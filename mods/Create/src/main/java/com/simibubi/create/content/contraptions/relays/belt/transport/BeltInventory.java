@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 import com.simibubi.create.content.contraptions.relays.belt.BeltBlock;
 import com.simibubi.create.content.contraptions.relays.belt.BeltBlockEntity;
 import com.simibubi.create.content.contraptions.relays.belt.BeltHelper;
@@ -39,6 +41,8 @@ public class BeltInventory {
 	final List<TransportedItemStack> toRemove;
 	boolean beltMovementPositive;
 	final float SEGMENT_WINDOW = .75f;
+	
+	TransportedItemStack lazyClientItem;
 
 	public BeltInventory(BeltBlockEntity be) {
 		this.belt = be;
@@ -48,6 +52,14 @@ public class BeltInventory {
 	}
 
 	public void tick() {
+
+		// Residual item for "smooth" transitions
+		if (lazyClientItem != null) {
+			if (lazyClientItem.locked)
+				lazyClientItem = null;
+			else
+				lazyClientItem.locked = true;
+		}
 
 		// Added/Removed items from previous cycle
 		if (!toInsert.isEmpty() || !toRemove.isEmpty()) {
@@ -195,8 +207,12 @@ public class BeltInventory {
 					continue;
 
 				currentItem.stack = remainder;
-				if (remainder.isEmpty())
+				if (remainder.isEmpty()) {
+					lazyClientItem = currentItem;
+					lazyClientItem.locked = false;
 					iterator.remove();
+				} else
+					currentItem.stack = remainder;
 
 				flapTunnel(this, lastOffset, movementFacing, false);
 				belt.sendData();
@@ -390,6 +406,8 @@ public class BeltInventory {
 		items.clear();
 		nbt.getList("Items", Tag.TAG_COMPOUND)
 			.forEach(inbt -> items.add(TransportedItemStack.read((CompoundTag) inbt)));
+		if (nbt.contains("LazyItem"))
+			lazyClientItem = TransportedItemStack.read(nbt.getCompound("LazyItem"));
 		beltMovementPositive = nbt.getBoolean("PositiveOrder");
 	}
 
@@ -398,6 +416,8 @@ public class BeltInventory {
 		ListTag itemsNBT = new ListTag();
 		items.forEach(stack -> itemsNBT.add(stack.serializeNBT()));
 		nbt.put("Items", itemsNBT);
+		if (lazyClientItem != null)
+			nbt.put("LazyItem", lazyClientItem.serializeNBT());
 		nbt.putBoolean("PositiveOrder", beltMovementPositive);
 		return nbt;
 	}
@@ -454,6 +474,11 @@ public class BeltInventory {
 
 	public List<TransportedItemStack> getTransportedItems() {
 		return items;
+	}
+
+	@Nullable
+	public TransportedItemStack getLazyClientItem() {
+		return lazyClientItem;
 	}
 
 }

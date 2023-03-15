@@ -2,7 +2,7 @@ package com.simibubi.create.content.logistics.item.box;
 
 import com.jozufozu.flywheel.core.PartialModel;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.simibubi.create.AllBlockPartials;
+import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.foundation.render.CachedBufferer;
 import com.simibubi.create.foundation.render.SuperByteBuffer;
 import com.simibubi.create.foundation.utility.AngleHelper;
@@ -27,7 +27,7 @@ public class PackageRenderer extends EntityRenderer<PackageEntity> {
 		ItemStack box = entity.box;
 		if (box.isEmpty())
 			box = PackageItem.getFallbackBox();
-		PartialModel model = AllBlockPartials.PACKAGES.get(box.getItem()
+		PartialModel model = AllPartialModels.PACKAGES.get(box.getItem()
 			.getRegistryName());
 		SuperByteBuffer sbb = CachedBufferer.partial(model, Blocks.AIR.defaultBlockState());
 		sbb.translate(-.5, 0, -.5)

@@ -13,6 +13,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.AllSpriteShifts;
 import com.simibubi.create.content.contraptions.base.KineticBlockEntityRenderer;
+import com.simibubi.create.content.contraptions.relays.belt.transport.BeltInventory;
 import com.simibubi.create.content.contraptions.relays.belt.transport.TransportedItemStack;
 import com.simibubi.create.content.logistics.item.box.PackageItem;
 import com.simibubi.create.foundation.block.render.SpriteShiftEntry;
@@ -197,128 +198,134 @@ public class BeltRenderer extends SafeBlockEntityRenderer<BeltBlockEntity> {
 
 		boolean onContraption = be.getLevel() instanceof WrappedWorld;
 
-		for (TransportedItemStack transported : be.getInventory()
-			.getTransportedItems()) {
-			ms.pushPose();
-            TransformStack.cast(ms)
-				.nudge(transported.angle);
+		BeltInventory inventory = be.getInventory();
+		for (TransportedItemStack transported : inventory.getTransportedItems())
+			renderItem(be, partialTicks, ms, buffer, light, overlay, beltFacing, directionVec, slope, verticality,
+				slopeAlongX, onContraption, transported);
+		if (inventory.getLazyClientItem() != null)
+			renderItem(be, partialTicks, ms, buffer, light, overlay, beltFacing, directionVec, slope, verticality,
+				slopeAlongX, onContraption, inventory.getLazyClientItem());
 
-			float offset;
-			float sideOffset;
-			float verticalMovement;
+		ms.popPose();
+	}
 
-			if (be.getSpeed() == 0) {
-				offset = transported.beltPosition;
-				sideOffset = transported.sideOffset;
-			} else {
-				offset = Mth.lerp(partialTicks, transported.prevBeltPosition, transported.beltPosition);
-				sideOffset = Mth.lerp(partialTicks, transported.prevSideOffset, transported.sideOffset);
-			}
+	private void renderItem(BeltBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light,
+		int overlay, Direction beltFacing, Vec3i directionVec, BeltSlope slope, int verticality, boolean slopeAlongX,
+		boolean onContraption, TransportedItemStack transported) {
+		ms.pushPose();
+		TransformStack.cast(ms)
+			.nudge(transported.angle);
 
-			if (offset < .5)
-				verticalMovement = 0;
-			else
-				verticalMovement = verticality * (Math.min(offset, be.beltLength - .5f) - .5f);
-			Vec3 offsetVec = Vec3.atLowerCornerOf(directionVec).scale(offset);
-			if (verticalMovement != 0)
-				offsetVec = offsetVec.add(0, verticalMovement, 0);
-			boolean onSlope =
-				slope != BeltSlope.HORIZONTAL && Mth.clamp(offset, .5f, be.beltLength - .5f) == offset;
-			boolean tiltForward = (slope == BeltSlope.DOWNWARD ^ beltFacing
-																   .getAxisDirection() == AxisDirection.POSITIVE) == (beltFacing
-																														.getAxis() == Axis.Z);
-			float slopeAngle = onSlope ? tiltForward ? -45 : 45 : 0;
+		float offset = Mth.lerp(partialTicks, transported.prevBeltPosition, transported.beltPosition);
+		float sideOffset = Mth.lerp(partialTicks, transported.prevSideOffset, transported.sideOffset);
+		float verticalMovement = verticality;
 
-			ms.translate(offsetVec.x, offsetVec.y, offsetVec.z);
-
-			boolean alongX = beltFacing
-							   .getClockWise()
-							   .getAxis() == Axis.X;
-			if (!alongX)
-				sideOffset *= -1;
-			ms.translate(alongX ? sideOffset : 0, 0, alongX ? 0 : sideOffset);
-
-			int stackLight = onContraption ? light : getPackedLight(be, offset);
-			ItemRenderer itemRenderer = Minecraft.getInstance()
-				.getItemRenderer();
-			boolean renderUpright = BeltHelper.isItemUpright(transported.stack);
-			boolean blockItem = itemRenderer.getModel(transported.stack, be.getLevel(), null, 0)
-				.isGui3d();
-			int count = (int) (Mth.log2((int) (transported.stack.getCount()))) / 2;
-			Random r = new Random(transported.angle);
-
-			boolean slopeShadowOnly = renderUpright && onSlope;
-			float slopeOffset = 1 / 8f;
-			if (slopeShadowOnly)
-				ms.pushPose();
-			if (!renderUpright || slopeShadowOnly)
-				ms.mulPose(new Vector3f(slopeAlongX ? 0 : 1, 0, slopeAlongX ? 1 : 0).rotationDegrees(slopeAngle));
-			if (onSlope)
-				ms.translate(0, slopeOffset, 0);
-			ms.pushPose();
-			ms.translate(0, -1 / 8f + 0.005f, 0);
-			ShadowRenderHelper.renderShadow(ms, buffer, .75f, .2f);
-			ms.popPose();
-			if (slopeShadowOnly) {
-				ms.popPose();
-				ms.translate(0, slopeOffset, 0);
-			}
-
-			if (renderUpright) {
-				Entity renderViewEntity = Minecraft.getInstance().cameraEntity;
-				if (renderViewEntity != null) {
-					Vec3 positionVec = renderViewEntity.position();
-					Vec3 vectorForOffset = BeltHelper.getVectorForOffset(be, offset);
-					Vec3 diff = vectorForOffset.subtract(positionVec);
-					float yRot = (float) (Mth.atan2(diff.x, diff.z) + Math.PI);
-					ms.mulPose(Vector3f.YP.rotation(yRot));
-				}
-				ms.translate(0, 3 / 32d, 1 / 16f);
-			}
-
-			for (int i = 0; i <= count; i++) {
-				ms.pushPose();
-				
-				boolean box = transported.stack.getItem() instanceof PackageItem;
-				ms.mulPose(Vector3f.YP.rotationDegrees(transported.angle));
-				if (!blockItem && !renderUpright) {
-					ms.translate(0, -.09375, 0);
-					ms.mulPose(Vector3f.XP.rotationDegrees(90));
-				}
-
-				if (blockItem && !box)
-					ms.translate(r.nextFloat() * .0625f * i, 0, r.nextFloat() * .0625f * i);
-
-				if (box) {
-					ms.translate(0, 6 / 16f, 0);
-					ms.scale(2f, 2f, 2f);
-				} else
-					ms.scale(.5f, .5f, .5f);
-
-				itemRenderer.renderStatic(null, transported.stack, TransformType.FIXED, false, ms, buffer,
-					be.getLevel(), stackLight, overlay, 0);
-				ms.popPose();
-
-				if (!renderUpright) {
-					if (!blockItem)
-						ms.mulPose(Vector3f.YP.rotationDegrees(10));
-					ms.translate(0, blockItem ? 1 / 64d : 1 / 16d, 0);
-				} else
-					ms.translate(0, 0, -1 / 16f);
-
-			}
-
-			ms.popPose();
+		if (be.getSpeed() == 0) {
+			offset = transported.beltPosition;
+			sideOffset = transported.sideOffset;
 		}
+
+		if (offset < .5)
+			verticalMovement = 0;
+		else
+			verticalMovement = verticality * (Math.min(offset, be.beltLength - .5f) - .5f);
+		Vec3 offsetVec = Vec3.atLowerCornerOf(directionVec).scale(offset);
+		if (verticalMovement != 0)
+			offsetVec = offsetVec.add(0, verticalMovement, 0);
+		boolean onSlope =
+			slope != BeltSlope.HORIZONTAL && Mth.clamp(offset, .5f, be.beltLength - .5f) == offset;
+		boolean tiltForward = (slope == BeltSlope.DOWNWARD ^ beltFacing
+															   .getAxisDirection() == AxisDirection.POSITIVE) == (beltFacing
+																													.getAxis() == Axis.Z);
+		float slopeAngle = onSlope ? tiltForward ? -45 : 45 : 0;
+
+		ms.translate(offsetVec.x, offsetVec.y, offsetVec.z);
+
+		boolean alongX = beltFacing
+						   .getClockWise()
+						   .getAxis() == Axis.X;
+		if (!alongX)
+			sideOffset *= -1;
+		ms.translate(alongX ? sideOffset : 0, 0, alongX ? 0 : sideOffset);
+
+		int stackLight = onContraption ? light : getPackedLight(be, offset);
+		ItemRenderer itemRenderer = Minecraft.getInstance()
+			.getItemRenderer();
+		boolean renderUpright = BeltHelper.isItemUpright(transported.stack);
+		boolean blockItem = itemRenderer.getModel(transported.stack, be.getLevel(), null, 0)
+			.isGui3d();
+		int count = (int) (Mth.log2((int) (transported.stack.getCount()))) / 2;
+		Random r = new Random(transported.angle);
+
+		boolean slopeShadowOnly = renderUpright && onSlope;
+		float slopeOffset = 1 / 8f;
+		if (slopeShadowOnly)
+			ms.pushPose();
+		if (!renderUpright || slopeShadowOnly)
+			ms.mulPose(new Vector3f(slopeAlongX ? 0 : 1, 0, slopeAlongX ? 1 : 0).rotationDegrees(slopeAngle));
+		if (onSlope)
+			ms.translate(0, slopeOffset, 0);
+		ms.pushPose();
+		ms.translate(0, -1 / 8f + 0.005f, 0);
+		ShadowRenderHelper.renderShadow(ms, buffer, .75f, .2f);
+		ms.popPose();
+		if (slopeShadowOnly) {
+			ms.popPose();
+			ms.translate(0, slopeOffset, 0);
+		}
+
+		if (renderUpright) {
+			Entity renderViewEntity = Minecraft.getInstance().cameraEntity;
+			if (renderViewEntity != null) {
+				Vec3 positionVec = renderViewEntity.position();
+				Vec3 vectorForOffset = BeltHelper.getVectorForOffset(be, offset);
+				Vec3 diff = vectorForOffset.subtract(positionVec);
+				float yRot = (float) (Mth.atan2(diff.x, diff.z) + Math.PI);
+				ms.mulPose(Vector3f.YP.rotation(yRot));
+			}
+			ms.translate(0, 3 / 32d, 1 / 16f);
+		}
+
+		for (int i = 0; i <= count; i++) {
+			ms.pushPose();
+			
+			boolean box = transported.stack.getItem() instanceof PackageItem;
+			ms.mulPose(Vector3f.YP.rotationDegrees(transported.angle));
+			if (!blockItem && !renderUpright) {
+				ms.translate(0, -.09375, 0);
+				ms.mulPose(Vector3f.XP.rotationDegrees(90));
+			}
+
+			if (blockItem && !box)
+				ms.translate(r.nextFloat() * .0625f * i, 0, r.nextFloat() * .0625f * i);
+
+			if (box) {
+				ms.translate(0, 6 / 16f, 0);
+				ms.scale(2f, 2f, 2f);
+			} else
+				ms.scale(.5f, .5f, .5f);
+
+			itemRenderer.renderStatic(null, transported.stack, TransformType.FIXED, false, ms, buffer,
+				be.getLevel(), stackLight, overlay, 0);
+			ms.popPose();
+
+			if (!renderUpright) {
+				if (!blockItem)
+					ms.mulPose(Vector3f.YP.rotationDegrees(10));
+				ms.translate(0, blockItem ? 1 / 64d : 1 / 16d, 0);
+			} else
+				ms.translate(0, 0, -1 / 16f);
+
+		}
+
 		ms.popPose();
 	}
 
 	protected int getPackedLight(BeltBlockEntity controller, float beltPos) {
 		int segment = (int) Math.floor(beltPos);
-		if (controller.lighter == null || segment >= controller.lighter.lightSegments() || segment < 0)
+		if (controller.lighter == null || controller.lighter.lightSegments() == 0)
 			return 0;
-
-		return controller.lighter.getPackedLight(segment);
+		return controller.lighter.getPackedLight(Mth.clamp(segment, 0, controller.lighter.lightSegments() - 1));
 	}
 
 }

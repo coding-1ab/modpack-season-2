@@ -1,7 +1,5 @@
 package com.simibubi.create.content.logistics.item.box;
 
-import java.util.function.Supplier;
-
 import com.simibubi.create.Create;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 import com.simibubi.create.foundation.utility.VecHelper;
@@ -12,7 +10,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 public class PackageDestroyPacket extends SimplePacketBase {
 
@@ -37,10 +35,9 @@ public class PackageDestroyPacket extends SimplePacketBase {
 		buffer.writeDouble(location.z);
 		buffer.writeItem(box);
 	}
-
+	
 	@Override
-	public void handle(Supplier<NetworkEvent.Context> context) {
-		NetworkEvent.Context ctx = context.get();
+	public boolean handle(Context ctx) {
 		ctx.enqueueWork(() -> {
 			for (int i = 0; i < 20; i++) {
 				Vec3 pos = VecHelper.offsetRandomly(location, Create.RANDOM, .5f);
@@ -49,7 +46,7 @@ public class PackageDestroyPacket extends SimplePacketBase {
 					pos.z, motion.x, motion.y, motion.z);
 			}
 		});
-		ctx.setPacketHandled(true);
+		return true;
 	}
 
 }
