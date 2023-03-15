@@ -1,6 +1,7 @@
 package com.simibubi.create.content.contraptions.components.actors;
 
 import com.simibubi.create.AllEntityTypes;
+import com.simibubi.create.content.logistics.item.box.PackageEntity;
 
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -73,6 +74,8 @@ public class SeatEntity extends Entity implements IEntityAdditionalSpawnData {
 			return 1 / 8f;
 		if (entity instanceof Wolf)
 			return 1 / 16f;
+		if (entity instanceof PackageEntity)
+			return 1 / 4f;
 		return 0;
 	}
 

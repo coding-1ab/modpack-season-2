@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllBlockPartials;
 import com.simibubi.create.content.contraptions.base.KineticTileEntity;
 import com.simibubi.create.content.contraptions.base.KineticTileEntityRenderer;
+import com.simibubi.create.content.logistics.item.box.PackageItem;
 import com.simibubi.create.foundation.render.CachedBufferer;
 import com.simibubi.create.foundation.render.SuperByteBuffer;
 import com.simibubi.create.foundation.utility.AngleHelper;
@@ -66,14 +67,24 @@ public class EjectorRenderer extends KineticTileEntityRenderer {
 			ms.pushPose();
 			Vec3 launchedItemLocation = ejector.getLaunchedItemLocation(time);
 			msr.translate(launchedItemLocation.subtract(Vec3.atLowerCornerOf(te.getBlockPos())));
-			Vec3 itemRotOffset = VecHelper.voxelSpace(0, 3, 0);
+			Vec3 itemRotOffset = VecHelper.voxelSpace(0, 2, -1);
 			msr.translate(itemRotOffset);
-			msr.rotateY(AngleHelper.horizontalAngle(ejector.getFacing()));
-			msr.rotateX(time * 40);
+
+			if (intAttached.getValue()
+				.getItem() instanceof PackageItem) {
+				ms.translate(0, 6 / 16f, 0);
+				ms.scale(2f, 2f, 2f);
+				msr.rotateY(time * 20);
+			} else {
+				ms.scale(.5f, .5f, .5f);
+				msr.rotateY(AngleHelper.horizontalAngle(ejector.getFacing()));
+				msr.rotateX(time * 40);
+			}
+			
 			msr.translateBack(itemRotOffset);
 			Minecraft.getInstance()
 				.getItemRenderer()
-				.renderStatic(intAttached.getValue(), TransformType.GROUND, light, overlay, ms, buffer, 0);
+				.renderStatic(intAttached.getValue(), TransformType.FIXED, light, overlay, ms, buffer, 0);
 			ms.popPose();
 		}
 

@@ -50,11 +50,13 @@ import com.simibubi.create.content.curiosities.tools.SandPaperItem;
 import com.simibubi.create.content.curiosities.weapons.PotatoCannonItem;
 import com.simibubi.create.content.curiosities.zapper.terrainzapper.WorldshaperItem;
 import com.simibubi.create.content.logistics.item.LinkedControllerItem;
+import com.simibubi.create.content.logistics.item.box.PackageItem;
 import com.simibubi.create.content.logistics.item.filter.FilterItem;
 import com.simibubi.create.content.logistics.trains.management.schedule.ScheduleItem;
 import com.simibubi.create.content.schematics.item.SchematicAndQuillItem;
 import com.simibubi.create.content.schematics.item.SchematicItem;
 import com.simibubi.create.foundation.data.AssetLookup;
+import com.simibubi.create.foundation.data.BuilderTransformers;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.recipe.CompatMetals;
 import com.simibubi.create.foundation.item.HiddenIngredientItem;
@@ -353,6 +355,20 @@ public class AllItems {
 		REGISTRATE.startSection(LOGISTICS);
 	}
 
+	public static final ItemEntry<PackageItem> CARDBOARD_PACKAGE_12x12 =
+		REGISTRATE.item("cardboard_package_12x12", p -> new PackageItem(p, 12, 12))
+			.transform(BuilderTransformers.packageItem("cardboard", 12, 12))
+			.register(),
+		CARDBOARD_PACKAGE_10x12 = REGISTRATE.item("cardboard_package_10x12", p -> new PackageItem(p, 10, 12))
+			.transform(BuilderTransformers.packageItem("cardboard", 10, 12))
+			.register(),
+		CARDBOARD_PACKAGE_10x8 = REGISTRATE.item("cardboard_package_10x8", p -> new PackageItem(p, 10, 8))
+			.transform(BuilderTransformers.packageItem("cardboard", 10, 8))
+			.register(),
+		CARDBOARD_PACKAGE_12x10 = REGISTRATE.item("cardboard_package_12x10", p -> new PackageItem(p, 12, 10))
+			.transform(BuilderTransformers.packageItem("cardboard", 12, 10))
+			.register();
+	
 	public static final ItemEntry<FilterItem> FILTER = REGISTRATE.item("filter", FilterItem::regular)
 		.model(AssetLookup.existingItemModel())
 		.register();

@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.mutable.MutableInt;
 
+import com.simibubi.create.content.logistics.item.box.PackageEntity;
 import com.simibubi.create.foundation.config.AllConfigs;
 import com.simibubi.create.foundation.utility.Pair;
 
@@ -16,6 +17,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
@@ -278,4 +281,15 @@ public class ItemHelper {
 		}
 		return -1;
 	}
+	
+	public static ItemStack fromItemEntity(Entity entityIn) {
+		if (!entityIn.isAlive())
+			return ItemStack.EMPTY;
+		if (entityIn instanceof PackageEntity) {
+			PackageEntity packageEntity = (PackageEntity) entityIn;
+			return packageEntity.getBox();
+		}
+		return entityIn instanceof ItemEntity ? ((ItemEntity) entityIn).getItem() : ItemStack.EMPTY;
+	}
+	
 }

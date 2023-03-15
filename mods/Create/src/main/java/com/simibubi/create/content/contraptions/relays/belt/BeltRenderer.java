@@ -14,6 +14,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllSpriteShifts;
 import com.simibubi.create.content.contraptions.base.KineticTileEntityRenderer;
 import com.simibubi.create.content.contraptions.relays.belt.transport.TransportedItemStack;
+import com.simibubi.create.content.logistics.item.box.PackageItem;
 import com.simibubi.create.foundation.block.render.SpriteShiftEntry;
 import com.simibubi.create.foundation.render.CachedBufferer;
 import com.simibubi.create.foundation.render.ShadowRenderHelper;
@@ -277,18 +278,23 @@ public class BeltRenderer extends SafeTileEntityRenderer<BeltTileEntity> {
 
 			for (int i = 0; i <= count; i++) {
 				ms.pushPose();
-
+				
+				boolean box = transported.stack.getItem() instanceof PackageItem;
 				ms.mulPose(Vector3f.YP.rotationDegrees(transported.angle));
 				if (!blockItem && !renderUpright) {
 					ms.translate(0, -.09375, 0);
 					ms.mulPose(Vector3f.XP.rotationDegrees(90));
 				}
 
-				if (blockItem) {
+				if (blockItem && !box)
 					ms.translate(r.nextFloat() * .0625f * i, 0, r.nextFloat() * .0625f * i);
-				}
 
-				ms.scale(.5f, .5f, .5f);
+				if (box) {
+					ms.translate(0, 6 / 16f, 0);
+					ms.scale(2f, 2f, 2f);
+				} else
+					ms.scale(.5f, .5f, .5f);
+				
 				itemRenderer.renderStatic(null, transported.stack, TransformType.FIXED, false, ms, buffer, te.getLevel(), stackLight, overlay, 0);
 				ms.popPose();
 

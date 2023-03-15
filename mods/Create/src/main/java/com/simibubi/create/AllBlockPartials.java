@@ -12,6 +12,7 @@ import com.simibubi.create.foundation.utility.Iterate;
 import com.simibubi.create.foundation.utility.Lang;
 
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 
 public class AllBlockPartials {
@@ -176,6 +177,7 @@ public class AllBlockPartials {
 	public static final Map<Direction, PartialModel> METAL_GIRDER_BRACKETS = new EnumMap<>(Direction.class);
 	public static final Map<DyeColor, PartialModel> TOOLBOX_LIDS = new EnumMap<>(DyeColor.class);
 	public static final List<PartialModel> CONTRAPTION_CONTROLS_INDICATOR = new ArrayList<>();
+	public static final Map<ResourceLocation, PartialModel> PACKAGES = new HashMap<>();
 
 	static {
 		for (FluidTransportBehaviour.AttachmentTypes.ComponentPartials type : FluidTransportBehaviour.AttachmentTypes.ComponentPartials.values()) {
@@ -192,6 +194,9 @@ public class AllBlockPartials {
 			METAL_GIRDER_BRACKETS.put(d, block("metal_girder/bracket_" + Lang.asId(d.name())));
 		for (int i = 0; i < 8; i++)
 			CONTRAPTION_CONTROLS_INDICATOR.add(block("contraption_controls/indicator_" + i));
+		for (String size : new String[] { "12x12", "10x12", "12x10", "10x8" })
+			PACKAGES.put(Create.asResource("cardboard_package_" + size),
+				new PartialModel(new ResourceLocation(Create.ID, "item/cardboard_package_" + size)));
 	}
 
 	private static PartialModel block(String path) {

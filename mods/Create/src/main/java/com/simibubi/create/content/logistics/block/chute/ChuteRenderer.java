@@ -3,6 +3,7 @@ package com.simibubi.create.content.logistics.block.chute;
 import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.logistics.block.chute.ChuteBlock.Shape;
+import com.simibubi.create.content.logistics.item.box.PackageItem;
 import com.simibubi.create.foundation.tileEntity.renderer.SafeTileEntityRenderer;
 
 import net.minecraft.client.Minecraft;
@@ -43,8 +44,12 @@ public class ChuteRenderer extends SafeTileEntityRenderer<ChuteTileEntity> {
 		float itemPosition = te.itemPosition.getValue(partialTicks);
 		ms.translate(0, -.5 + itemPosition, 0);
 		ms.scale(itemScale, itemScale, itemScale);
-		msr.rotateX(itemPosition * 180);
-		msr.rotateY(itemPosition * 180);
+		if (te.item.getItem() instanceof PackageItem) {
+			ms.scale(3, 3, 3);
+		} else {
+			msr.rotateX(itemPosition * 180);
+			msr.rotateY(itemPosition * 180);
+		}
 		itemRenderer.renderStatic(te.item, TransformType.FIXED, light, overlay, ms, buffer, 0);
 		ms.popPose();
 	}

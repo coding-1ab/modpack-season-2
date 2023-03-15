@@ -56,6 +56,7 @@ import com.simibubi.create.content.logistics.block.mechanicalArm.ArmPlacementPac
 import com.simibubi.create.content.logistics.item.LinkedControllerBindPacket;
 import com.simibubi.create.content.logistics.item.LinkedControllerInputPacket;
 import com.simibubi.create.content.logistics.item.LinkedControllerStopLecternPacket;
+import com.simibubi.create.content.logistics.item.box.PackageDestroyPacket;
 import com.simibubi.create.content.logistics.item.filter.FilterScreenPacket;
 import com.simibubi.create.content.logistics.packet.ConfigureStockswitchPacket;
 import com.simibubi.create.content.logistics.packet.FunnelFlapPacket;
@@ -195,6 +196,7 @@ public enum AllPackets {
 	TRACK_GRAPH_ROLL_CALL(TrackGraphRollCallPacket.class, TrackGraphRollCallPacket::new, PLAY_TO_CLIENT),
 	UPDATE_ELEVATOR_FLOORS(ElevatorFloorListPacket.class, ElevatorFloorListPacket::new, PLAY_TO_CLIENT),
 	CONTRAPTION_ACTOR_TOGGLE(ContraptionDisableActorPacket.class, ContraptionDisableActorPacket::new, PLAY_TO_CLIENT),
+	PACKAGE_DESTROYED(PackageDestroyPacket.class, PackageDestroyPacket::new, PLAY_TO_CLIENT),
 	SET_FIRE_IMMUNE(NetheriteDivingHandler.SetFireImmunePacket.class, NetheriteDivingHandler.SetFireImmunePacket::new, PLAY_TO_CLIENT),
 
 	;

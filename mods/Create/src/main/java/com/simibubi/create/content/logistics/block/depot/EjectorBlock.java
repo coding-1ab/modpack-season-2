@@ -9,6 +9,7 @@ import com.simibubi.create.AllTileEntities;
 import com.simibubi.create.content.contraptions.base.HorizontalKineticBlock;
 import com.simibubi.create.content.logistics.block.depot.EjectorTileEntity.State;
 import com.simibubi.create.foundation.block.ITE;
+import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.networking.AllPackets;
 import com.simibubi.create.foundation.utility.VecHelper;
 
@@ -19,7 +20,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -79,7 +79,7 @@ public class EjectorBlock extends HorizontalKineticBlock implements ITE<EjectorT
 			return;
 		if (entityIn.isSuppressingBounce())
 			return;
-		if (entityIn instanceof ItemEntity) {
+		if (!ItemHelper.fromItemEntity(entityIn).isEmpty()) {
 			SharedDepotBlockMethods.onLanded(worldIn, entityIn);
 			return;
 		}

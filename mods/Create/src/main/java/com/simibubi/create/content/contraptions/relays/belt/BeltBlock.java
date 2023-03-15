@@ -22,14 +22,18 @@ import com.simibubi.create.content.contraptions.relays.belt.transport.BeltMoveme
 import com.simibubi.create.content.contraptions.relays.belt.transport.BeltTunnelInteractionHandler;
 import com.simibubi.create.content.curiosities.armor.DivingBootsItem;
 import com.simibubi.create.content.logistics.block.belts.tunnel.BeltTunnelBlock;
+import com.simibubi.create.content.logistics.item.box.PackageEntity;
+import com.simibubi.create.content.logistics.item.box.PackageItem;
 import com.simibubi.create.content.schematics.ISpecialBlockItemRequirement;
 import com.simibubi.create.content.schematics.ItemRequirement;
 import com.simibubi.create.content.schematics.ItemRequirement.ItemUseType;
 import com.simibubi.create.foundation.block.ITE;
 import com.simibubi.create.foundation.block.render.DestroyProgressRenderingHandler;
 import com.simibubi.create.foundation.block.render.ReducedDestroyEffects;
+import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.tileEntity.behaviour.belt.TransportedItemStackHandlerBehaviour.TransportedResult;
 import com.simibubi.create.foundation.utility.Iterate;
+import com.simibubi.create.foundation.utility.VecHelper;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -45,7 +49,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
@@ -74,6 +77,7 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -198,25 +202,26 @@ public class BeltBlock extends HorizontalKineticBlock implements ITE<BeltTileEnt
 		BeltTileEntity belt = BeltHelper.getSegmentTE(worldIn, pos);
 		if (belt == null)
 			return;
-		if (entityIn instanceof ItemEntity && entityIn.isAlive()) {
+		ItemStack asItem = ItemHelper.fromItemEntity(entityIn);
+		if (!asItem.isEmpty()) {
 			if (worldIn.isClientSide)
 				return;
 			if (entityIn.getDeltaMovement().y > 0)
 				return;
-			if (!entityIn.isAlive())
+			Vec3 targetLocation = VecHelper.getCenterOf(pos)
+				.add(0, 5 / 16f, 0);
+			if (!PackageEntity.centerPackage(entityIn, targetLocation))
 				return;
 			if (BeltTunnelInteractionHandler.getTunnelOnPosition(worldIn, pos) != null)
 				return;
 			withTileEntityDo(worldIn, pos, te -> {
-				ItemEntity itemEntity = (ItemEntity) entityIn;
 				IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 					.orElse(null);
 				if (handler == null)
 					return;
-				ItemStack remainder = handler.insertItem(0, itemEntity.getItem()
-					.copy(), false);
+				ItemStack remainder = handler.insertItem(0, asItem, false);
 				if (remainder.isEmpty())
-					itemEntity.discard();
+					entityIn.discard();
 			});
 			return;
 		}
@@ -273,6 +278,19 @@ public class BeltBlock extends HorizontalKineticBlock implements ITE<BeltTileEnt
 		if (belt == null)
 			return InteractionResult.PASS;
 
+		if (heldItem.getItem() instanceof PackageItem) {
+			ItemStack toInsert = heldItem.copy();
+			IItemHandler handler = belt.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+				.orElse(null);
+			if (handler == null)
+				return InteractionResult.PASS;
+			ItemStack remainder = handler.insertItem(0, toInsert, false);
+			if (remainder.isEmpty()) {
+				heldItem.shrink(1);
+				return InteractionResult.SUCCESS;
+			}
+		}
+		
 		if (isHand) {
 			BeltTileEntity controllerBelt = belt.getControllerTE();
 			if (controllerBelt == null)

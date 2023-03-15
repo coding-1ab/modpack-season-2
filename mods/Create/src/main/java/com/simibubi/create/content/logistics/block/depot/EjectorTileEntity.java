@@ -13,6 +13,7 @@ import com.simibubi.create.content.contraptions.base.KineticTileEntity;
 import com.simibubi.create.content.contraptions.relays.belt.transport.TransportedItemStack;
 import com.simibubi.create.content.logistics.block.funnel.AbstractFunnelBlock;
 import com.simibubi.create.content.logistics.block.funnel.FunnelBlock;
+import com.simibubi.create.content.logistics.item.box.PackageEntity;
 import com.simibubi.create.foundation.config.AllConfigs;
 import com.simibubi.create.foundation.networking.AllPackets;
 import com.simibubi.create.foundation.tileEntity.TileEntityBehaviour;
@@ -149,6 +150,8 @@ public class EjectorTileEntity extends KineticTileEntity {
 			if (!entity.isAlive())
 				continue;
 			if (entity instanceof ItemEntity)
+				continue;
+			if (entity instanceof PackageEntity)
 				continue;
 			if (entity.getPistonPushReaction() == PushReaction.IGNORE)
 				continue;

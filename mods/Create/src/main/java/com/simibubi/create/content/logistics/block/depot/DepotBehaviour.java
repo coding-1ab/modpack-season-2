@@ -254,8 +254,9 @@ public class DepotBehaviour extends TileEntityBehaviour {
 		int cumulativeStackSize = getPresentStackSize();
 		for (TransportedItemStack transportedItemStack : incoming)
 			cumulativeStackSize += transportedItemStack.stack.getCount();
-		int fromGetter = maxStackSize.get();
-		return (fromGetter == 0 ? 64 : fromGetter) - cumulativeStackSize;
+		int fromGetter =
+			Math.min(maxStackSize.get() == 0 ? 64 : maxStackSize.get(), getHeldItemStack().getMaxStackSize());
+		return (fromGetter) - cumulativeStackSize;
 	}
 
 	public ItemStack insert(TransportedItemStack heldItem, boolean simulate) {

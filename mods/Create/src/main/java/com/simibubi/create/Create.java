@@ -131,6 +131,7 @@ public class Create {
 		CopperRegistries.inject();
 
 		modEventBus.addListener(Create::init);
+		modEventBus.addListener(AllEntityTypes::registerEntityAttributes);
 		modEventBus.addListener(EventPriority.LOWEST, Create::gatherData);
 		modEventBus.addGenericListener(SoundEvent.class, AllSoundEvents::register);
 
