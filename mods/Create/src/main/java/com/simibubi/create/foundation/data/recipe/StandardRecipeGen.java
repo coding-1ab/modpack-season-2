@@ -24,10 +24,8 @@ import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.Create;
-import com.simibubi.create.content.AllSections;
 import com.simibubi.create.content.palettes.AllPaletteBlocks;
 import com.simibubi.create.content.palettes.AllPaletteStoneTypes;
-import com.simibubi.create.foundation.utility.Lang;
 import com.simibubi.create.foundation.utility.RegisteredObjects;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.entry.ItemEntry;
@@ -68,7 +66,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 	 * (Ctrl-o) in Eclipse
 	 */
 
-	private Marker MATERIALS = enterSection(AllSections.MATERIALS);
+	private Marker MATERIALS = enterFolder("materials");
 
 	GeneratedRecipe
 
@@ -136,7 +134,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 
 	;
 
-	private Marker CURIOSITIES = enterSection(AllSections.CURIOSITIES);
+	private Marker CURIOSITIES = enterFolder("curiosities");
 
 	GeneratedRecipe
 
@@ -175,7 +173,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 
 	;
 
-	private Marker KINETICS = enterSection(AllSections.KINETICS);
+	private Marker KINETICS = enterFolder("kinetics");
 
 	GeneratedRecipe ANDESITE_LADDER = create(AllBlocks.ANDESITE_LADDER).returns(4)
 		.unlockedBy(I::andesite)
@@ -814,6 +812,14 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.pattern("AAA")
 				.pattern(" C ")),
 
+		MECHANICAL_ROLLER = create(AllBlocks.MECHANICAL_ROLLER).unlockedBy(I::andesiteCasing)
+			.viaShaped(b -> b.define('C', I.andesiteCasing())
+				.define('A', I.electronTube())
+				.define('I', AllBlocks.CRUSHING_WHEEL.get())
+				.pattern("A")
+				.pattern("C")
+				.pattern("I")),
+
 		MECHANICAL_DRILL = create(AllBlocks.MECHANICAL_DRILL).unlockedBy(I::andesiteCasing)
 			.viaShaped(b -> b.define('C', I.andesiteCasing())
 				.define('A', I.andesite())
@@ -829,7 +835,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 
 	;
 
-	private Marker LOGISTICS = enterSection(AllSections.LOGISTICS);
+	private Marker LOGISTICS = enterFolder("logistics");
 
 	GeneratedRecipe
 
@@ -935,7 +941,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 
 	;
 
-	private Marker SCHEMATICS = enterSection(AllSections.SCHEMATICS);
+	private Marker SCHEMATICS = enterFolder("schematics");
 
 	GeneratedRecipe
 
@@ -965,7 +971,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 
 	;
 
-	private Marker PALETTES = enterSection(AllSections.PALETTES);
+	private Marker PALETTES = enterFolder("palettes");
 
 	GeneratedRecipe
 
@@ -1085,11 +1091,6 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 	 */
 
 	String currentFolder = "";
-
-	Marker enterSection(AllSections section) {
-		currentFolder = Lang.asId(section.name());
-		return new Marker();
-	}
 
 	Marker enterFolder(String folder) {
 		currentFolder = folder;

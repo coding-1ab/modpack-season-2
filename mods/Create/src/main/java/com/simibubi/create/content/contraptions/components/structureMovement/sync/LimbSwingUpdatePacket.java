@@ -1,7 +1,5 @@
 package com.simibubi.create.content.contraptions.components.structureMovement.sync;
 
-import java.util.function.Supplier;
-
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 
 import net.minecraft.client.Minecraft;
@@ -26,37 +24,35 @@ public class LimbSwingUpdatePacket extends SimplePacketBase {
 
 	public LimbSwingUpdatePacket(FriendlyByteBuf buffer) {
 		entityId = buffer.readInt();
-		position = new Vec3(buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
+		position = new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
 		limbSwing = buffer.readFloat();
 	}
 
 	@Override
 	public void write(FriendlyByteBuf buffer) {
 		buffer.writeInt(entityId);
-		buffer.writeFloat((float) position.x);
-		buffer.writeFloat((float) position.y);
-		buffer.writeFloat((float) position.z);
+		buffer.writeDouble(position.x);
+		buffer.writeDouble(position.y);
+		buffer.writeDouble(position.z);
 		buffer.writeFloat(limbSwing);
 	}
 
 	@Override
-	public void handle(Supplier<Context> context) {
-		context.get()
-			.enqueueWork(() -> {
-				ClientLevel world = Minecraft.getInstance().level;
-				if (world == null)
-					return;
-				Entity entity = world.getEntity(entityId);
-				if (entity == null)
-					return;
-				CompoundTag data = entity.getPersistentData();
-				data.putInt("LastOverrideLimbSwingUpdate", 0);
-				data.putFloat("OverrideLimbSwing", limbSwing);
-				entity.lerpTo(position.x, position.y, position.z, entity.getYRot(),
-					entity.getXRot(), 2, false);
-			});
-		context.get()
-			.setPacketHandled(true);
+	public boolean handle(Context context) {
+		context.enqueueWork(() -> {
+			ClientLevel world = Minecraft.getInstance().level;
+			if (world == null)
+				return;
+			Entity entity = world.getEntity(entityId);
+			if (entity == null)
+				return;
+			CompoundTag data = entity.getPersistentData();
+			data.putInt("LastOverrideLimbSwingUpdate", 0);
+			data.putFloat("OverrideLimbSwing", limbSwing);
+			entity.lerpTo(position.x, position.y, position.z, entity.getYRot(),
+				entity.getXRot(), 2, false);
+		});
+		return true;
 	}
 
 }

@@ -1,7 +1,5 @@
 package com.simibubi.create.content.curiosities.armor;
 
-import java.util.function.Supplier;
-
 import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.networking.AllPackets;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
@@ -94,7 +92,7 @@ public final class NetheriteDivingHandler {
 
 	public static void setFireImmune(LivingEntity entity, boolean fireImmune) {
 		entity.getPersistentData().putBoolean(FIRE_IMMUNE_KEY, fireImmune);
-		AllPackets.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), SetFireImmunePacket.create(entity));
+		AllPackets.getChannel().send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), SetFireImmunePacket.create(entity));
 	}
 
 	@SubscribeEvent
@@ -107,7 +105,7 @@ public final class NetheriteDivingHandler {
 			return;
 		}
 
-		AllPackets.channel.send(PacketDistributor.PLAYER.with(() -> player), SetFireImmunePacket.create(entity));
+		AllPackets.getChannel().send(PacketDistributor.PLAYER.with(() -> player), SetFireImmunePacket.create(entity));
 	}
 
 	public static class SetFireImmunePacket extends SimplePacketBase {
@@ -137,14 +135,14 @@ public final class NetheriteDivingHandler {
 		}
 
 		@Override
-		public void handle(Supplier<Context> context) {
-			context.get().enqueueWork(() -> {
+		public boolean handle(Context context) {
+			context.enqueueWork(() -> {
 				Entity entity = Minecraft.getInstance().level.getEntity(entityId);
 				if (entity != null) {
 					entity.getPersistentData().putBoolean(FIRE_IMMUNE_KEY, fireImmune);
 				}
 			});
-			context.get().setPacketHandled(true);
+			return true;
 		}
 	}
 }

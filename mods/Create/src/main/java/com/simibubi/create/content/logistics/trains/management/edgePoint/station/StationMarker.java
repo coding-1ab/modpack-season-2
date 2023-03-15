@@ -6,11 +6,11 @@ import java.util.Optional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
-import com.simibubi.create.AllTileEntities;
+import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.trains.management.edgePoint.TrackTargetingBehaviour;
+import com.simibubi.create.foundation.blockEntity.BlockEntityBehaviour;
 import com.simibubi.create.foundation.map.CustomRenderedMapDecoration;
-import com.simibubi.create.foundation.tileEntity.TileEntityBehaviour;
 import com.simibubi.create.foundation.utility.Components;
 
 import net.minecraft.client.Minecraft;
@@ -21,6 +21,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
@@ -51,14 +52,14 @@ public class StationMarker {
 	}
 
 	public static StationMarker fromWorld(BlockGetter level, BlockPos pos) {
-		Optional<StationTileEntity> stationOption = AllTileEntities.TRACK_STATION.get(level, pos);
+		Optional<StationBlockEntity> stationOption = AllBlockEntityTypes.TRACK_STATION.get(level, pos);
 
 		if (stationOption.isEmpty() || stationOption.get().getStation() == null)
 			return null;
 
 		String name = stationOption.get()
 			.getStation().name;
-		return new StationMarker(pos, TileEntityBehaviour.get(stationOption.get(), TrackTargetingBehaviour.TYPE)
+		return new StationMarker(pos, BlockEntityBehaviour.get(stationOption.get(), TrackTargetingBehaviour.TYPE)
 			.getPositionForMapMarker(), Components.literal(name));
 	}
 
@@ -104,7 +105,7 @@ public class StationMarker {
 	}
 
 	public static class Decoration extends MapDecoration implements CustomRenderedMapDecoration {
-		private static final RenderType RENDER_TYPE = RenderType.text(Create.asResource("textures/gui/station_map_icon.png"));
+		private static final ResourceLocation TEXTURE = Create.asResource("textures/gui/station_map_icon.png");
 
 		public Decoration(byte x, byte y, Component name) {
 			super(TYPE, x, y, (byte) 0, name);
@@ -130,7 +131,7 @@ public class StationMarker {
 			poseStack.translate(0.5f, 0f, 0);
 			poseStack.scale(4.5F, 4.5F, 3.0F);
 
-			VertexConsumer buffer = bufferSource.getBuffer(RENDER_TYPE);
+			VertexConsumer buffer = bufferSource.getBuffer(RenderType.text(TEXTURE));
 			Matrix4f mat = poseStack.last().pose();
 			float zOffset = -0.001f;
 			buffer.vertex(mat, -1, -1, zOffset * index).color(255, 255, 255, 255).uv(0.0f		, 0.0f		 ).uv2(packedLight).endVertex();

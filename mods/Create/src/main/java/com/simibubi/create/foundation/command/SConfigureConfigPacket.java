@@ -3,8 +3,9 @@ package com.simibubi.create.foundation.command;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
+import org.slf4j.Logger;
 
+import com.mojang.logging.LogUtils;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.contraptions.goggles.GoggleConfigScreen;
 import com.simibubi.create.content.logistics.trains.CameraDistanceModifier;
@@ -32,9 +33,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 public class SConfigureConfigPacket extends SimplePacketBase {
+
+	private static final Logger LOGGER = LogUtils.getLogger();
 
 	private final String option;
 	private final String value;
@@ -56,25 +59,21 @@ public class SConfigureConfigPacket extends SimplePacketBase {
 	}
 
 	@Override
-	public void handle(Supplier<NetworkEvent.Context> ctx) {
-		ctx.get()
-			.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-				if (option.startsWith("SET")) {
-					trySetConfig(option.substring(3), value);
-					return;
-				}
+	public boolean handle(Context context) {
+		context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+			if (option.startsWith("SET")) {
+				trySetConfig(option.substring(3), value);
+				return;
+			}
 
-				try {
-					Actions.valueOf(option)
-						.performAction(value);
-				} catch (IllegalArgumentException e) {
-					LogManager.getLogger()
-						.warn("Received ConfigureConfigPacket with invalid Option: " + option);
-				}
-			}));
-
-		ctx.get()
-			.setPacketHandled(true);
+			try {
+				Actions.valueOf(option)
+					.performAction(value);
+			} catch (IllegalArgumentException e) {
+				LOGGER.warn("Received ConfigureConfigPacket with invalid Option: " + option);
+			}
+		}));
+		return true;
 	}
 
 	private static void trySetConfig(String option, String value) {
@@ -164,21 +163,21 @@ public class SConfigureConfigPacket extends SimplePacketBase {
 
 			if (value.equals("info")) {
 				Component text = Components.literal("Rainbow Debug Utility is currently: ")
-					.append(boolToText(AllConfigs.CLIENT.rainbowDebug.get()));
+					.append(boolToText(AllConfigs.client().rainbowDebug.get()));
 				player.displayClientMessage(text, false);
 				return;
 			}
 
-			AllConfigs.CLIENT.rainbowDebug.set(Boolean.parseBoolean(value));
-			Component text = boolToText(AllConfigs.CLIENT.rainbowDebug.get())
+			AllConfigs.client().rainbowDebug.set(Boolean.parseBoolean(value));
+			Component text = boolToText(AllConfigs.client().rainbowDebug.get())
 				.append(Components.literal(" Rainbow Debug Utility").withStyle(ChatFormatting.WHITE));
 			player.displayClientMessage(text, false);
 		}
 
 		@OnlyIn(Dist.CLIENT)
 		private static void overlayReset(String value) {
-			AllConfigs.CLIENT.overlayOffsetX.set(0);
-			AllConfigs.CLIENT.overlayOffsetY.set(0);
+			AllConfigs.client().overlayOffsetX.set(0);
+			AllConfigs.client().overlayOffsetY.set(0);
 		}
 
 		@OnlyIn(Dist.CLIENT)
@@ -211,7 +210,7 @@ public class SConfigureConfigPacket extends SimplePacketBase {
 
 		@OnlyIn(Dist.CLIENT)
 		private static void fabulousWarning(String value) {
-			AllConfigs.CLIENT.ignoreFabulousWarning.set(true);
+			AllConfigs.client().ignoreFabulousWarning.set(true);
 			LocalPlayer player = Minecraft.getInstance().player;
 			if (player != null) {
 				player.displayClientMessage(

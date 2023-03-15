@@ -1,7 +1,5 @@
 package com.simibubi.create.content.contraptions.components.structureMovement;
 
-import java.util.function.Supplier;
-
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -12,43 +10,44 @@ import net.minecraftforge.network.NetworkEvent.Context;
 public class ContraptionStallPacket extends SimplePacketBase {
 
 	int entityID;
-	float x;
-	float y;
-	float z;
+	double x;
+	double y;
+	double z;
 	float angle;
 
 	public ContraptionStallPacket(int entityID, double posX, double posY, double posZ, float angle) {
 		this.entityID = entityID;
-		this.x = (float) posX;
-		this.y = (float) posY;
-		this.z = (float) posZ;
+		this.x = posX;
+		this.y = posY;
+		this.z = posZ;
 		this.angle = angle;
 	}
 
 	public ContraptionStallPacket(FriendlyByteBuf buffer) {
 		entityID = buffer.readInt();
-		x = buffer.readFloat();
-		y = buffer.readFloat();
-		z = buffer.readFloat();
+		x = buffer.readDouble();
+		y = buffer.readDouble();
+		z = buffer.readDouble();
 		angle = buffer.readFloat();
 	}
 
 	@Override
 	public void write(FriendlyByteBuf buffer) {
 		buffer.writeInt(entityID);
-		writeAll(buffer, x, y, z, angle);
+		writeAll(buffer, x, y, z);
+		buffer.writeFloat(angle);
 	}
 
 	@Override
-	public void handle(Supplier<Context> context) {
-		context.get().enqueueWork(
-				() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AbstractContraptionEntity.handleStallPacket(this)));
-		context.get().setPacketHandled(true);
+	public boolean handle(Context context) {
+		context.enqueueWork(
+			() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AbstractContraptionEntity.handleStallPacket(this)));
+		return true;
 	}
 
-	private void writeAll(FriendlyByteBuf buffer, float... floats) {
-		for (float f : floats)
-			buffer.writeFloat(f);
+	private void writeAll(FriendlyByteBuf buffer, double... doubles) {
+		for (double d : doubles)
+			buffer.writeDouble(d);
 	}
 
 }

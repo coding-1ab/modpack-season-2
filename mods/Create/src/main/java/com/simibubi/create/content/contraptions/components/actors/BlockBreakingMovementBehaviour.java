@@ -28,7 +28,7 @@ public class BlockBreakingMovementBehaviour implements MovementBehaviour {
 	public void startMoving(MovementContext context) {
 		if (context.world.isClientSide)
 			return;
-		context.data.putInt("BreakerId", -BlockBreakingKineticTileEntity.NEXT_BREAKER_ID.incrementAndGet());
+		context.data.putInt("BreakerId", -BlockBreakingKineticBlockEntity.NEXT_BREAKER_ID.incrementAndGet());
 	}
 
 	@Override
@@ -40,9 +40,9 @@ public class BlockBreakingMovementBehaviour implements MovementBehaviour {
 			damageEntities(context, pos, world);
 		if (world.isClientSide)
 			return;
+		
 		if (!canBreak(world, pos, stateVisited))
 			return;
-
 		context.data.put("BreakingPos", NbtUtils.writeBlockPos(pos));
 		context.stall = true;
 	}
@@ -180,7 +180,7 @@ public class BlockBreakingMovementBehaviour implements MovementBehaviour {
 			return;
 		}
 
-		float breakSpeed = Mth.clamp(Math.abs(context.getAnimationSpeed()) / 500f, 1 / 128f, 16f);
+		float breakSpeed = getBlockBreakingSpeed(context);
 		destroyProgress += Mth.clamp((int) (breakSpeed / blockHardness), 1, 10 - destroyProgress);
 		world.playSound(null, breakingPos, stateToBreak.getSoundType()
 			.getHitSound(), SoundSource.NEUTRAL, .25f, 1);
@@ -199,7 +199,7 @@ public class BlockBreakingMovementBehaviour implements MovementBehaviour {
 
 			context.stall = false;
 			if (shouldDestroyStartBlock(stateToBreak))
-				BlockHelper.destroyBlock(context.world, breakingPos, 1f, stack -> this.dropItem(context, stack));
+				destroyBlock(context, breakingPos);
 			onBlockBroken(context, ogPos, stateToBreak);
 			ticksUntilNextProgress = -1;
 			data.remove("Progress");
@@ -214,13 +214,21 @@ public class BlockBreakingMovementBehaviour implements MovementBehaviour {
 		data.putInt("Progress", destroyProgress);
 	}
 
+	protected void destroyBlock(MovementContext context, BlockPos breakingPos) {
+		BlockHelper.destroyBlock(context.world, breakingPos, 1f, stack -> this.dropItem(context, stack));
+	}
+
+	protected float getBlockBreakingSpeed(MovementContext context) {
+		return Mth.clamp(Math.abs(context.getAnimationSpeed()) / 500f, 1 / 128f, 16f);
+	}
+
 	protected boolean shouldDestroyStartBlock(BlockState stateToBreak) {
 		return true;
 	}
 
 	public boolean canBreak(Level world, BlockPos breakingPos, BlockState state) {
 		float blockHardness = state.getDestroySpeed(world, breakingPos);
-		return BlockBreakingKineticTileEntity.isBreakable(state, blockHardness);
+		return BlockBreakingKineticBlockEntity.isBreakable(state, blockHardness);
 	}
 
 	protected void onBlockBroken(MovementContext context, BlockPos pos, BlockState brokenState) {

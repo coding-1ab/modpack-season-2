@@ -82,7 +82,7 @@ public class AllIcons implements ScreenElement {
 	public static final AllIcons
 		I_TOOL_DEPLOY = newRow(),
 		I_SKIP_MISSING = next(),
-		I_SKIP_TILES = next(),
+		I_SKIP_BLOCK_ENTITIES = next(),
 		I_DICE = next(),
 		I_TUNNEL_SPLIT = next(),
 		I_TUNNEL_FORCED_SPLIT = next(),
@@ -104,6 +104,10 @@ public class AllIcons implements ScreenElement {
 
 		I_ADD_INVERTED_ATTRIBUTE = next(),
 		I_FLIP = next(),
+		
+		I_ROLLER_PAVE = next(),
+		I_ROLLER_FILL = next(),
+		I_ROLLER_WIDE_FILL = next(),
 
 		I_PLAY = newRow(),
 		I_PAUSE = next(),

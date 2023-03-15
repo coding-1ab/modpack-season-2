@@ -15,6 +15,7 @@ import com.simibubi.create.content.logistics.trains.BezierConnection;
 import com.simibubi.create.content.logistics.trains.ITrackBlock;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
+import com.simibubi.create.foundation.config.AllConfigs;
 import com.simibubi.create.foundation.utility.AngleHelper;
 import com.simibubi.create.foundation.utility.Couple;
 import com.simibubi.create.foundation.utility.Iterate;
@@ -101,6 +102,7 @@ public class TrackPlacement {
 		ItemStack stack, boolean girder, boolean maximiseTurn) {
 		Vec3 lookVec = player.getLookAngle();
 		int lookAngle = (int) (22.5 + AngleHelper.deg(Mth.atan2(lookVec.z, lookVec.x)) % 360) / 8;
+		int maxLength = AllConfigs.server().trains.maxTrackPlacementLength.get();
 
 		if (level.isClientSide && cached != null && pos2.equals(hoveringPos) && stack.equals(lastItem)
 			&& hoveringMaxed == maximiseTurn && lookAngle == hoveringAngle)
@@ -143,11 +145,13 @@ public class TrackPlacement {
 
 		if (pos1.equals(pos2))
 			return info.withMessage("second_point");
-		if (pos1.distSqr(pos2) > 32 * 32)
+		if (pos1.distSqr(pos2) > maxLength * maxLength)
 			return info.withMessage("too_far")
 				.tooJumbly();
-		if (!state1.hasProperty(TrackBlock.HAS_TE))
+		if (!state1.hasProperty(TrackBlock.HAS_BE))
 			return info.withMessage("original_missing");
+		if (level.getBlockEntity(pos2) instanceof TrackBlockEntity tbe && tbe.isTilted())
+			return info.withMessage("turn_start");
 
 		if (axis1.dot(end2.subtract(end1)) < 0) {
 			axis1 = axis1.scale(-1);
@@ -481,8 +485,8 @@ public class TrackPlacement {
 			Vec3 axis = first ? info.axis1 : info.axis2;
 			BlockPos pos = first ? info.pos1 : info.pos2;
 			BlockState state = first ? state1 : state2;
-			if (state.hasProperty(TrackBlock.HAS_TE) && !simulate)
-				state = state.setValue(TrackBlock.HAS_TE, false);
+			if (state.hasProperty(TrackBlock.HAS_BE) && !simulate)
+				state = state.setValue(TrackBlock.HAS_BE, false);
 
 			switch (state.getValue(TrackBlock.SHAPE)) {
 			case TE, TW:
@@ -524,12 +528,12 @@ public class TrackPlacement {
 		if (!simulate) {
 			BlockState stateAtPos = level.getBlockState(targetPos1);
 			level.setBlock(targetPos1, ProperWaterloggedBlock.withWater(level,
-				(stateAtPos.getBlock() == state1.getBlock() ? stateAtPos : state1).setValue(TrackBlock.HAS_TE, true),
+				(stateAtPos.getBlock() == state1.getBlock() ? stateAtPos : state1).setValue(TrackBlock.HAS_BE, true),
 				targetPos1), 3);
 
 			stateAtPos = level.getBlockState(targetPos2);
 			level.setBlock(targetPos2, ProperWaterloggedBlock.withWater(level,
-				(stateAtPos.getBlock() == state2.getBlock() ? stateAtPos : state2).setValue(TrackBlock.HAS_TE, true),
+				(stateAtPos.getBlock() == state2.getBlock() ? stateAtPos : state2).setValue(TrackBlock.HAS_BE, true),
 				targetPos2), 3);
 		}
 
@@ -537,13 +541,13 @@ public class TrackPlacement {
 		BlockEntity te2 = level.getBlockEntity(targetPos2);
 		int requiredTracksForTurn = (info.curve.getSegmentCount() + 1) / 2;
 
-		if (!(te1 instanceof TrackTileEntity) || !(te2 instanceof TrackTileEntity)) {
+		if (!(te1 instanceof TrackBlockEntity) || !(te2 instanceof TrackBlockEntity)) {
 			info.requiredTracks += requiredTracksForTurn;
 			return info;
 		}
 
-		TrackTileEntity tte1 = (TrackTileEntity) te1;
-		TrackTileEntity tte2 = (TrackTileEntity) te2;
+		TrackBlockEntity tte1 = (TrackBlockEntity) te1;
+		TrackBlockEntity tte2 = (TrackBlockEntity) te2;
 
 		if (!tte1.getConnections()
 			.containsKey(tte2.getBlockPos()))
@@ -554,6 +558,8 @@ public class TrackPlacement {
 
 		tte1.addConnection(info.curve);
 		tte2.addConnection(info.curve.secondary());
+		tte1.tilt.tryApplySmoothing();
+		tte2.tilt.tryApplySmoothing();
 		return info;
 	}
 
