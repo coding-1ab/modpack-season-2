@@ -3,7 +3,6 @@ package org.antarcticgardens.newage;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeSerializer;
 import net.fabricmc.api.ModInitializer;
 
-import org.antarcticgardens.newage.content.carbonbrushes.CarbonBrushesBlock;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlock;
 import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
 import org.antarcticgardens.newage.tools.RecipeTool;
@@ -25,7 +24,7 @@ public class CreateNewAge implements ModInitializer {
 		new EnergiserBlock(1);
 		EnergisingRecipe.type = RecipeTool.createIRecipeTypeInfo("energising", new ProcessingRecipeSerializer<>(EnergisingRecipe::new));
 
-		new CarbonBrushesBlock()
+//		new CarbonBrushesBlock()
 
 		RegistryTool.finish();
 	}
