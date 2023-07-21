@@ -33,7 +33,7 @@ loom {
     splitEnvironmentSourceSets()
 
 	mods {
-		"create-overcharged" {
+		"create-new-age" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}

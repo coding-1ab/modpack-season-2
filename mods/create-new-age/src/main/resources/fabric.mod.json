@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "create-new-age",
 	"version": "${version}",
-	"name": "Create Electric Stonks",
+	"name": "Create New Age",
 	"description": "TODO",
 	"authors": [
 		"TODO"
@@ -12,7 +12,7 @@
 		"sources": "TODO"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/create-electric-stonks/icon.png",
+	"icon": "assets/create_new_age/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
@@ -23,9 +23,9 @@
 		]
 	},
 	"mixins": [
-		"create-new-age.mixins.json",
+		"create_new_age.mixins.json",
 		{
-			"config": "create-new-age.client.mixins.json",
+			"config": "create_new_age.client.mixins.json",
 			"environment": "client"
 		}
 	],

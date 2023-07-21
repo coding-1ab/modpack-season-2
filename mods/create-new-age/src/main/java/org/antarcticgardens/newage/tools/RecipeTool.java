@@ -7,7 +7,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import org.antarcticgardens.newage.CreateNewAge;
 
 public class RecipeTool {
-    public static  <S extends RecipeSerializer<?>> IRecipeTypeInfo createIRecipeInfo(String name, S serializer) {
+    public static <S extends RecipeSerializer<?>> IRecipeTypeInfo createIRecipeTypeInfo(String name, S serializer) {
         RecipeType<?> type = RegistryTool.registerRecipe(name);
         RegistryTool.registerSerializer(name, serializer);
         return new IRecipeTypeInfo() {
