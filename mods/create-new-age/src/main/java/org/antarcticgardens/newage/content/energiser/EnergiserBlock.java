@@ -32,11 +32,6 @@ public class EnergiserBlock extends HorizontalKineticBlock implements IBE<Energi
     }
 
     @Override
-    public boolean canSurvive(@NotNull BlockState state, LevelReader worldIn, BlockPos pos) {
-        return !AllBlocks.BASIN.has(worldIn.getBlockState(pos.below()));
-    }
-
-    @Override
     public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter worldIn, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         if (context instanceof EntityCollisionContext
                 && ((EntityCollisionContext) context).getEntity() instanceof Player)

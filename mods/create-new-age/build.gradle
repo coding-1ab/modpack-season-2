@@ -57,7 +57,7 @@ dependencies {
 
 	// Botarium for energy API
 	modImplementation "earth.terrarium:botarium-common-${minecraft_version}:${botarium_version}"
-	modApi( "earth.terrarium:botarium-fabric-${minecraft_version}:${botarium_version}")
+	modApi("earth.terrarium:botarium-fabric-${minecraft_version}:${botarium_version}")
 
 	// For testing electricity stuff, don't actually use classes provided by it
 	modImplementation("earth.terrarium.adastra:ad_astra-fabric-$minecraft_version:$ad_astra_version")

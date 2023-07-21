@@ -4,6 +4,7 @@ import com.simibubi.create.content.kinetics.belt.BeltHelper;
 import com.simibubi.create.content.kinetics.belt.behaviour.BeltProcessingBehaviour;
 import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
@@ -40,16 +41,17 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
 
     public EnergisingRecipe currentRecipe;
     public long charged;
-
     @Override
     public void read(CompoundTag nbt, boolean clientPacket) {
         charged = nbt.getLong("charged");
+        System.out.println("read");
         super.read(nbt, clientPacket);
     }
 
     @Override
     public void write(CompoundTag nbt, boolean clientPacket) {
         nbt.putLong("charged", charged);
+        System.out.println("saved");
         super.write(nbt, clientPacket);
     }
 
@@ -86,7 +88,7 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
                         TransportedItemStackHandlerBehaviour.TransportedResult.convertTo(out));
             }
             blockEntity.sendData();
-            return ProcessingResult.HOLD;
+            return ProcessingResult.PASS;
         }
 
 
@@ -99,7 +101,6 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
         }
 
         currentRecipe = getRecipe(transportedItemStack.stack);
-        charged = 0;
         if (currentRecipe == null || currentRecipe.getIngredients().size() > 1)
             return ProcessingResult.PASS;
 
