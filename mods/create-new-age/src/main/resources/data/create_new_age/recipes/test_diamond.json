@@ -5,7 +5,7 @@
       "item": "minecraft:iron_ingot"
     }
   ],
-  "energy_needed": 1000,
+  "energy_needed": 300,
   "results": [
     {
       "item": "minecraft:diamond"

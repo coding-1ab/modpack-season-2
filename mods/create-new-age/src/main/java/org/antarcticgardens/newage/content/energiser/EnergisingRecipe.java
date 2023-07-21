@@ -61,7 +61,7 @@ public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAs
 
     @Override
     protected int getMaxOutputCount() {
-        return 64;
+        return 4;
     }
 
     @Override

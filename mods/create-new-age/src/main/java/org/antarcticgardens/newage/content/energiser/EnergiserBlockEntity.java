@@ -53,7 +53,7 @@ public class EnergiserBlockEntity extends BasinOperatingBlockEntity implements B
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
-        behaviours.add(new EnergiserBehaviour(this, (int)Math.pow(2, tier) * 2));
+        behaviours.add(new EnergiserBehaviour(this, (int)Math.pow(2, tier)));
     }
 
     @Override
