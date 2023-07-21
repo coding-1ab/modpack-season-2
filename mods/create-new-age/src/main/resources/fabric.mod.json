@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "create-new-age",
+	"version": "${version}",
+	"name": "Create Electric Stonks",
+	"description": "TODO",
+	"authors": [
+		"TODO"
+	],
+	"contact": {
+		"homepage": "TODO",
+		"sources": "TODO"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/create-electric-stonks/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"org.antarcticgardens.newage.CreateNewAge"
+		],
+		"client": [
+			"org.antarcticgardens.newage.CreateNewAgeClient"
+		]
+	},
+	"mixins": [
+		"create-new-age.mixins.json",
+		{
+			"config": "create-new-age.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.14.21",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

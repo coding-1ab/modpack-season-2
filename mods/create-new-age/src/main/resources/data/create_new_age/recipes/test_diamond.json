@@ -1,0 +1,14 @@
+{
+  "type": "create_new_age:energising",
+  "ingredients": [
+    {
+      "item": "minecraft:iron_ingot"
+    }
+  ],
+  "energy_needed": 1000,
+  "results": [
+    {
+      "item": "minecraft:diamond"
+    }
+  ]
+}
