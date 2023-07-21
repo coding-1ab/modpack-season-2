@@ -4,9 +4,18 @@ import com.simibubi.create.content.kinetics.belt.BeltHelper;
 import com.simibubi.create.content.kinetics.belt.behaviour.BeltProcessingBehaviour;
 import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
+import com.simibubi.create.content.trains.CubeParticleData;
+import com.simibubi.create.foundation.particle.AirParticleData;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Math;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,18 +50,68 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
 
     public EnergisingRecipe currentRecipe;
     public long charged;
+
+    public long needed;
     @Override
     public void read(CompoundTag nbt, boolean clientPacket) {
         charged = nbt.getLong("charged");
-        System.out.println("read");
+        needed = nbt.getLong("needed");
         super.read(nbt, clientPacket);
     }
 
     @Override
     public void write(CompoundTag nbt, boolean clientPacket) {
         nbt.putLong("charged", charged);
-        System.out.println("saved");
+        nbt.putLong("needed", needed);
         super.write(nbt, clientPacket);
+    }
+
+    public long sinceUpdate = 0;
+
+    private boolean prv = false;
+    @Override
+    public void tick() {
+        super.tick();
+        if (be.getLevel() == null) {
+            return;
+        }
+        if (!be.getLevel().isClientSide()) {
+            sinceUpdate--;
+            if (sinceUpdate <= 0) {
+                needed = 0;
+            }
+        }
+
+        if (needed > 0) {
+            charged += be.energy.internalExtract(
+                    (long) Math.min(maxAbsorptionSpeed * (long) Math.abs(be.getSpeed() * 0.1),
+                            needed - charged), false);
+        }
+
+        if (be.getLevel().isClientSide()) {
+            be.size -= 0.15f;
+            be.size = Math.clamp(0, 1, be.size);
+            if (needed > 0 && charged > 0) {
+                be.size = (float) Math.lerp(be.size, (float) charged / needed, 0.6);
+                prv = true;
+            } else if(prv) {
+                prv = false;
+                var rand = be.getLevel().getRandom();
+                for (int i = 0 ; i < 6 ; i++) {
+                    be.getLevel().addParticle(ParticleTypes.GLOW,
+                            false,
+                            be.getBlockPos().getX() + 0.5 + (rand.nextFloat() - 0.5) * 0.4,
+                            be.getBlockPos().getY() - 1.4 + (rand.nextFloat() - 0.5) * 0.4,
+                            be.getBlockPos().getZ() + 0.5 + (rand.nextFloat() - 0.5) * 0.4,
+                            0.0, 0.5, 0.0);
+
+                }
+                be.getLevel().playLocalSound(be.getBlockPos().getX() + 0.5,
+                        be.getBlockPos().getY() - 1.4,
+                        be.getBlockPos().getZ() + 0.5,
+                        SoundEvents.ENDER_EYE_DEATH, SoundSource.BLOCKS, 0.3f, 2.0f, true);
+            }
+        }
     }
 
     private ProcessingResult itemHeld(TransportedItemStack transportedItemStack, TransportedItemStackHandlerBehaviour handler) {
@@ -60,13 +119,10 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
             return ProcessingResult.PASS;
         }
         int count = transportedItemStack.stack.getCount();
-        long energyNeeded = (long) count * currentRecipe.energyNeeded;
+        needed = (long) count * currentRecipe.energyNeeded;
+        sinceUpdate = 10;
 
-        charged += be.energy.internalExtract(
-                Math.min(maxAbsorptionSpeed * (long) Math.abs(be.getSpeed() * 0.1),
-                        energyNeeded - charged), false);
-
-        if (charged >= energyNeeded) {
+        if (charged >= needed) {
             List<TransportedItemStack> out = currentRecipe.rollResults().stream()
                     .map(stack -> {
                         TransportedItemStack copy = transportedItemStack.copy();
@@ -79,6 +135,7 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
                     .collect(Collectors.toList());
 
             charged = 0;
+            needed = 0;
 
             if (out.isEmpty()) {
                 handler.handleProcessingOnItem(transportedItemStack,

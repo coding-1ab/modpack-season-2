@@ -19,6 +19,7 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
     public WrappedBlockEnergyContainer energy;
 
     public int tier;
+    public float size = 0f;
 
     @Override
     protected void write(CompoundTag compound, boolean clientPacket) {
