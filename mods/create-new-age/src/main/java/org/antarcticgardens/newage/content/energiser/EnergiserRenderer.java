@@ -1,4 +1,4 @@
-package org.antarcticgardens.newage.renderers.energiser;
+package org.antarcticgardens.newage.content.energiser;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
@@ -8,8 +8,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import org.antarcticgardens.newage.content.energiser.EnergiserBlockEntity;
-import org.joml.Matrix4f;
 
 public class EnergiserRenderer extends KineticBlockEntityRenderer<EnergiserBlockEntity> {
     public EnergiserRenderer(BlockEntityRendererProvider.Context context) {
@@ -28,7 +26,6 @@ public class EnergiserRenderer extends KineticBlockEntityRenderer<EnergiserBlock
                     .scale(be.size * 0.12f, 1.0f, be.size * 0.12f)
                     .renderInto(ms, consumer);
         }
-
     }
 
     @Override

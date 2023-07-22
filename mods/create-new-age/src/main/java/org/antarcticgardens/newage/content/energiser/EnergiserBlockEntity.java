@@ -13,13 +13,21 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.List;
 
 public class EnergiserBlockEntity extends KineticBlockEntity implements BotariumEnergyBlock<WrappedBlockEnergyContainer> {
-
-    public static BlockEntityType<EnergiserBlockEntity> type;
-
     public WrappedBlockEnergyContainer energy;
 
     public int tier;
     public float size = 0f;
+
+    public EnergiserBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int tier) {
+        super(type, pos, state);
+        energy = new WrappedBlockEnergyContainer(
+                this, new SimpleEnergyContainer((long) (Math.pow(10, tier) * 10000)));
+        this.tier = tier;
+    }
+
+    public static EnergiserBlockEntity newTier1(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        return new EnergiserBlockEntity(type, pos, state, 1);
+    }
 
     @Override
     protected void write(CompoundTag compound, boolean clientPacket) {
@@ -33,19 +41,11 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
         super.read(compound, clientPacket);
     }
 
-    public EnergiserBlockEntity(BlockPos pos, BlockState state, int level) {
-        super(type, pos, state);
-        energy = new WrappedBlockEnergyContainer(
-                this, new SimpleEnergyContainer((long) (Math.pow(10, level) * 10000)));
-        this.tier = level;
-    }
-
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
         behaviours.add(new EnergiserBehaviour(this, (int)Math.pow(2, tier)));
     }
-
 
     @Override
     public WrappedBlockEnergyContainer getEnergyStorage() {

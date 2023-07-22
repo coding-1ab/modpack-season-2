@@ -30,12 +30,9 @@ repositories {
 }
 
 loom {
-    splitEnvironmentSourceSets()
-
 	mods {
 		"create-new-age" {
 			sourceSet sourceSets.main
-			sourceSet sourceSets.client
 		}
 	}
 }

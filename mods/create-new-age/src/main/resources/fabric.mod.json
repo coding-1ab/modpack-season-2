@@ -17,9 +17,6 @@
 	"entrypoints": {
 		"main": [
 			"org.antarcticgardens.newage.CreateNewAge"
-		],
-		"client": [
-			"org.antarcticgardens.newage.CreateNewAgeClient"
 		]
 	},
 	"mixins": [
