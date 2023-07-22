@@ -9,6 +9,9 @@
   "results": [
     {
       "item": "minecraft:diamond"
+    },
+    {
+      "item": "minecraft:stone"
     }
   ]
 }
