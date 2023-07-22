@@ -1,3 +1,9 @@
 {
-  "recipe.assembly.energising": "Energising"
+  "recipe.assembly.energising": "Energising",
+  "create.tooltip.create_new_age.energy_stored": "Energy Stored: ",
+  "create.tooltip.create_new_age.energy_stats": "Energy Stats: ",
+  "create.tooltip.create_new_age.energy_usage": "Energy Usage: ",
+  "create.tooltip.create_new_age.energy": "%s ⚡",
+  "create.tooltip.create_new_age.energy_usage_per_second": "%s ⚡/s",
+  "create.tooltip.create_new_age.energy_storage": "%s ⚡ / %s ⚡"
 }

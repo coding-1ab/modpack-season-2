@@ -4,14 +4,8 @@ import com.simibubi.create.content.kinetics.belt.BeltHelper;
 import com.simibubi.create.content.kinetics.belt.behaviour.BeltProcessingBehaviour;
 import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
-import com.simibubi.create.content.trains.CubeParticleData;
-import com.simibubi.create.foundation.particle.AirParticleData;
-import net.minecraft.core.particles.ItemParticleOption;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
@@ -81,11 +75,13 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
                 needed = 0;
             }
         }
+        be.lastCharged = -1;
 
         if (needed > 0) {
-            charged += be.energy.internalExtract(
+            be.lastCharged =  be.energy.internalExtract(
                     (long) Math.min(maxAbsorptionSpeed * (long) Math.abs(be.getSpeed() * 0.1),
                             needed - charged), false);
+            charged += be.lastCharged;
         }
 
         if (be.getLevel().isClientSide()) {

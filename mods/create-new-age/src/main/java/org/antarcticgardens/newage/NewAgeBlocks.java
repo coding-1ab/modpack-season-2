@@ -1,5 +1,6 @@
 package org.antarcticgardens.newage;
 
+import com.simibubi.create.content.kinetics.BlockStressDefaults;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.antarcticgardens.newage.content.carbonbrushes.CarbonBrushesBlock;
@@ -15,6 +16,7 @@ public class NewAgeBlocks {
     public static final BlockEntry<EnergiserBlock> ENERGISER_T1 =
             REGISTRATE.block("energiser_t1", EnergiserBlock::new)
                     .properties(BlockBehaviour.Properties::noOcclusion)
+                    .transform(BlockStressDefaults.setImpact(2.0))
                     .simpleItem()
                     .register();
 
