@@ -7,6 +7,7 @@ import org.antarcticgardens.newage.content.carbonbrushes.CarbonBrushesRenderer;
 import org.antarcticgardens.newage.content.energiser.EnergiserInstance;
 import org.antarcticgardens.newage.content.energiser.EnergiserRenderer;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlockEntity;
+import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlockEntity;
 
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
@@ -23,6 +24,11 @@ public class NewAgeBlockEntityTypes {
             .instance(() -> CarbonBrushesInstance::new)
             .validBlocks(NewAgeBlocks.CARBON_BRUSHES)
             .renderer(() -> CarbonBrushesRenderer::new)
+            .register();
+
+    public static final BlockEntityEntry<HeatPipeBlockEntity> HEAT_PIPE = REGISTRATE
+            .blockEntity("heat_pipe", HeatPipeBlockEntity::new)
+            .validBlocks(NewAgeBlocks.HEAT_PIPE)
             .register();
 
     public static void load() {  }
