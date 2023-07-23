@@ -7,6 +7,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -134,7 +135,7 @@ public class HeatPumpBlock extends Block implements EntityBlock {
             massPipe = 0;
         }
         return (world, blockPos, blockState, sel) -> {
-            if ((world.getGameTime() + on) % 20 != 0 || !(sel instanceof HeatPumpBlockEntity self)) return;
+            if ((world.getGameTime() + on) % 20 != 0 || !(sel instanceof HeatPumpBlockEntity self) || self.getLevel() == null) return;
             for (Direction value : Direction.values()) {
                 BlockEntity entity = world.getBlockEntity(blockPos.relative(value));
                 if (entity instanceof HeatBlockEntity heat) {
@@ -162,6 +163,10 @@ public class HeatPumpBlock extends Block implements EntityBlock {
                 if (self.heat > 0) {
                     self.heat = Math.max(0, self.heat-4);
                 }
+            }
+
+            if (self.heat > 3000) {
+                self.getLevel().setBlock(self.getBlockPos(), Blocks.LAVA.defaultBlockState(), 3);
             }
         };
     }
