@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "heat_strength=0": {
+      "model": "create_new_age:block/heat/heater/heater"
+    },
+    "heat_strength=1": {
+      "model": "create_new_age:block/heat/heater/heater"
+    },
+    "heat_strength=2": {
+      "model": "create_new_age:block/heat/heater/heater_on"
+    },
+    "heat_strength=3": {
+      "model": "create_new_age:block/heat/heater/heater_mega_on"
+    }
+  }
+}

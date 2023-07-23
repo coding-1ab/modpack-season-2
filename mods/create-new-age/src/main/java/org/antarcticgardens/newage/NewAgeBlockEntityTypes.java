@@ -10,6 +10,7 @@ import org.antarcticgardens.newage.content.energiser.EnergiserBlockEntity;
 import org.antarcticgardens.newage.content.energiser.EnergiserInstance;
 import org.antarcticgardens.newage.content.energiser.EnergiserRenderer;
 import org.antarcticgardens.newage.content.generatorcoil.GeneratorCoilBlockEntity;
+import org.antarcticgardens.newage.content.heat.heater.HeaterBlockEntity;
 import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlockEntity;
 import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlockEntity;
 
@@ -38,6 +39,12 @@ public class NewAgeBlockEntityTypes {
     public static final BlockEntityEntry<HeatPumpBlockEntity> HEAT_PUMP = REGISTRATE
             .blockEntity("heat_pump", HeatPumpBlockEntity::new)
             .validBlocks(NewAgeBlocks.HEAT_PUMP)
+            .register();
+
+
+    public static final BlockEntityEntry<HeaterBlockEntity> HEATER = REGISTRATE
+            .blockEntity("heater", HeaterBlockEntity::new)
+            .validBlocks(NewAgeBlocks.HEATER)
             .register();
 
     public static final BlockEntityEntry<GeneratorCoilBlockEntity> GENERATOR_COIL = REGISTRATE

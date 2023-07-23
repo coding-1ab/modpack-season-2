@@ -136,6 +136,8 @@ public class HeatPumpBlock extends Block implements EntityBlock {
         }
         return (world, blockPos, blockState, sel) -> {
             if ((world.getGameTime() + on) % 20 != 0 || !(sel instanceof HeatPumpBlockEntity self) || self.getLevel() == null) return;
+            self.lastPump = 0;
+            Direction facing = state.getValue(FACING);
             for (Direction value : Direction.values()) {
                 BlockEntity entity = world.getBlockEntity(blockPos.relative(value));
                 if (entity instanceof HeatBlockEntity heat) {
@@ -143,6 +145,9 @@ public class HeatPumpBlock extends Block implements EntityBlock {
                     if (diff > 0 && heat.canAdd(value)) {
                         self.heat -= diff;
                         heat.addHeat(diff);
+                        if (facing == value) {
+                            self.lastPump = diff;
+                        }
                     }
                     if (self.heat > 0) {
                         self.heat = Math.max(self.heat - 1, 0);
@@ -151,21 +156,18 @@ public class HeatPumpBlock extends Block implements EntityBlock {
                     }
                 }
             }
-
-            Direction facing = state.getValue(FACING);
             BlockEntity entity = world.getBlockEntity(blockPos.relative(facing));
-            self.lastPump = 0;
             if (entity instanceof HeatBlockEntity hbe && hbe.canAdd(facing)) {
                 float ht = Math.min(self.heat / ((float)Math.cbrt(Math.abs(hbe.getHeat())) + 1), self.heat);
                 hbe.addHeat(ht);
-                self.lastPump = ht;
+                self.lastPump += ht;
                 self.heat -= ht;
                 if (self.heat > 0) {
                     self.heat = Math.max(0, self.heat-4);
                 }
             }
 
-            if (self.heat > 3000) {
+            if (self.heat > 6000) {
                 self.getLevel().setBlock(self.getBlockPos(), Blocks.LAVA.defaultBlockState(), 3);
             }
         };
