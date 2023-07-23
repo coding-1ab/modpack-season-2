@@ -142,23 +142,9 @@ public class HeatPipeBlock extends Block implements EntityBlock {
             massPipe = 0;
         }
         return (world, blockPos, blockState, self) -> {
-            if ((world.getGameTime() + on) % 20 != 0) return;
-            for (Direction value : Direction.values()) {
-                BlockEntity entity = world.getBlockEntity(blockPos.relative(value));
-                if (entity instanceof HeatBlockEntity heat) {
-                    float diff = (((HeatPipeBlockEntity) self).heat - heat.getHeat()) * 0.5f;
-                    if (diff > 0 && heat.canAdd(value)) {
-                        ((HeatPipeBlockEntity) self).heat -= diff;
-                        heat.addHeat(diff);
-                    }
-                    if (((HeatPipeBlockEntity) self).heat > 0) {
-                        ((HeatPipeBlockEntity) self).heat = Math.max(((HeatPipeBlockEntity) self).heat - 1, 0);
-                    } else if (((HeatPipeBlockEntity) self).heat < 0) {
-                        ((HeatPipeBlockEntity) self).heat = 0;
-                    }
-                }
-            }
-            if (((HeatPipeBlockEntity) self).heat > 10000) {
+            if ((world.getGameTime() + on) % 20 != 0 || !(self instanceof HeatPipeBlockEntity selfC)) return;
+            HeatBlockEntity.transferAround(selfC);
+            if (selfC.heat > 10000) {
                 self.getLevel().setBlock(self.getBlockPos(), Blocks.LAVA.defaultBlockState(), 3);
             }
         };

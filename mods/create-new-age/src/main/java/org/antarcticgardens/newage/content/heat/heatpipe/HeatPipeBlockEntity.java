@@ -48,6 +48,11 @@ public class HeatPipeBlockEntity extends BlockEntity implements HeatBlockEntity,
         heat += amount;
     }
 
+    @Override
+    public void setHeat(float amount) {
+        heat = amount;
+    }
+
     @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {

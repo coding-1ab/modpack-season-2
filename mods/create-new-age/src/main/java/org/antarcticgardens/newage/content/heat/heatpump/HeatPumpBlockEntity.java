@@ -73,6 +73,11 @@ public class HeatPumpBlockEntity extends BlockEntity implements HeatBlockEntity,
     }
 
     @Override
+    public void setHeat(float amount) {
+        heat = amount;
+    }
+
+    @Override
     public boolean canAdd(Direction from) {
         if (getLevel() == null)
             return false;

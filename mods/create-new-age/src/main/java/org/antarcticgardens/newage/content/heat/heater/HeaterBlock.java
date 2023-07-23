@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.antarcticgardens.newage.NewAgeBlockEntityTypes;
+import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +22,7 @@ public class HeaterBlock extends Block implements EntityBlock {
 
     public static final IntegerProperty STRENGTH = IntegerProperty.create("heat_strength", 0, 3);
     public HeaterBlock(Properties properties) {
-        super(properties);
+        super(properties.lightLevel(state -> state.getValue(STRENGTH) * 2));
     }
 
     @Override
@@ -45,10 +46,11 @@ public class HeaterBlock extends Block implements EntityBlock {
         }
         return (world, blockPos, blockState, sel) -> {
             if ((world.getGameTime() + on) % 20 != 0 || !(sel instanceof HeaterBlockEntity self) || self.getLevel() == null) return;
-            if (self.heat > 8000) {
+            HeatBlockEntity.transferAround(self);
+            if (self.heat > 9000) {
                 self.getLevel().setBlock(self.getBlockPos(), Blocks.LAVA.defaultBlockState(), 3);
-            } else if (self.heat > 200) {
-                self.heat -= 200;
+            } else if (self.heat > 400) {
+                self.heat -= 400;
                 level.setBlock(blockPos, state.setValue(STRENGTH, 3), 3);
             } else if (self.heat > 100) {
                 self.heat -= 100;
@@ -61,5 +63,7 @@ public class HeaterBlock extends Block implements EntityBlock {
             }
         };
     }
+
+
 
 }

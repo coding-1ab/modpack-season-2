@@ -138,27 +138,12 @@ public class HeatPumpBlock extends Block implements EntityBlock {
             if ((world.getGameTime() + on) % 20 != 0 || !(sel instanceof HeatPumpBlockEntity self) || self.getLevel() == null) return;
             self.lastPump = 0;
             Direction facing = state.getValue(FACING);
-            for (Direction value : Direction.values()) {
-                BlockEntity entity = world.getBlockEntity(blockPos.relative(value));
-                if (entity instanceof HeatBlockEntity heat) {
-                    float diff = (self.heat - heat.getHeat()) * 0.5f;
-                    if (diff > 0 && heat.canAdd(value)) {
-                        self.heat -= diff;
-                        heat.addHeat(diff);
-                        if (facing == value) {
-                            self.lastPump = diff;
-                        }
-                    }
-                    if (self.heat > 0) {
-                        self.heat = Math.max(self.heat - 1, 0);
-                    } else if (self.heat < 0) {
-                        self.heat = 0;
-                    }
-                }
-            }
             BlockEntity entity = world.getBlockEntity(blockPos.relative(facing));
             if (entity instanceof HeatBlockEntity hbe && hbe.canAdd(facing)) {
-                float ht = Math.min(self.heat / ((float)Math.cbrt(Math.abs(hbe.getHeat())) + 1), self.heat);
+                float diff = self.heat - hbe.getHeat();
+                float ht = Math.min(
+                        self.heat / ((float)Math.cbrt(Math.abs(hbe.getHeat())) + 1) + Math.max(diff/2, 0)
+                        , self.heat);
                 hbe.addHeat(ht);
                 self.lastPump += ht;
                 self.heat -= ht;
