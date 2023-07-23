@@ -44,6 +44,8 @@ public class HeatPumpBlockEntity extends BlockEntity implements HeatBlockEntity,
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(heat))
+                .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
         Lang.translate("tooltip.create_new_age.pump").style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
         Lang.translate("tooltip.create_new_age.temperature.ps", StringFormattingTool.formatFloat(lastPump)).style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
         return true;

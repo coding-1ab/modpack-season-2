@@ -153,7 +153,7 @@ public class HeatPipeBlock extends Block implements EntityBlock {
                     if (((HeatPipeBlockEntity) self).heat > 0) {
                         ((HeatPipeBlockEntity) self).heat = Math.max(((HeatPipeBlockEntity) self).heat - 1, 0);
                     } else if (((HeatPipeBlockEntity) self).heat < 0) {
-                        ((HeatPipeBlockEntity) self).heat = Math.min(((HeatPipeBlockEntity) self).heat + 1, 0);
+                        ((HeatPipeBlockEntity) self).heat = 0;
                     }
                 }
             }
