@@ -1,4 +1,4 @@
-package org.antarcticgardens.newage.content.heat.heatpipe;
+package org.antarcticgardens.newage.content.heat.heatpump;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -23,8 +24,11 @@ import org.antarcticgardens.newage.NewAgeBlockEntityTypes;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
-public class HeatPipeBlock extends Block implements EntityBlock {
-    public HeatPipeBlock(Properties properties) {
+import static org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlock.massPipe;
+import static org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlock.updateState;
+
+public class HeatPumpBlock extends Block implements EntityBlock {
+    public HeatPumpBlock(Properties properties) {
         super(properties);
     }
 
@@ -35,17 +39,11 @@ public class HeatPipeBlock extends Block implements EntityBlock {
     public static BooleanProperty SOUTH = BlockStateProperties.SOUTH;
     public static BooleanProperty WEST = BlockStateProperties.WEST;
 
+    public static DirectionProperty FACING = BlockStateProperties.FACING;
+
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(UP, DOWN, NORTH, EAST, SOUTH, WEST);
-    }
-
-
-    private static BlockState checkHeatBlock(BlockState state, LevelAccessor world, BlockPos pos, Direction dir, BooleanProperty property) {
-        return state.setValue(property,
-                world.getBlockEntity(pos.relative(dir)) instanceof HeatBlockEntity hbe
-                        && hbe.canConnect(dir));
-
+        builder.add(UP, DOWN, NORTH, EAST, SOUTH, WEST, FACING);
     }
 
     @Nullable
@@ -54,17 +52,13 @@ public class HeatPipeBlock extends Block implements EntityBlock {
         BlockState state = this.defaultBlockState();
         Level world = context.getLevel();
         BlockPos pos = context.getClickedPos();
-        return updateState(state, world, pos);
-    }
+        Direction dir = context.getClickedFace();
+        if (context.getPlayer() == null || !context.getPlayer().isCrouching())
+            dir = dir.getOpposite();
 
-    public static BlockState updateState(BlockState state, LevelAccessor world, BlockPos pos) {
-        state = checkHeatBlock(state, world, pos, Direction.DOWN, DOWN);
-        state = checkHeatBlock(state, world, pos, Direction.UP, UP);
-        state = checkHeatBlock(state, world, pos, Direction.NORTH, NORTH);
-        state = checkHeatBlock(state, world, pos, Direction.EAST, EAST);
-        state = checkHeatBlock(state, world, pos, Direction.SOUTH, SOUTH);
-        state = checkHeatBlock(state, world, pos, Direction.WEST, WEST);
-        return state;
+        state = state.setValue(FACING, dir);
+
+        return updateState(state, world, pos);
     }
 
 
@@ -90,32 +84,33 @@ public class HeatPipeBlock extends Block implements EntityBlock {
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         VoxelShape shape = Shapes.box(0.25, 0.25, 0.25, 0.75, 0.75, 0.75);
-        if (state.getValue(UP)) {
+        Direction facing = state.getValue(FACING);
+        if (state.getValue(UP) || facing == Direction.UP) {
             shape = Shapes.join(shape,
                     Shapes.box(0.25, 0.75, 0.25, 0.75, 1.0, 0.75),
                     BooleanOp.OR);
         }
-        if (state.getValue(DOWN)) {
+        if (state.getValue(DOWN) || facing == Direction.DOWN) {
             shape = Shapes.join(shape,
                     Shapes.box(0.25, 0.0, 0.25, 0.75, 0.25, 0.75),
                     BooleanOp.OR);
         }
-        if (state.getValue(NORTH)) {
+        if (state.getValue(NORTH) || facing == Direction.NORTH) {
             shape = Shapes.join(shape,
                     Shapes.box(0.25, 0.25, 0.0, 0.75, 0.75, 0.25),
                     BooleanOp.OR);
         }
-        if (state.getValue(EAST)) {
+        if (state.getValue(EAST) || facing == Direction.EAST) {
             shape = Shapes.join(shape,
                     Shapes.box(0.75, 0.25, 0.25, 1.0, 0.75, 0.75),
                     BooleanOp.OR);
         }
-        if (state.getValue(SOUTH)) {
+        if (state.getValue(SOUTH) || facing == Direction.SOUTH) {
             shape = Shapes.join(shape,
                     Shapes.box(0.25, 0.25, 0.75, 0.75, 0.75, 1.0),
                     BooleanOp.OR);
         }
-        if (state.getValue(WEST)) {
+        if (state.getValue(WEST) || facing == Direction.WEST) {
             shape = Shapes.join(shape,
                     Shapes.box(0, 0.25, 0.25, 0.25, 0.75, 0.75),
                     BooleanOp.OR);
@@ -127,11 +122,9 @@ public class HeatPipeBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return NewAgeBlockEntityTypes.HEAT_PIPE.create(pos, state);
+        return NewAgeBlockEntityTypes.HEAT_PUMP.create(pos, state);
     }
 
-
-    public static int massPipe = 0;
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
@@ -142,20 +135,17 @@ public class HeatPipeBlock extends Block implements EntityBlock {
         }
         return (world, blockPos, blockState, self) -> {
             if ((world.getGameTime() + on) % 20 != 0) return;
-            for (Direction value : Direction.values()) {
-                BlockEntity entity = world.getBlockEntity(blockPos.relative(value));
-                if (entity instanceof HeatBlockEntity heat) {
-                    float diff = (((HeatPipeBlockEntity) self).heat - heat.getHeat()) * 0.5f;
-                    if (diff > 0 && heat.canAdd(value)) {
-                        ((HeatPipeBlockEntity) self).heat -= diff;
-                        heat.addHeat(diff);
-                    }
-                    if (((HeatPipeBlockEntity) self).heat > 0) {
-                        ((HeatPipeBlockEntity) self).heat = Math.max(((HeatPipeBlockEntity) self).heat - 1, 0);
-                    } else if (((HeatPipeBlockEntity) self).heat < 0) {
-                        ((HeatPipeBlockEntity) self).heat = Math.min(((HeatPipeBlockEntity) self).heat + 1, 0);
-                    }
+            Direction facing = state.getValue(FACING);
+            BlockEntity entity = world.getBlockEntity(blockPos.relative(facing));
+            (((HeatPumpBlockEntity) self)).lastPump = 0;
+            if (entity instanceof HeatBlockEntity hbe && hbe.canAdd(facing)) {
+                hbe.addHeat((((HeatPumpBlockEntity) self).heat));
+                float ht = (((HeatPumpBlockEntity) self)).heat;
+                if (ht > 0) {
+                    ht = Math.max(0, ht-16);
                 }
+                (((HeatPumpBlockEntity) self)).lastPump = ht;
+                (((HeatPumpBlockEntity) self)).heat = 0;
             }
         };
     }

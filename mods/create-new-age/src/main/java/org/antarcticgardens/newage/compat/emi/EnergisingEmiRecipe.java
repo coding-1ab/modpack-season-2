@@ -8,6 +8,7 @@ import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
 import net.minecraft.network.chat.Component;
 import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
+import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 public class EnergisingEmiRecipe extends BasicEmiRecipe {
 
@@ -28,7 +29,7 @@ public class EnergisingEmiRecipe extends BasicEmiRecipe {
 
         widgets.addSlot(inputs.get(0), 0, 0);
 
-        Component text = Component.literal(energyNeeded + " ⚡");
+        Component text = Component.literal(StringFormattingTool.formatLong(energyNeeded) + " ⚡");
         widgets.addText(text, 30 - text.getString().length(), 20, 0x1166ff, false);
 
         int x = 58;

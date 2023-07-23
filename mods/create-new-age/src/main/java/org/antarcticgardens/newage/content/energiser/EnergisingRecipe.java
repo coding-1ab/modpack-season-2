@@ -33,7 +33,6 @@ public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAs
     public int energyNeeded;
     public EnergisingRecipe(ProcessingRecipeBuilder.ProcessingRecipeParams params) {
         super(type, params);
-        System.out.println(getRollableResultsAsItemStacks().get(0));
     }
 
     @Override

@@ -5,8 +5,9 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.antarcticgardens.newage.content.carbonbrushes.CarbonBrushesBlock;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlock;
-import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlock;
 import org.antarcticgardens.newage.content.generatorcoil.GeneratorCoilBlock;
+import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlock;
+import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlock;
 
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
@@ -30,6 +31,12 @@ public class NewAgeBlocks {
 
     public static final BlockEntry<HeatPipeBlock> HEAT_PIPE =
             REGISTRATE.block("heat_pipe", HeatPipeBlock::new)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .simpleItem()
+                    .register();
+
+    public static final BlockEntry<HeatPumpBlock> HEAT_PUMP =
+            REGISTRATE.block("heat_pump", HeatPumpBlock::new)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .simpleItem()
                     .register();

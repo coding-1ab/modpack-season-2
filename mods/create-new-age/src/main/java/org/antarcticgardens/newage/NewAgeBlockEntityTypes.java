@@ -6,11 +6,12 @@ import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import org.antarcticgardens.newage.content.carbonbrushes.CarbonBrushesBlockEntity;
 import org.antarcticgardens.newage.content.carbonbrushes.CarbonBrushesInstance;
 import org.antarcticgardens.newage.content.carbonbrushes.CarbonBrushesRenderer;
+import org.antarcticgardens.newage.content.energiser.EnergiserBlockEntity;
 import org.antarcticgardens.newage.content.energiser.EnergiserInstance;
 import org.antarcticgardens.newage.content.energiser.EnergiserRenderer;
-import org.antarcticgardens.newage.content.energiser.EnergiserBlockEntity;
-import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlockEntity;
 import org.antarcticgardens.newage.content.generatorcoil.GeneratorCoilBlockEntity;
+import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlockEntity;
+import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlockEntity;
 
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
@@ -32,6 +33,11 @@ public class NewAgeBlockEntityTypes {
     public static final BlockEntityEntry<HeatPipeBlockEntity> HEAT_PIPE = REGISTRATE
             .blockEntity("heat_pipe", HeatPipeBlockEntity::new)
             .validBlocks(NewAgeBlocks.HEAT_PIPE)
+            .register();
+
+    public static final BlockEntityEntry<HeatPumpBlockEntity> HEAT_PUMP = REGISTRATE
+            .blockEntity("heat_pump", HeatPumpBlockEntity::new)
+            .validBlocks(NewAgeBlocks.HEAT_PUMP)
             .register();
 
     public static final BlockEntityEntry<GeneratorCoilBlockEntity> GENERATOR_COIL = REGISTRATE

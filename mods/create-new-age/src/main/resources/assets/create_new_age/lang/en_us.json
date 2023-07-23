@@ -4,6 +4,9 @@
   "create.tooltip.create_new_age.energy_stats": "Energy Stats: ",
   "create.tooltip.create_new_age.energy_usage": "Energy Usage: ",
   "create.tooltip.create_new_age.energy": "%s ⚡",
+  "create.tooltip.create_new_age.temperature": "%s ˚T",
+  "create.tooltip.create_new_age.temperature.ps": "%s ˚T/s",
+  "create.tooltip.create_new_age.pump": "Pumping: ",
   "create.tooltip.create_new_age.energy_usage_per_second": "%s ⚡/s",
   "create.tooltip.create_new_age.energy_storage": "%s ⚡ / %s ⚡"
 }

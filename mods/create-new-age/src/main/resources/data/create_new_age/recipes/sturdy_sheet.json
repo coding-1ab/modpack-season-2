@@ -43,7 +43,7 @@
     },
     {
       "type": "create_new_age:energising",
-      "energy_needed": 300,
+      "energy_needed": 30000,
       "ingredients": [
         {
           "item": "create:unprocessed_obsidian_sheet"

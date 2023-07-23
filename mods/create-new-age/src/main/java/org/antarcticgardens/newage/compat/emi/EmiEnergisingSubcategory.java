@@ -1,13 +1,14 @@
 package org.antarcticgardens.newage.compat.emi;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.simibubi.create.AllBlocks;
-import com.simibubi.create.compat.emi.CreateEmiAnimations;
 import com.simibubi.create.compat.emi.EmiSequencedAssemblySubCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedRecipe;
 import dev.emi.emi.api.widget.WidgetHolder;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import org.antarcticgardens.newage.NewAgeBlocks;
+import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
+import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import static com.simibubi.create.compat.emi.CreateEmiAnimations.*;
 
@@ -38,5 +39,8 @@ public class EmiEnergisingSubcategory extends EmiSequencedAssemblySubCategory {
                     .render(graphics);
 
         }).tooltip(getTooltip(recipe, index));
+
+        widgets.addText(Component.literal(StringFormattingTool.formatLong(((EnergisingRecipe)recipe.getRecipe()).energyNeeded) + " ⚡"),
+                x, 20, 0x1166ff, false);
     }
 }

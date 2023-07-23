@@ -1,9 +1,10 @@
-package org.antarcticgardens.newage.content.heat.heatpipe;
+package org.antarcticgardens.newage.content.heat.heatpump;
 
 import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.utility.Lang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -18,34 +19,34 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class HeatPipeBlockEntity extends BlockEntity implements HeatBlockEntity, IHaveGoggleInformation {
-    public HeatPipeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
+public class HeatPumpBlockEntity extends BlockEntity implements HeatBlockEntity, IHaveGoggleInformation {
+    public HeatPumpBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
     }
 
     public float heat = 0;
 
+    public float lastPump = 0;
+
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
         heat = tag.getFloat("heat");
+        lastPump = tag.getFloat("last");
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putFloat("heat", heat);
-    }
-
-
-    @Override
-    public float getHeat() {
-        return heat;
+        tag.putFloat("last", lastPump);
     }
 
     @Override
-    public void addHeat(float amount) {
-        heat += amount;
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        Lang.translate("tooltip.create_new_age.pump").style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
+        Lang.translate("tooltip.create_new_age.temperature.ps", StringFormattingTool.formatFloat(lastPump)).style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
+        return true;
     }
 
     @Nullable
@@ -60,10 +61,19 @@ public class HeatPipeBlockEntity extends BlockEntity implements HeatBlockEntity,
     }
 
     @Override
-    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(heat))
-                .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
-        return true;
+    public float getHeat() {
+        return heat;
     }
 
+    @Override
+    public void addHeat(float amount) {
+        heat += amount;
+    }
+
+    @Override
+    public boolean canAdd(Direction from) {
+        if (getLevel() == null)
+            return false;
+        return from != getLevel().getBlockState(getBlockPos()).getValue(HeatPumpBlock.FACING).getOpposite();
+    }
 }
