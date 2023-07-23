@@ -160,7 +160,7 @@ public class HeatPumpBlock extends Block implements EntityBlock {
                 self.lastPump = ht;
                 self.heat -= ht;
                 if (self.heat > 0) {
-                    self.heat = Math.max(0, self.heat-16);
+                    self.heat = Math.max(0, self.heat-4);
                 }
             }
         };
