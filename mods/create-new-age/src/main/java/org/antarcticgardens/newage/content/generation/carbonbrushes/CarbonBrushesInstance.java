@@ -1,4 +1,4 @@
-package org.antarcticgardens.newage.content.carbonbrushes;
+package org.antarcticgardens.newage.content.generation.carbonbrushes;
 
 import com.jozufozu.flywheel.api.MaterialManager;
 import com.simibubi.create.content.kinetics.base.ShaftInstance;

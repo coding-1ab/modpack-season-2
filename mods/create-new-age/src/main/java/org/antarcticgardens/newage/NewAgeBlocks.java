@@ -3,9 +3,10 @@ package org.antarcticgardens.newage;
 import com.simibubi.create.content.kinetics.BlockStressDefaults;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import org.antarcticgardens.newage.content.carbonbrushes.CarbonBrushesBlock;
+import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesBlock;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlock;
-import org.antarcticgardens.newage.content.generatorcoil.GeneratorCoilBlock;
+import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlock;
+import org.antarcticgardens.newage.content.generation.magnets.MagnetiteBlock;
 import org.antarcticgardens.newage.content.heat.heater.HeaterBlock;
 import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlock;
 import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlock;
@@ -52,6 +53,11 @@ public class NewAgeBlocks {
             REGISTRATE.block("generator_coil", GeneratorCoilBlock::new)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .transform(BlockStressDefaults.setImpact(12.0f))
+                    .simpleItem()
+                    .register();
+
+    public static final BlockEntry<MagnetiteBlock> MAGNETITE_BLOCK =
+            REGISTRATE.block("magnetite_block", MagnetiteBlock::new)
                     .simpleItem()
                     .register();
 

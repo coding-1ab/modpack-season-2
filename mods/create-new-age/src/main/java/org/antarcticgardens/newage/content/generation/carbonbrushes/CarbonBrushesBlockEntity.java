@@ -1,4 +1,4 @@
-package org.antarcticgardens.newage.content.carbonbrushes;
+package org.antarcticgardens.newage.content.generation.carbonbrushes;
 
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.BlockPos;

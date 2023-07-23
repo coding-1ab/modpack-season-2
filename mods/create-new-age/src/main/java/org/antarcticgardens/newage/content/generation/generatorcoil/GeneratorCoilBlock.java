@@ -1,4 +1,4 @@
-package org.antarcticgardens.newage.content.generatorcoil;
+package org.antarcticgardens.newage.content.generation.generatorcoil;
 
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
