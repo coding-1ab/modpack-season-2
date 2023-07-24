@@ -24,7 +24,7 @@ public class StringFormattingTool {
 
     public static String formatFloat(float f) {
         int d = 0;
-        while (f >= 100 && d < postfixes.length) {
+        while (f >= 1000 && d < postfixes.length) {
             f/=1000;
             d++;
         }

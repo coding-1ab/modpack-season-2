@@ -68,6 +68,21 @@ public class HeaterBlockEntity extends BlockEntity implements HeatBlockEntity, I
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(heat))
                 .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
+        int strength = getBlockState().getValue(HeaterBlock.STRENGTH);
+        int heat = 0;
+
+        if (strength == 1) {
+            heat = 50;
+        } else if (strength == 2) {
+            heat = 100;
+        } else if (strength == 3) {
+            heat = 400;
+        }
+
+        Lang.translate("tooltip.create_new_age.releasing")
+                .style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
+        Lang.translate("tooltip.create_new_age.temperature.ps", StringFormattingTool.formatFloat(heat))
+                .style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
         return true;
     }
 
