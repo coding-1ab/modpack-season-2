@@ -16,6 +16,7 @@ public class GeneratorCoilBlockEntity extends KineticBlockEntity {
     private final List<BlockPos> magnetPositions;
 
     private float lastStress = 0.0f;
+    private int generatedEnergy = 0;
 
     public GeneratorCoilBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
@@ -63,9 +64,8 @@ public class GeneratorCoilBlockEntity extends KineticBlockEntity {
 
     @Override
     public void lazyTick() {
-        super.lazyTick();
-
         float stress = calculateStressApplied();
+        generatedEnergy = (int) ((stress - super.calculateStressApplied()) * Math.abs(this.getTheoreticalSpeed()));
 
         if (getOrCreateNetwork() != null && lastStress != stress) {
             getOrCreateNetwork().remove(this);
@@ -73,5 +73,11 @@ public class GeneratorCoilBlockEntity extends KineticBlockEntity {
 
             lastStress = stress;
         }
+    }
+
+    public int takeGeneratedEnergy() {
+        int energy = generatedEnergy;
+        generatedEnergy = 0;
+        return energy;
     }
 }

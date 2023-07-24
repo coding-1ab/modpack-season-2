@@ -54,20 +54,22 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         Lang.translate("tooltip.create_new_age.energy_stats")
-                .style(ChatFormatting.WHITE).forGoggles(tooltip, 1);
+                .style(ChatFormatting.WHITE).forGoggles(tooltip);
 
         Lang.translate("tooltip.create_new_age.energy_stored")
                 .style(ChatFormatting.GRAY)
-                .forGoggles(tooltip, 2);
+                .forGoggles(tooltip);
         Lang.translate("tooltip.create_new_age.energy_storage", energy.getStoredEnergy(), energy.getMaxCapacity())
-                .style(ChatFormatting.AQUA).forGoggles(tooltip, 3);
+                .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
+
         if (lastCharged != -1) {
             Lang.translate("tooltip.create_new_age.energy_usage")
                     .style(ChatFormatting.GRAY)
-                    .forGoggles(tooltip, 2);
-            Lang.translate("tooltip.create_new_age.energy_usage_per_second", lastCharged * 20)
-                    .style(ChatFormatting.AQUA).forGoggles(tooltip, 3);
+                    .forGoggles(tooltip);
+            Lang.translate("tooltip.create_new_age.energy_per_second", lastCharged * 20)
+                    .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
         }
+
         return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
     }
 
