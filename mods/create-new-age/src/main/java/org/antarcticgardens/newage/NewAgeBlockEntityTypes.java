@@ -2,12 +2,11 @@ package org.antarcticgardens.newage;
 
 import com.simibubi.create.content.kinetics.base.CutoutRotatingInstance;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
+import com.simibubi.create.content.kinetics.base.ShaftInstance;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesBlockEntity;
-import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesInstance;
 import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesRenderer;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlockEntity;
-import org.antarcticgardens.newage.content.energiser.EnergiserInstance;
 import org.antarcticgardens.newage.content.energiser.EnergiserRenderer;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlockEntity;
 import org.antarcticgardens.newage.content.heat.heater.HeaterBlockEntity;
@@ -19,14 +18,14 @@ import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 public class NewAgeBlockEntityTypes {
     public static final BlockEntityEntry<EnergiserBlockEntity> ENERGISER_T1 = REGISTRATE
             .blockEntity("energiser_t1", EnergiserBlockEntity::newTier1)
-            .instance(() -> EnergiserInstance::new)
+            .instance(() -> ShaftInstance::new)
             .validBlocks(NewAgeBlocks.ENERGISER_T1)
             .renderer(() -> EnergiserRenderer::new)
             .register();
 
     public static final BlockEntityEntry<CarbonBrushesBlockEntity> CARBON_BRUSHES = REGISTRATE
             .blockEntity("carbon_brushes", CarbonBrushesBlockEntity::new)
-            .instance(() -> CarbonBrushesInstance::new)
+            .instance(() -> ShaftInstance::new)
             .validBlocks(NewAgeBlocks.CARBON_BRUSHES)
             .renderer(() -> CarbonBrushesRenderer::new)
             .register();
