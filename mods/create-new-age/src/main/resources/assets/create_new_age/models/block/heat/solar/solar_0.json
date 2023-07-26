@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "create_new_age:block/solar/solar_sides_0",
+    "side": "create_new_age:block/solar/solar_sides_0",
+    "top": "create_new_age:block/solar/solar_top_0"
+  }
+}

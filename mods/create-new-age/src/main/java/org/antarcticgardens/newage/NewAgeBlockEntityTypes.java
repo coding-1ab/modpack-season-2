@@ -12,6 +12,7 @@ import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoi
 import org.antarcticgardens.newage.content.heat.heater.HeaterBlockEntity;
 import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlockEntity;
 import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlockEntity;
+import org.antarcticgardens.newage.content.heat.solarheatingplate.SolarHeatingPlateBlockEntity;
 
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
@@ -38,6 +39,12 @@ public class NewAgeBlockEntityTypes {
     public static final BlockEntityEntry<HeatPumpBlockEntity> HEAT_PUMP = REGISTRATE
             .blockEntity("heat_pump", HeatPumpBlockEntity::new)
             .validBlocks(NewAgeBlocks.HEAT_PUMP)
+            .register();
+
+
+    public static final BlockEntityEntry<SolarHeatingPlateBlockEntity> BASIC_SOLAR_HEATING_PLATE = REGISTRATE
+            .blockEntity("basic_solar_heating_plate", SolarHeatingPlateBlockEntity::createBasic)
+            .validBlocks(NewAgeBlocks.BASIC_SOLAR_HEATING_PLATE)
             .register();
 
 

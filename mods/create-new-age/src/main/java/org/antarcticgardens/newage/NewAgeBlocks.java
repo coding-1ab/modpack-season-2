@@ -10,6 +10,7 @@ import org.antarcticgardens.newage.content.generation.magnets.MagnetiteBlock;
 import org.antarcticgardens.newage.content.heat.heater.HeaterBlock;
 import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlock;
 import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlock;
+import org.antarcticgardens.newage.content.heat.solarheatingplate.SolarHeatingPlateBlock;
 
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
@@ -58,6 +59,11 @@ public class NewAgeBlocks {
 
     public static final BlockEntry<MagnetiteBlock> MAGNETITE_BLOCK =
             REGISTRATE.block("magnetite_block", MagnetiteBlock::new)
+                    .simpleItem()
+                    .register();
+
+    public static final BlockEntry<SolarHeatingPlateBlock> BASIC_SOLAR_HEATING_PLATE =
+            REGISTRATE.block("basic_solar_heating_plate", SolarHeatingPlateBlock::new)
                     .simpleItem()
                     .register();
 
