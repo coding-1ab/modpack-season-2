@@ -46,11 +46,13 @@ public class HeatPipeBlockEntity extends BlockEntity implements HeatBlockEntity,
     @Override
     public void addHeat(float amount) {
         heat += amount;
+        setChanged();
     }
 
     @Override
     public void setHeat(float amount) {
         heat = amount;
+        setChanged();
     }
 
     @Nullable

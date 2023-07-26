@@ -59,11 +59,13 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
     @Override
     public void addHeat(float amount) {
         heat += amount;
+        setChanged();
     }
 
     @Override
     public void setHeat(float amount) {
         heat = amount;
+        setChanged();
     }
 
     @Nullable
@@ -105,7 +107,7 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
         HeatBlockEntity.transferAround(this);
 
         float light = world.getBrightness(LightLayer.SKY, blockPos.above()) - dark;
-        last = Math.max((light/15f)*energyPerSecond - Math.max(0, heat - 100), 0);
+        last = Math.max((light/15f)*energyPerSecond - Math.max(0, heat - (10 * energyPerSecond)), 0);
         addHeat(last);
     }
 }

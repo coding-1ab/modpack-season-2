@@ -10,5 +10,6 @@
   "create.tooltip.create_new_age.pump": "Pumping: ",
   "create.tooltip.create_new_age.energy_per_second": "%s ⚡/s",
   "create.tooltip.create_new_age.energy_storage": "%s ⚡ / %s ⚡",
-  "create.tooltip.create_new_age.releasing": "Releasing: "
+  "create.tooltip.create_new_age.releasing": "Releasing: ",
+  "create.tooltip.create_new_age.generating": "Generating: "
 }

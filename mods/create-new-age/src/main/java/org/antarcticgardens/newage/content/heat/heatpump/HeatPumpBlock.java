@@ -150,6 +150,7 @@ public class HeatPumpBlock extends Block implements EntityBlock {
                 if (self.heat > 0) {
                     self.heat = Math.max(0, self.heat-4);
                 }
+                self.setChanged();
             }
 
             if (self.heat > 6000) {

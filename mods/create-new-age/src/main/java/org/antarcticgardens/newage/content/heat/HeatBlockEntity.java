@@ -39,6 +39,7 @@ public interface HeatBlockEntity {
             }
         }
         float setAmount = totalToAverage / totalBlocks;
+        self.setHeat(setAmount);
         int i = 0;
         for (HeatBlockEntity hbe : setters) {
             if (hbe != null) {
