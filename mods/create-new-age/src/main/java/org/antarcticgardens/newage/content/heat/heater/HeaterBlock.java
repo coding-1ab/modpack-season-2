@@ -61,6 +61,7 @@ public class HeaterBlock extends Block implements EntityBlock {
             } else {
                 level.setBlock(blockPos, state.setValue(STRENGTH, 0), 3);
             }
+            self.setChanged();
         };
     }
 

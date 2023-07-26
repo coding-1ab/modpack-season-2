@@ -4,15 +4,18 @@ import com.simibubi.create.content.kinetics.base.CutoutRotatingInstance;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftInstance;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
-import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesBlockEntity;
-import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesRenderer;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlockEntity;
 import org.antarcticgardens.newage.content.energiser.EnergiserRenderer;
+import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesBlockEntity;
+import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesRenderer;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlockEntity;
 import org.antarcticgardens.newage.content.heat.heater.HeaterBlockEntity;
 import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlockEntity;
 import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlockEntity;
 import org.antarcticgardens.newage.content.heat.solarheatingplate.SolarHeatingPlateBlockEntity;
+import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineBlockEntity;
+import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineInstance;
+import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineRenderer;
 
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
@@ -63,6 +66,13 @@ public class NewAgeBlockEntityTypes {
             .instance(() -> CutoutRotatingInstance::new)
             .validBlocks(NewAgeBlocks.GENERATOR_COIL)
             .renderer(() -> KineticBlockEntityRenderer::new)
+            .register();
+
+    public static final BlockEntityEntry<StirlingEngineBlockEntity> STIRLING_ENGINE = REGISTRATE
+            .blockEntity("stirling_engine", StirlingEngineBlockEntity::new)
+            .instance(() -> StirlingEngineInstance::new)
+            .validBlocks(NewAgeBlocks.STIRLING_ENGINE)
+            .renderer(() -> StirlingEngineRenderer::new)
             .register();
 
     public static void load() {  }
