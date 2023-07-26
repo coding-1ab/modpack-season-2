@@ -5,8 +5,10 @@ import com.simibubi.create.foundation.utility.Lang;
 import com.simibubi.create.foundation.utility.animation.LerpedFloat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
@@ -70,10 +72,14 @@ public class StirlingEngineBlockEntity extends GeneratingKineticBlockEntity impl
             HeatBlockEntity.transferAround(this);
             if (getHeat() > 50) {
                 if (getHeat() > 100) {
-                    setHeat(getHeat() - 100);
-                    if (speed != 16) {
-                        speed = 16;
-                        updateGeneratedRotation();
+                    if (getHeat() < 6000) {
+                        setHeat(getHeat() - 100);
+                        if (speed != 16) {
+                            speed = 16;
+                            updateGeneratedRotation();
+                        }
+                    } else {
+                        getLevel().setBlock(getBlockPos(), Blocks.LAVA.defaultBlockState(), 3);
                     }
                 } else {
                     setHeat(getHeat() - 50);
@@ -104,6 +110,11 @@ public class StirlingEngineBlockEntity extends GeneratingKineticBlockEntity impl
     @Override
     public float getHeat() {
         return heat;
+    }
+
+    @Override
+    public boolean canConnect(Direction from) {
+        return from == Direction.UP;
     }
 
     @Override
