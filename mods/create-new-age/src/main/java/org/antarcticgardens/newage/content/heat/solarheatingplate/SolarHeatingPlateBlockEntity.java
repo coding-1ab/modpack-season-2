@@ -108,6 +108,7 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
         } else {
             dark = world.getSkyDarken();
         }
+        dark *= 2;
         HeatBlockEntity.transferAround(this);
 
         float light = world.getBrightness(LightLayer.SKY, blockPos.above()) - dark;
