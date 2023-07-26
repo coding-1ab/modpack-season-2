@@ -109,8 +109,5 @@
 				"down": {"uv": [8, 4, 4, 8], "texture": "#0"}
 			}
 		}
-	],
-	"loader": "porting_lib:obj",
-	"flip_v": true,
-	"model": "create_new_age:models/block/generation/generator_coil/generator_coil.obj"
+	]
 }

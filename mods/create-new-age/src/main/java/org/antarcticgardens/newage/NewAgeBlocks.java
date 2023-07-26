@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesBlock;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlock;
+import org.antarcticgardens.newage.content.generation.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlock;
 import org.antarcticgardens.newage.content.generation.magnets.MagnetiteBlock;
 import org.antarcticgardens.newage.content.heat.heater.HeaterBlock;
@@ -70,6 +71,12 @@ public class NewAgeBlocks {
 
     public static final BlockEntry<Block> ADVANCED_SOLAR_HEATING_PLATE =
             REGISTRATE.block("advanced_solar_heating_plate", SolarHeatingPlateBlock::createAdvanced)
+                    .simpleItem()
+                    .register();
+
+    public static final BlockEntry<ElectricalConnectorBlock> ELECTRICAL_CONNECTOR =
+            REGISTRATE.block("electrical_connector", ElectricalConnectorBlock::new)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
                     .simpleItem()
                     .register();
 
