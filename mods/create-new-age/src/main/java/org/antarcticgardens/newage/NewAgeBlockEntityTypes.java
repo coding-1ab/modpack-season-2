@@ -47,6 +47,11 @@ public class NewAgeBlockEntityTypes {
             .validBlocks(NewAgeBlocks.BASIC_SOLAR_HEATING_PLATE)
             .register();
 
+    public static final BlockEntityEntry<SolarHeatingPlateBlockEntity> ADVANCED_SOLAR_HEATING_PLATE = REGISTRATE
+            .blockEntity("advanced_solar_heating_plate", SolarHeatingPlateBlockEntity::createAdvanced)
+            .validBlocks(NewAgeBlocks.ADVANCED_SOLAR_HEATING_PLATE)
+            .register();
+
 
     public static final BlockEntityEntry<HeaterBlockEntity> HEATER = REGISTRATE
             .blockEntity("heater", HeaterBlockEntity::new)

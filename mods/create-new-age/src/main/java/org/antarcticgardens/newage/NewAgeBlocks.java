@@ -2,6 +2,7 @@ package org.antarcticgardens.newage;
 
 import com.simibubi.create.content.kinetics.BlockStressDefaults;
 import com.tterrag.registrate.util.entry.BlockEntry;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesBlock;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlock;
@@ -62,8 +63,13 @@ public class NewAgeBlocks {
                     .simpleItem()
                     .register();
 
-    public static final BlockEntry<SolarHeatingPlateBlock> BASIC_SOLAR_HEATING_PLATE =
-            REGISTRATE.block("basic_solar_heating_plate", SolarHeatingPlateBlock::new)
+    public static final BlockEntry<Block> BASIC_SOLAR_HEATING_PLATE =
+            REGISTRATE.block("basic_solar_heating_plate", SolarHeatingPlateBlock::createBasic)
+                    .simpleItem()
+                    .register();
+
+    public static final BlockEntry<Block> ADVANCED_SOLAR_HEATING_PLATE =
+            REGISTRATE.block("advanced_solar_heating_plate", SolarHeatingPlateBlock::createAdvanced)
                     .simpleItem()
                     .register();
 

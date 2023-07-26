@@ -34,6 +34,10 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
         return new SolarHeatingPlateBlockEntity(type, pos, blockState, 20);
     }
 
+    public static SolarHeatingPlateBlockEntity createAdvanced(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
+        return new SolarHeatingPlateBlockEntity(type, pos, blockState, 60);
+    }
+
     public float heat = 0;
 
     @Override
@@ -107,7 +111,7 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
         HeatBlockEntity.transferAround(this);
 
         float light = world.getBrightness(LightLayer.SKY, blockPos.above()) - dark;
-        last = Math.max((light/15f)*energyPerSecond - Math.max(0, heat - (10 * energyPerSecond)), 0);
+        last = Math.max((light/15f)*energyPerSecond - Math.max(0, heat - (20 * energyPerSecond)), 0);
         addHeat(last);
     }
 }

@@ -1,5 +1,6 @@
 package org.antarcticgardens.newage.content.heat.solarheatingplate;
 
+import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -14,15 +15,18 @@ import org.jetbrains.annotations.Nullable;
 import static org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlock.massPipe;
 
 public class SolarHeatingPlateBlock extends Block implements EntityBlock {
-    public SolarHeatingPlateBlock(Properties properties) {
+    private final BlockEntityEntry<?> entry;
+
+    public SolarHeatingPlateBlock(Properties properties, BlockEntityEntry<?> entry) {
         super(properties);
+        this.entry = entry;
     }
 
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return NewAgeBlockEntityTypes.BASIC_SOLAR_HEATING_PLATE.create(pos, state);
+        return entry.create(pos, state);
     }
 
     @Nullable
@@ -38,4 +42,13 @@ public class SolarHeatingPlateBlock extends Block implements EntityBlock {
             ent.tick(blockPos, level1, blockState);
         };
     }
+
+    public static Block createAdvanced(Properties properties) {
+        return  new SolarHeatingPlateBlock(properties, NewAgeBlockEntityTypes.ADVANCED_SOLAR_HEATING_PLATE);
+    }
+
+    public static Block createBasic(Properties properties) {
+        return  new SolarHeatingPlateBlock(properties, NewAgeBlockEntityTypes.BASIC_SOLAR_HEATING_PLATE);
+    }
+
 }
