@@ -16,6 +16,7 @@ import org.antarcticgardens.newage.content.heat.solarheatingplate.SolarHeatingPl
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineBlockEntity;
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineInstance;
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineRenderer;
+import org.antarcticgardens.newage.content.reactor.reactorcore.ReactorCoreBlockEntity;
 
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
@@ -59,6 +60,11 @@ public class NewAgeBlockEntityTypes {
     public static final BlockEntityEntry<HeaterBlockEntity> HEATER = REGISTRATE
             .blockEntity("heater", HeaterBlockEntity::new)
             .validBlocks(NewAgeBlocks.HEATER)
+            .register();
+
+    public static final BlockEntityEntry<ReactorCoreBlockEntity> REACTOR_CORE = REGISTRATE
+            .blockEntity("reactor_core", ReactorCoreBlockEntity::new)
+            .validBlocks(NewAgeBlocks.REACTOR_CORE)
             .register();
 
     public static final BlockEntityEntry<GeneratorCoilBlockEntity> GENERATOR_COIL = REGISTRATE
