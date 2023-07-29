@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "create_new_age:block/reactor/rod_off"
+    },
+    "lit=true": {
+      "model": "create_new_age:block/reactor/rod_on"
+    }
+  }
+}

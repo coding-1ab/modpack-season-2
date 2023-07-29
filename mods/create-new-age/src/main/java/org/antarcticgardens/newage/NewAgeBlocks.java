@@ -16,7 +16,7 @@ import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlock;
 import org.antarcticgardens.newage.content.heat.solarheatingplate.SolarHeatingPlateBlock;
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineBlock;
 import org.antarcticgardens.newage.content.reactor.ReactorBlock;
-import org.antarcticgardens.newage.content.reactor.reactorcore.ReactorCoreBlock;
+import org.antarcticgardens.newage.content.reactor.reactorrod.ReactorRodBlock;
 
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
@@ -90,9 +90,11 @@ public class NewAgeBlocks {
                     .simpleItem()
                     .register();
 
-    public static final BlockEntry<ReactorCoreBlock> REACTOR_CORE =
-            REGISTRATE.block("reactor_core", ReactorCoreBlock::new)
+    public static final BlockEntry<ReactorRodBlock> REACTOR_ROD =
+            REGISTRATE.block("reactor_rod", ReactorRodBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .addLayer(() -> RenderType::cutout)
                     .simpleItem()
                     .register();
 
