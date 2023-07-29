@@ -26,7 +26,7 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
                 world.setBlock(pos, state.setValue(ReactorRodBlock.ACTIVE, true), 3);
                 working = true;
             }
-            heat+=20;
+            heat+=30;
         } else {
             if (working) {
                 world.setBlock(pos, state.setValue(ReactorRodBlock.ACTIVE, false), 3);
@@ -53,14 +53,14 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
     public void load(CompoundTag tag) {
         super.load(tag);
         heat = tag.getFloat("heat");
-        tag.putFloat("fuel", fuel);
+        fuel = tag.getInt("fuel");
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putFloat("heat", heat);
-        tag.putFloat("fuel", fuel);
+        tag.putInt("fuel", fuel);
     }
 
 

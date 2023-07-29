@@ -142,7 +142,7 @@ public class HeatPumpBlock extends Block implements EntityBlock {
             if (entity instanceof HeatBlockEntity hbe && hbe.canAdd(facing)) {
                 float diff = self.heat - hbe.getHeat();
                 float ht = Math.min(
-                        self.heat / ((float)Math.cbrt(Math.abs(hbe.getHeat())) + 1) + Math.max(diff/2, 0)
+                        self.heat / ((float)Math.cbrt(Math.abs(hbe.getHeat())/self.heat) + 1) + Math.max(diff/2, 0)
                         , self.heat);
                 hbe.addHeat(ht);
                 self.lastPump += ht;
