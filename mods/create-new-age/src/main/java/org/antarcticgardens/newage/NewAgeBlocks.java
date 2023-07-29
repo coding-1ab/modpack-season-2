@@ -18,6 +18,7 @@ import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineBlo
 import org.antarcticgardens.newage.content.reactor.ReactorBlock;
 import org.antarcticgardens.newage.content.reactor.ReactorTransparentBlock;
 import org.antarcticgardens.newage.content.reactor.reactorfuelacceptor.ReactorFuelAcceptorBlock;
+import org.antarcticgardens.newage.content.reactor.reactorheatvent.ReactorHeatVentBlock;
 import org.antarcticgardens.newage.content.reactor.reactorrod.ReactorRodBlock;
 
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
@@ -111,6 +112,13 @@ public class NewAgeBlocks {
 
     public static final BlockEntry<ReactorFuelAcceptorBlock> REACTOR_FUEL_ACCEPTOR =
             REGISTRATE.block("reactor_fuel_acceptor", ReactorFuelAcceptorBlock::new)
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .simpleItem()
+                    .register();
+
+
+    public static final BlockEntry<ReactorHeatVentBlock> REACTOR_HEAT_VENT =
+            REGISTRATE.block("reactor_heat_vent", ReactorHeatVentBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .simpleItem()
                     .register();

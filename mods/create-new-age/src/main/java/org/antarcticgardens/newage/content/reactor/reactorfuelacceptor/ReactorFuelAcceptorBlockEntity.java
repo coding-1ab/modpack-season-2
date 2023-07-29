@@ -4,6 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
@@ -13,19 +16,19 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.antarcticgardens.Configurations;
 import org.antarcticgardens.newage.CreateNewAge;
+import org.antarcticgardens.newage.content.reactor.RodFindingReactorBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorrod.ReactorRodBlockEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ReactorFuelAcceptorBlockEntity extends BlockEntity implements Container {
+public class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBlockEntity implements Container {
 
     public static final TagKey<Item> fuel = new TagKey<>(Registries.ITEM, new ResourceLocation(CreateNewAge.MOD_ID, "nuclear/is_nuclear_fuel"));
 
@@ -59,6 +62,17 @@ public class ReactorFuelAcceptorBlockEntity extends BlockEntity implements Conta
     @Override
     public ItemStack removeItemNoUpdate(int slot) {
         return container.removeItemNoUpdate(slot);
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag() {
+        return saveWithoutMetadata();
     }
 
     @Override
@@ -142,22 +156,4 @@ public class ReactorFuelAcceptorBlockEntity extends BlockEntity implements Conta
             }
         }
     }
-
-    public void findRods(List<ReactorRodBlockEntity> list, Direction dir) {
-        if (level == null)
-            return;
-
-        BlockEntity entity = level.getBlockEntity(getBlockPos().relative(dir));
-
-        int c = 0;
-        while (entity instanceof ReactorRodBlockEntity rrbe) {
-            c++;
-            if (c > Configurations.MAX_RODS_IN_DIRECTION) {
-                return;
-            }
-            list.add(rrbe);
-            entity = level.getBlockEntity(rrbe.getBlockPos().relative(dir));
-        }
-    }
-
 }

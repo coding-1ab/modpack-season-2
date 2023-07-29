@@ -24,6 +24,7 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
         unbug++;
         if (unbug > 40) {
             working = state.getValue(ReactorRodBlock.ACTIVE);
+
             unbug=0;
         }
         if (fuel > 0) {
@@ -33,10 +34,12 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
                 working = true;
             }
             heat+=30;
+            setChanged();
         } else {
             if (working) {
                 world.setBlock(pos, state.setValue(ReactorRodBlock.ACTIVE, false), 3);
                 working = false;
+                setChanged();
             }
         }
     }
