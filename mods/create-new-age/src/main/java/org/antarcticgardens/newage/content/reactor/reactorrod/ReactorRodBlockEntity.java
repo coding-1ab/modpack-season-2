@@ -18,8 +18,14 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
         working = blockState.getValue(ReactorRodBlock.ACTIVE);
     }
 
+    int unbug = 0;
     private boolean working;
     public void tick(BlockPos pos, Level world, BlockState state) {
+        unbug++;
+        if (unbug > 40) {
+            working = state.getValue(ReactorRodBlock.ACTIVE);
+            unbug=0;
+        }
         if (fuel > 0) {
             fuel--;
             if (!working) {
