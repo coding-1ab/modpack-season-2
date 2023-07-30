@@ -72,6 +72,7 @@ public class NewAgeBlocks {
             REGISTRATE.block("heat_pipe", HeatPipeBlock::new)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(properties -> properties.strength(1.6f))
                     .simpleItem()
                     .register();
 
@@ -79,6 +80,7 @@ public class NewAgeBlocks {
             REGISTRATE.block("heat_pump", HeatPumpBlock::new)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(properties -> properties.strength(1.6f))
                     .simpleItem()
                     .register();
 
@@ -86,6 +88,7 @@ public class NewAgeBlocks {
             REGISTRATE.block("heater", HeaterBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(properties -> properties.strength(2.0f))
                     .simpleItem()
                     .register();
 
@@ -94,6 +97,7 @@ public class NewAgeBlocks {
             REGISTRATE.block("stirling_engine", properties -> new StirlingEngineBlock(properties, NewAgeBlockEntityTypes.STIRLING_ENGINE))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(properties -> properties.strength(2.0f))
                     .transform(BlockStressDefaults.setCapacity(32.0))
                     .simpleItem()
                     .register();

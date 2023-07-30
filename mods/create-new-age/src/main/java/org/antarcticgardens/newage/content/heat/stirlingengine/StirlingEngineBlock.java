@@ -1,16 +1,21 @@
 package org.antarcticgardens.newage.content.heat.stirlingengine;
 
+import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
 public class StirlingEngineBlock extends RotatedPillarKineticBlock implements IBE<StirlingEngineBlockEntity> {
     private final BlockEntityEntry<StirlingEngineBlockEntity> entry;
@@ -23,17 +28,32 @@ public class StirlingEngineBlock extends RotatedPillarKineticBlock implements IB
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        BlockState state = super.getStateForPlacement(context);
-        Direction.Axis axis = Direction.Axis.X;
-        if (context.getClickedFace().getAxis().isHorizontal()) {
-            axis = context.getClickedFace().getAxis();
-        } else if (context.getPlayer() != null) {
-            Vector3f delta = new Vector3f((float) (context.getPlayer().getX() - context.getClickedPos().getX()), 0, (float) (context.getPlayer().getZ() - context.getClickedPos().getZ()));
-            axis = Math.abs(delta.x) > Math.abs(delta.z) ? Direction.Axis.X : Direction.Axis.Z;
+        Direction.Axis axis = getPreferredAxis(context);
+        if (axis == null || context.getClickedFace().getAxis().isVertical()) {
+            axis = context.getHorizontalDirection().getAxis();
         }
-        state = state.setValue(AXIS, axis);
+        return defaultBlockState().setValue(AXIS, axis);
+    }
 
-        return state;
+    @Override
+    public InteractionResult onWrenched(BlockState state, UseOnContext context) {
+        Level world = context.getLevel();
+        BlockState rotated = state.setValue(AXIS, state.getValue(AXIS) == Direction.Axis.X ? Direction.Axis.Z : Direction.Axis.X);
+        if (!rotated.canSurvive(world, context.getClickedPos()))
+            return InteractionResult.PASS;
+
+        KineticBlockEntity.switchToBlockState(world, context.getClickedPos(), updateAfterWrenched(rotated, context));
+
+        BlockEntity be = context.getLevel()
+                .getBlockEntity(context.getClickedPos());
+        if (be instanceof GeneratingKineticBlockEntity) {
+            ((GeneratingKineticBlockEntity) be).reActivateSource = true;
+        }
+
+        if (world.getBlockState(context.getClickedPos()) != state)
+            playRotateSound(world, context.getClickedPos());
+
+        return InteractionResult.SUCCESS;
     }
 
     @Override
