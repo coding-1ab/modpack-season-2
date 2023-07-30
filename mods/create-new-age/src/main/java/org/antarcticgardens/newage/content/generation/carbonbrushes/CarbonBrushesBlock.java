@@ -11,7 +11,7 @@ import org.antarcticgardens.newage.NewAgeBlockEntityTypes;
 
 public class CarbonBrushesBlock extends DirectionalKineticBlock implements IBE<CarbonBrushesBlockEntity> {
     public CarbonBrushesBlock(Properties properties) {
-        super(properties);
+        super(properties.strength(2.5F, 1.0F));
     }
 
     @Override

@@ -47,6 +47,14 @@ public class NewAgeBlocks {
                     .simpleItem()
                     .register();
 
+    public static final BlockEntry<GeneratorCoilBlock> GENERATOR_COIL =
+            REGISTRATE.block("generator_coil", GeneratorCoilBlock::new)
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .transform(BlockStressDefaults.setImpact(12.0f))
+                    .simpleItem()
+                    .register();
+
     public static final BlockEntry<HeatPipeBlock> HEAT_PIPE =
             REGISTRATE.block("heat_pipe", HeatPipeBlock::new)
                     .properties(BlockBehaviour.Properties::noOcclusion)
@@ -65,14 +73,6 @@ public class NewAgeBlocks {
             REGISTRATE.block("heater", HeaterBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
-                    .simpleItem()
-                    .register();
-
-    public static final BlockEntry<GeneratorCoilBlock> GENERATOR_COIL =
-            REGISTRATE.block("generator_coil", GeneratorCoilBlock::new)
-                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-                    .properties(BlockBehaviour.Properties::noOcclusion)
-                    .transform(BlockStressDefaults.setImpact(12.0f))
                     .simpleItem()
                     .register();
 

@@ -12,7 +12,7 @@ import org.antarcticgardens.newage.NewAgeBlockEntityTypes;
 
 public class GeneratorCoilBlock extends RotatedPillarKineticBlock implements IBE<GeneratorCoilBlockEntity> {
     public GeneratorCoilBlock(Properties properties) {
-        super(properties);
+        super(properties.strength(2.0F, 1.0F));
     }
 
     @Override
