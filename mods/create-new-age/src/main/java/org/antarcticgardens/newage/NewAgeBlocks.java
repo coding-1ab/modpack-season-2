@@ -55,6 +55,12 @@ public class NewAgeBlocks {
                     .simpleItem()
                     .register();
 
+    public static final BlockEntry<MagnetiteBlock> MAGNETITE_BLOCK =
+            REGISTRATE.block("magnetite_block", MagnetiteBlock::new)
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .simpleItem()
+                    .register();
+
     public static final BlockEntry<HeatPipeBlock> HEAT_PIPE =
             REGISTRATE.block("heat_pipe", HeatPipeBlock::new)
                     .properties(BlockBehaviour.Properties::noOcclusion)
@@ -82,12 +88,6 @@ public class NewAgeBlocks {
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .transform(BlockStressDefaults.setCapacity(32.0))
-                    .simpleItem()
-                    .register();
-
-    public static final BlockEntry<MagnetiteBlock> MAGNETITE_BLOCK =
-            REGISTRATE.block("magnetite_block", MagnetiteBlock::new)
-                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .simpleItem()
                     .register();
 

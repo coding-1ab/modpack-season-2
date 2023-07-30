@@ -4,7 +4,7 @@ import net.minecraft.world.level.block.Block;
 
 public class MagnetiteBlock extends Block implements IMagneticBlock {
     public MagnetiteBlock(Properties properties) {
-        super(properties);
+        super(properties.strength(5.0F, 7.0F));
     }
 
     @Override
