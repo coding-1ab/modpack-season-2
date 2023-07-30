@@ -9,7 +9,6 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.newage.NewAgeBlockEntityTypes;
-import org.antarcticgardens.newage.content.reactor.reactorrod.ReactorRodBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

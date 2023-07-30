@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
+import org.antarcticgardens.newage.content.reactor.NuclearUtil;
 import org.jetbrains.annotations.Nullable;
 
 public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntity {
@@ -18,14 +19,17 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
         working = blockState.getValue(ReactorRodBlock.ACTIVE);
     }
 
-    int unbug = 0;
+    int twoSeconds = 0;
     private boolean working;
     public void tick(BlockPos pos, Level world, BlockState state) {
-        unbug++;
-        if (unbug > 40) {
+        twoSeconds++;
+        if (twoSeconds > 40) {
             working = state.getValue(ReactorRodBlock.ACTIVE);
 
-            unbug=0;
+            twoSeconds = 0;
+            if (working) {
+                NuclearUtil.createRadiation(8, world, pos);
+            }
         }
         if (fuel > 0) {
             fuel--;
