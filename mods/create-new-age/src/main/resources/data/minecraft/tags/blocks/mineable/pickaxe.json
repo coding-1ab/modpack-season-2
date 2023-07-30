@@ -4,6 +4,7 @@
     "create_new_age:energiser_t1",
     "create_new_age:carbon_brushes",
     "create_new_age:generator_coil",
-    "create_new_age:magnetite_block"
+    "create_new_age:magnetite_block",
+    "create_new_age:electrical_connector"
   ]
 }

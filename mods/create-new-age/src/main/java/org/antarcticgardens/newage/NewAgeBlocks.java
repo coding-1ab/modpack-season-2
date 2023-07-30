@@ -38,6 +38,13 @@ public class NewAgeBlocks {
                     .simpleItem()
                     .register();
 
+    public static final BlockEntry<ElectricalConnectorBlock> ELECTRICAL_CONNECTOR =
+            REGISTRATE.block("electrical_connector", ElectricalConnectorBlock::new)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(properties -> properties.strength(0.4f))
+                    .simpleItem()
+                    .register();
+
     public static final BlockEntry<CarbonBrushesBlock> CARBON_BRUSHES =
             REGISTRATE.block("carbon_brushes", CarbonBrushesBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
@@ -149,13 +156,6 @@ public class NewAgeBlocks {
     public static final BlockEntry<Block> ADVANCED_SOLAR_HEATING_PLATE =
             REGISTRATE.block("advanced_solar_heating_plate", SolarHeatingPlateBlock::createAdvanced)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-                    .simpleItem()
-                    .register();
-
-    public static final BlockEntry<ElectricalConnectorBlock> ELECTRICAL_CONNECTOR =
-            REGISTRATE.block("electrical_connector", ElectricalConnectorBlock::new)
-                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-                    .properties(BlockBehaviour.Properties::noOcclusion)
                     .simpleItem()
                     .register();
 
