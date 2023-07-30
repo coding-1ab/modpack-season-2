@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class EnergiserBlock extends HorizontalKineticBlock implements IBE<EnergiserBlockEntity> {
     public EnergiserBlock(Properties properties) {
-        super(properties);
+        super(properties.strength(2.5F, 1.0F));
     }
 
     @Override
