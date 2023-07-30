@@ -9,6 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.antarcticgardens.newage.NewAgeBlocks;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
 import org.antarcticgardens.newage.content.reactor.NuclearUtil;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +23,9 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
     int twoSeconds = 0;
     private boolean working;
     public void tick(BlockPos pos, Level world, BlockState state) {
+        if (this.heat > 24000) {
+            world.setBlock(pos, NewAgeBlocks.CORIUM.getDefaultState(), 3);
+        }
         twoSeconds++;
         if (twoSeconds > 40) {
             working = state.getValue(ReactorRodBlock.ACTIVE);

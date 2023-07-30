@@ -15,8 +15,10 @@ import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlock;
 import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlock;
 import org.antarcticgardens.newage.content.heat.solarheatingplate.SolarHeatingPlateBlock;
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineBlock;
+import org.antarcticgardens.newage.content.reactor.CoriumBlock;
 import org.antarcticgardens.newage.content.reactor.ReactorBlock;
 import org.antarcticgardens.newage.content.reactor.ReactorTransparentBlock;
+import org.antarcticgardens.newage.content.reactor.SolidCoriumBlock;
 import org.antarcticgardens.newage.content.reactor.reactorfuelacceptor.ReactorFuelAcceptorBlock;
 import org.antarcticgardens.newage.content.reactor.reactorheatvent.ReactorHeatVentBlock;
 import org.antarcticgardens.newage.content.reactor.reactorrod.ReactorRodBlock;
@@ -83,6 +85,18 @@ public class NewAgeBlocks {
 
     public static final BlockEntry<MagnetiteBlock> MAGNETITE_BLOCK =
             REGISTRATE.block("magnetite_block", MagnetiteBlock::new)
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .simpleItem()
+                    .register();
+
+    public static final BlockEntry<SolidCoriumBlock> SOLID_CORIUM =
+            REGISTRATE.block("solid_corium", SolidCoriumBlock::new)
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .simpleItem()
+                    .register();
+
+    public static final BlockEntry<CoriumBlock> CORIUM =
+            REGISTRATE.block("corium", CoriumBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .simpleItem()
                     .register();
