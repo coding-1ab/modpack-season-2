@@ -1,6 +1,7 @@
 package org.antarcticgardens.newage.content.reactor.reactorrod;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -24,7 +25,7 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
     private boolean working;
     public void tick(BlockPos pos, Level world, BlockState state) {
         if (this.heat > 16000) {
-            heat-=28;
+            heat-=25;
             setChanged();
             if (this.heat > 24000) {
                 world.setBlock(pos, NewAgeBlocks.CORIUM.getDefaultState(), 3);
@@ -32,6 +33,7 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
         }
         twoSeconds++;
         if (twoSeconds > 40) {
+            transferAroundRodOnly(this);
             working = state.getValue(ReactorRodBlock.ACTIVE);
 
             twoSeconds = 0;
@@ -54,6 +56,25 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
                 setChanged();
             }
         }
+    }
+
+    static <T extends  BlockEntity & HeatBlockEntity> void transferAroundRodOnly(T self) {
+        if (self.getLevel() == null) {
+            return;
+        }
+        float totalToAverage = self.getHeat();
+        int totalBlocks = 1;
+        HeatBlockEntity[] setters = new HeatBlockEntity[6];
+        for (int i = 0 ; i < 6 ; i++) {
+            Direction value = Direction.values()[i];
+            BlockEntity entity = self.getLevel().getBlockEntity(self.getBlockPos().relative(value));
+            if (entity instanceof ReactorRodBlockEntity hbe && hbe.canAdd(value)) {
+                setters[i] = hbe;
+                totalToAverage += hbe.getHeat();
+                totalBlocks++;
+            }
+        }
+        HeatBlockEntity.average(self, totalToAverage, totalBlocks, setters);
     }
 
     @Nullable
