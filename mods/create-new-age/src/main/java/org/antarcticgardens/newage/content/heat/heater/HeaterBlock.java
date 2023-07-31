@@ -1,5 +1,6 @@
 package org.antarcticgardens.newage.content.heat.heater;
 
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlock.massPipe;
 
-public class HeaterBlock extends Block implements EntityBlock {
+public class HeaterBlock extends Block implements EntityBlock, IWrenchable {
 
     public static final IntegerProperty STRENGTH = IntegerProperty.create("heat_strength", 0, 3);
     public HeaterBlock(Properties properties) {

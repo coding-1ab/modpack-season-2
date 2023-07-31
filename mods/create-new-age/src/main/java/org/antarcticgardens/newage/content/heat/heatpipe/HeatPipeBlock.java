@@ -1,5 +1,6 @@
 package org.antarcticgardens.newage.content.heat.heatpipe;
 
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -24,7 +25,7 @@ import org.antarcticgardens.newage.NewAgeBlockEntityTypes;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
-public class HeatPipeBlock extends Block implements EntityBlock {
+public class HeatPipeBlock extends Block implements EntityBlock, IWrenchable {
     public HeatPipeBlock(Properties properties) {
         super(properties);
     }
