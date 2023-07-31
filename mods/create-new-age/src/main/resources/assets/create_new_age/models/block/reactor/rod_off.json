@@ -4,7 +4,8 @@
 	"textures": {
 		"0": "create_new_age:block/reactor/casing",
 		"1": "create_new_age:block/reactor/glass",
-		"2": "create_new_age:block/reactor/rod_off"
+		"2": "create_new_age:block/reactor/rod_off",
+		"particle": "create_new_age:block/reactor/rod_off"
 	},
 	"elements": [
 		{
