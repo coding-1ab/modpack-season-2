@@ -9,6 +9,8 @@
     "create_new_age:heat_pipe",
     "create_new_age:heat_pump",
     "create_new_age:heater",
-    "create_new_age:stirling_engine"
+    "create_new_age:stirling_engine",
+    "create_new_age:corium",
+    "create_new_age:solid_corium"
   ]
 }

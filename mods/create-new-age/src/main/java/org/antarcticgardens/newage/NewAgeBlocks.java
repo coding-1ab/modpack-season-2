@@ -105,12 +105,14 @@ public class NewAgeBlocks {
     public static final BlockEntry<SolidCoriumBlock> SOLID_CORIUM =
             REGISTRATE.block("solid_corium", SolidCoriumBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(properties -> properties.strength(50.0f))
                     .simpleItem()
                     .register();
 
     public static final BlockEntry<CoriumBlock> CORIUM =
             REGISTRATE.block("corium", CoriumBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(properties -> properties.strength(70.0f))
                     .simpleItem()
                     .register();
 
