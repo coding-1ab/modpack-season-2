@@ -20,6 +20,7 @@
 
   "tab.create_new_age.tab": "Create: New Age",
   "block.create_new_age.energiser_t1": "Basic Energiser",
+  "block.create_new_age.energiser_t2": "Advanced Energiser",
   "block.create_new_age.carbon_brushes": "Carbon Brushes",
   "block.create_new_age.heat_pipe": "Heat Pipe",
   "block.create_new_age.heat_pump": "Heat Pump",

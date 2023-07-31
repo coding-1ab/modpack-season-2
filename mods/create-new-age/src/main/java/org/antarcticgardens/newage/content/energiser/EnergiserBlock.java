@@ -4,6 +4,7 @@ import com.simibubi.create.AllShapes;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.utility.Lang;
+import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,10 +31,13 @@ public class EnergiserBlock extends HorizontalKineticBlock implements IBE<Energi
     private final int strength;
     private final long stores;
 
-    public EnergiserBlock(Properties properties, int tier) {
+    private BlockEntityEntry<EnergiserBlockEntity> entry;
+
+    public EnergiserBlock(Properties properties, int tier, BlockEntityEntry<EnergiserBlockEntity> entry) {
         super(properties.strength(2.5F, 1.0F));
-        this.strength = (int)Math.pow(2, tier);
+        this.strength = (int)Math.pow(2, tier * 2);
         this.stores = (long) (Math.pow(10, tier) * 10000);
+        this.entry = entry;
     }
 
     @Override
@@ -69,7 +73,7 @@ public class EnergiserBlock extends HorizontalKineticBlock implements IBE<Energi
 
     @Override
     public BlockEntityType<? extends EnergiserBlockEntity> getBlockEntityType() {
-        return NewAgeBlockEntityTypes.ENERGISER_T1.get();
+        return entry.get();
     }
 
     @Override
@@ -83,6 +87,11 @@ public class EnergiserBlock extends HorizontalKineticBlock implements IBE<Energi
     }
 
     public static Block createT1(Properties properties) {
-        return new EnergiserBlock(properties, 1);
+        return new EnergiserBlock(properties, 1, NewAgeBlockEntityTypes.ENERGISER_T1);
     }
+
+    public static Block createT2(Properties properties) {
+        return new EnergiserBlock(properties, 2, NewAgeBlockEntityTypes.ENERGISER_T2);
+    }
+
 }

@@ -35,7 +35,16 @@ public class NewAgeBlocks {
             REGISTRATE.block("energiser_t1", EnergiserBlock::createT1)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
-                    .transform(BlockStressDefaults.setImpact(2.0))
+                    .transform(BlockStressDefaults.setImpact(4.0))
+                    .item(AssemblyOperatorBlockItem::new)
+                    .build()
+                    .register();
+
+    public static final BlockEntry<Block> ENERGISER_T2 =
+            REGISTRATE.block("energiser_t2", EnergiserBlock::createT2)
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .transform(BlockStressDefaults.setImpact(8.0))
                     .item(AssemblyOperatorBlockItem::new)
                     .build()
                     .register();

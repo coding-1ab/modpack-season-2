@@ -14,10 +14,12 @@ public class CreateNewAgeClient implements ClientModInitializer {
         // ponders
         PonderRegistrationHelper helper = new PonderRegistrationHelper(CreateNewAge.MOD_ID);
         helper.addStoryBoard(NewAgeBlocks.ENERGISER_T1, "energiser", EnergiserPonder::ponder);
+        helper.addStoryBoard(NewAgeBlocks.ENERGISER_T2, "energiser", EnergiserPonder::ponder);
 
 
         // ToolTip
         addToolTipModifier(NewAgeBlocks.ENERGISER_T1);
+        addToolTipModifier(NewAgeBlocks.ENERGISER_T2);
         addToolTipModifier(NewAgeBlocks.STIRLING_ENGINE);
         addToolTipModifier(NewAgeBlocks.GENERATOR_COIL);
     }

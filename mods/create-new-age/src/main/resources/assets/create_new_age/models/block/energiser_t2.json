@@ -1,0 +1,7 @@
+{
+  "parent": "create_new_age:block/energiser",
+  "textures": {
+    "0": "create_new_age:block/energiser_t2",
+    "particle": "create_new_age:block/energiser_t2"
+  }
+}

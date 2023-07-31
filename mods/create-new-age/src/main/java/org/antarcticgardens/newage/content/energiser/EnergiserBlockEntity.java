@@ -31,6 +31,9 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
     public static EnergiserBlockEntity newTier1(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         return new EnergiserBlockEntity(type, pos, state, 1);
     }
+    public static EnergiserBlockEntity newTier2(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        return new EnergiserBlockEntity(type, pos, state, 2);
+    }
 
     @Override
     protected void write(CompoundTag compound, boolean clientPacket) {
@@ -47,7 +50,7 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
-        behaviours.add(new EnergiserBehaviour(this, (int)Math.pow(2, tier)));
+        behaviours.add(new EnergiserBehaviour(this, (int)Math.pow(2, tier*2)));
     }
 
     public long lastCharged = -1;

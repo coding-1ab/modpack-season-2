@@ -30,6 +30,13 @@ public class NewAgeBlockEntityTypes {
             .renderer(() -> EnergiserRenderer::new)
             .register();
 
+    public static final BlockEntityEntry<EnergiserBlockEntity> ENERGISER_T2 = REGISTRATE
+            .blockEntity("energiser_t2", EnergiserBlockEntity::newTier2)
+            .instance(() -> ShaftInstance::new)
+            .validBlocks(NewAgeBlocks.ENERGISER_T1)
+            .renderer(() -> EnergiserRenderer::new)
+            .register();
+
     public static final BlockEntityEntry<CarbonBrushesBlockEntity> CARBON_BRUSHES = REGISTRATE
             .blockEntity("carbon_brushes", CarbonBrushesBlockEntity::new)
             .instance(() -> ShaftInstance::new)
