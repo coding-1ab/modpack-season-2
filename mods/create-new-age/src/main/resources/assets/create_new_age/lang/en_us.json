@@ -41,5 +41,21 @@
 
   "tag.create_new_age.nuclear.hazmat_suit": "Hazmat Protection",
   "tag.create_new_age.nuclear.is_nuclear_fuel": "Nuclear Fuel",
-  "emi.category.create_new_age.energising": "Energising"
+  "emi.category.create_new_age.energising": "Energising",
+
+
+  "create_new_age.ponder.heating.text_1": "You can use a Heating Plate to generate heat during daytime.",
+  "create_new_age.ponder.heating.text_2": "Heat pipes can be used to spread heat around.",
+
+  "create_new_age.ponder.heating.text_3": "240 ˚T",
+  "create_new_age.ponder.heating.text_4": "0 ˚T",
+  "create_new_age.ponder.heating.text_5": "0 ˚T",
+
+  "create_new_age.ponder.heating.text_6": "120 ˚T",
+  "create_new_age.ponder.heating.text_7": "120 ˚T",
+  "create_new_age.ponder.heating.text_8": "0 ˚T",
+
+  "create_new_age.ponder.heating.text_9": "80 ˚T",
+  "create_new_age.ponder.heating.text_10": "80 ˚T",
+  "create_new_age.ponder.heating.text_11": "80 ˚T"
 }

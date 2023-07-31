@@ -38,6 +38,10 @@ public interface HeatBlockEntity {
                 totalBlocks++;
             }
         }
+        average(self, totalToAverage, totalBlocks, setters);
+    }
+
+    static <T extends BlockEntity & HeatBlockEntity> void average(T self, float totalToAverage, int totalBlocks, HeatBlockEntity[] setters) {
         float setAmount = totalToAverage / totalBlocks;
         self.setHeat(setAmount);
         int i = 0;
