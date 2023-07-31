@@ -23,8 +23,12 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
     int twoSeconds = 0;
     private boolean working;
     public void tick(BlockPos pos, Level world, BlockState state) {
-        if (this.heat > 24000) {
-            world.setBlock(pos, NewAgeBlocks.CORIUM.getDefaultState(), 3);
+        if (this.heat > 16000) {
+            heat-=28;
+            setChanged();
+            if (this.heat > 24000) {
+                world.setBlock(pos, NewAgeBlocks.CORIUM.getDefaultState(), 3);
+            }
         }
         twoSeconds++;
         if (twoSeconds > 40) {
