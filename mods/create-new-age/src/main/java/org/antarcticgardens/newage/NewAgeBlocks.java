@@ -1,6 +1,7 @@
 package org.antarcticgardens.newage;
 
 import com.simibubi.create.content.kinetics.BlockStressDefaults;
+import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.block.Block;
@@ -35,7 +36,8 @@ public class NewAgeBlocks {
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .transform(BlockStressDefaults.setImpact(2.0))
-                    .simpleItem()
+                    .item(AssemblyOperatorBlockItem::new)
+                    .build()
                     .register();
 
     public static final BlockEntry<ElectricalConnectorBlock> ELECTRICAL_CONNECTOR =
