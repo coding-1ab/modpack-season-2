@@ -1,5 +1,6 @@
 package org.antarcticgardens.newage.content.heat.solarheatingplate;
 
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -14,11 +15,11 @@ import org.jetbrains.annotations.Nullable;
 
 import static org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlock.massPipe;
 
-public class SolarHeatingPlateBlock extends Block implements EntityBlock {
+public class SolarHeatingPlateBlock extends Block implements EntityBlock, IWrenchable {
     private final BlockEntityEntry<?> entry;
 
     public SolarHeatingPlateBlock(Properties properties, BlockEntityEntry<?> entry) {
-        super(properties);
+        super(properties.strength(4.0f));
         this.entry = entry;
     }
 
