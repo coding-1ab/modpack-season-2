@@ -65,7 +65,7 @@ public class SolarHeatingPlateBlock extends Block implements EntityBlock, IWrenc
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Lang.translate("tooltip.create_new_age.generates").style(ChatFormatting.GRAY)
-                .add(Lang.translate("tooltip.create_new_age.energy_per_second", strength).style(ChatFormatting.AQUA))
                 .component());
+        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy_per_second", strength).style(ChatFormatting.AQUA).component());
     }
 }

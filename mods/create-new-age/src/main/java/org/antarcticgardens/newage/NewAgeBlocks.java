@@ -31,8 +31,8 @@ public class NewAgeBlocks {
         REGISTRATE.defaultCreativeTab(CreateNewAge.CREATIVE_TAB_KEY);
     }
 
-    public static final BlockEntry<EnergiserBlock> ENERGISER_T1 =
-            REGISTRATE.block("energiser_t1", EnergiserBlock::new)
+    public static final BlockEntry<Block> ENERGISER_T1 =
+            REGISTRATE.block("energiser_t1", EnergiserBlock::createT1)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .transform(BlockStressDefaults.setImpact(2.0))
