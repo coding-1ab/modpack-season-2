@@ -1,8 +1,14 @@
 package org.antarcticgardens.newage.content.heat.solarheatingplate;
 
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
+import com.simibubi.create.foundation.utility.Lang;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -13,14 +19,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.newage.NewAgeBlockEntityTypes;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 import static org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlock.massPipe;
 
 public class SolarHeatingPlateBlock extends Block implements EntityBlock, IWrenchable {
     private final BlockEntityEntry<?> entry;
+    private final int strength;
 
-    public SolarHeatingPlateBlock(Properties properties, BlockEntityEntry<?> entry) {
+    public SolarHeatingPlateBlock(Properties properties, BlockEntityEntry<?> entry, int strength) {
         super(properties.strength(4.0f));
         this.entry = entry;
+        this.strength = strength;
     }
 
 
@@ -45,11 +55,17 @@ public class SolarHeatingPlateBlock extends Block implements EntityBlock, IWrenc
     }
 
     public static Block createAdvanced(Properties properties) {
-        return  new SolarHeatingPlateBlock(properties, NewAgeBlockEntityTypes.ADVANCED_SOLAR_HEATING_PLATE);
+        return  new SolarHeatingPlateBlock(properties, NewAgeBlockEntityTypes.ADVANCED_SOLAR_HEATING_PLATE, 20);
     }
 
     public static Block createBasic(Properties properties) {
-        return  new SolarHeatingPlateBlock(properties, NewAgeBlockEntityTypes.BASIC_SOLAR_HEATING_PLATE);
+        return  new SolarHeatingPlateBlock(properties, NewAgeBlockEntityTypes.BASIC_SOLAR_HEATING_PLATE, 60);
     }
 
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(Lang.translate("tooltip.create_new_age.generates").style(ChatFormatting.GRAY)
+                .add(Lang.translate("tooltip.create_new_age.energy_per_second", strength).style(ChatFormatting.AQUA))
+                .component());
+    }
 }

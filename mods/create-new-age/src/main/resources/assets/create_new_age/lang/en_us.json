@@ -14,6 +14,7 @@
   "create.tooltip.create_new_age.generating": "Generating: ",
   "create.tooltip.create_new_age.using": "Using: ",
   "create.tooltip.create_new_age.extracting": "Extracting: ",
+  "create.tooltip.create_new_age.generates":  "Generates: ",
 
   "tab.create_new_age.tab": "Create: New Age",
   "block.create_new_age.energiser_t1": "Basic Energiser",
