@@ -7,6 +7,7 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 import net.fabricmc.api.ClientModInitializer;
 import org.antarcticgardens.newage.content.energiser.EnergiserPonder;
 import org.antarcticgardens.newage.content.heat.HeatingPonder;
+import org.antarcticgardens.newage.content.heat.heater.HeaterPonder;
 
 public class CreateNewAgeClient implements ClientModInitializer {
     @Override
@@ -22,6 +23,9 @@ public class CreateNewAgeClient implements ClientModInitializer {
         helper.addStoryBoard(NewAgeBlocks.BASIC_SOLAR_HEATING_PLATE, "heating", HeatingPonder::ponder);
         helper.addStoryBoard(NewAgeBlocks.ADVANCED_SOLAR_HEATING_PLATE, "heating", HeatingPonder::ponder);
         helper.addStoryBoard(NewAgeBlocks.STIRLING_ENGINE, "heating", HeatingPonder::ponder);
+
+        helper.addStoryBoard(NewAgeBlocks.HEATER, "heater", HeaterPonder::ponder);
+
 
         // ToolTip
         addToolTipModifier(NewAgeBlocks.ENERGISER_T1);

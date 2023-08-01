@@ -64,5 +64,9 @@
   "create_new_age.ponder.heating.text_13": "If a Stirling Engine is provided with more heat it will rotate a bit less slowly. ",
 
   "create_new_age.ponder.heating.text_14": "You can use a heat pump to pump heat forward!",
-  "create_new_age.ponder.heating.text_15": "However be careful, if a block overheats, it will turn into lava."
+  "create_new_age.ponder.heating.text_15": "However be careful, if a block overheats, it will turn into lava.",
+
+  "create_new_age.ponder.heater.header": "Boiler Heater",
+  "create_new_age.ponder.heater.text_1": "The Boiler Heater acts the same way as a blaze burner, however it uses heat instead of burnable fuel.",
+  "create_new_age.ponder.heater.text_2": "The more heat you provide to it, the more heat it will release."
 }
