@@ -59,6 +59,8 @@ public class GeneratorCoilBlockEntity extends KineticBlockEntity {
                 stress += magneticBlock.getStrength();
         }
 
+        this.lastStressApplied = stress;
+
         return stress;
     }
 
