@@ -15,6 +15,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import org.antarcticgardens.newage.NewAgeBlocks;
 import org.antarcticgardens.newage.compat.emi.EmiEnergisingSubcategory;
+import org.antarcticgardens.newage.compat.jei.JeiEnergisingSubcategory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.Set;
 public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAssemblyRecipe {
 
     public static SequencedAssemblySubCategoryType subCategoryType = new SequencedAssemblySubCategoryType(
-            () -> null,
+            () -> JeiEnergisingSubcategory::new,
             () -> null,
             () -> EmiEnergisingSubcategory::new
     ); // TODO

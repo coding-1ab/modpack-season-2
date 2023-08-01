@@ -60,6 +60,7 @@ dependencies {
 	// modImplementation("earth.terrarium.adastra:ad_astra-fabric-$minecraft_version:$ad_astra_version")
 
 	modCompileOnly("dev.emi:emi-fabric:${emi_version}");
+	modCompileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
 
 	switch (recipe_viewer.toLowerCase(Locale.ROOT)) {
 		case "jei": modLocalRuntime("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}"); break
