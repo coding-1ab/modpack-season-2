@@ -57,5 +57,9 @@
 
   "create_new_age.ponder.heating.text_9": "80 ˚T",
   "create_new_age.ponder.heating.text_10": "80 ˚T",
-  "create_new_age.ponder.heating.text_11": "80 ˚T"
+  "create_new_age.ponder.heating.text_11": "80 ˚T",
+
+  "create_new_age.ponder.heating.text_12": "When provided with heat a Stirling Engine will start to slowly rotate.",
+
+  "create_new_age.ponder.heating.text_13": "If a Stirling Engine is provided with more heat it will rotate a bit less slowly. "
 }
