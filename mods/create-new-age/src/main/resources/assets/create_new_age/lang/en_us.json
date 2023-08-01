@@ -69,5 +69,20 @@
 
   "create_new_age.ponder.heater.header": "Boiler Heater",
   "create_new_age.ponder.heater.text_1": "The Boiler Heater acts the same way as a blaze burner, however it uses heat instead of burnable fuel.",
-  "create_new_age.ponder.heater.text_2": "The more heat you provide to it, the more heat it will release."
+  "create_new_age.ponder.heater.text_2": "The more heat you provide to it, the more heat it will release.",
+
+
+  "create_new_age.ponder.reactor.header": "Using Nuclear Energy",
+  "create_new_age.ponder.reactor.text_1": "A nuclear reactor is a great way to generate large amounts of heat.",
+  "create_new_age.ponder.reactor.text_2": "The first component of a nuclear reactor are the Reactor Rods, which allow for nuclear reaction to take place.",
+  "create_new_age.ponder.reactor.text_3": "The second component is the Reactor Fuel Inserter which allows you to insert fuel into the reactor.",
+  "create_new_age.ponder.reactor.text_4": "The final component needed for a nuclear reactor is the Reactor Heat Vent which will collect heat from the reactor and distribute it to connected pipes.",
+
+  "create_new_age.ponder.reactor.text_5": "However as one uses the nuclear reactor they must be careful as the nuclear reactor emits deadly radiation.",
+
+  "create_new_age.ponder.reactor.text_6": "One can avoid radiation by wearing leather armour or by completely encasing the nuclear reactor in Reactor Casing/Glass.",
+
+  "create_new_age.ponder.reactor.text_7": "Additionally you must have something use the heat from the reactor, otherwise you will get a fun little meltdown."
+
+
 }
