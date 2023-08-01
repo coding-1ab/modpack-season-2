@@ -61,6 +61,8 @@ dependencies {
 
 	modCompileOnly("dev.emi:emi-fabric:${emi_version}");
 	modCompileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+	modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}");
+
 
 	switch (recipe_viewer.toLowerCase(Locale.ROOT)) {
 		case "jei": modLocalRuntime("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}"); break

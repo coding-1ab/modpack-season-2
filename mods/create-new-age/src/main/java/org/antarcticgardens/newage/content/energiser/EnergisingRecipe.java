@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level;
 import org.antarcticgardens.newage.NewAgeBlocks;
 import org.antarcticgardens.newage.compat.emi.EmiEnergisingSubcategory;
 import org.antarcticgardens.newage.compat.jei.JeiEnergisingSubcategory;
+import org.antarcticgardens.newage.compat.rei.ReiEnergiserSubCategory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAs
 
     public static SequencedAssemblySubCategoryType subCategoryType = new SequencedAssemblySubCategoryType(
             () -> JeiEnergisingSubcategory::new,
-            () -> null,
+            () -> ReiEnergiserSubCategory::new,
             () -> EmiEnergisingSubcategory::new
     ); // TODO
 

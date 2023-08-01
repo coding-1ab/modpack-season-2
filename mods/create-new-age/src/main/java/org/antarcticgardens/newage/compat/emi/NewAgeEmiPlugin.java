@@ -17,12 +17,15 @@ public class NewAgeEmiPlugin implements EmiPlugin {
 
     public static final ResourceLocation ENERGISING_SPRITE_SHEET = new ResourceLocation(CreateNewAge.MOD_ID, "textures/gui/emi_simplified_textures.png");
     public static final EmiStack ENERGISING_WORKSTATION = EmiStack.of(NewAgeBlocks.ENERGISER_T1.asItem().getDefaultInstance());
+    public static final EmiStack ENERGISING_WORKSTATION_2 = EmiStack.of(NewAgeBlocks.ENERGISER_T2.asItem().getDefaultInstance());
+
     public static final EmiRecipeCategory ENERGISING
             = new EmiRecipeCategory(new ResourceLocation(CreateNewAge.MOD_ID, "energising"), ENERGISING_WORKSTATION, new EmiTexture(ENERGISING_SPRITE_SHEET, 0, 0, 16, 16));
     @Override
     public void register(EmiRegistry registry) {
         registry.addCategory(ENERGISING);
         registry.addWorkstation(ENERGISING, ENERGISING_WORKSTATION);
+        registry.addWorkstation(ENERGISING, ENERGISING_WORKSTATION_2);
 
 
         RecipeManager manager = registry.getRecipeManager();

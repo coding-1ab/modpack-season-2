@@ -26,6 +26,9 @@
 		],
 		"jei_mod_plugin": [
 			"org.antarcticgardens.newage.compat.jei.NewAgeJeiPlugin"
+		],
+		"rei_client": [
+			"org.antarcticgardens.newage.compat.rei.NewAgeReiPlugin"
 		]
 	},
 	"mixins": [
