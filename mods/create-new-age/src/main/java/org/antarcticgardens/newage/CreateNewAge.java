@@ -37,6 +37,7 @@ public class CreateNewAge implements ModInitializer {
 
 		NewAgeBlocks.load();
 		NewAgeBlockEntityTypes.load();
+		NewAgeItems.load();
 
 		REGISTRATE.register();
 

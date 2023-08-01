@@ -8,6 +8,7 @@ import net.fabricmc.api.ClientModInitializer;
 import org.antarcticgardens.newage.content.energiser.EnergiserPonder;
 import org.antarcticgardens.newage.content.heat.HeatingPonder;
 import org.antarcticgardens.newage.content.heat.heater.HeaterPonder;
+import org.antarcticgardens.newage.content.reactor.ReactorPonder;
 
 public class CreateNewAgeClient implements ClientModInitializer {
     @Override
@@ -25,6 +26,13 @@ public class CreateNewAgeClient implements ClientModInitializer {
         helper.addStoryBoard(NewAgeBlocks.STIRLING_ENGINE, "heating", HeatingPonder::ponder);
 
         helper.addStoryBoard(NewAgeBlocks.HEATER, "heater", HeaterPonder::ponder);
+
+        helper.addStoryBoard(NewAgeBlocks.REACTOR_CASING, "reactor", ReactorPonder::ponder);
+        helper.addStoryBoard(NewAgeBlocks.REACTOR_GLASS, "reactor", ReactorPonder::ponder);
+        helper.addStoryBoard(NewAgeBlocks.REACTOR_FUEL_ACCEPTOR, "reactor", ReactorPonder::ponder);
+        helper.addStoryBoard(NewAgeBlocks.REACTOR_ROD, "reactor", ReactorPonder::ponder);
+        helper.addStoryBoard(NewAgeBlocks.REACTOR_HEAT_VENT, "reactor", ReactorPonder::ponder);
+        helper.addStoryBoard(NewAgeItems.NUCLEAR_FUEL, "reactor", ReactorPonder::ponder);
 
 
         // ToolTip
