@@ -3,6 +3,7 @@ package org.antarcticgardens.newage.content.heat;
 import com.simibubi.create.foundation.ponder.SceneBuilder;
 import com.simibubi.create.foundation.ponder.SceneBuildingUtil;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.antarcticgardens.newage.NewAgeBlocks;
@@ -78,8 +79,47 @@ public class HeatingPonder {
                 .text("").pointAt(new Vec3(3.5, 2.5, 1.5));
         scene.world.setKineticSpeed(util.select.position(3, 2, 1), 16);
         scene.effects.rotationSpeedIndicator(util.grid.at(3, 2, 1));
+
         scene.idleSeconds(4);
 
+        scene.addKeyframe();
+        scene.idle(15);
+
+        scene.world.showSection(util.select.fromTo(2, 1, 2,2, 2, 3), Direction.UP);
+        scene.world.modifyBlock(util.grid.at(2, 1, 1),
+                blockState -> blockState.setValue(BlockStateProperties.SOUTH, true),
+                false);
+
+        scene.idleSeconds(1);
+
+        scene.rotateCameraY(90);
+
+        scene.world.setKineticSpeed(util.select.position(3, 2, 1), 8);
+        scene.effects.rotationSpeedIndicator(util.grid.at(3, 2, 1));
+
+        scene.world.setKineticSpeed(util.select.position(2, 2, 3), 16);
+        scene.effects.rotationSpeedIndicator(util.grid.at(2, 2, 3));
+
+        scene.idle(15);
+
+        scene.overlay.showText(60).placeNearTarget()
+                .text("").pointAt(new Vec3(2.5, 2.5, 3.5));
+
+        scene.idleSeconds(4);
+
+        scene.world.setBlock(util.grid.at(2, 2, 3), Blocks.AIR.defaultBlockState(), true);
+        scene.world.modifyBlock(util.grid.at(2, 1, 3),
+                blockState -> blockState.setValue(BlockStateProperties.UP, false),
+                false);
+
+        scene.idle(10);
+
+        scene.overlay.showText(60).placeNearTarget()
+                .text("").pointAt(new Vec3(2.5, 1.5, 3.5));
+
+        scene.idle(40);
+        scene.world.setBlock(util.grid.at(2, 1, 3), Blocks.LAVA.defaultBlockState(), true);
+        scene.idle(60);
     }
 
     private static void showTripleText(SceneBuilder scene) {

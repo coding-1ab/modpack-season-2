@@ -43,6 +43,7 @@
   "tag.create_new_age.nuclear.is_nuclear_fuel": "Nuclear Fuel",
   "emi.category.create_new_age.energising": "Energising",
 
+  "create_new_age.ponder.heating.header": "Heating System",
 
   "create_new_age.ponder.heating.text_1": "You can use a Heating Plate to generate heat during daytime.",
   "create_new_age.ponder.heating.text_2": "Heat pipes can be used to spread heat around.",
@@ -59,7 +60,9 @@
   "create_new_age.ponder.heating.text_10": "80 ˚T",
   "create_new_age.ponder.heating.text_11": "80 ˚T",
 
-  "create_new_age.ponder.heating.text_12": "When provided with heat a Stirling Engine will start to slowly rotate.",
+  "create_new_age.ponder.heating.text_12": "When provided with heat from below a Stirling Engine will start to slowly rotate.",
+  "create_new_age.ponder.heating.text_13": "If a Stirling Engine is provided with more heat it will rotate a bit less slowly. ",
 
-  "create_new_age.ponder.heating.text_13": "If a Stirling Engine is provided with more heat it will rotate a bit less slowly. "
+  "create_new_age.ponder.heating.text_14": "You can use a heat pump to pump heat forward!",
+  "create_new_age.ponder.heating.text_15": "However be careful, if a block overheats, it will turn into lava."
 }
