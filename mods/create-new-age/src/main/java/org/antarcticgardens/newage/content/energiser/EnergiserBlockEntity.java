@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
 
@@ -62,14 +63,14 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
         Lang.translate("tooltip.create_new_age.energy_stored")
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
-        Lang.translate("tooltip.create_new_age.energy_storage", energy.getStoredEnergy(), energy.getMaxCapacity())
+        Lang.translate("tooltip.create_new_age.energy_storage", StringFormattingTool.formatLong(energy.getStoredEnergy()), StringFormattingTool.formatLong(energy.getMaxCapacity()))
                 .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
 
         if (lastCharged != -1) {
             Lang.translate("tooltip.create_new_age.energy_usage")
                     .style(ChatFormatting.GRAY)
                     .forGoggles(tooltip);
-            Lang.translate("tooltip.create_new_age.energy_per_second", lastCharged * 20)
+            Lang.translate("tooltip.create_new_age.energy_per_second", StringFormattingTool.formatLong(lastCharged * 20L))
                     .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
         }
 
