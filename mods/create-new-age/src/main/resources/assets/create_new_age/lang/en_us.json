@@ -33,6 +33,7 @@
   "block.create_new_age.stirling_engine": "Stirling Engine",
   "block.create_new_age.magnetite_block": "Magnetite Block",
   "block.create_new_age.layered_magnet": "Layered Magnet",
+  "block.create_new_age.redstone_magnet": "Redstone Magnet",
   "block.create_new_age.solid_corium": "Solid Corium",
   "block.create_new_age.corium": "Corium",
   "block.create_new_age.reactor_casing": "Reactor Casing",

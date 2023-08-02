@@ -79,6 +79,12 @@ public class NewAgeBlocks {
                     .simpleItem()
                     .register();
 
+    public static final BlockEntry<ImplementedMagnetBlock> REDSTONE_MAGNET =
+            REGISTRATE.block("redstone_magnet", ImplementedMagnetBlock.simple(2))
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .simpleItem()
+                    .register();
+
     public static final BlockEntry<ImplementedMagnetBlock> LAYERED_MAGNET =
             REGISTRATE.block("layered_magnet", ImplementedMagnetBlock.simple(4))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
