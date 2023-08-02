@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.newage.Configurations;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlockEntity;
+import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_storage", energyContainer.getStoredEnergy(), energyContainer.getMaxCapacity())
+        Lang.translate("tooltip.create_new_age.energy_storage", StringFormattingTool.formatLong(energyContainer.getStoredEnergy()), StringFormattingTool.formatLong(energyContainer.getMaxCapacity()))
                 .style(ChatFormatting.AQUA)
                 .forGoggles(tooltip, 1);
 
@@ -62,7 +63,7 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_per_second", lastOutput*20)
+        Lang.translate("tooltip.create_new_age.energy_per_second", StringFormattingTool.formatLong(lastOutput*20L))
                 .style(ChatFormatting.AQUA)
                 .forGoggles(tooltip, 1);
 
