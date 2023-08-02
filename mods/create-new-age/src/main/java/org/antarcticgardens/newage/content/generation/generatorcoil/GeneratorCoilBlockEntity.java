@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import org.antarcticgardens.Configurations;
 import org.antarcticgardens.newage.content.generation.magnets.IMagneticBlock;
 import org.antarcticgardens.newage.tools.RelativeBlockPos;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
@@ -74,7 +75,7 @@ public class GeneratorCoilBlockEntity extends KineticBlockEntity {
     @Override
     public void lazyTick() {
         float stress = calculateStressApplied();
-        generatedEnergy = (int) ((stress - plainStress) * Math.abs(this.getTheoreticalSpeed()));
+        generatedEnergy = (int) ((stress - plainStress) * Math.abs(this.getTheoreticalSpeed()) * Configurations.SU_TO_ENERGY);
 
         var network = getOrCreateNetwork();
 
