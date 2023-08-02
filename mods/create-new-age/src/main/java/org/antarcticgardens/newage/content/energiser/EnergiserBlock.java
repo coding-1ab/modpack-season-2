@@ -22,6 +22,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.antarcticgardens.newage.NewAgeBlockEntityTypes;
+import org.antarcticgardens.newage.tools.StringFormattingTool;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +37,7 @@ public class EnergiserBlock extends HorizontalKineticBlock implements IBE<Energi
     public EnergiserBlock(Properties properties, int tier, BlockEntityEntry<EnergiserBlockEntity> entry) {
         super(properties.strength(2.5F, 1.0F));
         this.strength = (int)Math.pow(2, tier * 2);
-        this.stores = (long) (Math.pow(10, tier) * 10000);
+        this.stores = (long) (Math.pow(10, tier) * 1000);
         this.entry = entry;
     }
 
@@ -79,10 +80,10 @@ public class EnergiserBlock extends HorizontalKineticBlock implements IBE<Energi
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Lang.translate("tooltip.create_new_age.speed").style(ChatFormatting.GRAY).component());
-        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy_per_second", strength*20).style(ChatFormatting.AQUA)
+        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy_per_second", StringFormattingTool.formatLong(strength*20L)).style(ChatFormatting.AQUA)
                 .component());
         tooltip.add(Lang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY).component());
-        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy", stores).style(ChatFormatting.AQUA)
+        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy", StringFormattingTool.formatLong(stores)).style(ChatFormatting.AQUA)
                 .component());
     }
 
