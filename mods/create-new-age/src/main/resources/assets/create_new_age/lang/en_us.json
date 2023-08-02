@@ -46,6 +46,10 @@
   "item.create_new_age.incomplete_fuel": "Incomplete Nuclear Fuel",
   "item.create_new_age.thorium": "Thorium",
   "item.create_new_age.radioactive_thorium": "Radioactive Thorium",
+  "item.create_new_age.overcharged_iron": "Overcharged Iron",
+  "item.create_new_age.overcharged_gold": "Overcharged Gold",
+  "item.create_new_age.overcharged_diamond": "Overcharged Diamond",
+
 
   "tag.create_new_age.nuclear.hazmat_suit": "Hazmat Protection",
   "tag.create_new_age.nuclear.is_nuclear_fuel": "Nuclear Fuel",

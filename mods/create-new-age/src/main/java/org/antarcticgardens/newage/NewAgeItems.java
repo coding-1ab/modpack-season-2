@@ -8,6 +8,18 @@ import net.minecraft.world.item.Item;
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
 public class NewAgeItems {
+
+    public static final ItemEntry<Item> OVERCHARGED_GOLD =
+            REGISTRATE.item("overcharged_gold", Item::new)
+                    .register();
+
+    public static final ItemEntry<Item> OVERCHARGED_IRON =
+            REGISTRATE.item("overcharged_iron", Item::new)
+                    .register();
+
+    public static final ItemEntry<Item> OVERCHARGED_DIAMOND =
+            REGISTRATE.item("overcharged_diamond", Item::new)
+                    .register();
     public static final ItemEntry<Item> NUCLEAR_FUEL =
             REGISTRATE.item("nuclear_fuel", Item::new)
                     .register();
