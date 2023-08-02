@@ -5,7 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.antarcticgardens.Configurations;
+import org.antarcticgardens.newage.Configurations;
 import org.antarcticgardens.newage.content.reactor.reactorrod.ReactorRodBlockEntity;
 
 import java.util.List;

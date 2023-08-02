@@ -14,12 +14,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.antarcticgardens.newage.Configurations;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlockEntity;
 
 import java.util.List;
 
 public class CarbonBrushesBlockEntity extends KineticBlockEntity implements BotariumEnergyBlock<WrappedBlockEnergyContainer>, IHaveGoggleInformation {
-    public static int MAX_COILS = 8;
 
     private final WrappedBlockEnergyContainer energyContainer;
 
@@ -62,7 +62,7 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_per_second", lastOutput)
+        Lang.translate("tooltip.create_new_age.energy_per_second", lastOutput*20)
                 .style(ChatFormatting.AQUA)
                 .forGoggles(tooltip, 1);
 
@@ -70,14 +70,14 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
     }
 
     @Override
-    public void lazyTick() {
+    public void tick() {
         Direction.Axis axis = getBlockState().getValue(DirectionalKineticBlock.FACING).getAxis();
 
         int coilAmount = 0;
         lastOutput = 0;
 
-        for (int i = 1; i <= MAX_COILS; i++) {
-            if (coilAmount >= MAX_COILS)
+        for (int i = 1; i <= Configurations.MAX_COILS; i++) {
+            if (coilAmount >= Configurations.MAX_COILS)
                 break;
 
             if (processBlockEntityAt(worldPosition.relative(axis, i), coilAmount))
@@ -89,7 +89,7 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
     }
 
     private boolean processBlockEntityAt(BlockPos pos, int coilAmount) {
-        if (coilAmount >= MAX_COILS)
+        if (coilAmount >= Configurations.MAX_COILS)
             return false;
 
         if (level.getBlockEntity(pos) instanceof GeneratorCoilBlockEntity coil) {
