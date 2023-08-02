@@ -31,4 +31,8 @@ public class StringFormattingTool {
         return String.format("%.1f%s", f, postfixes[d]);
     }
 
+    public static String formatPercentFloat(float f) {
+        return String.format("%.1f", f * 100);
+    }
+
 }

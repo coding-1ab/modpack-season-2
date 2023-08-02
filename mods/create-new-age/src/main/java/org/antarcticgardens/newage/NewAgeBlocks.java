@@ -69,7 +69,7 @@ public class NewAgeBlocks {
             REGISTRATE.block("generator_coil", GeneratorCoilBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
-                    .transform(BlockStressDefaults.setImpact(12.0f))
+                    .transform(BlockStressDefaults.setImpact(32.0f))
                     .simpleItem()
                     .register();
 

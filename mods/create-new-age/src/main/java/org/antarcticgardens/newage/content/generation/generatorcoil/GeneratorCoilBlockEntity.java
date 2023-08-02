@@ -3,12 +3,16 @@ package org.antarcticgardens.newage.content.generation.generatorcoil;
 import com.google.common.collect.Lists;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
+import com.simibubi.create.foundation.utility.Lang;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.antarcticgardens.newage.content.generation.magnets.IMagneticBlock;
 import org.antarcticgardens.newage.tools.RelativeBlockPos;
+import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
 
@@ -50,9 +54,12 @@ public class GeneratorCoilBlockEntity extends KineticBlockEntity {
         return new AABB(worldPosition).inflate(1);
     }
 
+    private float plainStress;
+
     @Override
     public float calculateStressApplied() {
-        float stress = super.calculateStressApplied();
+        plainStress = super.calculateStressApplied();
+        float stress = plainStress;
 
         for (BlockPos pos : magnetPositions) {
             if (level.getBlockState(pos).getBlock() instanceof IMagneticBlock magneticBlock)
@@ -67,14 +74,25 @@ public class GeneratorCoilBlockEntity extends KineticBlockEntity {
     @Override
     public void lazyTick() {
         float stress = calculateStressApplied();
-        generatedEnergy = (int) ((stress - super.calculateStressApplied()) * Math.abs(this.getTheoreticalSpeed()));
+        generatedEnergy = (int) ((stress - plainStress) * Math.abs(this.getTheoreticalSpeed()));
 
-        if (getOrCreateNetwork() != null && lastStress != stress) {
-            getOrCreateNetwork().remove(this);
-            getOrCreateNetwork().addSilently(this, lastCapacityProvided, lastStress);
+        var network = getOrCreateNetwork();
+
+        if (network != null && lastStress != stress) {
+            network.remove(this);
+            network.addSilently(this, lastCapacityProvided, lastStress);
 
             lastStress = stress;
         }
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        Lang.translate("tooltip.create_new_age.efficiency").style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
+        Lang.translate("tooltip.create_new_age.percent", StringFormattingTool.formatPercentFloat(
+                (lastStressApplied-plainStress)/lastStressApplied
+        )).style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
+        return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
     }
 
     public int takeGeneratedEnergy() {
