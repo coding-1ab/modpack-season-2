@@ -15,5 +15,11 @@ public class NewAgeItems {
             REGISTRATE.item("thorium", Item::new)
                     .register();
 
+    public static final ItemEntry<Item> RADIOACTIVE_THORIUM =
+            REGISTRATE.item("radioactive_thorium", Item::new)
+                    .register();
+
+
+
     public static void load() {  }
 }
