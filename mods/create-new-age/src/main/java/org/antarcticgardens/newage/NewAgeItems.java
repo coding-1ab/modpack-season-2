@@ -11,5 +11,9 @@ public class NewAgeItems {
             REGISTRATE.item("nuclear_fuel", Item::new)
                     .register();
 
+    public static final ItemEntry<Item> THORIUM =
+            REGISTRATE.item("thorium", Item::new)
+                    .register();
+
     public static void load() {  }
 }

@@ -176,5 +176,13 @@ public class NewAgeBlocks {
                     .simpleItem()
                     .register();
 
+
+    public static final BlockEntry<Block> THORIUM_ORE =
+            REGISTRATE.block("thorium_ore", Block::new)
+                    .properties((p) -> p.strength(3.5f))
+                    .item(AssemblyOperatorBlockItem::new)
+                    .build()
+                    .register();
+
     public static void load() {  }
 }
