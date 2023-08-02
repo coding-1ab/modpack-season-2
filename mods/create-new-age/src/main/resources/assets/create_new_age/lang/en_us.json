@@ -17,6 +17,8 @@
   "create.tooltip.create_new_age.generates":  "Generates: ",
   "create.tooltip.create_new_age.stores":  "Stores: ",
   "create.tooltip.create_new_age.speed":  "Speed: ",
+  "create.tooltip.create_new_age.magnetic_force":  "Magnetic Force: ",
+
 
   "tab.create_new_age.tab": "Create: New Age",
   "block.create_new_age.energiser_t1": "Basic Energiser",
@@ -28,6 +30,7 @@
   "block.create_new_age.generator_coil": "Generator Coil",
   "block.create_new_age.stirling_engine": "Stirling Engine",
   "block.create_new_age.magnetite_block": "Magnetite Block",
+  "block.create_new_age.layered_magnet": "Layered Magnet",
   "block.create_new_age.solid_corium": "Solid Corium",
   "block.create_new_age.corium": "Corium",
   "block.create_new_age.reactor_casing": "Reactor Casing",

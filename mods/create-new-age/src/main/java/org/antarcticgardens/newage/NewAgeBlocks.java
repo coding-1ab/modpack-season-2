@@ -10,7 +10,7 @@ import org.antarcticgardens.newage.content.energiser.EnergiserBlock;
 import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesBlock;
 import org.antarcticgardens.newage.content.generation.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlock;
-import org.antarcticgardens.newage.content.generation.magnets.MagnetiteBlock;
+import org.antarcticgardens.newage.content.generation.magnets.ImplementedMagnetBlock;
 import org.antarcticgardens.newage.content.heat.heater.HeaterBlock;
 import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlock;
 import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlock;
@@ -73,8 +73,14 @@ public class NewAgeBlocks {
                     .simpleItem()
                     .register();
 
-    public static final BlockEntry<MagnetiteBlock> MAGNETITE_BLOCK =
-            REGISTRATE.block("magnetite_block", MagnetiteBlock::new)
+    public static final BlockEntry<ImplementedMagnetBlock> MAGNETITE_BLOCK =
+            REGISTRATE.block("magnetite_block", ImplementedMagnetBlock.simple(1))
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .simpleItem()
+                    .register();
+
+    public static final BlockEntry<ImplementedMagnetBlock> LAYERED_MAGNET =
+            REGISTRATE.block("layered_magnet", ImplementedMagnetBlock.simple(4))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .simpleItem()
                     .register();
