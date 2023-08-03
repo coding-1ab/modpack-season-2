@@ -10,12 +10,15 @@
     },
     "C": {
       "item": "create_new_age:reactor_casing"
+    },
+    "G": {
+      "item": "create_new_age:reactor_glass"
     }
   },
   "pattern": [
     "CAAAC",
-    " CFC ",
-    " CFC ",
+    " GFG ",
+    " GFG ",
     "CAAAC"
   ],
   "result": {
