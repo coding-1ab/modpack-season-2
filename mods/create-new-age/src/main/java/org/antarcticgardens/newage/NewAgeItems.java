@@ -37,6 +37,11 @@ public class NewAgeItems {
                     .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
                     .register();
 
+    public static final ItemEntry<SequencedAssemblyItem> INCOMPLETE_CASING =
+            REGISTRATE.item("incomplete_casing", SequencedAssemblyItem::new)
+                    .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
+                    .register();
+
 
 
     public static void load() {  }
