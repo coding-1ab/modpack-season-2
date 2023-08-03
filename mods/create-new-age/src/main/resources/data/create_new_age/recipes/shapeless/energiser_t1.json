@@ -1,7 +1,5 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "redstone",
-  "group": "wooden_button",
   "ingredients": [
     {
       "item": "create:andesite_casing"
