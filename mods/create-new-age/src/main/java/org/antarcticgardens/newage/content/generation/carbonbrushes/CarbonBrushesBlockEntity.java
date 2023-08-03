@@ -37,12 +37,14 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
     @Override
     protected void write(CompoundTag compound, boolean clientPacket) {
         compound.putLong("energy", energyContainer.getStoredEnergy());
+        compound.putInt("lastOutput", lastOutput);
         super.write(compound, clientPacket);
     }
 
     @Override
     protected void read(CompoundTag compound, boolean clientPacket) {
         energyContainer.setEnergy(compound.getLong("energy"));
+        lastOutput = compound.getInt("lastOutput");
         super.read(compound, clientPacket);
     }
 
