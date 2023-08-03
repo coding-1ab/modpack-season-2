@@ -75,17 +75,20 @@ public class GeneratorCoilBlockEntity extends KineticBlockEntity {
     @Override
     public void tick() {
         super.tick();
-        generatedEnergy = (int) ((lastStress - plainStress) * Math.abs(this.getTheoreticalSpeed()) * Configurations.SU_TO_ENERGY);
+        generatedEnergy = (int) ((lastStressApplied - plainStress) * Math.abs(this.getTheoreticalSpeed()) * Configurations.SU_TO_ENERGY);
     }
 
     @Override
     public void lazyTick() {
+        if (level == null || level.isClientSide)
+            return;
         float stress = calculateStressApplied();
         var network = getOrCreateNetwork();
 
         if (network != null && lastStress != stress) {
-            network.remove(this);
-            network.addSilently(this, lastCapacityProvided, lastStress);
+            network.updateStressFor(this, stress);
+            network.updateStress();
+            sendData();
 
             lastStress = stress;
         }

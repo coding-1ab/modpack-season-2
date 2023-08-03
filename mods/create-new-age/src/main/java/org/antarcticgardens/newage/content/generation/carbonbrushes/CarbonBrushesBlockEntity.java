@@ -70,8 +70,12 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
         return true;
     }
 
+    private int syncOut = 0;
+
     @Override
     public void tick() {
+        super.tick();
+        if (level == null || level.isClientSide) return;
         Direction.Axis axis = getBlockState().getValue(DirectionalKineticBlock.FACING).getAxis();
 
         int coilAmount = 0;
@@ -89,6 +93,16 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
         }
     }
 
+    @Override
+    public void lazyTick() {
+        if (level == null || level.isClientSide) return;
+        if (syncOut > 0) {
+            syncOut = 0;
+            setChanged();
+            sendData();
+        }
+    }
+
     private boolean processBlockEntityAt(BlockPos pos, int coilAmount) {
         if (coilAmount >= Configurations.MAX_COILS)
             return false;
@@ -96,6 +110,7 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
         if (level.getBlockEntity(pos) instanceof GeneratorCoilBlockEntity coil) {
             int energy = coil.takeGeneratedEnergy();
             lastOutput += energy;
+            syncOut += energy;
             energyContainer.internalInsert(energy, false);
             return true;
         }
