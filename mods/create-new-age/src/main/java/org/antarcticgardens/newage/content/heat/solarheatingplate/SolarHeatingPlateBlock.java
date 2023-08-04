@@ -55,11 +55,11 @@ public class SolarHeatingPlateBlock extends Block implements EntityBlock, IWrenc
     }
 
     public static Block createAdvanced(Properties properties) {
-        return  new SolarHeatingPlateBlock(properties, NewAgeBlockEntityTypes.ADVANCED_SOLAR_HEATING_PLATE, 20);
+        return  new SolarHeatingPlateBlock(properties, NewAgeBlockEntityTypes.ADVANCED_SOLAR_HEATING_PLATE, 60);
     }
 
     public static Block createBasic(Properties properties) {
-        return  new SolarHeatingPlateBlock(properties, NewAgeBlockEntityTypes.BASIC_SOLAR_HEATING_PLATE, 60);
+        return  new SolarHeatingPlateBlock(properties, NewAgeBlockEntityTypes.BASIC_SOLAR_HEATING_PLATE, 20);
     }
 
     @Override
