@@ -81,6 +81,7 @@ public class EnergiserBlock extends HorizontalKineticBlock implements IBE<Energi
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Lang.translate("tooltip.create_new_age.speed").style(ChatFormatting.GRAY).component());
         tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy_per_second", StringFormattingTool.formatLong(strength*20L)).style(ChatFormatting.AQUA)
+                        .add(Lang.text(" ").translate("tooltip.create_new_age.per_rpm", 10).style(ChatFormatting.GRAY))
                 .component());
         tooltip.add(Lang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY).component());
         tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy", StringFormattingTool.formatLong(stores)).style(ChatFormatting.AQUA)
@@ -93,6 +94,10 @@ public class EnergiserBlock extends HorizontalKineticBlock implements IBE<Energi
 
     public static Block createT2(Properties properties) {
         return new EnergiserBlock(properties, 2, NewAgeBlockEntityTypes.ENERGISER_T2);
+    }
+
+    public static Block createT3(Properties properties) {
+        return new EnergiserBlock(properties, 3, NewAgeBlockEntityTypes.ENERGISER_T3);
     }
 
 }

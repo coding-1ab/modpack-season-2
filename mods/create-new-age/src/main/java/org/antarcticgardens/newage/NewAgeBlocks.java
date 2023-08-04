@@ -49,6 +49,15 @@ public class NewAgeBlocks {
                     .build()
                     .register();
 
+    public static final BlockEntry<Block> ENERGISER_T3 =
+            REGISTRATE.block("energiser_t3", EnergiserBlock::createT3)
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .transform(BlockStressDefaults.setImpact(32.0))
+                    .item(AssemblyOperatorBlockItem::new)
+                    .build()
+                    .register();
+
     public static final BlockEntry<ElectricalConnectorBlock> ELECTRICAL_CONNECTOR =
             REGISTRATE.block("electrical_connector", ElectricalConnectorBlock::new)
                     .properties(BlockBehaviour.Properties::noOcclusion)

@@ -36,6 +36,10 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
         return new EnergiserBlockEntity(type, pos, state, 2);
     }
 
+    public static EnergiserBlockEntity newTier3(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        return new EnergiserBlockEntity(type, pos, state, 3);
+    }
+
     @Override
     protected void write(CompoundTag compound, boolean clientPacket) {
         compound.putLong("energy", energy.getStoredEnergy());

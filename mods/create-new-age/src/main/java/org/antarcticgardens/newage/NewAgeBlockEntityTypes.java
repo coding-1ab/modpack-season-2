@@ -33,7 +33,14 @@ public class NewAgeBlockEntityTypes {
     public static final BlockEntityEntry<EnergiserBlockEntity> ENERGISER_T2 = REGISTRATE
             .blockEntity("energiser_t2", EnergiserBlockEntity::newTier2)
             .instance(() -> ShaftInstance::new)
-            .validBlocks(NewAgeBlocks.ENERGISER_T1)
+            .validBlocks(NewAgeBlocks.ENERGISER_T2)
+            .renderer(() -> EnergiserRenderer::new)
+            .register();
+
+    public static final BlockEntityEntry<EnergiserBlockEntity> ENERGISER_T3 = REGISTRATE
+            .blockEntity("energiser_t3", EnergiserBlockEntity::newTier3)
+            .instance(() -> ShaftInstance::new)
+            .validBlocks(NewAgeBlocks.ENERGISER_T3)
             .renderer(() -> EnergiserRenderer::new)
             .register();
 
