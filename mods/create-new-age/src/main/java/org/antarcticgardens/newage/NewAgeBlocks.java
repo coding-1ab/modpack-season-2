@@ -106,6 +106,12 @@ public class NewAgeBlocks {
                     .simpleItem()
                     .register();
 
+    public static final BlockEntry<ImplementedMagnetBlock> NETHERITE_MAGNET =
+            REGISTRATE.block("netherite_magnet", ImplementedMagnetBlock.simple(16))
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .simpleItem()
+                    .register();
+
     public static final BlockEntry<HeatPipeBlock> HEAT_PIPE =
             REGISTRATE.block("heat_pipe", HeatPipeBlock::new)
                     .properties(BlockBehaviour.Properties::noOcclusion)
