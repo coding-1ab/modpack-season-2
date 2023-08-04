@@ -20,7 +20,7 @@
       "x": 270
     },
     "facing=west": {
-      "model": "create_new_age:block/motor",
+      "model": "create_new_age:block/motors/basic_motor_side",
       "y": 270
     }
   }
