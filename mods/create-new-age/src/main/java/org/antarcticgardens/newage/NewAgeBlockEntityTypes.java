@@ -1,6 +1,7 @@
 package org.antarcticgardens.newage;
 
 import com.simibubi.create.content.kinetics.base.CutoutRotatingInstance;
+import com.simibubi.create.content.kinetics.base.HalfShaftInstance;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftInstance;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
@@ -16,9 +17,11 @@ import org.antarcticgardens.newage.content.heat.solarheatingplate.SolarHeatingPl
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineBlockEntity;
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineInstance;
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineRenderer;
+import org.antarcticgardens.newage.content.motors.MotorBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorfuelacceptor.ReactorFuelAcceptorBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorheatvent.ReactorHeatVentBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorrod.ReactorRodBlockEntity;
+import org.antarcticgardens.newage.tools.HalfShaftRendererThing;
 
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
@@ -105,6 +108,14 @@ public class NewAgeBlockEntityTypes {
             .instance(() -> StirlingEngineInstance::new)
             .validBlocks(NewAgeBlocks.STIRLING_ENGINE)
             .renderer(() -> StirlingEngineRenderer::new)
+            .register();
+
+
+    public static final BlockEntityEntry<MotorBlockEntity> BASIC_MOTOR = REGISTRATE
+            .blockEntity("basic_motor", MotorBlockEntity.create(10000, 512, 128))
+            .instance(() -> HalfShaftInstance::new)
+            .validBlocks(NewAgeBlocks.BASIC_MOTOR)
+            .renderer(() -> HalfShaftRendererThing::new)
             .register();
 
     public static void load() {  }

@@ -16,6 +16,7 @@ import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlock;
 import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlock;
 import org.antarcticgardens.newage.content.heat.solarheatingplate.SolarHeatingPlateBlock;
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineBlock;
+import org.antarcticgardens.newage.content.motors.MotorBlock;
 import org.antarcticgardens.newage.content.reactor.CoriumBlock;
 import org.antarcticgardens.newage.content.reactor.ReactorBlock;
 import org.antarcticgardens.newage.content.reactor.ReactorTransparentBlock;
@@ -62,6 +63,13 @@ public class NewAgeBlocks {
             REGISTRATE.block("electrical_connector", ElectricalConnectorBlock::new)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(0.4f))
+                    .simpleItem()
+                    .register();
+
+    public static final BlockEntry<MotorBlock> BASIC_MOTOR =
+            REGISTRATE.block("basic_motor", (p) -> new MotorBlock(p, NewAgeBlockEntityTypes.BASIC_MOTOR))
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
                     .simpleItem()
                     .register();
 
