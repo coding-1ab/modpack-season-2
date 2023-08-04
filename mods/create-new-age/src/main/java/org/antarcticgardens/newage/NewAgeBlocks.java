@@ -78,7 +78,7 @@ public class NewAgeBlocks {
             REGISTRATE.block("generator_coil", GeneratorCoilBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
-                    .transform(BlockStressDefaults.setImpact(32.0f))
+                    .transform(BlockStressDefaults.setImpact(24.0f))
                     .simpleItem()
                     .register();
 
@@ -96,6 +96,12 @@ public class NewAgeBlocks {
 
     public static final BlockEntry<ImplementedMagnetBlock> LAYERED_MAGNET =
             REGISTRATE.block("layered_magnet", ImplementedMagnetBlock.simple(4))
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .simpleItem()
+                    .register();
+
+    public static final BlockEntry<ImplementedMagnetBlock> FLUXUATED_MAGNETITE =
+            REGISTRATE.block("fluxuated_magnetite", ImplementedMagnetBlock.simple(8))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .simpleItem()
                     .register();
