@@ -49,6 +49,7 @@
   "block.create_new_age.advanced_solar_heating_plate": "Advanced Solar Plate",
   "block.create_new_age.electrical_connector": "Electrical Connector",
   "block.create_new_age.basic_motor": "Basic Motor",
+  "block.create_new_age.advanced_motor": "Advanced Motor",
   "block.create_new_age.thorium_ore": "Thorium Ore",
   "item.create_new_age.nuclear_fuel": "Nuclear Fuel",
   "item.create_new_age.incomplete_fuel": "Incomplete Nuclear Fuel",

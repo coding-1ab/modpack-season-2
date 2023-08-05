@@ -112,7 +112,15 @@ public class NewAgeBlockEntityTypes {
 
 
     public static final BlockEntityEntry<MotorBlockEntity> BASIC_MOTOR = REGISTRATE
-            .blockEntity("basic_motor", MotorBlockEntity.create(10000, 512, 128))
+            .blockEntity("basic_motor", MotorBlockEntity.create(16000, 512, 128))
+            .instance(() -> HalfShaftInstance::new)
+            .validBlocks(NewAgeBlocks.BASIC_MOTOR)
+            .renderer(() -> HalfShaftRendererThing::new)
+            .register();
+
+
+    public static final BlockEntityEntry<MotorBlockEntity> ADVANCED_MOTOR = REGISTRATE
+            .blockEntity("advanced_motor", MotorBlockEntity.create(64000, 2048, 256))
             .instance(() -> HalfShaftInstance::new)
             .validBlocks(NewAgeBlocks.BASIC_MOTOR)
             .renderer(() -> HalfShaftRendererThing::new)
