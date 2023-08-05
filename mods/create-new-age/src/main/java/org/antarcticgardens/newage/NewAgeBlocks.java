@@ -70,6 +70,7 @@ public class NewAgeBlocks {
             REGISTRATE.block("basic_motor", (p) -> new MotorBlock(p, NewAgeBlockEntityTypes.BASIC_MOTOR))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(properties -> properties.strength(3.0f))
                     .simpleItem()
                     .register();
 
