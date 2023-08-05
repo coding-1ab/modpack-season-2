@@ -1,0 +1,7 @@
+{
+	"parent": "create_new_age:block/motors/basic_motor",
+	"textures": {
+		"0": "create_new_age:block/diamond_motor",
+		"particle": "create_new_age:block/diamond_motor"
+	}
+}

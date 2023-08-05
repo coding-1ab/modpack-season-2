@@ -82,6 +82,15 @@ public class NewAgeBlocks {
                     .simpleItem()
                     .register();
 
+
+    public static final BlockEntry<MotorBlock> REINFORCED_MOTOR =
+            REGISTRATE.block("reinforced_motor", (p) -> new MotorBlock(p, NewAgeBlockEntityTypes.REINFORCED_MOTOR))
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(properties -> properties.strength(3.8f))
+                    .simpleItem()
+                    .register();
+
     public static final BlockEntry<CarbonBrushesBlock> CARBON_BRUSHES =
             REGISTRATE.block("carbon_brushes", CarbonBrushesBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
