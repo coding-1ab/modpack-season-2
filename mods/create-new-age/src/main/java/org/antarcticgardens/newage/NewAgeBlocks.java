@@ -67,7 +67,7 @@ public class NewAgeBlocks {
                     .register();
 
     public static final BlockEntry<MotorBlock> BASIC_MOTOR =
-            REGISTRATE.block("basic_motor", (p) -> new MotorBlock(p, NewAgeBlockEntityTypes.BASIC_MOTOR))
+            REGISTRATE.block("basic_motor", (p) -> new MotorBlock(p, NewAgeBlockEntityTypes.BASIC_MOTOR, 16000, 512, 128))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(3.0f))
@@ -75,7 +75,7 @@ public class NewAgeBlocks {
                     .register();
 
     public static final BlockEntry<MotorBlock> ADVANCED_MOTOR =
-            REGISTRATE.block("advanced_motor", (p) -> new MotorBlock(p, NewAgeBlockEntityTypes.ADVANCED_MOTOR))
+            REGISTRATE.block("advanced_motor", (p) -> new MotorBlock(p, NewAgeBlockEntityTypes.ADVANCED_MOTOR, 64000, 2048, 256))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(3.5f))
@@ -84,10 +84,10 @@ public class NewAgeBlocks {
 
 
     public static final BlockEntry<MotorBlock> REINFORCED_MOTOR =
-            REGISTRATE.block("reinforced_motor", (p) -> new MotorBlock(p, NewAgeBlockEntityTypes.REINFORCED_MOTOR))
+            REGISTRATE.block("reinforced_motor", (p) -> new MotorBlock(p, NewAgeBlockEntityTypes.REINFORCED_MOTOR, 128000, 8192, 256))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
-                    .properties(properties -> properties.strength(3.8f))
+                    .properties(properties -> properties.strength(4.0f))
                     .simpleItem()
                     .register();
 

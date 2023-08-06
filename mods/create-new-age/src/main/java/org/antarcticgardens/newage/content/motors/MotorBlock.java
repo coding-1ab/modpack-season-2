@@ -4,13 +4,17 @@ package org.antarcticgardens.newage.content.motors;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.foundation.block.IBE;
+import com.simibubi.create.foundation.utility.Lang;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
@@ -23,18 +27,44 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.antarcticgardens.newage.tools.StringFormattingTool;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class MotorBlock extends DirectionalKineticBlock implements IRotate, IBE<MotorBlockEntity> {
     protected static final VoxelShape Y_AXIS_AABB = Block.box(2.0, 0.0, 2.0, 14.0, 16.0, 14.0);
     protected static final VoxelShape Z_AXIS_AABB = Block.box(2.0, 2.0, 0.0, 14.0, 14.0, 16.0);
     protected static final VoxelShape X_AXIS_AABB = Block.box(0.0, 2.0, 2.0, 16.0, 14.0, 14.0);
     private final BlockEntityEntry<MotorBlockEntity> entry;
+    private final long capacity;
+    private final float stressGenerated;
+    private final float maxSpeed;
 
-    public MotorBlock(Properties properties, BlockEntityEntry<MotorBlockEntity> entry) {
+    public MotorBlock(Properties properties, BlockEntityEntry<MotorBlockEntity> entry, long capacity, float stressGenerated, float maxSpeed) {
         super(properties);
         this.entry = entry;
+        this.capacity = capacity;
+        this.stressGenerated = stressGenerated;
+        this.maxSpeed = maxSpeed;
     }
 
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(Lang.translate("tooltip.create_new_age.generates").style(ChatFormatting.GRAY)
+                .component());
+        tooltip.add(Lang.text(" ").add(Lang.number(stressGenerated).text(" ")
+                .translate("generic.unit.stress").style(ChatFormatting.AQUA)).component());
+
+        tooltip.add(Lang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY)
+                .component());
+        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy", StringFormattingTool.formatLong(capacity)).style(ChatFormatting.AQUA).component());
+
+        tooltip.add(Lang.translate("tooltip.create_new_age.max_speed").style(ChatFormatting.GRAY)
+                .component());
+        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.rpm", (int)maxSpeed).style(ChatFormatting.AQUA).component());
+
+    }
 
     @Override
     public SpeedLevel getMinimumRequiredSpeedLevel() {
