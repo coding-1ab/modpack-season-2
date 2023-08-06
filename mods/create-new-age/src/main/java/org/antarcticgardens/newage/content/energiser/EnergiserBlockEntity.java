@@ -41,18 +41,6 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
     }
 
     @Override
-    protected void write(CompoundTag compound, boolean clientPacket) {
-        compound.putLong("energy", energy.getStoredEnergy());
-        super.write(compound, clientPacket);
-    }
-
-    @Override
-    protected void read(CompoundTag compound, boolean clientPacket) {
-        energy.setEnergy(compound.getLong("energy"));
-        super.read(compound, clientPacket);
-    }
-
-    @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
         behaviours.add(new EnergiserBehaviour(this, (int)Math.pow(2, tier*2)));

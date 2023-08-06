@@ -57,7 +57,7 @@ dependencies {
 	modApi("earth.terrarium:botarium-fabric-${minecraft_version}:${botarium_version}")
 
 	// For testing electricity stuff, don't actually use classes provided by it
-	 modImplementation("earth.terrarium.adastra:ad_astra-fabric-$minecraft_version:$ad_astra_version")
+//	 modImplementation("earth.terrarium.adastra:ad_astra-fabric-$minecraft_version:$ad_astra_version")
 
 	modCompileOnly("dev.emi:emi-fabric:${emi_version}");
 	modCompileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
