@@ -1,29 +1,29 @@
 {
   "variants": {
-    "face=ceiling": {
+    "facing=down": {
       "model": "create_new_age:block/generation/electrical_connector",
       "x": 180
     },
 
-    "face=floor": {
+    "facing=up": {
       "model": "create_new_age:block/generation/electrical_connector"
     },
 
-    "face=wall,facing=east": {
+    "facing=east": {
       "model": "create_new_age:block/generation/electrical_connector",
       "x": 90,
       "y": 90
     },
-    "face=wall,facing=north": {
+    "facing=north": {
       "model": "create_new_age:block/generation/electrical_connector",
       "x": 90
     },
-    "face=wall,facing=south": {
+    "facing=south": {
       "model": "create_new_age:block/generation/electrical_connector",
       "x": 90,
       "y": 180
     },
-    "face=wall,facing=west": {
+    "facing=west": {
       "model": "create_new_age:block/generation/electrical_connector",
       "x": 90,
       "y": 270

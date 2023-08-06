@@ -4,7 +4,6 @@ import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.antarcticgardens.newage.NewAgeBlocks;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
 
 import java.util.*;
@@ -47,15 +46,14 @@ public class ElectricalNetwork {
             pathManager.addConnection(node, connectedNode);
     }
 
-    private void updateConsumers() {
+    public void updateConsumers() {
         consumers.clear();
 
         for (ElectricalConnectorBlockEntity node : nodes) {
             if (node.getLevel() != null) {
-                BlockEntity entity = node.getLevel()
-                        .getBlockEntity(NewAgeBlocks.ELECTRICAL_CONNECTOR.get().getSupportingBlockPos(node));
+                BlockEntity entity = node.getLevel().getBlockEntity(node.getSupportingBlockPos());
 
-                if (entity instanceof BotariumEnergyBlock<?> energyBlock) {
+                if (entity instanceof BotariumEnergyBlock<?> energyBlock && !(entity instanceof ElectricalConnectorBlockEntity)) {
                     if (energyBlock.getEnergyStorage().allowsInsertion())
                         consumers.put(node, energyBlock);
                 }

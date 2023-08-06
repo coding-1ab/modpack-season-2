@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.antarcticgardens.newage.content.electricity.network.ElectricalNetwork;
 import org.antarcticgardens.newage.content.electricity.network.NetworkEnergyContainer;
 import org.antarcticgardens.newage.content.electricity.wire.WireType;
@@ -81,11 +82,19 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
         return Collections.unmodifiableMap(connectorPositions);
     }
 
+    public BlockPos getSupportingBlockPos() {
+        return getBlockPos().relative(getBlockState().getValue(BlockStateProperties.FACING).getOpposite());
+    }
+
     protected void tick() {
         if (!tickedBefore) {
             updateNetwork();
             tickedBefore = true;
         }
+    }
+
+    protected void neighborChanged() {
+        network.updateConsumers();
     }
 
     private void updateNetwork() {

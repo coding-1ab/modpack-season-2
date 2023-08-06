@@ -21,8 +21,7 @@ public class NetworkEnergyContainer implements EnergyContainer {
     @Override
     public long insertEnergy(long maxAmount, boolean simulate) {
         if (connector.getLevel() != null) {
-            BlockEntity entity = connector.getLevel()
-                    .getBlockEntity(NewAgeBlocks.ELECTRICAL_CONNECTOR.get().getSupportingBlockPos(connector));
+            BlockEntity entity = connector.getLevel().getBlockEntity(connector.getSupportingBlockPos());
 
             if (entity instanceof BotariumEnergyBlock<?> energyBlock) {
                 long canExtract = energyBlock.getEnergyStorage().extractEnergy(Long.MAX_VALUE, true);
@@ -56,7 +55,7 @@ public class NetworkEnergyContainer implements EnergyContainer {
 
     @Override
     public long maxExtract() {
-        return Long.MAX_VALUE;
+        return 0;
     }
 
     @Override
@@ -66,7 +65,7 @@ public class NetworkEnergyContainer implements EnergyContainer {
 
     @Override
     public boolean allowsExtraction() {
-        return true;
+        return false;
     }
 
     @Override
