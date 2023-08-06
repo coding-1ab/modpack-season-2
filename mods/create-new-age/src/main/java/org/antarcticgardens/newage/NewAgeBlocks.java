@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlock;
 import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesBlock;
-import org.antarcticgardens.newage.content.generation.connector.ElectricalConnectorBlock;
+import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlock;
 import org.antarcticgardens.newage.content.generation.magnets.ImplementedMagnetBlock;
 import org.antarcticgardens.newage.content.heat.heater.HeaterBlock;

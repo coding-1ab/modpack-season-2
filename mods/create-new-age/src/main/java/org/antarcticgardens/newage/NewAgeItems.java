@@ -3,7 +3,7 @@ package org.antarcticgardens.newage;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyItem;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.world.item.Item;
-
+import org.antarcticgardens.newage.content.electricity.wire.ElectricWireItem;
 
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
@@ -43,6 +43,9 @@ public class NewAgeItems {
                     .register();
 
 
+    public static final ItemEntry<ElectricWireItem> COPPER_WIRE =
+            REGISTRATE.item("copper_wire", ElectricWireItem::newCopperWire)
+                    .register();
 
     public static void load() {  }
 }

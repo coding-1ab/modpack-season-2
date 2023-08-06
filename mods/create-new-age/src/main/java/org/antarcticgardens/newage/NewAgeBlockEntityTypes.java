@@ -9,6 +9,8 @@ import org.antarcticgardens.newage.content.energiser.EnergiserBlockEntity;
 import org.antarcticgardens.newage.content.energiser.EnergiserRenderer;
 import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesBlockEntity;
 import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesRenderer;
+import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
+import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorRenderer;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlockEntity;
 import org.antarcticgardens.newage.content.heat.heater.HeaterBlockEntity;
 import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlockEntity;
@@ -132,6 +134,12 @@ public class NewAgeBlockEntityTypes {
             .instance(() -> HalfShaftInstance::new)
             .validBlocks(NewAgeBlocks.REINFORCED_MOTOR)
             .renderer(() -> HalfShaftRendererThing::new)
+            .register();
+
+    public static final BlockEntityEntry<ElectricalConnectorBlockEntity> ELECTRICAL_CONNECTOR = REGISTRATE
+            .blockEntity("electrical_connector", ElectricalConnectorBlockEntity::new)
+            .validBlocks(NewAgeBlocks.ELECTRICAL_CONNECTOR)
+            .renderer(() -> ElectricalConnectorRenderer::new)
             .register();
 
     public static void load() {  }

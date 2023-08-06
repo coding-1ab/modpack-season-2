@@ -7,6 +7,7 @@ import com.simibubi.create.foundation.utility.Lang;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
 import earth.terrarium.botarium.common.energy.impl.ExtractOnlyEnergyContainer;
 import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
+import earth.terrarium.botarium.common.energy.util.EnergyHooks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,7 +22,6 @@ import org.antarcticgardens.newage.tools.StringFormattingTool;
 import java.util.List;
 
 public class CarbonBrushesBlockEntity extends KineticBlockEntity implements BotariumEnergyBlock<WrappedBlockEnergyContainer>, IHaveGoggleInformation {
-
     private final WrappedBlockEnergyContainer energyContainer;
 
     private int lastOutput = 0;
@@ -93,6 +93,8 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
             if (processBlockEntityAt(worldPosition.relative(axis, -i), coilAmount))
                 coilAmount++;
         }
+
+        EnergyHooks.distributeEnergyNearby(this);
     }
 
     @Override

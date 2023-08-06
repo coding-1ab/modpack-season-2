@@ -14,11 +14,16 @@ public class StringFormattingTool {
 
     public static String formatLong(long l) {
         int d = 0;
-        while (l >= 1000 && d < postfixes.length) {
-            l/=1000;
+        double number = l;
+        while (number >= 1000 && d < postfixes.length) {
+            number /= 1000;
             d++;
         }
-        return l + postfixes[d];
+
+        if (l >= 1000 && l < 100000)
+            return String.format("%.1f%s", number, postfixes[d]);
+
+        return number + postfixes[d];
     }
 
 
