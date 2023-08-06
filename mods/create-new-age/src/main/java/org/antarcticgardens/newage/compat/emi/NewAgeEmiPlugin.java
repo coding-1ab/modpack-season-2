@@ -19,6 +19,8 @@ public class NewAgeEmiPlugin implements EmiPlugin {
     public static final EmiStack ENERGISING_WORKSTATION = EmiStack.of(NewAgeBlocks.ENERGISER_T1.asItem().getDefaultInstance());
     public static final EmiStack ENERGISING_WORKSTATION_2 = EmiStack.of(NewAgeBlocks.ENERGISER_T2.asItem().getDefaultInstance());
 
+    public static final EmiStack ENERGISING_WORKSTATION_3 = EmiStack.of(NewAgeBlocks.ENERGISER_T3.asItem().getDefaultInstance());
+
     public static final EmiRecipeCategory ENERGISING
             = new EmiRecipeCategory(new ResourceLocation(CreateNewAge.MOD_ID, "energising"), ENERGISING_WORKSTATION, new EmiTexture(ENERGISING_SPRITE_SHEET, 0, 0, 16, 16));
     @Override
@@ -26,6 +28,8 @@ public class NewAgeEmiPlugin implements EmiPlugin {
         registry.addCategory(ENERGISING);
         registry.addWorkstation(ENERGISING, ENERGISING_WORKSTATION);
         registry.addWorkstation(ENERGISING, ENERGISING_WORKSTATION_2);
+        registry.addWorkstation(ENERGISING, ENERGISING_WORKSTATION_3);
+
 
 
         RecipeManager manager = registry.getRecipeManager();

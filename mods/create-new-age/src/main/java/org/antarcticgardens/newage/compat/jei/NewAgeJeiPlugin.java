@@ -42,6 +42,8 @@ public class NewAgeJeiPlugin implements IModPlugin {
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(NewAgeBlocks.ENERGISER_T1.asStack(), energisingType);
         registration.addRecipeCatalyst(NewAgeBlocks.ENERGISER_T2.asStack(), energisingType);
+        registration.addRecipeCatalyst(NewAgeBlocks.ENERGISER_T3.asStack(), energisingType);
+
 
     }
 }
