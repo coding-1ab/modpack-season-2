@@ -16,11 +16,10 @@ import java.util.stream.Collectors;
 
 public class EnergiserBehaviour extends BeltProcessingBehaviour {
 
-    private final long maxAbsorptionSpeed;
+    public long maxAbsorptionSpeed;
     public EnergiserBlockEntity be;
-    public EnergiserBehaviour(EnergiserBlockEntity be, long maxAbsorptionSpeed) {
+    public EnergiserBehaviour(EnergiserBlockEntity be) {
         super(be);
-        this.maxAbsorptionSpeed = maxAbsorptionSpeed;
         whenItemEnters(this::itemEnter);
         whileItemHeld(this::itemHeld);
         this.be = be;
@@ -44,12 +43,15 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
 
     public EnergisingRecipe currentRecipe;
     public long charged;
-
     public long needed;
+
+    private boolean shouldCreateParticles = false;
+
     @Override
     public void read(CompoundTag nbt, boolean clientPacket) {
         charged = nbt.getLong("charged");
         needed = nbt.getLong("needed");
+        shouldCreateParticles = nbt.getBoolean("shouldCreateParticles");
         super.read(nbt, clientPacket);
     }
 
@@ -57,12 +59,14 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
     public void write(CompoundTag nbt, boolean clientPacket) {
         nbt.putLong("charged", charged);
         nbt.putLong("needed", needed);
+        nbt.putBoolean("shouldCreateParticles",shouldCreateParticles);
+        if (clientPacket)
+            shouldCreateParticles = false;
         super.write(nbt, clientPacket);
     }
 
     public long sinceUpdate = 0;
 
-    private boolean prv = false;
     @Override
     public void tick() {
         super.tick();
@@ -75,6 +79,7 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
                 needed = 0;
             }
         }
+
         be.lastCharged = -1;
 
         if (needed > 0) {
@@ -89,9 +94,8 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
             be.size = Math.clamp(0, 1, be.size);
             if (needed > 0 && charged > 0) {
                 be.size = (float) Math.lerp(be.size, (float) charged / needed, 0.6);
-                prv = true;
-            } else if(prv) {
-                prv = false;
+            } else if(shouldCreateParticles) {
+                shouldCreateParticles = false;
                 var rand = be.getLevel().getRandom();
                 for (int i = 0 ; i < 6 ; i++) {
                     be.getLevel().addParticle(ParticleTypes.GLOW,
@@ -111,6 +115,9 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
     }
 
     private ProcessingResult itemHeld(TransportedItemStack transportedItemStack, TransportedItemStackHandlerBehaviour handler) {
+        if (currentRecipe == null) {
+            currentRecipe = getRecipe(transportedItemStack.stack);
+        }
         if (be.getSpeed() == 0 || currentRecipe == null || be.getLevel() == null) {
             return ProcessingResult.PASS;
         }
@@ -140,6 +147,7 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
                 handler.handleProcessingOnItem(transportedItemStack,
                         TransportedItemStackHandlerBehaviour.TransportedResult.convertTo(out));
             }
+            shouldCreateParticles = true;
             blockEntity.sendData();
             return ProcessingResult.PASS;
         }

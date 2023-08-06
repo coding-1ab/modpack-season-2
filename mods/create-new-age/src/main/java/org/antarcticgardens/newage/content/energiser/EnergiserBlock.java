@@ -41,6 +41,8 @@ public class EnergiserBlock extends HorizontalKineticBlock implements IBE<Energi
         this.entry = entry;
     }
 
+
+
     @Override
     public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter worldIn, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         if (context instanceof EntityCollisionContext && ((EntityCollisionContext) context).getEntity() instanceof Player)

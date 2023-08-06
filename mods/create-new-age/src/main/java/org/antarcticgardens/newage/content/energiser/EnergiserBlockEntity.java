@@ -8,10 +8,11 @@ import earth.terrarium.botarium.common.energy.impl.SimpleEnergyContainer;
 import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
@@ -21,12 +22,19 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
 
     public int tier;
     public float size = 0f;
+    private EnergiserBehaviour energisingBehaviour;
 
     public EnergiserBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int tier) {
         super(type, pos, state);
         energy = new WrappedBlockEnergyContainer(
                 this, new SimpleEnergyContainer((long) (Math.pow(10, tier) * 1000)));
         this.tier = tier;
+        this.energisingBehaviour.maxAbsorptionSpeed = (int)Math.pow(2, tier*2);
+    }
+
+    protected AABB createRenderBoundingBox() {
+        var pos = new Vec3(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
+        return new AABB(pos.add(-1, -3, -1), pos.add(1, 1, 1));
     }
 
     public static EnergiserBlockEntity newTier1(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -43,7 +51,8 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
-        behaviours.add(new EnergiserBehaviour(this, (int)Math.pow(2, tier*2)));
+        energisingBehaviour = new EnergiserBehaviour(this);
+        behaviours.add(energisingBehaviour);
     }
 
     public long lastCharged = -1;
