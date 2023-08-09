@@ -163,6 +163,10 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
 
     @Override
     public float calculateAddedStressCapacity() {
+        if (level != null && level.isClientSide()) {
+            return this.lastCapacityProvided;
+        }
+
         this.lastCapacityProvided = actualStress / actualSpeed;
         this.lastCapacityProvided = Float.isNaN(this.lastCapacityProvided) || Float.isInfinite(this.lastCapacityProvided) ? 0 : Math.abs(this.lastCapacityProvided);
         return this.lastCapacityProvided;
@@ -209,12 +213,12 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
         super.tick();
 
         if (!level.isClientSide()) {
-            float needed = (float) Math.ceil((stressImpact) * Configurations.SU_TO_ENERGY);
+            int needed = (int) Math.ceil((stressImpact) * Configurations.SU_TO_ENERGY);
 
-            e = energy.extractEnergy((long)Math.ceil(needed), false);
+            e = energy.extractEnergy(needed, false);
             if (e > 0) {
                 actualSpeed = speedBehavior.value;
-                actualStress = stressImpact * (e / needed);
+                actualStress = (float) Math.ceil(stressImpact * (e / (float)needed));
             } else {
                 actualSpeed = 0;
                 actualStress = 0;
