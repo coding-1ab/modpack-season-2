@@ -83,10 +83,17 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
     }
 
     private int calculateLighting(BlockEntity entity, Vector3f pos) {
-        BlockPos blockPos = new BlockPos(entity.getBlockPos()).offset((int) pos.x(), (int) pos.y(), (int) pos.z());
+        BlockPos blockPos = new BlockPos(entity.getBlockPos()).offset(ceil(pos.x()), ceil(pos.y()), ceil(pos.z()));
         int sky = entity.getLevel().getBrightness(LightLayer.SKY, blockPos);
         int block = entity.getLevel().getBrightness(LightLayer.BLOCK, blockPos);
         return LightTexture.pack(block, sky);
+    }
+
+    private int ceil(float a) {
+        if (a >= 0)
+            return (int) Math.ceil(a);
+        else
+            return (int) -Math.ceil(-a);
     }
 
     private double catenary(double x, double length) {
