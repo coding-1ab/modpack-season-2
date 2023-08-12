@@ -62,6 +62,14 @@
   "item.create_new_age.overcharged_iron": "Overcharged Iron",
   "item.create_new_age.overcharged_gold": "Overcharged Gold",
   "item.create_new_age.overcharged_diamond": "Overcharged Diamond",
+  "item.create_new_age.copper_wire": "Copper Wire",
+  "item.create_new_age.golden_wire": "Golden Wire",
+  "item.create_new_age.diamond_wire": "Diamond Wire",
+
+  "item.create_new_age.wire.message.self_connect": "You cannot connect a connector to itself",
+  "item.create_new_age.wire.message.too_far": "Too far away! Maximum wire length is 10 blocks",
+  "item.create_new_age.wire.message.already_connected": "These connectors are already connected",
+  "item.create_new_age.wire.message.unbound": "Unbound from connector",
 
 
   "tag.create_new_age.nuclear.hazmat_suit": "Hazmat Protection",
@@ -107,6 +115,4 @@
   "create_new_age.ponder.reactor.text_6": "One can avoid radiation by wearing leather armour or by completely encasing the nuclear reactor in Reactor Casing/Glass.",
 
   "create_new_age.ponder.reactor.text_7": "Additionally you must have something use the heat from the reactor, otherwise you will get a fun little meltdown."
-
-
 }

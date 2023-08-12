@@ -47,5 +47,13 @@ public class NewAgeItems {
             REGISTRATE.item("copper_wire", ElectricWireItem::newCopperWire)
                     .register();
 
+    public static final ItemEntry<ElectricWireItem> GOLDEN_WIRE =
+            REGISTRATE.item("golden_wire", ElectricWireItem::newGoldenWire)
+                    .register();
+
+    public static final ItemEntry<ElectricWireItem> DIAMOND_WIRE =
+            REGISTRATE.item("diamond_wire", ElectricWireItem::newDiamondWire)
+                    .register();
+
     public static void load() {  }
 }

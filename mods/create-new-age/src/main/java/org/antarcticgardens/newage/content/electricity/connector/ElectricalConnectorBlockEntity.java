@@ -4,6 +4,7 @@ import com.simibubi.create.foundation.utility.NBTHelper;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
 import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -12,6 +13,8 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Containers;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -108,14 +111,18 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
         if (!level.isClientSide())
             network.destroy();
 
-        for (ElectricalConnectorBlockEntity connector : connectors.keySet()) {
-            connector.disconnect(this);
-            connector.updateNetwork();
+        for (Map.Entry<ElectricalConnectorBlockEntity, WireType> e : connectors.entrySet()) {
+            e.getKey().disconnect(this);
+            e.getKey().updateNetwork();
 
-            connector.setChanged();
+            e.getKey().setChanged();
 
-            if (level instanceof ServerLevel serverLevel)
-                serverLevel.getChunkSource().blockChanged(connector.getBlockPos());
+            if (level instanceof ServerLevel serverLevel) {
+                serverLevel.getChunkSource().blockChanged(e.getKey().getBlockPos());
+
+                Containers.dropContents(level, getBlockPos(), NonNullList.of(ItemStack.EMPTY, e.getValue().getDroppedItem()));
+                System.out.println(level + " " + getBlockPos() + " " + e.getValue().getDroppedItem());
+            }
         }
     }
 
@@ -132,6 +139,10 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
         entity.setChanged();
         setChanged();
+    }
+
+    public boolean isConnected(BlockPos pos) {
+        return connectorPositions.containsKey(pos);
     }
 
     public void disconnect(ElectricalConnectorBlockEntity entity) {
