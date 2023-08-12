@@ -1,6 +1,5 @@
 package org.antarcticgardens.newage.content.electricity.wire;
 
-import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -9,7 +8,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
 
@@ -27,8 +25,12 @@ public class ElectricWireItem extends Item {
         return new ElectricWireItem(properties, WireType.COPPER);
     }
 
+    public static ElectricWireItem newIronWire(Properties properties) {
+        return new ElectricWireItem(properties, WireType.IRON);
+    }
+
     public static ElectricWireItem newGoldenWire(Properties properties) {
-        return new ElectricWireItem(properties, WireType.GOLDEN);
+        return new ElectricWireItem(properties, WireType.GOLD);
     }
 
     public static ElectricWireItem newDiamondWire(Properties properties) {

@@ -8,7 +8,6 @@ import org.antarcticgardens.newage.content.electricity.wire.ElectricWireItem;
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
 public class NewAgeItems {
-
     public static final ItemEntry<Item> OVERCHARGED_GOLD =
             REGISTRATE.item("overcharged_gold", Item::new)
                     .register();
@@ -43,16 +42,29 @@ public class NewAgeItems {
                     .register();
 
 
+    public static final ItemEntry<Item> OVERCHARGED_IRON_SHEET =
+            REGISTRATE.item("overcharged_iron_sheet", Item::new)
+                    .register();
+
+    public static final ItemEntry<Item> OVERCHARGED_GOLDEN_SHEET =
+            REGISTRATE.item("overcharged_golden_sheet", Item::new)
+                    .register();
+
+
     public static final ItemEntry<ElectricWireItem> COPPER_WIRE =
             REGISTRATE.item("copper_wire", ElectricWireItem::newCopperWire)
                     .register();
 
+    public static final ItemEntry<ElectricWireItem> IRON_WIRE =
+            REGISTRATE.item("overcharged_iron_wire", ElectricWireItem::newIronWire)
+                    .register();
+
     public static final ItemEntry<ElectricWireItem> GOLDEN_WIRE =
-            REGISTRATE.item("golden_wire", ElectricWireItem::newGoldenWire)
+            REGISTRATE.item("overcharged_golden_wire", ElectricWireItem::newGoldenWire)
                     .register();
 
     public static final ItemEntry<ElectricWireItem> DIAMOND_WIRE =
-            REGISTRATE.item("diamond_wire", ElectricWireItem::newDiamondWire)
+            REGISTRATE.item("overcharged_diamond_wire", ElectricWireItem::newDiamondWire)
                     .register();
 
     public static void load() {  }

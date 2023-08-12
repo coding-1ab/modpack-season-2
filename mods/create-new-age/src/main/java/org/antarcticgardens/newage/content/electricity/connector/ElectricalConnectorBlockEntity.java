@@ -121,7 +121,6 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
                 serverLevel.getChunkSource().blockChanged(e.getKey().getBlockPos());
 
                 Containers.dropContents(level, getBlockPos(), NonNullList.of(ItemStack.EMPTY, e.getValue().getDroppedItem()));
-                System.out.println(level + " " + getBlockPos() + " " + e.getValue().getDroppedItem());
             }
         }
     }
