@@ -3,6 +3,7 @@ package org.antarcticgardens.newage.content.electricity.wire;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,13 +25,30 @@ public class ElectricWireItem extends Item {
         return new ElectricWireItem(properties, WireType.COPPER);
     }
 
+    public static ElectricWireItem newIronWire(Properties properties) {
+        return new ElectricWireItem(properties, WireType.IRON);
+    }
+
+    public static ElectricWireItem newGoldenWire(Properties properties) {
+        return new ElectricWireItem(properties, WireType.GOLD);
+    }
+
+    public static ElectricWireItem newDiamondWire(Properties properties) {
+        return new ElectricWireItem(properties, WireType.DIAMOND);
+    }
+
     @Override
     public InteractionResult useOn(UseOnContext context) {
         BlockEntity clickedEntity = context.getLevel().getBlockEntity(context.getClickedPos());
+        BlockPos boundToPos = getBoundConnector(context.getItemInHand());
+
+        if (boundToPos != null && context.getPlayer().isShiftKeyDown()) {
+            context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.unbound"), true);
+            context.getItemInHand().removeTagKey("boundTo");
+            return InteractionResult.SUCCESS;
+        }
 
         if (clickedEntity instanceof ElectricalConnectorBlockEntity clickedConnector) {
-            BlockPos boundToPos = getBoundConnector(context.getItemInHand());
-
             if (boundToPos == null) {
                 setBoundConnector(context.getItemInHand(), clickedConnector);
                 return InteractionResult.SUCCESS;
@@ -38,11 +56,15 @@ public class ElectricWireItem extends Item {
                 BlockPos clickedPos = clickedConnector.getBlockPos();
 
                 if (boundToPos.equals(clickedPos)) {
-                    System.out.println("1");
+                    context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.self_connect"), true);
                     context.getItemInHand().removeTagKey("boundTo");
                     return InteractionResult.FAIL;
                 } else if (!clickedPos.closerThan(boundToPos, MAX_DISTANCE)) {
-                    System.out.println("2");
+                    context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far"), true);
+                    return InteractionResult.FAIL;
+                } else if (clickedConnector.isConnected(boundToPos)) {
+                    context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.already_connected"), true);
+                    context.getItemInHand().removeTagKey("boundTo");
                     return InteractionResult.FAIL;
                 }
 
@@ -51,11 +73,13 @@ public class ElectricWireItem extends Item {
                 if (boundToEntity instanceof ElectricalConnectorBlockEntity boundToConnector) {
                     context.getItemInHand().removeTagKey("boundTo");
                     boundToConnector.connect(clickedConnector, wireType);
+
+                    if (!context.getPlayer().isCreative())
+                        context.getItemInHand().shrink(1);
+
                     return InteractionResult.CONSUME;
-                } else {
-                    System.out.println("3");
+                } else
                     return InteractionResult.FAIL;
-                }
             }
         }
 
