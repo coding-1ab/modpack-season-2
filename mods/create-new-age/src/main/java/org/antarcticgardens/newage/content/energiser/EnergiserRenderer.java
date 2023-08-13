@@ -22,8 +22,8 @@ public class EnergiserRenderer extends KineticBlockEntityRenderer<EnergiserBlock
             float scaler = (1-be.size * 0.12f) * 0.5f;
             var buf = CachedBufferer.block(Blocks.WHITE_CONCRETE.defaultBlockState());
             buf.color(100, 150, 200, 200)
-                    .translate(scaler, -1.35, scaler)
-                    .scale(be.size * 0.12f, 1.0f, be.size * 0.12f)
+                    .translate(scaler, -1.3, scaler)
+                    .scale(be.size * 0.12f, 0.8f, be.size * 0.12f)
                     .renderInto(ms, consumer);
         }
     }
