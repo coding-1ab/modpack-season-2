@@ -138,6 +138,11 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
         entity.setChanged();
         setChanged();
+
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.getChunkSource().blockChanged(entity.getBlockPos());
+            serverLevel.getChunkSource().blockChanged(getBlockPos());
+        }
     }
 
     public boolean isConnected(BlockPos pos) {
