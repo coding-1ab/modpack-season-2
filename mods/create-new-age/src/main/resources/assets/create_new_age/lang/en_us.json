@@ -1,5 +1,5 @@
 {
-  "recipe.assembly.energising": "Energising",
+  "recipe.assembly.energising": "Energizing",
   "create.tooltip.create_new_age.energy_stored": "Energy Stored: ",
   "create.tooltip.create_new_age.energy_stats": "Energy Stats: ",
   "create.tooltip.create_new_age.energy_usage": "Energy Usage: ",
@@ -7,7 +7,7 @@
   "create.tooltip.create_new_age.energy": "%s ⚡",
   "create.tooltip.create_new_age.max_speed": "Maximum Speed: ",
   "create.tooltip.create_new_age.temperature": "%s ˚T",
-  "create.tooltip.create_new_age.rpm": "%s rpm",
+  "create.tooltip.create_new_age.rpm": "%s RPM",
   "create.tooltip.create_new_age.temperature.ps": "%s ˚T/s",
   "create.tooltip.create_new_age.pump": "Pumping: ",
   "create.tooltip.create_new_age.energy_per_second": "%s ⚡/s",
@@ -26,9 +26,9 @@
 
 
   "tab.create_new_age.tab": "Create: New Age",
-  "block.create_new_age.energiser_t1": "Basic Energiser",
-  "block.create_new_age.energiser_t2": "Advanced Energiser",
-  "block.create_new_age.energiser_t3": "Reinforced Energiser",
+  "block.create_new_age.energiser_t1": "Basic Energizer",
+  "block.create_new_age.energiser_t2": "Advanced Energizer",
+  "block.create_new_age.energiser_t3": "Reinforced Energizer",
   "block.create_new_age.carbon_brushes": "Brushes",
   "block.create_new_age.heat_pipe": "Heat Pipe",
   "block.create_new_age.heat_pump": "Heat Pump",
@@ -66,7 +66,7 @@
   "item.create_new_age.overcharged_golden_sheet": "Overcharged Golden Sheet",
   "item.create_new_age.copper_wire": "Copper Wire",
   "item.create_new_age.overcharged_iron_wire": "Overcharged Iron Wire",
-  "item.create_new_age.overcharged_golden_wire": "Overcharged Gold Wire",
+  "item.create_new_age.overcharged_golden_wire": "Overcharged Golden Wire",
   "item.create_new_age.overcharged_diamond_wire": "Overcharged Diamond Wire",
 
   "item.create_new_age.wire.message.self_connect": "You cannot connect a connector to itself",
@@ -77,7 +77,7 @@
 
   "tag.create_new_age.nuclear.hazmat_suit": "Hazmat Protection",
   "tag.create_new_age.nuclear.is_nuclear_fuel": "Nuclear Fuel",
-  "emi.category.create_new_age.energising": "Energising",
+  "emi.category.create_new_age.energising": "Energizing",
 
   "create_new_age.ponder.heating.header": "Heating System",
 
