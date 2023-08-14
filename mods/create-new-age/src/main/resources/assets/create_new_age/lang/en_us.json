@@ -29,7 +29,7 @@
   "block.create_new_age.energiser_t1": "Basic Energizer",
   "block.create_new_age.energiser_t2": "Advanced Energizer",
   "block.create_new_age.energiser_t3": "Reinforced Energizer",
-  "block.create_new_age.carbon_brushes": "Brushes",
+  "block.create_new_age.carbon_brushes": "Carbon Brushes",
   "block.create_new_age.heat_pipe": "Heat Pipe",
   "block.create_new_age.heat_pump": "Heat Pump",
   "block.create_new_age.heater": "Boiler Heater",
@@ -70,7 +70,7 @@
   "item.create_new_age.overcharged_diamond_wire": "Overcharged Diamond Wire",
 
   "item.create_new_age.wire.message.self_connect": "You cannot connect a connector to itself",
-  "item.create_new_age.wire.message.too_far": "Too far away! Maximum wire length is 10 blocks",
+  "item.create_new_age.wire.message.too_far": "Too far away! Maximum wire length is %d blocks",
   "item.create_new_age.wire.message.already_connected": "These connectors are already connected",
   "item.create_new_age.wire.message.unbound": "Unbound from connector",
 
@@ -115,7 +115,7 @@
 
   "create_new_age.ponder.reactor.text_5": "However as one uses the nuclear reactor they must be careful as the nuclear reactor emits deadly radiation.",
 
-  "create_new_age.ponder.reactor.text_6": "One can avoid radiation by wearing leather armour or by completely encasing the nuclear reactor in Reactor Casing/Glass.",
+  "create_new_age.ponder.reactor.text_6": "One can avoid radiation by wearing leather armor or by completely encasing the nuclear reactor in Reactor Casing/Glass.",
 
   "create_new_age.ponder.reactor.text_7": "Additionally you must have something use the heat from the reactor, otherwise you will get a fun little meltdown."
 }
