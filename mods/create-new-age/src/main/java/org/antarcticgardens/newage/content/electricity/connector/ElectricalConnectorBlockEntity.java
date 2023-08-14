@@ -44,9 +44,9 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
     protected void saveAdditional(CompoundTag nbt) {
         ListTag list = new ListTag();
 
-        for (Map.Entry<ElectricalConnectorBlockEntity, WireType> e : connectors.entrySet()) {
+        for (Map.Entry<BlockPos, WireType> e : connectorPositions.entrySet()) {
             CompoundTag compound = new CompoundTag();
-            compound.put("position", NBTHelper.writeVec3i(e.getKey().getBlockPos()));
+            compound.put("position", NBTHelper.writeVec3i(e.getKey()));
             compound.put("wire", StringTag.valueOf(e.getValue().name()));
 
             list.add(compound);
