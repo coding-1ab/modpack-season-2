@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 import org.antarcticgardens.newage.NewAgeRenderTypes;
 import org.antarcticgardens.newage.content.electricity.wire.ElectricWireItem;
 import org.antarcticgardens.newage.content.electricity.wire.WireType;
@@ -62,6 +63,11 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
 
             poseStack.popPose();
         }
+    }
+
+    @Override
+    public boolean shouldRenderOffScreen(ElectricalConnectorBlockEntity blockEntity) {
+        return true;
     }
 
     private int calculateLighting(BlockEntity entity, Vector3f pos, Vector3f pos1) {
