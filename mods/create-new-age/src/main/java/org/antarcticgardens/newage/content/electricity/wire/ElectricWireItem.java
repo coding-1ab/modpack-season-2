@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
 
 public class ElectricWireItem extends Item {
-    public static final double MAX_DISTANCE = 10.0;
+    public static final double MAX_DISTANCE = 16.0;
 
     private final WireType wireType;
 
@@ -60,7 +60,7 @@ public class ElectricWireItem extends Item {
                     context.getItemInHand().removeTagKey("boundTo");
                     return InteractionResult.FAIL;
                 } else if (!clickedPos.closerThan(boundToPos, MAX_DISTANCE)) {
-                    context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far"), true);
+                    context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far", MAX_DISTANCE), true);
                     return InteractionResult.FAIL;
                 } else if (clickedConnector.isConnected(boundToPos)) {
                     context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.already_connected"), true);
