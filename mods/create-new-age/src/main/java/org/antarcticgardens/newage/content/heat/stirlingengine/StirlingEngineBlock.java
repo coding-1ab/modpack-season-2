@@ -10,11 +10,15 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class StirlingEngineBlock extends RotatedPillarKineticBlock implements IBE<StirlingEngineBlockEntity> {
@@ -54,6 +58,14 @@ public class StirlingEngineBlock extends RotatedPillarKineticBlock implements IB
             playRotateSound(world, context.getClickedPos());
 
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return switch (state.getValue(AXIS)) {
+            case X -> Block.box(0.0, 0.0, 2.0, 16.0, 14.0, 14.0);
+            default -> Block.box(2.0, 0.0, 0.0, 14.0, 14.0, 16.0);
+        };
     }
 
     @Override
