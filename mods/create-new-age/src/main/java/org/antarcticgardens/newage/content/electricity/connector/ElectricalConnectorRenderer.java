@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.Vec3;
+import org.antarcticgardens.newage.Configurations;
 import org.antarcticgardens.newage.NewAgeRenderTypes;
 import org.antarcticgardens.newage.content.electricity.wire.ElectricWireItem;
 import org.antarcticgardens.newage.content.electricity.wire.WireType;
@@ -19,8 +19,6 @@ import org.joml.Vector3f;
 import java.util.Map;
 
 public class ElectricalConnectorRenderer implements BlockEntityRenderer<ElectricalConnectorBlockEntity> {
-    public static final int WIRE_SECTIONS_PER_METER = 10;
-    public static final float WIRE_THICKNESS = 0.03f;
 
     public ElectricalConnectorRenderer(BlockEntityRendererProvider.Context context) {
         super();
@@ -51,7 +49,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
             Vector3f lastSection = from;
             Vector3f direction = new Vector3f(to).sub(from).normalize();
             float distance = to.distance(from);
-            int sections = (int) Math.ceil(distance * WIRE_SECTIONS_PER_METER);
+            int sections = (int) Math.ceil(distance * Configurations.WIRE_SECTIONS_PER_METER);
             float perSection = distance / sections;
 
             for (int i = 0; i <= sections; i++) {
@@ -104,7 +102,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
         int b = color[2];
         int z = color[3];
 
-        float f = WIRE_THICKNESS / 2;
+        float f = Configurations.WIRE_THICKNESS / 2;
         float distance = from.distance(to);
 
         consumer.vertex(pose, -f, -f, 0.0f).color(r, g, b, z).uv2(light).endVertex();

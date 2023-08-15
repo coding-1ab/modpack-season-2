@@ -8,6 +8,8 @@ import java.util.Map;
 
 public class Configurations {
 
+    public static int WIRE_SECTIONS_PER_METER = 10;
+    public static float WIRE_THICKNESS = 0.03f;
     public static int MAX_RODS_IN_DIRECTION = 32;
 
     public static float SU_TO_ENERGY = 0.01f; // 0.2 energy per 1 su/s
@@ -41,6 +43,11 @@ public class Configurations {
                     
                     # How many coils can the carbon brushes collect energy from
                     MAX_COILS %s
+                    
+                    # Wire rendering settings
+                    # settings this number to a lower number will improve fps
+                    WIRE_SECTIONS_PER_METER 10
+                    WIRE_THICKNESS 0.03
                     """,
                     SU_TO_ENERGY,
                     MAX_RODS_IN_DIRECTION,
@@ -51,15 +58,11 @@ public class Configurations {
         for (Map.Entry<String, String> entry : configs.entrySet()) {
             try {
                 switch (entry.getKey()) {
-                    case "MAX_RODS_IN_DIRECTION":
-                        MAX_RODS_IN_DIRECTION = Integer.parseInt(entry.getValue());
-                        break;
-                    case "SU_TO_ENERGY":
-                        SU_TO_ENERGY = Float.parseFloat(entry.getValue());
-                        break;
-                    case "MAX_COILS":
-                        MAX_COILS = Integer.parseInt(entry.getValue());
-                        break;
+                    case "MAX_RODS_IN_DIRECTION" -> MAX_RODS_IN_DIRECTION = Integer.parseInt(entry.getValue());
+                    case "SU_TO_ENERGY" -> SU_TO_ENERGY = Float.parseFloat(entry.getValue());
+                    case "MAX_COILS" -> MAX_COILS = Integer.parseInt(entry.getValue());
+                    case "WIRE_SECTIONS_PER_METER" -> WIRE_SECTIONS_PER_METER = Integer.parseInt(entry.getValue());
+                    case "WIRE_THICKNESS" -> WIRE_THICKNESS = Float.parseFloat(entry.getValue());
                 }
             } catch (Exception e) {
                 CreateNewAge.LOGGER.error("Error setting " + entry.getKey() + " to " + entry.getValue(), e);
