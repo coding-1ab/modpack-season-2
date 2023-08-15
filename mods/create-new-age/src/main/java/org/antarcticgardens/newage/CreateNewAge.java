@@ -1,5 +1,6 @@
 package org.antarcticgardens.newage;
 
+import com.simibubi.create.content.contraptions.ContraptionMovementSetting;
 import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeSerializer;
 import com.simibubi.create.foundation.data.CreateRegistrate;
@@ -22,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 
 import static org.antarcticgardens.newage.content.heat.heater.HeaterBlock.STRENGTH;
 
@@ -69,6 +71,7 @@ public class CreateNewAge implements ModInitializer {
 		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES, ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation("create_new_age","ore_thorium")));
 		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES, ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation("create_new_age","magnetite")));
 
+		ContraptionMovementSetting.register(NewAgeBlocks.ELECTRICAL_CONNECTOR.get(), () -> ContraptionMovementSetting.UNMOVABLE);
 	}
 
 	private void registerCreativeTab() {
