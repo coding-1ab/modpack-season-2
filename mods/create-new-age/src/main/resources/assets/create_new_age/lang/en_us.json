@@ -117,5 +117,11 @@
 
   "create_new_age.ponder.reactor.text_6": "One can avoid radiation by wearing leather armor or by completely encasing the nuclear reactor in Reactor Casing/Glass.",
 
-  "create_new_age.ponder.reactor.text_7": "Additionally you must have something use the heat from the reactor, otherwise you will get a fun little meltdown."
+  "create_new_age.ponder.reactor.text_7": "Additionally you must have something use the heat from the reactor, otherwise you will get a fun little meltdown.",
+
+  "create_new_age.ponder.energiser.header": "Energizer",
+
+  "create_new_age.ponder.energiser.text_1": "When provided with electricity and rotation, the Energizer will energize items in depots and on belts under it."
+
+
 }
