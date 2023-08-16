@@ -20,10 +20,10 @@ public class StringFormattingTool {
             d++;
         }
 
-        if (l >= 1000 && l < 100000)
+        if (l >= 1000 && Math.floor(number) != number)
             return String.format("%.1f%s", number, postfixes[d]);
 
-        return number + postfixes[d];
+        return (int)number + postfixes[d];
     }
 
 
