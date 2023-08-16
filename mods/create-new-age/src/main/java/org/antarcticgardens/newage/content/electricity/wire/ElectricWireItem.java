@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -60,6 +61,18 @@ public class ElectricWireItem extends Item {
             return InteractionResultHolder.success(item);
         }
         return InteractionResultHolder.pass(item);
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+        if (isSelected) {
+            BlockPos boundToPos = getBoundConnector(stack);
+            if (boundToPos == null)
+                return;
+            if (!(level.getBlockEntity(boundToPos) instanceof ElectricalConnectorBlockEntity)) {
+                stack.removeTagKey("boundTo");
+            }
+        }
     }
 
     @Override
