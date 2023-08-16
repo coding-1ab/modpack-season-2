@@ -9,10 +9,12 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.antarcticgardens.newage.Configurations;
 import org.antarcticgardens.newage.NewAgeRenderTypes;
@@ -72,7 +74,16 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                 BlockPos bound = wire.getBoundConnector(itemInHand);
 
                 if (bound != null && bound.equals(blockEntity.getBlockPos())) {
-                    Vec3 playerPos = player.getEyePosition(partialTick).add(player.getViewVector(partialTick).normalize().scale(2.0f));
+                    HitResult hit = player.pick(Minecraft.getInstance().gameMode.getPickRange(), partialTick, false);
+                    Vec3 eyePos = player.getEyePosition(partialTick);
+                    Vec3 playerPos = eyePos.add(player.getViewVector(partialTick).normalize().scale(2.0f));
+
+                    if (hit instanceof BlockHitResult blockHit) {
+                        Vec3 vec = eyePos.add(blockHit.getLocation().subtract(eyePos).scale(0.9f));
+
+                        if (eyePos.distanceTo(playerPos) > eyePos.distanceTo(vec))
+                            playerPos = vec;
+                    }
 
                     Vector3f to = new Vector3f(
                             (float) (playerPos.x - pos.getX() - 0.5),
@@ -80,7 +91,9 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                             (float) (playerPos.z - pos.getZ() - 0.5)
                     );
 
-                    if (!playerPos.closerThan(new Vec3(bound.getX(), bound.getY(), bound.getZ()), ElectricWireItem.MAX_DISTANCE * 2))
+                    double distance = playerPos.distanceToSqr(bound.getX(), bound.getY(), bound.getZ());
+
+                    if (distance > Mth.square(ElectricWireItem.MAX_DISTANCE * 2))
                         return;
 
                     int[] color1 = wire.getWireType().getColor1();
@@ -88,7 +101,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                     color1[3] = HELD_OPACITY;
                     color2[3] = HELD_OPACITY;
 
-                    if (Minecraft.getInstance().gameMode != null && player.pick(Minecraft.getInstance().gameMode.getPickRange(), partialTick, false) instanceof BlockHitResult blockHit) {
+                    if (Minecraft.getInstance().gameMode != null && hit instanceof BlockHitResult blockHit) {
                         if (blockEntity.getLevel().getBlockEntity(blockHit.getBlockPos()) instanceof ElectricalConnectorBlockEntity connector) {
                             if (connector.isConnected(blockEntity.getBlockPos()))
                                 return;
@@ -99,11 +112,13 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                                     blockHit.getBlockPos().getZ() - pos.getZ()
                             );
 
-                            if (!connector.getBlockPos().closerThan(blockEntity.getBlockPos(), ElectricWireItem.MAX_DISTANCE)) {
-                                color1 = TOO_LONG1;
-                                color2 = TOO_LONG2;
-                            }
+                            distance = connector.getBlockPos().distSqr(blockEntity.getBlockPos());
                         }
+                    }
+
+                    if (distance > Mth.square(ElectricWireItem.MAX_DISTANCE)) {
+                        color1 = TOO_LONG1;
+                        color2 = TOO_LONG2;
                     }
 
                     poseStack.pushPose();
