@@ -4,6 +4,7 @@ import com.simibubi.create.content.kinetics.belt.BeltHelper;
 import com.simibubi.create.content.kinetics.belt.behaviour.BeltProcessingBehaviour;
 import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
+import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
@@ -12,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import org.joml.Math;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class EnergiserBehaviour extends BeltProcessingBehaviour {
@@ -29,7 +31,15 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
         if (be.getLevel() == null) {
             return null;
         }
-        
+
+        Optional<EnergisingRecipe> assemblyRecipe =
+                SequencedAssemblyRecipe.getRecipe(getWorld(), stack, EnergisingRecipe.type.getType(), EnergisingRecipe.class);
+
+
+        if (assemblyRecipe.isPresent()) {
+            return assemblyRecipe.get();
+        }
+
         List<EnergisingRecipe> recipes = be.getLevel().getRecipeManager().getAllRecipesFor(EnergisingRecipe.type.getType());
 
         for (EnergisingRecipe recipe : recipes) {

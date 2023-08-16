@@ -57,6 +57,7 @@
   "item.create_new_age.nuclear_fuel": "Nuclear Fuel",
   "item.create_new_age.incomplete_fuel": "Incomplete Nuclear Fuel",
   "item.create_new_age.incomplete_casing": "Incomplete Reactor Casing",
+  "item.create_new_age.incomplete_wire": "Incomplete Wire",
   "item.create_new_age.thorium": "Thorium",
   "item.create_new_age.radioactive_thorium": "Radioactive Thorium",
   "item.create_new_age.overcharged_iron": "Overcharged Iron",
@@ -122,6 +123,5 @@
   "create_new_age.ponder.energiser.header": "Energizer",
 
   "create_new_age.ponder.energiser.text_1": "When provided with electricity and rotation, the Energizer will energize items in depots and on belts under it."
-
 
 }
