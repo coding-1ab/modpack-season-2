@@ -28,10 +28,8 @@ import java.util.Map;
 public class ElectricalConnectorRenderer implements BlockEntityRenderer<ElectricalConnectorBlockEntity> {
     public static final float SAG_FACTOR = 0.92f;
 
-    public static final int HELD_OPACITY = 128;
-
-    public static final int[] TOO_LONG1 = { 204, 0, 0, HELD_OPACITY };
-    public static final int[] TOO_LONG2 = { 150, 0, 0, HELD_OPACITY };
+    public static final int[] TOO_LONG1 = { 204, 0, 0, 255 };
+    public static final int[] TOO_LONG2 = { 150, 0, 0, 255 };
 
     public ElectricalConnectorRenderer(BlockEntityRendererProvider.Context context) {
         super();
@@ -98,8 +96,6 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
 
                     int[] color1 = wire.getWireType().getColor1();
                     int[] color2 = wire.getWireType().getColor2();
-                    color1[3] = HELD_OPACITY;
-                    color2[3] = HELD_OPACITY;
 
                     if (Minecraft.getInstance().gameMode != null && hit instanceof BlockHitResult blockHit) {
                         if (blockEntity.getLevel().getBlockEntity(blockHit.getBlockPos()) instanceof ElectricalConnectorBlockEntity connector) {
