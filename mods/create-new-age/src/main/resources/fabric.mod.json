@@ -2,16 +2,17 @@
 	"schemaVersion": 1,
 	"id": "create-new-age",
 	"version": "${version}",
-	"name": "Create New Age",
-	"description": "TODO",
+	"name": "Create: New Age",
+	"description": "An addon for the Create mod that adds integration with electricity",
 	"authors": [
-		"TODO"
+		"Antarctic Gardens"
 	],
 	"contact": {
-		"homepage": "TODO",
-		"sources": "TODO"
+		"homepage": "http://antarcticgardens.org/",
+		"sources": "https://gitlab.com/antarcticgardens/create-new-age",
+		"issues": "https://gitlab.com/antarcticgardens/create-new-age/-/issues"
 	},
-	"license": "CC0-1.0",
+	"license": "BSD-3-Clause",
 	"icon": "assets/create_new_age/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -32,17 +33,14 @@
 		]
 	},
 	"mixins": [
-		"create_new_age.mixins.json",
-		{
-			"config": "create_new_age.client.mixins.json",
-			"environment": "client"
-		}
+		"create_new_age.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.14.21",
 		"minecraft": "~1.20.1",
 		"java": ">=17",
 		"fabric-api": "*",
-		"botarium": "*"
+		"botarium": "*",
+		"create": "*"
 	}
 }
