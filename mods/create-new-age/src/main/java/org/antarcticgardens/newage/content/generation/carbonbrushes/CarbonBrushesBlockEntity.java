@@ -76,21 +76,12 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
     public void tick() {
         super.tick();
         if (level == null || level.isClientSide) return;
-        Direction.Axis axis = getBlockState().getValue(DirectionalKineticBlock.FACING).getAxis();
+        Direction facing = getBlockState().getValue(DirectionalKineticBlock.FACING);
 
-        int coilAmount = 0;
+        int coilsLeft = Configurations.MAX_COILS;
         lastOutput = 0;
-
-        for (int i = 1; i <= Configurations.MAX_COILS; i++) {
-            if (coilAmount >= Configurations.MAX_COILS)
-                break;
-
-            if (processBlockEntityAt(worldPosition.relative(axis, i), coilAmount))
-                coilAmount++;
-
-            if (processBlockEntityAt(worldPosition.relative(axis, -i), coilAmount))
-                coilAmount++;
-        }
+        coilsLeft = processCoil(worldPosition, facing, coilsLeft);
+        processCoil(worldPosition, facing.getOpposite(), coilsLeft);
 
         EnergyHooks.distributeEnergyNearby(this);
     }
@@ -105,19 +96,20 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
         }
     }
 
-    private boolean processBlockEntityAt(BlockPos pos, int coilAmount) {
-        if (coilAmount >= Configurations.MAX_COILS)
-            return false;
+    private int processCoil(BlockPos pos, Direction dir, int left) {
+        if (left <= 0)
+            return 0;
+
+        pos = pos.relative(dir);
 
         if (level.getBlockEntity(pos) instanceof GeneratorCoilBlockEntity coil) {
             int energy = coil.takeGeneratedEnergy();
             lastOutput += energy;
             syncOut += energy;
             energyContainer.internalInsert(energy, false);
-            return true;
+            return processCoil(pos, dir, left-1);
         }
-
-        return false;
+        return left;
     }
 
     @Override
