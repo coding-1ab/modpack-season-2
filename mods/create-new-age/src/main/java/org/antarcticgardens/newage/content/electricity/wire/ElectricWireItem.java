@@ -6,7 +6,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -15,6 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -46,15 +50,22 @@ public class ElectricWireItem extends Item {
     }
 
     @Override
+    public InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, InteractionHand usedHand) {
+        ItemStack item = player.getItemInHand(usedHand);
+        BlockPos boundToPos = getBoundConnector(item);
+
+        if (boundToPos != null && player.isShiftKeyDown()) {
+            player.displayClientMessage(Component.translatable("item.create_new_age.wire.message.unbound"), true);
+            item.removeTagKey("boundTo");
+            return InteractionResultHolder.success(item);
+        }
+        return InteractionResultHolder.pass(item);
+    }
+
+    @Override
     public InteractionResult useOn(UseOnContext context) {
         BlockEntity clickedEntity = context.getLevel().getBlockEntity(context.getClickedPos());
         BlockPos boundToPos = getBoundConnector(context.getItemInHand());
-
-        if (boundToPos != null && context.getPlayer().isShiftKeyDown()) {
-            context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.unbound"), true);
-            context.getItemInHand().removeTagKey("boundTo");
-            return InteractionResult.SUCCESS;
-        }
 
         if (clickedEntity instanceof ElectricalConnectorBlockEntity clickedConnector) {
             if (boundToPos == null) {
