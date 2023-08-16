@@ -26,11 +26,11 @@ public enum WireType {
     }
 
     public int[] getColor1() {
-        return color1;
+        return color1.clone();
     }
 
     public int[] getColor2() {
-        return color2;
+        return color2.clone();
     }
 
     public ItemStack getDroppedItem() {

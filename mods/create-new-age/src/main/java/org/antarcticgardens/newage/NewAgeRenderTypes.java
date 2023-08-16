@@ -18,6 +18,7 @@ public class NewAgeRenderTypes extends RenderType {
                     .setTextureState(RenderStateShard.NO_TEXTURE)
                     .setCullState(RenderStateShard.NO_CULL)
                     .setLightmapState(RenderStateShard.LIGHTMAP)
+                    .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
                     .createCompositeState(false)
     );
 

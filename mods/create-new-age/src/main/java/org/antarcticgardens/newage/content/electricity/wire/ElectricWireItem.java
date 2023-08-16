@@ -118,13 +118,17 @@ public class ElectricWireItem extends Item {
         return InteractionResult.PASS;
     }
 
-    private BlockPos getBoundConnector(ItemStack stack) {
+    public BlockPos getBoundConnector(ItemStack stack) {
         CompoundTag tag = stack.getTagElement("boundTo");
 
         if (tag == null)
             return null;
 
         return NbtUtils.readBlockPos(tag);
+    }
+
+    public WireType getWireType() {
+        return wireType;
     }
 
     private void setBoundConnector(ItemStack stack, ElectricalConnectorBlockEntity connector) {
@@ -137,5 +141,4 @@ public class ElectricWireItem extends Item {
                 .component());
         tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy_per_second", StringFormattingTool.formatLong(wireType.getConductivity() * 20)).style(ChatFormatting.AQUA).component());
     }
-
 }
