@@ -12,7 +12,7 @@ public class Configurations {
     public static float WIRE_THICKNESS = 0.03f;
     public static int MAX_RODS_IN_DIRECTION = 32;
 
-    public static float SU_TO_ENERGY = 0.01f; // 0.2 energy per 1 su/s
+    public static float SU_TO_ENERGY = 0.029296875f;
 
     public static int MAX_COILS = 8;
 
@@ -35,7 +35,7 @@ public class Configurations {
             Files.write(f.toPath(), String.format(
                     """
                     # Responsible for how much energy is generated per 1 stress unit in a tick
-                    # Set this setting to 0.029296875 for compat with the default config of create: crafts and additions
+                    # Default [0.029296875] is supposed to be compatible with default config of create: crafts and additions
                     SU_TO_ENERGY %s
                     
                     # How many Reactor rods can a fuel inserter or a heat vent have into any one direction
@@ -46,12 +46,14 @@ public class Configurations {
                     
                     # Wire rendering settings
                     # settings this number to a lower number will improve fps
-                    WIRE_SECTIONS_PER_METER 10
-                    WIRE_THICKNESS 0.03
+                    WIRE_SECTIONS_PER_METER %s
+                    WIRE_THICKNESS %s
                     """,
                     SU_TO_ENERGY,
                     MAX_RODS_IN_DIRECTION,
-                    MAX_COILS
+                    MAX_COILS,
+                    WIRE_SECTIONS_PER_METER,
+                    WIRE_THICKNESS
             ).getBytes());
         }
 
