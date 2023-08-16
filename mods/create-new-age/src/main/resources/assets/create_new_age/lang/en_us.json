@@ -21,6 +21,7 @@
   "create.tooltip.create_new_age.stores":  "Stores: ",
   "create.tooltip.create_new_age.speed":  "Speed: ",
   "create.tooltip.create_new_age.efficiency":  "Efficiency: ",
+  "create.tooltip.create_new_age.transfers":  "Transfers: ",
   "create.tooltip.create_new_age.percent":  "%s%%",
   "create.tooltip.create_new_age.magnetic_force":  "Magnetic Force: ",
 
