@@ -13,7 +13,7 @@ public class ElectricalNetwork {
     private final List<ElectricalConnectorBlockEntity> nodes = new ArrayList<>();
     private final Map<ElectricalConnectorBlockEntity, BotariumEnergyBlock<?>> consumers = new HashMap<>();
 
-    private final ElectricalNetworkPathManager pathManager = new ElectricalNetworkPathManager(consumers);
+    private final ElectricalNetworkPathManager pathManager = new ElectricalNetworkPathManager();
 
     public ElectricalNetwork(ElectricalConnectorBlockEntity base) {
         nodes.add(base);
@@ -89,12 +89,15 @@ public class ElectricalNetwork {
                             NetworkPathConductivityContext context,
                             long amount,
                             boolean simulate) {
-        List<NetworkPath> paths = pathManager.findPaths(from, to.getKey());
+        NetworkPath path;
         long inserted = 0;
 
-        for (NetworkPath path : paths) {
+        while ((path = pathManager.findConductiblePath(from, to.getKey())) != null && inserted < amount) {
             long pathConductivity = context.calculatePathConductivity(path);
             long insertedThroughThisPath = to.getValue().getEnergyStorage().insertEnergy(Math.min(pathConductivity, amount - inserted), simulate);
+
+            if (insertedThroughThisPath == 0)
+                break;
 
             if (!simulate && insertedThroughThisPath > 0 && to.getValue() instanceof BlockEntity be) {
                 be.setChanged();
@@ -106,9 +109,6 @@ public class ElectricalNetwork {
 
             if (pathConductivity != 0)
                 context.decreasePathConductivity(path, insertedThroughThisPath);
-
-            if (inserted >= amount)
-                break;
         }
 
         return inserted;

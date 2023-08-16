@@ -64,6 +64,10 @@ public class NetworkPathConductivityContext {
         }
     }
 
+    protected long getConnectionConductivity(NetworkPathKey<ElectricalConnectorBlockEntity> key) {
+        return connections.get(key).getB();
+    }
+
     protected void updateConductivity() {
         for (Map.Entry<NetworkPathKey<ElectricalConnectorBlockEntity>, Tuple<Long, Long>> e : connections.entrySet())
             connections.get(e.getKey()).setB(e.getValue().getA());

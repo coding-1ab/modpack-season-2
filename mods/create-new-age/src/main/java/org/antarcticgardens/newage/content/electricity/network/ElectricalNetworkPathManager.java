@@ -1,66 +1,56 @@
 package org.antarcticgardens.newage.content.electricity.network;
 
-import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ElectricalNetworkPathManager {
-    public static final int MAX_PATHFINDING_DEPTH = 128;
-
-    private final Map<ElectricalConnectorBlockEntity, BotariumEnergyBlock<?>> consumers;
-
-    private final Map<NetworkPathKey<ElectricalConnectorBlockEntity>, List<NetworkPath>> paths = new HashMap<>();
     private final NetworkPathConductivityContext context = new NetworkPathConductivityContext();
-
-    protected ElectricalNetworkPathManager(Map<ElectricalConnectorBlockEntity, BotariumEnergyBlock<?>> consumers) {
-        this.consumers = consumers;
-    }
 
     protected void addConnection(ElectricalConnectorBlockEntity node, ElectricalConnectorBlockEntity node1) {
         context.addConnection(node, node1);
     }
 
-    protected List<NetworkPath> findPaths(ElectricalConnectorBlockEntity a, ElectricalConnectorBlockEntity b) {
-        NetworkPath path = new NetworkPath(a);
-        return findPaths(path, b, 0);
-    }
+    protected NetworkPath findConductiblePath(ElectricalConnectorBlockEntity a, ElectricalConnectorBlockEntity b) {
+        List<ElectricalConnectorBlockEntity> visited = new ArrayList<>();
+        Queue<QueueElement> queue = new LinkedList<>();
+        queue.add(new QueueElement(a, null));
 
-    private List<NetworkPath> findPaths(NetworkPath path, ElectricalConnectorBlockEntity target, int depth) {
-        if (paths.containsKey(new NetworkPathKey<>(path.getLastNode(), target)))
-            return paths.get(new NetworkPathKey<>(path.getLastNode(), target));
+        while (!queue.isEmpty()) {
+            var element = queue.poll();
 
-        List<NetworkPath> foundPaths = new ArrayList<>();
-
-        for (ElectricalConnectorBlockEntity connector : path.getLastNode().getConnectors().keySet()) {
-            if (path.getNodes().contains(connector))
-                continue;
-
-            NetworkPath connectorPath = new NetworkPath(path);
-            connectorPath.addNode(connector);
-
-            if (connector == target) {
-                foundPaths.add(new NetworkPath(connectorPath));
-                continue;
+            if (element.connector.equals(b)) {
+                NetworkPath path = unwrapConductiblePath(element);
+                if (path != null && context.calculatePathConductivity(path) > 0)
+                    return path;
             }
 
-            if (consumers.containsKey(connector)) {
-                List<NetworkPath> pathList = paths.getOrDefault(new NetworkPathKey<>(path.getFirstNode(), path.getLastNode()), new ArrayList<>());
-
-                if (!pathList.contains(connectorPath)) {
-                    pathList.add(new NetworkPath(connectorPath));
-                    paths.put(new NetworkPathKey<>(path.getFirstNode(), path.getLastNode()), pathList);
+            for (ElectricalConnectorBlockEntity connector : element.connector.getConnectors().keySet()) {
+                if (!visited.contains(connector)) {
+                    visited.add(connector);
+                    queue.add(new QueueElement(connector, element));
                 }
             }
-
-            if (depth++ <= MAX_PATHFINDING_DEPTH)
-                foundPaths.addAll(findPaths(connectorPath, target, depth));
         }
 
-        return foundPaths;
+        return null;
+    }
+
+    private NetworkPath unwrapConductiblePath(QueueElement element) {
+        NetworkPath path = new NetworkPath();
+
+        while (element != null) {
+            if (path.getLength() != 0 && context.getConnectionConductivity(new NetworkPathKey<>(element.connector, path.getFirstNode())) <= 0)
+                return null;
+
+            path.addNodeToBeginning(element.connector);
+            element = element.parent;
+        }
+
+        if (path.getLength() < 2)
+            return null;
+
+        return path;
     }
 
     protected NetworkPathConductivityContext getConductivityContext() {
@@ -70,4 +60,6 @@ public class ElectricalNetworkPathManager {
     protected void tick() {
         context.updateConductivity();
     }
+
+    private record QueueElement(ElectricalConnectorBlockEntity connector, QueueElement parent) { }
 }

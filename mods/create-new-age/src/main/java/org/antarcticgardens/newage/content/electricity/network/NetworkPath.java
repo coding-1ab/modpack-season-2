@@ -9,18 +9,17 @@ import java.util.List;
 public class NetworkPath {
     private final List<ElectricalConnectorBlockEntity> nodes = new ArrayList<>();
 
-    public NetworkPath(ElectricalConnectorBlockEntity baseNode) {
-        addNode(baseNode);
+    protected NetworkPath() {
+
     }
 
-    public NetworkPath(NetworkPath base) {
-        for (ElectricalConnectorBlockEntity node : base.getNodes())
-            addNode(node);
-    }
-
-    public void addNode(ElectricalConnectorBlockEntity node) {
+    protected void addNodeToBeginning(ElectricalConnectorBlockEntity node) {
         if (!nodes.contains(node))
-            nodes.add(node);
+            nodes.add(0, node);
+    }
+
+    protected int getLength() {
+        return nodes.size();
     }
 
     public ElectricalConnectorBlockEntity getFirstNode() {
