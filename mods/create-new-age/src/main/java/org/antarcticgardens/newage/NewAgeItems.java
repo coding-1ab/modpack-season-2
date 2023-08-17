@@ -46,6 +46,11 @@ public class NewAgeItems {
                     .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
                     .register();
 
+    public static final ItemEntry<SequencedAssemblyItem> INCOMPLETE_ENCHANTED_GOLDEN_APPLE =
+            REGISTRATE.item("incomplete_enchanted_golden_apple", SequencedAssemblyItem::new)
+                    .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
+                    .register();
+
 
     public static final ItemEntry<Item> OVERCHARGED_IRON_SHEET =
             REGISTRATE.item("overcharged_iron_sheet", Item::new)
