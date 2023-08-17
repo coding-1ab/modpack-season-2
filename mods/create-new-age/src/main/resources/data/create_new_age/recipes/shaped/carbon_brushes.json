@@ -3,7 +3,7 @@
   "category": "building",
   "key": {
     "c": {
-      "item": "create:copper_nugget"
+      "item": "minecraft:coal"
     },
     "a": {
       "item": "create:andesite_alloy"
