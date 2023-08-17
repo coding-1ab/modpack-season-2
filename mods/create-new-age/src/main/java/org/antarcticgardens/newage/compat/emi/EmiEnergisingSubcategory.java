@@ -1,6 +1,7 @@
 package org.antarcticgardens.newage.compat.emi;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.compat.emi.EmiSequencedAssemblySubCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedRecipe;
 import dev.emi.emi.api.widget.WidgetHolder;
@@ -21,9 +22,8 @@ public class EmiEnergisingSubcategory extends EmiSequencedAssemblySubCategory {
     public void addWidgets(WidgetHolder widgets, int x, int y, SequencedRecipe<?> recipe, int index) {
         widgets.addDrawable(x, y, getWidth(), 96, (graphics, mouseX, mouseY, delta) -> {
             PoseStack matrices = graphics.pose();
-            float scale = 0.6f;
             matrices.translate(3, 54, 0);
-            matrices.scale(scale, scale, scale);
+            matrices.scale(.75f, .75f, .75f);
 
             matrices.translate(0, 0, 200);
             matrices.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-15.5f));
@@ -36,6 +36,11 @@ public class EmiEnergisingSubcategory extends EmiSequencedAssemblySubCategory {
 
             blockElement(NewAgeBlocks.ENERGISER_T1.getDefaultState())
                     .scale(20)
+                    .render(graphics);
+
+            blockElement(AllBlocks.DEPOT.getDefaultState())
+                    .scale(20)
+                    .atLocal(0, 2, 0)
                     .render(graphics);
 
         }).tooltip(getTooltip(recipe, index));

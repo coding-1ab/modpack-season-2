@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.antarcticgardens.newage.NewAgeBlocks;
+import org.antarcticgardens.newage.compat.RenderingUtil;
 import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
@@ -81,6 +82,6 @@ public class EnergisingJeiCategory implements IRecipeCategory<EnergisingRecipe> 
     @Override
     public void draw(EnergisingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
         AllGuiTextures.JEI_ARROW.render(guiGraphics, 31, 8);
-        guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.literal(StringFormattingTool.formatLong(recipe.energyNeeded) + " ⚡"), 50, 18, 0x1166ff);
+        RenderingUtil.drawCenteredStringWithoutShadow(guiGraphics, Minecraft.getInstance().font, Component.literal(StringFormattingTool.formatLong(recipe.energyNeeded) + " ⚡"), 50, 18, 0x1166ff);
     }
 }

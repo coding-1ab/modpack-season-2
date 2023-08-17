@@ -2,6 +2,7 @@ package org.antarcticgardens.newage.compat.jei;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.compat.jei.category.animations.AnimatedKinetics;
 import com.simibubi.create.compat.jei.category.sequencedAssembly.JeiSequencedAssemblySubCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedRecipe;
@@ -12,6 +13,8 @@ import net.minecraft.network.chat.Component;
 import org.antarcticgardens.newage.NewAgeBlocks;
 import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
+
+import static com.simibubi.create.compat.emi.CreateEmiAnimations.blockElement;
 
 public class JeiEnergisingSubcategory extends JeiSequencedAssemblySubCategory {
 
@@ -30,13 +33,17 @@ public class JeiEnergisingSubcategory extends JeiSequencedAssemblySubCategory {
 
                 blockElement(shaft(Direction.Axis.Z))
                         .rotateBlock(0, 0, getCurrentAngle())
-                        .scale(24)
+                        .scale(20)
                         .render(graphics);
 
                 blockElement(NewAgeBlocks.ENERGISER_T1.getDefaultState())
-                        .scale(24)
+                        .scale(20)
                         .render(graphics);
 
+                blockElement(AllBlocks.DEPOT.getDefaultState())
+                        .scale(20)
+                        .atLocal(0, 2, 0)
+                        .render(graphics);
 
                 matrixStack.popPose();
             }
@@ -48,8 +55,8 @@ public class JeiEnergisingSubcategory extends JeiSequencedAssemblySubCategory {
         PoseStack ms = graphics.pose();
         energiser.offset = index;
         ms.pushPose();
-        ms.translate(-5, 50, 0);
-        ms.scale(.6f, .6f, .6f);
+        ms.translate(-7, 50, 0);
+        ms.scale(.75f, .75f, .75f);
         energiser.draw(graphics, getWidth() / 2, 0);
         ms.popPose();
         graphics.drawString(Minecraft.getInstance().font, Component.literal(StringFormattingTool.formatLong(((EnergisingRecipe)recipe.getAsAssemblyRecipe()).energyNeeded) + " ⚡"), 0, 20, 0x1166ff, false);

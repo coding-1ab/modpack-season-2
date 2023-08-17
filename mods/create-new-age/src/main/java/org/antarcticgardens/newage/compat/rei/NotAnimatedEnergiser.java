@@ -2,6 +2,7 @@ package org.antarcticgardens.newage.compat.rei;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.compat.rei.category.animations.AnimatedKinetics;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -24,13 +25,17 @@ public class NotAnimatedEnergiser extends AnimatedKinetics {
 
         blockElement(shaft(Direction.Axis.Z))
                 .rotateBlock(0, 0, getCurrentAngle())
-                .scale(24)
+                .scale(20)
                 .render(graphics);
 
         blockElement(NewAgeBlocks.ENERGISER_T1.getDefaultState())
-                .scale(24)
+                .scale(20)
                 .render(graphics);
 
+        blockElement(AllBlocks.DEPOT.getDefaultState())
+                .scale(20)
+                .atLocal(0, 2, 0)
+                .render(graphics);
 
         matrixStack.popPose();
     }

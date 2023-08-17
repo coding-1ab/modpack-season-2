@@ -5,8 +5,11 @@ import com.simibubi.create.compat.rei.category.animations.AnimatedKinetics;
 import com.simibubi.create.compat.rei.category.sequencedAssembly.ReiSequencedAssemblySubCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedRecipe;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
+import org.antarcticgardens.newage.compat.RenderingUtil;
 import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
@@ -24,10 +27,10 @@ public class ReiEnergiserSubCategory extends ReiSequencedAssemblySubCategory {
         PoseStack ms = graphics.pose();
         energiser.offset = index;
         ms.pushPose();
-        ms.translate(-5, 50, 0);
-        ms.scale(.6f, .6f, .6f);
+        ms.translate(-7, 50, 0);
+        ms.scale(.75f, .75f, .75f);
         energiser.draw(graphics, getWidth() / 2, 0);
-        graphics.drawCenteredString(Minecraft.getInstance().font, Component.literal(StringFormattingTool.formatLong(((EnergisingRecipe)recipe.getAsAssemblyRecipe()).energyNeeded) + " ⚡"), -5, 50, 0x1166ff);
         ms.popPose();
+        RenderingUtil.drawCenteredStringWithoutShadow(graphics, Minecraft.getInstance().font, Component.literal(StringFormattingTool.formatLong(((EnergisingRecipe)recipe.getAsAssemblyRecipe()).energyNeeded) + " ⚡"), 13, 20, 0x1166ff);
     }
 }
