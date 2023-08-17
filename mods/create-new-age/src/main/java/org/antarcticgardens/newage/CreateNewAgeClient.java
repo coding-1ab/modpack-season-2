@@ -5,6 +5,7 @@ import com.simibubi.create.foundation.item.TooltipModifier;
 import com.simibubi.create.foundation.ponder.PonderRegistrationHelper;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.fabricmc.api.ClientModInitializer;
+import org.antarcticgardens.newage.content.electricity.ElectricityPonder;
 import org.antarcticgardens.newage.content.energiser.EnergiserPonder;
 import org.antarcticgardens.newage.content.heat.HeatingPonder;
 import org.antarcticgardens.newage.content.heat.heater.HeaterPonder;
@@ -35,6 +36,11 @@ public class CreateNewAgeClient implements ClientModInitializer {
         helper.addStoryBoard(NewAgeBlocks.REACTOR_HEAT_VENT, "reactor", ReactorPonder::ponder);
         helper.addStoryBoard(NewAgeItems.NUCLEAR_FUEL, "reactor", ReactorPonder::ponder);
 
+        helper.addStoryBoard(NewAgeBlocks.ELECTRICAL_CONNECTOR, "wires", ElectricityPonder::ponder);
+        helper.addStoryBoard(NewAgeItems.COPPER_WIRE, "wires", ElectricityPonder::ponder);
+        helper.addStoryBoard(NewAgeItems.DIAMOND_WIRE, "wires", ElectricityPonder::ponder);
+        helper.addStoryBoard(NewAgeItems.GOLDEN_WIRE, "wires", ElectricityPonder::ponder);
+        helper.addStoryBoard(NewAgeItems.IRON_WIRE, "wires", ElectricityPonder::ponder);
 
         // ToolTip
         addToolTipModifier(NewAgeBlocks.ENERGISER_T1);
