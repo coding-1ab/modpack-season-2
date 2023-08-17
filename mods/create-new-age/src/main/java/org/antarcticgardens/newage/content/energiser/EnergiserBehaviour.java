@@ -83,10 +83,14 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
         if (be.getLevel() == null) {
             return;
         }
-        if (!be.getLevel().isClientSide()) {
+        if (!be.getLevel().isClientSide() && needed > 0) {
             sinceUpdate--;
             if (sinceUpdate <= 0) {
                 needed = 0;
+                be.getEnergyStorage().internalInsert(charged, false);
+                charged = 0;
+                currentRecipe = null;
+                blockEntity.sendData();
             }
         }
 
@@ -146,6 +150,10 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
                         return copy;
                     })
                     .collect(Collectors.toList());
+
+            if (charged > needed) {
+                be.getEnergyStorage().insertEnergy(charged - needed, false);
+            }
 
             charged = 0;
             needed = 0;

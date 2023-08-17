@@ -123,6 +123,8 @@
 
   "create_new_age.ponder.energiser.header": "Energizer",
 
-  "create_new_age.ponder.energiser.text_1": "When provided with electricity and rotation, the Energizer will energize items in depots and on belts under it."
+  "create_new_age.ponder.energiser.text_1": "When provided with electricity and rotation, the Energizer will energize items in depots and on belts under it.",
+
+  "create_new_age.ponder.wires.header": "Wiring"
 
 }

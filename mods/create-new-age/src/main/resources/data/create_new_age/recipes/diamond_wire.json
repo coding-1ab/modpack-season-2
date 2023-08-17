@@ -12,8 +12,7 @@
   "loops": 3,
   "sequence": [
     {
-      "type": "create_new_age:energising",
-      "energy_needed": 100,
+      "type": "create:cutting",
       "ingredients": [
         {
           "item": "create_new_age:incomplete_wire"
@@ -26,7 +25,8 @@
       ]
     },
     {
-      "type": "create:cutting",
+      "type": "create_new_age:energising",
+      "energy_needed": 100,
       "ingredients": [
         {
           "item": "create_new_age:incomplete_wire"
