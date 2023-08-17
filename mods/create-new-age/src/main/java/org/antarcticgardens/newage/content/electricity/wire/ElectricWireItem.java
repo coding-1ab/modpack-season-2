@@ -72,6 +72,11 @@ public class ElectricWireItem extends Item {
             if (!(level.getBlockEntity(boundToPos) instanceof ElectricalConnectorBlockEntity)) {
                 stack.removeTagKey("boundTo");
             }
+            if (entity.distanceToSqr(boundToPos.getX(), boundToPos.getY(), boundToPos.getZ()) > MAX_DISTANCE*MAX_DISTANCE*3) {
+                stack.removeTagKey("boundTo");
+                if (entity instanceof Player pl)
+                    pl.displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far", MAX_DISTANCE), true);
+            }
         }
     }
 
@@ -108,6 +113,8 @@ public class ElectricWireItem extends Item {
 
                     if (!context.getPlayer().isCreative())
                         context.getItemInHand().shrink(1);
+
+                    context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.connected"), true);
 
                     return InteractionResult.CONSUME;
                 } else

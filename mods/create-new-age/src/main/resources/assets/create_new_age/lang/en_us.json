@@ -75,7 +75,7 @@
   "item.create_new_age.wire.message.too_far": "Too far away! Maximum wire length is %d blocks",
   "item.create_new_age.wire.message.already_connected": "These connectors are already connected",
   "item.create_new_age.wire.message.unbound": "Unbound from connector",
-
+  "item.create_new_age.wire.message.connected": "Connected connector",
 
   "tag.create_new_age.nuclear.hazmat_suit": "Hazmat Protection",
   "tag.create_new_age.nuclear.is_nuclear_fuel": "Nuclear Fuel",
