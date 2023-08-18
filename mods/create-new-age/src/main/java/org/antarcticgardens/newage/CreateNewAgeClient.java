@@ -7,6 +7,7 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 import net.fabricmc.api.ClientModInitializer;
 import org.antarcticgardens.newage.content.electricity.ElectricityPonder;
 import org.antarcticgardens.newage.content.energiser.EnergiserPonder;
+import org.antarcticgardens.newage.content.generation.GenerationPonder;
 import org.antarcticgardens.newage.content.heat.HeatingPonder;
 import org.antarcticgardens.newage.content.heat.heater.HeaterPonder;
 import org.antarcticgardens.newage.content.reactor.ReactorPonder;
@@ -41,6 +42,14 @@ public class CreateNewAgeClient implements ClientModInitializer {
         helper.addStoryBoard(NewAgeItems.DIAMOND_WIRE, "wires", ElectricityPonder::ponder);
         helper.addStoryBoard(NewAgeItems.GOLDEN_WIRE, "wires", ElectricityPonder::ponder);
         helper.addStoryBoard(NewAgeItems.IRON_WIRE, "wires", ElectricityPonder::ponder);
+
+        helper.addStoryBoard(NewAgeBlocks.CARBON_BRUSHES, "generation", GenerationPonder::ponder);
+        helper.addStoryBoard(NewAgeBlocks.GENERATOR_COIL, "generation", GenerationPonder::ponder);
+        helper.addStoryBoard(NewAgeBlocks.MAGNETITE_BLOCK, "generation", GenerationPonder::ponder);
+        helper.addStoryBoard(NewAgeBlocks.REDSTONE_MAGNET, "generation", GenerationPonder::ponder);
+        helper.addStoryBoard(NewAgeBlocks.LAYERED_MAGNET, "generation", GenerationPonder::ponder);
+        helper.addStoryBoard(NewAgeBlocks.FLUXUATED_MAGNETITE, "generation", GenerationPonder::ponder);
+        helper.addStoryBoard(NewAgeBlocks.NETHERITE_MAGNET, "generation", GenerationPonder::ponder);
 
         // ToolTip
         addToolTipModifier(NewAgeBlocks.ENERGISER_T1);
