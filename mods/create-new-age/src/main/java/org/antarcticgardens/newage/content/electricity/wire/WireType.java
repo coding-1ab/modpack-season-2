@@ -2,6 +2,7 @@ package org.antarcticgardens.newage.content.electricity.wire;
 
 import net.minecraft.world.item.ItemStack;
 import org.antarcticgardens.newage.NewAgeItems;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 
 public enum WireType {
     COPPER(1024, new int[] { 158, 88, 75, 255 }, new int[] { 173, 108, 92, 255 }, NewAgeItems.COPPER_WIRE::asStack),
@@ -22,7 +23,7 @@ public enum WireType {
     }
 
     public long getConductivity() {
-        return conductivity;
+        return (long) (conductivity * NewAgeConfig.getCommon().conductivityMultiplier.get());
     }
 
     public int[] getColor1() {

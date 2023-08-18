@@ -22,6 +22,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.antarcticgardens.newage.NewAgeBlockEntityTypes;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,18 +30,23 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class EnergiserBlock extends HorizontalKineticBlock implements IBE<EnergiserBlockEntity> {
-    private final int strength;
-    private final long stores;
+    private final int tier;
 
     private BlockEntityEntry<EnergiserBlockEntity> entry;
 
     public EnergiserBlock(Properties properties, int tier, BlockEntityEntry<EnergiserBlockEntity> entry) {
         super(properties.strength(2.5F, 1.0F));
-        this.strength = (int)Math.pow(2, tier * 2);
-        this.stores = (long) (Math.pow(10, tier) * 1000);
         this.entry = entry;
+        this.tier = tier;
     }
 
+    public static int getStrength(int tier) {
+        return (int) (Math.pow(2, tier * 2) * NewAgeConfig.getCommon().energiserSpeedMultiplier.get());
+    }
+
+    public static long getCapacity(int tier) {
+        return (long) (Math.pow(10, tier) * 1000);
+    }
 
 
     @Override
@@ -82,11 +88,11 @@ public class EnergiserBlock extends HorizontalKineticBlock implements IBE<Energi
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Lang.translate("tooltip.create_new_age.speed").style(ChatFormatting.GRAY).component());
-        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy_per_second", StringFormattingTool.formatLong(strength*20L)).style(ChatFormatting.AQUA)
+        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy_per_second", StringFormattingTool.formatLong(getStrength(tier) * 20L)).style(ChatFormatting.AQUA)
                         .add(Lang.text(" ").translate("tooltip.create_new_age.per_rpm", 10).style(ChatFormatting.GRAY))
                 .component());
         tooltip.add(Lang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY).component());
-        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy", StringFormattingTool.formatLong(stores)).style(ChatFormatting.AQUA)
+        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy", StringFormattingTool.formatLong(getCapacity(tier))).style(ChatFormatting.AQUA)
                 .component());
     }
 

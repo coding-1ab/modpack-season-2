@@ -17,9 +17,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class EnergiserBehaviour extends BeltProcessingBehaviour {
+    protected int tier;
+    protected EnergiserBlockEntity be;
 
-    public long maxAbsorptionSpeed;
-    public EnergiserBlockEntity be;
     public EnergiserBehaviour(EnergiserBlockEntity be) {
         super(be);
         whenItemEnters(this::itemEnter);
@@ -98,7 +98,7 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
 
         if (needed > 0) {
             be.lastCharged =  be.energy.internalExtract(
-                    (long) Math.min(maxAbsorptionSpeed * (long) Math.abs(be.getSpeed() * 0.1),
+                    (long) Math.min(EnergiserBlock.getStrength(tier) * (long) Math.abs(be.getSpeed() * 0.1),
                             needed - charged), false);
             charged += be.lastCharged;
         }

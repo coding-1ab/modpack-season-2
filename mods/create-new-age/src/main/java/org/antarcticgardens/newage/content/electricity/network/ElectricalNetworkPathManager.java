@@ -1,5 +1,6 @@
 package org.antarcticgardens.newage.content.electricity.network;
 
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
 
 import java.util.*;
@@ -14,7 +15,7 @@ public class ElectricalNetworkPathManager {
     protected NetworkPath findConductiblePath(ElectricalConnectorBlockEntity a, ElectricalConnectorBlockEntity b) {
         List<ElectricalConnectorBlockEntity> visited = new ArrayList<>();
         Queue<QueueElement> queue = new LinkedList<>();
-        queue.add(new QueueElement(a, null));
+        queue.add(new QueueElement(a, null, 0));
 
         while (!queue.isEmpty()) {
             var element = queue.poll();
@@ -26,9 +27,9 @@ public class ElectricalNetworkPathManager {
             }
 
             for (ElectricalConnectorBlockEntity connector : element.connector.getConnectors().keySet()) {
-                if (!visited.contains(connector)) {
+                if (!visited.contains(connector) && element.depth < NewAgeConfig.getCommon().maxPathfindingDepth.get()) {
                     visited.add(connector);
-                    queue.add(new QueueElement(connector, element));
+                    queue.add(new QueueElement(connector, element, element.depth + 1));
                 }
             }
         }
@@ -61,5 +62,5 @@ public class ElectricalNetworkPathManager {
         context.updateConductivity();
     }
 
-    private record QueueElement(ElectricalConnectorBlockEntity connector, QueueElement parent) { }
+    private record QueueElement(ElectricalConnectorBlockEntity connector, QueueElement parent, int depth) { }
 }

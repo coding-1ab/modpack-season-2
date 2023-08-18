@@ -6,6 +6,9 @@ public class CommonConfig {
     public final ForgeConfigSpec.ConfigValue<Double> suToEnergy;
     public final ForgeConfigSpec.ConfigValue<Integer> maxRodsInDirection;
     public final ForgeConfigSpec.ConfigValue<Integer> maxCoils;
+    public final ForgeConfigSpec.ConfigValue<Double> conductivityMultiplier;
+    public final ForgeConfigSpec.ConfigValue<Integer> maxPathfindingDepth;
+    public final ForgeConfigSpec.ConfigValue<Double> energiserSpeedMultiplier;
 
     public CommonConfig(ForgeConfigSpec.Builder builder) {
         suToEnergy = builder
@@ -21,5 +24,17 @@ public class CommonConfig {
         maxRodsInDirection = builder
                 .comment("How many reactor rods can a fuel inserter or a heat vent have in a single direction")
                 .define("maxRodsInDirection", 32);
+
+        conductivityMultiplier = builder
+                .comment("Multiplier of wire conductivity")
+                .define("conductivityMultiplier", 1.0);
+
+        maxPathfindingDepth = builder
+                .comment("Maximum depth of network pathfinding")
+                .define("maxPathfindingDepth", 32);
+
+        energiserSpeedMultiplier = builder
+                .comment("Multiplier of energising speed")
+                .define("energiserSpeedMultiplier", 1.0);
     }
 }

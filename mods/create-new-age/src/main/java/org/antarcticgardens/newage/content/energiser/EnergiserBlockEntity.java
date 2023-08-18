@@ -27,9 +27,9 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
     public EnergiserBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int tier) {
         super(type, pos, state);
         energy = new WrappedBlockEnergyContainer(
-                this, new SimpleEnergyContainer((long) (Math.pow(10, tier) * 1000)));
+                this, new SimpleEnergyContainer(EnergiserBlock.getCapacity(tier)));
         this.tier = tier;
-        this.energisingBehaviour.maxAbsorptionSpeed = (int)Math.pow(2, tier*2);
+        this.energisingBehaviour.tier = tier;
     }
 
     protected AABB createRenderBoundingBox() {
