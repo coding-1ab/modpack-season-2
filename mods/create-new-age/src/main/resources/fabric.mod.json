@@ -30,6 +30,9 @@
 		],
 		"rei_client": [
 			"org.antarcticgardens.newage.compat.rei.NewAgeReiPlugin"
+		],
+		"modmenu": [
+			"org.antarcticgardens.newage.compat.modmenu.NewAgeModMenuIntegration"
 		]
 	},
 	"mixins": [
