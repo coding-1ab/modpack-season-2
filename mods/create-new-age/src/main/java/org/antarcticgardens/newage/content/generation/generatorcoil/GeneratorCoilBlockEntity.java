@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import org.antarcticgardens.newage.Configurations;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.generation.magnets.IMagneticBlock;
 import org.antarcticgardens.newage.tools.RelativeBlockPos;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
@@ -75,7 +75,7 @@ public class GeneratorCoilBlockEntity extends KineticBlockEntity {
     @Override
     public void tick() {
         super.tick();
-        generatedEnergy = (int) ((lastStressApplied - plainStress) * Math.abs(this.getTheoreticalSpeed()) * Configurations.SU_TO_ENERGY);
+        generatedEnergy = (int) ((lastStressApplied - plainStress) * Math.abs(this.getTheoreticalSpeed()) * NewAgeConfig.getCommon().suToEnergy.get());
     }
 
     @Override

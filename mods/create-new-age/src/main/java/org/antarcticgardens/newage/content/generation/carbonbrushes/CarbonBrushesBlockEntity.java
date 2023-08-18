@@ -15,7 +15,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.antarcticgardens.newage.Configurations;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlockEntity;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
@@ -78,7 +78,7 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
         if (level == null || level.isClientSide) return;
         Direction facing = getBlockState().getValue(DirectionalKineticBlock.FACING);
 
-        int coilsLeft = Configurations.MAX_COILS;
+        int coilsLeft = NewAgeConfig.getCommon().maxCoils.get();
         lastOutput = 0;
         coilsLeft = processCoil(worldPosition, facing, coilsLeft);
         processCoil(worldPosition, facing.getOpposite(), coilsLeft);

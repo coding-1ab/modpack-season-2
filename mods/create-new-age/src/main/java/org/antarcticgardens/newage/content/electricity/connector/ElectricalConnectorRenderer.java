@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.antarcticgardens.newage.Configurations;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.NewAgeRenderTypes;
 import org.antarcticgardens.newage.content.electricity.wire.ElectricWireItem;
 import org.antarcticgardens.newage.content.electricity.wire.WireType;
@@ -142,7 +142,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
         Vector3f lastSection = from;
         Vector3f direction = new Vector3f(to).sub(from).normalize();
         float distance = to.distance(from);
-        int sections = (int) Math.ceil(distance * Configurations.WIRE_SECTIONS_PER_METER);
+        int sections = (int) Math.ceil(distance * NewAgeConfig.getClient().wireSectionsPerMeter.get());
         float perSection = distance / sections;
 
         for (int i = 0; i <= sections; i++) {
@@ -192,7 +192,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
         int b = color[2];
         int z = color[3];
 
-        float f = Configurations.WIRE_THICKNESS / 2;
+        float f = NewAgeConfig.getClient().wireThickness.get().floatValue() / 2;
         float distance = from.distance(to);
 
         consumer.vertex(pose, -f, -f, 0.0f).color(r, g, b, z).uv2(light).endVertex();
