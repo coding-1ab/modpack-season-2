@@ -16,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.newage.config.NewAgeConfig;
+import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlock;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlockEntity;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
@@ -102,7 +103,7 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
 
         pos = pos.relative(dir);
 
-        if (level.getBlockEntity(pos) instanceof GeneratorCoilBlockEntity coil) {
+        if (level.getBlockEntity(pos) instanceof GeneratorCoilBlockEntity coil && coil.getBlockState().getValue(GeneratorCoilBlock.AXIS).test(dir)) {
             int energy = coil.takeGeneratedEnergy();
             lastOutput += energy;
             syncOut += energy;
