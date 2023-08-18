@@ -1,8 +1,14 @@
 package org.antarcticgardens.newage.content.generation;
 
+import com.simibubi.create.content.kinetics.gauge.StressGaugeBlockEntity;
 import com.simibubi.create.foundation.ponder.SceneBuilder;
 import com.simibubi.create.foundation.ponder.SceneBuildingUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+import org.antarcticgardens.newage.NewAgeBlocks;
+import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
+import org.antarcticgardens.newage.content.electricity.wire.WireType;
 
 public class GenerationPonder {
 
@@ -64,6 +70,111 @@ public class GenerationPonder {
         scene.idle(15);
 
         scene.world.showSection(util.select.fromTo(5, 5, 6, 3, 5, 5), Direction.DOWN);
+
+        scene.idle(20);
+
+        scene.world.setKineticSpeed(util.select.fromTo(4, 3, 3, 4, 3, 8), 32);
+
+        scene.idle(30);
+
+        scene.world.showSection(util.select.position(4, 1, 1), Direction.DOWN);
+
+        scene.idle(5);
+
+        scene.world.showSection(util.select.position(5, 1, 1), Direction.DOWN);
+
+        scene.idle(5);
+
+        scene.world.showSection(util.select.position(6, 1, 1), Direction.DOWN);
+
+        scene.idle(5);
+
+        scene.world.showSection(util.select.position(4, 2, 4), Direction.SOUTH);
+
+        scene.idle(5);
+
+        scene.world.showSection(util.select.position(4, 2, 1), Direction.DOWN);
+
+        scene.idle(15);
+
+        scene.world.modifyBlockEntity(new BlockPos(4, 2, 4), ElectricalConnectorBlockEntity.class, en -> {
+            en.connect((ElectricalConnectorBlockEntity) en.getLevel().getBlockEntity(new BlockPos(4, 2, 1)), WireType.IRON);
+        });
+
+        scene.idle(2);
+
+        scene.world.setKineticSpeed(util.select.fromTo(4,1, 1, 6, 1, 1), 16);
+
+        scene.idle(20);
+
+        scene.addKeyframe();
+
+        scene.idle(20);
+
+        replaceCoil(scene, util, NewAgeBlocks.REDSTONE_MAGNET.getDefaultState());
+
+        scene.idle(10);
+
+        scene.rotateCameraY(180);
+
+        scene.idle(20);
+
+        scene.world.showSection(util.select.position(4, 3, 8), Direction.NORTH);
+
+        scene.world.modifyBlockEntityNBT(util.select.position(4, 3, 8), StressGaugeBlockEntity.class,
+                nbt -> nbt.putFloat("Value", .25f));
+
+        scene.idle(20);
+
+        replaceCoil(scene, util, NewAgeBlocks.LAYERED_MAGNET.getDefaultState());
+
+        scene.world.modifyBlockEntityNBT(util.select.position(4, 3, 8), StressGaugeBlockEntity.class,
+                nbt -> nbt.putFloat("Value", .5f));
+
+        scene.idle(20);
+
+        replaceCoil(scene, util, NewAgeBlocks.FLUXUATED_MAGNETITE.getDefaultState());
+
+        scene.world.modifyBlockEntityNBT(util.select.position(4, 3, 8), StressGaugeBlockEntity.class,
+                nbt -> nbt.putFloat("Value", 1.0f));
+
+    }
+
+    private static final int WAIT_TIME = 1;
+    public static void replaceCoil(SceneBuilder scene, SceneBuildingUtil util, BlockState state) {
+        for (int i = 0 ; i < 3 ; i++) {
+            scene.world.setBlock(new BlockPos(3+i, 1, 6), state, true);
+            scene.idle(WAIT_TIME);
+        }
+        for (int i = 0 ; i < 3 ; i++) {
+            scene.world.setBlock(new BlockPos(6, 2+i, 6), state, true);
+            scene.idle(WAIT_TIME);
+        }
+        for (int i = 0 ; i < 3 ; i++) {
+            scene.world.setBlock(new BlockPos(5-i, 5, 6), state, true);
+            scene.idle(WAIT_TIME);
+        }
+        for (int i = 0 ; i < 3 ; i++) {
+            scene.world.setBlock(new BlockPos(2, 4-i, 6), state, true);
+            scene.idle(WAIT_TIME);
+        }
+
+        for (int i = 0 ; i < 3 ; i++) {
+            scene.world.setBlock(new BlockPos(3+i, 1, 5), state, true);
+            scene.idle(WAIT_TIME);
+        }
+        for (int i = 0 ; i < 3 ; i++) {
+            scene.world.setBlock(new BlockPos(6, 2+i, 5), state, true);
+            scene.idle(WAIT_TIME);
+        }
+        for (int i = 0 ; i < 3 ; i++) {
+            scene.world.setBlock(new BlockPos(5-i, 5, 5), state, true);
+            scene.idle(WAIT_TIME);
+        }
+        for (int i = 0 ; i < 3 ; i++) {
+            scene.world.setBlock(new BlockPos(2, 4-i, 5), state, true);
+            scene.idle(WAIT_TIME);
+        }
 
     }
 
