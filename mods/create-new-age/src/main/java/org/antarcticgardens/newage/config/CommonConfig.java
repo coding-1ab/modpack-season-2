@@ -10,6 +10,8 @@ public class CommonConfig {
     public final ForgeConfigSpec.ConfigValue<Integer> maxPathfindingDepth;
     public final ForgeConfigSpec.ConfigValue<Double> energiserSpeedMultiplier;
 
+    public final ForgeConfigSpec.ConfigValue<Double> overheatingMultiplier;
+
     public CommonConfig(ForgeConfigSpec.Builder builder) {
         suToEnergy = builder
                 .comment(
@@ -36,5 +38,10 @@ public class CommonConfig {
         energiserSpeedMultiplier = builder
                 .comment("Multiplier of energising speed")
                 .define("energiserSpeedMultiplier", 1.0);
+
+        overheatingMultiplier = builder
+                .comment("Multiplier for the temperature at which components overheat. Set to less than 0 to disable overheating.")
+                .define("overheatingMultiplier", 1.0);
+
     }
 }

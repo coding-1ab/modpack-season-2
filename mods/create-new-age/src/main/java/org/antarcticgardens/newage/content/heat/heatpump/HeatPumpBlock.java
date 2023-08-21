@@ -23,6 +23,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.antarcticgardens.newage.NewAgeBlockEntityTypes;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
@@ -151,7 +152,7 @@ public class HeatPumpBlock extends Block implements EntityBlock, IWrenchable {
                 self.setChanged();
             }
 
-            if (self.heat > 6000) {
+            if (self.heat > 6000 * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
                 self.getLevel().setBlock(self.getBlockPos(), Blocks.LAVA.defaultBlockState(), 3);
             }
         };

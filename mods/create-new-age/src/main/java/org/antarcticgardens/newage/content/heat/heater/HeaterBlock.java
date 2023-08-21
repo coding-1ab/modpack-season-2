@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.antarcticgardens.newage.NewAgeBlockEntityTypes;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +49,7 @@ public class HeaterBlock extends Block implements EntityBlock, IWrenchable {
         return (world, blockPos, blockState, sel) -> {
             if ((world.getGameTime() + on) % 20 != 0 || !(sel instanceof HeaterBlockEntity self) || self.getLevel() == null) return;
             HeatBlockEntity.transferAround(self);
-            if (self.heat > 9000) {
+            if (self.heat > 9000 * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
                 self.getLevel().setBlock(self.getBlockPos(), Blocks.LAVA.defaultBlockState(), 3);
             } else if (self.heat > 400) {
                 self.heat -= 400;

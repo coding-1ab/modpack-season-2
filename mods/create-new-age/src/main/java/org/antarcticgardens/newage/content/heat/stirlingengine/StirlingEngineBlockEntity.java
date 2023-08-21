@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
@@ -72,7 +73,7 @@ public class StirlingEngineBlockEntity extends GeneratingKineticBlockEntity impl
             HeatBlockEntity.transferAround(this);
             if (getHeat() > 50) {
                 if (getHeat() > 100) {
-                    if (getHeat() < 6000) {
+                    if (getHeat() < 6000 * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
                         setHeat(getHeat() - 100);
                         if (speed != 16) {
                             speed = 16;
