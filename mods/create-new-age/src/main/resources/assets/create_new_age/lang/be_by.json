@@ -141,5 +141,24 @@
   "create_new_age.ponder.motor.text_1": "Маторы дазваляюць ствараць кручэнне з дапамогай электрычнасці",
   "create_new_age.ponder.motor.text_2": "Вы можаце наладзіць хуткасць матора з дапамогай гаечнага ключа, аднак колькасць адзінак кручэння, якую ён выдае, застанецца ранейшай",
   "create_new_age.ponder.motor.text_3": "Вы можаце адключыць яго, падаўшы рэдстоўнавы сігнал",
-  "create_new_age.ponder.motor.text_4": "Вы таксама можаце інвертаваць гэта, націснуўшы на матор правай кнопкай мышы"
+  "create_new_age.ponder.motor.text_4": "Вы таксама можаце інвертаваць гэта, націснуўшы на матор правай кнопкай мышы",
+
+
+  "create_new_age.ponder.tag.electrical": "Электрычныя кампаненты",
+  "create_new_age.ponder.tag.electrical.description": "Блокі, якія адказваюць за выпрацоўку, транспартыроўку і выкарыстанне электраэнергіі",
+
+  "create_new_age.ponder.tag.wiring": "Праводка",
+  "create_new_age.ponder.tag.wiring.description": "Прадметы, якія выкарыстоўваюцца для праводкі",
+
+  "create_new_age.ponder.tag.magnets": "Магніты",
+  "create_new_age.ponder.tag.magnets.description": "Магніты, якія выкарыстоўваюцца для выпрацоўкі электрычнасці",
+
+  "create_new_age.ponder.tag.electricity_generation": "Генерацыя электрычнасці",
+  "create_new_age.ponder.tag.electricity_generation.description": "Блокі, якія выкарыстоўваюцца для выпрацоўкі электрычнасці",
+
+  "create_new_age.ponder.tag.heating": "Цеплавые кампаненты",
+  "create_new_age.ponder.tag.heating.description": "Блокі, якія выкарыстоўваюцца для выпрацоўкі, транспартыроўкі і выкарыстання цяпла",
+
+  "create_new_age.ponder.tag.reactor": "Ядзерны рэактар",
+  "create_new_age.ponder.tag.reactor.description": "Блокі, якія выкарыстоўваюцца ў ядзерным рэактары"
 }
