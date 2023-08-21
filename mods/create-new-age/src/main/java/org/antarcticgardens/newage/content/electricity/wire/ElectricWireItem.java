@@ -6,6 +6,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -56,6 +58,7 @@ public class ElectricWireItem extends Item {
         BlockPos boundToPos = getBoundConnector(item);
 
         if (boundToPos != null && player.isShiftKeyDown()) {
+            playUnboundSound(player);
             player.displayClientMessage(Component.translatable("item.create_new_age.wire.message.unbound"), true);
             item.removeTagKey("boundTo");
             return InteractionResultHolder.success(item);
@@ -74,8 +77,9 @@ public class ElectricWireItem extends Item {
             }
             if (entity.distanceToSqr(boundToPos.getX(), boundToPos.getY(), boundToPos.getZ()) > MAX_DISTANCE*MAX_DISTANCE*3) {
                 stack.removeTagKey("boundTo");
+                playUnboundSound(entity);
                 if (entity instanceof Player pl)
-                    pl.displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far", MAX_DISTANCE), true);
+                    pl.displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far", (int) MAX_DISTANCE), true);
             }
         }
     }
@@ -88,6 +92,7 @@ public class ElectricWireItem extends Item {
         if (clickedEntity instanceof ElectricalConnectorBlockEntity clickedConnector) {
             if (boundToPos == null) {
                 setBoundConnector(context.getItemInHand(), clickedConnector);
+                playBoundSound(context.getPlayer());
                 return InteractionResult.SUCCESS;
             } else {
                 BlockPos clickedPos = clickedConnector.getBlockPos();
@@ -97,7 +102,7 @@ public class ElectricWireItem extends Item {
                     context.getItemInHand().removeTagKey("boundTo");
                     return InteractionResult.FAIL;
                 } else if (!clickedPos.closerThan(boundToPos, MAX_DISTANCE)) {
-                    context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far", MAX_DISTANCE), true);
+                    context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far", (int) MAX_DISTANCE), true);
                     return InteractionResult.FAIL;
                 } else if (clickedConnector.isConnected(boundToPos)) {
                     context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.already_connected"), true);
@@ -114,6 +119,8 @@ public class ElectricWireItem extends Item {
                     if (!context.getPlayer().isCreative())
                         context.getItemInHand().shrink(1);
 
+                    playBoundSound(context.getPlayer());
+
                     context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.connected"), true);
 
                     return InteractionResult.CONSUME;
@@ -123,6 +130,14 @@ public class ElectricWireItem extends Item {
         }
 
         return InteractionResult.PASS;
+    }
+
+    private void playBoundSound(Entity entity) {
+        entity.playSound(SoundEvents.LEASH_KNOT_PLACE, 1.0f, 1.0f);
+    }
+
+    private void playUnboundSound(Entity entity) {
+        entity.playSound(SoundEvents.LEASH_KNOT_BREAK, 1.0f, 1.0f);
     }
 
     public BlockPos getBoundConnector(ItemStack stack) {
