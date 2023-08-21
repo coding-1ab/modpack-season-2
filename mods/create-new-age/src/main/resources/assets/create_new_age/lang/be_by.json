@@ -1,4 +1,5 @@
 {
+  "create_new_age.monkey_edition": "Create: New Age [Monkey Edition]",
   "recipe.assembly.energising": "Зарадка энергіяй",
   "create.tooltip.create_new_age.energy_stored": "Захавана энергіі: ",
   "create.tooltip.create_new_age.energy_stats": "Энергетычная статыстыка: ",
@@ -21,6 +22,7 @@
   "create.tooltip.create_new_age.stores":  "Захоўвае: ",
   "create.tooltip.create_new_age.speed":  "Хуткасць: ",
   "create.tooltip.create_new_age.efficiency":  "Эфектыўнасць: ",
+  "create.tooltip.create_new_age.transfers": "Электраправоднасць: ",
   "create.tooltip.create_new_age.percent":  "%s%%",
   "create.tooltip.create_new_age.magnetic_force":  "Магнітная сіла: ",
 
@@ -57,6 +59,7 @@
   "item.create_new_age.nuclear_fuel": "Ядзернае паліва",
   "item.create_new_age.incomplete_fuel": "Незавершанае ядзернае паліва",
   "item.create_new_age.incomplete_casing": "Незавершаны кажух рэактара",
+  "item.create_new_age.incomplete_wire": "Незавершаны провад",
   "item.create_new_age.thorium": "Торый",
   "item.create_new_age.radioactive_thorium": "Радыёактыўны торый",
   "item.create_new_age.overcharged_iron": "Зараджанае жалеза",
@@ -73,8 +76,7 @@
   "item.create_new_age.wire.message.too_far": "Занадта далёка! Максімальная даўжыня провада - %d блокаў",
   "item.create_new_age.wire.message.already_connected": "Гэтыя ўводы ўжо падключаны",
   "item.create_new_age.wire.message.unbound": "Увод адвязаны",
-
-
+  "item.create_new_age.wire.message.connected": "Увод падключаны",
   "tag.create_new_age.nuclear.hazmat_suit": "Хімічная ахова",
   "tag.create_new_age.nuclear.is_nuclear_fuel": "Ядзернае паліва",
   "emi.category.create_new_age.energising": "Зарадка энергіяй",
@@ -117,5 +119,27 @@
 
   "create_new_age.ponder.reactor.text_6": "Можна пазбегнуць радыяцыі, надзеўшы скураную браню або зачыніўшы рэактар корпусам або шклом рэактара",
 
-  "create_new_age.ponder.reactor.text_7": "Акрамя таго, вы павінны адвадзіць цяпло ад рэактара, інакш ён расплавіцца"
+  "create_new_age.ponder.reactor.text_7": "Акрамя таго, вы павінны адвадзіць цяпло ад рэактара, інакш ён расплавіцца",
+
+  "create_new_age.ponder.energiser.header": "Энэрджайзер",
+
+  "create_new_age.ponder.energiser.text_1": "Пры наяўнасці электрычнасці і кручэння энэрджайзер будзе зараджаць прадметы на дэпо і канвеерах пад ім",
+
+  "create_new_age.ponder.wires.header": "Праводка",
+
+
+  "create_new_age.ponder.generation.header": "Генерацыя электрычнасці",
+
+  "create_new_age.ponder.generation.text_1": "Шпулькі генератара выпрацоўваюць электрычнасць, круцячыся ў атачэнні магнітаў",
+  "create_new_age.ponder.generation.text_2": "Электрычнасць, якую выпрацоўваюць шпулькі, можна сабраць з дапамогай вугальных шчотак",
+  "create_new_age.ponder.generation.text_3": "Па меры павелічэння сілы магнітаў вакол шпулек генератара павялічваецца адсотак адзінак кручэння, якія ператвараюцца ў электрычнасць",
+  "create_new_age.ponder.generation.text_4": "Эфектыўнасць: 33.3%%",
+  "create_new_age.ponder.generation.text_5": "Эфектыўнасць: 50.0%%",
+  "create_new_age.ponder.generation.text_6": "Аднак разам з эфектыўнасцю павялічваецца колькасць адзінак кручэння, якія выкарыстоўваюцца шпулькамі генератара",
+
+  "create_new_age.ponder.motor.header": "Маторы!",
+  "create_new_age.ponder.motor.text_1": "Маторы дазваляюць ствараць кручэнне з дапамогай электрычнасці",
+  "create_new_age.ponder.motor.text_2": "Вы можаце наладзіць хуткасць матора з дапамогай гаечнага ключа, аднак колькасць адзінак кручэння, якую ён выдае, застанецца ранейшай",
+  "create_new_age.ponder.motor.text_3": "Вы можаце адключыць яго, падаўшы рэдстоўнавы сігнал",
+  "create_new_age.ponder.motor.text_4": "Вы таксама можаце інвертаваць гэта, націснуўшы на матор правай кнопкай мышы"
 }
