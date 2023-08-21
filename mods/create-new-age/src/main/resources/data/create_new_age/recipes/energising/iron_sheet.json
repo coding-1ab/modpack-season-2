@@ -3,7 +3,7 @@
   "energy_needed": 1000,
   "ingredients": [
     {
-      "item": "create:iron_sheet"
+      "tag": "c:iron_plates"
     }
   ],
   "results": [
