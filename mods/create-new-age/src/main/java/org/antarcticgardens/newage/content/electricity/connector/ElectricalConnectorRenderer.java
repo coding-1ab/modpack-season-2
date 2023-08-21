@@ -27,6 +27,8 @@ import org.joml.Vector3f;
 
 import java.util.Map;
 
+import static org.antarcticgardens.newage.tools.RaycastUtil.pickBlockFromPos;
+
 public class ElectricalConnectorRenderer implements BlockEntityRenderer<ElectricalConnectorBlockEntity> {
     public static final float SAG_FACTOR = 0.92f;
 
@@ -77,7 +79,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                     Vec3 eyePos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
                     Vec3 endPos = eyePos.add(player.getViewVector(partialTick).normalize().scale(2.0f));
 
-                    HitResult hit = pickBlockFromPos(player, eyePos, player.getViewVector(partialTick), Minecraft.getInstance().gameMode.getPickRange());
+                    HitResult hit = pickBlockFromPos(blockEntity.getLevel(), eyePos, player.getViewVector(partialTick), Minecraft.getInstance().gameMode.getPickRange());
 
                     if (hit instanceof BlockHitResult blockHit) {
                         Vec3 vec = eyePos.add(blockHit.getLocation().subtract(eyePos).scale(0.9f));
@@ -131,11 +133,6 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                 }
             }
         }
-    }
-
-    private HitResult pickBlockFromPos(Entity entity, Vec3 pos, Vec3 dir, float distance) {
-        Vec3 vec33 = pos.add(dir.x * distance, dir.y * distance, dir.z * distance);
-        return entity.level().clip(new ClipContext(pos, vec33, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, entity));
     }
 
     private void renderWire(VertexConsumer consumer, Matrix4f pose, Vector3f from, Vector3f to, ElectricalConnectorBlockEntity blockEntity, int[] color1, int[] color2) {
