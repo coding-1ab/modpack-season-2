@@ -100,7 +100,10 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
 
 
     public void tick(BlockPos blockPos, Level world, BlockState blockState) {
-        if (heat > 60*energyPerSecond * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
+        var common = NewAgeConfig.getCommon();
+        double multiplier = common.overheatingMultiplier.get();
+        double generationMultiplier = common.solarPanelHeatMultiplier.get();
+        if (multiplier > 0 && heat > 60*energyPerSecond * multiplier * generationMultiplier) {
             world.setBlock(blockPos, Blocks.LAVA.defaultBlockState(), 3);
         }
 
@@ -118,7 +121,7 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
         HeatBlockEntity.transferAround(this);
 
         float light = world.getBrightness(LightLayer.SKY, blockPos.above()) - dark;
-        last = Math.max((light/15f)*energyPerSecond - Math.max(0, heat - (20 * energyPerSecond)), 0);
+        last = (float) Math.max((light/15f)*energyPerSecond*generationMultiplier - Math.max(0, heat - (20 * energyPerSecond*generationMultiplier)), 0);
         addHeat(last);
     }
 }

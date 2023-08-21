@@ -81,7 +81,8 @@ public class ReactorHeatVentBlockEntity extends RodFindingReactorBlockEntity imp
     public void tick(BlockPos pos, Level world, BlockState state) {
         tick++;
         if (tick >= 20) {
-            if (heat > 16000 *NewAgeConfig.getCommon().overheatingMultiplier.get()) {
+            double multiplier = NewAgeConfig.getCommon().overheatingMultiplier.get();
+            if (multiplier > 0 && heat > 16000 * multiplier) {
                 world.setBlock(pos, Blocks.LAVA.defaultBlockState(), 3);
             }
             tick = 0;

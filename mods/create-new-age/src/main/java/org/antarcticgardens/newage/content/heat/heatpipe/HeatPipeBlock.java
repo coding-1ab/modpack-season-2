@@ -146,7 +146,8 @@ public class HeatPipeBlock extends Block implements EntityBlock, IWrenchable {
         return (world, blockPos, blockState, self) -> {
             if ((world.getGameTime() + on) % 20 != 0 || !(self instanceof HeatPipeBlockEntity selfC)) return;
             HeatBlockEntity.transferAround(selfC);
-            if (selfC.heat > 10000 * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
+            double multiplier = NewAgeConfig.getCommon().overheatingMultiplier.get();
+            if (multiplier > 0 && selfC.heat > 10000 * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
                 self.getLevel().setBlock(self.getBlockPos(), Blocks.LAVA.defaultBlockState(), 3);
             }
         };

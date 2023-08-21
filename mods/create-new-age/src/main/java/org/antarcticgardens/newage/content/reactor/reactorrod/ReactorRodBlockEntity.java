@@ -25,9 +25,10 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
     int twoSeconds = 0;
     private boolean working;
     public void tick(BlockPos pos, Level world, BlockState state) {
-        double multiplier = NewAgeConfig.getCommon().overheatingMultiplier.get();
+        var common = NewAgeConfig.getCommon();
+        double multiplier = common.overheatingMultiplier.get();
         if (multiplier > 0 && this.heat > 16000*multiplier) {
-            heat-=25;
+            heat-=common.nuclearReactorRodHeatLoss.get();
             setChanged();
             if (this.heat > 24000*multiplier) {
                 world.setBlock(pos, NewAgeBlocks.CORIUM.getDefaultState(), 3);
@@ -49,7 +50,7 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
                 world.setBlock(pos, state.setValue(ReactorRodBlock.ACTIVE, true), 3);
                 working = true;
             }
-            heat+=30;
+            heat+=common.nuclearReactorRodHeat.get();
             setChanged();
         } else {
             if (working) {

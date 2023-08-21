@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.newage.NewAgeBlockEntityTypes;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -66,6 +67,6 @@ public class SolarHeatingPlateBlock extends Block implements EntityBlock, IWrenc
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Lang.translate("tooltip.create_new_age.generates").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.temperature.ps", strength).style(ChatFormatting.AQUA).component());
+        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.temperature.ps", strength * NewAgeConfig.getCommon().solarPanelHeatMultiplier.get()).style(ChatFormatting.AQUA).component());
     }
 }

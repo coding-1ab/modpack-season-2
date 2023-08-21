@@ -49,7 +49,8 @@ public class HeaterBlock extends Block implements EntityBlock, IWrenchable {
         return (world, blockPos, blockState, sel) -> {
             if ((world.getGameTime() + on) % 20 != 0 || !(sel instanceof HeaterBlockEntity self) || self.getLevel() == null) return;
             HeatBlockEntity.transferAround(self);
-            if (self.heat > 9000 * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
+            double multiplier = NewAgeConfig.getCommon().overheatingMultiplier.get();
+            if (multiplier > 0 && self.heat > 9000 * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
                 self.getLevel().setBlock(self.getBlockPos(), Blocks.LAVA.defaultBlockState(), 3);
             } else if (self.heat > 400) {
                 self.heat -= 400;

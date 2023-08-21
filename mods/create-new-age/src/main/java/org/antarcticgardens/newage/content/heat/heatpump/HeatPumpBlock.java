@@ -152,7 +152,8 @@ public class HeatPumpBlock extends Block implements EntityBlock, IWrenchable {
                 self.setChanged();
             }
 
-            if (self.heat > 6000 * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
+            double multiplier = NewAgeConfig.getCommon().overheatingMultiplier.get();
+            if (multiplier > 0 && self.heat > 6000 * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
                 self.getLevel().setBlock(self.getBlockPos(), Blocks.LAVA.defaultBlockState(), 3);
             }
         };
