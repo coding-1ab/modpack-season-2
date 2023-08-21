@@ -8,6 +8,10 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -56,6 +60,15 @@ public class CreateNewAge implements ModInitializer {
 		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES, ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation("create_new_age","magnetite")));
 
 		ContraptionMovementSetting.register(NewAgeBlocks.ELECTRICAL_CONNECTOR.get(), () -> ContraptionMovementSetting.UNMOVABLE);
+
+		var containerContainer = FabricLoader.getInstance().getModContainer("create_new_age");
+
+		if (containerContainer.isEmpty()) {
+			return;
+		}
+
+		ModContainer modContainer = containerContainer.get();
+		ResourceManagerHelper.registerBuiltinResourcePack(new ResourceLocation(MOD_ID, "create_new_age_monkey_edition"), modContainer, Component.translatable("create_new_age.monkey_edition"), ResourcePackActivationType.NORMAL);
 	}
 
 	private void registerCreativeTab() {
