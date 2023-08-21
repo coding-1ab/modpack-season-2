@@ -54,7 +54,7 @@
   "block.create_new_age.advanced_solar_heating_plate": "Advanced Solar Plate",
   "block.create_new_age.electrical_connector": "Electrical Connector",
   "block.create_new_age.basic_motor": "Basic Motor",
-  "block.create_new_age.advanced_motor": "Advanced Motor",
+  "block.create_new_age.advanced_motor": "Strong Motor",
   "block.create_new_age.reinforced_motor": "Reinforced Motor",
   "block.create_new_age.thorium_ore": "Thorium Ore",
   "item.create_new_age.nuclear_fuel": "Nuclear Fuel",
@@ -137,5 +137,11 @@
   "create_new_age.ponder.generation.text_3": "As the magnetic force of magnets around the Generator Coils increases, the percentage of SU being turned into electricity increases.",
   "create_new_age.ponder.generation.text_4": "Efficiency: 33.3%%",
   "create_new_age.ponder.generation.text_5": "Efficiency: 50.0%%",
-  "create_new_age.ponder.generation.text_6": "However, as the efficiency increases, the amount of SU used by the Generator Coils increases."
+  "create_new_age.ponder.generation.text_6": "However, as the efficiency increases, the amount of SU used by the Generator Coils increases.",
+
+  "create_new_age.ponder.motor.header": "Motors!",
+  "create_new_age.ponder.motor.text_1": "Motors allow you to generate rotation using electricity.",
+  "create_new_age.ponder.motor.text_2": "You can configure its speed using a wrench, however the amount of SU it outputs will stay the same.",
+  "create_new_age.ponder.motor.text_3": "By powering it with redstone you can disable it.",
+  "create_new_age.ponder.motor.text_4": "You can also invert that mechanic by right-clicking on it."
 }

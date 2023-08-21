@@ -10,6 +10,7 @@ import org.antarcticgardens.newage.content.energiser.EnergiserPonder;
 import org.antarcticgardens.newage.content.generation.GenerationPonder;
 import org.antarcticgardens.newage.content.heat.HeatingPonder;
 import org.antarcticgardens.newage.content.heat.heater.HeaterPonder;
+import org.antarcticgardens.newage.content.motors.MotorPonder;
 import org.antarcticgardens.newage.content.reactor.ReactorPonder;
 
 public class CreateNewAgeClient implements ClientModInitializer {
@@ -50,6 +51,10 @@ public class CreateNewAgeClient implements ClientModInitializer {
         helper.addStoryBoard(NewAgeBlocks.LAYERED_MAGNET, "generation", GenerationPonder::ponder);
         helper.addStoryBoard(NewAgeBlocks.FLUXUATED_MAGNETITE, "generation", GenerationPonder::ponder);
         helper.addStoryBoard(NewAgeBlocks.NETHERITE_MAGNET, "generation", GenerationPonder::ponder);
+
+        helper.addStoryBoard(NewAgeBlocks.BASIC_MOTOR, "motor", MotorPonder::motor);
+        helper.addStoryBoard(NewAgeBlocks.ADVANCED_MOTOR, "motor", MotorPonder::motor);
+        helper.addStoryBoard(NewAgeBlocks.REINFORCED_MOTOR, "motor", MotorPonder::motor);
 
         // ToolTip
         addToolTipModifier(NewAgeBlocks.ENERGISER_T1);
