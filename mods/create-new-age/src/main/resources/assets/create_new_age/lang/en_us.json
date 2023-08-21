@@ -143,5 +143,24 @@
   "create_new_age.ponder.motor.text_1": "Motors allow you to generate rotation using electricity.",
   "create_new_age.ponder.motor.text_2": "You can configure its speed using a wrench, however the amount of SU it outputs will stay the same.",
   "create_new_age.ponder.motor.text_3": "By powering it with redstone you can disable it.",
-  "create_new_age.ponder.motor.text_4": "You can also invert that mechanic by right-clicking on it."
+  "create_new_age.ponder.motor.text_4": "You can also invert that mechanic by right-clicking on it.",
+
+
+  "create_new_age.ponder.tag.electrical": "Electrical Components",
+  "create_new_age.ponder.tag.electrical.description": "Blocks responsible for generating, transporting and using electricity.",
+
+  "create_new_age.ponder.tag.wiring": "Wiring",
+  "create_new_age.ponder.tag.wiring.description": "Items used for wiring.",
+
+  "create_new_age.ponder.tag.magnets": "Magnets",
+  "create_new_age.ponder.tag.magnets.description": "Magnets used for generating electricity.",
+
+  "create_new_age.ponder.tag.electricity_generation": "Electricity Generation",
+  "create_new_age.ponder.tag.electricity_generation.description": "Blocks used for generating electricity.",
+
+  "create_new_age.ponder.tag.heating": "Heating Components",
+  "create_new_age.ponder.tag.heating.description": "Blocks used for generating, transporting and using heat.",
+
+  "create_new_age.ponder.tag.reactor": "Nuclear Reactor",
+  "create_new_age.ponder.tag.reactor.description": "Blocks used in a nuclear reactor."
 }
