@@ -133,7 +133,7 @@ public class NewAgeBlocks {
                     .register();
 
     public static final BlockEntry<ImplementedMagnetBlock> NETHERITE_MAGNET =
-            REGISTRATE.block("netherite_magnet", ImplementedMagnetBlock.simple(16))
+            REGISTRATE.block("netherite_magnet", ImplementedMagnetBlock.simple(24))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .simpleItem()
                     .register();
