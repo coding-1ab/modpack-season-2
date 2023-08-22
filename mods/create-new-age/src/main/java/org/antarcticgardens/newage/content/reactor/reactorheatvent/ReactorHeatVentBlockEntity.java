@@ -12,6 +12,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.newage.config.NewAgeConfig;
@@ -88,6 +89,8 @@ public class ReactorHeatVentBlockEntity extends RodFindingReactorBlockEntity imp
             tick = 0;
             extract = 0;
 
+            transferAroundNonRodOnly(this);
+
             List<ReactorRodBlockEntity> rods = new LinkedList<>();
             for (Direction dir : Direction.values()) {
                 findRods(rods, dir);
@@ -102,6 +105,25 @@ public class ReactorHeatVentBlockEntity extends RodFindingReactorBlockEntity imp
                 heat+=total;
             }
         }
+    }
+
+    static <T extends BlockEntity & HeatBlockEntity> void transferAroundNonRodOnly(T self) {
+        if (self.getLevel() == null) {
+            return;
+        }
+        float totalToAverage = self.getHeat();
+        int totalBlocks = 1;
+        HeatBlockEntity[] setters = new HeatBlockEntity[6];
+        for (int i = 0 ; i < 6 ; i++) {
+            Direction value = Direction.values()[i];
+            BlockEntity entity = self.getLevel().getBlockEntity(self.getBlockPos().relative(value));
+            if (entity instanceof HeatBlockEntity hbe && !(entity instanceof ReactorRodBlockEntity) && hbe.canAdd(value)) {
+                setters[i] = hbe;
+                totalToAverage += hbe.getHeat();
+                totalBlocks++;
+            }
+        }
+        HeatBlockEntity.average(self, totalToAverage, totalBlocks, setters);
     }
 
     @Override

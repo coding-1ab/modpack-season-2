@@ -1,8 +1,12 @@
 package org.antarcticgardens.newage.content.reactor.reactorrod;
 
+import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.foundation.utility.Lang;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -14,9 +18,12 @@ import org.antarcticgardens.newage.NewAgeBlocks;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
 import org.antarcticgardens.newage.content.reactor.NuclearUtil;
+import org.antarcticgardens.newage.tools.StringFormattingTool;
 import org.jetbrains.annotations.Nullable;
 
-public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntity {
+import java.util.List;
+
+public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntity, IHaveGoggleInformation {
     public ReactorRodBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
         working = blockState.getValue(ReactorRodBlock.ACTIVE);
@@ -59,6 +66,13 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
                 setChanged();
             }
         }
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(heat))
+                .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
+        return true;
     }
 
     static <T extends  BlockEntity & HeatBlockEntity> void transferAroundRodOnly(T self) {
