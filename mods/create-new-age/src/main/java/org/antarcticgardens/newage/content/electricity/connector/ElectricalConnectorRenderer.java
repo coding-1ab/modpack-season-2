@@ -10,9 +10,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
@@ -94,7 +92,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                             (float) (endPos.z - pos.getZ() - 0.5)
                     );
 
-                    double distance = endPos.distanceToSqr(bound.getX(), bound.getY(), bound.getZ());
+                    double distance = endPos.distanceToSqr(bound.getX() + 0.5, bound.getY() + 0.5, bound.getZ() + 0.5);
 
                     if (distance > Mth.square(ElectricWireItem.MAX_DISTANCE * 2))
                         return;
@@ -117,7 +115,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                         }
                     }
 
-                    if (distance > Mth.square(ElectricWireItem.MAX_DISTANCE)) {
+                    if (distance >= Mth.square(ElectricWireItem.MAX_DISTANCE)) {
                         color1 = TOO_LONG1;
                         color2 = TOO_LONG2;
                     }
