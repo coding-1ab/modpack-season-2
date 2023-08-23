@@ -14,12 +14,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.*;
 import org.antarcticgardens.newage.CreateNewAge;
 import org.antarcticgardens.newage.tools.RaycastUtil;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public class NuclearUtil {
     public static final TagKey<Block> STOPS_RADIATION = new TagKey<>(Registries.BLOCK, new ResourceLocation(CreateNewAge.MOD_ID, "stops_radiation"));
@@ -44,7 +46,7 @@ public class NuclearUtil {
                     continue;
 
                 Vec3 direction = le.getEyePosition().subtract(start).normalize();
-                HitResult hitResult = RaycastUtil.pickBlockFromPos(world, start, direction, (float) Math.ceil(distance));
+                HitResult hitResult = RaycastUtil.pickFilteredBlockFromPos(world, start, direction, (float) Math.ceil(distance), bs -> bs.is(STOPS_RADIATION));
 
                 if (hitResult instanceof BlockHitResult bhr) {
                     if (world.getBlockState(bhr.getBlockPos()).is(STOPS_RADIATION))
