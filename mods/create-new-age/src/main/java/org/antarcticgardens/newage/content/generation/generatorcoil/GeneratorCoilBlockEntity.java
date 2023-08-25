@@ -75,7 +75,7 @@ public class GeneratorCoilBlockEntity extends KineticBlockEntity {
     @Override
     public void tick() {
         super.tick();
-        generatedEnergy = (int) ((lastStressApplied - plainStress) * Math.abs(this.getTheoreticalSpeed()) * NewAgeConfig.getCommon().suToEnergy.get());
+        generatedEnergy = (int) ((lastStressApplied - plainStress) * Math.abs(this.getSpeed()) * NewAgeConfig.getCommon().suToEnergy.get());
     }
 
     @Override
