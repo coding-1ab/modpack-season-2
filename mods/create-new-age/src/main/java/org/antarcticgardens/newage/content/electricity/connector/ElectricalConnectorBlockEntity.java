@@ -26,12 +26,12 @@ import org.antarcticgardens.newage.content.electricity.wire.WireType;
 
 import java.util.*;
 
-public class ElectricalConnectorBlockEntity extends BlockEntity implements BotariumEnergyBlock<WrappedBlockEnergyContainer> {
+public class ElectricalConnectorBlockEntity extends BlockEntity implements BotariumEnergyBlock<NetworkEnergyContainer> {
     private final Map<ElectricalConnectorBlockEntity, WireType> connectors = new HashMap<>();
     private final Map<BlockPos, WireType> connectorPositions = new HashMap<>();
 
     private ElectricalNetwork network;
-    private WrappedBlockEnergyContainer energyContainer;
+    private NetworkEnergyContainer energyContainer;
 
     protected boolean tickedBefore = false;
 
@@ -160,7 +160,7 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
     public void setNetwork(ElectricalNetwork network) {
         this.network = network;
-        energyContainer = new WrappedBlockEnergyContainer(this, new NetworkEnergyContainer(this, this.network));
+        energyContainer = new NetworkEnergyContainer(this, this.network);
     }
 
     public ElectricalNetwork getNetwork() {
@@ -168,7 +168,7 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
     }
 
     @Override
-    public WrappedBlockEnergyContainer getEnergyStorage() {
+    public NetworkEnergyContainer getEnergyStorage() {
         return energyContainer;
     }
 }

@@ -1,9 +1,13 @@
 package org.antarcticgardens.newage.content.electricity.network;
 
-import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
+import earth.terrarium.botarium.common.energy.base.PlatformEnergyManager;
+import earth.terrarium.botarium.common.energy.util.EnergyHooks;
+import earth.terrarium.botarium.fabric.energy.FabricEnergyManager;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
 
 import java.util.*;
@@ -11,7 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class ElectricalNetwork {
     private final List<ElectricalConnectorBlockEntity> nodes = new ArrayList<>();
-    private final Map<ElectricalConnectorBlockEntity, BotariumEnergyBlock<?>> consumers = new HashMap<>();
+    private final Map<ElectricalConnectorBlockEntity, NetworkConsumer> consumers = new HashMap<>();
 
     private final ElectricalNetworkPathManager pathManager = new ElectricalNetworkPathManager();
 
@@ -51,11 +55,13 @@ public class ElectricalNetwork {
 
         for (ElectricalConnectorBlockEntity node : nodes) {
             if (node.getLevel() != null) {
+                Direction dir = node.getBlockState().getValue(BlockStateProperties.FACING).getOpposite();
                 BlockEntity entity = node.getLevel().getBlockEntity(node.getSupportingBlockPos());
 
-                if (entity instanceof BotariumEnergyBlock<?> energyBlock && !(entity instanceof ElectricalConnectorBlockEntity)) {
-                    if (energyBlock.getEnergyStorage().allowsInsertion())
-                        consumers.put(node, energyBlock);
+                if (entity != null && !(entity instanceof ElectricalConnectorBlockEntity) && EnergyHooks.isEnergyContainer(entity, dir)) {
+                    PlatformEnergyManager storage = EnergyHooks.getBlockEnergyManager(entity, dir);
+                    if (storage.supportsInsertion() && storage instanceof FabricEnergyManager fem)
+                        consumers.put(node, new NetworkConsumer(entity, fem.energy()));
                 }
             }
         }
@@ -77,7 +83,7 @@ public class ElectricalNetwork {
 
         consumers.entrySet().stream()
                 .sorted(Comparator.comparingDouble(e ->
-                        e.getValue().getEnergyStorage().getStoredEnergy() / (double) e.getValue().getEnergyStorage().getMaxCapacity()))
+                        e.getValue().storage().getAmount() / (double) e.getValue().storage().getCapacity()))
                 .takeWhile(e -> inserted.get() < amount)
                 .forEach(e -> inserted.addAndGet(insertInto(from, e, context, Math.min(perConsumer, amount - inserted.get()), simulate)));
 
@@ -85,7 +91,7 @@ public class ElectricalNetwork {
     }
 
     private long insertInto(ElectricalConnectorBlockEntity from,
-                            Map.Entry<ElectricalConnectorBlockEntity, BotariumEnergyBlock<?>> to,
+                            Map.Entry<ElectricalConnectorBlockEntity, NetworkConsumer> to,
                             NetworkPathConductivityContext context,
                             long amount,
                             boolean simulate) {
@@ -94,12 +100,14 @@ public class ElectricalNetwork {
 
         while ((path = pathManager.findConductiblePath(from, to.getKey())) != null && inserted < amount) {
             long pathConductivity = context.calculatePathConductivity(path);
-            long insertedThroughThisPath = to.getValue().getEnergyStorage().insertEnergy(Math.min(pathConductivity, amount - inserted), simulate);
+            long insertedThroughThisPath = to.getValue().insert(Math.min(pathConductivity, amount - inserted), simulate);
 
             if (insertedThroughThisPath == 0)
                 break;
 
-            if (!simulate && insertedThroughThisPath > 0 && to.getValue() instanceof BlockEntity be) {
+            if (!simulate && insertedThroughThisPath > 0) {
+                BlockEntity be = to.getValue().entity();
+
                 be.setChanged();
                 if (be.getLevel() instanceof ServerLevel serverLevel)
                     serverLevel.getChunkSource().blockChanged(be.getBlockPos());
@@ -130,5 +138,9 @@ public class ElectricalNetwork {
 
     public List<ElectricalConnectorBlockEntity> getNodes() {
         return Collections.unmodifiableList(nodes);
+    }
+    
+    public ElectricalNetworkPathManager getPathManager() {
+        return pathManager;
     }
 }

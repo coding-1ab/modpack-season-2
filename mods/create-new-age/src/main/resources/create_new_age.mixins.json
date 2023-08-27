@@ -3,8 +3,6 @@
 	"package": "org.antarcticgardens.newage.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"TransactionImplMixin",
-		"FabricBlockEnergyContainerMixin",
 		"LevelMixin"
 	],
 	"injectors": {
