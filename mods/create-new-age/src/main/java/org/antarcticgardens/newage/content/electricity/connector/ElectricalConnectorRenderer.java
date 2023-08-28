@@ -93,8 +93,9 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                     );
 
                     double distance = endPos.distanceToSqr(bound.getX() + 0.5, bound.getY() + 0.5, bound.getZ() + 0.5);
+                    int maxDistance = NewAgeConfig.getCommon().maxWireLength.get();
 
-                    if (distance > Mth.square(ElectricWireItem.MAX_DISTANCE * 2))
+                    if (distance > Mth.square(maxDistance * 2))
                         return;
 
                     int[] color1 = wire.getWireType().getColor1();
@@ -115,7 +116,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                         }
                     }
 
-                    if (distance >= Mth.square(ElectricWireItem.MAX_DISTANCE)) {
+                    if (distance >= Mth.square(maxDistance)) {
                         color1 = TOO_LONG1;
                         color2 = TOO_LONG2;
                     }
@@ -166,7 +167,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
     }
 
     private float catenary(double x, double length, int sections) {
-        double a = length / ElectricWireItem.MAX_DISTANCE * SAG_FACTOR;
+        double a = length / NewAgeConfig.getCommon().maxWireLength.get() * SAG_FACTOR;
         x = (x / sections * 2 - 1);
         return (float) ((Math.cosh(x) - Math.cosh(1.0f)) * a);
     }

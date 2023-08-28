@@ -18,7 +18,7 @@ public class CommonConfig {
 
     public final ForgeConfigSpec.ConfigValue<Double> solarPanelHeatMultiplier;
 
-
+    public final ForgeConfigSpec.ConfigValue<Integer> maxWireLength;
 
     public CommonConfig(ForgeConfigSpec.Builder builder) {
         suToEnergy = builder
@@ -63,5 +63,8 @@ public class CommonConfig {
                 .comment("Multiplier for how much heat solar panels output.")
                 .defineInRange("solarPanelHeatMultiplier", 1.0, 0, Double.MAX_VALUE);
 
+        maxWireLength = builder
+                .comment("Maximum wire length")
+                .defineInRange("maxWireLength", 16, 1, Integer.MAX_VALUE);
     }
 }
