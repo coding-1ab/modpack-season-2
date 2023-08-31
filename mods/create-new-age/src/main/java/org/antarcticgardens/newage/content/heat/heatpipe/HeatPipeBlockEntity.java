@@ -19,6 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class HeatPipeBlockEntity extends BlockEntity implements HeatBlockEntity, IHaveGoggleInformation {
+    public float generating;
+
     public HeatPipeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
     }
@@ -29,12 +31,14 @@ public class HeatPipeBlockEntity extends BlockEntity implements HeatBlockEntity,
     public void load(CompoundTag tag) {
         super.load(tag);
         heat = tag.getFloat("heat");
+        generating = tag.getFloat("generating");
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putFloat("heat", heat);
+        tag.putFloat("generating", generating);
     }
 
 
@@ -70,6 +74,14 @@ public class HeatPipeBlockEntity extends BlockEntity implements HeatBlockEntity,
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(heat))
                 .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
+
+        if (generating > 0.05) {
+            Lang.translate("tooltip.create_new_age.generating")
+                    .style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
+            Lang.translate("tooltip.create_new_age.temperature.ps", StringFormattingTool.formatFloat(generating))
+                    .style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
+        }
+
         return true;
     }
 

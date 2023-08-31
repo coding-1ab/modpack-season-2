@@ -1,6 +1,7 @@
 package org.antarcticgardens.newage.content.heat.heatpipe;
 
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
+import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -145,6 +146,25 @@ public class HeatPipeBlock extends Block implements EntityBlock, IWrenchable {
         }
         return (world, blockPos, blockState, self) -> {
             if ((world.getGameTime() + on) % 20 != 0 || !(self instanceof HeatPipeBlockEntity selfC)) return;
+
+            BlockPos heatPos = blockPos.below();
+
+            float heat = BoilerHeaters.getActiveHeat(level, blockPos, level.getBlockState(heatPos));
+
+            selfC.generating = 0;
+
+            double loss = NewAgeConfig.getCommon().passivePipeHeatLoss.get();
+
+            selfC.heat = (float) Math.max(0, selfC.heat - loss);
+
+            if (heat >= 0) {
+                selfC.generating = ((1+heat*3) * 6);
+                selfC.generating = (float) Math.max(Math.min(selfC.generating, ((2+Math.pow(2, heat)) * 300) - selfC.heat), 0);
+                selfC.heat += selfC.generating;
+            }
+
+            selfC.generating -= (float) loss;
+
             HeatBlockEntity.transferAround(selfC);
             double multiplier = NewAgeConfig.getCommon().overheatingMultiplier.get();
             if (multiplier > 0 && selfC.heat > 10000 * NewAgeConfig.getCommon().overheatingMultiplier.get()) {

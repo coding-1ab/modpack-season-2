@@ -10,6 +10,12 @@ public class CommonConfig {
     public final ForgeConfigSpec.ConfigValue<Integer> maxPathfindingDepth;
     public final ForgeConfigSpec.ConfigValue<Double> energiserSpeedMultiplier;
 
+    public final ForgeConfigSpec.ConfigValue<Double> passiveHeatSourceMultiplier;
+
+    public final ForgeConfigSpec.ConfigValue<Double> passivePipeHeatLoss;
+
+    public final ForgeConfigSpec.ConfigValue<Double> heaterRequiredHeatMultiplier;
+
     public final ForgeConfigSpec.ConfigValue<Double> overheatingMultiplier;
 
     public final ForgeConfigSpec.ConfigValue<Double> nuclearReactorRodHeat;
@@ -50,6 +56,18 @@ public class CommonConfig {
         overheatingMultiplier = builder
                 .comment("Multiplier for the temperature at which components overheat. Set to -1 to disable overheating.")
                 .defineInRange("overheatingMultiplier", 1.0, -1, Double.MAX_VALUE);
+
+        passiveHeatSourceMultiplier = builder
+                .comment("Multiplier for how much heat pipes obtain from passive heat sources like Lava or even Boilers.")
+                .defineInRange("passiveHeatSourceMultiplier", 1.0, 0, Double.MAX_VALUE);
+
+        passivePipeHeatLoss = builder
+                .comment("How much heat do pipes loose per second.")
+                .defineInRange("passivePipeHeatLoss", 1.0, 0, Double.MAX_VALUE);
+
+        heaterRequiredHeatMultiplier = builder
+                .comment("Multiplier for how much heat a boiler needs.")
+                .defineInRange("boilerRequiredHeatMultiplier", 1.0, 0, Double.MAX_VALUE);
 
         nuclearReactorRodHeat = builder
                 .comment("How much heat per tick a nuclear reactor rod generate.")
