@@ -75,7 +75,7 @@ public class CreateNewAge implements ModInitializer {
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,
 				new ResourceLocation(MOD_ID, "tab"),
 				FabricItemGroup.builder()
-						.icon(NewAgeBlocks.ENERGISER_T1::asStack)
+						.icon(NewAgeBlocks.GENERATOR_COIL::asStack)
 						.title(Component.translatable("tab." + MOD_ID + ".tab"))
 						.build());
 	}
