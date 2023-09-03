@@ -1,5 +1,6 @@
 package org.antarcticgardens.newage.content.heat.heater;
 
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.ponder.SceneBuilder;
 import com.simibubi.create.foundation.ponder.SceneBuildingUtil;
 import net.minecraft.core.Direction;
@@ -18,7 +19,7 @@ public class HeaterPonder {
         scene.world.showSection(util.select.fromTo(1, 1, 1, 5, 1, 5), Direction.DOWN);
 
         scene.world.modifyBlock(util.grid.at(2, 1, 1),
-                blockState -> blockState.setValue(HeaterBlock.STRENGTH, 0),
+                blockState -> blockState.setValue(HeaterBlock.STRENGTH, BlazeBurnerBlock.HeatLevel.NONE),
                 false);
 
         scene.idle(10);
@@ -41,19 +42,19 @@ public class HeaterPonder {
         scene.idle(30);
 
         scene.world.modifyBlock(util.grid.at(2, 1, 1),
-                blockState -> blockState.setValue(HeaterBlock.STRENGTH, 1),
+                blockState -> blockState.setValue(HeaterBlock.STRENGTH, BlazeBurnerBlock.HeatLevel.SMOULDERING),
                 false);
 
         scene.idle(50);
 
         scene.world.modifyBlock(util.grid.at(2, 1, 1),
-                blockState -> blockState.setValue(HeaterBlock.STRENGTH, 2),
+                blockState -> blockState.setValue(HeaterBlock.STRENGTH, BlazeBurnerBlock.HeatLevel.KINDLED),
                 false);
 
         scene.idle(100);
 
         scene.world.modifyBlock(util.grid.at(2, 1, 1),
-                blockState -> blockState.setValue(HeaterBlock.STRENGTH, 3),
+                blockState -> blockState.setValue(HeaterBlock.STRENGTH, BlazeBurnerBlock.HeatLevel.SEETHING),
                 false);
     }
 }

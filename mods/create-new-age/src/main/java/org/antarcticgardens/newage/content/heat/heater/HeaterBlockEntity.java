@@ -1,6 +1,7 @@
 package org.antarcticgardens.newage.content.heat.heater;
 
 import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.utility.Lang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -71,17 +72,28 @@ public class HeaterBlockEntity extends BlockEntity implements HeatBlockEntity, I
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(heat))
                 .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
-        int strength = getBlockState().getValue(HeaterBlock.STRENGTH);
+        BlazeBurnerBlock.HeatLevel strength = getBlockState().getValue(HeaterBlock.STRENGTH);
         double heat = 0;
 
         Double mult = NewAgeConfig.getCommon().heaterRequiredHeatMultiplier.get();
 
-        if (strength == 1) {
-            heat = 50 * mult;
-        } else if (strength == 2) {
-            heat = 100 * mult;
-        } else if (strength == 3) {
-            heat = 400 * mult;
+        switch (strength) {
+
+            case NONE -> {
+                heat = 0;
+            }
+            case SMOULDERING -> {
+                heat = 50 * mult;
+            }
+            case FADING -> {
+                heat = 100 * mult;
+            }
+            case KINDLED -> {
+                heat = 400 * mult;
+            }
+            case SEETHING -> {
+                heat = 500 * mult;
+            }
         }
 
         Lang.translate("tooltip.create_new_age.releasing")
