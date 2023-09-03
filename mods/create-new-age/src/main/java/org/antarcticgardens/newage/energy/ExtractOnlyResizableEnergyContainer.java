@@ -68,12 +68,12 @@ public class ExtractOnlyResizableEnergyContainer implements EnergyContainer, Upd
 
     @Override
     public long maxInsert() {
-        return 1024;
+        return Long.MAX_VALUE;
     }
 
     @Override
     public long maxExtract() {
-        return 1024;
+        return Long.MAX_VALUE;
     }
 
     @Override
