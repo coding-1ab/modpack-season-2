@@ -7,7 +7,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -21,7 +20,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
-import org.antarcticgardens.newage.tools.StringFormattingTool;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -164,6 +162,6 @@ public class ElectricWireItem extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Lang.translate("tooltip.create_new_age.transfers").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy_per_second", StringFormattingTool.formatLong(wireType.getConductivity() * 20)).style(ChatFormatting.AQUA).component());
+        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy_per_tick", String.format("%,d", wireType.getConductivity())).style(ChatFormatting.AQUA).component());
     }
 }

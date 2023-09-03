@@ -55,7 +55,7 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_per_second", StringFormattingTool.formatLong(lastOutput*20L))
+        Lang.translate("tooltip.create_new_age.energy_per_tick", StringFormattingTool.formatLong(lastOutput))
                 .style(ChatFormatting.AQUA)
                 .forGoggles(tooltip, 1);
 

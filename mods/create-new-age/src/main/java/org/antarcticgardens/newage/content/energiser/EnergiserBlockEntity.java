@@ -71,7 +71,7 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
             Lang.translate("tooltip.create_new_age.energy_usage")
                     .style(ChatFormatting.GRAY)
                     .forGoggles(tooltip);
-            Lang.translate("tooltip.create_new_age.energy_per_second", StringFormattingTool.formatLong(lastCharged * 20L))
+            Lang.translate("tooltip.create_new_age.energy_per_tick", StringFormattingTool.formatLong(lastCharged))
                     .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
         }
 

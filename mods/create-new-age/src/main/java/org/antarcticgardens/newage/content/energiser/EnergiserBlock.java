@@ -88,7 +88,7 @@ public class EnergiserBlock extends HorizontalKineticBlock implements IBE<Energi
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Lang.translate("tooltip.create_new_age.speed").style(ChatFormatting.GRAY).component());
-        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy_per_second", StringFormattingTool.formatLong(getStrength(tier) * 20L)).style(ChatFormatting.AQUA)
+        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy_per_tick", StringFormattingTool.formatLong(getStrength(tier))).style(ChatFormatting.AQUA)
                         .add(Lang.text(" ").translate("tooltip.create_new_age.per_rpm", 10).style(ChatFormatting.GRAY))
                 .component());
         tooltip.add(Lang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY).component());

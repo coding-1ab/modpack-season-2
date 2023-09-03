@@ -152,7 +152,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_per_second", StringFormattingTool.formatLong(e*20L))
+        Lang.translate("tooltip.create_new_age.energy_per_tick", StringFormattingTool.formatLong(e))
                 .style(ChatFormatting.AQUA)
                 .forGoggles(tooltip, 1);
 
