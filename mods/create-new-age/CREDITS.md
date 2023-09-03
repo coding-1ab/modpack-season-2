@@ -14,8 +14,9 @@ Carbon Brushes model + textures - ProfBones
 Fixing java reflection usage when not needed - Skeleton321
 
 ## Translations
-Belarusian - Talstoj <br>
-Spanish - Albertosaurio65
+Belarusian - talstoj <br>
+Spanish - Albertosaurio65 <br>
+Simplified Chinese - Z.Su
 
 ## Additional credits
 
