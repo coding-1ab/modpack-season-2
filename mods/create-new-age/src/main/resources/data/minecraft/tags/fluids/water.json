@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "create_new_age:glowstone_electrolyte",
+    "create_new_age:flowing_glowstone_electrolyte"
+  ]
+}

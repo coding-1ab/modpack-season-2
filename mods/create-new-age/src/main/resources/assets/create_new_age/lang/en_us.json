@@ -162,5 +162,12 @@
   "create_new_age.ponder.tag.heating.description": "Blocks used for generating, transporting and using heat.",
 
   "create_new_age.ponder.tag.reactor": "Nuclear Reactor",
-  "create_new_age.ponder.tag.reactor.description": "Blocks used in a nuclear reactor."
+  "create_new_age.ponder.tag.reactor.description": "Blocks used in a nuclear reactor.",
+
+
+  
+
+  "item.create_new_age.glowstone_electrolyte_bucket": "Glowstone Electrolyte Bucket",
+
+  "fluid.create_new_age.glowstone_electrolyte": "Glowstone Electrolyte"
 }

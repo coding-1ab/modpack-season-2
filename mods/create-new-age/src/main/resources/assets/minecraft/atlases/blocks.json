@@ -1,0 +1,12 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "create_new_age:fluid/glowstone_electrolyte_flow"
+    },
+    {
+      "type": "single",
+      "resource": "create_new_age:fluid/glowstone_electrolyte_still"
+    }
+  ]
+}
