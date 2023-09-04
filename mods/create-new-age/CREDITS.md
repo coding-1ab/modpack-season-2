@@ -7,8 +7,10 @@ Original assets - nullBlade
 ## Outside contributions
 
 ### Assets
-Energiser model + textures - ProfBones <br>
-Carbon Brushes model + textures - ProfBones
+Energiser model - ProfBones <br>
+Carbon Brushes model - ProfBones <br>
+Connector model - ProfBones <br>
+Motor models - ProfBones
 
 ### Bug fixes
 Fixing java reflection usage when not needed - Skeleton321
