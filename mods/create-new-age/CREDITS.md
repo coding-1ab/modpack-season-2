@@ -16,9 +16,9 @@ Motor models - ProfBones
 Fixing java reflection usage when not needed - Skeleton321
 
 ## Translations
-Belarusian - talstoj <br>
-Spanish - Albertosaurio65 <br>
-Simplified Chinese - Z.Su
+Belarusian — talstoj <br>
+Spanish — Albertosaurio65 <br>
+Simplified Chinese — 叁了个肆@Bilibili
 
 ## Additional credits
 
