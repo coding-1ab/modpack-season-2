@@ -13,8 +13,8 @@
     }
   },
   "pattern": [
-    "ztz",
-    "tct"
+    "tct",
+    "ztz"
   ],
   "result": {
     "count": 4,
