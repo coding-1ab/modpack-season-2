@@ -2,13 +2,15 @@ package org.antarcticgardens.newage;
 
 import com.simibubi.create.content.kinetics.BlockStressDefaults;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
+import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
+import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlock;
 import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesBlock;
-import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlock;
 import org.antarcticgardens.newage.content.generation.magnets.ImplementedMagnetBlock;
 import org.antarcticgardens.newage.content.heat.heater.HeaterBlock;
@@ -189,6 +191,10 @@ public class NewAgeBlocks {
     public static final BlockEntry<ReactorBlock> REACTOR_CASING =
             REGISTRATE.block("reactor_casing", ReactorBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .transform(b -> {
+                        b.onRegister(CreateRegistrate.connectedTextures(() -> new SimpleCTBehaviour(NewAgeSpriteShifts.REACTOR_CASING)));
+                        return b;
+                    })
                     .simpleItem()
                     .register();
 

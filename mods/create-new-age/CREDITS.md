@@ -7,10 +7,12 @@ Original assets - nullBlade
 ## Outside contributions
 
 ### Assets
-Energiser model - ProfBones <br>
-Carbon Brushes model - ProfBones <br>
-Connector model - ProfBones <br>
-Motor models - ProfBones
+Energiser model — ProfBones <br>
+Carbon Brushes model — ProfBones <br>
+Connector model — ProfBones <br>
+Motor models — ProfBones <br>
+Reactor casing texture — ProfBones <br>
+Pipe Texture — Lunar Antic <br>
 
 ### Bug fixes
 Fixing java reflection usage when not needed - Skeleton321
