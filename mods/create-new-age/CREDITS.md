@@ -13,6 +13,8 @@ Connector model — ProfBones <br>
 Motor models — ProfBones <br>
 Reactor casing&glass texture — ProfBones <br>
 Pipe Texture — Lunar Antic <br>
+Overcharged Diamond - ProfBones <br>
+Wire Coils - ProfBones  <br>
 
 ### Bug fixes
 Fixing java reflection usage when not needed - Skeleton321
