@@ -15,7 +15,8 @@ Reactor casing&glass texture — ProfBones <br>
 Reactor fuel inserter&heat vent models — ProfBones <br>
 Pipe Texture — Lunar Antic <br>
 Overcharged Diamond - ProfBones <br>
-Wire Coils - ProfBones  <br>
+Wire Coils - ProfBones <br>
+Generator Coil model - ProfBones <br>
 
 ### Bug fixes
 Fixing java reflection usage when not needed - Skeleton321
