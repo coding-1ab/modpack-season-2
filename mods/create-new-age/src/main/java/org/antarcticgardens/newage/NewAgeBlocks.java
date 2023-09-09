@@ -14,6 +14,7 @@ import org.antarcticgardens.newage.content.energiser.EnergiserBlock;
 import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesBlock;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlock;
 import org.antarcticgardens.newage.content.generation.magnets.ImplementedMagnetBlock;
+import org.antarcticgardens.newage.content.generation.magnets.MagnetBlockItem;
 import org.antarcticgardens.newage.content.heat.heater.HeaterBlock;
 import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlock;
 import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlock;
@@ -114,7 +115,7 @@ public class NewAgeBlocks {
     public static final BlockEntry<ImplementedMagnetBlock> MAGNETITE_BLOCK =
             REGISTRATE.block("magnetite_block", ImplementedMagnetBlock.simple(1))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-                    .simpleItem()
+                    .item(MagnetBlockItem::new).build()
                     .register();
 
     public static final BlockEntry<ImplementedMagnetBlock> REDSTONE_MAGNET =
@@ -124,25 +125,25 @@ public class NewAgeBlocks {
                         b.onRegister(CreateRegistrate.connectedTextures(() -> new SimpleCTBehaviour(NewAgeSpriteShifts.REDSTONE_MAGNET)));
                         return b;
                     })
-                    .simpleItem()
+                    .item(MagnetBlockItem::new).build()
                     .register();
 
     public static final BlockEntry<ImplementedMagnetBlock> LAYERED_MAGNET =
             REGISTRATE.block("layered_magnet", ImplementedMagnetBlock.simple(4))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-                    .simpleItem()
+                    .item(MagnetBlockItem::new).build()
                     .register();
 
     public static final BlockEntry<ImplementedMagnetBlock> FLUXUATED_MAGNETITE =
             REGISTRATE.block("fluxuated_magnetite", ImplementedMagnetBlock.simple(8))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-                    .simpleItem()
+                    .item(MagnetBlockItem::new).build()
                     .register();
 
     public static final BlockEntry<ImplementedMagnetBlock> NETHERITE_MAGNET =
             REGISTRATE.block("netherite_magnet", ImplementedMagnetBlock.simple(24))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-                    .simpleItem()
+                    .item(MagnetBlockItem::new).build()
                     .register();
 
     public static final BlockEntry<HeatPipeBlock> HEAT_PIPE =

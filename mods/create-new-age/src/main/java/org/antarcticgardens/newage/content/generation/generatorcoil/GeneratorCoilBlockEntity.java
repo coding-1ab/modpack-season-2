@@ -18,7 +18,7 @@ import org.antarcticgardens.newage.tools.StringFormattingTool;
 import java.util.List;
 
 public class GeneratorCoilBlockEntity extends KineticBlockEntity {
-    private final List<BlockPos> magnetPositions;
+    public final List<BlockPos> magnetPositions;
 
     private float lastStress = 0.0f;
     private int generatedEnergy = 0;
@@ -30,21 +30,21 @@ public class GeneratorCoilBlockEntity extends KineticBlockEntity {
                 state.getValue(RotatedPillarKineticBlock.AXIS));
 
         magnetPositions = Lists.newArrayList(
-                relativePosition.up(2).getPos(),
                 relativePosition.up(2).right(1).getPos(),
+                relativePosition.up(2).getPos(),
                 relativePosition.up(2).left(1).getPos(),
 
+                relativePosition.left(2).up(1).getPos(),
+                relativePosition.left(2).getPos(),
+                relativePosition.left(2).down(1).getPos(),
+
+                relativePosition.down(2).left(1).getPos(),
                 relativePosition.down(2).getPos(),
                 relativePosition.down(2).right(1).getPos(),
-                relativePosition.down(2).left(1).getPos(),
 
-                relativePosition.right(2).getPos(),
-                relativePosition.right(2).up(1).getPos(),
                 relativePosition.right(2).down(1).getPos(),
-
-                relativePosition.left(2).getPos(),
-                relativePosition.left(2).up(1).getPos(),
-                relativePosition.left(2).down(1).getPos()
+                relativePosition.right(2).getPos(),
+                relativePosition.right(2).up(1).getPos()
         );
 
         setLazyTickRate(20);
