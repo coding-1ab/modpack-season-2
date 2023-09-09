@@ -12,6 +12,7 @@ Carbon Brushes model — ProfBones <br>
 Connector model — ProfBones <br>
 Motor models — ProfBones <br>
 Reactor casing&glass texture — ProfBones <br>
+Reactor fuel inserter&heat vent models — ProfBones <br>
 Pipe Texture — Lunar Antic <br>
 Overcharged Diamond - ProfBones <br>
 Wire Coils - ProfBones  <br>

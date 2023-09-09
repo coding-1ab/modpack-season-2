@@ -207,7 +207,6 @@ public class NewAgeBlocks {
             REGISTRATE.block("reactor_rod", ReactorRodBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
-                    .addLayer(() -> RenderType::cutout)
                     .simpleItem()
                     .register();
 
@@ -228,6 +227,7 @@ public class NewAgeBlocks {
     public static final BlockEntry<ReactorFuelAcceptorBlock> REACTOR_FUEL_ACCEPTOR =
             REGISTRATE.block("reactor_fuel_acceptor", ReactorFuelAcceptorBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
                     .simpleItem()
                     .register();
 
@@ -235,6 +235,7 @@ public class NewAgeBlocks {
     public static final BlockEntry<ReactorHeatVentBlock> REACTOR_HEAT_VENT =
             REGISTRATE.block("reactor_heat_vent", ReactorHeatVentBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
                     .simpleItem()
                     .register();
 
