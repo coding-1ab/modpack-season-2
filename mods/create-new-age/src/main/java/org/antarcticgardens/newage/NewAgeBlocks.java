@@ -7,6 +7,7 @@ import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlock;
@@ -119,6 +120,10 @@ public class NewAgeBlocks {
     public static final BlockEntry<ImplementedMagnetBlock> REDSTONE_MAGNET =
             REGISTRATE.block("redstone_magnet", ImplementedMagnetBlock.simple(2))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .transform(b -> {
+                        b.onRegister(CreateRegistrate.connectedTextures(() -> new SimpleCTBehaviour(NewAgeSpriteShifts.REDSTONE_MAGNET)));
+                        return b;
+                    })
                     .simpleItem()
                     .register();
 
@@ -208,9 +213,14 @@ public class NewAgeBlocks {
 
     public static final BlockEntry<ReactorTransparentBlock> REACTOR_GLASS =
             REGISTRATE.block("reactor_glass", ReactorTransparentBlock::new)
+                    .initialProperties(()->Blocks.GLASS)
                     .properties(p -> p.isViewBlocking((blockState, blockGetter, blockPos) -> false))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(p -> p.isViewBlocking((a,b,c) -> false))
+                    .transform(b -> {
+                        b.onRegister(CreateRegistrate.connectedTextures(() -> new SimpleCTBehaviour(NewAgeSpriteShifts.REACTOR_GLASS)));
+                        return b;
+                    })
                     .addLayer(() -> RenderType::cutout)
                     .simpleItem()
                     .register();

@@ -11,7 +11,7 @@ Energiser model — ProfBones <br>
 Carbon Brushes model — ProfBones <br>
 Connector model — ProfBones <br>
 Motor models — ProfBones <br>
-Reactor casing texture — ProfBones <br>
+Reactor casing&glass texture — ProfBones <br>
 Pipe Texture — Lunar Antic <br>
 
 ### Bug fixes

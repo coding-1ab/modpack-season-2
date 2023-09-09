@@ -56,7 +56,11 @@ public class GenerationPonder {
         scene.world.showSection(util.select.position(4, 3, 3), Direction.DOWN);
         scene.world.showSection(util.select.position(3, 3, 3), Direction.DOWN);
 
-        scene.idle(10);
+        scene.idle(20);
+
+        scene.world.setKineticSpeed(util.select.fromTo(4, 4, 3, 4, 3, 8), 32);
+
+        scene.idle(35);
 
         scene.world.showSection(util.select.fromTo(4, 3, 6, 4, 3, 4), Direction.DOWN);
 
@@ -75,8 +79,6 @@ public class GenerationPonder {
         scene.world.showSection(util.select.fromTo(5, 5, 6, 3, 5, 5), Direction.DOWN);
 
         scene.idle(20);
-
-        scene.world.setKineticSpeed(util.select.fromTo(4, 3, 3, 4, 3, 8), 32);
 
         scene.idle(15);
 
