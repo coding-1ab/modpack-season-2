@@ -41,7 +41,7 @@ public class EnergiserBlock extends HorizontalKineticBlock implements IBE<Energi
     }
 
     public static int getStrength(int tier) {
-        return (int) (Math.pow(2, tier * 2) * NewAgeConfig.getCommon().energiserSpeedMultiplier.get());
+        return (int) ((Math.pow(4, tier)) * NewAgeConfig.getCommon().energiserSpeedMultiplier.get());
     }
 
     public static long getCapacity(int tier) {
