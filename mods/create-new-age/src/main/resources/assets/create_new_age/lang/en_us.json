@@ -169,5 +169,8 @@
 
   "item.create_new_age.glowstone_electrolyte_bucket": "Glowstone Electrolyte Bucket",
 
-  "fluid.create_new_age.glowstone_electrolyte": "Glowstone Electrolyte"
+  "fluid.create_new_age.glowstone_electrolyte": "Glowstone Electrolyte",
+  
+  "create.tooltip.create_new_age.attention": "Attention!",
+  "create.tooltip.create_new_age.battery_issue": "_Battery controller_ must be located at the top of a _fluid tank_ filled with _electrolyte_."
 }

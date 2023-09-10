@@ -5,6 +5,7 @@ import com.simibubi.create.content.kinetics.base.HalfShaftInstance;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftInstance;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
+import org.antarcticgardens.newage.content.electricity.battery.BatteryControllerBlockEntity;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlockEntity;
 import org.antarcticgardens.newage.content.energiser.EnergiserRenderer;
 import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesBlockEntity;
@@ -140,6 +141,12 @@ public class NewAgeBlockEntityTypes {
             .blockEntity("electrical_connector", ElectricalConnectorBlockEntity::new)
             .validBlocks(NewAgeBlocks.ELECTRICAL_CONNECTOR)
             .renderer(() -> ElectricalConnectorRenderer::new)
+            .register();
+    
+    
+    public static final BlockEntityEntry<BatteryControllerBlockEntity> BATTERY_CONTROLLER = REGISTRATE
+            .blockEntity("battery_controller", BatteryControllerBlockEntity::new)
+            .validBlocks(NewAgeBlocks.BATTERY_CONTROLLER)
             .register();
 
     public static void load() {  }
