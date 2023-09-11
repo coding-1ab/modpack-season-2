@@ -245,12 +245,16 @@ public class NewAgeBlocks {
     public static final BlockEntry<Block> BASIC_SOLAR_HEATING_PLATE =
             REGISTRATE.block("basic_solar_heating_plate", SolarHeatingPlateBlock::createBasic)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .addLayer(() -> RenderType::cutout)
                     .simpleItem()
                     .register();
 
     public static final BlockEntry<Block> ADVANCED_SOLAR_HEATING_PLATE =
             REGISTRATE.block("advanced_solar_heating_plate", SolarHeatingPlateBlock::createAdvanced)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .addLayer(() -> RenderType::cutout)
                     .simpleItem()
                     .register();
 

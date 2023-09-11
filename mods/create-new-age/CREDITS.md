@@ -13,10 +13,12 @@ Connector model — ProfBones <br>
 Motor models — ProfBones <br>
 Reactor casing&glass texture — ProfBones <br>
 Reactor fuel inserter&heat vent models — ProfBones <br>
-Pipe Texture — Lunar Antic <br>
 Overcharged Diamond - ProfBones <br>
 Wire Coils - ProfBones <br>
 Generator Coil model - ProfBones <br>
+Heating pipes+pumps model - ProfBones <br>
+Solar heating plate models - ProfBones
+
 
 ### Bug fixes
 Fixing java reflection usage when not needed - Skeleton321
@@ -25,6 +27,10 @@ Fixing java reflection usage when not needed - Skeleton321
 Belarusian — talstoj <br>
 Spanish — Albertosaurio65 <br>
 Simplified Chinese — 叁了个肆@Bilibili
+
+# Legacy outside contributions
+{Used during developement of 1.1} Pipe Texture — Lunar Antic <br>
+
 
 ## Additional credits
 
