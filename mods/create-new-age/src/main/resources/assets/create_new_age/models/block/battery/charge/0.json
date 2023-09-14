@@ -1,0 +1,7 @@
+{
+"textures": {
+		"0": "create_new_age:block/battery/screen/screen-0",
+		"1": "create_new_age:block/battery/battery",
+		"particle": "create_new_age:block/battery/battery"
+	},
+}

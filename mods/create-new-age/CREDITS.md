@@ -18,7 +18,7 @@ Wire Coils - ProfBones <br>
 Generator Coil model - ProfBones <br>
 Heating pipes+pumps model - ProfBones <br>
 Solar heating plate models - ProfBones
-
+Battery Controller model - ProfBones
 
 ### Bug fixes
 Fixing java reflection usage when not needed - Skeleton321
