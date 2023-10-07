@@ -22,6 +22,8 @@ public class GenerationPonder {
         scene.scaleSceneView(0.7f);
         scene.addKeyframe();
 
+        scene.idle(20);
+
         scene.world.showSection(util.select.layer(0), Direction.UP);
 
         scene.idle(10);
@@ -84,7 +86,7 @@ public class GenerationPonder {
 
         scene.overlay.showText(100)
                 .pointAt(new Vec3(4.5, 5.5, 5.5))
-                .text("");
+                .text("If you are reading this please disable ponder debug mode.");
 
         scene.idle(110);
 
@@ -179,6 +181,12 @@ public class GenerationPonder {
                 nbt -> nbt.putFloat("Value", 1.0f));
 
         scene.idle(20);
+
+        scene.overlay.showText(100)
+                .pointAt(new Vec3(4.5, 4.5, 4.5))
+                .text("If you are reading this please disable ponder debug mode.");
+
+        scene.idle(100);
 
         scene.markAsFinished();
 

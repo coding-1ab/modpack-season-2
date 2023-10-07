@@ -172,5 +172,7 @@
   "fluid.create_new_age.glowstone_electrolyte": "Glowstone Electrolyte",
   
   "create.tooltip.create_new_age.attention": "Attention!",
-  "create.tooltip.create_new_age.battery_issue": "_Battery controller_ must be located at the top of a _fluid tank_ filled with _electrolyte_."
+  "create.tooltip.create_new_age.battery_issue": "_Battery controller_ must be located at the top of a _fluid tank_ filled with _electrolyte_.",
+
+  "create_new_age.ponder.generation.text_7": "Since this was asked too many times, GENERATOR COILS DO NOT GENERATE ROTATION, ONLY ELECTRICITY."
 }
