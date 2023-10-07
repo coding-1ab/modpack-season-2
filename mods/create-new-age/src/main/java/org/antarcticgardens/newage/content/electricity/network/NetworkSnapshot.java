@@ -3,7 +3,6 @@ package org.antarcticgardens.newage.content.electricity.network;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import earth.terrarium.botarium.common.energy.base.EnergySnapshot;
-import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
@@ -22,8 +21,9 @@ public class NetworkSnapshot implements EnergySnapshot {
             BlockPos pos = connector.getSupportingBlockPos();
             BlockEntity be = connector.getLevel().getBlockEntity(pos);
             
-            if (be instanceof BotariumEnergyBlock<?> bb) 
+            if (be instanceof BotariumEnergyBlock<?> bb && !(be instanceof ElectricalConnectorBlockEntity)) {
                 snapshots.put(connector, bb.getEnergyStorage().createSnapshot());
+            }
         }
     }
     
