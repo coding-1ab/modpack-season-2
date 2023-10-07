@@ -17,8 +17,9 @@ Overcharged Diamond - ProfBones <br>
 Wire Coils - ProfBones <br>
 Generator Coil model - ProfBones <br>
 Heating pipes+pumps model - ProfBones <br>
-Solar heating plate models - ProfBones
-Battery Controller model - ProfBones
+Solar heating plate models - ProfBones <br>
+Battery Controller model - ProfBones <br>
+Thorium textures (block+item) - ProfBones
 
 ### Bug fixes
 Fixing java reflection usage when not needed - Skeleton321
