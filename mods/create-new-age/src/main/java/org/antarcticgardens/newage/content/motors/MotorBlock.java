@@ -29,6 +29,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,7 +57,7 @@ public class MotorBlock extends DirectionalKineticBlock implements IRotate, IBE<
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Lang.translate("tooltip.create_new_age.generates").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").add(Lang.number(stressGenerated).text(" ")
+        tooltip.add(Lang.text(" ").add(Lang.number(stressGenerated * NewAgeConfig.getCommon().motorSUMultiplier.get()).text(" ")
                 .translate("generic.unit.stress").style(ChatFormatting.AQUA)).component());
 
         tooltip.add(Lang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY)

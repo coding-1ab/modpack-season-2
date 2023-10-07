@@ -213,12 +213,12 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
         super.tick();
 
         if (!level.isClientSide()) {
-            int needed = (int) Math.ceil((stressImpact) * NewAgeConfig.getCommon().suToEnergy.get());
+            int needed = (int) Math.ceil((stressImpact * NewAgeConfig.getCommon().motorSUMultiplier.get()) * NewAgeConfig.getCommon().suToEnergy.get());
 
             e = needsPower == powered ? energy.extractEnergy(needed, false) : 0;
             if (e > 0) {
                 actualSpeed = speedBehavior.value;
-                actualStress = (float) Math.ceil(stressImpact * (e / (float)needed));
+                actualStress = (float) Math.ceil(stressImpact * NewAgeConfig.getCommon().motorSUMultiplier.get() * (e / (float)needed));
             } else {
                 actualSpeed = 0;
                 actualStress = 0;
