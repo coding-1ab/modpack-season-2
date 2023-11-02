@@ -7,12 +7,14 @@ import com.simibubi.create.foundation.utility.Lang;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -23,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.antarcticgardens.newage.content.motors.MotorBlock;
 import org.antarcticgardens.newage.content.motors.MotorBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,6 +67,25 @@ public class MotorExtensionBlock extends Block implements IBE<MotorExtensionBloc
 
     }
 
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        Direction direction = context.getClickedFace().getOpposite();
+        BlockPos pos = context.getClickedPos();
+        if (context.getPlayer() != null && context.getPlayer().isCrouching()) {
+            direction = direction.getOpposite();
+        } else if (!(context.getLevel().getBlockState(pos.relative(direction)).getBlock() instanceof MotorBlock)) {
+            for (Direction d : Direction.values()) {
+                if (context.getLevel().getBlockState(pos.relative(d)).getBlock() instanceof MotorBlock) {
+                    direction = d;
+                    break;
+                }
+            }
+        }
+
+        BlockState blockState = super.getStateForPlacement(context).setValue(FACING, direction);
+        return blockState;
+    }
 
     @Override
     public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {
