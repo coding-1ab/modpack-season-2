@@ -21,6 +21,7 @@ import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlock;
 import org.antarcticgardens.newage.content.heat.solarheatingplate.SolarHeatingPlateBlock;
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineBlock;
 import org.antarcticgardens.newage.content.motors.MotorBlock;
+import org.antarcticgardens.newage.content.motors.extension.MotorExtensionBlock;
 import org.antarcticgardens.newage.content.reactor.CoriumBlock;
 import org.antarcticgardens.newage.content.reactor.ReactorBlock;
 import org.antarcticgardens.newage.content.reactor.ReactorTransparentBlock;
@@ -89,6 +90,14 @@ public class NewAgeBlocks {
 
     public static final BlockEntry<MotorBlock> REINFORCED_MOTOR =
             REGISTRATE.block("reinforced_motor", (p) -> new MotorBlock(p, NewAgeBlockEntityTypes.REINFORCED_MOTOR, 128000, 8192, 256))
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(properties -> properties.strength(4.0f))
+                    .simpleItem()
+                    .register();
+
+    public static final BlockEntry<MotorExtensionBlock> BASIC_MOTOR_EXTENSION =
+            REGISTRATE.block("basic_motor_extension", (p) -> new MotorExtensionBlock(p, NewAgeBlockEntityTypes.BASIC_MOTOR_EXTENSION, 2.0f, 64_000))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(4.0f))

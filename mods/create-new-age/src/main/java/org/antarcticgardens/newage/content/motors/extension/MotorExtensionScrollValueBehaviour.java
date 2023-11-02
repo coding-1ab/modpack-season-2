@@ -34,7 +34,7 @@ public class MotorExtensionScrollValueBehaviour extends ScrollValueBehaviour {
         int value = Math.max(1, valueSetting.value());
         if (!valueSetting.equals(getValueSettings()))
             playFeedbackSound(this);
-        setValue(valueSetting.row() == 0 ? -value : value);
+        setValue(value);
     }
 
     @Override

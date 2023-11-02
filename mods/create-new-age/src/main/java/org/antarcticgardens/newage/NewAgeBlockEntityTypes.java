@@ -21,6 +21,7 @@ import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineBlo
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineInstance;
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineRenderer;
 import org.antarcticgardens.newage.content.motors.MotorBlockEntity;
+import org.antarcticgardens.newage.content.motors.extension.MotorExtensionBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorfuelacceptor.ReactorFuelAcceptorBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorheatvent.ReactorHeatVentBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorrod.ReactorRodBlockEntity;
@@ -119,6 +120,11 @@ public class NewAgeBlockEntityTypes {
             .instance(() -> HalfShaftInstance::new)
             .validBlocks(NewAgeBlocks.BASIC_MOTOR)
             .renderer(() -> HalfShaftRendererThing::new)
+            .register();
+
+    public static final BlockEntityEntry<MotorExtensionBlockEntity> BASIC_MOTOR_EXTENSION = REGISTRATE
+            .blockEntity("basic_motor_extension", MotorExtensionBlockEntity.create(2.0f, 100_000))
+            .validBlocks(NewAgeBlocks.BASIC_MOTOR_EXTENSION)
             .register();
 
 

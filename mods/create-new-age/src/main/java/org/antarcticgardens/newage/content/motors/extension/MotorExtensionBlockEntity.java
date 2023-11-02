@@ -21,7 +21,7 @@ import java.util.List;
 
 public class MotorExtensionBlockEntity extends SmartBlockEntity {
     public MotorExtensionScrollValueBehaviour stressBehavior;
-    private float multiplier = 0;
+    public float multiplier = 1;
 
     public final long extraBattery;
 
@@ -44,6 +44,7 @@ public class MotorExtensionBlockEntity extends SmartBlockEntity {
         stressBehavior.withCallback(i ->
         {
             multiplier = i/100f;
+            stressBehavior.value = i;
             this.notifyUpdate();
         });
         behaviours.add(stressBehavior);
