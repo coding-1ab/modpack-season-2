@@ -174,5 +174,11 @@
   "create.tooltip.create_new_age.attention": "Attention!",
   "create.tooltip.create_new_age.battery_issue": "_Battery controller_ must be located at the top of a _fluid tank_ filled with _electrolyte_.",
 
-  "create_new_age.ponder.generation.text_7": "Since this was asked too many times, GENERATOR COILS DO NOT GENERATE ROTATION, ONLY ELECTRICITY."
+  "create_new_age.ponder.generation.text_7": "Note: GENERATOR COILS DO NOT GENERATE ROTATION, ONLY ELECTRICITY.",
+
+  "create.tooltip.create_new_age.stress_limit_multiplier": "Stress Capacity Multiplier",
+  "create.tooltip.create_new_age.additional_capacity": "Additional Capacity",
+  "create.new_age.motor.stress_multiplier": "Stress Capacity Multiplier",
+
+  "block.create_new_age.basic_motor_extension": "Basic Motor Extension"
 }
