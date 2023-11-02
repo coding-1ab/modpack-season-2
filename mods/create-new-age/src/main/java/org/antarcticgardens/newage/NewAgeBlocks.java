@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlock;
-import org.antarcticgardens.newage.content.electricity.battery.BatteryControllerBlock;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlock;
 import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesBlock;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlock;
@@ -272,13 +271,6 @@ public class NewAgeBlocks {
                     .properties((p) -> p.strength(3.5f))
                     .item(AssemblyOperatorBlockItem::new)
                     .build()
-                    .register();
-    
-    
-    public static final BlockEntry<BatteryControllerBlock> BATTERY_CONTROLLER =
-            REGISTRATE.block("battery_controller", BatteryControllerBlock::new)
-                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-                    .simpleItem()
                     .register();
 
     public static void load() {  }

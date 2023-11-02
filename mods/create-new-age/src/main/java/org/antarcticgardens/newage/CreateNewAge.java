@@ -52,7 +52,6 @@ public class CreateNewAge implements ModInitializer {
 		NewAgeBlocks.load();
 		NewAgeBlockEntityTypes.load();
 		NewAgeItems.load();
-		NewAgeFluids.load();
 
 		magnetPlacementHelperId = PlacementHelpers.register(new MagnetPlacementHelper());
 
