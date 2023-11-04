@@ -68,10 +68,50 @@ public class HeaterBlockEntity extends BlockEntity implements HeatBlockEntity, I
         return saveWithoutMetadata();
     }
 
+    @Nullable
+    @Override
+    public float[] getHeatTiers() {
+        return new float[] {
+                50,
+                100,
+                400,
+                500
+        };
+    }
+
+    @Override
+    public float getTierHeat() {
+        BlazeBurnerBlock.HeatLevel strength = getBlockState().getValue(HeaterBlock.STRENGTH);
+        double heat = 0;
+        Double mult = NewAgeConfig.getCommon().heaterRequiredHeatMultiplier.get();
+        switch (strength) {
+            case NONE -> {
+                heat = 0;
+            }
+            case SMOULDERING -> {
+                heat = 50 * mult;
+            }
+            case FADING -> {
+                heat = 100 * mult;
+            }
+            case KINDLED -> {
+                heat = 400 * mult;
+            }
+            case SEETHING -> {
+                heat = 500 * mult;
+            }
+        }
+        return (float)heat;
+    }
+
+    @Override
+    public double getHeatTierMultiplier() {
+        return NewAgeConfig.getCommon().heaterRequiredHeatMultiplier.get();
+    }
+
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(heat))
-                .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
+        HeatBlockEntity.addToolTips(this, tooltip);
         BlazeBurnerBlock.HeatLevel strength = getBlockState().getValue(HeaterBlock.STRENGTH);
         double heat = 0;
 

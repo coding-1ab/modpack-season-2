@@ -9,7 +9,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -166,10 +165,7 @@ public class HeatPipeBlock extends Block implements EntityBlock, IWrenchable {
             selfC.generating -= (float) loss;
 
             HeatBlockEntity.transferAround(selfC);
-            double multiplier = NewAgeConfig.getCommon().overheatingMultiplier.get();
-            if (multiplier > 0 && selfC.heat > 10000 * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
-                self.getLevel().setBlock(self.getBlockPos(), Blocks.LAVA.defaultBlockState(), 3);
-            }
+            HeatBlockEntity.handleOverheat(selfC);
         };
     }
 }

@@ -5,7 +5,6 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -50,11 +49,9 @@ public class HeaterBlock extends Block implements EntityBlock, IWrenchable {
         return (world, blockPos, blockState, sel) -> {
             if ((world.getGameTime() + on) % 20 != 0 || !(sel instanceof HeaterBlockEntity self) || self.getLevel() == null) return;
             HeatBlockEntity.transferAround(self);
-            double multiplier = NewAgeConfig.getCommon().overheatingMultiplier.get();
             Double mult = NewAgeConfig.getCommon().heaterRequiredHeatMultiplier.get();
-            if (multiplier > 0 && self.heat > 9000 * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
-                self.getLevel().setBlock(self.getBlockPos(), Blocks.LAVA.defaultBlockState(), 3);
-            } else if (self.heat > 500 * mult) {
+            HeatBlockEntity.handleOverheat(self);
+            if (self.heat > 500 * mult) {
                 self.heat -= (float) (500 * mult);
                 level.setBlock(blockPos, state.setValue(STRENGTH, BlazeBurnerBlock.HeatLevel.SEETHING), 3);
             } else if (self.heat > 400 * mult) {

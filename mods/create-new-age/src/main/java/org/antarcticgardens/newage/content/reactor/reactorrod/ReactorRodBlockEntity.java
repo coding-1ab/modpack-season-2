@@ -1,8 +1,6 @@
 package org.antarcticgardens.newage.content.reactor.reactorrod;
 
 import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.foundation.utility.Lang;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -18,7 +16,6 @@ import org.antarcticgardens.newage.NewAgeBlocks;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
 import org.antarcticgardens.newage.content.reactor.NuclearUtil;
-import org.antarcticgardens.newage.tools.StringFormattingTool;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -37,9 +34,7 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
         if (multiplier > 0 && this.heat > 16000*multiplier) {
             heat-=common.nuclearReactorRodHeatLoss.get();
             setChanged();
-            if (this.heat > 24000*multiplier) {
-                world.setBlock(pos, NewAgeBlocks.CORIUM.getDefaultState(), 3);
-            }
+            HeatBlockEntity.handleOverheat(this, () -> world.setBlock(pos, NewAgeBlocks.CORIUM.getDefaultState(), 3));
         }
         twoSeconds++;
         if (twoSeconds > 40) {
@@ -70,8 +65,7 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(heat))
-                .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
+        HeatBlockEntity.addToolTips(this, tooltip);
         return true;
     }
 
@@ -92,6 +86,11 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
             }
         }
         HeatBlockEntity.average(self, totalToAverage, totalBlocks, setters);
+    }
+
+    @Override
+    public float maxHeat() {
+        return 26000;
     }
 
     @Nullable

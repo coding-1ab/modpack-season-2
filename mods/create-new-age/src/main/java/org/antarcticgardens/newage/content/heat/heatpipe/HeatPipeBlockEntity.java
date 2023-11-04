@@ -72,8 +72,7 @@ public class HeatPipeBlockEntity extends BlockEntity implements HeatBlockEntity,
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(heat))
-                .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
+        HeatBlockEntity.addToolTips(this, tooltip);
 
         if (generating > 0.05) {
             Lang.translate("tooltip.create_new_age.generating")
