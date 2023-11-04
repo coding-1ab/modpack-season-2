@@ -11,7 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -26,11 +25,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -56,7 +54,7 @@ public class MotorBlock extends DirectionalKineticBlock implements IRotate, IBE<
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Lang.translate("tooltip.create_new_age.generates").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").add(Lang.number(stressGenerated).text(" ")
+        tooltip.add(Lang.text(" ").add(Lang.number(stressGenerated * NewAgeConfig.getCommon().motorSUMultiplier.get()).text(" ")
                 .translate("generic.unit.stress").style(ChatFormatting.AQUA)).component());
 
         tooltip.add(Lang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY)
@@ -122,18 +120,6 @@ public class MotorBlock extends DirectionalKineticBlock implements IRotate, IBE<
     public InteractionResult onWrenched(BlockState state, UseOnContext context) {
         if (state.hasBlockEntity()) {
             BlockEntity entity = context.getLevel().getBlockEntity(context.getClickedPos());
-            if (entity instanceof MotorBlockEntity en) {
-                en.needsPower = !en.needsPower;
-                return InteractionResult.SUCCESS;
-            }
-        }
-        return InteractionResult.FAIL;
-    }
-
-    @Override
-    public InteractionResult use(BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
-        if (state.hasBlockEntity()) {
-            BlockEntity entity = level.getBlockEntity(pos);
             if (entity instanceof MotorBlockEntity en) {
                 en.needsPower = !en.needsPower;
                 return InteractionResult.SUCCESS;

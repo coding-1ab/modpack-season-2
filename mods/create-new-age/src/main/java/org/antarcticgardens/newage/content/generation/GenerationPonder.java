@@ -22,6 +22,8 @@ public class GenerationPonder {
         scene.scaleSceneView(0.7f);
         scene.addKeyframe();
 
+        scene.idle(20);
+
         scene.world.showSection(util.select.layer(0), Direction.UP);
 
         scene.idle(10);
@@ -56,7 +58,11 @@ public class GenerationPonder {
         scene.world.showSection(util.select.position(4, 3, 3), Direction.DOWN);
         scene.world.showSection(util.select.position(3, 3, 3), Direction.DOWN);
 
-        scene.idle(10);
+        scene.idle(20);
+
+        scene.world.setKineticSpeed(util.select.fromTo(4, 4, 3, 4, 3, 8), 32);
+
+        scene.idle(35);
 
         scene.world.showSection(util.select.fromTo(4, 3, 6, 4, 3, 4), Direction.DOWN);
 
@@ -76,13 +82,11 @@ public class GenerationPonder {
 
         scene.idle(20);
 
-        scene.world.setKineticSpeed(util.select.fromTo(4, 3, 3, 4, 3, 8), 32);
-
         scene.idle(15);
 
         scene.overlay.showText(100)
                 .pointAt(new Vec3(4.5, 5.5, 5.5))
-                .text("");
+                .text("If you are reading this please disable ponder debug mode.");
 
         scene.idle(110);
 
@@ -177,6 +181,12 @@ public class GenerationPonder {
                 nbt -> nbt.putFloat("Value", 1.0f));
 
         scene.idle(20);
+
+        scene.overlay.showText(100)
+                .pointAt(new Vec3(4.5, 4.5, 4.5))
+                .text("If you are reading this please disable ponder debug mode.");
+
+        scene.idle(100);
 
         scene.markAsFinished();
 

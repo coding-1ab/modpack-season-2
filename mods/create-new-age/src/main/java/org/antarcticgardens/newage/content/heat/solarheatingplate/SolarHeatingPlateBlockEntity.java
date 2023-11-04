@@ -12,7 +12,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -87,8 +86,7 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(heat))
-                .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
+        HeatBlockEntity.addToolTips(this, tooltip);
 
         Lang.translate("tooltip.create_new_age.generating")
                 .style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
@@ -101,11 +99,7 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
 
     public void tick(BlockPos blockPos, Level world, BlockState blockState) {
         var common = NewAgeConfig.getCommon();
-        double multiplier = common.overheatingMultiplier.get();
         double generationMultiplier = common.solarPanelHeatMultiplier.get();
-        if (multiplier > 0 && heat > 60*energyPerSecond * multiplier * generationMultiplier) {
-            world.setBlock(blockPos, Blocks.LAVA.defaultBlockState(), 3);
-        }
 
         int dark = 0;
         if (world.isClientSide()) {
@@ -119,6 +113,7 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
         }
         dark *= 2;
         HeatBlockEntity.transferAround(this);
+        HeatBlockEntity.handleOverheat(this);
 
         float light = world.getBrightness(LightLayer.SKY, blockPos.above()) - dark;
         last = (float) Math.max((light/15f)*energyPerSecond*generationMultiplier - Math.max(0, heat - (20 * energyPerSecond*generationMultiplier)), 0);

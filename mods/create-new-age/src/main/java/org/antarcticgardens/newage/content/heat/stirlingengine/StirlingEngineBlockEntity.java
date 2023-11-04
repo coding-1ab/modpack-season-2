@@ -8,12 +8,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -34,13 +33,26 @@ public class StirlingEngineBlockEntity extends GeneratingKineticBlockEntity impl
     }
 
     @Override
+    public float getTierHeat() {
+        return speed * 3.125f;
+    }
+
+    @Nullable
+    @Override
+    public float[] getHeatTiers() {
+        return new float[] {
+                50,
+                100
+        };
+    }
+
+    @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(heat))
-                .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
+        HeatBlockEntity.addToolTips(this, tooltip);
 
         Lang.translate("tooltip.create_new_age.using")
                 .style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
-        Lang.translate("tooltip.create_new_age.temperature.ps", StringFormattingTool.formatFloat(speed * 6.25f)) // 6.25 is is 50/8
+        Lang.translate("tooltip.create_new_age.temperature.ps", StringFormattingTool.formatFloat(speed * 3.125f)) // 3.125 is is 50/16
                 .style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
 
         return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
@@ -73,20 +85,16 @@ public class StirlingEngineBlockEntity extends GeneratingKineticBlockEntity impl
             HeatBlockEntity.transferAround(this);
             if (getHeat() > 50) {
                 if (getHeat() > 100) {
-                    double multiplier = NewAgeConfig.getCommon().overheatingMultiplier.get();
-                    if (getHeat() < 6000 * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
-                        setHeat(getHeat() - 100);
-                        if (speed != 16) {
-                            speed = 16;
-                            updateGeneratedRotation();
-                        }
-                    } else if (multiplier > 0) {
-                        getLevel().setBlock(getBlockPos(), Blocks.LAVA.defaultBlockState(), 3);
+                    setHeat(getHeat() - 100);
+                    if (speed != 32) {
+                        speed = 32;
+                        updateGeneratedRotation();
                     }
+                    HeatBlockEntity.handleOverheat(this);
                 } else {
                     setHeat(getHeat() - 50);
-                    if (speed != 8) {
-                        speed = 8;
+                    if (speed != 16) {
+                        speed = 16;
                         updateGeneratedRotation();
                     }
                 }

@@ -1,0 +1,30 @@
+{
+  "type": "create:mechanical_crafting",
+  "acceptMirrored": true,
+  "key": {
+    "d": {
+      "item": "minecraft:diamond"
+    },
+    "D": {
+      "item": "create_new_age:overcharged_diamond"
+    },
+    "#": {
+      "item": "create_new_age:reinforced_motor"
+    },
+    ".": {
+      "item": "create_new_age:copper_circuit"
+    },
+    "I": {
+      "tag": "c:iron_plates"
+    }
+  },
+  "pattern": [
+    "IIIII",
+    "..#..",
+    "IIIII"
+  ],
+  "result": {
+    "count": 2,
+    "item": "create_new_age:advanced_motor_extension"
+  }
+}

@@ -5,12 +5,12 @@ import com.simibubi.create.content.kinetics.base.HalfShaftInstance;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftInstance;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
+import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
+import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorRenderer;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlockEntity;
 import org.antarcticgardens.newage.content.energiser.EnergiserRenderer;
 import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesBlockEntity;
 import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesRenderer;
-import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
-import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorRenderer;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlockEntity;
 import org.antarcticgardens.newage.content.heat.heater.HeaterBlockEntity;
 import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlockEntity;
@@ -20,6 +20,7 @@ import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineBlo
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineInstance;
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineRenderer;
 import org.antarcticgardens.newage.content.motors.MotorBlockEntity;
+import org.antarcticgardens.newage.content.motors.extension.MotorExtensionBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorfuelacceptor.ReactorFuelAcceptorBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorheatvent.ReactorHeatVentBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorrod.ReactorRodBlockEntity;
@@ -141,6 +142,18 @@ public class NewAgeBlockEntityTypes {
             .validBlocks(NewAgeBlocks.ELECTRICAL_CONNECTOR)
             .renderer(() -> ElectricalConnectorRenderer::new)
             .register();
+
+    public static final BlockEntityEntry<MotorExtensionBlockEntity> BASIC_MOTOR_EXTENSION = REGISTRATE
+            .blockEntity("basic_motor_extension", MotorExtensionBlockEntity.create(2.0f, 64_000, 1))
+            .validBlocks(NewAgeBlocks.BASIC_MOTOR_EXTENSION)
+            .register();
+
+    public static final BlockEntityEntry<MotorExtensionBlockEntity> ADVANCED_MOTOR_EXTENSION = REGISTRATE
+            .blockEntity("advanced_motor_extension", MotorExtensionBlockEntity.create(8.0f, 256_000, 5))
+            .validBlocks(NewAgeBlocks.ADVANCED_MOTOR_EXTENSION)
+            .register();
+    
+    
 
     public static void load() {  }
 }

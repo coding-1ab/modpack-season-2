@@ -1,15 +1,14 @@
 package org.antarcticgardens.newage.content.electricity.network;
 
-import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import earth.terrarium.botarium.common.energy.base.EnergySnapshot;
-import earth.terrarium.botarium.common.energy.impl.SimpleEnergySnapshot;
+import earth.terrarium.botarium.util.Updatable;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.antarcticgardens.newage.NewAgeBlocks;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
 
-public class NetworkEnergyContainer implements EnergyContainer {
+public class NetworkEnergyContainer implements EnergyContainer, Updatable<BlockEntity> {
     private final ElectricalConnectorBlockEntity connector;
     private final ElectricalNetwork network;
 
@@ -17,20 +16,14 @@ public class NetworkEnergyContainer implements EnergyContainer {
         this.connector = connector;
         this.network = network;
     }
+    
+    public ElectricalNetwork getNetwork() {
+        return network;
+    }
 
     @Override
     public long insertEnergy(long maxAmount, boolean simulate) {
-        if (connector.getLevel() != null) {
-            BlockEntity entity = connector.getLevel().getBlockEntity(connector.getSupportingBlockPos());
-
-            if (entity instanceof BotariumEnergyBlock<?> energyBlock) {
-                long canExtract = energyBlock.getEnergyStorage().extractEnergy(Long.MAX_VALUE, true);
-                long inserted = network.insert(connector, canExtract, false);
-                energyBlock.getEnergyStorage().extractEnergy(inserted, false);
-            }
-        }
-
-        return 0;
+        return network.insert(connector, maxAmount, simulate);
     }
 
     @Override
@@ -70,7 +63,7 @@ public class NetworkEnergyContainer implements EnergyContainer {
 
     @Override
     public EnergySnapshot createSnapshot() {
-        return new SimpleEnergySnapshot(this);
+        return new NetworkSnapshot(network);
     }
 
     @Override
@@ -91,5 +84,11 @@ public class NetworkEnergyContainer implements EnergyContainer {
     @Override
     public CompoundTag serialize(CompoundTag nbt) {
         return new CompoundTag();
+    }
+
+    @Override
+    public void update(BlockEntity be) {
+        be.setChanged();
+        be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), Block.UPDATE_ALL);
     }
 }

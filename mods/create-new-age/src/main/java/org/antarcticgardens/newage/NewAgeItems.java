@@ -60,6 +60,13 @@ public class NewAgeItems {
             REGISTRATE.item("overcharged_golden_sheet", Item::new)
                     .register();
 
+    public static final ItemEntry<Item> BLANK_CIRCUIT =
+            REGISTRATE.item("blank_circuit", Item::new)
+                    .register();
+    public static final ItemEntry<Item> COPPER_CIRCUIT =
+            REGISTRATE.item("copper_circuit", Item::new)
+                    .register();
+
 
     public static final ItemEntry<ElectricWireItem> COPPER_WIRE =
             REGISTRATE.item("copper_wire", ElectricWireItem::newCopperWire)

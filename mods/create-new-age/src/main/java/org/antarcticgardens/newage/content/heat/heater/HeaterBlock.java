@@ -1,17 +1,17 @@
 package org.antarcticgardens.newage.content.heat.heater;
 
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.antarcticgardens.newage.NewAgeBlockEntityTypes;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
@@ -22,9 +22,9 @@ import static org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlock.ma
 
 public class HeaterBlock extends Block implements EntityBlock, IWrenchable {
 
-    public static final IntegerProperty STRENGTH = IntegerProperty.create("heat_strength", 0, 3);
+    public static final EnumProperty<BlazeBurnerBlock.HeatLevel> STRENGTH = BlazeBurnerBlock.HEAT_LEVEL;
     public HeaterBlock(Properties properties) {
-        super(properties.lightLevel(state -> state.getValue(STRENGTH) * 2));
+        super(properties.lightLevel(state -> state.getValue(STRENGTH).ordinal()));
     }
 
     @Override
@@ -49,20 +49,22 @@ public class HeaterBlock extends Block implements EntityBlock, IWrenchable {
         return (world, blockPos, blockState, sel) -> {
             if ((world.getGameTime() + on) % 20 != 0 || !(sel instanceof HeaterBlockEntity self) || self.getLevel() == null) return;
             HeatBlockEntity.transferAround(self);
-            double multiplier = NewAgeConfig.getCommon().overheatingMultiplier.get();
-            if (multiplier > 0 && self.heat > 9000 * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
-                self.getLevel().setBlock(self.getBlockPos(), Blocks.LAVA.defaultBlockState(), 3);
-            } else if (self.heat > 400) {
-                self.heat -= 400;
-                level.setBlock(blockPos, state.setValue(STRENGTH, 3), 3);
-            } else if (self.heat > 100) {
-                self.heat -= 100;
-                level.setBlock(blockPos, state.setValue(STRENGTH, 2), 3);
-            } else if (self.heat > 50) {
-                self.heat -= 50;
-                level.setBlock(blockPos, state.setValue(STRENGTH, 1), 3);
+            Double mult = NewAgeConfig.getCommon().heaterRequiredHeatMultiplier.get();
+            HeatBlockEntity.handleOverheat(self);
+            if (self.heat > 500 * mult) {
+                self.heat -= (float) (500 * mult);
+                level.setBlock(blockPos, state.setValue(STRENGTH, BlazeBurnerBlock.HeatLevel.SEETHING), 3);
+            } else if (self.heat > 400 * mult) {
+                self.heat -= (float) (400 * mult);
+                level.setBlock(blockPos, state.setValue(STRENGTH, BlazeBurnerBlock.HeatLevel.KINDLED), 3);
+            } else if (self.heat > 100 * mult) {
+                self.heat -= (float) (100 * mult);
+                level.setBlock(blockPos, state.setValue(STRENGTH, BlazeBurnerBlock.HeatLevel.FADING), 3);
+            } else if (self.heat > 50 * mult) {
+                self.heat -= (float) (50 * mult);
+                level.setBlock(blockPos, state.setValue(STRENGTH, BlazeBurnerBlock.HeatLevel.SMOULDERING), 3);
             } else {
-                level.setBlock(blockPos, state.setValue(STRENGTH, 0), 3);
+                level.setBlock(blockPos, state.setValue(STRENGTH, BlazeBurnerBlock.HeatLevel.NONE), 3);
             }
             self.setChanged();
         };

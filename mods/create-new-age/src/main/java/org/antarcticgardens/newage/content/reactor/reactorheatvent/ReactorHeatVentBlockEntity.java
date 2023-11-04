@@ -11,7 +11,6 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -83,9 +82,7 @@ public class ReactorHeatVentBlockEntity extends RodFindingReactorBlockEntity imp
         tick++;
         if (tick >= 20) {
             double multiplier = NewAgeConfig.getCommon().overheatingMultiplier.get();
-            if (multiplier > 0 && heat > 16000 * multiplier) {
-                world.setBlock(pos, Blocks.LAVA.defaultBlockState(), 3);
-            }
+            HeatBlockEntity.handleOverheat(this);
             tick = 0;
             extract = 0;
 
@@ -96,7 +93,7 @@ public class ReactorHeatVentBlockEntity extends RodFindingReactorBlockEntity imp
                 findRods(rods, dir);
             }
             for (ReactorRodBlockEntity rod : rods) {
-                float total = Math.min(rod.heat, 9000 - heat);
+                float total = Math.min(rod.heat, 10_000 - heat);
                 rod.heat -= total;
                 if (total > 0) {
                     setChanged();
@@ -128,8 +125,8 @@ public class ReactorHeatVentBlockEntity extends RodFindingReactorBlockEntity imp
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(heat))
-                .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
+        HeatBlockEntity.addToolTips(this, tooltip);
+
         Lang.translate("tooltip.create_new_age.extracting")
                 .style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
         Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(extract))

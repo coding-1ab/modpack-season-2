@@ -4,6 +4,7 @@ import com.simibubi.create.content.contraptions.ContraptionMovementSetting;
 import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeSerializer;
 import com.simibubi.create.foundation.data.CreateRegistrate;
+import com.simibubi.create.foundation.placement.PlacementHelpers;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
@@ -22,6 +23,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
+import org.antarcticgardens.newage.content.generation.magnets.MagnetPlacementHelper;
 import org.antarcticgardens.newage.tools.RecipeTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,8 @@ public class CreateNewAge implements ModInitializer {
 
 	public static final ResourceKey<CreativeModeTab> CREATIVE_TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
 			new ResourceLocation(MOD_ID, "tab"));
+	
+	private static int magnetPlacementHelperId;
 
 	@Override
 	public void onInitialize() {
@@ -49,10 +53,12 @@ public class CreateNewAge implements ModInitializer {
 		NewAgeBlockEntityTypes.load();
 		NewAgeItems.load();
 
+		magnetPlacementHelperId = PlacementHelpers.register(new MagnetPlacementHelper());
+
 		REGISTRATE.register();
 		NewAgeConfig.getCommon();
 
-		BoilerHeaters.registerHeater(NewAgeBlocks.HEATER.get(), (level, pos, state) -> state.getValue(STRENGTH) - 1);
+		BoilerHeaters.registerHeater(NewAgeBlocks.HEATER.get(), (level, pos, state) -> state.getValue(STRENGTH).ordinal() - 1);
 
 		EnergisingRecipe.type = RecipeTool.createIRecipeTypeInfo("energising", new ProcessingRecipeSerializer<>(EnergisingRecipe::new));
 
@@ -70,12 +76,16 @@ public class CreateNewAge implements ModInitializer {
 		ModContainer modContainer = containerContainer.get();
 		ResourceManagerHelper.registerBuiltinResourcePack(new ResourceLocation(MOD_ID, "create_new_age_monkey_edition"), modContainer, Component.translatable("create_new_age.monkey_edition"), ResourcePackActivationType.NORMAL);
 	}
+	
+	public static int getMagnetPlacementHelperId() {
+		return magnetPlacementHelperId;
+	}
 
 	private void registerCreativeTab() {
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,
 				new ResourceLocation(MOD_ID, "tab"),
 				FabricItemGroup.builder()
-						.icon(NewAgeBlocks.ENERGISER_T1::asStack)
+						.icon(NewAgeBlocks.GENERATOR_COIL::asStack)
 						.title(Component.translatable("tab." + MOD_ID + ".tab"))
 						.build());
 	}

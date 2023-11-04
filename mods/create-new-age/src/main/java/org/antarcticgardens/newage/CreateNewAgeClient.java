@@ -143,11 +143,10 @@ public class CreateNewAgeClient implements ClientModInitializer {
         addToolTipModifier(NewAgeBlocks.ENERGISER_T3);
         addToolTipModifier(NewAgeBlocks.STIRLING_ENGINE);
         addToolTipModifier(NewAgeBlocks.GENERATOR_COIL);
+
     }
 
     public void addToolTipModifier(BlockEntry<?> entry) {
         TooltipModifier.REGISTRY.register(entry.asItem(), KineticStats.create(entry.asItem()));
-
     }
-
 }

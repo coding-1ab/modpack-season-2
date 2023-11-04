@@ -1,5 +1,6 @@
 package org.antarcticgardens.newage.content.reactor;
 
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.ponder.PonderPalette;
 import com.simibubi.create.foundation.ponder.SceneBuilder;
 import com.simibubi.create.foundation.ponder.SceneBuildingUtil;
@@ -106,7 +107,7 @@ public class ReactorPonder {
 
         scene.idle(15);
 
-        scene.world.modifyBlocks(util.select.fromTo(2, 1, 3, 2, 1, 5), blockState -> blockState.setValue(HeaterBlock.STRENGTH, 3), false);
+        scene.world.modifyBlocks(util.select.fromTo(2, 1, 3, 2, 1, 5), blockState -> blockState.setValue(HeaterBlock.STRENGTH, BlazeBurnerBlock.HeatLevel.SEETHING), false);
 
         scene.idle(70);
 

@@ -2,13 +2,16 @@ package org.antarcticgardens.newage;
 
 import com.simibubi.create.content.kinetics.BlockStressDefaults;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
+import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
+import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlock;
 import org.antarcticgardens.newage.content.generation.carbonbrushes.CarbonBrushesBlock;
-import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlock;
 import org.antarcticgardens.newage.content.generation.magnets.ImplementedMagnetBlock;
 import org.antarcticgardens.newage.content.heat.heater.HeaterBlock;
@@ -17,6 +20,7 @@ import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlock;
 import org.antarcticgardens.newage.content.heat.solarheatingplate.SolarHeatingPlateBlock;
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineBlock;
 import org.antarcticgardens.newage.content.motors.MotorBlock;
+import org.antarcticgardens.newage.content.motors.extension.MotorExtensionBlock;
 import org.antarcticgardens.newage.content.reactor.CoriumBlock;
 import org.antarcticgardens.newage.content.reactor.ReactorBlock;
 import org.antarcticgardens.newage.content.reactor.ReactorTransparentBlock;
@@ -91,6 +95,22 @@ public class NewAgeBlocks {
                     .simpleItem()
                     .register();
 
+    public static final BlockEntry<MotorExtensionBlock> BASIC_MOTOR_EXTENSION =
+            REGISTRATE.block("basic_motor_extension", (p) -> new MotorExtensionBlock(p, NewAgeBlockEntityTypes.BASIC_MOTOR_EXTENSION, 2.0f, 64_000))
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(properties -> properties.strength(4.0f))
+                    .simpleItem()
+                    .register();
+
+    public static final BlockEntry<MotorExtensionBlock> ADVANCED_MOTOR_EXTENSION =
+            REGISTRATE.block("advanced_motor_extension", (p) -> new MotorExtensionBlock(p, NewAgeBlockEntityTypes.ADVANCED_MOTOR_EXTENSION, 8.0f, 256_000))
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(properties -> properties.strength(4.0f))
+                    .simpleItem()
+                    .register();
+
     public static final BlockEntry<CarbonBrushesBlock> CARBON_BRUSHES =
             REGISTRATE.block("carbon_brushes", CarbonBrushesBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
@@ -117,6 +137,10 @@ public class NewAgeBlocks {
     public static final BlockEntry<ImplementedMagnetBlock> REDSTONE_MAGNET =
             REGISTRATE.block("redstone_magnet", ImplementedMagnetBlock.simple(2))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .transform(b -> {
+                        b.onRegister(CreateRegistrate.connectedTextures(() -> new SimpleCTBehaviour(NewAgeSpriteShifts.REDSTONE_MAGNET)));
+                        return b;
+                    })
                     .simpleItem()
                     .register();
 
@@ -189,6 +213,10 @@ public class NewAgeBlocks {
     public static final BlockEntry<ReactorBlock> REACTOR_CASING =
             REGISTRATE.block("reactor_casing", ReactorBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .transform(b -> {
+                        b.onRegister(CreateRegistrate.connectedTextures(() -> new SimpleCTBehaviour(NewAgeSpriteShifts.REACTOR_CASING)));
+                        return b;
+                    })
                     .simpleItem()
                     .register();
 
@@ -196,15 +224,19 @@ public class NewAgeBlocks {
             REGISTRATE.block("reactor_rod", ReactorRodBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
-                    .addLayer(() -> RenderType::cutout)
                     .simpleItem()
                     .register();
 
     public static final BlockEntry<ReactorTransparentBlock> REACTOR_GLASS =
             REGISTRATE.block("reactor_glass", ReactorTransparentBlock::new)
+                    .initialProperties(()->Blocks.GLASS)
                     .properties(p -> p.isViewBlocking((blockState, blockGetter, blockPos) -> false))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(p -> p.isViewBlocking((a,b,c) -> false))
+                    .transform(b -> {
+                        b.onRegister(CreateRegistrate.connectedTextures(() -> new SimpleCTBehaviour(NewAgeSpriteShifts.REACTOR_GLASS)));
+                        return b;
+                    })
                     .addLayer(() -> RenderType::cutout)
                     .simpleItem()
                     .register();
@@ -212,6 +244,7 @@ public class NewAgeBlocks {
     public static final BlockEntry<ReactorFuelAcceptorBlock> REACTOR_FUEL_ACCEPTOR =
             REGISTRATE.block("reactor_fuel_acceptor", ReactorFuelAcceptorBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
                     .simpleItem()
                     .register();
 
@@ -219,6 +252,7 @@ public class NewAgeBlocks {
     public static final BlockEntry<ReactorHeatVentBlock> REACTOR_HEAT_VENT =
             REGISTRATE.block("reactor_heat_vent", ReactorHeatVentBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
                     .simpleItem()
                     .register();
 
@@ -226,12 +260,16 @@ public class NewAgeBlocks {
     public static final BlockEntry<Block> BASIC_SOLAR_HEATING_PLATE =
             REGISTRATE.block("basic_solar_heating_plate", SolarHeatingPlateBlock::createBasic)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .addLayer(() -> RenderType::cutout)
                     .simpleItem()
                     .register();
 
     public static final BlockEntry<Block> ADVANCED_SOLAR_HEATING_PLATE =
             REGISTRATE.block("advanced_solar_heating_plate", SolarHeatingPlateBlock::createAdvanced)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .addLayer(() -> RenderType::cutout)
                     .simpleItem()
                     .register();
 

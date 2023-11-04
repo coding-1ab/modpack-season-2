@@ -4,15 +4,20 @@
   "key": {
     "c": {
       "tag": "c:copper_plates"
+    },
+    "z": {
+      "tag": "c:zinc_nuggets"
+    },
+    "t": {
+      "tag": "minecraft:terracotta"
     }
   },
   "pattern": [
-    "ccc",
-    "   ",
-    "ccc"
+    "ztz",
+    "tct"
   ],
   "result": {
-    "count": 6,
+    "count": 4,
     "item": "create_new_age:heat_pipe"
   },
   "show_notification": true

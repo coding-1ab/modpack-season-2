@@ -5,6 +5,9 @@ import com.simibubi.create.content.kinetics.belt.behaviour.BeltProcessingBehavio
 import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
+import earth.terrarium.botarium.common.energy.base.PlatformItemEnergyManager;
+import earth.terrarium.botarium.common.energy.util.EnergyHooks;
+import earth.terrarium.botarium.common.item.ItemStackHolder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
@@ -19,6 +22,7 @@ import java.util.stream.Collectors;
 public class EnergiserBehaviour extends BeltProcessingBehaviour {
     protected int tier;
     protected EnergiserBlockEntity be;
+    public boolean capacitorMode = false;
 
     public EnergiserBehaviour(EnergiserBlockEntity be) {
         super(be);
@@ -62,6 +66,7 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
         charged = nbt.getLong("charged");
         needed = nbt.getLong("needed");
         shouldCreateParticles = nbt.getBoolean("shouldCreateParticles");
+        capacitorMode = nbt.getBoolean("capacitorModer");
         super.read(nbt, clientPacket);
     }
 
@@ -70,6 +75,7 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
         nbt.putLong("charged", charged);
         nbt.putLong("needed", needed);
         nbt.putBoolean("shouldCreateParticles",shouldCreateParticles);
+        nbt.putBoolean("capacitorMode", capacitorMode);
         if (clientPacket)
             shouldCreateParticles = false;
         super.write(nbt, clientPacket);
@@ -90,17 +96,20 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
                 be.getEnergyStorage().internalInsert(charged, false);
                 charged = 0;
                 currentRecipe = null;
+                capacitorMode = false;
                 blockEntity.sendData();
             }
         }
 
-        be.lastCharged = -1;
+        if (!capacitorMode) {
+            be.lastCharged = -1;
 
-        if (needed > 0) {
-            be.lastCharged =  be.energy.internalExtract(
-                    (long) Math.min(EnergiserBlock.getStrength(tier) * (long) Math.abs(be.getSpeed() * 0.1),
-                            needed - charged), false);
-            charged += be.lastCharged;
+            if (needed > 0) {
+                be.lastCharged = be.energy.internalExtract(
+                        (long) Math.min(eSpeed(),
+                                needed - charged), false);
+                charged += be.lastCharged;
+            }
         }
 
         if (be.getLevel().isClientSide()) {
@@ -132,9 +141,43 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
         if (currentRecipe == null) {
             currentRecipe = getRecipe(transportedItemStack.stack);
         }
-        if (be.getSpeed() == 0 || currentRecipe == null || be.getLevel() == null) {
+        if (be.getSpeed() == 0 || (currentRecipe == null && !capacitorMode) || be.getLevel() == null) {
             return ProcessingResult.PASS;
         }
+        if (capacitorMode) {
+            if (EnergyHooks.isEnergyItem(transportedItemStack.stack)) {
+                capacitorMode = true;
+
+                var stack = new ItemStackHolder(transportedItemStack.stack);
+
+                be.lastCharged = EnergyHooks.safeMoveBlockToItemEnergy(be, null, stack,
+                        eSpeed());
+
+                PlatformItemEnergyManager container = EnergyHooks.getItemEnergyManager(stack.getStack());
+
+                charged = container.getStoredEnergy();
+                needed = container.getCapacity();
+                sinceUpdate = 10;
+                transportedItemStack.stack = stack.getStack();
+
+                blockEntity.sendData();
+
+
+                if (charged >= needed) {
+                    capacitorMode = false;
+                    charged = 0;
+                    needed = 0;
+                    shouldCreateParticles = true;
+                    return ProcessingResult.PASS;
+                }
+
+                return ProcessingResult.HOLD;
+            }
+
+            capacitorMode = false;
+            return ProcessingResult.PASS;
+        }
+
         int count = transportedItemStack.stack.getCount();
         needed = (long) count * currentRecipe.energyNeeded;
         sinceUpdate = 10;
@@ -174,12 +217,26 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
         return ProcessingResult.HOLD;
     }
 
+    private long eSpeed() {
+        return EnergiserBlock.getStrength(be.tier) * (long) Math.abs(be.getSpeed() * 0.1);
+    }
+
     private ProcessingResult itemEnter(TransportedItemStack transportedItemStack, TransportedItemStackHandlerBehaviour transportedItemStackHandlerBehaviour) {
         if (be.getSpeed() == 0) {
             return ProcessingResult.PASS;
         }
+        if (EnergyHooks.isEnergyItem(transportedItemStack.stack)) {
+            capacitorMode = true;
+            PlatformItemEnergyManager container = EnergyHooks.getItemEnergyManager(transportedItemStack.stack);
+            charged = container.getStoredEnergy();
+            needed = container.getCapacity();
+            sinceUpdate = 10;
+            return ProcessingResult.HOLD;
+        }
+        capacitorMode = false;
 
         currentRecipe = getRecipe(transportedItemStack.stack);
+        sinceUpdate = 10;
         if (currentRecipe == null || currentRecipe.getIngredients().size() > 1)
             return ProcessingResult.PASS;
 

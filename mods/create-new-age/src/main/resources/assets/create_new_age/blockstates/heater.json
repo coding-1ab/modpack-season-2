@@ -1,16 +1,19 @@
 {
   "variants": {
-    "heat_strength=0": {
+    "blaze=none": {
       "model": "create_new_age:block/heat/heater/heater"
     },
-    "heat_strength=1": {
-      "model": "create_new_age:block/heat/heater/heater"
+    "blaze=smouldering": {
+      "model": "create_new_age:block/heat/heater/heater_on_1"
     },
-    "heat_strength=2": {
-      "model": "create_new_age:block/heat/heater/heater_on"
+    "blaze=fading": {
+      "model": "create_new_age:block/heat/heater/heater_on_3"
     },
-    "heat_strength=3": {
-      "model": "create_new_age:block/heat/heater/heater_mega_on"
+    "blaze=kindled": {
+      "model": "create_new_age:block/heat/heater/heater_on_4"
+    },
+    "blaze=seething": {
+      "model": "create_new_age:block/heat/heater/heater_on_5"
     }
   }
 }

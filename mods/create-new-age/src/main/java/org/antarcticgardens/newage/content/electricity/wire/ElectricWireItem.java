@@ -7,7 +7,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -19,16 +18,14 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
-import org.antarcticgardens.newage.tools.StringFormattingTool;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class ElectricWireItem extends Item {
-    public static final double MAX_DISTANCE = 16.0;
-
     private final WireType wireType;
 
     public ElectricWireItem(Properties properties, WireType wireType) {
@@ -75,11 +72,14 @@ public class ElectricWireItem extends Item {
             if (!(level.getBlockEntity(boundToPos) instanceof ElectricalConnectorBlockEntity)) {
                 stack.removeTagKey("boundTo");
             }
-            if (entity.distanceToSqr(boundToPos.getX(), boundToPos.getY(), boundToPos.getZ()) > MAX_DISTANCE*MAX_DISTANCE*3) {
+
+            int maxLength = NewAgeConfig.getCommon().maxWireLength.get();
+            
+            if (entity.distanceToSqr(boundToPos.getX(), boundToPos.getY(), boundToPos.getZ()) > (maxLength * maxLength * 3)) {
                 stack.removeTagKey("boundTo");
                 playUnboundSound(entity);
                 if (entity instanceof Player pl)
-                    pl.displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far", (int) MAX_DISTANCE), true);
+                    pl.displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far", maxLength), true);
             }
         }
     }
@@ -96,13 +96,14 @@ public class ElectricWireItem extends Item {
                 return InteractionResult.SUCCESS;
             } else {
                 BlockPos clickedPos = clickedConnector.getBlockPos();
+                int maxLength = NewAgeConfig.getCommon().maxWireLength.get();
 
                 if (boundToPos.equals(clickedPos)) {
                     context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.self_connect"), true);
                     context.getItemInHand().removeTagKey("boundTo");
                     return InteractionResult.FAIL;
-                } else if (!clickedPos.closerThan(boundToPos, MAX_DISTANCE)) {
-                    context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far", (int) MAX_DISTANCE), true);
+                } else if (!clickedPos.closerThan(boundToPos, maxLength)) {
+                    context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far", maxLength), true);
                     return InteractionResult.FAIL;
                 } else if (clickedConnector.isConnected(boundToPos)) {
                     context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.already_connected"), true);
@@ -161,6 +162,6 @@ public class ElectricWireItem extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Lang.translate("tooltip.create_new_age.transfers").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy_per_second", StringFormattingTool.formatLong(wireType.getConductivity() * 20)).style(ChatFormatting.AQUA).component());
+        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy_per_tick", String.format("%,d", wireType.getConductivity())).style(ChatFormatting.AQUA).component());
     }
 }
