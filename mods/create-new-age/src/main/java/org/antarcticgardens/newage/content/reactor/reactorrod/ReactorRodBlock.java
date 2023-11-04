@@ -41,6 +41,10 @@ public class ReactorRodBlock extends ReactorBlock implements EntityBlock {
         this.registerDefaultState(this.stateDefinition.any().setValue(AXIS, Direction.Axis.Y));
     }
 
+    protected static final VoxelShape Y_AXIS_AABB = Block.box(4.5, 0.0, 4.5, 11.5, 16.0, 11.5);
+    protected static final VoxelShape Z_AXIS_AABB = Block.box(4.5, 4.5, 0.0, 11.5, 11.5, 16.0);
+    protected static final VoxelShape X_AXIS_AABB = Block.box(0.0, 4.5, 4.5, 16.0, 11.5, 11.5);
+
     public static final BooleanProperty ACTIVE = BlockStateProperties.LIT;
     public static final EnumProperty<Direction.Axis> AXIS = EnumProperty.create("axis", Direction.Axis.class);
 
@@ -52,6 +56,14 @@ public class ReactorRodBlock extends ReactorBlock implements EntityBlock {
 
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState().setValue(ACTIVE, false).setValue(AXIS, context.getClickedFace().getAxis());
+    }
+
+    public VoxelShape getShape(BlockState arg, BlockGetter arg2, BlockPos arg3, CollisionContext arg4) {
+        return switch ((arg.getValue(AXIS))) {
+            case X -> X_AXIS_AABB;
+            case Z -> Z_AXIS_AABB;
+            case Y -> Y_AXIS_AABB;
+        };
     }
 
     @Override
