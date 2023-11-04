@@ -24,22 +24,24 @@ public class MotorExtensionBlockEntity extends SmartBlockEntity {
     public float multiplier = 1;
 
     public final long extraBattery;
+    public final int scaler;
 
-    public MotorExtensionBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, float maxMultiplier, long extraBattery) {
+    public MotorExtensionBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, float maxMultiplier, long extraBattery, int scaler) {
         super(arg, arg2, arg3);
         this.extraBattery = extraBattery;
+        this.scaler = scaler;
+        stressBehavior.scaler = scaler;
         stressBehavior.between(1, (int)(100 * maxMultiplier));
     }
 
-    public static BlockEntityBuilder.BlockEntityFactory<MotorExtensionBlockEntity> create(float maxMultiplier, long extraBattery) {
-        return (type, pos, state) -> new MotorExtensionBlockEntity(type, pos, state, maxMultiplier, extraBattery);
+    public static BlockEntityBuilder.BlockEntityFactory<MotorExtensionBlockEntity> create(float maxMultiplier, long extraBattery, int scaler) {
+        return (type, pos, state) -> new MotorExtensionBlockEntity(type, pos, state, maxMultiplier, extraBattery, scaler);
     }
 
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-        stressBehavior = new MotorExtensionScrollValueBehaviour(Lang.translateDirect("new_age.motor.stress_multiplier"), this, new MotorValueBox());
-        stressBehavior.requiresWrench();
+        stressBehavior = new MotorExtensionScrollValueBehaviour(Lang.translateDirect("new_age.motor.stress_multiplier"), this, new MotorValueBox(), scaler);
         stressBehavior.value = 100;
         stressBehavior.withCallback(i ->
         {
@@ -51,6 +53,8 @@ public class MotorExtensionBlockEntity extends SmartBlockEntity {
     }
 
     static class MotorValueBox extends ValueBoxTransform.Sided {
+
+
 
         @Override
         protected Vec3 getSouthLocation() {

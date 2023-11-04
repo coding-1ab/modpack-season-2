@@ -16,8 +16,11 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public class MotorExtensionScrollValueBehaviour extends ScrollValueBehaviour {
 
-    public MotorExtensionScrollValueBehaviour(Component label, SmartBlockEntity be, ValueBoxTransform slot) {
+    protected int scaler;
+
+    public MotorExtensionScrollValueBehaviour(Component label, SmartBlockEntity be, ValueBoxTransform slot, int scaler) {
         super(label, be, slot);
+        this.scaler = scaler;
         withFormatter(v -> String.valueOf(Math.abs(v)));
     }
 
@@ -26,7 +29,8 @@ public class MotorExtensionScrollValueBehaviour extends ScrollValueBehaviour {
         ImmutableList<Component> rows = ImmutableList.of(Components.literal("%")
                         .withStyle(ChatFormatting.BOLD));
         ValueSettingsFormatter formatter = new ValueSettingsFormatter(this::formatSettings);
-        return new ValueSettingsBoard(label, max, max/8, rows, formatter);
+        value /= scaler;
+        return new ValueSettingsBoard(label, max/scaler, 100, rows, formatter);
     }
 
     @Override
@@ -34,7 +38,7 @@ public class MotorExtensionScrollValueBehaviour extends ScrollValueBehaviour {
         int value = Math.max(1, valueSetting.value());
         if (!valueSetting.equals(getValueSettings()))
             playFeedbackSound(this);
-        setValue(value);
+        setValue(value*scaler);
     }
 
     @Override
@@ -43,7 +47,7 @@ public class MotorExtensionScrollValueBehaviour extends ScrollValueBehaviour {
     }
 
     public MutableComponent formatSettings(ValueSettings settings) {
-        return Lang.number(Math.max(1, Math.abs(settings.value())))
+        return Lang.number(Math.max(1, Math.abs(settings.value() * scaler)))
                 .add(Lang.text("%")
                         .style(ChatFormatting.BOLD))
                 .component();

@@ -103,6 +103,14 @@ public class NewAgeBlocks {
                     .simpleItem()
                     .register();
 
+    public static final BlockEntry<MotorExtensionBlock> ADVANCED_MOTOR_EXTENSION =
+            REGISTRATE.block("advanced_motor_extension", (p) -> new MotorExtensionBlock(p, NewAgeBlockEntityTypes.ADVANCED_MOTOR_EXTENSION, 8.0f, 256_000))
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(properties -> properties.strength(4.0f))
+                    .simpleItem()
+                    .register();
+
     public static final BlockEntry<CarbonBrushesBlock> CARBON_BRUSHES =
             REGISTRATE.block("carbon_brushes", CarbonBrushesBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
