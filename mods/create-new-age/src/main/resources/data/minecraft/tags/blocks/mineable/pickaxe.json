@@ -24,6 +24,10 @@
     "create_new_age:layered_magnet",
     "create_new_age:redstone_magnet",
     "create_new_age:netherite_magnet",
-    "create_new_age:basic_motor"
+    "create_new_age:basic_motor",
+    "create_new_age:advanced_motor",
+    "create_new_age:reinforced_motor",
+    "create_new_age:basic_motor_extension",
+    "create_new_age:advanced_motor_extension"
   ]
 }
