@@ -3,7 +3,8 @@
 	"parent": "minecraft:block/cube_bottom_top",
 	"texture_size": [64, 64],
 	"textures": {
-		"3": "create_new_age:block/solar/solar_0"
+		"3": "create_new_age:block/solar/solar_0",
+		"particle": "create_new_age:block/solar/solar_0"
 	},
 	"elements": [
 		{
