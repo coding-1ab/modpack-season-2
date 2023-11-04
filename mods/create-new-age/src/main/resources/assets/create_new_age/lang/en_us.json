@@ -183,5 +183,7 @@
   "block.create_new_age.basic_motor_extension": "Basic Motor Extension",
   "block.create_new_age.advanced_motor_extension": "Strong Motor Extension",
   "item.create_new_age.copper_circuit": "Copper Circuit",
-  "item.create_new_age.blank_circuit": "Blank Circuit"
+  "item.create_new_age.blank_circuit": "Blank Circuit",
+
+  "tooltip.create_new_age.motor_extension": "Placed behind a motor"
 }

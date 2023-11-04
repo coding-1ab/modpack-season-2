@@ -57,6 +57,7 @@ public class MotorExtensionBlock extends Block implements IBE<MotorExtensionBloc
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(Component.translatable("tooltip.create_new_age.motor_extension").withStyle(ChatFormatting.DARK_GRAY));
         tooltip.add(Lang.translate("tooltip.create_new_age.stress_limit_multiplier").style(ChatFormatting.GRAY)
                 .component());
         tooltip.add(Lang.text(" ").add(Lang.number((int)(maxStressMultiplier*100)).text("%").style(ChatFormatting.AQUA)).component());
