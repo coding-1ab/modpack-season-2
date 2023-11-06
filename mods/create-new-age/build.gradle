@@ -58,7 +58,8 @@ dependencies {
 
 	// For testing electricity stuff, don't actually use classes provided by it
 	modImplementation("earth.terrarium.adastra:ad_astra-fabric-$minecraft_version:$ad_astra_version")
-	modImplementation "maven.modrinth:ae2:Mdn0ka1O"
+//	modImplementation "maven.modrinth:ae2:Mdn0ka1O"
+	modImplementation "maven.modrinth:createaddition:ogRcUOQY"
 
 	modImplementation("com.terraformersmc:modmenu:${modmenu_version}")
 

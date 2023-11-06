@@ -1,14 +1,17 @@
 package org.antarcticgardens.newage.content.electricity.connector;
 
+import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.foundation.utility.Lang;
 import com.simibubi.create.foundation.utility.NBTHelper;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
-import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -26,7 +29,7 @@ import org.antarcticgardens.newage.content.electricity.wire.WireType;
 
 import java.util.*;
 
-public class ElectricalConnectorBlockEntity extends BlockEntity implements BotariumEnergyBlock<NetworkEnergyContainer> {
+public class ElectricalConnectorBlockEntity extends BlockEntity implements BotariumEnergyBlock<NetworkEnergyContainer>, IHaveGoggleInformation {
     private final Map<ElectricalConnectorBlockEntity, WireType> connectors = new HashMap<>();
     private final Map<BlockPos, WireType> connectorPositions = new HashMap<>();
 
@@ -94,10 +97,43 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
             updateNetwork();
             tickedBefore = true;
         }
+        
+//        if (getLevel() != null && getBlockState().getValue(ElectricalConnectorBlock.MODE).pull) {
+//            Direction dir = getBlockState().getValue(BlockStateProperties.FACING).getOpposite();
+//            BlockEntity entity = getLevel().getBlockEntity(getSupportingBlockPos());
+//
+//            if (entity != null && !(entity instanceof ElectricalConnectorBlockEntity) && EnergyHooks.isEnergyContainer(entity, dir)) {
+//                PlatformEnergyManager storage = EnergyHooks.getBlockEnergyManager(entity, dir);
+//                if (storage.supportsInsertion() && storage instanceof FabricEnergyManager fem) {
+//                    EnergyStorageWrapper energy = new EnergyStorageWrapper(entity, fem.energy());
+//                    
+//                    long maxExtract = energy.extract(Long.MAX_VALUE, true);
+//                    long extracted = network.insert(this, maxExtract, false);
+//                    energy.extract(extracted, false);
+//                }
+//            }
+//        }
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        Lang.translate("tooltip.create_new_age.connector_info")
+                .style(ChatFormatting.WHITE).forGoggles(tooltip);
+        
+        Lang.translate("tooltip.create_new_age.mode")
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip);
+        
+        ElectricalConnectorMode mode = getBlockState().getValue(ElectricalConnectorBlock.MODE);
+        Lang.translate("tooltip.create_new_age.connector_mode." + mode.getSerializedName())
+                .style(ChatFormatting.AQUA)
+                .forGoggles(tooltip, 1);
+        
+        return true;
     }
 
     protected void neighborChanged() {
-        network.updateConsumers();
+        network.updateConsumersAndSources();
     }
 
     private void updateNetwork() {

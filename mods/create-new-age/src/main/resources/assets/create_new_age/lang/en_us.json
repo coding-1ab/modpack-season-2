@@ -26,6 +26,11 @@
   "create.tooltip.create_new_age.transfers":  "Transfers: ",
   "create.tooltip.create_new_age.percent":  "%s%%",
   "create.tooltip.create_new_age.magnetic_force":  "Magnetic Force: ",
+  
+  "create.tooltip.create_new_age.connector_info": "Connector Info: ",
+  "create.tooltip.create_new_age.mode": "Mode: ",
+  "create.tooltip.create_new_age.connector_mode.inert": "Inert",
+  "create.tooltip.create_new_age.connector_mode.pull": "Pull",
 
 
   "tab.create_new_age.tab": "Create: New Age",
