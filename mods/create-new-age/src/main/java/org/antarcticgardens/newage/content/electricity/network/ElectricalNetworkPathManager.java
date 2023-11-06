@@ -16,6 +16,7 @@ public class ElectricalNetworkPathManager {
         List<ElectricalConnectorBlockEntity> visited = new ArrayList<>();
         Queue<QueueElement> queue = new LinkedList<>();
         queue.add(new QueueElement(a, null, 0));
+        visited.add(a);
 
         while (!queue.isEmpty()) {
             var element = queue.poll();
