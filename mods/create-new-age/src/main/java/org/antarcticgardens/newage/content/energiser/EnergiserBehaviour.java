@@ -225,13 +225,17 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
         if (be.getSpeed() == 0) {
             return ProcessingResult.PASS;
         }
+
         if (EnergyHooks.isEnergyItem(transportedItemStack.stack)) {
-            capacitorMode = true;
-            PlatformItemEnergyManager container = EnergyHooks.getItemEnergyManager(transportedItemStack.stack);
-            charged = container.getStoredEnergy();
-            needed = container.getCapacity();
-            sinceUpdate = 10;
-            return ProcessingResult.HOLD;
+            var energy = EnergyHooks.getItemEnergyManager(transportedItemStack.stack);
+            if (energy.getStoredEnergy() < energy.getCapacity()) {
+                capacitorMode = true;
+                PlatformItemEnergyManager container = EnergyHooks.getItemEnergyManager(transportedItemStack.stack);
+                charged = container.getStoredEnergy();
+                needed = container.getCapacity();
+                sinceUpdate = 10;
+                return ProcessingResult.HOLD;
+            }
         }
         capacitorMode = false;
 
