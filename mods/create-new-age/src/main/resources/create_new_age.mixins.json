@@ -3,8 +3,7 @@
   "package": "org.antarcticgardens.newage.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "LevelMixin",
-    "FluidTankMixin"
+    "LevelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
