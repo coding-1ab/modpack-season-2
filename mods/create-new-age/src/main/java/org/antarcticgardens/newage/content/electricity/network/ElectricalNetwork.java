@@ -58,7 +58,7 @@ public class ElectricalNetwork {
 
         for (ElectricalConnectorBlockEntity node : nodes) {
             if (node.getLevel() != null) {
-                Direction dir = node.getBlockState().getValue(BlockStateProperties.FACING).getOpposite();
+                Direction dir = node.getBlockState().getValue(BlockStateProperties.FACING);
                 BlockEntity entity = node.getLevel().getBlockEntity(node.getSupportingBlockPos());
 
                 if (entity != null && !(entity instanceof ElectricalConnectorBlockEntity) && EnergyHooks.isEnergyContainer(entity, dir)) {
