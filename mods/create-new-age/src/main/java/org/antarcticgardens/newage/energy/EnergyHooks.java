@@ -19,11 +19,11 @@ public class EnergyHooks {
         Direction.stream()
                 .map(direction -> Pair.of(direction, level.getBlockEntity(blockPos.relative(direction))))
                 .filter(pair -> pair.getSecond() != null)
-                .map(pair -> Pair.of(safeGetBlockEnergyManager(pair.getSecond(), pair.getFirst()), pair.getFirst()))
+                .map(pair -> Pair.of(safeGetBlockEnergyManager(pair.getSecond(), pair.getFirst().getOpposite()), pair.getFirst()))
                 .filter(pair -> pair.getFirst().isPresent())
                 .forEach(pair -> {
                     PlatformEnergyManager externalEnergy = pair.getFirst().get();
-                    safeGetBlockEnergyManager(energyBlock, pair.getSecond().getOpposite())
+                    safeGetBlockEnergyManager(energyBlock, pair.getSecond())
                             .ifPresent(platformEnergyManager -> moveEnergy(platformEnergyManager, externalEnergy, amount == -1 ? energyBlock.getEnergyStorage().getStoredEnergy() : amount));
                 });
     }
