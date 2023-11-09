@@ -2,9 +2,6 @@
   "type": "create:mechanical_crafting",
   "acceptMirrored": true,
   "key": {
-    "d": {
-      "item": "minecraft:diamond"
-    },
     "D": {
       "item": "create_new_age:overcharged_diamond"
     },
@@ -15,12 +12,12 @@
       "item": "create_new_age:copper_circuit"
     },
     "I": {
-      "tag": "c:iron_plates"
+      "item": "create_new_age:overcharged_iron_sheet"
     }
   },
   "pattern": [
     "IIIII",
-    "..#..",
+    "D.#.D",
     "IIIII"
   ],
   "result": {
