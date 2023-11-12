@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "create_new_age:magnetite_block"
+          "name": "create_new_age:fluxuated_magnetite"
         }
       ],
       "rolls": 1.0
