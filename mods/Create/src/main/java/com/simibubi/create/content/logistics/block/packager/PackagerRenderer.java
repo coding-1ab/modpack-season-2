@@ -12,9 +12,9 @@ import com.simibubi.create.foundation.utility.AngleHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -65,8 +65,8 @@ public class PackagerRenderer extends SmartBlockEntityRenderer<PackagerBlockEnti
 				.scale(1.49f, 1.49f, 1.49f);
 			Minecraft.getInstance()
 				.getItemRenderer()
-				.renderStatic(null, renderedBox, TransformType.FIXED, false, ms, buffer, be.getLevel(), light, overlay,
-					0);
+				.renderStatic(null, renderedBox, ItemDisplayContext.FIXED, false, ms, buffer, be.getLevel(), light,
+					overlay, 0);
 		}
 
 		ms.popPose();

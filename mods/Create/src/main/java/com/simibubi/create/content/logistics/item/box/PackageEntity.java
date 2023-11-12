@@ -6,9 +6,9 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.simibubi.create.AllEntityTypes;
+import com.simibubi.create.AllPackets;
 import com.simibubi.create.Create;
-import com.simibubi.create.content.logistics.block.chute.ChuteBlock;
-import com.simibubi.create.foundation.networking.AllPackets;
+import com.simibubi.create.content.logistics.chute.ChuteBlock;
 import com.simibubi.create.foundation.utility.AngleHelper;
 import com.simibubi.create.foundation.utility.VecHelper;
 
@@ -17,9 +17,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -86,7 +88,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 		packageEntity.originalEntity = originalEntity;
 
 		if (world != null && !world.isClientSide)
-			if (ChuteBlock.isChute(world.getBlockState(new BlockPos(position.x, position.y + .5f, position.z))))
+			if (ChuteBlock.isChute(world.getBlockState(BlockPos.containing(position.x, position.y + .5f, position.z))))
 				packageEntity.setYRot(((int) packageEntity.getYRot()) / 90 * 90);
 
 		return packageEntity;
@@ -113,7 +115,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 	@Override
 	public void travel(Vec3 p_213352_1_) {
 		super.travel(p_213352_1_);
-		if (!level.isClientSide)
+		if (!level().isClientSide)
 			return;
 		if (getDeltaMovement().length() < 1 / 128f)
 			return;
@@ -122,8 +124,8 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 
 		Vec3 motion = getDeltaMovement().scale(.75f);
 		AABB bb = getBoundingBox();
-		List<VoxelShape> entityStream = level.getEntityCollisions(this, bb.expandTowards(motion));
-		motion = collideBoundingBox(this, motion, bb, level, entityStream);
+		List<VoxelShape> entityStream = level().getEntityCollisions(this, bb.expandTowards(motion));
+		motion = collideBoundingBox(this, motion, bb, level(), entityStream);
 
 		Vec3 clientPos = position().add(motion);
 		if (lerpSteps != 0)
@@ -201,7 +203,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 	}
 
 	public boolean decreaseInsertionTimer(@Nullable Vec3 targetSpot) {
-		if (level.isClientSide)
+		if (level().isClientSide)
 			return true;
 		if (targetSpot != null) {
 			setDeltaMovement(getDeltaMovement().scale(.75f)
@@ -242,7 +244,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 			.isEmpty())
 			return super.interact(pPlayer, pHand);
 		pPlayer.setItemInHand(pHand, box);
-		level.playSound(null, blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, .2f,
+		level().playSound(null, blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, .2f,
 			.75f + Create.RANDOM.nextFloat());
 		remove(RemovalReason.DISCARDED);
 		return InteractionResult.SUCCESS;
@@ -269,47 +271,42 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 		if (!isAlive())
 			return;
 		if (state.getBlock() == Blocks.WATER) {
-			destroy(DamageSource.DROWN);
+			destroy(damageSources().drown());
 			remove(RemovalReason.KILLED);
 		}
 	}
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
-		if (level.isClientSide || !this.isAlive())
+		if (level().isClientSide || !this.isAlive())
 			return false;
 
-		if (DamageSource.OUT_OF_WORLD.equals(source)) {
-			this.remove(RemovalReason.DISCARDED);
+		if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+			this.kill();
 			return false;
 		}
 
-		if (DamageSource.IN_WALL.equals(source) && (isPassenger() || insertionDelay < 20))
+		if (source.equals(damageSources().inWall()) && (isPassenger() || insertionDelay < 20))
 			return false;
 
-		if (DamageSource.FALL.equals(source))
+		if (source.is(DamageTypeTags.IS_FALL))
 			return false;
 
 		if (this.isInvulnerableTo(source))
 			return false;
 
-		if (source.isExplosion()) {
+		if (source.is(DamageTypeTags.IS_EXPLOSION)) {
 			this.destroy(source);
 			this.remove(RemovalReason.KILLED);
 			return false;
 		}
 
-		if (DamageSource.IN_FIRE.equals(source)) {
+		if (source.is(DamageTypeTags.IS_FIRE)) {
 			if (this.isOnFire()) {
 				this.takeDamage(source, 0.15F);
 			} else {
 				this.setSecondsOnFire(5);
 			}
-			return false;
-		}
-
-		if (DamageSource.ON_FIRE.equals(source) && this.getHealth() > 0.5F) {
-			this.takeDamage(source, 4.0F);
 			return false;
 		}
 
@@ -338,8 +335,8 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 	private void destroy(DamageSource source) {
 		AllPackets.getChannel()
 			.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new PackageDestroyPacket(position(), box));
-		this.level.playSound((Player) null, getX(), getY(), getZ(), SoundEvents.ARMOR_STAND_BREAK,
-			this.getSoundSource(), 1.0F, 1.0F);
+		level().playSound((Player) null, getX(), getY(), getZ(), SoundEvents.ARMOR_STAND_BREAK, this.getSoundSource(),
+			1.0F, 1.0F);
 		this.dropAllDeathLoot(source);
 	}
 
@@ -351,8 +348,8 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 			ItemStack itemstack = contents.getStackInSlot(i);
 			if (itemstack.isEmpty())
 				continue;
-			ItemEntity entityIn = new ItemEntity(level, getX(), getY(), getZ(), itemstack);
-			level.addFreshEntity(entityIn);
+			ItemEntity entityIn = new ItemEntity(level(), getX(), getY(), getZ(), itemstack);
+			level().addFreshEntity(entityIn);
 		}
 	}
 
@@ -369,7 +366,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.fluids.transfer.GenericItemEmptying;
+import com.simibubi.create.content.logistics.item.box.PackageItem;
 import com.simibubi.create.foundation.utility.Pair;
 
 import net.minecraft.nbt.CompoundTag;
@@ -27,6 +28,8 @@ public class FilterItemStack {
 				return new ListFilterItemStack(filter);
 			if (AllItems.ATTRIBUTE_FILTER.isIn(filter))
 				return new AttributeFilterItemStack(filter);
+			if (AllItems.PACKAGE_FILTER.isIn(filter))
+				return new AdressFilterItemStack(filter);
 		}
 
 		return new FilterItemStack(filter);
@@ -35,7 +38,7 @@ public class FilterItemStack {
 	public static FilterItemStack of(CompoundTag tag) {
 		return of(ItemStack.of(tag));
 	}
-	
+
 	public static FilterItemStack empty() {
 		return of(ItemStack.EMPTY);
 	}
@@ -47,16 +50,16 @@ public class FilterItemStack {
 	public CompoundTag serializeNBT() {
 		return filterItemStack.serializeNBT();
 	}
-	
+
 	public ItemStack item() {
 		return filterItemStack;
 	}
-	
+
 	public FluidStack fluid(Level level) {
 		resolveFluid(level);
 		return filterFluidStack;
 	}
-	
+
 	public boolean isFilterItem() {
 		return filterItemStack.getItem() instanceof FilterItem;
 	}
@@ -94,13 +97,13 @@ public class FilterItemStack {
 	}
 
 	//
-	
+
 	private void resolveFluid(Level world) {
 		if (!fluidExtracted) {
 			fluidExtracted = true;
 			if (GenericItemEmptying.canItemBeEmptied(world, filterItemStack))
 				filterFluidStack = GenericItemEmptying.emptyItem(world, filterItemStack, true)
-				.getFirst();
+					.getFirst();
 		}
 	}
 
@@ -229,6 +232,29 @@ public class FilterItemStack {
 				return false;
 			}
 
+			return false;
+		}
+
+	}
+
+	public static class AdressFilterItemStack extends FilterItemStack {
+
+		public String filterString;
+
+		protected AdressFilterItemStack(ItemStack filter) {
+			super(filter);
+			filterString = filter.getOrCreateTag()
+				.getString("Address");
+		}
+
+		@Override
+		public boolean test(Level world, ItemStack stack, boolean matchNBT) {
+			return stack.getItem() instanceof PackageItem
+				&& PackageItem.matchAddress(stack, filterString.isBlank() ? "*" : filterString);
+		}
+
+		@Override
+		public boolean test(Level world, FluidStack stack, boolean matchNBT) {
 			return false;
 		}
 

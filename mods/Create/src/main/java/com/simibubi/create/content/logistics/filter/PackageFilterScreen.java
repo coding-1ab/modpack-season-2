@@ -1,6 +1,5 @@
-package com.simibubi.create.content.logistics.item.filter;
+package com.simibubi.create.content.logistics.filter;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.gui.widget.Indicator;
@@ -23,11 +22,6 @@ public class PackageFilterScreen extends AbstractFilterScreen<PackageFilterMenu>
 
 		int x = leftPos;
 		int y = topPos;
-	}
-
-	@Override
-	public void renderForeground(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		super.renderForeground(matrixStack, mouseX, mouseY, partialTicks);
 	}
 
 	@Override

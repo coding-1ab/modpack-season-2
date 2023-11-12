@@ -374,16 +374,16 @@ public class AllItems {
 		CARDBOARD_PACKAGE_12x10 = REGISTRATE.item("cardboard_package_12x10", p -> new PackageItem(p, 12, 10))
 			.transform(BuilderTransformers.packageItem("cardboard", 12, 10))
 			.register();
-	
+
 	public static final ItemEntry<FilterItem> FILTER = REGISTRATE.item("filter", FilterItem::regular)
 		.lang("List Filter")
-		.register(), ATTRIBUTE_FILTER =
-			REGISTRATE.item("attribute_filter", FilterItem::attribute)
-				.register();
+		.register(),
 
-	public static final ItemEntry<FilterItem> PACKAGE_FILTER = REGISTRATE.item("package_filter", FilterItem::address)
-		.model(AssetLookup.existingItemModel())
-		.register();
+		ATTRIBUTE_FILTER = REGISTRATE.item("attribute_filter", FilterItem::attribute)
+			.register(),
+
+		PACKAGE_FILTER = REGISTRATE.item("package_filter", FilterItem::address)
+			.register();
 
 	public static final ItemEntry<ScheduleItem> SCHEDULE = REGISTRATE.item("schedule", ScheduleItem::new)
 		.lang("Train Schedule")

@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.item.filter;
+package com.simibubi.create.content.logistics.filter;
 
 import com.simibubi.create.AllMenuTypes;
 

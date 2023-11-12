@@ -15,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class PackageRenderer extends EntityRenderer<PackageEntity> {
 
@@ -27,8 +28,7 @@ public class PackageRenderer extends EntityRenderer<PackageEntity> {
 		ItemStack box = entity.box;
 		if (box.isEmpty())
 			box = PackageItem.getFallbackBox();
-		PartialModel model = AllPartialModels.PACKAGES.get(box.getItem()
-			.getRegistryName());
+		PartialModel model = AllPartialModels.PACKAGES.get(ForgeRegistries.ITEMS.getKey(box.getItem()));
 		SuperByteBuffer sbb = CachedBufferer.partial(model, Blocks.AIR.defaultBlockState());
 		sbb.translate(-.5, 0, -.5)
 			.rotateCentered(Direction.UP, AngleHelper.rad(yaw))
