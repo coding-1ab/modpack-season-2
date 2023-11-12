@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Random;
 
 import com.simibubi.create.AllEntityTypes;
-import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.utility.Components;
 
 import net.minecraft.ChatFormatting;
@@ -31,6 +30,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class PackageItem extends Item {
@@ -55,6 +55,11 @@ public class PackageItem extends Item {
 	}
 
 	@Override
+	public boolean canFitInsideContainerItems() {
+		return false;
+	}
+
+	@Override
 	public boolean hasCustomEntity(ItemStack stack) {
 		return true;
 	}
@@ -65,10 +70,15 @@ public class PackageItem extends Item {
 	}
 
 	public static ItemStack containing(List<ItemStack> stacks) {
+		ItemStackHandler newInv = new ItemStackHandler(9);
+		stacks.forEach(s -> ItemHandlerHelper.insertItemStacked(newInv, s, false));
+		return containing(newInv);
+	}
+
+	public static ItemStack containing(ItemStackHandler stacks) {
 		ItemStack box = new ItemStack(randomBox());
 		CompoundTag compound = new CompoundTag();
-		ItemStackHandler newInv = new ItemStackHandler(9);
-		compound.put("Items", newInv.serializeNBT());
+		compound.put("Items", stacks.serializeNBT());
 		box.setTag(compound);
 		return box;
 	}
@@ -81,19 +91,14 @@ public class PackageItem extends Item {
 			.putString("Address", address);
 	}
 
-	public static boolean matchAddress(ItemStack box, String other) {
-		String address = box.getTag()
+	public static boolean matchAddress(ItemStack box, String address) {
+		String boxAddress = box.getTag()
 			.getString("Address");
-		if (address == null || address.isEmpty())
-			return false;
-		if (address.equals("*"))
+		if (address.equals("*") || boxAddress.equals("*"))
 			return true;
-		if (address.equals(other))
-			return true;
-		if (address.endsWith("*") && other.startsWith(address.substring(0, address.length() - 1)))
-			return true;
-
-		return false;
+		String matcher = "\\Q" + address.replace("*", "\\E.*\\Q") + "\\E";
+		String boxMatcher = "\\Q" + boxAddress.replace("*", "\\E.*\\Q") + "\\E";
+		return address.matches(boxMatcher) || boxAddress.matches(matcher);
 	}
 
 	public static float getWidth(ItemStack box) {
@@ -113,7 +118,6 @@ public class PackageItem extends Item {
 		CompoundTag invNBT = box.getOrCreateTagElement("Items");
 		if (!invNBT.isEmpty())
 			newInv.deserializeNBT(invNBT);
-		newInv.setStackInSlot(0, AllItems.BRASS_INGOT.asStack());
 		return newInv;
 	}
 
@@ -130,27 +134,32 @@ public class PackageItem extends Item {
 		if (compoundnbt.contains("Address", Tag.TAG_STRING))
 			pTooltipComponents.add(Components.literal("-> " + compoundnbt.getString("Address"))
 				.withStyle(ChatFormatting.GOLD));
-		if (!compoundnbt.contains("Items", Tag.TAG_LIST))
+		if (!compoundnbt.contains("Items", Tag.TAG_COMPOUND))
 			return;
 
-		int j = 0;
+		int visibleNames = 0;
+		int skippedNames = 0;
 		ItemStackHandler contents = getContents(pStack);
 		for (int i = 0; i < contents.getSlots(); i++) {
 			ItemStack itemstack = contents.getStackInSlot(i);
 			if (itemstack.isEmpty())
 				continue;
-			if (j > 4) {
-				pTooltipComponents.add(Components.translatable("container.shulkerBox.more", j - i)
-					.withStyle(ChatFormatting.ITALIC));
-				break;
+			if (visibleNames > 2) {
+				skippedNames++;
+				continue;
 			}
-			++j;
-			pTooltipComponents.add(itemstack.getDisplayName()
+
+			visibleNames++;
+			pTooltipComponents.add(itemstack.getHoverName()
 				.copy()
 				.append(" x")
 				.append(String.valueOf(itemstack.getCount()))
 				.withStyle(ChatFormatting.GRAY));
 		}
+
+		if (skippedNames > 0)
+			pTooltipComponents.add(Components.translatable("container.shulkerBox.more", skippedNames)
+				.withStyle(ChatFormatting.ITALIC));
 	}
 
 	// Throwing stuff
@@ -175,8 +184,10 @@ public class PackageItem extends Item {
 			playerIn.getInventory()
 				.placeItemBackInInventory(itemstack);
 		}
-		if (!playerIn.isCreative())
-			box.shrink(1);
+		box.shrink(1);
+		if (box.isEmpty())
+			playerIn.getInventory()
+				.removeItem(box);
 		return new InteractionResultHolder<>(InteractionResult.SUCCESS, box);
 	}
 
@@ -242,8 +253,8 @@ public class PackageItem extends Item {
 			SoundSource.NEUTRAL, 0.5F, 0.5F);
 
 		ItemStack copy = stack.copy();
-		if (!playerentity.isCreative())
-			stack.shrink(1);
+		stack.shrink(1);
+
 		if (stack.isEmpty())
 			playerentity.getInventory()
 				.removeItem(stack);

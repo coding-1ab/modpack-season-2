@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.content.contraptions.processing.EmptyingByBasin;
+import com.simibubi.create.content.logistics.item.box.PackageItem;
 import com.simibubi.create.content.logistics.item.filter.AttributeFilterMenu.WhitelistMode;
 import com.simibubi.create.foundation.utility.Components;
 import com.simibubi.create.foundation.utility.Lang;
@@ -43,7 +44,7 @@ public class FilterItem extends Item implements MenuProvider {
 	private FilterType type;
 
 	private enum FilterType {
-		REGULAR, ATTRIBUTE;
+		REGULAR, ATTRIBUTE, ADDRESS;
 	}
 
 	public static FilterItem regular(Properties properties) {
@@ -52,6 +53,10 @@ public class FilterItem extends Item implements MenuProvider {
 
 	public static FilterItem attribute(Properties properties) {
 		return new FilterItem(FilterType.ATTRIBUTE, properties);
+	}
+	
+	public static FilterItem address(Properties properties) {
+		return new FilterItem(FilterType.ADDRESS, properties);
 	}
 
 	private FilterItem(FilterType type, Properties properties) {
@@ -158,6 +163,8 @@ public class FilterItem extends Item implements MenuProvider {
 			return FilterMenu.create(id, inv, heldItem);
 		if (type == FilterType.ATTRIBUTE)
 			return AttributeFilterMenu.create(id, inv, heldItem);
+		if (type == FilterType.ADDRESS)
+			return PackageFilterMenu.create(id, inv, heldItem);
 		return null;
 	}
 
@@ -250,6 +257,14 @@ public class FilterItem extends Item implements MenuProvider {
 			case WHITELIST_DISJ:
 				return false;
 			}
+		}
+		
+		if (AllItems.PACKAGE_FILTER.get() == filter.getItem()) {
+			if (!(stack.getItem() instanceof PackageItem))
+				return false;
+			String filterString = filter.getOrCreateTag()
+				.getString("Address");
+			PackageItem.matchAddress(stack, filterString.isBlank() ? "*" : filterString);
 		}
 
 		return false;

@@ -10,6 +10,8 @@ import com.simibubi.create.content.logistics.item.filter.AttributeFilterMenu;
 import com.simibubi.create.content.logistics.item.filter.AttributeFilterScreen;
 import com.simibubi.create.content.logistics.item.filter.FilterMenu;
 import com.simibubi.create.content.logistics.item.filter.FilterScreen;
+import com.simibubi.create.content.logistics.item.filter.PackageFilterMenu;
+import com.simibubi.create.content.logistics.item.filter.PackageFilterScreen;
 import com.simibubi.create.content.logistics.trains.management.schedule.ScheduleMenu;
 import com.simibubi.create.content.logistics.trains.management.schedule.ScheduleScreen;
 import com.simibubi.create.content.schematics.block.SchematicTableMenu;
@@ -38,6 +40,9 @@ public class AllMenuTypes {
 
 	public static final MenuEntry<AttributeFilterMenu> ATTRIBUTE_FILTER =
 		register("attribute_filter", AttributeFilterMenu::new, () -> AttributeFilterScreen::new);
+	
+	public static final MenuEntry<PackageFilterMenu> PACKAGE_FILTER =
+		register("package_filter", PackageFilterMenu::new, () -> PackageFilterScreen::new);
 
 	public static final MenuEntry<BlueprintMenu> CRAFTING_BLUEPRINT =
 		register("crafting_blueprint", BlueprintMenu::new, () -> BlueprintScreen::new);

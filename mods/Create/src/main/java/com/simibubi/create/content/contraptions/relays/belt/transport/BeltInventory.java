@@ -180,7 +180,7 @@ public class BeltInventory {
 			// Apply Movement
 			currentItem.beltPosition += limitedMovement;
 			currentItem.sideOffset +=
-				(currentItem.getTargetSideOffset() - currentItem.sideOffset) * Math.abs(limitedMovement) * 2f;
+				(currentItem.getTargetSideOffset() - currentItem.sideOffset) * Math.abs(limitedMovement) * 6f;
 			currentPos = currentItem.beltPosition;
 
 			// Movement successful

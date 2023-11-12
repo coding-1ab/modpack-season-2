@@ -54,6 +54,7 @@ public enum AllGuiTextures implements ScreenElement {
 
 	FILTER("filters", 214, 97),
 	ATTRIBUTE_FILTER("filters", 0, 97, 241, 83),
+	PACKAGE_FILTER("packager", 0, 104, 218, 79),
 
 	TOOLBOX("toolbox", 188, 171),
 	TOOLBELT_SLOT("minecraft", "widgets", 24, 23, 22, 22),

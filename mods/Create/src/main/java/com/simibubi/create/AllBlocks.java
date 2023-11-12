@@ -203,6 +203,7 @@ import com.simibubi.create.content.logistics.block.funnel.FunnelMovementBehaviou
 import com.simibubi.create.content.logistics.block.inventories.CreativeCrateBlock;
 import com.simibubi.create.content.logistics.block.mechanicalArm.ArmBlock;
 import com.simibubi.create.content.logistics.block.mechanicalArm.ArmItem;
+import com.simibubi.create.content.logistics.block.packager.PackagerBlock;
 import com.simibubi.create.content.logistics.block.redstone.AnalogLeverBlock;
 import com.simibubi.create.content.logistics.block.redstone.ContactMovementBehaviour;
 import com.simibubi.create.content.logistics.block.redstone.ContentObserverBlock;
@@ -1734,6 +1735,17 @@ public class AllBlocks {
 				.build()))
 		.onRegister(connectedTextures(ItemVaultCTBehaviour::new))
 		.item(ItemVaultItem::new)
+		.build()
+		.register();
+
+	public static final BlockEntry<PackagerBlock> PACKAGER = REGISTRATE.block("packager", PackagerBlock::new)
+		.initialProperties(SharedProperties::softMetal)
+		.properties(p -> p.noOcclusion())
+		.addLayer(() -> RenderType::cutoutMipped)
+		.blockstate((c, p) -> p.horizontalBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
+		.transform(BlockStressDefaults.setImpact(1.0))
+		.item()
+		.model(AssetLookup::customItemModel)
 		.build()
 		.register();
 

@@ -108,6 +108,9 @@ public class AllPartialModels {
 
 		EJECTOR_TOP = block("weighted_ejector/top"),
 
+		PACKAGER_TRAY = block("packager/tray"), PACKAGER_HATCH_OPEN = block("packager/hatch_open"),
+		PACKAGER_HATCH_CLOSED = block("packager/hatch_closed"),
+
 		COPPER_BACKTANK_SHAFT = block("copper_backtank/block_shaft_input"),
 		COPPER_BACKTANK_COGS = block("copper_backtank/block_cogs"),
 

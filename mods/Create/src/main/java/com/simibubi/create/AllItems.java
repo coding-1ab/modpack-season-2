@@ -359,6 +359,10 @@ public class AllItems {
 			.model(AssetLookup.existingItemModel())
 			.register();
 
+	public static final ItemEntry<FilterItem> PACKAGE_FILTER = REGISTRATE.item("package_filter", FilterItem::address)
+		.model(AssetLookup.existingItemModel())
+		.register();
+
 	public static final ItemEntry<ScheduleItem> SCHEDULE = REGISTRATE.item("schedule", ScheduleItem::new)
 		.lang("Train Schedule")
 		.register();
