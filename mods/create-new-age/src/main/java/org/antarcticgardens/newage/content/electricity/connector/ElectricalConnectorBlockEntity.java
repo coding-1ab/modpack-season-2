@@ -97,22 +97,6 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
             updateNetwork();
             tickedBefore = true;
         }
-        
-//        if (getLevel() != null && getBlockState().getValue(ElectricalConnectorBlock.MODE).pull) {
-//            Direction dir = getBlockState().getValue(BlockStateProperties.FACING).getOpposite();
-//            BlockEntity entity = getLevel().getBlockEntity(getSupportingBlockPos());
-//
-//            if (entity != null && !(entity instanceof ElectricalConnectorBlockEntity) && EnergyHooks.isEnergyContainer(entity, dir)) {
-//                PlatformEnergyManager storage = EnergyHooks.getBlockEnergyManager(entity, dir);
-//                if (storage.supportsInsertion() && storage instanceof FabricEnergyManager fem) {
-//                    EnergyStorageWrapper energy = new EnergyStorageWrapper(entity, fem.energy());
-//                    
-//                    long maxExtract = energy.extract(Long.MAX_VALUE, true);
-//                    long extracted = network.insert(this, maxExtract, false);
-//                    energy.extract(extracted, false);
-//                }
-//            }
-//        }
     }
 
     @Override
