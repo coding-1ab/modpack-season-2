@@ -42,7 +42,7 @@ public class FilterItem extends Item implements MenuProvider {
 	private FilterType type;
 
 	private enum FilterType {
-		REGULAR, ATTRIBUTE;
+		REGULAR, ATTRIBUTE, ADDRESS;
 	}
 
 	public static FilterItem regular(Properties properties) {
@@ -51,6 +51,10 @@ public class FilterItem extends Item implements MenuProvider {
 
 	public static FilterItem attribute(Properties properties) {
 		return new FilterItem(FilterType.ATTRIBUTE, properties);
+	}
+	
+	public static FilterItem address(Properties properties) {
+		return new FilterItem(FilterType.ADDRESS, properties);
 	}
 
 	private FilterItem(FilterType type, Properties properties) {
@@ -167,6 +171,8 @@ public class FilterItem extends Item implements MenuProvider {
 			return FilterMenu.create(id, inv, heldItem);
 		if (type == FilterType.ATTRIBUTE)
 			return AttributeFilterMenu.create(id, inv, heldItem);
+		if (type == FilterType.ADDRESS)
+			return PackageFilterMenu.create(id, inv, heldItem);
 		return null;
 	}
 

@@ -42,6 +42,7 @@ import com.simibubi.create.content.legacy.ChromaticCompoundItem;
 import com.simibubi.create.content.legacy.RefinedRadianceItem;
 import com.simibubi.create.content.legacy.ShadowSteelItem;
 import com.simibubi.create.content.logistics.filter.FilterItem;
+import com.simibubi.create.content.logistics.item.box.PackageItem;
 import com.simibubi.create.content.materials.ExperienceNuggetItem;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockItem;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyItem;
@@ -50,6 +51,7 @@ import com.simibubi.create.content.schematics.SchematicAndQuillItem;
 import com.simibubi.create.content.schematics.SchematicItem;
 import com.simibubi.create.content.trains.schedule.ScheduleItem;
 import com.simibubi.create.foundation.data.AssetLookup;
+import com.simibubi.create.foundation.data.BuilderTransformers;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.recipe.CompatMetals;
 import com.simibubi.create.foundation.item.CombustibleItem;
@@ -359,11 +361,29 @@ public class AllItems {
 
 	// Logistics
 
+	public static final ItemEntry<PackageItem> CARDBOARD_PACKAGE_12x12 =
+		REGISTRATE.item("cardboard_package_12x12", p -> new PackageItem(p, 12, 12))
+			.transform(BuilderTransformers.packageItem("cardboard", 12, 12))
+			.register(),
+		CARDBOARD_PACKAGE_10x12 = REGISTRATE.item("cardboard_package_10x12", p -> new PackageItem(p, 10, 12))
+			.transform(BuilderTransformers.packageItem("cardboard", 10, 12))
+			.register(),
+		CARDBOARD_PACKAGE_10x8 = REGISTRATE.item("cardboard_package_10x8", p -> new PackageItem(p, 10, 8))
+			.transform(BuilderTransformers.packageItem("cardboard", 10, 8))
+			.register(),
+		CARDBOARD_PACKAGE_12x10 = REGISTRATE.item("cardboard_package_12x10", p -> new PackageItem(p, 12, 10))
+			.transform(BuilderTransformers.packageItem("cardboard", 12, 10))
+			.register();
+	
 	public static final ItemEntry<FilterItem> FILTER = REGISTRATE.item("filter", FilterItem::regular)
 		.lang("List Filter")
 		.register(), ATTRIBUTE_FILTER =
 			REGISTRATE.item("attribute_filter", FilterItem::attribute)
 				.register();
+
+	public static final ItemEntry<FilterItem> PACKAGE_FILTER = REGISTRATE.item("package_filter", FilterItem::address)
+		.model(AssetLookup.existingItemModel())
+		.register();
 
 	public static final ItemEntry<ScheduleItem> SCHEDULE = REGISTRATE.item("schedule", ScheduleItem::new)
 		.lang("Train Schedule")

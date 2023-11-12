@@ -521,11 +521,16 @@ public class BeltBlockEntity extends KineticBlockEntity {
 			.isVertical()) {
 			if (movementFacing != side) {
 				transportedStack.sideOffset = side.getAxisDirection()
-					.getStep() * .35f;
+					.getStep() * .675f;
 				if (side.getAxis() == Axis.X)
 					transportedStack.sideOffset *= -1;
-			} else
-				transportedStack.beltPosition = getDirectionAwareBeltMovementSpeed() > 0 ? index : index + 1;
+			} else {
+				float extraOffset =
+					BeltHelper.getSegmentBE(level, worldPosition.relative(movementFacing.getOpposite())) != null ? .26f
+						: 0;
+				transportedStack.beltPosition =
+					getDirectionAwareBeltMovementSpeed() > 0 ? index - extraOffset : index + 1 + extraOffset;
+			}
 		}
 
 		transportedStack.prevSideOffset = transportedStack.sideOffset;

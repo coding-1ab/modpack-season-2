@@ -1,0 +1,22 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "create:item/package_transforms",
+	"textures": {
+		"0": "create:entity/package/cardboard",
+		"particle": "create:entity/package/cardboard_particle"
+	},
+	"elements": [
+		{
+			"from": [2, 0, 2],
+			"to": [14, 12, 14],
+			"faces": {
+				"north": {"uv": [12.75, 8.5, 15.75, 11.5], "texture": "#0"},
+				"east": {"uv": [9.75, 5.5, 12.75, 8.5], "texture": "#0"},
+				"south": {"uv": [12.75, 8.5, 15.75, 11.5], "texture": "#0"},
+				"west": {"uv": [9.75, 8.5, 12.75, 11.5], "texture": "#0"},
+				"up": {"uv": [12.75, 5.5, 15.75, 8.5], "texture": "#0"},
+				"down": {"uv": [9.75, 11.5, 12.75, 14.5], "texture": "#0"}
+			}
+		}
+	]
+}

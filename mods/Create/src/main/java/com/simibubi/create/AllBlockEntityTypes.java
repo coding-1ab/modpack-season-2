@@ -154,6 +154,8 @@ import com.simibubi.create.content.kinetics.waterwheel.LargeWaterWheelBlockEntit
 import com.simibubi.create.content.kinetics.waterwheel.WaterWheelBlockEntity;
 import com.simibubi.create.content.kinetics.waterwheel.WaterWheelInstance;
 import com.simibubi.create.content.kinetics.waterwheel.WaterWheelRenderer;
+import com.simibubi.create.content.logistics.block.packager.PackagerBlockEntity;
+import com.simibubi.create.content.logistics.block.packager.PackagerRenderer;
 import com.simibubi.create.content.logistics.chute.ChuteBlockEntity;
 import com.simibubi.create.content.logistics.chute.ChuteRenderer;
 import com.simibubi.create.content.logistics.chute.SmartChuteBlockEntity;
@@ -462,6 +464,12 @@ public class AllBlockEntityTypes {
 	public static final BlockEntityEntry<ItemVaultBlockEntity> ITEM_VAULT = REGISTRATE
 		.blockEntity("item_vault", ItemVaultBlockEntity::new)
 		.validBlocks(AllBlocks.ITEM_VAULT)
+		.register();
+	
+	public static final BlockEntityEntry<PackagerBlockEntity> PACKAGER = REGISTRATE
+		.blockEntity("packager", PackagerBlockEntity::new)
+		.validBlocks(AllBlocks.PACKAGER)
+		.renderer(() -> PackagerRenderer::new)
 		.register();
 
 	public static final BlockEntityEntry<MechanicalPistonBlockEntity> MECHANICAL_PISTON = REGISTRATE

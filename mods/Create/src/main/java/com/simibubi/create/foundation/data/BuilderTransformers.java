@@ -9,6 +9,7 @@ import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -35,6 +36,7 @@ import com.simibubi.create.content.kinetics.crank.ValveHandleBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogCTBehaviour;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogwheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedShaftBlock;
+import com.simibubi.create.content.logistics.item.box.PackageItem;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock.Shape;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelItem;
@@ -45,6 +47,7 @@ import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import com.simibubi.create.foundation.block.connected.HorizontalCTBehaviour;
 import com.simibubi.create.foundation.utility.RegisteredObjects;
 import com.tterrag.registrate.builders.BlockBuilder;
+import com.tterrag.registrate.builders.ItemBuilder;
 import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 
@@ -459,6 +462,14 @@ public class BuilderTransformers {
 			.model((c, p) -> p.withExistingParent(c.getName(), p.modLoc("block/" + c.getName())))
 			.tag(AllItemTags.CONTRAPTION_CONTROLLED.tag)
 			.build();
+	}
+
+	public static <B extends PackageItem> NonNullUnaryOperator<ItemBuilder<B, CreateRegistrate>> packageItem(
+		String material, int diameter, int height) {
+		return b -> b.properties(p -> p.stacksTo(1))
+			.model((c, p) -> p.getExistingFile(p.modLoc(c.getName())))
+			.lang(material.substring(0, 1)
+				.toUpperCase(Locale.ROOT) + material.substring(1) + " Package");
 	}
 
 }

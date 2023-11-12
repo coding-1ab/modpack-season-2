@@ -6,11 +6,14 @@ import javax.annotation.Nullable;
 
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
+import com.simibubi.create.content.logistics.item.box.PackageEntity;
 import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.render.ReducedDestroyEffects;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.utility.Iterate;
+import com.simibubi.create.foundation.utility.VecHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -85,30 +88,28 @@ public abstract class AbstractChuteBlock extends Block implements IWrenchable, I
 	@Override
 	public void updateEntityAfterFallOn(BlockGetter worldIn, Entity entityIn) {
 		super.updateEntityAfterFallOn(worldIn, entityIn);
-		if (!(entityIn instanceof ItemEntity))
+		ItemStack stack = ItemHelper.fromItemEntity(entityIn);
+		if (stack.isEmpty())
 			return;
 		if (entityIn.level().isClientSide)
 			return;
 		if (!entityIn.isAlive())
 			return;
-		DirectBeltInputBehaviour input = BlockEntityBehaviour.get(entityIn.level(),
-			BlockPos.containing(entityIn.position()
-				.add(0, 0.5f, 0))
-				.below(),
-			DirectBeltInputBehaviour.TYPE);
+		BlockPos pos = BlockPos.containing(entityIn.position()
+			.add(0, 0.5f, 0))
+			.below();
+		DirectBeltInputBehaviour input = BlockEntityBehaviour.get(entityIn.level(), pos, DirectBeltInputBehaviour.TYPE);
 		if (input == null)
 			return;
 		if (!input.canInsertFromSide(Direction.UP))
 			return;
-
-		ItemEntity itemEntity = (ItemEntity) entityIn;
-		ItemStack toInsert = itemEntity.getItem();
-		ItemStack remainder = input.handleInsertion(toInsert, Direction.UP, false);
-
+		if (!PackageEntity.centerPackage(entityIn, VecHelper.getCenterOf(pos)))
+			return;
+		ItemStack remainder = input.handleInsertion(stack, Direction.UP, false);
 		if (remainder.isEmpty())
-			itemEntity.discard();
-		if (remainder.getCount() < toInsert.getCount())
-			itemEntity.setItem(remainder);
+			entityIn.discard();
+		else if (remainder.getCount() < stack.getCount() && entityIn instanceof ItemEntity)
+			((ItemEntity) entityIn).setItem(remainder);
 	}
 
 	@Override

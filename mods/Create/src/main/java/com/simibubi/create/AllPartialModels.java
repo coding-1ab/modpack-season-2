@@ -115,6 +115,9 @@ public class AllPartialModels {
 
 		EJECTOR_TOP = block("weighted_ejector/top"),
 
+		PACKAGER_TRAY = block("packager/tray"), PACKAGER_HATCH_OPEN = block("packager/hatch_open"),
+		PACKAGER_HATCH_CLOSED = block("packager/hatch_closed"),
+
 		COPPER_BACKTANK_SHAFT = block("copper_backtank/block_shaft_input"),
 		COPPER_BACKTANK_COGS = block("copper_backtank/block_cogs"),
 
@@ -192,6 +195,7 @@ public class AllPartialModels {
 	public static final Map<DyeColor, PartialModel> TOOLBOX_LIDS = new EnumMap<>(DyeColor.class);
 	public static final Map<ResourceLocation, Couple<PartialModel>> FOLDING_DOORS = new HashMap<>();
 	public static final List<PartialModel> CONTRAPTION_CONTROLS_INDICATOR = new ArrayList<>();
+	public static final Map<ResourceLocation, PartialModel> PACKAGES = new HashMap<>();
 
 	static {
 		for (FluidTransportBehaviour.AttachmentTypes.ComponentPartials type : FluidTransportBehaviour.AttachmentTypes.ComponentPartials.values()) {
@@ -211,6 +215,10 @@ public class AllPartialModels {
 		
 		putFoldingDoor("andesite_door");
 		putFoldingDoor("copper_door");
+		
+		for (String size : new String[] { "12x12", "10x12", "12x10", "10x8" })
+			PACKAGES.put(Create.asResource("cardboard_package_" + size),
+				new PartialModel(new ResourceLocation(Create.ID, "item/cardboard_package_" + size)));
 	}
 
 	private static void putFoldingDoor(String path) {
