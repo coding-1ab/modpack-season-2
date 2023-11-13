@@ -885,6 +885,12 @@
 	"create.contraption.door_control.none.short": "None",
 	"create.contraption.door_control.player_facing": "You are facing: %1$s",
 
+	"create.logistical_link.set": "Targeted workstation selected",
+	"create.logistical_link.success": "Successfully bound to logistical target",
+	"create.logistical_link.clear": "Cleared selection",
+	"create.logistical_link.too_far": "Targeted workstation is too far from here",
+	"create.logistical_link.invalid": "Assign a Stock Ticker or Cash Register before placing",
+
 	"create.display_link.set": "Targeted position selected",
 	"create.display_link.success": "Successfully bound to targeted position",
 	"create.display_link.clear": "Cleared position selection",

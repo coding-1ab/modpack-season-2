@@ -28,6 +28,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -179,8 +180,9 @@ public class BeltInventory {
 
 			// Apply Movement
 			currentItem.beltPosition += limitedMovement;
-			currentItem.sideOffset +=
-				(currentItem.getTargetSideOffset() - currentItem.sideOffset) * Math.abs(limitedMovement) * 6f;
+			float diffToMiddle = currentItem.getTargetSideOffset() - currentItem.sideOffset;
+			currentItem.sideOffset += Mth.clamp(diffToMiddle * Math.abs(limitedMovement) * 6f, -Math.abs(diffToMiddle),
+				Math.abs(diffToMiddle));
 			currentPos = currentItem.beltPosition;
 
 			// Movement successful

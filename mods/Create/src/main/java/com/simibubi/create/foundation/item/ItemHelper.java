@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.mutable.MutableInt;
 
-import com.simibubi.create.content.logistics.item.box.PackageEntity;
+import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.foundation.utility.Pair;
 
 import net.minecraft.core.BlockPos;

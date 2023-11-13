@@ -1,7 +1,7 @@
 package com.simibubi.create.content.contraptions.actors.seat;
 
 import com.simibubi.create.AllEntityTypes;
-import com.simibubi.create.content.logistics.item.box.PackageEntity;
+import com.simibubi.create.content.logistics.box.PackageEntity;
 
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;

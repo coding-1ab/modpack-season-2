@@ -10,11 +10,7 @@ import com.simibubi.create.compat.computercraft.ComputerCraftProxy;
 import com.simibubi.create.content.redstone.displayLink.source.DisplaySource;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTarget;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
-import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
-public class DisplayLinkBlockEntity extends SmartBlockEntity {
+public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity {
 
 	protected BlockPos targetOffset;
 
@@ -36,9 +32,6 @@ public class DisplayLinkBlockEntity extends SmartBlockEntity {
 	public DisplayTarget activeTarget;
 	public int targetLine;
 
-	public LerpedFloat glow;
-	private boolean sendPulse;
-
 	public int refreshTicks;
 	public AbstractComputerBehaviour computerBehaviour;
 
@@ -47,9 +40,6 @@ public class DisplayLinkBlockEntity extends SmartBlockEntity {
 		targetOffset = BlockPos.ZERO;
 		sourceConfig = new CompoundTag();
 		targetLine = 0;
-		glow = LerpedFloat.linear()
-			.startWithValue(0);
-		glow.chase(0, 0.5f, Chaser.EXP);
 	}
 
 	@Override
@@ -62,17 +52,12 @@ public class DisplayLinkBlockEntity extends SmartBlockEntity {
 	public void tick() {
 		super.tick();
 
-		if (isVirtual()) {
-			glow.tickChaser();
+		if (isVirtual())
 			return;
-		}
-
 		if (activeSource == null)
 			return;
-		if (level.isClientSide) {
-			glow.tickChaser();
+		if (level.isClientSide)
 			return;
-		}
 
 		refreshTicks++;
 		if (refreshTicks < activeSource.getPassiveRefreshTicks() || !activeSource.shouldPassiveReset())
@@ -126,7 +111,7 @@ public class DisplayLinkBlockEntity extends SmartBlockEntity {
 
 		DisplayLinkContext context = new DisplayLinkContext(level, this);
 		activeSource.transferData(context, activeTarget, targetLine);
-		sendPulse = true;
+		sendPulseNextSync();
 		sendData();
 
 		award(AllAdvancements.DISPLAY_LINK);
@@ -144,10 +129,6 @@ public class DisplayLinkBlockEntity extends SmartBlockEntity {
 		writeGatheredData(tag);
 		if (clientPacket && activeTarget != null)
 			tag.putString("TargetType", activeTarget.id.toString());
-		if (clientPacket && sendPulse) {
-			sendPulse = false;
-			NBTHelper.putMarker(tag, "Pulse");
-		}
 	}
 
 	private void writeGatheredData(CompoundTag tag) {
@@ -169,9 +150,6 @@ public class DisplayLinkBlockEntity extends SmartBlockEntity {
 
 		if (clientPacket && tag.contains("TargetType"))
 			activeTarget = AllDisplayBehaviours.getTarget(new ResourceLocation(tag.getString("TargetType")));
-		if (clientPacket && tag.contains("Pulse"))
-			glow.setValue(2);
-
 		if (!tag.contains("Source"))
 			return;
 

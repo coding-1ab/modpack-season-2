@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.item.box;
+package com.simibubi.create.content.logistics.box;
 
 import java.util.Collections;
 import java.util.List;

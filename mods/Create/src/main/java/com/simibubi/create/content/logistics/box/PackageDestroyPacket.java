@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.item.box;
+package com.simibubi.create.content.logistics.box;
 
 import com.simibubi.create.Create;
 import com.simibubi.create.foundation.networking.SimplePacketBase;

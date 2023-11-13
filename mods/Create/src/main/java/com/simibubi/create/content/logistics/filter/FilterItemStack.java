@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.fluids.transfer.GenericItemEmptying;
-import com.simibubi.create.content.logistics.item.box.PackageItem;
+import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.utility.Pair;
 
 import net.minecraft.nbt.CompoundTag;

@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.block.packager;
+package com.simibubi.create.content.logistics.packager;
 
 import com.jozufozu.flywheel.core.PartialModel;
 import com.jozufozu.flywheel.util.transform.TransformStack;

@@ -1,6 +1,6 @@
-package com.simibubi.create.content.logistics.block.packager;
+package com.simibubi.create.content.logistics.packager;
 
-import com.simibubi.create.content.logistics.item.box.PackageItem;
+import com.simibubi.create.content.logistics.box.PackageItem;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;

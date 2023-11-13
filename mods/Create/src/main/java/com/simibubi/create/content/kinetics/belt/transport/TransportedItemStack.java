@@ -4,7 +4,7 @@ import java.util.Random;
 
 import com.simibubi.create.content.kinetics.belt.BeltHelper;
 import com.simibubi.create.content.kinetics.fan.processing.FanProcessingType;
-import com.simibubi.create.content.logistics.item.box.PackageItem;
+import com.simibubi.create.content.logistics.box.PackageItem;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

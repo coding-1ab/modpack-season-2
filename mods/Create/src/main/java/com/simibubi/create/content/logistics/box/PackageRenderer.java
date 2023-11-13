@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.item.box;
+package com.simibubi.create.content.logistics.box;
 
 import com.jozufozu.flywheel.core.PartialModel;
 import com.mojang.blaze3d.vertex.PoseStack;

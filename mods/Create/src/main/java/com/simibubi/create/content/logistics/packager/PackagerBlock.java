@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.block.packager;
+package com.simibubi.create.content.logistics.packager;
 
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllItems;

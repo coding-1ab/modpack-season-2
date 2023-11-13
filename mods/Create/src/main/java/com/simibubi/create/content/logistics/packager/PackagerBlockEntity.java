@@ -1,13 +1,14 @@
-package com.simibubi.create.content.logistics.block.packager;
+package com.simibubi.create.content.logistics.packager;
 
 import java.util.List;
 
+import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.crate.BottomlessItemHandler;
-import com.simibubi.create.content.logistics.item.box.PackageItem;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.CapManipulationBehaviourBase.InterfaceProvider;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipulationBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.inventory.VersionedInventoryTrackerBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.utility.NBTHelper;
 
@@ -43,6 +44,9 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	public static final int CYCLE = 30;
 	public int animationTicks;
 	public boolean animationInward;
+	
+	private InventorySummary availableItems;
+	private VersionedInventoryTrackerBehaviour invVersionTracker;
 
 	public PackagerBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
@@ -60,6 +64,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
 		behaviours.add(targetInventory = new InvManipulationBehaviour(this, InterfaceProvider.oppositeOfBlockFacing()));
+		behaviours.add(invVersionTracker = new VersionedInventoryTrackerBehaviour(this));
 	}
 
 	@Override
@@ -70,6 +75,22 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			return;
 		}
 		animationTicks--;
+	}
+	
+	public InventorySummary getAvailableItems() {
+		if (availableItems != null && invVersionTracker.stillWaiting(targetInventory.getInventory()))
+			return availableItems;
+		availableItems = new InventorySummary();
+		
+		IItemHandler targetInv = targetInventory.getInventory();
+		if (targetInv == null)
+			return availableItems;
+		
+		for (int slot = 0; slot < targetInv.getSlots(); slot++)
+			availableItems.add(targetInv.getStackInSlot(slot));
+		
+		invVersionTracker.awaitNewVersion(targetInventory.getInventory());
+		return availableItems;
 	}
 
 	@Override

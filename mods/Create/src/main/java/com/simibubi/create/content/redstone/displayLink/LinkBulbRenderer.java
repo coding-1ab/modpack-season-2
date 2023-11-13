@@ -16,14 +16,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class DisplayLinkRenderer extends SafeBlockEntityRenderer<DisplayLinkBlockEntity> {
+public class LinkBulbRenderer extends SafeBlockEntityRenderer<LinkWithBulbBlockEntity> {
 
-	public DisplayLinkRenderer(BlockEntityRendererProvider.Context context) {}
+	public LinkBulbRenderer(BlockEntityRendererProvider.Context context) {}
 
 	@Override
-	protected void renderSafe(DisplayLinkBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
+	protected void renderSafe(LinkWithBulbBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
 		int light, int overlay) {
-		float glow = be.glow.getValue(partialTicks);
+		float glow = be.getGlow(partialTicks);
 		if (glow < .125f)
 			return;
 

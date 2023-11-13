@@ -157,7 +157,6 @@ import com.simibubi.create.content.kinetics.waterwheel.LargeWaterWheelBlock;
 import com.simibubi.create.content.kinetics.waterwheel.LargeWaterWheelBlockItem;
 import com.simibubi.create.content.kinetics.waterwheel.WaterWheelBlock;
 import com.simibubi.create.content.kinetics.waterwheel.WaterWheelStructuralBlock;
-import com.simibubi.create.content.logistics.block.packager.PackagerBlock;
 import com.simibubi.create.content.logistics.chute.ChuteBlock;
 import com.simibubi.create.content.logistics.chute.ChuteGenerator;
 import com.simibubi.create.content.logistics.chute.ChuteItem;
@@ -173,6 +172,10 @@ import com.simibubi.create.content.logistics.funnel.BrassFunnelBlock;
 import com.simibubi.create.content.logistics.funnel.FunnelGenerator;
 import com.simibubi.create.content.logistics.funnel.FunnelItem;
 import com.simibubi.create.content.logistics.funnel.FunnelMovementBehaviour;
+import com.simibubi.create.content.logistics.logisticalLink.LogisticalLinkBlock;
+import com.simibubi.create.content.logistics.logisticalLink.LogisticalLinkBlockItem;
+import com.simibubi.create.content.logistics.packager.PackagerBlock;
+import com.simibubi.create.content.logistics.stockTicker.StockTickerBlock;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BrassTunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BrassTunnelCTBehaviour;
@@ -1654,6 +1657,26 @@ public class AllBlocks {
 		.model(AssetLookup::customItemModel)
 		.build()
 		.register();
+
+	public static final BlockEntry<StockTickerBlock> STOCK_TICKER =
+		REGISTRATE.block("stock_ticker", StockTickerBlock::new)
+			.initialProperties(SharedProperties::softMetal)
+			.properties(p -> p.sound(SoundType.GLASS))
+			.addLayer(() -> RenderType::cutoutMipped)
+			.blockstate((c, p) -> p.horizontalBlock(c.get(), AssetLookup.standardModel(c, p)))
+			.simpleItem()
+			.register();
+	
+	public static final BlockEntry<LogisticalLinkBlock> LOGISTICAL_LINK =
+		REGISTRATE.block("logistical_link", LogisticalLinkBlock::new)
+			.initialProperties(SharedProperties::softMetal)
+			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BROWN))
+			.addLayer(() -> RenderType::translucent)
+			.transform(axeOrPickaxe())
+			.blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.forPowered(c, p)))
+			.item(LogisticalLinkBlockItem::new)
+			.transform(customItemModel("_", "block"))
+			.register();
 
 	public static final BlockEntry<AndesiteFunnelBlock> ANDESITE_FUNNEL =
 		REGISTRATE.block("andesite_funnel", AndesiteFunnelBlock::new)

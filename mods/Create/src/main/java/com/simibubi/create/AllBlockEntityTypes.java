@@ -154,8 +154,6 @@ import com.simibubi.create.content.kinetics.waterwheel.LargeWaterWheelBlockEntit
 import com.simibubi.create.content.kinetics.waterwheel.WaterWheelBlockEntity;
 import com.simibubi.create.content.kinetics.waterwheel.WaterWheelInstance;
 import com.simibubi.create.content.kinetics.waterwheel.WaterWheelRenderer;
-import com.simibubi.create.content.logistics.block.packager.PackagerBlockEntity;
-import com.simibubi.create.content.logistics.block.packager.PackagerRenderer;
 import com.simibubi.create.content.logistics.chute.ChuteBlockEntity;
 import com.simibubi.create.content.logistics.chute.ChuteRenderer;
 import com.simibubi.create.content.logistics.chute.SmartChuteBlockEntity;
@@ -169,6 +167,10 @@ import com.simibubi.create.content.logistics.depot.EjectorRenderer;
 import com.simibubi.create.content.logistics.funnel.FunnelBlockEntity;
 import com.simibubi.create.content.logistics.funnel.FunnelInstance;
 import com.simibubi.create.content.logistics.funnel.FunnelRenderer;
+import com.simibubi.create.content.logistics.logisticalLink.LogisticalLinkBlockEntity;
+import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
+import com.simibubi.create.content.logistics.packager.PackagerRenderer;
+import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlockEntity;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelInstance;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelRenderer;
@@ -186,7 +188,7 @@ import com.simibubi.create.content.redstone.diodes.BrassDiodeRenderer;
 import com.simibubi.create.content.redstone.diodes.PulseExtenderBlockEntity;
 import com.simibubi.create.content.redstone.diodes.PulseRepeaterBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
-import com.simibubi.create.content.redstone.displayLink.DisplayLinkRenderer;
+import com.simibubi.create.content.redstone.displayLink.LinkBulbRenderer;
 import com.simibubi.create.content.redstone.displayLink.source.NixieTubeDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.target.NixieTubeDisplayTarget;
 import com.simibubi.create.content.redstone.link.RedstoneLinkBlockEntity;
@@ -471,6 +473,17 @@ public class AllBlockEntityTypes {
 		.validBlocks(AllBlocks.PACKAGER)
 		.renderer(() -> PackagerRenderer::new)
 		.register();
+	
+	public static final BlockEntityEntry<LogisticalLinkBlockEntity> LOGISTICAL_LINK = REGISTRATE
+		.blockEntity("logistical_link", LogisticalLinkBlockEntity::new)
+		.validBlocks(AllBlocks.LOGISTICAL_LINK)
+		.renderer(() -> LinkBulbRenderer::new)
+		.register();
+	
+	public static final BlockEntityEntry<StockTickerBlockEntity> STOCK_TICKER = REGISTRATE
+		.blockEntity("stock_ticker", StockTickerBlockEntity::new)
+		.validBlocks(AllBlocks.STOCK_TICKER)
+		.register();
 
 	public static final BlockEntityEntry<MechanicalPistonBlockEntity> MECHANICAL_PISTON = REGISTRATE
 		.blockEntity("mechanical_piston", MechanicalPistonBlockEntity::new)
@@ -748,7 +761,7 @@ public class AllBlockEntityTypes {
 	public static final BlockEntityEntry<DisplayLinkBlockEntity> DISPLAY_LINK = REGISTRATE
 		.blockEntity("display_link", DisplayLinkBlockEntity::new)
 		.validBlocks(AllBlocks.DISPLAY_LINK)
-		.renderer(() -> DisplayLinkRenderer::new)
+		.renderer(() -> LinkBulbRenderer::new)
 		.register();
 
 	public static final BlockEntityEntry<ThresholdSwitchBlockEntity> THRESHOLD_SWITCH = REGISTRATE

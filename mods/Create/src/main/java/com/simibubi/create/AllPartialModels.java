@@ -182,6 +182,7 @@ public class AllPartialModels {
 		CRAFTING_BLUEPRINT_3x3 = entity("crafting_blueprint_large"),
 
 		TRAIN_HAT = entity("train_hat"),
+		LOGISTICS_HAT = entity("logistics_hat"),
 
 		COUPLING_ATTACHMENT = entity("minecart_coupling/attachment"), COUPLING_RING = entity("minecart_coupling/ring"),
 		COUPLING_CONNECTOR = entity("minecart_coupling/connector")
