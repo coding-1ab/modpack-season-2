@@ -101,7 +101,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		availableItems = new InventorySummary();
 
 		IItemHandler targetInv = targetInventory.getInventory();
-		if (targetInv == null)
+		if (targetInv == null || targetInv instanceof PackagerItemHandler)
 			return availableItems;
 
 		for (int slot = 0; slot < targetInv.getSlots(); slot++)
@@ -203,7 +203,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		if (!heldBox.isEmpty() || animationTicks != 0)
 			return;
 		IItemHandler targetInv = targetInventory.getInventory();
-		if (targetInv == null)
+		if (targetInv == null || targetInv instanceof PackagerItemHandler)
 			return;
 
 		boolean anyItemPresent = false;

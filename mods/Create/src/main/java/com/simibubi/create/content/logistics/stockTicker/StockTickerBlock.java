@@ -7,7 +7,9 @@ import com.simibubi.create.AllShapes;
 import com.simibubi.create.foundation.block.IBE;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -20,12 +22,22 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class StockTickerBlock extends HorizontalDirectionalBlock implements LogisticalWorkstationBlock, IBE<StockTickerBlockEntity> {
+public class StockTickerBlock extends HorizontalDirectionalBlock
+	implements LogisticalWorkstationBlock, IBE<StockTickerBlockEntity> {
 
 	public StockTickerBlock(Properties pProperties) {
 		super(pProperties);
 	}
-	
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext pContext) {
+		Direction facing = pContext.getHorizontalDirection()
+			.getOpposite();
+		boolean reverse = pContext.getPlayer() != null && pContext.getPlayer()
+			.isShiftKeyDown();
+		return super.getStateForPlacement(pContext).setValue(FACING, reverse ? facing.getOpposite() : facing);
+	}
+
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> pBuilder) {
 		super.createBlockStateDefinition(pBuilder.add(FACING));

@@ -24,6 +24,7 @@ public class StockTickerBlockEntity extends LogisticalWorkstationBlockEntity {
 
 	public StockTickerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
+		previouslyUsedAddress = "";
 	}
 
 	@Override
