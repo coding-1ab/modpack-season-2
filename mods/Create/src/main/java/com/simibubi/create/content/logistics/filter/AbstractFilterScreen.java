@@ -75,7 +75,9 @@ public abstract class AbstractFilterScreen<F extends AbstractFilterMenu> extends
 
 		background.render(graphics, x, y);
 		graphics.drawString(font, title, x + (background.width - 8) / 2 - font.width(title) / 2, y + 4,
-			AllItems.FILTER.isIn(menu.contentHolder) ? 0x303030 : 0x592424, false);
+			AllItems.PACKAGE_FILTER.isIn(menu.contentHolder) ? 0x3D3C48
+				: AllItems.FILTER.isIn(menu.contentHolder) ? 0x303030 : 0x592424,
+			false);
 
 		GuiGameElement.of(menu.contentHolder).<GuiGameElement
 			.GuiRenderBuilder>at(x + background.width + 8, y + background.height - 52, -200)

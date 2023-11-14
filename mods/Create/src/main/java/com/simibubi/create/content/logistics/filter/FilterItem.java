@@ -42,7 +42,7 @@ public class FilterItem extends Item implements MenuProvider {
 	private FilterType type;
 
 	private enum FilterType {
-		REGULAR, ATTRIBUTE, ADDRESS;
+		REGULAR, ATTRIBUTE, PACKAGE;
 	}
 
 	public static FilterItem regular(Properties properties) {
@@ -52,9 +52,9 @@ public class FilterItem extends Item implements MenuProvider {
 	public static FilterItem attribute(Properties properties) {
 		return new FilterItem(FilterType.ATTRIBUTE, properties);
 	}
-	
+
 	public static FilterItem address(Properties properties) {
-		return new FilterItem(FilterType.ADDRESS, properties);
+		return new FilterItem(FilterType.PACKAGE, properties);
 	}
 
 	private FilterItem(FilterType type, Properties properties) {
@@ -73,13 +73,13 @@ public class FilterItem extends Item implements MenuProvider {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		if (!AllKeys.shiftDown()) {
-			List<Component> makeSummary = makeSummary(stack);
-			if (makeSummary.isEmpty())
-				return;
-			tooltip.add(Components.literal(" "));
-			tooltip.addAll(makeSummary);
-		}
+		if (AllKeys.shiftDown())
+			return;
+		List<Component> makeSummary = makeSummary(stack);
+		if (makeSummary.isEmpty())
+			return;
+		tooltip.add(Components.literal(" "));
+		tooltip.addAll(makeSummary);
 	}
 
 	private List<Component> makeSummary(ItemStack filter) {
@@ -147,6 +147,17 @@ public class FilterItem extends Item implements MenuProvider {
 				return Collections.emptyList();
 		}
 
+		if (type == FilterType.PACKAGE) {
+			String address = filter.getOrCreateTag()
+				.getString("Address");
+			if (!address.isBlank())
+				list.add(Lang.text("-> ")
+					.style(ChatFormatting.GRAY)
+					.add(Lang.text(address)
+						.style(ChatFormatting.GOLD))
+					.component());
+		}
+
 		return list;
 	}
 
@@ -171,7 +182,7 @@ public class FilterItem extends Item implements MenuProvider {
 			return FilterMenu.create(id, inv, heldItem);
 		if (type == FilterType.ATTRIBUTE)
 			return AttributeFilterMenu.create(id, inv, heldItem);
-		if (type == FilterType.ADDRESS)
+		if (type == FilterType.PACKAGE)
 			return PackageFilterMenu.create(id, inv, heldItem);
 		return null;
 	}

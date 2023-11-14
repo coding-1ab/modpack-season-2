@@ -29,7 +29,7 @@ public class FilterItemStack {
 			if (AllItems.ATTRIBUTE_FILTER.isIn(filter))
 				return new AttributeFilterItemStack(filter);
 			if (AllItems.PACKAGE_FILTER.isIn(filter))
-				return new AdressFilterItemStack(filter);
+				return new PackageFilterItemStack(filter);
 		}
 
 		return new FilterItemStack(filter);
@@ -237,11 +237,11 @@ public class FilterItemStack {
 
 	}
 
-	public static class AdressFilterItemStack extends FilterItemStack {
+	public static class PackageFilterItemStack extends FilterItemStack {
 
 		public String filterString;
 
-		protected AdressFilterItemStack(ItemStack filter) {
+		protected PackageFilterItemStack(ItemStack filter) {
 			super(filter);
 			filterString = filter.getOrCreateTag()
 				.getString("Address");
@@ -249,8 +249,9 @@ public class FilterItemStack {
 
 		@Override
 		public boolean test(Level world, ItemStack stack, boolean matchNBT) {
-			return stack.getItem() instanceof PackageItem
-				&& PackageItem.matchAddress(stack, filterString.isBlank() ? "*" : filterString);
+			return (filterString.isBlank() && super.test(world, stack, matchNBT))
+				|| stack.getItem() instanceof PackageItem
+					&& PackageItem.matchAddress(stack, filterString.isBlank() ? "*" : filterString);
 		}
 
 		@Override

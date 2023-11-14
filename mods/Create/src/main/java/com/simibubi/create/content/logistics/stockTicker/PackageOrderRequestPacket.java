@@ -14,10 +14,12 @@ import net.minecraft.world.item.ItemStack;
 public class PackageOrderRequestPacket extends BlockEntityConfigurationPacket<StockTickerBlockEntity> {
 
 	private List<IntAttached<ItemStack>> items;
+	private String address;
 
-	public PackageOrderRequestPacket(BlockPos pos, List<IntAttached<ItemStack>> items) {
+	public PackageOrderRequestPacket(BlockPos pos, List<IntAttached<ItemStack>> items, String address) {
 		super(pos);
 		this.items = items;
+		this.address = address;
 	}
 
 	public PackageOrderRequestPacket(FriendlyByteBuf buffer) {
@@ -26,6 +28,7 @@ public class PackageOrderRequestPacket extends BlockEntityConfigurationPacket<St
 
 	@Override
 	protected void writeSettings(FriendlyByteBuf buffer) {
+		buffer.writeUtf(address);
 		buffer.writeVarInt(items.size());
 		for (IntAttached<ItemStack> entry : items) {
 			buffer.writeVarInt(entry.getFirst());
@@ -35,6 +38,7 @@ public class PackageOrderRequestPacket extends BlockEntityConfigurationPacket<St
 
 	@Override
 	protected void readSettings(FriendlyByteBuf buffer) {
+		address = buffer.readUtf();
 		int size = buffer.readVarInt();
 		items = new ArrayList<>();
 		for (int i = 0; i < size; i++)
@@ -46,7 +50,7 @@ public class PackageOrderRequestPacket extends BlockEntityConfigurationPacket<St
 
 	@Override
 	protected void applySettings(ServerPlayer player, StockTickerBlockEntity be) {
-		be.receivePackageRequest(items, player);
+		be.receivePackageRequest(items, player, address);
 	}
 
 }

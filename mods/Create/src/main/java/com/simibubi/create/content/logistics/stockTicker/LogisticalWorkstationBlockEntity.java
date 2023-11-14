@@ -7,8 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.simibubi.create.content.logistics.logisticalLink.LogisticalLinkBlockEntity;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
+import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.utility.IntAttached;
 
@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class LogisticalWorkstationBlockEntity extends SmartBlockEntity {
 
-	private Map<Integer, IntAttached<WeakReference<LogisticalLinkBlockEntity>>> connectedLinks = new HashMap<>();
+	private Map<Integer, IntAttached<WeakReference<PackagerLinkBlockEntity>>> connectedLinks = new HashMap<>();
 	private InventorySummary summaryOfLinks;
 	private int ticksSinceLastSummary;
 
@@ -45,10 +45,10 @@ public abstract class LogisticalWorkstationBlockEntity extends SmartBlockEntity 
 			ticksSinceLastSummary++;
 	}
 
-	protected List<LogisticalLinkBlockEntity> getAvailableLinks() {
-		List<LogisticalLinkBlockEntity> links = new ArrayList<>();
+	protected List<PackagerLinkBlockEntity> getAvailableLinks() {
+		List<PackagerLinkBlockEntity> links = new ArrayList<>();
 		connectedLinks.forEach(($, entry) -> {
-			LogisticalLinkBlockEntity blockEntity = entry.getSecond()
+			PackagerLinkBlockEntity blockEntity = entry.getSecond()
 				.get();
 			if (blockEntity != null && !blockEntity.isRemoved() && !blockEntity.isChunkUnloaded())
 				links.add(blockEntity);
@@ -80,7 +80,7 @@ public abstract class LogisticalWorkstationBlockEntity extends SmartBlockEntity 
 		ticksSinceLastSummary = 0;
 		summaryOfLinks = new InventorySummary();
 		connectedLinks.forEach(($, entry) -> {
-			LogisticalLinkBlockEntity link = entry.getSecond()
+			PackagerLinkBlockEntity link = entry.getSecond()
 				.get();
 			if (link != null && !link.isRemoved() && !link.isChunkUnloaded())
 				summaryOfLinks.add(link.fetchSummaryFromPackager());
@@ -94,13 +94,13 @@ public abstract class LogisticalWorkstationBlockEntity extends SmartBlockEntity 
 		for (Iterator<Integer> iterator = connectedLinks.keySet()
 			.iterator(); iterator.hasNext();) {
 			Integer id = iterator.next();
-			IntAttached<WeakReference<LogisticalLinkBlockEntity>> entry = connectedLinks.get(id);
+			IntAttached<WeakReference<PackagerLinkBlockEntity>> entry = connectedLinks.get(id);
 			entry.decrement();
 			if (entry.isOrBelowZero()) {
 				iterator.remove();
 				continue;
 			}
-			LogisticalLinkBlockEntity link = entry.getSecond()
+			PackagerLinkBlockEntity link = entry.getSecond()
 				.get();
 			if (link == null || link.isRemoved() || link.isChunkUnloaded()) {
 				iterator.remove();
@@ -109,9 +109,13 @@ public abstract class LogisticalWorkstationBlockEntity extends SmartBlockEntity 
 		}
 	}
 
-	public void keepConnected(LogisticalLinkBlockEntity link) {
+	public void keepConnected(PackagerLinkBlockEntity link) {
 		connectedLinks.computeIfAbsent(link.linkId, $ -> IntAttached.withZero(new WeakReference<>(link)))
 			.setFirst(3);
+	}
+
+	public void invalidateLink(PackagerLinkBlockEntity link) {
+		connectedLinks.remove(link.linkId);
 	}
 
 }

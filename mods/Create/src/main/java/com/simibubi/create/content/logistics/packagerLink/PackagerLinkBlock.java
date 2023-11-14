@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.logisticalLink;
+package com.simibubi.create.content.logistics.packagerLink;
 
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
@@ -22,11 +22,11 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class LogisticalLinkBlock extends WrenchableDirectionalBlock implements IBE<LogisticalLinkBlockEntity> {
+public class PackagerLinkBlock extends WrenchableDirectionalBlock implements IBE<PackagerLinkBlockEntity> {
 
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
-	public LogisticalLinkBlock(Properties properties) {
+	public PackagerLinkBlock(Properties properties) {
 		super(properties);
 		registerDefaultState(defaultBlockState().setValue(POWERED, false));
 	}
@@ -53,8 +53,7 @@ public class LogisticalLinkBlock extends WrenchableDirectionalBlock implements I
 		boolean previouslyPowered = state.getValue(POWERED);
 		if (previouslyPowered != powered) {
 			worldIn.setBlock(pos, state.cycle(POWERED), 2);
-			if (!powered)
-				withBlockEntityDo(worldIn, pos, LogisticalLinkBlockEntity::onNoLongerPowered);
+			withBlockEntityDo(worldIn, pos, link -> link.redstonePowerChanged(powered));
 		}
 	}
 
@@ -87,13 +86,13 @@ public class LogisticalLinkBlock extends WrenchableDirectionalBlock implements I
 	}
 
 	@Override
-	public Class<LogisticalLinkBlockEntity> getBlockEntityClass() {
-		return LogisticalLinkBlockEntity.class;
+	public Class<PackagerLinkBlockEntity> getBlockEntityClass() {
+		return PackagerLinkBlockEntity.class;
 	}
 
 	@Override
-	public BlockEntityType<? extends LogisticalLinkBlockEntity> getBlockEntityType() {
-		return AllBlockEntityTypes.LOGISTICAL_LINK.get();
+	public BlockEntityType<? extends PackagerLinkBlockEntity> getBlockEntityType() {
+		return AllBlockEntityTypes.PACKAGER_LINK.get();
 	}
 
 }

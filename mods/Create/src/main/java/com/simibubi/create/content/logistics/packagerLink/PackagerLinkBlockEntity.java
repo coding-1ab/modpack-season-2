@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.logisticalLink;
+package com.simibubi.create.content.logistics.packagerLink;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -8,10 +8,10 @@ import javax.annotation.Nullable;
 
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
+import com.simibubi.create.content.logistics.packager.PackagingRequest;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalWorkstationBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.LinkWithBulbBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.IntAttached;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class LogisticalLinkBlockEntity extends LinkWithBulbBlockEntity {
+public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 
 	public static final AtomicInteger linkIdGenerator = new AtomicInteger();
 
@@ -31,7 +31,7 @@ public class LogisticalLinkBlockEntity extends LinkWithBulbBlockEntity {
 
 	private WeakReference<LogisticalWorkstationBlockEntity> target;
 
-	public LogisticalLinkBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+	public PackagerLinkBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 		targetOffset = BlockPos.ZERO;
 		linkId = linkIdGenerator.getAndIncrement();
@@ -46,31 +46,54 @@ public class LogisticalLinkBlockEntity extends LinkWithBulbBlockEntity {
 		sendData();
 		return packager.getAvailableItems();
 	}
-	
-	public int processRequest(ItemStack stack, int amount) {
+
+	public int processRequest(ItemStack stack, int amount, String address) {
 		PackagerBlockEntity packager = getSource();
 		if (packager == null)
 			return 0;
-		
+
 		InventorySummary summary = packager.getAvailableItems();
 		int availableCount = summary.getCountOf(stack);
 		int toWithdraw = Math.min(amount, availableCount);
-		
-		packager.queueRequest(IntAttached.with(toWithdraw, stack));
+
+		PackagingRequest packagingRequest = PackagingRequest.create(stack, toWithdraw, address);
+		packager.queueRequest(packagingRequest);
 		sendPulseNextSync();
 		sendData();
-		
+
 		return toWithdraw;
 	}
 
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
 
-	public void onNoLongerPowered() {}
+	public void redstonePowerChanged(boolean powered) {
+		if (powered) {
+			invalidateLink();
+			return;
+		}
+		lazyTick();
+	}
 
 	@Override
 	public void initialize() {
 		super.initialize();
+		PackagerBlockEntity source = getSource();
+		if (source != null)
+			source.recheckIfLinksPresent();
+	}
+
+	@Override
+	public void invalidate() {
+		super.invalidate();
+		invalidateLink();
+	}
+
+	private void invalidateLink() {
+		LogisticalWorkstationBlockEntity target = getTarget();
+		if (target == null)
+			return;
+		target.invalidateLink(this);
 	}
 
 	@Override
@@ -99,14 +122,14 @@ public class LogisticalLinkBlockEntity extends LinkWithBulbBlockEntity {
 		}
 		return null;
 	}
-	
+
 	@Nullable
 	public PackagerBlockEntity getSource() {
 		BlockState blockState = getBlockState();
-		if (blockState.getOptionalValue(LogisticalLinkBlock.POWERED)
+		if (blockState.getOptionalValue(PackagerLinkBlock.POWERED)
 			.orElse(true))
 			return null;
-		BlockPos source = worldPosition.relative(blockState.getOptionalValue(LogisticalLinkBlock.FACING)
+		BlockPos source = worldPosition.relative(blockState.getOptionalValue(PackagerLinkBlock.FACING)
 			.orElse(Direction.UP)
 			.getOpposite());
 		if (!(level.getBlockEntity(source) instanceof PackagerBlockEntity packager))

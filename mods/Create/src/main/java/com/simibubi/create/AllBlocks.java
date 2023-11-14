@@ -172,9 +172,10 @@ import com.simibubi.create.content.logistics.funnel.BrassFunnelBlock;
 import com.simibubi.create.content.logistics.funnel.FunnelGenerator;
 import com.simibubi.create.content.logistics.funnel.FunnelItem;
 import com.simibubi.create.content.logistics.funnel.FunnelMovementBehaviour;
-import com.simibubi.create.content.logistics.logisticalLink.LogisticalLinkBlock;
-import com.simibubi.create.content.logistics.logisticalLink.LogisticalLinkBlockItem;
 import com.simibubi.create.content.logistics.packager.PackagerBlock;
+import com.simibubi.create.content.logistics.packager.PackagerGenerator;
+import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
+import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockItem;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlock;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BrassTunnelBlock;
@@ -1651,12 +1652,23 @@ public class AllBlocks {
 		.initialProperties(SharedProperties::softMetal)
 		.properties(p -> p.noOcclusion())
 		.addLayer(() -> RenderType::cutoutMipped)
-		.blockstate((c, p) -> p.horizontalBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
+		.blockstate(new PackagerGenerator()::generate)
 		.transform(BlockStressDefaults.setImpact(1.0))
 		.item()
 		.model(AssetLookup::customItemModel)
 		.build()
 		.register();
+
+	public static final BlockEntry<PackagerLinkBlock> PACKAGER_LINK =
+		REGISTRATE.block("packager_link", PackagerLinkBlock::new)
+			.initialProperties(SharedProperties::softMetal)
+			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BROWN))
+			.addLayer(() -> RenderType::translucent)
+			.transform(axeOrPickaxe())
+			.blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.forPowered(c, p)))
+			.item(PackagerLinkBlockItem::new)
+			.transform(customItemModel("_", "block"))
+			.register();
 
 	public static final BlockEntry<StockTickerBlock> STOCK_TICKER =
 		REGISTRATE.block("stock_ticker", StockTickerBlock::new)
@@ -1665,17 +1677,6 @@ public class AllBlocks {
 			.addLayer(() -> RenderType::cutoutMipped)
 			.blockstate((c, p) -> p.horizontalBlock(c.get(), AssetLookup.standardModel(c, p)))
 			.simpleItem()
-			.register();
-	
-	public static final BlockEntry<LogisticalLinkBlock> LOGISTICAL_LINK =
-		REGISTRATE.block("logistical_link", LogisticalLinkBlock::new)
-			.initialProperties(SharedProperties::softMetal)
-			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BROWN))
-			.addLayer(() -> RenderType::translucent)
-			.transform(axeOrPickaxe())
-			.blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.forPowered(c, p)))
-			.item(LogisticalLinkBlockItem::new)
-			.transform(customItemModel("_", "block"))
 			.register();
 
 	public static final BlockEntry<AndesiteFunnelBlock> ANDESITE_FUNNEL =

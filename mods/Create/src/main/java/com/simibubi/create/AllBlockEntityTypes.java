@@ -167,9 +167,9 @@ import com.simibubi.create.content.logistics.depot.EjectorRenderer;
 import com.simibubi.create.content.logistics.funnel.FunnelBlockEntity;
 import com.simibubi.create.content.logistics.funnel.FunnelInstance;
 import com.simibubi.create.content.logistics.funnel.FunnelRenderer;
-import com.simibubi.create.content.logistics.logisticalLink.LogisticalLinkBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerRenderer;
+import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlockEntity;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelInstance;
@@ -474,9 +474,9 @@ public class AllBlockEntityTypes {
 		.renderer(() -> PackagerRenderer::new)
 		.register();
 	
-	public static final BlockEntityEntry<LogisticalLinkBlockEntity> LOGISTICAL_LINK = REGISTRATE
-		.blockEntity("logistical_link", LogisticalLinkBlockEntity::new)
-		.validBlocks(AllBlocks.LOGISTICAL_LINK)
+	public static final BlockEntityEntry<PackagerLinkBlockEntity> PACKAGER_LINK = REGISTRATE
+		.blockEntity("packager_link", PackagerLinkBlockEntity::new)
+		.validBlocks(AllBlocks.PACKAGER_LINK)
 		.renderer(() -> LinkBulbRenderer::new)
 		.register();
 	

@@ -311,6 +311,9 @@
 	"create.gui.stock_ticker.no_packagers_linked": "No Packagers Linked",
 	"create.gui.stock_ticker.inventories_empty": "Linked Inventories are Empty",
 	"create.gui.stock_ticker.no_search_results": "No matching items found",
+	"create.gui.stock_ticker.search_items": "Search Items",
+	"create.gui.stock_ticker.package_adress": "Package Address",
+	"create.gui.stock_ticker.confirm_order": "Confirm Order",
 	
 	"create.clipboard.actions": "Clipboard Actions",
 	"create.clipboard.to_copy": "%1$s to Copy settings",
@@ -890,11 +893,11 @@
 	"create.contraption.door_control.none.short": "None",
 	"create.contraption.door_control.player_facing": "You are facing: %1$s",
 
-	"create.logistical_link.set": "Targeted workstation selected",
-	"create.logistical_link.success": "Successfully bound to logistical target",
-	"create.logistical_link.clear": "Cleared selection",
-	"create.logistical_link.too_far": "Targeted workstation is too far from here",
-	"create.logistical_link.invalid": "Assign a Stock Ticker or Cash Register before placing",
+	"create.packager_link.set": "Targeted workstation selected",
+	"create.packager_link.success": "Successfully bound to target",
+	"create.packager_link.clear": "Cleared selection",
+	"create.packager_link.too_far": "Targeted workstation is too far from here",
+	"create.packager_link.invalid": "Assign a Stock Ticker or Cash Register before placing",
 
 	"create.display_link.set": "Targeted position selected",
 	"create.display_link.success": "Successfully bound to targeted position",

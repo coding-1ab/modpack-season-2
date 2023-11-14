@@ -3,7 +3,9 @@ package com.simibubi.create.content.logistics.packager;
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
+import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.block.IBE;
+import com.simibubi.create.foundation.block.WrenchableDirectionalBlock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,15 +17,18 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.items.IItemHandler;
 
-public class PackagerBlock extends HorizontalDirectionalBlock implements IBE<PackagerBlockEntity>, IWrenchable {
+public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<PackagerBlockEntity>, IWrenchable {
 
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
@@ -34,10 +39,28 @@ public class PackagerBlock extends HorizontalDirectionalBlock implements IBE<Pac
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		Capability<IItemHandler> itemCap = ForgeCapabilities.ITEM_HANDLER;
+		Direction preferredFacing = null;
+		for (Direction face : context.getNearestLookingDirections()) {
+			BlockEntity be = context.getLevel()
+				.getBlockEntity(context.getClickedPos()
+					.relative(face));
+			if (be != null && (be.getCapability(itemCap)
+				.isPresent())) {
+				preferredFacing = face.getOpposite();
+				break;
+			}
+		}
+
+		if (preferredFacing == null) {
+			Direction facing = context.getNearestLookingDirection();
+			preferredFacing = context.getPlayer() != null && context.getPlayer()
+				.isShiftKeyDown() ? facing : facing.getOpposite();
+		}
+
 		return super.getStateForPlacement(context).setValue(POWERED, context.getLevel()
 			.hasNeighborSignal(context.getClickedPos()))
-			.setValue(FACING, context.getHorizontalDirection()
-				.getOpposite());
+			.setValue(FACING, preferredFacing);
 	}
 
 	@Override
@@ -47,8 +70,23 @@ public class PackagerBlock extends HorizontalDirectionalBlock implements IBE<Pac
 			return InteractionResult.PASS;
 
 		if (onBlockEntityUse(worldIn, pos, be -> {
-			if (be.heldBox.isEmpty())
+			if (be.heldBox.isEmpty()) {
+				if (be.animationTicks > 0)
+					return InteractionResult.SUCCESS;
+				ItemStack heldItem = player.getItemInHand(handIn);
+				if (heldItem.getItem() instanceof PackageItem) {
+					if (worldIn.isClientSide())
+						return InteractionResult.SUCCESS;
+					if (!be.unwrapBox(heldItem.copy(), true))
+						return InteractionResult.SUCCESS;
+					be.unwrapBox(heldItem.copy(), false);
+					heldItem.shrink(1);
+					if (heldItem.isEmpty())
+						player.setItemInHand(handIn, ItemStack.EMPTY);
+					return InteractionResult.SUCCESS;
+				}
 				return InteractionResult.PASS;
+			}
 			if (be.animationTicks > 0)
 				return InteractionResult.PASS;
 			if (!worldIn.isClientSide()) {
@@ -66,7 +104,7 @@ public class PackagerBlock extends HorizontalDirectionalBlock implements IBE<Pac
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		super.createBlockStateDefinition(builder.add(POWERED, FACING));
+		super.createBlockStateDefinition(builder.add(POWERED));
 	}
 
 	@Override

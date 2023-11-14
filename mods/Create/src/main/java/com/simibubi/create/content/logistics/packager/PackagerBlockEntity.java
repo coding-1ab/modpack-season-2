@@ -3,20 +3,23 @@ package com.simibubi.create.content.logistics.packager;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.crate.BottomlessItemHandler;
+import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.CapManipulationBehaviourBase.InterfaceProvider;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipulationBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.VersionedInventoryTrackerBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
-import com.simibubi.create.foundation.utility.IntAttached;
+import com.simibubi.create.foundation.utility.Iterate;
 import com.simibubi.create.foundation.utility.NBTHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -30,17 +33,14 @@ import net.minecraftforge.items.ItemStackHandler;
 
 public class PackagerBlockEntity extends SmartBlockEntity {
 
-	enum RedstoneMode {
-		SEND_ONE, KEEP_SENDING
-	}
+	public boolean redstoneModeActive;
+	public boolean redstonePowered;
 
 	public InvManipulationBehaviour targetInventory;
-	public RedstoneMode mode;
-	public boolean active;
 	public ItemStack heldBox;
 	public ItemStack previouslyUnwrapped;
 
-	public List<IntAttached<ItemStack>> queuedRequests; // TODO: needs to be saved to disk
+	public List<PackagingRequest> queuedRequests;
 
 	public PackagerItemHandler inventory;
 	private final LazyOptional<IItemHandler> invProvider;
@@ -54,9 +54,9 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 	public PackagerBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
-		mode = RedstoneMode.SEND_ONE;
-		active = state.getOptionalValue(PackagerBlock.POWERED)
+		redstonePowered = state.getOptionalValue(PackagerBlock.POWERED)
 			.orElse(false);
+		redstoneModeActive = true;
 		heldBox = ItemStack.EMPTY;
 		previouslyUnwrapped = ItemStack.EMPTY;
 		inventory = new PackagerItemHandler(this);
@@ -73,6 +73,12 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	}
 
 	@Override
+	public void initialize() {
+		super.initialize();
+		recheckIfLinksPresent();
+	}
+
+	@Override
 	public void tick() {
 		super.tick();
 		if (!level.isClientSide() && !queuedRequests.isEmpty())
@@ -84,8 +90,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		animationTicks--;
 	}
 
-	public void queueRequest(IntAttached<ItemStack> requestedItem) {
-		queuedRequests.add(requestedItem);
+	public void queueRequest(PackagingRequest packagingRequest) {
+		queuedRequests.add(packagingRequest);
 		level.blockEntityChanged(worldPosition);
 	}
 
@@ -108,13 +114,33 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	@Override
 	public void lazyTick() {
 		super.lazyTick();
-		if (!active || level.isClientSide())
+		if (!redstonePowered || level.isClientSide())
+			return;
+		redstonePowered = getBlockState().getOptionalValue(PackagerBlock.POWERED)
+			.orElse(false);
+		if (!redstonePowered)
+			return;
+		recheckIfLinksPresent();
+		if (!redstoneModeActive)
 			return;
 		attemptToSend(false);
 	}
 
+	public void recheckIfLinksPresent() {
+		redstoneModeActive = true;
+		for (Direction d : Iterate.directions) {
+			BlockState adjacentState = level.getBlockState(worldPosition.relative(d));
+			if (!AllBlocks.PACKAGER_LINK.has(adjacentState))
+				continue;
+			if (adjacentState.getValue(PackagerLinkBlock.FACING) != d)
+				continue;
+			redstoneModeActive = false;
+			return;
+		}
+	}
+
 	public void activate() {
-		active = true;
+		redstonePowered = true;
 		setChanged();
 	}
 
@@ -174,8 +200,6 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	}
 
 	public void attemptToSend(boolean requestQueue) {
-		if (!requestQueue && (mode == RedstoneMode.SEND_ONE || !isBlockPowered()))
-			active = false;
 		if (!heldBox.isEmpty() || animationTicks != 0)
 			return;
 		IItemHandler targetInv = targetInventory.getInventory();
@@ -185,18 +209,21 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		boolean anyItemPresent = false;
 		ItemStackHandler extractedItems = new ItemStackHandler(PackageItem.SLOTS);
 		ItemStack extractedPackageItem = ItemStack.EMPTY;
-		IntAttached<ItemStack> nextRequest = null;
+		PackagingRequest nextRequest = null;
+		String fixedAddress = null;
 
-		if (requestQueue && !queuedRequests.isEmpty())
+		if (requestQueue && !queuedRequests.isEmpty()) {
 			nextRequest = queuedRequests.get(0);
+			fixedAddress = nextRequest.address();
+		}
 
 		Outer: for (int i = 0; i < PackageItem.SLOTS; i++)
 			for (int slot = 0; slot < targetInv.getSlots(); slot++) {
-				int initialCount = requestQueue ? Math.min(64, nextRequest.getFirst()) : 64;
+				int initialCount = requestQueue ? Math.min(64, nextRequest.getCount()) : 64;
 				ItemStack extracted = targetInv.extractItem(slot, initialCount, true);
 				if (extracted.isEmpty())
 					continue;
-				if (requestQueue && !ItemHandlerHelper.canItemStacksStack(extracted, nextRequest.getSecond()))
+				if (requestQueue && !ItemHandlerHelper.canItemStacksStack(extracted, nextRequest.item()))
 					continue;
 
 				boolean bulky = !extracted.getItem()
@@ -210,19 +237,22 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 				int transferred = extracted.getCount() - leftovers;
 				targetInv.extractItem(slot, transferred, false);
 
+				if (extracted.getItem() instanceof PackageItem)
+					extractedPackageItem = extracted;
+
 				if (requestQueue) {
-					nextRequest.setFirst(nextRequest.getFirst() - transferred);
-					if (nextRequest.isZero()) {
+					nextRequest.subtract(transferred);
+					if (nextRequest.isEmpty()) {
 						queuedRequests.remove(0);
 						if (queuedRequests.isEmpty())
 							break Outer;
 						nextRequest = queuedRequests.get(0);
+						if (!fixedAddress.equals(nextRequest.address()))
+							break Outer;
 						break;
 					}
 				}
 
-				if (extracted.getItem() instanceof PackageItem)
-					extractedPackageItem = extracted;
 				if (bulky)
 					break Outer;
 			}
@@ -234,6 +264,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		}
 
 		heldBox = extractedPackageItem.isEmpty() ? PackageItem.containing(extractedItems) : extractedPackageItem.copy();
+		if (fixedAddress != null)
+			PackageItem.addAddress(heldBox, fixedAddress);
 		animationInward = false;
 		animationTicks = CYCLE;
 		notifyUpdate();
@@ -242,23 +274,28 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	@Override
 	protected void read(CompoundTag compound, boolean clientPacket) {
 		super.read(compound, clientPacket);
-		active = compound.getBoolean("Active");
+		redstonePowered = compound.getBoolean("Active");
 		animationInward = compound.getBoolean("AnimationInward");
 		animationTicks = compound.getInt("AnimationTicks");
-		mode = NBTHelper.readEnum(compound, "Mode", RedstoneMode.class);
 		heldBox = ItemStack.of(compound.getCompound("HeldBox"));
 		previouslyUnwrapped = ItemStack.of(compound.getCompound("InsertedBox"));
+		if (clientPacket)
+			return;
+		queuedRequests =
+			NBTHelper.readCompoundList(compound.getList("QueuedRequests", Tag.TAG_COMPOUND), PackagingRequest::fromNBT);
 	}
 
 	@Override
 	protected void write(CompoundTag compound, boolean clientPacket) {
 		super.write(compound, clientPacket);
-		compound.putBoolean("Active", active);
+		compound.putBoolean("Active", redstonePowered);
 		compound.putBoolean("AnimationInward", animationInward);
 		compound.putInt("AnimationTicks", animationTicks);
-		NBTHelper.writeEnum(compound, "Mode", mode);
 		compound.put("HeldBox", heldBox.serializeNBT());
 		compound.put("InsertedBox", previouslyUnwrapped.serializeNBT());
+		if (clientPacket)
+			return;
+		compound.put("QueuedRequests", NBTHelper.writeCompoundList(queuedRequests, PackagingRequest::toNBT));
 	}
 
 	@Override
@@ -278,11 +315,6 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		if (cap == ForgeCapabilities.ITEM_HANDLER)
 			return invProvider.cast();
 		return super.getCapability(cap, side);
-	}
-
-	private boolean isBlockPowered() {
-		return getBlockState().getOptionalValue(PackagerBlock.POWERED)
-			.orElse(false);
 	}
 
 	public float getTrayOffset(float partialTicks) {

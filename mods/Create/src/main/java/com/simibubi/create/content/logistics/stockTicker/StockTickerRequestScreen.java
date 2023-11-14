@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.foundation.gui.AbstractSimiScreen;
@@ -26,6 +27,7 @@ import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -47,8 +49,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 	int orderY;
 
 	EditBox searchBox;
-	boolean ignoreTextInput;
-	int mouseDownTicks;
+	EditBox addressBox;
 
 	int emptyTicks = 0;
 
@@ -76,16 +77,25 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		super.init();
 
 		itemsX = guiLeft + (windowWidth - cols * colWidth) / 2;
-		itemsY = guiTop + 45;
+		itemsY = guiTop + 35;
 		orderY = itemsY + rows * rowHeight + 10;
 
-		searchBox = new EditBox(this.font, itemsX + 1, itemsY - 18, 120, 9, Component.translatable("itemGroup.search"));
-		searchBox.setValue("");
+		MutableComponent searchLabel = Lang.translateDirect("gui.stock_ticker.search_items");
+		searchBox = new EditBox(this.font, itemsX + 1, itemsY - 18, 120, 9, searchLabel);
 		searchBox.setMaxLength(50);
 		searchBox.setBordered(false);
-		searchBox.setVisible(true);
-		searchBox.setTextColor(16777215);
+		searchBox.setTextColor(0xffffff);
 		addRenderableWidget(searchBox);
+
+		MutableComponent addressLabel = Lang.translateDirect("gui.stock_ticker.package_adress");
+		boolean initial = addressBox == null;
+		addressBox = new EditBox(this.font, itemsX + 1, orderY + rowHeight + 10, 120, 9, addressLabel);
+		addressBox.setMaxLength(50);
+		addressBox.setBordered(false);
+		addressBox.setTextColor(0xffffff);
+		if (initial)
+			addressBox.setValue(blockEntity.previouslyUsedAddress);
+		addRenderableWidget(addressBox);
 	}
 
 	private void refreshSearchResults(boolean scrollBackUp) {
@@ -156,11 +166,6 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		else
 			emptyTicks = 0;
 
-		if (minecraft.mouseHandler.isLeftPressed())
-			mouseDownTicks++;
-		else
-			mouseDownTicks = 0;
-
 		List<IntAttached<ItemStack>> clientStockSnapshot = blockEntity.getClientStockSnapshot();
 		if (clientStockSnapshot != currentItemSource) {
 			currentItemSource = clientStockSnapshot;
@@ -192,15 +197,39 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		// Render some boxes
 		graphics.renderOutline(searchBox.getX() - 4, searchBox.getY() - 4, searchBox.getWidth() + 12,
 			searchBox.getHeight() + 7, color.getRGB());
+		graphics.renderOutline(addressBox.getX() - 4, addressBox.getY() - 4, addressBox.getWidth() + 12,
+			addressBox.getHeight() + 7, color.getRGB());
 		graphics.renderOutline(itemsX - 3, itemsY - 4, cols * colWidth + 6, rows * rowHeight + 8, color.getRGB());
 		graphics.renderOutline(itemsX - 3, orderY - 4, cols * colWidth + 6, rowHeight + 8, color.getRGB());
+		drawConfirmBox(graphics, color, mouseX, mouseY);
 
+		// Render text input hints
+		if (searchBox.getValue()
+			.isBlank())
+			graphics.drawString(font, searchBox.getMessage(), searchBox.getX(), searchBox.getY(), 0x88dddddd);
+		if (addressBox.getValue()
+			.isBlank())
+			graphics.drawString(font, addressBox.getMessage(), addressBox.getX(), addressBox.getY(), 0x88dddddd);
+
+		// Render static item icons
 		ms.pushPose();
 		ms.translate(itemsX + cols * colWidth + 3, orderY - 8, 0);
 		ms.scale(2f, 2f, 2f);
 		GuiGameElement.of(AllItems.CARDBOARD_PACKAGE_10x12.asStack())
 			.render(graphics);
 		ms.popPose();
+
+		ms.pushPose();
+		ms.translate(itemsX + cols * colWidth + 8, itemsY, 0);
+		ms.scale(1.5f, 1.5f, 1.5f);
+		GuiGameElement.of(AllBlocks.PACKAGER.asStack())
+			.render(graphics);
+		ms.translate(0, -9, 15);
+		GuiGameElement.of(AllBlocks.PACKAGER_LINK.asStack())
+			.render(graphics);
+		ms.popPose();
+		graphics.drawString(font, Lang.text(blockEntity.activeLinks + "")
+			.component(), itemsX + cols * colWidth + 33, itemsY + 11, 0x88dddddd);
 
 		// Render ordered items
 		for (int index = 0; index < cols; index++) {
@@ -377,6 +406,34 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		return order ? col : slot;
 	}
 
+	private void drawConfirmBox(GuiGraphics graphics, Color defaultColor, int mouseX, int mouseY) {
+		int confirmX = addressBox.getX() + addressBox.getWidth() + 10;
+		int confirmY = addressBox.getY() - 4;
+		int confirmW = (cols * colWidth) - addressBox.getWidth() - 8;
+		int confirmH = addressBox.getHeight() + 7;
+
+		boolean hovered = isConfirmHovered(mouseX, mouseY);
+		boolean inactive = itemsToOrder.isEmpty();
+		int color = inactive ? defaultColor.darker()
+			.getRGB() : hovered ? 0xeeffffff : 0x99ffffff;
+		graphics.renderOutline(confirmX, confirmY, confirmW, confirmH, color);
+		graphics.drawCenteredString(font, Lang.translateDirect("gui.stock_ticker.confirm_order"),
+			confirmX + (confirmW / 2), confirmY + 4, color);
+	}
+
+	private boolean isConfirmHovered(int mouseX, int mouseY) {
+		int confirmX = addressBox.getX() + addressBox.getWidth() + 10;
+		int confirmY = addressBox.getY() - 4;
+		int confirmW = (cols * colWidth) - addressBox.getWidth() - 8;
+		int confirmH = addressBox.getHeight() + 7;
+
+		if (mouseX < confirmX || mouseX >= confirmX + confirmW)
+			return false;
+		if (mouseY < confirmY || mouseY >= confirmY + confirmH)
+			return false;
+		return true;
+	}
+
 	private Component getTroubleshootingMessage() {
 		if (currentItemSource == null)
 			return Lang.translate("gui.stock_ticker.checking_stocks")
@@ -402,11 +459,16 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 
 		boolean lmb = pButton == 0;
 		boolean rmb = pButton == 1;
-		
+
 		if (rmb && searchBox.isMouseOver(pMouseX, pMouseY)) {
 			searchBox.setValue("");
 			refreshSearchResults(true);
 			searchBox.setFocused(true);
+			return true;
+		}
+
+		if (lmb && isConfirmHovered((int) pMouseX, (int) pMouseY)) {
+			sendIt();
 			return true;
 		}
 
@@ -425,7 +487,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		int transfer = hasShiftDown() ? itemStack.getMaxStackSize() : 1;
 		int current = existingOrder.getFirst();
 
-		if (rmb) {
+		if (rmb || orderClicked) {
 			existingOrder.setFirst(current - transfer);
 			if (existingOrder.getFirst() <= 0)
 				itemsToOrder.remove(existingOrder);
@@ -460,8 +522,8 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 
 	@Override
 	public boolean charTyped(char pCodePoint, int pModifiers) {
-		if (ignoreTextInput)
-			return false;
+		if (addressBox.isFocused() && addressBox.charTyped(pCodePoint, pModifiers))
+			return true;
 		String s = searchBox.getValue();
 		if (!searchBox.charTyped(pCodePoint, pModifiers))
 			return false;
@@ -473,15 +535,13 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 	@Override
 	public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
 		if (pKeyCode == GLFW.GLFW_KEY_ENTER && hasShiftDown()) {
-			revalidateOrders();
-			if (!itemsToOrder.isEmpty()) {
-				AllPackets.getChannel()
-					.sendToServer(new PackageOrderRequestPacket(blockEntity.getBlockPos(), itemsToOrder));
-				minecraft.setScreen(null);
-			}
+			sendIt();
+			return true;
 		}
 
-		ignoreTextInput = false;
+		if (addressBox.isFocused() && addressBox.keyPressed(pKeyCode, pScanCode, pModifiers))
+			return true;
+
 		String s = searchBox.getValue();
 		if (!searchBox.keyPressed(pKeyCode, pScanCode, pModifiers))
 			return searchBox.isFocused() && searchBox.isVisible() && pKeyCode != 256 ? true
@@ -491,9 +551,18 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		return true;
 	}
 
+	private void sendIt() {
+		revalidateOrders();
+		if (itemsToOrder.isEmpty())
+			return;
+		AllPackets.getChannel()
+			.sendToServer(
+				new PackageOrderRequestPacket(blockEntity.getBlockPos(), itemsToOrder, addressBox.getValue()));
+		minecraft.setScreen(null);
+	}
+
 	@Override
 	public boolean keyReleased(int pKeyCode, int pScanCode, int pModifiers) {
-		ignoreTextInput = false;
 		return super.keyReleased(pKeyCode, pScanCode, pModifiers);
 	}
 

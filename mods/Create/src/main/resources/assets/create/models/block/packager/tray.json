@@ -1,8 +1,7 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"4": "create:block/packager_tray",
-		"particle": "create:block/packager"
+		"4": "create:block/packager_tray"
 	},
 	"elements": [
 		{

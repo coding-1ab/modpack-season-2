@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.logisticalLink;
+package com.simibubi.create.content.logistics.packagerLink;
 
 import com.simibubi.create.content.logistics.stockTicker.LogisticalWorkstationBlock;
 import com.simibubi.create.content.redstone.displayLink.ClickToLinkBlockItem;
@@ -8,9 +8,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 
-public class LogisticalLinkBlockItem extends ClickToLinkBlockItem {
+public class PackagerLinkBlockItem extends ClickToLinkBlockItem {
 
-	public LogisticalLinkBlockItem(Block pBlock, Properties pProperties) {
+	public PackagerLinkBlockItem(Block pBlock, Properties pProperties) {
 		super(pBlock, pProperties);
 	}
 
@@ -22,12 +22,12 @@ public class LogisticalLinkBlockItem extends ClickToLinkBlockItem {
 
 	@Override
 	public int getMaxDistanceFromSelection() {
-		return AllConfigs.server().logistics.logisticalLinkRange.get();
+		return AllConfigs.server().logistics.packagerLinkRange.get();
 	}
 
 	@Override
 	public String getMessageTranslationKey() {
-		return "logistical_link";
+		return "packager_link";
 	}
 
 }

@@ -28,12 +28,12 @@ public class PackageFilterMenu extends AbstractFilterMenu {
 
 	@Override
 	protected int getPlayerInventoryXOffset() {
-		return 51;
+		return 40;
 	}
 
 	@Override
 	protected int getPlayerInventoryYOffset() {
-		return 105;
+		return 101;
 	}
 
 	@Override

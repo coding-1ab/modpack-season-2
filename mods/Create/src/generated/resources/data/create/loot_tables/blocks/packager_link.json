@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "create:logistical_link"
+          "name": "create:packager_link"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "create:blocks/logistical_link"
+  "random_sequence": "create:blocks/packager_link"
 }

@@ -6,9 +6,12 @@ import java.util.Random;
 
 import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.foundation.utility.Components;
+import com.simibubi.create.foundation.utility.VecHelper;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -172,6 +175,14 @@ public class PackageItem extends Item {
 	public InteractionResultHolder<ItemStack> open(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack box = playerIn.getItemInHand(handIn);
 		ItemStackHandler contents = getContents(box);
+
+		ItemStack particle = box.copy();
+
+		box.shrink(1);
+		if (box.isEmpty())
+			playerIn.getInventory()
+				.removeItem(box);
+
 		for (int i = 0; i < contents.getSlots(); i++) {
 			ItemStack itemstack = contents.getStackInSlot(i);
 			if (itemstack.isEmpty())
@@ -179,10 +190,22 @@ public class PackageItem extends Item {
 			playerIn.getInventory()
 				.placeItemBackInInventory(itemstack);
 		}
-		box.shrink(1);
-		if (box.isEmpty())
-			playerIn.getInventory()
-				.removeItem(box);
+
+		Vec3 position = playerIn.position();
+		worldIn.playSound((Player) null, position.x, position.y, position.z, SoundEvents.ARMOR_STAND_BREAK,
+			SoundSource.PLAYERS, 0.5F, 1.0F);
+
+		if (worldIn.isClientSide())
+			for (int i = 0; i < 10; i++) {
+				Vec3 motion = VecHelper.offsetRandomly(Vec3.ZERO, worldIn.getRandom(), .125f);
+				Vec3 pos = position.add(0, 0.5, 0)
+					.add(playerIn.getLookAngle()
+						.scale(.5))
+					.add(motion.scale(4));
+				worldIn.addParticle(new ItemParticleOption(ParticleTypes.ITEM, particle), pos.x, pos.y, pos.z, motion.x,
+					motion.y, motion.z);
+			}
+
 		return new InteractionResultHolder<>(InteractionResult.SUCCESS, box);
 	}
 

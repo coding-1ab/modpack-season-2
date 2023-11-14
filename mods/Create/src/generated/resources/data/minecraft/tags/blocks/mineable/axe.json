@@ -86,7 +86,7 @@
     "create:rotation_speed_controller",
     "create:mechanical_arm",
     "create:railway_casing",
-    "create:logistical_link",
+    "create:packager_link",
     "create:content_observer",
     "create:stockpile_switch",
     "create:creative_crate",
