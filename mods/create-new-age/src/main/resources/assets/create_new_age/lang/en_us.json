@@ -132,7 +132,11 @@
 
   "create_new_age.ponder.energiser.text_1": "When provided with electricity and rotation, the Energizer will energize items in depots and on belts under it.",
 
+  
   "create_new_age.ponder.wires.header": "Wiring",
+  "create_new_age.ponder.wires.text_1": "Wires are used to transfer energy from one place to another",
+  "create_new_age.ponder.wires.text_2": "This block automatically tries to push its energy to neighboring blocks. But let's imagine it doesn't",
+  "create_new_age.ponder.wires.text_3": "Connector can pull energy from the block it stands on when 'Pull' mode is enabled. Modes are switched with a wrench",
 
 
   "create_new_age.ponder.generation.header": "Generating Electricity",
