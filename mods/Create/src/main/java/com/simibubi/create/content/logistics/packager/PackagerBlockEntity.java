@@ -1,5 +1,6 @@
 package com.simibubi.create.content.logistics.packager;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import com.simibubi.create.content.logistics.box.PackageItem;
@@ -10,6 +11,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.inventory.CapManipul
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipulationBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.VersionedInventoryTrackerBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
+import com.simibubi.create.foundation.utility.IntAttached;
 import com.simibubi.create.foundation.utility.NBTHelper;
 
 import net.minecraft.core.BlockPos;
@@ -38,13 +40,15 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	public ItemStack heldBox;
 	public ItemStack previouslyUnwrapped;
 
+	public List<IntAttached<ItemStack>> queuedRequests; // TODO: needs to be saved to disk
+
 	public PackagerItemHandler inventory;
 	private final LazyOptional<IItemHandler> invProvider;
 
 	public static final int CYCLE = 30;
 	public int animationTicks;
 	public boolean animationInward;
-	
+
 	private InventorySummary availableItems;
 	private VersionedInventoryTrackerBehaviour invVersionTracker;
 
@@ -59,6 +63,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		invProvider = LazyOptional.of(() -> inventory);
 		animationTicks = 0;
 		animationInward = true;
+		queuedRequests = new LinkedList<>();
 	}
 
 	@Override
@@ -70,25 +75,32 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	@Override
 	public void tick() {
 		super.tick();
+		if (!level.isClientSide() && !queuedRequests.isEmpty())
+			attemptToSend(true);
 		if (animationTicks == 0) {
 			previouslyUnwrapped = ItemStack.EMPTY;
 			return;
 		}
 		animationTicks--;
 	}
-	
+
+	public void queueRequest(IntAttached<ItemStack> requestedItem) {
+		queuedRequests.add(requestedItem);
+		level.blockEntityChanged(worldPosition);
+	}
+
 	public InventorySummary getAvailableItems() {
 		if (availableItems != null && invVersionTracker.stillWaiting(targetInventory.getInventory()))
 			return availableItems;
 		availableItems = new InventorySummary();
-		
+
 		IItemHandler targetInv = targetInventory.getInventory();
 		if (targetInv == null)
 			return availableItems;
-		
+
 		for (int slot = 0; slot < targetInv.getSlots(); slot++)
 			availableItems.add(targetInv.getStackInSlot(slot));
-		
+
 		invVersionTracker.awaitNewVersion(targetInventory.getInventory());
 		return availableItems;
 	}
@@ -98,7 +110,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		super.lazyTick();
 		if (!active || level.isClientSide())
 			return;
-		attemptToSend();
+		attemptToSend(false);
 	}
 
 	public void activate() {
@@ -161,8 +173,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		return true;
 	}
 
-	public void attemptToSend() {
-		if (mode == RedstoneMode.SEND_ONE || !isBlockPowered())
+	public void attemptToSend(boolean requestQueue) {
+		if (!requestQueue && (mode == RedstoneMode.SEND_ONE || !isBlockPowered()))
 			active = false;
 		if (!heldBox.isEmpty() || animationTicks != 0)
 			return;
@@ -173,11 +185,18 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		boolean anyItemPresent = false;
 		ItemStackHandler extractedItems = new ItemStackHandler(PackageItem.SLOTS);
 		ItemStack extractedPackageItem = ItemStack.EMPTY;
+		IntAttached<ItemStack> nextRequest = null;
+
+		if (requestQueue && !queuedRequests.isEmpty())
+			nextRequest = queuedRequests.get(0);
 
 		Outer: for (int i = 0; i < PackageItem.SLOTS; i++)
 			for (int slot = 0; slot < targetInv.getSlots(); slot++) {
-				ItemStack extracted = targetInv.extractItem(slot, 64, true);
+				int initialCount = requestQueue ? Math.min(64, nextRequest.getFirst()) : 64;
+				ItemStack extracted = targetInv.extractItem(slot, initialCount, true);
 				if (extracted.isEmpty())
+					continue;
+				if (requestQueue && !ItemHandlerHelper.canItemStacksStack(extracted, nextRequest.getSecond()))
 					continue;
 
 				boolean bulky = !extracted.getItem()
@@ -186,17 +205,33 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 					continue;
 
 				anyItemPresent = true;
-				int leftovers = ItemHandlerHelper.insertItemStacked(extractedItems, extracted, false)
+				int leftovers = ItemHandlerHelper.insertItemStacked(extractedItems, extracted.copy(), false)
 					.getCount();
-				targetInv.extractItem(slot, extracted.getCount() - leftovers, false);
+				int transferred = extracted.getCount() - leftovers;
+				targetInv.extractItem(slot, transferred, false);
+
+				if (requestQueue) {
+					nextRequest.setFirst(nextRequest.getFirst() - transferred);
+					if (nextRequest.isZero()) {
+						queuedRequests.remove(0);
+						if (queuedRequests.isEmpty())
+							break Outer;
+						nextRequest = queuedRequests.get(0);
+						break;
+					}
+				}
+
 				if (extracted.getItem() instanceof PackageItem)
 					extractedPackageItem = extracted;
 				if (bulky)
 					break Outer;
 			}
 
-		if (!anyItemPresent)
+		if (!anyItemPresent) {
+			if (nextRequest != null)
+				queuedRequests.remove(0);
 			return;
+		}
 
 		heldBox = extractedPackageItem.isEmpty() ? PackageItem.containing(extractedItems) : extractedPackageItem.copy();
 		animationInward = false;
@@ -240,7 +275,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-		if (cap == ForgeCapabilities.ITEM_HANDLER && side != Direction.DOWN)
+		if (cap == ForgeCapabilities.ITEM_HANDLER)
 			return invProvider.cast();
 		return super.getCapability(cap, side);
 	}

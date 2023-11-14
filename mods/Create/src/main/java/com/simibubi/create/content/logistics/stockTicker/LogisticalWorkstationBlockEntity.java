@@ -1,8 +1,10 @@
 package com.simibubi.create.content.logistics.stockTicker;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.simibubi.create.content.logistics.logisticalLink.LogisticalLinkBlockEntity;
@@ -11,6 +13,7 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.utility.IntAttached;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -20,10 +23,13 @@ public abstract class LogisticalWorkstationBlockEntity extends SmartBlockEntity 
 	private InventorySummary summaryOfLinks;
 	private int ticksSinceLastSummary;
 
+	protected int activeLinks;
+
 	public LogisticalWorkstationBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 		setLazyTickRate(10);
 		ticksSinceLastSummary = 15;
+		activeLinks = 0;
 	}
 
 	@Override
@@ -31,10 +37,39 @@ public abstract class LogisticalWorkstationBlockEntity extends SmartBlockEntity 
 		super.tick();
 		if (level.isClientSide())
 			return;
+		if (activeLinks != connectedLinks.size() && !isRemoved()) {
+			activeLinks = connectedLinks.size();
+			sendData();
+		}
 		if (ticksSinceLastSummary < 15)
 			ticksSinceLastSummary++;
 	}
-	
+
+	protected List<LogisticalLinkBlockEntity> getAvailableLinks() {
+		List<LogisticalLinkBlockEntity> links = new ArrayList<>();
+		connectedLinks.forEach(($, entry) -> {
+			LogisticalLinkBlockEntity blockEntity = entry.getSecond()
+				.get();
+			if (blockEntity != null && !blockEntity.isRemoved() && !blockEntity.isChunkUnloaded())
+				links.add(blockEntity);
+		});
+		return links;
+	}
+
+	@Override
+	protected void write(CompoundTag tag, boolean clientPacket) {
+		super.write(tag, clientPacket);
+		if (clientPacket)
+			tag.putInt("ActiveLinks", activeLinks);
+	}
+
+	@Override
+	protected void read(CompoundTag tag, boolean clientPacket) {
+		super.read(tag, clientPacket);
+		if (clientPacket)
+			activeLinks = tag.getInt("ActiveLinks");
+	}
+
 	public InventorySummary getRecentSummary() {
 		if (summaryOfLinks == null || ticksSinceLastSummary >= 15)
 			refreshInventorySummary();

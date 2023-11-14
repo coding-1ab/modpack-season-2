@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.content.logistics.logisticalLink.LogisticalLinkBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.IntAttached;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -41,6 +43,19 @@ public class StockTickerBlockEntity extends LogisticalWorkstationBlockEntity {
 			return;
 		lastClientsideStockSnapshot = newlyReceivedStockSnapshot;
 		newlyReceivedStockSnapshot = null;
+	}
+	
+	public void receivePackageRequest(List<IntAttached<ItemStack>> stacks, Player player) {
+		List<LogisticalLinkBlockEntity> availableLinks = getAvailableLinks();
+		for (IntAttached<ItemStack> entry : stacks) {
+			int remainingCount = entry.getFirst();
+			ItemStack requestedItem = entry.getSecond();
+			for (LogisticalLinkBlockEntity link : availableLinks) {
+				remainingCount -= link.processRequest(requestedItem, remainingCount);
+				if (remainingCount == 0)
+					break;
+			}
+		}
 	}
 
 }

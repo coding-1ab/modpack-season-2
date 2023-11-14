@@ -11,11 +11,13 @@ import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalWorkstationBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.LinkWithBulbBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.utility.IntAttached;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -37,18 +39,28 @@ public class LogisticalLinkBlockEntity extends LinkWithBulbBlockEntity {
 	}
 
 	public InventorySummary fetchSummaryFromPackager() {
-		BlockState blockState = getBlockState();
-		if (blockState.getOptionalValue(LogisticalLinkBlock.POWERED)
-			.orElse(true))
-			return InventorySummary.EMPTY;
-		BlockPos source = worldPosition.relative(blockState.getOptionalValue(LogisticalLinkBlock.FACING)
-			.orElse(Direction.UP)
-			.getOpposite());
-		if (!(level.getBlockEntity(source) instanceof PackagerBlockEntity packager))
+		PackagerBlockEntity packager = getSource();
+		if (packager == null)
 			return InventorySummary.EMPTY;
 		sendPulseNextSync();
 		sendData();
 		return packager.getAvailableItems();
+	}
+	
+	public int processRequest(ItemStack stack, int amount) {
+		PackagerBlockEntity packager = getSource();
+		if (packager == null)
+			return 0;
+		
+		InventorySummary summary = packager.getAvailableItems();
+		int availableCount = summary.getCountOf(stack);
+		int toWithdraw = Math.min(amount, availableCount);
+		
+		packager.queueRequest(IntAttached.with(toWithdraw, stack));
+		sendPulseNextSync();
+		sendData();
+		
+		return toWithdraw;
 	}
 
 	@Override
@@ -86,6 +98,20 @@ public class LogisticalLinkBlockEntity extends LinkWithBulbBlockEntity {
 			return lwbe;
 		}
 		return null;
+	}
+	
+	@Nullable
+	public PackagerBlockEntity getSource() {
+		BlockState blockState = getBlockState();
+		if (blockState.getOptionalValue(LogisticalLinkBlock.POWERED)
+			.orElse(true))
+			return null;
+		BlockPos source = worldPosition.relative(blockState.getOptionalValue(LogisticalLinkBlock.FACING)
+			.orElse(Direction.UP)
+			.getOpposite());
+		if (!(level.getBlockEntity(source) instanceof PackagerBlockEntity packager))
+			return null;
+		return packager;
 	}
 
 	@Override

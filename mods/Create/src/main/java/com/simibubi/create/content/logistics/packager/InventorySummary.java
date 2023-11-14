@@ -54,6 +54,16 @@ public class InventorySummary {
 		IntAttached<ItemStack> newEntry = IntAttached.with(count, stack);
 		stacks.add(newEntry);
 	}
+	
+	public int getCountOf(ItemStack stack) {
+		List<IntAttached<ItemStack>> list = items.get(stack.getItem());
+		if (list == null)
+			return 0;
+		for (IntAttached<ItemStack> entry : list)
+			if (ItemHandlerHelper.canItemStacksStack(entry.getSecond(), stack))
+				return entry.getFirst();
+		return 0;
+	}
 
 	public List<IntAttached<ItemStack>> getStacksByCount() {
 		if (stacksByCount == null) {

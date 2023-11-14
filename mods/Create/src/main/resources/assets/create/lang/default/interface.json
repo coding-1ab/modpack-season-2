@@ -307,6 +307,11 @@
 
 	"create.gui.clipboard.erase_checked": "Erase checked items",
 	
+	"create.gui.stock_ticker.checking_stocks": "Checking stocks...",
+	"create.gui.stock_ticker.no_packagers_linked": "No Packagers Linked",
+	"create.gui.stock_ticker.inventories_empty": "Linked Inventories are Empty",
+	"create.gui.stock_ticker.no_search_results": "No matching items found",
+	
 	"create.clipboard.actions": "Clipboard Actions",
 	"create.clipboard.to_copy": "%1$s to Copy settings",
 	"create.clipboard.to_paste": "%1$s to Paste settings",

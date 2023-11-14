@@ -1,6 +1,5 @@
 package com.simibubi.create.content.logistics.box;
 
-import com.simibubi.create.Create;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 import com.simibubi.create.foundation.utility.VecHelper;
 
@@ -42,8 +41,8 @@ public class PackageDestroyPacket extends SimplePacketBase {
 		ctx.enqueueWork(() -> {
 			for (int i = 0; i < 20; i++) {
 				ClientLevel level = Minecraft.getInstance().level;
-				Vec3 pos = VecHelper.offsetRandomly(location, level.getRandom(), .5f);
-				Vec3 motion = Vec3.ZERO;
+				Vec3 motion = VecHelper.offsetRandomly(Vec3.ZERO, level.getRandom(), .125f);
+				Vec3 pos = location.add(motion.scale(4));
 				level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, box), pos.x, pos.y,
 					pos.z, motion.x, motion.y, motion.z);
 			}

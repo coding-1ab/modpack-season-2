@@ -334,7 +334,8 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 
 	private void destroy(DamageSource source) {
 		AllPackets.getChannel()
-			.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new PackageDestroyPacket(position(), box));
+			.send(PacketDistributor.TRACKING_ENTITY.with(() -> this),
+				new PackageDestroyPacket(getBoundingBox().getCenter(), box));
 		level().playSound((Player) null, getX(), getY(), getZ(), SoundEvents.ARMOR_STAND_BREAK, this.getSoundSource(),
 			1.0F, 1.0F);
 		this.dropAllDeathLoot(source);
