@@ -5,7 +5,6 @@ import com.simibubi.create.foundation.ponder.SceneBuilder;
 import com.simibubi.create.foundation.ponder.SceneBuildingUtil;
 import com.simibubi.create.foundation.ponder.element.InputWindowElement;
 import com.simibubi.create.foundation.utility.Pointing;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
@@ -36,11 +35,12 @@ public class MotorPonder {
         scene.idle(75);
 
         scene.world.showSection(util.select.position(2, 3, 2), Direction.DOWN);
-        scene.world.showSection(util.select.position(2, 50, 2), Direction.DOWN);
+        scene.world.showSection(util.select.position(4, 3, 2), Direction.EAST);
 
         scene.idle(20);
 
-        scene.world.modifyBlockEntity(new BlockPos(2, 3, 2), ElectricalConnectorBlockEntity.class, (en) -> en.connect((ElectricalConnectorBlockEntity) en.getLevel().getBlockEntity(new BlockPos(2, 50, 2)), WireType.IRON));
+        scene.world.modifyBlockEntity(util.grid.at(2, 3, 2), ElectricalConnectorBlockEntity.class, 
+                (en) -> en.connect((ElectricalConnectorBlockEntity) en.getLevel().getBlockEntity(util.grid.at(4, 3, 2)), WireType.IRON));
 
         scene.idle(5);
 
@@ -54,7 +54,7 @@ public class MotorPonder {
         scene.idle(10);
 
         scene.overlay.showText(100)
-                .text("")
+                .text("You can configure its speed using a wrench, however the amount of SU it outputs will stay the same.")
                 .placeNearTarget()
                 .pointAt(util.vector.of(2.5, 2.5, 2.25));
 

@@ -12,6 +12,7 @@ import org.antarcticgardens.newage.content.generation.GenerationPonder;
 import org.antarcticgardens.newage.content.heat.HeatingPonder;
 import org.antarcticgardens.newage.content.heat.heater.HeaterPonder;
 import org.antarcticgardens.newage.content.motors.MotorPonder;
+import org.antarcticgardens.newage.content.motors.extension.MotorExtensionPonder;
 import org.antarcticgardens.newage.content.reactor.ReactorPonder;
 
 public class CreateNewAgeClient implements ClientModInitializer {
@@ -43,6 +44,10 @@ public class CreateNewAgeClient implements ClientModInitializer {
 
         var reactor = helper.createTag("reactor")
                 .item(NewAgeBlocks.REACTOR_ROD.get())
+                .addToIndex();
+        
+        var motorExtension = helper.createTag("motor_extension")
+                .item(NewAgeBlocks.BASIC_MOTOR_EXTENSION.get())
                 .addToIndex();
 
         PonderRegistry.TAGS.forTag(electrical)
@@ -98,6 +103,10 @@ public class CreateNewAgeClient implements ClientModInitializer {
                 .add(NewAgeBlocks.REACTOR_HEAT_VENT)
                 .add(NewAgeBlocks.REACTOR_FUEL_ACCEPTOR)
                 .add(NewAgeItems.NUCLEAR_FUEL);
+        
+        PonderRegistry.TAGS.forTag(motorExtension)
+                .add(NewAgeBlocks.BASIC_MOTOR_EXTENSION)
+                .add(NewAgeBlocks.ADVANCED_MOTOR_EXTENSION);
 
 
         helper.addStoryBoard(NewAgeBlocks.ENERGISER_T1, "energiser", EnergiserPonder::ponder);
@@ -135,6 +144,9 @@ public class CreateNewAgeClient implements ClientModInitializer {
 
         helper.forComponents(NewAgeBlocks.BASIC_MOTOR, NewAgeBlocks.ADVANCED_MOTOR, NewAgeBlocks.REINFORCED_MOTOR)
                 .addStoryBoard("motor", MotorPonder::motor);
+        
+        helper.forComponents(NewAgeBlocks.BASIC_MOTOR_EXTENSION, NewAgeBlocks.ADVANCED_MOTOR_EXTENSION)
+                .addStoryBoard("motor_extension", MotorExtensionPonder::motorExtension);
 
 
         // ToolTip

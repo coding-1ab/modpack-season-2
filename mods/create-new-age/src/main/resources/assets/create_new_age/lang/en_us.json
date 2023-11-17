@@ -153,6 +153,11 @@
   "create_new_age.ponder.motor.text_2": "You can configure its speed using a wrench, however the amount of SU it outputs will stay the same.",
   "create_new_age.ponder.motor.text_3": "By powering it with redstone you can disable it.",
   "create_new_age.ponder.motor.text_4": "You can also invert that mechanic by right-clicking on it.",
+  
+  "create_new_age.ponder.motor_extension.header": "Motor Extensions",
+  "create_new_age.ponder.motor_extension.text_1": "Tired of your motors being overstressed? Use a motor extension!",
+  "create_new_age.ponder.motor_extension.text_2": "Extensions allow you to configure motor stress capacity multiplier",
+  "create_new_age.ponder.motor_extension.text_3": "Note that energy consumption is proportional to stress capacity",
 
 
   "create_new_age.ponder.tag.electrical": "Electrical Components",
