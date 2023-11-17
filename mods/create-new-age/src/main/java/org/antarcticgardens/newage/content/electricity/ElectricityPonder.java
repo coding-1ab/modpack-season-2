@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.antarcticgardens.newage.NewAgeBlocks;
 import org.antarcticgardens.newage.NewAgeItems;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
 import org.antarcticgardens.newage.content.electricity.wire.WireType;
@@ -37,7 +38,7 @@ public class ElectricityPonder {
         scene.idle(5);
 
         scene.overlay.showText(100)
-                .pointAt(new Vec3(3.5, 2.5, 2.5))
+                .pointAt(util.vector.centerOf(3, 2, 2))
                 .text("");
 
         scene.idle(75);
@@ -57,15 +58,13 @@ public class ElectricityPonder {
         scene.effects.rotationSpeedIndicator(util.grid.at(1, 1, 2));
 
         scene.idle(30);
-
         scene.addKeyframe();
-
         scene.idle(10);
 
         scene.overlay.chaseBoundingBoxOutline(PonderPalette.GREEN, new Object(), new AABB(3, 2, 3, 4, 3, 4), 100);
 
         scene.overlay.showText(100)
-                .pointAt(new Vec3(3.5, 2.5, 3.5))
+                .pointAt(util.vector.centerOf(3, 2, 3))
                 .text("");
 
         scene.idle(100);
@@ -73,8 +72,10 @@ public class ElectricityPonder {
         scene.overlay.chaseBoundingBoxOutline(PonderPalette.RED, new Object(), new AABB(3, 2, 3, 4, 3, 4), 120);
         scene.world.setKineticSpeed(util.select.position(1, 1, 2), 0);
 
+        scene.idle(10);
+
         scene.overlay.showText(120)
-                .pointAt(new Vec3(3.5, 2.5, 3.5))
+                .pointAt(util.vector.centerOf(3, 2, 3))
                 .text("");
         
         scene.idle(120);
@@ -86,6 +87,25 @@ public class ElectricityPonder {
 
         scene.world.setKineticSpeed(util.select.position(1, 1, 2), 16);
         scene.effects.rotationSpeedIndicator(util.grid.at(1, 1, 2));
+
+        scene.idle(30);
+        scene.addKeyframe();
+        scene.idle(10);
+        
+        scene.world.hideSection(util.select.fromTo(4, 1, 1, 5, 4, 5), Direction.UP);
+        
+        scene.world.hideSection(util.select.position(3, 2, 3), Direction.UP);
+        scene.world.setBlock(util.grid.at(3, 2, 3), NewAgeBlocks.ENERGISER_T2.getDefaultState(), false);
+        scene.idle(10);
+        scene.world.showSection(util.select.position(3, 2, 3), Direction.DOWN);
+        
+        scene.world.setKineticSpeed(util.select.position(1, 1, 2), 0);
+
+        scene.overlay.showText(150)
+                .pointAt(util.vector.centerOf(3, 2, 3))
+                .text("");
+        
+        scene.idle(50);
     }
 
     public static void connect(ElectricalConnectorBlockEntity en) {
