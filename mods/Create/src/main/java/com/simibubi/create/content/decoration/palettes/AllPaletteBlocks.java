@@ -1,5 +1,13 @@
 package com.simibubi.create.content.decoration.palettes;
 
+import static com.simibubi.create.Create.REGISTRATE;
+import static com.simibubi.create.foundation.data.WindowGen.customWindowBlock;
+import static com.simibubi.create.foundation.data.WindowGen.customWindowPane;
+import static com.simibubi.create.foundation.data.WindowGen.framedGlass;
+import static com.simibubi.create.foundation.data.WindowGen.framedGlassPane;
+import static com.simibubi.create.foundation.data.WindowGen.woodenWindowBlock;
+import static com.simibubi.create.foundation.data.WindowGen.woodenWindowPane;
+
 import com.simibubi.create.AllCreativeModeTabs;
 import com.simibubi.create.AllSpriteShifts;
 import com.simibubi.create.Create;
@@ -9,6 +17,7 @@ import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.WindowGen;
 import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.entry.BlockEntry;
+
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.ResourceLocation;
@@ -20,17 +29,11 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.common.Tags;
 
-import static com.simibubi.create.Create.REGISTRATE;
-import static com.simibubi.create.foundation.data.WindowGen.customWindowBlock;
-import static com.simibubi.create.foundation.data.WindowGen.customWindowPane;
-import static com.simibubi.create.foundation.data.WindowGen.framedGlass;
-import static com.simibubi.create.foundation.data.WindowGen.framedGlassPane;
-import static com.simibubi.create.foundation.data.WindowGen.woodenWindowBlock;
-import static com.simibubi.create.foundation.data.WindowGen.woodenWindowPane;
-
 public class AllPaletteBlocks {
 
-	static { REGISTRATE.useCreativeTab(AllCreativeModeTabs.BUILDING_BLOCKS_TAB); }
+	static {
+		REGISTRATE.setCreativeTab(AllCreativeModeTabs.PALETTES_CREATIVE_TAB);
+	}
 
 	// Windows and Glass
 

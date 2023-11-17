@@ -36,6 +36,7 @@ import com.simibubi.create.content.trains.entity.CarriageContraption;
 import com.simibubi.create.content.trains.entity.Train;
 import com.simibubi.create.content.trains.entity.TrainPacket;
 import com.simibubi.create.content.trains.entity.TravellingPoint;
+import com.simibubi.create.content.trains.graph.DiscoveredPath;
 import com.simibubi.create.content.trains.graph.EdgePointType;
 import com.simibubi.create.content.trains.graph.TrackEdge;
 import com.simibubi.create.content.trains.graph.TrackGraph;
@@ -374,8 +375,8 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 				if (train.navigation.destination != station)
 					continue;
 
-				GlobalStation preferredDestination = train.runtime.startCurrentInstruction();
-				train.navigation.startNavigation(preferredDestination != null ? preferredDestination : station, Double.MAX_VALUE, false);
+				DiscoveredPath preferredPath = train.runtime.startCurrentInstruction();
+				train.navigation.startNavigation(preferredPath != null ? preferredPath : train.navigation.findPathTo(station, Double.MAX_VALUE));
 			}
 		}
 

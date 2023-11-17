@@ -3,6 +3,7 @@ package com.simibubi.create.content.contraptions.behaviour;
 import java.util.function.UnaryOperator;
 
 import com.simibubi.create.content.contraptions.Contraption;
+import com.simibubi.create.content.logistics.filter.FilterItemStack;
 
 import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
@@ -32,6 +33,8 @@ public class MovementContext {
 	public Contraption contraption;
 	public Object temporaryData;
 
+	private FilterItemStack filter;
+
 	public MovementContext(Level world, StructureBlockInfo info, Contraption contraption) {
 		this.world = world;
 		this.state = info.state();
@@ -47,6 +50,7 @@ public class MovementContext {
 		position = null;
 		data = new CompoundTag();
 		stall = false;
+		filter = null;
 	}
 
 	public float getAnimationSpeed() {
@@ -82,6 +86,12 @@ public class MovementContext {
 		nbt.putBoolean("FirstMovement", firstMovement);
 		nbt.put("Data", data.copy());
 		return nbt;
+	}
+
+	public FilterItemStack getFilterFromBE() {
+		if (filter != null)
+			return filter;
+		return filter = FilterItemStack.of(blockEntityData.getCompound("Filter"));
 	}
 
 }

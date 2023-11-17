@@ -1,5 +1,7 @@
 package com.simibubi.create.content.contraptions.elevator;
 
+import java.util.List;
+
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllSoundEvents;
@@ -10,14 +12,13 @@ import com.simibubi.create.content.contraptions.pulley.PulleyBlockEntity;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.infrastructure.config.AllConfigs;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.List;
 
 public class ElevatorPulleyBlockEntity extends PulleyBlockEntity {
 
@@ -88,7 +89,7 @@ public class ElevatorPulleyBlockEntity extends PulleyBlockEntity {
 		if (level.isClientSide())
 			targetLevel = ec.clientYTarget;
 		if (!wasArrived && !level.isClientSide()) {
-			triggerContact(ec, targetLevel);
+			triggerContact(ec, targetLevel - ec.contactYOffset);
 			AllSoundEvents.CONTRAPTION_DISASSEMBLE.play(level, null, worldPosition.below((int) offset), 0.75f, 0.8f);
 		}
 

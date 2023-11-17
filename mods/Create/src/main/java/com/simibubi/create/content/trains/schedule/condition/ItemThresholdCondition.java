@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import com.simibubi.create.Create;
-import com.simibubi.create.content.logistics.filter.FilterItem;
+import com.simibubi.create.content.logistics.filter.FilterItemStack;
 import com.simibubi.create.content.trains.entity.Carriage;
 import com.simibubi.create.content.trains.entity.Train;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
@@ -24,7 +24,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class ItemThresholdCondition extends CargoThresholdCondition {
-	public ItemStack stack = ItemStack.EMPTY;
+
+	private FilterItemStack stack = FilterItemStack.empty();
 
 	@Override
 	protected Component getUnit() {
@@ -33,7 +34,7 @@ public class ItemThresholdCondition extends CargoThresholdCondition {
 
 	@Override
 	protected ItemStack getIcon() {
-		return stack;
+		return stack.item();
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class ItemThresholdCondition extends CargoThresholdCondition {
 			IItemHandlerModifiable items = carriage.storage.getItems();
 			for (int i = 0; i < items.getSlots(); i++) {
 				ItemStack stackInSlot = items.getStackInSlot(i);
-				if (!FilterItem.test(level, stackInSlot, stack))
+				if (!stack.test(level, stackInSlot))
 					continue;
 
 				if (stacks)
@@ -71,7 +72,7 @@ public class ItemThresholdCondition extends CargoThresholdCondition {
 	protected void readAdditional(CompoundTag tag) {
 		super.readAdditional(tag);
 		if (tag.contains("Item"))
-			stack = ItemStack.of(tag.getCompound("Item"));
+			stack = FilterItemStack.of(tag.getCompound("Item"));
 	}
 
 	@Override
@@ -81,12 +82,12 @@ public class ItemThresholdCondition extends CargoThresholdCondition {
 
 	@Override
 	public void setItem(int slot, ItemStack stack) {
-		this.stack = stack;
+		this.stack = FilterItemStack.of(stack);
 	}
 
 	@Override
 	public ItemStack getItem(int slot) {
-		return stack;
+		return stack.item();
 	}
 
 	@Override
@@ -97,9 +98,9 @@ public class ItemThresholdCondition extends CargoThresholdCondition {
 			CreateLang.translateDirect("schedule.condition.threshold.x_units_of_item", getThreshold(),
 				CreateLang.translateDirect("schedule.condition.threshold." + (inStacks() ? "stacks" : "items")),
 				stack.isEmpty() ? CreateLang.translateDirect("schedule.condition.threshold.anything")
-					: stack.getItem() instanceof FilterItem
+					: stack.isFilterItem()
 						? CreateLang.translateDirect("schedule.condition.threshold.matching_content")
-						: stack.getHoverName())
+						: stack.item().getHoverName())
 				.withStyle(ChatFormatting.DARK_AQUA));
 	}
 

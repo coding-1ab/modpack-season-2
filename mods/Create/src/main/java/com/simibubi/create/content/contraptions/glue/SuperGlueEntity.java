@@ -1,5 +1,9 @@
 package com.simibubi.create.content.contraptions.glue;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.AllItems;
@@ -11,6 +15,7 @@ import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.schematics.requirement.ISpecialEntityItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement.ItemUseType;
+
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
@@ -49,10 +54,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class SuperGlueEntity extends Entity implements IEntityAdditionalSpawnData, ISpecialEntityItemRequirement {
 
@@ -295,9 +296,12 @@ public class SuperGlueEntity extends Entity implements IEntityAdditionalSpawnDat
 		return PushReaction.IGNORE;
 	}
 
+	public void setPortalEntrancePos() {
+		portalEntrancePos = blockPosition();
+	}
+
 	@Override
 	public PortalInfo findDimensionEntryPoint(ServerLevel pDestination) {
-		portalEntrancePos = blockPosition();
 		return super.findDimensionEntryPoint(pDestination);
 	}
 

@@ -1,5 +1,12 @@
 package com.simibubi.create.content.contraptions;
 
+import static net.createmod.catnip.utility.math.AngleHelper.angleLerp;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.annotation.Nullable;
+
 import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllEntityTypes;
@@ -10,6 +17,7 @@ import com.simibubi.create.content.contraptions.minecart.capability.MinecartCont
 import com.simibubi.create.content.contraptions.mounted.CartAssemblerBlockEntity.CartMovementMode;
 import com.simibubi.create.content.contraptions.mounted.MountedContraption;
 import com.simibubi.create.foundation.item.ItemHelper;
+
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.NBTHelper;
 import net.createmod.catnip.utility.VecHelper;
@@ -40,12 +48,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
-
-import javax.annotation.Nullable;
-import java.util.Optional;
-import java.util.UUID;
-
-import static net.createmod.catnip.utility.math.AngleHelper.angleLerp;
 
 /**
  * Ex: Minecarts, Couplings <br>
@@ -567,6 +569,9 @@ public class OrientedContraptionEntity extends AbstractContraptionEntity {
 	private Vec3 getContraptionOffset(float partialTicks, Entity ridingEntity) {
 		AbstractContraptionEntity parent = (AbstractContraptionEntity) ridingEntity;
 		Vec3 passengerPosition = parent.getPassengerPosition(this, partialTicks);
+		if (passengerPosition == null)
+			return Vec3.ZERO;
+
 		double x = passengerPosition.x - Mth.lerp(partialTicks, this.xOld, this.getX());
 		double y = passengerPosition.y - Mth.lerp(partialTicks, this.yOld, this.getY());
 		double z = passengerPosition.z - Mth.lerp(partialTicks, this.zOld, this.getZ());

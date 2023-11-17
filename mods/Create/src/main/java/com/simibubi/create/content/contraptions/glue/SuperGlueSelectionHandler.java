@@ -1,5 +1,9 @@
 package com.simibubi.create.content.contraptions.glue;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import com.google.common.base.Objects;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllSoundEvents;
@@ -7,6 +11,7 @@ import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.contraptions.chassis.AbstractChassisBlock;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.foundation.utility.RaycastHelper;
+
 import net.createmod.catnip.CatnipClient;
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.Minecraft;
@@ -24,10 +29,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 public class SuperGlueSelectionHandler {
 
@@ -120,7 +121,7 @@ public class SuperGlueSelectionHandler {
 			return;
 		}
 
-		boolean cancel = player.isSteppingCarefully();
+		boolean cancel = player.isShiftKeyDown();
 		if (cancel && firstPos == null)
 			return;
 
@@ -188,6 +189,8 @@ public class SuperGlueSelectionHandler {
 
 		if (!isGlue(player.getMainHandItem()))
 			return false;
+		if (!player.mayBuild())
+			return false;
 
 		if (attack) {
 			if (selected == null)
@@ -198,7 +201,7 @@ public class SuperGlueSelectionHandler {
 			return true;
 		}
 
-		if (player.isSteppingCarefully()) {
+		if (player.isShiftKeyDown()) {
 			if (firstPos != null) {
 				discard();
 				return true;

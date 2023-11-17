@@ -1,5 +1,8 @@
 package com.simibubi.create.content.decoration.girder;
 
+import static net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock.FACE;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
+
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllShapes;
@@ -15,6 +18,7 @@ import com.simibubi.create.content.trains.display.FlapDisplayBlock;
 import com.simibubi.create.content.trains.track.TrackBlock;
 import com.simibubi.create.content.trains.track.TrackShape;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
+
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.placement.IPlacementHelper;
 import net.createmod.catnip.utility.placement.PlacementHelpers;
@@ -59,9 +63,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import static net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock.FACE;
-import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
 public class GirderBlock extends Block implements SimpleWaterloggedBlock, IWrenchable {
 
@@ -119,7 +120,7 @@ public class GirderBlock extends Block implements SimpleWaterloggedBlock, IWrenc
 			return InteractionResult.SUCCESS;
 		}
 
-		if (AllItems.WRENCH.isIn(itemInHand) && !pPlayer.isSteppingCarefully()) {
+		if (AllItems.WRENCH.isIn(itemInHand) && !pPlayer.isShiftKeyDown()) {
 			if (GirderWrenchBehavior.handleClick(pLevel, pPos, pState, pHit))
 				return InteractionResult.sidedSuccess(pLevel.isClientSide);
 			return InteractionResult.FAIL;

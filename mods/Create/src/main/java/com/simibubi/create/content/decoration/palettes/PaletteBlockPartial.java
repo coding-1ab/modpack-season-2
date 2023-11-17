@@ -1,5 +1,10 @@
 package com.simibubi.create.content.decoration.palettes;
 
+import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
+
+import java.util.Arrays;
+import java.util.function.Supplier;
+
 import com.simibubi.create.Create;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.builders.BlockBuilder;
@@ -10,6 +15,7 @@ import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonnullType;
+
 import net.createmod.catnip.utility.lang.Lang;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
@@ -26,11 +32,6 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraftforge.client.model.generators.ModelFile;
-
-import java.util.Arrays;
-import java.util.function.Supplier;
-
-import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 public abstract class PaletteBlockPartial<B extends Block> {
 
@@ -223,7 +224,7 @@ public abstract class PaletteBlockPartial<B extends Block> {
 
 		@Override
 		protected WallBlock createBlock(Supplier<? extends Block> block) {
-			return new WallBlock(Properties.copy(block.get()));
+			return new WallBlock(Properties.copy(block.get()).forceSolidOn());
 		}
 
 		@Override

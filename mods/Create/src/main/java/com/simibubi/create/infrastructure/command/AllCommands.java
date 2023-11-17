@@ -29,12 +29,14 @@ public class AllCommands {
 				.then(OverlayConfigCommand.register())
 				.then(DumpRailwaysCommand.register())
 				.then(FixLightingCommand.register())
+				.then(DebugInfoCommand.register())
 				.then(HighlightCommand.register())
 				.then(KillTrainCommand.register())
 				.then(PassengerCommand.register())
 				.then(CouplingCommand.register())
 				.then(CloneCommand.register())
 				.then(GlueCommand.register())
+
 
 				// utility
 				.then(util);

@@ -4,8 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import com.simibubi.create.Create;
-import com.simibubi.create.content.fluids.transfer.GenericItemEmptying;
-import com.simibubi.create.content.logistics.filter.FilterItem;
+import com.simibubi.create.content.logistics.filter.FilterItemStack;
 import com.simibubi.create.content.trains.entity.Carriage;
 import com.simibubi.create.content.trains.entity.Train;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
@@ -27,8 +26,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class FluidThresholdCondition extends CargoThresholdCondition {
-	public ItemStack compareStack = ItemStack.EMPTY;
-	public FluidStack fluidStack = null;
+
+	private FilterItemStack compareStack = FilterItemStack.empty();
 
 	@Override
 	protected Component getUnit() {
@@ -37,7 +36,7 @@ public class FluidThresholdCondition extends CargoThresholdCondition {
 
 	@Override
 	protected ItemStack getIcon() {
-		return compareStack;
+		return compareStack.item();
 	}
 
 	@Override
@@ -50,7 +49,7 @@ public class FluidThresholdCondition extends CargoThresholdCondition {
 			IFluidHandler fluids = carriage.storage.getFluids();
 			for (int i = 0; i < fluids.getTanks(); i++) {
 				FluidStack fluidInTank = fluids.getFluidInTank(i);
-				if (!FilterItem.test(level, fluidInTank, compareStack))
+				if (!compareStack.test(level, fluidInTank))
 					continue;
 				foundFluid += fluidInTank.getAmount();
 			}
@@ -70,7 +69,7 @@ public class FluidThresholdCondition extends CargoThresholdCondition {
 	protected void readAdditional(CompoundTag tag) {
 		super.readAdditional(tag);
 		if (tag.contains("Bucket"))
-			compareStack = ItemStack.of(tag.getCompound("Bucket"));
+			compareStack = FilterItemStack.of(tag.getCompound("Bucket"));
 	}
 
 	@Override
@@ -80,16 +79,7 @@ public class FluidThresholdCondition extends CargoThresholdCondition {
 
 	@OnlyIn(Dist.CLIENT)
 	private FluidStack loadFluid() {
-		if (fluidStack != null)
-			return fluidStack;
-		fluidStack = FluidStack.EMPTY;
-		if (!GenericItemEmptying.canItemBeEmptied(Minecraft.getInstance().level, compareStack))
-			return fluidStack;
-		FluidStack fluidInFilter = GenericItemEmptying.emptyItem(Minecraft.getInstance().level, compareStack, true)
-			.getFirst();
-		if (fluidInFilter == null)
-			return fluidStack;
-		return fluidStack = fluidInFilter;
+		return compareStack.fluid(Minecraft.getInstance().level);
 	}
 
 	@Override
@@ -100,7 +90,7 @@ public class FluidThresholdCondition extends CargoThresholdCondition {
 			CreateLang.translateDirect("schedule.condition.threshold.x_units_of_item", getThreshold(),
 				CreateLang.translateDirect("schedule.condition.threshold.buckets"),
 				compareStack.isEmpty() ? CreateLang.translateDirect("schedule.condition.threshold.anything")
-					: compareStack.getItem() instanceof FilterItem
+					: compareStack.isFilterItem()
 						? CreateLang.translateDirect("schedule.condition.threshold.matching_content")
 						: loadFluid().getDisplayName())
 				.withStyle(ChatFormatting.DARK_AQUA));
@@ -108,12 +98,12 @@ public class FluidThresholdCondition extends CargoThresholdCondition {
 
 	@Override
 	public void setItem(int slot, ItemStack stack) {
-		compareStack = stack;
+		compareStack = FilterItemStack.of(stack);
 	}
 
 	@Override
 	public ItemStack getItem(int slot) {
-		return compareStack;
+		return compareStack.item();
 	}
 
 	@Override

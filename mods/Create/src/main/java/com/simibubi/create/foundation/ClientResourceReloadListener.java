@@ -1,6 +1,7 @@
 package com.simibubi.create.foundation;
 
 import com.simibubi.create.CreateClient;
+import com.simibubi.create.content.kinetics.belt.BeltHelper;
 import com.simibubi.create.foundation.sound.SoundScapes;
 
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -12,6 +13,7 @@ public class ClientResourceReloadListener implements ResourceManagerReloadListen
 	public void onResourceManagerReload(ResourceManager resourceManager) {
 		CreateClient.invalidateRenderers();
 		SoundScapes.invalidateAll();
+		BeltHelper.uprightCache.clear();
 	}
 
 }
