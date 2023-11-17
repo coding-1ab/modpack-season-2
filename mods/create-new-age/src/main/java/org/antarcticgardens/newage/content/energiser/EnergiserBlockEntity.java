@@ -4,6 +4,7 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.Lang;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
+import earth.terrarium.botarium.common.energy.impl.InsertOnlyEnergyContainer;
 import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -27,7 +28,7 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
     public EnergiserBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int tier) {
         super(type, pos, state);
         energy = new WrappedBlockEnergyContainer(
-                this, new SimpleEnergyContainer(EnergiserBlock.getCapacity(tier)));
+                this, new InsertOnlyEnergyContainer(EnergiserBlock.getCapacity(tier)));
         this.tier = tier;
         this.energisingBehaviour.tier = tier;
     }

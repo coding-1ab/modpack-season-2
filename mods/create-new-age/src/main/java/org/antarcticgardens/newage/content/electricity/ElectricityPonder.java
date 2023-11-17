@@ -95,8 +95,8 @@ public class ElectricityPonder {
         scene.world.hideSection(util.select.fromTo(4, 1, 1, 5, 4, 5), Direction.UP);
         
         scene.world.hideSection(util.select.position(3, 2, 3), Direction.UP);
+        scene.idle(15);
         scene.world.setBlock(util.grid.at(3, 2, 3), NewAgeBlocks.ENERGISER_T2.getDefaultState(), false);
-        scene.idle(10);
         scene.world.showSection(util.select.position(3, 2, 3), Direction.DOWN);
         
         scene.world.setKineticSpeed(util.select.position(1, 1, 2), 0);
