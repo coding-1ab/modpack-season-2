@@ -71,8 +71,8 @@ public class ElectricalConnectorBlock extends DirectionalBlock implements IBE<El
     @Override
     public <S extends BlockEntity> BlockEntityTicker<S> getTicker(Level p_153212_, BlockState p_153213_, BlockEntityType<S> p_153214_) {
         return (level, blockPos, blockState, blockEntity) -> {
-            if (blockEntity instanceof ElectricalConnectorBlockEntity connector)
-                connector.tick();
+            if (blockEntity instanceof ElectricalConnectorBlockEntity connector && !level.isClientSide)
+                connector.serverTick();
         };
     }
 

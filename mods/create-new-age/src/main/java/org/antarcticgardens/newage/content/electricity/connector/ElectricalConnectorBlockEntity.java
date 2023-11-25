@@ -34,13 +34,13 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
     private final Map<BlockPos, WireType> connectorPositions = new HashMap<>();
 
     private ElectricalNetwork network;
-    private NetworkEnergyContainer energyContainer;
+    private final NetworkEnergyContainer energyContainer;
 
-    protected boolean tickedBefore = false;
+    private boolean connectionsInitialized = false;
 
     public ElectricalConnectorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
-        setNetwork(new ElectricalNetwork(this));
+        energyContainer = new NetworkEnergyContainer(this, null);
     }
 
     @Override
@@ -92,10 +92,13 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
         return getBlockPos().relative(getBlockState().getValue(BlockStateProperties.FACING).getOpposite());
     }
 
-    protected void tick() {
-        if (!tickedBefore) {
-            updateNetwork();
-            tickedBefore = true;
+    protected void serverTick() {
+        if (network == null) 
+            setNetwork(new ElectricalNetwork(this));
+        
+        if (!connectionsInitialized) {
+            updateConnections();
+            connectionsInitialized = true;
         }
     }
 
@@ -120,7 +123,7 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
         network.updateConsumersAndSources();
     }
 
-    private void updateNetwork() {
+    private void updateConnections() {
         for (Map.Entry<BlockPos, WireType> e : connectorPositions.entrySet()) {
             if (getLevel().getBlockEntity(e.getKey()) instanceof ElectricalConnectorBlockEntity connector)
                 connect(connector, e.getValue());
@@ -133,7 +136,7 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
         for (Map.Entry<ElectricalConnectorBlockEntity, WireType> e : connectors.entrySet()) {
             e.getKey().disconnect(this);
-            e.getKey().updateNetwork();
+            e.getKey().updateConnections();
 
             e.getKey().setChanged();
 
@@ -146,12 +149,10 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
     }
 
     public void connect(ElectricalConnectorBlockEntity entity, WireType wireType) {
-        if (!connectors.containsKey(entity)) {
+        if (!connectors.containsKey(entity)) 
             connectors.put(entity, wireType);
-            entity.connect(this, wireType);
-        }
 
-        network.addNode(entity);
+        entity.connectWithoutNetworking(this, wireType);
 
         if (!connectorPositions.containsKey(entity.getBlockPos()))
             connectorPositions.put(entity.getBlockPos(), wireType);
@@ -160,9 +161,19 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
         setChanged();
 
         if (level instanceof ServerLevel serverLevel) {
+            network.addNode(entity);
+            
             serverLevel.getChunkSource().blockChanged(entity.getBlockPos());
             serverLevel.getChunkSource().blockChanged(getBlockPos());
         }
+    }
+    
+    private void connectWithoutNetworking(ElectricalConnectorBlockEntity entity, WireType wireType) {
+        if (!connectors.containsKey(entity)) 
+            connectors.put(entity, wireType);
+
+        if (!connectorPositions.containsKey(entity.getBlockPos()))
+            connectorPositions.put(entity.getBlockPos(), wireType);
     }
 
     public boolean isConnected(BlockPos pos) {
@@ -180,7 +191,7 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
     public void setNetwork(ElectricalNetwork network) {
         this.network = network;
-        energyContainer = new NetworkEnergyContainer(this, this.network);
+        energyContainer.setNetwork(network);
     }
 
     public ElectricalNetwork getNetwork() {
