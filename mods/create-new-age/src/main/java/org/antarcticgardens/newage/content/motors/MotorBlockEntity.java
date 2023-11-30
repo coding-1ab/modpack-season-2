@@ -24,9 +24,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.motors.extension.MotorExtensionBlockEntity;
 import org.antarcticgardens.newage.energy.InsertOnlyResizableEnergyContainer;
-import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
@@ -65,6 +65,11 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
         return (type, pos, state) -> new MotorBlockEntity(type, pos, state, capacity, stressGenerated, maxSpeed);
     }
 
+    @Override
+    public void initialize() {
+        powered = getLevel().hasNeighborSignal(this.getBlockPos());
+        super.initialize();
+    }
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
