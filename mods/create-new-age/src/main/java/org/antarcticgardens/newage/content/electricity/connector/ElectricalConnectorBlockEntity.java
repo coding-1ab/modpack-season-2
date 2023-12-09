@@ -120,7 +120,9 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
     }
 
     protected void neighborChanged() {
-        network.updateConsumersAndSources();
+        if (network != null) {
+            network.updateConsumersAndSources();
+        }
     }
 
     private void updateConnections() {
