@@ -20,6 +20,7 @@ import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlock;
 import org.antarcticgardens.newage.content.heat.solarheatingplate.SolarHeatingPlateBlock;
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineBlock;
 import org.antarcticgardens.newage.content.motors.MotorBlock;
+import org.antarcticgardens.newage.content.motors.MotorVariants;
 import org.antarcticgardens.newage.content.motors.extension.MotorExtensionBlock;
 import org.antarcticgardens.newage.content.reactor.CoriumBlock;
 import org.antarcticgardens.newage.content.reactor.ReactorBlock;
@@ -71,7 +72,8 @@ public class NewAgeBlocks {
                     .register();
 
     public static final BlockEntry<MotorBlock> BASIC_MOTOR =
-            REGISTRATE.block("basic_motor", (p) -> new MotorBlock(p, NewAgeBlockEntityTypes.BASIC_MOTOR, 16000, 512, 128))
+            REGISTRATE.block("basic_motor", (p) -> new MotorBlock(p,
+                                                                  NewAgeBlockEntityTypes.BASIC_MOTOR, MotorVariants.BASIC))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(3.0f))
@@ -79,7 +81,7 @@ public class NewAgeBlocks {
                     .register();
 
     public static final BlockEntry<MotorBlock> ADVANCED_MOTOR =
-            REGISTRATE.block("advanced_motor", (p) -> new MotorBlock(p, NewAgeBlockEntityTypes.ADVANCED_MOTOR, 64000, 2048, 256))
+            REGISTRATE.block("advanced_motor", (p) -> new MotorBlock(p, NewAgeBlockEntityTypes.ADVANCED_MOTOR, MotorVariants.ADVANCED))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(3.5f))
@@ -88,7 +90,7 @@ public class NewAgeBlocks {
 
 
     public static final BlockEntry<MotorBlock> REINFORCED_MOTOR =
-            REGISTRATE.block("reinforced_motor", (p) -> new MotorBlock(p, NewAgeBlockEntityTypes.REINFORCED_MOTOR, 128000, 8192, 256))
+            REGISTRATE.block("reinforced_motor", (p) -> new MotorBlock(p, NewAgeBlockEntityTypes.REINFORCED_MOTOR, MotorVariants.REINFORCED))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(4.0f))

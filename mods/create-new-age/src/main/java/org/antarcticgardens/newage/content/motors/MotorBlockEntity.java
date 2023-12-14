@@ -28,6 +28,8 @@ import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.motors.extension.MotorExtensionBlockEntity;
 import org.antarcticgardens.newage.energy.InsertOnlyResizableEnergyContainer;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
+import org.antarcticgardens.newage.content.motors.MotorVariants;
+
 
 import java.util.List;
 
@@ -49,11 +51,11 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
     private float stress = 0;
     private InsertOnlyResizableEnergyContainer mut;
 
-    public MotorBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, long maxCapacity, float stressImpact, float maxSpeed) {
+    public MotorBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, MotorVariants variant) {
         super(arg, arg2, arg3);
-        this.maxCapacity = maxCapacity;
-        this.stressImpact = stressImpact;
-        this.maxSpeed = maxSpeed;
+        this.stressImpact = MotorVariants.motorStress(variant);
+        this.maxSpeed = MotorVariants.motorSpeed(variant);
+        this.maxCapacity = MotorVariants.motorCapacity(variant);
         if (mut == null) {
             getEnergyStorage();
         }
@@ -61,8 +63,8 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
         speedBehavior.between((int) -maxSpeed, (int) maxSpeed);
     }
 
-    public static BlockEntityBuilder.BlockEntityFactory<MotorBlockEntity> create(long capacity, float stressGenerated, float maxSpeed) {
-        return (type, pos, state) -> new MotorBlockEntity(type, pos, state, capacity, stressGenerated, maxSpeed);
+    public static BlockEntityBuilder.BlockEntityFactory<MotorBlockEntity> create(MotorVariants variant) {
+        return (type, pos, state) -> new MotorBlockEntity(type, pos, state, variant);
     }
 
     @Override

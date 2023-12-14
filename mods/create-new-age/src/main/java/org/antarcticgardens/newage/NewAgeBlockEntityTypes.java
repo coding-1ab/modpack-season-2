@@ -20,11 +20,13 @@ import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineBlo
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineInstance;
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineRenderer;
 import org.antarcticgardens.newage.content.motors.MotorBlockEntity;
+import org.antarcticgardens.newage.content.motors.MotorVariants;
 import org.antarcticgardens.newage.content.motors.extension.MotorExtensionBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorfuelacceptor.ReactorFuelAcceptorBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorheatvent.ReactorHeatVentBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorrod.ReactorRodBlockEntity;
 import org.antarcticgardens.newage.tools.HalfShaftRendererThing;
+
 
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
@@ -115,7 +117,7 @@ public class NewAgeBlockEntityTypes {
 
 
     public static final BlockEntityEntry<MotorBlockEntity> BASIC_MOTOR = REGISTRATE
-            .blockEntity("basic_motor", MotorBlockEntity.create(16000, 512, 128))
+            .blockEntity("basic_motor", MotorBlockEntity.create(MotorVariants.BASIC))
             .instance(() -> HalfShaftInstance::new)
             .validBlocks(NewAgeBlocks.BASIC_MOTOR)
             .renderer(() -> HalfShaftRendererThing::new)
@@ -123,7 +125,7 @@ public class NewAgeBlockEntityTypes {
 
 
     public static final BlockEntityEntry<MotorBlockEntity> ADVANCED_MOTOR = REGISTRATE
-            .blockEntity("advanced_motor", MotorBlockEntity.create(64000, 2048, 256))
+            .blockEntity("advanced_motor", MotorBlockEntity.create(MotorVariants.ADVANCED))
             .instance(() -> HalfShaftInstance::new)
             .validBlocks(NewAgeBlocks.ADVANCED_MOTOR)
             .renderer(() -> HalfShaftRendererThing::new)
@@ -131,7 +133,7 @@ public class NewAgeBlockEntityTypes {
 
 
     public static final BlockEntityEntry<MotorBlockEntity> REINFORCED_MOTOR = REGISTRATE
-            .blockEntity("reinforced_motor", MotorBlockEntity.create(128000, 8192, 256))
+            .blockEntity("reinforced_motor", MotorBlockEntity.create(MotorVariants.REINFORCED))
             .instance(() -> HalfShaftInstance::new)
             .validBlocks(NewAgeBlocks.REINFORCED_MOTOR)
             .renderer(() -> HalfShaftRendererThing::new)
@@ -152,8 +154,6 @@ public class NewAgeBlockEntityTypes {
             .blockEntity("advanced_motor_extension", MotorExtensionBlockEntity.create(8.0f, 256_000, 5))
             .validBlocks(NewAgeBlocks.ADVANCED_MOTOR_EXTENSION)
             .register();
-    
-    
 
     public static void load() {  }
 }

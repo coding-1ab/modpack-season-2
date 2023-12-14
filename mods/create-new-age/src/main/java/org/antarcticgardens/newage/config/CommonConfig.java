@@ -28,6 +28,24 @@ public class CommonConfig {
 
     public final ForgeConfigSpec.ConfigValue<Integer> maxWireLength;
 
+    public final ForgeConfigSpec.ConfigValue<Integer> basicMotorCapacity;
+
+    public final ForgeConfigSpec.ConfigValue<Integer> advancedMotorCapacity;
+
+    public final ForgeConfigSpec.ConfigValue<Integer> reinforcedMotorCapacity;
+
+    public final ForgeConfigSpec.ConfigValue<Double> basicMotorStress;
+
+    public final ForgeConfigSpec.ConfigValue<Double> advancedMotorStress;
+
+    public final ForgeConfigSpec.ConfigValue<Double> reinforcedMotorStress;
+
+    public final ForgeConfigSpec.ConfigValue<Double> basicMotorSpeed;
+
+    public final ForgeConfigSpec.ConfigValue<Double> advancedMotorSpeed;
+
+    public final ForgeConfigSpec.ConfigValue<Double> reinforcedMotorSpeed;
+
     public CommonConfig(ForgeConfigSpec.Builder builder) {
         suToEnergy = builder
                 .comment(
@@ -92,5 +110,40 @@ public class CommonConfig {
                 .comment("Maximum motor SU multiplier")
                 .defineInRange("motorSuMultiplier", 1.0, 0.0, Double.MAX_VALUE);
 
+        basicMotorCapacity = builder
+            .comment("Internal FE capacity of a basic motor")
+            .defineInRange("basicMotorCapacity", 16000, 1, Integer.MAX_VALUE);
+
+        advancedMotorCapacity = builder
+            .comment("Internal FE capacity of a advanced motor")
+            .defineInRange("advancedMotorCapacity", 64000, 1, Integer.MAX_VALUE);
+
+        reinforcedMotorCapacity = builder
+            .comment("Internal FE capacity of a reinforced motor")
+            .defineInRange("reinforcedMotorCapacity", 128000, 1, Integer.MAX_VALUE);
+
+        basicMotorSpeed = builder
+            .comment("Top Speed of a basic motor")
+            .defineInRange("basicMotorSpeed", 128, 1, Double.MAX_VALUE);
+
+        advancedMotorSpeed = builder
+            .comment("Top Speed of a advanced motor")
+            .defineInRange("advancedMotorSpeed", 256, 1, Double.MAX_VALUE);
+
+        reinforcedMotorSpeed = builder
+            .comment("Top Speed of a reinforced motor")
+            .defineInRange("reinforcedMotorSpeed", 256, 1, Double.MAX_VALUE);
+
+        basicMotorStress = builder
+            .comment("Generated SU of a basic motor")
+            .defineInRange("basicMotorStress", 512, 1, Double.MAX_VALUE);
+
+        advancedMotorStress = builder
+            .comment("Generated SU of a advanced motor")
+            .defineInRange("advancedMotorStress", 2048, 1, Double.MAX_VALUE);
+
+        reinforcedMotorStress = builder
+            .comment("Generated SU of a reinforced motor")
+            .defineInRange("reinforcedMotorStress", 8192, 1, Double.MAX_VALUE);
     }
 }
