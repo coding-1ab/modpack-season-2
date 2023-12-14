@@ -22,6 +22,7 @@ import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineRen
 import org.antarcticgardens.newage.content.motors.MotorBlockEntity;
 import org.antarcticgardens.newage.content.motors.MotorVariants;
 import org.antarcticgardens.newage.content.motors.extension.MotorExtensionBlockEntity;
+import org.antarcticgardens.newage.content.motors.extension.MotorExtensionVariants;
 import org.antarcticgardens.newage.content.reactor.reactorfuelacceptor.ReactorFuelAcceptorBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorheatvent.ReactorHeatVentBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorrod.ReactorRodBlockEntity;
@@ -146,12 +147,12 @@ public class NewAgeBlockEntityTypes {
             .register();
 
     public static final BlockEntityEntry<MotorExtensionBlockEntity> BASIC_MOTOR_EXTENSION = REGISTRATE
-            .blockEntity("basic_motor_extension", MotorExtensionBlockEntity.create(2.0f, 64_000, 1))
+            .blockEntity("basic_motor_extension", MotorExtensionBlockEntity.create(MotorExtensionVariants.BASIC))
             .validBlocks(NewAgeBlocks.BASIC_MOTOR_EXTENSION)
             .register();
 
     public static final BlockEntityEntry<MotorExtensionBlockEntity> ADVANCED_MOTOR_EXTENSION = REGISTRATE
-            .blockEntity("advanced_motor_extension", MotorExtensionBlockEntity.create(8.0f, 256_000, 5))
+            .blockEntity("advanced_motor_extension", MotorExtensionBlockEntity.create(MotorExtensionVariants.ADVANCED))
             .validBlocks(NewAgeBlocks.ADVANCED_MOTOR_EXTENSION)
             .register();
 

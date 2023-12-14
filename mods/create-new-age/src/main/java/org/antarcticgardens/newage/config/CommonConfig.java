@@ -46,6 +46,19 @@ public class CommonConfig {
 
     public final ForgeConfigSpec.ConfigValue<Double> reinforcedMotorSpeed;
 
+    public final ForgeConfigSpec.ConfigValue<Double> basicMotorExtensionMultiplier;
+
+    public final ForgeConfigSpec.ConfigValue<Double> advancedMotorExtensionMultiplier;
+
+    public final ForgeConfigSpec.ConfigValue<Integer> basicMotorExtensionExtraCapacity;
+
+    public final ForgeConfigSpec.ConfigValue<Integer> advancedMotorExtensionExtraCapacity;
+
+    public final ForgeConfigSpec.ConfigValue<Integer> basicMotorExtensionScaler;
+
+    public final ForgeConfigSpec.ConfigValue<Integer> advancedMotorExtensionScaler;
+
+
     public CommonConfig(ForgeConfigSpec.Builder builder) {
         suToEnergy = builder
                 .comment(
@@ -145,5 +158,29 @@ public class CommonConfig {
         reinforcedMotorStress = builder
             .comment("Generated SU of a reinforced motor")
             .defineInRange("reinforcedMotorStress", 8192, 1, Double.MAX_VALUE);
+
+        basicMotorExtensionMultiplier = builder
+            .comment("Power Multiplier of a basic motor extension")
+            .defineInRange("basicMotorExtensionMultiplier", 2.0, 1.0, Double.MAX_VALUE);
+
+        advancedMotorExtensionMultiplier = builder
+            .comment("Power Multiplier of a basic motor extension")
+            .defineInRange("advancedMotorExtensionMultiplier", 8.0, 1.0, Double.MAX_VALUE);
+
+        basicMotorExtensionExtraCapacity = builder
+            .comment("Extra FE capacity of a basic motor extension")
+            .defineInRange("basicMotorExtensionExtraCapacity", 64000, 1, Integer.MAX_VALUE);
+
+        advancedMotorExtensionExtraCapacity = builder
+            .comment("Extra FE capacity of a advanced motor extension")
+            .defineInRange("advancedMotorExtensionExtraCapacity", 256000, 1, Integer.MAX_VALUE);
+
+        basicMotorExtensionScaler = builder
+            .comment("Scaler of a basic motor extension")
+            .defineInRange("basicMotorExtensionScaler", 1, 1, Integer.MAX_VALUE);
+
+        advancedMotorExtensionScaler = builder
+            .comment("Scaler of a advanced motor extension")
+            .defineInRange("advancedMotorExtensionScaler", 1, 1, Integer.MAX_VALUE);
     }
 }

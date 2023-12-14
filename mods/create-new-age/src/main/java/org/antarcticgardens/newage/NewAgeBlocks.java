@@ -29,6 +29,7 @@ import org.antarcticgardens.newage.content.reactor.SolidCoriumBlock;
 import org.antarcticgardens.newage.content.reactor.reactorfuelacceptor.ReactorFuelAcceptorBlock;
 import org.antarcticgardens.newage.content.reactor.reactorheatvent.ReactorHeatVentBlock;
 import org.antarcticgardens.newage.content.reactor.reactorrod.ReactorRodBlock;
+import org.antarcticgardens.newage.content.motors.extension.MotorExtensionVariants;
 
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
@@ -98,7 +99,7 @@ public class NewAgeBlocks {
                     .register();
 
     public static final BlockEntry<MotorExtensionBlock> BASIC_MOTOR_EXTENSION =
-            REGISTRATE.block("basic_motor_extension", (p) -> new MotorExtensionBlock(p, NewAgeBlockEntityTypes.BASIC_MOTOR_EXTENSION, 2.0f, 64_000))
+            REGISTRATE.block("basic_motor_extension", (p) -> new MotorExtensionBlock(p, NewAgeBlockEntityTypes.BASIC_MOTOR_EXTENSION, MotorExtensionVariants.BASIC))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(4.0f))
@@ -106,7 +107,7 @@ public class NewAgeBlocks {
                     .register();
 
     public static final BlockEntry<MotorExtensionBlock> ADVANCED_MOTOR_EXTENSION =
-            REGISTRATE.block("advanced_motor_extension", (p) -> new MotorExtensionBlock(p, NewAgeBlockEntityTypes.ADVANCED_MOTOR_EXTENSION, 8.0f, 256_000))
+            REGISTRATE.block("advanced_motor_extension", (p) -> new MotorExtensionBlock(p, NewAgeBlockEntityTypes.ADVANCED_MOTOR_EXTENSION, MotorExtensionVariants.ADVANCED))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(4.0f))

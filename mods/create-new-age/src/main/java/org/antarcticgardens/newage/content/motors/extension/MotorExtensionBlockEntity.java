@@ -16,6 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.antarcticgardens.newage.content.motors.extension.MotorExtensionVariants;
 
 import java.util.List;
 
@@ -26,16 +27,17 @@ public class MotorExtensionBlockEntity extends SmartBlockEntity {
     public final long extraBattery;
     public final int scaler;
 
-    public MotorExtensionBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, float maxMultiplier, long extraBattery, int scaler) {
+    public MotorExtensionBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, MotorExtensionVariants variant) {
         super(arg, arg2, arg3);
-        this.extraBattery = extraBattery;
-        this.scaler = scaler;
+        this.extraBattery = MotorExtensionVariants.extensionExtraCapacity(variant);
+        this.scaler = (int)MotorExtensionVariants.extensionScaler(variant);
+        float maxMultiplier = MotorExtensionVariants.extensionMultiplier(variant);
         stressBehavior.scaler = scaler;
         stressBehavior.between(1, (int)(100 * maxMultiplier));
     }
 
-    public static BlockEntityBuilder.BlockEntityFactory<MotorExtensionBlockEntity> create(float maxMultiplier, long extraBattery, int scaler) {
-        return (type, pos, state) -> new MotorExtensionBlockEntity(type, pos, state, maxMultiplier, extraBattery, scaler);
+    public static BlockEntityBuilder.BlockEntityFactory<MotorExtensionBlockEntity> create(MotorExtensionVariants variant) {
+        return (type, pos, state) -> new MotorExtensionBlockEntity(type, pos, state, variant);
     }
 
 
