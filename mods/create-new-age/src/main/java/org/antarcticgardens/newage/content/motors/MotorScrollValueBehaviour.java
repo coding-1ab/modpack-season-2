@@ -50,10 +50,19 @@ public class MotorScrollValueBehaviour extends ScrollValueBehaviour {
                         .style(ChatFormatting.BOLD))
                 .component();
     }
+    
+    public void betweenValidated(int min, int max) {
+        this.between(min, max);
+        
+        if (value > max) {
+            value = max;
+        } else if (value < min) {
+            value = min;
+        }
+    }
 
     @Override
     public String getClipboardKey() {
         return "Speed";
     }
-
 }

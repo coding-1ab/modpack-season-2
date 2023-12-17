@@ -1,7 +1,7 @@
 # Create: New Age mod credits
 This mod has been made by Antarctic Gardens.
-## Main team:
-Programming - Talstoj, nullBlade <br>
+## Main team
+Programming - Kastuś Talstoj, nullBlade <br>
 Original assets - nullBlade
 
 ## Outside contributions
@@ -24,8 +24,10 @@ Thorium textures (block+item) - ProfBones
 ### Bug fixes
 Fixing java reflection usage when not needed - Skeleton321
 
+### Other programming
+Motors configuration - Anton Masyakin
+
 ## Translations
-Belarusian — talstoj <br>
 Spanish — Albertosaurio65 <br>
 Simplified Chinese — 叁了个肆@Bilibili
 

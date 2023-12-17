@@ -28,9 +28,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.antarcticgardens.newage.config.NewAgeConfig;
+import org.antarcticgardens.newage.content.motors.variants.IMotorVariant;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 import org.jetbrains.annotations.Nullable;
-import org.antarcticgardens.newage.content.motors.MotorVariants;
 
 import java.util.List;
 
@@ -39,9 +39,9 @@ public class MotorBlock extends DirectionalKineticBlock implements IRotate, IBE<
     protected static final VoxelShape Z_AXIS_AABB = Block.box(2.0, 2.0, 0.0, 14.0, 14.0, 16.0);
     protected static final VoxelShape X_AXIS_AABB = Block.box(0.0, 2.0, 2.0, 16.0, 14.0, 14.0);
     private final BlockEntityEntry<MotorBlockEntity> entry;
-    private final MotorVariants variant;
+    private final IMotorVariant variant;
 
-    public MotorBlock(Properties properties, BlockEntityEntry<MotorBlockEntity> entry, MotorVariants variant) {
+    public MotorBlock(Properties properties, BlockEntityEntry<MotorBlockEntity> entry, IMotorVariant variant) {
         super(properties);
         this.entry = entry;
         this.variant = variant;
@@ -51,18 +51,17 @@ public class MotorBlock extends DirectionalKineticBlock implements IRotate, IBE<
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Lang.translate("tooltip.create_new_age.generates").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").add(Lang.number(variant.motorStress(variant) * NewAgeConfig.getCommon().motorSUMultiplier.get()).text(" ")
+        tooltip.add(Lang.text(" ").add(Lang.number(variant.getStress() * NewAgeConfig.getCommon().motorSUMultiplier.get()).text(" ")
                 .translate("generic.unit.stress").style(ChatFormatting.AQUA)).component());
 
         tooltip.add(Lang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY)
                 .component());
         tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy",
-                                             StringFormattingTool.formatLong(variant.motorCapacity(variant))).style(ChatFormatting.AQUA).component());
+                                             StringFormattingTool.formatLong(variant.getMaxCapacity())).style(ChatFormatting.AQUA).component());
 
         tooltip.add(Lang.translate("tooltip.create_new_age.max_speed").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.rpm", (int)variant.motorSpeed(variant)).style(ChatFormatting.AQUA).component());
-
+        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.rpm", variant.getSpeed()).style(ChatFormatting.AQUA).component());
     }
 
     @Override

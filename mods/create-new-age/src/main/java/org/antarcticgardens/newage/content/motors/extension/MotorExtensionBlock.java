@@ -27,8 +27,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.antarcticgardens.newage.content.motors.MotorBlock;
 import org.antarcticgardens.newage.content.motors.MotorBlockEntity;
+import org.antarcticgardens.newage.content.motors.extension.variants.IMotorExtensionVariant;
 import org.jetbrains.annotations.Nullable;
-import org.antarcticgardens.newage.content.motors.extension.MotorExtensionVariants;
 
 import java.util.List;
 
@@ -39,10 +39,9 @@ public class MotorExtensionBlock extends Block implements IBE<MotorExtensionBloc
     protected static final VoxelShape Z_AXIS_AABB = Block.box(2.0, 2.0, 0.0, 14.0, 14.0, 16.0);
     protected static final VoxelShape X_AXIS_AABB = Block.box(0.0, 2.0, 2.0, 16.0, 14.0, 14.0);
     private final BlockEntityEntry<MotorExtensionBlockEntity> entry;
-    private MotorExtensionVariants variant;
+    private final IMotorExtensionVariant variant;
 
-
-    public MotorExtensionBlock(Properties properties, BlockEntityEntry<MotorExtensionBlockEntity> entry, MotorExtensionVariants variant) {
+    public MotorExtensionBlock(Properties properties, BlockEntityEntry<MotorExtensionBlockEntity> entry, IMotorExtensionVariant variant) {
         super(properties);
         this.entry = entry;
         this.variant = variant;
@@ -58,12 +57,11 @@ public class MotorExtensionBlock extends Block implements IBE<MotorExtensionBloc
         tooltip.add(Component.translatable("tooltip.create_new_age.motor_extension").withStyle(ChatFormatting.DARK_GRAY));
         tooltip.add(Lang.translate("tooltip.create_new_age.stress_limit_multiplier").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").add(Lang.number((int)(MotorExtensionVariants.extensionMultiplier(variant)*100)).text("%").style(ChatFormatting.AQUA)).component());
+        tooltip.add(Lang.text(" ").add(Lang.number((int)(variant.getMultiplier() * 100)).text("%").style(ChatFormatting.AQUA)).component());
 
         tooltip.add(Lang.translate("tooltip.create_new_age.additional_capacity").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").add(Lang.number(MotorExtensionVariants.extensionExtraCapacity(variant)).text("⚡").style(ChatFormatting.AQUA)).component());
-
+        tooltip.add(Lang.text(" ").add(Lang.number(variant.getExtraCapacity()).text("⚡").style(ChatFormatting.AQUA)).component());
     }
 
     @Nullable

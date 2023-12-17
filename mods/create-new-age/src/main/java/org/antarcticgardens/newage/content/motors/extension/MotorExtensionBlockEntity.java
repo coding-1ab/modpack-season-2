@@ -16,48 +16,58 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.antarcticgardens.newage.content.motors.extension.MotorExtensionVariants;
+import org.antarcticgardens.newage.content.motors.extension.variants.IMotorExtensionVariant;
 
 import java.util.List;
 
 public class MotorExtensionBlockEntity extends SmartBlockEntity {
-    public MotorExtensionScrollValueBehaviour stressBehavior;
-    public float multiplier = 1;
+    private MotorExtensionScrollValueBehaviour stressBehavior;
+    private float multiplier = 1;
+    private final IMotorExtensionVariant variant;
 
-    public final long extraBattery;
-    public final int scaler;
-
-    public MotorExtensionBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, MotorExtensionVariants variant) {
+    public MotorExtensionBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, IMotorExtensionVariant variant) {
         super(arg, arg2, arg3);
-        this.extraBattery = MotorExtensionVariants.extensionExtraCapacity(variant);
-        this.scaler = (int)MotorExtensionVariants.extensionScaler(variant);
-        float maxMultiplier = MotorExtensionVariants.extensionMultiplier(variant);
-        stressBehavior.scaler = scaler;
-        stressBehavior.between(1, (int)(100 * maxMultiplier));
+        this.variant = variant;
     }
 
-    public static BlockEntityBuilder.BlockEntityFactory<MotorExtensionBlockEntity> create(MotorExtensionVariants variant) {
+    public static BlockEntityBuilder.BlockEntityFactory<MotorExtensionBlockEntity> create(IMotorExtensionVariant variant) {
         return (type, pos, state) -> new MotorExtensionBlockEntity(type, pos, state, variant);
     }
 
+    @Override
+    public void tick() {
+        super.tick();
+        
+        if (multiplier > variant.getMultiplier()) {
+            multiplier = variant.getMultiplier();
+            stressBehavior.setValue((int) (multiplier * 100));
+        }
+        
+        stressBehavior.step = variant.getScrollStep();
+        stressBehavior.betweenValidated(1, (int)(100 * variant.getMultiplier()));
+    }
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-        stressBehavior = new MotorExtensionScrollValueBehaviour(Lang.translateDirect("new_age.motor.stress_multiplier"), this, new MotorValueBox(), scaler);
+        stressBehavior = new MotorExtensionScrollValueBehaviour(Lang.translateDirect("new_age.motor.stress_multiplier"), this, new MotorValueBox(), 1);
         stressBehavior.value = 100;
-        stressBehavior.withCallback(i ->
-        {
+        stressBehavior.withCallback(i -> {
             multiplier = i/100f;
             stressBehavior.value = i;
             this.notifyUpdate();
         });
         behaviours.add(stressBehavior);
     }
+    
+    public float getMultiplier() {
+        return multiplier;
+    }
+    
+    public IMotorExtensionVariant getVariant() {
+        return variant;
+    }
 
     static class MotorValueBox extends ValueBoxTransform.Sided {
-
-
-
         @Override
         protected Vec3 getSouthLocation() {
             return VecHelper.voxelSpace(8, 8, 12.5);
@@ -89,7 +99,6 @@ public class MotorExtensionBlockEntity extends SmartBlockEntity {
                 return false;
             return direction.getAxis() != facing.getAxis();
         }
-
     }
 
     @Override
@@ -104,5 +113,4 @@ public class MotorExtensionBlockEntity extends SmartBlockEntity {
         compound.putFloat("stressMultiplier", multiplier);
         super.write(compound, clientPacket);
     }
-
 }

@@ -15,12 +15,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class MotorExtensionScrollValueBehaviour extends ScrollValueBehaviour {
+    protected int step;
 
-    protected int scaler;
-
-    public MotorExtensionScrollValueBehaviour(Component label, SmartBlockEntity be, ValueBoxTransform slot, int scaler) {
+    public MotorExtensionScrollValueBehaviour(Component label, SmartBlockEntity be, ValueBoxTransform slot, int step) {
         super(label, be, slot);
-        this.scaler = scaler;
+        this.step = step;
         withFormatter(v -> String.valueOf(Math.abs(v)));
     }
 
@@ -29,8 +28,8 @@ public class MotorExtensionScrollValueBehaviour extends ScrollValueBehaviour {
         ImmutableList<Component> rows = ImmutableList.of(Components.literal("%")
                         .withStyle(ChatFormatting.BOLD));
         ValueSettingsFormatter formatter = new ValueSettingsFormatter(this::formatSettings);
-        value /= scaler;
-        return new ValueSettingsBoard(label, max/scaler, 100, rows, formatter);
+        value /= step;
+        return new ValueSettingsBoard(label, max / step, 100, rows, formatter);
     }
 
     @Override
@@ -38,7 +37,7 @@ public class MotorExtensionScrollValueBehaviour extends ScrollValueBehaviour {
         int value = Math.max(1, valueSetting.value());
         if (!valueSetting.equals(getValueSettings()))
             playFeedbackSound(this);
-        setValue(value*scaler);
+        setValue(value * step);
     }
 
     @Override
@@ -47,15 +46,24 @@ public class MotorExtensionScrollValueBehaviour extends ScrollValueBehaviour {
     }
 
     public MutableComponent formatSettings(ValueSettings settings) {
-        return Lang.number(Math.max(1, Math.abs(settings.value() * scaler)))
+        return Lang.number(Math.max(1, Math.abs(settings.value() * step)))
                 .add(Lang.text("%")
                         .style(ChatFormatting.BOLD))
                 .component();
+    }
+
+    public void betweenValidated(int min, int max) {
+        this.between(min, max);
+
+        if (value > max) {
+            value = max;
+        } else if (value < min) {
+            value = min;
+        }
     }
 
     @Override
     public String getClipboardKey() {
         return "Stress Multiplier";
     }
-
 }
