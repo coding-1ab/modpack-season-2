@@ -7,9 +7,13 @@ import com.simibubi.create.foundation.utility.Lang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import org.antarcticgardens.newage.CreateNewAge;
+import org.antarcticgardens.newage.NewAgeTags;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.generation.magnets.IMagneticBlock;
 import org.antarcticgardens.newage.tools.RelativeBlockPos;
@@ -63,8 +67,25 @@ public class GeneratorCoilBlockEntity extends KineticBlockEntity {
         float stress = plainStress;
 
         for (BlockPos pos : magnetPositions) {
-            if (level.getBlockState(pos).getBlock() instanceof IMagneticBlock magneticBlock)
+            BlockState state = level.getBlockState(pos);
+            if (state.getBlock() instanceof IMagneticBlock magneticBlock)
                 stress += magneticBlock.getStrength();
+            else if (state.is(NewAgeTags.CUSTOM_MAGNET_TAG)) {
+                for (TagKey<Block> blockTagKey : state.getTags().toList()) {
+                    if (blockTagKey.location().getNamespace().equals(CreateNewAge.MOD_ID)) {
+                        String path = blockTagKey.location().getPath();
+                        if (path.startsWith("magnets/strength_")) {
+                            try {
+                                stress += Integer.parseInt(path.substring(17));
+                                break;
+                            } catch (NumberFormatException e) {
+                                e.printStackTrace();
+                                CreateNewAge.LOGGER.error("BAD TAG " + blockTagKey + " on item " + state.getBlock());
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         this.lastStressApplied = stress;
