@@ -146,7 +146,6 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
         }
         if (capacitorMode) {
             if (EnergyHooks.isEnergyItem(transportedItemStack.stack)) {
-                capacitorMode = true;
 
                 var stack = new ItemStackHolder(transportedItemStack.stack);
 
@@ -210,6 +209,9 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
             }
             shouldCreateParticles = true;
             blockEntity.sendData();
+
+            currentRecipe = null;
+
         }
 
         return ProcessingResult.HOLD;
