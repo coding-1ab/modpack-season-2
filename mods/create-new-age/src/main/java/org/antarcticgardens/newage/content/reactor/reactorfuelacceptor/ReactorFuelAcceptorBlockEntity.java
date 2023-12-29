@@ -34,7 +34,7 @@ public class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBlockEntity
 
     public ReactorFuelAcceptorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
-        container = new SimpleContainer(9);
+        container = new SimpleContainer(3);
     }
 
     public SimpleContainer container;
@@ -117,7 +117,7 @@ public class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBlockEntity
             for (Direction dir : Direction.values()) {
                 findRods(rods, dir);
             }
-            if (rods.size() == 0) {
+            if (rods.isEmpty()) {
                 return;
             }
             AtomicInteger have = new AtomicInteger();
