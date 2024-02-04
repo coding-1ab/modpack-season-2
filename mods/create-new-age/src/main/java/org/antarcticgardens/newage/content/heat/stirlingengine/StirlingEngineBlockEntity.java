@@ -34,15 +34,15 @@ public class StirlingEngineBlockEntity extends GeneratingKineticBlockEntity impl
 
     @Override
     public float getTierHeat() {
-        return speed * 3.125f;
+        return speed * 9.375f;
     }
 
     @Nullable
     @Override
     public float[] getHeatTiers() {
         return new float[] {
-                50,
-                100
+                150,
+                600
         };
     }
 
@@ -81,29 +81,31 @@ public class StirlingEngineBlockEntity extends GeneratingKineticBlockEntity impl
         if (getLevel() == null)
             return;
 
-        if (getLevel().getGameTime() % 20 == 0) {
-            HeatBlockEntity.transferAround(this);
-            if (getHeat() > 50) {
-                if (getHeat() > 100) {
-                    setHeat(getHeat() - 100);
-                    if (speed != 32) {
-                        speed = 32;
-                        updateGeneratedRotation();
+        if (getLevel().getGameTime()  % 20 == 0) {
+            if (getLevel().getGameTime() % 60 == 0) {
+                if (getHeat() >= 150) {
+                    if (getHeat() >= 600 || getHeat() >= 300 && speed == 32) {
+                        setHeat(getHeat() - 300);
+                        if (speed != 32) {
+                            speed = 32;
+                            updateGeneratedRotation();
+                        }
+                        HeatBlockEntity.handleOverheat(this);
+                    } else {
+                        setHeat(getHeat() - 150);
+                        if (speed != 16) {
+                            speed = 16;
+                            updateGeneratedRotation();
+                        }
                     }
-                    HeatBlockEntity.handleOverheat(this);
                 } else {
-                    setHeat(getHeat() - 50);
-                    if (speed != 16) {
-                        speed = 16;
+                    if (speed != 0) {
+                        speed = 0;
                         updateGeneratedRotation();
                     }
-                }
-            } else {
-                if (speed != 0) {
-                    speed = 0;
-                    updateGeneratedRotation();
                 }
             }
+            HeatBlockEntity.transferAround(this);
         }
 
         if (!getLevel().isClientSide) {

@@ -5,8 +5,10 @@ import com.simibubi.create.foundation.utility.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
@@ -112,7 +114,6 @@ public interface HeatBlockEntity {
         handleOverheat(self, () -> self.getLevel().setBlock(self.getBlockPos(), Blocks.LAVA.defaultBlockState(), 3));
     }
 
-
     static <T extends  BlockEntity & HeatBlockEntity> void transferAround(T self) {
         if (self.getLevel() == null) {
             return;
@@ -132,6 +133,10 @@ public interface HeatBlockEntity {
         average(self, totalToAverage, totalBlocks, setters);
 
         self.setChanged();
+        if (self.getLevel() instanceof ServerLevel level && self.getLevel().getGameTime() % 100 == 0) {
+            BlockState state = self.getBlockState();
+            level.sendBlockUpdated(self.getBlockPos(), state, state, 3);
+        }
     }
 
     static <T extends BlockEntity & HeatBlockEntity> void average(T self, float totalToAverage, int totalBlocks, HeatBlockEntity[] setters) {
