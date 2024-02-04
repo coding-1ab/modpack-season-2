@@ -67,6 +67,7 @@ public class HeaterBlock extends Block implements EntityBlock, IWrenchable {
                 level.setBlock(blockPos, state.setValue(STRENGTH, BlazeBurnerBlock.HeatLevel.NONE), 3);
             }
             self.setChanged();
+            HeatBlockEntity.trySync(self);
         };
     }
 

@@ -133,7 +133,10 @@ public interface HeatBlockEntity {
         average(self, totalToAverage, totalBlocks, setters);
 
         self.setChanged();
-        if (self.getLevel() instanceof ServerLevel level && self.getLevel().getGameTime() % 100 == 0) {
+    }
+
+    static <T extends BlockEntity & HeatBlockEntity> void trySync(T self) {
+        if (self.getLevel() instanceof ServerLevel level && self.getLevel().getGameTime() % 160 == 0) {
             BlockState state = self.getBlockState();
             level.sendBlockUpdated(self.getBlockPos(), state, state, 3);
         }

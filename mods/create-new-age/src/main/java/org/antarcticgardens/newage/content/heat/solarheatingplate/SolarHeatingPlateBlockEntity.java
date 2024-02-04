@@ -118,5 +118,6 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
         float light = world.getBrightness(LightLayer.SKY, blockPos.above()) - dark;
         last = (float) Math.max((light/15f)*energyPerSecond*generationMultiplier - Math.max(0, heat - (20 * energyPerSecond*generationMultiplier)), 0);
         addHeat(last);
+        HeatBlockEntity.trySync(this);
     }
 }

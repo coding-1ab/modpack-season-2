@@ -151,6 +151,7 @@ public class HeatPumpBlock extends Block implements EntityBlock, IWrenchable {
             }
 
             HeatBlockEntity.handleOverheat(self);
+            HeatBlockEntity.trySync(self);
         };
     }
 }

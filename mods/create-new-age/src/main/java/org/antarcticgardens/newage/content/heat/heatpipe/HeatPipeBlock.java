@@ -166,6 +166,7 @@ public class HeatPipeBlock extends Block implements EntityBlock, IWrenchable {
 
             HeatBlockEntity.transferAround(selfC);
             HeatBlockEntity.handleOverheat(selfC);
+            HeatBlockEntity.trySync(selfC);
         };
     }
 }
