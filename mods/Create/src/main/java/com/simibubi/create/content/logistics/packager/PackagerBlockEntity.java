@@ -264,6 +264,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		}
 
 		heldBox = extractedPackageItem.isEmpty() ? PackageItem.containing(extractedItems) : extractedPackageItem.copy();
+		PackageItem.clearAddress(heldBox);
 		if (fixedAddress != null)
 			PackageItem.addAddress(heldBox, fixedAddress);
 		animationInward = false;

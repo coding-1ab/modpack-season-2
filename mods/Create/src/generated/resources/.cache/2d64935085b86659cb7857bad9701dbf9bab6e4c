@@ -1,4 +1,4 @@
-// 1.20.1	2023-11-14T17:22:08.2034016	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
+// 1.20.1	2023-11-15T17:03:30.7508565	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
 60bbdf92d2ac9824ea6144955c74043a6005f79d assets/create/blockstates/acacia_window.json
 6a67703c2697d81b7dc83e9d72a66f9c9ff08383 assets/create/blockstates/acacia_window_pane.json
 c3ae87b62e81d8e9476eccd793bb1548d74c66a1 assets/create/blockstates/adjustable_chain_gearshift.json
@@ -52,6 +52,8 @@ debf33346bf410216f21082e1e8d07aa6250b84c assets/create/blockstates/brown_nixie_t
 440b29e1dffa4374ddc1aed444bff18a485bc1cb assets/create/blockstates/brown_valve_handle.json
 2064534de4791b339fdcd4ef3a8129a2e233ec50 assets/create/blockstates/calcite_pillar.json
 060c957b28afed9f4e0954cbef7e80cbf4b99f58 assets/create/blockstates/cart_assembler.json
+eeffe640493e7989b05126fa39d239d406627e3d assets/create/blockstates/charged_contact.json
+582b1c5bebe0e94fed65eca11b5534b0e283d8c9 assets/create/blockstates/charge_relay.json
 c7eca70054241944171b1d4ffcba0376b071ec62 assets/create/blockstates/chocolate.json
 9eb989b0a0545af9efd052d1f127b2ec28a972d1 assets/create/blockstates/chute.json
 b5170d754ce5f07ea2b4646eb07c099c50bae249 assets/create/blockstates/clipboard.json
@@ -65,6 +67,7 @@ b5170d754ce5f07ea2b4646eb07c099c50bae249 assets/create/blockstates/clipboard.jso
 134c62bbd8ea43ff54c8edb2da5ea707f0a228fe assets/create/blockstates/copper_backtank.json
 1b1e311efecc45ce7a3f69c8a1c2c53c6559b995 assets/create/blockstates/copper_bars.json
 33175a9b530554e42e2ac68a9761d55f7f8623cf assets/create/blockstates/copper_casing.json
+761120a063b09562a407ce27a7326664dffa9a7b assets/create/blockstates/copper_coil.json
 f7254f20f91e2f1295e36d2e70390d43f3952d07 assets/create/blockstates/copper_door.json
 736777de0eb038ff1ef9e8fe9d04c23d80239eda assets/create/blockstates/copper_ladder.json
 df3103dfc1c3ba7a9573229d009cb0de4925df16 assets/create/blockstates/copper_scaffolding.json
@@ -587,9 +590,11 @@ d688e80dfbd5b17970814887c3698fc721981caa assets/create/blockstates/wooden_bracke
 b0d8f08968763a5f74e5cd5644377a76a9f39753 assets/create/blockstates/yellow_toolbox.json
 fe8c497aacc641c2f01cec90bba9f19e59cc2ed2 assets/create/blockstates/yellow_valve_handle.json
 e819e93fdcbe9fd9c050a052d2718ff3b3539365 assets/create/blockstates/zinc_block.json
+c9b71aef4eeca024f63f1c4a3cf4564726bf860c assets/create/blockstates/zinc_casing.json
+d44ad16b315bbd2fa226b367d51777184c018258 assets/create/blockstates/zinc_coil.json
 64121dcb216381c83b4fe28aa361ea07c24c9ad0 assets/create/blockstates/zinc_ore.json
-711da58b5b20fb40868de441134f5875d1231b38 assets/create/lang/en_ud.json
-7c5765fe164103972a783ec113aa637d7bcd1911 assets/create/lang/en_us.json
+2a0fae4dc61478f02f3ab0141c9ea6233ef511e0 assets/create/lang/en_ud.json
+47574ab81a7607ad0923be4874a41390c4195067 assets/create/lang/en_us.json
 a97e1060e00ae701a02e39cd4ef8054cf345fac4 assets/create/models/block/acacia_window.json
 103e032c0b1a0a6a27c67da8c91179a564bd281c assets/create/models/block/acacia_window_pane_noside.json
 fb00b627abda76ad4fea867ca57dbfadd24fffa3 assets/create/models/block/acacia_window_pane_noside_alt.json
@@ -724,6 +729,7 @@ d8339ab47ffa828985c7da27c37794a95aba8b42 assets/create/models/block/clockwork_be
 8afe6afaff33b94c1fcee68fdaf842d525eec212 assets/create/models/block/copper_cap.json
 58e6ed1f765ba67ca5d8a446af357f311587e431 assets/create/models/block/copper_cap_alt.json
 d8053f194ee9331288aadac94bc23fff5a63ae9c assets/create/models/block/copper_casing.json
+ceaa622d3ad11f249f9278ac03d49a941a106a79 assets/create/models/block/copper_coil.json
 2606721928394e80b24b5f0ff7011c1c552cfe7c assets/create/models/block/copper_ladder.json
 d063df8e9b974c11fc7810ce176b02d7d924e15b assets/create/models/block/copper_post.json
 2b5aed4a917694beb33d9b0ecbc800dcbc143ee9 assets/create/models/block/copper_post_ends.json
@@ -1669,6 +1675,8 @@ cf8477d6c7558ceba38416fae755567086a856a6 assets/create/models/block/yellow_sail.
 21bb6e0b43984214c496e531e16dd60aeb619a42 assets/create/models/block/yellow_toolbox.json
 467109ede866fb030d2cdc46c832643630d982b5 assets/create/models/block/yellow_valve_handle.json
 23d6852eca1bf1480dc74ed51d15c098e26a520f assets/create/models/block/zinc_block.json
+cd3a393d9668e7e2ff353ef6b9d30628732f0bd9 assets/create/models/block/zinc_casing.json
+c64796e26eb256938fa6c386b94fa0d0c09be4f1 assets/create/models/block/zinc_coil.json
 617330267f01a08062b05b8516082d7ebdab3d0b assets/create/models/block/zinc_ore.json
 86b835fa8d2264feb2159262b069c6c2cf68e818 assets/create/models/item/acacia_window.json
 697eda24a3a1c79401d7d073a503804cb589e2f5 assets/create/models/item/acacia_window_pane.json
@@ -1725,6 +1733,8 @@ fce64539b36fc8a5ffa39d7a3f73765818437cbf assets/create/models/item/brown_seat.js
 1db479848369140bb913ba09f3f1d994e4ac864c assets/create/models/item/builders_tea.json
 f5ff4e2ed2ea2e43b6d02f6a95ba02b2e4b611dc assets/create/models/item/calcite_pillar.json
 1cdb2b8801551c1540bb9b2a9cc3d725a2b433e7 assets/create/models/item/cart_assembler.json
+9bf9831d1341f41c885280356ba2212c9da71e6a assets/create/models/item/charged_contact.json
+8ab2a7a0fff23e72810673d8c863269664b83119 assets/create/models/item/charge_relay.json
 a197d08618f4035182c91a6b16031eb681ab8a7c assets/create/models/item/chest_minecart_contraption.json
 293cfa8b1073f8641a2c623b73a90907576c36ed assets/create/models/item/chocolate_bucket.json
 77654cbd16cdfa95181ea3f85fcfa3cd352b69fd assets/create/models/item/chocolate_glazed_berries.json
@@ -1745,6 +1755,7 @@ de48f4b6fa26928ebc7d5d60e6a0767093430d65 assets/create/models/item/contraption_c
 6c53b1a6ed28929b7a0a090edf6101e610f842fc assets/create/models/item/copper_backtank_placeable.json
 2a0b31d76ab8a74c458475640d17de15ad314fcd assets/create/models/item/copper_bars.json
 688e4dee99126b7507761de618d6788c18f17153 assets/create/models/item/copper_casing.json
+21d59aa4de7bbb978b21065124c0dfd13dcbdf4d assets/create/models/item/copper_coil.json
 68890c027cd6a094b484a237d3ff5daeb09622af assets/create/models/item/copper_diving_boots.json
 23499699c6ea6a30673835056f5d0039519413fa assets/create/models/item/copper_diving_helmet.json
 0e394c50a977eae45d3d8e6a62e256a5408ac994 assets/create/models/item/copper_door.json
@@ -2291,6 +2302,8 @@ ac59f141cd3c3f7e57a794e542d6e22bf8ebb8f9 assets/create/models/item/yellow_seat.j
 532a429d58a177f61b4d67180db7676fa7536052 assets/create/models/item/yellow_toolbox.json
 2c87ef8a26a01a17b2f3799d62cb27cf1107d061 assets/create/models/item/yellow_valve_handle.json
 bcf63b7198d31d3a94b2566171b7e3e84464601c assets/create/models/item/zinc_block.json
+df6b2facd5807b68d5ebac55934b9ed2acafdb33 assets/create/models/item/zinc_casing.json
+0a9e2af4b6cde7e17e83ec919df68cfbf442a63a assets/create/models/item/zinc_coil.json
 d4a3290393c1c659f3d4dd4e267a87d287bd49a6 assets/create/models/item/zinc_ingot.json
 1e9656f81ec01a89796b175cf029d1de45b758fe assets/create/models/item/zinc_nugget.json
 f3719d4d3a8d1e0d9f36db5d1317894ecacf3bf3 assets/create/models/item/zinc_ore.json
@@ -3004,6 +3017,8 @@ d391cff5b741fd6ddf5b6fa64e05526eb3a9f0d9 data/create/loot_tables/blocks/brown_ni
 7c7cf4c30786f6e0a699e2b3f9120343e53107f4 data/create/loot_tables/blocks/brown_valve_handle.json
 06d1c478e4236210aa12b5911691868fef33bb5f data/create/loot_tables/blocks/calcite_pillar.json
 515c839deea520b07b03f7ba65c4a7b22fdf5ba3 data/create/loot_tables/blocks/cart_assembler.json
+3b3781f8766d5d23f8c8778263c6baf2f81f59fc data/create/loot_tables/blocks/charged_contact.json
+815e28cf0f41cd8024d291339cad3f8cdcd000a8 data/create/loot_tables/blocks/charge_relay.json
 fb4877d45df15be1a74378ab28f23fbf9d0657ef data/create/loot_tables/blocks/chute.json
 ace9255cbdd1af5e5068916d2a6bed2f861f81f1 data/create/loot_tables/blocks/clipboard.json
 bfd871acdde6c239098ead188a5aad7636d11bc0 data/create/loot_tables/blocks/clockwork_bearing.json
@@ -3016,6 +3031,7 @@ f2058ad809606d54123c7efbad2a6b995ed1defe data/create/loot_tables/blocks/controls
 e069fbd8c2331ef76611a33c6d66fd025b65d3b6 data/create/loot_tables/blocks/copper_backtank.json
 fa0856e11351ad0882de2066569807e782071881 data/create/loot_tables/blocks/copper_bars.json
 5f48b688829ca7849997d88697cff2de1ede4804 data/create/loot_tables/blocks/copper_casing.json
+880ccd1ac5188dd35d00414de4374ecb6d11d8c8 data/create/loot_tables/blocks/copper_coil.json
 0937b9f634b86dbe41e07eda52c69993fce60fb5 data/create/loot_tables/blocks/copper_door.json
 8ed70d812f38adfa147db07a4f2bbe206a69ad20 data/create/loot_tables/blocks/copper_ladder.json
 ac621731ca23e6fbb1003be59edacdf837dbc37e data/create/loot_tables/blocks/copper_scaffolding.json
@@ -3536,6 +3552,8 @@ d9f853e662b004b6ffdbb82af99ad7e774698178 data/create/loot_tables/blocks/yellow_n
 11b10beba7a6842ce3d01ea4210bff7d3aa6ab94 data/create/loot_tables/blocks/yellow_toolbox.json
 b9648ec56e55fe2b9d54adf172405519a46bfa66 data/create/loot_tables/blocks/yellow_valve_handle.json
 8be474a69469561dfe759159a40fb135a6ad5de6 data/create/loot_tables/blocks/zinc_block.json
+11b555a6eb588caaffbfe8deb7cfa7f10ab38e90 data/create/loot_tables/blocks/zinc_casing.json
+59bc464d9bc1dcb50d0ca8fab5314fbef5a0968e data/create/loot_tables/blocks/zinc_coil.json
 4ab95e007dd1ad1401800116e785ce85607907f8 data/create/loot_tables/blocks/zinc_ore.json
 8af7629e400e2447e672796724ebcf20b9e327f1 data/create/recipes/acacia_window.json
 16af9663aaaa3eaec11a6de9fde8df946fbec529 data/create/recipes/acacia_window_pane.json
@@ -4177,7 +4195,7 @@ fdd28fc956dbec71ba24cdea5adfc049d6eb31e3 data/create/recipes/tuff_pillar_from_st
 8a32b955b4320eddff017378785d1c95e1434229 data/create/recipes/weathered_copper_tile_stairs.json
 f1a03ac86925e26cbec6aeeada2eafb40008fc8e data/create/recipes/weathered_copper_tile_stairs_from_weathered_copper_tiles_stonecutting.json
 8b98a671e80724e815a3af0c3764d760e4170e02 data/create/tags/blocks/brittle.json
-8b6c0b444b15f7fb2d55b9cbcb68537c1269f877 data/create/tags/blocks/casing.json
+6aa1b027fbeb41d04edc14868d6b69324f505b76 data/create/tags/blocks/casing.json
 35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/create/tags/blocks/contraption_inventory_deny.json
 c7ec0dbc18e9c1b58e568ed925287b89df11a136 data/create/tags/blocks/copycat_allow.json
 876eb9210f4a14898a2fe6d225699c66b5bdfeef data/create/tags/blocks/copycat_deny.json
@@ -4209,7 +4227,7 @@ e191d5f912e05091b3a0b1df17f4c4181e04d96f data/create/tags/fluids/fan_processing_
 c9ae54a7510073b17edf82f7591e14bdb2c51837 data/create/tags/fluids/fan_processing_catalysts/splashing.json
 35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/create/tags/items/blaze_burner_fuel/regular.json
 8ba98bf390a326abeebfd5d84be5f740c935a8b6 data/create/tags/items/blaze_burner_fuel/special.json
-8b6c0b444b15f7fb2d55b9cbcb68537c1269f877 data/create/tags/items/casing.json
+6aa1b027fbeb41d04edc14868d6b69324f505b76 data/create/tags/items/casing.json
 f43cac8216e2a9347e48cf93a43de95dd810ca20 data/create/tags/items/contraption_controlled.json
 d371dfd35e49a7bef19f59c03e7f4ae20992f03d data/create/tags/items/create_ingots.json
 910d0f5ccbc4c84b224eca1f1588b1695f41447b data/create/tags/items/crushed_raw_materials.json
@@ -4298,8 +4316,8 @@ c741ba83b562ae3459d7c4f2db69537f549ea411 data/forge/tags/items/tools/wrench.json
 515a1c773e617dd7e38aa1b893acc7db2dd30e08 data/minecraft/tags/blocks/dripstone_replaceable_blocks.json
 e3321ff14704c031a2c16953b7e391f4f24dd70b data/minecraft/tags/blocks/impermeable.json
 515a1c773e617dd7e38aa1b893acc7db2dd30e08 data/minecraft/tags/blocks/lush_ground_replaceable.json
-048aac62c140e80fdf697ac3c69c491a885a1fa2 data/minecraft/tags/blocks/mineable/axe.json
-3e4ab40c4ba66211e508e3aaceaede2e020527a2 data/minecraft/tags/blocks/mineable/pickaxe.json
+eada9d497e6a4cfec442b3b0e8e6ba58b2d26324 data/minecraft/tags/blocks/mineable/axe.json
+c8318db42c70456b12d9781c1f3f4c6490fe2349 data/minecraft/tags/blocks/mineable/pickaxe.json
 515a1c773e617dd7e38aa1b893acc7db2dd30e08 data/minecraft/tags/blocks/moss_replaceable.json
 0c13aae0eeb99e89febe8dbe5e002af2ff843a9e data/minecraft/tags/blocks/needs_iron_tool.json
 3cb2a92cbdf32ed5978f740dc378d363306c3e84 data/minecraft/tags/blocks/needs_stone_tool.json

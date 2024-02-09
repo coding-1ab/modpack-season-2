@@ -84,14 +84,23 @@ public class PackageItem extends Item {
 		return box;
 	}
 
+	public static void clearAddress(ItemStack box) {
+		if (box.hasTag())
+			box.getTag()
+				.remove("Address");
+	}
+
 	public static void addAddress(ItemStack box, String address) {
 		box.getOrCreateTag()
 			.putString("Address", address);
 	}
 
 	public static boolean matchAddress(ItemStack box, String address) {
-		String boxAddress = box.getTag()
-			.getString("Address");
+		String boxAddress = !box.hasTag() ? ""
+			: box.getTag()
+				.getString("Address");
+		if (address.isBlank())
+			return boxAddress.isBlank();
 		if (address.equals("*") || boxAddress.equals("*"))
 			return true;
 		String matcher = "\\Q" + address.replace("*", "\\E.*\\Q") + "\\E";

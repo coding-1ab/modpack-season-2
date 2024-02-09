@@ -52,6 +52,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 	EditBox addressBox;
 
 	int emptyTicks = 0;
+	int successTicks = 0;
 
 	List<IntAttached<ItemStack>> currentItemSource;
 	List<IntAttached<ItemStack>> displayedItems;
@@ -67,6 +68,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		blockEntity.lastClientsideStockSnapshot = null;
 		ticksSinceLastUpdate = 15;
 		emptyTicks = 0;
+		successTicks = 0;
 		itemScroll = LerpedFloat.linear()
 			.startWithValue(0);
 	}
@@ -165,6 +167,11 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 			emptyTicks++;
 		else
 			emptyTicks = 0;
+		
+		if (successTicks > 0 && itemsToOrder.isEmpty())
+			successTicks++;
+		else
+			successTicks = 0;
 
 		List<IntAttached<ItemStack>> clientStockSnapshot = blockEntity.getClientStockSnapshot();
 		if (clientStockSnapshot != currentItemSource) {
@@ -190,7 +197,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		PoseStack ms = graphics.pose();
 		Color color = new Color(255, 255, 255, 50);
-		float currentScroll = itemScroll.getValue(minecraft.getDeltaFrameTime());
+		float currentScroll = itemScroll.getValue(partialTicks);
 		int startRow = Math.max(0, Mth.floor(currentScroll) - 1);
 		int hoveredSlot = getHoveredSlot(mouseX, mouseY, true);
 
@@ -245,11 +252,20 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 			ms.popPose();
 		}
 
+		// Something isnt right
 		if (displayedItems.isEmpty()) {
 			Component msg = getTroubleshootingMessage();
-			float alpha = Mth.clamp((emptyTicks - 10f) / 20f, 0f, 1f);
+			float alpha = Mth.clamp((emptyTicks - 10f) / 5f, 0f, 1f);
 			if (alpha > 0)
 				graphics.drawString(font, msg, itemsX + 1, itemsY, new Color(.5f, .5f, .5f, alpha).getRGB());
+		}
+		
+		// Request just sent
+		if (itemsToOrder.isEmpty() && successTicks > 0) {
+			Component msg = Lang.translateDirect("gui.stock_ticker.request_sent");
+			float alpha = Mth.clamp((successTicks - 10f) / 5f, 0f, 1f);
+			if (alpha > 0)
+				graphics.drawCenteredString(font, msg, itemsX + cols * colWidth / 2, orderY + 4, new Color(.75f, .95f, .75f, alpha).getRGB());
 		}
 
 		hoveredSlot = getHoveredSlot(mouseX, mouseY, false);
@@ -551,14 +567,26 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		return true;
 	}
 
+	@Override
+	public void removed() {
+		AllPackets.getChannel()
+			.sendToServer(new PackageOrderRequestPacket(blockEntity.getBlockPos(), Collections.emptyList(),
+				addressBox.getValue()));
+		super.removed();
+	}
+	
 	private void sendIt() {
 		revalidateOrders();
 		if (itemsToOrder.isEmpty())
 			return;
+		
 		AllPackets.getChannel()
 			.sendToServer(
 				new PackageOrderRequestPacket(blockEntity.getBlockPos(), itemsToOrder, addressBox.getValue()));
-		minecraft.setScreen(null);
+		
+		itemsToOrder = new ArrayList<>();
+		ticksSinceLastUpdate = 10;
+		successTicks = 1;
 	}
 
 	@Override

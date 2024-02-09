@@ -314,6 +314,7 @@
 	"create.gui.stock_ticker.search_items": "Search Items",
 	"create.gui.stock_ticker.package_adress": "Package Address",
 	"create.gui.stock_ticker.confirm_order": "Confirm Order",
+	"create.gui.stock_ticker.request_sent": "Request Sent!",
 	
 	"create.clipboard.actions": "Clipboard Actions",
 	"create.clipboard.to_copy": "%1$s to Copy settings",
