@@ -21,9 +21,9 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -78,12 +78,12 @@ public class DepotBehaviour extends BlockEntityBehaviour {
 	public void enableMerging() {
 		allowMerge = true;
 	}
-	
+
 	public DepotBehaviour withCallback(Consumer<ItemStack> changeListener) {
 		onHeldInserted = changeListener;
 		return this;
 	}
-	
+
 	public DepotBehaviour onlyAccepts(Predicate<ItemStack> filter) {
 		acceptedItems = filter;
 		return this;

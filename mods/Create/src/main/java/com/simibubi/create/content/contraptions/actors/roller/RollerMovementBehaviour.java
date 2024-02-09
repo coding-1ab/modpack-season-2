@@ -33,12 +33,12 @@ import com.simibubi.create.content.trains.graph.TrackGraph;
 import com.simibubi.create.foundation.damageTypes.CreateDamageSources;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.utility.BlockHelper;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Pair;
-import com.simibubi.create.foundation.utility.VecHelper;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -195,7 +195,7 @@ public class RollerMovementBehaviour extends BlockBreakingMovementBehaviour {
 		int startingY = 1;
 		if (!getStateToPaveWith(context).isAir()) {
 			FilterItemStack filter = context.getFilterFromBE();
-			if (!ItemHelper	
+			if (!ItemHelper
 				.extract(context.contraption.getSharedInventory(),
 					stack -> filter.test(context.world, stack), 1, true)
 				.isEmpty())
@@ -306,7 +306,7 @@ public class RollerMovementBehaviour extends BlockBreakingMovementBehaviour {
 		BlockState stateToPaveWith = getStateToPaveWith(context);
 		BlockState stateToPaveWithAsSlab = getStateToPaveWithAsSlab(context);
 		RollingMode mode = getMode(context);
-		
+
 		if (mode != RollingMode.TUNNEL_PAVE && stateToPaveWith.isAir())
 			return;
 

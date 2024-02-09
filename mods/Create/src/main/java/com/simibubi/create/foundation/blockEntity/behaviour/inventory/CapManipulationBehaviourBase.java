@@ -6,8 +6,8 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper.ExtractionCountMode;
-import com.simibubi.create.foundation.utility.BlockFace;
 
+import net.createmod.catnip.utility.BlockFace;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -102,7 +102,7 @@ public abstract class CapManipulationBehaviourBase<T, S extends CapManipulationB
 			amount = filter.getAmount();
 		return amount;
 	}
-	
+
 	public ExtractionCountMode getModeFromFilter() {
 		ExtractionCountMode mode = ExtractionCountMode.UPTO;
 		FilteringBehaviour filter = blockEntity.getBehaviour(FilteringBehaviour.TYPE);

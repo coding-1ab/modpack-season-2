@@ -7,8 +7,8 @@ import com.simibubi.create.Create;
 import com.simibubi.create.content.trains.entity.Train;
 import com.simibubi.create.content.trains.entity.TrainIconType;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
-import com.simibubi.create.foundation.utility.Components;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;

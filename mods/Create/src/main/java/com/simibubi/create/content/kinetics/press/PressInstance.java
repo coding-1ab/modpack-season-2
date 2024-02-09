@@ -9,8 +9,9 @@ import com.jozufozu.flywheel.core.materials.oriented.OrientedData;
 import com.mojang.math.Axis;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.ShaftInstance;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
+
+import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.utility.math.AngleHelper;
 
 public class PressInstance extends ShaftInstance<MechanicalPressBlockEntity> implements DynamicInstance {
 

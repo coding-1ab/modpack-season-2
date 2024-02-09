@@ -24,12 +24,12 @@ import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.foundation.item.TooltipHelper;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.VecHelper;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -487,15 +487,15 @@ public class DeployerBlockEntity extends KineticBlockEntity {
 
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		Lang.translate("tooltip.deployer.header")
+		CreateLang.translate("tooltip.deployer.header")
 			.forGoggles(tooltip);
 
-		Lang.translate("tooltip.deployer." + (mode == Mode.USE ? "using" : "punching"))
+		CreateLang.translate("tooltip.deployer." + (mode == Mode.USE ? "using" : "punching"))
 			.style(ChatFormatting.YELLOW)
 			.forGoggles(tooltip);
 
 		if (!heldItem.isEmpty())
-			Lang.translate("tooltip.deployer.contains", Components.translatable(heldItem.getDescriptionId())
+			CreateLang.translate("tooltip.deployer.contains", Components.translatable(heldItem.getDescriptionId())
 				.getString(), heldItem.getCount())
 				.style(ChatFormatting.GREEN)
 				.forGoggles(tooltip);

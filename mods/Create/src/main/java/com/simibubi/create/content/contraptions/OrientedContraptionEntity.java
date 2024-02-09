@@ -1,6 +1,6 @@
 package com.simibubi.create.content.contraptions;
 
-import static com.simibubi.create.foundation.utility.AngleHelper.angleLerp;
+import static net.createmod.catnip.utility.math.AngleHelper.angleLerp;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -17,11 +17,11 @@ import com.simibubi.create.content.contraptions.minecart.capability.MinecartCont
 import com.simibubi.create.content.contraptions.mounted.CartAssemblerBlockEntity.CartMovementMode;
 import com.simibubi.create.content.contraptions.mounted.MountedContraption;
 import com.simibubi.create.foundation.item.ItemHelper;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -496,7 +496,7 @@ public class OrientedContraptionEntity extends AbstractContraptionEntity {
 		Vec3 anchorVec = super.getAnchorVec();
 		return anchorVec.subtract(.5, 0, .5);
 	}
-	
+
 	@Override
 	public Vec3 getPrevAnchorVec() {
 		Vec3 prevAnchorVec = super.getPrevAnchorVec();
@@ -571,7 +571,7 @@ public class OrientedContraptionEntity extends AbstractContraptionEntity {
 		Vec3 passengerPosition = parent.getPassengerPosition(this, partialTicks);
 		if (passengerPosition == null)
 			return Vec3.ZERO;
-		
+
 		double x = passengerPosition.x - Mth.lerp(partialTicks, this.xOld, this.getX());
 		double y = passengerPosition.y - Mth.lerp(partialTicks, this.yOld, this.getY());
 		double z = passengerPosition.z - Mth.lerp(partialTicks, this.zOld, this.getZ());

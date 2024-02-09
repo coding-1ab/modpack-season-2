@@ -9,18 +9,18 @@ import com.simibubi.create.AllKeys;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.Create;
-import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.schematics.SchematicExport;
 import com.simibubi.create.content.schematics.SchematicExport.SchematicExportResult;
 import com.simibubi.create.content.schematics.packet.InstantSchematicPacket;
-import com.simibubi.create.foundation.gui.ScreenOpener;
-import com.simibubi.create.foundation.outliner.Outliner;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.foundation.utility.RaycastHelper;
 import com.simibubi.create.foundation.utility.RaycastHelper.PredicateTraceResult;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.CatnipClient;
+import net.createmod.catnip.gui.ScreenOpener;
+import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.outliner.Outliner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -80,7 +80,7 @@ public class SchematicAndQuillHandler {
 		firstPos = BlockPos.containing(bb.minX, bb.minY, bb.minZ);
 		secondPos = BlockPos.containing(bb.maxX, bb.maxY, bb.maxZ);
 		LocalPlayer player = Minecraft.getInstance().player;
-		Lang.translate("schematicAndQuill.dimensions", (int) bb.getXsize() + 1, (int) bb.getYsize() + 1,
+		CreateLang.translate("schematicAndQuill.dimensions", (int) bb.getXsize() + 1, (int) bb.getYsize() + 1,
 			(int) bb.getZsize() + 1)
 			.sendStatus(player);
 
@@ -106,20 +106,20 @@ public class SchematicAndQuillHandler {
 		}
 
 		if (selectedPos == null) {
-			Lang.translate("schematicAndQuill.noTarget")
+			CreateLang.translate("schematicAndQuill.noTarget")
 				.sendStatus(player);
 			return true;
 		}
 
 		if (firstPos != null) {
 			secondPos = selectedPos;
-			Lang.translate("schematicAndQuill.secondPos")
+			CreateLang.translate("schematicAndQuill.secondPos")
 				.sendStatus(player);
 			return true;
 		}
 
 		firstPos = selectedPos;
-		Lang.translate("schematicAndQuill.firstPos")
+		CreateLang.translate("schematicAndQuill.firstPos")
 			.sendStatus(player);
 		return true;
 	}
@@ -128,7 +128,7 @@ public class SchematicAndQuillHandler {
 		LocalPlayer player = Minecraft.getInstance().player;
 		firstPos = null;
 		secondPos = null;
-		Lang.translate("schematicAndQuill.abort")
+		CreateLang.translate("schematicAndQuill.abort")
 			.sendStatus(player);
 	}
 
@@ -208,13 +208,13 @@ public class SchematicAndQuillHandler {
 		);
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (result == null) {
-			Lang.translate("schematicAndQuill.failed")
+			CreateLang.translate("schematicAndQuill.failed")
 					.style(ChatFormatting.RED)
 					.sendStatus(player);
 			return;
 		}
 		Path file = result.file();
-		Lang.translate("schematicAndQuill.saved", file.getFileName())
+		CreateLang.translate("schematicAndQuill.saved", file.getFileName())
 				.sendStatus(player);
 		firstPos = null;
 		secondPos = null;
@@ -231,7 +231,7 @@ public class SchematicAndQuillHandler {
 	}
 
 	private Outliner outliner() {
-		return CreateClient.OUTLINER;
+		return CatnipClient.OUTLINER;
 	}
 
 }

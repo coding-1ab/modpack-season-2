@@ -7,10 +7,10 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.mutable.MutableObject;
 
 import com.simibubi.create.AllItems;
-import com.simibubi.create.foundation.gui.ScreenOpener;
-import com.simibubi.create.foundation.utility.Components;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.gui.ScreenOpener;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

@@ -6,9 +6,9 @@ import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
@@ -17,7 +17,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class TimeOfDayDisplaySource extends SingleLineDisplaySource {
 
 	public static final MutableComponent EMPTY_TIME = Components.literal("--:--");
-	
+
 	@Override
 	protected MutableComponent provideLine(DisplayLinkContext context, DisplayTargetStats stats) {
 		if (!(context.level()instanceof ServerLevel sLevel))
@@ -35,7 +35,7 @@ public class TimeOfDayDisplaySource extends SingleLineDisplaySource {
 		int dayTime = (int) (sLevel.getDayTime() % 24000);
 		int hours = (dayTime / 1000 + 6) % 24;
 		int minutes = (dayTime % 1000) * 60 / 1000;
-		MutableComponent suffix = Lang.translateDirect("generic.daytime." + (hours > 11 ? "pm" : "am"));
+		MutableComponent suffix = CreateLang.translateDirect("generic.daytime." + (hours > 11 ? "pm" : "am"));
 
 		minutes = minutes / 5 * 5;
 		if (c12) {
@@ -78,8 +78,8 @@ public class TimeOfDayDisplaySource extends SingleLineDisplaySource {
 			return;
 
 		builder.addSelectionScrollInput(0, 60, (si, l) -> {
-			si.forOptions(Lang.translatedOptions("display_source.time", "12_hour", "24_hour"))
-				.titled(Lang.translateDirect("display_source.time.format"));
+			si.forOptions(CreateLang.translatedOptions("display_source.time", "12_hour", "24_hour"))
+				.titled(CreateLang.translateDirect("display_source.time.format"));
 		}, "Cycle");
 	}
 

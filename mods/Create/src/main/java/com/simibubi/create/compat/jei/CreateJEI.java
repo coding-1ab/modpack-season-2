@@ -1,18 +1,5 @@
 package com.simibubi.create.compat.jei;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllFluids;
 import com.simibubi.create.AllItems;
@@ -62,15 +49,13 @@ import com.simibubi.create.content.processing.basin.BasinRecipe;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerScreen;
 import com.simibubi.create.content.trains.schedule.ScheduleScreen;
-import com.simibubi.create.foundation.config.ConfigBase.ConfigBool;
 import com.simibubi.create.foundation.data.recipe.LogStrippingFakeRecipes;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.simibubi.create.infrastructure.config.CRecipes;
-
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
@@ -85,6 +70,7 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
 import mezz.jei.api.runtime.IIngredientManager;
+import net.createmod.catnip.config.ConfigBase.ConfigBool;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -99,6 +85,18 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.fml.ModList;
+
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 @JeiPlugin
 @SuppressWarnings("unused")
@@ -517,7 +515,7 @@ public class CreateJEI implements IModPlugin {
 
 			CreateRecipeCategory.Info<T> info = new CreateRecipeCategory.Info<>(
 					new mezz.jei.api.recipe.RecipeType<>(Create.asResource(name), recipeClass),
-					Lang.translateDirect("recipe." + name), background, icon, recipesSupplier, catalysts);
+					CreateLang.translateDirect("recipe." + name), background, icon, recipesSupplier, catalysts);
 			CreateRecipeCategory<T> category = factory.create(info);
 			allCategories.add(category);
 			return category;

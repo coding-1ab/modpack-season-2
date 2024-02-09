@@ -13,8 +13,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import com.simibubi.create.foundation.utility.RegisteredObjects;
 
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -184,7 +184,7 @@ public abstract class FluidIngredient implements Predicate<FluidStack> {
 
 		@Override
 		protected void writeInternal(JsonObject json) {
-			json.addProperty("fluid", RegisteredObjects.getKeyOrThrow(fluid)
+			json.addProperty("fluid", CatnipServices.REGISTRIES.getKeyOrThrow(fluid)
 				.toString());
 			json.add("nbt", JsonParser.parseString(tagToMatch.toString()));
 		}

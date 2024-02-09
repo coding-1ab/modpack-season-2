@@ -28,17 +28,19 @@ import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.advancement.AllTriggers;
 import com.simibubi.create.foundation.block.CopperRegistries;
 import com.simibubi.create.foundation.data.CreateRegistrate;
+import com.simibubi.create.foundation.gui.CreateTheme;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
-import com.simibubi.create.foundation.item.TooltipHelper.Palette;
 import com.simibubi.create.foundation.item.TooltipModifier;
 import com.simibubi.create.foundation.utility.AttachedRegistry;
+import com.simibubi.create.foundation.utility.CreateNBTProcessors;
 import com.simibubi.create.infrastructure.command.ServerLagger;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.simibubi.create.infrastructure.data.CreateDatagen;
 import com.simibubi.create.infrastructure.worldgen.AllFeatures;
 import com.simibubi.create.infrastructure.worldgen.AllPlacementModifiers;
 
+import net.createmod.catnip.utility.lang.LangBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -78,7 +80,7 @@ public class Create {
 
 	static {
 		REGISTRATE.setTooltipModifierFactory(item -> {
-			return new ItemDescription.Modifier(item, Palette.STANDARD_CREATE)
+			return new ItemDescription.Modifier(item, CreateTheme.Key.STANDARD_TOOLTIP.palette())
 				.andThen(TooltipModifier.mapNull(KineticStats.create(item)));
 		});
 	}
@@ -154,6 +156,7 @@ public class Create {
 
 	public static void init(final FMLCommonSetupEvent event) {
 		AllFluids.registerFluidInteractions();
+		CreateNBTProcessors.register();
 
 		event.enqueueWork(() -> {
 			// TODO: custom registration should all happen in one place
@@ -167,6 +170,10 @@ public class Create {
 			AllAdvancements.register();
 			AllTriggers.register();
 		});
+	}
+
+	public static LangBuilder lang() {
+		return new LangBuilder(ID);
 	}
 
 	public static ResourceLocation asResource(String path) {

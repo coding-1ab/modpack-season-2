@@ -1,16 +1,14 @@
 package com.simibubi.create.content.contraptions;
 
-import static com.simibubi.create.foundation.utility.AngleHelper.angleLerp;
-
 import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.VecHelper;
-
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -51,7 +49,7 @@ public class ControlledContraptionEntity extends AbstractContraptionEntity {
 		entity.setContraption(contraption);
 		return entity;
 	}
-	
+
 	@Override
 	public void setPos(double x, double y, double z) {
 		super.setPos(x, y, z);
@@ -132,7 +130,7 @@ public class ControlledContraptionEntity extends AbstractContraptionEntity {
 	}
 
 	public float getAngle(float partialTicks) {
-		return partialTicks == 1.0F ? angle : angleLerp(partialTicks, prevAngle, angle);
+		return partialTicks == 1.0F ? angle : AngleHelper.angleLerp(partialTicks, prevAngle, angle);
 	}
 
 	public void setRotationAxis(Axis rotationAxis) {

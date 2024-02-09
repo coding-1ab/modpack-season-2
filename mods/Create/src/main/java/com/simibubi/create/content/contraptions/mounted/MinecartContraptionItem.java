@@ -1,11 +1,5 @@
 package com.simibubi.create.content.contraptions.mounted;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.tuple.MutablePair;
-
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllMovementBehaviours;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
@@ -17,10 +11,9 @@ import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterf
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.kinetics.deployer.DeployerFakePlayer;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.NBTHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-
+import net.createmod.catnip.utility.NBTHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockSource;
@@ -47,6 +40,10 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import org.apache.commons.lang3.tuple.MutablePair;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 @EventBusSubscriber
 public class MinecartContraptionItem extends Item {
@@ -64,7 +61,7 @@ public class MinecartContraptionItem extends Item {
 	public static MinecartContraptionItem chest(Properties builder) {
 		return new MinecartContraptionItem(Type.CHEST, builder);
 	}
-	
+
 	@Override
 	public boolean canFitInsideContainerItems() {
 		return AllConfigs.server().kinetics.minecartContraptionInContainers.get();
@@ -229,7 +226,7 @@ public class MinecartContraptionItem extends Item {
 
 		if (ContraptionMovementSetting.isNoPickup(contraption.getBlocks()
 			.values())) {
-			player.displayClientMessage(Lang.translateDirect("contraption.minecart_contraption_illegal_pickup")
+			player.displayClientMessage(CreateLang.translateDirect("contraption.minecart_contraption_illegal_pickup")
 				.withStyle(ChatFormatting.RED), true);
 			return;
 		}
@@ -249,7 +246,7 @@ public class MinecartContraptionItem extends Item {
 		ItemStack generatedStack = create(type, oce).setHoverName(entity.getCustomName());
 
 		if (ContraptionData.isTooLargeForPickup(generatedStack.serializeNBT())) {
-			MutableComponent message = Lang.translateDirect("contraption.minecart_contraption_too_big")
+			MutableComponent message = CreateLang.translateDirect("contraption.minecart_contraption_too_big")
 					.withStyle(ChatFormatting.RED);
 			player.displayClientMessage(message, true);
 			return;

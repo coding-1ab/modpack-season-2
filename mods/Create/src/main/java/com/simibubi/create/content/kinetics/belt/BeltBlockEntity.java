@@ -30,8 +30,8 @@ import com.simibubi.create.content.kinetics.belt.transport.ItemHandlerBeltSegmen
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.simibubi.create.content.logistics.tunnel.BrassTunnelBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.NBTHelper;
 
+import net.createmod.catnip.utility.NBTHelper;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
@@ -195,7 +195,7 @@ public class BeltBlockEntity extends KineticBlockEntity {
 		if (isController())
 			getInventory().ejectAll();
 	}
-	
+
 	@Override
 	public void invalidate() {
 		super.invalidate();
@@ -282,7 +282,7 @@ public class BeltBlockEntity extends KineticBlockEntity {
 			return false;
 		if (level.isClientSide())
 			return true;
-		
+
 		for (BlockPos blockPos : BeltBlock.getBeltChain(level, getController())) {
 			BeltBlockEntity belt = BeltHelper.getSegmentBE(level, blockPos);
 			if (belt == null)
@@ -291,7 +291,7 @@ public class BeltBlockEntity extends KineticBlockEntity {
 			belt.setChanged();
 			belt.sendData();
 		}
-		
+
 		return true;
 	}
 
@@ -430,7 +430,7 @@ public class BeltBlockEntity extends KineticBlockEntity {
 	public void setCasingType(CasingType type) {
 		if (casing == type)
 			return;
-		
+
 		BlockState blockState = getBlockState();
 		boolean shouldBlockHaveCasing = type != CasingType.NONE;
 
@@ -441,7 +441,7 @@ public class BeltBlockEntity extends KineticBlockEntity {
 			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 16);
 			return;
 		}
-		
+
 		if (casing != CasingType.NONE)
 			level.levelEvent(2001, worldPosition,
 				Block.getId(casing == CasingType.ANDESITE ? AllBlocks.ANDESITE_CASING.getDefaultState()

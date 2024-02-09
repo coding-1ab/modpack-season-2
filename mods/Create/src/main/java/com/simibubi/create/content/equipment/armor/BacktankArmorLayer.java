@@ -1,11 +1,10 @@
 package com.simibubi.create.content.equipment.armor;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -46,8 +45,8 @@ public class BacktankArmorLayer<T extends LivingEntity, M extends EntityModel<T>
 		RenderType renderType = Sheets.cutoutBlockSheet();
 		BlockState renderedState = item.getBlock().defaultBlockState()
 				.setValue(BacktankBlock.HORIZONTAL_FACING, Direction.SOUTH);
-		SuperByteBuffer backtank = CachedBufferer.block(renderedState);
-		SuperByteBuffer cogs = CachedBufferer.partial(BacktankRenderer.getCogsModel(renderedState), renderedState);
+		SuperByteBuffer backtank = CachedBuffers.block(renderedState);
+		SuperByteBuffer cogs = CachedBuffers.partial(BacktankRenderer.getCogsModel(renderedState), renderedState);
 
 		ms.pushPose();
 
@@ -63,7 +62,7 @@ public class BacktankArmorLayer<T extends LivingEntity, M extends EntityModel<T>
 			.rotateY(180)
 			.unCentre()
 			.translate(0, 6.5f / 16, 11f / 16)
-			.rotate(Direction.EAST, AngleHelper.rad(2 * AnimationTickHolder.getRenderTime(entity.level()) % 360))
+			.rotate(Direction.EAST, AngleHelper.rad(2 * LevelTickHolder.getRenderTime(entity.level()) % 360))
 			.translate(0, -6.5f / 16, -11f / 16);
 
 		cogs.forEntityRender()
@@ -90,5 +89,5 @@ public class BacktankArmorLayer<T extends LivingEntity, M extends EntityModel<T>
 		BacktankArmorLayer<?, ?> layer = new BacktankArmorLayer<>(livingRenderer);
 		livingRenderer.addLayer((BacktankArmorLayer) layer);
 	}
-	
+
 }

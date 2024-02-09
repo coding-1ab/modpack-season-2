@@ -3,9 +3,9 @@ package com.simibubi.create.content.trains.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
@@ -122,7 +122,7 @@ public class TrainStatus {
 		if (owner == null)
 			return;
 		if (owner instanceof Player player) {
-			player.displayClientMessage(Lang.translateDirect("train.status", train.name)
+			player.displayClientMessage(CreateLang.translateDirect("train.status", train.name)
 				.withStyle(ChatFormatting.GOLD), false);
 			queued.forEach(c -> player.displayClientMessage(c, false));
 		}
@@ -131,7 +131,7 @@ public class TrainStatus {
 
 	public void displayInformation(String key, boolean itsAGoodThing, Object... args) {
 		queued.add(Components.literal(" - ").withStyle(ChatFormatting.GRAY)
-			.append(Lang.translateDirect("train.status." + key, args)
+			.append(CreateLang.translateDirect("train.status." + key, args)
 				.withStyle(st -> st.withColor(itsAGoodThing ? 0xD5ECC2 : 0xFFD3B4))));
 		if (queued.size() > 3)
 			queued.remove(0);

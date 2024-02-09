@@ -2,8 +2,9 @@ package com.simibubi.create.foundation.gui.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
-import com.simibubi.create.foundation.gui.element.ScreenElement;
 
+import net.createmod.catnip.gui.element.ScreenElement;
+import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
@@ -35,7 +36,7 @@ public class IconButton extends AbstractSimiWidget {
 	}
 
 	protected void drawBg(GuiGraphics graphics, AllGuiTextures button) {
-		graphics.blit(button.location, getX(), getY(), button.startX, button.startY, button.width, button.height);
+		graphics.blit(button.location, getX(), getY(), button.getStartX(), button.getStartY(), button.getWidth(), button.getHeight());
 	}
 
 	public void setToolTip(Component text) {

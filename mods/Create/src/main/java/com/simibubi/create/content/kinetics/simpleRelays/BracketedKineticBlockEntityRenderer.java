@@ -5,10 +5,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
@@ -41,12 +41,12 @@ public class BracketedKineticBlockEntityRenderer extends KineticBlockEntityRende
 		Axis axis = getRotationAxisOf(be);
 		Direction facing = Direction.fromAxisAndDirection(axis, AxisDirection.POSITIVE);
 		renderRotatingBuffer(be,
-			CachedBufferer.partialFacingVertical(AllPartialModels.SHAFTLESS_LARGE_COGWHEEL, be.getBlockState(), facing),
+			CachedBuffers.partialFacingVertical(AllPartialModels.SHAFTLESS_LARGE_COGWHEEL, be.getBlockState(), facing),
 			ms, buffer.getBuffer(RenderType.solid()), light);
 
 		float angle = getAngleForLargeCogShaft(be, axis);
 		SuperByteBuffer shaft =
-			CachedBufferer.partialFacingVertical(AllPartialModels.COGWHEEL_SHAFT, be.getBlockState(), facing);
+			CachedBuffers.partialFacingVertical(AllPartialModels.COGWHEEL_SHAFT, be.getBlockState(), facing);
 		kineticRotationTransform(shaft, be, axis, angle, light);
 		shaft.renderInto(ms, buffer.getBuffer(RenderType.solid()));
 
@@ -55,7 +55,7 @@ public class BracketedKineticBlockEntityRenderer extends KineticBlockEntityRende
 	public static float getAngleForLargeCogShaft(SimpleKineticBlockEntity be, Axis axis) {
 		BlockPos pos = be.getBlockPos();
 		float offset = getShaftAngleOffset(axis, pos);
-		float time = AnimationTickHolder.getRenderTime(be.getLevel());
+		float time = LevelTickHolder.getRenderTime(be.getLevel());
 		float angle = ((time * be.getSpeed() * 3f / 10 + offset) % 360) / 180 * (float) Math.PI;
 		return angle;
 	}

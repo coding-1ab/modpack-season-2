@@ -6,9 +6,10 @@ import java.util.function.Function;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour.StepContext;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.gui.widget.AbstractSimiWidget;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -19,9 +20,9 @@ public class ScrollInput extends AbstractSimiWidget {
 
 	protected Consumer<Integer> onScroll;
 	protected int state;
-	protected Component title = Lang.translateDirect("gui.scrollInput.defaultTitle");
-	protected final Component scrollToModify = Lang.translateDirect("gui.scrollInput.scrollToModify");
-	protected final Component shiftScrollsFaster = Lang.translateDirect("gui.scrollInput.shiftScrollsFaster");
+	protected Component title = CreateLang.translateDirect("gui.scrollInput.defaultTitle");
+	protected final Component scrollToModify = CreateLang.translateDirect("gui.scrollInput.scrollToModify");
+	protected final Component shiftScrollsFaster = CreateLang.translateDirect("gui.scrollInput.shiftScrollsFaster");
 	protected Component hint = null;
 	protected Label displayLabel;
 	protected boolean inverted;
@@ -96,7 +97,7 @@ public class ScrollInput extends AbstractSimiWidget {
 			writeToLabel();
 		return this;
 	}
-	
+
 	@Override
 	public void tick() {
 		super.tick();

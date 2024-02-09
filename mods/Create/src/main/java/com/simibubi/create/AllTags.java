@@ -7,8 +7,7 @@ import static com.simibubi.create.AllTags.NameSpace.TIC;
 
 import java.util.Collections;
 
-import com.simibubi.create.foundation.utility.Lang;
-
+import net.createmod.catnip.utility.lang.Lang;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -52,7 +51,7 @@ public class AllTags {
 	}
 
 	public enum NameSpace {
-		
+
 		MOD(Create.ID, false, true),
 		FORGE("forge"),
 		TIC("tconstruct"),
@@ -76,7 +75,7 @@ public class AllTags {
 	}
 
 	public enum AllBlockTags {
-		
+
 		BRITTLE,
 		CASING,
 		CONTRAPTION_INVENTORY_DENY,
@@ -153,11 +152,11 @@ public class AllTags {
 		}
 
 		private static void init() {}
-		
+
 	}
 
 	public enum AllItemTags {
-		
+
 		BLAZE_BURNER_FUEL_REGULAR(MOD, "blaze_burner_fuel/regular"),
 		BLAZE_BURNER_FUEL_SPECIAL(MOD, "blaze_burner_fuel/special"),
 		CASING,
@@ -224,11 +223,11 @@ public class AllTags {
 		}
 
 		private static void init() {}
-		
+
 	}
 
 	public enum AllFluidTags {
-		
+
 		BOTTOMLESS_ALLOW(MOD, "bottomless/allow"),
 		BOTTOMLESS_DENY(MOD, "bottomless/deny"),
 		FAN_PROCESSING_CATALYSTS_BLASTING(MOD, "fan_processing_catalysts/blasting"),
@@ -279,9 +278,9 @@ public class AllTags {
 		}
 
 		private static void init() {}
-		
+
 	}
-	
+
 	public enum AllEntityTags {
 
 		BLAZE_BURNER_CAPTURABLE,
@@ -327,9 +326,9 @@ public class AllTags {
 		}
 
 		private static void init() {}
-		
+
 	}
-	
+
 	public enum AllRecipeSerializerTags {
 
 		AUTOMATION_IGNORE,

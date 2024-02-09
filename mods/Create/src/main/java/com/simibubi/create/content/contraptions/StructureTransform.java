@@ -1,11 +1,6 @@
 package com.simibubi.create.content.contraptions;
 
-import static net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS;
-import static net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING;
-import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
-
-import com.simibubi.create.foundation.utility.VecHelper;
-
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -28,6 +23,10 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.Vec3;
+
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 public class StructureTransform {
 

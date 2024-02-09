@@ -12,9 +12,10 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox.IconValueBox;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox.TextValueBox;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.CatnipClient;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -45,7 +46,7 @@ public class ScrollValueRenderer {
 		if (behaviour == null)
 			return;
 		if (!behaviour.isActive()) {
-			CreateClient.OUTLINER.remove(pos);
+			CatnipClient.OUTLINER.remove(pos);
 			return;
 		}
 		ItemStack mainhandItem = mc.player.getItemInHand(InteractionHand.MAIN_HAND);
@@ -69,7 +70,7 @@ public class ScrollValueRenderer {
 
 		List<MutableComponent> tip = new ArrayList<>();
 		tip.add(behaviour.label.copy());
-		tip.add(Lang.translateDirect("gui.value_settings.hold_to_edit"));
+		tip.add(CreateLang.translateDirect("gui.value_settings.hold_to_edit"));
 		CreateClient.VALUE_SETTINGS_HANDLER.showHoverTip(tip);
 	}
 
@@ -90,7 +91,7 @@ public class ScrollValueRenderer {
 		box.passive(!highlight)
 			.wideOutline();
 
-		CreateClient.OUTLINER.showValueBox(pos, box.transform(behaviour.slotPositioning))
+		CatnipClient.OUTLINER.showOutline(pos, box.transform(behaviour.slotPositioning))
 			.highlightFace(face);
 	}
 

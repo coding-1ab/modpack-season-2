@@ -9,7 +9,6 @@ import com.jozufozu.flywheel.core.PartialModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.contraptions.StructureTransform;
-import com.simibubi.create.content.schematics.SchematicWorld;
 import com.simibubi.create.content.trains.graph.DimensionPalette;
 import com.simibubi.create.content.trains.graph.EdgeData;
 import com.simibubi.create.content.trains.graph.EdgePointType;
@@ -23,11 +22,12 @@ import com.simibubi.create.content.trains.signal.TrackEdgePoint;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.ponder.PonderWorld;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.levelWrappers.SchematicLevel;
+import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -311,7 +311,7 @@ public class TrackTargetingBehaviour<T extends TrackEdgePoint> extends BlockEnti
 	public static void render(LevelAccessor level, BlockPos pos, AxisDirection direction,
 		BezierTrackPointLocation bezier, PoseStack ms, MultiBufferSource buffer, int light, int overlay,
 		RenderedTrackOverlayType type, float scale) {
-		if (level instanceof SchematicWorld && !(level instanceof PonderWorld))
+		if (level instanceof SchematicLevel && !(level instanceof PonderLevel))
 			return;
 
 		BlockState trackState = level.getBlockState(pos);
@@ -323,7 +323,7 @@ public class TrackTargetingBehaviour<T extends TrackEdgePoint> extends BlockEnti
 		ITrackBlock track = (ITrackBlock) block;
 		PartialModel partial = track.prepareTrackOverlay(level, pos, trackState, bezier, direction, ms, type);
 		if (partial != null)
-			CachedBufferer.partial(partial, trackState)
+			CachedBuffers.partial(partial, trackState)
 				.translate(.5, 0, .5)
 				.scale(scale)
 				.translate(-.5, 0, -.5)

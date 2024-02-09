@@ -9,8 +9,8 @@ import java.util.function.BiFunction;
 
 import com.simibubi.create.content.logistics.chute.ChuteShapes;
 import com.simibubi.create.content.trains.track.TrackVoxelShapes;
-import com.simibubi.create.foundation.utility.VoxelShaper;
 
+import net.createmod.catnip.utility.VoxelShaper;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.level.block.Block;
@@ -161,7 +161,7 @@ public class AllShapes {
 			.forHorizontal(SOUTH),
 
 		PLACARD = shape(2, 0, 2, 14, 3, 14).forDirectional(UP),
-		
+
 		CLIPBOARD_FLOOR = shape(3, 0, 1, 13, 1, 15).forHorizontal(SOUTH),
 		CLIPBOARD_CEILING = shape(3, 15, 1, 13, 16, 15).forHorizontal(SOUTH),
 		CLIPBOARD_WALL = shape(3, 1, 0, 13, 15, 1).forHorizontal(SOUTH),

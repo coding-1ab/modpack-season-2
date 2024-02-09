@@ -15,11 +15,11 @@ import com.simibubi.create.content.redstone.link.controller.LinkedControllerServ
 import com.simibubi.create.content.trains.entity.CarriageEntityHandler;
 import com.simibubi.create.foundation.ModFilePackResources;
 import com.simibubi.create.foundation.recipe.RecipeFinder;
-import com.simibubi.create.foundation.utility.Components;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
-import com.simibubi.create.foundation.utility.WorldAttached;
 import com.simibubi.create.infrastructure.command.AllCommands;
 
+import net.createmod.catnip.utility.WorldAttached;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;

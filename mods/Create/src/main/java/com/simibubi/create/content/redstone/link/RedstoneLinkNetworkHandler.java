@@ -9,10 +9,10 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.simibubi.create.Create;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.WorldHelper;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.WorldHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -110,7 +110,7 @@ public class RedstoneLinkNetworkHandler {
 				iterator.remove();
 				continue;
 			}
-			
+
 			if (!withinRange(actor, other))
 				continue;
 

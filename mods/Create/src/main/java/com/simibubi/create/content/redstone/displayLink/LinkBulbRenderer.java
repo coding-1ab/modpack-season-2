@@ -4,10 +4,10 @@ import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
 import com.simibubi.create.foundation.render.RenderTypes;
-import com.simibubi.create.foundation.utility.AngleHelper;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -49,11 +49,11 @@ public class LinkBulbRenderer extends SafeBlockEntityRenderer<LinkWithBulbBlockE
 			.rotateX(-AngleHelper.verticalAngle(face) - 90)
 			.unCentre();
 
-		CachedBufferer.partial(AllPartialModels.DISPLAY_LINK_TUBE, blockState)
+		CachedBuffers.partial(AllPartialModels.DISPLAY_LINK_TUBE, blockState)
 			.light(LightTexture.FULL_BRIGHT)
 			.renderInto(ms, buffer.getBuffer(RenderType.translucent()));
 
-		CachedBufferer.partial(AllPartialModels.DISPLAY_LINK_GLOW, blockState)
+		CachedBuffers.partial(AllPartialModels.DISPLAY_LINK_GLOW, blockState)
 			.light(LightTexture.FULL_BRIGHT)
 			.color(color, color, color, 255)
 			.disableDiffuse()

@@ -17,12 +17,12 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBoard;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsFormatter;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.VecHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -144,7 +144,7 @@ public class ValveHandleBlockEntity extends HandCrankBlockEntity {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public SuperByteBuffer getRenderedHandle() {
-		return CachedBufferer.block(getBlockState());
+		return CachedBuffers.block(getBlockState());
 	}
 
 	@Override
@@ -162,8 +162,8 @@ public class ValveHandleBlockEntity extends HandCrankBlockEntity {
 	public static class ValveHandleScrollValueBehaviour extends ScrollValueBehaviour {
 
 		public ValveHandleScrollValueBehaviour(SmartBlockEntity be) {
-			super(Lang.translateDirect("kinetics.valve_handle.rotated_angle"), be, new ValveHandleValueBox());
-			withFormatter(v -> String.valueOf(Math.abs(v)) + Lang.translateDirect("generic.unit.degrees")
+			super(CreateLang.translateDirect("kinetics.valve_handle.rotated_angle"), be, new ValveHandleValueBox());
+			withFormatter(v -> String.valueOf(Math.abs(v)) + CreateLang.translateDirect("generic.unit.degrees")
 				.getString());
 		}
 
@@ -190,8 +190,8 @@ public class ValveHandleBlockEntity extends HandCrankBlockEntity {
 		}
 
 		public MutableComponent formatValue(ValueSettings settings) {
-			return Lang.number(Math.max(1, Math.abs(settings.value())))
-				.add(Lang.translateDirect("generic.unit.degrees"))
+			return CreateLang.number(Math.max(1, Math.abs(settings.value())))
+				.add(CreateLang.translateDirect("generic.unit.degrees"))
 				.component();
 		}
 
@@ -215,7 +215,7 @@ public class ValveHandleBlockEntity extends HandCrankBlockEntity {
 		protected Vec3 getSouthLocation() {
 			return VecHelper.voxelSpace(8, 8, 4.5);
 		}
-		
+
 		@Override
 		public boolean testHit(BlockState state, Vec3 localHit) {
 			Vec3 offset = getLocalOffset(state);

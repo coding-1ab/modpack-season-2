@@ -1,29 +1,5 @@
 package com.simibubi.create.content.contraptions;
 
-import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isExtensionPole;
-import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isPistonHead;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
-
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllInteractionBehaviours;
@@ -70,16 +46,15 @@ import com.simibubi.create.content.redstone.contact.RedstoneContactBlock;
 import com.simibubi.create.content.trains.bogey.AbstractBogeyBlock;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
-import com.simibubi.create.foundation.utility.BBHelper;
-import com.simibubi.create.foundation.utility.BlockFace;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.ICoordinate;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.NBTProcessors;
-import com.simibubi.create.foundation.utility.UniqueLinkedList;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-
+import net.createmod.catnip.utility.BBHelper;
+import net.createmod.catnip.utility.BlockFace;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.NBTProcessors;
+import net.createmod.catnip.utility.UniqueLinkedList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -129,6 +104,28 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import net.minecraftforge.registries.GameData;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
+
+import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isExtensionPole;
+import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isPistonHead;
 
 public abstract class Contraption {
 
@@ -1156,14 +1153,14 @@ public abstract class Contraption {
 			if (behaviour != null)
 				behaviour.startMoving(context);
 			pair.setRight(context);
-			if (behaviour instanceof ContraptionControlsMovement) 
+			if (behaviour instanceof ContraptionControlsMovement)
 				disableActorOnStart(context);
 		}
 
 		for (ItemStack stack : disabledActors)
 			setActorsActive(stack, false);
 	}
-	
+
 	protected void disableActorOnStart(MovementContext context) {
 		if (!ContraptionControlsMovement.isDisabledInitially(context))
 			return;

@@ -9,8 +9,8 @@ import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.contraptions.behaviour.MovingInteractionBehaviour;
 import com.simibubi.create.content.contraptions.mounted.MountedContraption;
-import com.simibubi.create.foundation.utility.NBTHelper;
 
+import net.createmod.catnip.utility.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
@@ -28,7 +28,7 @@ public class DeployerMovingInteraction extends MovingInteractionBehaviour {
 			.getActorAt(localPos);
 		if (actor == null || actor.right == null)
 			return false;
-		
+
 		MovementContext ctx = actor.right;
 		ItemStack heldStack = player.getItemInHand(activeHand);
 		if (heldStack.getItem()

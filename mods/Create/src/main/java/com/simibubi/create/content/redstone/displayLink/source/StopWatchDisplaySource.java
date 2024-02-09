@@ -4,8 +4,8 @@ import com.simibubi.create.content.kinetics.clock.CuckooClockBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
-import com.simibubi.create.foundation.utility.Components;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.network.chat.MutableComponent;
 
 public class StopWatchDisplaySource extends SingleLineDisplaySource {

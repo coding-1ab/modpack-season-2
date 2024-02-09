@@ -1,14 +1,9 @@
 package com.simibubi.create.content.decoration.slidingDoor;
 
-import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
-
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.content.contraptions.ContraptionWorld;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -40,6 +35,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.Nullable;
+import java.util.function.Supplier;
+
 public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<SlidingDoorBlockEntity> {
 
 	public static final Supplier<BlockSetType> TRAIN_SET_TYPE =
@@ -60,11 +58,11 @@ public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<Slid
 	public static SlidingDoorBlock metal(Properties p_52737_, boolean folds) {
 		return new SlidingDoorBlock(p_52737_, TRAIN_SET_TYPE.get(), folds);
 	}
-	
+
 	public static SlidingDoorBlock glass(Properties p_52737_, boolean folds) {
 		return new SlidingDoorBlock(p_52737_, GLASS_SET_TYPE.get(), folds);
 	}
-	
+
 	public SlidingDoorBlock(Properties p_52737_, BlockSetType type, boolean folds) {
 		super(p_52737_, type);
 		this.folds = folds;

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.simibubi.create.content.logistics.filter.ItemAttribute;
-import com.simibubi.create.foundation.utility.Components;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;

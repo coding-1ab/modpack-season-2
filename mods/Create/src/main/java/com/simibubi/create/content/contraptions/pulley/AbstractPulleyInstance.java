@@ -15,7 +15,6 @@ import com.jozufozu.flywheel.util.box.ImmutableBox;
 import com.mojang.math.Axis;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.ShaftInstance;
-
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.LightLayer;

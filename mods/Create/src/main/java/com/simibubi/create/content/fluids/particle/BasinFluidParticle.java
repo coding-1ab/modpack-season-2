@@ -5,8 +5,8 @@ import org.joml.Quaternionf;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;

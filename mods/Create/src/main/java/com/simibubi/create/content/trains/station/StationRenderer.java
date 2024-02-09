@@ -11,9 +11,9 @@ import com.simibubi.create.content.trains.track.ITrackBlock;
 import com.simibubi.create.content.trains.track.TrackTargetingBehaviour;
 import com.simibubi.create.content.trains.track.TrackTargetingBehaviour.RenderedTrackOverlayType;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -49,7 +49,7 @@ public class StationRenderer extends SafeBlockEntityRenderer<StationBlockEntity>
 		GlobalStation station = be.getStation();
 		boolean isAssembling = be.getBlockState()
 			.getValue(StationBlock.ASSEMBLING);
-		
+
 		if (!isAssembling || (station == null || station.getPresentTrain() != null) && !be.isVirtual()) {
 			renderFlag(
 				be.flag.getValue(partialTicks) > 0.75f ? AllPartialModels.STATION_ON : AllPartialModels.STATION_OFF, be,
@@ -70,7 +70,7 @@ public class StationRenderer extends SafeBlockEntityRenderer<StationBlockEntity>
 
 		if (be.isVirtual() && be.bogeyLocations == null)
 			be.refreshAssemblyInfo();
-		
+
 		if (direction == null || be.assemblyLength == 0 || be.bogeyLocations == null)
 			return;
 
@@ -99,7 +99,7 @@ public class StationRenderer extends SafeBlockEntityRenderer<StationBlockEntity>
 
 			if (valid != -1) {
 				int lightColor = LevelRenderer.getLightColor(level, currentPos);
-				SuperByteBuffer sbb = CachedBufferer.partial(assemblyOverlay, trackState);
+				SuperByteBuffer sbb = CachedBuffers.partial(assemblyOverlay, trackState);
 				sbb.color(valid);
 				sbb.light(lightColor);
 				sbb.renderInto(ms, vb);
@@ -115,8 +115,8 @@ public class StationRenderer extends SafeBlockEntityRenderer<StationBlockEntity>
 		MultiBufferSource buffer, int light, int overlay) {
 		if (!be.resolveFlagAngle())
 			return;
-		SuperByteBuffer flagBB = CachedBufferer.partial(flag, be.getBlockState());
-		transformFlag(flagBB, be, partialTicks, be.flagYRot, be.flagFlipped);
+		SuperByteBuffer flagBB = CachedBuffers.partial(flag, be.getBlockState());
+		//transformFlag(flagBB, be, partialTicks, be.flagYRot, be.flagFlipped);//TODO flw
 		flagBB.translate(0.5f / 16, 0, 0)
 			.rotateY(be.flagFlipped ? 0 : 180)
 			.translate(-0.5f / 16, 0, 0)

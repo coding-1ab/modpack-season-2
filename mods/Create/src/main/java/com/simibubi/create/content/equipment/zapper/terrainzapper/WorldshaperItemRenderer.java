@@ -9,8 +9,8 @@ import com.simibubi.create.Create;
 import com.simibubi.create.content.equipment.zapper.ZapperItemRenderer;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModel;
 import com.simibubi.create.foundation.item.render.PartialItemModelRenderer;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
 
+import net.createmod.catnip.utility.AnimationTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LightTexture;
@@ -44,7 +44,7 @@ public class WorldshaperItemRenderer extends ZapperItemRenderer {
 
 		// Core glows
 		float multiplier;
-		if (mainHand || offHand) 
+		if (mainHand || offHand)
 			multiplier = animation;
 		else
 			multiplier = Mth.sin(worldTime * 5);

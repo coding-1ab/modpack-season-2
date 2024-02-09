@@ -2,8 +2,8 @@ package com.simibubi.create.infrastructure.command;
 
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
-import com.simibubi.create.foundation.utility.Components;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 

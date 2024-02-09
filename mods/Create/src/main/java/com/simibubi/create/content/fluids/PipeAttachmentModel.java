@@ -13,8 +13,8 @@ import com.simibubi.create.content.fluids.FluidTransportBehaviour.AttachmentType
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.model.BakedModelWrapperWithData;
-import com.simibubi.create.foundation.utility.Iterate;
 
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;

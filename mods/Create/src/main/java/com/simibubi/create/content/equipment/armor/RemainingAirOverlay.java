@@ -1,13 +1,10 @@
 package com.simibubi.create.content.equipment.armor;
 
-import java.util.List;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.foundation.gui.element.GuiGameElement;
-import com.simibubi.create.foundation.utility.Color;
-import com.simibubi.create.foundation.utility.Components;
-
+import net.createmod.catnip.gui.element.GuiGameElement;
+import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -18,6 +15,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
+
+import java.util.List;
 
 public class RemainingAirOverlay implements IGuiOverlay {
 	public static final RemainingAirOverlay INSTANCE = new RemainingAirOverlay();

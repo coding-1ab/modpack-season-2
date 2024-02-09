@@ -15,10 +15,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
-import com.simibubi.create.foundation.item.TooltipHelper.Palette;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.FontHelper.Palette;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
@@ -164,14 +164,14 @@ public record ItemDescription(ImmutableList<Component> lines, ImmutableList<Comp
 			boolean hasControls = !linesOnCtrl.isEmpty();
 
 			if (hasDescription || hasControls) {
-				String[] holdDesc = Lang.translateDirect("tooltip.holdForDescription", "$")
+				String[] holdDesc = CreateLang.translateDirect("tooltip.holdForDescription", "$")
 					.getString()
 					.split("\\$");
-				String[] holdCtrl = Lang.translateDirect("tooltip.holdForControls", "$")
+				String[] holdCtrl = CreateLang.translateDirect("tooltip.holdForControls", "$")
 					.getString()
 					.split("\\$");
-				MutableComponent keyShift = Lang.translateDirect("tooltip.keyShift");
-				MutableComponent keyCtrl = Lang.translateDirect("tooltip.keyCtrl");
+				MutableComponent keyShift = CreateLang.translateDirect("tooltip.keyShift");
+				MutableComponent keyCtrl = CreateLang.translateDirect("tooltip.keyCtrl");
 				for (List<Component> list : Arrays.asList(lines, linesOnShift, linesOnCtrl)) {
 					boolean shift = list == linesOnShift;
 					boolean ctrl = list == linesOnCtrl;

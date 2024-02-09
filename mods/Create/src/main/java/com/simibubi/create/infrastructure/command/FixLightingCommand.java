@@ -1,13 +1,12 @@
 package com.simibubi.create.infrastructure.command;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
-import com.simibubi.create.AllPackets;
-import com.simibubi.create.foundation.utility.Components;
 
+import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.PacketDistributor;
 
 public class FixLightingCommand {
 
@@ -15,9 +14,11 @@ public class FixLightingCommand {
 		return Commands.literal("fixLighting")
 			.requires(cs -> cs.hasPermission(0))
 			.executes(ctx -> {
-				AllPackets.getChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) ctx.getSource()
-					.getEntity()),
-					new SConfigureConfigPacket(SConfigureConfigPacket.Actions.fixLighting.name(), String.valueOf(true)));
+				CatnipServices.NETWORK.simpleActionToClient(
+						(ServerPlayer) ctx.getSource().getEntity(),
+						"experimentalLighting",
+						String.valueOf(true)
+				);
 
 				ctx.getSource()
 					.sendSuccess(() -> 

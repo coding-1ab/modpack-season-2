@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import com.google.common.collect.ImmutableList;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -26,8 +26,8 @@ public class MountedStorageInteraction {
 		int slotCount, Supplier<Boolean> stillValid) {
 		int rows = Mth.clamp(slotCount / 9, 1, 6);
 		MenuType<?> menuType = menus.get(rows - 1);
-		Component menuName = Lang.translateDirect("contraptions.moving_container", displayName);
-		
+		Component menuName = CreateLang.translateDirect("contraptions.moving_container", displayName);
+
 		return new MenuProvider() {
 
 			@Override

@@ -36,9 +36,9 @@ import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
 import com.simibubi.create.foundation.block.render.MultiPosDestructionHandler;
 import com.simibubi.create.foundation.block.render.ReducedDestroyEffects;
 import com.simibubi.create.foundation.item.ItemHelper;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -469,7 +469,7 @@ public class BeltBlock extends HorizontalKineticBlock
 	@Override
 	public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
 		super.onRemove(state, world, pos, newState, isMoving);
-		
+
 		if (world.isClientSide)
 			return;
 		if (state.getBlock() == newState.getBlock())
@@ -524,7 +524,7 @@ public class BeltBlock extends HorizontalKineticBlock
 		if (state.getValue(CASING) && state.getValue(SLOPE) == BeltSlope.HORIZONTAL)
 			withBlockEntityDo(world, pos, bbe -> bbe.setCovered(isBlockCoveringBelt(world, pos.above())));
 	}
-	
+
 	public static boolean isBlockCoveringBelt(LevelAccessor world, BlockPos pos) {
 		BlockState blockState = world.getBlockState(pos);
 		VoxelShape collisionShape = blockState.getCollisionShape(world, pos);
@@ -551,7 +551,7 @@ public class BeltBlock extends HorizontalKineticBlock
 			((BeltTunnelBlock) tunnelBlock).updateTunnel(world, pos);
 	}
 
-	public static List<BlockPos> getBeltChain(Level world, BlockPos controllerPos) {
+	public static List<BlockPos> getBeltChain(LevelAccessor world, BlockPos controllerPos) {
 		List<BlockPos> positions = new LinkedList<>();
 
 		BlockState blockState = world.getBlockState(controllerPos);
@@ -726,7 +726,7 @@ public class BeltBlock extends HorizontalKineticBlock
 	public boolean isPathfindable(BlockState state, BlockGetter reader, BlockPos pos, PathComputationType type) {
 		return false;
 	}
-	
+
 	@Override
 	public FluidState getFluidState(BlockState pState) {
 		return fluidState(pState);

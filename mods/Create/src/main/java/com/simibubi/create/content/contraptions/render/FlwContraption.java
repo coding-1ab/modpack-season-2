@@ -1,12 +1,5 @@
 package com.simibubi.create.content.contraptions.render;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.joml.Matrix4f;
-
 import com.jozufozu.flywheel.backend.Backend;
 import com.jozufozu.flywheel.backend.gl.GlStateTracker;
 import com.jozufozu.flywheel.backend.instancing.Engine;
@@ -24,8 +17,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.foundation.render.CreateContexts;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-
+import net.createmod.catnip.utility.AnimationTickHolder;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -33,6 +25,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FlwContraption extends ContraptionRenderInfo {
 

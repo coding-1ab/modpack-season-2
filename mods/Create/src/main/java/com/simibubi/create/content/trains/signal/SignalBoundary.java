@@ -15,10 +15,10 @@ import com.simibubi.create.content.trains.graph.TrackNode;
 import com.simibubi.create.content.trains.signal.SignalBlock.SignalType;
 import com.simibubi.create.content.trains.signal.SignalBlockEntity.OverlayState;
 import com.simibubi.create.content.trains.signal.SignalBlockEntity.SignalState;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.NBTHelper;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;

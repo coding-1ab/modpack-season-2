@@ -5,9 +5,9 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBoard;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsFormatter;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -25,7 +25,7 @@ public class BrassDiodeScrollValueBehaviour extends ScrollValueBehaviour {
 	@Override
 	public ValueSettingsBoard createBoard(Player player, BlockHitResult hitResult) {
 		return new ValueSettingsBoard(label, 60, 10,
-			Lang.translatedOptions("generic.unit", "ticks", "seconds", "minutes"),
+			CreateLang.translatedOptions("generic.unit", "ticks", "seconds", "minutes"),
 			new ValueSettingsFormatter(this::formatSettings));
 	}
 
@@ -73,7 +73,7 @@ public class BrassDiodeScrollValueBehaviour extends ScrollValueBehaviour {
 		default -> value + ":00";
 		});
 	}
-	
+
 	@Override
 	public String getClipboardKey() {
 		return "Timings";

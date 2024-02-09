@@ -6,12 +6,12 @@ import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.contraptions.elevator.ElevatorContraption;
 import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.IntAttached;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.IntAttached;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -134,7 +134,7 @@ public class ContraptionControlsMovement implements MovementBehaviour {
 		efs.targetYEqualsSelection = efs.currentTargetY == ec.clientYTarget;
 
 		if (ec.isTargetUnreachable(efs.currentTargetY))
-			efs.currentLongName = Lang.translate("contraption.controls.floor_unreachable")
+			efs.currentLongName = CreateLang.translate("contraption.controls.floor_unreachable")
 				.string();
 	}
 

@@ -9,8 +9,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.equipment.symmetryWand.mirror.EmptyMirror;
 import com.simibubi.create.content.equipment.symmetryWand.mirror.SymmetryMirror;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
 
+import net.createmod.catnip.utility.AnimationTickHolder;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

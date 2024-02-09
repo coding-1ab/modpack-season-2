@@ -6,9 +6,9 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Pair;
 
+import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;

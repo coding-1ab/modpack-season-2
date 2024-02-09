@@ -1,9 +1,9 @@
 package com.simibubi.create.content.kinetics.turntable;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -28,16 +28,16 @@ public class TurntableHandler {
 		BlockEntity blockEntity = mc.level.getBlockEntity(pos);
 		if (!(blockEntity instanceof TurntableBlockEntity))
 			return;
-		
+
 		TurntableBlockEntity turnTable = (TurntableBlockEntity) blockEntity;
 		float speed = turnTable.getSpeed() * 3/10;
 
 		if (speed == 0)
 			return;
-		
+
 		Vec3 origin = VecHelper.getCenterOf(pos);
 		Vec3 offset = mc.player.position().subtract(origin);
-		
+
 		if (offset.length() > 1/4f)
 			speed *= Mth.clamp((1/2f - offset.length()) * 2, 0, 1);
 

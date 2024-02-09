@@ -1,12 +1,9 @@
 package com.simibubi.create.content.equipment.blueprint;
 
-import java.util.Collection;
-
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.logistics.filter.AttributeFilterMenu.WhitelistMode;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.filter.ItemAttribute;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -31,6 +28,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.common.crafting.MultiItemValue;
 import net.minecraftforge.items.ItemStackHandler;
+
+import java.util.Collection;
 
 public class BlueprintItem extends Item {
 

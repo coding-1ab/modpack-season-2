@@ -11,14 +11,14 @@ import com.simibubi.create.AllSpriteShifts;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
-import com.simibubi.create.foundation.block.render.SpriteShiftEntry;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SpriteShiftEntry;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -65,7 +65,7 @@ public class BlazeBurnerRenderer extends SafeBlockEntityRenderer<BlazeBurnerBloc
 		}
 
 		Level level = context.world;
-		float horizontalAngle = AngleHelper.rad(headAngle.getValue(AnimationTickHolder.getPartialTicks(level)));
+		float horizontalAngle = AngleHelper.rad(headAngle.getValue(LevelTickHolder.getPartialTicks(level)));
 		boolean drawGoggles = context.blockEntityData.contains("Goggles");
 		boolean drawHat = conductor || context.blockEntityData.contains("TrainHat");
 		int hashCode = context.hashCode();
@@ -80,7 +80,7 @@ public class BlazeBurnerRenderer extends SafeBlockEntityRenderer<BlazeBurnerBloc
 		boolean canDrawFlame, boolean drawGoggles, boolean drawHat, int hashCode) {
 
 		boolean blockAbove = animation > 0.125f;
-		float time = AnimationTickHolder.getRenderTime(level);
+		float time = LevelTickHolder.getRenderTime(level);
 		float renderTick = time + (hashCode % 13) * 16f;
 		float offsetMult = heatLevel.isAtLeast(HeatLevel.FADING) ? 64 : 16;
 		float offset = Mth.sin((float) ((renderTick / 16f) % (2 * Math.PI))) / offsetMult;
@@ -117,7 +117,7 @@ public class BlazeBurnerRenderer extends SafeBlockEntityRenderer<BlazeBurnerBloc
 			uScroll = uScroll - Math.floor(uScroll);
 			uScroll = uScroll * spriteWidth / 2;
 
-			SuperByteBuffer flameBuffer = CachedBufferer.partial(AllPartialModels.BLAZE_BURNER_FLAME, blockState);
+			SuperByteBuffer flameBuffer = CachedBuffers.partial(AllPartialModels.BLAZE_BURNER_FLAME, blockState);
 			if (modelTransform != null)
 				flameBuffer.transform(modelTransform);
 			flameBuffer.shiftUVScrolling(spriteShift, (float) uScroll, (float) vScroll);
@@ -134,7 +134,7 @@ public class BlazeBurnerRenderer extends SafeBlockEntityRenderer<BlazeBurnerBloc
 			blazeModel = AllPartialModels.BLAZE_INERT;
 		}
 
-		SuperByteBuffer blazeBuffer = CachedBufferer.partial(blazeModel, blockState);
+		SuperByteBuffer blazeBuffer = CachedBuffers.partial(blazeModel, blockState);
 		if (modelTransform != null)
 			blazeBuffer.transform(modelTransform);
 		blazeBuffer.translate(0, headY, 0);
@@ -144,7 +144,7 @@ public class BlazeBurnerRenderer extends SafeBlockEntityRenderer<BlazeBurnerBloc
 			PartialModel gogglesModel = blazeModel == AllPartialModels.BLAZE_INERT
 					? AllPartialModels.BLAZE_GOGGLES_SMALL : AllPartialModels.BLAZE_GOGGLES;
 
-			SuperByteBuffer gogglesBuffer = CachedBufferer.partial(gogglesModel, blockState);
+			SuperByteBuffer gogglesBuffer = CachedBuffers.partial(gogglesModel, blockState);
 			if (modelTransform != null)
 				gogglesBuffer.transform(modelTransform);
 			gogglesBuffer.translate(0, headY + 8 / 16f, 0);
@@ -152,7 +152,7 @@ public class BlazeBurnerRenderer extends SafeBlockEntityRenderer<BlazeBurnerBloc
 		}
 
 		if (drawHat) {
-			SuperByteBuffer hatBuffer = CachedBufferer.partial(AllPartialModels.TRAIN_HAT, blockState);
+			SuperByteBuffer hatBuffer = CachedBuffers.partial(AllPartialModels.TRAIN_HAT, blockState);
 			if (modelTransform != null)
 				hatBuffer.transform(modelTransform);
 			hatBuffer.translate(0, headY, 0);
@@ -177,14 +177,14 @@ public class BlazeBurnerRenderer extends SafeBlockEntityRenderer<BlazeBurnerBloc
 			PartialModel rodsModel2 = heatLevel == HeatLevel.SEETHING ? AllPartialModels.BLAZE_BURNER_SUPER_RODS_2
 				: AllPartialModels.BLAZE_BURNER_RODS_2;
 
-			SuperByteBuffer rodsBuffer = CachedBufferer.partial(rodsModel, blockState);
+			SuperByteBuffer rodsBuffer = CachedBuffers.partial(rodsModel, blockState);
 			if (modelTransform != null)
 				rodsBuffer.transform(modelTransform);
 			rodsBuffer.translate(0, offset1 + animation + .125f, 0)
 				.light(LightTexture.FULL_BRIGHT)
 				.renderInto(ms, solid);
 
-			SuperByteBuffer rodsBuffer2 = CachedBufferer.partial(rodsModel2, blockState);
+			SuperByteBuffer rodsBuffer2 = CachedBuffers.partial(rodsModel2, blockState);
 			if (modelTransform != null)
 				rodsBuffer2.transform(modelTransform);
 			rodsBuffer2.translate(0, offset2 + animation - 3 / 16f, 0)

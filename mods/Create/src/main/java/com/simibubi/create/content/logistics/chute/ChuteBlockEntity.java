@@ -25,13 +25,13 @@ import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.ItemHelper.ExtractionCountMode;
 import com.simibubi.create.foundation.particle.AirParticleData;
 import com.simibubi.create.foundation.utility.BlockHelper;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.VecHelper;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
@@ -721,28 +721,28 @@ public class ChuteBlockEntity extends SmartBlockEntity implements IHaveGoggleInf
 
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		boolean downward = getItemMotion() < 0;
-		Lang.translate("tooltip.chute.header")
+		CreateLang.translate("tooltip.chute.header")
 			.forGoggles(tooltip);
 
 		if (pull == 0 && push == 0)
-			Lang.translate("tooltip.chute.no_fans_attached")
+			CreateLang.translate("tooltip.chute.no_fans_attached")
 				.style(ChatFormatting.GRAY)
 				.forGoggles(tooltip);
 		if (pull != 0)
-			Lang.translate("tooltip.chute.fans_" + (pull > 0 ? "pull_up" : "push_down"))
+			CreateLang.translate("tooltip.chute.fans_" + (pull > 0 ? "pull_up" : "push_down"))
 				.style(ChatFormatting.GRAY)
 				.forGoggles(tooltip);
 		if (push != 0)
-			Lang.translate("tooltip.chute.fans_" + (push > 0 ? "push_up" : "pull_down"))
+			CreateLang.translate("tooltip.chute.fans_" + (push > 0 ? "push_up" : "pull_down"))
 				.style(ChatFormatting.GRAY)
 				.forGoggles(tooltip);
 
-		Lang.text("-> ")
-			.add(Lang.translate("tooltip.chute.items_move_" + (downward ? "down" : "up")))
+		CreateLang.text("-> ")
+			.add(CreateLang.translate("tooltip.chute.items_move_" + (downward ? "down" : "up")))
 			.style(ChatFormatting.YELLOW)
 			.forGoggles(tooltip);
 		if (!item.isEmpty())
-			Lang.translate("tooltip.chute.contains", Components.translatable(item.getDescriptionId())
+			CreateLang.translate("tooltip.chute.contains", Components.translatable(item.getDescriptionId())
 				.getString(), item.getCount())
 				.style(ChatFormatting.GREEN)
 				.forGoggles(tooltip);

@@ -5,11 +5,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.Iterate;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -32,7 +32,7 @@ public class SplitShaftRenderer extends KineticBlockEntityRenderer<SplitShaftBlo
 		Block block = be.getBlockState().getBlock();
 		final Axis boxAxis = ((IRotate) block).getRotationAxis(be.getBlockState());
 		final BlockPos pos = be.getBlockPos();
-		float time = AnimationTickHolder.getRenderTime(be.getLevel());
+		float time = LevelTickHolder.getRenderTime(be.getLevel());
 
 		for (Direction direction : Iterate.directions) {
 			Axis axis = direction.getAxis();
@@ -48,7 +48,7 @@ public class SplitShaftRenderer extends KineticBlockEntityRenderer<SplitShaftBlo
 			angle = angle / 180f * (float) Math.PI;
 
 			SuperByteBuffer superByteBuffer =
-					CachedBufferer.partialFacing(AllPartialModels.SHAFT_HALF, be.getBlockState(), direction);
+					CachedBuffers.partialFacing(AllPartialModels.SHAFT_HALF, be.getBlockState(), direction);
 			kineticRotationTransform(superByteBuffer, be, axis, angle, light);
 			superByteBuffer.renderInto(ms, buffer.getBuffer(RenderType.solid()));
 		}

@@ -1,13 +1,13 @@
 package com.simibubi.create.content.contraptions;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class TranslatingContraption extends Contraption {
 
@@ -53,5 +53,5 @@ public abstract class TranslatingContraption extends Contraption {
 	public boolean canBeStabilized(Direction facing, BlockPos localPos) {
 		return false;
 	}
-	
+
 }

@@ -10,13 +10,13 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
-import com.simibubi.create.foundation.utility.AngleHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.foundation.utility.DyeHelper;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.VecHelper;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
 
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -50,7 +50,7 @@ public class ContraptionControlsBlockEntity extends SmartBlockEntity {
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
 		behaviours.add(filtering = new FilteringBehaviour(this, new ControlsSlot()));
-		filtering.setLabel(Lang.translateDirect("contraptions.contoller.target"));
+		filtering.setLabel(CreateLang.translateDirect("contraptions.contoller.target"));
 		filtering.withPredicate(AllItemTags.CONTRAPTION_CONTROLLED::matches);
 	}
 
@@ -106,18 +106,18 @@ public class ContraptionControlsBlockEntity extends SmartBlockEntity {
 	}
 
 	public static void sendStatus(Player player, ItemStack filter, boolean enabled) {
-		MutableComponent state = Lang.translate("contraption.controls.actor_toggle." + (enabled ? "on" : "off"))
+		MutableComponent state = CreateLang.translate("contraption.controls.actor_toggle." + (enabled ? "on" : "off"))
 			.color(DyeHelper.DYE_TABLE.get(enabled ? DyeColor.LIME : DyeColor.ORANGE)
 				.getFirst())
 			.component();
 
 		if (filter.isEmpty()) {
-			Lang.translate("contraption.controls.all_actor_toggle", state)
+			CreateLang.translate("contraption.controls.all_actor_toggle", state)
 				.sendStatus(player);
 			return;
 		}
 
-		Lang.translate("contraption.controls.specific_actor_toggle", filter.getHoverName()
+		CreateLang.translate("contraption.controls.specific_actor_toggle", filter.getHoverName()
 			.getString(), state)
 			.sendStatus(player);
 	}

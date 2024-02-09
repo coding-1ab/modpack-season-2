@@ -13,13 +13,13 @@ import com.simibubi.create.content.kinetics.steamEngine.SteamJetParticleData;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.VecHelper;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -109,11 +109,11 @@ public class WhistleBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		String[] pitches = Lang.translateDirect("generic.notes")
+		String[] pitches = CreateLang.translateDirect("generic.notes")
 			.getString()
 			.split(";");
 		MutableComponent textComponent = Components.literal(spacing);
-		tooltip.add(textComponent.append(Lang.translateDirect("generic.pitch", pitches[pitch % pitches.length])));
+		tooltip.add(textComponent.append(CreateLang.translateDirect("generic.pitch", pitches[pitch % pitches.length])));
 		return true;
 	}
 

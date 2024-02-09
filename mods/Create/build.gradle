@@ -1,65 +1,117 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        mavenCentral()
-        jcenter()
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
-        maven { url = 'https://maven.parchmentmc.org' }
-    }
-    dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:${forgegradle_version}"
-        classpath "org.spongepowered:mixingradle:${mixingradle_version}"
-        classpath "org.parchmentmc:librarian:${librarian_version}"
-    }
-}
-
 plugins {
+    id 'idea'
+    id 'eclipse'
+    id 'maven-publish'
+
+    id 'net.minecraftforge.gradle' version "${forgegradle_version}"
+    id 'org.spongepowered.mixin' version "${mixingradle_version}"
+    id 'org.parchmentmc.librarian.forgegradle' version "${librarian_version}"
+
     id 'com.matthewprenger.cursegradle' version "${cursegradle_version}"
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
-apply plugin: 'org.spongepowered.mixin'
+
+apply from: './gradle/java.gradle'
 
 jarJar.enable()
 
-boolean dev = System.getenv('RELEASE') == null || System.getenv('RELEASE').equals('false');
-// jozu: I use a gradle workspace with both projects.
-// The project is named Flywheel-Forge, but sub-projects are named by folder.
-boolean inWorkspace = findProject(':Flywheel') != null
-
+boolean dev = System.getenv('RELEASE') == null || System.getenv('RELEASE').equals('false')
 ext.buildNumber = System.getenv('BUILD_NUMBER')
 
-group = 'com.simibubi.create'
-archivesBaseName = "create-${artifact_minecraft_version}"
-version = mod_version + (dev && buildNumber != null ? "-${buildNumber}" : '')
+base {
+    archivesName = "create-${artifact_minecraft_version}"
+    group = 'com.simibubi.create'
+    version = mod_version + (dev && buildNumber != null ? "-${buildNumber}" : '')
+}
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+// jozu: I use a gradle workspace with both projects.
+// The project is named Flywheel-Forge, but sub-projects are named by folder.
+boolean flywheelInWorkspace = findProject(':Flywheel') != null
 
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + ' (' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.enabled')
+boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
+boolean ponderInWorkspace = rootProject.hasProperty('multiModWorkspace.ponder')
+
+if (catnipInWorkspace) {
+    evaluationDependsOn(":catnip:Forge")
+}
+
+if (ponderInWorkspace) {
+    evaluationDependsOn(":ponder:Forge")
+}
+
+project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace || flywheelInWorkspace ? 'enabled' : 'disabled'} for project ${project.name}.")
+project.logger.lifecycle("Dependencies included in Workspace: [Flywheel: ${flywheelInWorkspace}], [Catnip: ${catnipInWorkspace}], [Ponder: ${ponderInWorkspace}]")
+
+mixin {
+    add sourceSets.main, 'create.refmap.json'
+
+    config 'create.mixins.json'
+}
+
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 
 minecraft {
+
     if (Boolean.parseBoolean(project.use_parchment)) {
         mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
     } else {
         mappings channel: 'official', version: "${minecraft_version}"
     }
 
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    // This property allows configuring Gradle's ProcessResources task(s) to run on IDE output locations before launching the game.
+    copyIdeResources = true
+
+    if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
+        accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    }
 
     runs {
-        client {
+        // applies to all the run configs below
+        configureEach {
             workingDirectory project.file('run')
-            arg '-mixin.config=create.mixins.json'
-            //jvmArgs '-XX:+UnlockCommercialFeatures' // uncomment for profiling
+
+            if (inMultiModWorkspace)
+                ideaModule "createmod.Create.main"
+            else
+                ideaModule "Create.main"
+
             property 'forge.logging.console.level', 'info'
+            jvmArgs '-XX:+IgnoreUnrecognizedVMOptions', '-XX:+AllowEnhancedClassRedefinition' // uncomment with jbr
+            //jvmArgs("-XX:-OmitStackTraceInFastThrow") // uncomment when you get exceptions with null messages etc
+            //jvmArgs '-XX:+UnlockCommercialFeatures' // uncomment for profiling
+
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
+            arg '-mixin.config=create.mixins.json'
+            arg '-mixin.config=catnip.mixins.json'
+
             mods {
                 create {
                     source sourceSets.main
                 }
 
-                if (inWorkspace) {
+                if (catnipInWorkspace) {
+                    catnip {
+                        source project(":catnip:Common").sourceSets.main
+                        source project(":catnip:Forge").sourceSets.main
+                    }
+                }
+
+                if (ponderInWorkspace) {
+                    ponder {
+                        source project(":ponder:Common").sourceSets.main
+                        source project(":ponder:Forge").sourceSets.main
+                    }
+                }
+            }
+        }
+
+        client {
+            arg '-mixin.config=flywheel.mixins.json'
+
+            mods {
+                if (flywheelInWorkspace) {
                     flywheel {
                         source project(":Flywheel").sourceSets.main
                     }
@@ -69,27 +121,14 @@ minecraft {
 
         server {
             workingDirectory project.file('run/server')
-            arg '-mixin.config=create.mixins.json'
-            property 'forge.logging.console.level', 'info'
-            mods {
-                create {
-                    source sourceSets.main
-                }
-            }
         }
 
         data {
-            workingDirectory project.file('run')
-            arg '-mixin.config=create.mixins.json'
             property 'forge.logging.markers', 'REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
             args '--mod', 'create', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources')
             mods {
-                create {
-                    source sourceSets.main
-                }
-
-                if (inWorkspace) {
+                if (flywheelInWorkspace) {
                     flywheel {
                         source project(":Flywheel").sourceSets.main
                     }
@@ -99,14 +138,7 @@ minecraft {
 
         gameTestServer {
             workingDirectory project.file('run/gametest')
-            arg '-mixin.config=create.mixins.json'
-            property 'forge.logging.console.level', 'info'
-            mods {
-                create {
-                    source sourceSets.main
-                }
-            }
-            // setForceExit false <- FIXME 1.20
+            //setForceExit false <- FIXME 1.20
         }
     }
 }
@@ -149,17 +181,28 @@ repositories {
         }
     }
     maven {
+        // Location of the maven for Ponder, Catnip
+        name = 'createmod maven'
+        url 'https://maven.createmod.net'
+    }
+    maven {
         name = "Modrinth"
         url = "https://api.modrinth.com/maven"
         content {
             includeGroup "maven.modrinth"
         }
     }
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
 
     mavenLocal()
     flatDir {
         dirs 'libs'
     }
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+    exclude '.cache/'
 }
 
 dependencies {
@@ -174,10 +217,24 @@ dependencies {
 
     implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
 
-    if (inWorkspace) {
+    if (flywheelInWorkspace) {
         implementation project(':Flywheel')
     } else {
         implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
+    }
+
+    if (catnipInWorkspace) {
+        implementation project(":catnip:Common")
+        implementation project(":catnip:Forge")
+    } else {
+        implementation fg.deobf("net.createmod.catnip:Catnip-Forge-${minecraft_version}:${catnip_version}")
+    }
+
+    if (ponderInWorkspace) {
+        implementation project(":ponder:Common")
+        implementation project(":ponder:Forge")
+    } else {
+        implementation fg.deobf("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}")
     }
 
     compileOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}")
@@ -218,43 +275,42 @@ sourceSets.main.java {
 	}
 }
 
-sourceSets.main.resources {
-    srcDir 'src/generated/resources'
-    exclude '.cache/'
-}
-
-mixin {
-    add sourceSets.main, 'create.refmap.json'
-}
-
 // Workaround for SpongePowered/MixinGradle#38
 afterEvaluate {
     tasks.configureReobfTaskForReobfJar.mustRunAfter(tasks.compileJava)
     tasks.configureReobfTaskForReobfJarJar.mustRunAfter(tasks.compileJava)
 }
 
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+processResources {
+    def buildProps = project.properties.clone()
+
+    // Replaces FML's magic file.jarVersion string with the correct version at build time.
+    buildProps.put('file', [jarVersion: project.version])
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand buildProps
+    }
 }
 
 compileJava {
     options.compilerArgs = ['-Xdiags:verbose']
 }
 
-jar {
-    archiveClassifier = 'slim'
-    manifest {
-        attributes([
-            'Specification-Title': 'create',
-            'Specification-Vendor': 'simibubi',
-            'Specification-Version': '1',
-            'Implementation-Title': project.jar.archiveBaseName,
-            'Implementation-Version': project.jar.archiveVersion,
-            'Implementation-Vendor': 'simibubi',
-            'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            'MixinConfigs': 'create.mixins.json'
-        ])
+void addLicense(jarTask) {
+    jarTask.from('LICENSE') {
+        rename { "${it}_${project.archivesBaseName}" }
     }
+}
+
+tasks.jar {
+    archiveClassifier = 'slim'
+    finalizedBy('reobfJar')
+    addLicense it
+}
+
+tasks.jarJar {
+    finalizedBy('reobfJarJar')
+    addLicense it
 }
 
 task jarJarRelease {
@@ -267,28 +323,10 @@ task jarJarRelease {
     finalizedBy tasks.jarJar
 }
 
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
-void addLicense(jarTask) {
-    jarTask.from('LICENSE') {
-        rename { "${it}_${project.archivesBaseName}" }
-    }
-}
-
-jar.finalizedBy('reobfJar')
-tasks.jarJar.finalizedBy('reobfJarJar')
-
-addLicense(jar)
-addLicense(tasks.jarJar)
-
-publishing {
+project.publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = archivesBaseName
-
+            artifactId base.archivesName.get()
             from components.java
             fg.component(it)
             jarJar.component(it)

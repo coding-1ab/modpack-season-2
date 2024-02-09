@@ -9,10 +9,10 @@ import com.simibubi.create.content.trains.signal.SignalBlockEntity;
 import com.simibubi.create.content.trains.signal.SignalBlockEntity.SignalState;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Couple;
 import com.simibubi.create.foundation.utility.DynamicComponent;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

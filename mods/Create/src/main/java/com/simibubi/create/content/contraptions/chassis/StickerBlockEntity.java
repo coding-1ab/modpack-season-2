@@ -9,9 +9,9 @@ import com.simibubi.create.content.contraptions.glue.SuperGlueEntity;
 import com.simibubi.create.content.contraptions.glue.SuperGlueItem;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
 
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -85,7 +85,7 @@ public class StickerBlockEntity extends SmartBlockEntity {
 	protected void write(CompoundTag tag, boolean clientPacket) {
 		super.write(tag, clientPacket);
 	}
-	
+
 	@Override
 	protected void read(CompoundTag compound, boolean clientPacket) {
 		super.read(compound, clientPacket);

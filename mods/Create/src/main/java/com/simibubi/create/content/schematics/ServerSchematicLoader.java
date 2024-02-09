@@ -19,12 +19,12 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.schematics.SchematicExport.SchematicExportResult;
 import com.simibubi.create.content.schematics.table.SchematicTableBlockEntity;
-import com.simibubi.create.foundation.utility.Components;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.foundation.utility.FilesHelper;
-import com.simibubi.create.foundation.utility.Lang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.simibubi.create.infrastructure.config.CSchematics;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -88,9 +88,9 @@ public class ServerSchematicLoader {
 
 	public void handleNewUpload(ServerPlayer player, String schematic, long size, BlockPos pos) {
 		String playerPath = getSchematicPath() + "/" + player.getGameProfile()
-			.getName();
+				.getName();
 		String playerSchematicId = player.getGameProfile()
-			.getName() + "/" + schematic;
+				.getName() + "/" + schematic;
 		FilesHelper.createFolderIfMissing(playerPath);
 
 		// Unsupported Format
@@ -100,11 +100,11 @@ public class ServerSchematicLoader {
 		}
 
 		Path playerSchematicsPath = Paths.get(getSchematicPath(), player.getGameProfile()
-			.getName())
-			.toAbsolutePath();
+						.getName())
+				.toAbsolutePath();
 
 		Path uploadPath = playerSchematicsPath.resolve(schematic)
-			.normalize();
+				.normalize();
 		if (!uploadPath.startsWith(playerSchematicsPath)) {
 			Create.LOGGER.warn("Attempted Schematic Upload with directory escape: {}", playerSchematicId);
 			return;
@@ -136,8 +136,8 @@ public class ServerSchematicLoader {
 			if (count >= getConfig().maxSchematics.get()) {
 				Stream<Path> list2 = Files.list(Paths.get(playerPath));
 				Optional<Path> lastFilePath = list2.filter(f -> !Files.isDirectory(f))
-					.min(Comparator.comparingLong(f -> f.toFile()
-						.lastModified()));
+						.min(Comparator.comparingLong(f -> f.toFile()
+								.lastModified()));
 				list2.close();
 				if (lastFilePath.isPresent()) {
 					Files.deleteIfExists(lastFilePath.get());
@@ -160,9 +160,9 @@ public class ServerSchematicLoader {
 	protected boolean validateSchematicSizeOnServer(ServerPlayer player, long size) {
 		Integer maxFileSize = getConfig().maxTotalSchematicSize.get();
 		if (size > maxFileSize * 1000) {
-			player.sendSystemMessage(Lang.translateDirect("schematics.uploadTooLarge")
+			player.sendSystemMessage(CreateLang.translateDirect("schematics.uploadTooLarge")
 				.append(Components.literal(" (" + size / 1000 + " KB).")));
-			player.sendSystemMessage(Lang.translateDirect("schematics.maxAllowedSize")
+			player.sendSystemMessage(CreateLang.translateDirect("schematics.maxAllowedSize")
 				.append(Components.literal(" " + maxFileSize + " KB")));
 			return false;
 		}
@@ -175,7 +175,7 @@ public class ServerSchematicLoader {
 
 	public void handleWriteRequest(ServerPlayer player, String schematic, byte[] data) {
 		String playerSchematicId = player.getGameProfile()
-			.getName() + "/" + schematic;
+				.getName() + "/" + schematic;
 
 		if (activeUploads.containsKey(playerSchematicId)) {
 			SchematicUploadEntry entry = activeUploads.get(playerSchematicId);
@@ -246,7 +246,7 @@ public class ServerSchematicLoader {
 
 	public void handleFinishedUpload(ServerPlayer player, String schematic) {
 		String playerSchematicId = player.getGameProfile()
-			.getName() + "/" + schematic;
+				.getName() + "/" + schematic;
 
 		if (activeUploads.containsKey(playerSchematicId)) {
 			try {
@@ -278,7 +278,7 @@ public class ServerSchematicLoader {
 	}
 
 	public void handleInstantSchematic(ServerPlayer player, String schematic, Level world, BlockPos pos,
-		BlockPos bounds) {
+									   BlockPos bounds) {
 		String playerName = player.getGameProfile().getName();
 		String playerPath = getSchematicPath() + "/" + playerName;
 		String playerSchematicId = playerName + "/" + schematic;
@@ -291,10 +291,10 @@ public class ServerSchematicLoader {
 		}
 
 		Path schematicPath = Paths.get(getSchematicPath())
-			.toAbsolutePath();
+				.toAbsolutePath();
 
 		Path path = schematicPath.resolve(playerSchematicId)
-			.normalize();
+				.normalize();
 		if (!path.startsWith(schematicPath)) {
 			Create.LOGGER.warn("Attempted Schematic Upload with directory escape: {}", playerSchematicId);
 			return;
@@ -318,7 +318,7 @@ public class ServerSchematicLoader {
 			player.setItemInHand(InteractionHand.MAIN_HAND,
 				SchematicItem.create(world.holderLookup(Registries.BLOCK), schematic, playerName));
 		else
-			Lang.translate("schematicAndQuill.instant_failed")
+			CreateLang.translate("schematicAndQuill.instant_failed")
 				.style(ChatFormatting.RED)
 				.sendStatus(player);
 	}

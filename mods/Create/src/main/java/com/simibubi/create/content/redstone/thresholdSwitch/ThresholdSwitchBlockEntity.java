@@ -13,8 +13,8 @@ import com.simibubi.create.foundation.blockEntity.behaviour.inventory.CapManipul
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipulationBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.TankManipulationBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.VersionedInventoryTrackerBehaviour;
-import com.simibubi.create.foundation.utility.BlockFace;
 
+import net.createmod.catnip.utility.BlockFace;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -109,13 +109,13 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 
 		} else if (observedInventory.hasInventory() || observedTank.hasInventory()) {
 			if (observedInventory.hasInventory()) {
-				
+
 				// Item inventory
 				IItemHandler inv = observedInventory.getInventory();
 				if (invVersionTracker.stillWaiting(inv)) {
 					occupied = prevLevel;
 					totalSpace = 1f;
-					
+
 				} else {
 					invVersionTracker.awaitNewVersion(inv);
 					for (int slot = 0; slot < inv.getSlots(); slot++) {
@@ -124,7 +124,7 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 						int count = stackInSlot.getCount();
 						if (space == 0)
 							continue;
-						
+
 						totalSpace += 1;
 						if (filtering.test(stackInSlot))
 							occupied += count * (1f / space);
@@ -209,7 +209,7 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 				this.updateCurrentLevel();
 				invVersionTracker.reset();
 			}));
-		
+
 		behaviours.add(invVersionTracker = new VersionedInventoryTrackerBehaviour(this));
 
 		InterfaceProvider towardBlockFacing =

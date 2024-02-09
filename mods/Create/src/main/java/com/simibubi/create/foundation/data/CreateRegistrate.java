@@ -17,7 +17,6 @@ import com.simibubi.create.content.fluids.VirtualFluid;
 import com.simibubi.create.foundation.block.connected.CTModel;
 import com.simibubi.create.foundation.block.connected.ConnectedTextureBehaviour;
 import com.simibubi.create.foundation.item.TooltipModifier;
-import com.simibubi.create.foundation.utility.RegisteredObjects;
 import com.tterrag.registrate.AbstractRegistrate;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.builders.BlockEntityBuilder.BlockEntityFactory;
@@ -28,6 +27,7 @@ import com.tterrag.registrate.util.nullness.NonNullConsumer;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
 
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -262,20 +262,20 @@ public class CreateRegistrate extends AbstractRegistrate<CreateRegistrate> {
 	private static void registerBlockModel(Block entry,
 		Supplier<NonNullFunction<BakedModel, ? extends BakedModel>> func) {
 		CreateClient.MODEL_SWAPPER.getCustomBlockModels()
-			.register(RegisteredObjects.getKeyOrThrow(entry), func.get());
+			.register(CatnipServices.REGISTRIES.getKeyOrThrow(entry), func.get());
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	private static void registerItemModel(Item entry,
 		Supplier<NonNullFunction<BakedModel, ? extends BakedModel>> func) {
 		CreateClient.MODEL_SWAPPER.getCustomItemModels()
-			.register(RegisteredObjects.getKeyOrThrow(entry), func.get());
+			.register(CatnipServices.REGISTRIES.getKeyOrThrow(entry), func.get());
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	private static void registerCTBehviour(Block entry, Supplier<ConnectedTextureBehaviour> behaviorSupplier) {
 		ConnectedTextureBehaviour behavior = behaviorSupplier.get();
 		CreateClient.MODEL_SWAPPER.getCustomBlockModels()
-			.register(RegisteredObjects.getKeyOrThrow(entry), model -> new CTModel(model, behavior));
+			.register(CatnipServices.REGISTRIES.getKeyOrThrow(entry), model -> new CTModel(model, behavior));
 	}
 }

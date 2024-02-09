@@ -17,6 +17,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.utility.IInteractionChecker;
 import com.simibubi.create.foundation.utility.IPartialSafeNBT;
 
+import net.createmod.ponder.api.VirtualBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -28,7 +29,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 public abstract class SmartBlockEntity extends CachedRenderBBBlockEntity
-	implements IPartialSafeNBT, IInteractionChecker, ISpecialBlockEntityItemRequirement {
+	implements IPartialSafeNBT, IInteractionChecker, ISpecialBlockEntityItemRequirement, VirtualBlockEntity {
 
 	private final Map<BehaviourType<?>, BlockEntityBehaviour> behaviours = new HashMap<>();
 	private boolean initialized = false;

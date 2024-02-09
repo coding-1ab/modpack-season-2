@@ -1,15 +1,11 @@
 package com.simibubi.create.content.contraptions.glue;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.contraptions.BlockMovementChecks;
-import com.simibubi.create.foundation.placement.IPlacementHelper;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.worldWrappers.RayTraceWorld;
-
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.levelWrappers.RayTraceLevel;
+import net.createmod.catnip.utility.placement.IPlacementHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -30,6 +26,9 @@ import net.minecraftforge.event.level.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.network.PacketDistributor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @EventBusSubscriber
 public class SuperGlueHandler {
@@ -74,10 +73,10 @@ public class SuperGlueHandler {
 		Vec3 end = start.add(look.x * distance, look.y * distance, look.z * distance);
 		Level world = placer.level();
 
-		RayTraceWorld rayTraceWorld =
-			new RayTraceWorld(world, (p, state) -> p.equals(pos) ? Blocks.AIR.defaultBlockState() : state);
+		RayTraceLevel rayTraceLevel =
+			new RayTraceLevel(world, (p, state) -> p.equals(pos) ? Blocks.AIR.defaultBlockState() : state);
 		BlockHitResult ray =
-			rayTraceWorld.clip(new ClipContext(start, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, placer));
+			rayTraceLevel.clip(new ClipContext(start, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, placer));
 
 		Direction face = ray.getDirection();
 		if (face == null || ray.getType() == Type.MISS)

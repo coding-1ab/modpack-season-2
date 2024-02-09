@@ -1,9 +1,9 @@
 package com.simibubi.create;
 
-import static com.simibubi.create.AllTags.forgeItemTag;
 import static com.simibubi.create.AllTags.AllItemTags.CREATE_INGOTS;
 import static com.simibubi.create.AllTags.AllItemTags.CRUSHED_RAW_MATERIALS;
 import static com.simibubi.create.AllTags.AllItemTags.PLATES;
+import static com.simibubi.create.AllTags.forgeItemTag;
 import static com.simibubi.create.Create.REGISTRATE;
 import static com.simibubi.create.foundation.data.recipe.CompatMetals.ALUMINUM;
 import static com.simibubi.create.foundation.data.recipe.CompatMetals.LEAD;

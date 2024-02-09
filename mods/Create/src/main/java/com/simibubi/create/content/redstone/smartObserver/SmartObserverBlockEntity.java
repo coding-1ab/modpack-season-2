@@ -15,9 +15,9 @@ import com.simibubi.create.foundation.blockEntity.behaviour.inventory.CapManipul
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipulationBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.TankManipulationBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.VersionedInventoryTrackerBehaviour;
-import com.simibubi.create.foundation.utility.BlockFace;
-import com.simibubi.create.foundation.utility.Iterate;
 
+import net.createmod.catnip.utility.BlockFace;
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -32,10 +32,10 @@ public class SmartObserverBlockEntity extends SmartBlockEntity {
 	private FilteringBehaviour filtering;
 	private InvManipulationBehaviour observedInventory;
 	private TankManipulationBehaviour observedTank;
-	
+
 	private VersionedInventoryTrackerBehaviour invVersionTracker;
 	private boolean sustainSignal;
-	
+
 	public int turnOffTicks = 0;
 
 	public SmartObserverBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -59,10 +59,10 @@ public class SmartObserverBlockEntity extends SmartBlockEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		
+
 		if (level.isClientSide())
 			return;
-		
+
 		BlockState state = getBlockState();
 		if (turnOffTicks > 0) {
 			turnOffTicks--;

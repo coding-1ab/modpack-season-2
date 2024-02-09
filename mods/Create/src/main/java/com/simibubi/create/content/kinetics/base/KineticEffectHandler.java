@@ -1,8 +1,8 @@
 package com.simibubi.create.content.kinetics.base;
 
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.particles.ParticleOptions;

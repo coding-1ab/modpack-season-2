@@ -4,8 +4,8 @@ import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.WrenchableDirectionalBlock;
-import com.simibubi.create.foundation.utility.Iterate;
 
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -190,7 +190,7 @@ public class RedstoneLinkBlock extends WrenchableDirectionalBlock implements IBE
 	public Class<RedstoneLinkBlockEntity> getBlockEntityClass() {
 		return RedstoneLinkBlockEntity.class;
 	}
-	
+
 	@Override
 	public BlockEntityType<? extends RedstoneLinkBlockEntity> getBlockEntityType() {
 		return AllBlockEntityTypes.REDSTONE_LINK.get();

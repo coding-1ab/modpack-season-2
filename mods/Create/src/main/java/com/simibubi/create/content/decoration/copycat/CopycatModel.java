@@ -8,8 +8,8 @@ import javax.annotation.Nullable;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.foundation.model.BakedModelWrapperWithData;
-import com.simibubi.create.foundation.utility.Iterate;
 
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;

@@ -28,19 +28,19 @@ import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipul
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
 import com.simibubi.create.foundation.utility.BlockHelper;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.IntAttached;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.LangBuilder;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.VecHelper;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.IntAttached;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.utility.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -730,7 +730,7 @@ public class BasinBlockEntity extends SmartBlockEntity implements IHaveGoggleInf
 
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		Lang.translate("gui.goggles.basin_contents")
+		CreateLang.translate("gui.goggles.basin_contents")
 			.forGoggles(tooltip);
 
 		IItemHandlerModifiable items = itemCapability.orElse(new ItemStackHandler());
@@ -741,25 +741,25 @@ public class BasinBlockEntity extends SmartBlockEntity implements IHaveGoggleInf
 			ItemStack stackInSlot = items.getStackInSlot(i);
 			if (stackInSlot.isEmpty())
 				continue;
-			Lang.text("")
+			CreateLang.text("")
 				.add(Components.translatable(stackInSlot.getDescriptionId())
 					.withStyle(ChatFormatting.GRAY))
-				.add(Lang.text(" x" + stackInSlot.getCount())
+				.add(CreateLang.text(" x" + stackInSlot.getCount())
 					.style(ChatFormatting.GREEN))
 				.forGoggles(tooltip, 1);
 			isEmpty = false;
 		}
 
-		LangBuilder mb = Lang.translate("generic.unit.millibuckets");
+		LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
 		for (int i = 0; i < fluids.getTanks(); i++) {
 			FluidStack fluidStack = fluids.getFluidInTank(i);
 			if (fluidStack.isEmpty())
 				continue;
-			Lang.text("")
-				.add(Lang.fluidName(fluidStack)
-					.add(Lang.text(" "))
+			CreateLang.text("")
+				.add(CreateLang.fluidName(fluidStack)
+					.add(CreateLang.text(" "))
 					.style(ChatFormatting.GRAY)
-					.add(Lang.number(fluidStack.getAmount())
+					.add(CreateLang.number(fluidStack.getAmount())
 						.add(mb)
 						.style(ChatFormatting.BLUE)))
 				.forGoggles(tooltip, 1);

@@ -9,10 +9,11 @@ import com.simibubi.create.content.kinetics.crafter.CrafterHelper;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.VecHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.CatnipClient;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -78,15 +79,15 @@ public class EdgeInteractionRenderer {
 		ValueBox box = new ValueBox(Components.immutableEmpty(), bb, pos).passive(!hit)
 			.transform(new EdgeValueBoxTransform(offset))
 			.wideOutline();
-		CreateClient.OUTLINER.showValueBox("edge", box)
+		CatnipClient.OUTLINER.showOutline("edge", box)
 			.highlightFace(face);
 
 		if (!hit)
 			return;
 
 		List<MutableComponent> tip = new ArrayList<>();
-		tip.add(Lang.translateDirect("logistics.crafter.connected"));
-		tip.add(Lang.translateDirect(CrafterHelper.areCraftersConnected(world, pos, pos.relative(closestEdge))
+		tip.add(CreateLang.translateDirect("logistics.crafter.connected"));
+		tip.add(CreateLang.translateDirect(CrafterHelper.areCraftersConnected(world, pos, pos.relative(closestEdge))
 			? "logistics.crafter.click_to_separate"
 			: "logistics.crafter.click_to_merge"));
 		CreateClient.VALUE_SETTINGS_HANDLER.showHoverTip(tip);

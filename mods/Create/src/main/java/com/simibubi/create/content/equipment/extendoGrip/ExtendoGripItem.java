@@ -1,9 +1,5 @@
 package com.simibubi.create.content.equipment.extendoGrip;
 
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -12,9 +8,8 @@ import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.equipment.armor.BacktankUtil;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-
+import net.createmod.catnip.utility.AnimationTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
@@ -50,6 +45,10 @@ import net.minecraftforge.event.level.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @EventBusSubscriber
 public class ExtendoGripItem extends Item {

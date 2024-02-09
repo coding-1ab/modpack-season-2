@@ -7,8 +7,8 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.contraptions.IDisplayAssemblyExceptions;
-import com.simibubi.create.foundation.utility.Components;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;

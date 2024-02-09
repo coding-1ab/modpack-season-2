@@ -22,8 +22,8 @@ import com.simibubi.create.content.schematics.requirement.ISpecialBlockItemRequi
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
 import com.simibubi.create.foundation.block.IBE;
-import com.simibubi.create.foundation.utility.Iterate;
 
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.DebugPackets;
@@ -178,17 +178,17 @@ public class EncasedPipeBlock extends Block
 				EncasedPipeBlock.transferSixWayProperties(state, defaultBlockState()));
 		FluidTransportBehaviour.loadFlows(level, pos);
 	}
-	
+
 	@Override
 	public BlockState rotate(BlockState pState, Rotation pRotation) {
 		return FluidPipeBlockRotation.rotate(pState, pRotation);
 	}
-	
+
 	@Override
 	public BlockState mirror(BlockState pState, Mirror pMirror) {
 		return FluidPipeBlockRotation.mirror(pState, pMirror);
 	}
-	
+
 	@Override
 	public BlockState transform(BlockState state, StructureTransform transform) {
 		return FluidPipeBlockRotation.transform(state, transform);

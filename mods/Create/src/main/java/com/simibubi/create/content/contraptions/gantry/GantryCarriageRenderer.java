@@ -5,12 +5,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.Iterate;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -54,7 +54,7 @@ public class GantryCarriageRenderer extends KineticBlockEntityRenderer<GantryCar
 			if (facing == Direction.NORTH || facing == Direction.EAST)
 				angleForBE *= -1;
 
-		SuperByteBuffer cogs = CachedBufferer.partial(AllPartialModels.GANTRY_COGS, state);
+		SuperByteBuffer cogs = CachedBuffers.partial(AllPartialModels.GANTRY_COGS, state);
 		cogs.centre()
 				.rotateY(AngleHelper.horizontalAngle(facing))
 				.rotateX(facing == Direction.UP ? 0 : facing == Direction.DOWN ? 180 : 90)
@@ -70,7 +70,7 @@ public class GantryCarriageRenderer extends KineticBlockEntityRenderer<GantryCar
 	}
 
 	public static float getAngleForBE(KineticBlockEntity be, final BlockPos pos, Axis axis) {
-		float time = AnimationTickHolder.getRenderTime(be.getLevel());
+		float time = LevelTickHolder.getRenderTime(be.getLevel());
 		float offset = getRotationOffsetForPosition(be, pos, axis);
 		return (time * be.getSpeed() * 3f / 20 + offset) % 360;
 	}

@@ -3,8 +3,7 @@ package com.simibubi.create.compat;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.simibubi.create.foundation.utility.Lang;
-
+import net.createmod.catnip.utility.lang.Lang;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fml.ModList;

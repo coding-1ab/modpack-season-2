@@ -1,9 +1,5 @@
 package com.simibubi.create.content.contraptions.elevator;
 
-import java.util.Optional;
-
-import javax.annotation.Nullable;
-
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
@@ -14,9 +10,8 @@ import com.simibubi.create.content.schematics.requirement.ISpecialBlockItemRequi
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.WrenchableDirectionalBlock;
-import com.simibubi.create.foundation.gui.ScreenOpener;
 import com.simibubi.create.foundation.utility.BlockHelper;
-
+import net.createmod.catnip.gui.ScreenOpener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -43,6 +38,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
+
+import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class ElevatorContactBlock extends WrenchableDirectionalBlock
 	implements IBE<ElevatorContactBlockEntity>, ISpecialBlockItemRequirement {
@@ -85,7 +83,7 @@ public class ElevatorContactBlock extends WrenchableDirectionalBlock
 
 		return onWrenched;
 	}
-	
+
 	@Nullable
 	public static ColumnCoords getColumnCoords(LevelAccessor level, BlockPos pos) {
 		BlockState blockState = level.getBlockState(pos);

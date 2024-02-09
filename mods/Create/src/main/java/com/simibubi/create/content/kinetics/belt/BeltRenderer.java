@@ -16,16 +16,16 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.belt.transport.BeltInventory;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.foundation.block.render.SpriteShiftEntry;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
 import com.simibubi.create.foundation.render.ShadowRenderHelper;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.worldWrappers.WrappedWorld;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SpriteShiftEntry;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.levelWrappers.WrappedLevel;
+import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -76,7 +76,7 @@ public class BeltRenderer extends SafeBlockEntityRenderer<BeltBlockEntity> {
 			PoseStack localTransforms = new PoseStack();
 			TransformStack msr = TransformStack.cast(localTransforms);
 			VertexConsumer vb = buffer.getBuffer(RenderType.solid());
-			float renderTick = AnimationTickHolder.getRenderTime(be.getLevel());
+			float renderTick = LevelTickHolder.getRenderTime(be.getLevel());
 
 			msr.centre()
 				.rotateY(AngleHelper.horizontalAngle(facing) + (upward ? 180 : 0) + (sideways ? 270 : 0))
@@ -96,7 +96,7 @@ public class BeltRenderer extends SafeBlockEntityRenderer<BeltBlockEntity> {
 
 				PartialModel beltPartial = getBeltPartial(diagonal, start, end, bottom);
 
-				SuperByteBuffer beltBuffer = CachedBufferer.partial(beltPartial, blockState)
+				SuperByteBuffer beltBuffer = CachedBuffers.partial(beltPartial, blockState)
 					.light(light);
 
 				SpriteShiftEntry spriteShift = getSpriteShiftEntry(color, diagonal, bottom);
@@ -149,7 +149,7 @@ public class BeltRenderer extends SafeBlockEntityRenderer<BeltBlockEntity> {
 					return stack;
 				};
 
-				SuperByteBuffer superBuffer = CachedBufferer.partialDirectional(AllPartialModels.BELT_PULLEY,
+				SuperByteBuffer superBuffer = CachedBuffers.partialDirectional(AllPartialModels.BELT_PULLEY,
 					blockState, dir, matrixStackSupplier);
 				KineticBlockEntityRenderer.standardKineticRotationTransform(superBuffer, be, light)
 					.renderInto(ms, vb);
@@ -210,7 +210,7 @@ public class BeltRenderer extends SafeBlockEntityRenderer<BeltBlockEntity> {
 		int verticality = slope == BeltSlope.DOWNWARD ? -1 : slope == BeltSlope.UPWARD ? 1 : 0;
 		boolean slopeAlongX = beltFacing.getAxis() == Direction.Axis.X;
 
-		boolean onContraption = be.getLevel() instanceof WrappedWorld;
+		boolean onContraption = be.getLevel() instanceof WrappedLevel;
 
 		BeltInventory inventory = be.getInventory();
 		for (TransportedItemStack transported : inventory.getTransportedItems())

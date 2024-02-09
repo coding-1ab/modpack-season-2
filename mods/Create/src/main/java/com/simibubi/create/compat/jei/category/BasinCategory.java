@@ -1,12 +1,5 @@
 package com.simibubi.create.compat.jei.category;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import org.apache.commons.lang3.mutable.MutableInt;
-
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.processing.basin.BasinRecipe;
@@ -16,19 +9,23 @@ import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.foundation.fluid.FluidIngredient;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.item.ItemHelper;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.Pair;
-
+import com.simibubi.create.foundation.utility.CreateLang;
 import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
+import net.createmod.catnip.utility.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.mutable.MutableInt;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
+import java.util.List;
 
 @ParametersAreNonnullByDefault
 public class BasinCategory extends CreateRecipeCategory<BasinRecipe> {
@@ -130,7 +127,7 @@ public class BasinCategory extends CreateRecipeCategory<BasinRecipe> {
 
 		AllGuiTextures heatBar = noHeat ? AllGuiTextures.JEI_NO_HEAT_BAR : AllGuiTextures.JEI_HEAT_BAR;
 		heatBar.render(graphics, 4, 80);
-		graphics.drawString(Minecraft.getInstance().font, Lang.translateDirect(requiredHeat.getTranslationKey()), 9,
+		graphics.drawString(Minecraft.getInstance().font, CreateLang.translateDirect(requiredHeat.getTranslationKey()), 9,
 				86, requiredHeat.getColor(), false);
 	}
 

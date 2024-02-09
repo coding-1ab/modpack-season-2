@@ -44,16 +44,16 @@ import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
 import com.simibubi.create.foundation.block.render.MultiPosDestructionHandler;
 import com.simibubi.create.foundation.block.render.ReducedDestroyEffects;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.BlockFace;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.Pair;
-import com.simibubi.create.foundation.utility.VecHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.createmod.catnip.utility.BlockFace;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -297,11 +297,11 @@ public class TrackBlock extends Block
 		if (player == null)
 			return;
 		player.displayClientMessage(Components.literal("<!> ")
-			.append(Lang.translateDirect("portal_track.failed"))
+			.append(CreateLang.translateDirect("portal_track.failed"))
 			.withStyle(ChatFormatting.GOLD), false);
 		MutableComponent component = failPos != null
-			? Lang.translateDirect("portal_track." + fail, failPos.getX(), failPos.getY(), failPos.getZ())
-			: Lang.translateDirect("portal_track." + fail);
+			? CreateLang.translateDirect("portal_track." + fail, failPos.getX(), failPos.getY(), failPos.getZ())
+			: CreateLang.translateDirect("portal_track." + fail);
 		player.displayClientMessage(Components.literal(" - ")
 			.withStyle(ChatFormatting.GRAY)
 			.append(component.withStyle(st -> st.withColor(0xFFD3B4))), false);

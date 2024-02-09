@@ -1,11 +1,5 @@
 package com.simibubi.create.content.contraptions.mounted;
 
-import static com.simibubi.create.content.contraptions.mounted.CartAssemblerBlock.RAIL_SHAPE;
-
-import java.util.Queue;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.contraptions.Contraption;
@@ -13,10 +7,9 @@ import com.simibubi.create.content.contraptions.ContraptionType;
 import com.simibubi.create.content.contraptions.mounted.CartAssemblerBlockEntity.CartMovementMode;
 import com.simibubi.create.content.contraptions.render.ContraptionLighter;
 import com.simibubi.create.content.contraptions.render.NonStationaryLighter;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.VecHelper;
-
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -35,6 +28,11 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.Queue;
+
+import static com.simibubi.create.content.contraptions.mounted.CartAssemblerBlock.RAIL_SHAPE;
 
 public class MountedContraption extends Contraption {
 
@@ -159,7 +157,7 @@ public class MountedContraption extends Contraption {
 		if (cart instanceof Container container)
 			storage.attachExternal(new ContraptionInvWrapper(true, new InvWrapper(container)));
 	}
-	
+
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public ContraptionLighter<?> makeLighter() {

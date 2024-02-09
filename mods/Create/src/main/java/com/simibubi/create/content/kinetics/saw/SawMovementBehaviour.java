@@ -9,8 +9,8 @@ import com.simibubi.create.content.kinetics.base.BlockBreakingMovementBehaviour;
 import com.simibubi.create.foundation.damageTypes.CreateDamageSources;
 import com.simibubi.create.foundation.utility.AbstractBlockBreakQueue;
 import com.simibubi.create.foundation.utility.TreeCutter;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

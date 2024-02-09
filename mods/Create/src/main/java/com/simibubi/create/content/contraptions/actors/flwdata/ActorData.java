@@ -1,11 +1,9 @@
 package com.simibubi.create.content.contraptions.actors.flwdata;
 
+import com.jozufozu.flywheel.api.InstanceData;
+import net.minecraft.core.BlockPos;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-
-import com.jozufozu.flywheel.api.InstanceData;
-
-import net.minecraft.core.BlockPos;
 
 public class ActorData extends InstanceData {
     float x;

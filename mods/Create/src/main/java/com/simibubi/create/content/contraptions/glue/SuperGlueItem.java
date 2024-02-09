@@ -1,8 +1,8 @@
 package com.simibubi.create.content.contraptions.glue;
 
 import com.simibubi.create.content.contraptions.chassis.AbstractChassisBlock;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ItemParticleOption;

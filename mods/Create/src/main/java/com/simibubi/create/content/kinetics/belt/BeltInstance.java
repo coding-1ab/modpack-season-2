@@ -16,10 +16,10 @@ import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityInstance;
 import com.simibubi.create.content.kinetics.base.flwdata.BeltData;
 import com.simibubi.create.content.kinetics.base.flwdata.RotatingData;
-import com.simibubi.create.foundation.block.render.SpriteShiftEntry;
 import com.simibubi.create.foundation.render.AllMaterialSpecs;
-import com.simibubi.create.foundation.utility.Iterate;
 
+import net.createmod.catnip.render.SpriteShiftEntry;
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;

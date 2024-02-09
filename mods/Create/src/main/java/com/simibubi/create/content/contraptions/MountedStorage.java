@@ -6,8 +6,7 @@ import com.simibubi.create.content.kinetics.crafter.MechanicalCrafterBlockEntity
 import com.simibubi.create.content.logistics.crate.BottomlessItemHandler;
 import com.simibubi.create.content.logistics.vault.ItemVaultBlockEntity;
 import com.simibubi.create.content.processing.recipe.ProcessingInventory;
-import com.simibubi.create.foundation.utility.NBTHelper;
-
+import net.createmod.catnip.utility.NBTHelper;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.ContainerHelper;
@@ -56,7 +55,7 @@ public class MountedStorage {
 			if (handler instanceof ItemStackHandler)
 				return !(handler instanceof ProcessingInventory);
 			return canUseModdedInventory(be, handler);
-			
+
 		} catch (Exception e) {
 			return false;
 		}

@@ -28,13 +28,14 @@ import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.INamedIc
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollOptionBehaviour;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.utility.BlockHelper;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.NBTHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.utility.lang.Lang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -98,7 +99,7 @@ public class BrassTunnelBlockEntity extends BeltTunnelBlockEntity implements IHa
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
 		super.addBehaviours(behaviours);
 		behaviours.add(selectionMode = new ScrollOptionBehaviour<>(SelectionMode.class,
-			Lang.translateDirect("logistics.when_multiple_outputs_available"), this, new BrassTunnelModeSlot()));
+			CreateLang.translateDirect("logistics.when_multiple_outputs_available"), this, new BrassTunnelModeSlot()));
 
 		selectionMode.onlyActiveWhen(this::hasDistributionBehaviour);
 
@@ -785,18 +786,18 @@ public class BrassTunnelBlockEntity extends BeltTunnelBlockEntity implements IHa
 			return false;
 
 		tooltip.add(componentSpacing.plainCopy()
-			.append(Lang.translateDirect("tooltip.brass_tunnel.contains"))
+			.append(CreateLang.translateDirect("tooltip.brass_tunnel.contains"))
 			.withStyle(ChatFormatting.WHITE));
 		for (ItemStack item : allStacks) {
 			tooltip.add(componentSpacing.plainCopy()
-				.append(Lang.translateDirect("tooltip.brass_tunnel.contains_entry",
+				.append(CreateLang.translateDirect("tooltip.brass_tunnel.contains_entry",
 					Components.translatable(item.getDescriptionId())
 						.getString(),
 					item.getCount()))
 				.withStyle(ChatFormatting.GRAY));
 		}
 		tooltip.add(componentSpacing.plainCopy()
-			.append(Lang.translateDirect("tooltip.brass_tunnel.retrieve"))
+			.append(CreateLang.translateDirect("tooltip.brass_tunnel.retrieve"))
 			.withStyle(ChatFormatting.DARK_GRAY));
 
 		return true;

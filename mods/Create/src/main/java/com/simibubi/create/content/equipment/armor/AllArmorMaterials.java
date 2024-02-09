@@ -1,16 +1,15 @@
 package com.simibubi.create.content.equipment.armor;
 
-import java.util.function.Supplier;
-
 import com.google.common.base.Suppliers;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.Create;
-
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ArmorItem.Type;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+
+import java.util.function.Supplier;
 
 public enum AllArmorMaterials implements ArmorMaterial {
 

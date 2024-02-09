@@ -25,8 +25,9 @@ import com.simibubi.create.content.logistics.filter.attribute.astralsorcery.Astr
 import com.simibubi.create.content.logistics.filter.attribute.astralsorcery.AstralSorceryAttunementAttribute;
 import com.simibubi.create.content.logistics.filter.attribute.astralsorcery.AstralSorceryCrystalAttribute;
 import com.simibubi.create.content.logistics.filter.attribute.astralsorcery.AstralSorceryPerkGemAttribute;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.lang.Lang;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -123,7 +124,7 @@ public interface ItemAttribute {
 
 	@OnlyIn(value = Dist.CLIENT)
 	default MutableComponent format(boolean inverted) {
-		return Lang.translateDirect("item_attributes." + getTranslationKey() + (inverted ? ".inverted" : ""),
+		return CreateLang.translateDirect("item_attributes." + getTranslationKey() + (inverted ? ".inverted" : ""),
 			getTranslationParameters());
 	}
 

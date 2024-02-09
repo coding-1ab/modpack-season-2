@@ -2,7 +2,6 @@ package com.simibubi.create.content.contraptions.sync;
 
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
@@ -59,7 +58,7 @@ public class ContraptionInteractionPacket extends SimplePacketBase {
 			if (!sender.hasLineOfSight(entityByID))
 				d -= 3;
 			d *= d;
-			if (sender.distanceToSqr(entityByID) > d) 
+			if (sender.distanceToSqr(entityByID) > d)
 				return;
 			if (contraptionEntity.handlePlayerInteraction(sender, localPos, face, interactionHand))
 				sender.swing(interactionHand, true);

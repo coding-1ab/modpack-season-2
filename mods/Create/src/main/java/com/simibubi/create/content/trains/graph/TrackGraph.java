@@ -25,12 +25,12 @@ import com.simibubi.create.content.trains.signal.SignalEdgeGroup;
 import com.simibubi.create.content.trains.signal.TrackEdgePoint;
 import com.simibubi.create.content.trains.track.BezierConnection;
 import com.simibubi.create.content.trains.track.TrackMaterial;
-import com.simibubi.create.foundation.utility.Color;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.Pair;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;

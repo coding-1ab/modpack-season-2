@@ -5,8 +5,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import com.mojang.brigadier.StringReader;
 import com.mojang.serialization.Codec;
 import com.simibubi.create.foundation.particle.ICustomParticleDataWithSprite;
-import com.simibubi.create.foundation.utility.RegisteredObjects;
 
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -61,7 +61,7 @@ public abstract class BasicParticleData<T extends Particle> implements ParticleO
 
 	@Override
 	public String writeToString() {
-		return RegisteredObjects.getKeyOrThrow(getType()).toString();
+		return CatnipServices.REGISTRIES.getKeyOrThrow(getType()).toString();
 	}
 
 	@Override

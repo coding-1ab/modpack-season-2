@@ -3,17 +3,17 @@ package com.simibubi.create.content.contraptions.render;
 import com.jozufozu.flywheel.core.virtual.VirtualRenderWorld;
 import com.jozufozu.flywheel.event.RenderLayerEvent;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.contraptions.Contraption;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.render.SuperByteBufferCache;
-import com.simibubi.create.foundation.utility.Pair;
 
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.render.SuperByteBufferCache;
+import net.createmod.catnip.render.SuperByteBufferCache.Compartment;
+import net.createmod.catnip.utility.Pair;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.LevelAccessor;
 
 public class SBBContraptionManager extends ContraptionRenderingWorld<ContraptionRenderInfo> {
-	public static final SuperByteBufferCache.Compartment<Pair<Contraption, RenderType>> CONTRAPTION = new SuperByteBufferCache.Compartment<>();
+	public static final Compartment<Pair<Contraption, RenderType>> CONTRAPTION = new Compartment<>();
 
 	public SBBContraptionManager(LevelAccessor world) {
 		super(world);
@@ -33,7 +33,7 @@ public class SBBContraptionManager extends ContraptionRenderingWorld<Contraption
 	@Override
 	public boolean invalidate(Contraption contraption) {
 		for (RenderType chunkBufferLayer : RenderType.chunkBufferLayers()) {
-			CreateClient.BUFFER_CACHE.invalidate(CONTRAPTION, Pair.of(contraption, chunkBufferLayer));
+			SuperByteBufferCache.getInstance().invalidate(CONTRAPTION, Pair.of(contraption, chunkBufferLayer));
 		}
 		return super.invalidate(contraption);
 	}
@@ -47,7 +47,7 @@ public class SBBContraptionManager extends ContraptionRenderingWorld<Contraption
 	private void renderContraptionLayerSBB(ContraptionRenderInfo renderInfo, RenderType layer, VertexConsumer consumer) {
 		if (!renderInfo.isVisible()) return;
 
-		SuperByteBuffer contraptionBuffer = CreateClient.BUFFER_CACHE.get(CONTRAPTION, Pair.of(renderInfo.contraption, layer), () -> ContraptionRenderDispatcher.buildStructureBuffer(renderInfo.renderWorld, renderInfo.contraption, layer));
+		SuperByteBuffer contraptionBuffer = SuperByteBufferCache.getInstance().get(CONTRAPTION, Pair.of(renderInfo.contraption, layer), () -> ContraptionRenderDispatcher.buildStructureBuffer(renderInfo.renderWorld, renderInfo.contraption, layer));
 
 		if (!contraptionBuffer.isEmpty()) {
 			ContraptionMatrices matrices = renderInfo.getMatrices();

@@ -7,10 +7,11 @@ import java.util.List;
 
 import com.google.common.base.Strings;
 import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.FontHelper;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -22,8 +23,8 @@ public class TooltipHelper {
 
 	public static final int MAX_WIDTH_PER_LINE = 200;
 
-	public static MutableComponent holdShift(Palette palette, boolean highlighted) {
-		return Lang.translateDirect("tooltip.holdForDescription", Lang.translateDirect("tooltip.keyShift")
+	public static MutableComponent holdShift(FontHelper.Palette palette, boolean highlighted) {
+		return CreateLang.translateDirect("tooltip.holdForDescription", CreateLang.translateDirect("tooltip.keyShift")
 			.withStyle(ChatFormatting.GRAY))
 			.withStyle(ChatFormatting.DARK_GRAY);
 	}
@@ -31,10 +32,10 @@ public class TooltipHelper {
 	public static void addHint(List<Component> tooltip, String hintKey, Object... messageParams) {
 		Component spacing = IHaveGoggleInformation.componentSpacing;
 		tooltip.add(spacing.plainCopy()
-			.append(Lang.translateDirect(hintKey + ".title"))
+			.append(CreateLang.translateDirect(hintKey + ".title"))
 			.withStyle(ChatFormatting.GOLD));
-		Component hint = Lang.translateDirect(hintKey);
-		List<Component> cutComponent = cutTextComponent(hint, Palette.GRAY_AND_WHITE);
+		Component hint = CreateLang.translateDirect(hintKey);
+		List<Component> cutComponent = cutTextComponent(hint, FontHelper.Palette.GRAY_AND_WHITE);
 		for (Component component : cutComponent)
 			tooltip.add(spacing.plainCopy()
 				.append(component));
@@ -53,16 +54,16 @@ public class TooltipHelper {
 	public static Style styleFromColor(ChatFormatting color) {
 		return Style.EMPTY.applyFormat(color);
 	}
-	
+
 	public static Style styleFromColor(int hex) {
 		return Style.EMPTY.withColor(hex);
 	}
 
-	public static List<Component> cutStringTextComponent(String s, Palette palette) {
+	public static List<Component> cutStringTextComponent(String s, FontHelper.Palette palette) {
 		return cutTextComponent(Components.literal(s), palette);
 	}
 
-	public static List<Component> cutTextComponent(Component c, Palette palette) {
+	public static List<Component> cutTextComponent(Component c, FontHelper.Palette palette) {
 		return cutTextComponent(c, palette.primary(), palette.highlight());
 	}
 
@@ -140,27 +141,6 @@ public class TooltipHelper {
 		}
 
 		return formattedLines;
-	}
-
-	public record Palette(Style primary, Style highlight) {
-		public static final Palette STANDARD_CREATE = new Palette(styleFromColor(0xC9974C), styleFromColor(0xF1DD79));
-
-		public static final Palette BLUE = ofColors(ChatFormatting.BLUE, ChatFormatting.AQUA);
-		public static final Palette GREEN = ofColors(ChatFormatting.DARK_GREEN, ChatFormatting.GREEN);
-		public static final Palette YELLOW = ofColors(ChatFormatting.GOLD, ChatFormatting.YELLOW);
-		public static final Palette RED = ofColors(ChatFormatting.DARK_RED, ChatFormatting.RED);
-		public static final Palette PURPLE = ofColors(ChatFormatting.DARK_PURPLE, ChatFormatting.LIGHT_PURPLE);
-		public static final Palette GRAY = ofColors(ChatFormatting.DARK_GRAY, ChatFormatting.GRAY);
-
-		public static final Palette ALL_GRAY = ofColors(ChatFormatting.GRAY, ChatFormatting.GRAY);
-		public static final Palette GRAY_AND_BLUE = ofColors(ChatFormatting.GRAY, ChatFormatting.BLUE);
-		public static final Palette GRAY_AND_WHITE = ofColors(ChatFormatting.GRAY, ChatFormatting.WHITE);
-		public static final Palette GRAY_AND_GOLD = ofColors(ChatFormatting.GRAY, ChatFormatting.GOLD);
-		public static final Palette GRAY_AND_RED = ofColors(ChatFormatting.GRAY, ChatFormatting.RED);
-
-		public static Palette ofColors(ChatFormatting primary, ChatFormatting highlight) {
-			return new Palette(styleFromColor(primary), styleFromColor(highlight));
-		}
 	}
 
 }

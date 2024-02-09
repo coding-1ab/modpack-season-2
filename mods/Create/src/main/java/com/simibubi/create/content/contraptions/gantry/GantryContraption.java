@@ -6,7 +6,6 @@ import com.simibubi.create.content.contraptions.ContraptionType;
 import com.simibubi.create.content.contraptions.TranslatingContraption;
 import com.simibubi.create.content.contraptions.render.ContraptionLighter;
 import com.simibubi.create.content.contraptions.render.NonStationaryLighter;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

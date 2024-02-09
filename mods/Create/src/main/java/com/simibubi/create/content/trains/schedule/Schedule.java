@@ -19,10 +19,10 @@ import com.simibubi.create.content.trains.schedule.destination.ChangeThrottleIns
 import com.simibubi.create.content.trains.schedule.destination.ChangeTitleInstruction;
 import com.simibubi.create.content.trains.schedule.destination.DestinationInstruction;
 import com.simibubi.create.content.trains.schedule.destination.ScheduleInstruction;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.Pair;
 
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;

@@ -11,11 +11,12 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.VecHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.CatnipClient;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -45,8 +46,8 @@ public class LinkRenderer {
 		if (behaviour == null)
 			return;
 
-		Component freq1 = Lang.translateDirect("logistics.firstFrequency");
-		Component freq2 = Lang.translateDirect("logistics.secondFrequency");
+		Component freq1 = CreateLang.translateDirect("logistics.firstFrequency");
+		Component freq2 = CreateLang.translateDirect("logistics.secondFrequency");
 
 		for (boolean first : Iterate.trueAndFalse) {
 			AABB bb = new AABB(Vec3.ZERO, Vec3.ZERO).inflate(.25f);
@@ -63,7 +64,7 @@ public class LinkRenderer {
 			if (!empty)
 				box.wideOutline();
 
-			CreateClient.OUTLINER.showValueBox(Pair.of(Boolean.valueOf(first), pos), box.transform(transform))
+			CatnipClient.OUTLINER.showOutline(Pair.of(Boolean.valueOf(first), pos), box.transform(transform))
 				.highlightFace(result.getDirection());
 
 			if (!hit)
@@ -72,7 +73,7 @@ public class LinkRenderer {
 			List<MutableComponent> tip = new ArrayList<>();
 			tip.add(label.copy());
 			tip.add(
-				Lang.translateDirect(empty ? "logistics.filter.click_to_set" : "logistics.filter.click_to_replace"));
+				CreateLang.translateDirect(empty ? "logistics.filter.click_to_set" : "logistics.filter.click_to_replace"));
 			CreateClient.VALUE_SETTINGS_HANDLER.showHoverTip(tip);
 		}
 	}

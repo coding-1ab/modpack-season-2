@@ -19,9 +19,9 @@ import com.jozufozu.flywheel.util.transform.Transform;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.trains.entity.CarriageBogey;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -326,10 +326,10 @@ public abstract class BogeyRenderer {
 	public record BogeyModelData(Transform<?> transform) implements Transform<BogeyModelData> {
 		public static BogeyModelData from(PartialModel model) {
 			BlockState air = Blocks.AIR.defaultBlockState();
-			return new BogeyModelData(CachedBufferer.partial(model, air));
+			return new BogeyModelData(CachedBuffers.partial(model, air));
 		}
 		public static BogeyModelData from(BlockState model) {
-			return new BogeyModelData(CachedBufferer.block(model));
+			return new BogeyModelData(CachedBuffers.block(model));
 		}
 		public void render(PoseStack ms, int light, @Nullable VertexConsumer vb) {
 			transform.scale(1 - 1/512f);

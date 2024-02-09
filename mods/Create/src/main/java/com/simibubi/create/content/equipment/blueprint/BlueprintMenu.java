@@ -1,11 +1,8 @@
 package com.simibubi.create.content.equipment.blueprint;
 
-import java.util.Optional;
-
 import com.simibubi.create.AllMenuTypes;
 import com.simibubi.create.content.equipment.blueprint.BlueprintEntity.BlueprintSection;
 import com.simibubi.create.foundation.gui.menu.GhostItemMenu;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
@@ -26,6 +23,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+
+import java.util.Optional;
 
 public class BlueprintMenu extends GhostItemMenu<BlueprintSection> {
 

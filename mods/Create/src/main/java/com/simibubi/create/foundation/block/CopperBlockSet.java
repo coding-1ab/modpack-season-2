@@ -10,9 +10,6 @@ import java.util.function.Supplier;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.simibubi.create.foundation.data.TagGen;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.RegisteredObjects;
 import com.tterrag.registrate.AbstractRegistrate;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.providers.DataGenContext;
@@ -24,6 +21,9 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 
+import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.lang.Lang;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -228,7 +228,7 @@ public class CopperBlockSet {
 		public void generateBlockState(DataGenContext<Block, Block> ctx, RegistrateBlockstateProvider prov,
 			CopperBlockSet blocks, WeatherState state, boolean waxed) {
 			Block block = ctx.get();
-			String path = RegisteredObjects.getKeyOrThrow(block)
+			String path = CatnipServices.REGISTRIES.getKeyOrThrow(block)
 				.getPath();
 			String baseLoc = ModelProvider.BLOCK_FOLDER + "/" + blocks.generalDirectory + getWeatherStatePrefix(state);
 

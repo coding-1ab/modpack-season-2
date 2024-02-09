@@ -1,21 +1,19 @@
 package com.simibubi.create.content.decoration.bracket;
 
-import java.util.function.Predicate;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.NBTHelper;
-
+import net.createmod.catnip.utility.NBTHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Predicate;
 
 public class BracketedBlockEntityBehaviour extends BlockEntityBehaviour {
 

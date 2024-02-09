@@ -1,23 +1,15 @@
 package com.simibubi.create.content.contraptions;
 
-import java.lang.ref.WeakReference;
-import java.util.Collection;
-
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.mutable.MutableObject;
-
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.contraptions.sync.ContraptionInteractionPacket;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
 import com.simibubi.create.content.trains.entity.TrainRelocator;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.Iterate;
 import com.simibubi.create.foundation.utility.RaycastHelper;
 import com.simibubi.create.foundation.utility.RaycastHelper.PredicateTraceResult;
-import com.simibubi.create.foundation.utility.VecHelper;
-
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.player.RemotePlayer;
@@ -39,6 +31,11 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import org.apache.commons.lang3.mutable.MutableObject;
+
+import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
+import java.util.Collection;
 
 @EventBusSubscriber
 public class ContraptionHandlerClient {
@@ -91,7 +88,7 @@ public class ContraptionHandlerClient {
 		Collection<WeakReference<AbstractContraptionEntity>> contraptions =
 			ContraptionHandler.loadedContraptions.get(mc.level)
 				.values();
-		
+
 		for (WeakReference<AbstractContraptionEntity> ref : contraptions) {
 			AbstractContraptionEntity contraptionEntity = ref.get();
 			if (contraptionEntity == null)

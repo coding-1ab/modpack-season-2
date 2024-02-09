@@ -33,8 +33,6 @@ import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.ModularGuiLine;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
-import com.simibubi.create.foundation.gui.UIRenderHelper;
-import com.simibubi.create.foundation.gui.element.GuiGameElement;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.simibubi.create.foundation.gui.menu.GhostItemSubmitPacket;
 import com.simibubi.create.foundation.gui.widget.IconButton;
@@ -42,13 +40,15 @@ import com.simibubi.create.foundation.gui.widget.Indicator;
 import com.simibubi.create.foundation.gui.widget.Indicator.State;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.IntAttached;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.Pair;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.gui.UIRenderHelper;
+import net.createmod.catnip.gui.element.GuiGameElement;
+import net.createmod.catnip.utility.IntAttached;
+import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -109,11 +109,11 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 	@Override
 	protected void init() {
 		AllGuiTextures bg = AllGuiTextures.SCHEDULE;
-		setWindowSize(bg.width, bg.height);
+		setWindowSize(bg.getWidth(), bg.getHeight());
 		super.init();
 		clearWidgets();
 
-		confirmButton = new IconButton(leftPos + bg.width - 42, topPos + bg.height - 24, AllIcons.I_CONFIRM);
+		confirmButton = new IconButton(leftPos + bg.getWidth() - 42, topPos + bg.getHeight() - 24, AllIcons.I_CONFIRM);
 		confirmButton.withCallback(() -> minecraft.player.closeContainer());
 		addRenderableWidget(confirmButton);
 
@@ -128,10 +128,10 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 		});
 
 		List<Component> tip = cyclicButton.getToolTip();
-		tip.add(Lang.translateDirect("schedule.loop"));
-		tip.add(Lang.translateDirect("schedule.loop1")
+		tip.add(CreateLang.translateDirect("schedule.loop"));
+		tip.add(CreateLang.translateDirect("schedule.loop1")
 			.withStyle(ChatFormatting.GRAY));
-		tip.add(Lang.translateDirect("schedule.loop2")
+		tip.add(CreateLang.translateDirect("schedule.loop2")
 			.withStyle(ChatFormatting.GRAY));
 
 		addRenderableWidget(cyclicButton);
@@ -142,7 +142,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 			resetProgress.active = false;
 		});
 		resetProgress.active = schedule.savedProgress > 0 && !schedule.entries.isEmpty();
-		resetProgress.setToolTip(Lang.translateDirect("schedule.reset"));
+		resetProgress.setToolTip(CreateLang.translateDirect("schedule.reset"));
 		addRenderableWidget(resetProgress);
 
 		skipProgress = new IconButton(leftPos + 63, topPos + 202, AllIcons.I_PRIORITY_LOW);
@@ -152,11 +152,11 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 			resetProgress.active = schedule.savedProgress > 0;
 		});
 		skipProgress.active = schedule.entries.size() > 1;
-		skipProgress.setToolTip(Lang.translateDirect("schedule.skip"));
+		skipProgress.setToolTip(CreateLang.translateDirect("schedule.skip"));
 		addRenderableWidget(skipProgress);
 
 		stopEditing();
-		extraAreas = ImmutableList.of(new Rect2i(leftPos + bg.width, topPos + bg.height - 56, 48, 48));
+		extraAreas = ImmutableList.of(new Rect2i(leftPos + bg.getWidth(), topPos + bg.getHeight() - 56, 48, 48));
 		horizontalScrolls.clear();
 		for (int i = 0; i < schedule.entries.size(); i++)
 			horizontalScrolls.add(LerpedFloat.linear()
@@ -195,7 +195,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 			editingDestination = instruction;
 			updateEditorSubwidgets(editingDestination);
 			scrollInput.forOptions(Schedule.getTypeOptions(Schedule.INSTRUCTION_TYPES))
-				.titled(Lang.translateDirect("schedule.instruction_type"))
+				.titled(CreateLang.translateDirect("schedule.instruction_type"))
 				.writingTo(scrollInputLabel)
 				.calling(index -> {
 					ScheduleInstruction newlyCreated = Schedule.INSTRUCTION_TYPES.get(index)
@@ -220,7 +220,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 			editingCondition = cond;
 			updateEditorSubwidgets(editingCondition);
 			scrollInput.forOptions(Schedule.getTypeOptions(Schedule.CONDITION_TYPES))
-				.titled(Lang.translateDirect("schedule.condition_type"))
+				.titled(CreateLang.translateDirect("schedule.condition_type"))
 				.writingTo(scrollInputLabel)
 				.calling(index -> {
 					ScheduleWaitCondition newlyCreated = Schedule.CONDITION_TYPES.get(index)
@@ -635,9 +635,9 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 		return fieldSize;
 	}
 
-	private Component clickToEdit = Lang.translateDirect("gui.schedule.lmb_edit")
+	private Component clickToEdit = CreateLang.translateDirect("gui.schedule.lmb_edit")
 		.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
-	private Component rClickToDelete = Lang.translateDirect("gui.schedule.rmb_remove")
+	private Component rClickToDelete = CreateLang.translateDirect("gui.schedule.rmb_remove")
 		.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
 
 	public boolean action(@Nullable GuiGraphics graphics, double mouseX, double mouseY, int click) {
@@ -688,7 +688,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 
 			if (x > 180 && x <= 192) {
 				if (y > 0 && y <= 14) {
-					renderActionTooltip(graphics, ImmutableList.of(Lang.translateDirect("gui.schedule.remove_entry")),
+					renderActionTooltip(graphics, ImmutableList.of(CreateLang.translateDirect("gui.schedule.remove_entry")),
 						mx, my);
 					if (click == 0) {
 						entries.remove(entry);
@@ -697,7 +697,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 					return true;
 				}
 				if (y > cardHeight - 14) {
-					renderActionTooltip(graphics, ImmutableList.of(Lang.translateDirect("gui.schedule.duplicate")), mx,
+					renderActionTooltip(graphics, ImmutableList.of(CreateLang.translateDirect("gui.schedule.duplicate")), mx,
 						my);
 					if (click == 0) {
 						entries.add(entries.indexOf(entry), entry.clone());
@@ -709,7 +709,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 
 			if (x > 194) {
 				if (y > 7 && y <= 20 && i > 0) {
-					renderActionTooltip(graphics, ImmutableList.of(Lang.translateDirect("gui.schedule.move_up")), mx,
+					renderActionTooltip(graphics, ImmutableList.of(CreateLang.translateDirect("gui.schedule.move_up")), mx,
 						my);
 					if (click == 0) {
 						entries.remove(entry);
@@ -719,7 +719,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 					return true;
 				}
 				if (y > 20 && y <= 33 && i < entries.size() - 1) {
-					renderActionTooltip(graphics, ImmutableList.of(Lang.translateDirect("gui.schedule.move_down")), mx,
+					renderActionTooltip(graphics, ImmutableList.of(CreateLang.translateDirect("gui.schedule.move_down")), mx,
 						my);
 					if (click == 0) {
 						entries.remove(entry);
@@ -769,7 +769,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 				if (row < conditions.size() && row >= 0) {
 					boolean canRemove = conditions.size() > 1 || columns.size() > 1;
 					List<Component> components = new ArrayList<>();
-					components.add(Lang.translateDirect("schedule.condition_type")
+					components.add(CreateLang.translateDirect("schedule.condition_type")
 						.withStyle(ChatFormatting.GRAY));
 					ScheduleWaitCondition condition = conditions.get(row);
 					components.addAll(condition.getTitleAs("condition"));
@@ -797,7 +797,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 				}
 
 				if (y > 18 * conditions.size() && y <= 18 * conditions.size() + 10 && x >= w / 2 - 5 && x < w / 2 + 5) {
-					renderActionTooltip(graphics, ImmutableList.of(Lang.translateDirect("gui.schedule.add_condition")), mx, my);
+					renderActionTooltip(graphics, ImmutableList.of(CreateLang.translateDirect("gui.schedule.add_condition")), mx, my);
 					if (click == 0)
 						startEditing(new ScheduledDelay(), confirmed -> {
 							if (confirmed)
@@ -812,7 +812,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 			if (x < 0 || x > 15 || y > 20)
 				return false;
 
-			renderActionTooltip(graphics, ImmutableList.of(Lang.translateDirect("gui.schedule.alternative_condition")),
+			renderActionTooltip(graphics, ImmutableList.of(CreateLang.translateDirect("gui.schedule.alternative_condition")),
 				mx, my);
 			if (click == 0)
 				startEditing(new ScheduledDelay(), confirmed -> {
@@ -828,7 +828,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 		if (x < 18 || x > 33 || y > 14)
 			return false;
 
-		renderActionTooltip(graphics, ImmutableList.of(Lang.translateDirect("gui.schedule.add_entry")), mx, my);
+		renderActionTooltip(graphics, ImmutableList.of(CreateLang.translateDirect("gui.schedule.add_entry")), mx, my);
 		if (click == 0)
 			startEditing(new DestinationInstruction(), confirmed -> {
 				if (!confirmed)
@@ -1001,7 +1001,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 		super.renderForeground(graphics, mouseX, mouseY, partialTicks);
 
 		GuiGameElement.of(menu.contentHolder).<GuiGameElement
-			.GuiRenderBuilder>at(leftPos + AllGuiTextures.SCHEDULE.width, topPos + AllGuiTextures.SCHEDULE.height - 56,
+			.GuiRenderBuilder>at(leftPos + AllGuiTextures.SCHEDULE.getWidth(), topPos + AllGuiTextures.SCHEDULE.getHeight() - 56,
 				-200)
 			.scale(3)
 			.render(graphics);
@@ -1030,7 +1030,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 	protected void renderBg(GuiGraphics graphics, float pPartialTick, int pMouseX, int pMouseY) {
 		AllGuiTextures.SCHEDULE.render(graphics, leftPos, topPos);
 		FormattedCharSequence formattedcharsequence = title.getVisualOrderText();
-		int center = leftPos + (AllGuiTextures.SCHEDULE.width - 8) / 2;
+		int center = leftPos + (AllGuiTextures.SCHEDULE.getWidth() - 8) / 2;
 		graphics.drawString(font, formattedcharsequence, (float) (center - font.width(formattedcharsequence) / 2),
 			(float) topPos + 4, 0x505050, false);
 		renderSchedule(graphics, pMouseX, pMouseY, pPartialTick);
@@ -1043,9 +1043,9 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> {
 		AllGuiTextures.PLAYER_INVENTORY.render(graphics, leftPos + 38, topPos + 122);
 		graphics.drawString(font, playerInventoryTitle, leftPos + 46, topPos + 128, 0x505050, false);
 
-		formattedcharsequence = editingCondition == null ? Lang.translateDirect("schedule.instruction.editor")
+		formattedcharsequence = editingCondition == null ? CreateLang.translateDirect("schedule.instruction.editor")
 			.getVisualOrderText()
-			: Lang.translateDirect("schedule.condition.editor")
+			: CreateLang.translateDirect("schedule.condition.editor")
 				.getVisualOrderText();
 		graphics.drawString(font, formattedcharsequence, (float) (center - font.width(formattedcharsequence) / 2),
 			(float) topPos + 44, 0x505050, false);

@@ -17,7 +17,6 @@
     "WaterWheelFluidSpreadMixin",
     "accessor.AbstractProjectileDispenseBehaviorAccessor",
     "accessor.DispenserBlockAccessor",
-    "accessor.EntityAccessor",
     "accessor.FallingBlockEntityAccessor",
     "accessor.GameTestHelperAccessor",
     "accessor.LivingEntityAccessor",
@@ -27,9 +26,7 @@
   ],
   "client": [
     "accessor.AgeableListModelAccessor",
-    "accessor.GameRendererAccessor",
     "accessor.HumanoidArmorLayerAccessor",
-    "accessor.ParticleEngineAccessor",
     "client.BlockDestructionProgressMixin",
     "client.CameraMixin",
     "client.EntityContraptionInteractionMixin",

@@ -18,11 +18,11 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBehavio
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBoard;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsFormatter;
 import com.simibubi.create.foundation.item.ItemHelper;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.VecHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -52,7 +52,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	boolean showCount;
 
 	private FilterItemStack filter;
-	
+
 	public int count;
 	public boolean upTo;
 	private Predicate<ItemStack> predicate;
@@ -97,14 +97,14 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 		filter = FilterItemStack.of(nbt.getCompound("Filter"));
 		count = nbt.getInt("FilterAmount");
 		upTo = nbt.getBoolean("UpTo");
-		
+
 		// Migrate from previous behaviour
 		if (count == 0) {
 			upTo = true;
 			count = filter.item()
 				.getMaxStackSize();
 		}
-		
+
 		super.read(nbt, clientPacket);
 	}
 
@@ -261,15 +261,14 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	public ValueSettingsBoard createBoard(Player player, BlockHitResult hitResult) {
 		ItemStack filter = getFilter(hitResult.getDirection());
 		int maxAmount = (filter.getItem() instanceof FilterItem) ? 64 : filter.getMaxStackSize();
-		return new ValueSettingsBoard(Lang.translateDirect("logistics.filter.extracted_amount"), maxAmount, 16,
-			Lang.translatedOptions("logistics.filter", "up_to", "exactly"),
+		return new ValueSettingsBoard(CreateLang.translateDirect("logistics.filter.extracted_amount"), maxAmount, 16,
+				CreateLang.translatedOptions("logistics.filter", "up_to", "exactly"),
 			new ValueSettingsFormatter(this::formatValue));
 	}
 
 	public MutableComponent formatValue(ValueSettings value) {
-		if (value.row() == 0 && value.value() == filter.item()
-			.getMaxStackSize())
-			return Lang.translateDirect("logistics.filter.any_amount_short");
+		if (value.row() == 0 && value.value() == filter.item().getMaxStackSize())
+			return CreateLang.translateDirect("logistics.filter.any_amount_short");
 		return Components.literal(((value.row() == 0) ? "\u2264" : "=") + Math.max(1, value.value()));
 	}
 
@@ -300,11 +299,11 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 			toApply.setCount(1);
 
 		if (!setFilter(side, toApply)) {
-			player.displayClientMessage(Lang.translateDirect("logistics.filter.invalid_item"), true);
+			player.displayClientMessage(CreateLang.translateDirect("logistics.filter.invalid_item"), true);
 			AllSoundEvents.DENY.playOnServer(player.level(), player.blockPosition(), 1, 1);
 			return;
 		}
-		
+
 		if (!player.isCreative()) {
 			if (toApply.getItem() instanceof FilterItem) {
 				if (itemInHand.getCount() == 1)
@@ -320,7 +319,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	public MutableComponent getLabel() {
 		if (customLabel != null)
 			return customLabel;
-		return Lang.translateDirect(
+		return CreateLang.translateDirect(
 			recipeFilter ? "logistics.recipe_filter" : fluidFilter ? "logistics.fluid_filter" : "logistics.filter");
 	}
 
@@ -371,7 +370,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 				return true;
 			}
 
-			player.displayClientMessage(Lang
+			player.displayClientMessage(CreateLang
 				.translate("logistics.filter.requires_item_in_inventory", copied.getHoverName()
 					.copy()
 					.withStyle(ChatFormatting.WHITE))

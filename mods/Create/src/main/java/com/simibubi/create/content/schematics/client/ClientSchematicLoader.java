@@ -17,11 +17,11 @@ import java.util.Map;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.schematics.packet.SchematicUploadPacket;
-import com.simibubi.create.foundation.utility.Components;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.foundation.utility.FilesHelper;
-import com.simibubi.create.foundation.utility.Lang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -86,8 +86,8 @@ public class ClientSchematicLoader {
 		if (size > maxSize * 1000) {
 			LocalPlayer player = Minecraft.getInstance().player;
 			if (player != null) {
-				player.displayClientMessage(Lang.translateDirect("schematics.uploadTooLarge").append(" (" + size / 1000 + " KB)."), false);
-				player.displayClientMessage(Lang.translateDirect("schematics.maxAllowedSize").append(" " + maxSize + " KB"), false);
+				player.displayClientMessage(CreateLang.translateDirect("schematics.uploadTooLarge").append(" (" + size / 1000 + " KB)."), false);
+				player.displayClientMessage(CreateLang.translateDirect("schematics.maxAllowedSize").append(" " + maxSize + " KB"), false);
 			}
 			return false;
 		}

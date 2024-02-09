@@ -22,12 +22,12 @@ import com.simibubi.create.content.kinetics.transmission.sequencer.SequencedGear
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.item.TooltipHelper;
-import com.simibubi.create.foundation.item.TooltipHelper.Palette;
 import com.simibubi.create.foundation.sound.SoundScapes;
 import com.simibubi.create.foundation.sound.SoundScapes.AmbienceGroup;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.FontHelper.Palette;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
@@ -68,7 +68,7 @@ public class KineticBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 	private int validationCountdown;
 	protected float lastStressApplied;
 	protected float lastCapacityProvided;
-	
+
 	public SequenceContext sequenceContext;
 
 	public KineticBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
@@ -404,13 +404,13 @@ public class KineticBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 		boolean notFastEnough = !isSpeedRequirementFulfilled() && getSpeed() != 0;
 
 		if (overStressed && AllConfigs.client().enableOverstressedTooltip.get()) {
-			Lang.translate("gui.stressometer.overstressed")
+			CreateLang.translate("gui.stressometer.overstressed")
 				.style(GOLD)
 				.forGoggles(tooltip);
-			Component hint = Lang.translateDirect("gui.contraptions.network_overstressed");
+			Component hint = CreateLang.translateDirect("gui.contraptions.network_overstressed");
 			List<Component> cutString = TooltipHelper.cutTextComponent(hint, Palette.GRAY_AND_WHITE);
 			for (int i = 0; i < cutString.size(); i++)
-				Lang.builder()
+				CreateLang.builder()
 					.add(cutString.get(i)
 						.copy())
 					.forGoggles(tooltip);
@@ -418,15 +418,15 @@ public class KineticBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 		}
 
 		if (notFastEnough) {
-			Lang.translate("tooltip.speedRequirement")
+			CreateLang.translate("tooltip.speedRequirement")
 				.style(GOLD)
 				.forGoggles(tooltip);
 			MutableComponent hint =
-				Lang.translateDirect("gui.contraptions.not_fast_enough", I18n.get(getBlockState().getBlock()
+				CreateLang.translateDirect("gui.contraptions.not_fast_enough", I18n.get(getBlockState().getBlock()
 					.getDescriptionId()));
 			List<Component> cutString = TooltipHelper.cutTextComponent(hint, Palette.GRAY_AND_WHITE);
 			for (int i = 0; i < cutString.size(); i++)
-				Lang.builder()
+				CreateLang.builder()
 					.add(cutString.get(i)
 						.copy())
 					.forGoggles(tooltip);
@@ -446,7 +446,7 @@ public class KineticBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 		if (Mth.equal(stressAtBase, 0))
 			return added;
 
-		Lang.translate("gui.goggles.kinetic_stats")
+		CreateLang.translate("gui.goggles.kinetic_stats")
 			.forGoggles(tooltip);
 
 		addStressImpactStats(tooltip, stressAtBase);
@@ -456,17 +456,17 @@ public class KineticBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 	}
 
 	protected void addStressImpactStats(List<Component> tooltip, float stressAtBase) {
-		Lang.translate("tooltip.stressImpact")
+		CreateLang.translate("tooltip.stressImpact")
 			.style(GRAY)
 			.forGoggles(tooltip);
 
 		float stressTotal = stressAtBase * Math.abs(getTheoreticalSpeed());
 
-		Lang.number(stressTotal)
+		CreateLang.number(stressTotal)
 			.translate("generic.unit.stress")
 			.style(ChatFormatting.AQUA)
 			.space()
-			.add(Lang.translate("gui.goggles.at_current_speed")
+			.add(CreateLang.translate("gui.goggles.at_current_speed")
 				.style(ChatFormatting.DARK_GRAY))
 			.forGoggles(tooltip, 1);
 	}
@@ -603,7 +603,7 @@ public class KineticBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 	public int getRotationAngleOffset(Axis axis) {
 		return 0;
 	}
-	
+
 	protected boolean syncSequenceContext() {
 		return false;
 	}

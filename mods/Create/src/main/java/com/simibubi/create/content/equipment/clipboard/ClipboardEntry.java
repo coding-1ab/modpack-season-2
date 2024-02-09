@@ -3,8 +3,7 @@ package com.simibubi.create.content.equipment.clipboard;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.simibubi.create.foundation.utility.NBTHelper;
-
+import net.createmod.catnip.utility.NBTHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -46,7 +45,7 @@ public class ClipboardEntry {
 		List<ClipboardEntry> entries = pages.get(page);
 		return entries;
 	}
-	
+
 	public static void saveAll(List<List<ClipboardEntry>> entries, ItemStack clipboardItem) {
 		CompoundTag tag = clipboardItem.getOrCreateTag();
 		tag.put("Pages", NBTHelper.writeCompoundList(entries, list -> {

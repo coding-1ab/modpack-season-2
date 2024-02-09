@@ -17,11 +17,11 @@ import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
 import com.simibubi.create.content.fluids.VirtualFluid;
 import com.simibubi.create.content.fluids.potion.PotionFluid;
 import com.simibubi.create.content.fluids.potion.PotionFluid.PotionFluidType;
-import com.simibubi.create.foundation.utility.Color;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.tterrag.registrate.builders.FluidBuilder.FluidTypeFactory;
 import com.tterrag.registrate.util.entry.FluidEntry;
 
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer.FogMode;
@@ -165,7 +165,7 @@ public class AllFluids {
 				public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) {
 					return TintedFluidType.this.getTintColor(state, getter, pos);
 				}
-				
+
 				@Override
 				public @NotNull Vector3f modifyFogColor(Camera camera, float partialTick, ClientLevel level,
 					int renderDistance, float darkenWorldAmount, Vector3f fluidFogColor) {
@@ -191,11 +191,11 @@ public class AllFluids {
 		protected abstract int getTintColor(FluidStack stack);
 
 		protected abstract int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos);
-		
+
 		protected Vector3f getCustomFogColor() {
 			return null;
 		}
-		
+
 		protected float getFogDistanceModifier() {
 			return 1f;
 		}
@@ -235,12 +235,12 @@ public class AllFluids {
 		public int getTintColor(FluidState state, BlockAndTintGetter world, BlockPos pos) {
 			return 0x00ffffff;
 		}
-		
+
 		@Override
 		protected Vector3f getCustomFogColor() {
 			return fogColor;
 		}
-		
+
 		@Override
 		protected float getFogDistanceModifier() {
 			return fogDistance.get();

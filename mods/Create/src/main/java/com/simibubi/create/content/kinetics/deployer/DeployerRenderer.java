@@ -21,13 +21,14 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity.Mode;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringRenderer;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -97,7 +98,7 @@ public class DeployerRenderer extends SafeBlockEntityRenderer<DeployerBlockEntit
 			ms.translate(0, isBlockItem ? 9 / 16f : 11 / 16f, 0);
 			ms.scale(scale, scale, scale);
 			transform = ItemDisplayContext.GROUND;
-			ms.mulPose(Axis.YP.rotationDegrees(AnimationTickHolder.getRenderTime(be.getLevel())));
+			ms.mulPose(Axis.YP.rotationDegrees(LevelTickHolder.getRenderTime(be.getLevel())));
 
 		} else {
 			float scale = punching ? .75f : isBlockItem ? .75f - 1 / 64f : .5f;
@@ -119,8 +120,8 @@ public class DeployerRenderer extends SafeBlockEntityRenderer<DeployerBlockEntit
 		BlockState blockState = be.getBlockState();
 		Vec3 offset = getHandOffset(be, partialTicks, blockState);
 
-		SuperByteBuffer pole = CachedBufferer.partial(AllPartialModels.DEPLOYER_POLE, blockState);
-		SuperByteBuffer hand = CachedBufferer.partial(be.getHandPose(), blockState);
+		SuperByteBuffer pole = CachedBuffers.partial(AllPartialModels.DEPLOYER_POLE, blockState);
+		SuperByteBuffer hand = CachedBuffers.partial(be.getHandPose(), blockState);
 
 		transform(pole.translate(offset.x, offset.y, offset.z), blockState, true)
 			.light(light)
@@ -165,9 +166,9 @@ public class DeployerRenderer extends SafeBlockEntityRenderer<DeployerBlockEntit
 		if (context.contraption.stalled)
 			speed = 0;
 
-		SuperByteBuffer shaft = CachedBufferer.block(AllBlocks.SHAFT.getDefaultState());
-		SuperByteBuffer pole = CachedBufferer.partial(AllPartialModels.DEPLOYER_POLE, blockState);
-		SuperByteBuffer hand = CachedBufferer.partial(handPose, blockState);
+		SuperByteBuffer shaft = CachedBuffers.block(AllBlocks.SHAFT.getDefaultState());
+		SuperByteBuffer pole = CachedBuffers.partial(AllPartialModels.DEPLOYER_POLE, blockState);
+		SuperByteBuffer hand = CachedBuffers.partial(handPose, blockState);
 
 		double factor;
 		if (context.contraption.stalled || context.position == null || context.data.contains("StationaryTimer")) {
@@ -193,7 +194,7 @@ public class DeployerRenderer extends SafeBlockEntityRenderer<DeployerBlockEntit
 			axis = def.getRotationAxis(context.state);
 		}
 
-		float time = AnimationTickHolder.getRenderTime(context.world) / 20;
+		float time = LevelTickHolder.getRenderTime(context.world) / 20;
 		float angle = (time * speed) % 360;
 
 		TransformStack.cast(m)

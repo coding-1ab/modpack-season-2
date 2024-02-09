@@ -5,10 +5,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.decoration.steamWhistle.WhistleBlock.WhistleSize;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -35,11 +35,11 @@ public class WhistleRenderer extends SafeBlockEntityRenderer<WhistleBlockEntity>
 
 		float offset = be.animation.getValue(partialTicks);
 		if (be.animation.getChaseTarget() > 0 && be.animation.getValue() > 0.5f) {
-			float wiggleProgress = (AnimationTickHolder.getTicks(be.getLevel()) + partialTicks) / 8f;
+			float wiggleProgress = (LevelTickHolder.getTicks(be.getLevel()) + partialTicks) / 8f;
 			offset -= Math.sin(wiggleProgress * (2 * Mth.PI) * (4 - size.ordinal())) / 16f;
 		}
 
-		CachedBufferer.partial(mouth, blockState)
+		CachedBuffers.partial(mouth, blockState)
 			.centre()
 			.rotateY(AngleHelper.horizontalAngle(direction))
 			.unCentre()

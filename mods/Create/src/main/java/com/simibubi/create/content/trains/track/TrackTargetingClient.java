@@ -9,8 +9,8 @@ import com.simibubi.create.content.trains.graph.TrackGraphLocation;
 import com.simibubi.create.content.trains.track.TrackBlockOutline.BezierPointSelection;
 import com.simibubi.create.content.trains.track.TrackTargetingBehaviour.RenderedTrackOverlayType;
 import com.simibubi.create.content.trains.track.TrackTargetingBlockItem.OverlapResult;
-import com.simibubi.create.foundation.render.SuperRenderTypeBuffer;
 
+import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LevelRenderer;

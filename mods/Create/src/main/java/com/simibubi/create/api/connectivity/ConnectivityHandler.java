@@ -1,22 +1,8 @@
 package com.simibubi.create.api.connectivity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.PriorityQueue;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.simibubi.create.content.fluids.tank.CreativeFluidTankBlockEntity;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
-import com.simibubi.create.foundation.utility.Iterate;
-
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -27,6 +13,17 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.Set;
 
 public class ConnectivityHandler {
 
@@ -315,13 +312,13 @@ public class ConnectivityHandler {
 		for (int yOffset = 0; yOffset < height; yOffset++) {
 			for (int xOffset = 0; xOffset < width; xOffset++) {
 				for (int zOffset = 0; zOffset < width; zOffset++) {
-					
+
 					BlockPos pos = switch (axis) {
 					case X -> origin.offset(yOffset, xOffset, zOffset);
 					case Y -> origin.offset(xOffset, yOffset, zOffset);
 					case Z -> origin.offset(xOffset, zOffset, yOffset);
 					};
-					
+
 					T partAt = partAt(be.getType(), level, pos);
 					if (partAt == null)
 						continue;
@@ -353,19 +350,19 @@ public class ConnectivityHandler {
 						frontier.add(partAt);
 						partAt.preventConnectivityUpdate();
 					}
-					if (cache != null) 
+					if (cache != null)
 						cache.put(pos, partAt);
 				}
 			}
 		}
-		
+
 		if (be instanceof IMultiBlockEntityContainer.Inventory inv && inv.hasInventory())
 			be.getCapability(ForgeCapabilities.ITEM_HANDLER)
 				.invalidate();
 		if (be instanceof IMultiBlockEntityContainer.Fluid fluid && fluid.hasTank())
 			be.getCapability(ForgeCapabilities.FLUID_HANDLER)
 				.invalidate();
-		
+
 		if (tryReconnect)
 			formMulti(be.getType(), level, cache == null ? new SearchCache<>() : cache, frontier);
 	}

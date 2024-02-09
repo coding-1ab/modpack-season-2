@@ -8,11 +8,11 @@ import com.simibubi.create.content.contraptions.pulley.AbstractPulleyRenderer;
 import com.simibubi.create.content.contraptions.pulley.PulleyRenderer;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
-import com.simibubi.create.foundation.block.render.SpriteShiftEntry;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AngleHelper;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SpriteShiftEntry;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -53,7 +53,7 @@ public class ElevatorPulleyRenderer extends KineticBlockEntityRenderer<ElevatorP
 		float blockStateAngle =
 			180 + AngleHelper.horizontalAngle(blockState.getValue(ElevatorPulleyBlock.HORIZONTAL_FACING));
 
-		SuperByteBuffer magnet = CachedBufferer.partial(AllPartialModels.ELEVATOR_MAGNET, blockState);
+		SuperByteBuffer magnet = CachedBuffers.partial(AllPartialModels.ELEVATOR_MAGNET, blockState);
 		if (running || offset == 0)
 			AbstractPulleyRenderer.renderAt(world, magnet.centre()
 				.rotateY(blockStateAngle)
@@ -78,8 +78,8 @@ public class ElevatorPulleyRenderer extends KineticBlockEntityRenderer<ElevatorP
 			.light(light)
 			.renderInto(ms, vb);
 
-		SuperByteBuffer halfRope = CachedBufferer.partial(AllPartialModels.ELEVATOR_BELT_HALF, blockState);
-		SuperByteBuffer rope = CachedBufferer.partial(AllPartialModels.ELEVATOR_BELT, blockState);
+		SuperByteBuffer halfRope = CachedBuffers.partial(AllPartialModels.ELEVATOR_BELT_HALF, blockState);
+		SuperByteBuffer rope = CachedBuffers.partial(AllPartialModels.ELEVATOR_BELT, blockState);
 
 		float f = offset % 1;
 		if (f < .25f || f > .75f) {
@@ -110,7 +110,7 @@ public class ElevatorPulleyRenderer extends KineticBlockEntityRenderer<ElevatorP
 
 	protected SuperByteBuffer getRotatedCoil(KineticBlockEntity be) {
 		BlockState blockState = be.getBlockState();
-		return CachedBufferer.partialFacing(AllPartialModels.ELEVATOR_COIL, blockState,
+		return CachedBuffers.partialFacing(AllPartialModels.ELEVATOR_COIL, blockState,
 			blockState.getValue(ElevatorPulleyBlock.HORIZONTAL_FACING));
 	}
 

@@ -15,14 +15,13 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import com.simibubi.create.content.trains.graph.DiscoveredPath;
-
 import org.apache.commons.lang3.mutable.MutableDouble;
 import org.apache.commons.lang3.mutable.MutableObject;
 
 import com.simibubi.create.Create;
 import com.simibubi.create.content.trains.entity.TravellingPoint.ITrackSelector;
 import com.simibubi.create.content.trains.graph.DimensionPalette;
+import com.simibubi.create.content.trains.graph.DiscoveredPath;
 import com.simibubi.create.content.trains.graph.EdgeData;
 import com.simibubi.create.content.trains.graph.EdgePointType;
 import com.simibubi.create.content.trains.graph.TrackEdge;
@@ -36,11 +35,11 @@ import com.simibubi.create.content.trains.signal.TrackEdgePoint;
 import com.simibubi.create.content.trains.station.GlobalStation;
 import com.simibubi.create.content.trains.track.BezierConnection;
 import com.simibubi.create.content.trains.track.TrackMaterial;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.Pair;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.Mth;
@@ -886,9 +885,9 @@ public class Navigation {
 			c -> currentPath.add(Couple
 				.deserializeEach(c.getList("Nodes", Tag.TAG_COMPOUND), c2 -> TrackNodeLocation.read(c2, dimensions))
 				.map(graph::locateNode)));
-		
+
 		removeBrokenPathEntries();
-		
+
 		waitingForSignal = tag.contains("BlockingSignal")
 			? Pair.of(tag.getUUID("BlockingSignal"), tag.getBoolean("BlockingSignalSide"))
 			: null;
@@ -903,7 +902,7 @@ public class Navigation {
 		 * Trains might load or save with null entries in their path, this method avoids
 		 * that anomaly from causing NPEs. The underlying issue has not been found.
 		 */
-		
+
 		boolean nullEntriesPresent = false;
 
 		for (Iterator<Couple<TrackNode>> iterator = currentPath.iterator(); iterator.hasNext();) {

@@ -17,10 +17,10 @@ import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.contraptions.render.ActorInstance;
 import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
 import com.simibubi.create.content.contraptions.render.ContraptionRenderDispatcher;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.AnimationTickHolder;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
@@ -35,7 +35,7 @@ public class StabilizedBearingMovementBehaviour implements MovementBehaviour {
 	public ItemStack canBeDisabledVia(MovementContext context) {
 		return null;
 	}
-	
+
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void renderInContraption(MovementContext context, VirtualRenderWorld renderWorld,
@@ -45,7 +45,7 @@ public class StabilizedBearingMovementBehaviour implements MovementBehaviour {
 
 		Direction facing = context.state.getValue(BlockStateProperties.FACING);
 		PartialModel top = AllPartialModels.BEARING_TOP;
-		SuperByteBuffer superBuffer = CachedBufferer.partial(top, context.state);
+		SuperByteBuffer superBuffer = CachedBuffers.partial(top, context.state);
 		float renderPartialTicks = AnimationTickHolder.getPartialTicks();
 
 		// rotate to match blockstate

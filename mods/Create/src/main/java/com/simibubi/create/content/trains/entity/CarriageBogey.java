@@ -14,14 +14,14 @@ import com.simibubi.create.content.trains.bogey.BogeyInstance;
 import com.simibubi.create.content.trains.bogey.BogeyStyle;
 import com.simibubi.create.content.trains.graph.DimensionPalette;
 import com.simibubi.create.content.trains.graph.TrackGraph;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.RegisteredObjects;
-import com.simibubi.create.foundation.utility.VecHelper;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
 
+import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -179,7 +179,7 @@ public class CarriageBogey {
 
 	public CompoundTag write(DimensionPalette dimensions) {
 		CompoundTag tag = new CompoundTag();
-		tag.putString("Type", RegisteredObjects.getKeyOrThrow((Block) type)
+		tag.putString("Type", CatnipServices.REGISTRIES.getKeyOrThrow((Block) type)
 			.toString());
 		tag.put("Points", points.serializeEach(tp -> tp.write(dimensions)));
 		tag.putBoolean("UpsideDown", upsideDown);

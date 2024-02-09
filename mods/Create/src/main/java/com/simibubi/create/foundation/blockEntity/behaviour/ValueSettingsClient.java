@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
-import com.simibubi.create.foundation.gui.ScreenOpener;
-import com.simibubi.create.foundation.utility.Color;
 
+import net.createmod.catnip.gui.ScreenOpener;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;

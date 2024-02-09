@@ -19,13 +19,14 @@ import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.INamedIc
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollOptionBehaviour;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.item.TooltipHelper;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.VecHelper;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.lang.Lang;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
@@ -112,7 +113,7 @@ public class ArmBlockEntity extends KineticBlockEntity implements ITransformable
 		super.addBehaviours(behaviours);
 
 		selectionMode = new ScrollOptionBehaviour<SelectionMode>(SelectionMode.class,
-			Lang.translateDirect("logistics.when_multiple_outputs_available"), this, new SelectionModeValueBox());
+			CreateLang.translateDirect("logistics.when_multiple_outputs_available"), this, new SelectionModeValueBox());
 		behaviours.add(selectionMode);
 
 		registerAwardables(behaviours, AllAdvancements.ARM_BLAZE_BURNER, AllAdvancements.ARM_MANY_TARGETS,

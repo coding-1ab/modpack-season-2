@@ -1,14 +1,11 @@
 package com.simibubi.create.content.decoration;
 
-import java.util.function.Predicate;
-
 import com.simibubi.create.content.equipment.extendoGrip.ExtendoGripItem;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
-import com.simibubi.create.foundation.placement.IPlacementHelper;
-import com.simibubi.create.foundation.placement.PlacementHelpers;
-import com.simibubi.create.foundation.placement.PlacementOffset;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-
+import net.createmod.catnip.utility.placement.IPlacementHelper;
+import net.createmod.catnip.utility.placement.PlacementHelpers;
+import net.createmod.catnip.utility.placement.PlacementOffset;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,6 +22,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
+
+import java.util.function.Predicate;
 
 public class MetalLadderBlock extends LadderBlock implements IWrenchable {
 

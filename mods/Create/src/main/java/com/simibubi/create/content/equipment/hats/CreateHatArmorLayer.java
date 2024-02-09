@@ -5,8 +5,8 @@ import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.trains.schedule.TrainHatOffsets;
 import com.simibubi.create.foundation.mixin.accessor.AgeableListModelAccessor;
-import com.simibubi.create.foundation.render.CachedBufferer;
 
+import net.createmod.catnip.render.CachedBuffers;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.AxolotlModel;
 import net.minecraft.client.model.EntityModel;
@@ -118,7 +118,7 @@ public class CreateHatArmorLayer<T extends LivingEntity, M extends EntityModel<T
 			ms.translate(0, -2.25f / 16f, 0);
 			msr.rotateX(-8.5f);
 			BlockState air = Blocks.AIR.defaultBlockState();
-			CachedBufferer.partial(hat, air)
+			CachedBuffers.partial(hat, air)
 				.forEntityRender()
 				.light(light)
 				.renderInto(ms, buffer.getBuffer(renderType));

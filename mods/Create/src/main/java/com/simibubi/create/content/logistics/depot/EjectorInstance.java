@@ -5,8 +5,8 @@ import com.jozufozu.flywheel.api.instance.DynamicInstance;
 import com.jozufozu.flywheel.core.materials.model.ModelData;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.ShaftInstance;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
 
+import net.createmod.catnip.utility.AnimationTickHolder;
 import net.minecraft.util.Mth;
 
 public class EjectorInstance extends ShaftInstance<EjectorBlockEntity> implements DynamicInstance {
@@ -56,6 +56,6 @@ public class EjectorInstance extends ShaftInstance<EjectorBlockEntity> implement
 	private void pivotPlate(float lidProgress) {
 		float angle = lidProgress * 70;
 
-		EjectorRenderer.applyLidAngle(blockEntity, angle, plate.loadIdentity().translate(getInstancePosition()));
+		//EjectorRenderer.applyLidAngle(blockEntity, angle, plate.loadIdentity().translate(getInstancePosition()));//TODO flw
 	}
 }

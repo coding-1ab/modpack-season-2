@@ -10,10 +10,10 @@ import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.VoxelShaper;
 import com.tterrag.registrate.util.entry.BlockEntry;
 
+import net.createmod.catnip.utility.VoxelShaper;
+import net.createmod.catnip.utility.lang.Lang;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
@@ -75,14 +75,14 @@ public class BeltFunnelBlock extends AbstractHorizontalFunnelBlock implements IS
 	public boolean isOfSameType(FunnelBlock otherFunnel) {
 		return parent.get() == otherFunnel;
 	}
-	
+
 	@Override
 	public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (newState.getBlock() instanceof FunnelBlock fb && isOfSameType(fb))
 			return;
 		super.onRemove(state, world, pos, newState, isMoving);
 	}
-	
+
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter p_220053_2_, BlockPos p_220053_3_,
 		CollisionContext p_220053_4_) {

@@ -5,11 +5,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -27,13 +27,13 @@ public class BacktankRenderer extends KineticBlockEntityRenderer<BacktankBlockEn
 		super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
 
 		BlockState blockState = be.getBlockState();
-		SuperByteBuffer cogs = CachedBufferer.partial(getCogsModel(blockState), blockState);
+		SuperByteBuffer cogs = CachedBuffers.partial(getCogsModel(blockState), blockState);
 		cogs.centre()
 			.rotateY(180 + AngleHelper.horizontalAngle(blockState.getValue(BacktankBlock.HORIZONTAL_FACING)))
 			.unCentre()
 			.translate(0, 6.5f / 16, 11f / 16)
 			.rotate(Direction.EAST,
-				AngleHelper.rad(be.getSpeed() / 4f * AnimationTickHolder.getRenderTime(be.getLevel()) % 360))
+				AngleHelper.rad(be.getSpeed() / 4f * LevelTickHolder.getRenderTime(be.getLevel()) % 360))
 			.translate(0, -6.5f / 16, -11f / 16);
 		cogs.light(light)
 			.renderInto(ms, buffer.getBuffer(RenderType.solid()));
@@ -41,7 +41,7 @@ public class BacktankRenderer extends KineticBlockEntityRenderer<BacktankBlockEn
 
 	@Override
 	protected SuperByteBuffer getRotatedModel(BacktankBlockEntity be, BlockState state) {
-		return CachedBufferer.partial(getShaftModel(state), state);
+		return CachedBuffers.partial(getShaftModel(state), state);
 	}
 
 	public static PartialModel getCogsModel(BlockState state) {

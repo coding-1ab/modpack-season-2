@@ -7,10 +7,10 @@ import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.simpleRelays.BracketedKineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntity;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.Iterate;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -59,7 +59,7 @@ public class EncasedCogRenderer extends KineticBlockEntityRenderer<SimpleKinetic
 		for (Direction d : Iterate.directionsInAxis(getRotationAxisOf(be))) {
 			if (!def.hasShaftTowards(be.getLevel(), be.getBlockPos(), blockState, d))
 				continue;
-			SuperByteBuffer shaft = CachedBufferer.partialFacing(AllPartialModels.SHAFT_HALF, be.getBlockState(), d);
+			SuperByteBuffer shaft = CachedBuffers.partialFacing(AllPartialModels.SHAFT_HALF, be.getBlockState(), d);
 			kineticRotationTransform(shaft, be, axis, angle, light);
 			shaft.renderInto(ms, buffer.getBuffer(RenderType.solid()));
 		}
@@ -67,7 +67,7 @@ public class EncasedCogRenderer extends KineticBlockEntityRenderer<SimpleKinetic
 
 	@Override
 	protected SuperByteBuffer getRotatedModel(SimpleKineticBlockEntity be, BlockState state) {
-		return CachedBufferer.partialFacingVertical(
+		return CachedBuffers.partialFacingVertical(
 			large ? AllPartialModels.SHAFTLESS_LARGE_COGWHEEL : AllPartialModels.SHAFTLESS_COGWHEEL, state,
 			Direction.fromAxisAndDirection(state.getValue(EncasedCogwheelBlock.AXIS), AxisDirection.POSITIVE));
 	}

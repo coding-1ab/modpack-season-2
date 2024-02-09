@@ -14,10 +14,10 @@ import com.simibubi.create.content.trains.bogey.BogeyStyle;
 import com.simibubi.create.content.trains.bogey.StandardBogeyRenderer.CommonStandardBogeyRenderer;
 import com.simibubi.create.content.trains.bogey.StandardBogeyRenderer.LargeStandardBogeyRenderer;
 import com.simibubi.create.content.trains.bogey.StandardBogeyRenderer.SmallStandardBogeyRenderer;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.tterrag.registrate.util.entry.BlockEntry;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -60,7 +60,7 @@ public class AllBogeyStyles {
 		protected final ResourceLocation name;
 		protected final ResourceLocation cycleGroup;
 
-		protected Component displayName = Lang.translateDirect("bogey.style.invalid");
+		protected Component displayName = CreateLang.translateDirect("bogey.style.invalid");
 		protected ResourceLocation soundType = AllSoundEvents.TRAIN2.getId();
 		protected CompoundTag defaultData = new CompoundTag();
 		protected ParticleOptions contactParticle = ParticleTypes.CRIT;

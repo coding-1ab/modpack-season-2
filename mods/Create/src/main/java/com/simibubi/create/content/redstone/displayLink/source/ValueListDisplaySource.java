@@ -15,11 +15,11 @@ import com.simibubi.create.content.trains.display.FlapDisplayBlockEntity;
 import com.simibubi.create.content.trains.display.FlapDisplayLayout;
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.IntAttached;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.IntAttached;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
@@ -138,11 +138,11 @@ public abstract class ValueListDisplaySource extends DisplaySource {
 	private Couple<MutableComponent> shorten(int number) {
 		if (number >= 1000000)
 			return Couple.create(Components.literal(String.valueOf(number / 1000000)),
-				Lang.translateDirect("display_source.value_list.million")
+				CreateLang.translateDirect("display_source.value_list.million")
 					.append(WHITESPACE));
 		if (number >= 1000)
 			return Couple.create(Components.literal(String.valueOf(number / 1000)),
-				Lang.translateDirect("display_source.value_list.thousand")
+				CreateLang.translateDirect("display_source.value_list.thousand")
 					.append(WHITESPACE));
 		return Couple.create(Components.literal(String.valueOf(number)), WHITESPACE);
 	}
@@ -162,8 +162,8 @@ public abstract class ValueListDisplaySource extends DisplaySource {
 	@OnlyIn(Dist.CLIENT)
 	protected void addFullNumberConfig(ModularGuiLineBuilder builder) {
 		builder.addSelectionScrollInput(0, 75,
-			(si, l) -> si.forOptions(Lang.translatedOptions("display_source.value_list", "shortened", "full_number"))
-				.titled(Lang.translateDirect("display_source.value_list.display")),
+			(si, l) -> si.forOptions(CreateLang.translatedOptions("display_source.value_list", "shortened", "full_number"))
+				.titled(CreateLang.translateDirect("display_source.value_list.display")),
 			"Format");
 	}
 

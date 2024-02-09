@@ -3,8 +3,8 @@ package com.simibubi.create.content.kinetics.base;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.simibubi.create.foundation.utility.BlockHelper;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -142,7 +142,7 @@ public abstract class BlockBreakingKineticBlockEntity extends KineticBlockEntity
 				return;
 			if (level.restoringBlockSnapshots)
 				return;
-			
+
 			ItemEntity itementity = new ItemEntity(level, vec.x, vec.y, vec.z, stack);
 			itementity.setDefaultPickUpDelay();
 			itementity.setDeltaMovement(Vec3.ZERO);

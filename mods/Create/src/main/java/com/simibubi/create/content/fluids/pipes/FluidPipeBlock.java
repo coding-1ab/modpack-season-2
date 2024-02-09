@@ -18,8 +18,8 @@ import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.Iterate;
 
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -341,20 +341,20 @@ public class FluidPipeBlock extends PipeBlock implements SimpleWaterloggedBlock,
 	public VoxelShape getOcclusionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
 		return OCCLUSION_BOX;
 	}
-	
+
 	@Override
 	public BlockState rotate(BlockState pState, Rotation pRotation) {
 		return FluidPipeBlockRotation.rotate(pState, pRotation);
 	}
-	
+
 	@Override
 	public BlockState mirror(BlockState pState, Mirror pMirror) {
 		return FluidPipeBlockRotation.mirror(pState, pMirror);
 	}
-	
+
 	@Override
 	public BlockState transform(BlockState state, StructureTransform transform) {
 		return FluidPipeBlockRotation.transform(state, transform);
 	}
-	
+
 }

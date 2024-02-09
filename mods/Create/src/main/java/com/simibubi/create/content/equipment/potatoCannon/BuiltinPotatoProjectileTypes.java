@@ -1,17 +1,11 @@
 package com.simibubi.create.content.equipment.potatoCannon;
 
-import java.util.UUID;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.Create;
 import com.simibubi.create.foundation.mixin.accessor.FallingBlockEntityAccessor;
-import com.simibubi.create.foundation.utility.WorldAttached;
-
+import net.createmod.catnip.utility.WorldAttached;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -45,6 +39,11 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.UUID;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class BuiltinPotatoProjectileTypes {
 

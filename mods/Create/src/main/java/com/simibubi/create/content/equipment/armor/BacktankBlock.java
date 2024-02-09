@@ -1,13 +1,10 @@
 package com.simibubi.create.content.equipment.armor;
 
-import java.util.Optional;
-
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllEnchantments;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -43,6 +40,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.util.FakePlayer;
 
+import java.util.Optional;
+
 public class BacktankBlock extends HorizontalKineticBlock
 	implements IBE<BacktankBlockEntity>, SimpleWaterloggedBlock {
 
@@ -77,7 +76,7 @@ public class BacktankBlock extends HorizontalKineticBlock
 	@Override
 	public BlockState updateShape(BlockState state, Direction direction, BlockState neighbourState,
 		LevelAccessor world, BlockPos pos, BlockPos neighbourPos) {
-		if (state.getValue(BlockStateProperties.WATERLOGGED)) 
+		if (state.getValue(BlockStateProperties.WATERLOGGED))
 			world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
 		return state;
 	}
@@ -181,7 +180,7 @@ public class BacktankBlock extends HorizontalKineticBlock
 	public Class<BacktankBlockEntity> getBlockEntityClass() {
 		return BacktankBlockEntity.class;
 	}
-	
+
 	@Override
 	public BlockEntityType<? extends BacktankBlockEntity> getBlockEntityType() {
 		return AllBlockEntityTypes.BACKTANK.get();

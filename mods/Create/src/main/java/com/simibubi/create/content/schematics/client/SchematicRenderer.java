@@ -10,11 +10,12 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.simibubi.create.content.schematics.SchematicWorld;
 import com.simibubi.create.foundation.render.BlockEntityRenderHelper;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.render.SuperRenderTypeBuffer;
 
+import net.createmod.catnip.render.ShadeSpearatingSuperByteBuffer;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.render.SuperRenderTypeBuffer;
+import net.createmod.catnip.utility.levelWrappers.SchematicLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -36,14 +37,14 @@ public class SchematicRenderer {
 	private final Map<RenderType, SuperByteBuffer> bufferCache = new LinkedHashMap<>(getLayerCount());
 	private boolean active;
 	private boolean changed;
-	protected SchematicWorld schematic;
+	protected SchematicLevel schematic;
 	private BlockPos anchor;
 
 	public SchematicRenderer() {
 		changed = false;
 	}
 
-	public void display(SchematicWorld world) {
+	public void display(SchematicLevel world) {
 		this.anchor = world.anchor;
 		this.schematic = world;
 		this.active = true;
@@ -99,7 +100,7 @@ public class SchematicRenderer {
 		PoseStack poseStack = objects.poseStack;
 		RandomSource random = objects.random;
 		BlockPos.MutableBlockPos mutableBlockPos = objects.mutableBlockPos;
-		SchematicWorld renderWorld = schematic;
+		SchematicLevel renderWorld = schematic;
 		renderWorld.renderMode = true;
 		BoundingBox bounds = renderWorld.getBounds();
 
@@ -141,7 +142,7 @@ public class SchematicRenderer {
 
 		renderWorld.renderMode = false;
 
-		SuperByteBuffer sbb = new SuperByteBuffer(bufferedData);
+		SuperByteBuffer sbb = new ShadeSpearatingSuperByteBuffer(bufferedData);
 		bufferedData.release();
 		return sbb;
 	}

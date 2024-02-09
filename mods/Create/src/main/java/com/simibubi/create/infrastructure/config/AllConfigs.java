@@ -8,8 +8,8 @@ import java.util.function.Supplier;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.simibubi.create.content.kinetics.BlockStressValues;
-import com.simibubi.create.foundation.config.ConfigBase;
 
+import net.createmod.catnip.config.ConfigBase;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;

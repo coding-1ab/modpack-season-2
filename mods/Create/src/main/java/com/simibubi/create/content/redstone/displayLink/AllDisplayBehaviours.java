@@ -20,9 +20,9 @@ import com.simibubi.create.content.redstone.displayLink.target.DisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.target.LecternDisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.target.SignDisplayTarget;
 import com.simibubi.create.foundation.utility.AttachedRegistry;
-import com.simibubi.create.foundation.utility.RegisteredObjects;
 import com.tterrag.registrate.util.nullness.NonNullConsumer;
 
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.LevelAccessor;
@@ -62,7 +62,7 @@ public class AllDisplayBehaviours {
 			TARGETS_BY_BLOCK.register(block, target);
 		}
 	}
-	
+
 	public static void assignBlockEntity(DisplayBehaviour behaviour, ResourceLocation beType) {
 		if (behaviour instanceof DisplaySource source) {
 			List<DisplaySource> sources = SOURCES_BY_BLOCK_ENTITY.get(beType);
@@ -90,7 +90,7 @@ public class AllDisplayBehaviours {
 			TARGETS_BY_BLOCK.register(block, target);
 		}
 	}
-	
+
 	public static void assignBlockEntity(DisplayBehaviour behaviour, BlockEntityType<?> beType) {
 		if (behaviour instanceof DisplaySource source) {
 			List<DisplaySource> sources = SOURCES_BY_BLOCK_ENTITY.get(beType);
@@ -108,7 +108,7 @@ public class AllDisplayBehaviours {
 	public static <B extends Block> NonNullConsumer<? super B> assignDataBehaviour(DisplayBehaviour behaviour,
 		String... suffix) {
 		return b -> {
-			ResourceLocation registryName = RegisteredObjects.getKeyOrThrow(b);
+			ResourceLocation registryName = CatnipServices.REGISTRIES.getKeyOrThrow(b);
 			String idSuffix = behaviour instanceof DisplaySource ? "_source" : "_target";
 			if (suffix.length > 0)
 				idSuffix += "_" + suffix[0];
@@ -120,7 +120,7 @@ public class AllDisplayBehaviours {
 	public static <B extends BlockEntityType<?>> NonNullConsumer<? super B> assignDataBehaviourBE(
 		DisplayBehaviour behaviour, String... suffix) {
 		return b -> {
-			ResourceLocation registryName = RegisteredObjects.getKeyOrThrow(b);
+			ResourceLocation registryName = CatnipServices.REGISTRIES.getKeyOrThrow(b);
 			String idSuffix = behaviour instanceof DisplaySource ? "_source" : "_target";
 			if (suffix.length > 0)
 				idSuffix += "_" + suffix[0];

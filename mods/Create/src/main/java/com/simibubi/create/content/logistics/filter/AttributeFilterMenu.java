@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.simibubi.create.AllMenuTypes;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Pair;
 
+import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -155,7 +155,7 @@ public class AttributeFilterMenu extends AbstractFilterMenu {
 		});
 		filterItem.getOrCreateTag()
 			.put("MatchedAttributes", attributes);
-		
+
 		if (attributes.isEmpty() && whitelistMode == WhitelistMode.WHITELIST_DISJ)
 			filterItem.setTag(null);
 	}

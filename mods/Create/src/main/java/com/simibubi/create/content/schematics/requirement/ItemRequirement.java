@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.simibubi.create.foundation.utility.NBTProcessors;
-
+import net.createmod.catnip.utility.NBTProcessors;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;

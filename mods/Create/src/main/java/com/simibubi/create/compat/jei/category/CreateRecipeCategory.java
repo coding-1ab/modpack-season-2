@@ -1,22 +1,10 @@
 package com.simibubi.create.compat.jei.category;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.simibubi.create.AllFluids;
 import com.simibubi.create.content.fluids.potion.PotionFluidHandler;
 import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
-
+import com.simibubi.create.foundation.utility.CreateLang;
 import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotTooltipCallback;
@@ -24,6 +12,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
@@ -33,6 +22,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -112,7 +109,7 @@ public abstract class CreateRecipeCategory<T extends Recipe<?>> implements IReci
 		return (view, tooltip) -> {
 			float chance = output.getChance();
 			if (chance != 1)
-				tooltip.add(1, Lang.translateDirect("recipe.processing.chance", chance < 0.01 ? "<1" : (int) (chance * 100))
+				tooltip.add(1, CreateLang.translateDirect("recipe.processing.chance", chance < 0.01 ? "<1" : (int) (chance * 100))
 					.withStyle(ChatFormatting.GOLD));
 		};
 	}
@@ -155,7 +152,7 @@ public abstract class CreateRecipeCategory<T extends Recipe<?>> implements IReci
 			}
 
 			int amount = mbAmount == -1 ? fluidStack.getAmount() : mbAmount;
-			Component text = Components.literal(String.valueOf(amount)).append(Lang.translateDirect("generic.unit.millibuckets")).withStyle(ChatFormatting.GOLD);
+			Component text = Components.literal(String.valueOf(amount)).append(CreateLang.translateDirect("generic.unit.millibuckets")).withStyle(ChatFormatting.GOLD);
 			if (tooltip.isEmpty())
 				tooltip.add(0, text);
 			else {
@@ -170,12 +167,12 @@ public abstract class CreateRecipeCategory<T extends Recipe<?>> implements IReci
 		return new IDrawable() {
 			@Override
 			public int getWidth() {
-				return texture.width;
+				return texture.getWidth();
 			}
 
 			@Override
 			public int getHeight() {
-				return texture.height;
+				return texture.getHeight();
 			}
 
 			@Override

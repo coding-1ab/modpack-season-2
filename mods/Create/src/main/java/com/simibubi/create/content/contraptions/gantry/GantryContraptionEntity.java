@@ -10,10 +10,9 @@ import com.simibubi.create.content.contraptions.ContraptionCollider;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.kinetics.gantry.GantryShaftBlock;
 import com.simibubi.create.content.kinetics.gantry.GantryShaftBlockEntity;
-import com.simibubi.create.foundation.utility.NBTHelper;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
-import com.simibubi.create.foundation.utility.VecHelper;
-
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

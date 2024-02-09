@@ -1,9 +1,5 @@
 package com.simibubi.create.content.contraptions.render;
 
-import java.util.Collection;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.jozufozu.flywheel.backend.Backend;
 import com.jozufozu.flywheel.backend.gl.error.GlError;
 import com.jozufozu.flywheel.config.BackendType;
@@ -24,8 +20,8 @@ import com.simibubi.create.content.contraptions.ContraptionWorld;
 import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.foundation.render.BlockEntityRenderHelper;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-
+import net.createmod.catnip.render.ShadeSpearatingSuperByteBuffer;
+import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
@@ -39,6 +35,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.Collection;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(Dist.CLIENT)
@@ -175,7 +174,7 @@ public class ContraptionRenderDispatcher {
 				.withBlocks(values)
 				.withModelData(c.modelData)
 				.build();
-		SuperByteBuffer sbb = new SuperByteBuffer(data);
+		SuperByteBuffer sbb = new ShadeSpearatingSuperByteBuffer(data);
 		data.release();
 		return sbb;
 	}

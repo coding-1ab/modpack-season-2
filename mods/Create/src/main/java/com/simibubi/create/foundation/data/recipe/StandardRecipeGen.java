@@ -26,11 +26,11 @@ import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.decoration.palettes.AllPaletteBlocks;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
-import com.simibubi.create.foundation.utility.RegisteredObjects;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -1389,8 +1389,8 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 		}
 
 		private ResourceLocation getRegistryName() {
-			return compatDatagenOutput == null ? RegisteredObjects.getKeyOrThrow(result.get()
-				.asItem()) : compatDatagenOutput;
+			return compatDatagenOutput == null ? CatnipServices.REGISTRIES.getKeyOrThrow(result.get()
+					.asItem()) : compatDatagenOutput;
 		}
 
 		GeneratedCookingRecipeBuilder viaCooking(Supplier<? extends ItemLike> item) {
@@ -1474,7 +1474,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 						consumer.accept(
 							isOtherMod ? new ModdedCookingRecipeResult(result, compatDatagenOutput, recipeConditions)
 								: result);
-					}, createSimpleLocation(RegisteredObjects.getKeyOrThrow(serializer)
+					}, createSimpleLocation(CatnipServices.REGISTRIES.getKeyOrThrow(serializer)
 						.getPath()));
 				});
 			}

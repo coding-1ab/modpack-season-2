@@ -17,13 +17,13 @@ import com.simibubi.create.content.kinetics.steamEngine.SteamEngineBlock;
 import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.fluid.FluidHelper;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import joptsimple.internal.Strings;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -154,7 +154,7 @@ public class BoilerData {
 
 		tooltip.add(indent.plainCopy()
 			.append(
-				Lang.translateDirect("boiler.status", getHeatLevelTextComponent().withStyle(ChatFormatting.GREEN))));
+				CreateLang.translateDirect("boiler.status", getHeatLevelTextComponent().withStyle(ChatFormatting.GREEN))));
 		tooltip.add(indent2.plainCopy()
 			.append(getSizeComponent(true, false)));
 		tooltip.add(indent2.plainCopy()
@@ -172,31 +172,31 @@ public class BoilerData {
 		tooltip.add(Components.immutableEmpty());
 
 		if (attachedEngines > 0 && maxHeatForSize > 0 && maxHeatForWater == 0 && (passiveHeat ? 1 : activeHeat) > 0) {
-			Lang.translate("boiler.water_input_rate")
+			CreateLang.translate("boiler.water_input_rate")
 				.style(ChatFormatting.GRAY)
 				.forGoggles(tooltip);
-			Lang.number(waterSupply)
+			CreateLang.number(waterSupply)
 				.style(ChatFormatting.BLUE)
-				.add(Lang.translate("generic.unit.millibuckets"))
-				.add(Lang.text(" / ")
+				.add(CreateLang.translate("generic.unit.millibuckets"))
+				.add(CreateLang.text(" / ")
 					.style(ChatFormatting.GRAY))
-				.add(Lang.translate("boiler.per_tick", Lang.number(waterSupplyPerLevel)
-					.add(Lang.translate("generic.unit.millibuckets")))
+				.add(CreateLang.translate("boiler.per_tick", CreateLang.number(waterSupplyPerLevel)
+					.add(CreateLang.translate("generic.unit.millibuckets")))
 					.style(ChatFormatting.DARK_GRAY))
 				.forGoggles(tooltip, 1);
 			return true;
 		}
 
-		Lang.translate("tooltip.capacityProvided")
+		CreateLang.translate("tooltip.capacityProvided")
 			.style(ChatFormatting.GRAY)
 			.forGoggles(tooltip);
 
-		Lang.number(totalSU)
+		CreateLang.number(totalSU)
 			.translate("generic.unit.stress")
 			.style(ChatFormatting.AQUA)
 			.space()
-			.add((attachedEngines == 1 ? Lang.translate("boiler.via_one_engine")
-				: Lang.translate("boiler.via_engines", attachedEngines)).style(ChatFormatting.DARK_GRAY))
+			.add((attachedEngines == 1 ? CreateLang.translate("boiler.via_one_engine")
+				: CreateLang.translate("boiler.via_engines", attachedEngines)).style(ChatFormatting.DARK_GRAY))
 			.forGoggles(tooltip, 1);
 
 		return true;
@@ -214,10 +214,10 @@ public class BoilerData {
 	public MutableComponent getHeatLevelTextComponent() {
 		int boilerLevel = Math.min(activeHeat, Math.min(maxHeatForWater, maxHeatForSize));
 
-		return isPassive() ? Lang.translateDirect("boiler.passive")
-			: (boilerLevel == 0 ? Lang.translateDirect("boiler.idle")
-				: boilerLevel == 18 ? Lang.translateDirect("boiler.max_lvl")
-					: Lang.translateDirect("boiler.lvl", String.valueOf(boilerLevel)));
+		return isPassive() ? CreateLang.translateDirect("boiler.passive")
+			: (boilerLevel == 0 ? CreateLang.translateDirect("boiler.idle")
+				: boilerLevel == 18 ? CreateLang.translateDirect("boiler.max_lvl")
+					: CreateLang.translateDirect("boiler.lvl", String.valueOf(boilerLevel)));
 	}
 
 	public MutableComponent getSizeComponent(boolean forGoggles, boolean useBlocksAsBars, ChatFormatting... styles) {
@@ -242,9 +242,9 @@ public class BoilerData {
 		ChatFormatting style1 = styles.length >= 1 ? styles[0] : ChatFormatting.GRAY;
 		ChatFormatting style2 = styles.length >= 2 ? styles[1] : ChatFormatting.DARK_GRAY;
 
-		return Lang.translateDirect("boiler." + label)
+		return CreateLang.translateDirect("boiler." + label)
 			.withStyle(style1)
-			.append(Lang.translateDirect("boiler." + label + "_dots")
+			.append(CreateLang.translateDirect("boiler." + label + "_dots")
 				.withStyle(style2))
 			.append(base);
 	}

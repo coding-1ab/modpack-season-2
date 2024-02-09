@@ -6,12 +6,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -34,7 +34,7 @@ public class BeltTunnelRenderer extends SmartBlockEntityRenderer<BeltTunnelBlock
 		if (Backend.canUseInstancing(be.getLevel()))
 			return;
 
-		SuperByteBuffer flapBuffer = CachedBufferer.partial(AllPartialModels.BELT_TUNNEL_FLAP, be.getBlockState());
+		SuperByteBuffer flapBuffer = CachedBuffers.partial(AllPartialModels.BELT_TUNNEL_FLAP, be.getBlockState());
 		VertexConsumer vb = buffer.getBuffer(RenderType.solid());
 		Vec3 pivot = VecHelper.voxelSpace(0, 10, 1f);
 		TransformStack msr = TransformStack.cast(ms);
@@ -51,7 +51,7 @@ public class BeltTunnelRenderer extends SmartBlockEntityRenderer<BeltTunnelBlock
 			msr.centre()
 				.rotateY(horizontalAngle)
 				.unCentre();
-			
+
 			ms.translate(0.075f / 16f, 0, 0);
 
 			for (int segment = 0; segment <= 3; segment++) {

@@ -2,8 +2,7 @@ package com.simibubi.create.content.equipment.clipboard;
 
 import javax.annotation.Nonnull;
 
-import com.simibubi.create.foundation.gui.ScreenOpener;
-
+import net.createmod.catnip.gui.ScreenOpener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

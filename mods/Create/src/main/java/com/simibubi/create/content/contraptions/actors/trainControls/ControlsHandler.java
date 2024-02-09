@@ -12,7 +12,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.foundation.utility.ControlsUtil;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -41,7 +41,7 @@ public class ControlsHandler {
 		controlsPos = controllerLocalPos;
 
 		Minecraft.getInstance().player.displayClientMessage(
-			Lang.translateDirect("contraption.controls.start_controlling", entity.getContraptionName()), true);
+			CreateLang.translateDirect("contraption.controls.start_controlling", entity.getContraptionName()), true);
 	}
 
 	public static void stopControlling() {
@@ -58,7 +58,7 @@ public class ControlsHandler {
 		controlsPos = null;
 		currentlyPressed.clear();
 
-		Minecraft.getInstance().player.displayClientMessage(Lang.translateDirect("contraption.controls.stop_controlling"),
+		Minecraft.getInstance().player.displayClientMessage(CreateLang.translateDirect("contraption.controls.stop_controlling"),
 			true);
 	}
 

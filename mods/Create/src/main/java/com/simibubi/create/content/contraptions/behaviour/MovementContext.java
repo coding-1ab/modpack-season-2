@@ -4,8 +4,8 @@ import java.util.function.UnaryOperator;
 
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -32,7 +32,7 @@ public class MovementContext {
 	public CompoundTag data;
 	public Contraption contraption;
 	public Object temporaryData;
-	
+
 	private FilterItemStack filter;
 
 	public MovementContext(Level world, StructureBlockInfo info, Contraption contraption) {
@@ -87,7 +87,7 @@ public class MovementContext {
 		nbt.put("Data", data.copy());
 		return nbt;
 	}
-	
+
 	public FilterItemStack getFilterFromBE() {
 		if (filter != null)
 			return filter;

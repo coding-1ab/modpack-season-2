@@ -11,11 +11,11 @@ import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.font.FontSet;
@@ -86,7 +86,7 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
 			for (int i = 0; i < line.size(); i++) {
 				FlapDisplaySection section = line.get(i);
 				renderOutput.nextSection(section);
-				int ticks = AnimationTickHolder.getTicks(be.getLevel());
+				int ticks = LevelTickHolder.getTicks(be.getLevel());
 				String text = section.renderCharsIndividually() || !section.spinning[0] ? section.text
 					: section.cyclingOptions[((ticks / 3) + i * 13) % section.cyclingOptions.length];
 				StringDecomposer.iterateFormatted(text, Style.EMPTY, renderOutput);
@@ -140,8 +140,8 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
 
 		public boolean accept(int charIndex, Style style, int glyph) {
 			FontSet fontset = getFontSet();
-			int ticks = paused ? 0 : AnimationTickHolder.getTicks(level);
-			float time = paused ? 0 : AnimationTickHolder.getRenderTime(level);
+			int ticks = paused ? 0 : LevelTickHolder.getTicks(level);
+			float time = paused ? 0 : LevelTickHolder.getRenderTime(level);
 			float dim = 1;
 
 			if (section.renderCharsIndividually() && section.spinning[Math.min(charIndex, section.spinning.length)]) {
@@ -229,7 +229,7 @@ public class FlapDisplayRenderer extends KineticBlockEntityRenderer<FlapDisplayB
 
 	@Override
 	protected SuperByteBuffer getRotatedModel(FlapDisplayBlockEntity be, BlockState state) {
-		return CachedBufferer.partialFacingVertical(AllPartialModels.SHAFTLESS_COGWHEEL, state,
+		return CachedBuffers.partialFacingVertical(AllPartialModels.SHAFTLESS_COGWHEEL, state,
 			state.getValue(FlapDisplayBlock.HORIZONTAL_FACING));
 	}
 

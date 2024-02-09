@@ -8,8 +8,8 @@ import com.simibubi.create.content.kinetics.base.HorizontalAxisKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
-import com.simibubi.create.foundation.gui.ScreenOpener;
 
+import net.createmod.catnip.gui.ScreenOpener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -151,7 +151,7 @@ public class SequencedGearshiftBlock extends HorizontalAxisKineticBlock implemen
 	public Class<SequencedGearshiftBlockEntity> getBlockEntityClass() {
 		return SequencedGearshiftBlockEntity.class;
 	}
-	
+
 	@Override
 	public BlockEntityType<? extends SequencedGearshiftBlockEntity> getBlockEntityType() {
 		return AllBlockEntityTypes.SEQUENCED_GEARSHIFT.get();

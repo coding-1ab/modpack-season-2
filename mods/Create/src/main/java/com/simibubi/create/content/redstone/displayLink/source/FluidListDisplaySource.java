@@ -15,11 +15,11 @@ import com.simibubi.create.content.trains.display.FlapDisplayLayout;
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.TankManipulationBehaviour;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Couple;
 import com.simibubi.create.foundation.utility.FluidFormatter;
-import com.simibubi.create.foundation.utility.IntAttached;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.IntAttached;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;

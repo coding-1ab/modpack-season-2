@@ -1,11 +1,5 @@
 package com.simibubi.create.content.contraptions.mounted;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
@@ -15,7 +9,6 @@ import com.simibubi.create.content.schematics.requirement.ISpecialBlockItemRequi
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement.ItemUseType;
 import com.simibubi.create.foundation.block.IBE;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -59,6 +52,11 @@ import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+
 public class CartAssemblerBlock extends BaseRailBlock
 	implements IBE<CartAssemblerBlockEntity>, IWrenchable, ISpecialBlockItemRequirement {
 
@@ -91,11 +89,11 @@ public class CartAssemblerBlock extends BaseRailBlock
 	public static BlockState getRailBlock(BlockState state) {
 		BaseRailBlock railBlock = (BaseRailBlock) state.getValue(RAIL_TYPE)
 			.getBlock();
-		
+
 		@SuppressWarnings("deprecation")
 		BlockState railState = railBlock.defaultBlockState()
 			.setValue(railBlock.getShapeProperty(), state.getValue(RAIL_SHAPE));
-		
+
 		if (railState.hasProperty(ControllerRailBlock.BACKWARDS))
 			railState = railState.setValue(ControllerRailBlock.BACKWARDS, state.getValue(BACKWARDS));
 		return railState;

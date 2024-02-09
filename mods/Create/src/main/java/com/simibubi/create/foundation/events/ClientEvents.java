@@ -51,20 +51,20 @@ import com.simibubi.create.foundation.blockEntity.behaviour.edgeInteraction.Edge
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueHandler;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueRenderer;
-import com.simibubi.create.foundation.config.ui.BaseConfigScreen;
 import com.simibubi.create.foundation.fluid.FluidHelper;
 import com.simibubi.create.foundation.item.TooltipModifier;
 import com.simibubi.create.foundation.networking.LeftClickPacket;
-import com.simibubi.create.foundation.placement.PlacementHelpers;
-import com.simibubi.create.foundation.ponder.PonderTooltipHandler;
-import com.simibubi.create.foundation.render.SuperRenderTypeBuffer;
 import com.simibubi.create.foundation.sound.SoundScapes;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
 import com.simibubi.create.foundation.utility.CameraAngleAnimationService;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
-import com.simibubi.create.foundation.utility.worldWrappers.WrappedClientWorld;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.config.ui.BaseConfigScreen;
+import net.createmod.catnip.render.DefaultSuperRenderTypeBuffer;
+import net.createmod.catnip.render.SuperRenderTypeBuffer;
+import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.utility.levelWrappers.WrappedClientLevel;
+import net.createmod.ponder.foundation.PonderTooltipHandler;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -86,7 +86,6 @@ import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
-import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
@@ -153,9 +152,6 @@ public class ClientEvents {
 		// CollisionDebugger.tick();
 		ArmInteractionPointHandler.tick();
 		EjectorTargetHandler.tick();
-		PlacementHelpers.tick();
-		CreateClient.OUTLINER.tickOutlines();
-		CreateClient.GHOST_BLOCKS.tickGhosts();
 		ContraptionRenderDispatcher.tick(world);
 		BlueprintOverlayRenderer.tick();
 		ToolboxHandlerClient.clientTick();
@@ -186,7 +182,7 @@ public class ClientEvents {
 	@SubscribeEvent
 	public static void onLoadWorld(LevelEvent.Load event) {
 		LevelAccessor world = event.getLevel();
-		if (world.isClientSide() && world instanceof ClientLevel && !(world instanceof WrappedClientWorld)) {
+		if (world.isClientSide() && world instanceof ClientLevel && !(world instanceof WrappedClientLevel)) {
 			CreateClient.invalidateRenderers();
 			AnimationTickHolder.reset();
 		}
@@ -207,10 +203,10 @@ public class ClientEvents {
 	public static void onRenderWorld(RenderLevelStageEvent event) {
 		if (event.getStage() != Stage.AFTER_PARTICLES)
 			return;
-		
+
 		PoseStack ms = event.getPoseStack();
 		ms.pushPose();
-		SuperRenderTypeBuffer buffer = SuperRenderTypeBuffer.getInstance();
+		SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBuffer.getInstance();
 		float partialTicks = AnimationTickHolder.getPartialTicks();
 		Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera()
 			.getPosition();
@@ -220,8 +216,6 @@ public class ClientEvents {
 		CouplingRenderer.renderAll(ms, buffer, camera);
 		CarriageCouplingRenderer.renderAll(ms, buffer, camera);
 		CreateClient.SCHEMATIC_HANDLER.render(ms, buffer, camera);
-		CreateClient.GHOST_BLOCKS.renderAll(ms, buffer, camera);
-		CreateClient.OUTLINER.renderOutlines(ms, buffer, camera, partialTicks);
 
 		buffer.draw();
 		RenderSystem.enableCull();
@@ -240,11 +234,6 @@ public class ClientEvents {
 	}
 
 	@SubscribeEvent
-	public static void getItemTooltipColor(RenderTooltipEvent.Color event) {
-		PonderTooltipHandler.handleTooltipColor(event);
-	}
-
-	@SubscribeEvent
 	public static void addToItemTooltip(ItemTooltipEvent event) {
 		if (!AllConfigs.client().tooltips.get())
 			return;
@@ -257,7 +246,6 @@ public class ClientEvents {
 			modifier.modify(event);
 		}
 
-		PonderTooltipHandler.addToTooltip(event);
 		SequencedAssemblyRecipe.addToTooltip(event);
 	}
 
@@ -364,7 +352,7 @@ public class ClientEvents {
 				.orElseThrow(() -> new IllegalStateException("Create mod container missing on LoadComplete"));
 			createContainer.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
 				() -> new ConfigScreenHandler.ConfigScreenFactory(
-					(mc, previousScreen) -> BaseConfigScreen.forCreate(previousScreen)));
+					(mc, previousScreen) -> new BaseConfigScreen(previousScreen, Create.ID)));
 		}
 
 	}

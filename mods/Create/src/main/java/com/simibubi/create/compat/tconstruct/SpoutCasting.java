@@ -4,9 +4,8 @@ import com.simibubi.create.api.behaviour.BlockSpoutingBehaviour;
 import com.simibubi.create.compat.Mods;
 import com.simibubi.create.content.fluids.spout.SpoutBlockEntity;
 import com.simibubi.create.foundation.fluid.FluidHelper;
-import com.simibubi.create.foundation.utility.RegisteredObjects;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -41,7 +40,7 @@ public class SpoutCasting extends BlockSpoutingBehaviour {
 		if (handler.getTanks() != 1)
 			return 0;
 
-		ResourceLocation registryName = RegisteredObjects.getKeyOrThrow(blockEntity.getType());
+		ResourceLocation registryName = CatnipServices.REGISTRIES.getKeyOrThrow(blockEntity.getType());
 		if (!registryName.equals(TABLE) && !registryName.equals(BASIN))
 			return 0;
 		if (!handler.isFluidValid(0, availableFluid))

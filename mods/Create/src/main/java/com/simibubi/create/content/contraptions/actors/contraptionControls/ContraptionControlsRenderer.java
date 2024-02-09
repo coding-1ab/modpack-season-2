@@ -13,14 +13,14 @@ import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
 import com.simibubi.create.content.redstone.nixieTube.NixieTubeRenderer;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.Color;
-import com.simibubi.create.foundation.utility.Couple;
 import com.simibubi.create.foundation.utility.DyeHelper;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.catnip.utility.theme.Color;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -57,14 +57,14 @@ public class ContraptionControlsRenderer extends SmartBlockEntityRenderer<Contra
 		ms.translate(buttonOffset.x, buttonOffset.y, buttonOffset.z);
 
 		VertexConsumer vc = buffer.getBuffer(RenderType.solid());
-		CachedBufferer.partialFacing(AllPartialModels.CONTRAPTION_CONTROLS_BUTTON, blockState, facing)
+		CachedBuffers.partialFacing(AllPartialModels.CONTRAPTION_CONTROLS_BUTTON, blockState, facing)
 			.light(light)
 			.renderInto(ms, vc);
 
 		ms.popPose();
 
 		int i = (((int) blockEntity.indicator.getValue(pt) / 45) % 8) + 8;
-		CachedBufferer.partialFacing(AllPartialModels.CONTRAPTION_CONTROLS_INDICATOR.get(i % 8), blockState, facing)
+		CachedBuffers.partialFacing(AllPartialModels.CONTRAPTION_CONTROLS_INDICATOR.get(i % 8), blockState, facing)
 			.light(light)
 			.renderInto(ms, vc);
 	}
@@ -104,7 +104,7 @@ public class ContraptionControlsRenderer extends SmartBlockEntityRenderer<Contra
 
 		float buttondepth = -.25f;
 		if (ctx.contraption.presentBlockEntities.get(ctx.localPos) instanceof ContraptionControlsBlockEntity cbe)
-			buttondepth += -1 / 24f * cbe.button.getValue(AnimationTickHolder.getPartialTicks(renderWorld));
+			buttondepth += -1 / 24f * cbe.button.getValue(LevelTickHolder.getPartialTicks(renderWorld));
 
 		if (!text.isBlank() && playerDistance < 100) {
 			int actualWidth = fontRenderer.width(text);

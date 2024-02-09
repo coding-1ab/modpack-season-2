@@ -6,11 +6,11 @@ import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTank
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour.TankSegment;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.simibubi.create.foundation.fluid.FluidRenderer;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.IntAttached;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.IntAttached;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -72,7 +72,7 @@ public class BasinRenderer extends SmartBlockEntityRenderer<BasinBlockEntity> {
 			if (fluidLevel > 0) {
 				ms.translate(0,
 					(Mth.sin(
-						AnimationTickHolder.getRenderTime(basin.getLevel()) / 12f + anglePartition * itemCount) + 1.5f)
+							LevelTickHolder.getRenderTime(basin.getLevel()) / 12f + anglePartition * itemCount) + 1.5f)
 						* 1 / 32f,
 					0);
 			}
@@ -171,7 +171,7 @@ public class BasinRenderer extends SmartBlockEntityRenderer<BasinBlockEntity> {
 
 				float partial = Mth.clamp(units / totalUnits, 0, 1);
 				xMax += partial * 12 / 16f;
-				FluidRenderer.renderFluidBox(renderedFluid, xMin, yMin, zMin, xMax, yMax, zMax, buffer, ms, light,
+				FluidRenderer.renderFluidBox(renderedFluid.getFluid(), renderedFluid.getAmount(), xMin, yMin, zMin, xMax, yMax, zMax, buffer, ms, light,
 					false);
 
 				xMin = xMax;

@@ -6,8 +6,8 @@ import java.util.List;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.fluids.transfer.GenericItemEmptying;
 import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.foundation.utility.Pair;
 
+import net.createmod.catnip.utility.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -203,37 +203,35 @@ public class FilterItemStack {
 				boolean matches = attribute.appliesTo(stack, world) != inverted;
 
 				if (matches) {
-					switch (whitelistMode) {
-					case BLACKLIST:
-						return false;
-					case WHITELIST_CONJ:
-						continue;
-					case WHITELIST_DISJ:
-						return true;
-					}
+                    switch (whitelistMode) {
+                        case BLACKLIST -> {
+                            return false;
+                        }
+                        case WHITELIST_CONJ -> {
+							continue;
+                        }
+                        case WHITELIST_DISJ -> {
+                            return true;
+                        }
+                    }
 				} else {
-					switch (whitelistMode) {
-					case BLACKLIST:
-						continue;
-					case WHITELIST_CONJ:
-						return false;
-					case WHITELIST_DISJ:
-						continue;
-					}
+                    switch (whitelistMode) {
+                        case BLACKLIST, WHITELIST_DISJ -> {
+							continue;
+                        }
+                        case WHITELIST_CONJ -> {
+                            return false;
+                        }
+                    }
 				}
 			}
 
-			switch (whitelistMode) {
-			case BLACKLIST:
-				return true;
-			case WHITELIST_CONJ:
-				return true;
-			case WHITELIST_DISJ:
-				return false;
-			}
+            return switch (whitelistMode) {
+                case BLACKLIST, WHITELIST_CONJ -> true;
+                case WHITELIST_DISJ -> false;
+            };
 
-			return false;
-		}
+        }
 
 	}
 

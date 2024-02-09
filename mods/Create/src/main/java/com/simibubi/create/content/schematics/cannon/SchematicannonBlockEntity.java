@@ -24,11 +24,11 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.ItemHelper.ExtractionCountMode;
 import com.simibubi.create.foundation.utility.BlockHelper;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.simibubi.create.infrastructure.config.CSchematics;
 
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -811,7 +811,7 @@ public class SchematicannonBlockEntity extends SmartBlockEntity implements MenuP
 
 	@Override
 	public Component getDisplayName() {
-		return Lang.translateDirect("gui.schematicannon.title");
+		return CreateLang.translateDirect("gui.schematicannon.title");
 	}
 
 	public void updateChecklist() {

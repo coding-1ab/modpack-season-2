@@ -7,17 +7,17 @@ import java.util.Optional;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity.CasingType;
 import com.simibubi.create.content.kinetics.belt.item.BeltConnectorItem;
 import com.simibubi.create.content.kinetics.belt.transport.BeltInventory;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.VecHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.CatnipClient;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -171,14 +171,14 @@ public class BeltSlicer {
 					if (itemstack.isEmpty())
 						continue;
 					int count = itemstack.getCount();
-					
+
 					if (AllItems.BELT_CONNECTOR.isIn(itemstack)) {
 						if (!world.isClientSide)
 							itemstack.shrink(1);
 						beltFound = true;
 						continue;
 					}
-					
+
 					if (AllBlocks.SHAFT.isIn(itemstack)) {
 						int taken = Math.min(count, requiredShafts - amountRetrieved);
 						if (!world.isClientSide)
@@ -473,13 +473,13 @@ public class BeltSlicer {
 			return;
 
 		if (feedback.langKey != null)
-			mc.player.displayClientMessage(Lang.translateDirect(feedback.langKey)
+			mc.player.displayClientMessage(CreateLang.translateDirect(feedback.langKey)
 				.withStyle(feedback.formatting), true);
 		else
 			mc.player.displayClientMessage(Components.immutableEmpty(), true);
 
 		if (feedback.bb != null)
-			CreateClient.OUTLINER.chaseAABB("BeltSlicer", feedback.bb)
+			CatnipClient.OUTLINER.chaseAABB("BeltSlicer", feedback.bb)
 				.lineWidth(1 / 16f)
 				.colored(feedback.color);
 	}

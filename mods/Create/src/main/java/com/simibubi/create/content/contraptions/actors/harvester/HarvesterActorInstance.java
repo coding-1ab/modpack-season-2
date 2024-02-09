@@ -9,10 +9,10 @@ import com.jozufozu.flywheel.core.virtual.VirtualRenderWorld;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.contraptions.render.ActorInstance;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -50,11 +50,11 @@ public class HarvesterActorInstance extends ActorInstance {
 	protected PartialModel getRollingPartial() {
 		return AllPartialModels.HARVESTER_BLADE;
 	}
-	
+
 	protected Vec3 getRotationOffset() {
 		return rotOffset;
 	}
-	
+
 	protected double getRadius() {
 		return 6.5;
 	}

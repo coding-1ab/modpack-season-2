@@ -21,10 +21,10 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBoard;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsFormatter;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.BulkScrollValueBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -54,7 +54,7 @@ public class ChassisBlockEntity extends SmartBlockEntity {
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
 		int max = AllConfigs.server().kinetics.maxChassisRange.get();
-		range = new ChassisScrollValueBehaviour(Lang.translateDirect("contraptions.chassis.range"), this,
+		range = new ChassisScrollValueBehaviour(CreateLang.translateDirect("contraptions.chassis.range"), this,
 			new CenteredSideValueBoxTransform(), be -> ((ChassisBlockEntity) be).collectChassisGroup());
 		range.requiresWrench();
 		range.between(1, max);
@@ -70,7 +70,7 @@ public class ChassisBlockEntity extends SmartBlockEntity {
 	public void initialize() {
 		super.initialize();
 		if (getBlockState().getBlock() instanceof RadialChassisBlock)
-			range.setLabel(Lang.translateDirect("contraptions.chassis.radius"));
+			range.setLabel(CreateLang.translateDirect("contraptions.chassis.radius"));
 	}
 
 	@Override
@@ -260,7 +260,7 @@ public class ChassisBlockEntity extends SmartBlockEntity {
 
 		@Override
 		public ValueSettingsBoard createBoard(Player player, BlockHitResult hitResult) {
-			ImmutableList<Component> rows = ImmutableList.of(Lang.translateDirect("contraptions.chassis.distance"));
+			ImmutableList<Component> rows = ImmutableList.of(CreateLang.translateDirect("contraptions.chassis.distance"));
 			ValueSettingsFormatter formatter =
 				new ValueSettingsFormatter(vs -> new ValueSettings(vs.row(), vs.value() + 1).format());
 			return new ValueSettingsBoard(label, max - 1, 1, rows, formatter);
@@ -290,7 +290,7 @@ public class ChassisBlockEntity extends SmartBlockEntity {
 			ValueSettings vs = super.getValueSettings();
 			return new ValueSettings(vs.row(), vs.value() - 1);
 		}
-		
+
 		@Override
 		public String getClipboardKey() {
 			return "Chassis";

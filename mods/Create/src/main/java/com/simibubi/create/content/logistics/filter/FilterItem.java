@@ -10,9 +10,9 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.content.logistics.filter.AttributeFilterMenu.WhitelistMode;
 import com.simibubi.create.foundation.item.ItemHelper;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -92,8 +92,8 @@ public class FilterItem extends Item implements MenuProvider {
 			boolean blacklist = filter.getOrCreateTag()
 				.getBoolean("Blacklist");
 
-			list.add((blacklist ? Lang.translateDirect("gui.filter.deny_list")
-				: Lang.translateDirect("gui.filter.allow_list")).withStyle(ChatFormatting.GOLD));
+			list.add((blacklist ? CreateLang.translateDirect("gui.filter.deny_list")
+				: CreateLang.translateDirect("gui.filter.allow_list")).withStyle(ChatFormatting.GOLD));
 			int count = 0;
 			for (int i = 0; i < filterItems.getSlots(); i++) {
 				if (count > 3) {
@@ -119,10 +119,10 @@ public class FilterItem extends Item implements MenuProvider {
 			WhitelistMode whitelistMode = WhitelistMode.values()[filter.getOrCreateTag()
 				.getInt("WhitelistMode")];
 			list.add((whitelistMode == WhitelistMode.WHITELIST_CONJ
-				? Lang.translateDirect("gui.attribute_filter.allow_list_conjunctive")
+				? CreateLang.translateDirect("gui.attribute_filter.allow_list_conjunctive")
 				: whitelistMode == WhitelistMode.WHITELIST_DISJ
-					? Lang.translateDirect("gui.attribute_filter.allow_list_disjunctive")
-					: Lang.translateDirect("gui.attribute_filter.deny_list")).withStyle(ChatFormatting.GOLD));
+					? CreateLang.translateDirect("gui.attribute_filter.allow_list_disjunctive")
+					: CreateLang.translateDirect("gui.attribute_filter.deny_list")).withStyle(ChatFormatting.GOLD));
 
 			int count = 0;
 			ListTag attributes = filter.getOrCreateTag()

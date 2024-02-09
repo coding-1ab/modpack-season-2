@@ -9,12 +9,12 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.KineticDebugger;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.render.SuperByteBufferCache;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.Color;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.render.SuperByteBufferCache;
+import net.createmod.catnip.utility.theme.Color;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -70,12 +70,12 @@ public class KineticBlockEntityRenderer<T extends KineticBlockEntity> extends Sa
 	}
 
 	protected SuperByteBuffer getRotatedModel(T be, BlockState state) {
-		return CachedBufferer.block(KINETIC_BLOCK, state);
+		return CachedBuffers.block(KINETIC_BLOCK, state);
 	}
 
 	public static void renderRotatingKineticBlock(KineticBlockEntity be, BlockState renderedState, PoseStack ms,
 		VertexConsumer buffer, int light) {
-		SuperByteBuffer superByteBuffer = CachedBufferer.block(KINETIC_BLOCK, renderedState);
+		SuperByteBuffer superByteBuffer = CachedBuffers.block(KINETIC_BLOCK, renderedState);
 		renderRotatingBuffer(be, superByteBuffer, ms, buffer, light);
 	}
 
@@ -85,7 +85,7 @@ public class KineticBlockEntityRenderer<T extends KineticBlockEntity> extends Sa
 	}
 
 	public static float getAngleForTe(KineticBlockEntity be, final BlockPos pos, Axis axis) {
-		float time = AnimationTickHolder.getRenderTime(be.getLevel());
+		float time = LevelTickHolder.getRenderTime(be.getLevel());
 		float offset = getRotationOffsetForPosition(be, pos, axis);
 		float angle = ((time * be.getSpeed() * 3f / 10 + offset) % 360) / 180 * (float) Math.PI;
 		return angle;

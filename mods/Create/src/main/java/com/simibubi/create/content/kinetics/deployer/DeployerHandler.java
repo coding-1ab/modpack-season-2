@@ -22,8 +22,8 @@ import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity.Mode;
 import com.simibubi.create.content.trains.track.ITrackBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.BlockHelper;
-import com.simibubi.create.foundation.utility.worldWrappers.WrappedWorld;
 
+import net.createmod.catnip.utility.levelWrappers.WrappedLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -75,7 +75,7 @@ import net.minecraftforge.eventbus.api.Event;
 
 public class DeployerHandler {
 
-	private static final class ItemUseWorld extends WrappedWorld {
+	private static final class ItemUseWorld extends WrappedLevel {
 		private final Direction face;
 		private final BlockPos pos;
 		boolean rayMode = false;
@@ -101,7 +101,7 @@ public class DeployerHandler {
 				|| pos.relative(face.getOpposite(), 1)
 					.equals(position)))
 				return Blocks.BEDROCK.defaultBlockState();
-			return world.getBlockState(position);
+			return level.getBlockState(position);
 		}
 	}
 

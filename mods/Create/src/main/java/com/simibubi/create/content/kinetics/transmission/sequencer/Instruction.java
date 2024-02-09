@@ -3,8 +3,8 @@ package com.simibubi.create.content.kinetics.transmission.sequencer;
 import java.util.Vector;
 
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.foundation.utility.NBTHelper;
 
+import net.createmod.catnip.utility.NBTHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 

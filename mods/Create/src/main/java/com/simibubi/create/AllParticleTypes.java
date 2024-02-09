@@ -11,8 +11,8 @@ import com.simibubi.create.content.kinetics.steamEngine.SteamJetParticleData;
 import com.simibubi.create.content.trains.CubeParticleData;
 import com.simibubi.create.foundation.particle.AirParticleData;
 import com.simibubi.create.foundation.particle.ICustomParticleData;
-import com.simibubi.create.foundation.utility.Lang;
 
+import net.createmod.catnip.utility.lang.Lang;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraftforge.api.distmarker.Dist;

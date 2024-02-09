@@ -6,12 +6,12 @@ import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.content.kinetics.base.DirectionalAxisKineticBlock;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.foundation.block.IBE;
-import com.simibubi.create.foundation.utility.Color;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.VecHelper;
-import com.simibubi.create.foundation.utility.worldWrappers.WrappedWorld;
 
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.lang.Lang;
+import net.createmod.catnip.utility.levelWrappers.WrappedLevel;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -113,7 +113,7 @@ public class GaugeBlock extends DirectionalAxisKineticBlock implements IBE<Gauge
 			return false;
 		if (getRotationAxis(state) == Axis.Y && face != state.getValue(FACING))
 			return false;
-		if (!Block.shouldRenderFace(state, world, pos, face, pos.relative(face)) && !(world instanceof WrappedWorld))
+		if (!Block.shouldRenderFace(state, world, pos, face, pos.relative(face)) && !(world instanceof WrappedLevel))
 			return false;
 		return true;
 	}

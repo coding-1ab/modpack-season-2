@@ -11,9 +11,10 @@ import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.schematics.cannon.MaterialChecklist;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.blockEntity.IMergeableBE;
-import com.simibubi.create.foundation.utility.BBHelper;
 import com.simibubi.create.foundation.utility.BlockHelper;
 
+import net.createmod.catnip.utility.BBHelper;
+import net.createmod.catnip.utility.levelWrappers.SchematicLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -41,7 +42,7 @@ public class SchematicPrinter {
 
 	private boolean schematicLoaded;
 	private boolean isErrored;
-	private SchematicWorld blockReader;
+	private SchematicLevel blockReader;
 	private BlockPos schematicAnchor;
 
 	private BlockPos currentPos;
@@ -65,7 +66,7 @@ public class SchematicPrinter {
 				schematicLoaded = true;
 			}
 		}
-		
+
 		printingEntityIndex = compound.getInt("EntityProgress");
 		printStage = PrintStage.valueOf(compound.getString("PrintStage"));
 		compound.getList("DeferredBlocks", 10).stream()
@@ -78,7 +79,7 @@ public class SchematicPrinter {
 			compound.put("CurrentPos", NbtUtils.writeBlockPos(currentPos));
 		if (schematicAnchor != null)
 			compound.put("Anchor", NbtUtils.writeBlockPos(schematicAnchor));
-		
+
 		compound.putInt("EntityProgress", printingEntityIndex);
 		compound.putString("PrintStage", printStage.name());
 		ListTag tagDeferredBlocks = new ListTag();
@@ -97,7 +98,7 @@ public class SchematicPrinter {
 
 		schematicAnchor = NbtUtils.readBlockPos(blueprint.getTag()
 			.getCompound("Anchor"));
-		blockReader = new SchematicWorld(schematicAnchor, originalWorld);
+		blockReader = new SchematicLevel(schematicAnchor, originalWorld);
 
 		try {
 			activeTemplate.placeInWorld(blockReader, schematicAnchor, schematicAnchor, settings,
@@ -111,7 +112,7 @@ public class SchematicPrinter {
 
 		BlockPos extraBounds = StructureTemplate.calculateRelativePosition(settings, new BlockPos(activeTemplate.getSize())
 			.offset(-1, -1, -1));
-		blockReader.bounds = BBHelper.encapsulate(blockReader.bounds, extraBounds);
+		blockReader.setBounds(BBHelper.encapsulate(blockReader.getBounds(), extraBounds));
 
 		StructureTransform transform = new StructureTransform(settings.getRotationPivot(), Direction.Axis.Y,
 			settings.getRotation(), settings.getMirror());
@@ -140,7 +141,7 @@ public class SchematicPrinter {
 	public boolean isLoaded() {
 		return schematicLoaded;
 	}
-	
+
 	public boolean isErrored() {
 		return isErrored;
 	}
@@ -213,7 +214,7 @@ public class SchematicPrinter {
 		BlockState toReplace = world.getBlockState(pos);
 		BlockEntity toReplaceBE = world.getBlockEntity(pos);
 		BlockState toReplaceOther = null;
-		
+
 		if (state.hasProperty(BlockStateProperties.BED_PART) && state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)
 				&& state.getValue(BlockStateProperties.BED_PART) == BedPart.FOOT)
 			toReplaceOther = world.getBlockState(pos.relative(state.getValue(BlockStateProperties.HORIZONTAL_FACING)));

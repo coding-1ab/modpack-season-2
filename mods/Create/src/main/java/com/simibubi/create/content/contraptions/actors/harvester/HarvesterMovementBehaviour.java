@@ -1,9 +1,5 @@
 package com.simibubi.create.content.contraptions.actors.harvester;
 
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.mutable.MutableBoolean;
-
 import com.jozufozu.flywheel.api.MaterialManager;
 import com.jozufozu.flywheel.core.virtual.VirtualRenderWorld;
 import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
@@ -13,9 +9,8 @@ import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
 import com.simibubi.create.content.contraptions.render.ContraptionRenderDispatcher;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.utility.BlockHelper;
-import com.simibubi.create.foundation.utility.VecHelper;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
@@ -35,6 +30,9 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.IPlantable;
+import org.apache.commons.lang3.mutable.MutableBoolean;
+
+import javax.annotation.Nullable;
 
 public class HarvesterMovementBehaviour implements MovementBehaviour {
 

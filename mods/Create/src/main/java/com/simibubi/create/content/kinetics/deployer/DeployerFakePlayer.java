@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.mojang.authlib.GameProfile;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.simibubi.create.infrastructure.config.CKinetics;
 
@@ -71,7 +71,7 @@ public class DeployerFakePlayer extends FakePlayer {
 
 	@Override
 	public Component getDisplayName() {
-		return Lang.translateDirect("block.deployer.damage_source_name");
+		return CreateLang.translateDirect("block.deployer.damage_source_name");
 	}
 
 	@Override

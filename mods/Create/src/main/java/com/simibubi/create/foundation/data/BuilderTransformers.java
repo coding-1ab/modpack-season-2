@@ -45,12 +45,12 @@ import com.simibubi.create.content.trains.bogey.StandardBogeyBlock;
 import com.simibubi.create.foundation.block.ItemUseOverrides;
 import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import com.simibubi.create.foundation.block.connected.HorizontalCTBehaviour;
-import com.simibubi.create.foundation.utility.RegisteredObjects;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.builders.ItemBuilder;
 import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
@@ -106,7 +106,7 @@ public class BuilderTransformers {
 			.blockstate((c, p) -> BlockStateGen.horizontalAxisBlock(c, p, s -> p.models()
 				.getExistingFile(p.modLoc("block/track/bogey/top"))))
 			.loot((p, l) -> p.dropOther(l, AllBlocks.RAILWAY_CASING.get()))
-			.onRegister(block -> AbstractBogeyBlock.registerStandardBogey(RegisteredObjects.getKeyOrThrow(block)));
+			.onRegister(block -> AbstractBogeyBlock.registerStandardBogey(CatnipServices.REGISTRIES.getKeyOrThrow(block)));
 	}
 
 	public static <B extends CopycatBlock, P> NonNullUnaryOperator<BlockBuilder<B, P>> copycat() {

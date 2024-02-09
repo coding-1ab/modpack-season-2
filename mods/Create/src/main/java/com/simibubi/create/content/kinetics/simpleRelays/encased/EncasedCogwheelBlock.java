@@ -16,9 +16,9 @@ import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntit
 import com.simibubi.create.content.schematics.requirement.ISpecialBlockItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.block.IBE;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.VoxelShaper;
 
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.VoxelShaper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;

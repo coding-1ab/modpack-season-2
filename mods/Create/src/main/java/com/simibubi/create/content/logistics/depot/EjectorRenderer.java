@@ -10,12 +10,12 @@ import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
 import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.IntAttached;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.IntAttached;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -47,7 +47,7 @@ public class EjectorRenderer extends ShaftRenderer<EjectorBlockEntity> {
 		float angle = lidProgress * 70;
 
 		if (!Backend.canUseInstancing(be.getLevel())) {
-			SuperByteBuffer model = CachedBufferer.partial(AllPartialModels.EJECTOR_TOP, be.getBlockState());
+			SuperByteBuffer model = CachedBuffers.partial(AllPartialModels.EJECTOR_TOP, be.getBlockState());
 			applyLidAngle(be, angle, model);
 			model.light(light)
 					.renderInto(ms, vertexBuilder);

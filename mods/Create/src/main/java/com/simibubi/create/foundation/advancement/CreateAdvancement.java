@@ -5,9 +5,9 @@ import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 import com.simibubi.create.Create;
-import com.simibubi.create.foundation.utility.Components;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.advancements.FrameType;

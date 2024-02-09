@@ -11,9 +11,9 @@ import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides.Clipbo
 import com.simibubi.create.content.trains.track.TrackBlockOutline;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -112,11 +112,11 @@ public class ClipboardValueSettingsHandler {
 			return;
 
 		List<MutableComponent> tip = new ArrayList<>();
-		tip.add(Lang.translateDirect("clipboard.actions"));
+		tip.add(CreateLang.translateDirect("clipboard.actions"));
 		if (canCopy)
-			tip.add(Lang.translateDirect("clipboard.to_copy", Components.keybind("key.use")));
+			tip.add(CreateLang.translateDirect("clipboard.to_copy", Components.keybind("key.use")));
 		if (canPaste)
-			tip.add(Lang.translateDirect("clipboard.to_paste", Components.keybind("key.attack")));
+			tip.add(CreateLang.translateDirect("clipboard.to_paste", Components.keybind("key.attack")));
 
 		CreateClient.VALUE_SETTINGS_HANDLER.showHoverTip(tip);
 	}
@@ -196,7 +196,7 @@ public class ClipboardValueSettingsHandler {
 		if (!anySuccess)
 			return;
 
-		player.displayClientMessage(Lang
+		player.displayClientMessage(CreateLang
 			.translate(paste ? "clipboard.pasted_to" : "clipboard.copied_from", world.getBlockState(pos)
 				.getBlock()
 				.getName()

@@ -11,8 +11,8 @@ import com.simibubi.create.content.trains.signal.SignalBlock.SignalType;
 import com.simibubi.create.content.trains.track.TrackTargetingBehaviour;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.NBTHelper;
 
+import net.createmod.catnip.utility.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -109,7 +109,7 @@ public class SignalBlockEntity extends SmartBlockEntity implements ITransformabl
 			boundary.updateBlockEntityPower(this);
 			notifyUpdate();
 		});
-		
+
 		blockState.getOptionalValue(SignalBlock.TYPE)
 			.ifPresent(stateType -> {
 				SignalType targetType = boundary.getTypeFor(worldPosition);

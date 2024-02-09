@@ -6,10 +6,10 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
 import com.simibubi.create.foundation.fluid.FluidRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -73,7 +73,7 @@ public class FluidTankRenderer extends SafeBlockEntityRenderer<FluidTankBlockEnt
 
 		ms.pushPose();
 		ms.translate(0, clampedLevel - totalHeight, 0);
-		FluidRenderer.renderFluidBox(fluidStack, xMin, yMin, zMin, xMax, yMax, zMax, buffer, ms, light, false);
+		FluidRenderer.renderFluidBox(fluidStack.getFluid(), fluidStack.getAmount(), xMin, yMin, zMin, xMax, yMax, zMax, buffer, ms, light, false);
 		ms.popPose();
 	}
 
@@ -90,13 +90,13 @@ public class FluidTankRenderer extends SafeBlockEntityRenderer<FluidTankBlockEnt
 
 		for (Direction d : Iterate.horizontalDirections) {
 			ms.pushPose();
-			CachedBufferer.partial(AllPartialModels.BOILER_GAUGE, blockState)
+			CachedBuffers.partial(AllPartialModels.BOILER_GAUGE, blockState)
 				.rotateY(d.toYRot())
 				.unCentre()
 				.translate(be.width / 2f - 6 / 16f, 0, 0)
 				.light(light)
 				.renderInto(ms, vb);
-			CachedBufferer.partial(AllPartialModels.BOILER_GAUGE_DIAL, blockState)
+			CachedBuffers.partial(AllPartialModels.BOILER_GAUGE_DIAL, blockState)
 				.rotateY(d.toYRot())
 				.unCentre()
 				.translate(be.width / 2f - 6 / 16f, 0, 0)

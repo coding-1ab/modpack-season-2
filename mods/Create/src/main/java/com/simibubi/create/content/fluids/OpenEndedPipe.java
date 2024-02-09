@@ -13,9 +13,9 @@ import com.simibubi.create.content.fluids.potion.PotionFluidHandler;
 import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.fluid.FluidHelper;
-import com.simibubi.create.foundation.utility.BlockFace;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.BlockFace;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

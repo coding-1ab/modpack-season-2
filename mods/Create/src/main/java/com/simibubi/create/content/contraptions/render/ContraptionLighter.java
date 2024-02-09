@@ -6,7 +6,6 @@ import com.jozufozu.flywheel.light.LightUpdater;
 import com.jozufozu.flywheel.util.box.GridAlignedBB;
 import com.jozufozu.flywheel.util.box.ImmutableBox;
 import com.simibubi.create.content.contraptions.Contraption;
-
 import net.minecraft.world.level.LightLayer;
 
 public abstract class ContraptionLighter<C extends Contraption> implements LightListener {

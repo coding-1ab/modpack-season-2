@@ -87,7 +87,6 @@ import com.simibubi.create.content.trains.track.CurvedTrackSelectionPacket;
 import com.simibubi.create.content.trains.track.PlaceExtendedCurvePacket;
 import com.simibubi.create.foundation.blockEntity.RemoveBlockEntityPacket;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsPacket;
-import com.simibubi.create.foundation.config.ui.CConfigureConfigPacket;
 import com.simibubi.create.foundation.gui.menu.ClearMenuPacket;
 import com.simibubi.create.foundation.gui.menu.GhostItemSubmitPacket;
 import com.simibubi.create.foundation.networking.ISyncPersistentData;
@@ -95,9 +94,10 @@ import com.simibubi.create.foundation.networking.LeftClickPacket;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 import com.simibubi.create.infrastructure.command.HighlightPacket;
-import com.simibubi.create.infrastructure.command.SConfigureConfigPacket;
+import com.simibubi.create.infrastructure.command.SimpleCreateActions;
 import com.simibubi.create.infrastructure.debugInfo.ServerDebugInfoPacket;
 
+import net.createmod.catnip.net.ClientboundSimpleActionPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -135,7 +135,6 @@ public enum AllPackets {
 	LINKED_CONTROLLER_BIND(LinkedControllerBindPacket.class, LinkedControllerBindPacket::new, PLAY_TO_SERVER),
 	LINKED_CONTROLLER_USE_LECTERN(LinkedControllerStopLecternPacket.class, LinkedControllerStopLecternPacket::new,
 		PLAY_TO_SERVER),
-	C_CONFIGURE_CONFIG(CConfigureConfigPacket.class, CConfigureConfigPacket::new, PLAY_TO_SERVER),
 	SUBMIT_GHOST_ITEM(GhostItemSubmitPacket.class, GhostItemSubmitPacket::new, PLAY_TO_SERVER),
 	BLUEPRINT_COMPLETE_RECIPE(BlueprintAssignCompleteRecipePacket.class, BlueprintAssignCompleteRecipePacket::new,
 		PLAY_TO_SERVER),
@@ -175,7 +174,6 @@ public enum AllPackets {
 	SYMMETRY_EFFECT(SymmetryEffectPacket.class, SymmetryEffectPacket::new, PLAY_TO_CLIENT),
 	SERVER_SPEED(ServerSpeedProvider.Packet.class, ServerSpeedProvider.Packet::new, PLAY_TO_CLIENT),
 	BEAM_EFFECT(ZapperBeamPacket.class, ZapperBeamPacket::new, PLAY_TO_CLIENT),
-	S_CONFIGURE_CONFIG(SConfigureConfigPacket.class, SConfigureConfigPacket::new, PLAY_TO_CLIENT),
 	CONTRAPTION_STALL(ContraptionStallPacket.class, ContraptionStallPacket::new, PLAY_TO_CLIENT),
 	CONTRAPTION_DISASSEMBLE(ContraptionDisassemblyPacket.class, ContraptionDisassemblyPacket::new, PLAY_TO_CLIENT),
 	CONTRAPTION_BLOCK_CHANGED(ContraptionBlockChangedPacket.class, ContraptionBlockChangedPacket::new, PLAY_TO_CLIENT),
@@ -217,6 +215,18 @@ public enum AllPackets {
 	SERVER_DEBUG_INFO(ServerDebugInfoPacket.class, ServerDebugInfoPacket::new, PLAY_TO_CLIENT),
 	PACKAGE_DESTROYED(PackageDestroyPacket.class, PackageDestroyPacket::new, PLAY_TO_CLIENT),
 	LOGISTICS_STOCK_RESPONSE(LogisticalStockResponsePacket.class, LogisticalStockResponsePacket::new, PLAY_TO_CLIENT);
+
+	static {
+		ClientboundSimpleActionPacket.addAction("rainbowDebug", () -> SimpleCreateActions::rainbowDebug);
+		ClientboundSimpleActionPacket.addAction("overlayReset", () -> SimpleCreateActions::overlayReset);
+		ClientboundSimpleActionPacket.addAction("overlayScreen", () -> SimpleCreateActions::overlayScreen);
+		ClientboundSimpleActionPacket.addAction("experimentalLighting", () -> SimpleCreateActions::experimentalLighting);
+		ClientboundSimpleActionPacket.addAction("fabulousWarning", () -> SimpleCreateActions::fabulousWarning);
+		ClientboundSimpleActionPacket.addAction("zoomMultiplier", () -> SimpleCreateActions::zoomMultiplier);
+		ClientboundSimpleActionPacket.addAction("camAngleYawTarget", () -> value -> SimpleCreateActions.camAngleTarget(value, true));
+		ClientboundSimpleActionPacket.addAction("camAnglePitchTarget", () -> value -> SimpleCreateActions.camAngleTarget(value, false));
+		ClientboundSimpleActionPacket.addAction("camAngleFunction", () -> SimpleCreateActions::camAngleFunction);
+	}
 
 	public static final ResourceLocation CHANNEL_NAME = Create.asResource("main");
 	public static final int NETWORK_VERSION = 3;

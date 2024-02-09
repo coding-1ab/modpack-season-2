@@ -1,15 +1,5 @@
 package com.simibubi.create.content.equipment.clipboard;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.mutable.MutableBoolean;
-import org.apache.commons.lang3.mutable.MutableInt;
-
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -20,15 +10,14 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides.ClipboardType;
-import com.simibubi.create.foundation.gui.AbstractSimiScreen;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
-
+import com.simibubi.create.foundation.utility.CreateLang;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.createmod.catnip.gui.AbstractSimiScreen;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.SharedConstants;
 import net.minecraft.Util;
 import net.minecraft.client.StringSplitter;
@@ -49,6 +38,14 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableBoolean;
+import org.apache.commons.lang3.mutable.MutableInt;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ClipboardScreen extends AbstractSimiScreen {
 
@@ -127,10 +124,10 @@ public class ClipboardScreen extends AbstractSimiScreen {
 				currentEntries.add(new ClipboardEntry(false, Components.empty()));
 			sendIfEditingBlock();
 		});
-		clearBtn.setToolTip(Lang.translateDirect("gui.clipboard.erase_checked"));
+		clearBtn.setToolTip(CreateLang.translateDirect("gui.clipboard.erase_checked"));
 		closeBtn = new IconButton(x + 234, y + 175, AllIcons.I_PRIORITY_VERY_LOW)
 			.withCallback(() -> minecraft.setScreen(null));
-		closeBtn.setToolTip(Lang.translateDirect("station.close"));
+		closeBtn.setToolTip(CreateLang.translateDirect("station.close"));
 		addRenderableWidget(closeBtn);
 		addRenderableWidget(clearBtn);
 
@@ -574,7 +571,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
 			return true;
 		if (pButton != 0)
 			return true;
-		
+
 		if (hoveredEntry != -1) {
 			if (hoveredCheck) {
 				editingIndex = -1;
@@ -607,7 +604,7 @@ public class ClipboardScreen extends AbstractSimiScreen {
 			editingIndex = -1;
 			return false;
 		}
-		
+
 		long i = Util.getMillis();
 		DisplayCache cache = getDisplayCache();
 		int j = cache.getIndexAtPosition(font, convertScreenToLocal(new Pos2i((int) pMouseX, (int) pMouseY)));

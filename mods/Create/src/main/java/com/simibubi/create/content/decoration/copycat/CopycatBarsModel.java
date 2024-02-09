@@ -3,9 +3,9 @@ package com.simibubi.create.content.decoration.copycat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.simibubi.create.foundation.block.render.SpriteShiftEntry;
 import com.simibubi.create.foundation.model.BakedQuadHelper;
 
+import net.createmod.catnip.render.SpriteShiftEntry;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -26,7 +26,7 @@ public class CopycatBarsModel extends CopycatModel {
 	public boolean useAmbientOcclusion() {
 		return false;
 	}
-	
+
 	@Override
 	protected List<BakedQuad> getCroppedQuads(BlockState state, Direction side, RandomSource rand, BlockState material,
 		ModelData wrappedData, RenderType renderType) {

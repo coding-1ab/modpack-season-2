@@ -1,7 +1,7 @@
 package com.simibubi.create.foundation.blockEntity.behaviour;
 
 import com.simibubi.create.content.equipment.clipboard.ClipboardCloneable;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -18,7 +18,7 @@ public interface ValueSettingsBehaviour extends ClipboardCloneable {
 	public static record ValueSettings(int row, int value) {
 
 		public MutableComponent format() {
-			return Lang.number(value)
+			return CreateLang.number(value)
 				.component();
 		}
 

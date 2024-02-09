@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
@@ -23,7 +23,7 @@ public class ContraptionSeatMappingPacket extends SimplePacketBase {
 	public ContraptionSeatMappingPacket(int entityID, Map<UUID, Integer> mapping) {
 		this(entityID, mapping, -1);
 	}
-	
+
 	public ContraptionSeatMappingPacket(int entityID, Map<UUID, Integer> mapping, int dismountedID) {
 		this.entityID = entityID;
 		this.mapping = mapping;
@@ -57,7 +57,7 @@ public class ContraptionSeatMappingPacket extends SimplePacketBase {
 			if (!(entityByID instanceof AbstractContraptionEntity))
 				return;
 			AbstractContraptionEntity contraptionEntity = (AbstractContraptionEntity) entityByID;
-			
+
 			if (dismountedID != -1) {
 				Entity dismountedByID = Minecraft.getInstance().level.getEntity(dismountedID);
 				if (Minecraft.getInstance().player != dismountedByID)
@@ -67,7 +67,7 @@ public class ContraptionSeatMappingPacket extends SimplePacketBase {
 					dismountedByID.getPersistentData()
 						.put("ContraptionDismountLocation", VecHelper.writeNBT(transformedVector));
 			}
-			
+
 			contraptionEntity.getContraption()
 				.setSeatMapping(mapping);
 		});

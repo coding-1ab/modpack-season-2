@@ -4,11 +4,11 @@ import java.util.function.Predicate;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
-import com.simibubi.create.foundation.placement.IPlacementHelper;
-import com.simibubi.create.foundation.placement.PlacementHelpers;
 import com.simibubi.create.foundation.placement.PoleHelper;
-import com.simibubi.create.foundation.utility.VoxelShaper;
 
+import net.createmod.catnip.utility.VoxelShaper;
+import net.createmod.catnip.utility.placement.IPlacementHelper;
+import net.createmod.catnip.utility.placement.PlacementHelpers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;

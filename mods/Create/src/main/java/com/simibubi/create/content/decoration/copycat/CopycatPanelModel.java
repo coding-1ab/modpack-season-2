@@ -6,8 +6,8 @@ import java.util.List;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.foundation.model.BakedModelHelper;
 import com.simibubi.create.foundation.model.BakedQuadHelper;
-import com.simibubi.create.foundation.utility.Iterate;
 
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;

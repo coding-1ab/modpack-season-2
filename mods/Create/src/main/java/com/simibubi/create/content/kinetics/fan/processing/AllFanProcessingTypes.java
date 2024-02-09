@@ -18,10 +18,10 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.content.processing.burner.LitBlazeBurnerBlock;
 import com.simibubi.create.foundation.damageTypes.CreateDamageSources;
 import com.simibubi.create.foundation.recipe.RecipeApplier;
-import com.simibubi.create.foundation.utility.Color;
-import com.simibubi.create.foundation.utility.VecHelper;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -117,7 +117,7 @@ public class AllFanProcessingTypes {
 		public List<ItemStack> process(ItemStack stack, Level level) {
 			return null;
 		}
-	
+
 		@Override
 		public void spawnProcessingParticles(Level level, Vec3 pos) {
 		}

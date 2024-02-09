@@ -17,10 +17,11 @@ import com.simibubi.create.content.logistics.filter.FilterItemStack;
 import com.simibubi.create.content.logistics.filter.ItemAttribute;
 import com.simibubi.create.content.trains.track.TrackPlacement.PlacementInfo;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
-import com.simibubi.create.foundation.gui.element.GuiGameElement;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.Pair;
 
+import net.createmod.catnip.gui.element.GuiGameElement;
+import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.utility.Pair;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -288,7 +289,7 @@ public class BlueprintOverlayRenderer {
 
 	public static void drawItemStack(GuiGraphics graphics, Minecraft mc, int x, int y, ItemStack itemStack, String count) {
 		if (itemStack.getItem() instanceof FilterItem) {
-			int step = AnimationTickHolder.getTicks(mc.level) / 10;
+			int step = LevelTickHolder.getTicks(mc.level) / 10;
 			ItemStack[] itemsMatchingFilter = getItemsMatchingFilter(itemStack);
 			if (itemsMatchingFilter.length > 0)
 				itemStack = itemsMatchingFilter[step % itemsMatchingFilter.length];

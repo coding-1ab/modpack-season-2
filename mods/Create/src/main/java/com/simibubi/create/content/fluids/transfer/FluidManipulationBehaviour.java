@@ -12,11 +12,11 @@ import com.simibubi.create.AllTags.AllFluidTags;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.fluid.FluidHelper;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.VecHelper;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -36,11 +36,11 @@ public abstract class FluidManipulationBehaviour extends BlockEntityBehaviour {
 
 	public static record BlockPosEntry(BlockPos pos, int distance) {
 	};
-	
+
 	public static class ChunkNotLoadedException extends Exception {
 		private static final long serialVersionUID = 1L;
 	}
-	
+
 	BoundingBox affectedArea;
 	BlockPos rootPos;
 	boolean infinite;
@@ -160,7 +160,7 @@ public abstract class FluidManipulationBehaviour extends BlockEntityBehaviour {
 
 			if (!world.isLoaded(currentPos))
 				throw new ChunkNotLoadedException();
-			
+
 			FluidState fluidState = world.getFluidState(currentPos);
 			if (fluidState.isEmpty())
 				continue;
@@ -203,7 +203,7 @@ public abstract class FluidManipulationBehaviour extends BlockEntityBehaviour {
 	protected void playEffect(Level world, BlockPos pos, Fluid fluid, boolean fillSound) {
 		if (fluid == null)
 			return;
-		
+
 		BlockPos splooshPos = pos == null ? blockEntity.getBlockPos() : pos;
 		FluidStack stack = new FluidStack(fluid, 1);
 

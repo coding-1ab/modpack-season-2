@@ -5,9 +5,8 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.RegisteredObjects;
-
+import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.utility.Couple;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 
@@ -26,12 +25,12 @@ public class BlockStressValues {
 
 	@Nullable
 	public static IStressValueProvider getProvider(Block block) {
-		return getProvider(RegisteredObjects.getKeyOrThrow(block)
+		return getProvider(CatnipServices.REGISTRIES.getKeyOrThrow(block)
 			.getNamespace());
 	}
 
 	public static double getImpact(Block block) {
-		ResourceLocation blockId = RegisteredObjects.getKeyOrThrow(block);
+		ResourceLocation blockId = CatnipServices.REGISTRIES.getKeyOrThrow(block);
 		IStressValueProvider provider = getProvider(blockId.getNamespace());
 		if (provider != null) {
 			return provider.getImpact(block);
@@ -44,7 +43,7 @@ public class BlockStressValues {
 	}
 
 	public static double getCapacity(Block block) {
-		ResourceLocation blockId = RegisteredObjects.getKeyOrThrow(block);
+		ResourceLocation blockId = CatnipServices.REGISTRIES.getKeyOrThrow(block);
 		IStressValueProvider provider = getProvider(blockId.getNamespace());
 		if (provider != null) {
 			return provider.getCapacity(block);
@@ -57,7 +56,7 @@ public class BlockStressValues {
 	}
 
 	public static boolean hasImpact(Block block) {
-		ResourceLocation blockId = RegisteredObjects.getKeyOrThrow(block);
+		ResourceLocation blockId = CatnipServices.REGISTRIES.getKeyOrThrow(block);
 		IStressValueProvider provider = getProvider(blockId.getNamespace());
 		if (provider != null) {
 			return provider.hasImpact(block);
@@ -66,7 +65,7 @@ public class BlockStressValues {
 	}
 
 	public static boolean hasCapacity(Block block) {
-		ResourceLocation blockId = RegisteredObjects.getKeyOrThrow(block);
+		ResourceLocation blockId = CatnipServices.REGISTRIES.getKeyOrThrow(block);
 		IStressValueProvider provider = getProvider(blockId.getNamespace());
 		if (provider != null) {
 			return provider.hasCapacity(block);
@@ -76,7 +75,7 @@ public class BlockStressValues {
 
 	@Nullable
 	public static Couple<Integer> getGeneratedRPM(Block block) {
-		ResourceLocation blockId = RegisteredObjects.getKeyOrThrow(block);
+		ResourceLocation blockId = CatnipServices.REGISTRIES.getKeyOrThrow(block);
 		IStressValueProvider provider = getProvider(blockId.getNamespace());
 		if (provider != null) {
 			return provider.getGeneratedRPM(block);
@@ -87,7 +86,7 @@ public class BlockStressValues {
 	public interface IStressValueProvider {
 		/**
 		 * Gets the stress impact of a block.
-		 * 
+		 *
 		 * @param block The block.
 		 * @return the stress impact value of the block, or 0 if it does not have one.
 		 */
@@ -95,7 +94,7 @@ public class BlockStressValues {
 
 		/**
 		 * Gets the stress capacity of a block.
-		 * 
+		 *
 		 * @param block The block.
 		 * @return the stress capacity value of the block, or 0 if it does not have one.
 		 */
@@ -106,7 +105,7 @@ public class BlockStressValues {
 		boolean hasCapacity(Block block);
 
 		/**
-		 * 
+		 *
 		 * @param block
 		 * @return min, max generated RPM; null if block does not have a stress capacity
 		 */

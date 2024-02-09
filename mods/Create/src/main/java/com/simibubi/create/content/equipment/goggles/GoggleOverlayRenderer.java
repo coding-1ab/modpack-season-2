@@ -1,30 +1,25 @@
 package com.simibubi.create.content.equipment.goggles;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.contraptions.IDisplayAssemblyExceptions;
 import com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock;
 import com.simibubi.create.content.contraptions.piston.PistonExtensionPoleBlock;
 import com.simibubi.create.content.trains.entity.TrainRelocator;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.foundation.gui.RemovedGuiUtils;
-import com.simibubi.create.foundation.gui.Theme;
-import com.simibubi.create.foundation.gui.element.GuiGameElement;
-import com.simibubi.create.foundation.outliner.Outline;
-import com.simibubi.create.foundation.outliner.Outliner.OutlineEntry;
-import com.simibubi.create.foundation.utility.Color;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.simibubi.create.infrastructure.config.CClient;
-
+import net.createmod.catnip.CatnipClient;
+import net.createmod.catnip.gui.element.GuiGameElement;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.utility.outliner.Outline;
+import net.createmod.catnip.utility.outliner.Outliner.OutlineEntry;
+import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -43,11 +38,15 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class GoggleOverlayRenderer {
 
 	public static final IGuiOverlay OVERLAY = GoggleOverlayRenderer::renderOverlay;
 
-	private static final Map<Object, OutlineEntry> outlines = CreateClient.OUTLINER.getOutlines();
+	private static final Map<Object, OutlineEntry> outlines = CatnipClient.OUTLINER.getOutlines();
 
 	public static int hoverTicks = 0;
 	public static BlockPos lastHovered = null;
@@ -82,7 +81,7 @@ public class GoggleOverlayRenderer {
 		lastHovered = pos;
 
 		pos = proxiedOverlayPosition(world, pos);
-		
+
 		BlockEntity be = world.getBlockEntity(pos);
 		boolean wearingGoggles = GogglesItem.isWearingGoggles(mc.player);
 
@@ -144,19 +143,19 @@ public class GoggleOverlayRenderer {
 			}
 
 			if (!pistonFound) {
-				hoverTicks = 0;				
+				hoverTicks = 0;
 				return;
 			}
 			if (!tooltip.isEmpty())
 				tooltip.add(Components.immutableEmpty());
 
 			tooltip.add(IHaveGoggleInformation.componentSpacing.plainCopy()
-				.append(Lang.translateDirect("gui.goggles.pole_length"))
+				.append(CreateLang.translateDirect("gui.goggles.pole_length"))
 				.append(Components.literal(" " + poles)));
 		}
 
 		if (tooltip.isEmpty()) {
-			hoverTicks = 0;			
+			hoverTicks = 0;
 			return;
 		}
 
@@ -186,14 +185,11 @@ public class GoggleOverlayRenderer {
 		float fade = Mth.clamp((hoverTicks + partialTicks) / 24f, 0, 1);
 		Boolean useCustom = cfg.overlayCustomColor.get();
 		Color colorBackground = useCustom ? new Color(cfg.overlayBackgroundColor.get())
-			: Theme.c(Theme.Key.VANILLA_TOOLTIP_BACKGROUND)
-				.scaleAlpha(.75f);
+			: Theme.Key.VANILLA_TOOLTIP_BACKGROUND.c().scaleAlpha(.75f);
 		Color colorBorderTop = useCustom ? new Color(cfg.overlayBorderColorTop.get())
-			: Theme.c(Theme.Key.VANILLA_TOOLTIP_BORDER, true)
-				.copy();
+			: Theme.Key.VANILLA_TOOLTIP_BORDER.c(true).copy();
 		Color colorBorderBot = useCustom ? new Color(cfg.overlayBorderColorBot.get())
-			: Theme.c(Theme.Key.VANILLA_TOOLTIP_BORDER, false)
-				.copy();
+			: Theme.Key.VANILLA_TOOLTIP_BORDER.c(false).copy();
 
 		if (fade < 1) {
 			poseStack.translate(Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + .5f) * 8, 0, 0);
@@ -211,7 +207,7 @@ public class GoggleOverlayRenderer {
 			.render(graphics);
 		poseStack.popPose();
 	}
-	
+
 	public static BlockPos proxiedOverlayPosition(Level level, BlockPos pos) {
 		BlockState targetedState = level.getBlockState(pos);
 		if (targetedState.getBlock() instanceof IProxyHoveringInformation proxy)

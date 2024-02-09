@@ -15,10 +15,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.google.common.base.Predicates;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllRecipeTypes;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Pointing;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.Pointing;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;

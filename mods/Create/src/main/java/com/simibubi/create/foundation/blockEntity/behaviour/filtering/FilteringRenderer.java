@@ -15,12 +15,13 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox.ItemValueBo
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform.Sided;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.Pair;
-import com.simibubi.create.foundation.utility.VecHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.CatnipClient;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -53,7 +54,7 @@ public class FilteringRenderer {
 		FilteringBehaviour behaviour = BlockEntityBehaviour.get(world, pos, FilteringBehaviour.TYPE);
 		if (mc.player.isShiftKeyDown())
 			return;
-		
+
 		ItemStack mainhandItem = mc.player.getItemInHand(InteractionHand.MAIN_HAND);
 		if (behaviour == null)
 			return;
@@ -82,7 +83,7 @@ public class FilteringRenderer {
 		ValueBox box = new ItemValueBox(label, bb, pos, filter, showCount ? behaviour.count : -1, behaviour.upTo);
 		box.passive(!hit || AllBlocks.CLIPBOARD.isIn(mainhandItem));
 
-		CreateClient.OUTLINER.showValueBox(Pair.of("filter", pos), box.transform(behaviour.slotPositioning))
+		CatnipClient.OUTLINER.showOutline(Pair.of("filter", pos), box.transform(behaviour.slotPositioning))
 			.lineWidth(1 / 64f)
 			.withFaceTexture(hit ? AllSpecialTextures.THIN_CHECKERED : null)
 			.highlightFace(result.getDirection());
@@ -92,10 +93,10 @@ public class FilteringRenderer {
 
 		List<MutableComponent> tip = new ArrayList<>();
 		tip.add(label.copy());
-		tip.add(Lang
+		tip.add(CreateLang
 			.translateDirect(filter.isEmpty() ? "logistics.filter.click_to_set" : "logistics.filter.click_to_replace"));
 		if (showCount)
-			tip.add(Lang.translateDirect("logistics.filter.hold_to_set_amount"));
+			tip.add(CreateLang.translateDirect("logistics.filter.hold_to_set_amount"));
 
 		CreateClient.VALUE_SETTINGS_HANDLER.showHoverTip(tip);
 	}

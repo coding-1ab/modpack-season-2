@@ -6,9 +6,9 @@ import com.simibubi.create.AllShapes;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.kinetics.base.DirectionalAxisKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
-import com.simibubi.create.foundation.utility.Lang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.lang.Lang;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -207,7 +207,7 @@ public class MechanicalPistonBlock extends DirectionalAxisKineticBlock implement
 	public Class<MechanicalPistonBlockEntity> getBlockEntityClass() {
 		return MechanicalPistonBlockEntity.class;
 	}
-	
+
 	@Override
 	public BlockEntityType<? extends MechanicalPistonBlockEntity> getBlockEntityType() {
 		return AllBlockEntityTypes.MECHANICAL_PISTON.get();

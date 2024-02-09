@@ -14,11 +14,11 @@ import com.simibubi.create.content.redstone.nixieTube.NixieTubeBlockEntity;
 import com.simibubi.create.content.trains.display.FlapDisplayBlockEntity;
 import com.simibubi.create.content.trains.display.FlapDisplayLayout;
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
-import com.simibubi.create.foundation.utility.Components;
 import com.simibubi.create.infrastructure.gametest.CreateGameTestHelper;
 import com.simibubi.create.infrastructure.gametest.GameTestGroup;
 
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;

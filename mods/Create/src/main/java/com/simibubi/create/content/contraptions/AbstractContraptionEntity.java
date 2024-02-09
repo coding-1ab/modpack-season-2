@@ -37,9 +37,9 @@ import com.simibubi.create.content.trains.entity.Train;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.collision.Matrix3d;
 import com.simibubi.create.foundation.mixin.accessor.ServerLevelAccessor;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -220,7 +220,7 @@ public abstract class AbstractContraptionEntity extends Entity implements IEntit
 	public Vec3 getPassengerPosition(Entity passenger, float partialTicks) {
 		if (contraption == null)
 			return null;
-		
+
 		UUID id = passenger.getUUID();
 		if (passenger instanceof OrientedContraptionEntity) {
 			BlockPos localPos = contraption.getBearingPosOf(id);
@@ -235,7 +235,7 @@ public abstract class AbstractContraptionEntity extends Entity implements IEntit
 		BlockPos seat = contraption.getSeatOf(id);
 		if (seat == null)
 			return null;
-		
+
 		Vec3 transformedVector = toGlobalVector(Vec3.atLowerCornerOf(seat)
 			.add(.5, passenger.getMyRidingOffset() + ySize - .15f, .5), partialTicks)
 				.add(VecHelper.getCenterOf(BlockPos.ZERO))

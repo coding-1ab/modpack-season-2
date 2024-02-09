@@ -2,7 +2,8 @@ package com.simibubi.create.infrastructure.config;
 
 import com.simibubi.create.content.contraptions.ContraptionData;
 import com.simibubi.create.content.contraptions.ContraptionMovementSetting;
-import com.simibubi.create.foundation.config.ConfigBase;
+
+import net.createmod.catnip.config.ConfigBase;
 
 public class CKinetics extends ConfigBase {
 

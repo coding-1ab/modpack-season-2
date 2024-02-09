@@ -6,12 +6,11 @@ import java.util.function.UnaryOperator;
 import com.simibubi.create.compat.Mods;
 import com.simibubi.create.content.contraptions.glue.SuperGlueEntity;
 import com.simibubi.create.foundation.utility.AttachedRegistry;
-import com.simibubi.create.foundation.utility.BlockFace;
-import com.simibubi.create.foundation.utility.Pair;
 
+import net.createmod.catnip.utility.BlockFace;
+import net.createmod.catnip.utility.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

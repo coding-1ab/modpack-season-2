@@ -1,7 +1,5 @@
 package com.simibubi.create.content.decoration.copycat;
 
-import java.util.List;
-
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.contraptions.ITransformableBlockEntity;
 import com.simibubi.create.content.contraptions.StructureTransform;
@@ -12,8 +10,7 @@ import com.simibubi.create.content.schematics.requirement.ItemRequirement.ItemUs
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.IPartialSafeNBT;
-import com.simibubi.create.foundation.utility.Iterate;
-
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -25,6 +22,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.items.ItemHandlerHelper;
+
+import java.util.List;
 
 public class CopycatBlockEntity extends SmartBlockEntity
 	implements ISpecialBlockEntityItemRequirement, ITransformableBlockEntity, IPartialSafeNBT {
@@ -167,19 +166,19 @@ public class CopycatBlockEntity extends SmartBlockEntity
 	@Override
 	public void writeSafe(CompoundTag tag) {
 		super.writeSafe(tag);
-		
+
 		ItemStack stackWithoutNBT = consumedItem.copy();
 		stackWithoutNBT.setTag(null);
-		
+
 		write(tag, stackWithoutNBT, material);
 	}
-	
+
 	@Override
 	protected void write(CompoundTag tag, boolean clientPacket) {
 		super.write(tag, clientPacket);
 		write(tag, consumedItem, material);
 	}
-	
+
 	protected void write(CompoundTag tag, ItemStack stack, BlockState material) {
 		tag.put("Item", stack.serializeNBT());
 		tag.put("Material", NbtUtils.writeBlockState(material));

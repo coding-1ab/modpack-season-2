@@ -14,10 +14,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.SingleRotatingInstance;
 import com.simibubi.create.content.kinetics.base.flwdata.RotatingData;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.Color;
-import com.simibubi.create.foundation.utility.Iterate;
 
+import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.theme.Color;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.util.Mth;
@@ -110,7 +111,7 @@ public class ArmInstance extends SingleRotatingInstance<ArmBlockEntity> implemen
 
 		if (rave) {
 			float renderTick =
-				AnimationTickHolder.getRenderTime(blockEntity.getLevel()) + (blockEntity.hashCode() % 64);
+				LevelTickHolder.getRenderTime(blockEntity.getLevel()) + (blockEntity.hashCode() % 64);
 			baseAngle = (renderTick * 10) % 360;
 			lowerArmAngle = Mth.lerp((Mth.sin(renderTick / 4) + 1) / 2, -45, 15);
 			upperArmAngle = Mth.lerp((Mth.sin(renderTick / 8) + 1) / 4, -45, 95);
@@ -145,12 +146,12 @@ public class ArmInstance extends SingleRotatingInstance<ArmBlockEntity> implemen
 			.setColor(color);
 
 		ArmRenderer.transformHead(msr, headAngle);
-		
+
 		if (ceiling && blockEntity.goggles)
 			msr.rotateZ(180);
-		
+
 		claw.setTransform(msLocal);
-		
+
 		if (ceiling && blockEntity.goggles)
 			msr.rotateZ(180);
 

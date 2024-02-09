@@ -5,10 +5,10 @@ import java.util.List;
 
 import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.item.TooltipHelper;
-import com.simibubi.create.foundation.item.TooltipHelper.Palette;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.FontHelper.Palette;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
@@ -23,7 +23,7 @@ public interface IDisplayAssemblyExceptions {
 			tooltip.add(Components.immutableEmpty());
 
 		tooltip.add(IHaveGoggleInformation.componentSpacing.plainCopy()
-			.append(Lang.translateDirect("gui.assembly.exception")
+			.append(CreateLang.translateDirect("gui.assembly.exception")
 				.withStyle(ChatFormatting.GOLD)));
 
 		String text = e.component.getString();

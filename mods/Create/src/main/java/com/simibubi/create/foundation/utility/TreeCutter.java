@@ -19,6 +19,7 @@ import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.compat.Mods;
 import com.simibubi.create.compat.dynamictrees.DynamicTree;
 
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -306,10 +307,8 @@ public class TreeCutter {
 	}
 
 	private static boolean isLeaf(BlockState state) {
-		for (Property<?> property : state.getValues()
-			.keySet())
-			if (property instanceof IntegerProperty && property.getName()
-				.equals("distance"))
+		for (Property<?> property : state.getValues().keySet())
+			if (property instanceof IntegerProperty && property.getName().equals("distance"))
 				return true;
 		return false;
 	}

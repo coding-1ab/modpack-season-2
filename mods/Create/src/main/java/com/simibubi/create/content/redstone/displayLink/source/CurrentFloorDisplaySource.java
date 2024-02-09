@@ -3,8 +3,8 @@ package com.simibubi.create.content.redstone.displayLink.source;
 import com.simibubi.create.content.contraptions.elevator.ElevatorContactBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
-import com.simibubi.create.foundation.utility.Components;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.network.chat.MutableComponent;
 
 public class CurrentFloorDisplaySource extends SingleLineDisplaySource {
@@ -15,7 +15,7 @@ public class CurrentFloorDisplaySource extends SingleLineDisplaySource {
 			return EMPTY_LINE;
 		return Components.literal(ecbe.lastReportedCurrentFloor);
 	}
-	
+
 	@Override
 	protected String getTranslationKey() {
 		return "current_floor";

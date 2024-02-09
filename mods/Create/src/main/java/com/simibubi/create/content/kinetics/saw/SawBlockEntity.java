@@ -26,9 +26,9 @@ import com.simibubi.create.foundation.recipe.RecipeConditions;
 import com.simibubi.create.foundation.recipe.RecipeFinder;
 import com.simibubi.create.foundation.utility.AbstractBlockBreakQueue;
 import com.simibubi.create.foundation.utility.TreeCutter;
-import com.simibubi.create.foundation.utility.VecHelper;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -259,7 +259,7 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity {
 		super.invalidate();
 		invProvider.invalidate();
 	}
-	
+
 	@Override
 	public void destroy() {
 		super.destroy();
@@ -351,8 +351,8 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity {
 				ItemHelper.addToList(stack, list);
 			}
 		}
-		
-		for (int slot = 0; slot < list.size() && slot + 1 < inventory.getSlots(); slot++) 
+
+		for (int slot = 0; slot < list.size() && slot + 1 < inventory.getSlots(); slot++)
 			inventory.setStackInSlot(slot + 1, list.get(slot));
 
 		award(AllAdvancements.SAW_PROCESSING);

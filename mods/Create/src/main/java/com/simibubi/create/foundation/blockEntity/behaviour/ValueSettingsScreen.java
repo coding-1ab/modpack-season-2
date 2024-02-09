@@ -12,14 +12,14 @@ import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBehaviour.ValueSettings;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsFormatter.ScrollOptionSettingsFormatter;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueHandler;
-import com.simibubi.create.foundation.gui.AbstractSimiScreen;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.AllIcons;
-import com.simibubi.create.foundation.gui.UIRenderHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.gui.AbstractSimiScreen;
+import net.createmod.catnip.gui.UIRenderHelper;
+import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
@@ -136,7 +136,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 		int scale = board.maxValue() > 128 ? 1 : 2;
 
 		Component title = board.title();
-		Component tip = Lang.translateDirect("gui.value_settings.release_to_confirm", Components.keybind("key.use"));
+		Component tip = CreateLang.translateDirect("gui.value_settings.release_to_confirm", Components.keybind("key.use"));
 		double fadeIn = Math.pow(Mth.clamp((ticksOpen + partialTicks) / 4.0, 0, 1), 1);
 
 		int fattestLabel = Math.max(font.width(tip), font.width(title));
@@ -177,9 +177,9 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 			if (!iconMode) {
 				UIRenderHelper.drawCropped(graphics, x - 4, y, maxLabelWidth + 8, 11,
 					zLevel, AllGuiTextures.VALUE_SETTINGS_LABEL_BG);
-				for (int w = 0; w < valueBarWidth; w += AllGuiTextures.VALUE_SETTINGS_BAR.width - 1)
+				for (int w = 0; w < valueBarWidth; w += AllGuiTextures.VALUE_SETTINGS_BAR.getWidth() - 1)
 					UIRenderHelper.drawCropped(graphics, valueBarX + w, y + 1,
-						Math.min(AllGuiTextures.VALUE_SETTINGS_BAR.width - 1, valueBarWidth - w), 8,
+						Math.min(AllGuiTextures.VALUE_SETTINGS_BAR.getWidth() - 1, valueBarWidth - w), 8,
 						zLevel, AllGuiTextures.VALUE_SETTINGS_BAR);
 				graphics.drawString(font, component, x, y + 1, 0x442000, false);
 			}
@@ -255,7 +255,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 		AllGuiTextures.BRASS_FRAME_BL.render(graphics, x, y + h - 4);
 		AllGuiTextures.BRASS_FRAME_BR.render(graphics, x + w - 4, y + h - 4);
 		int zLevel = 0;
-		
+
 		if (h > 8) {
 			UIRenderHelper.drawStretched(graphics, x, y + 4, 3, h - 8, zLevel, AllGuiTextures.BRASS_FRAME_LEFT);
 			UIRenderHelper.drawStretched(graphics, x + w - 3, y + 4, 3, h - 8, zLevel, AllGuiTextures.BRASS_FRAME_RIGHT);

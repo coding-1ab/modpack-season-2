@@ -8,12 +8,12 @@ import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.content.trains.entity.CarriageContraption;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.VecHelper;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
 
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.Direction;
@@ -34,7 +34,7 @@ public class BlazeBurnerMovementBehaviour implements MovementBehaviour {
 	public boolean renderAsNormalBlockEntity() {
 		return false;
 	}
-	
+
 	@Override
 	public ItemStack canBeDisabledVia(MovementContext context) {
 		return null;

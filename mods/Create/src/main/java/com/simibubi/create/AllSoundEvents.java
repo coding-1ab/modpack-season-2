@@ -345,7 +345,7 @@ public class AllSoundEvents {
 //
 //	}
 
-	private static class SoundEntryProvider implements DataProvider {
+	public static class SoundEntryProvider implements DataProvider {
 
 		private PackOutput output;
 
@@ -437,7 +437,7 @@ public class AllSoundEvents {
 		public SoundEntryBuilder playExisting(SoundEvent event) {
 			return playExisting(event, 1, 1);
 		}
-		
+
 		public SoundEntryBuilder playExisting(Holder<SoundEvent> event) {
 			return playExisting(event::get, 1, 1);
 		}

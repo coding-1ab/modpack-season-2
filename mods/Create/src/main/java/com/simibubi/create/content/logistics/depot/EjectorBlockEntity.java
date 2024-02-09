@@ -19,17 +19,17 @@ import com.simibubi.create.content.logistics.funnel.FunnelBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.IntAttached;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.Pair;
-import com.simibubi.create.foundation.utility.VecHelper;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.IntAttached;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -104,7 +104,7 @@ public class EjectorBlockEntity extends KineticBlockEntity {
 		behaviours.add(depotBehaviour = new DepotBehaviour(this));
 
 		maxStackSize =
-			new ScrollValueBehaviour(Lang.translateDirect("weighted_ejector.stack_size"), this, new EjectorSlot())
+			new ScrollValueBehaviour(CreateLang.translateDirect("weighted_ejector.stack_size"), this, new EjectorSlot())
 				.between(0, 64)
 				.withFormatter(i -> i == 0 ? "*" : String.valueOf(i));
 		behaviours.add(maxStackSize);

@@ -6,10 +6,10 @@ import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
 import com.simibubi.create.foundation.gui.widget.TooltipArea;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.Pair;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
 

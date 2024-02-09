@@ -1,15 +1,11 @@
 package com.simibubi.create.content.decoration.girder;
 
-import java.util.List;
-import java.util.function.Predicate;
-
 import com.google.common.base.Predicates;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.equipment.extendoGrip.ExtendoGripItem;
-import com.simibubi.create.foundation.placement.IPlacementHelper;
-import com.simibubi.create.foundation.placement.PlacementOffset;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-
+import net.createmod.catnip.utility.placement.IPlacementHelper;
+import net.createmod.catnip.utility.placement.PlacementOffset;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -21,6 +17,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.ForgeMod;
+
+import java.util.List;
+import java.util.function.Predicate;
 
 public class GirderPlacementHelper implements IPlacementHelper {
 

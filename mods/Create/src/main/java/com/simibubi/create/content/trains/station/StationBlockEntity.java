@@ -13,8 +13,6 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import com.simibubi.create.content.trains.graph.DiscoveredPath;
-
 import org.jetbrains.annotations.NotNull;
 
 import com.simibubi.create.AllBlocks;
@@ -38,6 +36,7 @@ import com.simibubi.create.content.trains.entity.CarriageContraption;
 import com.simibubi.create.content.trains.entity.Train;
 import com.simibubi.create.content.trains.entity.TrainPacket;
 import com.simibubi.create.content.trains.entity.TravellingPoint;
+import com.simibubi.create.content.trains.graph.DiscoveredPath;
 import com.simibubi.create.content.trains.graph.EdgePointType;
 import com.simibubi.create.content.trains.graph.TrackEdge;
 import com.simibubi.create.content.trains.graph.TrackGraph;
@@ -53,15 +52,15 @@ import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.NBTHelper;
-import com.simibubi.create.foundation.utility.VecHelper;
-import com.simibubi.create.foundation.utility.WorldAttached;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.WorldAttached;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
@@ -288,7 +287,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 		BlockPos up = BlockPos.containing(track.getUpNormal(level, pos, state));
 		BlockPos down = BlockPos.containing(track.getUpNormal(level, pos, state).scale(-1));
 		int bogeyOffset = pos.distManhattan(edgePoint.getGlobalPosition()) - 1;
-		
+
 		if (!isValidBogeyOffset(bogeyOffset)) {
 			for (boolean upsideDown : Iterate.falseAndTrue) {
 				for (int i = -1; i <= 1; i++) {
@@ -303,7 +302,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 					CompoundTag oldData = oldBE.getBogeyData();
 					BlockState newBlock = bogey.getNextSize(oldBE);
 					if (newBlock.getBlock() == bogey)
-						player.displayClientMessage(Lang.translateDirect("bogey.style.no_other_sizes")
+						player.displayClientMessage(CreateLang.translateDirect("bogey.style.no_other_sizes")
 							.withStyle(ChatFormatting.RED), true);
 					level.setBlock(bogeyPos, newBlock, 3);
 					BlockEntity newEntity = level.getBlockEntity(bogeyPos);
@@ -320,7 +319,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 
 		ItemStack handItem = player.getItemInHand(hand);
 		if (!player.isCreative() && !AllBlocks.RAILWAY_CASING.isIn(handItem)) {
-			player.displayClientMessage(Lang.translateDirect("train_assembly.requires_casing"), true);
+			player.displayClientMessage(CreateLang.translateDirect("train_assembly.requires_casing"), true);
 			return false;
 		}
 
@@ -340,7 +339,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 		}
 		bogeyAnchor = ProperWaterloggedBlock.withWater(level, bogeyAnchor, pos);
 		level.setBlock(targetPos, bogeyAnchor, 3);
-		player.displayClientMessage(Lang.translateDirect("train_assembly.bogey_created"), true);
+		player.displayClientMessage(CreateLang.translateDirect("train_assembly.bogey_created"), true);
 		SoundType soundtype = bogeyAnchor.getBlock()
 			.getSoundType(state, level, pos, player);
 		level.playSound(null, pos, soundtype.getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F,
@@ -606,7 +605,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 			return;
 
 		if (bogeyLocations[0] != 0) {
-			exception(new AssemblyException(Lang.translateDirect("train_assembly.frontmost_bogey_at_station")), -1);
+			exception(new AssemblyException(CreateLang.translateDirect("train_assembly.frontmost_bogey_at_station")), -1);
 			return;
 		}
 
@@ -639,7 +638,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 				break;
 
 			if (loc - iPrevious < 3) {
-				exception(new AssemblyException(Lang.translateDirect("train_assembly.bogeys_too_close", i, i + 1)), -1);
+				exception(new AssemblyException(CreateLang.translateDirect("train_assembly.bogeys_too_close", i, i + 1)), -1);
 				return;
 			}
 
@@ -715,7 +714,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 		}
 
 		if (points.size() == 0) {
-			exception(new AssemblyException(Lang.translateDirect("train_assembly.no_bogeys")), -1);
+			exception(new AssemblyException(CreateLang.translateDirect("train_assembly.no_bogeys")), -1);
 			return;
 		}
 
@@ -738,7 +737,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 				atLeastOneForwardControls |= contraption.hasForwardControls();
 				contraption.setSoundQueueOffset(offset);
 				if (!success) {
-					exception(new AssemblyException(Lang.translateDirect("train_assembly.nothing_attached", bogeyIndex + 1)),
+					exception(new AssemblyException(CreateLang.translateDirect("train_assembly.nothing_attached", bogeyIndex + 1)),
 						-1);
 					return;
 				}
@@ -760,7 +759,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 			if (secondBogeyPos != null) {
 				if (bogeyIndex == bogeyCount - 1 || !secondBogeyPos
 					.equals((upsideDownBogeys[bogeyIndex + 1] ? upsideDownBogeyPosOffset : bogeyPosOffset).relative(assemblyDirection, bogeyLocations[bogeyIndex + 1] + 1))) {
-					exception(new AssemblyException(Lang.translateDirect("train_assembly.not_connected_in_order")),
+					exception(new AssemblyException(CreateLang.translateDirect("train_assembly.not_connected_in_order")),
 						contraptions.size() + 1);
 					return;
 				}
@@ -772,7 +771,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 				bogeyIndex++;
 
 			} else if (!typeOfFirstBogey.allowsSingleBogeyCarriage()) {
-				exception(new AssemblyException(Lang.translateDirect("train_assembly.single_bogey_carriage")),
+				exception(new AssemblyException(CreateLang.translateDirect("train_assembly.single_bogey_carriage")),
 					contraptions.size() + 1);
 				return;
 			}
@@ -782,7 +781,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 		}
 
 		if (!atLeastOneForwardControls) {
-			exception(new AssemblyException(Lang.translateDirect("train_assembly.no_controls")), -1);
+			exception(new AssemblyException(CreateLang.translateDirect("train_assembly.no_controls")), -1);
 			return;
 		}
 

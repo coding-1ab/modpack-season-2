@@ -4,11 +4,11 @@ import com.jozufozu.flywheel.backend.Backend;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -28,8 +28,8 @@ public class StickerRenderer extends SafeBlockEntityRenderer<StickerBlockEntity>
 		if (Backend.canUseInstancing(be.getLevel())) return;
 
 		BlockState state = be.getBlockState();
-		SuperByteBuffer head = CachedBufferer.partial(AllPartialModels.STICKER_HEAD, state);
-		float offset = be.piston.getValue(AnimationTickHolder.getPartialTicks(be.getLevel()));
+		SuperByteBuffer head = CachedBuffers.partial(AllPartialModels.STICKER_HEAD, state);
+		float offset = be.piston.getValue(LevelTickHolder.getPartialTicks(be.getLevel()));
 
 		if (be.getLevel() != Minecraft.getInstance().level && !be.isVirtual())
 			offset = state.getValue(StickerBlock.EXTENDED) ? 1 : 0;

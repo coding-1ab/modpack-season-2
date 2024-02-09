@@ -15,12 +15,12 @@ import com.simibubi.create.content.equipment.armor.BacktankUtil;
 import com.simibubi.create.content.equipment.zapper.ShootableGadgetItemMethods;
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.VecHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel.ArmPose;
@@ -246,13 +246,13 @@ public class PotatoCannonItem extends ProjectileWeaponItem implements CustomArmP
 			reloadTicks = reloadTicks.withStyle(darkGreen);
 
 			tooltip.add(spacing.plainCopy()
-				.append(Lang.translateDirect(_attack, damage)
+				.append(CreateLang.translateDirect(_attack, damage)
 					.withStyle(darkGreen)));
 			tooltip.add(spacing.plainCopy()
-				.append(Lang.translateDirect(_reload, reloadTicks)
+				.append(CreateLang.translateDirect(_reload, reloadTicks)
 					.withStyle(darkGreen)));
 			tooltip.add(spacing.plainCopy()
-				.append(Lang.translateDirect(_knockback, knockback)
+				.append(CreateLang.translateDirect(_knockback, knockback)
 					.withStyle(darkGreen)));
 		});
 		super.appendHoverText(stack, world, tooltip, flag);

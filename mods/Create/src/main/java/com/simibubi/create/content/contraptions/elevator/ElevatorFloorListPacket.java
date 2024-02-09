@@ -1,20 +1,19 @@
 package com.simibubi.create.content.contraptions.elevator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.IntAttached;
-
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.IntAttached;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent.Context;
 import net.minecraftforge.network.PacketDistributor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ElevatorFloorListPacket extends SimplePacketBase {
 

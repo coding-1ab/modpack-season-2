@@ -26,8 +26,8 @@ import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder.Pro
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeSerializer;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipeSerializer;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
-import com.simibubi.create.foundation.utility.Lang;
 
+import net.createmod.catnip.utility.lang.Lang;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;

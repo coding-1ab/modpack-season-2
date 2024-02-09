@@ -11,11 +11,11 @@ import com.simibubi.create.Create;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.minecart.capability.CapabilityMinecartController;
 import com.simibubi.create.content.contraptions.minecart.capability.MinecartController;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -45,7 +45,7 @@ public class CouplingHandler {
 			event.setResult(Result.DENY);
 		}
 	}
-	
+
 	public static void forEachLoadedCoupling(Level world, Consumer<Couple<MinecartController>> consumer) {
 		if (world == null)
 			return;
@@ -83,13 +83,13 @@ public class CouplingHandler {
 		int distanceTo = (int) entity1.position()
 			.distanceTo(entity2.position());
 		boolean contraptionCoupling = player == null;
-		
+
 		if (distanceTo < 2) {
 			if (contraptionCoupling)
 				return false; // dont allow train contraptions with <2 distance
 			distanceTo = 2;
 		}
-		
+
 		if (distanceTo > AllConfigs.server().kinetics.maxCartCouplingLength.get()) {
 			status(player, tooFar);
 			return false;
@@ -177,7 +177,7 @@ public class CouplingHandler {
 	public static void status(Player player, String key) {
 		if (player == null)
 			return;
-		player.displayClientMessage(Lang.translateDirect("minecart_coupling." + key), true);
+		player.displayClientMessage(CreateLang.translateDirect("minecart_coupling." + key), true);
 	}
 
 }

@@ -13,12 +13,12 @@ import com.simibubi.create.content.trains.schedule.Schedule;
 import com.simibubi.create.content.trains.station.GlobalStation;
 import com.simibubi.create.content.trains.station.StationBlockEntity;
 import com.simibubi.create.content.trains.station.TrainEditPacket;
-import com.simibubi.create.foundation.utility.Components;
 import com.simibubi.create.foundation.utility.StringHelper;
 
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.CompoundTag;

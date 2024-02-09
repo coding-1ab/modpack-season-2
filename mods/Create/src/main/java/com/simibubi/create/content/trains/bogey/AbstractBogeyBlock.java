@@ -29,10 +29,10 @@ import com.simibubi.create.content.trains.graph.TrackEdge;
 import com.simibubi.create.content.trains.track.TrackMaterial;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.RegisteredObjects;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
@@ -227,7 +227,7 @@ public abstract class AbstractBogeyBlock<T extends AbstractBogeyBlockEntity> ext
 			sbbe.setBogeyData(sbbe.getBogeyData().merge(defaultData));
 
 			if (size == getSize()) {
-				player.displayClientMessage(Lang.translateDirect("bogey.style.updated_style")
+				player.displayClientMessage(CreateLang.translateDirect("bogey.style.updated_style")
 						.append(": ").append(style.displayName), true);
 			} else {
 				CompoundTag oldData = sbbe.getBogeyData();
@@ -236,7 +236,7 @@ public abstract class AbstractBogeyBlock<T extends AbstractBogeyBlockEntity> ext
 				if (!(newBlockEntity instanceof AbstractBogeyBlockEntity newBlockEntity1))
 					return InteractionResult.FAIL;
 				newBlockEntity1.setBogeyData(oldData);
-				player.displayClientMessage(Lang.translateDirect("bogey.style.updated_style_and_size")
+				player.displayClientMessage(CreateLang.translateDirect("bogey.style.updated_style_and_size")
 						.append(": ").append(style.displayName), true);
 			}
 
@@ -263,7 +263,7 @@ public abstract class AbstractBogeyBlock<T extends AbstractBogeyBlockEntity> ext
 	public BlockState getRotatedBlockState(BlockState state, Direction targetedFace) {
 		Block block = state.getBlock();
 		List<ResourceLocation> bogeyCycle = getBogeyBlockCycle();
-		int indexOf = bogeyCycle.indexOf(RegisteredObjects.getKeyOrThrow(block));
+		int indexOf = bogeyCycle.indexOf(CatnipServices.REGISTRIES.getKeyOrThrow(block));
 		if (indexOf == -1)
 			return state;
 		int index = (indexOf + 1) % bogeyCycle.size();

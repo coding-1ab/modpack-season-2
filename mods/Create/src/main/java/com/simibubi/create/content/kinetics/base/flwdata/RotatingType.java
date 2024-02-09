@@ -13,8 +13,8 @@ import com.mojang.math.Axis;
 import com.simibubi.create.content.kinetics.KineticDebugger;
 import com.simibubi.create.foundation.render.AllInstanceFormats;
 import com.simibubi.create.foundation.render.AllProgramSpecs;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
 
+import net.createmod.catnip.utility.AnimationTickHolder;
 import net.minecraft.resources.ResourceLocation;
 
 public class RotatingType implements Instanced<RotatingData>, Batched<RotatingData> {

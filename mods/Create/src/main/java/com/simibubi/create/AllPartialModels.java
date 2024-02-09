@@ -8,10 +8,10 @@ import java.util.Map;
 
 import com.jozufozu.flywheel.core.PartialModel;
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.lang.Lang;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
@@ -58,7 +58,7 @@ public class AllPartialModels {
 		ANALOG_LEVER_INDICATOR = block("analog_lever/indicator"), FUNNEL_FLAP = block("funnel/flap"),
 		BELT_FUNNEL_FLAP = block("belt_funnel/flap"), BELT_TUNNEL_FLAP = block("belt_tunnel/flap"),
 		FLEXPEATER_INDICATOR = block("diodes/indicator"),
-		
+
 		ROLLER_WHEEL = block("mechanical_roller/wheel"),
 		ROLLER_FRAME = block("mechanical_roller/frame"),
 
@@ -67,7 +67,7 @@ public class AllPartialModels {
 		CUCKOO_PIG = block("cuckoo_clock/pig"), CUCKOO_CREEPER = block("cuckoo_clock/creeper"),
 
 		GANTRY_COGS = block("gantry_carriage/wheels"),
-		
+
 		ROPE_COIL = block("rope_pulley/rope_coil"), ROPE_HALF = block("rope_pulley/rope_half"),
 		ROPE_HALF_MAGNET = block("rope_pulley/rope_half_magnet"),
 
@@ -213,7 +213,7 @@ public class AllPartialModels {
 			METAL_GIRDER_BRACKETS.put(d, block("metal_girder/bracket_" + Lang.asId(d.name())));
 		for (int i = 0; i < 8; i++)
 			CONTRAPTION_CONTROLS_INDICATOR.add(block("contraption_controls/indicator_" + i));
-		
+
 		putFoldingDoor("andesite_door");
 		putFoldingDoor("copper_door");
 		

@@ -3,8 +3,9 @@ package com.simibubi.create.foundation.gui.widget;
 import javax.annotation.Nonnull;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.simibubi.create.foundation.utility.Components;
 
+import net.createmod.catnip.gui.widget.AbstractSimiWidget;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

@@ -1,9 +1,5 @@
 package com.simibubi.create.content.contraptions.actors.psi;
 
-import java.util.Optional;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.jozufozu.flywheel.api.MaterialManager;
 import com.jozufozu.flywheel.core.virtual.VirtualRenderWorld;
 import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
@@ -12,10 +8,9 @@ import com.simibubi.create.content.contraptions.render.ActorInstance;
 import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
 import com.simibubi.create.content.contraptions.render.ContraptionRenderDispatcher;
 import com.simibubi.create.content.trains.entity.CarriageContraption;
-import com.simibubi.create.foundation.utility.VecHelper;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
-
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,6 +21,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class PortableStorageInterfaceMovement implements MovementBehaviour {
 

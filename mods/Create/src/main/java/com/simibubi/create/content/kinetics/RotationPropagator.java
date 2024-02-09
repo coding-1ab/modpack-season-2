@@ -16,9 +16,9 @@ import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import com.simibubi.create.content.kinetics.speedController.SpeedControllerBlock;
 import com.simibubi.create.content.kinetics.speedController.SpeedControllerBlockEntity;
 import com.simibubi.create.content.kinetics.transmission.SplitShaftBlockEntity;
-import com.simibubi.create.foundation.utility.Iterate;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;

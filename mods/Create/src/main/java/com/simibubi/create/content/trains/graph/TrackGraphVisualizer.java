@@ -9,15 +9,15 @@ import org.lwjgl.glfw.GLFW;
 
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.Create;
-import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.trains.signal.SignalBoundary;
 import com.simibubi.create.content.trains.signal.SignalEdgeGroup;
 import com.simibubi.create.content.trains.signal.TrackEdgePoint;
 import com.simibubi.create.content.trains.track.BezierConnection;
-import com.simibubi.create.foundation.outliner.Outliner;
-import com.simibubi.create.foundation.utility.Color;
-import com.simibubi.create.foundation.utility.Pair;
 
+import net.createmod.catnip.CatnipClient;
+import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
@@ -36,7 +36,7 @@ public class TrackGraphVisualizer {
 			return;
 
 		Vec3 camera = cameraEntity.getEyePosition();
-		Outliner outliner = CreateClient.OUTLINER;
+		Outliner outliner = CatnipClient.OUTLINER;
 		Map<UUID, SignalEdgeGroup> allGroups = Create.RAILWAYS.sided(null).signalEdgeGroups;
 		float width = 1 / 8f;
 
@@ -239,7 +239,7 @@ public class TrackGraphVisualizer {
 			Vec3 yOffset = new Vec3(0, 3 / 16f, 0);
 			Vec3 v1 = location.add(yOffset);
 			Vec3 v2 = v1.add(node.normal.scale(3 / 16f));
-			CreateClient.OUTLINER.showLine(Integer.valueOf(node.netId), v1, v2)
+			CatnipClient.OUTLINER.showLine(Integer.valueOf(node.netId), v1, v2)
 				.colored(Color.mixColors(Color.WHITE, graph.color, 1))
 				.lineWidth(1 / 8f);
 
@@ -255,7 +255,7 @@ public class TrackGraphVisualizer {
 				if (!edge.node1.location.dimension.equals(edge.node2.location.dimension)) {
 					v1 = location.add(yOffset);
 					v2 = v1.add(node.normal.scale(3 / 16f));
-					CreateClient.OUTLINER.showLine(Integer.valueOf(node.netId), v1, v2)
+					CatnipClient.OUTLINER.showLine(Integer.valueOf(node.netId), v1, v2)
 						.colored(Color.mixColors(Color.WHITE, graph.color, 1))
 						.lineWidth(1 / 4f);
 					continue;
@@ -268,15 +268,15 @@ public class TrackGraphVisualizer {
 					if (extended) {
 						Vec3 materialPos = edge.getPosition(graph, 0.5)
 							.add(0, 1, 0);
-						CreateClient.OUTLINER.showItem(Pair.of(edge, edge.edgeData), materialPos,
+						CatnipClient.OUTLINER.showItem(Pair.of(edge, edge.edgeData), materialPos,
 							edge.getTrackMaterial()
 								.asStack());
-						CreateClient.OUTLINER.showAABB(edge.edgeData, AABB.ofSize(materialPos, .25, 0, .25)
+						CatnipClient.OUTLINER.showAABB(edge.edgeData, AABB.ofSize(materialPos, .25, 0, .25)
 							.move(0, -0.5, 0))
 							.lineWidth(1 / 16f)
 							.colored(graph.color);
 					}
-					CreateClient.OUTLINER.showLine(edge, edge.getPosition(graph, 0)
+					CatnipClient.OUTLINER.showLine(edge, edge.getPosition(graph, 0)
 						.add(yOffset),
 						edge.getPosition(graph, 1)
 							.add(yOffset))
@@ -290,9 +290,9 @@ public class TrackGraphVisualizer {
 				if (extended) {
 					Vec3 materialPos = edge.getPosition(graph, 0.5)
 						.add(0, 1, 0);
-					CreateClient.OUTLINER.showItem(Pair.of(edge, edge.edgeData), materialPos, edge.getTrackMaterial()
+					CatnipClient.OUTLINER.showItem(Pair.of(edge, edge.edgeData), materialPos, edge.getTrackMaterial()
 						.asStack());
-					CreateClient.OUTLINER.showAABB(edge.edgeData, AABB.ofSize(materialPos, .25, 0, .25)
+					CatnipClient.OUTLINER.showAABB(edge.edgeData, AABB.ofSize(materialPos, .25, 0, .25)
 						.move(0, -0.5, 0))
 						.lineWidth(1 / 16f)
 						.colored(graph.color);
@@ -300,7 +300,7 @@ public class TrackGraphVisualizer {
 				for (int i = 0; i <= turn.getSegmentCount(); i++) {
 					Vec3 current = edge.getPosition(graph, i * 1f / turn.getSegmentCount());
 					if (previous != null)
-						CreateClient.OUTLINER
+						CatnipClient.OUTLINER
 							.showLine(Pair.of(edge, previous), previous.add(yOffset), current.add(yOffset))
 							.colored(graph.color)
 							.lineWidth(1 / 16f);

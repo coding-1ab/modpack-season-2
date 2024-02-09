@@ -3,8 +3,8 @@ package com.simibubi.create.content.contraptions.minecart;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.contraptions.minecart.capability.CapabilityMinecartController;
 import com.simibubi.create.content.contraptions.minecart.capability.MinecartController;
-import com.simibubi.create.foundation.utility.Iterate;
 
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;

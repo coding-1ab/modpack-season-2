@@ -11,11 +11,12 @@ import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringB
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.INamedIconOptions;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollOptionBehaviour;
 import com.simibubi.create.foundation.gui.AllIcons;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.VecHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.lang.Lang;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -48,9 +49,9 @@ public class RollerBlockEntity extends SmartBlockEntity {
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
 		behaviours.add(filtering = new FilteringBehaviour(this, new RollerValueBox(3)));
 		behaviours.add(mode = new ScrollOptionBehaviour<RollingMode>(RollingMode.class,
-			Lang.translateDirect("contraptions.roller_mode"), this, new RollerValueBox(-3)));
+			CreateLang.translateDirect("contraptions.roller_mode"), this, new RollerValueBox(-3)));
 
-		filtering.setLabel(Lang.translateDirect("contraptions.mechanical_roller.pave_material"));
+		filtering.setLabel(CreateLang.translateDirect("contraptions.mechanical_roller.pave_material"));
 		filtering.withCallback(this::onFilterChanged);
 		filtering.withPredicate(this::isValidMaterial);
 		mode.withCallback(this::onModeChanged);
@@ -186,7 +187,7 @@ public class RollerBlockEntity extends SmartBlockEntity {
 				.rotateY(yRot)
 				.rotateX(90);
 		}
-		
+
 		@Override
 		public boolean testHit(BlockState state, Vec3 localHit) {
 			Vec3 offset = getLocalOffset(state);
