@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Random;
 
 import com.simibubi.create.AllEntityTypes;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.VecHelper;
 
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ItemParticleOption;

@@ -1,9 +1,9 @@
 package com.simibubi.create.content.logistics.stockTicker;
 
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
-import com.simibubi.create.foundation.gui.ScreenOpener;
-import com.simibubi.create.foundation.utility.Iterate;
 
+import net.createmod.catnip.gui.ScreenOpener;
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

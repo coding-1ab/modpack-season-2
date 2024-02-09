@@ -15,15 +15,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
-import com.simibubi.create.foundation.gui.AbstractSimiScreen;
-import com.simibubi.create.foundation.gui.element.GuiGameElement;
-import com.simibubi.create.foundation.utility.Color;
-import com.simibubi.create.foundation.utility.IntAttached;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.gui.AbstractSimiScreen;
+import net.createmod.catnip.gui.element.GuiGameElement;
+import net.createmod.catnip.utility.IntAttached;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
@@ -82,14 +82,14 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		itemsY = guiTop + 35;
 		orderY = itemsY + rows * rowHeight + 10;
 
-		MutableComponent searchLabel = Lang.translateDirect("gui.stock_ticker.search_items");
+		MutableComponent searchLabel = CreateLang.translateDirect("gui.stock_ticker.search_items");
 		searchBox = new EditBox(this.font, itemsX + 1, itemsY - 18, 120, 9, searchLabel);
 		searchBox.setMaxLength(50);
 		searchBox.setBordered(false);
 		searchBox.setTextColor(0xffffff);
 		addRenderableWidget(searchBox);
 
-		MutableComponent addressLabel = Lang.translateDirect("gui.stock_ticker.package_adress");
+		MutableComponent addressLabel = CreateLang.translateDirect("gui.stock_ticker.package_adress");
 		boolean initial = addressBox == null;
 		addressBox = new EditBox(this.font, itemsX + 1, orderY + rowHeight + 10, 120, 9, addressLabel);
 		addressBox.setMaxLength(50);
@@ -235,7 +235,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		GuiGameElement.of(AllBlocks.PACKAGER_LINK.asStack())
 			.render(graphics);
 		ms.popPose();
-		graphics.drawString(font, Lang.text(blockEntity.activeLinks + "")
+		graphics.drawString(font, CreateLang.text(blockEntity.activeLinks + "")
 			.component(), itemsX + cols * colWidth + 33, itemsY + 11, 0x88dddddd);
 
 		// Render ordered items
@@ -262,7 +262,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		
 		// Request just sent
 		if (itemsToOrder.isEmpty() && successTicks > 0) {
-			Component msg = Lang.translateDirect("gui.stock_ticker.request_sent");
+			Component msg = CreateLang.translateDirect("gui.stock_ticker.request_sent");
 			float alpha = Mth.clamp((successTicks - 10f) / 5f, 0f, 1f);
 			if (alpha > 0)
 				graphics.drawCenteredString(font, msg, itemsX + cols * colWidth / 2, orderY + 4, new Color(.75f, .95f, .75f, alpha).getRGB());
@@ -368,12 +368,12 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		int middleColor = special ? 0xaaffaa : 0xdddddd;
 
 		for (int xi : Iterate.positiveAndNegative)
-			graphics.drawString(font, Lang.text(text)
+			graphics.drawString(font, CreateLang.text(text)
 				.component(), 11 + xi, 10, xi < 0 ? lightOutline : darkOutline, false);
 		for (int yi : Iterate.positiveAndNegative)
-			graphics.drawString(font, Lang.text(text)
+			graphics.drawString(font, CreateLang.text(text)
 				.component(), 11, 10 + yi, yi < 0 ? lightOutline : darkOutline, false);
-		graphics.drawString(font, Lang.text(text)
+		graphics.drawString(font, CreateLang.text(text)
 			.component(), 11, 10, middleColor, false);
 	}
 
@@ -433,7 +433,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		int color = inactive ? defaultColor.darker()
 			.getRGB() : hovered ? 0xeeffffff : 0x99ffffff;
 		graphics.renderOutline(confirmX, confirmY, confirmW, confirmH, color);
-		graphics.drawCenteredString(font, Lang.translateDirect("gui.stock_ticker.confirm_order"),
+		graphics.drawCenteredString(font, CreateLang.translateDirect("gui.stock_ticker.confirm_order"),
 			confirmX + (confirmW / 2), confirmY + 4, color);
 	}
 
@@ -452,15 +452,15 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 
 	private Component getTroubleshootingMessage() {
 		if (currentItemSource == null)
-			return Lang.translate("gui.stock_ticker.checking_stocks")
+			return CreateLang.translate("gui.stock_ticker.checking_stocks")
 				.component();
 		if (blockEntity.activeLinks == 0)
-			return Lang.translate("gui.stock_ticker.no_packagers_linked")
+			return CreateLang.translate("gui.stock_ticker.no_packagers_linked")
 				.component();
 		if (currentItemSource.isEmpty())
-			return Lang.translate("gui.stock_ticker.inventories_empty")
+			return CreateLang.translate("gui.stock_ticker.inventories_empty")
 				.component();
-		return Lang.translate("gui.stock_ticker.no_search_results")
+		return CreateLang.translate("gui.stock_ticker.no_search_results")
 			.component();
 	}
 

@@ -9,8 +9,8 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalStockResponsePacket;
-import com.simibubi.create.foundation.utility.IntAttached;
 
+import net.createmod.catnip.utility.IntAttached;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;

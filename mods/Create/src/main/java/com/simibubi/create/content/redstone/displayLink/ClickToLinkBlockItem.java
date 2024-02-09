@@ -1,9 +1,9 @@
 package com.simibubi.create.content.redstone.displayLink;
 
 import com.simibubi.create.AllSoundEvents;
-import com.simibubi.create.CreateClient;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.CatnipClient;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -62,7 +62,7 @@ public abstract class ClickToLinkBlockItem extends BlockItem {
 		if (player.isShiftKeyDown() && stack.hasTag()) {
 			if (level.isClientSide)
 				return InteractionResult.SUCCESS;
-			player.displayClientMessage(Lang.translateDirect(msgKey + ".clear"), true);
+			player.displayClientMessage(CreateLang.translateDirect(msgKey + ".clear"), true);
 			stack.setTag(null);
 			return InteractionResult.SUCCESS;
 		}
@@ -71,7 +71,7 @@ public abstract class ClickToLinkBlockItem extends BlockItem {
 			if (!isValidTarget(level, pos)) {
 				if (level.isClientSide)
 					AllSoundEvents.DENY.playFrom(player);
-				player.displayClientMessage(Lang.translateDirect(msgKey + ".invalid"), true);
+				player.displayClientMessage(CreateLang.translateDirect(msgKey + ".invalid"), true);
 				return InteractionResult.FAIL;
 			}
 			
@@ -79,7 +79,7 @@ public abstract class ClickToLinkBlockItem extends BlockItem {
 				return InteractionResult.SUCCESS;
 			CompoundTag stackTag = stack.getOrCreateTag();
 			stackTag.put("SelectedPos", NbtUtils.writeBlockPos(pos));
-			player.displayClientMessage(Lang.translateDirect(msgKey + ".set"), true);
+			player.displayClientMessage(CreateLang.translateDirect(msgKey + ".set"), true);
 			stack.setTag(stackTag);
 			return InteractionResult.SUCCESS;
 		}
@@ -91,7 +91,7 @@ public abstract class ClickToLinkBlockItem extends BlockItem {
 		BlockPos placedPos = pos.relative(pContext.getClickedFace(), state.canBeReplaced() ? 0 : 1);
 
 		if (!selectedPos.closerThan(placedPos, maxDistance)) {
-			player.displayClientMessage(Lang.translateDirect(msgKey + ".too_far")
+			player.displayClientMessage(CreateLang.translateDirect(msgKey + ".too_far")
 				.withStyle(ChatFormatting.RED), true);
 			return InteractionResult.FAIL;
 		}
@@ -106,7 +106,7 @@ public abstract class ClickToLinkBlockItem extends BlockItem {
 		ItemStack itemInHand = player.getItemInHand(pContext.getHand());
 		if (!itemInHand.isEmpty())
 			itemInHand.setTag(null);
-		player.displayClientMessage(Lang.translateDirect(msgKey + ".success")
+		player.displayClientMessage(CreateLang.translateDirect(msgKey + ".success")
 			.withStyle(ChatFormatting.GREEN), true);
 		return useOn;
 	}
@@ -135,7 +135,7 @@ public abstract class ClickToLinkBlockItem extends BlockItem {
 			lastShownPos = selectedPos;
 		}
 
-		CreateClient.OUTLINER.showAABB("target", lastShownAABB)
+		CatnipClient.OUTLINER.showAABB("target", lastShownAABB)
 			.colored(0xffcb74)
 			.lineWidth(1 / 16f);
 	}

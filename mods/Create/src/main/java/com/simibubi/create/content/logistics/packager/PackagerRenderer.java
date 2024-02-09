@@ -5,10 +5,10 @@ import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AngleHelper;
 
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -40,7 +40,7 @@ public class PackagerRenderer extends SmartBlockEntityRenderer<PackagerBlockEnti
 		PartialModel hatchModel =
 			hatchOpen ? AllPartialModels.PACKAGER_HATCH_OPEN : AllPartialModels.PACKAGER_HATCH_CLOSED;
 
-		SuperByteBuffer sbb = CachedBufferer.partial(hatchModel, blockState);
+		SuperByteBuffer sbb = CachedBuffers.partial(hatchModel, blockState);
 		sbb.translate(Vec3.atLowerCornerOf(facing.getNormal())
 			.scale(.49999f))
 			.rotateCentered(Direction.UP, AngleHelper.rad(AngleHelper.horizontalAngle(facing)))
@@ -53,7 +53,7 @@ public class PackagerRenderer extends SmartBlockEntityRenderer<PackagerBlockEnti
 		msr.translate(Vec3.atLowerCornerOf(facing.getNormal())
 			.scale(trayOffset));
 
-		sbb = CachedBufferer.partial(AllPartialModels.PACKAGER_TRAY, blockState);
+		sbb = CachedBuffers.partial(AllPartialModels.PACKAGER_TRAY, blockState);
 		sbb.rotateCentered(Direction.UP, AngleHelper.rad(facing.toYRot()))
 			.light(light)
 			.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));

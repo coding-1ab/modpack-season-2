@@ -151,9 +151,9 @@ public class FilterItem extends Item implements MenuProvider {
 			String address = filter.getOrCreateTag()
 				.getString("Address");
 			if (!address.isBlank())
-				list.add(Lang.text("-> ")
+				list.add(CreateLang.text("-> ")
 					.style(ChatFormatting.GRAY)
-					.add(Lang.text(address)
+					.add(CreateLang.text(address)
 						.style(ChatFormatting.GOLD))
 					.component());
 		}
