@@ -1,13 +1,13 @@
 modLoader="javafml"
 loaderVersion="[47,)"
-issueTrackerURL="${mod_issues}"
+issueTrackerURL="https://github.com/Creators-of-Create/Create/issues"
 license="${mod_license}"
 
 [[mods]]
 modId="create"
 version="${file.jarVersion}"
 displayName="${mod_name}"
-displayURL="${mod_homepage}"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/create"
 logoFile="logo.png"
 #credits=""
 authors="${mod_author}"
