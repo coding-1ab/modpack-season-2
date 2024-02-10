@@ -7,6 +7,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.crate.BottomlessItemHandler;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
+import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.CapManipulationBehaviourBase.InterfaceProvider;
@@ -164,9 +165,14 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 					.getCount() == toInsert.getCount())
 					continue;
 				if (itemInSlot.isEmpty()) {
+					int maxStackSize = targetInv.getSlotLimit(slot);
+					if (maxStackSize < toInsert.getCount()) {
+						toInsert.shrink(maxStackSize);
+						toInsert = ItemHandlerHelper.copyStackWithSize(toInsert, maxStackSize);
+					} else
+						contents.setStackInSlot(boxSlot, ItemStack.EMPTY);
 					itemInSlot = toInsert;
 					targetInv.insertItem(slot, toInsert, simulate);
-					contents.setStackInSlot(boxSlot, ItemStack.EMPTY);
 					continue;
 				}
 				if (!ItemHandlerHelper.canItemStacksStack(toInsert, itemInSlot))
@@ -211,51 +217,91 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		ItemStack extractedPackageItem = ItemStack.EMPTY;
 		PackagingRequest nextRequest = null;
 		String fixedAddress = null;
+		int fixedOrderId = 0;
+
+		boolean continuePacking = true;
+
+		// Data written to packages for defrags
+		int linkIndexInOrder = 0;
+		boolean finalLinkInOrder = false;
+		int packageIndexAtLink = 0;
+		boolean finalPackageAtLink = false;
+		PackageOrder orderContext = null;
 
 		if (requestQueue && !queuedRequests.isEmpty()) {
 			nextRequest = queuedRequests.get(0);
 			fixedAddress = nextRequest.address();
+			fixedOrderId = nextRequest.orderId();
+			linkIndexInOrder = nextRequest.linkIndex();
+			finalLinkInOrder = nextRequest.finalLink()
+				.booleanValue();
+			packageIndexAtLink = nextRequest.packageCounter()
+				.getAndIncrement();
+			orderContext = nextRequest.context();
 		}
 
-		Outer: for (int i = 0; i < PackageItem.SLOTS; i++)
-			for (int slot = 0; slot < targetInv.getSlots(); slot++) {
-				int initialCount = requestQueue ? Math.min(64, nextRequest.getCount()) : 64;
-				ItemStack extracted = targetInv.extractItem(slot, initialCount, true);
-				if (extracted.isEmpty())
-					continue;
-				if (requestQueue && !ItemHandlerHelper.canItemStacksStack(extracted, nextRequest.item()))
-					continue;
+		Outer: for (int i = 0; i < PackageItem.SLOTS; i++) {
+			while (continuePacking) {
+				continuePacking = false;
 
-				boolean bulky = !extracted.getItem()
-					.canFitInsideContainerItems();
-				if (bulky && anyItemPresent)
-					continue;
+				for (int slot = 0; slot < targetInv.getSlots(); slot++) {
+					int initialCount = requestQueue ? Math.min(64, nextRequest.getCount()) : 64;
+					ItemStack extracted = targetInv.extractItem(slot, initialCount, true);
+					if (extracted.isEmpty())
+						continue;
+					if (requestQueue && !ItemHandlerHelper.canItemStacksStack(extracted, nextRequest.item()))
+						continue;
 
-				anyItemPresent = true;
-				int leftovers = ItemHandlerHelper.insertItemStacked(extractedItems, extracted.copy(), false)
-					.getCount();
-				int transferred = extracted.getCount() - leftovers;
-				targetInv.extractItem(slot, transferred, false);
+					boolean bulky = !extracted.getItem()
+						.canFitInsideContainerItems();
+					if (bulky && anyItemPresent)
+						continue;
 
-				if (extracted.getItem() instanceof PackageItem)
-					extractedPackageItem = extracted;
+					anyItemPresent = true;
+					int leftovers = ItemHandlerHelper.insertItemStacked(extractedItems, extracted.copy(), false)
+						.getCount();
+					int transferred = extracted.getCount() - leftovers;
+					targetInv.extractItem(slot, transferred, false);
 
-				if (requestQueue) {
-					nextRequest.subtract(transferred);
-					if (nextRequest.isEmpty()) {
-						queuedRequests.remove(0);
-						if (queuedRequests.isEmpty())
+					if (extracted.getItem() instanceof PackageItem)
+						extractedPackageItem = extracted;
+
+					if (!requestQueue) {
+						if (bulky)
 							break Outer;
-						nextRequest = queuedRequests.get(0);
-						if (!fixedAddress.equals(nextRequest.address()))
-							break Outer;
-						break;
+						continue;
 					}
-				}
 
-				if (bulky)
-					break Outer;
+					nextRequest.subtract(transferred);
+
+					if (!nextRequest.isEmpty()) {
+						if (bulky)
+							break Outer;
+						continue;
+					}
+
+					finalPackageAtLink = true;
+					queuedRequests.remove(0);
+					if (queuedRequests.isEmpty())
+						break Outer;
+					int previousCount = nextRequest.packageCounter()
+						.intValue();
+					nextRequest = queuedRequests.get(0);
+					if (!fixedAddress.equals(nextRequest.address()))
+						break Outer;
+					if (fixedOrderId != nextRequest.orderId())
+						break Outer;
+
+					nextRequest.packageCounter()
+						.setValue(previousCount);
+					finalPackageAtLink = false;
+					continuePacking = true;
+					if (bulky)
+						break Outer;
+					break;
+				}
 			}
+		}
 
 		if (!anyItemPresent) {
 			if (nextRequest != null)
@@ -267,6 +313,9 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		PackageItem.clearAddress(heldBox);
 		if (fixedAddress != null)
 			PackageItem.addAddress(heldBox, fixedAddress);
+		if (requestQueue)
+			PackageItem.setOrder(heldBox, fixedOrderId, linkIndexInOrder, finalLinkInOrder, packageIndexAtLink,
+				finalPackageAtLink, orderContext);
 		animationInward = false;
 		animationTicks = CYCLE;
 		notifyUpdate();

@@ -55,7 +55,6 @@ public class EjectorInstance extends ShaftInstance<EjectorBlockEntity> implement
 
 	private void pivotPlate(float lidProgress) {
 		float angle = lidProgress * 70;
-
-		//EjectorRenderer.applyLidAngle(blockEntity, angle, plate.loadIdentity().translate(getInstancePosition()));//TODO flw
+		EjectorRenderer.applyLidAngle(blockEntity, angle, plate.loadIdentity().translate(getInstancePosition()));
 	}
 }

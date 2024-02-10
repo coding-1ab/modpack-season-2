@@ -1,24 +1,19 @@
 package com.simibubi.create.content.logistics.stockTicker;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
 
-import net.createmod.catnip.utility.IntAttached;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
 
 public class PackageOrderRequestPacket extends BlockEntityConfigurationPacket<StockTickerBlockEntity> {
 
-	private List<IntAttached<ItemStack>> items;
+	private PackageOrder order;
 	private String address;
 
-	public PackageOrderRequestPacket(BlockPos pos, List<IntAttached<ItemStack>> items, String address) {
+	public PackageOrderRequestPacket(BlockPos pos, PackageOrder order, String address) {
 		super(pos);
-		this.items = items;
+		this.order = order;
 		this.address = address;
 	}
 
@@ -29,20 +24,13 @@ public class PackageOrderRequestPacket extends BlockEntityConfigurationPacket<St
 	@Override
 	protected void writeSettings(FriendlyByteBuf buffer) {
 		buffer.writeUtf(address);
-		buffer.writeVarInt(items.size());
-		for (IntAttached<ItemStack> entry : items) {
-			buffer.writeVarInt(entry.getFirst());
-			buffer.writeItem(entry.getSecond());
-		}
+		order.write(buffer);
 	}
 
 	@Override
 	protected void readSettings(FriendlyByteBuf buffer) {
 		address = buffer.readUtf();
-		int size = buffer.readVarInt();
-		items = new ArrayList<>();
-		for (int i = 0; i < size; i++)
-			items.add(IntAttached.with(buffer.readVarInt(), buffer.readItem()));
+		order = PackageOrder.read(buffer);
 	}
 
 	@Override
@@ -50,7 +38,7 @@ public class PackageOrderRequestPacket extends BlockEntityConfigurationPacket<St
 
 	@Override
 	protected void applySettings(ServerPlayer player, StockTickerBlockEntity be) {
-		be.receivePackageRequest(items, player, address);
+		be.receivePackageRequest(order, player, address);
 	}
 
 }

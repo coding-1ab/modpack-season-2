@@ -167,6 +167,8 @@ import com.simibubi.create.content.logistics.depot.EjectorRenderer;
 import com.simibubi.create.content.logistics.funnel.FunnelBlockEntity;
 import com.simibubi.create.content.logistics.funnel.FunnelInstance;
 import com.simibubi.create.content.logistics.funnel.FunnelRenderer;
+import com.simibubi.create.content.logistics.orderCollector.OrderCollectorBlockEntity;
+import com.simibubi.create.content.logistics.orderCollector.OrderCollectorRenderer;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerRenderer;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
@@ -483,6 +485,13 @@ public class AllBlockEntityTypes {
 	public static final BlockEntityEntry<StockTickerBlockEntity> STOCK_TICKER = REGISTRATE
 		.blockEntity("stock_ticker", StockTickerBlockEntity::new)
 		.validBlocks(AllBlocks.STOCK_TICKER)
+		.register();
+	
+	public static final BlockEntityEntry<OrderCollectorBlockEntity> ORDER_COLLECTOR = REGISTRATE
+		.blockEntity("order_collector", OrderCollectorBlockEntity::new)
+		.instance(() -> ShaftInstance::new)
+		.validBlocks(AllBlocks.ORDER_COLLECTOR)
+		.renderer(() -> OrderCollectorRenderer::new)
 		.register();
 
 	public static final BlockEntityEntry<MechanicalPistonBlockEntity> MECHANICAL_PISTON = REGISTRATE

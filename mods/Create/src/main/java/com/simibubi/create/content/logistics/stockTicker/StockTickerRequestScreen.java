@@ -167,7 +167,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 			emptyTicks++;
 		else
 			emptyTicks = 0;
-		
+
 		if (successTicks > 0 && itemsToOrder.isEmpty())
 			successTicks++;
 		else
@@ -259,13 +259,14 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 			if (alpha > 0)
 				graphics.drawString(font, msg, itemsX + 1, itemsY, new Color(.5f, .5f, .5f, alpha).getRGB());
 		}
-		
+
 		// Request just sent
 		if (itemsToOrder.isEmpty() && successTicks > 0) {
 			Component msg = CreateLang.translateDirect("gui.stock_ticker.request_sent");
 			float alpha = Mth.clamp((successTicks - 10f) / 5f, 0f, 1f);
 			if (alpha > 0)
-				graphics.drawCenteredString(font, msg, itemsX + cols * colWidth / 2, orderY + 4, new Color(.75f, .95f, .75f, alpha).getRGB());
+				graphics.drawCenteredString(font, msg, itemsX + cols * colWidth / 2, orderY + 4,
+					new Color(.75f, .95f, .75f, alpha).getRGB());
 		}
 
 		hoveredSlot = getHoveredSlot(mouseX, mouseY, false);
@@ -521,10 +522,13 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-		int maxScroll = Math.max(0, Mth.ceil(displayedItems.size() / (1.0 * cols)) - rows);
-		int direction = (int) Math.signum(-delta);
-		float newTarget = Mth.clamp(itemScroll.getChaseTarget() + direction, 0, maxScroll);
-		itemScroll.chase(newTarget, 0.5, Chaser.EXP);
+		int hoveredOrderSlot = getHoveredSlot((int) mouseX, (int) mouseY, true);
+		if (hoveredOrderSlot == noneHovered) {
+			int maxScroll = Math.max(0, Mth.ceil(displayedItems.size() / (1.0 * cols)) - rows);
+			int direction = (int) Math.signum(-delta);
+			float newTarget = Mth.clamp(itemScroll.getChaseTarget() + direction, 0, maxScroll);
+			itemScroll.chase(newTarget, 0.5, Chaser.EXP);
+		}
 		return true;
 	}
 
@@ -570,20 +574,20 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 	@Override
 	public void removed() {
 		AllPackets.getChannel()
-			.sendToServer(new PackageOrderRequestPacket(blockEntity.getBlockPos(), Collections.emptyList(),
-				addressBox.getValue()));
+			.sendToServer(new PackageOrderRequestPacket(blockEntity.getBlockPos(),
+				new PackageOrder(Collections.emptyList()), addressBox.getValue()));
 		super.removed();
 	}
-	
+
 	private void sendIt() {
 		revalidateOrders();
 		if (itemsToOrder.isEmpty())
 			return;
-		
+
 		AllPackets.getChannel()
-			.sendToServer(
-				new PackageOrderRequestPacket(blockEntity.getBlockPos(), itemsToOrder, addressBox.getValue()));
-		
+			.sendToServer(new PackageOrderRequestPacket(blockEntity.getBlockPos(), new PackageOrder(itemsToOrder),
+				addressBox.getValue()));
+
 		itemsToOrder = new ArrayList<>();
 		ticksSinceLastUpdate = 10;
 		successTicks = 1;

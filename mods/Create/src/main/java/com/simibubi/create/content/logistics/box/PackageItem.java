@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import com.simibubi.create.AllEntityTypes;
+import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.lang.Components;
@@ -95,10 +98,30 @@ public class PackageItem extends Item {
 			.putString("Address", address);
 	}
 
+	public static void setOrder(ItemStack box, int orderId, int linkIndex, boolean isFinalLink, int fragmentIndex,
+		boolean isFinal, @Nullable PackageOrder orderContext) {
+		CompoundTag tag = new CompoundTag();
+		tag.putInt("OrderId", orderId);
+		tag.putInt("LinkIndex", linkIndex);
+		tag.putBoolean("IsFinalLink", isFinalLink);
+		tag.putInt("Index", fragmentIndex);
+		tag.putBoolean("IsFinal", isFinal);
+		if (orderContext != null)
+			tag.put("OrderContext", orderContext.write());
+		box.getOrCreateTag()
+			.put("Fragment", tag);
+	}
+
+	public static int getOrderId(ItemStack box) {
+		CompoundTag tag = box.getTag();
+		if (tag == null || !tag.contains("Fragment"))
+			return -1;
+		return tag.getCompound("Fragment")
+			.getInt("OrderId");
+	}
+
 	public static boolean matchAddress(ItemStack box, String address) {
-		String boxAddress = !box.hasTag() ? ""
-			: box.getTag()
-				.getString("Address");
+		String boxAddress = getAddress(box);
 		if (address.isBlank())
 			return boxAddress.isBlank();
 		if (address.equals("*") || boxAddress.equals("*"))
@@ -106,6 +129,13 @@ public class PackageItem extends Item {
 		String matcher = "\\Q" + address.replace("*", "\\E.*\\Q") + "\\E";
 		String boxMatcher = "\\Q" + boxAddress.replace("*", "\\E.*\\Q") + "\\E";
 		return address.matches(boxMatcher) || boxAddress.matches(matcher);
+	}
+
+	public static String getAddress(ItemStack box) {
+		String boxAddress = !box.hasTag() ? ""
+			: box.getTag()
+				.getString("Address");
+		return boxAddress;
 	}
 
 	public static float getWidth(ItemStack box) {
@@ -141,6 +171,22 @@ public class PackageItem extends Item {
 		if (compoundnbt.contains("Address", Tag.TAG_STRING))
 			pTooltipComponents.add(Components.literal("-> " + compoundnbt.getString("Address"))
 				.withStyle(ChatFormatting.GOLD));
+
+		// TEMPORARY
+		if (compoundnbt.contains("Fragment")) {
+			CompoundTag fragTag = compoundnbt.getCompound("Fragment");
+			pTooltipComponents.add(Components.literal("Order Information (Temporary)")
+				.withStyle(ChatFormatting.GREEN));
+			pTooltipComponents.add(Components
+				.literal(" Link " + fragTag.getInt("LinkIndex") + (fragTag.getBoolean("IsFinalLink") ? " Final" : "")
+					+ " | Fragment " + fragTag.getInt("Index") + (fragTag.getBoolean("IsFinal") ? " Final" : ""))
+				.withStyle(ChatFormatting.DARK_GREEN));
+			if (fragTag.contains("OrderContext"))
+				pTooltipComponents.add(Components.literal("Has Context!")
+					.withStyle(ChatFormatting.DARK_GREEN));
+		}
+		//
+
 		if (!compoundnbt.contains("Items", Tag.TAG_COMPOUND))
 			return;
 

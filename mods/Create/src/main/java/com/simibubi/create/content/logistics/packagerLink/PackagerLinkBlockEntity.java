@@ -6,10 +6,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.mutable.MutableBoolean;
+
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagingRequest;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalWorkstationBlockEntity;
+import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.redstone.displayLink.LinkWithBulbBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
@@ -47,16 +50,20 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 		return packager.getAvailableItems();
 	}
 
-	public int processRequest(ItemStack stack, int amount, String address) {
+	public int processRequest(ItemStack stack, int amount, String address, int linkIndex, MutableBoolean finalLink,
+		int orderId, @Nullable PackageOrder orderContext) {
 		PackagerBlockEntity packager = getSource();
 		if (packager == null)
 			return 0;
 
 		InventorySummary summary = packager.getAvailableItems();
 		int availableCount = summary.getCountOf(stack);
-		int toWithdraw = Math.min(amount, availableCount);
+		if (availableCount == 0)
+			return 0;
 
-		PackagingRequest packagingRequest = PackagingRequest.create(stack, toWithdraw, address);
+		int toWithdraw = Math.min(amount, availableCount);
+		PackagingRequest packagingRequest =
+			PackagingRequest.create(stack, toWithdraw, address, linkIndex, finalLink, 0, orderId, orderContext);
 		packager.queueRequest(packagingRequest);
 		sendPulseNextSync();
 		sendData();

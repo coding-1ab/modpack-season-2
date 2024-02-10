@@ -172,6 +172,7 @@ import com.simibubi.create.content.logistics.funnel.BrassFunnelBlock;
 import com.simibubi.create.content.logistics.funnel.FunnelGenerator;
 import com.simibubi.create.content.logistics.funnel.FunnelItem;
 import com.simibubi.create.content.logistics.funnel.FunnelMovementBehaviour;
+import com.simibubi.create.content.logistics.orderCollector.OrderCollectorBlock;
 import com.simibubi.create.content.logistics.packager.PackagerBlock;
 import com.simibubi.create.content.logistics.packager.PackagerGenerator;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
@@ -1651,6 +1652,9 @@ public class AllBlocks {
 	public static final BlockEntry<PackagerBlock> PACKAGER = REGISTRATE.block("packager", PackagerBlock::new)
 		.initialProperties(SharedProperties::softMetal)
 		.properties(p -> p.noOcclusion())
+		.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
+			.sound(SoundType.NETHERITE_BLOCK))
+		.transform(pickaxeOnly())
 		.addLayer(() -> RenderType::cutoutMipped)
 		.blockstate(new PackagerGenerator()::generate)
 		.transform(BlockStressDefaults.setImpact(1.0))
@@ -1662,9 +1666,10 @@ public class AllBlocks {
 	public static final BlockEntry<PackagerLinkBlock> PACKAGER_LINK =
 		REGISTRATE.block("packager_link", PackagerLinkBlock::new)
 			.initialProperties(SharedProperties::softMetal)
-			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BROWN))
+			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
+				.sound(SoundType.NETHERITE_BLOCK))
 			.addLayer(() -> RenderType::translucent)
-			.transform(axeOrPickaxe())
+			.transform(pickaxeOnly())
 			.blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.forPowered(c, p)))
 			.item(PackagerLinkBlockItem::new)
 			.transform(customItemModel("_", "block"))
@@ -1674,11 +1679,25 @@ public class AllBlocks {
 		REGISTRATE.block("stock_ticker", StockTickerBlock::new)
 			.initialProperties(SharedProperties::softMetal)
 			.properties(p -> p.sound(SoundType.GLASS))
+			.transform(axeOrPickaxe())
 			.addLayer(() -> RenderType::cutoutMipped)
 			.blockstate((c, p) -> p.horizontalBlock(c.get(), AssetLookup.standardModel(c, p)))
 			.simpleItem()
 			.register();
 
+	public static final BlockEntry<OrderCollectorBlock> ORDER_COLLECTOR =
+		REGISTRATE.block("order_collector", OrderCollectorBlock::new)
+			.initialProperties(SharedProperties::softMetal)
+			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
+				.sound(SoundType.NETHERITE_BLOCK))
+			.properties(p -> p.noOcclusion())
+			.transform(pickaxeOnly())
+			.blockstate(BlockStateGen.horizontalBlockProvider(true))
+			.transform(BlockStressDefaults.setImpact(2.0))
+			.item(AssemblyOperatorBlockItem::new)
+			.transform(customItemModel())
+			.register();
+	
 	public static final BlockEntry<AndesiteFunnelBlock> ANDESITE_FUNNEL =
 		REGISTRATE.block("andesite_funnel", AndesiteFunnelBlock::new)
 			.addLayer(() -> RenderType::cutoutMipped)
