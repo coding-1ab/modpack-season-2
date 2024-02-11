@@ -18,6 +18,7 @@ import com.simibubi.create.content.schematics.client.SchematicHandler;
 import com.simibubi.create.content.trains.GlobalRailwayManager;
 import com.simibubi.create.foundation.ClientResourceReloadListener;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsClient;
+import com.simibubi.create.foundation.gui.CreateTheme;
 import com.simibubi.create.foundation.ponder.CreatePonderPlugin;
 import com.simibubi.create.foundation.render.CreateContexts;
 import com.simibubi.create.foundation.utility.ModelSwapper;
@@ -92,6 +93,7 @@ public class CreateClient {
 		//AllPonderTags.register();
 		//PonderIndex.register();
 		PonderIndex.addPlugin(new CreatePonderPlugin());
+		CreateTheme.loadClass();
 
 		setupConfigUIBackground();
 	}

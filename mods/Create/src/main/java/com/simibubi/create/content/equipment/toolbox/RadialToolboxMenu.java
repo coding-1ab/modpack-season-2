@@ -16,12 +16,14 @@ import com.simibubi.create.AllKeys;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.AllIcons;
+import com.simibubi.create.foundation.gui.CreateTheme;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.GuiGraphics;
@@ -213,8 +215,10 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
 
 	@Override
 	public void renderBackground(GuiGraphics graphics) {
-		int a = ((int) (0x50 * Math.min(1, (ticksOpen + AnimationTickHolder.getPartialTicks()) / 20f))) << 24;
-		graphics.fillGradient(0, 0, this.width, this.height, 0x101010 | a, 0x101010 | a);
+		Color color = CreateTheme.Key.RADIAL_BACKGROUND.c()
+				.scaleAlpha(Math.min(1, (ticksOpen + AnimationTickHolder.getPartialTicks()) / 20f));
+
+		graphics.fillGradient(0, 0, this.width, this.height, color.getRGB(), color.getRGB());
 	}
 
 	@Override

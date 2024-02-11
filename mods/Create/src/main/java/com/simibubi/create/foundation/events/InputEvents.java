@@ -2,6 +2,7 @@ package com.simibubi.create.foundation.events;
 
 import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.contraptions.elevator.ElevatorControlsHandler;
+import com.simibubi.create.content.contraptions.wrench.RadialWrenchHandler;
 import com.simibubi.create.content.equipment.toolbox.ToolboxHandlerClient;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerClientHandler;
 import com.simibubi.create.content.trains.TrainHUD;
@@ -28,6 +29,7 @@ public class InputEvents {
 
 		CreateClient.SCHEMATIC_HANDLER.onKeyInput(key, pressed);
 		ToolboxHandlerClient.onKeyInput(key, pressed);
+		RadialWrenchHandler.onKeyInput(key, pressed);
 	}
 
 	@SubscribeEvent
