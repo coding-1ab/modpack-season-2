@@ -1,0 +1,28 @@
+{
+  "type": "create:mechanical_crafting",
+  "acceptMirrored": true,
+  "key": {
+    "C": {
+      "item": "create_new_age:reactor_casing"
+    },
+    "F": {
+      "item": "create_new_age:nuclear_fuel"
+    },
+    "G": {
+      "item": "create_new_age:reactor_glass"
+    },
+    "P": {
+      "tag": "forge:plates/gold"
+    }
+  },
+  "pattern": [
+    "CPPPC",
+    " GFG ",
+    " GFG ",
+    "CPPPC"
+  ],
+  "result": {
+    "count": 2,
+    "item": "create_new_age:reactor_rod"
+  }
+}

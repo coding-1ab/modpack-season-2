@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "create_new_age:basic_energiser",
+    "create_new_age:advanced_energiser",
+    "create_new_age:reinforced_energiser"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "type": "create_new_age:energising",
+  "energyNeeded": 10000,
+  "ingredients": [
+    {
+      "tag": "forge:gems/diamond"
+    }
+  ],
+  "results": [
+    {
+      "item": "create_new_age:overcharged_diamond"
+    }
+  ]
+}

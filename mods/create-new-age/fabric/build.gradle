@@ -1,0 +1,42 @@
+dependencies {
+    compileOnly(project(":common"))
+    
+    modImplementation("net.fabricmc:fabric-loader:${fabricLoaderVersion}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
+    
+    modImplementation("com.tterrag.registrate_fabric:Registrate:${rootProject.registrateFabricVersion}")
+    modImplementation("com.simibubi.create:create-fabric-${rootProject.minecraftVersion}:${createFabricVersion}")
+    
+    modRuntimeOnly("maven.modrinth:modmenu:${modmenuVersion}")
+    modRuntimeOnly("maven.modrinth:sodium:${sodiumVersion}")
+    modRuntimeOnly("maven.modrinth:indium:${indiumVersion}")
+    
+    modRuntimeOnly("maven.modrinth:resourceful-lib:YzWNEutS")
+    modRuntimeOnly("maven.modrinth:resourceful-config:PlEObkl9")
+    modRuntimeOnly("maven.modrinth:botarium:YgOh7n9M")
+    modRuntimeOnly("maven.modrinth:ad-astra:DruFc2hK")
+}
+
+compileJava {
+    source(project(":common").sourceSets.main.allSource)
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ['-ACNA_FABRIC']
+}
+
+var modId = rootProject.modId
+
+loom {
+    runs {
+        datagen {
+            inherit(client)
+            vmArg("-Dfabric-api.datagen")
+            vmArg("-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}")
+            vmArg("-Dporting_lib.datagen.existing_resources=${file("../common/src/main/resources")}")
+            vmArg("-Dfabric-api.datagen.modid=${modId}")
+            
+            runDir("build/datagen")
+        }
+    }    
+}

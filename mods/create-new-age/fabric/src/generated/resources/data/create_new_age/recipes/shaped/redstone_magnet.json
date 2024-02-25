@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "N": {
+      "tag": "c:iron_nuggets"
+    },
+    "R": {
+      "tag": "c:redstone_blocks"
+    }
+  },
+  "pattern": [
+    "NNN",
+    "NRN",
+    "NNN"
+  ],
+  "result": {
+    "count": 2,
+    "item": "create_new_age:redstone_magnet"
+  },
+  "show_notification": true
+}

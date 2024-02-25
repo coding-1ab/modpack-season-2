@@ -1,0 +1,18 @@
+repositories {
+    maven { url "https://maven.neoforged.net/" }
+}
+
+dependencies {
+    forge("net.neoforged:forge:${rootProject.forgeVersion}:universal")
+    
+    modCompileOnly("net.fabricmc:fabric-loader:0.15.6")
+    modCompileOnly("curse.maven:forge-config-api-port-fabric-547434:4583000")
+    
+    modCompileOnly("com.google.code.findbugs:findbugs:3.0.1")
+}
+
+loom {
+    forge {
+        convertAccessWideners = true
+    }
+}

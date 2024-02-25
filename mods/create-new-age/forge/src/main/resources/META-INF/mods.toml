@@ -1,0 +1,44 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+
+license="BSD-3-Clause"
+issueTrackerURL="https://gitlab.com/antarcticgardens/create-new-age"
+showAsResourcePack=false
+
+[[mods]]
+modId="create_new_age"
+version="${version}"
+displayName="Create: New Age"
+logoFile="icon.png"
+authors="Antarctic Gardens"
+description="An addon for the Create mod that adds integration with electricity"
+displayTest="MATCH_VERSION"
+displayURL="https://antarcticgardens.org/"
+
+[[dependencies.create_new_age]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.create_new_age]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1]"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.create_new_age]]
+    modId="esl"
+    mandatory=true
+    versionRange="[1.0-SNAPSHOT]"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.create_new_age]]
+    modId="create"
+    mandatory=true
+    versionRange="[0.5.1.f,)"
+    ordering="NONE"
+    side="BOTH"

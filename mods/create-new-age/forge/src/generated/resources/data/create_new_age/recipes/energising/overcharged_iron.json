@@ -1,0 +1,14 @@
+{
+  "type": "create_new_age:energising",
+  "energyNeeded": 1000,
+  "ingredients": [
+    {
+      "tag": "forge:ingots/iron"
+    }
+  ],
+  "results": [
+    {
+      "item": "create_new_age:overcharged_iron"
+    }
+  ]
+}

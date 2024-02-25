@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "create_new_age",
+  "version": "${version}",
+  "name": "Create: New Age",
+  "description": "An addon for the Create mod that adds integration with electricity",
+  "authors": [
+    "Antarctic Gardens"
+  ],
+  "contact": {
+    "homepage": "http://antarcticgardens.org/",
+    "sources": "https://gitlab.com/antarcticgardens/create-new-age",
+    "issues": "https://gitlab.com/antarcticgardens/create-new-age/-/issues"
+  },
+  "license": "BSD-3-Clause",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "org.antarcticgardens.cna.fabric.data.CreateNewAgeDatagenFabric"
+    ],
+    "main": [
+      "org.antarcticgardens.cna.CreateNewAgeFabric"
+    ],
+    
+    "jei_mod_plugin": [
+      "org.antarcticgardens.cna.compat.jei.CNAJeiPlugin"
+    ]
+  },
+  "mixins": [
+    "create_new_age-common.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.21",
+    "minecraft": "~1.20.1",
+    "java": ">=17",
+    "fabric-api": "*",
+    "esl": "*",
+    "create": "*"
+  }
+}

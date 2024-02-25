@@ -1,0 +1,44 @@
+repositories {
+    maven { url "https://maven.neoforged.net/" }
+}
+
+dependencies {
+    compileOnly(project(":common"))
+    
+    forge("net.neoforged:forge:${rootProject.forgeVersion}")
+    
+    modRuntimeOnly("maven.modrinth:createaddition:1.20.1-1.2.2")
+}
+
+processResources {
+    from(project(":common").sourceSets.main.resources)
+    inputs.property "version", project.version
+    
+    filesMatching("META-INF/mods.toml") {
+        expand "version": project.version
+    }
+}
+
+compileJava {
+    source(project(":common").sourceSets.main.allSource)
+}
+
+var modId = rootProject.modId
+
+loom {
+    loom {
+        forge {
+            convertAccessWideners = true
+            mixinConfig("create_new_age-common.mixins.json")
+        }
+    }
+    
+    runs {
+        datagen {
+            data()
+            programArgs("--all", "--mod", "${modId}")
+            programArgs("--output", file("src/generated/resources").absolutePath)
+            programArgs("--existing", file("../common/src/main/resources").absolutePath)
+        }
+    }
+}

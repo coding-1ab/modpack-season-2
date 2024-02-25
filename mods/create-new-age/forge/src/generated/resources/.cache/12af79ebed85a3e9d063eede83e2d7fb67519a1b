@@ -1,0 +1,4 @@
+// 1.20.1	2024-02-24T23:47:48.049326744	Create New Age Mechanical Crafting Recipes
+85af2977fcbf0820287179c7489ae733b81c15ee data/create_new_age/recipes/mechanical_crafting/advanced_motor_extension.json
+d4e52b1bef811529d6c954e08d1439f38c9320b4 data/create_new_age/recipes/mechanical_crafting/reactor_rod.json
+445bdb053456065bc3960d11832446149f74a389 data/create_new_age/recipes/mechanical_crafting/reinforced_motor.json

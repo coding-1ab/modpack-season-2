@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "create:andesite_alloy_block"
+    },
+    "C": {
+      "tag": "c:copper_ingots"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "CAC",
+    "CCC"
+  ],
+  "result": {
+    "item": "create_new_age:generator_coil"
+  },
+  "show_notification": true
+}
