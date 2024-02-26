@@ -1,8 +1,9 @@
 {
     "tab.create_new_age.tab": "Create: New Age",
+    
     "category.create_new_age.energising": "Energizing",
     "recipe.assembly.energising": "Energizing",
-    "create_new_age.monkey_edition": "Create: New Age [Monkey Edition]",
+    "emi.category.create_new_age.energising": "Energizing",
 
     "item.create_new_age.wire.message.self_connect": "You cannot connect a connector to itself",
     "item.create_new_age.wire.message.too_far": "Too far away! Maximum wire length is %d blocks",

@@ -15,7 +15,7 @@ import org.antarcticgardens.cna.content.heat.heater.HeaterBlock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class CreateNewAge {
+public abstract class CreateNewAge {
     public static final Logger LOGGER = LogManager.getLogger();
     
     public static final String MOD_ID = "create_new_age";
@@ -55,8 +55,6 @@ public class CreateNewAge {
             BoilerHeaters.registerHeater(CNABlocks.HEATER.get(), ((level, pos, state) -> state.getValue(HeaterBlock.STRENGTH).ordinal() - 1));
         });
 
-        // TODO: Ores
-        
         // TODO: Monkey edition?
     }
     

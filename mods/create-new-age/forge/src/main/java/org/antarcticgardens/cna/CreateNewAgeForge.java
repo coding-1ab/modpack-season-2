@@ -11,9 +11,10 @@ import org.antarcticgardens.cna.forge.data.CreateNewAgeDatagenForge;
 @Mod(CreateNewAge.MOD_ID)
 public class CreateNewAgeForge extends CreateNewAge {
     public CreateNewAgeForge() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.LOWEST, new CreateNewAgeDatagenForge()::gatherData);
-        
         this.initialize(new ForgePlatform());
         MinecraftForge.EVENT_BUS.addListener((TickEvent.LevelTickEvent e) -> NetworkTicker.tickWorld(e.level));
+        
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(new CreateNewAgeClientForge()::onClientSetup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.LOWEST, new CreateNewAgeDatagenForge()::gatherData);
     }
 }

@@ -8,7 +8,7 @@
     "Antarctic Gardens"
   ],
   "contact": {
-    "homepage": "http://antarcticgardens.org/",
+    "homepage": "https://antarcticgardens.org/",
     "sources": "https://gitlab.com/antarcticgardens/create-new-age",
     "issues": "https://gitlab.com/antarcticgardens/create-new-age/-/issues"
   },
@@ -22,9 +22,21 @@
     "main": [
       "org.antarcticgardens.cna.CreateNewAgeFabric"
     ],
+    "client": [
+      "org.antarcticgardens.cna.CreateNewAgeClientFabric"
+    ],
     
     "jei_mod_plugin": [
       "org.antarcticgardens.cna.compat.jei.CNAJeiPlugin"
+    ],
+    "rei_client": [
+      "org.antarcticgardens.cna.fabric.compat.rei.CNAReiPlugin"
+    ],
+    "emi": [
+      "org.antarcticgardens.cna.fabric.compat.emi.CNAEmiPlugin"
+    ],
+    "modmenu": [
+      "org.antarcticgardens.cna.fabric.compat.modmenu.CNAModMenuApiImpl"
     ]
   },
   "mixins": [

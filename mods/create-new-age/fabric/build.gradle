@@ -1,3 +1,8 @@
+repositories {
+    maven { url = "https://maven.terraformersmc.com/" } // ModMenu, EMI
+    maven { url = "https://maven.shedaniel.me" } // REI
+}
+
 dependencies {
     compileOnly(project(":common"))
     
@@ -7,10 +12,22 @@ dependencies {
     modImplementation("com.tterrag.registrate_fabric:Registrate:${rootProject.registrateFabricVersion}")
     modImplementation("com.simibubi.create:create-fabric-${rootProject.minecraftVersion}:${createFabricVersion}")
     
-    modRuntimeOnly("maven.modrinth:modmenu:${modmenuVersion}")
+    // Mods with compat
+    modImplementation("com.terraformersmc:modmenu:${modmenuVersion}")
+    modCompileOnly("dev.emi:emi-fabric:${emiVersion}+${rootProject.minecraftVersion}:api")
+    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:${reiVersion}")
+    
+    if (recipeViewer == "emi") {
+        modRuntimeOnly("dev.emi:emi-fabric:${emiVersion}+${rootProject.minecraftVersion}")
+    } else if (recipeViewer == "rei") {
+        modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${reiVersion}")
+    }
+    
+    // Runtime only mods
     modRuntimeOnly("maven.modrinth:sodium:${sodiumVersion}")
     modRuntimeOnly("maven.modrinth:indium:${indiumVersion}")
     
+    // Runtime only mods for testing
     modRuntimeOnly("maven.modrinth:resourceful-lib:YzWNEutS")
     modRuntimeOnly("maven.modrinth:resourceful-config:PlEObkl9")
     modRuntimeOnly("maven.modrinth:botarium:YgOh7n9M")

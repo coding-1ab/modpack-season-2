@@ -14,6 +14,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import org.antarcticgardens.cna.CNABlocks;
+import org.antarcticgardens.cna.CreateNewAge;
 import org.antarcticgardens.cna.compat.jei.JeiEnergisingSubcategory;
 import org.antarcticgardens.cna.util.RecipeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -87,18 +88,15 @@ public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAs
     @Override
     public void addAssemblyIngredients(List<Ingredient> list) {}
     
+    @SuppressWarnings("unchecked")
     @Override
     #if CNA_FABRIC
     public SequencedAssemblySubCategoryType getJEISubCategory() {
-        return new SequencedAssemblySubCategoryType(
-                    () -> JeiEnergisingSubcategory::new,
-                    () -> null,
-                    () -> null
-                );
+        return (SequencedAssemblySubCategoryType) CreateNewAge.getInstance().getPlatform().getEnergisingRecipeSubCategory();
     }
     #else
     public Supplier<Supplier<SequencedAssemblySubCategory>> getJEISubCategory() {
-        return () -> JeiEnergisingSubcategory::new;
+        return (Supplier<Supplier<SequencedAssemblySubCategory>>) CreateNewAge.getInstance().getPlatform().getEnergisingRecipeSubCategory();
     }
     #endif
 

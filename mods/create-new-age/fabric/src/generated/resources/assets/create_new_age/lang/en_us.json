@@ -60,7 +60,7 @@
   "create.tooltip.create_new_age.temperature.ps": "%s ˚T/s",
   "create.tooltip.create_new_age.transfers": "Transfers: ",
   "create.tooltip.create_new_age.using": "Using: ",
-  "create_new_age.monkey_edition": "Create: New Age [Monkey Edition]",
+  "emi.category.create_new_age.energising": "Energizing",
   "item.create_new_age.blank_circuit": "Blank Circuit",
   "item.create_new_age.copper_circuit": "Copper Circuit",
   "item.create_new_age.copper_wire": "Copper Wire",
