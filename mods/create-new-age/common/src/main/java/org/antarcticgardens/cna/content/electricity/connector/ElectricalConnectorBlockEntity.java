@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.AABB;
 import org.antarcticgardens.cna.CNABlockEntityTypes;
 import org.antarcticgardens.cna.content.electricity.network.ElectricalNetwork;
 import org.antarcticgardens.cna.content.electricity.network.NetworkEnergyStorage;
@@ -38,6 +39,7 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements IHave
     private final NetworkEnergyStorage storage;
 
     private boolean connectionsInitialized = false;
+    boolean needsInstanceUpdate = true;
 
     public ElectricalConnectorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -74,6 +76,8 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements IHave
                 connectorPositions.put(pos, wire);
             }
         }
+
+        needsInstanceUpdate = true;
     }
 
     @Override
@@ -104,6 +108,13 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements IHave
         }
     }
 
+    #if !CNA_FABRIC
+    @Override
+    public AABB getRenderBoundingBox() {
+        return INFINITE_EXTENT_AABB;
+    }
+    #endif
+
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         Lang.translate("tooltip.create_new_age.connector_info")
@@ -132,6 +143,8 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements IHave
             if (getLevel().getBlockEntity(e.getKey()) instanceof ElectricalConnectorBlockEntity connector)
                 connect(connector, e.getValue());
         }
+
+        needsInstanceUpdate = true;
     }
 
     protected void remove(Level level) {

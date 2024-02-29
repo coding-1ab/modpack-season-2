@@ -1,11 +1,11 @@
-package org.antarcticgardens.cna.content.electricity.network;
+package org.antarcticgardens.cna.util;
 
 import java.util.Objects;
 
-public class NetworkPathKey<T> {
+public class HashSortedPair<T> {
     private final T a, b;
 
-    public NetworkPathKey(T a, T b) {
+    public HashSortedPair(T a, T b) {
         if (a.hashCode() > b.hashCode()) {
             this.a = a;
             this.b = b;
@@ -22,7 +22,7 @@ public class NetworkPathKey<T> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof NetworkPathKey<?> key)
+        if (obj instanceof HashSortedPair<?> key)
             return key.a.equals(a) && key.b.equals(b);
 
         return false;

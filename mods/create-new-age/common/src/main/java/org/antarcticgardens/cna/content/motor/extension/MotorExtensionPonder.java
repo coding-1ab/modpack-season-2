@@ -24,7 +24,7 @@ public class MotorExtensionPonder {
                 nbt -> nbt.putFloat("Value", 1.0f));
 
         scene.world.modifyBlockEntity(util.grid.at(2, 2, 2), ElectricalConnectorBlockEntity.class, be ->
-                be.connect((ElectricalConnectorBlockEntity) be.getLevel().getBlockEntity(util.grid.at(4, 2, 2)), WireType.GOLD));
+                be.connect((ElectricalConnectorBlockEntity) be.getLevel().getBlockEntity(util.grid.at(4, 2, 2)), WireType.OVERCHARGED_GOLD));
         
         scene.idle(10);
         scene.world.showSection(util.select.position(2, 1, 2), Direction.DOWN);

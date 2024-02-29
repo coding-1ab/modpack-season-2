@@ -1,4 +1,4 @@
-package org.antarcticgardens.cna.tools;
+package org.antarcticgardens.cna.util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

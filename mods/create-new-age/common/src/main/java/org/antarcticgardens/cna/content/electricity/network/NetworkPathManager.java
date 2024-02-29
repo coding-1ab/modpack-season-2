@@ -2,6 +2,7 @@ package org.antarcticgardens.cna.content.electricity.network;
 
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlockEntity;
+import org.antarcticgardens.cna.util.HashSortedPair;
 
 import java.util.*;
 
@@ -42,7 +43,7 @@ public class NetworkPathManager {
         NetworkPath path = new NetworkPath();
 
         while (element != null) {
-            if (path.getLength() != 0 && context.getConnectionConductivity(new NetworkPathKey<>(element.connector, path.getFirstNode())) <= 0)
+            if (path.getLength() != 0 && context.getConnectionConductivity(new HashSortedPair<>(element.connector, path.getFirstNode())) <= 0)
                 return null;
 
             path.addNodeToBeginning(element.connector);

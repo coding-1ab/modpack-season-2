@@ -40,7 +40,7 @@ public class MotorPonder {
         scene.idle(20);
 
         scene.world.modifyBlockEntity(util.grid.at(2, 3, 2), ElectricalConnectorBlockEntity.class, 
-                (en) -> en.connect((ElectricalConnectorBlockEntity) en.getLevel().getBlockEntity(util.grid.at(4, 3, 2)), WireType.IRON));
+                (en) -> en.connect((ElectricalConnectorBlockEntity) en.getLevel().getBlockEntity(util.grid.at(4, 3, 2)), WireType.OVERCHARGED_IRON));
 
         scene.idle(5);
 

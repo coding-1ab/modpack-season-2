@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.*;
 import org.antarcticgardens.cna.CreateNewAge;
-import org.antarcticgardens.cna.tools.RaycastUtil;
+import org.antarcticgardens.cna.util.RaycastUtil;
 
 import java.util.List;
 

@@ -37,9 +37,10 @@ public class ElectricalConnectorBlock extends DirectionalBlock implements IBE<El
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (newState.is(CNABlocks.ELECTRICAL_CONNECTOR.get()))
             return;
-        
-        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof ElectricalConnectorBlockEntity connector)
+
+        if (level.getBlockEntity(pos) instanceof ElectricalConnectorBlockEntity connector) {
             connector.remove(level);
+        }
 
         super.onRemove(state, level, pos, newState, movedByPiston);
     }

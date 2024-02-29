@@ -38,15 +38,15 @@ public class ElectricWireItem extends Item {
     }
 
     public static ElectricWireItem newIronWire(Properties properties) {
-        return new ElectricWireItem(properties, WireType.IRON);
+        return new ElectricWireItem(properties, WireType.OVERCHARGED_IRON);
     }
 
     public static ElectricWireItem newGoldenWire(Properties properties) {
-        return new ElectricWireItem(properties, WireType.GOLD);
+        return new ElectricWireItem(properties, WireType.OVERCHARGED_GOLD);
     }
 
     public static ElectricWireItem newDiamondWire(Properties properties) {
-        return new ElectricWireItem(properties, WireType.DIAMOND);
+        return new ElectricWireItem(properties, WireType.OVERCHARGED_DIAMOND);
     }
 
     @Override
