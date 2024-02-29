@@ -619,7 +619,7 @@ public class Train {
 	public Pair<Train, Vec3> findCollidingTrain(Level level, Vec3 start, Vec3 end, ResourceKey<Level> dimension) {
 		Vec3 diff = end.subtract(start);
 		double maxDistanceSqr = Math.pow(AllConfigs.server().trains.maxAssemblyLength.get(), 2.0);
-		
+
 		Trains: for (Train train : Create.RAILWAYS.sided(level).trains.values()) {
 			if (train == this)
 				continue;
@@ -1244,6 +1244,21 @@ public class Train {
 			distance = Math.min(distance, (float) dce.positionAnchor.distanceToSqr(location));
 		}
 		return distance;
+	}
+
+	public List<ResourceKey<Level>> getPresentDimensions() {
+		return carriages.stream()
+				.flatMap((Carriage carriage) -> carriage.getPresentDimensions().stream())
+				.distinct()
+				.toList();
+	}
+
+	public Optional<BlockPos> getPositionInDimension(ResourceKey<Level> dimension) {
+		return carriages.stream()
+				.map(carriage -> carriage.getPositionInDimension(dimension))
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.findFirst();
 	}
 
 }

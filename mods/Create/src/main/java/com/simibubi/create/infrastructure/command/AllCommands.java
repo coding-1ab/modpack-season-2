@@ -31,10 +31,10 @@ public class AllCommands {
 				.then(FixLightingCommand.register())
 				.then(DebugInfoCommand.register())
 				.then(HighlightCommand.register())
-				.then(KillTrainCommand.register())
 				.then(PassengerCommand.register())
 				.then(CouplingCommand.register())
 				.then(CloneCommand.register())
+				.then(TrainCommand.register())
 				.then(GlueCommand.register())
 
 
