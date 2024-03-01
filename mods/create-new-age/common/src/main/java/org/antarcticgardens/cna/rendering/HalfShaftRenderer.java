@@ -1,4 +1,4 @@
-package org.antarcticgardens.cna.util;
+package org.antarcticgardens.cna.rendering;
 
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;

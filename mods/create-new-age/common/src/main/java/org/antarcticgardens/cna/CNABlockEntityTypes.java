@@ -27,7 +27,7 @@ import org.antarcticgardens.cna.content.motor.variants.BasicMotorVariant;
 import org.antarcticgardens.cna.content.nuclear.reactor.fuelacceptor.ReactorFuelAcceptorBlockEntity;
 import org.antarcticgardens.cna.content.nuclear.reactor.rod.ReactorRodBlockEntity;
 import org.antarcticgardens.cna.content.nuclear.reactor.vent.ReactorHeatVentBlockEntity;
-import org.antarcticgardens.cna.util.HalfShaftRenderer;
+import org.antarcticgardens.cna.rendering.HalfShaftRenderer;
 
 import static org.antarcticgardens.cna.CreateNewAge.REGISTRATE;
 

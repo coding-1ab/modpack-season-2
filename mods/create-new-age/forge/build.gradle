@@ -29,7 +29,10 @@ loom {
     loom {
         forge {
             convertAccessWideners = true
-            mixinConfig("create_new_age-common.mixins.json")
+            mixinConfigs(
+                    "create_new_age-common.mixins.json",
+                    "create_new_age-forge.mixins.json"
+            )
         }
     }
     

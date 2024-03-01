@@ -1,12 +1,12 @@
 package org.antarcticgardens.cna;
 
+import com.mojang.math.Axis;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.content.kinetics.BlockStressDefaults;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
 import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.ModelGen;
-import com.simibubi.create.foundation.data.TagGen;
 import com.tterrag.registrate.providers.loot.RegistrateBlockLootTables;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.tags.BlockTags;
@@ -42,6 +42,9 @@ import org.antarcticgardens.cna.content.nuclear.reactor.fuelacceptor.ReactorFuel
 import org.antarcticgardens.cna.content.nuclear.reactor.rod.ReactorRodBlock;
 import org.antarcticgardens.cna.content.nuclear.reactor.vent.ReactorHeatVentBlock;
 import org.antarcticgardens.cna.data.CNABlockStateGen;
+import org.antarcticgardens.cna.rendering.ItemShaftRenderer;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import static org.antarcticgardens.cna.CreateNewAge.REGISTRATE;
 
@@ -59,6 +62,7 @@ public class CNABlocks {
                     .tag(BlockTags.MINEABLE_WITH_AXE)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .item(AssemblyOperatorBlockItem::new)
+                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.5f, 0.0f, 0.0f), Axis.XP.rotationDegrees(90.0f)))
                     .build()
                     .register();
 
@@ -71,6 +75,7 @@ public class CNABlocks {
                     .tag(BlockTags.MINEABLE_WITH_AXE)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .item(AssemblyOperatorBlockItem::new)
+                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.5f, 0.0f, 0.0f), Axis.XP.rotationDegrees(90.0f)))
                     .build()
                     .register();
 
@@ -83,6 +88,7 @@ public class CNABlocks {
                     .tag(BlockTags.MINEABLE_WITH_AXE)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .item(AssemblyOperatorBlockItem::new)
+                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.5f, 0.0f, 0.0f), Axis.XP.rotationDegrees(90.0f)))
                     .build()
                     .register();
 
@@ -155,7 +161,9 @@ public class CNABlocks {
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .blockstate((c, p) -> p.directionalBlock(c.get(), p.models().getExistingFile(p.modLoc("block/carbon_brushes/base"))))
-                    .simpleItem()
+                    .item()
+                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.0f), new Quaternionf()))
+                    .build()
                     .register();
     
     public static final BlockEntry<MotorBlock> BASIC_MOTOR =
@@ -166,6 +174,7 @@ public class CNABlocks {
                     .blockstate(new MotorBlockStateGen("motor")::generate)
                     .properties(properties -> properties.strength(3.0f))
                     .item()
+                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.0f), Axis.XP.rotationDegrees(90.0f)))
                     .transform(b -> b.model((c, p) -> 
                             p.withExistingParent(c.getName(), p.modLoc("block/" + c.getName() + "/horizontal"))).build())
                     .register();
@@ -178,6 +187,7 @@ public class CNABlocks {
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .blockstate(new MotorBlockStateGen("motor")::generate)
                     .item()
+                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.0f), Axis.XP.rotationDegrees(90.0f)))
                     .transform(b -> b.model((c, p) ->
                             p.withExistingParent(c.getName(), p.modLoc("block/" + c.getName() + "/horizontal"))).build())
                     .register();
@@ -191,6 +201,7 @@ public class CNABlocks {
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .blockstate(new MotorBlockStateGen("motor")::generate)
                     .item()
+                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.0f), Axis.XP.rotationDegrees(90.0f)))
                     .transform(b -> b.model((c, p) ->
                             p.withExistingParent(c.getName(), p.modLoc("block/" + c.getName() + "/horizontal"))).build())
                     .register();

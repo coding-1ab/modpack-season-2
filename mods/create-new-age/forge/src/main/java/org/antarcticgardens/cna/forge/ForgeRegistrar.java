@@ -1,8 +1,11 @@
 package org.antarcticgardens.cna.forge;
 
+import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRenderer;
+import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -14,6 +17,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.antarcticgardens.cna.CreateNewAge;
 import org.antarcticgardens.cna.CNABlocks;
+import org.antarcticgardens.cna.forge.mixin.ItemAccessor;
 import org.antarcticgardens.cna.platform.PlatformRegistrar;
 
 public class ForgeRegistrar implements PlatformRegistrar {
@@ -40,6 +44,11 @@ public class ForgeRegistrar implements PlatformRegistrar {
         RECIPE_SERIALIZER_REGISTER.register(name, () -> serializer);
         
         return type;
+    }
+
+    @Override
+    public void registerCustomItemRenderer(Item item, CustomRenderedItemModelRenderer renderer) {
+        ((ItemAccessor) item).setRenderProperties(SimpleCustomRenderer.create(item, renderer));
     }
 
     @Override
