@@ -11,6 +11,7 @@ import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.ModelGen;
 import com.tterrag.registrate.providers.loot.RegistrateBlockLootTables;
 import com.tterrag.registrate.util.entry.BlockEntry;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
@@ -53,6 +54,7 @@ import org.joml.Vector3f;
 
 import static org.antarcticgardens.cna.CreateNewAge.REGISTRATE;
 
+@SuppressWarnings("removal")
 public class CNABlocks {
     static {
         REGISTRATE.defaultCreativeTab(CreateNewAge.CREATIVE_TAB_KEY);
@@ -327,6 +329,7 @@ public class CNABlocks {
                     .transform(b -> b.onRegister(CreateRegistrate.connectedTextures(() -> new SimpleCTBehaviour(CNASpriteShifts.REACTOR_GLASS))))
                     .tag(CNATags.Block.STOPS_RADIATION.blockTag)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .addLayer(() -> RenderType::cutout)
                     .simpleItem()
                     .register();
 
@@ -358,6 +361,7 @@ public class CNABlocks {
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .blockstate((c, p) -> p.simpleBlock(c.get(), p.models().getExistingFile(p.modLoc(c.getName()))))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .addLayer(() -> RenderType::cutout)
                     .simpleItem()
                     .register();
 
@@ -367,6 +371,7 @@ public class CNABlocks {
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .blockstate((c, p) -> p.simpleBlock(c.get(), p.models().getExistingFile(p.modLoc(c.getName()))))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .addLayer(() -> RenderType::cutout)
                     .simpleItem()
                     .register();
 

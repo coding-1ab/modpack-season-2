@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "bottom=false,top=false": {
+      "model": "create_new_age:block/battery_middle"
+    },
+    "bottom=false,top=true": {
+      "model": "create_new_age:block/battery_top"
+    },
+    "bottom=true,top=false": {
+      "model": "create_new_age:block/battery_bottom"
+    },
+    "bottom=true,top=true": {
+      "model": "create_new_age:block/battery_single"
+    }
+  }
+}
