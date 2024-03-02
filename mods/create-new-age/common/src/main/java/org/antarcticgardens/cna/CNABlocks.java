@@ -1,9 +1,11 @@
 package org.antarcticgardens.cna;
 
 import com.mojang.math.Axis;
+import com.simibubi.create.content.fluids.tank.FluidTankModel;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.content.kinetics.BlockStressDefaults;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
+import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.ModelGen;
@@ -16,6 +18,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
+import org.antarcticgardens.cna.content.electricity.battery.BatteryBlock;
+import org.antarcticgardens.cna.content.electricity.battery.BatteryBlockStateGen;
+import org.antarcticgardens.cna.content.electricity.battery.BatteryModel;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesBlock;
 import org.antarcticgardens.cna.content.electricity.generation.coil.GeneratorCoilBlock;
@@ -376,6 +381,16 @@ public class CNABlocks {
                                     lt.applyExplosionDecay(b, LootItem.lootTableItem(CNAItems.THORIUM)
                                             .apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE))))))
                     .item(AssemblyOperatorBlockItem::new)
+                    .build()
+                    .register();
+
+
+    public static final BlockEntry<BatteryBlock> BATTERY =
+            REGISTRATE.block("battery", BatteryBlock::new)
+                    .blockstate(new BatteryBlockStateGen()::generate)
+                    .onRegister(CreateRegistrate.blockModel(() -> BatteryModel::new))
+                    .item()
+                    .model(AssetLookup.customBlockItemModel("battery_single"))
                     .build()
                     .register();
 

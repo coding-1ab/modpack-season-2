@@ -1,0 +1,7 @@
+{
+  "parent": "create:block/fluid_tank/block_bottom",
+  "textures": {
+    "0": "create_new_age:block/battery_top",
+    "1": "create_new_age:block/battery_side"
+  }
+}
