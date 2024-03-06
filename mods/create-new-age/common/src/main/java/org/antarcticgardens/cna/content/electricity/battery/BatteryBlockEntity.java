@@ -10,11 +10,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
 import java.util.List;
 
 public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockEntityContainer {
-    public static int MAX_SIZE = 3;
+    public static final int MAX_SIZE = 3;
+    public static final int SYNC_RATE = 8;
 
     private int size = 1;
     private int height = 1;
@@ -22,6 +24,9 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
     private BlockPos controller = null;
     private BlockPos lastKnownPos = null;
     private boolean updateConnectivity = false;
+
+    private int syncCooldown = 0;
+    private boolean syncQueued = false;
 
     public BatteryBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -33,35 +38,19 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
     }
 
     @Override
-    public void removeController(boolean keepContents) {
-        if (!level.isClientSide()) {
-            updateConnectivity = true;
-
-            controller = null;
-            size = 1;
-            height = 1;
-
-            BlockState state = getBlockState();
-            if (state.getBlock() instanceof BatteryBlock) {
-                state = state.setValue(BatteryBlock.BOTTOM, true)
-                        .setValue(BatteryBlock.TOP, true);
-                getLevel().setBlock(worldPosition, state, 16 | 4 | 2 | 1);
-            }
-
-            setChanged();
-            sendData();
-        }
-    }
-
-    @Override
     public void tick() {
         super.tick();
+
+        if (syncCooldown > 0) {
+            if (--syncCooldown == 0 && syncQueued)
+                sendData();
+        }
 
         if (lastKnownPos == null) {
             lastKnownPos = worldPosition;
         } else if (!lastKnownPos.equals(worldPosition) && worldPosition != null) {
             onPositionChanged();
-            lastKnownPos = worldPosition;
+            return;
         }
 
         if (updateConnectivity)
@@ -90,6 +79,10 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
     protected void read(CompoundTag tag, boolean clientPacket) {
         super.read(tag, clientPacket);
 
+        BlockPos controllerBefore = controller;
+        int prevSize = size;
+        int prevHeight = height;
+
         updateConnectivity = tag.contains("UpdateConnectivity");
 
         if (tag.contains("LastKnownPos"))
@@ -98,8 +91,19 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
         if (tag.contains("Controller")) {
             controller = NbtUtils.readBlockPos(tag.getCompound("Controller"));
         } else {
+            controller = null;
             size = tag.getInt("Size");
             height = tag.getInt("Height");
+        }
+
+        if (clientPacket) {
+            boolean changeOfController = controllerBefore == null ? controller != null : !controllerBefore.equals(controller);
+            if (changeOfController || prevSize != size || prevHeight != height) {
+                if (hasLevel())
+                    level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 16);
+
+                invalidateRenderBoundingBox();
+            }
         }
     }
 
@@ -110,9 +114,43 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
             ConnectivityHandler.formMulti(this);
     }
 
+    @Override
+    public void sendData() {
+        if (syncCooldown > 0) {
+            syncQueued = true;
+            return;
+        }
+
+        super.sendData();
+
+        syncQueued = false;
+        syncCooldown = SYNC_RATE;
+    }
+
     private void onPositionChanged() {
         removeController(true);
         lastKnownPos = worldPosition;
+    }
+
+    @Override
+    public void removeController(boolean keepContents) {
+        if (!level.isClientSide()) {
+            updateConnectivity = true;
+
+            controller = null;
+            size = 1;
+            height = 1;
+
+            BlockState state = getBlockState();
+            if (state.getBlock() instanceof BatteryBlock) {
+                state = state.setValue(BatteryBlock.BOTTOM, true)
+                        .setValue(BatteryBlock.TOP, true);
+                getLevel().setBlock(worldPosition, state, 16 | 4 | 2 | 1);
+            }
+
+            setChanged();
+            sendData();
+        }
     }
 
     @Override
@@ -124,7 +162,7 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
     public BatteryBlockEntity getControllerBE() {
         if (isController())
             return this;
-        else if (level != null && level.getBlockEntity(getController()) instanceof BatteryBlockEntity be)
+        else if (level != null && level.getBlockEntity(controller) instanceof BatteryBlockEntity be)
             return be;
         else
             return null;
@@ -136,8 +174,19 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
     }
 
     @Override
+    protected AABB createRenderBoundingBox() {
+        if (isController())
+            return super.createRenderBoundingBox().expandTowards(size - 1, height - 1, size - 1);
+        else
+            return super.createRenderBoundingBox();
+    }
+
+    @Override
     public void setController(BlockPos pos) {
-        if (!pos.equals(controller) && !pos.equals(worldPosition)) {
+        if (level.isClientSide() && !isVirtual())
+            return;
+
+        if (!pos.equals(controller)) {
             controller = pos;
 
             setChanged();
@@ -159,7 +208,7 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
     public void notifyMultiUpdated() {
         BlockState state = getBlockState();
         if (state.getBlock() instanceof BatteryBlock) {
-            state.setValue(BatteryBlock.BOTTOM, getController().getY() == getBlockPos().getY())
+            state = state.setValue(BatteryBlock.BOTTOM, getController().getY() == getBlockPos().getY())
                     .setValue(BatteryBlock.TOP, getController().getY() + height - 1 == getBlockPos().getY());
             level.setBlock(worldPosition, state, 4 | 2);
         }

@@ -392,6 +392,7 @@ public class CNABlocks {
 
     public static final BlockEntry<BatteryBlock> BATTERY =
             REGISTRATE.block("battery", BatteryBlock::new)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
                     .blockstate(new BatteryBlockStateGen()::generate)
                     .onRegister(CreateRegistrate.blockModel(() -> BatteryModel::new))
                     .item()

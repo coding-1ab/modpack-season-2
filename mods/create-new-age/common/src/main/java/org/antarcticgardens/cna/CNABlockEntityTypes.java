@@ -6,6 +6,7 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftInstance;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import org.antarcticgardens.cna.content.electricity.battery.BatteryBlockEntity;
+import org.antarcticgardens.cna.content.electricity.battery.BatteryRenderer;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlockEntity;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorInstance;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorRenderer;
@@ -129,6 +130,7 @@ public class CNABlockEntityTypes {
     public static final BlockEntityEntry<BatteryBlockEntity> BATTERY = REGISTRATE
             .blockEntity("battery", BatteryBlockEntity::new)
             .validBlocks(CNABlocks.BATTERY)
+            .renderer(() -> BatteryRenderer::new)
             .register();
 
     public static void load() {  }

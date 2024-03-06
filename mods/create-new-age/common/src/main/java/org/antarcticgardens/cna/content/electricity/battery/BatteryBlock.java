@@ -31,6 +31,9 @@ public class BatteryBlock extends Block implements IBE<BatteryBlockEntity> {
 
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        if (oldState.getBlock() == state.getBlock() || movedByPiston)
+            return;
+
         withBlockEntityDo(level, pos, BatteryBlockEntity::updateConnectivity);
     }
 
