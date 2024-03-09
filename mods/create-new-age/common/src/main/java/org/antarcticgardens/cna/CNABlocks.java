@@ -395,6 +395,7 @@ public class CNABlocks {
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .blockstate(new BatteryBlockStateGen()::generate)
                     .onRegister(CreateRegistrate.blockModel(() -> BatteryModel::new))
+                    .addLayer(() -> RenderType::cutoutMipped)
                     .item()
                     .model(AssetLookup.customBlockItemModel("battery_single"))
                     .build()

@@ -28,7 +28,7 @@ public class BatteryRenderer extends SafeBlockEntityRenderer<BatteryBlockEntity>
             msr.translate(be.getWidth() / 2f, 0.5, be.getWidth() / 2f);
 
             float dialPivot = 5.75f / 16;
-            float progress = 0.0f;
+            float progress = be.gauge.getValue(partialTicks);
 
             for (Direction d : Iterate.horizontalDirections) {
                 ms.pushPose();
