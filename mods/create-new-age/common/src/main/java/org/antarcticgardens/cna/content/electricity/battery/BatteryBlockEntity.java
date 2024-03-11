@@ -36,11 +36,12 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
     private int syncCooldown = 0;
     private boolean syncQueued = false;
 
-    private final SimpleEnergyStorage storage = new SimpleEnergyStorage(getBlockCapacity())
+    protected final SimpleEnergyStorage storage = new SimpleEnergyStorage(getBlockCapacity())
             .setMaxInsert(2000) // TODO: Config?
             .setMaxExtract(2000)
             .onFinalCommit(this::notifyUpdate);
-    private SimpleEnergyStorage exposedStorage = storage;
+
+    private SimpleEnergyStorage exposedStorage;
 
     protected final LerpedFloat gauge = LerpedFloat.linear();
 
@@ -84,6 +85,8 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
         sendData();
         if (level.isClientSide)
             invalidateRenderBoundingBox();
+        else
+            refreshExposed();
     }
 
     @Override
@@ -206,7 +209,11 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
                 getLevel().setBlock(worldPosition, state, 16 | 4 | 2 | 1);
             }
 
+            SimpleEnergyStorage oldExposed = getEnergyStorage();
             refreshExposed();
+            long amount = exposedStorage.internalInsert(oldExposed.internalExtract(exposedStorage.getCapacity(), true), true);
+            exposedStorage.internalInsert(oldExposed.internalExtract(amount, false), false);
+
             setChanged();
             sendData();
         }
@@ -295,11 +302,17 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
         if (isController()) {
             applySize(getTotalSize());
 
-            for (int yOffset = 0; yOffset < height; yOffset++)
-                for (int xOffset = 0; xOffset < size; xOffset++)
-                    for (int zOffset = 0; zOffset < size; zOffset++)
-                        if (level.getBlockEntity(worldPosition.offset(xOffset, yOffset, zOffset)) instanceof BatteryBlockEntity be)
+            for (int yOffset = 0; yOffset < height; yOffset++) {
+                for (int xOffset = 0; xOffset < size; xOffset++) {
+                    for (int zOffset = 0; zOffset < size; zOffset++) {
+                        if (level.getBlockEntity(worldPosition.offset(xOffset, yOffset, zOffset)) instanceof BatteryBlockEntity be) {
+                            long amount = storage.internalInsert(be.storage.internalExtract(storage.getCapacity(), true), true);
+                            storage.internalInsert(be.storage.internalExtract(amount, false), false);
                             be.refreshExposed();
+                        }
+                    }
+                }
+            }
         }
 
         setChanged();
