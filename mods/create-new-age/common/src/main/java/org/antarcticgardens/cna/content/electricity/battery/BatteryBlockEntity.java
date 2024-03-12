@@ -203,7 +203,7 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
             height = 1;
 
             BlockState state = getBlockState();
-            if (state.getBlock() instanceof BatteryBlock) {
+            if (BatteryBlock.isBattery(state)) {
                 state = state.setValue(BatteryBlock.BOTTOM, true)
                         .setValue(BatteryBlock.TOP, true);
                 getLevel().setBlock(worldPosition, state, 16 | 4 | 2 | 1);
@@ -293,7 +293,7 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
     @Override
     public void notifyMultiUpdated() {
         BlockState state = getBlockState();
-        if (state.getBlock() instanceof BatteryBlock) {
+        if (BatteryBlock.isBattery(state)) {
             state = state.setValue(BatteryBlock.BOTTOM, getController().getY() == getBlockPos().getY())
                     .setValue(BatteryBlock.TOP, getController().getY() + height - 1 == getBlockPos().getY());
             level.setBlock(worldPosition, state, 4 | 2);

@@ -58,4 +58,8 @@ public class BatteryBlock extends Block implements IBE<BatteryBlockEntity> {
     public BlockEntityType<? extends BatteryBlockEntity> getBlockEntityType() {
         return CNABlockEntityTypes.BATTERY.get();
     }
+
+    public static boolean isBattery(BlockState state) {
+        return state.getBlock() instanceof BatteryBlock;
+    }
 }
