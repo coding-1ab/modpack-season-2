@@ -3,6 +3,8 @@ package org.antarcticgardens.cna.content.electricity.battery;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -12,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.cna.CNABlockEntityTypes;
+import org.jetbrains.annotations.Nullable;
 
 public class BatteryItem extends BlockItem {
     public BatteryItem(Block block, Properties properties) {
@@ -90,5 +93,14 @@ public class BatteryItem extends BlockItem {
                 super.place(context);
             }
         }
+    }
+
+    @Override
+    protected boolean updateCustomBlockEntityTag(BlockPos pos, Level level, @Nullable Player player, ItemStack stack, BlockState state) {
+        if (level.getServer() != null) {
+            stack.removeTagKey("BlockEntityTag");
+        }
+
+        return super.updateCustomBlockEntityTag(pos, level, player, stack, state);
     }
 }

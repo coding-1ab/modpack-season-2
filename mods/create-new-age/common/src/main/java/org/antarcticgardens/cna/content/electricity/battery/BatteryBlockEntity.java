@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.antarcticgardens.cna.CNABlockEntityTypes;
+import org.antarcticgardens.cna.util.StringFormatUtil;
 import org.antarcticgardens.esl.energy.EnergyStorage;
 import org.antarcticgardens.esl.energy.SimpleEnergyStorage;
 
@@ -166,7 +167,7 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
         Lang.translate("tooltip.create_new_age.energy_stats")
                 .style(ChatFormatting.WHITE).forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_storage", storage.getStoredEnergy(), storage.getCapacity())
+        Lang.translate("tooltip.create_new_age.energy_storage", StringFormatUtil.formatLong(storage.getStoredEnergy()), StringFormatUtil.formatLong(storage.getCapacity()))
                 .style(ChatFormatting.AQUA).forGoggles(tooltip);
 
         return IHaveGoggleInformation.super.addToGoggleTooltip(tooltip, isPlayerSneaking);
@@ -198,6 +199,7 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
             if (!keepContents)
                 applySize(1);
 
+            System.out.println("Removing controller for " + getBlockPos());
             controller = null;
             size = 1;
             height = 1;
@@ -265,6 +267,8 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
 
         if (!pos.equals(controller)) {
             controller = pos;
+
+            System.out.println("Setting controller " + pos + " for " + getBlockPos());
 
             refreshExposed();
             setChanged();
