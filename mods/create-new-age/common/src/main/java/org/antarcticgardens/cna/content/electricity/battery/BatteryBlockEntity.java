@@ -209,11 +209,10 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
                 getLevel().setBlock(worldPosition, state, 16 | 4 | 2 | 1);
             }
 
-            SimpleEnergyStorage oldExposed = getEnergyStorage();
-            refreshExposed();
-            long amount = exposedStorage.internalInsert(oldExposed.internalExtract(exposedStorage.getCapacity(), true), true);
-            exposedStorage.internalInsert(oldExposed.internalExtract(amount, false), false);
+            long amount = storage.internalInsert(getEnergyStorage().internalExtract(getBlockCapacity(), true), true);
+            storage.internalInsert(getEnergyStorage().internalExtract(amount, false), false);
 
+            refreshExposed();
             setChanged();
             sendData();
         }
