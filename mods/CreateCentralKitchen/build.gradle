@@ -159,17 +159,17 @@ dependencies {
     //implementation fg.deobf("curse.maven:cultural-delight-574622:${cultural_delight_file}")
     //implementation fg.deobf("curse.maven:pineapple-delight-687974:${pineapple_delight_file}")
     ////abnormals mods addons
-    /*implementation fg.deobf("com.teamabnormals:blueprint:${blueprint_version}")
-    implementation fg.deobf("curse.maven:abnormals-delight-442719:${abnormals_delight_file}")
-    implementation fg.deobf("curse.maven:atmospheric-362393:${atmospheric_file}")
+    implementation fg.deobf("com.teamabnormals:blueprint:${blueprint_version}")
+    //implementation fg.deobf("curse.maven:abnormals-delight-442719:${abnormals_delight_file}")
+    //implementation fg.deobf("curse.maven:atmospheric-362393:${atmospheric_file}")
     implementation fg.deobf("curse.maven:autumnity-365045:${autumnity_file}")
     implementation fg.deobf("curse.maven:buzzier-bees-355458:${buzzier_bees_file}")
-    implementation fg.deobf("curse.maven:environmental-388992:${environmental_file}")
-    implementation fg.deobf("curse.maven:neapolitan-382016:${neapolitan_file}")
-    implementation fg.deobf("curse.maven:upgrade-aquatic-326895:${upgrade_aquatic_file}")
-    implementation fg.deobf("curse.maven:peculiars-418551:${peculiars_file}")
-    implementation fg.deobf("curse.maven:respiteful-836471:${respiteful_file}")
-    implementation fg.deobf("curse.maven:seasonals-416471:${seasonals_file}")*/
+    //implementation fg.deobf("curse.maven:environmental-388992:${environmental_file}")
+    //implementation fg.deobf("curse.maven:neapolitan-382016:${neapolitan_file}")
+    //implementation fg.deobf("curse.maven:upgrade-aquatic-326895:${upgrade_aquatic_file}")
+    //implementation fg.deobf("curse.maven:peculiars-418551:${peculiars_file}")
+    //implementation fg.deobf("curse.maven:respiteful-836471:${respiteful_file}")
+    //implementation fg.deobf("curse.maven:seasonals-416471:${seasonals_file}")
     //implementation fg.deobf("curse.maven:cookielicious-409577:${cookielicious_file}")
     //implementation fg.deobf("curse.maven:exquisito-859262:${exquisito_file}") // I believe the author disables 3rd party download
     //independent mods

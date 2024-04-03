@@ -1,6 +1,22 @@
 {
   "values": [
     {
+      "id": "create_central_kitchen:flowing_sap",
+      "required": false
+    },
+    {
+      "id": "create_central_kitchen:sap",
+      "required": false
+    },
+    {
+      "id": "create_central_kitchen:flowing_syrup",
+      "required": false
+    },
+    {
+      "id": "create_central_kitchen:syrup",
+      "required": false
+    },
+    {
       "id": "create_central_kitchen:flowing_tomato_sauce",
       "required": false
     },
