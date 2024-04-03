@@ -9,10 +9,15 @@ import it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import plus.dragons.createcentralkitchen.CentralKitchen;
+import plus.dragons.createcentralkitchen.entry.item.FDItemEntries;
+import plus.dragons.createcentralkitchen.entry.item.MDItemEntries;
+import plus.dragons.createcentralkitchen.foundation.utility.Mods;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -53,6 +58,7 @@ public class CckCreativeModeTab {
             List<Item> items = new LinkedList();
             items.addAll(this.collectItems());
             items.addAll(this.collectBlocks());
+            items.addAll(this.collectFluid());
             filterAndOutput(output, items);
         }
 
@@ -87,16 +93,38 @@ public class CckCreativeModeTab {
             return items;
         }
 
+        private List<Item> collectFluid() {
+            List<Item> items = new ReferenceArrayList();
+            Iterator var3 = REGISTRATE.getAll(Registries.FLUID).iterator();
+
+            while(var3.hasNext()) {
+                RegistryEntry<ForgeFlowingFluid> entry = (RegistryEntry)var3.next();
+                ForgeFlowingFluid fluid = entry.get();
+                if (fluid.getBucket()!=Items.AIR) {
+                    items.add(fluid.getBucket());
+                }
+            }
+
+            return items;
+        }
+
         private static void filterAndOutput(CreativeModeTab.Output output, List<Item> items) {
             Iterator var4 = items.iterator();
             while(var4.hasNext()) {
                 Item item = (Item)var4.next();
                 if(item.toString().contains("incomplete")) continue;
-                if(item.toString().equals("create:blaze_burner")) continue;
-                if(item.toString().equals("create_central_kitchen:create_tab_icon")) continue;
+                if(item.toString().contains("guide")) continue;
+                if(item.toString().contains("blaze_burner")) continue;
+                if(item.toString().contains("creative_tab_icon")) continue;
+                if(item.toString().contains("pumpkin_pie")) continue;
                 output.accept(item);
             }
-
+            if (Mods.isLoaded(Mods.FD))
+                output.accept(FDItemEntries.COOKING_GUIDE.asStack());
+//            if (Mods.isLoaded(Mods.FR))
+//                output.accept(FRItemEntries.BREWING_GUIDE.asStack());
+            if (Mods.isLoaded(Mods.MD))
+                output.accept(MDItemEntries.MINERS_COOKING_GUIDE.asStack());
         }
     }
 }
