@@ -85,7 +85,7 @@ public class CckCreativeModeTab {
             while(var3.hasNext()) {
                 RegistryEntry<Item> entry = (RegistryEntry)var3.next();
                 Item item = entry.get();
-                if (!(item instanceof BlockItem)) {
+                if (!(item instanceof BlockItem) && !(item instanceof BucketItem)) {
                     items.add(item);
                 }
             }
@@ -100,7 +100,7 @@ public class CckCreativeModeTab {
             while(var3.hasNext()) {
                 RegistryEntry<ForgeFlowingFluid> entry = (RegistryEntry)var3.next();
                 ForgeFlowingFluid fluid = entry.get();
-                if (fluid.getBucket()!=Items.AIR) {
+                if (fluid.getBucket()!=Items.AIR && !items.contains(fluid.getBucket())) {
                     items.add(fluid.getBucket());
                 }
             }
@@ -116,7 +116,6 @@ public class CckCreativeModeTab {
                 if(item.toString().contains("guide")) continue;
                 if(item.toString().contains("blaze_burner")) continue;
                 if(item.toString().contains("creative_tab_icon")) continue;
-                if(item.toString().contains("pumpkin_pie")) continue;
                 output.accept(item);
             }
             if (Mods.isLoaded(Mods.FD))
