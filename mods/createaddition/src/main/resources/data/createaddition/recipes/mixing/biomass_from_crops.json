@@ -1,12 +1,39 @@
 {
   "type": "create:mixing",
   "ingredients": [
-	{
-      "tag": "forge:crops"
-    },
-    {
-      "tag": "forge:crops"
-    },
+    [
+      {
+        "count": 2,
+        "tag": "forge:crops"
+      },
+      {
+        "flowers": 2,
+        "tag": "minecraft:flowers"
+      },
+      {
+        "item": "minecraft:honeycomb"
+      },
+      {
+        "count": 3,
+        "tag": "minecraft:leaves"
+      },
+      {
+        "count": 2,
+        "tag": "createaddition:plant_foods"
+      },
+      {
+        "count": 3,
+        "tag": "createaddition:plants"
+      },
+      {
+        "count": 3,
+        "tag": "minecraft:saplings"
+      },
+      {
+        "count": 8,
+        "item": "minecraft:stick"
+      }
+    ],
     {
       "fluidTag": "forge:plantoil",
       "amount": 100
