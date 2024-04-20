@@ -7,6 +7,18 @@ Original assets - nullBlade
 ## Outside contributions
 
 ### Assets
+
+#### 1.2
+Most models were retouched/redone by AndromedaGalaxy29 <br>
+This includes:
+ - magnets
+ - the reactor
+ - everything to do with heating
+ - all items
+ - 
+Some model changes to the coil were done by Gertimoshka <br>
+
+#### 1.1
 Energiser model — ProfBones <br>
 Carbon Brushes model — ProfBones <br>
 Connector model — ProfBones <br>
@@ -31,7 +43,7 @@ Motors configuration - Anton Masyakin
 Spanish — Albertosaurio65 <br>
 Simplified Chinese — 叁了个肆@Bilibili
 
-# Legacy outside contributions
+# Outside contribution that were never released
 {Used during developement of 1.1} Pipe Texture — Lunar Antic <br>
 
 
