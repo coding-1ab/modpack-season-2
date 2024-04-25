@@ -143,13 +143,10 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 
 		if(remainingBurnTime < 1)
 
-		if(recipeCache.isEmpty())
-			return;
+		if(recipeCache.isEmpty()) return;
 
-		if(tankInventory.getFluidAmount() < 100)
-			return;
-		if(remainingBurnTime > MAX_HEAT_CAPACITY)
-			return;
+		if(tankInventory.getFluidAmount() < 100) return;
+		if(remainingBurnTime > MAX_HEAT_CAPACITY) return;
 
 		// Added try catch because this crashes for some reason for a minority of players, very strange.
 		try {
@@ -199,22 +196,18 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 
 		burningTick();
 
-		if (isCreative)
-			return;
+		if (isCreative) return;
 
-		if (remainingBurnTime > 0)
-			remainingBurnTime--;
+		if (remainingBurnTime > 0) remainingBurnTime--;
 
 		if (activeFuel == FuelType.NORMAL)
 			updateBlockState();
-		if (remainingBurnTime > 0)
-			return;
+		if (remainingBurnTime > 0) return;
 
 		if (activeFuel == FuelType.SPECIAL) {
 			activeFuel = FuelType.NORMAL;
 			remainingBurnTime = MAX_HEAT_CAPACITY / 2;
-		} else
-			activeFuel = FuelType.NONE;
+		} else activeFuel = FuelType.NONE;
 
 		updateBlockState();
 	}
@@ -258,12 +251,9 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 		if (!isCreative) {
 			compound.putInt("fuelLevel", activeFuel.ordinal());
 			compound.putInt("burnTimeRemaining", remainingBurnTime);
-		} else
-			compound.putBoolean("isCreative", true);
-		if (goggles)
-			compound.putBoolean("Goggles", true);
-		if (hat)
-			compound.putBoolean("TrainHat", true);
+		} else compound.putBoolean("isCreative", true);
+		if (goggles) compound.putBoolean("Goggles", true);
+		if (hat) compound.putBoolean("TrainHat", true);
 		compound.put("TankContent", tankInventory.writeToNBT(new CompoundTag()));
 		super.write(compound, clientPacket);
 	}
@@ -310,12 +300,10 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 		IFluidHandler tehandler = tecap.orElse(null);
 		if (tehandler.getTankCapacity(0) - tehandler.getFluidInTank(0).getAmount() < 1000) return false;
 
-		if(!simulate)
-			tehandler.fill(new FluidStack(handler.getFluidInTank(0).getFluid(), 1000), FluidAction.EXECUTE);
+		if(!simulate) tehandler.fill(new FluidStack(handler.getFluidInTank(0).getFluid(), 1000), FluidAction.EXECUTE);
 		//if (!player.isCreative())
 		//	player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET, 1));
-		if(!simulate)
-			level.playSound(null, getBlockPos(), SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, .125f + level.random.nextFloat() * .125f, .75f - level.random.nextFloat() * .25f);
+		if(!simulate) level.playSound(null, getBlockPos(), SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, .125f + level.random.nextFloat() * .125f, .75f - level.random.nextFloat() * .25f);
 		return true;
 	}
 
@@ -425,10 +413,8 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	}
 
 	protected void spawnParticles(BlazeBurnerBlock.HeatLevel heatLevel, double burstMult) {
-		if (level == null)
-			return;
-		if (heatLevel == BlazeBurnerBlock.HeatLevel.NONE)
-			return;
+		if (level == null) return;
+		if (heatLevel == BlazeBurnerBlock.HeatLevel.NONE) return;
 
 		RandomSource r = level.getRandom();
 
@@ -436,10 +422,8 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 		Vec3 v = c.add(VecHelper.offsetRandomly(Vec3.ZERO, r, .125f)
 			.multiply(1, 0, 1));
 
-		if (r.nextInt(3) == 0)
-			level.addParticle(ParticleTypes.LARGE_SMOKE, v.x, v.y, v.z, 0, 0, 0);
-		if (r.nextInt(2) != 0)
-			return;
+		if (r.nextInt(3) == 0) level.addParticle(ParticleTypes.LARGE_SMOKE, v.x, v.y, v.z, 0, 0, 0);
+		if (r.nextInt(2) != 0) return;
 
 		boolean empty = level.getBlockState(worldPosition.above())
 			.getCollisionShape(level, worldPosition.above())
