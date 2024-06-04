@@ -15,6 +15,7 @@
     "create:encased_chain_drive",
     "create:adjustable_chain_gearshift",
     "create:belt",
+    "create:chain_lift",
     "create:water_wheel",
     "create:large_water_wheel",
     "create:water_wheel_structure",

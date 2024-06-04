@@ -29,6 +29,8 @@ import com.simibubi.create.content.equipment.zapper.ZapperItem;
 import com.simibubi.create.content.equipment.zapper.terrainzapper.WorldshaperRenderHandler;
 import com.simibubi.create.content.kinetics.KineticDebugger;
 import com.simibubi.create.content.kinetics.belt.item.BeltConnectorHandler;
+import com.simibubi.create.content.kinetics.chainLift.ChainLiftInteractionHandler;
+import com.simibubi.create.content.kinetics.chainLift.ChainLiftRidingHandler;
 import com.simibubi.create.content.kinetics.fan.AirCurrent;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPointHandler;
 import com.simibubi.create.content.kinetics.turntable.TurntableHandler;
@@ -118,7 +120,6 @@ public class ClientEvents {
 		}
 
 		SoundScapes.tick();
-		AnimationTickHolder.tick();
 
 		CreateClient.SCHEMATIC_SENDER.tick();
 		CreateClient.SCHEMATIC_AND_QUILL_HANDLER.tick();
@@ -167,6 +168,8 @@ public class ClientEvents {
 		CreateClient.VALUE_SETTINGS_HANDLER.tick();
 		ScrollValueHandler.tick();
 		NetheriteBacktankFirstPersonRenderer.clientTick();
+		ChainLiftInteractionHandler.clientTick();
+		ChainLiftRidingHandler.clientTick();
 	}
 
 	@SubscribeEvent

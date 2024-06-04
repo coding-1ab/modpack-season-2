@@ -121,7 +121,10 @@ public class PackageItem extends Item {
 	}
 
 	public static boolean matchAddress(ItemStack box, String address) {
-		String boxAddress = getAddress(box);
+		return matchAddress(getAddress(box), address);
+	}
+	
+	public static boolean matchAddress(String boxAddress, String address) {
 		if (address.isBlank())
 			return boxAddress.isBlank();
 		if (address.equals("*") || boxAddress.equals("*"))

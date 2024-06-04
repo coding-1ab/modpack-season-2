@@ -114,6 +114,11 @@ public class AllPartialModels {
 		GOGGLES = block("goggles"),
 
 		EJECTOR_TOP = block("weighted_ejector/top"),
+		
+		CHAIN_LIFT_GUARD = block("chain_lift/guard"),
+		
+		PACKAGE_PORT_TUBE = block("package_port/tube"),
+		PACKAGE_PORT_CAP = block("package_port/cap"),
 
 		PACKAGER_TRAY = block("packager/tray"), PACKAGER_HATCH_OPEN = block("packager/hatch_open"),
 		PACKAGER_HATCH_CLOSED = block("packager/hatch_closed"),

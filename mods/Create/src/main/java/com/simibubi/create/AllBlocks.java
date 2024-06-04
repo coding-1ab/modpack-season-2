@@ -109,6 +109,7 @@ import com.simibubi.create.content.kinetics.belt.BeltModel;
 import com.simibubi.create.content.kinetics.chainDrive.ChainDriveBlock;
 import com.simibubi.create.content.kinetics.chainDrive.ChainDriveGenerator;
 import com.simibubi.create.content.kinetics.chainDrive.ChainGearshiftBlock;
+import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlock;
 import com.simibubi.create.content.kinetics.clock.CuckooClockBlock;
 import com.simibubi.create.content.kinetics.crafter.CrafterCTBehaviour;
 import com.simibubi.create.content.kinetics.crafter.MechanicalCrafterBlock;
@@ -173,6 +174,8 @@ import com.simibubi.create.content.logistics.funnel.FunnelGenerator;
 import com.simibubi.create.content.logistics.funnel.FunnelItem;
 import com.simibubi.create.content.logistics.funnel.FunnelMovementBehaviour;
 import com.simibubi.create.content.logistics.orderCollector.OrderCollectorBlock;
+import com.simibubi.create.content.logistics.packagePort.PackagePortBlock;
+import com.simibubi.create.content.logistics.packagePort.PackagePortItem;
 import com.simibubi.create.content.logistics.packager.PackagerBlock;
 import com.simibubi.create.content.logistics.packager.PackagerGenerator;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
@@ -522,6 +525,17 @@ public class AllBlocks {
 		.onRegister(CreateRegistrate.blockModel(() -> BeltModel::new))
 		.register();
 
+	public static final BlockEntry<ChainLiftBlock> CHAIN_LIFT =
+		REGISTRATE.block("chain_lift", ChainLiftBlock::new)
+			.initialProperties(SharedProperties::stone)
+			.properties(p -> p.noOcclusion().mapColor(MapColor.PODZOL))
+			.transform(axeOrPickaxe())
+			.transform(BlockStressDefaults.setNoImpact())
+			.blockstate((c, p) -> p.simpleBlock(c.getEntry(), AssetLookup.partialBaseModel(c, p)))
+			.item()
+			.transform(customItemModel())
+			.register();
+	
 	public static final BlockEntry<CreativeMotorBlock> CREATIVE_MOTOR =
 		REGISTRATE.block("creative_motor", CreativeMotorBlock::new)
 			.initialProperties(SharedProperties::stone)
@@ -1659,6 +1673,19 @@ public class AllBlocks {
 		.blockstate(new PackagerGenerator()::generate)
 		.transform(BlockStressDefaults.setImpact(1.0))
 		.item()
+		.model(AssetLookup::customItemModel)
+		.build()
+		.register();
+	
+	public static final BlockEntry<PackagePortBlock> PACKAGE_PORT = REGISTRATE.block("package_port", PackagePortBlock::new)
+		.initialProperties(SharedProperties::softMetal)
+		.properties(p -> p.noOcclusion())
+		.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
+			.sound(SoundType.NETHERITE_BLOCK))
+		.transform(pickaxeOnly())
+		.addLayer(() -> RenderType::cutoutMipped)
+		.blockstate((c, p) -> p.simpleBlock(c.getEntry(), AssetLookup.partialBaseModel(c, p)))
+		.item(PackagePortItem::new)
 		.model(AssetLookup::customItemModel)
 		.build()
 		.register();

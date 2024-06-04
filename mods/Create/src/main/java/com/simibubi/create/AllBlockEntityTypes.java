@@ -83,6 +83,8 @@ import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
 import com.simibubi.create.content.kinetics.belt.BeltInstance;
 import com.simibubi.create.content.kinetics.belt.BeltRenderer;
 import com.simibubi.create.content.kinetics.chainDrive.ChainGearshiftBlockEntity;
+import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlockEntity;
+import com.simibubi.create.content.kinetics.chainLift.ChainLiftRenderer;
 import com.simibubi.create.content.kinetics.clock.CuckooClockBlockEntity;
 import com.simibubi.create.content.kinetics.clock.CuckooClockRenderer;
 import com.simibubi.create.content.kinetics.crafter.MechanicalCrafterBlockEntity;
@@ -169,6 +171,8 @@ import com.simibubi.create.content.logistics.funnel.FunnelInstance;
 import com.simibubi.create.content.logistics.funnel.FunnelRenderer;
 import com.simibubi.create.content.logistics.orderCollector.OrderCollectorBlockEntity;
 import com.simibubi.create.content.logistics.orderCollector.OrderCollectorRenderer;
+import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
+import com.simibubi.create.content.logistics.packagePort.PackagePortRenderer;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerRenderer;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
@@ -357,6 +361,13 @@ public class AllBlockEntityTypes {
 		.validBlocks(AllBlocks.GANTRY_CARRIAGE)
 		.renderer(() -> GantryCarriageRenderer::new)
 		.register();
+	
+	public static final BlockEntityEntry<ChainLiftBlockEntity> CHAIN_LIFT = REGISTRATE
+		.blockEntity("chain_lift", ChainLiftBlockEntity::new)
+		.instance(() -> ShaftInstance::new)
+		.validBlocks(AllBlocks.CHAIN_LIFT)
+		.renderer(() -> ChainLiftRenderer::new)
+		.register();
 
 	public static final BlockEntityEntry<PumpBlockEntity> MECHANICAL_PUMP = REGISTRATE
 		.blockEntity("mechanical_pump", PumpBlockEntity::new)
@@ -474,6 +485,12 @@ public class AllBlockEntityTypes {
 		.blockEntity("packager", PackagerBlockEntity::new)
 		.validBlocks(AllBlocks.PACKAGER)
 		.renderer(() -> PackagerRenderer::new)
+		.register();
+	
+	public static final BlockEntityEntry<PackagePortBlockEntity> PACKAGE_PORT = REGISTRATE
+		.blockEntity("package_port", PackagePortBlockEntity::new)
+		.validBlocks(AllBlocks.PACKAGE_PORT)
+		.renderer(() -> PackagePortRenderer::new)
 		.register();
 	
 	public static final BlockEntityEntry<PackagerLinkBlockEntity> PACKAGER_LINK = REGISTRATE

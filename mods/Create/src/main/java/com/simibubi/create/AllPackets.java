@@ -45,6 +45,8 @@ import com.simibubi.create.content.equipment.toolbox.ToolboxEquipPacket;
 import com.simibubi.create.content.equipment.zapper.ZapperBeamPacket;
 import com.simibubi.create.content.equipment.zapper.terrainzapper.ConfigureWorldshaperPacket;
 import com.simibubi.create.content.fluids.transfer.FluidSplashPacket;
+import com.simibubi.create.content.kinetics.chainLift.ChainLiftConnectionPacket;
+import com.simibubi.create.content.kinetics.chainLift.ChainLiftRidingPacket;
 import com.simibubi.create.content.kinetics.gauge.GaugeObservedPacket;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmPlacementPacket;
 import com.simibubi.create.content.kinetics.transmission.sequencer.ConfigureSequencedGearshiftPacket;
@@ -55,6 +57,7 @@ import com.simibubi.create.content.logistics.depot.EjectorPlacementPacket;
 import com.simibubi.create.content.logistics.depot.EjectorTriggerPacket;
 import com.simibubi.create.content.logistics.filter.FilterScreenPacket;
 import com.simibubi.create.content.logistics.funnel.FunnelFlapPacket;
+import com.simibubi.create.content.logistics.packagePort.PackagePortPlacementPacket;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalStockRequestPacket;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalStockResponsePacket;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrderRequestPacket;
@@ -124,6 +127,7 @@ public enum AllPackets {
 	CONTRAPTION_INTERACT(ContraptionInteractionPacket.class, ContraptionInteractionPacket::new, PLAY_TO_SERVER),
 	CLIENT_MOTION(ClientMotionPacket.class, ClientMotionPacket::new, PLAY_TO_SERVER),
 	PLACE_ARM(ArmPlacementPacket.class, ArmPlacementPacket::new, PLAY_TO_SERVER),
+	PLACE_PACKAGE_PORT(PackagePortPlacementPacket.class, PackagePortPlacementPacket::new, PLAY_TO_SERVER),
 	MINECART_COUPLING_CREATION(CouplingCreationPacket.class, CouplingCreationPacket::new, PLAY_TO_SERVER),
 	INSTANT_SCHEMATIC(InstantSchematicPacket.class, InstantSchematicPacket::new, PLAY_TO_SERVER),
 	SYNC_SCHEMATIC(SchematicSyncPacket.class, SchematicSyncPacket::new, PLAY_TO_SERVER),
@@ -169,6 +173,8 @@ public enum AllPackets {
 		ContraptionColliderLockPacketRequest::new, PLAY_TO_SERVER),
 	LOGISTICS_STOCK_REQUEST(LogisticalStockRequestPacket.class, LogisticalStockRequestPacket::new, PLAY_TO_SERVER),
 	LOGISTICS_PACKAGE_REQUEST(PackageOrderRequestPacket.class, PackageOrderRequestPacket::new, PLAY_TO_SERVER),
+	CHAIN_LIFT_CONNECT(ChainLiftConnectionPacket.class, ChainLiftConnectionPacket::new, PLAY_TO_SERVER),
+	CHAIN_LIFT_RIDING(ChainLiftRidingPacket.class, ChainLiftRidingPacket::new, PLAY_TO_SERVER),
 
 	// Server to Client
 	SYMMETRY_EFFECT(SymmetryEffectPacket.class, SymmetryEffectPacket::new, PLAY_TO_CLIENT),
@@ -207,6 +213,8 @@ public enum AllPackets {
 	S_PLACE_EJECTOR(ArmPlacementPacket.ClientBoundRequest.class, ArmPlacementPacket.ClientBoundRequest::new,
 		PLAY_TO_CLIENT),
 	S_PLACE_ARM(EjectorPlacementPacket.ClientBoundRequest.class, EjectorPlacementPacket.ClientBoundRequest::new,
+		PLAY_TO_CLIENT),
+	S_PLACE_PACKAGE_PORT(PackagePortPlacementPacket.ClientBoundRequest.class, PackagePortPlacementPacket.ClientBoundRequest::new,
 		PLAY_TO_CLIENT),
 	UPDATE_ELEVATOR_FLOORS(ElevatorFloorListPacket.class, ElevatorFloorListPacket::new, PLAY_TO_CLIENT),
 	CONTRAPTION_ACTOR_TOGGLE(ContraptionDisableActorPacket.class, ContraptionDisableActorPacket::new, PLAY_TO_CLIENT),

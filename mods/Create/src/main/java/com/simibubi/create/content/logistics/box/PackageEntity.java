@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 
 import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.AllPackets;
-import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.chute.ChuteBlock;
 
 import net.createmod.catnip.utility.VecHelper;
@@ -91,6 +90,14 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 			if (ChuteBlock.isChute(world.getBlockState(BlockPos.containing(position.x, position.y + .5f, position.z))))
 				packageEntity.setYRot(((int) packageEntity.getYRot()) / 90 * 90);
 
+		return packageEntity;
+	}
+
+	public static PackageEntity fromItemStack(Level world, Vec3 position, ItemStack itemstack) {
+		PackageEntity packageEntity = AllEntityTypes.PACKAGE.get()
+			.create(world);
+		packageEntity.setPos(position);
+		packageEntity.setBox(itemstack);
 		return packageEntity;
 	}
 
@@ -245,7 +252,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 			return super.interact(pPlayer, pHand);
 		pPlayer.setItemInHand(pHand, box);
 		level().playSound(null, blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, .2f,
-			.75f + Create.RANDOM.nextFloat());
+			.75f + level().random.nextFloat());
 		remove(RemovalReason.DISCARDED);
 		return InteractionResult.SUCCESS;
 	}
