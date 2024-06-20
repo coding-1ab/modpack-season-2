@@ -282,7 +282,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 			if (row > currentScroll + (rows - 1))
 				scale = Mth.clamp((currentScroll + rows) - row, 0, 1);
 			scale *= scale;
-			if (scale < 0.1)
+			if (scale < 0.5)
 				continue;
 
 			for (int col = 0; col < cols; col++) {
@@ -295,7 +295,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 
 				ms.pushPose();
 				ms.translate(itemsX + col * colWidth, itemsY + row * rowHeight, 0);
-				renderItemEntry(graphics, scale, entry, isStackHovered, false);
+				renderItemEntry(graphics, 1, entry, isStackHovered, false);
 				ms.popPose();
 			}
 		}

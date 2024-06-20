@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.chainLift.ChainLiftPackage.ChainLiftPackagePhysicsData;
@@ -31,12 +33,10 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ChainLiftBlockEntity extends KineticBlockEntity {
 
@@ -52,15 +52,15 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 	public Map<BlockPos, ConnectedPort> loopPorts = new HashMap<>();
 	public Map<BlockPos, ConnectedPort> travelPorts = new HashMap<>();
 	public ChainLiftRoutingTable routingTable = new ChainLiftRoutingTable();
-	
+
 	List<ChainLiftPackage> loopingPackages = new ArrayList<>();
 	Map<BlockPos, List<ChainLiftPackage>> travellingPackages = new HashMap<>();
-	
+
 	public boolean reversed;
 
 	public ChainLiftBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
-		}
+	}
 
 	@Override
 	protected AABB createRenderBoundingBox() {
@@ -89,7 +89,7 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 		super.tick();
 
 		float serverSpeed = ServerSpeedProvider.get();
-		float speed = getSpeed() / 180f;
+		float speed = getSpeed() / 360f;
 		float radius = 1.5f;
 		float distancePerTick = Math.abs(speed);
 		float degreesPerTick = (speed / (Mth.PI * radius)) * 360f;
@@ -182,7 +182,7 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 
 				// transfer to other
 				if (level.getBlockEntity(worldPosition.offset(target)) instanceof ChainLiftBlockEntity clbe) {
-					box.chainPosition = wrapAngle(stats.tangentAngle + 180 + 2 * 49 * (reversed ? -1 : 1));
+					box.chainPosition = wrapAngle(stats.tangentAngle + 180 + 2 * 35 * (reversed ? -1 : 1));
 					clbe.addLoopingPackage(box);
 					iterator.remove();
 					notifyUpdate();
@@ -248,11 +248,13 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 		if (!(level.getBlockEntity(globalPos) instanceof PackagePortBlockEntity ppbe))
 			return false;
 
-		ppbe.inventory.receiveMode(true);
-		ItemStack remainder = ItemHandlerHelper.insertItem(ppbe.inventory, box.item.copy(), false);
-		ppbe.inventory.receiveMode(false);
+		if (ppbe.isAnimationInProgress())
+			return false;
+		if (ppbe.inventory.isBackedUp())
+			return false;
 
-		return remainder.isEmpty();
+		ppbe.startAnimation(box.item, false);
+		return true;
 	}
 
 	public boolean addTravellingPackage(ChainLiftPackage box, BlockPos connection) {
@@ -294,14 +296,34 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 		for (Entry<BlockPos, List<ChainLiftPackage>> entry : travellingPackages.entrySet()) {
 			BlockPos target = entry.getKey();
 			ConnectionStats stats = connectionStats.get(target);
-			for (ChainLiftPackage box : entry.getValue())
-				box.worldPosition = stats.start.add((stats.end.subtract(stats.start)).normalize()
-					.scale(Math.min(stats.chainLength, box.chainPosition)));
+			for (ChainLiftPackage box : entry.getValue()) {
+				box.worldPosition = getPackagePosition(box.chainPosition, target);
+				if (level == null || !level.isClientSide())
+					continue;
+				Vec3 diff = stats.end.subtract(stats.start)
+					.normalize();
+				box.yaw = Mth.wrapDegrees((float) Mth.atan2(diff.x, diff.z) * Mth.RAD_TO_DEG - 90);
+			}
 		}
 
-		for (ChainLiftPackage box : loopingPackages)
-			box.worldPosition = Vec3.atBottomCenterOf(worldPosition)
-				.add(VecHelper.rotate(new Vec3(0, 0.25, 1), box.chainPosition, Axis.Y));
+		for (ChainLiftPackage box : loopingPackages) {
+			box.worldPosition = getPackagePosition(box.chainPosition, null);
+			box.yaw = Mth.wrapDegrees(box.chainPosition);
+			if (reversed)
+				box.yaw += 180;
+		}
+	}
+
+	public Vec3 getPackagePosition(float chainPosition, @Nullable BlockPos travelTarget) {
+		if (travelTarget == null)
+			return Vec3.atBottomCenterOf(worldPosition)
+				.add(VecHelper.rotate(new Vec3(0, 6 / 16f, 0.875), chainPosition, Axis.Y));
+		ConnectionStats stats = connectionStats.get(travelTarget);
+		if (stats == null)
+			return Vec3.ZERO;
+		Vec3 diff = stats.end.subtract(stats.start)
+			.normalize();
+		return stats.start.add(diff.scale(Math.min(stats.chainLength, chainPosition)));
 	}
 
 	private void tickBoxVisuals(ChainLiftPackage box) {
@@ -312,29 +334,48 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 		if (!physicsData.shouldTick())
 			return;
 
+		physicsData.prevTargetPos = physicsData.targetPos;
 		physicsData.prevPos = physicsData.pos;
-		if (physicsData.pos.distanceToSqr(box.worldPosition) > 1.5f * 1.5f)
-			physicsData.pos = box.worldPosition.add(physicsData.pos.subtract(box.worldPosition)
-				.normalize()
-				.scale(1.5));
-		physicsData.motion = physicsData.motion.add(0, -0.1, 0)
-			.scale(0.85)
-			.add((box.worldPosition.subtract(physicsData.pos)).scale(0.15));
-		physicsData.pos = physicsData.pos.add(physicsData.motion);
+		physicsData.prevYaw = physicsData.yaw;
+		physicsData.flipped = reversed;
+
+		if (physicsData.pos != null) {
+			if (physicsData.pos.distanceToSqr(box.worldPosition) > 1.5f * 1.5f)
+				physicsData.pos = box.worldPosition.add(physicsData.pos.subtract(box.worldPosition)
+					.normalize()
+					.scale(1.5));
+			physicsData.motion = physicsData.motion.add(0, -0.25, 0)
+				.scale(0.75)
+				.add((box.worldPosition.subtract(physicsData.pos)).scale(0.25));
+			physicsData.pos = physicsData.pos.add(physicsData.motion);
+		}
+
+		physicsData.targetPos = box.worldPosition.subtract(0, 9 / 16f, 0);
+
+		if (physicsData.pos == null) {
+			physicsData.pos = physicsData.targetPos;
+			physicsData.prevPos = physicsData.targetPos;
+			physicsData.prevTargetPos = physicsData.targetPos;
+		}
+
+		physicsData.yaw = AngleHelper.angleLerp(.25, physicsData.yaw, box.yaw);
 	}
 
 	private void calculateConnectionStats(BlockPos connection) {
 		boolean reversed = getSpeed() < 0;
-		float offBranchDistance = 49f;
+		float offBranchDistance = 35f;
 		float direction = Mth.RAD_TO_DEG * (float) Mth.atan2(connection.getX(), connection.getZ());
 		float angle = wrapAngle(direction - offBranchDistance * (reversed ? -1 : 1));
-		float oppositeAngle = wrapAngle(angle + 180 + 2 * 49 * (reversed ? -1 : 1));
+		float oppositeAngle = wrapAngle(angle + 180 + 2 * offBranchDistance * (reversed ? -1 : 1));
+
 		Vec3 start = Vec3.atBottomCenterOf(worldPosition)
-			.add(VecHelper.rotate(new Vec3(0, 0, 1), angle, Axis.Y))
-			.add(0, 4 / 16f, 0);
+			.add(VecHelper.rotate(new Vec3(0, 0, 1.25), angle, Axis.Y))
+			.add(0, 6 / 16f, 0);
+
 		Vec3 end = Vec3.atBottomCenterOf(worldPosition.offset(connection))
-			.add(VecHelper.rotate(new Vec3(0, 0, 1), oppositeAngle, Axis.Y))
-			.add(0, 4 / 16f, 0);
+			.add(VecHelper.rotate(new Vec3(0, 0, 1.25), oppositeAngle, Axis.Y))
+			.add(0, 6 / 16f, 0);
+
 		float length = (float) start.distanceTo(end);
 		connectionStats.put(connection, new ConnectionStats(angle, length, start, end));
 	}
@@ -374,6 +415,8 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 	}
 
 	private void updateChainShapes() {
+		prepareStats();
+
 		List<ChainLiftShape> shapes = new ArrayList<>();
 		shapes.add(new ChainLiftBB(Vec3.atBottomCenterOf(BlockPos.ZERO)));
 		for (BlockPos target : connections) {

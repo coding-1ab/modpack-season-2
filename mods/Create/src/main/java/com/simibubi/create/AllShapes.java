@@ -216,6 +216,8 @@ public class AllShapes {
 			.build(),
 
 		TRACK_COLLISION = shape(0, 0, 0, 16, 2, 16).build(),
+		
+		PACKAGE_PORT = shape(0, 0, 0, 16, 4, 16).add(2, 2, 2, 14, 14, 14).build(),
 
 		TRACK_FALLBACK = shape(0, 0, 0, 16, 4, 16).build(),
 

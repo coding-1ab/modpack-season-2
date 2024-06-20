@@ -1,11 +1,13 @@
 package com.simibubi.create.foundation.render;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.simibubi.create.Create;
 
+import net.minecraft.Util;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -20,11 +22,12 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 // TODO 1.17: use custom shaders instead of vanilla ones
 public class RenderTypes extends RenderStateShard {
 
-	public static final RenderStateShard.ShaderStateShard GLOWING_SHADER = new RenderStateShard.ShaderStateShard(() -> Shaders.glowingShader);
+	public static final RenderStateShard.ShaderStateShard GLOWING_SHADER =
+		new RenderStateShard.ShaderStateShard(() -> Shaders.glowingShader);
 
 	public static RenderType getGlowingSolid(ResourceLocation texture) {
-		return RenderType.create(createLayerName("glowing_solid"), DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256,
-			true, false, RenderType.CompositeState.builder()
+		return RenderType.create(createLayerName("glowing_solid"), DefaultVertexFormat.NEW_ENTITY,
+			VertexFormat.Mode.QUADS, 256, true, false, RenderType.CompositeState.builder()
 				.setShaderState(GLOWING_SHADER)
 				.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
 				.setCullState(CULL)
@@ -40,8 +43,8 @@ public class RenderTypes extends RenderStateShard {
 	}
 
 	public static RenderType getGlowingTranslucent(ResourceLocation texture) {
-		return RenderType.create(createLayerName("glowing_translucent"), DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS,
-			256, true, true, RenderType.CompositeState.builder()
+		return RenderType.create(createLayerName("glowing_translucent"), DefaultVertexFormat.NEW_ENTITY,
+			VertexFormat.Mode.QUADS, 256, true, true, RenderType.CompositeState.builder()
 				.setShaderState(GLOWING_SHADER)
 				.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
 				.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
@@ -64,34 +67,50 @@ public class RenderTypes extends RenderStateShard {
 		return ADDITIVE;
 	}
 
+	private static final Function<ResourceLocation, RenderType> CHAIN = Util.memoize((p_234330_) -> {
+		return RenderType.create("chain_lift_chain", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false,
+			true, RenderType.CompositeState.builder()
+				.setShaderState(RENDERTYPE_CUTOUT_MIPPED_SHADER)
+				.setTextureState(new RenderStateShard.TextureStateShard(p_234330_, false, true))
+				.setTransparencyState(NO_TRANSPARENCY)
+				.setWriteMaskState(COLOR_DEPTH_WRITE)
+				.setLightmapState(LIGHTMAP)
+				.setOverlayState(OVERLAY)
+				.createCompositeState(false));
+	});
+
+	public static RenderType chain(ResourceLocation pLocation) {
+		return CHAIN.apply(pLocation);
+	}
+
 	private static final RenderType GLOWING_TRANSLUCENT_DEFAULT = getGlowingTranslucent(InventoryMenu.BLOCK_ATLAS);
 
 	public static RenderType getGlowingTranslucent() {
 		return GLOWING_TRANSLUCENT_DEFAULT;
 	}
 
-	private static final RenderType ITEM_PARTIAL_SOLID =
-		RenderType.create(createLayerName("item_partial_solid"), DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true,
-			false, RenderType.CompositeState.builder()
-				.setShaderState(RENDERTYPE_ENTITY_SOLID_SHADER)
-				.setTextureState(BLOCK_SHEET)
-				.setCullState(CULL)
-				.setLightmapState(LIGHTMAP)
-				.setOverlayState(OVERLAY)
-				.createCompositeState(true));
+	private static final RenderType ITEM_PARTIAL_SOLID = RenderType.create(createLayerName("item_partial_solid"),
+		DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, false, RenderType.CompositeState.builder()
+			.setShaderState(RENDERTYPE_ENTITY_SOLID_SHADER)
+			.setTextureState(BLOCK_SHEET)
+			.setCullState(CULL)
+			.setLightmapState(LIGHTMAP)
+			.setOverlayState(OVERLAY)
+			.createCompositeState(true));
 
 	public static RenderType getItemPartialSolid() {
 		return ITEM_PARTIAL_SOLID;
 	}
 
-	private static final RenderType ITEM_PARTIAL_TRANSLUCENT = RenderType.create(createLayerName("item_partial_translucent"),
-		DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, RenderType.CompositeState.builder()
-			.setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_CULL_SHADER)
-			.setTextureState(BLOCK_SHEET)
-			.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-			.setLightmapState(LIGHTMAP)
-			.setOverlayState(OVERLAY)
-			.createCompositeState(true));
+	private static final RenderType ITEM_PARTIAL_TRANSLUCENT =
+		RenderType.create(createLayerName("item_partial_translucent"), DefaultVertexFormat.NEW_ENTITY,
+			VertexFormat.Mode.QUADS, 256, true, true, RenderType.CompositeState.builder()
+				.setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_CULL_SHADER)
+				.setTextureState(BLOCK_SHEET)
+				.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+				.setLightmapState(LIGHTMAP)
+				.setOverlayState(OVERLAY)
+				.createCompositeState(true));
 
 	public static RenderType getItemPartialTranslucent() {
 		return ITEM_PARTIAL_TRANSLUCENT;
@@ -113,7 +132,8 @@ public class RenderTypes extends RenderStateShard {
 		@SubscribeEvent
 		public static void onRegisterShaders(RegisterShadersEvent event) throws IOException {
 			ResourceProvider resourceProvider = event.getResourceProvider();
-			event.registerShader(new ShaderInstance(resourceProvider, Create.asResource("glowing_shader"), DefaultVertexFormat.NEW_ENTITY), shader -> glowingShader = shader);
+			event.registerShader(new ShaderInstance(resourceProvider, Create.asResource("glowing_shader"),
+				DefaultVertexFormat.NEW_ENTITY), shader -> glowingShader = shader);
 		}
 	}
 

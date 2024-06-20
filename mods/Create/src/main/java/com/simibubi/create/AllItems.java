@@ -1,9 +1,9 @@
 package com.simibubi.create;
 
+import static com.simibubi.create.AllTags.forgeItemTag;
 import static com.simibubi.create.AllTags.AllItemTags.CREATE_INGOTS;
 import static com.simibubi.create.AllTags.AllItemTags.CRUSHED_RAW_MATERIALS;
 import static com.simibubi.create.AllTags.AllItemTags.PLATES;
-import static com.simibubi.create.AllTags.forgeItemTag;
 import static com.simibubi.create.Create.REGISTRATE;
 import static com.simibubi.create.foundation.data.recipe.CompatMetals.ALUMINUM;
 import static com.simibubi.create.foundation.data.recipe.CompatMetals.LEAD;
@@ -362,16 +362,16 @@ public class AllItems {
 	// Logistics
 
 	public static final ItemEntry<PackageItem> CARDBOARD_PACKAGE_12x12 =
-		REGISTRATE.item("cardboard_package_12x12", p -> new PackageItem(p, 12, 12))
+		REGISTRATE.item("cardboard_package_12x12", p -> new PackageItem(p, 12, 12, 23f))
 			.transform(BuilderTransformers.packageItem("cardboard", 12, 12))
 			.register(),
-		CARDBOARD_PACKAGE_10x12 = REGISTRATE.item("cardboard_package_10x12", p -> new PackageItem(p, 10, 12))
+		CARDBOARD_PACKAGE_10x12 = REGISTRATE.item("cardboard_package_10x12", p -> new PackageItem(p, 10, 12, 22f))
 			.transform(BuilderTransformers.packageItem("cardboard", 10, 12))
 			.register(),
-		CARDBOARD_PACKAGE_10x8 = REGISTRATE.item("cardboard_package_10x8", p -> new PackageItem(p, 10, 8))
+		CARDBOARD_PACKAGE_10x8 = REGISTRATE.item("cardboard_package_10x8", p -> new PackageItem(p, 10, 8, 18f))
 			.transform(BuilderTransformers.packageItem("cardboard", 10, 8))
 			.register(),
-		CARDBOARD_PACKAGE_12x10 = REGISTRATE.item("cardboard_package_12x10", p -> new PackageItem(p, 12, 10))
+		CARDBOARD_PACKAGE_12x10 = REGISTRATE.item("cardboard_package_12x10", p -> new PackageItem(p, 12, 10, 21f))
 			.transform(BuilderTransformers.packageItem("cardboard", 12, 10))
 			.register();
 

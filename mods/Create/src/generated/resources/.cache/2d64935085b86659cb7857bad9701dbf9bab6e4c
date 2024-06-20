@@ -1,4 +1,4 @@
-// 1.20.1	2024-05-23T17:42:17.3367493	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
+// 1.20.1	2024-06-19T14:00:03.9832322	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
 60bbdf92d2ac9824ea6144955c74043a6005f79d assets/create/blockstates/acacia_window.json
 6a67703c2697d81b7dc83e9d72a66f9c9ff08383 assets/create/blockstates/acacia_window_pane.json
 c3ae87b62e81d8e9476eccd793bb1548d74c66a1 assets/create/blockstates/adjustable_chain_gearshift.json
@@ -1727,6 +1727,10 @@ fce64539b36fc8a5ffa39d7a3f73765818437cbf assets/create/models/item/brown_seat.js
 9477ab491586f1314bebf4d58387425ae56d0bad assets/create/models/item/brown_valve_handle.json
 1db479848369140bb913ba09f3f1d994e4ac864c assets/create/models/item/builders_tea.json
 f5ff4e2ed2ea2e43b6d02f6a95ba02b2e4b611dc assets/create/models/item/calcite_pillar.json
+45d7fa87d102a0373a06a13592f58baafa4e5a33 assets/create/models/item/cardboard_package_10x12.json
+f998f36d9a6f469bbd3822a17b2b45f81e6810c6 assets/create/models/item/cardboard_package_10x8.json
+b7a24a7dd21a464815b2fd8cd6037e854be3f485 assets/create/models/item/cardboard_package_12x10.json
+d5396690e7813c67ee3600555d7e47d0097b1f56 assets/create/models/item/cardboard_package_12x12.json
 1cdb2b8801551c1540bb9b2a9cc3d725a2b433e7 assets/create/models/item/cart_assembler.json
 9a29b1b49f3afd2ee63828b00b94ebb1ff2dba84 assets/create/models/item/chain_lift.json
 a197d08618f4035182c91a6b16031eb681ab8a7c assets/create/models/item/chest_minecart_contraption.json

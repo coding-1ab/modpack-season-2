@@ -22,6 +22,20 @@ public class PackagePortInventory extends ItemStackHandler {
 		receiveMode = enable;
 	}
 
+	public boolean isBackedUp() {
+		for (int i = 0; i < getSlots(); i++)
+			if (getStackInSlot(i).isEmpty())
+				return false;
+		return true;
+	}
+
+	public boolean isEmpty() {
+		for (int i = 0; i < getSlots(); i++)
+			if (!getStackInSlot(i).isEmpty())
+				return false;
+		return true;
+	}
+
 	@Override
 	public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
 		if (!(stack.getItem() instanceof PackageItem))
@@ -29,12 +43,12 @@ public class PackagePortInventory extends ItemStackHandler {
 		if (receiveMode)
 			return super.insertItem(slot, stack, simulate);
 
-		PackagePortTarget target = port.target;
-		if (target == null)
+		if (port.isAnimationInProgress())
 			return stack;
-		if (!target.export(port.getLevel(), port.getBlockPos(), stack, simulate))
+		if (port.target == null || !port.target.export(port.getLevel(), port.getBlockPos(), stack, true))
 			return stack;
-
+		if (!simulate)
+			port.startAnimation(stack.copy(), true);
 		return ItemStack.EMPTY;
 	}
 

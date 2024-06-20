@@ -69,7 +69,7 @@ public class ChainLiftRidingHandler {
 						.scale(Math.min(stats.chainLength(), chainPosition)));
 		} else {
 			targetPosition = Vec3.atBottomCenterOf(ridingChainLift)
-				.add(VecHelper.rotate(new Vec3(0, 0.25, 1), chainPosition, Axis.Y));
+				.add(VecHelper.rotate(new Vec3(0, 0.25, 0.875), chainPosition, Axis.Y));
 		}
 
 		Vec3 diff = targetPosition.subtract(playerPosition);
@@ -89,7 +89,7 @@ public class ChainLiftRidingHandler {
 
 	private static void updateTargetPosition(Minecraft mc, ChainLiftBlockEntity clbe) {
 		float serverSpeed = ServerSpeedProvider.get();
-		float speed = clbe.getSpeed() / 180f;
+		float speed = clbe.getSpeed() / 360f;
 		float radius = 1.5f;
 		float distancePerTick = Math.abs(speed);
 		float degreesPerTick = (speed / (Mth.PI * radius)) * 360f;
@@ -114,7 +114,7 @@ public class ChainLiftRidingHandler {
 			// transfer to other
 			if (mc.level.getBlockEntity(clbe.getBlockPos()
 				.offset(ridingConnection)) instanceof ChainLiftBlockEntity clbe2) {
-				chainPosition = clbe.wrapAngle(stats.tangentAngle() + 180 + 2 * 49 * (clbe.reversed ? -1 : 1));
+				chainPosition = clbe.wrapAngle(stats.tangentAngle() + 180 + 2 * 35 * (clbe.reversed ? -1 : 1));
 				ridingChainLift = clbe2.getBlockPos();
 				ridingConnection = null;
 			}

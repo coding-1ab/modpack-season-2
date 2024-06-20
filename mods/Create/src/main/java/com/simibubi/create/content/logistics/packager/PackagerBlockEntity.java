@@ -6,6 +6,7 @@ import java.util.List;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.crate.BottomlessItemHandler;
+import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -21,9 +22,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -36,6 +41,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 	public boolean redstoneModeActive;
 	public boolean redstonePowered;
+	public String signBasedAddress;
 
 	public InvManipulationBehaviour targetInventory;
 	public ItemStack heldBox;
@@ -65,6 +71,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		animationTicks = 0;
 		animationInward = true;
 		queuedRequests = new LinkedList<>();
+		signBasedAddress = "";
 	}
 
 	@Override
@@ -88,7 +95,11 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			previouslyUnwrapped = ItemStack.EMPTY;
 			return;
 		}
+		
 		animationTicks--;
+		
+		if (animationTicks == 0 && !level.isClientSide())
+			wakeTheFrogs();
 	}
 
 	public void queueRequest(PackagingRequest packagingRequest) {
@@ -124,6 +135,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		recheckIfLinksPresent();
 		if (!redstoneModeActive)
 			return;
+		updateSignAddress();
 		attemptToSend(false);
 	}
 
@@ -267,6 +279,10 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 						extractedPackageItem = extracted;
 
 					if (!requestQueue) {
+						if (targetInv instanceof BottomlessItemHandler) {
+							continuePacking = true;
+							continue Outer;
+						}
 						if (bulky)
 							break Outer;
 						continue;
@@ -311,14 +327,53 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 		heldBox = extractedPackageItem.isEmpty() ? PackageItem.containing(extractedItems) : extractedPackageItem.copy();
 		PackageItem.clearAddress(heldBox);
+
 		if (fixedAddress != null)
 			PackageItem.addAddress(heldBox, fixedAddress);
 		if (requestQueue)
 			PackageItem.setOrder(heldBox, fixedOrderId, linkIndexInOrder, finalLinkInOrder, packageIndexAtLink,
 				finalPackageAtLink, orderContext);
+		if (!requestQueue && !signBasedAddress.isBlank())
+			PackageItem.addAddress(heldBox, signBasedAddress);
+
 		animationInward = false;
 		animationTicks = CYCLE;
+
 		notifyUpdate();
+	}
+
+	protected void updateSignAddress() {
+		signBasedAddress = "";
+		for (Direction side : Iterate.directions) {
+			String address = getSign(side);
+			if (address == null || address.isBlank())
+				continue;
+			signBasedAddress = address;
+		}
+	}
+
+	protected String getSign(Direction side) {
+		BlockEntity blockEntity = level.getBlockEntity(worldPosition.relative(side));
+		if (!(blockEntity instanceof SignBlockEntity sign))
+			return null;
+		for (boolean front : Iterate.trueAndFalse) {
+			SignText text = sign.getText(front);
+			for (Component component : text.getMessages(false)) {
+				String address = component.getString();
+				if (!address.isBlank())
+					return address;
+			}
+		}
+		return null;
+	}
+
+	protected void wakeTheFrogs() {
+		for (Direction side : Iterate.directions) {
+			if (side == Direction.DOWN)
+				continue;
+			if (level.getBlockEntity(worldPosition.relative(side)) instanceof PackagePortBlockEntity port)
+				port.tryPullingFromAdjacentInventories();
+		}
 	}
 
 	@Override
@@ -327,6 +382,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		redstonePowered = compound.getBoolean("Active");
 		animationInward = compound.getBoolean("AnimationInward");
 		animationTicks = compound.getInt("AnimationTicks");
+		signBasedAddress = compound.getString("SignAddress");
 		heldBox = ItemStack.of(compound.getCompound("HeldBox"));
 		previouslyUnwrapped = ItemStack.of(compound.getCompound("InsertedBox"));
 		if (clientPacket)
@@ -341,6 +397,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		compound.putBoolean("Active", redstonePowered);
 		compound.putBoolean("AnimationInward", animationInward);
 		compound.putInt("AnimationTicks", animationTicks);
+		compound.putString("SignAddress", signBasedAddress);
 		compound.put("HeldBox", heldBox.serializeNBT());
 		compound.put("InsertedBox", previouslyUnwrapped.serializeNBT());
 		if (clientPacket)

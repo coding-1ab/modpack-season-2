@@ -10,6 +10,7 @@ import com.google.common.cache.CacheBuilder;
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.WorldAttached;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.Vec3;
@@ -27,14 +28,24 @@ public class ChainLiftPackage {
 			.build());
 
 	public class ChainLiftPackagePhysicsData {
+		public Vec3 targetPos;
+		public Vec3 prevTargetPos;
 		public Vec3 prevPos;
 		public Vec3 pos;
+		
 		public Vec3 motion;
 		public int lastTick;
+		public float yaw;
+		public float prevYaw;
+		public boolean flipped;
+		public ResourceLocation modelKey;
 
 		public ChainLiftPackagePhysicsData(Vec3 serverPosition) {
-			this.prevPos = serverPosition;
-			this.pos = serverPosition;
+			this.targetPos = null;
+			this.prevTargetPos = null;
+			this.pos = null;
+			this.prevPos = null;
+			
 			this.motion = Vec3.ZERO;
 			this.lastTick = AnimationTickHolder.getTicks();
 		}
@@ -53,6 +64,7 @@ public class ChainLiftPackage {
 	public boolean justFlipped;
 
 	public Vec3 worldPosition;
+	public float yaw;
 
 	private ChainLiftPackagePhysicsData physicsData;
 

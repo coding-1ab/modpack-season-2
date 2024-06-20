@@ -116,9 +116,11 @@ public class AllPartialModels {
 		EJECTOR_TOP = block("weighted_ejector/top"),
 		
 		CHAIN_LIFT_GUARD = block("chain_lift/guard"),
+		CHAIN_LIFT_SHAFT = block("chain_lift/shaft"),
 		
-		PACKAGE_PORT_TUBE = block("package_port/tube"),
-		PACKAGE_PORT_CAP = block("package_port/cap"),
+		PACKAGE_PORT_BODY = block("package_port/body"),
+		PACKAGE_PORT_HEAD = block("package_port/head"),
+		PACKAGE_PORT_TONGUE = block("package_port/tongue"),
 
 		PACKAGER_TRAY = block("packager/tray"), PACKAGER_HATCH_OPEN = block("packager/hatch_open"),
 		PACKAGER_HATCH_CLOSED = block("packager/hatch_closed"),
@@ -201,7 +203,9 @@ public class AllPartialModels {
 	public static final Map<DyeColor, PartialModel> TOOLBOX_LIDS = new EnumMap<>(DyeColor.class);
 	public static final Map<ResourceLocation, Couple<PartialModel>> FOLDING_DOORS = new HashMap<>();
 	public static final List<PartialModel> CONTRAPTION_CONTROLS_INDICATOR = new ArrayList<>();
+	
 	public static final Map<ResourceLocation, PartialModel> PACKAGES = new HashMap<>();
+	public static final Map<ResourceLocation, PartialModel> PACKAGE_RIGGING = new HashMap<>();
 
 	static {
 		for (FluidTransportBehaviour.AttachmentTypes.ComponentPartials type : FluidTransportBehaviour.AttachmentTypes.ComponentPartials.values()) {
@@ -222,9 +226,11 @@ public class AllPartialModels {
 		putFoldingDoor("andesite_door");
 		putFoldingDoor("copper_door");
 		
-		for (String size : new String[] { "12x12", "10x12", "12x10", "10x8" })
-			PACKAGES.put(Create.asResource("cardboard_package_" + size),
-				new PartialModel(new ResourceLocation(Create.ID, "item/cardboard_package_" + size)));
+		for (String size : new String[] { "12x12", "10x12", "12x10", "10x8" }) {
+			ResourceLocation key = Create.asResource("cardboard_package_" + size);
+			PACKAGES.put(key, new PartialModel(Create.asResource("item/packages/cardboard_" + size)));
+			PACKAGE_RIGGING.put(key, new PartialModel(Create.asResource("item/packages/cardboard_" + size + "_rigging")));
+		}
 	}
 
 	private static void putFoldingDoor(String path) {

@@ -5,13 +5,10 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllItems;
 import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlockEntity;
 import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlockEntity.ConnectedPort;
 import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlockEntity.ConnectionStats;
 import com.simibubi.create.content.kinetics.chainLift.ChainLiftPackage;
-import com.simibubi.create.content.logistics.filter.FilterItemStack;
-import com.simibubi.create.content.logistics.filter.FilterItemStack.PackageFilterItemStack;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -19,6 +16,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 
 public abstract class PackagePortTarget {
 
@@ -37,6 +35,8 @@ public abstract class PackagePortTarget {
 	public void register(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {}
 
 	public void deregister(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {}
+
+	public abstract Vec3 getExactTargetLocation(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos);
 
 	public CompoundTag write() {
 		CompoundTag compoundTag = new CompoundTag();
@@ -91,6 +91,8 @@ public abstract class PackagePortTarget {
 		public boolean export(LevelAccessor level, BlockPos portPos, ItemStack box, boolean simulate) {
 			if (!(be(level, portPos) instanceof ChainLiftBlockEntity clbe))
 				return false;
+			if (connection != null && !clbe.connections.contains(connection))
+				return false;
 			if (simulate)
 				return true;
 			ChainLiftPackage box2 = new ChainLiftPackage(chainPos, box.copy());
@@ -126,7 +128,7 @@ public abstract class PackagePortTarget {
 
 			if (connection != null && !actualBe.connections.contains(connection))
 				return;
-			String portFilter = getFilterString(ppbe);
+			String portFilter = ppbe.getFilterString();
 			if (portFilter == null)
 				return;
 			actualBe.routingTable.receivePortInfo(portFilter, connection == null ? BlockPos.ZERO : connection);
@@ -140,24 +142,12 @@ public abstract class PackagePortTarget {
 				return;
 			clbe.loopPorts.remove(relativePos.multiply(-1));
 			clbe.travelPorts.remove(relativePos.multiply(-1));
-			String portFilter = getFilterString(ppbe);
+			String portFilter = ppbe.getFilterString();
 			if (portFilter == null)
 				return;
 			clbe.routingTable.entriesByDistance.removeIf(e -> e.endOfRoute() && e.port()
 				.equals(portFilter));
 			clbe.routingTable.changed = true;
-		}
-
-		private String getFilterString(PackagePortBlockEntity ppbe) {
-			ItemStack filter = ppbe.filtering.getFilter();
-			String portFilter = null;
-			FilterItemStack filterStack = FilterItemStack.of(filter);
-			if (AllItems.PACKAGE_FILTER.isIn(filter)) {
-				if (!(filterStack instanceof PackageFilterItemStack pfis))
-					return "";
-				portFilter = pfis.filterString;
-			}
-			return portFilter;
 		}
 
 		@Override
@@ -176,6 +166,13 @@ public abstract class PackagePortTarget {
 				connection = NbtUtils.readBlockPos(tag.getCompound("Connection"));
 				flipped = tag.getBoolean("Flipped");
 			}
+		}
+
+		@Override
+		public Vec3 getExactTargetLocation(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
+			if (!(be(level, portPos) instanceof ChainLiftBlockEntity clbe))
+				return Vec3.ZERO;
+			return clbe.getPackagePosition(chainPos, connection);
 		}
 
 	}

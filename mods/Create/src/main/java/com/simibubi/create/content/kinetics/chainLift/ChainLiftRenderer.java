@@ -3,32 +3,44 @@ package com.simibubi.create.content.kinetics.chainLift;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+
+import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlockEntity.ConnectionStats;
 import com.simibubi.create.content.kinetics.chainLift.ChainLiftPackage.ChainLiftPackagePhysicsData;
+import com.simibubi.create.content.logistics.box.PackageItem;
+import com.simibubi.create.foundation.render.RenderTypes;
 
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class ChainLiftRenderer extends KineticBlockEntityRenderer<ChainLiftBlockEntity> {
+
+	public static final ResourceLocation CHAIN_LOCATION = new ResourceLocation("textures/block/chain.png");
+	public static final int MIP_DISTANCE = 48;
 
 	public ChainLiftRenderer(Context context) {
 		super(context);
@@ -53,29 +65,66 @@ public class ChainLiftRenderer extends KineticBlockEntityRenderer<ChainLiftBlock
 		ChainLiftPackage box, float partialTicks) {
 		if (box.worldPosition == null)
 			return;
+		if (box.item == null || box.item.isEmpty())
+			return;
 
 		ChainLiftPackagePhysicsData physicsData = box.physicsData(be.getLevel());
+		if (physicsData.prevPos == null)
+			return;
 
-		ms.pushPose();
-
-		ItemRenderer itemRenderer = Minecraft.getInstance()
-			.getItemRenderer();
 		Vec3 position = physicsData.prevPos.lerp(physicsData.pos, partialTicks);
-		ms.translate(position.x - pos.getX(), position.y - pos.getY(), position.z - pos.getZ());
-		ms.scale(2f, 2f, 2f);
+		Vec3 targetPosition = physicsData.prevTargetPos.lerp(physicsData.targetPos, partialTicks);
+		float yaw = AngleHelper.angleLerp(partialTicks, physicsData.prevYaw, physicsData.yaw);
+		Vec3 offset =
+			new Vec3(targetPosition.x - pos.getX(), targetPosition.y - pos.getY(), targetPosition.z - pos.getZ());
 
 		BlockPos containingPos = BlockPos.containing(position);
 		Level level = be.getLevel();
-		itemRenderer.renderStatic(null, box.item, ItemDisplayContext.FIXED, false, ms, buffer, level,
-			LightTexture.pack(level.getBrightness(LightLayer.BLOCK, containingPos),
-				level.getBrightness(LightLayer.SKY, containingPos)),
-			overlay, 0);
+		BlockState blockState = be.getBlockState();
+		int light = LightTexture.pack(level.getBrightness(LightLayer.BLOCK, containingPos),
+			level.getBrightness(LightLayer.SKY, containingPos));
 
-		ms.popPose();
+		if (physicsData.modelKey == null) {
+			ResourceLocation key = ForgeRegistries.ITEMS.getKey(box.item.getItem());
+			if (key == null)
+				return;
+			physicsData.modelKey = key;
+		}
+
+		SuperByteBuffer rigBuffer =
+			CachedBuffers.partial(AllPartialModels.PACKAGE_RIGGING.get(physicsData.modelKey), blockState);
+		SuperByteBuffer boxBuffer =
+			CachedBuffers.partial(AllPartialModels.PACKAGES.get(physicsData.modelKey), blockState);
+
+		Vec3 dangleDiff = VecHelper.rotate(targetPosition.add(0, 0.5, 0)
+			.subtract(position), -yaw, Axis.Y);
+		float zRot = Mth.wrapDegrees((float) Mth.atan2(-dangleDiff.x, dangleDiff.y) * Mth.RAD_TO_DEG) / 2;
+		float xRot = Mth.wrapDegrees((float) Mth.atan2(dangleDiff.z, dangleDiff.y) * Mth.RAD_TO_DEG) / 2;
+		zRot = Mth.clamp(zRot, -25, 25);
+		xRot = Mth.clamp(xRot, -25, 25);
+		
+		for (SuperByteBuffer buf : new SuperByteBuffer[] { rigBuffer, boxBuffer }) {
+			buf.translate(offset);
+			buf.translate(0, 10 / 16f, 0);
+			buf.rotateY(yaw);
+
+			buf.rotateZ(zRot);
+			buf.rotateX(xRot);
+			
+			if (physicsData.flipped && buf == rigBuffer)
+				buf.rotateY(180);
+
+			buf.unCentre();
+			buf.translate(0, -PackageItem.getHookDistance(box.item) + 7 / 16f, 0);
+
+			buf.light(light)
+				.overlay(overlay)
+				.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
+		}
 	}
 
 	private void renderChains(ChainLiftBlockEntity be, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
-		float time = LevelTickHolder.getRenderTime(be.getLevel()) / (180f / Math.abs(be.getSpeed()));
+		float time = LevelTickHolder.getRenderTime(be.getLevel()) / (360f / Math.abs(be.getSpeed()));
 		time %= 1;
 		if (time < 0)
 			time += 1;
@@ -93,48 +142,107 @@ public class ChainLiftRenderer extends KineticBlockEntityRenderer<ChainLiftBlock
 			double pitch = (float) Mth.RAD_TO_DEG * Mth.atan2(diff.y, diff.multiply(1, 0, 1)
 				.length());
 
-			ms.pushPose();
-
+			Level level = be.getLevel();
+			BlockPos tilePos = be.getBlockPos();
 			Vec3 startOffset = stats.start()
-				.subtract(Vec3.atCenterOf(be.getBlockPos()));
+				.subtract(Vec3.atCenterOf(tilePos));
 
 			SuperByteBuffer guard = CachedBuffers.partial(AllPartialModels.CHAIN_LIFT_GUARD, be.getBlockState());
-			guard.translate(startOffset.multiply(0, 1, 0));
-			guard.translate(0.5, 0.5, 0.5);
+			// guard.translate(startOffset.multiply(0, 1, 0));
+			guard.centre();
 			guard.rotateY(yaw);
 
-			guard.translate(0, 0, 11 / 16f);
-			guard.rotateX(-pitch);
-			guard.translate(0, 0, -11 / 16f);
-
-			guard.translate(-0.5, 0, -.25);
+			guard.unCentre();
 			guard.light(light)
 				.nudge((int) blockPos.asLong())
 				.overlay(overlay)
 				.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
 
-			double segments = stats.chainLength();
-			int roundedSegments = (int) Math.round(segments);
-			float scale = (float) (segments / roundedSegments);
+			ms.pushPose();
+			TransformStack chain = TransformStack.cast(ms);
+			chain.centre();
+			chain.translate(startOffset);
+			chain.rotateY(yaw);
+			chain.rotateX(90 - pitch);
+			chain.rotateY(45);
+			chain.translate(0, 8 / 16f, 0);
+			chain.unCentre();
 
-			for (int i = 0; i < roundedSegments; i++) {
-				SuperByteBuffer chain = CachedBuffers.block(Blocks.CHAIN.defaultBlockState());
-				chain.centre();
-				chain.translate(startOffset);
-				chain.rotateY(yaw);
-				chain.rotateX(90 - pitch);
-				chain.translate(0, 8 / 16f, 0);
-				chain.unCentre();
-				chain.scale(1, scale, 1);
-				chain.translate(0, i + animation, 0);
+			int light1 = LightTexture.pack(level.getBrightness(LightLayer.BLOCK, tilePos),
+				level.getBrightness(LightLayer.SKY, tilePos));
+			int light2 = LightTexture.pack(level.getBrightness(LightLayer.BLOCK, tilePos.offset(blockPos)),
+				level.getBrightness(LightLayer.SKY, tilePos.offset(blockPos)));
 
-				chain.light(light)
-					.overlay(overlay)
-					.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
-			}
+			boolean far = !Minecraft.getInstance()
+				.getBlockEntityRenderDispatcher().camera.getPosition()
+					.closerThan(Vec3.atCenterOf(tilePos)
+						.add(blockPos.getX() / 2f, blockPos.getY() / 2f, blockPos.getZ() / 2f), MIP_DISTANCE);
+
+			renderChain(ms, buffer, animation, stats.chainLength(), light1, light2, far);
 
 			ms.popPose();
 		}
+	}
+
+	public static void renderChain(PoseStack ms, MultiBufferSource buffer, float animation, float length, int light1,
+		int light2, boolean far) {
+		float radius = far ? 1f / 16f : 1.5f / 16f;
+		float minV = far ? 0 : animation;
+		float maxV = far ? 1 / 16f : length + minV;
+		float minU = far ? 3 / 16f : 0;
+		float maxU = far ? 4 / 16f : 3 / 16f;
+
+		ms.pushPose();
+		ms.translate(0.5D, 0.0D, 0.5D);
+
+		VertexConsumer vc = buffer.getBuffer(RenderTypes.chain(CHAIN_LOCATION));
+		renderPart(ms, vc, length, 0.0F, radius, radius, 0.0F, -radius, 0.0F, 0.0F, -radius, minU, maxU, minV, maxV,
+			light1, light2, far);
+
+		ms.popPose();
+	}
+
+	private static void renderPart(PoseStack pPoseStack, VertexConsumer pConsumer, float pMaxY, float pX0, float pZ0,
+		float pX1, float pZ1, float pX2, float pZ2, float pX3, float pZ3, float pMinU, float pMaxU, float pMinV,
+		float pMaxV, int light1, int light2, boolean far) {
+		PoseStack.Pose posestack$pose = pPoseStack.last();
+		Matrix4f matrix4f = posestack$pose.pose();
+		Matrix3f matrix3f = posestack$pose.normal();
+
+		float uO = far ? 0f : 3 / 16f;
+		renderQuad(matrix4f, matrix3f, pConsumer, 0, pMaxY, pX0, pZ0, pX3, pZ3, pMinU, pMaxU, pMinV, pMaxV, light1,
+			light2);
+		renderQuad(matrix4f, matrix3f, pConsumer, 0, pMaxY, pX3, pZ3, pX0, pZ0, pMinU, pMaxU, pMinV, pMaxV, light1,
+			light2);
+		renderQuad(matrix4f, matrix3f, pConsumer, 0, pMaxY, pX1, pZ1, pX2, pZ2, pMinU + uO, pMaxU + uO, pMinV, pMaxV,
+			light1, light2);
+		renderQuad(matrix4f, matrix3f, pConsumer, 0, pMaxY, pX2, pZ2, pX1, pZ1, pMinU + uO, pMaxU + uO, pMinV, pMaxV,
+			light1, light2);
+	}
+
+	private static void renderQuad(Matrix4f pPose, Matrix3f pNormal, VertexConsumer pConsumer, float pMinY, float pMaxY,
+		float pMinX, float pMinZ, float pMaxX, float pMaxZ, float pMinU, float pMaxU, float pMinV, float pMaxV,
+		int light1, int light2) {
+		addVertex(pPose, pNormal, pConsumer, pMaxY, pMinX, pMinZ, pMaxU, pMinV, light2);
+		addVertex(pPose, pNormal, pConsumer, pMinY, pMinX, pMinZ, pMaxU, pMaxV, light1);
+		addVertex(pPose, pNormal, pConsumer, pMinY, pMaxX, pMaxZ, pMinU, pMaxV, light1);
+		addVertex(pPose, pNormal, pConsumer, pMaxY, pMaxX, pMaxZ, pMinU, pMinV, light2);
+	}
+
+	private static void addVertex(Matrix4f pPose, Matrix3f pNormal, VertexConsumer pConsumer, float pY, float pX,
+		float pZ, float pU, float pV, int light) {
+		pConsumer.vertex(pPose, pX, pY, pZ)
+			.color(1.0f, 1.0f, 1.0f, 1.0f)
+			.uv(pU, pV)
+			.overlayCoords(OverlayTexture.NO_OVERLAY)
+			.uv2(light)
+			.normal(pNormal, 0.0F, 1.0F, 0.0F)
+			.endVertex();
+	}
+
+	@Override
+	public int getViewDistance() {
+		return 256;
 	}
 
 	@Override
@@ -143,8 +251,13 @@ public class ChainLiftRenderer extends KineticBlockEntityRenderer<ChainLiftBlock
 	}
 
 	@Override
-	protected BlockState getRenderedBlockState(ChainLiftBlockEntity be) {
-		return shaft(Axis.Y);
+	protected SuperByteBuffer getRotatedModel(ChainLiftBlockEntity be, BlockState state) {
+		return CachedBuffers.partial(AllPartialModels.CHAIN_LIFT_SHAFT, state);
+	}
+
+	@Override
+	protected RenderType getRenderType(ChainLiftBlockEntity be, BlockState state) {
+		return RenderType.cutoutMipped();
 	}
 
 }

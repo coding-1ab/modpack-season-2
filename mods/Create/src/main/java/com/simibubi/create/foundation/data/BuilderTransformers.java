@@ -467,7 +467,8 @@ public class BuilderTransformers {
 	public static <B extends PackageItem> NonNullUnaryOperator<ItemBuilder<B, CreateRegistrate>> packageItem(
 		String material, int diameter, int height) {
 		return b -> b.properties(p -> p.stacksTo(1))
-			.model((c, p) -> p.getExistingFile(p.modLoc(c.getName())))
+			.model((c, p) -> p.withExistingParent(c.getName(),
+				p.modLoc("item/packages/" + material + "_" + diameter + "x" + height)))
 			.lang(material.substring(0, 1)
 				.toUpperCase(Locale.ROOT) + material.substring(1) + " Package");
 	}

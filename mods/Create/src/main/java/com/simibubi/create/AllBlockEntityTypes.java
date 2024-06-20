@@ -84,6 +84,7 @@ import com.simibubi.create.content.kinetics.belt.BeltInstance;
 import com.simibubi.create.content.kinetics.belt.BeltRenderer;
 import com.simibubi.create.content.kinetics.chainDrive.ChainGearshiftBlockEntity;
 import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlockEntity;
+import com.simibubi.create.content.kinetics.chainLift.ChainLiftInstance;
 import com.simibubi.create.content.kinetics.chainLift.ChainLiftRenderer;
 import com.simibubi.create.content.kinetics.clock.CuckooClockBlockEntity;
 import com.simibubi.create.content.kinetics.clock.CuckooClockRenderer;
@@ -364,7 +365,7 @@ public class AllBlockEntityTypes {
 	
 	public static final BlockEntityEntry<ChainLiftBlockEntity> CHAIN_LIFT = REGISTRATE
 		.blockEntity("chain_lift", ChainLiftBlockEntity::new)
-		.instance(() -> ShaftInstance::new)
+		.instance(() -> ChainLiftInstance::new)
 		.validBlocks(AllBlocks.CHAIN_LIFT)
 		.renderer(() -> ChainLiftRenderer::new)
 		.register();

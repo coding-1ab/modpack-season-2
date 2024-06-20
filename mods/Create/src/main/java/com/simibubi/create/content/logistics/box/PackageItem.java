@@ -44,11 +44,13 @@ public class PackageItem extends Item {
 	public static final int SLOTS = 9;
 
 	int width, height;
+	float hookDistance;
 
-	public PackageItem(Properties properties, int width, int height) {
+	public PackageItem(Properties properties, int width, int height, float hookDistance) {
 		super(properties);
 		this.width = width;
 		this.height = height;
+		this.hookDistance = hookDistance;
 		ALL_BOXES.add(this);
 	}
 
@@ -58,6 +60,10 @@ public class PackageItem extends Item {
 		return FALLBACK_BOX;
 	}
 
+	public static boolean isPackage(ItemStack stack) {
+		return stack.getItem() instanceof PackageItem;
+	}
+	
 	@Override
 	public boolean canFitInsideContainerItems() {
 		return false;
@@ -142,14 +148,20 @@ public class PackageItem extends Item {
 	}
 
 	public static float getWidth(ItemStack box) {
-		if (box.getItem() instanceof PackageItem)
-			return ((PackageItem) box.getItem()).width / 16f;
+		if (box.getItem() instanceof PackageItem pi)
+			return pi.width / 16f;
 		return 1;
 	}
 
 	public static float getHeight(ItemStack box) {
-		if (box.getItem() instanceof PackageItem)
-			return ((PackageItem) box.getItem()).height / 16f;
+		if (box.getItem() instanceof PackageItem pi)
+			return pi.height / 16f;
+		return 1;
+	}
+
+	public static float getHookDistance(ItemStack box) {
+		if (box.getItem() instanceof PackageItem pi)
+			return pi.hookDistance / 16f;
 		return 1;
 	}
 

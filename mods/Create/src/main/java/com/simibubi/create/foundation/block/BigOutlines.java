@@ -1,6 +1,7 @@
 package com.simibubi.create.foundation.block;
 
 import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlock;
+import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlock;
 import com.simibubi.create.content.trains.track.TrackBlock;
 import com.simibubi.create.foundation.utility.RaycastHelper;
 
@@ -12,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -46,10 +48,11 @@ public class BigOutlines {
 				for (int z = -1; z <= 1; z++) {
 					p.set(pos.getX() + x, pos.getY(), pos.getZ() + z);
 					BlockState blockState = mc.level.getBlockState(p);
+					Block block = blockState.getBlock();
 
 					// Could be a dedicated interface for big blocks
-					if (!(blockState.getBlock() instanceof TrackBlock)
-						&& !(blockState.getBlock() instanceof SlidingDoorBlock))
+					if (!(block instanceof TrackBlock) && !(block instanceof SlidingDoorBlock)
+						&& !(block instanceof ChainLiftBlock))
 						continue;
 
 					BlockHitResult hit = blockState.getInteractionShape(mc.level, p)
