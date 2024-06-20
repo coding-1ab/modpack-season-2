@@ -1,22 +1,22 @@
-package com.simibubi.create.content.kinetics.chainLift;
+package com.simibubi.create.content.kinetics.chainConveyor;
 
 import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class ChainLiftConnectionPacket extends BlockEntityConfigurationPacket<ChainLiftBlockEntity> {
+public class ChainConveyorConnectionPacket extends BlockEntityConfigurationPacket<ChainConveyorBlockEntity> {
 
 	private BlockPos targetPos;
 	private boolean connect;
 
-	public ChainLiftConnectionPacket(BlockPos pos, BlockPos targetPos, boolean connect) {
+	public ChainConveyorConnectionPacket(BlockPos pos, BlockPos targetPos, boolean connect) {
 		super(pos);
 		this.targetPos = targetPos;
 		this.connect = connect;
 	}
 
-	public ChainLiftConnectionPacket(FriendlyByteBuf buffer) {
+	public ChainConveyorConnectionPacket(FriendlyByteBuf buffer) {
 		super(buffer);
 	}
 
@@ -33,11 +33,11 @@ public class ChainLiftConnectionPacket extends BlockEntityConfigurationPacket<Ch
 	}
 
 	@Override
-	protected void applySettings(ChainLiftBlockEntity be) {
+	protected void applySettings(ChainConveyorBlockEntity be) {
 		// TODO max size config check
 
 		if (!(be.getLevel()
-			.getBlockEntity(targetPos) instanceof ChainLiftBlockEntity clbe))
+			.getBlockEntity(targetPos) instanceof ChainConveyorBlockEntity clbe))
 			return;
 
 		if (connect) {

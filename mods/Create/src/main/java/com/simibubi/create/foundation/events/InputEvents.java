@@ -3,7 +3,7 @@ package com.simibubi.create.foundation.events;
 import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.contraptions.elevator.ElevatorControlsHandler;
 import com.simibubi.create.content.equipment.toolbox.ToolboxHandlerClient;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftInteractionHandler;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInteractionHandler;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerClientHandler;
 import com.simibubi.create.content.trains.TrainHUD;
 import com.simibubi.create.content.trains.entity.TrainRelocator;
@@ -88,7 +88,7 @@ public class InputEvents {
 		LinkedControllerClientHandler.deactivateInLectern();
 		TrainRelocator.onClicked(event);
 		
-		if (ChainLiftInteractionHandler.onUse())
+		if (ChainConveyorInteractionHandler.onUse())
 			event.setCanceled(true);
 	}
 

@@ -1,7 +1,7 @@
 package com.simibubi.create.foundation.block;
 
 import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlock;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlock;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlock;
 import com.simibubi.create.content.trains.track.TrackBlock;
 import com.simibubi.create.foundation.utility.RaycastHelper;
 
@@ -52,7 +52,7 @@ public class BigOutlines {
 
 					// Could be a dedicated interface for big blocks
 					if (!(block instanceof TrackBlock) && !(block instanceof SlidingDoorBlock)
-						&& !(block instanceof ChainLiftBlock))
+						&& !(block instanceof ChainConveyorBlock))
 						continue;
 
 					BlockHitResult hit = blockState.getInteractionShape(mc.level, p)

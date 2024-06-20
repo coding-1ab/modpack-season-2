@@ -1,7 +1,7 @@
-package com.simibubi.create.content.kinetics.chainLift;
+package com.simibubi.create.content.kinetics.chainConveyor;
 
 import com.simibubi.create.AllPackets;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlockEntity.ConnectionStats;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity.ConnectionStats;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 
 import net.createmod.catnip.utility.AnimationTickHolder;
@@ -13,33 +13,33 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 
-public class ChainLiftRidingHandler {
+public class ChainConveyorRidingHandler {
 
-	public static BlockPos ridingChainLift;
+	public static BlockPos ridingChainConveyor;
 	public static float chainPosition;
 	public static BlockPos ridingConnection;
 	public static boolean flipped;
 
 	public static void embark(BlockPos lift, float position, BlockPos connection) {
-		ridingChainLift = lift;
+		ridingChainConveyor = lift;
 		chainPosition = position;
 		ridingConnection = connection;
-		if (Minecraft.getInstance().level.getBlockEntity(ridingChainLift) instanceof ChainLiftBlockEntity clbe)
+		if (Minecraft.getInstance().level.getBlockEntity(ridingChainConveyor) instanceof ChainConveyorBlockEntity clbe)
 			flipped = clbe.getSpeed() < 0;
 	}
 
 	public static void clientTick() {
-		if (ridingChainLift == null)
+		if (ridingChainConveyor == null)
 			return;
 		Minecraft mc = Minecraft.getInstance();
-		BlockEntity blockEntity = mc.level.getBlockEntity(ridingChainLift);
-		if (mc.player.isCrouching() || !(blockEntity instanceof ChainLiftBlockEntity clbe)) {
-			ridingChainLift = null;
+		BlockEntity blockEntity = mc.level.getBlockEntity(ridingChainConveyor);
+		if (mc.player.isCrouching() || !(blockEntity instanceof ChainConveyorBlockEntity clbe)) {
+			ridingChainConveyor = null;
 			ridingConnection = null;
 			return;
 		}
 		if (ridingConnection != null && !clbe.connections.contains(ridingConnection)) {
-			ridingChainLift = null;
+			ridingChainConveyor = null;
 			ridingConnection = null;
 			return;
 		}
@@ -52,11 +52,11 @@ public class ChainLiftRidingHandler {
 
 		updateTargetPosition(mc, clbe);
 
-		blockEntity = mc.level.getBlockEntity(ridingChainLift);
-		if (!(blockEntity instanceof ChainLiftBlockEntity))
+		blockEntity = mc.level.getBlockEntity(ridingChainConveyor);
+		if (!(blockEntity instanceof ChainConveyorBlockEntity))
 			return;
 
-		clbe = (ChainLiftBlockEntity) blockEntity;
+		clbe = (ChainConveyorBlockEntity) blockEntity;
 		clbe.prepareStats();
 
 		Vec3 targetPosition = playerPosition;
@@ -68,13 +68,13 @@ public class ChainLiftRidingHandler {
 					.subtract(stats.start())).normalize()
 						.scale(Math.min(stats.chainLength(), chainPosition)));
 		} else {
-			targetPosition = Vec3.atBottomCenterOf(ridingChainLift)
+			targetPosition = Vec3.atBottomCenterOf(ridingChainConveyor)
 				.add(VecHelper.rotate(new Vec3(0, 0.25, 0.875), chainPosition, Axis.Y));
 		}
 
 		Vec3 diff = targetPosition.subtract(playerPosition);
 		if (diff.length() > 3) {
-			ridingChainLift = null;
+			ridingChainConveyor = null;
 			ridingConnection = null;
 			return;
 		}
@@ -84,10 +84,10 @@ public class ChainLiftRidingHandler {
 			.add(diff.scale(0.25)));
 		if (AnimationTickHolder.getTicks() % 10 == 0)
 			AllPackets.getChannel()
-				.sendToServer(new ChainLiftRidingPacket(ridingChainLift));
+				.sendToServer(new ChainConveyorRidingPacket(ridingChainConveyor));
 	}
 
-	private static void updateTargetPosition(Minecraft mc, ChainLiftBlockEntity clbe) {
+	private static void updateTargetPosition(Minecraft mc, ChainConveyorBlockEntity clbe) {
 		float serverSpeed = ServerSpeedProvider.get();
 		float speed = clbe.getSpeed() / 360f;
 		float radius = 1.5f;
@@ -99,7 +99,7 @@ public class ChainLiftRidingHandler {
 
 			if (flipped != clbe.getSpeed() < 0) {
 				flipped = clbe.getSpeed() < 0;
-				ridingChainLift = clbe.getBlockPos()
+				ridingChainConveyor = clbe.getBlockPos()
 					.offset(ridingConnection);
 				chainPosition = stats.chainLength() - chainPosition;
 				ridingConnection = ridingConnection.multiply(-1);
@@ -113,9 +113,9 @@ public class ChainLiftRidingHandler {
 
 			// transfer to other
 			if (mc.level.getBlockEntity(clbe.getBlockPos()
-				.offset(ridingConnection)) instanceof ChainLiftBlockEntity clbe2) {
+				.offset(ridingConnection)) instanceof ChainConveyorBlockEntity clbe2) {
 				chainPosition = clbe.wrapAngle(stats.tangentAngle() + 180 + 2 * 35 * (clbe.reversed ? -1 : 1));
-				ridingChainLift = clbe2.getBlockPos();
+				ridingChainConveyor = clbe2.getBlockPos();
 				ridingConnection = null;
 			}
 

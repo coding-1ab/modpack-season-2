@@ -106,10 +106,10 @@ import com.simibubi.create.content.kinetics.BlockStressDefaults;
 import com.simibubi.create.content.kinetics.belt.BeltBlock;
 import com.simibubi.create.content.kinetics.belt.BeltGenerator;
 import com.simibubi.create.content.kinetics.belt.BeltModel;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlock;
 import com.simibubi.create.content.kinetics.chainDrive.ChainDriveBlock;
 import com.simibubi.create.content.kinetics.chainDrive.ChainDriveGenerator;
 import com.simibubi.create.content.kinetics.chainDrive.ChainGearshiftBlock;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlock;
 import com.simibubi.create.content.kinetics.clock.CuckooClockBlock;
 import com.simibubi.create.content.kinetics.crafter.CrafterCTBehaviour;
 import com.simibubi.create.content.kinetics.crafter.MechanicalCrafterBlock;
@@ -525,8 +525,8 @@ public class AllBlocks {
 		.onRegister(CreateRegistrate.blockModel(() -> BeltModel::new))
 		.register();
 
-	public static final BlockEntry<ChainLiftBlock> CHAIN_LIFT =
-		REGISTRATE.block("chain_lift", ChainLiftBlock::new)
+	public static final BlockEntry<ChainConveyorBlock> CHAIN_CONVEYOR =
+		REGISTRATE.block("chain_conveyor", ChainConveyorBlock::new)
 			.initialProperties(SharedProperties::stone)
 			.properties(p -> p.noOcclusion().mapColor(MapColor.PODZOL))
 			.transform(axeOrPickaxe())

@@ -68,7 +68,7 @@ public class RenderTypes extends RenderStateShard {
 	}
 
 	private static final Function<ResourceLocation, RenderType> CHAIN = Util.memoize((p_234330_) -> {
-		return RenderType.create("chain_lift_chain", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false,
+		return RenderType.create("chain_conveyor_chain", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false,
 			true, RenderType.CompositeState.builder()
 				.setShaderState(RENDERTYPE_CUTOUT_MIPPED_SHADER)
 				.setTextureState(new RenderStateShard.TextureStateShard(p_234330_, false, true))

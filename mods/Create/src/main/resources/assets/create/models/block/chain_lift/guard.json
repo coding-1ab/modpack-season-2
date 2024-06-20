@@ -1,6 +1,0 @@
-{
-	"parent": "create:block/chain_lift/textures",
-	"loader": "forge:obj",
-	"flip_v": true,
-	"model": "create:models/block/chain_lift/conveyor_ports.obj"
-}

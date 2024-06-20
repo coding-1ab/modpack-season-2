@@ -1,4 +1,4 @@
-package com.simibubi.create.content.kinetics.chainLift;
+package com.simibubi.create.content.kinetics.chainConveyor;
 
 import javax.annotation.Nullable;
 
@@ -12,7 +12,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public abstract class ChainLiftShape {
+public abstract class ChainConveyorShape {
 
 	@Nullable
 	public abstract Vec3 intersect(Vec3 from, Vec3 to);
@@ -23,7 +23,7 @@ public abstract class ChainLiftShape {
 
 	public abstract void drawPoint(BlockPos anchor, float position);
 
-	public static class ChainLiftOBB extends ChainLiftShape {
+	public static class ChainConveyorOBB extends ChainConveyorShape {
 
 		BlockPos connection;
 		double yaw, pitch;
@@ -33,7 +33,7 @@ public abstract class ChainLiftShape {
 
 		Vec3[] linePoints;
 
-		public ChainLiftOBB(BlockPos connection, Vec3 start, Vec3 end) {
+		public ChainConveyorOBB(BlockPos connection, Vec3 start, Vec3 end) {
 			this.connection = connection;
 			Vec3 diff = end.subtract(start);
 			double d = diff.length();
@@ -111,13 +111,13 @@ public abstract class ChainLiftShape {
 		}
 	}
 
-	public static class ChainLiftBB extends ChainLiftShape {
+	public static class ChainConveyorBB extends ChainConveyorShape {
 
 		Vec3 lb, rb;
 		final double radius = 1;
 		AABB bounds;
 
-		public ChainLiftBB(Vec3 center) {
+		public ChainConveyorBB(Vec3 center) {
 			lb = center.add(0, 0, 0);
 			rb = center.add(0, 0.5, 0);
 			bounds = new AABB(lb, rb).inflate(radius, 0, radius);

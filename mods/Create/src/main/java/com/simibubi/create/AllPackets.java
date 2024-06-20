@@ -45,8 +45,8 @@ import com.simibubi.create.content.equipment.toolbox.ToolboxEquipPacket;
 import com.simibubi.create.content.equipment.zapper.ZapperBeamPacket;
 import com.simibubi.create.content.equipment.zapper.terrainzapper.ConfigureWorldshaperPacket;
 import com.simibubi.create.content.fluids.transfer.FluidSplashPacket;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftConnectionPacket;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftRidingPacket;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorConnectionPacket;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRidingPacket;
 import com.simibubi.create.content.kinetics.gauge.GaugeObservedPacket;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmPlacementPacket;
 import com.simibubi.create.content.kinetics.transmission.sequencer.ConfigureSequencedGearshiftPacket;
@@ -173,8 +173,8 @@ public enum AllPackets {
 		ContraptionColliderLockPacketRequest::new, PLAY_TO_SERVER),
 	LOGISTICS_STOCK_REQUEST(LogisticalStockRequestPacket.class, LogisticalStockRequestPacket::new, PLAY_TO_SERVER),
 	LOGISTICS_PACKAGE_REQUEST(PackageOrderRequestPacket.class, PackageOrderRequestPacket::new, PLAY_TO_SERVER),
-	CHAIN_LIFT_CONNECT(ChainLiftConnectionPacket.class, ChainLiftConnectionPacket::new, PLAY_TO_SERVER),
-	CHAIN_LIFT_RIDING(ChainLiftRidingPacket.class, ChainLiftRidingPacket::new, PLAY_TO_SERVER),
+	CHAIN_CONVEYOR_CONNECT(ChainConveyorConnectionPacket.class, ChainConveyorConnectionPacket::new, PLAY_TO_SERVER),
+	CHAIN_CONVEYOR_RIDING(ChainConveyorRidingPacket.class, ChainConveyorRidingPacket::new, PLAY_TO_SERVER),
 
 	// Server to Client
 	SYMMETRY_EFFECT(SymmetryEffectPacket.class, SymmetryEffectPacket::new, PLAY_TO_CLIENT),

@@ -1,4 +1,4 @@
-package com.simibubi.create.content.kinetics.chainLift;
+package com.simibubi.create.content.kinetics.chainConveyor;
 
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
@@ -21,9 +21,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class ChainLiftBlock extends KineticBlock implements IBE<ChainLiftBlockEntity> {
+public class ChainConveyorBlock extends KineticBlock implements IBE<ChainConveyorBlockEntity> {
 
-	public ChainLiftBlock(Properties properties) {
+	public ChainConveyorBlock(Properties properties) {
 		super(properties);
 	}
 
@@ -48,8 +48,8 @@ public class ChainLiftBlock extends KineticBlock implements IBE<ChainLiftBlockEn
 		if (itemInHand.isEmpty()) {
 			withBlockEntityDo(pLevel, pPos, be -> {
 				float bestDiff = Float.POSITIVE_INFINITY;
-				ChainLiftPackage best = null;
-				for (ChainLiftPackage liftPackage : be.loopingPackages) {
+				ChainConveyorPackage best = null;
+				for (ChainConveyorPackage liftPackage : be.loopingPackages) {
 					float angleDiff = Math.abs(AngleHelper.getShortestAngleDiff(liftPackage.chainPosition, angle));
 					if (angleDiff > bestDiff)
 						continue;
@@ -69,7 +69,7 @@ public class ChainLiftBlock extends KineticBlock implements IBE<ChainLiftBlockEn
 		}
 
 		withBlockEntityDo(pLevel, pPos, be -> {
-			be.addLoopingPackage(new ChainLiftPackage(angle, itemInHand.copyWithCount(1)));
+			be.addLoopingPackage(new ChainConveyorPackage(angle, itemInHand.copyWithCount(1)));
 			itemInHand.shrink(1);
 			if (itemInHand.isEmpty())
 				pPlayer.setItemInHand(pHand, ItemStack.EMPTY);
@@ -89,13 +89,13 @@ public class ChainLiftBlock extends KineticBlock implements IBE<ChainLiftBlockEn
 	}
 
 	@Override
-	public Class<ChainLiftBlockEntity> getBlockEntityClass() {
-		return ChainLiftBlockEntity.class;
+	public Class<ChainConveyorBlockEntity> getBlockEntityClass() {
+		return ChainConveyorBlockEntity.class;
 	}
 
 	@Override
-	public BlockEntityType<? extends ChainLiftBlockEntity> getBlockEntityType() {
-		return AllBlockEntityTypes.CHAIN_LIFT.get();
+	public BlockEntityType<? extends ChainConveyorBlockEntity> getBlockEntityType() {
+		return AllBlockEntityTypes.CHAIN_CONVEYOR.get();
 	}
 
 }

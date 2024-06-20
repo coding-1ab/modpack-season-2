@@ -1,4 +1,4 @@
-package com.simibubi.create.content.kinetics.chainLift;
+package com.simibubi.create.content.kinetics.chainConveyor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,9 +13,9 @@ import javax.annotation.Nullable;
 
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftPackage.ChainLiftPackagePhysicsData;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftShape.ChainLiftBB;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftShape.ChainLiftOBB;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorPackage.ChainConveyorPackagePhysicsData;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorShape.ChainConveyorBB;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorShape.ChainConveyorOBB;
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
@@ -27,7 +27,6 @@ import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
@@ -38,7 +37,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public class ChainLiftBlockEntity extends KineticBlockEntity {
+public class ChainConveyorBlockEntity extends KineticBlockEntity {
 
 	public record ConnectionStats(float tangentAngle, float chainLength, Vec3 start, Vec3 end) {
 	}
@@ -51,14 +50,14 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 
 	public Map<BlockPos, ConnectedPort> loopPorts = new HashMap<>();
 	public Map<BlockPos, ConnectedPort> travelPorts = new HashMap<>();
-	public ChainLiftRoutingTable routingTable = new ChainLiftRoutingTable();
+	public ChainConveyorRoutingTable routingTable = new ChainConveyorRoutingTable();
 
-	List<ChainLiftPackage> loopingPackages = new ArrayList<>();
-	Map<BlockPos, List<ChainLiftPackage>> travellingPackages = new HashMap<>();
+	List<ChainConveyorPackage> loopingPackages = new ArrayList<>();
+	Map<BlockPos, List<ChainConveyorPackage>> travellingPackages = new HashMap<>();
 
 	public boolean reversed;
 
-	public ChainLiftBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
+	public ChainConveyorBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
 	}
 
@@ -75,13 +74,15 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 
 	@Override
 	public boolean addToTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		super.addToTooltip(tooltip, isPlayerSneaking);
-		tooltip.addAll(routingTable.createSummary());
-		if (!loopPorts.isEmpty())
-			tooltip.add(Components.literal(loopPorts.size() + " Loop ports"));
-		if (!travelPorts.isEmpty())
-			tooltip.add(Components.literal(travelPorts.size() + " Travel ports"));
-		return true;
+		return super.addToTooltip(tooltip, isPlayerSneaking);
+		
+//		// debug routing info
+//		tooltip.addAll(routingTable.createSummary());
+//		if (!loopPorts.isEmpty())
+//			tooltip.add(Components.literal(loopPorts.size() + " Loop ports"));
+//		if (!travelPorts.isEmpty())
+//			tooltip.add(Components.literal(travelPorts.size() + " Travel ports"));
+//		return true;
 	}
 
 	@Override
@@ -98,21 +99,18 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 		prepareStats();
 
 		if (level.isClientSide()) {
-			for (ChainLiftPackage box : loopingPackages)
+			for (ChainConveyorPackage box : loopingPackages)
 				tickBoxVisuals(box);
-			for (Entry<BlockPos, List<ChainLiftPackage>> entry : travellingPackages.entrySet())
-				for (ChainLiftPackage box : entry.getValue())
+			for (Entry<BlockPos, List<ChainConveyorPackage>> entry : travellingPackages.entrySet())
+				for (ChainConveyorPackage box : entry.getValue())
 					tickBoxVisuals(box);
 		}
 
-		/* if serverside */ {
+		if (!level.isClientSide()) {
 			routingTable.tick();
 			if (routingTable.shouldAdvertise()) {
-				if (level.isClientSide())
-					level.addParticle(ParticleTypes.CRIT, worldPosition.getX() + .5, worldPosition.getY() + 1.5,
-						worldPosition.getZ() + .5, 0, 0, 0);
 				for (BlockPos pos : connections)
-					if (level.getBlockEntity(worldPosition.offset(pos)) instanceof ChainLiftBlockEntity clbe)
+					if (level.getBlockEntity(worldPosition.offset(pos)) instanceof ChainConveyorBlockEntity clbe)
 						routingTable.advertiseTo(pos, clbe.routingTable);
 				routingTable.changed = false;
 				routingTable.lastUpdate = 0;
@@ -125,13 +123,13 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 		}
 
 		if (reversedPreviously != reversed) {
-			for (Entry<BlockPos, List<ChainLiftPackage>> entry : travellingPackages.entrySet()) {
+			for (Entry<BlockPos, List<ChainConveyorPackage>> entry : travellingPackages.entrySet()) {
 				BlockPos offset = entry.getKey();
-				if (!(level.getBlockEntity(worldPosition.offset(offset)) instanceof ChainLiftBlockEntity otherLift))
+				if (!(level.getBlockEntity(worldPosition.offset(offset)) instanceof ChainConveyorBlockEntity otherLift))
 					continue;
-				for (Iterator<ChainLiftPackage> iterator = entry.getValue()
+				for (Iterator<ChainConveyorPackage> iterator = entry.getValue()
 					.iterator(); iterator.hasNext();) {
-					ChainLiftPackage box = iterator.next();
+					ChainConveyorPackage box = iterator.next();
 					if (box.justFlipped)
 						continue;
 					box.justFlipped = true;
@@ -145,13 +143,13 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 			notifyUpdate();
 		}
 
-		for (Entry<BlockPos, List<ChainLiftPackage>> entry : travellingPackages.entrySet()) {
+		for (Entry<BlockPos, List<ChainConveyorPackage>> entry : travellingPackages.entrySet()) {
 			BlockPos target = entry.getKey();
 			ConnectionStats stats = connectionStats.get(target);
 
-			Travelling: for (Iterator<ChainLiftPackage> iterator = entry.getValue()
+			Travelling: for (Iterator<ChainConveyorPackage> iterator = entry.getValue()
 				.iterator(); iterator.hasNext();) {
-				ChainLiftPackage box = iterator.next();
+				ChainConveyorPackage box = iterator.next();
 
 				float prevChainPosition = box.chainPosition;
 				box.chainPosition += serverSpeed * distancePerTick;
@@ -181,7 +179,7 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 					continue;
 
 				// transfer to other
-				if (level.getBlockEntity(worldPosition.offset(target)) instanceof ChainLiftBlockEntity clbe) {
+				if (level.getBlockEntity(worldPosition.offset(target)) instanceof ChainConveyorBlockEntity clbe) {
 					box.chainPosition = wrapAngle(stats.tangentAngle + 180 + 2 * 35 * (reversed ? -1 : 1));
 					clbe.addLoopingPackage(box);
 					iterator.remove();
@@ -190,8 +188,8 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 			}
 		}
 
-		Looping: for (Iterator<ChainLiftPackage> iterator = loopingPackages.iterator(); iterator.hasNext();) {
-			ChainLiftPackage box = iterator.next();
+		Looping: for (Iterator<ChainConveyorPackage> iterator = loopingPackages.iterator(); iterator.hasNext();) {
+			ChainConveyorPackage box = iterator.next();
 
 			float prevChainPosition = box.chainPosition;
 			box.chainPosition += serverSpeed * degreesPerTick;
@@ -243,7 +241,7 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 		return !notCrossed;
 	}
 
-	private boolean exportToPort(ChainLiftPackage box, BlockPos offset) {
+	private boolean exportToPort(ChainConveyorPackage box, BlockPos offset) {
 		BlockPos globalPos = worldPosition.offset(offset);
 		if (!(level.getBlockEntity(globalPos) instanceof PackagePortBlockEntity ppbe))
 			return false;
@@ -257,7 +255,7 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 		return true;
 	}
 
-	public boolean addTravellingPackage(ChainLiftPackage box, BlockPos connection) {
+	public boolean addTravellingPackage(ChainConveyorPackage box, BlockPos connection) {
 		if (!connections.contains(connection))
 			return false;
 		travellingPackages.computeIfAbsent(connection, $ -> new ArrayList<>())
@@ -272,7 +270,7 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 		sendData();
 	}
 
-	public boolean addLoopingPackage(ChainLiftPackage box) {
+	public boolean addLoopingPackage(ChainConveyorPackage box) {
 		loopingPackages.add(box);
 		notifyUpdate();
 		return true;
@@ -293,10 +291,10 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 	public void updateBoxWorldPositions() {
 		prepareStats();
 
-		for (Entry<BlockPos, List<ChainLiftPackage>> entry : travellingPackages.entrySet()) {
+		for (Entry<BlockPos, List<ChainConveyorPackage>> entry : travellingPackages.entrySet()) {
 			BlockPos target = entry.getKey();
 			ConnectionStats stats = connectionStats.get(target);
-			for (ChainLiftPackage box : entry.getValue()) {
+			for (ChainConveyorPackage box : entry.getValue()) {
 				box.worldPosition = getPackagePosition(box.chainPosition, target);
 				if (level == null || !level.isClientSide())
 					continue;
@@ -306,7 +304,7 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 			}
 		}
 
-		for (ChainLiftPackage box : loopingPackages) {
+		for (ChainConveyorPackage box : loopingPackages) {
 			box.worldPosition = getPackagePosition(box.chainPosition, null);
 			box.yaw = Mth.wrapDegrees(box.chainPosition);
 			if (reversed)
@@ -326,11 +324,11 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 		return stats.start.add(diff.scale(Math.min(stats.chainLength, chainPosition)));
 	}
 
-	private void tickBoxVisuals(ChainLiftPackage box) {
+	private void tickBoxVisuals(ChainConveyorPackage box) {
 		if (box.worldPosition == null)
 			return;
 
-		ChainLiftPackagePhysicsData physicsData = box.physicsData(level);
+		ChainConveyorPackagePhysicsData physicsData = box.physicsData(level);
 		if (!physicsData.shouldTick())
 			return;
 
@@ -400,9 +398,9 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 		boolean removed = connections.remove(localTarget);
 		if (removed) {
 			connectionStats.remove(localTarget);
-			List<ChainLiftPackage> packages = travellingPackages.remove(localTarget);
+			List<ChainConveyorPackage> packages = travellingPackages.remove(localTarget);
 			if (packages != null)
-				for (ChainLiftPackage box : packages)
+				for (ChainConveyorPackage box : packages)
 					drop(box);
 			notifyUpdate();
 			updateChainShapes();
@@ -417,41 +415,41 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 	private void updateChainShapes() {
 		prepareStats();
 
-		List<ChainLiftShape> shapes = new ArrayList<>();
-		shapes.add(new ChainLiftBB(Vec3.atBottomCenterOf(BlockPos.ZERO)));
+		List<ChainConveyorShape> shapes = new ArrayList<>();
+		shapes.add(new ChainConveyorBB(Vec3.atBottomCenterOf(BlockPos.ZERO)));
 		for (BlockPos target : connections) {
 			ConnectionStats stats = connectionStats.get(target);
 			if (stats == null)
 				continue;
 			Vec3 localStart = stats.start.subtract(Vec3.atLowerCornerOf(worldPosition));
 			Vec3 localEnd = stats.end.subtract(Vec3.atLowerCornerOf(worldPosition));
-			shapes.add(new ChainLiftOBB(target, localStart, localEnd));
+			shapes.add(new ChainConveyorOBB(target, localStart, localEnd));
 		}
-		ChainLiftInteractionHandler.loadedChains.get(level)
+		ChainConveyorInteractionHandler.loadedChains.get(level)
 			.put(worldPosition, shapes);
 	}
 
 	@Override
 	public void destroy() {
 		super.destroy();
-		ChainLiftInteractionHandler.loadedChains.get(level)
+		ChainConveyorInteractionHandler.loadedChains.get(level)
 			.invalidate(worldPosition);
 
 		if (level.isClientSide())
 			return;
 
 		for (BlockPos blockPos : connections)
-			if (level.getBlockEntity(worldPosition.offset(blockPos)) instanceof ChainLiftBlockEntity clbe)
+			if (level.getBlockEntity(worldPosition.offset(blockPos)) instanceof ChainConveyorBlockEntity clbe)
 				clbe.removeConnectionTo(worldPosition);
 
-		for (ChainLiftPackage box : loopingPackages)
+		for (ChainConveyorPackage box : loopingPackages)
 			drop(box);
-		for (Entry<BlockPos, List<ChainLiftPackage>> entry : travellingPackages.entrySet())
-			for (ChainLiftPackage box : entry.getValue())
+		for (Entry<BlockPos, List<ChainConveyorPackage>> entry : travellingPackages.entrySet())
+			for (ChainConveyorPackage box : entry.getValue())
 				drop(box);
 	}
 
-	private void drop(ChainLiftPackage box) {
+	private void drop(ChainConveyorPackage box) {
 		level.addFreshEntity(PackageEntity.fromItemStack(level, box.worldPosition.subtract(0, 0.5, 0), box.item));
 	}
 
@@ -466,7 +464,7 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 		boolean connectedViaAxes, boolean connectedViaCogs) {
 		if (connections.contains(target.getBlockPos()
 			.subtract(worldPosition))) {
-			if (!(target instanceof ChainLiftBlockEntity clbe))
+			if (!(target instanceof ChainConveyorBlockEntity clbe))
 				return 0;
 			return 1;
 		}
@@ -481,11 +479,11 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 			CompoundTag compoundTag = new CompoundTag();
 			compoundTag.put("Target", NbtUtils.writeBlockPos(entry.getKey()));
 			compoundTag.put("Packages", NBTHelper.writeCompoundList(entry.getValue(),
-				clientPacket ? ChainLiftPackage::writeToClient : ChainLiftPackage::write));
+				clientPacket ? ChainConveyorPackage::writeToClient : ChainConveyorPackage::write));
 			return compoundTag;
 		}));
 		compound.put("LoopingPackages", NBTHelper.writeCompoundList(loopingPackages,
-			clientPacket ? ChainLiftPackage::writeToClient : ChainLiftPackage::write));
+			clientPacket ? ChainConveyorPackage::writeToClient : ChainConveyorPackage::write));
 	}
 
 	@Override
@@ -497,9 +495,9 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 		travellingPackages.clear();
 		NBTHelper.iterateCompoundList(compound.getList("TravellingPackages", Tag.TAG_COMPOUND),
 			c -> travellingPackages.put(NbtUtils.readBlockPos(c.getCompound("Target")),
-				NBTHelper.readCompoundList(c.getList("Packages", Tag.TAG_COMPOUND), ChainLiftPackage::read)));
-		loopingPackages =
-			NBTHelper.readCompoundList(compound.getList("LoopingPackages", Tag.TAG_COMPOUND), ChainLiftPackage::read);
+				NBTHelper.readCompoundList(c.getList("Packages", Tag.TAG_COMPOUND), ChainConveyorPackage::read)));
+		loopingPackages = NBTHelper.readCompoundList(compound.getList("LoopingPackages", Tag.TAG_COMPOUND),
+			ChainConveyorPackage::read);
 		connectionStats = null;
 		updateBoxWorldPositions();
 		updateChainShapes();
@@ -512,11 +510,11 @@ public class ChainLiftBlockEntity extends KineticBlockEntity {
 		return angle;
 	}
 
-	public List<ChainLiftPackage> getLoopingPackages() {
+	public List<ChainConveyorPackage> getLoopingPackages() {
 		return loopingPackages;
 	}
 
-	public Map<BlockPos, List<ChainLiftPackage>> getTravellingPackages() {
+	public Map<BlockPos, List<ChainConveyorPackage>> getTravellingPackages() {
 		return travellingPackages;
 	}
 

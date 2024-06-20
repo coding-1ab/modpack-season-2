@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "create:chain_lift"
+          "name": "create:chain_conveyor"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "create:blocks/chain_lift"
+  "random_sequence": "create:blocks/chain_conveyor"
 }

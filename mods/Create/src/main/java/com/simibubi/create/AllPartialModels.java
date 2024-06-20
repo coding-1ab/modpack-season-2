@@ -115,8 +115,8 @@ public class AllPartialModels {
 
 		EJECTOR_TOP = block("weighted_ejector/top"),
 		
-		CHAIN_LIFT_GUARD = block("chain_lift/guard"),
-		CHAIN_LIFT_SHAFT = block("chain_lift/shaft"),
+		CHAIN_CONVEYOR_GUARD = block("chain_conveyor/guard"),
+		CHAIN_CONVEYOR_SHAFT = block("chain_conveyor/shaft"),
 		
 		PACKAGE_PORT_BODY = block("package_port/body"),
 		PACKAGE_PORT_HEAD = block("package_port/head"),

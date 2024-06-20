@@ -1,4 +1,4 @@
-package com.simibubi.create.content.kinetics.chainLift;
+package com.simibubi.create.content.kinetics.chainConveyor;
 
 import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
 
@@ -6,13 +6,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 
-public class ChainLiftRidingPacket extends BlockEntityConfigurationPacket<ChainLiftBlockEntity> {
+public class ChainConveyorRidingPacket extends BlockEntityConfigurationPacket<ChainConveyorBlockEntity> {
 
-	public ChainLiftRidingPacket(BlockPos pos) {
+	public ChainConveyorRidingPacket(BlockPos pos) {
 		super(pos);
 	}
 	
-	public ChainLiftRidingPacket(FriendlyByteBuf buffer) {
+	public ChainConveyorRidingPacket(FriendlyByteBuf buffer) {
 		super(buffer);
 	}
 
@@ -23,10 +23,10 @@ public class ChainLiftRidingPacket extends BlockEntityConfigurationPacket<ChainL
 	protected void readSettings(FriendlyByteBuf buffer) {}
 
 	@Override
-	protected void applySettings(ChainLiftBlockEntity be) {}
+	protected void applySettings(ChainConveyorBlockEntity be) {}
 
 	@Override
-	protected void applySettings(ServerPlayer sender, ChainLiftBlockEntity be) {
+	protected void applySettings(ServerPlayer sender, ChainConveyorBlockEntity be) {
 		sender.fallDistance = 0;
 		sender.connection.aboveGroundTickCount = 0;
 		sender.connection.aboveGroundVehicleTickCount = 0;

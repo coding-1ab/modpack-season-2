@@ -1,4 +1,4 @@
-package com.simibubi.create.content.kinetics.chainLift;
+package com.simibubi.create.content.kinetics.chainConveyor;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
@@ -19,7 +19,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber(Dist.CLIENT)
-public class ChainLiftConnectionHandler {
+public class ChainConveyorConnectionHandler {
 
 	private static BlockPos firstPos;
 	private static ResourceKey<Level> firstDim;
@@ -32,7 +32,7 @@ public class ChainLiftConnectionHandler {
 		Player player = event.getEntity();
 		BlockState blockState = level.getBlockState(pos);
 
-		if (!AllBlocks.CHAIN_LIFT.has(blockState))
+		if (!AllBlocks.CHAIN_CONVEYOR.has(blockState))
 			return;
 		if (!itemStack.is(Items.CHAIN)) // Replace with tag? generic renderer?
 			return;
@@ -55,9 +55,9 @@ public class ChainLiftConnectionHandler {
 
 		// TODO max distance config
 
-		ChainLiftBlock chainLiftBlock = AllBlocks.CHAIN_LIFT.get();
-		ChainLiftBlockEntity sourceLift = chainLiftBlock.getBlockEntity(level, firstPos);
-		ChainLiftBlockEntity targetLift = chainLiftBlock.getBlockEntity(level, pos);
+		ChainConveyorBlock chainConveyorBlock = AllBlocks.CHAIN_CONVEYOR.get();
+		ChainConveyorBlockEntity sourceLift = chainConveyorBlock.getBlockEntity(level, firstPos);
+		ChainConveyorBlockEntity targetLift = chainConveyorBlock.getBlockEntity(level, pos);
 
 		if (sourceLift == null || targetLift == null) {
 			firstPos = null;
@@ -67,7 +67,7 @@ public class ChainLiftConnectionHandler {
 		}
 
 		AllPackets.getChannel()
-			.sendToServer(new ChainLiftConnectionPacket(firstPos, pos, true));
+			.sendToServer(new ChainConveyorConnectionPacket(firstPos, pos, true));
 
 		CreateLang.text("Chain added") // TODO localisation entry
 			.sendStatus(player);

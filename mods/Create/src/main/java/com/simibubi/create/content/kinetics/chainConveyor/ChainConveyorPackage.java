@@ -1,4 +1,4 @@
-package com.simibubi.create.content.kinetics.chainLift;
+package com.simibubi.create.content.kinetics.chainConveyor;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -15,19 +15,19 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.Vec3;
 
-public class ChainLiftPackage {
+public class ChainConveyorPackage {
 
 	// Server creates unique ids for chain boxes
 	public static final AtomicInteger netIdGenerator = new AtomicInteger();
 
 	// Client tracks physics data by id so it can travel between BEs
 	private static final int ticksUntilExpired = 30;
-	public static final WorldAttached<Cache<Integer, ChainLiftPackagePhysicsData>> physicsDataCache =
+	public static final WorldAttached<Cache<Integer, ChainConveyorPackagePhysicsData>> physicsDataCache =
 		new WorldAttached<>($ -> CacheBuilder.newBuilder()
 			.expireAfterAccess(ticksUntilExpired * 50, TimeUnit.MILLISECONDS)
 			.build());
 
-	public class ChainLiftPackagePhysicsData {
+	public class ChainConveyorPackagePhysicsData {
 		public Vec3 targetPos;
 		public Vec3 prevTargetPos;
 		public Vec3 prevPos;
@@ -40,7 +40,7 @@ public class ChainLiftPackage {
 		public boolean flipped;
 		public ResourceLocation modelKey;
 
-		public ChainLiftPackagePhysicsData(Vec3 serverPosition) {
+		public ChainConveyorPackagePhysicsData(Vec3 serverPosition) {
 			this.targetPos = null;
 			this.prevTargetPos = null;
 			this.pos = null;
@@ -66,13 +66,13 @@ public class ChainLiftPackage {
 	public Vec3 worldPosition;
 	public float yaw;
 
-	private ChainLiftPackagePhysicsData physicsData;
+	private ChainConveyorPackagePhysicsData physicsData;
 
-	public ChainLiftPackage(float chainPosition, ItemStack item) {
+	public ChainConveyorPackage(float chainPosition, ItemStack item) {
 		this(chainPosition, item, netIdGenerator.incrementAndGet());
 	}
 
-	public ChainLiftPackage(float chainPosition, ItemStack item, int netId) {
+	public ChainConveyorPackage(float chainPosition, ItemStack item, int netId) {
 		this.chainPosition = chainPosition;
 		this.item = item;
 		this.netId = netId;
@@ -92,19 +92,19 @@ public class ChainLiftPackage {
 		return compoundTag;
 	}
 
-	public static ChainLiftPackage read(CompoundTag compoundTag) {
+	public static ChainConveyorPackage read(CompoundTag compoundTag) {
 		float pos = compoundTag.getFloat("Position");
 		ItemStack item = ItemStack.of(compoundTag.getCompound("Item"));
 		if (compoundTag.contains("NetID"))
-			return new ChainLiftPackage(pos, item, compoundTag.getInt("NetID"));
-		return new ChainLiftPackage(pos, item);
+			return new ChainConveyorPackage(pos, item, compoundTag.getInt("NetID"));
+		return new ChainConveyorPackage(pos, item);
 	}
 
-	public ChainLiftPackagePhysicsData physicsData(LevelAccessor level) {
+	public ChainConveyorPackagePhysicsData physicsData(LevelAccessor level) {
 		if (physicsData == null) {
 			try {
 				return physicsData = physicsDataCache.get(level)
-					.get(netId, () -> new ChainLiftPackagePhysicsData(worldPosition));
+					.get(netId, () -> new ChainConveyorPackagePhysicsData(worldPosition));
 			} catch (ExecutionException e) {
 				e.printStackTrace();
 			}

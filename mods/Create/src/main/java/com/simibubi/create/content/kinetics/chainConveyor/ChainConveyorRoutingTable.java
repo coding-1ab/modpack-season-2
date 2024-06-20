@@ -1,4 +1,4 @@
-package com.simibubi.create.content.kinetics.chainLift;
+package com.simibubi.create.content.kinetics.chainConveyor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
-public class ChainLiftRoutingTable {
+public class ChainConveyorRoutingTable {
 
 	public static final int ENTRY_TIMEOUT = 100;
 	public static final int PORT_ENTRY_TIMEOUT = 20;
@@ -61,7 +61,7 @@ public class ChainLiftRoutingTable {
 		return BlockPos.ZERO;
 	}
 
-	public void advertiseTo(BlockPos connection, ChainLiftRoutingTable otherTable) {
+	public void advertiseTo(BlockPos connection, ChainConveyorRoutingTable otherTable) {
 		BlockPos backConnection = connection.multiply(-1);
 		for (RoutingTableEntry entry : entriesByDistance)
 			if (entry.endOfRoute() || !connection.equals(entry.nextConnection()))

@@ -1,4 +1,4 @@
-package com.simibubi.create.content.kinetics.chainLift;
+package com.simibubi.create.content.kinetics.chainConveyor;
 
 import java.util.List;
 import java.util.Map.Entry;
@@ -20,9 +20,9 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 
-public class ChainLiftInteractionHandler {
+public class ChainConveyorInteractionHandler {
 
-	public static WorldAttached<Cache<BlockPos, List<ChainLiftShape>>> loadedChains =
+	public static WorldAttached<Cache<BlockPos, List<ChainConveyorShape>>> loadedChains =
 		new WorldAttached<>($ -> CacheBuilder.newBuilder()
 			.expireAfterAccess(3, TimeUnit.SECONDS)
 			.build());
@@ -50,16 +50,16 @@ public class ChainLiftInteractionHandler {
 				.distanceToSqr(from);
 
 		BlockPos bestLift = null;
-		ChainLiftShape bestShape = null;
+		ChainConveyorShape bestShape = null;
 		selectedConnection = null;
 
-		for (Entry<BlockPos, List<ChainLiftShape>> entry : loadedChains.get(Minecraft.getInstance().level)
+		for (Entry<BlockPos, List<ChainConveyorShape>> entry : loadedChains.get(Minecraft.getInstance().level)
 			.asMap()
 			.entrySet()) {
 			BlockPos liftPos = entry.getKey();
-			for (ChainLiftShape chainLiftShape : entry.getValue()) {
+			for (ChainConveyorShape chainConveyorShape : entry.getValue()) {
 				Vec3 liftVec = Vec3.atLowerCornerOf(liftPos);
-				Vec3 intersect = chainLiftShape.intersect(from.subtract(liftVec), to.subtract(liftVec));
+				Vec3 intersect = chainConveyorShape.intersect(from.subtract(liftVec), to.subtract(liftVec));
 				if (intersect == null)
 					continue;
 
@@ -69,9 +69,9 @@ public class ChainLiftInteractionHandler {
 					continue;
 				bestDiff = distanceToSqr;
 				bestLift = liftPos;
-				bestShape = chainLiftShape;
-				selectedChainPosition = chainLiftShape.getChainPosition(intersect);
-				if (chainLiftShape instanceof ChainLiftShape.ChainLiftOBB obb)
+				bestShape = chainConveyorShape;
+				selectedChainPosition = chainConveyorShape.getChainPosition(intersect);
+				if (chainConveyorShape instanceof ChainConveyorShape.ChainConveyorOBB obb)
 					selectedConnection = obb.connection;
 			}
 		}
@@ -99,7 +99,7 @@ public class ChainLiftInteractionHandler {
 
 		if (AllItemTags.WRENCH.matches(mainHandItem)) {
 			if (!mc.player.isCrouching()) {
-				ChainLiftRidingHandler.embark(selectedLift, selectedChainPosition, selectedConnection);
+				ChainConveyorRidingHandler.embark(selectedLift, selectedChainPosition, selectedConnection);
 				return true;
 			}
 			// dismantle or start riding
@@ -108,7 +108,7 @@ public class ChainLiftInteractionHandler {
 
 		if (AllBlocks.PACKAGE_PORT.isIn(mainHandItem)) {
 			PackagePortTargetSelectionHandler.activePackageTarget =
-				new PackagePortTarget.ChainLiftPortTarget(selectedLift, selectedChainPosition, selectedConnection);
+				new PackagePortTarget.ChainConveyorPortTarget(selectedLift, selectedChainPosition, selectedConnection);
 			return true;
 		}
 

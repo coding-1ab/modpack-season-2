@@ -1,4 +1,4 @@
-package com.simibubi.create.content.kinetics.chainLift;
+package com.simibubi.create.content.kinetics.chainConveyor;
 
 import java.util.List;
 import java.util.Map.Entry;
@@ -11,8 +11,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlockEntity.ConnectionStats;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftPackage.ChainLiftPackagePhysicsData;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity.ConnectionStats;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorPackage.ChainConveyorPackagePhysicsData;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.render.RenderTypes;
 
@@ -37,38 +37,38 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class ChainLiftRenderer extends KineticBlockEntityRenderer<ChainLiftBlockEntity> {
+public class ChainConveyorRenderer extends KineticBlockEntityRenderer<ChainConveyorBlockEntity> {
 
 	public static final ResourceLocation CHAIN_LOCATION = new ResourceLocation("textures/block/chain.png");
 	public static final int MIP_DISTANCE = 48;
 
-	public ChainLiftRenderer(Context context) {
+	public ChainConveyorRenderer(Context context) {
 		super(context);
 	}
 
 	@Override
-	protected void renderSafe(ChainLiftBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
+	protected void renderSafe(ChainConveyorBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
 		int light, int overlay) {
 		super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
 		BlockPos pos = be.getBlockPos();
 
 		renderChains(be, ms, buffer, light, overlay);
 
-		for (ChainLiftPackage box : be.loopingPackages)
+		for (ChainConveyorPackage box : be.loopingPackages)
 			renderBox(be, ms, buffer, overlay, pos, box, partialTicks);
-		for (Entry<BlockPos, List<ChainLiftPackage>> entry : be.travellingPackages.entrySet())
-			for (ChainLiftPackage box : entry.getValue())
+		for (Entry<BlockPos, List<ChainConveyorPackage>> entry : be.travellingPackages.entrySet())
+			for (ChainConveyorPackage box : entry.getValue())
 				renderBox(be, ms, buffer, overlay, pos, box, partialTicks);
 	}
 
-	private void renderBox(ChainLiftBlockEntity be, PoseStack ms, MultiBufferSource buffer, int overlay, BlockPos pos,
-		ChainLiftPackage box, float partialTicks) {
+	private void renderBox(ChainConveyorBlockEntity be, PoseStack ms, MultiBufferSource buffer, int overlay, BlockPos pos,
+		ChainConveyorPackage box, float partialTicks) {
 		if (box.worldPosition == null)
 			return;
 		if (box.item == null || box.item.isEmpty())
 			return;
 
-		ChainLiftPackagePhysicsData physicsData = box.physicsData(be.getLevel());
+		ChainConveyorPackagePhysicsData physicsData = box.physicsData(be.getLevel());
 		if (physicsData.prevPos == null)
 			return;
 
@@ -123,7 +123,7 @@ public class ChainLiftRenderer extends KineticBlockEntityRenderer<ChainLiftBlock
 		}
 	}
 
-	private void renderChains(ChainLiftBlockEntity be, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
+	private void renderChains(ChainConveyorBlockEntity be, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
 		float time = LevelTickHolder.getRenderTime(be.getLevel()) / (360f / Math.abs(be.getSpeed()));
 		time %= 1;
 		if (time < 0)
@@ -147,7 +147,7 @@ public class ChainLiftRenderer extends KineticBlockEntityRenderer<ChainLiftBlock
 			Vec3 startOffset = stats.start()
 				.subtract(Vec3.atCenterOf(tilePos));
 
-			SuperByteBuffer guard = CachedBuffers.partial(AllPartialModels.CHAIN_LIFT_GUARD, be.getBlockState());
+			SuperByteBuffer guard = CachedBuffers.partial(AllPartialModels.CHAIN_CONVEYOR_GUARD, be.getBlockState());
 			// guard.translate(startOffset.multiply(0, 1, 0));
 			guard.centre();
 			guard.rotateY(yaw);
@@ -246,17 +246,17 @@ public class ChainLiftRenderer extends KineticBlockEntityRenderer<ChainLiftBlock
 	}
 
 	@Override
-	public boolean shouldRenderOffScreen(ChainLiftBlockEntity be) {
+	public boolean shouldRenderOffScreen(ChainConveyorBlockEntity be) {
 		return !be.connections.isEmpty();
 	}
 
 	@Override
-	protected SuperByteBuffer getRotatedModel(ChainLiftBlockEntity be, BlockState state) {
-		return CachedBuffers.partial(AllPartialModels.CHAIN_LIFT_SHAFT, state);
+	protected SuperByteBuffer getRotatedModel(ChainConveyorBlockEntity be, BlockState state) {
+		return CachedBuffers.partial(AllPartialModels.CHAIN_CONVEYOR_SHAFT, state);
 	}
 
 	@Override
-	protected RenderType getRenderType(ChainLiftBlockEntity be, BlockState state) {
+	protected RenderType getRenderType(ChainConveyorBlockEntity be, BlockState state) {
 		return RenderType.cutoutMipped();
 	}
 

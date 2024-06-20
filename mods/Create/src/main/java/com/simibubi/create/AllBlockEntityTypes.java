@@ -82,10 +82,10 @@ import com.simibubi.create.content.kinetics.base.SingleRotatingInstance;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
 import com.simibubi.create.content.kinetics.belt.BeltInstance;
 import com.simibubi.create.content.kinetics.belt.BeltRenderer;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInstance;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRenderer;
 import com.simibubi.create.content.kinetics.chainDrive.ChainGearshiftBlockEntity;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlockEntity;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftInstance;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftRenderer;
 import com.simibubi.create.content.kinetics.clock.CuckooClockBlockEntity;
 import com.simibubi.create.content.kinetics.clock.CuckooClockRenderer;
 import com.simibubi.create.content.kinetics.crafter.MechanicalCrafterBlockEntity;
@@ -363,11 +363,11 @@ public class AllBlockEntityTypes {
 		.renderer(() -> GantryCarriageRenderer::new)
 		.register();
 	
-	public static final BlockEntityEntry<ChainLiftBlockEntity> CHAIN_LIFT = REGISTRATE
-		.blockEntity("chain_lift", ChainLiftBlockEntity::new)
-		.instance(() -> ChainLiftInstance::new)
-		.validBlocks(AllBlocks.CHAIN_LIFT)
-		.renderer(() -> ChainLiftRenderer::new)
+	public static final BlockEntityEntry<ChainConveyorBlockEntity> CHAIN_CONVEYOR = REGISTRATE
+		.blockEntity("chain_conveyor", ChainConveyorBlockEntity::new)
+		.instance(() -> ChainConveyorInstance::new)
+		.validBlocks(AllBlocks.CHAIN_CONVEYOR)
+		.renderer(() -> ChainConveyorRenderer::new)
 		.register();
 
 	public static final BlockEntityEntry<PumpBlockEntity> MECHANICAL_PUMP = REGISTRATE

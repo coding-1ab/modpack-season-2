@@ -5,10 +5,10 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlockEntity;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlockEntity.ConnectedPort;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftBlockEntity.ConnectionStats;
-import com.simibubi.create.content.kinetics.chainLift.ChainLiftPackage;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorPackage;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity.ConnectedPort;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity.ConnectionStats;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -53,10 +53,14 @@ public abstract class PackagePortTarget {
 		BlockPos relativePos = NbtUtils.readBlockPos(tag.getCompound("RelativePos"));
 		PackagePortTarget target = switch (tag.getString("Type")) {
 
-		case "ChainLift" -> new ChainLiftPortTarget(relativePos, 0, null);
+		case "ChainConveyor" -> new ChainConveyorPortTarget(relativePos, 0, null);
 
 		default -> null;
 		};
+		
+		if (target == null)
+			return null;
+		
 		target.readInternal(tag);
 		return target;
 	}
@@ -69,33 +73,33 @@ public abstract class PackagePortTarget {
 		return level.getBlockEntity(portPos.offset(relativePos));
 	}
 
-	public static class ChainLiftPortTarget extends PackagePortTarget {
+	public static class ChainConveyorPortTarget extends PackagePortTarget {
 
 		public float chainPos;
 		public BlockPos connection;
 		public boolean flipped;
 
-		public ChainLiftPortTarget(BlockPos relativePos, float chainPos, @Nullable BlockPos connection) {
-			super("ChainLift", relativePos);
+		public ChainConveyorPortTarget(BlockPos relativePos, float chainPos, @Nullable BlockPos connection) {
+			super("ChainConveyor", relativePos);
 			this.chainPos = chainPos;
 			this.connection = connection;
 		}
 
 		@Override
 		public void setup(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
-			if (be(level, portPos) instanceof ChainLiftBlockEntity clbe)
+			if (be(level, portPos) instanceof ChainConveyorBlockEntity clbe)
 				flipped = clbe.getSpeed() < 0;
 		}
 
 		@Override
 		public boolean export(LevelAccessor level, BlockPos portPos, ItemStack box, boolean simulate) {
-			if (!(be(level, portPos) instanceof ChainLiftBlockEntity clbe))
+			if (!(be(level, portPos) instanceof ChainConveyorBlockEntity clbe))
 				return false;
 			if (connection != null && !clbe.connections.contains(connection))
 				return false;
 			if (simulate)
 				return true;
-			ChainLiftPackage box2 = new ChainLiftPackage(chainPos, box.copy());
+			ChainConveyorPackage box2 = new ChainConveyorPackage(chainPos, box.copy());
 			if (connection == null)
 				return clbe.addLoopingPackage(box2);
 			return clbe.addTravellingPackage(box2, connection);
@@ -103,14 +107,14 @@ public abstract class PackagePortTarget {
 
 		@Override
 		public void register(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
-			if (!(be(level, portPos) instanceof ChainLiftBlockEntity clbe))
+			if (!(be(level, portPos) instanceof ChainConveyorBlockEntity clbe))
 				return;
-			ChainLiftBlockEntity actualBe = clbe;
+			ChainConveyorBlockEntity actualBe = clbe;
 
 			// Jump to opposite chain if motion reversed
 			if (connection != null && clbe.getSpeed() < 0 != flipped) {
 				deregister(ppbe, level, portPos);
-				actualBe = AllBlocks.CHAIN_LIFT.get()
+				actualBe = AllBlocks.CHAIN_CONVEYOR.get()
 					.getBlockEntity(level, clbe.getBlockPos()
 						.offset(connection));
 				if (actualBe == null)
@@ -138,7 +142,7 @@ public abstract class PackagePortTarget {
 
 		@Override
 		public void deregister(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
-			if (!(be(level, portPos) instanceof ChainLiftBlockEntity clbe))
+			if (!(be(level, portPos) instanceof ChainConveyorBlockEntity clbe))
 				return;
 			clbe.loopPorts.remove(relativePos.multiply(-1));
 			clbe.travelPorts.remove(relativePos.multiply(-1));
@@ -170,7 +174,7 @@ public abstract class PackagePortTarget {
 
 		@Override
 		public Vec3 getExactTargetLocation(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
-			if (!(be(level, portPos) instanceof ChainLiftBlockEntity clbe))
+			if (!(be(level, portPos) instanceof ChainConveyorBlockEntity clbe))
 				return Vec3.ZERO;
 			return clbe.getPackagePosition(chainPos, connection);
 		}

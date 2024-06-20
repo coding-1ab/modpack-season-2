@@ -1,4 +1,4 @@
-package com.simibubi.create.content.kinetics.chainLift;
+package com.simibubi.create.content.kinetics.chainConveyor;
 
 import com.jozufozu.flywheel.api.Instancer;
 import com.jozufozu.flywheel.api.Material;
@@ -8,15 +8,15 @@ import com.simibubi.create.content.kinetics.base.SingleRotatingInstance;
 import com.simibubi.create.content.kinetics.base.flwdata.RotatingData;
 import com.simibubi.create.foundation.render.AllMaterialSpecs;
 
-public class ChainLiftInstance extends SingleRotatingInstance<ChainLiftBlockEntity> {
+public class ChainConveyorInstance extends SingleRotatingInstance<ChainConveyorBlockEntity> {
 
-	public ChainLiftInstance(MaterialManager materialManager, ChainLiftBlockEntity blockEntity) {
+	public ChainConveyorInstance(MaterialManager materialManager, ChainConveyorBlockEntity blockEntity) {
 		super(materialManager, blockEntity);
 	}
 
 	@Override
 	protected Instancer<RotatingData> getModel() {
-		return getRotatingMaterial().getModel(AllPartialModels.CHAIN_LIFT_SHAFT, blockEntity.getBlockState());
+		return getRotatingMaterial().getModel(AllPartialModels.CHAIN_CONVEYOR_SHAFT, blockEntity.getBlockState());
 	}
 
 	@Override
