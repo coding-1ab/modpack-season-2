@@ -5,7 +5,7 @@
       "tag": "minecraft:planks"
     },
     {
-      "fluid": "forge:creosote",
+      "fluid": "immersiveengineering:creosote",
       "amount": 125
     }
   ],
@@ -16,8 +16,8 @@
   ],
   "conditions": [
     {
-      "fluidTag": "forge:creosote",
-      "type": "createaddition:has_fluid_tag"
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
     }
   ]
 }
