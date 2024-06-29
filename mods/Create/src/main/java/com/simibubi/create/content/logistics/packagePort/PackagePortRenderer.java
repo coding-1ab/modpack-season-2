@@ -31,13 +31,18 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 		float headPitch = 80;
 		float tonguePitch = 0;
 		float tongueLength = 0;
+		float headPitchModifier = 1;
+
+		boolean hasTarget = blockEntity.target != null;
+		boolean animating = blockEntity.isAnimationInProgress();
+		boolean depositing = blockEntity.currentlyDepositing;
 
 		Vec3 diff = Vec3.ZERO;
 
-		if (blockEntity.target != null) {
+		if (hasTarget) {
 			diff = blockEntity.target
 				.getExactTargetLocation(blockEntity, blockEntity.getLevel(), blockEntity.getBlockPos())
-				.subtract(0, 1, 0)
+				.subtract(0, animating && depositing ? 0 : 0.75, 0)
 				.subtract(Vec3.atCenterOf(blockEntity.getBlockPos()));
 			yaw = (float) (Mth.atan2(diff.x, diff.z) * Mth.RAD_TO_DEG) + 180;
 			tonguePitch = (float) Mth.atan2(diff.y, diff.multiply(1, 0, 1)
@@ -46,31 +51,36 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 			headPitch = Mth.clamp(tonguePitch * 2, 60, 100);
 		}
 
-		if (blockEntity.isAnimationInProgress()) {
+		if (animating) {
 			float progress = blockEntity.animationProgress.getValue(partialTicks);
 			float scale = 1;
 			float itemDistance = 0;
 
-			if (blockEntity.currentlyDepositing) {
+			if (depositing) {
 				double modifier = Math.max(0, 1 - Math.pow((progress - 0.25) * 4 - 1, 4));
 				itemDistance =
 					(float) Math.max(tongueLength * Math.min(1, (progress - 0.25) * 3), tongueLength * modifier);
-				tongueLength *= modifier;
-				headPitch *= Math.max(0, 1 - Math.pow((progress) * 2 - 1, 4));
-				scale = 0.5f + progress / 2;
+				tongueLength *= Math.max(0, 1 - Math.pow((progress * 1.25 - 0.25) * 4 - 1, 4));
+				headPitchModifier = (float) Math.max(0, 1 - Math.pow((progress * 1.25) * 2 - 1, 4));
+				scale = 0.25f + progress * 3 / 4;
 
 			} else {
 				tongueLength *= Math.pow(Math.max(0, 1 - progress * 1.25), 5);
-				headPitch *= Math.min(progress * 30, 1 - Math.max(0, (progress - 0.5) * 2));
+				headPitchModifier = 1 - (float) Math.min(1, Math.max(0, (Math.pow(progress * 1.5, 2) - 0.5) * 2));
 				scale = (float) Math.max(0.5, 1 - progress * 1.25);
 				itemDistance = tongueLength;
 			}
 
 			renderPackage(blockEntity, ms, buffer, light, overlay, diff, scale, itemDistance);
+
 		} else {
 			tongueLength = 0;
-			headPitch = 0;
+			float anticipation = blockEntity.anticipationProgress.getValue(partialTicks);
+			headPitchModifier =
+				anticipation > 0 ? (float) Math.max(0, 1 - Math.pow((anticipation * 1.25) * 2 - 1, 4)) : 0;
 		}
+
+		headPitch *= headPitchModifier;
 
 		body.centre()
 			.rotateY(yaw)
@@ -130,6 +140,8 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 		int overlay, Vec3 diff, float scale, float itemDistance) {
 		if (blockEntity.animatedPackage == null)
 			return;
+		if (scale < 0.45)
+			return;
 		ResourceLocation key = ForgeRegistries.ITEMS.getKey(blockEntity.animatedPackage.getItem());
 		if (key == null)
 			return;
@@ -137,10 +149,15 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 			CachedBuffers.partial(AllPartialModels.PACKAGE_RIGGING.get(key), blockEntity.getBlockState());
 		SuperByteBuffer boxBuffer =
 			CachedBuffers.partial(AllPartialModels.PACKAGES.get(key), blockEntity.getBlockState());
+
+		boolean animating = blockEntity.isAnimationInProgress();
+		boolean depositing = blockEntity.currentlyDepositing;
+
 		for (SuperByteBuffer buf : new SuperByteBuffer[] { boxBuffer, rigBuffer }) {
 			buf.translate(0, 3 / 16f, 0)
 				.translate(diff.normalize()
-					.scale(itemDistance))
+					.scale(itemDistance)
+					.subtract(0, animating && depositing ? 0.75 : 0, 0))
 				.centre()
 				.scale(scale)
 				.unCentre()

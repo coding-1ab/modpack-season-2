@@ -29,12 +29,14 @@ import com.simibubi.create.content.equipment.zapper.ZapperItem;
 import com.simibubi.create.content.equipment.zapper.terrainzapper.WorldshaperRenderHandler;
 import com.simibubi.create.content.kinetics.KineticDebugger;
 import com.simibubi.create.content.kinetics.belt.item.BeltConnectorHandler;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorConnectionHandler;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInteractionHandler;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRidingHandler;
 import com.simibubi.create.content.kinetics.fan.AirCurrent;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPointHandler;
 import com.simibubi.create.content.kinetics.turntable.TurntableHandler;
 import com.simibubi.create.content.logistics.depot.EjectorTargetHandler;
+import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.content.redstone.displayLink.ClickToLinkBlockItem;
 import com.simibubi.create.content.redstone.link.LinkRenderer;
@@ -170,6 +172,8 @@ public class ClientEvents {
 		NetheriteBacktankFirstPersonRenderer.clientTick();
 		ChainConveyorInteractionHandler.clientTick();
 		ChainConveyorRidingHandler.clientTick();
+		ChainConveyorConnectionHandler.clientTick();
+		PackagePortTargetSelectionHandler.tick();
 	}
 
 	@SubscribeEvent
@@ -210,7 +214,6 @@ public class ClientEvents {
 		PoseStack ms = event.getPoseStack();
 		ms.pushPose();
 		SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBuffer.getInstance();
-		float partialTicks = AnimationTickHolder.getPartialTicks();
 		Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera()
 			.getPosition();
 
@@ -219,6 +222,7 @@ public class ClientEvents {
 		CouplingRenderer.renderAll(ms, buffer, camera);
 		CarriageCouplingRenderer.renderAll(ms, buffer, camera);
 		CreateClient.SCHEMATIC_HANDLER.render(ms, buffer, camera);
+		ChainConveyorInteractionHandler.drawCustomBlockSelection(ms, buffer, camera);
 
 		buffer.draw();
 		RenderSystem.enableCull();

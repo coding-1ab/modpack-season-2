@@ -9,6 +9,7 @@ import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
@@ -19,13 +20,19 @@ public class ChainConveyorRidingHandler {
 	public static float chainPosition;
 	public static BlockPos ridingConnection;
 	public static boolean flipped;
+	public static int catchingUp;
 
 	public static void embark(BlockPos lift, float position, BlockPos connection) {
 		ridingChainConveyor = lift;
 		chainPosition = position;
 		ridingConnection = connection;
-		if (Minecraft.getInstance().level.getBlockEntity(ridingChainConveyor) instanceof ChainConveyorBlockEntity clbe)
+		catchingUp = 20;
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.level.getBlockEntity(ridingChainConveyor) instanceof ChainConveyorBlockEntity clbe)
 			flipped = clbe.getSpeed() < 0;
+
+		Component component = Component.translatable("mount.onboard", mc.options.keyShift.getTranslatedKeyMessage());
+		mc.gui.setOverlayMessage(component, false);
 	}
 
 	public static void clientTick() {
@@ -33,7 +40,7 @@ public class ChainConveyorRidingHandler {
 			return;
 		Minecraft mc = Minecraft.getInstance();
 		BlockEntity blockEntity = mc.level.getBlockEntity(ridingChainConveyor);
-		if (mc.player.isCrouching() || !(blockEntity instanceof ChainConveyorBlockEntity clbe)) {
+		if (mc.player.isShiftKeyDown() || !(blockEntity instanceof ChainConveyorBlockEntity clbe)) {
 			ridingChainConveyor = null;
 			ridingConnection = null;
 			return;
@@ -69,11 +76,14 @@ public class ChainConveyorRidingHandler {
 						.scale(Math.min(stats.chainLength(), chainPosition)));
 		} else {
 			targetPosition = Vec3.atBottomCenterOf(ridingChainConveyor)
-				.add(VecHelper.rotate(new Vec3(0, 0.25, 0.875), chainPosition, Axis.Y));
+				.add(VecHelper.rotate(new Vec3(0, 0.25, 1), chainPosition, Axis.Y));
 		}
+		
+		if (catchingUp > 0)
+			catchingUp--;
 
 		Vec3 diff = targetPosition.subtract(playerPosition);
-		if (diff.length() > 3) {
+		if (catchingUp == 0 && diff.length() > 3) {
 			ridingChainConveyor = null;
 			ridingConnection = null;
 			return;

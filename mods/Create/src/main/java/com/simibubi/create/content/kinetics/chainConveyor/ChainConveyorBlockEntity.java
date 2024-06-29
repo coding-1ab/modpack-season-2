@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
@@ -20,22 +21,34 @@ import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
+import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.NBTHelper;
 import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ChainConveyorBlockEntity extends KineticBlockEntity {
 
@@ -56,6 +69,9 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 	Map<BlockPos, List<ChainConveyorPackage>> travellingPackages = new HashMap<>();
 
 	public boolean reversed;
+	public boolean cancelDrops;
+
+	BlockPos chainDestroyedEffectToSend;
 
 	public ChainConveyorBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
@@ -72,10 +88,19 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 		updateChainShapes();
 	}
 
+	public boolean canAcceptMorePackages() {
+		return loopingPackages.size() + travellingPackages.size() < AllConfigs.server().logistics.chainConveyorCapacity
+			.get();
+	}
+
+	public boolean canAcceptMorePackagesFromOtherConveyor() {
+		return loopingPackages.size() < AllConfigs.server().logistics.chainConveyorCapacity.get();
+	}
+
 	@Override
 	public boolean addToTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		return super.addToTooltip(tooltip, isPlayerSneaking);
-		
+
 //		// debug routing info
 //		tooltip.addAll(routingTable.createSummary());
 //		if (!loopPorts.isEmpty())
@@ -150,11 +175,15 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 			Travelling: for (Iterator<ChainConveyorPackage> iterator = entry.getValue()
 				.iterator(); iterator.hasNext();) {
 				ChainConveyorPackage box = iterator.next();
+				box.justFlipped = false;
 
 				float prevChainPosition = box.chainPosition;
 				box.chainPosition += serverSpeed * distancePerTick;
 				box.chainPosition = Math.min(stats.chainLength, box.chainPosition);
-				box.justFlipped = false;
+
+				float anticipatePosition = box.chainPosition;
+				anticipatePosition += serverSpeed * distancePerTick * 4;
+				anticipatePosition = Math.min(stats.chainLength, anticipatePosition);
 
 				if (level.isClientSide())
 					continue;
@@ -163,10 +192,18 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 					ConnectedPort port = portEntry.getValue();
 					float chainPosition = port.chainPosition();
 
-					if (prevChainPosition > chainPosition || box.chainPosition < chainPosition)
+					if (prevChainPosition > chainPosition)
+						continue;
+					boolean notAtPositionYet = box.chainPosition < chainPosition;
+					if (notAtPositionYet && anticipatePosition < chainPosition)
 						continue;
 					if (!PackageItem.matchAddress(box.item, port.filter()))
 						continue;
+					if (notAtPositionYet) {
+						notifyPortToAnticipate(portEntry.getKey());
+						continue;
+					}
+					
 					if (!exportToPort(box, portEntry.getKey()))
 						continue;
 
@@ -190,11 +227,15 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 
 		Looping: for (Iterator<ChainConveyorPackage> iterator = loopingPackages.iterator(); iterator.hasNext();) {
 			ChainConveyorPackage box = iterator.next();
+			box.justFlipped = false;
 
 			float prevChainPosition = box.chainPosition;
 			box.chainPosition += serverSpeed * degreesPerTick;
 			box.chainPosition = wrapAngle(box.chainPosition);
-			box.justFlipped = false;
+			
+			float anticipatePosition = box.chainPosition;
+			anticipatePosition += serverSpeed * degreesPerTick * 4;
+			anticipatePosition = wrapAngle(anticipatePosition);
 
 			if (level.isClientSide())
 				continue;
@@ -203,10 +244,16 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 				ConnectedPort port = portEntry.getValue();
 				float offBranchAngle = port.chainPosition();
 
-				if (!loopThresholdCrossed(box.chainPosition, prevChainPosition, offBranchAngle))
+				boolean notAtPositionYet = !loopThresholdCrossed(box.chainPosition, prevChainPosition, offBranchAngle);
+				if (notAtPositionYet && !loopThresholdCrossed(anticipatePosition, prevChainPosition, offBranchAngle))
 					continue;
 				if (!PackageItem.matchAddress(box.item, port.filter()))
 					continue;
+				if (notAtPositionYet) {
+					notifyPortToAnticipate(portEntry.getKey());
+					continue;
+				}
+				
 				if (!exportToPort(box, portEntry.getKey()))
 					continue;
 
@@ -216,6 +263,10 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 			}
 
 			for (BlockPos connection : connections) {
+				if (level.getBlockEntity(worldPosition.offset(connection)) instanceof ChainConveyorBlockEntity ccbe
+					&& !ccbe.canAcceptMorePackagesFromOtherConveyor())
+					continue;
+
 				float offBranchAngle = connectionStats.get(connection).tangentAngle;
 
 				if (!loopThresholdCrossed(box.chainPosition, prevChainPosition, offBranchAngle))
@@ -253,6 +304,11 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 
 		ppbe.startAnimation(box.item, false);
 		return true;
+	}
+
+	private void notifyPortToAnticipate(BlockPos offset) {
+		if (level.getBlockEntity(worldPosition.offset(offset)) instanceof PackagePortBlockEntity ppbe)
+			ppbe.sendAnticipate();
 	}
 
 	public boolean addTravellingPackage(ChainConveyorPackage box, BlockPos connection) {
@@ -393,6 +449,24 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 		return added;
 	}
 
+	public void chainDestroyed(BlockPos target, boolean spawnDrops, boolean sendEffect) {
+		int chainCount = getChainCost(target);
+		if (sendEffect) {
+			chainDestroyedEffectToSend = target;
+			sendData();
+		}
+		if (!spawnDrops)
+			return;
+
+		if (!forPointsAlongChains(target, chainCount,
+			vec -> level.addFreshEntity(new ItemEntity(level, vec.x, vec.y, vec.z, new ItemStack(Items.CHAIN))))) {
+			while (chainCount > 0) {
+				Block.popResource(level, worldPosition, new ItemStack(Blocks.CHAIN.asItem(), Math.min(chainCount, 64)));
+				chainCount -= 64;
+			}
+		}
+	}
+
 	public boolean removeConnectionTo(BlockPos target) {
 		BlockPos localTarget = target.subtract(worldPosition);
 		boolean removed = connections.remove(localTarget);
@@ -425,28 +499,76 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 			Vec3 localEnd = stats.end.subtract(Vec3.atLowerCornerOf(worldPosition));
 			shapes.add(new ChainConveyorOBB(target, localStart, localEnd));
 		}
-		ChainConveyorInteractionHandler.loadedChains.get(level)
-			.put(worldPosition, shapes);
+
+		if (level != null && level.isClientSide())
+			ChainConveyorInteractionHandler.loadedChains.get(level)
+				.put(worldPosition, shapes);
+	}
+
+	@Override
+	public void remove() {
+		super.remove();
+		if (level == null || !level.isClientSide())
+			return;
+		for (BlockPos blockPos : connections)
+			spawnDestroyParticles(blockPos);
+	}
+
+	private void spawnDestroyParticles(BlockPos blockPos) {
+		forPointsAlongChains(blockPos, (int) Math.round(Vec3.atLowerCornerOf(blockPos)
+			.length() * 8),
+			vec -> level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.CHAIN.defaultBlockState()),
+				vec.x, vec.y, vec.z, 0, 0, 0));
 	}
 
 	@Override
 	public void destroy() {
 		super.destroy();
-		ChainConveyorInteractionHandler.loadedChains.get(level)
-			.invalidate(worldPosition);
 
-		if (level.isClientSide())
-			return;
-
-		for (BlockPos blockPos : connections)
+		for (BlockPos blockPos : connections) {
+			chainDestroyed(blockPos, !cancelDrops, false);
 			if (level.getBlockEntity(worldPosition.offset(blockPos)) instanceof ChainConveyorBlockEntity clbe)
 				clbe.removeConnectionTo(worldPosition);
+		}
 
 		for (ChainConveyorPackage box : loopingPackages)
 			drop(box);
 		for (Entry<BlockPos, List<ChainConveyorPackage>> entry : travellingPackages.entrySet())
 			for (ChainConveyorPackage box : entry.getValue())
 				drop(box);
+	}
+
+	public boolean forPointsAlongChains(BlockPos connection, int positions, Consumer<Vec3> callback) {
+		prepareStats();
+		ConnectionStats stats = connectionStats.get(connection);
+		if (stats == null)
+			return false;
+
+		Vec3 start = stats.start;
+		Vec3 direction = stats.end.subtract(start);
+		Vec3 origin = Vec3.atCenterOf(worldPosition);
+		Vec3 normal = direction.cross(new Vec3(0, 1, 0))
+			.normalize();
+		Vec3 offset = start.subtract(origin);
+		Vec3 start2 = origin.add(offset.add(normal.scale(-2 * normal.dot(offset))));
+
+		for (boolean firstChain : Iterate.trueAndFalse) {
+			int steps = positions / 2;
+			if (firstChain)
+				steps += positions % 2;
+			for (int i = 0; i < steps; i++)
+				callback.accept((firstChain ? start : start2).add(direction.scale((0.5 + i) / steps)));
+		}
+
+		return true;
+	}
+
+	@Override
+	public void invalidate() {
+		super.invalidate();
+		if (level != null && level.isClientSide())
+			ChainConveyorInteractionHandler.loadedChains.get(level)
+				.invalidate(worldPosition);
 	}
 
 	private void drop(ChainConveyorPackage box) {
@@ -474,6 +596,11 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 	@Override
 	protected void write(CompoundTag compound, boolean clientPacket) {
 		super.write(compound, clientPacket);
+		if (clientPacket && chainDestroyedEffectToSend != null) {
+			compound.put("DestroyEffect", NbtUtils.writeBlockPos(chainDestroyedEffectToSend));
+			chainDestroyedEffectToSend = null;
+		}
+
 		compound.put("Connections", NBTHelper.writeCompoundList(connections, NbtUtils::writeBlockPos));
 		compound.put("TravellingPackages", NBTHelper.writeCompoundList(travellingPackages.entrySet(), entry -> {
 			CompoundTag compoundTag = new CompoundTag();
@@ -489,6 +616,9 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 	@Override
 	protected void read(CompoundTag compound, boolean clientPacket) {
 		super.read(compound, clientPacket);
+		if (clientPacket && compound.contains("DestroyEffect") && level != null)
+			spawnDestroyParticles(NbtUtils.readBlockPos(compound.getCompound("DestroyEffect")));
+
 		connections.clear();
 		NBTHelper.iterateCompoundList(compound.getList("Connections", Tag.TAG_COMPOUND),
 			c -> connections.add(NbtUtils.readBlockPos(c)));
@@ -508,6 +638,51 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 		if (angle < 0)
 			angle += 360;
 		return angle;
+	}
+
+	public static int getChainCost(BlockPos connection) {
+		return (int) Math.max(Math.round(Vec3.atLowerCornerOf(connection)
+			.length() / 1.25), 1);
+	}
+
+	public static boolean getChainsFromInventory(Player player, ItemStack chain, int cost, boolean simulate) {
+		int found = 0;
+
+		Inventory inv = player.getInventory();
+		int size = inv.items.size();
+		for (int j = 0; j <= size + 1; j++) {
+			int i = j;
+			boolean offhand = j == size + 1;
+			if (j == size)
+				i = inv.selected;
+			else if (offhand)
+				i = 0;
+			else if (j == inv.selected)
+				continue;
+
+			ItemStack stackInSlot = (offhand ? inv.offhand : inv.items).get(i);
+			if (!stackInSlot.is(chain.getItem()))
+				continue;
+			if (found >= cost)
+				continue;
+
+			int count = stackInSlot.getCount();
+
+			if (!simulate) {
+				int remainingItems = count - Math.min(cost - found, count);
+				if (i == inv.selected)
+					stackInSlot.setTag(null);
+				ItemStack newItem = ItemHandlerHelper.copyStackWithSize(stackInSlot, remainingItems);
+				if (offhand)
+					player.setItemInHand(InteractionHand.OFF_HAND, newItem);
+				else
+					inv.setItem(i, newItem);
+			}
+
+			found += count;
+		}
+
+		return found >= cost;
 	}
 
 	public List<ChainConveyorPackage> getLoopingPackages() {

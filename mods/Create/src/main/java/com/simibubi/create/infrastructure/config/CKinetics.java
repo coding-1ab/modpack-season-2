@@ -9,6 +9,8 @@ public class CKinetics extends ConfigBase {
 
 	public final ConfigBool disableStress = b(false, "disableStress", Comments.disableStress);
 	public final ConfigInt maxBeltLength = i(20, 5, "maxBeltLength", Comments.maxBeltLength);
+	public final ConfigInt maxChainConveyorLength = i(32, 5, "maxChainConveyorLength", Comments.maxChainConveyorLength);
+	public final ConfigInt maxChainConveyorConnections = i(4, 1, "maxChainConveyorConnections", Comments.maxChainConveyorConnections);
 	public final ConfigInt crushingDamage = i(4, 0, "crushingDamage", Comments.crushingDamage);
 	public final ConfigInt maxRotationSpeed = i(256, 64, "maxRotationSpeed", Comments.rpm, Comments.maxRotationSpeed);
 	public final ConfigEnum<DeployerAggroSetting> ignoreDeployerAttacks =
@@ -70,6 +72,8 @@ public class CKinetics extends ConfigBase {
 
 	private static class Comments {
 		static String maxBeltLength = "Maximum length in blocks of mechanical belts.";
+		static String maxChainConveyorLength = "Maximum length in blocks of chain conveyor connections.";
+		static String maxChainConveyorConnections = "Maximum amount of connections each chain conveyor can have.";
 		static String crushingDamage = "Damage dealt by active Crushing Wheels.";
 		static String maxRotationSpeed = "Maximum allowed rotation speed for any Kinetic Block.";
 		static String fanPushDistance = "Maximum distance in blocks Fans can push entities.";

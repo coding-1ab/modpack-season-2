@@ -99,15 +99,12 @@ public class BlueprintOverlayRenderer {
 	public static void displayTrackRequirements(PlacementInfo info, ItemStack pavementItem) {
 		if (active)
 			return;
-
-		active = true;
-		empty = false;
-		noOutput = true;
-		ingredients.clear();
+		prepareCustomOverlay();
 
 		int tracks = info.requiredTracks;
 		while (tracks > 0) {
-			ingredients.add(Pair.of(new ItemStack(info.trackMaterial.getBlock(), Math.min(64, tracks)), info.hasRequiredTracks));
+			ingredients.add(
+				Pair.of(new ItemStack(info.trackMaterial.getBlock(), Math.min(64, tracks)), info.hasRequiredTracks));
 			tracks -= 64;
 		}
 
@@ -116,6 +113,25 @@ public class BlueprintOverlayRenderer {
 			ingredients.add(Pair.of(ItemHandlerHelper.copyStackWithSize(pavementItem, Math.min(64, pavement)),
 				info.hasRequiredPavement));
 			pavement -= 64;
+		}
+	}
+
+	private static void prepareCustomOverlay() {
+		active = true;
+		empty = false;
+		noOutput = true;
+		ingredients.clear();
+	}
+
+	public static void displayChainRequirements(Item chainItem, int count, boolean fulfilled) {
+		if (active)
+			return;
+		prepareCustomOverlay();
+
+		int chains = count;
+		while (chains > 0) {
+			ingredients.add(Pair.of(new ItemStack(chainItem, Math.min(64, chains)), fulfilled));
+			chains -= 64;
 		}
 	}
 
@@ -240,8 +256,7 @@ public class BlueprintOverlayRenderer {
 		}
 	}
 
-	public static void renderOverlay(ForgeGui gui, GuiGraphics graphics, float partialTicks, int width,
-		int height) {
+	public static void renderOverlay(ForgeGui gui, GuiGraphics graphics, float partialTicks, int width, int height) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.options.hideGui)
 			return;
@@ -287,7 +302,8 @@ public class BlueprintOverlayRenderer {
 		RenderSystem.disableBlend();
 	}
 
-	public static void drawItemStack(GuiGraphics graphics, Minecraft mc, int x, int y, ItemStack itemStack, String count) {
+	public static void drawItemStack(GuiGraphics graphics, Minecraft mc, int x, int y, ItemStack itemStack,
+		String count) {
 		if (itemStack.getItem() instanceof FilterItem) {
 			int step = LevelTickHolder.getTicks(mc.level) / 10;
 			ItemStack[] itemsMatchingFilter = getItemsMatchingFilter(itemStack);

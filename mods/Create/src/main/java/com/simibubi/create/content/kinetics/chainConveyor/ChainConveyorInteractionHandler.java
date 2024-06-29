@@ -6,20 +6,33 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.logistics.packagePort.PackagePortTarget;
 import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler;
 import com.simibubi.create.foundation.utility.RaycastHelper;
 
+import net.createmod.catnip.CatnipClient;
 import net.createmod.catnip.utility.WorldAttached;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
+@EventBusSubscriber(Dist.CLIENT)
 public class ChainConveyorInteractionHandler {
 
 	public static WorldAttached<Cache<BlockPos, List<ChainConveyorShape>>> loadedChains =
@@ -30,6 +43,8 @@ public class ChainConveyorInteractionHandler {
 	public static BlockPos selectedLift;
 	public static float selectedChainPosition;
 	public static BlockPos selectedConnection;
+	public static Vec3 selectedBakedPosition;
+	public static ChainConveyorShape selectedShape;
 
 	public static void clientTick() {
 		if (!isActive()) {
@@ -38,8 +53,12 @@ public class ChainConveyorInteractionHandler {
 		}
 
 		Minecraft mc = Minecraft.getInstance();
+		ItemStack mainHandItem = mc.player.getMainHandItem();
+		boolean isWrench = AllItemTags.WRENCH.matches(mainHandItem);
+		boolean dismantling = isWrench && mc.player.isShiftKeyDown();
 		double range = mc.player.getAttribute(ForgeMod.BLOCK_REACH.get())
 			.getValue() + 1;
+
 		Vec3 from = RaycastHelper.getTraceOrigin(mc.player);
 		Vec3 to = RaycastHelper.getTraceTarget(mc.player, range, from);
 		HitResult hitResult = mc.hitResult;
@@ -58,6 +77,8 @@ public class ChainConveyorInteractionHandler {
 			.entrySet()) {
 			BlockPos liftPos = entry.getKey();
 			for (ChainConveyorShape chainConveyorShape : entry.getValue()) {
+				if (chainConveyorShape instanceof ChainConveyorShape.ChainConveyorBB && dismantling)
+					continue;
 				Vec3 liftVec = Vec3.atLowerCornerOf(liftPos);
 				Vec3 intersect = chainConveyorShape.intersect(from.subtract(liftVec), to.subtract(liftVec));
 				if (intersect == null)
@@ -80,8 +101,16 @@ public class ChainConveyorInteractionHandler {
 		if (bestLift == null)
 			return;
 
-		bestShape.drawOutline(bestLift);
-		bestShape.drawPoint(bestLift, selectedChainPosition);
+		selectedShape = bestShape;
+		selectedBakedPosition = bestShape.getVec(bestLift, selectedChainPosition);
+
+		if (!isWrench) {
+			CatnipClient.OUTLINER
+				.chaseAABB("ChainPointSelection", new AABB(selectedBakedPosition, selectedBakedPosition))
+				.colored(Color.WHITE)
+				.lineWidth(1 / 6f)
+				.disableLineNormals();
+		}
 	}
 
 	private static boolean isActive() {
@@ -98,21 +127,44 @@ public class ChainConveyorInteractionHandler {
 		ItemStack mainHandItem = mc.player.getMainHandItem();
 
 		if (AllItemTags.WRENCH.matches(mainHandItem)) {
-			if (!mc.player.isCrouching()) {
+			if (!mc.player.isShiftKeyDown()) {
 				ChainConveyorRidingHandler.embark(selectedLift, selectedChainPosition, selectedConnection);
 				return true;
 			}
-			// dismantle or start riding
+
+			AllPackets.getChannel()
+				.sendToServer(new ChainConveyorConnectionPacket(selectedLift, selectedLift.offset(selectedConnection),
+					mainHandItem, false));
 			return true;
 		}
 
 		if (AllBlocks.PACKAGE_PORT.isIn(mainHandItem)) {
+			PackagePortTargetSelectionHandler.exactPositionOfTarget = selectedBakedPosition;
 			PackagePortTargetSelectionHandler.activePackageTarget =
 				new PackagePortTarget.ChainConveyorPortTarget(selectedLift, selectedChainPosition, selectedConnection);
 			return true;
 		}
 
-		return false;
+		return true;
+	}
+
+	public static void drawCustomBlockSelection(PoseStack ms, MultiBufferSource buffer, Vec3 camera) {
+		if (selectedLift == null || selectedShape == null)
+			return;
+
+		VertexConsumer vb = buffer.getBuffer(RenderType.lines());
+		ms.pushPose();
+		ms.translate(selectedLift.getX() - camera.x, selectedLift.getY() - camera.y, selectedLift.getZ() - camera.z);
+		selectedShape.drawOutline(selectedLift, ms, vb);
+		ms.popPose();
+	}
+
+	@SubscribeEvent
+	public static void hideVanillaBlockSelection(RenderHighlightEvent.Block event) {
+		if (selectedLift == null || selectedShape == null)
+			return;
+
+		event.setCanceled(true);
 	}
 
 }

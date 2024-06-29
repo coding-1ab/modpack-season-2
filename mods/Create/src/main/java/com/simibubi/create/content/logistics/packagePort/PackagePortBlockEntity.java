@@ -46,7 +46,10 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 
 	public ItemStack animatedPackage;
 	public LerpedFloat animationProgress;
+	public LerpedFloat anticipationProgress;
 	public boolean currentlyDepositing;
+	
+	public boolean sendAnticipate;
 
 	public float passiveYaw;
 
@@ -55,6 +58,7 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 		inventory = new PackagePortInventory(this);
 		itemHandler = LazyOptional.of(() -> inventory);
 		animationProgress = LerpedFloat.linear();
+		anticipationProgress = LerpedFloat.linear();
 	}
 
 	@Override
@@ -70,7 +74,11 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 
 	@Override
 	public AABB getRenderBoundingBox() {
-		return super.getRenderBoundingBox().expandTowards(0, 1, 0);
+		AABB bb = super.getRenderBoundingBox().expandTowards(0, 1, 0);
+		if (target != null)
+			bb = bb.minmax(new AABB(BlockPos.containing(target.getExactTargetLocation(this, level, worldPosition))))
+				.inflate(0.5);
+		return bb;
 	}
 
 	@Override
@@ -106,10 +114,27 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 		for (int i = 0; i < inventory.getSlots(); i++)
 			drop(inventory.getStackInSlot(i));
 	}
+	
+	public void sendAnticipate() {
+		if (isAnimationInProgress())
+			return;
+		sendAnticipate = true;
+		sendData();
+	}
+	
+	public void anticipate() {
+		anticipationProgress.chase(1, 0.1, Chaser.LINEAR);
+	}
 
 	@Override
 	public void tick() {
 		super.tick();
+		
+		if (anticipationProgress.getValue() == 1)
+			anticipationProgress.updateChaseTarget(0);
+
+		anticipationProgress.tickChaser();
+		
 		if (!isAnimationInProgress())
 			return;
 
@@ -131,6 +156,7 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 		if (animationProgress.getValue() < 1)
 			return;
 
+		anticipationProgress.startWithValue(0);
 		animationProgress.startWithValue(0);
 		if (level.isClientSide()) {
 			animatedPackage = null;
@@ -246,11 +272,16 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 			tag.put("AnimatedPackage", animatedPackage.serializeNBT());
 			tag.putBoolean("Deposit", currentlyDepositing);
 		}
+		if (sendAnticipate) {
+			sendAnticipate = false;
+			tag.putBoolean("Anticipate", true);
+		}
 	}
 
 	@Override
 	protected void read(CompoundTag tag, boolean clientPacket) {
 		super.read(tag, clientPacket);
+		PackagePortTarget prevTarget = target;
 		target = PackagePortTarget.read(tag.getCompound("Target"));
 		inventory.deserializeNBT(tag.getCompound("Inventory"));
 		passiveYaw = tag.getFloat("PlacedYaw");
@@ -258,6 +289,10 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 			animatedPackage = null;
 		if (tag.contains("AnimatedPackage"))
 			startAnimation(ItemStack.of(tag.getCompound("AnimatedPackage")), tag.getBoolean("Deposit"));
+		if (clientPacket && tag.contains("Anticipate"))
+			anticipate();
+		if (clientPacket && prevTarget != target)
+			invalidateRenderBoundingBox();
 	}
 
 	public String getFilterString() {

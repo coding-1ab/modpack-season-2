@@ -57,10 +57,10 @@ public abstract class PackagePortTarget {
 
 		default -> null;
 		};
-		
+
 		if (target == null)
 			return null;
-		
+
 		target.readInternal(tag);
 		return target;
 	}
@@ -97,6 +97,14 @@ public abstract class PackagePortTarget {
 				return false;
 			if (connection != null && !clbe.connections.contains(connection))
 				return false;
+			if (simulate) {
+				if (connection == null && !clbe.canAcceptMorePackages())
+					return false;
+				if (connection != null && (!(level.getBlockEntity(clbe.getBlockPos()
+					.offset(connection)) instanceof ChainConveyorBlockEntity otherClbe)
+					|| !otherClbe.canAcceptMorePackages()))
+					return false;
+			}
 			if (simulate)
 				return true;
 			ChainConveyorPackage box2 = new ChainConveyorPackage(chainPos, box.copy());

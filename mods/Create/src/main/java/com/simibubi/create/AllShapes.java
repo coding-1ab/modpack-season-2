@@ -216,8 +216,14 @@ public class AllShapes {
 			.build(),
 
 		TRACK_COLLISION = shape(0, 0, 0, 16, 2, 16).build(),
-		
-		PACKAGE_PORT = shape(0, 0, 0, 16, 4, 16).add(2, 2, 2, 14, 14, 14).build(),
+
+		PACKAGE_PORT = shape(0, 0, 0, 16, 4, 16).add(2, 2, 2, 14, 14, 14)
+			.build(),
+
+		CHAIN_CONVEYOR_INTERACTION = shape(-10, 2, 0, 26, 14, 16).add(0, 2, -10, 16, 14, 26)
+			.add(-5, 2, -5, 21, 14, 21)
+			.add(Shapes.block())
+			.build(),
 
 		TRACK_FALLBACK = shape(0, 0, 0, 16, 4, 16).build(),
 
