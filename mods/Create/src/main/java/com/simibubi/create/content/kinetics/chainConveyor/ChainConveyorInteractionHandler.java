@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllTags.AllItemTags;
+import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.packagePort.PackagePortTarget;
 import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler;
 import com.simibubi.create.foundation.utility.RaycastHelper;
@@ -116,7 +117,8 @@ public class ChainConveyorInteractionHandler {
 	private static boolean isActive() {
 		Minecraft mc = Minecraft.getInstance();
 		ItemStack mainHandItem = mc.player.getMainHandItem();
-		return AllItemTags.WRENCH.matches(mainHandItem) || AllBlocks.PACKAGE_PORT.isIn(mainHandItem);
+		return AllItemTags.WRENCH.matches(mainHandItem) || AllBlocks.PACKAGE_PORT.isIn(mainHandItem)
+			|| PackageItem.isPackage(mainHandItem);
 	}
 
 	public static boolean onUse() {
@@ -142,6 +144,13 @@ public class ChainConveyorInteractionHandler {
 			PackagePortTargetSelectionHandler.exactPositionOfTarget = selectedBakedPosition;
 			PackagePortTargetSelectionHandler.activePackageTarget =
 				new PackagePortTarget.ChainConveyorPortTarget(selectedLift, selectedChainPosition, selectedConnection);
+			return true;
+		}
+
+		if (PackageItem.isPackage(mainHandItem)) {
+			AllPackets.getChannel()
+				.sendToServer(new ChainPackageInteractionPacket(selectedLift, selectedConnection, selectedChainPosition,
+					mainHandItem));
 			return true;
 		}
 

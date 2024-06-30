@@ -47,6 +47,7 @@ import com.simibubi.create.content.equipment.zapper.terrainzapper.ConfigureWorld
 import com.simibubi.create.content.fluids.transfer.FluidSplashPacket;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorConnectionPacket;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRidingPacket;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainPackageInteractionPacket;
 import com.simibubi.create.content.kinetics.gauge.GaugeObservedPacket;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmPlacementPacket;
 import com.simibubi.create.content.kinetics.transmission.sequencer.ConfigureSequencedGearshiftPacket;
@@ -175,6 +176,7 @@ public enum AllPackets {
 	LOGISTICS_PACKAGE_REQUEST(PackageOrderRequestPacket.class, PackageOrderRequestPacket::new, PLAY_TO_SERVER),
 	CHAIN_CONVEYOR_CONNECT(ChainConveyorConnectionPacket.class, ChainConveyorConnectionPacket::new, PLAY_TO_SERVER),
 	CHAIN_CONVEYOR_RIDING(ChainConveyorRidingPacket.class, ChainConveyorRidingPacket::new, PLAY_TO_SERVER),
+	CHAIN_PACKAGE_INTERACTION(ChainPackageInteractionPacket.class, ChainPackageInteractionPacket::new, PLAY_TO_SERVER),
 
 	// Server to Client
 	SYMMETRY_EFFECT(SymmetryEffectPacket.class, SymmetryEffectPacket::new, PLAY_TO_CLIENT),

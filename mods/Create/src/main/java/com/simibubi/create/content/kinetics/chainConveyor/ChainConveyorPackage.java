@@ -1,5 +1,6 @@
 package com.simibubi.create.content.kinetics.chainConveyor;
 
+import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,6 +40,8 @@ public class ChainConveyorPackage {
 		public float prevYaw;
 		public boolean flipped;
 		public ResourceLocation modelKey;
+		
+		public WeakReference<ChainConveyorBlockEntity> beReference;
 
 		public ChainConveyorPackagePhysicsData(Vec3 serverPosition) {
 			this.targetPos = null;
@@ -56,6 +59,12 @@ public class ChainConveyorPackage {
 			lastTick = AnimationTickHolder.getTicks();
 			return true;
 		}
+		
+		public void setBE(ChainConveyorBlockEntity ccbe) {
+			if (beReference == null || beReference.get() != ccbe)
+				beReference = new WeakReference<ChainConveyorBlockEntity>(ccbe);
+		}
+		
 	}
 
 	public float chainPosition;

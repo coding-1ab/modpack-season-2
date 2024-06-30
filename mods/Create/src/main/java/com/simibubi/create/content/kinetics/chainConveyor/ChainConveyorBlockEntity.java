@@ -93,6 +93,16 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 			.get();
 	}
 
+	public boolean canAcceptPackagesFor(@Nullable BlockPos connection) {
+		if (connection == null && !canAcceptMorePackages())
+			return false;
+		if (connection != null
+			&& (!(level.getBlockEntity(worldPosition.offset(connection)) instanceof ChainConveyorBlockEntity otherClbe)
+				|| !otherClbe.canAcceptMorePackages()))
+			return false;
+		return true;
+	}
+
 	public boolean canAcceptMorePackagesFromOtherConveyor() {
 		return loopingPackages.size() < AllConfigs.server().logistics.chainConveyorCapacity.get();
 	}
@@ -385,6 +395,8 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 			return;
 
 		ChainConveyorPackagePhysicsData physicsData = box.physicsData(level);
+		physicsData.setBE(this);
+		
 		if (!physicsData.shouldTick())
 			return;
 

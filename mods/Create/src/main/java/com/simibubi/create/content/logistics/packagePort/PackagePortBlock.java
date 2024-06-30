@@ -52,5 +52,10 @@ public class PackagePortBlock extends Block implements IBE<PackagePortBlockEntit
 	public BlockEntityType<? extends PackagePortBlockEntity> getBlockEntityType() {
 		return AllBlockEntityTypes.PACKAGE_PORT.get();
 	}
+	
+	@Override
+	public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
+		IBE.onRemove(pState, pLevel, pPos, pNewState);
+	}
 
 }

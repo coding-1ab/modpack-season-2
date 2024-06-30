@@ -6,9 +6,9 @@ import javax.annotation.Nullable;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
-import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorPackage;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity.ConnectedPort;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity.ConnectionStats;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorPackage;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -97,16 +97,8 @@ public abstract class PackagePortTarget {
 				return false;
 			if (connection != null && !clbe.connections.contains(connection))
 				return false;
-			if (simulate) {
-				if (connection == null && !clbe.canAcceptMorePackages())
-					return false;
-				if (connection != null && (!(level.getBlockEntity(clbe.getBlockPos()
-					.offset(connection)) instanceof ChainConveyorBlockEntity otherClbe)
-					|| !otherClbe.canAcceptMorePackages()))
-					return false;
-			}
 			if (simulate)
-				return true;
+				return clbe.getSpeed() != 0 && clbe.canAcceptPackagesFor(connection);
 			ChainConveyorPackage box2 = new ChainConveyorPackage(chainPos, box.copy());
 			if (connection == null)
 				return clbe.addLoopingPackage(box2);
