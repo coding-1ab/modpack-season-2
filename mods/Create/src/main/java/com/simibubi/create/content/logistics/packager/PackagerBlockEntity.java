@@ -7,6 +7,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.crate.BottomlessItemHandler;
 import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
+import com.simibubi.create.content.logistics.packager.PackagerBlock.PackagerType;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -59,6 +60,11 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	private InventorySummary availableItems;
 	private VersionedInventoryTrackerBehaviour invVersionTracker;
 
+	//
+
+	public boolean defragmenterActive;
+	public PackageDefragmenter defragmenter;
+
 	public PackagerBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
 		redstonePowered = state.getOptionalValue(PackagerBlock.POWERED)
@@ -72,6 +78,9 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		animationInward = true;
 		queuedRequests = new LinkedList<>();
 		signBasedAddress = "";
+		if (AllBlocks.PACKAGER.has(state))
+			defragmenterActive = state.getValue(PackagerBlock.TYPE) == PackagerType.DEFRAG;
+		defragmenter = new PackageDefragmenter();
 	}
 
 	@Override
@@ -89,15 +98,15 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		if (!level.isClientSide() && !queuedRequests.isEmpty())
+		if (!level.isClientSide() && !queuedRequests.isEmpty() && !defragmenterActive)
 			attemptToSend(true);
 		if (animationTicks == 0) {
 			previouslyUnwrapped = ItemStack.EMPTY;
 			return;
 		}
-		
+
 		animationTicks--;
-		
+
 		if (animationTicks == 0 && !level.isClientSide())
 			wakeTheFrogs();
 	}
@@ -141,6 +150,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 	public void recheckIfLinksPresent() {
 		redstoneModeActive = true;
+		if (defragmenterActive)
+			return;
 		for (Direction d : Iterate.directions) {
 			BlockState adjacentState = level.getBlockState(worldPosition.relative(d));
 			if (!AllBlocks.PACKAGER_LINK.has(adjacentState))
@@ -166,46 +177,64 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		if (targetInv == null)
 			return false;
 
-		for (int slot = 0; slot < targetInv.getSlots(); slot++) {
-			ItemStack itemInSlot = targetInv.getStackInSlot(slot);
-			int itemsAddedToSlot = 0;
-			for (int boxSlot = 0; boxSlot < contents.getSlots(); boxSlot++) {
-				ItemStack toInsert = contents.getStackInSlot(boxSlot);
-				if (toInsert.isEmpty())
+		boolean targetIsCreativeCrate = targetInv instanceof BottomlessItemHandler;
+
+		if (defragmenterActive) {
+			boolean anySpace = false;
+			for (int slot = 0; slot < targetInv.getSlots(); slot++) {
+				ItemStack remainder = targetInv.insertItem(slot, box, simulate);
+				if (!remainder.isEmpty())
 					continue;
-				if (targetInv.insertItem(slot, toInsert, true)
-					.getCount() == toInsert.getCount())
-					continue;
-				if (itemInSlot.isEmpty()) {
-					int maxStackSize = targetInv.getSlotLimit(slot);
-					if (maxStackSize < toInsert.getCount()) {
-						toInsert.shrink(maxStackSize);
-						toInsert = ItemHandlerHelper.copyStackWithSize(toInsert, maxStackSize);
-					} else
-						contents.setStackInSlot(boxSlot, ItemStack.EMPTY);
-					itemInSlot = toInsert;
-					targetInv.insertItem(slot, toInsert, simulate);
-					continue;
-				}
-				if (!ItemHandlerHelper.canItemStacksStack(toInsert, itemInSlot))
-					continue;
-				int insertedAmount = toInsert.getCount() - targetInv.insertItem(slot, toInsert, simulate)
-					.getCount();
-				int slotLimit = (int) ((targetInv.getStackInSlot(slot)
-					.isEmpty() ? itemInSlot.getMaxStackSize() / 64f : 1) * targetInv.getSlotLimit(slot));
-				int insertableAmountWithPreviousItems =
-					Math.min(toInsert.getCount(), slotLimit - itemInSlot.getCount() - itemsAddedToSlot);
-				int added = Math.min(insertedAmount, insertableAmountWithPreviousItems);
-				contents.setStackInSlot(boxSlot,
-					ItemHandlerHelper.copyStackWithSize(toInsert, toInsert.getCount() - added));
+				anySpace = true;
+				break;
 			}
+
+			if (!targetIsCreativeCrate && !anySpace)
+				return false;
 		}
 
-		if (!(targetInv instanceof BottomlessItemHandler))
-			for (int boxSlot = 0; boxSlot < contents.getSlots(); boxSlot++)
-				if (!contents.getStackInSlot(boxSlot)
-					.isEmpty())
-					return false;
+		if (!defragmenterActive) {
+			for (int slot = 0; slot < targetInv.getSlots(); slot++) {
+				ItemStack itemInSlot = targetInv.getStackInSlot(slot);
+				int itemsAddedToSlot = 0;
+				for (int boxSlot = 0; boxSlot < contents.getSlots(); boxSlot++) {
+					ItemStack toInsert = contents.getStackInSlot(boxSlot);
+					if (toInsert.isEmpty())
+						continue;
+					if (targetInv.insertItem(slot, toInsert, true)
+						.getCount() == toInsert.getCount())
+						continue;
+					if (itemInSlot.isEmpty()) {
+						int maxStackSize = targetInv.getSlotLimit(slot);
+						if (maxStackSize < toInsert.getCount()) {
+							toInsert.shrink(maxStackSize);
+							toInsert = ItemHandlerHelper.copyStackWithSize(toInsert, maxStackSize);
+						} else
+							contents.setStackInSlot(boxSlot, ItemStack.EMPTY);
+						itemInSlot = toInsert;
+						targetInv.insertItem(slot, toInsert, simulate);
+						continue;
+					}
+					if (!ItemHandlerHelper.canItemStacksStack(toInsert, itemInSlot))
+						continue;
+					int insertedAmount = toInsert.getCount() - targetInv.insertItem(slot, toInsert, simulate)
+						.getCount();
+					int slotLimit = (int) ((targetInv.getStackInSlot(slot)
+						.isEmpty() ? itemInSlot.getMaxStackSize() / 64f : 1) * targetInv.getSlotLimit(slot));
+					int insertableAmountWithPreviousItems =
+						Math.min(toInsert.getCount(), slotLimit - itemInSlot.getCount() - itemsAddedToSlot);
+					int added = Math.min(insertedAmount, insertableAmountWithPreviousItems);
+					contents.setStackInSlot(boxSlot,
+						ItemHandlerHelper.copyStackWithSize(toInsert, toInsert.getCount() - added));
+				}
+			}
+
+			if (!targetIsCreativeCrate)
+				for (int boxSlot = 0; boxSlot < contents.getSlots(); boxSlot++)
+					if (!contents.getStackInSlot(boxSlot)
+						.isEmpty())
+						return false;
+		}
 
 		if (simulate)
 			return true;
@@ -220,9 +249,15 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	public void attemptToSend(boolean requestQueue) {
 		if (!heldBox.isEmpty() || animationTicks != 0)
 			return;
+
 		IItemHandler targetInv = targetInventory.getInventory();
 		if (targetInv == null || targetInv instanceof PackagerItemHandler)
 			return;
+
+		if (defragmenterActive) {
+			attemptToDefrag(targetInv);
+			return;
+		}
 
 		boolean anyItemPresent = false;
 		ItemStackHandler extractedItems = new ItemStackHandler(PackageItem.SLOTS);
@@ -342,6 +377,57 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		notifyUpdate();
 	}
 
+	protected void attemptToDefrag(IItemHandler targetInv) {
+		defragmenter.clear();
+		int completedOrderId = -1;
+
+		for (int slot = 0; slot < targetInv.getSlots(); slot++) {
+			ItemStack extracted = targetInv.extractItem(slot, 1, true);
+			if (extracted.isEmpty() || !PackageItem.isPackage(extracted))
+				continue;
+
+			if (!defragmenter.isFragmented(extracted)) {
+				targetInv.extractItem(slot, 1, false);
+				heldBox = extracted.copy();
+				animationInward = false;
+				animationTicks = CYCLE;
+				notifyUpdate();
+				return;
+			}
+
+			completedOrderId = defragmenter.addPackageFragment(extracted);
+			if (completedOrderId != -1)
+				break;
+		}
+
+		if (completedOrderId == -1)
+			return;
+
+		List<ItemStack> boxesToExport = defragmenter.repack(completedOrderId);
+
+		for (int slot = 0; slot < targetInv.getSlots(); slot++) {
+			ItemStack extracted = targetInv.extractItem(slot, 1, true);
+			if (extracted.isEmpty() || !PackageItem.isPackage(extracted))
+				continue;
+			if (PackageItem.getOrderId(extracted) != completedOrderId)
+				continue;
+			targetInv.extractItem(slot, 1, false);
+		}
+
+		if (boxesToExport.isEmpty())
+			return;
+
+		heldBox = boxesToExport.get(0)
+			.copy();
+		animationInward = false;
+		animationTicks = CYCLE;
+
+		for (int i = 1; i < boxesToExport.size(); i++)
+			ItemHandlerHelper.insertItem(targetInv, boxesToExport.get(i), false);
+
+		notifyUpdate();
+	}
+
 	protected void updateSignAddress() {
 		signBasedAddress = "";
 		for (Direction side : Iterate.directions) {
@@ -385,6 +471,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		signBasedAddress = compound.getString("SignAddress");
 		heldBox = ItemStack.of(compound.getCompound("HeldBox"));
 		previouslyUnwrapped = ItemStack.of(compound.getCompound("InsertedBox"));
+		defragmenterActive = compound.getBoolean("Defrag");
 		if (clientPacket)
 			return;
 		queuedRequests =
@@ -400,6 +487,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		compound.putString("SignAddress", signBasedAddress);
 		compound.put("HeldBox", heldBox.serializeNBT());
 		compound.put("InsertedBox", previouslyUnwrapped.serializeNBT());
+		compound.putBoolean("Defrag", defragmenterActive);
 		if (clientPacket)
 			return;
 		compound.put("QueuedRequests", NBTHelper.writeCompoundList(queuedRequests, PackagingRequest::toNBT));

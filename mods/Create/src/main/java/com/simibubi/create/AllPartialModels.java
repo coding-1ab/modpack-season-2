@@ -59,8 +59,7 @@ public class AllPartialModels {
 		BELT_FUNNEL_FLAP = block("belt_funnel/flap"), BELT_TUNNEL_FLAP = block("belt_tunnel/flap"),
 		FLEXPEATER_INDICATOR = block("diodes/indicator"),
 
-		ROLLER_WHEEL = block("mechanical_roller/wheel"),
-		ROLLER_FRAME = block("mechanical_roller/frame"),
+		ROLLER_WHEEL = block("mechanical_roller/wheel"), ROLLER_FRAME = block("mechanical_roller/frame"),
 
 		CUCKOO_MINUTE_HAND = block("cuckoo_clock/minute_hand"), CUCKOO_HOUR_HAND = block("cuckoo_clock/hour_hand"),
 		CUCKOO_LEFT_DOOR = block("cuckoo_clock/left_door"), CUCKOO_RIGHT_DOOR = block("cuckoo_clock/right_door"),
@@ -100,8 +99,8 @@ public class AllPartialModels {
 		ARM_CLAW_GRIP_UPPER = block("mechanical_arm/upper_claw_grip"),
 		ARM_CLAW_GRIP_LOWER = block("mechanical_arm/lower_claw_grip"),
 
-		MECHANICAL_PUMP_COG = block("mechanical_pump/cog"),
-		FLUID_PIPE_CASING = block("fluid_pipe/casing"), FLUID_VALVE_POINTER = block("fluid_valve/pointer"),
+		MECHANICAL_PUMP_COG = block("mechanical_pump/cog"), FLUID_PIPE_CASING = block("fluid_pipe/casing"),
+		FLUID_VALVE_POINTER = block("fluid_valve/pointer"),
 
 		SPOUT_TOP = block("spout/top"), SPOUT_MIDDLE = block("spout/middle"), SPOUT_BOTTOM = block("spout/bottom"),
 
@@ -114,16 +113,14 @@ public class AllPartialModels {
 		GOGGLES = block("goggles"),
 
 		EJECTOR_TOP = block("weighted_ejector/top"),
-		
-		CHAIN_CONVEYOR_GUARD = block("chain_conveyor/guard"),
-		CHAIN_CONVEYOR_SHAFT = block("chain_conveyor/shaft"),
-		
-		PACKAGE_PORT_BODY = block("package_port/body"),
-		PACKAGE_PORT_HEAD = block("package_port/head"),
+
+		CHAIN_CONVEYOR_GUARD = block("chain_conveyor/guard"), CHAIN_CONVEYOR_SHAFT = block("chain_conveyor/shaft"),
+
+		PACKAGE_PORT_BODY = block("package_port/body"), PACKAGE_PORT_HEAD = block("package_port/head"),
 		PACKAGE_PORT_TONGUE = block("package_port/tongue"),
 
-		PACKAGER_TRAY = block("packager/tray"), PACKAGER_HATCH_OPEN = block("packager/hatch_open"),
-		PACKAGER_HATCH_CLOSED = block("packager/hatch_closed"),
+		PACKAGER_TRAY_REGULAR = block("packager/tray_regular"), PACKAGER_TRAY_DEFRAG = block("packager/tray_defrag"),
+		PACKAGER_HATCH_OPEN = block("packager/hatch_open"), PACKAGER_HATCH_CLOSED = block("packager/hatch_closed"),
 
 		COPPER_BACKTANK_SHAFT = block("copper_backtank/block_shaft_input"),
 		COPPER_BACKTANK_COGS = block("copper_backtank/block_cogs"),
@@ -171,8 +168,7 @@ public class AllPartialModels {
 		BLAZE_GOGGLES = block("blaze_burner/goggles"), BLAZE_GOGGLES_SMALL = block("blaze_burner/goggles_small"),
 		BLAZE_IDLE = block("blaze_burner/blaze/idle"), BLAZE_ACTIVE = block("blaze_burner/blaze/active"),
 		BLAZE_SUPER = block("blaze_burner/blaze/super"), BLAZE_BURNER_FLAME = block("blaze_burner/flame"),
-		BLAZE_BURNER_RODS = block("blaze_burner/rods_small"),
-		BLAZE_BURNER_RODS_2 = block("blaze_burner/rods_large"),
+		BLAZE_BURNER_RODS = block("blaze_burner/rods_small"), BLAZE_BURNER_RODS_2 = block("blaze_burner/rods_large"),
 		BLAZE_BURNER_SUPER_RODS = block("blaze_burner/superheated_rods_small"),
 		BLAZE_BURNER_SUPER_RODS_2 = block("blaze_burner/superheated_rods_large"),
 
@@ -180,16 +176,14 @@ public class AllPartialModels {
 		WHISTLE_MOUTH_MEDIUM = block("steam_whistle/medium_mouth"),
 		WHISTLE_MOUTH_SMALL = block("steam_whistle/small_mouth"),
 
-		WATER_WHEEL = block("water_wheel/wheel"),
-		LARGE_WATER_WHEEL = block("large_water_wheel/block"),
+		WATER_WHEEL = block("water_wheel/wheel"), LARGE_WATER_WHEEL = block("large_water_wheel/block"),
 		LARGE_WATER_WHEEL_EXTENSION = block("large_water_wheel/block_extension"),
 
 		CRAFTING_BLUEPRINT_1x1 = entity("crafting_blueprint_small"),
 		CRAFTING_BLUEPRINT_2x2 = entity("crafting_blueprint_medium"),
 		CRAFTING_BLUEPRINT_3x3 = entity("crafting_blueprint_large"),
 
-		TRAIN_HAT = entity("train_hat"),
-		LOGISTICS_HAT = entity("logistics_hat"),
+		TRAIN_HAT = entity("train_hat"), LOGISTICS_HAT = entity("logistics_hat"),
 
 		COUPLING_ATTACHMENT = entity("minecart_coupling/attachment"), COUPLING_RING = entity("minecart_coupling/ring"),
 		COUPLING_CONNECTOR = entity("minecart_coupling/connector")
@@ -203,12 +197,13 @@ public class AllPartialModels {
 	public static final Map<DyeColor, PartialModel> TOOLBOX_LIDS = new EnumMap<>(DyeColor.class);
 	public static final Map<ResourceLocation, Couple<PartialModel>> FOLDING_DOORS = new HashMap<>();
 	public static final List<PartialModel> CONTRAPTION_CONTROLS_INDICATOR = new ArrayList<>();
-	
+
 	public static final Map<ResourceLocation, PartialModel> PACKAGES = new HashMap<>();
 	public static final Map<ResourceLocation, PartialModel> PACKAGE_RIGGING = new HashMap<>();
 
 	static {
-		for (FluidTransportBehaviour.AttachmentTypes.ComponentPartials type : FluidTransportBehaviour.AttachmentTypes.ComponentPartials.values()) {
+		for (FluidTransportBehaviour.AttachmentTypes.ComponentPartials type : FluidTransportBehaviour.AttachmentTypes.ComponentPartials
+			.values()) {
 			Map<Direction, PartialModel> map = new HashMap<>();
 			for (Direction d : Iterate.directions) {
 				String asId = Lang.asId(type.name());
@@ -225,11 +220,12 @@ public class AllPartialModels {
 
 		putFoldingDoor("andesite_door");
 		putFoldingDoor("copper_door");
-		
+
 		for (String size : new String[] { "12x12", "10x12", "12x10", "10x8" }) {
 			ResourceLocation key = Create.asResource("cardboard_package_" + size);
 			PACKAGES.put(key, new PartialModel(Create.asResource("item/packages/cardboard_" + size)));
-			PACKAGE_RIGGING.put(key, new PartialModel(Create.asResource("item/packages/cardboard_" + size + "_rigging")));
+			PACKAGE_RIGGING.put(key,
+				new PartialModel(Create.asResource("item/packages/cardboard_" + size + "_rigging")));
 		}
 	}
 

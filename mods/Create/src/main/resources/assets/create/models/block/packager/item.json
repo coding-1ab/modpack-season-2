@@ -2,9 +2,8 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
 	"textures": {
-		"0": "create:block/packager_block",
-		"1": "create:block/packager_door_closed",
-		"2": "create:block/packager_tray",
+		"1": "create:block/packager_block",
+		"2": "create:block/packager_door_closed",
 		"3": "create:block/axis",
 		"particle": "create:block/packager_block"
 	},
@@ -15,12 +14,12 @@
 			"to": [16, 16, 16],
 			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
 			"faces": {
-				"north": {"uv": [8, 0, 16, 8], "texture": "#0"},
-				"east": {"uv": [8, 0, 16, 8], "texture": "#0"},
-				"south": {"uv": [8, 0, 16, 8], "texture": "#0"},
-				"west": {"uv": [8, 0, 16, 8], "texture": "#0"},
-				"up": {"uv": [0, 0, 8, 8], "rotation": 180, "texture": "#0"},
-				"down": {"uv": [0, 8, 8, 16], "rotation": 180, "texture": "#0"}
+				"north": {"uv": [8, 0, 16, 8], "texture": "#1"},
+				"east": {"uv": [8, 0, 16, 8], "texture": "#1"},
+				"south": {"uv": [8, 0, 16, 8], "texture": "#1"},
+				"west": {"uv": [8, 0, 16, 8], "texture": "#1"},
+				"up": {"uv": [0, 0, 8, 8], "rotation": 180, "texture": "#1"},
+				"down": {"uv": [0, 8, 8, 16], "rotation": 180, "texture": "#1"}
 			}
 		},
 		{
@@ -29,26 +28,12 @@
 			"to": [0, 16, 16],
 			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
 			"faces": {
-				"north": {"uv": [8, 0, 16, 8], "texture": "#0"},
-				"east": {"uv": [8, 0, 16, 8], "texture": "#0"},
-				"south": {"uv": [8, 0, 16, 8], "texture": "#0"},
-				"west": {"uv": [8, 0, 16, 8], "texture": "#0"},
-				"up": {"uv": [0, 0, 8, 8], "rotation": 180, "texture": "#0"},
-				"down": {"uv": [0, 8, 8, 16], "rotation": 180, "texture": "#0"}
-			}
-		},
-		{
-			"name": "tray",
-			"from": [2, 2, 1.5],
-			"to": [14, 4, 14.5],
-			"rotation": {"angle": 0, "axis": "y", "origin": [16, 0, 16]},
-			"faces": {
-				"north": {"uv": [2, 14, 14, 16], "texture": "#2"},
-				"east": {"uv": [13, 2, 15, 15], "rotation": 90, "texture": "#2"},
-				"south": {"uv": [2, 14, 14, 16], "texture": "#2"},
-				"west": {"uv": [13, 2, 15, 15], "rotation": 90, "texture": "#2"},
-				"up": {"uv": [2, 2, 14, 15], "rotation": 180, "texture": "#2"},
-				"down": {"uv": [2, 2, 14, 15], "rotation": 180, "texture": "#2"}
+				"north": {"uv": [8, 0, 16, 8], "texture": "#1"},
+				"east": {"uv": [8, 0, 16, 8], "texture": "#1"},
+				"south": {"uv": [8, 0, 16, 8], "texture": "#1"},
+				"west": {"uv": [8, 0, 16, 8], "texture": "#1"},
+				"up": {"uv": [0, 0, 8, 8], "rotation": 180, "texture": "#1"},
+				"down": {"uv": [0, 8, 8, 16], "rotation": 180, "texture": "#1"}
 			}
 		},
 		{
@@ -78,12 +63,24 @@
 			"to": [15, 15, 18],
 			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
 			"faces": {
-				"north": {"uv": [15, 1, 1, 15], "texture": "#1"},
-				"east": {"uv": [8, 15.5, 9.5, 8.5], "texture": "#0"},
-				"south": {"uv": [1, 1, 15, 15], "texture": "#1"},
-				"west": {"uv": [8, 15.5, 9.5, 8.5], "texture": "#0"},
-				"up": {"uv": [8, 15.5, 9.5, 8.5], "rotation": 270, "texture": "#0"},
-				"down": {"uv": [8, 15.5, 9.5, 8.5], "rotation": 270, "texture": "#0"}
+				"north": {"uv": [15, 1, 1, 15], "texture": "#2"},
+				"east": {"uv": [8, 15.5, 9.5, 8.5], "texture": "#1"},
+				"south": {"uv": [1, 1, 15, 15], "texture": "#2"},
+				"west": {"uv": [8, 15.5, 9.5, 8.5], "texture": "#1"},
+				"up": {"uv": [8, 15.5, 9.5, 8.5], "rotation": 270, "texture": "#1"},
+				"down": {"uv": [8, 15.5, 9.5, 8.5], "rotation": 270, "texture": "#1"}
+			}
+		},
+		{
+			"from": [2, 2, 1.5],
+			"to": [14, 4, 14.5],
+			"faces": {
+				"north": {"uv": [9.5, 15, 15.5, 16], "texture": "#1"},
+				"east": {"uv": [15, 9, 16, 15.5], "rotation": 90, "texture": "#1"},
+				"south": {"uv": [9.5, 15, 15.5, 16], "texture": "#1"},
+				"west": {"uv": [15, 9, 16, 15.5], "rotation": 90, "texture": "#1"},
+				"up": {"uv": [9.5, 9, 15.5, 15.5], "texture": "#1"},
+				"down": {"uv": [9.5, 9, 15.5, 15.5], "texture": "#1"}
 			}
 		}
 	],
@@ -95,22 +92,29 @@
 			"children": [0, 1]
 		},
 		{
-			"name": "Tray",
-			"origin": [0, 0, 0],
-			"color": 0,
-			"children": [2]
-		},
-		{
 			"name": "Rails Horizontal",
 			"origin": [0, 0, 0],
 			"color": 0,
-			"children": [3, 4]
+			"children": [2, 3]
 		},
 		{
 			"name": "Door",
 			"origin": [0, 0, 0],
 			"color": 0,
-			"children": [5]
+			"children": [4]
+		},
+		{
+			"name": "tray_regular",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [
+				{
+					"name": "Tray",
+					"origin": [0, 0, 0],
+					"color": 0,
+					"children": [5]
+				}
+			]
 		}
 	]
 }

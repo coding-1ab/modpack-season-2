@@ -1,0 +1,6 @@
+{
+	"parent": "create:block/packager/tray_regular",
+	"textures": {
+		"1": "create:block/packager_block_defrag"
+	}
+}

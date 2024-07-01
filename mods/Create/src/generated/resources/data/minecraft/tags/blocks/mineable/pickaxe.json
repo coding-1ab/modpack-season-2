@@ -126,7 +126,6 @@
     "create:package_port",
     "create:packager_link",
     "create:stock_ticker",
-    "create:order_collector",
     "create:andesite_funnel",
     "create:andesite_belt_funnel",
     "create:brass_funnel",

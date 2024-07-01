@@ -917,6 +917,9 @@
 	"create.packager_link.clear": "Cleared selection",
 	"create.packager_link.too_far": "Targeted workstation is too far from here",
 	"create.packager_link.invalid": "Assign a Stock Ticker or Cash Register before placing",
+	
+	"create.packager.mode_change.regular": "-> Package and unbox items",
+	"create.packager.mode_change.defrag": "-> Collect fragments and output completed",
 
 	"create.display_link.set": "Targeted position selected",
 	"create.display_link.success": "Successfully bound to targeted position",

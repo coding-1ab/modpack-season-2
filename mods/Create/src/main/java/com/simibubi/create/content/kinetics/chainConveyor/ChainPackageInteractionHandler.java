@@ -27,6 +27,7 @@ public class ChainPackageInteractionHandler {
 				if (data == null || data.targetPos == null || data.beReference == null)
 					return;
 				AABB bounds = new AABB(data.targetPos, data.targetPos).move(0, -.25, 0)
+					.expandTowards(0, 0.5, 0)
 					.inflate(0.45);
 
 				double range = mc.player.getAttribute(ForgeMod.BLOCK_REACH.get())

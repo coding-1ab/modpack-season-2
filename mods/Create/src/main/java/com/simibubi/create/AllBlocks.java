@@ -173,7 +173,6 @@ import com.simibubi.create.content.logistics.funnel.BrassFunnelBlock;
 import com.simibubi.create.content.logistics.funnel.FunnelGenerator;
 import com.simibubi.create.content.logistics.funnel.FunnelItem;
 import com.simibubi.create.content.logistics.funnel.FunnelMovementBehaviour;
-import com.simibubi.create.content.logistics.orderCollector.OrderCollectorBlock;
 import com.simibubi.create.content.logistics.packagePort.PackagePortBlock;
 import com.simibubi.create.content.logistics.packagePort.PackagePortItem;
 import com.simibubi.create.content.logistics.packager.PackagerBlock;
@@ -1712,19 +1711,6 @@ public class AllBlocks {
 			.simpleItem()
 			.register();
 
-	public static final BlockEntry<OrderCollectorBlock> ORDER_COLLECTOR =
-		REGISTRATE.block("order_collector", OrderCollectorBlock::new)
-			.initialProperties(SharedProperties::softMetal)
-			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
-				.sound(SoundType.NETHERITE_BLOCK))
-			.properties(p -> p.noOcclusion())
-			.transform(pickaxeOnly())
-			.blockstate(BlockStateGen.horizontalBlockProvider(true))
-			.transform(BlockStressDefaults.setImpact(2.0))
-			.item(AssemblyOperatorBlockItem::new)
-			.transform(customItemModel())
-			.register();
-	
 	public static final BlockEntry<AndesiteFunnelBlock> ANDESITE_FUNNEL =
 		REGISTRATE.block("andesite_funnel", AndesiteFunnelBlock::new)
 			.addLayer(() -> RenderType::cutoutMipped)

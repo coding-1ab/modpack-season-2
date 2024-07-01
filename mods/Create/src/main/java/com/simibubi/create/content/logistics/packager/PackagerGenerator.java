@@ -25,9 +25,11 @@ public class PackagerGenerator extends SpecialBlockStateGen {
 	@Override
 	public <T extends Block> ModelFile getModel(DataGenContext<Block, T> ctx, RegistrateBlockstateProvider prov,
 		BlockState state) {
+		String type = state.getValue(PackagerBlock.TYPE)
+			.getSerializedName();
 		return state.getValue(PackagerBlock.FACING)
-			.getAxis() == Axis.Y ? AssetLookup.partialBaseModel(ctx, prov, "vertical")
-				: AssetLookup.partialBaseModel(ctx, prov);
+			.getAxis() == Axis.Y ? AssetLookup.partialBaseModel(ctx, prov, type, "vertical")
+				: AssetLookup.partialBaseModel(ctx, prov, type);
 	}
 
 }

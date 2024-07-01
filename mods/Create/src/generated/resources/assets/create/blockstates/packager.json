@@ -1,45 +1,87 @@
 {
   "variants": {
-    "facing=down,powered=false": {
-      "model": "create:block/packager/block_vertical"
+    "facing=down,powered=false,type=defrag": {
+      "model": "create:block/packager/block_defrag_vertical"
     },
-    "facing=down,powered=true": {
-      "model": "create:block/packager/block_vertical"
+    "facing=down,powered=false,type=regular": {
+      "model": "create:block/packager/block_regular_vertical"
     },
-    "facing=east,powered=false": {
-      "model": "create:block/packager/block",
+    "facing=down,powered=true,type=defrag": {
+      "model": "create:block/packager/block_defrag_vertical"
+    },
+    "facing=down,powered=true,type=regular": {
+      "model": "create:block/packager/block_regular_vertical"
+    },
+    "facing=east,powered=false,type=defrag": {
+      "model": "create:block/packager/block_defrag",
       "y": 270
     },
-    "facing=east,powered=true": {
-      "model": "create:block/packager/block",
+    "facing=east,powered=false,type=regular": {
+      "model": "create:block/packager/block_regular",
       "y": 270
     },
-    "facing=north,powered=false": {
-      "model": "create:block/packager/block",
+    "facing=east,powered=true,type=defrag": {
+      "model": "create:block/packager/block_defrag",
+      "y": 270
+    },
+    "facing=east,powered=true,type=regular": {
+      "model": "create:block/packager/block_regular",
+      "y": 270
+    },
+    "facing=north,powered=false,type=defrag": {
+      "model": "create:block/packager/block_defrag",
       "y": 180
     },
-    "facing=north,powered=true": {
-      "model": "create:block/packager/block",
+    "facing=north,powered=false,type=regular": {
+      "model": "create:block/packager/block_regular",
       "y": 180
     },
-    "facing=south,powered=false": {
-      "model": "create:block/packager/block"
+    "facing=north,powered=true,type=defrag": {
+      "model": "create:block/packager/block_defrag",
+      "y": 180
     },
-    "facing=south,powered=true": {
-      "model": "create:block/packager/block"
+    "facing=north,powered=true,type=regular": {
+      "model": "create:block/packager/block_regular",
+      "y": 180
     },
-    "facing=up,powered=false": {
-      "model": "create:block/packager/block_vertical"
+    "facing=south,powered=false,type=defrag": {
+      "model": "create:block/packager/block_defrag"
     },
-    "facing=up,powered=true": {
-      "model": "create:block/packager/block_vertical"
+    "facing=south,powered=false,type=regular": {
+      "model": "create:block/packager/block_regular"
     },
-    "facing=west,powered=false": {
-      "model": "create:block/packager/block",
+    "facing=south,powered=true,type=defrag": {
+      "model": "create:block/packager/block_defrag"
+    },
+    "facing=south,powered=true,type=regular": {
+      "model": "create:block/packager/block_regular"
+    },
+    "facing=up,powered=false,type=defrag": {
+      "model": "create:block/packager/block_defrag_vertical"
+    },
+    "facing=up,powered=false,type=regular": {
+      "model": "create:block/packager/block_regular_vertical"
+    },
+    "facing=up,powered=true,type=defrag": {
+      "model": "create:block/packager/block_defrag_vertical"
+    },
+    "facing=up,powered=true,type=regular": {
+      "model": "create:block/packager/block_regular_vertical"
+    },
+    "facing=west,powered=false,type=defrag": {
+      "model": "create:block/packager/block_defrag",
       "y": 90
     },
-    "facing=west,powered=true": {
-      "model": "create:block/packager/block",
+    "facing=west,powered=false,type=regular": {
+      "model": "create:block/packager/block_regular",
+      "y": 90
+    },
+    "facing=west,powered=true,type=defrag": {
+      "model": "create:block/packager/block_defrag",
+      "y": 90
+    },
+    "facing=west,powered=true,type=regular": {
+      "model": "create:block/packager/block_regular",
       "y": 90
     }
   }

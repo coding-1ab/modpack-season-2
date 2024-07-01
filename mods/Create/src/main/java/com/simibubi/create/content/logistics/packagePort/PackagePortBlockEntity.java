@@ -232,6 +232,8 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 	}
 
 	public void tryPullingFromAdjacentInventories() {
+		if (isAnimationInProgress())
+			return;
 		if (target == null || !target.export(level, worldPosition, AllItems.CARDBOARD_PACKAGE_10x12.asStack(), true))
 			return;
 		for (Direction side : Iterate.directions) {

@@ -43,7 +43,7 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 
 	public InventorySummary fetchSummaryFromPackager() {
 		PackagerBlockEntity packager = getSource();
-		if (packager == null)
+		if (packager == null || packager.defragmenterActive)
 			return InventorySummary.EMPTY;
 		sendPulseNextSync();
 		sendData();
@@ -53,7 +53,7 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 	public int processRequest(ItemStack stack, int amount, String address, int linkIndex, MutableBoolean finalLink,
 		int orderId, @Nullable PackageOrder orderContext) {
 		PackagerBlockEntity packager = getSource();
-		if (packager == null)
+		if (packager == null || packager.defragmenterActive)
 			return 0;
 
 		InventorySummary summary = packager.getAvailableItems();

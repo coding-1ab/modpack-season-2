@@ -4,6 +4,7 @@ import com.jozufozu.flywheel.core.PartialModel;
 import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
+import com.simibubi.create.content.logistics.packager.PackagerBlock.PackagerType;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 
 import net.createmod.catnip.render.CachedBuffers;
@@ -53,7 +54,10 @@ public class PackagerRenderer extends SmartBlockEntityRenderer<PackagerBlockEnti
 		msr.translate(Vec3.atLowerCornerOf(facing.getNormal())
 			.scale(trayOffset));
 
-		sbb = CachedBuffers.partial(AllPartialModels.PACKAGER_TRAY, blockState);
+		sbb = CachedBuffers.partial(
+			blockState.getValue(PackagerBlock.TYPE) == PackagerType.REGULAR ? AllPartialModels.PACKAGER_TRAY_REGULAR
+				: AllPartialModels.PACKAGER_TRAY_DEFRAG,
+			blockState);
 		sbb.rotateCentered(Direction.UP, AngleHelper.rad(facing.toYRot()))
 			.light(light)
 			.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
