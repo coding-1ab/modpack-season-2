@@ -1,7 +1,10 @@
 package com.simibubi.create.content.logistics.packagePort;
 
+import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
+import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxRenderer;
+import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 
 import net.createmod.catnip.render.CachedBuffers;
@@ -23,11 +26,10 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 	@Override
 	protected void renderSafe(PackagePortBlockEntity blockEntity, float partialTicks, PoseStack ms,
 		MultiBufferSource buffer, int light, int overlay) {
-		super.renderSafe(blockEntity, partialTicks, ms, buffer, light, overlay);
-
 		SuperByteBuffer body = CachedBuffers.partial(AllPartialModels.PACKAGE_PORT_BODY, blockEntity.getBlockState());
 
-		float yaw = blockEntity.passiveYaw;
+		float yaw = blockEntity.getYaw();
+
 		float headPitch = 80;
 		float tonguePitch = 0;
 		float tongueLength = 0;
@@ -44,7 +46,6 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 				.getExactTargetLocation(blockEntity, blockEntity.getLevel(), blockEntity.getBlockPos())
 				.subtract(0, animating && depositing ? 0 : 0.75, 0)
 				.subtract(Vec3.atCenterOf(blockEntity.getBlockPos()));
-			yaw = (float) (Mth.atan2(diff.x, diff.z) * Mth.RAD_TO_DEG) + 180;
 			tonguePitch = (float) Mth.atan2(diff.y, diff.multiply(1, 0, 1)
 				.length() + (3 / 16f)) * Mth.RAD_TO_DEG;
 			tongueLength = Math.max((float) diff.length(), 1);
@@ -103,6 +104,26 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 //			.color(color)
 			.overlay(overlay)
 			.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
+
+		{ // Filter slot animates with the head
+			ms.pushPose();
+			TransformStack.cast(ms)
+				.centre()
+				.rotateY(yaw)
+				.unCentre()
+				.translate(8 / 16f, 10 / 16f, 11 / 16f)
+				.rotateX(headPitch)
+				.translateBack(8 / 16f, 10 / 16f, 11 / 16f)
+
+				.translate(8 / 16f, 13.5 / 16f, 10 / 16f)
+				.rotateX(90)
+				.scale(.5f);
+
+			FilteringBehaviour behaviour = blockEntity.getBehaviour(FilteringBehaviour.TYPE);
+			ValueBoxRenderer.renderItemIntoValueBox(behaviour.getFilter(), ms, buffer, light, overlay);
+
+			ms.popPose();
+		}
 
 		SuperByteBuffer tongue =
 			CachedBuffers.partial(AllPartialModels.PACKAGE_PORT_TONGUE, blockEntity.getBlockState());

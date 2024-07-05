@@ -14,7 +14,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.item.ItemHelper;
 
 import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -32,6 +31,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
@@ -103,7 +103,7 @@ public abstract class AbstractChuteBlock extends Block implements IWrenchable, I
 			return;
 		if (!input.canInsertFromSide(Direction.UP))
 			return;
-		if (!PackageEntity.centerPackage(entityIn, VecHelper.getCenterOf(pos)))
+		if (!PackageEntity.centerPackage(entityIn, Vec3.atBottomCenterOf(pos.above())))
 			return;
 		ItemStack remainder = input.handleInsertion(stack, Direction.UP, false);
 		if (remainder.isEmpty())

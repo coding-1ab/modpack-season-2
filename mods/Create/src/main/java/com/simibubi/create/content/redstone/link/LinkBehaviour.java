@@ -204,7 +204,7 @@ public class LinkBehaviour extends BlockEntityBehaviour implements IRedstoneLink
 	public boolean testHit(Boolean first, Vec3 hit) {
 		BlockState state = blockEntity.getBlockState();
 		Vec3 localHit = hit.subtract(Vec3.atLowerCornerOf(blockEntity.getBlockPos()));
-		return (first ? firstSlot : secondSlot).testHit(state, localHit);
+		return (first ? firstSlot : secondSlot).testHit(getWorld(), getPos(), state, localHit);
 	}
 
 	@Override

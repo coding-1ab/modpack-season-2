@@ -6,8 +6,10 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.math.AngleHelper;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
@@ -21,7 +23,7 @@ public class RedstoneLinkFrequencySlot extends ValueBoxTransform.Dual {
 	Vec3 vertical = VecHelper.voxelSpace(10f, 2.5f, 5.5f);
 
 	@Override
-	public Vec3 getLocalOffset(BlockState state) {
+	public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
 		Direction facing = state.getValue(RedstoneLinkBlock.FACING);
 		Vec3 location = VecHelper.voxelSpace(8f, 3.01f, 5.5f);
 
@@ -40,7 +42,7 @@ public class RedstoneLinkFrequencySlot extends ValueBoxTransform.Dual {
 	}
 
 	@Override
-	public void rotate(BlockState state, PoseStack ms) {
+	public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
 		Direction facing = state.getValue(RedstoneLinkBlock.FACING);
 		float yRot = facing.getAxis()
 			.isVertical() ? 0 : AngleHelper.horizontalAngle(facing) + 180;

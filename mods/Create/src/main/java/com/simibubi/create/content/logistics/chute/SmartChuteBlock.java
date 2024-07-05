@@ -53,7 +53,7 @@ public class SmartChuteBlock extends AbstractChuteBlock {
 	public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
 		return true;
 	}
-	
+
 	@Override
 	public BlockEntityType<? extends ChuteBlockEntity> getBlockEntityType() {
 		return AllBlockEntityTypes.SMART_CHUTE.get();

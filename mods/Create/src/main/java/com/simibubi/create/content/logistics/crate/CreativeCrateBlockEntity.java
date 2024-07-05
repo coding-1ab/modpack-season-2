@@ -11,6 +11,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -55,13 +56,13 @@ public class CreativeCrateBlockEntity extends CrateBlockEntity {
 		return new FilteringBehaviour(this, new ValueBoxTransform() {
 
 			@Override
-			public void rotate(BlockState state, PoseStack ms) {
+			public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
 				TransformStack.cast(ms)
 					.rotateX(90);
 			}
 
 			@Override
-			public Vec3 getLocalOffset(BlockState state) {
+			public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
 				return new Vec3(0.5, 13.5 / 16d, 0.5);
 			}
 

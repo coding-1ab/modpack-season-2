@@ -25,6 +25,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -125,14 +126,14 @@ public class ContraptionControlsBlockEntity extends SmartBlockEntity {
 	public static class ControlsSlot extends ValueBoxTransform.Sided {
 
 		@Override
-		public Vec3 getLocalOffset(BlockState state) {
+		public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
 			Direction facing = state.getValue(ControlsBlock.FACING);
 			float yRot = AngleHelper.horizontalAngle(facing);
 			return VecHelper.rotateCentered(VecHelper.voxelSpace(8, 12f, 5.5f), yRot, Axis.Y);
 		}
 
 		@Override
-		public void rotate(BlockState state, PoseStack ms) {
+		public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
 			Direction facing = state.getValue(ControlsBlock.FACING);
 			float yRot = AngleHelper.horizontalAngle(facing);
 			TransformStack.cast(ms)

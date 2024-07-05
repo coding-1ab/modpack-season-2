@@ -1,5 +1,7 @@
 package com.simibubi.create.foundation.blockEntity.behaviour;
 
+import java.lang.ref.WeakReference;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform.Sided;
@@ -18,6 +20,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -33,8 +36,10 @@ public class ValueBox extends ChasingAABBOutline {
 
 	public boolean isPassive;
 
-	protected BlockPos pos;
 	protected ValueBoxTransform transform;
+	
+	protected WeakReference<LevelAccessor> level;
+	protected BlockPos pos;
 	protected BlockState blockState;
 
 	protected AllIcons outline = AllIcons.VALUE_BOX_HOVER_4PX;
@@ -48,6 +53,7 @@ public class ValueBox extends ChasingAABBOutline {
 		this.label = label;
 		this.pos = pos;
 		this.blockState = state;
+		this.level = new WeakReference<LevelAccessor>(Minecraft.getInstance().level);
 	}
 
 	public ValueBox transform(ValueBoxTransform transform) {
@@ -75,13 +81,15 @@ public class ValueBox extends ChasingAABBOutline {
 		boolean hasTransform = transform != null;
 		if (transform instanceof Sided && params.getHighlightedFace() != null)
 			((Sided) transform).fromSide(params.getHighlightedFace());
-		if (hasTransform && !transform.shouldRender(blockState))
+		
+		LevelAccessor levelAccessor = level.get();
+		if (hasTransform && !transform.shouldRender(levelAccessor, pos, blockState))
 			return;
 
 		ms.pushPose();
 		ms.translate(pos.getX() - camera.x, pos.getY() - camera.y, pos.getZ() - camera.z);
 		if (hasTransform)
-			transform.transform(blockState, ms);
+			transform.transform(levelAccessor, pos, blockState, ms);
 
 		if (!isPassive) {
 			ms.pushPose();

@@ -231,7 +231,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	public boolean testHit(Vec3 hit) {
 		BlockState state = blockEntity.getBlockState();
 		Vec3 localHit = hit.subtract(Vec3.atLowerCornerOf(blockEntity.getBlockPos()));
-		return slotPositioning.testHit(state, localHit);
+		return slotPositioning.testHit(getWorld(), getPos(), state, localHit);
 	}
 
 	public int getAmount() {

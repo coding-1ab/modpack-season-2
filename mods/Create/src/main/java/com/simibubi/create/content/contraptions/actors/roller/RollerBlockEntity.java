@@ -21,6 +21,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -180,7 +181,7 @@ public class RollerBlockEntity extends SmartBlockEntity {
 		}
 
 		@Override
-		public void rotate(BlockState state, PoseStack ms) {
+		public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
 			Direction facing = state.getValue(RollerBlock.FACING);
 			float yRot = AngleHelper.horizontalAngle(facing) + 180;
 			TransformStack.cast(ms)
@@ -189,15 +190,15 @@ public class RollerBlockEntity extends SmartBlockEntity {
 		}
 
 		@Override
-		public boolean testHit(BlockState state, Vec3 localHit) {
-			Vec3 offset = getLocalOffset(state);
+		public boolean testHit(LevelAccessor level, BlockPos pos, BlockState state, Vec3 localHit) {
+			Vec3 offset = getLocalOffset(level, pos, state);
 			if (offset == null)
 				return false;
 			return localHit.distanceTo(offset) < scale / 3;
 		}
 
 		@Override
-		public Vec3 getLocalOffset(BlockState state) {
+		public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
 			Direction facing = state.getValue(RollerBlock.FACING);
 			float stateAngle = AngleHelper.horizontalAngle(facing) + 180;
 			return VecHelper.rotateCentered(VecHelper.voxelSpace(8 + hOffset, 15.5f, 11), stateAngle, Axis.Y);

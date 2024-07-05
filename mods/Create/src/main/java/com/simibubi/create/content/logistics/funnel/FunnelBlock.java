@@ -125,14 +125,14 @@ public abstract class FunnelBlock extends AbstractDirectionalFunnelBlock {
 		Direction direction = getFunnelFacing(state);
 		Vec3 openPos = VecHelper.getCenterOf(pos)
 			.add(Vec3.atLowerCornerOf(direction.getNormal())
-				.scale(-.25f));
+				.scale(-.125f));
 		Vec3 diff = entityIn.position()
 			.subtract(openPos);
 		double projectedDiff = direction.getAxis()
 			.choose(diff.x, diff.y, diff.z);
 		if (projectedDiff < 0 == (direction.getAxisDirection() == AxisDirection.POSITIVE))
 			return;
-		float yOffset = direction == Direction.UP ? 0.075f : direction == Direction.DOWN ? -0.5f : -0.5f;
+		float yOffset = direction == Direction.UP ? 0.25f : direction == Direction.DOWN ? -0.5f : -0.5f;
 		if (!PackageEntity.centerPackage(entityIn, openPos.add(0, yOffset, 0)))
 			return;
 

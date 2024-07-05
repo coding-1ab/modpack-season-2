@@ -1,4 +1,4 @@
-// 1.20.1	2024-07-01T12:19:36.8328674	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
+// 1.20.1	2024-07-05T10:54:30.6312512	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
 60bbdf92d2ac9824ea6144955c74043a6005f79d assets/create/blockstates/acacia_window.json
 6a67703c2697d81b7dc83e9d72a66f9c9ff08383 assets/create/blockstates/acacia_window_pane.json
 c3ae87b62e81d8e9476eccd793bb1548d74c66a1 assets/create/blockstates/adjustable_chain_gearshift.json
@@ -4255,7 +4255,7 @@ de1fc89be6a52473d526d3efe0204b9b8489058c data/forge/tags/blocks/glass_panes.json
 81b107ada9c6ac5679a21f8c6a006bf230f69c39 data/forge/tags/blocks/ores/zinc.json
 e475ad1c52bffedfc544e5331a87c1f5c45149fd data/forge/tags/blocks/ores_in_ground/deepslate.json
 2f6068972e364599b6849dc46fcb0724d4219d53 data/forge/tags/blocks/ores_in_ground/stone.json
-2589b135c0e96ad29076569e144528fe32ea5b39 data/forge/tags/blocks/relocation_not_supported.json
+8a5988e68f3a41341b486784c29d00e16d5272f7 data/forge/tags/blocks/relocation_not_supported.json
 b3af02a6fa3dc41bc3f4db933485f22b202deea3 data/forge/tags/blocks/storage_blocks.json
 7d10cdf9e46a79753d4437c7bb958e3ab8bf0c89 data/forge/tags/blocks/storage_blocks/andesite_alloy.json
 70bba470740dc7a77f51b4cb1747a105b62d4bde data/forge/tags/blocks/storage_blocks/brass.json

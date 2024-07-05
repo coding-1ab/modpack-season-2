@@ -99,7 +99,7 @@ public class LinkRenderer {
 			ItemStack stack = first ? behaviour.frequencyFirst.getStack() : behaviour.frequencyLast.getStack();
 
 			ms.pushPose();
-			transform.transform(be.getBlockState(), ms);
+			transform.transform(be.getLevel(), be.getBlockPos(), be.getBlockState(), ms);
 			ValueBoxRenderer.renderItemIntoValueBox(stack, ms, buffer, light, overlay);
 			ms.popPose();
 		}

@@ -1,5 +1,6 @@
 {
   "values": [
+    "create:chain_conveyor",
     "create:track"
   ]
 }

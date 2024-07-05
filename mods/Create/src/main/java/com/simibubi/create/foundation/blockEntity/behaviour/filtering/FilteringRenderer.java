@@ -32,6 +32,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -67,14 +68,14 @@ public class FilteringRenderer {
 			return;
 		if (behaviour.slotPositioning instanceof ValueBoxTransform.Sided)
 			((Sided) behaviour.slotPositioning).fromSide(result.getDirection());
-		if (!behaviour.slotPositioning.shouldRender(state))
+		if (!behaviour.slotPositioning.shouldRender(world, pos, state))
 			return;
 
 		ItemStack filter = behaviour.getFilter();
 		boolean isFilterSlotted = filter.getItem() instanceof FilterItem;
 		boolean showCount = behaviour.isCountVisible();
 		Component label = behaviour.getLabel();
-		boolean hit = behaviour.slotPositioning.testHit(state, target.getLocation()
+		boolean hit = behaviour.slotPositioning.testHit(world, pos, state, target.getLocation()
 			.subtract(Vec3.atLowerCornerOf(pos)));
 
 		AABB emptyBB = new AABB(Vec3.ZERO, Vec3.ZERO);
@@ -107,12 +108,15 @@ public class FilteringRenderer {
 		if (be == null || be.isRemoved())
 			return;
 
+		Level level = be.getLevel();
+		BlockPos blockPos = be.getBlockPos();
+		
 		if (!be.isVirtual()) {
 			Entity cameraEntity = Minecraft.getInstance().cameraEntity;
-			if (cameraEntity != null && be.getLevel() == cameraEntity.level()) {
+			if (cameraEntity != null && level == cameraEntity.level()) {
 				float max = AllConfigs.client().filterItemRenderDistance.getF();
 				if (cameraEntity.position()
-					.distanceToSqr(VecHelper.getCenterOf(be.getBlockPos())) > (max * max)) {
+					.distanceToSqr(VecHelper.getCenterOf(blockPos)) > (max * max)) {
 					return;
 				}
 			}
@@ -139,11 +143,11 @@ public class FilteringRenderer {
 					continue;
 
 				sided.fromSide(d);
-				if (!slotPositioning.shouldRender(blockState))
+				if (!slotPositioning.shouldRender(level, blockPos, blockState))
 					continue;
 
 				ms.pushPose();
-				slotPositioning.transform(blockState, ms);
+				slotPositioning.transform(level, blockPos, blockState, ms);
 				if (AllBlocks.CONTRAPTION_CONTROLS.has(blockState))
 					ValueBoxRenderer.renderFlatItemIntoValueBox(filter, ms, buffer, light, overlay);
 				else
@@ -152,9 +156,9 @@ public class FilteringRenderer {
 			}
 			sided.fromSide(side);
 			return;
-		} else if (slotPositioning.shouldRender(blockState)) {
+		} else if (slotPositioning.shouldRender(level, blockPos, blockState)) {
 			ms.pushPose();
-			slotPositioning.transform(blockState, ms);
+			slotPositioning.transform(level, blockPos, blockState, ms);
 			ValueBoxRenderer.renderItemIntoValueBox(behaviour.getFilter(), ms, buffer, light, overlay);
 			ms.popPose();
 		}

@@ -16,6 +16,7 @@ import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -65,15 +66,15 @@ public class CreativeMotorBlockEntity extends GeneratingKineticBlockEntity {
 		}
 
 		@Override
-		public Vec3 getLocalOffset(BlockState state) {
+		public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
 			Direction facing = state.getValue(CreativeMotorBlock.FACING);
-			return super.getLocalOffset(state).add(Vec3.atLowerCornerOf(facing.getNormal())
+			return super.getLocalOffset(level, pos, state).add(Vec3.atLowerCornerOf(facing.getNormal())
 				.scale(-1 / 16f));
 		}
 
 		@Override
-		public void rotate(BlockState state, PoseStack ms) {
-			super.rotate(state, ms);
+		public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
+			super.rotate(level, pos, state, ms);
 			Direction facing = state.getValue(CreativeMotorBlock.FACING);
 			if (facing.getAxis() == Axis.Y)
 				return;

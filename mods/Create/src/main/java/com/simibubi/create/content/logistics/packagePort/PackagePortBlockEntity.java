@@ -25,6 +25,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -48,7 +49,7 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 	public LerpedFloat animationProgress;
 	public LerpedFloat anticipationProgress;
 	public boolean currentlyDepositing;
-	
+
 	public boolean sendAnticipate;
 
 	public float passiveYaw;
@@ -114,14 +115,14 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 		for (int i = 0; i < inventory.getSlots(); i++)
 			drop(inventory.getStackInSlot(i));
 	}
-	
+
 	public void sendAnticipate() {
 		if (isAnimationInProgress())
 			return;
 		sendAnticipate = true;
 		sendData();
 	}
-	
+
 	public void anticipate() {
 		anticipationProgress.chase(1, 0.1, Chaser.LINEAR);
 	}
@@ -129,12 +130,12 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		
+
 		if (anticipationProgress.getValue() == 1)
 			anticipationProgress.updateChaseTarget(0);
 
 		anticipationProgress.tickChaser();
-		
+
 		if (!isAnimationInProgress())
 			return;
 
@@ -209,7 +210,7 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 		if (inventory.isEmpty())
 			return;
 		for (Direction side : Iterate.directions) {
-			if (side == Direction.UP)
+			if (side != Direction.DOWN)
 				continue;
 			IItemHandler handler = getAdjacentInventory(side);
 			if (handler == null)
@@ -237,7 +238,7 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 		if (target == null || !target.export(level, worldPosition, AllItems.CARDBOARD_PACKAGE_10x12.asStack(), true))
 			return;
 		for (Direction side : Iterate.directions) {
-			if (side == Direction.UP)
+			if (side != Direction.DOWN)
 				continue;
 			IItemHandler handler = getAdjacentInventory(side);
 			if (handler == null)
@@ -307,6 +308,14 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 			portFilter = pfis.filterString;
 		}
 		return portFilter;
+	}
+
+	public float getYaw() {
+		if (target == null)
+			return passiveYaw;
+		Vec3 diff = target.getExactTargetLocation(this, level, worldPosition)
+			.subtract(Vec3.atCenterOf(worldPosition));
+		return (float) (Mth.atan2(diff.x, diff.z) * Mth.RAD_TO_DEG) + 180;
 	}
 
 }

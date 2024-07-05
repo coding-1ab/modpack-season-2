@@ -1,5 +1,7 @@
 package com.simibubi.create.content.logistics.packagePort;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
@@ -15,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -29,6 +32,11 @@ public class PackagePortBlock extends Block implements IBE<PackagePortBlockEntit
 	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
 		return AllShapes.PACKAGE_PORT;
 	}
+	
+	@Override
+	public @Nullable PushReaction getPistonPushReaction(BlockState state) {
+		return PushReaction.NORMAL;
+	}
 
 	@Override
 	public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, LivingEntity pPlacer, ItemStack pStack) {
@@ -39,6 +47,7 @@ public class PackagePortBlock extends Block implements IBE<PackagePortBlockEntit
 			Vec3 diff = VecHelper.getCenterOf(pPos)
 				.subtract(pPlacer.position());
 			be.passiveYaw = (float) (Mth.atan2(diff.x, diff.z) * Mth.RAD_TO_DEG);
+			be.passiveYaw = Math.round(be.passiveYaw / 11.25f) * 11.25f;
 			be.notifyUpdate();
 		});
 	}

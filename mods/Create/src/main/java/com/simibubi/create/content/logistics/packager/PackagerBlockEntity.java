@@ -454,12 +454,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	}
 
 	protected void wakeTheFrogs() {
-		for (Direction side : Iterate.directions) {
-			if (side == Direction.DOWN)
-				continue;
-			if (level.getBlockEntity(worldPosition.relative(side)) instanceof PackagePortBlockEntity port)
-				port.tryPullingFromAdjacentInventories();
-		}
+		if (level.getBlockEntity(worldPosition.relative(Direction.UP)) instanceof PackagePortBlockEntity port)
+			port.tryPullingFromAdjacentInventories();
 	}
 
 	@Override

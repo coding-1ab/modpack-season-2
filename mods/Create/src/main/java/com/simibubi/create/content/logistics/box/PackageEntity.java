@@ -122,6 +122,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 	@Override
 	public void travel(Vec3 p_213352_1_) {
 		super.travel(p_213352_1_);
+
 		if (!level().isClientSide)
 			return;
 		if (getDeltaMovement().length() < 1 / 128f)
@@ -161,10 +162,6 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 			originalEntity = null;
 		}
 		insertionDelay = Math.min(insertionDelay + 1, 30);
-		if (extractorAnimationProgress > -1) {
-			extractorAnimationProgress--;
-			return;
-		}
 		super.tick();
 	}
 
@@ -210,8 +207,6 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 	}
 
 	public boolean decreaseInsertionTimer(@Nullable Vec3 targetSpot) {
-		if (level().isClientSide)
-			return true;
 		if (targetSpot != null) {
 			setDeltaMovement(getDeltaMovement().scale(.75f)
 				.multiply(1, .25f, 1));
@@ -365,6 +360,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
 		box = ItemStack.of(compound.getCompound("Box"));
+		refreshDimensions();
 	}
 
 	@Override

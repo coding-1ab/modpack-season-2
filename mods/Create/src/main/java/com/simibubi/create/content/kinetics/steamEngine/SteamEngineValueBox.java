@@ -7,8 +7,10 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import net.createmod.catnip.utility.Pointing;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.math.AngleHelper;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
@@ -36,7 +38,7 @@ public class SteamEngineValueBox extends ValueBoxTransform.Sided {
 	}
 
 	@Override
-	public Vec3 getLocalOffset(BlockState state) {
+	public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
 		Direction side = getSide();
 		Direction engineFacing = SteamEngineBlock.getFacing(state);
 
@@ -59,11 +61,11 @@ public class SteamEngineValueBox extends ValueBoxTransform.Sided {
 	}
 
 	@Override
-	public void rotate(BlockState state, PoseStack ms) {
+	public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
 		Direction facing = SteamEngineBlock.getFacing(state);
 
 		if (facing.getAxis() == Axis.Y) {
-			super.rotate(state, ms);
+			super.rotate(level, pos, state, ms);
 			return;
 		}
 

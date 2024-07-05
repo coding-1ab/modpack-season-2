@@ -5,14 +5,16 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 
 import net.createmod.catnip.utility.VecHelper;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class SawFilterSlot extends ValueBoxTransform {
 
 	@Override
-	public Vec3 getLocalOffset(BlockState state) {
+	public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
 		if (state.getValue(SawBlock.FACING) != Direction.UP)
 			return null;
 		int offset = state.getValue(SawBlock.FLIPPED) ? -3 : 3;
@@ -22,7 +24,7 @@ public class SawFilterSlot extends ValueBoxTransform {
 	}
 
 	@Override
-	public void rotate(BlockState state, PoseStack ms) {
+	public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
 		int yRot = (state.getValue(SawBlock.AXIS_ALONG_FIRST_COORDINATE) ? 90 : 0)
 			+ (state.getValue(SawBlock.FLIPPED) ? 0 : 180);
 		TransformStack.cast(ms)
