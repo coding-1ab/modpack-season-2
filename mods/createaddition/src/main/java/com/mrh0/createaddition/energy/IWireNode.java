@@ -140,8 +140,6 @@ public interface IWireNode {
 	 * @return  The node index, or -1 if none are available.
 	 */
 	default int getAvailableNode(Vec3 pos) {
-		// before: return 0;
-		// Might be a good idea to not return 0 if the method isn't implemented.
 		return getAvailableNode();
 	}
 
@@ -593,8 +591,8 @@ public interface IWireNode {
 	}
 
 	@Nullable
-	static WireType getTypeOfConnection(Level world, BlockPos pos1, BlockPos pos2) {
-		BlockEntity te1 = world.getBlockEntity(pos1);
+	static WireType getTypeOfConnection(Level level, BlockPos pos1, BlockPos pos2) {
+		BlockEntity te1 = level.getBlockEntity(pos1);
 		if (te1 == null) return null;
 		if (!(te1 instanceof IWireNode wn)) return null;
 		LocalNode ln = wn.getConnectionTo(pos2);
@@ -602,14 +600,11 @@ public interface IWireNode {
 		return ln.getType();
 	}
 	
-	static IWireNode getWireNode(Level world, BlockPos pos) {
-		if(pos == null)
-			return null;
-		BlockEntity te = world.getBlockEntity(pos);
-		if(te == null)
-			return null;
-		if(!(te instanceof IWireNode))
-			return null;
+	static IWireNode getWireNode(Level level, BlockPos pos) {
+		if(pos == null) return null;
+		BlockEntity te = level.getBlockEntity(pos);
+		if(te == null) return null;
+		if(!(te instanceof IWireNode)) return null;
 		return (IWireNode) te;
 	}
 	
