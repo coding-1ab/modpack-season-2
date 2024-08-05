@@ -165,14 +165,10 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements IHave
         }
     }
 
+
     public void connect(ElectricalConnectorBlockEntity entity, WireType wireType) {
-        if (!connectors.containsKey(entity)) 
-            connectors.put(entity, wireType);
-
         entity.connectWithoutNetworking(this, wireType);
-
-        if (!connectorPositions.containsKey(entity.getBlockPos()))
-            connectorPositions.put(entity.getBlockPos(), wireType);
+        connectWithoutNetworking(entity, wireType);
 
         entity.setChanged();
         setChanged();
@@ -193,19 +189,20 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements IHave
             connectorPositions.put(entity.getBlockPos(), wireType);
     }
 
-    public boolean isConnected(BlockPos pos) {
-        return connectorPositions.containsKey(pos);
-    }
-
     public void disconnect(ElectricalConnectorBlockEntity entity) {
         connectors.remove(entity);
         connectorPositions.remove(entity.getBlockPos());
+    }
+
+    public boolean isConnected(BlockPos pos) {
+        return connectorPositions.containsKey(pos);
     }
 
     public Map<ElectricalConnectorBlockEntity, WireType> getConnectedConnectors() {
         return Collections.unmodifiableMap(connectors);
     }
 
+    
     public void setNetwork(ElectricalNetwork network) {
         this.network = network;
         storage.setNetwork(network);

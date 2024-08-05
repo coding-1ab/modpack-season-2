@@ -37,7 +37,7 @@ subprojects {
             it.parchment("org.parchmentmc.data:parchment-${rootProject.minecraftVersion}:${rootProject.parchmentVersion}@zip")
         })
         
-        annotationProcessor("systems.manifold:manifold-preprocessor:2024.1.2")
+        annotationProcessor("systems.manifold:manifold-preprocessor:2024.1.29")
         
         modImplementation("org.antarcticgardens:esl-${project.name}:${rootProject.eslVersion}")
         

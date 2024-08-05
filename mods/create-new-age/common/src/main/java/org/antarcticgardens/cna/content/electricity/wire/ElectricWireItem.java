@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -102,7 +103,7 @@ public class ElectricWireItem extends Item {
                     context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.self_connect"), true);
                     context.getItemInHand().removeTagKey("boundTo");
                     return InteractionResult.FAIL;
-                } else if (!clickedPos.closerThan(boundToPos, maxLength)) {
+                } else if (clickedPos.distSqr(boundToPos) > Mth.square(maxLength)) {
                     context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far", maxLength), true);
                     return InteractionResult.FAIL;
                 } else if (clickedConnector.isConnected(boundToPos)) {

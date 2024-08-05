@@ -25,6 +25,7 @@ import org.antarcticgardens.cna.content.electricity.battery.BatteryItem;
 import org.antarcticgardens.cna.content.electricity.battery.BatteryModel;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesBlock;
+import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesItemRenderer;
 import org.antarcticgardens.cna.content.electricity.generation.coil.GeneratorCoilBlock;
 import org.antarcticgardens.cna.content.electricity.generation.magnet.ImplementedMagnetBlock;
 import org.antarcticgardens.cna.content.energising.EnergiserBlock;
@@ -170,7 +171,8 @@ public class CNABlocks {
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .blockstate((c, p) -> p.directionalBlock(c.get(), p.models().getExistingFile(p.modLoc("block/carbon_brushes/base"))))
                     .item()
-                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.0f), new Quaternionf()))
+                    .transform(CarbonBrushesItemRenderer.itemTransformer(new Vector3f(0.0f), new Quaternionf()))
+                    .transform(b -> b.model((c, p) -> p.withExistingParent(c.getName(), p.modLoc("block/carbon_brushes/base"))))
                     .build()
                     .register();
     

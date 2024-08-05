@@ -5,14 +5,16 @@ import com.jozufozu.flywheel.api.instance.DynamicInstance;
 import com.jozufozu.flywheel.backend.instancing.blockentity.BlockEntityInstance;
 import com.jozufozu.flywheel.core.Materials;
 import com.jozufozu.flywheel.core.materials.model.ModelData;
+import com.jozufozu.flywheel.util.Pair;
 import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import org.antarcticgardens.cna.CNARenderTypes;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.electricity.wire.WireType;
-import org.antarcticgardens.cna.util.HashSortedPair;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.*;
@@ -20,7 +22,8 @@ import java.util.*;
 public class ElectricalConnectorInstance extends BlockEntityInstance<ElectricalConnectorBlockEntity> implements DynamicInstance {
     private static final Map<ElectricalConnectorBlockEntity, ElectricalConnectorInstance> instances = new HashMap<>();
 
-    private final Map<BlockPos, ModelData> wires = new HashMap<>();
+    private final Map<BlockPos, Wire> wires = new HashMap<>();
+    private final Map<BlockPos, List<Pair<ModelData, Vec3>>> wireInstances = new HashMap<>();
 
     public ElectricalConnectorInstance(MaterialManager materialManager, ElectricalConnectorBlockEntity connector) {
         super(materialManager, connector);
@@ -28,14 +31,11 @@ public class ElectricalConnectorInstance extends BlockEntityInstance<ElectricalC
         updateConnections();
     }
 
-    public void updateConnections() {
+    private void updateConnections() {
         wires.entrySet().removeIf(e -> {
             boolean remove = !blockEntity.isConnected(e.getKey());
-
-            if (remove) {
-                e.getValue().delete();
-            }
-
+            if (remove) 
+                removeWireInstances(e.getKey());
             return remove;
         });
 
@@ -49,31 +49,49 @@ public class ElectricalConnectorInstance extends BlockEntityInstance<ElectricalC
         if (getWorldPosition().hashCode() > target.hashCode()) {
             Vector3f direction = blockPosToVector3f(target.subtract(getWorldPosition()));
             float distance = direction.length();
+            int sectionsAmount = (int) Math.ceil(CNAConfig.getClient().wireSectionsPerMeter.get() * distance);
             direction.normalize();
+            Wire wire = new Wire(direction, distance, sectionsAmount);
+            wireInstances.put(target, createWireInstances(wire, getInstancePosition().getCenter(), wireType.getTextureLocation()));
+            wires.put(target, wire);
+        }
+    }
+    
+    private List<Pair<ModelData, Vec3>> createWireInstances(Wire wire, Vec3 position, ResourceLocation texture) {
+        List<Pair<ModelData, Vec3>> instances = new ArrayList<>();
+        
+        for (int i = 0; i < wire.getSections().size(); i++) {
+            Pair<WireSection, Float> pair = wire.getSections().get(i);
 
-            int sections = (int) Math.ceil(CNAConfig.getClient().wireSectionsPerMeter.get() * distance);
-            float sectionLength = distance / sections;
-
-            ModelData data = materialManager.solid(CNARenderTypes.wire(wireType.getTextureLocation()))
+            ModelData data = materialManager.solid(CNARenderTypes.wire(texture))
                     .material(Materials.TRANSFORMED)
-                    .model(new HashSortedPair<>(getWorldPosition(), target), () ->
-                            new WireModel(direction, sections, sectionLength, CNAConfig.getClient().wireThickness.get().floatValue()))
+                    .model(pair.first().name(), () -> pair.first())
                     .createInstance();
 
             PoseStack ps = new PoseStack();
             TransformStack ts = TransformStack.cast(ps);
-            ts.translate(getInstancePosition().getCenter());
+            ts.translate(position);
+            ps.mulPoseMatrix(new Matrix4f().rotateTowards(wire.getDirection(), wire.getUp()));
+            ts.translate(0.0f, pair.second(), wire.getSectionLength() * i);
             data.setTransform(ps);
-
-            wires.put(target, data);
+            
+            instances.add(Pair.of(data, new Vec3(wire.getDirection()).scale(wire.getSectionLength() * i)
+                    .add(new Vec3(wire.getUp()).scale(pair.second()))));
         }
+        
+        return instances;
     }
 
     @Override
     protected void remove() {
         instances.remove(blockEntity);
-        wires.forEach((k, v) -> v.delete());
+        wireInstances.forEach((k, v) -> removeWireInstances(k));
+        wireInstances.clear();
         wires.clear();
+    }
+    
+    private void removeWireInstances(BlockPos target) {
+        wireInstances.getOrDefault(target, new ArrayList<>()).forEach(p -> p.first().delete());
     }
 
     @Override
@@ -86,7 +104,10 @@ public class ElectricalConnectorInstance extends BlockEntityInstance<ElectricalC
 
     @Override
     public void updateLight() {
-        wires.forEach((k, v) -> relight(getWorldPosition(), v));
+        wires.forEach((k, v) -> 
+                wireInstances.forEach((blockPos, pairs) -> 
+                        pairs.forEach(p -> 
+                                relight(BlockPos.containing(getWorldPosition().getCenter().add(p.second())), p.first()))));
     }
 
     private Vector3f blockPosToVector3f(BlockPos pos) {

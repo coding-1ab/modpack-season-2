@@ -1,11 +1,8 @@
-package org.antarcticgardens.cna.rendering;
+package org.antarcticgardens.cna.content.electricity.generation.brushes;
 
-import com.jozufozu.flywheel.core.PartialModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.simibubi.create.Create;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModel;
-import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRenderer;
 import com.simibubi.create.foundation.item.render.PartialItemModelRenderer;
 import com.tterrag.registrate.builders.ItemBuilder;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
@@ -13,36 +10,32 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.antarcticgardens.cna.CNAPartialModels;
 import org.antarcticgardens.cna.CreateNewAge;
+import org.antarcticgardens.cna.rendering.ItemShaftRenderer;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class ItemShaftRenderer extends CustomRenderedItemModelRenderer {
-    private static final PartialModel SHAFT = new PartialModel(Create.asResource("block/shaft"));
-
-    protected final Vector3f offset;
-    protected final Quaternionf rotation;
-
-    protected ItemShaftRenderer(Vector3f offset, Quaternionf rotation) {
-        this.offset = offset.div(16.0f);
-        this.rotation = rotation;
+public class CarbonBrushesItemRenderer extends ItemShaftRenderer {
+    protected CarbonBrushesItemRenderer(Vector3f offset, Quaternionf rotation) {
+        super(offset, rotation);
     }
 
     @Override
-    protected void render(ItemStack stack, CustomRenderedItemModel model, PartialItemModelRenderer renderer,
+    protected void render(ItemStack stack, CustomRenderedItemModel model, PartialItemModelRenderer renderer, 
                           ItemDisplayContext transformType, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
-        renderer.render(model.getOriginalModel(), light);
+        super.render(stack, model, renderer, transformType, ms, buffer, light, overlay);
 
         ms.mulPose(rotation);
         ms.mulPose(Axis.YP.rotation(1.0f));
         ms.translate(offset.x, offset.y, offset.z);
-        renderer.render(SHAFT.get(), light);
+        renderer.render(CNAPartialModels.COIL.get(), light);
     }
 
     public static <T extends Item, P> NonNullUnaryOperator<ItemBuilder<T, P>> itemTransformer(Vector3f offset, Quaternionf rotation) {
         return b -> {
             b.onRegister(item -> CreateNewAge.getInstance().getPlatform().getRegistrar()
-                    .registerCustomItemRenderer(item, new ItemShaftRenderer(offset, rotation)));
+                    .registerCustomItemRenderer(item, new CarbonBrushesItemRenderer(offset, rotation)));
             return b;
         };
     }
