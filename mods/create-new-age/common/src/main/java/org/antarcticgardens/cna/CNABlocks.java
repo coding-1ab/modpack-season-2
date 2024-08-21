@@ -1,9 +1,8 @@
 package org.antarcticgardens.cna;
 
 import com.mojang.math.Axis;
-import com.simibubi.create.content.fluids.tank.FluidTankModel;
-import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.content.kinetics.BlockStressDefaults;
+import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BlockStateGen;
@@ -226,6 +225,7 @@ public class CNABlocks {
                     .item()
                     .transform(b -> b.model((c, p) ->
                             p.withExistingParent(c.getName(), p.modLoc("block/" + c.getName() + "/horizontal"))).build())
+                    .addLayer(() -> RenderType::cutout)
                     .register();
 
     public static final BlockEntry<MotorExtensionBlock> ADVANCED_MOTOR_EXTENSION =
@@ -238,6 +238,7 @@ public class CNABlocks {
                     .item()
                     .transform(b -> b.model((c, p) ->
                             p.withExistingParent(c.getName(), p.modLoc("block/" + c.getName() + "/horizontal"))).build())
+                    .addLayer(() -> RenderType::cutout)
                     .register();
 
 
