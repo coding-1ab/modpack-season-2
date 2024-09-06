@@ -124,7 +124,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 	public void tick() {
 		super.tick();
 
-		float serverSpeed = ServerSpeedProvider.get();
+		float serverSpeed = level.isClientSide() ? ServerSpeedProvider.get() : 1f;
 		float speed = getSpeed() / 360f;
 		float radius = 1.5f;
 		float distancePerTick = Math.abs(speed);
