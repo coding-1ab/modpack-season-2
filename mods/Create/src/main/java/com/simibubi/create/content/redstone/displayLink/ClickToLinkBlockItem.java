@@ -67,18 +67,35 @@ public abstract class ClickToLinkBlockItem extends BlockItem {
 			return InteractionResult.SUCCESS;
 		}
 
+		String placedDim = level.dimension()
+			.location()
+			.toString();
+
 		if (!stack.hasTag()) {
 			if (!isValidTarget(level, pos)) {
+				if (placeWhenInvalid()) {
+					InteractionResult useOn = super.useOn(pContext);
+					if (level.isClientSide || useOn == InteractionResult.FAIL)
+						return useOn;
+
+					ItemStack itemInHand = player.getItemInHand(pContext.getHand());
+					if (!itemInHand.isEmpty())
+						itemInHand.setTag(null);
+					return useOn;
+				}
+
 				if (level.isClientSide)
 					AllSoundEvents.DENY.playFrom(player);
 				player.displayClientMessage(CreateLang.translateDirect(msgKey + ".invalid"), true);
 				return InteractionResult.FAIL;
 			}
-			
+
 			if (level.isClientSide)
 				return InteractionResult.SUCCESS;
 			CompoundTag stackTag = stack.getOrCreateTag();
 			stackTag.put("SelectedPos", NbtUtils.writeBlockPos(pos));
+			stackTag.putString("SelectedDimension", placedDim);
+
 			player.displayClientMessage(CreateLang.translateDirect(msgKey + ".set"), true);
 			stack.setTag(stackTag);
 			return InteractionResult.SUCCESS;
@@ -88,15 +105,17 @@ public abstract class ClickToLinkBlockItem extends BlockItem {
 		CompoundTag teTag = new CompoundTag();
 
 		BlockPos selectedPos = NbtUtils.readBlockPos(tag.getCompound("SelectedPos"));
+		String selectedDim = tag.getString("SelectedDimension");
 		BlockPos placedPos = pos.relative(pContext.getClickedFace(), state.canBeReplaced() ? 0 : 1);
 
-		if (!selectedPos.closerThan(placedPos, maxDistance)) {
+		if (maxDistance != -1 && (!selectedPos.closerThan(placedPos, maxDistance) || !selectedDim.equals(placedDim))) {
 			player.displayClientMessage(CreateLang.translateDirect(msgKey + ".too_far")
 				.withStyle(ChatFormatting.RED), true);
 			return InteractionResult.FAIL;
 		}
 
 		teTag.put("TargetOffset", NbtUtils.writeBlockPos(selectedPos.subtract(placedPos)));
+		teTag.putString("TargetDimension", selectedDim);
 		tag.put("BlockEntityTag", teTag);
 
 		InteractionResult useOn = super.useOn(pContext);
@@ -141,13 +160,17 @@ public abstract class ClickToLinkBlockItem extends BlockItem {
 	}
 
 	public abstract int getMaxDistanceFromSelection();
-	
+
 	public abstract String getMessageTranslationKey();
-	
+
+	public boolean placeWhenInvalid() {
+		return false;
+	}
+
 	public boolean isValidTarget(LevelAccessor level, BlockPos pos) {
 		return true;
 	}
-	
+
 	@OnlyIn(Dist.CLIENT)
 	public AABB getSelectionBounds(BlockPos pos) {
 		Level world = Minecraft.getInstance().level;

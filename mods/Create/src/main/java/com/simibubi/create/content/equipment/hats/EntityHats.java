@@ -6,7 +6,7 @@ import com.jozufozu.flywheel.core.PartialModel;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
-import com.simibubi.create.content.logistics.stockTicker.LogisticalWorkstationBlock;
+import com.simibubi.create.content.logistics.stockTicker.StockTickerBlock;
 import com.simibubi.create.content.trains.entity.CarriageContraption;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
 
@@ -52,7 +52,7 @@ public class EntityHats {
 			for (int y : Iterate.zeroAndOne) {
 				if (!(level.getBlockState(pos.relative(d)
 					.above(y))
-					.getBlock() instanceof LogisticalWorkstationBlock lw))
+					.getBlock() instanceof StockTickerBlock lw))
 					continue;
 				PartialModel hatOfStation = lw.getHat(level, pos, entity);
 				if (hatOfStation == null)

@@ -6,7 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 
-public class LogisticalStockRequestPacket extends BlockEntityConfigurationPacket<LogisticalWorkstationBlockEntity> {
+public class LogisticalStockRequestPacket extends BlockEntityConfigurationPacket<StockCheckingBlockEntity> {
 
 	public LogisticalStockRequestPacket(BlockPos pos) {
 		super(pos);
@@ -23,10 +23,10 @@ public class LogisticalStockRequestPacket extends BlockEntityConfigurationPacket
 	protected void readSettings(FriendlyByteBuf buffer) {}
 
 	@Override
-	protected void applySettings(LogisticalWorkstationBlockEntity be) {}
+	protected void applySettings(StockCheckingBlockEntity be) {}
 
 	@Override
-	protected void applySettings(ServerPlayer player, LogisticalWorkstationBlockEntity be) {
+	protected void applySettings(ServerPlayer player, StockCheckingBlockEntity be) {
 		be.getRecentSummary()
 			.divideAndSendTo(player, pos);
 	}

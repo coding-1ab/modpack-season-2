@@ -6,9 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import com.simibubi.create.AllPackets;
-import com.simibubi.create.Create;
-import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
-import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour;
 
 import net.createmod.catnip.utility.IntAttached;
 import net.minecraft.core.BlockPos;
@@ -18,20 +16,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class StockTickerBlockEntity extends LogisticalWorkstationBlockEntity {
+public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 
 	protected List<IntAttached<ItemStack>> lastClientsideStockSnapshot;
 	protected List<IntAttached<ItemStack>> newlyReceivedStockSnapshot;
 
 	protected String previouslyUsedAddress;
+	protected int activeLinks;
 
 	public StockTickerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 		previouslyUsedAddress = "";
 	}
-
-	@Override
-	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
 
 	public void refreshClientStockSnapshot() {
 		AllPackets.getChannel()
@@ -43,15 +39,30 @@ public class StockTickerBlockEntity extends LogisticalWorkstationBlockEntity {
 	}
 
 	@Override
+	public void tick() {
+		super.tick();
+		if (level.isClientSide())
+			return;
+		if (activeLinks != activeLinksLastSummary && !isRemoved()) {
+			activeLinks = activeLinksLastSummary;
+			sendData();
+		}
+	}
+
+	@Override
 	protected void write(CompoundTag tag, boolean clientPacket) {
 		super.write(tag, clientPacket);
 		tag.putString("PreviousAddress", previouslyUsedAddress);
+		if (clientPacket)
+			tag.putInt("ActiveLinks", activeLinks);
 	}
 
 	@Override
 	protected void read(CompoundTag tag, boolean clientPacket) {
 		super.read(tag, clientPacket);
 		previouslyUsedAddress = tag.getString("PreviousAddress");
+		if (clientPacket)
+			activeLinks = tag.getInt("ActiveLinks");
 	}
 
 	public void receiveStockPacket(List<IntAttached<ItemStack>> stacks, boolean endOfTransmission) {
@@ -68,15 +79,15 @@ public class StockTickerBlockEntity extends LogisticalWorkstationBlockEntity {
 		List<IntAttached<ItemStack>> stacks = order.stacks();
 
 		// Packages need to track their index and successors for successful defrag
-		List<PackagerLinkBlockEntity> availableLinks = getAvailableLinks();
-		List<PackagerLinkBlockEntity> usedLinks = new ArrayList<>();
+		List<LogisticallyLinkedBehaviour> availableLinks = behaviour.getAllConnectedAvailableLinks(true);
+		List<LogisticallyLinkedBehaviour> usedLinks = new ArrayList<>();
 		MutableBoolean finalLinkTracker = new MutableBoolean(false);
 
 		// First box needs to carry the order specifics for successful defrag
 		PackageOrder contextToSend = order;
 
 		// Packages from future orders should not be merged in the packager queue
-		int orderId = Create.RANDOM.nextInt();
+		int orderId = player.level().random.nextInt();
 
 		for (int i = 0; i < stacks.size(); i++) {
 			IntAttached<ItemStack> entry = stacks.get(i);
@@ -84,7 +95,7 @@ public class StockTickerBlockEntity extends LogisticalWorkstationBlockEntity {
 			boolean finalEntry = i == stacks.size() - 1;
 			ItemStack requestedItem = entry.getSecond();
 
-			for (PackagerLinkBlockEntity link : availableLinks) {
+			for (LogisticallyLinkedBehaviour link : availableLinks) {
 				int usedIndex = usedLinks.indexOf(link);
 				int linkIndex = usedIndex == -1 ? usedLinks.size() : usedIndex;
 				MutableBoolean isFinalLink = new MutableBoolean(false);

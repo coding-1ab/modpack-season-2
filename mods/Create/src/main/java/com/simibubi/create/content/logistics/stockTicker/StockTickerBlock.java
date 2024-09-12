@@ -22,8 +22,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class StockTickerBlock extends HorizontalDirectionalBlock
-	implements LogisticalWorkstationBlock, IBE<StockTickerBlockEntity> {
+public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<StockTickerBlockEntity> {
 
 	public StockTickerBlock(Properties pProperties) {
 		super(pProperties);
@@ -48,7 +47,6 @@ public class StockTickerBlock extends HorizontalDirectionalBlock
 		return AllShapes.STOCK_TICKER;
 	}
 
-	@Override
 	@OnlyIn(Dist.CLIENT)
 	public PartialModel getHat(LevelAccessor level, BlockPos pos, LivingEntity keeper) {
 		return AllPartialModels.LOGISTICS_HAT;

@@ -1,28 +1,35 @@
 package com.simibubi.create.content.logistics.packagerLink;
 
-import com.simibubi.create.content.logistics.stockTicker.LogisticalWorkstationBlock;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.logistics.stockTicker.StockTickerBlock;
 import com.simibubi.create.content.redstone.displayLink.ClickToLinkBlockItem;
-import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 
-public class PackagerLinkBlockItem extends ClickToLinkBlockItem {
+public class LogisticallyLinkedBlockItem extends ClickToLinkBlockItem {
 
-	public PackagerLinkBlockItem(Block pBlock, Properties pProperties) {
+	public LogisticallyLinkedBlockItem(Block pBlock, Properties pProperties) {
 		super(pBlock, pProperties);
 	}
 
 	@Override
 	public boolean isValidTarget(LevelAccessor level, BlockPos pos) {
-		return level.getBlockState(pos)
-			.getBlock() instanceof LogisticalWorkstationBlock;
+		Block block = level.getBlockState(pos)
+			.getBlock();
+		return (!AllBlocks.STOCK_TICKER.is(this) && block instanceof StockTickerBlock)
+			|| block instanceof PackagerLinkBlock;
+	}
+	
+	@Override
+	public boolean placeWhenInvalid() {
+		return true;
 	}
 
 	@Override
 	public int getMaxDistanceFromSelection() {
-		return AllConfigs.server().logistics.packagerLinkRange.get();
+		return -1;
 	}
 
 	@Override

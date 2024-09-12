@@ -178,7 +178,7 @@ import com.simibubi.create.content.logistics.packagePort.PackagePortItem;
 import com.simibubi.create.content.logistics.packager.PackagerBlock;
 import com.simibubi.create.content.logistics.packager.PackagerGenerator;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
-import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockItem;
+import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlock;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BrassTunnelBlock;
@@ -1699,7 +1699,7 @@ public class AllBlocks {
 			.addLayer(() -> RenderType::translucent)
 			.transform(pickaxeOnly())
 			.blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.forPowered(c, p)))
-			.item(PackagerLinkBlockItem::new)
+			.item(LogisticallyLinkedBlockItem::new)
 			.transform(customItemModel("_", "block"))
 			.register();
 
@@ -1710,7 +1710,8 @@ public class AllBlocks {
 			.transform(axeOrPickaxe())
 			.addLayer(() -> RenderType::cutoutMipped)
 			.blockstate((c, p) -> p.horizontalBlock(c.get(), AssetLookup.standardModel(c, p)))
-			.simpleItem()
+			.item(LogisticallyLinkedBlockItem::new)
+			.build()
 			.register();
 
 	public static final BlockEntry<AndesiteFunnelBlock> ANDESITE_FUNNEL =

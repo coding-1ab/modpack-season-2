@@ -1,7 +1,6 @@
 package com.simibubi.create.content.logistics.packagerLink;
 
 import com.simibubi.create.AllBlockEntityTypes;
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.WrenchableDirectionalBlock;
@@ -36,11 +35,7 @@ public class PackagerLinkBlock extends WrenchableDirectionalBlock implements IBE
 		BlockPos pos = context.getClickedPos();
 		Direction face = context.getClickedFace();
 		BlockState placed = super.getStateForPlacement(context).setValue(FACING, face);
-		BlockState placedOn = context.getLevel()
-			.getBlockState(pos.relative(face.getOpposite()));
-		if (!AllBlocks.PACKAGER.has(placedOn))
-			return null;
-		return placed.setValue(POWERED, shouldBePowered(placed, context.getLevel(), pos));
+		return placed.setValue(POWERED, getPower(placed, context.getLevel(), pos) > 0);
 	}
 
 	@Override
@@ -49,25 +44,20 @@ public class PackagerLinkBlock extends WrenchableDirectionalBlock implements IBE
 		if (worldIn.isClientSide)
 			return;
 
-		boolean powered = shouldBePowered(state, worldIn, pos);
+		int power = getPower(state, worldIn, pos);
+		boolean powered = power > 0;
 		boolean previouslyPowered = state.getValue(POWERED);
-		if (previouslyPowered != powered) {
+		if (previouslyPowered != powered)
 			worldIn.setBlock(pos, state.cycle(POWERED), 2);
-			withBlockEntityDo(worldIn, pos, link -> link.redstonePowerChanged(powered));
-		}
+		withBlockEntityDo(worldIn, pos, link -> link.behaviour.redstonePowerChanged(power));
 	}
 
-	private boolean shouldBePowered(BlockState state, Level worldIn, BlockPos pos) {
-		boolean powered = false;
-		for (Direction d : Iterate.directions) {
-			if (d.getOpposite() == state.getValue(FACING))
-				continue;
-			if (worldIn.getSignal(pos.relative(d), d) == 0)
-				continue;
-			powered = true;
-			break;
-		}
-		return powered;
+	public static int getPower(BlockState state, Level worldIn, BlockPos pos) {
+		int power = 0;
+		for (Direction d : Iterate.directions)
+			if (d.getOpposite() != state.getValue(FACING))
+				power = Math.max(power, worldIn.getSignal(pos.relative(d), d));
+		return power;
 	}
 
 	@Override

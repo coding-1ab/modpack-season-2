@@ -46,16 +46,16 @@ public class StockTickerInteractionHandler {
 				BlockPos workstationPos = pos.relative(d)
 					.above(y);
 				if (!(level.getBlockState(workstationPos)
-					.getBlock() instanceof LogisticalWorkstationBlock lw))
+					.getBlock() instanceof StockTickerBlock lw))
 					continue;
 				targetPos = workstationPos;
 				stations++;
 			}
 		}
-		
+
 		if (stations != 1)
 			return;
-		
+
 		final BlockPos posForUI = targetPos;
 		if (level.isClientSide())
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> displayScreen(posForUI));
