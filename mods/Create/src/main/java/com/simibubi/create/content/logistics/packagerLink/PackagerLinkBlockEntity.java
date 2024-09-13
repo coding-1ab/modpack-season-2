@@ -18,6 +18,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.items.IItemHandler;
 
 public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 
@@ -38,9 +39,11 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 	}
 
 	public int processRequest(ItemStack stack, int amount, String address, int linkIndex, MutableBoolean finalLink,
-		int orderId, @Nullable PackageOrder orderContext) {
+		int orderId, @Nullable PackageOrder orderContext, @Nullable IItemHandler ignoredHandler) {
 		PackagerBlockEntity packager = getPackager();
 		if (packager == null || packager.defragmenterActive)
+			return 0;
+		if (packager.isTargetingSameInventory(ignoredHandler))
 			return 0;
 
 		InventorySummary summary = packager.getAvailableItems();

@@ -30,6 +30,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.items.IItemHandler;
 
 public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 
@@ -169,9 +170,10 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 	}
 
 	public int processRequest(ItemStack stack, int amount, String address, int linkIndex, MutableBoolean finalLink,
-		int orderId, @Nullable PackageOrder orderContext) {
+		int orderId, @Nullable PackageOrder orderContext, @Nullable IItemHandler ignoredHandler) {
 		if (blockEntity instanceof PackagerLinkBlockEntity plbe)
-			return plbe.processRequest(stack, amount, address, linkIndex, finalLink, orderId, orderContext);
+			return plbe.processRequest(stack, amount, address, linkIndex, finalLink, orderId, orderContext,
+				ignoredHandler);
 		return 0;
 	}
 

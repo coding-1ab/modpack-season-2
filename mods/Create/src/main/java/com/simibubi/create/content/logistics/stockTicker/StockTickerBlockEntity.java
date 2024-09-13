@@ -6,27 +6,49 @@ import java.util.List;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipulationBehaviour;
 
+import net.createmod.catnip.utility.BlockFace;
 import net.createmod.catnip.utility.IntAttached;
+import net.createmod.catnip.utility.NBTHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.items.IItemHandler;
 
 public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 
+	// Player-interface Feature
 	protected List<IntAttached<ItemStack>> lastClientsideStockSnapshot;
 	protected List<IntAttached<ItemStack>> newlyReceivedStockSnapshot;
-
 	protected String previouslyUsedAddress;
 	protected int activeLinks;
+
+	// Auto-restock Feature
+	protected InvManipulationBehaviour observedInventory;
+	protected List<IntAttached<ItemStack>> restockAmounts;
+	protected String restockAddress;
+	protected boolean powered;
 
 	public StockTickerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 		previouslyUsedAddress = "";
+		restockAddress = "";
+		restockAmounts = new ArrayList<>();
+	}
+
+	@Override
+	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+		super.addBehaviours(behaviours);
+		behaviours
+			.add(observedInventory = new InvManipulationBehaviour(this, (w, p, s) -> new BlockFace(p, Direction.DOWN)));
 	}
 
 	public void refreshClientStockSnapshot() {
@@ -53,6 +75,11 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 	protected void write(CompoundTag tag, boolean clientPacket) {
 		super.write(tag, clientPacket);
 		tag.putString("PreviousAddress", previouslyUsedAddress);
+		tag.put("RestockAmounts",
+			NBTHelper.writeCompoundList(restockAmounts, ia -> ia.serializeNBT(ItemStack::serializeNBT)));
+		tag.putString("RestockAddress", restockAddress);
+		tag.putBoolean("Powered", powered);
+
 		if (clientPacket)
 			tag.putInt("ActiveLinks", activeLinks);
 	}
@@ -61,8 +88,71 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 	protected void read(CompoundTag tag, boolean clientPacket) {
 		super.read(tag, clientPacket);
 		previouslyUsedAddress = tag.getString("PreviousAddress");
+		restockAmounts = NBTHelper.readCompoundList(tag.getList("RestockAmounts", Tag.TAG_COMPOUND),
+			c -> IntAttached.read(c, ItemStack::of));
+		restockAddress = tag.getString("RestockAddress");
+		powered = tag.getBoolean("Powered");
+
 		if (clientPacket)
 			activeLinks = tag.getInt("ActiveLinks");
+	}
+
+	protected void takeInventoryStockSnapshot() {
+		restockAmounts = new ArrayList<>();
+		IItemHandler inventory = observedInventory.getInventory();
+		if (inventory == null)
+			return;
+		restockAmounts = summariseObservedInventory().getStacksByCount();
+		if (restockAmounts.size() > 8)
+			restockAmounts.subList(8, restockAmounts.size())
+				.clear();
+		notifyUpdate();
+	}
+
+	private InventorySummary summariseObservedInventory() {
+		IItemHandler inventory = observedInventory.getInventory();
+		if (inventory == null)
+			return InventorySummary.EMPTY;
+		InventorySummary inventorySummary = new InventorySummary();
+		for (int i = 0; i < inventory.getSlots(); i++)
+			inventorySummary.add(inventory.getStackInSlot(i));
+		return inventorySummary;
+	}
+
+	protected void onRedstonePowerChanged() {
+		boolean hasNeighborSignal = level.hasNeighborSignal(worldPosition);
+		if (powered == hasNeighborSignal)
+			return;
+
+		if (hasNeighborSignal)
+			triggerRestock();
+
+		powered = hasNeighborSignal;
+		setChanged();
+	}
+
+	protected void triggerRestock() {
+		if (!observedInventory.hasInventory() || restockAmounts.isEmpty())
+			return;
+
+		InventorySummary presentStock = summariseObservedInventory();
+		List<IntAttached<ItemStack>> missingItems = new ArrayList<>();
+		for (IntAttached<ItemStack> required : restockAmounts) {
+			int diff = required.getFirst() - presentStock.getCountOf(required.getValue());
+			if (diff > 0)
+				missingItems.add(IntAttached.with(diff, required.getValue()));
+		}
+
+		if (missingItems.isEmpty())
+			return;
+
+		broadcastPackageRequest(new PackageOrder(missingItems), observedInventory.getInventory(), restockAddress);
+	}
+
+	protected void updateAutoRestockSettings(String address, List<IntAttached<ItemStack>> amounts) {
+		restockAmounts = amounts;
+		restockAddress = address;
+		notifyUpdate();
 	}
 
 	public void receiveStockPacket(List<IntAttached<ItemStack>> stacks, boolean endOfTransmission) {
@@ -75,7 +165,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 		newlyReceivedStockSnapshot = null;
 	}
 
-	public void receivePackageRequest(PackageOrder order, Player player, String address) {
+	public void broadcastPackageRequest(PackageOrder order, IItemHandler ignoredHandler, String address) {
 		List<IntAttached<ItemStack>> stacks = order.stacks();
 
 		// Packages need to track their index and successors for successful defrag
@@ -87,7 +177,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 		PackageOrder contextToSend = order;
 
 		// Packages from future orders should not be merged in the packager queue
-		int orderId = player.level().random.nextInt();
+		int orderId = level.random.nextInt();
 
 		for (int i = 0; i < stacks.size(); i++) {
 			IntAttached<ItemStack> entry = stacks.get(i);
@@ -103,7 +193,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 					isFinalLink = finalLinkTracker;
 
 				int processedCount = link.processRequest(requestedItem, remainingCount, address, linkIndex, isFinalLink,
-					orderId, contextToSend);
+					orderId, contextToSend, ignoredHandler);
 				if (processedCount > 0 && usedIndex == -1) {
 					contextToSend = null;
 					usedLinks.add(link);

@@ -520,4 +520,27 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		return animationTicks >= CYCLE / 2 ? ItemStack.EMPTY : heldBox;
 	}
 
+	public boolean isTargetingSameInventory(IItemHandler inventory) {
+		IItemHandler myInventory = targetInventory.getInventory();
+		if (myInventory == null || inventory == null)
+			return false;
+
+		if (myInventory == inventory)
+			return true;
+		
+		// If a contained ItemStack instance is the same, we can be pretty sure these
+		// inventories are the same (works for compound inventories)
+		for (int i = 0; i < inventory.getSlots(); i++) {
+			ItemStack stackInSlot = inventory.getStackInSlot(i);
+			if (stackInSlot.isEmpty())
+				continue;
+			for (int j = 0; j < myInventory.getSlots(); j++)
+				if (stackInSlot == myInventory.getStackInSlot(j))
+					return true;
+			break;
+		}
+
+		return false;
+	}
+
 }

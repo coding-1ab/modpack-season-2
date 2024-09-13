@@ -6,21 +6,29 @@ import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.foundation.block.IBE;
 
+import net.createmod.catnip.gui.ScreenOpener;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.DistExecutor;
 
 public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<StockTickerBlockEntity> {
 
@@ -40,6 +48,31 @@ public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> pBuilder) {
 		super.createBlockStateDefinition(pBuilder.add(FACING));
+	}
+
+	@Override
+	public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand,
+		BlockHitResult pHit) {
+		return onBlockEntityUse(pLevel, pPos, stbe -> {
+			if (!stbe.observedInventory.hasInventory())
+				return InteractionResult.PASS;
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> displayScreen(stbe, pPlayer));
+			return InteractionResult.SUCCESS;
+		});
+	}
+
+	@Override
+	public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pNeighborBlock,
+		BlockPos pNeighborPos, boolean pMovedByPiston) {
+		if (pLevel.isClientSide())
+			return;
+		withBlockEntityDo(pLevel, pPos, StockTickerBlockEntity::onRedstonePowerChanged);
+	}
+
+	@OnlyIn(value = Dist.CLIENT)
+	protected void displayScreen(StockTickerBlockEntity be, Player player) {
+		if (player instanceof LocalPlayer)
+			ScreenOpener.open(new StockTickerAutoRequestScreen(be));
 	}
 
 	@Override

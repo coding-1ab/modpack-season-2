@@ -62,6 +62,7 @@ import com.simibubi.create.content.logistics.packagePort.PackagePortPlacementPac
 import com.simibubi.create.content.logistics.stockTicker.LogisticalStockRequestPacket;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalStockResponsePacket;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrderRequestPacket;
+import com.simibubi.create.content.logistics.stockTicker.StockTickerConfigurationPacket;
 import com.simibubi.create.content.logistics.tunnel.TunnelFlapPacket;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkConfigurationPacket;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerBindPacket;
@@ -177,6 +178,7 @@ public enum AllPackets {
 	CHAIN_CONVEYOR_CONNECT(ChainConveyorConnectionPacket.class, ChainConveyorConnectionPacket::new, PLAY_TO_SERVER),
 	CHAIN_CONVEYOR_RIDING(ChainConveyorRidingPacket.class, ChainConveyorRidingPacket::new, PLAY_TO_SERVER),
 	CHAIN_PACKAGE_INTERACTION(ChainPackageInteractionPacket.class, ChainPackageInteractionPacket::new, PLAY_TO_SERVER),
+	STOCK_TICKER_CONFIGURATION(StockTickerConfigurationPacket.class, StockTickerConfigurationPacket::new, PLAY_TO_SERVER),
 
 	// Server to Client
 	SYMMETRY_EFFECT(SymmetryEffectPacket.class, SymmetryEffectPacket::new, PLAY_TO_CLIENT),

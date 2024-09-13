@@ -38,7 +38,7 @@ public class PackageOrderRequestPacket extends BlockEntityConfigurationPacket<St
 
 	@Override
 	protected void applySettings(ServerPlayer player, StockTickerBlockEntity be) {
-		be.receivePackageRequest(order, player, address);
+		be.broadcastPackageRequest(order, null, address);
 	}
 
 }
