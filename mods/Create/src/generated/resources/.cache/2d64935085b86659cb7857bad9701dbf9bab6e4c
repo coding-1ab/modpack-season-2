@@ -1,4 +1,4 @@
-// 1.20.1	2024-09-12T18:35:03.2786801	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
+// 1.20.1	2024-09-13T16:19:53.5157579	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
 60bbdf92d2ac9824ea6144955c74043a6005f79d assets/create/blockstates/acacia_window.json
 6a67703c2697d81b7dc83e9d72a66f9c9ff08383 assets/create/blockstates/acacia_window_pane.json
 c3ae87b62e81d8e9476eccd793bb1548d74c66a1 assets/create/blockstates/adjustable_chain_gearshift.json
@@ -422,6 +422,7 @@ b1f5ad596067cb4c84eb53b2c7b359be76f1cfbe assets/create/blockstates/powered_shaft
 df7af1e49c53ae99ac3f0b2fca5d948b8ea91938 assets/create/blockstates/pulley_magnet.json
 89d763258c53aa12a1e0c0e586ab701f3de5a1b5 assets/create/blockstates/pulse_extender.json
 81281435b8d1eeb4f1e318c6d14d49fa1fd86820 assets/create/blockstates/pulse_repeater.json
+65bfd8283749117663f7199204691758fd286e38 assets/create/blockstates/pulse_timer.json
 b658654aa97e8dd2c897f432a601835a3f8aca10 assets/create/blockstates/purple_nixie_tube.json
 f8f9802df9c0b4e39edeefc3b1abb38255d79801 assets/create/blockstates/purple_sail.json
 91b5ab66d7ec5235d278ee2bed6ddd88f39ce81d assets/create/blockstates/purple_seat.json
@@ -590,8 +591,8 @@ b0d8f08968763a5f74e5cd5644377a76a9f39753 assets/create/blockstates/yellow_toolbo
 fe8c497aacc641c2f01cec90bba9f19e59cc2ed2 assets/create/blockstates/yellow_valve_handle.json
 e819e93fdcbe9fd9c050a052d2718ff3b3539365 assets/create/blockstates/zinc_block.json
 64121dcb216381c83b4fe28aa361ea07c24c9ad0 assets/create/blockstates/zinc_ore.json
-20b568e230c8a0f35c3ffc21d76001e4832e606c assets/create/lang/en_ud.json
-cdf84caeef5420a50ce11c5f7c931600436260b5 assets/create/lang/en_us.json
+4eb67203a52afbfe4131617cc61d6da1ce5f4000 assets/create/lang/en_ud.json
+454816b2ff679522f371744d93bc32d8292f9248 assets/create/lang/en_us.json
 a97e1060e00ae701a02e39cd4ef8054cf345fac4 assets/create/models/block/acacia_window.json
 103e032c0b1a0a6a27c67da8c91179a564bd281c assets/create/models/block/acacia_window_pane_noside.json
 fb00b627abda76ad4fea867ca57dbfadd24fffa3 assets/create/models/block/acacia_window_pane_noside_alt.json
@@ -1390,6 +1391,9 @@ b21ec7cde56398b65f44922ddb026d9adb7b6072 assets/create/models/block/polished_cut
 66374fdc4d3d55f99b03e406f3b594f8b1bab94d assets/create/models/block/pulse_repeater_powered.json
 6bd0d85ca18b468bee279e7bc398bc8395e33a8b assets/create/models/block/pulse_repeater_powered_powering.json
 de0cc956e7ff1510d0947ca8fd2b6e642944f0ee assets/create/models/block/pulse_repeater_powering.json
+addbe93af945ff7ca2680a27225db804d3ac9b46 assets/create/models/block/pulse_timer_powered.json
+ab3d7e10abcb53b835d6f5c406b7a777a942d6f7 assets/create/models/block/pulse_timer_powered_powering.json
+7b425d9db8d914b52b7faad2f792c020b678f84d assets/create/models/block/pulse_timer_powering.json
 2f040681214af58a97e70d3a6e77a0fc2e02c624 assets/create/models/block/purple_nixie_tube.json
 356378a5839b0b400aa5e0a67740634113c09a38 assets/create/models/block/purple_sail.json
 bc8e473a5662b6180b00b85e5006241a283c9baa assets/create/models/block/purple_seat.json
@@ -2124,6 +2128,7 @@ bd70b798ca9f73f4e5aabc30e286487f5363122e assets/create/models/item/precision_mec
 d9a736e7a6fc70e0848de3e318c739d58b1e563f assets/create/models/item/propeller.json
 9b41eec5759887be9bae3d27654bf478a7eff676 assets/create/models/item/pulse_extender.json
 ea76bd3bd9e5bea4d64d91347d473b538e926b02 assets/create/models/item/pulse_repeater.json
+6ff9ce0cc633ea39b779b2e873a1d0fd7cfe7119 assets/create/models/item/pulse_timer.json
 7e165f83266edf34bb03fa3e8d2a83d44829c10a assets/create/models/item/purple_seat.json
 d75c4969334f2ee1ae4a3d8ac28b001735c76b97 assets/create/models/item/purple_toolbox.json
 ebffb05119f499fcec051a4337aadc47654baed2 assets/create/models/item/purple_valve_handle.json
@@ -3379,6 +3384,7 @@ afe84b9468fba532acc447236a9a0cbdd02c4560 data/create/loot_tables/blocks/powered_
 fbc433a7e8518860bc828a52b56dba92e4dff66c data/create/loot_tables/blocks/pulley_magnet.json
 e654e6cedc0373e97caea947e7e605bc4095da88 data/create/loot_tables/blocks/pulse_extender.json
 422385f062dd63edaf246c42fb0e617e92e6cc44 data/create/loot_tables/blocks/pulse_repeater.json
+93f0c41aedaa2b9baceda78b93a4b3198962e3f9 data/create/loot_tables/blocks/pulse_timer.json
 6f453ea136098a5872aeb4e2ad1e5b78d2fd571f data/create/loot_tables/blocks/purple_nixie_tube.json
 c6b7a02db55cf0824a48156adf469c478dfd6a8d data/create/loot_tables/blocks/purple_sail.json
 73cd7cc36fafb491666d2bccf1b4f24624b3c8f2 data/create/loot_tables/blocks/purple_seat.json
@@ -4201,7 +4207,7 @@ a1e21c22f32354fd1a82a1b0a59dd786c0deaba0 data/create/tags/blocks/movable_empty_c
 4970078b49ddac1b1d500ed0469cedf42bdc3d35 data/create/tags/blocks/non_movable.json
 06e13efbb7b0d09ff7ecd1a7dc45a0760b91ad67 data/create/tags/blocks/ore_override_stone.json
 a5874f73c7dc0a3ae12999e6ae8abf45bc7fb9be data/create/tags/blocks/passive_boiler_heaters.json
-3928cfdba3f941456bb05005fa0c36966a3aa880 data/create/tags/blocks/safe_nbt.json
+4926993b3e8a853f6c32847bc31b13d9a4da0b8a data/create/tags/blocks/safe_nbt.json
 79418bd729cef417b322cef9b491e7ae83317d61 data/create/tags/blocks/seats.json
 5def5088f7fd31b80e6f28c1c4ea146aa9d7d15b data/create/tags/blocks/toolboxes.json
 2589b135c0e96ad29076569e144528fe32ea5b39 data/create/tags/blocks/tracks.json

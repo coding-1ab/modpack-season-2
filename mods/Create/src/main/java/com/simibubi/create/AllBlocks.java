@@ -177,8 +177,8 @@ import com.simibubi.create.content.logistics.packagePort.PackagePortBlock;
 import com.simibubi.create.content.logistics.packagePort.PackagePortItem;
 import com.simibubi.create.content.logistics.packager.PackagerBlock;
 import com.simibubi.create.content.logistics.packager.PackagerGenerator;
-import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
+import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlock;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BrassTunnelBlock;
@@ -1933,6 +1933,16 @@ public class AllBlocks {
 			.model(AbstractDiodeGenerator::diodeItemModel)
 			.build()
 			.register();
+
+	public static final BlockEntry<BrassDiodeBlock> PULSE_TIMER = REGISTRATE.block("pulse_timer", BrassDiodeBlock::new)
+		.initialProperties(() -> Blocks.REPEATER)
+		.tag(AllBlockTags.SAFE_NBT.tag)
+		.blockstate(new BrassDiodeGenerator()::generate)
+		.addLayer(() -> RenderType::cutoutMipped)
+		.item()
+		.model(AbstractDiodeGenerator::diodeItemModel)
+		.build()
+		.register();
 
 	public static final BlockEntry<PoweredLatchBlock> POWERED_LATCH =
 		REGISTRATE.block("powered_latch", PoweredLatchBlock::new)
