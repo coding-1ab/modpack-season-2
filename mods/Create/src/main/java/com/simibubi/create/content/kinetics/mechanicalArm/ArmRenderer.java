@@ -1,13 +1,13 @@
 package com.simibubi.create.content.kinetics.mechanicalArm;
 
-import com.jozufozu.flywheel.backend.Backend;
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmBlockEntity.Phase;
 
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.utility.AnimationTickHolder;
@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -38,7 +39,7 @@ public class ArmRenderer extends KineticBlockEntityRenderer<ArmBlockEntity> {
 
 		ItemStack item = be.heldItem;
 		boolean hasItem = !item.isEmpty();
-		boolean usingFlywheel = Backend.canUseInstancing(be.getLevel());
+		boolean usingFlywheel = VisualizationManager.supportsVisualization(be.getLevel());
 
 		if (usingFlywheel && !hasItem)
 			return;
@@ -46,15 +47,14 @@ public class ArmRenderer extends KineticBlockEntityRenderer<ArmBlockEntity> {
 		ItemRenderer itemRenderer = Minecraft.getInstance()
 			.getItemRenderer();
 
-		boolean isBlockItem =
-			hasItem && (item.getItem() instanceof BlockItem) && itemRenderer.getModel(item, be.getLevel(), null, 0)
-				.isGui3d();
+		BakedModel bakedModel = itemRenderer.getModel(item, be.getLevel(), null, 0);
+		boolean isBlockItem = hasItem && (item.getItem() instanceof BlockItem) && bakedModel.isGui3d();
 
 		VertexConsumer builder = buffer.getBuffer(be.goggles ? RenderType.cutout() : RenderType.solid());
 		BlockState blockState = be.getBlockState();
 
 		PoseStack msLocal = new PoseStack();
-		TransformStack msr = TransformStack.cast(msLocal);
+		var msr = TransformStack.of(msLocal);
 
 		float baseAngle;
 		float lowerArmAngle;
@@ -80,10 +80,10 @@ public class ArmRenderer extends KineticBlockEntityRenderer<ArmBlockEntity> {
 			color = 0xFFFFFF;
 		}
 
-		msr.centre();
+		msr.center();
 
 		if (inverted)
-			msr.rotateX(180);
+			msr.rotateXDegrees(180);
 
 		if (usingFlywheel)
 			doItemTransforms(msr, baseAngle, lowerArmAngle, upperArmAngle, headAngle);
@@ -94,7 +94,7 @@ public class ArmRenderer extends KineticBlockEntityRenderer<ArmBlockEntity> {
 		if (hasItem) {
 			ms.pushPose();
 			float itemScale = isBlockItem ? .5f : .625f;
-			msr.rotateX(90);
+			msr.rotateXDegrees(90);
 			msLocal.translate(0, isBlockItem ? -9 / 16f : -10 / 16f, 0);
 			msLocal.scale(itemScale, itemScale, itemScale);
 
@@ -103,7 +103,7 @@ public class ArmRenderer extends KineticBlockEntityRenderer<ArmBlockEntity> {
 				.mul(msLocal.last()
 					.pose());
 
-			itemRenderer.renderStatic(item, ItemDisplayContext.FIXED, light, overlay, ms, buffer, be.getLevel(), 0);
+			itemRenderer.render(item, ItemDisplayContext.FIXED, false, ms, buffer, light, overlay, bakedModel);
 			ms.popPose();
 		}
 
@@ -144,13 +144,13 @@ public class ArmRenderer extends KineticBlockEntityRenderer<ArmBlockEntity> {
 		transformHead(msr, headAngle);
 
 		if (inverted)
-			msr.rotateZ(180);
+			msr.rotateZDegrees(180);
 
 		claw.transform(msLocal)
 			.renderInto(ms, builder);
 
 		if (inverted)
-			msr.rotateZ(180);
+			msr.rotateZDegrees(180);
 
 		for (int flip : Iterate.positiveAndNegative) {
 			msLocal.pushPose();
@@ -176,22 +176,22 @@ public class ArmRenderer extends KineticBlockEntityRenderer<ArmBlockEntity> {
 
 	public static void transformHead(TransformStack msr, float headAngle) {
 		msr.translate(0, 0, -15 / 16d);
-		msr.rotateX(headAngle - 45f);
+		msr.rotateXDegrees(headAngle - 45f);
 	}
 
 	public static void transformUpperArm(TransformStack msr, float upperArmAngle) {
 		msr.translate(0, 0, -14 / 16d);
-		msr.rotateX(upperArmAngle - 90);
+		msr.rotateXDegrees(upperArmAngle - 90);
 	}
 
 	public static void transformLowerArm(TransformStack msr, float lowerArmAngle) {
 		msr.translate(0, 2 / 16d, 0);
-		msr.rotateX(lowerArmAngle + 135);
+		msr.rotateXDegrees(lowerArmAngle + 135);
 	}
 
 	public static void transformBase(TransformStack msr, float baseAngle) {
 		msr.translate(0, 4 / 16d, 0);
-		msr.rotateY(baseAngle);
+		msr.rotateYDegrees(baseAngle);
 	}
 
 	@Override

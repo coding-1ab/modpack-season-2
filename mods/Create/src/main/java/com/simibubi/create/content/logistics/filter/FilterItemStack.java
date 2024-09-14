@@ -23,6 +23,10 @@ public class FilterItemStack {
 
 	public static FilterItemStack of(ItemStack filter) {
 		if (filter.hasTag()) {
+			CompoundTag stackTag = filter.getTag();
+			stackTag.remove("Enchantments");
+			stackTag.remove("AttributeModifiers");
+
 			if (AllItems.FILTER.isIn(filter))
 				return new ListFilterItemStack(filter);
 			if (AllItems.ATTRIBUTE_FILTER.isIn(filter))
@@ -128,7 +132,7 @@ public class FilterItemStack {
 					containedItems.add(FilterItemStack.of(stackInSlot));
 			}
 
-			shouldRespectNBT = !defaults ? false
+			shouldRespectNBT = defaults ? false
 				: filter.getTag()
 					.getBoolean("RespectNBT");
 			isBlacklist = defaults ? false

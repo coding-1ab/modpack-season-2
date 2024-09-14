@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -19,6 +18,7 @@ import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.CreateTheme;
 import com.simibubi.create.foundation.utility.CreateLang;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.utility.AnimationTickHolder;
@@ -128,10 +128,10 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
 
 			for (int slot = 0; slot < 8; slot++) {
 				ms.pushPose();
-				TransformStack.cast(ms)
-					.rotateZ(slot * 45 - 45)
+				TransformStack.of(ms)
+					.rotateZDegrees(slot * 45 - 45)
 					.translate(0, -40 + (10 * (1 - fade) * (1 - fade)), 0)
-					.rotateZ(-slot * 45 + 45);
+					.rotateZDegrees(-slot * 45 + 45);
 				ms.translate(-12, -12, 0);
 
 				if (state == State.SELECT_ITEM || state == State.SELECT_ITEM_UNEQUIP) {

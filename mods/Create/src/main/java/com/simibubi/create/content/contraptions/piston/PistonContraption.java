@@ -1,12 +1,26 @@
 package com.simibubi.create.content.contraptions.piston;
 
+import static com.simibubi.create.AllBlocks.MECHANICAL_PISTON_HEAD;
+import static com.simibubi.create.AllBlocks.PISTON_EXTENSION_POLE;
+import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isExtensionPole;
+import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isPiston;
+import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isPistonHead;
+import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isStickyPiston;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.contraptions.BlockMovementChecks;
 import com.simibubi.create.content.contraptions.ContraptionType;
 import com.simibubi.create.content.contraptions.TranslatingContraption;
 import com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.PistonState;
-import com.simibubi.create.content.contraptions.render.ContraptionLighter;
 import com.simibubi.create.infrastructure.config.AllConfigs;
+
 import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,21 +35,6 @@ import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-
-import static com.simibubi.create.AllBlocks.MECHANICAL_PISTON_HEAD;
-import static com.simibubi.create.AllBlocks.PISTON_EXTENSION_POLE;
-import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isExtensionPole;
-import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isPiston;
-import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isPistonHead;
-import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isStickyPiston;
-import static net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING;
 
 public class PistonContraption extends TranslatingContraption {
 
@@ -242,9 +241,4 @@ public class PistonContraption extends TranslatingContraption {
 		return tag;
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	@Override
-	public ContraptionLighter<?> makeLighter() {
-		return new PistonLighter(this);
-	}
 }

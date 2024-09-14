@@ -1,10 +1,10 @@
 package com.simibubi.create.content.contraptions.chassis;
 
-import com.jozufozu.flywheel.backend.Backend;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
 
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.utility.math.AngleHelper;
@@ -25,7 +25,7 @@ public class StickerRenderer extends SafeBlockEntityRenderer<StickerBlockEntity>
 	protected void renderSafe(StickerBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
 		int light, int overlay) {
 
-		if (Backend.canUseInstancing(be.getLevel())) return;
+		if (VisualizationManager.supportsVisualization(be.getLevel())) return;
 
 		BlockState state = be.getBlockState();
 		SuperByteBuffer head = CachedBuffers.partial(AllPartialModels.STICKER_HEAD, state);
@@ -36,10 +36,10 @@ public class StickerRenderer extends SafeBlockEntityRenderer<StickerBlockEntity>
 
 		Direction facing = state.getValue(StickerBlock.FACING);
 		head.nudge(be.hashCode())
-			.centre()
-			.rotateY(AngleHelper.horizontalAngle(facing))
-			.rotateX(AngleHelper.verticalAngle(facing) + 90)
-			.unCentre()
+			.center()
+			.rotateYDegrees(AngleHelper.horizontalAngle(facing))
+			.rotateXDegrees(AngleHelper.verticalAngle(facing) + 90)
+			.uncenter()
 			.translate(0, (offset * offset) * 4 / 16f, 0);
 
 		head.light(light)

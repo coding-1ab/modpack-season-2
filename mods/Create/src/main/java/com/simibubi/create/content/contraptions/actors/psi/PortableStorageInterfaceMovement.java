@@ -1,13 +1,18 @@
 package com.simibubi.create.content.contraptions.actors.psi;
 
-import com.jozufozu.flywheel.api.MaterialManager;
-import com.jozufozu.flywheel.core.virtual.VirtualRenderWorld;
+import java.util.Optional;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
-import com.simibubi.create.content.contraptions.render.ActorInstance;
+import com.simibubi.create.content.contraptions.render.ActorVisual;
 import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
-import com.simibubi.create.content.contraptions.render.ContraptionRenderDispatcher;
 import com.simibubi.create.content.trains.entity.CarriageContraption;
+import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
+
+import dev.engine_room.flywheel.api.visualization.VisualizationContext;
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
@@ -21,9 +26,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
 
 public class PortableStorageInterfaceMovement implements MovementBehaviour {
 
@@ -38,22 +40,22 @@ public class PortableStorageInterfaceMovement implements MovementBehaviour {
 	}
 
 	@Override
-	public boolean hasSpecialInstancedRendering() {
+	public boolean disableBlockEntityRendering() {
 		return true;
 	}
 
 	@Nullable
 	@Override
-	public ActorInstance createInstance(MaterialManager materialManager, VirtualRenderWorld simulationWorld,
-		MovementContext context) {
-		return new PSIActorInstance(materialManager, simulationWorld, context);
+	public ActorVisual createVisual(VisualizationContext visualizationContext, VirtualRenderWorld simulationWorld,
+		MovementContext movementContext) {
+		return new PSIActorVisual(visualizationContext, simulationWorld, movementContext);
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void renderInContraption(MovementContext context, VirtualRenderWorld renderWorld,
 		ContraptionMatrices matrices, MultiBufferSource buffer) {
-		if (!ContraptionRenderDispatcher.canInstance())
+		if (!VisualizationManager.supportsVisualization(context.world))
 			PortableStorageInterfaceRenderer.renderInContraption(context, renderWorld, matrices, buffer);
 	}
 

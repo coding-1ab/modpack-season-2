@@ -1,8 +1,12 @@
 package com.simibubi.create.content.equipment.bell;
 
-import com.jozufozu.flywheel.backend.ShadersModHandler;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+
+import dev.engine_room.flywheel.lib.util.ShadersModHandler;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.SimpleAnimatedParticle;
@@ -10,8 +14,6 @@ import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 public class CustomRotationParticle extends SimpleAnimatedParticle {
 

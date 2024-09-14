@@ -6,6 +6,7 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper.ExtractionCountMode;
+import com.simibubi.create.foundation.utility.HashableNonNullConsumer;
 
 import net.createmod.catnip.utility.BlockFace;
 import net.minecraft.core.BlockPos;
@@ -128,7 +129,7 @@ public abstract class CapManipulationBehaviourBase<T, S extends CapManipulationB
 		targetCapability =
 			bypassSided ? invBE.getCapability(capability) : invBE.getCapability(capability, targetBlockFace.getFace());
 		if (targetCapability.isPresent())
-			targetCapability.addListener(this::onHandlerInvalidated);
+			targetCapability.addListener(new HashableNonNullConsumer<>(this::onHandlerInvalidated, this));
 	}
 
 	@FunctionalInterface

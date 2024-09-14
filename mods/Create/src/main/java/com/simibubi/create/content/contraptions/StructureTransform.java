@@ -1,5 +1,9 @@
 package com.simibubi.create.content.contraptions;
 
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
+
 import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,10 +27,6 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.Vec3;
-
-import static net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS;
-import static net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING;
-import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 public class StructureTransform {
 
@@ -97,6 +97,16 @@ public class StructureTransform {
 		return vec;
 	}
 
+	public Vec3 unapplyWithoutOffset(Vec3 globalVec) {
+		Vec3 vec = globalVec;
+		if (rotationAxis != null)
+			vec = VecHelper.rotateCentered(vec, -angle, rotationAxis);
+		if (mirror != null)
+			vec = VecHelper.mirrorCentered(vec, mirror);
+
+		return vec;
+	}
+
 	public Vec3 apply(Vec3 localVec) {
 		return applyWithoutOffset(localVec).add(Vec3.atLowerCornerOf(offset));
 	}
@@ -107,6 +117,14 @@ public class StructureTransform {
 
 	public BlockPos apply(BlockPos localPos) {
 		return applyWithoutOffset(localPos).offset(offset);
+	}
+
+	public BlockPos unapply(BlockPos globalPos) {
+		return unapplyWithoutOffset(globalPos.subtract(offset));
+	}
+
+	public BlockPos unapplyWithoutOffset(BlockPos globalPos) {
+		return BlockPos.containing(unapplyWithoutOffset(VecHelper.getCenterOf(globalPos)));
 	}
 
 	public void apply(BlockEntity be) {

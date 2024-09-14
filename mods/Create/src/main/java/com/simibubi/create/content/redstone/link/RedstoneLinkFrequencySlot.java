@@ -1,9 +1,9 @@
 package com.simibubi.create.content.redstone.link;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.Direction;
@@ -45,9 +45,9 @@ public class RedstoneLinkFrequencySlot extends ValueBoxTransform.Dual {
 		float yRot = facing.getAxis()
 			.isVertical() ? 0 : AngleHelper.horizontalAngle(facing) + 180;
 		float xRot = facing == Direction.UP ? 90 : facing == Direction.DOWN ? 270 : 0;
-		TransformStack.cast(ms)
-			.rotateY(yRot)
-			.rotateX(xRot);
+		TransformStack.of(ms)
+			.rotateYDegrees(yRot)
+			.rotateXDegrees(xRot);
 	}
 
 	@Override

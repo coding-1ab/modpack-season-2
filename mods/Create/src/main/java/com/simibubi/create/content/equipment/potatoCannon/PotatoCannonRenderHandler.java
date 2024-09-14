@@ -1,11 +1,11 @@
 package com.simibubi.create.content.equipment.potatoCannon;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.equipment.zapper.ShootableGadgetRenderHandler;
 import com.simibubi.create.foundation.particle.AirParticleData;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -49,15 +49,15 @@ public class PotatoCannonRenderHandler extends ShootableGadgetRenderHandler {
 	protected void transformTool(PoseStack ms, float flip, float equipProgress, float recoil, float pt) {
 		ms.translate(flip * -.1f, 0, .14f);
 		ms.scale(.75f, .75f, .75f);
-		TransformStack.cast(ms)
-			.rotateX(recoil * 80);
+		TransformStack.of(ms)
+			.rotateXDegrees(recoil * 80);
 	}
 
 	@Override
 	protected void transformHand(PoseStack ms, float flip, float equipProgress, float recoil, float pt) {
 		ms.translate(flip * -.09, -.275, -.25);
-		TransformStack.cast(ms)
-			.rotateZ(flip * -10);
+		TransformStack.of(ms)
+			.rotateZDegrees(flip * -10);
 	}
 
 }

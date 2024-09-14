@@ -1,9 +1,9 @@
 package com.simibubi.create.content.redstone.diodes;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,9 +20,9 @@ public class BrassDiodeScrollSlot extends ValueBoxTransform {
 	@Override
 	public void rotate(BlockState state, PoseStack ms) {
 		float yRot = AngleHelper.horizontalAngle(state.getValue(BlockStateProperties.HORIZONTAL_FACING)) + 180;
-		TransformStack.cast(ms)
-			.rotateY(yRot)
-			.rotateX(90);
+		TransformStack.of(ms)
+			.rotateYDegrees(yRot)
+			.rotateXDegrees(90);
 	}
 
 	@Override

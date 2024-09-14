@@ -1,19 +1,21 @@
 package com.simibubi.create.content.decoration.bracket;
 
+import java.util.function.Predicate;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+
 import net.createmod.catnip.utility.NBTHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Predicate;
 
 public class BracketedBlockEntityBehaviour extends BlockEntityBehaviour {
 
@@ -84,6 +86,10 @@ public class BracketedBlockEntityBehaviour extends BlockEntityBehaviour {
 		return bracket != null;
 	}
 
+	public boolean isBracketValid(BlockState bracketState) {
+		return bracketState.getBlock() instanceof BracketBlock;
+	}
+
 	@Nullable
 	public BlockState getBracket() {
 		return bracket;
@@ -108,7 +114,7 @@ public class BracketedBlockEntityBehaviour extends BlockEntityBehaviour {
 
 	@Override
 	public void write(CompoundTag nbt, boolean clientPacket) {
-		if (isBracketPresent()) {
+		if (isBracketPresent() && isBracketValid(bracket)) {
 			nbt.put("Bracket", NbtUtils.writeBlockState(bracket));
 		}
 		if (clientPacket && reRender) {
@@ -120,8 +126,12 @@ public class BracketedBlockEntityBehaviour extends BlockEntityBehaviour {
 
 	@Override
 	public void read(CompoundTag nbt, boolean clientPacket) {
-		if (nbt.contains("Bracket"))
-			bracket = NbtUtils.readBlockState(blockEntity.blockHolderGetter(), nbt.getCompound("Bracket"));
+		if (nbt.contains("Bracket")) {
+			bracket = null;
+			BlockState readBlockState = NbtUtils.readBlockState(blockEntity.blockHolderGetter(), nbt.getCompound("Bracket"));
+			if (isBracketValid(readBlockState))
+				bracket = readBlockState;
+		}
 		if (clientPacket && nbt.contains("Redraw"))
 			getWorld().sendBlockUpdated(getPos(), blockEntity.getBlockState(), blockEntity.getBlockState(), 16);
 		super.read(nbt, clientPacket);

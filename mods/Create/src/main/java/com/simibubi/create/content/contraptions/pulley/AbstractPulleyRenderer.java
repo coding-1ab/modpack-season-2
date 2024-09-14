@@ -1,13 +1,13 @@
 package com.simibubi.create.content.contraptions.pulley;
 
-import com.jozufozu.flywheel.backend.Backend;
-import com.jozufozu.flywheel.core.PartialModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.utility.math.AngleHelper;
@@ -44,7 +44,7 @@ public abstract class AbstractPulleyRenderer<T extends KineticBlockEntity> exten
 	protected void renderSafe(T be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
 		int light, int overlay) {
 
-		if (Backend.canUseInstancing(be.getLevel()))
+		if (VisualizationManager.supportsVisualization(be.getLevel()))
 			return;
 
 		super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
@@ -53,8 +53,9 @@ public abstract class AbstractPulleyRenderer<T extends KineticBlockEntity> exten
 
 		Axis rotationAxis = ((IRotate) be.getBlockState()
 			.getBlock()).getRotationAxis(be.getBlockState());
+		VertexConsumer vb = buffer.getBuffer(RenderType.solid());
 		kineticRotationTransform(getRotatedCoil(be), be, rotationAxis, AngleHelper.rad(offset * 180), light)
-			.renderInto(ms, buffer.getBuffer(RenderType.solid()));
+			.renderInto(ms, vb);
 
 		Level world = be.getLevel();
 		BlockState blockState = be.getBlockState();
@@ -65,7 +66,6 @@ public abstract class AbstractPulleyRenderer<T extends KineticBlockEntity> exten
 		SuperByteBuffer magnet = renderMagnet(be);
 		SuperByteBuffer rope = renderRope(be);
 
-		VertexConsumer vb = buffer.getBuffer(RenderType.solid());
 		if (running || offset == 0)
 			renderAt(world, offset > .25f ? magnet : halfMagnet, offset, pos, ms, vb);
 
@@ -85,7 +85,7 @@ public abstract class AbstractPulleyRenderer<T extends KineticBlockEntity> exten
 		BlockPos actualPos = pulleyPos.below((int) offset);
 		int light = LevelRenderer.getLightColor(world, world.getBlockState(actualPos), actualPos);
 		partial.translate(0, -offset, 0)
-			.light(light)
+		.light(light)
 			.renderInto(ms, buffer);
 	}
 

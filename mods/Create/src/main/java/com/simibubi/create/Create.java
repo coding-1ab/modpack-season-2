@@ -41,8 +41,10 @@ import com.simibubi.create.infrastructure.worldgen.AllFeatures;
 import com.simibubi.create.infrastructure.worldgen.AllPlacementModifiers;
 
 import net.createmod.catnip.utility.lang.LangBuilder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeMod;
@@ -60,7 +62,7 @@ public class Create {
 
 	public static final String ID = "create";
 	public static final String NAME = "Create";
-	public static final String VERSION = "0.6-experimental";
+	public static final String VERSION = "0.5.2-experimental";
 
 	public static final Logger LOGGER = LogUtils.getLogger();
 
@@ -76,7 +78,8 @@ public class Create {
 	 * <b>Other mods should not use this field!</b> If you are an addon developer, create your own instance of
 	 * {@link CreateRegistrate}.
 	 */
-	public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(ID);
+	public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(ID)
+		.defaultCreativeTab((ResourceKey<CreativeModeTab>) null);
 
 	static {
 		REGISTRATE.setTooltipModifierFactory(item -> {

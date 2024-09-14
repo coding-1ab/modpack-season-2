@@ -1,15 +1,19 @@
 package com.simibubi.create.content.contraptions.actors.harvester;
 
-import com.jozufozu.flywheel.api.MaterialManager;
-import com.jozufozu.flywheel.core.virtual.VirtualRenderWorld;
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.mutable.MutableBoolean;
+
 import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
-import com.simibubi.create.content.contraptions.render.ActorInstance;
+import com.simibubi.create.content.contraptions.render.ActorVisual;
 import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
-import com.simibubi.create.content.contraptions.render.ContraptionRenderDispatcher;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.infrastructure.config.AllConfigs;
+
+import dev.engine_room.flywheel.api.visualization.VisualizationContext;
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
@@ -30,9 +34,6 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.IPlantable;
-import org.apache.commons.lang3.mutable.MutableBoolean;
-
-import javax.annotation.Nullable;
 
 public class HarvesterMovementBehaviour implements MovementBehaviour {
 
@@ -41,25 +42,6 @@ public class HarvesterMovementBehaviour implements MovementBehaviour {
 		return MovementBehaviour.super.isActive(context)
 			&& !VecHelper.isVecPointingTowards(context.relativeMotion, context.state.getValue(HarvesterBlock.FACING)
 				.getOpposite());
-	}
-
-	@Override
-	public boolean hasSpecialInstancedRendering() {
-		return true;
-	}
-
-	@Nullable
-	@Override
-	public ActorInstance createInstance(MaterialManager materialManager, VirtualRenderWorld simulationWorld,
-		MovementContext context) {
-		return new HarvesterActorInstance(materialManager, simulationWorld, context);
-	}
-
-	@Override
-	public void renderInContraption(MovementContext context, VirtualRenderWorld renderWorld,
-		ContraptionMatrices matrices, MultiBufferSource buffers) {
-        if (!ContraptionRenderDispatcher.canInstance())
-			HarvesterRenderer.renderInContraption(context, renderWorld, matrices, buffers);
 	}
 
 	@Override
@@ -214,6 +196,25 @@ public class HarvesterMovementBehaviour implements MovementBehaviour {
 			return Blocks.AIR.defaultBlockState();
 		return state.getFluidState()
 			.createLegacyBlock();
+	}
+
+	@Override
+	public boolean disableBlockEntityRendering() {
+		return true;
+	}
+
+	@Override
+	public void renderInContraption(MovementContext context, VirtualRenderWorld renderWorld,
+		ContraptionMatrices matrices, MultiBufferSource buffers) {
+        if (!VisualizationManager.supportsVisualization(context.world))
+			HarvesterRenderer.renderInContraption(context, renderWorld, matrices, buffers);
+	}
+
+	@Nullable
+	@Override
+	public ActorVisual createVisual(VisualizationContext visualizationContext, VirtualRenderWorld simulationWorld,
+		MovementContext movementContext) {
+		return new HarvesterActorVisual(visualizationContext, simulationWorld, movementContext);
 	}
 
 }

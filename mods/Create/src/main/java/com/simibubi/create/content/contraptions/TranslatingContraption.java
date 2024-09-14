@@ -1,13 +1,15 @@
 package com.simibubi.create.content.contraptions;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.simibubi.create.infrastructure.config.AllConfigs;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 public abstract class TranslatingContraption extends Contraption {
 
@@ -19,7 +21,7 @@ public abstract class TranslatingContraption extends Contraption {
 			return Collections.emptySet();
 		if (cachedColliders == null || cachedColliderDirection != movementDirection) {
 			cachedColliderDirection = movementDirection;
-			cachedColliders= createColliders(world, movementDirection);
+			cachedColliders = createColliders(world, movementDirection);
 		}
 		return cachedColliders;
 	}
@@ -51,7 +53,7 @@ public abstract class TranslatingContraption extends Contraption {
 
 	@Override
 	public boolean canBeStabilized(Direction facing, BlockPos localPos) {
-		return false;
+		return AllConfigs.server().kinetics.stabiliseStableContraptions.get();
 	}
 
 }

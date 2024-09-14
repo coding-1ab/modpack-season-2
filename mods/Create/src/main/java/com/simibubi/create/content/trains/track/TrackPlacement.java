@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.jozufozu.flywheel.util.Color;
 import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
@@ -23,6 +22,7 @@ import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
 import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -33,6 +33,7 @@ import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
@@ -508,7 +509,7 @@ public class TrackPlacement {
 				// copy over all shared properties from the shaped state to the correct track material block
 				BlockState toPlace = BlockHelper.copyProperties(state, info.trackMaterial.getBlock().defaultBlockState());
 
-				boolean canPlace = stateAtPos.canBeReplaced();
+				boolean canPlace = stateAtPos.canBeReplaced() || stateAtPos.is(BlockTags.FLOWERS);
 				if (canPlace)
 					info.requiredTracks++;
 				if (simulate)

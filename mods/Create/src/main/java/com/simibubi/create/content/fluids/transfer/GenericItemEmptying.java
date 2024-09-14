@@ -8,7 +8,6 @@ import com.simibubi.create.content.fluids.potion.PotionFluidHandler;
 
 import net.createmod.catnip.utility.Pair;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -24,7 +23,7 @@ public class GenericItemEmptying {
 	private static final RecipeWrapper WRAPPER = new RecipeWrapper(new ItemStackHandler(1));
 
 	public static boolean canItemBeEmptied(Level world, ItemStack stack) {
-		if (stack.getItem() instanceof PotionItem)
+		if (PotionFluidHandler.isPotionItem(stack))
 			return true;
 
 		WRAPPER.setItem(0, stack);
@@ -49,7 +48,7 @@ public class GenericItemEmptying {
 		FluidStack resultingFluid = FluidStack.EMPTY;
 		ItemStack resultingItem = ItemStack.EMPTY;
 
-		if (stack.getItem() instanceof PotionItem)
+		if (PotionFluidHandler.isPotionItem(stack))
 			return PotionFluidHandler.emptyPotion(stack, simulate);
 
 		WRAPPER.setItem(0, stack);

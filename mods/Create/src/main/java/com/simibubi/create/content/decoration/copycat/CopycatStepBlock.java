@@ -2,6 +2,8 @@ package com.simibubi.create.content.decoration.copycat;
 
 import java.util.function.Predicate;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.foundation.placement.PoleHelper;
@@ -9,6 +11,7 @@ import com.simibubi.create.foundation.placement.PoleHelper;
 import net.createmod.catnip.utility.VoxelShaper;
 import net.createmod.catnip.utility.placement.IPlacementHelper;
 import net.createmod.catnip.utility.placement.PlacementHelpers;
+import net.createmod.catnip.utility.placement.PlacementOffset;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -209,10 +212,21 @@ public class CopycatStepBlock extends WaterloggedCopycatBlock {
 		}
 
 		@Override
-		public Predicate<ItemStack> getItemPredicate() {
+		public @NotNull Predicate<ItemStack> getItemPredicate() {
 			return AllBlocks.COPYCAT_STEP::isIn;
 		}
 
+		@Override
+		public @NotNull PlacementOffset getOffset(Player player, Level world, BlockState state, BlockPos pos,
+												  BlockHitResult ray) {
+			PlacementOffset offset = super.getOffset(player, world, state, pos, ray);
+
+			if (offset.isSuccessful())
+				offset.withTransform(offset.getTransform()
+						.andThen(s -> s.setValue(HALF, state.getValue(HALF))));
+
+			return offset;
+		}
 	}
 
 }

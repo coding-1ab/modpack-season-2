@@ -1,9 +1,17 @@
 package com.simibubi.create.compat.jei.category;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.compat.jei.category.animations.AnimatedCrafter;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
+
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -23,11 +31,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.IShapedRecipe;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.List;
 
 @ParametersAreNonnullByDefault
 public class MechanicalCraftingCategory extends CreateRecipeCategory<CraftingRecipe> {
@@ -97,16 +100,21 @@ public class MechanicalCraftingCategory extends CreateRecipeCategory<CraftingRec
 		matrixStack.translate(getXPadding(recipe), getYPadding(recipe), 0);
 
 		for (int row = 0; row < getHeight(recipe); row++)
-			for (int col = 0; col < getWidth(recipe); col++)
-				if (!recipe.getIngredients()
-					.get(row * getWidth(recipe) + col)
-					.isEmpty()) {
-					matrixStack.pushPose();
-					matrixStack.translate(col * 19 * scale, row * 19 * scale, 0);
-					matrixStack.scale(scale, scale, scale);
-					AllGuiTextures.JEI_SLOT.render(graphics, 0, 0);
-					matrixStack.popPose();
-				}
+			for (int col = 0; col < getWidth(recipe); col++) {
+				int pIndex = row * getWidth(recipe) + col;
+				if (pIndex >= recipe.getIngredients()
+					.size())
+					break;
+				if (recipe.getIngredients()
+					.get(pIndex)
+					.isEmpty())
+					continue;
+				matrixStack.pushPose();
+				matrixStack.translate(col * 19 * scale, row * 19 * scale, 0);
+				matrixStack.scale(scale, scale, scale);
+				AllGuiTextures.JEI_SLOT.render(graphics, 0, 0);
+				matrixStack.popPose();
+			}
 
 		matrixStack.popPose();
 

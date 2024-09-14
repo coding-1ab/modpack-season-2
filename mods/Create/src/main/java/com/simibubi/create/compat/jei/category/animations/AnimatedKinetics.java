@@ -1,10 +1,10 @@
 package com.simibubi.create.compat.jei.category.animations;
 
-import com.jozufozu.flywheel.core.PartialModel;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.foundation.gui.CustomLightingSettings;
 
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import mezz.jei.api.gui.drawable.IDrawable;
 import net.createmod.catnip.gui.ILightingSettings;
 import net.createmod.catnip.gui.element.GuiGameElement;

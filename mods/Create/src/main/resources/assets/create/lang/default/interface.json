@@ -117,7 +117,8 @@
 	"create.keyinfo.toolmenu": "Focus Schematic Overlay",
 	"create.keyinfo.toolbelt": "Access Nearby Toolboxes",
 	"create.keyinfo.scrollup": "Simulate Mousewheel Up (inworld)",
-	"create.keyinfo.scrolldown": "Simulate Mousewheel Down (inworld)",
+  "create.keyinfo.scrolldown": "Simulate Mousewheel Down (inworld)",
+  "create.keyinfo.ponder": "Ponder",
 
 	"create.gui.scrollInput.defaultTitle": "Choose an Option:",
 	"create.gui.scrollInput.scrollToModify": "Scroll to Modify",

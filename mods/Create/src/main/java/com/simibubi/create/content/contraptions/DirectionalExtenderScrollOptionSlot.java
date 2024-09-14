@@ -2,10 +2,10 @@ package com.simibubi.create.content.contraptions;
 
 import java.util.function.BiPredicate;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.blockEntity.behaviour.CenteredSideValueBoxTransform;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,8 +27,8 @@ public class DirectionalExtenderScrollOptionSlot extends CenteredSideValueBoxTra
 	@Override
 	public void rotate(BlockState state, PoseStack ms) {
 		if (!getSide().getAxis().isHorizontal())
-			TransformStack.cast(ms)
-					.rotateY(AngleHelper.horizontalAngle(state.getValue(BlockStateProperties.FACING)) + 180);
+			TransformStack.of(ms)
+					.rotateYDegrees(AngleHelper.horizontalAngle(state.getValue(BlockStateProperties.FACING)) + 180);
 		super.rotate(state, ms);
 	}
 }

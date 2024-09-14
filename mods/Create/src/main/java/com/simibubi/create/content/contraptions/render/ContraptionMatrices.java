@@ -1,11 +1,13 @@
 package com.simibubi.create.content.contraptions.render;
 
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
+
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import org.joml.Matrix4f;
 
 /**
  * <p>
@@ -20,9 +22,7 @@ public class ContraptionMatrices {
 	private final Matrix4f world = new Matrix4f();
 	private final Matrix4f light = new Matrix4f();
 
-	private boolean ready;
-
-	public void setup(PoseStack viewProjection, AbstractContraptionEntity entity) {
+	void setup(PoseStack viewProjection, AbstractContraptionEntity entity) {
 		float partialTicks = AnimationTickHolder.getPartialTicks();
 
 		this.viewProjection.pushPose();
@@ -39,17 +39,14 @@ public class ContraptionMatrices {
 		light.set(world);
 		light.mul(model.last()
 			.pose());
-
-		ready = true;
 	}
 
-	public void clear() {
+	void clear() {
 		clearStack(modelViewProjection);
 		clearStack(viewProjection);
 		clearStack(model);
 		world.identity();
 		light.identity();
-		ready = false;
 	}
 
 	public PoseStack getModelViewProjection() {
@@ -70,10 +67,6 @@ public class ContraptionMatrices {
 
 	public Matrix4f getLight() {
 		return light;
-	}
-
-	public boolean isReady() {
-		return ready;
 	}
 
 	public static void transform(PoseStack ms, PoseStack transform) {

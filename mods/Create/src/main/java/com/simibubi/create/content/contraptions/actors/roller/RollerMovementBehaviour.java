@@ -9,15 +9,12 @@ import java.util.function.BiConsumer;
 
 import javax.annotation.Nullable;
 
-import com.jozufozu.flywheel.api.MaterialManager;
-import com.jozufozu.flywheel.core.virtual.VirtualRenderWorld;
-import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllTags;
 import com.simibubi.create.content.contraptions.actors.roller.RollerBlockEntity.RollingMode;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.contraptions.pulley.PulleyContraption;
-import com.simibubi.create.content.contraptions.render.ActorInstance;
+import com.simibubi.create.content.contraptions.render.ActorVisual;
 import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
-import com.simibubi.create.content.contraptions.render.ContraptionRenderDispatcher;
 import com.simibubi.create.content.kinetics.base.BlockBreakingMovementBehaviour;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
 import com.simibubi.create.content.trains.bogey.StandardBogeyBlock;
@@ -33,8 +30,11 @@ import com.simibubi.create.content.trains.graph.TrackGraph;
 import com.simibubi.create.foundation.damageTypes.CreateDamageSources;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.utility.BlockHelper;
+import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import dev.engine_room.flywheel.api.visualization.VisualizationContext;
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.Pair;
@@ -70,21 +70,21 @@ public class RollerMovementBehaviour extends BlockBreakingMovementBehaviour {
 	}
 
 	@Override
-	public boolean hasSpecialInstancedRendering() {
+	public boolean disableBlockEntityRendering() {
 		return true;
 	}
 
 	@Nullable
 	@Override
-	public ActorInstance createInstance(MaterialManager materialManager, VirtualRenderWorld simulationWorld,
-		MovementContext context) {
-		return new RollerActorInstance(materialManager, simulationWorld, context);
+	public ActorVisual createVisual(VisualizationContext visualizationContext, VirtualRenderWorld simulationWorld,
+		MovementContext movementContext) {
+		return new RollerActorVisual(visualizationContext, simulationWorld, movementContext);
 	}
 
 	@Override
 	public void renderInContraption(MovementContext context, VirtualRenderWorld renderWorld,
 		ContraptionMatrices matrices, MultiBufferSource buffers) {
-		if (!ContraptionRenderDispatcher.canInstance())
+		if (!VisualizationManager.supportsVisualization(context.world))
 			RollerRenderer.renderInContraption(context, renderWorld, matrices, buffers);
 	}
 
@@ -109,7 +109,7 @@ public class RollerMovementBehaviour extends BlockBreakingMovementBehaviour {
 				return false;
 
 		return super.canBreak(world, breakingPos, state) && !state.getCollisionShape(world, breakingPos)
-			.isEmpty() && !AllBlocks.TRACK.has(state);
+			.isEmpty() && !AllTags.AllBlockTags.TRACKS.matches(state);
 	}
 
 	@Override
@@ -469,8 +469,9 @@ public class RollerMovementBehaviour extends BlockBreakingMovementBehaviour {
 		if (existing.is(toPlace.getBlock()))
 			return PaveResult.PASS;
 		if (!existing.is(BlockTags.LEAVES) && !existing.canBeReplaced()
-			&& !existing.getCollisionShape(level, targetPos)
-				.isEmpty())
+			&& (!existing.getCollisionShape(level, targetPos)
+				.isEmpty()
+				|| existing.is(BlockTags.PORTALS)))
 			return PaveResult.FAIL;
 
 		FilterItemStack filter = context.getFilterFromBE();

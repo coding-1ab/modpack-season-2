@@ -363,6 +363,10 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 		if (!tryEnterAssemblyMode())
 			return false;
 
+		//Check the station wasn't destroyed
+		if (!(level.getBlockState(worldPosition).getBlock() instanceof StationBlock))
+			return true;
+
 		BlockState newState = getBlockState().setValue(StationBlock.ASSEMBLING, true);
 		level.setBlock(getBlockPos(), newState, 3);
 		refreshBlockState();
@@ -618,13 +622,13 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 		BlockPos bogeyOffset = BlockPos.containing(track.getUpNormal(level, trackPosition, trackState));
 
 		TrackNodeLocation location = null;
-		Vec3 centre = Vec3.atBottomCenterOf(trackPosition)
+		Vec3 center = Vec3.atBottomCenterOf(trackPosition)
 			.add(0, track.getElevationAtCenter(level, trackPosition, trackState), 0);
 		Collection<DiscoveredLocation> ends = track.getConnected(level, trackPosition, trackState, true, null);
 		Vec3 targetOffset = Vec3.atLowerCornerOf(assemblyDirection.getNormal());
 		for (DiscoveredLocation end : ends)
 			if (Mth.equal(0, targetOffset.distanceToSqr(end.getLocation()
-				.subtract(centre)
+				.subtract(center)
 				.normalize())))
 				location = end;
 		if (location == null)

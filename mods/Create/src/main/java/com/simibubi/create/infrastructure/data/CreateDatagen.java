@@ -46,6 +46,7 @@ public class CreateDatagen {
 		generator.addProvider(event.includeServer(), new StandardRecipeGen(output));
 		generator.addProvider(event.includeServer(), new MechanicalCraftingRecipeGen(output));
 		generator.addProvider(event.includeServer(), new SequencedAssemblyRecipeGen(output));
+		generator.addProvider(event.includeServer(), new VanillaHatOffsetGenerator(output));
 
 		if (event.includeServer()) {
 			ProcessingRecipeGen.registerAll(generator, output);

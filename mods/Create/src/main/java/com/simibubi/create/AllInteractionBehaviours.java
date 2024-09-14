@@ -6,6 +6,7 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.content.contraptions.behaviour.DoorMovingInteraction;
+import com.simibubi.create.content.contraptions.behaviour.FenceGateMovingInteraction;
 import com.simibubi.create.content.contraptions.behaviour.LeverMovingInteraction;
 import com.simibubi.create.content.contraptions.behaviour.MovingInteractionBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.TrapdoorMovingInteraction;
@@ -75,6 +76,15 @@ public class AllInteractionBehaviours {
 			}
 			return null;
 		});
+
+		FenceGateMovingInteraction fenceGateBehavior = new FenceGateMovingInteraction();
+		registerBehaviourProvider(state -> {
+			if (state.is(BlockTags.FENCE_GATES)) {
+				return fenceGateBehavior;
+			}
+			return null;
+		});
+
 	}
 
 	public interface BehaviourProvider {

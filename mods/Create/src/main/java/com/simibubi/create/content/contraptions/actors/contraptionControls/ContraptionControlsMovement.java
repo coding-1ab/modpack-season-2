@@ -1,12 +1,12 @@
 package com.simibubi.create.content.contraptions.actors.contraptionControls;
 
-import com.jozufozu.flywheel.core.virtual.VirtualRenderWorld;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.contraptions.elevator.ElevatorContraption;
 import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
 import com.simibubi.create.foundation.utility.CreateLang;
+import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.IntAttached;
@@ -136,11 +136,6 @@ public class ContraptionControlsMovement implements MovementBehaviour {
 		if (ec.isTargetUnreachable(efs.currentTargetY))
 			efs.currentLongName = CreateLang.translate("contraption.controls.floor_unreachable")
 				.string();
-	}
-
-	@Override
-	public boolean renderAsNormalBlockEntity() {
-		return true;
 	}
 
 	@Override

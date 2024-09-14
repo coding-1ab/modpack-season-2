@@ -41,6 +41,9 @@ import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 
 public class AllFluids {
+	static {
+		REGISTRATE.setCreativeTab(AllCreativeModeTabs.BASE_CREATIVE_TAB);
+	}
 
 	public static final FluidEntry<PotionFluid> POTION =
 		REGISTRATE.virtualFluid("potion", PotionFluidType::new, PotionFluid::new)

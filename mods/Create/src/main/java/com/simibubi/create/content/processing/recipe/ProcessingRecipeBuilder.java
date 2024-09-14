@@ -170,6 +170,10 @@ public class ProcessingRecipeBuilder<T extends ProcessingRecipe<?>> {
 		return output(new ProcessingOutput(Pair.of(mod.asResource(id), amount), chance));
 	}
 
+	public ProcessingRecipeBuilder<T> output(Mods mod, String id) {
+		return output(1, mod.asResource(id), 1);
+	}
+
 	public ProcessingRecipeBuilder<T> output(float chance, ResourceLocation registryName, int amount) {
 		return output(new ProcessingOutput(Pair.of(registryName, amount), chance));
 	}
