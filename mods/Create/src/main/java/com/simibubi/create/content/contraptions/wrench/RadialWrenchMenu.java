@@ -10,9 +10,10 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
+
 import org.joml.Matrix4f;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -249,7 +250,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 			Color c = innerColor.copy().setAlpha(0.5f);
 			UIRenderHelper.drawRadialSector(graphics, innerRadius - 3, innerRadius - 2, -(sectorAngle / 2 + 90), sectorAngle, c, c);
 
-			TransformStack.cast(poseStack)
+			TransformStack.of(poseStack)
 					.translateY(-(sectorWidth / 2f + innerRadius))
 					.rotateZ(-i * sectorAngle);
 
@@ -276,7 +277,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 
 			poseStack.pushPose();
 
-			TransformStack.cast(poseStack)
+			TransformStack.of(poseStack)
 					.rotateZ(sectorAngle / 2);
 
 			poseStack.translate(0, -innerRadius - 20, 10);
@@ -285,7 +286,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 			UIRenderHelper.angledGradient(graphics,  90, 0, 0, 0.5f, 25              , Color.WHITE.setAlpha(0.5f), Color.WHITE.setAlpha(0.15f));
 			poseStack.popPose();
 
-			TransformStack.cast(poseStack)
+			TransformStack.of(poseStack)
 					.rotateZ(sectorAngle);
 		}
 
@@ -301,10 +302,10 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 		float b = 0.8f;
 
 		poseStack.pushPose();
-		TransformStack.cast(poseStack)
-				.rotateZRadians(-theta)
-				.translateY(innerRadius + 3)
-				.translateZ(15);
+		TransformStack.of(poseStack)
+			.rotateZ((float) -theta)
+			.translateY(innerRadius + 3)
+			.translateZ(15);
 
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 

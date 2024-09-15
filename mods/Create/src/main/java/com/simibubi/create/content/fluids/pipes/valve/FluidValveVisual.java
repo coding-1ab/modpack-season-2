@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftVisual;
-import com.simibubi.create.foundation.utility.AngleHelper;
+import net.createmod.catnip.utility.math.AngleHelper;
 
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.visual.DynamicVisual;

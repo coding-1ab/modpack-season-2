@@ -2,7 +2,7 @@ package com.simibubi.create.content.kinetics.saw;
 
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.SingleRotatingVisual;
-import com.simibubi.create.foundation.render.VirtualRenderHelper;
+import net.createmod.catnip.render.VirtualRenderHelper;
 
 import dev.engine_room.flywheel.api.model.Model;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;

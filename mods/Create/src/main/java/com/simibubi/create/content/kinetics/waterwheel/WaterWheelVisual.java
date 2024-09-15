@@ -6,13 +6,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityVisual;
 import com.simibubi.create.content.kinetics.base.RotatingInstance;
 import com.simibubi.create.foundation.render.AllInstanceTypes;
-import com.simibubi.create.foundation.render.CachedBufferer;
 
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.model.Model;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.model.ModelCache;
 import dev.engine_room.flywheel.lib.model.baked.BakedModelBuilder;
+import net.createmod.catnip.render.CachedBuffers;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.AxisDirection;
@@ -81,7 +81,7 @@ public class WaterWheelVisual<T extends WaterWheelBlockEntity> extends KineticBl
 		} else {
 			dir = state.getValue(WaterWheelBlock.FACING);
 		}
-		PoseStack transform = CachedBufferer.rotateToFaceVertical(dir).get();
+		PoseStack transform = CachedBuffers.rotateToFaceVertical(dir).get();
 		return BakedModelBuilder.create(model)
 				.poseStack(transform)
 				.build();

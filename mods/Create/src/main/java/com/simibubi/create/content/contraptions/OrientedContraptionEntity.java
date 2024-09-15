@@ -353,7 +353,7 @@ public class OrientedContraptionEntity extends AbstractContraptionEntity {
 				return false;
 			OrientedContraptionEntity parent = (OrientedContraptionEntity) riding;
 			prevYaw = yaw;
-			yaw = wrapAngle180(getInitialYaw() - parent.getInitialYaw()) - parent.getViewYRot(1);
+			yaw = AngleHelper.wrapAngle180(getInitialYaw() - parent.getInitialYaw()) - parent.getViewYRot(1);
 			return false;
 		}
 

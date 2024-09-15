@@ -3,7 +3,7 @@ package com.simibubi.create.content.contraptions.pulley;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPartialModels;
-import com.simibubi.create.foundation.render.VirtualRenderHelper;
+import net.createmod.catnip.render.VirtualRenderHelper;
 
 import dev.engine_room.flywheel.api.instance.Instancer;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;

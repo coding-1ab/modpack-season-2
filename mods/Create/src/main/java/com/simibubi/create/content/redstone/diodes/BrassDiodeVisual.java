@@ -3,7 +3,7 @@ package com.simibubi.create.content.redstone.diodes;
 import java.util.function.Consumer;
 
 import com.simibubi.create.AllPartialModels;
-import com.simibubi.create.foundation.utility.Color;
+import net.createmod.catnip.utility.theme.Color;
 
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.visual.TickableVisual;

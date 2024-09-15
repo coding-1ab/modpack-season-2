@@ -3,7 +3,6 @@ package com.simibubi.create.content.equipment.toolbox;
 import java.util.function.Consumer;
 
 import com.simibubi.create.AllPartialModels;
-import com.simibubi.create.foundation.utility.Iterate;
 
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.instance.Instancer;
@@ -14,6 +13,7 @@ import dev.engine_room.flywheel.lib.instance.TransformedInstance;
 import dev.engine_room.flywheel.lib.model.Models;
 import dev.engine_room.flywheel.lib.visual.AbstractBlockEntityVisual;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.core.Direction;
 
 public class ToolBoxVisual extends AbstractBlockEntityVisual<ToolboxBlockEntity> implements SimpleDynamicVisual {

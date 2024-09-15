@@ -40,13 +40,13 @@ ${mod_description}
 [[dependencies.create]]
     modId="catnip"
     mandatory=true
-    versionRange="[0.6,)"
+    versionRange="[0.8,)"
     ordering="AFTER"
     side="BOTH"
 
 [[dependencies.create]]
     modId="ponder"
     mandatory=true
-    versionRange="[0.6,)"
+    versionRange="[0.8,)"
     ordering="AFTER"
     side="BOTH"

@@ -3,7 +3,7 @@ package com.simibubi.create.content.kinetics.base;
 import java.util.function.Consumer;
 
 import com.simibubi.create.foundation.render.AllInstanceTypes;
-import com.simibubi.create.foundation.render.VirtualRenderHelper;
+import net.createmod.catnip.render.VirtualRenderHelper;
 
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.model.Model;
