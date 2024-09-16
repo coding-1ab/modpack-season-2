@@ -1,5 +1,6 @@
 package com.simibubi.create.content.logistics.stockTicker;
 
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 
 import net.createmod.catnip.gui.ScreenOpener;
@@ -58,7 +59,8 @@ public class StockTickerInteractionHandler {
 
 		final BlockPos posForUI = targetPos;
 		if (level.isClientSide())
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> displayScreen(posForUI));
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+				() -> () -> displayScreen(posForUI, AllBlocks.REDSTONE_REQUESTER.isIn(player.getMainHandItem())));
 
 		event.setCancellationResult(InteractionResult.SUCCESS);
 		event.setCanceled(true);
@@ -66,9 +68,9 @@ public class StockTickerInteractionHandler {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	private static void displayScreen(BlockPos tickerPos) {
+	private static void displayScreen(BlockPos tickerPos, boolean encodeRequester) {
 		if (Minecraft.getInstance().level.getBlockEntity(tickerPos) instanceof StockTickerBlockEntity be)
-			ScreenOpener.open(new StockTickerRequestScreen(be));
+			ScreenOpener.open(new StockTickerRequestScreen(be, encodeRequester));
 	}
 
 }

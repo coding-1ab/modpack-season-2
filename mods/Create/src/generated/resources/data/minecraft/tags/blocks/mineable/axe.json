@@ -88,6 +88,7 @@
     "create:mechanical_arm",
     "create:railway_casing",
     "create:stock_ticker",
+    "create:redstone_requester",
     "create:content_observer",
     "create:stockpile_switch",
     "create:creative_crate",

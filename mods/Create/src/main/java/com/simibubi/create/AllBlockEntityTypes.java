@@ -175,6 +175,7 @@ import com.simibubi.create.content.logistics.packagePort.PackagePortRenderer;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerRenderer;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
+import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlockEntity;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlockEntity;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelInstance;
@@ -502,6 +503,11 @@ public class AllBlockEntityTypes {
 	public static final BlockEntityEntry<StockTickerBlockEntity> STOCK_TICKER = REGISTRATE
 		.blockEntity("stock_ticker", StockTickerBlockEntity::new)
 		.validBlocks(AllBlocks.STOCK_TICKER)
+		.register();
+	
+	public static final BlockEntityEntry<RedstoneRequesterBlockEntity> REDSTONE_REQUESTER = REGISTRATE
+		.blockEntity("redstone_requester", RedstoneRequesterBlockEntity::new)
+		.validBlocks(AllBlocks.REDSTONE_REQUESTER)
 		.register();
 
 	public static final BlockEntityEntry<MechanicalPistonBlockEntity> MECHANICAL_PISTON = REGISTRATE

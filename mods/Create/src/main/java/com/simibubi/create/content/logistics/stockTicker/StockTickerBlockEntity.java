@@ -13,11 +13,9 @@ import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipul
 
 import net.createmod.catnip.utility.BlockFace;
 import net.createmod.catnip.utility.IntAttached;
-import net.createmod.catnip.utility.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,7 +31,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 
 	// Auto-restock Feature
 	protected InvManipulationBehaviour observedInventory;
-	protected List<IntAttached<ItemStack>> restockAmounts;
+	protected PackageOrder restockAmounts;
 	protected String restockAddress;
 	protected boolean powered;
 
@@ -41,7 +39,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 		super(type, pos, state);
 		previouslyUsedAddress = "";
 		restockAddress = "";
-		restockAmounts = new ArrayList<>();
+		restockAmounts = PackageOrder.empty();
 	}
 
 	@Override
@@ -75,8 +73,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 	protected void write(CompoundTag tag, boolean clientPacket) {
 		super.write(tag, clientPacket);
 		tag.putString("PreviousAddress", previouslyUsedAddress);
-		tag.put("RestockAmounts",
-			NBTHelper.writeCompoundList(restockAmounts, ia -> ia.serializeNBT(ItemStack::serializeNBT)));
+		tag.put("RestockAmounts", restockAmounts.write());
 		tag.putString("RestockAddress", restockAddress);
 		tag.putBoolean("Powered", powered);
 
@@ -88,8 +85,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 	protected void read(CompoundTag tag, boolean clientPacket) {
 		super.read(tag, clientPacket);
 		previouslyUsedAddress = tag.getString("PreviousAddress");
-		restockAmounts = NBTHelper.readCompoundList(tag.getList("RestockAmounts", Tag.TAG_COMPOUND),
-			c -> IntAttached.read(c, ItemStack::of));
+		restockAmounts = PackageOrder.read(tag.getCompound("RestockAmounts"));
 		restockAddress = tag.getString("RestockAddress");
 		powered = tag.getBoolean("Powered");
 
@@ -98,13 +94,14 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 	}
 
 	protected void takeInventoryStockSnapshot() {
-		restockAmounts = new ArrayList<>();
+		restockAmounts = PackageOrder.empty();
 		IItemHandler inventory = observedInventory.getInventory();
 		if (inventory == null)
 			return;
-		restockAmounts = summariseObservedInventory().getStacksByCount();
-		if (restockAmounts.size() > 8)
-			restockAmounts.subList(8, restockAmounts.size())
+		restockAmounts = new PackageOrder(summariseObservedInventory().getStacksByCount());
+		List<IntAttached<ItemStack>> stacks = restockAmounts.stacks();
+		if (stacks.size() > 8)
+			stacks.subList(8, stacks.size())
 				.clear();
 		notifyUpdate();
 	}
@@ -137,7 +134,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 
 		InventorySummary presentStock = summariseObservedInventory();
 		List<IntAttached<ItemStack>> missingItems = new ArrayList<>();
-		for (IntAttached<ItemStack> required : restockAmounts) {
+		for (IntAttached<ItemStack> required : restockAmounts.stacks()) {
 			int diff = required.getFirst() - presentStock.getCountOf(required.getValue());
 			if (diff > 0)
 				missingItems.add(IntAttached.with(diff, required.getValue()));
@@ -149,7 +146,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 		broadcastPackageRequest(new PackageOrder(missingItems), observedInventory.getInventory(), restockAddress);
 	}
 
-	protected void updateAutoRestockSettings(String address, List<IntAttached<ItemStack>> amounts) {
+	protected void updateAutoRestockSettings(String address, PackageOrder amounts) {
 		restockAmounts = amounts;
 		restockAddress = address;
 		notifyUpdate();

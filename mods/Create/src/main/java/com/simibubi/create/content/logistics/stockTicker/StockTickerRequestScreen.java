@@ -58,10 +58,13 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 	List<IntAttached<ItemStack>> displayedItems;
 	List<IntAttached<ItemStack>> itemsToOrder;
 
-	public StockTickerRequestScreen(StockTickerBlockEntity be) {
+	boolean encodeRequester; // Redstone requesters
+
+	public StockTickerRequestScreen(StockTickerBlockEntity be, boolean encodeRequester) {
 		super(be.getBlockState()
 			.getBlock()
 			.getName());
+		this.encodeRequester = encodeRequester;
 		displayedItems = new ArrayList<>();
 		itemsToOrder = new ArrayList<>();
 		blockEntity = be;
@@ -220,9 +223,10 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 
 		// Render static item icons
 		ms.pushPose();
-		ms.translate(itemsX + cols * colWidth + 3, orderY - 8, 0);
-		ms.scale(2f, 2f, 2f);
-		GuiGameElement.of(AllItems.CARDBOARD_PACKAGE_10x12.asStack())
+		ms.translate(itemsX + cols * colWidth + 8, orderY - 4, 0);
+		ms.scale(1.5f, 1.5f, 1.5f);
+		GuiGameElement
+			.of(encodeRequester ? AllBlocks.REDSTONE_REQUESTER.asStack() : AllItems.CARDBOARD_PACKAGE_10x12.asStack())
 			.render(graphics);
 		ms.popPose();
 
@@ -434,7 +438,9 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		int color = inactive ? defaultColor.darker()
 			.getRGB() : hovered ? 0xeeffffff : 0x99ffffff;
 		graphics.renderOutline(confirmX, confirmY, confirmW, confirmH, color);
-		graphics.drawCenteredString(font, CreateLang.translateDirect("gui.stock_ticker.confirm_order"),
+		graphics.drawCenteredString(font,
+			CreateLang.translateDirect(
+				encodeRequester ? "gui.stock_ticker.program_requester" : "gui.stock_ticker.confirm_order"),
 			confirmX + (confirmW / 2), confirmY + 4, color);
 	}
 
@@ -575,7 +581,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 	public void removed() {
 		AllPackets.getChannel()
 			.sendToServer(new PackageOrderRequestPacket(blockEntity.getBlockPos(),
-				new PackageOrder(Collections.emptyList()), addressBox.getValue()));
+				new PackageOrder(Collections.emptyList()), addressBox.getValue(), false));
 		super.removed();
 	}
 
@@ -586,11 +592,14 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 
 		AllPackets.getChannel()
 			.sendToServer(new PackageOrderRequestPacket(blockEntity.getBlockPos(), new PackageOrder(itemsToOrder),
-				addressBox.getValue()));
+				addressBox.getValue(), encodeRequester));
 
 		itemsToOrder = new ArrayList<>();
 		ticksSinceLastUpdate = 10;
 		successTicks = 1;
+
+		if (encodeRequester)
+			minecraft.setScreen(null);
 	}
 
 	@Override

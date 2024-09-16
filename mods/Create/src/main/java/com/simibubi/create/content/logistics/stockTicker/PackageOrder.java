@@ -26,6 +26,14 @@ public record PackageOrder(List<IntAttached<ItemStack>> stacks) {
 		tag.put("Entries", list);
 		return tag;
 	}
+	
+	public static PackageOrder empty() {
+		return new PackageOrder(List.of());
+	}
+	
+	public boolean isEmpty() {
+		return stacks.isEmpty();
+	}
 
 	public static PackageOrder read(CompoundTag tag) {
 		List<IntAttached<ItemStack>> stacks = new ArrayList<>();

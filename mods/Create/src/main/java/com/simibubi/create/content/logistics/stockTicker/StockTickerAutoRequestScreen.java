@@ -1,7 +1,6 @@
 package com.simibubi.create.content.logistics.stockTicker;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -41,7 +40,7 @@ public class StockTickerAutoRequestScreen extends AbstractSimiScreen {
 
 	private void resetAmounts() {
 		modifiedAmounts = new ArrayList<>();
-		for (IntAttached<ItemStack> intAttached : blockEntity.restockAmounts)
+		for (IntAttached<ItemStack> intAttached : currentStacks())
 			modifiedAmounts.add(intAttached.getFirst());
 	}
 
@@ -73,7 +72,7 @@ public class StockTickerAutoRequestScreen extends AbstractSimiScreen {
 		if (button == takeSnapshotButton) {
 			AllPackets.getChannel()
 				.sendToServer(
-					new StockTickerConfigurationPacket(blockEntity.getBlockPos(), true, "", Collections.emptyList()));
+					new StockTickerConfigurationPacket(blockEntity.getBlockPos(), true, "", PackageOrder.empty()));
 			modifiedAmounts = null;
 		}
 	}
@@ -81,8 +80,8 @@ public class StockTickerAutoRequestScreen extends AbstractSimiScreen {
 	@Override
 	public void removed() {
 		if (modifiedAmounts != null)
-			for (int i = 0; i < blockEntity.restockAmounts.size(); i++)
-				blockEntity.restockAmounts.get(i)
+			for (int i = 0; i < currentStacks().size(); i++)
+				currentStacks().get(i)
 					.setFirst(modifiedAmounts.get(i));
 		AllPackets.getChannel()
 			.sendToServer(new StockTickerConfigurationPacket(blockEntity.getBlockPos(), false, addressBox.getValue(),
@@ -97,7 +96,7 @@ public class StockTickerAutoRequestScreen extends AbstractSimiScreen {
 
 	@Override
 	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-		if (modifiedAmounts != null && blockEntity.restockAmounts.size() != modifiedAmounts.size())
+		if (modifiedAmounts != null && currentStacks().size() != modifiedAmounts.size())
 			resetAmounts();
 
 		Color color = new Color(255, 255, 255, 50);
@@ -116,13 +115,13 @@ public class StockTickerAutoRequestScreen extends AbstractSimiScreen {
 		graphics.drawString(font, Components.literal("Target Amounts:"), guiLeft, guiTop, 0x88dddddd);
 		PoseStack ms = graphics.pose();
 
-		for (int i = 0; i < blockEntity.restockAmounts.size(); i++) {
-			IntAttached<ItemStack> entry = blockEntity.restockAmounts.get(i);
+		for (int i = 0; i < currentStacks().size(); i++) {
+			IntAttached<ItemStack> entry = currentStacks().get(i);
 			ms.pushPose();
 
 			ms.translate(guiLeft + i % cols * colWidth, guiTop + 20 + i / cols * rowHeight, 200);
 
-			int customCount = modifiedAmounts == null ? blockEntity.restockAmounts.get(i)
+			int customCount = modifiedAmounts == null ? currentStacks().get(i)
 				.getFirst() : modifiedAmounts.get(i);
 			drawItemCount(graphics, customCount, customCount);
 			ms.translate(0, 0, -200);
@@ -138,15 +137,19 @@ public class StockTickerAutoRequestScreen extends AbstractSimiScreen {
 		}
 
 		if (hoveredSlot != -1)
-			graphics.renderTooltip(font, blockEntity.restockAmounts.get(hoveredSlot)
+			graphics.renderTooltip(font, currentStacks().get(hoveredSlot)
 				.getValue(), mouseX, mouseY);
+	}
+
+	private List<IntAttached<ItemStack>> currentStacks() {
+		return blockEntity.restockAmounts.stacks();
 	}
 
 	private int getHoveredSlot(int mouseX, int mouseY) {
 		if (mouseY < guiTop + 20 || mouseY > guiTop + 20 + rowHeight)
 			return -1;
 		int slot = (mouseX - guiLeft) / colWidth;
-		if (slot >= blockEntity.restockAmounts.size())
+		if (slot >= currentStacks().size())
 			return -1;
 		return Math.max(-1, slot);
 	}

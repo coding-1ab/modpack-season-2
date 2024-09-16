@@ -317,6 +317,10 @@
 	"create.gui.stock_ticker.package_adress": "Package Address",
 	"create.gui.stock_ticker.confirm_order": "Confirm Order",
 	"create.gui.stock_ticker.request_sent": "Request Sent!",
+	"create.gui.stock_ticker.program_requester": "Program Requester",
+	
+	"create.redstone_requester.keeper_connected": "Connected to Stock keeper successfully",
+	"create.redstone_requester.keeper_too_far_away": "Requester too far away from Stock keeper",
 	
 	"create.clipboard.actions": "Clipboard Actions",
 	"create.clipboard.to_copy": "%1$s to Copy settings",

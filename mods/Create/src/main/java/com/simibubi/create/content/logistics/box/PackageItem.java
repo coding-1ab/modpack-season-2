@@ -187,7 +187,7 @@ public class PackageItem extends Item {
 			pTooltipComponents.add(Components.literal("-> " + compoundnbt.getString("Address"))
 				.withStyle(ChatFormatting.GOLD));
 
-		// TEMPORARY
+		/* Debug Fragmentation Data
 		if (compoundnbt.contains("Fragment")) {
 			CompoundTag fragTag = compoundnbt.getCompound("Fragment");
 			pTooltipComponents.add(Components.literal("Order Information (Temporary)")
@@ -200,7 +200,7 @@ public class PackageItem extends Item {
 				pTooltipComponents.add(Components.literal("Has Context!")
 					.withStyle(ChatFormatting.DARK_GREEN));
 		}
-		//
+		*/
 
 		if (!compoundnbt.contains("Items", Tag.TAG_COMPOUND))
 			return;

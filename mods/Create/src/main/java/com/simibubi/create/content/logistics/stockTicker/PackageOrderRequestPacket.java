@@ -1,5 +1,6 @@
 package com.simibubi.create.content.logistics.stockTicker;
 
+import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlock;
 import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
 
 import net.minecraft.core.BlockPos;
@@ -10,11 +11,13 @@ public class PackageOrderRequestPacket extends BlockEntityConfigurationPacket<St
 
 	private PackageOrder order;
 	private String address;
+	private boolean encodeRequester;
 
-	public PackageOrderRequestPacket(BlockPos pos, PackageOrder order, String address) {
+	public PackageOrderRequestPacket(BlockPos pos, PackageOrder order, String address, boolean encodeRequester) {
 		super(pos);
 		this.order = order;
 		this.address = address;
+		this.encodeRequester = encodeRequester;
 	}
 
 	public PackageOrderRequestPacket(FriendlyByteBuf buffer) {
@@ -25,12 +28,14 @@ public class PackageOrderRequestPacket extends BlockEntityConfigurationPacket<St
 	protected void writeSettings(FriendlyByteBuf buffer) {
 		buffer.writeUtf(address);
 		order.write(buffer);
+		buffer.writeBoolean(encodeRequester);
 	}
 
 	@Override
 	protected void readSettings(FriendlyByteBuf buffer) {
 		address = buffer.readUtf();
 		order = PackageOrder.read(buffer);
+		encodeRequester = buffer.readBoolean();
 	}
 
 	@Override
@@ -38,7 +43,13 @@ public class PackageOrderRequestPacket extends BlockEntityConfigurationPacket<St
 
 	@Override
 	protected void applySettings(ServerPlayer player, StockTickerBlockEntity be) {
+		if (encodeRequester) {
+			RedstoneRequesterBlock.programRequester(player, be, order, address);
+			return;
+		}
+
 		be.broadcastPackageRequest(order, null, address);
+		return;
 	}
 
 }
