@@ -283,8 +283,16 @@
 
 	"create.gui.threshold_switch.title": "Threshold Switch",
 	"create.gui.threshold_switch.invert_signal": "Invert Signal",
-	"create.gui.threshold_switch.move_to_lower_at": "Move to lower lane at %1$s%%",
-	"create.gui.threshold_switch.move_to_upper_at": "Move to upper lane at %1$s%%",
+	"create.gui.threshold_switch.power_on_when": "Power on when...",
+	"create.gui.threshold_switch.power_off_when": "Power off when...",
+	"create.gui.threshold_switch.upper_threshold": "...at or above:",
+	"create.gui.threshold_switch.lower_threshold": "...at or below:",
+	"create.gui.threshold_switch.currently": "Currently %1$s",
+	"create.gui.threshold_switch.range": "(%1$s to %2$s)",
+	"create.gui.threshold_switch.range_max": "(max. %1$s)",
+	"create.gui.threshold_switch.pulley_y_level": "%1$sy",
+	"create.gui.threshold_switch.not_attached": "Not attached to a block",
+	"create.gui.threshold_switch.incompatible": "Incompatible block",
 
 	"create.gui.sequenced_gearshift.title": "Sequenced Gearshift",
 	"create.gui.sequenced_gearshift.instruction": "Instruction",

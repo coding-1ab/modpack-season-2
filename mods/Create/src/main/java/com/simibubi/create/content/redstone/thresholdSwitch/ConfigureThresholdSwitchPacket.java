@@ -7,11 +7,11 @@ import net.minecraft.network.FriendlyByteBuf;
 
 public class ConfigureThresholdSwitchPacket extends BlockEntityConfigurationPacket<ThresholdSwitchBlockEntity> {
 
-	private float offBelow;
-	private float onAbove;
+	private int offBelow;
+	private int onAbove;
 	private boolean invert;
 
-	public ConfigureThresholdSwitchPacket(BlockPos pos, float offBelow, float onAbove, boolean invert) {
+	public ConfigureThresholdSwitchPacket(BlockPos pos, int offBelow, int onAbove, boolean invert) {
 		super(pos);
 		this.offBelow = offBelow;
 		this.onAbove = onAbove;
@@ -24,15 +24,15 @@ public class ConfigureThresholdSwitchPacket extends BlockEntityConfigurationPack
 	
 	@Override
 	protected void readSettings(FriendlyByteBuf buffer) {
-		offBelow = buffer.readFloat();
-		onAbove = buffer.readFloat();
+		offBelow = buffer.readInt();
+		onAbove = buffer.readInt();
 		invert = buffer.readBoolean();
 	}
 
 	@Override
 	protected void writeSettings(FriendlyByteBuf buffer) {
-		buffer.writeFloat(offBelow);
-		buffer.writeFloat(onAbove);
+		buffer.writeInt(offBelow);
+		buffer.writeInt(onAbove);
 		buffer.writeBoolean(invert);
 	}
 

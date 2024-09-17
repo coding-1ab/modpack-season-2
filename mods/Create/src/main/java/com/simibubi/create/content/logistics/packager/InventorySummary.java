@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+
+import org.apache.commons.lang3.mutable.MutableInt;
 
 import com.google.common.collect.Lists;
 import com.simibubi.create.AllPackets;
@@ -25,6 +28,7 @@ public class InventorySummary {
 
 	private Map<Item, List<IntAttached<ItemStack>>> items = new IdentityHashMap<>();
 	private List<IntAttached<ItemStack>> stacksByCount;
+	private int totalCount;
 
 	public void add(InventorySummary summary) {
 		summary.items.forEach((i, list) -> list.forEach(this::add));
@@ -42,6 +46,8 @@ public class InventorySummary {
 		if (count == 0 || stack.isEmpty())
 			return;
 
+		totalCount += count;
+		
 		List<IntAttached<ItemStack>> stacks = items.computeIfAbsent(stack.getItem(), $ -> Lists.newArrayList());
 		for (IntAttached<ItemStack> existing : stacks) {
 			ItemStack existingStack = existing.getSecond();
@@ -54,7 +60,7 @@ public class InventorySummary {
 		IntAttached<ItemStack> newEntry = IntAttached.with(count, stack);
 		stacks.add(newEntry);
 	}
-	
+
 	public int getCountOf(ItemStack stack) {
 		List<IntAttached<ItemStack>> list = items.get(stack.getItem());
 		if (list == null)
@@ -65,6 +71,16 @@ public class InventorySummary {
 		return 0;
 	}
 
+	public int getTotalOfMatching(Predicate<ItemStack> filter) {
+		MutableInt sum = new MutableInt();
+		items.forEach(($, list) -> {
+			for (IntAttached<ItemStack> entry : list)
+				if (filter.test(entry.getSecond()))
+					sum.add(entry.getFirst());
+		});
+		return sum.getValue();
+	}
+
 	public List<IntAttached<ItemStack>> getStacksByCount() {
 		if (stacksByCount == null) {
 			stacksByCount = new ArrayList<>();
@@ -73,11 +89,15 @@ public class InventorySummary {
 		}
 		return stacksByCount;
 	}
+	
+	public int getTotalCount() {
+		return totalCount;
+	}
 
 	public void divideAndSendTo(ServerPlayer player, BlockPos pos) {
 		List<IntAttached<ItemStack>> stacks = getStacksByCount();
 		int remaining = stacks.size();
-		
+
 		List<IntAttached<ItemStack>> currentList = null;
 		PacketTarget target = PacketDistributor.PLAYER.with(() -> player);
 

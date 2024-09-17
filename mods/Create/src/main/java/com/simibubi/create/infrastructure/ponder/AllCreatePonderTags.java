@@ -36,7 +36,8 @@ public class AllCreatePonderTags {
 	TRAIN_RELATED = loc("train_related"),
 	RECENTLY_UPDATED = loc("recently_updated"),
 	DISPLAY_SOURCES = loc("display_sources"),
-	DISPLAY_TARGETS = loc("display_targets");
+	DISPLAY_TARGETS = loc("display_targets"),
+	THRESHOLD_SWITCH_TARGETS = loc("threshold_switch_targets");
 
 	/*public static final PonderTag
 
@@ -225,6 +226,12 @@ public class AllCreatePonderTags {
 				.title("Targets for Display Links")
 				.description("Components or Blocks which can process and display the data received from a Display Link")
 				.register();
+
+		helper.registerTag(THRESHOLD_SWITCH_TARGETS)
+			.item(AllBlocks.THRESHOLD_SWITCH.get())
+			.title("Targets for Threshold Switches")
+			.description("Threshold Switches can read from these blocks, as well as most item and fluid containers.")
+			.register();
 
 		HELPER.addToTag(RECENTLY_UPDATED)
 				.add(AllBlocks.WATER_WHEEL)
@@ -452,6 +459,16 @@ public class AllCreatePonderTags {
 				.add(Blocks.RESPAWN_ANCHOR)
 				.add(Blocks.COMMAND_BLOCK)
 				.add(Blocks.TARGET);
+
+		HELPER.addToTag(THRESHOLD_SWITCH_TARGETS)
+			.add(AllBlocks.ROPE_PULLEY)
+			.add(AllBlocks.STOCK_TICKER)
+			.add(AllBlocks.ITEM_VAULT)
+			.add(AllBlocks.FLUID_TANK);
+
+		itemHelper.addToTag(THRESHOLD_SWITCH_TARGETS)
+			.add(Blocks.CHEST)
+			.add(Blocks.BARREL);
 
 		Mods.COMPUTERCRAFT.executeIfInstalled(() -> () -> {
 			Block computer = ForgeRegistries.BLOCKS.getValue(Mods.COMPUTERCRAFT.rl("computer_advanced"));

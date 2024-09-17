@@ -40,13 +40,9 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	SCHEMATICANNON_FUEL("schematics_2", 28, 222, 47, 16),
 	SCHEMATICANNON_FUEL_CREATIVE("schematics_2", 28, 239, 47, 16),
 
-	STOCKSWITCH("logistics", 182, 95),
-	STOCKSWITCH_ARROW_UP("logistics", 191, 0, 7, 24),
-	STOCKSWITCH_ARROW_DOWN("logistics", 198, 0, 7, 24),
-	STOCKSWITCH_CURSOR("logistics", 206, 0, 7, 16),
-	STOCKSWITCH_INTERVAL("logistics", 0, 95, 100, 18),
-	STOCKSWITCH_UNPOWERED_LANE("logistics", 37, 20, 100, 18),
-	STOCKSWITCH_POWERED_LANE("logistics", 37, 42, 100, 18),
+	THRESHOLD_SWITCH("threshold_switch", 182, 103),
+	THRESHOLD_SWITCH_ITEMCOUNT_INPUTS("threshold_switch", 0, 105, 115, 22),
+	THRESHOLD_SWITCH_MISC_INPUTS("threshold_switch", 0, 129, 115, 22),
 
 	FILTER("filters", 214, 99),
 	ATTRIBUTE_FILTER("filters", 0, 99, 241, 85),
