@@ -6,13 +6,15 @@ import com.simibubi.create.AllPackets;
 import com.simibubi.create.Create;
 import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.contraptions.ContraptionHandler;
+import com.simibubi.create.content.contraptions.actors.seat.ContraptionPlayerPassengerRotation;
 import com.simibubi.create.content.contraptions.actors.trainControls.ControlsHandler;
 import com.simibubi.create.content.contraptions.chassis.ChassisRangeDisplay;
 import com.simibubi.create.content.contraptions.minecart.CouplingHandlerClient;
 import com.simibubi.create.content.contraptions.minecart.CouplingPhysics;
 import com.simibubi.create.content.contraptions.minecart.CouplingRenderer;
 import com.simibubi.create.content.contraptions.minecart.capability.CapabilityMinecartController;
-import com.simibubi.create.content.contraptions.render.ContraptionRenderDispatcher;
+import com.simibubi.create.content.contraptions.render.ContraptionRenderInfoManager;
+import com.simibubi.create.content.contraptions.wrench.RadialWrenchHandler;
 import com.simibubi.create.content.decoration.girder.GirderWrenchBehavior;
 import com.simibubi.create.content.equipment.armor.BacktankArmorLayer;
 import com.simibubi.create.content.equipment.armor.DivingHelmetItem;
@@ -46,6 +48,7 @@ import com.simibubi.create.content.trains.TrainHUD;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
 import com.simibubi.create.content.trains.entity.CarriageCouplingRenderer;
 import com.simibubi.create.content.trains.entity.TrainRelocator;
+import com.simibubi.create.content.trains.schedule.hat.TrainHatInfoReloadListener;
 import com.simibubi.create.content.trains.track.CurvedTrackInteraction;
 import com.simibubi.create.content.trains.track.TrackBlockOutline;
 import com.simibubi.create.content.trains.track.TrackPlacement;
@@ -155,9 +158,10 @@ public class ClientEvents {
 		// CollisionDebugger.tick();
 		ArmInteractionPointHandler.tick();
 		EjectorTargetHandler.tick();
-		ContraptionRenderDispatcher.tick(world);
+		ContraptionRenderInfoManager.tickFor(world);
 		BlueprintOverlayRenderer.tick();
 		ToolboxHandlerClient.clientTick();
+		RadialWrenchHandler.clientTick();
 		TrackTargetingClient.clientTick();
 		TrackPlacement.clientTick();
 		TrainRelocator.clientTick();
@@ -170,6 +174,7 @@ public class ClientEvents {
 		CreateClient.VALUE_SETTINGS_HANDLER.tick();
 		ScrollValueHandler.tick();
 		NetheriteBacktankFirstPersonRenderer.clientTick();
+		ContraptionPlayerPassengerRotation.tick();
 		ChainConveyorInteractionHandler.clientTick();
 		ChainConveyorRidingHandler.clientTick();
 		ChainConveyorConnectionHandler.clientTick();
@@ -227,6 +232,8 @@ public class ClientEvents {
 		buffer.draw();
 		RenderSystem.enableCull();
 		ms.popPose();
+
+		ContraptionPlayerPassengerRotation.frame();
 	}
 
 	@SubscribeEvent
@@ -328,6 +335,7 @@ public class ClientEvents {
 		@SubscribeEvent
 		public static void registerClientReloadListeners(RegisterClientReloadListenersEvent event) {
 			event.registerReloadListener(CreateClient.RESOURCE_RELOAD_LISTENER);
+			event.registerReloadListener(TrainHatInfoReloadListener.LISTENER);
 		}
 
 		@SubscribeEvent

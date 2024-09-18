@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.jozufozu.flywheel.backend.instancing.InstancedRenderDispatcher;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.logistics.funnel.BeltFunnelBlock;
@@ -17,6 +16,7 @@ import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock.Shape;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
+import dev.engine_room.flywheel.lib.visualization.VisualizationHelper;
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
@@ -109,7 +109,7 @@ public class BeltTunnelBlockEntity extends SmartBlockEntity {
 			sides.addAll(flaps.keySet());
 		super.read(compound, clientPacket);
 		if (clientPacket)
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> InstancedRenderDispatcher.enqueueUpdate(this));
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> VisualizationHelper.queueUpdate(this));
 	}
 
 	private LerpedFloat createChasingFlap() {

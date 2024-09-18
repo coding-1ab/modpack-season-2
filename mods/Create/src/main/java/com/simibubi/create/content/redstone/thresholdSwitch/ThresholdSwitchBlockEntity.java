@@ -2,7 +2,10 @@ package com.simibubi.create.content.redstone.thresholdSwitch;
 
 import java.util.List;
 
-import com.simibubi.create.compat.storageDrawers.StorageDrawers;
+import com.simibubi.create.compat.thresholdSwitch.FunctionalStorage;
+import com.simibubi.create.compat.thresholdSwitch.SophisticatedStorage;
+import com.simibubi.create.compat.thresholdSwitch.StorageDrawers;
+import com.simibubi.create.compat.thresholdSwitch.ThresholdSwitchCompat;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
@@ -50,6 +53,12 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 	private InvManipulationBehaviour observedInventory;
 	private TankManipulationBehaviour observedTank;
 	private VersionedInventoryTrackerBehaviour invVersionTracker;
+
+	private static final List<ThresholdSwitchCompat> COMPAT = List.of(
+		new FunctionalStorage(),
+		new SophisticatedStorage(),
+		new StorageDrawers()
+	);
 
 	public ThresholdSwitchBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -126,11 +135,11 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 			currentLevel = observable.getCurrentValue();
 			currentMaxLevel = observable.getMaxValue();
 
-		} else if (StorageDrawers.isDrawer(targetBlockEntity) && observedInventory.hasInventory()) {
+		/*} else if (StorageDrawers.isDrawer(targetBlockEntity) && observedInventory.hasInventory()) {
 			currentMinLevel = 0;
 			currentLevel = StorageDrawers.getItemCount(observedInventory.getInventory(), filtering);
 			currentMaxLevel = StorageDrawers.getTotalStorageSpace(observedInventory.getInventory());
-
+		*/
 		} else if (targetBlockEntity instanceof StockTickerBlockEntity stockTicker) {
 			currentMinLevel = 0;
 			currentMaxLevel = 64000;
@@ -160,7 +169,15 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 					invVersionTracker.awaitNewVersion(inv);
 					for (int slot = 0; slot < inv.getSlots(); slot++) {
 						ItemStack stackInSlot = inv.getStackInSlot(slot);
-						int space = inv.getSlotLimit(slot);
+
+						int finalSlot = slot;
+						long space = COMPAT
+							.stream()
+							.filter(compat -> compat.isFromThisMod(targetBlockEntity))
+							.map(compat -> compat.getSpaceInSlot(inv, finalSlot))
+							.findFirst()
+							.orElseGet(() -> (long) Math.min(stackInSlot.getMaxStackSize(), inv.getSlotLimit(finalSlot)));
+
 						int count = stackInSlot.getCount();
 						if (space == 0)
 							continue;

@@ -146,7 +146,7 @@ public abstract class FluidManipulationBehaviour extends BlockEntityBehaviour {
 		BiConsumer<BlockPos, Integer> add, boolean searchDownward) throws ChunkNotLoadedException {
 		Level world = getWorld();
 		int maxBlocks = maxBlocks();
-		int maxRange = canDrainInfinitely(fluid) ? maxRange() : maxRange() / 2;
+		int maxRange = maxRange();
 		int maxRangeSq = maxRange * maxRange;
 		int i;
 

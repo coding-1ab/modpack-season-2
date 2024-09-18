@@ -1,11 +1,12 @@
 package com.simibubi.create.content.kinetics.simpleRelays;
 
-import com.jozufozu.flywheel.backend.Backend;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.ponder.utility.LevelTickHolder;
@@ -27,7 +28,7 @@ public class BracketedKineticBlockEntityRenderer extends KineticBlockEntityRende
 	protected void renderSafe(BracketedKineticBlockEntity be, float partialTicks, PoseStack ms,
 		MultiBufferSource buffer, int light, int overlay) {
 
-		if (Backend.canUseInstancing(be.getLevel()))
+		if (VisualizationManager.supportsVisualization(be.getLevel()))
 			return;
 
 		if (!AllBlocks.LARGE_COGWHEEL.has(be.getBlockState())) {
@@ -38,17 +39,18 @@ public class BracketedKineticBlockEntityRenderer extends KineticBlockEntityRende
 		// Large cogs sometimes have to offset their teeth by 11.25 degrees in order to
 		// mesh properly
 
+		VertexConsumer vc = buffer.getBuffer(RenderType.solid());
 		Axis axis = getRotationAxisOf(be);
 		Direction facing = Direction.fromAxisAndDirection(axis, AxisDirection.POSITIVE);
 		renderRotatingBuffer(be,
 			CachedBuffers.partialFacingVertical(AllPartialModels.SHAFTLESS_LARGE_COGWHEEL, be.getBlockState(), facing),
-			ms, buffer.getBuffer(RenderType.solid()), light);
+			ms, vc, light);
 
 		float angle = getAngleForLargeCogShaft(be, axis);
 		SuperByteBuffer shaft =
 			CachedBuffers.partialFacingVertical(AllPartialModels.COGWHEEL_SHAFT, be.getBlockState(), facing);
 		kineticRotationTransform(shaft, be, axis, angle, light);
-		shaft.renderInto(ms, buffer.getBuffer(RenderType.solid()));
+		shaft.renderInto(ms, vc);
 
 	}
 

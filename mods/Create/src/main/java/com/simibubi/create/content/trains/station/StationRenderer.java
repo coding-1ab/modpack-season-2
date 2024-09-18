@@ -1,8 +1,5 @@
 package com.simibubi.create.content.trains.station;
 
-import com.jozufozu.flywheel.core.PartialModel;
-import com.jozufozu.flywheel.util.transform.Transform;
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllPartialModels;
@@ -12,6 +9,9 @@ import com.simibubi.create.content.trains.track.TrackTargetingBehaviour;
 import com.simibubi.create.content.trains.track.TrackTargetingBehaviour.RenderedTrackOverlayType;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
 
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import dev.engine_room.flywheel.lib.transform.Transform;
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -55,7 +55,7 @@ public class StationRenderer extends SafeBlockEntityRenderer<StationBlockEntity>
 				be.flag.getValue(partialTicks) > 0.75f ? AllPartialModels.STATION_ON : AllPartialModels.STATION_OFF, be,
 				partialTicks, ms, buffer, light, overlay);
 			ms.pushPose();
-			TransformStack.cast(ms)
+			TransformStack.of(ms)
 				.translate(targetPosition.subtract(pos));
 			TrackTargetingBehaviour.render(level, targetPosition, target.getTargetDirection(), target.getTargetBezier(),
 				ms, buffer, light, overlay, RenderedTrackOverlayType.STATION, 1);
@@ -118,7 +118,7 @@ public class StationRenderer extends SafeBlockEntityRenderer<StationBlockEntity>
 		SuperByteBuffer flagBB = CachedBuffers.partial(flag, be.getBlockState());
 		//transformFlag(flagBB, be, partialTicks, be.flagYRot, be.flagFlipped);//TODO flw
 		flagBB.translate(0.5f / 16, 0, 0)
-			.rotateY(be.flagFlipped ? 0 : 180)
+			.rotateYDegrees(be.flagFlipped ? 0 : 180)
 			.translate(-0.5f / 16, 0, 0)
 			.light(light)
 			.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
@@ -134,11 +134,11 @@ public class StationRenderer extends SafeBlockEntityRenderer<StationBlockEntity>
 		}
 
 		float nudge = 1 / 512f;
-		flag.centre()
-			.rotateY(yRot)
+		flag.center()
+			.rotateYDegrees(yRot)
 			.translate(nudge, 9.5f / 16f, flipped ? 14f / 16f - nudge : 2f / 16f + nudge)
-			.unCentre()
-			.rotateX((flipped ? 1 : -1) * (progress * 90 + 270));
+			.uncenter()
+			.rotateXDegrees((flipped ? 1 : -1) * (progress * 90 + 270));
 	}
 
 	@Override

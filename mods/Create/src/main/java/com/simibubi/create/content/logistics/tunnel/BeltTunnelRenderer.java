@@ -1,12 +1,12 @@
 package com.simibubi.create.content.logistics.tunnel;
 
-import com.jozufozu.flywheel.backend.Backend;
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.utility.Iterate;
@@ -31,13 +31,13 @@ public class BeltTunnelRenderer extends SmartBlockEntityRenderer<BeltTunnelBlock
 		int light, int overlay) {
 		super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
 
-		if (Backend.canUseInstancing(be.getLevel()))
+		if (VisualizationManager.supportsVisualization(be.getLevel()))
 			return;
 
 		SuperByteBuffer flapBuffer = CachedBuffers.partial(AllPartialModels.BELT_TUNNEL_FLAP, be.getBlockState());
 		VertexConsumer vb = buffer.getBuffer(RenderType.solid());
 		Vec3 pivot = VecHelper.voxelSpace(0, 10, 1f);
-		TransformStack msr = TransformStack.cast(ms);
+		var msr = TransformStack.of(ms);
 
 		for (Direction direction : Iterate.directions) {
 			if (!be.flaps.containsKey(direction))
@@ -48,9 +48,9 @@ public class BeltTunnelRenderer extends SmartBlockEntityRenderer<BeltTunnelBlock
 				.getValue(partialTicks);
 
 			ms.pushPose();
-			msr.centre()
-				.rotateY(horizontalAngle)
-				.unCentre();
+			msr.center()
+				.rotateYDegrees(horizontalAngle)
+				.uncenter();
 
 			ms.translate(0.075f / 16f, 0, 0);
 
@@ -64,7 +64,7 @@ public class BeltTunnelRenderer extends SmartBlockEntityRenderer<BeltTunnelBlock
 					flapAngle *= .5f;
 
 				msr.translate(pivot)
-					.rotateX(flapAngle)
+					.rotateXDegrees(flapAngle)
 					.translateBack(pivot);
 				flapBuffer.light(light)
 					.renderInto(ms, vb);

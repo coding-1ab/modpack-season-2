@@ -1,9 +1,9 @@
 package com.simibubi.create.content.redstone;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.BlockPos;
@@ -49,8 +49,8 @@ public class FilteredDetectorFilterSlot extends ValueBoxTransform.Sided {
 			return;
 		if (getSide() != Direction.UP)
 			return;
-		TransformStack.cast(ms)
-			.rotateZ(-AngleHelper.horizontalAngle(facing) + 180);
+		TransformStack.of(ms)
+			.rotateZDegrees(-AngleHelper.horizontalAngle(facing) + 180);
 	}
 
 	@Override

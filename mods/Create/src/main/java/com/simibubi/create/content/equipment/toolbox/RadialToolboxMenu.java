@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -16,12 +15,15 @@ import com.simibubi.create.AllKeys;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.AllIcons;
+import com.simibubi.create.foundation.gui.CreateTheme;
 import com.simibubi.create.foundation.utility.CreateLang;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.GuiGraphics;
@@ -126,10 +128,10 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
 
 			for (int slot = 0; slot < 8; slot++) {
 				ms.pushPose();
-				TransformStack.cast(ms)
-					.rotateZ(slot * 45 - 45)
+				TransformStack.of(ms)
+					.rotateZDegrees(slot * 45 - 45)
 					.translate(0, -40 + (10 * (1 - fade) * (1 - fade)), 0)
-					.rotateZ(-slot * 45 + 45);
+					.rotateZDegrees(-slot * 45 + 45);
 				ms.translate(-12, -12, 0);
 
 				if (state == State.SELECT_ITEM || state == State.SELECT_ITEM_UNEQUIP) {
@@ -213,8 +215,10 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
 
 	@Override
 	public void renderBackground(GuiGraphics graphics) {
-		int a = ((int) (0x50 * Math.min(1, (ticksOpen + AnimationTickHolder.getPartialTicks()) / 20f))) << 24;
-		graphics.fillGradient(0, 0, this.width, this.height, 0x101010 | a, 0x101010 | a);
+		Color color = CreateTheme.Key.RADIAL_BACKGROUND.c()
+				.scaleAlpha(Math.min(1, (ticksOpen + AnimationTickHolder.getPartialTicks()) / 20f));
+
+		graphics.fillGradient(0, 0, this.width, this.height, color.getRGB(), color.getRGB());
 	}
 
 	@Override

@@ -2,10 +2,10 @@ package com.simibubi.create.foundation.fluid;
 
 import java.util.function.Function;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.utility.BasicFluidRenderer;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.client.Minecraft;
@@ -48,12 +48,12 @@ public class FluidRenderer extends BasicFluidRenderer {
 		if (inbound)
 			direction = direction.getOpposite();
 
-		TransformStack msr = TransformStack.cast(ms);
+		var msr = TransformStack.of(ms);
 		ms.pushPose();
-		msr.centre()
-			.rotateY(AngleHelper.horizontalAngle(direction))
-			.rotateX(direction == Direction.UP ? 180 : direction == Direction.DOWN ? 0 : 270)
-			.unCentre();
+		msr.center()
+			.rotateYDegrees(AngleHelper.horizontalAngle(direction))
+			.rotateXDegrees(direction == Direction.UP ? 180 : direction == Direction.DOWN ? 0 : 270)
+			.uncenter();
 		ms.translate(.5, 0, .5);
 
 		float h = radius;
@@ -67,7 +67,7 @@ public class FluidRenderer extends BasicFluidRenderer {
 			ms.pushPose();
 			renderFlowingTiledFace(Direction.SOUTH, hMin, yMin, hMax, yMax, h, builder, ms, light, color, flowTexture);
 			ms.popPose();
-			msr.rotateY(90);
+			msr.rotateYDegrees(90);
 		}
 
 		if (progress != 1)

@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.content.contraptions.bearing.StabilizedContraption;
@@ -18,6 +17,7 @@ import com.simibubi.create.content.contraptions.mounted.CartAssemblerBlockEntity
 import com.simibubi.create.content.contraptions.mounted.MountedContraption;
 import com.simibubi.create.foundation.item.ItemHelper;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.NBTHelper;
 import net.createmod.catnip.utility.VecHelper;
@@ -353,7 +353,7 @@ public class OrientedContraptionEntity extends AbstractContraptionEntity {
 				return false;
 			OrientedContraptionEntity parent = (OrientedContraptionEntity) riding;
 			prevYaw = yaw;
-			yaw = -parent.getViewYRot(1);
+			yaw = AngleHelper.wrapAngle180(getInitialYaw() - parent.getInitialYaw()) - parent.getViewYRot(1);
 			return false;
 		}
 
@@ -538,13 +538,13 @@ public class OrientedContraptionEntity extends AbstractContraptionEntity {
 				repositionOnContraption(matrixStack, partialTicks, ridingEntity);
 		}
 
-		TransformStack.cast(matrixStack)
+		TransformStack.of(matrixStack)
 			.nudge(getId())
-			.centre()
-			.rotateY(angleYaw)
-			.rotateZ(anglePitch)
-			.rotateY(angleInitialYaw)
-			.unCentre();
+			.center()
+			.rotateYDegrees(angleYaw)
+			.rotateZDegrees(anglePitch)
+			.rotateYDegrees(angleInitialYaw)
+			.uncenter();
 	}
 
 	@OnlyIn(Dist.CLIENT)

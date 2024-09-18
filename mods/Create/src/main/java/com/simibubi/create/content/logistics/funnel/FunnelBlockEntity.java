@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
-import com.jozufozu.flywheel.backend.instancing.InstancedRenderDispatcher;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllSoundEvents;
@@ -25,6 +24,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.inventory.VersionedI
 import com.simibubi.create.foundation.item.ItemHelper.ExtractionCountMode;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import dev.engine_room.flywheel.lib.visualization.VisualizationHelper;
 import net.createmod.catnip.utility.BlockFace;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
@@ -119,7 +119,7 @@ public class FunnelBlockEntity extends SmartBlockEntity implements IHaveHovering
 	private void activateExtractor() {
 		if (invVersionTracker.stillWaiting(invManipulation))
 			return;
-		
+
 		BlockState blockState = getBlockState();
 		Direction facing = AbstractFunnelBlock.getFunnelFacing(blockState);
 
@@ -262,7 +262,7 @@ public class FunnelBlockEntity extends SmartBlockEntity implements IHaveHovering
 			new InvManipulationBehaviour(this, (w, p, s) -> new BlockFace(p, AbstractFunnelBlock.getFunnelFacing(s)
 				.getOpposite()));
 		behaviours.add(invManipulation);
-		
+
 		behaviours.add(invVersionTracker = new VersionedInventoryTrackerBehaviour(this));
 
 		filtering = new FilteringBehaviour(this, new FunnelFilterSlotPositioning());
@@ -270,7 +270,7 @@ public class FunnelBlockEntity extends SmartBlockEntity implements IHaveHovering
 		filtering.onlyActiveWhen(this::supportsFiltering);
 		filtering.withCallback($ -> invVersionTracker.reset());
 		behaviours.add(filtering);
-		
+
 		behaviours.add(new DirectBeltInputBehaviour(this).onlyInsertWhen(this::supportsDirectBeltInput)
 			.setInsertionHandler(this::handleDirectBeltInput));
 		registerAwardables(behaviours, AllAdvancements.FUNNEL);
@@ -366,7 +366,7 @@ public class FunnelBlockEntity extends SmartBlockEntity implements IHaveHovering
 		extractionCooldown = compound.getInt("TransferCooldown");
 
 		if (clientPacket)
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> InstancedRenderDispatcher.enqueueUpdate(this));
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> VisualizationHelper.queueUpdate(this));
 	}
 
 	public void onTransfer(ItemStack stack) {

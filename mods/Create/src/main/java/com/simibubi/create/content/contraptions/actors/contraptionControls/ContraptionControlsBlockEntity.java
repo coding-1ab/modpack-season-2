@@ -2,7 +2,6 @@ package com.simibubi.create.content.contraptions.actors.contraptionControls;
 
 import java.util.List;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.contraptions.actors.trainControls.ControlsBlock;
@@ -13,6 +12,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringB
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.foundation.utility.DyeHelper;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
@@ -136,9 +136,9 @@ public class ContraptionControlsBlockEntity extends SmartBlockEntity {
 		public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
 			Direction facing = state.getValue(ControlsBlock.FACING);
 			float yRot = AngleHelper.horizontalAngle(facing);
-			TransformStack.cast(ms)
-				.rotateY(yRot + 180)
-				.rotateX(67.5f);
+			TransformStack.of(ms)
+				.rotateYDegrees(yRot + 180)
+				.rotateXDegrees(67.5f);
 		}
 
 		@Override

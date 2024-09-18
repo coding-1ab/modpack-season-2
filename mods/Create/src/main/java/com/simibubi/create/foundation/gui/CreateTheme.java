@@ -11,6 +11,7 @@ public class CreateTheme extends Theme {
 	protected void init() {
 
 		put(Key.STANDARD_TOOLTIP, new Color(0xff_c9974c), new Color(0xff_f1dd79));
+		put(Key.RADIAL_BACKGROUND, new Color(0x50_101010, true));
 
 	}
 
@@ -19,6 +20,7 @@ public class CreateTheme extends Theme {
 	public static class Key {
 
 		public static final Theme.Key STANDARD_TOOLTIP = new Theme.Key();
+		public static final Theme.Key RADIAL_BACKGROUND = new Theme.Key();
 
 	}
 }

@@ -1,9 +1,15 @@
 package com.simibubi.create.content.decoration.slidingDoor;
 
+import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
+
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.content.contraptions.ContraptionWorld;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
+import com.simibubi.create.foundation.block.IHaveBigOutline;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -35,10 +41,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import javax.annotation.Nullable;
-import java.util.function.Supplier;
-
-public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<SlidingDoorBlockEntity> {
+public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<SlidingDoorBlockEntity>, IHaveBigOutline {
 
 	public static final Supplier<BlockSetType> TRAIN_SET_TYPE =
 		() -> new BlockSetType("train", true, SoundType.NETHERITE_BLOCK, SoundEvents.IRON_DOOR_CLOSE,

@@ -1,10 +1,13 @@
 package com.simibubi.create.content.equipment.blueprint;
 
-import com.jozufozu.flywheel.core.PartialModel;
-import com.jozufozu.flywheel.util.transform.TransformStack;
+import org.joml.Matrix3f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.equipment.blueprint.BlueprintEntity.BlueprintSection;
+
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.utility.Couple;
@@ -19,7 +22,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import org.joml.Matrix3f;
 
 public class BlueprintRenderer extends EntityRenderer<BlueprintEntity> {
 
@@ -33,13 +35,13 @@ public class BlueprintRenderer extends EntityRenderer<BlueprintEntity> {
 		PartialModel partialModel = entity.size == 3 ? AllPartialModels.CRAFTING_BLUEPRINT_3x3
 			: entity.size == 2 ? AllPartialModels.CRAFTING_BLUEPRINT_2x2 : AllPartialModels.CRAFTING_BLUEPRINT_1x1;
 		SuperByteBuffer sbb = CachedBuffers.partial(partialModel, Blocks.AIR.defaultBlockState());
-		sbb.rotateY(-yaw)
-			.rotateX(90.0F + entity.getXRot())
+		sbb.rotateYDegrees(-yaw)
+			.rotateXDegrees(90.0F + entity.getXRot())
 			.translate(-.5, -1 / 32f, -.5);
 		if (entity.size == 2)
 			sbb.translate(.5, 0, -.5);
 
-		sbb.forEntityRender()
+		sbb.disableDiffuse()
 			.light(light)
 			.renderInto(ms, buffer.getBuffer(Sheets.solidBlockSheet()));
 		super.render(entity, yaw, pt, ms, buffer, light);
@@ -58,18 +60,18 @@ public class BlueprintRenderer extends EntityRenderer<BlueprintEntity> {
 		}
 		int itemLight = Mth.floor(sl + .5) << 20 | (Mth.floor(bl + .5) & 0xf) << 4;
 
-		TransformStack.cast(ms)
-			.rotateY(vertical ? 0 : -yaw)
-			.rotateX(fakeNormalXRotation);
+		TransformStack.of(ms)
+			.rotateYDegrees(vertical ? 0 : -yaw)
+			.rotateXDegrees(fakeNormalXRotation);
 		Matrix3f copy = new Matrix3f(ms.last()
 			.normal());
 
 		ms.popPose();
 		ms.pushPose();
 
-		TransformStack.cast(ms)
-			.rotateY(-yaw)
-			.rotateX(entity.getXRot())
+		TransformStack.of(ms)
+			.rotateYDegrees(-yaw)
+			.rotateXDegrees(entity.getXRot())
 			.translate(0, 0, 1 / 32f + .001);
 
 		if (entity.size == 3)

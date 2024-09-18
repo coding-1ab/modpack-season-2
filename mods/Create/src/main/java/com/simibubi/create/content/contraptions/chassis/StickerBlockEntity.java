@@ -2,7 +2,6 @@ package com.simibubi.create.content.contraptions.chassis;
 
 import java.util.List;
 
-import com.jozufozu.flywheel.backend.instancing.InstancedRenderDispatcher;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.contraptions.glue.SuperGlueEntity;
@@ -10,6 +9,7 @@ import com.simibubi.create.content.contraptions.glue.SuperGlueItem;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
+import dev.engine_room.flywheel.lib.visualization.VisualizationHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
 import net.minecraft.client.Minecraft;
@@ -70,7 +70,7 @@ public class StickerBlockEntity extends SmartBlockEntity {
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> playSound(false));
 		piston.chase(target, .4f, Chaser.LINEAR);
 
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> InstancedRenderDispatcher.enqueueUpdate(this));
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> VisualizationHelper.queueUpdate(this));
 	}
 
 	public boolean isAttachedToBlock() {

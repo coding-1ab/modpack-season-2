@@ -1,5 +1,18 @@
 package com.simibubi.create.compat.jei;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllFluids;
 import com.simibubi.create.AllItems;
@@ -56,6 +69,7 @@ import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.simibubi.create.infrastructure.config.CRecipes;
+
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
@@ -85,18 +99,6 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.fml.ModList;
-
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 @JeiPlugin
 @SuppressWarnings("unused")
@@ -144,6 +146,7 @@ public class CreateJEI implements IModPlugin {
 
 		smoking = builder(SmokingRecipe.class)
 				.addTypedRecipes(() -> RecipeType.SMOKING)
+				.removeNonAutomation()
 				.catalystStack(ProcessingViaFanCategory.getFan("fan_smoking"))
 				.doubleItemIcon(AllItems.PROPELLER.get(), Items.CAMPFIRE)
 				.emptyBackground(178, 72)
@@ -153,6 +156,7 @@ public class CreateJEI implements IModPlugin {
 				.addTypedRecipesExcluding(() -> RecipeType.SMELTING, () -> RecipeType.BLASTING)
 				.addTypedRecipes(() -> RecipeType.BLASTING)
 				.removeRecipes(() -> RecipeType.SMOKING)
+				.removeNonAutomation()
 				.catalystStack(ProcessingViaFanCategory.getFan("fan_blasting"))
 				.doubleItemIcon(AllItems.PROPELLER.get(), Items.LAVA_BUCKET)
 				.emptyBackground(178, 72)
@@ -258,6 +262,7 @@ public class CreateJEI implements IModPlugin {
 				.addTypedRecipes(AllRecipeTypes.DEPLOYING)
 				.addTypedRecipes(AllRecipeTypes.SANDPAPER_POLISHING::getType, DeployerApplicationRecipe::convert)
 				.addTypedRecipes(AllRecipeTypes.ITEM_APPLICATION::getType, ManualApplicationRecipe::asDeploying)
+				.removeNonAutomation()
 				.catalyst(AllBlocks.DEPLOYER::get)
 				.catalyst(AllBlocks.DEPOT::get)
 				.catalyst(AllItems.BELT_CONNECTOR::get)
@@ -463,6 +468,10 @@ public class CreateJEI implements IModPlugin {
 					return false;
 				});
 			});
+		}
+
+		public CategoryBuilder<T> removeNonAutomation() {
+			return addRecipeListConsumer(recipes -> recipes.removeIf(AllRecipeTypes.CAN_BE_AUTOMATED.negate()));
 		}
 
 		public CategoryBuilder<T> catalystStack(Supplier<ItemStack> supplier) {

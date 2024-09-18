@@ -1,5 +1,6 @@
 package com.simibubi.create.foundation.data;
 
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -52,7 +53,7 @@ public class TagGen {
 		return appender;
 	}
 
-	public static <T extends TagAppender<?>> T addOptional(T appender, Mods mod, String... ids) {
+	public static <T extends TagAppender<?>> T addOptional(T appender, Mods mod, List<String> ids) {
 		for (String id : ids) {
 			appender.addOptional(mod.asResource(id));
 		}

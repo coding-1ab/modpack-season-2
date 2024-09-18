@@ -3,7 +3,6 @@ package com.simibubi.create.content.contraptions;
 import java.util.Arrays;
 import java.util.List;
 
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 
@@ -22,15 +21,13 @@ public interface IDisplayAssemblyExceptions {
 		if (!tooltip.isEmpty())
 			tooltip.add(Components.immutableEmpty());
 
-		tooltip.add(IHaveGoggleInformation.componentSpacing.plainCopy()
-			.append(CreateLang.translateDirect("gui.assembly.exception")
-				.withStyle(ChatFormatting.GOLD)));
+		CreateLang.translate("gui.assembly.exception").style(ChatFormatting.GOLD)
+			.forGoggles(tooltip);
 
 		String text = e.component.getString();
 		Arrays.stream(text.split("\n"))
 			.forEach(l -> TooltipHelper.cutStringTextComponent(l, Palette.GRAY_AND_WHITE)
-				.forEach(c -> tooltip.add(IHaveGoggleInformation.componentSpacing.plainCopy()
-					.append(c))));
+				.forEach(c -> CreateLang.builder().add(c).forGoggles(tooltip)));
 
 		return true;
 	}

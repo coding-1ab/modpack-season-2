@@ -1,5 +1,32 @@
 package com.simibubi.create.content.contraptions;
 
+import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isExtensionPole;
+import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isPistonHead;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllInteractionBehaviours;
@@ -29,10 +56,7 @@ import com.simibubi.create.content.contraptions.pulley.PulleyBlock;
 import com.simibubi.create.content.contraptions.pulley.PulleyBlock.MagnetBlock;
 import com.simibubi.create.content.contraptions.pulley.PulleyBlock.RopeBlock;
 import com.simibubi.create.content.contraptions.pulley.PulleyBlockEntity;
-import com.simibubi.create.content.contraptions.render.ContraptionLighter;
-import com.simibubi.create.content.contraptions.render.EmptyLighter;
 import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlock;
-import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.kinetics.base.BlockBreakingMovementBehaviour;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
@@ -41,7 +65,6 @@ import com.simibubi.create.content.kinetics.gantry.GantryShaftBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ShaftBlock;
 import com.simibubi.create.content.kinetics.steamEngine.PoweredShaftBlockEntity;
 import com.simibubi.create.content.logistics.crate.CreativeCrateBlockEntity;
-import com.simibubi.create.content.logistics.vault.ItemVaultBlockEntity;
 import com.simibubi.create.content.redstone.contact.RedstoneContactBlock;
 import com.simibubi.create.content.trains.bogey.AbstractBogeyBlock;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
@@ -49,6 +72,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringB
 import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.ICoordinate;
 import com.simibubi.create.infrastructure.config.AllConfigs;
+
 import net.createmod.catnip.utility.BBHelper;
 import net.createmod.catnip.utility.BlockFace;
 import net.createmod.catnip.utility.Iterate;
@@ -96,36 +120,12 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import net.minecraftforge.registries.GameData;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
-
-import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isExtensionPole;
-import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isPistonHead;
 
 public abstract class Contraption {
 
@@ -148,6 +148,7 @@ public abstract class Contraption {
 	protected Map<UUID, Integer> seatMapping;
 	protected Map<UUID, BlockFace> stabilizedSubContraptions;
 	protected MountedStorageManager storage;
+	protected Multimap<BlockPos, StructureBlockInfo> capturedMultiblocks;
 
 	private Set<SuperGlueEntity> glueToRemove;
 	private Map<BlockPos, Entity> initialPassengers;
@@ -158,8 +159,7 @@ public abstract class Contraption {
 	// Client
 	public Map<BlockPos, ModelData> modelData;
 	public Map<BlockPos, BlockEntity> presentBlockEntities;
-	public List<BlockEntity> maybeInstancedBlockEntities;
-	public List<BlockEntity> specialRenderedBlockEntities;
+	public List<BlockEntity> renderedBlockEntities;
 
 	protected ContraptionWorld world;
 	public boolean deferInvalidate;
@@ -176,12 +176,12 @@ public abstract class Contraption {
 		glueToRemove = new HashSet<>();
 		initialPassengers = new HashMap<>();
 		presentBlockEntities = new HashMap<>();
-		maybeInstancedBlockEntities = new ArrayList<>();
-		specialRenderedBlockEntities = new ArrayList<>();
+		renderedBlockEntities = new ArrayList<>();
 		pendingSubContraptions = new ArrayList<>();
 		stabilizedSubContraptions = new HashMap<>();
 		simplifiedEntityColliders = Optional.empty();
 		storage = new MountedStorageManager();
+		capturedMultiblocks = ArrayListMultimap.create();
 	}
 
 	public ContraptionWorld getContraptionWorld() {
@@ -641,6 +641,8 @@ public abstract class Contraption {
 		BlockEntity be = pair.getValue();
 		storage.addBlock(localPos, be);
 
+		captureMultiblock(localPos, structureBlockInfo, be);
+
 		if (AllMovementBehaviours.getBehaviour(captured.state()) != null)
 			actors.add(MutablePair.of(structureBlockInfo, null));
 
@@ -655,6 +657,25 @@ public abstract class Contraption {
 			hasUniversalCreativeCrate = true;
 	}
 
+	protected void captureMultiblock(BlockPos localPos, StructureBlockInfo structureBlockInfo, BlockEntity be) {
+		if (!(be instanceof IMultiBlockEntityContainer multiBlockBE))
+			return;
+
+		CompoundTag nbt = structureBlockInfo.nbt();
+		BlockPos controllerPos = nbt.contains("Controller") ?
+				toLocalPos(NbtUtils.readBlockPos(nbt.getCompound("Controller"))) :
+				localPos;
+		nbt.put("Controller", NbtUtils.writeBlockPos(controllerPos));
+
+		if (multiBlockBE.isController() && multiBlockBE.getHeight() <= 1 && multiBlockBE.getWidth() <= 1) {
+			nbt.put("LastKnownPos", NbtUtils.writeBlockPos(BlockPos.ZERO.below(Integer.MAX_VALUE - 1)));
+			return;
+		}
+
+		nbt.remove("LastKnownPos");
+		capturedMultiblocks.put(controllerPos, structureBlockInfo);
+	}
+
 	@Nullable
 	protected CompoundTag getBlockEntityNBT(Level world, BlockPos pos) {
 		BlockEntity blockEntity = world.getBlockEntity(pos);
@@ -664,11 +685,6 @@ public abstract class Contraption {
 		nbt.remove("x");
 		nbt.remove("y");
 		nbt.remove("z");
-
-		if ((blockEntity instanceof FluidTankBlockEntity || blockEntity instanceof ItemVaultBlockEntity)
-			&& nbt.contains("Controller"))
-			nbt.put("Controller",
-				NbtUtils.writeBlockPos(toLocalPos(NbtUtils.readBlockPos(nbt.getCompound("Controller")))));
 
 		return nbt;
 	}
@@ -688,16 +704,30 @@ public abstract class Contraption {
 	public void readNBT(Level world, CompoundTag nbt, boolean spawnData) {
 		blocks.clear();
 		presentBlockEntities.clear();
-		specialRenderedBlockEntities.clear();
+		renderedBlockEntities.clear();
 
 		Tag blocks = nbt.get("Blocks");
 		// used to differentiate between the 'old' and the paletted serialization
 		boolean usePalettedDeserialization =
-			blocks != null && blocks.getId() == 10 && ((CompoundTag) blocks).contains("Palette");
+			blocks != null && blocks.getId() == Tag.TAG_COMPOUND && ((CompoundTag) blocks).contains("Palette");
 		readBlocksCompound(blocks, world, usePalettedDeserialization);
 
+		capturedMultiblocks.clear();
+		nbt.getList("CapturedMultiblocks", Tag.TAG_COMPOUND).forEach(c -> {
+				CompoundTag tag = (CompoundTag) c;
+				if (!tag.contains("Controller", Tag.TAG_COMPOUND) && !tag.contains("Parts", Tag.TAG_LIST))
+					return;
+
+				BlockPos controllerPos = NbtUtils.readBlockPos(tag.getCompound("Controller"));
+				tag.getList("Parts", Tag.TAG_COMPOUND).forEach(part -> {
+					BlockPos partPos = NbtUtils.readBlockPos((CompoundTag) part);
+					StructureBlockInfo partInfo = this.blocks.get(partPos);
+					capturedMultiblocks.put(controllerPos, partInfo);
+				});
+			});
+
 		actors.clear();
-		nbt.getList("Actors", 10)
+		nbt.getList("Actors", Tag.TAG_COMPOUND)
 			.forEach(c -> {
 				CompoundTag comp = (CompoundTag) c;
 				StructureBlockInfo info = this.blocks.get(NbtUtils.readBlockPos(comp.getCompound("Pos")));
@@ -740,7 +770,7 @@ public abstract class Contraption {
 		storage.read(nbt, presentBlockEntities, spawnData);
 
 		if (nbt.contains("BoundsFront"))
-			bounds = NBTHelper.readAABB(nbt.getList("BoundsFront", 5));
+			bounds = NBTHelper.readAABB(nbt.getList("BoundsFront", Tag.TAG_FLOAT));
 
 		stalled = nbt.getBoolean("Stalled");
 		hasUniversalCreativeCrate = nbt.getBoolean("BottomlessSupply");
@@ -752,6 +782,19 @@ public abstract class Contraption {
 		nbt.putString("Type", getType().id);
 
 		CompoundTag blocksNBT = writeBlocksCompound();
+
+		ListTag multiblocksNBT = new ListTag();
+		capturedMultiblocks.keySet().forEach(controllerPos -> {
+			CompoundTag tag = new CompoundTag();
+			tag.put("Controller", NbtUtils.writeBlockPos(controllerPos));
+
+			Collection<StructureBlockInfo> multiblockParts = capturedMultiblocks.get(controllerPos);
+			ListTag partsNBT = new ListTag();
+			multiblockParts.forEach(info -> partsNBT.add(NbtUtils.writeBlockPos(info.pos())));
+			tag.put("Parts", partsNBT);
+
+			multiblocksNBT.add(tag);
+		});
 
 		ListTag actorsNBT = new ListTag();
 		for (MutablePair<StructureBlockInfo, MovementContext> actor : getActors()) {
@@ -803,6 +846,7 @@ public abstract class Contraption {
 
 		nbt.put("Blocks", blocksNBT);
 		nbt.put("Actors", actorsNBT);
+		nbt.put("CapturedMultiblocks", multiblocksNBT);
 		nbt.put("DisabledActors", disabledActorsNBT);
 		nbt.put("Interactors", interactorNBT);
 		nbt.put("Superglue", superglueNBT);
@@ -859,12 +903,12 @@ public abstract class Contraption {
 				throw new IllegalStateException("Palette Map index exceeded maximum");
 			});
 
-			ListTag list = c.getList("Palette", 10);
+			ListTag list = c.getList("Palette", Tag.TAG_COMPOUND);
 			palette.values.clear();
 			for (int i = 0; i < list.size(); ++i)
 				palette.values.add(NbtUtils.readBlockState(holderGetter, list.getCompound(i)));
 
-			blockList = c.getList("BlockList", 10);
+			blockList = c.getList("BlockList", Tag.TAG_COMPOUND);
 		} else {
 			blockList = (ListTag) compound;
 		}
@@ -893,20 +937,17 @@ public abstract class Contraption {
 			if (be == null)
 				return;
 			be.setLevel(world);
-			modelData.put(info.pos(), be.getModelData());
 			if (be instanceof KineticBlockEntity kbe)
 				kbe.setSpeed(0);
 			be.getBlockState();
 
-			MovementBehaviour movementBehaviour = AllMovementBehaviours.getBehaviour(info.state());
-			if (movementBehaviour == null || !movementBehaviour.hasSpecialInstancedRendering())
-				maybeInstancedBlockEntities.add(be);
-
-			if (movementBehaviour != null && !movementBehaviour.renderAsNormalBlockEntity())
-				return;
-
 			presentBlockEntities.put(info.pos(), be);
-			specialRenderedBlockEntities.add(be);
+			modelData.put(info.pos(), be.getModelData());
+
+			MovementBehaviour movementBehaviour = AllMovementBehaviours.getBehaviour(info.state());
+			if (movementBehaviour == null || !movementBehaviour.disableBlockEntityRendering()) {
+				renderedBlockEntities.add(be);
+			}
 		});
 	}
 
@@ -1022,6 +1063,8 @@ public abstract class Contraption {
 			return;
 		disassembled = true;
 
+		translateMultiblockControllers(transform);
+
 		for (boolean nonBrittles : Iterate.trueAndFalse) {
 			for (StructureBlockInfo block : blocks.values()) {
 				if (nonBrittles == BlockMovementChecks.isBrittle(block.state()))
@@ -1086,7 +1129,7 @@ public abstract class Contraption {
 					tag = null;
 
 				if (blockEntity != null)
-					tag = NBTProcessors.process(blockEntity, tag, false);
+					tag = NBTProcessors.process(state, blockEntity, tag, false);
 				if (blockEntity != null && tag != null) {
 					tag.putInt("x", targetPos.getX());
 					tag.putInt("y", targetPos.getY());
@@ -1097,8 +1140,11 @@ public abstract class Contraption {
 						tag.remove("InitialOffset");
 					}
 
-					if (blockEntity instanceof IMultiBlockEntityContainer && tag.contains("LastKnownPos"))
-						tag.put("LastKnownPos", NbtUtils.writeBlockPos(BlockPos.ZERO.below(Integer.MAX_VALUE - 1)));
+					if (blockEntity instanceof IMultiBlockEntityContainer) {
+						if (tag.contains("LastKnownPos") || capturedMultiblocks.isEmpty()) {
+							tag.put("LastKnownPos", NbtUtils.writeBlockPos(BlockPos.ZERO.below(Integer.MAX_VALUE - 1)));
+						}
+					}
 
 					blockEntity.load(tag);
 					storage.addStorageToWorld(block, blockEntity);
@@ -1124,6 +1170,38 @@ public abstract class Contraption {
 		}
 
 		storage.clear();
+	}
+
+	protected void translateMultiblockControllers(StructureTransform transform) {
+		if (transform.rotationAxis != null && transform.rotationAxis != Axis.Y && transform.rotation != Rotation.NONE) {
+			capturedMultiblocks.values().forEach(info -> {
+				info.nbt().put("LastKnownPos", NbtUtils.writeBlockPos(BlockPos.ZERO.below(Integer.MAX_VALUE - 1)));
+			});
+			return;
+		}
+
+		capturedMultiblocks.keySet().forEach(controllerPos -> {
+			Collection<StructureBlockInfo> multiblockParts = capturedMultiblocks.get(controllerPos);
+			Optional<BoundingBox> optionalBoundingBox = BoundingBox.encapsulatingPositions(multiblockParts.stream().map(info -> transform.apply(info.pos())).toList());
+			if (optionalBoundingBox.isEmpty())
+				return;
+
+			BoundingBox boundingBox = optionalBoundingBox.get();
+			BlockPos newControllerPos = new BlockPos(boundingBox.minX(), boundingBox.minY(), boundingBox.minZ());
+			BlockPos newLocalPos = toLocalPos(newControllerPos);
+			BlockPos otherPos = transform.unapply(newControllerPos);
+
+			multiblockParts.forEach(info -> info.nbt().put("Controller", NbtUtils.writeBlockPos(newControllerPos)));
+
+			if (controllerPos.equals(newLocalPos))
+				return;
+
+			// swap nbt data to the new controller position
+			StructureBlockInfo prevControllerInfo = blocks.get(controllerPos);
+			StructureBlockInfo newControllerInfo = blocks.get(otherPos);
+			blocks.put(otherPos, new StructureBlockInfo(newControllerInfo.pos(), newControllerInfo.state(), prevControllerInfo.nbt()));
+			blocks.put(controllerPos, new StructureBlockInfo(prevControllerInfo.pos(), prevControllerInfo.state(), newControllerInfo.nbt()));
+		});
 	}
 
 	public void addPassengersToWorld(Level world, StructureTransform transform, List<Entity> seatedEntities) {
@@ -1299,12 +1377,6 @@ public abstract class Contraption {
 		return interactors;
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	public ContraptionLighter<?> makeLighter() {
-		// TODO: move lighters to registry
-		return new EmptyLighter(this);
-	}
-
 	public void invalidateColliders() {
 		simplifiedEntityColliders = Optional.empty();
 		gatherBBsOffThread();
@@ -1372,12 +1444,18 @@ public abstract class Contraption {
 		return storage.getFluids();
 	}
 
-	public Collection<StructureBlockInfo> getRenderedBlocks() {
-		return blocks.values();
+	public RenderedBlocks getRenderedBlocks() {
+		return new RenderedBlocks(pos -> {
+			StructureBlockInfo info = blocks.get(pos);
+			if (info == null) {
+				return Blocks.AIR.defaultBlockState();
+			}
+			return info.state();
+		}, blocks.keySet());
 	}
 
-	public Collection<BlockEntity> getSpecialRenderedBEs() {
-		return specialRenderedBlockEntities;
+	public Collection<BlockEntity> getRenderedBEs() {
+		return renderedBlockEntities;
 	}
 
 	public boolean isHiddenInPortal(BlockPos localPos) {
@@ -1423,6 +1501,9 @@ public abstract class Contraption {
 				return true;
 		}
 		return false;
+	}
+
+	public record RenderedBlocks(Function<BlockPos, BlockState> lookup, Iterable<BlockPos> positions) {
 	}
 
 }

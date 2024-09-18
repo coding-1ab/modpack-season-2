@@ -1,11 +1,11 @@
 package com.simibubi.create.content.decoration.steamWhistle;
 
-import com.jozufozu.flywheel.core.PartialModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.decoration.steamWhistle.WhistleBlock.WhistleSize;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
 
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.createmod.ponder.utility.LevelTickHolder;
@@ -40,9 +40,9 @@ public class WhistleRenderer extends SafeBlockEntityRenderer<WhistleBlockEntity>
 		}
 
 		CachedBuffers.partial(mouth, blockState)
-			.centre()
-			.rotateY(AngleHelper.horizontalAngle(direction))
-			.unCentre()
+			.center()
+			.rotateYDegrees(AngleHelper.horizontalAngle(direction))
+			.uncenter()
 			.translate(0, offset * 4 / 16f, 0)
 			.light(light)
 			.renderInto(ms, buffer.getBuffer(RenderType.solid()));

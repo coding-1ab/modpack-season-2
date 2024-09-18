@@ -3,9 +3,6 @@ package com.simibubi.create.content.kinetics.crank;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
-import com.jozufozu.flywheel.api.Instancer;
-import com.jozufozu.flywheel.api.Material;
-import com.jozufozu.flywheel.core.materials.model.ModelData;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
@@ -19,8 +16,10 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsFormatt
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 
+import dev.engine_room.flywheel.api.model.Model;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.render.VirtualRenderHelper;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
@@ -93,7 +92,7 @@ public class ValveHandleBlockEntity extends HandCrankBlockEntity {
 	@Override
 	public float getIndependentAngle(float partialTicks) {
 		if (inUse == 0 && source != null && getSpeed() != 0)
-			return KineticBlockEntityRenderer.getAngleForTe(this, worldPosition,
+			return KineticBlockEntityRenderer.getAngleForBe(this, worldPosition,
 				KineticBlockEntityRenderer.getRotationAxisOf(this));
 
 		int step = getBlockState().getOptionalValue(ValveHandleBlock.FACING)
@@ -150,8 +149,8 @@ public class ValveHandleBlockEntity extends HandCrankBlockEntity {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public Instancer<ModelData> getRenderedHandleInstance(Material<ModelData> material) {
-		return material.getModel(getBlockState());
+	public Model getRenderedHandleInstance() {
+		return VirtualRenderHelper.blockModel(getBlockState());
 	}
 
 	@Override

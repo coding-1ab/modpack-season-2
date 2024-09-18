@@ -4,7 +4,6 @@ import static com.simibubi.create.AllPartialModels.GIRDER_SEGMENT_BOTTOM;
 import static com.simibubi.create.AllPartialModels.GIRDER_SEGMENT_MIDDLE;
 import static com.simibubi.create.AllPartialModels.GIRDER_SEGMENT_TOP;
 
-import com.jozufozu.flywheel.backend.Backend;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -12,6 +11,7 @@ import com.simibubi.create.content.trains.track.BezierConnection.GirderAngles;
 import com.simibubi.create.content.trains.track.BezierConnection.SegmentAngles;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
 
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.VecHelper;
@@ -36,7 +36,7 @@ public class TrackRenderer extends SafeBlockEntityRenderer<TrackBlockEntity> {
 	protected void renderSafe(TrackBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light,
 		int overlay) {
 		Level level = be.getLevel();
-		if (Backend.canUseInstancing(level))
+		if (VisualizationManager.supportsVisualization(level))
 			return;
 		VertexConsumer vb = buffer.getBuffer(RenderType.cutoutMipped());
 		be.connections.values()
@@ -48,15 +48,15 @@ public class TrackRenderer extends SafeBlockEntityRenderer<TrackBlockEntity> {
 			return;
 
 		ms.pushPose();
-		BlockPos tePosition = bc.tePositions.getFirst();
+		BlockPos bePosition = bc.bePositions.getFirst();
 		BlockState air = Blocks.AIR.defaultBlockState();
 		SegmentAngles[] segments = bc.getBakedSegments();
 
-		renderGirder(level, bc, ms, vb, tePosition);
+		renderGirder(level, bc, ms, vb, bePosition);
 
 		for (int i = 1; i < segments.length; i++) {
 			SegmentAngles segment = segments[i];
-			int light = LevelRenderer.getLightColor(level, segment.lightPosition.offset(tePosition));
+			int light = LevelRenderer.getLightColor(level, segment.lightPosition.offset(bePosition));
 
 			TrackMaterial.TrackModelHolder modelHolder = bc.getMaterial().getModelHolder();
 
@@ -68,7 +68,7 @@ public class TrackRenderer extends SafeBlockEntityRenderer<TrackBlockEntity> {
 
 			for (boolean first : Iterate.trueAndFalse) {
 				Pose transform = segment.railTransforms.get(first);
-				CachedBuffers.partial(first ? modelHolder.segment_left() : modelHolder.segment_right(), air)
+				CachedBuffers.partial(first ? modelHolder.leftSegment() : modelHolder.rightSegment(), air)
 					.mulPose(transform.pose())
 					.mulNormal(transform.normal())
 					.light(light)

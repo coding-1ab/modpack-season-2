@@ -1,8 +1,8 @@
 package com.simibubi.create.foundation.blockEntity.renderer;
 
-import com.jozufozu.flywheel.backend.Backend;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -18,7 +18,7 @@ public abstract class ColoredOverlayBlockEntityRenderer<T extends BlockEntity> e
 	protected void renderSafe(T be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
 			int light, int overlay) {
 
-		if (Backend.canUseInstancing(be.getLevel())) return;
+		if (VisualizationManager.supportsVisualization(be.getLevel())) return;
 
 		SuperByteBuffer render = render(getOverlayBuffer(be), getColor(be, partialTicks), light);
 		render.renderInto(ms, buffer.getBuffer(RenderType.solid()));

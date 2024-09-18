@@ -25,6 +25,6 @@
     "create:pulse_timer",
     "create:clipboard",
     "#minecraft:banners",
-    "#minecraft:signs"
+    "#minecraft:all_signs"
   ]
 }

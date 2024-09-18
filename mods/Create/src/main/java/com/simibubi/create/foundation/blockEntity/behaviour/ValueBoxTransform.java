@@ -4,9 +4,9 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.BlockPos;
@@ -115,9 +115,9 @@ public abstract class ValueBoxTransform {
 		public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
 			float yRot = AngleHelper.horizontalAngle(getSide()) + 180;
 			float xRot = getSide() == Direction.UP ? 90 : getSide() == Direction.DOWN ? 270 : 0;
-			TransformStack.cast(ms)
-				.rotateY(yRot)
-				.rotateX(xRot);
+			TransformStack.of(ms)
+				.rotateYDegrees(yRot)
+				.rotateXDegrees(xRot);
 		}
 
 		@Override

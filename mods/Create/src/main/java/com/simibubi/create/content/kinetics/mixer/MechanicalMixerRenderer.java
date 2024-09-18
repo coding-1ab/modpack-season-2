@@ -1,11 +1,11 @@
 package com.simibubi.create.content.kinetics.mixer;
 
-import com.jozufozu.flywheel.backend.Backend;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.ponder.utility.LevelTickHolder;
@@ -30,7 +30,7 @@ public class MechanicalMixerRenderer extends KineticBlockEntityRenderer<Mechanic
 	protected void renderSafe(MechanicalMixerBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
 		int light, int overlay) {
 
-		if (Backend.canUseInstancing(be.getLevel())) return;
+		if (VisualizationManager.supportsVisualization(be.getLevel())) return;
 
 		BlockState blockState = be.getBlockState();
 
@@ -51,7 +51,7 @@ public class MechanicalMixerRenderer extends KineticBlockEntityRenderer<Mechanic
 
 		VertexConsumer vbCutout = buffer.getBuffer(RenderType.cutoutMipped());
 		SuperByteBuffer headRender = CachedBuffers.partial(AllPartialModels.MECHANICAL_MIXER_HEAD, blockState);
-		headRender.rotateCentered(Direction.UP, angle)
+		headRender.rotateCentered(angle, Direction.UP)
 				.translate(0, -renderedHeadOffset, 0)
 				.light(light)
 				.renderInto(ms, vbCutout);

@@ -1,17 +1,25 @@
 package com.simibubi.create.content.equipment.goggles;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.compat.Mods;
 import com.simibubi.create.content.contraptions.IDisplayAssemblyExceptions;
 import com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock;
 import com.simibubi.create.content.contraptions.piston.PistonExtensionPoleBlock;
 import com.simibubi.create.content.trains.entity.TrainRelocator;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.foundation.gui.RemovedGuiUtils;
+import com.simibubi.create.foundation.mixin.accessor.MouseHandlerAccessor;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.simibubi.create.infrastructure.config.CClient;
+
 import net.createmod.catnip.CatnipClient;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.utility.Iterate;
@@ -21,6 +29,7 @@ import net.createmod.catnip.utility.outliner.Outliner.OutlineEntry;
 import net.createmod.catnip.utility.theme.Color;
 import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -37,10 +46,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class GoggleOverlayRenderer {
 
@@ -91,11 +96,16 @@ public class GoggleOverlayRenderer {
 		boolean goggleAddedInformation = false;
 		boolean hoverAddedInformation = false;
 
+		ItemStack item = AllItems.GOGGLES.asStack();
+
 		List<Component> tooltip = new ArrayList<>();
 
 		if (hasGoggleInformation && wearingGoggles) {
+			boolean isShifting = mc.player.isShiftKeyDown();
+
 			IHaveGoggleInformation gte = (IHaveGoggleInformation) be;
-			goggleAddedInformation = gte.addToGoggleTooltip(tooltip, mc.player.isShiftKeyDown());
+			goggleAddedInformation = gte.addToGoggleTooltip(tooltip, isShifting);
+			item = gte.getIcon(isShifting);
 		}
 
 		if (hasHoveringInformation) {
@@ -149,9 +159,9 @@ public class GoggleOverlayRenderer {
 			if (!tooltip.isEmpty())
 				tooltip.add(Components.immutableEmpty());
 
-			tooltip.add(IHaveGoggleInformation.componentSpacing.plainCopy()
-				.append(CreateLang.translateDirect("gui.goggles.pole_length"))
-				.append(Components.literal(" " + poles)));
+			CreateLang.translate("gui.goggles.pole_length")
+				.text(" " + poles)
+				.forGoggles(tooltip);
 		}
 
 		if (tooltip.isEmpty()) {
@@ -198,14 +208,44 @@ public class GoggleOverlayRenderer {
 			colorBorderBot.scaleAlpha(fade);
 		}
 
-		RemovedGuiUtils.drawHoveringText(graphics, tooltip, posX, posY, width, height, -1, colorBackground.getRGB(),
-			colorBorderTop.getRGB(), colorBorderBot.getRGB(), mc.font);
-
-		ItemStack item = AllItems.GOGGLES.asStack();
 		GuiGameElement.of(item)
 			.at(posX + 10, posY - 16, 450)
 			.render(graphics);
+
+		if (!Mods.MODERNUI.isLoaded()) {
+			// default tooltip rendering when modernUI is not loaded
+			RemovedGuiUtils.drawHoveringText(graphics, tooltip, posX, posY, width, height, -1, colorBackground.getRGB(),
+				colorBorderTop.getRGB(), colorBorderBot.getRGB(), mc.font);
+
+			poseStack.popPose();
+
+			return;
+		}
+
+		/*
+		 * special handling for modernUI
+		 *
+		 * their tooltip handler causes the overlay to jiggle each frame,
+		 * if the mouse is moving, guiScale is anything but 1 and exactPositioning is enabled
+		 *
+		 * this is a workaround to fix this behavior
+		 */
+		MouseHandler mouseHandler = Minecraft.getInstance().mouseHandler;
+		Window window = Minecraft.getInstance().getWindow();
+		double guiScale = window.getGuiScale();
+		double cursorX = mouseHandler.xpos();
+		double cursorY = mouseHandler.ypos();
+		((MouseHandlerAccessor) mouseHandler).create$setXPos(Math.round(cursorX / guiScale) * guiScale);
+		((MouseHandlerAccessor) mouseHandler).create$setYPos(Math.round(cursorY / guiScale) * guiScale);
+
+		RemovedGuiUtils.drawHoveringText(graphics, tooltip, posX, posY, width, height, -1, colorBackground.getRGB(),
+			colorBorderTop.getRGB(), colorBorderBot.getRGB(), mc.font);
+
+		((MouseHandlerAccessor) mouseHandler).create$setXPos(cursorX);
+		((MouseHandlerAccessor) mouseHandler).create$setYPos(cursorY);
+
 		poseStack.popPose();
+
 	}
 
 	public static BlockPos proxiedOverlayPosition(Level level, BlockPos pos) {

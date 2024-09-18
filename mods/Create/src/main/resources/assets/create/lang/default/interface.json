@@ -117,7 +117,8 @@
 	"create.keyinfo.toolmenu": "Focus Schematic Overlay",
 	"create.keyinfo.toolbelt": "Access Nearby Toolboxes",
 	"create.keyinfo.scrollup": "Simulate Mousewheel Up (inworld)",
-	"create.keyinfo.scrolldown": "Simulate Mousewheel Down (inworld)",
+  "create.keyinfo.scrolldown": "Simulate Mousewheel Down (inworld)",
+  "create.keyinfo.ponder": "Ponder",
 
 	"create.gui.scrollInput.defaultTitle": "Choose an Option:",
 	"create.gui.scrollInput.scrollToModify": "Scroll to Modify",
@@ -178,7 +179,7 @@
 	"create.terrainzapper.leftClickToSet": "Left-Click a Block to set Material",
 
 	"create.large_water_wheel.not_enough_space": "Clear Blocks for Placement",
-	
+
 	"create.minecart_coupling.two_couplings_max": "Minecarts cannot have more than two couplings each",
 	"create.minecart_coupling.unloaded": "Parts of your train seem to be in unloaded chunks",
 	"create.minecart_coupling.no_loops": "Couplings cannot form a loop",
@@ -218,7 +219,7 @@
 	"create.logistics.fluid_filter": "Fluid Filter",
 	"create.logistics.firstFrequency": "Frequency #1",
 	"create.logistics.secondFrequency": "Frequency #2",
-	
+
 	"create.logistics.filter.click_to_set": "Click with item to set",
 	"create.logistics.filter.click_to_replace": "Click with item to replace",
 	"create.logistics.filter.hold_to_set_amount": "Click and hold for amount",
@@ -229,26 +230,26 @@
 	"create.logistics.filter.up_to": "Up to",
 	"create.logistics.filter.exactly": "Exactly",
 	"create.logistics.filter.requires_item_in_inventory": "Requires %1$s item in Inventory",
-	
+
 	"create.logistics.creative_crate.supply": "Infinite Supply",
 	"create.logistics.train_observer.cargo_filter": "Cargo Filter",
-	
+
 	"create.kinetics.creative_motor.rotation_speed": "Generated Speed in RPM",
 	"create.kinetics.speed_controller.rotation_speed": "Targeted Speed in RPM",
 	"create.kinetics.valve_handle.rotated_angle": "Rotation when used",
-	
+
 	"create.logistics.redstone_interval": "Redstone Interval",
-	
+
 	"create.contraptions.contoller.target": "Targeted Component",
 	"create.contraptions.mechanical_roller.pave_material": "Paving Material",
-	
+
 	"create.contraptions.chassis.radius": "Radius when Sticky",
 	"create.contraptions.chassis.range": "Range of Sticky Sides",
 	"create.contraptions.chassis.distance": "Distance",
-	
+
 	"create.gui.value_settings.hold_to_edit": "Click and hold to edit",
 	"create.gui.value_settings.release_to_confirm": "Release %1$s to Confirm",
-	
+
 	"create.gui.goggles.generator_stats": "Generator Stats:",
 	"create.gui.goggles.kinetic_stats": "Kinetic Stats:",
 	"create.gui.goggles.at_current_speed": "at current speed",
@@ -316,7 +317,7 @@
 	"create.gui.sequenced_gearshift.speed.back_fast": "Double speed, Reversed",
 
 	"create.gui.clipboard.erase_checked": "Erase checked items",
-	
+
 	"create.gui.stock_ticker.checking_stocks": "Checking stocks...",
 	"create.gui.stock_ticker.no_packagers_linked": "No Packagers Linked",
 	"create.gui.stock_ticker.inventories_empty": "Linked Inventories are Empty",
@@ -326,10 +327,10 @@
 	"create.gui.stock_ticker.confirm_order": "Confirm Order",
 	"create.gui.stock_ticker.request_sent": "Request Sent!",
 	"create.gui.stock_ticker.program_requester": "Program Requester",
-	
+
 	"create.redstone_requester.keeper_connected": "Connected to Stock keeper successfully",
 	"create.redstone_requester.keeper_too_far_away": "Requester too far away from Stock keeper",
-	
+
 	"create.clipboard.actions": "Clipboard Actions",
 	"create.clipboard.to_copy": "%1$s to Copy settings",
 	"create.clipboard.to_paste": "%1$s to Paste settings",
@@ -892,6 +893,7 @@
 	"create.train.status": "<i> Information about Train: %1$s",
 	"create.train.status.back_on_track": "Train is back on Track",
 	"create.train.status.collision": "Collision with other Train",
+	"create.train.status.collision.where": "In %1$s near [%2$s]",
 	"create.train.status.end_of_track": "A Carriage has reached the end of its Track",
 	"create.train.status.double_portal": "A Carriage cannot enter a portal whilst leaving another",
 	"create.train.status.coupling_stress": "Forced stop due to Stress on Couplings",
@@ -917,7 +919,7 @@
 	"create.contraption.controls.actor_toggle.on": "On",
 	"create.contraption.controls.actor_toggle.off": "Off",
 	"create.contraption.controls.floor_unreachable": "Unreachable",
-	
+
 	"create.contraption.door_control": "Onboard Door Control",
 	"create.contraption.door_control.all": "Open All Doors",
 	"create.contraption.door_control.all.short": "Open All",
@@ -936,7 +938,7 @@
 	"create.packager_link.set": "Target selected",
 	"create.packager_link.success": "Successfully bound to target",
 	"create.packager_link.clear": "Cleared selection",
-	
+
 	"create.packager.mode_change.regular": "-> Package and unbox items",
 	"create.packager.mode_change.defrag": "-> Collect fragments and output completed",
 

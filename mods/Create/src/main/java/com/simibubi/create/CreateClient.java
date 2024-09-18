@@ -3,8 +3,8 @@ package com.simibubi.create;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.content.contraptions.glue.SuperGlueSelectionHandler;
-import com.simibubi.create.content.contraptions.render.ContraptionRenderDispatcher;
-import com.simibubi.create.content.contraptions.render.SBBContraptionManager;
+import com.simibubi.create.content.contraptions.render.ContraptionRenderInfo;
+import com.simibubi.create.content.contraptions.render.ContraptionRenderInfoManager;
 import com.simibubi.create.content.decoration.encasing.CasingConnectivity;
 import com.simibubi.create.content.equipment.bell.SoulPulseEffectHandler;
 import com.simibubi.create.content.equipment.potatoCannon.PotatoCannonRenderHandler;
@@ -18,8 +18,9 @@ import com.simibubi.create.content.schematics.client.SchematicHandler;
 import com.simibubi.create.content.trains.GlobalRailwayManager;
 import com.simibubi.create.foundation.ClientResourceReloadListener;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsClient;
+import com.simibubi.create.foundation.gui.CreateTheme;
 import com.simibubi.create.foundation.ponder.CreatePonderPlugin;
-import com.simibubi.create.foundation.render.CreateContexts;
+import com.simibubi.create.foundation.render.AllInstanceTypes;
 import com.simibubi.create.foundation.utility.ModelSwapper;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.simibubi.create.infrastructure.gui.CreateMainMenuScreen;
@@ -62,8 +63,8 @@ public class CreateClient {
 	public static void onCtorClient(IEventBus modEventBus, IEventBus forgeEventBus) {
 		modEventBus.addListener(CreateClient::clientInit);
 		modEventBus.addListener(AllParticleTypes::registerFactories);
-		modEventBus.addListener(CreateContexts::flwInit);
-		modEventBus.addListener(ContraptionRenderDispatcher::gatherContext);
+
+		AllInstanceTypes.init();
 
 		MODEL_SWAPPER.registerListeners(modEventBus);
 
@@ -77,14 +78,14 @@ public class CreateClient {
 		//BUFFER_CACHE.registerCompartment(CachedBufferer.DIRECTIONAL_PARTIAL);
 		//BUFFER_CACHE.registerCompartment(KineticBlockEntityRenderer.KINETIC_BLOCK);
 		//BUFFER_CACHE.registerCompartment(WaterWheelRenderer.WATER_WHEEL);
-		//BUFFER_CACHE.registerCompartment(SBBContraptionManager.CONTRAPTION, 20);
+		//BUFFER_CACHE.registerCompartment(ContraptionRenderInfo.CONTRAPTION, 20);
 		//BUFFER_CACHE.registerCompartment(WorldSectionElement.DOC_WORLD_SECTION, 20);
 
 		SuperByteBufferCache.getInstance().registerCompartment(CachedBuffers.PARTIAL);
 		SuperByteBufferCache.getInstance().registerCompartment(CachedBuffers.DIRECTIONAL_PARTIAL);
 		SuperByteBufferCache.getInstance().registerCompartment(KineticBlockEntityRenderer.KINETIC_BLOCK);
 		SuperByteBufferCache.getInstance().registerCompartment(WaterWheelRenderer.WATER_WHEEL);
-		SuperByteBufferCache.getInstance().registerCompartment(SBBContraptionManager.CONTRAPTION, 20);
+		SuperByteBufferCache.getInstance().registerCompartment(ContraptionRenderInfo.CONTRAPTION, 20);
 
 		AllPartialModels.init();
 
@@ -92,6 +93,7 @@ public class CreateClient {
 		//AllPonderTags.register();
 		//PonderIndex.register();
 		PonderIndex.addPlugin(new CreatePonderPlugin());
+		CreateTheme.loadClass();
 
 		setupConfigUIBackground();
 	}
@@ -118,7 +120,7 @@ public class CreateClient {
 
 	public static void invalidateRenderers() {
 		SCHEMATIC_HANDLER.updateRenderers();
-		ContraptionRenderDispatcher.reset();
+		ContraptionRenderInfoManager.resetAll();
 	}
 
 	public static void checkGraphicsFanciness() {

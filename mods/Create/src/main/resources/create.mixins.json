@@ -6,6 +6,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "create.refmap.json",
   "mixins": [
+    "BlockItemMixin",
     "ClientboundMapItemDataPacketMixin",
     "ContraptionDriverInteractMixin",
     "CustomItemUseEffectsMixin",
@@ -22,11 +23,14 @@
     "accessor.LivingEntityAccessor",
     "accessor.NbtAccounterAccessor",
     "accessor.ServerLevelAccessor",
-    "accessor.SystemReportAccessor"
+    "accessor.SystemReportAccessor",
+    "accessor.UseOnContextAccessor"
   ],
   "client": [
     "accessor.AgeableListModelAccessor",
+    "accessor.FontAccessor",
     "accessor.HumanoidArmorLayerAccessor",
+    "accessor.MouseHandlerAccessor",
     "client.BlockDestructionProgressMixin",
     "client.CameraMixin",
     "client.EntityContraptionInteractionMixin",

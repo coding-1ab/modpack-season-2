@@ -1,10 +1,10 @@
 package com.simibubi.create.content.kinetics.gearbox;
 
-import com.jozufozu.flywheel.backend.Backend;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.utility.Iterate;
@@ -26,7 +26,7 @@ public class GearboxRenderer extends KineticBlockEntityRenderer<GearboxBlockEnti
 	@Override
 	protected void renderSafe(GearboxBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
 			int light, int overlay) {
-		if (Backend.canUseInstancing(be.getLevel())) return;
+		if (VisualizationManager.supportsVisualization(be.getLevel())) return;
 
 		final Axis boxAxis = be.getBlockState().getValue(BlockStateProperties.AXIS);
 		final BlockPos pos = be.getBlockPos();

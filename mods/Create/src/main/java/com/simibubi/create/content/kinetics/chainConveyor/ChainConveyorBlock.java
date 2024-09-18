@@ -5,6 +5,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.foundation.block.IBE;
+import com.simibubi.create.foundation.block.IHaveBigOutline;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,7 +27,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class ChainConveyorBlock extends KineticBlock implements IBE<ChainConveyorBlockEntity> {
+public class ChainConveyorBlock extends KineticBlock implements IBE<ChainConveyorBlockEntity>, IHaveBigOutline {
 
 	public ChainConveyorBlock(Properties properties) {
 		super(properties);

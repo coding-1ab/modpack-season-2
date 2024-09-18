@@ -1,11 +1,11 @@
 package com.simibubi.create.content.logistics.chute;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.chute.ChuteBlock.Shape;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -37,9 +37,9 @@ public class ChuteRenderer extends SafeBlockEntityRenderer<ChuteBlockEntity> {
 		int light, int overlay) {
 		ItemRenderer itemRenderer = Minecraft.getInstance()
 			.getItemRenderer();
-		TransformStack msr = TransformStack.cast(ms);
+		var msr = TransformStack.of(ms);
 		ms.pushPose();
-		msr.centre();
+		msr.center();
 		float itemScale = .5f;
 		float itemPosition = be.itemPosition.getValue(partialTicks);
 		ms.translate(0, -.5 + itemPosition, 0);
@@ -47,8 +47,8 @@ public class ChuteRenderer extends SafeBlockEntityRenderer<ChuteBlockEntity> {
 		if (be.item.getItem() instanceof PackageItem) {
 			ms.scale(3, 3, 3);
 		} else {
-			msr.rotateX(itemPosition * 180);
-			msr.rotateY(itemPosition * 180);
+			msr.rotateXDegrees(itemPosition * 180);
+			msr.rotateYDegrees(itemPosition * 180);
 		}
 		itemRenderer.renderStatic(be.item, ItemDisplayContext.FIXED, light, overlay, ms, buffer, be.getLevel(), 0);
 		ms.popPose();

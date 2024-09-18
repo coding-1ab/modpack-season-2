@@ -2,7 +2,6 @@ package com.simibubi.create.content.kinetics.motor;
 
 import java.util.List;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
@@ -11,6 +10,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.BlockPos;
@@ -80,8 +80,8 @@ public class CreativeMotorBlockEntity extends GeneratingKineticBlockEntity {
 				return;
 			if (getSide() != Direction.UP)
 				return;
-			TransformStack.cast(ms)
-				.rotateZ(-AngleHelper.horizontalAngle(facing) + 180);
+			TransformStack.of(ms)
+				.rotateZDegrees(-AngleHelper.horizontalAngle(facing) + 180);
 		}
 
 		@Override

@@ -4,7 +4,6 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.jozufozu.flywheel.core.PartialModel;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -22,6 +21,7 @@ import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.utility.CreateLang;
 
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.animation.LerpedFloat;
