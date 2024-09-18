@@ -5,6 +5,7 @@ import com.simibubi.create.content.contraptions.elevator.ElevatorControlsHandler
 import com.simibubi.create.content.equipment.toolbox.ToolboxHandlerClient;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInteractionHandler;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainPackageInteractionHandler;
+import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerClientHandler;
 import com.simibubi.create.content.trains.TrainHUD;
 import com.simibubi.create.content.trains.entity.TrainRelocator;
@@ -91,6 +92,8 @@ public class InputEvents {
 		TrainRelocator.onClicked(event);
 
 		if (ChainConveyorInteractionHandler.onUse())
+			event.setCanceled(true);
+		else if (PackagePortTargetSelectionHandler.onUse())
 			event.setCanceled(true);
 
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {

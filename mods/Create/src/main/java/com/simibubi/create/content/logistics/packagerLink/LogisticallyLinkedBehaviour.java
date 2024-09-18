@@ -62,7 +62,8 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 	}
 
 	public void invalidateSelf() {
-		if (getTarget() instanceof LogisticallyLinkedBehaviour target)
+		LogisticallyLinkedBehaviour target = getTarget();
+		if (target != null)
 			target.invalidateLink(this);
 	}
 
@@ -86,10 +87,13 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 				.getLevel(targetDim);
 		if (world == null)
 			return null;
+		if (!world.isLoaded(targetPos))
+			return null;
 
-		if (world.isLoaded(targetPos) && get(world, targetPos, TYPE) instanceof LogisticallyLinkedBehaviour llb) {
-			target = new WeakReference<LogisticallyLinkedBehaviour>(llb);
-			return llb;
+		LogisticallyLinkedBehaviour logisticallyLinkedBehaviour = get(world, targetPos, TYPE);
+		if (logisticallyLinkedBehaviour != null) {
+			target = new WeakReference<LogisticallyLinkedBehaviour>(logisticallyLinkedBehaviour);
+			return logisticallyLinkedBehaviour;
 		}
 
 		return null;
@@ -121,7 +125,8 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 	}
 
 	public void tickTargetConnection() {
-		if (getTarget() instanceof LogisticallyLinkedBehaviour target)
+		LogisticallyLinkedBehaviour target = getTarget();
+		if (target != null)
 			target.keepConnected(this);
 	}
 
@@ -158,7 +163,8 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 		int combinedPower = relativePower + redstonePower;
 		links.put(this, combinedPower);
 
-		if (getTarget() instanceof LogisticallyLinkedBehaviour target && !links.containsKey(target))
+		LogisticallyLinkedBehaviour target = getTarget();
+		if (target != null && !links.containsKey(target))
 			target.appendAvailableLinksRecursive(links, combinedPower);
 
 		connectedLinks.forEach(($, entry) -> {
