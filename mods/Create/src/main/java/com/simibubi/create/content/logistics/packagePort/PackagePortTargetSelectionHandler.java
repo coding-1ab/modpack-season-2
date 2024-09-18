@@ -6,6 +6,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import net.createmod.catnip.CatnipClient;
+import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.Minecraft;
@@ -13,6 +14,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -25,13 +27,20 @@ public class PackagePortTargetSelectionHandler {
 	public static Vec3 exactPositionOfTarget;
 
 	public static void flushSettings(BlockPos pos) {
-		if (activePackageTarget == null)
+		if (activePackageTarget == null) {
+			CreateLang.translate("gui.package_port.not_targeting_anything")
+				.sendStatus(Minecraft.getInstance().player);
 			return;
+		}
 
 		if (validateDiff(exactPositionOfTarget, pos) == null) {
 			activePackageTarget.relativePos = activePackageTarget.relativePos.subtract(pos);
 			AllPackets.getChannel()
 				.sendToServer(new PackagePortPlacementPacket(activePackageTarget, pos));
+
+			BlockEntity blockEntity = Minecraft.getInstance().level.getBlockEntity(pos);
+			if (blockEntity instanceof PackagePortBlockEntity ppbe)
+				ScreenOpener.open(new PackagePortScreen(ppbe));
 		}
 
 		activePackageTarget = null;

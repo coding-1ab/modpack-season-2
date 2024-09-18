@@ -9,11 +9,9 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.content.logistics.filter.FilterItemStack;
-import com.simibubi.create.content.logistics.filter.FilterItemStack.PackageFilterItemStack;
+import com.simibubi.create.content.logistics.packager.PackagerItemHandler;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
 
 import net.createmod.catnip.utility.Iterate;
@@ -40,7 +38,8 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public class PackagePortBlockEntity extends SmartBlockEntity {
 
-	public FilteringBehaviour filtering;
+	public boolean acceptsPackages;
+	public String addressFilter;
 	public PackagePortTarget target;
 	public PackagePortInventory inventory;
 	private LazyOptional<IItemHandler> itemHandler;
@@ -60,14 +59,12 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 		itemHandler = LazyOptional.of(() -> inventory);
 		animationProgress = LerpedFloat.linear();
 		anticipationProgress = LerpedFloat.linear();
+		addressFilter = "";
+		acceptsPackages = true;
 	}
 
 	@Override
-	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-		behaviours.add(filtering = new FilteringBehaviour(this, new PackagePortFilterSlotPositioning())
-			.withPredicate(AllItems.PACKAGE_FILTER::isIn)
-			.withCallback(this::filterChanged));
-	}
+	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
 
 	public boolean isAnimationInProgress() {
 		return animationProgress.getChaseTarget() == 1;
@@ -89,7 +86,7 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 		return super.getCapability(cap, side);
 	}
 
-	private void filterChanged(ItemStack filter) {
+	public void filterChanged() {
 		if (target != null) {
 			target.deregister(this, level, worldPosition);
 			target.register(this, level, worldPosition);
@@ -247,7 +244,9 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 				if (!PackageItem.isPackage(stack))
 					return false;
 				String filterString = getFilterString();
-				return filterString == null || !PackageItem.matchAddress(stack, filterString);
+				boolean canAccept =
+					handler instanceof PackagerItemHandler || !PackageItem.matchAddress(stack, filterString);
+				return filterString == null || canAccept;
 			}, false);
 			if (extract.isEmpty())
 				continue;
@@ -271,6 +270,8 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 			tag.put("Target", target.write());
 		tag.put("Inventory", inventory.serializeNBT());
 		tag.putFloat("PlacedYaw", passiveYaw);
+		tag.putString("AddressFilter", addressFilter);
+		tag.putBoolean("AcceptsPackages", acceptsPackages);
 		if (animatedPackage != null) {
 			tag.put("AnimatedPackage", animatedPackage.serializeNBT());
 			tag.putBoolean("Deposit", currentlyDepositing);
@@ -288,6 +289,8 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 		target = PackagePortTarget.read(tag.getCompound("Target"));
 		inventory.deserializeNBT(tag.getCompound("Inventory"));
 		passiveYaw = tag.getFloat("PlacedYaw");
+		addressFilter = tag.getString("AddressFilter");
+		acceptsPackages = tag.getBoolean("AcceptsPackages");
 		if (!clientPacket)
 			animatedPackage = null;
 		if (tag.contains("AnimatedPackage"))
@@ -299,15 +302,7 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 	}
 
 	public String getFilterString() {
-		ItemStack filter = filtering.getFilter();
-		String portFilter = null;
-		FilterItemStack filterStack = FilterItemStack.of(filter);
-		if (AllItems.PACKAGE_FILTER.isIn(filter)) {
-			if (!(filterStack instanceof PackageFilterItemStack pfis))
-				return "";
-			portFilter = pfis.filterString;
-		}
-		return portFilter;
+		return acceptsPackages ? addressFilter : null;
 	}
 
 	public float getYaw() {

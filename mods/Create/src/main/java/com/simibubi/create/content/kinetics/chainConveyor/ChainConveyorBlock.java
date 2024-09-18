@@ -1,6 +1,7 @@
 package com.simibubi.create.content.kinetics.chainConveyor;
 
 import com.simibubi.create.AllBlockEntityTypes;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.foundation.block.IBE;
@@ -51,6 +52,8 @@ public class ChainConveyorBlock extends KineticBlock implements IBE<ChainConveyo
 		BlockHitResult pHit) {
 		if (!pLevel.isClientSide() && pPlayer != null && pPlayer.getItemInHand(pHand)
 			.is(Items.CHAIN))
+			return InteractionResult.SUCCESS;
+		if (pPlayer != null && AllBlocks.PACKAGE_PORT.isIn(pPlayer.getItemInHand(pHand)))
 			return InteractionResult.SUCCESS;
 		return InteractionResult.PASS;
 	}

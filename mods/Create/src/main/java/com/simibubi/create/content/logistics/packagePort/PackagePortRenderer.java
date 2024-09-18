@@ -1,14 +1,12 @@
 package com.simibubi.create.content.logistics.packagePort;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
-import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxRenderer;
-import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
@@ -42,6 +40,11 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 		Vec3 diff = Vec3.ZERO;
 
 		if (hasTarget) {
+			if (blockEntity.acceptsPackages && blockEntity.addressFilter != null
+				&& !blockEntity.addressFilter.isBlank())
+				renderNameplateOnHover(blockEntity, Components.literal(blockEntity.addressFilter), 1, ms, buffer,
+					light);
+
 			diff = blockEntity.target
 				.getExactTargetLocation(blockEntity, blockEntity.getLevel(), blockEntity.getBlockPos())
 				.subtract(0, animating && depositing ? 0 : 0.75, 0)
@@ -87,7 +90,6 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 			.rotateY(yaw)
 			.unCentre()
 			.light(light)
-//			.color(color)
 			.overlay(overlay)
 			.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
 
@@ -104,26 +106,6 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 //			.color(color)
 			.overlay(overlay)
 			.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
-
-		{ // Filter slot animates with the head
-			ms.pushPose();
-			TransformStack.cast(ms)
-				.centre()
-				.rotateY(yaw)
-				.unCentre()
-				.translate(8 / 16f, 10 / 16f, 11 / 16f)
-				.rotateX(headPitch)
-				.translateBack(8 / 16f, 10 / 16f, 11 / 16f)
-
-				.translate(8 / 16f, 13.5 / 16f, 10 / 16f)
-				.rotateX(90)
-				.scale(.5f);
-
-			FilteringBehaviour behaviour = blockEntity.getBehaviour(FilteringBehaviour.TYPE);
-			ValueBoxRenderer.renderItemIntoValueBox(behaviour.getFilter(), ms, buffer, light, overlay);
-
-			ms.popPose();
-		}
 
 		SuperByteBuffer tongue =
 			CachedBuffers.partial(AllPartialModels.PACKAGE_PORT_TONGUE, blockEntity.getBlockState());

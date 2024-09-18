@@ -51,7 +51,7 @@ public class ChainConveyorRoutingTable {
 	}
 
 	public void receivePortInfo(String filter, BlockPos connection) {
-		insert(new RoutingTableEntry(filter, 0, connection, new MutableInt(PORT_ENTRY_TIMEOUT), true));
+		insert(new RoutingTableEntry(filter, "*".equals(filter) ? 1000 : 0, connection, new MutableInt(PORT_ENTRY_TIMEOUT), true));
 	}
 
 	public BlockPos getExitFor(ItemStack box) {

@@ -463,6 +463,15 @@
 	"create.gui.filter.ignore_data": "Ignore Data",
 	"create.gui.filter.ignore_data.description": "Items match regardless of their attributes.",
 
+	"create.gui.package_port.accept_nothing": "/ Accept none",
+	"create.gui.package_port.packages_backed_up": "%1$s Package(s) backed up",
+	"create.gui.package_port.eject_to_inventory": "Eject to Inventory",
+	"create.gui.package_port.send_only": "Only send packages",
+	"create.gui.package_port.catch_packages": "Catch packages addressed to...",
+	"create.gui.package_port.catch_packages_wildcard": "Use * as a text wildcard",
+	"create.gui.package_port.catch_packages_empty": "Leave empty to match non-addressed",
+	"create.gui.package_port.not_targeting_anything": "Package port is not targeting anything",
+
 	"create.item_attributes.placeable": "is placeable",
 	"create.item_attributes.placeable.inverted": "is not placeable",
 	"create.item_attributes.consumable": "can be eaten",
