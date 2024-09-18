@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,6 +28,7 @@ import com.simibubi.create.content.contraptions.ITransformableBlockEntity;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.decoration.slidingDoor.DoorControlBehaviour;
 import com.simibubi.create.content.logistics.depot.DepotBehaviour;
+import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlock;
 import com.simibubi.create.content.trains.bogey.AbstractBogeyBlock;
 import com.simibubi.create.content.trains.bogey.AbstractBogeyBlockEntity;
@@ -46,6 +48,7 @@ import com.simibubi.create.content.trains.graph.TrackNodeLocation;
 import com.simibubi.create.content.trains.graph.TrackNodeLocation.DiscoveredLocation;
 import com.simibubi.create.content.trains.schedule.Schedule;
 import com.simibubi.create.content.trains.schedule.ScheduleItem;
+import com.simibubi.create.content.trains.station.GlobalStation.GlobalPackagePort;
 import com.simibubi.create.content.trains.track.ITrackBlock;
 import com.simibubi.create.content.trains.track.TrackTargetingBehaviour;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
@@ -89,6 +92,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.network.PacketDistributor;
 
 public class StationBlockEntity extends SmartBlockEntity implements ITransformableBlockEntity {
@@ -220,6 +224,8 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 
 	@Override
 	public void tick() {
+		tickPackagePorts();
+
 		if (isAssembling() && level.isClientSide)
 			refreshAssemblyInfo();
 		super.tick();
@@ -285,7 +291,8 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 			return false;
 
 		BlockPos up = BlockPos.containing(track.getUpNormal(level, pos, state));
-		BlockPos down = BlockPos.containing(track.getUpNormal(level, pos, state).scale(-1));
+		BlockPos down = BlockPos.containing(track.getUpNormal(level, pos, state)
+			.scale(-1));
 		int bogeyOffset = pos.distManhattan(edgePoint.getGlobalPosition()) - 1;
 
 		if (!isValidBogeyOffset(bogeyOffset)) {
@@ -323,7 +330,9 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 			return false;
 		}
 
-		boolean upsideDown = (player.getViewXRot(1.0F) < 0 && (track.getBogeyAnchor(level, pos, state)).getBlock() instanceof AbstractBogeyBlock<?> bogey && bogey.canBeUpsideDown());
+		boolean upsideDown = (player.getViewXRot(1.0F) < 0
+			&& (track.getBogeyAnchor(level, pos, state)).getBlock() instanceof AbstractBogeyBlock<?> bogey
+			&& bogey.canBeUpsideDown());
 
 		BlockPos targetPos = upsideDown ? pos.offset(down) : pos.offset(up);
 		if (level.getBlockState(targetPos)
@@ -380,7 +389,8 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 					continue;
 
 				DiscoveredPath preferredPath = train.runtime.startCurrentInstruction();
-				train.navigation.startNavigation(preferredPath != null ? preferredPath : train.navigation.findPathTo(station, Double.MAX_VALUE));
+				train.navigation.startNavigation(
+					preferredPath != null ? preferredPath : train.navigation.findPathTo(station, Double.MAX_VALUE));
 			}
 		}
 
@@ -455,9 +465,10 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 		ItemStack schedule = train.runtime.returnSchedule();
 		if (schedule.isEmpty())
 			return;
-		if (sender != null && sender.getMainHandItem().isEmpty()) {
+		if (sender != null && sender.getMainHandItem()
+			.isEmpty()) {
 			sender.getInventory()
-					.placeItemBackInInventory(schedule);
+				.placeItemBackInInventory(schedule);
 			return;
 		}
 
@@ -526,14 +537,17 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 			}
 
 			BlockState potentialBogeyState = level.getBlockState(bogeyOffset.offset(currentPos));
-			BlockPos upsideDownBogeyOffset = new BlockPos(bogeyOffset.getX(), bogeyOffset.getY()*-1, bogeyOffset.getZ());
+			BlockPos upsideDownBogeyOffset =
+				new BlockPos(bogeyOffset.getX(), bogeyOffset.getY() * -1, bogeyOffset.getZ());
 			if (bogeyIndex < bogeyLocations.length) {
-				if (potentialBogeyState.getBlock() instanceof AbstractBogeyBlock<?> bogey && !bogey.isUpsideDown(potentialBogeyState)) {
+				if (potentialBogeyState.getBlock() instanceof AbstractBogeyBlock<?> bogey
+					&& !bogey.isUpsideDown(potentialBogeyState)) {
 					bogeyTypes[bogeyIndex] = bogey;
 					bogeyLocations[bogeyIndex] = i;
 					upsideDownBogeys[bogeyIndex] = false;
 					bogeyIndex++;
-				} else if ((potentialBogeyState = level.getBlockState(upsideDownBogeyOffset.offset(currentPos))).getBlock() instanceof AbstractBogeyBlock<?> bogey && bogey.isUpsideDown(potentialBogeyState)) {
+				} else if ((potentialBogeyState = level.getBlockState(upsideDownBogeyOffset.offset(currentPos)))
+					.getBlock() instanceof AbstractBogeyBlock<?> bogey && bogey.isUpsideDown(potentialBogeyState)) {
 					bogeyTypes[bogeyIndex] = bogey;
 					bogeyLocations[bogeyIndex] = i;
 					upsideDownBogeys[bogeyIndex] = true;
@@ -609,7 +623,8 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 			return;
 
 		if (bogeyLocations[0] != 0) {
-			exception(new AssemblyException(CreateLang.translateDirect("train_assembly.frontmost_bogey_at_station")), -1);
+			exception(new AssemblyException(CreateLang.translateDirect("train_assembly.frontmost_bogey_at_station")),
+				-1);
 			return;
 		}
 
@@ -642,7 +657,8 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 				break;
 
 			if (loc - iPrevious < 3) {
-				exception(new AssemblyException(CreateLang.translateDirect("train_assembly.bogeys_too_close", i, i + 1)), -1);
+				exception(
+					new AssemblyException(CreateLang.translateDirect("train_assembly.bogeys_too_close", i, i + 1)), -1);
 				return;
 			}
 
@@ -733,16 +749,19 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 				spacing.add(bogeyLocations[bogeyIndex] - bogeyLocations[bogeyIndex - 1]);
 			CarriageContraption contraption = new CarriageContraption(assemblyDirection);
 			BlockPos bogeyPosOffset = trackPosition.offset(bogeyOffset);
-			BlockPos upsideDownBogeyPosOffset = trackPosition.offset(new BlockPos(bogeyOffset.getX(), bogeyOffset.getY() * -1, bogeyOffset.getZ()));
+			BlockPos upsideDownBogeyPosOffset =
+				trackPosition.offset(new BlockPos(bogeyOffset.getX(), bogeyOffset.getY() * -1, bogeyOffset.getZ()));
 
 			try {
 				int offset = bogeyLocations[bogeyIndex] + 1;
-				boolean success = contraption.assemble(level, upsideDownBogeys[bogeyIndex] ? upsideDownBogeyPosOffset.relative(assemblyDirection, offset) : bogeyPosOffset.relative(assemblyDirection, offset));
+				boolean success = contraption.assemble(level,
+					upsideDownBogeys[bogeyIndex] ? upsideDownBogeyPosOffset.relative(assemblyDirection, offset)
+						: bogeyPosOffset.relative(assemblyDirection, offset));
 				atLeastOneForwardControls |= contraption.hasForwardControls();
 				contraption.setSoundQueueOffset(offset);
 				if (!success) {
-					exception(new AssemblyException(CreateLang.translateDirect("train_assembly.nothing_attached", bogeyIndex + 1)),
-						-1);
+					exception(new AssemblyException(
+						CreateLang.translateDirect("train_assembly.nothing_attached", bogeyIndex + 1)), -1);
 					return;
 				}
 			} catch (AssemblyException e) {
@@ -753,25 +772,28 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 			AbstractBogeyBlock<?> typeOfFirstBogey = bogeyTypes[bogeyIndex];
 			boolean firstBogeyIsUpsideDown = upsideDownBogeys[bogeyIndex];
 			BlockPos firstBogeyPos = contraption.anchor;
-			AbstractBogeyBlockEntity firstBogeyBlockEntity = (AbstractBogeyBlockEntity) level.getBlockEntity(firstBogeyPos);
-			CarriageBogey firstBogey =
-				new CarriageBogey(typeOfFirstBogey, firstBogeyIsUpsideDown, firstBogeyBlockEntity.getBogeyData(), points.get(pointIndex), points.get(pointIndex + 1));
+			AbstractBogeyBlockEntity firstBogeyBlockEntity =
+				(AbstractBogeyBlockEntity) level.getBlockEntity(firstBogeyPos);
+			CarriageBogey firstBogey = new CarriageBogey(typeOfFirstBogey, firstBogeyIsUpsideDown,
+				firstBogeyBlockEntity.getBogeyData(), points.get(pointIndex), points.get(pointIndex + 1));
 			CarriageBogey secondBogey = null;
 			BlockPos secondBogeyPos = contraption.getSecondBogeyPos();
 			int bogeySpacing = 0;
 
 			if (secondBogeyPos != null) {
 				if (bogeyIndex == bogeyCount - 1 || !secondBogeyPos
-					.equals((upsideDownBogeys[bogeyIndex + 1] ? upsideDownBogeyPosOffset : bogeyPosOffset).relative(assemblyDirection, bogeyLocations[bogeyIndex + 1] + 1))) {
-					exception(new AssemblyException(CreateLang.translateDirect("train_assembly.not_connected_in_order")),
+					.equals((upsideDownBogeys[bogeyIndex + 1] ? upsideDownBogeyPosOffset : bogeyPosOffset)
+						.relative(assemblyDirection, bogeyLocations[bogeyIndex + 1] + 1))) {
+					exception(
+						new AssemblyException(CreateLang.translateDirect("train_assembly.not_connected_in_order")),
 						contraptions.size() + 1);
 					return;
 				}
 				AbstractBogeyBlockEntity secondBogeyBlockEntity =
-						(AbstractBogeyBlockEntity) level.getBlockEntity(secondBogeyPos);
+					(AbstractBogeyBlockEntity) level.getBlockEntity(secondBogeyPos);
 				bogeySpacing = bogeyLocations[bogeyIndex + 1] - bogeyLocations[bogeyIndex];
-				secondBogey = new CarriageBogey(bogeyTypes[bogeyIndex + 1], upsideDownBogeys[bogeyIndex + 1], secondBogeyBlockEntity.getBogeyData(),
-						points.get(pointIndex + 2), points.get(pointIndex + 3));
+				secondBogey = new CarriageBogey(bogeyTypes[bogeyIndex + 1], upsideDownBogeys[bogeyIndex + 1],
+					secondBogeyBlockEntity.getBogeyData(), points.get(pointIndex + 2), points.get(pointIndex + 3));
 				bogeyIndex++;
 
 			} else if (!typeOfFirstBogey.allowsSingleBogeyCarriage()) {
@@ -818,7 +840,8 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 
 		train.collectInitiallyOccupiedSignalBlocks();
 		Create.RAILWAYS.addTrain(train);
-		AllPackets.getChannel().send(PacketDistributor.ALL.noArg(), new TrainPacket(train, true));
+		AllPackets.getChannel()
+			.send(PacketDistributor.ALL.noArg(), new TrainPacket(train, true));
 		clearException();
 
 		award(AllAdvancements.TRAIN);
@@ -934,6 +957,62 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 	@Override
 	public void transform(StructureTransform transform) {
 		edgePoint.transform(transform);
+	}
+
+	// Package port integration
+
+	public void attachPackagePort(PackagePortBlockEntity ppbe) {
+		GlobalStation station = getStation();
+		if (station == null)
+			return;
+
+		GlobalPackagePort globalPackagePort = new GlobalPackagePort();
+		globalPackagePort.address = ppbe.addressFilter;
+		station.connectedPorts.put(ppbe.getBlockPos(), globalPackagePort);
+	}
+
+	public void removePackagePort(PackagePortBlockEntity ppbe) {
+		GlobalStation station = getStation();
+		if (station == null)
+			return;
+
+		station.connectedPorts.remove(ppbe.getBlockPos());
+	}
+
+	public void tickPackagePorts() {
+		GlobalStation station = getStation();
+		if (station == null)
+			return;
+		
+		boolean changed = false;
+
+		for (Iterator<Entry<BlockPos, GlobalPackagePort>> iterator = station.connectedPorts.entrySet()
+			.iterator(); iterator.hasNext();) {
+			Entry<BlockPos, GlobalPackagePort> entry = iterator.next();
+			BlockPos pos = entry.getKey();
+			GlobalPackagePort port = entry.getValue();
+			if (!level.isLoaded(pos))
+				continue;
+			if (!(level.getBlockEntity(pos) instanceof PackagePortBlockEntity ppbe)) {
+				iterator.remove();
+				changed = true;
+				continue;
+			}
+			
+			while (!port.inBuffer.isEmpty()) {
+				ItemStack itemStack = port.inBuffer.get(0);
+				ppbe.inventory.receiveMode(true);
+				ItemStack insertItem = ItemHandlerHelper.insertItem(ppbe.inventory, itemStack, false);
+				ppbe.inventory.receiveMode(false);
+				if (!insertItem.isEmpty())
+					break;
+				port.inBuffer.remove(0);
+				changed = true;
+			}
+		}
+		
+		if (changed)
+			Create.RAILWAYS.markTracksDirty();
 	}
 
 }

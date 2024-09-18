@@ -142,10 +142,10 @@ public class PackagePortScreen extends AbstractSimiScreen {
 			graphics.renderComponentTooltip(font, List.of(CreateLang.translate("gui.package_port.catch_packages")
 				.color(AbstractSimiWidget.HEADER_RGB)
 				.component(),
-				CreateLang.translate("gui.package_port.catch_packages_wildcard")
+				CreateLang.translate("gui.package_port.catch_packages_empty")
 					.style(ChatFormatting.GRAY)
 					.component(),
-				CreateLang.translate("gui.package_port.catch_packages_empty")
+				CreateLang.translate("gui.package_port.catch_packages_wildcard")
 					.style(ChatFormatting.GRAY)
 					.component()),
 				mouseX, mouseY);

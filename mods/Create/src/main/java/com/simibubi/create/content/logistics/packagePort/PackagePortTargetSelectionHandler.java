@@ -2,6 +2,7 @@ package com.simibubi.create.content.logistics.packagePort;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.content.trains.station.StationBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
@@ -14,6 +15,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -45,6 +47,31 @@ public class PackagePortTargetSelectionHandler {
 
 		activePackageTarget = null;
 		return;
+	}
+
+	public static boolean onUse() {
+		Minecraft mc = Minecraft.getInstance();
+		HitResult hitResult = mc.hitResult;
+		ItemStack mainHandItem = mc.player.getMainHandItem();
+
+		if (hitResult == null || hitResult.getType() == Type.MISS)
+			return false;
+		if (!(hitResult instanceof BlockHitResult bhr))
+			return false;
+
+		BlockPos pos = bhr.getBlockPos();
+		if (!(mc.level.getBlockEntity(pos) instanceof StationBlockEntity sbe))
+			return false;
+		if (sbe.edgePoint == null)
+			return false;
+		if (!AllBlocks.PACKAGE_PORT.isIn(mainHandItem))
+			return false;
+
+		PackagePortTargetSelectionHandler.exactPositionOfTarget =
+			Vec3.atCenterOf(sbe.edgePoint.getPositionForMapMarker()
+				.above());
+		PackagePortTargetSelectionHandler.activePackageTarget = new PackagePortTarget.TrainStationPortTarget(pos);
+		return true;
 	}
 
 	public static void tick() {

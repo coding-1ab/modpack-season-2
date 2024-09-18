@@ -9,14 +9,21 @@ import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEnti
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity.ConnectedPort;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity.ConnectionStats;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorPackage;
+import com.simibubi.create.content.trains.entity.Carriage;
+import com.simibubi.create.content.trains.entity.Train;
+import com.simibubi.create.content.trains.station.GlobalStation;
+import com.simibubi.create.content.trains.station.StationBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 public abstract class PackagePortTarget {
 
@@ -54,6 +61,7 @@ public abstract class PackagePortTarget {
 		PackagePortTarget target = switch (tag.getString("Type")) {
 
 		case "ChainConveyor" -> new ChainConveyorPortTarget(relativePos, 0, null);
+		case "TrainStation" -> new TrainStationPortTarget(relativePos);
 
 		default -> null;
 		};
@@ -178,6 +186,67 @@ public abstract class PackagePortTarget {
 				return Vec3.ZERO;
 			return clbe.getPackagePosition(chainPos, connection);
 		}
+
+	}
+
+	public static class TrainStationPortTarget extends PackagePortTarget {
+
+		public TrainStationPortTarget(BlockPos relativePos) {
+			super("TrainStation", relativePos);
+		}
+
+		@Override
+		public boolean export(LevelAccessor level, BlockPos portPos, ItemStack box, boolean simulate) {
+			if (!(be(level, portPos) instanceof StationBlockEntity sbe))
+				return false;
+
+			GlobalStation station = sbe.getStation();
+			if (station == null)
+				return false;
+
+			Train train = station.getPresentTrain();
+			if (train == null)
+				return false;
+			if (!(level instanceof Level l))
+				return false;
+
+			for (Carriage carriage : train.carriages) {
+				IItemHandlerModifiable inventory = carriage.storage.getItems();
+				if (inventory == null)
+					continue;
+				ItemStack insertItemStacked = ItemHandlerHelper.insertItemStacked(inventory, box, simulate);
+				if (insertItemStacked.isEmpty())
+					return true;
+			}
+
+			return false;
+		}
+
+		@Override
+		public Vec3 getExactTargetLocation(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
+			if (!(be(level, portPos) instanceof StationBlockEntity sbe) || sbe.edgePoint == null)
+				return Vec3.atCenterOf(portPos);
+			return Vec3.atCenterOf(sbe.edgePoint.getPositionForMapMarker()
+				.above());
+		}
+
+		@Override
+		public void register(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
+			if (be(level, portPos) instanceof StationBlockEntity sbe)
+				sbe.attachPackagePort(ppbe);
+		}
+
+		@Override
+		public void deregister(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
+			if (be(level, portPos) instanceof StationBlockEntity sbe)
+				sbe.removePackagePort(ppbe);
+		}
+
+		@Override
+		protected void writeInternal(CompoundTag tag) {}
+
+		@Override
+		protected void readInternal(CompoundTag tag) {}
 
 	}
 

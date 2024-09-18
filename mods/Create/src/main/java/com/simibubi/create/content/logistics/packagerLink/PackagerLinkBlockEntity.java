@@ -70,7 +70,8 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 	public void initialize() {
 		super.initialize();
 		behaviour.redstonePowerChanged(PackagerLinkBlock.getPower(getBlockState(), level, worldPosition));
-		if (getPackager() instanceof PackagerBlockEntity packager)
+		PackagerBlockEntity packager = getPackager();
+		if (packager != null)
 			packager.recheckIfLinksPresent();
 	}
 
