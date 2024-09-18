@@ -82,8 +82,8 @@ import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
 import com.simibubi.create.content.kinetics.belt.BeltRenderer;
 import com.simibubi.create.content.kinetics.belt.BeltVisual;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
-import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInstance;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRenderer;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorVisual;
 import com.simibubi.create.content.kinetics.chainDrive.ChainGearshiftBlockEntity;
 import com.simibubi.create.content.kinetics.clock.CuckooClockBlockEntity;
 import com.simibubi.create.content.kinetics.clock.CuckooClockRenderer;
@@ -365,7 +365,7 @@ public class AllBlockEntityTypes {
 
 	public static final BlockEntityEntry<ChainConveyorBlockEntity> CHAIN_CONVEYOR = REGISTRATE
 		.blockEntity("chain_conveyor", ChainConveyorBlockEntity::new)
-		.instance(() -> ChainConveyorInstance::new)
+		.visual(() -> ChainConveyorVisual::new)
 		.validBlocks(AllBlocks.CHAIN_CONVEYOR)
 		.renderer(() -> ChainConveyorRenderer::new)
 		.register();
@@ -845,7 +845,7 @@ public class AllBlockEntityTypes {
 
 	public static final BlockEntityEntry<PulseTimerBlockEntity> PULSE_TIMER = REGISTRATE
 		.blockEntity("pulse_timer", PulseTimerBlockEntity::new)
-		.instance(() -> BrassDiodeInstance::new, false)
+		.visual(() -> BrassDiodeVisual::new, false)
 		.validBlocks(AllBlocks.PULSE_TIMER)
 		.renderer(() -> BrassDiodeRenderer::new)
 		.register();

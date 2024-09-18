@@ -223,9 +223,9 @@ public class AllPartialModels {
 
 		for (String size : new String[] { "12x12", "10x12", "12x10", "10x8" }) {
 			ResourceLocation key = Create.asResource("cardboard_package_" + size);
-			PACKAGES.put(key, new PartialModel(Create.asResource("item/packages/cardboard_" + size)));
+			PACKAGES.put(key, PartialModel.of(Create.asResource("item/packages/cardboard_" + size)));
 			PACKAGE_RIGGING.put(key,
-				new PartialModel(Create.asResource("item/packages/cardboard_" + size + "_rigging")));
+				PartialModel.of(Create.asResource("item/packages/cardboard_" + size + "_rigging")));
 		}
 	}
 

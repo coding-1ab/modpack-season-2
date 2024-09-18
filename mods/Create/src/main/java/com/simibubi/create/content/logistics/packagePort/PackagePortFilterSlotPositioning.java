@@ -1,9 +1,9 @@
 package com.simibubi.create.content.logistics.packagePort;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
@@ -21,7 +21,7 @@ public class PackagePortFilterSlotPositioning extends ValueBoxTransform {
 			return !ppbe.isAnimationInProgress();
 		return true;
 	}
-	
+
 	@Override
 	public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
 		float horizontalAngle = 0;
@@ -38,7 +38,7 @@ public class PackagePortFilterSlotPositioning extends ValueBoxTransform {
 		if (level != null && level.getBlockEntity(pos) instanceof PackagePortBlockEntity ppbe)
 			horizontalAngle = ppbe.getYaw();
 
-		TransformStack.cast(ms)
+		TransformStack.of(ms)
 			.rotateY(horizontalAngle)
 			.rotateX(90);
 	}

@@ -3,7 +3,6 @@ package com.simibubi.create.content.redstone.thresholdSwitch;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
@@ -16,6 +15,7 @@ import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.ponder.AllCreatePonderTags;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.element.GuiGameElement;
@@ -191,9 +191,9 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
 		PoseStack ms = graphics.pose();
 		ms.pushPose();
 		ms.translate(torchX - 5, torchY + 14, 200);
-		TransformStack.cast(ms)
-			.rotateX(-22.5)
-			.rotateY(45);
+		TransformStack.of(ms)
+			.rotateXDegrees(-22.5f)
+			.rotateYDegrees(45);
 
 		for (boolean power : Iterate.trueAndFalse) {
 			GuiGameElement.of(Blocks.REDSTONE_TORCH.defaultBlockState()

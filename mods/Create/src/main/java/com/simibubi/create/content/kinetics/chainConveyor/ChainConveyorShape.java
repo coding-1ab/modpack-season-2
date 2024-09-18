@@ -2,12 +2,12 @@ package com.simibubi.create.content.kinetics.chainConveyor;
 
 import javax.annotation.Nullable;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.content.trains.track.TrackBlockOutline;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
@@ -85,10 +85,10 @@ public abstract class ChainConveyorShape {
 
 		@Override
 		public void drawOutline(BlockPos anchor, PoseStack ms, VertexConsumer vb) {
-			TransformStack.cast(ms)
+			TransformStack.of(ms)
 				.translate(pivot)
-				.rotateY(yaw)
-				.rotateX(pitch)
+				.rotateYDegrees((float) yaw)
+				.rotateXDegrees((float) pitch)
 				.translateBack(pivot);
 			TrackBlockOutline.renderShape(voxelShape, ms, vb, null);
 		}

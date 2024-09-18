@@ -1,9 +1,9 @@
 package com.simibubi.create.content.logistics.box;
 
-import com.jozufozu.flywheel.core.PartialModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.utility.math.AngleHelper;
@@ -31,7 +31,7 @@ public class PackageRenderer extends EntityRenderer<PackageEntity> {
 		PartialModel model = AllPartialModels.PACKAGES.get(ForgeRegistries.ITEMS.getKey(box.getItem()));
 		SuperByteBuffer sbb = CachedBuffers.partial(model, Blocks.AIR.defaultBlockState());
 		sbb.translate(-.5, 0, -.5)
-			.rotateCentered(Direction.UP, AngleHelper.rad(yaw))
+			.rotateCentered(AngleHelper.rad(yaw), Direction.UP)
 			.light(light)
 			.nudge(entity.getId());
 		sbb.renderInto(ms, buffer.getBuffer(RenderType.solid()));

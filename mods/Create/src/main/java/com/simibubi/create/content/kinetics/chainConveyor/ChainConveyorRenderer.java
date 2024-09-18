@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllPartialModels;
@@ -16,6 +15,7 @@ import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorPackage.C
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.render.RenderTypes;
 
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.utility.VecHelper;
@@ -102,7 +102,7 @@ public class ChainConveyorRenderer extends KineticBlockEntityRenderer<ChainConve
 		float xRot = Mth.wrapDegrees((float) Mth.atan2(dangleDiff.z, dangleDiff.y) * Mth.RAD_TO_DEG) / 2;
 		zRot = Mth.clamp(zRot, -25, 25);
 		xRot = Mth.clamp(xRot, -25, 25);
-		
+
 		for (SuperByteBuffer buf : new SuperByteBuffer[] { rigBuffer, boxBuffer }) {
 			buf.translate(offset);
 			buf.translate(0, 10 / 16f, 0);
@@ -110,11 +110,11 @@ public class ChainConveyorRenderer extends KineticBlockEntityRenderer<ChainConve
 
 			buf.rotateZ(zRot);
 			buf.rotateX(xRot);
-			
+
 			if (physicsData.flipped && buf == rigBuffer)
 				buf.rotateY(180);
 
-			buf.unCentre();
+			buf.uncenter();
 			buf.translate(0, -PackageItem.getHookDistance(box.item) + 7 / 16f, 0);
 
 			buf.light(light)
@@ -149,24 +149,24 @@ public class ChainConveyorRenderer extends KineticBlockEntityRenderer<ChainConve
 
 			SuperByteBuffer guard = CachedBuffers.partial(AllPartialModels.CHAIN_CONVEYOR_GUARD, be.getBlockState());
 			// guard.translate(startOffset.multiply(0, 1, 0));
-			guard.centre();
-			guard.rotateY(yaw);
+			guard.center();
+			guard.rotateYDegrees((float) yaw);
 
-			guard.unCentre();
+			guard.uncenter();
 			guard.light(light)
 				.nudge((int) blockPos.asLong())
 				.overlay(overlay)
 				.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
 
 			ms.pushPose();
-			TransformStack chain = TransformStack.cast(ms);
-			chain.centre();
+			var chain = TransformStack.of(ms);
+			chain.center();
 			chain.translate(startOffset);
-			chain.rotateY(yaw);
-			chain.rotateX(90 - pitch);
-			chain.rotateY(45);
+			chain.rotateYDegrees((float) yaw);
+			chain.rotateXDegrees(90 - (float) pitch);
+			chain.rotateYDegrees(45);
 			chain.translate(0, 8 / 16f, 0);
-			chain.unCentre();
+			chain.uncenter();
 
 			int light1 = LightTexture.pack(level.getBrightness(LightLayer.BLOCK, tilePos),
 				level.getBrightness(LightLayer.SKY, tilePos));

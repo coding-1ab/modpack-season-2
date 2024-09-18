@@ -1,12 +1,12 @@
 package com.simibubi.create.content.logistics.packager;
 
-import com.jozufozu.flywheel.core.PartialModel;
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.logistics.packager.PackagerBlock.PackagerType;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.utility.math.AngleHelper;
@@ -44,13 +44,13 @@ public class PackagerRenderer extends SmartBlockEntityRenderer<PackagerBlockEnti
 		SuperByteBuffer sbb = CachedBuffers.partial(hatchModel, blockState);
 		sbb.translate(Vec3.atLowerCornerOf(facing.getNormal())
 			.scale(.49999f))
-			.rotateCentered(Direction.UP, AngleHelper.rad(AngleHelper.horizontalAngle(facing)))
-			.rotateCentered(Direction.EAST, AngleHelper.rad(AngleHelper.verticalAngle(facing)))
+			.rotateCentered(AngleHelper.rad(AngleHelper.horizontalAngle(facing)), Direction.UP)
+			.rotateCentered(AngleHelper.rad(AngleHelper.verticalAngle(facing)), Direction.EAST)
 			.light(light)
 			.renderInto(ms, buffer.getBuffer(RenderType.solid()));
 
 		ms.pushPose();
-		TransformStack msr = TransformStack.cast(ms);
+		var msr = TransformStack.of(ms);
 		msr.translate(Vec3.atLowerCornerOf(facing.getNormal())
 			.scale(trayOffset));
 
@@ -58,7 +58,7 @@ public class PackagerRenderer extends SmartBlockEntityRenderer<PackagerBlockEnti
 			blockState.getValue(PackagerBlock.TYPE) == PackagerType.REGULAR ? AllPartialModels.PACKAGER_TRAY_REGULAR
 				: AllPartialModels.PACKAGER_TRAY_DEFRAG,
 			blockState);
-		sbb.rotateCentered(Direction.UP, AngleHelper.rad(facing.toYRot()))
+		sbb.rotateCentered(AngleHelper.rad(facing.toYRot()), Direction.UP)
 			.light(light)
 			.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
 
