@@ -64,7 +64,7 @@ public class PackagerRenderer extends SmartBlockEntityRenderer<PackagerBlockEnti
 
 		if (!renderedBox.isEmpty()) {
 			msr.translate(.5f, .5f, .5f)
-				.rotateY(facing.toYRot())
+				.rotateYDegrees(facing.toYRot())
 				.translate(0, 2 / 16f, 0)
 				.scale(1.49f, 1.49f, 1.49f);
 			Minecraft.getInstance()

@@ -39,8 +39,8 @@ public class PackagePortFilterSlotPositioning extends ValueBoxTransform {
 			horizontalAngle = ppbe.getYaw();
 
 		TransformStack.of(ms)
-			.rotateY(horizontalAngle)
-			.rotateX(90);
+			.rotateYDegrees(horizontalAngle)
+			.rotateXDegrees(90);
 	}
 
 }

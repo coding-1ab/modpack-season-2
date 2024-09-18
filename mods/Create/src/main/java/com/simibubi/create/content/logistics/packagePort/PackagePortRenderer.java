@@ -86,20 +86,20 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 
 		headPitch *= headPitchModifier;
 
-		body.centre()
-			.rotateY(yaw)
-			.unCentre()
+		body.center()
+			.rotateYDegrees(yaw)
+			.uncenter()
 			.light(light)
 			.overlay(overlay)
 			.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
 
 		SuperByteBuffer head = CachedBuffers.partial(AllPartialModels.PACKAGE_PORT_HEAD, blockEntity.getBlockState());
 
-		head.centre()
-			.rotateY(yaw)
-			.unCentre()
+		head.center()
+			.rotateYDegrees(yaw)
+			.uncenter()
 			.translate(8 / 16f, 10 / 16f, 11 / 16f)
-			.rotateX(headPitch)
+			.rotateXDegrees(headPitch)
 			.translateBack(8 / 16f, 10 / 16f, 11 / 16f);
 
 		head.light(light)
@@ -110,11 +110,11 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 		SuperByteBuffer tongue =
 			CachedBuffers.partial(AllPartialModels.PACKAGE_PORT_TONGUE, blockEntity.getBlockState());
 
-		tongue.centre()
-			.rotateY(yaw)
-			.unCentre()
+		tongue.center()
+			.rotateYDegrees(yaw)
+			.uncenter()
 			.translate(8 / 16f, 10 / 16f, 11 / 16f)
-			.rotateX(tonguePitch)
+			.rotateXDegrees(tonguePitch)
 			.scale(1f, 1f, tongueLength / (7 / 16f))
 			.translateBack(8 / 16f, 10 / 16f, 11 / 16f);
 
@@ -127,7 +127,7 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 //		SuperByteBuffer hatBuffer = CachedBuffers.partial(AllPartialModels.TRAIN_HAT, blockEntity.getBlockState());
 //		hatBuffer
 //			.translate(8 / 16f, 14 / 16f, 8 / 16f)
-//			.rotateY(yaw + 180)
+//			.rotateYDegrees(yaw + 180)
 //			.translate(0, 0, -3 / 16f)
 //			.rotateX(-4)
 //			.translateBack(0, 0, -3 / 16f)
@@ -161,9 +161,9 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 				.translate(diff.normalize()
 					.scale(itemDistance)
 					.subtract(0, animating && depositing ? 0.75 : 0, 0))
-				.centre()
+				.center()
 				.scale(scale)
-				.unCentre()
+				.uncenter()
 				.light(light)
 				.overlay(overlay)
 				.renderInto(ms, buffer.getBuffer(RenderType.cutout()));

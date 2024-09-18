@@ -106,13 +106,13 @@ public class ChainConveyorRenderer extends KineticBlockEntityRenderer<ChainConve
 		for (SuperByteBuffer buf : new SuperByteBuffer[] { rigBuffer, boxBuffer }) {
 			buf.translate(offset);
 			buf.translate(0, 10 / 16f, 0);
-			buf.rotateY(yaw);
+			buf.rotateYDegrees(yaw);
 
-			buf.rotateZ(zRot);
-			buf.rotateX(xRot);
+			buf.rotateZDegrees(zRot);
+			buf.rotateXDegrees(xRot);
 
 			if (physicsData.flipped && buf == rigBuffer)
-				buf.rotateY(180);
+				buf.rotateYDegrees(180);
 
 			buf.uncenter();
 			buf.translate(0, -PackageItem.getHookDistance(box.item) + 7 / 16f, 0);

@@ -251,7 +251,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 
 			TransformStack.of(poseStack)
 					.translateY(-(sectorWidth / 2f + innerRadius))
-					.rotateZ(-i * sectorAngle);
+					.rotateZDegrees(-i * sectorAngle);
 
 			try {
 				GuiGameElement.of(blockState, blockEntity)
@@ -277,7 +277,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 			poseStack.pushPose();
 
 			TransformStack.of(poseStack)
-					.rotateZ(sectorAngle / 2);
+					.rotateZDegrees(sectorAngle / 2);
 
 			poseStack.translate(0, -innerRadius - 20, 10);
 
@@ -286,7 +286,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 			poseStack.popPose();
 
 			TransformStack.of(poseStack)
-					.rotateZ(sectorAngle);
+					.rotateZDegrees(sectorAngle);
 		}
 
 		poseStack.popPose();
