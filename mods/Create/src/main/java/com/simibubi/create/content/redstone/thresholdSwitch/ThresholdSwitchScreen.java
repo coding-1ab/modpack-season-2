@@ -28,6 +28,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RedstoneTorchBlock;
 
@@ -162,14 +163,16 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
 		}
 
 		graphics.drawString(font,
-			Components.literal("\u2265 " + (forItems ? onAbove.getState() / valueStep
-				: blockEntity.format(onAbove.getState() / valueStep, stacks)
-					.getString())),
+			Components.literal("\u2265 " + (typeOfCurrentTarget == ThresholdType.UNSUPPORTED ? ""
+				: forItems ? onAbove.getState() / valueStep
+					: blockEntity.format(onAbove.getState() / valueStep, stacks)
+						.getString())),
 			x + 53, y + 28, 0xFFFFFFFF, true);
 		graphics.drawString(font,
-			Components.literal("\u2264 " + (forItems ? offBelow.getState() / valueStep
-				: blockEntity.format(offBelow.getState() / valueStep, stacks)
-					.getString())),
+			Components.literal("\u2264 " + (typeOfCurrentTarget == ThresholdType.UNSUPPORTED ? ""
+				: forItems ? offBelow.getState() / valueStep
+					: blockEntity.format(offBelow.getState() / valueStep, stacks)
+						.getString())),
 			x + 53, y + 28 + 24, 0xFFFFFFFF, true);
 
 		GuiGameElement.of(renderedItem).<GuiGameElement
@@ -181,7 +184,7 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
 		int itemY = y + 80;
 
 		ItemStack displayItem = blockEntity.getDisplayItemForScreen();
-		GuiGameElement.of(displayItem).<GuiGameElement
+		GuiGameElement.of(displayItem.isEmpty() ? new ItemStack(Items.BARRIER) : displayItem).<GuiGameElement
 			.GuiRenderBuilder>at(itemX, itemY, 0)
 			.render(graphics);
 
@@ -285,11 +288,15 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
 	}
 
 	private void updateInputBoxes() {
-		boolean forItems = blockEntity.getTypeOfCurrentTarget() == ThresholdType.ITEM;
+		ThresholdType typeOfCurrentTarget = blockEntity.getTypeOfCurrentTarget();
+		boolean forItems = typeOfCurrentTarget == ThresholdType.ITEM;
 		final int valueStep = getValueStep();
 		inStacks.active = inStacks.visible = forItems;
 		onAbove.setWidth(forItems ? 48 : 103);
 		offBelow.setWidth(forItems ? 48 : 103);
+
+		onAbove.visible = typeOfCurrentTarget != ThresholdType.UNSUPPORTED;
+		offBelow.visible = typeOfCurrentTarget != ThresholdType.UNSUPPORTED;
 
 		int min = blockEntity.currentMinLevel + valueStep;
 		int max = blockEntity.currentMaxLevel;

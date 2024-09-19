@@ -227,10 +227,6 @@ public class BeltRenderer extends SafeBlockEntityRenderer<BeltBlockEntity> {
 	private void renderItem(BeltBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light,
 		int overlay, Direction beltFacing, Vec3i directionVec, BeltSlope slope, int verticality, boolean slopeAlongX,
 		boolean onContraption, TransportedItemStack transported, Vec3 beltStartOffset) {
-		ms.pushPose();
-		TransformStack.of(ms)
-			.nudge(transported.angle);
-
 		Minecraft mc = Minecraft.getInstance();
 		ItemRenderer itemRenderer = mc.getItemRenderer();
 		MutableBlockPos mutablePos = new MutableBlockPos();
