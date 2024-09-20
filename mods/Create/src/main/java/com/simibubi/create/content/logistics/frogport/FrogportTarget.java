@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.packagePort;
+package com.simibubi.create.content.logistics.frogport;
 
 import java.util.Map;
 
@@ -25,25 +25,25 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public abstract class PackagePortTarget {
+public abstract class FrogportTarget {
 
 	public BlockPos relativePos;
 	private String typeKey;
 
-	public PackagePortTarget(String typeKey, BlockPos relativePos) {
+	public FrogportTarget(String typeKey, BlockPos relativePos) {
 		this.typeKey = typeKey;
 		this.relativePos = relativePos;
 	}
 
 	public abstract boolean export(LevelAccessor level, BlockPos portPos, ItemStack box, boolean simulate);
 
-	public void setup(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {}
+	public void setup(FrogportBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {}
 
-	public void register(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {}
+	public void register(FrogportBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {}
 
-	public void deregister(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {}
+	public void deregister(FrogportBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {}
 
-	public abstract Vec3 getExactTargetLocation(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos);
+	public abstract Vec3 getExactTargetLocation(FrogportBlockEntity ppbe, LevelAccessor level, BlockPos portPos);
 
 	public CompoundTag write() {
 		CompoundTag compoundTag = new CompoundTag();
@@ -53,15 +53,15 @@ public abstract class PackagePortTarget {
 		return compoundTag;
 	}
 
-	public static PackagePortTarget read(CompoundTag tag) {
+	public static FrogportTarget read(CompoundTag tag) {
 		if (tag.isEmpty())
 			return null;
 
 		BlockPos relativePos = NbtUtils.readBlockPos(tag.getCompound("RelativePos"));
-		PackagePortTarget target = switch (tag.getString("Type")) {
+		FrogportTarget target = switch (tag.getString("Type")) {
 
-		case "ChainConveyor" -> new ChainConveyorPortTarget(relativePos, 0, null);
-		case "TrainStation" -> new TrainStationPortTarget(relativePos);
+		case "ChainConveyor" -> new ChainConveyorFrogportTarget(relativePos, 0, null);
+		case "TrainStation" -> new TrainStationFrogportTarget(relativePos);
 
 		default -> null;
 		};
@@ -81,20 +81,20 @@ public abstract class PackagePortTarget {
 		return level.getBlockEntity(portPos.offset(relativePos));
 	}
 
-	public static class ChainConveyorPortTarget extends PackagePortTarget {
+	public static class ChainConveyorFrogportTarget extends FrogportTarget {
 
 		public float chainPos;
 		public BlockPos connection;
 		public boolean flipped;
 
-		public ChainConveyorPortTarget(BlockPos relativePos, float chainPos, @Nullable BlockPos connection) {
+		public ChainConveyorFrogportTarget(BlockPos relativePos, float chainPos, @Nullable BlockPos connection) {
 			super("ChainConveyor", relativePos);
 			this.chainPos = chainPos;
 			this.connection = connection;
 		}
 
 		@Override
-		public void setup(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
+		public void setup(FrogportBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
 			if (be(level, portPos) instanceof ChainConveyorBlockEntity clbe)
 				flipped = clbe.getSpeed() < 0;
 		}
@@ -114,7 +114,7 @@ public abstract class PackagePortTarget {
 		}
 
 		@Override
-		public void register(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
+		public void register(FrogportBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
 			if (!(be(level, portPos) instanceof ChainConveyorBlockEntity clbe))
 				return;
 			ChainConveyorBlockEntity actualBe = clbe;
@@ -149,7 +149,7 @@ public abstract class PackagePortTarget {
 		}
 
 		@Override
-		public void deregister(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
+		public void deregister(FrogportBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
 			if (!(be(level, portPos) instanceof ChainConveyorBlockEntity clbe))
 				return;
 			clbe.loopPorts.remove(relativePos.multiply(-1));
@@ -181,7 +181,7 @@ public abstract class PackagePortTarget {
 		}
 
 		@Override
-		public Vec3 getExactTargetLocation(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
+		public Vec3 getExactTargetLocation(FrogportBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
 			if (!(be(level, portPos) instanceof ChainConveyorBlockEntity clbe))
 				return Vec3.ZERO;
 			return clbe.getPackagePosition(chainPos, connection);
@@ -189,9 +189,9 @@ public abstract class PackagePortTarget {
 
 	}
 
-	public static class TrainStationPortTarget extends PackagePortTarget {
+	public static class TrainStationFrogportTarget extends FrogportTarget {
 
-		public TrainStationPortTarget(BlockPos relativePos) {
+		public TrainStationFrogportTarget(BlockPos relativePos) {
 			super("TrainStation", relativePos);
 		}
 
@@ -223,7 +223,7 @@ public abstract class PackagePortTarget {
 		}
 
 		@Override
-		public Vec3 getExactTargetLocation(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
+		public Vec3 getExactTargetLocation(FrogportBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
 			if (!(be(level, portPos) instanceof StationBlockEntity sbe) || sbe.edgePoint == null)
 				return Vec3.atCenterOf(portPos);
 			return Vec3.atCenterOf(sbe.edgePoint.getPositionForMapMarker()
@@ -231,13 +231,13 @@ public abstract class PackagePortTarget {
 		}
 
 		@Override
-		public void register(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
+		public void register(FrogportBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
 			if (be(level, portPos) instanceof StationBlockEntity sbe)
 				sbe.attachPackagePort(ppbe);
 		}
 
 		@Override
-		public void deregister(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
+		public void deregister(FrogportBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
 			if (be(level, portPos) instanceof StationBlockEntity sbe)
 				sbe.removePackagePort(ppbe);
 		}

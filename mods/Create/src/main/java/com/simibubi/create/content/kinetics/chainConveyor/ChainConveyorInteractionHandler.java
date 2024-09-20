@@ -12,8 +12,8 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.content.logistics.packagePort.PackagePortTarget;
-import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler;
+import com.simibubi.create.content.logistics.frogport.FrogportTarget;
+import com.simibubi.create.content.logistics.frogport.FrogportTargetSelectionHandler;
 import com.simibubi.create.foundation.utility.RaycastHelper;
 
 import net.createmod.catnip.CatnipClient;
@@ -117,7 +117,7 @@ public class ChainConveyorInteractionHandler {
 	private static boolean isActive() {
 		Minecraft mc = Minecraft.getInstance();
 		ItemStack mainHandItem = mc.player.getMainHandItem();
-		return AllItemTags.WRENCH.matches(mainHandItem) || AllBlocks.PACKAGE_PORT.isIn(mainHandItem)
+		return AllItemTags.WRENCH.matches(mainHandItem) || AllBlocks.PACKAGE_FROGPORT.isIn(mainHandItem)
 			|| PackageItem.isPackage(mainHandItem);
 	}
 
@@ -140,10 +140,10 @@ public class ChainConveyorInteractionHandler {
 			return true;
 		}
 
-		if (AllBlocks.PACKAGE_PORT.isIn(mainHandItem)) {
-			PackagePortTargetSelectionHandler.exactPositionOfTarget = selectedBakedPosition;
-			PackagePortTargetSelectionHandler.activePackageTarget =
-				new PackagePortTarget.ChainConveyorPortTarget(selectedLift, selectedChainPosition, selectedConnection);
+		if (AllBlocks.PACKAGE_FROGPORT.isIn(mainHandItem)) {
+			FrogportTargetSelectionHandler.exactPositionOfTarget = selectedBakedPosition;
+			FrogportTargetSelectionHandler.activePackageTarget =
+				new FrogportTarget.ChainConveyorFrogportTarget(selectedLift, selectedChainPosition, selectedConnection);
 			return true;
 		}
 

@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.packagePort;
+package com.simibubi.create.content.logistics.frogport;
 
 import com.simibubi.create.AllPackets;
 
@@ -12,9 +12,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.PacketDistributor;
 
-public class PackagePortItem extends BlockItem {
+public class FrogportItem extends BlockItem {
 
-	public PackagePortItem(Block pBlock, Properties pProperties) {
+	public FrogportItem(Block pBlock, Properties pProperties) {
 		super(pBlock, pProperties);
 	}
 
@@ -23,7 +23,7 @@ public class PackagePortItem extends BlockItem {
 		BlockState p_195943_5_) {
 		if (!world.isClientSide && player instanceof ServerPlayer sp)
 			AllPackets.getChannel()
-				.send(PacketDistributor.PLAYER.with(() -> sp), new PackagePortPlacementPacket.ClientBoundRequest(pos));
+				.send(PacketDistributor.PLAYER.with(() -> sp), new FrogportPlacementPacket.ClientBoundRequest(pos));
 		return super.updateCustomBlockEntityTag(pos, world, player, p_195943_4_, p_195943_5_);
 	}
 

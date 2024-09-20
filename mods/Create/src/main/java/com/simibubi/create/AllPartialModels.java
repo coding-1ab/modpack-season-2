@@ -116,8 +116,8 @@ public class AllPartialModels {
 
 		CHAIN_CONVEYOR_GUARD = block("chain_conveyor/guard"), CHAIN_CONVEYOR_SHAFT = block("chain_conveyor/shaft"),
 
-		PACKAGE_PORT_BODY = block("package_port/body"), PACKAGE_PORT_HEAD = block("package_port/head"),
-		PACKAGE_PORT_TONGUE = block("package_port/tongue"),
+		FROGPORT_BODY = block("package_frogport/body"), FROGPORT_HEAD = block("package_frogport/head"),
+		FROGPORT_TONGUE = block("package_frogport/tongue"),
 
 		PACKAGER_TRAY_REGULAR = block("packager/tray_regular"), PACKAGER_TRAY_DEFRAG = block("packager/tray_defrag"),
 		PACKAGER_HATCH_OPEN = block("packager/hatch_open"), PACKAGER_HATCH_CLOSED = block("packager/hatch_closed"),

@@ -54,7 +54,7 @@ public class ChainConveyorBlock extends KineticBlock implements IBE<ChainConveyo
 		if (!pLevel.isClientSide() && pPlayer != null && pPlayer.getItemInHand(pHand)
 			.is(Items.CHAIN))
 			return InteractionResult.SUCCESS;
-		if (pPlayer != null && AllBlocks.PACKAGE_PORT.isIn(pPlayer.getItemInHand(pHand)))
+		if (pPlayer != null && AllBlocks.PACKAGE_FROGPORT.isIn(pPlayer.getItemInHand(pHand)))
 			return InteractionResult.SUCCESS;
 		return InteractionResult.PASS;
 	}

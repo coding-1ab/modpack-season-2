@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.packagePort;
+package com.simibubi.create.content.logistics.frogport;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
@@ -23,9 +23,9 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
 
-public class PackagePortTargetSelectionHandler {
+public class FrogportTargetSelectionHandler {
 
-	public static PackagePortTarget activePackageTarget;
+	public static FrogportTarget activePackageTarget;
 	public static Vec3 exactPositionOfTarget;
 
 	public static void flushSettings(BlockPos pos) {
@@ -38,11 +38,11 @@ public class PackagePortTargetSelectionHandler {
 		if (validateDiff(exactPositionOfTarget, pos) == null) {
 			activePackageTarget.relativePos = activePackageTarget.relativePos.subtract(pos);
 			AllPackets.getChannel()
-				.sendToServer(new PackagePortPlacementPacket(activePackageTarget, pos));
+				.sendToServer(new FrogportPlacementPacket(activePackageTarget, pos));
 
 			BlockEntity blockEntity = Minecraft.getInstance().level.getBlockEntity(pos);
-			if (blockEntity instanceof PackagePortBlockEntity ppbe)
-				ScreenOpener.open(new PackagePortScreen(ppbe));
+			if (blockEntity instanceof FrogportBlockEntity ppbe)
+				ScreenOpener.open(new FrogportScreen(ppbe));
 		}
 
 		activePackageTarget = null;
@@ -64,13 +64,13 @@ public class PackagePortTargetSelectionHandler {
 			return false;
 		if (sbe.edgePoint == null)
 			return false;
-		if (!AllBlocks.PACKAGE_PORT.isIn(mainHandItem))
+		if (!AllBlocks.PACKAGE_FROGPORT.isIn(mainHandItem))
 			return false;
 
-		PackagePortTargetSelectionHandler.exactPositionOfTarget =
+		FrogportTargetSelectionHandler.exactPositionOfTarget =
 			Vec3.atCenterOf(sbe.edgePoint.getPositionForMapMarker()
 				.above());
-		PackagePortTargetSelectionHandler.activePackageTarget = new PackagePortTarget.TrainStationPortTarget(pos);
+		FrogportTargetSelectionHandler.activePackageTarget = new FrogportTarget.TrainStationFrogportTarget(pos);
 		return true;
 	}
 
@@ -79,7 +79,7 @@ public class PackagePortTargetSelectionHandler {
 		LocalPlayer player = mc.player;
 		if (activePackageTarget == null)
 			return;
-		if (!AllBlocks.PACKAGE_PORT.isIn(player.getMainHandItem()))
+		if (!AllBlocks.PACKAGE_FROGPORT.isIn(player.getMainHandItem()))
 			return;
 
 		HitResult objectMouseOver = mc.hitResult;

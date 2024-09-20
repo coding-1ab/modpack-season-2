@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
+import com.simibubi.create.content.logistics.frogport.FrogportBlockEntity;
 import com.simibubi.create.content.trains.entity.Carriage;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
 import com.simibubi.create.content.trains.entity.Train;
@@ -197,7 +197,7 @@ public class GlobalStation extends SingleBlockEntityEdgePoint {
 					if (!PackageItem.matchAddress(stack, port.address))
 						continue;
 					
-					if (level != null && level.isLoaded(pos) && level.getBlockEntity(pos) instanceof PackagePortBlockEntity ppbe) {
+					if (level != null && level.isLoaded(pos) && level.getBlockEntity(pos) instanceof FrogportBlockEntity ppbe) {
 						if (ppbe.isAnimationInProgress())
 							continue;
 						if (ppbe.inventory.isBackedUp())

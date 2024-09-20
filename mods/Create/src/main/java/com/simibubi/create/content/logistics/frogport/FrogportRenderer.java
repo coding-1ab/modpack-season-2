@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.packagePort;
+package com.simibubi.create.content.logistics.frogport;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
@@ -15,16 +15,16 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlockEntity> {
+public class FrogportRenderer extends SmartBlockEntityRenderer<FrogportBlockEntity> {
 
-	public PackagePortRenderer(Context context) {
+	public FrogportRenderer(Context context) {
 		super(context);
 	}
 
 	@Override
-	protected void renderSafe(PackagePortBlockEntity blockEntity, float partialTicks, PoseStack ms,
+	protected void renderSafe(FrogportBlockEntity blockEntity, float partialTicks, PoseStack ms,
 		MultiBufferSource buffer, int light, int overlay) {
-		SuperByteBuffer body = CachedBuffers.partial(AllPartialModels.PACKAGE_PORT_BODY, blockEntity.getBlockState());
+		SuperByteBuffer body = CachedBuffers.partial(AllPartialModels.FROGPORT_BODY, blockEntity.getBlockState());
 
 		float yaw = blockEntity.getYaw();
 
@@ -93,7 +93,7 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 			.overlay(overlay)
 			.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
 
-		SuperByteBuffer head = CachedBuffers.partial(AllPartialModels.PACKAGE_PORT_HEAD, blockEntity.getBlockState());
+		SuperByteBuffer head = CachedBuffers.partial(AllPartialModels.FROGPORT_HEAD, blockEntity.getBlockState());
 
 		head.center()
 			.rotateYDegrees(yaw)
@@ -108,7 +108,7 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 			.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
 
 		SuperByteBuffer tongue =
-			CachedBuffers.partial(AllPartialModels.PACKAGE_PORT_TONGUE, blockEntity.getBlockState());
+			CachedBuffers.partial(AllPartialModels.FROGPORT_TONGUE, blockEntity.getBlockState());
 
 		tongue.center()
 			.rotateYDegrees(yaw)
@@ -139,7 +139,7 @@ public class PackagePortRenderer extends SmartBlockEntityRenderer<PackagePortBlo
 
 	}
 
-	private void renderPackage(PackagePortBlockEntity blockEntity, PoseStack ms, MultiBufferSource buffer, int light,
+	private void renderPackage(FrogportBlockEntity blockEntity, PoseStack ms, MultiBufferSource buffer, int light,
 		int overlay, Vec3 diff, float scale, float itemDistance) {
 		if (blockEntity.animatedPackage == null)
 			return;

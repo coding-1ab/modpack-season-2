@@ -19,7 +19,7 @@ import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorShape.Cha
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorShape.ChainConveyorOBB;
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
+import com.simibubi.create.content.logistics.frogport.FrogportBlockEntity;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
@@ -304,7 +304,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 
 	private boolean exportToPort(ChainConveyorPackage box, BlockPos offset) {
 		BlockPos globalPos = worldPosition.offset(offset);
-		if (!(level.getBlockEntity(globalPos) instanceof PackagePortBlockEntity ppbe))
+		if (!(level.getBlockEntity(globalPos) instanceof FrogportBlockEntity ppbe))
 			return false;
 
 		if (ppbe.isAnimationInProgress())
@@ -317,7 +317,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 	}
 
 	private void notifyPortToAnticipate(BlockPos offset) {
-		if (level.getBlockEntity(worldPosition.offset(offset)) instanceof PackagePortBlockEntity ppbe)
+		if (level.getBlockEntity(worldPosition.offset(offset)) instanceof FrogportBlockEntity ppbe)
 			ppbe.sendAnticipate();
 	}
 

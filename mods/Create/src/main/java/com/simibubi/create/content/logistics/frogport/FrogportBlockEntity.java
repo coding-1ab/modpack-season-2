@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.packagePort;
+package com.simibubi.create.content.logistics.frogport;
 
 import java.util.List;
 
@@ -36,12 +36,12 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class PackagePortBlockEntity extends SmartBlockEntity {
+public class FrogportBlockEntity extends SmartBlockEntity {
 
 	public boolean acceptsPackages;
 	public String addressFilter;
-	public PackagePortTarget target;
-	public PackagePortInventory inventory;
+	public FrogportTarget target;
+	public FrogportInventory inventory;
 	private LazyOptional<IItemHandler> itemHandler;
 
 	public ItemStack animatedPackage;
@@ -53,9 +53,9 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 
 	public float passiveYaw;
 
-	public PackagePortBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+	public FrogportBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
-		inventory = new PackagePortInventory(this);
+		inventory = new FrogportInventory(this);
 		itemHandler = LazyOptional.of(() -> inventory);
 		animationProgress = LerpedFloat.linear();
 		anticipationProgress = LerpedFloat.linear();
@@ -257,7 +257,7 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 
 	protected IItemHandler getAdjacentInventory(Direction side) {
 		BlockEntity blockEntity = level.getBlockEntity(worldPosition.relative(side));
-		if (blockEntity == null || blockEntity instanceof PackagePortBlockEntity)
+		if (blockEntity == null || blockEntity instanceof FrogportBlockEntity)
 			return null;
 		return blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, side.getOpposite())
 			.orElse(null);
@@ -285,8 +285,8 @@ public class PackagePortBlockEntity extends SmartBlockEntity {
 	@Override
 	protected void read(CompoundTag tag, boolean clientPacket) {
 		super.read(tag, clientPacket);
-		PackagePortTarget prevTarget = target;
-		target = PackagePortTarget.read(tag.getCompound("Target"));
+		FrogportTarget prevTarget = target;
+		target = FrogportTarget.read(tag.getCompound("Target"));
 		inventory.deserializeNBT(tag.getCompound("Inventory"));
 		passiveYaw = tag.getFloat("PlacedYaw");
 		addressFilter = tag.getString("AddressFilter");

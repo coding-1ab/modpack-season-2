@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.packagePort;
+package com.simibubi.create.content.logistics.frogport;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -34,9 +34,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 
-public class PackagePortBlock extends Block implements IBE<PackagePortBlockEntity>, IWrenchable {
+public class FrogportBlock extends Block implements IBE<FrogportBlockEntity>, IWrenchable {
 
-	public PackagePortBlock(Properties pProperties) {
+	public FrogportBlock(Properties pProperties) {
 		super(pProperties);
 	}
 
@@ -75,7 +75,7 @@ public class PackagePortBlock extends Block implements IBE<PackagePortBlockEntit
 	}
 
 	@OnlyIn(value = Dist.CLIENT)
-	protected void displayScreen(PackagePortBlockEntity be, Player player) {
+	protected void displayScreen(FrogportBlockEntity be, Player player) {
 		if (be.target == null) {
 			CreateLang.translate("gui.package_port.not_targeting_anything")
 				.style(ChatFormatting.RED)
@@ -83,17 +83,17 @@ public class PackagePortBlock extends Block implements IBE<PackagePortBlockEntit
 			return;
 		}
 		if (player instanceof LocalPlayer)
-			ScreenOpener.open(new PackagePortScreen(be));
+			ScreenOpener.open(new FrogportScreen(be));
 	}
 
 	@Override
-	public Class<PackagePortBlockEntity> getBlockEntityClass() {
-		return PackagePortBlockEntity.class;
+	public Class<FrogportBlockEntity> getBlockEntityClass() {
+		return FrogportBlockEntity.class;
 	}
 
 	@Override
-	public BlockEntityType<? extends PackagePortBlockEntity> getBlockEntityType() {
-		return AllBlockEntityTypes.PACKAGE_PORT.get();
+	public BlockEntityType<? extends FrogportBlockEntity> getBlockEntityType() {
+		return AllBlockEntityTypes.PACKAGE_FROGPORT.get();
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.packagePort;
+package com.simibubi.create.content.logistics.frogport;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -7,12 +7,12 @@ import com.simibubi.create.content.logistics.box.PackageItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class PackagePortInventory extends ItemStackHandler {
+public class FrogportInventory extends ItemStackHandler {
 
 	private boolean receiveMode;
-	private PackagePortBlockEntity port;
+	private FrogportBlockEntity port;
 
-	public PackagePortInventory(PackagePortBlockEntity port) {
+	public FrogportInventory(FrogportBlockEntity port) {
 		super(9);
 		this.port = port;
 		receiveMode = false;

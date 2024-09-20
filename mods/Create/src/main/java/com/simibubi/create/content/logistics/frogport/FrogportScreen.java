@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.packagePort;
+package com.simibubi.create.content.logistics.frogport;
 
 import java.util.List;
 
@@ -19,19 +19,19 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
-public class PackagePortScreen extends AbstractSimiScreen {
+public class FrogportScreen extends AbstractSimiScreen {
 
-	private ItemStack renderedItem = AllBlocks.PACKAGE_PORT.asStack();
+	private ItemStack renderedItem = AllBlocks.PACKAGE_FROGPORT.asStack();
 	private ItemStack renderedPackage = PackageItem.containing(List.of());
 	private AllGuiTextures background;
-	private PackagePortBlockEntity blockEntity;
+	private FrogportBlockEntity blockEntity;
 	private EditBox addressBox;
 	private IconButton confirmButton;
 	private IconButton dontAcceptPackages;
 	private IconButton dumpPackagesButton;
 
-	public PackagePortScreen(PackagePortBlockEntity be) {
-		super(AllBlocks.PACKAGE_PORT.asStack()
+	public FrogportScreen(FrogportBlockEntity be) {
+		super(AllBlocks.PACKAGE_FROGPORT.asStack()
 			.getHoverName());
 		background = AllGuiTextures.PACKAGE_FILTER;
 		this.blockEntity = be;
@@ -65,7 +65,7 @@ public class PackagePortScreen extends AbstractSimiScreen {
 
 		dumpPackagesButton = new IconButton(x + 156, y + background.getHeight() - 24, AllIcons.I_PRIORITY_LOW);
 		dumpPackagesButton.withCallback(() -> AllPackets.getChannel()
-			.sendToServer(new PackagePortConfigurationPacket(blockEntity.getBlockPos(), addressBox.getValue(),
+			.sendToServer(new FrogportConfigurationPacket(blockEntity.getBlockPos(), addressBox.getValue(),
 				!sendOnly(), true)));
 		dumpPackagesButton.setToolTip(CreateLang.translateDirect("gui.package_port.eject_to_inventory"));
 		addRenderableWidget(dumpPackagesButton);
@@ -85,7 +85,7 @@ public class PackagePortScreen extends AbstractSimiScreen {
 	@Override
 	public void removed() {
 		AllPackets.getChannel()
-			.sendToServer(new PackagePortConfigurationPacket(blockEntity.getBlockPos(), addressBox.getValue(),
+			.sendToServer(new FrogportConfigurationPacket(blockEntity.getBlockPos(), addressBox.getValue(),
 				!sendOnly(), false));
 		super.removed();
 	}

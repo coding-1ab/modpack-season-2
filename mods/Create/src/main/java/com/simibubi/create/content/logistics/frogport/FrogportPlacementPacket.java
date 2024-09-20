@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.packagePort;
+package com.simibubi.create.content.logistics.frogport;
 
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 import com.simibubi.create.infrastructure.config.AllConfigs;
@@ -13,18 +13,18 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent.Context;
 
-public class PackagePortPlacementPacket extends SimplePacketBase {
+public class FrogportPlacementPacket extends SimplePacketBase {
 
-	private PackagePortTarget target;
+	private FrogportTarget target;
 	private BlockPos pos;
 
-	public PackagePortPlacementPacket(PackagePortTarget target, BlockPos pos) {
+	public FrogportPlacementPacket(FrogportTarget target, BlockPos pos) {
 		this.target = target;
 		this.pos = pos;
 	}
 
-	public PackagePortPlacementPacket(FriendlyByteBuf buffer) {
-		target = PackagePortTarget.read(buffer.readNbt());
+	public FrogportPlacementPacket(FriendlyByteBuf buffer) {
+		target = FrogportTarget.read(buffer.readNbt());
 		pos = buffer.readBlockPos();
 	}
 
@@ -44,7 +44,7 @@ public class PackagePortPlacementPacket extends SimplePacketBase {
 			if (world == null || !world.isLoaded(pos))
 				return;
 			BlockEntity blockEntity = world.getBlockEntity(pos);
-			if (!(blockEntity instanceof PackagePortBlockEntity ppbe))
+			if (!(blockEntity instanceof FrogportBlockEntity ppbe))
 				return;
 
 			Vec3 targetLocation = target.getExactTargetLocation(ppbe, world, pos);
@@ -79,7 +79,7 @@ public class PackagePortPlacementPacket extends SimplePacketBase {
 		@Override
 		public boolean handle(Context context) {
 			context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-				() -> () -> PackagePortTargetSelectionHandler.flushSettings(pos)));
+				() -> () -> FrogportTargetSelectionHandler.flushSettings(pos)));
 			return true;
 		}
 

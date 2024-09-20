@@ -38,7 +38,7 @@ import com.simibubi.create.content.kinetics.fan.AirCurrent;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPointHandler;
 import com.simibubi.create.content.kinetics.turntable.TurntableHandler;
 import com.simibubi.create.content.logistics.depot.EjectorTargetHandler;
-import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler;
+import com.simibubi.create.content.logistics.frogport.FrogportTargetSelectionHandler;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.content.redstone.displayLink.ClickToLinkBlockItem;
 import com.simibubi.create.content.redstone.link.LinkRenderer;
@@ -178,7 +178,7 @@ public class ClientEvents {
 		ChainConveyorInteractionHandler.clientTick();
 		ChainConveyorRidingHandler.clientTick();
 		ChainConveyorConnectionHandler.clientTick();
-		PackagePortTargetSelectionHandler.tick();
+		FrogportTargetSelectionHandler.tick();
 	}
 
 	@SubscribeEvent

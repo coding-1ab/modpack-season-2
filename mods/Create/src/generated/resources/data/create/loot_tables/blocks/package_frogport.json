@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "create:package_port"
+          "name": "create:package_frogport"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "create:blocks/package_port"
+  "random_sequence": "create:blocks/package_frogport"
 }

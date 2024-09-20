@@ -28,7 +28,7 @@ import com.simibubi.create.content.contraptions.ITransformableBlockEntity;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.decoration.slidingDoor.DoorControlBehaviour;
 import com.simibubi.create.content.logistics.depot.DepotBehaviour;
-import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
+import com.simibubi.create.content.logistics.frogport.FrogportBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlock;
 import com.simibubi.create.content.trains.bogey.AbstractBogeyBlock;
 import com.simibubi.create.content.trains.bogey.AbstractBogeyBlockEntity;
@@ -961,7 +961,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 
 	// Package port integration
 
-	public void attachPackagePort(PackagePortBlockEntity ppbe) {
+	public void attachPackagePort(FrogportBlockEntity ppbe) {
 		GlobalStation station = getStation();
 		if (station == null)
 			return;
@@ -971,7 +971,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 		station.connectedPorts.put(ppbe.getBlockPos(), globalPackagePort);
 	}
 
-	public void removePackagePort(PackagePortBlockEntity ppbe) {
+	public void removePackagePort(FrogportBlockEntity ppbe) {
 		GlobalStation station = getStation();
 		if (station == null)
 			return;
@@ -993,7 +993,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 			GlobalPackagePort port = entry.getValue();
 			if (!level.isLoaded(pos))
 				continue;
-			if (!(level.getBlockEntity(pos) instanceof PackagePortBlockEntity ppbe)) {
+			if (!(level.getBlockEntity(pos) instanceof FrogportBlockEntity ppbe)) {
 				iterator.remove();
 				changed = true;
 				continue;

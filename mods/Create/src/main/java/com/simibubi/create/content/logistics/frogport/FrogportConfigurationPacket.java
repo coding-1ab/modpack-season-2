@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.packagePort;
+package com.simibubi.create.content.logistics.frogport;
 
 import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
 
@@ -7,20 +7,20 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
-public class PackagePortConfigurationPacket extends BlockEntityConfigurationPacket<PackagePortBlockEntity> {
+public class FrogportConfigurationPacket extends BlockEntityConfigurationPacket<FrogportBlockEntity> {
 
 	private String newFilter;
 	private boolean ejectPackages;
 	private boolean acceptPackages;
 
-	public PackagePortConfigurationPacket(BlockPos pos, String newFilter, boolean acceptPackages, boolean ejectPackages) {
+	public FrogportConfigurationPacket(BlockPos pos, String newFilter, boolean acceptPackages, boolean ejectPackages) {
 		super(pos);
 		this.newFilter = newFilter;
 		this.ejectPackages = ejectPackages;
 		this.acceptPackages = acceptPackages;
 	}
 
-	public PackagePortConfigurationPacket(FriendlyByteBuf buffer) {
+	public FrogportConfigurationPacket(FriendlyByteBuf buffer) {
 		super(buffer);
 	}
 
@@ -39,7 +39,7 @@ public class PackagePortConfigurationPacket extends BlockEntityConfigurationPack
 	}
 
 	@Override
-	protected void applySettings(ServerPlayer player, PackagePortBlockEntity be) {
+	protected void applySettings(ServerPlayer player, FrogportBlockEntity be) {
 		super.applySettings(player, be);
 		if (!ejectPackages)
 			return;
@@ -55,7 +55,7 @@ public class PackagePortConfigurationPacket extends BlockEntityConfigurationPack
 	}
 
 	@Override
-	protected void applySettings(PackagePortBlockEntity be) {
+	protected void applySettings(FrogportBlockEntity be) {
 		if (be.addressFilter.equals(newFilter) && be.acceptsPackages == acceptPackages)
 			return;
 		be.addressFilter = newFilter;

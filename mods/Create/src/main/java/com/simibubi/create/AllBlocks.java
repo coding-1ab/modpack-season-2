@@ -166,6 +166,8 @@ import com.simibubi.create.content.logistics.crate.CreativeCrateBlock;
 import com.simibubi.create.content.logistics.depot.DepotBlock;
 import com.simibubi.create.content.logistics.depot.EjectorBlock;
 import com.simibubi.create.content.logistics.depot.EjectorItem;
+import com.simibubi.create.content.logistics.frogport.FrogportBlock;
+import com.simibubi.create.content.logistics.frogport.FrogportItem;
 import com.simibubi.create.content.logistics.funnel.AndesiteFunnelBlock;
 import com.simibubi.create.content.logistics.funnel.BeltFunnelBlock;
 import com.simibubi.create.content.logistics.funnel.BeltFunnelGenerator;
@@ -173,8 +175,6 @@ import com.simibubi.create.content.logistics.funnel.BrassFunnelBlock;
 import com.simibubi.create.content.logistics.funnel.FunnelGenerator;
 import com.simibubi.create.content.logistics.funnel.FunnelItem;
 import com.simibubi.create.content.logistics.funnel.FunnelMovementBehaviour;
-import com.simibubi.create.content.logistics.packagePort.PackagePortBlock;
-import com.simibubi.create.content.logistics.packagePort.PackagePortItem;
 import com.simibubi.create.content.logistics.packager.PackagerBlock;
 import com.simibubi.create.content.logistics.packager.PackagerGenerator;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
@@ -1723,8 +1723,8 @@ public class AllBlocks {
 		.build()
 		.register();
 
-	public static final BlockEntry<PackagePortBlock> PACKAGE_PORT =
-		REGISTRATE.block("package_port", PackagePortBlock::new)
+	public static final BlockEntry<FrogportBlock> PACKAGE_FROGPORT =
+		REGISTRATE.block("package_frogport", FrogportBlock::new)
 			.initialProperties(SharedProperties::softMetal)
 			.properties(p -> p.noOcclusion())
 			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
@@ -1732,7 +1732,7 @@ public class AllBlocks {
 			.transform(pickaxeOnly())
 			.addLayer(() -> RenderType::cutoutMipped)
 			.blockstate((c, p) -> p.simpleBlock(c.getEntry(), AssetLookup.partialBaseModel(c, p)))
-			.item(PackagePortItem::new)
+			.item(FrogportItem::new)
 			.model(AssetLookup::customItemModel)
 			.build()
 			.register();

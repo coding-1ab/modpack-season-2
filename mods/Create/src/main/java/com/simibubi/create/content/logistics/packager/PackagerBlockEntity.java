@@ -6,7 +6,7 @@ import java.util.List;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.crate.BottomlessItemHandler;
-import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
+import com.simibubi.create.content.logistics.frogport.FrogportBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerBlock.PackagerType;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
@@ -454,7 +454,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	}
 
 	protected void wakeTheFrogs() {
-		if (level.getBlockEntity(worldPosition.relative(Direction.UP)) instanceof PackagePortBlockEntity port)
+		if (level.getBlockEntity(worldPosition.relative(Direction.UP)) instanceof FrogportBlockEntity port)
 			port.tryPullingFromAdjacentInventories();
 	}
 
