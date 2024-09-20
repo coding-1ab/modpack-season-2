@@ -284,7 +284,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 			return false;
 
 		if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-			this.kill();
+			this.remove(RemovalReason.KILLED);
 			return false;
 		}
 
