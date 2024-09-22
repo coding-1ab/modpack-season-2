@@ -15,6 +15,7 @@ import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorPackage.C
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.render.RenderTypes;
 
+import dev.engine_room.flywheel.api.backend.BackendManager;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
@@ -54,11 +55,13 @@ public class ChainConveyorRenderer extends KineticBlockEntityRenderer<ChainConve
 
 		renderChains(be, ms, buffer, light, overlay);
 
-		for (ChainConveyorPackage box : be.loopingPackages)
-			renderBox(be, ms, buffer, overlay, pos, box, partialTicks);
-		for (Entry<BlockPos, List<ChainConveyorPackage>> entry : be.travellingPackages.entrySet())
-			for (ChainConveyorPackage box : entry.getValue())
+		if (!BackendManager.isBackendOn()) {
+			for (ChainConveyorPackage box : be.loopingPackages)
 				renderBox(be, ms, buffer, overlay, pos, box, partialTicks);
+			for (Entry<BlockPos, List<ChainConveyorPackage>> entry : be.travellingPackages.entrySet())
+				for (ChainConveyorPackage box : entry.getValue())
+					renderBox(be, ms, buffer, overlay, pos, box, partialTicks);
+		}
 	}
 
 	private void renderBox(ChainConveyorBlockEntity be, PoseStack ms, MultiBufferSource buffer, int overlay, BlockPos pos,
@@ -147,16 +150,18 @@ public class ChainConveyorRenderer extends KineticBlockEntityRenderer<ChainConve
 			Vec3 startOffset = stats.start()
 				.subtract(Vec3.atCenterOf(tilePos));
 
-			SuperByteBuffer guard = CachedBuffers.partial(AllPartialModels.CHAIN_CONVEYOR_GUARD, be.getBlockState());
-			// guard.translate(startOffset.multiply(0, 1, 0));
-			guard.center();
-			guard.rotateYDegrees((float) yaw);
+			if (!BackendManager.isBackendOn()) {
+				SuperByteBuffer guard = CachedBuffers.partial(AllPartialModels.CHAIN_CONVEYOR_GUARD, be.getBlockState());
+				// guard.translate(startOffset.multiply(0, 1, 0));
+				guard.center();
+				guard.rotateYDegrees((float) yaw);
 
-			guard.uncenter();
-			guard.light(light)
-				.nudge((int) blockPos.asLong())
-				.overlay(overlay)
-				.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
+				guard.uncenter();
+				guard.light(light)
+					.nudge((int) blockPos.asLong())
+					.overlay(overlay)
+					.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
+			}
 
 			ms.pushPose();
 			var chain = TransformStack.of(ms);

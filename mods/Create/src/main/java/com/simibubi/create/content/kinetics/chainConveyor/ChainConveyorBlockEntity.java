@@ -23,6 +23,7 @@ import com.simibubi.create.content.logistics.frogport.FrogportBlockEntity;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import dev.engine_room.flywheel.api.backend.BackendManager;
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.NBTHelper;
 import net.createmod.catnip.utility.VecHelper;
@@ -134,11 +135,10 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 		prepareStats();
 
 		if (level.isClientSide()) {
-			for (ChainConveyorPackage box : loopingPackages)
-				tickBoxVisuals(box);
-			for (Entry<BlockPos, List<ChainConveyorPackage>> entry : travellingPackages.entrySet())
-				for (ChainConveyorPackage box : entry.getValue())
-					tickBoxVisuals(box);
+			// We can use TickableVisuals if flywheel is enabled
+			if (!BackendManager.isBackendOn()) {
+				tickBoxVisuals();
+			}
 		}
 
 		if (!level.isClientSide()) {
@@ -213,7 +213,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 						notifyPortToAnticipate(portEntry.getKey());
 						continue;
 					}
-					
+
 					if (!exportToPort(box, portEntry.getKey()))
 						continue;
 
@@ -242,7 +242,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 			float prevChainPosition = box.chainPosition;
 			box.chainPosition += serverSpeed * degreesPerTick;
 			box.chainPosition = wrapAngle(box.chainPosition);
-			
+
 			float anticipatePosition = box.chainPosition;
 			anticipatePosition += serverSpeed * degreesPerTick * 4;
 			anticipatePosition = wrapAngle(anticipatePosition);
@@ -263,7 +263,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 					notifyPortToAnticipate(portEntry.getKey());
 					continue;
 				}
-				
+
 				if (!exportToPort(box, portEntry.getKey()))
 					continue;
 
@@ -293,6 +293,14 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 		}
 
 		updateBoxWorldPositions();
+	}
+
+	public void tickBoxVisuals() {
+		for (ChainConveyorPackage box : loopingPackages)
+			tickBoxVisuals(box);
+		for (Entry<BlockPos, List<ChainConveyorPackage>> entry : travellingPackages.entrySet())
+			for (ChainConveyorPackage box : entry.getValue())
+				tickBoxVisuals(box);
 	}
 
 	public boolean loopThresholdCrossed(float chainPosition, float prevChainPosition, float offBranchAngle) {
@@ -396,7 +404,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 
 		ChainConveyorPackagePhysicsData physicsData = box.physicsData(level);
 		physicsData.setBE(this);
-		
+
 		if (!physicsData.shouldTick())
 			return;
 
