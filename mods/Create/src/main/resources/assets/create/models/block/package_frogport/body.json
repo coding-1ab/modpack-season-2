@@ -5,7 +5,8 @@
 		"1": "create:block/port",
 		"particle": "create:block/port2"
 	},
-	"elements": [
+  "render_type": "minecraft:cutout",
+  "elements": [
 		{
 			"from": [2, 4, 2],
 			"to": [14, 10, 14],

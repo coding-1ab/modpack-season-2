@@ -168,6 +168,7 @@ import com.simibubi.create.content.logistics.depot.EjectorRenderer;
 import com.simibubi.create.content.logistics.depot.EjectorVisual;
 import com.simibubi.create.content.logistics.frogport.FrogportBlockEntity;
 import com.simibubi.create.content.logistics.frogport.FrogportRenderer;
+import com.simibubi.create.content.logistics.frogport.FrogportVisual;
 import com.simibubi.create.content.logistics.funnel.FunnelBlockEntity;
 import com.simibubi.create.content.logistics.funnel.FunnelRenderer;
 import com.simibubi.create.content.logistics.funnel.FunnelVisual;
@@ -490,6 +491,7 @@ public class AllBlockEntityTypes {
 
 	public static final BlockEntityEntry<FrogportBlockEntity> PACKAGE_FROGPORT = REGISTRATE
 		.blockEntity("package_frogport", FrogportBlockEntity::new)
+		.visual(() -> FrogportVisual::new, false)
 		.validBlocks(AllBlocks.PACKAGE_FROGPORT)
 		.renderer(() -> FrogportRenderer::new)
 		.register();

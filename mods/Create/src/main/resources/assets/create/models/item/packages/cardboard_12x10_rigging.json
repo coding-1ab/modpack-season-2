@@ -5,6 +5,7 @@
 		"0": "create:entity/package/cardboard",
 		"particle": "create:entity/package/cardboard_particle"
 	},
+  "render_type": "minecraft:cutout",
 	"elements": [
 		{
 			"name": "rope_2",
