@@ -47,7 +47,9 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	FILTER("filters", 214, 99),
 	ATTRIBUTE_FILTER("filters", 0, 99, 241, 85),
 	PACKAGE_FILTER("filters_2", 0, 0, 218, 79),
-	PACKAGE_PORT_SLOT("filters_2", 15, 23, 18, 18),
+	
+	FROGPORT("frogport", 0, 0, 238, 99),
+	FROGPORT_SLOT("frogport", 25, 33, 18, 18),
 
 	TOOLBOX("toolbox", 188, 171),
 	TOOLBELT_SLOT("minecraft", "widgets", 24, 23, 22, 22),

@@ -44,6 +44,7 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 	public int currentMinLevel;
 	public int currentLevel;
 	public int currentMaxLevel;
+	public boolean inStacks;
 
 	private boolean redstoneState;
 	private boolean inverted;
@@ -78,6 +79,7 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 		currentLevel = compound.getInt("CurrentAmount");
 		currentMinLevel = compound.getInt("CurrentMinAmount");
 		currentMaxLevel = compound.getInt("CurrentMaxAmount");
+		inStacks = compound.getBoolean("InStacks");
 		redstoneState = compound.getBoolean("Powered");
 		inverted = compound.getBoolean("Inverted");
 		poweredAfterDelay = compound.getBoolean("PoweredAfterDelay");
@@ -96,6 +98,7 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 		compound.putInt("CurrentAmount", currentLevel);
 		compound.putInt("CurrentMinAmount", currentMinLevel);
 		compound.putInt("CurrentMaxAmount", currentMaxLevel);
+		compound.putBoolean("InStacks", inStacks);
 		compound.putBoolean("Powered", redstoneState);
 		compound.putBoolean("PoweredAfterDelay", poweredAfterDelay);
 		super.write(compound, clientPacket);

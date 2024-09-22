@@ -59,5 +59,11 @@ public class FrogportInventory extends ItemStackHandler {
 			port.notifyUpdate();
 		return extractItem;
 	}
+	
+	@Override
+	protected void onContentsChanged(int slot) {
+		super.onContentsChanged(slot);
+		port.setChanged();
+	}
 
 }

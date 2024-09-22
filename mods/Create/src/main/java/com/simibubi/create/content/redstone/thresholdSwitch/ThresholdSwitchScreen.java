@@ -68,9 +68,7 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
 			.forOptions(List.of(CreateLang.translateDirect("schedule.condition.threshold.items"),
 				CreateLang.translateDirect("schedule.condition.threshold.stacks")))
 			.titled(CreateLang.translateDirect("schedule.condition.threshold.item_measure"))
-			.setState(
-				blockEntity.getTypeOfCurrentTarget() == ThresholdType.ITEM && blockEntity.onWhenAbove % 64 == 0 ? 1
-					: 0);
+			.setState(blockEntity.inStacks ? 1 : 0);
 
 		offBelow = new ScrollInput(x + 48, y + 47, 1, 18)
 			.withRange(blockEntity.getMinLevel(), blockEntity.getMaxLevel() + 1 - getValueStep())
@@ -335,7 +333,7 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
 	protected void send(boolean invert) {
 		AllPackets.getChannel()
 			.sendToServer(new ConfigureThresholdSwitchPacket(blockEntity.getBlockPos(), offBelow.getState(),
-				onAbove.getState(), invert));
+				onAbove.getState(), invert, inStacks.getState() == 1));
 	}
 
 }

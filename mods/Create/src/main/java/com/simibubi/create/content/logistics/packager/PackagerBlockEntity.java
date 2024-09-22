@@ -166,6 +166,12 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	public void activate() {
 		redstonePowered = true;
 		setChanged();
+		
+		recheckIfLinksPresent();
+		if (!redstoneModeActive)
+			return;
+		updateSignAddress();
+		attemptToSend(false);
 	}
 
 	public boolean unwrapBox(ItemStack box, boolean simulate) {

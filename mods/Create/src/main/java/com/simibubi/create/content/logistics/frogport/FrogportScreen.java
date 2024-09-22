@@ -33,19 +33,19 @@ public class FrogportScreen extends AbstractSimiScreen {
 	public FrogportScreen(FrogportBlockEntity be) {
 		super(AllBlocks.PACKAGE_FROGPORT.asStack()
 			.getHoverName());
-		background = AllGuiTextures.PACKAGE_FILTER;
+		background = AllGuiTextures.FROGPORT;
 		this.blockEntity = be;
 	}
 
 	@Override
 	protected void init() {
 		setWindowSize(background.getWidth(), background.getHeight());
-		setWindowOffset(-11, 7);
+		setWindowOffset(-11, -3);
 		super.init();
 		clearWidgets();
 
-		int x = guiLeft;
-		int y = guiTop;
+		int x = guiLeft + 10;
+		int y = guiTop + 10;
 
 		addressBox = new EditBox(this.font, x + 44, y + 28, 140, 9, Component.empty());
 		addressBox.setMaxLength(50);
@@ -59,18 +59,18 @@ public class FrogportScreen extends AbstractSimiScreen {
 		addRenderableWidget(addressBox);
 
 		confirmButton =
-			new IconButton(x + background.getWidth() - 33, y + background.getHeight() - 24, AllIcons.I_CONFIRM);
+			new IconButton(x + background.getWidth() - 53, y + background.getHeight() - 44, AllIcons.I_CONFIRM);
 		confirmButton.withCallback(() -> minecraft.setScreen(null));
 		addRenderableWidget(confirmButton);
 
-		dumpPackagesButton = new IconButton(x + 156, y + background.getHeight() - 24, AllIcons.I_PRIORITY_LOW);
+		dumpPackagesButton = new IconButton(x + 156, y + background.getHeight() - 44, AllIcons.I_PRIORITY_LOW);
 		dumpPackagesButton.withCallback(() -> AllPackets.getChannel()
-			.sendToServer(new FrogportConfigurationPacket(blockEntity.getBlockPos(), addressBox.getValue(),
-				!sendOnly(), true)));
+			.sendToServer(
+				new FrogportConfigurationPacket(blockEntity.getBlockPos(), addressBox.getValue(), !sendOnly(), true)));
 		dumpPackagesButton.setToolTip(CreateLang.translateDirect("gui.package_port.eject_to_inventory"));
 		addRenderableWidget(dumpPackagesButton);
 
-		dontAcceptPackages = new IconButton(x + 15, y + background.getHeight() - 24, AllIcons.I_SEND_ONLY);
+		dontAcceptPackages = new IconButton(x + 15, y + background.getHeight() - 44, AllIcons.I_SEND_ONLY);
 		dontAcceptPackages.withCallback(() -> {
 			addressBox.setValue(CreateLang.translate("gui.package_port.accept_nothing")
 				.string());
@@ -85,8 +85,8 @@ public class FrogportScreen extends AbstractSimiScreen {
 	@Override
 	public void removed() {
 		AllPackets.getChannel()
-			.sendToServer(new FrogportConfigurationPacket(blockEntity.getBlockPos(), addressBox.getValue(),
-				!sendOnly(), false));
+			.sendToServer(
+				new FrogportConfigurationPacket(blockEntity.getBlockPos(), addressBox.getValue(), !sendOnly(), false));
 		super.removed();
 	}
 
@@ -100,8 +100,8 @@ public class FrogportScreen extends AbstractSimiScreen {
 	public void tick() {
 		super.tick();
 		dontAcceptPackages.active = !sendOnly();
-		if (dumpPackagesButton.active != (getPackageCount() != 0)) {
-			dumpPackagesButton.active = !dumpPackagesButton.active;
+		if (dumpPackagesButton.visible != (getPackageCount() != 0)) {
+			dumpPackagesButton.visible = !dumpPackagesButton.active;
 			dumpPackagesButton.getToolTip()
 				.clear();
 			if (dumpPackagesButton.active)
@@ -111,27 +111,28 @@ public class FrogportScreen extends AbstractSimiScreen {
 
 	@Override
 	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-		int x = guiLeft;
-		int y = guiTop;
+		int x = guiLeft + 10;
+		int y = guiTop + 10;
 
-		background.render(graphics, x, y);
-		graphics.drawString(font, title, x + background.getWidth() / 2 - font.width(title) / 2, y + 4, 0x3D3C48, false);
+		background.render(graphics, guiLeft, guiTop);
+		graphics.drawString(font, title, x + (background.getWidth() - 20) / 2 - font.width(title) / 2, y + 4, 0x3D3C48,
+			false);
 
 		GuiGameElement.of(renderedItem).<GuiGameElement
 			.GuiRenderBuilder>at(x + background.getWidth() + 6, y + background.getHeight() - 56, -200)
 			.scale(5)
 			.render(graphics);
 
-		AllGuiTextures.PACKAGE_PORT_SLOT.render(graphics, x + 136, y + background.getHeight() - 24);
 		graphics.renderItem(renderedPackage, x + 16, y + 23);
 
 		if (getPackageCount() > 0) {
-			graphics.renderItem(renderedPackage, x + 137, y + background.getHeight() - 24);
-			graphics.renderItemDecorations(font, renderedPackage, x + 137, y + background.getHeight() - 24,
+			AllGuiTextures.FROGPORT_SLOT.render(graphics, x + 136, y + background.getHeight() - 44);
+			graphics.renderItem(renderedPackage, x + 137, y + background.getHeight() - 44);
+			graphics.renderItemDecorations(font, renderedPackage, x + 137, y + background.getHeight() - 44,
 				String.valueOf(getPackageCount()));
 
-			if (mouseX > x + 136 && mouseX < x + 136 + 18 && mouseY > y + background.getHeight() - 24
-				&& mouseY < y + background.getHeight() - 24 + 18)
+			if (mouseX > x + 136 && mouseX < x + 136 + 18 && mouseY > y + background.getHeight() - 44
+				&& mouseY < y + background.getHeight() - 44 + 18)
 				graphics.renderComponentTooltip(font,
 					List.of(CreateLang.translate("gui.package_port.packages_backed_up", getPackageCount())
 						.component()),
