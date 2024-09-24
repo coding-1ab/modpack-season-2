@@ -189,6 +189,10 @@ public class ThresholdSwitchScreen extends AbstractSimiScreen {
 		int torchX = x + 23;
 		int torchY = y + 24;
 
+		boolean highlightTopRow = blockEntity.isInverted() ^ blockEntity.isPowered();
+		AllGuiTextures.THRESHOLD_SWITCH_CURRENT_STATE.render(graphics, torchX - 3,
+			torchY - 4 + (highlightTopRow ? 0 : 24));
+
 		PoseStack ms = graphics.pose();
 		ms.pushPose();
 		ms.translate(torchX - 5, torchY + 14, 200);

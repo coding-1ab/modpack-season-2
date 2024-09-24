@@ -158,7 +158,6 @@ public class ChainConveyorRenderer extends KineticBlockEntityRenderer<ChainConve
 
 				guard.uncenter();
 				guard.light(light)
-					.nudge((int) blockPos.asLong())
 					.overlay(overlay)
 					.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
 			}

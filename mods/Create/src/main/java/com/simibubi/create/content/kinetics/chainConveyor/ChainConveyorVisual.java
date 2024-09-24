@@ -164,7 +164,6 @@ public class ChainConveyorVisual extends SingleRotatingVisual<ChainConveyorBlock
 				.center()
 				.rotateYDegrees((float) yaw)
 				.uncenter()
-				.nudge((int) blockPos.asLong())
 				.light(rotatingModel.light)
 				.setChanged();
 

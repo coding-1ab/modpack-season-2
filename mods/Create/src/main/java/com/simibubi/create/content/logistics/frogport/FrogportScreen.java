@@ -28,6 +28,7 @@ public class FrogportScreen extends AbstractSimiScreen {
 	private EditBox addressBox;
 	private IconButton confirmButton;
 	private IconButton dontAcceptPackages;
+	private IconButton acceptPackages;
 	private IconButton dumpPackagesButton;
 
 	public FrogportScreen(FrogportBlockEntity be) {
@@ -52,9 +53,9 @@ public class FrogportScreen extends AbstractSimiScreen {
 		addressBox.setBordered(false);
 		addressBox.setTextColor(0xffffff);
 		addressBox.setValue(blockEntity.addressFilter);
+
 		if (!blockEntity.acceptsPackages)
-			addressBox.setValue(CreateLang.translate("gui.package_port.accept_nothing")
-				.string());
+			addressBox.visible = false;
 
 		addRenderableWidget(addressBox);
 
@@ -70,11 +71,23 @@ public class FrogportScreen extends AbstractSimiScreen {
 		dumpPackagesButton.setToolTip(CreateLang.translateDirect("gui.package_port.eject_to_inventory"));
 		addRenderableWidget(dumpPackagesButton);
 
-		dontAcceptPackages = new IconButton(x + 15, y + background.getHeight() - 44, AllIcons.I_SEND_ONLY);
-		dontAcceptPackages.withCallback(() -> {
-			addressBox.setValue(CreateLang.translate("gui.package_port.accept_nothing")
-				.string());
+		acceptPackages = new IconButton(x + 15, y + background.getHeight() - 44, AllIcons.I_SEND_AND_RECEIVE);
+		acceptPackages.withCallback(() -> {
+			addressBox.visible = true;
+			acceptPackages.active = false;
+			dontAcceptPackages.active = true;
 		});
+		acceptPackages.active = !blockEntity.acceptsPackages;
+		acceptPackages.setToolTip(CreateLang.translateDirect("gui.package_port.send_and_receive"));
+		addRenderableWidget(acceptPackages);
+
+		dontAcceptPackages = new IconButton(x + 15 + 18, y + background.getHeight() - 44, AllIcons.I_SEND_ONLY);
+		dontAcceptPackages.withCallback(() -> {
+			addressBox.visible = false;
+			acceptPackages.active = true;
+			dontAcceptPackages.active = false;
+		});
+		dontAcceptPackages.active = blockEntity.acceptsPackages;
 		dontAcceptPackages.setToolTip(CreateLang.translateDirect("gui.package_port.send_only"));
 		addRenderableWidget(dontAcceptPackages);
 
@@ -91,15 +104,12 @@ public class FrogportScreen extends AbstractSimiScreen {
 	}
 
 	private boolean sendOnly() {
-		return CreateLang.translate("gui.package_port.accept_nothing")
-			.string()
-			.equals(addressBox.getValue());
+		return !addressBox.visible;
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
-		dontAcceptPackages.active = !sendOnly();
 		if (dumpPackagesButton.visible != (getPackageCount() != 0)) {
 			dumpPackagesButton.visible = !dumpPackagesButton.active;
 			dumpPackagesButton.getToolTip()
@@ -124,6 +134,9 @@ public class FrogportScreen extends AbstractSimiScreen {
 			.render(graphics);
 
 		graphics.renderItem(renderedPackage, x + 16, y + 23);
+
+		if (!addressBox.visible)
+			AllGuiTextures.FROGPORT_INACTIVE_ADDRESS.render(graphics, x + 35, y + 22);
 
 		if (getPackageCount() > 0) {
 			AllGuiTextures.FROGPORT_SLOT.render(graphics, x + 136, y + background.getHeight() - 44);

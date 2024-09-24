@@ -43,6 +43,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	THRESHOLD_SWITCH("threshold_switch", 182, 103),
 	THRESHOLD_SWITCH_ITEMCOUNT_INPUTS("threshold_switch", 0, 105, 115, 22),
 	THRESHOLD_SWITCH_MISC_INPUTS("threshold_switch", 0, 129, 115, 22),
+	THRESHOLD_SWITCH_CURRENT_STATE("threshold_switch", 0, 153, 24, 24),
 
 	FILTER("filters", 214, 99),
 	ATTRIBUTE_FILTER("filters", 0, 99, 241, 85),
@@ -50,6 +51,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	
 	FROGPORT("frogport", 0, 0, 238, 99),
 	FROGPORT_SLOT("frogport", 25, 33, 18, 18),
+	FROGPORT_INACTIVE_ADDRESS("frogport", 45, 102, 162, 20),
 
 	TOOLBOX("toolbox", 188, 171),
 	TOOLBELT_SLOT("minecraft", "widgets", 24, 23, 22, 22),

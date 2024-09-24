@@ -141,7 +141,8 @@ public class FrogportBlockEntity extends SmartBlockEntity {
 		if (currentlyDepositing) {
 			if (!level.isClientSide()) {
 				if (animationProgress.getValue() > 0.5 && animatedPackage != null) {
-					if (target == null || !target.export(level, worldPosition, animatedPackage, false))
+					if (target == null
+						|| !target.depositImmediately() && !target.export(level, worldPosition, animatedPackage, false))
 						drop(animatedPackage);
 					animatedPackage = null;
 				}
@@ -180,6 +181,10 @@ public class FrogportBlockEntity extends SmartBlockEntity {
 
 	public void startAnimation(ItemStack box, boolean deposit) {
 		if (!(box.getItem() instanceof PackageItem))
+			return;
+
+		if (deposit && (target == null
+			|| target.depositImmediately() && !target.export(level, worldPosition, box.copy(), false)))
 			return;
 
 		animationProgress.startWithValue(0);

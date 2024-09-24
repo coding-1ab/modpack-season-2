@@ -330,6 +330,7 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 	public void updatePowerAfterDelay() {
 		poweredAfterDelay = shouldBePowered();
 		level.blockUpdated(worldPosition, getBlockState().getBlock());
+		sendData();
 	}
 
 	public boolean isPowered() {

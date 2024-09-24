@@ -45,6 +45,10 @@ public abstract class FrogportTarget {
 
 	public abstract Vec3 getExactTargetLocation(FrogportBlockEntity ppbe, LevelAccessor level, BlockPos portPos);
 
+	public boolean depositImmediately() {
+		return false;
+	}
+	
 	public CompoundTag write() {
 		CompoundTag compoundTag = new CompoundTag();
 		writeInternal(compoundTag);
@@ -240,6 +244,11 @@ public abstract class FrogportTarget {
 		public void deregister(FrogportBlockEntity ppbe, LevelAccessor level, BlockPos portPos) {
 			if (be(level, portPos) instanceof StationBlockEntity sbe)
 				sbe.removePackagePort(ppbe);
+		}
+		
+		@Override
+		public boolean depositImmediately() {
+			return true;
 		}
 
 		@Override

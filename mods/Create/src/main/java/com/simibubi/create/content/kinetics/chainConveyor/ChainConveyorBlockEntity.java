@@ -489,21 +489,21 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 
 	public boolean removeConnectionTo(BlockPos target) {
 		BlockPos localTarget = target.subtract(worldPosition);
-		boolean removed = connections.remove(localTarget);
-		if (removed) {
-			connectionStats.remove(localTarget);
-			List<ChainConveyorPackage> packages = travellingPackages.remove(localTarget);
-			if (packages != null)
-				for (ChainConveyorPackage box : packages)
-					drop(box);
-			notifyUpdate();
-			updateChainShapes();
-		}
+		if (!connections.contains(localTarget))
+			return false;
 
 		detachKinetics();
+		connections.remove(localTarget);
+		connectionStats.remove(localTarget);
+		List<ChainConveyorPackage> packages = travellingPackages.remove(localTarget);
+		if (packages != null)
+			for (ChainConveyorPackage box : packages)
+				drop(box);
+		notifyUpdate();
+		updateChainShapes();
 		updateSpeed = true;
 
-		return removed;
+		return true;
 	}
 
 	private void updateChainShapes() {

@@ -298,6 +298,7 @@ import net.minecraft.world.level.block.IronBarsBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockBehaviour.StatePredicate;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.material.MapColor;
@@ -1712,6 +1713,7 @@ public class AllBlocks {
 	public static final BlockEntry<PackagerBlock> PACKAGER = REGISTRATE.block("packager", PackagerBlock::new)
 		.initialProperties(SharedProperties::softMetal)
 		.properties(p -> p.noOcclusion())
+		.properties(p -> p.isRedstoneConductor(($1, $2, $3) -> false))
 		.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
 			.sound(SoundType.NETHERITE_BLOCK))
 		.transform(pickaxeOnly())
@@ -1843,6 +1845,7 @@ public class AllBlocks {
 			.initialProperties(SharedProperties::stone)
 			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BROWN)
 				.noOcclusion())
+			.properties(p -> p.isRedstoneConductor(($1, $2, $3) -> false))
 			.transform(axeOrPickaxe())
 			.blockstate(new SmartObserverGenerator()::generate)
 			.onRegister(assignDataBehaviour(new ItemCountDisplaySource(), "count_items"))
@@ -1859,6 +1862,7 @@ public class AllBlocks {
 			.initialProperties(SharedProperties::stone)
 			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BROWN)
 				.noOcclusion())
+			.properties(p -> p.isRedstoneConductor(($1, $2, $3) -> false))
 			.transform(axeOrPickaxe())
 			.blockstate(new ThresholdSwitchGenerator()::generate)
 			.onRegister(assignDataBehaviour(new FillLevelDisplaySource(), "fill_level"))
