@@ -172,6 +172,7 @@ import com.simibubi.create.content.logistics.frogport.FrogportVisual;
 import com.simibubi.create.content.logistics.funnel.FunnelBlockEntity;
 import com.simibubi.create.content.logistics.funnel.FunnelRenderer;
 import com.simibubi.create.content.logistics.funnel.FunnelVisual;
+import com.simibubi.create.content.logistics.itemHatch.ItemHatchBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerRenderer;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
@@ -481,6 +482,12 @@ public class AllBlockEntityTypes {
 	public static final BlockEntityEntry<ItemVaultBlockEntity> ITEM_VAULT = REGISTRATE
 		.blockEntity("item_vault", ItemVaultBlockEntity::new)
 		.validBlocks(AllBlocks.ITEM_VAULT)
+		.register();
+	
+	public static final BlockEntityEntry<ItemHatchBlockEntity> ITEM_HATCH = REGISTRATE
+		.blockEntity("item_hatch", ItemHatchBlockEntity::new)
+		.validBlocks(AllBlocks.ITEM_HATCH)
+		.renderer(() -> SmartBlockEntityRenderer::new)
 		.register();
 
 	public static final BlockEntityEntry<PackagerBlockEntity> PACKAGER = REGISTRATE

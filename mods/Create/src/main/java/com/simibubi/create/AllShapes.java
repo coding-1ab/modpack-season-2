@@ -175,7 +175,12 @@ public class AllShapes {
 			.forDirectional(UP),
 
 		WHISTLE_BASE = shape(1, 0, 1, 15, 3, 15).add(5, 0, 5, 11, 8, 11)
-			.forDirectional(UP)
+			.forDirectional(UP),
+
+		ITEM_HATCH = shape(1, 0, 0, 15, 16, 2).add(2, 2, 0, 14, 13, 3.8)
+			.add(2, 4, 0, 14, 11, 5.8)
+			.add(2, 6, 0, 14, 9, 7.8)
+			.forHorizontal(SOUTH)
 
 	;
 

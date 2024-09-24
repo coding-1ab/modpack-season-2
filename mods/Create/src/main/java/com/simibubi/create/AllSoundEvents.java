@@ -211,6 +211,12 @@ public class AllSoundEvents {
 			.playExisting(SoundEvents.GENERIC_EAT, .5f, 1f)
 			.category(SoundSource.BLOCKS)
 			.build(),
+			
+		ITEM_HATCH = create("item_hatch").subtitle("Item Hatch opens")
+			.playExisting(SoundEvents.BARREL_OPEN, .25f, 1.4f)
+			.playExisting(SoundEvents.NETHERITE_BLOCK_PLACE, .75f, 1.15f)
+			.category(SoundSource.BLOCKS)
+			.build(),
 
 		CRUSHING_1 = create("crushing_1").subtitle("Crushing noises")
 			.playExisting(SoundEvents.NETHERRACK_HIT)

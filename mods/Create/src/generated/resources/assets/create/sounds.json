@@ -251,6 +251,23 @@
     ],
     "subtitle": "create.subtitle.haunted_bell_use"
   },
+  "item_hatch": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.barrel.open"
+      }
+    ],
+    "subtitle": "create.subtitle.item_hatch"
+  },
+  "item_hatch_compounded_1": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.netherite_block.place"
+      }
+    ]
+  },
   "mechanical_press_activation": {
     "sounds": [
       {

@@ -122,6 +122,7 @@
     "create:large_bogey",
     "create:controls",
     "create:item_vault",
+    "create:item_hatch",
     "create:packager",
     "create:package_frogport",
     "create:packager_link",
