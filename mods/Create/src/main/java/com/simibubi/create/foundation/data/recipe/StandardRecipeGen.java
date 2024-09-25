@@ -999,6 +999,14 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.pattern("C")
 				.pattern("S")),
 
+		LOGISTICS_LINK_CLEAR = create(AllBlocks.PACKAGER_LINK).withSuffix("_clear")
+			.unlockedBy(AllBlocks.PACKAGER_LINK::asItem)
+			.viaShapeless(b -> b.requires(AllBlocks.PACKAGER_LINK)),
+
+		STOCK_TICKER_CLEAR = create(AllBlocks.STOCK_TICKER).withSuffix("_clear")
+			.unlockedBy(AllBlocks.STOCK_TICKER::asItem)
+			.viaShapeless(b -> b.requires(AllBlocks.STOCK_TICKER)),
+
 		DISPLAY_LINK = create(AllBlocks.DISPLAY_LINK).unlockedBy(I::brassCasing)
 			.viaShaped(b -> b.define('C', Blocks.REDSTONE_TORCH)
 				.define('A', I.copperSheet())

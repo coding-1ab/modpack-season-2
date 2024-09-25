@@ -1,133 +1,108 @@
 package com.simibubi.create.content.logistics.packagerLink;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
-import net.createmod.catnip.utility.IntAttached;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandler;
 
 public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 
 	public static final BehaviourType<LogisticallyLinkedBehaviour> TYPE = new BehaviourType<>();
+
 	public static final AtomicInteger LINK_ID_GENERATOR = new AtomicInteger();
+	public int linkId; // Runtime context, not saved to disk
 
 	public int redstonePower;
+	public UUID freqId;
 
-	// To
-	public int linkId;
-	public BlockPos targetOffset;
-	public ResourceKey<Level> targetDim;
-	public WeakReference<LogisticallyLinkedBehaviour> target;
+	//
 
-	// From
-	private Map<Integer, IntAttached<WeakReference<LogisticallyLinkedBehaviour>>> connectedLinks = new HashMap<>();
+	public static final Cache<UUID, Cache<Integer, WeakReference<LogisticallyLinkedBehaviour>>> LINKS =
+		CacheBuilder.newBuilder()
+			.expireAfterAccess(1, TimeUnit.SECONDS)
+			.build();
+
+	public static Collection<LogisticallyLinkedBehaviour> getAllPresent(UUID freq, boolean sortByPriority) {
+		Cache<Integer, WeakReference<LogisticallyLinkedBehaviour>> cache = LINKS.getIfPresent(freq);
+		if (cache == null)
+			return Collections.emptyList();
+		Stream<LogisticallyLinkedBehaviour> stream = new LinkedList<>(cache.asMap()
+			.values()).stream()
+				.map(WeakReference::get)
+				.filter(LogisticallyLinkedBehaviour::isValidLink);
+
+		if (sortByPriority)
+			stream = stream.sorted((e1, e2) -> Integer.compare(e1.redstonePower, e2.redstonePower));
+
+		return stream.toList();
+	}
+
+	public static void keepAlive(LogisticallyLinkedBehaviour behaviour) {
+		if (behaviour.redstonePower == 15)
+			return;
+		try {
+			Cache<Integer, WeakReference<LogisticallyLinkedBehaviour>> cache = LINKS.get(behaviour.freqId,
+				() -> CacheBuilder.newBuilder()
+					.expireAfterAccess(1, TimeUnit.SECONDS)
+					.build());
+
+			if (cache == null)
+				return;
+
+			WeakReference<LogisticallyLinkedBehaviour> reference =
+				cache.get(behaviour.linkId, () -> new WeakReference<>(behaviour));
+			if (reference.get() != behaviour)
+				cache.put(behaviour.linkId, new WeakReference<>(behaviour));
+
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void remove(LogisticallyLinkedBehaviour behaviour) {
+		Cache<Integer, WeakReference<LogisticallyLinkedBehaviour>> cache = LINKS.getIfPresent(behaviour.freqId);
+		if (cache != null)
+			cache.invalidate(behaviour.linkId);
+	}
+
+	//
 
 	public LogisticallyLinkedBehaviour(SmartBlockEntity be) {
 		super(be);
-		targetOffset = BlockPos.ZERO;
 		linkId = LINK_ID_GENERATOR.getAndIncrement();
+		freqId = UUID.randomUUID();
 	}
 
 	@Override
 	public void unload() {
 		super.unload();
-		if (!getWorld().isClientSide())
-			invalidateSelf();
-	}
-
-	public void invalidateSelf() {
-		LogisticallyLinkedBehaviour target = getTarget();
-		if (target != null)
-			target.invalidateLink(this);
-	}
-
-	@Nullable
-	public LogisticallyLinkedBehaviour getTarget() {
-		if (targetOffset.equals(BlockPos.ZERO))
-			return null;
-
-		if (target != null) {
-			LogisticallyLinkedBehaviour link = target.get();
-			if (isValidLink(link))
-				return link;
-			target = null;
-		}
-
-		BlockPos targetPos = getPos().offset(targetOffset);
-		Level world = getWorld();
-
-		if (world instanceof ServerLevel sl)
-			world = sl.getServer()
-				.getLevel(targetDim);
-		if (world == null)
-			return null;
-		if (!world.isLoaded(targetPos))
-			return null;
-
-		LogisticallyLinkedBehaviour logisticallyLinkedBehaviour = get(world, targetPos, TYPE);
-		if (logisticallyLinkedBehaviour != null) {
-			target = new WeakReference<LogisticallyLinkedBehaviour>(logisticallyLinkedBehaviour);
-			return logisticallyLinkedBehaviour;
-		}
-
-		return null;
+		remove(this);
 	}
 
 	@Override
 	public void lazyTick() {
-		if (getWorld().isClientSide())
-			return;
-
-		tickTargetConnection();
-
-		for (Iterator<Integer> iterator = connectedLinks.keySet()
-			.iterator(); iterator.hasNext();) {
-			Integer id = iterator.next();
-			IntAttached<WeakReference<LogisticallyLinkedBehaviour>> entry = connectedLinks.get(id);
-			entry.decrement();
-			if (entry.isOrBelowZero()) {
-				iterator.remove();
-				continue;
-			}
-			LogisticallyLinkedBehaviour link = entry.getSecond()
-				.get();
-			if (!isValidLink(link)) {
-				iterator.remove();
-				continue;
-			}
-		}
-	}
-
-	public void tickTargetConnection() {
-		LogisticallyLinkedBehaviour target = getTarget();
-		if (target != null)
-			target.keepConnected(this);
+		keepAlive(this);
 	}
 
 	public void redstonePowerChanged(int power) {
@@ -137,42 +112,9 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 		blockEntity.setChanged();
 
 		if (power == 15)
-			invalidateSelf();
+			remove(this);
 		else
-			tickTargetConnection();
-	}
-
-	public List<LogisticallyLinkedBehaviour> getAllConnectedAvailableLinks(boolean sortByPriority) {
-		Map<LogisticallyLinkedBehaviour, Integer> links = new IdentityHashMap<>();
-		appendAvailableLinksRecursive(links, 0);
-
-		if (!sortByPriority)
-			return new ArrayList<>(links.keySet());
-
-		return new ArrayList<>(links.entrySet()).stream()
-			.sorted((e1, e2) -> e1.getValue()
-				.compareTo(e2.getValue()))
-			.map(Entry::getKey)
-			.toList();
-	}
-
-	private void appendAvailableLinksRecursive(Map<LogisticallyLinkedBehaviour, Integer> links, int relativePower) {
-		if (redstonePower == 15)
-			return;
-
-		int combinedPower = relativePower + redstonePower;
-		links.put(this, combinedPower);
-
-		LogisticallyLinkedBehaviour target = getTarget();
-		if (target != null && !links.containsKey(target))
-			target.appendAvailableLinksRecursive(links, combinedPower);
-
-		connectedLinks.forEach(($, entry) -> {
-			LogisticallyLinkedBehaviour link = entry.getSecond()
-				.get();
-			if (isValidLink(link) && !links.containsKey(link))
-				link.appendAvailableLinksRecursive(links, combinedPower);
-		});
+			keepAlive(this);
 	}
 
 	public int processRequest(ItemStack stack, int amount, String address, int linkIndex, MutableBoolean finalLink,
@@ -203,39 +145,25 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 	@Override
 	public void write(CompoundTag tag, boolean clientPacket) {
 		super.write(tag, clientPacket);
-		tag.put("TargetOffset", NbtUtils.writeBlockPos(targetOffset));
-		if (targetDim != null)
-			tag.putString("TargetDimension", targetDim.location()
-				.toString());
+		tag.putUUID("Freq", freqId);
 		tag.putInt("Power", redstonePower);
 	}
 
 	@Override
 	public void read(CompoundTag tag, boolean clientPacket) {
 		super.read(tag, clientPacket);
-		targetOffset = NbtUtils.readBlockPos(tag.getCompound("TargetOffset"));
+		if (tag.hasUUID("Freq"))
+			freqId = tag.getUUID("Freq");
 		redstonePower = tag.getInt("Power");
-
-		if (!tag.contains("TargetDimension")) {
-			targetDim = Level.OVERWORLD;
-			return;
-		}
-
-		targetDim = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(tag.getString("TargetDimension")));
-	}
-
-	public void keepConnected(LogisticallyLinkedBehaviour link) {
-		connectedLinks.computeIfAbsent(link.linkId, $ -> IntAttached.withZero(new WeakReference<>(link)))
-			.setFirst(3);
-	}
-
-	public void invalidateLink(LogisticallyLinkedBehaviour link) {
-		connectedLinks.remove(link.linkId);
 	}
 
 	@Override
 	public BehaviourType<?> getType() {
 		return TYPE;
+	}
+
+	public Iterable<LogisticallyLinkedBehaviour> getAllConnectedAvailableLinks(boolean sortByPriority) {
+		return getAllPresent(freqId, sortByPriority);
 	}
 
 }

@@ -166,7 +166,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 		List<IntAttached<ItemStack>> stacks = order.stacks();
 
 		// Packages need to track their index and successors for successful defrag
-		List<LogisticallyLinkedBehaviour> availableLinks = behaviour.getAllConnectedAvailableLinks(true);
+		Iterable<LogisticallyLinkedBehaviour> availableLinks = behaviour.getAllConnectedAvailableLinks(true);
 		List<LogisticallyLinkedBehaviour> usedLinks = new ArrayList<>();
 		MutableBoolean finalLinkTracker = new MutableBoolean(false);
 
