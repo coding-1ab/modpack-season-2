@@ -1,7 +1,6 @@
 package com.simibubi.create.content.logistics.packagerLink;
 
 import java.util.List;
-import java.util.UUID;
 
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -66,6 +65,7 @@ public class LogisticallyLinkedBlockItem extends BlockItem {
 			return InteractionResult.FAIL;
 
 		LogisticallyLinkedBehaviour link = BlockEntityBehaviour.get(level, pos, LogisticallyLinkedBehaviour.TYPE);
+		boolean tuned = isTuned(stack);
 
 		if (link != null) {
 			if (level.isClientSide)
@@ -85,7 +85,7 @@ public class LogisticallyLinkedBlockItem extends BlockItem {
 		if (level.isClientSide || useOn == InteractionResult.FAIL)
 			return useOn;
 
-		player.displayClientMessage(isTuned(stack) ? CreateLang.translateDirect("logistically_linked.connected")
+		player.displayClientMessage(tuned ? CreateLang.translateDirect("logistically_linked.connected")
 			: CreateLang.translateDirect("logistically_linked.new_network_started"), true);
 		return useOn;
 	}

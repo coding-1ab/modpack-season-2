@@ -26,11 +26,11 @@ public record PackageOrder(List<IntAttached<ItemStack>> stacks) {
 		tag.put("Entries", list);
 		return tag;
 	}
-	
+
 	public static PackageOrder empty() {
 		return new PackageOrder(List.of());
 	}
-	
+
 	public boolean isEmpty() {
 		return stacks.isEmpty();
 	}

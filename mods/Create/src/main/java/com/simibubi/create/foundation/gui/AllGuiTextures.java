@@ -173,6 +173,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	INDICATOR_RED("widgets", 72, 18, 18, 6),
 
 	HOTSLOT_ARROW("widgets", 24, 51, 20, 12),
+	HOTSLOT_ARROW_BAD("widgets", 52, 51, 20, 15),
 	HOTSLOT("widgets", 0, 68, 22, 22),
 	HOTSLOT_ACTIVE("widgets", 0, 46, 22, 22),
 	HOTSLOT_SUPER_ACTIVE("widgets", 27, 67, 24, 24),
@@ -189,6 +190,8 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	TRAIN_PROMPT_L("widgets", 8, 209, 3, 16),
 	TRAIN_PROMPT_R("widgets", 11, 209, 3, 16),
 	TRAIN_PROMPT("widgets", 0, 230, 256, 16),
+	
+	TRADE_OVERLAY("widgets", 136, 97, 98, 48),
 
 	// ComputerCraft
 	COMPUTER("computer", 200, 102);

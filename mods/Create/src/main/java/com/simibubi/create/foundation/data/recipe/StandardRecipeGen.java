@@ -999,13 +999,9 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.pattern("C")
 				.pattern("S")),
 
-		LOGISTICS_LINK_CLEAR = create(AllBlocks.PACKAGER_LINK).withSuffix("_clear")
-			.unlockedBy(AllBlocks.PACKAGER_LINK::asItem)
-			.viaShapeless(b -> b.requires(AllBlocks.PACKAGER_LINK)),
-
-		STOCK_TICKER_CLEAR = create(AllBlocks.STOCK_TICKER).withSuffix("_clear")
-			.unlockedBy(AllBlocks.STOCK_TICKER::asItem)
-			.viaShapeless(b -> b.requires(AllBlocks.STOCK_TICKER)),
+		LOGISTICS_LINK_CLEAR = clearData(AllBlocks.PACKAGER_LINK),
+		STOCK_TICKER_CLEAR = clearData(AllBlocks.STOCK_TICKER),
+		REDSTONE_REQUESTER_CLEAR = clearData(AllBlocks.REDSTONE_REQUESTER),
 
 		DISPLAY_LINK = create(AllBlocks.DISPLAY_LINK).unlockedBy(I::brassCasing)
 			.viaShaped(b -> b.define('C', Blocks.REDSTONE_TORCH)
@@ -1080,6 +1076,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 
 		CLIPBOARD_CLEAR = clearData(AllBlocks.CLIPBOARD), SCHEDULE_CLEAR = clearData(AllItems.SCHEDULE),
 		FILTER_CLEAR = clearData(AllItems.FILTER), ATTRIBUTE_FILTER_CLEAR = clearData(AllItems.ATTRIBUTE_FILTER),
+		DISPLAY_CLOTH_CLEAR = clearData(AllItems.DISPLAY_CLOTH),
 
 		DIVING_HELMET = create(AllItems.COPPER_DIVING_HELMET).unlockedByTag(I::copper)
 			.viaShaped(b -> b.define('G', Tags.Items.GLASS)

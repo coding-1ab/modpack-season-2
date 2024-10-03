@@ -183,7 +183,8 @@ public class PackageItem extends Item {
 		super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
 		CompoundTag compoundnbt = pStack.getOrCreateTag();
 
-		if (compoundnbt.contains("Address", Tag.TAG_STRING))
+		if (compoundnbt.contains("Address", Tag.TAG_STRING) && !compoundnbt.getString("Address")
+			.isBlank())
 			pTooltipComponents.add(Components.literal("-> " + compoundnbt.getString("Address"))
 				.withStyle(ChatFormatting.GOLD));
 

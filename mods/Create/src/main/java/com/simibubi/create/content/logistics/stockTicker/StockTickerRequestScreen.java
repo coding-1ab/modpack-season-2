@@ -36,7 +36,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class StockTickerRequestScreen extends AbstractSimiScreen {
 
 	StockTickerBlockEntity blockEntity;
-	int ticksSinceLastUpdate = 0;
 	LerpedFloat itemScroll;
 
 	final int rows = 8;
@@ -69,7 +68,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		itemsToOrder = new ArrayList<>();
 		blockEntity = be;
 		blockEntity.lastClientsideStockSnapshot = null;
-		ticksSinceLastUpdate = 15;
+		blockEntity.ticksSinceLastUpdate = 15;
 		emptyTicks = 0;
 		successTicks = 0;
 		itemScroll = LerpedFloat.linear()
@@ -187,13 +186,8 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		if (Math.abs(itemScroll.getValue() - itemScroll.getChaseTarget()) < 1 / 16f)
 			itemScroll.setValue(itemScroll.getChaseTarget());
 
-		if (ticksSinceLastUpdate < 15) {
-			ticksSinceLastUpdate++;
-			return;
-		}
-
-		ticksSinceLastUpdate = 0;
-		blockEntity.refreshClientStockSnapshot();
+		if (blockEntity.ticksSinceLastUpdate > 15)
+			blockEntity.refreshClientStockSnapshot();
 	}
 
 	@Override
@@ -504,7 +498,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		if (existingOrder == null) {
 			if (itemsToOrder.size() >= cols || rmb)
 				return true;
-			itemsToOrder.add(existingOrder = IntAttached.withZero(itemStack));
+			itemsToOrder.add(existingOrder = IntAttached.withZero(itemStack.copyWithCount(1)));
 		}
 
 		int transfer = hasShiftDown() ? itemStack.getMaxStackSize() : 1;
@@ -595,7 +589,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 				addressBox.getValue(), encodeRequester));
 
 		itemsToOrder = new ArrayList<>();
-		ticksSinceLastUpdate = 10;
+		blockEntity.ticksSinceLastUpdate = 10;
 		successTicks = 1;
 
 		if (encodeRequester)

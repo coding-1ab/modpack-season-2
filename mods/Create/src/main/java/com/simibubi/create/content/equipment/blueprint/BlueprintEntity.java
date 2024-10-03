@@ -207,6 +207,12 @@ public class BlueprintEntity extends HangingEntity
 		d6 = d6 / 32.0D;
 		this.setBoundingBox(new AABB(d1 - d4, d2 - d5, d3 - d6, d1 + d4, d2 + d5, d3 + d6));
 	}
+	
+	@Override
+	public void setPos(double pX, double pY, double pZ) {
+		setPosRaw(pX, pY, pZ);
+		super.setPos(pX, pY, pZ);
+	}
 
 	@Override
 	public boolean survives() {

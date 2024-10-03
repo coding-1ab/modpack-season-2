@@ -127,6 +127,7 @@ public class AllCreativeModeTabs {
 					AllItems.FURNACE_MINECART_CONTRAPTION,
 					AllItems.CHEST_MINECART_CONTRAPTION,
 					AllItems.SCHEMATIC,
+					AllItems.SHOPPING_LIST,
 					AllBlocks.ANDESITE_ENCASED_SHAFT,
 					AllBlocks.BRASS_ENCASED_SHAFT,
 					AllBlocks.ANDESITE_ENCASED_COGWHEEL,

@@ -57,6 +57,8 @@ import com.simibubi.create.content.logistics.depot.EjectorAwardPacket;
 import com.simibubi.create.content.logistics.depot.EjectorElytraPacket;
 import com.simibubi.create.content.logistics.depot.EjectorPlacementPacket;
 import com.simibubi.create.content.logistics.depot.EjectorTriggerPacket;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothPacketToClient;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothPacketToServer;
 import com.simibubi.create.content.logistics.filter.FilterScreenPacket;
 import com.simibubi.create.content.logistics.frogport.FrogportConfigurationPacket;
 import com.simibubi.create.content.logistics.frogport.FrogportPlacementPacket;
@@ -184,6 +186,7 @@ public enum AllPackets {
 	CHAIN_PACKAGE_INTERACTION(ChainPackageInteractionPacket.class, ChainPackageInteractionPacket::new, PLAY_TO_SERVER),
 	STOCK_TICKER_CONFIGURATION(StockTickerConfigurationPacket.class, StockTickerConfigurationPacket::new, PLAY_TO_SERVER),
 	PACKAGE_PORT_CONFIGURATION(FrogportConfigurationPacket.class, FrogportConfigurationPacket::new, PLAY_TO_SERVER),
+	DISPLAY_CLOTH_SERVERBOUND(DisplayClothPacketToServer.class, DisplayClothPacketToServer::new, PLAY_TO_SERVER),
 
 	// Server to Client
 	SYMMETRY_EFFECT(SymmetryEffectPacket.class, SymmetryEffectPacket::new, PLAY_TO_CLIENT),
@@ -231,7 +234,8 @@ public enum AllPackets {
 	ATTACHED_COMPUTER(AttachedComputerPacket.class, AttachedComputerPacket::new, PLAY_TO_CLIENT),
 	SERVER_DEBUG_INFO(ServerDebugInfoPacket.class, ServerDebugInfoPacket::new, PLAY_TO_CLIENT),
 	PACKAGE_DESTROYED(PackageDestroyPacket.class, PackageDestroyPacket::new, PLAY_TO_CLIENT),
-	LOGISTICS_STOCK_RESPONSE(LogisticalStockResponsePacket.class, LogisticalStockResponsePacket::new, PLAY_TO_CLIENT);
+	LOGISTICS_STOCK_RESPONSE(LogisticalStockResponsePacket.class, LogisticalStockResponsePacket::new, PLAY_TO_CLIENT),
+	DISPLAY_CLOTH_CLIENTBOUND(DisplayClothPacketToClient.class, DisplayClothPacketToClient::new, PLAY_TO_CLIENT);
 
 	static {
 		ClientboundSimpleActionPacket.addAction("rainbowDebug", () -> SimpleCreateActions::rainbowDebug);

@@ -179,6 +179,8 @@ public class AllPartialModels {
 		WATER_WHEEL = block("water_wheel/wheel"), LARGE_WATER_WHEEL = block("large_water_wheel/block"),
 		LARGE_WATER_WHEEL_EXTENSION = block("large_water_wheel/block_extension"),
 
+		DISPLAY_CLOTH = entity("display_cloth"),
+		
 		CRAFTING_BLUEPRINT_1x1 = entity("crafting_blueprint_small"),
 		CRAFTING_BLUEPRINT_2x2 = entity("crafting_blueprint_medium"),
 		CRAFTING_BLUEPRINT_3x3 = entity("crafting_blueprint_large"),

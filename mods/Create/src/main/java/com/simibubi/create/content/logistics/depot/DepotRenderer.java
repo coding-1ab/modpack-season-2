@@ -71,7 +71,7 @@ public class DepotRenderer extends SafeBlockEntityRenderer<DepotBlockEntity> {
 			ItemStack itemStack = tis.stack;
 			int angle = tis.angle;
 			Random r = new Random(0);
-			renderItem(be.getLevel(), ms, buffer, light, overlay, itemStack, angle, r, itemPosition);
+			renderItem(be.getLevel(), ms, buffer, light, overlay, itemStack, angle, r, itemPosition, false);
 			ms.popPose();
 		}
 
@@ -93,7 +93,7 @@ public class DepotRenderer extends SafeBlockEntityRenderer<DepotBlockEntity> {
 				msr.rotateYDegrees(-(360 / 8f * i));
 			Random r = new Random(i + 1);
 			int angle = (int) (360 * r.nextFloat());
-			renderItem(be.getLevel(), ms, buffer, light, overlay, stack, renderUpright ? angle + 90 : angle, r, itemPosition);
+			renderItem(be.getLevel(), ms, buffer, light, overlay, stack, renderUpright ? angle + 90 : angle, r, itemPosition, false);
 			ms.popPose();
 		}
 
@@ -101,14 +101,14 @@ public class DepotRenderer extends SafeBlockEntityRenderer<DepotBlockEntity> {
 	}
 
 	public static void renderItem(Level level, PoseStack ms, MultiBufferSource buffer, int light, int overlay, ItemStack itemStack,
-		int angle, Random r, Vec3 itemPosition) {
+		int angle, Random r, Vec3 itemPosition, boolean alwaysUpright) {
 		ItemRenderer itemRenderer = Minecraft.getInstance()
 			.getItemRenderer();
 		var msr = TransformStack.of(ms);
 		int count = (int) (Mth.log2((int) (itemStack.getCount()))) / 2;
-		boolean renderUpright = BeltHelper.isItemUpright(itemStack);
 		BakedModel bakedModel = itemRenderer.getModel(itemStack, null, null, 0);
 		boolean blockItem = bakedModel.isGui3d();
+		boolean renderUpright = BeltHelper.isItemUpright(itemStack) || alwaysUpright && !blockItem;
 
 		ms.pushPose();
 		msr.rotateYDegrees(angle);
@@ -127,7 +127,7 @@ public class DepotRenderer extends SafeBlockEntityRenderer<DepotBlockEntity> {
 
 		for (int i = 0; i <= count; i++) {
 			ms.pushPose();
-			if (blockItem)
+			if (blockItem && r != null)
 				ms.translate(r.nextFloat() * .0625f * i, 0, r.nextFloat() * .0625f * i);
 
 			if (itemStack.getItem() instanceof PackageItem) {

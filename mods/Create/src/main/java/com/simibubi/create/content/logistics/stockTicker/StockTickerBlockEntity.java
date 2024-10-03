@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -13,21 +14,25 @@ import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipul
 
 import net.createmod.catnip.utility.BlockFace;
 import net.createmod.catnip.utility.IntAttached;
+import net.createmod.catnip.utility.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.items.IItemHandler;
 
 public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 
 	// Player-interface Feature
 	protected List<IntAttached<ItemStack>> lastClientsideStockSnapshot;
+	protected InventorySummary lastClientsideStockSnapshotAsSummary;
 	protected List<IntAttached<ItemStack>> newlyReceivedStockSnapshot;
 	protected String previouslyUsedAddress;
 	protected int activeLinks;
+	protected int ticksSinceLastUpdate;
 
 	// Auto-restock Feature
 	protected InvManipulationBehaviour observedInventory;
@@ -50,6 +55,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 	}
 
 	public void refreshClientStockSnapshot() {
+		ticksSinceLastUpdate = 0;
 		AllPackets.getChannel()
 			.sendToServer(new LogisticalStockRequestPacket(worldPosition));
 	}
@@ -58,11 +64,22 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 		return lastClientsideStockSnapshot;
 	}
 
+	public InventorySummary getLastClientsideStockSnapshotAsSummary() {
+		return lastClientsideStockSnapshotAsSummary;
+	}
+	
+	public int getTicksSinceLastUpdate() {
+		return ticksSinceLastUpdate;
+	}
+
 	@Override
 	public void tick() {
 		super.tick();
-		if (level.isClientSide())
+		if (level.isClientSide()) {
+			if (ticksSinceLastUpdate < 100)
+				ticksSinceLastUpdate += 1;
 			return;
+		}
 		if (activeLinks != activeLinksLastSummary && !isRemoved()) {
 			activeLinks = activeLinksLastSummary;
 			sendData();
@@ -159,6 +176,8 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 		if (!endOfTransmission)
 			return;
 		lastClientsideStockSnapshot = newlyReceivedStockSnapshot;
+		lastClientsideStockSnapshotAsSummary = new InventorySummary();
+		stacks.forEach(lastClientsideStockSnapshotAsSummary::add);
 		newlyReceivedStockSnapshot = null;
 	}
 
@@ -207,6 +226,19 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 
 		previouslyUsedAddress = address;
 		notifyUpdate();
+	}
+
+	public boolean isKeeperPresent() {
+		for (int yOffset : Iterate.zeroAndOne) {
+			for (Direction side : Iterate.horizontalDirections) {
+				BlockPos seatPos = worldPosition.below(yOffset)
+					.relative(side);
+				for (SeatEntity seatEntity : level.getEntitiesOfClass(SeatEntity.class, new AABB(seatPos)))
+					if (seatEntity.isVehicle())
+						return true;
+			}
+		}
+		return false;
 	}
 
 }

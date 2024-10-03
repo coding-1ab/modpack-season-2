@@ -1,0 +1,193 @@
+package com.simibubi.create.content.logistics.displayCloth;
+
+import java.util.List;
+import java.util.UUID;
+
+import com.simibubi.create.content.logistics.packager.InventorySummary;
+import com.simibubi.create.foundation.utility.CreateLang;
+
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.IntAttached;
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.lang.Components;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.EntityGetter;
+import net.minecraft.world.level.Level;
+
+public class ShoppingListItem extends Item {
+
+	public static record ShoppingList(List<IntAttached<BlockPos>> purchases, UUID shopOwner, UUID shopNetwork) {
+
+		public static ShoppingList load(CompoundTag tag) {
+			return new ShoppingList(
+				NBTHelper.readCompoundList(tag.getList("Purchases", Tag.TAG_COMPOUND),
+					c -> IntAttached.read(c, NbtUtils::readBlockPos)),
+				tag.getUUID("ShopOwner"), tag.getUUID("ShopNetwork"));
+		}
+
+		public CompoundTag save() {
+			CompoundTag tag = new CompoundTag();
+			tag.put("Purchases",
+				NBTHelper.writeCompoundList(purchases, ia -> ia.serializeNBT(NbtUtils::writeBlockPos)));
+			tag.putUUID("ShopOwner", shopOwner);
+			tag.putUUID("ShopNetwork", shopNetwork);
+			return tag;
+		}
+
+		// Y value of clothPos is pixel perfect (x16)
+		public void addPurchases(BlockPos clothPos, int amount) {
+			for (IntAttached<BlockPos> entry : purchases) {
+				if (clothPos.equals(entry.getValue())) {
+					entry.setFirst(entry.getFirst() + amount);
+					return;
+				}
+			}
+			purchases.add(IntAttached.with(amount, clothPos));
+		}
+		
+		public int getPurchases(BlockPos clothPos) {
+			for (IntAttached<BlockPos> entry : purchases)
+				if (clothPos.equals(entry.getValue()))
+					return entry.getFirst();
+			return 0;
+		}
+
+		public Couple<InventorySummary> bakeEntries(EntityGetter level) {
+			InventorySummary input = new InventorySummary();
+			InventorySummary output = new InventorySummary();
+
+			for (IntAttached<BlockPos> entry : purchases) {
+				DisplayClothEntity entity = DisplayClothEntity.getAtPosWithPixelY(level, entry.getValue());
+				if (entity == null)
+					continue;
+				input.add(entity.paymentItem, entity.paymentAmount * entry.getFirst());
+				for (IntAttached<ItemStack> stackEntry : entity.requestData.encodedRequest.stacks())
+					output.add(stackEntry.getValue(), stackEntry.getFirst() * entry.getFirst());
+			}
+
+			return Couple.create(output, input);
+		}
+	}
+
+	public ShoppingListItem(Properties pProperties) {
+		super(pProperties);
+	}
+
+	public static ShoppingList getList(ItemStack stack) {
+		if (!stack.hasTag() || !stack.getTag()
+			.contains("ShoppingList"))
+			return null;
+		return ShoppingList.load(stack.getTag()
+			.getCompound("ShoppingList"));
+	}
+
+	public static ItemStack saveList(ItemStack stack, ShoppingList list, String address) {
+		CompoundTag tag = stack.getOrCreateTag();
+		tag.put("ShoppingList", list.save());
+		tag.putString("Address", address);
+		return stack;
+	}
+
+	public static String getAddress(ItemStack stack) {
+		if (!stack.hasTag())
+			return "";
+		return stack.getTag()
+			.getString("Address");
+	}
+
+	@Override
+	public void appendHoverText(ItemStack pStack, Level pLevel, List<Component> pTooltipComponents,
+		TooltipFlag pIsAdvanced) {
+		ShoppingList list = getList(pStack);
+
+		if (list != null) {
+			Couple<InventorySummary> lists = list.bakeEntries(pLevel);
+
+			if (lists != null) {
+				for (InventorySummary items : lists) {
+					List<IntAttached<ItemStack>> entries = items.getStacksByCount();
+					boolean cost = items == lists.getSecond();
+
+					if (cost)
+						pTooltipComponents.add(Components.empty());
+
+					if (entries.size() == 1) {
+						IntAttached<ItemStack> entry = entries.get(0);
+						CreateLang.text(cost ? "Total cost: " : "")
+							.style(ChatFormatting.GOLD)
+							.add(CreateLang.builder()
+								.add(entry.getSecond()
+									.getHoverName())
+								.text(" x")
+								.text(String.valueOf(entry.getFirst()))
+								.style(cost ? ChatFormatting.YELLOW : ChatFormatting.GRAY))
+							.addTo(pTooltipComponents);
+
+					} else {
+						if (cost)
+							CreateLang.text("Total cost: ")
+								.style(ChatFormatting.GOLD)
+								.addTo(pTooltipComponents);
+						for (IntAttached<ItemStack> entry : entries) {
+							CreateLang.builder()
+								.add(entry.getSecond()
+									.getHoverName())
+								.text(" x")
+								.text(String.valueOf(entry.getFirst()))
+								.style(cost ? ChatFormatting.YELLOW : ChatFormatting.GRAY)
+								.addTo(pTooltipComponents);
+						}
+					}
+				}
+			}
+		}
+
+		CreateLang.text("Hand this to a shop keeper")
+			.style(ChatFormatting.GRAY)
+			.addTo(pTooltipComponents);
+
+		CreateLang.text("Sneak-Click to discard")
+			.style(ChatFormatting.DARK_GRAY)
+			.addTo(pTooltipComponents);
+	}
+
+	@Override
+	public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
+		if (pUsedHand == InteractionHand.OFF_HAND || pPlayer == null || !pPlayer.isShiftKeyDown())
+			return new InteractionResultHolder<ItemStack>(InteractionResult.PASS, pPlayer.getItemInHand(pUsedHand));
+
+		CreateLang.text("Shopping list discarded")
+			.sendStatus(pPlayer);
+		pPlayer.playSound(SoundEvents.BOOK_PAGE_TURN);
+		return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, ItemStack.EMPTY);
+	}
+
+	@Override
+	public InteractionResult useOn(UseOnContext pContext) {
+		InteractionHand pUsedHand = pContext.getHand();
+		Player pPlayer = pContext.getPlayer();
+		if (pUsedHand == InteractionHand.OFF_HAND || pPlayer == null || !pPlayer.isShiftKeyDown())
+			return InteractionResult.PASS;
+		pPlayer.setItemInHand(pUsedHand, ItemStack.EMPTY);
+
+		CreateLang.text("Shopping list discarded")
+			.sendStatus(pPlayer);
+		pPlayer.playSound(SoundEvents.BOOK_PAGE_TURN);
+		return InteractionResult.SUCCESS;
+	}
+
+}

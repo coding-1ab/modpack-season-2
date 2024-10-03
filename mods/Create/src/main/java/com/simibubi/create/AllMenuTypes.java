@@ -4,6 +4,8 @@ import com.simibubi.create.content.equipment.blueprint.BlueprintMenu;
 import com.simibubi.create.content.equipment.blueprint.BlueprintScreen;
 import com.simibubi.create.content.equipment.toolbox.ToolboxMenu;
 import com.simibubi.create.content.equipment.toolbox.ToolboxScreen;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothPricingMenu;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothPricingScreen;
 import com.simibubi.create.content.logistics.filter.AttributeFilterMenu;
 import com.simibubi.create.content.logistics.filter.AttributeFilterScreen;
 import com.simibubi.create.content.logistics.filter.FilterMenu;
@@ -55,6 +57,9 @@ public class AllMenuTypes {
 	
 	public static final MenuEntry<ScheduleMenu> SCHEDULE =
 		register("schedule", ScheduleMenu::new, () -> ScheduleScreen::new);
+	
+	public static final MenuEntry<DisplayClothPricingMenu> DISPLAY_CLOTH =
+		register("display_cloth", DisplayClothPricingMenu::new, () -> DisplayClothPricingScreen::new);
 
 	private static <C extends AbstractContainerMenu, S extends Screen & MenuAccess<C>> MenuEntry<C> register(
 		String name, ForgeMenuFactory<C> factory, NonNullSupplier<ScreenFactory<C, S>> screenFactory) {

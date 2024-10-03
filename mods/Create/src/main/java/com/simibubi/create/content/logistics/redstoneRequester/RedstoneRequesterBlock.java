@@ -4,18 +4,17 @@ import java.util.List;
 
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllItems;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.utility.IntAttached;
-import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -48,32 +47,36 @@ public class RedstoneRequesterBlock extends Block implements IBE<RedstoneRequest
 	public static void programRequester(ServerPlayer player, StockTickerBlockEntity be, PackageOrder order,
 		String address) {
 		ItemStack stack = player.getMainHandItem();
-		if (!AllBlocks.REDSTONE_REQUESTER.isIn(stack))
+		if (!AllBlocks.REDSTONE_REQUESTER.isIn(stack) && !AllItems.DISPLAY_CLOTH.isIn(stack))
 			return;
 
-		CompoundTag tag = stack.getOrCreateTag();
-		addBEtag(order, address, tag);
-
-		tag.put("StockTickerPos", NbtUtils.writeBlockPos(be.getBlockPos()));
-		tag.putString("StockTickerDim", player.level()
+		AutoRequestData autoRequestData = new AutoRequestData();
+		autoRequestData.encodedRequest = order;
+		autoRequestData.encodedTargetAdress = address;
+		autoRequestData.targetOffset = be.getBlockPos();
+		autoRequestData.targetDim = player.level()
 			.dimension()
 			.location()
-			.toString());
+			.toString();
 
+		autoRequestData.writeToItem(BlockPos.ZERO, stack);
 		player.setItemInHand(InteractionHand.MAIN_HAND, stack);
 	}
 
 	@Override
 	public void appendHoverText(ItemStack pStack, BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
 		super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
-		CompoundTag compoundnbt = pStack.getOrCreateTag();
-		if (!compoundnbt.contains("BlockEntityTag", Tag.TAG_COMPOUND))
-			return;
-		compoundnbt = compoundnbt.getCompound("BlockEntityTag");
+		appendRequesterTooltip(pStack, pTooltip);
+	}
 
-		if (compoundnbt.contains("EncodedAddress", Tag.TAG_STRING))
-			pTooltip.add(Components.literal("-> " + compoundnbt.getString("EncodedAddress"))
-				.withStyle(ChatFormatting.GOLD));
+	public static void appendRequesterTooltip(ItemStack pStack, List<Component> pTooltip) {
+		if (!pStack.hasTag())
+			return;
+
+		CompoundTag compoundnbt = pStack.getTag();
+//		if (compoundnbt.contains("EncodedAddress", Tag.TAG_STRING))
+//			pTooltip.add(Components.literal("-> " + compoundnbt.getString("EncodedAddress"))
+//				.withStyle(ChatFormatting.GOLD));
 
 		if (!compoundnbt.contains("EncodedRequest", Tag.TAG_COMPOUND))
 			return;
@@ -87,39 +90,18 @@ public class RedstoneRequesterBlock extends Block implements IBE<RedstoneRequest
 				.append(String.valueOf(entry.getFirst()))
 				.withStyle(ChatFormatting.GRAY));
 		}
-	}
 
-	private static void addBEtag(PackageOrder order, String address, CompoundTag tag) {
-		CompoundTag teTag = new CompoundTag();
-		teTag.put("EncodedRequest", order.write());
-		teTag.putString("EncodedAddress", address);
-		tag.put("BlockEntityTag", teTag);
+		CreateLang.translate("logistically_linked.tooltip_clear")
+			.style(ChatFormatting.DARK_GRAY)
+			.addTo(pTooltip);
 	}
 
 	@Override
 	public void setPlacedBy(Level pLevel, BlockPos requesterPos, BlockState pState, LivingEntity pPlacer,
 		ItemStack pStack) {
-		super.setPlacedBy(pLevel, requesterPos, pState, pPlacer, pStack);
-
-		withBlockEntityDo(pLevel, requesterPos, rrbe -> {
-			CompoundTag tag = pStack.getTag();
-			BlockPos tickerPos = NbtUtils.readBlockPos(tag.getCompound("StockTickerPos"));
-			String tickerDim = tag.getString("StockTickerDim");
-
-			rrbe.targetOffset = tickerPos.subtract(requesterPos);
-			rrbe.targetDim = tickerDim;
-			rrbe.isValid = tickerPos.closerThan(requesterPos, 128) && tickerDim.equals(pLevel.dimension()
-				.location()
-				.toString());
-
-			if (pPlacer instanceof Player player)
-				CreateLang
-					.translate(
-						rrbe.isValid ? "redstone_requester.keeper_connected" : "redstone_requester.keeper_too_far_away")
-					.style(rrbe.isValid ? ChatFormatting.WHITE : ChatFormatting.RED)
-					.sendStatus(player);
-		});
-
+		Player player = pPlacer instanceof Player ? (Player) pPlacer : null;
+		withBlockEntityDo(pLevel, requesterPos,
+			rrbe -> rrbe.requestData = AutoRequestData.readFromItem(pLevel, player, requesterPos, pStack));
 	}
 
 	@Override
@@ -130,18 +112,9 @@ public class RedstoneRequesterBlock extends Block implements IBE<RedstoneRequest
 		if (!(blockEntity instanceof RedstoneRequesterBlockEntity rrbe))
 			return drops;
 
-		for (ItemStack itemStack : drops) {
-			if (!itemStack.is(this.asItem()))
-				continue;
-
-			CompoundTag tag = itemStack.getOrCreateTag();
-
-			addBEtag(rrbe.encodedRequest, rrbe.encodedTargetAdress, tag);
-			tag.put("StockTickerPos", NbtUtils.writeBlockPos(rrbe.getBlockPos()
-				.offset(rrbe.targetOffset)));
-			tag.putString("StockTickerDim", rrbe.targetDim);
-			itemStack.setTag(tag);
-		}
+		for (ItemStack itemStack : drops)
+			if (itemStack.is(this.asItem()))
+				rrbe.requestData.writeToItem(rrbe.getBlockPos(), itemStack);
 
 		return drops;
 	}

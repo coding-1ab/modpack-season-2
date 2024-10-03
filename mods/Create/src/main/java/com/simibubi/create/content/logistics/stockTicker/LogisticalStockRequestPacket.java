@@ -30,5 +30,10 @@ public class LogisticalStockRequestPacket extends BlockEntityConfigurationPacket
 		be.getRecentSummary()
 			.divideAndSendTo(player, pos);
 	}
+	
+	@Override
+	protected int maxRange() {
+		return 4096;
+	}
 
 }

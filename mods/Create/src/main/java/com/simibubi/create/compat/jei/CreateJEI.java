@@ -57,6 +57,7 @@ import com.simibubi.create.content.kinetics.press.MechanicalPressBlockEntity;
 import com.simibubi.create.content.kinetics.press.PressingRecipe;
 import com.simibubi.create.content.kinetics.saw.CuttingRecipe;
 import com.simibubi.create.content.kinetics.saw.SawBlockEntity;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothPricingScreen;
 import com.simibubi.create.content.logistics.filter.AbstractFilterScreen;
 import com.simibubi.create.content.processing.basin.BasinRecipe;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
@@ -372,6 +373,7 @@ public class CreateJEI implements IModPlugin {
 		registration.addGhostIngredientHandler(BlueprintScreen.class, new GhostIngredientHandler());
 		registration.addGhostIngredientHandler(LinkedControllerScreen.class, new GhostIngredientHandler());
 		registration.addGhostIngredientHandler(ScheduleScreen.class, new GhostIngredientHandler());
+		registration.addGhostIngredientHandler(DisplayClothPricingScreen.class, new GhostIngredientHandler());
 	}
 
 	private class CategoryBuilder<T extends Recipe<?>> {
