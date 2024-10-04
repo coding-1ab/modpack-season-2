@@ -3,6 +3,8 @@ package com.simibubi.create.content.logistics.displayCloth;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.foundation.utility.CreateLang;
 
@@ -66,11 +68,13 @@ public class ShoppingListItem extends Item {
 			return 0;
 		}
 
-		public Couple<InventorySummary> bakeEntries(EntityGetter level) {
+		public Couple<InventorySummary> bakeEntries(EntityGetter level, @Nullable BlockPos clothPosToIgnore) {
 			InventorySummary input = new InventorySummary();
 			InventorySummary output = new InventorySummary();
 
 			for (IntAttached<BlockPos> entry : purchases) {
+				if (clothPosToIgnore != null && clothPosToIgnore.equals(entry.getValue()))
+					continue;
 				DisplayClothEntity entity = DisplayClothEntity.getAtPosWithPixelY(level, entry.getValue());
 				if (entity == null)
 					continue;
@@ -115,7 +119,7 @@ public class ShoppingListItem extends Item {
 		ShoppingList list = getList(pStack);
 
 		if (list != null) {
-			Couple<InventorySummary> lists = list.bakeEntries(pLevel);
+			Couple<InventorySummary> lists = list.bakeEntries(pLevel, null);
 
 			if (lists != null) {
 				for (InventorySummary items : lists) {
@@ -127,7 +131,7 @@ public class ShoppingListItem extends Item {
 
 					if (entries.size() == 1) {
 						IntAttached<ItemStack> entry = entries.get(0);
-						CreateLang.text(cost ? "Total cost: " : "")
+						CreateLang.temporaryText(cost ? "Total cost: " : "")
 							.style(ChatFormatting.GOLD)
 							.add(CreateLang.builder()
 								.add(entry.getSecond()
@@ -139,7 +143,7 @@ public class ShoppingListItem extends Item {
 
 					} else {
 						if (cost)
-							CreateLang.text("Total cost: ")
+							CreateLang.temporaryText("Total cost: ")
 								.style(ChatFormatting.GOLD)
 								.addTo(pTooltipComponents);
 						for (IntAttached<ItemStack> entry : entries) {
@@ -156,11 +160,11 @@ public class ShoppingListItem extends Item {
 			}
 		}
 
-		CreateLang.text("Hand this to a shop keeper")
+		CreateLang.temporaryText("Hand this to a shop keeper")
 			.style(ChatFormatting.GRAY)
 			.addTo(pTooltipComponents);
 
-		CreateLang.text("Sneak-Click to discard")
+		CreateLang.temporaryText("Sneak-Click to discard")
 			.style(ChatFormatting.DARK_GRAY)
 			.addTo(pTooltipComponents);
 	}
@@ -170,7 +174,7 @@ public class ShoppingListItem extends Item {
 		if (pUsedHand == InteractionHand.OFF_HAND || pPlayer == null || !pPlayer.isShiftKeyDown())
 			return new InteractionResultHolder<ItemStack>(InteractionResult.PASS, pPlayer.getItemInHand(pUsedHand));
 
-		CreateLang.text("Shopping list discarded")
+		CreateLang.temporaryText("Shopping list discarded")
 			.sendStatus(pPlayer);
 		pPlayer.playSound(SoundEvents.BOOK_PAGE_TURN);
 		return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, ItemStack.EMPTY);
@@ -184,7 +188,7 @@ public class ShoppingListItem extends Item {
 			return InteractionResult.PASS;
 		pPlayer.setItemInHand(pUsedHand, ItemStack.EMPTY);
 
-		CreateLang.text("Shopping list discarded")
+		CreateLang.temporaryText("Shopping list discarded")
 			.sendStatus(pPlayer);
 		pPlayer.playSound(SoundEvents.BOOK_PAGE_TURN);
 		return InteractionResult.SUCCESS;

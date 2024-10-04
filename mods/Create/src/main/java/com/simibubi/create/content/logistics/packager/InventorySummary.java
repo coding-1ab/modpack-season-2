@@ -42,12 +42,18 @@ public class InventorySummary {
 		add(entry.getSecond(), entry.getFirst());
 	}
 
+	public InventorySummary copy() {
+		InventorySummary inventorySummary = new InventorySummary();
+		items.forEach((i, list) -> list.forEach(entry -> inventorySummary.add(entry.getSecond(), entry.getFirst())));
+		return inventorySummary;
+	}
+
 	public void add(ItemStack stack, int count) {
 		if (count == 0 || stack.isEmpty())
 			return;
 
 		totalCount += count;
-		
+
 		List<IntAttached<ItemStack>> stacks = items.computeIfAbsent(stack.getItem(), $ -> Lists.newArrayList());
 		for (IntAttached<ItemStack> existing : stacks) {
 			ItemStack existingStack = existing.getSecond();
@@ -89,7 +95,7 @@ public class InventorySummary {
 		}
 		return stacksByCount;
 	}
-	
+
 	public int getTotalCount() {
 		return totalCount;
 	}

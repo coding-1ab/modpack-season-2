@@ -1,16 +1,26 @@
 package com.simibubi.create.content.logistics.stockTicker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem;
 import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem.ShoppingList;
+import com.simibubi.create.content.logistics.packager.InventorySummary;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.ScreenOpener;
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.IntAttached;
 import net.createmod.catnip.utility.Iterate;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -24,6 +34,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 @EventBusSubscriber
 public class StockTickerInteractionHandler {
@@ -43,25 +54,9 @@ public class StockTickerInteractionHandler {
 			return;
 
 		ItemStack mainHandItem = player.getMainHandItem();
+
 		if (AllItems.SHOPPING_LIST.isIn(mainHandItem)) {
-
-			if (!level.isClientSide()) {
-				if (!(level.getBlockEntity(targetPos) instanceof StockTickerBlockEntity tickerBE))
-					return;
-				ShoppingList list = ShoppingListItem.getList(mainHandItem);
-				if (list == null)
-					return;
-
-				PackageOrder order = new PackageOrder(list.bakeEntries(level)
-					.getFirst()
-					.getStacksByCount());
-
-				tickerBE.broadcastPackageRequest(order, null, ShoppingListItem.getAddress(mainHandItem));
-				player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-			}
-
-			event.setCancellationResult(InteractionResult.SUCCESS);
-			event.setCanceled(true);
+			interactWithShop(event, player, level, targetPos, mainHandItem);
 			return;
 		}
 
@@ -75,6 +70,102 @@ public class StockTickerInteractionHandler {
 		event.setCancellationResult(InteractionResult.SUCCESS);
 		event.setCanceled(true);
 		return;
+	}
+
+	private static void interactWithShop(EntityInteractSpecific event, Player player, Level level, BlockPos targetPos,
+		ItemStack mainHandItem) {
+		event.setCancellationResult(InteractionResult.SUCCESS);
+		event.setCanceled(true);
+
+		if (level.isClientSide())
+			return;
+		if (!(level.getBlockEntity(targetPos) instanceof StockTickerBlockEntity tickerBE))
+			return;
+
+		ShoppingList list = ShoppingListItem.getList(mainHandItem);
+		if (list == null)
+			return;
+
+		Couple<InventorySummary> bakeEntries = list.bakeEntries(level, null);
+		InventorySummary paymentEntries = bakeEntries.getSecond();
+		InventorySummary orderEntries = bakeEntries.getFirst();
+		PackageOrder order = new PackageOrder(orderEntries.getStacksByCount());
+
+		// Must be up-to-date
+		tickerBE.refreshInventorySummary();
+
+		// Check stock levels
+		InventorySummary recentSummary = tickerBE.getRecentSummary();
+		for (IntAttached<ItemStack> entry : order.stacks()) {
+			if (recentSummary.getCountOf(entry.getSecond()) >= entry.getFirst())
+				continue;
+
+			AllSoundEvents.DENY.playOnServer(level, player.blockPosition());
+			CreateLang.temporaryText("Purchase failed: Stock levels lower than expected")
+				.style(ChatFormatting.RED)
+				.sendStatus(player);
+			return;
+		}
+
+		// Check space in stock ticker
+		int occupiedSlots = 0;
+		for (IntAttached<ItemStack> entry : paymentEntries.getStacksByCount())
+			occupiedSlots += Mth.ceil(entry.getFirst() / (float) entry.getValue()
+				.getMaxStackSize());
+		for (int i = 0; i < tickerBE.receivedPayments.getSlots(); i++)
+			if (tickerBE.receivedPayments.getStackInSlot(i)
+				.isEmpty())
+				occupiedSlots--;
+
+		if (occupiedSlots > 0) {
+			AllSoundEvents.DENY.playOnServer(level, player.blockPosition());
+			CreateLang.temporaryText("Not enough space in Cash Register")
+				.style(ChatFormatting.RED)
+				.sendStatus(player);
+			return;
+		}
+
+		// Transfer payment to stock ticker
+		for (boolean simulate : Iterate.trueAndFalse) {
+			InventorySummary tally = paymentEntries.copy();
+			List<ItemStack> toTransfer = new ArrayList<>();
+
+			for (int i = 0; i < player.getInventory().items.size(); i++) {
+				ItemStack item = player.getInventory()
+					.getItem(i);
+				if (item.isEmpty())
+					continue;
+				int countOf = tally.getCountOf(item);
+				if (countOf == 0)
+					continue;
+				int toRemove = Math.min(item.getCount(), countOf);
+				tally.add(item, -toRemove);
+
+				if (simulate)
+					continue;
+
+				int newStackSize = item.getCount() - toRemove;
+				player.getInventory()
+					.setItem(i, newStackSize == 0 ? ItemStack.EMPTY : item.copyWithCount(newStackSize));
+				toTransfer.add(item.copyWithCount(toRemove));
+			}
+
+			if (simulate && tally.getTotalCount() != 0) {
+				AllSoundEvents.DENY.playOnServer(level, player.blockPosition());
+				CreateLang.temporaryText("You cannot afford this purchase")
+					.style(ChatFormatting.RED)
+					.sendStatus(player);
+				return;
+			}
+
+			if (simulate)
+				continue;
+
+			toTransfer.forEach(s -> ItemHandlerHelper.insertItemStacked(tickerBE.receivedPayments, s, false));
+		}
+
+		tickerBE.broadcastPackageRequest(order, null, ShoppingListItem.getAddress(mainHandItem));
+		player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 	}
 
 	public static BlockPos getStockTickerPosition(Entity entity) {

@@ -13,6 +13,7 @@ import com.simibubi.create.content.equipment.blueprint.BlueprintEntity.Blueprint
 import com.simibubi.create.content.equipment.blueprint.BlueprintEntity.BlueprintSection;
 import com.simibubi.create.content.logistics.displayCloth.BlueprintOverlayShopContext;
 import com.simibubi.create.content.logistics.displayCloth.DisplayClothEntity;
+import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem.ShoppingList;
 import com.simibubi.create.content.logistics.filter.AttributeFilterMenu.WhitelistMode;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
@@ -34,6 +35,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -137,13 +139,13 @@ public class BlueprintOverlayRenderer {
 		}
 	}
 
-	public static void displayClothShop(DisplayClothEntity dce, int alreadyPurchased) {
+	public static void displayClothShop(DisplayClothEntity dce, int alreadyPurchased, ShoppingList list) {
 		if (active)
 			return;
 		prepareCustomOverlay();
 		noOutput = false;
 
-		shopContext = new BlueprintOverlayShopContext(false, dce.getStockLevelForTrade(), alreadyPurchased);
+		shopContext = new BlueprintOverlayShopContext(false, dce.getStockLevelForTrade(list), alreadyPurchased);
 
 		ingredients.add(Pair.of(dce.paymentItem.copyWithCount(dce.paymentAmount),
 			!dce.paymentItem.isEmpty() && shopContext.stockLevel() > shopContext.purchases()));
@@ -155,19 +157,34 @@ public class BlueprintOverlayRenderer {
 	public static void displayShoppingList(Couple<InventorySummary> bakedList) {
 		if (active || bakedList == null)
 			return;
+		Minecraft mc = Minecraft.getInstance();
 		prepareCustomOverlay();
 		noOutput = false;
 
 		shopContext = new BlueprintOverlayShopContext(true, 1, 0);
 
 		for (IntAttached<ItemStack> entry : bakedList.getSecond()
-			.getStacksByCount())
+			.getStacksByCount()) {
 			ingredients.add(Pair.of(entry.getSecond()
-				.copyWithCount(entry.getFirst()), true));
+				.copyWithCount(entry.getFirst()), canAfford(mc.player, entry)));
+		}
+
 		for (IntAttached<ItemStack> entry : bakedList.getFirst()
 			.getStacksByCount())
 			results.add(entry.getSecond()
 				.copyWithCount(entry.getFirst()));
+	}
+
+	private static boolean canAfford(Player player, IntAttached<ItemStack> entry) {
+		int itemsPresent = 0;
+		for (int i = 0; i < player.getInventory().items.size(); i++) {
+			ItemStack item = player.getInventory()
+				.getItem(i);
+			if (item.isEmpty() || !ItemHandlerHelper.canItemStacksStack(item, entry.getSecond()))
+				continue;
+			itemsPresent += item.getCount();
+		}
+		return itemsPresent >= entry.getFirst();
 	}
 
 	private static void prepareCustomOverlay() {
@@ -342,8 +359,8 @@ public class BlueprintOverlayRenderer {
 			RenderSystem.enableBlend();
 			(pair.getSecond() ? AllGuiTextures.HOTSLOT_ACTIVE : AllGuiTextures.HOTSLOT).render(graphics, x, y);
 			ItemStack itemStack = pair.getFirst();
-			String count =
-				shopContext != null || pair.getSecond() ? null : ChatFormatting.GOLD.toString() + itemStack.getCount();
+			String count = shopContext != null && !shopContext.checkout() || pair.getSecond() ? null
+				: ChatFormatting.GOLD.toString() + itemStack.getCount();
 			drawItemStack(graphics, mc, x, y, itemStack, count);
 			x += 21;
 		}

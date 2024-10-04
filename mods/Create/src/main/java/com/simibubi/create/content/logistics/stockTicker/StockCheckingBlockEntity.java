@@ -46,7 +46,7 @@ public abstract class StockCheckingBlockEntity extends SmartBlockEntity {
 		return summaryOfLinks;
 	}
 
-	protected void refreshInventorySummary() {
+	public void refreshInventorySummary() {
 		ticksSinceLastSummary = 0;
 		activeLinksLastSummary = 0;
 		summaryOfLinks = new InventorySummary();

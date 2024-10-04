@@ -42,7 +42,7 @@ public class DisplayClothOverlayRenderer {
 			if (!tickerBE.behaviour.freqId.equals(list.shopNetwork()))
 				return;
 
-			BlueprintOverlayRenderer.displayShoppingList(list.bakeEntries(mc.level));
+			BlueprintOverlayRenderer.displayShoppingList(list.bakeEntries(mc.level, null));
 			return;
 		}
 
@@ -50,7 +50,7 @@ public class DisplayClothOverlayRenderer {
 		if (list != null)
 			alreadyPurchased = list.getPurchases(dce.getPosWithPixelY());
 
-		BlueprintOverlayRenderer.displayClothShop(dce, alreadyPurchased);
+		BlueprintOverlayRenderer.displayClothShop(dce, alreadyPurchased, list);
 	}
 
 }

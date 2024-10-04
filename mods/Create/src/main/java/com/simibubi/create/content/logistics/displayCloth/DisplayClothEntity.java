@@ -131,7 +131,7 @@ public class DisplayClothEntity extends HangingEntity implements IEntityAddition
 
 	public InteractionResult interactAsCustomer(Player player) {
 		ItemStack itemInHand = player.getItemInHand(InteractionHand.MAIN_HAND);
-		ItemStack prevListItem = null;
+		ItemStack prevListItem = ItemStack.EMPTY;
 		boolean addOntoList = false;
 
 		// Remove other lists from inventory
@@ -153,14 +153,14 @@ public class DisplayClothEntity extends HangingEntity implements IEntityAddition
 		}
 
 		if (!itemInHand.isEmpty() && !addOntoList) {
-			CreateLang.text("Empty hand required to start a shopping list")
+			CreateLang.temporaryText("Empty hand required to start a shopping list")
 				.sendStatus(player);
 			AllSoundEvents.DENY.playOnServer(level(), blockPosition());
 			return InteractionResult.SUCCESS;
 		}
 
 		if (paymentItem.isEmpty()) {
-			CreateLang.text("Shop owner must set a price first")
+			CreateLang.temporaryText("Shop owner must set a price first")
 				.sendStatus(player);
 			AllSoundEvents.DENY.playOnServer(level(), blockPosition());
 			return InteractionResult.SUCCESS;
@@ -171,10 +171,10 @@ public class DisplayClothEntity extends HangingEntity implements IEntityAddition
 		if (level().getBlockEntity(tickerPos) instanceof StockTickerBlockEntity stbe && stbe.isKeeperPresent())
 			tickerID = stbe.behaviour.freqId;
 
-		int stockLevel = getStockLevelForTrade();
+		int stockLevel = getStockLevelForTrade(ShoppingListItem.getList(prevListItem));
 
 		if (tickerID == null) {
-			CreateLang.text("Stock keeper missing")
+			CreateLang.temporaryText("Stock keeper missing")
 				.style(ChatFormatting.RED)
 				.sendStatus(player);
 			AllSoundEvents.DENY.playOnServer(level(), blockPosition());
@@ -182,10 +182,20 @@ public class DisplayClothEntity extends HangingEntity implements IEntityAddition
 		}
 
 		if (stockLevel == 0) {
-			CreateLang.text("Out of Stock")
+			CreateLang.temporaryText("Out of Stock")
 				.style(ChatFormatting.RED)
 				.sendStatus(player);
 			AllSoundEvents.DENY.playOnServer(level(), blockPosition());
+
+			if (!prevListItem.isEmpty()) {
+				if (player.getItemInHand(InteractionHand.MAIN_HAND)
+					.isEmpty())
+					player.setItemInHand(InteractionHand.MAIN_HAND, prevListItem);
+				else
+					player.getInventory()
+						.placeItemBackInInventory(prevListItem);
+			}
+
 			return InteractionResult.SUCCESS;
 		}
 
@@ -202,7 +212,7 @@ public class DisplayClothEntity extends HangingEntity implements IEntityAddition
 		BlockPos posWithPixelY = getPosWithPixelY();
 
 		if (list.getPurchases(posWithPixelY) == stockLevel) {
-			CreateLang.text("Limited stock available")
+			CreateLang.temporaryText("Limited stock available")
 				.style(ChatFormatting.RED)
 				.sendStatus(player);
 			AllSoundEvents.DENY.playOnServer(level(), blockPosition());
@@ -210,7 +220,7 @@ public class DisplayClothEntity extends HangingEntity implements IEntityAddition
 		} else {
 			list.addPurchases(posWithPixelY, 1);
 			if (!addOntoList)
-				CreateLang.text("Use this list to add more to your purchase")
+				CreateLang.temporaryText("Use this list to add more to your purchase")
 					.color(0xeeeeee)
 					.sendStatus(player);
 			if (!addOntoList)
@@ -231,7 +241,7 @@ public class DisplayClothEntity extends HangingEntity implements IEntityAddition
 		return InteractionResult.SUCCESS;
 	}
 
-	public int getStockLevelForTrade() {
+	public int getStockLevelForTrade(@Nullable ShoppingList otherPurchases) {
 		BlockPos tickerPos = requestData.targetOffset.offset(blockPosition());
 		if (!(level().getBlockEntity(tickerPos) instanceof StockTickerBlockEntity stbe))
 			return 0;
@@ -248,10 +258,16 @@ public class DisplayClothEntity extends HangingEntity implements IEntityAddition
 		if (recentSummary == null)
 			return 0;
 
+		InventorySummary modifierSummary = new InventorySummary();
+		if (otherPurchases != null)
+			modifierSummary = otherPurchases.bakeEntries(level(), getPosWithPixelY())
+				.getFirst();
+
 		int smallestQuotient = Integer.MAX_VALUE;
 		for (IntAttached<ItemStack> entry : requestData.encodedRequest.stacks())
-			smallestQuotient =
-				Math.min(smallestQuotient, recentSummary.getCountOf(entry.getValue()) / entry.getFirst());
+			smallestQuotient = Math.min(smallestQuotient,
+				(recentSummary.getCountOf(entry.getValue()) - modifierSummary.getCountOf(entry.getValue()))
+					/ entry.getFirst());
 
 		return smallestQuotient;
 	}

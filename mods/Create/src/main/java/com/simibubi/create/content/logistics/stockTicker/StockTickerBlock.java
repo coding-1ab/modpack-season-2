@@ -54,6 +54,16 @@ public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<
 	public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand,
 		BlockHitResult pHit) {
 		return onBlockEntityUse(pLevel, pPos, stbe -> {
+
+			if (!stbe.receivedPayments.isEmpty()) {
+				for (int i = 0; i < stbe.receivedPayments.getSlots(); i++)
+					pPlayer.getInventory()
+						.placeItemBackInInventory(
+							stbe.receivedPayments.extractItem(i, stbe.receivedPayments.getStackInSlot(i)
+								.getCount(), false));
+				return InteractionResult.SUCCESS;
+			}
+
 			if (!stbe.observedInventory.hasInventory())
 				return InteractionResult.PASS;
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> displayScreen(stbe, pPlayer));
@@ -83,6 +93,11 @@ public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<
 	@OnlyIn(Dist.CLIENT)
 	public PartialModel getHat(LevelAccessor level, BlockPos pos, LivingEntity keeper) {
 		return AllPartialModels.LOGISTICS_HAT;
+	}
+
+	@Override
+	public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
+		IBE.onRemove(pState, pLevel, pPos, pNewState);
 	}
 
 	@Override

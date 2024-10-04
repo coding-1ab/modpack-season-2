@@ -4,27 +4,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
+import org.checkerframework.checker.units.qual.s;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
+import com.simibubi.create.content.equipment.goggles.IHaveHoveringInformation;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipulationBehaviour;
+import com.simibubi.create.foundation.item.ItemHelper;
+import com.simibubi.create.foundation.item.SmartInventory;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.utility.BlockFace;
 import net.createmod.catnip.utility.IntAttached;
 import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.lang.Components;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 
-public class StockTickerBlockEntity extends StockCheckingBlockEntity {
+public class StockTickerBlockEntity extends StockCheckingBlockEntity implements IHaveHoveringInformation {
 
 	// Player-interface Feature
 	protected List<IntAttached<ItemStack>> lastClientsideStockSnapshot;
@@ -40,11 +52,17 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 	protected String restockAddress;
 	protected boolean powered;
 
+	// Shop feature
+	protected SmartInventory receivedPayments;
+	protected LazyOptional<IItemHandler> capability;
+
 	public StockTickerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 		previouslyUsedAddress = "";
 		restockAddress = "";
 		restockAmounts = PackageOrder.empty();
+		receivedPayments = new SmartInventory(27, this, 64, false);
+		capability = LazyOptional.of(() -> receivedPayments);
 	}
 
 	@Override
@@ -67,7 +85,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 	public InventorySummary getLastClientsideStockSnapshotAsSummary() {
 		return lastClientsideStockSnapshotAsSummary;
 	}
-	
+
 	public int getTicksSinceLastUpdate() {
 		return ticksSinceLastUpdate;
 	}
@@ -93,6 +111,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 		tag.put("RestockAmounts", restockAmounts.write());
 		tag.putString("RestockAddress", restockAddress);
 		tag.putBoolean("Powered", powered);
+		tag.put("ReceivedPayments", receivedPayments.serializeNBT());
 
 		if (clientPacket)
 			tag.putInt("ActiveLinks", activeLinks);
@@ -105,6 +124,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 		restockAmounts = PackageOrder.read(tag.getCompound("RestockAmounts"));
 		restockAddress = tag.getString("RestockAddress");
 		powered = tag.getBoolean("Powered");
+		receivedPayments.deserializeNBT(tag.getCompound("ReceivedPayments"));
 
 		if (clientPacket)
 			activeLinks = tag.getInt("ActiveLinks");
@@ -239,6 +259,50 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public boolean addToTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+		if (receivedPayments.isEmpty())
+			return false;
+		CreateLang.temporaryText("Contains payments:")
+			.style(ChatFormatting.WHITE)
+			.forGoggles(tooltip);
+
+		InventorySummary summary = new InventorySummary();
+		for (int i = 0; i < receivedPayments.getSlots(); i++)
+			summary.add(receivedPayments.getStackInSlot(i));
+		for (IntAttached<ItemStack> entry : summary.getStacksByCount())
+			CreateLang.builder()
+				.text(Components.translatable(entry.getSecond()
+					.getDescriptionId())
+					.getString() + " x" + entry.getFirst())
+				.style(ChatFormatting.GREEN)
+				.forGoggles(tooltip);
+
+		CreateLang.temporaryText("Right-click to retrieve")
+			.style(ChatFormatting.GRAY)
+			.forGoggles(tooltip);
+		return true;
+	}
+
+	@Override
+	public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+		if (isItemHandlerCap(cap))
+			return capability.cast();
+		return super.getCapability(cap, side);
+	}
+
+	@Override
+	public void destroy() {
+		ItemHelper.dropContents(level, worldPosition, receivedPayments);
+		super.destroy();
+	}
+
+	@Override
+	public void invalidate() {
+		capability.invalidate();
+		super.invalidate();
 	}
 
 }
