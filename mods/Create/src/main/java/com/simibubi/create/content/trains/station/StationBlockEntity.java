@@ -1,10 +1,10 @@
 package com.simibubi.create.content.trains.station;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,7 +28,8 @@ import com.simibubi.create.content.contraptions.ITransformableBlockEntity;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.decoration.slidingDoor.DoorControlBehaviour;
 import com.simibubi.create.content.logistics.depot.DepotBehaviour;
-import com.simibubi.create.content.logistics.frogport.FrogportBlockEntity;
+import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
+import com.simibubi.create.content.logistics.packagePort.postbox.PostboxBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlock;
 import com.simibubi.create.content.trains.bogey.AbstractBogeyBlock;
 import com.simibubi.create.content.trains.bogey.AbstractBogeyBlockEntity;
@@ -92,7 +93,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.network.PacketDistributor;
 
 public class StationBlockEntity extends SmartBlockEntity implements ITransformableBlockEntity {
@@ -224,8 +224,6 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 
 	@Override
 	public void tick() {
-		tickPackagePorts();
-
 		if (isAssembling() && level.isClientSide)
 			refreshAssemblyInfo();
 		super.tick();
@@ -372,8 +370,9 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 		if (!tryEnterAssemblyMode())
 			return false;
 
-		//Check the station wasn't destroyed
-		if (!(level.getBlockState(worldPosition).getBlock() instanceof StationBlock))
+		// Check the station wasn't destroyed
+		if (!(level.getBlockState(worldPosition)
+			.getBlock() instanceof StationBlock))
 			return true;
 
 		BlockState newState = getBlockState().setValue(StationBlock.ASSEMBLING, true);
@@ -961,58 +960,38 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 
 	// Package port integration
 
-	public void attachPackagePort(FrogportBlockEntity ppbe) {
+	public void attachPackagePort(PackagePortBlockEntity ppbe) {
 		GlobalStation station = getStation();
-		if (station == null)
+		if (station == null || level.isClientSide)
 			return;
+
+		if (ppbe instanceof PostboxBlockEntity pbe)
+			pbe.trackedGlobalStation = new WeakReference<GlobalStation>(station);
+		
+		if (station.connectedPorts.containsKey(ppbe.getBlockPos()))
+			restoreOfflineBuffer(ppbe, station.connectedPorts.get(ppbe.getBlockPos()));
 
 		GlobalPackagePort globalPackagePort = new GlobalPackagePort();
 		globalPackagePort.address = ppbe.addressFilter;
 		station.connectedPorts.put(ppbe.getBlockPos(), globalPackagePort);
 	}
 
-	public void removePackagePort(FrogportBlockEntity ppbe) {
+	private void restoreOfflineBuffer(PackagePortBlockEntity ppbe, GlobalPackagePort globalPackagePort) {
+		if (!globalPackagePort.primed)
+			return;
+		for (int i = 0; i < globalPackagePort.offlineBuffer.getSlots(); i++) {
+			ppbe.inventory.setStackInSlot(i, globalPackagePort.offlineBuffer.getStackInSlot(i));
+			globalPackagePort.offlineBuffer.setStackInSlot(i, ItemStack.EMPTY);
+		}
+		globalPackagePort.primed = false;
+	}
+
+	public void removePackagePort(PackagePortBlockEntity ppbe) {
 		GlobalStation station = getStation();
 		if (station == null)
 			return;
 
 		station.connectedPorts.remove(ppbe.getBlockPos());
-	}
-
-	public void tickPackagePorts() {
-		GlobalStation station = getStation();
-		if (station == null)
-			return;
-		
-		boolean changed = false;
-
-		for (Iterator<Entry<BlockPos, GlobalPackagePort>> iterator = station.connectedPorts.entrySet()
-			.iterator(); iterator.hasNext();) {
-			Entry<BlockPos, GlobalPackagePort> entry = iterator.next();
-			BlockPos pos = entry.getKey();
-			GlobalPackagePort port = entry.getValue();
-			if (!level.isLoaded(pos))
-				continue;
-			if (!(level.getBlockEntity(pos) instanceof FrogportBlockEntity ppbe)) {
-				iterator.remove();
-				changed = true;
-				continue;
-			}
-			
-			while (!port.inBuffer.isEmpty()) {
-				ItemStack itemStack = port.inBuffer.get(0);
-				ppbe.inventory.receiveMode(true);
-				ItemStack insertItem = ItemHandlerHelper.insertItem(ppbe.inventory, itemStack, false);
-				ppbe.inventory.receiveMode(false);
-				if (!insertItem.isEmpty())
-					break;
-				port.inBuffer.remove(0);
-				changed = true;
-			}
-		}
-		
-		if (changed)
-			Create.RAILWAYS.markTracksDirty();
 	}
 
 }

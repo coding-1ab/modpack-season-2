@@ -49,9 +49,11 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	ATTRIBUTE_FILTER("filters", 0, 99, 241, 85),
 	PACKAGE_FILTER("filters_2", 0, 0, 218, 79),
 	
-	FROGPORT("frogport", 0, 0, 238, 99),
-	FROGPORT_SLOT("frogport", 25, 33, 18, 18),
-	FROGPORT_INACTIVE_ADDRESS("frogport", 45, 102, 162, 20),
+	POSTBOX_HEADER("frogport_and_mailbox", 0, 23, 214, 24),
+	FROGPORT_HEADER("frogport_and_mailbox", 0, 0, 214, 17),
+	FROGPORT_SLOT("frogport_and_mailbox", 26, 55, 18, 18),
+	FROGPORT_EDIT_NAME("frogport_and_mailbox", 230, 3, 13, 13),
+	FROGPORT_BG("frogport_and_mailbox", 0, 47, 220, 82),
 
 	TOOLBOX("toolbox", 188, 171),
 	TOOLBELT_SLOT("minecraft", "widgets", 24, 23, 22, 22),

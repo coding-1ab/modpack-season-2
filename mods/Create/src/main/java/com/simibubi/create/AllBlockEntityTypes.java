@@ -166,13 +166,15 @@ import com.simibubi.create.content.logistics.depot.DepotRenderer;
 import com.simibubi.create.content.logistics.depot.EjectorBlockEntity;
 import com.simibubi.create.content.logistics.depot.EjectorRenderer;
 import com.simibubi.create.content.logistics.depot.EjectorVisual;
-import com.simibubi.create.content.logistics.frogport.FrogportBlockEntity;
-import com.simibubi.create.content.logistics.frogport.FrogportRenderer;
-import com.simibubi.create.content.logistics.frogport.FrogportVisual;
 import com.simibubi.create.content.logistics.funnel.FunnelBlockEntity;
 import com.simibubi.create.content.logistics.funnel.FunnelRenderer;
 import com.simibubi.create.content.logistics.funnel.FunnelVisual;
 import com.simibubi.create.content.logistics.itemHatch.ItemHatchBlockEntity;
+import com.simibubi.create.content.logistics.packagePort.frogport.FrogportBlockEntity;
+import com.simibubi.create.content.logistics.packagePort.frogport.FrogportRenderer;
+import com.simibubi.create.content.logistics.packagePort.frogport.FrogportVisual;
+import com.simibubi.create.content.logistics.packagePort.postbox.PostboxBlockEntity;
+import com.simibubi.create.content.logistics.packagePort.postbox.PostboxRenderer;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerRenderer;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
@@ -501,6 +503,12 @@ public class AllBlockEntityTypes {
 		.visual(() -> FrogportVisual::new, false)
 		.validBlocks(AllBlocks.PACKAGE_FROGPORT)
 		.renderer(() -> FrogportRenderer::new)
+		.register();
+	
+	public static final BlockEntityEntry<PostboxBlockEntity> PACKAGE_POSTBOX = REGISTRATE
+		.blockEntity("package_postbox", PostboxBlockEntity::new)
+		.validBlocks(AllBlocks.PACKAGE_POSTBOXES.toArray())
+		.renderer(() -> PostboxRenderer::new)
 		.register();
 
 	public static final BlockEntityEntry<PackagerLinkBlockEntity> PACKAGER_LINK = REGISTRATE

@@ -163,6 +163,9 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 		}
 		insertionDelay = Math.min(insertionDelay + 1, 30);
 		super.tick();
+		
+		if (!PackageItem.isPackage(box))
+			discard();
 	}
 
 	/*

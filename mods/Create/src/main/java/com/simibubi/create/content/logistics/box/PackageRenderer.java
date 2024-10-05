@@ -26,7 +26,7 @@ public class PackageRenderer extends EntityRenderer<PackageEntity> {
 	@Override
 	public void render(PackageEntity entity, float yaw, float pt, PoseStack ms, MultiBufferSource buffer, int light) {
 		ItemStack box = entity.box;
-		if (box.isEmpty())
+		if (box.isEmpty() || !PackageItem.isPackage(box))
 			box = PackageItem.getFallbackBox();
 		PartialModel model = AllPartialModels.PACKAGES.get(ForgeRegistries.ITEMS.getKey(box.getItem()));
 		SuperByteBuffer sbb = CachedBuffers.partial(model, Blocks.AIR.defaultBlockState());

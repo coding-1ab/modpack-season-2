@@ -180,7 +180,9 @@ public class AllShapes {
 		ITEM_HATCH = shape(1, 0, 0, 15, 16, 2).add(2, 2, 0, 14, 13, 3.8)
 			.add(2, 4, 0, 14, 11, 5.8)
 			.add(2, 6, 0, 14, 9, 7.8)
-			.forHorizontal(SOUTH)
+			.forHorizontal(SOUTH),
+
+		POSTBOX = shape(2, 0, 0, 14, 14, 16).forHorizontal(SOUTH);
 
 	;
 

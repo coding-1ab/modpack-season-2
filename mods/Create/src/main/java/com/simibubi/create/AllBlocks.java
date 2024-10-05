@@ -166,8 +166,6 @@ import com.simibubi.create.content.logistics.crate.CreativeCrateBlock;
 import com.simibubi.create.content.logistics.depot.DepotBlock;
 import com.simibubi.create.content.logistics.depot.EjectorBlock;
 import com.simibubi.create.content.logistics.depot.EjectorItem;
-import com.simibubi.create.content.logistics.frogport.FrogportBlock;
-import com.simibubi.create.content.logistics.frogport.FrogportItem;
 import com.simibubi.create.content.logistics.funnel.AndesiteFunnelBlock;
 import com.simibubi.create.content.logistics.funnel.BeltFunnelBlock;
 import com.simibubi.create.content.logistics.funnel.BeltFunnelGenerator;
@@ -176,6 +174,9 @@ import com.simibubi.create.content.logistics.funnel.FunnelGenerator;
 import com.simibubi.create.content.logistics.funnel.FunnelItem;
 import com.simibubi.create.content.logistics.funnel.FunnelMovementBehaviour;
 import com.simibubi.create.content.logistics.itemHatch.ItemHatchBlock;
+import com.simibubi.create.content.logistics.packagePort.PackagePortItem;
+import com.simibubi.create.content.logistics.packagePort.frogport.FrogportBlock;
+import com.simibubi.create.content.logistics.packagePort.postbox.PostboxBlock;
 import com.simibubi.create.content.logistics.packager.PackagerBlock;
 import com.simibubi.create.content.logistics.packager.PackagerGenerator;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
@@ -1746,10 +1747,34 @@ public class AllBlocks {
 			.transform(pickaxeOnly())
 			.addLayer(() -> RenderType::cutoutMipped)
 			.blockstate((c, p) -> p.simpleBlock(c.getEntry(), AssetLookup.partialBaseModel(c, p)))
-			.item(FrogportItem::new)
+			.item(PackagePortItem::new)
 			.model(AssetLookup::customItemModel)
 			.build()
 			.register();
+	
+	public static final DyedBlockList<PostboxBlock> PACKAGE_POSTBOXES = new DyedBlockList<>(colour -> {
+		String colourName = colour.getSerializedName();
+		return REGISTRATE.block(colourName + "_postbox", p -> new PostboxBlock(p, colour))
+			.initialProperties(SharedProperties::wooden)
+			.properties(p -> p.mapColor(colour))
+			.transform(axeOnly())
+			.blockstate((c, p) -> {
+				p.horizontalBlock(c.get(), s -> p.models()
+					.withExistingParent(colourName + "_postbox",
+						p.modLoc("block/package_postbox/block_" + (s.getValue(PostboxBlock.OPEN) ? "open" : "closed")))
+					.texture("0", p.modLoc("block/post_box/post_box_" + colourName))
+					.texture("1", p.modLoc("block/post_box/post_box_" + colourName
+						+ (s.getValue(PostboxBlock.OPEN) ? "_open" : "_closed"))));
+			})
+			.tag(AllBlockTags.POSTBOXES.tag)
+			.item(PackagePortItem::new)
+			.model((c, p) -> p.withExistingParent(colourName + "_postbox", p.modLoc("block/package_postbox/item"))
+				.texture("0", p.modLoc("block/post_box/post_box_" + colourName))
+				.texture("1", p.modLoc("block/post_box/post_box_" + colourName + "_closed")))
+			.tag(AllItemTags.POSTBOXES.tag)
+			.build()
+			.register();
+	});
 
 	public static final BlockEntry<PackagerLinkBlock> PACKAGER_LINK =
 		REGISTRATE.block("packager_link", PackagerLinkBlock::new)

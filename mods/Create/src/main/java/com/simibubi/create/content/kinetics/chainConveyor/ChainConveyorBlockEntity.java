@@ -19,7 +19,7 @@ import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorShape.Cha
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorShape.ChainConveyorOBB;
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.content.logistics.frogport.FrogportBlockEntity;
+import com.simibubi.create.content.logistics.packagePort.frogport.FrogportBlockEntity;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
@@ -112,7 +112,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 	public boolean addToTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		return super.addToTooltip(tooltip, isPlayerSneaking);
 
-//		// debug routing info
+		// debug routing info
 //		tooltip.addAll(routingTable.createSummary());
 //		if (!loopPorts.isEmpty())
 //			tooltip.add(Components.literal(loopPorts.size() + " Loop ports"));
@@ -317,7 +317,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 
 		if (ppbe.isAnimationInProgress())
 			return false;
-		if (ppbe.inventory.isBackedUp())
+		if (ppbe.isBackedUp())
 			return false;
 
 		ppbe.startAnimation(box.item, false);

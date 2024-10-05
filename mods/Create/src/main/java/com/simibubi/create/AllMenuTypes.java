@@ -10,6 +10,8 @@ import com.simibubi.create.content.logistics.filter.FilterMenu;
 import com.simibubi.create.content.logistics.filter.FilterScreen;
 import com.simibubi.create.content.logistics.filter.PackageFilterMenu;
 import com.simibubi.create.content.logistics.filter.PackageFilterScreen;
+import com.simibubi.create.content.logistics.packagePort.PackagePortMenu;
+import com.simibubi.create.content.logistics.packagePort.PackagePortScreen;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerMenu;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerScreen;
 import com.simibubi.create.content.schematics.cannon.SchematicannonMenu;
@@ -55,6 +57,9 @@ public class AllMenuTypes {
 	
 	public static final MenuEntry<ScheduleMenu> SCHEDULE =
 		register("schedule", ScheduleMenu::new, () -> ScheduleScreen::new);
+	
+	public static final MenuEntry<PackagePortMenu> PACKAGE_PORT =
+		register("package_port", PackagePortMenu::new, () -> PackagePortScreen::new);
 
 	private static <C extends AbstractContainerMenu, S extends Screen & MenuAccess<C>> MenuEntry<C> register(
 		String name, ForgeMenuFactory<C> factory, NonNullSupplier<ScreenFactory<C, S>> screenFactory) {
