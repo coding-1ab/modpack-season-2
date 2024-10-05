@@ -916,6 +916,7 @@ public class Train {
 		setCurrentStation(station);
 		reservedSignalBlocks.clear();
 		runtime.destinationReached();
+		station.runMailTransfer();
 	}
 
 	public void setCurrentStation(GlobalStation station) {

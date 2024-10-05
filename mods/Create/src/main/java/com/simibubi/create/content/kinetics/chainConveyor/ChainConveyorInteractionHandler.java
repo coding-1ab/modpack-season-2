@@ -12,8 +12,8 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.content.logistics.frogport.FrogportTarget;
-import com.simibubi.create.content.logistics.frogport.FrogportTargetSelectionHandler;
+import com.simibubi.create.content.logistics.packagePort.PackagePortTarget;
+import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler;
 import com.simibubi.create.foundation.utility.RaycastHelper;
 
 import net.createmod.catnip.CatnipClient;
@@ -141,9 +141,9 @@ public class ChainConveyorInteractionHandler {
 		}
 
 		if (AllBlocks.PACKAGE_FROGPORT.isIn(mainHandItem)) {
-			FrogportTargetSelectionHandler.exactPositionOfTarget = selectedBakedPosition;
-			FrogportTargetSelectionHandler.activePackageTarget =
-				new FrogportTarget.ChainConveyorFrogportTarget(selectedLift, selectedChainPosition, selectedConnection);
+			PackagePortTargetSelectionHandler.exactPositionOfTarget = selectedBakedPosition;
+			PackagePortTargetSelectionHandler.activePackageTarget =
+				new PackagePortTarget.ChainConveyorFrogportTarget(selectedLift, selectedChainPosition, selectedConnection);
 			return true;
 		}
 

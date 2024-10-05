@@ -464,8 +464,6 @@
 	"create.gui.filter.ignore_data": "Ignore Data",
 	"create.gui.filter.ignore_data.description": "Items match regardless of their attributes.",
 
-	"create.gui.package_port.packages_backed_up": "%1$s Package(s) backed up",
-	"create.gui.package_port.eject_to_inventory": "Eject to Inventory",
 	"create.gui.package_port.send_only": "Only send packages",
 	"create.gui.package_port.send_and_receive": "Send and receive packages",
 	"create.gui.package_port.catch_packages": "Catch packages addressed to...",
