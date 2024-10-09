@@ -188,6 +188,21 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	TRAIN_PROMPT_R("widgets", 11, 209, 3, 16),
 	TRAIN_PROMPT("widgets", 0, 230, 256, 16),
 
+	// PlacementIndicator
+	PLACEMENT_INDICATOR_SHEET("placement_indicator", 0, 0, 16, 256),
+	
+	// Train Map
+	TRAINMAP_SPRITES("trainmap_sprite_sheet", 0, 0, 512, 256),
+	TRAINMAP_SIGNAL("widgets", 81, 156, 5, 10),
+	TRAINMAP_STATION_ORTHO("widgets", 49, 156, 5, 5),
+	TRAINMAP_STATION_DIAGO("widgets", 56, 156, 5, 5),
+	TRAINMAP_STATION_ORTHO_HIGHLIGHT("widgets", 63, 156, 7, 7),
+	TRAINMAP_STATION_DIAGO_HIGHLIGHT("widgets", 72, 156, 7, 7),
+	
+	TRAINMAP_TOGGLE_PANEL("widgets", 166, 74, 33, 14),
+	TRAINMAP_TOGGLE_ON("widgets", 166, 89, 12, 7),
+	TRAINMAP_TOGGLE_OFF("widgets", 166, 97, 12, 7),
+
 	// ComputerCraft
 	COMPUTER("computer", 200, 102);
 

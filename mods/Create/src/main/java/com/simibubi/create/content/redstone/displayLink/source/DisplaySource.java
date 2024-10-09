@@ -12,6 +12,7 @@ import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStat
 import com.simibubi.create.content.trains.display.FlapDisplayBlockEntity;
 import com.simibubi.create.content.trains.display.FlapDisplayLayout;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
+import com.simibubi.create.foundation.utility.NBTProcessors;
 
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.network.chat.Component;
@@ -38,6 +39,12 @@ public abstract class DisplaySource extends DisplayBehaviour {
 		List<MutableComponent> text = provideText(context, stats);
 		if (text.isEmpty())
 			text = EMPTY;
+
+		if (activeTarget.requiresComponentSanitization())
+			for (MutableComponent component : text)
+				if (NBTProcessors.textComponentHasClickEvent(component))
+					return; // Naughty
+		
 		activeTarget.acceptText(line, text, context);
 	}
 

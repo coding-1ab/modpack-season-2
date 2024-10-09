@@ -21,9 +21,9 @@ public class TrainStatus {
 
 	Train train;
 
-	boolean navigation;
-	boolean track;
-	boolean conductor;
+	public boolean navigation;
+	public boolean track;
+	public boolean conductor;
 
 	List<StatusMessage> queued = new ArrayList<>();
 

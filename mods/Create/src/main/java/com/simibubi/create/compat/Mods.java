@@ -30,7 +30,9 @@ public enum Mods {
 	TCONSTRUCT,
 	FRAMEDBLOCKS,
 	XLPACKETS,
-	MODERNUI;
+	MODERNUI,
+	FTBCHUNKS,
+	JOURNEYMAP;
 
 	private final String id;
 

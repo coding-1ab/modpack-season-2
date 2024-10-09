@@ -31,6 +31,7 @@ import com.simibubi.create.foundation.advancement.AllAdvancements;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -428,6 +429,13 @@ public class Carriage {
 			if (entity != null)
 				return entity;
 		}
+		return null;
+	}
+
+	public Pair<ResourceKey<Level>, DimensionalCarriageEntity> anyAvailableDimensionalCarriage() {
+		for (Entry<ResourceKey<Level>, DimensionalCarriageEntity> entry : entities.entrySet())
+			if (entry.getValue().entity.get() != null)
+				return Pair.of(entry.getKey(), entry.getValue());
 		return null;
 	}
 
