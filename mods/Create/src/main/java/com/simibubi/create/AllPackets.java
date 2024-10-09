@@ -8,6 +8,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.simibubi.create.compat.computercraft.AttachedComputerPacket;
+import com.simibubi.create.compat.trainmap.TrainMapSyncPacket;
+import com.simibubi.create.compat.trainmap.TrainMapSyncRequestPacket;
 import com.simibubi.create.content.contraptions.ContraptionBlockChangedPacket;
 import com.simibubi.create.content.contraptions.ContraptionColliderLockPacket;
 import com.simibubi.create.content.contraptions.ContraptionColliderLockPacket.ContraptionColliderLockPacketRequest;
@@ -187,6 +189,7 @@ public enum AllPackets {
 	STOCK_TICKER_CONFIGURATION(StockTickerConfigurationPacket.class, StockTickerConfigurationPacket::new, PLAY_TO_SERVER),
 	DISPLAY_CLOTH_SERVERBOUND(DisplayClothPacketToServer.class, DisplayClothPacketToServer::new, PLAY_TO_SERVER),
 	PACKAGE_PORT_CONFIGURATION(PackagePortConfigurationPacket.class, PackagePortConfigurationPacket::new, PLAY_TO_SERVER),
+	TRAIN_MAP_REQUEST(TrainMapSyncRequestPacket.class, TrainMapSyncRequestPacket::new, PLAY_TO_SERVER),
 
 	// Server to Client
 	SYMMETRY_EFFECT(SymmetryEffectPacket.class, SymmetryEffectPacket::new, PLAY_TO_CLIENT),
@@ -235,7 +238,8 @@ public enum AllPackets {
 	SERVER_DEBUG_INFO(ServerDebugInfoPacket.class, ServerDebugInfoPacket::new, PLAY_TO_CLIENT),
 	PACKAGE_DESTROYED(PackageDestroyPacket.class, PackageDestroyPacket::new, PLAY_TO_CLIENT),
 	LOGISTICS_STOCK_RESPONSE(LogisticalStockResponsePacket.class, LogisticalStockResponsePacket::new, PLAY_TO_CLIENT),
-	DISPLAY_CLOTH_CLIENTBOUND(DisplayClothPacketToClient.class, DisplayClothPacketToClient::new, PLAY_TO_CLIENT);
+	DISPLAY_CLOTH_CLIENTBOUND(DisplayClothPacketToClient.class, DisplayClothPacketToClient::new, PLAY_TO_CLIENT),
+	TRAIN_MAP_SYNC(TrainMapSyncPacket.class, TrainMapSyncPacket::new, PLAY_TO_CLIENT);
 
 	static {
 		ClientboundSimpleActionPacket.addAction("rainbowDebug", () -> SimpleCreateActions::rainbowDebug);

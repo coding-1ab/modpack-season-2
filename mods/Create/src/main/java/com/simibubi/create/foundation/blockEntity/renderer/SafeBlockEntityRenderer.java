@@ -2,10 +2,12 @@ package com.simibubi.create.foundation.blockEntity.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
@@ -28,7 +30,10 @@ public abstract class SafeBlockEntityRenderer<T extends BlockEntity> implements 
 			.getBlock() == Blocks.AIR;
 	}
 
-	public boolean shouldCullItem(Vec3 itemPos) {
+	public boolean shouldCullItem(Vec3 itemPos, Level level) {
+		if (level instanceof PonderLevel)
+			return false;
+
 		Frustum frustum = Minecraft.getInstance().levelRenderer.capturedFrustum != null ?
 				Minecraft.getInstance().levelRenderer.capturedFrustum :
 				Minecraft.getInstance().levelRenderer.cullingFrustum;

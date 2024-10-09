@@ -95,6 +95,7 @@ public class Train {
 	public Navigation navigation;
 	public ScheduleRuntime runtime;
 	public TrainIconType icon;
+	public int mapColorIndex;
 	public Component name;
 	public TrainStatus status;
 
@@ -933,6 +934,8 @@ public class Train {
 
 	@Nullable
 	public LivingEntity getOwner(Level level) {
+		if (level.getServer() == null)
+			return null;
 		try {
 			UUID uuid = owner;
 			return uuid == null ? null
@@ -1131,6 +1134,7 @@ public class Train {
 		tag.putInt("Fuel", fuelTicks);
 		tag.putDouble("TargetSpeed", targetSpeed);
 		tag.putString("IconType", icon.id.toString());
+		tag.putInt("MapColorIndex", mapColorIndex);
 		tag.putString("Name", Component.Serializer.toJson(name));
 		if (currentStation != null)
 			tag.putUUID("Station", currentStation);
@@ -1183,6 +1187,7 @@ public class Train {
 			train.speedBeforeStall = tag.getDouble("SpeedBeforeStall");
 		train.targetSpeed = tag.getDouble("TargetSpeed");
 		train.icon = TrainIconType.byId(new ResourceLocation(tag.getString("IconType")));
+		train.mapColorIndex = tag.getInt("MapColorIndex");
 		train.name = Component.Serializer.fromJson(tag.getString("Name"));
 		train.currentStation = tag.contains("Station") ? tag.getUUID("Station") : null;
 		train.currentlyBackwards = tag.getBoolean("Backwards");

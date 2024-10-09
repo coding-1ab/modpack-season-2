@@ -57,6 +57,13 @@ public class SmartObserverBlockEntity extends SmartBlockEntity {
 	}
 
 	@Override
+	public void invalidateCaps() {
+		observedInventory.removeListener();
+		observedTank.removeListener();
+		super.invalidateCaps();
+	}
+
+	@Override
 	public void tick() {
 		super.tick();
 

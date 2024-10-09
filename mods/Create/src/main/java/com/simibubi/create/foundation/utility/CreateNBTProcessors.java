@@ -1,7 +1,10 @@
 package com.simibubi.create.foundation.utility;
 
+import java.util.List;
+
 import com.simibubi.create.AllBlockEntityTypes;
 
+import net.createmod.catnip.utility.NBTHelper;
 import net.createmod.catnip.utility.NBTProcessors;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -39,10 +42,28 @@ public class CreateNBTProcessors {
 			}
 			return data;
 		});
+		
+		NBTProcessors.addProcessor(AllBlockEntityTypes.CLIPBOARD.get(), data -> {
+			if (!data.contains("Item", Tag.TAG_COMPOUND))
+				return data;
+			CompoundTag book = data.getCompound("Item");
+			
+			if (!book.contains("tag", Tag.TAG_COMPOUND))
+				return data;
+			CompoundTag itemData = book.getCompound("tag");
+			
+			for (List<String> entries : NBTHelper.readCompoundList(itemData.getList("Pages", Tag.TAG_COMPOUND),
+				pageTag -> NBTHelper.readCompoundList(pageTag.getList("Entries", Tag.TAG_COMPOUND),
+					tag -> tag.getString("Text")))) {
+				for (String entry : entries)
+					if (NBTProcessors.textComponentHasClickEvent(entry))
+						return null;
+			}
+			return data;
+		});
 
 		NBTProcessors.addProcessor(AllBlockEntityTypes.CREATIVE_CRATE.get(), NBTProcessors.itemProcessor("Filter"));
 		NBTProcessors.addProcessor(AllBlockEntityTypes.PLACARD.get(), NBTProcessors.itemProcessor("Item"));
-
 	}
 
 }

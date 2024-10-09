@@ -319,6 +319,17 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 		behaviours.add(observedTank = new TankManipulationBehaviour(this, towardBlockFacing).bypassSidedness());
 	}
 
+	@Override
+	public void invalidateCaps() {
+		observedInventory.removeListener();
+		observedTank.removeListener();
+		super.invalidateCaps();
+	}
+
+	public float getLevelForDisplay() {
+		return currentLevel == -1 ? 0 : currentLevel;
+	}
+
 	public boolean getState() {
 		return redstoneState;
 	}

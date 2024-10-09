@@ -297,5 +297,16 @@ public class ItemHelper {
 		}
 		return entityIn instanceof ItemEntity ? ((ItemEntity) entityIn).getItem() : ItemStack.EMPTY;
 	}
+
+	public static ItemStack limitCountToMaxStackSize(ItemStack stack, boolean simulate) {
+		int count = stack.getCount();
+		int max = stack.getMaxStackSize();
+		if (count <= max)
+			return ItemStack.EMPTY;
+		ItemStack remainder = ItemHandlerHelper.copyStackWithSize(stack, count - max);
+		if (!simulate)
+			stack.setCount(max);
+		return remainder;
+	}
 	
 }
