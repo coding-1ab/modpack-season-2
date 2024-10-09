@@ -206,9 +206,9 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	TRAINMAP_STATION_ORTHO_HIGHLIGHT("widgets", 63, 156, 7, 7),
 	TRAINMAP_STATION_DIAGO_HIGHLIGHT("widgets", 72, 156, 7, 7),
 	
-	TRAINMAP_TOGGLE_PANEL("widgets", 166, 74, 33, 14),
-	TRAINMAP_TOGGLE_ON("widgets", 166, 89, 12, 7),
-	TRAINMAP_TOGGLE_OFF("widgets", 166, 97, 12, 7),
+	TRAINMAP_TOGGLE_PANEL("widgets", 219, 4, 33, 14),
+	TRAINMAP_TOGGLE_ON("widgets", 219, 19, 12, 7),
+	TRAINMAP_TOGGLE_OFF("widgets", 219, 27, 12, 7),
 
 	// ComputerCraft
 	COMPUTER("computer", 200, 102);
