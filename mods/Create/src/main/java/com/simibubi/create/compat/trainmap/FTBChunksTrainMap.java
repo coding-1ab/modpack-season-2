@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.gui.RemovedGuiUtils;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import dev.ftb.mods.ftbchunks.client.gui.LargeMapScreen;
@@ -138,7 +138,7 @@ public class FTBChunksTrainMap {
 			return false;
 
 		renderingTooltip = true;
-		RemovedGuiUtils.drawHoveringText(graphics, List.of(Lang.translate("train_map.toggle")
+		RemovedGuiUtils.drawHoveringText(graphics, List.of(CreateLang.translate("train_map.toggle")
 			.component()), event.getMouseX(), event.getMouseY() + 20, largeMapScreen.width, largeMapScreen.height, 256,
 			Minecraft.getInstance().font);
 		renderingTooltip = false;

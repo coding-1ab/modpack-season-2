@@ -24,16 +24,16 @@ import com.simibubi.create.content.trains.graph.TrackNodeLocation;
 import com.simibubi.create.content.trains.station.GlobalStation;
 import com.simibubi.create.content.trains.track.BezierConnection;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.foundation.utility.Iterate;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.Pair;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.simibubi.create.infrastructure.config.CClient;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
@@ -107,9 +107,9 @@ public class TrainMapManager {
 	public static boolean isToggleWidgetHovered(int mouseX, int mouseY, int x, int y) {
 		if (CreateClient.RAILWAYS.trackNetworks.isEmpty())
 			return false;
-		if (mouseX < x || mouseX >= x + AllGuiTextures.TRAINMAP_TOGGLE_PANEL.width)
+		if (mouseX < x || mouseX >= x + AllGuiTextures.TRAINMAP_TOGGLE_PANEL.getWidth())
 			return false;
-		if (mouseY < y || mouseY >= y + AllGuiTextures.TRAINMAP_TOGGLE_PANEL.height)
+		if (mouseY < y || mouseY >= y + AllGuiTextures.TRAINMAP_TOGGLE_PANEL.getHeight())
 			return false;
 		return true;
 	}
@@ -127,39 +127,39 @@ public class TrainMapManager {
 		TrainState state = trainEntry.state;
 		SignalState signalState = trainEntry.signalState;
 
-		Lang.text(train.name.getString())
+		CreateLang.text(train.name.getString())
 			.color(bright)
 			.addTo(output);
 
 		if (!trainEntry.ownerName.isBlank())
-			Lang.translate("train_map.train_owned_by", trainEntry.ownerName)
+			CreateLang.translate("train_map.train_owned_by", trainEntry.ownerName)
 				.color(blue)
 				.addTo(output);
 
 		switch (state) {
 
 		case CONDUCTOR_MISSING:
-			Lang.translate("train_map.conductor_missing")
+			CreateLang.translate("train_map.conductor_missing")
 				.color(orange)
 				.addTo(output);
 			return output;
 		case DERAILED:
-			Lang.translate("train_map.derailed")
+			CreateLang.translate("train_map.derailed")
 				.color(orange)
 				.addTo(output);
 			return output;
 		case NAVIGATION_FAILED:
-			Lang.translate("train_map.navigation_failed")
+			CreateLang.translate("train_map.navigation_failed")
 				.color(orange)
 				.addTo(output);
 			return output;
 		case SCHEDULE_INTERRUPTED:
-			Lang.translate("train_map.schedule_interrupted")
+			CreateLang.translate("train_map.schedule_interrupted")
 				.color(orange)
 				.addTo(output);
 			return output;
 		case RUNNING_MANUALLY:
-			Lang.translate("train_map.player_controlled")
+			CreateLang.translate("train_map.player_controlled")
 				.color(blue)
 				.addTo(output);
 			break;
@@ -174,23 +174,23 @@ public class TrainMapManager {
 
 		if (!currentStation.isBlank()) {
 			if (targetStationDistance == 0)
-				Lang.translate("train_map.train_at_station", currentStation)
+				CreateLang.translate("train_map.train_at_station", currentStation)
 					.color(darkBlue)
 					.addTo(output);
 			else
-				Lang.translate("train_map.train_moving_to_station", currentStation, targetStationDistance)
+				CreateLang.translate("train_map.train_moving_to_station", currentStation, targetStationDistance)
 					.color(darkBlue)
 					.addTo(output);
 		}
 
 		if (signalState != SignalState.NOT_WAITING) {
 			boolean chainSignal = signalState == SignalState.CHAIN_SIGNAL;
-			Lang.translate("train_map.waiting_at_signal")
+			CreateLang.translate("train_map.waiting_at_signal")
 				.color(orange)
 				.addTo(output);
 
 			if (signalState == SignalState.WAITING_FOR_REDSTONE)
-				Lang.translate("train_map.redstone_powered")
+				CreateLang.translate("train_map.redstone_powered")
 					.color(blue)
 					.addTo(output);
 			else {
@@ -200,7 +200,7 @@ public class TrainMapManager {
 				if (waitingFor != null) {
 					Train trainWaitingFor = CreateClient.RAILWAYS.trains.get(waitingFor);
 					if (trainWaitingFor != null) {
-						Lang.translate("train_map.for_other_train", trainWaitingFor.name.getString())
+						CreateLang.translate("train_map.for_other_train", trainWaitingFor.name.getString())
 							.color(blue)
 							.addTo(output);
 						trainFound = true;
@@ -209,11 +209,11 @@ public class TrainMapManager {
 
 				if (!trainFound) {
 					if (chainSignal)
-						Lang.translate("train_map.cannot_traverse_section")
+						CreateLang.translate("train_map.cannot_traverse_section")
 							.color(blue)
 							.addTo(output);
 					else
-						Lang.translate("train_map.section_reserved")
+						CreateLang.translate("train_map.section_reserved")
 							.color(blue)
 							.addTo(output);
 				}
@@ -221,7 +221,7 @@ public class TrainMapManager {
 		}
 
 		if (trainEntry.fueled)
-			Lang.translate("train_map.fuel_boosted")
+			CreateLang.translate("train_map.fuel_boosted")
 				.color(darkBlue)
 				.addTo(output);
 
@@ -276,9 +276,9 @@ public class TrainMapManager {
 				pose.pushPose();
 				pose.translate(x - 2, y - 2, 5);
 
-				pose.translate(sprite.width / 2.0, sprite.height / 2.0, 0);
+				pose.translate(sprite.getWidth() / 2.0, sprite.getHeight() / 2.0, 0);
 				pose.mulPose(Axis.ZP.rotationDegrees(90 * (rotation / 2)));
-				pose.translate(-sprite.width / 2.0, -sprite.height / 2.0, 0);
+				pose.translate(-sprite.getWidth() / 2.0, -sprite.getHeight() / 2.0, 0);
 
 				sprite.render(graphics, 0, 0);
 				sprite.render(graphics, 0, 0);
@@ -408,8 +408,8 @@ public class TrainMapManager {
 					int sheetX = col * 16 + colorCol * 128;
 					int sheetY = row * 16 + colorRow * 64;
 
-					graphics.blit(sprite.location, positionX, positionY, sheetX, sheetY, 16, 16, sprite.width,
-						sprite.height);
+					graphics.blit(sprite.location, positionX, positionY, sheetX, sheetY, 16, 16, sprite.getWidth(),
+						sprite.getHeight());
 				}
 
 				pose.popPose();

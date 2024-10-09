@@ -2,8 +2,7 @@ package com.simibubi.create.foundation.blockEntity.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import com.simibubi.create.foundation.ponder.PonderWorld;
-
+import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -32,7 +31,7 @@ public abstract class SafeBlockEntityRenderer<T extends BlockEntity> implements 
 	}
 
 	public boolean shouldCullItem(Vec3 itemPos, Level level) {
-		if (level instanceof PonderWorld)
+		if (level instanceof PonderLevel)
 			return false;
 
 		Frustum frustum = Minecraft.getInstance().levelRenderer.capturedFrustum != null ?

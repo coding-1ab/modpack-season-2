@@ -7,8 +7,8 @@ import java.util.UUID;
 import com.simibubi.create.compat.trainmap.TrainMapSync.TrainMapSyncEntry;
 import com.simibubi.create.content.trains.graph.DimensionPalette;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
-import com.simibubi.create.foundation.utility.Pair;
 
+import net.createmod.catnip.utility.Pair;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent.Context;
 
