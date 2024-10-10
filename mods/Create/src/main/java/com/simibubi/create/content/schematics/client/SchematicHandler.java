@@ -16,6 +16,8 @@ import com.simibubi.create.content.schematics.SchematicItem;
 import com.simibubi.create.content.schematics.client.tools.ToolType;
 import com.simibubi.create.content.schematics.packet.SchematicPlacePacket;
 import com.simibubi.create.content.schematics.packet.SchematicSyncPacket;
+import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
@@ -169,6 +171,7 @@ public class SchematicHandler implements IGuiOverlay {
 			schematic.placeInWorld(w, pos, pos, placementSettings, w.getRandom(), Block.UPDATE_CLIENTS);
 			for (BlockEntity blockEntity : w.getBlockEntities())
 				blockEntity.setLevel(w);
+			fixControllerBlockEntities(w);
 		} catch (Exception e) {
 			Minecraft.getInstance().player.displayClientMessage(CreateLang.translate("schematic.error")
 				.component(), false);
@@ -183,6 +186,7 @@ public class SchematicHandler implements IGuiOverlay {
 			placementSettings.getMirror());
 		for (BlockEntity be : wMirroredFB.getRenderedBlockEntities())
 			transform.apply(be);
+		fixControllerBlockEntities(wMirroredFB);
 
 		placementSettings.setMirror(Mirror.LEFT_RIGHT);
 		pos = BlockPos.ZERO.south(size.getZ() - 1);
@@ -191,6 +195,7 @@ public class SchematicHandler implements IGuiOverlay {
 			placementSettings.getMirror());
 		for (BlockEntity be : wMirroredLR.getRenderedBlockEntities())
 			transform.apply(be);
+		fixControllerBlockEntities(wMirroredLR);
 
 		renderers.get(0)
 			.display(w);
@@ -198,6 +203,26 @@ public class SchematicHandler implements IGuiOverlay {
 			.display(wMirroredFB);
 		renderers.get(2)
 			.display(wMirroredLR);
+	}
+
+	private void fixControllerBlockEntities(SchematicLevel level) {
+		for (BlockEntity blockEntity : level.getBlockEntities()) {
+			if (!(blockEntity instanceof IMultiBlockEntityContainer multiBlockEntity))
+				continue;
+			BlockPos lastKnown = multiBlockEntity.getLastKnownPos();
+			BlockPos current = blockEntity.getBlockPos();
+			if (lastKnown == null || current == null)
+				continue;
+			if (multiBlockEntity.isController())
+				continue;
+			if (!lastKnown.equals(current)) {
+				BlockPos newControllerPos = multiBlockEntity.getController()
+					.offset(current.subtract(lastKnown));
+				if (multiBlockEntity instanceof SmartBlockEntity sbe)
+					sbe.markVirtual();
+				multiBlockEntity.setController(newControllerPos);
+			}
+		}
 	}
 
 	public void render(PoseStack ms, SuperRenderTypeBuffer buffer, Vec3 camera) {
