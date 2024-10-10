@@ -324,7 +324,7 @@ public class BeltRenderer extends SafeBlockEntityRenderer<BeltBlockEntity> {
 		for (int i = 0; i <= count; i++) {
 			ms.pushPose();
 
-			boolean box = transported.stack.getItem() instanceof PackageItem;
+			boolean box = PackageItem.isPackage(transported.stack);
 			ms.mulPose(Axis.YP.rotationDegrees(transported.angle));
 			if (!blockItem && !renderUpright) {
 				ms.translate(0, -.09375, 0);
@@ -335,8 +335,8 @@ public class BeltRenderer extends SafeBlockEntityRenderer<BeltBlockEntity> {
 				ms.translate(r.nextFloat() * .0625f * i, 0, r.nextFloat() * .0625f * i);
 
 			if (box) {
-				ms.translate(0, 6 / 16f, 0);
-				ms.scale(2f, 2f, 2f);
+				ms.translate(0, 4 / 16f, 0);
+				ms.scale(1.5f, 1.5f, 1.5f);
 			} else
 				ms.scale(.5f, .5f, .5f);
 				itemRenderer.render(transported.stack, ItemDisplayContext.FIXED, false, ms, buffer, stackLight, overlay, bakedModel);

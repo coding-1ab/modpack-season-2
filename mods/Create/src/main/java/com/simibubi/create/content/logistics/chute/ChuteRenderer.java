@@ -43,10 +43,10 @@ public class ChuteRenderer extends SafeBlockEntityRenderer<ChuteBlockEntity> {
 		float itemScale = .5f;
 		float itemPosition = be.itemPosition.getValue(partialTicks);
 		ms.translate(0, -.5 + itemPosition, 0);
-		ms.scale(itemScale, itemScale, itemScale);
-		if (be.item.getItem() instanceof PackageItem) {
-			ms.scale(3, 3, 3);
+		if (PackageItem.isPackage(be.item)) {
+			ms.scale(1.5f, 1.5f, 1.5f);
 		} else {
+			ms.scale(itemScale, itemScale, itemScale);
 			msr.rotateXDegrees(itemPosition * 180);
 			msr.rotateYDegrees(itemPosition * 180);
 		}

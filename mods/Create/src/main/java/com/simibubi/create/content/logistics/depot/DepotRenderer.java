@@ -130,9 +130,9 @@ public class DepotRenderer extends SafeBlockEntityRenderer<DepotBlockEntity> {
 			if (blockItem && r != null)
 				ms.translate(r.nextFloat() * .0625f * i, 0, r.nextFloat() * .0625f * i);
 
-			if (itemStack.getItem() instanceof PackageItem) {
-				ms.translate(0, 6/16f, 0);
-				ms.scale(2f, 2f, 2f);
+			if (PackageItem.isPackage(itemStack)) {
+				ms.translate(0, 4 / 16f, 0);
+				ms.scale(1.5f, 1.5f, 1.5f);
 			} else
 				ms.scale(.5f, .5f, .5f);
 			

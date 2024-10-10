@@ -66,10 +66,9 @@ public class EjectorRenderer extends ShaftRenderer<EjectorBlockEntity> {
 			Vec3 itemRotOffset = VecHelper.voxelSpace(0, 2, -1);
 			msr.translate(itemRotOffset);
 
-			if (intAttached.getValue()
-				.getItem() instanceof PackageItem) {
-				ms.translate(0, 6 / 16f, 0);
-				ms.scale(2f, 2f, 2f);
+			if (PackageItem.isPackage(intAttached.getValue())) {
+				ms.translate(0, 4 / 16f, 0);
+				ms.scale(1.5f, 1.5f, 1.5f);
 				msr.rotateYDegrees(time * 20);
 			} else {
 				ms.scale(.5f, .5f, .5f);

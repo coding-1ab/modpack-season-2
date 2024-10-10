@@ -16,6 +16,7 @@ import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.kinetics.base.BlockBreakingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
+import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.processing.recipe.ProcessingInventory;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
@@ -67,6 +68,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 
 @ParametersAreNonnullByDefault
@@ -325,6 +327,22 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity {
 	}
 
 	private void applyRecipe() {
+		ItemStack input = inventory.getStackInSlot(0);
+		List<ItemStack> list = new ArrayList<>();
+		
+		if (PackageItem.isPackage(input)) {
+			inventory.clear();
+			ItemStackHandler results = PackageItem.getContents(input);
+			for (int i = 0; i < results.getSlots(); i++) {
+				ItemStack stack = results.getStackInSlot(i);
+				if (!stack.isEmpty())
+					ItemHelper.addToList(stack, list);
+			}
+			for (int slot = 0; slot < list.size() && slot + 1 < inventory.getSlots(); slot++)
+				inventory.setStackInSlot(slot + 1, list.get(slot));
+			return;
+		}
+		
 		List<? extends Recipe<?>> recipes = getRecipes();
 		if (recipes.isEmpty())
 			return;
@@ -333,11 +351,9 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity {
 
 		Recipe<?> recipe = recipes.get(recipeIndex);
 
-		int rolls = inventory.getStackInSlot(0)
-			.getCount();
+		int rolls = input.getCount();
 		inventory.clear();
 
-		List<ItemStack> list = new ArrayList<>();
 		for (int roll = 0; roll < rolls; roll++) {
 			List<ItemStack> results = new LinkedList<ItemStack>();
 			if (recipe instanceof CuttingRecipe)
