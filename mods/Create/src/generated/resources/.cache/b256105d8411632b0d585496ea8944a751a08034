@@ -1,4 +1,4 @@
-// 1.20.1	2024-10-15T10:59:16.1265677	Create's Processing Recipes
+// 1.20.1	2024-10-15T23:01:25.1999039	Create's Processing Recipes
 3c94326fb730f68c1e44fe1e2ef09c9db6ffd92b data/create/recipes/compacting/andesite_from_flint.json
 8d3d5b31f3601b9f681ff710e0545a483a1494c6 data/create/recipes/compacting/blaze_cake.json
 8bd7f4e3a686ab520b2d55594d2018d0e9a50c91 data/create/recipes/compacting/chocolate.json
@@ -968,7 +968,7 @@ a91dae829938d3f69a7007d3cf8db02b70fe3a7f data/create/recipes/milling/white_tulip
 5f1b8a82af091cd4589ecfa5c13a4db6ad9c51b9 data/create/recipes/mixing/andesite_alloy.json
 48604c2205b18fe1401eac58d14aa1677cbd9c2b data/create/recipes/mixing/andesite_alloy_from_zinc.json
 d06c1d0362dccc4e5f8b22f851dc8316b35c06b0 data/create/recipes/mixing/brass_ingot.json
-59fc3b044b72cb7855daa63c64f723b7f0957c5e data/create/recipes/mixing/cardboard_pulp.json
+fd3d1d8d2584dca71525f52ce6e08a1a77d3045f data/create/recipes/mixing/cardboard_pulp.json
 840a9008d4531425beadfcf224d21e938acc4502 data/create/recipes/mixing/chocolate.json
 e7b86d4ca5de2df474794424d93b447e5f9dcdc3 data/create/recipes/mixing/chocolate_melting.json
 39e832016fa5e360434271505d09ced17a40e7eb data/create/recipes/mixing/compat/ae2/fluix_crystal.json

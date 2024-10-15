@@ -73,9 +73,6 @@ public class MixingRecipeGen extends ProcessingRecipeGen {
 			.require(Items.PAPER)
 			.require(Items.PAPER)
 			.require(Items.PAPER)
-			.require(Items.PAPER)
-			.require(Items.PAPER)
-			.require(Items.PAPER)
 			.require(Fluids.WATER, 1000)
 			.output(AllItems.CARDBOARD_PULP, 1)),
 

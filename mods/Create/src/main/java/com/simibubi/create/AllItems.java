@@ -24,6 +24,7 @@ import com.simibubi.create.content.equipment.TreeFertilizerItem;
 import com.simibubi.create.content.equipment.armor.AllArmorMaterials;
 import com.simibubi.create.content.equipment.armor.BacktankItem;
 import com.simibubi.create.content.equipment.armor.BacktankItem.BacktankBlockItem;
+import com.simibubi.create.content.equipment.armor.BaseArmorItem;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
 import com.simibubi.create.content.equipment.armor.DivingHelmetItem;
 import com.simibubi.create.content.equipment.blueprint.BlueprintItem;
@@ -65,6 +66,7 @@ import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -146,6 +148,7 @@ public class AllItems {
 	public static final ItemEntry<CardboardSwordItem> CARDBOARD_SWORD =
 		REGISTRATE.item("cardboard_sword", CardboardSwordItem::new)
 			.properties(p -> p.stacksTo(1))
+			.model(AssetLookup.itemModelWithPartials())
 			.register();
 
 	public static final ItemEntry<Item> RAW_ZINC =
@@ -307,6 +310,37 @@ public class AllItems {
 			.item("netherite_diving_boots",
 				p -> new DivingBootsItem(ArmorMaterials.NETHERITE, p, Create.asResource("netherite_diving")))
 			.properties(p -> p.fireResistant())
+			.tag(forgeItemTag("armors/boots"))
+			.register();
+
+	public static final ItemEntry<? extends BaseArmorItem>
+
+	CARDBOARD_HELMET =
+		REGISTRATE
+			.item("cardboard_helmet",
+				p -> new BaseArmorItem(AllArmorMaterials.CARDBOARD, ArmorItem.Type.HELMET, p,
+					Create.asResource("cardboard")))
+			.tag(forgeItemTag("armors/helmet"))
+			.register(),
+
+		CARDBOARD_CHESTPLATE = REGISTRATE
+			.item("cardboard_chestplate",
+				p -> new BaseArmorItem(AllArmorMaterials.CARDBOARD, ArmorItem.Type.CHESTPLATE, p,
+					Create.asResource("cardboard")))
+			.tag(forgeItemTag("armors/chestplate"))
+			.register(),
+
+		CARDBOARD_LEGGINGS = REGISTRATE
+			.item("cardboard_leggings",
+				p -> new BaseArmorItem(AllArmorMaterials.CARDBOARD, ArmorItem.Type.LEGGINGS, p,
+					Create.asResource("cardboard")))
+			.tag(forgeItemTag("armors/leggings"))
+			.register(),
+
+		CARDBOARD_BOOTS = REGISTRATE
+			.item("cardboard_boots",
+				p -> new BaseArmorItem(AllArmorMaterials.CARDBOARD, ArmorItem.Type.BOOTS, p,
+					Create.asResource("cardboard")))
 			.tag(forgeItemTag("armors/boots"))
 			.register();
 

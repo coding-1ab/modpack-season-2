@@ -1,4 +1,4 @@
-// 1.20.1	2024-10-15T12:45:53.6413921	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
+// 1.20.1	2024-10-15T23:01:25.2230224	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
 60bbdf92d2ac9824ea6144955c74043a6005f79d assets/create/blockstates/acacia_window.json
 6a67703c2697d81b7dc83e9d72a66f9c9ff08383 assets/create/blockstates/acacia_window_pane.json
 c3ae87b62e81d8e9476eccd793bb1548d74c66a1 assets/create/blockstates/adjustable_chain_gearshift.json
@@ -609,8 +609,8 @@ b0d8f08968763a5f74e5cd5644377a76a9f39753 assets/create/blockstates/yellow_toolbo
 fe8c497aacc641c2f01cec90bba9f19e59cc2ed2 assets/create/blockstates/yellow_valve_handle.json
 e819e93fdcbe9fd9c050a052d2718ff3b3539365 assets/create/blockstates/zinc_block.json
 64121dcb216381c83b4fe28aa361ea07c24c9ad0 assets/create/blockstates/zinc_ore.json
-8ed3587c8b0fd48d591340803e6570490614e7a3 assets/create/lang/en_ud.json
-4ccbf8f607fce6dfd1b32c0406ba571c9d335e9b assets/create/lang/en_us.json
+2fa2f9f6b521cc5012a6aa497c7991b2e67ee170 assets/create/lang/en_ud.json
+3f4bc5c6c5ecde34d3e6c121ea7f6706e5b90563 assets/create/lang/en_us.json
 a97e1060e00ae701a02e39cd4ef8054cf345fac4 assets/create/models/block/acacia_window.json
 103e032c0b1a0a6a27c67da8c91179a564bd281c assets/create/models/block/acacia_window_pane_noside.json
 fb00b627abda76ad4fea867ca57dbfadd24fffa3 assets/create/models/block/acacia_window_pane_noside_alt.json
@@ -1768,12 +1768,16 @@ fce64539b36fc8a5ffa39d7a3f73765818437cbf assets/create/models/item/brown_seat.js
 1db479848369140bb913ba09f3f1d994e4ac864c assets/create/models/item/builders_tea.json
 f5ff4e2ed2ea2e43b6d02f6a95ba02b2e4b611dc assets/create/models/item/calcite_pillar.json
 cc2692f7964f4266ecf00fcab176b1ef0b78673f assets/create/models/item/cardboard.json
+39eadb54cec52d9e2a087fc71ef83341688f2781 assets/create/models/item/cardboard_boots.json
+d6a3f139fca5ac6aff94d11d75fe239283bb4a09 assets/create/models/item/cardboard_chestplate.json
+82236ea8e939c46f0d2c9142336190eca2a0425e assets/create/models/item/cardboard_helmet.json
+416a4d33a2b3b1921285f96436853dd7690447ac assets/create/models/item/cardboard_leggings.json
 45d7fa87d102a0373a06a13592f58baafa4e5a33 assets/create/models/item/cardboard_package_10x12.json
 f998f36d9a6f469bbd3822a17b2b45f81e6810c6 assets/create/models/item/cardboard_package_10x8.json
 b7a24a7dd21a464815b2fd8cd6037e854be3f485 assets/create/models/item/cardboard_package_12x10.json
 d5396690e7813c67ee3600555d7e47d0097b1f56 assets/create/models/item/cardboard_package_12x12.json
 39aacb806378ce16d5c801a0c7ea8027b5090f9c assets/create/models/item/cardboard_pulp.json
-9ed2aad55ca1d8d4e1881c1abd1154f8bc4d35c2 assets/create/models/item/cardboard_sword.json
+9dccb21720687bbd516c8598c5449028077f8467 assets/create/models/item/cardboard_sword.json
 1cdb2b8801551c1540bb9b2a9cc3d725a2b433e7 assets/create/models/item/cart_assembler.json
 390a06d81c8c2a0ff83196bd0154dd292206e3b6 assets/create/models/item/chain_conveyor.json
 a197d08618f4035182c91a6b16031eb681ab8a7c assets/create/models/item/chest_minecart_contraption.json
@@ -4355,9 +4359,12 @@ bcd593714f43bc6a0aefbd714c24db3cf9e71250 data/forge/tags/blocks/storage_blocks/r
 8140415f1c16f09167f41eeee25c09706a944be0 data/forge/tags/fluids/chocolate.json
 0ccc9ff76001cdd7db1b79c1371f59d3283abe64 data/forge/tags/fluids/honey.json
 cca816b34ac2e9b7933df680aa9778ff2cfe9605 data/forge/tags/fluids/tea.json
-00c856dcfa4368cca671ee5d93c4900835991d68 data/forge/tags/items/armors/boots.json
+1a9ce7d5f5fe92d3b73e269cd5dbf5cd1f1fe5b8 data/forge/tags/items/armors/boots.json
+6749b53c23aefe4baa55c4b2f624bbc6dfe5f423 data/forge/tags/items/armors/chestplate.json
 695d75b352fd190b303c724d1aaee9bb786a903b data/forge/tags/items/armors/chestplates.json
+5b91b107f48b47958db20f13cb3cc0c6f7085fdc data/forge/tags/items/armors/helmet.json
 3580dae058fc75b45fab4c4ebbd1b01573ba9e11 data/forge/tags/items/armors/helmets.json
+afdac448376ff5624f49cbf31feedf691ecbc4c5 data/forge/tags/items/armors/leggings.json
 06ebf72e8f6c081862236d4b068b5dfb275a8385 data/forge/tags/items/buckets/honey.json
 801d097b0af7153e0c5c72a924d61f8afb4cf264 data/forge/tags/items/dough.json
 801d097b0af7153e0c5c72a924d61f8afb4cf264 data/forge/tags/items/dough/wheat.json

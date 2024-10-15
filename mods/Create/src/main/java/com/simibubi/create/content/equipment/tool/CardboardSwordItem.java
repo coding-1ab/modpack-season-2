@@ -1,6 +1,7 @@
 package com.simibubi.create.content.equipment.tool;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -8,6 +9,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllSoundEvents;
+import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -28,6 +30,9 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -124,6 +129,12 @@ public class CardboardSwordItem extends SwordItem {
 		livingAttacker.setDeltaMovement(livingAttacker.getDeltaMovement()
 			.multiply(0.6D, 1.0D, 0.6D));
 		livingAttacker.setSprinting(false);
+	}
+	
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+		consumer.accept(SimpleCustomRenderer.create(this, new CardboardSwordItemRenderer()));
 	}
 
 }
