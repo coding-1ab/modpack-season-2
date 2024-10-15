@@ -8,6 +8,15 @@
     ],
     "subtitle": "create.subtitle.blaze_munch"
   },
+  "cardboard_bonk": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "create:cardboard_bonk"
+      }
+    ],
+    "subtitle": "create.subtitle.cardboard_bonk"
+  },
   "chiff": {
     "sounds": [
       {

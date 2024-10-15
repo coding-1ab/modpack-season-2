@@ -33,6 +33,7 @@ import com.simibubi.create.content.equipment.goggles.GogglesModel;
 import com.simibubi.create.content.equipment.potatoCannon.PotatoCannonItem;
 import com.simibubi.create.content.equipment.sandPaper.SandPaperItem;
 import com.simibubi.create.content.equipment.symmetryWand.SymmetryWandItem;
+import com.simibubi.create.content.equipment.tool.CardboardSwordItem;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
 import com.simibubi.create.content.equipment.zapper.terrainzapper.WorldshaperItem;
 import com.simibubi.create.content.kinetics.belt.item.BeltConnectorItem;
@@ -82,7 +83,9 @@ public class AllItems {
 		POLISHED_ROSE_QUARTZ = ingredient("polished_rose_quartz"), POWDERED_OBSIDIAN = ingredient("powdered_obsidian"),
 		STURDY_SHEET = taggedIngredient("sturdy_sheet", forgeItemTag("plates/obsidian"), PLATES.tag),
 		PROPELLER = ingredient("propeller"), WHISK = ingredient("whisk"), BRASS_HAND = ingredient("brass_hand"),
-		CRAFTER_SLOT_COVER = ingredient("crafter_slot_cover"), ELECTRON_TUBE = ingredient("electron_tube");
+		CRAFTER_SLOT_COVER = ingredient("crafter_slot_cover"), ELECTRON_TUBE = ingredient("electron_tube"),
+		CARDBOARD_PULP = ingredient("cardboard_pulp"),
+		CARDBOARD = taggedIngredient("cardboard", forgeItemTag("plates/cardboard"));
 
 	public static final ItemEntry<SequencedAssemblyItem>
 
@@ -139,6 +142,11 @@ public class AllItems {
 		.properties(p -> p.stacksTo(16))
 		.lang("Builder's Tea")
 		.register();
+
+	public static final ItemEntry<CardboardSwordItem> CARDBOARD_SWORD =
+		REGISTRATE.item("cardboard_sword", CardboardSwordItem::new)
+			.properties(p -> p.stacksTo(1))
+			.register();
 
 	public static final ItemEntry<Item> RAW_ZINC =
 		taggedIngredient("raw_zinc", forgeItemTag("raw_materials/zinc"), forgeItemTag("raw_materials"));

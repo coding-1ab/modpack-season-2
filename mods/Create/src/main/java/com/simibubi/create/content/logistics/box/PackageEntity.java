@@ -44,6 +44,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.NetworkHooks;
@@ -163,7 +164,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 		}
 		insertionDelay = Math.min(insertionDelay + 1, 30);
 		super.tick();
-		
+
 		if (!PackageItem.isPackage(box))
 			discard();
 	}
@@ -283,6 +284,9 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
+		if (!ForgeHooks.onLivingAttack(this, source, amount))
+			return false;
+
 		if (level().isClientSide || !this.isAlive())
 			return false;
 

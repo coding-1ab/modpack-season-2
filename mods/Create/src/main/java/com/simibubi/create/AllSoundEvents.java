@@ -125,7 +125,11 @@ public class AllSoundEvents {
 			.category(SoundSource.BLOCKS)
 			.build(),
 
-		FWOOMP = create("fwoomp").subtitle("Potato Launcher fwoomps")
+		FWOOMP = create("fwoomp").subtitle("Resonant fwoomp")
+			.category(SoundSource.PLAYERS)
+			.build(),
+
+		CARDBOARD_SWORD = create("cardboard_bonk").subtitle("Resonant bonk")
 			.category(SoundSource.PLAYERS)
 			.build(),
 

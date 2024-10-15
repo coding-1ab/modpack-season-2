@@ -26,6 +26,9 @@ public class PressingRecipeGen extends ProcessingRecipeGen {
 		BRASS = create("brass_ingot", b -> b.require(I.brass())
 			.output(AllItems.BRASS_SHEET.get())),
 
+		CARDBOARD = create("cardboard", b -> b.require(AllItems.CARDBOARD_PULP)
+			.output(AllItems.CARDBOARD.get())),
+
 		// Atmospheric
 		ATM = moddedPaths(Mods.ATM, "crustose"),
 

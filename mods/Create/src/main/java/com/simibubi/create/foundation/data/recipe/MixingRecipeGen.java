@@ -62,6 +62,22 @@ public class MixingRecipeGen extends ProcessingRecipeGen {
 		MUD = create("mud_by_mixing", b -> b.require(BlockTagIngredient.create(BlockTags.CONVERTABLE_TO_MUD))
 			.require(Fluids.WATER, 250)
 			.output(Blocks.MUD, 1)),
+		
+		PULP = create("cardboard_pulp", b -> b
+			.require(Items.PAPER)
+			.require(Items.PAPER)
+			.require(Items.PAPER)
+			.require(Items.PAPER)
+			.require(Items.PAPER)
+			.require(Items.PAPER)
+			.require(Items.PAPER)
+			.require(Items.PAPER)
+			.require(Items.PAPER)
+			.require(Items.PAPER)
+			.require(Items.PAPER)
+			.require(Items.PAPER)
+			.require(Fluids.WATER, 1000)
+			.output(AllItems.CARDBOARD_PULP, 1)),
 
 		// AE2
 
