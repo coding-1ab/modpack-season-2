@@ -160,6 +160,12 @@ public class AllSoundEvents {
 			.playExisting(SoundEvents.NETHERITE_BLOCK_HIT, .25f, .75f)
 			.category(SoundSource.BLOCKS)
 			.build(),
+			
+		PACKAGE_POP = create("package_pop").subtitle("Package breaks")
+			.playExisting(SoundEvents.ARMOR_STAND_BREAK, .25f, .75f)
+			.playExisting(SoundEvents.WOOL_BREAK, .5f, 1.15f)
+			.category(SoundSource.BLOCKS)
+			.build(),
 
 		CRAFTER_CLICK = create("crafter_click").subtitle("Crafter clicks")
 			.playExisting(SoundEvents.NETHERITE_BLOCK_HIT, .25f, 1)

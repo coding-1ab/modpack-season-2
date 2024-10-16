@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.logistics.chute.ChuteBlock;
 
 import net.createmod.catnip.utility.VecHelper;
@@ -345,8 +346,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 		AllPackets.getChannel()
 			.send(PacketDistributor.TRACKING_ENTITY.with(() -> this),
 				new PackageDestroyPacket(getBoundingBox().getCenter(), box));
-		level().playSound((Player) null, getX(), getY(), getZ(), SoundEvents.ARMOR_STAND_BREAK, this.getSoundSource(),
-			1.0F, 1.0F);
+		AllSoundEvents.PACKAGE_POP.playOnServer(level(), blockPosition());
 		this.dropAllDeathLoot(source);
 	}
 
@@ -425,7 +425,17 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 	}
 
 	protected SoundEvent getFallSound(int heightIn) {
-		return SoundEvents.ARMOR_STAND_FALL;
+		return SoundEvents.WOOL_HIT;
+	}
+
+	@Override
+	public float getVoicePitch() {
+		return 1.5f;
+	}
+
+	@Override
+	public Fallsounds getFallSounds() {
+		return new LivingEntity.Fallsounds(SoundEvents.WOOL_FALL, SoundEvents.WOOL_FALL);
 	}
 
 	@Nullable
@@ -435,7 +445,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 
 	@Nullable
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.ARMOR_STAND_BREAK;
+		return null;
 	}
 
 }

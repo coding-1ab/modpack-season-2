@@ -390,6 +390,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 		if (travelTarget == null)
 			return Vec3.atBottomCenterOf(worldPosition)
 				.add(VecHelper.rotate(new Vec3(0, 6 / 16f, 0.875), chainPosition, Axis.Y));
+		prepareStats();
 		ConnectionStats stats = connectionStats.get(travelTarget);
 		if (stats == null)
 			return Vec3.ZERO;

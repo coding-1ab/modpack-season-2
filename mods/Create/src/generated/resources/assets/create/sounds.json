@@ -328,6 +328,23 @@
       }
     ]
   },
+  "package_pop": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.armor_stand.break"
+      }
+    ],
+    "subtitle": "create.subtitle.package_pop"
+  },
+  "package_pop_compounded_1": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.wool.break"
+      }
+    ]
+  },
   "peculiar_bell_use": {
     "sounds": [
       {

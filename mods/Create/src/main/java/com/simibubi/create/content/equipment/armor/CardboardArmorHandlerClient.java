@@ -39,7 +39,8 @@ public class CardboardArmorHandlerClient {
 				Math.min(Math.abs(Mth.cos((AnimationTickHolder.getRenderTime() % 256) / 2.0f)) * 2 / 16f, movement * 5),
 				0);
 
-		PackageRenderer.renderBox(player, -player.getYRot(), ms, event.getMultiBufferSource(), event.getPackedLight(),
+		float f = Mth.lerp(event.getPartialTick(), player.yRotO, player.getYRot());
+		PackageRenderer.renderBox(player, -f + -90, ms, event.getMultiBufferSource(), event.getPackedLight(),
 			AllPartialModels.PACKAGES.get(ForgeRegistries.ITEMS.getKey(AllItems.CARDBOARD_PACKAGE_10x12.get())));
 		ms.popPose();
 	}

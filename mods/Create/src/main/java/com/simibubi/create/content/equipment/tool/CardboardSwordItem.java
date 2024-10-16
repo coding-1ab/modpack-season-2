@@ -1,12 +1,9 @@
 package com.simibubi.create.content.equipment.tool;
 
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
@@ -16,11 +13,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
@@ -40,31 +34,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber
 public class CardboardSwordItem extends SwordItem {
 
-	private ImmutableMultimap<Attribute, AttributeModifier> cardboardModifiers;
-
 	public CardboardSwordItem(Properties pProperties) {
 		super(AllToolMaterials.CARDBOARD, 3, 1f, pProperties);
-
-		float attackDamage = 3f + AllToolMaterials.CARDBOARD.getAttackDamageBonus();
-		ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-		builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier",
-			attackDamage, AttributeModifier.Operation.ADDITION));
-		builder.put(Attributes.ATTACK_SPEED,
-			new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", 1f, AttributeModifier.Operation.ADDITION));
-
-		// Setting knockback to 0 prevents the aggressive punching sound
-		// Knockback strength is reapplied in the event handler below
-		builder.put(Attributes.ATTACK_KNOCKBACK,
-			new AttributeModifier(UUID.fromString("45227E1C-A180-4865-B01B-BCCE9785ACA3"), "Weapon modifier", 0f,
-				AttributeModifier.Operation.MULTIPLY_TOTAL));
-
-		cardboardModifiers = builder.build();
-	}
-
-	@Override
-	public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pEquipmentSlot) {
-		return pEquipmentSlot == EquipmentSlot.MAINHAND ? cardboardModifiers
-			: super.getDefaultAttributeModifiers(pEquipmentSlot);
 	}
 
 	@Override

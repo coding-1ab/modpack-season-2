@@ -22,6 +22,7 @@ public class PackageRenderer extends EntityRenderer<PackageEntity> {
 
 	public PackageRenderer(Context pContext) {
 		super(pContext);
+		shadowRadius = 0.5f;
 	}
 
 	@Override

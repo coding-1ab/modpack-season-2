@@ -20,7 +20,7 @@ public enum AllArmorMaterials implements ArmorMaterial {
 		() -> Ingredient.of(Items.COPPER_INGOT)),
 
 	CARDBOARD(Create.asResource("cardboard")
-		.toString(), 7, new int[] { 1, 1, 1, 1 }, 25, () -> SoundEvents.ARMOR_EQUIP_LEATHER, 0.0F, 0.0F,
+		.toString(), 4, new int[] { 1, 1, 1, 1 }, 25, () -> SoundEvents.ARMOR_EQUIP_LEATHER, 0.0F, 0.0F,
 		() -> Ingredient.of(AllItems.CARDBOARD))
 
 	;
