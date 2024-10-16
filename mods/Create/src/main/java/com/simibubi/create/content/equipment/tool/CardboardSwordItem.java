@@ -64,7 +64,7 @@ public class CardboardSwordItem extends SwordItem {
 		Entity attacker = event.getSource()
 			.getEntity();
 		LivingEntity target = event.getEntity();
-		if (target instanceof Spider)
+		if (target == null || target instanceof Spider)
 			return;
 		if (!(attacker instanceof LivingEntity livingAttacker
 			&& AllItems.CARDBOARD_SWORD.isIn(livingAttacker.getItemInHand(InteractionHand.MAIN_HAND))))
@@ -75,33 +75,26 @@ public class CardboardSwordItem extends SwordItem {
 		// Reference player.attack()
 		// This section replicates knockback behaviour without hurting the target
 
-		double i = livingAttacker.getAttributeValue(Attributes.ATTACK_KNOCKBACK) + 2;
-		i += EnchantmentHelper.getKnockbackBonus(livingAttacker);
+		double knockbackStrength = livingAttacker.getAttributeValue(Attributes.ATTACK_KNOCKBACK) + 2;
+		knockbackStrength += EnchantmentHelper.getKnockbackBonus(livingAttacker);
 		if (livingAttacker.isSprinting()
 			&& (!(livingAttacker instanceof Player p) || p.getAttackStrengthScale(0.5f) > 0.9f))
-			++i;
+			++knockbackStrength;
 
-		if (i <= 0)
+		if (knockbackStrength <= 0)
 			return;
 
-		if (target instanceof LivingEntity livingTarget) {
-			livingTarget.knockback(i * 0.5F, Mth.sin(livingAttacker.getYRot() * Mth.DEG_TO_RAD),
-				-Mth.cos(livingAttacker.getYRot() * Mth.DEG_TO_RAD));
-			if ((livingTarget.getClassification(false) == MobCategory.MISC
-				|| livingTarget.getClassification(false) == MobCategory.CREATURE) && !(livingTarget instanceof Player))
-				livingTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 9, true, false, false));
-
-		} else {
-			event.getEntity()
-				.push(-Mth.sin(livingAttacker.getYRot() * Mth.DEG_TO_RAD) * i * 0.5F, 0.05D,
-					Mth.cos(livingAttacker.getYRot() * Mth.DEG_TO_RAD) * i * 0.5F);
-		}
+		target.knockback(knockbackStrength * 0.5F, Mth.sin(livingAttacker.getYRot() * Mth.DEG_TO_RAD),
+			-Mth.cos(livingAttacker.getYRot() * Mth.DEG_TO_RAD));
+		if ((target.getClassification(false) == MobCategory.MISC
+			|| target.getClassification(false) == MobCategory.CREATURE) && !(target instanceof Player))
+			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 9, true, false, false));
 
 		livingAttacker.setDeltaMovement(livingAttacker.getDeltaMovement()
 			.multiply(0.6D, 1.0D, 0.6D));
 		livingAttacker.setSprinting(false);
 	}
-	
+
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
