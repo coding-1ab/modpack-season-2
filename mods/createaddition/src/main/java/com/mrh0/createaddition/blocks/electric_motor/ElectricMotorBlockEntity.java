@@ -32,14 +32,14 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 
 public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
-
+	protected float motorSpeed;
 	protected ScrollValueBehaviour generatedSpeed;
 	protected final InternalEnergyStorage energy;
 	private LazyOptional<net.minecraftforge.energy.IEnergyStorage> lazyEnergy;
 	private LazyOptional<ElectricMotorPeripheral> lazyPeripheral = null;
 
 	private boolean cc_update_rpm = false;
-	private int cc_new_rpm = 32;
+	private float cc_new_rpm = 32.0f;
 
 	private boolean active = false;
 
@@ -99,9 +99,10 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 		return true;
 	}
 
-	public void updateGeneratedRotation(int i) {
+	// This is the callback that is called by the ScrollValueBehaviour!
+	public void updateGeneratedRotation(int rpm) {
+		motorSpeed = rpm;
 		super.updateGeneratedRotation();
-		cc_new_rpm = i;
 	}
 
 	@Override
@@ -111,10 +112,12 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 			updateGeneratedRotation();
 	}
 
+	// This is the method that determines the absolute true output speed!
 	@Override
 	public float getGeneratedSpeed() {
-		if (!CABlocks.ELECTRIC_MOTOR.has(getBlockState())) return 0;
-		return convertToDirection(active ? generatedSpeed.getValue() : 0, getBlockState().getValue(ElectricMotorBlock.FACING));
+		if (!CABlocks.ELECTRIC_MOTOR.has(getBlockState()))
+			return 0;
+		return convertToDirection(active ? motorSpeed : 0, getBlockState().getValue(ElectricMotorBlock.FACING));
 	}
 
 	@Override
@@ -160,11 +163,9 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 	@Override
 	public void lazyTick() {
 		super.lazyTick();
-		cc_antiSpam = 5;
-
 	}
 
-	public static int getEnergyConsumptionRate(int rpm) {
+	public static int getEnergyConsumptionRate(float rpm) {
 		return Math.abs(rpm) > 0 ? (int)Math.max((double)Config.FE_RPM.get() * ((double)Math.abs(rpm) / 256d), (double)Config.ELECTRIC_MOTOR_MINIMUM_CONSUMPTION.get()) : 0;
 	}
 
@@ -176,27 +177,27 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 	}
 
 	// CC
-	int cc_antiSpam = 0;
 	boolean first = true;
 
 	@Override
 	public void tick() {
 		super.tick();
 		if(first) {
+			motorSpeed = generatedSpeed.getValue();
 			updateGeneratedRotation();
 			first = false;
 		}
 
-		if(cc_update_rpm && cc_antiSpam > 0) {
-			generatedSpeed.setValue(cc_new_rpm);
+		if(cc_update_rpm) {
+			generatedSpeed.setValue(Math.round(cc_new_rpm));
+			motorSpeed = cc_new_rpm;
 			cc_update_rpm = false;
-			cc_antiSpam--;
 			updateGeneratedRotation();
 		}
 
 		//Old Lazy
 		if(level.isClientSide()) return;
-		int con = getEnergyConsumptionRate(generatedSpeed.getValue());
+		int con = getEnergyConsumptionRate(motorSpeed);
 		if(!active) {
 			if(energy.getEnergyStored() > con * 2 && !getBlockState().getValue(ElectricMotorBlock.POWERED)) {
 				active = true;
@@ -219,31 +220,33 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 		if (Config.AUDIO_ENABLED.get()) CASoundScapes.play(CASoundScapes.AmbienceGroup.DYNAMO, worldPosition, 1);
 	}
 
-	public static int getDurationAngle(int deg, float initialProgress, float speed) {
+	
+	public static float getDurationAngle(float deg, float initialProgress, float speed) {
 		speed = Math.abs(speed);
 		deg = Math.abs(deg);
 		if(speed < 0.1f) return 0;
 		double degreesPerTick = (speed * 360) / 60 / 20;
-		return (int) ((1 - initialProgress) * deg / degreesPerTick + 1);
+		return (float) ((1 - initialProgress) * deg / degreesPerTick + 1);
 	}
 
-	public static int getDurationDistance(int dis, float initialProgress, float speed) {
+	public static float getDurationDistance(float dis, float initialProgress, float speed) {
 		speed = Math.abs(speed);
 		dis = Math.abs(dis);
 		if(speed < 0.1f) return 0;
 		double metersPerTick = speed / 512;
-		return (int) ((1 - initialProgress) * dis / metersPerTick);
+		return (float) ((1 - initialProgress) * dis / metersPerTick);
 	}
 
-	public boolean setRPM(int rpm) {
+	// This is the callback used by the CC Peripheral!
+	public boolean setRPM(float rpm) {
 		rpm = Math.max(Math.min(rpm, Config.ELECTRIC_MOTOR_RPM_RANGE.get()), -Config.ELECTRIC_MOTOR_RPM_RANGE.get());
 		cc_new_rpm = rpm;
 		cc_update_rpm = true;
-		return cc_antiSpam > 0;
+		return true;
 	}
 
-	public int getRPM() {
-		return cc_new_rpm;//generatedSpeed.getValue();
+	public float getRPM() {
+		return motorSpeed;
 	}
 
 	public int getGeneratedStress() {
@@ -251,7 +254,7 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 	}
 
 	public int getEnergyConsumption() {
-		return getEnergyConsumptionRate(generatedSpeed.getValue());
+		return getEnergyConsumptionRate(motorSpeed);
 	}
 
 	public boolean isPoweredState() {
