@@ -54,6 +54,7 @@ import com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock;
 import com.simibubi.create.content.contraptions.piston.MechanicalPistonHeadBlock;
 import com.simibubi.create.content.contraptions.piston.PistonExtensionPoleBlock;
 import com.simibubi.create.content.contraptions.pulley.PulleyBlock;
+import com.simibubi.create.content.decoration.CardboardBlock;
 import com.simibubi.create.content.decoration.MetalLadderBlock;
 import com.simibubi.create.content.decoration.MetalScaffoldingBlock;
 import com.simibubi.create.content.decoration.TrainTrapdoorBlock;
@@ -2466,6 +2467,20 @@ public class AllBlocks {
 		.build()
 		.lang("Block of Brass")
 		.register();
+	
+	public static final BlockEntry<CardboardBlock> CARDBOARD_BLOCK =
+		REGISTRATE.block("cardboard_block", CardboardBlock::new)
+			.initialProperties(() -> Blocks.MUSHROOM_STEM)
+			.properties(p -> p.mapColor(MapColor.COLOR_BROWN)
+				.ignitedByLava())
+			.transform(axeOnly())
+			.blockstate(BlockStateGen.horizontalAxisBlockProvider(false))
+			.tag(Tags.Blocks.STORAGE_BLOCKS)
+			.transform(tagBlockAndItem("storage_blocks/cardboard"))
+			.tag(Tags.Items.STORAGE_BLOCKS)
+			.build()
+			.lang("Block of Cardboard")
+			.register();
 
 	public static final BlockEntry<ExperienceBlock> EXPERIENCE_BLOCK =
 		REGISTRATE.block("experience_block", ExperienceBlock::new)

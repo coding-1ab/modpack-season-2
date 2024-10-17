@@ -17,6 +17,7 @@ import com.simibubi.create.content.contraptions.render.ContraptionRenderInfoMana
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchHandler;
 import com.simibubi.create.content.decoration.girder.GirderWrenchBehavior;
 import com.simibubi.create.content.equipment.armor.BacktankArmorLayer;
+import com.simibubi.create.content.equipment.armor.CardboardArmorStealthOverlay;
 import com.simibubi.create.content.equipment.armor.DivingHelmetItem;
 import com.simibubi.create.content.equipment.armor.NetheriteBacktankFirstPersonRenderer;
 import com.simibubi.create.content.equipment.armor.NetheriteDivingHandler;
@@ -183,6 +184,7 @@ public class ClientEvents {
 		PackagePortTargetSelectionHandler.tick();
 		LogisticallyLinkedClientHandler.tick();
 		DisplayClothOverlayRenderer.tick();
+		CardboardArmorStealthOverlay.clientTick();
 	}
 
 	@SubscribeEvent

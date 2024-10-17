@@ -202,6 +202,7 @@ public class AllPartialModels {
 	public static final List<PartialModel> CONTRAPTION_CONTROLS_INDICATOR = new ArrayList<>();
 
 	public static final Map<ResourceLocation, PartialModel> PACKAGES = new HashMap<>();
+	public static final List<PartialModel> PACKAGES_AS_LIST = new ArrayList<>();
 	public static final Map<ResourceLocation, PartialModel> PACKAGE_RIGGING = new HashMap<>();
 
 	static {
@@ -226,7 +227,9 @@ public class AllPartialModels {
 
 		for (String size : new String[] { "12x12", "10x12", "12x10", "10x8" }) {
 			ResourceLocation key = Create.asResource("cardboard_package_" + size);
-			PACKAGES.put(key, PartialModel.of(Create.asResource("item/packages/cardboard_" + size)));
+			PartialModel model = PartialModel.of(Create.asResource("item/packages/cardboard_" + size));
+			PACKAGES.put(key, model);
+			PACKAGES_AS_LIST.add(model);
 			PACKAGE_RIGGING.put(key,
 				PartialModel.of(Create.asResource("item/packages/cardboard_" + size + "_rigging")));
 		}

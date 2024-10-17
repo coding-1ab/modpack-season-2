@@ -1,4 +1,4 @@
-// 1.20.1	2024-10-15T10:59:16.195561	Create's Standard Recipes
+// 1.20.1	2024-10-17T18:56:47.6838794	Create's Standard Recipes
 a8cc4af26f6c7c45a9eef12e92af1452fe042454 data/create/advancements/recipes/combat/crafting/appliances/netherite_backtank.json
 2c2639c7b307ee7c7a4e97e5efebf496788998ad data/create/advancements/recipes/combat/crafting/appliances/netherite_backtank_from_netherite.json
 81dcf0cb1aa99e39bc7d1a386e07cad4cee7d8b9 data/create/advancements/recipes/combat/crafting/appliances/netherite_diving_boots.json
@@ -188,6 +188,8 @@ cb416511a219d2bc5806c6880c01820a8b563b80 data/create/advancements/recipes/misc/c
 8aa51bd8685a70f200506d3efd4e73ce9b2d7370 data/create/advancements/recipes/misc/crafting/materials/brass_ingot_from_compacting.json
 9e703c5fa1bd44eb6581e745f06923d40126ada4 data/create/advancements/recipes/misc/crafting/materials/brass_ingot_from_decompacting.json
 4cb9d1fc5289b11df4610a85aa2cd67877556b32 data/create/advancements/recipes/misc/crafting/materials/brass_nugget_from_decompacting.json
+f07788c42f4c49d0b4fc7253742d95e94bd5346d data/create/advancements/recipes/misc/crafting/materials/cardboard_block.json
+86439f388e88fe56d3931ab46fce5a111b2c15f4 data/create/advancements/recipes/misc/crafting/materials/cardboard_from_block.json
 ffcd3f0339794c782a8be8434cd79de15d0ab3cc data/create/advancements/recipes/misc/crafting/materials/copper_ingot.json
 58c23978d7222951cba2bbf3020cd0c2c6f85ac9 data/create/advancements/recipes/misc/crafting/materials/copper_nugget.json
 d4879e7721bdbb6c7029ac88ff5684acec8223d6 data/create/advancements/recipes/misc/crafting/materials/electron_tube.json
@@ -438,6 +440,8 @@ f9f94e5082e7971e55b25bc00ba86c3579b492aa data/create/recipes/crafting/materials/
 ecd8581ad4a04cc1217133363bd15d76129cb651 data/create/recipes/crafting/materials/brass_ingot_from_compacting.json
 fe2f3c0722aa0f6b41ad0f497b9742eb856c0dd0 data/create/recipes/crafting/materials/brass_ingot_from_decompacting.json
 941b2c1007c4b3afb6e141a754141de1b1c9a43a data/create/recipes/crafting/materials/brass_nugget_from_decompacting.json
+4c92a1eadc2e5dfba9e871537671702ccf35368a data/create/recipes/crafting/materials/cardboard_block.json
+cb1188148d18e456cecd33279aaf695787ddbf74 data/create/recipes/crafting/materials/cardboard_from_block.json
 d4d6664d05c7406b4f839413d4e3c60cf0347fb7 data/create/recipes/crafting/materials/copper_ingot.json
 4863d3feda514d414962c1947abaa232ab3f6cd5 data/create/recipes/crafting/materials/copper_nugget.json
 66c0b1d060395826c4a45082a03295b5df450801 data/create/recipes/crafting/materials/electron_tube.json

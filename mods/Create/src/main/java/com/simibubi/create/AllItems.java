@@ -25,6 +25,7 @@ import com.simibubi.create.content.equipment.armor.AllArmorMaterials;
 import com.simibubi.create.content.equipment.armor.BacktankItem;
 import com.simibubi.create.content.equipment.armor.BacktankItem.BacktankBlockItem;
 import com.simibubi.create.content.equipment.armor.BaseArmorItem;
+import com.simibubi.create.content.equipment.armor.CardboardHelmetItem;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
 import com.simibubi.create.content.equipment.armor.DivingHelmetItem;
 import com.simibubi.create.content.equipment.blueprint.BlueprintItem;
@@ -318,7 +319,7 @@ public class AllItems {
 	CARDBOARD_HELMET =
 		REGISTRATE
 			.item("cardboard_helmet",
-				p -> new BaseArmorItem(AllArmorMaterials.CARDBOARD, ArmorItem.Type.HELMET, p,
+				p -> new CardboardHelmetItem(AllArmorMaterials.CARDBOARD, ArmorItem.Type.HELMET, p,
 					Create.asResource("cardboard")))
 			.tag(forgeItemTag("armors/helmet"))
 			.register(),

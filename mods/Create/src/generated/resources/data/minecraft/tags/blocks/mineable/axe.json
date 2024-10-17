@@ -130,6 +130,7 @@
     "create:brown_seat",
     "create:green_seat",
     "create:red_seat",
-    "create:black_seat"
+    "create:black_seat",
+    "create:cardboard_block"
   ]
 }

@@ -28,7 +28,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock.Action;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber
@@ -49,14 +52,22 @@ public class CardboardSwordItem extends SwordItem {
 	}
 
 	@Override
-	public boolean hurtEnemy(ItemStack pStack, LivingEntity pTarget, LivingEntity pAttacker) {
-		return super.hurtEnemy(pStack, pTarget, pAttacker);
+	public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
+		AllSoundEvents.CARDBOARD_SWORD.playFrom(entity, 0.75f, 1.85f);
+		return super.onLeftClickEntity(stack, player, entity);
 	}
 
-	@Override
-	public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
-		AllSoundEvents.CARDBOARD_SWORD.playFrom(entity, 0.75f, 1.5f);
-		return super.onLeftClickEntity(stack, player, entity);
+	@SubscribeEvent
+	public static void cardboardSwordsMakeNoiseOnClick(LeftClickBlock event) {
+		ItemStack itemStack = event.getItemStack();
+		if (!AllItems.CARDBOARD_SWORD.isIn(itemStack))
+			return;
+		if (event.getAction() != Action.START)
+			return;
+		if (event.getSide() == LogicalSide.CLIENT)
+			AllSoundEvents.CARDBOARD_SWORD.playAt(event.getLevel(), event.getPos(), 0.5f, 1.85f, false);
+		else
+			AllSoundEvents.CARDBOARD_SWORD.play(event.getLevel(), event.getEntity(), event.getPos(), 0.5f, 1.85f);
 	}
 
 	@SubscribeEvent
@@ -84,6 +95,7 @@ public class CardboardSwordItem extends SwordItem {
 		if (knockbackStrength <= 0)
 			return;
 
+		target.stopRiding();
 		target.knockback(knockbackStrength * 0.5F, Mth.sin(livingAttacker.getYRot() * Mth.DEG_TO_RAD),
 			-Mth.cos(livingAttacker.getYRot() * Mth.DEG_TO_RAD));
 		if ((target.getClassification(false) == MobCategory.MISC

@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
@@ -58,8 +60,6 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 import net.minecraftforge.common.crafting.conditions.NotCondition;
-
-import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class StandardRecipeGen extends CreateRecipeProvider {
@@ -115,6 +115,16 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.pattern("CCC")
 				.pattern("CCC")
 				.pattern("CCC")),
+			
+		CARDBOARD_BLOCK = create(AllBlocks.CARDBOARD_BLOCK).unlockedBy(AllItems.CARDBOARD::get)
+			.viaShaped(b -> b.define('C', AllItems.CARDBOARD.get())
+				.pattern("CC")
+				.pattern("CC")),
+		
+		CARDBOARD_FROM_BLOCK = create(AllItems.CARDBOARD).withSuffix("_from_block")
+			.returns(4)
+			.unlockedBy(AllItems.CARDBOARD::get)
+			.viaShapeless(b -> b.requires(AllBlocks.CARDBOARD_BLOCK.get())),
 
 		BRASS_COMPACTING =
 			metalCompacting(ImmutableList.of(AllItems.BRASS_NUGGET, AllItems.BRASS_INGOT, AllBlocks.BRASS_BLOCK),
