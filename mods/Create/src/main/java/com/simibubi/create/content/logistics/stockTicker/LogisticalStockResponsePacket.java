@@ -3,6 +3,7 @@ package com.simibubi.create.content.logistics.stockTicker;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 
 import net.createmod.catnip.utility.IntAttached;
@@ -17,10 +18,10 @@ import net.minecraftforge.network.NetworkEvent.Context;
 public class LogisticalStockResponsePacket extends SimplePacketBase {
 
 	private BlockPos pos;
-	private List<IntAttached<ItemStack>> items;
+	private List<BigItemStack> items;
 	private boolean lastPacket;
 
-	public LogisticalStockResponsePacket(boolean lastPacket, BlockPos pos, List<IntAttached<ItemStack>> items) {
+	public LogisticalStockResponsePacket(boolean lastPacket, BlockPos pos, List<BigItemStack> items) {
 		this.lastPacket = lastPacket;
 		this.pos = pos;
 		this.items = items;
@@ -32,7 +33,7 @@ public class LogisticalStockResponsePacket extends SimplePacketBase {
 		int count = buffer.readVarInt();
 		items = new ArrayList<>(count);
 		for (int i = 0; i < count; i++)
-			items.add(IntAttached.with(buffer.readVarInt(), buffer.readItem()));
+			items.add(BigItemStack.receive(buffer));
 	}
 
 	@Override
@@ -40,10 +41,7 @@ public class LogisticalStockResponsePacket extends SimplePacketBase {
 		buffer.writeBoolean(lastPacket);
 		buffer.writeBlockPos(pos);
 		buffer.writeVarInt(items.size());
-		for (IntAttached<ItemStack> entry : items) {
-			buffer.writeVarInt(entry.getFirst());
-			buffer.writeItem(entry.getSecond());
-		}
+		items.forEach(stack -> stack.send(buffer));
 	}
 
 	@Override

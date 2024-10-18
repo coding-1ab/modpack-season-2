@@ -5,12 +5,12 @@ import java.util.List;
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.IntAttached;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -82,12 +82,11 @@ public class RedstoneRequesterBlock extends Block implements IBE<RedstoneRequest
 			return;
 
 		PackageOrder contents = PackageOrder.read(compoundnbt.getCompound("EncodedRequest"));
-		for (IntAttached<ItemStack> entry : contents.stacks()) {
-			pTooltip.add(entry.getSecond()
-				.getHoverName()
+		for (BigItemStack entry : contents.stacks()) {
+			pTooltip.add(entry.stack.getHoverName()
 				.copy()
 				.append(" x")
-				.append(String.valueOf(entry.getFirst()))
+				.append(String.valueOf(entry.count))
 				.withStyle(ChatFormatting.GRAY));
 		}
 

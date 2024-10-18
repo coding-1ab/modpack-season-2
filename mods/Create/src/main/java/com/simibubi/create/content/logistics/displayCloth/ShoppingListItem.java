@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.foundation.utility.CreateLang;
 
@@ -60,7 +61,7 @@ public class ShoppingListItem extends Item {
 			}
 			purchases.add(IntAttached.with(amount, clothPos));
 		}
-		
+
 		public int getPurchases(BlockPos clothPos) {
 			for (IntAttached<BlockPos> entry : purchases)
 				if (clothPos.equals(entry.getValue()))
@@ -79,8 +80,8 @@ public class ShoppingListItem extends Item {
 				if (entity == null)
 					continue;
 				input.add(entity.paymentItem, entity.paymentAmount * entry.getFirst());
-				for (IntAttached<ItemStack> stackEntry : entity.requestData.encodedRequest.stacks())
-					output.add(stackEntry.getValue(), stackEntry.getFirst() * entry.getFirst());
+				for (BigItemStack stackEntry : entity.requestData.encodedRequest.stacks())
+					output.add(stackEntry.stack, stackEntry.count * entry.getFirst());
 			}
 
 			return Couple.create(output, input);
@@ -123,21 +124,20 @@ public class ShoppingListItem extends Item {
 
 			if (lists != null) {
 				for (InventorySummary items : lists) {
-					List<IntAttached<ItemStack>> entries = items.getStacksByCount();
+					List<BigItemStack> entries = items.getStacksByCount();
 					boolean cost = items == lists.getSecond();
 
 					if (cost)
 						pTooltipComponents.add(Components.empty());
 
 					if (entries.size() == 1) {
-						IntAttached<ItemStack> entry = entries.get(0);
+						BigItemStack entry = entries.get(0);
 						CreateLang.temporaryText(cost ? "Total cost: " : "")
 							.style(ChatFormatting.GOLD)
 							.add(CreateLang.builder()
-								.add(entry.getSecond()
-									.getHoverName())
+								.add(entry.stack.getHoverName())
 								.text(" x")
-								.text(String.valueOf(entry.getFirst()))
+								.text(String.valueOf(entry.count))
 								.style(cost ? ChatFormatting.YELLOW : ChatFormatting.GRAY))
 							.addTo(pTooltipComponents);
 
@@ -146,12 +146,11 @@ public class ShoppingListItem extends Item {
 							CreateLang.temporaryText("Total cost: ")
 								.style(ChatFormatting.GOLD)
 								.addTo(pTooltipComponents);
-						for (IntAttached<ItemStack> entry : entries) {
+						for (BigItemStack entry : entries) {
 							CreateLang.builder()
-								.add(entry.getSecond()
-									.getHoverName())
+								.add(entry.stack.getHoverName())
 								.text(" x")
-								.text(String.valueOf(entry.getFirst()))
+								.text(String.valueOf(entry.count))
 								.style(cost ? ChatFormatting.YELLOW : ChatFormatting.GRAY)
 								.addTo(pTooltipComponents);
 						}

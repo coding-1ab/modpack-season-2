@@ -37,7 +37,8 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 
 		be.inboundConnections.forEach((toSide, map) -> {
 			map.forEach((fromPos, connection) -> renderConnection(be.getBlockState(), fromPos.offset(be.getBlockPos()),
-				be.getBlockPos(), connection.fromSide(), toSide, be.satisfied, false));
+				be.getBlockPos(), connection.fromSide(), toSide, be.satisfied ? 2 : be.promisedSatisfied ? 1 : 0,
+				false));
 			renderAttachment(be, toSide, false, ms, buffer, light, overlay);
 		});
 	}
@@ -63,16 +64,18 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 	}
 
 	public static void renderConnection(BlockState blockState, BlockPos fromPos, BlockPos toPos, Pointing fromSide,
-		Pointing toSide, boolean satisfied, boolean effect) {
+		Pointing toSide, int satisfyState, boolean effect) {
 		Direction facing = FactoryPanelBlock.connectedDirection(blockState);
 		Vec3 facingNormal = Vec3.atLowerCornerOf(facing.getNormal());
 		Vec3 offset = Vec3.atCenterOf(BlockPos.ZERO)
 			.add(facingNormal.scale(-0.375));
 
-		int color = satisfied ? 0x85E59B : (AnimationTickHolder.getTicks() % 16 >= 8) ? 0x7783A8 : 0x687291;
+		boolean flicker = AnimationTickHolder.getTicks() % 16 >= 8;
+		int color = satisfyState == 1 ? (flicker ? 0xBC75FF : 0x915BC6)
+			: satisfyState == 2 ? 0x85E59B : (flicker ? 0x7783A8 : 0x687291);
 
 		if (effect)
-			color = satisfied ? 0xEAF2EC : 0xE5654B;
+			color = satisfyState != 0 ? 0xEAF2EC : 0xE5654B;
 
 		Pointing currentDirection = fromSide;
 		BlockPos currentPos = fromPos;
@@ -86,11 +89,11 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 			Vec3 toOffset = Vec3.atLowerCornerOf(nextPos)
 				.add(offset);
 
-			Pair<Integer, Pair<Boolean, Boolean>> key =
-				Pair.of(currentPos.hashCode() + 13 * nextPos.hashCode(), Pair.of(effect, effect ? satisfied : true));
+			Pair<Integer, Pair<Boolean, Boolean>> key = Pair.of(currentPos.hashCode() + 13 * nextPos.hashCode(),
+				Pair.of(effect, effect ? satisfyState != 0 : true));
 
 			CatnipClient.OUTLINER.showLine(key, fromOffset, toOffset)
-				.lineWidth(effect ? (satisfied ? 3f / 32f : 3.5f / 32f) : 2 / 32f)
+				.lineWidth(effect ? (satisfyState != 0 ? 3f / 32f : 3.5f / 32f) : 2 / 32f)
 				.colored(color);
 
 			if (currentPos.equals(targetPos))

@@ -54,7 +54,7 @@ public class FactoryPanelEffectPacket extends SimplePacketBase {
 		BlockState blockState = level.getBlockState(fromPos);
 		if (!AllBlocks.FACTORY_PANEL.has(blockState))
 			return true;
-		FactoryPanelRenderer.renderConnection(blockState, fromPos, toPos, fromSide, toSide, success, true);
+		FactoryPanelRenderer.renderConnection(blockState, fromPos, toPos, fromSide, toSide, success ? 1 : 0, true);
 		return true;
 	}
 }

@@ -15,11 +15,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.element.GuiGameElement;
-import net.createmod.catnip.utility.IntAttached;
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
@@ -53,9 +53,9 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 	int emptyTicks = 0;
 	int successTicks = 0;
 
-	List<IntAttached<ItemStack>> currentItemSource;
-	List<IntAttached<ItemStack>> displayedItems;
-	List<IntAttached<ItemStack>> itemsToOrder;
+	List<BigItemStack> currentItemSource;
+	List<BigItemStack> displayedItems;
+	List<BigItemStack> itemsToOrder;
 
 	boolean encodeRequester; // Redstone requesters
 
@@ -126,8 +126,8 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		final String value = valueWithPrefix;
 
 		displayedItems = new ArrayList<>();
-		for (IntAttached<ItemStack> entry : currentItemSource) {
-			ItemStack stack = entry.getValue();
+		for (BigItemStack entry : currentItemSource) {
+			ItemStack stack = entry.stack;
 
 			if (modSearch) {
 				if (ForgeRegistries.ITEMS.getKey(stack.getItem())
@@ -175,7 +175,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		else
 			successTicks = 0;
 
-		List<IntAttached<ItemStack>> clientStockSnapshot = blockEntity.getClientStockSnapshot();
+		List<BigItemStack> clientStockSnapshot = blockEntity.getClientStockSnapshot();
 		if (clientStockSnapshot != currentItemSource) {
 			currentItemSource = clientStockSnapshot;
 			refreshSearchResults(false);
@@ -241,7 +241,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 			if (itemsToOrder.size() <= index)
 				break;
 
-			IntAttached<ItemStack> entry = itemsToOrder.get(index);
+			BigItemStack entry = itemsToOrder.get(index);
 			boolean isStackHovered = index == hoveredSlot;
 
 			ms.pushPose();
@@ -288,7 +288,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 				if (displayedItems.size() <= index)
 					break;
 
-				IntAttached<ItemStack> entry = displayedItems.get(index);
+				BigItemStack entry = displayedItems.get(index);
 				boolean isStackHovered = index == hoveredSlot;
 
 				ms.pushPose();
@@ -313,28 +313,26 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 
 		// Render tooltip of hovered item
 		if (hoveredSlot != noneHovered)
-			graphics.renderTooltip(font, displayedItems.get(hoveredSlot)
-				.getValue(), mouseX, mouseY);
+			graphics.renderTooltip(font, displayedItems.get(hoveredSlot).stack, mouseX, mouseY);
 		hoveredSlot = getHoveredSlot(mouseX, mouseY, true);
 		if (hoveredSlot != noneHovered)
-			graphics.renderTooltip(font, itemsToOrder.get(hoveredSlot)
-				.getValue(), mouseX, mouseY);
+			graphics.renderTooltip(font, itemsToOrder.get(hoveredSlot).stack, mouseX, mouseY);
 	}
 
-	private void renderItemEntry(GuiGraphics graphics, float scale, IntAttached<ItemStack> entry,
-		boolean isStackHovered, boolean isRenderingOrders) {
+	private void renderItemEntry(GuiGraphics graphics, float scale, BigItemStack entry, boolean isStackHovered,
+		boolean isRenderingOrders) {
 		PoseStack ms = graphics.pose();
 		ms.pushPose();
 		ms.translate(0, 0, 200);
 
-		int customCount = entry.getFirst();
+		int customCount = entry.count;
 		if (!isRenderingOrders) {
-			IntAttached<ItemStack> order = getOrderForItem(entry.getSecond());
+			BigItemStack order = getOrderForItem(entry.stack);
 			if (order != null)
-				customCount -= order.getFirst();
+				customCount -= order.count;
 		}
 
-		drawItemCount(graphics, entry.getFirst(), customCount);
+		drawItemCount(graphics, entry.count, customCount);
 		ms.translate(0, 0, -200);
 
 		float scaleFromHover = 1;
@@ -346,7 +344,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		ms.scale(scale, scale, scale);
 		ms.scale(scaleFromHover, scaleFromHover, scaleFromHover);
 		ms.translate(-18 / 2.0, -18 / 2.0, 0);
-		GuiGameElement.of(entry.getSecond())
+		GuiGameElement.of(entry.stack)
 			.render(graphics);
 		ms.popPose();
 	}
@@ -377,23 +375,23 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 	}
 
 	@Nullable
-	private IntAttached<ItemStack> getOrderForItem(ItemStack stack) {
-		for (IntAttached<ItemStack> entry : itemsToOrder)
-			if (ItemHandlerHelper.canItemStacksStack(stack, entry.getValue()))
+	private BigItemStack getOrderForItem(ItemStack stack) {
+		for (BigItemStack entry : itemsToOrder)
+			if (ItemHandlerHelper.canItemStacksStack(stack, entry.stack))
 				return entry;
 		return null;
 	}
 
 	private void revalidateOrders() {
-		Set<IntAttached<ItemStack>> invalid = new HashSet<>(itemsToOrder);
+		Set<BigItemStack> invalid = new HashSet<>(itemsToOrder);
 		if (currentItemSource == null) {
 			itemsToOrder.removeAll(invalid);
 			return;
 		}
-		for (IntAttached<ItemStack> entry : itemsToOrder)
-			for (IntAttached<ItemStack> available : currentItemSource)
-				if (ItemHandlerHelper.canItemStacksStack(entry.getValue(), available.getValue())) {
-					entry.setFirst(Math.min(available.getFirst(), entry.getFirst()));
+		for (BigItemStack entry : itemsToOrder)
+			for (BigItemStack available : currentItemSource)
+				if (ItemHandlerHelper.canItemStacksStack(entry.stack, available.stack)) {
+					entry.count = Math.min(available.count, entry.count);
 					invalid.remove(entry);
 					break;
 				}
@@ -492,26 +490,26 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		if (hoveredSlot == noneHovered || !lmb && !rmb)
 			return super.mouseClicked(pMouseX, pMouseY, pButton);
 
-		IntAttached<ItemStack> entry = orderClicked ? itemsToOrder.get(hoveredSlot) : displayedItems.get(hoveredSlot);
-		ItemStack itemStack = entry.getValue();
-		IntAttached<ItemStack> existingOrder = getOrderForItem(itemStack);
+		BigItemStack entry = orderClicked ? itemsToOrder.get(hoveredSlot) : displayedItems.get(hoveredSlot);
+		ItemStack itemStack = entry.stack;
+		BigItemStack existingOrder = getOrderForItem(itemStack);
 		if (existingOrder == null) {
 			if (itemsToOrder.size() >= cols || rmb)
 				return true;
-			itemsToOrder.add(existingOrder = IntAttached.withZero(itemStack.copyWithCount(1)));
+			itemsToOrder.add(existingOrder = new BigItemStack(itemStack.copyWithCount(1), 0));
 		}
 
 		int transfer = hasShiftDown() ? itemStack.getMaxStackSize() : 1;
-		int current = existingOrder.getFirst();
+		int current = existingOrder.count;
 
 		if (rmb || orderClicked) {
-			existingOrder.setFirst(current - transfer);
-			if (existingOrder.getFirst() <= 0)
+			existingOrder.count = current - transfer;
+			if (existingOrder.count <= 0)
 				itemsToOrder.remove(existingOrder);
 			return true;
 		}
 
-		existingOrder.setFirst(current + Math.min(transfer, entry.getFirst() - current));
+		existingOrder.count = current + Math.min(transfer, entry.count - current);
 		return true;
 	}
 

@@ -5,20 +5,19 @@ import static com.simibubi.create.foundation.gui.AllGuiTextures.PLAYER_INVENTORY
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.element.GuiGameElement;
-import net.createmod.catnip.utility.IntAttached;
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
 
 public class DisplayClothPricingScreen extends AbstractSimiContainerScreen<DisplayClothPricingMenu> {
 
@@ -74,13 +73,12 @@ public class DisplayClothPricingScreen extends AbstractSimiContainerScreen<Displ
 		PoseStack ms = graphics.pose();
 
 		for (int i = 0; i < currentStacks().size(); i++) {
-			IntAttached<ItemStack> entry = currentStacks().get(i);
+			BigItemStack entry = currentStacks().get(i);
 			ms.pushPose();
 
 			ms.translate(x + i % cols * colWidth, y + 20 + i / cols * rowHeight, 200);
 
-			int customCount = currentStacks().get(i)
-				.getFirst();
+			int customCount = currentStacks().get(i).count;
 			drawItemCount(graphics, customCount, customCount);
 			ms.translate(0, 0, -200);
 
@@ -89,17 +87,16 @@ public class DisplayClothPricingScreen extends AbstractSimiContainerScreen<Displ
 			ms.translate(18 / 2.0, 18 / 2.0, 0);
 			ms.scale(scaleFromHover, scaleFromHover, scaleFromHover);
 			ms.translate(-18 / 2.0, -18 / 2.0, 0);
-			GuiGameElement.of(entry.getSecond())
+			GuiGameElement.of(entry.stack)
 				.render(graphics);
 			ms.popPose();
 		}
 
 		if (hoveredSlot != -1)
-			graphics.renderTooltip(font, currentStacks().get(hoveredSlot)
-				.getValue(), mouseX, mouseY);
+			graphics.renderTooltip(font, currentStacks().get(hoveredSlot).stack, mouseX, mouseY);
 	}
 
-	private List<IntAttached<ItemStack>> currentStacks() {
+	private List<BigItemStack> currentStacks() {
 		return menu.contentHolder.requestData.encodedRequest.stacks();
 	}
 

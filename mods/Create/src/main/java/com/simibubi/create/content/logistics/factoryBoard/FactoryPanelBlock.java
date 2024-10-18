@@ -121,8 +121,7 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 			if (pState.getValue(POWERED))
 				updateNeighbours(pState, pLevel, pPos);
 
-		if (pState.hasBlockEntity() && (blockChanged || !pNewState.hasBlockEntity()))
-			pLevel.removeBlockEntity(pPos);
+		IBE.onRemove(pState, pLevel, pPos, pNewState);
 	}
 
 	public static void updateNeighbours(BlockState pState, Level pLevel, BlockPos pPos) {

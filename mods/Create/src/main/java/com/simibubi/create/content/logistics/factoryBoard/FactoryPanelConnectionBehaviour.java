@@ -7,7 +7,11 @@ import java.util.Map.Entry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.Create;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
+import com.simibubi.create.content.logistics.packagerLink.RequestPromise;
+import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
@@ -18,7 +22,6 @@ import com.simibubi.create.foundation.utility.CreateLang;
 
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.gui.ScreenOpener;
-import net.createmod.catnip.utility.IntAttached;
 import net.createmod.catnip.utility.NBTHelper;
 import net.createmod.catnip.utility.Pointing;
 import net.createmod.catnip.utility.VecHelper;
@@ -53,13 +56,15 @@ public class FactoryPanelConnectionBehaviour extends ScrollValueBehaviour {
 	public String address;
 	public Pointing side;
 
+	public static final int REQUEST_INTERVAL = 100;
+
 	private int timer;
 
 	public FactoryPanelConnectionBehaviour(FactoryPanelBlockEntity be, Pointing side) {
 		super(Components.empty(), be, new FactoryPanelConnectionSlotPositioning(be, side));
 		this.side = side;
 		onlyActiveWhen(() -> inputModeActive || be.hasInboundConnections(side));
-		withFormatter(value -> inputModeActive ? formatInputSlot(value) : formatTimerSlot(value));
+		withFormatter(value -> formatInputSlot(value));
 		inputModeActive = false;
 		setValue(1);
 		address = "";
@@ -72,22 +77,22 @@ public class FactoryPanelConnectionBehaviour extends ScrollValueBehaviour {
 			return;
 		if (!(blockEntity instanceof FactoryPanelBlockEntity fpbe))
 			return;
-		if (!fpbe.hasInboundConnections(side) || fpbe.satisfied)
+		if (!fpbe.hasInboundConnections(side) || fpbe.satisfied || fpbe.promisedSatisfied)
 			return;
-		if (value < 20)
+		if (value <= 0)
 			return;
 		if (timer > 0) {
-			timer = Math.min(timer, value);
+			timer = Math.min(timer, REQUEST_INTERVAL);
 			timer--;
 			return;
 		}
 
-		timer = value;
+		timer = REQUEST_INTERVAL;
 
 		InventorySummary summary = fpbe.getAccurateSummary();
 		boolean failed = false;
 
-		ArrayList<IntAttached<ItemStack>> toRequest = new ArrayList<>();
+		List<BigItemStack> toRequest = new ArrayList<>();
 		for (Entry<BlockPos, FactoryPanelConnection> entry : fpbe.inboundConnections.get(side)
 			.entrySet()) {
 			BlockPos targetPos = getPos().offset(entry.getKey());
@@ -98,7 +103,7 @@ public class FactoryPanelConnectionBehaviour extends ScrollValueBehaviour {
 			Pointing fromSide = entry.getValue()
 				.fromSide();
 			FactoryPanelConnectionBehaviour connectionBehaviour = fpbe2.connections.get(fromSide);
-			ItemStack item = fpbe2.behaviour.getFilter();
+			ItemStack item = fpbe2.panelBehaviour.getFilter();
 			if (connectionBehaviour.value == 0 || item.isEmpty())
 				continue;
 			if (summary.getCountOf(item) < connectionBehaviour.value) {
@@ -107,7 +112,7 @@ public class FactoryPanelConnectionBehaviour extends ScrollValueBehaviour {
 				continue;
 			}
 
-			toRequest.add(IntAttached.with(connectionBehaviour.value, item));
+			toRequest.add(new BigItemStack(item, connectionBehaviour.value));
 			sendEffect(targetPos, fromSide, getPos(), side, true);
 		}
 
@@ -116,6 +121,10 @@ public class FactoryPanelConnectionBehaviour extends ScrollValueBehaviour {
 
 		PackageOrder order = new PackageOrder(toRequest);
 		fpbe.broadcastPackageRequest(order, null, address);
+
+		RequestPromiseQueue promises = Create.LOGISTICS.getQueuedPromises(fpbe.behaviour.freqId);
+		if (promises != null)
+			promises.add(new RequestPromise(new BigItemStack(fpbe.panelBehaviour.getFilter(), getValue())));
 	}
 
 	private void sendEffect(BlockPos fromPos, Pointing fromSide, BlockPos toPos, Pointing toSide, boolean success) {
@@ -141,16 +150,12 @@ public class FactoryPanelConnectionBehaviour extends ScrollValueBehaviour {
 
 	@Override
 	public ValueSettingsBoard createBoard(Player player, BlockHitResult hitResult) {
-		if (inputModeActive) {
-			return new ValueSettingsBoard(CreateLang.temporaryText("Amount per Shipment")
-				.component(), 64, 16,
-				List.of(CreateLang.temporaryText("Items")
-					.component()),
-				new ValueSettingsFormatter(this::formatInputSettings));
-		}
-		return new ValueSettingsBoard(CreateLang.temporaryText("Request inputs every...")
-			.component(), 60, 10, CreateLang.translatedOptions("generic.unit", "seconds", "minutes"),
-			new ValueSettingsFormatter(this::formatTimerSettings));
+		return new ValueSettingsBoard(
+			CreateLang.temporaryText(inputModeActive ? "Amount per Shipment" : "Expected Returns")
+				.component(),
+			64, 16, List.of(CreateLang.temporaryText("Items")
+				.component()),
+			new ValueSettingsFormatter(this::formatInputSettings));
 	}
 
 	@Override
@@ -164,30 +169,15 @@ public class FactoryPanelConnectionBehaviour extends ScrollValueBehaviour {
 
 	@Override
 	public void setValueSettings(Player player, ValueSettings valueSetting, boolean ctrlHeld) {
-		int value = valueSetting.value();
-		int multiplier = inputModeActive ? 1 : switch (valueSetting.row()) {
-		case 0 -> 20;
-		default -> 60 * 20;
-		};
+		int value = Math.max(1, valueSetting.value());
 		if (!valueSetting.equals(getValueSettings()))
 			playFeedbackSound(this);
-		setValue(Math.max(1, Math.max(1, value) * multiplier));
+		setValue(value);
 	}
 
 	@Override
 	public ValueSettings getValueSettings() {
-		int row = 0;
-		int value = this.value;
-
-		if (value > 60 * 20) {
-			value = value / (60 * 20);
-			row = 1;
-		} else if (value > 60) {
-			value = value / 20;
-			row = 0;
-		}
-
-		return new ValueSettings(row, value);
+		return new ValueSettings(0, this.value);
 	}
 
 	@Override
@@ -199,23 +189,9 @@ public class FactoryPanelConnectionBehaviour extends ScrollValueBehaviour {
 		blockEntity.sendData();
 	}
 
-	public MutableComponent formatTimerSettings(ValueSettings settings) {
-		int value = Math.max(1, settings.value());
-		return Components.literal(switch (settings.row()) {
-		case 0 -> "0:" + (value < 10 ? "0" : "") + value;
-		default -> value + ":00";
-		});
-	}
-
 	public MutableComponent formatInputSettings(ValueSettings settings) {
 		int value = Math.max(1, settings.value());
 		return Components.literal(value + "");
-	}
-
-	private String formatTimerSlot(int value) {
-		if (value < 20 * 60)
-			return (value / 20) + "s";
-		return (value / 20 / 60) + "m";
 	}
 
 	private String formatInputSlot(int value) {
@@ -253,7 +229,7 @@ public class FactoryPanelConnectionBehaviour extends ScrollValueBehaviour {
 			return;
 		label = inputModeActive ? CreateLang.temporaryText("Amount per Shipment")
 			.component()
-			: CreateLang.temporaryText("Request rate")
+			: CreateLang.temporaryText("Expected Amount")
 				.component();
 	}
 

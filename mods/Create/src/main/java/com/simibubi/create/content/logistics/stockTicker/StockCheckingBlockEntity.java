@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
-import net.createmod.catnip.utility.IntAttached;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -40,7 +40,7 @@ public abstract class StockCheckingBlockEntity extends SmartBlockEntity {
 	}
 
 	public void broadcastPackageRequest(PackageOrder order, IItemHandler ignoredHandler, String address) {
-		List<IntAttached<ItemStack>> stacks = order.stacks();
+		List<BigItemStack> stacks = order.stacks();
 
 		// Packages need to track their index and successors for successful defrag
 		Iterable<LogisticallyLinkedBehaviour> availableLinks = behaviour.getAllConnectedAvailableLinks(true);
@@ -54,10 +54,10 @@ public abstract class StockCheckingBlockEntity extends SmartBlockEntity {
 		int orderId = level.random.nextInt();
 
 		for (int i = 0; i < stacks.size(); i++) {
-			IntAttached<ItemStack> entry = stacks.get(i);
-			int remainingCount = entry.getFirst();
+			BigItemStack entry = stacks.get(i);
+			int remainingCount = entry.count;
 			boolean finalEntry = i == stacks.size() - 1;
-			ItemStack requestedItem = entry.getSecond();
+			ItemStack requestedItem = entry.stack;
 
 			for (LogisticallyLinkedBehaviour link : availableLinks) {
 				int usedIndex = usedLinks.indexOf(link);

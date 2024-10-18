@@ -9,6 +9,7 @@ import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllSoundEvents;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem.ShoppingList;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.redstoneRequester.AutoRequestData;
@@ -20,7 +21,6 @@ import com.simibubi.create.foundation.networking.ISyncPersistentData;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.foundation.utility.IInteractionChecker;
 
-import net.createmod.catnip.utility.IntAttached;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -264,10 +264,9 @@ public class DisplayClothEntity extends HangingEntity implements IEntityAddition
 				.getFirst();
 
 		int smallestQuotient = Integer.MAX_VALUE;
-		for (IntAttached<ItemStack> entry : requestData.encodedRequest.stacks())
+		for (BigItemStack entry : requestData.encodedRequest.stacks())
 			smallestQuotient = Math.min(smallestQuotient,
-				(recentSummary.getCountOf(entry.getValue()) - modifierSummary.getCountOf(entry.getValue()))
-					/ entry.getFirst());
+				(recentSummary.getCountOf(entry.stack) - modifierSummary.getCountOf(entry.stack)) / entry.count);
 
 		return smallestQuotient;
 	}

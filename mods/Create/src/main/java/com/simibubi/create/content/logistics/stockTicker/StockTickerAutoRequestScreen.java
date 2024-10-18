@@ -5,11 +5,11 @@ import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.element.GuiGameElement;
-import net.createmod.catnip.utility.IntAttached;
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Color;
@@ -18,7 +18,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
 
 public class StockTickerAutoRequestScreen extends AbstractSimiScreen {
 
@@ -40,8 +39,8 @@ public class StockTickerAutoRequestScreen extends AbstractSimiScreen {
 
 	private void resetAmounts() {
 		modifiedAmounts = new ArrayList<>();
-		for (IntAttached<ItemStack> intAttached : currentStacks())
-			modifiedAmounts.add(intAttached.getFirst());
+		for (BigItemStack stack : currentStacks())
+			modifiedAmounts.add(stack.count);
 	}
 
 	@Override
@@ -81,8 +80,7 @@ public class StockTickerAutoRequestScreen extends AbstractSimiScreen {
 	public void removed() {
 		if (modifiedAmounts != null)
 			for (int i = 0; i < currentStacks().size(); i++)
-				currentStacks().get(i)
-					.setFirst(modifiedAmounts.get(i));
+				currentStacks().get(i).count = modifiedAmounts.get(i);
 		AllPackets.getChannel()
 			.sendToServer(new StockTickerConfigurationPacket(blockEntity.getBlockPos(), false, addressBox.getValue(),
 				blockEntity.restockAmounts));
@@ -116,13 +114,12 @@ public class StockTickerAutoRequestScreen extends AbstractSimiScreen {
 		PoseStack ms = graphics.pose();
 
 		for (int i = 0; i < currentStacks().size(); i++) {
-			IntAttached<ItemStack> entry = currentStacks().get(i);
+			BigItemStack entry = currentStacks().get(i);
 			ms.pushPose();
 
 			ms.translate(guiLeft + i % cols * colWidth, guiTop + 20 + i / cols * rowHeight, 200);
 
-			int customCount = modifiedAmounts == null ? currentStacks().get(i)
-				.getFirst() : modifiedAmounts.get(i);
+			int customCount = modifiedAmounts == null ? currentStacks().get(i).count : modifiedAmounts.get(i);
 			drawItemCount(graphics, customCount, customCount);
 			ms.translate(0, 0, -200);
 
@@ -131,17 +128,16 @@ public class StockTickerAutoRequestScreen extends AbstractSimiScreen {
 			ms.translate(18 / 2.0, 18 / 2.0, 0);
 			ms.scale(scaleFromHover, scaleFromHover, scaleFromHover);
 			ms.translate(-18 / 2.0, -18 / 2.0, 0);
-			GuiGameElement.of(entry.getSecond())
+			GuiGameElement.of(entry.stack)
 				.render(graphics);
 			ms.popPose();
 		}
 
 		if (hoveredSlot != -1)
-			graphics.renderTooltip(font, currentStacks().get(hoveredSlot)
-				.getValue(), mouseX, mouseY);
+			graphics.renderTooltip(font, currentStacks().get(hoveredSlot).stack, mouseX, mouseY);
 	}
 
-	private List<IntAttached<ItemStack>> currentStacks() {
+	private List<BigItemStack> currentStacks() {
 		return blockEntity.restockAmounts.stacks();
 	}
 

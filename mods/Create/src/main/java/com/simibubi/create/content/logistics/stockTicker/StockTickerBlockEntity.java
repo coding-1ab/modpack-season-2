@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import com.simibubi.create.content.equipment.goggles.IHaveHoveringInformation;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipulationBehaviour;
@@ -17,7 +18,6 @@ import com.simibubi.create.foundation.item.SmartInventory;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.utility.BlockFace;
-import net.createmod.catnip.utility.IntAttached;
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
@@ -25,7 +25,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -36,9 +35,9 @@ import net.minecraftforge.items.IItemHandler;
 public class StockTickerBlockEntity extends StockCheckingBlockEntity implements IHaveHoveringInformation {
 
 	// Player-interface Feature
-	protected List<IntAttached<ItemStack>> lastClientsideStockSnapshot;
+	protected List<BigItemStack> lastClientsideStockSnapshot;
 	protected InventorySummary lastClientsideStockSnapshotAsSummary;
-	protected List<IntAttached<ItemStack>> newlyReceivedStockSnapshot;
+	protected List<BigItemStack> newlyReceivedStockSnapshot;
 	protected String previouslyUsedAddress;
 	protected int activeLinks;
 	protected int ticksSinceLastUpdate;
@@ -75,7 +74,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 			.sendToServer(new LogisticalStockRequestPacket(worldPosition));
 	}
 
-	public List<IntAttached<ItemStack>> getClientStockSnapshot() {
+	public List<BigItemStack> getClientStockSnapshot() {
 		return lastClientsideStockSnapshot;
 	}
 
@@ -86,7 +85,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 	public int getTicksSinceLastUpdate() {
 		return ticksSinceLastUpdate;
 	}
-	
+
 	@Override
 	public void broadcastPackageRequest(PackageOrder order, IItemHandler ignoredHandler, String address) {
 		super.broadcastPackageRequest(order, ignoredHandler, address);
@@ -141,7 +140,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		if (inventory == null)
 			return;
 		restockAmounts = new PackageOrder(summariseObservedInventory().getStacksByCount());
-		List<IntAttached<ItemStack>> stacks = restockAmounts.stacks();
+		List<BigItemStack> stacks = restockAmounts.stacks();
 		if (stacks.size() > 8)
 			stacks.subList(8, stacks.size())
 				.clear();
@@ -175,11 +174,11 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 			return;
 
 		InventorySummary presentStock = summariseObservedInventory();
-		List<IntAttached<ItemStack>> missingItems = new ArrayList<>();
-		for (IntAttached<ItemStack> required : restockAmounts.stacks()) {
-			int diff = required.getFirst() - presentStock.getCountOf(required.getValue());
+		List<BigItemStack> missingItems = new ArrayList<>();
+		for (BigItemStack required : restockAmounts.stacks()) {
+			int diff = required.count - presentStock.getCountOf(required.stack);
 			if (diff > 0)
-				missingItems.add(IntAttached.with(diff, required.getValue()));
+				missingItems.add(new BigItemStack(required.stack, diff));
 		}
 
 		if (missingItems.isEmpty())
@@ -194,7 +193,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		notifyUpdate();
 	}
 
-	public void receiveStockPacket(List<IntAttached<ItemStack>> stacks, boolean endOfTransmission) {
+	public void receiveStockPacket(List<BigItemStack> stacks, boolean endOfTransmission) {
 		if (newlyReceivedStockSnapshot == null)
 			newlyReceivedStockSnapshot = new ArrayList<>();
 		newlyReceivedStockSnapshot.addAll(stacks);
@@ -206,7 +205,6 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		newlyReceivedStockSnapshot = null;
 	}
 
-	
 	public boolean isKeeperPresent() {
 		for (int yOffset : Iterate.zeroAndOne) {
 			for (Direction side : Iterate.horizontalDirections) {
@@ -231,11 +229,10 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		InventorySummary summary = new InventorySummary();
 		for (int i = 0; i < receivedPayments.getSlots(); i++)
 			summary.add(receivedPayments.getStackInSlot(i));
-		for (IntAttached<ItemStack> entry : summary.getStacksByCount())
+		for (BigItemStack entry : summary.getStacksByCount())
 			CreateLang.builder()
-				.text(Components.translatable(entry.getSecond()
-					.getDescriptionId())
-					.getString() + " x" + entry.getFirst())
+				.text(Components.translatable(entry.stack.getDescriptionId())
+					.getString() + " x" + entry.count)
 				.style(ChatFormatting.GREEN)
 				.forGoggles(tooltip);
 

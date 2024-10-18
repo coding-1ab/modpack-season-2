@@ -102,6 +102,7 @@ public class CommonEvents {
 		LinkedControllerServerHandler.tick(world);
 		ControlsServerHandler.tick(world);
 		Create.RAILWAYS.tick(world);
+		Create.LOGISTICS.tick(world);
 	}
 
 	@SubscribeEvent
@@ -164,6 +165,7 @@ public class CommonEvents {
 		Create.REDSTONE_LINK_NETWORK_HANDLER.onLoadWorld(world);
 		Create.TORQUE_PROPAGATOR.onLoadWorld(world);
 		Create.RAILWAYS.levelLoaded(world);
+		Create.LOGISTICS.levelLoaded(world);
 	}
 
 	@SubscribeEvent

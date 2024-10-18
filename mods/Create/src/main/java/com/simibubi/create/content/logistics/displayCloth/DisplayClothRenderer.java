@@ -5,19 +5,18 @@ import java.util.List;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.simibubi.create.AllPartialModels;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.depot.DepotRenderer;
 
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
-import net.createmod.catnip.utility.IntAttached;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 
 public class DisplayClothRenderer extends EntityRenderer<DisplayClothEntity> {
@@ -42,10 +41,10 @@ public class DisplayClothRenderer extends EntityRenderer<DisplayClothEntity> {
 			return;
 		}
 
-		List<IntAttached<ItemStack>> stacks = entity.requestData.encodedRequest.stacks();
+		List<BigItemStack> stacks = entity.requestData.encodedRequest.stacks();
 
 		for (int i = 0; i < stacks.size(); i++) {
-			IntAttached<ItemStack> entry = stacks.get(i);
+			BigItemStack entry = stacks.get(i);
 			ms.pushPose();
 			ms.translate(0, 3 / 16f, 0);
 
@@ -56,8 +55,8 @@ public class DisplayClothRenderer extends EntityRenderer<DisplayClothEntity> {
 			}
 
 			ms.mulPose(Axis.YP.rotationDegrees(180));
-			DepotRenderer.renderItem(entity.level(), ms, buffer, light, OverlayTexture.NO_OVERLAY, entry.getSecond(), 0,
-				null, entity.position(), true);
+			DepotRenderer.renderItem(entity.level(), ms, buffer, light, OverlayTexture.NO_OVERLAY, entry.stack, 0, null,
+				entity.position(), true);
 			ms.popPose();
 		}
 

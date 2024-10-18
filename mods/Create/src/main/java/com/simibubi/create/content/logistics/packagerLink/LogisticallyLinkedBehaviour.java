@@ -16,6 +16,7 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -36,6 +37,8 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 	public int redstonePower;
 	public UUID freqId;
 
+	private boolean addedGlobally = false;
+
 	//
 
 	private static final Cache<UUID, Cache<Integer, WeakReference<LogisticallyLinkedBehaviour>>> LINKS =
@@ -46,11 +49,11 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 	private static final Cache<UUID, InventorySummary> SUMMARIES = CacheBuilder.newBuilder()
 		.expireAfterWrite(1, TimeUnit.SECONDS)
 		.build();
-	
+
 	private static final Cache<UUID, InventorySummary> ACCURATE_SUMMARIES = CacheBuilder.newBuilder()
 		.expireAfterWrite(100, TimeUnit.MILLISECONDS)
 		.build();
-	
+
 	public InventorySummary getSummaryOfNetwork(boolean accurate) {
 		try {
 			return (accurate ? ACCURATE_SUMMARIES : SUMMARIES).get(freqId, () -> {
@@ -131,6 +134,24 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 		keepAlive(this);
 	}
 
+	@Override
+	public void initialize() {
+		super.initialize();
+		if (getWorld().isClientSide)
+			return;
+		if (!addedGlobally) {
+			addedGlobally = true;
+			blockEntity.setChanged();
+			Create.LOGISTICS.linkAdded(freqId);
+		}
+	}
+
+	@Override
+	public void destroy() {
+		super.destroy();
+		Create.LOGISTICS.linkRemoved(freqId);
+	}
+
 	public void redstonePowerChanged(int power) {
 		if (power == redstonePower)
 			return;
@@ -173,6 +194,7 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 		super.write(tag, clientPacket);
 		tag.putUUID("Freq", freqId);
 		tag.putInt("Power", redstonePower);
+		tag.putBoolean("Added", addedGlobally);
 	}
 
 	@Override
@@ -181,6 +203,7 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 		if (tag.hasUUID("Freq"))
 			freqId = tag.getUUID("Freq");
 		redstonePower = tag.getInt("Power");
+		addedGlobally = tag.getBoolean("Added");
 	}
 
 	@Override

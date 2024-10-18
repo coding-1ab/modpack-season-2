@@ -1,11 +1,14 @@
 package com.simibubi.create.content.logistics.factoryBoard;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
+import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
 import com.simibubi.create.content.logistics.stockTicker.StockCheckingBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBoard;
@@ -33,6 +36,7 @@ import net.minecraft.world.phys.Vec3;
 public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 	int lastReportedLevelInStorage;
+	int lastReportedPromises;
 
 	public FactoryPanelBehaviour(FactoryPanelBlockEntity be) {
 		super(be, new FactoryPanelSlotPositioning(be));
@@ -70,6 +74,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			return Components.empty();
 
 		int inStorage = getLevelInStorage();
+		int promised = getPromised();
 		String stacks = upTo ? "" : "\u25A4";
 
 		if (count == 0) {
@@ -80,6 +85,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 		return CreateLang.text("   " + inStorage + stacks)
 			.color(inStorage >= count ? 0xD7FFA8 : 0xFFBFA8)
+			.add(CreateLang.text(promised == 0 ? "" : "+" + promised))
 			.add(CreateLang.text("/")
 				.style(ChatFormatting.WHITE))
 			.add(CreateLang.text(count + stacks + "  ")
@@ -97,19 +103,35 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			lastReportedLevelInStorage = levelInStorage;
 			blockEntity.sendData();
 		}
+		int promised = getPromised();
+		if (lastReportedPromises != promised) {
+			lastReportedPromises = promised;
+			blockEntity.sendData();
+		}
 	}
 
-	private int getLevelInStorage() {
+	public int getLevelInStorage() {
 		if (getWorld().isClientSide())
 			return lastReportedLevelInStorage;
 		InventorySummary summary = ((StockCheckingBlockEntity) blockEntity).getRecentSummary();
 		return summary.getCountOf(getFilter()) / (upTo ? 1 : getFilter().getMaxStackSize());
 	}
 
+	public int getPromised() {
+		if (getWorld().isClientSide())
+			return lastReportedPromises;
+		UUID freqId = ((StockCheckingBlockEntity) blockEntity).behaviour.freqId;
+		RequestPromiseQueue promises = Create.LOGISTICS.getQueuedPromises(freqId);
+		if (promises == null)
+			return 0;
+		return promises.getTotalPromised(getFilter());
+	}
+
 	@Override
 	public void write(CompoundTag nbt, boolean clientPacket) {
 		super.write(nbt, clientPacket);
 		nbt.putInt("LastLevel", lastReportedLevelInStorage);
+		nbt.putInt("LastPromised", lastReportedPromises);
 	}
 
 	@Override
@@ -118,8 +140,9 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		count = nbt.getInt("FilterAmount");
 		upTo = nbt.getBoolean("UpTo");
 		lastReportedLevelInStorage = nbt.getInt("LastLevel");
+		lastReportedPromises = nbt.getInt("LastPromised");
 	}
-	
+
 	@Override
 	public float getRenderDistance() {
 		return 64;

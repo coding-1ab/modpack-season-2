@@ -11,6 +11,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.equipment.blueprint.BlueprintEntity.BlueprintCraftingInventory;
 import com.simibubi.create.content.equipment.blueprint.BlueprintEntity.BlueprintSection;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.displayCloth.BlueprintOverlayShopContext;
 import com.simibubi.create.content.logistics.displayCloth.DisplayClothEntity;
 import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem.ShoppingList;
@@ -25,7 +26,6 @@ import com.simibubi.create.foundation.gui.AllGuiTextures;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.IntAttached;
 import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.ponder.utility.LevelTickHolder;
@@ -149,9 +149,8 @@ public class BlueprintOverlayRenderer {
 
 		ingredients.add(Pair.of(dce.paymentItem.copyWithCount(dce.paymentAmount),
 			!dce.paymentItem.isEmpty() && shopContext.stockLevel() > shopContext.purchases()));
-		for (IntAttached<ItemStack> entry : dce.requestData.encodedRequest.stacks())
-			results.add(entry.getSecond()
-				.copyWithCount(entry.getFirst()));
+		for (BigItemStack entry : dce.requestData.encodedRequest.stacks())
+			results.add(entry.stack.copyWithCount(entry.count));
 	}
 
 	public static void displayShoppingList(Couple<InventorySummary> bakedList) {
@@ -163,28 +162,26 @@ public class BlueprintOverlayRenderer {
 
 		shopContext = new BlueprintOverlayShopContext(true, 1, 0);
 
-		for (IntAttached<ItemStack> entry : bakedList.getSecond()
+		for (BigItemStack entry : bakedList.getSecond()
 			.getStacksByCount()) {
-			ingredients.add(Pair.of(entry.getSecond()
-				.copyWithCount(entry.getFirst()), canAfford(mc.player, entry)));
+			ingredients.add(Pair.of(entry.stack.copyWithCount(entry.count), canAfford(mc.player, entry)));
 		}
 
-		for (IntAttached<ItemStack> entry : bakedList.getFirst()
+		for (BigItemStack entry : bakedList.getFirst()
 			.getStacksByCount())
-			results.add(entry.getSecond()
-				.copyWithCount(entry.getFirst()));
+			results.add(entry.stack.copyWithCount(entry.count));
 	}
 
-	private static boolean canAfford(Player player, IntAttached<ItemStack> entry) {
+	private static boolean canAfford(Player player, BigItemStack entry) {
 		int itemsPresent = 0;
 		for (int i = 0; i < player.getInventory().items.size(); i++) {
 			ItemStack item = player.getInventory()
 				.getItem(i);
-			if (item.isEmpty() || !ItemHandlerHelper.canItemStacksStack(item, entry.getSecond()))
+			if (item.isEmpty() || !ItemHandlerHelper.canItemStacksStack(item, entry.stack))
 				continue;
 			itemsPresent += item.getCount();
 		}
-		return itemsPresent >= entry.getFirst();
+		return itemsPresent >= entry.count;
 	}
 
 	private static void prepareCustomOverlay() {

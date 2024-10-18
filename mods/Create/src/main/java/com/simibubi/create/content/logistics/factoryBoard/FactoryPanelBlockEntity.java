@@ -26,22 +26,24 @@ import net.minecraft.world.level.block.state.properties.AttachFace;
 
 public class FactoryPanelBlockEntity extends StockCheckingBlockEntity {
 
-	public FactoryPanelBehaviour behaviour;
+	public FactoryPanelBehaviour panelBehaviour;
 
 	public EnumMap<Pointing, Map<BlockPos, FactoryPanelConnection>> inboundConnections = new EnumMap<>(Pointing.class);
 	public EnumMap<Pointing, FactoryPanelConnectionBehaviour> connections;
 
 	public boolean satisfied;
+	public boolean promisedSatisfied;
 
 	public FactoryPanelBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 		satisfied = false;
+		promisedSatisfied = false;
 	}
 
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
 		super.addBehaviours(behaviours);
-		behaviours.add(behaviour = new FactoryPanelBehaviour(this));
+		behaviours.add(panelBehaviour = new FactoryPanelBehaviour(this));
 		connections = new EnumMap<>(Pointing.class);
 		for (Pointing side : Pointing.values()) {
 			FactoryPanelConnectionBehaviour e = new FactoryPanelConnectionBehaviour(this, side);
@@ -80,14 +82,25 @@ public class FactoryPanelBlockEntity extends StockCheckingBlockEntity {
 		if (level.isClientSide)
 			return;
 
-		ItemStack filter = behaviour.getFilter();
-		if (filter.isEmpty() || behaviour.getAmount() == 0) {
+		ItemStack filter = panelBehaviour.getFilter();
+		if (filter.isEmpty() || panelBehaviour.getAmount() == 0) {
 			setSatisfied(true);
 			return;
 		}
 
-		setSatisfied(getRecentSummary().getCountOf(filter) >= behaviour.getAmount()
-			* (behaviour.upTo ? 1 : filter.getMaxStackSize()));
+		int inStorage = panelBehaviour.getLevelInStorage();
+		int promised = panelBehaviour.getPromised();
+		int demand = panelBehaviour.getAmount() * (panelBehaviour.upTo ? 1 : filter.getMaxStackSize());
+		
+		setSatisfied(inStorage >= demand);
+		setPromisedSatisfied(inStorage + promised >= demand);
+	}
+
+	public void setPromisedSatisfied(boolean promisedSatisfied) {
+		if (this.promisedSatisfied == promisedSatisfied)
+			return;
+		this.promisedSatisfied = promisedSatisfied;
+		notifyUpdate();
 	}
 
 	public void setSatisfied(boolean satisfied) {
@@ -101,6 +114,7 @@ public class FactoryPanelBlockEntity extends StockCheckingBlockEntity {
 	protected void write(CompoundTag tag, boolean clientPacket) {
 		super.write(tag, clientPacket);
 		tag.putBoolean("Satisfied", satisfied);
+		tag.putBoolean("PromisedSatisfied", promisedSatisfied);
 
 		tag.put("Sides", NBTHelper.writeCompoundList(inboundConnections.entrySet(), e -> {
 			CompoundTag nbt = new CompoundTag();
@@ -121,6 +135,7 @@ public class FactoryPanelBlockEntity extends StockCheckingBlockEntity {
 	protected void read(CompoundTag tag, boolean clientPacket) {
 		super.read(tag, clientPacket);
 		satisfied = tag.getBoolean("Satisfied");
+		promisedSatisfied = tag.getBoolean("PromisedSatisfied");
 
 		inboundConnections.clear();
 		NBTHelper.iterateCompoundList(tag.getList("Sides", Tag.TAG_COMPOUND), nbt -> {

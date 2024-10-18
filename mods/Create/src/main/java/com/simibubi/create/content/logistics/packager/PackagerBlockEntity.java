@@ -2,13 +2,17 @@ package com.simibubi.create.content.logistics.packager;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.Create;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.crate.BottomlessItemHandler;
 import com.simibubi.create.content.logistics.packagePort.frogport.FrogportBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerBlock.PackagerType;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
+import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -116,20 +120,57 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		level.blockEntityChanged(worldPosition);
 	}
 
+	public void triggerStockCheck() {
+		getAvailableItems();
+	}
+	
 	public InventorySummary getAvailableItems() {
 		if (availableItems != null && invVersionTracker.stillWaiting(targetInventory.getInventory()))
 			return availableItems;
-		availableItems = new InventorySummary();
+
+		InventorySummary availableItems = new InventorySummary();
 
 		IItemHandler targetInv = targetInventory.getInventory();
-		if (targetInv == null || targetInv instanceof PackagerItemHandler)
+		if (targetInv == null || targetInv instanceof PackagerItemHandler) {
+			this.availableItems = availableItems;
 			return availableItems;
+		}
 
 		for (int slot = 0; slot < targetInv.getSlots(); slot++)
 			availableItems.add(targetInv.getStackInSlot(slot));
 
 		invVersionTracker.awaitNewVersion(targetInventory.getInventory());
+		submitNewArrivals(this.availableItems, availableItems);
+		this.availableItems = availableItems;
 		return availableItems;
+	}
+
+	private void submitNewArrivals(InventorySummary before, InventorySummary after) {
+		if (before == null || after.isEmpty())
+			return;
+
+		for (Direction d : Iterate.directions) {
+			BlockState adjacentState = level.getBlockState(worldPosition.relative(d));
+			if (!AllBlocks.PACKAGER_LINK.has(adjacentState))
+				continue;
+			if (adjacentState.getValue(PackagerLinkBlock.FACING) != d)
+				continue;
+			if (!(level.getBlockEntity(worldPosition.relative(d)) instanceof PackagerLinkBlockEntity plbe))
+				return;
+			UUID freqId = plbe.behaviour.freqId;
+			if (!Create.LOGISTICS.hasQueuedPromises(freqId))
+				return;
+
+			for (BigItemStack entry : after.getStacks())
+				before.add(entry.stack, -entry.count);
+
+			for (BigItemStack entry : before.getStacks())
+				if (entry.count < 0)
+					Create.LOGISTICS.getQueuedPromises(freqId)
+						.itemEnteredSystem(entry.stack, -entry.count);
+
+			return;
+		}
 	}
 
 	@Override
@@ -166,7 +207,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	public void activate() {
 		redstonePowered = true;
 		setChanged();
-		
+
 		recheckIfLinksPresent();
 		if (!redstoneModeActive)
 			return;
@@ -380,6 +421,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		animationInward = false;
 		animationTicks = CYCLE;
 
+		triggerStockCheck();
 		notifyUpdate();
 	}
 
@@ -478,6 +520,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			return;
 		queuedRequests =
 			NBTHelper.readCompoundList(compound.getList("QueuedRequests", Tag.TAG_COMPOUND), PackagingRequest::fromNBT);
+		if (compound.contains("LastSummary"))
+			availableItems = InventorySummary.read(compound.getCompound("LastSummary"));
 	}
 
 	@Override
@@ -493,6 +537,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		if (clientPacket)
 			return;
 		compound.put("QueuedRequests", NBTHelper.writeCompoundList(queuedRequests, PackagingRequest::toNBT));
+		if (availableItems != null)
+			compound.put("LastSummary", availableItems.write());
 	}
 
 	@Override
@@ -533,7 +579,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 		if (myInventory == inventory)
 			return true;
-		
+
 		// If a contained ItemStack instance is the same, we can be pretty sure these
 		// inventories are the same (works for compound inventories)
 		for (int i = 0; i < inventory.getSlots(); i++) {

@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -98,6 +99,7 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 					if (!be.unwrapBox(heldItem.copy(), true))
 						return InteractionResult.SUCCESS;
 					be.unwrapBox(heldItem.copy(), false);
+					be.triggerStockCheck();
 					heldItem.shrink(1);
 					if (heldItem.isEmpty())
 						player.setItemInHand(handIn, ItemStack.EMPTY);
@@ -146,6 +148,15 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 		});
 
 		return InteractionResult.SUCCESS;
+	}
+
+	@Override
+	public void onNeighborChange(BlockState state, LevelReader level, BlockPos pos, BlockPos neighbor) {
+		super.onNeighborChange(state, level, pos, neighbor);
+		if (neighbor.relative(state.getOptionalValue(FACING)
+			.orElse(Direction.UP))
+			.equals(pos))
+			withBlockEntityDo(level, pos, PackagerBlockEntity::triggerStockCheck);
 	}
 
 	@Override

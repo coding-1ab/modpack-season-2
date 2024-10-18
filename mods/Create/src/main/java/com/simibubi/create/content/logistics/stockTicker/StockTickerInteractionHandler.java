@@ -7,6 +7,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem;
 import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem.ShoppingList;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
@@ -14,7 +15,6 @@ import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.IntAttached;
 import net.createmod.catnip.utility.Iterate;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -96,8 +96,8 @@ public class StockTickerInteractionHandler {
 
 		// Check stock levels
 		InventorySummary recentSummary = tickerBE.getRecentSummary();
-		for (IntAttached<ItemStack> entry : order.stacks()) {
-			if (recentSummary.getCountOf(entry.getSecond()) >= entry.getFirst())
+		for (BigItemStack entry : order.stacks()) {
+			if (recentSummary.getCountOf(entry.stack) >= entry.count)
 				continue;
 
 			AllSoundEvents.DENY.playOnServer(level, player.blockPosition());
@@ -109,9 +109,8 @@ public class StockTickerInteractionHandler {
 
 		// Check space in stock ticker
 		int occupiedSlots = 0;
-		for (IntAttached<ItemStack> entry : paymentEntries.getStacksByCount())
-			occupiedSlots += Mth.ceil(entry.getFirst() / (float) entry.getValue()
-				.getMaxStackSize());
+		for (BigItemStack entry : paymentEntries.getStacksByCount())
+			occupiedSlots += Mth.ceil(entry.count / (float) entry.stack.getMaxStackSize());
 		for (int i = 0; i < tickerBE.receivedPayments.getSlots(); i++)
 			if (tickerBE.receivedPayments.getStackInSlot(i)
 				.isEmpty())

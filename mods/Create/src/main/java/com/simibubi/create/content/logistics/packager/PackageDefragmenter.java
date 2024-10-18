@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 
-import net.createmod.catnip.utility.IntAttached;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -40,7 +40,7 @@ public class PackageDefragmenter {
 		int collectedOrderId = PackageItem.getOrderId(box);
 		if (collectedOrderId == -1)
 			return -1;
-		
+
 		List<ItemStack> collectedOrder = collectedPackages.computeIfAbsent(collectedOrderId, $ -> Lists.newArrayList());
 		collectedOrder.add(box);
 
@@ -54,7 +54,7 @@ public class PackageDefragmenter {
 		List<ItemStack> exportingPackages = new ArrayList<>();
 		String address = "";
 		PackageOrder order = null;
-		List<IntAttached<ItemStack>> allItems = new ArrayList<>();
+		List<BigItemStack> allItems = new ArrayList<>();
 
 		for (ItemStack box : collectedPackages.get(orderId)) {
 			address = PackageItem.getAddress(box);
@@ -67,48 +67,47 @@ public class PackageDefragmenter {
 			ItemStackHandler contents = PackageItem.getContents(box);
 			Slots: for (int slot = 0; slot < contents.getSlots(); slot++) {
 				ItemStack stackInSlot = contents.getStackInSlot(slot);
-				for (IntAttached<ItemStack> existing : allItems) {
-					if (!ItemHandlerHelper.canItemStacksStack(stackInSlot, existing.getValue()))
+				for (BigItemStack existing : allItems) {
+					if (!ItemHandlerHelper.canItemStacksStack(stackInSlot, existing.stack))
 						continue;
-					existing.setFirst(existing.getFirst() + stackInSlot.getCount());
+					existing.count += stackInSlot.getCount();
 					continue Slots;
 				}
-				allItems.add(IntAttached.with(stackInSlot.getCount(), stackInSlot));
+				allItems.add(new BigItemStack(stackInSlot, stackInSlot.getCount()));
 			}
 		}
 
-		List<IntAttached<ItemStack>> orderedStacks = order == null ? Collections.emptyList() : order.stacks();
+		List<BigItemStack> orderedStacks = order == null ? Collections.emptyList() : order.stacks();
 		List<ItemStack> outputSlots = new ArrayList<>();
 
 		Repack: while (true) {
-			allItems.removeIf(e -> e.getFirst() == 0);
+			allItems.removeIf(e -> e.count == 0);
 			if (allItems.isEmpty())
 				break;
 
-			IntAttached<ItemStack> targetedEntry = null;
+			BigItemStack targetedEntry = null;
 			if (!orderedStacks.isEmpty())
 				targetedEntry = orderedStacks.remove(0);
 
-			ItemSearch: for (IntAttached<ItemStack> entry : allItems) {
-				int targetAmount = entry.getFirst();
+			ItemSearch: for (BigItemStack entry : allItems) {
+				int targetAmount = entry.count;
 				if (targetAmount == 0)
 					continue;
 				if (targetedEntry != null) {
-					targetAmount = targetedEntry.getFirst();
-					if (!ItemHandlerHelper.canItemStacksStack(entry.getSecond(), targetedEntry.getSecond()))
+					targetAmount = targetedEntry.count;
+					if (!ItemHandlerHelper.canItemStacksStack(entry.stack, targetedEntry.stack))
 						continue;
 				}
 
 				while (targetAmount > 0) {
-					int removedAmount = Math.min(Math.min(targetAmount, entry.getSecond()
-						.getMaxStackSize()), entry.getFirst());
+					int removedAmount = Math.min(Math.min(targetAmount, entry.stack.getMaxStackSize()), entry.count);
 					if (removedAmount == 0)
 						continue ItemSearch;
 
-					ItemStack output = ItemHandlerHelper.copyStackWithSize(entry.getSecond(), removedAmount);
+					ItemStack output = ItemHandlerHelper.copyStackWithSize(entry.stack, removedAmount);
 					targetAmount -= removedAmount;
-					targetedEntry.setFirst(targetAmount);
-					entry.setFirst(entry.getFirst() - removedAmount);
+					targetedEntry.count = targetAmount;
+					entry.count -= removedAmount;
 					outputSlots.add(output);
 				}
 
@@ -132,7 +131,7 @@ public class PackageDefragmenter {
 
 		for (ItemStack box : exportingPackages)
 			PackageItem.addAddress(box, address);
-		
+
 		return exportingPackages;
 	}
 
