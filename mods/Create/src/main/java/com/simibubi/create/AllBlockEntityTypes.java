@@ -166,6 +166,8 @@ import com.simibubi.create.content.logistics.depot.DepotRenderer;
 import com.simibubi.create.content.logistics.depot.EjectorBlockEntity;
 import com.simibubi.create.content.logistics.depot.EjectorRenderer;
 import com.simibubi.create.content.logistics.depot.EjectorVisual;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlockEntity;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelRenderer;
 import com.simibubi.create.content.logistics.funnel.FunnelBlockEntity;
 import com.simibubi.create.content.logistics.funnel.FunnelRenderer;
 import com.simibubi.create.content.logistics.funnel.FunnelVisual;
@@ -778,6 +780,12 @@ public class AllBlockEntityTypes {
 		.validBlocks(AllBlocks.PLACARD)
 		.renderer(() -> PlacardRenderer::new)
 		.register();
+
+	public static final BlockEntityEntry<FactoryPanelBlockEntity> FACTORY_PANEL =
+		REGISTRATE.blockEntity("factory_panel", FactoryPanelBlockEntity::new)
+			.validBlocks(AllBlocks.FACTORY_PANEL)
+			.renderer(() -> FactoryPanelRenderer::new)
+			.register();
 
 	public static final BlockEntityEntry<CartAssemblerBlockEntity> CART_ASSEMBLER = REGISTRATE
 		.blockEntity("cart_assembler", CartAssemblerBlockEntity::new)

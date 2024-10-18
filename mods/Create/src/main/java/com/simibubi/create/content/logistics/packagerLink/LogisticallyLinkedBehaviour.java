@@ -38,10 +38,36 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 
 	//
 
-	public static final Cache<UUID, Cache<Integer, WeakReference<LogisticallyLinkedBehaviour>>> LINKS =
+	private static final Cache<UUID, Cache<Integer, WeakReference<LogisticallyLinkedBehaviour>>> LINKS =
 		CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.SECONDS)
 			.build();
+
+	private static final Cache<UUID, InventorySummary> SUMMARIES = CacheBuilder.newBuilder()
+		.expireAfterWrite(1, TimeUnit.SECONDS)
+		.build();
+	
+	private static final Cache<UUID, InventorySummary> ACCURATE_SUMMARIES = CacheBuilder.newBuilder()
+		.expireAfterWrite(100, TimeUnit.MILLISECONDS)
+		.build();
+	
+	public InventorySummary getSummaryOfNetwork(boolean accurate) {
+		try {
+			return (accurate ? ACCURATE_SUMMARIES : SUMMARIES).get(freqId, () -> {
+				InventorySummary summaryOfLinks = new InventorySummary();
+				getAllConnectedAvailableLinks(false).forEach(link -> {
+					InventorySummary summary = link.getSummary();
+					if (summary != InventorySummary.EMPTY)
+						summaryOfLinks.contributingLinks++;
+					summaryOfLinks.add(summary);
+				});
+				return summaryOfLinks;
+			});
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		return InventorySummary.EMPTY;
+	}
 
 	public static Collection<LogisticallyLinkedBehaviour> getAllPresent(UUID freq, boolean sortByPriority) {
 		Cache<Integer, WeakReference<LogisticallyLinkedBehaviour>> cache = LINKS.getIfPresent(freq);

@@ -1014,6 +1014,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 		LOGISTICS_LINK_CLEAR = clearData(AllBlocks.PACKAGER_LINK),
 		STOCK_TICKER_CLEAR = clearData(AllBlocks.STOCK_TICKER),
 		REDSTONE_REQUESTER_CLEAR = clearData(AllBlocks.REDSTONE_REQUESTER),
+		FACTORY_PANEL_CLEAR = clearData(AllBlocks.FACTORY_PANEL),
 
 		DISPLAY_LINK = create(AllBlocks.DISPLAY_LINK).unlockedBy(I::brassCasing)
 			.viaShaped(b -> b.define('C', Blocks.REDSTONE_TORCH)

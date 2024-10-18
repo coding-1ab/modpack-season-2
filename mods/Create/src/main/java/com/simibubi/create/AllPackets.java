@@ -61,6 +61,9 @@ import com.simibubi.create.content.logistics.depot.EjectorPlacementPacket;
 import com.simibubi.create.content.logistics.depot.EjectorTriggerPacket;
 import com.simibubi.create.content.logistics.displayCloth.DisplayClothPacketToClient;
 import com.simibubi.create.content.logistics.displayCloth.DisplayClothPacketToServer;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelConfigurationPacket;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelConnectionPacket;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelEffectPacket;
 import com.simibubi.create.content.logistics.filter.FilterScreenPacket;
 import com.simibubi.create.content.logistics.funnel.FunnelFlapPacket;
 import com.simibubi.create.content.logistics.packagePort.PackagePortConfigurationPacket;
@@ -190,6 +193,8 @@ public enum AllPackets {
 	DISPLAY_CLOTH_SERVERBOUND(DisplayClothPacketToServer.class, DisplayClothPacketToServer::new, PLAY_TO_SERVER),
 	PACKAGE_PORT_CONFIGURATION(PackagePortConfigurationPacket.class, PackagePortConfigurationPacket::new, PLAY_TO_SERVER),
 	TRAIN_MAP_REQUEST(TrainMapSyncRequestPacket.class, TrainMapSyncRequestPacket::new, PLAY_TO_SERVER),
+	CONNECT_FACTORY_PANEL(FactoryPanelConnectionPacket.class, FactoryPanelConnectionPacket::new, PLAY_TO_SERVER),
+	CONFIGURE_FACTORY_PANEL(FactoryPanelConfigurationPacket.class, FactoryPanelConfigurationPacket::new, PLAY_TO_SERVER),
 
 	// Server to Client
 	SYMMETRY_EFFECT(SymmetryEffectPacket.class, SymmetryEffectPacket::new, PLAY_TO_CLIENT),
@@ -239,6 +244,7 @@ public enum AllPackets {
 	PACKAGE_DESTROYED(PackageDestroyPacket.class, PackageDestroyPacket::new, PLAY_TO_CLIENT),
 	LOGISTICS_STOCK_RESPONSE(LogisticalStockResponsePacket.class, LogisticalStockResponsePacket::new, PLAY_TO_CLIENT),
 	DISPLAY_CLOTH_CLIENTBOUND(DisplayClothPacketToClient.class, DisplayClothPacketToClient::new, PLAY_TO_CLIENT),
+	FACTORY_PANEL_EFFECT(FactoryPanelEffectPacket.class, FactoryPanelEffectPacket::new, PLAY_TO_CLIENT),
 	TRAIN_MAP_SYNC(TrainMapSyncPacket.class, TrainMapSyncPacket::new, PLAY_TO_CLIENT);
 
 	static {

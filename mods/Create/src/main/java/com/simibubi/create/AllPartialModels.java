@@ -179,6 +179,9 @@ public class AllPartialModels {
 
 		WATER_WHEEL = block("water_wheel/wheel"), LARGE_WATER_WHEEL = block("large_water_wheel/block"),
 		LARGE_WATER_WHEEL_EXTENSION = block("large_water_wheel/block_extension"),
+		
+		FACTORY_PANEL_TIMER = block("factory_panel/timer"),
+		FACTORY_PANEL_INPUT = block("factory_panel/input"),
 
 		DISPLAY_CLOTH = entity("display_cloth"),
 		

@@ -92,7 +92,7 @@ public class StockTickerInteractionHandler {
 		PackageOrder order = new PackageOrder(orderEntries.getStacksByCount());
 
 		// Must be up-to-date
-		tickerBE.refreshInventorySummary();
+		tickerBE.getAccurateSummary();
 
 		// Check stock levels
 		InventorySummary recentSummary = tickerBE.getRecentSummary();

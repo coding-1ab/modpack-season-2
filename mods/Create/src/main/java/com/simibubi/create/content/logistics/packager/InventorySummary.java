@@ -29,9 +29,12 @@ public class InventorySummary {
 	private Map<Item, List<IntAttached<ItemStack>>> items = new IdentityHashMap<>();
 	private List<IntAttached<ItemStack>> stacksByCount;
 	private int totalCount;
+	
+	public int contributingLinks;
 
 	public void add(InventorySummary summary) {
 		summary.items.forEach((i, list) -> list.forEach(this::add));
+		contributingLinks += summary.contributingLinks;
 	}
 
 	public void add(ItemStack stack) {

@@ -48,6 +48,8 @@ public class ValueSettingsInputHandler {
 		for (BlockEntityBehaviour behaviour : sbe.getAllBehaviours()) {
 			if (!(behaviour instanceof ValueSettingsBehaviour valueSettingsBehaviour))
 				continue;
+			if (valueSettingsBehaviour.bypassesInput(player.getMainHandItem()))
+				continue;
 
 			BlockHitResult ray = RaycastHelper.rayTraceRange(world, player, 10);
 			if (ray == null)
@@ -77,7 +79,7 @@ public class ValueSettingsInputHandler {
 			event.setCancellationResult(InteractionResult.SUCCESS);
 
 			if (!valueSettingsBehaviour.acceptsValueSettings() || fakePlayer) {
-				valueSettingsBehaviour.onShortInteract(player, hand, ray.getDirection());
+				valueSettingsBehaviour.onShortInteract(player, hand, ray.getDirection(), ray);
 				return;
 			}
 

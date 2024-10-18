@@ -3,6 +3,7 @@ package com.simibubi.create.foundation.blockEntity.behaviour;
 import java.lang.ref.WeakReference;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform.Sided;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.INamedIconOptions;
@@ -19,6 +20,8 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -35,6 +38,7 @@ public class ValueBox extends ChasingAABBOutline {
 	public int overrideColor = -1;
 
 	public boolean isPassive;
+	public boolean isDiamond;
 
 	protected ValueBoxTransform transform;
 	
@@ -94,6 +98,8 @@ public class ValueBox extends ChasingAABBOutline {
 		if (!isPassive) {
 			ms.pushPose();
 			ms.scale(-2.01f, -2.01f, 2.01f);
+			if (isDiamond)
+				ms.mulPose(Axis.ZP.rotation(Mth.PI / 4f));
 			ms.translate(-8 / 16.0, -8 / 16.0, -.5 / 16.0);
 			getOutline().render(ms, buffer, 0xffffff);
 			ms.popPose();
@@ -114,14 +120,12 @@ public class ValueBox extends ChasingAABBOutline {
 
 	public static class ItemValueBox extends ValueBox {
 		ItemStack stack;
-		int count;
-		boolean upTo;
+		MutableComponent count;
 
-		public ItemValueBox(Component label, AABB bb, BlockPos pos, ItemStack stack, int count, boolean upTo) {
+		public ItemValueBox(Component label, AABB bb, BlockPos pos, ItemStack stack, MutableComponent count) {
 			super(label, bb, pos);
 			this.stack = stack;
 			this.count = count;
-			this.upTo = upTo;
 		}
 
 		@Override
@@ -134,12 +138,10 @@ public class ValueBox extends ChasingAABBOutline {
 		@Override
 		public void renderContents(PoseStack ms, MultiBufferSource buffer) {
 			super.renderContents(ms, buffer);
-			if (count == -1)
+			if (count == null)
 				return;
 
 			Font font = Minecraft.getInstance().font;
-			boolean wildcard = count == 0 || upTo && count >= stack.getMaxStackSize();
-			Component countString = Components.literal(wildcard ? "*" : count + "");
 			ms.translate(17.5f, -5f, 7f);
 
 			boolean isFilter = stack.getItem() instanceof FilterItem;
@@ -152,7 +154,7 @@ public class ValueBox extends ChasingAABBOutline {
 				.size() <= 1;
 
 			float scale = 1.5f;
-			ms.translate(-font.width(countString), 0, 0);
+			ms.translate(-font.width(count), 0, 0);
 
 			if (isFilter)
 				ms.translate(-5, 8, 7.25f);
@@ -162,13 +164,13 @@ public class ValueBox extends ChasingAABBOutline {
 			} else
 				ms.translate(-7, 10, blockItem ? 10 + 1 / 4f : 0);
 
-			if (wildcard)
+			if (count.getString().equals("*"))
 				ms.translate(-1, 3f, 0);
 
 			ms.scale(scale, scale, scale);
-			drawString(ms, buffer, countString, 0, 0, isFilter ? 0xFFFFFF : 0xEDEDED);
+			drawString(ms, buffer, count, 0, 0, isFilter ? 0xFFFFFF : 0xEDEDED);
 			ms.translate(0, 0, -1 / 16f);
-			drawString(ms, buffer, countString, 1 - 1 / 8f, 1 - 1 / 8f, 0x4F4F4F);
+			drawString(ms, buffer, Components.literal(count.getString()), 1 - 1 / 8f, 1 - 1 / 8f, 0x3F3F3F);
 		}
 
 	}

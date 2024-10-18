@@ -167,6 +167,7 @@ import com.simibubi.create.content.logistics.crate.CreativeCrateBlock;
 import com.simibubi.create.content.logistics.depot.DepotBlock;
 import com.simibubi.create.content.logistics.depot.EjectorBlock;
 import com.simibubi.create.content.logistics.depot.EjectorItem;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock;
 import com.simibubi.create.content.logistics.funnel.AndesiteFunnelBlock;
 import com.simibubi.create.content.logistics.funnel.BeltFunnelBlock;
 import com.simibubi.create.content.logistics.funnel.BeltFunnelGenerator;
@@ -1807,6 +1808,16 @@ public class AllBlocks {
 			.transform(axeOrPickaxe())
 			.blockstate((c, p) -> p.simpleBlock(c.get(), AssetLookup.standardModel(c, p)))
 			.simpleItem()
+			.register();
+
+	public static final BlockEntry<FactoryPanelBlock> FACTORY_PANEL =
+		REGISTRATE.block("factory_panel", FactoryPanelBlock::new)
+			.initialProperties(SharedProperties::copperMetal)
+			.properties(p -> p.forceSolidOn())
+			.transform(pickaxeOnly())
+			.blockstate((c, p) -> p.horizontalFaceBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
+			.item(LogisticallyLinkedBlockItem::new)
+			.transform(customItemModel("_", "block"))
 			.register();
 
 	public static final BlockEntry<AndesiteFunnelBlock> ANDESITE_FUNNEL =

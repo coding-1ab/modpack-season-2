@@ -3,8 +3,6 @@ package com.simibubi.create.content.logistics.stockTicker;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.mutable.MutableBoolean;
-import org.checkerframework.checker.units.qual.s;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +10,6 @@ import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import com.simibubi.create.content.equipment.goggles.IHaveHoveringInformation;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
-import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipulationBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
@@ -89,6 +86,13 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 	public int getTicksSinceLastUpdate() {
 		return ticksSinceLastUpdate;
 	}
+	
+	@Override
+	public void broadcastPackageRequest(PackageOrder order, IItemHandler ignoredHandler, String address) {
+		super.broadcastPackageRequest(order, ignoredHandler, address);
+		previouslyUsedAddress = address;
+		notifyUpdate();
+	}
 
 	@Override
 	public void tick() {
@@ -98,8 +102,9 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 				ticksSinceLastUpdate += 1;
 			return;
 		}
-		if (activeLinks != activeLinksLastSummary && !isRemoved()) {
-			activeLinks = activeLinksLastSummary;
+		int contributingLinks = getRecentSummary().contributingLinks;
+		if (activeLinks != contributingLinks && !isRemoved()) {
+			activeLinks = contributingLinks;
 			sendData();
 		}
 	}
@@ -201,53 +206,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		newlyReceivedStockSnapshot = null;
 	}
 
-	public void broadcastPackageRequest(PackageOrder order, IItemHandler ignoredHandler, String address) {
-		List<IntAttached<ItemStack>> stacks = order.stacks();
-
-		// Packages need to track their index and successors for successful defrag
-		Iterable<LogisticallyLinkedBehaviour> availableLinks = behaviour.getAllConnectedAvailableLinks(true);
-		List<LogisticallyLinkedBehaviour> usedLinks = new ArrayList<>();
-		MutableBoolean finalLinkTracker = new MutableBoolean(false);
-
-		// First box needs to carry the order specifics for successful defrag
-		PackageOrder contextToSend = order;
-
-		// Packages from future orders should not be merged in the packager queue
-		int orderId = level.random.nextInt();
-
-		for (int i = 0; i < stacks.size(); i++) {
-			IntAttached<ItemStack> entry = stacks.get(i);
-			int remainingCount = entry.getFirst();
-			boolean finalEntry = i == stacks.size() - 1;
-			ItemStack requestedItem = entry.getSecond();
-
-			for (LogisticallyLinkedBehaviour link : availableLinks) {
-				int usedIndex = usedLinks.indexOf(link);
-				int linkIndex = usedIndex == -1 ? usedLinks.size() : usedIndex;
-				MutableBoolean isFinalLink = new MutableBoolean(false);
-				if (linkIndex == usedLinks.size() - 1)
-					isFinalLink = finalLinkTracker;
-
-				int processedCount = link.processRequest(requestedItem, remainingCount, address, linkIndex, isFinalLink,
-					orderId, contextToSend, ignoredHandler);
-				if (processedCount > 0 && usedIndex == -1) {
-					contextToSend = null;
-					usedLinks.add(link);
-					finalLinkTracker = isFinalLink;
-				}
-				remainingCount -= processedCount;
-				if (remainingCount > 0)
-					continue;
-				if (finalEntry)
-					finalLinkTracker.setTrue();
-				break;
-			}
-		}
-
-		previouslyUsedAddress = address;
-		notifyUpdate();
-	}
-
+	
 	public boolean isKeeperPresent() {
 		for (int yOffset : Iterate.zeroAndOne) {
 			for (Direction side : Iterate.horizontalDirections) {

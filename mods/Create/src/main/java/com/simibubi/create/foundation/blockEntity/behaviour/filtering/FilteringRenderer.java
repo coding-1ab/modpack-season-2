@@ -81,8 +81,9 @@ public class FilteringRenderer {
 		AABB emptyBB = new AABB(Vec3.ZERO, Vec3.ZERO);
 		AABB bb = isFilterSlotted ? emptyBB.inflate(.45f, .31f, .2f) : emptyBB.inflate(.25f);
 
-		ValueBox box = new ItemValueBox(label, bb, pos, filter, showCount ? behaviour.count : -1, behaviour.upTo);
-		box.passive(!hit || AllBlocks.CLIPBOARD.isIn(mainhandItem));
+		ValueBox box = new ItemValueBox(label, bb, pos, filter, behaviour.getCountLabelForValueBox());
+		box.passive(!hit || behaviour.bypassesInput(mainhandItem));
+		box.isDiamond = behaviour.diamondShape;
 
 		CatnipClient.OUTLINER.showOutline(Pair.of("filter", pos), box.transform(behaviour.slotPositioning))
 			.lineWidth(1 / 64f)
@@ -111,10 +112,14 @@ public class FilteringRenderer {
 		Level level = be.getLevel();
 		BlockPos blockPos = be.getBlockPos();
 		
+		FilteringBehaviour behaviour = be.getBehaviour(FilteringBehaviour.TYPE);
+		if (behaviour == null)
+			return;
+		
 		if (!be.isVirtual()) {
 			Entity cameraEntity = Minecraft.getInstance().cameraEntity;
 			if (cameraEntity != null && level == cameraEntity.level()) {
-				float max = AllConfigs.client().filterItemRenderDistance.getF();
+				float max = behaviour.getRenderDistance();
 				if (cameraEntity.position()
 					.distanceToSqr(VecHelper.getCenterOf(blockPos)) > (max * max)) {
 					return;
@@ -122,9 +127,6 @@ public class FilteringRenderer {
 			}
 		}
 
-		FilteringBehaviour behaviour = be.getBehaviour(FilteringBehaviour.TYPE);
-		if (behaviour == null)
-			return;
 		if (!behaviour.isActive())
 			return;
 		if (behaviour.getFilter()

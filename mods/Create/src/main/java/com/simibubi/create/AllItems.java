@@ -47,6 +47,7 @@ import com.simibubi.create.content.legacy.ShadowSteelItem;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.displayCloth.DisplayClothItem;
 import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelConnectorItem;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.materials.ExperienceNuggetItem;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockItem;
@@ -242,6 +243,10 @@ public class AllItems {
 	
 	public static final ItemEntry<DisplayClothItem> DISPLAY_CLOTH =
 		REGISTRATE.item("display_cloth", DisplayClothItem::new)
+			.register();
+	
+	public static final ItemEntry<FactoryPanelConnectorItem> FACTORY_PANEL_CONNECTOR =
+		REGISTRATE.item("factory_panel_connector", FactoryPanelConnectorItem::new)
 			.register();
 
 	// wrapped by COPPER_BACKTANK for block placement uses.
