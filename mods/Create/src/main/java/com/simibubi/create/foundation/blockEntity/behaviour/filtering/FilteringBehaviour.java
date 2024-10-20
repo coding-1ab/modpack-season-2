@@ -63,8 +63,6 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 
 	boolean recipeFilter;
 	boolean fluidFilter;
-	
-	protected boolean diamondShape;
 
 	public FilteringBehaviour(SmartBlockEntity be, ValueBoxTransform slot) {
 		super(be);
@@ -80,7 +78,6 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 		recipeFilter = false;
 		fluidFilter = false;
 		upTo = true;
-		diamondShape = false;
 	}
 
 	@Override
@@ -266,12 +263,13 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 		ItemStack filter = getFilter(hitResult.getDirection());
 		int maxAmount = (filter.getItem() instanceof FilterItem) ? 64 : filter.getMaxStackSize();
 		return new ValueSettingsBoard(CreateLang.translateDirect("logistics.filter.extracted_amount"), maxAmount, 16,
-				CreateLang.translatedOptions("logistics.filter", "up_to", "exactly"),
+			CreateLang.translatedOptions("logistics.filter", "up_to", "exactly"),
 			new ValueSettingsFormatter(this::formatValue));
 	}
 
 	public MutableComponent formatValue(ValueSettings value) {
-		if (value.row() == 0 && value.value() == filter.item().getMaxStackSize())
+		if (value.row() == 0 && value.value() == filter.item()
+			.getMaxStackSize())
 			return CreateLang.translateDirect("logistics.filter.any_amount_short");
 		return Components.literal(((value.row() == 0) ? "\u2264" : "=") + Math.max(1, value.value()));
 	}
@@ -326,7 +324,12 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 		return CreateLang.translateDirect(
 			recipeFilter ? "logistics.recipe_filter" : fluidFilter ? "logistics.fluid_filter" : "logistics.filter");
 	}
-	
+
+	public MutableComponent getTip() {
+		return CreateLang
+			.translateDirect(filter.isEmpty() ? "logistics.filter.click_to_set" : "logistics.filter.click_to_replace");
+	}
+
 	public MutableComponent getCountLabelForValueBox() {
 		return Components.literal(showCount ? upTo && filter.item()
 			.getMaxStackSize() == count ? "*" : String.valueOf(count) : "");
@@ -395,21 +398,21 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 
 		return setFilter(side, copied);
 	}
-	
+
 	public boolean isRecipeFilter() {
 		return recipeFilter;
 	}
-	
+
 	@Override
 	public boolean bypassesInput(ItemStack mainhandItem) {
-		return AllItems.FACTORY_PANEL_CONNECTOR.isIn(mainhandItem);
+		return false;
 	}
-	
+
 	@Override
 	public int netId() {
 		return 1;
 	}
-	
+
 	public float getRenderDistance() {
 		return AllConfigs.client().filterItemRenderDistance.getF();
 	}

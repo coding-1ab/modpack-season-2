@@ -16,7 +16,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform.Sided;
 import com.simibubi.create.foundation.utility.CreateLang;
-import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import net.createmod.catnip.CatnipClient;
 import net.createmod.catnip.utility.Iterate;
@@ -52,55 +51,60 @@ public class FilteringRenderer {
 		BlockPos pos = result.getBlockPos();
 		BlockState state = world.getBlockState(pos);
 
-		FilteringBehaviour behaviour = BlockEntityBehaviour.get(world, pos, FilteringBehaviour.TYPE);
 		if (mc.player.isShiftKeyDown())
+			return;
+		if (!(world.getBlockEntity(pos) instanceof SmartBlockEntity sbe))
 			return;
 
 		ItemStack mainhandItem = mc.player.getItemInHand(InteractionHand.MAIN_HAND);
-		if (behaviour == null)
-			return;
-		if (behaviour instanceof SidedFilteringBehaviour) {
-			behaviour = ((SidedFilteringBehaviour) behaviour).get(result.getDirection());
-			if (behaviour == null)
-				return;
+
+		for (BlockEntityBehaviour b : sbe.getAllBehaviours()) {
+			if (!(b instanceof FilteringBehaviour behaviour))
+				continue;
+
+			if (behaviour instanceof SidedFilteringBehaviour) {
+				behaviour = ((SidedFilteringBehaviour) behaviour).get(result.getDirection());
+				if (behaviour == null)
+					continue;
+			}
+
+			if (!behaviour.isActive())
+				continue;
+			if (behaviour.slotPositioning instanceof ValueBoxTransform.Sided)
+				((Sided) behaviour.slotPositioning).fromSide(result.getDirection());
+			if (!behaviour.slotPositioning.shouldRender(world, pos, state))
+				continue;
+
+			ItemStack filter = behaviour.getFilter();
+			boolean isFilterSlotted = filter.getItem() instanceof FilterItem;
+			boolean showCount = behaviour.isCountVisible();
+			Component label = behaviour.getLabel();
+			boolean hit = behaviour.slotPositioning.testHit(world, pos, state, target.getLocation()
+				.subtract(Vec3.atLowerCornerOf(pos)));
+
+			AABB emptyBB = new AABB(Vec3.ZERO, Vec3.ZERO);
+			AABB bb = isFilterSlotted ? emptyBB.inflate(.45f, .31f, .2f) : emptyBB.inflate(.25f);
+
+			ValueBox box = new ItemValueBox(label, bb, pos, filter, behaviour.getCountLabelForValueBox());
+			box.passive(!hit || behaviour.bypassesInput(mainhandItem));
+
+			CatnipClient.OUTLINER
+				.showOutline(Pair.of("filter" + behaviour.netId(), pos), box.transform(behaviour.slotPositioning))
+				.lineWidth(1 / 64f)
+				.withFaceTexture(hit ? AllSpecialTextures.THIN_CHECKERED : null)
+				.highlightFace(result.getDirection());
+
+			if (!hit)
+				continue;
+
+			List<MutableComponent> tip = new ArrayList<>();
+			tip.add(label.copy());
+			tip.add(behaviour.getTip());
+			if (showCount)
+				tip.add(CreateLang.translateDirect("logistics.filter.hold_to_set_amount"));
+
+			CreateClient.VALUE_SETTINGS_HANDLER.showHoverTip(tip);
 		}
-		if (!behaviour.isActive())
-			return;
-		if (behaviour.slotPositioning instanceof ValueBoxTransform.Sided)
-			((Sided) behaviour.slotPositioning).fromSide(result.getDirection());
-		if (!behaviour.slotPositioning.shouldRender(world, pos, state))
-			return;
-
-		ItemStack filter = behaviour.getFilter();
-		boolean isFilterSlotted = filter.getItem() instanceof FilterItem;
-		boolean showCount = behaviour.isCountVisible();
-		Component label = behaviour.getLabel();
-		boolean hit = behaviour.slotPositioning.testHit(world, pos, state, target.getLocation()
-			.subtract(Vec3.atLowerCornerOf(pos)));
-
-		AABB emptyBB = new AABB(Vec3.ZERO, Vec3.ZERO);
-		AABB bb = isFilterSlotted ? emptyBB.inflate(.45f, .31f, .2f) : emptyBB.inflate(.25f);
-
-		ValueBox box = new ItemValueBox(label, bb, pos, filter, behaviour.getCountLabelForValueBox());
-		box.passive(!hit || behaviour.bypassesInput(mainhandItem));
-		box.isDiamond = behaviour.diamondShape;
-
-		CatnipClient.OUTLINER.showOutline(Pair.of("filter", pos), box.transform(behaviour.slotPositioning))
-			.lineWidth(1 / 64f)
-			.withFaceTexture(hit ? AllSpecialTextures.THIN_CHECKERED : null)
-			.highlightFace(result.getDirection());
-
-		if (!hit)
-			return;
-
-		List<MutableComponent> tip = new ArrayList<>();
-		tip.add(label.copy());
-		tip.add(CreateLang
-			.translateDirect(filter.isEmpty() ? "logistics.filter.click_to_set" : "logistics.filter.click_to_replace"));
-		if (showCount)
-			tip.add(CreateLang.translateDirect("logistics.filter.hold_to_set_amount"));
-
-		CreateClient.VALUE_SETTINGS_HANDLER.showHoverTip(tip);
 	}
 
 	public static void renderOnBlockEntity(SmartBlockEntity be, float partialTicks, PoseStack ms,
@@ -111,58 +115,59 @@ public class FilteringRenderer {
 
 		Level level = be.getLevel();
 		BlockPos blockPos = be.getBlockPos();
-		
-		FilteringBehaviour behaviour = be.getBehaviour(FilteringBehaviour.TYPE);
-		if (behaviour == null)
-			return;
-		
-		if (!be.isVirtual()) {
-			Entity cameraEntity = Minecraft.getInstance().cameraEntity;
-			if (cameraEntity != null && level == cameraEntity.level()) {
-				float max = behaviour.getRenderDistance();
-				if (cameraEntity.position()
-					.distanceToSqr(VecHelper.getCenterOf(blockPos)) > (max * max)) {
-					return;
+
+		for (BlockEntityBehaviour b : be.getAllBehaviours()) {
+			if (!(b instanceof FilteringBehaviour behaviour))
+				continue;
+
+			if (!be.isVirtual()) {
+				Entity cameraEntity = Minecraft.getInstance().cameraEntity;
+				if (cameraEntity != null && level == cameraEntity.level()) {
+					float max = behaviour.getRenderDistance();
+					if (cameraEntity.position()
+						.distanceToSqr(VecHelper.getCenterOf(blockPos)) > (max * max)) {
+						continue;
+					}
 				}
 			}
-		}
 
-		if (!behaviour.isActive())
-			return;
-		if (behaviour.getFilter()
-			.isEmpty() && !(behaviour instanceof SidedFilteringBehaviour))
-			return;
+			if (!behaviour.isActive())
+				continue;
+			if (behaviour.getFilter()
+				.isEmpty() && !(behaviour instanceof SidedFilteringBehaviour))
+				continue;
 
-		ValueBoxTransform slotPositioning = behaviour.slotPositioning;
-		BlockState blockState = be.getBlockState();
+			ValueBoxTransform slotPositioning = behaviour.slotPositioning;
+			BlockState blockState = be.getBlockState();
 
-		if (slotPositioning instanceof ValueBoxTransform.Sided) {
-			ValueBoxTransform.Sided sided = (ValueBoxTransform.Sided) slotPositioning;
-			Direction side = sided.getSide();
-			for (Direction d : Iterate.directions) {
-				ItemStack filter = behaviour.getFilter(d);
-				if (filter.isEmpty())
-					continue;
+			if (slotPositioning instanceof ValueBoxTransform.Sided) {
+				ValueBoxTransform.Sided sided = (ValueBoxTransform.Sided) slotPositioning;
+				Direction side = sided.getSide();
+				for (Direction d : Iterate.directions) {
+					ItemStack filter = behaviour.getFilter(d);
+					if (filter.isEmpty())
+						continue;
 
-				sided.fromSide(d);
-				if (!slotPositioning.shouldRender(level, blockPos, blockState))
-					continue;
+					sided.fromSide(d);
+					if (!slotPositioning.shouldRender(level, blockPos, blockState))
+						continue;
 
+					ms.pushPose();
+					slotPositioning.transform(level, blockPos, blockState, ms);
+					if (AllBlocks.CONTRAPTION_CONTROLS.has(blockState))
+						ValueBoxRenderer.renderFlatItemIntoValueBox(filter, ms, buffer, light, overlay);
+					else
+						ValueBoxRenderer.renderItemIntoValueBox(filter, ms, buffer, light, overlay);
+					ms.popPose();
+				}
+				sided.fromSide(side);
+				continue;
+			} else if (slotPositioning.shouldRender(level, blockPos, blockState)) {
 				ms.pushPose();
 				slotPositioning.transform(level, blockPos, blockState, ms);
-				if (AllBlocks.CONTRAPTION_CONTROLS.has(blockState))
-					ValueBoxRenderer.renderFlatItemIntoValueBox(filter, ms, buffer, light, overlay);
-				else
-					ValueBoxRenderer.renderItemIntoValueBox(filter, ms, buffer, light, overlay);
+				ValueBoxRenderer.renderItemIntoValueBox(behaviour.getFilter(), ms, buffer, light, overlay);
 				ms.popPose();
 			}
-			sided.fromSide(side);
-			return;
-		} else if (slotPositioning.shouldRender(level, blockPos, blockState)) {
-			ms.pushPose();
-			slotPositioning.transform(level, blockPos, blockState, ms);
-			ValueBoxRenderer.renderItemIntoValueBox(behaviour.getFilter(), ms, buffer, light, overlay);
-			ms.popPose();
 		}
 	}
 

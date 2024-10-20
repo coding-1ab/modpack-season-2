@@ -180,8 +180,9 @@ public class AllPartialModels {
 		WATER_WHEEL = block("water_wheel/wheel"), LARGE_WATER_WHEEL = block("large_water_wheel/block"),
 		LARGE_WATER_WHEEL_EXTENSION = block("large_water_wheel/block_extension"),
 		
-		FACTORY_PANEL_TIMER = block("factory_panel/timer"),
-		FACTORY_PANEL_INPUT = block("factory_panel/input"),
+		FACTORY_PANEL = block("factory_panel/panel"),
+		FACTORY_PANEL_WITH_BULB = block("factory_panel/panel_with_bulb"),
+		FACTORY_PANEL_LIGHT = block("factory_panel/bulb_light"),
 
 		DISPLAY_CLOTH = entity("display_cloth"),
 		
@@ -199,6 +200,9 @@ public class AllPartialModels {
 	public static final Map<FluidTransportBehaviour.AttachmentTypes.ComponentPartials, Map<Direction, PartialModel>> PIPE_ATTACHMENTS =
 		new EnumMap<>(FluidTransportBehaviour.AttachmentTypes.ComponentPartials.class);
 
+	public static final Map<Direction, PartialModel> FACTORY_PANEL_ARROWS = new EnumMap<>(Direction.class);
+	public static final Map<Direction, PartialModel> FACTORY_PANEL_LINES = new EnumMap<>(Direction.class);
+	
 	public static final Map<Direction, PartialModel> METAL_GIRDER_BRACKETS = new EnumMap<>(Direction.class);
 	public static final Map<DyeColor, PartialModel> TOOLBOX_LIDS = new EnumMap<>(DyeColor.class);
 	public static final Map<ResourceLocation, Couple<PartialModel>> FOLDING_DOORS = new HashMap<>();
@@ -220,8 +224,11 @@ public class AllPartialModels {
 		}
 		for (DyeColor color : DyeColor.values())
 			TOOLBOX_LIDS.put(color, block("toolbox/lid/" + Lang.asId(color.name())));
-		for (Direction d : Iterate.horizontalDirections)
+		for (Direction d : Iterate.horizontalDirections) {
 			METAL_GIRDER_BRACKETS.put(d, block("metal_girder/bracket_" + Lang.asId(d.name())));
+			FACTORY_PANEL_ARROWS.put(d, block("factory_panel/connections/arrow_" + Lang.asId(d.name())));
+			FACTORY_PANEL_LINES.put(d, block("factory_panel/connections/line_" + Lang.asId(d.name())));
+		}
 		for (int i = 0; i < 8; i++)
 			CONTRAPTION_CONTROLS_INDICATOR.add(block("contraption_controls/indicator_" + i));
 

@@ -1,19 +1,18 @@
 package com.simibubi.create.content.logistics.factoryBoard;
 
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelSlot;
 import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
 
-import net.createmod.catnip.utility.Pointing;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 
 public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPacket<FactoryPanelBlockEntity> {
 
-	private Pointing side;
+	private PanelSlot slot;
 	private String address;
 
-	public FactoryPanelConfigurationPacket(BlockPos pos, Pointing side, String address) {
-		super(pos);
-		this.side = side;
+	public FactoryPanelConfigurationPacket(FactoryPanelPosition position, String address) {
+		super(position.pos());
+		this.slot = position.slot();
 		this.address = address;
 	}
 
@@ -23,21 +22,21 @@ public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPac
 
 	@Override
 	protected void writeSettings(FriendlyByteBuf buffer) {
-		buffer.writeVarInt(side.ordinal());
+		buffer.writeVarInt(slot.ordinal());
 		buffer.writeUtf(address);
 	}
 
 	@Override
 	protected void readSettings(FriendlyByteBuf buffer) {
-		side = Pointing.values()[buffer.readVarInt()];
+		slot = PanelSlot.values()[buffer.readVarInt()];
 		address = buffer.readUtf();
 	}
 
 	@Override
 	protected void applySettings(FactoryPanelBlockEntity be) {
-		FactoryPanelConnectionBehaviour behaviour = be.connections.get(side);
+		FactoryPanelBehaviour behaviour = be.panels.get(slot);
 		if (behaviour != null) {
-			behaviour.address = address;
+			behaviour.recipeAddress = address;
 			be.notifyUpdate();
 		}
 	}

@@ -10,9 +10,9 @@ import net.minecraft.network.chat.Component;
 public class FactoryPanelAddressInputScreen extends AbstractSimiScreen {
 
 	EditBox addressBox;
-	private FactoryPanelConnectionBehaviour behaviour;
+	private FactoryPanelBehaviour behaviour;
 
-	public FactoryPanelAddressInputScreen(FactoryPanelConnectionBehaviour behaviour) {
+	public FactoryPanelAddressInputScreen(FactoryPanelBehaviour behaviour) {
 		this.behaviour = behaviour;
 	}
 
@@ -24,7 +24,7 @@ public class FactoryPanelAddressInputScreen extends AbstractSimiScreen {
 		super.init();
 		clearWidgets();
 		addressBox = new EditBox(font, guiLeft, guiTop, sizeX, sizeY, Component.empty());
-		addressBox.setValue(behaviour.address);
+		addressBox.setValue(behaviour.recipeAddress);
 		addRenderableWidget(addressBox);
 	}
 
@@ -38,8 +38,7 @@ public class FactoryPanelAddressInputScreen extends AbstractSimiScreen {
 	public void removed() {
 		super.removed();
 		AllPackets.getChannel()
-			.sendToServer(
-				new FactoryPanelConfigurationPacket(behaviour.getPos(), behaviour.side, addressBox.getValue()));
+			.sendToServer(new FactoryPanelConfigurationPacket(behaviour.getPanelPosition(), addressBox.getValue()));
 	}
 
 }

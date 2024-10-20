@@ -12,6 +12,14 @@
       "type": "single",
       "resource": "create:entity/blueprint_small"
     },
+	{
+      "type": "single",
+      "resource": "create:block/factory_panel"
+    },
+	{
+      "type": "single",
+      "resource": "create:block/factory_panel_connections"
+    },
     {
       "type": "single",
       "resource": "create:entity/display_cloth"

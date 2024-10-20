@@ -1,23 +1,22 @@
 package com.simibubi.create.content.logistics.factoryBoard;
 
-import org.apache.commons.lang3.tuple.Pair;
+import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
+import com.simibubi.create.foundation.render.RenderTypes;
 
-import net.createmod.catnip.CatnipClient;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.utility.AnimationTickHolder;
-import net.createmod.catnip.utility.Pointing;
+import net.createmod.catnip.utility.theme.Color;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 
 public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelBlockEntity> {
 
@@ -29,93 +28,100 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 	protected void renderSafe(FactoryPanelBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
 		int light, int overlay) {
 		super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
-
-		be.connections.forEach((fromSide, behaviour) -> {
-			if (behaviour.inputModeActive)
-				renderAttachment(be, fromSide, true, ms, buffer, light, overlay);
-		});
-
-		be.inboundConnections.forEach((toSide, map) -> {
-			map.forEach((fromPos, connection) -> renderConnection(be.getBlockState(), fromPos.offset(be.getBlockPos()),
-				be.getBlockPos(), connection.fromSide(), toSide, be.satisfied ? 2 : be.promisedSatisfied ? 1 : 0,
-				false));
-			renderAttachment(be, toSide, false, ms, buffer, light, overlay);
-		});
+		for (FactoryPanelBehaviour behaviour : be.panels.values()) {
+			if (!behaviour.isActive())
+				continue;
+			if (behaviour.getAmount() > 0)
+				renderBulb(behaviour, partialTicks, ms, buffer, light, overlay);
+			for (FactoryPanelConnection connection : behaviour.targetedBy.values())
+				renderPath(behaviour, connection, partialTicks, ms, buffer, light, overlay);
+		}
 	}
 
-	private void renderAttachment(FactoryPanelBlockEntity be, Pointing side, boolean input, PoseStack ms,
+	public static void renderBulb(FactoryPanelBehaviour behaviour, float partialTicks, PoseStack ms,
 		MultiBufferSource buffer, int light, int overlay) {
-		ms.pushPose();
+		BlockState blockState = behaviour.blockEntity.getBlockState();
 
-		float offset = 6 / 16f;
+		float xRot = FactoryPanelBlock.getXRot(blockState) + Mth.PI / 2;
+		float yRot = FactoryPanelBlock.getYRot(blockState);
+		float glow = behaviour.bulb.getValue(partialTicks);
 
-		CachedBuffers
-			.partial(input ? AllPartialModels.FACTORY_PANEL_INPUT : AllPartialModels.FACTORY_PANEL_TIMER,
-				be.getBlockState())
-			.rotateCentered(be.getYRot() + Mth.PI, Direction.UP)
-			.rotateCentered(-be.getXRot(), Direction.EAST)
-			.translate(0, side == Pointing.UP ? offset : side == Pointing.DOWN ? -offset : 0, 0)
-			.translate(side == Pointing.LEFT ? offset : side == Pointing.RIGHT ? -offset : 0, 0, 0)
-			.light(light)
+		CachedBuffers.partial(AllPartialModels.FACTORY_PANEL_LIGHT, blockState)
+			.rotateCentered(yRot, Direction.UP)
+			.rotateCentered(xRot, Direction.EAST)
+			.rotateCentered(Mth.PI, Direction.UP)
+			.translate(behaviour.slot.xOffset * .5, 0, behaviour.slot.yOffset * .5)
+			.light(glow > 0.125f ? LightTexture.FULL_BRIGHT : light)
 			.overlay(overlay)
-			.renderInto(ms, buffer.getBuffer(RenderType.solid()));
+			.renderInto(ms, buffer.getBuffer(RenderType.translucent()));
 
-		ms.popPose();
+		if (glow < .125f)
+			return;
+
+		glow = (float) (1 - (2 * Math.pow(glow - .75f, 2)));
+		glow = Mth.clamp(glow, -1, 1);
+		int color = (int) (200 * glow);
+
+		CachedBuffers.partial(AllPartialModels.FACTORY_PANEL_LIGHT, blockState)
+			.rotateCentered(yRot, Direction.UP)
+			.rotateCentered(xRot, Direction.EAST)
+			.rotateCentered(Mth.PI, Direction.UP)
+			.translate(behaviour.slot.xOffset * .5, 0, behaviour.slot.yOffset * .5)
+//			.translate(1 / 16f, 2 / 16f, 7 / 16f)
+//			.scale(1.25f)
+//			.translate(-1 / 16f, -2 / 16f, -7 / 16f)
+			.light(LightTexture.FULL_BRIGHT)
+			.color(color, color, color, 255)
+			.overlay(overlay)
+			.renderInto(ms, buffer.getBuffer(RenderTypes.additive()));
 	}
 
-	public static void renderConnection(BlockState blockState, BlockPos fromPos, BlockPos toPos, Pointing fromSide,
-		Pointing toSide, int satisfyState, boolean effect) {
-		Direction facing = FactoryPanelBlock.connectedDirection(blockState);
-		Vec3 facingNormal = Vec3.atLowerCornerOf(facing.getNormal());
-		Vec3 offset = Vec3.atCenterOf(BlockPos.ZERO)
-			.add(facingNormal.scale(-0.375));
+	public static void renderPath(FactoryPanelBehaviour behaviour, FactoryPanelConnection connection,
+		float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
+		BlockState blockState = behaviour.blockEntity.getBlockState();
+		List<Direction> path = connection.getPath(blockState, behaviour.getPanelPosition());
+
+		float xRot = FactoryPanelBlock.getXRot(blockState) + Mth.PI / 2;
+		float yRot = FactoryPanelBlock.getYRot(blockState);
+		float glow = behaviour.bulb.getValue(partialTicks);
+		float yOffset = 0;
 
 		boolean flicker = AnimationTickHolder.getTicks() % 16 >= 8;
-		int color = satisfyState == 1 ? (flicker ? 0xBC75FF : 0x915BC6)
-			: satisfyState == 2 ? 0x85E59B : (flicker ? 0x7783A8 : 0x687291);
+		boolean success = connection.successTracker()
+			.booleanValue();
 
-		if (effect)
-			color = satisfyState != 0 ? 0xEAF2EC : 0xE5654B;
+		int color = behaviour.promisedSatisfied ? (flicker ? 0xBC75FF : 0x915BC6)
+			: behaviour.satisfied ? 0x85E59B : (flicker ? 0x7783A8 : 0x687291);
+		yOffset = behaviour.promisedSatisfied ? 1 : behaviour.satisfied ? 0 : 2;
 
-		Pointing currentDirection = fromSide;
-		BlockPos currentPos = fromPos;
-		BlockPos targetPos = toPos.relative(FactoryPanelBlock.getDirection(blockState, toSide));
+		if (glow > 0) {
+			color = Color.mixColors(color, success ? 0xEAF2EC : 0xE5654B, glow);
+			if (!behaviour.satisfied && !behaviour.promisedSatisfied)
+				yOffset += (success ? 1 : 2) * glow;
+		}
 
-		for (int i = 0; i < 100; i++) {
-			BlockPos nextPos = currentPos.relative(FactoryPanelBlock.getDirection(blockState, currentDirection));
+		float currentX = 0;
+		float currentZ = 0;
 
-			Vec3 fromOffset = Vec3.atLowerCornerOf(currentPos)
-				.add(offset);
-			Vec3 toOffset = Vec3.atLowerCornerOf(nextPos)
-				.add(offset);
+		for (int i = 0; i < path.size(); i++) {
+			Direction direction = path.get(i);
 
-			Pair<Integer, Pair<Boolean, Boolean>> key = Pair.of(currentPos.hashCode() + 13 * nextPos.hashCode(),
-				Pair.of(effect, effect ? satisfyState != 0 : true));
+			currentX += direction.getStepX() * .5;
+			currentZ += direction.getStepZ() * .5;
 
-			CatnipClient.OUTLINER.showLine(key, fromOffset, toOffset)
-				.lineWidth(effect ? (satisfyState != 0 ? 3f / 32f : 3.5f / 32f) : 2 / 32f)
-				.colored(color);
-
-			if (currentPos.equals(targetPos))
-				break;
-
-			currentPos = nextPos;
-
-			if (currentPos.equals(targetPos)) {
-				currentDirection = Pointing.values()[(toSide.ordinal() + 2) % 4];
-				continue;
-			}
-
-			for (Pointing p : Pointing.values()) {
-				if (p != currentDirection && Math.abs(p.ordinal() - currentDirection.ordinal()) % 2 == 0)
-					continue;
-				if (currentPos.relative(FactoryPanelBlock.getDirection(blockState, p))
-					.distManhattan(targetPos) < currentPos
-						.relative(FactoryPanelBlock.getDirection(blockState, currentDirection))
-						.distManhattan(targetPos))
-					currentDirection = p;
-			}
-
+			CachedBuffers
+				.partial((i == 0 ? AllPartialModels.FACTORY_PANEL_ARROWS : AllPartialModels.FACTORY_PANEL_LINES)
+					.get(direction.getOpposite()), blockState)
+				.rotateCentered(yRot, Direction.UP)
+				.rotateCentered(xRot, Direction.EAST)
+				.rotateCentered(Mth.PI, Direction.UP)
+				.translate(behaviour.slot.xOffset * .5 + .25, 0, behaviour.slot.yOffset * .5 + .25)
+				.translate(currentX, (yOffset + (direction.get2DDataValue() % 2) * 0.125f) / 512f, currentZ)
+//				.nudge(behaviour.hashCode())
+				.color(color)
+				.light(light)
+				.overlay(overlay)
+				.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
 		}
 
 	}
