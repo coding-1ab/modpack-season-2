@@ -48,7 +48,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	FILTER("filters", 214, 99),
 	ATTRIBUTE_FILTER("filters", 0, 99, 241, 85),
 	PACKAGE_FILTER("filters_2", 0, 0, 218, 79),
-	
+
 	POSTBOX_HEADER("frogport_and_mailbox", 0, 23, 214, 24),
 	FROGPORT_HEADER("frogport_and_mailbox", 0, 0, 214, 17),
 	FROGPORT_SLOT("frogport_and_mailbox", 26, 55, 18, 18),
@@ -150,6 +150,15 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	VALUE_SETTINGS_CURSOR_ICON("value_settings", 0, 44, 22, 20),
 	VALUE_SETTINGS_LABEL_BG("value_settings", 0, 31, 81, 11),
 
+	// HILO
+	FACTORY_PANEL_TOP("factory_panel", 0, 0, 172, 23),
+	FACTORY_PANEL_MIDDLE("factory_panel", 0, 23, 172, 26),
+	FACTORY_PANEL_BOTTOM("factory_panel", 0, 49, 172, 54),
+	FACTORY_PANEL_SLOT_FRAME("factory_panel", 3, 106, 20, 20),
+	FACTORY_PANEL_SLOT("factory_panel", 4, 107, 18, 18),
+	FACTORY_PANEL_ARROW("factory_panel", 27, 108, 22, 16),
+	FACTORY_PANEL_ARROW_FILLED("factory_panel", 50, 108, 22, 16),
+
 	// JEI
 	JEI_SLOT("jei/widgets", 18, 18),
 	JEI_CHANCE_SLOT("jei/widgets", 20, 156, 18, 18),
@@ -192,12 +201,12 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	TRAIN_PROMPT_L("widgets", 8, 209, 3, 16),
 	TRAIN_PROMPT_R("widgets", 11, 209, 3, 16),
 	TRAIN_PROMPT("widgets", 0, 230, 256, 16),
-	
+
 	TRADE_OVERLAY("widgets", 136, 97, 98, 48),
 
 	// PlacementIndicator
 	PLACEMENT_INDICATOR_SHEET("placement_indicator", 0, 0, 16, 256),
-	
+
 	// Train Map
 	TRAINMAP_SPRITES("trainmap_sprite_sheet", 0, 0, 512, 256),
 	TRAINMAP_SIGNAL("widgets", 81, 156, 5, 10),
@@ -205,7 +214,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	TRAINMAP_STATION_DIAGO("widgets", 56, 156, 5, 5),
 	TRAINMAP_STATION_ORTHO_HIGHLIGHT("widgets", 63, 156, 7, 7),
 	TRAINMAP_STATION_DIAGO_HIGHLIGHT("widgets", 72, 156, 7, 7),
-	
+
 	TRAINMAP_TOGGLE_PANEL("widgets", 219, 4, 33, 14),
 	TRAINMAP_TOGGLE_ON("widgets", 219, 19, 12, 7),
 	TRAINMAP_TOGGLE_OFF("widgets", 219, 27, 12, 7),
@@ -226,6 +235,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	AllGuiTextures(String location, int width, int height) {
 		this(location, 0, 0, width, height);
 	}
+
 	AllGuiTextures(String location, int startX, int startY, int width, int height) {
 		this(Create.ID, location, startX, startY, width, height);
 	}

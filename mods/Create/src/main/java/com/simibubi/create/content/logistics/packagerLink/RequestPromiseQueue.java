@@ -32,17 +32,42 @@ public class RequestPromiseQueue {
 		Create.LOGISTICS.markDirty();
 	}
 
-	public int getTotalPromised(ItemStack stack) {
+	public int getTotalPromisedAndRemoveExpired(ItemStack stack, int expiryTime) {
 		int promised = 0;
 		List<RequestPromise> list = promisesByItem.get(stack.getItem());
 		if (list == null)
 			return promised;
-		for (RequestPromise promise : list) {
+
+		for (Iterator<RequestPromise> iterator = list.iterator(); iterator.hasNext();) {
+			RequestPromise promise = iterator.next();
 			if (!ItemHandlerHelper.canItemStacksStack(promise.promisedStack.stack, stack))
 				continue;
+			if (expiryTime != -1 && promise.ticksExisted >= expiryTime) {
+				iterator.remove();
+				Create.LOGISTICS.markDirty();
+				continue;
+			}
+
 			promised += promise.promisedStack.count;
 		}
 		return promised;
+	}
+
+	public void forceClear(ItemStack stack) {
+		List<RequestPromise> list = promisesByItem.get(stack.getItem());
+		if (list == null)
+			return;
+
+		for (Iterator<RequestPromise> iterator = list.iterator(); iterator.hasNext();) {
+			RequestPromise promise = iterator.next();
+			if (!ItemHandlerHelper.canItemStacksStack(promise.promisedStack.stack, stack))
+				continue;
+			iterator.remove();
+			Create.LOGISTICS.markDirty();
+		}
+
+		if (list.isEmpty())
+			promisesByItem.remove(stack.getItem());
 	}
 
 	public void itemEnteredSystem(ItemStack stack, int amount) {

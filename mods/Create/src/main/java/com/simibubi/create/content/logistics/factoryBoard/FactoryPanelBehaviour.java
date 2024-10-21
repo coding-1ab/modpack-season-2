@@ -68,6 +68,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public int recipeOutput;
 	public LerpedFloat bulb;
 	public PanelSlot slot;
+	public int promiseClearingInterval;
+	public boolean forceClearPromises;
 
 	private boolean active;
 	private int lastReportedLevelInStorage;
@@ -85,6 +87,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		this.recipeAddress = "";
 		this.recipeOutput = 1;
 		this.active = false;
+		this.forceClearPromises = false;
+		this.promiseClearingInterval = -1;
 		this.bulb = LerpedFloat.linear()
 			.startWithValue(0)
 			.chase(0, 0.45, Chaser.EXP);
@@ -185,6 +189,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	}
 
 	public void addConnection(FactoryPanelPosition fromPos) {
+		if (targetedBy.size() >= 9)
+			return;
 		FactoryPanelBehaviour source = at(getWorld(), fromPos);
 		if (source == null)
 			return;
@@ -209,10 +215,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 		if (!player.level().isClientSide)
 			return;
-		if (isConnector) {
-			FactoryPanelConnectionHandler.panelClicked(getWorld(), getPanelPosition());
+		if (FactoryPanelConnectionHandler.panelClicked(getWorld(), player, getPanelPosition()))
 			return;
-		}
 
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> displayScreen(player));
 	}
@@ -280,7 +284,20 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 		UUID freqId = ((StockCheckingBlockEntity) blockEntity).behaviour.freqId;
 		RequestPromiseQueue promises = Create.LOGISTICS.getQueuedPromises(freqId);
-		return promises == null ? 0 : promises.getTotalPromised(getFilter());
+		if (forceClearPromises)
+			promises.forceClear(getFilter());
+
+		return promises == null ? 0
+			: promises.getTotalPromisedAndRemoveExpired(getFilter(), getPromiseExpiryTimeInTicks());
+	}
+
+	private int getPromiseExpiryTimeInTicks() {
+		if (promiseClearingInterval == -1)
+			return -1;
+		if (promiseClearingInterval == 0)
+			return 20 * 30;
+
+		return promiseClearingInterval * 20 * 60;
 	}
 
 	@Override
@@ -299,6 +316,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		panelTag.put("TargetedBy", NBTHelper.writeCompoundList(targetedBy.values(), FactoryPanelConnection::write));
 		panelTag.putString("RecipeAddress", recipeAddress);
 		panelTag.putInt("RecipeOutput", recipeOutput);
+		panelTag.putInt("PromiseClearingInterval", promiseClearingInterval);
 
 		nbt.put(CreateLang.asId(slot.name()), panelTag);
 	}
@@ -319,6 +337,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		lastReportedPromises = panelTag.getInt("LastPromised");
 		satisfied = panelTag.getBoolean("Satisfied");
 		promisedSatisfied = panelTag.getBoolean("PromisedSatisfied");
+		promiseClearingInterval = panelTag.getInt("PromiseClearingInterval");
 
 		targeting.clear();
 		NBTHelper.iterateCompoundList(panelTag.getList("Targeting", Tag.TAG_COMPOUND),
@@ -461,9 +480,9 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	}
 
 	@OnlyIn(value = Dist.CLIENT)
-	private void displayScreen(Player player) {
+	public void displayScreen(Player player) {
 		if (player instanceof LocalPlayer)
-			ScreenOpener.open(new FactoryPanelAddressInputScreen(this));
+			ScreenOpener.open(new FactoryPanelScreen(this));
 	}
 
 }
