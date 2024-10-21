@@ -176,8 +176,7 @@ public class AllCreativeModeTabs {
 			);
 
 			Map<ItemProviderEntry<?>, ItemProviderEntry<?>> simpleAfterOrderings = Map.of(
-					AllItems.VERTICAL_GEARBOX, AllBlocks.GEARBOX,
-					AllItems.FACTORY_PANEL_CONNECTOR, AllBlocks.FACTORY_PANEL
+					AllItems.VERTICAL_GEARBOX, AllBlocks.GEARBOX
 			);
 
 			simpleBeforeOrderings.forEach((entry, otherEntry) -> {

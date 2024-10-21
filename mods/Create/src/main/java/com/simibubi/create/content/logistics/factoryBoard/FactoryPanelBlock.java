@@ -2,7 +2,6 @@ package com.simibubi.create.content.logistics.factoryBoard;
 
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllItems;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
@@ -128,8 +127,6 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 		if (pPlayer == null)
 			return InteractionResult.PASS;
 		ItemStack item = pPlayer.getItemInHand(pHand);
-		if (AllItems.FACTORY_PANEL_CONNECTOR.isIn(item))
-			return InteractionResult.PASS;
 		if (pLevel.isClientSide)
 			return InteractionResult.SUCCESS;
 		if (!AllBlocks.FACTORY_PANEL.isIn(item))

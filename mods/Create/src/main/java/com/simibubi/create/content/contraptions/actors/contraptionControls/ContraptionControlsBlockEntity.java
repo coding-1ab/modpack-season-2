@@ -129,7 +129,7 @@ public class ContraptionControlsBlockEntity extends SmartBlockEntity {
 		public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
 			Direction facing = state.getValue(ControlsBlock.FACING);
 			float yRot = AngleHelper.horizontalAngle(facing);
-			return VecHelper.rotateCentered(VecHelper.voxelSpace(8, 12f, 5.5f), yRot, Axis.Y);
+			return VecHelper.rotateCentered(VecHelper.voxelSpace(8, 14f, 5.5f), yRot, Axis.Y);
 		}
 
 		@Override

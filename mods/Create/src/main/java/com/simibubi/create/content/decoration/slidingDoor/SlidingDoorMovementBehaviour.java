@@ -77,6 +77,16 @@ public class SlidingDoorMovementBehaviour implements MovementBehaviour {
 
 		toggleDoor(pos, contraption, info);
 
+		Direction facing = getDoorFacing(context);
+		BlockPos inWorldDoor = BlockPos.containing(context.position)
+			.relative(facing);
+		BlockState inWorldDoorState = context.world.getBlockState(inWorldDoor);
+		if (inWorldDoorState.getBlock() instanceof DoorBlock db && inWorldDoorState.hasProperty(DoorBlock.OPEN))
+			if (inWorldDoorState.hasProperty(DoorBlock.FACING) && inWorldDoorState.getOptionalValue(DoorBlock.FACING)
+				.orElse(Direction.UP)
+				.getAxis() == facing.getAxis())
+				db.setOpen(null, context.world, inWorldDoorState, inWorldDoor, shouldOpen);
+
 		if (shouldOpen)
 			context.world.playSound(null, BlockPos.containing(context.position), SoundEvents.IRON_DOOR_OPEN,
 				SoundSource.BLOCKS, .125f, 1);

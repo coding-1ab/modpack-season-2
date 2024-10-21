@@ -132,10 +132,18 @@ public class AllShapes {
 		STEP_BOTTOM = shape(0, 0, 8, 16, 8, 16).forHorizontal(SOUTH),
 		STEP_TOP = shape(0, 8, 8, 16, 16, 16).forHorizontal(SOUTH),
 
-		CONTROLS = shape(0, 0, 6, 16, 14, 16).forHorizontal(NORTH),
-		CONTRAPTION_CONTROLS = shape(0, 0, 6, 2, 14, 16).add(14, 0, 6, 16, 14, 16)
-			.add(0, 0, 14, 16, 14, 16)
-			.add(0, 0, 7, 16, 10, 16)
+		CONTROLS = shape(0, 0, 6, 16, 16, 16).add(0, 0, 0, 16, 2, 16)
+			.forHorizontal(NORTH),
+		CONTROLS_COLLISION = shape(0, 0, 6, 16, 16, 16).forHorizontal(NORTH),
+
+		CONTRAPTION_CONTROLS = shape(0, 0, 6, 2, 16, 16).add(14, 0, 6, 16, 16, 16)
+			.add(0, 0, 14, 16, 16, 16)
+			.add(0, 0, 7, 16, 12, 16)
+			.add(0, 0, 0, 16, 2, 16)
+			.forHorizontal(NORTH),
+		CONTRAPTION_CONTROLS_COLLISION = shape(0, 0, 6, 2, 16, 16).add(14, 0, 6, 16, 16, 16)
+			.add(0, 0, 14, 16, 16, 16)
+			.add(0, 0, 7, 16, 12, 16)
 			.forHorizontal(NORTH),
 
 		NIXIE_TUBE = shape(9, 0, 5, 15, 12, 11).add(1, 0, 5, 7, 12, 11)

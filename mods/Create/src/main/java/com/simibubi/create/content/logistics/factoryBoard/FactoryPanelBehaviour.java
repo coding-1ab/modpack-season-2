@@ -12,7 +12,6 @@ import javax.annotation.Nullable;
 
 import org.joml.Math;
 
-import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.BigItemStack;
@@ -205,9 +204,6 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 	@Override
 	public void onShortInteract(Player player, InteractionHand hand, Direction side, BlockHitResult hitResult) {
-		ItemStack itemInHand = player.getItemInHand(hand);
-		boolean isConnector = AllItems.FACTORY_PANEL_CONNECTOR.isIn(itemInHand);
-
 		if (getFilter().isEmpty()) {
 			super.onShortInteract(player, hand, side, hitResult);
 			return;

@@ -243,10 +243,6 @@ public class AllItems {
 	public static final ItemEntry<DisplayClothItem> DISPLAY_CLOTH =
 		REGISTRATE.item("display_cloth", DisplayClothItem::new)
 			.register();
-	
-	public static final ItemEntry<Item> FACTORY_PANEL_CONNECTOR =
-		REGISTRATE.item("factory_panel_connector", Item::new)
-			.register();
 
 	// wrapped by COPPER_BACKTANK for block placement uses.
 	// must be registered as of 1.18.2
