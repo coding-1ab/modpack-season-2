@@ -81,5 +81,9 @@ public class DestinationSuggestions extends CommandSuggestions {
 		int x = Mth.clamp(textBox.getScreenX(0), 0, textBox.getScreenX(0) + textBox.getInnerWidth() - width);
 		suggestions = new CommandSuggestions.SuggestionsList(x, 72 + yOffset, width, currentSuggestions, false);
 	}
+	
+	public boolean isEmpty() {
+		return viableStations.isEmpty();
+	}
 
 }

@@ -1,13 +1,18 @@
 package com.simibubi.create.content.logistics.packagePort;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;
+import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.item.SmartInventory;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.core.BlockPos;
@@ -134,8 +139,49 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 		if (level.isClientSide)
 			return InteractionResult.SUCCESS;
 
+		ItemStack mainHandItem = player.getMainHandItem();
+		if (AllBlocks.CLIPBOARD.isIn(mainHandItem)) {
+			addAddressToClipboard(player, mainHandItem);
+			return InteractionResult.SUCCESS;
+		}
+
 		NetworkHooks.openScreen((ServerPlayer) player, this, worldPosition);
 		return InteractionResult.SUCCESS;
+	}
+
+	private void addAddressToClipboard(Player player, ItemStack mainHandItem) {
+		if (addressFilter == null || addressFilter.isBlank())
+			return;
+
+		List<List<ClipboardEntry>> list = ClipboardEntry.readAll(mainHandItem);
+		for (List<ClipboardEntry> page : list) {
+			for (ClipboardEntry entry : page) {
+				String existing = entry.text.getString();
+				if (existing.equals("#" + addressFilter) || existing.equals("# " + addressFilter))
+					return;
+			}
+		}
+
+		List<ClipboardEntry> page = null;
+
+		for (List<ClipboardEntry> freePage : list) {
+			if (freePage.size() > 16)
+				continue;
+			page = freePage;
+			break;
+		}
+
+		if (page == null) {
+			page = new ArrayList<>();
+			list.add(page);
+		}
+
+		page.add(new ClipboardEntry(false, Components.literal("#" + addressFilter)));
+		player.displayClientMessage(CreateLang.temporaryText("'" + addressFilter + "' added to Clipboard")
+			.component(), true);
+		
+		ClipboardEntry.saveAll(list, mainHandItem);
+		mainHandItem.getTag().putInt("Type", ClipboardOverrides.ClipboardType.WRITTEN.ordinal());
 	}
 
 	@Override

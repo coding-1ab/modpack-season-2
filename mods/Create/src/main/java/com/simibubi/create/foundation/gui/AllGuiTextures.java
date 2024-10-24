@@ -78,6 +78,8 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	BLUEPRINT("curiosities_2", 0, 109, 179, 109),
 
 	CLIPBOARD("clipboard", 0, 0, 256, 256),
+	CLIPBOARD_ADDRESS("widgets", 116, 7, 8, 8),
+	CLIPBOARD_ADDRESS_INACTIVE("widgets", 125, 7, 8, 8),
 
 	DATA_GATHERER("display_link", 235, 162),
 	DATA_AREA_START("display_link", 0, 163, 2, 18),
@@ -151,9 +153,9 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	VALUE_SETTINGS_LABEL_BG("value_settings", 0, 31, 81, 11),
 
 	// HILO
-	FACTORY_PANEL_TOP("restocker_and_requester", 0, 0, 172, 23),
-	FACTORY_PANEL_MIDDLE("restocker_and_requester", 0, 23, 172, 26),
-	FACTORY_PANEL_BOTTOM("restocker_and_requester", 0, 49, 172, 54),
+	FACTORY_PANEL_TOP("restocker_and_requester", 0, 0, 182, 23),
+	FACTORY_PANEL_MIDDLE("restocker_and_requester", 0, 23, 182, 26),
+	FACTORY_PANEL_BOTTOM("restocker_and_requester", 0, 49, 182, 54),
 	FACTORY_PANEL_SLOT_FRAME("restocker_and_requester", 3, 106, 20, 20),
 	FACTORY_PANEL_SLOT("restocker_and_requester", 4, 107, 18, 18),
 	FACTORY_PANEL_ARROW("restocker_and_requester", 27, 108, 22, 16),

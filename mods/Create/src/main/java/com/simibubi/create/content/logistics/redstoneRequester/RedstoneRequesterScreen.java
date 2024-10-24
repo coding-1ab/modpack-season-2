@@ -7,6 +7,7 @@ import java.util.List;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.content.logistics.AddressEditBox;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.trains.station.NoShadowFontWrapper;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
@@ -51,6 +52,7 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 	@Override
 	protected void containerTick() {
 		super.containerTick();
+		addressBox.tick();
 		for (int i = 0; i < amounts.size(); i++)
 			if (menu.ghostInventory.getStackInSlot(i)
 				.isEmpty())
@@ -68,13 +70,9 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 		int y = getGuiTop();
 
 		if (addressBox == null) {
-			addressBox = new EditBox(new NoShadowFontWrapper(font), x + 50, y + 53, 110, 10, Component.empty());
+			addressBox = new AddressEditBox(this, new NoShadowFontWrapper(font), x + 50, y + 53, 110, 10);
 			addressBox.setValue(menu.contentHolder.encodedTargetAdress);
-			addressBox.setBordered(false);
 			addressBox.setTextColor(0x555555);
-			addressBox.setFocused(false);
-			addressBox.mouseClicked(0, 0, 0);
-			addressBox.setMaxLength(25);
 		}
 		addRenderableWidget(addressBox);
 

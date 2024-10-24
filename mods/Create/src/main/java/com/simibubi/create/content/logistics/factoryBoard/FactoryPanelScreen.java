@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.content.logistics.AddressEditBox;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.trains.station.NoShadowFontWrapper;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
@@ -72,22 +73,18 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 		if (addressBox == null) {
 			addressBox =
-				new EditBox(new NoShadowFontWrapper(font), x + 38, y + 30 + middleHeight(), 110, 10, Component.empty());
+				new AddressEditBox(this, new NoShadowFontWrapper(font), x + 38, y + 30 + middleHeight(), 110, 10);
 			addressBox.setValue(behaviour.recipeAddress);
-			addressBox.setBordered(false);
 			addressBox.setTextColor(0x555555);
-			addressBox.setFocused(false);
-			addressBox.mouseClicked(0, 0, 0);
-			addressBox.setMaxLength(25);
 		}
 		addressBox.setY(y + 30 + middleHeight());
 		addRenderableWidget(addressBox);
 
-		confirmButton = new IconButton(x + sizeX - 61, y + sizeY - 22, AllIcons.I_CONFIRM);
+		confirmButton = new IconButton(x + sizeX - 51, y + sizeY - 22, AllIcons.I_CONFIRM);
 		confirmButton.withCallback(() -> minecraft.setScreen(null));
 		addRenderableWidget(confirmButton);
 
-		promiseExpiration = new ScrollInput(x + 102, y + 54 + middleHeight(), 25, 16).withRange(-1, 31)
+		promiseExpiration = new ScrollInput(x + 112, y + 54 + middleHeight(), 25, 16).withRange(-1, 31)
 			.titled(CreateLang.temporaryText("Promises expire after")
 				.component());
 		promiseExpiration.setState(behaviour.promiseClearingInterval);
@@ -95,7 +92,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 		if (behaviour.targetedBy.size() < 9) {
 			int slot = behaviour.targetedBy.size();
-			newInputButton = new IconButton(x + 19 + (slot % 3 * 18), y + 27 + (slot / 3 * 18), AllIcons.I_ADD);
+			newInputButton = new IconButton(x + 24 + (slot % 3 * 18), y + 27 + (slot / 3 * 18), AllIcons.I_ADD);
 			newInputButton.withCallback(() -> {
 				FactoryPanelConnectionHandler.startConnection(behaviour);
 				minecraft.setScreen(null);
@@ -120,6 +117,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			updateConfigs();
 			init();
 		}
+		addressBox.tick();
 		promiseExpiration.titled(CreateLang
 			.temporaryText(promiseExpiration.getState() == -1 ? "Promises do not expire" : "Promises expire after:")
 			.component());
@@ -145,14 +143,14 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			AllGuiTextures sprite =
 				frame == 0 ? AllGuiTextures.FACTORY_PANEL_SLOT_FRAME : AllGuiTextures.FACTORY_PANEL_SLOT;
 			for (slot = 0; slot < behaviour.targetedBy.size(); slot++)
-				sprite.render(graphics, x + 18 + frame + (slot % 3 * 18), y + 26 + frame + (slot / 3 * 18));
+				sprite.render(graphics, x + 23 + frame + (slot % 3 * 18), y + 26 + frame + (slot / 3 * 18));
 			if (slot < 9)
-				sprite.render(graphics, x + 18 + frame + (slot % 3 * 18), y + 26 + frame + (slot / 3 * 18));
+				sprite.render(graphics, x + 23 + frame + (slot % 3 * 18), y + 26 + frame + (slot / 3 * 18));
 		}
 
 		slot = 0;
 		for (BigItemStack itemStack : inputConfig) {
-			int inputX = x + 20 + (slot % 3 * 18);
+			int inputX = x + 25 + (slot % 3 * 18);
 			int inputY = y + 28 + (slot / 3 * 18);
 			graphics.renderItem(itemStack.stack, inputX, inputY);
 			if (!itemStack.stack.isEmpty())
@@ -190,8 +188,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 		if (inputConfig.size() > 0) {
 			AllGuiTextures.FACTORY_PANEL_ARROW.render(graphics,
-				x + 70 + Mth.clamp(behaviour.targetedBy.size(), 0, 2) * 9, y + 16 + middleHeight() / 2);
-			int outputX = x + 128;
+				x + 75 + Mth.clamp(behaviour.targetedBy.size(), 0, 2) * 9, y + 16 + middleHeight() / 2);
+			int outputX = x + 130;
 			int outputY = y + 16 + middleHeight() / 2;
 			AllGuiTextures.FACTORY_PANEL_SLOT_FRAME.render(graphics, outputX - 2, outputY - 2);
 			graphics.renderItem(outputConfig.stack, outputX, outputY);
@@ -247,7 +245,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		// TITLE
 		Component title = CreateLang.temporaryText("Logistics Recipe")
 			.component();
-		graphics.drawString(font, title, x + 82 - font.width(title) / 2, y + 7, 0x3D3C48, false);
+		graphics.drawString(font, title, x + 87 - font.width(title) / 2, y + 7, 0x3D3C48, false);
 
 		// ITEM PREVIEW
 		ms.pushPose();
@@ -255,13 +253,13 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		GuiGameElement.of(AllBlocks.FACTORY_PANEL.asStack())
 			.scale(4)
 			.at(0, 0, -200)
-			.render(graphics, x + 165, y + 55);
+			.render(graphics, x + 175, y + 55);
 		if (!behaviour.getFilter()
 			.isEmpty()) {
 			GuiGameElement.of(behaviour.getFilter())
 				.scale(1.625)
 				.at(0, 0, 200)
-				.render(graphics, x + 184, y + 68);
+				.render(graphics, x + 194, y + 68);
 		}
 		ms.popPose();
 
@@ -272,7 +270,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 		ItemStack asStack = AllItems.CARDBOARD_PACKAGE_12x12.asStack();
 		int itemY = y + 54 + middleHeight();
-		int itemX = x + 78;
+		int itemX = x + 88;
 		graphics.renderItem(asStack, itemX, itemY);
 		int promised = behaviour.getPromised();
 		graphics.renderItemDecorations(font, asStack, itemX, itemY, promised + "");
@@ -323,7 +321,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 		// Remove connections
 		for (int i = 0; i < connections.size(); i++) {
-			int inputX = x + 20 + (i % 3 * 18);
+			int inputX = x + 25 + (i % 3 * 18);
 			int inputY = y + 28 + (i / 3 * 18);
 			if (mouseX >= inputX && mouseX < inputX + 16 && mouseY >= inputY && mouseY < inputY + 16) {
 				sendIt(connections.get(i)
@@ -334,7 +332,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 		// Clear promises
 		int itemY = y + 54 + middleHeight();
-		int itemX = x + 78;
+		int itemX = x + 88;
 		if (mouseX >= itemX && mouseX < itemX + 16 && mouseY >= itemY && mouseY < itemY + 16) {
 			sendIt(null, true);
 			return true;
@@ -349,7 +347,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		int y = guiTop;
 
 		for (int i = 0; i < inputConfig.size(); i++) {
-			int inputX = x + 20 + (i % 3 * 18);
+			int inputX = x + 25 + (i % 3 * 18);
 			int inputY = y + 28 + (i / 3 * 18);
 			if (mouseX >= inputX && mouseX < inputX + 16 && mouseY >= inputY && mouseY < inputY + 16) {
 				BigItemStack itemStack = inputConfig.get(i);
@@ -362,7 +360,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		}
 
 		if (inputConfig.size() > 0) {
-			int outputX = x + 128;
+			int outputX = x + 130;
 			int outputY = y + 16 + middleHeight() / 2;
 			if (mouseX >= outputX && mouseX < outputX + 16 && mouseY >= outputY && mouseY < outputY + 16) {
 				BigItemStack itemStack = outputConfig;

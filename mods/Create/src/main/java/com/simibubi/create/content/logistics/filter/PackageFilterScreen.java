@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.content.logistics.AddressEditBox;
 import com.simibubi.create.content.logistics.filter.FilterScreenPacket.Option;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.widget.IconButton;
@@ -33,6 +34,7 @@ public class PackageFilterScreen extends AbstractFilterScreen<PackageFilterMenu>
 			deferFocus = false;
 			setFocused(addressBox);
 		}
+		addressBox.tick();
 	}
 
 	@Override
@@ -43,9 +45,7 @@ public class PackageFilterScreen extends AbstractFilterScreen<PackageFilterMenu>
 		int x = leftPos;
 		int y = topPos;
 
-		addressBox = new EditBox(this.font, x + 44, y + 28, 140, 9, Component.empty());
-		addressBox.setMaxLength(50);
-		addressBox.setBordered(false);
+		addressBox = new AddressEditBox(this, this.font, x + 44, y + 28, 140, 9);
 		addressBox.setTextColor(0xffffff);
 		addressBox.setValue(menu.address);
 		addressBox.setResponder(this::onAddressEdited);
@@ -90,6 +90,7 @@ public class PackageFilterScreen extends AbstractFilterScreen<PackageFilterMenu>
 	public boolean charTyped(char pCodePoint, int pModifiers) {
 		return super.charTyped(pCodePoint, pModifiers);
 	}
+	
 
 	@Override
 	protected void contentsCleared() {

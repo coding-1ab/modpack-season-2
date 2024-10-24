@@ -15,6 +15,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.content.logistics.AddressEditBox;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.foundation.utility.CreateLang;
 
@@ -91,11 +92,8 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 		searchBox.setTextColor(0xffffff);
 		addRenderableWidget(searchBox);
 
-		MutableComponent addressLabel = CreateLang.translateDirect("gui.stock_ticker.package_adress");
 		boolean initial = addressBox == null;
-		addressBox = new EditBox(this.font, itemsX + 1, orderY + rowHeight + 10, 120, 9, addressLabel);
-		addressBox.setMaxLength(50);
-		addressBox.setBordered(false);
+		addressBox = new AddressEditBox(this, font, itemsX + 1, orderY + rowHeight + 10, 120, 9);
 		addressBox.setTextColor(0xffffff);
 		if (initial)
 			addressBox.setValue(blockEntity.previouslyUsedAddress);
@@ -164,6 +162,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen {
 	@Override
 	public void tick() {
 		super.tick();
+		addressBox.tick();
 
 		if (displayedItems.isEmpty())
 			emptyTicks++;
