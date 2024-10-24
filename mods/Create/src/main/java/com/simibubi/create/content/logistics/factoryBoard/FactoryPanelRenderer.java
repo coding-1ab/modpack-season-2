@@ -4,11 +4,12 @@ import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
+import com.simibubi.create.AllSpriteShifts;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.simibubi.create.foundation.render.RenderTypes;
 
 import net.createmod.catnip.render.CachedBuffers;
-import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -86,15 +87,14 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 		float glow = behaviour.bulb.getValue(partialTicks);
 		float yOffset = 0;
 
-		boolean flicker = AnimationTickHolder.getTicks() % 16 >= 8;
 		boolean success = connection.successTracker()
 			.booleanValue();
 
-		int color = behaviour.promisedSatisfied ? (flicker ? 0xBC75FF : 0x915BC6)
-			: behaviour.satisfied ? 0x85E59B : (flicker ? 0x7783A8 : 0x687291);
+		int color = behaviour.waitingForNetwork ? 0x5B3B3B
+			: behaviour.satisfied ? 0x9EFF7F : behaviour.promisedSatisfied ? 0x7FD6DB : 0x708DAD;
 		yOffset = behaviour.promisedSatisfied ? 1 : behaviour.satisfied ? 0 : 2;
 
-		if (glow > 0) {
+		if (!behaviour.waitingForNetwork && glow > 0 && !behaviour.satisfied) {
 			color = Color.mixColors(color, success ? 0xEAF2EC : 0xE5654B, glow);
 			if (!behaviour.satisfied && !behaviour.promisedSatisfied)
 				yOffset += (success ? 1 : 2) * glow;
@@ -109,16 +109,19 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 			currentX += direction.getStepX() * .5;
 			currentZ += direction.getStepZ() * .5;
 
-			CachedBuffers
+			SuperByteBuffer connectionSprite = CachedBuffers
 				.partial((i == 0 ? AllPartialModels.FACTORY_PANEL_ARROWS : AllPartialModels.FACTORY_PANEL_LINES)
 					.get(direction.getOpposite()), blockState)
 				.rotateCentered(yRot, Direction.UP)
 				.rotateCentered(xRot, Direction.EAST)
 				.rotateCentered(Mth.PI, Direction.UP)
 				.translate(behaviour.slot.xOffset * .5 + .25, 0, behaviour.slot.yOffset * .5 + .25)
-				.translate(currentX, (yOffset + (direction.get2DDataValue() % 2) * 0.125f) / 512f, currentZ)
-//				.nudge(behaviour.hashCode())
-				.color(color)
+				.translate(currentX, (yOffset + (direction.get2DDataValue() % 2) * 0.125f) / 512f, currentZ);
+
+			if (!behaviour.waitingForNetwork && !behaviour.satisfied && glow < 0.25)
+				connectionSprite.shiftUV(AllSpriteShifts.FACTORY_PANEL_CONNECTIONS);
+
+			connectionSprite.color(color)
 				.light(light)
 				.overlay(overlay)
 				.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));

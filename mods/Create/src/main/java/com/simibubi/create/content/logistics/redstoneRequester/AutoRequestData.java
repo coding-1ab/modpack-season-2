@@ -1,7 +1,6 @@
 package com.simibubi.create.content.logistics.redstoneRequester;
 
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
-import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.minecraft.ChatFormatting;
@@ -11,7 +10,6 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class AutoRequestData {
 
@@ -20,15 +18,6 @@ public class AutoRequestData {
 	public BlockPos targetOffset = BlockPos.ZERO;
 	public String targetDim = "";
 	public boolean isValid = false;
-
-	public void triggerRequest(Level level, BlockPos position) {
-		BlockPos tickerPos = position.offset(targetOffset);
-		if (!level.isLoaded(tickerPos))
-			return;
-		BlockEntity blockEntity = level.getBlockEntity(tickerPos);
-		if (blockEntity instanceof StockTickerBlockEntity stbe)
-			stbe.broadcastPackageRequest(encodedRequest, null, encodedTargetAdress);
-	}
 
 	public static AutoRequestData read(CompoundTag tag) {
 		AutoRequestData requestData = new AutoRequestData();

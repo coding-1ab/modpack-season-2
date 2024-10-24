@@ -9,11 +9,13 @@ public class LogisticsNetwork {
 	public UUID id;
 	public RequestPromiseQueue panelPromises;
 	public int totalLinks;
+	public int loadedLinks;
 	
 	public LogisticsNetwork(UUID networkId) {
 		id = networkId;
 		panelPromises = new RequestPromiseQueue();
 		totalLinks = 0;
+		loadedLinks = 0;
 	}
 
 	public CompoundTag write() {

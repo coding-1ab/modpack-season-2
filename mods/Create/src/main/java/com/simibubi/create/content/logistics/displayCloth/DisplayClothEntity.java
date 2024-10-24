@@ -265,8 +265,9 @@ public class DisplayClothEntity extends HangingEntity implements IEntityAddition
 
 		int smallestQuotient = Integer.MAX_VALUE;
 		for (BigItemStack entry : requestData.encodedRequest.stacks())
-			smallestQuotient = Math.min(smallestQuotient,
-				(recentSummary.getCountOf(entry.stack) - modifierSummary.getCountOf(entry.stack)) / entry.count);
+			if (entry.count > 0)
+				smallestQuotient = Math.min(smallestQuotient,
+					(recentSummary.getCountOf(entry.stack) - modifierSummary.getCountOf(entry.stack)) / entry.count);
 
 		return smallestQuotient;
 	}

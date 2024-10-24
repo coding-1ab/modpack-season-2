@@ -168,6 +168,7 @@ import com.simibubi.create.content.logistics.depot.DepotBlock;
 import com.simibubi.create.content.logistics.depot.EjectorBlock;
 import com.simibubi.create.content.logistics.depot.EjectorItem;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlockItem;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelModel;
 import com.simibubi.create.content.logistics.funnel.AndesiteFunnelBlock;
 import com.simibubi.create.content.logistics.funnel.BeltFunnelBlock;
@@ -185,6 +186,7 @@ import com.simibubi.create.content.logistics.packager.PackagerGenerator;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlock;
+import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlockItem;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlock;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BrassTunnelBlock;
@@ -1807,8 +1809,9 @@ public class AllBlocks {
 			.initialProperties(SharedProperties::stone)
 			.properties(p -> p.sound(SoundType.WOOD))
 			.transform(axeOrPickaxe())
-			.blockstate((c, p) -> p.simpleBlock(c.get(), AssetLookup.standardModel(c, p)))
-			.simpleItem()
+			.blockstate((c, p) -> BlockStateGen.simpleBlock(c, p, AssetLookup.forPowered(c, p)))
+			.item(RedstoneRequesterBlockItem::new)
+			.transform(customItemModel("_", "block"))
 			.register();
 
 	public static final BlockEntry<FactoryPanelBlock> FACTORY_PANEL =
@@ -1820,7 +1823,7 @@ public class AllBlocks {
 			.transform(pickaxeOnly())
 			.blockstate((c, p) -> p.horizontalFaceBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
 			.onRegister(CreateRegistrate.blockModel(() -> FactoryPanelModel::new))
-			.item(LogisticallyLinkedBlockItem::new)
+			.item(FactoryPanelBlockItem::new)
 			.model(AssetLookup::customItemModel)
 			.build()
 			.register();
@@ -2496,6 +2499,17 @@ public class AllBlocks {
 			.tag(Tags.Items.STORAGE_BLOCKS)
 			.build()
 			.lang("Block of Cardboard")
+			.register();
+	
+	public static final BlockEntry<CardboardBlock> BOUND_CARDBOARD_BLOCK =
+		REGISTRATE.block("bound_cardboard_block", CardboardBlock::new)
+			.initialProperties(() -> Blocks.MUSHROOM_STEM)
+			.properties(p -> p.mapColor(MapColor.COLOR_BROWN)
+				.ignitedByLava())
+			.transform(axeOnly())
+			.blockstate(BlockStateGen.horizontalAxisBlockProvider(false))
+			.simpleItem()
+			.lang("Bound block of Cardboard")
 			.register();
 
 	public static final BlockEntry<ExperienceBlock> EXPERIENCE_BLOCK =

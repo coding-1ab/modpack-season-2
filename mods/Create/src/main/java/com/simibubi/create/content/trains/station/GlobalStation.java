@@ -195,14 +195,17 @@ public class GlobalStation extends SingleBlockEntityEdgePoint {
 				for (Entry<BlockPos, GlobalPackagePort> entry : connectedPorts.entrySet()) {
 					GlobalPackagePort port = entry.getValue();
 					BlockPos pos = entry.getKey();
+					PostboxBlockEntity box = null;
 
 					if (!PackageItem.matchAddress(stack, port.address))
 						continue;
 
 					IItemHandler postboxInventory = port.offlineBuffer;
 					if (level != null && level.isLoaded(pos)
-						&& level.getBlockEntity(pos) instanceof PostboxBlockEntity ppbe)
+						&& level.getBlockEntity(pos) instanceof PostboxBlockEntity ppbe) {
 						postboxInventory = ppbe.inventory;
+						box = ppbe;
+					}
 
 					ItemStack result = ItemHandlerHelper.insertItemStacked(postboxInventory, stack, false);
 					if (!result.isEmpty())
@@ -210,6 +213,9 @@ public class GlobalStation extends SingleBlockEntityEdgePoint {
 
 					Create.RAILWAYS.markTracksDirty();
 					carriageInventory.setStackInSlot(slot, ItemStack.EMPTY);
+					if (box != null)
+						box.spawnParticles();
+					
 					break;
 				}
 			}
@@ -218,11 +224,14 @@ public class GlobalStation extends SingleBlockEntityEdgePoint {
 			for (Entry<BlockPos, GlobalPackagePort> entry : connectedPorts.entrySet()) {
 				GlobalPackagePort port = entry.getValue();
 				BlockPos pos = entry.getKey();
+				PostboxBlockEntity box = null;
 
 				IItemHandlerModifiable postboxInventory = port.offlineBuffer;
 				if (level != null && level.isLoaded(pos)
-					&& level.getBlockEntity(pos) instanceof PostboxBlockEntity ppbe)
+					&& level.getBlockEntity(pos) instanceof PostboxBlockEntity ppbe) {
 					postboxInventory = ppbe.inventory;
+					box = ppbe;
+				}
 
 				for (int slot = 0; slot < postboxInventory.getSlots(); slot++) {
 					ItemStack stack = postboxInventory.getStackInSlot(slot);
@@ -237,6 +246,8 @@ public class GlobalStation extends SingleBlockEntityEdgePoint {
 
 					postboxInventory.setStackInSlot(slot, ItemStack.EMPTY);
 					Create.RAILWAYS.markTracksDirty();
+					if (box != null)
+						box.spawnParticles();
 				}
 			}
 

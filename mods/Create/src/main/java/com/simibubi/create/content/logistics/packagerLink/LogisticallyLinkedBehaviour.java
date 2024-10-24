@@ -38,6 +38,17 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 	public UUID freqId;
 
 	private boolean addedGlobally = false;
+	private boolean loadedGlobally = false;
+	private boolean global = false;
+
+	//
+
+	public LogisticallyLinkedBehaviour(SmartBlockEntity be, boolean global) {
+		super(be);
+		this.global = global;
+		linkId = LINK_ID_GENERATOR.getAndIncrement();
+		freqId = UUID.randomUUID();
+	}
 
 	//
 
@@ -117,14 +128,10 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 
 	//
 
-	public LogisticallyLinkedBehaviour(SmartBlockEntity be) {
-		super(be);
-		linkId = LINK_ID_GENERATOR.getAndIncrement();
-		freqId = UUID.randomUUID();
-	}
-
 	@Override
 	public void unload() {
+		if (loadedGlobally && global)
+			Create.LOGISTICS.linkInvalidated(freqId);
 		super.unload();
 		remove(this);
 	}
@@ -139,17 +146,26 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 		super.initialize();
 		if (getWorld().isClientSide)
 			return;
-		if (!addedGlobally) {
+
+		if (!loadedGlobally && global) {
+			loadedGlobally = true;
+			Create.LOGISTICS.linkLoaded(freqId);
+		}
+
+		if (!addedGlobally && global) {
 			addedGlobally = true;
 			blockEntity.setChanged();
-			Create.LOGISTICS.linkAdded(freqId);
+			if (blockEntity instanceof PackagerLinkBlockEntity)
+				Create.LOGISTICS.linkAdded(freqId);
 		}
+
 	}
 
 	@Override
 	public void destroy() {
 		super.destroy();
-		Create.LOGISTICS.linkRemoved(freqId);
+		if (addedGlobally && global)
+			Create.LOGISTICS.linkRemoved(freqId);
 	}
 
 	public void redstonePowerChanged(int power) {

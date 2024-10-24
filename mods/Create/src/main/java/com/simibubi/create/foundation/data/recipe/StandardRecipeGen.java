@@ -115,16 +115,29 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.pattern("CCC")
 				.pattern("CCC")
 				.pattern("CCC")),
-			
-		CARDBOARD_BLOCK = create(AllBlocks.CARDBOARD_BLOCK).unlockedBy(AllItems.CARDBOARD::get)
-			.viaShaped(b -> b.define('C', AllItems.CARDBOARD.get())
+
+		CARDBOARD_BLOCK = create(AllBlocks.CARDBOARD_BLOCK).unlockedBy(I::cardboard)
+			.viaShaped(b -> b.define('C', I.cardboard())
 				.pattern("CC")
 				.pattern("CC")),
-		
+
+		BOUND_CARDBOARD_BLOCK = create(AllBlocks.BOUND_CARDBOARD_BLOCK).returns(8)
+			.unlockedBy(I::cardboard)
+			.viaShaped(b -> b.define('C', AllBlocks.CARDBOARD_BLOCK.get())
+				.define('S', Tags.Items.STRING)
+				.pattern("CCC")
+				.pattern("CSC")
+				.pattern("CCC")),
+
 		CARDBOARD_FROM_BLOCK = create(AllItems.CARDBOARD).withSuffix("_from_block")
 			.returns(4)
-			.unlockedBy(AllItems.CARDBOARD::get)
+			.unlockedBy(I::cardboard)
 			.viaShapeless(b -> b.requires(AllBlocks.CARDBOARD_BLOCK.get())),
+
+		CARDBOARD_FROM_BOUND_BLOCK = create(AllItems.CARDBOARD).withSuffix("_from_bound_block")
+			.returns(4)
+			.unlockedBy(I::cardboard)
+			.viaShapeless(b -> b.requires(AllBlocks.BOUND_CARDBOARD_BLOCK.get())),
 
 		BRASS_COMPACTING =
 			metalCompacting(ImmutableList.of(AllItems.BRASS_NUGGET, AllItems.BRASS_INGOT, AllBlocks.BRASS_BLOCK),
@@ -1091,6 +1104,28 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 		FILTER_CLEAR = clearData(AllItems.FILTER), ATTRIBUTE_FILTER_CLEAR = clearData(AllItems.ATTRIBUTE_FILTER),
 		DISPLAY_CLOTH_CLEAR = clearData(AllItems.DISPLAY_CLOTH),
 
+		CARDBOARD_HELMET = create(AllItems.CARDBOARD_HELMET).unlockedBy(I::cardboard)
+			.viaShaped(b -> b.define('P', I.cardboard())
+				.pattern("PPP")
+				.pattern("P P")),
+
+		CARDBOARD_CHESTPLATE = create(AllItems.CARDBOARD_CHESTPLATE).unlockedBy(I::cardboard)
+			.viaShaped(b -> b.define('P', I.cardboard())
+				.pattern("P P")
+				.pattern("PPP")
+				.pattern("PPP")),
+
+		CARDBOARD_LEGGINGS = create(AllItems.CARDBOARD_LEGGINGS).unlockedBy(I::cardboard)
+			.viaShaped(b -> b.define('P', I.cardboard())
+				.pattern("PPP")
+				.pattern("P P")
+				.pattern("P P")),
+
+		CARDBOARD_BOOTS = create(AllItems.CARDBOARD_BOOTS).unlockedBy(I::cardboard)
+			.viaShaped(b -> b.define('P', I.cardboard())
+				.pattern("P P")
+				.pattern("P P")),
+
 		DIVING_HELMET = create(AllItems.COPPER_DIVING_HELMET).unlockedByTag(I::copper)
 			.viaShaped(b -> b.define('G', Tags.Items.GLASS)
 				.define('P', I.copper())
@@ -1127,6 +1162,24 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 		SLIME_BALL = create(() -> Items.SLIME_BALL).unlockedBy(AllItems.DOUGH::get)
 			.viaShapeless(b -> b.requires(AllItems.DOUGH.get())
 				.requires(Tags.Items.DYES_LIME)),
+
+		BOOK = create(() -> Items.BOOK).unlockedBy(I::cardboard)
+			.viaShapeless(b -> b.requires(I.cardboard())
+				.requires(Items.PAPER)
+				.requires(Items.PAPER)
+				.requires(Items.PAPER)),
+
+		NAME_TAG = create(() -> Items.NAME_TAG).unlockedBy(I::cardboard)
+			.viaShapeless(b -> b.requires(Tags.Items.DYES_BLACK)
+				.requires(Tags.Items.STRING)
+				.requires(I.cardboard())),
+
+		ITEM_FRAME = create(() -> Items.ITEM_FRAME).unlockedBy(I::cardboard)
+			.viaShaped(b -> b.define('S', Tags.Items.RODS_WOODEN)
+				.define('P', I.cardboard())
+				.pattern("SSS")
+				.pattern("SPS")
+				.pattern("SSS")),
 
 		TREE_FERTILIZER = create(AllItems.TREE_FERTILIZER).returns(2)
 			.unlockedBy(() -> Items.BONE_MEAL)

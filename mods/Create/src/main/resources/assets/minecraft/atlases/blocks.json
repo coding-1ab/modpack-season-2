@@ -20,6 +20,10 @@
       "type": "single",
       "resource": "create:block/factory_panel_connections"
     },
+	{
+      "type": "single",
+      "resource": "create:block/factory_panel_connections_animated"
+    },
     {
       "type": "single",
       "resource": "create:entity/display_cloth"

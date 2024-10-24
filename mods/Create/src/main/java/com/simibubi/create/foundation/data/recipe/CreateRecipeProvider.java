@@ -123,6 +123,10 @@ public abstract class CreateRecipeProvider extends RecipeProvider {
 		static ItemLike brassCasing() {
 			return AllBlocks.BRASS_CASING.get();
 		}
+		
+		static ItemLike cardboard() {
+			return AllItems.CARDBOARD.get();
+		}
 
 		static ItemLike railwayCasing() {
 			return AllBlocks.RAILWAY_CASING.get();

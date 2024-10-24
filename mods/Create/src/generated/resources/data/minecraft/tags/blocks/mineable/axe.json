@@ -131,6 +131,7 @@
     "create:green_seat",
     "create:red_seat",
     "create:black_seat",
-    "create:cardboard_block"
+    "create:cardboard_block",
+    "create:bound_cardboard_block"
   ]
 }

@@ -40,6 +40,7 @@ import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPointHan
 import com.simibubi.create.content.kinetics.turntable.TurntableHandler;
 import com.simibubi.create.content.logistics.depot.EjectorTargetHandler;
 import com.simibubi.create.content.logistics.displayCloth.DisplayClothOverlayRenderer;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelConnectionHandler;
 import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedClientHandler;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
@@ -185,6 +186,7 @@ public class ClientEvents {
 		LogisticallyLinkedClientHandler.tick();
 		DisplayClothOverlayRenderer.tick();
 		CardboardArmorStealthOverlay.clientTick();
+		FactoryPanelConnectionHandler.clientTick();
 	}
 
 	@SubscribeEvent

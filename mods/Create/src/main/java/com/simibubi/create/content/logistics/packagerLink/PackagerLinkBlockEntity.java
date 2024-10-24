@@ -63,7 +63,7 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-		behaviours.add(behaviour = new LogisticallyLinkedBehaviour(this));
+		behaviours.add(behaviour = new LogisticallyLinkedBehaviour(this, true));
 	}
 
 	@Override

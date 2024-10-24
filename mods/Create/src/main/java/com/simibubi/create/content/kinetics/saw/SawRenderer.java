@@ -131,6 +131,7 @@ public class SawRenderer extends SafeBlockEntityRenderer<SawBlockEntity> {
 		if (alongZ)
 			ms.mulPose(Axis.YP.rotationDegrees(90));
 		ms.translate(outputs <= 1 ? .5 : .25, 0, offset);
+		ms.translate(alongZ ? -1 : 0, 0, 0);
 
 		int renderedI = 0;
 		for (int i = 0; i < be.inventory.getSlots(); i++) {

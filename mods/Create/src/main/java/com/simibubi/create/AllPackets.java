@@ -43,6 +43,7 @@ import com.simibubi.create.content.equipment.potatoCannon.PotatoCannonPacket;
 import com.simibubi.create.content.equipment.potatoCannon.PotatoProjectileTypeManager;
 import com.simibubi.create.content.equipment.symmetryWand.ConfigureSymmetryWandPacket;
 import com.simibubi.create.content.equipment.symmetryWand.SymmetryEffectPacket;
+import com.simibubi.create.content.equipment.tool.KnockbackPacket;
 import com.simibubi.create.content.equipment.toolbox.ToolboxDisposeAllPacket;
 import com.simibubi.create.content.equipment.toolbox.ToolboxEquipPacket;
 import com.simibubi.create.content.equipment.zapper.ZapperBeamPacket;
@@ -68,6 +69,7 @@ import com.simibubi.create.content.logistics.filter.FilterScreenPacket;
 import com.simibubi.create.content.logistics.funnel.FunnelFlapPacket;
 import com.simibubi.create.content.logistics.packagePort.PackagePortConfigurationPacket;
 import com.simibubi.create.content.logistics.packagePort.PackagePortPlacementPacket;
+import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterConfigurationPacket;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalStockRequestPacket;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalStockResponsePacket;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrderRequestPacket;
@@ -195,6 +197,7 @@ public enum AllPackets {
 	TRAIN_MAP_REQUEST(TrainMapSyncRequestPacket.class, TrainMapSyncRequestPacket::new, PLAY_TO_SERVER),
 	CONNECT_FACTORY_PANEL(FactoryPanelConnectionPacket.class, FactoryPanelConnectionPacket::new, PLAY_TO_SERVER),
 	CONFIGURE_FACTORY_PANEL(FactoryPanelConfigurationPacket.class, FactoryPanelConfigurationPacket::new, PLAY_TO_SERVER),
+	CONFIGURE_REDSTONE_REQUESTER(RedstoneRequesterConfigurationPacket.class, RedstoneRequesterConfigurationPacket::new, PLAY_TO_SERVER),
 
 	// Server to Client
 	SYMMETRY_EFFECT(SymmetryEffectPacket.class, SymmetryEffectPacket::new, PLAY_TO_CLIENT),
@@ -245,6 +248,7 @@ public enum AllPackets {
 	LOGISTICS_STOCK_RESPONSE(LogisticalStockResponsePacket.class, LogisticalStockResponsePacket::new, PLAY_TO_CLIENT),
 	DISPLAY_CLOTH_CLIENTBOUND(DisplayClothPacketToClient.class, DisplayClothPacketToClient::new, PLAY_TO_CLIENT),
 	FACTORY_PANEL_EFFECT(FactoryPanelEffectPacket.class, FactoryPanelEffectPacket::new, PLAY_TO_CLIENT),
+	KNOCKBACK(KnockbackPacket.class, KnockbackPacket::new, PLAY_TO_CLIENT),
 	TRAIN_MAP_SYNC(TrainMapSyncPacket.class, TrainMapSyncPacket::new, PLAY_TO_CLIENT);
 
 	static {

@@ -2,12 +2,18 @@ package com.simibubi.create.content.logistics.packagePort.postbox;
 
 import java.lang.ref.WeakReference;
 
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
 import com.simibubi.create.content.trains.station.GlobalStation;
 import com.simibubi.create.content.trains.station.GlobalStation.GlobalPackagePort;
 
+import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,9 +22,62 @@ public class PostboxBlockEntity extends PackagePortBlockEntity {
 
 	public WeakReference<GlobalStation> trackedGlobalStation;
 
+	public LerpedFloat flag;
+	
+	private boolean sendParticles;
+
 	public PostboxBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 		trackedGlobalStation = new WeakReference<GlobalStation>(null);
+		flag = LerpedFloat.linear()
+			.startWithValue(0);
+	}
+
+	@Override
+	public void tick() {
+		super.tick();
+		if (!level.isClientSide) {
+			if (sendParticles)
+				sendData();
+			return;
+		}
+
+		float currentTarget = flag.getChaseTarget();
+		if (currentTarget == 0 || flag.settled()) {
+			int target = inventory.isEmpty() ? 0 : 1;
+			if (target != currentTarget) {
+				flag.chase(target, 0.1f, Chaser.LINEAR);
+				if (target == 1)
+					AllSoundEvents.CONTRAPTION_ASSEMBLE.playAt(level, worldPosition, 1, 2, true);
+			}
+		}
+		boolean settled = flag.getValue() > .15f;
+		flag.tickChaser();
+		if (currentTarget == 0 && settled != flag.getValue() > .15f)
+			AllSoundEvents.CONTRAPTION_DISASSEMBLE.playAt(level, worldPosition, 0.75f, 1.5f, true);
+		
+		if (sendParticles) {
+			sendParticles = false;
+			BoneMealItem.addGrowthParticles(level, worldPosition, 40);
+		}
+	}
+	
+	public void spawnParticles() {
+		sendParticles = true;
+	}
+	
+	@Override
+	protected void write(CompoundTag tag, boolean clientPacket) {
+		super.write(tag, clientPacket);
+		if (clientPacket && sendParticles)
+			NBTHelper.putMarker(tag, "Particles");
+		sendParticles = false;
+	}
+	
+	@Override
+	protected void read(CompoundTag tag, boolean clientPacket) {
+		super.read(tag, clientPacket);
+		sendParticles = clientPacket && tag.contains("Particles");
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 
 import org.joml.Math;
 
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.BigItemStack;
@@ -63,6 +64,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 	public boolean satisfied;
 	public boolean promisedSatisfied;
+	public boolean waitingForNetwork;
 	public String recipeAddress;
 	public int recipeOutput;
 	public LerpedFloat bulb;
@@ -71,6 +73,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public boolean forceClearPromises;
 
 	private boolean active;
+	private int lastReportedUnloadedLinks;
 	private int lastReportedLevelInStorage;
 	private int lastReportedPromises;
 	private int timer;
@@ -83,6 +86,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		this.count = 0;
 		this.satisfied = false;
 		this.promisedSatisfied = false;
+		this.waitingForNetwork = false;
 		this.recipeAddress = "";
 		this.recipeOutput = 1;
 		this.active = false;
@@ -122,17 +126,22 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		int inStorage = getLevelInStorage();
 		int promised = getPromised();
 		int demand = getAmount() * (upTo ? 1 : filter.getMaxStackSize());
+		int unloadedLinkCount = getUnloadedLinks();
 		boolean shouldSatisfy = filter.isEmpty() || inStorage >= demand;
 		boolean shouldPromiseSatisfy = filter.isEmpty() || inStorage + promised >= demand;
+		boolean shouldWait = unloadedLinkCount > 0;
 
-		if (lastReportedLevelInStorage == inStorage && lastReportedPromises == promised && satisfied == shouldSatisfy
-			&& promisedSatisfied == shouldPromiseSatisfy)
+		if (lastReportedLevelInStorage == inStorage && lastReportedPromises == promised
+			&& lastReportedUnloadedLinks == unloadedLinkCount && satisfied == shouldSatisfy
+			&& promisedSatisfied == shouldPromiseSatisfy && waitingForNetwork == shouldWait)
 			return;
 
 		lastReportedLevelInStorage = inStorage;
 		satisfied = shouldSatisfy;
 		lastReportedPromises = promised;
 		promisedSatisfied = shouldPromiseSatisfy;
+		lastReportedUnloadedLinks = unloadedLinkCount;
+		waitingForNetwork = shouldWait;
 		blockEntity.sendData();
 	}
 
@@ -141,7 +150,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			return;
 		if (!(blockEntity instanceof FactoryPanelBlockEntity fpbe))
 			return;
-		if (satisfied || promisedSatisfied)
+		if (satisfied || promisedSatisfied || waitingForNetwork)
 			return;
 		if (timer > 0) {
 			timer = Math.min(timer, REQUEST_INTERVAL);
@@ -204,17 +213,17 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 	@Override
 	public void onShortInteract(Player player, InteractionHand hand, Direction side, BlockHitResult hitResult) {
-		if (getFilter().isEmpty()) {
+		if (player.level().isClientSide)
+			if (FactoryPanelConnectionHandler.panelClicked(getWorld(), player, this))
+				return;
+
+		if (getFilter().isEmpty() && !AllBlocks.FACTORY_PANEL.isIn(player.getItemInHand(hand))) {
 			super.onShortInteract(player, hand, side, hitResult);
 			return;
 		}
 
-		if (!player.level().isClientSide)
-			return;
-		if (FactoryPanelConnectionHandler.panelClicked(getWorld(), player, getPanelPosition()))
-			return;
-
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> displayScreen(player));
+		if (player.level().isClientSide)
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> displayScreen(player));
 	}
 
 	public void enable() {
@@ -262,6 +271,13 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		super.destroy();
 	}
 
+	public int getUnloadedLinks() {
+		if (getWorld().isClientSide())
+			return lastReportedUnloadedLinks;
+		UUID freqId = ((StockCheckingBlockEntity) blockEntity).behaviour.freqId;
+		return Create.LOGISTICS.getUnloadedLinkCount(freqId);
+	}
+
 	public int getLevelInStorage() {
 		if (getWorld().isClientSide())
 			return lastReportedLevelInStorage;
@@ -306,8 +322,10 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 		panelTag.putInt("LastLevel", lastReportedLevelInStorage);
 		panelTag.putInt("LastPromised", lastReportedPromises);
+		panelTag.putInt("LastUnloadedLinks", lastReportedUnloadedLinks);
 		panelTag.putBoolean("Satisfied", satisfied);
 		panelTag.putBoolean("PromisedSatisfied", promisedSatisfied);
+		panelTag.putBoolean("Waiting", waitingForNetwork);
 		panelTag.put("Targeting", NBTHelper.writeCompoundList(targeting, FactoryPanelPosition::write));
 		panelTag.put("TargetedBy", NBTHelper.writeCompoundList(targetedBy.values(), FactoryPanelConnection::write));
 		panelTag.putString("RecipeAddress", recipeAddress);
@@ -331,8 +349,10 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		upTo = panelTag.getBoolean("UpTo");
 		lastReportedLevelInStorage = panelTag.getInt("LastLevel");
 		lastReportedPromises = panelTag.getInt("LastPromised");
+		lastReportedUnloadedLinks = panelTag.getInt("LastUnloadedLinks");
 		satisfied = panelTag.getBoolean("Satisfied");
 		promisedSatisfied = panelTag.getBoolean("PromisedSatisfied");
+		waitingForNetwork = panelTag.getBoolean("Waiting");
 		promiseClearingInterval = panelTag.getInt("PromiseClearingInterval");
 
 		targeting.clear();
@@ -411,6 +431,9 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 				key += " (In Progress)";
 		}
 
+		if (waitingForNetwork)
+			key = "Some links are not loaded";
+
 		return CreateLang.temporaryText(key)
 			.component();
 	}
@@ -422,14 +445,16 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 	@Override
 	public MutableComponent getTip() {
-		return CreateLang.translateDirect(
-			filter.isEmpty() ? "logistics.filter.click_to_set" : "logistics.factory_panel.click_to_configure");
+		return CreateLang
+			.translateDirect(filter.isEmpty() ? "logistics.filter.click_to_set" : "factory_panel.click_to_configure");
 	}
 
 	@Override
 	public MutableComponent getCountLabelForValueBox() {
 		if (filter.isEmpty())
 			return Components.empty();
+		if (waitingForNetwork)
+			return Components.literal("?");
 
 		int inStorage = getLevelInStorage();
 		int promised = getPromised();
@@ -442,8 +467,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		}
 
 		return CreateLang.text("   " + inStorage + stacks)
-			.color(inStorage >= count ? 0xD7FFA8 : 0xFFBFA8)
-			.add(CreateLang.text(promised == 0 ? "" : "+" + promised))
+			.color(satisfied ? 0xD7FFA8 : promisedSatisfied ? 0xffcd75 : 0xFFBFA8)
+			.add(CreateLang.text(promised == 0 ? "" : "\u23F6"))
 			.add(CreateLang.text("/")
 				.style(ChatFormatting.WHITE))
 			.add(CreateLang.text(count + stacks + "  ")

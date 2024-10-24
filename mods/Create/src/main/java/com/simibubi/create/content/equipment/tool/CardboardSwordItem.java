@@ -5,9 +5,11 @@ import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 
 import com.simibubi.create.AllItems;
+import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -33,6 +35,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.network.PacketDistributor;
 
 @EventBusSubscriber
 public class CardboardSwordItem extends SwordItem {
@@ -95,16 +98,27 @@ public class CardboardSwordItem extends SwordItem {
 		if (knockbackStrength <= 0)
 			return;
 
-		target.stopRiding();
-		target.knockback(knockbackStrength * 0.5F, Mth.sin(livingAttacker.getYRot() * Mth.DEG_TO_RAD),
-			-Mth.cos(livingAttacker.getYRot() * Mth.DEG_TO_RAD));
-		if ((target.getClassification(false) == MobCategory.MISC
-			|| target.getClassification(false) == MobCategory.CREATURE) && !(target instanceof Player))
+		float yRot = livingAttacker.getYRot();
+		knockback(target, knockbackStrength, yRot);
+
+		boolean targetIsPlayer = target instanceof Player;
+		MobCategory targetType = target.getClassification(false);
+
+		if (target instanceof ServerPlayer sp)
+			AllPackets.getChannel()
+				.send(PacketDistributor.PLAYER.with(() -> sp), new KnockbackPacket(yRot, (float) knockbackStrength));
+
+		if ((targetType == MobCategory.MISC || targetType == MobCategory.CREATURE) && !targetIsPlayer)
 			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 9, true, false, false));
 
 		livingAttacker.setDeltaMovement(livingAttacker.getDeltaMovement()
 			.multiply(0.6D, 1.0D, 0.6D));
 		livingAttacker.setSprinting(false);
+	}
+
+	public static void knockback(LivingEntity target, double knockbackStrength, float yRot) {
+		target.stopRiding();
+		target.knockback(knockbackStrength * 0.5F, Mth.sin(yRot * Mth.DEG_TO_RAD), -Mth.cos(yRot * Mth.DEG_TO_RAD));
 	}
 
 	@Override

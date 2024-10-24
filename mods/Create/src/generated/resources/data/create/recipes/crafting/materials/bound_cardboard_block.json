@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "create:cardboard_block"
+    },
+    "S": {
+      "tag": "forge:string"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "CSC",
+    "CCC"
+  ],
+  "result": {
+    "count": 8,
+    "item": "create:bound_cardboard_block"
+  },
+  "show_notification": true
+}

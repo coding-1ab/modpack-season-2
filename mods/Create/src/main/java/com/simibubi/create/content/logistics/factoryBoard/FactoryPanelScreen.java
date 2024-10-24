@@ -97,7 +97,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			int slot = behaviour.targetedBy.size();
 			newInputButton = new IconButton(x + 19 + (slot % 3 * 18), y + 27 + (slot / 3 * 18), AllIcons.I_ADD);
 			newInputButton.withCallback(() -> {
-				FactoryPanelConnectionHandler.connectingFrom = behaviour.getPanelPosition();
+				FactoryPanelConnectionHandler.startConnection(behaviour);
 				minecraft.setScreen(null);
 			});
 			newInputButton.setToolTip(CreateLang.temporaryText("Connect an input panel")
@@ -155,46 +155,61 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			int inputX = x + 20 + (slot % 3 * 18);
 			int inputY = y + 28 + (slot / 3 * 18);
 			graphics.renderItem(itemStack.stack, inputX, inputY);
-			graphics.renderItemDecorations(font, behaviour.getFilter(), inputX, inputY, itemStack.count + "");
+			if (!itemStack.stack.isEmpty())
+				graphics.renderItemDecorations(font, itemStack.stack, inputX, inputY, itemStack.count + "");
+
 			slot++;
+			
 			if (mouseX >= inputX - 1 && mouseX < inputX - 1 + 18 && mouseY >= inputY - 1 && mouseY < inputY - 1 + 18) {
-				graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Send ")
-					.add(CreateLang.itemName(itemStack.stack)
-						.add(CreateLang.text(" x" + itemStack.count)))
+				if (itemStack.stack.isEmpty()) {
+					graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Empty panel")
+						.color(ScrollInput.HEADER_RGB)
+						.component(),
+						CreateLang.temporaryText("Left-Click to disconnect")
+							.style(ChatFormatting.DARK_GRAY)
+							.style(ChatFormatting.ITALIC)
+							.component()),
+						mouseX, mouseY);
+				} else
+					graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Send ")
+						.add(CreateLang.itemName(itemStack.stack)
+							.add(CreateLang.text(" x" + itemStack.count)))
+						.color(ScrollInput.HEADER_RGB)
+						.component(),
+						CreateLang.temporaryText("Scroll to change amount")
+							.style(ChatFormatting.DARK_GRAY)
+							.style(ChatFormatting.ITALIC)
+							.component(),
+						CreateLang.temporaryText("Left-Click to disconnect")
+							.style(ChatFormatting.DARK_GRAY)
+							.style(ChatFormatting.ITALIC)
+							.component()),
+						mouseX, mouseY);
+			}
+		}
+
+		if (inputConfig.size() > 0) {
+			AllGuiTextures.FACTORY_PANEL_ARROW.render(graphics,
+				x + 70 + Mth.clamp(behaviour.targetedBy.size(), 0, 2) * 9, y + 16 + middleHeight() / 2);
+			int outputX = x + 128;
+			int outputY = y + 16 + middleHeight() / 2;
+			AllGuiTextures.FACTORY_PANEL_SLOT_FRAME.render(graphics, outputX - 2, outputY - 2);
+			graphics.renderItem(outputConfig.stack, outputX, outputY);
+			graphics.renderItemDecorations(font, behaviour.getFilter(), outputX, outputY, outputConfig.count + "");
+
+			if (mouseX >= outputX - 1 && mouseX < outputX - 1 + 18 && mouseY >= outputY - 1
+				&& mouseY < outputY - 1 + 18) {
+				graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Expect ")
+					.add(CreateLang.itemName(outputConfig.stack)
+						.add(CreateLang.text(" x" + outputConfig.count)))
 					.color(ScrollInput.HEADER_RGB)
 					.component(),
 					CreateLang.temporaryText("Scroll to change amount")
 						.style(ChatFormatting.DARK_GRAY)
 						.style(ChatFormatting.ITALIC)
-						.component(),
-					CreateLang.temporaryText("Left-Click to disconnect")
-						.style(ChatFormatting.DARK_GRAY)
-						.style(ChatFormatting.ITALIC)
 						.component()),
 					mouseX, mouseY);
 			}
-		}
-
-		AllGuiTextures.FACTORY_PANEL_ARROW.render(graphics, x + 70 + Mth.clamp(behaviour.targetedBy.size(), 0, 2) * 9,
-			y + 16 + middleHeight() / 2);
-		int outputX = x + 128;
-		int outputY = y + 16 + middleHeight() / 2;
-		AllGuiTextures.FACTORY_PANEL_SLOT_FRAME.render(graphics, outputX - 2, outputY - 2);
-
-		graphics.renderItem(outputConfig.stack, outputX, outputY);
-		graphics.renderItemDecorations(font, behaviour.getFilter(), outputX, outputY, outputConfig.count + "");
-
-		if (mouseX >= outputX - 1 && mouseX < outputX - 1 + 18 && mouseY >= outputY - 1 && mouseY < outputY - 1 + 18) {
-			graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Expect ")
-				.add(CreateLang.itemName(outputConfig.stack)
-					.add(CreateLang.text(" x" + outputConfig.count)))
-				.color(ScrollInput.HEADER_RGB)
-				.component(),
-				CreateLang.temporaryText("Scroll to change amount")
-					.style(ChatFormatting.DARK_GRAY)
-					.style(ChatFormatting.ITALIC)
-					.component()),
-				mouseX, mouseY);
 		}
 
 		PoseStack ms = graphics.pose();
@@ -338,19 +353,23 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			int inputY = y + 28 + (i / 3 * 18);
 			if (mouseX >= inputX && mouseX < inputX + 16 && mouseY >= inputY && mouseY < inputY + 16) {
 				BigItemStack itemStack = inputConfig.get(i);
+				if (itemStack.stack.isEmpty())
+					return true;
 				itemStack.count =
 					Mth.clamp((int) (itemStack.count + Math.signum(pDelta) * (hasShiftDown() ? 10 : 1)), 1, 64);
 				return true;
 			}
 		}
 
-		int outputX = x + 128;
-		int outputY = y + 16 + middleHeight() / 2;
-		if (mouseX >= outputX && mouseX < outputX + 16 && mouseY >= outputY && mouseY < outputY + 16) {
-			BigItemStack itemStack = outputConfig;
-			itemStack.count =
-				Mth.clamp((int) (itemStack.count + Math.signum(pDelta) * (hasShiftDown() ? 10 : 1)), 1, 64);
-			return true;
+		if (inputConfig.size() > 0) {
+			int outputX = x + 128;
+			int outputY = y + 16 + middleHeight() / 2;
+			if (mouseX >= outputX && mouseX < outputX + 16 && mouseY >= outputY && mouseY < outputY + 16) {
+				BigItemStack itemStack = outputConfig;
+				itemStack.count =
+					Mth.clamp((int) (itemStack.count + Math.signum(pDelta) * (hasShiftDown() ? 10 : 1)), 1, 64);
+				return true;
+			}
 		}
 
 		return super.mouseScrolled(mouseX, mouseY, pDelta);
@@ -364,7 +383,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 	private void sendIt(@Nullable FactoryPanelPosition toRemove, boolean clearPromises) {
 		Map<FactoryPanelPosition, Integer> inputs = new HashMap<>();
-		if (inputs.size() == connections.size())
+		if (inputConfig.size() == connections.size())
 			for (int i = 0; i < inputConfig.size(); i++)
 				inputs.put(connections.get(i)
 					.from(), inputConfig.get(i).count);

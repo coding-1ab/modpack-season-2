@@ -6,6 +6,7 @@ import com.simibubi.create.content.contraptions.wrench.RadialWrenchHandler;
 import com.simibubi.create.content.equipment.toolbox.ToolboxHandlerClient;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInteractionHandler;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainPackageInteractionHandler;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelConnectionHandler;
 import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerClientHandler;
 import com.simibubi.create.content.trains.TrainHUD;
@@ -79,6 +80,11 @@ public class InputEvents {
 		if (key == mc.options.keyUse || key == mc.options.keyAttack) {
 			if (CreateClient.GLUE_HANDLER.onMouseInput(key == mc.options.keyAttack))
 				event.setCanceled(true);
+		}
+		
+		if (key == mc.options.keyUse && FactoryPanelConnectionHandler.onRightClick()) {
+			event.setCanceled(true);
+			return;
 		}
 
 		if (key == mc.options.keyPickItem) {

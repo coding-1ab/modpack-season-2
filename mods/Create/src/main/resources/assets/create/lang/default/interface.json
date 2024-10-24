@@ -979,6 +979,8 @@
 	"create.logistically_linked.connected": "Connected to other Transmitters successfully",
 	"create.logistically_linked.tooltip": "Frequency configured",
 	"create.logistically_linked.tooltip_clear": "Place in crafting grid to reset",
+	
+	"create.factory_panel.click_to_configure": "Click to specify a recipe",
 
 	"create.display_source.label": "Attached Label",
 	"create.display_source.combine_item_names": "Combine Item Names",
