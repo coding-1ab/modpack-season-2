@@ -10,21 +10,27 @@ import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import com.simibubi.create.content.equipment.goggles.IHaveHoveringInformation;
 import com.simibubi.create.content.logistics.BigItemStack;
+import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
-import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipulationBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.BlockFace;
 import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.NBTHelper;
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Containers;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -32,7 +38,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 
-public class StockTickerBlockEntity extends StockCheckingBlockEntity implements IHaveHoveringInformation {
+public class StockTickerBlockEntity extends StockCheckingBlockEntity implements IHaveHoveringInformation, MenuProvider {
 
 	// Player-interface Feature
 	protected List<BigItemStack> lastClientsideStockSnapshot;
@@ -41,12 +47,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 	protected String previouslyUsedAddress;
 	protected int activeLinks;
 	protected int ticksSinceLastUpdate;
-
-	// Auto-restock Feature
-	protected InvManipulationBehaviour observedInventory;
-	protected PackageOrder restockAmounts;
-	protected String restockAddress;
-	protected boolean powered;
+	protected List<ItemStack> categories;
 
 	// Shop feature
 	protected SmartInventory receivedPayments;
@@ -55,17 +56,9 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 	public StockTickerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 		previouslyUsedAddress = "";
-		restockAddress = "";
-		restockAmounts = PackageOrder.empty();
 		receivedPayments = new SmartInventory(27, this, 64, false);
 		capability = LazyOptional.of(() -> receivedPayments);
-	}
-
-	@Override
-	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-		super.addBehaviours(behaviours);
-		behaviours
-			.add(observedInventory = new InvManipulationBehaviour(this, (w, p, s) -> new BlockFace(p, Direction.DOWN)));
+		categories = new ArrayList<>();
 	}
 
 	public void refreshClientStockSnapshot() {
@@ -112,10 +105,8 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 	protected void write(CompoundTag tag, boolean clientPacket) {
 		super.write(tag, clientPacket);
 		tag.putString("PreviousAddress", previouslyUsedAddress);
-		tag.put("RestockAmounts", restockAmounts.write());
-		tag.putString("RestockAddress", restockAddress);
-		tag.putBoolean("Powered", powered);
 		tag.put("ReceivedPayments", receivedPayments.serializeNBT());
+		tag.put("Categories", NBTHelper.writeItemList(categories));
 
 		if (clientPacket)
 			tag.putInt("ActiveLinks", activeLinks);
@@ -125,72 +116,12 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 	protected void read(CompoundTag tag, boolean clientPacket) {
 		super.read(tag, clientPacket);
 		previouslyUsedAddress = tag.getString("PreviousAddress");
-		restockAmounts = PackageOrder.read(tag.getCompound("RestockAmounts"));
-		restockAddress = tag.getString("RestockAddress");
-		powered = tag.getBoolean("Powered");
 		receivedPayments.deserializeNBT(tag.getCompound("ReceivedPayments"));
+		categories = NBTHelper.readItemList(tag.getList("Categories", Tag.TAG_COMPOUND));
+		categories.removeIf(stack -> !stack.isEmpty() && !(stack.getItem() instanceof FilterItem));
 
 		if (clientPacket)
 			activeLinks = tag.getInt("ActiveLinks");
-	}
-
-	protected void takeInventoryStockSnapshot() {
-		restockAmounts = PackageOrder.empty();
-		IItemHandler inventory = observedInventory.getInventory();
-		if (inventory == null)
-			return;
-		restockAmounts = new PackageOrder(summariseObservedInventory().getStacksByCount());
-		List<BigItemStack> stacks = restockAmounts.stacks();
-		if (stacks.size() > 8)
-			stacks.subList(8, stacks.size())
-				.clear();
-		notifyUpdate();
-	}
-
-	private InventorySummary summariseObservedInventory() {
-		IItemHandler inventory = observedInventory.getInventory();
-		if (inventory == null)
-			return InventorySummary.EMPTY;
-		InventorySummary inventorySummary = new InventorySummary();
-		for (int i = 0; i < inventory.getSlots(); i++)
-			inventorySummary.add(inventory.getStackInSlot(i));
-		return inventorySummary;
-	}
-
-	protected void onRedstonePowerChanged() {
-		boolean hasNeighborSignal = level.hasNeighborSignal(worldPosition);
-		if (powered == hasNeighborSignal)
-			return;
-
-		if (hasNeighborSignal)
-			triggerRestock();
-
-		powered = hasNeighborSignal;
-		setChanged();
-	}
-
-	protected void triggerRestock() {
-		if (!observedInventory.hasInventory() || restockAmounts.isEmpty())
-			return;
-
-		InventorySummary presentStock = summariseObservedInventory();
-		List<BigItemStack> missingItems = new ArrayList<>();
-		for (BigItemStack required : restockAmounts.stacks()) {
-			int diff = required.count - presentStock.getCountOf(required.stack);
-			if (diff > 0)
-				missingItems.add(new BigItemStack(required.stack, diff));
-		}
-
-		if (missingItems.isEmpty())
-			return;
-
-		broadcastPackageRequest(new PackageOrder(missingItems), observedInventory.getInventory(), restockAddress);
-	}
-
-	protected void updateAutoRestockSettings(String address, PackageOrder amounts) {
-		restockAmounts = amounts;
-		restockAddress = address;
-		notifyUpdate();
 	}
 
 	public void receiveStockPacket(List<BigItemStack> stacks, boolean endOfTransmission) {
@@ -252,6 +183,10 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 	@Override
 	public void destroy() {
 		ItemHelper.dropContents(level, worldPosition, receivedPayments);
+		for (ItemStack filter : categories)
+			if (!filter.isEmpty() && filter.getItem() instanceof FilterItem)
+				Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
+					filter);
 		super.destroy();
 	}
 
@@ -259,6 +194,16 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 	public void invalidate() {
 		capability.invalidate();
 		super.invalidate();
+	}
+
+	@Override
+	public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
+		return StockKeeperCategoryMenu.create(pContainerId, pPlayerInventory, this);
+	}
+
+	@Override
+	public Component getDisplayName() {
+		return Components.empty();
 	}
 
 }

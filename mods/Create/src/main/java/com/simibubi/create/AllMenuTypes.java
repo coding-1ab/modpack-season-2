@@ -16,6 +16,8 @@ import com.simibubi.create.content.logistics.packagePort.PackagePortMenu;
 import com.simibubi.create.content.logistics.packagePort.PackagePortScreen;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterMenu;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterScreen;
+import com.simibubi.create.content.logistics.stockTicker.StockKeeperCategoryMenu;
+import com.simibubi.create.content.logistics.stockTicker.StockKeeperCategoryScreen;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerMenu;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerScreen;
 import com.simibubi.create.content.schematics.cannon.SchematicannonMenu;
@@ -61,6 +63,9 @@ public class AllMenuTypes {
 	
 	public static final MenuEntry<ScheduleMenu> SCHEDULE =
 		register("schedule", ScheduleMenu::new, () -> ScheduleScreen::new);
+	
+	public static final MenuEntry<StockKeeperCategoryMenu> STOCK_KEEPER_CATEGORY =
+		register("stock_keeper_category", StockKeeperCategoryMenu::new, () -> StockKeeperCategoryScreen::new);
 	
 	public static final MenuEntry<DisplayClothPricingMenu> DISPLAY_CLOTH =
 		register("display_cloth", DisplayClothPricingMenu::new, () -> DisplayClothPricingScreen::new);

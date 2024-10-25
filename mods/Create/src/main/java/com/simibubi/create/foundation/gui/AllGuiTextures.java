@@ -161,6 +161,15 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	FACTORY_PANEL_ARROW("restocker_and_requester", 27, 108, 22, 16),
 	FACTORY_PANEL_ARROW_FILLED("restocker_and_requester", 50, 108, 22, 16),
 	
+	STOCK_KEEPER_CATEGORY("stock_keeper_categories", 210, 190),
+	STOCK_KEEPER_CATEGORY_HEADER("stock_keeper_categories", 202, 15),
+	STOCK_KEEPER_CATEGORY_EDIT("stock_keeper_categories", 0, 216, 202, 38),
+	STOCK_KEEPER_CATEGORY_FOOTER("stock_keeper_categories", 0, 160, 210, 30),
+	STOCK_KEEPER_CATEGORY_NEW("stock_keeper_categories", 4, 194, 28, 17),
+	STOCK_KEEPER_CATEGORY_ENTRY("stock_keeper_categories", 39, 194, 169, 17),
+	STOCK_KEEPER_CATEGORY_UP("stock_keeper_categories", 211, 195, 8, 9),
+	STOCK_KEEPER_CATEGORY_DOWN("stock_keeper_categories", 211, 205, 8, 9),
+	
 	REDSTONE_REQUESTER("restocker_and_requester", 0, 134, 210, 100),
 
 	// JEI

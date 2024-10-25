@@ -6,10 +6,9 @@ import com.simibubi.create.AllShapes;
 import com.simibubi.create.foundation.block.IBE;
 
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
-import net.createmod.catnip.gui.ScreenOpener;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,7 +27,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.network.NetworkHooks;
 
 public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<StockTickerBlockEntity> {
 
@@ -64,25 +63,11 @@ public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<
 				return InteractionResult.SUCCESS;
 			}
 
-			if (!stbe.observedInventory.hasInventory())
-				return InteractionResult.PASS;
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> displayScreen(stbe, pPlayer));
+			if (pPlayer instanceof ServerPlayer sp && stbe.isKeeperPresent())
+				NetworkHooks.openScreen(sp, stbe, stbe.getBlockPos());
+
 			return InteractionResult.SUCCESS;
 		});
-	}
-
-	@Override
-	public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pNeighborBlock,
-		BlockPos pNeighborPos, boolean pMovedByPiston) {
-		if (pLevel.isClientSide())
-			return;
-		withBlockEntityDo(pLevel, pPos, StockTickerBlockEntity::onRedstonePowerChanged);
-	}
-
-	@OnlyIn(value = Dist.CLIENT)
-	protected void displayScreen(StockTickerBlockEntity be, Player player) {
-		if (player instanceof LocalPlayer)
-			ScreenOpener.open(new StockTickerAutoRequestScreen(be));
 	}
 
 	@Override

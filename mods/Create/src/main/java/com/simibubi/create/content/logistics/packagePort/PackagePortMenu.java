@@ -52,7 +52,7 @@ public class PackagePortMenu extends MenuBase<PackagePortBlockEntity> {
 		if (index < size) {
 			success = !moveItemStackTo(stack, size, slots.size(), false);
 		} else
-			success = !moveItemStackTo(stack, 0, size - 1, false);
+			success = !moveItemStackTo(stack, 0, size, false);
 
 		return success ? ItemStack.EMPTY : stack;
 	}
