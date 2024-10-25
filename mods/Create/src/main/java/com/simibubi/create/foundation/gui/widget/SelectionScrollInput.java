@@ -35,7 +35,7 @@ public class SelectionScrollInput extends ScrollInput {
 		if (title == null)
 			return;
 		toolTip.add(title.plainCopy()
-			.withStyle(s -> s.withColor(HEADER_RGB)));
+			.withStyle(s -> s.withColor(HEADER_RGB.getRGB())));
 		int min = Math.min(this.max - 16, state - 7);
 		int max = Math.max(this.min + 16, state + 8);
 		min = Math.max(min, this.min);
@@ -65,7 +65,7 @@ public class SelectionScrollInput extends ScrollInput {
 
 		if (hint != null)
 			toolTip.add(hint.plainCopy()
-				.withStyle(s -> s.withColor(HINT_RGB)));
+				.withStyle(s -> s.withColor(HINT_RGB.getRGB())));
 		toolTip.add(scrollToSelect.plainCopy()
 			.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
 	}

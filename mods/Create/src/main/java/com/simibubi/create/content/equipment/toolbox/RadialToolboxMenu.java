@@ -15,7 +15,6 @@ import com.simibubi.create.AllKeys;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.AllIcons;
-import com.simibubi.create.foundation.gui.CreateTheme;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import dev.engine_room.flywheel.lib.transform.TransformStack;
@@ -215,7 +214,7 @@ public class RadialToolboxMenu extends AbstractSimiScreen {
 
 	@Override
 	public void renderBackground(GuiGraphics graphics) {
-		Color color = CreateTheme.Key.RADIAL_BACKGROUND.c()
+		Color color = BACKGROUND_COLOR
 				.scaleAlpha(Math.min(1, (ticksOpen + AnimationTickHolder.getPartialTicks()) / 20f));
 
 		graphics.fillGradient(0, 0, this.width, this.height, color.getRGB(), color.getRGB());

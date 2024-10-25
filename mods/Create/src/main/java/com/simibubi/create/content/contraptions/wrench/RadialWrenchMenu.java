@@ -29,7 +29,6 @@ import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
 import com.simibubi.create.content.kinetics.transmission.sequencer.SequencedGearshiftBlock;
 import com.simibubi.create.foundation.gui.AllIcons;
-import com.simibubi.create.foundation.gui.CreateTheme;
 
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.gui.AbstractSimiScreen;
@@ -40,7 +39,6 @@ import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.createmod.catnip.utility.theme.Color;
-import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.enums.PonderGuiTextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -104,9 +102,9 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 	private int ticksOpen;
 	private int selectedStateIndex = 0;
 
-	private RenderElement iconScroll = RenderElement.of(PonderGuiTextures.ICON_SCROLL);
-	private RenderElement iconUp = RenderElement.of(AllIcons.I_PRIORITY_HIGH);
-	private RenderElement iconDown = RenderElement.of(AllIcons.I_PRIORITY_LOW);
+	private final RenderElement iconScroll = RenderElement.of(PonderGuiTextures.ICON_SCROLL);
+	private final RenderElement iconUp = RenderElement.of(AllIcons.I_PRIORITY_HIGH);
+	private final RenderElement iconDown = RenderElement.of(AllIcons.I_PRIORITY_LOW);
 
 	public static Optional<RadialWrenchMenu> tryCreateFor(BlockState state, BlockPos pos, @Nullable Level level) {
 		if (BLOCK_BLACKLIST.contains(CatnipServices.REGISTRIES.getKeyOrThrow(state.getBlock())))
@@ -198,18 +196,18 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 		if (selectedPropertyIndex > 0) {
 			iconScroll.at(-14, -46).render(graphics);
 			iconUp.at(-1, -46).render(graphics);
-			graphics.drawCenteredString(font, propertiesForState.get(selectedPropertyIndex - 1).getValue(), 0, -30, Theme.Key.TEXT.i());
+			graphics.drawCenteredString(font, propertiesForState.get(selectedPropertyIndex - 1).getValue(), 0, -30, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 		}
 
 		if (selectedPropertyIndex < propertiesForState.size() - 1) {
 			iconScroll.at(-14, 30).render(graphics);
 			iconDown.at(-1, 30).render(graphics);
-			graphics.drawCenteredString(font, propertiesForState.get(selectedPropertyIndex + 1).getValue(), 0, 22, Theme.Key.TEXT.i());
+			graphics.drawCenteredString(font, propertiesForState.get(selectedPropertyIndex + 1).getValue(), 0, 22, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 		}
 
-		graphics.drawCenteredString(font, "Currently", 0, -13, Theme.Key.TEXT.i());
-		graphics.drawCenteredString(font, "Changing:", 0, -3, Theme.Key.TEXT.i());
-		graphics.drawCenteredString(font, propertyLabel, 0, 7, Theme.Key.TEXT.i());
+		graphics.drawCenteredString(font, "Currently", 0, -13, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
+		graphics.drawCenteredString(font, "Changing:", 0, -3, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
+		graphics.drawCenteredString(font, propertyLabel, 0, 7, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 
 		ms.popPose();
 
@@ -269,7 +267,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 			poseStack.translate(0, 0, 50);
 
 			if (i == selectedStateIndex) {
-				graphics.drawCenteredString(font, blockState.getValue(property).toString(), 0, 15, Theme.Key.TEXT.i());
+				graphics.drawCenteredString(font, blockState.getValue(property).toString(), 0, 15, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 			}
 
 			poseStack.popPose();
@@ -338,7 +336,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 
 	@Override
 	public void renderBackground(GuiGraphics graphics) {
-		Color color = CreateTheme.Key.RADIAL_BACKGROUND.c()
+		Color color = BACKGROUND_COLOR
 				.scaleAlpha(Math.min(1, (ticksOpen + AnimationTickHolder.getPartialTicks()) / 20f));
 
 		graphics.fillGradient(0, 0, this.width, this.height, color.getRGB(), color.getRGB());

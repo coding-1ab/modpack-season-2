@@ -180,10 +180,10 @@ public class ScrollInput extends AbstractSimiWidget {
 		if (title == null)
 			return;
 		toolTip.add(title.plainCopy()
-			.withStyle(s -> s.withColor(HEADER_RGB)));
+			.withStyle(s -> s.withColor(HEADER_RGB.getRGB())));
 		if (hint != null)
 			toolTip.add(hint.plainCopy()
-				.withStyle(s -> s.withColor(HINT_RGB)));
+				.withStyle(s -> s.withColor(HINT_RGB.getRGB())));
 		toolTip.add(scrollToModify.plainCopy()
 			.withStyle(ChatFormatting.ITALIC, ChatFormatting.DARK_GRAY));
 		toolTip.add(shiftScrollsFaster.plainCopy()

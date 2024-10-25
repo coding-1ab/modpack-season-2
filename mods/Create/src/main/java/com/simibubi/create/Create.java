@@ -29,7 +29,6 @@ import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.advancement.AllTriggers;
 import com.simibubi.create.foundation.block.CopperRegistries;
 import com.simibubi.create.foundation.data.CreateRegistrate;
-import com.simibubi.create.foundation.gui.CreateTheme;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
 import com.simibubi.create.foundation.item.TooltipModifier;
@@ -41,6 +40,7 @@ import com.simibubi.create.infrastructure.data.CreateDatagen;
 import com.simibubi.create.infrastructure.worldgen.AllFeatures;
 import com.simibubi.create.infrastructure.worldgen.AllPlacementModifiers;
 
+import net.createmod.catnip.utility.FontHelper;
 import net.createmod.catnip.utility.lang.LangBuilder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -83,10 +83,10 @@ public class Create {
 		.defaultCreativeTab((ResourceKey<CreativeModeTab>) null);
 
 	static {
-		REGISTRATE.setTooltipModifierFactory(item -> {
-			return new ItemDescription.Modifier(item, CreateTheme.Key.STANDARD_TOOLTIP.palette())
-				.andThen(TooltipModifier.mapNull(KineticStats.create(item)));
-		});
+		REGISTRATE.setTooltipModifierFactory(item ->
+			new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
+			.andThen(TooltipModifier.mapNull(KineticStats.create(item)))
+		);
 	}
 
 	public static final ServerSchematicLoader SCHEMATIC_RECEIVER = new ServerSchematicLoader();
