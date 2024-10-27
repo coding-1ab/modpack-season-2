@@ -1,6 +1,7 @@
 package com.simibubi.create.content.logistics.stockTicker;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,7 @@ import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import com.simibubi.create.content.equipment.goggles.IHaveHoveringInformation;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.filter.FilterItem;
+import com.simibubi.create.content.logistics.filter.FilterItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
@@ -41,7 +43,7 @@ import net.minecraftforge.items.IItemHandler;
 public class StockTickerBlockEntity extends StockCheckingBlockEntity implements IHaveHoveringInformation, MenuProvider {
 
 	// Player-interface Feature
-	protected List<BigItemStack> lastClientsideStockSnapshot;
+	protected List<List<BigItemStack>> lastClientsideStockSnapshot;
 	protected InventorySummary lastClientsideStockSnapshotAsSummary;
 	protected List<BigItemStack> newlyReceivedStockSnapshot;
 	protected String previouslyUsedAddress;
@@ -67,7 +69,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 			.sendToServer(new LogisticalStockRequestPacket(worldPosition));
 	}
 
-	public List<BigItemStack> getClientStockSnapshot() {
+	public List<List<BigItemStack>> getClientStockSnapshot() {
 		return lastClientsideStockSnapshot;
 	}
 
@@ -128,11 +130,34 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		if (newlyReceivedStockSnapshot == null)
 			newlyReceivedStockSnapshot = new ArrayList<>();
 		newlyReceivedStockSnapshot.addAll(stacks);
+
 		if (!endOfTransmission)
 			return;
-		lastClientsideStockSnapshot = newlyReceivedStockSnapshot;
+
 		lastClientsideStockSnapshotAsSummary = new InventorySummary();
-		stacks.forEach(lastClientsideStockSnapshotAsSummary::add);
+		lastClientsideStockSnapshot = new ArrayList<>();
+
+		for (BigItemStack bigStack : newlyReceivedStockSnapshot)
+			lastClientsideStockSnapshotAsSummary.add(bigStack);
+
+		for (ItemStack filter : categories) {
+			List<BigItemStack> inCategory = new ArrayList<>();
+			if (!filter.isEmpty()) {
+				FilterItemStack filterItemStack = FilterItemStack.of(filter);
+				for (Iterator<BigItemStack> iterator = newlyReceivedStockSnapshot.iterator(); iterator.hasNext();) {
+					BigItemStack bigStack = iterator.next();
+					if (!filterItemStack.test(level, bigStack.stack))
+						continue;
+					inCategory.add(bigStack);
+					iterator.remove();
+				}
+			}
+			lastClientsideStockSnapshot.add(inCategory);
+		}
+		
+		List<BigItemStack> unsorted = new ArrayList<>(newlyReceivedStockSnapshot);
+		lastClientsideStockSnapshot.add(unsorted);
+
 		newlyReceivedStockSnapshot = null;
 	}
 

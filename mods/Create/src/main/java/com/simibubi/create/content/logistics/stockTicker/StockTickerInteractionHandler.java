@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
@@ -172,6 +173,8 @@ public class StockTickerInteractionHandler {
 		if (!(rootVehicle instanceof SeatEntity))
 			return null;
 		if (!(entity instanceof LivingEntity living))
+			return null;
+		if (AllEntityTypes.PACKAGE.is(entity))
 			return null;
 
 		BlockPos pos = entity.blockPosition();

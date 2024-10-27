@@ -7,17 +7,14 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
-
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.AllIcons;
+import com.simibubi.create.foundation.gui.ScreenWithStencils;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.simibubi.create.foundation.gui.menu.GhostItemSubmitPacket;
 import com.simibubi.create.foundation.gui.widget.IconButton;
@@ -30,7 +27,6 @@ import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -43,7 +39,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<StockKeeperCategoryMenu> {
+public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<StockKeeperCategoryMenu>
+	implements ScreenWithStencils {
 
 	private static final int CARD_HEADER = 20;
 	private static final int CARD_WIDTH = 160;
@@ -337,33 +334,6 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 	private void renderActionTooltip(@Nullable GuiGraphics graphics, List<Component> tooltip, int mx, int my) {
 		if (graphics != null)
 			graphics.renderTooltip(font, tooltip, Optional.empty(), mx, my);
-	}
-
-	protected void startStencil(GuiGraphics graphics, float x, float y, float w, float h) {
-		RenderSystem.clear(GL30.GL_STENCIL_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT, Minecraft.ON_OSX);
-
-		GL11.glDisable(GL11.GL_STENCIL_TEST);
-		RenderSystem.stencilMask(~0);
-		RenderSystem.clear(GL11.GL_STENCIL_BUFFER_BIT, Minecraft.ON_OSX);
-		GL11.glEnable(GL11.GL_STENCIL_TEST);
-		RenderSystem.stencilOp(GL11.GL_REPLACE, GL11.GL_KEEP, GL11.GL_KEEP);
-		RenderSystem.stencilMask(0xFF);
-		RenderSystem.stencilFunc(GL11.GL_NEVER, 1, 0xFF);
-
-		PoseStack matrixStack = graphics.pose();
-		matrixStack.pushPose();
-		matrixStack.translate(x, y, 0);
-		matrixStack.scale(w, h, 1);
-		graphics.fillGradient(0, 0, 1, 1, -100, 0xff000000, 0xff000000);
-		matrixStack.popPose();
-
-		GL11.glEnable(GL11.GL_STENCIL_TEST);
-		RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-		RenderSystem.stencilFunc(GL11.GL_EQUAL, 1, 0xFF);
-	}
-
-	protected void endStencil() {
-		GL11.glDisable(GL11.GL_STENCIL_TEST);
 	}
 
 	@Override

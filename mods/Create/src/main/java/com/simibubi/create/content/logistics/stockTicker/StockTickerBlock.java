@@ -3,6 +3,7 @@ package com.simibubi.create.content.logistics.stockTicker;
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.AllShapes;
+import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
 import com.simibubi.create.foundation.block.IBE;
 
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
@@ -52,6 +53,10 @@ public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<
 	@Override
 	public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand,
 		BlockHitResult pHit) {
+		if (pPlayer != null && pPlayer.getItemInHand(pHand)
+			.getItem() instanceof LogisticallyLinkedBlockItem)
+			return InteractionResult.PASS;
+		
 		return onBlockEntityUse(pLevel, pPos, stbe -> {
 
 			if (!stbe.receivedPayments.isEmpty()) {

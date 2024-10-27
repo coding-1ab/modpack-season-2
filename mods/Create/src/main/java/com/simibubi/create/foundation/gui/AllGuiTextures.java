@@ -161,6 +161,13 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	FACTORY_PANEL_ARROW("restocker_and_requester", 27, 108, 22, 16),
 	FACTORY_PANEL_ARROW_FILLED("restocker_and_requester", 50, 108, 22, 16),
 	
+	STOCK_KEEPER_REQUEST_HEADER("stock_keeper", 256, 22),
+	STOCK_KEEPER_REQUEST_BODY("stock_keeper", 0, 23, 256, 20),
+	STOCK_KEEPER_REQUEST_FOOTER("stock_keeper", 0, 44, 256, 74),
+	STOCK_KEEPER_REQUEST_SEARCH("stock_keeper", 0, 137, 256, 15),
+	STOCK_KEEPER_REQUEST_SAYS("stock_keeper", 4, 163, 8, 16),
+	NUMBERS("widgets", 100, 20, 5, 8),
+
 	STOCK_KEEPER_CATEGORY("stock_keeper_categories", 210, 190),
 	STOCK_KEEPER_CATEGORY_HEADER("stock_keeper_categories", 202, 15),
 	STOCK_KEEPER_CATEGORY_EDIT("stock_keeper_categories", 0, 216, 202, 38),
@@ -236,7 +243,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	COMPUTER("computer", 200, 102);
 
 	;
-
+	
 	public static final int FONT_COLOR = 0x575F7A;
 
 	public final ResourceLocation location;
