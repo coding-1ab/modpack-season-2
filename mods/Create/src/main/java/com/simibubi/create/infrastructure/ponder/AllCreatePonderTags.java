@@ -462,7 +462,6 @@ public class AllCreatePonderTags {
 
 		HELPER.addToTag(THRESHOLD_SWITCH_TARGETS)
 			.add(AllBlocks.ROPE_PULLEY)
-			.add(AllBlocks.STOCK_TICKER)
 			.add(AllBlocks.ITEM_VAULT)
 			.add(AllBlocks.FLUID_TANK);
 

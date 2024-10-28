@@ -6,9 +6,8 @@ import com.simibubi.create.compat.thresholdSwitch.FunctionalStorage;
 import com.simibubi.create.compat.thresholdSwitch.SophisticatedStorage;
 import com.simibubi.create.compat.thresholdSwitch.StorageDrawers;
 import com.simibubi.create.compat.thresholdSwitch.ThresholdSwitchCompat;
-import com.simibubi.create.content.logistics.filter.FilterItem;
-import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
+import com.simibubi.create.content.processing.recipe.ProcessingInventory;
 import com.simibubi.create.content.redstone.DirectedDirectionalBlock;
 import com.simibubi.create.content.redstone.FilteredDetectorFilterSlot;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlock;
@@ -32,6 +31,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.ticks.TickPriority;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -127,11 +127,11 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 		int prevLevel = currentLevel;
 		int prevMaxLevel = currentMaxLevel;
 
-		observedInventory.findNewCapability();
-		observedTank.findNewCapability();
-
 		BlockPos target = getTargetPos();
 		BlockEntity targetBlockEntity = level.getBlockEntity(target);
+		
+		observedInventory.findNewCapability();
+		observedTank.findNewCapability();
 
 		if (targetBlockEntity instanceof ThresholdSwitchObservable observable) {
 			currentMinLevel = observable.getMinValue();
@@ -143,17 +143,6 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 			currentLevel = StorageDrawers.getItemCount(observedInventory.getInventory(), filtering);
 			currentMaxLevel = StorageDrawers.getTotalStorageSpace(observedInventory.getInventory());
 		*/
-		} else if (targetBlockEntity instanceof StockTickerBlockEntity stockTicker) {
-			currentMinLevel = 0;
-			currentMaxLevel = 64000;
-			InventorySummary recentSummary = stockTicker.getRecentSummary();
-			ItemStack filter = filtering.getFilter();
-			if (filter.isEmpty())
-				currentLevel = recentSummary.getTotalCount();
-			else if (filter.getItem() instanceof FilterItem)
-				currentLevel = recentSummary.getTotalOfMatching(filtering::test);
-			else
-				currentLevel = recentSummary.getCountOf(filter);
 
 		} else if (observedInventory.hasInventory() || observedTank.hasInventory()) {
 			currentMinLevel = 0;
@@ -249,6 +238,12 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 		}
 	}
 
+	private boolean isSuitableInventory(BlockEntity be) {
+		return be != null && !(be instanceof StockTickerBlockEntity || be.getCapability(ForgeCapabilities.ITEM_HANDLER)
+			.filter(ProcessingInventory.class::isInstance)
+			.isPresent());
+	}
+	
 	private BlockPos getTargetPos() {
 		return worldPosition.relative(ThresholdSwitchBlock.getTargetDirection(getBlockState()));
 	}
@@ -278,7 +273,7 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 	}
 
 	public ThresholdType getTypeOfCurrentTarget() {
-		if (observedInventory.hasInventory() || level.getBlockEntity(getTargetPos()) instanceof StockTickerBlockEntity)
+		if (observedInventory.hasInventory())
 			return ThresholdType.ITEM;
 		if (observedTank.hasInventory())
 			return ThresholdType.FLUID;
@@ -315,7 +310,8 @@ public class ThresholdSwitchBlockEntity extends SmartBlockEntity {
 		InterfaceProvider towardBlockFacing =
 			(w, p, s) -> new BlockFace(p, DirectedDirectionalBlock.getTargetDirection(s));
 
-		behaviours.add(observedInventory = new InvManipulationBehaviour(this, towardBlockFacing).bypassSidedness());
+		behaviours.add(observedInventory = new InvManipulationBehaviour(this, towardBlockFacing).bypassSidedness()
+			.withFilter(this::isSuitableInventory));
 		behaviours.add(observedTank = new TankManipulationBehaviour(this, towardBlockFacing).bypassSidedness());
 	}
 

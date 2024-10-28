@@ -141,7 +141,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		orderY = y + windowHeight - 60;
 
 		MutableComponent searchLabel = CreateLang.translateDirect("gui.stock_ticker.search_items");
-		searchBox = new EditBox(this.font, x + 81, y + 24, 110, 9, searchLabel);
+		searchBox = new EditBox(this.font, x + 81, y + 25, 110, 9, searchLabel);
 		searchBox.setMaxLength(50);
 		searchBox.setBordered(false);
 		searchBox.setTextColor(0xffffff);
@@ -412,11 +412,12 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		ms.translate(0, -currentScroll * rowHeight, 0);
 
 		// Search bar
-		AllGuiTextures.STOCK_KEEPER_REQUEST_SEARCH.render(graphics, x, y + 20);
+		AllGuiTextures.STOCK_KEEPER_REQUEST_SEARCH.render(graphics, x, searchBox.getY() - 4);
 		searchBox.render(graphics, mouseX, mouseY, partialTicks);
 		if (searchBox.getValue()
 			.isBlank())
-			graphics.drawString(font, searchBox.getMessage(), searchBox.getX(), searchBox.getY(), 0x88dddddd);
+			graphics.drawString(font, searchBox.getMessage(),
+				x + windowWidth / 2 - font.width(searchBox.getMessage()) / 2, searchBox.getY(), 0x88dddddd);
 
 		// Something isnt right
 		boolean allEmpty = true;

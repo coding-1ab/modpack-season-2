@@ -90,7 +90,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		editorEditBox.setBordered(false);
 		editorEditBox.setFocused(false);
 		editorEditBox.mouseClicked(0, 0, 0);
-		editorEditBox.setMaxLength(50);
+		editorEditBox.setMaxLength(28);
 		editorEditBox.setValue(index == -1 || schedule.get(index)
 			.isEmpty() ? CreateLang.temporaryText("New Category")
 				.string()
