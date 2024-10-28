@@ -182,6 +182,8 @@ public class AllPartialModels {
 		
 		FACTORY_PANEL = block("factory_panel/panel"),
 		FACTORY_PANEL_WITH_BULB = block("factory_panel/panel_with_bulb"),
+		FACTORY_PANEL_RESTOCKER = block("factory_panel/panel_restocker"),
+		FACTORY_PANEL_RESTOCKER_WITH_BULB = block("factory_panel/panel_restocker_with_bulb"),
 		FACTORY_PANEL_LIGHT = block("factory_panel/bulb_light"),
 
 		DISPLAY_CLOTH = entity("display_cloth"),

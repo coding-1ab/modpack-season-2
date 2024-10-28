@@ -52,8 +52,8 @@ public class FactoryPanelEffectPacket extends SimplePacketBase {
 		if (panelBehaviour != null) {
 			panelBehaviour.bulb.setValue(1);
 			FactoryPanelConnection connection = panelBehaviour.targetedBy.get(fromPos);
-			connection.successTracker()
-				.setValue(success);
+			if (connection != null)
+				connection.success = success;
 		}
 		return true;
 	}

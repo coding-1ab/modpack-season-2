@@ -1,5 +1,7 @@
 package com.simibubi.create.content.logistics.factoryBoard;
 
+import javax.annotation.Nullable;
+
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.foundation.utility.CreateLang;
 
@@ -8,6 +10,7 @@ import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -24,36 +27,74 @@ public class FactoryPanelConnectionHandler {
 	public static boolean panelClicked(LevelAccessor level, Player player, FactoryPanelBehaviour panel) {
 		if (connectingFrom == null)
 			return false;
+
 		FactoryPanelBehaviour at = FactoryPanelBehaviour.at(level, connectingFrom);
 		if (panel.getPanelPosition()
 			.equals(connectingFrom) || at == null) {
 			player.displayClientMessage(Component.empty(), true);
 			connectingFrom = null;
 			connectingFromBox = null;
-			return false;
+			return true;
 		}
 
-		AllPackets.getChannel()
-			.sendToServer(new FactoryPanelConnectionPacket(panel.getPanelPosition(), connectingFrom));
+		String checkForIssues = checkForIssues(at, panel);
+		if (checkForIssues != null) {
+			player.displayClientMessage(CreateLang.temporaryText(checkForIssues)
+				.style(ChatFormatting.RED)
+				.component(), true);
+			connectingFrom = null;
+			connectingFromBox = null;
+			return true;
+		}
 
 		ItemStack filterFrom = panel.getFilter();
 		ItemStack filterTo = at.getFilter();
 
-		if (filterTo.isEmpty() || filterFrom.isEmpty())
-			player.displayClientMessage(CreateLang.temporaryText("Factory Panels are now connected")
-				.style(ChatFormatting.GREEN)
-				.component(), true);
-		else
-			player.displayClientMessage(CreateLang.temporaryText("Now using " + filterFrom.getHoverName()
-				.getString() + " to create "
-				+ filterTo.getHoverName()
-					.getString())
-				.style(ChatFormatting.GREEN)
-				.component(), true);
+		AllPackets.getChannel()
+			.sendToServer(new FactoryPanelConnectionPacket(panel.getPanelPosition(), connectingFrom));
+
+		player.displayClientMessage(CreateLang.temporaryText("Now using " + filterFrom.getHoverName()
+			.getString() + " to create "
+			+ filterTo.getHoverName()
+				.getString())
+			.style(ChatFormatting.GREEN)
+			.component(), true);
 
 		connectingFrom = null;
 		connectingFromBox = null;
 		return true;
+	}
+
+	@Nullable
+	private static String checkForIssues(FactoryPanelBehaviour from, FactoryPanelBehaviour to) {
+		BlockState state1 = to.blockEntity.getBlockState();
+		BlockState state2 = from.blockEntity.getBlockState();
+		BlockPos diff = to.getPos()
+			.subtract(from.getPos());
+
+		if (state1.setValue(FactoryPanelBlock.WATERLOGGED, false)
+			.setValue(FactoryPanelBlock.POWERED, false) != state2.setValue(FactoryPanelBlock.WATERLOGGED, false)
+				.setValue(FactoryPanelBlock.POWERED, false))
+			return "Panels must have the same orientation";
+
+		if (FactoryPanelBlock.connectedDirection(state1)
+			.getAxis()
+			.choose(diff.getX(), diff.getY(), diff.getZ()) != 0)
+			return "Panels must be on the same surface";
+
+		if (!diff.closerThan(BlockPos.ZERO, 16))
+			return "Panels are too far away from each other";
+
+		if (to.panelBE().restocker)
+			return "Input panel cannot be in restock mode";
+
+		if (to.getFilter()
+			.isEmpty()
+			|| from.getFilter()
+				.isEmpty())
+			return "Input panel must have an item first";
+
+		return null;
 	}
 
 	public static void clientTick() {

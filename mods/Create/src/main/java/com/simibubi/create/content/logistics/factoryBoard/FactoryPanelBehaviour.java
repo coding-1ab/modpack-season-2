@@ -14,12 +14,14 @@ import org.joml.Math;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelSlot;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
+import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromise;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
@@ -72,6 +74,9 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public int promiseClearingInterval;
 	public boolean forceClearPromises;
 
+	public RequestPromiseQueue restockerPromises;
+	private boolean promisePrimedForMarkDirty;
+
 	private boolean active;
 	private int lastReportedUnloadedLinks;
 	private int lastReportedLevelInStorage;
@@ -95,6 +100,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		this.bulb = LerpedFloat.linear()
 			.startWithValue(0)
 			.chase(0, 0.45, Chaser.EXP);
+		this.restockerPromises = new RequestPromiseQueue(be::setChanged);
+		this.promisePrimedForMarkDirty = true;
 	}
 
 	@Nullable
@@ -117,6 +124,12 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			bulb.tickChaser();
 			return;
 		}
+
+		if (!promisePrimedForMarkDirty) {
+			restockerPromises.setOnChanged(blockEntity::setChanged);
+			promisePrimedForMarkDirty = true;
+		}
+
 		tickStorageMonitor();
 		tickRequests();
 	}
@@ -146,9 +159,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	}
 
 	private void tickRequests() {
-		if (targetedBy.isEmpty())
-			return;
-		if (!(blockEntity instanceof FactoryPanelBlockEntity fpbe))
+		FactoryPanelBlockEntity panelBE = panelBE();
+		if (targetedBy.isEmpty() && !panelBE.restocker)
 			return;
 		if (satisfied || promisedSatisfied || waitingForNetwork)
 			return;
@@ -160,35 +172,70 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 		timer = REQUEST_INTERVAL;
 
-		InventorySummary summary = fpbe.getAccurateSummary();
+		if (panelBE.restocker) {
+			tryRestock();
+			return;
+		}
+
+		InventorySummary summary = panelBE.getAccurateSummary();
 		boolean failed = false;
 
 		List<BigItemStack> toRequest = new ArrayList<>();
 		for (FactoryPanelConnection connection : targetedBy.values()) {
-			FactoryPanelBehaviour source = at(getWorld(), connection.from());
+			FactoryPanelBehaviour source = at(getWorld(), connection.from);
 			if (source == null)
 				return;
 			ItemStack item = source.getFilter();
-			int amount = connection.amount();
+			int amount = connection.amount;
 			if (amount == 0 || item.isEmpty() || summary.getCountOf(item) < amount) {
-				sendEffect(connection.from(), false);
+				sendEffect(connection.from, false);
 				failed = true;
 				continue;
 			}
 
 			toRequest.add(new BigItemStack(item, amount));
-			sendEffect(connection.from(), true);
+			sendEffect(connection.from, true);
 		}
 
 		if (failed)
 			return;
 
 		PackageOrder order = new PackageOrder(toRequest);
-		fpbe.broadcastPackageRequest(order, null, recipeAddress);
+		panelBE.broadcastPackageRequest(order, null, recipeAddress);
 
-		RequestPromiseQueue promises = Create.LOGISTICS.getQueuedPromises(fpbe.behaviour.freqId);
+		RequestPromiseQueue promises = Create.LOGISTICS.getQueuedPromises(panelBE.behaviour.freqId);
 		if (promises != null)
 			promises.add(new RequestPromise(new BigItemStack(getFilter(), recipeOutput)));
+	}
+
+	private void tryRestock() {
+		ItemStack item = getFilter();
+		if (item.isEmpty())
+			return;
+
+		FactoryPanelBlockEntity panelBE = panelBE();
+		PackagerBlockEntity packager = panelBE.getRestockedPackager();
+		if (packager == null)
+			return;
+
+		int availableOnNetwork = panelBE.behaviour.getStockOf(item, packager.targetInventory.getInventory());
+		if (availableOnNetwork == 0) {
+			sendEffect(getPanelPosition(), false);
+			return;
+		}
+
+		int inStorage = getLevelInStorage();
+		int promised = getPromised();
+		int maxStackSize = item.getMaxStackSize();
+		int demand = getAmount() * (upTo ? 1 : maxStackSize);
+		int amountToOrder = Math.clamp(demand - promised - inStorage, 0, maxStackSize * 9);
+
+		BigItemStack orderedItem = new BigItemStack(item, Math.min(amountToOrder, availableOnNetwork));
+		PackageOrder order = new PackageOrder(List.of(orderedItem));
+
+		panelBE.broadcastPackageRequest(order, packager.targetInventory.getInventory(), recipeAddress);
+		restockerPromises.add(new RequestPromise(orderedItem));
+		sendEffect(getPanelPosition(), true);
 	}
 
 	private void sendEffect(FactoryPanelPosition fromPos, boolean success) {
@@ -203,7 +250,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		if (source == null)
 			return;
 		source.targeting.add(getPanelPosition());
-		targetedBy.putIfAbsent(fromPos, new FactoryPanelConnection(fromPos, 1));
+		targetedBy.put(fromPos, new FactoryPanelConnection(fromPos, 1));
 		blockEntity.notifyUpdate();
 	}
 
@@ -211,13 +258,46 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		return new FactoryPanelPosition(getPos(), slot);
 	}
 
+	public FactoryPanelBlockEntity panelBE() {
+		return (FactoryPanelBlockEntity) blockEntity;
+	}
+
 	@Override
 	public void onShortInteract(Player player, InteractionHand hand, Direction side, BlockHitResult hitResult) {
+		if (AllItemTags.WRENCH.matches(player.getItemInHand(hand))) {
+			int sharedMode = -1;
+			for (FactoryPanelPosition target : targeting) {
+				FactoryPanelBehaviour at = at(getWorld(), target);
+				if (at == null)
+					continue;
+				FactoryPanelConnection connection = at.targetedBy.get(getPanelPosition());
+				if (connection == null)
+					continue;
+				if (sharedMode == -1)
+					sharedMode = (connection.arrowBendMode + 1) % 4;
+				connection.arrowBendMode = sharedMode;
+				if (!player.level().isClientSide)
+					at.blockEntity.notifyUpdate();
+			}
+			if (sharedMode == -1)
+				return;
+
+			char[] boxes = "\u25a1\u25a1\u25a1\u25a1".toCharArray();
+			boxes[sharedMode] = '\u25a0';
+			player.displayClientMessage(CreateLang.temporaryText("Cycled arrow pathing mode " + new String(boxes))
+				.component(), true);
+
+			return;
+		}
+
 		if (player.level().isClientSide)
 			if (FactoryPanelConnectionHandler.panelClicked(getWorld(), player, this))
 				return;
 
-		if (getFilter().isEmpty() && !AllBlocks.FACTORY_PANEL.isIn(player.getItemInHand(hand))) {
+		if (getFilter().isEmpty()) {
+			if (AllBlocks.FACTORY_PANEL.isIn(player.getItemInHand(hand)))
+				return;
+
 			super.onShortInteract(player, hand, side, hitResult);
 			return;
 		}
@@ -274,6 +354,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public int getUnloadedLinks() {
 		if (getWorld().isClientSide())
 			return lastReportedUnloadedLinks;
+		if (panelBE().restocker)
+			return panelBE().getRestockedPackager() == null ? 1 : 0;
 		UUID freqId = ((StockCheckingBlockEntity) blockEntity).behaviour.freqId;
 		return Create.LOGISTICS.getUnloadedLinkCount(freqId);
 	}
@@ -284,23 +366,41 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		if (getFilter().isEmpty())
 			return 0;
 
-		InventorySummary summary = ((StockCheckingBlockEntity) blockEntity).getRecentSummary();
-		return summary.getCountOf(getFilter()) / (upTo ? 1 : getFilter().getMaxStackSize());
+		InventorySummary summary = getRelevantSummary();
+		return summary.getCountOf(getFilter());
+	}
+
+	private InventorySummary getRelevantSummary() {
+		FactoryPanelBlockEntity panelBE = panelBE();
+		if (!panelBE.restocker)
+			return panelBE.getRecentSummary();
+		PackagerBlockEntity packager = panelBE.getRestockedPackager();
+		if (packager == null)
+			return InventorySummary.EMPTY;
+		return packager.getAvailableItems();
 	}
 
 	public int getPromised() {
 		if (getWorld().isClientSide())
 			return lastReportedPromises;
-		if (getFilter().isEmpty())
+		ItemStack item = getFilter();
+		if (item.isEmpty())
 			return 0;
+
+		if (panelBE().restocker) {
+			if (forceClearPromises)
+				restockerPromises.forceClear(item);
+			forceClearPromises = false;
+			return restockerPromises.getTotalPromisedAndRemoveExpired(item, getPromiseExpiryTimeInTicks());
+		}
 
 		UUID freqId = ((StockCheckingBlockEntity) blockEntity).behaviour.freqId;
 		RequestPromiseQueue promises = Create.LOGISTICS.getQueuedPromises(freqId);
 		if (forceClearPromises)
-			promises.forceClear(getFilter());
+			promises.forceClear(item);
+		forceClearPromises = false;
 
-		return promises == null ? 0
-			: promises.getTotalPromisedAndRemoveExpired(getFilter(), getPromiseExpiryTimeInTicks());
+		return promises == null ? 0 : promises.getTotalPromisedAndRemoveExpired(item, getPromiseExpiryTimeInTicks());
 	}
 
 	private int getPromiseExpiryTimeInTicks() {
@@ -331,6 +431,9 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		panelTag.putString("RecipeAddress", recipeAddress);
 		panelTag.putInt("RecipeOutput", recipeOutput);
 		panelTag.putInt("PromiseClearingInterval", promiseClearingInterval);
+
+		if (panelBE().restocker && !clientPacket)
+			panelTag.put("Promises", restockerPromises.write());
 
 		nbt.put(CreateLang.asId(slot.name()), panelTag);
 	}
@@ -365,6 +468,12 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 		recipeAddress = panelTag.getString("RecipeAddress");
 		recipeOutput = panelTag.getInt("RecipeOutput");
+
+		if (nbt.getBoolean("Restocker") && !clientPacket) {
+			restockerPromises = RequestPromiseQueue.read(panelTag.getCompound("Promises"), () -> {
+			});
+			promisePrimedForMarkDirty = false;
+		}
 	}
 
 	@Override
@@ -395,8 +504,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			return;
 		count = Math.max(0, settings.value());
 		upTo = settings.row() == 0;
-		if (blockEntity instanceof FactoryPanelBlockEntity fpbe)
-			fpbe.redraw = true;
+		panelBE().redraw = true;
 		blockEntity.setChanged();
 		blockEntity.sendData();
 		playFeedbackSound(this);
@@ -456,7 +564,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		if (waitingForNetwork)
 			return Components.literal("?");
 
-		int inStorage = getLevelInStorage();
+		int inStorage = getLevelInStorage() / (upTo ? 1 : getFilter().getMaxStackSize());
 		int promised = getPromised();
 		String stacks = upTo ? "" : "\u25A4";
 

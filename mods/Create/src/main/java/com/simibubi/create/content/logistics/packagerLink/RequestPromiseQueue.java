@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.BigItemStack;
 
 import net.createmod.catnip.utility.NBTHelper;
@@ -21,15 +20,21 @@ import net.minecraftforge.items.ItemHandlerHelper;
 public class RequestPromiseQueue {
 
 	private Map<Item, List<RequestPromise>> promisesByItem;
+	private Runnable onChanged;
 
-	public RequestPromiseQueue() {
+	public RequestPromiseQueue(Runnable onChanged) {
 		promisesByItem = new IdentityHashMap<>();
+		this.onChanged = onChanged;
 	}
 
 	public void add(RequestPromise promise) {
 		promisesByItem.computeIfAbsent(promise.promisedStack.stack.getItem(), $ -> new LinkedList<>())
 			.add(promise);
-		Create.LOGISTICS.markDirty();
+		onChanged.run();
+	}
+
+	public void setOnChanged(Runnable onChanged) {
+		this.onChanged = onChanged;
 	}
 
 	public int getTotalPromisedAndRemoveExpired(ItemStack stack, int expiryTime) {
@@ -44,7 +49,7 @@ public class RequestPromiseQueue {
 				continue;
 			if (expiryTime != -1 && promise.ticksExisted >= expiryTime) {
 				iterator.remove();
-				Create.LOGISTICS.markDirty();
+				onChanged.run();
 				continue;
 			}
 
@@ -63,7 +68,7 @@ public class RequestPromiseQueue {
 			if (!ItemHandlerHelper.canItemStacksStack(promise.promisedStack.stack, stack))
 				continue;
 			iterator.remove();
-			Create.LOGISTICS.markDirty();
+			onChanged.run();
 		}
 
 		if (list.isEmpty())
@@ -86,7 +91,7 @@ public class RequestPromiseQueue {
 
 			if (requestPromise.promisedStack.count <= 0) {
 				iterator.remove();
-				Create.LOGISTICS.markDirty();
+				onChanged.run();
 			}
 			if (amount <= 0)
 				break;
@@ -114,8 +119,8 @@ public class RequestPromiseQueue {
 		return tag;
 	}
 
-	public static RequestPromiseQueue read(CompoundTag tag) {
-		RequestPromiseQueue queue = new RequestPromiseQueue();
+	public static RequestPromiseQueue read(CompoundTag tag, Runnable onChanged) {
+		RequestPromiseQueue queue = new RequestPromiseQueue(onChanged);
 		NBTHelper.iterateCompoundList(tag.getList("List", Tag.TAG_COMPOUND), c -> {
 			RequestPromise promise = new RequestPromise(BigItemStack.read(c));
 			promise.ticksExisted = c.getInt("Age");

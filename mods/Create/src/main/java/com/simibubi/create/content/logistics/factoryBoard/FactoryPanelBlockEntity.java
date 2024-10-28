@@ -3,8 +3,11 @@ package com.simibubi.create.content.logistics.factoryBoard;
 import java.util.EnumMap;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelSlot;
+import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.stockTicker.StockCheckingBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
@@ -16,6 +19,7 @@ import net.minecraft.core.Direction.Axis;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -28,11 +32,13 @@ public class FactoryPanelBlockEntity extends StockCheckingBlockEntity {
 	public EnumMap<PanelSlot, FactoryPanelBehaviour> panels;
 
 	public boolean redraw;
+	public boolean restocker;
 
 	private VoxelShape lastShape;
 
 	public FactoryPanelBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
+		restocker = false;
 	}
 
 	@Override
@@ -50,8 +56,37 @@ public class FactoryPanelBlockEntity extends StockCheckingBlockEntity {
 	@Override
 	public void lazyTick() {
 		super.lazyTick();
-		if (!level.isClientSide() && panels.isEmpty())
+		if (level.isClientSide())
+			return;
+
+		if (panels.isEmpty())
 			level.destroyBlock(worldPosition, false);
+
+		if (AllBlocks.FACTORY_PANEL.has(getBlockState())) {
+			boolean shouldBeRestocker = AllBlocks.PACKAGER
+				.has(level.getBlockState(worldPosition.relative(FactoryPanelBlock.connectedDirection(getBlockState())
+					.getOpposite())));
+			if (restocker == shouldBeRestocker)
+				return;
+			restocker = shouldBeRestocker;
+			redraw = true;
+			sendData();
+		}
+	}
+
+	@Nullable
+	public PackagerBlockEntity getRestockedPackager() {
+		BlockState state = getBlockState();
+		if (!restocker || !AllBlocks.FACTORY_PANEL.has(state))
+			return null;
+		BlockPos packagerPos = worldPosition.relative(FactoryPanelBlock.connectedDirection(state)
+			.getOpposite());
+		if (!level.isLoaded(packagerPos))
+			return null;
+		BlockEntity be = level.getBlockEntity(packagerPos);
+		if (be == null || !(be instanceof PackagerBlockEntity pbe))
+			return null;
+		return pbe;
 	}
 
 	public int activePanels() {
@@ -123,6 +158,7 @@ public class FactoryPanelBlockEntity extends StockCheckingBlockEntity {
 	@Override
 	protected void read(CompoundTag tag, boolean clientPacket) {
 		super.read(tag, clientPacket);
+		restocker = tag.getBoolean("Restocker");
 		if (clientPacket && tag.contains("Redraw")) {
 			lastShape = null;
 			level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 16);
@@ -132,6 +168,7 @@ public class FactoryPanelBlockEntity extends StockCheckingBlockEntity {
 	@Override
 	protected void write(CompoundTag tag, boolean clientPacket) {
 		super.write(tag, clientPacket);
+		tag.putBoolean("Restocker", restocker);
 		if (clientPacket && redraw) {
 			NBTHelper.putMarker(tag, "Redraw");
 			redraw = false;

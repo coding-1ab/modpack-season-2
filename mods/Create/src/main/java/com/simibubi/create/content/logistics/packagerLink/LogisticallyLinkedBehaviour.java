@@ -70,7 +70,7 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 			return (accurate ? ACCURATE_SUMMARIES : SUMMARIES).get(freqId, () -> {
 				InventorySummary summaryOfLinks = new InventorySummary();
 				getAllConnectedAvailableLinks(false).forEach(link -> {
-					InventorySummary summary = link.getSummary();
+					InventorySummary summary = link.getSummary(null);
 					if (summary != InventorySummary.EMPTY)
 						summaryOfLinks.contributingLinks++;
 					summaryOfLinks.add(summary);
@@ -81,6 +81,14 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 			e.printStackTrace();
 		}
 		return InventorySummary.EMPTY;
+	}
+
+	public int getStockOf(ItemStack stack, @Nullable IItemHandler ignoredHandler) {
+		int sum = 0;
+		for (LogisticallyLinkedBehaviour link : getAllConnectedAvailableLinks(false))
+			sum += link.getSummary(ignoredHandler)
+				.getCountOf(stack);
+		return sum;
 	}
 
 	public static Collection<LogisticallyLinkedBehaviour> getAllPresent(UUID freq, boolean sortByPriority) {
@@ -188,9 +196,9 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 		return 0;
 	}
 
-	public InventorySummary getSummary() {
+	public InventorySummary getSummary(@Nullable IItemHandler ignoredHandler) {
 		if (blockEntity instanceof PackagerLinkBlockEntity plbe)
-			return plbe.fetchSummaryFromPackager();
+			return plbe.fetchSummaryFromPackager(ignoredHandler);
 		return InventorySummary.EMPTY;
 	}
 

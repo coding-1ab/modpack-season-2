@@ -58,8 +58,12 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 		}
 	}
 
-	public static enum PanelType {
+	public static enum PanelState {
 		PASSIVE, ACTIVE
+	}
+	
+	public static enum PanelType {
+		NETWORK, PACKAGER
 	}
 
 	public FactoryPanelBlock(Properties p_53182_) {

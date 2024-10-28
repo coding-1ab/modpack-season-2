@@ -82,20 +82,20 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 
 		allowPartial = new IconButton(x + 12, y + bgHeight - 24, AllIcons.I_PARTIAL_REQUESTS);
 		allowPartial.withCallback(() -> {
-			allowPartial.active = false;
-			dontAllowPartial.active = true;
+			allowPartial.green = true;
+			dontAllowPartial.green = false;
 		});
-		allowPartial.active = !menu.contentHolder.allowPartialRequests;
+		allowPartial.green = menu.contentHolder.allowPartialRequests;
 		allowPartial.setToolTip(CreateLang.temporaryText("Allow partial orders")
 			.component());
 		addRenderableWidget(allowPartial);
 
 		dontAllowPartial = new IconButton(x + 12 + 18, y + bgHeight - 24, AllIcons.I_FULL_REQUESTS);
 		dontAllowPartial.withCallback(() -> {
-			allowPartial.active = true;
-			dontAllowPartial.active = false;
+			allowPartial.green = false;
+			dontAllowPartial.green = true;
 		});
-		dontAllowPartial.active = menu.contentHolder.allowPartialRequests;
+		dontAllowPartial.green = !menu.contentHolder.allowPartialRequests;
 		dontAllowPartial.setToolTip(CreateLang.temporaryText("Must send all items")
 			.component());
 		addRenderableWidget(dontAllowPartial);
@@ -221,7 +221,7 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 	public void removed() {
 		AllPackets.getChannel()
 			.sendToServer(new RedstoneRequesterConfigurationPacket(menu.contentHolder.getBlockPos(),
-				addressBox.getValue(), !allowPartial.active, amounts));
+				addressBox.getValue(), allowPartial.green, amounts));
 		super.removed();
 	}
 

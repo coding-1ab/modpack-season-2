@@ -28,6 +28,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
@@ -39,6 +40,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 	private ScrollInput promiseExpiration;
 	private FactoryPanelBehaviour behaviour;
 	private int displayedExtraRows;
+	private boolean restocker;
 
 	private BigItemStack outputConfig;
 	private List<BigItemStack> inputConfig;
@@ -47,6 +49,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 	public FactoryPanelScreen(FactoryPanelBehaviour behaviour) {
 		this.behaviour = behaviour;
 		minecraft = Minecraft.getInstance();
+		restocker = behaviour.panelBE().restocker;
 		updateConfigs();
 	}
 
@@ -55,8 +58,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		outputConfig = new BigItemStack(behaviour.getFilter(), behaviour.recipeOutput);
 		inputConfig = connections.stream()
 			.map(c -> {
-				FactoryPanelBehaviour b = FactoryPanelBehaviour.at(minecraft.level, c.from());
-				return b == null ? new BigItemStack(ItemStack.EMPTY, 0) : new BigItemStack(b.getFilter(), c.amount());
+				FactoryPanelBehaviour b = FactoryPanelBehaviour.at(minecraft.level, c.from);
+				return b == null ? new BigItemStack(ItemStack.EMPTY, 0) : new BigItemStack(b.getFilter(), c.amount);
 			})
 			.toList();
 	}
@@ -77,6 +80,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			addressBox.setValue(behaviour.recipeAddress);
 			addressBox.setTextColor(0x555555);
 		}
+		addressBox.setX(x + 38);
 		addressBox.setY(y + 30 + middleHeight());
 		addRenderableWidget(addressBox);
 
@@ -90,7 +94,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		promiseExpiration.setState(behaviour.promiseClearingInterval);
 		addRenderableWidget(promiseExpiration);
 
-		if (behaviour.targetedBy.size() < 9) {
+		if (!restocker && behaviour.targetedBy.size() < 9) {
 			int slot = behaviour.targetedBy.size();
 			newInputButton = new IconButton(x + 24 + (slot % 3 * 18), y + 27 + (slot / 3 * 18), AllIcons.I_ADD);
 			newInputButton.withCallback(() -> {
@@ -150,41 +154,12 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 		slot = 0;
 		for (BigItemStack itemStack : inputConfig) {
-			int inputX = x + 25 + (slot % 3 * 18);
-			int inputY = y + 28 + (slot / 3 * 18);
-			graphics.renderItem(itemStack.stack, inputX, inputY);
-			if (!itemStack.stack.isEmpty())
-				graphics.renderItemDecorations(font, itemStack.stack, inputX, inputY, itemStack.count + "");
-
+			renderInputItem(graphics, slot, itemStack, mouseX, mouseY);
 			slot++;
-			
-			if (mouseX >= inputX - 1 && mouseX < inputX - 1 + 18 && mouseY >= inputY - 1 && mouseY < inputY - 1 + 18) {
-				if (itemStack.stack.isEmpty()) {
-					graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Empty panel")
-						.color(ScrollInput.HEADER_RGB)
-						.component(),
-						CreateLang.temporaryText("Left-Click to disconnect")
-							.style(ChatFormatting.DARK_GRAY)
-							.style(ChatFormatting.ITALIC)
-							.component()),
-						mouseX, mouseY);
-				} else
-					graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Send ")
-						.add(CreateLang.itemName(itemStack.stack)
-							.add(CreateLang.text(" x" + itemStack.count)))
-						.color(ScrollInput.HEADER_RGB)
-						.component(),
-						CreateLang.temporaryText("Scroll to change amount")
-							.style(ChatFormatting.DARK_GRAY)
-							.style(ChatFormatting.ITALIC)
-							.component(),
-						CreateLang.temporaryText("Left-Click to disconnect")
-							.style(ChatFormatting.DARK_GRAY)
-							.style(ChatFormatting.ITALIC)
-							.component()),
-						mouseX, mouseY);
-			}
 		}
+
+		if (restocker)
+			renderInputItem(graphics, slot, new BigItemStack(behaviour.getFilter(), 1), mouseX, mouseY);
 
 		if (inputConfig.size() > 0) {
 			AllGuiTextures.FACTORY_PANEL_ARROW.render(graphics,
@@ -202,7 +177,13 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 						.add(CreateLang.text(" x" + outputConfig.count)))
 					.color(ScrollInput.HEADER_RGB)
 					.component(),
-					CreateLang.temporaryText("Scroll to change amount")
+					CreateLang.temporaryText("The amount of output returning")
+						.style(ChatFormatting.GRAY)
+						.component(),
+					CreateLang.temporaryText("after each successful request")
+						.style(ChatFormatting.GRAY)
+						.component(),
+					CreateLang.temporaryText("Scroll to change")
 						.style(ChatFormatting.DARK_GRAY)
 						.style(ChatFormatting.ITALIC)
 						.component()),
@@ -215,35 +196,11 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		ms.translate(0, 0, 10);
 
 		// ADDRESS
-		if (addressBox.isHovered() && !addressBox.isFocused()) {
-			if (addressBox.getValue()
-				.isBlank())
-				graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Send inputs to...")
-					.color(ScrollInput.HEADER_RGB)
-					.component(),
-					CreateLang.temporaryText("Enter an address where")
-						.style(ChatFormatting.GRAY)
-						.component(),
-					CreateLang.temporaryText("this recipe is carried out.")
-						.style(ChatFormatting.GRAY)
-						.component(),
-					CreateLang.translate("gui.schedule.lmb_edit")
-						.style(ChatFormatting.DARK_GRAY)
-						.style(ChatFormatting.ITALIC)
-						.component()),
-					mouseX, mouseY);
-			else
-				graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Sending inputs to")
-					.color(ScrollInput.HEADER_RGB)
-					.component(),
-					CreateLang.temporaryText("'" + addressBox.getValue() + "'")
-						.style(ChatFormatting.GRAY)
-						.component()),
-					mouseX, mouseY);
-		}
+		if (addressBox.isHovered() && !addressBox.isFocused())
+			showAddressBoxTooltip(graphics, mouseX, mouseY);
 
 		// TITLE
-		Component title = CreateLang.temporaryText("Logistics Recipe")
+		Component title = CreateLang.temporaryText(restocker ? "Restocker Settings" : "Recipe Settings")
 			.component();
 		graphics.drawString(font, title, x + 87 - font.width(title) / 2, y + 7, 0x3D3C48, false);
 
@@ -258,10 +215,19 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			.isEmpty()) {
 			GuiGameElement.of(behaviour.getFilter())
 				.scale(1.625)
-				.at(0, 0, 200)
+				.at(0, 0, 100)
 				.render(graphics, x + 194, y + 68);
 		}
+
+		ms.translate(0, 0, 350);
+		MutableComponent countLabelForValueBox = behaviour.getCountLabelForValueBox();
+		graphics.drawString(font, countLabelForValueBox, x + 210 - font.width(countLabelForValueBox) / 2, y + 98,
+			0xffffffff);
 		ms.popPose();
+
+		if (mouseX >= x + 190 - 1 && mouseX < x + 190 - 1 + 48 && mouseY >= y + middleHeight() - 25 + 90 - 1
+			&& mouseY < y + middleHeight() - 25 + 94 - 1 + 26)
+			showStockLevelTooltip(graphics, mouseX, mouseY);
 
 		// PROMISES
 		int state = promiseExpiration.getState();
@@ -282,10 +248,11 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 				promiseTip = List.of(CreateLang.temporaryText("No open promises")
 					.color(ScrollInput.HEADER_RGB)
 					.component(),
-					CreateLang.temporaryText("When inputs are sent, a promise")
+					CreateLang
+						.temporaryText(restocker ? "When items are sent, a promise" : "When inputs are sent, a promise")
 						.style(ChatFormatting.GRAY)
 						.component(),
-					CreateLang.temporaryText("is held until outputs arrive.")
+					CreateLang.temporaryText(restocker ? "is held until they arrive." : "is held until outputs arrive.")
 						.style(ChatFormatting.GRAY)
 						.component(),
 					CreateLang.temporaryText("This prevents over-sending.")
@@ -311,6 +278,128 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		ms.popPose();
 	}
 
+	//
+
+	private void renderInputItem(GuiGraphics graphics, int slot, BigItemStack itemStack, int mouseX, int mouseY) {
+		int inputX = guiLeft + 25 + (slot % 3 * 18);
+		int inputY = guiTop + 28 + (slot / 3 * 18);
+
+		graphics.renderItem(itemStack.stack, inputX, inputY);
+		if (!restocker && !itemStack.stack.isEmpty())
+			graphics.renderItemDecorations(font, itemStack.stack, inputX, inputY, itemStack.count + "");
+
+		if (mouseX < inputX - 1 || mouseX >= inputX - 1 + 18 || mouseY < inputY - 1 || mouseY >= inputY - 1 + 18)
+			return;
+
+		if (itemStack.stack.isEmpty()) {
+			graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Empty panel")
+				.color(ScrollInput.HEADER_RGB)
+				.component(),
+				CreateLang.temporaryText("Left-Click to disconnect")
+					.style(ChatFormatting.DARK_GRAY)
+					.style(ChatFormatting.ITALIC)
+					.component()),
+				mouseX, mouseY);
+			return;
+		}
+
+		if (restocker) {
+			graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Sending ")
+				.add(CreateLang.itemName(itemStack.stack))
+				.color(ScrollInput.HEADER_RGB)
+				.component(),
+				CreateLang.temporaryText("whenever local stock level")
+					.style(ChatFormatting.GRAY)
+					.component(),
+				CreateLang.temporaryText("is below the target amount")
+					.style(ChatFormatting.GRAY)
+					.component()),
+				mouseX, mouseY);
+			return;
+		}
+
+		graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Send ")
+			.add(CreateLang.itemName(itemStack.stack)
+				.add(CreateLang.text(" x" + itemStack.count)))
+			.color(ScrollInput.HEADER_RGB)
+			.component(),
+			CreateLang.temporaryText("Scroll to change amount")
+				.style(ChatFormatting.DARK_GRAY)
+				.style(ChatFormatting.ITALIC)
+				.component(),
+			CreateLang.temporaryText("Left-Click to disconnect")
+				.style(ChatFormatting.DARK_GRAY)
+				.style(ChatFormatting.ITALIC)
+				.component()),
+			mouseX, mouseY);
+	}
+
+	private void showStockLevelTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+		graphics.renderComponentTooltip(font,
+			List.of(
+				(behaviour.count > 0 ? CreateLang.temporaryText("Storage level and target")
+					: CreateLang.temporaryText("Storage level")).color(ScrollInput.HEADER_RGB)
+						.component(),
+				CreateLang.temporaryText("Targeted amount can be set")
+					.style(ChatFormatting.GRAY)
+					.component(),
+				CreateLang.temporaryText("by using the filter slot")
+					.style(ChatFormatting.GRAY)
+					.component(),
+				CreateLang.temporaryText("outside of this interface")
+					.style(ChatFormatting.GRAY)
+					.component()),
+			mouseX, mouseY);
+	}
+
+	private void showAddressBoxTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+		if (addressBox.getValue()
+			.isBlank()) {
+			if (restocker) {
+				graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Send items to...")
+					.color(ScrollInput.HEADER_RGB)
+					.component(),
+					CreateLang.temporaryText("Enter an address that will")
+						.style(ChatFormatting.GRAY)
+						.component(),
+					CreateLang.temporaryText("cause packages to arrive here.")
+						.style(ChatFormatting.GRAY)
+						.component(),
+					CreateLang.translate("gui.schedule.lmb_edit")
+						.style(ChatFormatting.DARK_GRAY)
+						.style(ChatFormatting.ITALIC)
+						.component()),
+					mouseX, mouseY);
+
+			} else {
+				graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Send inputs to...")
+					.color(ScrollInput.HEADER_RGB)
+					.component(),
+					CreateLang.temporaryText("Enter an address where")
+						.style(ChatFormatting.GRAY)
+						.component(),
+					CreateLang.temporaryText("this recipe is carried out.")
+						.style(ChatFormatting.GRAY)
+						.component(),
+					CreateLang.translate("gui.schedule.lmb_edit")
+						.style(ChatFormatting.DARK_GRAY)
+						.style(ChatFormatting.ITALIC)
+						.component()),
+					mouseX, mouseY);
+			}
+		} else
+			graphics.renderComponentTooltip(font,
+				List.of(CreateLang.temporaryText(restocker ? "Sending to" : "Sending inputs to")
+					.color(ScrollInput.HEADER_RGB)
+					.component(),
+					CreateLang.temporaryText("'" + addressBox.getValue() + "'")
+						.style(ChatFormatting.GRAY)
+						.component()),
+				mouseX, mouseY);
+	}
+
+	//
+
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int pButton) {
 		if (getFocused() != null && !getFocused().isMouseOver(mouseX, mouseY))
@@ -324,8 +413,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			int inputX = x + 25 + (i % 3 * 18);
 			int inputY = y + 28 + (i / 3 * 18);
 			if (mouseX >= inputX && mouseX < inputX + 16 && mouseY >= inputY && mouseY < inputY + 16) {
-				sendIt(connections.get(i)
-					.from(), false);
+				sendIt(connections.get(i).from, false);
 				return true;
 			}
 		}
@@ -383,8 +471,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		Map<FactoryPanelPosition, Integer> inputs = new HashMap<>();
 		if (inputConfig.size() == connections.size())
 			for (int i = 0; i < inputConfig.size(); i++)
-				inputs.put(connections.get(i)
-					.from(), inputConfig.get(i).count);
+				inputs.put(connections.get(i).from, inputConfig.get(i).count);
 		AllPackets.getChannel()
 			.sendToServer(new FactoryPanelConfigurationPacket(behaviour.getPanelPosition(), addressBox.getValue(),
 				inputs, outputConfig.count, promiseExpiration.getState(), toRemove, clearPromises));

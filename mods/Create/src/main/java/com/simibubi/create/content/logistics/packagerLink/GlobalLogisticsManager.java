@@ -31,7 +31,7 @@ public class GlobalLogisticsManager {
 		logisticsNetworks.computeIfAbsent(networkId, $ -> new LogisticsNetwork(networkId)).totalLinks++;
 		markDirty();
 	}
-	
+
 	public void linkLoaded(UUID networkId) {
 		logisticsNetworks.computeIfAbsent(networkId, $ -> new LogisticsNetwork(networkId)).loadedLinks++;
 	}
@@ -45,14 +45,14 @@ public class GlobalLogisticsManager {
 			logisticsNetworks.remove(networkId);
 		markDirty();
 	}
-	
+
 	public void linkInvalidated(UUID networkId) {
 		LogisticsNetwork logisticsNetwork = logisticsNetworks.get(networkId);
 		if (logisticsNetwork == null)
 			return;
 		logisticsNetwork.loadedLinks--;
 	}
-	
+
 	public int getUnloadedLinkCount(UUID networkId) {
 		LogisticsNetwork logisticsNetwork = logisticsNetworks.get(networkId);
 		if (logisticsNetwork == null)

@@ -1,6 +1,7 @@
 package com.simibubi.create.content.logistics.packager;
 
 import com.simibubi.create.AllBlockEntityTypes;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.logistics.box.PackageItem;
@@ -85,23 +86,28 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
 		BlockHitResult hit) {
-		if (player != null && AllItems.WRENCH.isIn(player.getItemInHand(handIn)))
+		if (player == null)
+			return InteractionResult.PASS;
+
+		ItemStack itemInHand = player.getItemInHand(handIn);
+		if (AllItems.WRENCH.isIn(itemInHand))
+			return InteractionResult.PASS;
+		if (AllBlocks.FACTORY_PANEL.isIn(itemInHand))
 			return InteractionResult.PASS;
 
 		if (onBlockEntityUse(worldIn, pos, be -> {
 			if (be.heldBox.isEmpty()) {
 				if (be.animationTicks > 0)
 					return InteractionResult.SUCCESS;
-				ItemStack heldItem = player.getItemInHand(handIn);
-				if (heldItem.getItem() instanceof PackageItem) {
+				if (itemInHand.getItem() instanceof PackageItem) {
 					if (worldIn.isClientSide())
 						return InteractionResult.SUCCESS;
-					if (!be.unwrapBox(heldItem.copy(), true))
+					if (!be.unwrapBox(itemInHand.copy(), true))
 						return InteractionResult.SUCCESS;
-					be.unwrapBox(heldItem.copy(), false);
+					be.unwrapBox(itemInHand.copy(), false);
 					be.triggerStockCheck();
-					heldItem.shrink(1);
-					if (heldItem.isEmpty())
+					itemInHand.shrink(1);
+					if (itemInHand.isEmpty())
 						player.setItemInHand(handIn, ItemStack.EMPTY);
 					return InteractionResult.SUCCESS;
 				}

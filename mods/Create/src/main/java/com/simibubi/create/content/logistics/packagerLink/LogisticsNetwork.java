@@ -2,18 +2,20 @@ package com.simibubi.create.content.logistics.packagerLink;
 
 import java.util.UUID;
 
+import com.simibubi.create.Create;
+
 import net.minecraft.nbt.CompoundTag;
 
 public class LogisticsNetwork {
-	
+
 	public UUID id;
 	public RequestPromiseQueue panelPromises;
 	public int totalLinks;
 	public int loadedLinks;
-	
+
 	public LogisticsNetwork(UUID networkId) {
 		id = networkId;
-		panelPromises = new RequestPromiseQueue();
+		panelPromises = new RequestPromiseQueue(Create.LOGISTICS::markDirty);
 		totalLinks = 0;
 		loadedLinks = 0;
 	}
@@ -25,10 +27,10 @@ public class LogisticsNetwork {
 		tag.putInt("Links", totalLinks);
 		return tag;
 	}
-	
+
 	public static LogisticsNetwork read(CompoundTag tag) {
 		LogisticsNetwork network = new LogisticsNetwork(tag.getUUID("Id"));
-		network.panelPromises = RequestPromiseQueue.read(tag.getCompound("Promises"));
+		network.panelPromises = RequestPromiseQueue.read(tag.getCompound("Promises"), Create.LOGISTICS::markDirty);
 		network.totalLinks = tag.getInt("Links");
 		return network;
 	}

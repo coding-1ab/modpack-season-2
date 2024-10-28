@@ -87,8 +87,7 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 		float glow = behaviour.bulb.getValue(partialTicks);
 		float yOffset = 0;
 
-		boolean success = connection.successTracker()
-			.booleanValue();
+		boolean success = connection.success;
 
 		int color = behaviour.waitingForNetwork ? 0x5B3B3B
 			: behaviour.satisfied ? 0x9EFF7F : behaviour.promisedSatisfied ? 0x7FD6DB : 0x708DAD;

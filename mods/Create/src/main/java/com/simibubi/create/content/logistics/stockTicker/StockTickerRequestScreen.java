@@ -347,7 +347,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		ms.translate(x - 30, y + windowHeight - 80, 0);
 		ms.scale(3.5f, 3.5f, 3.5f);
 		GuiGameElement
-			.of(encodeRequester ? AllBlocks.REDSTONE_REQUESTER.asStack() : AllItems.CARDBOARD_PACKAGE_10x12.asStack())
+			.of(encodeRequester ? AllBlocks.REDSTONE_REQUESTER.asStack() : AllItems.CARDBOARD_PACKAGE_12x12.asStack())
 			.render(graphics);
 		ms.popPose();
 

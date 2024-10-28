@@ -331,7 +331,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	}
 
 	public MutableComponent getCountLabelForValueBox() {
-		return Components.literal(showCount ? upTo && filter.item()
+		return Components.literal(isCountVisible() ? upTo && filter.item()
 			.getMaxStackSize() == count ? "*" : String.valueOf(count) : "");
 	}
 

@@ -79,19 +79,19 @@ public class PackagePortScreen extends AbstractSimiContainerScreen<PackagePortMe
 
 		acceptPackages = new IconButton(x + 37, y + background.getHeight() - 24, AllIcons.I_SEND_AND_RECEIVE);
 		acceptPackages.withCallback(() -> {
-			acceptPackages.active = false;
-			dontAcceptPackages.active = true;
+			acceptPackages.green = true;
+			dontAcceptPackages.green = false;
 		});
-		acceptPackages.active = !menu.contentHolder.acceptsPackages;
+		acceptPackages.green = menu.contentHolder.acceptsPackages;
 		acceptPackages.setToolTip(CreateLang.translateDirect("gui.package_port.send_and_receive"));
 		addRenderableWidget(acceptPackages);
 
 		dontAcceptPackages = new IconButton(x + 37 + 18, y + background.getHeight() - 24, AllIcons.I_SEND_ONLY);
 		dontAcceptPackages.withCallback(() -> {
-			acceptPackages.active = true;
-			dontAcceptPackages.active = false;
+			acceptPackages.green = false;
+			dontAcceptPackages.green = true;
 		});
-		dontAcceptPackages.active = menu.contentHolder.acceptsPackages;
+		dontAcceptPackages.green = !menu.contentHolder.acceptsPackages;
 		dontAcceptPackages.setToolTip(CreateLang.translateDirect("gui.package_port.send_only"));
 		addRenderableWidget(dontAcceptPackages);
 
@@ -180,7 +180,7 @@ public class PackagePortScreen extends AbstractSimiContainerScreen<PackagePortMe
 	public void removed() {
 		AllPackets.getChannel()
 			.sendToServer(new PackagePortConfigurationPacket(menu.contentHolder.getBlockPos(), addressBox.getValue(),
-				dontAcceptPackages.isActive()));
+				acceptPackages.green));
 		super.removed();
 	}
 

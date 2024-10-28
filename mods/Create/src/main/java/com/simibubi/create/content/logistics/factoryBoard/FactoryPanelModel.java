@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelSlot;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelState;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelType;
 import com.simibubi.create.foundation.model.BakedModelWrapperWithData;
 import com.simibubi.create.foundation.model.BakedQuadHelper;
@@ -45,7 +46,8 @@ public class FactoryPanelModel extends BakedModelWrapperWithData {
 			FactoryPanelBehaviour behaviour = FactoryPanelBehaviour.at(world, new FactoryPanelPosition(pos, slot));
 			if (behaviour == null)
 				continue;
-			data.types.put(slot, behaviour.count == 0 ? PanelType.PASSIVE : PanelType.ACTIVE);
+			data.states.put(slot, behaviour.count == 0 ? PanelState.PASSIVE : PanelState.ACTIVE);
+			data.type = behaviour.panelBE().restocker ? PanelType.PACKAGER : PanelType.NETWORK;
 		}
 		return builder.with(PANEL_PROPERTY, data);
 	}
@@ -58,15 +60,19 @@ public class FactoryPanelModel extends BakedModelWrapperWithData {
 		FactoryPanelModelData modelData = data.get(PANEL_PROPERTY);
 		List<BakedQuad> quads = new ArrayList<>(super.getQuads(state, null, rand, data, renderType));
 		for (PanelSlot panelSlot : PanelSlot.values())
-			if (modelData.types.containsKey(panelSlot))
-				addPanel(quads, state, panelSlot, modelData.types.get(panelSlot), rand, data, renderType);
+			if (modelData.states.containsKey(panelSlot))
+				addPanel(quads, state, panelSlot, modelData.type, modelData.states.get(panelSlot), rand, data,
+					renderType);
 		return quads;
 	}
 
-	public void addPanel(List<BakedQuad> quads, BlockState state, PanelSlot slot, PanelType type, RandomSource rand,
-		ModelData data, RenderType renderType) {
-		PartialModel factoryPanel =
-			type == PanelType.PASSIVE ? AllPartialModels.FACTORY_PANEL : AllPartialModels.FACTORY_PANEL_WITH_BULB;
+	public void addPanel(List<BakedQuad> quads, BlockState state, PanelSlot slot, PanelType type, PanelState panelState,
+		RandomSource rand, ModelData data, RenderType renderType) {
+		PartialModel factoryPanel = panelState == PanelState.PASSIVE
+			? type == PanelType.NETWORK ? AllPartialModels.FACTORY_PANEL : AllPartialModels.FACTORY_PANEL_RESTOCKER
+			: type == PanelType.NETWORK ? AllPartialModels.FACTORY_PANEL_WITH_BULB
+				: AllPartialModels.FACTORY_PANEL_RESTOCKER_WITH_BULB;
+
 		List<BakedQuad> quadsToAdd = factoryPanel.get()
 			.getQuads(state, null, rand, data, RenderType.solid());
 
@@ -92,7 +98,8 @@ public class FactoryPanelModel extends BakedModelWrapperWithData {
 	}
 
 	private static class FactoryPanelModelData {
-		public EnumMap<PanelSlot, PanelType> types = new EnumMap<>(PanelSlot.class);
+		public PanelType type;
+		public EnumMap<PanelSlot, PanelState> states = new EnumMap<>(PanelSlot.class);
 	}
 
 }

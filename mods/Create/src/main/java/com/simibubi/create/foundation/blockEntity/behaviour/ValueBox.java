@@ -38,7 +38,7 @@ public class ValueBox extends ChasingAABBOutline {
 	public boolean isPassive;
 
 	protected ValueBoxTransform transform;
-	
+
 	protected WeakReference<LevelAccessor> level;
 	protected BlockPos pos;
 	protected BlockState blockState;
@@ -82,7 +82,7 @@ public class ValueBox extends ChasingAABBOutline {
 		boolean hasTransform = transform != null;
 		if (transform instanceof Sided && params.getHighlightedFace() != null)
 			((Sided) transform).fromSide(params.getHighlightedFace());
-		
+
 		LevelAccessor levelAccessor = level.get();
 		if (hasTransform && !transform.shouldRender(levelAccessor, pos, blockState))
 			return;
@@ -159,13 +159,12 @@ public class ValueBox extends ChasingAABBOutline {
 			} else
 				ms.translate(-7, 10, blockItem ? 10 + 1 / 4f : 0);
 
-			if (count.getString().equals("*"))
+			if (count.getString()
+				.equals("*"))
 				ms.translate(-1, 3f, 0);
 
 			ms.scale(scale, scale, scale);
-			drawString(ms, buffer, count, 0, 0, isFilter ? 0xFFFFFF : 0xEDEDED);
-			ms.translate(0, 0, -1 / 16f);
-			drawString(ms, buffer, Components.literal(count.getString()), 1 - 1 / 8f, 1 - 1 / 8f, 0x3F3F3F);
+			drawString8x(ms, buffer, count, 0, 0, isFilter ? 0xFFFFFF : 0xEDEDED);
 		}
 
 	}
@@ -202,7 +201,10 @@ public class ValueBox extends ChasingAABBOutline {
 			ms.translate(singleDigit ? stringWidth / 2 : 0, singleDigit ? -verticalMargin : verticalMargin, 0);
 
 			int overrideColor = transform.getOverrideColor();
-			renderHoveringText(ms, buffer, text, overrideColor != -1 ? overrideColor : 0xEDEDED);
+			if (overrideColor == -1)
+				drawString8x(ms, buffer, text, 0, 0, 0xEDEDED);
+			else
+				drawString(ms, buffer, text, 0, 0, overrideColor);
 		}
 
 	}
@@ -228,16 +230,16 @@ public class ValueBox extends ChasingAABBOutline {
 
 	}
 
-	protected void renderHoveringText(PoseStack ms, MultiBufferSource buffer, Component text, int color) {
-		ms.pushPose();
-		drawString(ms, buffer, text, 0, 0, color);
-		ms.popPose();
-	}
-
 	private static void drawString(PoseStack ms, MultiBufferSource buffer, Component text, float x, float y,
 		int color) {
 		Minecraft.getInstance().font.drawInBatch(text, x, y, color, false, ms.last()
 			.pose(), buffer, Font.DisplayMode.NORMAL, 0, LightTexture.FULL_BRIGHT);
+	}
+
+	private static void drawString8x(PoseStack ms, MultiBufferSource buffer, Component text, float x, float y,
+		int color) {
+		Minecraft.getInstance().font.drawInBatch8xOutline(text.getVisualOrderText(), x, y, color, 0xff333333, ms.last()
+			.pose(), buffer, LightTexture.FULL_BRIGHT);
 	}
 
 }

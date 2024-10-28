@@ -83,7 +83,7 @@ public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPac
 			FactoryPanelPosition key = entry.getKey();
 			FactoryPanelConnection connection = behaviour.targetedBy.get(key);
 			if (connection != null)
-				behaviour.targetedBy.put(key, new FactoryPanelConnection(key, entry.getValue()));
+				connection.amount = entry.getValue();
 		}
 
 		behaviour.recipeOutput = outputAmount;

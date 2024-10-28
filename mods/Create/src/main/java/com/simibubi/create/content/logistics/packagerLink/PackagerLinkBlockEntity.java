@@ -29,10 +29,13 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 		setLazyTickRate(10);
 	}
 
-	public InventorySummary fetchSummaryFromPackager() {
+	public InventorySummary fetchSummaryFromPackager(@Nullable IItemHandler ignoredHandler) {
 		PackagerBlockEntity packager = getPackager();
 		if (packager == null || packager.defragmenterActive)
 			return InventorySummary.EMPTY;
+		if (packager.isTargetingSameInventory(ignoredHandler))
+			return InventorySummary.EMPTY;
+		
 		sendPulseNextSync();
 		sendData();
 		return packager.getAvailableItems();

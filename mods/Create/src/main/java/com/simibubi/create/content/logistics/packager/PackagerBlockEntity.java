@@ -1,18 +1,25 @@
 package com.simibubi.create.content.logistics.packager;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.Create;
+import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceBlockEntity;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.crate.BottomlessItemHandler;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBehaviour;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlockEntity;
 import com.simibubi.create.content.logistics.packagePort.frogport.FrogportBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerBlock.PackagerType;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
+import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -89,8 +96,13 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-		behaviours.add(targetInventory = new InvManipulationBehaviour(this, InterfaceProvider.oppositeOfBlockFacing()));
+		behaviours.add(targetInventory = new InvManipulationBehaviour(this, InterfaceProvider.oppositeOfBlockFacing())
+			.withFilter(this::supportsBlockEntity));
 		behaviours.add(invVersionTracker = new VersionedInventoryTrackerBehaviour(this));
+	}
+
+	private boolean supportsBlockEntity(BlockEntity target) {
+		return target != null && !(target instanceof PortableStorageInterfaceBlockEntity);
 	}
 
 	@Override
@@ -123,7 +135,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	public void triggerStockCheck() {
 		getAvailableItems();
 	}
-	
+
 	public InventorySummary getAvailableItems() {
 		if (availableItems != null && invVersionTracker.stillWaiting(targetInventory.getInventory()))
 			return availableItems;
@@ -149,28 +161,48 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		if (before == null || after.isEmpty())
 			return;
 
+		Set<RequestPromiseQueue> promiseQueues = new HashSet<>();
+
 		for (Direction d : Iterate.directions) {
+			if (!level.isLoaded(worldPosition.relative(d)))
+				continue;
+
 			BlockState adjacentState = level.getBlockState(worldPosition.relative(d));
-			if (!AllBlocks.PACKAGER_LINK.has(adjacentState))
-				continue;
-			if (adjacentState.getValue(PackagerLinkBlock.FACING) != d)
-				continue;
-			if (!(level.getBlockEntity(worldPosition.relative(d)) instanceof PackagerLinkBlockEntity plbe))
-				return;
-			UUID freqId = plbe.behaviour.freqId;
-			if (!Create.LOGISTICS.hasQueuedPromises(freqId))
-				return;
+			if (AllBlocks.FACTORY_PANEL.has(adjacentState)) {
+				if (FactoryPanelBlock.connectedDirection(adjacentState) != d)
+					continue;
+				if (!(level.getBlockEntity(worldPosition.relative(d)) instanceof FactoryPanelBlockEntity fpbe))
+					continue;
+				if (!fpbe.restocker)
+					continue;
+				for (FactoryPanelBehaviour behaviour : fpbe.panels.values()) {
+					if (!behaviour.isActive())
+						continue;
+					promiseQueues.add(behaviour.restockerPromises);
+				}
+			}
 
-			for (BigItemStack entry : after.getStacks())
-				before.add(entry.stack, -entry.count);
+			if (AllBlocks.PACKAGER_LINK.has(adjacentState)) {
+				if (adjacentState.getValue(PackagerLinkBlock.FACING) != d)
+					continue;
+				if (!(level.getBlockEntity(worldPosition.relative(d)) instanceof PackagerLinkBlockEntity plbe))
+					continue;
+				UUID freqId = plbe.behaviour.freqId;
+				if (!Create.LOGISTICS.hasQueuedPromises(freqId))
+					continue;
+				promiseQueues.add(Create.LOGISTICS.getQueuedPromises(freqId));
+			}
+		}
 
+		if (promiseQueues.isEmpty())
+			return;
+
+		for (BigItemStack entry : after.getStacks())
+			before.add(entry.stack, -entry.count);
+		for (RequestPromiseQueue queue : promiseQueues)
 			for (BigItemStack entry : before.getStacks())
 				if (entry.count < 0)
-					Create.LOGISTICS.getQueuedPromises(freqId)
-						.itemEnteredSystem(entry.stack, -entry.count);
-
-			return;
-		}
+					queue.itemEnteredSystem(entry.stack, -entry.count);
 	}
 
 	@Override
