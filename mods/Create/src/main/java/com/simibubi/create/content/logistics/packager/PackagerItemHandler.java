@@ -34,7 +34,7 @@ public class PackagerItemHandler implements IItemHandlerModifiable {
 
 	@Override
 	public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-		if (!blockEntity.heldBox.isEmpty())
+		if (!blockEntity.heldBox.isEmpty() || !blockEntity.queuedExitingPackages.isEmpty())
 			return stack;
 		if (!isItemValid(slot, stack))
 			return stack;

@@ -1,5 +1,6 @@
 package com.simibubi.create.content.logistics.stockTicker;
 
+import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour.RequestType;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlock;
 import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
 
@@ -48,7 +49,7 @@ public class PackageOrderRequestPacket extends BlockEntityConfigurationPacket<St
 			return;
 		}
 
-		be.broadcastPackageRequest(order, null, address);
+		be.broadcastPackageRequest(RequestType.PLAYER, order, null, address);
 		return;
 	}
 

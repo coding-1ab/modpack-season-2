@@ -18,11 +18,14 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
+import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
+import com.simibubi.create.content.logistics.packager.PackagingRequest;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
+import net.createmod.catnip.utility.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
@@ -41,54 +44,20 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 	private boolean loadedGlobally = false;
 	private boolean global = false;
 
-	//
-
-	public LogisticallyLinkedBehaviour(SmartBlockEntity be, boolean global) {
-		super(be);
-		this.global = global;
-		linkId = LINK_ID_GENERATOR.getAndIncrement();
-		freqId = UUID.randomUUID();
+	public static enum RequestType {
+		RESTOCK, REDSTONE, PLAYER
 	}
-
-	//
 
 	private static final Cache<UUID, Cache<Integer, WeakReference<LogisticallyLinkedBehaviour>>> LINKS =
 		CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.SECONDS)
 			.build();
 
-	private static final Cache<UUID, InventorySummary> SUMMARIES = CacheBuilder.newBuilder()
-		.expireAfterWrite(1, TimeUnit.SECONDS)
-		.build();
-
-	private static final Cache<UUID, InventorySummary> ACCURATE_SUMMARIES = CacheBuilder.newBuilder()
-		.expireAfterWrite(100, TimeUnit.MILLISECONDS)
-		.build();
-
-	public InventorySummary getSummaryOfNetwork(boolean accurate) {
-		try {
-			return (accurate ? ACCURATE_SUMMARIES : SUMMARIES).get(freqId, () -> {
-				InventorySummary summaryOfLinks = new InventorySummary();
-				getAllConnectedAvailableLinks(false).forEach(link -> {
-					InventorySummary summary = link.getSummary(null);
-					if (summary != InventorySummary.EMPTY)
-						summaryOfLinks.contributingLinks++;
-					summaryOfLinks.add(summary);
-				});
-				return summaryOfLinks;
-			});
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
-		return InventorySummary.EMPTY;
-	}
-
-	public int getStockOf(ItemStack stack, @Nullable IItemHandler ignoredHandler) {
-		int sum = 0;
-		for (LogisticallyLinkedBehaviour link : getAllConnectedAvailableLinks(false))
-			sum += link.getSummary(ignoredHandler)
-				.getCountOf(stack);
-		return sum;
+	public LogisticallyLinkedBehaviour(SmartBlockEntity be, boolean global) {
+		super(be);
+		this.global = global;
+		linkId = LINK_ID_GENERATOR.getAndIncrement();
+		freqId = UUID.randomUUID();
 	}
 
 	public static Collection<LogisticallyLinkedBehaviour> getAllPresent(UUID freq, boolean sortByPriority) {
@@ -188,12 +157,15 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 			keepAlive(this);
 	}
 
-	public int processRequest(ItemStack stack, int amount, String address, int linkIndex, MutableBoolean finalLink,
-		int orderId, @Nullable PackageOrder orderContext, @Nullable IItemHandler ignoredHandler) {
+	public Pair<PackagerBlockEntity, PackagingRequest> processRequest(ItemStack stack, int amount, String address,
+		int linkIndex, MutableBoolean finalLink, int orderId, @Nullable PackageOrder orderContext,
+		@Nullable IItemHandler ignoredHandler) {
+
 		if (blockEntity instanceof PackagerLinkBlockEntity plbe)
 			return plbe.processRequest(stack, amount, address, linkIndex, finalLink, orderId, orderContext,
 				ignoredHandler);
-		return 0;
+
+		return null;
 	}
 
 	public InventorySummary getSummary(@Nullable IItemHandler ignoredHandler) {
@@ -233,10 +205,6 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 	@Override
 	public BehaviourType<?> getType() {
 		return TYPE;
-	}
-
-	public Iterable<LogisticallyLinkedBehaviour> getAllConnectedAvailableLinks(boolean sortByPriority) {
-		return getAllPresent(freqId, sortByPriority);
 	}
 
 }

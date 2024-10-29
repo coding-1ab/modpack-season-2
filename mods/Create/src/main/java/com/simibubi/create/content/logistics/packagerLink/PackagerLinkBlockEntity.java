@@ -13,6 +13,7 @@ import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.redstone.displayLink.LinkWithBulbBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
+import net.createmod.catnip.utility.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -35,33 +36,32 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 			return InventorySummary.EMPTY;
 		if (packager.isTargetingSameInventory(ignoredHandler))
 			return InventorySummary.EMPTY;
-		
+
 		sendPulseNextSync();
 		sendData();
 		return packager.getAvailableItems();
 	}
 
-	public int processRequest(ItemStack stack, int amount, String address, int linkIndex, MutableBoolean finalLink,
-		int orderId, @Nullable PackageOrder orderContext, @Nullable IItemHandler ignoredHandler) {
+	public Pair<PackagerBlockEntity, PackagingRequest> processRequest(ItemStack stack, int amount, String address,
+		int linkIndex, MutableBoolean finalLink, int orderId, @Nullable PackageOrder orderContext,
+		@Nullable IItemHandler ignoredHandler) {
 		PackagerBlockEntity packager = getPackager();
 		if (packager == null || packager.defragmenterActive)
-			return 0;
+			return null;
 		if (packager.isTargetingSameInventory(ignoredHandler))
-			return 0;
+			return null;
 
 		InventorySummary summary = packager.getAvailableItems();
 		int availableCount = summary.getCountOf(stack);
 		if (availableCount == 0)
-			return 0;
+			return null;
 
-		int toWithdraw = Math.min(amount, availableCount);
-		PackagingRequest packagingRequest =
-			PackagingRequest.create(stack, toWithdraw, address, linkIndex, finalLink, 0, orderId, orderContext);
-		packager.queueRequest(packagingRequest);
 		sendPulseNextSync();
 		sendData();
 
-		return toWithdraw;
+		int toWithdraw = Math.min(amount, availableCount);
+		return Pair.of(packager,
+			PackagingRequest.create(stack, toWithdraw, address, linkIndex, finalLink, 0, orderId, orderContext));
 	}
 
 	@Override

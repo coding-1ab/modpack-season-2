@@ -14,6 +14,7 @@ import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
+import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour.RequestType;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -82,10 +83,11 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 	}
 
 	@Override
-	public void broadcastPackageRequest(PackageOrder order, IItemHandler ignoredHandler, String address) {
-		super.broadcastPackageRequest(order, ignoredHandler, address);
+	public boolean broadcastPackageRequest(RequestType type, PackageOrder order, IItemHandler ignoredHandler, String address) {
+		boolean result = super.broadcastPackageRequest(type, order, ignoredHandler, address);
 		previouslyUsedAddress = address;
 		notifyUpdate();
+		return result;
 	}
 
 	@Override

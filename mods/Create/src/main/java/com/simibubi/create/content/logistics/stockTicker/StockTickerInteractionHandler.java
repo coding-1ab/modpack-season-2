@@ -12,6 +12,7 @@ import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem;
 import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem.ShoppingList;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
+import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour.RequestType;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.ScreenOpener;
@@ -164,7 +165,7 @@ public class StockTickerInteractionHandler {
 			toTransfer.forEach(s -> ItemHandlerHelper.insertItemStacked(tickerBE.receivedPayments, s, false));
 		}
 
-		tickerBE.broadcastPackageRequest(order, null, ShoppingListItem.getAddress(mainHandItem));
+		tickerBE.broadcastPackageRequest(RequestType.PLAYER, order, null, ShoppingListItem.getAddress(mainHandItem));
 		player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 	}
 

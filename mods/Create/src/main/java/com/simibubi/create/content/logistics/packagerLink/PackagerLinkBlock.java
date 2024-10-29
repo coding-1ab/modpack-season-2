@@ -84,7 +84,7 @@ public class PackagerLinkBlock extends WrenchableDirectionalBlock implements IBE
 	public BlockEntityType<? extends PackagerLinkBlockEntity> getBlockEntityType() {
 		return AllBlockEntityTypes.PACKAGER_LINK.get();
 	}
-	
+
 	@Override
 	public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
 		IBE.onRemove(pState, pLevel, pPos, pNewState);

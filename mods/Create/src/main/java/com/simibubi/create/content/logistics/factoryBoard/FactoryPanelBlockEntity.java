@@ -2,13 +2,14 @@ package com.simibubi.create.content.logistics.factoryBoard;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelSlot;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
-import com.simibubi.create.content.logistics.stockTicker.StockCheckingBlockEntity;
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
 import net.createmod.catnip.utility.NBTHelper;
@@ -27,7 +28,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class FactoryPanelBlockEntity extends StockCheckingBlockEntity {
+public class FactoryPanelBlockEntity extends SmartBlockEntity {
 
 	public EnumMap<PanelSlot, FactoryPanelBehaviour> panels;
 
@@ -45,7 +46,6 @@ public class FactoryPanelBlockEntity extends StockCheckingBlockEntity {
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
 		panels = new EnumMap<>(PanelSlot.class);
 		redraw = true;
-		super.addBehaviours(behaviours);
 		for (PanelSlot slot : PanelSlot.values()) {
 			FactoryPanelBehaviour e = new FactoryPanelBehaviour(this, slot);
 			panels.put(slot, e);
@@ -59,7 +59,7 @@ public class FactoryPanelBlockEntity extends StockCheckingBlockEntity {
 		if (level.isClientSide())
 			return;
 
-		if (panels.isEmpty())
+		if (activePanels() == 0)
 			level.destroyBlock(worldPosition, false);
 
 		if (AllBlocks.FACTORY_PANEL.has(getBlockState())) {
@@ -105,10 +105,11 @@ public class FactoryPanelBlockEntity extends StockCheckingBlockEntity {
 			Block.popResource(level, worldPosition, AllBlocks.FACTORY_PANEL.asStack(panelCount - 1));
 	}
 
-	public boolean addPanel(PanelSlot slot) {
+	public boolean addPanel(PanelSlot slot, UUID frequency) {
 		FactoryPanelBehaviour behaviour = panels.get(slot);
 		if (behaviour != null && !behaviour.isActive()) {
 			behaviour.enable();
+			behaviour.setNetwork(frequency);
 			redraw = true;
 			lastShape = null;
 			return true;

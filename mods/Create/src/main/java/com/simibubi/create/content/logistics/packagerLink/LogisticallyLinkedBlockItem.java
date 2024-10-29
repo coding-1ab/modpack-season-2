@@ -1,6 +1,9 @@
 package com.simibubi.create.content.logistics.packagerLink;
 
 import java.util.List;
+import java.util.UUID;
+
+import javax.annotation.Nullable;
 
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -32,6 +35,17 @@ public class LogisticallyLinkedBlockItem extends BlockItem {
 	public static boolean isTuned(ItemStack pStack) {
 		return pStack.hasTag() && pStack.getTag()
 			.contains(BLOCK_ENTITY_TAG);
+	}
+	
+	@Nullable
+	public static UUID networkFromStack(ItemStack pStack) {
+		if (!isTuned(pStack))
+			return null;
+		CompoundTag tag = pStack.getTag()
+			.getCompound(BLOCK_ENTITY_TAG);
+		if (!tag.hasUUID("Freq"))
+			return null;
+		return tag.getUUID("Freq");
 	}
 
 	@Override

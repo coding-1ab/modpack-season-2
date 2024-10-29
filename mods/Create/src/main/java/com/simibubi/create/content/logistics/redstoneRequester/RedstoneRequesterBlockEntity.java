@@ -2,6 +2,7 @@ package com.simibubi.create.content.logistics.redstoneRequester;
 
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
+import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour.RequestType;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.logistics.stockTicker.StockCheckingBlockEntity;
 
@@ -63,7 +64,7 @@ public class RedstoneRequesterBlockEntity extends StockCheckingBlockEntity imple
 					return;
 		}
 
-		broadcastPackageRequest(encodedRequest, null, encodedTargetAdress);
+		broadcastPackageRequest(RequestType.REDSTONE, encodedRequest, null, encodedTargetAdress);
 		lastRequestSucceeded = true;
 	}
 

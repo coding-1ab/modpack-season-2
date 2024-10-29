@@ -17,6 +17,7 @@ import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlockEntity;
 import com.simibubi.create.content.logistics.packagePort.frogport.FrogportBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerBlock.PackagerType;
+import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour.RequestType;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
@@ -36,6 +37,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -59,12 +61,12 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	public ItemStack heldBox;
 	public ItemStack previouslyUnwrapped;
 
-	public List<PackagingRequest> queuedRequests;
+	public List<ItemStack> queuedExitingPackages;
 
 	public PackagerItemHandler inventory;
 	private final LazyOptional<IItemHandler> invProvider;
 
-	public static final int CYCLE = 30;
+	public static final int CYCLE = 20;
 	public int animationTicks;
 	public boolean animationInward;
 
@@ -87,7 +89,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		invProvider = LazyOptional.of(() -> inventory);
 		animationTicks = 0;
 		animationInward = true;
-		queuedRequests = new LinkedList<>();
+		queuedExitingPackages = new LinkedList<>();
 		signBasedAddress = "";
 		if (AllBlocks.PACKAGER.has(state))
 			defragmenterActive = state.getValue(PackagerBlock.TYPE) == PackagerType.DEFRAG;
@@ -114,10 +116,17 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		if (!level.isClientSide() && !queuedRequests.isEmpty() && !defragmenterActive)
-			attemptToSend(true);
+
 		if (animationTicks == 0) {
 			previouslyUnwrapped = ItemStack.EMPTY;
+
+			if (!level.isClientSide() && !queuedExitingPackages.isEmpty() && heldBox.isEmpty()) {
+				heldBox = queuedExitingPackages.remove(0);
+				animationInward = false;
+				animationTicks = CYCLE;
+				notifyUpdate();
+			}
+
 			return;
 		}
 
@@ -125,11 +134,6 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 		if (animationTicks == 0 && !level.isClientSide())
 			wakeTheFrogs();
-	}
-
-	public void queueRequest(PackagingRequest packagingRequest) {
-		queuedRequests.add(packagingRequest);
-		level.blockEntityChanged(worldPosition);
 	}
 
 	public void triggerStockCheck() {
@@ -218,7 +222,16 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		if (!redstoneModeActive)
 			return;
 		updateSignAddress();
-		attemptToSend(false);
+		attemptToSend(null);
+	}
+
+	public boolean isTooBusyFor(RequestType type) {
+		int queue = queuedExitingPackages.size();
+		return queue >= switch (type) {
+		case PLAYER -> 50;
+		case REDSTONE -> 20;
+		case RESTOCK -> 10;
+		};
 	}
 
 	public void recheckIfLinksPresent() {
@@ -244,7 +257,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		if (!redstoneModeActive)
 			return;
 		updateSignAddress();
-		attemptToSend(false);
+		attemptToSend(null);
 	}
 
 	public boolean unwrapBox(ItemStack box, boolean simulate) {
@@ -325,8 +338,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		return true;
 	}
 
-	public void attemptToSend(boolean requestQueue) {
-		if (!heldBox.isEmpty() || animationTicks != 0)
+	public void attemptToSend(List<PackagingRequest> queuedRequests) {
+		if (queuedRequests == null && (!heldBox.isEmpty() || animationTicks != 0))
 			return;
 
 		IItemHandler targetInv = targetInventory.getInventory();
@@ -353,6 +366,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		int packageIndexAtLink = 0;
 		boolean finalPackageAtLink = false;
 		PackageOrder orderContext = null;
+		boolean requestQueue = queuedRequests != null;
 
 		if (requestQueue && !queuedRequests.isEmpty()) {
 			nextRequest = queuedRequests.get(0);
@@ -439,17 +453,24 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			return;
 		}
 
-		heldBox = extractedPackageItem.isEmpty() ? PackageItem.containing(extractedItems) : extractedPackageItem.copy();
-		PackageItem.clearAddress(heldBox);
+		ItemStack createdBox =
+			extractedPackageItem.isEmpty() ? PackageItem.containing(extractedItems) : extractedPackageItem.copy();
+		PackageItem.clearAddress(createdBox);
 
 		if (fixedAddress != null)
-			PackageItem.addAddress(heldBox, fixedAddress);
+			PackageItem.addAddress(createdBox, fixedAddress);
 		if (requestQueue)
-			PackageItem.setOrder(heldBox, fixedOrderId, linkIndexInOrder, finalLinkInOrder, packageIndexAtLink,
+			PackageItem.setOrder(createdBox, fixedOrderId, linkIndexInOrder, finalLinkInOrder, packageIndexAtLink,
 				finalPackageAtLink, orderContext);
 		if (!requestQueue && !signBasedAddress.isBlank())
-			PackageItem.addAddress(heldBox, signBasedAddress);
+			PackageItem.addAddress(createdBox, signBasedAddress);
 
+		if (!heldBox.isEmpty() || animationTicks != 0) {
+			queuedExitingPackages.add(createdBox);
+			return;
+		}
+
+		heldBox = createdBox;
 		animationInward = false;
 		animationTicks = CYCLE;
 
@@ -550,8 +571,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		defragmenterActive = compound.getBoolean("Defrag");
 		if (clientPacket)
 			return;
-		queuedRequests =
-			NBTHelper.readCompoundList(compound.getList("QueuedRequests", Tag.TAG_COMPOUND), PackagingRequest::fromNBT);
+		queuedExitingPackages = NBTHelper.readItemList(compound.getList("QueuedPackages", Tag.TAG_COMPOUND));
 		if (compound.contains("LastSummary"))
 			availableItems = InventorySummary.read(compound.getCompound("LastSummary"));
 	}
@@ -568,7 +588,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		compound.putBoolean("Defrag", defragmenterActive);
 		if (clientPacket)
 			return;
-		compound.put("QueuedRequests", NBTHelper.writeCompoundList(queuedRequests, PackagingRequest::toNBT));
+		compound.put("QueuedPackages", NBTHelper.writeItemList(queuedExitingPackages));
 		if (availableItems != null)
 			compound.put("LastSummary", availableItems.write());
 	}
@@ -583,6 +603,9 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	public void destroy() {
 		super.destroy();
 		ItemHelper.dropContents(level, worldPosition, inventory);
+		queuedExitingPackages.forEach(stack -> Containers.dropItemStack(level, worldPosition.getX(),
+			worldPosition.getY(), worldPosition.getZ(), stack));
+		queuedExitingPackages.clear();
 	}
 
 	@Override

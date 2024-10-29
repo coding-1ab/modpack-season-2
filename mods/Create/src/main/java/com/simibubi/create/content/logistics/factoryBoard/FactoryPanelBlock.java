@@ -3,15 +3,19 @@ package com.simibubi.create.content.logistics.factoryBoard;
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
+import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -20,6 +24,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -40,6 +45,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.level.BlockEvent;
 
 public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 	implements ProperWaterloggedBlock, IBE<FactoryPanelBlockEntity>, IWrenchable {
@@ -61,7 +68,7 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 	public static enum PanelState {
 		PASSIVE, ACTIVE
 	}
-	
+
 	public static enum PanelType {
 		NETWORK, PACKAGER
 	}
@@ -104,10 +111,49 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 		FactoryPanelBlockEntity fpbe = getBlockEntity(level, pos);
 
 		Vec3 location = pContext.getClickLocation();
-		if (blockState.is(this) && location != null && fpbe != null && !level.isClientSide())
-			fpbe.addPanel(getTargetedSlot(pos, blockState, location));
+		if (blockState.is(this) && location != null && fpbe != null && !level.isClientSide()) {
+			if (fpbe.addPanel(getTargetedSlot(pos, blockState, location),
+				LogisticallyLinkedBlockItem.networkFromStack(pContext.getItemInHand())) && pContext.getPlayer() != null)
+				pContext.getPlayer()
+					.displayClientMessage(CreateLang.translateDirect("logistically_linked.connected"), true);
+		}
 
 		return withWater(stateForPlacement, pContext);
+	}
+
+	@Override
+	public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {
+		Level world = context.getLevel();
+		BlockPos pos = context.getClickedPos();
+		Player player = context.getPlayer();
+		PanelSlot slot = getTargetedSlot(pos, state, context.getClickLocation());
+
+		if (!(world instanceof ServerLevel serverLevel))
+			return InteractionResult.SUCCESS;
+
+		return onBlockEntityUse(world, pos, be -> {
+			FactoryPanelBehaviour behaviour = be.panels.get(slot);
+			if (behaviour == null || !behaviour.isActive())
+				return InteractionResult.SUCCESS;
+
+			BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, world.getBlockState(pos), player);
+			MinecraftForge.EVENT_BUS.post(event);
+			if (event.isCanceled())
+				return InteractionResult.SUCCESS;
+
+			if (!be.removePanel(slot))
+				return InteractionResult.SUCCESS;
+
+			if (!player.isCreative())
+				player.getInventory()
+					.placeItemBackInInventory(AllBlocks.FACTORY_PANEL.asStack());
+
+			playRemoveSound(world, pos);
+			if (be.activePanels() == 0)
+				world.destroyBlock(pos, false);
+
+			return InteractionResult.SUCCESS;
+		});
 	}
 
 	@Override
@@ -122,7 +168,8 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 		if (location == null)
 			return;
 		PanelSlot initialSlot = getTargetedSlot(pPos, pState, location);
-		withBlockEntityDo(pLevel, pPos, fpbe -> fpbe.addPanel(initialSlot));
+		withBlockEntityDo(pLevel, pPos,
+			fpbe -> fpbe.addPanel(initialSlot, LogisticallyLinkedBlockItem.networkFromStack(pStack)));
 	}
 
 	@Override
@@ -139,10 +186,18 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 		if (location == null)
 			return InteractionResult.SUCCESS;
 
+		if (!FactoryPanelBlockItem.isTuned(item)) {
+			AllSoundEvents.DENY.playOnServer(pLevel, pPos);
+			pPlayer.displayClientMessage(CreateLang.temporaryText("Tune to a transmitter before placing")
+				.component(), true);
+			return InteractionResult.FAIL;
+		}
+
 		PanelSlot newSlot = getTargetedSlot(pPos, pState, location);
 		withBlockEntityDo(pLevel, pPos, fpbe -> {
-			if (!fpbe.addPanel(newSlot))
+			if (!fpbe.addPanel(newSlot, LogisticallyLinkedBlockItem.networkFromStack(item)))
 				return;
+			pPlayer.displayClientMessage(CreateLang.translateDirect("logistically_linked.connected"), true);
 			pLevel.playSound(null, pPos, soundType.getPlaceSound(), SoundSource.BLOCKS);
 			if (pPlayer.isCreative())
 				return;

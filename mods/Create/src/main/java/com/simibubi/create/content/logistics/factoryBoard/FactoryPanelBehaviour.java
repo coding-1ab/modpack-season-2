@@ -1,10 +1,12 @@
 package com.simibubi.create.content.logistics.factoryBoard;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -12,6 +14,8 @@ import javax.annotation.Nullable;
 
 import org.joml.Math;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllTags.AllItemTags;
@@ -22,10 +26,12 @@ import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
+import com.simibubi.create.content.logistics.packager.PackagingRequest;
+import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour.RequestType;
+import com.simibubi.create.content.logistics.packagerLink.LogisticsManager;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromise;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
-import com.simibubi.create.content.logistics.stockTicker.StockCheckingBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBoard;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsFormatter;
@@ -73,6 +79,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public PanelSlot slot;
 	public int promiseClearingInterval;
 	public boolean forceClearPromises;
+	public UUID network;
 
 	public RequestPromiseQueue restockerPromises;
 	private boolean promisePrimedForMarkDirty;
@@ -102,6 +109,11 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			.chase(0, 0.45, Chaser.EXP);
 		this.restockerPromises = new RequestPromiseQueue(be::setChanged);
 		this.promisePrimedForMarkDirty = true;
+		this.network = UUID.randomUUID();
+	}
+
+	public void setNetwork(UUID network) {
+		this.network = network;
 	}
 
 	@Nullable
@@ -176,34 +188,55 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			tryRestock();
 			return;
 		}
+		
+		if (recipeAddress.isBlank())
+			return;
 
-		InventorySummary summary = panelBE.getAccurateSummary();
 		boolean failed = false;
 
-		List<BigItemStack> toRequest = new ArrayList<>();
+		Multimap<UUID, BigItemStack> toRequest = HashMultimap.create();
 		for (FactoryPanelConnection connection : targetedBy.values()) {
 			FactoryPanelBehaviour source = at(getWorld(), connection.from);
 			if (source == null)
 				return;
+
 			ItemStack item = source.getFilter();
 			int amount = connection.amount;
+			InventorySummary summary = LogisticsManager.getSummaryOfNetwork(source.network, true);
 			if (amount == 0 || item.isEmpty() || summary.getCountOf(item) < amount) {
 				sendEffect(connection.from, false);
 				failed = true;
 				continue;
 			}
 
-			toRequest.add(new BigItemStack(item, amount));
+			toRequest.put(source.network, new BigItemStack(item, amount));
 			sendEffect(connection.from, true);
 		}
 
 		if (failed)
 			return;
 
-		PackageOrder order = new PackageOrder(toRequest);
-		panelBE.broadcastPackageRequest(order, null, recipeAddress);
+		// Input items may come from differing networks
+		Map<UUID, Collection<BigItemStack>> asMap = toRequest.asMap();
+		List<Multimap<PackagerBlockEntity, PackagingRequest>> requests = new ArrayList<>();
 
-		RequestPromiseQueue promises = Create.LOGISTICS.getQueuedPromises(panelBE.behaviour.freqId);
+		// Collect request distributions
+		for (Entry<UUID, Collection<BigItemStack>> entry : asMap.entrySet())
+			requests.add(LogisticsManager.findPackagersForRequest(entry.getKey(),
+				new PackageOrder(new ArrayList<>(entry.getValue())), null, recipeAddress));
+
+		// Check if any packager is busy - cancel all
+		for (Multimap<PackagerBlockEntity, PackagingRequest> entry : requests)
+			for (PackagerBlockEntity packager : entry.keySet())
+				if (packager.isTooBusyFor(RequestType.RESTOCK))
+					return;
+
+		// Send it
+		for (Multimap<PackagerBlockEntity, PackagingRequest> entry : requests)
+			LogisticsManager.performPackageRequests(entry);
+
+		// Keep the output promise
+		RequestPromiseQueue promises = Create.LOGISTICS.getQueuedPromises(network);
 		if (promises != null)
 			promises.add(new RequestPromise(new BigItemStack(getFilter(), recipeOutput)));
 	}
@@ -215,10 +248,10 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 		FactoryPanelBlockEntity panelBE = panelBE();
 		PackagerBlockEntity packager = panelBE.getRestockedPackager();
-		if (packager == null)
+		if (packager == null || !packager.targetInventory.hasInventory())
 			return;
 
-		int availableOnNetwork = panelBE.behaviour.getStockOf(item, packager.targetInventory.getInventory());
+		int availableOnNetwork = LogisticsManager.getStockOf(network, item, packager.targetInventory.getInventory());
 		if (availableOnNetwork == 0) {
 			sendEffect(getPanelPosition(), false);
 			return;
@@ -233,9 +266,13 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		BigItemStack orderedItem = new BigItemStack(item, Math.min(amountToOrder, availableOnNetwork));
 		PackageOrder order = new PackageOrder(List.of(orderedItem));
 
-		panelBE.broadcastPackageRequest(order, packager.targetInventory.getInventory(), recipeAddress);
-		restockerPromises.add(new RequestPromise(orderedItem));
 		sendEffect(getPanelPosition(), true);
+
+		if (!LogisticsManager.broadcastPackageRequest(network, RequestType.RESTOCK, order,
+			packager.targetInventory.getInventory(), recipeAddress))
+			return;
+
+		restockerPromises.add(new RequestPromise(orderedItem));
 	}
 
 	private void sendEffect(FactoryPanelPosition fromPos, boolean success) {
@@ -356,8 +393,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			return lastReportedUnloadedLinks;
 		if (panelBE().restocker)
 			return panelBE().getRestockedPackager() == null ? 1 : 0;
-		UUID freqId = ((StockCheckingBlockEntity) blockEntity).behaviour.freqId;
-		return Create.LOGISTICS.getUnloadedLinkCount(freqId);
+		return Create.LOGISTICS.getUnloadedLinkCount(network);
 	}
 
 	public int getLevelInStorage() {
@@ -373,7 +409,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	private InventorySummary getRelevantSummary() {
 		FactoryPanelBlockEntity panelBE = panelBE();
 		if (!panelBE.restocker)
-			return panelBE.getRecentSummary();
+			return LogisticsManager.getSummaryOfNetwork(network, false);
 		PackagerBlockEntity packager = panelBE.getRestockedPackager();
 		if (packager == null)
 			return InventorySummary.EMPTY;
@@ -388,16 +424,19 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			return 0;
 
 		if (panelBE().restocker) {
-			if (forceClearPromises)
+			if (forceClearPromises) {
 				restockerPromises.forceClear(item);
+				timer = 0;
+			}
 			forceClearPromises = false;
 			return restockerPromises.getTotalPromisedAndRemoveExpired(item, getPromiseExpiryTimeInTicks());
 		}
 
-		UUID freqId = ((StockCheckingBlockEntity) blockEntity).behaviour.freqId;
-		RequestPromiseQueue promises = Create.LOGISTICS.getQueuedPromises(freqId);
-		if (forceClearPromises)
+		RequestPromiseQueue promises = Create.LOGISTICS.getQueuedPromises(network);
+		if (forceClearPromises) {
 			promises.forceClear(item);
+			timer = 0;
+		}
 		forceClearPromises = false;
 
 		return promises == null ? 0 : promises.getTotalPromisedAndRemoveExpired(item, getPromiseExpiryTimeInTicks());
@@ -431,6 +470,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		panelTag.putString("RecipeAddress", recipeAddress);
 		panelTag.putInt("RecipeOutput", recipeOutput);
 		panelTag.putInt("PromiseClearingInterval", promiseClearingInterval);
+		panelTag.putUUID("Freq", network);
 
 		if (panelBE().restocker && !clientPacket)
 			panelTag.put("Promises", restockerPromises.write());
@@ -457,6 +497,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		promisedSatisfied = panelTag.getBoolean("PromisedSatisfied");
 		waitingForNetwork = panelTag.getBoolean("Waiting");
 		promiseClearingInterval = panelTag.getInt("PromiseClearingInterval");
+		if (panelTag.hasUUID("Freq"))
+			network = panelTag.getUUID("Freq");
 
 		targeting.clear();
 		NBTHelper.iterateCompoundList(panelTag.getList("Targeting", Tag.TAG_COMPOUND),
