@@ -6,7 +6,7 @@
   "block.farmersdelight.skillet": "フライパン",
   "block.farmersdelight.oak_cabinet": "オークの戸棚",
   "block.farmersdelight.birch_cabinet": "シラカバの戸棚",
-  "block.farmersdelight.spruce_cabinet": "マツの戸棚",
+  "block.farmersdelight.spruce_cabinet": "トウヒの戸棚",
   "block.farmersdelight.jungle_cabinet": "ジャングルの戸棚",
   "block.farmersdelight.acacia_cabinet": "アカシアの戸棚",
   "block.farmersdelight.dark_oak_cabinet": "ダークオークの戸棚",
@@ -107,10 +107,10 @@
 
   "item.farmersdelight.tomato_sauce": "トマトソース",
   "item.farmersdelight.fried_egg": "目玉焼き",
-  "item.farmersdelight.milk_bottle": "牛乳入り瓶",
-  "item.farmersdelight.hot_cocoa": "ココア入り瓶",
+  "item.farmersdelight.milk_bottle": "ミルク入り瓶",
+  "item.farmersdelight.hot_cocoa": "ホットココア",
   "item.farmersdelight.apple_cider": "リンゴサイダー",
-  "item.farmersdelight.melon_juice": "メロンジュース",
+  "item.farmersdelight.melon_juice": "スイカジュース",
   "item.farmersdelight.wheat_dough": "パン生地",
   "item.farmersdelight.raw_pasta": "生のパスタ",
   "item.farmersdelight.pumpkin_slice": "カボチャの薄切り",
@@ -186,7 +186,7 @@
   "item.farmersdelight.squid_ink_pasta": "イカスミパスタ",
   "item.farmersdelight.grilled_salmon": "鮭のムニエル",
   "item.farmersdelight.mushroom_rice": "キノコの炊き込みご飯",
-
+  
   "block.farmersdelight.roast_chicken_block": "ローストチキン",
   "item.farmersdelight.roast_chicken": "大皿のローストチキン",
   "block.farmersdelight.stuffed_pumpkin_block": "スタッフドパンプキン",
@@ -221,7 +221,7 @@
   "farmersdelight.container.cooking_pot.not_heated": "下に熱源が必要",
   "farmersdelight.container.cooking_pot.heated": "加熱中",
   "farmersdelight.container.basket": "かご",
-  "farmersdelight.container.cabinet": "食品庫",
+  "farmersdelight.container.cabinet": "戸棚",
 
   "farmersdelight.tooltip.cooking_pot.empty": "空",
   "farmersdelight.tooltip.cooking_pot.single_serving": "1皿分を保存中",
@@ -303,20 +303,12 @@
 
   "farmersdelight.jei.cooking": "料理",
   "farmersdelight.jei.cutting": "まな板",
-  "farmersdelight.jei.chance": "%1$s%% チャンス",
+  "farmersdelight.jei.chance": "%1$s%%の確率",
   "farmersdelight.jei.decomposition": "分解",
   "farmersdelight.jei.decomposition.light": "日光が当たっていると加速する",
   "farmersdelight.jei.decomposition.fluid": "水が隣接していると加速する",
   "farmersdelight.jei.decomposition.accelerators": "隣接する活性化剤(下記参照)で加速する",
-
-  "farmersdelight.jei.info.straw": "クラフトに使用する乾燥した植物繊維。ナイフで草や作物を切ると手に入る",
-  "farmersdelight.jei.info.knife": "軽めの近接武器。草から藁を手に入れたり、動物から特別なアイテムをとることができる",
   "farmersdelight.jei.info.ham": "豚またはホグリンの足から取れる骨付きの肉。剣より軽いものでないと切れない",
-  "farmersdelight.jei.info.wild_cabbages": "キャベツは海岸によく自生している",
-  "farmersdelight.jei.info.wild_beetroots": "ビートルートは海岸によく自生している",
-  "farmersdelight.jei.info.wild_carrots": "ニンジンは平原や森林といった温帯の土地によく自生している",
-  "farmersdelight.jei.info.wild_onions": "タマネギは平原や森林といった温帯の土地によく自生している",
-  "farmersdelight.jei.info.wild_potatoes": "ジャガイモは山岳やタイガのような寒い土地によく自生している",
-  "farmersdelight.jei.info.wild_tomatoes": "トマトはサバンナや砂漠のような乾燥した土地によく自生している",
-  "farmersdelight.jei.info.wild_rice": "イネは沼地やジャングルなどの湿った土地の池に自生よく自生している"
+  "farmersdelight.jei.info.knife": "軽めの近接武器。草から藁を手に入れたり、動物から特別なアイテムをとることができる",
+  "farmersdelight.jei.info.straw": "クラフトに使用する乾燥した植物繊維。ナイフで草や作物を切ると手に入る"
 }

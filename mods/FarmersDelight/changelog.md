@@ -17,6 +17,24 @@
 - `tomatoes` were temporarily removed from the `crops` tag, as bee pollination was breaking ropelogged vines unpredictably;
   - This will likely be addressed in the next major release;
 
+### Translations
+- Added:
+  - be_by (thanks, observr1!)
+  - en_gb (thanks, akkini1!)
+  - da_dk (thanks, gohkenytp!)
+  - tok (thanks, PiggyDr!)
+- Updated:
+  - de_de (thanks, joernott and DaLumma!)
+  - es_ar (thanks, axperty!)
+  - es_mx (thanks, cerealconjugo!)
+  - ja_jp (thanks, konumatakaki and EndilCrafter!)
+  - ko_kr (thanks, smoong951!)
+  - ru_ru (thanks, mpustovoi!)
+  - uk_ua (thanks, TheGridExpert!)
+  - vi_vn (thanks, godkyo98!)
+  - zh_cn (thanks, DuckDuckStudio!)
+  - zh_tw (thanks, DuckDuckStudio and FuGu0416!)
+
 ### Fixes
 - Fix meal duplication when using containers against a Cooking Pot block, then closing and reloading the world;
 
