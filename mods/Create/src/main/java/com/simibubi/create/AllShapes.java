@@ -185,6 +185,9 @@ public class AllShapes {
 
 		WHISTLE_BASE = shape(1, 0, 1, 15, 3, 15).add(5, 0, 5, 11, 8, 11)
 			.forDirectional(UP),
+			
+		DESK_BELL = shape(3, 0, 3, 13, 3, 13).add(4, 0, 4, 12, 9, 12)
+			.forDirectional(UP),
 
 		ITEM_HATCH = shape(1, 0, 0, 15, 16, 2).add(2, 2, 0, 14, 13, 3.8)
 			.add(2, 4, 0, 14, 11, 5.8)

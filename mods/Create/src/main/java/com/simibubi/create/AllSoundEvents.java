@@ -247,6 +247,11 @@ public class AllSoundEvents {
 			.playExisting(SoundEvents.BELL_BLOCK)
 			.category(SoundSource.BLOCKS)
 			.build(),
+			
+		DESK_BELL_USE = create("desk_bell").subtitle("Reception bell dings")
+			.category(SoundSource.BLOCKS)
+			.attenuationDistance(64)
+			.build(),
 
 		WHISTLE_HIGH = create("whistle_high").subtitle("High whistling")
 			.category(SoundSource.RECORDS)

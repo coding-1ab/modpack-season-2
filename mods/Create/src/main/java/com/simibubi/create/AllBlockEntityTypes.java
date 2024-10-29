@@ -195,6 +195,8 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerVisual;
 import com.simibubi.create.content.redstone.analogLever.AnalogLeverBlockEntity;
 import com.simibubi.create.content.redstone.analogLever.AnalogLeverRenderer;
 import com.simibubi.create.content.redstone.analogLever.AnalogLeverVisual;
+import com.simibubi.create.content.redstone.deskBell.DeskBellBlockEntity;
+import com.simibubi.create.content.redstone.deskBell.DeskBellRenderer;
 import com.simibubi.create.content.redstone.diodes.BrassDiodeRenderer;
 import com.simibubi.create.content.redstone.diodes.BrassDiodeVisual;
 import com.simibubi.create.content.redstone.diodes.PulseExtenderBlockEntity;
@@ -899,6 +901,12 @@ public class AllBlockEntityTypes {
 		.blockEntity("cursed_bell", HauntedBellBlockEntity::new)
 		.validBlocks(AllBlocks.HAUNTED_BELL)
 		.renderer(() -> BellRenderer::new)
+		.register();
+	
+	public static final BlockEntityEntry<DeskBellBlockEntity> DESK_BELL = REGISTRATE
+		.blockEntity("desk_bell", DeskBellBlockEntity::new)
+		.validBlocks(AllBlocks.DESK_BELL)
+		.renderer(() -> DeskBellRenderer::new)
 		.register();
 
 	public static final BlockEntityEntry<ToolboxBlockEntity> TOOLBOX = REGISTRATE

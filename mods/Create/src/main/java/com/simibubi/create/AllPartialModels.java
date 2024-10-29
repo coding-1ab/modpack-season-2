@@ -83,6 +83,9 @@ public class AllPartialModels {
 		SYMMETRY_TRIPLEPLANE = block("symmetry_effect/tripleplane"),
 
 		STICKER_HEAD = block("sticker/head"),
+		
+		DESK_BELL_PLUNGER = block("desk_bell/plunger"),
+		DESK_BELL_BELL = block("desk_bell/bell"),
 
 		PORTABLE_STORAGE_INTERFACE_MIDDLE = block("portable_storage_interface/block_middle"),
 		PORTABLE_STORAGE_INTERFACE_MIDDLE_POWERED = block("portable_storage_interface/block_middle_powered"),

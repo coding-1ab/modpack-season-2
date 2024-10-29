@@ -209,6 +209,7 @@ import com.simibubi.create.content.redstone.analogLever.AnalogLeverBlock;
 import com.simibubi.create.content.redstone.contact.ContactMovementBehaviour;
 import com.simibubi.create.content.redstone.contact.RedstoneContactBlock;
 import com.simibubi.create.content.redstone.contact.RedstoneContactItem;
+import com.simibubi.create.content.redstone.deskBell.DeskBellBlock;
 import com.simibubi.create.content.redstone.diodes.AbstractDiodeGenerator;
 import com.simibubi.create.content.redstone.diodes.BrassDiodeBlock;
 import com.simibubi.create.content.redstone.diodes.BrassDiodeGenerator;
@@ -2122,6 +2123,14 @@ public class AllBlocks {
 			.transform(BuilderTransformers.bell())
 			.onRegister(movementBehaviour(new HauntedBellMovementBehaviour()))
 			.register();
+
+	public static final BlockEntry<DeskBellBlock> DESK_BELL = REGISTRATE.block("desk_bell", DeskBellBlock::new)
+		.properties(p -> p.mapColor(MapColor.SAND))
+		.blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.forPowered(c, p)))
+		.item()
+		.transform(customItemModel("_", "block"))
+		.onRegister(movementBehaviour(new BellMovementBehaviour()))
+		.register();
 
 	public static final DyedBlockList<ToolboxBlock> TOOLBOXES = new DyedBlockList<>(colour -> {
 		String colourName = colour.getSerializedName();

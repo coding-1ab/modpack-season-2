@@ -1,4 +1,4 @@
-// 1.20.1	2024-10-24T12:46:14.8446146	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
+// 1.20.1	2024-10-29T20:48:43.0748887	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
 60bbdf92d2ac9824ea6144955c74043a6005f79d assets/create/blockstates/acacia_window.json
 6a67703c2697d81b7dc83e9d72a66f9c9ff08383 assets/create/blockstates/acacia_window_pane.json
 c3ae87b62e81d8e9476eccd793bb1548d74c66a1 assets/create/blockstates/adjustable_chain_gearshift.json
@@ -219,6 +219,7 @@ c705f9cd47042867c87fab3a898a57152dec6dd5 assets/create/blockstates/deepslate_pil
 1073fe9e96ea170c81b613835064034f967945b5 assets/create/blockstates/deepslate_zinc_ore.json
 d0ec99fdd534e1f3a84cc51fa914d3b74fb2c96a assets/create/blockstates/deployer.json
 4f18fd003ca756417fd036bd8b66f323e0ca4852 assets/create/blockstates/depot.json
+5b933ed479ec646f8cc2cd3739405c34737d517c assets/create/blockstates/desk_bell.json
 26a5a4c176e75b1f48f3eb653a45c23e606f07b4 assets/create/blockstates/diorite_pillar.json
 d45d92164f81fd42cc1f8c6ba4ac25df0fca79b1 assets/create/blockstates/display_board.json
 a65771f280051a884725073d14a831539bc0d658 assets/create/blockstates/display_link.json
@@ -612,8 +613,8 @@ b0d8f08968763a5f74e5cd5644377a76a9f39753 assets/create/blockstates/yellow_toolbo
 fe8c497aacc641c2f01cec90bba9f19e59cc2ed2 assets/create/blockstates/yellow_valve_handle.json
 e819e93fdcbe9fd9c050a052d2718ff3b3539365 assets/create/blockstates/zinc_block.json
 64121dcb216381c83b4fe28aa361ea07c24c9ad0 assets/create/blockstates/zinc_ore.json
-7cae2f006a11bc6b07b15f0fd317e09ad9609650 assets/create/lang/en_ud.json
-2c05bc7cbfef98ba87340f4f50adba0d112d0a68 assets/create/lang/en_us.json
+33926a10d74a9fa696f64108554adb9217a82f33 assets/create/lang/en_ud.json
+5da69b7b326804d29d050e403133080025109fe9 assets/create/lang/en_us.json
 a97e1060e00ae701a02e39cd4ef8054cf345fac4 assets/create/models/block/acacia_window.json
 103e032c0b1a0a6a27c67da8c91179a564bd281c assets/create/models/block/acacia_window_pane_noside.json
 fb00b627abda76ad4fea867ca57dbfadd24fffa3 assets/create/models/block/acacia_window_pane_noside_alt.json
@@ -1968,6 +1969,7 @@ eef3be2fa3b6424436a553e3c1bfee3979015962 assets/create/models/item/cyan_seat.jso
 9b5b804fe75a3e748a0d9a6761ab46178e5f3850 assets/create/models/item/deepslate_zinc_ore.json
 7ff5075e907b57d6b0f6fd0a31d0e46464afe634 assets/create/models/item/deployer.json
 aa44d681c3ccffe08aedbda093062b1a5ab3302e assets/create/models/item/depot.json
+63e24083922af9d5300aea771bb63bb9962ba3e6 assets/create/models/item/desk_bell.json
 85a5830ca034be9a0ed534186210aa975278b20b assets/create/models/item/diorite_pillar.json
 2a992f0961b8bab5628e075da413c91e903e424c assets/create/models/item/display_board.json
 e71e3c355c4a9266e359e88278b238e38f15d9ea assets/create/models/item/display_cloth.json
@@ -3249,6 +3251,7 @@ ccb3ab3c0d9c8fad236ccc790c2f7a1524202e9a data/create/loot_tables/blocks/dark_oak
 3c3d83fc964462e2401ec6dac5200709d5ce1957 data/create/loot_tables/blocks/deepslate_zinc_ore.json
 8c1d8d9680834419b9049bc11137316b75f59f46 data/create/loot_tables/blocks/deployer.json
 9ded269b860ed96c964f6f8960a680a5c87fa033 data/create/loot_tables/blocks/depot.json
+eec1b262b34fc05a95bbb3762cf96a050030d010 data/create/loot_tables/blocks/desk_bell.json
 98987901bdb35efe2922b420def9cdb116ec5416 data/create/loot_tables/blocks/diorite_pillar.json
 6dda1fa6622ce351af2e0aeec2b5c2e4183fb593 data/create/loot_tables/blocks/display_board.json
 5320ddec6855d99e5685bb424d02165eca480805 data/create/loot_tables/blocks/display_link.json
