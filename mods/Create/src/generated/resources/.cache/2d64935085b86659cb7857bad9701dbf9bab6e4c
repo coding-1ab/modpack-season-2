@@ -1,4 +1,4 @@
-// 1.20.1	2024-10-30T18:22:23.0602544	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
+// 1.20.1	2024-10-30T19:35:41.3745103	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
 60bbdf92d2ac9824ea6144955c74043a6005f79d assets/create/blockstates/acacia_window.json
 6a67703c2697d81b7dc83e9d72a66f9c9ff08383 assets/create/blockstates/acacia_window_pane.json
 c3ae87b62e81d8e9476eccd793bb1548d74c66a1 assets/create/blockstates/adjustable_chain_gearshift.json
@@ -284,6 +284,8 @@ d0b26c085df3ee5189082bc18945e5f74ee529fa assets/create/blockstates/haunted_bell.
 bffc2169f5fc3a8e22f8952a90767e0bb8d726b5 assets/create/blockstates/horizontal_framed_glass_pane.json
 8ae52808eba950c36b75d62113e9cea9441a1a54 assets/create/blockstates/hose_pulley.json
 87fa830c5d3541d096fab32d430c54516c197583 assets/create/blockstates/industrial_iron_block.json
+3727801604445df291112fd9b99f99bbdcfa0f6d assets/create/blockstates/industrial_iron_window.json
+877418ed76fdc589788db119663ca3e52e26a2aa assets/create/blockstates/industrial_iron_window_pane.json
 2788ad2d29996076f7f18ab8d47e40c1ad10b348 assets/create/blockstates/item_drain.json
 e840d746532f350ee2977c00036163f73c3f4147 assets/create/blockstates/item_hatch.json
 3e99569e978c0fe17ec18b97881434a9da1a8421 assets/create/blockstates/item_vault.json
@@ -636,8 +638,8 @@ b0d8f08968763a5f74e5cd5644377a76a9f39753 assets/create/blockstates/yellow_toolbo
 fe8c497aacc641c2f01cec90bba9f19e59cc2ed2 assets/create/blockstates/yellow_valve_handle.json
 e819e93fdcbe9fd9c050a052d2718ff3b3539365 assets/create/blockstates/zinc_block.json
 64121dcb216381c83b4fe28aa361ea07c24c9ad0 assets/create/blockstates/zinc_ore.json
-c571c86ea08a65fa325f14509707f3d920f0926e assets/create/lang/en_ud.json
-2b95d25bac70a8db6d0736b9b818e3aaafa80096 assets/create/lang/en_us.json
+c3de6ad9aa8e75977b93d59a36b2fa2e1e4e9445 assets/create/lang/en_ud.json
+3cf9afee452951897c1ca572e5f7c3362f897db3 assets/create/lang/en_us.json
 a97e1060e00ae701a02e39cd4ef8054cf345fac4 assets/create/models/block/acacia_window.json
 103e032c0b1a0a6a27c67da8c91179a564bd281c assets/create/models/block/acacia_window_pane_noside.json
 fb00b627abda76ad4fea867ca57dbfadd24fffa3 assets/create/models/block/acacia_window_pane_noside_alt.json
@@ -1215,6 +1217,12 @@ a1a239714f5feb45a692f5c2873c37d6614e1b8b assets/create/models/block/horizontal_f
 0f7e518ef02428c55e1683bc9de0d20e2c1e6883 assets/create/models/block/horizontal_framed_glass_pane_side.json
 db3f9472815fb6acc1ee1d9941b8cc19518ebcbf assets/create/models/block/horizontal_framed_glass_pane_side_alt.json
 6868ed1959875efec96a15ca6f32b8c7efefb2d9 assets/create/models/block/industrial_iron_block.json
+02806f9c95ba6b74b61e1c92927492b3668ffdc9 assets/create/models/block/industrial_iron_window.json
+a0152d54688e8c4bb0c96e0476cca7e5f92dabd7 assets/create/models/block/industrial_iron_window_pane_noside.json
+bbc922f5ddce4acfe89911d149204d4663515fc2 assets/create/models/block/industrial_iron_window_pane_noside_alt.json
+13c0714510f379830f42488c4f0457c4f4d6be16 assets/create/models/block/industrial_iron_window_pane_post.json
+b5bbcb04dd68249b4d9c2bae2fa2c15e9bcd9870 assets/create/models/block/industrial_iron_window_pane_side.json
+7763d9f974f859963a48060858b80a6b46f842c9 assets/create/models/block/industrial_iron_window_pane_side_alt.json
 cdc4f1c608f74824fd270521a846823ca4b6ef16 assets/create/models/block/jungle_window.json
 8c5ee8e36756fcff3095c564567a35be1db23cee assets/create/models/block/jungle_window_pane_noside.json
 2bb34fe17c7cfafc8658cd0b44ab636191f81348 assets/create/models/block/jungle_window_pane_noside_alt.json
@@ -2095,6 +2103,8 @@ e623c9541adc0fa877c5615e3211f47886383f2d assets/create/models/item/horizontal_fr
 14ae1ba5e842715fc4526b19e20c74d10102eb4a assets/create/models/item/incomplete_precision_mechanism.json
 ae5c5925ecf775a4f5c3dc3c79d9766d7dd34ab6 assets/create/models/item/incomplete_track.json
 43173d18384817288a9ba687da77a4fab31b1957 assets/create/models/item/industrial_iron_block.json
+4596b83d7da43a670f2274c8389cca9897ae379d assets/create/models/item/industrial_iron_window.json
+b023f505f851799e7212531402e788e927cf6033 assets/create/models/item/industrial_iron_window_pane.json
 c6e3e4ca8b3dfdaaa943faa3dc89c0b2e6f2b5c4 assets/create/models/item/iron_sheet.json
 d1fbf1be53208c3ab5384dfd6be4d980c858941c assets/create/models/item/item_drain.json
 5adda29ca25d00eb41884d0b7ad4a471e250ae10 assets/create/models/item/item_hatch.json
@@ -2803,6 +2813,8 @@ e3c5bd9bf6f73620ccb61e0a9cb3beb18b04b527 data/create/advancements/recipes/buildi
 85fb8fdb3cebaaacf24794aec90e7894f66a8402 data/create/advancements/recipes/building_blocks/horizontal_framed_glass_from_glass_colorless_stonecutting.json
 c609b408d6467ec71513ecca19a6040ad7011a79 data/create/advancements/recipes/building_blocks/horizontal_framed_glass_pane.json
 a587d84e187d6552473f646461539dc56d4e748f data/create/advancements/recipes/building_blocks/industrial_iron_block_from_ingots_iron_stonecutting.json
+d6c892f6f3ae052b2f65d5e5a0cdcc7c60da13db data/create/advancements/recipes/building_blocks/industrial_iron_window.json
+a26261da3faa6b49a3d2c6b4f7ccc504681f73f8 data/create/advancements/recipes/building_blocks/industrial_iron_window_pane.json
 546af6a639e4799fb83d61b131ab0cc38ef6b33a data/create/advancements/recipes/building_blocks/jungle_window.json
 e8c728c46cc69cc0e9d755551bb9a52f2b61a6c0 data/create/advancements/recipes/building_blocks/jungle_window_pane.json
 b9d04c53fdf3ba977216021ca71aa5e4f2d9a0b0 data/create/advancements/recipes/building_blocks/layered_andesite_from_stone_types_andesite_stonecutting.json
@@ -3414,6 +3426,8 @@ f917ddc34b196750efbab88ee5565ecd0e38e0e6 data/create/loot_tables/blocks/haunted_
 a206598562bcbc9e3bc10dbe12fb22974ee58fcc data/create/loot_tables/blocks/horizontal_framed_glass_pane.json
 e65fae1b9b72cf2208696463fa20a82a4d64fb62 data/create/loot_tables/blocks/hose_pulley.json
 34c239150baa92e03ca89430148560e1b7a1f02d data/create/loot_tables/blocks/industrial_iron_block.json
+9c831bbcae1bf3dbddce1126a1279f4f22902a25 data/create/loot_tables/blocks/industrial_iron_window.json
+de30f216e9326c27103702ea296c460d927aa3ef data/create/loot_tables/blocks/industrial_iron_window_pane.json
 c22dea1941471be65c811cdc2ce7b77d2247e9e1 data/create/loot_tables/blocks/item_drain.json
 528078b0cf042236d2cb0701fb55f41f54aa932b data/create/loot_tables/blocks/item_hatch.json
 72b5a7288f7f54694df5f456e4ab4433bd38dfff data/create/loot_tables/blocks/item_vault.json
@@ -4143,6 +4157,8 @@ c1ac5bad113e067bf5cfa8d730dcc835420aecfb data/create/recipes/granite_from_stone_
 8d6448c67261138b6331273024b757a9a58b41c4 data/create/recipes/horizontal_framed_glass_from_glass_colorless_stonecutting.json
 dde9d763cc1306d48e2f3b813530fca0842a5c14 data/create/recipes/horizontal_framed_glass_pane.json
 61f759fec228090a60371add88cc90be3a84a735 data/create/recipes/industrial_iron_block_from_ingots_iron_stonecutting.json
+813c68e25ffc543d7457a1417897dd0b579d1b1e data/create/recipes/industrial_iron_window.json
+4a4e4f87a2753fb5310f7f70c39143e02b6a6fd0 data/create/recipes/industrial_iron_window_pane.json
 2b4a8702db989116dbf97d0021d71a5948336805 data/create/recipes/jungle_window.json
 4400d3db46b091d3ead7fbcb64cb712db2fde5de data/create/recipes/jungle_window_pane.json
 66da7fc9adbe0119bc41bfad0f6422fb93dcf3b6 data/create/recipes/layered_andesite_from_stone_types_andesite_stonecutting.json
@@ -4504,7 +4520,7 @@ c59c9fc0cdd45de659aa8023d36f9decb90f708c data/create/tags/items/vanilla_stripped
 64441ac1daa64c81601b94b82b21c0ee862b6344 data/create/tags/items/vanilla_stripped_wood.json
 edf7390f09e622193bbc720ec51ba128ea1e96e6 data/curios/tags/items/head.json
 10d5f0c1763f80860a39398ecc33dbbe43099471 data/forge/tags/blocks/glass/colorless.json
-26304ec2e243fa4268afa580ff2a199503d9a30a data/forge/tags/blocks/glass_panes.json
+6f715416c891aaff77831878d1970c4dd7d24742 data/forge/tags/blocks/glass_panes.json
 81b107ada9c6ac5679a21f8c6a006bf230f69c39 data/forge/tags/blocks/ores.json
 81b107ada9c6ac5679a21f8c6a006bf230f69c39 data/forge/tags/blocks/ores/zinc.json
 e475ad1c52bffedfc544e5331a87c1f5c45149fd data/forge/tags/blocks/ores_in_ground/deepslate.json
@@ -4532,7 +4548,7 @@ afdac448376ff5624f49cbf31feedf691ecbc4c5 data/forge/tags/items/armors/leggings.j
 745512f10c4ba52f2c224607377e41011fb2ecfe data/forge/tags/items/flour.json
 745512f10c4ba52f2c224607377e41011fb2ecfe data/forge/tags/items/flour/wheat.json
 10d5f0c1763f80860a39398ecc33dbbe43099471 data/forge/tags/items/glass/colorless.json
-26304ec2e243fa4268afa580ff2a199503d9a30a data/forge/tags/items/glass_panes.json
+6f715416c891aaff77831878d1970c4dd7d24742 data/forge/tags/items/glass_panes.json
 01d32d3b7b033aff44c047bf289d696de0b0c715 data/forge/tags/items/ingots.json
 5a7bffd1d604bc6ea8b35714ef02b95773240f90 data/forge/tags/items/ingots/brass.json
 ccf5b08295f6362a3f6b3b595f1de1bba4b224ec data/forge/tags/items/ingots/zinc.json
@@ -4567,7 +4583,7 @@ c741ba83b562ae3459d7c4f2db69537f549ea411 data/forge/tags/items/tools/wrench.json
 82274e06b6a9f3bfd83c8b59be38dee4a15b8bf3 data/minecraft/tags/blocks/climbable.json
 71aef080a900d9e86818cf579438c3d826d6567e data/minecraft/tags/blocks/doors.json
 515a1c773e617dd7e38aa1b893acc7db2dd30e08 data/minecraft/tags/blocks/dripstone_replaceable_blocks.json
-a25d96534556d2e526ed5d1efbd5f6c352457abf data/minecraft/tags/blocks/impermeable.json
+4fffa6fa3be0722121611a1c1393e39cc5281b24 data/minecraft/tags/blocks/impermeable.json
 515a1c773e617dd7e38aa1b893acc7db2dd30e08 data/minecraft/tags/blocks/lush_ground_replaceable.json
 4cf669239caa93951fd8e243a03e9157d2d06208 data/minecraft/tags/blocks/mineable/axe.json
 f816879274e6f561b67f460358e77f6084390d77 data/minecraft/tags/blocks/mineable/pickaxe.json

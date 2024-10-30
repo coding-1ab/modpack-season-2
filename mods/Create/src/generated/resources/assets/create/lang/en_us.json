@@ -496,6 +496,8 @@
   "block.create.horizontal_framed_glass_pane": "Horizontal Framed Glass Pane",
   "block.create.hose_pulley": "Hose Pulley",
   "block.create.industrial_iron_block": "Block of Industrial Iron",
+  "block.create.industrial_iron_window": "Industrial Iron Window",
+  "block.create.industrial_iron_window_pane": "Industrial Iron Window Pane",
   "block.create.item_drain": "Item Drain",
   "block.create.item_hatch": "Item Hatch",
   "block.create.item_vault": "Item Vault",

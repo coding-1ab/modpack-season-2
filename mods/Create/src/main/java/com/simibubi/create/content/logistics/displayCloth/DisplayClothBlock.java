@@ -86,6 +86,9 @@ public class DisplayClothBlock extends Block implements IHaveBigOutline, IWrench
 	@Override
 	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand,
 		BlockHitResult ray) {
+		if (ray.getDirection() == Direction.DOWN)
+			return InteractionResult.PASS;
+		
 		ItemStack heldItem = player.getItemInHand(hand);
 		boolean shiftKeyDown = player.isShiftKeyDown();
 		if (!player.mayBuild())
