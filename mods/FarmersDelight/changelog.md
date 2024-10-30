@@ -9,7 +9,7 @@
 - Added tag: `farmersdelight:campfire_signal_smoke`. Blocks in this tag will cause Campfires to emit "signal smoke", like the Hay Bale;
 
 ### Updates
-- Knives are now effective at mining Pumpkins and Melons;
+- Knives are now effective at mining Pumpkins (normal and carved) and Melons;
 - Knives will harvest **4 Pumpkin Slices** when mining a Pumpkin, instead of a whole unit. Carved Pumpkins are unaffected;
 - Added Canvas Signs to the vanilla `signs` and `hanging_signs` item tags;
 - Some crafting recipes are now properly grouped in the Crafting Table's recipe book;

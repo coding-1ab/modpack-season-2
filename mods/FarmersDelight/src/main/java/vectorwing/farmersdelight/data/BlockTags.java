@@ -72,6 +72,7 @@ public class BlockTags extends BlockTagsProvider
 		tag(ModTags.MINEABLE_WITH_KNIFE).add(
 						Blocks.MELON,
 						Blocks.PUMPKIN,
+						Blocks.CARVED_PUMPKIN,
 						Blocks.COBWEB,
 						Blocks.CAKE,
 						ModBlocks.APPLE_PIE.get(),
