@@ -208,8 +208,7 @@ StreamCodec.of(CuttingBoardRecipe.Serializer::toNetwork, CuttingBoardRecipe.Seri
 			resultsIn.replaceAll(ignored -> ChanceResult.read(buffer));
 			Optional<SoundEvent> soundEventIn = Optional.empty();
 			if (buffer.readBoolean()) {
-				Optional<Holder.Reference<SoundEvent>> holder = BuiltInRegistries.SOUND_EVENT
-						.getHolder(buffer.readResourceKey(Registries.SOUND_EVENT));
+				Optional<Holder.Reference<SoundEvent>> holder = BuiltInRegistries.SOUND_EVENT.getHolder(buffer.readResourceKey(Registries.SOUND_EVENT));
 				if (holder.isPresent() && holder.get().isBound()) {
 					soundEventIn = Optional.of(holder.get().value());
 				}
