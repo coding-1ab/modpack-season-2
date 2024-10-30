@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import org.lwjgl.glfw.GLFW;
+
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -352,13 +354,16 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 	public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
 		if (editingItem == null)
 			return super.keyPressed(pKeyCode, pScanCode, pModifiers);
+		
 		InputConstants.Key mouseKey = InputConstants.getKey(pKeyCode, pScanCode);
+		boolean hitEscape = pKeyCode == GLFW.GLFW_KEY_ESCAPE;
 		boolean hitEnter = getFocused() instanceof EditBox && (pKeyCode == 257 || pKeyCode == 335);
 		boolean hitE = getFocused() == null && minecraft.options.keyInventory.isActiveAndMatches(mouseKey);
-		if (hitE || hitEnter) {
+		if (hitE || hitEnter || hitEscape) {
 			stopEditing();
 			return true;
 		}
+		
 		return super.keyPressed(pKeyCode, pScanCode, pModifiers);
 	}
 
