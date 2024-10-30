@@ -7,6 +7,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllSoundEvents;
+import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem;
@@ -64,7 +65,7 @@ public class StockTickerInteractionHandler {
 
 		final BlockPos posForUI = targetPos;
 		final boolean encodeMode =
-			AllItems.DISPLAY_CLOTH.isIn(mainHandItem) || AllBlocks.REDSTONE_REQUESTER.isIn(mainHandItem);
+			AllItemTags.DISPLAY_CLOTHS.matches(mainHandItem) || AllBlocks.REDSTONE_REQUESTER.isIn(mainHandItem);
 
 		if (level.isClientSide())
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> displayScreen(posForUI, encodeMode));

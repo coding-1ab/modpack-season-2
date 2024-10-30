@@ -45,7 +45,6 @@ import com.simibubi.create.content.legacy.ChromaticCompoundItem;
 import com.simibubi.create.content.legacy.RefinedRadianceItem;
 import com.simibubi.create.content.legacy.ShadowSteelItem;
 import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.content.logistics.displayCloth.DisplayClothItem;
 import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.materials.ExperienceNuggetItem;
@@ -238,10 +237,6 @@ public class AllItems {
 
 	public static final ItemEntry<BlueprintItem> CRAFTING_BLUEPRINT =
 		REGISTRATE.item("crafting_blueprint", BlueprintItem::new)
-			.register();
-	
-	public static final ItemEntry<DisplayClothItem> DISPLAY_CLOTH =
-		REGISTRATE.item("display_cloth", DisplayClothItem::new)
 			.register();
 
 	// wrapped by COPPER_BACKTANK for block placement uses.

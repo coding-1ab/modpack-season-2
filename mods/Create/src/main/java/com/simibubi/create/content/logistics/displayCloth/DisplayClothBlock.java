@@ -9,6 +9,7 @@ import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
+import com.simibubi.create.content.logistics.redstoneRequester.AutoRequestData;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.IHaveBigOutline;
 
@@ -20,6 +21,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
@@ -34,6 +36,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -62,20 +65,42 @@ public class DisplayClothBlock extends Block implements IHaveBigOutline, IWrench
 	}
 
 	@Override
+	public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, LivingEntity pPlacer, ItemStack pStack) {
+		super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
+		if (!(pPlacer instanceof Player player))
+			return;
+
+		AutoRequestData requestData = AutoRequestData.readFromItem(pLevel, player, pPos, pStack);
+		if (requestData == null)
+			return;
+
+		pLevel.setBlockAndUpdate(pPos, pState.setValue(HAS_BE, true));
+		withBlockEntityDo(pLevel, pPos, dcbe -> {
+			dcbe.requestData = requestData;
+			dcbe.owner = player.getUUID();
+			if (dcbe.requestData.isValid)
+				dcbe.interactAsOwner(player);
+		});
+	}
+
+	@Override
 	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand,
 		BlockHitResult ray) {
 		ItemStack heldItem = player.getItemInHand(hand);
-		if (player.isShiftKeyDown() || !player.mayBuild())
+		boolean shiftKeyDown = player.isShiftKeyDown();
+		if (!player.mayBuild())
 			return InteractionResult.PASS;
 
 		IPlacementHelper placementHelper = PlacementHelpers.get(placementHelperId);
 		if (placementHelper.matchesItem(heldItem)) {
+			if (shiftKeyDown)
+				return InteractionResult.PASS;
 			placementHelper.getOffset(player, world, state, pos, ray)
 				.placeInWorld(world, (BlockItem) heldItem.getItem(), player, hand, ray);
 			return InteractionResult.SUCCESS;
 		}
 
-		if (heldItem.isEmpty() && !state.getValue(HAS_BE))
+		if ((shiftKeyDown || heldItem.isEmpty()) && !state.getValue(HAS_BE))
 			return InteractionResult.PASS;
 
 		if (!world.isClientSide() && !state.getValue(HAS_BE))
@@ -84,6 +109,28 @@ public class DisplayClothBlock extends Block implements IHaveBigOutline, IWrench
 			return InteractionResult.SUCCESS;
 
 		return onBlockEntityUse(world, pos, dcbe -> dcbe.use(player));
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public List<ItemStack> getDrops(BlockState pState,
+		net.minecraft.world.level.storage.loot.LootParams.Builder pParams) {
+		List<ItemStack> drops = super.getDrops(pState, pParams);
+
+		if (!(pParams.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof DisplayClothBlockEntity dcbe))
+			return drops;
+		if (!dcbe.isShop())
+			return drops;
+
+		for (ItemStack stack : drops) {
+			if (AllItemTags.DISPLAY_CLOTHS.matches(stack)) {
+				ItemStack drop = new ItemStack(this);
+				dcbe.requestData.writeToItem(dcbe.getBlockPos(), drop);
+				return List.of(drop);
+			}
+		}
+
+		return drops;
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-// 1.20.1	2024-10-24T13:00:33.3172448	Create's Standard Recipes
+// 1.20.1	2024-10-30T15:58:08.6667432	Create's Standard Recipes
 a8cc4af26f6c7c45a9eef12e92af1452fe042454 data/create/advancements/recipes/combat/crafting/appliances/netherite_backtank.json
 2c2639c7b307ee7c7a4e97e5efebf496788998ad data/create/advancements/recipes/combat/crafting/appliances/netherite_backtank_from_netherite.json
 81dcf0cb1aa99e39bc7d1a386e07cad4cee7d8b9 data/create/advancements/recipes/combat/crafting/appliances/netherite_diving_boots.json
@@ -45,12 +45,12 @@ dd3d469cc9899f3f7299cbd6903a2b541df5c7ff data/create/advancements/recipes/misc/c
 029e463d5eea7ae590577fdfab52664036727985 data/create/advancements/recipes/misc/crafting/appliances/copper_diving_boots.json
 5d5b4c49e81090a48c23314c49815f61ac170518 data/create/advancements/recipes/misc/crafting/appliances/copper_diving_helmet.json
 0746cb63e224d7620e781e1494b9a8b9d56b186b data/create/advancements/recipes/misc/crafting/appliances/crafting_blueprint.json
-4bd1ab25286d5a9dce7cafd1f814113f21a6969d data/create/advancements/recipes/misc/crafting/appliances/display_cloth_clear.json
 c4d0901541855ea2fda0cef7f0270edfa16d70e2 data/create/advancements/recipes/misc/crafting/appliances/dough.json
 79b6501f8cb069dc55b78871a5fecf40a5b3dbd5 data/create/advancements/recipes/misc/crafting/appliances/filter_clear.json
 37ad1d645de355b261b9bb6b611bd136723233b7 data/create/advancements/recipes/misc/crafting/appliances/item_frame.json
 3271ad36fbab51d87d0baad8c69cb7b2add506b8 data/create/advancements/recipes/misc/crafting/appliances/linked_controller.json
 54ed96f8c7d040058e5e682d68279d197b08e5e1 data/create/advancements/recipes/misc/crafting/appliances/name_tag.json
+9ce5a607b16146339de77128aec3747f8054d03b data/create/advancements/recipes/misc/crafting/appliances/package_filter_clear.json
 d4d13730d982713b5809ecf30187e01707248d75 data/create/advancements/recipes/misc/crafting/appliances/schedule_clear.json
 44c1a131bed101ad4b87d57816ff5a375cc36bf4 data/create/advancements/recipes/misc/crafting/appliances/slime_ball.json
 7d0fa7ac8a04b19cd3db31342e276d2da4860a1d data/create/advancements/recipes/misc/crafting/appliances/tree_fertilizer.json
@@ -300,7 +300,6 @@ efbfccade226b34d22abb77138dab8726725752e data/create/recipes/crafting/appliances
 c500139f545fea4568575b93b1ab9e56f004f137 data/create/recipes/crafting/appliances/copper_diving_boots.json
 77b28e10fcbe223f8235b193e899046b382382c9 data/create/recipes/crafting/appliances/copper_diving_helmet.json
 3e3f71d579ec7453e453d5b65aaee3c43169b679 data/create/recipes/crafting/appliances/crafting_blueprint.json
-4516e2c533f753f9d3802ae3c9c1400866ad3a31 data/create/recipes/crafting/appliances/display_cloth_clear.json
 b7c8f3c5e80749c6c38d5c0153dc68a79c32535f data/create/recipes/crafting/appliances/dough.json
 409b5d70ee1ef9164c327d79472e6d66ce55dec6 data/create/recipes/crafting/appliances/filter_clear.json
 854f7efc8724f733ed7f4ac08c1d252cf949512d data/create/recipes/crafting/appliances/item_frame.json
@@ -312,6 +311,7 @@ b5b29558d4efe161f6edaeae2c449735d46261ca data/create/recipes/crafting/appliances
 5a6d3e59e8fa623b147600cae7065e22af9c2cbf data/create/recipes/crafting/appliances/netherite_diving_boots_from_netherite.json
 5eae779a8c16a4efb8fa61996c608bc44c55da7f data/create/recipes/crafting/appliances/netherite_diving_helmet.json
 26eec27acd056e62510bc831cc6e6823a45c51b8 data/create/recipes/crafting/appliances/netherite_diving_helmet_from_netherite.json
+bbf63119e3ee54afd49fe2ccfe2c06baaa9f6f41 data/create/recipes/crafting/appliances/package_filter_clear.json
 0b83c52c90948141e5807b7d1243fb5d48d4c998 data/create/recipes/crafting/appliances/schedule_clear.json
 05e4700f7fd59029ba19bcfb7b49fd3a30a93cad data/create/recipes/crafting/appliances/slime_ball.json
 d0bad974476c54315e4b656c67dbf6165d183bbc data/create/recipes/crafting/appliances/tree_fertilizer.json

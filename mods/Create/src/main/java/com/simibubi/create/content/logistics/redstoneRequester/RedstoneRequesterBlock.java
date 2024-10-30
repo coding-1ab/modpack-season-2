@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllItems;
+import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
@@ -83,7 +83,9 @@ public class RedstoneRequesterBlock extends Block implements IBE<RedstoneRequest
 	public static void programRequester(ServerPlayer player, StockTickerBlockEntity be, PackageOrder order,
 		String address) {
 		ItemStack stack = player.getMainHandItem();
-		if (!AllBlocks.REDSTONE_REQUESTER.isIn(stack) && !AllItems.DISPLAY_CLOTH.isIn(stack))
+		boolean isRequester = AllBlocks.REDSTONE_REQUESTER.isIn(stack);
+		boolean isShopCloth = AllItemTags.DISPLAY_CLOTHS.matches(stack);
+		if (!isRequester && !isShopCloth)
 			return;
 
 		AutoRequestData autoRequestData = new AutoRequestData();
@@ -97,10 +99,12 @@ public class RedstoneRequesterBlock extends Block implements IBE<RedstoneRequest
 
 		autoRequestData.writeToItem(BlockPos.ZERO, stack);
 
-		CompoundTag stackTag = stack.getTag();
-		CompoundTag beTag = stackTag.getCompound(BlockItem.BLOCK_ENTITY_TAG);
-		beTag.putUUID("Freq", be.behaviour.freqId);
-		stackTag.put(BlockItem.BLOCK_ENTITY_TAG, beTag);
+		if (isRequester) {
+			CompoundTag stackTag = stack.getTag();
+			CompoundTag beTag = stackTag.getCompound(BlockItem.BLOCK_ENTITY_TAG);
+			beTag.putUUID("Freq", be.behaviour.freqId);
+			stackTag.put(BlockItem.BLOCK_ENTITY_TAG, beTag);
+		}
 
 		player.setItemInHand(InteractionHand.MAIN_HAND, stack);
 	}

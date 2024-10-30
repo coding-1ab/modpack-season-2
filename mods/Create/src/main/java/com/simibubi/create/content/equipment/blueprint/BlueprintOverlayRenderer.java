@@ -13,7 +13,7 @@ import com.simibubi.create.content.equipment.blueprint.BlueprintEntity.Blueprint
 import com.simibubi.create.content.equipment.blueprint.BlueprintEntity.BlueprintSection;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.displayCloth.BlueprintOverlayShopContext;
-import com.simibubi.create.content.logistics.displayCloth.DisplayClothEntity;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothBlockEntity;
 import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem.ShoppingList;
 import com.simibubi.create.content.logistics.filter.AttributeFilterMenu.WhitelistMode;
 import com.simibubi.create.content.logistics.filter.FilterItem;
@@ -139,7 +139,7 @@ public class BlueprintOverlayRenderer {
 		}
 	}
 
-	public static void displayClothShop(DisplayClothEntity dce, int alreadyPurchased, ShoppingList list) {
+	public static void displayClothShop(DisplayClothBlockEntity dce, int alreadyPurchased, ShoppingList list) {
 		if (active)
 			return;
 		prepareCustomOverlay();

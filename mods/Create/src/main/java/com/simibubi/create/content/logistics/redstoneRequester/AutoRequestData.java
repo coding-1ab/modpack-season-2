@@ -47,7 +47,7 @@ public class AutoRequestData {
 
 	public static AutoRequestData readFromItem(Level level, Player player, BlockPos position, ItemStack itemStack) {
 		CompoundTag tag = itemStack.getTag();
-		if (tag == null)
+		if (tag == null || !tag.contains("TargetOffset"))
 			return null;
 
 		AutoRequestData requestData = read(tag);

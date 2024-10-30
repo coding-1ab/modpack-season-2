@@ -28,8 +28,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.EntityGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 
 public class ShoppingListItem extends Item {
 
@@ -69,18 +69,17 @@ public class ShoppingListItem extends Item {
 			return 0;
 		}
 
-		public Couple<InventorySummary> bakeEntries(EntityGetter level, @Nullable BlockPos clothPosToIgnore) {
+		public Couple<InventorySummary> bakeEntries(LevelAccessor level, @Nullable BlockPos clothPosToIgnore) {
 			InventorySummary input = new InventorySummary();
 			InventorySummary output = new InventorySummary();
 
 			for (IntAttached<BlockPos> entry : purchases) {
 				if (clothPosToIgnore != null && clothPosToIgnore.equals(entry.getValue()))
 					continue;
-				DisplayClothEntity entity = DisplayClothEntity.getAtPosWithPixelY(level, entry.getValue());
-				if (entity == null)
+				if (!(level.getBlockEntity(entry.getValue()) instanceof DisplayClothBlockEntity dcbe))
 					continue;
-				input.add(entity.paymentItem, entity.paymentAmount * entry.getFirst());
-				for (BigItemStack stackEntry : entity.requestData.encodedRequest.stacks())
+				input.add(dcbe.paymentItem, dcbe.paymentAmount * entry.getFirst());
+				for (BigItemStack stackEntry : dcbe.requestData.encodedRequest.stacks())
 					output.add(stackEntry.stack, stackEntry.count * entry.getFirst());
 			}
 

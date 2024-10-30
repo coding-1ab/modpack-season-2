@@ -1102,7 +1102,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 
 		CLIPBOARD_CLEAR = clearData(AllBlocks.CLIPBOARD), SCHEDULE_CLEAR = clearData(AllItems.SCHEDULE),
 		FILTER_CLEAR = clearData(AllItems.FILTER), ATTRIBUTE_FILTER_CLEAR = clearData(AllItems.ATTRIBUTE_FILTER),
-		DISPLAY_CLOTH_CLEAR = clearData(AllItems.DISPLAY_CLOTH),
+		PACKAGE_FILTER_CLEAR = clearData(AllItems.PACKAGE_FILTER),
 
 		CARDBOARD_HELMET = create(AllItems.CARDBOARD_HELMET).unlockedBy(I::cardboard)
 			.viaShaped(b -> b.define('P', I.cardboard())

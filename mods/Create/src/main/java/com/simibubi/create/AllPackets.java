@@ -60,8 +60,7 @@ import com.simibubi.create.content.logistics.depot.EjectorAwardPacket;
 import com.simibubi.create.content.logistics.depot.EjectorElytraPacket;
 import com.simibubi.create.content.logistics.depot.EjectorPlacementPacket;
 import com.simibubi.create.content.logistics.depot.EjectorTriggerPacket;
-import com.simibubi.create.content.logistics.displayCloth.DisplayClothPacketToClient;
-import com.simibubi.create.content.logistics.displayCloth.DisplayClothPacketToServer;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothConfigurationPacket;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelConfigurationPacket;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelConnectionPacket;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelEffectPacket;
@@ -192,7 +191,7 @@ public enum AllPackets {
 	CHAIN_CONVEYOR_CONNECT(ChainConveyorConnectionPacket.class, ChainConveyorConnectionPacket::new, PLAY_TO_SERVER),
 	CHAIN_CONVEYOR_RIDING(ChainConveyorRidingPacket.class, ChainConveyorRidingPacket::new, PLAY_TO_SERVER),
 	CHAIN_PACKAGE_INTERACTION(ChainPackageInteractionPacket.class, ChainPackageInteractionPacket::new, PLAY_TO_SERVER),
-	DISPLAY_CLOTH_SERVERBOUND(DisplayClothPacketToServer.class, DisplayClothPacketToServer::new, PLAY_TO_SERVER),
+	DISPLAY_CLOTH_CONFIGURATION(DisplayClothConfigurationPacket.class, DisplayClothConfigurationPacket::new, PLAY_TO_SERVER),
 	PACKAGE_PORT_CONFIGURATION(PackagePortConfigurationPacket.class, PackagePortConfigurationPacket::new, PLAY_TO_SERVER),
 	TRAIN_MAP_REQUEST(TrainMapSyncRequestPacket.class, TrainMapSyncRequestPacket::new, PLAY_TO_SERVER),
 	CONNECT_FACTORY_PANEL(FactoryPanelConnectionPacket.class, FactoryPanelConnectionPacket::new, PLAY_TO_SERVER),
@@ -248,7 +247,6 @@ public enum AllPackets {
 	SERVER_DEBUG_INFO(ServerDebugInfoPacket.class, ServerDebugInfoPacket::new, PLAY_TO_CLIENT),
 	PACKAGE_DESTROYED(PackageDestroyPacket.class, PackageDestroyPacket::new, PLAY_TO_CLIENT),
 	LOGISTICS_STOCK_RESPONSE(LogisticalStockResponsePacket.class, LogisticalStockResponsePacket::new, PLAY_TO_CLIENT),
-	DISPLAY_CLOTH_CLIENTBOUND(DisplayClothPacketToClient.class, DisplayClothPacketToClient::new, PLAY_TO_CLIENT),
 	FACTORY_PANEL_EFFECT(FactoryPanelEffectPacket.class, FactoryPanelEffectPacket::new, PLAY_TO_CLIENT),
 	KNOCKBACK(KnockbackPacket.class, KnockbackPacket::new, PLAY_TO_CLIENT),
 	TRAIN_MAP_SYNC(TrainMapSyncPacket.class, TrainMapSyncPacket::new, PLAY_TO_CLIENT);

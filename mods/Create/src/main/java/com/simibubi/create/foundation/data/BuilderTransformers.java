@@ -37,6 +37,7 @@ import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogCTBeh
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogwheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedShaftBlock;
 import com.simibubi.create.content.logistics.box.PackageItem;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothBlockItem;
 import com.simibubi.create.content.logistics.displayCloth.DisplayClothModel;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock.Shape;
@@ -48,6 +49,7 @@ import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import com.simibubi.create.foundation.block.connected.HorizontalCTBehaviour;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.builders.ItemBuilder;
+import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
@@ -57,6 +59,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -483,12 +486,16 @@ public class BuilderTransformers {
 				.texture("0", p.modLoc("block/display_cloth/" + name))))
 			.onRegister(CreateRegistrate.blockModel(() -> DisplayClothModel::new))
 			.tag(AllBlockTags.DISPLAY_CLOTHS.tag)
-			.item()
+			.item(DisplayClothBlockItem::new)
 			.model((c, p) -> p
 				.withExistingParent(name + "_display_cloth",
 					p.modLoc("block/display_cloth/item" + (lowerItem ? "_lower" : "")))
 				.texture("0", p.modLoc("block/display_cloth/" + name)))
 			.tag(AllItemTags.DISPLAY_CLOTHS.tag)
+			.recipe((c, p) -> ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, c.get())
+				.requires(c.get())
+				.unlockedBy("has_" + c.getName(), RegistrateRecipeProvider.has(c.get()))
+				.save(p, Create.asResource("crafting/logistics/" + c.getName() + "_clear")))
 			.build();
 	}
 
