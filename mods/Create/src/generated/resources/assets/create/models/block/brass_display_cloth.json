@@ -1,0 +1,6 @@
+{
+  "parent": "create:block/display_cloth/block",
+  "textures": {
+    "0": "create:block/display_cloth/brass"
+  }
+}

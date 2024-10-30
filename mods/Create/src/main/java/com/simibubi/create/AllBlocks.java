@@ -167,6 +167,7 @@ import com.simibubi.create.content.logistics.crate.CreativeCrateBlock;
 import com.simibubi.create.content.logistics.depot.DepotBlock;
 import com.simibubi.create.content.logistics.depot.EjectorBlock;
 import com.simibubi.create.content.logistics.depot.EjectorItem;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothBlock;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlockItem;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelModel;
@@ -1757,7 +1758,7 @@ public class AllBlocks {
 			.model(AssetLookup::customItemModel)
 			.build()
 			.register();
-	
+
 	public static final DyedBlockList<PostboxBlock> PACKAGE_POSTBOXES = new DyedBlockList<>(colour -> {
 		String colourName = colour.getSerializedName();
 		return REGISTRATE.block(colourName + "_postbox", p -> new PostboxBlock(p, colour))
@@ -1827,6 +1828,37 @@ public class AllBlocks {
 			.item(FactoryPanelBlockItem::new)
 			.model(AssetLookup::customItemModel)
 			.build()
+			.register();
+
+	public static final DyedBlockList<DisplayClothBlock> DISPLAY_CLOTHS = new DyedBlockList<>(colour -> {
+		String colourName = colour.getSerializedName();
+		return REGISTRATE.block(colourName + "_display_cloth", p -> new DisplayClothBlock(p, colour))
+			.transform(BuilderTransformers.displayCloth(colourName, () -> Blocks.BLACK_CARPET, false))
+			.properties(p -> p.mapColor(colour))
+			.register();
+	});
+
+	public static final BlockEntry<DisplayClothBlock> ANDESITE_DISPLAY_CLOTH =
+		REGISTRATE.block("andesite_display_cloth", p -> new DisplayClothBlock(p, "andesite"))
+			.transform(BuilderTransformers.displayCloth("andesite", SharedProperties::stone, true))
+			.properties(p -> p.mapColor(MapColor.STONE)
+				.requiresCorrectToolForDrops())
+			.transform(pickaxeOnly())
+			.register();
+
+	public static final BlockEntry<DisplayClothBlock> BRASS_DISPLAY_CLOTH =
+		REGISTRATE.block("brass_display_cloth", p -> new DisplayClothBlock(p, "brass"))
+			.transform(BuilderTransformers.displayCloth("brass", SharedProperties::softMetal, true))
+			.properties(p -> p.mapColor(MapColor.TERRACOTTA_YELLOW)
+				.requiresCorrectToolForDrops())
+			.transform(pickaxeOnly())
+			.register();
+
+	public static final BlockEntry<DisplayClothBlock> COPPER_DISPLAY_CLOTH =
+		REGISTRATE.block("copper_display_cloth", p -> new DisplayClothBlock(p, "copper"))
+			.transform(BuilderTransformers.displayCloth("copper", SharedProperties::copperMetal, true))
+			.properties(p -> p.requiresCorrectToolForDrops())
+			.transform(pickaxeOnly())
 			.register();
 
 	public static final BlockEntry<AndesiteFunnelBlock> ANDESITE_FUNNEL =
@@ -2495,7 +2527,7 @@ public class AllBlocks {
 		.build()
 		.lang("Block of Brass")
 		.register();
-	
+
 	public static final BlockEntry<CardboardBlock> CARDBOARD_BLOCK =
 		REGISTRATE.block("cardboard_block", CardboardBlock::new)
 			.initialProperties(() -> Blocks.MUSHROOM_STEM)
@@ -2509,7 +2541,7 @@ public class AllBlocks {
 			.build()
 			.lang("Block of Cardboard")
 			.register();
-	
+
 	public static final BlockEntry<CardboardBlock> BOUND_CARDBOARD_BLOCK =
 		REGISTRATE.block("bound_cardboard_block", CardboardBlock::new)
 			.initialProperties(() -> Blocks.MUSHROOM_STEM)

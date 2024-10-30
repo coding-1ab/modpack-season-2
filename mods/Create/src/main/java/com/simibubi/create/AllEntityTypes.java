@@ -17,7 +17,7 @@ import com.simibubi.create.content.equipment.potatoCannon.PotatoProjectileRender
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageRenderer;
 import com.simibubi.create.content.logistics.displayCloth.DisplayClothEntity;
-import com.simibubi.create.content.logistics.displayCloth.DisplayClothRenderer;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothEntityRenderer;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntityRenderer;
 import com.simibubi.create.content.trains.entity.CarriageContraptionVisual;
@@ -66,7 +66,7 @@ public class AllEntityTypes {
 			Integer.MAX_VALUE, false, true, BlueprintEntity::build).register();
 	
 	public static final EntityEntry<DisplayClothEntity> DISPLAY_CLOTH =
-		register("display_cloth", DisplayClothEntity::new, () -> DisplayClothRenderer::new, MobCategory.MISC, 10,
+		register("display_cloth", DisplayClothEntity::new, () -> DisplayClothEntityRenderer::new, MobCategory.MISC, 10,
 			Integer.MAX_VALUE, false, true, DisplayClothEntity::build).register();
 
 	public static final EntityEntry<PotatoProjectileEntity> POTATO_PROJECTILE =

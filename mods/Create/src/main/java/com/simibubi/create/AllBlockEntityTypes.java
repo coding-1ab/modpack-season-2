@@ -166,6 +166,8 @@ import com.simibubi.create.content.logistics.depot.DepotRenderer;
 import com.simibubi.create.content.logistics.depot.EjectorBlockEntity;
 import com.simibubi.create.content.logistics.depot.EjectorRenderer;
 import com.simibubi.create.content.logistics.depot.EjectorVisual;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothBlockEntity;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothRenderer;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlockEntity;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelRenderer;
 import com.simibubi.create.content.logistics.funnel.FunnelBlockEntity;
@@ -514,6 +516,15 @@ public class AllBlockEntityTypes {
 		.validBlocks(AllBlocks.PACKAGE_POSTBOXES.toArray())
 		.renderer(() -> PostboxRenderer::new)
 		.register();
+
+	public static final BlockEntityEntry<DisplayClothBlockEntity> DISPLAY_CLOTH =
+		REGISTRATE.blockEntity("display_cloth", DisplayClothBlockEntity::new)
+			.validBlocks(AllBlocks.DISPLAY_CLOTHS.toArray())
+			.validBlock(AllBlocks.ANDESITE_DISPLAY_CLOTH)
+			.validBlock(AllBlocks.BRASS_DISPLAY_CLOTH)
+			.validBlock(AllBlocks.COPPER_DISPLAY_CLOTH)
+			.renderer(() -> DisplayClothRenderer::new)
+			.register();
 
 	public static final BlockEntityEntry<PackagerLinkBlockEntity> PACKAGER_LINK = REGISTRATE
 		.blockEntity("packager_link", PackagerLinkBlockEntity::new)

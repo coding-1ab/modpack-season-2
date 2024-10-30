@@ -27,8 +27,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class DepotRenderer extends SafeBlockEntityRenderer<DepotBlockEntity> {
 
-	public DepotRenderer(BlockEntityRendererProvider.Context context) {
-	}
+	public DepotRenderer(BlockEntityRendererProvider.Context context) {}
 
 	@Override
 	protected void renderSafe(DepotBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
@@ -59,7 +58,8 @@ public class DepotRenderer extends SafeBlockEntityRenderer<DepotBlockEntity> {
 			if (tis.insertedFrom.getAxis()
 				.isHorizontal()) {
 				Vec3 offsetVec = Vec3.atLowerCornerOf(tis.insertedFrom.getOpposite()
-					.getNormal()).scale(.5f - offset);
+					.getNormal())
+					.scale(.5f - offset);
 				ms.translate(offsetVec.x, offsetVec.y, offsetVec.z);
 				boolean alongX = tis.insertedFrom.getClockWise()
 					.getAxis() == Direction.Axis.X;
@@ -93,15 +93,16 @@ public class DepotRenderer extends SafeBlockEntityRenderer<DepotBlockEntity> {
 				msr.rotateYDegrees(-(360 / 8f * i));
 			Random r = new Random(i + 1);
 			int angle = (int) (360 * r.nextFloat());
-			renderItem(be.getLevel(), ms, buffer, light, overlay, stack, renderUpright ? angle + 90 : angle, r, itemPosition, false);
+			renderItem(be.getLevel(), ms, buffer, light, overlay, stack, renderUpright ? angle + 90 : angle, r,
+				itemPosition, false);
 			ms.popPose();
 		}
 
 		ms.popPose();
 	}
 
-	public static void renderItem(Level level, PoseStack ms, MultiBufferSource buffer, int light, int overlay, ItemStack itemStack,
-		int angle, Random r, Vec3 itemPosition, boolean alwaysUpright) {
+	public static void renderItem(Level level, PoseStack ms, MultiBufferSource buffer, int light, int overlay,
+		ItemStack itemStack, int angle, Random r, Vec3 itemPosition, boolean alwaysUpright) {
 		ItemRenderer itemRenderer = Minecraft.getInstance()
 			.getItemRenderer();
 		var msr = TransformStack.of(ms);
@@ -130,12 +131,15 @@ public class DepotRenderer extends SafeBlockEntityRenderer<DepotBlockEntity> {
 			if (blockItem && r != null)
 				ms.translate(r.nextFloat() * .0625f * i, 0, r.nextFloat() * .0625f * i);
 
-			if (PackageItem.isPackage(itemStack)) {
+			if (PackageItem.isPackage(itemStack) && !alwaysUpright) {
 				ms.translate(0, 4 / 16f, 0);
 				ms.scale(1.5f, 1.5f, 1.5f);
+			} else if (blockItem && alwaysUpright) {
+				ms.translate(0, 1 / 16f, 0);
+				ms.scale(.755f, .755f, .755f);
 			} else
 				ms.scale(.5f, .5f, .5f);
-			
+
 			if (!blockItem && !renderUpright) {
 				ms.translate(0, -3 / 16f, 0);
 				msr.rotateXDegrees(90);

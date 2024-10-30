@@ -189,6 +189,11 @@ public class AllPartialModels {
 		FACTORY_PANEL_RESTOCKER_WITH_BULB = block("factory_panel/panel_restocker_with_bulb"),
 		FACTORY_PANEL_LIGHT = block("factory_panel/bulb_light"),
 
+		DISPLAY_CLOTH_NW = block("display_cloth/north_west"),
+		DISPLAY_CLOTH_NE = block("display_cloth/north_east"),
+		DISPLAY_CLOTH_SW = block("display_cloth/south_west"),
+		DISPLAY_CLOTH_SE = block("display_cloth/south_east"),
+		
 		DISPLAY_CLOTH = entity("display_cloth"),
 		
 		CRAFTING_BLUEPRINT_1x1 = entity("crafting_blueprint_small"),

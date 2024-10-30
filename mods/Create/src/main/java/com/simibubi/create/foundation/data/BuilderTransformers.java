@@ -37,6 +37,7 @@ import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogCTBeh
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogwheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedShaftBlock;
 import com.simibubi.create.content.logistics.box.PackageItem;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothModel;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock.Shape;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelItem;
@@ -48,6 +49,7 @@ import com.simibubi.create.foundation.block.connected.HorizontalCTBehaviour;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.builders.ItemBuilder;
 import com.tterrag.registrate.util.DataIngredient;
+import com.tterrag.registrate.util.nullness.NonNullSupplier;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 
 import net.createmod.catnip.platform.CatnipServices;
@@ -105,7 +107,8 @@ public class BuilderTransformers {
 			.blockstate((c, p) -> BlockStateGen.horizontalAxisBlock(c, p, s -> p.models()
 				.getExistingFile(p.modLoc("block/track/bogey/top"))))
 			.loot((p, l) -> p.dropOther(l, AllBlocks.RAILWAY_CASING.get()))
-			.onRegister(block -> AbstractBogeyBlock.registerStandardBogey(CatnipServices.REGISTRIES.getKeyOrThrow(block)));
+			.onRegister(
+				block -> AbstractBogeyBlock.registerStandardBogey(CatnipServices.REGISTRIES.getKeyOrThrow(block)));
 	}
 
 	public static <B extends CopycatBlock, P> NonNullUnaryOperator<BlockBuilder<B, P>> copycat() {
@@ -469,6 +472,24 @@ public class BuilderTransformers {
 				p.modLoc("item/packages/" + material + "_" + diameter + "x" + height)))
 			.lang(material.substring(0, 1)
 				.toUpperCase(Locale.ROOT) + material.substring(1) + " Package");
+	}
+
+	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> displayCloth(String name,
+		NonNullSupplier<? extends Block> initialProps, boolean lowerItem) {
+		return b -> b.initialProperties(initialProps)
+			.addLayer(() -> RenderType::cutoutMipped)
+			.blockstate((c, p) -> p.simpleBlock(c.get(), p.models()
+				.withExistingParent(name + "_display_cloth", p.modLoc("block/display_cloth/block"))
+				.texture("0", p.modLoc("block/display_cloth/" + name))))
+			.onRegister(CreateRegistrate.blockModel(() -> DisplayClothModel::new))
+			.tag(AllBlockTags.DISPLAY_CLOTHS.tag)
+			.item()
+			.model((c, p) -> p
+				.withExistingParent(name + "_display_cloth",
+					p.modLoc("block/display_cloth/item" + (lowerItem ? "_lower" : "")))
+				.texture("0", p.modLoc("block/display_cloth/" + name)))
+			.tag(AllItemTags.DISPLAY_CLOTHS.tag)
+			.build();
 	}
 
 }

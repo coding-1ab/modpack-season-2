@@ -1,0 +1,23 @@
+{
+  "values": [
+    "create:white_display_cloth",
+    "create:orange_display_cloth",
+    "create:magenta_display_cloth",
+    "create:light_blue_display_cloth",
+    "create:yellow_display_cloth",
+    "create:lime_display_cloth",
+    "create:pink_display_cloth",
+    "create:gray_display_cloth",
+    "create:light_gray_display_cloth",
+    "create:cyan_display_cloth",
+    "create:purple_display_cloth",
+    "create:blue_display_cloth",
+    "create:brown_display_cloth",
+    "create:green_display_cloth",
+    "create:red_display_cloth",
+    "create:black_display_cloth",
+    "create:andesite_display_cloth",
+    "create:brass_display_cloth",
+    "create:copper_display_cloth"
+  ]
+}
