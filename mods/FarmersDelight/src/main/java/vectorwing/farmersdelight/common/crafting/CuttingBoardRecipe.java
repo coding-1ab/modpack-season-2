@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CuttingBoardRecipe implements Recipe<SingleRecipeInput>
+public class CuttingBoardRecipe implements Recipe<CuttingBoardRecipeWrapper> 
 {
 	public static final int MAX_RESULTS = 4;
 
@@ -46,12 +46,12 @@ public class CuttingBoardRecipe implements Recipe<SingleRecipeInput>
 	}
 
 	@Override
-	public boolean matches(SingleRecipeInput input, Level level) {
-		return this.input.test(input.item());
+	public boolean matches(CuttingBoardRecipeWrapper input, Level level) {
+		return this.input.test(input.item()) && this.tool.test(input.tool());
 	}
 
 	@Override
-	public ItemStack assemble(SingleRecipeInput inv, HolderLookup.Provider provider) {
+	public ItemStack assemble(CuttingBoardRecipeWrapper inv, HolderLookup.Provider provider) {
 		return this.results.getFirst().stack().copy();
 	}
 
@@ -149,38 +149,41 @@ public class CuttingBoardRecipe implements Recipe<SingleRecipeInput>
 		return result;
 	}
 
-	public static class Serializer implements RecipeSerializer<CuttingBoardRecipe>
-	{
-		private static final MapCodec<CuttingBoardRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-				Codec.STRING.optionalFieldOf("group", "").forGetter(CuttingBoardRecipe::getGroup),
-				Ingredient.LIST_CODEC_NONEMPTY.fieldOf("ingredients").flatXmap(ingredients -> {
-					if (ingredients.isEmpty()) {
-						return DataResult.error(() -> "No ingredients for cutting recipe");
-					}
-					if (ingredients.size() > 1) {
-						return DataResult.error(() -> "Too many ingredients for cutting recipe! Please define only one ingredient");
-					}
-					NonNullList<Ingredient> nonNullList = NonNullList.create();
-					nonNullList.add(ingredients.get(0));
-					return DataResult.success(ingredients.get(0));
-				}, ingredient -> {
-					NonNullList<Ingredient> nonNullList = NonNullList.create();
-					nonNullList.add(ingredient);
-					return DataResult.success(nonNullList);
-				}).forGetter(cuttingBoardRecipe -> cuttingBoardRecipe.input),
-				Ingredient.CODEC.fieldOf("tool").forGetter(CuttingBoardRecipe::getTool),
-				Codec.list(ChanceResult.CODEC).fieldOf("result").flatXmap(chanceResults -> {
-					if (chanceResults.size() > 4) {
-						return DataResult.error(() -> "Too many results for cutting recipe! The maximum quantity of unique results is " + MAX_RESULTS);
-					}
-					NonNullList<ChanceResult> nonNullList = NonNullList.create();
-					nonNullList.addAll(chanceResults);
-					return DataResult.success(nonNullList);
-				}, DataResult::success).forGetter(CuttingBoardRecipe::getRollableResults),
-				SoundEvent.DIRECT_CODEC.optionalFieldOf("sound").forGetter(CuttingBoardRecipe::getSoundEvent)
-		).apply(inst, CuttingBoardRecipe::new));
+	public static class Serializer implements RecipeSerializer<CuttingBoardRecipe> {
+		private static final MapCodec<CuttingBoardRecipe> CODEC = RecordCodecBuilder.mapCodec(
+				inst -> inst.group(Codec.STRING.optionalFieldOf("group", "").forGetter(CuttingBoardRecipe::getGroup),
+						Ingredient.LIST_CODEC_NONEMPTY.fieldOf("ingredients").flatXmap(ingredients -> {
+							if (ingredients.isEmpty()) {
+								return DataResult.error(() -> "No ingredients for cutting recipe");
+							}
+							if (ingredients.size() > 1) {
+								return DataResult.error(
+										() -> "Too many ingredients for cutting recipe! Please define only one ingredient");
+							}
+							NonNullList<Ingredient> nonNullList = NonNullList.create();
+							nonNullList.add(ingredients.get(0));
+							return DataResult.success(ingredients.get(0));
+						}, ingredient -> {
+							NonNullList<Ingredient> nonNullList = NonNullList.create();
+							nonNullList.add(ingredient);
+							return DataResult.success(nonNullList);
+						}).forGetter(cuttingBoardRecipe -> cuttingBoardRecipe.input),
+						Ingredient.CODEC.fieldOf("tool").forGetter(CuttingBoardRecipe::getTool),
+						Codec.list(ChanceResult.CODEC).fieldOf("result").flatXmap(chanceResults -> {
+							if (chanceResults.size() > 4) {
+								return DataResult.error(
+										() -> "Too many results for cutting recipe! The maximum quantity of unique results is "
+												+ MAX_RESULTS);
+							}
+							NonNullList<ChanceResult> nonNullList = NonNullList.create();
+							nonNullList.addAll(chanceResults);
+							return DataResult.success(nonNullList);
+						}, DataResult::success).forGetter(CuttingBoardRecipe::getRollableResults),
+						SoundEvent.DIRECT_CODEC.optionalFieldOf("sound").forGetter(CuttingBoardRecipe::getSoundEvent))
+						.apply(inst, CuttingBoardRecipe::new));
 
-		public static final StreamCodec<RegistryFriendlyByteBuf, CuttingBoardRecipe> STREAM_CODEC = StreamCodec.of(CuttingBoardRecipe.Serializer::toNetwork, CuttingBoardRecipe.Serializer::fromNetwork);
+		public static final StreamCodec<RegistryFriendlyByteBuf, CuttingBoardRecipe> STREAM_CODEC =
+StreamCodec.of(CuttingBoardRecipe.Serializer::toNetwork, CuttingBoardRecipe.Serializer::fromNetwork);
 
 		public Serializer() {
 		}

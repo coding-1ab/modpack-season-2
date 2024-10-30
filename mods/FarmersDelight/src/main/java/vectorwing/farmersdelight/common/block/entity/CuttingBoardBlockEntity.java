@@ -15,7 +15,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
@@ -38,6 +37,7 @@ import vectorwing.farmersdelight.common.registry.ModSounds;
 import vectorwing.farmersdelight.common.tag.CommonTags;
 import vectorwing.farmersdelight.common.utility.ItemUtils;
 import vectorwing.farmersdelight.common.utility.TextUtils;
+import vectorwing.farmersdelight.common.crafting.CuttingBoardRecipeWrapper;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -48,7 +48,7 @@ public class CuttingBoardBlockEntity extends SyncedBlockEntity
 {
 	private final ItemStackHandler inventory;
 	private ResourceLocation lastRecipeID;
-	private final RecipeManager.CachedCheck<SingleRecipeInput, CuttingBoardRecipe> quickCheck;
+	private final CachedCheck<CuttingBoardRecipeWrapper, CuttingBoardRecipe> quickCheck;
 
 	private boolean isItemCarvingBoard;
 
@@ -115,7 +115,7 @@ public class CuttingBoardBlockEntity extends SyncedBlockEntity
 	private Optional<RecipeHolder<CuttingBoardRecipe>> getMatchingRecipe(ItemStack toolStack, @Nullable Player player) {
 		if (level == null) return Optional.empty();
 
-		Optional<RecipeHolder<CuttingBoardRecipe>> recipe = quickCheck.getRecipeFor(new SingleRecipeInput(getStoredItem()), level);
+		Optional<RecipeHolder<CuttingBoardRecipe>> recipe = quickCheck.getRecipeFor(new CuttingBoardRecipeWrapper(getStoredItem()), level);
 		if (recipe.isPresent()) {
 			if (recipe.get().value().getTool().test(toolStack)) {
 				return recipe;
