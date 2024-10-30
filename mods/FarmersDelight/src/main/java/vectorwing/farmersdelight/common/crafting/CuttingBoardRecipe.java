@@ -184,7 +184,7 @@ public class CuttingBoardRecipe implements Recipe<CuttingBoardRecipeWrapper>
 						.apply(inst, CuttingBoardRecipe::new));
 
 		public static final StreamCodec<RegistryFriendlyByteBuf, CuttingBoardRecipe> STREAM_CODEC =
-				StreamCodec.of(CuttingBoardRecipe.Serializer::toNetwork, CuttingBoardRecipe.Serializer::fromNetwork);
+StreamCodec.of(CuttingBoardRecipe.Serializer::toNetwork, CuttingBoardRecipe.Serializer::fromNetwork);
 
 		public Serializer() {
 		}
@@ -228,8 +228,7 @@ public class CuttingBoardRecipe implements Recipe<CuttingBoardRecipeWrapper>
 				result.write(buffer);
 			}
 			if (recipe.getSoundEvent().isPresent()) {
-				Optional<ResourceKey<SoundEvent>> resourceKey = BuiltInRegistries.SOUND_EVENT
-						.getResourceKey(recipe.getSoundEvent().get());
+				Optional<ResourceKey<SoundEvent>> resourceKey = BuiltInRegistries.SOUND_EVENT.getResourceKey(recipe.getSoundEvent().get());
 				resourceKey.ifPresentOrElse(rk -> {
 					buffer.writeBoolean(true);
 					buffer.writeResourceKey(rk);
