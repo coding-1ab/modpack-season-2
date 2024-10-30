@@ -37,8 +37,7 @@ public class CuttingBoardRecipe implements Recipe<CuttingBoardRecipeWrapper>
 	private final NonNullList<ChanceResult> results;
 	private final Optional<SoundEvent> soundEvent;
 
-	public CuttingBoardRecipe(String group, Ingredient input, Ingredient tool, NonNullList<ChanceResult> results,
-			Optional<SoundEvent> soundEvent) {
+	public CuttingBoardRecipe(String group, Ingredient input, Ingredient tool, NonNullList<ChanceResult> results, Optional<SoundEvent> soundEvent) {
 		this.group = group;
 		this.input = input;
 		this.tool = tool;
