@@ -40,6 +40,7 @@
 - (1.21) Fixed Kelp Roll (whole) having wrong food stats;
 - (1.21) Fixed Skillet not being enchantable in an anvil;
 - (1.21) Fixed Knives being unable to receive Knockback and Looting;
+- (1.21) Fixed Cutting Boards being unable to handle two valid tools for the same input (thanks, Lance5057!);
 
 ## 1.2.4a (1.21)
 

@@ -30,6 +30,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.block.CuttingBoardBlock;
 import vectorwing.farmersdelight.common.crafting.CuttingBoardRecipe;
+import vectorwing.farmersdelight.common.crafting.CuttingBoardRecipeWrapper;
 import vectorwing.farmersdelight.common.registry.ModAdvancements;
 import vectorwing.farmersdelight.common.registry.ModBlockEntityTypes;
 import vectorwing.farmersdelight.common.registry.ModRecipeTypes;
@@ -37,7 +38,6 @@ import vectorwing.farmersdelight.common.registry.ModSounds;
 import vectorwing.farmersdelight.common.tag.CommonTags;
 import vectorwing.farmersdelight.common.utility.ItemUtils;
 import vectorwing.farmersdelight.common.utility.TextUtils;
-import vectorwing.farmersdelight.common.crafting.CuttingBoardRecipeWrapper;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -47,9 +47,8 @@ import java.util.Optional;
 public class CuttingBoardBlockEntity extends SyncedBlockEntity
 {
 	private final ItemStackHandler inventory;
+	private final RecipeManager.CachedCheck<CuttingBoardRecipeWrapper, CuttingBoardRecipe> quickCheck;
 	private ResourceLocation lastRecipeID;
-	private final CachedCheck<CuttingBoardRecipeWrapper, CuttingBoardRecipe> quickCheck;
-
 	private boolean isItemCarvingBoard;
 
 	public CuttingBoardBlockEntity(BlockPos pos, BlockState state) {
@@ -115,7 +114,7 @@ public class CuttingBoardBlockEntity extends SyncedBlockEntity
 	private Optional<RecipeHolder<CuttingBoardRecipe>> getMatchingRecipe(ItemStack toolStack, @Nullable Player player) {
 		if (level == null) return Optional.empty();
 
-		Optional<RecipeHolder<CuttingBoardRecipe>> recipe = quickCheck.getRecipeFor(new CuttingBoardRecipeWrapper(getStoredItem()), level);
+		Optional<RecipeHolder<CuttingBoardRecipe>> recipe = quickCheck.getRecipeFor(new CuttingBoardRecipeWrapper(getStoredItem(), toolStack), level);
 		if (recipe.isPresent()) {
 			if (recipe.get().value().getTool().test(toolStack)) {
 				return recipe;
