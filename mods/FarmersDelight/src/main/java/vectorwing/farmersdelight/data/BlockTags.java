@@ -70,6 +70,8 @@ public class BlockTags extends BlockTagsProvider
 				ModBlocks.RICH_SOIL_FARMLAND.get()
 		);
 		tag(ModTags.MINEABLE_WITH_KNIFE).add(
+						Blocks.MELON,
+						Blocks.PUMPKIN,
 						Blocks.COBWEB,
 						Blocks.CAKE,
 						ModBlocks.APPLE_PIE.get(),
@@ -103,8 +105,7 @@ public class BlockTags extends BlockTagsProvider
 				ModBlocks.CABBAGE_CROP.get(),
 				ModBlocks.ONION_CROP.get(),
 				ModBlocks.RICE_CROP_PANICLES.get(),
-				ModBlocks.BUDDING_TOMATO_CROP.get(),
-				ModBlocks.TOMATO_CROP.get());
+				ModBlocks.BUDDING_TOMATO_CROP.get());
 		tag(net.minecraft.tags.BlockTags.STANDING_SIGNS).add(
 				ModBlocks.CANVAS_SIGN.get(),
 				ModBlocks.WHITE_CANVAS_SIGN.get(),
@@ -269,6 +270,7 @@ public class BlockTags extends BlockTagsProvider
 				Blocks.GREEN_CANDLE_CAKE,
 				Blocks.RED_CANDLE_CAKE,
 				Blocks.BLACK_CANDLE_CAKE);
+		tag(ModTags.CAMPFIRE_SIGNAL_SMOKE).add(ModBlocks.STRAW_BALE.get()).add(ModBlocks.RICE_BALE.get());
 	}
 
 	private void registerCompatibilityTags() {

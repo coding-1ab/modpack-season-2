@@ -2,7 +2,41 @@
 
 ## 1.2.5
 
+### Additions
+- Farmer Villagers are now capable of planting and harvesting FD crops!
+  - They can plant Cabbage, Tomato and Onion. Rice is excluded due to unique planting conditions. However...
+  - They can harvest all 4 crops once fully mature, and will collect the drops. This includes the top half of Rice, which means they can harvest it indefinitely;
+- Added tag: `farmersdelight:campfire_signal_smoke`. Blocks in this tag will cause Campfires to emit "signal smoke", like the Hay Bale;
+
+### Updates
+- Knives are now effective at mining Pumpkins and Melons;
+- Knives will harvest **4 Pumpkin Slices** when mining a Pumpkin, instead of a whole unit. Carved Pumpkins are unaffected;
+- Added Canvas Signs to the vanilla `signs` and `hanging_signs` item tags;
+- Some crafting recipes are now properly grouped in the Crafting Table's recipe book;
+- Skillets are now waterloggable, but are unable to cook underwater, either handheld or as a block. Hard to fry when the skillet is flooded!
+- `tomatoes` were temporarily removed from the `crops` tag, as bee pollination was breaking ropelogged vines unpredictably;
+  - This will likely be addressed in the next major release;
+
+### Translations
+- Added:
+  - be_by (thanks, observr1!)
+  - da_dk (thanks, gohkenytp!)
+  - en_gb (thanks, akkini1!)
+  - tok (thanks, PiggyDr!)
+- Updated:
+  - de_de (thanks, joernott and DaLumma!)
+  - es_ar (thanks, axperty!)
+  - es_mx (thanks, cerealconjugo!)
+  - ja_jp (thanks, konumatakaki and EndilCrafter!)
+  - ko_kr (thanks, smoong951!)
+  - ru_ru (thanks, mpustovoi!)
+  - uk_ua (thanks, TheGridExpert!)
+  - vi_vn (thanks, godkyo98!)
+  - zh_cn (thanks, DuckDuckStudio!)
+  - zh_tw (thanks, DuckDuckStudio and FuGu0416!)
+
 ### Fixes
+- Fix meal duplication when using containers against a Cooking Pot block, then closing and reloading the world;
 - (1.21) Fixed Kelp Roll (whole) having wrong food stats;
 - (1.21) Fixed Skillet not being enchantable in an anvil;
 - (1.21) Fixed Knives being unable to receive Knockback and Looting;

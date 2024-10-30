@@ -41,6 +41,12 @@ public class ItemTags extends ItemTagsProvider
 	private void registerMinecraftTags() {
 		tag(net.minecraft.tags.ItemTags.TALL_FLOWERS).add(ModItems.WILD_RICE.get());
 		tag(net.minecraft.tags.ItemTags.PIGLIN_LOVED).add(ModItems.GOLDEN_KNIFE.get());
+		tag(net.minecraft.tags.ItemTags.SIGNS).addTag(ModTags.CANVAS_SIGNS);
+		tag(net.minecraft.tags.ItemTags.HANGING_SIGNS).addTag(ModTags.HANGING_CANVAS_SIGNS);
+		tag(net.minecraft.tags.ItemTags.VILLAGER_PLANTABLE_SEEDS)
+				.add(ModItems.CABBAGE_SEEDS.get())
+				.add(ModItems.TOMATO_SEEDS.get())
+				.add(ModItems.ONION.get());
 
 		tag(net.minecraft.tags.ItemTags.DURABILITY_ENCHANTABLE).addTag(ModTags.KNIVES).add(ModItems.SKILLET.get());
 		tag(net.minecraft.tags.ItemTags.WEAPON_ENCHANTABLE).addTag(ModTags.KNIVES).add(ModItems.SKILLET.get());

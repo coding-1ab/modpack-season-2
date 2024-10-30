@@ -140,6 +140,10 @@ public class SkilletItem extends BlockItem
 
 			Optional<RecipeHolder<CampfireCookingRecipe>> recipe = getCookingRecipe(cookingStack, level);
 			if (recipe.isPresent()) {
+				if (player.isUnderWater()) {
+					player.displayClientMessage(TextUtils.getTranslation("item.skillet.underwater"), true);
+					return InteractionResultHolder.pass(skilletStack);
+				}
 				ItemStack cookingStackCopy = cookingStack.copy();
 				ItemStack cookingStackUnit = cookingStackCopy.split(1);
 				skilletStack.set(ModDataComponents.SKILLET_INGREDIENT, new ItemStackWrapper(cookingStackUnit));
