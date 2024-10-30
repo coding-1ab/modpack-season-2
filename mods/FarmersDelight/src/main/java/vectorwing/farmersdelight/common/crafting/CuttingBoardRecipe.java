@@ -83,7 +83,9 @@ public class CuttingBoardRecipe implements Recipe<CuttingBoardRecipeWrapper>
 	}
 
 	public List<ItemStack> getResults() {
-		return getRollableResults().stream().map(ChanceResult::stack).collect(Collectors.toList());
+		return getRollableResults().stream()
+				.map(ChanceResult::stack)
+				.collect(Collectors.toList());
 	}
 
 	public NonNullList<ChanceResult> getRollableResults() {
@@ -126,21 +128,15 @@ public class CuttingBoardRecipe implements Recipe<CuttingBoardRecipeWrapper>
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
 
 		CuttingBoardRecipe that = (CuttingBoardRecipe) o;
 
-		if (!getGroup().equals(that.getGroup()))
-			return false;
-		if (!input.equals(that.input))
-			return false;
-		if (!getTool().equals(that.getTool()))
-			return false;
-		if (!getResults().equals(that.getResults()))
-			return false;
+		if (!getGroup().equals(that.getGroup())) return false;
+		if (!input.equals(that.input)) return false;
+		if (!getTool().equals(that.getTool())) return false;
+		if (!getResults().equals(that.getResults())) return false;
 		return Objects.equals(soundEvent, that.soundEvent);
 	}
 
@@ -187,8 +183,8 @@ public class CuttingBoardRecipe implements Recipe<CuttingBoardRecipeWrapper>
 						SoundEvent.DIRECT_CODEC.optionalFieldOf("sound").forGetter(CuttingBoardRecipe::getSoundEvent))
 						.apply(inst, CuttingBoardRecipe::new));
 
-		public static final StreamCodec<RegistryFriendlyByteBuf, CuttingBoardRecipe> STREAM_CODEC = StreamCodec
-				.of(CuttingBoardRecipe.Serializer::toNetwork, CuttingBoardRecipe.Serializer::fromNetwork);
+		public static final StreamCodec<RegistryFriendlyByteBuf, CuttingBoardRecipe> STREAM_CODEC =
+				StreamCodec.of(CuttingBoardRecipe.Serializer::toNetwork, CuttingBoardRecipe.Serializer::fromNetwork);
 
 		public Serializer() {
 		}
