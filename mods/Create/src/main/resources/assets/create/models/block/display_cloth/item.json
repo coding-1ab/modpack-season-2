@@ -3,7 +3,7 @@
 	"parent": "block/block",
 	"textures": {
 		"0": "create:block/display_cloth/red",
-		"particle": "create:block/display_cloth/red"
+		"particle": "#0"
 	},
 	"elements": [
 		{

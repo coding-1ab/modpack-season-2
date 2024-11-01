@@ -44,7 +44,7 @@ public class DisplayClothModel extends BakedModelWrapperWithData {
 	public static void reload() {
 		CORNERS.clear();
 	}
-	
+
 	@Override
 	public boolean useAmbientOcclusion() {
 		return false;
@@ -52,34 +52,40 @@ public class DisplayClothModel extends BakedModelWrapperWithData {
 
 	private List<BakedQuad> getCorner(DisplayClothBlock block, int corner, @NotNull RandomSource rand,
 		@Nullable RenderType renderType) {
-
-		List<List<BakedQuad>> corners = CORNERS.computeIfAbsent(block, b -> {
+		if (!CORNERS.containsKey(block)) {
 			TextureAtlasSprite targetSprite = getParticleIcon(ModelData.EMPTY);
 			List<List<BakedQuad>> list = new ArrayList<>();
 
 			for (PartialModel pm : List.of(AllPartialModels.DISPLAY_CLOTH_SW, AllPartialModels.DISPLAY_CLOTH_NW,
-				AllPartialModels.DISPLAY_CLOTH_NE, AllPartialModels.DISPLAY_CLOTH_SE)) {
-				List<BakedQuad> quads = new ArrayList<>();
+				AllPartialModels.DISPLAY_CLOTH_NE, AllPartialModels.DISPLAY_CLOTH_SE))
+				list.add(getCornerQuads(rand, renderType, targetSprite, pm));
 
-				for (BakedQuad quad : pm.get()
-					.getQuads(null, null, rand, ModelData.EMPTY, renderType)) {
-					TextureAtlasSprite original = quad.getSprite();
-					BakedQuad newQuad = BakedQuadHelper.clone(quad);
-					int[] vertexData = newQuad.getVertices();
-					for (int vertex = 0; vertex < 4; vertex++) {
-						BakedQuadHelper.setU(vertexData, vertex, targetSprite.getU(
-							SpriteShiftEntry.getUnInterpolatedU(original, BakedQuadHelper.getU(vertexData, vertex))));
-						BakedQuadHelper.setV(vertexData, vertex, targetSprite.getV(
-							SpriteShiftEntry.getUnInterpolatedV(original, BakedQuadHelper.getV(vertexData, vertex))));
-					}
-					quads.add(newQuad);
-				}
-				list.add(quads);
+			CORNERS.put(block, list);
+		}
+
+		return CORNERS.get(block)
+			.get(corner);
+	}
+
+	private List<BakedQuad> getCornerQuads(RandomSource rand, RenderType renderType, TextureAtlasSprite targetSprite,
+		PartialModel pm) {
+		List<BakedQuad> quads = new ArrayList<>();
+
+		for (BakedQuad quad : pm.get()
+			.getQuads(null, null, rand, ModelData.EMPTY, renderType)) {
+			TextureAtlasSprite original = quad.getSprite();
+			BakedQuad newQuad = BakedQuadHelper.clone(quad);
+			int[] vertexData = newQuad.getVertices();
+			for (int vertex = 0; vertex < 4; vertex++) {
+				BakedQuadHelper.setU(vertexData, vertex, targetSprite
+					.getU(SpriteShiftEntry.getUnInterpolatedU(original, BakedQuadHelper.getU(vertexData, vertex))));
+				BakedQuadHelper.setV(vertexData, vertex, targetSprite
+					.getV(SpriteShiftEntry.getUnInterpolatedV(original, BakedQuadHelper.getV(vertexData, vertex))));
 			}
-			return list;
-		});
+			quads.add(newQuad);
+		}
 
-		return corners.get(corner);
+		return quads;
 	}
 
 	@Override
