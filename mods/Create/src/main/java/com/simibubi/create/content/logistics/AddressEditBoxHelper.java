@@ -2,7 +2,9 @@ package com.simibubi.create.content.logistics;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
@@ -39,31 +41,33 @@ public class AddressEditBoxHelper {
 		NEARBY_CLIPBOARDS.put(blockPos, new WeakReference<>(blockEntity));
 	}
 
-	public static DestinationSuggestions createSuggestions(Screen screen, EditBox pInput) {
+	public static DestinationSuggestions createSuggestions(Screen screen, EditBox pInput, boolean anchorToBottom) {
 		Minecraft mc = Minecraft.getInstance();
 		Player player = mc.player;
 		List<IntAttached<String>> options = new ArrayList<>();
-		DestinationSuggestions destinationSuggestions =
-			new DestinationSuggestions(mc, screen, pInput, mc.font, options, -72 + pInput.getY() + pInput.getHeight());
+		Set<String> alreadyAdded = new HashSet<>();
+
+		DestinationSuggestions destinationSuggestions = new DestinationSuggestions(mc, screen, pInput, mc.font, options,
+			anchorToBottom, -72 + pInput.getY() + (anchorToBottom ? 0 : pInput.getHeight()));
 
 		if (player == null)
 			return destinationSuggestions;
 
 		for (int i = 0; i < Inventory.INVENTORY_SIZE; i++)
-			appendAddresses(options, player.getInventory()
+			appendAddresses(options, alreadyAdded, player.getInventory()
 				.getItem(i));
 
 		for (WeakReference<ClipboardBlockEntity> wr : NEARBY_CLIPBOARDS.asMap()
 			.values()) {
 			ClipboardBlockEntity cbe = wr.get();
 			if (cbe != null)
-				appendAddresses(options, cbe.dataContainer);
+				appendAddresses(options, alreadyAdded, cbe.dataContainer);
 		}
 
 		return destinationSuggestions;
 	}
 
-	private static void appendAddresses(List<IntAttached<String>> options, ItemStack item) {
+	private static void appendAddresses(List<IntAttached<String>> options, Set<String> alreadyAdded, ItemStack item) {
 		if (item == null || !AllBlocks.CLIPBOARD.isIn(item))
 			return;
 
@@ -77,7 +81,10 @@ public class AddressEditBoxHelper {
 			String address = string.substring(1);
 			if (address.isBlank())
 				return;
-			options.add(IntAttached.withZero(address.trim()));
+			String trim = address.trim();
+			if (!alreadyAdded.add(trim))
+				return;
+			options.add(IntAttached.withZero(trim));
 		}));
 	}
 

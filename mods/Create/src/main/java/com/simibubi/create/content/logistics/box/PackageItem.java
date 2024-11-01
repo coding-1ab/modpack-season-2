@@ -12,22 +12,27 @@ import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
@@ -63,7 +68,7 @@ public class PackageItem extends Item {
 	public static boolean isPackage(ItemStack stack) {
 		return stack.getItem() instanceof PackageItem;
 	}
-	
+
 	@Override
 	public boolean canFitInsideContainerItems() {
 		return false;
@@ -129,7 +134,7 @@ public class PackageItem extends Item {
 	public static boolean matchAddress(ItemStack box, String address) {
 		return matchAddress(getAddress(box), address);
 	}
-	
+
 	public static boolean matchAddress(String boxAddress, String address) {
 		if (address.isBlank())
 			return boxAddress.isBlank();
@@ -188,20 +193,18 @@ public class PackageItem extends Item {
 			pTooltipComponents.add(Components.literal("-> " + compoundnbt.getString("Address"))
 				.withStyle(ChatFormatting.GOLD));
 
-		/* Debug Fragmentation Data
-		if (compoundnbt.contains("Fragment")) {
-			CompoundTag fragTag = compoundnbt.getCompound("Fragment");
-			pTooltipComponents.add(Components.literal("Order Information (Temporary)")
-				.withStyle(ChatFormatting.GREEN));
-			pTooltipComponents.add(Components
-				.literal(" Link " + fragTag.getInt("LinkIndex") + (fragTag.getBoolean("IsFinalLink") ? " Final" : "")
-					+ " | Fragment " + fragTag.getInt("Index") + (fragTag.getBoolean("IsFinal") ? " Final" : ""))
-				.withStyle(ChatFormatting.DARK_GREEN));
-			if (fragTag.contains("OrderContext"))
-				pTooltipComponents.add(Components.literal("Has Context!")
-					.withStyle(ChatFormatting.DARK_GREEN));
-		}
-		*/
+		/*
+		 * Debug Fragmentation Data if (compoundnbt.contains("Fragment")) { CompoundTag
+		 * fragTag = compoundnbt.getCompound("Fragment");
+		 * pTooltipComponents.add(Components.literal("Order Information (Temporary)")
+		 * .withStyle(ChatFormatting.GREEN)); pTooltipComponents.add(Components
+		 * .literal(" Link " + fragTag.getInt("LinkIndex") +
+		 * (fragTag.getBoolean("IsFinalLink") ? " Final" : "") + " | Fragment " +
+		 * fragTag.getInt("Index") + (fragTag.getBoolean("IsFinal") ? " Final" : ""))
+		 * .withStyle(ChatFormatting.DARK_GREEN)); if (fragTag.contains("OrderContext"))
+		 * pTooltipComponents.add(Components.literal("Has Context!")
+		 * .withStyle(ChatFormatting.DARK_GREEN)); }
+		 */
 
 		if (!compoundnbt.contains("Items", Tag.TAG_COMPOUND))
 			return;
@@ -256,6 +259,18 @@ public class PackageItem extends Item {
 
 		for (int i = 0; i < contents.getSlots(); i++) {
 			ItemStack itemstack = contents.getStackInSlot(i);
+
+			if (itemstack.getItem() instanceof SpawnEggItem sei && worldIn instanceof ServerLevel sl) {
+				EntityType<?> entitytype = sei.getType(itemstack.getTag());
+				Entity entity = entitytype.spawn(sl, itemstack, null, BlockPos.containing(playerIn.position()
+					.add(playerIn.getLookAngle()
+						.multiply(1, 0, 1)
+						.normalize())),
+					MobSpawnType.SPAWN_EGG, false, false);
+				if (entity != null)
+					itemstack.shrink(1);
+			}
+
 			if (itemstack.isEmpty())
 				continue;
 			playerIn.getInventory()

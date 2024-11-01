@@ -70,7 +70,7 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 		int y = getGuiTop();
 
 		if (addressBox == null) {
-			addressBox = new AddressEditBox(this, new NoShadowFontWrapper(font), x + 50, y + 53, 110, 10);
+			addressBox = new AddressEditBox(this, new NoShadowFontWrapper(font), x + 50, y + 53, 110, 10, false);
 			addressBox.setValue(menu.contentHolder.encodedTargetAdress);
 			addressBox.setTextColor(0x555555);
 		}

@@ -148,7 +148,8 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		addWidget(searchBox);
 
 		boolean initial = addressBox == null;
-		addressBox = new AddressEditBox(this, new NoShadowFontWrapper(font), x + 60, y + windowHeight - 32, 112, 10);
+		addressBox =
+			new AddressEditBox(this, new NoShadowFontWrapper(font), x + 60, y + windowHeight - 32, 112, 10, true);
 		addressBox.setTextColor(0x555555);
 		if (initial)
 			addressBox.setValue(blockEntity.previouslyUsedAddress);

@@ -11,6 +11,7 @@ import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;
 import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.animatedContainer.AnimatedContainerBehaviour;
 import com.simibubi.create.foundation.item.SmartInventory;
 import com.simibubi.create.foundation.utility.CreateLang;
 
@@ -42,6 +43,8 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 	public PackagePortTarget target;
 	public SmartInventory inventory;
 
+	protected AnimatedContainerBehaviour<PackagePortMenu> openTracker;
+	
 	private LazyOptional<IItemHandler> itemHandler;
 
 	public PackagePortBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -129,7 +132,12 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 	}
 
 	@Override
-	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
+	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+		behaviours.add(openTracker = new AnimatedContainerBehaviour<>(this, PackagePortMenu.class));
+		openTracker.onOpenChanged(this::onOpenChange);
+	}
+
+	protected abstract void onOpenChange(boolean open);
 
 	public InteractionResult use(Player player) {
 		if (player == null || player.isCrouching())
@@ -165,7 +173,7 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 		List<ClipboardEntry> page = null;
 
 		for (List<ClipboardEntry> freePage : list) {
-			if (freePage.size() > 16)
+			if (freePage.size() > 11)
 				continue;
 			page = freePage;
 			break;
@@ -179,9 +187,10 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 		page.add(new ClipboardEntry(false, Components.literal("#" + addressFilter)));
 		player.displayClientMessage(CreateLang.temporaryText("'" + addressFilter + "' added to Clipboard")
 			.component(), true);
-		
+
 		ClipboardEntry.saveAll(list, mainHandItem);
-		mainHandItem.getTag().putInt("Type", ClipboardOverrides.ClipboardType.WRITTEN.ordinal());
+		mainHandItem.getTag()
+			.putInt("Type", ClipboardOverrides.ClipboardType.WRITTEN.ordinal());
 	}
 
 	@Override

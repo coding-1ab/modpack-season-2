@@ -88,7 +88,7 @@ public class DisplayClothBlock extends Block implements IHaveBigOutline, IWrench
 		BlockHitResult ray) {
 		if (ray.getDirection() == Direction.DOWN)
 			return InteractionResult.PASS;
-		
+
 		ItemStack heldItem = player.getItemInHand(hand);
 		boolean shiftKeyDown = player.isShiftKeyDown();
 		if (!player.mayBuild())
@@ -148,6 +148,12 @@ public class DisplayClothBlock extends Block implements IHaveBigOutline, IWrench
 
 	@Override
 	public VoxelShape getOcclusionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
+		return AllShapes.DISPLAY_CLOTH_OCCLUSION;
+	}
+
+	@Override
+	public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos,
+		CollisionContext pContext) {
 		return AllShapes.DISPLAY_CLOTH_OCCLUSION;
 	}
 

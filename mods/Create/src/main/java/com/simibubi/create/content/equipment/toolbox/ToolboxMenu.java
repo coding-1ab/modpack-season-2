@@ -3,6 +3,8 @@ package com.simibubi.create.content.equipment.toolbox;
 import static com.simibubi.create.content.equipment.toolbox.ToolboxInventory.STACKS_PER_COMPARTMENT;
 
 import com.simibubi.create.AllMenuTypes;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.animatedContainer.AnimatedContainerBehaviour;
 import com.simibubi.create.foundation.gui.menu.MenuBase;
 
 import net.minecraft.client.Minecraft;
@@ -27,7 +29,8 @@ public class ToolboxMenu extends MenuBase<ToolboxBlockEntity> {
 
 	public ToolboxMenu(MenuType<?> type, int id, Inventory inv, ToolboxBlockEntity be) {
 		super(type, id, inv, be);
-		be.startOpen(player);
+		BlockEntityBehaviour.get(be, AnimatedContainerBehaviour.TYPE)
+			.startOpen(player);
 	}
 
 	public static ToolboxMenu create(int id, Inventory inv, ToolboxBlockEntity be) {
@@ -153,7 +156,8 @@ public class ToolboxMenu extends MenuBase<ToolboxBlockEntity> {
 	public void removed(Player playerIn) {
 		super.removed(playerIn);
 		if (!playerIn.level().isClientSide)
-			contentHolder.stopOpen(playerIn);
+			BlockEntityBehaviour.get(contentHolder, AnimatedContainerBehaviour.TYPE)
+				.stopOpen(playerIn);
 	}
 
 }

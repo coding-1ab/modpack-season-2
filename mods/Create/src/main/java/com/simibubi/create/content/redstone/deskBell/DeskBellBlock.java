@@ -11,8 +11,6 @@ import com.simibubi.create.foundation.block.WrenchableDirectionalBlock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -73,18 +71,13 @@ public class DeskBellBlock extends WrenchableDirectionalBlock
 	@Override
 	public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand,
 		BlockHitResult pHit) {
-		if (pState.getValue(POWERED))
-			return InteractionResult.CONSUME;
-		press(pState, pLevel, pPos);
 		playSound(pPlayer, pLevel, pPos);
-		withBlockEntityDo(pLevel, pPos, DeskBellBlockEntity::ding);
-		return InteractionResult.SUCCESS;
-	}
-
-	public void press(BlockState pState, Level pLevel, BlockPos pPos) {
+		if (pLevel.isClientSide)
+			return InteractionResult.SUCCESS;
 		pLevel.setBlock(pPos, pState.setValue(POWERED, true), 3);
 		updateNeighbours(pState, pLevel, pPos);
-		pLevel.scheduleTick(pPos, this, 20);
+		withBlockEntityDo(pLevel, pPos, DeskBellBlockEntity::ding);
+		return InteractionResult.SUCCESS;
 	}
 
 	public void playSound(@Nullable Player pPlayer, LevelAccessor pLevel, BlockPos pPos) {
@@ -115,13 +108,7 @@ public class DeskBellBlock extends WrenchableDirectionalBlock
 		return true;
 	}
 
-	@Override
-	public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
-		if (pState.getValue(POWERED))
-			unPress(pState, pLevel, pPos);
-	}
-
-	protected void unPress(BlockState pState, Level pLevel, BlockPos pPos) {
+	public void unPress(BlockState pState, Level pLevel, BlockPos pPos) {
 		pLevel.setBlock(pPos, pState.setValue(POWERED, false), 3);
 		updateNeighbours(pState, pLevel, pPos);
 	}

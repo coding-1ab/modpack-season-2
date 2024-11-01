@@ -84,6 +84,10 @@ public class FrogportRenderer extends SmartBlockEntityRenderer<FrogportBlockEnti
 
 		headPitch *= headPitchModifier;
 
+		headPitch = Math.max(headPitch, blockEntity.manualOpenAnimationProgress.getValue(partialTicks) * 60);
+		tongueLength = Math.max(tongueLength, blockEntity.manualOpenAnimationProgress.getValue(partialTicks) * 0.25f);
+		
+
 		body.center()
 			.rotateYDegrees(yaw)
 			.uncenter()

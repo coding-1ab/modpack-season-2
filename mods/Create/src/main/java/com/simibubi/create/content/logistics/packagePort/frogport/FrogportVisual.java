@@ -116,6 +116,9 @@ public class FrogportVisual extends AbstractBlockEntityVisual<FrogportBlockEntit
 
 		headPitch *= headPitchModifier;
 
+		headPitch = Math.max(headPitch, blockEntity.manualOpenAnimationProgress.getValue(partialTicks) * 60);
+		tongueLength = Math.max(tongueLength, blockEntity.manualOpenAnimationProgress.getValue(partialTicks) * 0.25f);
+		
 		body.setIdentityTransform()
 			.translate(getVisualPosition())
 			.center()

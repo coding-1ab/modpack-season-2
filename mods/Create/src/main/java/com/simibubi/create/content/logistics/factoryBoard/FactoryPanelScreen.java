@@ -75,8 +75,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		int y = guiTop;
 
 		if (addressBox == null) {
-			addressBox =
-				new AddressEditBox(this, new NoShadowFontWrapper(font), x + 38, y + 30 + middleHeight(), 110, 10);
+			addressBox = new AddressEditBox(this, new NoShadowFontWrapper(font), x + 38, y + 30 + middleHeight(), 110,
+				10, false);
 			addressBox.setValue(behaviour.recipeAddress);
 			addressBox.setTextColor(0x555555);
 		}

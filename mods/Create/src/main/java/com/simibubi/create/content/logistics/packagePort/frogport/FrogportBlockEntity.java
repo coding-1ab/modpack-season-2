@@ -29,6 +29,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 public class FrogportBlockEntity extends PackagePortBlockEntity {
 
 	public ItemStack animatedPackage;
+	public LerpedFloat manualOpenAnimationProgress;
 	public LerpedFloat animationProgress;
 	public LerpedFloat anticipationProgress;
 	public boolean currentlyDepositing;
@@ -41,6 +42,9 @@ public class FrogportBlockEntity extends PackagePortBlockEntity {
 		super(type, pos, state);
 		animationProgress = LerpedFloat.linear();
 		anticipationProgress = LerpedFloat.linear();
+		manualOpenAnimationProgress = LerpedFloat.linear()
+			.startWithValue(0)
+			.chase(0, 0.35, Chaser.LINEAR);
 	}
 
 	public boolean isAnimationInProgress() {
@@ -68,8 +72,13 @@ public class FrogportBlockEntity extends PackagePortBlockEntity {
 	public void sendAnticipate() {
 		if (isAnimationInProgress())
 			return;
-		sendAnticipate = true;
-		sendData();
+		for (int i = 0; i < inventory.getSlots(); i++)
+			if (inventory.getStackInSlot(i)
+				.isEmpty()) {
+				sendAnticipate = true;
+				sendData();
+				return;
+			}
 	}
 
 	public void anticipate() {
@@ -83,7 +92,10 @@ public class FrogportBlockEntity extends PackagePortBlockEntity {
 		if (anticipationProgress.getValue() == 1)
 			anticipationProgress.updateChaseTarget(0);
 
+		manualOpenAnimationProgress.updateChaseTarget(openTracker.openCount > 0 ? 1 : 0);
+
 		anticipationProgress.tickChaser();
+		manualOpenAnimationProgress.tickChaser();
 
 		if (!isAnimationInProgress())
 			return;
@@ -177,6 +189,9 @@ public class FrogportBlockEntity extends PackagePortBlockEntity {
 				break;
 		}
 	}
+
+	@Override
+	protected void onOpenChange(boolean open) {}
 
 	public void tryPullingFromOwnAndAdjacentInventories() {
 		if (isAnimationInProgress())

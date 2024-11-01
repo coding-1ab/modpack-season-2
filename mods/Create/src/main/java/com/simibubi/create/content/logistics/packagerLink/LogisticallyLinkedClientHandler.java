@@ -2,15 +2,18 @@ package com.simibubi.create.content.logistics.packagerLink;
 
 import java.util.UUID;
 
-import com.simibubi.create.AllBlockEntityTypes;
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 
 import net.createmod.catnip.CatnipClient;
+import net.createmod.catnip.utility.AnimationTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class LogisticallyLinkedClientHandler {
@@ -36,10 +39,20 @@ public class LogisticallyLinkedClientHandler {
 				.getShape(player.level(), be.getBlockPos());
 			if (shape.isEmpty())
 				continue;
-			CatnipClient.OUTLINER.showAABB(behaviour, shape.bounds()
-				.inflate(AllBlockEntityTypes.FACTORY_PANEL.is(be) ? -1 / 16f : 0)
-				.move(be.getBlockPos()), 2)
-				.lineWidth(1 / 16f);
+			if (!player.blockPosition()
+				.closerThan(be.getBlockPos(), 64))
+				continue;
+			for (int i = 0; i < shape.toAabbs()
+				.size(); i++) {
+				AABB aabb = shape.toAabbs()
+					.get(i);
+				CatnipClient.OUTLINER.showAABB(Pair.of(behaviour, i), aabb.inflate(-1 / 128f)
+					.move(be.getBlockPos()), 2)
+					.lineWidth(1 / 32f)
+					.disableLineNormals()
+					.colored(AnimationTickHolder.getTicks() % 16 < 8 ? 0x708DAD : 0x90ADCD);
+			}
+
 		}
 	}
 

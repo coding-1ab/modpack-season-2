@@ -4,7 +4,7 @@
 	"textures": {
 		"0": "create:block/post_box/post_box_white",
 		"1": "create:block/post_box/post_box_white_closed",
-		"particle": "create:block/post_box/post_box_white"
+		"particle": "#0"
 	},
 	"elements": [
 		{

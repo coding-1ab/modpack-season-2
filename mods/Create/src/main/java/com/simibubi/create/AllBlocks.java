@@ -299,6 +299,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
@@ -1766,12 +1767,14 @@ public class AllBlocks {
 			.properties(p -> p.mapColor(colour))
 			.transform(axeOnly())
 			.blockstate((c, p) -> {
-				p.horizontalBlock(c.get(), s -> p.models()
-					.withExistingParent(colourName + "_postbox",
-						p.modLoc("block/package_postbox/block_" + (s.getValue(PostboxBlock.OPEN) ? "open" : "closed")))
-					.texture("0", p.modLoc("block/post_box/post_box_" + colourName))
-					.texture("1", p.modLoc("block/post_box/post_box_" + colourName
-						+ (s.getValue(PostboxBlock.OPEN) ? "_open" : "_closed"))));
+				p.horizontalBlock(c.get(), s -> {
+					String suffix = s.getValue(PostboxBlock.OPEN) ? "open" : "closed";
+					return p.models()
+						.withExistingParent(colourName + "_postbox_" + suffix,
+							p.modLoc("block/package_postbox/block_" + suffix))
+						.texture("0", p.modLoc("block/post_box/post_box_" + colourName))
+						.texture("1", p.modLoc("block/post_box/post_box_" + colourName + "_" + suffix));
+				});
 			})
 			.tag(AllBlockTags.POSTBOXES.tag)
 			.item(PackagePortItem::new)
@@ -2549,6 +2552,13 @@ public class AllBlocks {
 				.ignitedByLava())
 			.transform(axeOnly())
 			.blockstate(BlockStateGen.horizontalAxisBlockProvider(false))
+			.loot((r, b) -> r.add(b, LootTable.lootTable()
+				.withPool(r.applyExplosionCondition(b, LootPool.lootPool()
+					.setRolls(ConstantValue.exactly(1.0F))
+					.add(LootItem.lootTableItem(Items.STRING))))
+				.withPool(r.applyExplosionCondition(b, LootPool.lootPool()
+					.setRolls(ConstantValue.exactly(1.0F))
+					.add(LootItem.lootTableItem(AllBlocks.CARDBOARD_BLOCK.asItem()))))))
 			.simpleItem()
 			.lang("Bound block of Cardboard")
 			.register();

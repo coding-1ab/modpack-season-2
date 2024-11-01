@@ -18,6 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -31,6 +32,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -38,6 +40,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -356,6 +359,15 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 		ItemStackHandler contents = PackageItem.getContents(box);
 		for (int i = 0; i < contents.getSlots(); i++) {
 			ItemStack itemstack = contents.getStackInSlot(i);
+			
+			if (itemstack.getItem() instanceof SpawnEggItem sei && level() instanceof ServerLevel sl) {
+				EntityType<?> entitytype = sei.getType(itemstack.getTag());
+				Entity entity = entitytype.spawn(sl, itemstack, null, blockPosition(),
+					MobSpawnType.SPAWN_EGG, false, false);
+				if (entity != null)
+					itemstack.shrink(1);
+			}
+			
 			if (itemstack.isEmpty())
 				continue;
 			ItemEntity entityIn = new ItemEntity(level(), getX(), getY(), getZ(), itemstack);

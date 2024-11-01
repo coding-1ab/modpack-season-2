@@ -297,7 +297,7 @@ public class ScheduleScreen extends AbstractSimiContainerScreen<ScheduleMenu> im
 			if (!(e instanceof EditBox destinationBox))
 				return;
 			destinationSuggestions = new DestinationSuggestions(this.minecraft, this, destinationBox, this.font,
-				getViableStations(field), topPos + 33);
+				getViableStations(field), false, topPos + 33);
 			destinationSuggestions.setAllowSuggestions(true);
 			destinationSuggestions.updateCommandInfo();
 			destinationBox.setResponder(this::onDestinationEdited);

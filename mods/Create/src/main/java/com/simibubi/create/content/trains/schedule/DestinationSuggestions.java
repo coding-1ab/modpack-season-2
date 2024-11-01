@@ -26,8 +26,8 @@ public class DestinationSuggestions extends CommandSuggestions {
 	private int yOffset;
 
 	public DestinationSuggestions(Minecraft pMinecraft, Screen pScreen, EditBox pInput, Font pFont,
-		List<IntAttached<String>> viableStations, int yOffset) {
-		super(pMinecraft, pScreen, pInput, pFont, true, true, 0, 7, false, 0xee_303030);
+		List<IntAttached<String>> viableStations, boolean anchorToBottom, int yOffset) {
+		super(pMinecraft, pScreen, pInput, pFont, true, true, 0, 7, anchorToBottom, 0xee_303030);
 		this.textBox = pInput;
 		this.font = pFont;
 		this.viableStations = viableStations;

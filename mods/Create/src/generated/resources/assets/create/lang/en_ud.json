@@ -919,6 +919,8 @@
   "create.chain_conveyor.valid_connection": "✔ ʇɔǝuuoƆ uɐƆ",
   "create.clipboard.actions": "suoıʇɔⱯ pɹɐoqdıןƆ",
   "create.clipboard.copied_from": "%1$s ɯoɹɟ sbuıʇʇǝs buıʎdoƆ",
+  "create.clipboard.copied_from_clipboard": "pɹɐoqdıןƆ ɯoɹɟ sǝıɹʇuǝ pǝppⱯ",
+  "create.clipboard.copy_other_clipboard": "pɹɐoqdıןƆ sıɥʇ ɯoɹɟ sǝıɹʇuǝ ʎdoƆ oʇ %1$s",
   "create.clipboard.pasted_to": "%1$s oʇ sbuıʇʇǝs pǝıןddⱯ",
   "create.clipboard.to_copy": "sbuıʇʇǝs ʎdoƆ oʇ %1$s",
   "create.clipboard.to_paste": "sbuıʇʇǝs ǝʇsɐԀ oʇ %1$s",

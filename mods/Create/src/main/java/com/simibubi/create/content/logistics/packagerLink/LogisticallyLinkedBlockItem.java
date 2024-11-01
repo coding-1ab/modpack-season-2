@@ -77,6 +77,8 @@ public class LogisticallyLinkedBlockItem extends BlockItem {
 
 		if (player == null)
 			return InteractionResult.FAIL;
+		if (player.isShiftKeyDown())
+			return super.useOn(pContext);
 
 		LogisticallyLinkedBehaviour link = BlockEntityBehaviour.get(level, pos, LogisticallyLinkedBehaviour.TYPE);
 		boolean tuned = isTuned(stack);

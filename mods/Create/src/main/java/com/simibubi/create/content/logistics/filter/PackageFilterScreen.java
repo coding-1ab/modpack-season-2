@@ -45,7 +45,7 @@ public class PackageFilterScreen extends AbstractFilterScreen<PackageFilterMenu>
 		int x = leftPos;
 		int y = topPos;
 
-		addressBox = new AddressEditBox(this, this.font, x + 44, y + 28, 140, 9);
+		addressBox = new AddressEditBox(this, this.font, x + 44, y + 28, 140, 9, false);
 		addressBox.setTextColor(0xffffff);
 		addressBox.setValue(menu.address);
 		addressBox.setResponder(this::onAddressEdited);
@@ -57,7 +57,7 @@ public class PackageFilterScreen extends AbstractFilterScreen<PackageFilterMenu>
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		super.render(graphics, mouseX, mouseY, partialTicks);
-		
+
 		PoseStack ms = graphics.pose();
 		ms.pushPose();
 		ms.translate(leftPos + 16, topPos + 23, 0);
@@ -90,7 +90,6 @@ public class PackageFilterScreen extends AbstractFilterScreen<PackageFilterMenu>
 	public boolean charTyped(char pCodePoint, int pModifiers) {
 		return super.charTyped(pCodePoint, pModifiers);
 	}
-	
 
 	@Override
 	protected void contentsCleared() {

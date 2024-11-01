@@ -13,6 +13,8 @@ import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -23,7 +25,7 @@ public class PostboxBlockEntity extends PackagePortBlockEntity {
 	public WeakReference<GlobalStation> trackedGlobalStation;
 
 	public LerpedFloat flag;
-	
+
 	private boolean sendParticles;
 
 	public PostboxBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -55,17 +57,24 @@ public class PostboxBlockEntity extends PackagePortBlockEntity {
 		flag.tickChaser();
 		if (currentTarget == 0 && settled != flag.getValue() > .15f)
 			AllSoundEvents.CONTRAPTION_DISASSEMBLE.playAt(level, worldPosition, 0.75f, 1.5f, true);
-		
+
 		if (sendParticles) {
 			sendParticles = false;
 			BoneMealItem.addGrowthParticles(level, worldPosition, 40);
 		}
 	}
-	
+
+	@Override
+	protected void onOpenChange(boolean open) {
+		level.setBlockAndUpdate(worldPosition, getBlockState().setValue(PostboxBlock.OPEN, open));
+		level.playSound(null, worldPosition, open ? SoundEvents.BARREL_OPEN : SoundEvents.BARREL_CLOSE,
+			SoundSource.BLOCKS);
+	}
+
 	public void spawnParticles() {
 		sendParticles = true;
 	}
-	
+
 	@Override
 	protected void write(CompoundTag tag, boolean clientPacket) {
 		super.write(tag, clientPacket);
@@ -73,7 +82,7 @@ public class PostboxBlockEntity extends PackagePortBlockEntity {
 			NBTHelper.putMarker(tag, "Particles");
 		sendParticles = false;
 	}
-	
+
 	@Override
 	protected void read(CompoundTag tag, boolean clientPacket) {
 		super.read(tag, clientPacket);

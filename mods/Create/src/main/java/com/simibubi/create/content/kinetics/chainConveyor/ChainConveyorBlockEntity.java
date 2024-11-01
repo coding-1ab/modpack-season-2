@@ -80,7 +80,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 
 	@Override
 	protected AABB createRenderBoundingBox() {
-		return INFINITE_EXTENT_AABB; // TODO: compute smallest possible from connection data
+		return new AABB(worldPosition).inflate(connections.isEmpty() ? 3 : 64);
 	}
 
 	@Override

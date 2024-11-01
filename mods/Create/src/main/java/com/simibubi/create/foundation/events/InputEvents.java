@@ -99,11 +99,14 @@ public class InputEvents {
 		LinkedControllerClientHandler.deactivateInLectern();
 		TrainRelocator.onClicked(event);
 
-		if (ChainConveyorInteractionHandler.onUse())
+		if (ChainConveyorInteractionHandler.onUse()) {
 			event.setCanceled(true);
-		else if (PackagePortTargetSelectionHandler.onUse())
+			return;
+		} else if (PackagePortTargetSelectionHandler.onUse()) {
 			event.setCanceled(true);
-
+			return;
+		}
+			
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
 			if (ChainPackageInteractionHandler.onUse())
 				event.setCanceled(true);

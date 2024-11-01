@@ -1,6 +1,8 @@
 package com.simibubi.create.content.logistics.packagePort;
 
 import com.simibubi.create.AllMenuTypes;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.animatedContainer.AnimatedContainerBehaviour;
 import com.simibubi.create.foundation.gui.menu.MenuBase;
 import com.simibubi.create.foundation.item.SmartInventory;
 
@@ -24,6 +26,8 @@ public class PackagePortMenu extends MenuBase<PackagePortBlockEntity> {
 
 	public PackagePortMenu(MenuType<?> type, int id, Inventory inv, PackagePortBlockEntity be) {
 		super(type, id, inv, be);
+		BlockEntityBehaviour.get(be, AnimatedContainerBehaviour.TYPE)
+			.startOpen(player);
 	}
 
 	public static PackagePortMenu create(int id, Inventory inv, PackagePortBlockEntity be) {
@@ -79,6 +83,9 @@ public class PackagePortMenu extends MenuBase<PackagePortBlockEntity> {
 	@Override
 	public void removed(Player playerIn) {
 		super.removed(playerIn);
+		if (!playerIn.level().isClientSide)
+			BlockEntityBehaviour.get(contentHolder, AnimatedContainerBehaviour.TYPE)
+				.stopOpen(playerIn);
 	}
 
 }
