@@ -23,6 +23,7 @@ import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.NBTHelper;
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -37,6 +38,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
@@ -177,9 +180,13 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 	}
 
 	@Override
+	@OnlyIn(Dist.CLIENT)
 	public boolean addToTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (receivedPayments.isEmpty())
 			return false;
+		if (!behaviour.mayAdministrate(Minecraft.getInstance().player))
+			return false;
+		
 		CreateLang.temporaryText("Contains payments:")
 			.style(ChatFormatting.WHITE)
 			.forGoggles(tooltip);

@@ -35,6 +35,7 @@ import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
 import net.createmod.catnip.utility.theme.Color;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -69,6 +70,8 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 	int itemsX;
 	int itemsY;
 	int orderY;
+	int lockX;
+	int lockY;
 
 	EditBox searchBox;
 	EditBox addressBox;
@@ -86,10 +89,16 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 
 	boolean encodeRequester; // Redstone requesters
 
-	public StockTickerRequestScreen(StockTickerBlockEntity be, boolean encodeRequester) {
+	private boolean isAdmin;
+	private boolean isLocked;
+
+	public StockTickerRequestScreen(StockTickerBlockEntity be, boolean isAdmin, boolean isLocked,
+		boolean encodeRequester) {
 		super(be.getBlockState()
 			.getBlock()
 			.getName());
+		this.isAdmin = isAdmin;
+		this.isLocked = isLocked;
 		this.encodeRequester = encodeRequester;
 		displayedItems = new ArrayList<>();
 		itemsToOrder = new ArrayList<>();
@@ -136,9 +145,11 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		int x = guiLeft;
 		int y = guiTop;
 
-		itemsX = guiLeft + (windowWidth - cols * colWidth) / 2 + 1;
-		itemsY = guiTop + 35;
+		itemsX = x + (windowWidth - cols * colWidth) / 2 + 1;
+		itemsY = y + 35;
 		orderY = y + windowHeight - 60;
+		lockX = x + 230;
+		lockY = y + 15;
 
 		MutableComponent searchLabel = CreateLang.translateDirect("gui.stock_ticker.search_items");
 		searchBox = new EditBox(this.font, x + 81, y + 25, 110, 9, searchLabel);
@@ -493,6 +504,28 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			0x77000000);
 
 		UIRenderHelper.swapAndBlitColor(UIRenderHelper.framebuffer, minecraft.getMainRenderTarget());
+
+		// Render lock option
+		if (isAdmin) {
+			(isLocked ? AllGuiTextures.STOCK_KEEPER_REQUEST_LOCKED : AllGuiTextures.STOCK_KEEPER_REQUEST_UNLOCKED)
+				.render(graphics, lockX, lockY);
+			if (mouseX > lockX && mouseX <= lockX + 15 && mouseY > lockY && mouseY <= lockY + 15) {
+				graphics.renderComponentTooltip(font,
+					List.of(CreateLang.temporaryText(isLocked ? "Network is locked" : "Network is open")
+						.component(),
+						CreateLang.temporaryText("Locking prevents other Players")
+							.style(ChatFormatting.GRAY)
+							.component(),
+						CreateLang.temporaryText("from ordering items directly")
+							.style(ChatFormatting.GRAY)
+							.component(),
+						CreateLang.temporaryText("Click to toggle")
+							.style(ChatFormatting.DARK_GRAY)
+							.style(ChatFormatting.ITALIC)
+							.component()),
+					mouseX, mouseY);
+			}
+		}
 	}
 
 	private void renderItemEntry(GuiGraphics graphics, float scale, BigItemStack entry, boolean isStackHovered,
@@ -699,6 +732,13 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 
 		boolean lmb = pButton == 0;
 		boolean rmb = pButton == 1;
+
+		if (lmb && pMouseX > lockX && pMouseX <= lockX + 15 && pMouseY > lockY && pMouseY <= lockY + 15) {
+			isLocked = !isLocked;
+			AllPackets.getChannel()
+				.sendToServer(new StockKeeperLockPacket(blockEntity.getBlockPos(), isLocked));
+			return true;
+		}
 
 		if (rmb && searchBox.isMouseOver(pMouseX, pMouseY)) {
 			searchBox.setValue("");

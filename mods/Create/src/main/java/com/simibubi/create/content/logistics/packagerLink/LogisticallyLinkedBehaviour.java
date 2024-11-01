@@ -24,9 +24,13 @@ import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.utility.Pair;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
@@ -107,8 +111,8 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 
 	@Override
 	public void unload() {
-		if (loadedGlobally && global)
-			Create.LOGISTICS.linkInvalidated(freqId);
+		if (loadedGlobally && global && getWorld() != null)
+			Create.LOGISTICS.linkInvalidated(freqId, getGlobalPos());
 		super.unload();
 		remove(this);
 	}
@@ -126,23 +130,27 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 
 		if (!loadedGlobally && global) {
 			loadedGlobally = true;
-			Create.LOGISTICS.linkLoaded(freqId);
+			Create.LOGISTICS.linkLoaded(freqId, getGlobalPos());
 		}
 
 		if (!addedGlobally && global) {
 			addedGlobally = true;
 			blockEntity.setChanged();
-			if (blockEntity instanceof PackagerLinkBlockEntity)
-				Create.LOGISTICS.linkAdded(freqId);
+			if (blockEntity instanceof PackagerLinkBlockEntity plbe)
+				Create.LOGISTICS.linkAdded(freqId, getGlobalPos(), plbe.placedBy);
 		}
 
+	}
+
+	private GlobalPos getGlobalPos() {
+		return GlobalPos.of(getWorld().dimension(), getPos());
 	}
 
 	@Override
 	public void destroy() {
 		super.destroy();
-		if (addedGlobally && global)
-			Create.LOGISTICS.linkRemoved(freqId);
+		if (addedGlobally && global && getWorld() != null)
+			Create.LOGISTICS.linkRemoved(freqId, getGlobalPos());
 	}
 
 	public void redstonePowerChanged(int power) {
@@ -175,6 +183,23 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 	}
 
 	//
+	
+	public boolean mayInteract(Player player) {
+		return Create.LOGISTICS.mayInteract(freqId, player);
+	}
+	
+	public boolean mayInteractMessage(Player player) {
+		boolean mayInteract = Create.LOGISTICS.mayInteract(freqId, player);
+		if (!mayInteract)
+			player.displayClientMessage(CreateLang.temporaryText("Logistics Network is protected")
+				.style(ChatFormatting.RED)
+				.component(), true);
+		return mayInteract;
+	}
+	
+	public boolean mayAdministrate(Player player) {
+		return Create.LOGISTICS.mayAdministrate(freqId, player);
+	}
 
 	public static boolean isValidLink(LogisticallyLinkedBehaviour link) {
 		return link != null && !link.blockEntity.isRemoved() && !link.blockEntity.isChunkUnloaded();

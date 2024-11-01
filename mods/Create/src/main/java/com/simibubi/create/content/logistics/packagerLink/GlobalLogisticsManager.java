@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import net.minecraft.core.GlobalPos;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 
@@ -27,37 +29,61 @@ public class GlobalLogisticsManager {
 		loadLogisticsData(server);
 	}
 
-	public void linkAdded(UUID networkId) {
-		logisticsNetworks.computeIfAbsent(networkId, $ -> new LogisticsNetwork(networkId)).totalLinks++;
+	public boolean mayInteract(UUID networkId, Player player) {
+		LogisticsNetwork network = logisticsNetworks.get(networkId);
+		return network == null || network.owner == null || !network.locked || network.owner.equals(player.getUUID());
+	}
+
+	public boolean mayAdministrate(UUID networkId, Player player) {
+		LogisticsNetwork network = logisticsNetworks.get(networkId);
+		return network == null || network.owner == null || network.owner.equals(player.getUUID());
+	}
+	
+	public boolean isLockable(UUID networkId) {
+		LogisticsNetwork network = logisticsNetworks.get(networkId);
+		return network != null;
+	}
+	
+	public boolean isLocked(UUID networkId) {
+		LogisticsNetwork network = logisticsNetworks.get(networkId);
+		return network != null && network.locked;
+	}
+
+	public void linkAdded(UUID networkId, GlobalPos pos, UUID ownedBy) {
+		LogisticsNetwork network = logisticsNetworks.computeIfAbsent(networkId, $ -> new LogisticsNetwork(networkId));
+		network.totalLinks.add(pos);
+		if (ownedBy != null && network.owner == null)
+			network.owner = ownedBy;
 		markDirty();
 	}
 
-	public void linkLoaded(UUID networkId) {
-		logisticsNetworks.computeIfAbsent(networkId, $ -> new LogisticsNetwork(networkId)).loadedLinks++;
+	public void linkLoaded(UUID networkId, GlobalPos pos) {
+		logisticsNetworks.computeIfAbsent(networkId, $ -> new LogisticsNetwork(networkId)).loadedLinks.add(pos);
 	}
 
-	public void linkRemoved(UUID networkId) {
+	public void linkRemoved(UUID networkId, GlobalPos pos) {
 		LogisticsNetwork logisticsNetwork = logisticsNetworks.get(networkId);
 		if (logisticsNetwork == null)
 			return;
-		logisticsNetwork.totalLinks--;
-		if (logisticsNetwork.totalLinks <= 0)
+		logisticsNetwork.totalLinks.remove(pos);
+		logisticsNetwork.loadedLinks.remove(pos);
+		if (logisticsNetwork.totalLinks.size() <= 0)
 			logisticsNetworks.remove(networkId);
 		markDirty();
 	}
 
-	public void linkInvalidated(UUID networkId) {
+	public void linkInvalidated(UUID networkId, GlobalPos pos) {
 		LogisticsNetwork logisticsNetwork = logisticsNetworks.get(networkId);
 		if (logisticsNetwork == null)
 			return;
-		logisticsNetwork.loadedLinks--;
+		logisticsNetwork.loadedLinks.remove(pos);
 	}
 
 	public int getUnloadedLinkCount(UUID networkId) {
 		LogisticsNetwork logisticsNetwork = logisticsNetworks.get(networkId);
 		if (logisticsNetwork == null)
 			return 0;
-		return logisticsNetwork.totalLinks - logisticsNetwork.loadedLinks;
+		return logisticsNetwork.totalLinks.size() - logisticsNetwork.loadedLinks.size();
 	}
 
 	public RequestPromiseQueue getQueuedPromises(UUID networkId) {

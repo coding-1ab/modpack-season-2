@@ -3,11 +3,11 @@ package com.simibubi.create.content.logistics.stockTicker;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllSoundEvents;
-import com.simibubi.create.AllTags.AllItemTags;
+import com.simibubi.create.Create;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem;
@@ -16,13 +16,12 @@ import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour.RequestType;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.Iterate;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -31,13 +30,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.network.PacketDistributor;
 
 @EventBusSubscriber
 public class StockTickerInteractionHandler {
@@ -63,12 +60,31 @@ public class StockTickerInteractionHandler {
 			return;
 		}
 
-		final BlockPos posForUI = targetPos;
-		final boolean encodeMode =
-			AllItemTags.DISPLAY_CLOTHS.matches(mainHandItem) || AllBlocks.REDSTONE_REQUESTER.isIn(mainHandItem);
-
 		if (level.isClientSide())
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> displayScreen(posForUI, encodeMode));
+			return;
+		if (!(level.getBlockEntity(targetPos) instanceof StockTickerBlockEntity stbe))
+			return;
+
+		if (!stbe.behaviour.mayInteract(player)) {
+			player.displayClientMessage(
+				CreateLang.temporaryText("Logistics Network is protected. You can interact using a Shopping list.")
+					.style(ChatFormatting.RED)
+					.component(),
+				true);
+			return;
+		}
+
+		if (player instanceof ServerPlayer sp) {
+			boolean showLockOption =
+				stbe.behaviour.mayAdministrate(player) && Create.LOGISTICS.isLockable(stbe.behaviour.freqId);
+			boolean isCurrentlyLocked = Create.LOGISTICS.isLocked(stbe.behaviour.freqId);
+
+			AllPackets.getChannel()
+				.send(PacketDistributor.PLAYER.with(() -> sp),
+					new StockKeeperOpenRequestScreenPacket(targetPos, showLockOption, isCurrentlyLocked));
+			stbe.getRecentSummary()
+				.divideAndSendTo(sp, targetPos);
+		}
 
 		event.setCancellationResult(InteractionResult.SUCCESS);
 		event.setCanceled(true);
@@ -199,12 +215,6 @@ public class StockTickerInteractionHandler {
 		if (stations != 1)
 			return null;
 		return targetPos;
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	private static void displayScreen(BlockPos tickerPos, boolean encodeRequester) {
-		if (Minecraft.getInstance().level.getBlockEntity(tickerPos) instanceof StockTickerBlockEntity be)
-			ScreenOpener.open(new StockTickerRequestScreen(be, encodeRequester));
 	}
 
 }

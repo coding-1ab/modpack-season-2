@@ -95,6 +95,8 @@ public class RedstoneRequesterBlockEntity extends StockCheckingBlockEntity imple
 			return InteractionResult.PASS;
 		if (level.isClientSide)
 			return InteractionResult.SUCCESS;
+		if (!behaviour.mayInteractMessage(player))
+			return InteractionResult.SUCCESS;
 
 		NetworkHooks.openScreen((ServerPlayer) player, this, worldPosition);
 		return InteractionResult.SUCCESS;

@@ -301,6 +301,13 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 	@Override
 	public void onShortInteract(Player player, InteractionHand hand, Direction side, BlockHitResult hitResult) {
+		if (!Create.LOGISTICS.mayInteract(network, player)) {
+			player.displayClientMessage(CreateLang.temporaryText("Logistics Network is Protected")
+				.style(ChatFormatting.RED)
+				.component(), true);
+			return;
+		}
+		
 		if (AllItemTags.WRENCH.matches(player.getItemInHand(hand))) {
 			int sharedMode = -1;
 			for (FactoryPanelPosition target : targeting) {

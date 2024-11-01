@@ -86,6 +86,8 @@ public class LogisticallyLinkedBlockItem extends BlockItem {
 		if (link != null) {
 			if (level.isClientSide)
 				return InteractionResult.SUCCESS;
+			if (!link.mayInteractMessage(player))
+				return InteractionResult.SUCCESS;
 
 			CompoundTag stackTag = stack.getOrCreateTag();
 			CompoundTag teTag = new CompoundTag();

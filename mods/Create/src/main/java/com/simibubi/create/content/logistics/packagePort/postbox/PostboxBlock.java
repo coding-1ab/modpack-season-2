@@ -33,6 +33,7 @@ public class PostboxBlock extends HorizontalDirectionalBlock implements IBE<Post
 	public PostboxBlock(Properties properties, DyeColor color) {
 		super(properties);
 		this.color = color;
+		registerDefaultState(defaultBlockState().setValue(OPEN, false));
 	}
 
 	public DyeColor getColor() {

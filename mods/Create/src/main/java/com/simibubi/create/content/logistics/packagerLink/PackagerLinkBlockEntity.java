@@ -1,6 +1,7 @@
 package com.simibubi.create.content.logistics.packagerLink;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -16,6 +17,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import net.createmod.catnip.utility.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,10 +26,12 @@ import net.minecraftforge.items.IItemHandler;
 public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 
 	public LogisticallyLinkedBehaviour behaviour;
+	public UUID placedBy;
 
 	public PackagerLinkBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 		setLazyTickRate(10);
+		placedBy = null;
 	}
 
 	public InventorySummary fetchSummaryFromPackager(@Nullable IItemHandler ignoredHandler) {
@@ -62,6 +66,19 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 		int toWithdraw = Math.min(amount, availableCount);
 		return Pair.of(packager,
 			PackagingRequest.create(stack, toWithdraw, address, linkIndex, finalLink, 0, orderId, orderContext));
+	}
+
+	@Override
+	protected void write(CompoundTag tag, boolean clientPacket) {
+		super.write(tag, clientPacket);
+		if (placedBy != null)
+			tag.putUUID("PlacedBy", placedBy);
+	}
+
+	@Override
+	protected void read(CompoundTag tag, boolean clientPacket) {
+		super.read(tag, clientPacket);
+		placedBy = tag.contains("PlacedBy") ? tag.getUUID("PlacedBy") : null;
 	}
 
 	@Override
