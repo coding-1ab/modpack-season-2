@@ -86,7 +86,8 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 	}
 
 	@Override
-	public boolean broadcastPackageRequest(RequestType type, PackageOrder order, IItemHandler ignoredHandler, String address) {
+	public boolean broadcastPackageRequest(RequestType type, PackageOrder order, IItemHandler ignoredHandler,
+		String address) {
 		boolean result = super.broadcastPackageRequest(type, order, ignoredHandler, address);
 		previouslyUsedAddress = address;
 		notifyUpdate();
@@ -159,7 +160,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 			}
 			lastClientsideStockSnapshot.add(inCategory);
 		}
-		
+
 		List<BigItemStack> unsorted = new ArrayList<>(newlyReceivedStockSnapshot);
 		lastClientsideStockSnapshot.add(unsorted);
 
@@ -186,8 +187,8 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 			return false;
 		if (!behaviour.mayAdministrate(Minecraft.getInstance().player))
 			return false;
-		
-		CreateLang.temporaryText("Contains payments:")
+
+		CreateLang.translate("stock_ticker.contains_payments")
 			.style(ChatFormatting.WHITE)
 			.forGoggles(tooltip);
 
@@ -201,7 +202,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 				.style(ChatFormatting.GREEN)
 				.forGoggles(tooltip);
 
-		CreateLang.temporaryText("Right-click to retrieve")
+		CreateLang.translate("stock_ticker.click_to_retrieve")
 			.style(ChatFormatting.GRAY)
 			.forGoggles(tooltip);
 		return true;

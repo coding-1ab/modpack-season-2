@@ -84,19 +84,19 @@ public class AddressEditBox extends EditBox {
 		pGuiGraphics.renderItem(AllBlocks.CLIPBOARD.asStack(), itemX, itemY);
 		if (pMouseX >= itemX && pMouseX < itemX + 16 && pMouseY >= itemY && pMouseY < itemY + 16) {
 			List<Component> promiseTip = List.of();
-			promiseTip = List.of(CreateLang.temporaryText("Keeping Track")
+			promiseTip = List.of(CreateLang.translate("gui.address_box.clipboard_tip")
 				.color(ScrollInput.HEADER_RGB)
 				.component(),
-				CreateLang.temporaryText("Entries starting with '#' on")
+				CreateLang.translate("gui.address_box.clipboard_tip_1")
 					.style(ChatFormatting.GRAY)
 					.component(),
-				CreateLang.temporaryText("held or nearby clipboards will")
+					CreateLang.translate("gui.address_box.clipboard_tip_2")
 					.style(ChatFormatting.GRAY)
 					.component(),
-				CreateLang.temporaryText("help auto-complete this input.")
+					CreateLang.translate("gui.address_box.clipboard_tip_3")
 					.style(ChatFormatting.GRAY)
 					.component(),
-				CreateLang.temporaryText("(e.g. #storage, #factory)")
+					CreateLang.translate("gui.address_box.clipboard_tip_4")
 					.style(ChatFormatting.DARK_GRAY)
 					.component());
 			pGuiGraphics.renderComponentTooltip(Minecraft.getInstance().font, promiseTip, pMouseX, pMouseY);

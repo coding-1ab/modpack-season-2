@@ -131,7 +131,7 @@ public class ShoppingListItem extends Item {
 
 					if (entries.size() == 1) {
 						BigItemStack entry = entries.get(0);
-						CreateLang.temporaryText(cost ? "Total cost: " : "")
+						(cost ? CreateLang.translate("display_cloth.total_cost") : CreateLang.text(""))
 							.style(ChatFormatting.GOLD)
 							.add(CreateLang.builder()
 								.add(entry.stack.getHoverName())
@@ -142,7 +142,7 @@ public class ShoppingListItem extends Item {
 
 					} else {
 						if (cost)
-							CreateLang.temporaryText("Total cost: ")
+							CreateLang.translate("display_cloth.total_cost")
 								.style(ChatFormatting.GOLD)
 								.addTo(pTooltipComponents);
 						for (BigItemStack entry : entries) {
@@ -158,11 +158,11 @@ public class ShoppingListItem extends Item {
 			}
 		}
 
-		CreateLang.temporaryText("Hand this to a shop keeper")
+		CreateLang.translate("display_cloth.hand_to_shop_keeper")
 			.style(ChatFormatting.GRAY)
 			.addTo(pTooltipComponents);
 
-		CreateLang.temporaryText("Sneak-Click to discard")
+		CreateLang.translate("display_cloth.sneak_click_discard")
 			.style(ChatFormatting.DARK_GRAY)
 			.addTo(pTooltipComponents);
 	}
@@ -172,7 +172,7 @@ public class ShoppingListItem extends Item {
 		if (pUsedHand == InteractionHand.OFF_HAND || pPlayer == null || !pPlayer.isShiftKeyDown())
 			return new InteractionResultHolder<ItemStack>(InteractionResult.PASS, pPlayer.getItemInHand(pUsedHand));
 
-		CreateLang.temporaryText("Shopping list discarded")
+		CreateLang.translate("display_cloth.shopping_list_discarded")
 			.sendStatus(pPlayer);
 		pPlayer.playSound(SoundEvents.BOOK_PAGE_TURN);
 		return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, ItemStack.EMPTY);
@@ -186,7 +186,7 @@ public class ShoppingListItem extends Item {
 			return InteractionResult.PASS;
 		pPlayer.setItemInHand(pUsedHand, ItemStack.EMPTY);
 
-		CreateLang.temporaryText("Shopping list discarded")
+		CreateLang.translate("display_cloth.shopping_list_discarded")
 			.sendStatus(pPlayer);
 		pPlayer.playSound(SoundEvents.BOOK_PAGE_TURN);
 		return InteractionResult.SUCCESS;

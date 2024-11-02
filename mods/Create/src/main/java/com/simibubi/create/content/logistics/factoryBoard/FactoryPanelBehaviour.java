@@ -188,7 +188,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			tryRestock();
 			return;
 		}
-		
+
 		if (recipeAddress.isBlank())
 			return;
 
@@ -302,12 +302,12 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	@Override
 	public void onShortInteract(Player player, InteractionHand hand, Direction side, BlockHitResult hitResult) {
 		if (!Create.LOGISTICS.mayInteract(network, player)) {
-			player.displayClientMessage(CreateLang.temporaryText("Logistics Network is Protected")
+			player.displayClientMessage(CreateLang.translate("logistically_linked.protected")
 				.style(ChatFormatting.RED)
 				.component(), true);
 			return;
 		}
-		
+
 		if (AllItemTags.WRENCH.matches(player.getItemInHand(hand))) {
 			int sharedMode = -1;
 			for (FactoryPanelPosition target : targeting) {
@@ -328,7 +328,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 			char[] boxes = "\u25a1\u25a1\u25a1\u25a1".toCharArray();
 			boxes[sharedMode] = '\u25a0';
-			player.displayClientMessage(CreateLang.temporaryText("Cycled arrow pathing mode " + new String(boxes))
+			player.displayClientMessage(CreateLang.translate("factory_panel.cycled_arrow_path", new String(boxes))
 				.component(), true);
 
 			return;
@@ -562,21 +562,23 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	@Override
 	public ValueSettingsBoard createBoard(Player player, BlockHitResult hitResult) {
 		int maxAmount = 100;
-		return new ValueSettingsBoard(CreateLang.temporaryText("Target Amount in Storage")
+		return new ValueSettingsBoard(CreateLang.translate("factory_panel.target_amount")
 			.component(), maxAmount, 10,
-			List.of(CreateLang.temporaryText("Items")
+			List.of(CreateLang.translate("schedule.condition.threshold.items")
 				.component(),
-				CreateLang.temporaryText("Stacks")
+				CreateLang.translate("schedule.condition.threshold.stacks")
 					.component()),
 			new ValueSettingsFormatter(this::formatValue));
 	}
 
 	@Override
 	public MutableComponent getLabel() {
-		String key = "Target Amount";
+		String key = "";
 
 		if (getFilter().isEmpty())
-			key = "New Factory task";
+			key = "factory_panel.new_factory_task";
+		else if (waitingForNetwork)
+			key = "factory_panel.some_links_unloaded";
 		else if (getAmount() == 0 || targetedBy.isEmpty())
 			key = getFilter().getHoverName()
 				.getString();
@@ -585,13 +587,13 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			key = getFilter().getHoverName()
 				.getString() + " -> " + getAmount() + stacks;
 			if (!satisfied)
-				key += " (In Progress)";
+				key += " " + CreateLang.translate("factory_panel.in_progress")
+					.string();
+			return CreateLang.text(key)
+				.component();
 		}
 
-		if (waitingForNetwork)
-			key = "Some links are not loaded";
-
-		return CreateLang.temporaryText(key)
+		return CreateLang.translate(key)
 			.component();
 	}
 

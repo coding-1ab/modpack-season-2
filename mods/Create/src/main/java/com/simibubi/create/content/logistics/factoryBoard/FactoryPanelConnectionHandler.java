@@ -39,7 +39,7 @@ public class FactoryPanelConnectionHandler {
 
 		String checkForIssues = checkForIssues(at, panel);
 		if (checkForIssues != null) {
-			player.displayClientMessage(CreateLang.temporaryText(checkForIssues)
+			player.displayClientMessage(CreateLang.translate(checkForIssues)
 				.style(ChatFormatting.RED)
 				.component(), true);
 			connectingFrom = null;
@@ -53,9 +53,9 @@ public class FactoryPanelConnectionHandler {
 		AllPackets.getChannel()
 			.sendToServer(new FactoryPanelConnectionPacket(panel.getPanelPosition(), connectingFrom));
 
-		player.displayClientMessage(CreateLang.temporaryText("Now using " + filterFrom.getHoverName()
-			.getString() + " to create "
-			+ filterTo.getHoverName()
+		player.displayClientMessage(CreateLang.translate("factory_panel.panels_connected", filterFrom.getHoverName()
+			.getString(),
+			filterTo.getHoverName()
 				.getString())
 			.style(ChatFormatting.GREEN)
 			.component(), true);
@@ -75,24 +75,24 @@ public class FactoryPanelConnectionHandler {
 		if (state1.setValue(FactoryPanelBlock.WATERLOGGED, false)
 			.setValue(FactoryPanelBlock.POWERED, false) != state2.setValue(FactoryPanelBlock.WATERLOGGED, false)
 				.setValue(FactoryPanelBlock.POWERED, false))
-			return "Panels must have the same orientation";
+			return "factory_panel.same_orientation";
 
 		if (FactoryPanelBlock.connectedDirection(state1)
 			.getAxis()
 			.choose(diff.getX(), diff.getY(), diff.getZ()) != 0)
-			return "Panels must be on the same surface";
+			return "factory_panel.same_surface";
 
 		if (!diff.closerThan(BlockPos.ZERO, 16))
-			return "Panels are too far away from each other";
+			return "factory_panel.too_far_apart";
 
 		if (to.panelBE().restocker)
-			return "Input panel cannot be in restock mode";
+			return "factory_panel.input_in_restock_mode";
 
 		if (to.getFilter()
 			.isEmpty()
 			|| from.getFilter()
 				.isEmpty())
-			return "Input panel must have an item first";
+			return "factory_panel.no_item";
 
 		return null;
 	}
@@ -116,7 +116,7 @@ public class FactoryPanelConnectionHandler {
 			.colored(AnimationTickHolder.getTicks() % 16 > 8 ? 0x38b764 : 0xa7f070)
 			.lineWidth(1 / 16f);
 
-		mc.player.displayClientMessage(CreateLang.temporaryText("Click a second panel to connect...")
+		mc.player.displayClientMessage(CreateLang.translate("factory_panel.click_second_panel")
 			.component(), true);
 	}
 
@@ -128,7 +128,7 @@ public class FactoryPanelConnectionHandler {
 			return false;
 		connectingFrom = null;
 		connectingFromBox = null;
-		mc.player.displayClientMessage(CreateLang.temporaryText("Input connection aborted")
+		mc.player.displayClientMessage(CreateLang.translate("factory_panel.connection_aborted")
 			.component(), true);
 		return true;
 	}
