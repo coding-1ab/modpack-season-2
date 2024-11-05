@@ -55,7 +55,7 @@ public class ChainConveyorRidingHandler {
 
 		Vec3 playerPosition = mc.player.position()
 			.add(0, mc.player.getBoundingBox()
-				.getYsize() + 0.75, 0);
+				.getYsize() + 0.5, 0);
 
 		updateTargetPosition(mc, clbe);
 
@@ -66,7 +66,7 @@ public class ChainConveyorRidingHandler {
 		clbe = (ChainConveyorBlockEntity) blockEntity;
 		clbe.prepareStats();
 
-		Vec3 targetPosition = playerPosition;
+		Vec3 targetPosition;
 
 		if (ridingConnection != null) {
 			ConnectionStats stats = clbe.connectionStats.get(ridingConnection);
@@ -78,7 +78,7 @@ public class ChainConveyorRidingHandler {
 			targetPosition = Vec3.atBottomCenterOf(ridingChainConveyor)
 				.add(VecHelper.rotate(new Vec3(0, 0.25, 1), chainPosition, Axis.Y));
 		}
-		
+
 		if (catchingUp > 0)
 			catchingUp--;
 
@@ -94,7 +94,7 @@ public class ChainConveyorRidingHandler {
 			.add(diff.scale(0.25)));
 		if (AnimationTickHolder.getTicks() % 10 == 0)
 			AllPackets.getChannel()
-				.sendToServer(new ChainConveyorRidingPacket(ridingChainConveyor));
+				.sendToServer(new ServerboundChainConveyorRidingPacket(ridingChainConveyor));
 	}
 
 	private static void updateTargetPosition(Minecraft mc, ChainConveyorBlockEntity clbe) {

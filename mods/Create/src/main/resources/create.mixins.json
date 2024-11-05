@@ -20,13 +20,13 @@
     "accessor.AbstractProjectileDispenseBehaviorAccessor",
     "accessor.DispenserBlockAccessor",
     "accessor.FallingBlockEntityAccessor",
+    "accessor.FluidInteractionRegistryAccessor",
     "accessor.GameTestHelperAccessor",
     "accessor.LivingEntityAccessor",
     "accessor.NbtAccounterAccessor",
     "accessor.ServerLevelAccessor",
     "accessor.SystemReportAccessor",
-    "accessor.UseOnContextAccessor",
-    "accessor.FluidInteractionRegistryAccessor"
+    "accessor.UseOnContextAccessor"
   ],
   "client": [
     "accessor.AgeableListModelAccessor",
@@ -39,11 +39,12 @@
     "client.GameRendererMixin",
     "client.HeavyBootsOnPlayerMixin",
     "client.HumanoidArmorLayerMixin",
+    "client.HumanoidModelMixin",
     "client.LevelRendererMixin",
     "client.MapRendererMapInstanceMixin",
     "client.PlayerRendererMixin",
     "client.WindowResizeMixin",
-	"compat.JourneyFullscreenMapMixin"
+    "compat.JourneyFullscreenMapMixin"
   ],
   "injectors": {
     "defaultRequire": 1

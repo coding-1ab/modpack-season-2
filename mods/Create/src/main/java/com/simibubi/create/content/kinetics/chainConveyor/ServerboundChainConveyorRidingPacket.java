@@ -6,13 +6,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 
-public class ChainConveyorRidingPacket extends BlockEntityConfigurationPacket<ChainConveyorBlockEntity> {
+public class ServerboundChainConveyorRidingPacket extends BlockEntityConfigurationPacket<ChainConveyorBlockEntity> {
 
-	public ChainConveyorRidingPacket(BlockPos pos) {
+	public ServerboundChainConveyorRidingPacket(BlockPos pos) {
 		super(pos);
 	}
-	
-	public ChainConveyorRidingPacket(FriendlyByteBuf buffer) {
+
+	public ServerboundChainConveyorRidingPacket(FriendlyByteBuf buffer) {
 		super(buffer);
 	}
 
@@ -30,6 +30,7 @@ public class ChainConveyorRidingPacket extends BlockEntityConfigurationPacket<Ch
 		sender.fallDistance = 0;
 		sender.connection.aboveGroundTickCount = 0;
 		sender.connection.aboveGroundVehicleTickCount = 0;
+		ServerChainConveyorHandler.handleTTLPacket(sender);
 	}
 
 }

@@ -12,6 +12,7 @@ import com.simibubi.create.content.equipment.wrench.WrenchItem;
 import com.simibubi.create.content.equipment.zapper.ZapperInteractionHandler;
 import com.simibubi.create.content.equipment.zapper.ZapperItem;
 import com.simibubi.create.content.kinetics.belt.BeltHelper;
+import com.simibubi.create.content.kinetics.chainConveyor.ServerChainConveyorHandler;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerServerHandler;
 import com.simibubi.create.content.trains.entity.CarriageEntityHandler;
 import com.simibubi.create.foundation.ModFilePackResources;
@@ -69,6 +70,7 @@ public class CommonEvents {
 		ServerSpeedProvider.serverTick();
 		Create.RAILWAYS.sync.serverTick();
 		TrainMapSync.serverTick(event);
+		ServerChainConveyorHandler.tick();
 	}
 
 	@SubscribeEvent

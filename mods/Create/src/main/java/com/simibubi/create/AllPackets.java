@@ -50,8 +50,9 @@ import com.simibubi.create.content.equipment.zapper.ZapperBeamPacket;
 import com.simibubi.create.content.equipment.zapper.terrainzapper.ConfigureWorldshaperPacket;
 import com.simibubi.create.content.fluids.transfer.FluidSplashPacket;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorConnectionPacket;
-import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRidingPacket;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainPackageInteractionPacket;
+import com.simibubi.create.content.kinetics.chainConveyor.ClientboundChainConveyorRidingPacket;
+import com.simibubi.create.content.kinetics.chainConveyor.ServerboundChainConveyorRidingPacket;
 import com.simibubi.create.content.kinetics.gauge.GaugeObservedPacket;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmPlacementPacket;
 import com.simibubi.create.content.kinetics.transmission.sequencer.ConfigureSequencedGearshiftPacket;
@@ -191,7 +192,7 @@ public enum AllPackets {
 	LOGISTICS_STOCK_REQUEST(LogisticalStockRequestPacket.class, LogisticalStockRequestPacket::new, PLAY_TO_SERVER),
 	LOGISTICS_PACKAGE_REQUEST(PackageOrderRequestPacket.class, PackageOrderRequestPacket::new, PLAY_TO_SERVER),
 	CHAIN_CONVEYOR_CONNECT(ChainConveyorConnectionPacket.class, ChainConveyorConnectionPacket::new, PLAY_TO_SERVER),
-	CHAIN_CONVEYOR_RIDING(ChainConveyorRidingPacket.class, ChainConveyorRidingPacket::new, PLAY_TO_SERVER),
+	CHAIN_CONVEYOR_RIDING(ServerboundChainConveyorRidingPacket.class, ServerboundChainConveyorRidingPacket::new, PLAY_TO_SERVER),
 	CHAIN_PACKAGE_INTERACTION(ChainPackageInteractionPacket.class, ChainPackageInteractionPacket::new, PLAY_TO_SERVER),
 	DISPLAY_CLOTH_CONFIGURATION(DisplayClothConfigurationPacket.class, DisplayClothConfigurationPacket::new, PLAY_TO_SERVER),
 	PACKAGE_PORT_CONFIGURATION(PackagePortConfigurationPacket.class, PackagePortConfigurationPacket::new, PLAY_TO_SERVER),
@@ -253,7 +254,8 @@ public enum AllPackets {
 	FACTORY_PANEL_EFFECT(FactoryPanelEffectPacket.class, FactoryPanelEffectPacket::new, PLAY_TO_CLIENT),
 	KNOCKBACK(KnockbackPacket.class, KnockbackPacket::new, PLAY_TO_CLIENT),
 	STOCK_KEEPER_OPEN_GUI(StockKeeperOpenRequestScreenPacket.class, StockKeeperOpenRequestScreenPacket::new, PLAY_TO_CLIENT),
-	TRAIN_MAP_SYNC(TrainMapSyncPacket.class, TrainMapSyncPacket::new, PLAY_TO_CLIENT);
+	TRAIN_MAP_SYNC(TrainMapSyncPacket.class, TrainMapSyncPacket::new, PLAY_TO_CLIENT),
+	CLIENTBOUND_CHAIN_CONVEYOR(ClientboundChainConveyorRidingPacket.class, ClientboundChainConveyorRidingPacket::new, PLAY_TO_CLIENT);
 
 	static {
 		ClientboundSimpleActionPacket.addAction("rainbowDebug", () -> SimpleCreateActions::rainbowDebug);
