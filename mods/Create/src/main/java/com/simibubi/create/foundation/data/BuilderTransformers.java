@@ -479,22 +479,22 @@ public class BuilderTransformers {
 				.toUpperCase(Locale.ROOT) + material.substring(1) + " Package");
 	}
 
-	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> displayCloth(String name,
+	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> tableCloth(String name,
 		NonNullSupplier<? extends Block> initialProps, boolean lowerItem) {
 		return b -> b.initialProperties(initialProps)
 			.addLayer(() -> RenderType::cutoutMipped)
 			.blockstate((c, p) -> p.simpleBlock(c.get(), p.models()
-				.withExistingParent(name + "_display_cloth", p.modLoc("block/display_cloth/block"))
-				.texture("0", p.modLoc("block/display_cloth/" + name))))
+				.withExistingParent(name + "_table_cloth", p.modLoc("block/table_cloth/block"))
+				.texture("0", p.modLoc("block/table_cloth/" + name))))
 			.onRegister(CreateRegistrate.blockModel(() -> DisplayClothModel::new))
-			.tag(AllBlockTags.DISPLAY_CLOTHS.tag)
-			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.create.display_cloth"))
+			.tag(AllBlockTags.TABLE_CLOTHS.tag)
+			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.create.table_cloth"))
 			.item(DisplayClothBlockItem::new)
 			.model((c, p) -> p
-				.withExistingParent(name + "_display_cloth",
-					p.modLoc("block/display_cloth/item" + (lowerItem ? "_lower" : "")))
-				.texture("0", p.modLoc("block/display_cloth/" + name)))
-			.tag(AllItemTags.DISPLAY_CLOTHS.tag)
+				.withExistingParent(name + "_table_cloth",
+					p.modLoc("block/table_cloth/item" + (lowerItem ? "_lower" : "")))
+				.texture("0", p.modLoc("block/table_cloth/" + name)))
+			.tag(AllItemTags.TABLE_CLOTHS.tag)
 			.recipe((c, p) -> ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, c.get())
 				.requires(c.get())
 				.unlockedBy("has_" + c.getName(), RegistrateRecipeProvider.has(c.get()))

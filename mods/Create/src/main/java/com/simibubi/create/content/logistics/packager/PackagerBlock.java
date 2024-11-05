@@ -92,7 +92,7 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 		ItemStack itemInHand = player.getItemInHand(handIn);
 		if (AllItems.WRENCH.isIn(itemInHand))
 			return InteractionResult.PASS;
-		if (AllBlocks.FACTORY_PANEL.isIn(itemInHand))
+		if (AllBlocks.FACTORY_GAUGE.isIn(itemInHand))
 			return InteractionResult.PASS;
 
 		if (onBlockEntityUse(worldIn, pos, be -> {

@@ -369,7 +369,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		GuiGameElement.of(AllBlocks.PACKAGER.asStack())
 			.render(graphics);
 		ms.translate(0, -9, 15);
-		GuiGameElement.of(AllBlocks.PACKAGER_LINK.asStack())
+		GuiGameElement.of(AllBlocks.STOCK_LINK.asStack())
 			.render(graphics);
 		ms.popPose();
 		ms.pushPose();

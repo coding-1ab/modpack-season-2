@@ -177,7 +177,11 @@ public class AllCreativeModeTabs {
 			);
 
 			Map<ItemProviderEntry<?>, ItemProviderEntry<?>> simpleAfterOrderings = Map.of(
-					AllItems.VERTICAL_GEARBOX, AllBlocks.GEARBOX
+					AllItems.VERTICAL_GEARBOX, AllBlocks.GEARBOX,
+					AllItems.CARDBOARD_PACKAGE_10x12, AllBlocks.PACKAGER,
+					AllItems.CARDBOARD_PACKAGE_12x12, AllBlocks.PACKAGER,
+					AllItems.CARDBOARD_PACKAGE_10x8, AllBlocks.PACKAGER,
+					AllItems.CARDBOARD_PACKAGE_12x10, AllBlocks.PACKAGER
 			);
 
 			simpleBeforeOrderings.forEach((entry, otherEntry) -> {
@@ -242,7 +246,7 @@ public class AllCreativeModeTabs {
 				}
 			}
 			
-			for (BlockEntry<DisplayClothBlock> entry : AllBlocks.DISPLAY_CLOTHS) {
+			for (BlockEntry<DisplayClothBlock> entry : AllBlocks.TABLE_CLOTHS) {
 				DisplayClothBlock block = entry.get();
 				if (block.getColor() != DyeColor.RED) {
 					visibilities.put(entry.asItem(), TabVisibility.SEARCH_TAB_ONLY);

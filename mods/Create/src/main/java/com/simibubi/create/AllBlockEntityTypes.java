@@ -519,7 +519,7 @@ public class AllBlockEntityTypes {
 
 	public static final BlockEntityEntry<DisplayClothBlockEntity> DISPLAY_CLOTH =
 		REGISTRATE.blockEntity("display_cloth", DisplayClothBlockEntity::new)
-			.validBlocks(AllBlocks.DISPLAY_CLOTHS.toArray())
+			.validBlocks(AllBlocks.TABLE_CLOTHS.toArray())
 			.validBlock(AllBlocks.ANDESITE_DISPLAY_CLOTH)
 			.validBlock(AllBlocks.BRASS_DISPLAY_CLOTH)
 			.validBlock(AllBlocks.COPPER_DISPLAY_CLOTH)
@@ -528,7 +528,7 @@ public class AllBlockEntityTypes {
 
 	public static final BlockEntityEntry<PackagerLinkBlockEntity> PACKAGER_LINK = REGISTRATE
 		.blockEntity("packager_link", PackagerLinkBlockEntity::new)
-		.validBlocks(AllBlocks.PACKAGER_LINK)
+		.validBlocks(AllBlocks.STOCK_LINK)
 		.renderer(() -> LinkBulbRenderer::new)
 		.register();
 
@@ -796,7 +796,7 @@ public class AllBlockEntityTypes {
 
 	public static final BlockEntityEntry<FactoryPanelBlockEntity> FACTORY_PANEL =
 		REGISTRATE.blockEntity("factory_panel", FactoryPanelBlockEntity::new)
-			.validBlocks(AllBlocks.FACTORY_PANEL)
+			.validBlocks(AllBlocks.FACTORY_GAUGE)
 			.renderer(() -> FactoryPanelRenderer::new)
 			.register();
 

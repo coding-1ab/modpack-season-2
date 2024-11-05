@@ -2,6 +2,7 @@ package com.simibubi.create.content.logistics.packagePort.postbox;
 
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllShapes;
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 
 import net.minecraft.core.BlockPos;
@@ -24,7 +25,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class PostboxBlock extends HorizontalDirectionalBlock implements IBE<PostboxBlockEntity> {
+public class PostboxBlock extends HorizontalDirectionalBlock implements IBE<PostboxBlockEntity>, IWrenchable {
 
 	public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
 

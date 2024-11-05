@@ -178,7 +178,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 				continue;
 
 			BlockState adjacentState = level.getBlockState(worldPosition.relative(d));
-			if (AllBlocks.FACTORY_PANEL.has(adjacentState)) {
+			if (AllBlocks.FACTORY_GAUGE.has(adjacentState)) {
 				if (FactoryPanelBlock.connectedDirection(adjacentState) != d)
 					continue;
 				if (!(level.getBlockEntity(worldPosition.relative(d)) instanceof FactoryPanelBlockEntity fpbe))
@@ -192,7 +192,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 				}
 			}
 
-			if (AllBlocks.PACKAGER_LINK.has(adjacentState)) {
+			if (AllBlocks.STOCK_LINK.has(adjacentState)) {
 				if (adjacentState.getValue(PackagerLinkBlock.FACING) != d)
 					continue;
 				if (!(level.getBlockEntity(worldPosition.relative(d)) instanceof PackagerLinkBlockEntity plbe))
@@ -246,7 +246,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			return;
 		for (Direction d : Iterate.directions) {
 			BlockState adjacentState = level.getBlockState(worldPosition.relative(d));
-			if (!AllBlocks.PACKAGER_LINK.has(adjacentState))
+			if (!AllBlocks.STOCK_LINK.has(adjacentState))
 				continue;
 			if (adjacentState.getValue(PackagerLinkBlock.FACING) != d)
 				continue;
@@ -446,6 +446,9 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 						.setValue(previousCount);
 					finalPackageAtLink = false;
 					continuePacking = true;
+					if (nextRequest.context() != null)
+						orderContext = nextRequest.context();
+					
 					if (bulky)
 						break Outer;
 					break;

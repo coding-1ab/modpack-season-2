@@ -1,4 +1,4 @@
-// 1.20.1	2024-11-01T09:46:44.6761844	Create's Standard Recipes
+// 1.20.1	2024-11-05T20:29:59.0953128	Create's Standard Recipes
 a8cc4af26f6c7c45a9eef12e92af1452fe042454 data/create/advancements/recipes/combat/crafting/appliances/netherite_backtank.json
 2c2639c7b307ee7c7a4e97e5efebf496788998ad data/create/advancements/recipes/combat/crafting/appliances/netherite_backtank_from_netherite.json
 81dcf0cb1aa99e39bc7d1a386e07cad4cee7d8b9 data/create/advancements/recipes/combat/crafting/appliances/netherite_diving_boots.json
@@ -177,8 +177,7 @@ f3e387ae41a55cdb5ff745f40e2ddb5e2595e9b8 data/create/advancements/recipes/misc/c
 dc61a327753684a0d8a7bcc408d656b53ac633b1 data/create/advancements/recipes/misc/crafting/logistics/brass_tunnel.json
 03c367840951af268047c407b15aad52f0b094b4 data/create/advancements/recipes/misc/crafting/logistics/content_observer.json
 09454f1d4db813c89a0a2f3af966298fc5f7da7b data/create/advancements/recipes/misc/crafting/logistics/display_link.json
-659025bbb47c8acae226198fafbd980d89379e25 data/create/advancements/recipes/misc/crafting/logistics/factory_panel_clear.json
-995aa09f4672405984988e445a1d97301c5c4389 data/create/advancements/recipes/misc/crafting/logistics/packager_link_clear.json
+02fd978c4f9f3c247710b052486cb498aebce95b data/create/advancements/recipes/misc/crafting/logistics/factory_gauge_clear.json
 95b357cbac39acfbc68ac04d0d4681a4d91746ee data/create/advancements/recipes/misc/crafting/logistics/powered_latch.json
 ef84b382bd4f6ba9558574f2c8e63030813594e9 data/create/advancements/recipes/misc/crafting/logistics/powered_toggle_latch.json
 c443707391ce79dc1ec8cfacee74757b0c00bd3e data/create/advancements/recipes/misc/crafting/logistics/pulse_extender.json
@@ -187,6 +186,7 @@ c443707391ce79dc1ec8cfacee74757b0c00bd3e data/create/advancements/recipes/misc/c
 1b50ed47c37e48d1112c76059574eed71ecea4e5 data/create/advancements/recipes/misc/crafting/logistics/redstone_link.json
 cea78bc9b093a8a6a85ef1df53ddf11d9c37a114 data/create/advancements/recipes/misc/crafting/logistics/redstone_requester_clear.json
 831588b3f29411d5c4b358006051152eb2b23e6b data/create/advancements/recipes/misc/crafting/logistics/stockpile_switch.json
+972ce787e625ad95588ba1fdd36098173798f198 data/create/advancements/recipes/misc/crafting/logistics/stock_link_clear.json
 1e0fc9f4971286a69d9706006bd8358931382c9c data/create/advancements/recipes/misc/crafting/logistics/stock_ticker_clear.json
 cb416511a219d2bc5806c6880c01820a8b563b80 data/create/advancements/recipes/misc/crafting/materials/andesite_alloy.json
 3b65a04da4e16442bfa8accfe209b7c5342b1db9 data/create/advancements/recipes/misc/crafting/materials/andesite_alloy_block.json
@@ -439,8 +439,7 @@ a24f11d979f40994b9f881b0f49fff5d93185296 data/create/recipes/crafting/logistics/
 d994ef262b16357984d3ed62f6563d2f37266193 data/create/recipes/crafting/logistics/brass_tunnel.json
 0b18d9964f2d580eb465cc72208f7a7fdba7b63e data/create/recipes/crafting/logistics/content_observer.json
 cc837e8b014c121ed9d959baddea134ebf669350 data/create/recipes/crafting/logistics/display_link.json
-9b5926ef76342b8364bff3474e491704c3197c5f data/create/recipes/crafting/logistics/factory_panel_clear.json
-5db046b432f184c6590c8e6adaf95adac6f0dc9d data/create/recipes/crafting/logistics/packager_link_clear.json
+2fb7722137990b9b9be967a1f766e138678d0573 data/create/recipes/crafting/logistics/factory_gauge_clear.json
 dd28b63ceb46a1e9071549c4f8ff32f520c667f6 data/create/recipes/crafting/logistics/powered_latch.json
 9ee6e19644928dc78e6f8a5e59f30cd42ac3e454 data/create/recipes/crafting/logistics/powered_toggle_latch.json
 aa8a704ad643ff5f06db34f4047f7f740a556236 data/create/recipes/crafting/logistics/pulse_extender.json
@@ -449,6 +448,7 @@ c81f852f1d1514184ff235e790a6ca907f7b6ad4 data/create/recipes/crafting/logistics/
 00877e6b56f28d8691080ef18b654f0a141835ce data/create/recipes/crafting/logistics/redstone_link.json
 8446b3ca07575ea978ddde4121900207d54be8b3 data/create/recipes/crafting/logistics/redstone_requester_clear.json
 eff0d37e98e8badd8d2c3c9de17ee5560b110dbd data/create/recipes/crafting/logistics/stockpile_switch.json
+e19544e2ef88a4d10f6dc8a3a973793cb00085ba data/create/recipes/crafting/logistics/stock_link_clear.json
 38aa7b9b3c4724ec8b8d94f00a98d684110ad5ca data/create/recipes/crafting/logistics/stock_ticker_clear.json
 ac524c110f66a7433208a888c5f3bb69e5e95743 data/create/recipes/crafting/materials/andesite_alloy.json
 e6bb68a1d2ed5a629c83f5a0eefb843bb890736d data/create/recipes/crafting/materials/andesite_alloy_block.json

@@ -183,18 +183,16 @@ public class AllPartialModels {
 		WATER_WHEEL = block("water_wheel/wheel"), LARGE_WATER_WHEEL = block("large_water_wheel/block"),
 		LARGE_WATER_WHEEL_EXTENSION = block("large_water_wheel/block_extension"),
 		
-		FACTORY_PANEL = block("factory_panel/panel"),
-		FACTORY_PANEL_WITH_BULB = block("factory_panel/panel_with_bulb"),
-		FACTORY_PANEL_RESTOCKER = block("factory_panel/panel_restocker"),
-		FACTORY_PANEL_RESTOCKER_WITH_BULB = block("factory_panel/panel_restocker_with_bulb"),
-		FACTORY_PANEL_LIGHT = block("factory_panel/bulb_light"),
+		FACTORY_PANEL = block("factory_gauge/panel"),
+		FACTORY_PANEL_WITH_BULB = block("factory_gauge/panel_with_bulb"),
+		FACTORY_PANEL_RESTOCKER = block("factory_gauge/panel_restocker"),
+		FACTORY_PANEL_RESTOCKER_WITH_BULB = block("factory_gauge/panel_restocker_with_bulb"),
+		FACTORY_PANEL_LIGHT = block("factory_gauge/bulb_light"),
 
-		DISPLAY_CLOTH_NW = block("display_cloth/north_west"),
-		DISPLAY_CLOTH_NE = block("display_cloth/north_east"),
-		DISPLAY_CLOTH_SW = block("display_cloth/south_west"),
-		DISPLAY_CLOTH_SE = block("display_cloth/south_east"),
-		
-		DISPLAY_CLOTH = entity("display_cloth"),
+		DISPLAY_CLOTH_NW = block("table_cloth/north_west"),
+		DISPLAY_CLOTH_NE = block("table_cloth/north_east"),
+		DISPLAY_CLOTH_SW = block("table_cloth/south_west"),
+		DISPLAY_CLOTH_SE = block("table_cloth/south_east"),
 		
 		CRAFTING_BLUEPRINT_1x1 = entity("crafting_blueprint_small"),
 		CRAFTING_BLUEPRINT_2x2 = entity("crafting_blueprint_medium"),
@@ -236,8 +234,8 @@ public class AllPartialModels {
 			TOOLBOX_LIDS.put(color, block("toolbox/lid/" + Lang.asId(color.name())));
 		for (Direction d : Iterate.horizontalDirections) {
 			METAL_GIRDER_BRACKETS.put(d, block("metal_girder/bracket_" + Lang.asId(d.name())));
-			FACTORY_PANEL_ARROWS.put(d, block("factory_panel/connections/arrow_" + Lang.asId(d.name())));
-			FACTORY_PANEL_LINES.put(d, block("factory_panel/connections/line_" + Lang.asId(d.name())));
+			FACTORY_PANEL_ARROWS.put(d, block("factory_gauge/connections/arrow_" + Lang.asId(d.name())));
+			FACTORY_PANEL_LINES.put(d, block("factory_gauge/connections/line_" + Lang.asId(d.name())));
 		}
 		for (int i = 0; i < 8; i++)
 			CONTRAPTION_CONTROLS_INDICATOR.add(block("contraption_controls/indicator_" + i));

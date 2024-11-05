@@ -84,7 +84,7 @@ public class RedstoneRequesterBlock extends Block implements IBE<RedstoneRequest
 		String address) {
 		ItemStack stack = player.getMainHandItem();
 		boolean isRequester = AllBlocks.REDSTONE_REQUESTER.isIn(stack);
-		boolean isShopCloth = AllItemTags.DISPLAY_CLOTHS.matches(stack);
+		boolean isShopCloth = AllItemTags.TABLE_CLOTHS.matches(stack);
 		if (!isRequester && !isShopCloth)
 			return;
 

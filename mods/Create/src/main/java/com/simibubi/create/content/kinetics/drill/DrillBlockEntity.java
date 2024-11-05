@@ -65,10 +65,13 @@ public class DrillBlockEntity extends BlockBreakingKineticBlockEntity {
 				inv.handleInsertion(stack, Direction.UP, false);
 		else {
 			BlockEntity blockEntity = level.getBlockEntity(breakingPos.below());
-			if (blockEntity instanceof HopperBlockEntity hbe && hbe.getCapability(ForgeCapabilities.ITEM_HANDLER)
-				.orElse(null) instanceof IItemHandler handler)
-				for (ItemStack stack : Block.getDrops(stateToBreak, sl, breakingPos, null))
-					ItemHandlerHelper.insertItemStacked(handler, stack, false);
+			if (blockEntity instanceof HopperBlockEntity hbe) {
+				IItemHandler handler = hbe.getCapability(ForgeCapabilities.ITEM_HANDLER)
+					.orElse(null);
+				if (handler != null)
+					for (ItemStack stack : Block.getDrops(stateToBreak, sl, breakingPos, null))
+						ItemHandlerHelper.insertItemStacked(handler, stack, false);
+			}
 		}
 
 		level.levelEvent(2001, breakingPos, Block.getId(stateToBreak));

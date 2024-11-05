@@ -44,7 +44,7 @@ public class StockKeeperOpenRequestScreenPacket extends SimplePacketBase {
 			return true;
 		ItemStack mainHandItem = player.getMainHandItem();
 		final boolean encodeMode =
-			AllItemTags.DISPLAY_CLOTHS.matches(mainHandItem) || AllBlocks.REDSTONE_REQUESTER.isIn(mainHandItem);
+			AllItemTags.TABLE_CLOTHS.matches(mainHandItem) || AllBlocks.REDSTONE_REQUESTER.isIn(mainHandItem);
 		if (player.level()
 			.getBlockEntity(pos) instanceof StockTickerBlockEntity be)
 			ScreenOpener.open(new StockTickerRequestScreen(be, isAdmin, isLocked, encodeMode));

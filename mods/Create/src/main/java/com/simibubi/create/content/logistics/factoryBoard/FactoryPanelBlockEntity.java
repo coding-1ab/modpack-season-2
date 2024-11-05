@@ -62,7 +62,7 @@ public class FactoryPanelBlockEntity extends SmartBlockEntity {
 		if (activePanels() == 0)
 			level.destroyBlock(worldPosition, false);
 
-		if (AllBlocks.FACTORY_PANEL.has(getBlockState())) {
+		if (AllBlocks.FACTORY_GAUGE.has(getBlockState())) {
 			boolean shouldBeRestocker = AllBlocks.PACKAGER
 				.has(level.getBlockState(worldPosition.relative(FactoryPanelBlock.connectedDirection(getBlockState())
 					.getOpposite())));
@@ -77,7 +77,7 @@ public class FactoryPanelBlockEntity extends SmartBlockEntity {
 	@Nullable
 	public PackagerBlockEntity getRestockedPackager() {
 		BlockState state = getBlockState();
-		if (!restocker || !AllBlocks.FACTORY_PANEL.has(state))
+		if (!restocker || !AllBlocks.FACTORY_GAUGE.has(state))
 			return null;
 		BlockPos packagerPos = worldPosition.relative(FactoryPanelBlock.connectedDirection(state)
 			.getOpposite());
@@ -102,7 +102,7 @@ public class FactoryPanelBlockEntity extends SmartBlockEntity {
 		super.destroy();
 		int panelCount = activePanels();
 		if (panelCount > 1)
-			Block.popResource(level, worldPosition, AllBlocks.FACTORY_PANEL.asStack(panelCount - 1));
+			Block.popResource(level, worldPosition, AllBlocks.FACTORY_GAUGE.asStack(panelCount - 1));
 	}
 
 	public boolean addPanel(PanelSlot slot, UUID frequency) {

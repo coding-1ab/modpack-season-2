@@ -41,6 +41,7 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 public class FactoryPanelScreen extends AbstractSimiScreen {
 
@@ -77,7 +78,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 				return b == null ? new BigItemStack(ItemStack.EMPTY, 0) : new BigItemStack(b.getFilter(), c.amount);
 			})
 			.toList();
-		searchForCraftingRecipe();
+		
+//		searchForCraftingRecipe(); TODO finish crafter integration
 
 		craftingActive = false;
 		if (availableCraftingRecipe == null)
@@ -260,7 +262,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		// ITEM PREVIEW
 		ms.pushPose();
 		ms.translate(0, middleHeight() - 25, 0);
-		GuiGameElement.of(AllBlocks.FACTORY_PANEL.asStack())
+		GuiGameElement.of(AllBlocks.FACTORY_GAUGE.asStack())
 			.scale(4)
 			.at(0, 0, -200)
 			.render(graphics, x + 175, y + 55);
@@ -538,9 +540,15 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 	private void sendIt(@Nullable FactoryPanelPosition toRemove, boolean clearPromises) {
 		Map<FactoryPanelPosition, Integer> inputs = new HashMap<>();
+
 		if (inputConfig.size() == connections.size())
-			for (int i = 0; i < inputConfig.size(); i++)
-				inputs.put(connections.get(i).from, inputConfig.get(i).count);
+			for (int i = 0; i < inputConfig.size(); i++) {
+				BigItemStack stackInConfig = inputConfig.get(i);
+				inputs.put(connections.get(i).from, craftingActive ? (int) craftingIngredients.stream()
+					.filter(
+						b -> !b.stack.isEmpty() && ItemHandlerHelper.canItemStacksStack(b.stack, stackInConfig.stack))
+					.count() : stackInConfig.count);
+			}
 
 		List<ItemStack> craftingArrangement = craftingActive ? craftingIngredients.stream()
 			.map(b -> b.stack)

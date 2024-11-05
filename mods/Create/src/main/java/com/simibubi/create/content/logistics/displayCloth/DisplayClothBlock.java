@@ -126,7 +126,7 @@ public class DisplayClothBlock extends Block implements IHaveBigOutline, IWrench
 			return drops;
 
 		for (ItemStack stack : drops) {
-			if (AllItemTags.DISPLAY_CLOTHS.matches(stack)) {
+			if (AllItemTags.TABLE_CLOTHS.matches(stack)) {
 				ItemStack drop = new ItemStack(this);
 				dcbe.requestData.writeToItem(dcbe.getBlockPos(), drop);
 				return List.of(drop);
@@ -196,7 +196,7 @@ public class DisplayClothBlock extends Block implements IHaveBigOutline, IWrench
 
 		@Override
 		public Predicate<ItemStack> getItemPredicate() {
-			return i -> AllItemTags.DISPLAY_CLOTHS.matches(i.getItem());
+			return i -> AllItemTags.TABLE_CLOTHS.matches(i.getItem());
 		}
 
 		@Override

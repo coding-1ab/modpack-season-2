@@ -46,7 +46,7 @@ public class FactoryPanelEffectPacket extends SimplePacketBase {
 	public boolean handle(Context context) {
 		ClientLevel level = Minecraft.getInstance().level;
 		BlockState blockState = level.getBlockState(fromPos.pos());
-		if (!AllBlocks.FACTORY_PANEL.has(blockState))
+		if (!AllBlocks.FACTORY_GAUGE.has(blockState))
 			return true;
 		FactoryPanelBehaviour panelBehaviour = FactoryPanelBehaviour.at(level, toPos);
 		if (panelBehaviour != null) {

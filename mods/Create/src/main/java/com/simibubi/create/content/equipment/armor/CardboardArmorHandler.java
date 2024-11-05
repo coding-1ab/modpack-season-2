@@ -12,8 +12,10 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingVisibilityEvent;
+import net.minecraftforge.event.level.NoteBlockEvent.Play;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
@@ -62,6 +64,8 @@ public class CardboardArmorHandler {
 		if (!(entityIn instanceof LivingEntity entity))
 			return false;
 		if (entity.getPose() != Pose.CROUCHING)
+			return false;
+		if (entity instanceof Player player && player.getAbilities().flying)
 			return false;
 		if (!AllItems.CARDBOARD_HELMET.isIn(entity.getItemBySlot(EquipmentSlot.HEAD)))
 			return false;

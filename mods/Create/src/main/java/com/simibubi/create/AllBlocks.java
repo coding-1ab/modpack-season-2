@@ -1703,168 +1703,6 @@ public class AllBlocks {
 		.transform(customItemModel())
 		.register();
 
-	public static final BlockEntry<ItemVaultBlock> ITEM_VAULT = REGISTRATE.block("item_vault", ItemVaultBlock::new)
-		.initialProperties(SharedProperties::softMetal)
-		.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
-			.sound(SoundType.NETHERITE_BLOCK)
-			.explosionResistance(1200))
-		.transform(pickaxeOnly())
-		.blockstate((c, p) -> p.getVariantBuilder(c.get())
-			.forAllStates(s -> ConfiguredModel.builder()
-				.modelFile(AssetLookup.standardModel(c, p))
-				.rotationY(s.getValue(ItemVaultBlock.HORIZONTAL_AXIS) == Axis.X ? 90 : 0)
-				.build()))
-		.onRegister(connectedTextures(ItemVaultCTBehaviour::new))
-		.item(ItemVaultItem::new)
-		.build()
-		.register();
-
-	public static final BlockEntry<ItemHatchBlock> ITEM_HATCH = REGISTRATE.block("item_hatch", ItemHatchBlock::new)
-		.initialProperties(SharedProperties::softMetal)
-		.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
-			.sound(SoundType.NETHERITE_BLOCK))
-		.transform(pickaxeOnly())
-		.addLayer(() -> RenderType::cutoutMipped)
-		.blockstate((c, p) -> p.horizontalBlock(c.get(),
-			s -> AssetLookup.partialBaseModel(c, p, s.getValue(ItemHatchBlock.OPEN) ? "open" : "closed")))
-		.item()
-		.transform(customItemModel("_", "block_closed"))
-		.register();
-
-	public static final BlockEntry<PackagerBlock> PACKAGER = REGISTRATE.block("packager", PackagerBlock::new)
-		.initialProperties(SharedProperties::softMetal)
-		.properties(p -> p.noOcclusion())
-		.properties(p -> p.isRedstoneConductor(($1, $2, $3) -> false))
-		.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
-			.sound(SoundType.NETHERITE_BLOCK))
-		.transform(pickaxeOnly())
-		.addLayer(() -> RenderType::cutoutMipped)
-		.blockstate(new PackagerGenerator()::generate)
-		.transform(BlockStressDefaults.setImpact(1.0))
-		.item()
-		.model(AssetLookup::customItemModel)
-		.build()
-		.register();
-
-	public static final BlockEntry<FrogportBlock> PACKAGE_FROGPORT =
-		REGISTRATE.block("package_frogport", FrogportBlock::new)
-			.initialProperties(SharedProperties::softMetal)
-			.properties(p -> p.noOcclusion())
-			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
-				.sound(SoundType.NETHERITE_BLOCK))
-			.transform(pickaxeOnly())
-			.addLayer(() -> RenderType::cutoutMipped)
-			.blockstate((c, p) -> p.simpleBlock(c.getEntry(), AssetLookup.partialBaseModel(c, p)))
-			.item(PackagePortItem::new)
-			.model(AssetLookup::customItemModel)
-			.build()
-			.register();
-
-	public static final DyedBlockList<PostboxBlock> PACKAGE_POSTBOXES = new DyedBlockList<>(colour -> {
-		String colourName = colour.getSerializedName();
-		return REGISTRATE.block(colourName + "_postbox", p -> new PostboxBlock(p, colour))
-			.initialProperties(SharedProperties::wooden)
-			.properties(p -> p.mapColor(colour))
-			.transform(axeOnly())
-			.blockstate((c, p) -> {
-				p.horizontalBlock(c.get(), s -> {
-					String suffix = s.getValue(PostboxBlock.OPEN) ? "open" : "closed";
-					return p.models()
-						.withExistingParent(colourName + "_postbox_" + suffix,
-							p.modLoc("block/package_postbox/block_" + suffix))
-						.texture("0", p.modLoc("block/post_box/post_box_" + colourName))
-						.texture("1", p.modLoc("block/post_box/post_box_" + colourName + "_" + suffix));
-				});
-			})
-			.tag(AllBlockTags.POSTBOXES.tag)
-			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.create.package_postbox"))
-			.item(PackagePortItem::new)
-			.model((c, p) -> p.withExistingParent(colourName + "_postbox", p.modLoc("block/package_postbox/item"))
-				.texture("0", p.modLoc("block/post_box/post_box_" + colourName))
-				.texture("1", p.modLoc("block/post_box/post_box_" + colourName + "_closed")))
-			.tag(AllItemTags.POSTBOXES.tag)
-			.build()
-			.register();
-	});
-
-	public static final BlockEntry<PackagerLinkBlock> PACKAGER_LINK =
-		REGISTRATE.block("packager_link", PackagerLinkBlock::new)
-			.initialProperties(SharedProperties::softMetal)
-			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
-				.sound(SoundType.NETHERITE_BLOCK))
-			.addLayer(() -> RenderType::translucent)
-			.transform(pickaxeOnly())
-			.blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.forPowered(c, p)))
-			.item(LogisticallyLinkedBlockItem::new)
-			.transform(customItemModel("_", "block"))
-			.register();
-
-	public static final BlockEntry<StockTickerBlock> STOCK_TICKER =
-		REGISTRATE.block("stock_ticker", StockTickerBlock::new)
-			.initialProperties(SharedProperties::softMetal)
-			.properties(p -> p.sound(SoundType.GLASS))
-			.transform(axeOrPickaxe())
-			.addLayer(() -> RenderType::cutoutMipped)
-			.blockstate((c, p) -> p.horizontalBlock(c.get(), AssetLookup.standardModel(c, p)))
-			.item(LogisticallyLinkedBlockItem::new)
-			.build()
-			.register();
-
-	public static final BlockEntry<RedstoneRequesterBlock> REDSTONE_REQUESTER =
-		REGISTRATE.block("redstone_requester", RedstoneRequesterBlock::new)
-			.initialProperties(SharedProperties::stone)
-			.properties(p -> p.sound(SoundType.WOOD))
-			.transform(axeOrPickaxe())
-			.blockstate((c, p) -> BlockStateGen.simpleBlock(c, p, AssetLookup.forPowered(c, p)))
-			.item(RedstoneRequesterBlockItem::new)
-			.transform(customItemModel("_", "block"))
-			.register();
-
-	public static final BlockEntry<FactoryPanelBlock> FACTORY_PANEL =
-		REGISTRATE.block("factory_panel", FactoryPanelBlock::new)
-			.addLayer(() -> RenderType::cutoutMipped)
-			.initialProperties(SharedProperties::copperMetal)
-			.properties(p -> p.noOcclusion())
-			.properties(p -> p.forceSolidOn())
-			.transform(pickaxeOnly())
-			.blockstate((c, p) -> p.horizontalFaceBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
-			.onRegister(CreateRegistrate.blockModel(() -> FactoryPanelModel::new))
-			.item(FactoryPanelBlockItem::new)
-			.model(AssetLookup::customItemModel)
-			.build()
-			.register();
-
-	public static final DyedBlockList<DisplayClothBlock> DISPLAY_CLOTHS = new DyedBlockList<>(colour -> {
-		String colourName = colour.getSerializedName();
-		return REGISTRATE.block(colourName + "_display_cloth", p -> new DisplayClothBlock(p, colour))
-			.transform(BuilderTransformers.displayCloth(colourName, () -> Blocks.BLACK_CARPET, false))
-			.properties(p -> p.mapColor(colour))
-			.register();
-	});
-
-	public static final BlockEntry<DisplayClothBlock> ANDESITE_DISPLAY_CLOTH =
-		REGISTRATE.block("andesite_display_cloth", p -> new DisplayClothBlock(p, "andesite"))
-			.transform(BuilderTransformers.displayCloth("andesite", SharedProperties::stone, true))
-			.properties(p -> p.mapColor(MapColor.STONE)
-				.requiresCorrectToolForDrops())
-			.transform(pickaxeOnly())
-			.register();
-
-	public static final BlockEntry<DisplayClothBlock> BRASS_DISPLAY_CLOTH =
-		REGISTRATE.block("brass_display_cloth", p -> new DisplayClothBlock(p, "brass"))
-			.transform(BuilderTransformers.displayCloth("brass", SharedProperties::softMetal, true))
-			.properties(p -> p.mapColor(MapColor.TERRACOTTA_YELLOW)
-				.requiresCorrectToolForDrops())
-			.transform(pickaxeOnly())
-			.register();
-
-	public static final BlockEntry<DisplayClothBlock> COPPER_DISPLAY_CLOTH =
-		REGISTRATE.block("copper_display_cloth", p -> new DisplayClothBlock(p, "copper"))
-			.transform(BuilderTransformers.displayCloth("copper", SharedProperties::copperMetal, true))
-			.properties(p -> p.requiresCorrectToolForDrops())
-			.transform(pickaxeOnly())
-			.register();
-
 	public static final BlockEntry<AndesiteFunnelBlock> ANDESITE_FUNNEL =
 		REGISTRATE.block("andesite_funnel", AndesiteFunnelBlock::new)
 			.addLayer(() -> RenderType::cutoutMipped)
@@ -1969,6 +1807,168 @@ public class AllBlocks {
 		REGISTRATE.block("creative_crate", CreativeCrateBlock::new)
 			.transform(BuilderTransformers.crate("creative"))
 			.properties(p -> p.mapColor(MapColor.COLOR_PURPLE))
+			.register();
+	
+	public static final BlockEntry<ItemVaultBlock> ITEM_VAULT = REGISTRATE.block("item_vault", ItemVaultBlock::new)
+		.initialProperties(SharedProperties::softMetal)
+		.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
+			.sound(SoundType.NETHERITE_BLOCK)
+			.explosionResistance(1200))
+		.transform(pickaxeOnly())
+		.blockstate((c, p) -> p.getVariantBuilder(c.get())
+			.forAllStates(s -> ConfiguredModel.builder()
+				.modelFile(AssetLookup.standardModel(c, p))
+				.rotationY(s.getValue(ItemVaultBlock.HORIZONTAL_AXIS) == Axis.X ? 90 : 0)
+				.build()))
+		.onRegister(connectedTextures(ItemVaultCTBehaviour::new))
+		.item(ItemVaultItem::new)
+		.build()
+		.register();
+
+	public static final BlockEntry<ItemHatchBlock> ITEM_HATCH = REGISTRATE.block("item_hatch", ItemHatchBlock::new)
+		.initialProperties(SharedProperties::softMetal)
+		.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
+			.sound(SoundType.NETHERITE_BLOCK))
+		.transform(pickaxeOnly())
+		.addLayer(() -> RenderType::cutoutMipped)
+		.blockstate((c, p) -> p.horizontalBlock(c.get(),
+			s -> AssetLookup.partialBaseModel(c, p, s.getValue(ItemHatchBlock.OPEN) ? "open" : "closed")))
+		.item()
+		.transform(customItemModel("_", "block_closed"))
+		.register();
+
+	public static final BlockEntry<PackagerBlock> PACKAGER = REGISTRATE.block("packager", PackagerBlock::new)
+		.initialProperties(SharedProperties::softMetal)
+		.properties(p -> p.noOcclusion())
+		.properties(p -> p.isRedstoneConductor(($1, $2, $3) -> false))
+		.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
+			.sound(SoundType.NETHERITE_BLOCK))
+		.transform(pickaxeOnly())
+		.addLayer(() -> RenderType::cutoutMipped)
+		.blockstate(new PackagerGenerator()::generate)
+		.transform(BlockStressDefaults.setImpact(1.0))
+		.item()
+		.model(AssetLookup::customItemModel)
+		.build()
+		.register();
+
+	public static final BlockEntry<FrogportBlock> PACKAGE_FROGPORT =
+		REGISTRATE.block("package_frogport", FrogportBlock::new)
+			.initialProperties(SharedProperties::softMetal)
+			.properties(p -> p.noOcclusion())
+			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
+				.sound(SoundType.NETHERITE_BLOCK))
+			.transform(pickaxeOnly())
+			.addLayer(() -> RenderType::cutoutMipped)
+			.blockstate((c, p) -> p.simpleBlock(c.getEntry(), AssetLookup.partialBaseModel(c, p)))
+			.item(PackagePortItem::new)
+			.model(AssetLookup::customItemModel)
+			.build()
+			.register();
+
+	public static final DyedBlockList<PostboxBlock> PACKAGE_POSTBOXES = new DyedBlockList<>(colour -> {
+		String colourName = colour.getSerializedName();
+		return REGISTRATE.block(colourName + "_postbox", p -> new PostboxBlock(p, colour))
+			.initialProperties(SharedProperties::wooden)
+			.properties(p -> p.mapColor(colour))
+			.transform(axeOnly())
+			.blockstate((c, p) -> {
+				p.horizontalBlock(c.get(), s -> {
+					String suffix = s.getValue(PostboxBlock.OPEN) ? "open" : "closed";
+					return p.models()
+						.withExistingParent(colourName + "_postbox_" + suffix,
+							p.modLoc("block/package_postbox/block_" + suffix))
+						.texture("0", p.modLoc("block/post_box/post_box_" + colourName))
+						.texture("1", p.modLoc("block/post_box/post_box_" + colourName + "_" + suffix));
+				});
+			})
+			.tag(AllBlockTags.POSTBOXES.tag)
+			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.create.package_postbox"))
+			.item(PackagePortItem::new)
+			.model((c, p) -> p.withExistingParent(colourName + "_postbox", p.modLoc("block/package_postbox/item"))
+				.texture("0", p.modLoc("block/post_box/post_box_" + colourName))
+				.texture("1", p.modLoc("block/post_box/post_box_" + colourName + "_closed")))
+			.tag(AllItemTags.POSTBOXES.tag)
+			.build()
+			.register();
+	});
+
+	public static final BlockEntry<PackagerLinkBlock> STOCK_LINK =
+		REGISTRATE.block("stock_link", PackagerLinkBlock::new)
+			.initialProperties(SharedProperties::softMetal)
+			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
+				.sound(SoundType.NETHERITE_BLOCK))
+			.addLayer(() -> RenderType::translucent)
+			.transform(pickaxeOnly())
+			.blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.forPowered(c, p)))
+			.item(LogisticallyLinkedBlockItem::new)
+			.transform(customItemModel("_", "block"))
+			.register();
+
+	public static final BlockEntry<StockTickerBlock> STOCK_TICKER =
+		REGISTRATE.block("stock_ticker", StockTickerBlock::new)
+			.initialProperties(SharedProperties::softMetal)
+			.properties(p -> p.sound(SoundType.GLASS))
+			.transform(axeOrPickaxe())
+			.addLayer(() -> RenderType::cutoutMipped)
+			.blockstate((c, p) -> p.horizontalBlock(c.get(), AssetLookup.standardModel(c, p)))
+			.item(LogisticallyLinkedBlockItem::new)
+			.build()
+			.register();
+
+	public static final BlockEntry<RedstoneRequesterBlock> REDSTONE_REQUESTER =
+		REGISTRATE.block("redstone_requester", RedstoneRequesterBlock::new)
+			.initialProperties(SharedProperties::stone)
+			.properties(p -> p.sound(SoundType.WOOD))
+			.transform(axeOrPickaxe())
+			.blockstate((c, p) -> BlockStateGen.simpleBlock(c, p, AssetLookup.forPowered(c, p)))
+			.item(RedstoneRequesterBlockItem::new)
+			.transform(customItemModel("_", "block"))
+			.register();
+
+	public static final BlockEntry<FactoryPanelBlock> FACTORY_GAUGE =
+		REGISTRATE.block("factory_gauge", FactoryPanelBlock::new)
+			.addLayer(() -> RenderType::cutoutMipped)
+			.initialProperties(SharedProperties::copperMetal)
+			.properties(p -> p.noOcclusion())
+			.properties(p -> p.forceSolidOn())
+			.transform(pickaxeOnly())
+			.blockstate((c, p) -> p.horizontalFaceBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
+			.onRegister(CreateRegistrate.blockModel(() -> FactoryPanelModel::new))
+			.item(FactoryPanelBlockItem::new)
+			.model(AssetLookup::customItemModel)
+			.build()
+			.register();
+
+	public static final DyedBlockList<DisplayClothBlock> TABLE_CLOTHS = new DyedBlockList<>(colour -> {
+		String colourName = colour.getSerializedName();
+		return REGISTRATE.block(colourName + "_table_cloth", p -> new DisplayClothBlock(p, colour))
+			.transform(BuilderTransformers.tableCloth(colourName, () -> Blocks.BLACK_CARPET, false))
+			.properties(p -> p.mapColor(colour))
+			.register();
+	});
+
+	public static final BlockEntry<DisplayClothBlock> ANDESITE_DISPLAY_CLOTH =
+		REGISTRATE.block("andesite_table_cloth", p -> new DisplayClothBlock(p, "andesite"))
+			.transform(BuilderTransformers.tableCloth("andesite", SharedProperties::stone, true))
+			.properties(p -> p.mapColor(MapColor.STONE)
+				.requiresCorrectToolForDrops())
+			.transform(pickaxeOnly())
+			.register();
+
+	public static final BlockEntry<DisplayClothBlock> BRASS_DISPLAY_CLOTH =
+		REGISTRATE.block("brass_table_cloth", p -> new DisplayClothBlock(p, "brass"))
+			.transform(BuilderTransformers.tableCloth("brass", SharedProperties::softMetal, true))
+			.properties(p -> p.mapColor(MapColor.TERRACOTTA_YELLOW)
+				.requiresCorrectToolForDrops())
+			.transform(pickaxeOnly())
+			.register();
+
+	public static final BlockEntry<DisplayClothBlock> COPPER_DISPLAY_CLOTH =
+		REGISTRATE.block("copper_table_cloth", p -> new DisplayClothBlock(p, "copper"))
+			.transform(BuilderTransformers.tableCloth("copper", SharedProperties::copperMetal, true))
+			.properties(p -> p.requiresCorrectToolForDrops())
+			.transform(pickaxeOnly())
 			.register();
 
 	public static final BlockEntry<DisplayLinkBlock> DISPLAY_LINK =

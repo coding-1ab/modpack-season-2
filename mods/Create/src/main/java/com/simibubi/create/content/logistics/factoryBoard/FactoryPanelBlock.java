@@ -146,7 +146,7 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 
 			if (!player.isCreative())
 				player.getInventory()
-					.placeItemBackInInventory(AllBlocks.FACTORY_PANEL.asStack());
+					.placeItemBackInInventory(AllBlocks.FACTORY_GAUGE.asStack());
 
 			playRemoveSound(world, pos);
 			if (be.activePanels() == 0)
@@ -180,7 +180,7 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 		ItemStack item = pPlayer.getItemInHand(pHand);
 		if (pLevel.isClientSide)
 			return InteractionResult.SUCCESS;
-		if (!AllBlocks.FACTORY_PANEL.isIn(item))
+		if (!AllBlocks.FACTORY_GAUGE.isIn(item))
 			return InteractionResult.SUCCESS;
 		Vec3 location = pHit.getLocation();
 		if (location == null)
@@ -229,7 +229,7 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 			if (!fpbe.removePanel(destroyedSlot))
 				return InteractionResult.FAIL;
 			if (!player.isCreative())
-				popResource(level, pos, AllBlocks.FACTORY_PANEL.asStack());
+				popResource(level, pos, AllBlocks.FACTORY_GAUGE.asStack());
 			return InteractionResult.SUCCESS;
 		});
 	}
@@ -253,7 +253,7 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 	public boolean canBeReplaced(BlockState pState, BlockPlaceContext pUseContext) {
 		if (pUseContext.isSecondaryUseActive())
 			return false;
-		if (!AllBlocks.FACTORY_PANEL.isIn(pUseContext.getItemInHand()))
+		if (!AllBlocks.FACTORY_GAUGE.isIn(pUseContext.getItemInHand()))
 			return false;
 		Vec3 location = pUseContext.getClickLocation();
 		if (location == null)

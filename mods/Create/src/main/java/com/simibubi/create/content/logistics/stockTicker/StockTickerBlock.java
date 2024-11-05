@@ -3,6 +3,7 @@ package com.simibubi.create.content.logistics.stockTicker;
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.AllShapes;
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
 import com.simibubi.create.foundation.block.IBE;
 
@@ -30,7 +31,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
 
-public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<StockTickerBlockEntity> {
+public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<StockTickerBlockEntity>, IWrenchable {
 
 	public StockTickerBlock(Properties pProperties) {
 		super(pProperties);

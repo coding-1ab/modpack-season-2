@@ -355,7 +355,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 				return;
 
 		if (getFilter().isEmpty()) {
-			if (AllBlocks.FACTORY_PANEL.isIn(player.getItemInHand(hand)))
+			if (AllBlocks.FACTORY_GAUGE.isIn(player.getItemInHand(hand)))
 				return;
 
 			super.onShortInteract(player, hand, side, hitResult);
