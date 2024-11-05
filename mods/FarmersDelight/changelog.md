@@ -4,8 +4,8 @@
 
 ### Additions
 - Farmer Villagers are now capable of planting and harvesting FD crops!
-  - They can plant Cabbage, Tomato and Onion. Rice is excluded due to unique planting conditions. However...
-  - They can harvest all 4 crops once fully mature, and will collect the drops. This includes the top half of Rice, which means they can harvest it indefinitely;
+  - They can plant, harvest and collect the drops for Cabbage, Tomato and Onion;
+  - Rice is currently excluded from this equation, as farmer AI wasn't able to handle it properly without extensive changes.
 - Added tag: `farmersdelight:campfire_signal_smoke`. Blocks in this tag will cause Campfires to emit "signal smoke", like the Hay Bale;
 
 ### Updates
@@ -16,6 +16,9 @@
 - Skillets are now waterloggable, but are unable to cook underwater, either handheld or as a block. Hard to fry when the skillet is flooded!
 - `tomatoes` were temporarily removed from the `crops` tag, as bee pollination was breaking ropelogged vines unpredictably;
   - This will likely be addressed in the next major release;
+  
+### Fixes
+- Fix meal duplication when using containers against a Cooking Pot block, then closing and reloading the world;
 
 ### Translations
 - Added:
@@ -34,9 +37,6 @@
   - vi_vn (thanks, godkyo98!)
   - zh_cn (thanks, DuckDuckStudio!)
   - zh_tw (thanks, DuckDuckStudio and FuGu0416!)
-
-### Fixes
-- Fix meal duplication when using containers against a Cooking Pot block, then closing and reloading the world;
 
 ## 1.2.4
 
