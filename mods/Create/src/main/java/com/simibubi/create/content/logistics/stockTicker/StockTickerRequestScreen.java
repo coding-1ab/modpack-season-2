@@ -151,7 +151,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		lockX = x + 230;
 		lockY = y + 15;
 
-		MutableComponent searchLabel = CreateLang.translateDirect("gui.stock_ticker.search_items");
+		MutableComponent searchLabel = CreateLang.translateDirect("gui.stock_keeper.search_items");
 		searchBox = new EditBox(this.font, x + 81, y + 25, 110, 9, searchLabel);
 		searchBox.setMaxLength(50);
 		searchBox.setBordered(false);
@@ -182,7 +182,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			: stack.getHoverName()
 				.getString(),
 			0)));
-		categories.add(Pair.of(CreateLang.temporaryText("Unsorted")
+		categories.add(Pair.of(CreateLang.translate("gui.stock_keeper.unsorted_category")
 			.string(), 0));
 
 		String valueWithPrefix = searchBox.getValue();
@@ -392,17 +392,18 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			ms.popPose();
 		}
 
-		MutableComponent headerTitle = CreateLang.temporaryText("Stock Keeper")
+		MutableComponent headerTitle = CreateLang.translate("gui.stock_keeper.title")
 			.component();
 		graphics.drawString(font, headerTitle, x + windowWidth / 2 - font.width(headerTitle) / 2, y + 4, 0x505050,
 			false);
-		graphics.drawString(font, CreateLang.temporaryText("Send")
-			.component(), x + windowWidth - 52, y + windowHeight - 32,
-			isConfirmHovered(mouseX, mouseY) ? 0xffffff : 0x505050, false);
+		graphics.drawString(font,
+			CreateLang.translate(encodeRequester ? "gui.stock_keeper.configure" : "gui.stock_keeper.send")
+				.component(),
+			x + windowWidth - 52, y + windowHeight - 32, isConfirmHovered(mouseX, mouseY) ? 0xffffff : 0x505050, false);
 
 		// Request just sent
 		if (itemsToOrder.isEmpty() && successTicks > 0) {
-			Component msg = CreateLang.translateDirect("gui.stock_ticker.request_sent");
+			Component msg = CreateLang.translateDirect("gui.stock_keeper.request_sent");
 			float alpha = Mth.clamp((successTicks - 10f) / 5f, 0f, 1f);
 			if (alpha > 0)
 				graphics.drawString(font, msg, x + windowWidth / 2 - font.width(msg) / 2, orderY + 4,
@@ -510,20 +511,24 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			(isLocked ? AllGuiTextures.STOCK_KEEPER_REQUEST_LOCKED : AllGuiTextures.STOCK_KEEPER_REQUEST_UNLOCKED)
 				.render(graphics, lockX, lockY);
 			if (mouseX > lockX && mouseX <= lockX + 15 && mouseY > lockY && mouseY <= lockY + 15) {
-				graphics.renderComponentTooltip(font,
-					List.of(CreateLang.temporaryText(isLocked ? "Network is locked" : "Network is open")
-						.component(),
-						CreateLang.temporaryText("Locking prevents other Players")
-							.style(ChatFormatting.GRAY)
-							.component(),
-						CreateLang.temporaryText("from ordering items directly")
-							.style(ChatFormatting.GRAY)
-							.component(),
-						CreateLang.temporaryText("Click to toggle")
-							.style(ChatFormatting.DARK_GRAY)
-							.style(ChatFormatting.ITALIC)
-							.component()),
-					mouseX, mouseY);
+				graphics
+					.renderComponentTooltip(font,
+						List.of(
+							CreateLang
+								.translate(
+									isLocked ? "gui.stock_keeper.network_locked" : "gui.stock_keeper.network_open")
+								.component(),
+							CreateLang.translate("gui.stock_keeper.network_lock_tip")
+								.style(ChatFormatting.GRAY)
+								.component(),
+							CreateLang.translate("gui.stock_keeper.network_lock_tip_1")
+								.style(ChatFormatting.GRAY)
+								.component(),
+							CreateLang.translate("gui.stock_keeper.network_lock_tip_2")
+								.style(ChatFormatting.DARK_GRAY)
+								.style(ChatFormatting.ITALIC)
+								.component()),
+						mouseX, mouseY);
 			}
 		}
 	}
@@ -703,15 +708,15 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 
 	private Component getTroubleshootingMessage() {
 		if (currentItemSource == null)
-			return CreateLang.translate("gui.stock_ticker.checking_stocks")
+			return CreateLang.translate("gui.stock_keeper.checking_stocks")
 				.component();
 		if (blockEntity.activeLinks == 0)
-			return CreateLang.translate("gui.stock_ticker.no_packagers_linked")
+			return CreateLang.translate("gui.stock_keeper.no_packagers_linked")
 				.component();
 		if (currentItemSource.isEmpty())
-			return CreateLang.translate("gui.stock_ticker.inventories_empty")
+			return CreateLang.translate("gui.stock_keeper.inventories_empty")
 				.component();
-		return CreateLang.translate("gui.stock_ticker.no_search_results")
+		return CreateLang.translate("gui.stock_keeper.no_search_results")
 			.component();
 	}
 

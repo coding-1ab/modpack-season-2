@@ -1777,6 +1777,7 @@ public class AllBlocks {
 				});
 			})
 			.tag(AllBlockTags.POSTBOXES.tag)
+			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.create.package_postbox"))
 			.item(PackagePortItem::new)
 			.model((c, p) -> p.withExistingParent(colourName + "_postbox", p.modLoc("block/package_postbox/item"))
 				.texture("0", p.modLoc("block/post_box/post_box_" + colourName))

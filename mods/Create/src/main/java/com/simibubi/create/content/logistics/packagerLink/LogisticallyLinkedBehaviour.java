@@ -191,7 +191,7 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 	public boolean mayInteractMessage(Player player) {
 		boolean mayInteract = Create.LOGISTICS.mayInteract(freqId, player);
 		if (!mayInteract)
-			player.displayClientMessage(CreateLang.temporaryText("Logistics Network is protected")
+			player.displayClientMessage(CreateLang.translate("logistically_linked.protected")
 				.style(ChatFormatting.RED)
 				.component(), true);
 		return mayInteract;

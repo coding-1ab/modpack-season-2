@@ -22,7 +22,7 @@ public class FactoryPanelBlockItem extends LogisticallyLinkedBlockItem {
 		if (!isTuned(stack)) {
 			AllSoundEvents.DENY.playOnServer(pContext.getLevel(), pContext.getClickedPos());
 			pContext.getPlayer()
-				.displayClientMessage(CreateLang.temporaryText("Tune to a transmitter before placing")
+				.displayClientMessage(CreateLang.translate("factory_panel.tune_before_placing")
 					.component(), true);
 			return InteractionResult.FAIL;
 		}

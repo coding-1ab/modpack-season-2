@@ -47,6 +47,7 @@ import com.simibubi.create.content.trains.bogey.StandardBogeyBlock;
 import com.simibubi.create.foundation.block.ItemUseOverrides;
 import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import com.simibubi.create.foundation.block.connected.HorizontalCTBehaviour;
+import com.simibubi.create.foundation.item.ItemDescription;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.builders.ItemBuilder;
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
@@ -58,6 +59,7 @@ import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -486,6 +488,7 @@ public class BuilderTransformers {
 				.texture("0", p.modLoc("block/display_cloth/" + name))))
 			.onRegister(CreateRegistrate.blockModel(() -> DisplayClothModel::new))
 			.tag(AllBlockTags.DISPLAY_CLOTHS.tag)
+			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.create.display_cloth"))
 			.item(DisplayClothBlockItem::new)
 			.model((c, p) -> p
 				.withExistingParent(name + "_display_cloth",

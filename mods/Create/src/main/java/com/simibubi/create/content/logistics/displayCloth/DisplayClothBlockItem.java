@@ -32,7 +32,7 @@ public class DisplayClothBlockItem extends BlockItem {
 		if (!isFoil(pStack))
 			return;
 
-		CreateLang.temporaryText("Item shop configured")
+		CreateLang.translate("display_cloth.shop_configured")
 			.style(ChatFormatting.GOLD)
 			.addTo(pTooltip);
 

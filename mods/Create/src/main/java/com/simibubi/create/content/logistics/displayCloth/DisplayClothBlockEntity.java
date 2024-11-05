@@ -152,14 +152,14 @@ public class DisplayClothBlockEntity extends SmartBlockEntity implements MenuPro
 		}
 
 		if (!itemInHand.isEmpty() && !addOntoList) {
-			CreateLang.temporaryText("Empty hand required to start a shopping list")
+			CreateLang.translate("stock_keeper.shopping_list_empty_hand")
 				.sendStatus(player);
 			AllSoundEvents.DENY.playOnServer(level, worldPosition);
 			return InteractionResult.SUCCESS;
 		}
 
 		if (paymentItem.isEmpty()) {
-			CreateLang.temporaryText("Shop owner must set a price first")
+			CreateLang.translate("stock_keeper.no_price_set")
 				.sendStatus(player);
 			AllSoundEvents.DENY.playOnServer(level, worldPosition);
 			return InteractionResult.SUCCESS;
@@ -173,7 +173,7 @@ public class DisplayClothBlockEntity extends SmartBlockEntity implements MenuPro
 		int stockLevel = getStockLevelForTrade(ShoppingListItem.getList(prevListItem));
 
 		if (tickerID == null) {
-			CreateLang.temporaryText("Stock keeper missing")
+			CreateLang.translate("stock_keeper.keeper_missing")
 				.style(ChatFormatting.RED)
 				.sendStatus(player);
 			AllSoundEvents.DENY.playOnServer(level, worldPosition);
@@ -181,7 +181,7 @@ public class DisplayClothBlockEntity extends SmartBlockEntity implements MenuPro
 		}
 
 		if (stockLevel == 0) {
-			CreateLang.temporaryText("Out of Stock")
+			CreateLang.translate("stock_keeper.out_of_stock")
 				.style(ChatFormatting.RED)
 				.sendStatus(player);
 			AllSoundEvents.DENY.playOnServer(level, worldPosition);
@@ -209,7 +209,7 @@ public class DisplayClothBlockEntity extends SmartBlockEntity implements MenuPro
 		}
 
 		if (list.getPurchases(worldPosition) == stockLevel) {
-			CreateLang.temporaryText("Limited stock available")
+			CreateLang.translate("stock_keeper.limited_stock")
 				.style(ChatFormatting.RED)
 				.sendStatus(player);
 			AllSoundEvents.DENY.playOnServer(level, worldPosition);
@@ -217,7 +217,7 @@ public class DisplayClothBlockEntity extends SmartBlockEntity implements MenuPro
 		} else {
 			list.addPurchases(worldPosition, 1);
 			if (!addOntoList)
-				CreateLang.temporaryText("Use this list to add more to your purchase")
+				CreateLang.translate("stock_keeper.use_list_to_add_purchases")
 					.color(0xeeeeee)
 					.sendStatus(player);
 			if (!addOntoList)

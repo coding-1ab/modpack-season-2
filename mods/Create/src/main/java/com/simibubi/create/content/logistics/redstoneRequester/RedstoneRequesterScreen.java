@@ -86,7 +86,7 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 			dontAllowPartial.green = false;
 		});
 		allowPartial.green = menu.contentHolder.allowPartialRequests;
-		allowPartial.setToolTip(CreateLang.temporaryText("Allow partial orders")
+		allowPartial.setToolTip(CreateLang.translate("gui.redstone_requester.allow_partial")
 			.component());
 		addRenderableWidget(allowPartial);
 
@@ -96,7 +96,7 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 			dontAllowPartial.green = true;
 		});
 		dontAllowPartial.green = !menu.contentHolder.allowPartialRequests;
-		dontAllowPartial.setToolTip(CreateLang.temporaryText("Must send all items")
+		dontAllowPartial.setToolTip(CreateLang.translate("gui.redstone_requester.dont_allow_partial")
 			.component());
 		addRenderableWidget(dontAllowPartial);
 
@@ -110,11 +110,13 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 		AllGuiTextures.REDSTONE_REQUESTER.render(pGuiGraphics, x, y);
 		renderPlayerInventory(pGuiGraphics, x - 3, y + 106);
 
-		Component title = CreateLang.temporaryText("Redstone Requester")
+		ItemStack stack = AllBlocks.REDSTONE_REQUESTER.asStack();
+		Component title = CreateLang.text(stack.getHoverName()
+			.getString())
 			.component();
 		pGuiGraphics.drawString(font, title, x + 100 - font.width(title) / 2, y + 4, 0x3D3C48, false);
 
-		GuiGameElement.of(AllBlocks.REDSTONE_REQUESTER.asStack())
+		GuiGameElement.of(stack)
 			.scale(3)
 			.render(pGuiGraphics, x + 220, y + 60);
 	}
@@ -141,27 +143,29 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 		if (addressBox.isHovered() && !addressBox.isFocused()) {
 			if (addressBox.getValue()
 				.isBlank())
-				graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Send order to...")
-					.color(ScrollInput.HEADER_RGB)
-					.component(),
-					CreateLang.temporaryText("Enter the address this")
-						.style(ChatFormatting.GRAY)
+				graphics.renderComponentTooltip(font,
+					List.of(CreateLang.translate("gui.redstone_requester.requester_address")
+						.color(ScrollInput.HEADER_RGB)
 						.component(),
-					CreateLang.temporaryText("order should be send to.")
-						.style(ChatFormatting.GRAY)
-						.component(),
-					CreateLang.translate("gui.schedule.lmb_edit")
-						.style(ChatFormatting.DARK_GRAY)
-						.style(ChatFormatting.ITALIC)
-						.component()),
+						CreateLang.translate("gui.redstone_requester.requester_address_tip")
+							.style(ChatFormatting.GRAY)
+							.component(),
+						CreateLang.translate("gui.redstone_requester.requester_address_tip_1")
+							.style(ChatFormatting.GRAY)
+							.component(),
+						CreateLang.translate("gui.schedule.lmb_edit")
+							.style(ChatFormatting.DARK_GRAY)
+							.style(ChatFormatting.ITALIC)
+							.component()),
 					mouseX, mouseY);
 			else
-				graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Sending order to")
-					.color(ScrollInput.HEADER_RGB)
-					.component(),
-					CreateLang.temporaryText("'" + addressBox.getValue() + "'")
-						.style(ChatFormatting.GRAY)
-						.component()),
+				graphics.renderComponentTooltip(font,
+					List.of(CreateLang.translate("gui.redstone_requester.requester_address_given")
+						.color(ScrollInput.HEADER_RGB)
+						.component(),
+						CreateLang.text("'" + addressBox.getValue() + "'")
+							.style(ChatFormatting.GRAY)
+							.component()),
 					mouseX, mouseY);
 		}
 	}
@@ -197,12 +201,11 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 		if (slotIndex >= amounts.size())
 			return tooltip;
 
-		return List.of(CreateLang.temporaryText("Send ")
-			.add(CreateLang.itemName(pStack)
-				.add(CreateLang.text(" x" + amounts.get(slotIndex))))
+		return List.of(CreateLang.translate("gui.factory_panel.send_item", CreateLang.itemName(pStack)
+			.add(CreateLang.text(" x" + amounts.get(slotIndex))))
 			.color(ScrollInput.HEADER_RGB)
 			.component(),
-			CreateLang.temporaryText("Scroll to change amount")
+			CreateLang.translate("gui.factory_panel.scroll_to_change_amount")
 				.style(ChatFormatting.DARK_GRAY)
 				.style(ChatFormatting.ITALIC)
 				.component(),

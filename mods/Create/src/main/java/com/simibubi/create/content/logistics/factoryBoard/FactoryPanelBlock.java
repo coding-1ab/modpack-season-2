@@ -188,7 +188,7 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 
 		if (!FactoryPanelBlockItem.isTuned(item)) {
 			AllSoundEvents.DENY.playOnServer(pLevel, pPos);
-			pPlayer.displayClientMessage(CreateLang.temporaryText("Tune to a transmitter before placing")
+			pPlayer.displayClientMessage(CreateLang.translate("factory_panel.tune_before_placing")
 				.component(), true);
 			return InteractionResult.FAIL;
 		}

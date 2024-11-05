@@ -25,7 +25,8 @@
     "accessor.NbtAccounterAccessor",
     "accessor.ServerLevelAccessor",
     "accessor.SystemReportAccessor",
-    "accessor.UseOnContextAccessor"
+    "accessor.UseOnContextAccessor",
+    "accessor.FluidInteractionRegistryAccessor"
   ],
   "client": [
     "accessor.AgeableListModelAccessor",

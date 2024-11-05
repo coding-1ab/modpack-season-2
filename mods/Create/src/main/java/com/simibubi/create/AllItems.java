@@ -25,6 +25,7 @@ import com.simibubi.create.content.equipment.armor.AllArmorMaterials;
 import com.simibubi.create.content.equipment.armor.BacktankItem;
 import com.simibubi.create.content.equipment.armor.BacktankItem.BacktankBlockItem;
 import com.simibubi.create.content.equipment.armor.BaseArmorItem;
+import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
 import com.simibubi.create.content.equipment.armor.CardboardHelmetItem;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
 import com.simibubi.create.content.equipment.armor.DivingHelmetItem;
@@ -63,6 +64,7 @@ import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.TagDependentIngredientItem;
 import com.tterrag.registrate.util.entry.ItemEntry;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.food.FoodProperties;
@@ -86,8 +88,12 @@ public class AllItems {
 		STURDY_SHEET = taggedIngredient("sturdy_sheet", forgeItemTag("plates/obsidian"), PLATES.tag),
 		PROPELLER = ingredient("propeller"), WHISK = ingredient("whisk"), BRASS_HAND = ingredient("brass_hand"),
 		CRAFTER_SLOT_COVER = ingredient("crafter_slot_cover"), ELECTRON_TUBE = ingredient("electron_tube"),
-		CARDBOARD_PULP = ingredient("cardboard_pulp"),
-		CARDBOARD = taggedIngredient("cardboard", forgeItemTag("plates/cardboard"));
+		CARDBOARD_PULP = ingredient("cardboard_pulp");
+
+	public static final ItemEntry<CombustibleItem> CARDBOARD = REGISTRATE.item("cardboard", CombustibleItem::new)
+		.tag(forgeItemTag("plates/cardboard"))
+		.onRegister(i -> i.setBurnTime(1000))
+		.register();
 
 	public static final ItemEntry<SequencedAssemblyItem>
 
@@ -97,10 +103,9 @@ public class AllItems {
 
 	public static final ItemEntry<Item> PRECISION_MECHANISM = ingredient("precision_mechanism");
 
-	public static final ItemEntry<Item> BLAZE_CAKE_BASE =
-		REGISTRATE.item("blaze_cake_base", Item::new)
-			.tag(AllItemTags.UPRIGHT_ON_BELT.tag)
-			.register();
+	public static final ItemEntry<Item> BLAZE_CAKE_BASE = REGISTRATE.item("blaze_cake_base", Item::new)
+		.tag(AllItemTags.UPRIGHT_ON_BELT.tag)
+		.register();
 
 	public static final ItemEntry<CombustibleItem> BLAZE_CAKE = REGISTRATE.item("blaze_cake", CombustibleItem::new)
 		.tag(AllItemTags.BLAZE_BURNER_FUEL_SPECIAL.tag, AllItemTags.UPRIGHT_ON_BELT.tag)
@@ -311,33 +316,26 @@ public class AllItems {
 
 	public static final ItemEntry<? extends BaseArmorItem>
 
-	CARDBOARD_HELMET =
-		REGISTRATE
-			.item("cardboard_helmet",
-				p -> new CardboardHelmetItem(AllArmorMaterials.CARDBOARD, ArmorItem.Type.HELMET, p,
-					Create.asResource("cardboard")))
-			.tag(forgeItemTag("armors/helmet"))
-			.register(),
+	CARDBOARD_HELMET = REGISTRATE.item("cardboard_helmet", p -> new CardboardHelmetItem(ArmorItem.Type.HELMET, p))
+		.tag(forgeItemTag("armors/helmet"))
+		.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+		.register(),
 
-		CARDBOARD_CHESTPLATE = REGISTRATE
-			.item("cardboard_chestplate",
-				p -> new BaseArmorItem(AllArmorMaterials.CARDBOARD, ArmorItem.Type.CHESTPLATE, p,
-					Create.asResource("cardboard")))
-			.tag(forgeItemTag("armors/chestplate"))
-			.register(),
+		CARDBOARD_CHESTPLATE =
+			REGISTRATE.item("cardboard_chestplate", p -> new CardboardArmorItem(ArmorItem.Type.CHESTPLATE, p))
+				.tag(forgeItemTag("armors/chestplate"))
+				.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+				.register(),
 
-		CARDBOARD_LEGGINGS = REGISTRATE
-			.item("cardboard_leggings",
-				p -> new BaseArmorItem(AllArmorMaterials.CARDBOARD, ArmorItem.Type.LEGGINGS, p,
-					Create.asResource("cardboard")))
-			.tag(forgeItemTag("armors/leggings"))
-			.register(),
+		CARDBOARD_LEGGINGS =
+			REGISTRATE.item("cardboard_leggings", p -> new CardboardArmorItem(ArmorItem.Type.LEGGINGS, p))
+				.tag(forgeItemTag("armors/leggings"))
+				.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+				.register(),
 
-		CARDBOARD_BOOTS = REGISTRATE
-			.item("cardboard_boots",
-				p -> new BaseArmorItem(AllArmorMaterials.CARDBOARD, ArmorItem.Type.BOOTS, p,
-					Create.asResource("cardboard")))
+		CARDBOARD_BOOTS = REGISTRATE.item("cardboard_boots", p -> new CardboardArmorItem(ArmorItem.Type.BOOTS, p))
 			.tag(forgeItemTag("armors/boots"))
+			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
 			.register();
 
 	public static final ItemEntry<SandPaperItem> SAND_PAPER = REGISTRATE.item("sand_paper", SandPaperItem::new)
@@ -437,7 +435,7 @@ public class AllItems {
 		REGISTRATE.item("shopping_list", ShoppingListItem::new)
 			.properties(p -> p.stacksTo(1))
 			.register();
-	
+
 	// Schematics
 
 	public static final ItemEntry<Item> EMPTY_SCHEMATIC = REGISTRATE.item("empty_schematic", Item::new)

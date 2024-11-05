@@ -66,11 +66,9 @@ public class StockTickerInteractionHandler {
 			return;
 
 		if (!stbe.behaviour.mayInteract(player)) {
-			player.displayClientMessage(
-				CreateLang.temporaryText("Logistics Network is protected. You can interact using a Shopping list.")
-					.style(ChatFormatting.RED)
-					.component(),
-				true);
+			player.displayClientMessage(CreateLang.translate("stock_keeper.locked")
+				.style(ChatFormatting.RED)
+				.component(), true);
 			return;
 		}
 
@@ -120,7 +118,7 @@ public class StockTickerInteractionHandler {
 				continue;
 
 			AllSoundEvents.DENY.playOnServer(level, player.blockPosition());
-			CreateLang.temporaryText("Purchase failed: Stock levels lower than expected")
+			CreateLang.translate("stock_keeper.stock_level_too_low")
 				.style(ChatFormatting.RED)
 				.sendStatus(player);
 			return;
@@ -137,7 +135,7 @@ public class StockTickerInteractionHandler {
 
 		if (occupiedSlots > 0) {
 			AllSoundEvents.DENY.playOnServer(level, player.blockPosition());
-			CreateLang.temporaryText("Not enough space in Cash Register")
+			CreateLang.translate("stock_keeper.cash_register_full")
 				.style(ChatFormatting.RED)
 				.sendStatus(player);
 			return;
@@ -170,7 +168,7 @@ public class StockTickerInteractionHandler {
 
 			if (simulate && tally.getTotalCount() != 0) {
 				AllSoundEvents.DENY.playOnServer(level, player.blockPosition());
-				CreateLang.temporaryText("You cannot afford this purchase")
+				CreateLang.translate("stock_keeper.too_broke")
 					.style(ChatFormatting.RED)
 					.sendStatus(player);
 				return;

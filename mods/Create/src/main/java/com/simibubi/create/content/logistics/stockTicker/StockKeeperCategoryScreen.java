@@ -94,7 +94,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		editorEditBox.mouseClicked(0, 0, 0);
 		editorEditBox.setMaxLength(28);
 		editorEditBox.setValue(index == -1 || schedule.get(index)
-			.isEmpty() ? CreateLang.temporaryText("New Category")
+			.isEmpty() ? CreateLang.translate("gui.stock_ticker.new_category")
 				.string()
 				: schedule.get(index)
 					.getHoverName()
@@ -145,7 +145,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		if (editorEditBox == null)
 			return;
 		if (!editorEditBox.getValue()
-			.equals(CreateLang.temporaryText("New Category")
+			.equals(CreateLang.translate("gui.stock_ticker.new_category")
 				.string()))
 			return;
 		if (menu.proxyInventory.getStackInSlot(0)
@@ -225,14 +225,15 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 			AllGuiTextures.STOCK_KEEPER_CATEGORY_DOWN.render(graphics, cardWidth + 12, cardHeader - 9);
 
 		graphics.renderItem(entry, 16, 0);
-		graphics.drawString(font, entry.isEmpty() ? CreateLang.temporaryText("(Empty)")
-			.string()
-			: entry.getHoverName()
-				.getString(20)
-				.stripTrailing()
-				+ (entry.getHoverName()
-					.getString()
-					.length() > 20 ? "..." : ""),
+		graphics.drawString(font,
+			entry.isEmpty() ? CreateLang.translate("gui.stock_ticker.empty_category_name_placeholder")
+				.string()
+				: entry.getHoverName()
+					.getString(20)
+					.stripTrailing()
+					+ (entry.getHoverName()
+						.getString()
+						.length() > 20 ? "..." : ""),
 			36, 4, 0x656565, false);
 
 		matrixStack.popPose();
@@ -271,8 +272,9 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 			int fieldSize = 140;
 			if (x > 0 && x <= fieldSize && y > 0 && y <= 16) {
 				List<Component> components = new ArrayList<>();
-				components.add(entry.isEmpty() ? CreateLang.temporaryText("(Empty)")
-					.component() : entry.getHoverName());
+				components
+					.add(entry.isEmpty() ? CreateLang.translate("gui.stock_ticker.empty_category_name_placeholder")
+						.component() : entry.getHoverName());
 				components.add(clickToEdit);
 				renderActionTooltip(graphics, components, mx, my);
 				if (click == 0)
@@ -281,7 +283,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 			}
 
 			if (x > fieldSize && x <= fieldSize + 16 && y > 0 && y <= 16) {
-				renderActionTooltip(graphics, ImmutableList.of(CreateLang.temporaryText("Delete Category")
+				renderActionTooltip(graphics, ImmutableList.of(CreateLang.translate("gui.stock_ticker.delete_category")
 					.component()), mx, my);
 				if (click == 0) {
 					if (!entry.isEmpty())
@@ -324,7 +326,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		}
 
 		if (x > 0 && x <= 16 && y > 0 && y <= 16) {
-			renderActionTooltip(graphics, ImmutableList.of(CreateLang.temporaryText("New Category")
+			renderActionTooltip(graphics, ImmutableList.of(CreateLang.translate("gui.stock_ticker.new_category")
 				.component()), mx, my);
 			if (click == 0)
 				startEditing(-1);
@@ -354,7 +356,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 	public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
 		if (editingItem == null)
 			return super.keyPressed(pKeyCode, pScanCode, pModifiers);
-		
+
 		InputConstants.Key mouseKey = InputConstants.getKey(pKeyCode, pScanCode);
 		boolean hitEscape = pKeyCode == GLFW.GLFW_KEY_ESCAPE;
 		boolean hitEnter = getFocused() instanceof EditBox && (pKeyCode == 257 || pKeyCode == 335);
@@ -363,7 +365,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 			stopEditing();
 			return true;
 		}
-		
+
 		return super.keyPressed(pKeyCode, pScanCode, pModifiers);
 	}
 
@@ -402,20 +404,20 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 
 		if (hoveredSlot instanceof SlotItemHandler && hoveredSlot.getItem()
 			.isEmpty()) {
-			graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Category Filter")
+			graphics.renderComponentTooltip(font, List.of(CreateLang.translate("gui.stock_ticker.category_filter")
 				.color(ScrollInput.HEADER_RGB)
 				.component(),
-				CreateLang.temporaryText("Place a List or Attribute Filter")
+				CreateLang.translate("gui.stock_ticker.category_filter_tip")
 					.style(ChatFormatting.GRAY)
 					.component(),
-				CreateLang.temporaryText("to specify which items are included")
+				CreateLang.translate("gui.stock_ticker.category_filter_tip_1")
 					.style(ChatFormatting.GRAY)
 					.component()),
 				mouseX, mouseY);
 		}
 
 		if (editorEditBox != null && editorEditBox.isHovered() && !editorEditBox.isFocused()) {
-			graphics.renderComponentTooltip(font, List.of(CreateLang.temporaryText("Category Name")
+			graphics.renderComponentTooltip(font, List.of(CreateLang.translate("gui.stock_ticker.category_name")
 				.color(ScrollInput.HEADER_RGB)
 				.component(), clickToEdit), mouseX, mouseY);
 		}
@@ -443,7 +445,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		AllGuiTextures.STOCK_KEEPER_CATEGORY_FOOTER.render(graphics, leftPos + 2, topPos + 16 + 51);
 		renderPlayerInventory(graphics, leftPos + 18, topPos + 105);
 
-		formattedcharsequence = CreateLang.temporaryText("Category Editor")
+		formattedcharsequence = CreateLang.translate("gui.stock_ticker.category_editor")
 			.component()
 			.getVisualOrderText();
 		graphics.drawString(font, formattedcharsequence, (float) (center - font.width(formattedcharsequence) / 2),
@@ -463,7 +465,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		if (!(hoveredSlot instanceof SlotItemHandler))
 			return tooltip;
 		if (!tooltip.isEmpty())
-			tooltip.set(0, CreateLang.temporaryText("Category Filter")
+			tooltip.set(0, CreateLang.translate("gui.stock_ticker.category_filter")
 				.color(ScrollInput.HEADER_RGB)
 				.component());
 		return tooltip;

@@ -3,6 +3,7 @@ package com.simibubi.create.content.equipment.tool;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
@@ -22,6 +23,7 @@ import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStack.TooltipPart;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -44,6 +46,11 @@ public class CardboardSwordItem extends SwordItem {
 		super(AllToolMaterials.CARDBOARD, 3, 1f, pProperties);
 	}
 
+	@Override
+	public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType) {
+		return 1000;
+	}
+	
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
 		return enchantment == Enchantments.KNOCKBACK;
