@@ -2,8 +2,11 @@ package com.simibubi.create.content.logistics.factoryBoard;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -11,6 +14,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.content.logistics.AddressEditBox;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.trains.station.NoShadowFontWrapper;
@@ -27,10 +31,16 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 
 public class FactoryPanelScreen extends AbstractSimiScreen {
 
@@ -46,10 +56,15 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 	private List<BigItemStack> inputConfig;
 	private List<FactoryPanelConnection> connections;
 
+	private CraftingRecipe availableCraftingRecipe;
+	private boolean craftingActive;
+	private List<BigItemStack> craftingIngredients;
+
 	public FactoryPanelScreen(FactoryPanelBehaviour behaviour) {
 		this.behaviour = behaviour;
 		minecraft = Minecraft.getInstance();
 		restocker = behaviour.panelBE().restocker;
+		availableCraftingRecipe = null;
 		updateConfigs();
 	}
 
@@ -62,6 +77,31 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 				return b == null ? new BigItemStack(ItemStack.EMPTY, 0) : new BigItemStack(b.getFilter(), c.amount);
 			})
 			.toList();
+		searchForCraftingRecipe();
+
+		craftingActive = false;
+		if (availableCraftingRecipe == null)
+			return;
+
+		outputConfig.count = availableCraftingRecipe.getResultItem(minecraft.level.registryAccess())
+			.getCount();
+		craftingIngredients = new ArrayList<>();
+		craftingActive = true;
+
+		Ingredients: for (Ingredient ingredient : availableCraftingRecipe.getIngredients()) {
+			if (ingredient.isEmpty()) {
+				craftingIngredients.add(new BigItemStack(ItemStack.EMPTY, 1));
+				continue;
+			}
+			for (BigItemStack bigItemStack : inputConfig) {
+				if (!ingredient.test(bigItemStack.stack))
+					continue;
+				craftingIngredients.add(bigItemStack);
+				continue Ingredients;
+			}
+			while (craftingIngredients.size() < 9)
+				craftingIngredients.add(new BigItemStack(ItemStack.EMPTY, 1));
+		}
 	}
 
 	@Override
@@ -94,7 +134,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		promiseExpiration.setState(behaviour.promiseClearingInterval);
 		addRenderableWidget(promiseExpiration);
 
-		if (!restocker && behaviour.targetedBy.size() < 9) {
+		if (!craftingActive && !restocker && behaviour.targetedBy.size() < 9) {
 			int slot = behaviour.targetedBy.size();
 			newInputButton = new IconButton(x + 24 + (slot % 3 * 18), y + 27 + (slot / 3 * 18), AllIcons.I_ADD);
 			newInputButton.withCallback(() -> {
@@ -106,18 +146,21 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			addRenderableWidget(newInputButton);
 		}
 
-		displayedExtraRows = Math.min((behaviour.targetedBy.size() / 3), 2);
+		displayedExtraRows = rowsToDisplay();
+	}
+
+	private int rowsToDisplay() {
+		return craftingActive ? 2 : Math.min((behaviour.targetedBy.size() / 3), 2);
 	}
 
 	private int middleHeight() {
-		return AllGuiTextures.FACTORY_PANEL_MIDDLE.getHeight() + Math.min((behaviour.targetedBy.size() / 3), 2) * 18;
+		return AllGuiTextures.FACTORY_PANEL_MIDDLE.getHeight() + rowsToDisplay() * 18;
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
-		if (inputConfig.size() != behaviour.targetedBy.size()
-			|| displayedExtraRows != Math.min((behaviour.targetedBy.size() / 3), 2)) {
+		if (inputConfig.size() != behaviour.targetedBy.size() || displayedExtraRows != rowsToDisplay()) {
 			updateConfigs();
 			init();
 		}
@@ -144,27 +187,32 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 		// RECIPE
 		int slot = 0;
+		int slotsToRender = craftingActive ? 9 : behaviour.targetedBy.size();
 		for (int frame : Iterate.zeroAndOne) {
 			AllGuiTextures sprite =
 				frame == 0 ? AllGuiTextures.FACTORY_PANEL_SLOT_FRAME : AllGuiTextures.FACTORY_PANEL_SLOT;
-			for (slot = 0; slot < behaviour.targetedBy.size(); slot++)
+			for (slot = 0; slot < slotsToRender; slot++)
 				sprite.render(graphics, x + 23 + frame + (slot % 3 * 18), y + 26 + frame + (slot / 3 * 18));
 			if (slot < 9)
 				sprite.render(graphics, x + 23 + frame + (slot % 3 * 18), y + 26 + frame + (slot / 3 * 18));
 		}
 
 		slot = 0;
-		for (BigItemStack itemStack : inputConfig) {
-			renderInputItem(graphics, slot, itemStack, mouseX, mouseY);
-			slot++;
-		}
+
+		if (craftingActive) {
+			for (BigItemStack itemStack : craftingIngredients)
+				renderInputItem(graphics, slot++, itemStack, mouseX, mouseY);
+
+		} else
+			for (BigItemStack itemStack : inputConfig)
+				renderInputItem(graphics, slot++, itemStack, mouseX, mouseY);
 
 		if (restocker)
 			renderInputItem(graphics, slot, new BigItemStack(behaviour.getFilter(), 1), mouseX, mouseY);
 
 		if (inputConfig.size() > 0) {
-			AllGuiTextures.FACTORY_PANEL_ARROW.render(graphics,
-				x + 75 + Mth.clamp(behaviour.targetedBy.size(), 0, 2) * 9, y + 16 + middleHeight() / 2);
+			int arrowOffset = Mth.clamp(slotsToRender, 0, 2);
+			AllGuiTextures.FACTORY_PANEL_ARROW.render(graphics, x + 75 + arrowOffset * 9, y + 16 + middleHeight() / 2);
 			int outputX = x + 130;
 			int outputY = y + 16 + middleHeight() / 2;
 			AllGuiTextures.FACTORY_PANEL_SLOT_FRAME.render(graphics, outputX - 2, outputY - 2);
@@ -293,10 +341,13 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		int inputY = guiTop + 28 + (slot / 3 * 18);
 
 		graphics.renderItem(itemStack.stack, inputX, inputY);
-		if (!restocker && !itemStack.stack.isEmpty())
+		if (!craftingActive && !restocker && !itemStack.stack.isEmpty())
 			graphics.renderItemDecorations(font, itemStack.stack, inputX, inputY, itemStack.count + "");
 
 		if (mouseX < inputX - 1 || mouseX >= inputX - 1 + 18 || mouseY < inputY - 1 || mouseY >= inputY - 1 + 18)
+			return;
+
+		if (craftingActive)
 			return;
 
 		if (itemStack.stack.isEmpty()) {
@@ -423,14 +474,15 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		int y = guiTop;
 
 		// Remove connections
-		for (int i = 0; i < connections.size(); i++) {
-			int inputX = x + 25 + (i % 3 * 18);
-			int inputY = y + 28 + (i / 3 * 18);
-			if (mouseX >= inputX && mouseX < inputX + 16 && mouseY >= inputY && mouseY < inputY + 16) {
-				sendIt(connections.get(i).from, false);
-				return true;
+		if (!craftingActive)
+			for (int i = 0; i < connections.size(); i++) {
+				int inputX = x + 25 + (i % 3 * 18);
+				int inputY = y + 28 + (i / 3 * 18);
+				if (mouseX >= inputX && mouseX < inputX + 16 && mouseY >= inputY && mouseY < inputY + 16) {
+					sendIt(connections.get(i).from, false);
+					return true;
+				}
 			}
-		}
 
 		// Clear promises
 		int itemY = y + 54 + middleHeight();
@@ -447,6 +499,9 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 	public boolean mouseScrolled(double mouseX, double mouseY, double pDelta) {
 		int x = guiLeft;
 		int y = guiTop;
+
+		if (craftingActive)
+			return super.mouseScrolled(mouseX, mouseY, pDelta);
 
 		for (int i = 0; i < inputConfig.size(); i++) {
 			int inputX = x + 25 + (i % 3 * 18);
@@ -486,9 +541,70 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		if (inputConfig.size() == connections.size())
 			for (int i = 0; i < inputConfig.size(); i++)
 				inputs.put(connections.get(i).from, inputConfig.get(i).count);
+
+		List<ItemStack> craftingArrangement = craftingActive ? craftingIngredients.stream()
+			.map(b -> b.stack)
+			.toList() : List.of();
+
+		FactoryPanelPosition pos = behaviour.getPanelPosition();
+		int promiseExp = promiseExpiration.getState();
+		String address = addressBox.getValue();
+
+		FactoryPanelConfigurationPacket packet = new FactoryPanelConfigurationPacket(pos, address, inputs,
+			craftingArrangement, outputConfig.count, promiseExp, toRemove, clearPromises);
 		AllPackets.getChannel()
-			.sendToServer(new FactoryPanelConfigurationPacket(behaviour.getPanelPosition(), addressBox.getValue(),
-				inputs, outputConfig.count, promiseExpiration.getState(), toRemove, clearPromises));
+			.sendToServer(packet);
+	}
+
+	private void searchForCraftingRecipe() {
+		ItemStack output = outputConfig.stack;
+		if (output.isEmpty())
+			return;
+		if (behaviour.targetedBy.isEmpty())
+			return;
+
+		Set<Item> itemsToUse = inputConfig.stream()
+			.map(b -> b.stack)
+			.filter(i -> !i.isEmpty())
+			.map(i -> i.getItem())
+			.collect(Collectors.toSet());
+
+		ClientLevel level = Minecraft.getInstance().level;
+
+		availableCraftingRecipe = level.getRecipeManager()
+			.getAllRecipesFor(RecipeType.CRAFTING)
+			.parallelStream()
+			.filter(r -> r.getSerializer() == RecipeSerializer.SHAPED_RECIPE
+				|| r.getSerializer() == RecipeSerializer.SHAPELESS_RECIPE)
+			.filter(r -> output.getItem() == r.getResultItem(level.registryAccess())
+				.getItem())
+			.filter(r -> {
+				if (AllRecipeTypes.shouldIgnoreInAutomation(r))
+					return false;
+
+				Set<Item> itemsUsed = new HashSet<>();
+				for (Ingredient ingredient : r.getIngredients()) {
+					if (ingredient.isEmpty())
+						continue;
+					boolean available = false;
+					for (BigItemStack bis : inputConfig) {
+						if (!bis.stack.isEmpty() && ingredient.test(bis.stack)) {
+							available = true;
+							itemsUsed.add(bis.stack.getItem());
+							break;
+						}
+					}
+					if (!available)
+						return false;
+				}
+
+				if (itemsUsed.size() < itemsToUse.size())
+					return false;
+
+				return true;
+			})
+			.findAny()
+			.orElse(null);
 	}
 
 }

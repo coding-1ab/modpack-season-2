@@ -71,7 +71,7 @@ public class LogisticsManager {
 	public static boolean broadcastPackageRequest(UUID freqId, RequestType type, PackageOrder order,
 		IItemHandler ignoredHandler, String address) {
 		Multimap<PackagerBlockEntity, PackagingRequest> requests =
-			findPackagersForRequest(freqId, order, ignoredHandler, address);
+			findPackagersForRequest(freqId, order, null, ignoredHandler, address);
 
 		// Check if packagers have accumulated too many packages already
 		for (PackagerBlockEntity packager : requests.keySet())
@@ -84,7 +84,8 @@ public class LogisticsManager {
 	}
 
 	public static Multimap<PackagerBlockEntity, PackagingRequest> findPackagersForRequest(UUID freqId,
-		PackageOrder order, IItemHandler ignoredHandler, String address) {
+		PackageOrder order, @Nullable PackageOrder customContext, @Nullable IItemHandler ignoredHandler,
+		String address) {
 		List<BigItemStack> stacks = order.stacks();
 		Multimap<PackagerBlockEntity, PackagingRequest> requests = HashMultimap.create();
 
@@ -95,6 +96,8 @@ public class LogisticsManager {
 
 		// First box needs to carry the order specifics for successful defrag
 		PackageOrder contextToSend = order;
+		if (customContext != null)
+			contextToSend = customContext;
 
 		// Packages from future orders should not be merged in the packager queue
 		int orderId = r.nextInt();
@@ -143,7 +146,7 @@ public class LogisticsManager {
 		for (Entry<PackagerBlockEntity, Collection<PackagingRequest>> entry : asMap.entrySet()) {
 			ArrayList<PackagingRequest> queuedRequests = new ArrayList<>(entry.getValue());
 			PackagerBlockEntity packager = entry.getKey();
-			
+
 			for (int i = 0; i < 100; i++) {
 				if (queuedRequests.isEmpty())
 					break;

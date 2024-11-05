@@ -69,6 +69,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 	public Map<FactoryPanelPosition, FactoryPanelConnection> targetedBy;
 	public Set<FactoryPanelPosition> targeting;
+	public List<ItemStack> activeCraftingArrangement;
 
 	public boolean satisfied;
 	public boolean promisedSatisfied;
@@ -99,6 +100,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		this.satisfied = false;
 		this.promisedSatisfied = false;
 		this.waitingForNetwork = false;
+		this.activeCraftingArrangement = List.of();
 		this.recipeAddress = "";
 		this.recipeOutput = 1;
 		this.active = false;
@@ -195,6 +197,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		boolean failed = false;
 
 		Multimap<UUID, BigItemStack> toRequest = HashMultimap.create();
+		List<BigItemStack> toRequestAsList = new ArrayList<>();
+
 		for (FactoryPanelConnection connection : targetedBy.values()) {
 			FactoryPanelBehaviour source = at(getWorld(), connection.from);
 			if (source == null)
@@ -209,7 +213,9 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 				continue;
 			}
 
-			toRequest.put(source.network, new BigItemStack(item, amount));
+			BigItemStack stack = new BigItemStack(item, amount);
+			toRequest.put(source.network, stack);
+			toRequestAsList.add(stack);
 			sendEffect(connection.from, true);
 		}
 
@@ -218,12 +224,22 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 		// Input items may come from differing networks
 		Map<UUID, Collection<BigItemStack>> asMap = toRequest.asMap();
+		PackageOrder requestContext = new PackageOrder(toRequestAsList);
 		List<Multimap<PackagerBlockEntity, PackagingRequest>> requests = new ArrayList<>();
 
+		// Panel may enforce item arrangement
+		if (!activeCraftingArrangement.isEmpty())
+			requestContext = new PackageOrder(activeCraftingArrangement.stream()
+				.map(BigItemStack::new)
+				.toList());
+
 		// Collect request distributions
-		for (Entry<UUID, Collection<BigItemStack>> entry : asMap.entrySet())
-			requests.add(LogisticsManager.findPackagersForRequest(entry.getKey(),
-				new PackageOrder(new ArrayList<>(entry.getValue())), null, recipeAddress));
+		for (Entry<UUID, Collection<BigItemStack>> entry : asMap.entrySet()) {
+			PackageOrder order = new PackageOrder(new ArrayList<>(entry.getValue()));
+			Multimap<PackagerBlockEntity, PackagingRequest> request =
+				LogisticsManager.findPackagersForRequest(entry.getKey(), order, requestContext, null, recipeAddress);
+			requests.add(request);
+		}
 
 		// Check if any packager is busy - cancel all
 		for (Multimap<PackagerBlockEntity, PackagingRequest> entry : requests)
@@ -478,6 +494,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		panelTag.putInt("RecipeOutput", recipeOutput);
 		panelTag.putInt("PromiseClearingInterval", promiseClearingInterval);
 		panelTag.putUUID("Freq", network);
+		panelTag.put("Craft", NBTHelper.writeItemList(activeCraftingArrangement));
 
 		if (panelBE().restocker && !clientPacket)
 			panelTag.put("Promises", restockerPromises.write());
@@ -515,6 +532,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		NBTHelper.iterateCompoundList(panelTag.getList("TargetedBy", Tag.TAG_COMPOUND),
 			c -> targetedBy.put(FactoryPanelPosition.read(c), FactoryPanelConnection.read(c)));
 
+		activeCraftingArrangement = NBTHelper.readItemList(panelTag.getList("Craft", Tag.TAG_COMPOUND));
 		recipeAddress = panelTag.getString("RecipeAddress");
 		recipeOutput = panelTag.getInt("RecipeOutput");
 
@@ -580,8 +598,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		else if (waitingForNetwork)
 			key = "factory_panel.some_links_unloaded";
 		else if (getAmount() == 0 || targetedBy.isEmpty())
-			key = getFilter().getHoverName()
-				.getString();
+			return getFilter().getHoverName()
+				.plainCopy();
 		else {
 			String stacks = upTo ? "" : "\u25A4";
 			key = getFilter().getHoverName()

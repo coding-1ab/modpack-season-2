@@ -151,6 +151,12 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			this.availableItems = availableItems;
 			return availableItems;
 		}
+		
+		if (targetInv instanceof BottomlessItemHandler bih) {
+			availableItems.add(bih.getStackInSlot(0), BigItemStack.INF);
+			this.availableItems = availableItems;
+			return availableItems;
+		}
 
 		for (int slot = 0; slot < targetInv.getSlots(); slot++)
 			availableItems.add(targetInv.getStackInSlot(slot));

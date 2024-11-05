@@ -580,6 +580,9 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 				: count >= 1000 ? ((count * 10) / 1000) / 10f + "k"
 					: count >= 100 ? count + "" : count > 0 ? " " + count : "";// " \u2714";
 
+		if (count >= BigItemStack.INF)
+			text = "+";
+
 		if (text.isBlank())
 			return;
 

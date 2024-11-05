@@ -9,14 +9,20 @@ import net.minecraft.world.item.ItemStack;
 
 public class BigItemStack {
 
+	public static final int INF = 1_000_000_000;
+	
 	public ItemStack stack;
 	public int count;
 
+	public BigItemStack(ItemStack stack) {
+		this(stack, 1);
+	}
+	
 	public BigItemStack(ItemStack stack, int count) {
 		this.stack = stack;
 		this.count = count;
 	}
-
+	
 	public CompoundTag write() {
 		CompoundTag tag = new CompoundTag();
 		tag.put("Item", stack.serializeNBT());
@@ -31,6 +37,10 @@ public class BigItemStack {
 	public void send(FriendlyByteBuf buffer) {
 		buffer.writeItem(stack);
 		buffer.writeVarInt(count);
+	}
+	
+	public boolean isInfinite() {
+		return count >= INF;
 	}
 
 	public static BigItemStack receive(FriendlyByteBuf buffer) {

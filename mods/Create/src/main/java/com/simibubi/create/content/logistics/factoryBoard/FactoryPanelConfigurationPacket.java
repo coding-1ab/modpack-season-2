@@ -1,6 +1,8 @@
 package com.simibubi.create.content.logistics.factoryBoard;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -10,23 +12,26 @@ import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.Pane
 import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 
 public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPacket<FactoryPanelBlockEntity> {
 
 	private PanelSlot slot;
 	private String address;
 	private Map<FactoryPanelPosition, Integer> inputAmounts;
+	private List<ItemStack> craftingArrangement;
 	private int outputAmount;
 	private int promiseClearingInterval;
 	private FactoryPanelPosition removeConnection;
 	private boolean clearPromises;
 
 	public FactoryPanelConfigurationPacket(FactoryPanelPosition position, String address,
-		Map<FactoryPanelPosition, Integer> inputAmounts, int outputAmount, int promiseClearingInterval,
-		@Nullable FactoryPanelPosition removeConnection, boolean clearPromises) {
+		Map<FactoryPanelPosition, Integer> inputAmounts, List<ItemStack> craftingArrangement, int outputAmount,
+		int promiseClearingInterval, @Nullable FactoryPanelPosition removeConnection, boolean clearPromises) {
 		super(position.pos());
 		this.address = address;
 		this.inputAmounts = inputAmounts;
+		this.craftingArrangement = craftingArrangement;
 		this.outputAmount = outputAmount;
 		this.promiseClearingInterval = promiseClearingInterval;
 		this.removeConnection = removeConnection;
@@ -48,6 +53,8 @@ public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPac
 				.send(buffer);
 			buffer.writeVarInt(entry.getValue());
 		}
+		buffer.writeVarInt(craftingArrangement.size());
+		craftingArrangement.forEach(buffer::writeItem);
 		buffer.writeVarInt(outputAmount);
 		buffer.writeVarInt(promiseClearingInterval);
 		buffer.writeBoolean(removeConnection != null);
@@ -64,6 +71,10 @@ public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPac
 		int entries = buffer.readVarInt();
 		for (int i = 0; i < entries; i++)
 			inputAmounts.put(FactoryPanelPosition.receive(buffer), buffer.readVarInt());
+		int craftEntries = buffer.readVarInt();
+		craftingArrangement = new ArrayList<>();
+		for (int i = 0; i < craftEntries; i++)
+			craftingArrangement.add(buffer.readItem());
 		outputAmount = buffer.readVarInt();
 		promiseClearingInterval = buffer.readVarInt();
 		if (buffer.readBoolean())
@@ -88,6 +99,7 @@ public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPac
 
 		behaviour.recipeOutput = outputAmount;
 		behaviour.promiseClearingInterval = promiseClearingInterval;
+		behaviour.activeCraftingArrangement = craftingArrangement;
 
 		if (removeConnection != null) {
 			behaviour.targetedBy.remove(removeConnection);

@@ -58,13 +58,15 @@ public class InventorySummary {
 		if (count == 0 || stack.isEmpty())
 			return;
 
-		totalCount += count;
+		if (totalCount < BigItemStack.INF)
+			totalCount += count;
 
 		List<BigItemStack> stacks = items.computeIfAbsent(stack.getItem(), $ -> Lists.newArrayList());
 		for (BigItemStack existing : stacks) {
 			ItemStack existingStack = existing.stack;
 			if (ItemHandlerHelper.canItemStacksStack(existingStack, stack)) {
-				existing.count += count;
+				if (existing.count < BigItemStack.INF)
+					existing.count += count;
 				return;
 			}
 		}
@@ -101,7 +103,7 @@ public class InventorySummary {
 		}
 		return stacksByCount;
 	}
-	
+
 	public List<BigItemStack> getStacksByCount() {
 		if (stacksByCount == null) {
 			stacksByCount = new ArrayList<>();
