@@ -4,8 +4,8 @@
 
 ### Additions
 - Farmer Villagers are now capable of planting and harvesting FD crops!
-  - They can plant Cabbage, Tomato and Onion. Rice is excluded due to unique planting conditions. However...
-  - They can harvest all 4 crops once fully mature, and will collect the drops. This includes the top half of Rice, which means they can harvest it indefinitely;
+  - They can plant, harvest and collect the drops for Cabbage, Tomato and Onion;
+  - Rice is currently excluded from this equation, as farmer AI wasn't able to handle it properly without extensive changes.
 - Added tag: `farmersdelight:campfire_signal_smoke`. Blocks in this tag will cause Campfires to emit "signal smoke", like the Hay Bale;
 
 ### Updates
