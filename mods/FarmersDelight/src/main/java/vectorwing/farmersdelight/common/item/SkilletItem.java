@@ -102,6 +102,11 @@ public class SkilletItem extends BlockItem
 		return true;
 	}
 
+	@Override
+	public void postHurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+		stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
+	}
+
 	private static boolean isPlayerNearHeatSource(Player player, LevelReader level) {
 		if (player.isOnFire()) {
 			return true;

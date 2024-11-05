@@ -17,6 +17,14 @@
 - `tomatoes` were temporarily removed from the `crops` tag, as bee pollination was breaking ropelogged vines unpredictably;
   - This will likely be addressed in the next major release;
 
+### Fixes
+- Fix meal duplication when using containers against a Cooking Pot block, then closing and reloading the world;
+- (1.21) Fixed Kelp Roll (whole) having wrong food stats;
+- (1.21) Fixed Skillet not being enchantable in an anvil;
+- (1.21) Fixed Knives being unable to receive Knockback and Looting;
+- (1.21) Fixed Cutting Boards being unable to handle two valid tools for the same input (thanks, Lance5057!);
+- (1.21) Fixed Skillets not losing durability when attacking mobs;
+
 ### Translations
 - Added:
   - be_by (thanks, observr1!)
@@ -34,13 +42,6 @@
   - vi_vn (thanks, godkyo98!)
   - zh_cn (thanks, DuckDuckStudio!)
   - zh_tw (thanks, DuckDuckStudio and FuGu0416!)
-
-### Fixes
-- Fix meal duplication when using containers against a Cooking Pot block, then closing and reloading the world;
-- (1.21) Fixed Kelp Roll (whole) having wrong food stats;
-- (1.21) Fixed Skillet not being enchantable in an anvil;
-- (1.21) Fixed Knives being unable to receive Knockback and Looting;
-- (1.21) Fixed Cutting Boards being unable to handle two valid tools for the same input (thanks, Lance5057!);
 
 ## 1.2.4a (1.21)
 
