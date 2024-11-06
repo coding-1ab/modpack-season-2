@@ -293,6 +293,7 @@ import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -1808,7 +1809,7 @@ public class AllBlocks {
 			.transform(BuilderTransformers.crate("creative"))
 			.properties(p -> p.mapColor(MapColor.COLOR_PURPLE))
 			.register();
-	
+
 	public static final BlockEntry<ItemVaultBlock> ITEM_VAULT = REGISTRATE.block("item_vault", ItemVaultBlock::new)
 		.initialProperties(SharedProperties::softMetal)
 		.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
@@ -1885,6 +1886,22 @@ public class AllBlocks {
 			.tag(AllBlockTags.POSTBOXES.tag)
 			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.create.package_postbox"))
 			.item(PackagePortItem::new)
+			.recipe((c, p) -> {
+				ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, c.get())
+					.define('D', colour.getTag())
+					.define('B', Items.BARREL)
+					.define('A', AllItems.ANDESITE_ALLOY)
+					.pattern("D")
+					.pattern("B")
+					.pattern("A")
+					.unlockedBy("has_barrel", RegistrateRecipeProvider.has(Items.BARREL))
+					.save(p, Create.asResource("crafting/logistics/" + c.getName()));
+				ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, c.get())
+					.requires(colour.getTag())
+					.requires(AllItemTags.POSTBOXES.tag)
+					.unlockedBy("has_postbox", RegistrateRecipeProvider.has(AllItemTags.POSTBOXES.tag))
+					.save(p, Create.asResource("crafting/logistics/" + c.getName() + "_from_other_postbox"));
+			})
 			.model((c, p) -> p.withExistingParent(colourName + "_postbox", p.modLoc("block/package_postbox/item"))
 				.texture("0", p.modLoc("block/post_box/post_box_" + colourName))
 				.texture("1", p.modLoc("block/post_box/post_box_" + colourName + "_closed")))
@@ -1943,31 +1960,49 @@ public class AllBlocks {
 	public static final DyedBlockList<DisplayClothBlock> TABLE_CLOTHS = new DyedBlockList<>(colour -> {
 		String colourName = colour.getSerializedName();
 		return REGISTRATE.block(colourName + "_table_cloth", p -> new DisplayClothBlock(p, colour))
-			.transform(BuilderTransformers.tableCloth(colourName, () -> Blocks.BLACK_CARPET, false))
+			.transform(BuilderTransformers.tableCloth(colourName, () -> Blocks.BLACK_CARPET, true))
 			.properties(p -> p.mapColor(colour))
+			.recipe((c, p) -> {
+				ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, c.get(), 2)
+					.requires(DyeHelper.getWoolOfDye(colour))
+					.requires(AllItems.ANDESITE_ALLOY)
+					.unlockedBy("has_wool", RegistrateRecipeProvider.has(ItemTags.WOOL))
+					.save(p, Create.asResource("crafting/logistics/" + c.getName()));
+				ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, c.get())
+					.requires(colour.getTag())
+					.requires(AllItemTags.DYED_TABLE_CLOTHS.tag)
+					.unlockedBy("has_postbox", RegistrateRecipeProvider.has(AllItemTags.DYED_TABLE_CLOTHS.tag))
+					.save(p, Create.asResource("crafting/logistics/" + c.getName() + "_from_other_table_cloth"));
+			})
 			.register();
 	});
 
 	public static final BlockEntry<DisplayClothBlock> ANDESITE_DISPLAY_CLOTH =
 		REGISTRATE.block("andesite_table_cloth", p -> new DisplayClothBlock(p, "andesite"))
-			.transform(BuilderTransformers.tableCloth("andesite", SharedProperties::stone, true))
+			.transform(BuilderTransformers.tableCloth("andesite", SharedProperties::stone, false))
 			.properties(p -> p.mapColor(MapColor.STONE)
 				.requiresCorrectToolForDrops())
+			.recipe((c, p) -> p.stonecutting(DataIngredient.items(AllItems.ANDESITE_ALLOY.get()),
+				RecipeCategory.DECORATIONS, c::get, 2))
 			.transform(pickaxeOnly())
 			.register();
 
 	public static final BlockEntry<DisplayClothBlock> BRASS_DISPLAY_CLOTH =
 		REGISTRATE.block("brass_table_cloth", p -> new DisplayClothBlock(p, "brass"))
-			.transform(BuilderTransformers.tableCloth("brass", SharedProperties::softMetal, true))
+			.transform(BuilderTransformers.tableCloth("brass", SharedProperties::softMetal, false))
 			.properties(p -> p.mapColor(MapColor.TERRACOTTA_YELLOW)
 				.requiresCorrectToolForDrops())
+			.recipe((c, p) -> p.stonecutting(DataIngredient.tag(AllTags.forgeItemTag("ingots/brass")),
+				RecipeCategory.DECORATIONS, c::get, 2))
 			.transform(pickaxeOnly())
 			.register();
 
 	public static final BlockEntry<DisplayClothBlock> COPPER_DISPLAY_CLOTH =
 		REGISTRATE.block("copper_table_cloth", p -> new DisplayClothBlock(p, "copper"))
-			.transform(BuilderTransformers.tableCloth("copper", SharedProperties::copperMetal, true))
+			.transform(BuilderTransformers.tableCloth("copper", SharedProperties::copperMetal, false))
 			.properties(p -> p.requiresCorrectToolForDrops())
+			.recipe((c, p) -> p.stonecutting(DataIngredient.tag(AllTags.forgeItemTag("ingots/copper")),
+				RecipeCategory.DECORATIONS, c::get, 2))
 			.transform(pickaxeOnly())
 			.register();
 

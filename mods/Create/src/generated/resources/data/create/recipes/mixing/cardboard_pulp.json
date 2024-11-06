@@ -2,31 +2,31 @@
   "type": "create:mixing",
   "ingredients": [
     {
-      "item": "minecraft:paper"
+      "tag": "create:pulpifiable"
     },
     {
-      "item": "minecraft:paper"
+      "tag": "create:pulpifiable"
     },
     {
-      "item": "minecraft:paper"
+      "tag": "create:pulpifiable"
     },
     {
-      "item": "minecraft:paper"
+      "tag": "create:pulpifiable"
     },
     {
-      "item": "minecraft:paper"
+      "tag": "create:pulpifiable"
     },
     {
-      "item": "minecraft:paper"
+      "tag": "create:pulpifiable"
     },
     {
-      "item": "minecraft:paper"
+      "tag": "create:pulpifiable"
     },
     {
-      "item": "minecraft:paper"
+      "tag": "create:pulpifiable"
     },
     {
-      "item": "minecraft:paper"
+      "tag": "create:pulpifiable"
     },
     {
       "amount": 1000,
