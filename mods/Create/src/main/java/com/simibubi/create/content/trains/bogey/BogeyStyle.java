@@ -12,7 +12,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBogeyStyles;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.trains.bogey.BogeySizes.BogeySize;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -112,7 +112,7 @@ public class BogeyStyle {
 		protected final ResourceLocation cycleGroup;
 		protected final Map<BogeySizes.BogeySize, Supplier<? extends AbstractBogeyBlock<?>>> sizes = new HashMap<>();
 
-		protected Component displayName = Lang.translateDirect("bogey.style.invalid");
+		protected Component displayName = CreateLang.translateDirect("bogey.style.invalid");
 		protected Supplier<SoundEvent> soundEvent = AllSoundEvents.TRAIN2::getMainEvent;
 		protected ParticleOptions contactParticle = ParticleTypes.CRIT;
 		protected ParticleOptions smokeParticle = ParticleTypes.POOF;
