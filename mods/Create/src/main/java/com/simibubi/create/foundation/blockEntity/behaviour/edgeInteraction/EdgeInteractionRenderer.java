@@ -21,6 +21,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -107,13 +108,13 @@ public class EdgeInteractionRenderer {
 		}
 
 		@Override
-		public Vec3 getLocalOffset(BlockState state) {
+		public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
 			return add;
 		}
 
 		@Override
-		public void rotate(BlockState state, PoseStack ms) {
-			super.rotate(state, ms);
+		public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
+			super.rotate(level, pos, state, ms);
 		}
 
 	}

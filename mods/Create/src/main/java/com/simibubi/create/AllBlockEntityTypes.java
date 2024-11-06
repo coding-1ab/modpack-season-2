@@ -81,6 +81,9 @@ import com.simibubi.create.content.kinetics.base.SingleRotatingVisual;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
 import com.simibubi.create.content.kinetics.belt.BeltRenderer;
 import com.simibubi.create.content.kinetics.belt.BeltVisual;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRenderer;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorVisual;
 import com.simibubi.create.content.kinetics.chainDrive.ChainGearshiftBlockEntity;
 import com.simibubi.create.content.kinetics.clock.CuckooClockBlockEntity;
 import com.simibubi.create.content.kinetics.clock.CuckooClockRenderer;
@@ -163,9 +166,24 @@ import com.simibubi.create.content.logistics.depot.DepotRenderer;
 import com.simibubi.create.content.logistics.depot.EjectorBlockEntity;
 import com.simibubi.create.content.logistics.depot.EjectorRenderer;
 import com.simibubi.create.content.logistics.depot.EjectorVisual;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothBlockEntity;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothRenderer;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlockEntity;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelRenderer;
 import com.simibubi.create.content.logistics.funnel.FunnelBlockEntity;
 import com.simibubi.create.content.logistics.funnel.FunnelRenderer;
 import com.simibubi.create.content.logistics.funnel.FunnelVisual;
+import com.simibubi.create.content.logistics.itemHatch.ItemHatchBlockEntity;
+import com.simibubi.create.content.logistics.packagePort.frogport.FrogportBlockEntity;
+import com.simibubi.create.content.logistics.packagePort.frogport.FrogportRenderer;
+import com.simibubi.create.content.logistics.packagePort.frogport.FrogportVisual;
+import com.simibubi.create.content.logistics.packagePort.postbox.PostboxBlockEntity;
+import com.simibubi.create.content.logistics.packagePort.postbox.PostboxRenderer;
+import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
+import com.simibubi.create.content.logistics.packager.PackagerRenderer;
+import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
+import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlockEntity;
+import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlockEntity;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelRenderer;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelVisual;
@@ -179,12 +197,15 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerVisual;
 import com.simibubi.create.content.redstone.analogLever.AnalogLeverBlockEntity;
 import com.simibubi.create.content.redstone.analogLever.AnalogLeverRenderer;
 import com.simibubi.create.content.redstone.analogLever.AnalogLeverVisual;
+import com.simibubi.create.content.redstone.deskBell.DeskBellBlockEntity;
+import com.simibubi.create.content.redstone.deskBell.DeskBellRenderer;
 import com.simibubi.create.content.redstone.diodes.BrassDiodeRenderer;
 import com.simibubi.create.content.redstone.diodes.BrassDiodeVisual;
 import com.simibubi.create.content.redstone.diodes.PulseExtenderBlockEntity;
 import com.simibubi.create.content.redstone.diodes.PulseRepeaterBlockEntity;
+import com.simibubi.create.content.redstone.diodes.PulseTimerBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
-import com.simibubi.create.content.redstone.displayLink.DisplayLinkRenderer;
+import com.simibubi.create.content.redstone.displayLink.LinkBulbRenderer;
 import com.simibubi.create.content.redstone.displayLink.source.NixieTubeDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.target.NixieTubeDisplayTarget;
 import com.simibubi.create.content.redstone.link.RedstoneLinkBlockEntity;
@@ -353,6 +374,13 @@ public class AllBlockEntityTypes {
 		.renderer(() -> GantryCarriageRenderer::new)
 		.register();
 
+	public static final BlockEntityEntry<ChainConveyorBlockEntity> CHAIN_CONVEYOR = REGISTRATE
+		.blockEntity("chain_conveyor", ChainConveyorBlockEntity::new)
+		.visual(() -> ChainConveyorVisual::new)
+		.validBlocks(AllBlocks.CHAIN_CONVEYOR)
+		.renderer(() -> ChainConveyorRenderer::new)
+		.register();
+
 	public static final BlockEntityEntry<PumpBlockEntity> MECHANICAL_PUMP = REGISTRATE
 		.blockEntity("mechanical_pump", PumpBlockEntity::new)
 		.visual(() -> PumpCogVisual::new)
@@ -463,6 +491,56 @@ public class AllBlockEntityTypes {
 	public static final BlockEntityEntry<ItemVaultBlockEntity> ITEM_VAULT = REGISTRATE
 		.blockEntity("item_vault", ItemVaultBlockEntity::new)
 		.validBlocks(AllBlocks.ITEM_VAULT)
+		.register();
+	
+	public static final BlockEntityEntry<ItemHatchBlockEntity> ITEM_HATCH = REGISTRATE
+		.blockEntity("item_hatch", ItemHatchBlockEntity::new)
+		.validBlocks(AllBlocks.ITEM_HATCH)
+		.renderer(() -> SmartBlockEntityRenderer::new)
+		.register();
+
+	public static final BlockEntityEntry<PackagerBlockEntity> PACKAGER = REGISTRATE
+		.blockEntity("packager", PackagerBlockEntity::new)
+		.validBlocks(AllBlocks.PACKAGER)
+		.renderer(() -> PackagerRenderer::new)
+		.register();
+
+	public static final BlockEntityEntry<FrogportBlockEntity> PACKAGE_FROGPORT = REGISTRATE
+		.blockEntity("package_frogport", FrogportBlockEntity::new)
+		.visual(() -> FrogportVisual::new, false)
+		.validBlocks(AllBlocks.PACKAGE_FROGPORT)
+		.renderer(() -> FrogportRenderer::new)
+		.register();
+	
+	public static final BlockEntityEntry<PostboxBlockEntity> PACKAGE_POSTBOX = REGISTRATE
+		.blockEntity("package_postbox", PostboxBlockEntity::new)
+		.validBlocks(AllBlocks.PACKAGE_POSTBOXES.toArray())
+		.renderer(() -> PostboxRenderer::new)
+		.register();
+
+	public static final BlockEntityEntry<DisplayClothBlockEntity> DISPLAY_CLOTH =
+		REGISTRATE.blockEntity("display_cloth", DisplayClothBlockEntity::new)
+			.validBlocks(AllBlocks.TABLE_CLOTHS.toArray())
+			.validBlock(AllBlocks.ANDESITE_DISPLAY_CLOTH)
+			.validBlock(AllBlocks.BRASS_DISPLAY_CLOTH)
+			.validBlock(AllBlocks.COPPER_DISPLAY_CLOTH)
+			.renderer(() -> DisplayClothRenderer::new)
+			.register();
+
+	public static final BlockEntityEntry<PackagerLinkBlockEntity> PACKAGER_LINK = REGISTRATE
+		.blockEntity("packager_link", PackagerLinkBlockEntity::new)
+		.validBlocks(AllBlocks.STOCK_LINK)
+		.renderer(() -> LinkBulbRenderer::new)
+		.register();
+
+	public static final BlockEntityEntry<StockTickerBlockEntity> STOCK_TICKER = REGISTRATE
+		.blockEntity("stock_ticker", StockTickerBlockEntity::new)
+		.validBlocks(AllBlocks.STOCK_TICKER)
+		.register();
+
+	public static final BlockEntityEntry<RedstoneRequesterBlockEntity> REDSTONE_REQUESTER = REGISTRATE
+		.blockEntity("redstone_requester", RedstoneRequesterBlockEntity::new)
+		.validBlocks(AllBlocks.REDSTONE_REQUESTER)
 		.register();
 
 	public static final BlockEntityEntry<MechanicalPistonBlockEntity> MECHANICAL_PISTON = REGISTRATE
@@ -717,6 +795,12 @@ public class AllBlockEntityTypes {
 		.renderer(() -> PlacardRenderer::new)
 		.register();
 
+	public static final BlockEntityEntry<FactoryPanelBlockEntity> FACTORY_PANEL =
+		REGISTRATE.blockEntity("factory_panel", FactoryPanelBlockEntity::new)
+			.validBlocks(AllBlocks.FACTORY_GAUGE)
+			.renderer(() -> FactoryPanelRenderer::new)
+			.register();
+
 	public static final BlockEntityEntry<CartAssemblerBlockEntity> CART_ASSEMBLER = REGISTRATE
 		.blockEntity("cart_assembler", CartAssemblerBlockEntity::new)
 		.validBlocks(AllBlocks.CART_ASSEMBLER)
@@ -742,7 +826,7 @@ public class AllBlockEntityTypes {
 	public static final BlockEntityEntry<DisplayLinkBlockEntity> DISPLAY_LINK = REGISTRATE
 		.blockEntity("display_link", DisplayLinkBlockEntity::new)
 		.validBlocks(AllBlocks.DISPLAY_LINK)
-		.renderer(() -> DisplayLinkRenderer::new)
+		.renderer(() -> LinkBulbRenderer::new)
 		.register();
 
 	public static final BlockEntityEntry<ThresholdSwitchBlockEntity> THRESHOLD_SWITCH = REGISTRATE
@@ -798,6 +882,13 @@ public class AllBlockEntityTypes {
 		.renderer(() -> BrassDiodeRenderer::new)
 		.register();
 
+	public static final BlockEntityEntry<PulseTimerBlockEntity> PULSE_TIMER = REGISTRATE
+		.blockEntity("pulse_timer", PulseTimerBlockEntity::new)
+		.visual(() -> BrassDiodeVisual::new, false)
+		.validBlocks(AllBlocks.PULSE_TIMER)
+		.renderer(() -> BrassDiodeRenderer::new)
+		.register();
+
 	public static final BlockEntityEntry<LecternControllerBlockEntity> LECTERN_CONTROLLER = REGISTRATE
 		.blockEntity("lectern_controller", LecternControllerBlockEntity::new)
 		.validBlocks(AllBlocks.LECTERN_CONTROLLER)
@@ -822,6 +913,12 @@ public class AllBlockEntityTypes {
 		.blockEntity("cursed_bell", HauntedBellBlockEntity::new)
 		.validBlocks(AllBlocks.HAUNTED_BELL)
 		.renderer(() -> BellRenderer::new)
+		.register();
+	
+	public static final BlockEntityEntry<DeskBellBlockEntity> DESK_BELL = REGISTRATE
+		.blockEntity("desk_bell", DeskBellBlockEntity::new)
+		.validBlocks(AllBlocks.DESK_BELL)
+		.renderer(() -> DeskBellRenderer::new)
 		.register();
 
 	public static final BlockEntityEntry<ToolboxBlockEntity> TOOLBOX = REGISTRATE

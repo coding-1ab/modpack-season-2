@@ -10,6 +10,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -81,6 +82,14 @@ public interface ValueSettingsBehaviour extends ClipboardCloneable {
 				1.125f);
 	}
 
-	default void onShortInteract(Player player, InteractionHand hand, Direction side) {}
+	default void onShortInteract(Player player, InteractionHand hand, Direction side, BlockHitResult hitResult) {}
 
+	default boolean bypassesInput(ItemStack mainhandItem) {
+		return false;
+	}
+	
+	default int netId() {
+		return 0;
+	}
+	
 }

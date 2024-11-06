@@ -47,6 +47,10 @@
 	"item.create.attribute_filter.tooltip.condition1": "When R-Clicked",
 	"item.create.attribute_filter.tooltip.behaviour1": "Opens the _configuration interface_.",
 
+	"item.create.package_filter.tooltip.summary": "_Matches packaged items_ by their targeted _address_. Can be used in _Filter Slots_ of Create's Components",
+	"item.create.package_filter.tooltip.condition1": "When R-Clicked",
+	"item.create.package_filter.tooltip.behaviour1": "Opens the _configuration interface_.",
+
 	"item.create.empty_schematic.tooltip.summary": "Used as a recipe ingredient and for writing at the _Schematic Table_.",
 
 	"item.create.schematic.tooltip.summary": "Holds a structure to be positioned and placed into the world. Position the Hologram as desired and use a _Schematicannon_ to build it.",
@@ -143,6 +147,12 @@
 	"item.create.netherite_backtank.tooltip.condition2": "When placed, Powered by Kinetics",
 	"item.create.netherite_backtank.tooltip.behaviour2": "_Collects_ _Pressurized_ _Air_ at a rate depending on the Rotational Speed.",
 
+	"item.create.cardboard_armor.tooltip.summary": "_Wearable_ _equipment_ for increased _style_ and _stealth_.",
+	"item.create.cardboard_armor.tooltip.condition1": "When full set equipped",
+	"item.create.cardboard_armor.tooltip.behaviour1": "_Sneak_ to activate an inconspicuous _disguise_.",
+
+	"item.create.cardboard_sword.tooltip.summary": "Bonk. A _mostly_ _harmless_, yet powerful weapon of choice.",
+
 	"block.create.placard.tooltip.summary": "_Frame_ your _items_ in brass using this fancy wall panel. Safe for contraptions!",
 	"block.create.placard.tooltip.condition1": "When R-Clicked with Item",
 	"block.create.placard.tooltip.behaviour1": "_Adds_ the held _item_ to the Placard. _Emits_ a brief _Redstone_ signal if a matching item was present already.",
@@ -174,6 +184,10 @@
 	"item.create.experience_nugget.tooltip.behaviour1": "_Redeems_ _Experience_ points contained within.",
 
 	"block.create.peculiar_bell.tooltip.summary": "A decorative _Brass Bell_. Placing it right above open _Soul Fire_ may have side-effects...",
+	
+	"block.create.desk_bell.tooltip.summary": "Ring for Service! Emits a _redstone signal_ when activated.",
+	"block.create.desk_bell.tooltip.condition1": "When attached to Elevator Contraption",
+	"block.create.desk_bell.tooltip.behaviour1": "_Plays a sound_ when arriving at the _target floor_.",
 
 	"block.create.haunted_bell.tooltip.summary": "A _Cursed Bell_ haunted by lost souls of the Nether.",
 	"block.create.haunted_bell.tooltip.condition1": "When Held or Rang",
@@ -186,6 +200,27 @@
 	"block.create.copycat_step.tooltip.summary": "_Converts_ any _full block_ into a decorative step.",
 	"block.create.copycat_step.tooltip.condition1": "When R-Clicked",
 	"block.create.copycat_step.tooltip.behaviour1": "Applies _held item_ as its _material_ if possible. _Click again_ to cycle _orientation_ or _powered_ state. Use a _Wrench_ to _reset_ the material.",
+
+	"block.create.item_hatch.tooltip.summary": "_Quickly solves_ your _inventory_ clutter and makes it someone else's problem.",
+	"block.create.item_hatch.tooltip.condition1": "When R-Clicked",
+	"block.create.item_hatch.tooltip.behaviour1": "_Deposits_ your items into the _container_ it is placed on. _Hotbar items_ and items _with contents_ will _not_ be transferred.",
+
+	
+
+	"block.create.chain_conveyor.tooltip.summary": "[ponder] Connect with chains to form conveyor networks. Use frogports to transport packages on them. Use wrench to take a ride.",
+	"block.create.packager.tooltip.summary": "[ponder] Creates packages from attached inventory on redstone. Attach sign to specify target address. Alternatively, attach stock link to submit inventory contents to a logistics network.",
+	"block.create.package_frogport.tooltip.summary": "[ponder] Click a chain conveyor to link then place. Moves packages to and from chains based on their address. Set address filter in UI. Matching packages will be removed from chains and vice versa.",
+	"block.create.package_postbox.tooltip.summary": "[ponder] Click a train station to link then place. Moves packages to and from trains based on their address. Set address filter in UI. Matching packages will be removed from trains and vice versa.",
+	"block.create.stock_link.tooltip.summary": "[ponder] Attach to packager to make its target inventory available to request from. Click other links before placement to share their frequency. No range limitations",
+	"block.create.stock_ticker.tooltip.summary": "[ponder] Click stock link before placement to use its frequency. Needs an adjacent entity on a seat as its stock keeper. Click the entity to request items from any linked packagers to a given address. Click the stock ticker block to organise displayed items into categories.",
+	"block.create.redstone_requester.tooltip.summary": "[ponder] Click stock link before placement to use its frequency. Open UI to specify items requested to an address when a redstone pulse is received. Alternatively this request can be configured at a stock keeper before placement.",
+	"block.create.factory_gauge.tooltip.summary": "[ponder] Click stock link before placement to use its frequency. Place item to monitor in filter slot. Hold click to specify a target amount to maintain in storage.",
+	"block.create.factory_gauge.tooltip.condition1": "When attached to Packager",
+	"block.create.factory_gauge.tooltip.behaviour1": "Restocker mode: Panel requests items from the network to the specified address until the target amount is in the container. Short click the panel to set an address.",
+	"block.create.factory_gauge.tooltip.condition2": "When not attached to Packager",
+	"block.create.factory_gauge.tooltip.behaviour2": "Recipe mode: Panel requests ingredients to an address until the target amounted of the output item is found on the network (e.g. Send 1 Log to 'saw' and expect 6 Planks, until at least 64 Planks on network). Short click the panel to set an address and connect other panels as input items. Panels specifying an output item can also be reused as an input for other panels.",
+	"block.create.table_cloth.tooltip.summary": "[ponder] Can be used for decoration, click with item to display them. Alternatively, when used on a stock keeper, specify a request from your network that can be purchased by other players. The cost can be specified after placing the configured table cloth.",
+	"block.create.pulse_timer.tooltip.summary": "[ponder] Set a delay using the input slot. Repeatedly emits redstone pulses unless the input side is powered by a constant signal.",
 
 	"block.create.clipboard.tooltip.summary": "_Keeps your notes_ and makes you look more professional.",
 	"block.create.clipboard.tooltip.condition1": "When R-Clicked",

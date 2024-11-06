@@ -9,6 +9,7 @@ import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -35,6 +36,9 @@ import com.simibubi.create.content.kinetics.crank.ValveHandleBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogCTBehaviour;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogwheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedShaftBlock;
+import com.simibubi.create.content.logistics.box.PackageItem;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothBlockItem;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothModel;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock.Shape;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelItem;
@@ -43,15 +47,21 @@ import com.simibubi.create.content.trains.bogey.StandardBogeyBlock;
 import com.simibubi.create.foundation.block.ItemUseOverrides;
 import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import com.simibubi.create.foundation.block.connected.HorizontalCTBehaviour;
+import com.simibubi.create.foundation.item.ItemDescription;
 import com.tterrag.registrate.builders.BlockBuilder;
+import com.tterrag.registrate.builders.ItemBuilder;
+import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.DataIngredient;
+import com.tterrag.registrate.util.nullness.NonNullSupplier;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -102,7 +112,8 @@ public class BuilderTransformers {
 			.blockstate((c, p) -> BlockStateGen.horizontalAxisBlock(c, p, s -> p.models()
 				.getExistingFile(p.modLoc("block/track/bogey/top"))))
 			.loot((p, l) -> p.dropOther(l, AllBlocks.RAILWAY_CASING.get()))
-			.onRegister(block -> AbstractBogeyBlock.registerStandardBogey(CatnipServices.REGISTRIES.getKeyOrThrow(block)));
+			.onRegister(
+				block -> AbstractBogeyBlock.registerStandardBogey(CatnipServices.REGISTRIES.getKeyOrThrow(block)));
 	}
 
 	public static <B extends CopycatBlock, P> NonNullUnaryOperator<BlockBuilder<B, P>> copycat() {
@@ -457,6 +468,45 @@ public class BuilderTransformers {
 			.model((c, p) -> p.withExistingParent(c.getName(), p.modLoc("block/" + c.getName())))
 			.tag(AllItemTags.CONTRAPTION_CONTROLLED.tag)
 			.build();
+	}
+
+	public static <B extends PackageItem> NonNullUnaryOperator<ItemBuilder<B, CreateRegistrate>> packageItem(
+		String material, int diameter, int height) {
+		return b -> b.properties(p -> p.stacksTo(1))
+			.model((c, p) -> p.withExistingParent(c.getName(),
+				p.modLoc("item/packages/" + material + "_" + diameter + "x" + height)))
+			.lang(material.substring(0, 1)
+				.toUpperCase(Locale.ROOT) + material.substring(1) + " Package");
+	}
+
+	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> tableCloth(String name,
+		NonNullSupplier<? extends Block> initialProps, boolean dyed) {
+		return b -> {
+			ItemBuilder<DisplayClothBlockItem, BlockBuilder<B, P>> item = b.initialProperties(initialProps)
+				.addLayer(() -> RenderType::cutoutMipped)
+				.blockstate((c, p) -> p.simpleBlock(c.get(), p.models()
+					.withExistingParent(name + "_table_cloth", p.modLoc("block/table_cloth/block"))
+					.texture("0", p.modLoc("block/table_cloth/" + name))))
+				.onRegister(CreateRegistrate.blockModel(() -> DisplayClothModel::new))
+				.tag(AllBlockTags.TABLE_CLOTHS.tag)
+				.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.create.table_cloth"))
+				.item(DisplayClothBlockItem::new);
+
+			if (dyed)
+				item.tag(AllItemTags.DYED_TABLE_CLOTHS.tag);
+
+			return item
+				.model((c, p) -> p
+					.withExistingParent(name + "_table_cloth",
+						p.modLoc("block/table_cloth/item" + (!dyed ? "_lower" : "")))
+					.texture("0", p.modLoc("block/table_cloth/" + name)))
+				.tag(AllItemTags.TABLE_CLOTHS.tag)
+				.recipe((c, p) -> ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, c.get())
+					.requires(c.get())
+					.unlockedBy("has_" + c.getName(), RegistrateRecipeProvider.has(c.get()))
+					.save(p, Create.asResource("crafting/logistics/" + c.getName() + "_clear")))
+				.build();
+		};
 	}
 
 }

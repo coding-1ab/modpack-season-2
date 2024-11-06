@@ -17,6 +17,7 @@ import com.simibubi.create.content.contraptions.render.ContraptionRenderInfoMana
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchHandler;
 import com.simibubi.create.content.decoration.girder.GirderWrenchBehavior;
 import com.simibubi.create.content.equipment.armor.BacktankArmorLayer;
+import com.simibubi.create.content.equipment.armor.CardboardArmorStealthOverlay;
 import com.simibubi.create.content.equipment.armor.DivingHelmetItem;
 import com.simibubi.create.content.equipment.armor.NetheriteBacktankFirstPersonRenderer;
 import com.simibubi.create.content.equipment.armor.NetheriteDivingHandler;
@@ -25,17 +26,25 @@ import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.equipment.clipboard.ClipboardValueSettingsHandler;
 import com.simibubi.create.content.equipment.extendoGrip.ExtendoGripRenderHandler;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
+import com.simibubi.create.content.equipment.hats.CreateHatArmorLayer;
 import com.simibubi.create.content.equipment.toolbox.ToolboxHandlerClient;
 import com.simibubi.create.content.equipment.zapper.ZapperItem;
 import com.simibubi.create.content.equipment.zapper.terrainzapper.WorldshaperRenderHandler;
 import com.simibubi.create.content.kinetics.KineticDebugger;
 import com.simibubi.create.content.kinetics.belt.item.BeltConnectorHandler;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorConnectionHandler;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInteractionHandler;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRidingHandler;
 import com.simibubi.create.content.kinetics.fan.AirCurrent;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPointHandler;
 import com.simibubi.create.content.kinetics.turntable.TurntableHandler;
 import com.simibubi.create.content.logistics.depot.EjectorTargetHandler;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothOverlayRenderer;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelConnectionHandler;
+import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler;
+import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedClientHandler;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
-import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockItem;
+import com.simibubi.create.content.redstone.displayLink.ClickToLinkBlockItem;
 import com.simibubi.create.content.redstone.link.LinkRenderer;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerClientHandler;
 import com.simibubi.create.content.trains.CameraDistanceModifier;
@@ -43,7 +52,6 @@ import com.simibubi.create.content.trains.TrainHUD;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
 import com.simibubi.create.content.trains.entity.CarriageCouplingRenderer;
 import com.simibubi.create.content.trains.entity.TrainRelocator;
-import com.simibubi.create.content.trains.schedule.hat.TrainHatArmorLayer;
 import com.simibubi.create.content.trains.schedule.hat.TrainHatInfoReloadListener;
 import com.simibubi.create.content.trains.track.CurvedTrackInteraction;
 import com.simibubi.create.content.trains.track.TrackBlockOutline;
@@ -121,7 +129,6 @@ public class ClientEvents {
 		}
 
 		SoundScapes.tick();
-		AnimationTickHolder.tick();
 
 		CreateClient.SCHEMATIC_SENDER.tick();
 		CreateClient.SCHEMATIC_AND_QUILL_HANDLER.tick();
@@ -162,7 +169,7 @@ public class ClientEvents {
 		TrackTargetingClient.clientTick();
 		TrackPlacement.clientTick();
 		TrainRelocator.clientTick();
-		DisplayLinkBlockItem.clientTick();
+		ClickToLinkBlockItem.clientTick();
 		CurvedTrackInteraction.clientTick();
 		CameraDistanceModifier.tick();
 		CameraAngleAnimationService.tick();
@@ -172,6 +179,14 @@ public class ClientEvents {
 		ScrollValueHandler.tick();
 		NetheriteBacktankFirstPersonRenderer.clientTick();
 		ContraptionPlayerPassengerRotation.tick();
+		ChainConveyorInteractionHandler.clientTick();
+		ChainConveyorRidingHandler.clientTick();
+		ChainConveyorConnectionHandler.clientTick();
+		PackagePortTargetSelectionHandler.tick();
+		LogisticallyLinkedClientHandler.tick();
+		DisplayClothOverlayRenderer.tick();
+		CardboardArmorStealthOverlay.clientTick();
+		FactoryPanelConnectionHandler.clientTick();
 	}
 
 	@SubscribeEvent
@@ -212,7 +227,6 @@ public class ClientEvents {
 		PoseStack ms = event.getPoseStack();
 		ms.pushPose();
 		SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBuffer.getInstance();
-		float partialTicks = AnimationTickHolder.getPartialTicks();
 		Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera()
 			.getPosition();
 
@@ -221,6 +235,7 @@ public class ClientEvents {
 		CouplingRenderer.renderAll(ms, buffer, camera);
 		CarriageCouplingRenderer.renderAll(ms, buffer, camera);
 		CreateClient.SCHEMATIC_HANDLER.render(ms, buffer, camera);
+		ChainConveyorInteractionHandler.drawCustomBlockSelection(ms, buffer, camera);
 
 		buffer.draw();
 		RenderSystem.enableCull();
@@ -336,7 +351,7 @@ public class ClientEvents {
 			EntityRenderDispatcher dispatcher = Minecraft.getInstance()
 				.getEntityRenderDispatcher();
 			BacktankArmorLayer.registerOnAll(dispatcher);
-			TrainHatArmorLayer.registerOnAll(dispatcher);
+			CreateHatArmorLayer.registerOnAll(dispatcher);
 		}
 
 		@SubscribeEvent

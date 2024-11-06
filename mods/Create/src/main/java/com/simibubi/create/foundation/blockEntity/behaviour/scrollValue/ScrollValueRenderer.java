@@ -3,7 +3,6 @@ package com.simibubi.create.foundation.blockEntity.behaviour.scrollValue;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.CreateClient;
@@ -41,37 +40,45 @@ public class ScrollValueRenderer {
 		ClientLevel world = mc.level;
 		BlockPos pos = result.getBlockPos();
 		Direction face = result.getDirection();
+		boolean highlightFound = false;
 
-		ScrollValueBehaviour behaviour = BlockEntityBehaviour.get(world, pos, ScrollValueBehaviour.TYPE);
-		if (behaviour == null)
+		if (!(world.getBlockEntity(pos) instanceof SmartBlockEntity sbe))
 			return;
-		if (!behaviour.isActive()) {
-			CatnipClient.OUTLINER.remove(pos);
-			return;
-		}
-		ItemStack mainhandItem = mc.player.getItemInHand(InteractionHand.MAIN_HAND);
-		boolean clipboard = AllBlocks.CLIPBOARD.isIn(mainhandItem);
-		if (behaviour.needsWrench && !AllItems.WRENCH.isIn(mainhandItem) && !clipboard)
-			return;
-		boolean highlight = behaviour.testHit(target.getLocation()) && !clipboard;
 
-		if (behaviour instanceof BulkScrollValueBehaviour && AllKeys.ctrlDown()) {
-			BulkScrollValueBehaviour bulkScrolling = (BulkScrollValueBehaviour) behaviour;
-			for (SmartBlockEntity smartBlockEntity : bulkScrolling.getBulk()) {
-				ScrollValueBehaviour other = smartBlockEntity.getBehaviour(ScrollValueBehaviour.TYPE);
-				if (other != null)
-					addBox(world, smartBlockEntity.getBlockPos(), face, other, highlight);
+		for (BlockEntityBehaviour blockEntityBehaviour : sbe.getAllBehaviours()) {
+			if (!(blockEntityBehaviour instanceof ScrollValueBehaviour behaviour))
+				continue;
+
+			if (!behaviour.isActive()) {
+				CatnipClient.OUTLINER.remove(behaviour);
+				continue;
 			}
-		} else
-			addBox(world, pos, face, behaviour, highlight);
 
-		if (!highlight)
-			return;
+			ItemStack mainhandItem = mc.player.getItemInHand(InteractionHand.MAIN_HAND);
+			boolean clipboard = behaviour.bypassesInput(mainhandItem);
+			if (behaviour.needsWrench && !AllItems.WRENCH.isIn(mainhandItem) && !clipboard)
+				continue;
+			boolean highlight = behaviour.testHit(target.getLocation()) && !clipboard && !highlightFound;
 
-		List<MutableComponent> tip = new ArrayList<>();
-		tip.add(behaviour.label.copy());
-		tip.add(CreateLang.translateDirect("gui.value_settings.hold_to_edit"));
-		CreateClient.VALUE_SETTINGS_HANDLER.showHoverTip(tip);
+			if (behaviour instanceof BulkScrollValueBehaviour && AllKeys.ctrlDown()) {
+				BulkScrollValueBehaviour bulkScrolling = (BulkScrollValueBehaviour) behaviour;
+				for (SmartBlockEntity smartBlockEntity : bulkScrolling.getBulk()) {
+					ScrollValueBehaviour other = smartBlockEntity.getBehaviour(ScrollValueBehaviour.TYPE);
+					if (other != null)
+						addBox(world, smartBlockEntity.getBlockPos(), face, other, highlight);
+				}
+			} else
+				addBox(world, pos, face, behaviour, highlight);
+
+			if (!highlight)
+				continue;
+
+			highlightFound = true;
+			List<MutableComponent> tip = new ArrayList<>();
+			tip.add(behaviour.label.copy());
+			tip.add(CreateLang.translateDirect("gui.value_settings.hold_to_edit"));
+			CreateClient.VALUE_SETTINGS_HANDLER.showHoverTip(tip);
+		}
 	}
 
 	protected static void addBox(ClientLevel world, BlockPos pos, Direction face, ScrollValueBehaviour behaviour,
@@ -91,7 +98,7 @@ public class ScrollValueRenderer {
 		box.passive(!highlight)
 			.wideOutline();
 
-		CatnipClient.OUTLINER.showOutline(pos, box.transform(behaviour.slotPositioning))
+		CatnipClient.OUTLINER.showOutline(behaviour, box.transform(behaviour.slotPositioning))
 			.highlightFace(face);
 	}
 

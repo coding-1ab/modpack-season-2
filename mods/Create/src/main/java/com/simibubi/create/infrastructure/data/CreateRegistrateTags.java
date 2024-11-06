@@ -146,6 +146,10 @@ public class CreateRegistrateTags {
 	private static void genItemTags(RegistrateTagsProvider<Item> provIn) {
 		CreateTagsProvider<Item> prov = new CreateTagsProvider<>(provIn, Item::builtInRegistryHolder);
 
+		prov.tag(AllItemTags.PULPIFIABLE.tag)
+			.add(Items.BAMBOO, Items.SUGAR_CANE)
+			.addTag(ItemTags.SAPLINGS);
+
 		prov.tag(AllItemTags.SLEEPERS.tag)
 			.add(Items.STONE_SLAB, Items.SMOOTH_STONE_SLAB, Items.ANDESITE_SLAB);
 

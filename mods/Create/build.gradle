@@ -235,6 +235,13 @@ dependencies {
     jarJar("dev.engine_room.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}") {
         jarJar.ranged(it, '[1.0,2.0)')
     }
+	
+	jarJar("net.createmod.catnip:Catnip-Forge-${minecraft_version}:${catnip_version}") {
+        jarJar.ranged(it, '[0.7.5,)')
+    }
+    jarJar("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}") {
+        jarJar.ranged(it, '[0.7.5,)')
+    }
 
     implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
 

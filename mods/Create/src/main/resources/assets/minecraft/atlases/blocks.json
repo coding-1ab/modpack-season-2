@@ -12,6 +12,22 @@
       "type": "single",
       "resource": "create:entity/blueprint_small"
     },
+	{
+      "type": "single",
+      "resource": "create:block/factory_panel"
+    },
+	{
+      "type": "single",
+      "resource": "create:block/factory_panel_connections"
+    },
+	{
+      "type": "single",
+      "resource": "create:block/factory_panel_connections_animated"
+    },
+    {
+      "type": "single",
+      "resource": "create:entity/display_cloth"
+    },
     {
       "type": "single",
       "resource": "create:entity/coupling"
@@ -19,6 +35,18 @@
     {
       "type": "single",
       "resource": "create:entity/train_hat"
+    },
+    {
+      "type": "single",
+      "resource": "create:entity/logistics_hat"
+    },
+    {
+      "type": "single",
+      "resource": "create:entity/package/cardboard"
+    },
+    {
+      "type": "single",
+      "resource": "create:entity/package/cardboard_particle"
     },
     {
       "type": "single",

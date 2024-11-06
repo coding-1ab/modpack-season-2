@@ -4,6 +4,10 @@ import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.contraptions.elevator.ElevatorControlsHandler;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchHandler;
 import com.simibubi.create.content.equipment.toolbox.ToolboxHandlerClient;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInteractionHandler;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainPackageInteractionHandler;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelConnectionHandler;
+import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerClientHandler;
 import com.simibubi.create.content.trains.TrainHUD;
 import com.simibubi.create.content.trains.entity.TrainRelocator;
@@ -14,6 +18,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber(Dist.CLIENT)
@@ -76,6 +81,11 @@ public class InputEvents {
 			if (CreateClient.GLUE_HANDLER.onMouseInput(key == mc.options.keyAttack))
 				event.setCanceled(true);
 		}
+		
+		if (key == mc.options.keyUse && FactoryPanelConnectionHandler.onRightClick()) {
+			event.setCanceled(true);
+			return;
+		}
 
 		if (key == mc.options.keyPickItem) {
 			if (ToolboxHandlerClient.onPickItem())
@@ -88,6 +98,19 @@ public class InputEvents {
 
 		LinkedControllerClientHandler.deactivateInLectern();
 		TrainRelocator.onClicked(event);
+
+		if (ChainConveyorInteractionHandler.onUse()) {
+			event.setCanceled(true);
+			return;
+		} else if (PackagePortTargetSelectionHandler.onUse()) {
+			event.setCanceled(true);
+			return;
+		}
+			
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+			if (ChainPackageInteractionHandler.onUse())
+				event.setCanceled(true);
+		});
 	}
 
 }

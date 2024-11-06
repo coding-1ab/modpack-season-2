@@ -16,7 +16,8 @@ public class FillLevelDisplaySource extends PercentOrProgressBarDisplaySource {
 		BlockEntity be = context.getSourceBlockEntity();
 		if (!(be instanceof ThresholdSwitchBlockEntity tsbe))
 			return null;
-		return tsbe.currentLevel;
+		return Math.max(0,
+			(float) (tsbe.currentLevel - tsbe.currentMinLevel) / (tsbe.currentMaxLevel - tsbe.currentMinLevel));
 	}
 
 	@Override

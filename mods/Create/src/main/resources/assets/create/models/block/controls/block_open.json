@@ -1,14 +1,16 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
+		"3": "create:block/train_controller_base",
 		"4": "create:block/controls_frame",
 		"1_7": "create:block/controls",
 		"particle": "create:block/bogey/particle"
 	},
 	"elements": [
 		{
-			"from": [14, 0, 6],
-			"to": [16, 14, 16],
+			"from": [14, 2, 6],
+			"to": [16, 16, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 2, 0]},
 			"faces": {
 				"north": {"uv": [0, 9, 1, 16], "texture": "#4"},
 				"east": {"uv": [13, 0, 8, 7], "texture": "#4"},
@@ -19,8 +21,9 @@
 			}
 		},
 		{
-			"from": [2, 5, 14],
-			"to": [14, 14, 16],
+			"from": [2, 7, 14],
+			"to": [14, 16, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 2, 0]},
 			"faces": {
 				"north": {"uv": [1, 0, 7, 4.5], "texture": "#1_7"},
 				"south": {"uv": [1, 0, 7, 4.5], "texture": "#4"},
@@ -28,9 +31,9 @@
 			}
 		},
 		{
-			"from": [0, 0, 6],
-			"to": [2, 14, 16],
-			"rotation": {"angle": 0, "axis": "y", "origin": [16, 0, 0]},
+			"from": [0, 2, 6],
+			"to": [2, 16, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [16, 2, 0]},
 			"faces": {
 				"north": {"uv": [7, 9, 8, 16], "texture": "#4"},
 				"east": {"uv": [11, 9, 16, 16], "texture": "#4"},
@@ -41,8 +44,9 @@
 			}
 		},
 		{
-			"from": [2, 5, 7],
-			"to": [14, 13.05, 15],
+			"from": [2, 7, 7],
+			"to": [14, 15.05, 15],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 2, 0]},
 			"faces": {
 				"north": {"uv": [1, 14, 7, 10.05], "rotation": 180, "texture": "#4"},
 				"up": {"uv": [1, 13.5, 7, 9.55], "texture": "#4"},
@@ -50,12 +54,25 @@
 			}
 		},
 		{
-			"from": [2, 0, 8],
-			"to": [14, 5, 16],
+			"from": [2, 2, 8],
+			"to": [14, 7, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 2, 0]},
 			"faces": {
 				"north": {"uv": [1, 13.5, 7, 16], "texture": "#4"},
 				"south": {"uv": [1, 4.5, 7, 7], "texture": "#4"},
 				"down": {"uv": [7, 12, 1, 16], "texture": "#1_7"}
+			}
+		},
+		{
+			"from": [0, 0, 0],
+			"to": [16, 2, 16],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 2], "texture": "#3"},
+				"east": {"uv": [0, 0, 16, 2], "texture": "#3"},
+				"south": {"uv": [0, 0, 16, 2], "texture": "#3"},
+				"west": {"uv": [0, 0, 16, 2], "texture": "#3"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#3"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#3"}
 			}
 		}
 	],

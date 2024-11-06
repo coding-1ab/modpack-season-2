@@ -2,8 +2,6 @@ package com.simibubi.create.content.contraptions.actors.harvester;
 
 import javax.annotation.Nullable;
 
-import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
-
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
@@ -12,6 +10,7 @@ import com.simibubi.create.content.contraptions.render.ActorVisual;
 import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.utility.BlockHelper;
+import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;

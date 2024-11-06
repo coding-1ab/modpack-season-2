@@ -131,6 +131,7 @@ public class Train {
 	public float accumulatedSteamRelease;
 
 	int tickOffset;
+	int ticksSinceLastMailTransfer;
 	double[] stress;
 
 	// advancements
@@ -267,6 +268,15 @@ public class Train {
 			carriages.forEach(c -> c.manageEntities(level));
 			updateConductors();
 			return;
+		}
+		
+		GlobalStation currentStation = getCurrentStation();
+		if (currentStation != null) {
+			ticksSinceLastMailTransfer++;
+			if (ticksSinceLastMailTransfer > 20) {
+				currentStation.runMailTransfer();
+				ticksSinceLastMailTransfer = 0;
+			}
 		}
 
 		updateConductors();
@@ -917,6 +927,8 @@ public class Train {
 		setCurrentStation(station);
 		reservedSignalBlocks.clear();
 		runtime.destinationReached();
+		station.runMailTransfer();
+		ticksSinceLastMailTransfer = 0;
 	}
 
 	public void setCurrentStation(GlobalStation station) {

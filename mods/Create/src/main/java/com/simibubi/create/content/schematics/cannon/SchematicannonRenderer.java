@@ -9,11 +9,11 @@ import com.simibubi.create.content.schematics.cannon.LaunchedItem.ForBelt;
 import com.simibubi.create.content.schematics.cannon.LaunchedItem.ForBlockState;
 import com.simibubi.create.content.schematics.cannon.LaunchedItem.ForEntity;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
-import net.createmod.catnip.render.VirtualRenderHelper;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.render.VirtualRenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;

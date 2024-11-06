@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "forge:plates/copper"
+    },
+    "B": {
+      "item": "create:item_vault"
+    },
+    "C": {
+      "item": "minecraft:redstone_torch"
+    }
+  },
+  "pattern": [
+    "C",
+    "A",
+    "B"
+  ],
+  "result": {
+    "item": "create:stock_link"
+  },
+  "show_notification": true
+}

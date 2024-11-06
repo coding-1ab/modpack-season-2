@@ -13,6 +13,7 @@ import java.util.WeakHashMap;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.animatedContainer.AnimatedContainerBehaviour;
 import com.simibubi.create.foundation.utility.ResetableLazy;
 
 import net.createmod.catnip.utility.VecHelper;
@@ -34,7 +35,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -53,11 +53,12 @@ public class ToolboxBlockEntity extends SmartBlockEntity implements MenuProvider
 	ToolboxInventory inventory;
 	LazyOptional<IItemHandler> inventoryProvider;
 	ResetableLazy<DyeColor> colorProvider;
-	protected int openCount;
 
 	Map<Integer, WeakHashMap<Player, Integer>> connectedPlayers;
 
 	private Component customName;
+
+	private AnimatedContainerBehaviour<ToolboxMenu> openTracker;
 
 	public ToolboxBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -78,7 +79,9 @@ public class ToolboxBlockEntity extends SmartBlockEntity implements MenuProvider
 	}
 
 	@Override
-	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
+	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+		behaviours.add(openTracker = new AnimatedContainerBehaviour<>(this, ToolboxMenu.class));
+	}
 
 	@Override
 	public void initialize() {
@@ -101,8 +104,8 @@ public class ToolboxBlockEntity extends SmartBlockEntity implements MenuProvider
 		if (!level.isClientSide)
 			tickPlayers();
 
-		lid.chase(openCount > 0 ? 1 : 0, 0.2f, Chaser.LINEAR);
-		drawers.chase(openCount > 0 ? 1 : 0, 0.2f, Chaser.EXP);
+		lid.chase(openTracker.openCount > 0 ? 1 : 0, 0.2f, Chaser.LINEAR);
+		drawers.chase(openTracker.openCount > 0 ? 1 : 0, 0.2f, Chaser.EXP);
 		lid.tickChaser();
 		drawers.tickChaser();
 	}
@@ -257,17 +260,17 @@ public class ToolboxBlockEntity extends SmartBlockEntity implements MenuProvider
 	private void tickAudio() {
 		Vec3 vec = VecHelper.getCenterOf(worldPosition);
 		if (lid.settled()) {
-			if (openCount > 0 && lid.getChaseTarget() == 0) {
+			if (openTracker.openCount > 0 && lid.getChaseTarget() == 0) {
 				level.playLocalSound(vec.x, vec.y, vec.z, SoundEvents.IRON_DOOR_OPEN, SoundSource.BLOCKS, 0.25F,
 					level.random.nextFloat() * 0.1F + 1.2F, true);
 				level.playLocalSound(vec.x, vec.y, vec.z, SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 0.1F,
 					level.random.nextFloat() * 0.1F + 1.1F, true);
 			}
-			if (openCount == 0 && lid.getChaseTarget() == 1)
+			if (openTracker.openCount == 0 && lid.getChaseTarget() == 1)
 				level.playLocalSound(vec.x, vec.y, vec.z, SoundEvents.CHEST_CLOSE, SoundSource.BLOCKS, 0.1F,
 					level.random.nextFloat() * 0.1F + 1.1F, true);
 
-		} else if (openCount == 0 && lid.getChaseTarget() == 0 && lid.getValue(0) > 1 / 16f
+		} else if (openTracker.openCount == 0 && lid.getChaseTarget() == 0 && lid.getValue(0) > 1 / 16f
 			&& lid.getValue(1) < 1 / 16f)
 			level.playLocalSound(vec.x, vec.y, vec.z, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, 0.25F,
 				level.random.nextFloat() * 0.1F + 1.2F, true);
@@ -288,8 +291,6 @@ public class ToolboxBlockEntity extends SmartBlockEntity implements MenuProvider
 			this.uniqueId = compound.getUUID("UniqueId");
 		if (compound.contains("CustomName", 8))
 			this.customName = Component.Serializer.fromJson(compound.getString("CustomName"));
-		if (clientPacket)
-			openCount = compound.getInt("OpenCount");
 	}
 
 	@Override
@@ -303,8 +304,6 @@ public class ToolboxBlockEntity extends SmartBlockEntity implements MenuProvider
 		if (customName != null)
 			compound.putString("CustomName", Component.Serializer.toJson(customName));
 		super.write(compound, clientPacket);
-		if (clientPacket)
-			compound.putInt("OpenCount", openCount);
 	}
 
 	@Override
@@ -314,44 +313,9 @@ public class ToolboxBlockEntity extends SmartBlockEntity implements MenuProvider
 
 	@Override
 	public void lazyTick() {
-		updateOpenCount();
 		// keep re-advertising active TEs
 		ToolboxHandler.onLoad(this);
 		super.lazyTick();
-	}
-
-	void updateOpenCount() {
-		if (level.isClientSide)
-			return;
-		if (openCount == 0)
-			return;
-
-		int prevOpenCount = openCount;
-		openCount = 0;
-
-		for (Player playerentity : level.getEntitiesOfClass(Player.class, new AABB(worldPosition).inflate(8)))
-			if (playerentity.containerMenu instanceof ToolboxMenu
-				&& ((ToolboxMenu) playerentity.containerMenu).contentHolder == this)
-				openCount++;
-
-		if (prevOpenCount != openCount)
-			sendData();
-	}
-
-	public void startOpen(Player player) {
-		if (player.isSpectator())
-			return;
-		if (openCount < 0)
-			openCount = 0;
-		openCount++;
-		sendData();
-	}
-
-	public void stopOpen(Player player) {
-		if (player.isSpectator())
-			return;
-		openCount--;
-		sendData();
 	}
 
 	public void connectPlayer(int slot, Player player, int hotbarSlot) {

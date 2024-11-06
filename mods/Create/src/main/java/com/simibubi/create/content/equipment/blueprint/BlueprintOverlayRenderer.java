@@ -11,22 +11,31 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.equipment.blueprint.BlueprintEntity.BlueprintCraftingInventory;
 import com.simibubi.create.content.equipment.blueprint.BlueprintEntity.BlueprintSection;
+import com.simibubi.create.content.logistics.BigItemStack;
+import com.simibubi.create.content.logistics.displayCloth.BlueprintOverlayShopContext;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothBlockEntity;
+import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem.ShoppingList;
 import com.simibubi.create.content.logistics.filter.AttributeFilterMenu.WhitelistMode;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
 import com.simibubi.create.content.logistics.filter.ItemAttribute;
+import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.trains.track.TrackPlacement.PlacementInfo;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.utility.lang.Components;
 import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -54,10 +63,11 @@ public class BlueprintOverlayRenderer {
 	static boolean noOutput;
 	static boolean lastSneakState;
 	static BlueprintSection lastTargetedSection;
+	static BlueprintOverlayShopContext shopContext;
 
 	static Map<ItemStack, ItemStack[]> cachedRenderedFilters = new IdentityHashMap<>();
 	static List<Pair<ItemStack, Boolean>> ingredients = new ArrayList<>();
-	static ItemStack result = ItemStack.EMPTY;
+	static List<ItemStack> results = new ArrayList<>();
 	static boolean resultCraftable = false;
 
 	public static void tick() {
@@ -67,6 +77,7 @@ public class BlueprintOverlayRenderer {
 		lastTargetedSection = null;
 		active = false;
 		noOutput = false;
+		shopContext = null;
 
 		if (mc.gameMode.getPlayerMode() == GameType.SPECTATOR)
 			return;
@@ -99,15 +110,12 @@ public class BlueprintOverlayRenderer {
 	public static void displayTrackRequirements(PlacementInfo info, ItemStack pavementItem) {
 		if (active)
 			return;
-
-		active = true;
-		empty = false;
-		noOutput = true;
-		ingredients.clear();
+		prepareCustomOverlay();
 
 		int tracks = info.requiredTracks;
 		while (tracks > 0) {
-			ingredients.add(Pair.of(new ItemStack(info.trackMaterial.getBlock(), Math.min(64, tracks)), info.hasRequiredTracks));
+			ingredients.add(
+				Pair.of(new ItemStack(info.trackMaterial.getBlock(), Math.min(64, tracks)), info.hasRequiredTracks));
 			tracks -= 64;
 		}
 
@@ -117,6 +125,72 @@ public class BlueprintOverlayRenderer {
 				info.hasRequiredPavement));
 			pavement -= 64;
 		}
+	}
+
+	public static void displayChainRequirements(Item chainItem, int count, boolean fulfilled) {
+		if (active)
+			return;
+		prepareCustomOverlay();
+
+		int chains = count;
+		while (chains > 0) {
+			ingredients.add(Pair.of(new ItemStack(chainItem, Math.min(64, chains)), fulfilled));
+			chains -= 64;
+		}
+	}
+
+	public static void displayClothShop(DisplayClothBlockEntity dce, int alreadyPurchased, ShoppingList list) {
+		if (active)
+			return;
+		prepareCustomOverlay();
+		noOutput = false;
+
+		shopContext = new BlueprintOverlayShopContext(false, dce.getStockLevelForTrade(list), alreadyPurchased);
+
+		ingredients.add(Pair.of(dce.paymentItem.copyWithCount(dce.paymentAmount),
+			!dce.paymentItem.isEmpty() && shopContext.stockLevel() > shopContext.purchases()));
+		for (BigItemStack entry : dce.requestData.encodedRequest.stacks())
+			results.add(entry.stack.copyWithCount(entry.count));
+	}
+
+	public static void displayShoppingList(Couple<InventorySummary> bakedList) {
+		if (active || bakedList == null)
+			return;
+		Minecraft mc = Minecraft.getInstance();
+		prepareCustomOverlay();
+		noOutput = false;
+
+		shopContext = new BlueprintOverlayShopContext(true, 1, 0);
+
+		for (BigItemStack entry : bakedList.getSecond()
+			.getStacksByCount()) {
+			ingredients.add(Pair.of(entry.stack.copyWithCount(entry.count), canAfford(mc.player, entry)));
+		}
+
+		for (BigItemStack entry : bakedList.getFirst()
+			.getStacksByCount())
+			results.add(entry.stack.copyWithCount(entry.count));
+	}
+
+	private static boolean canAfford(Player player, BigItemStack entry) {
+		int itemsPresent = 0;
+		for (int i = 0; i < player.getInventory().items.size(); i++) {
+			ItemStack item = player.getInventory()
+				.getItem(i);
+			if (item.isEmpty() || !ItemHandlerHelper.canItemStacksStack(item, entry.stack))
+				continue;
+			itemsPresent += item.getCount();
+		}
+		return itemsPresent >= entry.count;
+	}
+
+	private static void prepareCustomOverlay() {
+		active = true;
+		empty = false;
+		noOutput = true;
+		ingredients.clear();
+		results.clear();
+		shopContext = null;
 	}
 
 	public static void rebuild(BlueprintSection sectionAt, boolean sneak) {
@@ -132,7 +206,7 @@ public class BlueprintOverlayRenderer {
 		}
 
 		BlueprintOverlayRenderer.empty = empty;
-		BlueprintOverlayRenderer.result = ItemStack.EMPTY;
+		BlueprintOverlayRenderer.results.clear();
 
 		if (empty)
 			return;
@@ -199,10 +273,11 @@ public class BlueprintOverlayRenderer {
 					success = false;
 				} else {
 					amountCrafted += resultFromRecipe.getCount();
-					if (result.isEmpty())
-						result = resultFromRecipe.copy();
+					if (results.isEmpty())
+						results.add(resultFromRecipe.copy());
 					else
-						result.grow(resultFromRecipe.getCount());
+						results.get(0)
+							.grow(resultFromRecipe.getCount());
 					resultCraftable = true;
 					firstPass = false;
 				}
@@ -215,7 +290,9 @@ public class BlueprintOverlayRenderer {
 
 			if (!success) {
 				if (firstPass) {
-					result = invalid ? ItemStack.EMPTY : items.getStackInSlot(9);
+					results.clear();
+					if (!invalid)
+						results.add(items.getStackInSlot(9));
 					resultCraftable = false;
 				}
 				break;
@@ -240,8 +317,7 @@ public class BlueprintOverlayRenderer {
 		}
 	}
 
-	public static void renderOverlay(ForgeGui gui, GuiGraphics graphics, float partialTicks, int width,
-		int height) {
+	public static void renderOverlay(ForgeGui gui, GuiGraphics graphics, float partialTicks, int width, int height) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.options.hideGui)
 			return;
@@ -249,19 +325,39 @@ public class BlueprintOverlayRenderer {
 		if (!active || empty)
 			return;
 
+		boolean invalidShop = shopContext != null && (ingredients.isEmpty() || ingredients.get(0)
+			.getFirst()
+			.isEmpty() || shopContext.stockLevel() == 0);
+
 		int w = 21 * ingredients.size();
 
-		if (!noOutput)
-			w += 51;
+		if (!noOutput) {
+			w += 21 * results.size();
+			w += 30;
+		}
 
 		int x = (width - w) / 2;
 		int y = (int) (height - 100);
 
+		if (shopContext != null) {
+			TooltipRenderUtil.renderTooltipBackground(graphics, x - 2, y + 1, w + 4, 19, 0, 0x55_000000, 0x55_000000, 0,
+				0);
+
+			AllGuiTextures.TRADE_OVERLAY.render(graphics, width / 2 - 49, y - 19);
+			if (shopContext.purchases() > 0) {
+				graphics.renderItem(AllItems.SHOPPING_LIST.asStack(), width / 2 + 20, y - 20);
+				graphics.drawString(mc.font, Components.literal("x" + shopContext.purchases()), width / 2 + 20 + 16,
+					y - 20 + 4, 0xff_eeeeee, true);
+			}
+		}
+
+		// Ingredients
 		for (Pair<ItemStack, Boolean> pair : ingredients) {
 			RenderSystem.enableBlend();
 			(pair.getSecond() ? AllGuiTextures.HOTSLOT_ACTIVE : AllGuiTextures.HOTSLOT).render(graphics, x, y);
 			ItemStack itemStack = pair.getFirst();
-			String count = pair.getSecond() ? null : ChatFormatting.GOLD.toString() + itemStack.getCount();
+			String count = shopContext != null && !shopContext.checkout() || pair.getSecond() ? null
+				: ChatFormatting.GOLD.toString() + itemStack.getCount();
 			drawItemStack(graphics, mc, x, y, itemStack, count);
 			x += 21;
 		}
@@ -269,25 +365,41 @@ public class BlueprintOverlayRenderer {
 		if (noOutput)
 			return;
 
+		// Arrow
 		x += 5;
 		RenderSystem.enableBlend();
-		AllGuiTextures.HOTSLOT_ARROW.render(graphics, x, y + 4);
+		if (invalidShop)
+			AllGuiTextures.HOTSLOT_ARROW_BAD.render(graphics, x, y + 4);
+		else
+			AllGuiTextures.HOTSLOT_ARROW.render(graphics, x, y + 4);
 		x += 25;
 
-		if (result.isEmpty()) {
+		// Outputs
+		if (results.isEmpty()) {
 			AllGuiTextures.HOTSLOT.render(graphics, x, y);
 			GuiGameElement.of(Items.BARRIER)
 				.at(x + 3, y + 3)
 				.render(graphics);
 		} else {
-			(resultCraftable ? AllGuiTextures.HOTSLOT_SUPER_ACTIVE : AllGuiTextures.HOTSLOT).render(graphics,
-				resultCraftable ? x - 1 : x, resultCraftable ? y - 1 : y);
-			drawItemStack(graphics, mc, x, y, result, null);
+			for (ItemStack result : results) {
+				AllGuiTextures slot = resultCraftable ? AllGuiTextures.HOTSLOT_SUPER_ACTIVE : AllGuiTextures.HOTSLOT;
+				if (!invalidShop && shopContext != null && shopContext.stockLevel() > shopContext.purchases())
+					slot = AllGuiTextures.HOTSLOT_ACTIVE;
+				slot.render(graphics, resultCraftable ? x - 1 : x, resultCraftable ? y - 1 : y);
+				drawItemStack(graphics, mc, x, y, result, null);
+				x += 21;
+			}
 		}
+
+//		if (shopContext != null) Display stock level?
+//			graphics.drawString(mc.font, Components.literal(shopContext.stockLevel() + "x in Stock"), x + 2, y + 13,
+//				0xff_797979, true);
+
 		RenderSystem.disableBlend();
 	}
 
-	public static void drawItemStack(GuiGraphics graphics, Minecraft mc, int x, int y, ItemStack itemStack, String count) {
+	public static void drawItemStack(GuiGraphics graphics, Minecraft mc, int x, int y, ItemStack itemStack,
+		String count) {
 		if (itemStack.getItem() instanceof FilterItem) {
 			int step = LevelTickHolder.getTicks(mc.level) / 10;
 			ItemStack[] itemsMatchingFilter = getItemsMatchingFilter(itemStack);

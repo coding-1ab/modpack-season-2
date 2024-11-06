@@ -132,10 +132,18 @@ public class AllShapes {
 		STEP_BOTTOM = shape(0, 0, 8, 16, 8, 16).forHorizontal(SOUTH),
 		STEP_TOP = shape(0, 8, 8, 16, 16, 16).forHorizontal(SOUTH),
 
-		CONTROLS = shape(0, 0, 6, 16, 14, 16).forHorizontal(NORTH),
-		CONTRAPTION_CONTROLS = shape(0, 0, 6, 2, 14, 16).add(14, 0, 6, 16, 14, 16)
-			.add(0, 0, 14, 16, 14, 16)
-			.add(0, 0, 7, 16, 10, 16)
+		CONTROLS = shape(0, 0, 6, 16, 16, 16).add(0, 0, 0, 16, 2, 16)
+			.forHorizontal(NORTH),
+		CONTROLS_COLLISION = shape(0, 0, 6, 16, 16, 16).forHorizontal(NORTH),
+
+		CONTRAPTION_CONTROLS = shape(0, 0, 6, 2, 16, 16).add(14, 0, 6, 16, 16, 16)
+			.add(0, 0, 14, 16, 16, 16)
+			.add(0, 0, 7, 16, 12, 16)
+			.add(0, 0, 0, 16, 2, 16)
+			.forHorizontal(NORTH),
+		CONTRAPTION_CONTROLS_COLLISION = shape(0, 0, 6, 2, 16, 16).add(14, 0, 6, 16, 16, 16)
+			.add(0, 0, 14, 16, 16, 16)
+			.add(0, 0, 7, 16, 12, 16)
 			.forHorizontal(NORTH),
 
 		NIXIE_TUBE = shape(9, 0, 5, 15, 12, 11).add(1, 0, 5, 7, 12, 11)
@@ -161,6 +169,7 @@ public class AllShapes {
 			.forHorizontal(SOUTH),
 
 		PLACARD = shape(2, 0, 2, 14, 3, 14).forDirectional(UP),
+		FACTORY_PANEL_FALLBACK = shape(0, 0, 0, 16, 2, 16).forDirectional(UP),
 
 		CLIPBOARD_FLOOR = shape(3, 0, 1, 13, 1, 15).forHorizontal(SOUTH),
 		CLIPBOARD_CEILING = shape(3, 15, 1, 13, 16, 15).forHorizontal(SOUTH),
@@ -175,7 +184,17 @@ public class AllShapes {
 			.forDirectional(UP),
 
 		WHISTLE_BASE = shape(1, 0, 1, 15, 3, 15).add(5, 0, 5, 11, 8, 11)
-			.forDirectional(UP)
+			.forDirectional(UP),
+			
+		DESK_BELL = shape(3, 0, 3, 13, 3, 13).add(4, 0, 4, 12, 9, 12)
+			.forDirectional(UP),
+
+		ITEM_HATCH = shape(1, 0, 0, 15, 16, 2).add(2, 2, 0, 14, 13, 3.8)
+			.add(2, 4, 0, 14, 11, 5.8)
+			.add(2, 6, 0, 14, 9, 7.8)
+			.forHorizontal(SOUTH),
+
+		POSTBOX = shape(2, 0, 0, 14, 14, 16).forHorizontal(SOUTH);
 
 	;
 
@@ -216,6 +235,17 @@ public class AllShapes {
 			.build(),
 
 		TRACK_COLLISION = shape(0, 0, 0, 16, 2, 16).build(),
+
+		PACKAGE_PORT = shape(0, 0, 0, 16, 4, 16).add(2, 2, 2, 14, 14, 14)
+			.build(),
+
+		DISPLAY_CLOTH = shape(-1, -9, -1, 17, 1, 17).build(),
+		DISPLAY_CLOTH_OCCLUSION = shape(0, 0, 0, 16, 1, 16).build(),
+
+		CHAIN_CONVEYOR_INTERACTION = shape(-10, 2, 0, 26, 14, 16).add(0, 2, -10, 16, 14, 26)
+			.add(-5, 2, -5, 21, 14, 21)
+			.add(Shapes.block())
+			.build(),
 
 		TRACK_FALLBACK = shape(0, 0, 0, 16, 4, 16).build(),
 
@@ -280,6 +310,8 @@ public class AllShapes {
 			.add(0, 6, 0, 16, 12, 16)
 			.build(),
 		STATION = shape(0, 0, 0, 16, 2, 16).add(1, 0, 1, 15, 13, 15)
+			.build(),
+		STOCK_TICKER = shape(1, 0, 1, 15, 4, 15).add(2, 0, 2, 14, 16, 14)
 			.build(),
 
 		WHISTLE_SMALL_FLOOR = shape(WHISTLE_SMALL).add(WHISTLE_BASE.get(UP))

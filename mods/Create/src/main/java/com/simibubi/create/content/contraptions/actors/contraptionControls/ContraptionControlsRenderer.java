@@ -99,7 +99,7 @@ public class ContraptionControlsRenderer extends SmartBlockEntityRenderer<Contra
 		msr.translate(ctx.localPos);
 		msr.rotateCentered(AngleHelper.rad(AngleHelper.horizontalAngle(ctx.state.getValue(ContraptionControlsBlock.FACING))),
 			Direction.UP);
-		ms.translate(0.275f + 0.125f, 1, 0.5f);
+		ms.translate(0.275f + 0.125f, 1 + 2/16f, 0.5f);
 		msr.rotate(AngleHelper.rad(67.5f), Direction.WEST);
 
 		float buttondepth = -.25f;

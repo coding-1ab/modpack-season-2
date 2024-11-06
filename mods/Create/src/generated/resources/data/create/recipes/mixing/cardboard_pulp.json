@@ -1,0 +1,42 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "tag": "create:pulpifiable"
+    },
+    {
+      "tag": "create:pulpifiable"
+    },
+    {
+      "tag": "create:pulpifiable"
+    },
+    {
+      "tag": "create:pulpifiable"
+    },
+    {
+      "tag": "create:pulpifiable"
+    },
+    {
+      "tag": "create:pulpifiable"
+    },
+    {
+      "tag": "create:pulpifiable"
+    },
+    {
+      "tag": "create:pulpifiable"
+    },
+    {
+      "tag": "create:pulpifiable"
+    },
+    {
+      "amount": 1000,
+      "fluid": "minecraft:water",
+      "nbt": {}
+    }
+  ],
+  "results": [
+    {
+      "item": "create:pulp"
+    }
+  ]
+}

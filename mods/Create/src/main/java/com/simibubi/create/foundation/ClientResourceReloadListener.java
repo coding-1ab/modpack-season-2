@@ -2,6 +2,7 @@ package com.simibubi.create.foundation;
 
 import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.kinetics.belt.BeltHelper;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothModel;
 import com.simibubi.create.foundation.sound.SoundScapes;
 
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -14,6 +15,7 @@ public class ClientResourceReloadListener implements ResourceManagerReloadListen
 		CreateClient.invalidateRenderers();
 		SoundScapes.invalidateAll();
 		BeltHelper.uprightCache.clear();
+		DisplayClothModel.reload();
 	}
 
 }

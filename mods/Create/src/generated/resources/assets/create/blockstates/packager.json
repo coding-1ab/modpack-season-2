@@ -1,0 +1,88 @@
+{
+  "variants": {
+    "facing=down,powered=false,type=defrag": {
+      "model": "create:block/packager/block_defrag_vertical"
+    },
+    "facing=down,powered=false,type=regular": {
+      "model": "create:block/packager/block_regular_vertical"
+    },
+    "facing=down,powered=true,type=defrag": {
+      "model": "create:block/packager/block_defrag_vertical"
+    },
+    "facing=down,powered=true,type=regular": {
+      "model": "create:block/packager/block_regular_vertical"
+    },
+    "facing=east,powered=false,type=defrag": {
+      "model": "create:block/packager/block_defrag",
+      "y": 270
+    },
+    "facing=east,powered=false,type=regular": {
+      "model": "create:block/packager/block_regular",
+      "y": 270
+    },
+    "facing=east,powered=true,type=defrag": {
+      "model": "create:block/packager/block_defrag",
+      "y": 270
+    },
+    "facing=east,powered=true,type=regular": {
+      "model": "create:block/packager/block_regular",
+      "y": 270
+    },
+    "facing=north,powered=false,type=defrag": {
+      "model": "create:block/packager/block_defrag",
+      "y": 180
+    },
+    "facing=north,powered=false,type=regular": {
+      "model": "create:block/packager/block_regular",
+      "y": 180
+    },
+    "facing=north,powered=true,type=defrag": {
+      "model": "create:block/packager/block_defrag",
+      "y": 180
+    },
+    "facing=north,powered=true,type=regular": {
+      "model": "create:block/packager/block_regular",
+      "y": 180
+    },
+    "facing=south,powered=false,type=defrag": {
+      "model": "create:block/packager/block_defrag"
+    },
+    "facing=south,powered=false,type=regular": {
+      "model": "create:block/packager/block_regular"
+    },
+    "facing=south,powered=true,type=defrag": {
+      "model": "create:block/packager/block_defrag"
+    },
+    "facing=south,powered=true,type=regular": {
+      "model": "create:block/packager/block_regular"
+    },
+    "facing=up,powered=false,type=defrag": {
+      "model": "create:block/packager/block_defrag_vertical"
+    },
+    "facing=up,powered=false,type=regular": {
+      "model": "create:block/packager/block_regular_vertical"
+    },
+    "facing=up,powered=true,type=defrag": {
+      "model": "create:block/packager/block_defrag_vertical"
+    },
+    "facing=up,powered=true,type=regular": {
+      "model": "create:block/packager/block_regular_vertical"
+    },
+    "facing=west,powered=false,type=defrag": {
+      "model": "create:block/packager/block_defrag",
+      "y": 90
+    },
+    "facing=west,powered=false,type=regular": {
+      "model": "create:block/packager/block_regular",
+      "y": 90
+    },
+    "facing=west,powered=true,type=defrag": {
+      "model": "create:block/packager/block_defrag",
+      "y": 90
+    },
+    "facing=west,powered=true,type=regular": {
+      "model": "create:block/packager/block_regular",
+      "y": 90
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "create:block/redstone_requester/block"
+    },
+    "powered=true": {
+      "model": "create:block/redstone_requester/block_powered"
+    }
+  }
+}

@@ -11,7 +11,6 @@ import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityVisual;
 import com.simibubi.create.content.kinetics.base.RotatingInstance;
 import com.simibubi.create.foundation.render.AllInstanceTypes;
-import net.createmod.catnip.render.VirtualRenderHelper;
 import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
@@ -20,6 +19,7 @@ import dev.engine_room.flywheel.lib.instance.TransformedInstance;
 import dev.engine_room.flywheel.lib.model.Models;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
+import net.createmod.catnip.render.VirtualRenderHelper;
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.NBTHelper;
 import net.createmod.catnip.utility.VecHelper;

@@ -13,7 +13,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBehavio
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBoard;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsFormatter;
 
-import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -136,7 +135,7 @@ public class ScrollValueBehaviour extends BlockEntityBehaviour implements ValueS
 	public boolean testHit(Vec3 hit) {
 		BlockState state = blockEntity.getBlockState();
 		Vec3 localHit = hit.subtract(Vec3.atLowerCornerOf(blockEntity.getBlockPos()));
-		return slotPositioning.testHit(state, localHit);
+		return slotPositioning.testHit(getWorld(), getPos(), state, localHit);
 	}
 
 	public void setLabel(Component label) {
@@ -180,11 +179,10 @@ public class ScrollValueBehaviour extends BlockEntityBehaviour implements ValueS
 	}
 
 	@Override
-	public void onShortInteract(Player player, InteractionHand hand, Direction side) {
+	public void onShortInteract(Player player, InteractionHand hand, Direction side, BlockHitResult hitResult) {
 		if (player instanceof FakePlayer)
 			blockEntity.getBlockState()
-				.use(getWorld(), player, hand,
-					new BlockHitResult(VecHelper.getCenterOf(getPos()), side, getPos(), true));
+				.use(getWorld(), player, hand, hitResult);
 	}
 
 }

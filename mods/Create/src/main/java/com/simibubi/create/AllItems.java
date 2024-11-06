@@ -1,9 +1,9 @@
 package com.simibubi.create;
 
+import static com.simibubi.create.AllTags.forgeItemTag;
 import static com.simibubi.create.AllTags.AllItemTags.CREATE_INGOTS;
 import static com.simibubi.create.AllTags.AllItemTags.CRUSHED_RAW_MATERIALS;
 import static com.simibubi.create.AllTags.AllItemTags.PLATES;
-import static com.simibubi.create.AllTags.forgeItemTag;
 import static com.simibubi.create.Create.REGISTRATE;
 import static com.simibubi.create.foundation.data.recipe.CompatMetals.ALUMINUM;
 import static com.simibubi.create.foundation.data.recipe.CompatMetals.LEAD;
@@ -24,6 +24,9 @@ import com.simibubi.create.content.equipment.TreeFertilizerItem;
 import com.simibubi.create.content.equipment.armor.AllArmorMaterials;
 import com.simibubi.create.content.equipment.armor.BacktankItem;
 import com.simibubi.create.content.equipment.armor.BacktankItem.BacktankBlockItem;
+import com.simibubi.create.content.equipment.armor.BaseArmorItem;
+import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
+import com.simibubi.create.content.equipment.armor.CardboardHelmetItem;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
 import com.simibubi.create.content.equipment.armor.DivingHelmetItem;
 import com.simibubi.create.content.equipment.blueprint.BlueprintItem;
@@ -33,6 +36,7 @@ import com.simibubi.create.content.equipment.goggles.GogglesModel;
 import com.simibubi.create.content.equipment.potatoCannon.PotatoCannonItem;
 import com.simibubi.create.content.equipment.sandPaper.SandPaperItem;
 import com.simibubi.create.content.equipment.symmetryWand.SymmetryWandItem;
+import com.simibubi.create.content.equipment.tool.CardboardSwordItem;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
 import com.simibubi.create.content.equipment.zapper.terrainzapper.WorldshaperItem;
 import com.simibubi.create.content.kinetics.belt.item.BeltConnectorItem;
@@ -41,6 +45,8 @@ import com.simibubi.create.content.legacy.ChromaticCompoundColor;
 import com.simibubi.create.content.legacy.ChromaticCompoundItem;
 import com.simibubi.create.content.legacy.RefinedRadianceItem;
 import com.simibubi.create.content.legacy.ShadowSteelItem;
+import com.simibubi.create.content.logistics.box.PackageItem;
+import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.materials.ExperienceNuggetItem;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockItem;
@@ -50,6 +56,7 @@ import com.simibubi.create.content.schematics.SchematicAndQuillItem;
 import com.simibubi.create.content.schematics.SchematicItem;
 import com.simibubi.create.content.trains.schedule.ScheduleItem;
 import com.simibubi.create.foundation.data.AssetLookup;
+import com.simibubi.create.foundation.data.BuilderTransformers;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.recipe.CompatMetals;
 import com.simibubi.create.foundation.item.CombustibleItem;
@@ -57,9 +64,11 @@ import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.TagDependentIngredientItem;
 import com.tterrag.registrate.util.entry.ItemEntry;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -78,7 +87,13 @@ public class AllItems {
 		POLISHED_ROSE_QUARTZ = ingredient("polished_rose_quartz"), POWDERED_OBSIDIAN = ingredient("powdered_obsidian"),
 		STURDY_SHEET = taggedIngredient("sturdy_sheet", forgeItemTag("plates/obsidian"), PLATES.tag),
 		PROPELLER = ingredient("propeller"), WHISK = ingredient("whisk"), BRASS_HAND = ingredient("brass_hand"),
-		CRAFTER_SLOT_COVER = ingredient("crafter_slot_cover"), ELECTRON_TUBE = ingredient("electron_tube");
+		CRAFTER_SLOT_COVER = ingredient("crafter_slot_cover"), ELECTRON_TUBE = ingredient("electron_tube"),
+		PULP = ingredient("pulp");
+
+	public static final ItemEntry<CombustibleItem> CARDBOARD = REGISTRATE.item("cardboard", CombustibleItem::new)
+		.tag(forgeItemTag("plates/cardboard"))
+		.onRegister(i -> i.setBurnTime(1000))
+		.register();
 
 	public static final ItemEntry<SequencedAssemblyItem>
 
@@ -88,10 +103,9 @@ public class AllItems {
 
 	public static final ItemEntry<Item> PRECISION_MECHANISM = ingredient("precision_mechanism");
 
-	public static final ItemEntry<Item> BLAZE_CAKE_BASE =
-		REGISTRATE.item("blaze_cake_base", Item::new)
-			.tag(AllItemTags.UPRIGHT_ON_BELT.tag)
-			.register();
+	public static final ItemEntry<Item> BLAZE_CAKE_BASE = REGISTRATE.item("blaze_cake_base", Item::new)
+		.tag(AllItemTags.UPRIGHT_ON_BELT.tag)
+		.register();
 
 	public static final ItemEntry<CombustibleItem> BLAZE_CAKE = REGISTRATE.item("blaze_cake", CombustibleItem::new)
 		.tag(AllItemTags.BLAZE_BURNER_FUEL_SPECIAL.tag, AllItemTags.UPRIGHT_ON_BELT.tag)
@@ -135,6 +149,12 @@ public class AllItems {
 		.properties(p -> p.stacksTo(16))
 		.lang("Builder's Tea")
 		.register();
+
+	public static final ItemEntry<CardboardSwordItem> CARDBOARD_SWORD =
+		REGISTRATE.item("cardboard_sword", CardboardSwordItem::new)
+			.properties(p -> p.stacksTo(1))
+			.model(AssetLookup.itemModelWithPartials())
+			.register();
 
 	public static final ItemEntry<Item> RAW_ZINC =
 		taggedIngredient("raw_zinc", forgeItemTag("raw_materials/zinc"), forgeItemTag("raw_materials"));
@@ -294,6 +314,30 @@ public class AllItems {
 			.tag(forgeItemTag("armors/boots"))
 			.register();
 
+	public static final ItemEntry<? extends BaseArmorItem>
+
+	CARDBOARD_HELMET = REGISTRATE.item("cardboard_helmet", p -> new CardboardHelmetItem(ArmorItem.Type.HELMET, p))
+		.tag(forgeItemTag("armors/helmet"))
+		.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+		.register(),
+
+		CARDBOARD_CHESTPLATE =
+			REGISTRATE.item("cardboard_chestplate", p -> new CardboardArmorItem(ArmorItem.Type.CHESTPLATE, p))
+				.tag(forgeItemTag("armors/chestplate"))
+				.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+				.register(),
+
+		CARDBOARD_LEGGINGS =
+			REGISTRATE.item("cardboard_leggings", p -> new CardboardArmorItem(ArmorItem.Type.LEGGINGS, p))
+				.tag(forgeItemTag("armors/leggings"))
+				.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+				.register(),
+
+		CARDBOARD_BOOTS = REGISTRATE.item("cardboard_boots", p -> new CardboardArmorItem(ArmorItem.Type.BOOTS, p))
+			.tag(forgeItemTag("armors/boots"))
+			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+			.register();
+
 	public static final ItemEntry<SandPaperItem> SAND_PAPER = REGISTRATE.item("sand_paper", SandPaperItem::new)
 		.tag(AllTags.AllItemTags.SANDPAPER.tag)
 		.register();
@@ -359,15 +403,38 @@ public class AllItems {
 
 	// Logistics
 
+	public static final ItemEntry<PackageItem> CARDBOARD_PACKAGE_12x12 =
+		REGISTRATE.item("cardboard_package_12x12", p -> new PackageItem(p, 12, 12, 23f))
+			.transform(BuilderTransformers.packageItem("cardboard", 12, 12))
+			.register(),
+		CARDBOARD_PACKAGE_10x12 = REGISTRATE.item("cardboard_package_10x12", p -> new PackageItem(p, 10, 12, 22f))
+			.transform(BuilderTransformers.packageItem("cardboard", 10, 12))
+			.register(),
+		CARDBOARD_PACKAGE_10x8 = REGISTRATE.item("cardboard_package_10x8", p -> new PackageItem(p, 10, 8, 18f))
+			.transform(BuilderTransformers.packageItem("cardboard", 10, 8))
+			.register(),
+		CARDBOARD_PACKAGE_12x10 = REGISTRATE.item("cardboard_package_12x10", p -> new PackageItem(p, 12, 10, 21f))
+			.transform(BuilderTransformers.packageItem("cardboard", 12, 10))
+			.register();
+
 	public static final ItemEntry<FilterItem> FILTER = REGISTRATE.item("filter", FilterItem::regular)
 		.lang("List Filter")
-		.register(), ATTRIBUTE_FILTER =
-			REGISTRATE.item("attribute_filter", FilterItem::attribute)
-				.register();
+		.register(),
+
+		ATTRIBUTE_FILTER = REGISTRATE.item("attribute_filter", FilterItem::attribute)
+			.register(),
+
+		PACKAGE_FILTER = REGISTRATE.item("package_filter", FilterItem::address)
+			.register();
 
 	public static final ItemEntry<ScheduleItem> SCHEDULE = REGISTRATE.item("schedule", ScheduleItem::new)
 		.lang("Train Schedule")
 		.register();
+
+	public static final ItemEntry<ShoppingListItem> SHOPPING_LIST =
+		REGISTRATE.item("shopping_list", ShoppingListItem::new)
+			.properties(p -> p.stacksTo(1))
+			.register();
 
 	// Schematics
 

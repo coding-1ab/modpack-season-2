@@ -12,6 +12,7 @@ import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
+import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.funnel.AbstractFunnelBlock;
 import com.simibubi.create.content.logistics.funnel.FunnelBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -50,6 +51,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.ClipContext.Block;
 import net.minecraft.world.level.ClipContext.Fluid;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.ObserverBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -148,6 +150,8 @@ public class EjectorBlockEntity extends KineticBlockEntity {
 			if (!entity.isAlive())
 				continue;
 			if (entity instanceof ItemEntity)
+				continue;
+			if (entity instanceof PackageEntity)
 				continue;
 			if (entity.getPistonPushReaction() == PushReaction.IGNORE)
 				continue;
@@ -618,16 +622,16 @@ public class EjectorBlockEntity extends KineticBlockEntity {
 	private class EjectorSlot extends ValueBoxTransform.Sided {
 
 		@Override
-		public Vec3 getLocalOffset(BlockState state) {
+		public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
 			if (direction != Direction.UP)
-				return super.getLocalOffset(state);
+				return super.getLocalOffset(level, pos, state);
 			return new Vec3(.5, 10.5 / 16f, .5).add(VecHelper.rotate(VecHelper.voxelSpace(0, 0, -5), angle(state), Axis.Y));
 		}
 
 		@Override
-		public void rotate(BlockState state, PoseStack ms) {
+		public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
 			if (direction != Direction.UP) {
-				super.rotate(state, ms);
+				super.rotate(level, pos, state, ms);
 				return;
 			}
 			TransformStack.of(ms)

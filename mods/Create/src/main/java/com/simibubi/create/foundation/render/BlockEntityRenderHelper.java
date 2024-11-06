@@ -9,7 +9,6 @@ import org.joml.Vector4f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.Create;
-import net.createmod.catnip.utility.AnimationTickHolder;
 import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
@@ -18,6 +17,7 @@ import dev.engine_room.flywheel.lib.transform.TransformStack;
 import dev.engine_room.flywheel.lib.visualization.VisualizationHelper;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.utility.AnimationTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;

@@ -3,8 +3,6 @@
 	"loader": "forge:composite",
 	"parent": "block/block",
 	"textures": {
-		"0": "create:block/display_link",
-		"3": "create:block/display_link_side_powered",
 		"particle": "create:block/brass_casing"
 	},
 	"children": {

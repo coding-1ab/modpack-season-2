@@ -30,7 +30,9 @@ public class BrassDiodeScrollValueBehaviour extends ScrollValueBehaviour {
 	}
 
 	@Override
-	public void onShortInteract(Player player, InteractionHand hand, Direction side) {
+	public void onShortInteract(Player player, InteractionHand hand, Direction side, BlockHitResult hitResult) {
+		if (getWorld().isClientSide)
+			return;
 		BlockState blockState = blockEntity.getBlockState();
 		if (blockState.getBlock()instanceof BrassDiodeBlock bdb)
 			bdb.toggle(getWorld(), getPos(), blockState, player, hand);

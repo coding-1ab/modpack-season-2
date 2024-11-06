@@ -1,7 +1,5 @@
 package com.simibubi.create.content.contraptions.render;
 
-import net.createmod.catnip.render.SuperByteBuffer;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -16,6 +14,7 @@ import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
+import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;

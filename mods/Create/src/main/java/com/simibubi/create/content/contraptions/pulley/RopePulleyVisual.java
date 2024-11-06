@@ -3,7 +3,6 @@ package com.simibubi.create.content.contraptions.pulley;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPartialModels;
-import net.createmod.catnip.render.VirtualRenderHelper;
 
 import dev.engine_room.flywheel.api.instance.Instancer;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
@@ -11,6 +10,7 @@ import dev.engine_room.flywheel.lib.instance.InstanceTypes;
 import dev.engine_room.flywheel.lib.instance.OrientedInstance;
 import dev.engine_room.flywheel.lib.instance.TransformedInstance;
 import dev.engine_room.flywheel.lib.model.Models;
+import net.createmod.catnip.render.VirtualRenderHelper;
 
 public class RopePulleyVisual extends AbstractPulleyVisual<PulleyBlockEntity> {
 	public RopePulleyVisual(VisualizationContext context, PulleyBlockEntity blockEntity, float partialTick) {

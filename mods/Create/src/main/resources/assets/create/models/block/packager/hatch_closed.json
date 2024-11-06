@@ -1,0 +1,30 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "create:block/packager_block",
+		"1": "create:block/packager_door_closed"
+	},
+	"elements": [
+		{
+			"from": [1.05, 1.05, 7],
+			"to": [14.95, 14.95, 10.05],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
+			"faces": {
+				"north": {"uv": [1, 1, 15, 15], "texture": "#1"},
+				"east": {"uv": [8, 15.5, 9.5, 8.5], "texture": "#0"},
+				"south": {"uv": [15, 1, 1, 15], "texture": "#1"},
+				"west": {"uv": [8, 15.5, 9.5, 8.5], "texture": "#0"},
+				"up": {"uv": [8, 15.5, 9.5, 8.5], "rotation": 90, "texture": "#0"},
+				"down": {"uv": [8, 15.5, 9.5, 8.5], "rotation": 90, "texture": "#0"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "Door",
+			"origin": [0, 0, 0],
+			"color": 0,
+			"children": [0]
+		}
+	]
+}

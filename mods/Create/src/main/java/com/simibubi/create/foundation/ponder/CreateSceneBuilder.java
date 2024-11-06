@@ -19,7 +19,7 @@ import com.simibubi.create.content.kinetics.gauge.SpeedGaugeBlockEntity;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmBlockEntity;
 import com.simibubi.create.content.logistics.funnel.FunnelBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
-import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
+import com.simibubi.create.content.redstone.displayLink.LinkWithBulbBlockEntity;
 import com.simibubi.create.content.trains.display.FlapDisplayBlockEntity;
 import com.simibubi.create.content.trains.signal.SignalBlockEntity;
 import com.simibubi.create.content.trains.station.StationBlockEntity;
@@ -301,8 +301,8 @@ public class CreateSceneBuilder extends PonderSceneBuilder {
 		}
 
 		public void flashDisplayLink(BlockPos position) {
-			modifyBlockEntity(position, DisplayLinkBlockEntity.class,
-					linkBlockEntity -> linkBlockEntity.glow.setValue(2));
+			modifyBlockEntity(position, LinkWithBulbBlockEntity.class,
+				linkBlockEntity -> linkBlockEntity.pulse());
 		}
 
 	}

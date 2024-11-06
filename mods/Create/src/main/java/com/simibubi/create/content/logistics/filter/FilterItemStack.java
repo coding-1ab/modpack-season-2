@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.fluids.transfer.GenericItemEmptying;
+import com.simibubi.create.content.logistics.box.PackageItem;
 
 import net.createmod.catnip.utility.Pair;
 import net.minecraft.nbt.CompoundTag;
@@ -31,6 +32,8 @@ public class FilterItemStack {
 				return new ListFilterItemStack(filter);
 			if (AllItems.ATTRIBUTE_FILTER.isIn(filter))
 				return new AttributeFilterItemStack(filter);
+			if (AllItems.PACKAGE_FILTER.isIn(filter))
+				return new PackageFilterItemStack(filter);
 		}
 
 		return new FilterItemStack(filter);
@@ -104,7 +107,7 @@ public class FilterItemStack {
 			fluidExtracted = true;
 			if (GenericItemEmptying.canItemBeEmptied(world, filterItemStack))
 				filterFluidStack = GenericItemEmptying.emptyItem(world, filterItemStack, true)
-				.getFirst();
+					.getFirst();
 		}
 	}
 
@@ -233,6 +236,29 @@ public class FilterItemStack {
             };
 
         }
+
+	}
+
+	public static class PackageFilterItemStack extends FilterItemStack {
+
+		public String filterString;
+
+		protected PackageFilterItemStack(ItemStack filter) {
+			super(filter);
+			filterString = filter.getOrCreateTag()
+				.getString("Address");
+		}
+
+		@Override
+		public boolean test(Level world, ItemStack stack, boolean matchNBT) {
+			return (filterString.isBlank() && super.test(world, stack, matchNBT))
+				|| stack.getItem() instanceof PackageItem && PackageItem.matchAddress(stack, filterString);
+		}
+
+		@Override
+		public boolean test(Level world, FluidStack stack, boolean matchNBT) {
+			return false;
+		}
 
 	}
 

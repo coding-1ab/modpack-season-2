@@ -11,6 +11,7 @@ import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.content.logistics.depot.EjectorBlockEntity.State;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
+import com.simibubi.create.foundation.item.ItemHelper;
 
 import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
@@ -19,7 +20,6 @@ import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -106,7 +106,7 @@ public class EjectorBlock extends HorizontalKineticBlock implements IBE<EjectorB
 			return;
 		if (entityIn.isSuppressingBounce())
 			return;
-		if (entityIn instanceof ItemEntity) {
+		if (!ItemHelper.fromItemEntity(entityIn).isEmpty()) {
 			SharedDepotBlockMethods.onLanded(worldIn, entityIn);
 			return;
 		}

@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.logistics.flwdata.FlapInstance;
 import com.simibubi.create.foundation.render.AllInstanceTypes;
-import net.createmod.catnip.utility.AnimationTickHolder;
 
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.instance.Instancer;
@@ -18,6 +17,7 @@ import dev.engine_room.flywheel.lib.model.Models;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.engine_room.flywheel.lib.visual.AbstractBlockEntityVisual;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
+import net.createmod.catnip.utility.AnimationTickHolder;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.LightLayer;
 

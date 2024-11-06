@@ -1,5 +1,10 @@
 package com.simibubi.create.content.contraptions.elevator;
 
+import java.lang.ref.WeakReference;
+import java.util.Collection;
+
+import org.apache.commons.lang3.tuple.MutablePair;
+
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
@@ -11,11 +16,13 @@ import com.simibubi.create.content.contraptions.actors.contraptionControls.Contr
 import com.simibubi.create.content.contraptions.actors.contraptionControls.ContraptionControlsMovement;
 import com.simibubi.create.content.contraptions.actors.contraptionControls.ContraptionControlsMovement.ElevatorFloorSelection;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
+
 import net.createmod.catnip.utility.Couple;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
 import net.minecraft.world.phys.AABB;
@@ -23,10 +30,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.commons.lang3.tuple.MutablePair;
-
-import java.lang.ref.WeakReference;
-import java.util.Collection;
 
 public class ElevatorControlsHandler {
 
@@ -35,8 +38,8 @@ public class ElevatorControlsHandler {
 	private static class ElevatorControlsSlot extends ContraptionControlsBlockEntity.ControlsSlot {
 
 		@Override
-		public boolean testHit(BlockState state, Vec3 localHit) {
-			Vec3 offset = getLocalOffset(state);
+		public boolean testHit(LevelAccessor level, BlockPos pos, BlockState state, Vec3 localHit) {
+			Vec3 offset = getLocalOffset(level, pos, state);
 			if (offset == null)
 				return false;
 			return localHit.distanceTo(offset) < scale * .85;
@@ -92,7 +95,7 @@ public class ElevatorControlsHandler {
 			if (!AllBlocks.CONTRAPTION_CONTROLS.has(info.state()))
 				continue;
 
-			if (!slot.testHit(info.state(), rayTraceResult.getLocation()
+			if (!slot.testHit(mc.level, pos, info.state(), rayTraceResult.getLocation()
 				.subtract(Vec3.atLowerCornerOf(pos))))
 				continue;
 

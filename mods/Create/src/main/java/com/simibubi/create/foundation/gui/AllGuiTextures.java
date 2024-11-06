@@ -40,16 +40,20 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	SCHEMATICANNON_FUEL("schematics_2", 28, 222, 47, 16),
 	SCHEMATICANNON_FUEL_CREATIVE("schematics_2", 28, 239, 47, 16),
 
-	STOCKSWITCH("logistics", 182, 95),
-	STOCKSWITCH_ARROW_UP("logistics", 191, 0, 7, 24),
-	STOCKSWITCH_ARROW_DOWN("logistics", 198, 0, 7, 24),
-	STOCKSWITCH_CURSOR("logistics", 206, 0, 7, 16),
-	STOCKSWITCH_INTERVAL("logistics", 0, 95, 100, 18),
-	STOCKSWITCH_UNPOWERED_LANE("logistics", 37, 20, 100, 18),
-	STOCKSWITCH_POWERED_LANE("logistics", 37, 42, 100, 18),
+	THRESHOLD_SWITCH("threshold_switch", 182, 103),
+	THRESHOLD_SWITCH_ITEMCOUNT_INPUTS("threshold_switch", 0, 105, 115, 22),
+	THRESHOLD_SWITCH_MISC_INPUTS("threshold_switch", 0, 129, 115, 22),
+	THRESHOLD_SWITCH_CURRENT_STATE("threshold_switch", 0, 153, 24, 24),
 
 	FILTER("filters", 214, 99),
 	ATTRIBUTE_FILTER("filters", 0, 99, 241, 85),
+	PACKAGE_FILTER("filters_2", 0, 0, 218, 79),
+
+	POSTBOX_HEADER("frogport_and_mailbox", 0, 23, 214, 24),
+	FROGPORT_HEADER("frogport_and_mailbox", 0, 0, 214, 17),
+	FROGPORT_SLOT("frogport_and_mailbox", 26, 55, 18, 18),
+	FROGPORT_EDIT_NAME("frogport_and_mailbox", 230, 3, 13, 13),
+	FROGPORT_BG("frogport_and_mailbox", 0, 47, 220, 82),
 
 	TOOLBOX("toolbox", 188, 171),
 	TOOLBELT_SLOT("minecraft", "widgets", 24, 23, 22, 22),
@@ -74,6 +78,8 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	BLUEPRINT("curiosities_2", 0, 109, 179, 109),
 
 	CLIPBOARD("clipboard", 0, 0, 256, 256),
+	CLIPBOARD_ADDRESS("widgets", 116, 7, 8, 8),
+	CLIPBOARD_ADDRESS_INACTIVE("widgets", 125, 7, 8, 8),
 
 	DATA_GATHERER("display_link", 235, 162),
 	DATA_AREA_START("display_link", 0, 163, 2, 18),
@@ -146,6 +152,35 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	VALUE_SETTINGS_CURSOR_ICON("value_settings", 0, 44, 22, 20),
 	VALUE_SETTINGS_LABEL_BG("value_settings", 0, 31, 81, 11),
 
+	// HILO
+	FACTORY_PANEL_TOP("restocker_and_requester", 0, 0, 182, 23),
+	FACTORY_PANEL_MIDDLE("restocker_and_requester", 0, 23, 182, 26),
+	FACTORY_PANEL_BOTTOM("restocker_and_requester", 0, 49, 182, 54),
+	FACTORY_PANEL_SLOT_FRAME("restocker_and_requester", 3, 106, 20, 20),
+	FACTORY_PANEL_SLOT("restocker_and_requester", 4, 107, 18, 18),
+	FACTORY_PANEL_ARROW("restocker_and_requester", 27, 108, 22, 16),
+	FACTORY_PANEL_ARROW_FILLED("restocker_and_requester", 50, 108, 22, 16),
+	
+	STOCK_KEEPER_REQUEST_HEADER("stock_keeper", 256, 22),
+	STOCK_KEEPER_REQUEST_BODY("stock_keeper", 0, 23, 256, 20),
+	STOCK_KEEPER_REQUEST_FOOTER("stock_keeper", 0, 44, 256, 74),
+	STOCK_KEEPER_REQUEST_SEARCH("stock_keeper", 0, 137, 256, 15),
+	STOCK_KEEPER_REQUEST_SAYS("stock_keeper", 4, 163, 8, 16),
+	STOCK_KEEPER_REQUEST_LOCKED("stock_keeper", 29, 163, 15, 15),
+	STOCK_KEEPER_REQUEST_UNLOCKED("stock_keeper", 45, 163, 15, 15),
+	NUMBERS("widgets", 100, 20, 5, 8),
+
+	STOCK_KEEPER_CATEGORY("stock_keeper_categories", 210, 190),
+	STOCK_KEEPER_CATEGORY_HEADER("stock_keeper_categories", 202, 15),
+	STOCK_KEEPER_CATEGORY_EDIT("stock_keeper_categories", 0, 216, 202, 38),
+	STOCK_KEEPER_CATEGORY_FOOTER("stock_keeper_categories", 0, 160, 210, 30),
+	STOCK_KEEPER_CATEGORY_NEW("stock_keeper_categories", 4, 194, 28, 17),
+	STOCK_KEEPER_CATEGORY_ENTRY("stock_keeper_categories", 39, 194, 169, 17),
+	STOCK_KEEPER_CATEGORY_UP("stock_keeper_categories", 211, 195, 8, 9),
+	STOCK_KEEPER_CATEGORY_DOWN("stock_keeper_categories", 211, 205, 8, 9),
+	
+	REDSTONE_REQUESTER("restocker_and_requester", 0, 134, 210, 100),
+
 	// JEI
 	JEI_SLOT("jei/widgets", 18, 18),
 	JEI_CHANCE_SLOT("jei/widgets", 20, 156, 18, 18),
@@ -164,6 +199,8 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	BUTTON("widgets", 18, 18),
 	BUTTON_HOVER("widgets", 18, 0, 18, 18),
 	BUTTON_DOWN("widgets", 36, 0, 18, 18),
+	BUTTON_GREEN("widgets", 72, 0, 18, 18),
+	BUTTON_DISABLED("widgets", 90, 0, 18, 18),
 	INDICATOR("widgets", 0, 18, 18, 6),
 	INDICATOR_WHITE("widgets", 18, 18, 18, 6),
 	INDICATOR_GREEN("widgets", 36, 18, 18, 6),
@@ -171,6 +208,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	INDICATOR_RED("widgets", 72, 18, 18, 6),
 
 	HOTSLOT_ARROW("widgets", 24, 51, 20, 12),
+	HOTSLOT_ARROW_BAD("widgets", 52, 51, 20, 15),
 	HOTSLOT("widgets", 0, 68, 22, 22),
 	HOTSLOT_ACTIVE("widgets", 0, 46, 22, 22),
 	HOTSLOT_SUPER_ACTIVE("widgets", 27, 67, 24, 24),
@@ -188,9 +226,11 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	TRAIN_PROMPT_R("widgets", 11, 209, 3, 16),
 	TRAIN_PROMPT("widgets", 0, 230, 256, 16),
 
+	TRADE_OVERLAY("widgets", 136, 97, 98, 48),
+
 	// PlacementIndicator
 	PLACEMENT_INDICATOR_SHEET("placement_indicator", 0, 0, 16, 256),
-	
+
 	// Train Map
 	TRAINMAP_SPRITES("trainmap_sprite_sheet", 0, 0, 512, 256),
 	TRAINMAP_SIGNAL("widgets", 81, 156, 5, 10),
@@ -198,16 +238,16 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	TRAINMAP_STATION_DIAGO("widgets", 56, 156, 5, 5),
 	TRAINMAP_STATION_ORTHO_HIGHLIGHT("widgets", 63, 156, 7, 7),
 	TRAINMAP_STATION_DIAGO_HIGHLIGHT("widgets", 72, 156, 7, 7),
-	
-	TRAINMAP_TOGGLE_PANEL("widgets", 166, 74, 33, 14),
-	TRAINMAP_TOGGLE_ON("widgets", 166, 89, 12, 7),
-	TRAINMAP_TOGGLE_OFF("widgets", 166, 97, 12, 7),
+
+	TRAINMAP_TOGGLE_PANEL("widgets", 219, 4, 33, 14),
+	TRAINMAP_TOGGLE_ON("widgets", 219, 19, 12, 7),
+	TRAINMAP_TOGGLE_OFF("widgets", 219, 27, 12, 7),
 
 	// ComputerCraft
 	COMPUTER("computer", 200, 102);
 
 	;
-
+	
 	public static final int FONT_COLOR = 0x575F7A;
 
 	public final ResourceLocation location;
@@ -219,6 +259,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	AllGuiTextures(String location, int width, int height) {
 		this(location, 0, 0, width, height);
 	}
+
 	AllGuiTextures(String location, int startX, int startY, int width, int height) {
 		this(Create.ID, location, startX, startY, width, height);
 	}

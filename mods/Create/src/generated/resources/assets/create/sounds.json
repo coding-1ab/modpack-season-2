@@ -8,6 +8,15 @@
     ],
     "subtitle": "create.subtitle.blaze_munch"
   },
+  "cardboard_bonk": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "create:cardboard_bonk"
+      }
+    ],
+    "subtitle": "create.subtitle.cardboard_bonk"
+  },
   "chiff": {
     "sounds": [
       {
@@ -207,6 +216,16 @@
     ],
     "subtitle": "create.subtitle.depot_slide"
   },
+  "desk_bell": {
+    "sounds": [
+      {
+        "type": "file",
+        "attenuation_distance": 64,
+        "name": "create:desk_bell"
+      }
+    ],
+    "subtitle": "create.subtitle.desk_bell"
+  },
   "funnel_flap": {
     "sounds": [
       {
@@ -250,6 +269,23 @@
       }
     ],
     "subtitle": "create.subtitle.haunted_bell_use"
+  },
+  "item_hatch": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.barrel.open"
+      }
+    ],
+    "subtitle": "create.subtitle.item_hatch"
+  },
+  "item_hatch_compounded_1": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.netherite_block.place"
+      }
+    ]
   },
   "mechanical_press_activation": {
     "sounds": [
@@ -299,6 +335,23 @@
       {
         "type": "event",
         "name": "minecraft:block.netherrack.break"
+      }
+    ]
+  },
+  "package_pop": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.armor_stand.break"
+      }
+    ],
+    "subtitle": "create.subtitle.package_pop"
+  },
+  "package_pop_compounded_1": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.wool.break"
       }
     ]
   },

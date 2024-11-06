@@ -14,6 +14,8 @@ import com.simibubi.create.content.decoration.palettes.AllPaletteBlocks;
 import com.simibubi.create.content.equipment.armor.BacktankUtil;
 import com.simibubi.create.content.equipment.toolbox.ToolboxBlock;
 import com.simibubi.create.content.kinetics.crank.ValveHandleBlock;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothBlock;
+import com.simibubi.create.content.logistics.packagePort.postbox.PostboxBlock;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.TagDependentIngredientItem;
 import com.tterrag.registrate.util.entry.BlockEntry;
@@ -127,6 +129,7 @@ public class AllCreativeModeTabs {
 					AllItems.FURNACE_MINECART_CONTRAPTION,
 					AllItems.CHEST_MINECART_CONTRAPTION,
 					AllItems.SCHEMATIC,
+					AllItems.SHOPPING_LIST,
 					AllBlocks.ANDESITE_ENCASED_SHAFT,
 					AllBlocks.BRASS_ENCASED_SHAFT,
 					AllBlocks.ANDESITE_ENCASED_COGWHEEL,
@@ -174,7 +177,11 @@ public class AllCreativeModeTabs {
 			);
 
 			Map<ItemProviderEntry<?>, ItemProviderEntry<?>> simpleAfterOrderings = Map.of(
-					AllItems.VERTICAL_GEARBOX, AllBlocks.GEARBOX
+					AllItems.VERTICAL_GEARBOX, AllBlocks.GEARBOX,
+					AllItems.CARDBOARD_PACKAGE_10x12, AllBlocks.PACKAGER,
+					AllItems.CARDBOARD_PACKAGE_12x12, AllBlocks.PACKAGER,
+					AllItems.CARDBOARD_PACKAGE_10x8, AllBlocks.PACKAGER,
+					AllItems.CARDBOARD_PACKAGE_12x10, AllBlocks.PACKAGER
 			);
 
 			simpleBeforeOrderings.forEach((entry, otherEntry) -> {
@@ -235,6 +242,20 @@ public class AllCreativeModeTabs {
 			for (BlockEntry<SeatBlock> entry : AllBlocks.SEATS) {
 				SeatBlock block = entry.get();
 				if (block.getColor() != DyeColor.RED) {
+					visibilities.put(entry.asItem(), TabVisibility.SEARCH_TAB_ONLY);
+				}
+			}
+			
+			for (BlockEntry<DisplayClothBlock> entry : AllBlocks.TABLE_CLOTHS) {
+				DisplayClothBlock block = entry.get();
+				if (block.getColor() != DyeColor.RED) {
+					visibilities.put(entry.asItem(), TabVisibility.SEARCH_TAB_ONLY);
+				}
+			}
+			
+			for (BlockEntry<PostboxBlock> entry : AllBlocks.PACKAGE_POSTBOXES) {
+				PostboxBlock block = entry.get();
+				if (block.getColor() != DyeColor.WHITE) {
 					visibilities.put(entry.asItem(), TabVisibility.SEARCH_TAB_ONLY);
 				}
 			}

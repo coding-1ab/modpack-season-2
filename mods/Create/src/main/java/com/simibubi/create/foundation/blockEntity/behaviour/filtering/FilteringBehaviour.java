@@ -19,6 +19,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBoard;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsFormatter;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
+import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.VecHelper;
@@ -51,7 +52,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	ValueBoxTransform slotPositioning;
 	boolean showCount;
 
-	private FilterItemStack filter;
+	protected FilterItemStack filter;
 
 	public int count;
 	public boolean upTo;
@@ -231,7 +232,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	public boolean testHit(Vec3 hit) {
 		BlockState state = blockEntity.getBlockState();
 		Vec3 localHit = hit.subtract(Vec3.atLowerCornerOf(blockEntity.getBlockPos()));
-		return slotPositioning.testHit(state, localHit);
+		return slotPositioning.testHit(getWorld(), getPos(), state, localHit);
 	}
 
 	public int getAmount() {
@@ -262,18 +263,19 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 		ItemStack filter = getFilter(hitResult.getDirection());
 		int maxAmount = (filter.getItem() instanceof FilterItem) ? 64 : filter.getMaxStackSize();
 		return new ValueSettingsBoard(CreateLang.translateDirect("logistics.filter.extracted_amount"), maxAmount, 16,
-				CreateLang.translatedOptions("logistics.filter", "up_to", "exactly"),
+			CreateLang.translatedOptions("logistics.filter", "up_to", "exactly"),
 			new ValueSettingsFormatter(this::formatValue));
 	}
 
 	public MutableComponent formatValue(ValueSettings value) {
-		if (value.row() == 0 && value.value() == filter.item().getMaxStackSize())
+		if (value.row() == 0 && value.value() == filter.item()
+			.getMaxStackSize())
 			return CreateLang.translateDirect("logistics.filter.any_amount_short");
 		return Components.literal(((value.row() == 0) ? "\u2264" : "=") + Math.max(1, value.value()));
 	}
 
 	@Override
-	public void onShortInteract(Player player, InteractionHand hand, Direction side) {
+	public void onShortInteract(Player player, InteractionHand hand, Direction side, BlockHitResult hitResult) {
 		Level level = getWorld();
 		BlockPos pos = getPos();
 		ItemStack itemInHand = player.getItemInHand(hand);
@@ -321,6 +323,16 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 			return customLabel;
 		return CreateLang.translateDirect(
 			recipeFilter ? "logistics.recipe_filter" : fluidFilter ? "logistics.fluid_filter" : "logistics.filter");
+	}
+
+	public MutableComponent getTip() {
+		return CreateLang
+			.translateDirect(filter.isEmpty() ? "logistics.filter.click_to_set" : "logistics.filter.click_to_replace");
+	}
+
+	public MutableComponent getCountLabelForValueBox() {
+		return Components.literal(isCountVisible() ? upTo && filter.item()
+			.getMaxStackSize() == count ? "*" : String.valueOf(count) : "");
 	}
 
 	@Override
@@ -386,9 +398,23 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 
 		return setFilter(side, copied);
 	}
-	
+
 	public boolean isRecipeFilter() {
 		return recipeFilter;
+	}
+
+	@Override
+	public boolean bypassesInput(ItemStack mainhandItem) {
+		return false;
+	}
+
+	@Override
+	public int netId() {
+		return 1;
+	}
+
+	public float getRenderDistance() {
+		return AllConfigs.client().filterItemRenderDistance.getF();
 	}
 
 }

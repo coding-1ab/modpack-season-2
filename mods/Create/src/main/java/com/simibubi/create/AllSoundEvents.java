@@ -125,7 +125,11 @@ public class AllSoundEvents {
 			.category(SoundSource.BLOCKS)
 			.build(),
 
-		FWOOMP = create("fwoomp").subtitle("Potato Launcher fwoomps")
+		FWOOMP = create("fwoomp").subtitle("Resonant fwoomp")
+			.category(SoundSource.PLAYERS)
+			.build(),
+
+		CARDBOARD_SWORD = create("cardboard_bonk").subtitle("Resonant bonk")
 			.category(SoundSource.PLAYERS)
 			.build(),
 
@@ -154,6 +158,12 @@ public class AllSoundEvents {
 		WRENCH_REMOVE = create("wrench_remove").subtitle("Component breaks")
 			.playExisting(SoundEvents.ITEM_PICKUP, .25f, .75f)
 			.playExisting(SoundEvents.NETHERITE_BLOCK_HIT, .25f, .75f)
+			.category(SoundSource.BLOCKS)
+			.build(),
+			
+		PACKAGE_POP = create("package_pop").subtitle("Package breaks")
+			.playExisting(SoundEvents.ARMOR_STAND_BREAK, .25f, .75f)
+			.playExisting(SoundEvents.WOOL_BREAK, .5f, 1.15f)
 			.category(SoundSource.BLOCKS)
 			.build(),
 
@@ -211,6 +221,12 @@ public class AllSoundEvents {
 			.playExisting(SoundEvents.GENERIC_EAT, .5f, 1f)
 			.category(SoundSource.BLOCKS)
 			.build(),
+			
+		ITEM_HATCH = create("item_hatch").subtitle("Item Hatch opens")
+			.playExisting(SoundEvents.BARREL_OPEN, .25f, 1.4f)
+			.playExisting(SoundEvents.NETHERITE_BLOCK_PLACE, .75f, 1.15f)
+			.category(SoundSource.BLOCKS)
+			.build(),
 
 		CRUSHING_1 = create("crushing_1").subtitle("Crushing noises")
 			.playExisting(SoundEvents.NETHERRACK_HIT)
@@ -230,6 +246,11 @@ public class AllSoundEvents {
 		PECULIAR_BELL_USE = create("peculiar_bell_use").subtitle("Peculiar Bell tolls")
 			.playExisting(SoundEvents.BELL_BLOCK)
 			.category(SoundSource.BLOCKS)
+			.build(),
+			
+		DESK_BELL_USE = create("desk_bell").subtitle("Reception bell dings")
+			.category(SoundSource.BLOCKS)
+			.attenuationDistance(64)
 			.build(),
 
 		WHISTLE_HIGH = create("whistle_high").subtitle("High whistling")

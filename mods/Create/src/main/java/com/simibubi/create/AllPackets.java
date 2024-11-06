@@ -43,20 +43,40 @@ import com.simibubi.create.content.equipment.potatoCannon.PotatoCannonPacket;
 import com.simibubi.create.content.equipment.potatoCannon.PotatoProjectileTypeManager;
 import com.simibubi.create.content.equipment.symmetryWand.ConfigureSymmetryWandPacket;
 import com.simibubi.create.content.equipment.symmetryWand.SymmetryEffectPacket;
+import com.simibubi.create.content.equipment.tool.KnockbackPacket;
 import com.simibubi.create.content.equipment.toolbox.ToolboxDisposeAllPacket;
 import com.simibubi.create.content.equipment.toolbox.ToolboxEquipPacket;
 import com.simibubi.create.content.equipment.zapper.ZapperBeamPacket;
 import com.simibubi.create.content.equipment.zapper.terrainzapper.ConfigureWorldshaperPacket;
 import com.simibubi.create.content.fluids.transfer.FluidSplashPacket;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorConnectionPacket;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainPackageInteractionPacket;
+import com.simibubi.create.content.kinetics.chainConveyor.ClientboundChainConveyorRidingPacket;
+import com.simibubi.create.content.kinetics.chainConveyor.ServerboundChainConveyorRidingPacket;
 import com.simibubi.create.content.kinetics.gauge.GaugeObservedPacket;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmPlacementPacket;
 import com.simibubi.create.content.kinetics.transmission.sequencer.ConfigureSequencedGearshiftPacket;
+import com.simibubi.create.content.logistics.box.PackageDestroyPacket;
 import com.simibubi.create.content.logistics.depot.EjectorAwardPacket;
 import com.simibubi.create.content.logistics.depot.EjectorElytraPacket;
 import com.simibubi.create.content.logistics.depot.EjectorPlacementPacket;
 import com.simibubi.create.content.logistics.depot.EjectorTriggerPacket;
+import com.simibubi.create.content.logistics.displayCloth.DisplayClothConfigurationPacket;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelConfigurationPacket;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelConnectionPacket;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelEffectPacket;
 import com.simibubi.create.content.logistics.filter.FilterScreenPacket;
 import com.simibubi.create.content.logistics.funnel.FunnelFlapPacket;
+import com.simibubi.create.content.logistics.packagePort.PackagePortConfigurationPacket;
+import com.simibubi.create.content.logistics.packagePort.PackagePortPlacementPacket;
+import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterConfigurationPacket;
+import com.simibubi.create.content.logistics.stockTicker.LogisticalStockRequestPacket;
+import com.simibubi.create.content.logistics.stockTicker.LogisticalStockResponsePacket;
+import com.simibubi.create.content.logistics.stockTicker.PackageOrderRequestPacket;
+import com.simibubi.create.content.logistics.stockTicker.StockKeeperCategoryEditPacket;
+import com.simibubi.create.content.logistics.stockTicker.StockKeeperCategoryRefundPacket;
+import com.simibubi.create.content.logistics.stockTicker.StockKeeperLockPacket;
+import com.simibubi.create.content.logistics.stockTicker.StockKeeperOpenRequestScreenPacket;
 import com.simibubi.create.content.logistics.tunnel.TunnelFlapPacket;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkConfigurationPacket;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerBindPacket;
@@ -123,6 +143,7 @@ public enum AllPackets {
 	CONTRAPTION_INTERACT(ContraptionInteractionPacket.class, ContraptionInteractionPacket::new, PLAY_TO_SERVER),
 	CLIENT_MOTION(ClientMotionPacket.class, ClientMotionPacket::new, PLAY_TO_SERVER),
 	PLACE_ARM(ArmPlacementPacket.class, ArmPlacementPacket::new, PLAY_TO_SERVER),
+	PLACE_PACKAGE_PORT(PackagePortPlacementPacket.class, PackagePortPlacementPacket::new, PLAY_TO_SERVER),
 	MINECART_COUPLING_CREATION(CouplingCreationPacket.class, CouplingCreationPacket::new, PLAY_TO_SERVER),
 	INSTANT_SCHEMATIC(InstantSchematicPacket.class, InstantSchematicPacket::new, PLAY_TO_SERVER),
 	SYNC_SCHEMATIC(SchematicSyncPacket.class, SchematicSyncPacket::new, PLAY_TO_SERVER),
@@ -168,7 +189,20 @@ public enum AllPackets {
 		ContraptionColliderLockPacketRequest::new, PLAY_TO_SERVER),
 	RADIAL_WRENCH_MENU_SUBMIT(RadialWrenchMenuSubmitPacket.class, RadialWrenchMenuSubmitPacket::new,
 			PLAY_TO_SERVER),
+	LOGISTICS_STOCK_REQUEST(LogisticalStockRequestPacket.class, LogisticalStockRequestPacket::new, PLAY_TO_SERVER),
+	LOGISTICS_PACKAGE_REQUEST(PackageOrderRequestPacket.class, PackageOrderRequestPacket::new, PLAY_TO_SERVER),
+	CHAIN_CONVEYOR_CONNECT(ChainConveyorConnectionPacket.class, ChainConveyorConnectionPacket::new, PLAY_TO_SERVER),
+	CHAIN_CONVEYOR_RIDING(ServerboundChainConveyorRidingPacket.class, ServerboundChainConveyorRidingPacket::new, PLAY_TO_SERVER),
+	CHAIN_PACKAGE_INTERACTION(ChainPackageInteractionPacket.class, ChainPackageInteractionPacket::new, PLAY_TO_SERVER),
+	DISPLAY_CLOTH_CONFIGURATION(DisplayClothConfigurationPacket.class, DisplayClothConfigurationPacket::new, PLAY_TO_SERVER),
+	PACKAGE_PORT_CONFIGURATION(PackagePortConfigurationPacket.class, PackagePortConfigurationPacket::new, PLAY_TO_SERVER),
 	TRAIN_MAP_REQUEST(TrainMapSyncRequestPacket.class, TrainMapSyncRequestPacket::new, PLAY_TO_SERVER),
+	CONNECT_FACTORY_PANEL(FactoryPanelConnectionPacket.class, FactoryPanelConnectionPacket::new, PLAY_TO_SERVER),
+	CONFIGURE_FACTORY_PANEL(FactoryPanelConfigurationPacket.class, FactoryPanelConfigurationPacket::new, PLAY_TO_SERVER),
+	CONFIGURE_REDSTONE_REQUESTER(RedstoneRequesterConfigurationPacket.class, RedstoneRequesterConfigurationPacket::new, PLAY_TO_SERVER),
+	CONFIGURE_STOCK_KEEPER_CATEGORIES(StockKeeperCategoryEditPacket.class, StockKeeperCategoryEditPacket::new, PLAY_TO_SERVER),
+	REFUND_STOCK_KEEPER_CATEGORY(StockKeeperCategoryRefundPacket.class, StockKeeperCategoryRefundPacket::new, PLAY_TO_SERVER),
+	LOCK_STOCK_KEEPER(StockKeeperLockPacket.class, StockKeeperLockPacket::new, PLAY_TO_SERVER),
 
 	// Server to Client
 	SYMMETRY_EFFECT(SymmetryEffectPacket.class, SymmetryEffectPacket::new, PLAY_TO_CLIENT),
@@ -208,13 +242,20 @@ public enum AllPackets {
 		PLAY_TO_CLIENT),
 	S_PLACE_ARM(EjectorPlacementPacket.ClientBoundRequest.class, EjectorPlacementPacket.ClientBoundRequest::new,
 		PLAY_TO_CLIENT),
+	S_PLACE_PACKAGE_PORT(PackagePortPlacementPacket.ClientBoundRequest.class, PackagePortPlacementPacket.ClientBoundRequest::new,
+		PLAY_TO_CLIENT),
 	UPDATE_ELEVATOR_FLOORS(ElevatorFloorListPacket.class, ElevatorFloorListPacket::new, PLAY_TO_CLIENT),
 	CONTRAPTION_ACTOR_TOGGLE(ContraptionDisableActorPacket.class, ContraptionDisableActorPacket::new, PLAY_TO_CLIENT),
 	CONTRAPTION_COLLIDER_LOCK(ContraptionColliderLockPacket.class, ContraptionColliderLockPacket::new, PLAY_TO_CLIENT),
 	ATTACHED_COMPUTER(AttachedComputerPacket.class, AttachedComputerPacket::new, PLAY_TO_CLIENT),
 	SERVER_DEBUG_INFO(ServerDebugInfoPacket.class, ServerDebugInfoPacket::new, PLAY_TO_CLIENT),
-	TRAIN_MAP_SYNC(TrainMapSyncPacket.class, TrainMapSyncPacket::new, PLAY_TO_CLIENT)
-	;
+	PACKAGE_DESTROYED(PackageDestroyPacket.class, PackageDestroyPacket::new, PLAY_TO_CLIENT),
+	LOGISTICS_STOCK_RESPONSE(LogisticalStockResponsePacket.class, LogisticalStockResponsePacket::new, PLAY_TO_CLIENT),
+	FACTORY_PANEL_EFFECT(FactoryPanelEffectPacket.class, FactoryPanelEffectPacket::new, PLAY_TO_CLIENT),
+	KNOCKBACK(KnockbackPacket.class, KnockbackPacket::new, PLAY_TO_CLIENT),
+	STOCK_KEEPER_OPEN_GUI(StockKeeperOpenRequestScreenPacket.class, StockKeeperOpenRequestScreenPacket::new, PLAY_TO_CLIENT),
+	TRAIN_MAP_SYNC(TrainMapSyncPacket.class, TrainMapSyncPacket::new, PLAY_TO_CLIENT),
+	CLIENTBOUND_CHAIN_CONVEYOR(ClientboundChainConveyorRidingPacket.class, ClientboundChainConveyorRidingPacket::new, PLAY_TO_CLIENT);
 
 	static {
 		ClientboundSimpleActionPacket.addAction("rainbowDebug", () -> SimpleCreateActions::rainbowDebug);

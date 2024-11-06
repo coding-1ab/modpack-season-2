@@ -8,6 +8,7 @@ import static com.simibubi.create.foundation.data.WindowGen.framedGlassPane;
 import static com.simibubi.create.foundation.data.WindowGen.woodenWindowBlock;
 import static com.simibubi.create.foundation.data.WindowGen.woodenWindowPane;
 
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllCreativeModeTabs;
 import com.simibubi.create.AllSpriteShifts;
 import com.simibubi.create.Create;
@@ -77,9 +78,13 @@ public class AllPaletteBlocks {
 		MANGROVE_WINDOW = woodenWindowBlock(WoodType.MANGROVE, Blocks.MANGROVE_PLANKS),
 		CRIMSON_WINDOW = woodenWindowBlock(WoodType.CRIMSON, Blocks.CRIMSON_PLANKS),
 		WARPED_WINDOW = woodenWindowBlock(WoodType.WARPED, Blocks.WARPED_PLANKS),
+		CHERRY_WINDOW = woodenWindowBlock(WoodType.CHERRY, Blocks.CHERRY_PLANKS),
+		BAMBOO_WINDOW = woodenWindowBlock(WoodType.BAMBOO, Blocks.BAMBOO_PLANKS),
 		ORNATE_IRON_WINDOW =
 			customWindowBlock("ornate_iron_window", () -> Items.IRON_NUGGET, () -> AllSpriteShifts.ORNATE_IRON_WINDOW,
-				() -> RenderType::cutout, false, () -> MapColor.TERRACOTTA_LIGHT_GRAY);
+				() -> RenderType::cutout, false, () -> MapColor.TERRACOTTA_LIGHT_GRAY),
+		INDUSTRIAL_IRON_WINDOW = customWindowBlock("industrial_iron_window", AllBlocks.INDUSTRIAL_IRON_BLOCK,
+			() -> AllSpriteShifts.INDUSTRIAL_IRON_WINDOW, () -> RenderType::cutout, false, () -> MapColor.COLOR_GRAY);
 
 	public static final BlockEntry<ConnectedGlassPaneBlock> OAK_WINDOW_PANE =
 		woodenWindowPane(WoodType.OAK, OAK_WINDOW),
@@ -91,8 +96,12 @@ public class AllPaletteBlocks {
 		MANGROVE_WINDOW_PANE = woodenWindowPane(WoodType.MANGROVE, MANGROVE_WINDOW),
 		CRIMSON_WINDOW_PANE = woodenWindowPane(WoodType.CRIMSON, CRIMSON_WINDOW),
 		WARPED_WINDOW_PANE = woodenWindowPane(WoodType.WARPED, WARPED_WINDOW),
+		CHERRY_WINDOW_PANE = woodenWindowPane(WoodType.CHERRY, CHERRY_WINDOW),
+		BAMBOO_WINDOW_PANE = woodenWindowPane(WoodType.BAMBOO, BAMBOO_WINDOW),
 		ORNATE_IRON_WINDOW_PANE = customWindowPane("ornate_iron_window", ORNATE_IRON_WINDOW,
-			() -> AllSpriteShifts.ORNATE_IRON_WINDOW, () -> RenderType::cutoutMipped);
+			() -> AllSpriteShifts.ORNATE_IRON_WINDOW, () -> RenderType::cutoutMipped),
+		INDUSTRIAL_IRON_WINDOW_PANE = customWindowPane("industrial_iron_window", INDUSTRIAL_IRON_WINDOW,
+			() -> AllSpriteShifts.INDUSTRIAL_IRON_WINDOW, () -> RenderType::cutoutMipped);
 
 	static {
 		AllPaletteStoneTypes.register(REGISTRATE);

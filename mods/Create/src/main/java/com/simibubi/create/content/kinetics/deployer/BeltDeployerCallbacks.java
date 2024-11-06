@@ -153,7 +153,7 @@ public class BeltDeployerCallbacks {
 		if (recipe instanceof SandPaperPolishingRecipe)
 			AllSoundEvents.SANDING_SHORT.playOnServer(world, pos, .35f, 1f);
 
-		blockEntity.sendData();
+		blockEntity.notifyUpdate();
 	}
 
 	private static void awardAdvancements(DeployerBlockEntity blockEntity, ItemStack created) {

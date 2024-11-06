@@ -39,6 +39,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -614,7 +615,7 @@ public class ArmBlockEntity extends KineticBlockEntity implements ITransformable
 		}
 
 		@Override
-		public Vec3 getLocalOffset(BlockState state) {
+		public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
 			int yPos = state.getValue(ArmBlock.CEILING) ? 16 - 3 : 3;
 			Vec3 location = VecHelper.voxelSpace(8, yPos, 15.5);
 			location = VecHelper.rotateCentered(location, AngleHelper.horizontalAngle(getSide()), Direction.Axis.Y);

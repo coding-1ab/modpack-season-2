@@ -41,13 +41,15 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 	private boolean iconMode;
 	private int milestoneSize;
 	private int soundCoolDown;
+	private int netId;
 
 	public ValueSettingsScreen(BlockPos pos, ValueSettingsBoard board, ValueSettings valueSettings,
-		Consumer<ValueSettings> onHover) {
+		Consumer<ValueSettings> onHover, int netId) {
 		this.pos = pos;
 		this.board = board;
 		this.initialSettings = valueSettings;
 		this.onHover = onHover;
+		this.netId = netId;
 		this.iconMode = board.formatter() instanceof ScrollOptionSettingsFormatter;
 		this.milestoneSize = iconMode ? 8 : 4;
 	}
@@ -136,7 +138,8 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 		int scale = board.maxValue() > 128 ? 1 : 2;
 
 		Component title = board.title();
-		Component tip = CreateLang.translateDirect("gui.value_settings.release_to_confirm", Components.keybind("key.use"));
+		Component tip =
+			CreateLang.translateDirect("gui.value_settings.release_to_confirm", Components.keybind("key.use"));
 		double fadeIn = Math.pow(Mth.clamp((ticksOpen + partialTicks) / 4.0, 0, 1), 1);
 
 		int fattestLabel = Math.max(font.width(tip), font.width(title));
@@ -152,17 +155,18 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 		int additionalHeight = iconMode ? 46 : 33;
 
 		int zLevel = 0;
-		UIRenderHelper.drawStretched(graphics, x - 11 + fadeInStart, y - 17, fadeInWidth, windowHeight + additionalHeight,
-			zLevel, AllGuiTextures.VALUE_SETTINGS_OUTER_BG);
-		UIRenderHelper.drawStretched(graphics, x - 10 + fadeInStart, y - 18, fadeInWidth - 2, 1,
-			zLevel, AllGuiTextures.VALUE_SETTINGS_OUTER_BG);
-		UIRenderHelper.drawStretched(graphics, x - 10 + fadeInStart, y - 17 + windowHeight + additionalHeight,
-			zLevel, fadeInWidth - 2, 1, AllGuiTextures.VALUE_SETTINGS_OUTER_BG);
+		UIRenderHelper.drawStretched(graphics, x - 11 + fadeInStart, y - 17, fadeInWidth,
+			windowHeight + additionalHeight, zLevel, AllGuiTextures.VALUE_SETTINGS_OUTER_BG);
+		UIRenderHelper.drawStretched(graphics, x - 10 + fadeInStart, y - 18, fadeInWidth - 2, 1, zLevel,
+			AllGuiTextures.VALUE_SETTINGS_OUTER_BG);
+		UIRenderHelper.drawStretched(graphics, x - 10 + fadeInStart, y - 17 + windowHeight + additionalHeight, zLevel,
+			fadeInWidth - 2, 1, AllGuiTextures.VALUE_SETTINGS_OUTER_BG);
 
 		if (fadeInWidth > fattestLabel) {
 			int textX = x - 11 - fatTipOffset + bgWidth / 2;
 			graphics.drawString(font, title, textX - font.width(title) / 2, y - 14, 0xdddddd, false);
-			graphics.drawString(font, tip, textX - font.width(tip) / 2, y + windowHeight + additionalHeight - 27, 0xdddddd, false);
+			graphics.drawString(font, tip, textX - font.width(tip) / 2, y + windowHeight + additionalHeight - 27,
+				0xdddddd, false);
 		}
 
 		renderBrassFrame(graphics, x + maxLabelWidth + 14, y - 3, valueBarWidth + 8, board.rows()
@@ -175,12 +179,12 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 			int valueBarX = x + maxLabelWidth + 14 + 4;
 
 			if (!iconMode) {
-				UIRenderHelper.drawCropped(graphics, x - 4, y, maxLabelWidth + 8, 11,
-					zLevel, AllGuiTextures.VALUE_SETTINGS_LABEL_BG);
+				UIRenderHelper.drawCropped(graphics, x - 4, y, maxLabelWidth + 8, 11, zLevel,
+					AllGuiTextures.VALUE_SETTINGS_LABEL_BG);
 				for (int w = 0; w < valueBarWidth; w += AllGuiTextures.VALUE_SETTINGS_BAR.getWidth() - 1)
 					UIRenderHelper.drawCropped(graphics, valueBarX + w, y + 1,
-						Math.min(AllGuiTextures.VALUE_SETTINGS_BAR.getWidth() - 1, valueBarWidth - w), 8,
-						zLevel, AllGuiTextures.VALUE_SETTINGS_BAR);
+						Math.min(AllGuiTextures.VALUE_SETTINGS_BAR.getWidth() - 1, valueBarWidth - w), 8, zLevel,
+						AllGuiTextures.VALUE_SETTINGS_BAR);
 				graphics.drawString(font, component, x, y + 1, 0x442000, false);
 			}
 
@@ -242,8 +246,8 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 		}
 
 		AllGuiTextures.VALUE_SETTINGS_CURSOR_LEFT.render(graphics, cursorX - 3, cursorY);
-		UIRenderHelper.drawCropped(graphics, cursorX, cursorY, cursorWidth, 14,
-			zLevel, AllGuiTextures.VALUE_SETTINGS_CURSOR);
+		UIRenderHelper.drawCropped(graphics, cursorX, cursorY, cursorWidth, 14, zLevel,
+			AllGuiTextures.VALUE_SETTINGS_CURSOR);
 		AllGuiTextures.VALUE_SETTINGS_CURSOR_RIGHT.render(graphics, cursorX + cursorWidth, cursorY);
 
 		graphics.drawString(font, cursorText, cursorX + 2, cursorY + 3, 0x442000, false);
@@ -258,7 +262,8 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 
 		if (h > 8) {
 			UIRenderHelper.drawStretched(graphics, x, y + 4, 3, h - 8, zLevel, AllGuiTextures.BRASS_FRAME_LEFT);
-			UIRenderHelper.drawStretched(graphics, x + w - 3, y + 4, 3, h - 8, zLevel, AllGuiTextures.BRASS_FRAME_RIGHT);
+			UIRenderHelper.drawStretched(graphics, x + w - 3, y + 4, 3, h - 8, zLevel,
+				AllGuiTextures.BRASS_FRAME_RIGHT);
 		}
 
 		if (w > 8) {
@@ -318,8 +323,8 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 		ValueSettings closest = getClosestCoordinate((int) pMouseX, (int) pMouseY);
 		// FIXME: value settings may be face-sensitive on future components
 		AllPackets.getChannel()
-			.sendToServer(new ValueSettingsPacket(pos, closest.row(), closest.value(), null, Direction.UP,
-				AllKeys.ctrlDown()));
+			.sendToServer(new ValueSettingsPacket(pos, closest.row(), closest.value(), null, null, Direction.UP,
+				AllKeys.ctrlDown(), netId));
 		onClose();
 	}
 

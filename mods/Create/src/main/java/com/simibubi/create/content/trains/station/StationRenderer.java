@@ -116,7 +116,7 @@ public class StationRenderer extends SafeBlockEntityRenderer<StationBlockEntity>
 		if (!be.resolveFlagAngle())
 			return;
 		SuperByteBuffer flagBB = CachedBuffers.partial(flag, be.getBlockState());
-		//transformFlag(flagBB, be, partialTicks, be.flagYRot, be.flagFlipped);//TODO flw
+		transformFlag(flagBB, be, partialTicks, be.flagYRot, be.flagFlipped);
 		flagBB.translate(0.5f / 16, 0, 0)
 			.rotateYDegrees(be.flagFlipped ? 0 : 180)
 			.translate(-0.5f / 16, 0, 0)

@@ -18,6 +18,7 @@ import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.CenteredSideValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import net.createmod.catnip.utility.Iterate;
@@ -27,6 +28,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -386,16 +388,31 @@ public class PulleyBlockEntity extends LinearActuatorBlockEntity implements Thre
 	public void animateOffset(float forcedOffset) {
 		offset = forcedOffset;
 	}
-
-	@Override
-	public float getPercent() {
-		int distance = worldPosition.getY() - level.getMinBuildHeight();
-		if (distance <= 0)
-			return 100;
-		return 100 * getInterpolatedOffset(.5f) / distance;
-	}
-
+	
 	public BlockPos getMirrorParent() {
 		return mirrorParent;
 	}
+
+	// Threshold switch
+	
+	@Override
+	public int getCurrentValue() {
+		return worldPosition.getY() - (int) getInterpolatedOffset(.5f);
+	}
+	
+	@Override
+	public int getMinValue() {
+		return level.getMinBuildHeight();
+	}
+	
+	@Override
+	public int getMaxValue() {
+		return worldPosition.getY();
+	}
+
+	@Override
+	public MutableComponent format(int value) {
+		return CreateLang.translateDirect("gui.threshold_switch.pulley_y_level", value);
+	}
+	
 }

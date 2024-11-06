@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
+import com.simibubi.create.content.logistics.box.PackageItem;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.transform.Rotate;
@@ -62,14 +63,22 @@ public class EjectorRenderer extends ShaftRenderer<EjectorBlockEntity> {
 			ms.pushPose();
 			Vec3 launchedItemLocation = be.getLaunchedItemLocation(time);
 			msr.translate(launchedItemLocation.subtract(Vec3.atLowerCornerOf(be.getBlockPos())));
-			Vec3 itemRotOffset = VecHelper.voxelSpace(0, 3, 0);
+			Vec3 itemRotOffset = VecHelper.voxelSpace(0, 2, -1);
 			msr.translate(itemRotOffset);
-			msr.rotateYDegrees(AngleHelper.horizontalAngle(be.getFacing()));
-			msr.rotateXDegrees(time * 40);
+
+			if (PackageItem.isPackage(intAttached.getValue())) {
+				ms.translate(0, 4 / 16f, 0);
+				ms.scale(1.5f, 1.5f, 1.5f);
+				msr.rotateYDegrees(time * 20);
+			} else {
+				ms.scale(.5f, .5f, .5f);
+				msr.rotateYDegrees(AngleHelper.horizontalAngle(be.getFacing()));
+				msr.rotateXDegrees(time * 40);
+			}
 			msr.translateBack(itemRotOffset);
 			Minecraft.getInstance()
 				.getItemRenderer()
-				.renderStatic(intAttached.getValue(), ItemDisplayContext.GROUND, light, overlay, ms, buffer, be.getLevel(), 0);
+				.renderStatic(intAttached.getValue(), ItemDisplayContext.FIXED, light, overlay, ms, buffer, be.getLevel(), 0);
 			ms.popPose();
 		}
 

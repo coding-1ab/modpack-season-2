@@ -2,6 +2,7 @@ package com.simibubi.create.foundation.render;
 
 import java.io.IOException;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -88,6 +89,18 @@ public class RenderTypes extends RenderStateShard {
 			.setOverlayState(OVERLAY)
 			.createCompositeState(true));
 
+	private static final Function<ResourceLocation, RenderType> CHAIN = Util.memoize((p_234330_) -> {
+		return RenderType.create("chain_conveyor_chain", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false,
+			true, RenderType.CompositeState.builder()
+				.setShaderState(RENDERTYPE_CUTOUT_MIPPED_SHADER)
+				.setTextureState(new RenderStateShard.TextureStateShard(p_234330_, false, true))
+				.setTransparencyState(NO_TRANSPARENCY)
+				.setWriteMaskState(COLOR_DEPTH_WRITE)
+				.setLightmapState(LIGHTMAP)
+				.setOverlayState(OVERLAY)
+				.createCompositeState(false));
+	});
+
 	public static RenderType entitySolidBlockMipped() {
 		return ENTITY_SOLID_BLOCK_MIPPED;
 	}
@@ -129,6 +142,10 @@ public class RenderTypes extends RenderStateShard {
 		return ITEM_GLOWING_TRANSLUCENT;
 	}
 
+	public static RenderType chain(ResourceLocation pLocation) {
+		return CHAIN.apply(pLocation);
+	}
+
 	private static String createLayerName(String name) {
 		return Create.ID + ":" + name;
 	}
@@ -145,7 +162,8 @@ public class RenderTypes extends RenderStateShard {
 		@SubscribeEvent
 		public static void onRegisterShaders(RegisterShadersEvent event) throws IOException {
 			ResourceProvider resourceProvider = event.getResourceProvider();
-			event.registerShader(new ShaderInstance(resourceProvider, Create.asResource("glowing_shader"), DefaultVertexFormat.NEW_ENTITY), shader -> glowingShader = shader);
+			event.registerShader(new ShaderInstance(resourceProvider, Create.asResource("glowing_shader"),
+				DefaultVertexFormat.NEW_ENTITY), shader -> glowingShader = shader);
 		}
 	}
 }
