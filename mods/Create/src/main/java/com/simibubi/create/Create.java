@@ -138,7 +138,7 @@ public class Create {
 		AllFanProcessingTypes.register();
 		BlockSpoutingBehaviour.registerDefaults();
 		BogeySizes.init();
-		AllBogeyStyles.register();
+		AllBogeyStyles.init();
 		// ----
 
 		ComputerCraftProxy.register();
