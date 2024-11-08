@@ -49,11 +49,6 @@ println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty '
 mixin {
     add sourceSets.main, 'create.refmap.json'
 
-    config 'flywheel.backend.mixins.json'
-    config 'flywheel.impl.mixins.json'
-    //config 'flywheel.impl.sodium.mixins.json'
-    config 'create.mixins.json'
-
     debug.verbose = true
     debug.export = true
 }
@@ -123,10 +118,6 @@ minecraft {
 
         client {
             workingDirectory project.file('run')
-
-            arg '-mixin.config=flywheel.backend.mixins.json'
-            arg '-mixin.config=flywheel.impl.mixins.json'
-            //arg '-mixin.config=flywheel.impl.sodium.mixins.json'
         }
 
         server {
