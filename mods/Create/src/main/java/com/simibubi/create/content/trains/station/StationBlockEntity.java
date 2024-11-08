@@ -27,6 +27,7 @@ import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.contraptions.ITransformableBlockEntity;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.decoration.slidingDoor.DoorControlBehaviour;
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.logistics.depot.DepotBehaviour;
 import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
 import com.simibubi.create.content.logistics.packagePort.postbox.PostboxBlockEntity;
@@ -314,7 +315,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 					if (!(newEntity instanceof AbstractBogeyBlockEntity newBE))
 						continue;
 					newBE.setBogeyData(oldData);
-					bogey.playRotateSound(level, bogeyPos);
+					IWrenchable.playRotateSound(level, bogeyPos);
 					return true;
 				}
 			}
@@ -476,7 +477,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 		itemEntity.setDeltaMovement(Vec3.ZERO);
 		getLevel().addFreshEntity(itemEntity);
 	}
-	
+
 	public void updateMapColor(int color) {
 		GlobalStation station = getStation();
 		if (station == null)
@@ -979,7 +980,7 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 
 		if (ppbe instanceof PostboxBlockEntity pbe)
 			pbe.trackedGlobalStation = new WeakReference<GlobalStation>(station);
-		
+
 		if (station.connectedPorts.containsKey(ppbe.getBlockPos()))
 			restoreOfflineBuffer(ppbe, station.connectedPorts.get(ppbe.getBlockPos()));
 

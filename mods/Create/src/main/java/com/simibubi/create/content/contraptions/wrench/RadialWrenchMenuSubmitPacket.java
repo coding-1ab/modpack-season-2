@@ -1,5 +1,6 @@
 package com.simibubi.create.content.contraptions.wrench;
 
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 
@@ -7,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.registries.GameData;
@@ -38,7 +40,10 @@ public class RadialWrenchMenuSubmitPacket extends SimplePacketBase {
 			ServerPlayer player = context.getSender();
 			Level level = player.level();
 
-			KineticBlockEntity.switchToBlockState(level, blockPos, newState);
+			BlockState updatedState = Block.updateFromNeighbourShapes(newState, level, blockPos);
+			KineticBlockEntity.switchToBlockState(level, blockPos, updatedState);
+
+			IWrenchable.playRotateSound(level, blockPos);
 		});
 		return true;
 	}

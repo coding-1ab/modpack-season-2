@@ -18,7 +18,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -49,11 +48,6 @@ public class PumpBlock extends DirectionalKineticBlock
 	public BlockState getRotatedBlockState(BlockState originalState, Direction targetedFace) {
 		return originalState.setValue(FACING, originalState.getValue(FACING)
 			.getOpposite());
-	}
-
-	@Override
-	public BlockState updateAfterWrenched(BlockState newState, UseOnContext context) {
-		return super.updateAfterWrenched(newState, context);
 	}
 
 	@Override
