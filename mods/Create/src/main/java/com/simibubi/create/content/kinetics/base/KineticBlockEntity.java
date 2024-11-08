@@ -393,6 +393,10 @@ public class KineticBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 			kineticBlockEntity.removeSource();
 		}
 
+		if (blockEntity instanceof GeneratingKineticBlockEntity generatingBlockEntity) {
+			generatingBlockEntity.reActivateSource = true;
+		}
+
 		world.setBlock(pos, state, 3);
 	}
 

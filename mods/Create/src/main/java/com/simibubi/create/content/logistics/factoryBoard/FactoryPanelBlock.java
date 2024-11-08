@@ -148,7 +148,7 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 				player.getInventory()
 					.placeItemBackInInventory(AllBlocks.FACTORY_GAUGE.asStack());
 
-			playRemoveSound(world, pos);
+			IWrenchable.playRemoveSound(world, pos);
 			if (be.activePanels() == 0)
 				world.destroyBlock(pos, false);
 
