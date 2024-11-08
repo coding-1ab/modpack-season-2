@@ -14,22 +14,7 @@
       "tag": "create:pulpifiable"
     },
     {
-      "tag": "create:pulpifiable"
-    },
-    {
-      "tag": "create:pulpifiable"
-    },
-    {
-      "tag": "create:pulpifiable"
-    },
-    {
-      "tag": "create:pulpifiable"
-    },
-    {
-      "tag": "create:pulpifiable"
-    },
-    {
-      "amount": 1000,
+      "amount": 250,
       "fluid": "minecraft:water",
       "nbt": {}
     }

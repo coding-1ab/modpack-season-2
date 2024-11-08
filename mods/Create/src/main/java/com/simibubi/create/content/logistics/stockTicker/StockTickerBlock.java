@@ -62,7 +62,7 @@ public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<
 			if (!stbe.behaviour.mayInteractMessage(pPlayer))
 				return InteractionResult.SUCCESS;
 
-			if (!stbe.receivedPayments.isEmpty()) {
+			if (!pLevel.isClientSide() && !stbe.receivedPayments.isEmpty()) {
 				for (int i = 0; i < stbe.receivedPayments.getSlots(); i++)
 					pPlayer.getInventory()
 						.placeItemBackInInventory(

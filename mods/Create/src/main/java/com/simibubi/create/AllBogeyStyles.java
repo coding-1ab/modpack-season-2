@@ -24,8 +24,8 @@ public class AllBogeyStyles {
 
 	public static final BogeyStyle STANDARD =
 		builder("standard", STANDARD_CYCLE_GROUP).displayName(Components.translatable("create.bogey.style.standard"))
-			.size(BogeySizes.SMALL, AllBlocks.SMALL_BOGEY, () -> new SizeRenderer(new StandardBogeyRenderer.Small(), StandardBogeyVisual.Small::new))
-			.size(BogeySizes.LARGE, AllBlocks.LARGE_BOGEY, () -> new SizeRenderer(new StandardBogeyRenderer.Large(), StandardBogeyVisual.Large::new))
+			.size(BogeySizes.SMALL, AllBlocks.SMALL_BOGEY, () -> () -> new SizeRenderer(new StandardBogeyRenderer.Small(), StandardBogeyVisual.Small::new))
+			.size(BogeySizes.LARGE, AllBlocks.LARGE_BOGEY, () -> () -> new SizeRenderer(new StandardBogeyRenderer.Large(), StandardBogeyVisual.Large::new))
 			.build();
 
 	public static Map<ResourceLocation, BogeyStyle> getCycleGroup(ResourceLocation cycleGroup) {

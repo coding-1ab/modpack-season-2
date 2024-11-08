@@ -154,9 +154,10 @@ public class FunnelBlockEntity extends SmartBlockEntity implements IHaveHovering
 			return;
 		}
 		for (Entity entity : level.getEntities(null, area)) {
-			if (entity instanceof ItemEntity || entity instanceof PackageEntity)
+			if (entity instanceof ItemEntity || entity instanceof PackageEntity) {
 				lastObserved = new WeakReference<>(entity);
-			return;
+				return;
+			}
 		}
 
 		// Extract
@@ -190,7 +191,7 @@ public class FunnelBlockEntity extends SmartBlockEntity implements IHaveHovering
 		startCooldown();
 	}
 
-	static final AABB coreBB = new AABB(VecHelper.CENTER_OF_ORIGIN, VecHelper.CENTER_OF_ORIGIN).inflate(.75f);
+	static final AABB coreBB = new AABB(BlockPos.ZERO);
 
 	private AABB getEntityOverflowScanningArea() {
 		Direction facing = AbstractFunnelBlock.getFunnelFacing(getBlockState());

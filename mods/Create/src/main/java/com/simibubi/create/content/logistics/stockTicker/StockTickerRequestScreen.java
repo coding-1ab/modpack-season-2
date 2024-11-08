@@ -92,6 +92,8 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 	private boolean isAdmin;
 	private boolean isLocked;
 
+	private boolean refreshSearchNextTick;
+
 	public StockTickerRequestScreen(StockTickerBlockEntity be, boolean isAdmin, boolean isLocked,
 		boolean encodeRequester) {
 		super(be.getBlockState()
@@ -111,6 +113,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		itemScroll = LerpedFloat.linear()
 			.startWithValue(0);
 		stockKeeper = new WeakReference<LivingEntity>(null);
+		refreshSearchNextTick = false;
 
 		// Find the keeper for rendering
 		for (int yOffset : Iterate.zeroAndOne) {
@@ -227,6 +230,9 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			categories.get(categoryIndex)
 				.setSecond(categoryY);
 
+			if (displayedItems.size() <= categoryIndex)
+				break;
+
 			List<BigItemStack> displayedItemsInCategory = displayedItems.get(categoryIndex);
 			for (BigItemStack entry : category) {
 				ItemStack stack = entry.stack;
@@ -298,6 +304,11 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			currentItemSource = clientStockSnapshot;
 			refreshSearchResults(false);
 			revalidateOrders();
+		}
+
+		if (refreshSearchNextTick) {
+			refreshSearchNextTick = false;
+			refreshSearchResults(true);
 		}
 
 		itemScroll.tickChaser();
@@ -558,12 +569,16 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		ms.scale(scale, scale, scale);
 		ms.scale(scaleFromHover, scaleFromHover, scaleFromHover);
 		ms.translate(-18 / 2.0, -18 / 2.0, 0);
-		GuiGameElement.of(entry.stack)
-			.render(graphics);
+		if (customCount != 0)
+			GuiGameElement.of(entry.stack)
+				.render(graphics);
 		ms.popPose();
 
 		ms.pushPose();
-		ms.translate(0, 0, 200);
+		ms.translate(0, 0, 190);
+		if (customCount != 0)
+			graphics.renderItemDecorations(font, entry.stack, 1, 1, "");
+		ms.translate(0, 0, 10);
 		drawItemCount(graphics, entry.count, customCount);
 		ms.popPose();
 	}
@@ -750,7 +765,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 
 		if (rmb && searchBox.isMouseOver(pMouseX, pMouseY)) {
 			searchBox.setValue("");
-			refreshSearchResults(true);
+			refreshSearchNextTick = true;
 			searchBox.setFocused(true);
 			return true;
 		}
@@ -837,7 +852,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		if (!searchBox.charTyped(pCodePoint, pModifiers))
 			return false;
 		if (!Objects.equals(s, searchBox.getValue()))
-			refreshSearchResults(true);
+			refreshSearchNextTick = true;
 		return true;
 	}
 
@@ -861,7 +876,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			return searchBox.isFocused() && searchBox.isVisible() && pKeyCode != 256 ? true
 				: super.keyPressed(pKeyCode, pScanCode, pModifiers);
 		if (!Objects.equals(s, searchBox.getValue()))
-			refreshSearchResults(true);
+			refreshSearchNextTick = true;
 		return true;
 	}
 

@@ -62,16 +62,6 @@ public class RenderTypes extends RenderStateShard {
 			.setOverlayState(OVERLAY)
 			.createCompositeState(true));
 
-	private static final RenderType FLUID = RenderType.create(createLayerName("fluid"),
-		DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
-			.setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_CULL_SHADER)
-			.setTextureState(BLOCK_SHEET_MIPPED)
-			.setCullState(NO_CULL)
-			.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-			.setLightmapState(LIGHTMAP)
-			.setOverlayState(OVERLAY)
-			.createCompositeState(true));
-
 	private static final RenderType ITEM_GLOWING_SOLID = RenderType.create(createLayerName("item_glowing_solid"),
 		DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, false, RenderType.CompositeState.builder()
 			.setShaderState(GLOWING_SHADER)
@@ -128,10 +118,6 @@ public class RenderTypes extends RenderStateShard {
 			.createCompositeState(false);
 		return RenderType.create("create_train_map", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP,
 			VertexFormat.Mode.QUADS, 256, false, true, rendertype$state);
-	}
-
-	public static RenderType fluid() {
-		return FLUID;
 	}
 
 	public static RenderType itemGlowingSolid() {

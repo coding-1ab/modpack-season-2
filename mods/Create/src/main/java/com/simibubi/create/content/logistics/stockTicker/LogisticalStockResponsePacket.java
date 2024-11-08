@@ -44,7 +44,7 @@ public class LogisticalStockResponsePacket extends SimplePacketBase {
 
 	@Override
 	public boolean handle(Context context) {
-		handleClient();
+		context.enqueueWork(this::handleClient);
 		return true;
 	}
 

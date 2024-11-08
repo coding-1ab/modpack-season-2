@@ -69,12 +69,7 @@ public class MixingRecipeGen extends ProcessingRecipeGen {
 			.require(AllItemTags.PULPIFIABLE.tag)
 			.require(AllItemTags.PULPIFIABLE.tag)
 			.require(AllItemTags.PULPIFIABLE.tag)
-			.require(AllItemTags.PULPIFIABLE.tag)
-			.require(AllItemTags.PULPIFIABLE.tag)
-			.require(AllItemTags.PULPIFIABLE.tag)
-			.require(AllItemTags.PULPIFIABLE.tag)
-			.require(AllItemTags.PULPIFIABLE.tag)
-			.require(Fluids.WATER, 1000)
+			.require(Fluids.WATER, 250)
 			.output(AllItems.PULP, 1)),
 
 		// AE2

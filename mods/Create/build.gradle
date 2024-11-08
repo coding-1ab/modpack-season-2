@@ -51,7 +51,7 @@ mixin {
 
     config 'flywheel.backend.mixins.json'
     config 'flywheel.impl.mixins.json'
-    config 'flywheel.impl.sodium.mixins.json'
+//    config 'flywheel.impl.sodium.mixins.json'
     config 'create.mixins.json'
 
     debug.verbose = true
@@ -126,7 +126,7 @@ minecraft {
 
             arg '-mixin.config=flywheel.backend.mixins.json'
             arg '-mixin.config=flywheel.impl.mixins.json'
-            arg '-mixin.config=flywheel.impl.sodium.mixins.json'
+//            arg '-mixin.config=flywheel.impl.sodium.mixins.json'
         }
 
         server {

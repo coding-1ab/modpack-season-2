@@ -249,39 +249,41 @@ public class PackageItem extends Item {
 	public InteractionResultHolder<ItemStack> open(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack box = playerIn.getItemInHand(handIn);
 		ItemStackHandler contents = getContents(box);
-
 		ItemStack particle = box.copy();
 
-		box.shrink(1);
+		box = box.copyWithCount(box.getCount() - 1);
 		if (box.isEmpty())
-			playerIn.getInventory()
-				.removeItem(box);
+			box = ItemStack.EMPTY;
 
-		for (int i = 0; i < contents.getSlots(); i++) {
-			ItemStack itemstack = contents.getStackInSlot(i);
+		playerIn.setItemInHand(handIn, box);
 
-			if (itemstack.getItem() instanceof SpawnEggItem sei && worldIn instanceof ServerLevel sl) {
-				EntityType<?> entitytype = sei.getType(itemstack.getTag());
-				Entity entity = entitytype.spawn(sl, itemstack, null, BlockPos.containing(playerIn.position()
-					.add(playerIn.getLookAngle()
-						.multiply(1, 0, 1)
-						.normalize())),
-					MobSpawnType.SPAWN_EGG, false, false);
-				if (entity != null)
-					itemstack.shrink(1);
+		if (!worldIn.isClientSide()) {
+			for (int i = 0; i < contents.getSlots(); i++) {
+				ItemStack itemstack = contents.getStackInSlot(i);
+
+				if (itemstack.getItem() instanceof SpawnEggItem sei && worldIn instanceof ServerLevel sl) {
+					EntityType<?> entitytype = sei.getType(itemstack.getTag());
+					Entity entity = entitytype.spawn(sl, itemstack, null, BlockPos.containing(playerIn.position()
+						.add(playerIn.getLookAngle()
+							.multiply(1, 0, 1)
+							.normalize())),
+						MobSpawnType.SPAWN_EGG, false, false);
+					if (entity != null)
+						itemstack.shrink(1);
+				}
+
+				if (itemstack.isEmpty())
+					continue;
+				playerIn.getInventory()
+					.placeItemBackInInventory(itemstack);
 			}
-
-			if (itemstack.isEmpty())
-				continue;
-			playerIn.getInventory()
-				.placeItemBackInInventory(itemstack);
 		}
 
 		Vec3 position = playerIn.position();
 		worldIn.playSound((Player) null, position.x, position.y, position.z, SoundEvents.ARMOR_STAND_BREAK,
 			SoundSource.PLAYERS, 0.5F, 1.0F);
 
-		if (worldIn.isClientSide())
+		if (worldIn.isClientSide()) {
 			for (int i = 0; i < 10; i++) {
 				Vec3 motion = VecHelper.offsetRandomly(Vec3.ZERO, worldIn.getRandom(), .125f);
 				Vec3 pos = position.add(0, 0.5, 0)
@@ -291,14 +293,15 @@ public class PackageItem extends Item {
 				worldIn.addParticle(new ItemParticleOption(ParticleTypes.ITEM, particle), pos.x, pos.y, pos.z, motion.x,
 					motion.y, motion.z);
 			}
+		}
 
-		return new InteractionResultHolder<>(InteractionResult.SUCCESS, box);
+		return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 	}
 
 	@Override
 	public InteractionResult useOn(UseOnContext context) {
 		if (context.getPlayer()
-			.isSteppingCarefully())
+			.isShiftKeyDown())
 			return open(context.getLevel(), context.getPlayer(), context.getHand()).getResult();
 
 		Vec3 point = context.getClickLocation();
@@ -331,7 +334,7 @@ public class PackageItem extends Item {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
-		if (player.isSteppingCarefully())
+		if (player.isShiftKeyDown())
 			return open(world, player, hand);
 		ItemStack itemstack = player.getItemInHand(hand);
 		player.startUsingItem(hand);

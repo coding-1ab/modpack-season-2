@@ -1,5 +1,7 @@
 package com.simibubi.create.content.logistics.factoryBoard;
 
+import java.util.UUID;
+
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
@@ -112,10 +114,21 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 
 		Vec3 location = pContext.getClickLocation();
 		if (blockState.is(this) && location != null && fpbe != null && !level.isClientSide()) {
-			if (fpbe.addPanel(getTargetedSlot(pos, blockState, location),
-				LogisticallyLinkedBlockItem.networkFromStack(pContext.getItemInHand())) && pContext.getPlayer() != null)
-				pContext.getPlayer()
-					.displayClientMessage(CreateLang.translateDirect("logistically_linked.connected"), true);
+			PanelSlot targetedSlot = getTargetedSlot(pos, blockState, location);
+			UUID networkFromStack = LogisticallyLinkedBlockItem.networkFromStack(pContext.getItemInHand());
+			Player pPlayer = pContext.getPlayer();
+
+			if (fpbe.addPanel(targetedSlot, networkFromStack) && pPlayer != null) {
+				pPlayer.displayClientMessage(CreateLang.translateDirect("logistically_linked.connected"), true);
+
+				if (!pPlayer.isCreative()) {
+					ItemStack item = pContext.getItemInHand();
+					item.shrink(1);
+					if (item.isEmpty())
+						pPlayer.setItemInHand(pContext.getHand(), ItemStack.EMPTY);
+				}
+			}
+
 		}
 
 		return withWater(stateForPlacement, pContext);

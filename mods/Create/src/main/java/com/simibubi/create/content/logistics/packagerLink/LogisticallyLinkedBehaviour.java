@@ -85,7 +85,7 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 		try {
 			Cache<Integer, WeakReference<LogisticallyLinkedBehaviour>> cache = LINKS.get(behaviour.freqId,
 				() -> CacheBuilder.newBuilder()
-					.expireAfterAccess(1, TimeUnit.SECONDS)
+					.expireAfterAccess(60, TimeUnit.SECONDS)
 					.build());
 
 			if (cache == null)

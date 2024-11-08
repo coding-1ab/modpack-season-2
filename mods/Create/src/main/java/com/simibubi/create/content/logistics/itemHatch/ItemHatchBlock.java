@@ -90,9 +90,13 @@ public class ItemHatchBlock extends HorizontalDirectionalBlock implements IBE<It
 		Inventory inventory = pPlayer.getInventory();
 		List<ItemStack> failedInsertions = new ArrayList<>();
 		boolean anyInserted = false;
+		boolean itemInHand = !pPlayer.getMainHandItem()
+			.isEmpty();
 
 		for (int i = 0; i < inventory.items.size(); i++) {
-			if (Inventory.isHotbarSlot(i))
+			if (Inventory.isHotbarSlot(i) != itemInHand)
+				continue;
+			if (itemInHand && i != inventory.selected)
 				continue;
 			ItemStack item = inventory.getItem(i);
 			if (item.isEmpty())

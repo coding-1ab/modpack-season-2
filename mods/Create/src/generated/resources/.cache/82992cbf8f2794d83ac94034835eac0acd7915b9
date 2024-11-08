@@ -1,4 +1,4 @@
-// 1.20.1	2024-11-05T22:14:55.6025876	Create's Standard Recipes
+// 1.20.1	2024-11-08T10:52:38.0073058	Create's Standard Recipes
 a8cc4af26f6c7c45a9eef12e92af1452fe042454 data/create/advancements/recipes/combat/crafting/appliances/netherite_backtank.json
 2c2639c7b307ee7c7a4e97e5efebf496788998ad data/create/advancements/recipes/combat/crafting/appliances/netherite_backtank_from_netherite.json
 81dcf0cb1aa99e39bc7d1a386e07cad4cee7d8b9 data/create/advancements/recipes/combat/crafting/appliances/netherite_diving_boots.json
@@ -40,6 +40,7 @@ b90af96817d6c38ec446f7464642a473a55c2027 data/create/advancements/recipes/misc/b
 6a0d06d354aa7f81e6141a03aeef9a51d03e3cd4 data/create/advancements/recipes/misc/crafting/appliances/cardboard_helmet.json
 dd3d469cc9899f3f7299cbd6903a2b541df5c7ff data/create/advancements/recipes/misc/crafting/appliances/cardboard_leggings.json
 f94a848698e7e52e0fb15b240a4e0ef89a3974fd data/create/advancements/recipes/misc/crafting/appliances/cardboard_sword.json
+52f97cc60de343ce7980113b2b458376dd8cbd74 data/create/advancements/recipes/misc/crafting/appliances/chain_from_zinc.json
 8b0f0b4342adbd3466c81298c87b5ed8993c3636 data/create/advancements/recipes/misc/crafting/appliances/clipboard.json
 42f06a32b53c954a54fa1d5ffb1afd2e161cbde2 data/create/advancements/recipes/misc/crafting/appliances/clipboard_clear.json
 6fa2794d2d8d8d5ffeea22701862d79578adf7f2 data/create/advancements/recipes/misc/crafting/appliances/copper_backtank.json
@@ -307,6 +308,7 @@ b42fe3c262a33657b098b036ae0864af988b9f10 data/create/recipes/crafting/appliances
 efbfccade226b34d22abb77138dab8726725752e data/create/recipes/crafting/appliances/cardboard_helmet.json
 1f49a67c1698a56cfd017a9e89a17c640052e1e3 data/create/recipes/crafting/appliances/cardboard_leggings.json
 c063d8143b5f93b258b2e5ce7c8b828af6a49e93 data/create/recipes/crafting/appliances/cardboard_sword.json
+cbd0357cfa7afdd877b6e772cad34df7e19a2ad3 data/create/recipes/crafting/appliances/chain_from_zinc.json
 66c24da136abee4521d788df83f55b1c224d19fe data/create/recipes/crafting/appliances/clipboard.json
 28d1dabd689b855964151100a80247b2ea150bd4 data/create/recipes/crafting/appliances/clipboard_clear.json
 97932adf38574c2baf0ed2d5e3d62e7514e0c2bf data/create/recipes/crafting/appliances/copper_backtank.json

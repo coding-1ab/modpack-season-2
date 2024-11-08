@@ -663,7 +663,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 
 	public static int getChainCost(BlockPos connection) {
 		return (int) Math.max(Math.round(Vec3.atLowerCornerOf(connection)
-			.length() / 1.25), 1);
+			.length() / 2.5), 1);
 	}
 
 	public static boolean getChainsFromInventory(Player player, ItemStack chain, int cost, boolean simulate) {

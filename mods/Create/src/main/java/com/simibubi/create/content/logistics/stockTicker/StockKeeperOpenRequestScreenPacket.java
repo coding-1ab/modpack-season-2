@@ -42,15 +42,17 @@ public class StockKeeperOpenRequestScreenPacket extends SimplePacketBase {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public boolean handle(Context context) {
-		LocalPlayer player = Minecraft.getInstance().player;
-		if (player == null)
-			return true;
-		ItemStack mainHandItem = player.getMainHandItem();
-		final boolean encodeMode =
-			AllItemTags.TABLE_CLOTHS.matches(mainHandItem) || AllBlocks.REDSTONE_REQUESTER.isIn(mainHandItem);
-		if (player.level()
-			.getBlockEntity(pos) instanceof StockTickerBlockEntity be)
-			ScreenOpener.open(new StockTickerRequestScreen(be, isAdmin, isLocked, encodeMode));
+		context.enqueueWork(() -> {
+			LocalPlayer player = Minecraft.getInstance().player;
+			if (player == null)
+				return;
+			ItemStack mainHandItem = player.getMainHandItem();
+			final boolean encodeMode =
+				AllItemTags.TABLE_CLOTHS.matches(mainHandItem) || AllBlocks.REDSTONE_REQUESTER.isIn(mainHandItem);
+			if (player.level()
+				.getBlockEntity(pos) instanceof StockTickerBlockEntity be)
+				ScreenOpener.open(new StockTickerRequestScreen(be, isAdmin, isLocked, encodeMode));
+		});
 		return true;
 	}
 

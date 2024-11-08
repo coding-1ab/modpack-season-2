@@ -12,6 +12,8 @@ import com.simibubi.create.content.logistics.box.PackageRenderer;
 
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.utility.AnimationTickHolder;
+import net.minecraft.client.CameraType;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -50,6 +52,10 @@ public class CardboardArmorHandlerClient {
 			return;
 
 		event.setCanceled(true);
+
+		if (player == Minecraft.getInstance().player
+			&& Minecraft.getInstance().options.getCameraType() == CameraType.FIRST_PERSON)
+			return;
 
 		PoseStack ms = event.getPoseStack();
 		ms.pushPose();

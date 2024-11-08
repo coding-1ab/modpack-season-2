@@ -44,17 +44,19 @@ public class FactoryPanelEffectPacket extends SimplePacketBase {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public boolean handle(Context context) {
-		ClientLevel level = Minecraft.getInstance().level;
-		BlockState blockState = level.getBlockState(fromPos.pos());
-		if (!AllBlocks.FACTORY_GAUGE.has(blockState))
-			return true;
-		FactoryPanelBehaviour panelBehaviour = FactoryPanelBehaviour.at(level, toPos);
-		if (panelBehaviour != null) {
-			panelBehaviour.bulb.setValue(1);
-			FactoryPanelConnection connection = panelBehaviour.targetedBy.get(fromPos);
-			if (connection != null)
-				connection.success = success;
-		}
+		context.enqueueWork(() -> {
+			ClientLevel level = Minecraft.getInstance().level;
+			BlockState blockState = level.getBlockState(fromPos.pos());
+			if (!AllBlocks.FACTORY_GAUGE.has(blockState))
+				return;
+			FactoryPanelBehaviour panelBehaviour = FactoryPanelBehaviour.at(level, toPos);
+			if (panelBehaviour != null) {
+				panelBehaviour.bulb.setValue(1);
+				FactoryPanelConnection connection = panelBehaviour.targetedBy.get(fromPos);
+				if (connection != null)
+					connection.success = success;
+			}
+		});
 		return true;
 	}
 }

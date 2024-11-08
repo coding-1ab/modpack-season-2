@@ -323,7 +323,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.pattern("C")
 				.pattern("S")
 				.pattern("I")),
-
+			
 		MECHANICAL_PISTON = create(AllBlocks.MECHANICAL_PISTON).unlockedBy(I::andesiteCasing)
 			.viaShaped(b -> b.define('B', ItemTags.WOODEN_SLABS)
 				.define('C', I.andesiteCasing())
@@ -1160,6 +1160,14 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 	DOUGH = create(AllItems.DOUGH).unlockedByTag(I::wheatFlour)
 		.viaShapeless(b -> b.requires(I.wheatFlour())
 			.requires(Items.WATER_BUCKET)),
+
+		CHAIN_FROM_ZINC = create(() -> Items.CHAIN).withSuffix("_from_zinc")
+			.unlockedByTag(I::zinc)
+			.viaShaped(b -> b.define('C', I.zinc())
+				.define('S', I.zincNugget())
+				.pattern("S")
+				.pattern("C")
+				.pattern("S")),
 
 		CLIPBOARD = create(AllBlocks.CLIPBOARD).unlockedBy(I::andesiteAlloy)
 			.viaShaped(b -> b.define('G', I.planks())
