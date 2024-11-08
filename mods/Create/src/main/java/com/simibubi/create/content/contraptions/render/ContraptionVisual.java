@@ -183,9 +183,10 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 	}
 
 	private void setEmbeddingMatrices(float partialTick) {
-		double x = Mth.lerp(partialTick, entity.xOld, entity.getX());
-		double y = Mth.lerp(partialTick, entity.yOld, entity.getY());
-		double z = Mth.lerp(partialTick, entity.zOld, entity.getZ());
+		var origin = renderOrigin();
+		double x = Mth.lerp(partialTick, entity.xOld, entity.getX()) - origin.getX();
+		double y = Mth.lerp(partialTick, entity.yOld, entity.getY()) - origin.getY();
+		double z = Mth.lerp(partialTick, entity.zOld, entity.getZ()) - origin.getZ();
 
 		contraptionMatrix.setIdentity();
 		contraptionMatrix.translate(x, y, z);
