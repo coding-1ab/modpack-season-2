@@ -53,7 +53,7 @@ public class PackageDefragmenter {
 	public List<ItemStack> repack(int orderId) {
 		List<ItemStack> exportingPackages = new ArrayList<>();
 		String address = "";
-		PackageOrder order = null;
+		PackageOrder orderContext = null;
 		List<BigItemStack> allItems = new ArrayList<>();
 
 		for (ItemStack box : collectedPackages.get(orderId)) {
@@ -61,7 +61,7 @@ public class PackageDefragmenter {
 			if (box.hasTag() && box.getTag()
 				.getCompound("Fragment")
 				.contains("OrderContext"))
-				order = PackageOrder.read(box.getTag()
+				orderContext = PackageOrder.read(box.getTag()
 					.getCompound("Fragment")
 					.getCompound("OrderContext"));
 			ItemStackHandler contents = PackageItem.getContents(box);
@@ -77,7 +77,7 @@ public class PackageDefragmenter {
 			}
 		}
 
-		List<BigItemStack> orderedStacks = order == null ? Collections.emptyList() : order.stacks();
+		List<BigItemStack> orderedStacks = orderContext == null ? Collections.emptyList() : new ArrayList<>(orderContext.stacks());
 		List<ItemStack> outputSlots = new ArrayList<>();
 
 		Repack: while (true) {
@@ -131,6 +131,9 @@ public class PackageDefragmenter {
 
 		for (ItemStack box : exportingPackages)
 			PackageItem.addAddress(box, address);
+		
+		if (!exportingPackages.isEmpty())
+			PackageItem.addOrderContext(exportingPackages.get(0), orderContext);
 
 		return exportingPackages;
 	}

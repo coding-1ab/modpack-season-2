@@ -1,5 +1,6 @@
 package com.simibubi.create.content.logistics.packager;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.UUID;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceBlockEntity;
+import com.simibubi.create.content.kinetics.crafter.MechanicalCrafterBlockEntity;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.crate.BottomlessItemHandler;
@@ -151,7 +153,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			this.availableItems = availableItems;
 			return availableItems;
 		}
-		
+
 		if (targetInv instanceof BottomlessItemHandler bih) {
 			availableItems.add(bih.getStackInSlot(0), BigItemStack.INF);
 			this.availableItems = availableItems;
@@ -271,11 +273,18 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			return false;
 
 		ItemStackHandler contents = PackageItem.getContents(box);
+		PackageOrder orderContext = PackageItem.getOrderContext(box);
 		IItemHandler targetInv = targetInventory.getInventory();
+		BlockEntity targetBE =
+			level.getBlockEntity(worldPosition.relative(getBlockState().getOptionalValue(PackagerBlock.FACING)
+				.orElse(Direction.UP)
+				.getOpposite()));
+
 		if (targetInv == null)
 			return false;
 
 		boolean targetIsCreativeCrate = targetInv instanceof BottomlessItemHandler;
+		boolean targetIsCrafter = targetBE instanceof MechanicalCrafterBlockEntity;
 
 		if (defragmenterActive) {
 			boolean anySpace = false;
@@ -295,10 +304,21 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			for (int slot = 0; slot < targetInv.getSlots(); slot++) {
 				ItemStack itemInSlot = targetInv.getStackInSlot(slot);
 				int itemsAddedToSlot = 0;
+
 				for (int boxSlot = 0; boxSlot < contents.getSlots(); boxSlot++) {
 					ItemStack toInsert = contents.getStackInSlot(boxSlot);
-					if (toInsert.isEmpty())
-						continue;
+
+					// Follow crafting arrangement
+					if (targetIsCrafter && orderContext != null && orderContext.stacks()
+						.size() > slot) {
+						BigItemStack targetStack = orderContext.stacks()
+							.get(slot);
+						if (targetStack.stack.isEmpty())
+							break;
+						if (!ItemHandlerHelper.canItemStacksStack(toInsert, targetStack.stack))
+							continue;
+					}
+
 					if (targetInv.insertItem(slot, toInsert, true)
 						.getCount() == toInsert.getCount())
 						continue;
@@ -311,17 +331,20 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 							contents.setStackInSlot(boxSlot, ItemStack.EMPTY);
 						itemInSlot = toInsert;
 						targetInv.insertItem(slot, toInsert, simulate);
+						itemsAddedToSlot += toInsert.getCount();
 						continue;
 					}
 					if (!ItemHandlerHelper.canItemStacksStack(toInsert, itemInSlot))
 						continue;
+
 					int insertedAmount = toInsert.getCount() - targetInv.insertItem(slot, toInsert, simulate)
 						.getCount();
 					int slotLimit = (int) ((targetInv.getStackInSlot(slot)
 						.isEmpty() ? itemInSlot.getMaxStackSize() / 64f : 1) * targetInv.getSlotLimit(slot));
 					int insertableAmountWithPreviousItems =
 						Math.min(toInsert.getCount(), slotLimit - itemInSlot.getCount() - itemsAddedToSlot);
-					int added = Math.min(insertedAmount, insertableAmountWithPreviousItems);
+
+					int added = Math.min(insertedAmount, Math.max(0, insertableAmountWithPreviousItems));
 					contents.setStackInSlot(boxSlot,
 						ItemHandlerHelper.copyStackWithSize(toInsert, toInsert.getCount() - added));
 				}
@@ -336,6 +359,9 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 		if (simulate)
 			return true;
+
+		if (targetBE instanceof MechanicalCrafterBlockEntity mcbe)
+			mcbe.checkCompletedRecipe(true);
 
 		previouslyUnwrapped = box;
 		animationInward = true;
@@ -448,7 +474,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 					continuePacking = true;
 					if (nextRequest.context() != null)
 						orderContext = nextRequest.context();
-					
+
 					if (bulky)
 						break Outer;
 					break;

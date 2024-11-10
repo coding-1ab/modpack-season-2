@@ -131,6 +131,24 @@ public class PackageItem extends Item {
 			.getInt("OrderId");
 	}
 
+	public static PackageOrder getOrderContext(ItemStack box) {
+		CompoundTag tag = box.getTag();
+		if (tag == null || !tag.contains("Fragment"))
+			return null;
+		CompoundTag frag = tag.getCompound("Fragment");
+		if (!frag.contains("OrderContext"))
+			return null;
+		return PackageOrder.read(frag.getCompound("OrderContext"));
+	}
+	
+	public static void addOrderContext(ItemStack box, PackageOrder orderContext) {
+		CompoundTag tag = box.getOrCreateTagElement("Fragment");
+		if (orderContext != null)
+			tag.put("OrderContext", orderContext.write());
+		box.getOrCreateTag()
+			.put("Fragment", tag);
+	}
+
 	public static boolean matchAddress(ItemStack box, String address) {
 		return matchAddress(getAddress(box), address);
 	}

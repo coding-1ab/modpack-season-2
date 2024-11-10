@@ -32,6 +32,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
@@ -41,6 +42,7 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class FactoryPanelScreen extends AbstractSimiScreen {
@@ -48,6 +50,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 	private EditBox addressBox;
 	private IconButton confirmButton;
 	private IconButton newInputButton;
+	private IconButton activateCraftingButton;
 	private ScrollInput promiseExpiration;
 	private FactoryPanelBehaviour behaviour;
 	private int displayedExtraRows;
@@ -66,6 +69,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		minecraft = Minecraft.getInstance();
 		restocker = behaviour.panelBE().restocker;
 		availableCraftingRecipe = null;
+		craftingActive = !behaviour.activeCraftingArrangement.isEmpty();
 		updateConfigs();
 	}
 
@@ -78,32 +82,40 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 				return b == null ? new BigItemStack(ItemStack.EMPTY, 0) : new BigItemStack(b.getFilter(), c.amount);
 			})
 			.toList();
-		
-//		searchForCraftingRecipe(); TODO finish crafter integration
 
-		craftingActive = false;
-		if (availableCraftingRecipe == null)
+		searchForCraftingRecipe();
+
+		if (availableCraftingRecipe == null) {
+			craftingActive = false;
 			return;
-
-		outputConfig.count = availableCraftingRecipe.getResultItem(minecraft.level.registryAccess())
-			.getCount();
-		craftingIngredients = new ArrayList<>();
-		craftingActive = true;
-
-		Ingredients: for (Ingredient ingredient : availableCraftingRecipe.getIngredients()) {
-			if (ingredient.isEmpty()) {
-				craftingIngredients.add(new BigItemStack(ItemStack.EMPTY, 1));
-				continue;
-			}
-			for (BigItemStack bigItemStack : inputConfig) {
-				if (!ingredient.test(bigItemStack.stack))
-					continue;
-				craftingIngredients.add(bigItemStack);
-				continue Ingredients;
-			}
-			while (craftingIngredients.size() < 9)
-				craftingIngredients.add(new BigItemStack(ItemStack.EMPTY, 1));
 		}
+
+		craftingIngredients = new ArrayList<>();
+
+		int width = 3;
+		if (availableCraftingRecipe instanceof IShapedRecipe<?> shaped)
+			width = shaped.getRecipeWidth();
+
+		NonNullList<Ingredient> ingredients = availableCraftingRecipe.getIngredients();
+		BigItemStack emptyIngredient = new BigItemStack(ItemStack.EMPTY, 1);
+
+		for (int i = 0; i < ingredients.size(); i++) {
+			Ingredient ingredient = ingredients.get(i);
+			BigItemStack craftingIngredient = emptyIngredient;
+
+			if (!ingredient.isEmpty())
+				for (BigItemStack bigItemStack : inputConfig)
+					if (ingredient.test(bigItemStack.stack))
+						craftingIngredient = bigItemStack;
+
+			craftingIngredients.add(craftingIngredient);
+			if (width < 3 && (i + 1) % width == 0)
+				for (int j = 0; j < 3 - width; j++)
+					craftingIngredients.add(emptyIngredient);
+		}
+
+		while (craftingIngredients.size() < 9)
+			craftingIngredients.add(emptyIngredient);
 	}
 
 	@Override
@@ -148,6 +160,24 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			addRenderableWidget(newInputButton);
 		}
 
+		activateCraftingButton = null;
+		if (availableCraftingRecipe != null) {
+			int outputX = x + 130;
+			int outputY = y + 15 + middleHeight() / 2;
+			activateCraftingButton = new IconButton(outputX + 17, outputY, AllIcons.I_3x3);
+			activateCraftingButton.withCallback(() -> {
+				craftingActive = !craftingActive;
+				init();
+				if (craftingActive) {
+					outputConfig.count = availableCraftingRecipe.getResultItem(minecraft.level.registryAccess())
+						.getCount();
+				}
+			});
+			activateCraftingButton.setToolTip(CreateLang.translate("gui.factory_panel.activate_crafting")
+				.component());
+			addRenderableWidget(activateCraftingButton);
+		}
+
 		displayedExtraRows = rowsToDisplay();
 	}
 
@@ -166,6 +196,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			updateConfigs();
 			init();
 		}
+		if (activateCraftingButton != null)
+			activateCraftingButton.green = craftingActive;
 		addressBox.tick();
 		promiseExpiration.titled(CreateLang
 			.translate(promiseExpiration.getState() == -1 ? "gui.factory_panel.promises_do_not_expire"
@@ -217,6 +249,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			AllGuiTextures.FACTORY_PANEL_ARROW.render(graphics, x + 75 + arrowOffset * 9, y + 16 + middleHeight() / 2);
 			int outputX = x + 130;
 			int outputY = y + 16 + middleHeight() / 2;
+			if (availableCraftingRecipe != null)
+				AllGuiTextures.FACTORY_PANEL_SLOT_FRAME.render(graphics, outputX + 16, outputY - 2);
 			AllGuiTextures.FACTORY_PANEL_SLOT_FRAME.render(graphics, outputX - 2, outputY - 2);
 			graphics.renderItem(outputConfig.stack, outputX, outputY);
 			graphics.renderItemDecorations(font, behaviour.getFilter(), outputX, outputY, outputConfig.count + "");

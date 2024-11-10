@@ -186,13 +186,13 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 		timer = REQUEST_INTERVAL;
 
+		if (recipeAddress.isBlank())
+			return;
+		
 		if (panelBE.restocker) {
 			tryRestock();
 			return;
 		}
-
-		if (recipeAddress.isBlank())
-			return;
 
 		boolean failed = false;
 

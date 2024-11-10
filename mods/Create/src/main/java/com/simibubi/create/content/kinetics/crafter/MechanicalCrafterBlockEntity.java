@@ -476,7 +476,7 @@ public class MechanicalCrafterBlockEntity extends KineticBlockEntity {
 			.isEmpty() || covered;
 	}
 
-	protected void checkCompletedRecipe(boolean poweredStart) {
+	public void checkCompletedRecipe(boolean poweredStart) {
 		if (getSpeed() == 0)
 			return;
 		if (level.isClientSide && !isVirtual())
