@@ -1,147 +1,157 @@
+@file:Suppress("UnstableApiUsage")
+
+
 plugins {
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+	id("dev.architectury.loom")
+	id("architectury-plugin")
+	id("com.github.johnrengelman.shadow")
 }
 
+val loader = prop("loom.platform")!!
+val minecraftVersion: String = stonecutter.current.version
+val common: Project = requireNotNull(stonecutter.node.sibling("")) {
+	"No common project for $project"
+}
+
+val ci = System.getenv("CI")?.toBoolean() ?: false
+val release = System.getenv("RELEASE")?.toBoolean() ?: false
+val nightly = ci && !release
+val buildNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull()
+version = "${mod.version}${if (release) "" else "-dev"}+mc.${minecraftVersion}-${loader}${if (nightly) "-build.${buildNumber}" else ""}"
+group = mod.group
+base {
+	archivesName.set(mod.id)
+}
 architectury {
 	platformSetupLoomIde()
 	forge()
 }
 
-loom {
-    accessWidenerPath.set(project(":common").loom.accessWidenerPath)
-
-	forge.apply {
-        convertAccessWideners.set(true)
-        extraAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
-	}
+val commonBundle: Configuration by configurations.creating {
+	isCanBeConsumed = false
+	isCanBeResolved = true
 }
 
-val common: Configuration by configurations.creating
-val shadowCommon: Configuration by configurations.creating
-val developmentForge: Configuration by configurations.getting
+val shadowBundle: Configuration by configurations.creating {
+	isCanBeConsumed = false
+	isCanBeResolved = true
+}
 
 configurations {
-	compileOnly.configure { extendsFrom(common) }
-	runtimeOnly.configure { extendsFrom(common) }
-	developmentForge.extendsFrom(common)
+	compileClasspath.get().extendsFrom(commonBundle)
+	runtimeClasspath.get().extendsFrom(commonBundle)
+	get("developmentForge").extendsFrom(commonBundle)
+}
+
+loom {
+	silentMojangMappingsLicense()
+	accessWidenerPath = common.loom.accessWidenerPath
+	forge.convertAccessWideners = true
+	forge.mixinConfigs(
+		"createbigcannons-common.mixins.json",
+		"createbigcannons.mixins.json",
+	)
+
+	runConfigs.all {
+		isIdeConfigGenerated = true
+		runDir = "../../../run"
+		vmArgs("-Dmixin.debug.export=true")
+	}
 }
 
 repositories {
-    // mavens for Forge-exclusives
-    maven("https://maven.theillusivec4.top/") // Curios
-    maven("https://maven.tterrag.com/") {
-        content {
-            includeGroup("com.tterrag.registrate")
-            includeGroup("com.simibubi.create")
-        }
-    }
-    maven("https://maven.realrobotix.me/master/") { // Ritchie's Projectile Library
-		content {
-			includeGroup("com.rbasamoyai")
-		}
-	}
-	flatDir {
-        dir("./libs")
-	}
-    mavenCentral()
+	maven("https://maven.theillusivec4.top/") // Curios
 }
 
 dependencies {
-    forge("net.minecraftforge:forge:${rootProject.property("minecraft_version")}-${rootProject.property("forge_version")}")
-    common(project(path = ":common", configuration = "namedElements")) { isTransitive = false }
-    shadowCommon(project(path = ":common", configuration = "transformProductionForge")) { isTransitive = false }
+	minecraft("com.mojang:minecraft:$minecraftVersion")
+	mappings(loom.layered {
+		mappings("org.quiltmc:quilt-mappings:${minecraftVersion}+build.${mod.dep("qm_version")}:intermediary-v2")
+		parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${mod.dep("parchment_version")}@zip")
+		officialMojangMappings { nameSyntheticMembers = false }
+	})
+	"forge"("net.minecraftforge:forge:$minecraftVersion-${common.mod.dep("forge_loader")}")
+
+	"io.github.llamalad7:mixinextras-forge:${mod.dep("mixin_extras")}".let {
+		annotationProcessor(it)
+		implementation(it)
+	}
 
 	// Create and its dependencies
-    modImplementation("com.simibubi.create:create-${rootProject.property("minecraft_version")}:${rootProject.property("create_forge_version")}:slim") { isTransitive = false }
-    modImplementation("com.tterrag.registrate:Registrate:${rootProject.property("registrate_forge_version")}")
-	// Please replace 1.20 with ${minecraft_version} at a later date
-    modImplementation("com.jozufozu.flywheel:flywheel-forge-${rootProject.property("minecraft_version")}:${rootProject.property("flywheel_forge_version")}")
+	modImplementation("com.simibubi.create:create-${minecraftVersion}:${mod.dep("create_forge_version")}:slim") { isTransitive = false }
+	modImplementation("com.tterrag.registrate:Registrate:${mod.dep("registrate_forge_version")}")
+	modImplementation("com.jozufozu.flywheel:flywheel-forge-${minecraftVersion}:${mod.dep("flywheel_forge_version")}")
 
 	// Development QOL
-    modLocalRuntime("mezz.jei:jei-${rootProject.property("minecraft_version")}-forge:${rootProject.property("jei_version")}") { isTransitive = false }
+	modLocalRuntime("mezz.jei:jei-${minecraftVersion}-forge:${mod.dep("jei_version")}") { isTransitive = false }
 
 	// if you would like to add integration with JEI, uncomment this line.
-    modCompileOnly("mezz.jei:jei-${rootProject.property("minecraft_version")}-forge-api:${rootProject.property("jei_version")}")
+	modCompileOnly("mezz.jei:jei-${minecraftVersion}-forge-api:${mod.dep("jei_version")}")
 
-    modImplementation("curse.maven:spark-361579:${rootProject.property("spark_forge_file")}") // Spark
+	modImplementation("curse.maven:spark-361579:${mod.dep("spark_forge_file")}") // Spark
 
 	// Ritchie's Projectile Library
-    val rplSuffix = if (rootProject.property("use_local_rpl_build").toString().toBoolean()) "" else "-build.${rootProject.property("rpl_build")}"
-    modImplementation(include("com.rbasamoyai:ritchiesprojectilelib:${rootProject.property("rpl_version")}+mc.${rootProject.property("minecraft_version")}-forge$rplSuffix"){ isTransitive = false })
+	val rplSuffix = if (mod.dep("use_local_rpl_build").toBoolean()) "" else "-build.${mod.dep("rpl_build")}"
+	modImplementation(include("com.rbasamoyai:ritchiesprojectilelib:${mod.dep("rpl_version")}+mc.${minecraftVersion}-forge$rplSuffix"){ isTransitive = false })
 	// Create: Unify
-    modImplementation("maven.modrinth:create-unify:${rootProject.property("unify_forge_file")}")
+	modImplementation("maven.modrinth:create-unify:${mod.dep("unify_forge_file")}")
 
-    compileOnly("io.github.llamalad7:mixinextras-common:${rootProject.property("mixinextras_version")}")
-    annotationProcessor(include("io.github.llamalad7:mixinextras-forge:${rootProject.property("mixinextras_version")}"){})
+	compileOnly("io.github.llamalad7:mixinextras-common:${mod.dep("mixinextras_version")}")
+	annotationProcessor(include("io.github.llamalad7:mixinextras-forge:${mod.dep("mixinextras_version")}"){})
 
 	// Fixes, integration
-    // "modImplementation"("curse.maven:free-cam-557076:${rootProject.property("freecam_forge_file")}") // Freecam
-    modImplementation("curse.maven:copycats-968398:${rootProject.property("copycats_forge_file")}")
-    modImplementation("curse.maven:framedblocks-441647:${rootProject.property("framedblocks_forge_file")}")
-    forgeRuntimeLibrary("com.github.ben-manes.caffeine:caffeine:3.1.1") // For FramedBlocks
+	// "modImplementation"("curse.maven:free-cam-557076:${mod.dep("freecam_forge_file")}") // Freecam
+	modImplementation("curse.maven:copycats-968398:${mod.dep("copycats_forge_file")}")
+	modImplementation("curse.maven:framedblocks-441647:${mod.dep("framedblocks_forge_file")}")
+	forgeRuntimeLibrary("com.github.ben-manes.caffeine:caffeine:3.1.1") // For FramedBlocks
 
 	// Curios
-    modRuntimeOnly("top.theillusivec4.curios:curios-forge:${rootProject.property("curios_forge_version")}")
-    modCompileOnly("top.theillusivec4.curios:curios-forge:${rootProject.property("curios_forge_version")}:api")
+	modRuntimeOnly("top.theillusivec4.curios:curios-forge:${mod.dep("curios_forge_version")}")
+	modCompileOnly("top.theillusivec4.curios:curios-forge:${mod.dep("curios_forge_version")}:api")
+
+	commonBundle(project(common.path, "namedElements")) { isTransitive = false }
+	shadowBundle(project(common.path, "transformProductionForge")) { isTransitive = false }
 }
 
-tasks.processResources {
-    // set up properties for filling into metadata
-    val properties = mapOf(
-        "version" to version as String,
-        "forge_version" to rootProject.property("forge_version").toString().split(".")[0], // only specify major version of forge
-        "minecraft_version" to rootProject.property("minecraft_version"),
-        "create_version" to rootProject.property("create_forge_version").toString().substringBefore("-"),
-        "unify_version" to rootProject.property("unify_forge_version"),
-        "copycats_requirement" to rootProject.property("copycats_requirement_forge"),
-        "framedblocks_requirement" to rootProject.property("framedblocks_requirement_forge"),
-        "curios_requirement" to rootProject.property("curios_requirement_forge")
-    )
-    properties.forEach { (k, v) -> inputs.property(k, v) }
 
-	filesMatching("META-INF/mods.toml") {
-        expand(properties)
-	}
-}
-
-loom {
-	forge {
-		mixinConfig(
-			"createbigcannons-common.mixins.json",
-			"createbigcannons.mixins.json"
-		)
-	}
-}
-
-tasks.shadowJar {
-	exclude("fabric.mod.json")
-	exclude("architectury.common.json")
-	configurations = listOf(shadowCommon)
-	archiveClassifier.set("dev-shadow")
-}
-
-tasks.remapJar {
-	injectAccessWidener.set(true)
-	inputFile.set(tasks.shadowJar.get().archiveFile)
-	dependsOn(tasks.shadowJar)
-	archiveClassifier.set(null as String?)
+java {
+	withSourcesJar()
+	val java = if (stonecutter.eval(minecraftVersion, ">=1.20.5"))
+		JavaVersion.VERSION_21 else JavaVersion.VERSION_17
+	targetCompatibility = java
+	sourceCompatibility = java
 }
 
 tasks.jar {
-	archiveClassifier.set("dev")
+	archiveClassifier = "dev"
 }
 
-tasks.sourcesJar {
-	val commonSources = project(":common").tasks.getByName<Jar>("sourcesJar")
-	dependsOn(commonSources)
-	from(commonSources.archiveFile.map { zipTree(it) })
+tasks.remapJar {
+	injectAccessWidener = true
+	input = tasks.shadowJar.get().archiveFile
+	archiveClassifier = null
+	dependsOn(tasks.shadowJar)
 }
 
-components.getByName("java") {
-	this as AdhocComponentWithVariants
-	this.withVariantsFromConfiguration(project.configurations["shadowRuntimeElements"]) {
-		skip()
-	}
+tasks.shadowJar {
+	configurations = listOf(shadowBundle)
+	archiveClassifier = "dev-shadow"
+	exclude("fabric.mod.json", "architectury.common.json")
+}
+
+tasks.processResources {
+	properties(listOf("META-INF/mods.toml"),
+		"id" to mod.id,
+		"name" to mod.id,
+		"version" to mod.version,
+		"forge_version" to common.mod.dep("forge_loader").substringBefore("."), // only specify major version of forge
+		"minecraft_version" to minecraftVersion,
+		"create_version" to mod.dep("create_forge_version").substringBefore("-"),
+		"unify_version" to mod.dep("unify_forge_version"),
+		"copycats_requirement" to mod.dep("copycats_requirement_forge"),
+		"framedblocks_requirement" to mod.dep("framedblocks_requirement_forge"),
+		"curios_requirement" to mod.dep("curios_requirement_forge")
+	)
 }
 
 sourceSets.main {
@@ -149,4 +159,17 @@ sourceSets.main {
 		srcDir("src/generated/resources")
 		exclude("src/generated/resources/.cache")
 	}
+}
+
+tasks.build {
+	group = "versioned"
+	description = "Must run through 'chiseledBuild'"
+}
+
+tasks.register<Copy>("buildAndCollect") {
+	group = "versioned"
+	description = "Must run through 'chiseledBuild'"
+	from(tasks.remapJar.get().archiveFile, tasks.remapSourcesJar.get().archiveFile)
+	into(rootProject.layout.buildDirectory.file("libs/${mod.version}/$loader"))
+	dependsOn("build")
 }

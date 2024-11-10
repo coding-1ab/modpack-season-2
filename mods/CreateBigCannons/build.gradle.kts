@@ -1,108 +1,74 @@
-import net.fabricmc.loom.api.LoomGradleExtensionAPI
+@file:Suppress("UnstableApiUsage")
 
 plugins {
-	java
-	`maven-publish`
-	id("architectury-plugin") version "3.4-SNAPSHOT"
-	id("dev.architectury.loom") version "1.7-SNAPSHOT" apply false
+	id("dev.architectury.loom")
+	id("architectury-plugin")
 }
 
-architectury {
-	minecraft = rootProject.extra["minecraft_version"] as String
-}
+val minecraftVersion = stonecutter.current.version
 
 val ci = System.getenv("CI")?.toBoolean() ?: false
 val release = System.getenv("RELEASE")?.toBoolean() ?: false
 val nightly = ci && !release
+val buildNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull()
+version = "${mod.version}${if (release) "" else "-dev"}+mc.${minecraftVersion}-common${if (nightly) "-build.${buildNumber}" else ""}"
+group = "${group}.common"
+base.archivesName.set(mod.id)
 
-allprojects {
-	apply(plugin = "java")
-	apply(plugin = "architectury-plugin")
+architectury.common(stonecutter.tree.branches.mapNotNull {
+	if (stonecutter.current.project !in it) null
+	else it.prop("loom.platform")
+})
 
-	base.archivesName.set(rootProject.extra["archives_base_name"] as String)
-	group = rootProject.group as String
+repositories {
+	maven("https://mvn.devos.one/snapshots/") // Create Fabric
+	maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") // Forge Config API Port
+	maven("https://maven.jamieswhiteshirt.com/libs-release") // Reach Entity Attributes
+}
 
-	repositories {
-		// Add repositories here if needed.
+loom {
+	silentMojangMappingsLicense()
+	accessWidenerPath = rootProject.file("src/main/resources/createbigcannons.accesswidener")
+}
+
+dependencies {
+	minecraft("com.mojang:minecraft:${minecraftVersion}")
+	mappings(loom.layered {
+		mappings("org.quiltmc:quilt-mappings:${minecraftVersion}+build.${mod.dep("qm_version")}:intermediary-v2")
+		parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${mod.dep("parchment_version")}@zip")
+		officialMojangMappings { nameSyntheticMembers = false }
+	})
+
+
+	modImplementation("net.fabricmc:fabric-loader:${mod.dep("fabric_loader_version")}")
+	modImplementation("net.fabricmc.fabric-api:fabric-api:${mod.dep("fabric_api_version")}")
+	modCompileOnly("com.simibubi.create:create-fabric-${mod.dep("minecraft_version")}:${mod.dep("create_fabric_version")}")
+	modCompileOnly("net.fabricmc.fabric-api:fabric-api:${mod.dep("fabric_api_version")}")
+
+	"io.github.llamalad7:mixinextras-common:${mod.dep("mixin_extras")}".let {
+		annotationProcessor(it)
+		implementation(it)
 	}
 
-	tasks.withType(JavaCompile::class).configureEach {
-		options.encoding = "UTF-8"
+	// Ritchie's Projectile Library
+	val rplSuffix = if (mod.dep("use_local_rpl_build").toBoolean()) "" else "-build.${mod.dep("rpl_build")}"
+	modImplementation("com.rbasamoyai:ritchiesprojectilelib:${mod.dep("rpl_version")}+mc.${minecraftVersion}-common$rplSuffix") {
+		isTransitive = false
 	}
 
-	java {
-		withSourcesJar()
-	}
+	modImplementation("curse.maven:copycats-968398:${mod.dep("copycats_fabric_file")}")
 }
 
 
-subprojects {
-	apply(plugin = "dev.architectury.loom")
-	apply(plugin = "maven-publish")
+java {
+	withSourcesJar()
+	val java = if (stonecutter.eval(minecraftVersion, ">=1.20.5"))
+		JavaVersion.VERSION_21 else JavaVersion.VERSION_17
+	targetCompatibility = java
+	sourceCompatibility = java
+}
 
-	val loom = project.extensions.getByType<LoomGradleExtensionAPI>()
-	loom.apply {
-		silentMojangMappingsLicense()
-	}
-	repositories {
-		mavenCentral()
-		maven { url = uri("https://maven.shedaniel.me/") }
-		maven { url = uri("https://maven.blamejared.com/") }
-		maven { url = uri("https://maven.parchmentmc.org") }
-		maven { url = uri("https://maven.quiltmc.org/repository/release") }
-		maven {
-			url = uri("https://maven.tterrag.com/")
-			content {
-				includeGroup("com.jozufozu.flywheel")
-			}
-		}
-		maven { url = uri("https://cursemaven.com") }
-		exclusiveContent {
-			forRepository {
-				maven {
-					name = "Modrinth"
-					url = uri("https://api.modrinth.com/maven")
-				}
-			}
-			filter {
-				includeGroup("maven.modrinth")
-			}
-		}
-	}
-
-	dependencies {
-		"minecraft"("com.mojang:minecraft:${rootProject.extra["minecraft_version"]}")
-		"mappings"(loom.layered {
-			mappings("org.quiltmc:quilt-mappings:${rootProject.extra["minecraft_version"]}+build.${rootProject.extra["qm_version"]}:intermediary-v2")
-			parchment("org.parchmentmc.data:parchment-${rootProject.extra["minecraft_version"]}:${rootProject.extra["parchment_version"]}@zip")
-			officialMojangMappings { nameSyntheticMembers = false }
-		})
-	}
-
-	val buildNumber = System.getenv("GITHUB_RUN_NUMBER")
-	version = "${rootProject.extra["mod_version"]}${if (release) "" else "-dev"}+mc.${rootProject.extra["minecraft_version"]}-${project.name}${if (nightly) "-build.${buildNumber}" else ""}"
-
-	publishing {
-		publications {
-			create<MavenPublication>("mavenJava") {
-				artifactId = rootProject.extra["archives_base_name"] as String
-				from(components["java"])
-			}
-		}
-		repositories {
-			maven {
-				name = "GitHubPackages"
-				url = uri("https://maven.pkg.github.com/cannoneers-of-create/createbigcannons")
-				credentials {
-					username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
-					password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
-				}
-			}
-			maven {
-				name = "realRobotixMaven"
-				url = uri("https://maven.realrobotix.me/createbigcannons")
-				credentials(PasswordCredentials::class)
-			}
-		}
-	}
+tasks.build {
+	group = "versioned"
+	description = "Must run through 'chiseledBuild'"
 }

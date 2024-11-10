@@ -1,20 +1,56 @@
+@file:Suppress("UnstableApiUsage")
+
 import java.util.*
 
+
 plugins {
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+	id("dev.architectury.loom")
+	id("architectury-plugin")
+	id("com.github.johnrengelman.shadow")
 }
 
+val loader = property("loom.platform")!!
+val minecraftVersion: String = stonecutter.current.version
+val common: Project = requireNotNull(stonecutter.node.sibling("")) {
+	"No common project for $project"
+}
+
+val ci = System.getenv("CI")?.toBoolean() ?: false
+val release = System.getenv("RELEASE")?.toBoolean() ?: false
+val nightly = ci && !release
+val buildNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull()
+version = "${mod.version}${if (release) "" else "-dev"}+mc.${minecraftVersion}-${loader}${if (nightly) "-build.${buildNumber}" else ""}"
+group = "${mod.group}.$loader"
+base {
+	archivesName.set(mod.id)
+}
 architectury {
-    platformSetupLoomIde()
-    fabric()
+	platformSetupLoomIde()
+	fabric()
+}
+
+val commonBundle: Configuration by configurations.creating {
+	isCanBeConsumed = false
+	isCanBeResolved = true
+}
+
+val shadowBundle: Configuration by configurations.creating {
+	isCanBeConsumed = false
+	isCanBeResolved = true
+}
+
+configurations {
+	compileClasspath.get().extendsFrom(commonBundle)
+	runtimeClasspath.get().extendsFrom(commonBundle)
+	get("developmentFabric").extendsFrom(commonBundle)
 }
 
 loom {
-    accessWidenerPath = project(":common").loom.accessWidenerPath
-
-    runs {
-        create("data") {
-            client()
+	silentMojangMappingsLicense()
+	accessWidenerPath = common.loom.accessWidenerPath
+	runConfigs {
+		create("data") {
+			client()
 
 			name("Fabric Data Generation")
 			vmArg("-Dfabric-api.datagen")
@@ -33,148 +69,137 @@ loom {
 			vmArg("-Dporting_lib.datagen.existing_resources=${project.rootProject.file("common/src/main/resources")}")
 			vmArg("-Dcreatebigcannons.datagen.platform=forge")
 		}
-	}
-}
-
-val common: Configuration by configurations.creating
-val shadowCommon: Configuration by configurations.creating
-val developmentFabric: Configuration by configurations.getting
-
-configurations {
-	compileOnly.configure { extendsFrom(common) }
-	runtimeOnly.configure { extendsFrom(common) }
-	developmentFabric.extendsFrom(common)
-}
-
-configurations.configureEach {
-	resolutionStrategy {
-        force("net.fabricmc:fabric-loader:${rootProject.property("fabric_loader_version")}")
+		all {
+			isIdeConfigGenerated = true
+			runDir = "../../../run"
+			//vmArgs("-Dmixin.debug.export=true")
+		}
 	}
 }
 
 repositories {
-    // mavens for Fabric-exclusives
-    maven { url = uri("https://mvn.devos.one/#/") }
-    maven { url = uri("https://api.modrinth.com/maven") } // LazyDFU
-    maven { url = uri("https://maven.terraformersmc.com/releases/") } // Mod Menu, EMI, Trinkets
-    maven { url = uri("https://mvn.devos.one/snapshots/") }
-    // Create Fabric, Forge Tags, Milk Lib, Registrate Fabric
-    maven { url = uri("https://mvn.devos.one/releases") } // Porting Lib Releases
-    maven { url = uri("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") } // Forge config api port
-    maven { url = uri("https://maven.cafeteria.dev/releases") } // Fake Player API
-    maven { url = uri("https://maven.jamieswhiteshirt.com/libs-release") } // Reach Entity Attributes
-    maven { url = uri("https://jitpack.io/") } // Mixin Extras, Fabric ASM
-    maven { url = uri("https://maven.ladysnake.org/releases") } // Trinkets
-    maven {
-        url = uri("https://maven.realrobotix.me/master/")
-		content {
-			includeGroup("com.rbasamoyai")
-		}
-	}
-	flatDir {
-        dir("libs")
-	}
+	maven("https://api.modrinth.com/maven") // LazyDFU
+	maven("https://maven.terraformersmc.com/releases/") // Mod Menu
+	maven("https://mvn.devos.one/snapshots/") // Create Fabric, Forge Tags, Milk Lib, Registrate Fabric
+	maven("https://mvn.devos.one/releases") // Porting Lib Releases
+	maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") // Forge config api port
+	maven("https://maven.cafeteria.dev/releases") // Fake Player API
+	maven("https://maven.jamieswhiteshirt.com/libs-release") // Reach Entity Attributes
+	maven("https://jitpack.io/") // Mixin Extras, Fabric ASM
+	maven("https://maven.ladysnake.org/releases") // Trinkets
 }
 
-
 dependencies {
-    modImplementation("net.fabricmc:fabric-loader:${rootProject.property("fabric_loader_version")}")
-    common(project(path = ":common", configuration = "namedElements")) { isTransitive = false }
-    shadowCommon(project(path = ":common", configuration = "transformProductionFabric")) { isTransitive = false }
+	minecraft("com.mojang:minecraft:$minecraftVersion")
+	mappings(loom.layered {
+		mappings("org.quiltmc:quilt-mappings:${minecraftVersion}+build.${mod.dep("qm_version")}:intermediary-v2")
+		parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${mod.dep("parchment_version")}@zip")
+		officialMojangMappings { nameSyntheticMembers = false }
+	})
+	modImplementation("net.fabricmc:fabric-loader:${mod.dep("fabric_loader")}")
+	modApi("net.fabricmc.fabric-api:fabric-api:${mod.dep("fabric_api_version")}")
 
-    // dependencies
-	modApi("net.fabricmc.fabric-api:fabric-api:${rootProject.property("fabric_api_version")}")
+	"io.github.llamalad7:mixinextras-fabric:${mod.dep("mixin_extras")}".let {
+		annotationProcessor(it)
+		implementation(it)
+	}
 
-    // Create - dependencies are added transitively
-    modImplementation("com.simibubi.create:create-fabric-${rootProject.property("minecraft_version")}:${rootProject.property("create_fabric_version")}")
+	// Create - dependencies are added transitively
+	modImplementation("com.simibubi.create:create-fabric-${minecraftVersion}:${mod.dep("create_fabric_version")}")
 
-    // Development QOL
-    modLocalRuntime("maven.modrinth:lazydfu:${rootProject.property("lazydfu_version")}")
-    modImplementation("com.terraformersmc:modmenu:${rootProject.property("modmenu_version")}")
+	// Development QOL
+	modLocalRuntime("maven.modrinth:lazydfu:${mod.dep("lazydfu_version")}")
+	modImplementation("com.terraformersmc:modmenu:${mod.dep("modmenu_version")}")
 
-    // Recipe Viewers - Create Fabric supports JEI, REI, and EMI.
-    // See root gradle.properties to choose which to use at runtime.
-    when (rootProject.property("fabric_recipe_viewer").toString().lowercase(Locale.ROOT)) {
-        "jei" -> modLocalRuntime("mezz.jei:jei-${rootProject.property("minecraft_version")}-fabric:${rootProject.property("jei_version")}")
-        "rei" -> modLocalRuntime("me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.property("rei_version")}")
-        "emi" -> modLocalRuntime("dev.emi:emi-fabric:${rootProject.property("emi_version")}")
-        "disabled" -> {}
-        else -> println("Unknown recipe viewer specified: ${rootProject.property("fabric_recipe_viewer")}. Must be JEI, REI, EMI, or disabled.")
-    }
-    // if you would like to add integration with them, uncomment them here.
-	modCompileOnly("mezz.jei:jei-${rootProject.property("minecraft_version")}-fabric:${rootProject.property("jei_version")}") { isTransitive = false }
-	modCompileOnly("mezz.jei:jei-${rootProject.property("minecraft_version")}-common:${rootProject.property("jei_version")}")
-    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:${rootProject.property("rei_version")}")
-    modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${rootProject.property("rei_version")}")
-    modCompileOnly("dev.emi:emi-fabric:${rootProject.property("emi_version")}")
+	// Recipe Viewers - Create Fabric supports JEI, REI, and EMI.
+	// See root gradle.properties to choose which to use at runtime.
+	when (mod.dep("fabric_recipe_viewer").lowercase(Locale.ROOT)) {
+		"jei" -> modLocalRuntime("mezz.jei:jei-${minecraftVersion}-fabric:${mod.dep("jei_version")}")
+		"rei" -> modLocalRuntime("me.shedaniel:RoughlyEnoughItems-fabric:${mod.dep("rei_version")}")
+		"emi" -> modLocalRuntime("dev.emi:emi-fabric:${mod.dep("emi_version")}")
+		"disabled" -> {}
+		else -> println("Unknown recipe viewer specified: ${mod.dep("fabric_recipe_viewer")}. Must be JEI, REI, EMI, or disabled.")
+	}
+	// if you would like to add integration with them, uncomment them here.
+	modCompileOnly("mezz.jei:jei-${minecraftVersion}-fabric:${mod.dep("jei_version")}") { isTransitive = false }
+	modCompileOnly("mezz.jei:jei-${minecraftVersion}-common:${mod.dep("jei_version")}")
+	modCompileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:${mod.dep("rei_version")}")
+	modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${mod.dep("rei_version")}")
+	modCompileOnly("dev.emi:emi-fabric:${mod.dep("emi_version")}")
 
-    modLocalRuntime("curse.maven:spark-361579:${rootProject.property("spark_fabric_file")}") // Spark
+	modLocalRuntime("curse.maven:spark-361579:${mod.dep("spark_fabric_file")}") // Spark
 
 	// Ritchie's Projectile Library
-	val rplSuffix = if (rootProject.property("use_local_rpl_build").toString().toBoolean()) "" else "-build.${rootProject.property("rpl_build")}"
-	modImplementation(include("com.rbasamoyai:ritchiesprojectilelib:${rootProject.property("rpl_version")}+mc.${rootProject.property("minecraft_version")}-fabric" + rplSuffix) { isTransitive = false })
+	val rplSuffix = if (mod.dep("use_local_rpl_build").toBoolean()) "" else "-build.${mod.dep("rpl_build")}"
+	modImplementation(include("com.rbasamoyai:ritchiesprojectilelib:${mod.dep("rpl_version")}+mc.${minecraftVersion}-fabric" + rplSuffix) { isTransitive = false })
 
 	// Fixes, integration
 	//modImplementation("curse.maven:free-cam-557076:${freecam_fabric_file}") // Freecam
-	modImplementation("curse.maven:copycats-968398:${rootProject.property("copycats_fabric_file")}")
+	modImplementation("curse.maven:copycats-968398:${mod.dep("copycats_fabric_file")}")
 	// Trinkets and CCA
-	modLocalRuntime("dev.emi:trinkets:${rootProject.property("trinkets_fabric_version")}")
-	modCompileOnly("dev.emi:trinkets:${rootProject.property("trinkets_fabric_version")}") { exclude(group = "com.terraformersmc") }
-	modCompileOnly("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${rootProject.property("cca_fabric_version")}")
-	modCompileOnly("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${rootProject.property("cca_fabric_version")}")
+	modLocalRuntime("dev.emi:trinkets:${mod.dep("trinkets_fabric_version")}")
+	modCompileOnly("dev.emi:trinkets:${mod.dep("trinkets_fabric_version")}") { exclude(group = "com.terraformersmc") }
+	modCompileOnly("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${mod.dep("cca_fabric_version")}")
+	modCompileOnly("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${mod.dep("cca_fabric_version")}")
+
+	commonBundle(project(common.path, "namedElements")) { isTransitive = false }
+	shadowBundle(project(common.path, "transformProductionFabric")) { isTransitive = false }
 }
 
-tasks.named<ProcessResources>("processResources") {
-    // set up properties for filling into metadata
-    val properties = mapOf(
-        "version" to version,
-        "fabric_loader_version" to rootProject.property("fabric_loader_version"),
-        "fabric_api_version" to rootProject.property("fabric_api_version"),
-        "minecraft_version" to rootProject.property("minecraft_version"),
-        "create_version" to rootProject.property("create_fabric_version"), // on fabric, use the entire version, unlike forge
-        "copycats_breaks" to rootProject.property("copycats_breaks_fabric"),
-        "trinkets_breaks" to rootProject.property("trinkets_breaks_fabric")
-    )
-    inputs.properties(properties)
 
-    filesMatching("fabric.mod.json") {
-        expand(properties)
-    }
+java {
+	withSourcesJar()
+	val java = if (stonecutter.eval(minecraftVersion, ">=1.20.5"))
+		JavaVersion.VERSION_21 else JavaVersion.VERSION_17
+	targetCompatibility = java
+	sourceCompatibility = java
 }
-
 
 tasks.shadowJar {
 	exclude("architectury.common.json")
-	configurations = listOf(shadowCommon)
-	archiveClassifier.set("dev-shadow")
+	configurations = listOf(shadowBundle)
+	archiveClassifier = "dev-shadow"
 }
 
 tasks.remapJar {
-	injectAccessWidener.set(true)
-	inputFile.set(tasks.shadowJar.get().archiveFile)
+	injectAccessWidener = true
+	input = tasks.shadowJar.get().archiveFile
+	archiveClassifier = null
 	dependsOn(tasks.shadowJar)
-	archiveClassifier.set(null as String?)
 }
 
 tasks.jar {
-	archiveClassifier.set("dev")
+	archiveClassifier = "dev"
 }
 
-tasks.sourcesJar {
-	val commonSources = project(":common").tasks.getByName<Jar>("sourcesJar")
-	dependsOn(commonSources)
-	from(commonSources.archiveFile.map { zipTree(it) })
+tasks.processResources {
+	properties(listOf("fabric.mod.json"),
+		"version" to mod.version,
+		"fabric_loader_version" to mod.dep("fabric_loader_version"),
+		"fabric_api_version" to mod.dep("fabric_api_version"),
+		"minecraft_version" to minecraftVersion,
+		"create_version" to mod.dep("create_fabric_version"), // on fabric, use the entire version, unlike forge
+		"copycats_breaks" to mod.dep("copycats_breaks_fabric"),
+		"trinkets_breaks" to mod.dep("trinkets_breaks_fabric")
+	)
 }
 
-components.getByName("java") {
-	this as AdhocComponentWithVariants
-	this.withVariantsFromConfiguration(project.configurations["shadowRuntimeElements"]) {
-		skip()
+sourceSets.main {
+	resources { // include generated resources in resources
+		srcDir("src/generated/resources")
+		exclude("src/generated/resources/.cache")
 	}
 }
 
-sourceSets["main"].resources {
-    // include generated resources in resources
-        srcDir("src/generated/resources")
-        exclude("src/generated/resources/.cache")
+tasks.build {
+	group = "versioned"
+	description = "Must run through 'chiseledBuild'"
+}
+
+tasks.register<Copy>("buildAndCollect") {
+	group = "versioned"
+	description = "Must run through 'chiseledBuild'"
+	from(tasks.remapJar.get().archiveFile, tasks.remapSourcesJar.get().archiveFile)
+	into(rootProject.layout.buildDirectory.file("libs/${mod.version}/$loader"))
+	dependsOn("build")
 }
