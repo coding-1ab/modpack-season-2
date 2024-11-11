@@ -13,6 +13,7 @@ import com.simibubi.create.content.fluids.potion.PotionFluidHandler;
 import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.fluid.FluidHelper;
+import com.simibubi.create.foundation.mixin.accessor.FlowingFluidAccessor;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import net.createmod.catnip.utility.BlockFace;
@@ -166,10 +167,25 @@ public class OpenEndedPipe extends FlowSource {
 		if (waterlog) {
 			world.setBlock(outputPos, state.setValue(WATERLOGGED, false), 3);
 			world.scheduleTick(outputPos, Fluids.WATER, 1);
-			return stack;
+		} else {
+			var newState = fluidState.createLegacyBlock()
+				.setValue(LiquidBlock.LEVEL, 14);
+
+			var newFluidState = newState.getFluidState();
+
+			if (newFluidState.getType() instanceof FlowingFluidAccessor flowing) {
+				var potentiallyFilled = flowing.create$getNewLiquid(world, outputPos, newState);
+
+				// Check if we'd immediately become the same fluid again.
+				if (potentiallyFilled.equals(fluidState)) {
+					// If so, no need to update the block state.
+					return stack;
+				}
+			}
+
+			world.setBlock(outputPos, newState, 3);
 		}
-		world.setBlock(outputPos, fluidState.createLegacyBlock()
-			.setValue(LiquidBlock.LEVEL, 14), 3);
+
 		return stack;
 	}
 

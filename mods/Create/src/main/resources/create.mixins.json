@@ -20,6 +20,7 @@
     "accessor.AbstractProjectileDispenseBehaviorAccessor",
     "accessor.DispenserBlockAccessor",
     "accessor.FallingBlockEntityAccessor",
+    "accessor.FlowingFluidAccessor",
     "accessor.FluidInteractionRegistryAccessor",
     "accessor.GameTestHelperAccessor",
     "accessor.LivingEntityAccessor",
