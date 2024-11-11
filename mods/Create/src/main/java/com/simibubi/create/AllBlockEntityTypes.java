@@ -492,7 +492,7 @@ public class AllBlockEntityTypes {
 		.blockEntity("item_vault", ItemVaultBlockEntity::new)
 		.validBlocks(AllBlocks.ITEM_VAULT)
 		.register();
-	
+
 	public static final BlockEntityEntry<ItemHatchBlockEntity> ITEM_HATCH = REGISTRATE
 		.blockEntity("item_hatch", ItemHatchBlockEntity::new)
 		.validBlocks(AllBlocks.ITEM_HATCH)
@@ -507,11 +507,11 @@ public class AllBlockEntityTypes {
 
 	public static final BlockEntityEntry<FrogportBlockEntity> PACKAGE_FROGPORT = REGISTRATE
 		.blockEntity("package_frogport", FrogportBlockEntity::new)
-		.visual(() -> FrogportVisual::new, false)
+		.visual(() -> FrogportVisual::new, true)
 		.validBlocks(AllBlocks.PACKAGE_FROGPORT)
 		.renderer(() -> FrogportRenderer::new)
 		.register();
-	
+
 	public static final BlockEntityEntry<PostboxBlockEntity> PACKAGE_POSTBOX = REGISTRATE
 		.blockEntity("package_postbox", PostboxBlockEntity::new)
 		.validBlocks(AllBlocks.PACKAGE_POSTBOXES.toArray())
@@ -914,7 +914,7 @@ public class AllBlockEntityTypes {
 		.validBlocks(AllBlocks.HAUNTED_BELL)
 		.renderer(() -> BellRenderer::new)
 		.register();
-	
+
 	public static final BlockEntityEntry<DeskBellBlockEntity> DESK_BELL = REGISTRATE
 		.blockEntity("desk_bell", DeskBellBlockEntity::new)
 		.validBlocks(AllBlocks.DESK_BELL)
