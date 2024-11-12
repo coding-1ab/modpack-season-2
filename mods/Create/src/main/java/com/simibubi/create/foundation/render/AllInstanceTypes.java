@@ -7,7 +7,6 @@ import org.lwjgl.system.MemoryUtil;
 import com.simibubi.create.content.contraptions.actors.ActorInstance;
 import com.simibubi.create.content.kinetics.base.RotatingInstance;
 import com.simibubi.create.content.kinetics.belt.BeltInstance;
-import com.simibubi.create.content.logistics.flwdata.FlapInstance;
 import com.simibubi.create.content.processing.burner.ScrollInstance;
 
 import dev.engine_room.flywheel.api.instance.InstanceType;
@@ -150,38 +149,6 @@ public class AllInstanceTypes {
 				MemoryUtil.memPutByte(ptr + 41, instance.rotationCenterY);
 				MemoryUtil.memPutByte(ptr + 42, instance.rotationCenterZ);
 				MemoryUtil.memPutFloat(ptr + 44, instance.speed);
-			})
-			.build();
-
-	// TODO: remove
-	public static final InstanceType<FlapInstance> FLAP = SimpleInstanceType.builder(FlapInstance::new)
-			.cullShader(asResource("instance/cull/flap.glsl"))
-			.vertexShader(asResource("instance/flap.vert"))
-			.layout(LayoutBuilder.create()
-					.vector("instancePos", FloatRepr.FLOAT, 3)
-					.vector("light", IntegerRepr.SHORT, 2)
-					.vector("segmentOffset", FloatRepr.FLOAT, 3)
-					.vector("pivot", FloatRepr.FLOAT, 3)
-					.scalar("horizontalAngle", FloatRepr.FLOAT)
-					.scalar("intensity", FloatRepr.FLOAT)
-					.scalar("flapScale", FloatRepr.FLOAT)
-					.scalar("flapness", FloatRepr.FLOAT)
-					.build())
-			.writer((ptr, instance) -> {
-				MemoryUtil.memPutFloat(ptr, instance.x);
-				MemoryUtil.memPutFloat(ptr + 4, instance.y);
-				MemoryUtil.memPutFloat(ptr + 8, instance.z);
-				ExtraMemoryOps.put2x16(ptr + 12, instance.packedLight);
-				MemoryUtil.memPutFloat(ptr + 16, instance.segmentOffsetX);
-				MemoryUtil.memPutFloat(ptr + 20, instance.segmentOffsetY);
-				MemoryUtil.memPutFloat(ptr + 24, instance.segmentOffsetZ);
-				MemoryUtil.memPutFloat(ptr + 28, instance.pivotX);
-				MemoryUtil.memPutFloat(ptr + 32, instance.pivotY);
-				MemoryUtil.memPutFloat(ptr + 36, instance.pivotZ);
-				MemoryUtil.memPutFloat(ptr + 40, instance.horizontalAngle);
-				MemoryUtil.memPutFloat(ptr + 44, instance.intensity);
-				MemoryUtil.memPutFloat(ptr + 48, instance.flapScale);
-				MemoryUtil.memPutFloat(ptr + 52, instance.flapness);
 			})
 			.build();
 
