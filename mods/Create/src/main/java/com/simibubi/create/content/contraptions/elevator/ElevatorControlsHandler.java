@@ -112,7 +112,8 @@ public class ElevatorControlsHandler {
 
 			ElevatorFloorSelection efs = (ElevatorFloorSelection) ctx.temporaryData;
 			int prev = efs.currentIndex;
-			efs.currentIndex += delta;
+			// Round away from 0. delta may be ~0.9, which is implicitly floor'd during a pure cast.
+			efs.currentIndex += (int) (delta > 0 ? Math.ceil(delta) : Math.floor(delta));
 			ContraptionControlsMovement.tickFloorSelection(efs, ec);
 
 			if (prev != efs.currentIndex && !ec.namesList.isEmpty()) {
