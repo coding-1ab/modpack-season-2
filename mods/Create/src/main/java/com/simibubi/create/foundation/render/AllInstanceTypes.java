@@ -101,6 +101,7 @@ public class AllInstanceTypes {
 					.vector("speed", FloatRepr.FLOAT, 2)
 					.vector("diff", FloatRepr.FLOAT, 2)
 					.vector("scale", FloatRepr.FLOAT, 2)
+					.vector("offset", FloatRepr.FLOAT, 2)
 					.build())
 			.writer((ptr, instance) -> {
 				MemoryUtil.memPutByte(ptr, instance.red);
@@ -119,6 +120,8 @@ public class AllInstanceTypes {
 				MemoryUtil.memPutFloat(ptr + 52, instance.diffV);
 				MemoryUtil.memPutFloat(ptr + 56, instance.scaleU);
 				MemoryUtil.memPutFloat(ptr + 60, instance.scaleV);
+				MemoryUtil.memPutFloat(ptr + 64, instance.offsetU);
+				MemoryUtil.memPutFloat(ptr + 68, instance.offsetV);
 			})
 			.build();
 

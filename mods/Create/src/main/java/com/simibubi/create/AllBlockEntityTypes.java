@@ -25,6 +25,7 @@ import com.simibubi.create.content.contraptions.chassis.StickerVisual;
 import com.simibubi.create.content.contraptions.elevator.ElevatorContactBlockEntity;
 import com.simibubi.create.content.contraptions.elevator.ElevatorPulleyBlockEntity;
 import com.simibubi.create.content.contraptions.elevator.ElevatorPulleyRenderer;
+import com.simibubi.create.content.contraptions.elevator.ElevatorPulleyVisual;
 import com.simibubi.create.content.contraptions.gantry.GantryCarriageBlockEntity;
 import com.simibubi.create.content.contraptions.gantry.GantryCarriageRenderer;
 import com.simibubi.create.content.contraptions.gantry.GantryCarriageVisual;
@@ -580,7 +581,7 @@ public class AllBlockEntityTypes {
 
 	public static final BlockEntityEntry<ElevatorPulleyBlockEntity> ELEVATOR_PULLEY =
 		REGISTRATE.blockEntity("elevator_pulley", ElevatorPulleyBlockEntity::new)
-//		.instance(() -> ElevatorPulleyInstance::new, false)
+			.visual(() -> ElevatorPulleyVisual::new, false)
 			.validBlocks(AllBlocks.ELEVATOR_PULLEY)
 			.renderer(() -> ElevatorPulleyRenderer::new)
 			.register();
