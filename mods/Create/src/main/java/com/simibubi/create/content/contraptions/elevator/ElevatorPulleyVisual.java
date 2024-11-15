@@ -87,7 +87,7 @@ public class ElevatorPulleyVisual extends ShaftVisual<ElevatorPulleyBlockEntity>
 
 		cachedMagnetTransform = new Matrix4f(magnet.pose);
 
-		setup(PulleyRenderer.getBlockEntityOffset(partialTick, blockEntity));
+		animate(PulleyRenderer.getBlockEntityOffset(partialTick, blockEntity));
 	}
 
 	@Override
@@ -106,12 +106,20 @@ public class ElevatorPulleyVisual extends ShaftVisual<ElevatorPulleyBlockEntity>
 
 	@Override
 	public void beginFrame(DynamicVisual.Context ctx) {
-		boolean running = PulleyRenderer.isPulleyRunning(blockEntity);
-
-		setup(PulleyRenderer.getBlockEntityOffset(ctx.partialTick(), blockEntity));
+		animate(PulleyRenderer.getBlockEntityOffset(ctx.partialTick(), blockEntity));
 	}
 
-	private void setup(float offset) {
+	@Override
+	protected void _delete() {
+		super._delete();
+
+		belt.delete();
+		halfBelt.delete();
+		coil.delete();
+		magnet.delete();
+	}
+
+	private void animate(float offset) {
 		if (offset == lastOffset) {
 			return;
 		}
@@ -197,7 +205,7 @@ public class ElevatorPulleyVisual extends ShaftVisual<ElevatorPulleyBlockEntity>
 	}
 
 	private static int offset2SectionCount(float offset) {
-		return (int) Math.ceil(offset / 16);
+		return (int) Math.ceil((offset + 1) / 16);
 	}
 
 }
