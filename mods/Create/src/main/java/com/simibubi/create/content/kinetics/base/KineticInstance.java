@@ -42,12 +42,8 @@ public class KineticInstance extends ColoredLitInstance {
     }
 
     public KineticInstance setColor(KineticBlockEntity blockEntity) {
-        if (blockEntity.hasNetwork()) {
-            setColor(Color.generateFromLong(blockEntity.network));
-        }else {
-            color(0xFF, 0xFF, 0xFF);
-        }
-        return this;
+        colorRgb(colorFromBE(blockEntity));
+		return this;
     }
 
     public KineticInstance setColor(Color c) {
@@ -65,4 +61,9 @@ public class KineticInstance extends ColoredLitInstance {
 		return this;
 	}
 
+	public static int colorFromBE(KineticBlockEntity be) {
+		if (be.hasNetwork())
+			return Color.generateFromLong(be.network).getRGB();
+		return 0xFFFFFF;
+	}
 }

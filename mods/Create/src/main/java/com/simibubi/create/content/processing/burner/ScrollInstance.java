@@ -58,6 +58,9 @@ public class ScrollInstance extends ColoredLitInstance {
 	}
 
 	public ScrollInstance setSpriteShift(SpriteShiftEntry spriteShift) {
+		return setSpriteShift(spriteShift, 0.5f, 0.5f);
+	}
+	public ScrollInstance setSpriteShift(SpriteShiftEntry spriteShift, float factorU, float factorV) {
 		float spriteWidth = spriteShift.getTarget()
 			.getU1()
 			- spriteShift.getTarget()
@@ -68,12 +71,24 @@ public class ScrollInstance extends ColoredLitInstance {
 			- spriteShift.getTarget()
 			.getV0();
 
-		scaleU = spriteWidth / 2;
-		scaleV = spriteHeight / 2;
+		scaleU = spriteWidth * factorU;
+		scaleV = spriteHeight * factorV;
 
 		diffU = spriteShift.getTarget().getU0() - spriteShift.getOriginal().getU0();
 		diffV = spriteShift.getTarget().getV0() - spriteShift.getOriginal().getV0();
 
+		return this;
+	}
+
+	public ScrollInstance speed(float speedU, float speedV) {
+		this.speedU = speedU;
+		this.speedV = speedV;
+		return this;
+	}
+
+	public ScrollInstance offset(float offsetU, float offsetV) {
+		this.offsetU = offsetU;
+		this.offsetV = offsetV;
 		return this;
 	}
 }

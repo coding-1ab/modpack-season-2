@@ -6,7 +6,6 @@ import org.lwjgl.system.MemoryUtil;
 
 import com.simibubi.create.content.contraptions.actors.ActorInstance;
 import com.simibubi.create.content.kinetics.base.RotatingInstance;
-import com.simibubi.create.content.kinetics.belt.BeltInstance;
 import com.simibubi.create.content.processing.burner.ScrollInstance;
 
 import dev.engine_room.flywheel.api.instance.InstanceType;
@@ -50,45 +49,6 @@ public class AllInstanceTypes {
 			})
 			.build();
 
-	public static final InstanceType<BeltInstance> BELT = SimpleInstanceType.builder(BeltInstance::new)
-			.cullShader(asResource("instance/cull/belt.glsl"))
-			.vertexShader(asResource("instance/belt.vert"))
-			.layout(LayoutBuilder.create()
-					.vector("color", FloatRepr.NORMALIZED_UNSIGNED_BYTE, 4)
-					.vector("light", IntegerRepr.SHORT, 2)
-					.vector("overlay", IntegerRepr.SHORT, 2)
-					.vector("pos", FloatRepr.FLOAT, 3)
-					.scalar("speed", FloatRepr.FLOAT)
-					.scalar("offset", FloatRepr.FLOAT)
-					.vector("rotation", FloatRepr.FLOAT, 4)
-					.vector("sourceTexture", FloatRepr.FLOAT, 2)
-					.vector("scrollTexture", FloatRepr.FLOAT, 4)
-					.scalar("scrollMult", FloatRepr.FLOAT)
-					.build())
-			.writer((ptr, instance) -> {
-				MemoryUtil.memPutByte(ptr, instance.red);
-				MemoryUtil.memPutByte(ptr + 1, instance.green);
-				MemoryUtil.memPutByte(ptr + 2, instance.blue);
-				MemoryUtil.memPutByte(ptr + 3, instance.alpha);
-				ExtraMemoryOps.put2x16(ptr + 4, instance.light);
-				ExtraMemoryOps.put2x16(ptr + 8, instance.overlay);
-				MemoryUtil.memPutFloat(ptr + 12, instance.x);
-				MemoryUtil.memPutFloat(ptr + 16, instance.y);
-				MemoryUtil.memPutFloat(ptr + 20, instance.z);
-				MemoryUtil.memPutFloat(ptr + 24, instance.rotationalSpeed);
-				MemoryUtil.memPutFloat(ptr + 28, instance.rotationOffset);
-				ExtraMemoryOps.putQuaternionf(ptr + 32, instance.rotation);
-				MemoryUtil.memPutFloat(ptr + 48, instance.sourceU);
-				MemoryUtil.memPutFloat(ptr + 52, instance.sourceV);
-				MemoryUtil.memPutFloat(ptr + 56, instance.minU);
-				MemoryUtil.memPutFloat(ptr + 60, instance.minV);
-				MemoryUtil.memPutFloat(ptr + 64, instance.maxU);
-				MemoryUtil.memPutFloat(ptr + 68, instance.maxV);
-				MemoryUtil.memPutFloat(ptr + 72, instance.scrollMult);
-			})
-			.build();
-
-	// TODO: use this for belts too
 	public static final InstanceType<ScrollInstance> SCROLLING = SimpleInstanceType.builder(ScrollInstance::new)
 			.cullShader(asResource("instance/cull/scrolling.glsl"))
 			.vertexShader(asResource("instance/scrolling.vert"))
