@@ -54,6 +54,7 @@ public abstract class AbstractPulleyVisual<T extends KineticBlockEntity> extends
 
 		updateOffset(partialTick);
 		updateLight(partialTick);
+		animate();
 	}
 
 	@Override
@@ -83,6 +84,10 @@ public abstract class AbstractPulleyVisual<T extends KineticBlockEntity> extends
 	@Override
 	public void beginFrame(DynamicVisual.Context ctx) {
 		updateOffset(ctx.partialTick());
+		animate();
+	}
+
+	private void animate() {
 		coil.rotation(rotationAxis.rotationDegrees(offset * 180))
 				.setChanged();
 

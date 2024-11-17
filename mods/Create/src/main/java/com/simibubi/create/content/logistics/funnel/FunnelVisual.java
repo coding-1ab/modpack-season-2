@@ -31,7 +31,9 @@ public class FunnelVisual extends AbstractBlockEntityVisual<FunnelBlockEntity> i
 
 		var commonTransform = FlapStuffs.commonTransform(getVisualPosition(), funnelFacing, -blockEntity.getFlapOffset());
 		flaps = new FlapStuffs.Visual(instancerProvider(), commonTransform, FlapStuffs.FUNNEL_PIVOT, Models.partial(flapPartial));
-    }
+
+		flaps.update(blockEntity.flap.getValue(partialTick));
+	}
 
     @Override
     public void beginFrame(DynamicVisual.Context ctx) {

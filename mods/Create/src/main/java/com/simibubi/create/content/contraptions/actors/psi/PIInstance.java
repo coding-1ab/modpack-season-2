@@ -23,17 +23,15 @@ public class PIInstance {
 	TransformedInstance middle;
 	TransformedInstance top;
 
-	public PIInstance(InstancerProvider instancerProvider, BlockState blockState, BlockPos instancePos) {
+	public PIInstance(InstancerProvider instancerProvider, BlockState blockState, BlockPos instancePos, boolean lit) {
 		this.instancerProvider = instancerProvider;
 		this.blockState = blockState;
 		this.instancePos = instancePos;
 		Direction facing = blockState.getValue(PortableStorageInterfaceBlock.FACING);
 		angleX = facing == Direction.UP ? 0 : facing == Direction.DOWN ? 180 : 90;
 		angleY = AngleHelper.horizontalAngle(facing);
-	}
-
-	public void init(boolean lit) {
 		this.lit = lit;
+
 		middle = instancerProvider.instancer(InstanceTypes.TRANSFORMED, Models.partial(PortableStorageInterfaceRenderer.getMiddleForState(blockState, lit)))
 				.createInstance();
 		top = instancerProvider.instancer(InstanceTypes.TRANSFORMED, Models.partial(PortableStorageInterfaceRenderer.getTopForState(blockState)))

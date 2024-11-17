@@ -68,10 +68,6 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		super(ctx, entity, partialTick);
 		embedding = ctx.createEmbedding(Vec3i.ZERO);
 
-		init(partialTick);
-    }
-
-	protected void init(float partialTick) {
 		setEmbeddingMatrices(partialTick);
 
 		Contraption contraption = entity.getContraption();
