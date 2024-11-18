@@ -70,7 +70,7 @@ public class BracketedKineticBlockEntityVisual extends SingleRotatingVisual<Brac
 		super.update(pt);
 		if (additionalShaft != null) {
 			updateRotation(additionalShaft);
-			additionalShaft.setRotationOffset(BracketedKineticBlockEntityRenderer.getShaftAngleOffset(axis, pos))
+			additionalShaft.setRotationOffset(BracketedKineticBlockEntityRenderer.getShaftAngleOffset(rotationAxis(), pos))
 					.setChanged();
 		}
 	}

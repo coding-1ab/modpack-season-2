@@ -29,7 +29,7 @@ public class SplitShaftVisual extends KineticBlockEntityVisual<SplitShaftBlockEn
 
         float speed = blockEntity.getSpeed();
 
-        for (Direction dir : Iterate.directionsInAxis(getRotationAxis())) {
+        for (Direction dir : Iterate.directionsInAxis(rotationAxis())) {
 
             float splitSpeed = speed * blockEntity.getRotationSpeedModifier(dir);
 

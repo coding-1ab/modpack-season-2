@@ -41,7 +41,7 @@ public abstract class AbstractPulleyVisual<T extends KineticBlockEntity> extends
 	public AbstractPulleyVisual(VisualizationContext dispatcher, T blockEntity, float partialTick) {
 		super(dispatcher, blockEntity, partialTick);
 
-		rotatingAbout = Direction.get(Direction.AxisDirection.POSITIVE, axis);
+		rotatingAbout = Direction.get(Direction.AxisDirection.POSITIVE, rotationAxis());
 		rotationAxis = Axis.of(rotatingAbout.step());
 
 		coil = getCoilModel().createInstance()
