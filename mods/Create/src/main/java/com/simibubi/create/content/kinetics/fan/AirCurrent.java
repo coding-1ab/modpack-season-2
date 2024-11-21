@@ -107,7 +107,7 @@ public class AirCurrent {
 
 			FanProcessingType processingType = getTypeAt((float) entityDistance);
 
-			if (processingType == AllFanProcessingTypes.NONE)
+			if (processingType == AllFanProcessingTypes.NONE.get())
 				continue;
 
 			if (entity instanceof ItemEntity itemEntity) {
@@ -176,7 +176,7 @@ public class AirCurrent {
 		// Determine segments with transported fluids/gases
 		segments.clear();
 		AirCurrentSegment currentSegment = null;
-		FanProcessingType type = AllFanProcessingTypes.NONE;
+		FanProcessingType type = AllFanProcessingTypes.NONE.get();
 
 		int limit = getLimit();
 		int searchStart = pushing ? 1 : limit;
@@ -187,7 +187,7 @@ public class AirCurrent {
 		for (int i = searchStart; i * searchStep <= searchEnd * searchStep; i += searchStep) {
 			BlockPos currentPos = start.relative(direction, i);
 			FanProcessingType newType = FanProcessingType.getAt(world, currentPos);
-			if (newType != AllFanProcessingTypes.NONE) {
+			if (newType != AllFanProcessingTypes.NONE.get()) {
 				type = newType;
 			}
 			if (currentSegment == null) {
@@ -320,7 +320,7 @@ public class AirCurrent {
 					BlockEntityBehaviour.get(world, pos, TransportedItemStackHandlerBehaviour.TYPE);
 				if (behaviour != null) {
 					FanProcessingType type = FanProcessingType.getAt(world, pos);
-					if (type == AllFanProcessingTypes.NONE)
+					if (type == AllFanProcessingTypes.NONE.get())
 						type = segmentType;
 					affectedItemHandlers.add(Pair.of(behaviour, type));
 				}
@@ -353,7 +353,7 @@ public class AirCurrent {
 				}
 			}
 		}
-		return AllFanProcessingTypes.NONE;
+		return AllFanProcessingTypes.NONE.get();
 	}
 
 	private static class AirCurrentSegment {

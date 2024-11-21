@@ -62,8 +62,8 @@ public class AllItemAttributeTypes {
 		EQUIPABLE = singleton("equipable", s -> LivingEntity.getEquipmentSlotForItem(s)
 			.getType() != EquipmentSlot.Type.HAND),
 		FURNACE_FUEL = singleton("furnace_fuel", AbstractFurnaceBlockEntity::isFuel),
-		WASHABLE = singleton("washable", AllFanProcessingTypes.SPLASHING::canProcess),
-		HAUNTABLE = singleton("hauntable", AllFanProcessingTypes.HAUNTING::canProcess),
+		WASHABLE = singleton("washable", AllFanProcessingTypes.SPLASHING.get()::canProcess),
+		HAUNTABLE = singleton("hauntable", AllFanProcessingTypes.HAUNTING.get()::canProcess),
 		CRUSHABLE = singleton("crushable", (s, w) -> testRecipe(s, w, AllRecipeTypes.CRUSHING.getType())
 			|| testRecipe(s, w, AllRecipeTypes.MILLING.getType())),
 		SMELTABLE = singleton("smeltable", (s, w) -> testRecipe(s, w, RecipeType.SMELTING)),

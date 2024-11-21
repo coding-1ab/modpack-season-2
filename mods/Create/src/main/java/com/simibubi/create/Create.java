@@ -2,8 +2,6 @@ package com.simibubi.create;
 
 import java.util.Random;
 
-import com.simibubi.create.content.logistics.item.filter.attribute.AllItemAttributeTypes;
-
 import org.slf4j.Logger;
 
 import com.google.gson.Gson;
@@ -20,6 +18,7 @@ import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import com.simibubi.create.content.kinetics.TorquePropagator;
 import com.simibubi.create.content.kinetics.fan.processing.AllFanProcessingTypes;
 import com.simibubi.create.content.kinetics.mechanicalArm.AllArmInteractionPointTypes;
+import com.simibubi.create.content.logistics.item.filter.attribute.AllItemAttributeTypes;
 import com.simibubi.create.content.logistics.packagerLink.GlobalLogisticsManager;
 import com.simibubi.create.content.redstone.displayLink.AllDisplayBehaviours;
 import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
@@ -133,6 +132,8 @@ public class Create {
 		AllConfigs.register(modLoadingContext);
 
 		AllItemAttributeTypes.register(modEventBus);
+		AllArmInteractionPointTypes.register(modEventBus);
+		AllFanProcessingTypes.register(modEventBus);
 		BlockSpoutingBehaviour.registerDefaults();
 
 		// FIXME: some of these registrations are not thread-safe
@@ -141,8 +142,6 @@ public class Create {
 		AllPortalTracks.registerDefaults();
 		AllDisplayBehaviours.registerDefaults();
 		ContraptionMovementSetting.registerDefaults();
-		AllArmInteractionPointTypes.register();
-		AllFanProcessingTypes.register();
 		BogeySizes.init();
 		AllBogeyStyles.init();
 		// ----

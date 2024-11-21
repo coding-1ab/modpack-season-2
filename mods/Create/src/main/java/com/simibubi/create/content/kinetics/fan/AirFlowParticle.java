@@ -78,7 +78,7 @@ public class AirFlowParticle extends SimpleAnimatedParticle {
 			motion = motion.scale(airCurrent.maxDistance - (distance - 1f)).scale(.5f);
 
 			FanProcessingType type = getType(distance);
-			if (type == AllFanProcessingTypes.NONE) {
+			if (type == AllFanProcessingTypes.NONE.get()) {
 				setColor(0xEEEEEE);
 				setAlpha(.25f);
 				selectSprite((int) Mth.clamp((distance / airCurrent.maxDistance) * 8 + random.nextInt(4),
@@ -102,7 +102,7 @@ public class AirFlowParticle extends SimpleAnimatedParticle {
 
 	private FanProcessingType getType(double distance) {
 		if (source.getAirCurrent() == null)
-			return AllFanProcessingTypes.NONE;
+			return AllFanProcessingTypes.NONE.get();
 		return source.getAirCurrent().getTypeAt((float) distance);
 	}
 
