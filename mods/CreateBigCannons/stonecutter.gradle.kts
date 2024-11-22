@@ -1,6 +1,7 @@
 import org.gradle.kotlin.dsl.support.uppercaseFirstChar
 
 plugins {
+	`maven-publish`
 	id("dev.kikugie.stonecutter")
 	id("dev.architectury.loom") version "1.6-SNAPSHOT" apply false
 	id("architectury-plugin") version "3.4-SNAPSHOT" apply false
@@ -14,14 +15,27 @@ stonecutter registerChiseled tasks.register("chiseledBuild", stonecutter.chisele
 	ofTask("buildAndCollect")
 }
 
-// Builds loader-specific versions into `build/libs/{mod.version}/{loader}`
+stonecutter registerChiseled tasks.register("chiseledPublish", stonecutter.chiseled) {
+	group = "project"
+	ofTask("publish")
+}
+
 for (it in stonecutter.tree.branches) {
 	if (it.id.isEmpty()) continue
-	val loader = it.id.uppercaseFirstChar()
+	val loader = it.id.upperCaseFirst()
+
+	// Builds loader-specific versions into `build/libs/{mod.version}/{loader}`
 	stonecutter registerChiseled tasks.register("chiseledBuild$loader", stonecutter.chiseled) {
 		group = "project"
 		versions { branch, _ -> branch == it.id }
 		ofTask("buildAndCollect")
+	}
+
+	// Publishes loader-specific versions
+	stonecutter registerChiseled tasks.register("chiseledPublish$loader", stonecutter.chiseled) {
+		group = "project"
+		versions { branch, _ -> branch == it.id }
+		ofTask("publish")
 	}
 }
 
@@ -37,6 +51,7 @@ for (it in stonecutter.tree.nodes) {
 }
 
 subprojects {
+	apply(plugin = "maven-publish")
 	repositories {
 		mavenCentral()
 		// mappings
@@ -72,6 +87,24 @@ subprojects {
 		}
 		flatDir{
 			dir("libs")
+		}
+	}
+	publishing {
+		repositories {
+			maven {
+				name = "GitHubPackages"
+				url = uri("https://maven.pkg.github.com/cannoneers-of-create/createbigcannons")
+				credentials {
+					username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+					password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+				}
+			}
+			maven {
+				name = "realRobotixMaven"
+				url = uri("https://maven.realrobotix.me/createbigcannons")
+				credentials(PasswordCredentials::class)
+			}
+			mavenLocal()
 		}
 	}
 }

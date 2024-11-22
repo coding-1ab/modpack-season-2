@@ -4,6 +4,7 @@ import java.util.*
 
 
 plugins {
+	`maven-publish`
 	id("dev.architectury.loom")
 	id("architectury-plugin")
 	id("com.github.johnrengelman.shadow")
@@ -146,13 +147,23 @@ dependencies {
 	shadowBundle(project(common.path, "transformProductionFabric")) { isTransitive = false }
 }
 
-
 java {
 	withSourcesJar()
 	val java = if (stonecutter.eval(minecraftVersion, ">=1.20.5"))
 		JavaVersion.VERSION_21 else JavaVersion.VERSION_17
 	targetCompatibility = java
 	sourceCompatibility = java
+}
+
+publishing {
+	publications {
+		create<MavenPublication>("mavenJava") {
+			artifact(tasks.remapJar)
+			artifact(tasks.remapSourcesJar)
+			group = mod.group
+			artifactId = mod.id
+		}
+	}
 }
 
 tasks.shadowJar {

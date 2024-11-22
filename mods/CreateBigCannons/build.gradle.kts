@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
+	`maven-publish`
 	id("dev.architectury.loom")
 	id("architectury-plugin")
 }
