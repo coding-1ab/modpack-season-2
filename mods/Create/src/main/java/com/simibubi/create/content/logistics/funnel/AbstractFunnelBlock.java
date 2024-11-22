@@ -57,7 +57,7 @@ public abstract class AbstractFunnelBlock extends Block
 		return withWater(defaultBlockState().setValue(POWERED, context.getLevel()
 			.hasNeighborSignal(context.getClickedPos())), context);
 	}
-	
+
 	@Override
 	public FluidState getFluidState(BlockState pState) {
 		return fluidState(pState);
@@ -69,7 +69,7 @@ public abstract class AbstractFunnelBlock extends Block
 		updateWater(pLevel, pState, pCurrentPos);
 		return pState;
 	}
-	
+
 	@Override
 	public boolean isPathfindable(BlockState state, BlockGetter reader, BlockPos pos, PathComputationType type) {
 		return false;
@@ -81,16 +81,16 @@ public abstract class AbstractFunnelBlock extends Block
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos,
 		boolean isMoving) {
-		if (worldIn.isClientSide)
+		if (level.isClientSide)
 			return;
-		InvManipulationBehaviour behaviour = BlockEntityBehaviour.get(worldIn, pos, InvManipulationBehaviour.TYPE);
+		InvManipulationBehaviour behaviour = BlockEntityBehaviour.get(level, pos, InvManipulationBehaviour.TYPE);
 		if (behaviour != null)
 			behaviour.onNeighborChanged(fromPos);
-		if (!worldIn.getBlockTicks()
+		if (!level.getBlockTicks()
 			.willTickThisTick(pos, this))
-			worldIn.scheduleTick(pos, this, 0);
+			level.scheduleTick(pos, this, 1);
 	}
 
 	@Override
