@@ -207,14 +207,8 @@ public class FunnelBlockEntity extends SmartBlockEntity implements IHaveHovering
 
 		BlockState blockState = getBlockState();
 		Direction facing = blockState.getValue(BeltFunnelBlock.HORIZONTAL_FACING);
-
-		BlockPos behaviourPos = worldPosition.below();
-
-		if (blockState.getValue(BeltFunnelBlock.SHAPE) == Shape.EXTENDED)
-			behaviourPos = behaviourPos.relative(facing);
-
 		DirectBeltInputBehaviour inputBehaviour =
-			BlockEntityBehaviour.get(level, behaviourPos, DirectBeltInputBehaviour.TYPE);
+			BlockEntityBehaviour.get(level, worldPosition.below(), DirectBeltInputBehaviour.TYPE);
 
 		if (inputBehaviour == null)
 			return;
