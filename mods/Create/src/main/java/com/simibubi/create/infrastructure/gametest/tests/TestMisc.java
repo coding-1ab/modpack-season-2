@@ -90,8 +90,8 @@ public class TestMisc {
 		helper.pullLever(lever);
 		helper.succeedWhen(() -> {
 			ThresholdSwitchBlockEntity switchBe = helper.getBlockEntity(AllBlockEntityTypes.THRESHOLD_SWITCH.get(), switchPos);
-			float level = switchBe.getStockLevel();
-			if (level < 0 || level > 1)
+			int level = switchBe.getStockLevel();
+			if (level < 0 || level > 100)
 				helper.fail("Invalid level: " + level);
 		});
 	}
