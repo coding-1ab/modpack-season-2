@@ -6,7 +6,6 @@ import java.util.Optional;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -19,18 +18,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 * Implement this Interface in the BlockEntity class that wants to add info to the screen
 * */
 public interface IHaveGoggleInformation {
-
-	/**
-	 * Use Lang.[...].forGoggles(list)
-	 */
-	String spacing = "    ";
-
-	/**
-	 * Use Lang.[...].forGoggles(list)
-	 */
-	@Deprecated
-	Component componentSpacing = Components.literal(spacing);
-
 	/**
 	 * this method will be called when looking at a BlockEntity that implemented this
 	 * interface
