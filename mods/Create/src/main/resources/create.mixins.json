@@ -15,7 +15,6 @@
     "LavaSwimmingMixin",
     "MainMixin",
     "MapItemSavedDataMixin",
-    "PlayerMixin",
     "TestCommandMixin",
     "WaterWheelFluidSpreadMixin",
     "accessor.AbstractProjectileDispenseBehaviorAccessor",
