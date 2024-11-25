@@ -74,6 +74,8 @@ public class SuperGlueSelectionHelper {
 			ItemStack stack = items.get(slot);
 			if (stack.isEmpty())
 				continue;
+			if (stack.getTag() != null && stack.getTag().contains("Unbreakable"))
+				return true;
 			if (!stack.isDamageableItem())
 				continue;
 			if (!(stack.getItem() instanceof SuperGlueItem))

@@ -58,11 +58,6 @@ public class TreeCutter {
 		return Optional.empty();
 	}
 
-	@Deprecated(forRemoval = true)
-	public static Tree findTree(@Nullable BlockGetter reader, BlockPos pos) {
-		return findTree(reader, pos, Blocks.AIR.defaultBlockState());
-	}
-
 	/**
 	 * Finds a tree at the given pos. Block at the position should be air
 	 *

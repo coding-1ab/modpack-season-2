@@ -1,6 +1,9 @@
 package com.simibubi.create.content.kinetics.steamEngine;
 
+import java.util.Objects;
 import java.util.function.Consumer;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
@@ -24,6 +27,9 @@ public class SteamEngineVisual extends AbstractBlockEntityVisual<SteamEngineBloc
 	protected final TransformedInstance linkage;
 	protected final TransformedInstance connector;
 
+	@Nullable
+	private Float lastAngle = null;
+
 	public SteamEngineVisual(VisualizationContext context, SteamEngineBlockEntity blockEntity, float partialTick) {
 		super(context, blockEntity, partialTick);
 
@@ -33,16 +39,32 @@ public class SteamEngineVisual extends AbstractBlockEntityVisual<SteamEngineBloc
 				.createInstance();
 		connector = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.ENGINE_CONNECTOR))
 				.createInstance();
+
+		animate();
 	}
 
 	@Override
 	public void beginFrame(DynamicVisual.Context ctx) {
+		animate();
+	}
+
+	private void animate() {
 		Float angle = blockEntity.getTargetAngle();
-		if (angle == null) {
-			piston.setZeroTransform().setChanged();
-			linkage.setZeroTransform().setChanged();
-			connector.setZeroTransform().setChanged();
+
+		if (Objects.equals(angle, lastAngle)) {
 			return;
+		}
+		lastAngle = angle;
+
+		if (angle == null) {
+			piston.setVisible(false);
+			linkage.setVisible(false);
+			connector.setVisible(false);
+			return;
+		} else {
+			piston.setVisible(true);
+			linkage.setVisible(true);
+			connector.setVisible(true);
 		}
 
 		Direction facing = SteamEngineBlock.getFacing(blockState);

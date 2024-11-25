@@ -29,15 +29,7 @@ public class ElevatorPulleyRenderer extends KineticBlockEntityRenderer<ElevatorP
 	@Override
 	protected void renderSafe(ElevatorPulleyBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
 		int light, int overlay) {
-
-//		if (VisualizationManager.supportsVisualization(be.getLevel()))
-//			return;
-
-		// from KBE. replace with super call when flw visual is implemented
-		BlockState state = getRenderedBlockState(be);
-		RenderType type = getRenderType(be, state);
-		renderRotatingBuffer(be, getRotatedModel(be, state), ms, buffer.getBuffer(type), light);
-		//
+		super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
 
 		float offset = PulleyRenderer.getBlockEntityOffset(partialTicks, be);
 		boolean running = PulleyRenderer.isPulleyRunning(be);

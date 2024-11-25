@@ -325,7 +325,7 @@ public class FunnelBlockEntity extends SmartBlockEntity implements IHaveHovering
 			AllPackets.getChannel()
 				.send(packetTarget(), new FunnelFlapPacket(this, inward));
 		} else {
-			flap.setValue(inward ? 1 : -1);
+			flap.setValue(inward ? -1 : 1);
 			AllSoundEvents.FUNNEL_FLAP.playAt(level, worldPosition, 1, 1, true);
 		}
 	}

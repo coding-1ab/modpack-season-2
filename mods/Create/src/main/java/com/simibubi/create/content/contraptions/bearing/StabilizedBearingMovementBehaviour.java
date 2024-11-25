@@ -44,7 +44,7 @@ public class StabilizedBearingMovementBehaviour implements MovementBehaviour {
 	@OnlyIn(Dist.CLIENT)
 	public void renderInContraption(MovementContext context, VirtualRenderWorld renderWorld,
 		ContraptionMatrices matrices, MultiBufferSource buffer) {
-		if (!VisualizationManager.supportsVisualization(context.world))
+		if (VisualizationManager.supportsVisualization(context.world))
 			return;
 
 		Direction facing = context.state.getValue(BlockStateProperties.FACING);

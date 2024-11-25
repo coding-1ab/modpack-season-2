@@ -31,7 +31,7 @@ public class BearingVisual<B extends KineticBlockEntity & IBearingBlockEntity> e
 		super(context, blockEntity, partialTick);
 
 		Direction facing = blockState.getValue(BlockStateProperties.FACING);
-		rotationAxis = Axis.of(Direction.get(Direction.AxisDirection.POSITIVE, axis).step());
+		rotationAxis = Axis.of(Direction.get(Direction.AxisDirection.POSITIVE, rotationAxis()).step());
 
 		blockOrientation = getBlockStateOrientation(facing);
 

@@ -25,6 +25,7 @@ import com.simibubi.create.content.contraptions.chassis.StickerVisual;
 import com.simibubi.create.content.contraptions.elevator.ElevatorContactBlockEntity;
 import com.simibubi.create.content.contraptions.elevator.ElevatorPulleyBlockEntity;
 import com.simibubi.create.content.contraptions.elevator.ElevatorPulleyRenderer;
+import com.simibubi.create.content.contraptions.elevator.ElevatorPulleyVisual;
 import com.simibubi.create.content.contraptions.gantry.GantryCarriageBlockEntity;
 import com.simibubi.create.content.contraptions.gantry.GantryCarriageRenderer;
 import com.simibubi.create.content.contraptions.gantry.GantryCarriageVisual;
@@ -492,7 +493,7 @@ public class AllBlockEntityTypes {
 		.blockEntity("item_vault", ItemVaultBlockEntity::new)
 		.validBlocks(AllBlocks.ITEM_VAULT)
 		.register();
-	
+
 	public static final BlockEntityEntry<ItemHatchBlockEntity> ITEM_HATCH = REGISTRATE
 		.blockEntity("item_hatch", ItemHatchBlockEntity::new)
 		.validBlocks(AllBlocks.ITEM_HATCH)
@@ -507,11 +508,11 @@ public class AllBlockEntityTypes {
 
 	public static final BlockEntityEntry<FrogportBlockEntity> PACKAGE_FROGPORT = REGISTRATE
 		.blockEntity("package_frogport", FrogportBlockEntity::new)
-		.visual(() -> FrogportVisual::new, false)
+		.visual(() -> FrogportVisual::new, true)
 		.validBlocks(AllBlocks.PACKAGE_FROGPORT)
 		.renderer(() -> FrogportRenderer::new)
 		.register();
-	
+
 	public static final BlockEntityEntry<PostboxBlockEntity> PACKAGE_POSTBOX = REGISTRATE
 		.blockEntity("package_postbox", PostboxBlockEntity::new)
 		.validBlocks(AllBlocks.PACKAGE_POSTBOXES.toArray())
@@ -580,7 +581,7 @@ public class AllBlockEntityTypes {
 
 	public static final BlockEntityEntry<ElevatorPulleyBlockEntity> ELEVATOR_PULLEY =
 		REGISTRATE.blockEntity("elevator_pulley", ElevatorPulleyBlockEntity::new)
-//		.instance(() -> ElevatorPulleyInstance::new, false)
+			.visual(() -> ElevatorPulleyVisual::new, false)
 			.validBlocks(AllBlocks.ELEVATOR_PULLEY)
 			.renderer(() -> ElevatorPulleyRenderer::new)
 			.register();
@@ -914,7 +915,7 @@ public class AllBlockEntityTypes {
 		.validBlocks(AllBlocks.HAUNTED_BELL)
 		.renderer(() -> BellRenderer::new)
 		.register();
-	
+
 	public static final BlockEntityEntry<DeskBellBlockEntity> DESK_BELL = REGISTRATE
 		.blockEntity("desk_bell", DeskBellBlockEntity::new)
 		.validBlocks(AllBlocks.DESK_BELL)

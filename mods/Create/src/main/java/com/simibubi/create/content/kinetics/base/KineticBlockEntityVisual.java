@@ -6,21 +6,19 @@ import com.simibubi.create.content.kinetics.simpleRelays.ShaftBlock;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.visual.AbstractBlockEntityVisual;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class KineticBlockEntityVisual<T extends KineticBlockEntity> extends AbstractBlockEntityVisual<T> {
 
-	protected final Direction.Axis axis;
-
 	public KineticBlockEntityVisual(VisualizationContext context, T blockEntity, float partialTick) {
 		super(context, blockEntity, partialTick);
-		axis = (blockState.getBlock() instanceof IRotate irotate) ? irotate.getRotationAxis(blockState) : Axis.Y;
 	}
 
 	protected final void updateRotation(RotatingInstance instance) {
-		updateRotation(instance, getRotationAxis(), getBlockEntitySpeed());
+		updateRotation(instance, rotationAxis(), getBlockEntitySpeed());
 	}
 
 	protected final void updateRotation(RotatingInstance instance, Direction.Axis axis) {
@@ -28,7 +26,7 @@ public abstract class KineticBlockEntityVisual<T extends KineticBlockEntity> ext
 	}
 
 	protected final void updateRotation(RotatingInstance instance, float speed) {
-		updateRotation(instance, getRotationAxis(), speed);
+		updateRotation(instance, rotationAxis(), speed);
 	}
 
 	protected final void updateRotation(RotatingInstance instance, Direction.Axis axis, float speed) {
@@ -40,7 +38,7 @@ public abstract class KineticBlockEntityVisual<T extends KineticBlockEntity> ext
 	}
 
 	protected final RotatingInstance setup(RotatingInstance key) {
-		return setup(key, getRotationAxis(), getBlockEntitySpeed());
+		return setup(key, rotationAxis(), getBlockEntitySpeed());
 	}
 
 	protected final RotatingInstance setup(RotatingInstance key, Direction.Axis axis) {
@@ -48,7 +46,7 @@ public abstract class KineticBlockEntityVisual<T extends KineticBlockEntity> ext
 	}
 
 	protected final RotatingInstance setup(RotatingInstance key, float speed) {
-		return setup(key, getRotationAxis(), speed);
+		return setup(key, rotationAxis(), speed);
 	}
 
 	protected final RotatingInstance setup(RotatingInstance key, Direction.Axis axis, float speed) {
@@ -63,17 +61,11 @@ public abstract class KineticBlockEntityVisual<T extends KineticBlockEntity> ext
 	}
 
 	protected float getRotationOffset(final Direction.Axis axis) {
-		float offset = ICogWheel.isLargeCog(blockState) ? 11.25f : 0;
-		double d = (((axis == Direction.Axis.X) ? 0 : pos.getX()) + ((axis == Direction.Axis.Y) ? 0 : pos.getY())
-			+ ((axis == Direction.Axis.Z) ? 0 : pos.getZ())) % 2;
-		if (d == 0) {
-			offset = 22.5f;
-		}
-		return offset;
+		return rotationOffset(blockState, axis, pos) + blockEntity.getRotationAngleOffset(axis);
 	}
 
-	protected Direction.Axis getRotationAxis() {
-		return axis;
+	protected Direction.Axis rotationAxis() {
+		return rotationAxis(blockState);
 	}
 
 	protected float getBlockEntitySpeed() {
@@ -81,11 +73,35 @@ public abstract class KineticBlockEntityVisual<T extends KineticBlockEntity> ext
 	}
 
 	protected BlockState shaft() {
-		return shaft(getRotationAxis());
+		return shaft(rotationAxis());
+	}
+
+	public static float rotationOffset(BlockState state, Axis axis, BlockPos pos) {
+		if (shouldOffset(axis, pos)) {
+			return 22.5f;
+		} else {
+			return ICogWheel.isLargeCog(state) ? 11.25f : 0;
+		}
+	}
+
+	public static boolean shouldOffset(Axis axis, BlockPos pos) {
+		// Sum the components of the other 2 axes.
+		int x = (axis == Axis.X) ? 0 : pos.getX();
+		int y = (axis == Axis.Y) ? 0 : pos.getY();
+		int z = (axis == Axis.Z) ? 0 : pos.getZ();
+		return ((x + y + z) % 2) == 0;
+	}
+
+	public static Axis rotationAxis(BlockState blockState) {
+		return (blockState.getBlock() instanceof IRotate irotate) ? irotate.getRotationAxis(blockState) : Axis.Y;
 	}
 
 	public static BlockState shaft(Direction.Axis axis) {
 		return AllBlocks.SHAFT.getDefaultState()
 			.setValue(ShaftBlock.AXIS, axis);
+	}
+
+	public static BlockState shaft(BlockState blockState) {
+		return shaft(rotationAxis(blockState));
 	}
 }

@@ -99,14 +99,14 @@ public class MechanicalPistonBlock extends DirectionalAxisKineticBlock implement
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, Level world, BlockPos pos, Block p_220069_4_, BlockPos fromPos,
-		boolean p_220069_6_) {
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos,
+		boolean isMoving) {
 		Direction direction = state.getValue(FACING);
 		if (!fromPos.equals(pos.relative(direction.getOpposite())))
 			return;
-		if (!world.isClientSide && !world.getBlockTicks()
+		if (!level.isClientSide && !level.getBlockTicks()
 			.willTickThisTick(pos, this))
-			world.scheduleTick(pos, this, 0);
+			level.scheduleTick(pos, this, 1);
 	}
 
 	@Override
