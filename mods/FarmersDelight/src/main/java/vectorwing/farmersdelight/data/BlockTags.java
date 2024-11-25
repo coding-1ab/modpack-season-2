@@ -1,7 +1,6 @@
 package vectorwing.farmersdelight.data;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
@@ -73,6 +72,7 @@ public class BlockTags extends BlockTagsProvider
 		tag(ModTags.MINEABLE_WITH_KNIFE).add(
 						Blocks.MELON,
 						Blocks.PUMPKIN,
+						Blocks.CARVED_PUMPKIN,
 						Blocks.COBWEB,
 						Blocks.CAKE,
 						ModBlocks.APPLE_PIE.get(),
@@ -106,8 +106,7 @@ public class BlockTags extends BlockTagsProvider
 				ModBlocks.CABBAGE_CROP.get(),
 				ModBlocks.ONION_CROP.get(),
 				ModBlocks.RICE_CROP_PANICLES.get(),
-				ModBlocks.BUDDING_TOMATO_CROP.get(),
-				ModBlocks.TOMATO_CROP.get());
+				ModBlocks.BUDDING_TOMATO_CROP.get());
 		tag(net.minecraft.tags.BlockTags.STANDING_SIGNS).add(
 				ModBlocks.CANVAS_SIGN.get(),
 				ModBlocks.WHITE_CANVAS_SIGN.get(),

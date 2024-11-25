@@ -1,28 +1,53 @@
 # Changelog
 
-## 1.2.5
-
-### Additions
-- Farmer Villagers are now capable of planting and harvesting FD crops!
-  - They can plant Cabbage, Tomato and Onion. Rice is excluded due to unique planting conditions. However...
-  - They can harvest all 4 crops once fully mature, and will collect the drops. This includes the top half of Rice, which means they can harvest it indefinitely;
-- Added tag: `farmersdelight:campfire_signal_smoke`. Blocks in this tag will cause Campfires to emit "signal smoke", like the Hay Bale;
+## 1.3.0
 
 ### Updates
-- Knives are now effective at mining Pumpkins and Melons;
-- Knives will harvest **4 Pumpkin Slices** when mining a Pumpkin, instead of a whole unit. Carved Pumpkins are unaffected;
-- Added Canvas Signs to the vanilla `signs` and `hanging_signs` item tags;
-- Some crafting recipes are now properly grouped in the Crafting Table's recipe book;
-- Skillets are now waterloggable, but are unable to cook underwater, either handheld or as a block. Hard to fry when the skillet is flooded!
 - Tomato crops have been updated:
   - The crop no longer uses the standard growth speed checks of `CropBlock`, which was slowing down hanging vines. They grow at a fixed rate now, regardless of height;
   - Applying bone meal to a mature tomato vine (sneaking, rich soil etc) will pass the boost to the vine above it, if possible;
   - Tomato seeds can now be planted on any farmland block;
-
-## Technical
 - FD's recipe builders now implement `RecipeBuilder`, which should allow a few extra features for add-on developers (thanks, Lance5057!);
 - FD's recipes now call for `assemble()` in most places, allowing extenders of most workstations to use the inventory when creating their result (thanks, ColonelPanic!);
 - Cutting recipes now accept arrays of ingredients in the `tool` field (thanks, BobVarioa!).
+
+## 1.2.5
+
+### Additions
+- Farmer Villagers are now capable of planting and harvesting FD crops!
+  - They can plant, harvest and collect the drops for Cabbage, Tomato and Onion;
+  - Rice is currently excluded from this equation, as farmer AI wasn't able to handle it properly without extensive changes.
+- Added tag: `farmersdelight:campfire_signal_smoke`. Blocks in this tag will cause Campfires to emit "signal smoke", like the Hay Bale;
+
+### Updates
+- Knives are now effective at mining Pumpkins (normal and carved) and Melons;
+- Knives will harvest **4 Pumpkin Slices** when mining a Pumpkin, instead of a whole unit. Carved Pumpkins are unaffected;
+- Added Canvas Signs to the vanilla `signs` and `hanging_signs` item tags;
+- Some crafting recipes are now properly grouped in the Crafting Table's recipe book;
+- Skillets are now waterloggable, but are unable to cook underwater, either handheld or as a block. Hard to fry when the skillet is flooded!
+- `tomatoes` were temporarily removed from the `crops` tag, as bee pollination was breaking ropelogged vines unpredictably;
+  - This will likely be addressed in the next major release;
+  
+### Fixes
+- Fix meal duplication when using containers against a Cooking Pot block, then closing and reloading the world;
+
+### Translations
+- Added:
+  - be_by (thanks, observr1!)
+  - en_gb (thanks, akkini1!)
+  - da_dk (thanks, gohkenytp!)
+  - tok (thanks, PiggyDr!)
+- Updated:
+  - de_de (thanks, joernott and DaLumma!)
+  - es_ar (thanks, axperty!)
+  - es_mx (thanks, cerealconjugo!)
+  - ja_jp (thanks, konumatakaki and EndilCrafter!)
+  - ko_kr (thanks, smoong951!)
+  - ru_ru (thanks, mpustovoi!)
+  - uk_ua (thanks, TheGridExpert!)
+  - vi_vn (thanks, godkyo98!)
+  - zh_cn (thanks, DuckDuckStudio!)
+  - zh_tw (thanks, DuckDuckStudio and FuGu0416!)
 
 ## 1.2.4
 
