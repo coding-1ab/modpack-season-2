@@ -12,34 +12,44 @@ import javax.annotation.Nullable;
 
 import org.lwjgl.glfw.GLFW;
 
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import com.simibubi.create.content.logistics.AddressEditBox;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
+import com.simibubi.create.content.processing.burner.BlazeBurnerRenderer;
 import com.simibubi.create.content.trains.station.NoShadowFontWrapper;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.ScreenWithStencils;
 import com.simibubi.create.foundation.utility.CreateLang;
 
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.GuiGameElement;
+import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -86,6 +96,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 	List<BigItemStack> itemsToOrder;
 
 	WeakReference<LivingEntity> stockKeeper;
+	WeakReference<BlazeBurnerBlockEntity> blaze;
 
 	boolean encodeRequester; // Redstone requesters
 
@@ -128,6 +139,11 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 						&& seatEntity.getPassengers()
 							.get(0) instanceof LivingEntity keeper)
 						stockKeeper = new WeakReference<>(keeper);
+				if (yOffset == 0 && be.getLevel()
+					.getBlockEntity(seatPos) instanceof BlazeBurnerBlockEntity bbbe) {
+					blaze = new WeakReference<>(bbbe);
+					return;
+				}
 			}
 		}
 	}
@@ -362,6 +378,31 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 				entityY - (int) (keeper.getEyeHeight(Pose.STANDING) * 50) / 2 * 2);
 			InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, entityX, entityY, 50, entityX - mouseX,
 				Mth.clamp(entityY - mouseY, -50, 10), keeper);
+			ms.popPose();
+		}
+
+		BlazeBurnerBlockEntity keeperBE = blaze.get();
+		if (keeperBE != null && !keeperBE.isRemoved()) {
+			ms.pushPose();
+			int entityX = x + windowWidth + 10;
+			int entityY = y + windowHeight - 80;
+			AllGuiTextures.STOCK_KEEPER_REQUEST_SAYS.render(graphics, x + 226, (entityY - 22) / 2 * 2);
+			ms.translate(entityX, entityY, 300);
+			ms.mulPose(Axis.XP.rotationDegrees(-22.5f));
+			ms.mulPose(Axis.YP.rotationDegrees(-45));
+			ms.scale(48, -48, 48);
+			float animation = keeperBE.headAnimation.getValue(AnimationTickHolder.getPartialTicks()) * .175f;
+			float horizontalAngle = AngleHelper.rad(180);
+			HeatLevel heatLevel = keeperBE.getHeatLevelForRender();
+			boolean canDrawFlame = heatLevel.isAtLeast(HeatLevel.FADING);
+			boolean drawGoggles = keeperBE.goggles;
+			PartialModel drawHat = AllPartialModels.LOGISTICS_HAT;
+			int hashCode = keeperBE.hashCode();
+			Lighting.setupForEntityInInventory();
+			BlazeBurnerRenderer.renderShared(ms, null, graphics.bufferSource(), minecraft.level,
+				keeperBE.getBlockState(), heatLevel, animation, horizontalAngle, canDrawFlame, drawGoggles, drawHat,
+				hashCode);
+			Lighting.setupFor3DItems();
 			ms.popPose();
 		}
 

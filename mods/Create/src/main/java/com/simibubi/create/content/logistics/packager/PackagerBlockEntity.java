@@ -1,6 +1,5 @@
 package com.simibubi.create.content.logistics.packager;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;

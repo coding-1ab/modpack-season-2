@@ -10,6 +10,8 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
+import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
+import com.simibubi.create.content.logistics.stockTicker.StockTickerInteractionHandler;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 import com.simibubi.create.foundation.block.IBE;
 
@@ -113,6 +115,14 @@ public class BlazeBurnerBlock extends HorizontalDirectionalBlock implements IBE<
 				bbte.notifyUpdate();
 				return InteractionResult.SUCCESS;
 			});
+
+		BlazeBurnerBlockEntity be = getBlockEntity(world, pos);
+		if (be != null && be.stockKeeper) {
+			StockTickerBlockEntity stockTicker = BlazeBurnerBlockEntity.getStockTicker(world, pos);
+			if (stockTicker != null)
+				StockTickerInteractionHandler.interactWithLogisticsManagerAt(player, world, stockTicker.getBlockPos());
+			return InteractionResult.SUCCESS;
+		}
 
 		if (heldItem.isEmpty() && heat != HeatLevel.NONE)
 			return onBlockEntityUse(world, pos, bbte -> {

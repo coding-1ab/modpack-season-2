@@ -74,6 +74,7 @@ public class AllArmInteractionPointTypes {
 	public static final DepotType DEPOT = register("depot", DepotType::new);
 	public static final FunnelType FUNNEL = register("funnel", FunnelType::new);
 	public static final MillstoneType MILLSTONE = register("millstone", MillstoneType::new);
+	public static final PackagerType PACKAGER = register("packager", PackagerType::new);
 	public static final SawType SAW = register("saw", SawType::new);
 
 	public static final CampfireType CAMPFIRE = register("campfire", CampfireType::new);
@@ -250,6 +251,22 @@ public class AllArmInteractionPointTypes {
 			return AllBlocks.MILLSTONE.has(state);
 		}
 
+		@Override
+		public ArmInteractionPoint createPoint(Level level, BlockPos pos, BlockState state) {
+			return new ArmInteractionPoint(this, level, pos, state);
+		}
+	}
+	
+	public static class PackagerType extends ArmInteractionPointType {
+		public PackagerType(ResourceLocation id) {
+			super(id);
+		}
+		
+		@Override
+		public boolean canCreatePoint(Level level, BlockPos pos, BlockState state) {
+			return AllBlocks.PACKAGER.has(state);
+		}
+		
 		@Override
 		public ArmInteractionPoint createPoint(Level level, BlockPos pos, BlockState state) {
 			return new ArmInteractionPoint(this, level, pos, state);

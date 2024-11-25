@@ -53,23 +53,30 @@ public class StockTickerInteractionHandler {
 		if (targetPos == null)
 			return;
 
+		if (interactWithLogisticsManagerAt(player, level, targetPos)) {
+			event.setCancellationResult(InteractionResult.SUCCESS);
+			event.setCanceled(true);
+		}
+	}
+
+	public static boolean interactWithLogisticsManagerAt(Player player, Level level, BlockPos targetPos) {
 		ItemStack mainHandItem = player.getMainHandItem();
 
 		if (AllItems.SHOPPING_LIST.isIn(mainHandItem)) {
-			interactWithShop(event, player, level, targetPos, mainHandItem);
-			return;
+			interactWithShop(player, level, targetPos, mainHandItem);
+			return true;
 		}
 
 		if (level.isClientSide())
-			return;
+			return true;
 		if (!(level.getBlockEntity(targetPos) instanceof StockTickerBlockEntity stbe))
-			return;
+			return false;
 
 		if (!stbe.behaviour.mayInteract(player)) {
 			player.displayClientMessage(CreateLang.translate("stock_keeper.locked")
 				.style(ChatFormatting.RED)
 				.component(), true);
-			return;
+			return true;
 		}
 
 		if (player instanceof ServerPlayer sp) {
@@ -83,17 +90,11 @@ public class StockTickerInteractionHandler {
 			stbe.getRecentSummary()
 				.divideAndSendTo(sp, targetPos);
 		}
-
-		event.setCancellationResult(InteractionResult.SUCCESS);
-		event.setCanceled(true);
-		return;
+		
+		return true;
 	}
 
-	private static void interactWithShop(EntityInteractSpecific event, Player player, Level level, BlockPos targetPos,
-		ItemStack mainHandItem) {
-		event.setCancellationResult(InteractionResult.SUCCESS);
-		event.setCanceled(true);
-
+	private static void interactWithShop(Player player, Level level, BlockPos targetPos, ItemStack mainHandItem) {
 		if (level.isClientSide())
 			return;
 		if (!(level.getBlockEntity(targetPos) instanceof StockTickerBlockEntity tickerBE))
@@ -188,7 +189,7 @@ public class StockTickerInteractionHandler {
 		Entity rootVehicle = entity.getRootVehicle();
 		if (!(rootVehicle instanceof SeatEntity))
 			return null;
-		if (!(entity instanceof LivingEntity living))
+		if (!(entity instanceof LivingEntity))
 			return null;
 		if (AllEntityTypes.PACKAGE.is(entity))
 			return null;
@@ -203,7 +204,7 @@ public class StockTickerInteractionHandler {
 					.above(y);
 				if (!(entity.level()
 					.getBlockState(workstationPos)
-					.getBlock() instanceof StockTickerBlock lw))
+					.getBlock() instanceof StockTickerBlock))
 					continue;
 				targetPos = workstationPos;
 				stations++;

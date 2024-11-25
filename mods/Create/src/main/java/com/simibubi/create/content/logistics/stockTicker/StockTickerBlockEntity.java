@@ -7,6 +7,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import com.simibubi.create.content.equipment.goggles.IHaveHoveringInformation;
@@ -175,6 +176,8 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 				for (SeatEntity seatEntity : level.getEntitiesOfClass(SeatEntity.class, new AABB(seatPos)))
 					if (seatEntity.isVehicle())
 						return true;
+				if (yOffset == 0 && AllBlockEntityTypes.HEATER.is(level.getBlockEntity(seatPos)))
+					return true;
 			}
 		}
 		return false;

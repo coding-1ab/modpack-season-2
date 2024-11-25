@@ -2,15 +2,21 @@ package com.simibubi.create.content.processing.burner;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock;
+import com.simibubi.create.content.logistics.stockTicker.StockTickerBlock;
+import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.content.processing.basin.BasinBlock;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
 import dev.engine_room.flywheel.api.backend.BackendManager;
+import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
@@ -26,6 +32,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -38,13 +46,16 @@ public class BlazeBurnerBlockEntity extends SmartBlockEntity {
 	public static final int MAX_HEAT_CAPACITY = 10000;
 	public static final int INSERTION_THRESHOLD = 500;
 
+	public LerpedFloat headAnimation;
+	public boolean stockKeeper;
+	public boolean isCreative;
+	public boolean goggles;
+	public boolean hat;
+
 	protected FuelType activeFuel;
 	protected int remainingBurnTime;
-	protected LerpedFloat headAnimation;
 	protected LerpedFloat headAngle;
-	protected boolean isCreative;
-	protected boolean goggles;
-	protected boolean hat;
+
 
 	public BlazeBurnerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -54,6 +65,7 @@ public class BlazeBurnerBlockEntity extends SmartBlockEntity {
 		headAngle = LerpedFloat.angular();
 		isCreative = false;
 		goggles = false;
+		stockKeeper = false;
 
 		headAngle.startWithValue((AngleHelper.horizontalAngle(state.getOptionalValue(BlazeBurnerBlock.FACING)
 			.orElse(Direction.SOUTH)) + 180) % 360);
@@ -101,6 +113,27 @@ public class BlazeBurnerBlockEntity extends SmartBlockEntity {
 			activeFuel = FuelType.NONE;
 
 		updateBlockState();
+	}
+
+	@Override
+	public void lazyTick() {
+		super.lazyTick();
+		stockKeeper = getStockTicker(level, worldPosition) != null;
+	}
+	
+	@Nullable
+	public static StockTickerBlockEntity getStockTicker(LevelAccessor level, BlockPos pos) {
+		for (Direction direction : Iterate.horizontalDirections) {
+			if (level instanceof Level l && !l.isLoaded(pos))
+				return null;
+			BlockState blockState = level.getBlockState(pos.relative(direction));
+			if (!AllBlocks.STOCK_TICKER.has(blockState)
+				|| blockState.getValue(StockTickerBlock.FACING) != direction.getOpposite())
+				continue;
+			if (level.getBlockEntity(pos.relative(direction)) instanceof StockTickerBlockEntity stbe)
+				return stbe;
+		}
+		return null;
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -172,6 +205,13 @@ public class BlazeBurnerBlockEntity extends SmartBlockEntity {
 
 	public BlazeBurnerBlock.HeatLevel getHeatLevelFromBlock() {
 		return BlazeBurnerBlock.getHeatLevelOf(getBlockState());
+	}
+	
+	public BlazeBurnerBlock.HeatLevel getHeatLevelForRender() {
+		HeatLevel heatLevel = getHeatLevelFromBlock();
+		if (!heatLevel.isAtLeast(HeatLevel.FADING) && stockKeeper)
+			return HeatLevel.FADING;
+		return heatLevel;
 	}
 
 	public void updateBlockState() {
