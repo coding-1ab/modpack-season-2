@@ -39,10 +39,9 @@ public class CommonSetup
 			registerDispenserBehaviors();
 			registerItemSetAdditions();
 			registerStackSizeOverrides();
+			ModAdvancements.register();
+			CraftingHelper.register(new VanillaCrateEnabledCondition.Serializer());
 		});
-
-		ModAdvancements.register();
-		CraftingHelper.register(new VanillaCrateEnabledCondition.Serializer());
 	}
 
 	public static void registerStackSizeOverrides() {
