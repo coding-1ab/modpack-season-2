@@ -239,6 +239,13 @@ public class RecipeGridHandler {
 			height = maxY - minY + 1;
 		}
 
+		public boolean onlyEmptyItems() {
+			for (ItemStack stack : grid.values())
+				if (!stack.isEmpty())
+					return false;
+			return true;
+		}
+
 	}
 
 }

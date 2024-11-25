@@ -91,13 +91,22 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		}
 
 		craftingIngredients = new ArrayList<>();
-
-		int width = 3;
-		if (availableCraftingRecipe instanceof IShapedRecipe<?> shaped)
-			width = shaped.getRecipeWidth();
-
 		NonNullList<Ingredient> ingredients = availableCraftingRecipe.getIngredients();
 		BigItemStack emptyIngredient = new BigItemStack(ItemStack.EMPTY, 1);
+
+		int width = Math.min(3, ingredients.size());
+		int height = Math.min(3, ingredients.size() / 3 + 1);
+
+		if (availableCraftingRecipe instanceof IShapedRecipe<?> shaped) {
+			width = shaped.getRecipeWidth();
+			height = shaped.getRecipeHeight();
+		}
+
+		if (height == 1)
+			for (int i = 0; i < 3; i++)
+				craftingIngredients.add(emptyIngredient);
+		if (width == 1)
+			craftingIngredients.add(emptyIngredient);
 
 		for (int i = 0; i < ingredients.size(); i++) {
 			Ingredient ingredient = ingredients.get(i);
@@ -257,24 +266,23 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 			if (mouseX >= outputX - 1 && mouseX < outputX - 1 + 18 && mouseY >= outputY - 1
 				&& mouseY < outputY - 1 + 18) {
-				graphics.renderComponentTooltip(font,
-					List.of(
-						CreateLang
-							.translate("gui.factory_panel.expected_output", CreateLang.itemName(outputConfig.stack)
-								.add(CreateLang.text(" x" + outputConfig.count))
-								.string())
-							.color(ScrollInput.HEADER_RGB)
-							.component(),
-						CreateLang.translate("gui.factory_panel.expected_output_tip")
-							.style(ChatFormatting.GRAY)
-							.component(),
-						CreateLang.translate("gui.factory_panel.expected_output_tip_1")
-							.style(ChatFormatting.GRAY)
-							.component(),
-						CreateLang.translate("gui.factory_panel.expected_output_tip_2")
-							.style(ChatFormatting.DARK_GRAY)
-							.style(ChatFormatting.ITALIC)
-							.component()),
+				MutableComponent c1 = CreateLang
+					.translate("gui.factory_panel.expected_output", CreateLang.itemName(outputConfig.stack)
+						.add(CreateLang.text(" x" + outputConfig.count))
+						.string())
+					.color(ScrollInput.HEADER_RGB)
+					.component();
+				MutableComponent c2 = CreateLang.translate("gui.factory_panel.expected_output_tip")
+					.style(ChatFormatting.GRAY)
+					.component();
+				MutableComponent c3 = CreateLang.translate("gui.factory_panel.expected_output_tip_1")
+					.style(ChatFormatting.GRAY)
+					.component();
+				MutableComponent c4 = CreateLang.translate("gui.factory_panel.expected_output_tip_2")
+					.style(ChatFormatting.DARK_GRAY)
+					.style(ChatFormatting.ITALIC)
+					.component();
+				graphics.renderComponentTooltip(font, craftingActive ? List.of(c1, c2, c3) : List.of(c1, c2, c3, c4),
 					mouseX, mouseY);
 			}
 		}
@@ -383,8 +391,19 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		if (mouseX < inputX - 1 || mouseX >= inputX - 1 + 18 || mouseY < inputY - 1 || mouseY >= inputY - 1 + 18)
 			return;
 
-		if (craftingActive)
+		if (craftingActive) {
+			graphics.renderComponentTooltip(font, List.of(CreateLang.translate("gui.factory_panel.crafting_input")
+				.color(ScrollInput.HEADER_RGB)
+				.component(),
+				CreateLang.translate("gui.factory_panel.crafting_input_tip")
+					.style(ChatFormatting.GRAY)
+					.component(),
+				CreateLang.translate("gui.factory_panel.crafting_input_tip_1")
+					.style(ChatFormatting.GRAY)
+					.component()),
+				mouseX, mouseY);
 			return;
+		}
 
 		if (itemStack.stack.isEmpty()) {
 			graphics.renderComponentTooltip(font, List.of(CreateLang.translate("gui.factory_panel.empty_panel")
