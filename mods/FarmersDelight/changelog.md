@@ -1,8 +1,15 @@
 # Changelog
 
-## 1.3.0
+## 1.3.0 (WIP)
 
 ### Updates
+- The Cutting Board has been redesigned:
+  - It can now hold a **full stack of items**, instead of one at a time. This allows players to process their stacks in half the time it took before;
+  - If the board's stack isn't full yet, players can top it up with more items;
+  - When cutting, the status bar will show how many items are left on the board;
+  - Comparator signal will now be based on the fill percentage for the item's max stack size;
+  - All off-hand interaction has been removed. Placing, removing and processing items is done entirely with the main hand;
+  - The `offhand_equipment` tag has been removed.
 - Tomato crops have been updated:
   - The crop no longer uses the standard growth speed checks of `CropBlock`, which was slowing down hanging vines. They grow at a fixed rate now, regardless of height;
   - Applying bone meal to a mature tomato vine (sneaking, rich soil etc) will pass the boost to the vine above it, if possible;

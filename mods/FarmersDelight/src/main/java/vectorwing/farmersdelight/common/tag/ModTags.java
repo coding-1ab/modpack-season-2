@@ -67,9 +67,6 @@ public class ModTags
 	// Foods and items that serve as filling for Cabbage Rolls
 	public static final TagKey<Item> CABBAGE_ROLL_INGREDIENTS = modItemTag("cabbage_roll_ingredients");
 
-	// Items commonly held in the off-hand. Cutting Boards won't let them be placed from the off-hand, for convenience.
-	public static final TagKey<Item> OFFHAND_EQUIPMENT = modItemTag("offhand_equipment");
-
 	// Knife items for game logic.
 	public static final TagKey<Item> KNIVES = modItemTag("tools/knives");
 
