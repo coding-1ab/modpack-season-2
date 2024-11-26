@@ -352,6 +352,8 @@
 	"create.stock_ticker.click_to_retrieve": "Click to retrieve",
 	
 	"create.gui.stock_ticker.category_editor": "Category Editor",
+	"create.gui.stock_ticker.shift_moves_top": "Shift moves to top",
+	"create.gui.stock_ticker.shift_moves_bottom": "Shift moves to bottom",
 	"create.gui.stock_ticker.category_filter": "Category Filter",
 	"create.gui.stock_ticker.category_filter_tip": "Place a List or Attribute Filter",
 	"create.gui.stock_ticker.category_filter_tip_1": "to specify which items are included",
@@ -1000,9 +1002,6 @@
 	"create.packager_link.set": "Target selected",
 	"create.packager_link.success": "Successfully bound to target",
 	"create.packager_link.clear": "Cleared selection",
-
-	"create.packager.mode_change.regular": "-> Package and unbox items",
-	"create.packager.mode_change.defrag": "-> Collect fragments and output completed",
 
 	"create.display_link.set": "Targeted position selected",
 	"create.display_link.success": "Successfully bound to targeted position",

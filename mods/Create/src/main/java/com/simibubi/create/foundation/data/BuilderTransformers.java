@@ -39,6 +39,7 @@ import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedShaftBlo
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.displayCloth.DisplayClothBlockItem;
 import com.simibubi.create.content.logistics.displayCloth.DisplayClothModel;
+import com.simibubi.create.content.logistics.packager.PackagerGenerator;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock.Shape;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelItem;
@@ -507,6 +508,20 @@ public class BuilderTransformers {
 					.save(p, Create.asResource("crafting/logistics/" + c.getName() + "_clear")))
 				.build();
 		};
+	}
+
+	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> packager() {
+		return b -> b.initialProperties(SharedProperties::softMetal)
+			.properties(p -> p.noOcclusion())
+			.properties(p -> p.isRedstoneConductor(($1, $2, $3) -> false))
+			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
+				.sound(SoundType.NETHERITE_BLOCK))
+			.transform(pickaxeOnly())
+			.addLayer(() -> RenderType::cutoutMipped)
+			.blockstate(new PackagerGenerator()::generate)
+			.item()
+			.model(AssetLookup::customItemModel)
+			.build();
 	}
 
 }

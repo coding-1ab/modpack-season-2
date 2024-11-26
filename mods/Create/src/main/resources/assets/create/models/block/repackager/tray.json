@@ -1,5 +1,5 @@
 {
-	"parent": "create:block/packager/tray_regular",
+	"parent": "create:block/packager/tray",
 	"textures": {
 		"1": "create:block/packager_block_defrag"
 	}

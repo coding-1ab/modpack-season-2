@@ -184,6 +184,7 @@ import com.simibubi.create.content.logistics.packagePort.frogport.FrogportBlock;
 import com.simibubi.create.content.logistics.packagePort.postbox.PostboxBlock;
 import com.simibubi.create.content.logistics.packager.PackagerBlock;
 import com.simibubi.create.content.logistics.packager.PackagerGenerator;
+import com.simibubi.create.content.logistics.packager.repackager.RepackagerBlock;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlock;
@@ -1839,18 +1840,12 @@ public class AllBlocks {
 		.register();
 
 	public static final BlockEntry<PackagerBlock> PACKAGER = REGISTRATE.block("packager", PackagerBlock::new)
-		.initialProperties(SharedProperties::softMetal)
-		.properties(p -> p.noOcclusion())
-		.properties(p -> p.isRedstoneConductor(($1, $2, $3) -> false))
-		.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
-			.sound(SoundType.NETHERITE_BLOCK))
-		.transform(pickaxeOnly())
-		.addLayer(() -> RenderType::cutoutMipped)
-		.blockstate(new PackagerGenerator()::generate)
-		.transform(BlockStressDefaults.setImpact(1.0))
-		.item()
-		.model(AssetLookup::customItemModel)
-		.build()
+		.transform(BuilderTransformers.packager())
+		.register();
+
+	public static final BlockEntry<RepackagerBlock> REPACKAGER = REGISTRATE.block("repackager", RepackagerBlock::new)
+		.transform(BuilderTransformers.packager())
+		.lang("Re-Packager")
 		.register();
 
 	public static final BlockEntry<FrogportBlock> PACKAGE_FROGPORT =

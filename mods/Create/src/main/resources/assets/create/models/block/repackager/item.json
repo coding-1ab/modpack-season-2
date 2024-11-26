@@ -1,0 +1,7 @@
+{
+	"parent": "create:block/packager/item",
+	"textures": {
+		"1": "create:block/packager_block_defrag",
+		"particle": "create:block/packager_block_defrag"
+	}
+}

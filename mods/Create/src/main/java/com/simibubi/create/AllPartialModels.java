@@ -123,7 +123,7 @@ public class AllPartialModels {
 		FROGPORT_TONGUE = block("package_frogport/tongue"),
 		POSTBOX_FLAG = block("package_postbox/flag"),
 
-		PACKAGER_TRAY_REGULAR = block("packager/tray_regular"), PACKAGER_TRAY_DEFRAG = block("packager/tray_defrag"),
+		PACKAGER_TRAY_REGULAR = block("packager/tray"), PACKAGER_TRAY_DEFRAG = block("repackager/tray"),
 		PACKAGER_HATCH_OPEN = block("packager/hatch_open"), PACKAGER_HATCH_CLOSED = block("packager/hatch_closed"),
 
 		COPPER_BACKTANK_SHAFT = block("copper_backtank/block_shaft_input"),

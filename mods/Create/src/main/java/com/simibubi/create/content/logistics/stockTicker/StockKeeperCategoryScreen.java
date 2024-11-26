@@ -297,21 +297,31 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 
 			if (x > 158 && x < 170) {
 				if (y > 2 && y <= 10 && i > 0) {
-					renderActionTooltip(graphics, ImmutableList.of(CreateLang.translateDirect("gui.schedule.move_up")),
+					renderActionTooltip(graphics,
+						ImmutableList.of(CreateLang.translateDirect("gui.schedule.move_up"),
+							CreateLang.translate("gui.stock_ticker.shift_moves_top")
+								.style(ChatFormatting.DARK_GRAY)
+								.style(ChatFormatting.ITALIC)
+								.component()),
 						mx, my);
 					if (click == 0) {
 						entries.remove(entry);
-						entries.add(i - 1, entry);
+						entries.add(hasShiftDown() ? 0 : i - 1, entry);
 						init();
 					}
 					return true;
 				}
 				if (y > 10 && y <= 22 && i < entries.size() - 1) {
 					renderActionTooltip(graphics,
-						ImmutableList.of(CreateLang.translateDirect("gui.schedule.move_down")), mx, my);
+						ImmutableList.of(CreateLang.translateDirect("gui.schedule.move_down"),
+							CreateLang.translate("gui.stock_ticker.shift_moves_bottom")
+								.style(ChatFormatting.DARK_GRAY)
+								.style(ChatFormatting.ITALIC)
+								.component()),
+						mx, my);
 					if (click == 0) {
 						entries.remove(entry);
-						entries.add(i + 1, entry);
+						entries.add(hasShiftDown() ? entries.size() : i + 1, entry);
 						init();
 					}
 					return true;
