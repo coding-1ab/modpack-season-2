@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.6
+
+### Fixes
+- (1.21) Fix Cutting Board recipes crashing with recipe optimization mods;
+
 ## 1.2.5
 
 ### Additions

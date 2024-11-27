@@ -30,7 +30,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CuttingBoardRecipe implements Recipe<CuttingBoardRecipeWrapper>
+public class CuttingBoardRecipe implements Recipe<CuttingBoardRecipeInput>
 {
 	public static final int MAX_RESULTS = 4;
 
@@ -49,12 +49,12 @@ public class CuttingBoardRecipe implements Recipe<CuttingBoardRecipeWrapper>
 	}
 
 	@Override
-	public boolean matches(CuttingBoardRecipeWrapper input, Level level) {
+	public boolean matches(CuttingBoardRecipeInput input, Level level) {
 		return this.input.test(input.item()) && this.tool.test(input.tool());
 	}
 
 	@Override
-	public ItemStack assemble(CuttingBoardRecipeWrapper inv, HolderLookup.Provider provider) {
+	public ItemStack assemble(CuttingBoardRecipeInput inv, HolderLookup.Provider provider) {
 		return this.results.getFirst().stack().copy();
 	}
 
