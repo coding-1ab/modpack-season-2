@@ -294,7 +294,9 @@
   "farmersdelight.block.cutting_board.invalid_item": "这东西可不能切啊……",
   "farmersdelight.block.cutting_board.invalid_tool": "或许得换个工具……",
   "farmersdelight.block.skillet.invalid_item": "这东西可放不进去……",
+  "farmersdelight.block.skillet.underwater": "被水泡着可没法煎啊……",
   "farmersdelight.item.skillet.how_to_cook": "用另一只手把食物拿好！",
+  "farmersdelight.item.skillet.underwater": "在水里可没法煎啊……",
 
   "death.attack.farmersdelight.stove": "%1$s被烤的酥脆",
   "death.attack.farmersdelight.stove.player": "%1$s被大厨%2$s扔到了烤架上",
