@@ -49,7 +49,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -166,22 +165,22 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		int y = guiTop;
 
 		itemsX = x + (windowWidth - cols * colWidth) / 2 + 1;
-		itemsY = y + 35;
-		orderY = y + windowHeight - 60;
-		lockX = x + 230;
-		lockY = y + 15;
+		itemsY = y + 33;
+		orderY = y + windowHeight - 72;
+		lockX = x + 200;
+		lockY = y + 18;
 
 		MutableComponent searchLabel = CreateLang.translateDirect("gui.stock_keeper.search_items");
-		searchBox = new EditBox(this.font, x + 81, y + 25, 110, 9, searchLabel);
+		searchBox = new EditBox(new NoShadowFontWrapper(font), x + 86, y + 22, 100, 9, searchLabel);
 		searchBox.setMaxLength(50);
 		searchBox.setBordered(false);
-		searchBox.setTextColor(0xffffff);
+		searchBox.setTextColor(0x4A2D31);
 		addWidget(searchBox);
 
 		boolean initial = addressBox == null;
 		addressBox =
-			new AddressEditBox(this, new NoShadowFontWrapper(font), x + 60, y + windowHeight - 32, 112, 10, true);
-		addressBox.setTextColor(0x555555);
+			new AddressEditBox(this, new NoShadowFontWrapper(font), x + 42, y + windowHeight - 36, 90, 10, true);
+		addressBox.setTextColor(0x714A40);
 		if (initial)
 			addressBox.setValue(blockEntity.previouslyUsedAddress);
 		addRenderableWidget(addressBox);
@@ -343,7 +342,6 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 	@Override
 	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		PoseStack ms = graphics.pose();
-		Color color = new Color(255, 255, 255, 50);
 		float currentScroll = itemScroll.getValue(partialTicks);
 		Couple<Integer> hoveredSlot = getHoveredSlot(mouseX, mouseY);
 
@@ -373,7 +371,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			ms.translate(0, 0, 300);
 			entitySizeOffset = (int) (Math.max(0, keeper.getBoundingBox()
 				.getXsize() - 1) * 50);
-			int entityX = x + windowWidth + 10 + entitySizeOffset;
+			int entityX = x - 10 - entitySizeOffset;
 			int entityY = y + windowHeight - 70;
 			AllGuiTextures.STOCK_KEEPER_REQUEST_SAYS.render(graphics, x + 226,
 				entityY - (int) (keeper.getEyeHeight(Pose.STANDING) * 50) / 2 * 2);
@@ -385,7 +383,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		BlazeBurnerBlockEntity keeperBE = blaze.get();
 		if (keeperBE != null && !keeperBE.isRemoved()) {
 			ms.pushPose();
-			int entityX = x + windowWidth + 10;
+			int entityX = x - 10;
 			int entityY = y + windowHeight - 80;
 			AllGuiTextures.STOCK_KEEPER_REQUEST_SAYS.render(graphics, x + 226, (entityY - 22) / 2 * 2);
 			ms.translate(entityX, entityY, 300);
@@ -393,7 +391,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			ms.mulPose(Axis.YP.rotationDegrees(-45));
 			ms.scale(48, -48, 48);
 			float animation = keeperBE.headAnimation.getValue(AnimationTickHolder.getPartialTicks()) * .175f;
-			float horizontalAngle = AngleHelper.rad(180);
+			float horizontalAngle = AngleHelper.rad(270);
 			HeatLevel heatLevel = keeperBE.getHeatLevelForRender();
 			boolean canDrawFlame = heatLevel.isAtLeast(HeatLevel.FADING);
 			boolean drawGoggles = keeperBE.goggles;
@@ -409,27 +407,28 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 
 		// Render static item icons
 		ms.pushPose();
-		ms.translate(x - 30, y + windowHeight - 80, 0);
+		ms.translate(x + windowWidth - 10, y + windowHeight - 65, 0);
 		ms.scale(3.5f, 3.5f, 3.5f);
 		GuiGameElement
 			.of(encodeRequester ? AllBlocks.REDSTONE_REQUESTER.asStack() : AllItems.CARDBOARD_PACKAGE_12x12.asStack())
 			.render(graphics);
 		ms.popPose();
 
-		ms.pushPose();
-		ms.translate(x + windowWidth + 39 + entitySizeOffset, y + windowHeight - 105, 0);
-		ms.scale(2.25f, 2.25f, 2.25f);
-		GuiGameElement.of(AllBlocks.PACKAGER.asStack())
-			.render(graphics);
-		ms.translate(0, -9, 15);
-		GuiGameElement.of(AllBlocks.STOCK_LINK.asStack())
-			.render(graphics);
-		ms.popPose();
-		ms.pushPose();
-		ms.translate(0, 0, 300);
-		graphics.drawString(font, CreateLang.text(blockEntity.activeLinks + "")
-			.component(), x + windowWidth + 76 + entitySizeOffset, y + windowHeight - 105, 0x88dddddd);
-		ms.popPose();
+		// Linked packager count
+//		ms.pushPose();
+//		ms.translate(x + windowWidth + 39 + entitySizeOffset, y + windowHeight - 105, 0);
+//		ms.scale(2.25f, 2.25f, 2.25f);
+//		GuiGameElement.of(AllBlocks.PACKAGER.asStack())
+//			.render(graphics);
+//		ms.translate(0, -9, 15);
+//		GuiGameElement.of(AllBlocks.STOCK_LINK.asStack())
+//			.render(graphics);
+//		ms.popPose();
+//		ms.pushPose();
+//		ms.translate(0, 0, 300);
+//		graphics.drawString(font, CreateLang.text(blockEntity.activeLinks + "")
+//			.component(), x + windowWidth + 76 + entitySizeOffset, y + windowHeight - 105, 0x88dddddd);
+//		ms.popPose();
 
 		// Render ordered items
 		for (int index = 0; index < cols; index++) {
@@ -445,30 +444,35 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			ms.popPose();
 		}
 
+		if (isConfirmHovered(mouseX, mouseY))
+			AllGuiTextures.STOCK_KEEPER_REQUEST_SEND_HOVER.render(graphics, x + windowWidth - 96,
+				y + windowHeight - 41);
+
 		MutableComponent headerTitle = CreateLang.translate("gui.stock_keeper.title")
 			.component();
-		graphics.drawString(font, headerTitle, x + windowWidth / 2 - font.width(headerTitle) / 2, y + 4, 0x505050,
+		graphics.drawString(font, headerTitle, x + windowWidth / 2 - font.width(headerTitle) / 2, y + 4, 0x714A40,
 			false);
-		graphics.drawString(font,
+		MutableComponent component =
 			CreateLang.translate(encodeRequester ? "gui.stock_keeper.configure" : "gui.stock_keeper.send")
-				.component(),
-			x + windowWidth - 52, y + windowHeight - 32, isConfirmHovered(mouseX, mouseY) ? 0xffffff : 0x505050, false);
+				.component();
+		graphics.drawString(font, component, x + windowWidth - 57 - font.width(component) / 2, y + windowHeight - 35,
+			0x252525, false);
 
 		// Request just sent
-		if (itemsToOrder.isEmpty() && successTicks > 0) {
-			Component msg = CreateLang.translateDirect("gui.stock_keeper.request_sent");
-			float alpha = Mth.clamp((successTicks - 10f) / 5f, 0f, 1f);
-			if (alpha > 0)
-				graphics.drawString(font, msg, x + windowWidth / 2 - font.width(msg) / 2, orderY + 4,
-					new Color(0x7A5A3A).setAlpha(alpha)
-						.getRGB(),
-					false);
-		}
+//		if (itemsToOrder.isEmpty() && successTicks > 0) {
+//			Component msg = CreateLang.translateDirect("gui.stock_keeper.request_sent");
+//			float alpha = Mth.clamp((successTicks - 10f) / 5f, 0f, 1f);
+//			if (alpha > 0)
+//				graphics.drawString(font, msg, x + windowWidth / 2 - font.width(msg) / 2, orderY + 4,
+//					new Color(0x7A5A3A).setAlpha(alpha)
+//						.getRGB(),
+//					false);
+//		}
 
 		int itemWindowX = x + 36;
 		int itemWindowX2 = itemWindowX + 184;
-		int itemWindowY = y + 16;
-		int itemWindowY2 = y + windowHeight - 68;
+		int itemWindowY = y + 17;
+		int itemWindowY2 = y + windowHeight - 80;
 
 		UIRenderHelper.swapAndBlitColor(minecraft.getMainRenderTarget(), UIRenderHelper.framebuffer);
 		startStencil(graphics, itemWindowX - 5, itemWindowY, itemWindowX2 - itemWindowX + 10,
@@ -477,13 +481,23 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		ms.pushPose();
 		ms.translate(0, -currentScroll * rowHeight, 0);
 
+		// BG
+		for (int sliceY = -2; sliceY < getMaxScroll() * rowHeight + windowHeight - 72; sliceY +=
+			AllGuiTextures.STOCK_KEEPER_REQUEST_BG.getHeight()) {
+			if (sliceY - currentScroll * rowHeight < -20)
+				continue;
+			if (sliceY - currentScroll * rowHeight > windowHeight - 72)
+				continue;
+			AllGuiTextures.STOCK_KEEPER_REQUEST_BG.render(graphics, x + 37, y + sliceY + 18);
+		}
+
 		// Search bar
-		AllGuiTextures.STOCK_KEEPER_REQUEST_SEARCH.render(graphics, x, searchBox.getY() - 4);
+		AllGuiTextures.STOCK_KEEPER_REQUEST_SEARCH.render(graphics, x + 57, searchBox.getY() - 5);
 		searchBox.render(graphics, mouseX, mouseY, partialTicks);
 		if (searchBox.getValue()
-			.isBlank())
+			.isBlank() && !searchBox.isFocused())
 			graphics.drawString(font, searchBox.getMessage(),
-				x + windowWidth / 2 - font.width(searchBox.getMessage()) / 2, searchBox.getY(), 0x88dddddd);
+				x + windowWidth / 2 - font.width(searchBox.getMessage()) / 2, searchBox.getY(), 0xff4A2D31, false);
 
 		// Something isnt right
 		boolean allEmpty = true;
@@ -492,9 +506,16 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		if (allEmpty) {
 			Component msg = getTroubleshootingMessage();
 			float alpha = Mth.clamp((emptyTicks - 10f) / 5f, 0f, 1f);
-			if (alpha > 0)
+			if (alpha > 0) {
+				graphics.drawString(font, msg, x + windowWidth / 2 - font.width(msg) / 2 + 1, itemsY + 20 + 1,
+					new Color(0x4A2D31).setAlpha(alpha)
+						.getRGB(),
+					false);
 				graphics.drawString(font, msg, x + windowWidth / 2 - font.width(msg) / 2, itemsY + 20,
-					new Color(.8f, .8f, .8f, alpha).getRGB());
+					new Color(0xF8F8EC).setAlpha(alpha)
+						.getRGB(),
+					false);
+			}
 		}
 
 		// Items
@@ -506,9 +527,12 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			if (category.isEmpty())
 				continue;
 
-			if (!categories.isEmpty())
+			if (!categories.isEmpty()) {
 				graphics.drawString(font, categories.get(categoryIndex)
-					.getFirst(), itemsX + 4, itemsY + categoryY + 6, 0xFF_FFFFFF);
+					.getFirst(), itemsX + 5, itemsY + categoryY + 8, 0x4A2D31, false);
+				graphics.drawString(font, categories.get(categoryIndex)
+					.getFirst(), itemsX + 4, itemsY + categoryY + 7, 0xF8F8EC, false);
+			}
 
 			for (int index = 0; index < category.size(); index++) {
 				int pY = itemsY + categoryY + (categories.isEmpty() ? 4 : rowHeight) + (index / cols) * rowHeight;
@@ -516,7 +540,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 
 				if (cullY < y)
 					continue;
-				if (cullY > y + windowHeight - 60)
+				if (cullY > y + windowHeight - 72)
 					break;
 
 				boolean isStackHovered = index == hoveredSlot.getSecond() && categoryIndex == hoveredSlot.getFirst();
@@ -529,17 +553,30 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			}
 		}
 
+		// Render lock option
+		if (isAdmin)
+			(isLocked ? AllGuiTextures.STOCK_KEEPER_REQUEST_LOCKED : AllGuiTextures.STOCK_KEEPER_REQUEST_UNLOCKED)
+				.render(graphics, lockX, lockY);
+
 		ms.popPose();
 		endStencil();
 
 		// Scroll bar
-		int windowH = windowHeight - 84;
+		int windowH = windowHeight - 92;
 		int totalH = getMaxScroll() * rowHeight + windowH;
-		int barSize = Mth.floor((float) windowH / totalH * (windowH - 2));
+		int barSize = Math.max(5, Mth.floor((float) windowH / totalH * (windowH - 2)));
 		if (barSize < windowH - 2) {
+			int barX = itemsX + cols * colWidth;
+			int barY = y + 15;
 			ms.pushPose();
 			ms.translate(0, (currentScroll * rowHeight) / totalH * (windowH - 2), 0);
-			graphics.renderOutline(itemsX + cols * colWidth + 2, y + 17, 1, barSize, color.getRGB());
+			AllGuiTextures pad = AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_PAD;
+			graphics.blit(pad.location, barX, barY, pad.getWidth(), barSize, pad.getStartX(), pad.getStartY(),
+				pad.getWidth(), pad.getHeight(), 256, 256);
+			AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_TOP.render(graphics, barX, barY);
+			if (barSize > 16)
+				AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_MID.render(graphics, barX, barY + barSize / 2 - 4);
+			AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_BOT.render(graphics, barX, barY + barSize - 5);
 			ms.popPose();
 		}
 
@@ -551,39 +588,27 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 						.get(hoveredSlot.getSecond()).stack,
 				mouseX, mouseY);
 
-		RenderSystem.enableBlend();
-		int zLevel = 200;
-		graphics.fillGradient(itemWindowX, itemWindowY, itemWindowX2, itemWindowY + 10, zLevel, 0x77000000, 0x00000000);
-		graphics.fillGradient(itemWindowX, itemWindowY2 - 10, itemWindowX2, itemWindowY2, zLevel, 0x00000000,
-			0x77000000);
+		// Render tooltip of lock option
+		if (currentScroll < 1 && isAdmin && mouseX > lockX && mouseX <= lockX + 15 && mouseY > lockY
+			&& mouseY <= lockY + 15) {
+			graphics.renderComponentTooltip(font,
+				List.of(
+					CreateLang.translate(isLocked ? "gui.stock_keeper.network_locked" : "gui.stock_keeper.network_open")
+						.component(),
+					CreateLang.translate("gui.stock_keeper.network_lock_tip")
+						.style(ChatFormatting.GRAY)
+						.component(),
+					CreateLang.translate("gui.stock_keeper.network_lock_tip_1")
+						.style(ChatFormatting.GRAY)
+						.component(),
+					CreateLang.translate("gui.stock_keeper.network_lock_tip_2")
+						.style(ChatFormatting.DARK_GRAY)
+						.style(ChatFormatting.ITALIC)
+						.component()),
+				mouseX, mouseY);
+		}
 
 		UIRenderHelper.swapAndBlitColor(UIRenderHelper.framebuffer, minecraft.getMainRenderTarget());
-
-		// Render lock option
-		if (isAdmin) {
-			(isLocked ? AllGuiTextures.STOCK_KEEPER_REQUEST_LOCKED : AllGuiTextures.STOCK_KEEPER_REQUEST_UNLOCKED)
-				.render(graphics, lockX, lockY);
-			if (mouseX > lockX && mouseX <= lockX + 15 && mouseY > lockY && mouseY <= lockY + 15) {
-				graphics
-					.renderComponentTooltip(font,
-						List.of(
-							CreateLang
-								.translate(
-									isLocked ? "gui.stock_keeper.network_locked" : "gui.stock_keeper.network_open")
-								.component(),
-							CreateLang.translate("gui.stock_keeper.network_lock_tip")
-								.style(ChatFormatting.GRAY)
-								.component(),
-							CreateLang.translate("gui.stock_keeper.network_lock_tip_1")
-								.style(ChatFormatting.GRAY)
-								.component(),
-							CreateLang.translate("gui.stock_keeper.network_lock_tip_2")
-								.style(ChatFormatting.DARK_GRAY)
-								.style(ChatFormatting.ITALIC)
-								.component()),
-						mouseX, mouseY);
-			}
-		}
 	}
 
 	private void renderItemEntry(GuiGraphics graphics, float scale, BigItemStack entry, boolean isStackHovered,
@@ -594,9 +619,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			BigItemStack order = getOrderForItem(entry.stack);
 			if (order != null)
 				customCount -= order.count;
-
-			graphics.renderOutline(0, 0, 18, 18,
-				isStackHovered ? 0x44_ffffff : customCount != entry.count ? 0x22_ffffff : 0x22_000000);
+			AllGuiTextures.STOCK_KEEPER_REQUEST_SLOT.render(graphics, 0, 0);
 		}
 
 		PoseStack ms = graphics.pose();
@@ -754,10 +777,10 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 	}
 
 	private boolean isConfirmHovered(int mouseX, int mouseY) {
-		int confirmX = addressBox.getX() + addressBox.getWidth() + 25;
-		int confirmY = addressBox.getY() - 4;
-		int confirmW = 40;
-		int confirmH = addressBox.getHeight() + 7;
+		int confirmX = guiLeft + 161;
+		int confirmY = guiTop + windowHeight - 39;
+		int confirmW = 78;
+		int confirmH = 18;
 
 		if (mouseX < confirmX || mouseX >= confirmX + confirmW)
 			return false;
@@ -798,7 +821,8 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		boolean lmb = pButton == 0;
 		boolean rmb = pButton == 1;
 
-		if (lmb && pMouseX > lockX && pMouseX <= lockX + 15 && pMouseY > lockY && pMouseY <= lockY + 15) {
+		if (isAdmin && itemScroll.getChaseTarget() == 0 && lmb && pMouseX > lockX && pMouseX <= lockX + 15
+			&& pMouseY > lockY && pMouseY <= lockY + 15) {
 			isLocked = !isLocked;
 			AllPackets.getChannel()
 				.sendToServer(new StockKeeperLockPacket(blockEntity.getBlockPos(), isLocked));

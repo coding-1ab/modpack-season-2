@@ -80,7 +80,7 @@ public class AddressEditBox extends EditBox {
 			return;
 		
 		int itemX = getX() + width + 4;
-		int itemY = getY() - 3;
+		int itemY = getY() - 4;
 		pGuiGraphics.renderItem(AllBlocks.CLIPBOARD.asStack(), itemX, itemY);
 		if (pMouseX >= itemX && pMouseX < itemX + 16 && pMouseY >= itemY && pMouseY < itemY + 16) {
 			List<Component> promiseTip = List.of();
