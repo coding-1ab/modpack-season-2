@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.6
+
+### Fixes
+- Fix Skillet's default block state having `waterlogged=true`;
+
 ## 1.2.5
 
 ### Additions
