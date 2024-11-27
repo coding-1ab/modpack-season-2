@@ -74,6 +74,8 @@ public class FilteringRenderer {
 				((Sided) behaviour.slotPositioning).fromSide(result.getDirection());
 			if (!behaviour.slotPositioning.shouldRender(world, pos, state))
 				continue;
+			if (!behaviour.mayInteract(mc.player))
+				continue;
 
 			ItemStack filter = behaviour.getFilter();
 			boolean isFilterSlotted = filter.getItem() instanceof FilterItem;

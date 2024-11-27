@@ -4,8 +4,6 @@ import com.simibubi.create.content.equipment.blueprint.BlueprintMenu;
 import com.simibubi.create.content.equipment.blueprint.BlueprintScreen;
 import com.simibubi.create.content.equipment.toolbox.ToolboxMenu;
 import com.simibubi.create.content.equipment.toolbox.ToolboxScreen;
-import com.simibubi.create.content.logistics.displayCloth.DisplayClothPricingMenu;
-import com.simibubi.create.content.logistics.displayCloth.DisplayClothPricingScreen;
 import com.simibubi.create.content.logistics.filter.AttributeFilterMenu;
 import com.simibubi.create.content.logistics.filter.AttributeFilterScreen;
 import com.simibubi.create.content.logistics.filter.FilterMenu;
@@ -66,9 +64,6 @@ public class AllMenuTypes {
 	
 	public static final MenuEntry<StockKeeperCategoryMenu> STOCK_KEEPER_CATEGORY =
 		register("stock_keeper_category", StockKeeperCategoryMenu::new, () -> StockKeeperCategoryScreen::new);
-	
-	public static final MenuEntry<DisplayClothPricingMenu> DISPLAY_CLOTH =
-		register("display_cloth", DisplayClothPricingMenu::new, () -> DisplayClothPricingScreen::new);
 	
 	public static final MenuEntry<PackagePortMenu> PACKAGE_PORT =
 		register("package_port", PackagePortMenu::new, () -> PackagePortScreen::new);

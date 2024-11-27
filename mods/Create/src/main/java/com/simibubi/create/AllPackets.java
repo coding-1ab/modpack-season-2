@@ -61,7 +61,6 @@ import com.simibubi.create.content.logistics.depot.EjectorAwardPacket;
 import com.simibubi.create.content.logistics.depot.EjectorElytraPacket;
 import com.simibubi.create.content.logistics.depot.EjectorPlacementPacket;
 import com.simibubi.create.content.logistics.depot.EjectorTriggerPacket;
-import com.simibubi.create.content.logistics.displayCloth.DisplayClothConfigurationPacket;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelConfigurationPacket;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelConnectionPacket;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelEffectPacket;
@@ -194,7 +193,6 @@ public enum AllPackets {
 	CHAIN_CONVEYOR_CONNECT(ChainConveyorConnectionPacket.class, ChainConveyorConnectionPacket::new, PLAY_TO_SERVER),
 	CHAIN_CONVEYOR_RIDING(ServerboundChainConveyorRidingPacket.class, ServerboundChainConveyorRidingPacket::new, PLAY_TO_SERVER),
 	CHAIN_PACKAGE_INTERACTION(ChainPackageInteractionPacket.class, ChainPackageInteractionPacket::new, PLAY_TO_SERVER),
-	DISPLAY_CLOTH_CONFIGURATION(DisplayClothConfigurationPacket.class, DisplayClothConfigurationPacket::new, PLAY_TO_SERVER),
 	PACKAGE_PORT_CONFIGURATION(PackagePortConfigurationPacket.class, PackagePortConfigurationPacket::new, PLAY_TO_SERVER),
 	TRAIN_MAP_REQUEST(TrainMapSyncRequestPacket.class, TrainMapSyncRequestPacket::new, PLAY_TO_SERVER),
 	CONNECT_FACTORY_PANEL(FactoryPanelConnectionPacket.class, FactoryPanelConnectionPacket::new, PLAY_TO_SERVER),

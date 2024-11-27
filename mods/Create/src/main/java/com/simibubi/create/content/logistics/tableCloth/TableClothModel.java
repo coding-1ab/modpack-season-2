@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.displayCloth;
+package com.simibubi.create.content.logistics.tableCloth;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -31,13 +31,13 @@ import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelData.Builder;
 import net.minecraftforge.client.model.data.ModelProperty;
 
-public class DisplayClothModel extends BakedModelWrapperWithData {
+public class TableClothModel extends BakedModelWrapperWithData {
 
 	private static final ModelProperty<CullData> CULL_PROPERTY = new ModelProperty<>();
 
-	private static final Map<DisplayClothBlock, List<List<BakedQuad>>> CORNERS = new HashMap<>();
+	private static final Map<TableClothBlock, List<List<BakedQuad>>> CORNERS = new HashMap<>();
 
-	public DisplayClothModel(BakedModel originalModel) {
+	public TableClothModel(BakedModel originalModel) {
 		super(originalModel);
 	}
 
@@ -50,14 +50,14 @@ public class DisplayClothModel extends BakedModelWrapperWithData {
 		return false;
 	}
 
-	private List<BakedQuad> getCorner(DisplayClothBlock block, int corner, @NotNull RandomSource rand,
+	private List<BakedQuad> getCorner(TableClothBlock block, int corner, @NotNull RandomSource rand,
 		@Nullable RenderType renderType) {
 		if (!CORNERS.containsKey(block)) {
 			TextureAtlasSprite targetSprite = getParticleIcon(ModelData.EMPTY);
 			List<List<BakedQuad>> list = new ArrayList<>();
 
-			for (PartialModel pm : List.of(AllPartialModels.DISPLAY_CLOTH_SW, AllPartialModels.DISPLAY_CLOTH_NW,
-				AllPartialModels.DISPLAY_CLOTH_NE, AllPartialModels.DISPLAY_CLOTH_SE))
+			for (PartialModel pm : List.of(AllPartialModels.TABLE_CLOTH_SW, AllPartialModels.TABLE_CLOTH_NW,
+				AllPartialModels.TABLE_CLOTH_NE, AllPartialModels.TABLE_CLOTH_SE))
 				list.add(getCornerQuads(rand, renderType, targetSprite, pm));
 
 			CORNERS.put(block, list);
@@ -112,7 +112,7 @@ public class DisplayClothModel extends BakedModelWrapperWithData {
 		if (cullData != null && cullData.culled()
 			.contains(side.getClockWise()))
 			return mainQuads;
-		if (state == null || !(state.getBlock() instanceof DisplayClothBlock dcb))
+		if (state == null || !(state.getBlock() instanceof TableClothBlock dcb))
 			return mainQuads;
 
 		List<BakedQuad> copyOf = new ArrayList<>(mainQuads);

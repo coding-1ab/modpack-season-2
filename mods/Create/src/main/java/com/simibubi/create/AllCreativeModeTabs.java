@@ -14,8 +14,8 @@ import com.simibubi.create.content.decoration.palettes.AllPaletteBlocks;
 import com.simibubi.create.content.equipment.armor.BacktankUtil;
 import com.simibubi.create.content.equipment.toolbox.ToolboxBlock;
 import com.simibubi.create.content.kinetics.crank.ValveHandleBlock;
-import com.simibubi.create.content.logistics.displayCloth.DisplayClothBlock;
 import com.simibubi.create.content.logistics.packagePort.postbox.PostboxBlock;
+import com.simibubi.create.content.logistics.tableCloth.TableClothBlock;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.TagDependentIngredientItem;
 import com.tterrag.registrate.util.entry.BlockEntry;
@@ -246,8 +246,8 @@ public class AllCreativeModeTabs {
 				}
 			}
 			
-			for (BlockEntry<DisplayClothBlock> entry : AllBlocks.TABLE_CLOTHS) {
-				DisplayClothBlock block = entry.get();
+			for (BlockEntry<TableClothBlock> entry : AllBlocks.TABLE_CLOTHS) {
+				TableClothBlock block = entry.get();
 				if (block.getColor() != DyeColor.RED) {
 					visibilities.put(entry.asItem(), TabVisibility.SEARCH_TAB_ONLY);
 				}

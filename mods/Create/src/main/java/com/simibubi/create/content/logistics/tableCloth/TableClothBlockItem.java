@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.displayCloth;
+package com.simibubi.create.content.logistics.tableCloth;
 
 import java.util.List;
 
@@ -14,9 +14,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
-public class DisplayClothBlockItem extends BlockItem {
+public class TableClothBlockItem extends BlockItem {
 
-	public DisplayClothBlockItem(Block pBlock, Properties pProperties) {
+	public TableClothBlockItem(Block pBlock, Properties pProperties) {
 		super(pBlock, pProperties);
 	}
 
@@ -32,7 +32,7 @@ public class DisplayClothBlockItem extends BlockItem {
 		if (!isFoil(pStack))
 			return;
 
-		CreateLang.translate("display_cloth.shop_configured")
+		CreateLang.translate("table_cloth.shop_configured")
 			.style(ChatFormatting.GOLD)
 			.addTo(pTooltip);
 

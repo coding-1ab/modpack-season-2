@@ -37,9 +37,9 @@ import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogCTBeh
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogwheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedShaftBlock;
 import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.content.logistics.displayCloth.DisplayClothBlockItem;
-import com.simibubi.create.content.logistics.displayCloth.DisplayClothModel;
 import com.simibubi.create.content.logistics.packager.PackagerGenerator;
+import com.simibubi.create.content.logistics.tableCloth.TableClothBlockItem;
+import com.simibubi.create.content.logistics.tableCloth.TableClothModel;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock.Shape;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelItem;
@@ -483,15 +483,15 @@ public class BuilderTransformers {
 	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> tableCloth(String name,
 		NonNullSupplier<? extends Block> initialProps, boolean dyed) {
 		return b -> {
-			ItemBuilder<DisplayClothBlockItem, BlockBuilder<B, P>> item = b.initialProperties(initialProps)
+			ItemBuilder<TableClothBlockItem, BlockBuilder<B, P>> item = b.initialProperties(initialProps)
 				.addLayer(() -> RenderType::cutoutMipped)
 				.blockstate((c, p) -> p.simpleBlock(c.get(), p.models()
 					.withExistingParent(name + "_table_cloth", p.modLoc("block/table_cloth/block"))
 					.texture("0", p.modLoc("block/table_cloth/" + name))))
-				.onRegister(CreateRegistrate.blockModel(() -> DisplayClothModel::new))
+				.onRegister(CreateRegistrate.blockModel(() -> TableClothModel::new))
 				.tag(AllBlockTags.TABLE_CLOTHS.tag)
 				.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.create.table_cloth"))
-				.item(DisplayClothBlockItem::new);
+				.item(TableClothBlockItem::new);
 
 			if (dyed)
 				item.tag(AllItemTags.DYED_TABLE_CLOTHS.tag);

@@ -362,11 +362,13 @@
 	"create.gui.stock_ticker.delete_category": "Delete Category",
 	"create.gui.stock_ticker.empty_category_name_placeholder": "(Empty)",
 	
-	"create.display_cloth.shop_configured": "Item shop configured",
-	"create.display_cloth.total_cost": "Total cost: ",
-	"create.display_cloth.hand_to_shop_keeper": "Hand this to a shop keeper",
-	"create.display_cloth.sneak_click_discard": "Sneak-Click to discard",
-	"create.display_cloth.shopping_list_discarded": "Shopping list discarded",
+	"create.table_cloth.price_per_order": "Price per Order",
+	"create.table_cloth.amount": "Amount",
+	"create.table_cloth.shop_configured": "Item shop configured",
+	"create.table_cloth.total_cost": "Total cost: ",
+	"create.table_cloth.hand_to_shop_keeper": "Hand this to a shop keeper",
+	"create.table_cloth.sneak_click_discard": "Sneak-Click to discard",
+	"create.table_cloth.shopping_list_discarded": "Shopping list discarded",
 	
 	"create.gui.address_box.clipboard_tip": "Keeping Track",
 	"create.gui.address_box.clipboard_tip_1": "Entries starting with '#' on",

@@ -1,10 +1,10 @@
-package com.simibubi.create.content.logistics.displayCloth;
+package com.simibubi.create.content.logistics.tableCloth;
 
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
-import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem.ShoppingList;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerInteractionHandler;
+import com.simibubi.create.content.logistics.tableCloth.ShoppingListItem.ShoppingList;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -15,7 +15,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.HitResult.Type;
 
-public class DisplayClothOverlayRenderer {
+public class TableClothOverlayRenderer {
 
 	public static void tick() {
 		Minecraft mc = Minecraft.getInstance();
@@ -30,9 +30,11 @@ public class DisplayClothOverlayRenderer {
 		if (mouseOver.getType() != Type.ENTITY) {
 			if (!(mouseOver instanceof BlockHitResult bhr))
 				return;
-			if (!(mc.level.getBlockEntity(bhr.getBlockPos()) instanceof DisplayClothBlockEntity dcbe))
+			if (!(mc.level.getBlockEntity(bhr.getBlockPos()) instanceof TableClothBlockEntity dcbe))
 				return;
 			if (!dcbe.isShop())
+				return;
+			if (dcbe.targetsPriceTag(mc.player, bhr))
 				return;
 
 			int alreadyPurchased = 0;

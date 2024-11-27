@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.displayCloth;
+package com.simibubi.create.content.logistics.tableCloth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,59 +9,62 @@ import javax.annotation.Nullable;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllSoundEvents;
+import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.content.logistics.BigItemStack;
-import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem.ShoppingList;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.redstoneRequester.AutoRequestData;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
+import com.simibubi.create.content.logistics.tableCloth.ShoppingListItem.ShoppingList;
 import com.simibubi.create.foundation.blockEntity.RemoveBlockEntityPacket;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.network.NetworkHooks;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
-public class DisplayClothBlockEntity extends SmartBlockEntity implements MenuProvider {
+public class TableClothBlockEntity extends SmartBlockEntity {
 
 	public AutoRequestData requestData;
 	public List<ItemStack> manuallyAddedItems;
-	public ItemStack paymentItem;
-	public int paymentAmount;
 	public UUID owner;
+
+	public Direction facing;
+	public boolean sideOccluded;
+	public FilteringBehaviour priceTag;
 
 	private List<ItemStack> renderedItemsForShop;
 
-	public DisplayClothBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+	public TableClothBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 		manuallyAddedItems = new ArrayList<>();
 		requestData = new AutoRequestData();
-		paymentItem = ItemStack.EMPTY;
-		paymentAmount = 1;
 		owner = null;
+		facing = Direction.SOUTH;
 	}
 
 	@Override
-	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
+	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+		behaviours.add(priceTag = new TableClothFilteringBehaviour(this));
+	}
 
 	public List<ItemStack> getItemsForRender() {
 		if (isShop()) {
@@ -77,11 +80,21 @@ public class DisplayClothBlockEntity extends SmartBlockEntity implements MenuPro
 		return manuallyAddedItems;
 	}
 
+	@Override
+	public void lazyTick() {
+		super.lazyTick();
+		BlockPos relativePos = worldPosition.relative(facing);
+		sideOccluded = level.getBlockState(relativePos)
+			.is(AllBlockTags.TABLE_CLOTHS.tag)
+			|| Block.isFaceFull(level.getBlockState(relativePos.below())
+				.getOcclusionShape(level, relativePos.below()), facing.getOpposite());
+	}
+
 	public boolean isShop() {
 		return !requestData.encodedRequest.isEmpty();
 	}
 
-	public InteractionResult use(Player player) {
+	public InteractionResult use(Player player, BlockHitResult ray) {
 		if (isShop())
 			return useShop(player);
 
@@ -93,7 +106,7 @@ public class DisplayClothBlockEntity extends SmartBlockEntity implements MenuPro
 			player.setItemInHand(InteractionHand.MAIN_HAND, manuallyAddedItems.remove(manuallyAddedItems.size() - 1));
 
 			if (manuallyAddedItems.isEmpty()) {
-				level.setBlock(worldPosition, getBlockState().setValue(DisplayClothBlock.HAS_BE, false), 3);
+				level.setBlock(worldPosition, getBlockState().setValue(TableClothBlock.HAS_BE, false), 3);
 				AllPackets.getChannel()
 					.send(packetTarget(), new RemoveBlockEntityPacket(worldPosition));
 			} else
@@ -106,6 +119,7 @@ public class DisplayClothBlockEntity extends SmartBlockEntity implements MenuPro
 			return InteractionResult.SUCCESS;
 
 		manuallyAddedItems.add(heldItem.copyWithCount(1));
+		facing = player.getDirection();
 		heldItem.shrink(1);
 		if (heldItem.isEmpty())
 			player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
@@ -113,22 +127,16 @@ public class DisplayClothBlockEntity extends SmartBlockEntity implements MenuPro
 		return InteractionResult.SUCCESS;
 	}
 
+	public boolean targetsPriceTag(Player player, BlockHitResult ray) {
+		return priceTag != null && priceTag.mayInteract(player) && priceTag.getSlotPositioning()
+			.testHit(level, worldPosition, getBlockState(), ray.getLocation()
+				.subtract(Vec3.atLowerCornerOf(worldPosition)));
+	}
+
 	public InteractionResult useShop(Player player) {
 		if (level.isClientSide())
 			return InteractionResult.SUCCESS;
-		if (!owner.equals(player.getUUID()) || (!paymentItem.isEmpty() && !player.isShiftKeyDown()))
-			return interactAsCustomer(player);
 
-		return interactAsOwner(player);
-	}
-
-	public InteractionResult interactAsOwner(Player player) {
-		if (player instanceof ServerPlayer sp)
-			NetworkHooks.openScreen(sp, this, worldPosition);
-		return InteractionResult.SUCCESS;
-	}
-
-	public InteractionResult interactAsCustomer(Player player) {
 		ItemStack itemInHand = player.getItemInHand(InteractionHand.MAIN_HAND);
 		ItemStack prevListItem = ItemStack.EMPTY;
 		boolean addOntoList = false;
@@ -158,7 +166,7 @@ public class DisplayClothBlockEntity extends SmartBlockEntity implements MenuPro
 			return InteractionResult.SUCCESS;
 		}
 
-		if (paymentItem.isEmpty()) {
+		if (getPaymentItem().isEmpty()) {
 			CreateLang.translate("stock_keeper.no_price_set")
 				.sendStatus(player);
 			AllSoundEvents.DENY.playOnServer(level, worldPosition);
@@ -273,8 +281,7 @@ public class DisplayClothBlockEntity extends SmartBlockEntity implements MenuPro
 	protected void write(CompoundTag tag, boolean clientPacket) {
 		super.write(tag, clientPacket);
 		tag.put("Items", NBTHelper.writeItemList(manuallyAddedItems));
-		tag.put("Payment", paymentItem.serializeNBT());
-		tag.putInt("PaymentAmount", paymentAmount);
+		tag.putInt("Facing", facing.get2DDataValue());
 		requestData.write(tag);
 		if (owner != null)
 			tag.putUUID("OwnerUUID", owner);
@@ -285,10 +292,14 @@ public class DisplayClothBlockEntity extends SmartBlockEntity implements MenuPro
 		super.read(tag, clientPacket);
 		manuallyAddedItems = NBTHelper.readItemList(tag.getList("Items", Tag.TAG_COMPOUND));
 		requestData = AutoRequestData.read(tag);
-		paymentItem = ItemStack.of(tag.getCompound("Payment"));
-		paymentAmount = tag.getInt("PaymentAmount");
 		owner = tag.contains("OwnerUUID") ? tag.getUUID("OwnerUUID") : null;
+		facing = Direction.from2DDataValue(Mth.positiveModulo(tag.getInt("Facing"), 4));
 	}
+//
+//	@Override
+//	protected AABB createRenderBoundingBox() {
+//		return new AABB(worldPosition).inflate(1);
+//	}
 
 	@Override
 	public void destroy() {
@@ -298,14 +309,13 @@ public class DisplayClothBlockEntity extends SmartBlockEntity implements MenuPro
 		manuallyAddedItems.clear();
 	}
 
-	@Override
-	public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
-		return DisplayClothPricingMenu.create(pContainerId, pPlayerInventory, this);
+	public ItemStack getPaymentItem() {
+		return priceTag.getFilter();
 	}
 
-	@Override
-	public Component getDisplayName() {
-		return Components.empty();
+	public int getPaymentAmount() {
+		return priceTag.getFilter()
+			.isEmpty() ? 1 : priceTag.count;
 	}
 
 }

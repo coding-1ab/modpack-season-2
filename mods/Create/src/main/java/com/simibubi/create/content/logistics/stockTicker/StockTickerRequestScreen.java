@@ -123,7 +123,8 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		successTicks = 0;
 		itemScroll = LerpedFloat.linear()
 			.startWithValue(0);
-		stockKeeper = new WeakReference<LivingEntity>(null);
+		stockKeeper = new WeakReference<>(null);
+		blaze = new WeakReference<>(null);
 		refreshSearchNextTick = false;
 
 		// Find the keeper for rendering

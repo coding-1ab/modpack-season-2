@@ -1,4 +1,4 @@
-package com.simibubi.create.content.logistics.displayCloth;
+package com.simibubi.create.content.logistics.tableCloth;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -41,7 +41,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class DisplayClothBlock extends Block implements IHaveBigOutline, IWrenchable, IBE<DisplayClothBlockEntity> {
+public class TableClothBlock extends Block implements IHaveBigOutline, IWrenchable, IBE<TableClothBlockEntity> {
 
 	public static final BooleanProperty HAS_BE = BooleanProperty.create("entity");
 
@@ -49,13 +49,13 @@ public class DisplayClothBlock extends Block implements IHaveBigOutline, IWrench
 
 	private DyeColor colour;
 
-	public DisplayClothBlock(Properties pProperties, DyeColor colour) {
+	public TableClothBlock(Properties pProperties, DyeColor colour) {
 		super(pProperties);
 		this.colour = colour;
 		registerDefaultState(defaultBlockState().setValue(HAS_BE, false));
 	}
 
-	public DisplayClothBlock(Properties pProperties, String type) {
+	public TableClothBlock(Properties pProperties, String type) {
 		super(pProperties);
 	}
 
@@ -78,8 +78,8 @@ public class DisplayClothBlock extends Block implements IHaveBigOutline, IWrench
 		withBlockEntityDo(pLevel, pPos, dcbe -> {
 			dcbe.requestData = requestData;
 			dcbe.owner = player.getUUID();
-			if (dcbe.requestData.isValid)
-				dcbe.interactAsOwner(player);
+			dcbe.facing = player.getDirection()
+				.getOpposite();
 		});
 	}
 
@@ -111,7 +111,7 @@ public class DisplayClothBlock extends Block implements IHaveBigOutline, IWrench
 		if (world.isClientSide())
 			return InteractionResult.SUCCESS;
 
-		return onBlockEntityUse(world, pos, dcbe -> dcbe.use(player));
+		return onBlockEntityUse(world, pos, dcbe -> dcbe.use(player, ray));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -120,7 +120,7 @@ public class DisplayClothBlock extends Block implements IHaveBigOutline, IWrench
 		net.minecraft.world.level.storage.loot.LootParams.Builder pParams) {
 		List<ItemStack> drops = super.getDrops(pState, pParams);
 
-		if (!(pParams.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof DisplayClothBlockEntity dcbe))
+		if (!(pParams.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof TableClothBlockEntity dcbe))
 			return drops;
 		if (!dcbe.isShop())
 			return drops;
@@ -138,23 +138,23 @@ public class DisplayClothBlock extends Block implements IHaveBigOutline, IWrench
 
 	@Override
 	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-		return colour == null ? AllShapes.DISPLAY_CLOTH_OCCLUSION : AllShapes.DISPLAY_CLOTH;
+		return colour == null ? AllShapes.TABLE_CLOTH_OCCLUSION : AllShapes.TABLE_CLOTH;
 	}
 
 	@Override
 	public VoxelShape getInteractionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
-		return colour == null ? AllShapes.DISPLAY_CLOTH_OCCLUSION : AllShapes.DISPLAY_CLOTH;
+		return colour == null ? AllShapes.TABLE_CLOTH_OCCLUSION : AllShapes.TABLE_CLOTH;
 	}
 
 	@Override
 	public VoxelShape getOcclusionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
-		return AllShapes.DISPLAY_CLOTH_OCCLUSION;
+		return AllShapes.TABLE_CLOTH_OCCLUSION;
 	}
 
 	@Override
 	public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos,
 		CollisionContext pContext) {
-		return AllShapes.DISPLAY_CLOTH_OCCLUSION;
+		return AllShapes.TABLE_CLOTH_OCCLUSION;
 	}
 
 	@Override
@@ -183,13 +183,13 @@ public class DisplayClothBlock extends Block implements IHaveBigOutline, IWrench
 	}
 
 	@Override
-	public Class<DisplayClothBlockEntity> getBlockEntityClass() {
-		return DisplayClothBlockEntity.class;
+	public Class<TableClothBlockEntity> getBlockEntityClass() {
+		return TableClothBlockEntity.class;
 	}
 
 	@Override
-	public BlockEntityType<? extends DisplayClothBlockEntity> getBlockEntityType() {
-		return AllBlockEntityTypes.DISPLAY_CLOTH.get();
+	public BlockEntityType<? extends TableClothBlockEntity> getBlockEntityType() {
+		return AllBlockEntityTypes.TABLE_CLOTH.get();
 	}
 
 	private static class PlacementHelper implements IPlacementHelper {
@@ -201,7 +201,7 @@ public class DisplayClothBlock extends Block implements IHaveBigOutline, IWrench
 
 		@Override
 		public Predicate<BlockState> getStatePredicate() {
-			return s -> s.getBlock() instanceof DisplayClothBlock;
+			return s -> s.getBlock() instanceof TableClothBlock;
 		}
 
 		@Override

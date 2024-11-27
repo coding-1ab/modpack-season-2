@@ -12,14 +12,14 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.content.equipment.blueprint.BlueprintEntity.BlueprintCraftingInventory;
 import com.simibubi.create.content.equipment.blueprint.BlueprintEntity.BlueprintSection;
 import com.simibubi.create.content.logistics.BigItemStack;
-import com.simibubi.create.content.logistics.displayCloth.BlueprintOverlayShopContext;
-import com.simibubi.create.content.logistics.displayCloth.DisplayClothBlockEntity;
-import com.simibubi.create.content.logistics.displayCloth.ShoppingListItem.ShoppingList;
 import com.simibubi.create.content.logistics.filter.AttributeFilterMenu.WhitelistMode;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
 import com.simibubi.create.content.logistics.filter.ItemAttribute;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
+import com.simibubi.create.content.logistics.tableCloth.BlueprintOverlayShopContext;
+import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
+import com.simibubi.create.content.logistics.tableCloth.ShoppingListItem.ShoppingList;
 import com.simibubi.create.content.trains.track.TrackPlacement.PlacementInfo;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 
@@ -139,7 +139,7 @@ public class BlueprintOverlayRenderer {
 		}
 	}
 
-	public static void displayClothShop(DisplayClothBlockEntity dce, int alreadyPurchased, ShoppingList list) {
+	public static void displayClothShop(TableClothBlockEntity dce, int alreadyPurchased, ShoppingList list) {
 		if (active)
 			return;
 		prepareCustomOverlay();
@@ -147,8 +147,8 @@ public class BlueprintOverlayRenderer {
 
 		shopContext = new BlueprintOverlayShopContext(false, dce.getStockLevelForTrade(list), alreadyPurchased);
 
-		ingredients.add(Pair.of(dce.paymentItem.copyWithCount(dce.paymentAmount),
-			!dce.paymentItem.isEmpty() && shopContext.stockLevel() > shopContext.purchases()));
+		ingredients.add(Pair.of(dce.getPaymentItem().copyWithCount(dce.getPaymentAmount()),
+			!dce.getPaymentItem().isEmpty() && shopContext.stockLevel() > shopContext.purchases()));
 		for (BigItemStack entry : dce.requestData.encodedRequest.stacks())
 			results.add(entry.stack.copyWithCount(entry.count));
 	}
