@@ -4,6 +4,7 @@
 
 ### Fixes
 - (1.21) Fix Cutting Board recipes crashing with recipe optimization mods;
+- (1.21) Fix Anvil being able to add Sweeping Edge to knives and skillets;
 
 ## 1.2.5
 

@@ -67,6 +67,14 @@ public class KnifeItem extends DiggerItem
 		return super.isPrimaryItemFor(stack, enchantment);
 	}
 
+	@Override
+	public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
+		if (enchantment.is(Enchantments.SWEEPING_EDGE)) {
+			return false;
+		}
+		return super.supportsEnchantment(stack, enchantment);
+	}
+
 	public boolean canPerformAction(ItemStack stack, ItemAbility toolAction) {
 		return KNIFE_ACTIONS.contains(toolAction);
 	}
