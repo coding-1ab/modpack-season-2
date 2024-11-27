@@ -7,6 +7,10 @@
 
 ### Fixes
 - Fix Skillet's default block state having `waterlogged=true`;
+- Fix `tomatoes` not having a map color;
+
+### Translations
+- en_nz (thanks, XlosVSM!);
 
 ## 1.2.5
 
