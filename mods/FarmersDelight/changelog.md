@@ -2,6 +2,9 @@
 
 ## 1.2.6
 
+### Updates
+- Added cutting recipe for Torchflower;
+
 ### Fixes
 - Fix Skillet's default block state having `waterlogged=true`;
 
