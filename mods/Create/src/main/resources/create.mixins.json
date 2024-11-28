@@ -15,6 +15,7 @@
     "LavaSwimmingMixin",
     "MainMixin",
     "MapItemSavedDataMixin",
+    "ShulkerBoxBlockMixin",
     "TestCommandMixin",
     "WaterWheelFluidSpreadMixin",
     "accessor.AbstractProjectileDispenseBehaviorAccessor",
