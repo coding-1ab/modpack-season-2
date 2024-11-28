@@ -10,7 +10,12 @@
 - Fix `tomatoes` not having a map color;
 
 ### Translations
-- en_nz (thanks, XlosVSM!);
+- Added:
+  - en_nz (thanks, XlosVSM!);
+- Updated:
+  - es_mx (thanks, cerealconjugo!);
+  - ja_jp (thanks, Abbage230!);
+  - zh_cn (thanks, NumberSir!);
 
 ## 1.2.5
 
