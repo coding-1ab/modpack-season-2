@@ -2,7 +2,11 @@
 
 ## 1.2.6
 
-### Updates
+### Additions
+- Farmer's Delight crops will now generate in village farms!
+  - Cabbage, Tomato and Onion will randomly replace either Wheat or Potato crops in villages;
+  - Crop availability varies between arid, temperate and cold biomes;
+  - Rice is excluded, as it requires a custom structure, and Villagers can't farm it yet.
 - Added cutting recipe for Torchflower;
 
 ### Fixes
