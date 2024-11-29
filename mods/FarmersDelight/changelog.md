@@ -2,9 +2,26 @@
 
 ## 1.2.6
 
+### Additions
+- Farmer's Delight crops will now generate in village farms!
+  - Cabbage, Tomato and Onion will randomly replace either Wheat or Potato crops in villages;
+  - Crop availability varies between arid, temperate and cold biomes;
+  - Rice is excluded, as it requires a custom structure, and Villagers can't farm it yet.
+- Added cutting recipe for Torchflower;
+
 ### Fixes
+- Fix Skillet's default block state having `waterlogged=true`;
+- Fix `tomatoes` not having a map color;
 - (1.21) Fix Cutting Board recipes crashing with recipe optimization mods;
 - (1.21) Fix Anvil being able to add Sweeping Edge to knives and skillets;
+
+### Translations
+- Added:
+  - en_nz (thanks, XlosVSM!);
+- Updated:
+  - es_mx (thanks, cerealconjugo!);
+  - ja_jp (thanks, Abbage230!);
+  - zh_cn (thanks, NumberSir!);
 
 ## 1.2.5
 
@@ -22,6 +39,9 @@
 - Skillets are now waterloggable, but are unable to cook underwater, either handheld or as a block. Hard to fry when the skillet is flooded!
 - `tomatoes` were temporarily removed from the `crops` tag, as bee pollination was breaking ropelogged vines unpredictably;
   - This will likely be addressed in the next major release;
+  
+### Fixes
+- Fix meal duplication when using containers against a Cooking Pot block, then closing and reloading the world;
 
 ### Fixes
 - Fix meal duplication when using containers against a Cooking Pot block, then closing and reloading the world;
