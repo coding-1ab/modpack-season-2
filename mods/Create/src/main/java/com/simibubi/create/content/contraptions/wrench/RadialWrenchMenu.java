@@ -28,6 +28,7 @@ import com.simibubi.create.content.kinetics.base.HorizontalAxisKineticBlock;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
 import com.simibubi.create.content.kinetics.transmission.sequencer.SequencedGearshiftBlock;
+import com.simibubi.create.content.redstone.DirectedDirectionalBlock;
 import com.simibubi.create.foundation.gui.AllIcons;
 
 import dev.engine_room.flywheel.lib.transform.TransformStack;
@@ -63,6 +64,7 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 		registerRotationProperty(HorizontalAxisKineticBlock.HORIZONTAL_AXIS, "Axis");
 		registerRotationProperty(HorizontalKineticBlock.HORIZONTAL_FACING, "Facing");
 		registerRotationProperty(HopperBlock.FACING, "Facing");
+		registerRotationProperty(DirectedDirectionalBlock.TARGET, "Target");
 
 		registerRotationProperty(SequencedGearshiftBlock.VERTICAL, "Vertical");
 	}
@@ -132,22 +134,40 @@ public class RadialWrenchMenu extends AbstractSimiScreen {
 		Map.Entry<Property<?>, String> entry = propertiesForState.get(selectedPropertyIndex);
 
 		allStates = new ArrayList<>();
-		allStates.add(state);
-		cycleAllPropertyValues(entry.getKey(), allStates);
+		//allStates.add(state);
+		cycleAllPropertyValues(state, entry.getKey(), allStates);
 
 		propertyLabel = entry.getValue();
 	}
 
-	private static void cycleAllPropertyValues(Property<?> property, List<BlockState> states) {
-		while (true) {
-			BlockState lastState = states.get(states.size() - 1);
-			BlockState cycledState = lastState.cycle(property);
+	private void cycleAllPropertyValues(BlockState state, Property<?> property, List<BlockState> states) {
+		Optional<? extends Comparable<?>> first = property.getPossibleValues().stream().findFirst();
+		if (first.isEmpty())
+			return;
 
-			if (states.contains(cycledState))
+		int offset = 0;
+		int safety = 100;
+		while (safety-- > 0) {
+			if (state.getValue(property).equals(first.get())) {
+				offset = 99 - safety;
+				break;
+			}
+
+			state = state.cycle(property);
+		}
+
+		safety = 100;
+		while (safety-- > 0) {
+			if (states.contains(state))
 				break;
 
-			states.add(cycledState);
+			states.add(state);
+
+			state = state.cycle(property);
 		}
+
+		offset = Mth.clamp(offset, 0, states.size() - 1);
+		selectedStateIndex = (offset == 0) ? 0 : (states.size() - offset);
 	}
 
 	@Override
