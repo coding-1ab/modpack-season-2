@@ -49,6 +49,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -340,6 +341,15 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 	}
 
 	@Override
+	public void renderBackground(GuiGraphics graphics) {
+		PoseStack ms = graphics.pose();
+		ms.pushPose();
+		ms.translate(0, 0, -300);
+		super.renderBackground(graphics);
+		ms.popPose();
+	}
+
+	@Override
 	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		PoseStack ms = graphics.pose();
 		float currentScroll = itemScroll.getValue(partialTicks);
@@ -368,11 +378,11 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		LivingEntity keeper = stockKeeper.get();
 		if (keeper != null && keeper.isAlive()) {
 			ms.pushPose();
-			ms.translate(0, 0, 300);
+			ms.translate(0, 0, -300);
 			entitySizeOffset = (int) (Math.max(0, keeper.getBoundingBox()
 				.getXsize() - 1) * 50);
-			int entityX = x - 10 - entitySizeOffset;
-			int entityY = y + windowHeight - 70;
+			int entityX = x - 20 - entitySizeOffset;
+			int entityY = y + windowHeight - 17;
 			AllGuiTextures.STOCK_KEEPER_REQUEST_SAYS.render(graphics, x + 226,
 				entityY - (int) (keeper.getEyeHeight(Pose.STANDING) * 50) / 2 * 2);
 			InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, entityX, entityY, 50, entityX - mouseX,
@@ -383,10 +393,10 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		BlazeBurnerBlockEntity keeperBE = blaze.get();
 		if (keeperBE != null && !keeperBE.isRemoved()) {
 			ms.pushPose();
-			int entityX = x - 10;
-			int entityY = y + windowHeight - 80;
+			int entityX = x - 20;
+			int entityY = y + windowHeight - 23;
 			AllGuiTextures.STOCK_KEEPER_REQUEST_SAYS.render(graphics, x + 226, (entityY - 22) / 2 * 2);
-			ms.translate(entityX, entityY, 300);
+			ms.translate(entityX, entityY, -100);
 			ms.mulPose(Axis.XP.rotationDegrees(-22.5f));
 			ms.mulPose(Axis.YP.rotationDegrees(-45));
 			ms.scale(48, -48, 48);
@@ -407,7 +417,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 
 		// Render static item icons
 		ms.pushPose();
-		ms.translate(x + windowWidth - 10, y + windowHeight - 65, 0);
+		ms.translate(x + windowWidth - 10, y + windowHeight - 67, 0);
 		ms.scale(3.5f, 3.5f, 3.5f);
 		GuiGameElement
 			.of(encodeRequester ? AllBlocks.REDSTONE_REQUESTER.asStack() : AllItems.CARDBOARD_PACKAGE_12x12.asStack())
@@ -444,7 +454,8 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			ms.popPose();
 		}
 
-		if (isConfirmHovered(mouseX, mouseY))
+		boolean justSent = itemsToOrder.isEmpty() && successTicks > 0;
+		if (isConfirmHovered(mouseX, mouseY) && !justSent)
 			AllGuiTextures.STOCK_KEEPER_REQUEST_SEND_HOVER.render(graphics, x + windowWidth - 96,
 				y + windowHeight - 41);
 
@@ -455,19 +466,41 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		MutableComponent component =
 			CreateLang.translate(encodeRequester ? "gui.stock_keeper.configure" : "gui.stock_keeper.send")
 				.component();
-		graphics.drawString(font, component, x + windowWidth - 57 - font.width(component) / 2, y + windowHeight - 35,
-			0x252525, false);
+
+		if (justSent) {
+			float alpha = Mth.clamp((successTicks + partialTicks - 5f) / 5f, 0f, 1f);
+			ms.pushPose();
+			ms.translate(alpha * alpha * 50, 0, 0);
+			if (successTicks < 10)
+				graphics.drawString(font, component, x + windowWidth - 57 - font.width(component) / 2,
+					y + windowHeight - 35, new Color(0x252525).setAlpha(1 - alpha * alpha)
+						.getRGB(),
+					false);
+			ms.popPose();
+
+		} else {
+			graphics.drawString(font, component, x + windowWidth - 57 - font.width(component) / 2,
+				y + windowHeight - 35, 0x252525, false);
+		}
 
 		// Request just sent
-//		if (itemsToOrder.isEmpty() && successTicks > 0) {
-//			Component msg = CreateLang.translateDirect("gui.stock_keeper.request_sent");
-//			float alpha = Mth.clamp((successTicks - 10f) / 5f, 0f, 1f);
-//			if (alpha > 0)
-//				graphics.drawString(font, msg, x + windowWidth / 2 - font.width(msg) / 2, orderY + 4,
-//					new Color(0x7A5A3A).setAlpha(alpha)
-//						.getRGB(),
-//					false);
-//		}
+		if (justSent) {
+			Component msg = CreateLang.translateDirect("gui.stock_keeper.request_sent");
+			float alpha = Mth.clamp((successTicks + partialTicks - 10f) / 5f, 0f, 1f);
+			int msgX = x + windowWidth / 2 - font.width(msg) / 2;
+			int msgY = orderY + 5;
+			if (alpha > 0) {
+				int c1 = new Color(0xB59370).setAlpha(alpha * 0.75f)
+					.getRGB();
+				int c2 = new Color(0xEDD8BB).setAlpha(alpha * 0)
+					.getRGB();
+				int c3 = new Color(0x714A40).setAlpha(alpha)
+					.getRGB();
+				TooltipRenderUtil.renderTooltipBackground(graphics, msgX - 2, msgY + 2, font.width(msg) + 4,
+					font.lineHeight - 5, 0, c1, c1, c2, c2);
+				graphics.drawString(font, msg, msgX, msgY, c3, false);
+			}
+		}
 
 		int itemWindowX = x + 36;
 		int itemWindowX2 = itemWindowX + 184;
@@ -617,7 +650,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		int customCount = entry.count;
 		if (!isRenderingOrders) {
 			BigItemStack order = getOrderForItem(entry.stack);
-			if (order != null)
+			if (order != null && entry.count < BigItemStack.INF)
 				customCount -= order.count;
 			AllGuiTextures.STOCK_KEEPER_REQUEST_SLOT.render(graphics, 0, 0);
 		}
@@ -701,6 +734,10 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			case 'm':
 				spriteWidth = 7;
 				xOffset = 70;
+				break;
+			case '+':
+				spriteWidth = 9;
+				xOffset = 84;
 				break;
 			}
 
