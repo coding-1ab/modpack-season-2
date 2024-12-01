@@ -375,4 +375,19 @@ public class TestItems {
 			helper.assertNixiePower(bigNixie, 7);
 		});
 	}
+
+	@GameTest(template = "depot_comparator_output")
+	public static void depotComparatorOutput(CreateGameTestHelper helper) {
+		BlockPos swordNixie = new BlockPos(7, 2, 1);
+		BlockPos diamondNixie = new BlockPos(5, 2, 1);
+		BlockPos fullPearlNixie = new BlockPos(3, 2, 1);
+		BlockPos halfPearlNixie = new BlockPos(1, 2, 1);
+
+		helper.succeedWhen(() -> {
+			helper.assertNixiePower(swordNixie, 15);
+			helper.assertNixiePower(diamondNixie, 15);
+			helper.assertNixiePower(fullPearlNixie, 15);
+			helper.assertNixiePower(halfPearlNixie, 8);
+		});
+	}
 }
