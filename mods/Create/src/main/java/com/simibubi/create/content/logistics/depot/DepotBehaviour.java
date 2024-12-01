@@ -59,7 +59,7 @@ public class DepotBehaviour extends BlockEntityBehaviour {
 
 	public DepotBehaviour(SmartBlockEntity be) {
 		super(be);
-		maxStackSize = () -> heldItem.stack.getMaxStackSize();
+		maxStackSize = () -> heldItem != null ? heldItem.stack.getMaxStackSize() : 64;
 		canAcceptItems = () -> true;
 		canFunnelsPullFrom = $ -> true;
 		acceptedItems = $ -> true;
