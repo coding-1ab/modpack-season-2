@@ -169,6 +169,8 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	STOCK_KEEPER_REQUEST_LOCKED("stock_keeper", 16, 176, 15, 16),
 	STOCK_KEEPER_REQUEST_UNLOCKED("stock_keeper", 32, 176, 15, 16),
 	STOCK_KEEPER_REQUEST_SLOT("stock_keeper", 32, 200, 18, 18),
+	STOCK_KEEPER_REQUEST_ORDERED_CRAFTING_SLOT("stock_keeper", 32, 219, 18, 18),
+	STOCK_KEEPER_REQUEST_CRAFTING_SLOT("stock_keeper", 32, 237, 18, 18),
 	STOCK_KEEPER_REQUEST_SEND_HOVER("stock_keeper", 55, 200, 80, 20),
 	STOCK_KEEPER_REQUEST_SCROLL_TOP("stock_keeper", 219, 192, 5, 4),
 	STOCK_KEEPER_REQUEST_SCROLL_PAD("stock_keeper", 219, 196, 5, 1),

@@ -75,7 +75,6 @@ import com.simibubi.create.content.logistics.stockTicker.PackageOrderRequestPack
 import com.simibubi.create.content.logistics.stockTicker.StockKeeperCategoryEditPacket;
 import com.simibubi.create.content.logistics.stockTicker.StockKeeperCategoryRefundPacket;
 import com.simibubi.create.content.logistics.stockTicker.StockKeeperLockPacket;
-import com.simibubi.create.content.logistics.stockTicker.StockKeeperOpenRequestScreenPacket;
 import com.simibubi.create.content.logistics.tunnel.TunnelFlapPacket;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkConfigurationPacket;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerBindPacket;
@@ -251,7 +250,6 @@ public enum AllPackets {
 	LOGISTICS_STOCK_RESPONSE(LogisticalStockResponsePacket.class, LogisticalStockResponsePacket::new, PLAY_TO_CLIENT),
 	FACTORY_PANEL_EFFECT(FactoryPanelEffectPacket.class, FactoryPanelEffectPacket::new, PLAY_TO_CLIENT),
 	KNOCKBACK(KnockbackPacket.class, KnockbackPacket::new, PLAY_TO_CLIENT),
-	STOCK_KEEPER_OPEN_GUI(StockKeeperOpenRequestScreenPacket.class, StockKeeperOpenRequestScreenPacket::new, PLAY_TO_CLIENT),
 	TRAIN_MAP_SYNC(TrainMapSyncPacket.class, TrainMapSyncPacket::new, PLAY_TO_CLIENT),
 	CLIENTBOUND_CHAIN_CONVEYOR(ClientboundChainConveyorRidingPacket.class, ClientboundChainConveyorRidingPacket::new, PLAY_TO_CLIENT);
 

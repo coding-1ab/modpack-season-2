@@ -45,7 +45,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 
-public class StockTickerBlockEntity extends StockCheckingBlockEntity implements IHaveHoveringInformation, MenuProvider {
+public class StockTickerBlockEntity extends StockCheckingBlockEntity implements IHaveHoveringInformation {
 
 	// Player-interface Feature
 	protected List<List<BigItemStack>> lastClientsideStockSnapshot;
@@ -234,14 +234,32 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		super.invalidate();
 	}
 
-	@Override
-	public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
-		return StockKeeperCategoryMenu.create(pContainerId, pPlayerInventory, this);
+	public class CategoryMenuProvider implements MenuProvider {
+
+		@Override
+		public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
+			return StockKeeperCategoryMenu.create(pContainerId, pPlayerInventory, StockTickerBlockEntity.this);
+		}
+
+		@Override
+		public Component getDisplayName() {
+			return Components.empty();
+		}
+
 	}
 
-	@Override
-	public Component getDisplayName() {
-		return Components.empty();
+	public class RequestMenuProvider implements MenuProvider {
+
+		@Override
+		public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
+			return StockKeeperRequestMenu.create(pContainerId, pPlayerInventory, StockTickerBlockEntity.this);
+		}
+
+		@Override
+		public Component getDisplayName() {
+			return Components.empty();
+		}
+
 	}
 
 }
