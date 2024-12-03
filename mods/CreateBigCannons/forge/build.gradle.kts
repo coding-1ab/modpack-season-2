@@ -67,9 +67,8 @@ repositories {
 dependencies {
 	minecraft("com.mojang:minecraft:$minecraftVersion")
 	mappings(loom.layered {
-		mappings("org.quiltmc:quilt-mappings:${minecraftVersion}+build.${mod.dep("qm_version")}:intermediary-v2")
-		parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${mod.dep("parchment_version")}@zip")
 		officialMojangMappings { nameSyntheticMembers = false }
+		parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${mod.dep("parchment_version")}@zip")
 	})
 	"forge"("net.minecraftforge:forge:$minecraftVersion-${common.mod.dep("forge_loader")}")
 
