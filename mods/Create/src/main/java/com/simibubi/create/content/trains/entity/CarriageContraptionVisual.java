@@ -50,7 +50,7 @@ public class CarriageContraptionVisual extends ContraptionVisual<CarriageContrap
 
 		var carriage = entity.getCarriage();
 
-		if (carriage != null) {
+		if (entity.validForRender && carriage != null) {
 			bogeys = carriage.bogeys.mapNotNull(bogey -> VisualizedBogey.of(visualizationContext, bogey, pt));
 			updateLight(pt);
 			return true;

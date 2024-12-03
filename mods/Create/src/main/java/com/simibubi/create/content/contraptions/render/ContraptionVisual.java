@@ -71,6 +71,16 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		setEmbeddingMatrices(partialTick);
 
 		Contraption contraption = entity.getContraption();
+
+		setupModel(contraption);
+
+		setupChildren(partialTick, contraption);
+
+		setupActors(partialTick, contraption);
+	}
+
+	// Must be called before setup children or setup actors as this creates the render world
+	private void setupModel(Contraption contraption) {
 		virtualRenderWorld = ContraptionRenderInfo.setupRenderWorld(level, contraption);
 
 		RenderedBlocks blocks = contraption.getRenderedBlocks();
@@ -82,19 +92,35 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		};
 
 		model = new ForgeMultiBlockModelBuilder(modelWorld, blocks.positions())
-				.modelDataLookup(pos -> contraption.modelData.getOrDefault(pos, ModelData.EMPTY))
-				.build();
+			.modelDataLookup(pos -> contraption.modelData.getOrDefault(pos, ModelData.EMPTY))
+			.build();
 
-		structure = embedding.instancerProvider()
-				.instancer(InstanceTypes.TRANSFORMED, model)
-				.createInstance();
+		var instancer = embedding.instancerProvider()
+			.instancer(InstanceTypes.TRANSFORMED, model);
+
+		// Null in ctor, so we need to create it
+		// But we can steal it if it already exists
+		if (structure == null) {
+			structure = instancer.createInstance();
+		} else {
+			instancer.stealInstance(structure);
+		}
 
 		structure.setChanged();
 
+	}
+
+	private void setupChildren(float partialTick, Contraption contraption) {
+		children.forEach(BlockEntityVisual::delete);
+		children.clear();
 		for (BlockEntity be : contraption.getRenderedBEs()) {
 			setupVisualizer(be, partialTick);
 		}
+	}
 
+	private void setupActors(float partialTick, Contraption contraption) {
+		actors.forEach(ActorVisual::delete);
+		actors.clear();
 		for (var actor : contraption.getActors()) {
 			setupActor(actor, partialTick);
 		}
@@ -176,13 +202,33 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		if (hasMovedBlocks()) {
 			updateLight(partialTick);
 		}
+
+		var contraption = entity.getContraption();
+		if (contraption.deferInvalidate) {
+			setupModel(contraption);
+			setupChildren(partialTick, contraption);
+			setupActors(partialTick, contraption);
+
+			contraption.deferInvalidate = false;
+		}
 	}
 
 	private void setEmbeddingMatrices(float partialTick) {
 		var origin = renderOrigin();
-		double x = Mth.lerp(partialTick, entity.xOld, entity.getX()) - origin.getX();
-		double y = Mth.lerp(partialTick, entity.yOld, entity.getY()) - origin.getY();
-		double z = Mth.lerp(partialTick, entity.zOld, entity.getZ()) - origin.getZ();
+		double x;
+		double y;
+		double z;
+		if (entity.isPrevPosInvalid()) {
+			// When the visual is created the entity's old position is often zero
+			x = entity.getX() - origin.getX();
+			y = entity.getY() - origin.getY();
+			z = entity.getZ() - origin.getZ();
+
+		} else {
+			x = Mth.lerp(partialTick, entity.xo, entity.getX()) - origin.getX();
+			y = Mth.lerp(partialTick, entity.yo, entity.getY()) - origin.getY();
+			z = Mth.lerp(partialTick, entity.zo, entity.getZ()) - origin.getZ();
+		}
 
 		contraptionMatrix.setIdentity();
 		contraptionMatrix.translate(x, y, z);
