@@ -23,6 +23,7 @@ architectury.common(stonecutter.tree.branches.mapNotNull {
 
 repositories {
 	maven("https://mvn.devos.one/snapshots/") // Create Fabric
+	maven("https://mvn.devos.one/releases/") // Porting Lib
 	maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") // Forge Config API Port
 	maven("https://maven.jamieswhiteshirt.com/libs-release") // Reach Entity Attributes
 }
@@ -35,11 +36,9 @@ loom {
 dependencies {
 	minecraft("com.mojang:minecraft:${minecraftVersion}")
 	mappings(loom.layered {
-		mappings("org.quiltmc:quilt-mappings:${minecraftVersion}+build.${mod.dep("qm_version")}:intermediary-v2")
-		parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${mod.dep("parchment_version")}@zip")
 		officialMojangMappings { nameSyntheticMembers = false }
+		parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${mod.dep("parchment_version")}@zip")
 	})
-
 
 	modImplementation("net.fabricmc:fabric-loader:${mod.dep("fabric_loader_version")}")
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${mod.dep("fabric_api_version")}")

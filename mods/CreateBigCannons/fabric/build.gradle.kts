@@ -82,7 +82,7 @@ repositories {
 	maven("https://api.modrinth.com/maven") // LazyDFU
 	maven("https://maven.terraformersmc.com/releases/") // Mod Menu
 	maven("https://mvn.devos.one/snapshots/") // Create Fabric, Forge Tags, Milk Lib, Registrate Fabric
-	maven("https://mvn.devos.one/releases") // Porting Lib Releases
+	maven("https://mvn.devos.one/releases/") // Porting Lib Releases
 	maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") // Forge config api port
 	maven("https://maven.cafeteria.dev/releases") // Fake Player API
 	maven("https://maven.jamieswhiteshirt.com/libs-release") // Reach Entity Attributes
@@ -93,9 +93,8 @@ repositories {
 dependencies {
 	minecraft("com.mojang:minecraft:$minecraftVersion")
 	mappings(loom.layered {
-		mappings("org.quiltmc:quilt-mappings:${minecraftVersion}+build.${mod.dep("qm_version")}:intermediary-v2")
-		parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${mod.dep("parchment_version")}@zip")
 		officialMojangMappings { nameSyntheticMembers = false }
+		parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${mod.dep("parchment_version")}@zip")
 	})
 	modImplementation("net.fabricmc:fabric-loader:${mod.dep("fabric_loader")}")
 	modApi("net.fabricmc.fabric-api:fabric-api:${mod.dep("fabric_api_version")}")
