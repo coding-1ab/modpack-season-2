@@ -19,6 +19,7 @@
 ### Translations
 - Added:
   - en_nz (thanks, XlosVSM!);
+  - vp_vl (thanks, SquareScreamYT!);
 - Updated:
   - es_mx (thanks, cerealconjugo!);
   - ja_jp (thanks, Abbage230!);
