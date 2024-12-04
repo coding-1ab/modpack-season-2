@@ -354,6 +354,7 @@ public class CreateJEI implements IModPlugin {
 	@Override
 	public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
 		registration.addRecipeTransferHandler(new BlueprintTransferHandler(), RecipeTypes.CRAFTING);
+		registration.addUniversalRecipeTransferHandler(new StockKeeperTransferHandler(registration.getJeiHelpers()));
 	}
 
 	@Override
@@ -409,11 +410,11 @@ public class CreateJEI implements IModPlugin {
 			return addRecipeListConsumer(recipes -> recipes.addAll(collection.get()));
 		}
 
+		@SuppressWarnings("unchecked")
 		public CategoryBuilder<T> addAllRecipesIf(Predicate<Recipe<?>> pred) {
 			return addRecipeListConsumer(recipes -> consumeAllRecipes(recipe -> {
-				if (pred.test(recipe)) {
+				if (pred.test(recipe))
 					recipes.add((T) recipe);
-				}
 			}));
 		}
 
@@ -541,13 +542,13 @@ public class CreateJEI implements IModPlugin {
 			.forEach(consumer);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T extends Recipe<?>> void consumeTypedRecipes(Consumer<T> consumer, RecipeType<?> type) {
 		Map<ResourceLocation, Recipe<?>> map = Minecraft.getInstance()
 			.getConnection()
 			.getRecipeManager().recipes.get(type);
-		if (map != null) {
+		if (map != null)
 			map.values().forEach(recipe -> consumer.accept((T) recipe));
-		}
 	}
 
 	public static List<Recipe<?>> getTypedRecipes(RecipeType<?> type) {

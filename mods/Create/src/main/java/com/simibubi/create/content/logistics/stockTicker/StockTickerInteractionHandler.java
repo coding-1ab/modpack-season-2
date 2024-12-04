@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
@@ -34,7 +33,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.NetworkHooks;
 
 @EventBusSubscriber
 public class StockTickerInteractionHandler {
@@ -84,9 +83,11 @@ public class StockTickerInteractionHandler {
 				stbe.behaviour.mayAdministrate(player) && Create.LOGISTICS.isLockable(stbe.behaviour.freqId);
 			boolean isCurrentlyLocked = Create.LOGISTICS.isLocked(stbe.behaviour.freqId);
 
-			AllPackets.getChannel()
-				.send(PacketDistributor.PLAYER.with(() -> sp),
-					new StockKeeperOpenRequestScreenPacket(targetPos, showLockOption, isCurrentlyLocked));
+			NetworkHooks.openScreen(sp, stbe.new RequestMenuProvider(), buf -> {
+				buf.writeBoolean(showLockOption);
+				buf.writeBoolean(isCurrentlyLocked);
+				buf.writeBlockPos(targetPos);
+			});
 			stbe.getRecentSummary()
 				.divideAndSendTo(sp, targetPos);
 		}

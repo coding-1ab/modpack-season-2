@@ -78,7 +78,7 @@ public class AddressEditBox extends EditBox {
 
 		if (!destinationSuggestions.isEmpty())
 			return;
-		
+
 		int itemX = getX() + width + 4;
 		int itemY = getY() - 4;
 		pGuiGraphics.renderItem(AllBlocks.CLIPBOARD.asStack(), itemX, itemY);
@@ -90,13 +90,13 @@ public class AddressEditBox extends EditBox {
 				CreateLang.translate("gui.address_box.clipboard_tip_1")
 					.style(ChatFormatting.GRAY)
 					.component(),
-					CreateLang.translate("gui.address_box.clipboard_tip_2")
+				CreateLang.translate("gui.address_box.clipboard_tip_2")
 					.style(ChatFormatting.GRAY)
 					.component(),
-					CreateLang.translate("gui.address_box.clipboard_tip_3")
+				CreateLang.translate("gui.address_box.clipboard_tip_3")
 					.style(ChatFormatting.GRAY)
 					.component(),
-					CreateLang.translate("gui.address_box.clipboard_tip_4")
+				CreateLang.translate("gui.address_box.clipboard_tip_4")
 					.style(ChatFormatting.DARK_GRAY)
 					.component());
 			pGuiGraphics.renderComponentTooltip(Minecraft.getInstance().font, promiseTip, pMouseX, pMouseY);

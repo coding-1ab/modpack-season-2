@@ -57,7 +57,7 @@ public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<
 		if (pPlayer != null && pPlayer.getItemInHand(pHand)
 			.getItem() instanceof LogisticallyLinkedBlockItem)
 			return InteractionResult.PASS;
-		
+
 		return onBlockEntityUse(pLevel, pPos, stbe -> {
 			if (!stbe.behaviour.mayInteractMessage(pPlayer))
 				return InteractionResult.SUCCESS;
@@ -72,7 +72,7 @@ public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<
 			}
 
 			if (pPlayer instanceof ServerPlayer sp && stbe.isKeeperPresent())
-				NetworkHooks.openScreen(sp, stbe, stbe.getBlockPos());
+				NetworkHooks.openScreen(sp, stbe.new CategoryMenuProvider(), stbe.getBlockPos());
 
 			return InteractionResult.SUCCESS;
 		});

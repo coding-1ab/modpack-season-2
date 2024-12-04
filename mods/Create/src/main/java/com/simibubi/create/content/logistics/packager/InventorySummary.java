@@ -47,6 +47,10 @@ public class InventorySummary {
 	public void add(BigItemStack entry) {
 		add(entry.stack, entry.count);
 	}
+	
+	public Map<Item, List<BigItemStack>> getItemMap() {
+		return items;
+	}
 
 	public InventorySummary copy() {
 		InventorySummary inventorySummary = new InventorySummary();

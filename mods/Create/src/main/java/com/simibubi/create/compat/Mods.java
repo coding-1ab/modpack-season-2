@@ -32,7 +32,8 @@ public enum Mods {
 	XLPACKETS,
 	MODERNUI,
 	FTBCHUNKS,
-	JOURNEYMAP;
+	JOURNEYMAP,
+	FTBLIBRARY;
 
 	private final String id;
 

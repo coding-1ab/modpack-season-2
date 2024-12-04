@@ -1,8 +1,12 @@
 package com.simibubi.create.content.logistics.stockTicker;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.IntStream;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +49,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 
-public class StockTickerBlockEntity extends StockCheckingBlockEntity implements IHaveHoveringInformation, MenuProvider {
+public class StockTickerBlockEntity extends StockCheckingBlockEntity implements IHaveHoveringInformation {
 
 	// Player-interface Feature
 	protected List<List<BigItemStack>> lastClientsideStockSnapshot;
@@ -55,6 +59,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 	protected int activeLinks;
 	protected int ticksSinceLastUpdate;
 	protected List<ItemStack> categories;
+	protected Map<UUID, List<Integer>> hiddenCategoriesByPlayer;
 
 	// Shop feature
 	protected SmartInventory receivedPayments;
@@ -66,6 +71,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		receivedPayments = new SmartInventory(27, this, 64, false);
 		capability = LazyOptional.of(() -> receivedPayments);
 		categories = new ArrayList<>();
+		hiddenCategoriesByPlayer = new HashMap<>();
 	}
 
 	public void refreshClientStockSnapshot() {
@@ -116,6 +122,12 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		tag.putString("PreviousAddress", previouslyUsedAddress);
 		tag.put("ReceivedPayments", receivedPayments.serializeNBT());
 		tag.put("Categories", NBTHelper.writeItemList(categories));
+		tag.put("HiddenCategories", NBTHelper.writeCompoundList(hiddenCategoriesByPlayer.entrySet(), e -> {
+			CompoundTag c = new CompoundTag();
+			c.putUUID("Id", e.getKey());
+			c.putIntArray("Indices", e.getValue());
+			return c;
+		}));
 
 		if (clientPacket)
 			tag.putInt("ActiveLinks", activeLinks);
@@ -128,6 +140,12 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		receivedPayments.deserializeNBT(tag.getCompound("ReceivedPayments"));
 		categories = NBTHelper.readItemList(tag.getList("Categories", Tag.TAG_COMPOUND));
 		categories.removeIf(stack -> !stack.isEmpty() && !(stack.getItem() instanceof FilterItem));
+		hiddenCategoriesByPlayer.clear();
+
+		NBTHelper.iterateCompoundList(tag.getList("HiddenCategories", Tag.TAG_COMPOUND),
+			c -> hiddenCategoriesByPlayer.put(c.getUUID("Id"), IntStream.of(c.getIntArray("Indices"))
+				.boxed()
+				.toList()));
 
 		if (clientPacket)
 			activeLinks = tag.getInt("ActiveLinks");
@@ -164,7 +182,6 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 
 		List<BigItemStack> unsorted = new ArrayList<>(newlyReceivedStockSnapshot);
 		lastClientsideStockSnapshot.add(unsorted);
-
 		newlyReceivedStockSnapshot = null;
 	}
 
@@ -234,14 +251,32 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		super.invalidate();
 	}
 
-	@Override
-	public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
-		return StockKeeperCategoryMenu.create(pContainerId, pPlayerInventory, this);
+	public class CategoryMenuProvider implements MenuProvider {
+
+		@Override
+		public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
+			return StockKeeperCategoryMenu.create(pContainerId, pPlayerInventory, StockTickerBlockEntity.this);
+		}
+
+		@Override
+		public Component getDisplayName() {
+			return Components.empty();
+		}
+
 	}
 
-	@Override
-	public Component getDisplayName() {
-		return Components.empty();
+	public class RequestMenuProvider implements MenuProvider {
+
+		@Override
+		public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
+			return StockKeeperRequestMenu.create(pContainerId, pPlayerInventory, StockTickerBlockEntity.this);
+		}
+
+		@Override
+		public Component getDisplayName() {
+			return Components.empty();
+		}
+
 	}
 
 }

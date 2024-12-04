@@ -7,19 +7,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllPartialModels;
+import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import com.simibubi.create.content.logistics.AddressEditBox;
 import com.simibubi.create.content.logistics.BigItemStack;
@@ -30,10 +32,10 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerRenderer;
 import com.simibubi.create.content.trains.station.NoShadowFontWrapper;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.ScreenWithStencils;
+import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
-import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.utility.AnimationTickHolder;
@@ -50,19 +52,38 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class StockTickerRequestScreen extends AbstractSimiScreen implements ScreenWithStencils {
+public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockKeeperRequestMenu>
+	implements ScreenWithStencils {
+
+	public static class CategoryEntry {
+		ItemStack filterStack;
+		boolean hidden;
+		String name;
+		int y;
+
+		public CategoryEntry(ItemStack filterStack, String name, int y) {
+			this.filterStack = filterStack;
+			this.name = name;
+			hidden = false;
+			this.y = y;
+		}
+	};
 
 	private static final AllGuiTextures NUMBERS = AllGuiTextures.NUMBERS;
 	private static final AllGuiTextures HEADER = AllGuiTextures.STOCK_KEEPER_REQUEST_HEADER;
@@ -70,7 +91,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 	private static final AllGuiTextures FOOTER = AllGuiTextures.STOCK_KEEPER_REQUEST_FOOTER;
 
 	StockTickerBlockEntity blockEntity;
-	LerpedFloat itemScroll;
+	public LerpedFloat itemScroll;
 
 	final int rows = 9;
 	final int cols = 9;
@@ -82,41 +103,47 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 	int orderY;
 	int lockX;
 	int lockY;
+	int windowWidth;
+	int windowHeight;
 
-	EditBox searchBox;
+	public EditBox searchBox;
 	EditBox addressBox;
 
 	int emptyTicks = 0;
 	int successTicks = 0;
 
-	List<List<BigItemStack>> currentItemSource;
-	List<List<BigItemStack>> displayedItems;
-	List<Pair<String, Integer>> categories;
+	public List<List<BigItemStack>> currentItemSource;
+	public List<List<BigItemStack>> displayedItems;
+	public List<CategoryEntry> categories;
 
-	List<BigItemStack> itemsToOrder;
+	public List<BigItemStack> itemsToOrder;
+	public List<CraftableBigItemStack> recipesToOrder;
 
 	WeakReference<LivingEntity> stockKeeper;
 	WeakReference<BlazeBurnerBlockEntity> blaze;
 
 	boolean encodeRequester; // Redstone requesters
+	ItemStack itemToProgram;
 
 	private boolean isAdmin;
 	private boolean isLocked;
+	private boolean scrollHandleActive;
 
-	private boolean refreshSearchNextTick;
+	public boolean refreshSearchNextTick;
+	public boolean moveToTopNextTick;
+	private List<Rect2i> extraAreas = Collections.emptyList();
 
-	public StockTickerRequestScreen(StockTickerBlockEntity be, boolean isAdmin, boolean isLocked,
-		boolean encodeRequester) {
-		super(be.getBlockState()
-			.getBlock()
-			.getName());
-		this.isAdmin = isAdmin;
-		this.isLocked = isLocked;
-		this.encodeRequester = encodeRequester;
+	private Set<Integer> hiddenCategories;
+
+	public StockKeeperRequestScreen(StockKeeperRequestMenu container, Inventory inv, Component title) {
+		super(container, inv, title);
 		displayedItems = new ArrayList<>();
 		itemsToOrder = new ArrayList<>();
+		recipesToOrder = new ArrayList<>();
 		categories = new ArrayList<>();
-		blockEntity = be;
+		isAdmin = menu.isAdmin;
+		isLocked = menu.isLocked;
+		blockEntity = container.contentHolder;
 		blockEntity.lastClientsideStockSnapshot = null;
 		blockEntity.ticksSinceLastUpdate = 15;
 		emptyTicks = 0;
@@ -126,21 +153,29 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		stockKeeper = new WeakReference<>(null);
 		blaze = new WeakReference<>(null);
 		refreshSearchNextTick = false;
+		moveToTopNextTick = false;
+		menu.screenReference = this;
+		hiddenCategories =
+			new HashSet<>(blockEntity.hiddenCategoriesByPlayer.getOrDefault(menu.player.getUUID(), List.of()));
+
+		itemToProgram = menu.player.getMainHandItem();
+		encodeRequester =
+			AllItemTags.TABLE_CLOTHS.matches(itemToProgram) || AllBlocks.REDSTONE_REQUESTER.isIn(itemToProgram);
 
 		// Find the keeper for rendering
 		for (int yOffset : Iterate.zeroAndOne) {
 			for (Direction side : Iterate.horizontalDirections) {
-				BlockPos seatPos = be.getBlockPos()
+				BlockPos seatPos = blockEntity.getBlockPos()
 					.below(yOffset)
 					.relative(side);
-				for (SeatEntity seatEntity : be.getLevel()
+				for (SeatEntity seatEntity : blockEntity.getLevel()
 					.getEntitiesOfClass(SeatEntity.class, new AABB(seatPos)))
 					if (!seatEntity.getPassengers()
 						.isEmpty()
 						&& seatEntity.getPassengers()
 							.get(0) instanceof LivingEntity keeper)
 						stockKeeper = new WeakReference<>(keeper);
-				if (yOffset == 0 && be.getLevel()
+				if (yOffset == 0 && blockEntity.getLevel()
 					.getBlockEntity(seatPos) instanceof BlazeBurnerBlockEntity bbbe) {
 					blaze = new WeakReference<>(bbbe);
 					return;
@@ -159,20 +194,21 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		appropriateHeight =
 			Math.min(appropriateHeight, HEADER.getHeight() + FOOTER.getHeight() + BODY.getHeight() * 17);
 
-		setWindowSize(256, appropriateHeight);
+		setWindowSize(windowWidth = 226, windowHeight = appropriateHeight);
 		super.init();
+		clearWidgets();
 
-		int x = guiLeft;
-		int y = guiTop;
+		int x = getGuiLeft();
+		int y = getGuiTop();
 
 		itemsX = x + (windowWidth - cols * colWidth) / 2 + 1;
 		itemsY = y + 33;
 		orderY = y + windowHeight - 72;
-		lockX = x + 200;
+		lockX = x + 186;
 		lockY = y + 18;
 
 		MutableComponent searchLabel = CreateLang.translateDirect("gui.stock_keeper.search_items");
-		searchBox = new EditBox(new NoShadowFontWrapper(font), x + 86, y + 22, 100, 9, searchLabel);
+		searchBox = new EditBox(new NoShadowFontWrapper(font), x + 71, y + 22, 100, 9, searchLabel);
 		searchBox.setMaxLength(50);
 		searchBox.setBordered(false);
 		searchBox.setTextColor(0x4A2D31);
@@ -180,11 +216,24 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 
 		boolean initial = addressBox == null;
 		addressBox =
-			new AddressEditBox(this, new NoShadowFontWrapper(font), x + 42, y + windowHeight - 36, 90, 10, true);
+			new AddressEditBox(this, new NoShadowFontWrapper(font), x + 27, y + windowHeight - 36, 90, 10, true);
 		addressBox.setTextColor(0x714A40);
 		if (initial)
 			addressBox.setValue(blockEntity.previouslyUsedAddress);
 		addRenderableWidget(addressBox);
+
+		extraAreas = new ArrayList<>();
+		int leftHeight = 40;
+		int rightHeight = 50;
+
+		LivingEntity keeper = stockKeeper.get();
+		if (keeper != null && keeper.isAlive())
+			leftHeight = (int) (Math.max(0, keeper.getBoundingBox()
+				.getYsize()) * 50);
+
+		extraAreas.add(new Rect2i(0, y + windowHeight - 15 - leftHeight, x, height));
+		if (encodeRequester)
+			extraAreas.add(new Rect2i(x + windowWidth, y + windowHeight - 15 - rightHeight, rightHeight, rightHeight));
 	}
 
 	private void refreshSearchResults(boolean scrollBackUp) {
@@ -198,23 +247,31 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		}
 
 		categories = new ArrayList<>();
-		blockEntity.categories.forEach(stack -> categories.add(Pair.of(stack.isEmpty() ? ""
-			: stack.getHoverName()
-				.getString(),
-			0)));
-		categories.add(Pair.of(CreateLang.translate("gui.stock_keeper.unsorted_category")
-			.string(), 0));
+		for (int i = 0; i < blockEntity.categories.size(); i++) {
+			ItemStack stack = blockEntity.categories.get(i);
+			CategoryEntry entry = new CategoryEntry(stack, stack.isEmpty() ? ""
+				: stack.getHoverName()
+					.getString(),
+				0);
+			entry.hidden = hiddenCategories.contains(i);
+			categories.add(entry);
+		}
+
+		CategoryEntry unsorted = new CategoryEntry(null, CreateLang.translate("gui.stock_keeper.unsorted_category")
+			.string(), 0);
+		unsorted.hidden = hiddenCategories.contains(-1);
+		categories.add(unsorted);
 
 		String valueWithPrefix = searchBox.getValue();
 		boolean anyItemsInCategory = false;
 
+		// Nothing is being filtered out
 		if (valueWithPrefix.isBlank()) {
-			displayedItems = currentItemSource;
+			displayedItems = new ArrayList<>(currentItemSource);
 
 			int categoryY = 0;
 			for (int categoryIndex = 0; categoryIndex < currentItemSource.size(); categoryIndex++) {
-				categories.get(categoryIndex)
-					.setSecond(categoryY);
+				categories.get(categoryIndex).y = categoryY;
 				List<BigItemStack> displayedItemsInCategory = displayedItems.get(categoryIndex);
 				if (displayedItemsInCategory.isEmpty())
 					continue;
@@ -222,16 +279,19 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 					anyItemsInCategory = true;
 
 				categoryY += rowHeight;
-				categoryY += Math.ceil(displayedItemsInCategory.size() / (float) cols) * rowHeight;
+				if (!categories.get(categoryIndex).hidden)
+					categoryY += Math.ceil(displayedItemsInCategory.size() / (float) cols) * rowHeight;
 			}
 
 			if (!anyItemsInCategory)
 				categories.clear();
 
 			clampScrollBar();
+			updateCraftableAmounts();
 			return;
 		}
 
+		// Filter by search string
 		boolean modSearch = false;
 		boolean tagSearch = false;
 		if ((modSearch = valueWithPrefix.startsWith("@")) || (tagSearch = valueWithPrefix.startsWith("#")))
@@ -242,10 +302,9 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		currentItemSource.forEach($ -> displayedItems.add(new ArrayList<>()));
 
 		int categoryY = 0;
-		for (int categoryIndex = 0; categoryIndex < currentItemSource.size(); categoryIndex++) {
+		for (int categoryIndex = 0; categoryIndex < displayedItems.size(); categoryIndex++) {
 			List<BigItemStack> category = currentItemSource.get(categoryIndex);
-			categories.get(categoryIndex)
-				.setSecond(categoryY);
+			categories.get(categoryIndex).y = categoryY;
 
 			if (displayedItems.size() <= categoryIndex)
 				break;
@@ -285,22 +344,25 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 
 			if (displayedItemsInCategory.isEmpty())
 				continue;
-
 			if (categoryIndex < currentItemSource.size() - 1)
 				anyItemsInCategory = true;
+
 			categoryY += rowHeight;
-			categoryY += Math.ceil(displayedItemsInCategory.size() / (float) cols) * rowHeight;
+
+			if (!categories.get(categoryIndex).hidden)
+				categoryY += Math.ceil(displayedItemsInCategory.size() / (float) cols) * rowHeight;
 		}
 
 		if (!anyItemsInCategory)
 			categories.clear();
 
 		clampScrollBar();
+		updateCraftableAmounts();
 	}
 
 	@Override
-	public void tick() {
-		super.tick();
+	protected void containerTick() {
+		super.containerTick();
 		addressBox.tick();
 
 		boolean allEmpty = true;
@@ -325,10 +387,11 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 
 		if (refreshSearchNextTick) {
 			refreshSearchNextTick = false;
-			refreshSearchResults(true);
+			refreshSearchResults(moveToTopNextTick);
 		}
 
 		itemScroll.tickChaser();
+
 		if (Math.abs(itemScroll.getValue() - itemScroll.getChaseTarget()) < 1 / 16f)
 			itemScroll.setValue(itemScroll.getChaseTarget());
 
@@ -350,23 +413,23 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 	}
 
 	@Override
-	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+	protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
 		PoseStack ms = graphics.pose();
 		float currentScroll = itemScroll.getValue(partialTicks);
 		Couple<Integer> hoveredSlot = getHoveredSlot(mouseX, mouseY);
 
-		int x = guiLeft;
-		int y = guiTop;
+		int x = getGuiLeft();
+		int y = getGuiTop();
 
 		// BG
-		HEADER.render(graphics, x, y);
+		HEADER.render(graphics, x - 15, y);
 		y += HEADER.getHeight();
 		for (int i = 0; i < (windowHeight - HEADER.getHeight() - FOOTER.getHeight()) / BODY.getHeight(); i++) {
-			BODY.render(graphics, x, y);
+			BODY.render(graphics, x - 15, y);
 			y += BODY.getHeight();
 		}
-		FOOTER.render(graphics, x, y);
-		y = guiTop;
+		FOOTER.render(graphics, x - 15, y);
+		y = getGuiTop();
 
 		// Render text input hints
 		if (addressBox.getValue()
@@ -381,10 +444,8 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			ms.translate(0, 0, -300);
 			entitySizeOffset = (int) (Math.max(0, keeper.getBoundingBox()
 				.getXsize() - 1) * 50);
-			int entityX = x - 20 - entitySizeOffset;
+			int entityX = x - 35 - entitySizeOffset;
 			int entityY = y + windowHeight - 17;
-			AllGuiTextures.STOCK_KEEPER_REQUEST_SAYS.render(graphics, x + 226,
-				entityY - (int) (keeper.getEyeHeight(Pose.STANDING) * 50) / 2 * 2);
 			InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, entityX, entityY, 50, entityX - mouseX,
 				Mth.clamp(entityY - mouseY, -50, 10), keeper);
 			ms.popPose();
@@ -393,9 +454,8 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		BlazeBurnerBlockEntity keeperBE = blaze.get();
 		if (keeperBE != null && !keeperBE.isRemoved()) {
 			ms.pushPose();
-			int entityX = x - 20;
+			int entityX = x - 35;
 			int entityY = y + windowHeight - 23;
-			AllGuiTextures.STOCK_KEEPER_REQUEST_SAYS.render(graphics, x + 226, (entityY - 22) / 2 * 2);
 			ms.translate(entityX, entityY, -100);
 			ms.mulPose(Axis.XP.rotationDegrees(-22.5f));
 			ms.mulPose(Axis.YP.rotationDegrees(-45));
@@ -416,29 +476,14 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		}
 
 		// Render static item icons
-		ms.pushPose();
-		ms.translate(x + windowWidth - 10, y + windowHeight - 67, 0);
-		ms.scale(3.5f, 3.5f, 3.5f);
-		GuiGameElement
-			.of(encodeRequester ? AllBlocks.REDSTONE_REQUESTER.asStack() : AllItems.CARDBOARD_PACKAGE_12x12.asStack())
-			.render(graphics);
-		ms.popPose();
-
-		// Linked packager count
-//		ms.pushPose();
-//		ms.translate(x + windowWidth + 39 + entitySizeOffset, y + windowHeight - 105, 0);
-//		ms.scale(2.25f, 2.25f, 2.25f);
-//		GuiGameElement.of(AllBlocks.PACKAGER.asStack())
-//			.render(graphics);
-//		ms.translate(0, -9, 15);
-//		GuiGameElement.of(AllBlocks.STOCK_LINK.asStack())
-//			.render(graphics);
-//		ms.popPose();
-//		ms.pushPose();
-//		ms.translate(0, 0, 300);
-//		graphics.drawString(font, CreateLang.text(blockEntity.activeLinks + "")
-//			.component(), x + windowWidth + 76 + entitySizeOffset, y + windowHeight - 105, 0x88dddddd);
-//		ms.popPose();
+		if (encodeRequester) {
+			ms.pushPose();
+			ms.translate(x + windowWidth + 5, y + windowHeight - 70, 0);
+			ms.scale(3.5f, 3.5f, 3.5f);
+			GuiGameElement.of(itemToProgram)
+				.render(graphics);
+			ms.popPose();
+		}
 
 		// Render ordered items
 		for (int index = 0; index < cols; index++) {
@@ -456,7 +501,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 
 		boolean justSent = itemsToOrder.isEmpty() && successTicks > 0;
 		if (isConfirmHovered(mouseX, mouseY) && !justSent)
-			AllGuiTextures.STOCK_KEEPER_REQUEST_SEND_HOVER.render(graphics, x + windowWidth - 96,
+			AllGuiTextures.STOCK_KEEPER_REQUEST_SEND_HOVER.render(graphics, x + windowWidth - 81,
 				y + windowHeight - 41);
 
 		MutableComponent headerTitle = CreateLang.translate("gui.stock_keeper.title")
@@ -472,14 +517,14 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			ms.pushPose();
 			ms.translate(alpha * alpha * 50, 0, 0);
 			if (successTicks < 10)
-				graphics.drawString(font, component, x + windowWidth - 57 - font.width(component) / 2,
+				graphics.drawString(font, component, x + windowWidth - 42 - font.width(component) / 2,
 					y + windowHeight - 35, new Color(0x252525).setAlpha(1 - alpha * alpha)
 						.getRGB(),
 					false);
 			ms.popPose();
 
 		} else {
-			graphics.drawString(font, component, x + windowWidth - 57 - font.width(component) / 2,
+			graphics.drawString(font, component, x + windowWidth - 42 - font.width(component) / 2,
 				y + windowHeight - 35, 0x252525, false);
 		}
 
@@ -490,7 +535,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			int msgX = x + windowWidth / 2 - font.width(msg) / 2;
 			int msgY = orderY + 5;
 			if (alpha > 0) {
-				int c1 = new Color(0xB59370).setAlpha(alpha * 0.75f)
+				int c1 = new Color(0xB59370).setAlpha(alpha)
 					.getRGB();
 				int c2 = new Color(0xEDD8BB).setAlpha(alpha * 0)
 					.getRGB();
@@ -502,7 +547,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			}
 		}
 
-		int itemWindowX = x + 36;
+		int itemWindowX = x + 21;
 		int itemWindowX2 = itemWindowX + 184;
 		int itemWindowY = y + 17;
 		int itemWindowY2 = y + windowHeight - 80;
@@ -521,11 +566,11 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 				continue;
 			if (sliceY - currentScroll * rowHeight > windowHeight - 72)
 				continue;
-			AllGuiTextures.STOCK_KEEPER_REQUEST_BG.render(graphics, x + 37, y + sliceY + 18);
+			AllGuiTextures.STOCK_KEEPER_REQUEST_BG.render(graphics, x + 22, y + sliceY + 18);
 		}
 
 		// Search bar
-		AllGuiTextures.STOCK_KEEPER_REQUEST_SEARCH.render(graphics, x + 57, searchBox.getY() - 5);
+		AllGuiTextures.STOCK_KEEPER_REQUEST_SEARCH.render(graphics, x + 42, searchBox.getY() - 5);
 		searchBox.render(graphics, mouseX, mouseY, partialTicks);
 		if (searchBox.getValue()
 			.isBlank() && !searchBox.isFocused())
@@ -554,17 +599,18 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		// Items
 		for (int categoryIndex = 0; categoryIndex < displayedItems.size(); categoryIndex++) {
 			List<BigItemStack> category = displayedItems.get(categoryIndex);
-			int categoryY = categories.isEmpty() ? 0
-				: categories.get(categoryIndex)
-					.getSecond();
+			CategoryEntry categoryEntry = categories.isEmpty() ? null : categories.get(categoryIndex);
+			int categoryY = categories.isEmpty() ? 0 : categoryEntry.y;
 			if (category.isEmpty())
 				continue;
 
 			if (!categories.isEmpty()) {
-				graphics.drawString(font, categories.get(categoryIndex)
-					.getFirst(), itemsX + 5, itemsY + categoryY + 8, 0x4A2D31, false);
-				graphics.drawString(font, categories.get(categoryIndex)
-					.getFirst(), itemsX + 4, itemsY + categoryY + 7, 0xF8F8EC, false);
+				(categoryEntry.hidden ? AllGuiTextures.STOCK_KEEPER_CATEGORY_HIDDEN
+					: AllGuiTextures.STOCK_KEEPER_CATEGORY_SHOWN).render(graphics, itemsX, itemsY + categoryY + 6);
+				graphics.drawString(font, categoryEntry.name, itemsX + 10, itemsY + categoryY + 8, 0x4A2D31, false);
+				graphics.drawString(font, categoryEntry.name, itemsX + 9, itemsY + categoryY + 7, 0xF8F8EC, false);
+				if (categoryEntry.hidden)
+					continue;
 			}
 
 			for (int index = 0; index < category.size(); index++) {
@@ -613,13 +659,53 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			ms.popPose();
 		}
 
+		// Render JEI imported
+		if (recipesToOrder.size() > 0) {
+			int jeiX = x + (windowWidth - colWidth * recipesToOrder.size()) / 2 + 1;
+			int jeiY = orderY - 31;
+			ms.pushPose();
+			ms.translate(jeiX, jeiY, 200);
+			int xoffset = -3;
+			AllGuiTextures.STOCK_KEEPER_REQUEST_BLUEPRINT_LEFT.render(graphics, xoffset, -3);
+			xoffset += 10;
+			for (int i = 0; i <= (recipesToOrder.size() - 1) * 5; i++) {
+				AllGuiTextures.STOCK_KEEPER_REQUEST_BLUEPRINT_MIDDLE.render(graphics, xoffset, -3);
+				xoffset += 4;
+			}
+			AllGuiTextures.STOCK_KEEPER_REQUEST_BLUEPRINT_RIGHT.render(graphics, xoffset, -3);
+
+			for (int index = 0; index < recipesToOrder.size(); index++) {
+				CraftableBigItemStack craftableBigItemStack = recipesToOrder.get(index);
+				boolean isStackHovered = index == hoveredSlot.getSecond() && -2 == hoveredSlot.getFirst();
+				ms.pushPose();
+				ms.translate(index * colWidth, 0, 0);
+				renderItemEntry(graphics, 1, craftableBigItemStack, isStackHovered, true);
+				ms.popPose();
+			}
+
+			ms.popPose();
+		}
+
 		// Render tooltip of hovered item
-		if (hoveredSlot != noneHovered)
-			graphics.renderTooltip(font,
-				hoveredSlot.getFirst() == -1 ? itemsToOrder.get(hoveredSlot.getSecond()).stack
+		if (hoveredSlot != noneHovered) {
+			int slot = hoveredSlot.getSecond();
+			boolean recipeHovered = hoveredSlot.getFirst() == -2;
+			boolean orderHovered = hoveredSlot.getFirst() == -1;
+			BigItemStack entry = recipeHovered ? recipesToOrder.get(slot)
+				: orderHovered ? itemsToOrder.get(slot)
 					: displayedItems.get(hoveredSlot.getFirst())
-						.get(hoveredSlot.getSecond()).stack,
-				mouseX, mouseY);
+						.get(slot);
+
+			if (recipeHovered) {
+				ArrayList<Component> lines =
+					new ArrayList<>(entry.stack.getTooltipLines(minecraft.player, TooltipFlag.NORMAL));
+				if (lines.size() > 0)
+					lines.set(0, CreateLang.translateDirect("gui.stock_keeper.craft", lines.get(0)
+						.copy()));
+				graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
+			} else
+				graphics.renderTooltip(font, entry.stack, mouseX, mouseY);
+		}
 
 		// Render tooltip of lock option
 		if (currentScroll < 1 && isAdmin && mouseX > lockX && mouseX <= lockX + 15 && mouseY > lockY
@@ -655,6 +741,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			AllGuiTextures.STOCK_KEEPER_REQUEST_SLOT.render(graphics, 0, 0);
 		}
 
+		boolean craftable = entry instanceof CraftableBigItemStack;
 		PoseStack ms = graphics.pose();
 		ms.pushPose();
 
@@ -667,31 +754,26 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		ms.scale(scale, scale, scale);
 		ms.scale(scaleFromHover, scaleFromHover, scaleFromHover);
 		ms.translate(-18 / 2.0, -18 / 2.0, 0);
-		if (customCount != 0)
+		if (customCount != 0 || craftable)
 			GuiGameElement.of(entry.stack)
 				.render(graphics);
 		ms.popPose();
 
 		ms.pushPose();
 		ms.translate(0, 0, 190);
-		if (customCount != 0)
+		if (customCount != 0 || craftable)
 			graphics.renderItemDecorations(font, entry.stack, 1, 1, "");
 		ms.translate(0, 0, 10);
-		drawItemCount(graphics, entry.count, customCount);
+		if (customCount > 1 || craftable)
+			drawItemCount(graphics, entry.count, customCount);
 		ms.popPose();
 	}
 
 	private void drawItemCount(GuiGraphics graphics, int count, int customCount) {
-		boolean special = customCount != count;
-		if (!special && count == 1)
-			return;
-
 		count = customCount;
-
 		String text = count >= 1000000 ? (count / 1000000) + "m"
 			: count >= 10000 ? (count / 1000) + "k"
-				: count >= 1000 ? ((count * 10) / 1000) / 10f + "k"
-					: count >= 100 ? count + "" : count > 0 ? " " + count : "";// " \u2714";
+				: count >= 1000 ? ((count * 10) / 1000) / 10f + "k" : count >= 100 ? count + "" : " " + count;
 
 		if (count >= BigItemStack.INF)
 			text = "+";
@@ -699,22 +781,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		if (text.isBlank())
 			return;
 
-//		int lightOutline = 0x444444;
-//		int darkOutline = 0x222222;
-//		int middleColor = special ? 0xaaffaa : 0xdddddd;
-//		if (" \u2714".equals(text)) {
-//			for (int xi : Iterate.positiveAndNegative)
-//				graphics.drawString(font, CreateLang.text(text)
-//					.component(), 11 + xi, 10, xi < 0 ? lightOutline : darkOutline, false);
-//			for (int yi : Iterate.positiveAndNegative)
-//				graphics.drawString(font, CreateLang.text(text)
-//					.component(), 11, 10 + yi, yi < 0 ? lightOutline : darkOutline, false);
-//			graphics.drawString(font, CreateLang.text(text)
-//				.component(), 11, 10, middleColor, false);
-//			return;
-//		}
-
-		int x = -text.length() * 2;
+		int x = (int) Math.floor(-text.length() * 2.5);
 		for (char c : text.toCharArray()) {
 			int index = c - '0';
 			int xOffset = index * 6;
@@ -769,10 +836,12 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			if (entry.count > 0)
 				invalid.remove(entry);
 		}
+
 		itemsToOrder.removeAll(invalid);
 	}
 
 	private Couple<Integer> getHoveredSlot(int x, int y) {
+		x += 1;
 		if (x < itemsX || x >= itemsX + cols * colWidth)
 			return noneHovered;
 
@@ -784,7 +853,15 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			return Couple.create(-1, col);
 		}
 
-		if (y < guiTop + 16 || y > guiTop + windowHeight - 69)
+		// Ordered recipe is hovered
+		if (y >= orderY - 31 && y < orderY - 31 + rowHeight) {
+			int jeiX = getGuiLeft() + (windowWidth - colWidth * recipesToOrder.size()) / 2 + 1;
+			int col = Mth.floorDiv(x - jeiX, colWidth);
+			if (recipesToOrder.size() > col && col >= 0)
+				return Couple.create(-2, col);
+		}
+
+		if (y < getGuiTop() + 16 || y > getGuiTop() + windowHeight - 80)
 			return noneHovered;
 		if (!itemScroll.settled())
 			return noneHovered;
@@ -792,11 +869,12 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		int localY = y - itemsY;
 
 		for (int categoryIndex = 0; categoryIndex < displayedItems.size(); categoryIndex++) {
-			Pair<String, Integer> entry = categories.isEmpty() ? Pair.of("", 0) : categories.get(categoryIndex);
+			CategoryEntry entry = categories.isEmpty() ? new CategoryEntry(null, "", 0) : categories.get(categoryIndex);
+			if (entry.hidden)
+				continue;
 
-			int row =
-				Mth.floor((localY - (categories.isEmpty() ? 4 : rowHeight) - entry.getSecond()) / (float) rowHeight)
-					+ (int) itemScroll.getChaseTarget();
+			int row = Mth.floor((localY - (categories.isEmpty() ? 4 : rowHeight) - entry.y) / (float) rowHeight
+				+ itemScroll.getChaseTarget());
 
 			int col = (x - itemsX) / colWidth;
 			int slot = row * cols + col;
@@ -814,8 +892,8 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 	}
 
 	private boolean isConfirmHovered(int mouseX, int mouseY) {
-		int confirmX = guiLeft + 161;
-		int confirmY = guiTop + windowHeight - 39;
+		int confirmX = getGuiLeft() + 161;
+		int confirmY = getGuiTop() + windowHeight - 39;
 		int confirmW = 78;
 		int confirmH = 18;
 
@@ -853,11 +931,23 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			searchBox.setFocused(false);
 		}
 
+		boolean lmb = pButton == GLFW.GLFW_MOUSE_BUTTON_LEFT;
+		boolean rmb = pButton == GLFW.GLFW_MOUSE_BUTTON_RIGHT;
+
+		// Scroll bar
+		int barX = itemsX + cols * colWidth - 1;
+		if (getMaxScroll() > 0 && lmb && pMouseX > barX && pMouseX <= barX + 8 && pMouseY > getGuiTop() + 15
+			&& pMouseY < getGuiTop() + windowHeight - 82) {
+			scrollHandleActive = true;
+			if (minecraft.isWindowActive())
+				GLFW.glfwSetInputMode(minecraft.getWindow()
+					.getWindow(), 208897, GLFW.GLFW_CURSOR_HIDDEN);
+			return true;
+		}
+
 		Couple<Integer> hoveredSlot = getHoveredSlot((int) pMouseX, (int) pMouseY);
 
-		boolean lmb = pButton == 0;
-		boolean rmb = pButton == 1;
-
+		// Lock
 		if (isAdmin && itemScroll.getChaseTarget() == 0 && lmb && pMouseX > lockX && pMouseX <= lockX + 15
 			&& pMouseY > lockY && pMouseY <= lockY + 15) {
 			isLocked = !isLocked;
@@ -866,36 +956,66 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 			return true;
 		}
 
+		// Search
 		if (rmb && searchBox.isMouseOver(pMouseX, pMouseY)) {
 			searchBox.setValue("");
 			refreshSearchNextTick = true;
+			moveToTopNextTick = true;
 			searchBox.setFocused(true);
 			return true;
 		}
 
+		// Confirm
 		if (lmb && isConfirmHovered((int) pMouseX, (int) pMouseY)) {
 			sendIt();
 			return true;
 		}
 
+		// Category hiding
+		int localY = (int) (pMouseY - itemsY);
+		if (itemScroll.settled() && lmb && !categories.isEmpty() && pMouseX >= itemsX
+			&& pMouseX < itemsX + cols * colWidth && pMouseY >= getGuiTop() + 16
+			&& pMouseY <= getGuiTop() + windowHeight - 80) {
+			for (int categoryIndex = 0; categoryIndex < displayedItems.size(); categoryIndex++) {
+				CategoryEntry entry = categories.get(categoryIndex);
+				if (Mth.floor((localY - entry.y) / (float) rowHeight + itemScroll.getChaseTarget()) != 0)
+					continue;
+				int indexOf = entry.filterStack == null ? -1 : blockEntity.categories.indexOf(entry.filterStack);
+				hiddenCategories.remove(indexOf);
+				if (!entry.hidden)
+					hiddenCategories.add(indexOf);
+				refreshSearchNextTick = true;
+				moveToTopNextTick = false;
+				return true;
+			}
+		}
+
 		if (hoveredSlot == noneHovered || !lmb && !rmb)
 			return super.mouseClicked(pMouseX, pMouseY, pButton);
 
-		BigItemStack entry = hoveredSlot.getFirst() == -1 ? itemsToOrder.get(hoveredSlot.getSecond())
-			: displayedItems.get(hoveredSlot.getFirst())
-				.get(hoveredSlot.getSecond());
-
+		// Items
 		boolean orderClicked = hoveredSlot.getFirst() == -1;
-		ItemStack itemStack = entry.stack;
-		BigItemStack existingOrder = getOrderForItem(itemStack);
+		boolean recipeClicked = hoveredSlot.getFirst() == -2;
+		BigItemStack entry = recipeClicked ? recipesToOrder.get(hoveredSlot.getSecond())
+			: orderClicked ? itemsToOrder.get(hoveredSlot.getSecond())
+				: displayedItems.get(hoveredSlot.getFirst())
+					.get(hoveredSlot.getSecond());
 
+		ItemStack itemStack = entry.stack;
+		int transfer = hasShiftDown() ? itemStack.getMaxStackSize() : hasControlDown() ? 10 : 1;
+
+		if (recipeClicked && entry instanceof CraftableBigItemStack cbis) {
+			requestCraftable(cbis, rmb ? -transfer : transfer);
+			return true;
+		}
+
+		BigItemStack existingOrder = getOrderForItem(entry.stack);
 		if (existingOrder == null) {
 			if (itemsToOrder.size() >= cols || rmb)
 				return true;
 			itemsToOrder.add(existingOrder = new BigItemStack(itemStack.copyWithCount(1), 0));
 		}
 
-		int transfer = hasShiftDown() ? itemStack.getMaxStackSize() : hasControlDown() ? 10 : 1;
 		int current = existingOrder.count;
 
 		if (rmb || orderClicked) {
@@ -911,18 +1031,61 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 
 	@Override
 	public boolean mouseReleased(double pMouseX, double pMouseY, int pButton) {
+		if (pButton == GLFW.GLFW_MOUSE_BUTTON_LEFT && scrollHandleActive) {
+			scrollHandleActive = false;
+			if (minecraft.isWindowActive())
+				GLFW.glfwSetInputMode(minecraft.getWindow()
+					.getWindow(), 208897, GLFW.GLFW_CURSOR_NORMAL);
+		}
 		return super.mouseReleased(pMouseX, pMouseY, pButton);
 	}
 
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-		Couple<Integer> hoveredOrderSlot = getHoveredSlot((int) mouseX, (int) mouseY);
-		if (hoveredOrderSlot == noneHovered || hoveredOrderSlot.getFirst() != -1) {
+		Couple<Integer> hoveredSlot = getHoveredSlot((int) mouseX, (int) mouseY);
+		boolean noHover = hoveredSlot == noneHovered;
+
+		if (noHover || hoveredSlot.getFirst() >= 0 && !hasShiftDown() && getMaxScroll() != 0) {
 			int maxScroll = getMaxScroll();
 			int direction = (int) (Math.ceil(Math.abs(delta)) * -Math.signum(delta));
-			float newTarget = Mth.clamp(itemScroll.getChaseTarget() + direction, 0, maxScroll);
+			float newTarget = Mth.clamp(Math.round(itemScroll.getChaseTarget() + direction), 0, maxScroll);
 			itemScroll.chase(newTarget, 0.5, Chaser.EXP);
+			return true;
 		}
+
+		boolean orderClicked = hoveredSlot.getFirst() == -1;
+		boolean recipeClicked = hoveredSlot.getFirst() == -2;
+		BigItemStack entry = recipeClicked ? recipesToOrder.get(hoveredSlot.getSecond())
+			: orderClicked ? itemsToOrder.get(hoveredSlot.getSecond())
+				: displayedItems.get(hoveredSlot.getFirst())
+					.get(hoveredSlot.getSecond());
+
+		boolean remove = delta < 0;
+		int transfer = Mth.ceil(Math.abs(delta)) * (hasControlDown() ? 10 : 1);
+
+		if (recipeClicked && entry instanceof CraftableBigItemStack cbis) {
+			requestCraftable(cbis, remove ? -transfer : transfer);
+			return true;
+		}
+
+		BigItemStack existingOrder = orderClicked ? entry : getOrderForItem(entry.stack);
+		if (existingOrder == null) {
+			if (itemsToOrder.size() >= cols || remove)
+				return true;
+			itemsToOrder.add(existingOrder = new BigItemStack(entry.stack.copyWithCount(1), 0));
+		}
+
+		int current = existingOrder.count;
+
+		if (remove) {
+			existingOrder.count = current - transfer;
+			if (existingOrder.count <= 0)
+				itemsToOrder.remove(existingOrder);
+			return true;
+		}
+
+		existingOrder.count = current + Math.min(transfer, blockEntity.getLastClientsideStockSnapshotAsSummary()
+			.getCountOf(entry.stack) - current);
 		return true;
 	}
 
@@ -937,14 +1100,49 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 	private int getMaxScroll() {
 		int visibleHeight = windowHeight - 84;
 		int totalRows = 0;
-		for (List<BigItemStack> list : displayedItems) {
+		for (int i = 0; i < displayedItems.size(); i++) {
+			List<BigItemStack> list = displayedItems.get(i);
 			if (list.isEmpty())
 				continue;
 			totalRows++;
+			if (categories.size() > i && categories.get(i).hidden)
+				continue;
 			totalRows += Math.ceil(list.size() / (float) cols);
 		}
 		int maxScroll = (int) Math.max(0, (totalRows * rowHeight - visibleHeight + 50) / rowHeight);
 		return maxScroll;
+	}
+
+	@Override
+	public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
+		if (pButton != GLFW.GLFW_MOUSE_BUTTON_LEFT || !scrollHandleActive)
+			return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
+
+		Window window = minecraft.getWindow();
+		double scaleX = window.getGuiScaledWidth() / (double) window.getScreenWidth();
+		double scaleY = window.getGuiScaledHeight() / (double) window.getScreenHeight();
+
+		int windowH = windowHeight - 92;
+		int totalH = getMaxScroll() * rowHeight + windowH;
+		int barSize = Math.max(5, Mth.floor((float) windowH / totalH * (windowH - 2)));
+
+		int minY = getGuiTop() + 15 + barSize / 2;
+		int maxY = getGuiTop() + 15 + windowH - barSize / 2;
+
+		if (barSize >= windowH - 2)
+			return true;
+
+		int barX = itemsX + cols * colWidth;
+		double target = (pMouseY - getGuiTop() - 15 - barSize / 2.0) * totalH / (windowH - 2) / rowHeight;
+		itemScroll.chase(Mth.clamp(target, 0, getMaxScroll()), 0.8, Chaser.EXP);
+
+		if (minecraft.isWindowActive()) {
+			double forceX = (barX + 2) / scaleX;
+			double forceY = Mth.clamp(pMouseY, minY, maxY) / scaleY;
+			GLFW.glfwSetCursorPos(window.getWindow(), forceX, forceY);
+		}
+
+		return true;
 	}
 
 	@Override
@@ -954,8 +1152,10 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		String s = searchBox.getValue();
 		if (!searchBox.charTyped(pCodePoint, pModifiers))
 			return false;
-		if (!Objects.equals(s, searchBox.getValue()))
+		if (!Objects.equals(s, searchBox.getValue())) {
 			refreshSearchNextTick = true;
+			moveToTopNextTick = true;
+		}
 		return true;
 	}
 
@@ -978,16 +1178,20 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 		if (!searchBox.keyPressed(pKeyCode, pScanCode, pModifiers))
 			return searchBox.isFocused() && searchBox.isVisible() && pKeyCode != 256 ? true
 				: super.keyPressed(pKeyCode, pScanCode, pModifiers);
-		if (!Objects.equals(s, searchBox.getValue()))
+		if (!Objects.equals(s, searchBox.getValue())) {
 			refreshSearchNextTick = true;
+			moveToTopNextTick = true;
+		}
 		return true;
 	}
 
 	@Override
 	public void removed() {
-		AllPackets.getChannel()
-			.sendToServer(new PackageOrderRequestPacket(blockEntity.getBlockPos(),
-				new PackageOrder(Collections.emptyList()), addressBox.getValue(), false));
+		SimpleChannel channel = AllPackets.getChannel();
+		BlockPos pos = blockEntity.getBlockPos();
+		channel.sendToServer(new PackageOrderRequestPacket(pos, new PackageOrder(Collections.emptyList()),
+			addressBox.getValue(), false));
+		channel.sendToServer(new StockKeeperCategoryHidingPacket(pos, new ArrayList<>(hiddenCategories)));
 		super.removed();
 	}
 
@@ -1001,6 +1205,7 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 				addressBox.getValue(), encodeRequester));
 
 		itemsToOrder = new ArrayList<>();
+		recipesToOrder = new ArrayList<>();
 		blockEntity.ticksSinceLastUpdate = 10;
 		successTicks = 1;
 
@@ -1011,6 +1216,205 @@ public class StockTickerRequestScreen extends AbstractSimiScreen implements Scre
 	@Override
 	public boolean keyReleased(int pKeyCode, int pScanCode, int pModifiers) {
 		return super.keyReleased(pKeyCode, pScanCode, pModifiers);
+	}
+
+	@Override
+	public List<Rect2i> getExtraAreas() {
+		return extraAreas;
+	}
+
+	public void requestCraftable(CraftableBigItemStack cbis, int requestedDifference) {
+		boolean takeOrdersAway = requestedDifference < 0;
+		if (takeOrdersAway)
+			requestedDifference = Math.max(-cbis.count, requestedDifference);
+		if (requestedDifference == 0)
+			return;
+
+		InventorySummary availableItems = blockEntity.getLastClientsideStockSnapshotAsSummary();
+		Function<ItemStack, Integer> countModifier = stack -> {
+			BigItemStack ordered = getOrderForItem(stack);
+			return ordered == null ? 0 : -ordered.count;
+		};
+
+		if (takeOrdersAway) {
+			availableItems = new InventorySummary();
+			for (BigItemStack ordered : itemsToOrder)
+				availableItems.add(ordered.stack, ordered.count);
+			countModifier = stack -> 0;
+		}
+
+		Pair<Integer, List<List<BigItemStack>>> craftingResult =
+			maxCraftable(cbis, availableItems, countModifier, takeOrdersAway ? -1 : 9 - itemsToOrder.size());
+		int outputCount = cbis.getOutputCount(blockEntity.getLevel());
+		int adjustToRecipeAmount = Mth.ceil(Math.abs(requestedDifference) / (float) outputCount) * outputCount;
+		int maxCraftable = Math.min(adjustToRecipeAmount, craftingResult.getFirst());
+
+		if (maxCraftable == 0)
+			return;
+
+		cbis.count += takeOrdersAway ? -maxCraftable : maxCraftable;
+
+		List<List<BigItemStack>> validEntriesByIngredient = craftingResult.getSecond();
+		for (List<BigItemStack> list : validEntriesByIngredient) {
+			int remaining = maxCraftable / outputCount;
+			for (BigItemStack entry : list) {
+				if (remaining <= 0)
+					break;
+
+				int toTransfer = Math.min(remaining, entry.count);
+				BigItemStack order = getOrderForItem(entry.stack);
+
+				if (takeOrdersAway) {
+					if (order != null) {
+						order.count -= toTransfer;
+						if (order.count == 0)
+							itemsToOrder.remove(order);
+					}
+				} else {
+					if (order == null)
+						itemsToOrder.add(order = new BigItemStack(entry.stack.copyWithCount(1), 0));
+					order.count += toTransfer;
+				}
+
+				remaining -= entry.count;
+			}
+		}
+
+		updateCraftableAmounts();
+	}
+
+	private void updateCraftableAmounts() {
+		InventorySummary usedItems = new InventorySummary();
+		InventorySummary availableItems = new InventorySummary();
+
+		for (BigItemStack ordered : itemsToOrder)
+			availableItems.add(ordered.stack, ordered.count);
+
+		for (CraftableBigItemStack cbis : recipesToOrder) {
+			Pair<Integer, List<List<BigItemStack>>> craftingResult =
+				maxCraftable(cbis, availableItems, stack -> -usedItems.getCountOf(stack), -1);
+			int maxCraftable = craftingResult.getFirst();
+			List<List<BigItemStack>> validEntriesByIngredient = craftingResult.getSecond();
+			int outputCount = cbis.getOutputCount(blockEntity.getLevel());
+
+			// Only tweak amounts downward
+			cbis.count = Math.min(cbis.count, maxCraftable);
+
+			// Use ingredients up before checking next recipe
+			for (List<BigItemStack> list : validEntriesByIngredient) {
+				int remaining = cbis.count / outputCount;
+				for (BigItemStack entry : list) {
+					if (remaining <= 0)
+						break;
+					usedItems.add(entry.stack, Math.min(remaining, entry.count));
+					remaining -= entry.count;
+				}
+			}
+		}
+	}
+
+	private Pair<Integer, List<List<BigItemStack>>> maxCraftable(CraftableBigItemStack cbis, InventorySummary summary,
+		Function<ItemStack, Integer> countModifier, int newTypeLimit) {
+		List<Ingredient> ingredients = cbis.getIngredients();
+		List<List<BigItemStack>> validEntriesByIngredient = new ArrayList<>();
+		List<ItemStack> visited = new ArrayList<>();
+
+		for (Ingredient ingredient : ingredients) {
+			if (ingredient.isEmpty())
+				continue;
+			List<BigItemStack> valid = new ArrayList<>();
+			for (List<BigItemStack> list : summary.getItemMap()
+				.values())
+				Entries: for (BigItemStack entry : list) {
+					if (!ingredient.test(entry.stack))
+						continue;
+					BigItemStack asBis = new BigItemStack(entry.stack,
+						summary.getCountOf(entry.stack) + countModifier.apply(entry.stack));
+					if (asBis.count > 0)
+						valid.add(asBis);
+					for (ItemStack visitedStack : visited) {
+						if (!ItemHandlerHelper.canItemStacksStack(visitedStack, entry.stack))
+							continue;
+						visitedStack.grow(1);
+						continue Entries;
+					}
+					visited.add(entry.stack.copyWithCount(1));
+				}
+
+			if (valid.isEmpty())
+				return Pair.of(0, List.of());
+
+			Collections.sort(valid,
+				(bis1, bis2) -> -Integer.compare(summary.getCountOf(bis1.stack), summary.getCountOf(bis2.stack)));
+			validEntriesByIngredient.add(valid);
+		}
+
+		// Used new items may have to be trimmed
+		if (newTypeLimit != -1) {
+			int toRemove = (int) validEntriesByIngredient.stream()
+				.flatMap(l -> l.stream())
+				.filter(entry -> getOrderForItem(entry.stack) == null)
+				.distinct()
+				.count() - newTypeLimit;
+
+			for (int i = 0; i < toRemove; i++)
+				removeLeastEssentialItemStack(validEntriesByIngredient);
+		}
+
+		// Ingredients with shared items must divide counts
+		for (ItemStack visitedItem : visited) {
+			for (List<BigItemStack> list : validEntriesByIngredient) {
+				for (BigItemStack entry : list) {
+					if (!ItemHandlerHelper.canItemStacksStack(entry.stack, visitedItem))
+						continue;
+					entry.count = entry.count / visitedItem.getCount();
+				}
+			}
+		}
+
+		// Determine the bottlenecking ingredient
+		int minCount = Integer.MAX_VALUE;
+		for (List<BigItemStack> list : validEntriesByIngredient) {
+			int sum = 0;
+			for (BigItemStack entry : list)
+				sum += entry.count;
+			minCount = Math.min(sum, minCount);
+		}
+
+		if (minCount == 0)
+			return Pair.of(0, List.of());
+
+		int outputCount = cbis.getOutputCount(blockEntity.getLevel());
+		return Pair.of(minCount * outputCount, validEntriesByIngredient);
+	}
+
+	private void removeLeastEssentialItemStack(List<List<BigItemStack>> validIngredients) {
+		List<BigItemStack> longest = null;
+		int most = 0;
+		for (List<BigItemStack> list : validIngredients) {
+			int count = (int) list.stream()
+				.filter(entry -> getOrderForItem(entry.stack) == null)
+				.count();
+			if (longest != null && count <= most)
+				continue;
+			longest = list;
+			most = count;
+		}
+
+		if (longest.isEmpty())
+			return;
+
+		BigItemStack chosen = null;
+		for (int i = 0; i < longest.size(); i++) {
+			BigItemStack entry = longest.get(longest.size() - 1 - i);
+			if (getOrderForItem(entry.stack) != null)
+				continue;
+			chosen = entry;
+			break;
+		}
+
+		for (List<BigItemStack> list : validIngredients)
+			list.remove(chosen);
 	}
 
 }
