@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -64,10 +65,25 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockKeeperRequestMenu>
 	implements ScreenWithStencils {
+
+	public static class CategoryEntry {
+		ItemStack filterStack;
+		boolean hidden;
+		String name;
+		int y;
+
+		public CategoryEntry(ItemStack filterStack, String name, int y) {
+			this.filterStack = filterStack;
+			this.name = name;
+			hidden = false;
+			this.y = y;
+		}
+	};
 
 	private static final AllGuiTextures NUMBERS = AllGuiTextures.NUMBERS;
 	private static final AllGuiTextures HEADER = AllGuiTextures.STOCK_KEEPER_REQUEST_HEADER;
@@ -98,7 +114,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 	public List<List<BigItemStack>> currentItemSource;
 	public List<List<BigItemStack>> displayedItems;
-	public List<Pair<String, Integer>> categories;
+	public List<CategoryEntry> categories;
 
 	public List<BigItemStack> itemsToOrder;
 	public List<CraftableBigItemStack> recipesToOrder;
@@ -111,9 +127,13 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 	private boolean isAdmin;
 	private boolean isLocked;
+	private boolean scrollHandleActive;
 
 	public boolean refreshSearchNextTick;
+	public boolean moveToTopNextTick;
 	private List<Rect2i> extraAreas = Collections.emptyList();
+
+	private Set<Integer> hiddenCategories;
 
 	public StockKeeperRequestScreen(StockKeeperRequestMenu container, Inventory inv, Component title) {
 		super(container, inv, title);
@@ -133,9 +153,12 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		stockKeeper = new WeakReference<>(null);
 		blaze = new WeakReference<>(null);
 		refreshSearchNextTick = false;
+		moveToTopNextTick = false;
 		menu.screenReference = this;
+		hiddenCategories =
+			new HashSet<>(blockEntity.hiddenCategoriesByPlayer.getOrDefault(menu.player.getUUID(), List.of()));
 
-		itemToProgram = Minecraft.getInstance().player.getMainHandItem();
+		itemToProgram = menu.player.getMainHandItem();
 		encodeRequester =
 			AllItemTags.TABLE_CLOTHS.matches(itemToProgram) || AllBlocks.REDSTONE_REQUESTER.isIn(itemToProgram);
 
@@ -224,12 +247,20 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		}
 
 		categories = new ArrayList<>();
-		blockEntity.categories.forEach(stack -> categories.add(Pair.of(stack.isEmpty() ? ""
-			: stack.getHoverName()
-				.getString(),
-			0)));
-		categories.add(Pair.of(CreateLang.translate("gui.stock_keeper.unsorted_category")
-			.string(), 0));
+		for (int i = 0; i < blockEntity.categories.size(); i++) {
+			ItemStack stack = blockEntity.categories.get(i);
+			CategoryEntry entry = new CategoryEntry(stack, stack.isEmpty() ? ""
+				: stack.getHoverName()
+					.getString(),
+				0);
+			entry.hidden = hiddenCategories.contains(i);
+			categories.add(entry);
+		}
+
+		CategoryEntry unsorted = new CategoryEntry(null, CreateLang.translate("gui.stock_keeper.unsorted_category")
+			.string(), 0);
+		unsorted.hidden = hiddenCategories.contains(-1);
+		categories.add(unsorted);
 
 		String valueWithPrefix = searchBox.getValue();
 		boolean anyItemsInCategory = false;
@@ -240,8 +271,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 			int categoryY = 0;
 			for (int categoryIndex = 0; categoryIndex < currentItemSource.size(); categoryIndex++) {
-				categories.get(categoryIndex)
-					.setSecond(categoryY);
+				categories.get(categoryIndex).y = categoryY;
 				List<BigItemStack> displayedItemsInCategory = displayedItems.get(categoryIndex);
 				if (displayedItemsInCategory.isEmpty())
 					continue;
@@ -249,7 +279,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 					anyItemsInCategory = true;
 
 				categoryY += rowHeight;
-				categoryY += Math.ceil(displayedItemsInCategory.size() / (float) cols) * rowHeight;
+				if (!categories.get(categoryIndex).hidden)
+					categoryY += Math.ceil(displayedItemsInCategory.size() / (float) cols) * rowHeight;
 			}
 
 			if (!anyItemsInCategory)
@@ -273,8 +304,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		int categoryY = 0;
 		for (int categoryIndex = 0; categoryIndex < displayedItems.size(); categoryIndex++) {
 			List<BigItemStack> category = currentItemSource.get(categoryIndex);
-			categories.get(categoryIndex)
-				.setSecond(categoryY);
+			categories.get(categoryIndex).y = categoryY;
 
 			if (displayedItems.size() <= categoryIndex)
 				break;
@@ -314,11 +344,13 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 			if (displayedItemsInCategory.isEmpty())
 				continue;
-
 			if (categoryIndex < currentItemSource.size() - 1)
 				anyItemsInCategory = true;
+
 			categoryY += rowHeight;
-			categoryY += Math.ceil(displayedItemsInCategory.size() / (float) cols) * rowHeight;
+
+			if (!categories.get(categoryIndex).hidden)
+				categoryY += Math.ceil(displayedItemsInCategory.size() / (float) cols) * rowHeight;
 		}
 
 		if (!anyItemsInCategory)
@@ -355,10 +387,11 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 		if (refreshSearchNextTick) {
 			refreshSearchNextTick = false;
-			refreshSearchResults(true);
+			refreshSearchResults(moveToTopNextTick);
 		}
 
 		itemScroll.tickChaser();
+
 		if (Math.abs(itemScroll.getValue() - itemScroll.getChaseTarget()) < 1 / 16f)
 			itemScroll.setValue(itemScroll.getChaseTarget());
 
@@ -566,17 +599,18 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		// Items
 		for (int categoryIndex = 0; categoryIndex < displayedItems.size(); categoryIndex++) {
 			List<BigItemStack> category = displayedItems.get(categoryIndex);
-			int categoryY = categories.isEmpty() ? 0
-				: categories.get(categoryIndex)
-					.getSecond();
+			CategoryEntry categoryEntry = categories.isEmpty() ? null : categories.get(categoryIndex);
+			int categoryY = categories.isEmpty() ? 0 : categoryEntry.y;
 			if (category.isEmpty())
 				continue;
 
 			if (!categories.isEmpty()) {
-				graphics.drawString(font, categories.get(categoryIndex)
-					.getFirst(), itemsX + 5, itemsY + categoryY + 8, 0x4A2D31, false);
-				graphics.drawString(font, categories.get(categoryIndex)
-					.getFirst(), itemsX + 4, itemsY + categoryY + 7, 0xF8F8EC, false);
+				(categoryEntry.hidden ? AllGuiTextures.STOCK_KEEPER_CATEGORY_HIDDEN
+					: AllGuiTextures.STOCK_KEEPER_CATEGORY_SHOWN).render(graphics, itemsX, itemsY + categoryY + 6);
+				graphics.drawString(font, categoryEntry.name, itemsX + 10, itemsY + categoryY + 8, 0x4A2D31, false);
+				graphics.drawString(font, categoryEntry.name, itemsX + 9, itemsY + categoryY + 7, 0xF8F8EC, false);
+				if (categoryEntry.hidden)
+					continue;
 			}
 
 			for (int index = 0; index < category.size(); index++) {
@@ -747,21 +781,6 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		if (text.isBlank())
 			return;
 
-//		int lightOutline = 0x444444;
-//		int darkOutline = 0x222222;
-//		int middleColor = special ? 0xaaffaa : 0xdddddd;
-//		if (" \u2714".equals(text)) {
-//			for (int xi : Iterate.positiveAndNegative)
-//				graphics.drawString(font, CreateLang.text(text)
-//					.component(), 11 + xi, 10, xi < 0 ? lightOutline : darkOutline, false);
-//			for (int yi : Iterate.positiveAndNegative)
-//				graphics.drawString(font, CreateLang.text(text)
-//					.component(), 11, 10 + yi, yi < 0 ? lightOutline : darkOutline, false);
-//			graphics.drawString(font, CreateLang.text(text)
-//				.component(), 11, 10, middleColor, false);
-//			return;
-//		}
-
 		int x = (int) Math.floor(-text.length() * 2.5);
 		for (char c : text.toCharArray()) {
 			int index = c - '0';
@@ -819,13 +838,10 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		}
 
 		itemsToOrder.removeAll(invalid);
-		if (invalid.stream()
-			.anyMatch(i -> i instanceof CraftableBigItemStack)) {
-			refreshSearchNextTick = true;
-		}
 	}
 
 	private Couple<Integer> getHoveredSlot(int x, int y) {
+		x += 1;
 		if (x < itemsX || x >= itemsX + cols * colWidth)
 			return noneHovered;
 
@@ -853,11 +869,12 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		int localY = y - itemsY;
 
 		for (int categoryIndex = 0; categoryIndex < displayedItems.size(); categoryIndex++) {
-			Pair<String, Integer> entry = categories.isEmpty() ? Pair.of("", 0) : categories.get(categoryIndex);
+			CategoryEntry entry = categories.isEmpty() ? new CategoryEntry(null, "", 0) : categories.get(categoryIndex);
+			if (entry.hidden)
+				continue;
 
-			int row =
-				Mth.floor((localY - (categories.isEmpty() ? 4 : rowHeight) - entry.getSecond()) / (float) rowHeight)
-					+ (int) itemScroll.getChaseTarget();
+			int row = Mth.floor((localY - (categories.isEmpty() ? 4 : rowHeight) - entry.y) / (float) rowHeight
+				+ itemScroll.getChaseTarget());
 
 			int col = (x - itemsX) / colWidth;
 			int slot = row * cols + col;
@@ -914,11 +931,23 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			searchBox.setFocused(false);
 		}
 
+		boolean lmb = pButton == GLFW.GLFW_MOUSE_BUTTON_LEFT;
+		boolean rmb = pButton == GLFW.GLFW_MOUSE_BUTTON_RIGHT;
+
+		// Scroll bar
+		int barX = itemsX + cols * colWidth - 1;
+		if (getMaxScroll() > 0 && lmb && pMouseX > barX && pMouseX <= barX + 8 && pMouseY > getGuiTop() + 15
+			&& pMouseY < getGuiTop() + windowHeight - 82) {
+			scrollHandleActive = true;
+			if (minecraft.isWindowActive())
+				GLFW.glfwSetInputMode(minecraft.getWindow()
+					.getWindow(), 208897, GLFW.GLFW_CURSOR_HIDDEN);
+			return true;
+		}
+
 		Couple<Integer> hoveredSlot = getHoveredSlot((int) pMouseX, (int) pMouseY);
 
-		boolean lmb = pButton == 0;
-		boolean rmb = pButton == 1;
-
+		// Lock
 		if (isAdmin && itemScroll.getChaseTarget() == 0 && lmb && pMouseX > lockX && pMouseX <= lockX + 15
 			&& pMouseY > lockY && pMouseY <= lockY + 15) {
 			isLocked = !isLocked;
@@ -927,21 +956,44 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			return true;
 		}
 
+		// Search
 		if (rmb && searchBox.isMouseOver(pMouseX, pMouseY)) {
 			searchBox.setValue("");
 			refreshSearchNextTick = true;
+			moveToTopNextTick = true;
 			searchBox.setFocused(true);
 			return true;
 		}
 
+		// Confirm
 		if (lmb && isConfirmHovered((int) pMouseX, (int) pMouseY)) {
 			sendIt();
 			return true;
 		}
 
+		// Category hiding
+		int localY = (int) (pMouseY - itemsY);
+		if (itemScroll.settled() && lmb && !categories.isEmpty() && pMouseX >= itemsX
+			&& pMouseX < itemsX + cols * colWidth && pMouseY >= getGuiTop() + 16
+			&& pMouseY <= getGuiTop() + windowHeight - 80) {
+			for (int categoryIndex = 0; categoryIndex < displayedItems.size(); categoryIndex++) {
+				CategoryEntry entry = categories.get(categoryIndex);
+				if (Mth.floor((localY - entry.y) / (float) rowHeight + itemScroll.getChaseTarget()) != 0)
+					continue;
+				int indexOf = entry.filterStack == null ? -1 : blockEntity.categories.indexOf(entry.filterStack);
+				hiddenCategories.remove(indexOf);
+				if (!entry.hidden)
+					hiddenCategories.add(indexOf);
+				refreshSearchNextTick = true;
+				moveToTopNextTick = false;
+				return true;
+			}
+		}
+
 		if (hoveredSlot == noneHovered || !lmb && !rmb)
 			return super.mouseClicked(pMouseX, pMouseY, pButton);
 
+		// Items
 		boolean orderClicked = hoveredSlot.getFirst() == -1;
 		boolean recipeClicked = hoveredSlot.getFirst() == -2;
 		BigItemStack entry = recipeClicked ? recipesToOrder.get(hoveredSlot.getSecond())
@@ -979,6 +1031,12 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 	@Override
 	public boolean mouseReleased(double pMouseX, double pMouseY, int pButton) {
+		if (pButton == GLFW.GLFW_MOUSE_BUTTON_LEFT && scrollHandleActive) {
+			scrollHandleActive = false;
+			if (minecraft.isWindowActive())
+				GLFW.glfwSetInputMode(minecraft.getWindow()
+					.getWindow(), 208897, GLFW.GLFW_CURSOR_NORMAL);
+		}
 		return super.mouseReleased(pMouseX, pMouseY, pButton);
 	}
 
@@ -990,7 +1048,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		if (noHover || hoveredSlot.getFirst() >= 0 && !hasShiftDown() && getMaxScroll() != 0) {
 			int maxScroll = getMaxScroll();
 			int direction = (int) (Math.ceil(Math.abs(delta)) * -Math.signum(delta));
-			float newTarget = Mth.clamp(itemScroll.getChaseTarget() + direction, 0, maxScroll);
+			float newTarget = Mth.clamp(Math.round(itemScroll.getChaseTarget() + direction), 0, maxScroll);
 			itemScroll.chase(newTarget, 0.5, Chaser.EXP);
 			return true;
 		}
@@ -1042,14 +1100,49 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 	private int getMaxScroll() {
 		int visibleHeight = windowHeight - 84;
 		int totalRows = 0;
-		for (List<BigItemStack> list : displayedItems) {
+		for (int i = 0; i < displayedItems.size(); i++) {
+			List<BigItemStack> list = displayedItems.get(i);
 			if (list.isEmpty())
 				continue;
 			totalRows++;
+			if (categories.size() > i && categories.get(i).hidden)
+				continue;
 			totalRows += Math.ceil(list.size() / (float) cols);
 		}
 		int maxScroll = (int) Math.max(0, (totalRows * rowHeight - visibleHeight + 50) / rowHeight);
 		return maxScroll;
+	}
+
+	@Override
+	public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
+		if (pButton != GLFW.GLFW_MOUSE_BUTTON_LEFT || !scrollHandleActive)
+			return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
+
+		Window window = minecraft.getWindow();
+		double scaleX = window.getGuiScaledWidth() / (double) window.getScreenWidth();
+		double scaleY = window.getGuiScaledHeight() / (double) window.getScreenHeight();
+
+		int windowH = windowHeight - 92;
+		int totalH = getMaxScroll() * rowHeight + windowH;
+		int barSize = Math.max(5, Mth.floor((float) windowH / totalH * (windowH - 2)));
+
+		int minY = getGuiTop() + 15 + barSize / 2;
+		int maxY = getGuiTop() + 15 + windowH - barSize / 2;
+
+		if (barSize >= windowH - 2)
+			return true;
+
+		int barX = itemsX + cols * colWidth;
+		double target = (pMouseY - getGuiTop() - 15 - barSize / 2.0) * totalH / (windowH - 2) / rowHeight;
+		itemScroll.chase(Mth.clamp(target, 0, getMaxScroll()), 0.8, Chaser.EXP);
+
+		if (minecraft.isWindowActive()) {
+			double forceX = (barX + 2) / scaleX;
+			double forceY = Mth.clamp(pMouseY, minY, maxY) / scaleY;
+			GLFW.glfwSetCursorPos(window.getWindow(), forceX, forceY);
+		}
+
+		return true;
 	}
 
 	@Override
@@ -1059,8 +1152,10 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		String s = searchBox.getValue();
 		if (!searchBox.charTyped(pCodePoint, pModifiers))
 			return false;
-		if (!Objects.equals(s, searchBox.getValue()))
+		if (!Objects.equals(s, searchBox.getValue())) {
 			refreshSearchNextTick = true;
+			moveToTopNextTick = true;
+		}
 		return true;
 	}
 
@@ -1083,16 +1178,20 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		if (!searchBox.keyPressed(pKeyCode, pScanCode, pModifiers))
 			return searchBox.isFocused() && searchBox.isVisible() && pKeyCode != 256 ? true
 				: super.keyPressed(pKeyCode, pScanCode, pModifiers);
-		if (!Objects.equals(s, searchBox.getValue()))
+		if (!Objects.equals(s, searchBox.getValue())) {
 			refreshSearchNextTick = true;
+			moveToTopNextTick = true;
+		}
 		return true;
 	}
 
 	@Override
 	public void removed() {
-		AllPackets.getChannel()
-			.sendToServer(new PackageOrderRequestPacket(blockEntity.getBlockPos(),
-				new PackageOrder(Collections.emptyList()), addressBox.getValue(), false));
+		SimpleChannel channel = AllPackets.getChannel();
+		BlockPos pos = blockEntity.getBlockPos();
+		channel.sendToServer(new PackageOrderRequestPacket(pos, new PackageOrder(Collections.emptyList()),
+			addressBox.getValue(), false));
+		channel.sendToServer(new StockKeeperCategoryHidingPacket(pos, new ArrayList<>(hiddenCategories)));
 		super.removed();
 	}
 

@@ -178,6 +178,8 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	STOCK_KEEPER_REQUEST_SCROLL_MID("stock_keeper", 219, 197, 5, 9),
 	STOCK_KEEPER_REQUEST_SCROLL_BOT("stock_keeper", 219, 207, 5, 5),
 	STOCK_KEEPER_REQUEST_BG("stock_keeper", 37, 48, 182, 20),
+	STOCK_KEEPER_CATEGORY_HIDDEN("stock_keeper", 143, 176, 8, 8),
+	STOCK_KEEPER_CATEGORY_SHOWN("stock_keeper", 151, 176, 8, 8),
 	NUMBERS("stock_keeper", 48, 176, 5, 8),
 
 	STOCK_KEEPER_CATEGORY("stock_keeper_categories", 210, 190),
