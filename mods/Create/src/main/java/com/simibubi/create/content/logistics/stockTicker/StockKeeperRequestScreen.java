@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
@@ -59,6 +60,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -99,7 +101,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 	public List<Pair<String, Integer>> categories;
 
 	public List<BigItemStack> itemsToOrder;
-	public List<BigItemStack> recipesToOrder;
+	public List<CraftableBigItemStack> recipesToOrder;
 
 	WeakReference<LivingEntity> stockKeeper;
 	WeakReference<BlazeBurnerBlockEntity> blaze;
@@ -221,41 +223,29 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			return;
 		}
 
-		boolean hasCraftables = hasCraftables();
-
 		categories = new ArrayList<>();
-		if (hasCraftables)
-			categories.add(Pair.of(CreateLang.translate("gui.stock_keeper.jei_category")
-				.string(), 0));
-
 		blockEntity.categories.forEach(stack -> categories.add(Pair.of(stack.isEmpty() ? ""
 			: stack.getHoverName()
 				.getString(),
 			0)));
-		categories.add(Pair.of(CreateLang
-			.translate(blockEntity.categories.isEmpty() ? "gui.stock_keeper.storage_category"
-				: "gui.stock_keeper.unsorted_category")
+		categories.add(Pair.of(CreateLang.translate("gui.stock_keeper.unsorted_category")
 			.string(), 0));
 
 		String valueWithPrefix = searchBox.getValue();
 		boolean anyItemsInCategory = false;
-		int extraCategories = hasCraftables ? 1 : 0;
 
 		// Nothing is being filtered out
 		if (valueWithPrefix.isBlank()) {
 			displayedItems = new ArrayList<>(currentItemSource);
 
-			if (hasCraftables)
-				displayedItems.add(0, getCraftables());
-
 			int categoryY = 0;
-			for (int categoryIndex = 0; categoryIndex < currentItemSource.size() + extraCategories; categoryIndex++) {
+			for (int categoryIndex = 0; categoryIndex < currentItemSource.size(); categoryIndex++) {
 				categories.get(categoryIndex)
 					.setSecond(categoryY);
 				List<BigItemStack> displayedItemsInCategory = displayedItems.get(categoryIndex);
 				if (displayedItemsInCategory.isEmpty())
 					continue;
-				if (categoryIndex - extraCategories < currentItemSource.size() - 1)
+				if (categoryIndex < currentItemSource.size() - 1)
 					anyItemsInCategory = true;
 
 				categoryY += rowHeight;
@@ -266,6 +256,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 				categories.clear();
 
 			clampScrollBar();
+			updateCraftableAmounts();
 			return;
 		}
 
@@ -279,13 +270,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		displayedItems = new ArrayList<>();
 		currentItemSource.forEach($ -> displayedItems.add(new ArrayList<>()));
 
-		if (hasCraftables)
-			displayedItems.add(new ArrayList<>());
-
 		int categoryY = 0;
 		for (int categoryIndex = 0; categoryIndex < displayedItems.size(); categoryIndex++) {
-			List<BigItemStack> category = categoryIndex - extraCategories < 0 ? getCraftables()
-				: currentItemSource.get(categoryIndex - extraCategories);
+			List<BigItemStack> category = currentItemSource.get(categoryIndex);
 			categories.get(categoryIndex)
 				.setSecond(categoryY);
 
@@ -328,7 +315,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			if (displayedItemsInCategory.isEmpty())
 				continue;
 
-			if (categoryIndex - extraCategories < currentItemSource.size() - 1)
+			if (categoryIndex < currentItemSource.size() - 1)
 				anyItemsInCategory = true;
 			categoryY += rowHeight;
 			categoryY += Math.ceil(displayedItemsInCategory.size() / (float) cols) * rowHeight;
@@ -338,6 +325,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			categories.clear();
 
 		clampScrollBar();
+		updateCraftableAmounts();
 	}
 
 	@Override
@@ -637,13 +625,50 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			ms.popPose();
 		}
 
+		// Render JEI imported
+		if (recipesToOrder.size() > 0) {
+			int jeiX = x + (windowWidth - colWidth * recipesToOrder.size()) / 2 + 1;
+			int jeiY = orderY - 31;
+			ms.pushPose();
+			ms.translate(jeiX, jeiY, 200);
+			int xoffset = -3;
+			AllGuiTextures.STOCK_KEEPER_REQUEST_BLUEPRINT_LEFT.render(graphics, xoffset, -3);
+			xoffset += 10;
+			for (int i = 0; i <= (recipesToOrder.size() - 1) * 5; i++) {
+				AllGuiTextures.STOCK_KEEPER_REQUEST_BLUEPRINT_MIDDLE.render(graphics, xoffset, -3);
+				xoffset += 4;
+			}
+			AllGuiTextures.STOCK_KEEPER_REQUEST_BLUEPRINT_RIGHT.render(graphics, xoffset, -3);
+
+			for (int index = 0; index < recipesToOrder.size(); index++) {
+				CraftableBigItemStack craftableBigItemStack = recipesToOrder.get(index);
+				boolean isStackHovered = index == hoveredSlot.getSecond() && -2 == hoveredSlot.getFirst();
+				ms.pushPose();
+				ms.translate(index * colWidth, 0, 0);
+				renderItemEntry(graphics, 1, craftableBigItemStack, isStackHovered, true);
+				ms.popPose();
+			}
+
+			ms.popPose();
+		}
+
 		// Render tooltip of hovered item
 		if (hoveredSlot != noneHovered) {
-			BigItemStack entry = hoveredSlot.getFirst() == -1 ? itemsToOrder.get(hoveredSlot.getSecond())
-				: displayedItems.get(hoveredSlot.getFirst())
-					.get(hoveredSlot.getSecond());
-			if (entry instanceof CraftableBigItemStack cbis) {
-				// TODO: what is being used to craft this?
+			int slot = hoveredSlot.getSecond();
+			boolean recipeHovered = hoveredSlot.getFirst() == -2;
+			boolean orderHovered = hoveredSlot.getFirst() == -1;
+			BigItemStack entry = recipeHovered ? recipesToOrder.get(slot)
+				: orderHovered ? itemsToOrder.get(slot)
+					: displayedItems.get(hoveredSlot.getFirst())
+						.get(slot);
+
+			if (recipeHovered) {
+				ArrayList<Component> lines =
+					new ArrayList<>(entry.stack.getTooltipLines(minecraft.player, TooltipFlag.NORMAL));
+				if (lines.size() > 0)
+					lines.set(0, CreateLang.translateDirect("gui.stock_keeper.craft", lines.get(0)
+						.copy()));
+				graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
 			} else
 				graphics.renderTooltip(font, entry.stack, mouseX, mouseY);
 		}
@@ -676,16 +701,13 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 		int customCount = entry.count;
 		if (!isRenderingOrders) {
-			BigItemStack order = getOrderForItem(entry);
+			BigItemStack order = getOrderForItem(entry.stack);
 			if (order != null && entry.count < BigItemStack.INF)
 				customCount -= order.count;
 			AllGuiTextures.STOCK_KEEPER_REQUEST_SLOT.render(graphics, 0, 0);
 		}
 
-		if (entry instanceof CraftableBigItemStack)
-			(isRenderingOrders ? AllGuiTextures.STOCK_KEEPER_REQUEST_ORDERED_CRAFTING_SLOT
-				: AllGuiTextures.STOCK_KEEPER_REQUEST_CRAFTING_SLOT).render(graphics, 0, 0);
-
+		boolean craftable = entry instanceof CraftableBigItemStack;
 		PoseStack ms = graphics.pose();
 		ms.pushPose();
 
@@ -698,31 +720,26 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		ms.scale(scale, scale, scale);
 		ms.scale(scaleFromHover, scaleFromHover, scaleFromHover);
 		ms.translate(-18 / 2.0, -18 / 2.0, 0);
-		if (customCount != 0)
+		if (customCount != 0 || craftable)
 			GuiGameElement.of(entry.stack)
 				.render(graphics);
 		ms.popPose();
 
 		ms.pushPose();
 		ms.translate(0, 0, 190);
-		if (customCount != 0)
+		if (customCount != 0 || craftable)
 			graphics.renderItemDecorations(font, entry.stack, 1, 1, "");
 		ms.translate(0, 0, 10);
-		drawItemCount(graphics, entry.count, customCount);
+		if (customCount > 1 || craftable)
+			drawItemCount(graphics, entry.count, customCount);
 		ms.popPose();
 	}
 
 	private void drawItemCount(GuiGraphics graphics, int count, int customCount) {
-		boolean special = customCount != count;
-		if (!special && count == 1)
-			return;
-
 		count = customCount;
-
 		String text = count >= 1000000 ? (count / 1000000) + "m"
 			: count >= 10000 ? (count / 1000) + "k"
-				: count >= 1000 ? ((count * 10) / 1000) / 10f + "k"
-					: count >= 100 ? count + "" : count > 0 ? " " + count : "";// " \u2714";
+				: count >= 1000 ? ((count * 10) / 1000) / 10f + "k" : count >= 100 ? count + "" : " " + count;
 
 		if (count >= BigItemStack.INF)
 			text = "+";
@@ -781,16 +798,10 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 	}
 
 	@Nullable
-	private BigItemStack getOrderForItem(BigItemStack stack) {
-		for (BigItemStack entry : itemsToOrder) {
-			if (entry instanceof CraftableBigItemStack != stack instanceof CraftableBigItemStack)
-				continue;
-			if (entry instanceof CraftableBigItemStack c1 && stack instanceof CraftableBigItemStack c2
-				&& c1.recipe != c2.recipe)
-				continue;
-			if (ItemHandlerHelper.canItemStacksStack(stack.stack, entry.stack))
+	private BigItemStack getOrderForItem(ItemStack stack) {
+		for (BigItemStack entry : itemsToOrder)
+			if (ItemHandlerHelper.canItemStacksStack(stack, entry.stack))
 				return entry;
-		}
 		return null;
 	}
 
@@ -802,13 +813,6 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			return;
 		}
 		for (BigItemStack entry : itemsToOrder) {
-			if (entry instanceof CraftableBigItemStack cbis) {
-				for (BigItemStack entry2 : recipesToOrder)
-					if (entry2 instanceof CraftableBigItemStack cbis2 && cbis.recipe == cbis2.recipe)
-						cbis.count = Math.min(cbis2.count, cbis.count);
-				invalid.remove(cbis);
-				continue;
-			}
 			entry.count = Math.min(summary.getCountOf(entry.stack), entry.count);
 			if (entry.count > 0)
 				invalid.remove(entry);
@@ -831,6 +835,14 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			if (itemsToOrder.size() <= col || col < 0)
 				return noneHovered;
 			return Couple.create(-1, col);
+		}
+
+		// Ordered recipe is hovered
+		if (y >= orderY - 31 && y < orderY - 31 + rowHeight) {
+			int jeiX = getGuiLeft() + (windowWidth - colWidth * recipesToOrder.size()) / 2 + 1;
+			int col = Mth.floorDiv(x - jeiX, colWidth);
+			if (recipesToOrder.size() > col && col >= 0)
+				return Couple.create(-2, col);
 		}
 
 		if (y < getGuiTop() + 16 || y > getGuiTop() + windowHeight - 80)
@@ -930,32 +942,26 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		if (hoveredSlot == noneHovered || !lmb && !rmb)
 			return super.mouseClicked(pMouseX, pMouseY, pButton);
 
-		BigItemStack entry = hoveredSlot.getFirst() == -1 ? itemsToOrder.get(hoveredSlot.getSecond())
-			: displayedItems.get(hoveredSlot.getFirst())
-				.get(hoveredSlot.getSecond());
-
 		boolean orderClicked = hoveredSlot.getFirst() == -1;
-		ItemStack itemStack = entry.stack;
-		BigItemStack existingOrder = getOrderForItem(entry);
+		boolean recipeClicked = hoveredSlot.getFirst() == -2;
+		BigItemStack entry = recipeClicked ? recipesToOrder.get(hoveredSlot.getSecond())
+			: orderClicked ? itemsToOrder.get(hoveredSlot.getSecond())
+				: displayedItems.get(hoveredSlot.getFirst())
+					.get(hoveredSlot.getSecond());
 
+		ItemStack itemStack = entry.stack;
+		int transfer = hasShiftDown() ? itemStack.getMaxStackSize() : hasControlDown() ? 10 : 1;
+
+		if (recipeClicked && entry instanceof CraftableBigItemStack cbis) {
+			requestCraftable(cbis, rmb ? -transfer : transfer);
+			return true;
+		}
+
+		BigItemStack existingOrder = getOrderForItem(entry.stack);
 		if (existingOrder == null) {
 			if (itemsToOrder.size() >= cols || rmb)
 				return true;
-			if (entry instanceof CraftableBigItemStack cbis) {
-				itemsToOrder.add(existingOrder = new CraftableBigItemStack(itemStack.copyWithCount(1), cbis.recipe));
-				existingOrder.count = 0;
-			} else
-				itemsToOrder.add(existingOrder = new BigItemStack(itemStack.copyWithCount(1), 0));
-		}
-
-		boolean isCrafted = existingOrder instanceof CraftableBigItemStack;
-		int transfer = hasShiftDown() ? itemStack.getMaxStackSize() : hasControlDown() ? 10 : 1;
-
-		if (existingOrder instanceof CraftableBigItemStack cbis) {
-			int increments = cbis.recipe.getResultItem(blockEntity.getLevel()
-				.registryAccess())
-				.getCount();
-			transfer = Mth.ceil(transfer / (float) increments) * increments;
+			itemsToOrder.add(existingOrder = new BigItemStack(itemStack.copyWithCount(1), 0));
 		}
 
 		int current = existingOrder.count;
@@ -964,14 +970,10 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			existingOrder.count = current - transfer;
 			if (existingOrder.count <= 0)
 				itemsToOrder.remove(existingOrder);
-			if (isCrafted)
-				refreshSearchResults(false);
 			return true;
 		}
 
 		existingOrder.count = current + Math.min(transfer, entry.count - current);
-		if (isCrafted)
-			refreshSearchResults(false);
 		return true;
 	}
 
@@ -982,13 +984,50 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-		Couple<Integer> hoveredOrderSlot = getHoveredSlot((int) mouseX, (int) mouseY);
-		if (hoveredOrderSlot == noneHovered || hoveredOrderSlot.getFirst() != -1) {
+		Couple<Integer> hoveredSlot = getHoveredSlot((int) mouseX, (int) mouseY);
+		boolean noHover = hoveredSlot == noneHovered;
+
+		if (noHover || hoveredSlot.getFirst() >= 0 && !hasShiftDown() && getMaxScroll() != 0) {
 			int maxScroll = getMaxScroll();
 			int direction = (int) (Math.ceil(Math.abs(delta)) * -Math.signum(delta));
 			float newTarget = Mth.clamp(itemScroll.getChaseTarget() + direction, 0, maxScroll);
 			itemScroll.chase(newTarget, 0.5, Chaser.EXP);
+			return true;
 		}
+
+		boolean orderClicked = hoveredSlot.getFirst() == -1;
+		boolean recipeClicked = hoveredSlot.getFirst() == -2;
+		BigItemStack entry = recipeClicked ? recipesToOrder.get(hoveredSlot.getSecond())
+			: orderClicked ? itemsToOrder.get(hoveredSlot.getSecond())
+				: displayedItems.get(hoveredSlot.getFirst())
+					.get(hoveredSlot.getSecond());
+
+		boolean remove = delta < 0;
+		int transfer = Mth.ceil(Math.abs(delta)) * (hasControlDown() ? 10 : 1);
+
+		if (recipeClicked && entry instanceof CraftableBigItemStack cbis) {
+			requestCraftable(cbis, remove ? -transfer : transfer);
+			return true;
+		}
+
+		BigItemStack existingOrder = orderClicked ? entry : getOrderForItem(entry.stack);
+		if (existingOrder == null) {
+			if (itemsToOrder.size() >= cols || remove)
+				return true;
+			itemsToOrder.add(existingOrder = new BigItemStack(entry.stack.copyWithCount(1), 0));
+		}
+
+		int current = existingOrder.count;
+
+		if (remove) {
+			existingOrder.count = current - transfer;
+			if (existingOrder.count <= 0)
+				itemsToOrder.remove(existingOrder);
+			return true;
+		}
+
+		existingOrder.count = current + Math.min(transfer, blockEntity.getLastClientsideStockSnapshotAsSummary()
+			.getCountOf(entry.stack) - current);
 		return true;
 	}
 
@@ -1062,8 +1101,6 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		if (itemsToOrder.isEmpty())
 			return;
 
-		// TODO convert craftable to their respective ingredients
-
 		AllPackets.getChannel()
 			.sendToServer(new PackageOrderRequestPacket(blockEntity.getBlockPos(), new PackageOrder(itemsToOrder),
 				addressBox.getValue(), encodeRequester));
@@ -1087,108 +1124,86 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		return extraAreas;
 	}
 
-	private boolean hasCraftables() {
-		return !recipesToOrder.isEmpty();
-	}
-
-	private ArrayList<BigItemStack> getCraftables() {
-		ArrayList<BigItemStack> list = new ArrayList<>();
-		for (BigItemStack ordered : recipesToOrder)
-			if (ordered instanceof CraftableBigItemStack cbis)
-				list.add(new CraftableBigItemStack(cbis.stack, cbis.recipe));
-		updateCraftableAmounts(list);
-		return list;
-	}
-
-	private void updateCraftableAmounts(List<BigItemStack> craftables) {
-		InventorySummary usedItems = new InventorySummary();
-		InventorySummary availableItems = blockEntity.lastClientsideStockSnapshotAsSummary;
-		if (availableItems == null)
+	public void requestCraftable(CraftableBigItemStack cbis, int requestedDifference) {
+		boolean takeOrdersAway = requestedDifference < 0;
+		if (takeOrdersAway)
+			requestedDifference = Math.max(-cbis.count, requestedDifference);
+		if (requestedDifference == 0)
 			return;
 
-		List<BigItemStack> craftablesOrderedFirst = new ArrayList<>();
-		for (BigItemStack bis : itemsToOrder)
-			if (bis instanceof CraftableBigItemStack cbis)
-				for (BigItemStack bis2 : craftables)
-					if (bis2 instanceof CraftableBigItemStack cbis2 && cbis.recipe == cbis2.recipe)
-						craftablesOrderedFirst.add(cbis2);
+		InventorySummary availableItems = blockEntity.getLastClientsideStockSnapshotAsSummary();
+		Function<ItemStack, Integer> countModifier = stack -> {
+			BigItemStack ordered = getOrderForItem(stack);
+			return ordered == null ? 0 : -ordered.count;
+		};
 
-		for (BigItemStack bis : craftables)
-			if (!craftablesOrderedFirst.contains(bis))
-				craftablesOrderedFirst.add(bis);
+		if (takeOrdersAway) {
+			availableItems = new InventorySummary();
+			for (BigItemStack ordered : itemsToOrder)
+				availableItems.add(ordered.stack, ordered.count);
+			countModifier = stack -> 0;
+		}
 
-		Orders: for (BigItemStack ordered : craftablesOrderedFirst) {
-			if (!(ordered instanceof CraftableBigItemStack cbis))
-				continue;
+		Pair<Integer, List<List<BigItemStack>>> craftingResult =
+			maxCraftable(cbis, availableItems, countModifier, takeOrdersAway ? -1 : 9 - itemsToOrder.size());
+		int outputCount = cbis.getOutputCount(blockEntity.getLevel());
+		int adjustToRecipeAmount = Mth.ceil(Math.abs(requestedDifference) / (float) outputCount) * outputCount;
+		int maxCraftable = Math.min(adjustToRecipeAmount, craftingResult.getFirst());
 
-			List<Ingredient> ingredients = cbis.getIngredients();
-			List<List<BigItemStack>> validEntriesByIngredient = new ArrayList<>();
-			List<ItemStack> visited = new ArrayList<>();
+		if (maxCraftable == 0)
+			return;
 
-			for (Ingredient ingredient : ingredients) {
-				if (ingredient.isEmpty())
-					continue;
-				List<BigItemStack> valid = new ArrayList<>();
-				for (List<BigItemStack> list : availableItems.getItemMap()
-					.values())
-					Entries: for (BigItemStack entry : list) {
-						if (!ingredient.test(entry.stack))
-							continue;
-						BigItemStack asBis = new BigItemStack(entry.stack, entry.count);
-						BigItemStack orderForItem = getOrderForItem(asBis);
-						if (orderForItem != null)
-							asBis.count -= orderForItem.count;
-						asBis.count = Math.max(0, asBis.count - usedItems.getCountOf(entry.stack));
-						valid.add(asBis);
-						for (ItemStack visitedStack : visited) {
-							if (!ItemHandlerHelper.canItemStacksStack(visitedStack, entry.stack))
-								continue;
-							visitedStack.grow(1);
-							continue Entries;
-						}
-						visited.add(entry.stack.copyWithCount(1));
+		cbis.count += takeOrdersAway ? -maxCraftable : maxCraftable;
+
+		List<List<BigItemStack>> validEntriesByIngredient = craftingResult.getSecond();
+		for (List<BigItemStack> list : validEntriesByIngredient) {
+			int remaining = maxCraftable / outputCount;
+			for (BigItemStack entry : list) {
+				if (remaining <= 0)
+					break;
+
+				int toTransfer = Math.min(remaining, entry.count);
+				BigItemStack order = getOrderForItem(entry.stack);
+
+				if (takeOrdersAway) {
+					if (order != null) {
+						order.count -= toTransfer;
+						if (order.count == 0)
+							itemsToOrder.remove(order);
 					}
-
-				if (valid.isEmpty()) {
-					cbis.count = 0;
-					continue Orders;
+				} else {
+					if (order == null)
+						itemsToOrder.add(order = new BigItemStack(entry.stack.copyWithCount(1), 0));
+					order.count += toTransfer;
 				}
 
-				validEntriesByIngredient.add(valid);
+				remaining -= entry.count;
 			}
+		}
 
-			// Ingredients with shared items must divide counts
-			for (ItemStack visitedItem : visited) {
-				for (List<BigItemStack> list : validEntriesByIngredient) {
-					for (BigItemStack entry : list) {
-						if (!ItemHandlerHelper.canItemStacksStack(entry.stack, visitedItem))
-							continue;
-						entry.count = entry.count / visitedItem.getCount();
-					}
-				}
-			}
+		updateCraftableAmounts();
+	}
 
-			// Determine the bottlenecking ingredient
-			int minCount = Integer.MAX_VALUE;
-			for (List<BigItemStack> list : validEntriesByIngredient) {
-				int sum = 0;
-				for (BigItemStack entry : list)
-					sum += entry.count;
-				minCount = Math.min(sum, minCount);
-			}
+	private void updateCraftableAmounts() {
+		InventorySummary usedItems = new InventorySummary();
+		InventorySummary availableItems = new InventorySummary();
 
-			int outputCount = cbis.recipe.getResultItem(blockEntity.getLevel()
-				.registryAccess())
-				.getCount();
+		for (BigItemStack ordered : itemsToOrder)
+			availableItems.add(ordered.stack, ordered.count);
 
-			cbis.count = minCount * outputCount;
+		for (CraftableBigItemStack cbis : recipesToOrder) {
+			Pair<Integer, List<List<BigItemStack>>> craftingResult =
+				maxCraftable(cbis, availableItems, stack -> -usedItems.getCountOf(stack), -1);
+			int maxCraftable = craftingResult.getFirst();
+			List<List<BigItemStack>> validEntriesByIngredient = craftingResult.getSecond();
+			int outputCount = cbis.getOutputCount(blockEntity.getLevel());
+
+			// Only tweak amounts downward
+			cbis.count = Math.min(cbis.count, maxCraftable);
 
 			// Use ingredients up before checking next recipe
-			BigItemStack orderForItem = getOrderForItem(cbis);
-			if (orderForItem == null)
-				continue Orders;
 			for (List<BigItemStack> list : validEntriesByIngredient) {
-				int remaining = orderForItem.count / outputCount;
+				int remaining = cbis.count / outputCount;
 				for (BigItemStack entry : list) {
 					if (remaining <= 0)
 						break;
@@ -1196,10 +1211,111 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 					remaining -= entry.count;
 				}
 			}
+		}
+	}
 
-			continue Orders;
+	private Pair<Integer, List<List<BigItemStack>>> maxCraftable(CraftableBigItemStack cbis, InventorySummary summary,
+		Function<ItemStack, Integer> countModifier, int newTypeLimit) {
+		List<Ingredient> ingredients = cbis.getIngredients();
+		List<List<BigItemStack>> validEntriesByIngredient = new ArrayList<>();
+		List<ItemStack> visited = new ArrayList<>();
+
+		for (Ingredient ingredient : ingredients) {
+			if (ingredient.isEmpty())
+				continue;
+			List<BigItemStack> valid = new ArrayList<>();
+			for (List<BigItemStack> list : summary.getItemMap()
+				.values())
+				Entries: for (BigItemStack entry : list) {
+					if (!ingredient.test(entry.stack))
+						continue;
+					BigItemStack asBis = new BigItemStack(entry.stack,
+						summary.getCountOf(entry.stack) + countModifier.apply(entry.stack));
+					if (asBis.count > 0)
+						valid.add(asBis);
+					for (ItemStack visitedStack : visited) {
+						if (!ItemHandlerHelper.canItemStacksStack(visitedStack, entry.stack))
+							continue;
+						visitedStack.grow(1);
+						continue Entries;
+					}
+					visited.add(entry.stack.copyWithCount(1));
+				}
+
+			if (valid.isEmpty())
+				return Pair.of(0, List.of());
+
+			Collections.sort(valid,
+				(bis1, bis2) -> -Integer.compare(summary.getCountOf(bis1.stack), summary.getCountOf(bis2.stack)));
+			validEntriesByIngredient.add(valid);
 		}
 
+		// Used new items may have to be trimmed
+		if (newTypeLimit != -1) {
+			int toRemove = (int) validEntriesByIngredient.stream()
+				.flatMap(l -> l.stream())
+				.filter(entry -> getOrderForItem(entry.stack) == null)
+				.distinct()
+				.count() - newTypeLimit;
+
+			for (int i = 0; i < toRemove; i++)
+				removeLeastEssentialItemStack(validEntriesByIngredient);
+		}
+
+		// Ingredients with shared items must divide counts
+		for (ItemStack visitedItem : visited) {
+			for (List<BigItemStack> list : validEntriesByIngredient) {
+				for (BigItemStack entry : list) {
+					if (!ItemHandlerHelper.canItemStacksStack(entry.stack, visitedItem))
+						continue;
+					entry.count = entry.count / visitedItem.getCount();
+				}
+			}
+		}
+
+		// Determine the bottlenecking ingredient
+		int minCount = Integer.MAX_VALUE;
+		for (List<BigItemStack> list : validEntriesByIngredient) {
+			int sum = 0;
+			for (BigItemStack entry : list)
+				sum += entry.count;
+			minCount = Math.min(sum, minCount);
+		}
+
+		if (minCount == 0)
+			return Pair.of(0, List.of());
+
+		int outputCount = cbis.getOutputCount(blockEntity.getLevel());
+		return Pair.of(minCount * outputCount, validEntriesByIngredient);
+	}
+
+	private void removeLeastEssentialItemStack(List<List<BigItemStack>> validIngredients) {
+		List<BigItemStack> longest = null;
+		int most = 0;
+		for (List<BigItemStack> list : validIngredients) {
+			int count = (int) list.stream()
+				.filter(entry -> getOrderForItem(entry.stack) == null)
+				.count();
+			if (longest != null && count <= most)
+				continue;
+			longest = list;
+			most = count;
+		}
+
+		if (longest.isEmpty())
+			return;
+
+		BigItemStack chosen = null;
+		for (int i = 0; i < longest.size(); i++) {
+			BigItemStack entry = longest.get(longest.size() - 1 - i);
+			if (getOrderForItem(entry.stack) != null)
+				continue;
+			chosen = entry;
+			break;
+		}
+
+		for (List<BigItemStack> list : validIngredients)
+			list.remove(chosen);
 	}
 
 }

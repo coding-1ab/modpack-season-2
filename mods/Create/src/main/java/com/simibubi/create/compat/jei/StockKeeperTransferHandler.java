@@ -84,15 +84,14 @@ public class StockKeeperTransferHandler implements IRecipeTransferHandler<StockK
 		IRecipeSlotsView recipeSlots, Player player, boolean maxTransfer, boolean doTransfer) {
 		if (!(container.screenReference instanceof StockKeeperRequestScreen screen))
 			return null;
-		
-		for (BigItemStack order : screen.recipesToOrder)
-			if (order instanceof CraftableBigItemStack cbis && cbis.recipe == recipe)
-				return new RecipeTransferErrorTooltip(CreateLang.temporaryText(
-					"Already ordering this recipe")
+
+		for (CraftableBigItemStack cbis : screen.recipesToOrder)
+			if (cbis.recipe == recipe)
+				return new RecipeTransferErrorTooltip(CreateLang.translate("gui.stock_keeper.already_ordering_recipe")
 					.component());
 
 		if (screen.itemsToOrder.size() >= 9)
-			return new RecipeTransferErrorTooltip(CreateLang.temporaryText("Order slots already full")
+			return new RecipeTransferErrorTooltip(CreateLang.translate("gui.stock_keeper.slots_full")
 				.component());
 
 		InventorySummary summary = screen.getMenu().contentHolder.getLastClientsideStockSnapshotAsSummary();
@@ -118,16 +117,20 @@ public class StockKeeperTransferHandler implements IRecipeTransferHandler<StockK
 				recipeSlots.getSlotViews(RecipeIngredientRole.INPUT), craftingSlots);
 
 		if (!transferOperations.missingItems.isEmpty())
-			return new RecipeTransferErrorMissingSlots(CreateLang.temporaryText("Required items are not in Stock")
+			return new RecipeTransferErrorMissingSlots(CreateLang.translate("gui.stock_keeper.not_in_stock")
 				.component(), transferOperations.missingItems);
 
 		if (!doTransfer)
 			return null;
-		
-		screen.recipesToOrder.add(new CraftableBigItemStack(recipe.getResultItem(player.level()
-			.registryAccess()), recipe));
+
+		CraftableBigItemStack cbis = new CraftableBigItemStack(recipe.getResultItem(player.level()
+			.registryAccess()), recipe);
+
+		screen.recipesToOrder.add(cbis);
 		screen.searchBox.setValue("");
 		screen.refreshSearchNextTick = true;
+		screen.requestCraftable(cbis, maxTransfer ? cbis.stack.getMaxStackSize() : 1);
+
 		return null;
 	}
 
