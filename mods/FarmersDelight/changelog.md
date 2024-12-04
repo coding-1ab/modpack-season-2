@@ -14,6 +14,7 @@
 - Fix `tomatoes` not having a map color;
 - (1.21) Fix Cutting Board recipes crashing with recipe optimization mods;
 - (1.21) Fix Anvil being able to add Sweeping Edge to knives and skillets;
+- (1.21) Fix Skillets lacking item data when placed via commands, causing crashes and inconsistencies;
 
 ### Translations
 - Added:
