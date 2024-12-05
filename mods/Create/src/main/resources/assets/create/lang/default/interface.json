@@ -1088,6 +1088,7 @@
 	"create.factory_panel.new_factory_task": "New factory task",
 	"create.factory_panel.some_links_unloaded": "Some links are not loaded",
 	"create.factory_panel.in_progress": "(In Progress)",
+	"create.factory_panel.redstone_paused": "(Redstone Paused)",
 	"create.factory_panel.cycled_arrow_path": "Cycled arrow pathing mode %1$s",
 	"create.factory_panel.tune_before_placing": "Tune to a stock link before placing",
 	"create.factory_panel.same_orientation": "Panels must have the same orientation",

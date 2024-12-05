@@ -1106,6 +1106,7 @@
   "create.factory_panel.new_factory_task": "New factory task",
   "create.factory_panel.no_item": "Input panel must have an item first",
   "create.factory_panel.panels_connected": "Now using %1$s to create %2$s",
+  "create.factory_panel.redstone_paused": "(Redstone Paused)",
   "create.factory_panel.same_orientation": "Panels must have the same orientation",
   "create.factory_panel.same_surface": "Panels must be on the same surface",
   "create.factory_panel.some_links_unloaded": "Some links are not loaded",

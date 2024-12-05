@@ -17,6 +17,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
 
 public class FactoryPanelConnectionHandler {
@@ -124,7 +126,11 @@ public class FactoryPanelConnectionHandler {
 		if (connectingFrom == null || connectingFromBox == null)
 			return false;
 		Minecraft mc = Minecraft.getInstance();
-		if (!mc.player.isShiftKeyDown())
+		boolean missed = false;
+		if (mc.hitResult instanceof BlockHitResult bhr && bhr.getType() != Type.MISS)
+			if (!(mc.level.getBlockEntity(bhr.getBlockPos()) instanceof FactoryPanelBlockEntity))
+				missed = true;
+		if (!mc.player.isShiftKeyDown() && !missed)
 			return false;
 		connectingFrom = null;
 		connectingFromBox = null;

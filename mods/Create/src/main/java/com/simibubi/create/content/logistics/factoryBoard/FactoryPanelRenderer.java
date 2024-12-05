@@ -8,6 +8,7 @@ import com.simibubi.create.AllSpriteShifts;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.simibubi.create.foundation.render.RenderTypes;
 
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.utility.theme.Color;
@@ -47,7 +48,10 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 		float yRot = FactoryPanelBlock.getYRot(blockState);
 		float glow = behaviour.bulb.getValue(partialTicks);
 
-		CachedBuffers.partial(AllPartialModels.FACTORY_PANEL_LIGHT, blockState)
+		PartialModel partial =
+			behaviour.redstonePowered ? AllPartialModels.FACTORY_PANEL_RED_LIGHT : AllPartialModels.FACTORY_PANEL_LIGHT;
+
+		CachedBuffers.partial(partial, blockState)
 			.rotateCentered(yRot, Direction.UP)
 			.rotateCentered(xRot, Direction.EAST)
 			.rotateCentered(Mth.PI, Direction.UP)
@@ -63,14 +67,11 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 		glow = Mth.clamp(glow, -1, 1);
 		int color = (int) (200 * glow);
 
-		CachedBuffers.partial(AllPartialModels.FACTORY_PANEL_LIGHT, blockState)
+		CachedBuffers.partial(partial, blockState)
 			.rotateCentered(yRot, Direction.UP)
 			.rotateCentered(xRot, Direction.EAST)
 			.rotateCentered(Mth.PI, Direction.UP)
 			.translate(behaviour.slot.xOffset * .5, 0, behaviour.slot.yOffset * .5)
-//			.translate(1 / 16f, 2 / 16f, 7 / 16f)
-//			.scale(1.25f)
-//			.translate(-1 / 16f, -2 / 16f, -7 / 16f)
 			.light(LightTexture.FULL_BRIGHT)
 			.color(color, color, color, 255)
 			.overlay(overlay)
@@ -89,11 +90,13 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 
 		boolean success = connection.success;
 
-		int color = behaviour.waitingForNetwork ? 0x5B3B3B
-			: behaviour.satisfied ? 0x9EFF7F : behaviour.promisedSatisfied ? 0x7FD6DB : 0x708DAD;
+		int color = behaviour.count == 0 ? 0x484858
+			: behaviour.redstonePowered ? 0x7A1800
+				: behaviour.waitingForNetwork ? 0x5B3B3B
+					: behaviour.satisfied ? 0x9EFF7F : behaviour.promisedSatisfied ? 0x7FD6DB : 0x708DAD;
 		yOffset = behaviour.promisedSatisfied ? 1 : behaviour.satisfied ? 0 : 2;
 
-		if (!behaviour.waitingForNetwork && glow > 0 && !behaviour.satisfied) {
+		if (!behaviour.redstonePowered && !behaviour.waitingForNetwork && glow > 0 && !behaviour.satisfied) {
 			color = Color.mixColors(color, success ? 0xEAF2EC : 0xE5654B, glow);
 			if (!behaviour.satisfied && !behaviour.promisedSatisfied)
 				yOffset += (success ? 1 : 2) * glow;

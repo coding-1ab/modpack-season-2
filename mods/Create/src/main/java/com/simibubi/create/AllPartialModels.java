@@ -191,6 +191,7 @@ public class AllPartialModels {
 		FACTORY_PANEL_RESTOCKER = block("factory_gauge/panel_restocker"),
 		FACTORY_PANEL_RESTOCKER_WITH_BULB = block("factory_gauge/panel_restocker_with_bulb"),
 		FACTORY_PANEL_LIGHT = block("factory_gauge/bulb_light"),
+		FACTORY_PANEL_RED_LIGHT = block("factory_gauge/bulb_red"),
 
 		TABLE_CLOTH_NW = block("table_cloth/north_west"),
 		TABLE_CLOTH_NE = block("table_cloth/north_east"),

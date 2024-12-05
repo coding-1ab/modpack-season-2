@@ -264,7 +264,7 @@ public class AllArmInteractionPointTypes {
 		
 		@Override
 		public boolean canCreatePoint(Level level, BlockPos pos, BlockState state) {
-			return AllBlocks.PACKAGER.has(state);
+			return AllBlocks.PACKAGER.has(state) || AllBlocks.REPACKAGER.has(state);
 		}
 		
 		@Override
