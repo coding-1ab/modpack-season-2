@@ -39,6 +39,8 @@ public class ChainConveyorRidingHandler {
 		if (ridingChainConveyor == null)
 			return;
 		Minecraft mc = Minecraft.getInstance();
+		if (mc.isPaused())
+			return;
 		BlockEntity blockEntity = mc.level.getBlockEntity(ridingChainConveyor);
 		if (mc.player.isShiftKeyDown() || !(blockEntity instanceof ChainConveyorBlockEntity clbe)) {
 			ridingChainConveyor = null;

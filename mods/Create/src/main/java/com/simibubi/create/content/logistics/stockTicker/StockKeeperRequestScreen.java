@@ -686,6 +686,15 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			ms.popPose();
 		}
 
+		UIRenderHelper.swapAndBlitColor(UIRenderHelper.framebuffer, minecraft.getMainRenderTarget());
+	}
+
+	@Override
+	protected void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		super.renderForeground(graphics, mouseX, mouseY, partialTicks);
+		float currentScroll = itemScroll.getValue(partialTicks);
+		Couple<Integer> hoveredSlot = getHoveredSlot(mouseX, mouseY);
+
 		// Render tooltip of hovered item
 		if (hoveredSlot != noneHovered) {
 			int slot = hoveredSlot.getSecond();
@@ -726,8 +735,6 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 						.component()),
 				mouseX, mouseY);
 		}
-
-		UIRenderHelper.swapAndBlitColor(UIRenderHelper.framebuffer, minecraft.getMainRenderTarget());
 	}
 
 	private void renderItemEntry(GuiGraphics graphics, float scale, BigItemStack entry, boolean isStackHovered,
@@ -768,7 +775,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			drawItemCount(graphics, entry.count, customCount);
 		ms.popPose();
 	}
-
+	
 	private void drawItemCount(GuiGraphics graphics, int count, int customCount) {
 		count = customCount;
 		String text = count >= 1000000 ? (count / 1000000) + "m"

@@ -25,6 +25,7 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
+import com.simibubi.create.foundation.utility.TickBasedCache;
 
 import net.createmod.catnip.utility.Pair;
 import net.minecraft.ChatFormatting;
@@ -53,9 +54,7 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 	}
 
 	private static final Cache<UUID, Cache<Integer, WeakReference<LogisticallyLinkedBehaviour>>> LINKS =
-		CacheBuilder.newBuilder()
-			.expireAfterAccess(1, TimeUnit.SECONDS)
-			.build();
+		new TickBasedCache<>(20, true);
 
 	public LogisticallyLinkedBehaviour(SmartBlockEntity be, boolean global) {
 		super(be);

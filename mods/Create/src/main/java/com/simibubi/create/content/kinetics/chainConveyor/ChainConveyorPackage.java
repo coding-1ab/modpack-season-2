@@ -2,11 +2,10 @@ package com.simibubi.create.content.kinetics.chainConveyor;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.simibubi.create.foundation.utility.TickBasedCache;
 
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.WorldAttached;
@@ -24,10 +23,8 @@ public class ChainConveyorPackage {
 	// Client tracks physics data by id so it can travel between BEs
 	private static final int ticksUntilExpired = 30;
 	public static final WorldAttached<Cache<Integer, ChainConveyorPackagePhysicsData>> physicsDataCache =
-		new WorldAttached<>($ -> CacheBuilder.newBuilder()
-			.expireAfterAccess(ticksUntilExpired * 50, TimeUnit.MILLISECONDS)
-			.build());
-
+		new WorldAttached<>($ -> new TickBasedCache<>(ticksUntilExpired, true));
+	
 	public class ChainConveyorPackagePhysicsData {
 		public Vec3 targetPos;
 		public Vec3 prevTargetPos;
