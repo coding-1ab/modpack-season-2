@@ -8,6 +8,8 @@ import static com.simibubi.create.foundation.data.WindowGen.framedGlassPane;
 import static com.simibubi.create.foundation.data.WindowGen.woodenWindowBlock;
 import static com.simibubi.create.foundation.data.WindowGen.woodenWindowPane;
 
+import java.util.List;
+
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllCreativeModeTabs;
 import com.simibubi.create.AllSpriteShifts;
@@ -15,6 +17,7 @@ import com.simibubi.create.Create;
 import com.simibubi.create.foundation.block.connected.HorizontalCTBehaviour;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
 import com.simibubi.create.foundation.data.BlockStateGen;
+import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.WindowGen;
 import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.entry.BlockEntry;
@@ -80,11 +83,17 @@ public class AllPaletteBlocks {
 		WARPED_WINDOW = woodenWindowBlock(WoodType.WARPED, Blocks.WARPED_PLANKS),
 		CHERRY_WINDOW = woodenWindowBlock(WoodType.CHERRY, Blocks.CHERRY_PLANKS),
 		BAMBOO_WINDOW = woodenWindowBlock(WoodType.BAMBOO, Blocks.BAMBOO_PLANKS),
-		ORNATE_IRON_WINDOW =
-			customWindowBlock("ornate_iron_window", () -> Items.IRON_NUGGET, () -> AllSpriteShifts.ORNATE_IRON_WINDOW,
-				() -> RenderType::cutout, false, () -> MapColor.TERRACOTTA_LIGHT_GRAY),
+		ORNATE_IRON_WINDOW = customWindowBlock("ornate_iron_window", () -> Items.IRON_NUGGET, null,
+			() -> RenderType::cutout, false, () -> MapColor.TERRACOTTA_LIGHT_GRAY),
 		INDUSTRIAL_IRON_WINDOW = customWindowBlock("industrial_iron_window", AllBlocks.INDUSTRIAL_IRON_BLOCK,
-			() -> AllSpriteShifts.INDUSTRIAL_IRON_WINDOW, () -> RenderType::cutout, false, () -> MapColor.COLOR_GRAY);
+			() -> AllSpriteShifts.INDUSTRIAL_IRON_WINDOW, () -> RenderType::cutout, false, () -> MapColor.COLOR_GRAY),
+		OLD_FACTORY_WINDOW = WindowGen
+			.randomisedWindowBlock("old_factory_window", AllBlocks.INDUSTRIAL_IRON_BLOCK, () -> RenderType::translucent,
+				true, () -> MapColor.TERRACOTTA_LIGHT_GRAY)
+			.onRegister(CreateRegistrate.connectedTextures(() -> new RandomisedWindowCTBehaviour(
+				List.of(AllSpriteShifts.OLD_FACTORY_WINDOW_1, AllSpriteShifts.OLD_FACTORY_WINDOW_2,
+					AllSpriteShifts.OLD_FACTORY_WINDOW_3, AllSpriteShifts.OLD_FACTORY_WINDOW_4))))
+			.register();
 
 	public static final BlockEntry<ConnectedGlassPaneBlock> OAK_WINDOW_PANE =
 		woodenWindowPane(WoodType.OAK, OAK_WINDOW),

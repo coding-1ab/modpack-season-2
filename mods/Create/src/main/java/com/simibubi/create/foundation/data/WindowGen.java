@@ -16,6 +16,7 @@ import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import com.simibubi.create.foundation.block.connected.ConnectedTextureBehaviour;
 import com.simibubi.create.foundation.block.connected.GlassPaneCTBehaviour;
 import com.simibubi.create.foundation.block.connected.HorizontalCTBehaviour;
+import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.providers.DataGenContext;
 import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
@@ -40,6 +41,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.Tags;
 
@@ -65,12 +67,38 @@ public class WindowGen {
 		return woodenWindowBlock(woodType, planksBlock, () -> RenderType::cutoutMipped, false);
 	}
 
+	public static BlockBuilder<WindowBlock, CreateRegistrate> randomisedWindowBlock(String name,
+		Supplier<? extends ItemLike> ingredient, Supplier<Supplier<RenderType>> renderType, boolean translucent,
+		Supplier<MapColor> color) {
+		ResourceLocation end_texture = Create.asResource(palettesDir() + name + "_end");
+		ResourceLocation side_texture = Create.asResource(palettesDir() + name);
+		Function<Integer, ResourceLocation> sides = i -> Create.asResource(palettesDir() + name + "_" + i);
+		Function<Integer, ResourceLocation> ends = i -> Create.asResource(palettesDir() + name + "_" + i + "_end");
+		return windowBlock(name, ingredient, null, renderType, translucent, n -> end_texture, n -> side_texture, color)
+			.blockstate((c, p) -> p.simpleBlock(c.get(), ConfiguredModel.builder()
+				.modelFile(p.models()
+					.cubeColumn(c.getName() + "_1", sides.apply(1), ends.apply(1)))
+				.nextModel()
+				.modelFile(p.models()
+					.cubeColumn(c.getName() + "_2", sides.apply(2), ends.apply(2)))
+				.nextModel()
+				.modelFile(p.models()
+					.cubeColumn(c.getName() + "_3", sides.apply(3), ends.apply(3)))
+				.nextModel()
+				.modelFile(p.models()
+					.cubeColumn(c.getName() + "_4", sides.apply(4), ends.apply(4)))
+				.build()))
+			.item()
+			.model((c, p) -> p.cubeColumn(c.getName(), sides.apply(1), ends.apply(1)))
+			.build();
+	}
+
 	public static BlockEntry<WindowBlock> customWindowBlock(String name, Supplier<? extends ItemLike> ingredient,
 		Supplier<CTSpriteShiftEntry> ct, Supplier<Supplier<RenderType>> renderType, boolean translucent,
 		Supplier<MapColor> color) {
 		NonNullFunction<String, ResourceLocation> end_texture = n -> Create.asResource(palettesDir() + name + "_end");
 		NonNullFunction<String, ResourceLocation> side_texture = n -> Create.asResource(palettesDir() + n);
-		return windowBlock(name, ingredient, ct, renderType, translucent, end_texture, side_texture, color);
+		return windowBlock(name, ingredient, ct, renderType, translucent, end_texture, side_texture, color).register();
 	}
 
 	public static BlockEntry<WindowBlock> woodenWindowBlock(WoodType woodType, Block planksBlock,
@@ -81,15 +109,16 @@ public class WindowGen {
 			$ -> new ResourceLocation("block/" + woodName + "_planks");
 		NonNullFunction<String, ResourceLocation> side_texture = n -> Create.asResource(palettesDir() + n);
 		return windowBlock(name, () -> planksBlock, () -> AllSpriteShifts.getWoodenWindow(woodType), renderType,
-			translucent, end_texture, side_texture, planksBlock::defaultMapColor);
+			translucent, end_texture, side_texture, planksBlock::defaultMapColor).register();
 	}
 
-	public static BlockEntry<WindowBlock> windowBlock(String name, Supplier<? extends ItemLike> ingredient,
+	public static BlockBuilder<WindowBlock, CreateRegistrate> windowBlock(String name, Supplier<? extends ItemLike> ingredient,
 		Supplier<CTSpriteShiftEntry> ct, Supplier<Supplier<RenderType>> renderType, boolean translucent,
 		NonNullFunction<String, ResourceLocation> endTexture, NonNullFunction<String, ResourceLocation> sideTexture,
 		Supplier<MapColor> color) {
 		return REGISTRATE.block(name, p -> new WindowBlock(p, translucent))
-			.onRegister(connectedTextures(() -> new HorizontalCTBehaviour(ct.get())))
+			.onRegister(ct == null ? $ -> {
+			} : connectedTextures(() -> new HorizontalCTBehaviour(ct.get())))
 			.addLayer(renderType)
 			.recipe((c, p) -> ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, c.get(), 2)
 				.pattern(" # ")
@@ -105,8 +134,7 @@ public class WindowGen {
 			.blockstate((c, p) -> p.simpleBlock(c.get(), p.models()
 				.cubeColumn(c.getName(), sideTexture.apply(c.getName()), endTexture.apply(c.getName()))))
 			.tag(BlockTags.IMPERMEABLE)
-			.simpleItem()
-			.register();
+			.simpleItem();
 	}
 
 	public static BlockEntry<ConnectedGlassBlock> framedGlass(String name,
