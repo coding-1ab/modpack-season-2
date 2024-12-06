@@ -2,6 +2,8 @@ package com.simibubi.create.foundation.blockEntity.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import com.simibubi.create.foundation.mixin.accessor.LevelRendererAccessor;
+
 import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -34,9 +36,10 @@ public abstract class SafeBlockEntityRenderer<T extends BlockEntity> implements 
 		if (level instanceof PonderLevel)
 			return false;
 
-		Frustum frustum = Minecraft.getInstance().levelRenderer.capturedFrustum != null ?
-				Minecraft.getInstance().levelRenderer.capturedFrustum :
-				Minecraft.getInstance().levelRenderer.cullingFrustum;
+		LevelRendererAccessor accessor = (LevelRendererAccessor) Minecraft.getInstance().levelRenderer;
+		Frustum frustum = accessor.create$getCapturedFrustum() != null ?
+			accessor.create$getCapturedFrustum() :
+			accessor.create$getCullingFrustum();
 
 		AABB itemBB = new AABB(
 				itemPos.x - 0.25,
