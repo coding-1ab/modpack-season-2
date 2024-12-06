@@ -2,7 +2,6 @@ package com.simibubi.create.foundation.blockEntity;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -17,6 +16,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.utility.IInteractionChecker;
 import com.simibubi.create.api.schematic.nbt.IPartialSafeNBT;
 
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.createmod.ponder.api.VirtualBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -31,7 +31,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 public abstract class SmartBlockEntity extends CachedRenderBBBlockEntity
 	implements IPartialSafeNBT, IInteractionChecker, ISpecialBlockEntityItemRequirement, VirtualBlockEntity {
 
-	private final Map<BehaviourType<?>, BlockEntityBehaviour> behaviours = new HashMap<>();
+	private final Map<BehaviourType<?>, BlockEntityBehaviour> behaviours = new Reference2ObjectArrayMap<>();
 	private boolean initialized = false;
 	private boolean firstNbtRead = true;
 	protected int lazyTickRate;
