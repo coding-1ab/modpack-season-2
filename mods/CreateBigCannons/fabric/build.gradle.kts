@@ -50,7 +50,7 @@ loom {
 	silentMojangMappingsLicense()
 	accessWidenerPath = common.loom.accessWidenerPath
 	runConfigs {
-		create("data") {
+		create("DataGenFabric") {
 			client()
 
 			name("Fabric Data Generation")
@@ -60,7 +60,7 @@ loom {
 			vmArg("-Dporting_lib.datagen.existing_resources=${project.rootProject.file("common/src/main/resources")}")
 			vmArg("-Dcreatebigcannons.datagen.platform=fabric")
 		}
-		create("data1") {
+		create("DataGenForge") {
 			client()
 
 			name("Forge Data Generation (Fabric)")
@@ -212,4 +212,10 @@ tasks.register<Copy>("buildAndCollect") {
 	from(tasks.remapJar.get().archiveFile, tasks.remapSourcesJar.get().archiveFile)
 	into(rootProject.layout.buildDirectory.file("libs/${mod.version}/$loader"))
 	dependsOn("build")
+}
+
+tasks.register("runDataGen") {
+	group = "loom"
+	description = "Generate data for Create Big Cannons"
+	dependsOn("runDataGenFabric", "runDataGenForge")
 }
