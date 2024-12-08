@@ -56,7 +56,7 @@ dependencies {
 		isTransitive = false
 	}
 
-	modImplementation("curse.maven:copycats-968398:${mod.dep("copycats_fabric_file")}")
+	modImplementation("com.copycatsplus:copycats:${mod.dep("copycats_version")}+mc.${minecraftVersion}-fabric") {isTransitive=false}
 }
 
 
