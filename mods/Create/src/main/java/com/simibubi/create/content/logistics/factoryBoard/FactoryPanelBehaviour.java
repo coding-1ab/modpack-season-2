@@ -432,6 +432,11 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 	@Override
 	public void destroy() {
+		disconnectAll();
+		super.destroy();
+	}
+
+	public void disconnectAll() {
 		FactoryPanelPosition panelPosition = getPanelPosition();
 		for (FactoryPanelPosition position : targetedBy.keySet()) {
 			FactoryPanelBehaviour source = at(getWorld(), position);
@@ -447,8 +452,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 				target.blockEntity.sendData();
 			}
 		}
-
-		super.destroy();
+		targetedBy.clear();
+		targeting.clear();
 	}
 
 	public int getUnloadedLinks() {
