@@ -90,7 +90,7 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 
 		boolean success = connection.success;
 
-		int color = behaviour.count == 0 ? 0x484858
+		int color = behaviour.count == 0 ? 0x888898
 			: behaviour.redstonePowered ? 0x7A1800
 				: behaviour.waitingForNetwork ? 0x5B3B3B
 					: behaviour.satisfied ? 0x9EFF7F : behaviour.promisedSatisfied ? 0x7FD6DB : 0x708DAD;

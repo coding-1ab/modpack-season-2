@@ -24,10 +24,12 @@ public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPac
 	private int promiseClearingInterval;
 	private FactoryPanelPosition removeConnection;
 	private boolean clearPromises;
+	private boolean reset;
 
 	public FactoryPanelConfigurationPacket(FactoryPanelPosition position, String address,
 		Map<FactoryPanelPosition, Integer> inputAmounts, List<ItemStack> craftingArrangement, int outputAmount,
-		int promiseClearingInterval, @Nullable FactoryPanelPosition removeConnection, boolean clearPromises) {
+		int promiseClearingInterval, @Nullable FactoryPanelPosition removeConnection, boolean clearPromises,
+		boolean reset) {
 		super(position.pos());
 		this.address = address;
 		this.inputAmounts = inputAmounts;
@@ -36,6 +38,7 @@ public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPac
 		this.promiseClearingInterval = promiseClearingInterval;
 		this.removeConnection = removeConnection;
 		this.clearPromises = clearPromises;
+		this.reset = reset;
 		this.slot = position.slot();
 	}
 
@@ -61,6 +64,7 @@ public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPac
 		if (removeConnection != null)
 			removeConnection.send(buffer);
 		buffer.writeBoolean(clearPromises);
+		buffer.writeBoolean(reset);
 	}
 
 	@Override
@@ -80,6 +84,7 @@ public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPac
 		if (buffer.readBoolean())
 			removeConnection = FactoryPanelPosition.receive(buffer);
 		clearPromises = buffer.readBoolean();
+		reset = buffer.readBoolean();
 	}
 
 	@Override
@@ -88,18 +93,27 @@ public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPac
 		if (behaviour == null)
 			return;
 
-		behaviour.recipeAddress = address;
+		behaviour.recipeAddress = reset ? "" : address;
+		behaviour.recipeOutput = reset ? 1 : outputAmount;
+		behaviour.promiseClearingInterval = reset ? -1 : promiseClearingInterval;
+		behaviour.activeCraftingArrangement = reset ? List.of() : craftingArrangement;
 
+		if (reset) {
+			behaviour.forceClearPromises = true;
+			behaviour.disconnectAll();
+			behaviour.setFilter(ItemStack.EMPTY);
+			behaviour.count = 0;
+			be.redraw = true;
+			be.notifyUpdate();
+			return;
+		}
+		
 		for (Entry<FactoryPanelPosition, Integer> entry : inputAmounts.entrySet()) {
 			FactoryPanelPosition key = entry.getKey();
 			FactoryPanelConnection connection = behaviour.targetedBy.get(key);
 			if (connection != null)
 				connection.amount = entry.getValue();
 		}
-
-		behaviour.recipeOutput = outputAmount;
-		behaviour.promiseClearingInterval = promiseClearingInterval;
-		behaviour.activeCraftingArrangement = craftingArrangement;
 
 		if (removeConnection != null) {
 			behaviour.targetedBy.remove(removeConnection);

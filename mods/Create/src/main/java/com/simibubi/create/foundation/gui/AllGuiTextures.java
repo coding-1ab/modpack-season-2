@@ -153,13 +153,9 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	VALUE_SETTINGS_LABEL_BG("value_settings", 0, 31, 81, 11),
 
 	// HILO
-	FACTORY_PANEL_TOP("restocker_and_requester", 0, 0, 182, 23),
-	FACTORY_PANEL_MIDDLE("restocker_and_requester", 0, 23, 182, 26),
-	FACTORY_PANEL_BOTTOM("restocker_and_requester", 0, 49, 182, 54),
-	FACTORY_PANEL_SLOT_FRAME("restocker_and_requester", 3, 106, 20, 20),
-	FACTORY_PANEL_SLOT("restocker_and_requester", 4, 107, 18, 18),
-	FACTORY_PANEL_ARROW("restocker_and_requester", 27, 108, 22, 16),
-	FACTORY_PANEL_ARROW_FILLED("restocker_and_requester", 50, 108, 22, 16),
+	FACTORY_GAUGE_RECIPE("factory_gauge", 32, 4, 192, 95),
+	FACTORY_GAUGE_RESTOCK("factory_gauge", 32, 109, 192, 55),
+	FACTORY_GAUGE_BOTTOM("factory_gauge", 32, 174, 200, 57),
 	
 	STOCK_KEEPER_REQUEST_HEADER("stock_keeper", 0, 0, 256, 36),
 	STOCK_KEEPER_REQUEST_BODY("stock_keeper", 0, 48, 256, 20),
