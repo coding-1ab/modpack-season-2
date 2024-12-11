@@ -178,14 +178,15 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	STOCK_KEEPER_CATEGORY_SHOWN("stock_keeper", 151, 176, 8, 8),
 	NUMBERS("stock_keeper", 48, 176, 5, 8),
 
-	STOCK_KEEPER_CATEGORY("stock_keeper_categories", 210, 190),
-	STOCK_KEEPER_CATEGORY_HEADER("stock_keeper_categories", 202, 15),
-	STOCK_KEEPER_CATEGORY_EDIT("stock_keeper_categories", 0, 216, 202, 38),
-	STOCK_KEEPER_CATEGORY_FOOTER("stock_keeper_categories", 0, 160, 210, 30),
-	STOCK_KEEPER_CATEGORY_NEW("stock_keeper_categories", 4, 194, 28, 17),
-	STOCK_KEEPER_CATEGORY_ENTRY("stock_keeper_categories", 39, 194, 169, 17),
-	STOCK_KEEPER_CATEGORY_UP("stock_keeper_categories", 211, 195, 8, 9),
-	STOCK_KEEPER_CATEGORY_DOWN("stock_keeper_categories", 211, 205, 8, 9),
+	STOCK_KEEPER_CATEGORY("stock_keeper_categories", 32, 32, 192, 20),
+	STOCK_KEEPER_CATEGORY_SAYS("stock_keeper_categories", 238, 86, 14, 20),
+	STOCK_KEEPER_CATEGORY_HEADER("stock_keeper_categories", 32, 0, 192, 18),
+	STOCK_KEEPER_CATEGORY_EDIT("stock_keeper_categories", 32, 208, 192, 38),
+	STOCK_KEEPER_CATEGORY_FOOTER("stock_keeper_categories", 32, 79, 200, 33),
+	STOCK_KEEPER_CATEGORY_NEW("stock_keeper_categories", 38, 127, 27, 18),
+	STOCK_KEEPER_CATEGORY_ENTRY("stock_keeper_categories", 38, 159, 171, 18),
+	STOCK_KEEPER_CATEGORY_UP("stock_keeper_categories", 211, 160, 8, 8),
+	STOCK_KEEPER_CATEGORY_DOWN("stock_keeper_categories", 211, 169, 8, 8),
 	
 	REDSTONE_REQUESTER("restocker_and_requester", 0, 134, 210, 100),
 
