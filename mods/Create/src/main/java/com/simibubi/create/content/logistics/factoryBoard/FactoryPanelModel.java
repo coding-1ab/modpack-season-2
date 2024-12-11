@@ -82,17 +82,34 @@ public class FactoryPanelModel extends BakedModelWrapperWithData {
 		for (BakedQuad bakedQuad : quadsToAdd) {
 			int[] vertices = bakedQuad.getVertices();
 			int[] transformedVertices = Arrays.copyOf(vertices, vertices.length);
-			
+
+			Vec3 quadNormal = Vec3.atLowerCornerOf(bakedQuad.getDirection()
+				.getNormal());
+			quadNormal = VecHelper.rotate(quadNormal, 180, Axis.Y);
+			quadNormal = VecHelper.rotate(quadNormal, xRot + 90, Axis.X);
+			quadNormal = VecHelper.rotate(quadNormal, yRot, Axis.Y);
+
 			for (int i = 0; i < vertices.length / BakedQuadHelper.VERTEX_STRIDE; i++) {
 				Vec3 vertex = BakedQuadHelper.getXYZ(vertices, i);
+				Vec3 normal = BakedQuadHelper.getNormalXYZ(vertices, i);
+
 				vertex = vertex.add(slot.xOffset * .5, 0, slot.yOffset * .5);
 				vertex = VecHelper.rotateCentered(vertex, 180, Axis.Y);
 				vertex = VecHelper.rotateCentered(vertex, xRot + 90, Axis.X);
 				vertex = VecHelper.rotateCentered(vertex, yRot, Axis.Y);
+
+				normal = VecHelper.rotate(normal, 180, Axis.Y);
+				normal = VecHelper.rotate(normal, xRot + 90, Axis.X);
+				normal = VecHelper.rotate(normal, yRot, Axis.Y);
+
 				BakedQuadHelper.setXYZ(transformedVertices, i, vertex);
+				BakedQuadHelper.setNormalXYZ(transformedVertices, i, new Vec3(0, 1, 0));
 			}
 
-			quads.add(BakedQuadHelper.cloneWithCustomGeometry(bakedQuad, transformedVertices));
+			Direction newNormal = Direction.fromDelta((int) Math.round(quadNormal.x), (int) Math.round(quadNormal.y),
+				(int) Math.round(quadNormal.z));
+			quads.add(new BakedQuad(transformedVertices, bakedQuad.getTintIndex(), newNormal, bakedQuad.getSprite(),
+				bakedQuad.isShade()));
 		}
 
 	}
