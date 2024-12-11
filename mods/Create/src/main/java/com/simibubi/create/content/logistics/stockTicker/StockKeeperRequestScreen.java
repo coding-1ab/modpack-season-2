@@ -414,6 +414,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 	@Override
 	protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+		if (this != minecraft.screen)
+			return; // stencil buffer does not cooperate with ponders gui fade out
+		
 		PoseStack ms = graphics.pose();
 		float currentScroll = itemScroll.getValue(partialTicks);
 		Couple<Integer> hoveredSlot = getHoveredSlot(mouseX, mouseY);
@@ -899,7 +902,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 	}
 
 	private boolean isConfirmHovered(int mouseX, int mouseY) {
-		int confirmX = getGuiLeft() + 161;
+		int confirmX = getGuiLeft() + 143;
 		int confirmY = getGuiTop() + windowHeight - 39;
 		int confirmW = 78;
 		int confirmH = 18;
@@ -1219,9 +1222,6 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		recipesToOrder = new ArrayList<>();
 		blockEntity.ticksSinceLastUpdate = 10;
 		successTicks = 1;
-
-		if (encodeRequester)
-			minecraft.setScreen(null);
 	}
 
 	@Override

@@ -138,12 +138,12 @@ public class TableClothBlock extends Block implements IHaveBigOutline, IWrenchab
 
 	@Override
 	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-		return colour == null ? AllShapes.TABLE_CLOTH_OCCLUSION : AllShapes.TABLE_CLOTH;
+		return AllShapes.TABLE_CLOTH;
 	}
 
 	@Override
 	public VoxelShape getInteractionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
-		return colour == null ? AllShapes.TABLE_CLOTH_OCCLUSION : AllShapes.TABLE_CLOTH;
+		return AllShapes.TABLE_CLOTH;
 	}
 
 	@Override

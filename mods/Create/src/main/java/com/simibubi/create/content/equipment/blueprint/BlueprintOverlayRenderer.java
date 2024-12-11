@@ -26,6 +26,7 @@ import com.simibubi.create.foundation.gui.AllGuiTextures;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.ponder.utility.LevelTickHolder;
@@ -35,11 +36,13 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.GameType;
@@ -147,8 +150,10 @@ public class BlueprintOverlayRenderer {
 
 		shopContext = new BlueprintOverlayShopContext(false, dce.getStockLevelForTrade(list), alreadyPurchased);
 
-		ingredients.add(Pair.of(dce.getPaymentItem().copyWithCount(dce.getPaymentAmount()),
-			!dce.getPaymentItem().isEmpty() && shopContext.stockLevel() > shopContext.purchases()));
+		ingredients.add(Pair.of(dce.getPaymentItem()
+			.copyWithCount(dce.getPaymentAmount()),
+			!dce.getPaymentItem()
+				.isEmpty() && shopContext.stockLevel() > shopContext.purchases()));
 		for (BigItemStack entry : dce.requestData.encodedRequest.stacks())
 			results.add(entry.stack.copyWithCount(entry.count));
 	}
@@ -319,7 +324,7 @@ public class BlueprintOverlayRenderer {
 
 	public static void renderOverlay(ForgeGui gui, GuiGraphics graphics, float partialTicks, int width, int height) {
 		Minecraft mc = Minecraft.getInstance();
-		if (mc.options.hideGui)
+		if (mc.options.hideGui || mc.screen != null)
 			return;
 
 		if (!active || empty)
@@ -391,9 +396,26 @@ public class BlueprintOverlayRenderer {
 			}
 		}
 
-//		if (shopContext != null) Display stock level?
-//			graphics.drawString(mc.font, Components.literal(shopContext.stockLevel() + "x in Stock"), x + 2, y + 13,
-//				0xff_797979, true);
+		if (shopContext != null && !shopContext.checkout()) {
+			int cycle = 0;
+			for (boolean count : Iterate.trueAndFalse)
+				for (int i = 0; i < results.size(); i++) {
+					ItemStack result = results.get(i);
+					List<Component> tooltipLines = result.getTooltipLines(mc.player, TooltipFlag.NORMAL);
+					if (tooltipLines.size() <= 1)
+						continue;
+					if (count) {
+						cycle++;
+						continue;
+					}
+					if ((gui.getGuiTicks() / 40) % cycle != i)
+						continue;
+					graphics.renderComponentTooltip(gui.getFont(), tooltipLines, mc.getWindow()
+						.getGuiScaledWidth(),
+						mc.getWindow()
+							.getGuiScaledHeight());
+				}
+		}
 
 		RenderSystem.disableBlend();
 	}
