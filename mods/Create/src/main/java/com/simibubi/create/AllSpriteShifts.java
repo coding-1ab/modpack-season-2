@@ -43,10 +43,10 @@ public class AllSpriteShifts {
 		ORNATE_IRON_WINDOW = vertical("palettes/ornate_iron_window"),
 		INDUSTRIAL_IRON_WINDOW = getCT(AllCTTypes.RECTANGLE, "palettes/industrial_iron_window"),
 		
-		OLD_FACTORY_WINDOW_1 = getCT(AllCTTypes.RECTANGLE, "palettes/old_factory_window_1"),
-		OLD_FACTORY_WINDOW_2 = getCT(AllCTTypes.RECTANGLE, "palettes/old_factory_window_2"),
-		OLD_FACTORY_WINDOW_3 = getCT(AllCTTypes.RECTANGLE, "palettes/old_factory_window_3"),
-		OLD_FACTORY_WINDOW_4 = getCT(AllCTTypes.RECTANGLE, "palettes/old_factory_window_4");
+		OLD_FACTORY_WINDOW_1 = getCT(AllCTTypes.RECTANGLE, "palettes/old_factory_window", "palettes/old_factory_window_1"),
+		OLD_FACTORY_WINDOW_2 = getCT(AllCTTypes.RECTANGLE, "palettes/old_factory_window", "palettes/old_factory_window_2"),
+		OLD_FACTORY_WINDOW_3 = getCT(AllCTTypes.RECTANGLE, "palettes/old_factory_window", "palettes/old_factory_window_3"),
+		OLD_FACTORY_WINDOW_4 = getCT(AllCTTypes.RECTANGLE, "palettes/old_factory_window", "palettes/old_factory_window_4");
 
 	public static final CTSpriteShiftEntry CRAFTER_SIDE = vertical("crafter_side"),
 		CRAFTER_OTHERSIDE = horizontal("crafter_side"),

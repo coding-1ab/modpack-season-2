@@ -8,8 +8,6 @@ import static com.simibubi.create.foundation.data.WindowGen.framedGlassPane;
 import static com.simibubi.create.foundation.data.WindowGen.woodenWindowBlock;
 import static com.simibubi.create.foundation.data.WindowGen.woodenWindowPane;
 
-import java.util.List;
-
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllCreativeModeTabs;
 import com.simibubi.create.AllSpriteShifts;
@@ -90,9 +88,7 @@ public class AllPaletteBlocks {
 		OLD_FACTORY_WINDOW = WindowGen
 			.randomisedWindowBlock("old_factory_window", AllBlocks.INDUSTRIAL_IRON_BLOCK, () -> RenderType::translucent,
 				true, () -> MapColor.TERRACOTTA_LIGHT_GRAY)
-			.onRegister(CreateRegistrate.connectedTextures(() -> new RandomisedWindowCTBehaviour(
-				List.of(AllSpriteShifts.OLD_FACTORY_WINDOW_1, AllSpriteShifts.OLD_FACTORY_WINDOW_2,
-					AllSpriteShifts.OLD_FACTORY_WINDOW_3, AllSpriteShifts.OLD_FACTORY_WINDOW_4))))
+			.onRegister(CreateRegistrate.connectedTextures(() -> new OldFactoryWindowCTBehaviour()))
 			.register();
 
 	public static final BlockEntry<ConnectedGlassPaneBlock> OAK_WINDOW_PANE =
@@ -108,9 +104,13 @@ public class AllPaletteBlocks {
 		CHERRY_WINDOW_PANE = woodenWindowPane(WoodType.CHERRY, CHERRY_WINDOW),
 		BAMBOO_WINDOW_PANE = woodenWindowPane(WoodType.BAMBOO, BAMBOO_WINDOW),
 		ORNATE_IRON_WINDOW_PANE = customWindowPane("ornate_iron_window", ORNATE_IRON_WINDOW,
-			() -> AllSpriteShifts.ORNATE_IRON_WINDOW, () -> RenderType::cutoutMipped),
+			() -> AllSpriteShifts.ORNATE_IRON_WINDOW, () -> RenderType::cutoutMipped).register(),
 		INDUSTRIAL_IRON_WINDOW_PANE = customWindowPane("industrial_iron_window", INDUSTRIAL_IRON_WINDOW,
-			() -> AllSpriteShifts.INDUSTRIAL_IRON_WINDOW, () -> RenderType::cutoutMipped);
+			() -> AllSpriteShifts.INDUSTRIAL_IRON_WINDOW, () -> RenderType::cutoutMipped).register(),
+		OLD_FACTORY_WINDOW_PANE =
+			customWindowPane("old_factory_window", OLD_FACTORY_WINDOW, null, () -> RenderType::translucent)
+				.onRegister(CreateRegistrate.connectedTextures(() -> new OldFactoryWindowPaneCTBehaviour()))
+				.register();
 
 	static {
 		AllPaletteStoneTypes.register(REGISTRATE);
