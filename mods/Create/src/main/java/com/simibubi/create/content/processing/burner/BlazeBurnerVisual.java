@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.AllSpriteShifts;
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.foundation.render.AllInstanceTypes;
 
 import dev.engine_room.flywheel.api.instance.Instance;
@@ -49,7 +50,7 @@ public class BlazeBurnerVisual extends AbstractBlockEntityVisual<BlazeBurnerBloc
 	public BlazeBurnerVisual(VisualizationContext ctx, BlazeBurnerBlockEntity blockEntity, float partialTick) {
 		super(ctx, blockEntity, partialTick);
 
-		heatLevel = blockEntity.getHeatLevelFromBlock();
+		heatLevel = blockEntity.getHeatLevelForRender();
 		validBlockAbove = blockEntity.isValidBlockAbove();
 
 		PartialModel blazeModel = BlazeBurnerRenderer.getBlazeModel(heatLevel, validBlockAbove);
@@ -125,11 +126,15 @@ public class BlazeBurnerVisual extends AbstractBlockEntityVisual<BlazeBurnerBloc
 			goggles = null;
 		}
 
-		if (blockEntity.hat && hat == null) {
-			hat = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.TRAIN_HAT))
+		boolean hatPresent = blockEntity.hat || blockEntity.stockKeeper;
+		if (hatPresent && hat == null) {
+			hat = instancerProvider()
+					.instancer(InstanceTypes.TRANSFORMED,
+						Models.partial(
+							blockEntity.stockKeeper ? AllPartialModels.LOGISTICS_HAT : AllPartialModels.TRAIN_HAT))
 					.createInstance();
 			hat.light(LightTexture.FULL_BRIGHT);
-		} else if (!blockEntity.hat && hat != null) {
+		} else if (!hatPresent && hat != null) {
 			hat.delete();
 			hat = null;
 		}

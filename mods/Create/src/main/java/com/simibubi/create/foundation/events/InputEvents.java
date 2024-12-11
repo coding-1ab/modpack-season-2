@@ -4,6 +4,7 @@ import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.contraptions.elevator.ElevatorControlsHandler;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchHandler;
 import com.simibubi.create.content.equipment.toolbox.ToolboxHandlerClient;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorConnectionHandler;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInteractionHandler;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainPackageInteractionHandler;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelConnectionHandler;
@@ -81,8 +82,9 @@ public class InputEvents {
 			if (CreateClient.GLUE_HANDLER.onMouseInput(key == mc.options.keyAttack))
 				event.setCanceled(true);
 		}
-		
-		if (key == mc.options.keyUse && FactoryPanelConnectionHandler.onRightClick()) {
+
+		if (key == mc.options.keyUse
+			&& (FactoryPanelConnectionHandler.onRightClick() || ChainConveyorConnectionHandler.onRightClick())) {
 			event.setCanceled(true);
 			return;
 		}
@@ -106,7 +108,7 @@ public class InputEvents {
 			event.setCanceled(true);
 			return;
 		}
-			
+
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
 			if (ChainPackageInteractionHandler.onUse())
 				event.setCanceled(true);

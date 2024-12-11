@@ -1,7 +1,0 @@
-{
-	"parent": "create:block/packager/block_regular",
-	"textures": {
-		"0": "create:block/packager_block_defrag",
-		"particle": "create:block/packager_block_defrag"
-	}
-}

@@ -222,6 +222,28 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 	}
 
 	@Override
+	public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pNeighborBlock,
+		BlockPos pNeighborPos, boolean pMovedByPiston) {
+		withBlockEntityDo(pLevel, pPos, fpbe -> fpbe.panels.values()
+			.forEach(FactoryPanelBehaviour::checkForRedstoneInput));
+	}
+
+	@Override
+	public boolean hasAnalogOutputSignal(BlockState pState) {
+		return true;
+	}
+
+	@Override
+	public int getAnalogOutputSignal(BlockState pState, Level pLevel, BlockPos pPos) {
+		return getBlockEntityOptional(pLevel, pPos).map(fpbe -> fpbe.panels.values()
+			.stream()
+			.filter(fpb -> fpb.isActive() && fpb.satisfied && fpb.count != 0)
+			.count())
+			.orElse(0L)
+			.intValue();
+	}
+
+	@Override
 	public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest,
 		FluidState fluid) {
 		if (tryDestroySubPanelFirst(state, level, pos, player))

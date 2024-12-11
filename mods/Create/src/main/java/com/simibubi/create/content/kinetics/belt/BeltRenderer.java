@@ -337,10 +337,12 @@ public class BeltRenderer extends SafeBlockEntityRenderer<BeltBlockEntity> {
 			if (box) {
 				ms.translate(0, 4 / 16f, 0);
 				ms.scale(1.5f, 1.5f, 1.5f);
-			} else
+			} else {
 				ms.scale(.5f, .5f, .5f);
-				itemRenderer.render(transported.stack, ItemDisplayContext.FIXED, false, ms, buffer, stackLight, overlay, bakedModel);
-				ms.popPose();
+			}
+
+			itemRenderer.render(transported.stack, ItemDisplayContext.FIXED, false, ms, buffer, stackLight, overlay, bakedModel);
+			ms.popPose();
 
 			if (!renderUpright) {
 				if (!blockItem)

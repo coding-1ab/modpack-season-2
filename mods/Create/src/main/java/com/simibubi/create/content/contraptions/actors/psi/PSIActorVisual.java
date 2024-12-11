@@ -15,9 +15,8 @@ public class PSIActorVisual extends ActorVisual {
 	public PSIActorVisual(VisualizationContext context, VirtualRenderWorld world, MovementContext movementContext) {
 		super(context, world, movementContext);
 
-		instance = new PIInstance(context.instancerProvider(), movementContext.state, movementContext.localPos);
+		instance = new PIInstance(context.instancerProvider(), movementContext.state, movementContext.localPos, false);
 
-		instance.init(false);
 		instance.middle.light(localBlockLight(), 0);
 		instance.top.light(localBlockLight(), 0);
 	}

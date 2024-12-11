@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceBlockEntity;
+import com.simibubi.create.content.kinetics.crafter.MechanicalCrafterBlockEntity;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.crate.BottomlessItemHandler;
@@ -16,7 +19,6 @@ import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBehaviour;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlockEntity;
 import com.simibubi.create.content.logistics.packagePort.frogport.FrogportBlockEntity;
-import com.simibubi.create.content.logistics.packager.PackagerBlock.PackagerType;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour.RequestType;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
@@ -53,7 +55,6 @@ import net.minecraftforge.items.ItemStackHandler;
 
 public class PackagerBlockEntity extends SmartBlockEntity {
 
-	public boolean redstoneModeActive;
 	public boolean redstonePowered;
 	public String signBasedAddress;
 
@@ -75,14 +76,10 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 	//
 
-	public boolean defragmenterActive;
-	public PackageDefragmenter defragmenter;
-
 	public PackagerBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
 		redstonePowered = state.getOptionalValue(PackagerBlock.POWERED)
 			.orElse(false);
-		redstoneModeActive = true;
 		heldBox = ItemStack.EMPTY;
 		previouslyUnwrapped = ItemStack.EMPTY;
 		inventory = new PackagerItemHandler(this);
@@ -91,9 +88,6 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		animationInward = true;
 		queuedExitingPackages = new LinkedList<>();
 		signBasedAddress = "";
-		if (AllBlocks.PACKAGER.has(state))
-			defragmenterActive = state.getValue(PackagerBlock.TYPE) == PackagerType.DEFRAG;
-		defragmenter = new PackageDefragmenter();
 	}
 
 	@Override
@@ -105,12 +99,6 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 	private boolean supportsBlockEntity(BlockEntity target) {
 		return target != null && !(target instanceof PortableStorageInterfaceBlockEntity);
-	}
-
-	@Override
-	public void initialize() {
-		super.initialize();
-		recheckIfLinksPresent();
 	}
 
 	@Override
@@ -151,15 +139,19 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			this.availableItems = availableItems;
 			return availableItems;
 		}
-		
+
 		if (targetInv instanceof BottomlessItemHandler bih) {
 			availableItems.add(bih.getStackInSlot(0), BigItemStack.INF);
 			this.availableItems = availableItems;
 			return availableItems;
 		}
 
-		for (int slot = 0; slot < targetInv.getSlots(); slot++)
-			availableItems.add(targetInv.getStackInSlot(slot));
+		for (int slot = 0; slot < targetInv.getSlots(); slot++) {
+			int slotLimit = targetInv.getSlotLimit(slot);
+			@NotNull
+			ItemStack extractItem = targetInv.extractItem(slot, slotLimit, true);
+			availableItems.add(extractItem);
+		}
 
 		invVersionTracker.awaitNewVersion(targetInventory.getInventory());
 		submitNewArrivals(this.availableItems, availableItems);
@@ -224,9 +216,6 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			.orElse(false);
 		if (!redstonePowered)
 			return;
-		recheckIfLinksPresent();
-		if (!redstoneModeActive)
-			return;
 		updateSignAddress();
 		attemptToSend(null);
 	}
@@ -240,28 +229,9 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		};
 	}
 
-	public void recheckIfLinksPresent() {
-		redstoneModeActive = true;
-		if (defragmenterActive)
-			return;
-		for (Direction d : Iterate.directions) {
-			BlockState adjacentState = level.getBlockState(worldPosition.relative(d));
-			if (!AllBlocks.STOCK_LINK.has(adjacentState))
-				continue;
-			if (adjacentState.getValue(PackagerLinkBlock.FACING) != d)
-				continue;
-			redstoneModeActive = false;
-			return;
-		}
-	}
-
 	public void activate() {
 		redstonePowered = true;
 		setChanged();
-
-		recheckIfLinksPresent();
-		if (!redstoneModeActive)
-			return;
 		updateSignAddress();
 		attemptToSend(null);
 	}
@@ -271,71 +241,79 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			return false;
 
 		ItemStackHandler contents = PackageItem.getContents(box);
+		PackageOrder orderContext = PackageItem.getOrderContext(box);
 		IItemHandler targetInv = targetInventory.getInventory();
+		BlockEntity targetBE =
+			level.getBlockEntity(worldPosition.relative(getBlockState().getOptionalValue(PackagerBlock.FACING)
+				.orElse(Direction.UP)
+				.getOpposite()));
+
 		if (targetInv == null)
 			return false;
 
 		boolean targetIsCreativeCrate = targetInv instanceof BottomlessItemHandler;
+		boolean targetIsCrafter = targetBE instanceof MechanicalCrafterBlockEntity;
 
-		if (defragmenterActive) {
-			boolean anySpace = false;
-			for (int slot = 0; slot < targetInv.getSlots(); slot++) {
-				ItemStack remainder = targetInv.insertItem(slot, box, simulate);
-				if (!remainder.isEmpty())
-					continue;
-				anySpace = true;
-				break;
-			}
+		for (int slot = 0; slot < targetInv.getSlots(); slot++) {
+			ItemStack itemInSlot = targetInv.getStackInSlot(slot);
+			int itemsAddedToSlot = 0;
 
-			if (!targetIsCreativeCrate && !anySpace)
-				return false;
-		}
+			for (int boxSlot = 0; boxSlot < contents.getSlots(); boxSlot++) {
+				ItemStack toInsert = contents.getStackInSlot(boxSlot);
 
-		if (!defragmenterActive) {
-			for (int slot = 0; slot < targetInv.getSlots(); slot++) {
-				ItemStack itemInSlot = targetInv.getStackInSlot(slot);
-				int itemsAddedToSlot = 0;
-				for (int boxSlot = 0; boxSlot < contents.getSlots(); boxSlot++) {
-					ItemStack toInsert = contents.getStackInSlot(boxSlot);
-					if (toInsert.isEmpty())
+				// Follow crafting arrangement
+				if (targetIsCrafter && orderContext != null && orderContext.stacks()
+					.size() > slot) {
+					BigItemStack targetStack = orderContext.stacks()
+						.get(slot);
+					if (targetStack.stack.isEmpty())
+						break;
+					if (!ItemHandlerHelper.canItemStacksStack(toInsert, targetStack.stack))
 						continue;
-					if (targetInv.insertItem(slot, toInsert, true)
-						.getCount() == toInsert.getCount())
-						continue;
-					if (itemInSlot.isEmpty()) {
-						int maxStackSize = targetInv.getSlotLimit(slot);
-						if (maxStackSize < toInsert.getCount()) {
-							toInsert.shrink(maxStackSize);
-							toInsert = ItemHandlerHelper.copyStackWithSize(toInsert, maxStackSize);
-						} else
-							contents.setStackInSlot(boxSlot, ItemStack.EMPTY);
-						itemInSlot = toInsert;
-						targetInv.insertItem(slot, toInsert, simulate);
-						continue;
-					}
-					if (!ItemHandlerHelper.canItemStacksStack(toInsert, itemInSlot))
-						continue;
-					int insertedAmount = toInsert.getCount() - targetInv.insertItem(slot, toInsert, simulate)
-						.getCount();
-					int slotLimit = (int) ((targetInv.getStackInSlot(slot)
-						.isEmpty() ? itemInSlot.getMaxStackSize() / 64f : 1) * targetInv.getSlotLimit(slot));
-					int insertableAmountWithPreviousItems =
-						Math.min(toInsert.getCount(), slotLimit - itemInSlot.getCount() - itemsAddedToSlot);
-					int added = Math.min(insertedAmount, insertableAmountWithPreviousItems);
-					contents.setStackInSlot(boxSlot,
-						ItemHandlerHelper.copyStackWithSize(toInsert, toInsert.getCount() - added));
 				}
-			}
 
-			if (!targetIsCreativeCrate)
-				for (int boxSlot = 0; boxSlot < contents.getSlots(); boxSlot++)
-					if (!contents.getStackInSlot(boxSlot)
-						.isEmpty())
-						return false;
+				if (targetInv.insertItem(slot, toInsert, true)
+					.getCount() == toInsert.getCount())
+					continue;
+				if (itemInSlot.isEmpty()) {
+					int maxStackSize = targetInv.getSlotLimit(slot);
+					if (maxStackSize < toInsert.getCount()) {
+						toInsert.shrink(maxStackSize);
+						toInsert = ItemHandlerHelper.copyStackWithSize(toInsert, maxStackSize);
+					} else
+						contents.setStackInSlot(boxSlot, ItemStack.EMPTY);
+					itemInSlot = toInsert;
+					targetInv.insertItem(slot, toInsert, simulate);
+					itemsAddedToSlot += toInsert.getCount();
+					continue;
+				}
+				if (!ItemHandlerHelper.canItemStacksStack(toInsert, itemInSlot))
+					continue;
+
+				int insertedAmount = toInsert.getCount() - targetInv.insertItem(slot, toInsert, simulate)
+					.getCount();
+				int slotLimit = (int) ((targetInv.getStackInSlot(slot)
+					.isEmpty() ? itemInSlot.getMaxStackSize() / 64f : 1) * targetInv.getSlotLimit(slot));
+				int insertableAmountWithPreviousItems =
+					Math.min(toInsert.getCount(), slotLimit - itemInSlot.getCount() - itemsAddedToSlot);
+
+				int added = Math.min(insertedAmount, Math.max(0, insertableAmountWithPreviousItems));
+				contents.setStackInSlot(boxSlot,
+					ItemHandlerHelper.copyStackWithSize(toInsert, toInsert.getCount() - added));
+			}
 		}
+
+		if (!targetIsCreativeCrate)
+			for (int boxSlot = 0; boxSlot < contents.getSlots(); boxSlot++)
+				if (!contents.getStackInSlot(boxSlot)
+					.isEmpty())
+					return false;
 
 		if (simulate)
 			return true;
+
+		if (targetBE instanceof MechanicalCrafterBlockEntity mcbe)
+			mcbe.checkCompletedRecipe(true);
 
 		previouslyUnwrapped = box;
 		animationInward = true;
@@ -351,11 +329,6 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		IItemHandler targetInv = targetInventory.getInventory();
 		if (targetInv == null || targetInv instanceof PackagerItemHandler)
 			return;
-
-		if (defragmenterActive) {
-			attemptToDefrag(targetInv);
-			return;
-		}
 
 		boolean anyItemPresent = false;
 		ItemStackHandler extractedItems = new ItemStackHandler(PackageItem.SLOTS);
@@ -448,7 +421,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 					continuePacking = true;
 					if (nextRequest.context() != null)
 						orderContext = nextRequest.context();
-					
+
 					if (bulky)
 						break Outer;
 					break;
@@ -484,57 +457,6 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		animationTicks = CYCLE;
 
 		triggerStockCheck();
-		notifyUpdate();
-	}
-
-	protected void attemptToDefrag(IItemHandler targetInv) {
-		defragmenter.clear();
-		int completedOrderId = -1;
-
-		for (int slot = 0; slot < targetInv.getSlots(); slot++) {
-			ItemStack extracted = targetInv.extractItem(slot, 1, true);
-			if (extracted.isEmpty() || !PackageItem.isPackage(extracted))
-				continue;
-
-			if (!defragmenter.isFragmented(extracted)) {
-				targetInv.extractItem(slot, 1, false);
-				heldBox = extracted.copy();
-				animationInward = false;
-				animationTicks = CYCLE;
-				notifyUpdate();
-				return;
-			}
-
-			completedOrderId = defragmenter.addPackageFragment(extracted);
-			if (completedOrderId != -1)
-				break;
-		}
-
-		if (completedOrderId == -1)
-			return;
-
-		List<ItemStack> boxesToExport = defragmenter.repack(completedOrderId);
-
-		for (int slot = 0; slot < targetInv.getSlots(); slot++) {
-			ItemStack extracted = targetInv.extractItem(slot, 1, true);
-			if (extracted.isEmpty() || !PackageItem.isPackage(extracted))
-				continue;
-			if (PackageItem.getOrderId(extracted) != completedOrderId)
-				continue;
-			targetInv.extractItem(slot, 1, false);
-		}
-
-		if (boxesToExport.isEmpty())
-			return;
-
-		heldBox = boxesToExport.get(0)
-			.copy();
-		animationInward = false;
-		animationTicks = CYCLE;
-
-		for (int i = 1; i < boxesToExport.size(); i++)
-			ItemHandlerHelper.insertItem(targetInv, boxesToExport.get(i), false);
-
 		notifyUpdate();
 	}
 
@@ -577,7 +499,6 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		signBasedAddress = compound.getString("SignAddress");
 		heldBox = ItemStack.of(compound.getCompound("HeldBox"));
 		previouslyUnwrapped = ItemStack.of(compound.getCompound("InsertedBox"));
-		defragmenterActive = compound.getBoolean("Defrag");
 		if (clientPacket)
 			return;
 		queuedExitingPackages = NBTHelper.readItemList(compound.getList("QueuedPackages", Tag.TAG_COMPOUND));
@@ -594,7 +515,6 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		compound.putString("SignAddress", signBasedAddress);
 		compound.put("HeldBox", heldBox.serializeNBT());
 		compound.put("InsertedBox", previouslyUnwrapped.serializeNBT());
-		compound.putBoolean("Defrag", defragmenterActive);
 		if (clientPacket)
 			return;
 		compound.put("QueuedPackages", NBTHelper.writeItemList(queuedExitingPackages));

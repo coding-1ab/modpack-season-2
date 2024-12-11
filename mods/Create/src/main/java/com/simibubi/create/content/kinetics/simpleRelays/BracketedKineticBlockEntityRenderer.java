@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntityVisual;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.createmod.catnip.render.CachedBuffers;
@@ -63,12 +64,11 @@ public class BracketedKineticBlockEntityRenderer extends KineticBlockEntityRende
 	}
 
 	public static float getShaftAngleOffset(Axis axis, BlockPos pos) {
-		float offset = 0;
-		double d = (((axis == Axis.X) ? 0 : pos.getX()) + ((axis == Axis.Y) ? 0 : pos.getY())
-			+ ((axis == Axis.Z) ? 0 : pos.getZ())) % 2;
-		if (d == 0)
-			offset = 22.5f;
-		return offset;
+		if (KineticBlockEntityVisual.shouldOffset(axis, pos)) {
+			return 22.5f;
+		} else {
+			return 0;
+		}
 	}
 
 }

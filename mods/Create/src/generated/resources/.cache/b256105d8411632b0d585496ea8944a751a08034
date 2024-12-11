@@ -1,4 +1,4 @@
-// 1.20.1	2024-11-08T15:43:24.6478256	Create's Processing Recipes
+// 1.20.1	2024-12-11T11:42:35.0350518	Create's Processing Recipes
 3c94326fb730f68c1e44fe1e2ef09c9db6ffd92b data/create/recipes/compacting/andesite_from_flint.json
 8d3d5b31f3601b9f681ff710e0545a483a1494c6 data/create/recipes/compacting/blaze_cake.json
 8bd7f4e3a686ab520b2d55594d2018d0e9a50c91 data/create/recipes/compacting/chocolate.json
@@ -990,7 +990,7 @@ ac2a2456e2f0ccd74db6dc5ad029eb4e6781a25d data/create/recipes/mixing/honey.json
 e715dd1d3961de8a817ddcd6a1c411761966e57e data/create/recipes/pressing/compat/betterendforge/chorus_nylium_path.json
 29a514bea64e7e3f7fe04c2d19749d174b4e42b3 data/create/recipes/pressing/compat/betterendforge/crystal_moss_path.json
 7b377ce79e3e32a7b3fece940fb0b234d255e3fe data/create/recipes/pressing/compat/betterendforge/end_moss_path.json
-17c68db229cef447679eeba25da1fe7de17be50d data/create/recipes/pressing/compat/betterendforge/end_myclium_path.json
+e4df3cd1f80b62382ea0941c3dde030c67dba03f data/create/recipes/pressing/compat/betterendforge/end_mycelium_path.json
 fb6d54e0ee3c8831060a8573d16814217888ae0e data/create/recipes/pressing/compat/betterendforge/jungle_moss_path.json
 77dbbdd01f36f1ede5018bc1feb3dff960988129 data/create/recipes/pressing/compat/betterendforge/pink_moss_path.json
 200b0a7f459b4c5f5bd7d6fe46ad1959923b9cb0 data/create/recipes/pressing/compat/betterendforge/shadow_grass_path.json

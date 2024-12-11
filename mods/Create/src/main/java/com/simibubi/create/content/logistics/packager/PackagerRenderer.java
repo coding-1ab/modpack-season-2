@@ -1,8 +1,8 @@
 package com.simibubi.create.content.logistics.packager;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPartialModels;
-import com.simibubi.create.content.logistics.packager.PackagerBlock.PackagerType;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
@@ -54,10 +54,8 @@ public class PackagerRenderer extends SmartBlockEntityRenderer<PackagerBlockEnti
 		msr.translate(Vec3.atLowerCornerOf(facing.getNormal())
 			.scale(trayOffset));
 
-		sbb = CachedBuffers.partial(
-			blockState.getValue(PackagerBlock.TYPE) == PackagerType.REGULAR ? AllPartialModels.PACKAGER_TRAY_REGULAR
-				: AllPartialModels.PACKAGER_TRAY_DEFRAG,
-			blockState);
+		sbb = CachedBuffers.partial(AllBlocks.PACKAGER.has(blockState) ? AllPartialModels.PACKAGER_TRAY_REGULAR
+			: AllPartialModels.PACKAGER_TRAY_DEFRAG, blockState);
 		sbb.rotateCentered(AngleHelper.rad(facing.toYRot()), Direction.UP)
 			.light(light)
 			.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));

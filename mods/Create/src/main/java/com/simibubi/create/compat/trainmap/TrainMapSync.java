@@ -1,13 +1,11 @@
 package com.simibubi.create.compat.trainmap;
 
 import java.lang.ref.WeakReference;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.trains.entity.Carriage;
@@ -21,6 +19,7 @@ import com.simibubi.create.content.trains.signal.SignalBlock.SignalType;
 import com.simibubi.create.content.trains.signal.SignalBoundary;
 import com.simibubi.create.content.trains.signal.SignalEdgeGroup;
 import com.simibubi.create.content.trains.station.GlobalStation;
+import com.simibubi.create.foundation.utility.TickBasedCache;
 
 import net.createmod.catnip.utility.Pair;
 import net.minecraft.network.FriendlyByteBuf;
@@ -169,9 +168,7 @@ public class TrainMapSync {
 
 	}
 
-	public static Cache<UUID, WeakReference<ServerPlayer>> requestingPlayers = CacheBuilder.newBuilder()
-		.expireAfterWrite(Duration.ofSeconds(1))
-		.build();
+	public static Cache<UUID, WeakReference<ServerPlayer>> requestingPlayers = new TickBasedCache<>(20, false);
 
 	public static void requestReceived(ServerPlayer sender) {
 		boolean sendImmediately = requestingPlayers.getIfPresent(sender.getUUID()) == null;

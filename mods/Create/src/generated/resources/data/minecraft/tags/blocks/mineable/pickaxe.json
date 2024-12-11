@@ -133,6 +133,7 @@
     "create:item_vault",
     "create:item_hatch",
     "create:packager",
+    "create:repackager",
     "create:package_frogport",
     "create:stock_link",
     "create:stock_ticker",

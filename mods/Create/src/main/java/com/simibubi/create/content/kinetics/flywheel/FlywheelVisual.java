@@ -57,7 +57,7 @@ public class FlywheelVisual extends KineticBlockEntityVisual<FlywheelBlockEntity
 
 		msr.translate(getVisualPosition());
 		msr.center()
-			.rotate(AngleHelper.rad(angle), Direction.get(Direction.AxisDirection.POSITIVE, axis))
+			.rotate(AngleHelper.rad(angle), Direction.get(Direction.AxisDirection.POSITIVE, rotationAxis()))
 			.uncenter();
 
 		wheel.setTransform(ms)

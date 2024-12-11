@@ -2,10 +2,8 @@ package com.simibubi.create.content.kinetics.chainConveyor;
 
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllBlocks;
@@ -15,6 +13,7 @@ import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.packagePort.PackagePortTarget;
 import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler;
 import com.simibubi.create.foundation.utility.RaycastHelper;
+import com.simibubi.create.foundation.utility.TickBasedCache;
 
 import net.createmod.catnip.CatnipClient;
 import net.createmod.catnip.utility.WorldAttached;
@@ -37,9 +36,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 public class ChainConveyorInteractionHandler {
 
 	public static WorldAttached<Cache<BlockPos, List<ChainConveyorShape>>> loadedChains =
-		new WorldAttached<>($ -> CacheBuilder.newBuilder()
-			.expireAfterAccess(3, TimeUnit.SECONDS)
-			.build());
+		new WorldAttached<>($ -> new TickBasedCache<>(60, true));
 
 	public static BlockPos selectedLift;
 	public static float selectedChainPosition;

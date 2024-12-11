@@ -167,7 +167,6 @@ import com.simibubi.create.content.logistics.crate.CreativeCrateBlock;
 import com.simibubi.create.content.logistics.depot.DepotBlock;
 import com.simibubi.create.content.logistics.depot.EjectorBlock;
 import com.simibubi.create.content.logistics.depot.EjectorItem;
-import com.simibubi.create.content.logistics.displayCloth.DisplayClothBlock;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlockItem;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelModel;
@@ -183,12 +182,13 @@ import com.simibubi.create.content.logistics.packagePort.PackagePortItem;
 import com.simibubi.create.content.logistics.packagePort.frogport.FrogportBlock;
 import com.simibubi.create.content.logistics.packagePort.postbox.PostboxBlock;
 import com.simibubi.create.content.logistics.packager.PackagerBlock;
-import com.simibubi.create.content.logistics.packager.PackagerGenerator;
+import com.simibubi.create.content.logistics.packager.repackager.RepackagerBlock;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlock;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlockItem;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlock;
+import com.simibubi.create.content.logistics.tableCloth.TableClothBlock;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BrassTunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BrassTunnelCTBehaviour;
@@ -1839,18 +1839,12 @@ public class AllBlocks {
 		.register();
 
 	public static final BlockEntry<PackagerBlock> PACKAGER = REGISTRATE.block("packager", PackagerBlock::new)
-		.initialProperties(SharedProperties::softMetal)
-		.properties(p -> p.noOcclusion())
-		.properties(p -> p.isRedstoneConductor(($1, $2, $3) -> false))
-		.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
-			.sound(SoundType.NETHERITE_BLOCK))
-		.transform(pickaxeOnly())
-		.addLayer(() -> RenderType::cutoutMipped)
-		.blockstate(new PackagerGenerator()::generate)
-		.transform(BlockStressDefaults.setImpact(1.0))
-		.item()
-		.model(AssetLookup::customItemModel)
-		.build()
+		.transform(BuilderTransformers.packager())
+		.register();
+
+	public static final BlockEntry<RepackagerBlock> REPACKAGER = REGISTRATE.block("repackager", RepackagerBlock::new)
+		.transform(BuilderTransformers.packager())
+		.lang("Re-Packager")
 		.register();
 
 	public static final BlockEntry<FrogportBlock> PACKAGE_FROGPORT =
@@ -1957,9 +1951,9 @@ public class AllBlocks {
 			.build()
 			.register();
 
-	public static final DyedBlockList<DisplayClothBlock> TABLE_CLOTHS = new DyedBlockList<>(colour -> {
+	public static final DyedBlockList<TableClothBlock> TABLE_CLOTHS = new DyedBlockList<>(colour -> {
 		String colourName = colour.getSerializedName();
-		return REGISTRATE.block(colourName + "_table_cloth", p -> new DisplayClothBlock(p, colour))
+		return REGISTRATE.block(colourName + "_table_cloth", p -> new TableClothBlock(p, colour))
 			.transform(BuilderTransformers.tableCloth(colourName, () -> Blocks.BLACK_CARPET, true))
 			.properties(p -> p.mapColor(colour))
 			.recipe((c, p) -> {
@@ -1977,8 +1971,8 @@ public class AllBlocks {
 			.register();
 	});
 
-	public static final BlockEntry<DisplayClothBlock> ANDESITE_DISPLAY_CLOTH =
-		REGISTRATE.block("andesite_table_cloth", p -> new DisplayClothBlock(p, "andesite"))
+	public static final BlockEntry<TableClothBlock> ANDESITE_TABLE_CLOTH =
+		REGISTRATE.block("andesite_table_cloth", p -> new TableClothBlock(p, "andesite"))
 			.transform(BuilderTransformers.tableCloth("andesite", SharedProperties::stone, false))
 			.properties(p -> p.mapColor(MapColor.STONE)
 				.requiresCorrectToolForDrops())
@@ -1987,8 +1981,8 @@ public class AllBlocks {
 			.transform(pickaxeOnly())
 			.register();
 
-	public static final BlockEntry<DisplayClothBlock> BRASS_DISPLAY_CLOTH =
-		REGISTRATE.block("brass_table_cloth", p -> new DisplayClothBlock(p, "brass"))
+	public static final BlockEntry<TableClothBlock> BRASS_TABLE_CLOTH =
+		REGISTRATE.block("brass_table_cloth", p -> new TableClothBlock(p, "brass"))
 			.transform(BuilderTransformers.tableCloth("brass", SharedProperties::softMetal, false))
 			.properties(p -> p.mapColor(MapColor.TERRACOTTA_YELLOW)
 				.requiresCorrectToolForDrops())
@@ -1997,8 +1991,8 @@ public class AllBlocks {
 			.transform(pickaxeOnly())
 			.register();
 
-	public static final BlockEntry<DisplayClothBlock> COPPER_DISPLAY_CLOTH =
-		REGISTRATE.block("copper_table_cloth", p -> new DisplayClothBlock(p, "copper"))
+	public static final BlockEntry<TableClothBlock> COPPER_TABLE_CLOTH =
+		REGISTRATE.block("copper_table_cloth", p -> new TableClothBlock(p, "copper"))
 			.transform(BuilderTransformers.tableCloth("copper", SharedProperties::copperMetal, false))
 			.properties(p -> p.requiresCorrectToolForDrops())
 			.recipe((c, p) -> p.stonecutting(DataIngredient.tag(AllTags.forgeItemTag("ingots/copper")),

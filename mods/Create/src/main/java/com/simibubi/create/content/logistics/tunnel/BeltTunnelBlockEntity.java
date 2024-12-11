@@ -155,7 +155,7 @@ public class BeltTunnelBlockEntity extends SmartBlockEntity {
 		if (level.isClientSide) {
 			if (flaps.containsKey(side))
 				flaps.get(side)
-					.setValue(inward ^ side.getAxis() == Axis.Z ? -1 : 1);
+					.setValue(inward ? -1 : 1);
 			return;
 		}
 

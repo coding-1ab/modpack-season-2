@@ -18,6 +18,7 @@ import com.simibubi.create.content.trains.entity.CarriageEntityHandler;
 import com.simibubi.create.foundation.ModFilePackResources;
 import com.simibubi.create.foundation.recipe.RecipeFinder;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
+import com.simibubi.create.foundation.utility.TickBasedCache;
 import com.simibubi.create.infrastructure.command.AllCommands;
 
 import net.createmod.catnip.utility.WorldAttached;
@@ -71,6 +72,7 @@ public class CommonEvents {
 		Create.RAILWAYS.sync.serverTick();
 		TrainMapSync.serverTick(event);
 		ServerChainConveyorHandler.tick();
+		TickBasedCache.tick();
 	}
 
 	@SubscribeEvent

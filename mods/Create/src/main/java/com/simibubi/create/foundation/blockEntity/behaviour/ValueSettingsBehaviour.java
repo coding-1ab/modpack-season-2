@@ -88,6 +88,10 @@ public interface ValueSettingsBehaviour extends ClipboardCloneable {
 		return false;
 	}
 	
+	default boolean mayInteract(Player player) {
+		return true;
+	}
+	
 	default int netId() {
 		return 0;
 	}

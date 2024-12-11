@@ -123,8 +123,11 @@ public class AllPartialModels {
 		FROGPORT_TONGUE = block("package_frogport/tongue"),
 		POSTBOX_FLAG = block("package_postbox/flag"),
 
-		PACKAGER_TRAY_REGULAR = block("packager/tray_regular"), PACKAGER_TRAY_DEFRAG = block("packager/tray_defrag"),
+		PACKAGER_TRAY_REGULAR = block("packager/tray"), PACKAGER_TRAY_DEFRAG = block("repackager/tray"),
 		PACKAGER_HATCH_OPEN = block("packager/hatch_open"), PACKAGER_HATCH_CLOSED = block("packager/hatch_closed"),
+		
+		TABLE_CLOTH_PRICE_SIDE = block("table_cloth/price_tag_side"),
+		TABLE_CLOTH_PRICE_TOP = block("table_cloth/price_tag_top"),
 
 		COPPER_BACKTANK_SHAFT = block("copper_backtank/block_shaft_input"),
 		COPPER_BACKTANK_COGS = block("copper_backtank/block_cogs"),
@@ -188,11 +191,12 @@ public class AllPartialModels {
 		FACTORY_PANEL_RESTOCKER = block("factory_gauge/panel_restocker"),
 		FACTORY_PANEL_RESTOCKER_WITH_BULB = block("factory_gauge/panel_restocker_with_bulb"),
 		FACTORY_PANEL_LIGHT = block("factory_gauge/bulb_light"),
+		FACTORY_PANEL_RED_LIGHT = block("factory_gauge/bulb_red"),
 
-		DISPLAY_CLOTH_NW = block("table_cloth/north_west"),
-		DISPLAY_CLOTH_NE = block("table_cloth/north_east"),
-		DISPLAY_CLOTH_SW = block("table_cloth/south_west"),
-		DISPLAY_CLOTH_SE = block("table_cloth/south_east"),
+		TABLE_CLOTH_NW = block("table_cloth/north_west"),
+		TABLE_CLOTH_NE = block("table_cloth/north_east"),
+		TABLE_CLOTH_SW = block("table_cloth/south_west"),
+		TABLE_CLOTH_SE = block("table_cloth/south_east"),
 		
 		CRAFTING_BLUEPRINT_1x1 = entity("crafting_blueprint_small"),
 		CRAFTING_BLUEPRINT_2x2 = entity("crafting_blueprint_medium"),

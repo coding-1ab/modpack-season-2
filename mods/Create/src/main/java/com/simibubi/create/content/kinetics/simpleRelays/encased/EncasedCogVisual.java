@@ -57,13 +57,13 @@ public class EncasedCogVisual extends KineticBlockEntityVisual<KineticBlockEntit
 
 		Block block = blockState.getBlock();
 		if (block instanceof IRotate def) {
-			for (Direction d : Iterate.directionsInAxis(axis)) {
+			for (Direction d : Iterate.directionsInAxis(rotationAxis())) {
 				if (!def.hasShaftTowards(blockEntity.getLevel(), blockEntity.getBlockPos(), blockState, d))
 					continue;
 				RotatingInstance data = setup(instancerProvider().instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.SHAFT_HALF, d))
 					.createInstance());
 				if (large) {
-					data.setRotationOffset(BracketedKineticBlockEntityRenderer.getShaftAngleOffset(axis, pos));
+					data.setRotationOffset(BracketedKineticBlockEntityRenderer.getShaftAngleOffset(rotationAxis(), pos));
 				}
 				if (d.getAxisDirection() == AxisDirection.POSITIVE) {
 					rotatingTopShaft = data;

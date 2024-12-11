@@ -50,6 +50,8 @@ public class ValueSettingsInputHandler {
 				continue;
 			if (valueSettingsBehaviour.bypassesInput(player.getMainHandItem()))
 				continue;
+			if (!valueSettingsBehaviour.mayInteract(player))
+				continue;
 
 			BlockHitResult ray = RaycastHelper.rayTraceRange(world, player, 10);
 			if (ray == null)

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.utility.lang.Components;
@@ -41,6 +42,10 @@ public class FrogportRenderer extends SmartBlockEntityRenderer<FrogportBlockEnti
 
 		if (blockEntity.addressFilter != null && !blockEntity.addressFilter.isBlank())
 			renderNameplateOnHover(blockEntity, Components.literal(blockEntity.addressFilter), 1, ms, buffer, light);
+
+		if (VisualizationManager.supportsVisualization(blockEntity.getLevel())) {
+			return;
+		}
 
 		if (hasTarget) {
 			diff = blockEntity.target
@@ -86,7 +91,7 @@ public class FrogportRenderer extends SmartBlockEntityRenderer<FrogportBlockEnti
 
 		headPitch = Math.max(headPitch, blockEntity.manualOpenAnimationProgress.getValue(partialTicks) * 60);
 		tongueLength = Math.max(tongueLength, blockEntity.manualOpenAnimationProgress.getValue(partialTicks) * 0.25f);
-		
+
 
 		body.center()
 			.rotateYDegrees(yaw)

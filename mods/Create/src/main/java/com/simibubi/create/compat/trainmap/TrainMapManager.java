@@ -48,18 +48,21 @@ import net.minecraft.world.phys.Vec3;
 public class TrainMapManager {
 
 	public static void tick() {
+		tick(Minecraft.getInstance().level.dimension());
+	}
+
+	public static void tick(ResourceKey<Level> dimension) {
 		TrainMapRenderer map = TrainMapRenderer.INSTANCE;
-		if (map.trackingVersion != CreateClient.RAILWAYS.version
-			|| map.trackingDim != Minecraft.getInstance().level.dimension()
+		if (map.trackingVersion != CreateClient.RAILWAYS.version || map.trackingDim != dimension
 			|| map.trackingTheme != AllConfigs.client().trainMapColorTheme.get()) {
-			redrawAll();
+			redrawAll(dimension);
 		}
 	}
 
 	public static List<FormattedText> renderAndPick(GuiGraphics graphics, int mouseX, int mouseY, float pt,
 		boolean linearFiltering, Rect2i bounds) {
 		Object hoveredElement = null;
-		
+
 		int offScreenMargin = 32;
 		bounds.setX(bounds.getX() - offScreenMargin);
 		bounds.setY(bounds.getY() - offScreenMargin);
@@ -444,10 +447,10 @@ public class TrainMapManager {
 	static final int PHASE_STRAIGHTS = 1;
 	static final int PHASE_CURVES = 2;
 
-	public static void redrawAll() {
+	public static void redrawAll(ResourceKey<Level> dimension) {
 		TrainMapRenderer map = TrainMapRenderer.INSTANCE;
 		map.trackingVersion = CreateClient.RAILWAYS.version;
-		map.trackingDim = Minecraft.getInstance().level.dimension();
+		map.trackingDim = dimension;
 		map.trackingTheme = AllConfigs.client().trainMapColorTheme.get();
 		map.startDrawing();
 

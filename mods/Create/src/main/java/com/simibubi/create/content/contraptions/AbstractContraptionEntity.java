@@ -38,6 +38,7 @@ import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.collision.Matrix3d;
 import com.simibubi.create.foundation.mixin.accessor.ServerLevelAccessor;
 
+import dev.engine_room.flywheel.api.backend.BackendManager;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.client.Minecraft;
@@ -380,7 +381,8 @@ public abstract class AbstractContraptionEntity extends Entity implements IEntit
 
 		if (level().isClientSide())
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-				if (!contraption.deferInvalidate)
+				// The visual will handle this with flywheel on.
+				if (!contraption.deferInvalidate || BackendManager.isBackendOn())
 					return;
 				contraption.deferInvalidate = false;
 				ContraptionRenderInfo.invalidate(contraption);
@@ -878,7 +880,7 @@ public abstract class AbstractContraptionEntity extends Entity implements IEntit
 		public float yRotation = 0;
 		public float zRotation = 0;
 		public float secondYRotation = 0;
-		
+
 		Matrix3d matrix;
 
 		public Matrix3d asMatrix() {
@@ -933,4 +935,7 @@ public abstract class AbstractContraptionEntity extends Entity implements IEntit
 		return isAlive() || level().isClientSide() ? staleTicks > 0 : false;
 	}
 
+	public boolean isPrevPosInvalid() {
+		return prevPosInvalid;
+	}
 }

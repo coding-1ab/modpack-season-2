@@ -35,7 +35,7 @@ public class BlazeBurnerRenderer extends SafeBlockEntityRenderer<BlazeBurnerBloc
 	@Override
 	protected void renderSafe(BlazeBurnerBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource bufferSource,
 		int light, int overlay) {
-		HeatLevel heatLevel = be.getHeatLevelFromBlock();
+		HeatLevel heatLevel = be.getHeatLevelForRender();
 		if (heatLevel == HeatLevel.NONE)
 			return;
 
@@ -45,7 +45,7 @@ public class BlazeBurnerRenderer extends SafeBlockEntityRenderer<BlazeBurnerBloc
 		float horizontalAngle = AngleHelper.rad(be.headAngle.getValue(partialTicks));
 		boolean canDrawFlame = heatLevel.isAtLeast(HeatLevel.FADING);
 		boolean drawGoggles = be.goggles;
-		boolean drawHat = be.hat;
+		PartialModel drawHat = be.hat ? AllPartialModels.TRAIN_HAT : be.stockKeeper ? AllPartialModels.LOGISTICS_HAT : null;
 		int hashCode = be.hashCode();
 
 		renderShared(ms, null, bufferSource,
@@ -60,9 +60,8 @@ public class BlazeBurnerRenderer extends SafeBlockEntityRenderer<BlazeBurnerBloc
 		if (heatLevel == HeatLevel.NONE)
 			return;
 
-		if (!heatLevel.isAtLeast(HeatLevel.FADING)) {
+		if (!heatLevel.isAtLeast(HeatLevel.FADING))
 			heatLevel = HeatLevel.FADING;
-		}
 
 		Level level = context.world;
 		float horizontalAngle = AngleHelper.rad(headAngle.getValue(LevelTickHolder.getPartialTicks(level)));
@@ -72,12 +71,12 @@ public class BlazeBurnerRenderer extends SafeBlockEntityRenderer<BlazeBurnerBloc
 
 		renderShared(matrices.getViewProjection(), matrices.getModel(), bufferSource,
 			level, state, heatLevel, 0, horizontalAngle,
-			false, drawGoggles, drawHat, hashCode);
+			false, drawGoggles, drawHat ? AllPartialModels.TRAIN_HAT : null, hashCode);
 	}
 
-	private static void renderShared(PoseStack ms, @Nullable PoseStack modelTransform, MultiBufferSource bufferSource,
+	public static void renderShared(PoseStack ms, @Nullable PoseStack modelTransform, MultiBufferSource bufferSource,
 		Level level, BlockState blockState, HeatLevel heatLevel, float animation, float horizontalAngle,
-		boolean canDrawFlame, boolean drawGoggles, boolean drawHat, int hashCode) {
+		boolean canDrawFlame, boolean drawGoggles, PartialModel drawHat, int hashCode) {
 
 		boolean blockAbove = animation > 0.125f;
 		float time = LevelTickHolder.getRenderTime(level);
@@ -143,8 +142,8 @@ public class BlazeBurnerRenderer extends SafeBlockEntityRenderer<BlazeBurnerBloc
 			draw(gogglesBuffer, horizontalAngle, ms, solid);
 		}
 
-		if (drawHat) {
-			SuperByteBuffer hatBuffer = CachedBuffers.partial(AllPartialModels.TRAIN_HAT, blockState);
+		if (drawHat != null) {
+			SuperByteBuffer hatBuffer = CachedBuffers.partial(drawHat, blockState);
 			if (modelTransform != null)
 				hatBuffer.transform(modelTransform);
 			hatBuffer.translate(0, headY, 0);
@@ -160,7 +159,7 @@ public class BlazeBurnerRenderer extends SafeBlockEntityRenderer<BlazeBurnerBloc
 				.rotateCentered(horizontalAngle + Mth.PI, Direction.UP)
 				.translate(0.5f, 0, 0.5f)
 				.light(LightTexture.FULL_BRIGHT)
-				.renderInto(ms, solid);
+				.renderInto(ms, cutout);
 		}
 
 		if (heatLevel.isAtLeast(HeatLevel.FADING)) {

@@ -39,6 +39,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringB
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.ScreenOpener;
+import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.NBTHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
@@ -54,7 +55,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
@@ -82,6 +85,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public boolean forceClearPromises;
 	public UUID network;
 
+	public boolean redstonePowered;
+
 	public RequestPromiseQueue restockerPromises;
 	private boolean promisePrimedForMarkDirty;
 
@@ -105,6 +110,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		this.recipeOutput = 1;
 		this.active = false;
 		this.forceClearPromises = false;
+		this.redstonePowered = false;
 		this.promiseClearingInterval = -1;
 		this.bulb = LerpedFloat.linear()
 			.startWithValue(0)
@@ -112,6 +118,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		this.restockerPromises = new RequestPromiseQueue(be::setChanged);
 		this.promisePrimedForMarkDirty = true;
 		this.network = UUID.randomUUID();
+		setLazyTickRate(40);
 	}
 
 	public void setNetwork(UUID network) {
@@ -134,7 +141,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public void tick() {
 		super.tick();
 		if (getWorld().isClientSide()) {
-			bulb.updateChaseTarget(satisfied ? 1 : 0);
+			bulb.updateChaseTarget(redstonePowered || satisfied ? 1 : 0);
 			bulb.tickChaser();
 			return;
 		}
@@ -146,6 +153,36 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 		tickStorageMonitor();
 		tickRequests();
+	}
+
+	@Override
+	public void lazyTick() {
+		super.lazyTick();
+		if (getWorld().isClientSide())
+			return;
+		checkForRedstoneInput();
+	}
+
+	public void checkForRedstoneInput() {
+		if (!active)
+			return;
+
+		boolean shouldPower = false;
+		BlockState blockState = blockEntity.getBlockState();
+		Vec3 localOffset = getSlotPositioning().getLocalOffset(getWorld(), getPos(), blockState);
+
+		for (Direction d : Iterate.directions) {
+			if (!localOffset.subtract(0.5, 0.5, 0.5)
+				.closerThan(Vec3.atLowerCornerOf(d.getNormal()), 1.25))
+				continue;
+			shouldPower |= getWorld().getSignal(getPos().relative(d), d) > 0;
+		}
+
+		if (shouldPower == redstonePowered)
+			return;
+		redstonePowered = shouldPower;
+		blockEntity.notifyUpdate();
+		timer = 1;
 	}
 
 	private void tickStorageMonitor() {
@@ -163,6 +200,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			&& promisedSatisfied == shouldPromiseSatisfy && waitingForNetwork == shouldWait)
 			return;
 
+		boolean comparator = satisfied != shouldSatisfy;
 		lastReportedLevelInStorage = inStorage;
 		satisfied = shouldSatisfy;
 		lastReportedPromises = promised;
@@ -170,13 +208,15 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		lastReportedUnloadedLinks = unloadedLinkCount;
 		waitingForNetwork = shouldWait;
 		blockEntity.sendData();
+		if (comparator)
+			blockEntity.setChanged();
 	}
 
 	private void tickRequests() {
 		FactoryPanelBlockEntity panelBE = panelBE();
 		if (targetedBy.isEmpty() && !panelBE.restocker)
 			return;
-		if (satisfied || promisedSatisfied || waitingForNetwork)
+		if (satisfied || promisedSatisfied || waitingForNetwork || redstonePowered)
 			return;
 		if (timer > 0) {
 			timer = Math.min(timer, REQUEST_INTERVAL);
@@ -186,13 +226,13 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 		timer = REQUEST_INTERVAL;
 
+		if (recipeAddress.isBlank())
+			return;
+
 		if (panelBE.restocker) {
 			tryRestock();
 			return;
 		}
-
-		if (recipeAddress.isBlank())
-			return;
 
 		boolean failed = false;
 
@@ -392,6 +432,11 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 	@Override
 	public void destroy() {
+		disconnectAll();
+		super.destroy();
+	}
+
+	public void disconnectAll() {
 		FactoryPanelPosition panelPosition = getPanelPosition();
 		for (FactoryPanelPosition position : targetedBy.keySet()) {
 			FactoryPanelBehaviour source = at(getWorld(), position);
@@ -407,8 +452,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 				target.blockEntity.sendData();
 			}
 		}
-
-		super.destroy();
+		targetedBy.clear();
+		targeting.clear();
 	}
 
 	public int getUnloadedLinks() {
@@ -488,6 +533,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		panelTag.putBoolean("Satisfied", satisfied);
 		panelTag.putBoolean("PromisedSatisfied", promisedSatisfied);
 		panelTag.putBoolean("Waiting", waitingForNetwork);
+		panelTag.putBoolean("RedstonePowered", redstonePowered);
 		panelTag.put("Targeting", NBTHelper.writeCompoundList(targeting, FactoryPanelPosition::write));
 		panelTag.put("TargetedBy", NBTHelper.writeCompoundList(targetedBy.values(), FactoryPanelConnection::write));
 		panelTag.putString("RecipeAddress", recipeAddress);
@@ -520,6 +566,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		satisfied = panelTag.getBoolean("Satisfied");
 		promisedSatisfied = panelTag.getBoolean("PromisedSatisfied");
 		waitingForNetwork = panelTag.getBoolean("Waiting");
+		redstonePowered = panelTag.getBoolean("RedstonePowered");
 		promiseClearingInterval = panelTag.getInt("PromiseClearingInterval");
 		if (panelTag.hasUUID("Freq"))
 			network = panelTag.getUUID("Freq");
@@ -601,10 +648,12 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			return getFilter().getHoverName()
 				.plainCopy();
 		else {
-			String stacks = upTo ? "" : "\u25A4";
 			key = getFilter().getHoverName()
-				.getString() + " -> " + getAmount() + stacks;
-			if (!satisfied)
+				.getString();
+			if (redstonePowered)
+				key += " " + CreateLang.translate("factory_panel.redstone_paused")
+					.string();
+			else if (!satisfied)
 				key += " " + CreateLang.translate("factory_panel.in_progress")
 					.string();
 			return CreateLang.text(key)

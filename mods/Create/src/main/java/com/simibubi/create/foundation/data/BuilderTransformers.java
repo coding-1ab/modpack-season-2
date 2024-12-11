@@ -37,8 +37,9 @@ import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogCTBeh
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogwheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedShaftBlock;
 import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.content.logistics.displayCloth.DisplayClothBlockItem;
-import com.simibubi.create.content.logistics.displayCloth.DisplayClothModel;
+import com.simibubi.create.content.logistics.packager.PackagerGenerator;
+import com.simibubi.create.content.logistics.tableCloth.TableClothBlockItem;
+import com.simibubi.create.content.logistics.tableCloth.TableClothModel;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock.Shape;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelItem;
@@ -482,24 +483,21 @@ public class BuilderTransformers {
 	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> tableCloth(String name,
 		NonNullSupplier<? extends Block> initialProps, boolean dyed) {
 		return b -> {
-			ItemBuilder<DisplayClothBlockItem, BlockBuilder<B, P>> item = b.initialProperties(initialProps)
+			ItemBuilder<TableClothBlockItem, BlockBuilder<B, P>> item = b.initialProperties(initialProps)
 				.addLayer(() -> RenderType::cutoutMipped)
 				.blockstate((c, p) -> p.simpleBlock(c.get(), p.models()
 					.withExistingParent(name + "_table_cloth", p.modLoc("block/table_cloth/block"))
 					.texture("0", p.modLoc("block/table_cloth/" + name))))
-				.onRegister(CreateRegistrate.blockModel(() -> DisplayClothModel::new))
+				.onRegister(CreateRegistrate.blockModel(() -> TableClothModel::new))
 				.tag(AllBlockTags.TABLE_CLOTHS.tag)
 				.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.create.table_cloth"))
-				.item(DisplayClothBlockItem::new);
+				.item(TableClothBlockItem::new);
 
 			if (dyed)
 				item.tag(AllItemTags.DYED_TABLE_CLOTHS.tag);
 
-			return item
-				.model((c, p) -> p
-					.withExistingParent(name + "_table_cloth",
-						p.modLoc("block/table_cloth/item" + (!dyed ? "_lower" : "")))
-					.texture("0", p.modLoc("block/table_cloth/" + name)))
+			return item.model((c, p) -> p.withExistingParent(name + "_table_cloth", p.modLoc("block/table_cloth/item"))
+				.texture("0", p.modLoc("block/table_cloth/" + name)))
 				.tag(AllItemTags.TABLE_CLOTHS.tag)
 				.recipe((c, p) -> ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, c.get())
 					.requires(c.get())
@@ -507,6 +505,20 @@ public class BuilderTransformers {
 					.save(p, Create.asResource("crafting/logistics/" + c.getName() + "_clear")))
 				.build();
 		};
+	}
+
+	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> packager() {
+		return b -> b.initialProperties(SharedProperties::softMetal)
+			.properties(p -> p.noOcclusion())
+			.properties(p -> p.isRedstoneConductor(($1, $2, $3) -> false))
+			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
+				.sound(SoundType.NETHERITE_BLOCK))
+			.transform(pickaxeOnly())
+			.addLayer(() -> RenderType::cutoutMipped)
+			.blockstate(new PackagerGenerator()::generate)
+			.item()
+			.model(AssetLookup::customItemModel)
+			.build();
 	}
 
 }

@@ -74,5 +74,5 @@ public class BigItemStack {
 		return "(" + stack.getHoverName()
 			.getString() + " x" + count + ")";
 	}
-
+	
 }

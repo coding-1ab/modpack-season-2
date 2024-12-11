@@ -47,6 +47,10 @@ public class InventorySummary {
 	public void add(BigItemStack entry) {
 		add(entry.stack, entry.count);
 	}
+	
+	public Map<Item, List<BigItemStack>> getItemMap() {
+		return items;
+	}
 
 	public InventorySummary copy() {
 		InventorySummary inventorySummary = new InventorySummary();
@@ -70,6 +74,9 @@ public class InventorySummary {
 				return;
 			}
 		}
+		
+		if (stack.getCount() > stack.getMaxStackSize())
+			stack = stack.copyWithCount(1);
 
 		BigItemStack newEntry = new BigItemStack(stack, count);
 		stacks.add(newEntry);

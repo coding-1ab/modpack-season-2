@@ -2,13 +2,12 @@ package com.simibubi.create.content.equipment.armor;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.logistics.box.PackageRenderer;
+import com.simibubi.create.foundation.utility.TickBasedCache;
 
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.utility.AnimationTickHolder;
@@ -27,9 +26,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber(value = Dist.CLIENT)
 public class CardboardArmorHandlerClient {
 
-	private static final Cache<UUID, Integer> BOXES_PLAYERS_ARE_HIDING_AS = CacheBuilder.newBuilder()
-		.expireAfterAccess(1, TimeUnit.SECONDS)
-		.build();
+	private static final Cache<UUID, Integer> BOXES_PLAYERS_ARE_HIDING_AS = new TickBasedCache<>(20, true);
 
 	@SubscribeEvent
 	public static void keepCacheAliveDesignDespiteNotRendering(PlayerTickEvent event) {

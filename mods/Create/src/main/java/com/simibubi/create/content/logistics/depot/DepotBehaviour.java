@@ -59,7 +59,7 @@ public class DepotBehaviour extends BlockEntityBehaviour {
 
 	public DepotBehaviour(SmartBlockEntity be) {
 		super(be);
-		maxStackSize = () -> 64;
+		maxStackSize = () -> heldItem != null ? heldItem.stack.getMaxStackSize() : 64;
 		canAcceptItems = () -> true;
 		canFunnelsPullFrom = $ -> true;
 		acceptedItems = $ -> true;
@@ -316,7 +316,7 @@ public class DepotBehaviour extends BlockEntityBehaviour {
 
 		if (simulate)
 			return returned;
-		
+
 		if (this.isEmpty()) {
 			if (heldItem.insertedFrom.getAxis()
 				.isHorizontal())
@@ -329,7 +329,7 @@ public class DepotBehaviour extends BlockEntityBehaviour {
 			heldItem = heldItem.copy();
 			heldItem.stack.setCount(maxCount);
 		}
-		
+
 		this.heldItem = heldItem;
 		onHeldInserted.accept(heldItem.stack);
 		return returned;
@@ -362,7 +362,7 @@ public class DepotBehaviour extends BlockEntityBehaviour {
 			return true;
 		return false;
 	}
-	
+
 	private ItemStack tryInsertingFromSide(TransportedItemStack transportedStack, Direction side, boolean simulate) {
 		ItemStack inserted = transportedStack.stack;
 

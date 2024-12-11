@@ -10,6 +10,7 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagingRequest;
+import com.simibubi.create.content.logistics.packager.repackager.RepackagerBlockEntity;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.redstone.displayLink.LinkWithBulbBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -36,7 +37,7 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 
 	public InventorySummary fetchSummaryFromPackager(@Nullable IItemHandler ignoredHandler) {
 		PackagerBlockEntity packager = getPackager();
-		if (packager == null || packager.defragmenterActive)
+		if (packager == null)
 			return InventorySummary.EMPTY;
 		if (packager.isTargetingSameInventory(ignoredHandler))
 			return InventorySummary.EMPTY;
@@ -50,7 +51,7 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 		int linkIndex, MutableBoolean finalLink, int orderId, @Nullable PackageOrder orderContext,
 		@Nullable IItemHandler ignoredHandler) {
 		PackagerBlockEntity packager = getPackager();
-		if (packager == null || packager.defragmenterActive)
+		if (packager == null)
 			return null;
 		if (packager.isTargetingSameInventory(ignoredHandler))
 			return null;
@@ -90,9 +91,6 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 	public void initialize() {
 		super.initialize();
 		behaviour.redstonePowerChanged(PackagerLinkBlock.getPower(getBlockState(), level, worldPosition));
-		PackagerBlockEntity packager = getPackager();
-		if (packager != null)
-			packager.recheckIfLinksPresent();
 	}
 
 	@Nullable
@@ -104,6 +102,8 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 			.orElse(Direction.UP)
 			.getOpposite());
 		if (!(level.getBlockEntity(source) instanceof PackagerBlockEntity packager))
+			return null;
+		if (packager instanceof RepackagerBlockEntity)
 			return null;
 		return packager;
 	}

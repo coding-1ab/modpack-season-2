@@ -43,6 +43,24 @@ public class ChainConveyorConnectionHandler {
 	private static BlockPos firstPos;
 	private static ResourceKey<Level> firstDim;
 
+	public static boolean onRightClick() {
+		Minecraft mc = Minecraft.getInstance();
+		if (!isChain(mc.player.getMainHandItem()))
+			return false;
+		if (firstPos == null)
+			return false;
+		boolean missed = false;
+		if (mc.hitResult instanceof BlockHitResult bhr && bhr.getType() != Type.MISS)
+			if (!(mc.level.getBlockEntity(bhr.getBlockPos()) instanceof ChainConveyorBlockEntity))
+				missed = true;
+		if (!mc.player.isShiftKeyDown() && !missed)
+			return false;
+		firstPos = null;
+		CreateLang.translate("chain_conveyor.selection_cleared")
+			.sendStatus(mc.player);
+		return true;
+	}
+
 	@SubscribeEvent
 	public static void onItemUsedOnBlock(PlayerInteractEvent.RightClickBlock event) {
 		ItemStack itemStack = event.getItemStack();

@@ -8,14 +8,12 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.simibubi.create.content.logistics.BigItemStack;
@@ -24,6 +22,7 @@ import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagingRequest;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour.RequestType;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
+import com.simibubi.create.foundation.utility.TickBasedCache;
 
 import net.createmod.catnip.utility.Pair;
 import net.minecraft.world.item.ItemStack;
@@ -33,13 +32,8 @@ public class LogisticsManager {
 
 	private static Random r = new Random();
 
-	public static final Cache<UUID, InventorySummary> ACCURATE_SUMMARIES = CacheBuilder.newBuilder()
-		.expireAfterWrite(100, TimeUnit.MILLISECONDS)
-		.build();
-
-	public static final Cache<UUID, InventorySummary> SUMMARIES = CacheBuilder.newBuilder()
-		.expireAfterWrite(1, TimeUnit.SECONDS)
-		.build();
+	public static final Cache<UUID, InventorySummary> ACCURATE_SUMMARIES = new TickBasedCache<>(1, false);
+	public static final Cache<UUID, InventorySummary> SUMMARIES = new TickBasedCache<>(20, false);
 
 	public static InventorySummary getSummaryOfNetwork(UUID freqId, boolean accurate) {
 		try {

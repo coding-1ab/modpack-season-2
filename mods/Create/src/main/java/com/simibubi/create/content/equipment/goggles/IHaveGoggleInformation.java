@@ -3,54 +3,28 @@ package com.simibubi.create.content.equipment.goggles;
 import java.util.List;
 import java.util.Optional;
 
-import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-/*
-* Implement this Interface in the BlockEntity class that wants to add info to the screen
-* */
+/**
+ * Implement this interface on the {@link BlockEntity} that wants to add info to the goggle overlay
+ */
 public interface IHaveGoggleInformation {
-
 	/**
-	 * Use Lang.[...].forGoggles(list)
-	 */
-	String spacing = "    ";
-
-	/**
-	 * Use Lang.[...].forGoggles(list)
-	 */
-	@Deprecated
-	Component componentSpacing = Components.literal(spacing);
-
-	/**
-	 * this method will be called when looking at a BlockEntity that implemented this
-	 * interface
+	 * This method will be called when looking at a {@link BlockEntity} that implements this interface
 	 *
 	 * @return {@code true} if the tooltip creation was successful and should be
 	 *         displayed, or {@code false} if the overlay should not be displayed
 	 */
 	default boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		return false;
-	}
-
-	/**
-	 * this method will be called when looking at a BlockEntity that implemented this
-	 * interface
-	 * <p>
-	 * return the item of your choosing after checking for any logic you wish, and the goggle on the goggle
-	 * tooltip will be replaced with the item you have returned
-	 */
-	default ItemStack getIcon(boolean isPlayerSneaking) {
-		return AllItems.GOGGLES.asStack();
 	}
 
 	default boolean containedFluidTooltip(List<Component> tooltip, boolean isPlayerSneaking,

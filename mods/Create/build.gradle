@@ -49,11 +49,6 @@ println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty '
 mixin {
     add sourceSets.main, 'create.refmap.json'
 
-    config 'flywheel.backend.mixins.json'
-    config 'flywheel.impl.mixins.json'
-    //config 'flywheel.impl.sodium.mixins.json'
-    config 'create.mixins.json'
-
     debug.verbose = true
     debug.export = true
 }
@@ -90,10 +85,11 @@ minecraft {
 
             property 'forge.logging.markers', ''
             property 'forge.logging.console.level', 'info'
-            jvmArgs '-XX:+IgnoreUnrecognizedVMOptions', '-XX:+AllowEnhancedClassRedefinition' // uncomment with jbr
+            jvmArgs '-XX:+IgnoreUnrecognizedVMOptions', '-XX:+AllowEnhancedClassRedefinition'
             //jvmArgs("-XX:-OmitStackTraceInFastThrow") // uncomment when you get exceptions with null messages etc
             //jvmArgs '-XX:+UnlockCommercialFeatures' // uncomment for profiling
 
+            property 'mixin.debug.export', 'true'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
@@ -123,10 +119,6 @@ minecraft {
 
         client {
             workingDirectory project.file('run')
-
-            arg '-mixin.config=flywheel.backend.mixins.json'
-            arg '-mixin.config=flywheel.impl.mixins.json'
-            //arg '-mixin.config=flywheel.impl.sodium.mixins.json'
         }
 
         server {
@@ -243,6 +235,10 @@ dependencies {
         jarJar.ranged(it, '[0.7.5,)')
     }
 
+    implementation(jarJar("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}")) {
+        jarJar.ranged(it, "[${mixin_extras_version},)")
+    }
+
     implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
 
     compileOnly fg.deobf("dev.engine_room.flywheel:flywheel-forge-api-${flywheel_minecraft_version}:${flywheel_version}")
@@ -262,9 +258,11 @@ dependencies {
         implementation fg.deobf("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}")
     }
 
-    compileOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}-forge-api:${jei_version}")
-    runtimeOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}-forge:${jei_version}")
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
+
+    // compileOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}")
+    // compileOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}-forge-api:${jei_version}")
+    implementation fg.deobf("mezz.jei:jei-${jei_minecraft_version}-forge:${jei_version}")
 
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}+${curios_minecraft_version}:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}+${curios_minecraft_version}")

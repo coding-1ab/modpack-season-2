@@ -5,14 +5,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.equipment.clipboard.ClipboardBlockEntity;
 import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;
 import com.simibubi.create.content.trains.schedule.DestinationSuggestions;
+import com.simibubi.create.foundation.utility.TickBasedCache;
 
 import net.createmod.catnip.utility.IntAttached;
 import net.minecraft.client.Minecraft;
@@ -26,9 +25,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class AddressEditBoxHelper {
 
-	private static Cache<BlockPos, WeakReference<ClipboardBlockEntity>> NEARBY_CLIPBOARDS = CacheBuilder.newBuilder()
-		.expireAfterWrite(1, TimeUnit.SECONDS)
-		.build();
+	private static final Cache<BlockPos, WeakReference<ClipboardBlockEntity>> NEARBY_CLIPBOARDS = new TickBasedCache<>(20, false);
 
 	public static void advertiseClipboard(ClipboardBlockEntity blockEntity) {
 		Minecraft mc = Minecraft.getInstance();
