@@ -1012,6 +1012,10 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		int transfer = hasShiftDown() ? itemStack.getMaxStackSize() : hasControlDown() ? 10 : 1;
 
 		if (recipeClicked && entry instanceof CraftableBigItemStack cbis) {
+			if (rmb && cbis.count == 0) {
+				recipesToOrder.remove(cbis);
+				return true;
+			}
 			requestCraftable(cbis, rmb ? -transfer : transfer);
 			return true;
 		}
@@ -1106,7 +1110,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 	private int getMaxScroll() {
 		int visibleHeight = windowHeight - 84;
-		int totalRows = 0;
+		int totalRows = 2;
 		for (int i = 0; i < displayedItems.size(); i++) {
 			List<BigItemStack> list = displayedItems.get(i);
 			if (list.isEmpty())

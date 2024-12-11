@@ -33,7 +33,7 @@ public class LogisticallyLinkedClientHandler {
 			return;
 
 		UUID uuid = tag.getUUID("Freq");
-		for (LogisticallyLinkedBehaviour behaviour : LogisticallyLinkedBehaviour.getAllPresent(uuid, false)) {
+		for (LogisticallyLinkedBehaviour behaviour : LogisticallyLinkedBehaviour.getAllPresent(uuid, false, true)) {
 			SmartBlockEntity be = behaviour.blockEntity;
 			VoxelShape shape = be.getBlockState()
 				.getShape(player.level(), be.getBlockPos());

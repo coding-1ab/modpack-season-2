@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceBlockEntity;
@@ -144,8 +146,12 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			return availableItems;
 		}
 
-		for (int slot = 0; slot < targetInv.getSlots(); slot++)
-			availableItems.add(targetInv.getStackInSlot(slot));
+		for (int slot = 0; slot < targetInv.getSlots(); slot++) {
+			int slotLimit = targetInv.getSlotLimit(slot);
+			@NotNull
+			ItemStack extractItem = targetInv.extractItem(slot, slotLimit, true);
+			availableItems.add(extractItem);
+		}
 
 		invVersionTracker.awaitNewVersion(targetInventory.getInventory());
 		submitNewArrivals(this.availableItems, availableItems);

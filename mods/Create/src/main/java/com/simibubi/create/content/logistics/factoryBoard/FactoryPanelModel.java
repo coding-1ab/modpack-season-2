@@ -76,13 +76,13 @@ public class FactoryPanelModel extends BakedModelWrapperWithData {
 		List<BakedQuad> quadsToAdd = factoryPanel.get()
 			.getQuads(state, null, rand, data, RenderType.solid());
 
+		float xRot = Mth.RAD_TO_DEG * FactoryPanelBlock.getXRot(state);
+		float yRot = Mth.RAD_TO_DEG * FactoryPanelBlock.getYRot(state);
+		
 		for (BakedQuad bakedQuad : quadsToAdd) {
 			int[] vertices = bakedQuad.getVertices();
 			int[] transformedVertices = Arrays.copyOf(vertices, vertices.length);
-
-			float xRot = Mth.RAD_TO_DEG * FactoryPanelBlock.getXRot(state);
-			float yRot = Mth.RAD_TO_DEG * FactoryPanelBlock.getYRot(state);
-
+			
 			for (int i = 0; i < vertices.length / BakedQuadHelper.VERTEX_STRIDE; i++) {
 				Vec3 vertex = BakedQuadHelper.getXYZ(vertices, i);
 				vertex = vertex.add(slot.xOffset * .5, 0, slot.yOffset * .5);

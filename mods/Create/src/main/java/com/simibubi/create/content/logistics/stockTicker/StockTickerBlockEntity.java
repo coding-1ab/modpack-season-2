@@ -100,6 +100,17 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		notifyUpdate();
 		return result;
 	}
+	
+	@Override
+	public InventorySummary getRecentSummary() {
+		InventorySummary recentSummary = super.getRecentSummary();
+		int contributingLinks = recentSummary.contributingLinks;
+		if (activeLinks != contributingLinks && !isRemoved()) {
+			activeLinks = contributingLinks;
+			sendData();
+		}
+		return recentSummary;
+	}
 
 	@Override
 	public void tick() {
@@ -108,11 +119,6 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 			if (ticksSinceLastUpdate < 100)
 				ticksSinceLastUpdate += 1;
 			return;
-		}
-		int contributingLinks = getRecentSummary().contributingLinks;
-		if (activeLinks != contributingLinks && !isRemoved()) {
-			activeLinks = contributingLinks;
-			sendData();
 		}
 	}
 
