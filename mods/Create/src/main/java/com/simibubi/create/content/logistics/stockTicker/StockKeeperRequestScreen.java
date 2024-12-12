@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -296,7 +297,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		boolean tagSearch = false;
 		if ((modSearch = valueWithPrefix.startsWith("@")) || (tagSearch = valueWithPrefix.startsWith("#")))
 			valueWithPrefix = valueWithPrefix.substring(1);
-		final String value = valueWithPrefix;
+		final String value = valueWithPrefix.toLowerCase(Locale.ROOT);
 
 		displayedItems = new ArrayList<>();
 		currentItemSource.forEach($ -> displayedItems.add(new ArrayList<>()));
@@ -333,6 +334,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 				if (stack.getHoverName()
 					.getString()
+					.toLowerCase(Locale.ROOT)
 					.contains(value)
 					|| ForgeRegistries.ITEMS.getKey(stack.getItem())
 						.getPath()
@@ -416,7 +418,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 	protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
 		if (this != minecraft.screen)
 			return; // stencil buffer does not cooperate with ponders gui fade out
-		
+
 		PoseStack ms = graphics.pose();
 		float currentScroll = itemScroll.getValue(partialTicks);
 		Couple<Integer> hoveredSlot = getHoveredSlot(mouseX, mouseY);
@@ -778,7 +780,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			drawItemCount(graphics, entry.count, customCount);
 		ms.popPose();
 	}
-	
+
 	private void drawItemCount(GuiGraphics graphics, int count, int customCount) {
 		count = customCount;
 		String text = count >= 1000000 ? (count / 1000000) + "m"
@@ -989,6 +991,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			for (int categoryIndex = 0; categoryIndex < displayedItems.size(); categoryIndex++) {
 				CategoryEntry entry = categories.get(categoryIndex);
 				if (Mth.floor((localY - entry.y) / (float) rowHeight + itemScroll.getChaseTarget()) != 0)
+					continue;
+				if (displayedItems.get(categoryIndex).isEmpty())
 					continue;
 				int indexOf = entry.filterStack == null ? -1 : blockEntity.categories.indexOf(entry.filterStack);
 				hiddenCategories.remove(indexOf);

@@ -55,6 +55,7 @@ import com.simibubi.create.content.contraptions.piston.MechanicalPistonHeadBlock
 import com.simibubi.create.content.contraptions.piston.PistonExtensionPoleBlock;
 import com.simibubi.create.content.contraptions.pulley.PulleyBlock;
 import com.simibubi.create.content.decoration.CardboardBlock;
+import com.simibubi.create.content.decoration.CardboardBlockItem;
 import com.simibubi.create.content.decoration.MetalLadderBlock;
 import com.simibubi.create.content.decoration.MetalScaffoldingBlock;
 import com.simibubi.create.content.decoration.TrainTrapdoorBlock;
@@ -811,7 +812,10 @@ public class AllBlocks {
 	public static final BlockEntry<ChuteBlock> CHUTE = REGISTRATE.block("chute", ChuteBlock::new)
 		.initialProperties(SharedProperties::softMetal)
 		.properties(p -> p.mapColor(MapColor.COLOR_GRAY)
-			.sound(SoundType.NETHERITE_BLOCK))
+			.sound(SoundType.NETHERITE_BLOCK)
+			.noOcclusion()
+			.isSuffocating((level, pos, state) -> false)
+			.isRedstoneConductor((level, pos, state) -> false))
 		.transform(pickaxeOnly())
 		.addLayer(() -> RenderType::cutoutMipped)
 		.blockstate(new ChuteGenerator()::generate)
@@ -2563,7 +2567,9 @@ public class AllBlocks {
 			.transform(axeOnly())
 			.blockstate(BlockStateGen.horizontalAxisBlockProvider(false))
 			.tag(Tags.Blocks.STORAGE_BLOCKS)
-			.transform(tagBlockAndItem("storage_blocks/cardboard"))
+			.tag(AllTags.forgeBlockTag("storage_blocks/cardboard"))
+			.item(CardboardBlockItem::new)
+			.tag(AllTags.forgeItemTag("storage_blocks/cardboard"))
 			.tag(Tags.Items.STORAGE_BLOCKS)
 			.build()
 			.lang("Block of Cardboard")
@@ -2583,7 +2589,8 @@ public class AllBlocks {
 				.withPool(r.applyExplosionCondition(b, LootPool.lootPool()
 					.setRolls(ConstantValue.exactly(1.0F))
 					.add(LootItem.lootTableItem(AllBlocks.CARDBOARD_BLOCK.asItem()))))))
-			.simpleItem()
+			.item(CardboardBlockItem::new)
+			.build()
 			.lang("Bound block of Cardboard")
 			.register();
 

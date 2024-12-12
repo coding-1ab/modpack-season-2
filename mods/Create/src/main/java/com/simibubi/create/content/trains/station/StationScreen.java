@@ -107,7 +107,7 @@ public class StationScreen extends AbstractStationScreen {
 		
 		colorTypeScroll = new ScrollInput(x + 166, y + 17, 22, 14).titled(CreateLang.translateDirect("station.train_map_color"));
 		colorTypeScroll.withRange(0, 16);
-		colorTypeScroll.withStepFunction(ctx -> -colorTypeScroll.standardStep()
+		colorTypeScroll.withStepFunction(ctx -> colorTypeScroll.standardStep()
 			.apply(ctx));
 		colorTypeScroll.calling(s -> {
 			Train train = displayedTrain.get();
@@ -188,9 +188,11 @@ public class StationScreen extends AbstractStationScreen {
 				disassembleTrainButton.visible = true;
 				dropScheduleButton.active = blockEntity.trainHasSchedule;
 				dropScheduleButton.visible = true;
-				colorTypeScroll.setState(imminentTrain.mapColorIndex);
-				colorTypeScroll.visible = true;
-				colorTypeScroll.active = true;
+				if (mapModsPresent()) {
+					colorTypeScroll.setState(imminentTrain.mapColorIndex);
+					colorTypeScroll.visible = true;
+					colorTypeScroll.active = true;
+				}
 				trainNameBox.active = true;
 				trainNameBox.setValue(imminentTrain.name.getString());
 				trainNameBox.setX(nameBoxX(trainNameBox.getValue(), trainNameBox));
@@ -333,7 +335,7 @@ public class StationScreen extends AbstractStationScreen {
 				graphics.drawString(font, "...", guiLeft + 26, guiTop + 47, 0xa6a6a6);
 		}
 		
-		if (!Mods.FTBCHUNKS.isLoaded())
+		if (!mapModsPresent())
 			return;
 		
 		AllGuiTextures sprite = AllGuiTextures.TRAINMAP_SPRITES;
@@ -353,6 +355,10 @@ public class StationScreen extends AbstractStationScreen {
 
 			graphics.blit(sprite.location, positionX, positionY, sheetX, sheetY, 16, 16, sprite.getWidth(), sprite.getHeight());
 		}
+	}
+
+	public boolean mapModsPresent() {
+		return Mods.FTBCHUNKS.isLoaded() || Mods.JOURNEYMAP.isLoaded();
 	}
 
 	@Override

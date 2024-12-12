@@ -253,6 +253,8 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 		if (!pPlayer.getItemInHand(pHand)
 			.isEmpty())
 			return super.interact(pPlayer, pHand);
+		if (pPlayer.level().isClientSide)
+			return InteractionResult.SUCCESS;
 		pPlayer.setItemInHand(pHand, box);
 		level().playSound(null, blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, .2f,
 			.75f + level().random.nextFloat());
@@ -359,15 +361,15 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 		ItemStackHandler contents = PackageItem.getContents(box);
 		for (int i = 0; i < contents.getSlots(); i++) {
 			ItemStack itemstack = contents.getStackInSlot(i);
-			
+
 			if (itemstack.getItem() instanceof SpawnEggItem sei && level() instanceof ServerLevel sl) {
 				EntityType<?> entitytype = sei.getType(itemstack.getTag());
-				Entity entity = entitytype.spawn(sl, itemstack, null, blockPosition(),
-					MobSpawnType.SPAWN_EGG, false, false);
+				Entity entity =
+					entitytype.spawn(sl, itemstack, null, blockPosition(), MobSpawnType.SPAWN_EGG, false, false);
 				if (entity != null)
 					itemstack.shrink(1);
 			}
-			
+
 			if (itemstack.isEmpty())
 				continue;
 			ItemEntity entityIn = new ItemEntity(level(), getX(), getY(), getZ(), itemstack);
