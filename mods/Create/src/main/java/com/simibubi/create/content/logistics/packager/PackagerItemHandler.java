@@ -64,7 +64,7 @@ public class PackagerItemHandler implements IItemHandlerModifiable {
 
 	@Override
 	public boolean isItemValid(int slot, ItemStack stack) {
-		return stack.getItem() instanceof PackageItem;
+		return PackageItem.isPackage(stack);
 	}
 
 }

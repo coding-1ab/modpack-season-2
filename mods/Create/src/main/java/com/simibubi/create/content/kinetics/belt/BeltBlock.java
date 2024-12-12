@@ -280,7 +280,7 @@ public class BeltBlock extends HorizontalKineticBlock
 		if (belt == null)
 			return InteractionResult.PASS;
 
-		if (heldItem.getItem() instanceof PackageItem) {
+		if (PackageItem.isPackage(heldItem)) {
 			ItemStack toInsert = heldItem.copy();
 			IItemHandler handler = belt.getCapability(ForgeCapabilities.ITEM_HANDLER)
 				.orElse(null);

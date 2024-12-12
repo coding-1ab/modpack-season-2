@@ -16,11 +16,11 @@ import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.content.logistics.AddressEditBox;
 import com.simibubi.create.content.logistics.BigItemStack;
+import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.content.trains.station.NoShadowFontWrapper;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.AllIcons;
@@ -305,7 +305,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		graphics.drawString(font, CreateLang.text(state == -1 ? " /" : state == 0 ? "30s" : state + "m")
 			.component(), promiseExpiration.getX() + 3, promiseExpiration.getY() + 4, 0xffeeeeee, true);
 
-		ItemStack asStack = AllItems.CARDBOARD_PACKAGE_12x12.asStack();
+		ItemStack asStack = PackageStyles.getDefaultBox();
 		int itemX = x + 68;
 		int itemY = y + windowHeight - 24;
 		graphics.renderItem(asStack, itemX, itemY);

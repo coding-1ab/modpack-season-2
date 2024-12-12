@@ -3,9 +3,9 @@ package com.simibubi.create.content.logistics.filter;
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.logistics.AddressEditBox;
+import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.content.logistics.filter.FilterScreenPacket.Option;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.widget.IconButton;
@@ -61,7 +61,7 @@ public class PackageFilterScreen extends AbstractFilterScreen<PackageFilterMenu>
 		PoseStack ms = graphics.pose();
 		ms.pushPose();
 		ms.translate(leftPos + 16, topPos + 23, 0);
-		GuiGameElement.of(AllItems.CARDBOARD_PACKAGE_12x12.asStack())
+		GuiGameElement.of(PackageStyles.getDefaultBox())
 			.render(graphics);
 		ms.popPose();
 	}

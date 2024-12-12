@@ -42,14 +42,6 @@
     },
     {
       "type": "single",
-      "resource": "create:entity/package/cardboard"
-    },
-    {
-      "type": "single",
-      "resource": "create:entity/package/cardboard_particle"
-    },
-    {
-      "type": "single",
       "resource": "create:fluid/chocolate_flow"
     },
     {

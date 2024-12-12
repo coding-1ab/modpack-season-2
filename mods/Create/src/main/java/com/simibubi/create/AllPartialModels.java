@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
+import com.simibubi.create.content.logistics.box.PackageStyles;
+import com.simibubi.create.content.logistics.box.PackageStyles.PackageStyle;
 
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.utility.Couple;
@@ -247,13 +249,12 @@ public class AllPartialModels {
 		putFoldingDoor("andesite_door");
 		putFoldingDoor("copper_door");
 
-		for (String size : new String[] { "12x12", "10x12", "12x10", "10x8" }) {
-			ResourceLocation key = Create.asResource("cardboard_package_" + size);
-			PartialModel model = PartialModel.of(Create.asResource("item/packages/cardboard_" + size));
+		for (PackageStyle style : PackageStyles.STYLES) {
+			ResourceLocation key = style.getItemId();
+			PartialModel model = PartialModel.of(Create.asResource("item/" + key.getPath()));
 			PACKAGES.put(key, model);
 			PACKAGES_AS_LIST.add(model);
-			PACKAGE_RIGGING.put(key,
-				PartialModel.of(Create.asResource("item/packages/cardboard_" + size + "_rigging")));
+			PACKAGE_RIGGING.put(key, PartialModel.of(style.getRiggingModel()));
 		}
 	}
 

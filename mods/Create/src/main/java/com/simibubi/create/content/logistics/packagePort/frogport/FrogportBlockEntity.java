@@ -1,8 +1,8 @@
 package com.simibubi.create.content.logistics.packagePort.frogport;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllItems;
 import com.simibubi.create.content.logistics.box.PackageItem;
+import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerItemHandler;
 import com.simibubi.create.foundation.item.ItemHelper;
@@ -136,7 +136,7 @@ public class FrogportBlockEntity extends PackagePortBlockEntity {
 	}
 
 	public void startAnimation(ItemStack box, boolean deposit) {
-		if (!(box.getItem() instanceof PackageItem))
+		if (!PackageItem.isPackage(box))
 			return;
 
 		if (deposit && (target == null
@@ -196,7 +196,7 @@ public class FrogportBlockEntity extends PackagePortBlockEntity {
 	public void tryPullingFromOwnAndAdjacentInventories() {
 		if (isAnimationInProgress())
 			return;
-		if (target == null || !target.export(level, worldPosition, AllItems.CARDBOARD_PACKAGE_10x12.asStack(), true))
+		if (target == null || !target.export(level, worldPosition, PackageStyles.getDefaultBox(), true))
 			return;
 		if (tryPullingFrom(inventory))
 			return;

@@ -83,7 +83,7 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 			if (be.heldBox.isEmpty()) {
 				if (be.animationTicks > 0)
 					return InteractionResult.SUCCESS;
-				if (itemInHand.getItem() instanceof PackageItem) {
+				if (PackageItem.isPackage(itemInHand)) {
 					if (worldIn.isClientSide())
 						return InteractionResult.SUCCESS;
 					if (!be.unwrapBox(itemInHand.copy(), true))

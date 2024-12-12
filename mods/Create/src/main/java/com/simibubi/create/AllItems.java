@@ -45,7 +45,8 @@ import com.simibubi.create.content.legacy.ChromaticCompoundColor;
 import com.simibubi.create.content.legacy.ChromaticCompoundItem;
 import com.simibubi.create.content.legacy.RefinedRadianceItem;
 import com.simibubi.create.content.legacy.ShadowSteelItem;
-import com.simibubi.create.content.logistics.box.PackageItem;
+import com.simibubi.create.content.logistics.box.PackageStyles;
+import com.simibubi.create.content.logistics.box.PackageStyles.PackageStyle;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.tableCloth.ShoppingListItem;
 import com.simibubi.create.content.materials.ExperienceNuggetItem;
@@ -403,20 +404,12 @@ public class AllItems {
 
 	// Logistics
 
-	public static final ItemEntry<PackageItem> CARDBOARD_PACKAGE_12x12 =
-		REGISTRATE.item("cardboard_package_12x12", p -> new PackageItem(p, 12, 12, 23f))
-			.transform(BuilderTransformers.packageItem("cardboard", 12, 12))
-			.register(),
-		CARDBOARD_PACKAGE_10x12 = REGISTRATE.item("cardboard_package_10x12", p -> new PackageItem(p, 10, 12, 22f))
-			.transform(BuilderTransformers.packageItem("cardboard", 10, 12))
-			.register(),
-		CARDBOARD_PACKAGE_10x8 = REGISTRATE.item("cardboard_package_10x8", p -> new PackageItem(p, 10, 8, 18f))
-			.transform(BuilderTransformers.packageItem("cardboard", 10, 8))
-			.register(),
-		CARDBOARD_PACKAGE_12x10 = REGISTRATE.item("cardboard_package_12x10", p -> new PackageItem(p, 12, 10, 21f))
-			.transform(BuilderTransformers.packageItem("cardboard", 12, 10))
-			.register();
-
+	static {
+		for (PackageStyle style : PackageStyles.STYLES)
+			BuilderTransformers.packageItem(style)
+				.register();
+	}
+	
 	public static final ItemEntry<FilterItem> FILTER = REGISTRATE.item("filter", FilterItem::regular)
 		.lang("List Filter")
 		.register(),

@@ -1,6 +1,7 @@
 package com.simibubi.create.content.logistics.box;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPartialModels;
 
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
@@ -29,7 +30,7 @@ public class PackageRenderer extends EntityRenderer<PackageEntity> {
 	public void render(PackageEntity entity, float yaw, float pt, PoseStack ms, MultiBufferSource buffer, int light) {
 		ItemStack box = entity.box;
 		if (box.isEmpty() || !PackageItem.isPackage(box))
-			box = PackageItem.getFallbackBox();
+			box = AllBlocks.CARDBOARD_BLOCK.asStack();
 		PartialModel model = AllPartialModels.PACKAGES.get(ForgeRegistries.ITEMS.getKey(box.getItem()));
 		renderBox(entity, yaw, ms, buffer, light, model);
 		super.render(entity, yaw, pt, ms, buffer, light);
@@ -37,6 +38,8 @@ public class PackageRenderer extends EntityRenderer<PackageEntity> {
 
 	public static void renderBox(Entity entity, float yaw, PoseStack ms, MultiBufferSource buffer, int light,
 		PartialModel model) {
+		if (model == null)
+			return;
 		SuperByteBuffer sbb = CachedBuffers.partial(model, Blocks.AIR.defaultBlockState());
 		sbb.translate(-.5, 0, -.5)
 			.rotateCentered(AngleHelper.rad(yaw), Direction.UP)

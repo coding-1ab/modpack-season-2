@@ -2,6 +2,7 @@ package com.simibubi.create.foundation.data;
 
 import static com.simibubi.create.AllInteractionBehaviours.interactionBehaviour;
 import static com.simibubi.create.AllMovementBehaviours.movementBehaviour;
+import static com.simibubi.create.Create.REGISTRATE;
 import static com.simibubi.create.foundation.data.BlockStateGen.axisBlock;
 import static com.simibubi.create.foundation.data.CreateRegistrate.casingConnectivity;
 import static com.simibubi.create.foundation.data.CreateRegistrate.connectedTextures;
@@ -37,6 +38,7 @@ import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogCTBeh
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogwheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedShaftBlock;
 import com.simibubi.create.content.logistics.box.PackageItem;
+import com.simibubi.create.content.logistics.box.PackageStyles.PackageStyle;
 import com.simibubi.create.content.logistics.packager.PackagerGenerator;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockItem;
 import com.simibubi.create.content.logistics.tableCloth.TableClothModel;
@@ -471,13 +473,26 @@ public class BuilderTransformers {
 			.build();
 	}
 
-	public static <B extends PackageItem> NonNullUnaryOperator<ItemBuilder<B, CreateRegistrate>> packageItem(
-		String material, int diameter, int height) {
-		return b -> b.properties(p -> p.stacksTo(1))
-			.model((c, p) -> p.withExistingParent(c.getName(),
-				p.modLoc("item/packages/" + material + "_" + diameter + "x" + height)))
-			.lang(material.substring(0, 1)
-				.toUpperCase(Locale.ROOT) + material.substring(1) + " Package");
+	public static ItemBuilder<PackageItem, CreateRegistrate> packageItem(PackageStyle style) {
+		String size = "_" + style.width() + "x" + style.height();
+		return REGISTRATE.item(style.getItemId()
+			.getPath(), p -> new PackageItem(p, style))
+			.properties(p -> p.stacksTo(1))
+			.tag(AllItemTags.PACKAGES.tag)
+			.model((c, p) -> {
+				if (style.rare())
+					p.withExistingParent(c.getName(), p.modLoc("item/package/custom" + size))
+						.texture("2", p.modLoc("item/package/" + style.type()));
+				else
+					p.withExistingParent(c.getName(), p.modLoc("item/package/" + style.type() + size));
+			})
+			.lang((style.rare() ? "Rare"
+				: style.type()
+					.substring(0, 1)
+					.toUpperCase(Locale.ROOT)
+					+ style.type()
+						.substring(1))
+				+ " Package");
 	}
 
 	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> tableCloth(String name,
