@@ -85,10 +85,10 @@ public class AllPaletteBlocks {
 			() -> RenderType::cutout, false, () -> MapColor.TERRACOTTA_LIGHT_GRAY),
 		INDUSTRIAL_IRON_WINDOW = customWindowBlock("industrial_iron_window", AllBlocks.INDUSTRIAL_IRON_BLOCK,
 			() -> AllSpriteShifts.INDUSTRIAL_IRON_WINDOW, () -> RenderType::cutout, false, () -> MapColor.COLOR_GRAY),
-		OLD_FACTORY_WINDOW = WindowGen
-			.randomisedWindowBlock("old_factory_window", AllBlocks.INDUSTRIAL_IRON_BLOCK, () -> RenderType::translucent,
-				true, () -> MapColor.TERRACOTTA_LIGHT_GRAY)
-			.onRegister(CreateRegistrate.connectedTextures(() -> new OldFactoryWindowCTBehaviour()))
+		WEATHERED_IRON_WINDOW = WindowGen
+			.randomisedWindowBlock("weathered_iron_window", AllBlocks.WEATHERED_IRON_BLOCK,
+				() -> RenderType::translucent, true, () -> MapColor.TERRACOTTA_LIGHT_GRAY)
+			.onRegister(CreateRegistrate.connectedTextures(() -> new WeatheredIronWindowCTBehaviour()))
 			.register();
 
 	public static final BlockEntry<ConnectedGlassPaneBlock> OAK_WINDOW_PANE =
@@ -107,9 +107,9 @@ public class AllPaletteBlocks {
 			() -> AllSpriteShifts.ORNATE_IRON_WINDOW, () -> RenderType::cutoutMipped).register(),
 		INDUSTRIAL_IRON_WINDOW_PANE = customWindowPane("industrial_iron_window", INDUSTRIAL_IRON_WINDOW,
 			() -> AllSpriteShifts.INDUSTRIAL_IRON_WINDOW, () -> RenderType::cutoutMipped).register(),
-		OLD_FACTORY_WINDOW_PANE =
-			customWindowPane("old_factory_window", OLD_FACTORY_WINDOW, null, () -> RenderType::translucent)
-				.onRegister(CreateRegistrate.connectedTextures(() -> new OldFactoryWindowPaneCTBehaviour()))
+		WEATHERED_IRON_WINDOW_PANE =
+			customWindowPane("weathered_iron_window", WEATHERED_IRON_WINDOW, null, () -> RenderType::translucent)
+				.onRegister(CreateRegistrate.connectedTextures(() -> new WeatheredIronWindowPaneCTBehaviour()))
 				.register();
 
 	static {

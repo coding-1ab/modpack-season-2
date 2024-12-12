@@ -196,6 +196,7 @@
     "create:zinc_block",
     "create:andesite_alloy_block",
     "create:industrial_iron_block",
+    "create:weathered_iron_block",
     "create:brass_block",
     "create:experience_block",
     "create:rose_quartz_block",

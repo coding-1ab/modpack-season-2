@@ -19,11 +19,11 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class OldFactoryWindowPaneCTBehaviour extends GlassPaneCTBehaviour {
+public class WeatheredIronWindowPaneCTBehaviour extends GlassPaneCTBehaviour {
 
 	private List<CTSpriteShiftEntry> shifts;
 
-	public OldFactoryWindowPaneCTBehaviour() {
+	public WeatheredIronWindowPaneCTBehaviour() {
 		super(null);
 		this.shifts = List.of(AllSpriteShifts.OLD_FACTORY_WINDOW_1, AllSpriteShifts.OLD_FACTORY_WINDOW_2,
 			AllSpriteShifts.OLD_FACTORY_WINDOW_3, AllSpriteShifts.OLD_FACTORY_WINDOW_4);

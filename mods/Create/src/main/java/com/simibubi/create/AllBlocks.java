@@ -2531,19 +2531,13 @@ public class AllBlocks {
 		.register();
 
 	public static final BlockEntry<Block> INDUSTRIAL_IRON_BLOCK = REGISTRATE.block("industrial_iron_block", Block::new)
-		.initialProperties(SharedProperties::softMetal)
-		.properties(p -> p.mapColor(MapColor.COLOR_GRAY)
-			.sound(SoundType.NETHERITE_BLOCK)
-			.requiresCorrectToolForDrops())
-		.transform(pickaxeOnly())
-		.blockstate((c, p) -> p.simpleBlock(c.get(), p.models()
-			.cubeColumn(c.getName(), p.modLoc("block/industrial_iron_block"),
-				p.modLoc("block/industrial_iron_block_top"))))
-		.tag(AllBlockTags.WRENCH_PICKUP.tag)
+		.transform(BuilderTransformers.palettesIronBlock())
 		.lang("Block of Industrial Iron")
-		.recipe((c, p) -> p.stonecutting(DataIngredient.tag(Tags.Items.INGOTS_IRON), RecipeCategory.BUILDING_BLOCKS,
-			c::get, 2))
-		.simpleItem()
+		.register();
+	
+	public static final BlockEntry<Block> WEATHERED_IRON_BLOCK = REGISTRATE.block("weathered_iron_block", Block::new)
+		.transform(BuilderTransformers.palettesIronBlock())
+		.lang("Block of Weathered Iron")
 		.register();
 
 	public static final BlockEntry<Block> BRASS_BLOCK = REGISTRATE.block("brass_block", Block::new)

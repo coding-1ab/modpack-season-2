@@ -21,11 +21,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "create:old_factory_window_pane"
+          "name": "create:weathered_iron_window"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "create:blocks/old_factory_window_pane"
+  "random_sequence": "create:blocks/weathered_iron_window"
 }

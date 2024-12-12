@@ -1,4 +1,4 @@
-// 1.20.1	2024-12-11T11:42:35.0350518	Create's Processing Recipes
+// 1.20.1	2024-12-12T16:30:46.5531873	Create's Processing Recipes
 3c94326fb730f68c1e44fe1e2ef09c9db6ffd92b data/create/recipes/compacting/andesite_from_flint.json
 8d3d5b31f3601b9f681ff710e0545a483a1494c6 data/create/recipes/compacting/blaze_cake.json
 8bd7f4e3a686ab520b2d55594d2018d0e9a50c91 data/create/recipes/compacting/chocolate.json
@@ -1047,6 +1047,9 @@ b5a0a0fc79bf310965aa16e78044b3f6a8a9998f data/create/recipes/splashing/ic2/crush
 6707b4319280ce28e1edd594e58549f65cd8376c data/create/recipes/splashing/immersiveengineering/crushed_raw_nickel.json
 d379607eda7fba5048751d806a245d58e91acc1f data/create/recipes/splashing/immersiveengineering/crushed_raw_silver.json
 8afc0810a0166a62d8d394f2841d27e7f7a3e6c5 data/create/recipes/splashing/immersiveengineering/crushed_raw_uranium.json
+cafec636b007eeb5df2092824464c91661a13004 data/create/recipes/splashing/industrial_iron_block.json
+38ed0fb231d19ed30ba3debc0bebf8ffbc5f5a72 data/create/recipes/splashing/industrial_iron_window.json
+ffede841a2104f7266425288bd328e7236ebd9e4 data/create/recipes/splashing/industrial_iron_window_pane.json
 676a409aadcbf2497b366234c5186c6192a67c8d data/create/recipes/splashing/light_blue_concrete_powder.json
 d4053dba524524329f43df5bdde81d9ee07838b5 data/create/recipes/splashing/light_gray_concrete_powder.json
 3d87975758344a4e420c3c5a138dd300e97cf3c4 data/create/recipes/splashing/lime_concrete_powder.json

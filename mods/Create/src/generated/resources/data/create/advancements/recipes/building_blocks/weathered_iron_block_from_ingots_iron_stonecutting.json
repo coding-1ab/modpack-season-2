@@ -1,13 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_ingredient": {
+    "has_ingots_iron": {
       "conditions": {
         "items": [
           {
-            "items": [
-              "create:industrial_iron_block"
-            ]
+            "tag": "forge:ingots/iron"
           }
         ]
       },
@@ -15,20 +13,20 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "create:old_factory_window"
+        "recipe": "create:weathered_iron_block_from_ingots_iron_stonecutting"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
-      "has_ingredient",
+      "has_ingots_iron",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "create:old_factory_window"
+      "create:weathered_iron_block_from_ingots_iron_stonecutting"
     ]
   },
   "sends_telemetry_event": false

@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "create:old_factory_window"
+              "create:weathered_iron_window"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "create:old_factory_window_pane"
+        "recipe": "create:weathered_iron_window_pane"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "create:old_factory_window_pane"
+      "create:weathered_iron_window_pane"
     ]
   },
   "sends_telemetry_event": false

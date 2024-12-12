@@ -3,7 +3,7 @@
   "category": "building",
   "key": {
     "#": {
-      "item": "create:industrial_iron_block"
+      "item": "create:weathered_iron_block"
     },
     "X": {
       "tag": "forge:glass/colorless"
@@ -15,7 +15,7 @@
   ],
   "result": {
     "count": 2,
-    "item": "create:old_factory_window"
+    "item": "create:weathered_iron_window"
   },
   "show_notification": true
 }
