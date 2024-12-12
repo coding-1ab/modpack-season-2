@@ -38,8 +38,7 @@ public class PlayerSkyhookRenderer {
 	}
 
 	private static void setHangingPose(HumanoidModel<?> model) {
-
-		//model.head.resetPose();
+		model.head.x = 0;
 		model.body.resetPose();
 		model.leftArm.resetPose();
 		model.rightArm.resetPose();
@@ -55,11 +54,15 @@ public class PlayerSkyhookRenderer {
 		model.body.zRot = bodySwing;
 		model.head.zRot = bodySwing;
 
+		model.rightArm.y -= 3;
+
 		float offsetX = model.rightArm.x;
 		float offsetY = model.rightArm.y;
-		model.rightArm.x = offsetX * Mth.cos(bodySwing) - offsetY * Mth.sin(bodySwing);
-		model.rightArm.y = offsetX * Mth.sin(bodySwing) + offsetY * Mth.cos(bodySwing);
-		model.rightArm.xRot = -AngleHelper.rad(135);
+//		model.rightArm.x = offsetX * Mth.cos(bodySwing) - offsetY * Mth.sin(bodySwing);
+//		model.rightArm.y = offsetX * Mth.sin(bodySwing) + offsetY * Mth.cos(bodySwing);
+		float armPivotX = offsetX * Mth.cos(bodySwing) - offsetY * Mth.sin(bodySwing) + 4.5f;
+		float armPivotY = offsetX * Mth.sin(bodySwing) + offsetY * Mth.cos(bodySwing) + 2;
+		model.rightArm.xRot = -AngleHelper.rad(150);
 		model.rightArm.zRot = AngleHelper.rad(15);
 
 		offsetX = model.leftArm.x;
@@ -76,7 +79,7 @@ public class PlayerSkyhookRenderer {
 		model.rightLeg.xRot = -AngleHelper.rad(25);
 		model.rightLeg.zRot = AngleHelper.rad(10) + 0.5f * bodySwing + limbSwing;
 
-		model.leftLeg.y -= 0.2f;
+		model.leftLeg.y -= 0.8f;
 		offsetX = model.leftLeg.x;
 		offsetY = model.leftLeg.y;
 		model.leftLeg.x = offsetX * Mth.cos(bodySwing) - offsetY * Mth.sin(bodySwing);
@@ -84,6 +87,17 @@ public class PlayerSkyhookRenderer {
 		model.leftLeg.xRot = AngleHelper.rad(10);
 		model.leftLeg.zRot = -AngleHelper.rad(10) + 0.5f * bodySwing + limbSwing;
 
+		model.head.x -= armPivotX;
+		model.body.x -= armPivotX;
+		model.leftArm.x -= armPivotX;
+		model.leftLeg.x -= armPivotX;
+		model.rightLeg.x -= armPivotX;
+
+		model.head.y -= armPivotY;
+		model.body.y -= armPivotY;
+		model.leftArm.y -= armPivotY;
+		model.leftLeg.y -= armPivotY;
+		model.rightLeg.y -= armPivotY;
 	}
 
 }
