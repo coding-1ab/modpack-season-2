@@ -68,6 +68,7 @@ import com.simibubi.create.foundation.networking.LeftClickPacket;
 import com.simibubi.create.foundation.sound.SoundScapes;
 import com.simibubi.create.foundation.utility.CameraAngleAnimationService;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
+import com.simibubi.create.foundation.utility.TickBasedCache;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import net.createmod.catnip.config.ui.BaseConfigScreen;
@@ -187,6 +188,7 @@ public class ClientEvents {
 		TableClothOverlayRenderer.tick();
 		CardboardArmorStealthOverlay.clientTick();
 		FactoryPanelConnectionHandler.clientTick();
+		TickBasedCache.clientTick();
 	}
 
 	@SubscribeEvent

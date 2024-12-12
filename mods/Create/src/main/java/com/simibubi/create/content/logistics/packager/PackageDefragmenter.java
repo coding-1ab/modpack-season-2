@@ -77,7 +77,8 @@ public class PackageDefragmenter {
 			}
 		}
 
-		List<BigItemStack> orderedStacks = orderContext == null ? Collections.emptyList() : new ArrayList<>(orderContext.stacks());
+		List<BigItemStack> orderedStacks =
+			orderContext == null ? Collections.emptyList() : new ArrayList<>(orderContext.stacks());
 		List<ItemStack> outputSlots = new ArrayList<>();
 
 		Repack: while (true) {
@@ -127,11 +128,16 @@ public class PackageDefragmenter {
 			currentSlot = 0;
 		}
 
-		exportingPackages.add(PackageItem.containing(target));
+		for (int slot = 0; slot < target.getSlots(); slot++)
+			if (!target.getStackInSlot(slot)
+				.isEmpty()) {
+				exportingPackages.add(PackageItem.containing(target));
+				break;
+			}
 
 		for (ItemStack box : exportingPackages)
 			PackageItem.addAddress(box, address);
-		
+
 		if (!exportingPackages.isEmpty())
 			PackageItem.addOrderContext(exportingPackages.get(0), orderContext);
 

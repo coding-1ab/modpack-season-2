@@ -59,6 +59,8 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 	private IconButton editorConfirm;
 	private EditBox editorEditBox;
 
+	final int slices = 4;
+
 	public StockKeeperCategoryScreen(StockKeeperCategoryMenu menu, Inventory inv, Component title) {
 		super(menu, inv, title);
 		schedule = new ArrayList<>(menu.contentHolder.categories);
@@ -68,26 +70,27 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 	@Override
 	protected void init() {
 		AllGuiTextures bg = AllGuiTextures.STOCK_KEEPER_CATEGORY;
-		setWindowSize(bg.getWidth(), bg.getHeight());
+		setWindowSize(bg.getWidth(), bg.getHeight() * slices + AllGuiTextures.STOCK_KEEPER_CATEGORY_HEADER.getHeight()
+			+ AllGuiTextures.STOCK_KEEPER_CATEGORY_FOOTER.getHeight());
 		super.init();
 		clearWidgets();
 
-		confirmButton = new IconButton(leftPos + bg.getWidth() - 33, topPos + bg.getHeight() - 24, AllIcons.I_CONFIRM);
+		confirmButton = new IconButton(leftPos + bg.getWidth() - 25, topPos + imageHeight - 25, AllIcons.I_CONFIRM);
 		confirmButton.withCallback(() -> minecraft.player.closeContainer());
 		addRenderableWidget(confirmButton);
 
 		stopEditing();
 
-		extraAreas = ImmutableList.of(new Rect2i(leftPos + bg.getWidth(), topPos + bg.getHeight() - 40, 48, 40));
+		extraAreas = ImmutableList.of(new Rect2i(leftPos + bg.getWidth(), topPos + imageHeight - 40, 48, 40));
 	}
 
 	protected void startEditing(int index) {
 		confirmButton.visible = false;
 
-		editorConfirm = new IconButton(leftPos + 36 + 143, topPos + 55 + 18, AllIcons.I_CONFIRM);
+		editorConfirm = new IconButton(leftPos + 36 + 131, topPos + 59, AllIcons.I_CONFIRM);
 		menu.slotsActive = true;
 
-		editorEditBox = new EditBox(font, leftPos + 53, topPos + 45, 128, 10, Components.empty());
+		editorEditBox = new EditBox(font, leftPos + 47, topPos + 28, 124, 10, Components.empty());
 		editorEditBox.setTextColor(0xffeeeeee);
 		editorEditBox.setBordered(false);
 		editorEditBox.setFocused(false);
@@ -170,7 +173,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		}
 	}
 
-	protected void renderSchedule(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+	protected void renderCategories(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		PoseStack matrixStack = graphics.pose();
 		UIRenderHelper.swapAndBlitColor(minecraft.getMainRenderTarget(), UIRenderHelper.framebuffer);
 
@@ -179,12 +182,13 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		float scrollOffset = -scroll.getValue(partialTicks);
 
 		for (int i = 0; i <= entries.size(); i++) {
-			startStencil(graphics, leftPos + 3, topPos + 16, 196, 143);
+			startStencil(graphics, leftPos + 3, topPos + 16, 184,
+				3 + AllGuiTextures.STOCK_KEEPER_CATEGORY.getHeight() * slices);
 			matrixStack.pushPose();
 			matrixStack.translate(0, scrollOffset, 0);
 
 			if (i == entries.size()) {
-				AllGuiTextures.STOCK_KEEPER_CATEGORY_NEW.render(graphics, leftPos + 9, topPos + yOffset);
+				AllGuiTextures.STOCK_KEEPER_CATEGORY_NEW.render(graphics, leftPos + 7, topPos + yOffset);
 				matrixStack.popPose();
 				endStencil();
 				break;
@@ -199,11 +203,6 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 			endStencil();
 		}
 
-		int zLevel = 200;
-		graphics.fillGradient(leftPos + 3, topPos + 16, leftPos + 3 + 196, topPos + 16 + 10, zLevel, 0x77000000,
-			0x00000000);
-		graphics.fillGradient(leftPos + 3, topPos + 6 + 143, leftPos + 3 + 196, topPos + 143 + 16, zLevel, 0x00000000,
-			0x77000000);
 		UIRenderHelper.swapAndBlitColor(UIRenderHelper.framebuffer, minecraft.getMainRenderTarget());
 	}
 
@@ -215,7 +214,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 
 		PoseStack matrixStack = graphics.pose();
 		matrixStack.pushPose();
-		matrixStack.translate(leftPos + 9, topPos + yOffset, 0);
+		matrixStack.translate(leftPos + 7, topPos + yOffset, 0);
 
 		AllGuiTextures.STOCK_KEEPER_CATEGORY_ENTRY.render(graphics, 0, 0);
 
@@ -224,7 +223,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		if (i < schedule.size() - 1)
 			AllGuiTextures.STOCK_KEEPER_CATEGORY_DOWN.render(graphics, cardWidth + 12, cardHeader - 9);
 
-		graphics.renderItem(entry, 16, 0);
+		graphics.renderItem(entry, 14, 1);
 		graphics.drawString(font,
 			entry.isEmpty() ? CreateLang.translate("gui.stock_ticker.empty_category_name_placeholder")
 				.string()
@@ -234,7 +233,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 					+ (entry.getHoverName()
 						.getString()
 						.length() > 20 ? "..." : ""),
-			36, 4, 0x656565, false);
+			35, 5, 0x656565, false);
 
 		matrixStack.popPose();
 		return cardHeight;
@@ -359,7 +358,15 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		if (action(null, pMouseX, pMouseY, pButton))
 			return true;
 
-		return super.mouseClicked(pMouseX, pMouseY, pButton);
+		boolean wasNotFocused = editorEditBox != null && !editorEditBox.isFocused();
+		boolean mouseClicked = super.mouseClicked(pMouseX, pMouseY, pButton);
+
+		if (editorEditBox != null && editorEditBox.isMouseOver(pMouseX, pMouseY) && wasNotFocused) {
+			editorEditBox.moveCursorToEnd();
+			editorEditBox.setHighlightPos(0);
+		}
+
+		return mouseClicked;
 	}
 
 	@Override
@@ -385,7 +392,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 			return super.mouseScrolled(pMouseX, pMouseY, pDelta);
 
 		float chaseTarget = scroll.getChaseTarget();
-		float max = 40 - 143;
+		float max = 40 - (3 + AllGuiTextures.STOCK_KEEPER_CATEGORY.getHeight() * slices);
 		max += schedule.size() * CARD_HEADER + 24;
 		if (max > 0) {
 			chaseTarget -= pDelta * 12;
@@ -402,8 +409,8 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		super.renderForeground(graphics, mouseX, mouseY, partialTicks);
 
 		GuiGameElement.of(AllBlocks.STOCK_TICKER.asStack()).<GuiGameElement
-			.GuiRenderBuilder>at(leftPos + AllGuiTextures.STOCK_KEEPER_CATEGORY.getWidth() + 3,
-				topPos + AllGuiTextures.STOCK_KEEPER_CATEGORY.getHeight() - 44, -190)
+			.GuiRenderBuilder>at(leftPos + AllGuiTextures.STOCK_KEEPER_CATEGORY.getWidth() + 12,
+				topPos + imageHeight - 39, -190)
 			.scale(3)
 			.render(graphics);
 
@@ -436,30 +443,45 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 
 	@Override
 	protected void renderBg(GuiGraphics graphics, float pPartialTick, int pMouseX, int pMouseY) {
-		AllGuiTextures.STOCK_KEEPER_CATEGORY.render(graphics, leftPos, topPos);
+		int y = topPos;
+		AllGuiTextures.STOCK_KEEPER_CATEGORY_HEADER.render(graphics, leftPos, y);
+		y += AllGuiTextures.STOCK_KEEPER_CATEGORY_HEADER.getHeight();
+		for (int i = 0; i < slices; i++) {
+			AllGuiTextures.STOCK_KEEPER_CATEGORY.render(graphics, leftPos, y);
+			y += AllGuiTextures.STOCK_KEEPER_CATEGORY.getHeight();
+		}
+		AllGuiTextures.STOCK_KEEPER_CATEGORY_FOOTER.render(graphics, leftPos, y);
+		AllGuiTextures.STOCK_KEEPER_CATEGORY_SAYS.render(graphics, leftPos + imageWidth - 6, y + 7);
+
 		FormattedCharSequence formattedcharsequence = menu.contentHolder.getBlockState()
 			.getBlock()
 			.getName()
 			.getVisualOrderText();
-		int center = leftPos + (AllGuiTextures.STOCK_KEEPER_CATEGORY.getWidth() - 8) / 2;
+
+		int center = leftPos + (AllGuiTextures.STOCK_KEEPER_CATEGORY.getWidth()) / 2;
 		graphics.drawString(font, formattedcharsequence, (float) (center - font.width(formattedcharsequence) / 2),
 			(float) topPos + 4, 0x3D3C48, false);
-		renderSchedule(graphics, pMouseX, pMouseY, pPartialTick);
+		renderCategories(graphics, pMouseX, pMouseY, pPartialTick);
 
 		if (editingItem == null)
 			return;
 
 		graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
-		AllGuiTextures.STOCK_KEEPER_CATEGORY_HEADER.render(graphics, leftPos + 2, topPos + 16);
-		AllGuiTextures.STOCK_KEEPER_CATEGORY_EDIT.render(graphics, leftPos + 2, topPos + 16 + 14);
-		AllGuiTextures.STOCK_KEEPER_CATEGORY_FOOTER.render(graphics, leftPos + 2, topPos + 16 + 51);
-		renderPlayerInventory(graphics, leftPos + 18, topPos + 105);
+
+		y = topPos - 5;
+		AllGuiTextures.STOCK_KEEPER_CATEGORY_HEADER.render(graphics, leftPos, y);
+		y += AllGuiTextures.STOCK_KEEPER_CATEGORY_HEADER.getHeight();
+		AllGuiTextures.STOCK_KEEPER_CATEGORY_EDIT.render(graphics, leftPos, y);
+		y += AllGuiTextures.STOCK_KEEPER_CATEGORY_EDIT.getHeight();
+		AllGuiTextures.STOCK_KEEPER_CATEGORY_FOOTER.render(graphics, leftPos, y);
+
+		renderPlayerInventory(graphics, leftPos + 10, topPos + 88);
 
 		formattedcharsequence = CreateLang.translate("gui.stock_ticker.category_editor")
 			.component()
 			.getVisualOrderText();
 		graphics.drawString(font, formattedcharsequence, (float) (center - font.width(formattedcharsequence) / 2),
-			(float) topPos + 20, 0x3D3C48, false);
+			(float) topPos - 1, 0x3D3C48, false);
 	}
 
 	@Override

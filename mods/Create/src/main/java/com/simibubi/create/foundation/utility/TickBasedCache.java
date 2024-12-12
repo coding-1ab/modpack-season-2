@@ -18,9 +18,14 @@ import com.google.common.collect.ImmutableMap;
 public class TickBasedCache<K, V> implements Cache<K, V> {
 
 	private static int currentTick = 0;
+	private static int currentClientTick = 0;
 
 	public static void tick() {
 		currentTick++;
+	}
+
+	public static void clientTick() {
+		currentClientTick++;
 	}
 
 	//
@@ -30,10 +35,16 @@ public class TickBasedCache<K, V> implements Cache<K, V> {
 
 	private int ticksUntilTimeout;
 	private boolean resetTimerOnAccess;
+	private boolean clientSide;
 
 	public TickBasedCache(int ticksUntilTimeout, boolean resetTimerOnAccess) {
+		this(ticksUntilTimeout, resetTimerOnAccess, false);
+	}
+
+	public TickBasedCache(int ticksUntilTimeout, boolean resetTimerOnAccess, boolean clientSide) {
 		this.ticksUntilTimeout = ticksUntilTimeout;
 		this.resetTimerOnAccess = resetTimerOnAccess;
+		this.clientSide = clientSide;
 	}
 
 	@Override
@@ -41,14 +52,18 @@ public class TickBasedCache<K, V> implements Cache<K, V> {
 		MutableInt timestamp = timestamps.get(key);
 		if (timestamp == null)
 			return null;
-		if (timestamp.intValue() < currentTick - ticksUntilTimeout) {
+		if (timestamp.intValue() < ticks() - ticksUntilTimeout) {
 			timestamps.remove(key);
 			map.remove(key);
 			return null;
 		}
 		if (resetTimerOnAccess)
-			timestamp.setValue(currentTick);
+			timestamp.setValue(ticks());
 		return map.get(key);
+	}
+
+	public int ticks() {
+		return clientSide ? currentClientTick : currentTick;
 	}
 
 	@Override
@@ -67,7 +82,7 @@ public class TickBasedCache<K, V> implements Cache<K, V> {
 	}
 
 	private MutableInt now() {
-		return new MutableInt(currentTick);
+		return new MutableInt(ticks());
 	}
 
 	@Override
@@ -117,6 +132,7 @@ public class TickBasedCache<K, V> implements Cache<K, V> {
 
 	@Override
 	public ConcurrentMap<K, V> asMap() {
+		cleanUp();
 		return map;
 	}
 
@@ -124,10 +140,10 @@ public class TickBasedCache<K, V> implements Cache<K, V> {
 	public void cleanUp() {
 		Set<K> outdated = new HashSet<>();
 		timestamps.forEach((k, v) -> {
-			if (v.intValue() < currentTick - ticksUntilTimeout)
+			if (v.intValue() < ticks() - ticksUntilTimeout)
 				outdated.add(k);
 			if (resetTimerOnAccess)
-				v.setValue(currentTick);
+				v.setValue(ticks());
 		});
 		outdated.forEach(map::remove);
 		outdated.forEach(timestamps::remove);

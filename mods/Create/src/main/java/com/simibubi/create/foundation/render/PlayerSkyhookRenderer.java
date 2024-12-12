@@ -66,14 +66,14 @@ public class PlayerSkyhookRenderer {
 		offsetY = model.leftArm.y;
 		model.leftArm.x = offsetX * Mth.cos(bodySwing) - offsetY * Mth.sin(bodySwing);
 		model.leftArm.y = offsetX * Mth.sin(bodySwing) + offsetY * Mth.cos(bodySwing);
-		model.leftArm.zRot = -AngleHelper.rad(5) + 0.5f * bodySwing + limbSwing;
+		model.leftArm.zRot = -AngleHelper.rad(20) + 0.5f * bodySwing + limbSwing;
 
 		model.rightLeg.y -= 0.2f;
 		offsetX = model.rightLeg.x;
 		offsetY = model.rightLeg.y;
 		model.rightLeg.x = offsetX * Mth.cos(bodySwing) - offsetY * Mth.sin(bodySwing);
 		model.rightLeg.y = offsetX * Mth.sin(bodySwing) + offsetY * Mth.cos(bodySwing);
-		model.rightLeg.xRot = -AngleHelper.rad(10);
+		model.rightLeg.xRot = -AngleHelper.rad(25);
 		model.rightLeg.zRot = AngleHelper.rad(10) + 0.5f * bodySwing + limbSwing;
 
 		model.leftLeg.y -= 0.2f;

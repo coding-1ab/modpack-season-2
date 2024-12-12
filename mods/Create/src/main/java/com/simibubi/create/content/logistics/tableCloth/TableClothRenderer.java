@@ -10,10 +10,12 @@ import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRende
 
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.render.CachedBuffers;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -56,7 +58,14 @@ public class TableClothRenderer extends SmartBlockEntityRenderer<TableClothBlock
 				ms.mulPose(Axis.YP.rotationDegrees(-i * (360f / stacks.size()) - 45f));
 			}
 
-			ms.mulPose(Axis.YP.rotationDegrees(180));
+			BakedModel bakedModel = Minecraft.getInstance()
+				.getItemRenderer()
+				.getModel(entry, null, null, 0);
+			boolean blockItem = bakedModel.isGui3d();
+			if (!blockItem)
+				TransformStack.of(ms)
+					.rotate(-rotationInRadians + Mth.PI, Direction.UP);
+
 			DepotRenderer.renderItem(blockEntity.getLevel(), ms, buffer, light, OverlayTexture.NO_OVERLAY, entry, 0,
 				null, Vec3.atCenterOf(blockEntity.getBlockPos()), true);
 			ms.popPose();

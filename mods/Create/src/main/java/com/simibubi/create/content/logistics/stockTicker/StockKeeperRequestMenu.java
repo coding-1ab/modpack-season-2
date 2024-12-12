@@ -51,7 +51,9 @@ public class StockKeeperRequestMenu extends MenuBase<StockTickerBlockEntity> {
 	public void initializeContents(int pStateId, List<ItemStack> pItems, ItemStack pCarried) {}
 
 	@Override
-	protected void addSlots() {}
+	protected void addSlots() {
+		addPlayerSlots(-1000, 0);
+	}
 
 	@Override
 	protected void saveData(StockTickerBlockEntity contentHolder) {}

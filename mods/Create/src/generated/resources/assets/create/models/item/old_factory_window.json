@@ -2,6 +2,6 @@
   "parent": "minecraft:block/cube_column",
   "textures": {
     "end": "create:block/palettes/old_factory_window_1_end",
-    "side": "create:block/palettes/old_factory_window_1"
+    "side": "create:block/palettes/old_factory_window"
   }
 }

@@ -496,11 +496,8 @@ public class BuilderTransformers {
 			if (dyed)
 				item.tag(AllItemTags.DYED_TABLE_CLOTHS.tag);
 
-			return item
-				.model((c, p) -> p
-					.withExistingParent(name + "_table_cloth",
-						p.modLoc("block/table_cloth/item" + (!dyed ? "_lower" : "")))
-					.texture("0", p.modLoc("block/table_cloth/" + name)))
+			return item.model((c, p) -> p.withExistingParent(name + "_table_cloth", p.modLoc("block/table_cloth/item"))
+				.texture("0", p.modLoc("block/table_cloth/" + name)))
 				.tag(AllItemTags.TABLE_CLOTHS.tag)
 				.recipe((c, p) -> ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, c.get())
 					.requires(c.get())

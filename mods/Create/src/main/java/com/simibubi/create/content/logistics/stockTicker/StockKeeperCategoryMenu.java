@@ -55,8 +55,8 @@ public class StockKeeperCategoryMenu extends MenuBase<StockTickerBlockEntity> {
 
 	@Override
 	protected void addSlots() {
-		addSlot(new InactiveItemHandlerSlot(proxyInventory, 0, 23, 41));
-		addPlayerSlots(26, 123);
+		addSlot(new InactiveItemHandlerSlot(proxyInventory, 0, 16, 24));
+		addPlayerSlots(18, 106);
 	}
 
 	@Override

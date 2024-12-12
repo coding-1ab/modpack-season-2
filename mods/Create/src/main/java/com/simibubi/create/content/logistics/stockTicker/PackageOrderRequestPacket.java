@@ -45,6 +45,7 @@ public class PackageOrderRequestPacket extends BlockEntityConfigurationPacket<St
 	@Override
 	protected void applySettings(ServerPlayer player, StockTickerBlockEntity be) {
 		if (encodeRequester) {
+			player.closeContainer();
 			RedstoneRequesterBlock.programRequester(player, be, order, address);
 			return;
 		}

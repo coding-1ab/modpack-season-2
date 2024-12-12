@@ -31,14 +31,17 @@ public class FTBChunksTrainMap {
 	public static void tick() {
 		if (cancelTooltips > 0)
 			cancelTooltips--;
-		if (!AllConfigs.client().showTrainMapOverlay.get()
-			|| getAsLargeMapScreen(Minecraft.getInstance().screen) == null) {
+
+		LargeMapScreen mapScreen = getAsLargeMapScreen(Minecraft.getInstance().screen);
+
+		if (!AllConfigs.client().showTrainMapOverlay.get() || mapScreen == null) {
 			if (requesting)
 				TrainMapSyncClient.stopRequesting();
 			requesting = false;
 			return;
 		}
-		TrainMapManager.tick();
+
+		TrainMapManager.tick(mapScreen.currentDimension());
 		requesting = true;
 		TrainMapSyncClient.requestData();
 	}

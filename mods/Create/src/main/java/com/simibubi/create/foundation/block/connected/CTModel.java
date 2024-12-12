@@ -76,7 +76,7 @@ public class CTModel extends BakedModelWrapperWithData {
 			if (index == -1)
 				continue;
 
-			CTSpriteShiftEntry spriteShift = behaviour.getShift(state, quad.getDirection(), quad.getSprite());
+			CTSpriteShiftEntry spriteShift = behaviour.getShift(state, rand, quad.getDirection(), quad.getSprite());
 			if (spriteShift == null)
 				continue;
 			if (quad.getSprite() != spriteShift.getOriginal())
