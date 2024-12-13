@@ -130,6 +130,8 @@ public class Create {
 
 		AllConfigs.register(modLoadingContext);
 
+		BlockSpoutingBehaviour.registerDefaults();
+
 		// FIXME: some of these registrations are not thread-safe
 		AllMovementBehaviours.registerDefaults();
 		AllInteractionBehaviours.registerDefaults();
@@ -138,7 +140,6 @@ public class Create {
 		ContraptionMovementSetting.registerDefaults();
 		AllArmInteractionPointTypes.register();
 		AllFanProcessingTypes.register();
-		BlockSpoutingBehaviour.registerDefaults();
 		BogeySizes.init();
 		AllBogeyStyles.init();
 		// ----
