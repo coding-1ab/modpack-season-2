@@ -24,6 +24,7 @@ import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
+import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.CapManipulationBehaviourBase.InterfaceProvider;
@@ -253,13 +254,21 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 		boolean targetIsCreativeCrate = targetInv instanceof BottomlessItemHandler;
 		boolean targetIsCrafter = targetBE instanceof MechanicalCrafterBlockEntity;
+		
+		if (targetBE instanceof BasinBlockEntity basin)
+			basin.inputInventory.packagerMode = true;
 
 		for (int slot = 0; slot < targetInv.getSlots(); slot++) {
 			ItemStack itemInSlot = targetInv.getStackInSlot(slot);
+			if (!simulate)
+				itemInSlot = itemInSlot.copy();
+			
 			int itemsAddedToSlot = 0;
 
 			for (int boxSlot = 0; boxSlot < contents.getSlots(); boxSlot++) {
 				ItemStack toInsert = contents.getStackInSlot(boxSlot);
+				if (toInsert.isEmpty())
+					continue;
 
 				// Follow crafting arrangement
 				if (targetIsCrafter && orderContext != null && orderContext.stacks()
@@ -275,6 +284,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 				if (targetInv.insertItem(slot, toInsert, true)
 					.getCount() == toInsert.getCount())
 					continue;
+				
 				if (itemInSlot.isEmpty()) {
 					int maxStackSize = targetInv.getSlotLimit(slot);
 					if (maxStackSize < toInsert.getCount()) {
@@ -282,11 +292,15 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 						toInsert = ItemHandlerHelper.copyStackWithSize(toInsert, maxStackSize);
 					} else
 						contents.setStackInSlot(boxSlot, ItemStack.EMPTY);
+					
 					itemInSlot = toInsert;
+					if (!simulate)
+						itemInSlot = itemInSlot.copy();
+					
 					targetInv.insertItem(slot, toInsert, simulate);
-					itemsAddedToSlot += toInsert.getCount();
 					continue;
 				}
+				
 				if (!ItemHandlerHelper.canItemStacksStack(toInsert, itemInSlot))
 					continue;
 
@@ -298,10 +312,15 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 					Math.min(toInsert.getCount(), slotLimit - itemInSlot.getCount() - itemsAddedToSlot);
 
 				int added = Math.min(insertedAmount, Math.max(0, insertableAmountWithPreviousItems));
+				itemsAddedToSlot += added;
+				
 				contents.setStackInSlot(boxSlot,
 					ItemHandlerHelper.copyStackWithSize(toInsert, toInsert.getCount() - added));
 			}
 		}
+		
+		if (targetBE instanceof BasinBlockEntity basin)
+			basin.inputInventory.packagerMode = false;
 
 		if (!targetIsCreativeCrate)
 			for (int boxSlot = 0; boxSlot < contents.getSlots(); boxSlot++)
@@ -337,8 +356,6 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		String fixedAddress = null;
 		int fixedOrderId = 0;
 
-		boolean continuePacking = true;
-
 		// Data written to packages for defrags
 		int linkIndexInOrder = 0;
 		boolean finalLinkInOrder = false;
@@ -360,6 +377,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		}
 
 		Outer: for (int i = 0; i < PackageItem.SLOTS; i++) {
+			boolean continuePacking = true;
+			
 			while (continuePacking) {
 				continuePacking = false;
 
@@ -386,10 +405,6 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 						extractedPackageItem = extracted;
 
 					if (!requestQueue) {
-						if (targetInv instanceof BottomlessItemHandler) {
-							continuePacking = true;
-							continue Outer;
-						}
 						if (bulky)
 							break Outer;
 						continue;

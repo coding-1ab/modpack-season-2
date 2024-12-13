@@ -254,15 +254,13 @@ public class PackageItem extends Item {
 		ItemStackHandler contents = getContents(box);
 		ItemStack particle = box.copy();
 
-		box = box.copyWithCount(box.getCount() - 1);
-		if (box.isEmpty())
-			box = ItemStack.EMPTY;
-
-		playerIn.setItemInHand(handIn, box);
+		playerIn.setItemInHand(handIn, box.getCount() <= 1 ? ItemStack.EMPTY : box.copyWithCount(box.getCount() - 1));
 
 		if (!worldIn.isClientSide()) {
 			for (int i = 0; i < contents.getSlots(); i++) {
 				ItemStack itemstack = contents.getStackInSlot(i);
+				if (itemstack.isEmpty())
+					continue;
 
 				if (itemstack.getItem() instanceof SpawnEggItem sei && worldIn instanceof ServerLevel sl) {
 					EntityType<?> entitytype = sei.getType(itemstack.getTag());
@@ -275,10 +273,8 @@ public class PackageItem extends Item {
 						itemstack.shrink(1);
 				}
 
-				if (itemstack.isEmpty())
-					continue;
 				playerIn.getInventory()
-					.placeItemBackInInventory(itemstack);
+					.placeItemBackInInventory(itemstack.copy());
 			}
 		}
 
@@ -298,14 +294,15 @@ public class PackageItem extends Item {
 			}
 		}
 
-		return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
+		return new InteractionResultHolder<>(InteractionResult.SUCCESS, box);
 	}
 
 	@Override
 	public InteractionResult useOn(UseOnContext context) {
 		if (context.getPlayer()
-			.isShiftKeyDown())
+			.isShiftKeyDown()) {
 			return open(context.getLevel(), context.getPlayer(), context.getHand()).getResult();
+		}
 
 		Vec3 point = context.getClickLocation();
 		float h = style.height() / 16f;

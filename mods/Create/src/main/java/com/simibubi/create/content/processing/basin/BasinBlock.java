@@ -139,18 +139,12 @@ public class BasinBlock extends Block implements IBE<BasinBlockEntity>, IWrencha
 			return;
 		ItemEntity itemEntity = (ItemEntity) entityIn;
 		withBlockEntityDo(worldIn, entityIn.blockPosition(), be -> {
-
-			// Tossed items bypass the quarter-stack limit
-			be.inputInventory.withMaxStackSize(64);
 			ItemStack insertItem = ItemHandlerHelper.insertItem(be.inputInventory, itemEntity.getItem()
 				.copy(), false);
-			be.inputInventory.withMaxStackSize(16);
-
 			if (insertItem.isEmpty()) {
 				itemEntity.discard();
 				return;
 			}
-
 			itemEntity.setItem(insertItem);
 		});
 	}
