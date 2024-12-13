@@ -13,7 +13,7 @@ import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
-import com.simibubi.create.content.schematics.requirement.ISpecialEntityItemRequirement;
+import com.simibubi.create.api.schematic.requirement.ISpecialEntityItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement.ItemUseType;
 import com.simibubi.create.foundation.networking.ISyncPersistentData;
@@ -207,7 +207,7 @@ public class BlueprintEntity extends HangingEntity
 		d6 = d6 / 32.0D;
 		this.setBoundingBox(new AABB(d1 - d4, d2 - d5, d3 - d6, d1 + d4, d2 + d5, d3 + d6));
 	}
-	
+
 	@Override
 	public void setPos(double pX, double pY, double pZ) {
 		setPosRaw(pX, pY, pZ);

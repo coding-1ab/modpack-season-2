@@ -8,14 +8,14 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import com.simibubi.create.api.event.BlockEntityBehaviourEvent;
-import com.simibubi.create.content.schematics.requirement.ISpecialBlockEntityItemRequirement;
+import com.simibubi.create.api.schematic.requirement.ISpecialBlockEntityItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
 import com.simibubi.create.foundation.advancement.CreateAdvancement;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.IInteractionChecker;
-import com.simibubi.create.foundation.utility.IPartialSafeNBT;
+import com.simibubi.create.api.schematic.nbt.IPartialSafeNBT;
 
 import net.createmod.ponder.api.VirtualBlockEntity;
 import net.minecraft.core.BlockPos;

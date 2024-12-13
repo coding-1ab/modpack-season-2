@@ -28,7 +28,7 @@ import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.funnel.FunnelBlock;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlock;
-import com.simibubi.create.content.schematics.requirement.ISpecialBlockItemRequirement;
+import com.simibubi.create.api.schematic.requirement.ISpecialBlockItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement.ItemUseType;
 import com.simibubi.create.foundation.block.IBE;
@@ -292,7 +292,7 @@ public class BeltBlock extends HorizontalKineticBlock
 				return InteractionResult.SUCCESS;
 			}
 		}
-		
+
 		if (isHand) {
 			BeltBlockEntity controllerBelt = belt.getControllerBE();
 			if (controllerBelt == null)

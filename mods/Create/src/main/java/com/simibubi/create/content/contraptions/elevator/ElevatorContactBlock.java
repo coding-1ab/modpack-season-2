@@ -6,7 +6,7 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.content.contraptions.elevator.ElevatorColumn.ColumnCoords;
 import com.simibubi.create.content.redstone.contact.RedstoneContactBlock;
 import com.simibubi.create.content.redstone.diodes.BrassDiodeBlock;
-import com.simibubi.create.content.schematics.requirement.ISpecialBlockItemRequirement;
+import com.simibubi.create.api.schematic.requirement.ISpecialBlockItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.WrenchableDirectionalBlock;

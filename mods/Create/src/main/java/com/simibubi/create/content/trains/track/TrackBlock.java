@@ -30,7 +30,7 @@ import com.simibubi.create.AllShapes;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.content.decoration.girder.GirderBlock;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
-import com.simibubi.create.content.schematics.requirement.ISpecialBlockItemRequirement;
+import com.simibubi.create.api.schematic.requirement.ISpecialBlockItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement.ItemUseType;
 import com.simibubi.create.content.trains.CubeParticleData;
