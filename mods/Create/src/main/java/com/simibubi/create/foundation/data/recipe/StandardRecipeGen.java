@@ -1053,6 +1053,8 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.pattern("CAC")
 				.pattern(" C ")),
 
+		PACKAGER_CYCLE = conversionCycle(ImmutableList.of(AllBlocks.PACKAGER, AllBlocks.REPACKAGER)),
+			
 		PACKAGE_FROGPORT = create(AllBlocks.PACKAGE_FROGPORT).unlockedBy(I::cardboard)
 			.viaShaped(b -> b.define('C', I.andesiteAlloy())
 				.define('B', Tags.Items.SLIMEBALLS)
@@ -1441,7 +1443,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 		for (int i = 0; i < cycle.size(); i++) {
 			ItemProviderEntry<? extends ItemLike> currentEntry = cycle.get(i);
 			ItemProviderEntry<? extends ItemLike> nextEntry = cycle.get((i + 1) % cycle.size());
-			result = create(nextEntry).withSuffix("from_conversion")
+			result = create(nextEntry).withSuffix("_from_conversion")
 				.unlockedBy(currentEntry::get)
 				.viaShapeless(b -> b.requires(currentEntry.get()));
 		}

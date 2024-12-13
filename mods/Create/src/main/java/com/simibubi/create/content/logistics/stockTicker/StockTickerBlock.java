@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -101,6 +102,11 @@ public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<
 	@Override
 	public BlockEntityType<? extends StockTickerBlockEntity> getBlockEntityType() {
 		return AllBlockEntityTypes.STOCK_TICKER.get();
+	}
+	
+	@Override
+	public boolean isPathfindable(BlockState pState, BlockGetter pLevel, BlockPos pPos, PathComputationType pType) {
+		return false;
 	}
 
 }

@@ -1,13 +1,18 @@
 package com.simibubi.create.content.logistics.packagePort.frogport;
 
+import java.util.List;
+
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.equipment.goggles.IHaveHoveringInformation;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerItemHandler;
 import com.simibubi.create.foundation.item.ItemHelper;
+import com.simibubi.create.foundation.item.TooltipHelper;
 
 import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.utility.NBTHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
 import net.minecraft.core.BlockPos;
@@ -15,6 +20,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -26,7 +32,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class FrogportBlockEntity extends PackagePortBlockEntity {
+public class FrogportBlockEntity extends PackagePortBlockEntity implements IHaveHoveringInformation {
 
 	public ItemStack animatedPackage;
 	public LerpedFloat manualOpenAnimationProgress;
@@ -37,6 +43,8 @@ public class FrogportBlockEntity extends PackagePortBlockEntity {
 	public boolean sendAnticipate;
 
 	public float passiveYaw;
+
+	private boolean failedLastExport;
 
 	public FrogportBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -65,8 +73,13 @@ public class FrogportBlockEntity extends PackagePortBlockEntity {
 		super.lazyTick();
 		if (level.isClientSide() || isAnimationInProgress())
 			return;
+
+		boolean prevFail = failedLastExport;
 		tryPushingToAdjacentInventories();
 		tryPullingFromOwnAndAdjacentInventories();
+
+		if (failedLastExport != prevFail)
+			sendData();
 	}
 
 	public void sendAnticipate() {
@@ -165,28 +178,33 @@ public class FrogportBlockEntity extends PackagePortBlockEntity {
 	}
 
 	protected void tryPushingToAdjacentInventories() {
-		if (inventory.isEmpty())
+		failedLastExport = false;
+		IItemHandler inventory = itemHandler.orElse(null);
+
+		if (inventory == null)
 			return;
-		for (Direction side : Iterate.directions) {
-			if (side != Direction.DOWN)
+
+		boolean empty = true;
+		for (int i = 0; i < inventory.getSlots(); i++)
+			if (!inventory.getStackInSlot(i)
+				.isEmpty())
+				empty = false;
+		if (empty)
+			return;
+		IItemHandler handler = getAdjacentInventory(Direction.DOWN);
+		if (handler == null)
+			return;
+
+		for (int i = 0; i < inventory.getSlots(); i++) {
+			ItemStack stackInSlot = inventory.extractItem(i, 1, true);
+			if (stackInSlot.isEmpty())
 				continue;
-			IItemHandler handler = getAdjacentInventory(side);
-			if (handler == null)
-				continue;
-			boolean anyLeft = false;
-			for (int i = 0; i < inventory.getSlots(); i++) {
-				ItemStack stackInSlot = inventory.getStackInSlot(i);
-				if (stackInSlot.isEmpty())
-					continue;
-				ItemStack remainder = ItemHandlerHelper.insertItemStacked(handler, stackInSlot, false);
-				if (remainder.isEmpty()) {
-					inventory.setStackInSlot(i, ItemStack.EMPTY);
-					level.blockEntityChanged(worldPosition);
-				} else
-					anyLeft = true;
-			}
-			if (!anyLeft)
-				break;
+			ItemStack remainder = ItemHandlerHelper.insertItemStacked(handler, stackInSlot, false);
+			if (remainder.isEmpty()) {
+				inventory.extractItem(i, 1, false);
+				level.blockEntityChanged(worldPosition);
+			} else
+				failedLastExport = true;
 		}
 	}
 
@@ -246,12 +264,15 @@ public class FrogportBlockEntity extends PackagePortBlockEntity {
 			sendAnticipate = false;
 			tag.putBoolean("Anticipate", true);
 		}
+		if (failedLastExport)
+			NBTHelper.putMarker(tag, "FailedLastExport");
 	}
 
 	@Override
 	protected void read(CompoundTag tag, boolean clientPacket) {
 		super.read(tag, clientPacket);
 		passiveYaw = tag.getFloat("PlacedYaw");
+		failedLastExport = tag.getBoolean("FailedLastExport");
 		if (!clientPacket)
 			animatedPackage = null;
 		if (tag.contains("AnimatedPackage"))
@@ -266,6 +287,15 @@ public class FrogportBlockEntity extends PackagePortBlockEntity {
 		Vec3 diff = target.getExactTargetLocation(this, level, worldPosition)
 			.subtract(Vec3.atCenterOf(worldPosition));
 		return (float) (Mth.atan2(diff.x, diff.z) * Mth.RAD_TO_DEG) + 180;
+	}
+
+	@Override
+	public boolean addToTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+		boolean superTip = IHaveHoveringInformation.super.addToTooltip(tooltip, isPlayerSneaking);
+		if (!failedLastExport)
+			return superTip;
+		TooltipHelper.addHint(tooltip, "hint.blocked_frogport");
+		return true;
 	}
 
 }

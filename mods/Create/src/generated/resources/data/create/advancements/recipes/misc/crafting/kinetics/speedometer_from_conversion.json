@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "create:rose_quartz_tiles"
+              "create:stressometer"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "create:crafting/materials/small_rose_quartz_tilesfrom_conversion"
+        "recipe": "create:crafting/kinetics/speedometer_from_conversion"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "create:crafting/materials/small_rose_quartz_tilesfrom_conversion"
+      "create:crafting/kinetics/speedometer_from_conversion"
     ]
   },
   "sends_telemetry_event": false

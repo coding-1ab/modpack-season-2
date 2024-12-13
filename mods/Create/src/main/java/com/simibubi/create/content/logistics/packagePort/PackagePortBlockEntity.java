@@ -45,7 +45,7 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 
 	protected AnimatedContainerBehaviour<PackagePortMenu> openTracker;
 	
-	private LazyOptional<IItemHandler> itemHandler;
+	protected LazyOptional<IItemHandler> itemHandler;
 
 	public PackagePortBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);

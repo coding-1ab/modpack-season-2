@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "create:speedometer"
+              "create:repackager"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "create:crafting/kinetics/stressometerfrom_conversion"
+        "recipe": "create:crafting/logistics/packager_from_conversion"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "create:crafting/kinetics/stressometerfrom_conversion"
+      "create:crafting/logistics/packager_from_conversion"
     ]
   },
   "sends_telemetry_event": false

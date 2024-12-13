@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "create:linear_chassis"
+              "create:packager"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "create:crafting/kinetics/secondary_linear_chassisfrom_conversion"
+        "recipe": "create:crafting/logistics/repackager_from_conversion"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "create:crafting/kinetics/secondary_linear_chassisfrom_conversion"
+      "create:crafting/logistics/repackager_from_conversion"
     ]
   },
   "sends_telemetry_event": false

@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "create:gearbox"
+              "create:speedometer"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "create:crafting/kinetics/vertical_gearboxfrom_conversion"
+        "recipe": "create:crafting/kinetics/stressometer_from_conversion"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "create:crafting/kinetics/vertical_gearboxfrom_conversion"
+      "create:crafting/kinetics/stressometer_from_conversion"
     ]
   },
   "sends_telemetry_event": false

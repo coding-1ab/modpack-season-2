@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -131,6 +132,11 @@ public class DeskBellBlock extends WrenchableDirectionalBlock
 	@Override
 	public BlockEntityType<? extends DeskBellBlockEntity> getBlockEntityType() {
 		return AllBlockEntityTypes.DESK_BELL.get();
+	}
+	
+	@Override
+	public boolean isPathfindable(BlockState pState, BlockGetter pLevel, BlockPos pPos, PathComputationType pType) {
+		return false;
 	}
 
 }

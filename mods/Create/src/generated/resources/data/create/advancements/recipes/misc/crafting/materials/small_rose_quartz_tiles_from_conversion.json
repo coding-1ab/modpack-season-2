@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "create:white_sail"
+              "create:rose_quartz_tiles"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "create:crafting/kinetics/sail_framefrom_conversion"
+        "recipe": "create:crafting/materials/small_rose_quartz_tiles_from_conversion"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "create:crafting/kinetics/sail_framefrom_conversion"
+      "create:crafting/materials/small_rose_quartz_tiles_from_conversion"
     ]
   },
   "sends_telemetry_event": false

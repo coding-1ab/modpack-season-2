@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "create:secondary_linear_chassis"
+              "create:linear_chassis"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "create:crafting/kinetics/linear_chassisfrom_conversion"
+        "recipe": "create:crafting/kinetics/secondary_linear_chassis_from_conversion"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "create:crafting/kinetics/linear_chassisfrom_conversion"
+      "create:crafting/kinetics/secondary_linear_chassis_from_conversion"
     ]
   },
   "sends_telemetry_event": false

@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -72,6 +73,11 @@ public class PostboxBlock extends HorizontalDirectionalBlock implements IBE<Post
 	@Override
 	public BlockEntityType<? extends PostboxBlockEntity> getBlockEntityType() {
 		return AllBlockEntityTypes.PACKAGE_POSTBOX.get();
+	}
+	
+	@Override
+	public boolean isPathfindable(BlockState state, BlockGetter reader, BlockPos pos, PathComputationType type) {
+		return false;
 	}
 
 }

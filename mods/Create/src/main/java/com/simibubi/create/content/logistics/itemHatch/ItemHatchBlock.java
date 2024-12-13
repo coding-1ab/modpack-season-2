@@ -11,6 +11,7 @@ import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -30,6 +31,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -90,13 +92,12 @@ public class ItemHatchBlock extends HorizontalDirectionalBlock implements IBE<It
 		Inventory inventory = pPlayer.getInventory();
 		List<ItemStack> failedInsertions = new ArrayList<>();
 		boolean anyInserted = false;
-		boolean itemInHand = !pPlayer.getMainHandItem()
-			.isEmpty();
+		boolean depositItemInHand = !pPlayer.isShiftKeyDown();
 
 		for (int i = 0; i < inventory.items.size(); i++) {
-			if (Inventory.isHotbarSlot(i) != itemInHand)
+			if (Inventory.isHotbarSlot(i) != depositItemInHand)
 				continue;
-			if (itemInHand && i != inventory.selected)
+			if (depositItemInHand && i != inventory.selected)
 				continue;
 			ItemStack item = inventory.getItem(i);
 			if (item.isEmpty())
@@ -129,6 +130,10 @@ public class ItemHatchBlock extends HorizontalDirectionalBlock implements IBE<It
 		AllSoundEvents.ITEM_HATCH.playOnServer(pLevel, pPos);
 		pLevel.setBlockAndUpdate(pPos, pState.setValue(OPEN, true));
 		pLevel.scheduleTick(pPos, this, 10);
+
+		CreateLang.translate(depositItemInHand ? "item_hatch.deposit_item" : "item_hatch.deposit_inventory")
+			.sendStatus(pPlayer);
+
 		return InteractionResult.SUCCESS;
 	}
 
@@ -154,4 +159,9 @@ public class ItemHatchBlock extends HorizontalDirectionalBlock implements IBE<It
 		return AllBlockEntityTypes.ITEM_HATCH.get();
 	}
 
+	@Override
+	public boolean isPathfindable(BlockState state, BlockGetter reader, BlockPos pos, PathComputationType type) {
+		return false;
+	}
+	
 }
