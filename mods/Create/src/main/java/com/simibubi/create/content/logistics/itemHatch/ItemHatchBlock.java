@@ -9,11 +9,13 @@ import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.block.IBE;
+import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -24,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -31,6 +34,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -41,17 +45,20 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class ItemHatchBlock extends HorizontalDirectionalBlock implements IBE<ItemHatchBlockEntity>, IWrenchable {
+public class ItemHatchBlock extends HorizontalDirectionalBlock
+	implements IBE<ItemHatchBlockEntity>, IWrenchable, ProperWaterloggedBlock {
 
 	public static final BooleanProperty OPEN = BooleanProperty.create("open");
 
 	public ItemHatchBlock(Properties pProperties) {
 		super(pProperties);
+		registerDefaultState(defaultBlockState().setValue(OPEN, false)
+			.setValue(WATERLOGGED, false));
 	}
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> pBuilder) {
-		super.createBlockStateDefinition(pBuilder.add(OPEN, FACING));
+		super.createBlockStateDefinition(pBuilder.add(OPEN, FACING, WATERLOGGED));
 	}
 
 	@Override
@@ -64,9 +71,21 @@ public class ItemHatchBlock extends HorizontalDirectionalBlock implements IBE<It
 			.isVertical())
 			return null;
 
-		return state.setValue(FACING, pContext.getClickedFace()
+		return withWater(state.setValue(FACING, pContext.getClickedFace()
 			.getOpposite())
-			.setValue(OPEN, false);
+			.setValue(OPEN, false), pContext);
+	}
+
+	@Override
+	public FluidState getFluidState(BlockState pState) {
+		return fluidState(pState);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState pState, Direction pDirection, BlockState pNeighborState,
+		LevelAccessor pLevel, BlockPos pPos, BlockPos pNeighborPos) {
+		updateWater(pLevel, pState, pPos);
+		return pState;
 	}
 
 	@Override
@@ -163,5 +182,5 @@ public class ItemHatchBlock extends HorizontalDirectionalBlock implements IBE<It
 	public boolean isPathfindable(BlockState state, BlockGetter reader, BlockPos pos, PathComputationType type) {
 		return false;
 	}
-	
+
 }

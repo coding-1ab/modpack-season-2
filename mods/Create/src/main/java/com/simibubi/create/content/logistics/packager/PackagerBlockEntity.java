@@ -121,8 +121,10 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 		animationTicks--;
 
-		if (animationTicks == 0 && !level.isClientSide())
+		if (animationTicks == 0 && !level.isClientSide()) {
 			wakeTheFrogs();
+			setChanged();
+		}
 	}
 
 	public void triggerStockCheck() {

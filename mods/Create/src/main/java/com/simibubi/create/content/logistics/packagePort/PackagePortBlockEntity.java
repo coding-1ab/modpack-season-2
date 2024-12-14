@@ -34,6 +34,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.network.NetworkHooks;
 
 public abstract class PackagePortBlockEntity extends SmartBlockEntity implements MenuProvider {
@@ -201,6 +202,10 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 	@Override
 	public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
 		return PackagePortMenu.create(pContainerId, pPlayerInventory, this);
+	}
+	
+	public int getComparatorOutput() {
+		return ItemHandlerHelper.calcRedstoneFromInventory(inventory);
 	}
 
 }

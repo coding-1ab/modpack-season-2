@@ -3,6 +3,7 @@ package com.simibubi.create.content.logistics.packagerLink;
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.foundation.block.IBE;
+import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
 import com.simibubi.create.foundation.block.WrenchableDirectionalBlock;
 
 import net.createmod.catnip.utility.Iterate;
@@ -14,23 +15,27 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class PackagerLinkBlock extends WrenchableDirectionalBlock implements IBE<PackagerLinkBlockEntity> {
+public class PackagerLinkBlock extends WrenchableDirectionalBlock
+	implements IBE<PackagerLinkBlockEntity>, ProperWaterloggedBlock {
 
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
 	public PackagerLinkBlock(Properties properties) {
 		super(properties);
-		registerDefaultState(defaultBlockState().setValue(POWERED, false));
+		registerDefaultState(defaultBlockState().setValue(POWERED, false)
+			.setValue(WATERLOGGED, false));
 	}
 
 	@Override
@@ -38,7 +43,19 @@ public class PackagerLinkBlock extends WrenchableDirectionalBlock implements IBE
 		BlockPos pos = context.getClickedPos();
 		Direction face = context.getClickedFace();
 		BlockState placed = super.getStateForPlacement(context).setValue(FACING, face);
-		return placed.setValue(POWERED, getPower(placed, context.getLevel(), pos) > 0);
+		return withWater(placed.setValue(POWERED, getPower(placed, context.getLevel(), pos) > 0), context);
+	}
+
+	@Override
+	public FluidState getFluidState(BlockState pState) {
+		return fluidState(pState);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState pState, Direction pDirection, BlockState pNeighborState,
+		LevelAccessor pLevel, BlockPos pPos, BlockPos pNeighborPos) {
+		updateWater(pLevel, pState, pPos);
+		return pState;
 	}
 
 	@Override
@@ -81,7 +98,7 @@ public class PackagerLinkBlock extends WrenchableDirectionalBlock implements IBE
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		super.createBlockStateDefinition(builder.add(POWERED));
+		super.createBlockStateDefinition(builder.add(POWERED, WATERLOGGED));
 	}
 
 	@Override

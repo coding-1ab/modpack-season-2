@@ -160,10 +160,27 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 	public BlockEntityType<? extends PackagerBlockEntity> getBlockEntityType() {
 		return AllBlockEntityTypes.PACKAGER.get();
 	}
-	
+
 	@Override
 	public boolean isPathfindable(BlockState pState, BlockGetter pLevel, BlockPos pPos, PathComputationType pType) {
 		return false;
+	}
+
+	@Override
+	public boolean hasAnalogOutputSignal(BlockState pState) {
+		return true;
+	}
+
+	@Override
+	public int getAnalogOutputSignal(BlockState pState, Level pLevel, BlockPos pPos) {
+		return getBlockEntityOptional(pLevel, pPos).map(pbe -> {
+			boolean empty = pbe.inventory.getStackInSlot(0)
+				.isEmpty();
+			if (pbe.animationTicks != 0)
+				empty = false;
+			return empty ? 0 : 15;
+		})
+			.orElse(0);
 	}
 
 }

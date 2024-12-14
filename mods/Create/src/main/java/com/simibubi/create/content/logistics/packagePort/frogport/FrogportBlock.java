@@ -85,5 +85,16 @@ public class FrogportBlock extends Block implements IBE<FrogportBlockEntity>, IW
 	public boolean isPathfindable(BlockState state, BlockGetter reader, BlockPos pos, PathComputationType type) {
 		return false;
 	}
+	
+	@Override
+	public boolean hasAnalogOutputSignal(BlockState pState) {
+		return true;
+	}
+
+	@Override
+	public int getAnalogOutputSignal(BlockState pState, Level pLevel, BlockPos pPos) {
+		return getBlockEntityOptional(pLevel, pPos).map(pbe -> pbe.getComparatorOutput())
+			.orElse(0);
+	}
 
 }
