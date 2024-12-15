@@ -76,7 +76,7 @@ jobs:
                     DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
                 if: env.DISCORD_WEBHOOK != ''
                 run: |
-                    curl -H "Content-Type: application/json" -X POST -d '{"content": null, "embeds": [{"title": "Building new release: ${{ steps.read_properties.outputs.mod.version }}", "color": null}], "attachments": []}' $DISCORD_WEBHOOK
+                    curl -H "Content-Type: application/json" -X POST -d '{"content": null, "embeds": [{"title": "Building new release: ${{ steps.read_properties.outputs.mod-version }}", "color": null}], "attachments": []}' $DISCORD_WEBHOOK
 
             -   name: Send built file to discord
                 env:
