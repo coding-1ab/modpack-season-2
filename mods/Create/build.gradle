@@ -206,6 +206,11 @@ repositories {
     }
     maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
 
+    // Mirror of maven.createmod.net
+    if (System.getProperty("os.name").contains("Mac") && System.getenv("USER") == "ithundxr") {
+        maven { url = "https://maven.ithundxr.dev/mirror" }
+    }
+
     mavenCentral()
     mavenLocal()
     flatDir {
