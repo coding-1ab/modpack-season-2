@@ -13,6 +13,7 @@ import com.simibubi.create.content.equipment.zapper.ZapperInteractionHandler;
 import com.simibubi.create.content.equipment.zapper.ZapperItem;
 import com.simibubi.create.content.kinetics.belt.BeltHelper;
 import com.simibubi.create.content.kinetics.chainConveyor.ServerChainConveyorHandler;
+import com.simibubi.create.content.kinetics.drill.CobbleGenOptimisation;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerServerHandler;
 import com.simibubi.create.content.trains.entity.CarriageEntityHandler;
 import com.simibubi.create.foundation.ModFilePackResources;
@@ -178,6 +179,7 @@ public class CommonEvents {
 		Create.REDSTONE_LINK_NETWORK_HANDLER.onUnloadWorld(world);
 		Create.TORQUE_PROPAGATOR.onUnloadWorld(world);
 		WorldAttached.invalidateWorld(world);
+		CobbleGenOptimisation.invalidateWorld(world);
 	}
 
 	@SubscribeEvent
