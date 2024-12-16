@@ -29,6 +29,8 @@ import net.minecraftforge.fluids.FluidType;
 
 public class CobbleGenOptimisation {
 
+	static PlacementSimulationServerLevel cachedLevel;
+
 	public record CobbleGenBlockConfiguration(List<BlockState> statesAroundDrill) {
 	}
 
@@ -89,13 +91,23 @@ public class CobbleGenOptimisation {
 		}
 
 		// TODO Catnip: add empty methods to PSSL overriding levelEvent() side-effects
-		PlacementSimulationServerLevel simulation = new PlacementSimulationServerLevel(level);
+		if (cachedLevel == null || cachedLevel.getLevel() != level)
+			cachedLevel = new PlacementSimulationServerLevel(level);
+
 		BlockState result = Blocks.AIR.defaultBlockState();
 		if (interaction == null)
 			return result;
 
-		interaction.interact(simulation, pos, pos.relative(affected.getFirst()), affected.getSecond());
-		return simulation.blocksAdded.getOrDefault(pos, result);
+		interaction.interact(cachedLevel, pos, pos.relative(affected.getFirst()), affected.getSecond());
+		BlockState output = cachedLevel.blocksAdded.getOrDefault(pos, result);
+		cachedLevel.clear();
+
+		return output;
+	}
+
+	public static void invalidateWorld(LevelAccessor world) {
+		if (cachedLevel != null && cachedLevel.getLevel() == world)
+			cachedLevel = null;
 	}
 
 }
