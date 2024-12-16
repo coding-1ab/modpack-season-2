@@ -2,6 +2,9 @@ package com.simibubi.create.content.equipment.clipboard;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
+
+import com.simibubi.create.foundation.utility.CreateNBTProcessors;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -43,6 +46,9 @@ public class ClipboardEditPacket extends SimplePacketBase {
 	@Override
 	public boolean handle(Context context) {
 		context.enqueueWork(() -> {
+			// Get rid of any unsafe data
+			data = CreateNBTProcessors.clipboardProcessor(data);
+
 			ServerPlayer sender = context.getSender();
 
 			if (targetedBlock != null) {

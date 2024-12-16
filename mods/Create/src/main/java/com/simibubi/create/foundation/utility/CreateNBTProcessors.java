@@ -12,7 +12,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public class CreateNBTProcessors {
-
 	public static void register() {
 
 		NBTProcessors.addProcessor(BlockEntityType.SIGN, data -> {
@@ -42,28 +41,29 @@ public class CreateNBTProcessors {
 			}
 			return data;
 		});
-		
-		NBTProcessors.addProcessor(AllBlockEntityTypes.CLIPBOARD.get(), data -> {
-			if (!data.contains("Item", Tag.TAG_COMPOUND))
-				return data;
-			CompoundTag book = data.getCompound("Item");
-			
-			if (!book.contains("tag", Tag.TAG_COMPOUND))
-				return data;
-			CompoundTag itemData = book.getCompound("tag");
-			
-			for (List<String> entries : NBTHelper.readCompoundList(itemData.getList("Pages", Tag.TAG_COMPOUND),
-				pageTag -> NBTHelper.readCompoundList(pageTag.getList("Entries", Tag.TAG_COMPOUND),
-					tag -> tag.getString("Text")))) {
-				for (String entry : entries)
-					if (NBTProcessors.textComponentHasClickEvent(entry))
-						return null;
-			}
-			return data;
-		});
+
+		NBTProcessors.addProcessor(AllBlockEntityTypes.CLIPBOARD.get(), CreateNBTProcessors::clipboardProcessor);
 
 		NBTProcessors.addProcessor(AllBlockEntityTypes.CREATIVE_CRATE.get(), NBTProcessors.itemProcessor("Filter"));
 		NBTProcessors.addProcessor(AllBlockEntityTypes.PLACARD.get(), NBTProcessors.itemProcessor("Item"));
 	}
 
+	public static CompoundTag clipboardProcessor(CompoundTag data) {
+		if (!data.contains("Item", Tag.TAG_COMPOUND))
+			return data;
+		CompoundTag book = data.getCompound("Item");
+
+		if (!book.contains("tag", Tag.TAG_COMPOUND))
+			return data;
+		CompoundTag itemData = book.getCompound("tag");
+
+		for (List<String> entries : NBTHelper.readCompoundList(itemData.getList("Pages", Tag.TAG_COMPOUND),
+			pageTag -> NBTHelper.readCompoundList(pageTag.getList("Entries", Tag.TAG_COMPOUND),
+				tag -> tag.getString("Text")))) {
+			for (String entry : entries)
+				if (NBTProcessors.textComponentHasClickEvent(entry))
+					return null;
+		}
+		return data;
+	}
 }
