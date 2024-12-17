@@ -1935,8 +1935,9 @@ public class AllBlocks {
 		REGISTRATE.block("redstone_requester", RedstoneRequesterBlock::new)
 			.initialProperties(SharedProperties::stone)
 			.properties(p -> p.sound(SoundType.WOOD))
+			.properties(p -> p.noOcclusion())
 			.transform(axeOrPickaxe())
-			.blockstate((c, p) -> BlockStateGen.simpleBlock(c, p, AssetLookup.forPowered(c, p)))
+			.blockstate((c, p) -> BlockStateGen.horizontalAxisBlock(c, p, AssetLookup.forPowered(c, p)))
 			.item(RedstoneRequesterBlockItem::new)
 			.transform(customItemModel("_", "block"))
 			.register();

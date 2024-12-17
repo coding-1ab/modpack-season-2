@@ -1,28 +1,28 @@
 {
 	"credit": "Made with Blockbench",
-	"texture_size": [32, 32],
+	"render_type": "cutout",
 	"textures": {
-		"1": "create:block/packager_block",
-		"particle": "create:block/packager_block"
+		"1": "create:block/packager_details"
 	},
 	"elements": [
 		{
-			"from": [2, 2, 1.5],
-			"to": [14, 4, 14.5],
+			"from": [2, 2, 2],
+			"to": [14, 4, 14],
+			"rotation": {"angle": 0, "axis": "y", "origin": [2, 2, 2]},
 			"faces": {
-				"north": {"uv": [9.5, 15, 15.5, 16], "texture": "#1"},
-				"east": {"uv": [15, 9, 16, 15.5], "rotation": 90, "texture": "#1"},
-				"south": {"uv": [9.5, 15, 15.5, 16], "texture": "#1"},
-				"west": {"uv": [15, 9, 16, 15.5], "rotation": 90, "texture": "#1"},
-				"up": {"uv": [9.5, 9, 15.5, 15.5], "texture": "#1"},
-				"down": {"uv": [9.5, 9, 15.5, 15.5], "texture": "#1"}
+				"north": {"uv": [1, 6.5, 7, 7.5], "texture": "#1"},
+				"east": {"uv": [1, 6.5, 7, 7.5], "texture": "#1"},
+				"south": {"uv": [1, 6.5, 7, 7.5], "texture": "#1"},
+				"west": {"uv": [1, 6.5, 7, 7.5], "texture": "#1"},
+				"up": {"uv": [1, 1, 7, 7], "texture": "#1"},
+				"down": {"uv": [1, 1, 7, 7], "texture": "#1"}
 			}
 		}
 	],
 	"groups": [
 		{
-			"name": "Tray",
-			"origin": [0, 0, 0],
+			"name": "sled",
+			"origin": [8, 8, 8],
 			"color": 0,
 			"children": [0]
 		}
