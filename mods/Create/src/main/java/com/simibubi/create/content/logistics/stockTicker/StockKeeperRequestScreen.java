@@ -24,6 +24,7 @@ import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
+import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;
 import com.simibubi.create.content.logistics.AddressEditBox;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
@@ -45,6 +46,7 @@ import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.ChatFormatting;
@@ -58,6 +60,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -125,6 +128,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 	boolean encodeRequester; // Redstone requesters
 	ItemStack itemToProgram;
+	List<List<ClipboardEntry>> clipboardItem;
 
 	private boolean isAdmin;
 	private boolean isLocked;
@@ -162,6 +166,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		itemToProgram = menu.player.getMainHandItem();
 		encodeRequester =
 			AllItemTags.TABLE_CLOTHS.matches(itemToProgram) || AllBlocks.REDSTONE_REQUESTER.isIn(itemToProgram);
+
+		if (AllBlocks.CLIPBOARD.isIn(itemToProgram))
+			clipboardItem = ClipboardEntry.readAll(itemToProgram);
 
 		// Find the keeper for rendering
 		for (int yOffset : Iterate.zeroAndOne) {
@@ -244,6 +251,12 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 		if (currentItemSource == null) {
 			clampScrollBar();
+			return;
+		}
+
+		if (isSchematicListMode()) {
+			clampScrollBar();
+			requestSchematicList();
 			return;
 		}
 
@@ -504,6 +517,10 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			ms.popPose();
 		}
 
+		if (itemsToOrder.size() > 8)
+			graphics.drawString(font, Components.literal("[+" + (itemsToOrder.size() - 8) + "]"), x + windowWidth - 40,
+				orderY + 21, 0xB59370);
+
 		boolean justSent = itemsToOrder.isEmpty() && successTicks > 0;
 		if (isConfirmHovered(mouseX, mouseY) && !justSent)
 			AllGuiTextures.STOCK_KEEPER_REQUEST_SEND_HOVER.render(graphics, x + windowWidth - 81,
@@ -590,14 +607,19 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			Component msg = getTroubleshootingMessage();
 			float alpha = Mth.clamp((emptyTicks - 10f) / 5f, 0f, 1f);
 			if (alpha > 0) {
-				graphics.drawString(font, msg, x + windowWidth / 2 - font.width(msg) / 2 + 1, itemsY + 20 + 1,
-					new Color(0x4A2D31).setAlpha(alpha)
-						.getRGB(),
-					false);
-				graphics.drawString(font, msg, x + windowWidth / 2 - font.width(msg) / 2, itemsY + 20,
-					new Color(0xF8F8EC).setAlpha(alpha)
-						.getRGB(),
-					false);
+				List<FormattedCharSequence> split = font.split(msg, 160);
+				for (int i = 0; i < split.size(); i++) {
+					FormattedCharSequence sequence = split.get(i);
+					int lineWidth = font.width(sequence);
+					graphics.drawString(font, sequence, x + windowWidth / 2 - lineWidth / 2 + 1,
+						itemsY + 20 + 1 + i * (font.lineHeight + 1), new Color(0x4A2D31).setAlpha(alpha)
+							.getRGB(),
+						false);
+					graphics.drawString(font, sequence, x + windowWidth / 2 - lineWidth / 2,
+						itemsY + 20 + i * (font.lineHeight + 1), new Color(0xF8F8EC).setAlpha(alpha)
+							.getRGB(),
+						false);
+				}
 			}
 		}
 
@@ -854,7 +876,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 	private Couple<Integer> getHoveredSlot(int x, int y) {
 		x += 1;
-		if (x < itemsX || x >= itemsX + cols * colWidth)
+		if (x < itemsX || x >= itemsX + cols * colWidth || isSchematicListMode())
 			return noneHovered;
 
 		// Ordered item is hovered
@@ -926,6 +948,11 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		if (currentItemSource.isEmpty())
 			return CreateLang.translate("gui.stock_keeper.inventories_empty")
 				.component();
+		if (isSchematicListMode())
+			return CreateLang
+				.translate(itemsToOrder.isEmpty() ? "gui.stock_keeper.schematic_list.no_results"
+					: "gui.stock_keeper.schematic_list.requesting")
+				.component();
 		return CreateLang.translate("gui.stock_keeper.no_search_results")
 			.component();
 	}
@@ -992,7 +1019,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 				CategoryEntry entry = categories.get(categoryIndex);
 				if (Mth.floor((localY - entry.y) / (float) rowHeight + itemScroll.getChaseTarget()) != 0)
 					continue;
-				if (displayedItems.get(categoryIndex).isEmpty())
+				if (displayedItems.get(categoryIndex)
+					.isEmpty())
 					continue;
 				int indexOf = entry.filterStack == null ? -1 : blockEntity.categories.indexOf(entry.filterStack);
 				hiddenCategories.remove(indexOf);
@@ -1226,6 +1254,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		recipesToOrder = new ArrayList<>();
 		blockEntity.ticksSinceLastUpdate = 10;
 		successTicks = 1;
+		
+		if (isSchematicListMode())
+			menu.player.closeContainer();
 	}
 
 	@Override
@@ -1236,6 +1267,24 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 	@Override
 	public List<Rect2i> getExtraAreas() {
 		return extraAreas;
+	}
+
+	public boolean isSchematicListMode() {
+		return clipboardItem != null;
+	}
+
+	public void requestSchematicList() {
+		itemsToOrder.clear();
+		InventorySummary availableItems = blockEntity.getLastClientsideStockSnapshotAsSummary();
+		for (List<ClipboardEntry> list : clipboardItem) {
+			for (ClipboardEntry entry : list) {
+				ItemStack stack = entry.icon;
+				int toOrder = Math.min(entry.itemAmount, availableItems.getCountOf(stack));
+				if (toOrder == 0)
+					continue;
+				itemsToOrder.add(new BigItemStack(stack, toOrder));
+			}
+		}
 	}
 
 	public void requestCraftable(CraftableBigItemStack cbis, int requestedDifference) {

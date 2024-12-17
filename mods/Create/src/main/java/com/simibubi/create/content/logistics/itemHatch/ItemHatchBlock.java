@@ -6,6 +6,7 @@ import java.util.List;
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.AllSoundEvents;
+import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.block.IBE;
@@ -112,6 +113,9 @@ public class ItemHatchBlock extends HorizontalDirectionalBlock
 		List<ItemStack> failedInsertions = new ArrayList<>();
 		boolean anyInserted = false;
 		boolean depositItemInHand = !pPlayer.isShiftKeyDown();
+
+		if (!depositItemInHand && AllItemTags.WRENCH.matches(pPlayer.getItemInHand(pHand)))
+			return InteractionResult.PASS;
 
 		for (int i = 0; i < inventory.items.size(); i++) {
 			if (Inventory.isHotbarSlot(i) != depositItemInHand)

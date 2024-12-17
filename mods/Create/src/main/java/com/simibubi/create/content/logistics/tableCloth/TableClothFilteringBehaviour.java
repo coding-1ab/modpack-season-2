@@ -18,7 +18,6 @@ public class TableClothFilteringBehaviour extends FilteringBehaviour {
 
 	public TableClothFilteringBehaviour(TableClothBlockEntity be) {
 		super(be, new TableClothFilterSlot(be));
-		showCountWhen(() -> !filter.isEmpty());
 		withPredicate(is -> !(is.getItem() instanceof FilterItem));
 		count = 1;
 	}
@@ -48,12 +47,26 @@ public class TableClothFilteringBehaviour extends FilteringBehaviour {
 		return CreateLang.translateDirect("table_cloth.price_per_order");
 	}
 
+	public boolean isCountVisible() {
+		return !filter.isEmpty();
+	}
+	
 	@Override
 	public boolean setFilter(ItemStack stack) {
 		int before = count;
 		boolean result = super.setFilter(stack);
 		count = before;
 		return result;
+	}
+	
+	@Override
+	public void setValueSettings(Player player, ValueSettings settings, boolean ctrlDown) {
+		if (getValueSettings().equals(settings))
+			return;
+		count = settings.value();
+		blockEntity.setChanged();
+		blockEntity.sendData();
+		playFeedbackSound(this);
 	}
 
 	@Override
