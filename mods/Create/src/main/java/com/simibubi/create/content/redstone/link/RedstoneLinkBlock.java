@@ -123,10 +123,12 @@ public class RedstoneLinkBlock extends WrenchableDirectionalBlock implements IBE
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
+	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
 		BlockHitResult hit) {
-		if (player.isShiftKeyDown())
-			return toggleMode(state, worldIn, pos);
+		if (player.isShiftKeyDown() && toggleMode(state, level, pos) == InteractionResult.SUCCESS) {
+			level.scheduleTick(pos, this, 1);
+			return InteractionResult.SUCCESS;
+		}
 		return InteractionResult.PASS;
 	}
 
@@ -146,8 +148,10 @@ public class RedstoneLinkBlock extends WrenchableDirectionalBlock implements IBE
 
 	@Override
 	public InteractionResult onWrenched(BlockState state, UseOnContext context) {
-		if (toggleMode(state, context.getLevel(), context.getClickedPos()) == InteractionResult.SUCCESS)
+		if (toggleMode(state, context.getLevel(), context.getClickedPos()) == InteractionResult.SUCCESS) {
+			context.getLevel().scheduleTick(context.getClickedPos(), this, 1);
 			return InteractionResult.SUCCESS;
+		}
 		return super.onWrenched(state, context);
 	}
 
