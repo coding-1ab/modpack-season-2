@@ -11,7 +11,7 @@ public class CLogistics extends ConfigBase {
 	public final ConfigInt packagePortRange = i(5, 1, "packagePortRange", Comments.packagePortRange);
 	public final ConfigInt linkRange = i(256, 1, "linkRange", Comments.linkRange);
 	public final ConfigInt displayLinkRange = i(64, 1, "displayLinkRange", Comments.displayLinkRange);
-	public final ConfigInt vaultCapacity = i(20, 1, "vaultCapacity", Comments.vaultCapacity);
+	public final ConfigInt vaultCapacity = i(20, 1, 2048, "vaultCapacity", Comments.vaultCapacity);
 	public final ConfigInt chainConveyorCapacity = i(20, 1, "chainConveyorCapacity", Comments.chainConveyorCapacity);
 	public final ConfigInt brassTunnelTimer = i(10, 1, 10, "brassTunnelTimer", Comments.brassTunnelTimer);
 	public final ConfigBool seatHostileMobs = b(true, "seatHostileMobs", Comments.seatHostileMobs);
