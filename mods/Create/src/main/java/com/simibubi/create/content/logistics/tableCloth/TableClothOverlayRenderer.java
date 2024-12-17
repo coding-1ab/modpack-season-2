@@ -1,5 +1,6 @@
 package com.simibubi.create.content.logistics.tableCloth;
 
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
@@ -33,6 +34,8 @@ public class TableClothOverlayRenderer {
 			if (!(mc.level.getBlockEntity(bhr.getBlockPos()) instanceof TableClothBlockEntity dcbe))
 				return;
 			if (!dcbe.isShop())
+				return;
+			if (AllBlocks.CLIPBOARD.isIn(heldItem))
 				return;
 			if (dcbe.targetsPriceTag(mc.player, bhr))
 				return;

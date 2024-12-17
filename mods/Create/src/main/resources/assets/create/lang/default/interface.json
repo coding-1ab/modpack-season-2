@@ -340,6 +340,8 @@
 	"create.gui.stock_keeper.already_ordering_recipe": "Already ordering this recipe",
 	"create.gui.stock_keeper.slots_full": "Order slots already full",
 	"create.gui.stock_keeper.not_in_stock": "Required items are not in Stock",
+	"create.gui.stock_keeper.schematic_list.no_results": "No items from your checklist are in stock",
+	"create.gui.stock_keeper.schematic_list.requesting": "Click 'Send' to request all available items from your checklist",
 	
 	"create.stock_keeper.shopping_list_empty_hand": "Empty hand required to start a shopping list",
 	"create.stock_keeper.no_price_set": "Shop owner must set a price first",

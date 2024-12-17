@@ -1339,6 +1339,8 @@
   "create.gui.stock_keeper.package_adress": "Package Address",
   "create.gui.stock_keeper.program_requester": "Program Requester",
   "create.gui.stock_keeper.request_sent": "Request Sent!",
+  "create.gui.stock_keeper.schematic_list.no_results": "No items from your checklist are in stock",
+  "create.gui.stock_keeper.schematic_list.requesting": "Click 'Send' to request all available items from your checklist",
   "create.gui.stock_keeper.search_items": "Search Items",
   "create.gui.stock_keeper.send": "Send",
   "create.gui.stock_keeper.slots_full": "Order slots already full",

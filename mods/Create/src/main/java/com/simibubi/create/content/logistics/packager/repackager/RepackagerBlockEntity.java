@@ -56,6 +56,14 @@ public class RepackagerBlockEntity extends PackagerBlockEntity {
 		return true;
 	}
 
+	@Override
+	public void recheckIfLinksPresent() {}
+	
+	@Override
+	public boolean redstoneModeActive() {
+		return true;
+	}
+
 	public void attemptToSend(List<PackagingRequest> queuedRequests) {
 		if (queuedRequests == null && (!heldBox.isEmpty() || animationTicks != 0))
 			return;

@@ -93,7 +93,7 @@ public class PackagerLinkBlock extends WrenchableDirectionalBlock
 
 	@Override
 	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-		return AllShapes.DATA_GATHERER.get(pState.getValue(FACING));
+		return AllShapes.STOCK_LINK.get(pState.getValue(FACING));
 	}
 
 	@Override

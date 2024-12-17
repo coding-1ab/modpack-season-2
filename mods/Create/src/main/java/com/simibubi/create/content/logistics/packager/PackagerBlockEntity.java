@@ -103,6 +103,12 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	}
 
 	@Override
+	public void initialize() {
+		super.initialize();
+		recheckIfLinksPresent();
+	}
+
+	@Override
 	public void tick() {
 		super.tick();
 
@@ -213,14 +219,47 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	@Override
 	public void lazyTick() {
 		super.lazyTick();
-		if (!redstonePowered || level.isClientSide())
+		if (level.isClientSide())
+			return;
+		recheckIfLinksPresent();
+		if (!redstonePowered)
 			return;
 		redstonePowered = getBlockState().getOptionalValue(PackagerBlock.POWERED)
 			.orElse(false);
-		if (!redstonePowered)
+		if (!redstoneModeActive())
 			return;
 		updateSignAddress();
 		attemptToSend(null);
+	}
+
+	public void recheckIfLinksPresent() {
+		if (level.isClientSide())
+			return;
+		BlockState blockState = getBlockState();
+		if (!blockState.hasProperty(PackagerBlock.LINKED))
+			return;
+		boolean shouldBeLinked = shouldBeLinked();
+		boolean isLinked = blockState.getValue(PackagerBlock.LINKED);
+		if (shouldBeLinked == isLinked)
+			return;
+		level.setBlockAndUpdate(worldPosition, blockState.cycle(PackagerBlock.LINKED));
+	}
+
+	public boolean redstoneModeActive() {
+		return !getBlockState().getOptionalValue(PackagerBlock.LINKED)
+			.orElse(false);
+	}
+
+	private boolean shouldBeLinked() {
+		for (Direction d : Iterate.directions) {
+			BlockState adjacentState = level.getBlockState(worldPosition.relative(d));
+			if (!AllBlocks.STOCK_LINK.has(adjacentState))
+				continue;
+			if (adjacentState.getValue(PackagerLinkBlock.FACING) != d)
+				continue;
+			return true;
+		}
+		return false;
 	}
 
 	public boolean isTooBusyFor(RequestType type) {
@@ -235,6 +274,11 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	public void activate() {
 		redstonePowered = true;
 		setChanged();
+
+		recheckIfLinksPresent();
+		if (!redstoneModeActive())
+			return;
+
 		updateSignAddress();
 		attemptToSend(null);
 	}
@@ -256,7 +300,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 		boolean targetIsCreativeCrate = targetInv instanceof BottomlessItemHandler;
 		boolean targetIsCrafter = targetBE instanceof MechanicalCrafterBlockEntity;
-		
+
 		if (targetBE instanceof BasinBlockEntity basin)
 			basin.inputInventory.packagerMode = true;
 
@@ -264,7 +308,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			ItemStack itemInSlot = targetInv.getStackInSlot(slot);
 			if (!simulate)
 				itemInSlot = itemInSlot.copy();
-			
+
 			int itemsAddedToSlot = 0;
 
 			for (int boxSlot = 0; boxSlot < contents.getSlots(); boxSlot++) {
@@ -286,7 +330,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 				if (targetInv.insertItem(slot, toInsert, true)
 					.getCount() == toInsert.getCount())
 					continue;
-				
+
 				if (itemInSlot.isEmpty()) {
 					int maxStackSize = targetInv.getSlotLimit(slot);
 					if (maxStackSize < toInsert.getCount()) {
@@ -294,15 +338,15 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 						toInsert = ItemHandlerHelper.copyStackWithSize(toInsert, maxStackSize);
 					} else
 						contents.setStackInSlot(boxSlot, ItemStack.EMPTY);
-					
+
 					itemInSlot = toInsert;
 					if (!simulate)
 						itemInSlot = itemInSlot.copy();
-					
+
 					targetInv.insertItem(slot, toInsert, simulate);
 					continue;
 				}
-				
+
 				if (!ItemHandlerHelper.canItemStacksStack(toInsert, itemInSlot))
 					continue;
 
@@ -315,12 +359,12 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 				int added = Math.min(insertedAmount, Math.max(0, insertableAmountWithPreviousItems));
 				itemsAddedToSlot += added;
-				
+
 				contents.setStackInSlot(boxSlot,
 					ItemHandlerHelper.copyStackWithSize(toInsert, toInsert.getCount() - added));
 			}
 		}
-		
+
 		if (targetBE instanceof BasinBlockEntity basin)
 			basin.inputInventory.packagerMode = false;
 
@@ -380,7 +424,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 		Outer: for (int i = 0; i < PackageItem.SLOTS; i++) {
 			boolean continuePacking = true;
-			
+
 			while (continuePacking) {
 				continuePacking = false;
 
