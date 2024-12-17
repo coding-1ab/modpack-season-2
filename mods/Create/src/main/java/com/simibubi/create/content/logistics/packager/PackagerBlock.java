@@ -35,10 +35,14 @@ import net.minecraftforge.items.IItemHandler;
 public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<PackagerBlockEntity>, IWrenchable {
 
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+	public static final BooleanProperty LINKED = BooleanProperty.create("linked");
 
 	public PackagerBlock(Properties properties) {
 		super(properties);
-		registerDefaultState(defaultBlockState().setValue(POWERED, false));
+		BlockState defaultBlockState = defaultBlockState();
+		if (defaultBlockState.hasProperty(LINKED))
+			defaultBlockState = defaultBlockState.setValue(LINKED, false);
+		registerDefaultState(defaultBlockState.setValue(POWERED, false));
 	}
 
 	@Override
@@ -116,7 +120,7 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		super.createBlockStateDefinition(builder.add(POWERED));
+		super.createBlockStateDefinition(builder.add(POWERED, LINKED));
 	}
 
 	@Override
