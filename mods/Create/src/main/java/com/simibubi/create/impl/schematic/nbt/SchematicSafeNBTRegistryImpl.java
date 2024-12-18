@@ -11,7 +11,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public class SchematicSafeNBTRegistryImpl {
-	private static final AttachedRegistry<BlockEntityType<? extends BlockEntity>, SchematicSafeNBTRegistry.ContextProvidingPartialSafeNBT> BLOCK_ENTITY_PARTIAL_SAFE_NBT = new AttachedRegistry<>(ForgeRegistries.BLOCK_ENTITY_TYPES);
+	private static final AttachedRegistry<BlockEntityType<?>, SchematicSafeNBTRegistry.ContextProvidingPartialSafeNBT> BLOCK_ENTITY_PARTIAL_SAFE_NBT = new AttachedRegistry<>(ForgeRegistries.BLOCK_ENTITY_TYPES);
 
 	public static void register(BlockEntityType<? extends BlockEntity> blockEntityType, SchematicSafeNBTRegistry.ContextProvidingPartialSafeNBT safeNBT) {
 		BLOCK_ENTITY_PARTIAL_SAFE_NBT.register(blockEntityType, safeNBT);

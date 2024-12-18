@@ -18,8 +18,8 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 public class SchematicRequirementsRegistryImpl {
 	private static final AttachedRegistry<Block, SchematicRequirementsRegistry.BlockRequirement> BLOCK_REQUIREMENTS = new AttachedRegistry<>(ForgeRegistries.BLOCKS);
-	private static final AttachedRegistry<BlockEntityType<? extends BlockEntity>, SchematicRequirementsRegistry.BlockEntityRequirement> BLOCK_ENTITY_REQUIREMENTS = new AttachedRegistry<>(ForgeRegistries.BLOCK_ENTITY_TYPES);
-	private static final AttachedRegistry<EntityType<? extends Entity>, SchematicRequirementsRegistry.EntityRequirement> ENTITY_REQUIREMENTS = new AttachedRegistry<>(ForgeRegistries.ENTITY_TYPES);
+	private static final AttachedRegistry<BlockEntityType<?>, SchematicRequirementsRegistry.BlockEntityRequirement> BLOCK_ENTITY_REQUIREMENTS = new AttachedRegistry<>(ForgeRegistries.BLOCK_ENTITY_TYPES);
+	private static final AttachedRegistry<EntityType<?>, SchematicRequirementsRegistry.EntityRequirement> ENTITY_REQUIREMENTS = new AttachedRegistry<>(ForgeRegistries.ENTITY_TYPES);
 
 	public static void registerForBlock(Block block, SchematicRequirementsRegistry.BlockRequirement requirement) {
 		BLOCK_REQUIREMENTS.register(block, requirement);
