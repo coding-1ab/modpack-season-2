@@ -1,7 +1,6 @@
 package com.simibubi.create.api.schematic.requirement;
 
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
-import com.simibubi.create.foundation.utility.AttachedRegistry;
 
 import com.simibubi.create.impl.schematic.requirement.SchematicRequirementsRegistryImpl;
 
@@ -12,14 +11,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
 
-import org.jetbrains.annotations.ApiStatus;
-
-import javax.annotation.Nullable;
-
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Registry for schematic requirements for blocks, block entities, and entities.
