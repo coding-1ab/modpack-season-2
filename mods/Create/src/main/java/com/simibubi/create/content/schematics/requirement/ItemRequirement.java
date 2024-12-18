@@ -39,6 +39,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import org.jetbrains.annotations.Nullable;
+
 public class ItemRequirement {
 	public static final ItemRequirement NONE = new ItemRequirement(Collections.emptyList());
 	public static final ItemRequirement INVALID = new ItemRequirement(Collections.emptyList());
@@ -67,7 +69,7 @@ public class ItemRequirement {
 			.collect(Collectors.toList()));
 	}
 
-	public static ItemRequirement of(BlockState state, BlockEntity be) {
+	public static ItemRequirement of(BlockState state, @Nullable BlockEntity be) {
 		Block block = state.getBlock();
 
 		ItemRequirement requirement;
@@ -80,13 +82,15 @@ public class ItemRequirement {
 			requirement = defaultOf(state, be);
 		}
 
-		SchematicRequirementsRegistry.BlockEntityRequirement blockEntityItemRequirement = SchematicRequirementsRegistryImpl.getRequirementForBlockEntityType(be.getType());
-		if (blockEntityItemRequirement != null) {
-			requirement = requirement.union(blockEntityItemRequirement.getRequiredItems(be, state));
-		} else if (be instanceof ISpecialBlockEntityItemRequirement specialBE) {
-			requirement = requirement.union(specialBE.getRequiredItems(state));
-		} else if (com.simibubi.create.compat.Mods.FRAMEDBLOCKS.contains(block)) {
-			requirement = requirement.union(FramedBlocksInSchematics.getRequiredItems(state, be));
+		if (be != null) {
+			SchematicRequirementsRegistry.BlockEntityRequirement blockEntityItemRequirement = SchematicRequirementsRegistryImpl.getRequirementForBlockEntityType(be.getType());
+			if (blockEntityItemRequirement != null) {
+				requirement = requirement.union(blockEntityItemRequirement.getRequiredItems(be, state));
+			} else if (be instanceof ISpecialBlockEntityItemRequirement specialBE) {
+				requirement = requirement.union(specialBE.getRequiredItems(state));
+			} else if (com.simibubi.create.compat.Mods.FRAMEDBLOCKS.contains(block)) {
+				requirement = requirement.union(FramedBlocksInSchematics.getRequiredItems(state, be));
+			}
 		}
 
 		return requirement;

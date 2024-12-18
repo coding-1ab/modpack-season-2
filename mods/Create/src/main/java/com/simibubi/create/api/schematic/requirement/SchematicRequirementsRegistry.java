@@ -16,6 +16,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import javax.annotation.Nullable;
+
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -105,7 +107,7 @@ public class SchematicRequirementsRegistry {
 
 	@FunctionalInterface
 	public interface BlockRequirement {
-		ItemRequirement getRequiredItems(BlockState state, BlockEntity blockEntity);
+		ItemRequirement getRequiredItems(BlockState state, @Nullable BlockEntity blockEntity);
 	}
 
 	@FunctionalInterface
