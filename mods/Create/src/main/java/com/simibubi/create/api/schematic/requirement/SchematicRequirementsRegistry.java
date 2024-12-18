@@ -1,7 +1,6 @@
 package com.simibubi.create.api.schematic.requirement;
 
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
-
 import com.simibubi.create.impl.schematic.requirement.SchematicRequirementsRegistryImpl;
 
 import net.minecraft.resources.ResourceLocation;
@@ -21,11 +20,11 @@ public class SchematicRequirementsRegistry {
 	/**
 	 * Register a new special requirement for a specified block
 	 *
-	 * @param block The block you want to register a {@link BlockRequirement} for
+	 * @param block       The block you want to register a {@link BlockRequirement} for
 	 * @param requirement The requirement you would like to add to this block,
-	 *                       the {@link BlockRequirement#getRequiredItems(BlockState, BlockEntity)}
-	 *                       method will be called on the {@link BlockRequirement} you have provided,
-	 *                       and you will be able to insert requirements based off the context that is given
+	 *                    the {@link BlockRequirement#getRequiredItems(BlockState, BlockEntity)}
+	 *                    method will be called on the {@link BlockRequirement} you have provided,
+	 *                    and you will be able to insert requirements based off the context that is given
 	 */
 	public static void registerForBlock(Block block, BlockRequirement requirement) {
 		SchematicRequirementsRegistryImpl.registerForBlock(block, requirement);
@@ -34,11 +33,11 @@ public class SchematicRequirementsRegistry {
 	/**
 	 * Register a new special requirement for a specified block
 	 *
-	 * @param block The id of the block you want to register a {@link BlockRequirement} for
+	 * @param block       The id of the block you want to register a {@link BlockRequirement} for
 	 * @param requirement The requirement you would like to add to this block,
-	 *                       the {@link BlockRequirement#getRequiredItems(BlockState, BlockEntity)}
-	 *                       method will be called on the {@link BlockRequirement} you have provided,
-	 *                       and you will be able to insert requirements based off the context that is given
+	 *                    the {@link BlockRequirement#getRequiredItems(Block, BlockState, BlockEntity)}
+	 *                    method will be called on the {@link BlockRequirement} you have provided,
+	 *                    and you will be able to insert requirements based off the context that is given
 	 */
 	public static void registerForBlock(ResourceLocation block, BlockRequirement requirement) {
 		SchematicRequirementsRegistryImpl.registerForBlock(block, requirement);
@@ -48,10 +47,10 @@ public class SchematicRequirementsRegistry {
 	 * Register a new special requirement for a specified block entity type
 	 *
 	 * @param blockEntityType The blockEntityType you want to register a {@link BlockEntityRequirement} for
-	 * @param requirement The requirement you would like to add to this block entity type,
-	 *                       the {@link BlockEntityRequirement#getRequiredItems(BlockEntity, BlockState)}
-	 *                       method will be called on the {@link BlockEntityRequirement} you have provided,
-	 *                       and you will be able to insert requirements based off the context that is given
+	 * @param requirement     The requirement you would like to add to this block entity type,
+	 *                        the {@link BlockEntityRequirement#getRequiredItems(BlockEntity, BlockState)}
+	 *                        method will be called on the {@link BlockEntityRequirement} you have provided,
+	 *                        and you will be able to insert requirements based off the context that is given
 	 */
 	public static void registerForBlockEntity(BlockEntityType<BlockEntity> blockEntityType, BlockEntityRequirement requirement) {
 		SchematicRequirementsRegistryImpl.registerForBlockEntity(blockEntityType, requirement);
@@ -61,10 +60,10 @@ public class SchematicRequirementsRegistry {
 	 * Register a new special requirement for a specified block entity type
 	 *
 	 * @param blockEntityType The id of the blockEntityType you want to register a {@link BlockEntityRequirement} for
-	 * @param requirement The requirement you would like to add to this block entity type,
-	 *                       the {@link BlockEntityRequirement#getRequiredItems(BlockEntity, BlockState)}
-	 *                       method will be called on the {@link BlockEntityRequirement} you have provided,
-	 *                       and you will be able to insert requirements based off the context that is given
+	 * @param requirement     The requirement you would like to add to this block entity type,
+	 *                        the {@link BlockEntityRequirement#getRequiredItems(BlockEntity, BlockState)}
+	 *                        method will be called on the {@link BlockEntityRequirement} you have provided,
+	 *                        and you will be able to insert requirements based off the context that is given
 	 */
 	public static void registerForBlockEntity(ResourceLocation blockEntityType, BlockEntityRequirement requirement) {
 		SchematicRequirementsRegistryImpl.registerForBlockEntity(blockEntityType, requirement);
@@ -73,11 +72,11 @@ public class SchematicRequirementsRegistry {
 	/**
 	 * Register a new special requirement for a specified entity type
 	 *
-	 * @param entityType The entityType you want to register a {@link EntityRequirement} for
+	 * @param entityType  The entityType you want to register a {@link EntityRequirement} for
 	 * @param requirement The requirement you would like to add to this entity type,
-	 *                       the {@link EntityRequirement#getRequiredItems(Entity)}
-	 *                       method will be called on the {@link EntityRequirement} you have provided,
-	 *                       and you will be able to insert requirements based off the context that is given
+	 *                    the {@link EntityRequirement#getRequiredItems(Entity)}
+	 *                    method will be called on the {@link EntityRequirement} you have provided,
+	 *                    and you will be able to insert requirements based off the context that is given
 	 */
 	public static void registerForEntity(EntityType<Entity> entityType, EntityRequirement requirement) {
 		SchematicRequirementsRegistryImpl.registerForEntity(entityType, requirement);
@@ -86,11 +85,11 @@ public class SchematicRequirementsRegistry {
 	/**
 	 * Register a new special requirement for a specified entity type
 	 *
-	 * @param entityType The id of the entityType you want to register a {@link EntityRequirement} for
+	 * @param entityType  The id of the entityType you want to register a {@link EntityRequirement} for
 	 * @param requirement The requirement you would like to add to this entity type,
-	 *                       the {@link EntityRequirement#getRequiredItems(Entity)}
-	 *                       method will be called on the {@link EntityRequirement} you have provided,
-	 *                       and you will be able to insert requirements based off the context that is given
+	 *                    the {@link EntityRequirement#getRequiredItems(Entity)}
+	 *                    method will be called on the {@link EntityRequirement} you have provided,
+	 *                    and you will be able to insert requirements based off the context that is given
 	 */
 	public static void registerForEntity(ResourceLocation entityType, EntityRequirement requirement) {
 		SchematicRequirementsRegistryImpl.registerForEntity(entityType, requirement);
@@ -100,7 +99,7 @@ public class SchematicRequirementsRegistry {
 
 	@FunctionalInterface
 	public interface BlockRequirement {
-		ItemRequirement getRequiredItems(BlockState state, @Nullable BlockEntity blockEntity);
+		ItemRequirement getRequiredItems(Block block, BlockState state, @Nullable BlockEntity blockEntity);
 	}
 
 	@FunctionalInterface

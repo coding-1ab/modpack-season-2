@@ -2,7 +2,7 @@ package com.simibubi.create.content.redstone;
 
 import javax.annotation.Nullable;
 
-import com.simibubi.create.content.contraptions.ITransformableBlock;
+import com.simibubi.create.api.contraption.ITransformableBlock;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 

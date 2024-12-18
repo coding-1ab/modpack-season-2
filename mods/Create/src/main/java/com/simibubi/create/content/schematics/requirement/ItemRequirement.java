@@ -75,7 +75,7 @@ public class ItemRequirement {
 		ItemRequirement requirement;
 		SchematicRequirementsRegistry.BlockRequirement blockItemRequirement = SchematicRequirementsRegistryImpl.getRequirementForBlock(block);
 		if (blockItemRequirement != null) {
-			requirement = blockItemRequirement.getRequiredItems(state, be);
+			requirement = blockItemRequirement.getRequiredItems(block, state, be);
 		} else if (block instanceof ISpecialBlockItemRequirement specialBlock) {
 			requirement = specialBlock.getRequiredItems(state, be);
 		} else {

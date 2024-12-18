@@ -1,6 +1,6 @@
 package com.simibubi.create.content.kinetics.base;
 
-import com.simibubi.create.content.contraptions.ITransformableBlock;
+import com.simibubi.create.api.contraption.ITransformableBlock;
 import com.simibubi.create.content.contraptions.StructureTransform;
 
 import net.createmod.catnip.utility.Iterate;

@@ -4,6 +4,12 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
+import com.simibubi.create.api.contraption.ContraptionTransformableRegistry;
+import com.simibubi.create.api.contraption.ITransformableBlock;
+import com.simibubi.create.api.contraption.ITransformableBlockEntity;
+
+import com.simibubi.create.impl.contraption.ContraptionTransformableRegistryImpl;
+
 import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -128,8 +134,12 @@ public class StructureTransform {
 	}
 
 	public void apply(BlockEntity be) {
-		if (be instanceof ITransformableBlockEntity)
-			((ITransformableBlockEntity) be).transform(this);
+		ContraptionTransformableRegistry.TransformableBlockEntity transformableBlockEntity = ContraptionTransformableRegistryImpl.get(be.getType());
+		if (transformableBlockEntity != null) {
+			transformableBlockEntity.transform(be, this);
+		} else if (be instanceof ITransformableBlockEntity itbe) {
+			itbe.transform(this);
+		}
 	}
 
 	/**
@@ -139,8 +149,12 @@ public class StructureTransform {
 	 */
 	public BlockState apply(BlockState state) {
 		Block block = state.getBlock();
-		if (block instanceof ITransformableBlock transformable)
+		ContraptionTransformableRegistry.TransformableBlock transformableBlock = ContraptionTransformableRegistryImpl.get(block);
+		if (transformableBlock != null) {
+			return transformableBlock.transform(block, state, this);
+		} else if (block instanceof ITransformableBlock transformable) {
 			return transformable.transform(state, this);
+		}
 
 		if (mirror != null)
 			state = state.mirror(mirror);
