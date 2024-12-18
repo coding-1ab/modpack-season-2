@@ -3,6 +3,9 @@ package com.simibubi.create.content.logistics.factoryBoard;
 import javax.annotation.Nullable;
 
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelSlot;
+import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
+import com.simibubi.create.content.redstone.link.RedstoneLinkBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.CatnipClient;
@@ -15,6 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -127,9 +131,42 @@ public class FactoryPanelConnectionHandler {
 			return false;
 		Minecraft mc = Minecraft.getInstance();
 		boolean missed = false;
-		if (mc.hitResult instanceof BlockHitResult bhr && bhr.getType() != Type.MISS)
-			if (!(mc.level.getBlockEntity(bhr.getBlockPos()) instanceof FactoryPanelBlockEntity))
+
+		if (mc.hitResult instanceof BlockHitResult bhr && bhr.getType() != Type.MISS) {
+			BlockEntity blockEntity = mc.level.getBlockEntity(bhr.getBlockPos());
+
+			// Connecting redstone or display links
+			if (blockEntity instanceof RedstoneLinkBlockEntity || blockEntity instanceof DisplayLinkBlockEntity) {
+				FactoryPanelPosition bestPosition = null;
+				double bestDistance = Double.POSITIVE_INFINITY;
+
+				for (PanelSlot slot : PanelSlot.values()) {
+					FactoryPanelPosition panelPosition = new FactoryPanelPosition(blockEntity.getBlockPos(), slot);
+					FactoryPanelConnection connection = new FactoryPanelConnection(panelPosition, 1);
+					Vec3 diff =
+						connection.calculatePathDiff(mc.level.getBlockState(connectingFrom.pos()), connectingFrom);
+					if (bestDistance < diff.lengthSqr())
+						continue;
+					bestDistance = diff.lengthSqr();
+					bestPosition = panelPosition;
+				}
+
+				AllPackets.getChannel()
+					.sendToServer(new FactoryPanelConnectionPacket(bestPosition, connectingFrom));
+
+				mc.player.displayClientMessage(CreateLang.translate("factory_panel.link_connected")
+					.style(ChatFormatting.GREEN)
+					.component(), true);
+
+				connectingFrom = null;
+				connectingFromBox = null;
+				return true;
+			}
+
+			if (!(blockEntity instanceof FactoryPanelBlockEntity))
 				missed = true;
+		}
+
 		if (!mc.player.isShiftKeyDown() && !missed)
 			return false;
 		connectingFrom = null;

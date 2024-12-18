@@ -519,7 +519,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 		if (itemsToOrder.size() > 8)
 			graphics.drawString(font, Components.literal("[+" + (itemsToOrder.size() - 8) + "]"), x + windowWidth - 40,
-				orderY + 21, 0xB59370);
+				orderY + 21, 0xF8F8EC);
 
 		boolean justSent = itemsToOrder.isEmpty() && successTicks > 0;
 		if (isConfirmHovered(mouseX, mouseY) && !justSent)

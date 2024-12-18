@@ -1,5 +1,6 @@
 package com.simibubi.create.content.logistics.factoryBoard;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,8 @@ public class FactoryPanelConnection {
 	public int arrowBendMode;
 	public boolean success;
 
+	public WeakReference<Object> cachedSource;
+
 	private int arrowBendModeCurrentPathUses;
 
 	public FactoryPanelConnection(FactoryPanelPosition from, int amount) {
@@ -29,6 +32,7 @@ public class FactoryPanelConnection {
 		success = true;
 		arrowBendMode = -1;
 		arrowBendModeCurrentPathUses = 0;
+		cachedSource = new WeakReference<Object>(null);
 	}
 
 	public static FactoryPanelConnection read(CompoundTag nbt) {
@@ -52,20 +56,7 @@ public class FactoryPanelConnection {
 		arrowBendModeCurrentPathUses = arrowBendMode;
 		path.clear();
 
-		float xRot = Mth.RAD_TO_DEG * FactoryPanelBlock.getXRot(state);
-		float yRot = Mth.RAD_TO_DEG * FactoryPanelBlock.getYRot(state);
-
-		int slotDiffx = to.slot().xOffset - from.slot().xOffset;
-		int slotDiffY = to.slot().yOffset - from.slot().yOffset;
-		Vec3 diff = Vec3.atLowerCornerOf(to.pos()
-			.subtract(from.pos()));
-
-		diff = VecHelper.rotate(diff, -yRot, Axis.Y);
-		diff = VecHelper.rotate(diff, -xRot - 90, Axis.X);
-		diff = VecHelper.rotate(diff, -180, Axis.Y);
-		diff = diff.add(slotDiffx * .5, 0, slotDiffY * .5);
-		diff = diff.multiply(1, 0, 1);
-
+		Vec3 diff = calculatePathDiff(state, to);
 		BlockPos toTravelFirst = BlockPos.ZERO;
 		BlockPos toTravelLast = BlockPos.containing(diff.scale(2)
 			.add(0.1, 0.1, 0.1));
@@ -111,6 +102,22 @@ public class FactoryPanelConnection {
 		}
 
 		return path;
+	}
+
+	public Vec3 calculatePathDiff(BlockState state, FactoryPanelPosition to) {
+		float xRot = Mth.RAD_TO_DEG * FactoryPanelBlock.getXRot(state);
+		float yRot = Mth.RAD_TO_DEG * FactoryPanelBlock.getYRot(state);
+		int slotDiffx = to.slot().xOffset - from.slot().xOffset;
+		int slotDiffY = to.slot().yOffset - from.slot().yOffset;
+		
+		Vec3 diff = Vec3.atLowerCornerOf(to.pos()
+			.subtract(from.pos()));
+		diff = VecHelper.rotate(diff, -yRot, Axis.Y);
+		diff = VecHelper.rotate(diff, -xRot - 90, Axis.X);
+		diff = VecHelper.rotate(diff, -180, Axis.Y);
+		diff = diff.add(slotDiffx * .5, 0, slotDiffY * .5);
+		diff = diff.multiply(1, 0, 1);
+		return diff;
 	}
 
 }

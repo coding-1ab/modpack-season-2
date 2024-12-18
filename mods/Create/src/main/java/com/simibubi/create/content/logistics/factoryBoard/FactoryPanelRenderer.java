@@ -5,6 +5,8 @@ import java.util.List;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.AllSpriteShifts;
+import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
+import com.simibubi.create.content.redstone.link.RedstoneLinkBlockEntity;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.simibubi.create.foundation.render.RenderTypes;
 
@@ -36,6 +38,8 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 			if (behaviour.getAmount() > 0)
 				renderBulb(behaviour, partialTicks, ms, buffer, light, overlay);
 			for (FactoryPanelConnection connection : behaviour.targetedBy.values())
+				renderPath(behaviour, connection, partialTicks, ms, buffer, light, overlay);
+			for (FactoryPanelConnection connection : behaviour.targetedByLinks.values())
 				renderPath(behaviour, connection, partialTicks, ms, buffer, light, overlay);
 		}
 	}
@@ -86,20 +90,44 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 		float xRot = FactoryPanelBlock.getXRot(blockState) + Mth.PI / 2;
 		float yRot = FactoryPanelBlock.getYRot(blockState);
 		float glow = behaviour.bulb.getValue(partialTicks);
+
+		FactoryPanelSupportBehaviour sbe = FactoryPanelBehaviour.linkAt(behaviour.getWorld(), connection);
+		boolean displayLinkMode = sbe != null && sbe.blockEntity instanceof DisplayLinkBlockEntity;
+		boolean redstoneLinkMode = sbe != null && sbe.blockEntity instanceof RedstoneLinkBlockEntity;
+		boolean pathReversed = sbe != null && !sbe.isOutput();
+
+		int color = 0;
 		float yOffset = 0;
-
 		boolean success = connection.success;
+		boolean dots = false;
 
-		int color = behaviour.count == 0 ? 0x888898
-			: behaviour.redstonePowered ? 0x7A1800
-				: behaviour.waitingForNetwork ? 0x5B3B3B
-					: behaviour.satisfied ? 0x9EFF7F : behaviour.promisedSatisfied ? 0x7FD6DB : 0x708DAD;
-		yOffset = behaviour.promisedSatisfied ? 1 : behaviour.satisfied ? 0 : 2;
+		if (displayLinkMode) {
+			// Display status
+			color = 0x3C9852;
+			dots = true;
 
-		if (!behaviour.redstonePowered && !behaviour.waitingForNetwork && glow > 0 && !behaviour.satisfied) {
-			color = Color.mixColors(color, success ? 0xEAF2EC : 0xE5654B, glow);
-			if (!behaviour.satisfied && !behaviour.promisedSatisfied)
-				yOffset += (success ? 1 : 2) * glow;
+		} else if (redstoneLinkMode) {
+			// Link status
+			color = pathReversed ? (behaviour.count == 0 ? 0x888898 : behaviour.satisfied ? 0xEF0000 : 0x580101)
+				: (behaviour.redstonePowered ? 0xEF0000 : 0x580101);
+			yOffset = 0.5f;
+
+		} else {
+			// Regular ingredient status
+			color = behaviour.count == 0 ? 0x888898
+				: behaviour.redstonePowered ? 0x888898
+					: behaviour.waitingForNetwork ? 0x5B3B3B
+						: behaviour.satisfied ? 0x9EFF7F : behaviour.promisedSatisfied ? 0x22AFAF : 0x3D6EBD;
+
+			yOffset = 1;
+			yOffset += behaviour.promisedSatisfied ? 1 : behaviour.satisfied ? 0 : 2;
+
+			if (!behaviour.redstonePowered && !behaviour.waitingForNetwork && glow > 0 && !behaviour.satisfied) {
+				float p = (1 - (1 - glow) * (1 - glow));
+				color = Color.mixColors(color, success ? 0xEAF2EC : 0xE5654B, p);
+				if (!behaviour.satisfied && !behaviour.promisedSatisfied)
+					yOffset += (success ? 1 : 2) * p;
+			}
 		}
 
 		float currentX = 0;
@@ -108,25 +136,35 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 		for (int i = 0; i < path.size(); i++) {
 			Direction direction = path.get(i);
 
-			currentX += direction.getStepX() * .5;
-			currentZ += direction.getStepZ() * .5;
+			if (!pathReversed) {
+				currentX += direction.getStepX() * .5;
+				currentZ += direction.getStepZ() * .5;
+			}
 
-			SuperByteBuffer connectionSprite = CachedBuffers
-				.partial((i == 0 ? AllPartialModels.FACTORY_PANEL_ARROWS : AllPartialModels.FACTORY_PANEL_LINES)
-					.get(direction.getOpposite()), blockState)
+			boolean isArrowSegment = pathReversed ? i == path.size() - 1 : i == 0;
+			PartialModel partial = (dots ? AllPartialModels.FACTORY_PANEL_DOTTED
+				: isArrowSegment ? AllPartialModels.FACTORY_PANEL_ARROWS : AllPartialModels.FACTORY_PANEL_LINES)
+					.get(pathReversed ? direction : direction.getOpposite());
+			SuperByteBuffer connectionSprite = CachedBuffers.partial(partial, blockState)
 				.rotateCentered(yRot, Direction.UP)
 				.rotateCentered(xRot, Direction.EAST)
 				.rotateCentered(Mth.PI, Direction.UP)
 				.translate(behaviour.slot.xOffset * .5 + .25, 0, behaviour.slot.yOffset * .5 + .25)
 				.translate(currentX, (yOffset + (direction.get2DDataValue() % 2) * 0.125f) / 512f, currentZ);
 
-			if (!behaviour.waitingForNetwork && !behaviour.satisfied && glow < 0.25)
+			if (!displayLinkMode && !redstoneLinkMode && !behaviour.waitingForNetwork && !behaviour.satisfied
+				&& !behaviour.redstonePowered)
 				connectionSprite.shiftUV(AllSpriteShifts.FACTORY_PANEL_CONNECTIONS);
 
 			connectionSprite.color(color)
 				.light(light)
 				.overlay(overlay)
 				.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
+
+			if (pathReversed) {
+				currentX += direction.getStepX() * .5;
+				currentZ += direction.getStepZ() * .5;
+			}
 		}
 
 	}

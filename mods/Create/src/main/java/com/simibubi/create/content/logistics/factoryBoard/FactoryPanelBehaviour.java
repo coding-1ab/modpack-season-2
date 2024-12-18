@@ -1,5 +1,6 @@
 package com.simibubi.create.content.logistics.factoryBoard;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,19 +34,20 @@ import com.simibubi.create.content.logistics.packagerLink.RequestPromise;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBoard;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsFormatter;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.ScreenOpener;
-import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.NBTHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -55,9 +57,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
@@ -71,6 +71,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public static final int REQUEST_INTERVAL = 100;
 
 	public Map<FactoryPanelPosition, FactoryPanelConnection> targetedBy;
+	public Map<BlockPos, FactoryPanelConnection> targetedByLinks;
 	public Set<FactoryPanelPosition> targeting;
 	public List<ItemStack> activeCraftingArrangement;
 
@@ -100,6 +101,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		super(be, new FactoryPanelSlotPositioning(slot));
 		this.slot = slot;
 		this.targetedBy = new HashMap<>();
+		this.targetedByLinks = new HashMap<>();
 		this.targeting = new HashSet<>();
 		this.count = 0;
 		this.satisfied = false;
@@ -114,7 +116,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		this.promiseClearingInterval = -1;
 		this.bulb = LerpedFloat.linear()
 			.startWithValue(0)
-			.chase(0, 0.45, Chaser.EXP);
+			.chase(0, 0.125, Chaser.EXP);
 		this.restockerPromises = new RequestPromiseQueue(be::setChanged);
 		this.promisePrimedForMarkDirty = true;
 		this.network = UUID.randomUUID();
@@ -123,6 +125,16 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 	public void setNetwork(UUID network) {
 		this.network = network;
+	}
+
+	@Nullable
+	public static FactoryPanelBehaviour at(BlockAndTintGetter world, FactoryPanelConnection connection) {
+		Object cached = connection.cachedSource.get();
+		if (cached instanceof FactoryPanelBehaviour fbe && !fbe.blockEntity.isRemoved())
+			return fbe;
+		FactoryPanelBehaviour result = at(world, connection.from);
+		connection.cachedSource = new WeakReference<Object>(result);
+		return result;
 	}
 
 	@Nullable
@@ -135,6 +147,29 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		if (!behaviour.active)
 			return null;
 		return behaviour;
+	}
+
+	@Nullable
+	public static FactoryPanelSupportBehaviour linkAt(BlockAndTintGetter world, FactoryPanelConnection connection) {
+		Object cached = connection.cachedSource.get();
+		if (cached instanceof FactoryPanelSupportBehaviour fpsb && !fpsb.blockEntity.isRemoved())
+			return fpsb;
+		FactoryPanelSupportBehaviour result = linkAt(world, connection.from);
+		connection.cachedSource = new WeakReference<Object>(result);
+		return result;
+	}
+
+	@Nullable
+	public static FactoryPanelSupportBehaviour linkAt(BlockAndTintGetter world, FactoryPanelPosition pos) {
+		if (world instanceof Level l && !l.isLoaded(pos.pos()))
+			return null;
+		return BlockEntityBehaviour.get(world, pos.pos(), FactoryPanelSupportBehaviour.TYPE);
+	}
+
+	@Override
+	public void initialize() {
+		super.initialize();
+		notifyRedstoneOutputs();
 	}
 
 	@Override
@@ -168,21 +203,32 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			return;
 
 		boolean shouldPower = false;
-		BlockState blockState = blockEntity.getBlockState();
-		Vec3 localOffset = getSlotPositioning().getLocalOffset(getWorld(), getPos(), blockState);
-
-		for (Direction d : Iterate.directions) {
-			if (!localOffset.subtract(0.5, 0.5, 0.5)
-				.closerThan(Vec3.atLowerCornerOf(d.getNormal()), 1.25))
-				continue;
-			shouldPower |= getWorld().getSignal(getPos().relative(d), d) > 0;
+		for (FactoryPanelConnection connection : targetedByLinks.values()) {
+			if (!getWorld().isLoaded(connection.from.pos()))
+				return;
+			FactoryPanelSupportBehaviour linkAt = linkAt(getWorld(), connection);
+			if (linkAt == null)
+				return;
+			shouldPower |= linkAt.shouldPanelBePowered();
 		}
 
 		if (shouldPower == redstonePowered)
 			return;
+
 		redstonePowered = shouldPower;
 		blockEntity.notifyUpdate();
 		timer = 1;
+	}
+
+	private void notifyRedstoneOutputs() {
+		for (FactoryPanelConnection connection : targetedByLinks.values()) {
+			if (!getWorld().isLoaded(connection.from.pos()))
+				return;
+			FactoryPanelSupportBehaviour linkAt = linkAt(getWorld(), connection);
+			if (linkAt == null || linkAt.isOutput())
+				return;
+			linkAt.notifyLink();
+		}
 	}
 
 	private void tickStorageMonitor() {
@@ -200,7 +246,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			&& promisedSatisfied == shouldPromiseSatisfy && waitingForNetwork == shouldWait)
 			return;
 
-		boolean comparator = satisfied != shouldSatisfy;
+		boolean notifyOutputs = satisfied != shouldSatisfy;
 		lastReportedLevelInStorage = inStorage;
 		satisfied = shouldSatisfy;
 		lastReportedPromises = promised;
@@ -208,8 +254,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		lastReportedUnloadedLinks = unloadedLinkCount;
 		waitingForNetwork = shouldWait;
 		blockEntity.sendData();
-		if (comparator)
-			blockEntity.setChanged();
+		if (notifyOutputs)
+			notifyRedstoneOutputs();
 	}
 
 	private void tickRequests() {
@@ -240,7 +286,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		List<BigItemStack> toRequestAsList = new ArrayList<>();
 
 		for (FactoryPanelConnection connection : targetedBy.values()) {
-			FactoryPanelBehaviour source = at(getWorld(), connection.from);
+			FactoryPanelBehaviour source = at(getWorld(), connection);
 			if (source == null)
 				return;
 
@@ -337,11 +383,23 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	}
 
 	public void addConnection(FactoryPanelPosition fromPos) {
+		FactoryPanelSupportBehaviour link = linkAt(getWorld(), fromPos);
+		if (link != null) {
+			targetedByLinks.put(fromPos.pos(), new FactoryPanelConnection(fromPos, 1));
+			link.connect(this);
+			blockEntity.notifyUpdate();
+			return;
+		}
+
+		if (panelBE().restocker)
+			return;
 		if (targetedBy.size() >= 9)
 			return;
+
 		FactoryPanelBehaviour source = at(getWorld(), fromPos);
 		if (source == null)
 			return;
+
 		source.targeting.add(getPanelPosition());
 		targetedBy.put(fromPos, new FactoryPanelConnection(fromPos, 1));
 		blockEntity.notifyUpdate();
@@ -366,6 +424,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 		if (AllItemTags.WRENCH.matches(player.getItemInHand(hand))) {
 			int sharedMode = -1;
+			boolean notifySelf = false;
+
 			for (FactoryPanelPosition target : targeting) {
 				FactoryPanelBehaviour at = at(getWorld(), target);
 				if (at == null)
@@ -379,6 +439,15 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 				if (!player.level().isClientSide)
 					at.blockEntity.notifyUpdate();
 			}
+
+			for (FactoryPanelConnection connection : targetedByLinks.values()) {
+				if (sharedMode == -1)
+					sharedMode = (connection.arrowBendMode + 1) % 4;
+				connection.arrowBendMode = sharedMode;
+				if (!player.level().isClientSide)
+					notifySelf = true;
+			}
+
 			if (sharedMode == -1)
 				return;
 
@@ -386,6 +455,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			boxes[sharedMode] = '\u25a0';
 			player.displayClientMessage(CreateLang.translate("factory_panel.cycled_arrow_path", new String(boxes))
 				.component(), true);
+			if (notifySelf)
+				blockEntity.notifyUpdate();
 
 			return;
 		}
@@ -438,8 +509,13 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 	public void disconnectAll() {
 		FactoryPanelPosition panelPosition = getPanelPosition();
-		for (FactoryPanelPosition position : targetedBy.keySet()) {
-			FactoryPanelBehaviour source = at(getWorld(), position);
+		for (FactoryPanelConnection connection : targetedByLinks.values()) {
+			FactoryPanelSupportBehaviour source = linkAt(getWorld(), connection);
+			if (source != null)
+				source.disconnect(this);
+		}
+		for (FactoryPanelConnection connection : targetedBy.values()) {
+			FactoryPanelBehaviour source = at(getWorld(), connection);
 			if (source != null) {
 				source.targeting.remove(panelPosition);
 				source.blockEntity.sendData();
@@ -452,6 +528,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 				target.blockEntity.sendData();
 			}
 		}
+		targetedByLinks.clear();
 		targetedBy.clear();
 		targeting.clear();
 	}
@@ -536,6 +613,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		panelTag.putBoolean("RedstonePowered", redstonePowered);
 		panelTag.put("Targeting", NBTHelper.writeCompoundList(targeting, FactoryPanelPosition::write));
 		panelTag.put("TargetedBy", NBTHelper.writeCompoundList(targetedBy.values(), FactoryPanelConnection::write));
+		panelTag.put("TargetedByLinks",
+			NBTHelper.writeCompoundList(targetedByLinks.values(), FactoryPanelConnection::write));
 		panelTag.putString("RecipeAddress", recipeAddress);
 		panelTag.putInt("RecipeOutput", recipeOutput);
 		panelTag.putInt("PromiseClearingInterval", promiseClearingInterval);
@@ -579,6 +658,11 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		NBTHelper.iterateCompoundList(panelTag.getList("TargetedBy", Tag.TAG_COMPOUND),
 			c -> targetedBy.put(FactoryPanelPosition.read(c), FactoryPanelConnection.read(c)));
 
+		targetedByLinks.clear();
+		NBTHelper.iterateCompoundList(panelTag.getList("TargetedByLinks", Tag.TAG_COMPOUND),
+			c -> targetedByLinks.put(FactoryPanelPosition.read(c)
+				.pos(), FactoryPanelConnection.read(c)));
+
 		activeCraftingArrangement = NBTHelper.readItemList(panelTag.getList("Craft", Tag.TAG_COMPOUND));
 		recipeAddress = panelTag.getString("RecipeAddress");
 		recipeOutput = panelTag.getInt("RecipeOutput");
@@ -597,7 +681,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 	@Override
 	public MutableComponent formatValue(ValueSettings value) {
-		return value.value() == 0 ? Components.literal("*")
+		return value.value() == 0 ? CreateLang.translateDirect("gui.factory_panel.inactive")
 			: Components.literal(Math.max(0, value.value()) + ((value.row() == 0) ? "" : "\u25A4"));
 	}
 
@@ -673,6 +757,10 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public MutableComponent getTip() {
 		return CreateLang
 			.translateDirect(filter.isEmpty() ? "logistics.filter.click_to_set" : "factory_panel.click_to_configure");
+	}
+
+	public MutableComponent getAmountTip() {
+		return CreateLang.translateDirect("factory_panel.hold_to_set_amount");
 	}
 
 	@Override

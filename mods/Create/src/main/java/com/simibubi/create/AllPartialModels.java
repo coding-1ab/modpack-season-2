@@ -216,6 +216,7 @@ public class AllPartialModels {
 
 	public static final Map<Direction, PartialModel> FACTORY_PANEL_ARROWS = new EnumMap<>(Direction.class);
 	public static final Map<Direction, PartialModel> FACTORY_PANEL_LINES = new EnumMap<>(Direction.class);
+	public static final Map<Direction, PartialModel> FACTORY_PANEL_DOTTED = new EnumMap<>(Direction.class);
 	
 	public static final Map<Direction, PartialModel> METAL_GIRDER_BRACKETS = new EnumMap<>(Direction.class);
 	public static final Map<DyeColor, PartialModel> TOOLBOX_LIDS = new EnumMap<>(DyeColor.class);
@@ -242,6 +243,7 @@ public class AllPartialModels {
 			METAL_GIRDER_BRACKETS.put(d, block("metal_girder/bracket_" + Lang.asId(d.name())));
 			FACTORY_PANEL_ARROWS.put(d, block("factory_gauge/connections/arrow_" + Lang.asId(d.name())));
 			FACTORY_PANEL_LINES.put(d, block("factory_gauge/connections/line_" + Lang.asId(d.name())));
+			FACTORY_PANEL_DOTTED.put(d, block("factory_gauge/connections/dotted_" + Lang.asId(d.name())));
 		}
 		for (int i = 0; i < 8; i++)
 			CONTRAPTION_CONTROLS_INDICATOR.add(block("contraption_controls/indicator_" + i));

@@ -7,14 +7,12 @@ import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.compat.computercraft.ComputerCraftProxy;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelSupportBehaviour;
 import com.simibubi.create.content.redstone.displayLink.source.DisplaySource;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTarget;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -37,6 +35,7 @@ public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity {
 
 	public int refreshTicks;
 	public AbstractComputerBehaviour computerBehaviour;
+	public FactoryPanelSupportBehaviour factoryPanelSupport;
 
 	public DisplayLinkBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -48,6 +47,8 @@ public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity {
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
 		behaviours.add(computerBehaviour = ComputerCraftProxy.behaviour(this));
+		behaviours.add(factoryPanelSupport = new FactoryPanelSupportBehaviour(this, () -> false, () -> false, () -> {
+		}));
 		registerAwardables(behaviours, AllAdvancements.DISPLAY_LINK, AllAdvancements.DISPLAY_BOARD);
 	}
 

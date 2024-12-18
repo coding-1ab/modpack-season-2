@@ -181,7 +181,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		});
 		newInputButton.setToolTip(CreateLang.translate("gui.factory_panel.connect_input")
 			.component());
-		addRenderableWidget(newInputButton);
+		if (!restocker)
+			addRenderableWidget(newInputButton);
 
 		activateCraftingButton = null;
 		if (availableCraftingRecipe != null) {
@@ -496,7 +497,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			}
 
 		// Clear promises
-		int itemX = x + 103;
+		int itemX = x + 68;
 		int itemY = y + windowHeight - 24;
 		if (mouseX >= itemX && mouseX < itemX + 16 && mouseY >= itemY && mouseY < itemY + 16) {
 			sendIt(null, true);

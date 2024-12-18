@@ -63,6 +63,11 @@ public class DisplayLinkBlock extends WrenchableDirectionalBlock implements IBE<
 		super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
 		AdvancementBehaviour.setPlacedBy(pLevel, pPos, pPlacer);
 	}
+	
+	@Override
+	public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
+		IBE.onRemove(pState, pLevel, pPos, pNewState);
+	}
 
 	public static void notifyGatherers(LevelAccessor level, BlockPos pos) {
 		forEachAttachedGatherer(level, pos, DisplayLinkBlockEntity::tickSource);

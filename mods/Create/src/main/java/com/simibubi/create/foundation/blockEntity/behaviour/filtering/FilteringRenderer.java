@@ -15,7 +15,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox.ItemValueBo
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform.Sided;
-import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.CatnipClient;
 import net.createmod.catnip.utility.Iterate;
@@ -103,7 +102,7 @@ public class FilteringRenderer {
 			tip.add(label.copy());
 			tip.add(behaviour.getTip());
 			if (showCount)
-				tip.add(CreateLang.translateDirect("logistics.filter.hold_to_set_amount"));
+				tip.add(behaviour.getAmountTip());
 
 			CreateClient.VALUE_SETTINGS_HANDLER.showHoverTip(tip);
 		}
