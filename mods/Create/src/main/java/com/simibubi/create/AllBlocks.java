@@ -225,6 +225,7 @@ import com.simibubi.create.content.redstone.displayLink.source.AccumulatedItemCo
 import com.simibubi.create.content.redstone.displayLink.source.BoilerDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.source.CurrentFloorDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.source.EntityNameDisplaySource;
+import com.simibubi.create.content.redstone.displayLink.source.FactoryGaugeDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.source.FillLevelDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.source.FluidAmountDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.source.FluidListDisplaySource;
@@ -1950,6 +1951,7 @@ public class AllBlocks {
 			.transform(pickaxeOnly())
 			.blockstate((c, p) -> p.horizontalFaceBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
 			.onRegister(CreateRegistrate.blockModel(() -> FactoryPanelModel::new))
+			.onRegister(assignDataBehaviour(new FactoryGaugeDisplaySource(), "gauge_status"))
 			.item(FactoryPanelBlockItem::new)
 			.model(AssetLookup::customItemModel)
 			.build()

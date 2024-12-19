@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.compat.computercraft.ComputerCraftProxy;
+import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelPosition;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelSupportBehaviour;
 import com.simibubi.create.content.redstone.displayLink.source.DisplaySource;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTarget;
@@ -48,6 +49,7 @@ public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity {
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
 		behaviours.add(computerBehaviour = ComputerCraftProxy.behaviour(this));
 		behaviours.add(factoryPanelSupport = new FactoryPanelSupportBehaviour(this, () -> false, () -> false, () -> {
+			updateGatheredData();
 		}));
 		registerAwardables(behaviours, AllAdvancements.DISPLAY_LINK, AllAdvancements.DISPLAY_BOARD);
 	}
@@ -184,6 +186,8 @@ public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity {
 	}
 
 	public BlockPos getSourcePosition() {
+		for (FactoryPanelPosition position : factoryPanelSupport.getLinkedPanels())
+			return position.pos();
 		return worldPosition.relative(getDirection());
 	}
 

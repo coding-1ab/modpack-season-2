@@ -1,6 +1,5 @@
 package com.simibubi.create.content.redstone.displayLink.source;
 
-import com.simibubi.create.Create;
 import com.simibubi.create.content.kinetics.clock.CuckooClockBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
@@ -45,8 +44,8 @@ public class TimeOfDayDisplaySource extends SingleLineDisplaySource {
 		}
 
 		if (!isNatural) {
-			hours = Create.RANDOM.nextInt(70) + 24;
-			minutes = Create.RANDOM.nextInt(40) + 60;
+			hours = sLevel.random.nextInt(70) + 24;
+			minutes = sLevel.random.nextInt(40) + 60;
 		}
 
 		MutableComponent component = Components.literal(

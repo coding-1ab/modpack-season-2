@@ -501,6 +501,10 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		return active;
 	}
 
+	public boolean isMissingAddress() {
+		return !targetedBy.isEmpty() && count != 0 && recipeAddress.isBlank();
+	}
+
 	@Override
 	public void destroy() {
 		disconnectAll();
@@ -509,11 +513,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 	public void disconnectAll() {
 		FactoryPanelPosition panelPosition = getPanelPosition();
-		for (FactoryPanelConnection connection : targetedByLinks.values()) {
-			FactoryPanelSupportBehaviour source = linkAt(getWorld(), connection);
-			if (source != null)
-				source.disconnect(this);
-		}
+		disconnectAllLinks();
 		for (FactoryPanelConnection connection : targetedBy.values()) {
 			FactoryPanelBehaviour source = at(getWorld(), connection);
 			if (source != null) {
@@ -528,9 +528,17 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 				target.blockEntity.sendData();
 			}
 		}
-		targetedByLinks.clear();
 		targetedBy.clear();
 		targeting.clear();
+	}
+
+	public void disconnectAllLinks() {
+		for (FactoryPanelConnection connection : targetedByLinks.values()) {
+			FactoryPanelSupportBehaviour source = linkAt(getWorld(), connection);
+			if (source != null)
+				source.disconnect(this);
+		}
+		targetedByLinks.clear();
 	}
 
 	public int getUnloadedLinks() {
@@ -724,6 +732,11 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public MutableComponent getLabel() {
 		String key = "";
 
+		if (isMissingAddress())
+			return CreateLang.translate("gui.factory_panel.address_missing")
+				.style(ChatFormatting.RED)
+				.component();
+
 		if (getFilter().isEmpty())
 			key = "factory_panel.new_factory_task";
 		else if (waitingForNetwork)
@@ -770,17 +783,19 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		if (waitingForNetwork)
 			return Components.literal("?");
 
-		int inStorage = getLevelInStorage() / (upTo ? 1 : getFilter().getMaxStackSize());
+		int levelInStorage = getLevelInStorage();
+		boolean inf = levelInStorage >= BigItemStack.INF;
+		int inStorage = levelInStorage / (upTo ? 1 : getFilter().getMaxStackSize());
 		int promised = getPromised();
 		String stacks = upTo ? "" : "\u25A4";
 
 		if (count == 0) {
-			return CreateLang.text(inStorage + stacks)
+			return CreateLang.text(inf ? "  \u221e" : inStorage + stacks)
 				.color(0xF1EFE8)
 				.component();
 		}
 
-		return CreateLang.text("   " + inStorage + stacks)
+		return CreateLang.text(inf ? "  \u221e" : "   " + inStorage + stacks)
 			.color(satisfied ? 0xD7FFA8 : promisedSatisfied ? 0xffcd75 : 0xFFBFA8)
 			.add(CreateLang.text(promised == 0 ? "" : "\u23F6"))
 			.add(CreateLang.text("/")
@@ -818,6 +833,11 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public void displayScreen(Player player) {
 		if (player instanceof LocalPlayer)
 			ScreenOpener.open(new FactoryPanelScreen(this));
+	}
+
+	public int getIngredientStatusColor() {
+		return count == 0 || isMissingAddress() || redstonePowered ? 0x888898
+			: waitingForNetwork ? 0x5B3B3B : satisfied ? 0x9EFF7F : promisedSatisfied ? 0x22AFAF : 0x3D6EBD;
 	}
 
 }

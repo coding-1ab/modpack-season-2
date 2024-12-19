@@ -59,6 +59,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 	private FactoryPanelBehaviour behaviour;
 	private boolean restocker;
 	private boolean sendReset;
+	private boolean sendRedstoneReset;
 
 	private BigItemStack outputConfig;
 	private List<BigItemStack> inputConfig;
@@ -301,6 +302,26 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 		ms.popPose();
 
+		// REDSTONE LINKS
+		if (!behaviour.targetedByLinks.isEmpty()) {
+			ItemStack asStack = AllBlocks.REDSTONE_LINK.asStack();
+			int itemX = x + 9;
+			int itemY = y + windowHeight - 24;
+			AllGuiTextures.FROGPORT_SLOT.render(graphics, itemX - 1, itemY - 1);
+			graphics.renderItem(asStack, itemX, itemY);
+
+			if (mouseX >= itemX && mouseX < itemX + 16 && mouseY >= itemY && mouseY < itemY + 16) {
+				List<Component> linkTip = List.of(CreateLang.translate("gui.factory_panel.has_link_connections")
+					.color(ScrollInput.HEADER_RGB)
+					.component(),
+					CreateLang.translate("gui.factory_panel.left_click_disconnect")
+						.style(ChatFormatting.DARK_GRAY)
+						.style(ChatFormatting.ITALIC)
+						.component());
+				graphics.renderComponentTooltip(font, linkTip, mouseX, mouseY);
+			}
+		}
+
 		// PROMISES
 		int state = promiseExpiration.getState();
 		graphics.drawString(font, CreateLang.text(state == -1 ? " /" : state == 0 ? "30s" : state + "m")
@@ -503,6 +524,15 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			sendIt(null, true);
 			return true;
 		}
+		
+		// remove redstone connections
+		itemX = x + 9;
+		itemY = y + windowHeight - 24;
+		if (mouseX >= itemX && mouseX < itemX + 16 && mouseY >= itemY && mouseY < itemY + 16) {
+			sendRedstoneReset = true;
+			sendIt(null, false);
+			return true;
+		}
 
 		return super.mouseClicked(mouseX, mouseY, pButton);
 	}
@@ -569,7 +599,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		String address = addressBox.getValue();
 
 		FactoryPanelConfigurationPacket packet = new FactoryPanelConfigurationPacket(pos, address, inputs,
-			craftingArrangement, outputConfig.count, promiseExp, toRemove, clearPromises, sendReset);
+			craftingArrangement, outputConfig.count, promiseExp, toRemove, clearPromises, sendReset, sendRedstoneReset);
 		AllPackets.getChannel()
 			.sendToServer(packet);
 	}

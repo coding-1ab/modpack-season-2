@@ -113,22 +113,24 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 		FactoryPanelBlockEntity fpbe = getBlockEntity(level, pos);
 
 		Vec3 location = pContext.getClickLocation();
-		if (blockState.is(this) && location != null && fpbe != null && !level.isClientSide()) {
-			PanelSlot targetedSlot = getTargetedSlot(pos, blockState, location);
-			UUID networkFromStack = LogisticallyLinkedBlockItem.networkFromStack(pContext.getItemInHand());
-			Player pPlayer = pContext.getPlayer();
+		if (blockState.is(this) && location != null && fpbe != null) {
+			if (!level.isClientSide()) {
+				PanelSlot targetedSlot = getTargetedSlot(pos, blockState, location);
+				UUID networkFromStack = LogisticallyLinkedBlockItem.networkFromStack(pContext.getItemInHand());
+				Player pPlayer = pContext.getPlayer();
 
-			if (fpbe.addPanel(targetedSlot, networkFromStack) && pPlayer != null) {
-				pPlayer.displayClientMessage(CreateLang.translateDirect("logistically_linked.connected"), true);
+				if (fpbe.addPanel(targetedSlot, networkFromStack) && pPlayer != null) {
+					pPlayer.displayClientMessage(CreateLang.translateDirect("logistically_linked.connected"), true);
 
-				if (!pPlayer.isCreative()) {
-					ItemStack item = pContext.getItemInHand();
-					item.shrink(1);
-					if (item.isEmpty())
-						pPlayer.setItemInHand(pContext.getHand(), ItemStack.EMPTY);
+					if (!pPlayer.isCreative()) {
+						ItemStack item = pContext.getItemInHand();
+						item.shrink(1);
+						if (item.isEmpty())
+							pPlayer.setItemInHand(pContext.getHand(), ItemStack.EMPTY);
+					}
 				}
 			}
-
+			stateForPlacement = blockState;
 		}
 
 		return withWater(stateForPlacement, pContext);

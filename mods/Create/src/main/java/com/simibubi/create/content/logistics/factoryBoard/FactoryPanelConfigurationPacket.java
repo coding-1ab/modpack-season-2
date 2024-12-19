@@ -25,11 +25,12 @@ public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPac
 	private FactoryPanelPosition removeConnection;
 	private boolean clearPromises;
 	private boolean reset;
+	private boolean redstoneReset;
 
 	public FactoryPanelConfigurationPacket(FactoryPanelPosition position, String address,
 		Map<FactoryPanelPosition, Integer> inputAmounts, List<ItemStack> craftingArrangement, int outputAmount,
 		int promiseClearingInterval, @Nullable FactoryPanelPosition removeConnection, boolean clearPromises,
-		boolean reset) {
+		boolean reset, boolean sendRedstoneReset) {
 		super(position.pos());
 		this.address = address;
 		this.inputAmounts = inputAmounts;
@@ -39,6 +40,7 @@ public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPac
 		this.removeConnection = removeConnection;
 		this.clearPromises = clearPromises;
 		this.reset = reset;
+		this.redstoneReset = sendRedstoneReset;
 		this.slot = position.slot();
 	}
 
@@ -65,6 +67,7 @@ public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPac
 			removeConnection.send(buffer);
 		buffer.writeBoolean(clearPromises);
 		buffer.writeBoolean(reset);
+		buffer.writeBoolean(redstoneReset);
 	}
 
 	@Override
@@ -85,6 +88,7 @@ public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPac
 			removeConnection = FactoryPanelPosition.receive(buffer);
 		clearPromises = buffer.readBoolean();
 		reset = buffer.readBoolean();
+		redstoneReset = buffer.readBoolean();
 	}
 
 	@Override
@@ -104,6 +108,12 @@ public class FactoryPanelConfigurationPacket extends BlockEntityConfigurationPac
 			behaviour.setFilter(ItemStack.EMPTY);
 			behaviour.count = 0;
 			be.redraw = true;
+			be.notifyUpdate();
+			return;
+		}
+		
+		if (redstoneReset) {
+			behaviour.disconnectAllLinks();
 			be.notifyUpdate();
 			return;
 		}

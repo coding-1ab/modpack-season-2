@@ -4,8 +4,8 @@ import javax.annotation.Nullable;
 
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelSlot;
-import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
-import com.simibubi.create.content.redstone.link.RedstoneLinkBlockEntity;
+import com.simibubi.create.foundation.block.WrenchableDirectionalBlock;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.CatnipClient;
@@ -14,6 +14,7 @@ import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -73,6 +74,13 @@ public class FactoryPanelConnectionHandler {
 
 	@Nullable
 	private static String checkForIssues(FactoryPanelBehaviour from, FactoryPanelBehaviour to) {
+		if (from == null)
+			return "factory_panel.connection_aborted";
+		if (from.targetedBy.containsKey(to.getPanelPosition()))
+			return "factory_panel.already_connected";
+		if (from.targetedBy.size() >= 9)
+			return "factory_panel.cannot_add_more_inputs";
+		
 		BlockState state1 = to.blockEntity.getBlockState();
 		BlockState state2 = from.blockEntity.getBlockState();
 		BlockPos diff = to.getPos()
@@ -99,6 +107,31 @@ public class FactoryPanelConnectionHandler {
 			|| from.getFilter()
 				.isEmpty())
 			return "factory_panel.no_item";
+
+		return null;
+	}
+
+	@Nullable
+	private static String checkForIssues(FactoryPanelBehaviour from, FactoryPanelSupportBehaviour to) {
+		if (from == null)
+			return "factory_panel.connection_aborted";
+			
+		BlockState state1 = from.blockEntity.getBlockState();
+		BlockState state2 = to.blockEntity.getBlockState();
+		BlockPos diff = to.getPos()
+			.subtract(from.getPos());
+		Direction connectedDirection = FactoryPanelBlock.connectedDirection(state1);
+
+		if (connectedDirection != state2.getOptionalValue(WrenchableDirectionalBlock.FACING)
+			.orElse(connectedDirection))
+			return "factory_panel.same_orientation";
+
+		if (connectedDirection.getAxis()
+			.choose(diff.getX(), diff.getY(), diff.getZ()) != 0)
+			return "factory_panel.same_surface";
+
+		if (!diff.closerThan(BlockPos.ZERO, 16))
+			return "factory_panel.too_far_apart";
 
 		return null;
 	}
@@ -134,9 +167,22 @@ public class FactoryPanelConnectionHandler {
 
 		if (mc.hitResult instanceof BlockHitResult bhr && bhr.getType() != Type.MISS) {
 			BlockEntity blockEntity = mc.level.getBlockEntity(bhr.getBlockPos());
+			FactoryPanelSupportBehaviour behaviour =
+				BlockEntityBehaviour.get(mc.level, bhr.getBlockPos(), FactoryPanelSupportBehaviour.TYPE);
 
 			// Connecting redstone or display links
-			if (blockEntity instanceof RedstoneLinkBlockEntity || blockEntity instanceof DisplayLinkBlockEntity) {
+			if (behaviour != null) {
+				FactoryPanelBehaviour at = FactoryPanelBehaviour.at(mc.level, connectingFrom);
+				String checkForIssues = checkForIssues(at, behaviour);
+				if (checkForIssues != null) {
+					mc.player.displayClientMessage(CreateLang.translate(checkForIssues)
+						.style(ChatFormatting.RED)
+						.component(), true);
+					connectingFrom = null;
+					connectingFromBox = null;
+					return true;
+				}
+
 				FactoryPanelPosition bestPosition = null;
 				double bestDistance = Double.POSITIVE_INFINITY;
 
@@ -154,7 +200,10 @@ public class FactoryPanelConnectionHandler {
 				AllPackets.getChannel()
 					.sendToServer(new FactoryPanelConnectionPacket(bestPosition, connectingFrom));
 
-				mc.player.displayClientMessage(CreateLang.translate("factory_panel.link_connected")
+				mc.player.displayClientMessage(CreateLang
+					.translate("factory_panel.link_connected", blockEntity.getBlockState()
+						.getBlock()
+						.getName())
 					.style(ChatFormatting.GREEN)
 					.component(), true);
 

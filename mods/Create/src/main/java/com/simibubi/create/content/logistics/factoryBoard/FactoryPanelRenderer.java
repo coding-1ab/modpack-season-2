@@ -52,8 +52,9 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 		float yRot = FactoryPanelBlock.getYRot(blockState);
 		float glow = behaviour.bulb.getValue(partialTicks);
 
-		PartialModel partial =
-			behaviour.redstonePowered ? AllPartialModels.FACTORY_PANEL_RED_LIGHT : AllPartialModels.FACTORY_PANEL_LIGHT;
+		boolean missingAddress = behaviour.isMissingAddress();
+		PartialModel partial = behaviour.redstonePowered || missingAddress ? AllPartialModels.FACTORY_PANEL_RED_LIGHT
+			: AllPartialModels.FACTORY_PANEL_LIGHT;
 
 		CachedBuffers.partial(partial, blockState)
 			.rotateCentered(yRot, Direction.UP)
@@ -114,10 +115,7 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 
 		} else {
 			// Regular ingredient status
-			color = behaviour.count == 0 ? 0x888898
-				: behaviour.redstonePowered ? 0x888898
-					: behaviour.waitingForNetwork ? 0x5B3B3B
-						: behaviour.satisfied ? 0x9EFF7F : behaviour.promisedSatisfied ? 0x22AFAF : 0x3D6EBD;
+			color = behaviour.getIngredientStatusColor();
 
 			yOffset = 1;
 			yOffset += behaviour.promisedSatisfied ? 1 : behaviour.satisfied ? 0 : 2;
@@ -152,8 +150,8 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 				.translate(behaviour.slot.xOffset * .5 + .25, 0, behaviour.slot.yOffset * .5 + .25)
 				.translate(currentX, (yOffset + (direction.get2DDataValue() % 2) * 0.125f) / 512f, currentZ);
 
-			if (!displayLinkMode && !redstoneLinkMode && !behaviour.waitingForNetwork && !behaviour.satisfied
-				&& !behaviour.redstonePowered)
+			if (!displayLinkMode && !redstoneLinkMode && !behaviour.isMissingAddress() && !behaviour.waitingForNetwork
+				&& !behaviour.satisfied && !behaviour.redstonePowered)
 				connectionSprite.shiftUV(AllSpriteShifts.FACTORY_PANEL_CONNECTIONS);
 
 			connectionSprite.color(color)
@@ -166,7 +164,6 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 				currentZ += direction.getStepZ() * .5;
 			}
 		}
-
 	}
 
 }

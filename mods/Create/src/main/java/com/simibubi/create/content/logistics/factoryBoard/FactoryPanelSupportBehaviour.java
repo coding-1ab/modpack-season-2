@@ -1,8 +1,8 @@
 package com.simibubi.create.content.logistics.factoryBoard;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
@@ -19,7 +19,7 @@ public class FactoryPanelSupportBehaviour extends BlockEntityBehaviour {
 
 	public static final BehaviourType<FactoryPanelSupportBehaviour> TYPE = new BehaviourType<>();
 
-	private Set<FactoryPanelPosition> linkedPanels;
+	private List<FactoryPanelPosition> linkedPanels;
 	private boolean changed;
 
 	private Supplier<Boolean> outputPower;
@@ -32,7 +32,7 @@ public class FactoryPanelSupportBehaviour extends BlockEntityBehaviour {
 		this.isOutput = isOutput;
 		this.outputPower = outputPower;
 		this.onNotify = onNotify;
-		linkedPanels = new HashSet<>();
+		linkedPanels = new ArrayList<>();
 	}
 
 	public boolean shouldPanelBePowered() {
@@ -95,12 +95,15 @@ public class FactoryPanelSupportBehaviour extends BlockEntityBehaviour {
 		return false;
 	}
 
-	public Set<FactoryPanelPosition> getLinkedPanels() {
+	public List<FactoryPanelPosition> getLinkedPanels() {
 		return linkedPanels;
 	}
 
 	public void connect(FactoryPanelBehaviour panel) {
-		linkedPanels.add(panel.getPanelPosition());
+		FactoryPanelPosition panelPosition = panel.getPanelPosition();
+		if (linkedPanels.contains(panelPosition))
+			return;
+		linkedPanels.add(panelPosition);
 		changed = true;
 	}
 
