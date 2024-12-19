@@ -1,7 +1,21 @@
 package com.simibubi.create.api.connectivity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.Set;
+
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.simibubi.create.content.fluids.tank.CreativeFluidTankBlockEntity;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
+
 import net.createmod.catnip.utility.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,17 +27,6 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.PriorityQueue;
-import java.util.Set;
 
 public class ConnectivityHandler {
 
@@ -35,7 +38,7 @@ public class ConnectivityHandler {
 	}
 
 	private static <T extends BlockEntity & IMultiBlockEntityContainer> void formMulti(BlockEntityType<?> type,
-		BlockGetter level, SearchCache<T> cache, List<T> frontier) {
+																					   BlockGetter level, SearchCache<T> cache, List<T> frontier) {
 		PriorityQueue<Pair<Integer, T>> creationQueue = makeCreationQueue();
 		Set<BlockPos> visited = new HashSet<>();
 		Direction.Axis mainAxis = frontier.get(0)
@@ -107,7 +110,7 @@ public class ConnectivityHandler {
 	}
 
 	private static <T extends BlockEntity & IMultiBlockEntityContainer> int tryToFormNewMulti(T be, SearchCache<T> cache,
-		boolean simulate) {
+																							  boolean simulate) {
 		int bestWidth = 1;
 		int bestAmount = -1;
 		if (!be.isController())
@@ -142,7 +145,7 @@ public class ConnectivityHandler {
 	}
 
 	private static <T extends BlockEntity & IMultiBlockEntityContainer> int tryToFormNewMultiOfWidth(T be, int width,
-		SearchCache<T> cache, boolean simulate) {
+																									 SearchCache<T> cache, boolean simulate) {
 		int amount = 0;
 		int height = 0;
 		BlockEntityType<?> type = be.getType();
@@ -160,13 +163,14 @@ public class ConnectivityHandler {
 		}
 		Direction.Axis axis = be.getMainConnectionAxis();
 
-		Search: for (int yOffset = 0; yOffset < be.getMaxLength(axis, width); yOffset++) {
+		Search:
+		for (int yOffset = 0; yOffset < be.getMaxLength(axis, width); yOffset++) {
 			for (int xOffset = 0; xOffset < width; xOffset++) {
 				for (int zOffset = 0; zOffset < width; zOffset++) {
 					BlockPos pos = switch (axis) {
-					case X -> origin.offset(yOffset, xOffset, zOffset);
-					case Y -> origin.offset(xOffset, yOffset, zOffset);
-					case Z -> origin.offset(xOffset, zOffset, yOffset);
+						case X -> origin.offset(yOffset, xOffset, zOffset);
+						case Y -> origin.offset(xOffset, yOffset, zOffset);
+						case Z -> origin.offset(xOffset, zOffset, yOffset);
 					};
 					Optional<T> part = cache.getOrCache(type, level, pos);
 					if (part.isEmpty())
@@ -229,9 +233,9 @@ public class ConnectivityHandler {
 			for (int xOffset = 0; xOffset < width; xOffset++) {
 				for (int zOffset = 0; zOffset < width; zOffset++) {
 					BlockPos pos = switch (axis) {
-					case X -> origin.offset(yOffset, xOffset, zOffset);
-					case Y -> origin.offset(xOffset, yOffset, zOffset);
-					case Z -> origin.offset(xOffset, zOffset, yOffset);
+						case X -> origin.offset(yOffset, xOffset, zOffset);
+						case Y -> origin.offset(xOffset, yOffset, zOffset);
+						case Z -> origin.offset(xOffset, zOffset, yOffset);
 					};
 					T part = partAt(type, level, pos);
 					if (part == null)
@@ -280,7 +284,7 @@ public class ConnectivityHandler {
 
 	// tryReconnect helps whenever only a few tanks have been removed
 	private static <T extends BlockEntity & IMultiBlockEntityContainer> void splitMultiAndInvalidate(T be,
-		@Nullable SearchCache<T> cache, boolean tryReconnect) {
+																									 @Nullable SearchCache<T> cache, boolean tryReconnect) {
 		Level level = be.getLevel();
 		if (level == null)
 			return;
@@ -314,9 +318,9 @@ public class ConnectivityHandler {
 				for (int zOffset = 0; zOffset < width; zOffset++) {
 
 					BlockPos pos = switch (axis) {
-					case X -> origin.offset(yOffset, xOffset, zOffset);
-					case Y -> origin.offset(xOffset, yOffset, zOffset);
-					case Z -> origin.offset(xOffset, zOffset, yOffset);
+						case X -> origin.offset(yOffset, xOffset, zOffset);
+						case Y -> origin.offset(xOffset, yOffset, zOffset);
+						case Z -> origin.offset(xOffset, zOffset, yOffset);
 					};
 
 					T partAt = partAt(be.getType(), level, pos);
@@ -373,7 +377,7 @@ public class ConnectivityHandler {
 
 	@Nullable
 	public static <T extends BlockEntity & IMultiBlockEntityContainer> T partAt(BlockEntityType<?> type, BlockGetter level,
-		BlockPos pos) {
+																				BlockPos pos) {
 		BlockEntity be = level.getBlockEntity(pos);
 		if (be != null && be.getType() == type && !be.isRemoved())
 			return checked(be);
@@ -381,7 +385,7 @@ public class ConnectivityHandler {
 	}
 
 	public static <T extends BlockEntity & IMultiBlockEntityContainer> boolean isConnected(BlockGetter level, BlockPos pos,
-		BlockPos other) {
+																						   BlockPos other) {
 		T one = checked(level.getBlockEntity(pos));
 		T two = checked(level.getBlockEntity(other));
 		if (one == null || two == null)

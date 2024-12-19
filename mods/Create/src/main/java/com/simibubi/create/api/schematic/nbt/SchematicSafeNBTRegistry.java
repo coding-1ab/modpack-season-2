@@ -16,10 +16,10 @@ public class SchematicSafeNBTRegistry {
 	 * Register a new partial safe nbt provider for a specific blockEntityType
 	 *
 	 * @param blockEntityType The block entity type you would like to register this for
-	 * @param safeNBT The custom PartialSafeNBT provider you would like to register for this blockEntityType,
-	 *                your {@link ContextProvidingPartialSafeNBT#writeSafe(BlockEntity, CompoundTag)} method will be
-	 *                called on the passed {@link ContextProvidingPartialSafeNBT}
-	 *                when the block entities data is being prepared for placement.
+	 * @param safeNBT         The custom PartialSafeNBT provider you would like to register for this blockEntityType,
+	 *                        your {@link ContextProvidingPartialSafeNBT#writeSafe(BlockEntity, CompoundTag)} method will be
+	 *                        called on the passed {@link ContextProvidingPartialSafeNBT}
+	 *                        when the block entities data is being prepared for placement.
 	 */
 	public static void register(BlockEntityType<? extends BlockEntity> blockEntityType, ContextProvidingPartialSafeNBT safeNBT) {
 		SchematicSafeNBTRegistryImpl.register(blockEntityType, safeNBT);
@@ -29,7 +29,9 @@ public class SchematicSafeNBTRegistry {
 
 	@FunctionalInterface
 	public interface ContextProvidingPartialSafeNBT {
-		/** This will always be called from the logical server */
+		/**
+		 * This will always be called from the logical server
+		 */
 		void writeSafe(BlockEntity blockEntity, CompoundTag tag);
 	}
 }

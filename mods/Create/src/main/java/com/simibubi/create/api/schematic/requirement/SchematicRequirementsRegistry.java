@@ -1,5 +1,7 @@
 package com.simibubi.create.api.schematic.requirement;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.impl.schematic.requirement.SchematicRequirementsRegistryImpl;
 
@@ -11,8 +13,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-import org.jetbrains.annotations.Nullable;
-
 /**
  * Registry for schematic requirements for blocks, block entities, and entities.
  */
@@ -22,7 +22,7 @@ public class SchematicRequirementsRegistry {
 	 *
 	 * @param block       The block you want to register a {@link BlockRequirement} for
 	 * @param requirement The requirement you would like to add to this block,
-	 *                    the {@link BlockRequirement#getRequiredItems(BlockState, BlockEntity)}
+	 *                    the {@link BlockRequirement#getRequiredItems(Block, BlockState, BlockEntity)}
 	 *                    method will be called on the {@link BlockRequirement} you have provided,
 	 *                    and you will be able to insert requirements based off the context that is given
 	 */
