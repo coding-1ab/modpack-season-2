@@ -111,9 +111,7 @@ public class AllShapes {
 			.add(5, 0, 5, 11, 1, 9)
 			.add(5, -1, 6, 11, 0, 8)
 			.forHorizontal(SOUTH),
-		PUMP = shape(2, 0, 2, 14, 5, 14).add(4, 0, 4, 12, 16, 12)
-			.add(3, 11, 3, 13, 16, 13)
-			.forDirectional(Direction.UP),
+		PUMP = shape(2, 0, 2, 14, 16, 14).forDirectional(Direction.UP),
 		CRUSHING_WHEEL_CONTROLLER_COLLISION = shape(0, 0, 0, 16, 13, 16).forDirectional(Direction.DOWN),
 
 		BELL_FLOOR = shape(0, 0, 5, 16, 11, 11).add(3, 1, 3, 13, 13, 13)

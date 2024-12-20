@@ -906,7 +906,7 @@ public class AllBlocks {
 	public static final BlockEntry<GlassFluidPipeBlock> GLASS_FLUID_PIPE =
 		REGISTRATE.block("glass_fluid_pipe", GlassFluidPipeBlock::new)
 			.initialProperties(SharedProperties::copperMetal)
-			.properties(p -> p.forceSolidOn())
+			.properties(p -> p.noOcclusion())
 			.addLayer(() -> RenderType::cutoutMipped)
 			.transform(pickaxeOnly())
 			.blockstate((c, p) -> {

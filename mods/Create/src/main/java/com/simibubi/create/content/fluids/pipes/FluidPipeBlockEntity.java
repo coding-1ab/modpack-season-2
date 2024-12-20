@@ -2,7 +2,6 @@ package com.simibubi.create.content.fluids.pipes;
 
 import java.util.List;
 
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.api.contraption.ITransformableBlockEntity;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.decoration.bracket.BracketedBlockEntityBehaviour;
@@ -65,19 +64,25 @@ public class FluidPipeBlockEntity extends SmartBlockEntity implements ITransform
 			if (state.getBlock() instanceof EncasedPipeBlock && attachment != AttachmentTypes.DRAIN)
 				return AttachmentTypes.NONE;
 
-			if (attachment == AttachmentTypes.RIM && !FluidPipeBlock.isPipe(otherState)
-				&& !AllBlocks.MECHANICAL_PUMP.has(otherState) && !AllBlocks.ENCASED_FLUID_PIPE.has(otherState)) {
-				FluidTransportBehaviour pipeBehaviour =
-					BlockEntityBehaviour.get(world, offsetPos, FluidTransportBehaviour.TYPE);
-				if (pipeBehaviour != null)
-					if (pipeBehaviour.canHaveFlowToward(otherState, direction.getOpposite()))
-						return AttachmentTypes.CONNECTION;
+			if (attachment == AttachmentTypes.RIM) {
+				if (!FluidPipeBlock.isPipe(otherState) && !(otherState.getBlock() instanceof EncasedPipeBlock)
+					&& !(otherState.getBlock() instanceof GlassFluidPipeBlock)) {
+					FluidTransportBehaviour pipeBehaviour =
+						BlockEntityBehaviour.get(world, offsetPos, FluidTransportBehaviour.TYPE);
+					if (pipeBehaviour != null && pipeBehaviour.canHaveFlowToward(otherState, direction.getOpposite()))
+						return AttachmentTypes.DETAILED_CONNECTION;
+				}
+
+				if (!FluidPipeBlock.shouldDrawRim(world, pos, state, direction))
+					return FluidPropagator.getStraightPipeAxis(state) == direction.getAxis()
+						? AttachmentTypes.CONNECTION
+						: AttachmentTypes.DETAILED_CONNECTION;
 			}
 
-			if (attachment == AttachmentTypes.RIM && !FluidPipeBlock.shouldDrawRim(world, pos, state, direction))
-				return AttachmentTypes.CONNECTION;
-			if (attachment == AttachmentTypes.NONE && state.getValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(direction)))
-				return AttachmentTypes.CONNECTION;
+			if (attachment == AttachmentTypes.NONE
+				&& state.getValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(direction)))
+				return AttachmentTypes.DETAILED_CONNECTION;
+
 			return attachment;
 		}
 

@@ -260,6 +260,7 @@ public abstract class FluidTransportBehaviour extends BlockEntityBehaviour {
 	public enum AttachmentTypes {
 		NONE,
 		CONNECTION(ComponentPartials.CONNECTION),
+		DETAILED_CONNECTION(ComponentPartials.RIM_CONNECTOR),
 		RIM(ComponentPartials.RIM_CONNECTOR, ComponentPartials.RIM),
 		PARTIAL_RIM(ComponentPartials.RIM),
 		DRAIN(ComponentPartials.RIM_CONNECTOR, ComponentPartials.DRAIN),
