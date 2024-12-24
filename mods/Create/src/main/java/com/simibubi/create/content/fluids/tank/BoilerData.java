@@ -1,6 +1,7 @@
 package com.simibubi.create.content.fluids.tank;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,6 +9,7 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.decoration.steamWhistle.WhistleBlock;
 import com.simibubi.create.content.decoration.steamWhistle.WhistleBlockEntity;
@@ -29,6 +31,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -65,10 +69,25 @@ public class BoilerData {
 
 	public LerpedFloat gauge = LerpedFloat.linear();
 
+	// client only sound control
+
+	// re-use the same lambda for each side
+	private final SoundPool.Sound sound = (level, pos) -> {
+		float volume = 3f / Math.max(2, attachedEngines / 6);
+		float pitch = 1.18f - level.random.nextFloat() * .25f;
+		level.playLocalSound(pos.getX(), pos.getY(), pos.getZ(),
+			SoundEvents.CANDLE_EXTINGUISH, SoundSource.BLOCKS, volume, pitch, false);
+
+		AllSoundEvents.STEAM.playAt(level, pos, volume / 16, .8f, false);
+	};
+	// separate pools for each side so they sound distinct when standing at corners of the boiler
+	private final EnumMap<Direction, SoundPool> pools = new EnumMap<>(Direction.class);
+
 	public void tick(FluidTankBlockEntity controller) {
 		if (!isActive())
 			return;
 		if (controller.getLevel().isClientSide) {
+			pools.values().forEach(p -> p.play(controller.getLevel()));
 			gauge.tickChaser();
 			float current = gauge.getValue(1);
 			if (current > 1 && Create.RANDOM.nextFloat() < 1 / 2f)
@@ -103,6 +122,15 @@ public class BoilerData {
 			controller.award(AllAdvancements.STEAM_ENGINE_MAXED);
 
 		controller.notifyUpdate();
+	}
+
+	public void queueSoundOnSide(BlockPos pos, Direction side) {
+		SoundPool pool = pools.get(side);
+		if (pool == null) {
+			pool = new SoundPool(4, 2, sound);
+			pools.put(side, pool);
+		}
+		pool.queueAt(pos);
 	}
 
 	public int getTheoreticalHeatLevel() {
