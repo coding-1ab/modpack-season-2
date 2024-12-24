@@ -11,7 +11,7 @@ import java.util.Set;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllTags;
-import com.simibubi.create.api.contraption.ITransformableBlockEntity;
+import com.simibubi.create.api.contraption.transformable.ITransformableBlockEntity;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.trains.graph.TrackNodeLocation;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;

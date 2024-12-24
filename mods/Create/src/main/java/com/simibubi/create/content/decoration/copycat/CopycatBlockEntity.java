@@ -1,7 +1,7 @@
 package com.simibubi.create.content.decoration.copycat;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.api.contraption.ITransformableBlockEntity;
+import com.simibubi.create.api.contraption.transformable.ITransformableBlockEntity;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.redstone.RoseQuartzLampBlock;
 import com.simibubi.create.api.schematic.requirement.ISpecialBlockEntityItemRequirement;

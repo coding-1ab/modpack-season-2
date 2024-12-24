@@ -1,7 +1,7 @@
 package com.simibubi.create.content.kinetics.chainDrive;
 
 import com.simibubi.create.AllBlockEntityTypes;
-import com.simibubi.create.api.contraption.ITransformableBlock;
+import com.simibubi.create.api.contraption.transformable.ITransformableBlock;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.kinetics.base.DirectionalAxisKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;

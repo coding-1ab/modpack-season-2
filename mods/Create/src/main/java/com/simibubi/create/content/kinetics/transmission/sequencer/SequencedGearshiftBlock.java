@@ -2,7 +2,7 @@ package com.simibubi.create.content.kinetics.transmission.sequencer;
 
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.api.contraption.ITransformableBlock;
+import com.simibubi.create.api.contraption.transformable.ITransformableBlock;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.kinetics.base.HorizontalAxisKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlock;

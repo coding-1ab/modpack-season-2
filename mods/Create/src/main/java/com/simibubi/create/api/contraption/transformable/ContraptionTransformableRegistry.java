@@ -1,7 +1,7 @@
-package com.simibubi.create.api.contraption;
+package com.simibubi.create.api.contraption.transformable;
 
 import com.simibubi.create.content.contraptions.StructureTransform;
-import com.simibubi.create.impl.contraption.ContraptionTransformableRegistryImpl;
+import com.simibubi.create.impl.contraption.transformable.ContraptionTransformableRegistryImpl;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;

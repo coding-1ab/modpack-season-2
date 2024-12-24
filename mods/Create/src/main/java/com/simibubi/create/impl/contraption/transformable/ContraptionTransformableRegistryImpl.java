@@ -1,9 +1,9 @@
-package com.simibubi.create.impl.contraption;
+package com.simibubi.create.impl.contraption.transformable;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import com.simibubi.create.api.contraption.ContraptionTransformableRegistry.TransformableBlock;
-import com.simibubi.create.api.contraption.ContraptionTransformableRegistry.TransformableBlockEntity;
+import com.simibubi.create.api.contraption.transformable.ContraptionTransformableRegistry.TransformableBlock;
+import com.simibubi.create.api.contraption.transformable.ContraptionTransformableRegistry.TransformableBlockEntity;
 import com.simibubi.create.foundation.utility.AttachedRegistry;
 
 import net.minecraft.world.level.block.Block;

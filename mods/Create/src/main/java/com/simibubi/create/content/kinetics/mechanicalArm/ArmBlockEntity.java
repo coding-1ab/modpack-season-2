@@ -6,7 +6,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.simibubi.create.Create;
-import com.simibubi.create.api.contraption.ITransformableBlockEntity;
+import com.simibubi.create.api.contraption.transformable.ITransformableBlockEntity;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.mechanicalArm.AllArmInteractionPointTypes.JukeboxPoint;
