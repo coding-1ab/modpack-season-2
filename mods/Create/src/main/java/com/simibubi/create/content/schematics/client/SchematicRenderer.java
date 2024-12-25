@@ -6,7 +6,6 @@ import java.util.Map;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.render.BlockEntityRenderHelper;
 
-import dev.engine_room.flywheel.lib.model.ModelUtil;
 import net.createmod.catnip.render.ShadedBlockSbbBuilder;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
@@ -85,7 +84,8 @@ public class SchematicRenderer {
 	}
 
 	protected SuperByteBuffer drawLayer(RenderType layer) {
-		BlockRenderDispatcher dispatcher = ModelUtil.VANILLA_RENDERER;
+		BlockRenderDispatcher dispatcher = Minecraft.getInstance()
+			.getBlockRenderer();
 		ModelBlockRenderer renderer = dispatcher.getModelRenderer();
 		ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
 

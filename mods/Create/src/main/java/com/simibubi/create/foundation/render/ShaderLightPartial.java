@@ -9,15 +9,15 @@ import dev.engine_room.flywheel.lib.material.SimpleMaterial;
 import dev.engine_room.flywheel.lib.model.ModelUtil;
 import dev.engine_room.flywheel.lib.model.baked.BakedModelBuilder;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
-import dev.engine_room.flywheel.lib.util.ResourceReloadCache;
+import dev.engine_room.flywheel.lib.util.RendererReloadCache;
 import net.minecraft.client.renderer.RenderType;
 
 public class ShaderLightPartial {
-	private static final ResourceReloadCache<PartialModel, Model> FLAT = new ResourceReloadCache<>(it -> BakedModelBuilder.create(it.get())
+	private static final RendererReloadCache<PartialModel, Model> FLAT = new RendererReloadCache<>(it -> BakedModelBuilder.create(it.get())
 		.materialFunc((renderType, aBoolean) -> getMaterial(renderType, aBoolean, LightShaders.FLAT))
 		.build());
 
-	private static final ResourceReloadCache<PartialModel, Model> SMOOTH = new ResourceReloadCache<>(it -> BakedModelBuilder.create(it.get())
+	private static final RendererReloadCache<PartialModel, Model> SMOOTH = new RendererReloadCache<>(it -> BakedModelBuilder.create(it.get())
 		.materialFunc((renderType, aBoolean) -> getMaterial(renderType, aBoolean, LightShaders.SMOOTH))
 		.build());
 

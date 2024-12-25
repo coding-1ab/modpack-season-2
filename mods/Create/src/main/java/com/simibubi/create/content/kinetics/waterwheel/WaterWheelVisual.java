@@ -11,7 +11,7 @@ import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.model.Model;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.model.baked.BakedModelBuilder;
-import dev.engine_room.flywheel.lib.util.ResourceReloadCache;
+import dev.engine_room.flywheel.lib.util.RendererReloadCache;
 import net.createmod.catnip.render.CachedBuffers;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
@@ -19,7 +19,7 @@ import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class WaterWheelVisual<T extends WaterWheelBlockEntity> extends KineticBlockEntityVisual<T> {
-	private static final ResourceReloadCache<WaterWheelModelKey, Model> MODEL_CACHE = new ResourceReloadCache<>(WaterWheelVisual::createModel);
+	private static final RendererReloadCache<WaterWheelModelKey, Model> MODEL_CACHE = new RendererReloadCache<>(WaterWheelVisual::createModel);
 
 	protected final boolean large;
 	protected BlockState lastMaterial;
