@@ -240,7 +240,7 @@
   "farmersdelight.advancement.place_organic_compost": "Composta avanzada",
   "farmersdelight.advancement.place_organic_compost.desc": "Coloca un par de bloques de composta orgánica. Es mejor cuando está bajo el sol, con algo de agua y callampas!",
   "farmersdelight.advancement.get_rich_soil": "Alimentos para plantas",
-  "farmersdelight.advancement.get_rich_soil.desc": "Deja un poco de compost orgánico para que se descomponga hasta que se convierta en un suelo rico. ¡Los hongos podrían ayudar!",
+  "farmersdelight.advancement.get_rich_soil.desc": "Deja un poco de compost orgánico para que se descomponga hasta que se convierta en un suelo rico. ¡Las callampas podrían ayudar!",
   "farmersdelight.advancement.get_ham": "Carnicero salvaje",
   "farmersdelight.advancement.get_ham.desc": "Los cuchillos pueden recoger los despojos de los animales con más cuidado. ¡Algunos de ellos pueden incluso producir cortes de carne más grandes!",
   "farmersdelight.advancement.use_cutting_board": "¡Cuidado con los dedos!",
@@ -259,7 +259,7 @@
   "farmersdelight.advancement.get_mushroom_colony": "Callampas entre nosotros...",
   "farmersdelight.advancement.get_mushroom_colony.desc": "Planta las callampas en un suelo rico bajo la oscuridad, observa cómo se forma una colonia y luego córtalos.",
   "farmersdelight.advancement.plant_all_crops": "Rotación de cultivos",
-  "farmersdelight.advancement.plant_all_crops.desc": "Cultiva cada planta comestible que te encuentres, como vegetales, frutas, hongos o raices.",
+  "farmersdelight.advancement.plant_all_crops.desc": "Cultiva cada planta comestible que te encuentres, como vegetales, frutas, callampas o raices.",
   
   "farmersdelight.advancement.place_campfire": "Hoguera encendida",
   "farmersdelight.advancement.place_campfire.desc": "Coloca una hoguera para mantenerte caliente por la noche",
