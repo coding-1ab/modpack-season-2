@@ -1,4 +1,4 @@
-// 1.20.1	2024-12-13T16:37:18.6553347	Create's Standard Recipes
+// 1.20.1	2024-12-27T18:05:56.832873	Create's Standard Recipes
 a8cc4af26f6c7c45a9eef12e92af1452fe042454 data/create/advancements/recipes/combat/crafting/appliances/netherite_backtank.json
 2c2639c7b307ee7c7a4e97e5efebf496788998ad data/create/advancements/recipes/combat/crafting/appliances/netherite_backtank_from_netherite.json
 81dcf0cb1aa99e39bc7d1a386e07cad4cee7d8b9 data/create/advancements/recipes/combat/crafting/appliances/netherite_diving_boots.json
@@ -227,6 +227,7 @@ aa2067bedd73d45dcf4bf2c1a30d227d4de4f57d data/create/advancements/recipes/misc/c
 4fb6101ff037b9da3f030729dd991dab4c934267 data/create/advancements/recipes/misc/crafting/materials/rose_quartz_tiles_from_conversion.json
 489c20709121bfe0408566b0b89dfa685efef8e4 data/create/advancements/recipes/misc/crafting/materials/sand_paper.json
 6cd07e204c574b1419ba81cfffc1967a1c7d4f75 data/create/advancements/recipes/misc/crafting/materials/small_rose_quartz_tiles_from_conversion.json
+dc1e07242564e81694f151cecfc2b6115e5862ca data/create/advancements/recipes/misc/crafting/materials/transmitter.json
 0d60ad8d0436ed33a8013616390ca5e970e042ee data/create/advancements/recipes/misc/crafting/materials/zinc_block_from_compacting.json
 8b9692de75d0c1d694bb3a2ce2316200ef3ff197 data/create/advancements/recipes/misc/crafting/materials/zinc_ingot_from_compacting.json
 dd7c250fa8e41cbaae65754f38b8861397718ae4 data/create/advancements/recipes/misc/crafting/materials/zinc_ingot_from_decompacting.json
@@ -458,7 +459,7 @@ a24f11d979f40994b9f881b0f49fff5d93185296 data/create/recipes/crafting/logistics/
 d994ef262b16357984d3ed62f6563d2f37266193 data/create/recipes/crafting/logistics/brass_tunnel.json
 0b18d9964f2d580eb465cc72208f7a7fdba7b63e data/create/recipes/crafting/logistics/content_observer.json
 4f3ce7533d77e5bcab8da815d0fd5d41c95efe4e data/create/recipes/crafting/logistics/desk_bell.json
-cc837e8b014c121ed9d959baddea134ebf669350 data/create/recipes/crafting/logistics/display_link.json
+5ed926477160d18871cce4306da2f8d4ae17f7e5 data/create/recipes/crafting/logistics/display_link.json
 4daadd2c67fe8bbf5594fb50dcf051dad7f9997a data/create/recipes/crafting/logistics/factory_gauge.json
 2fb7722137990b9b9be967a1f766e138678d0573 data/create/recipes/crafting/logistics/factory_gauge_clear.json
 f3ba21e8979256fb78cd618ac4f1082b0b2f9e0c data/create/recipes/crafting/logistics/item_hatch.json
@@ -476,7 +477,7 @@ c81f852f1d1514184ff235e790a6ca907f7b6ad4 data/create/recipes/crafting/logistics/
 8446b3ca07575ea978ddde4121900207d54be8b3 data/create/recipes/crafting/logistics/redstone_requester_clear.json
 e156e092a9c719e91cd62e23f8ee2201dce4c2a8 data/create/recipes/crafting/logistics/repackager_from_conversion.json
 eff0d37e98e8badd8d2c3c9de17ee5560b110dbd data/create/recipes/crafting/logistics/stockpile_switch.json
-900dc578ab8dd26014cf473f2c5a8b5fbf23ccf8 data/create/recipes/crafting/logistics/stock_link.json
+8f8e7800431590b06f287fc6a24389ec71fc3eb4 data/create/recipes/crafting/logistics/stock_link.json
 e19544e2ef88a4d10f6dc8a3a973793cb00085ba data/create/recipes/crafting/logistics/stock_link_clear.json
 d4671c9d3c654aadd3fd238dfaa6939587f8a81b data/create/recipes/crafting/logistics/stock_ticker.json
 38aa7b9b3c4724ec8b8d94f00a98d684110ad5ca data/create/recipes/crafting/logistics/stock_ticker_clear.json
@@ -504,6 +505,7 @@ e89aa3ab801e3ce25387ae67c5e47bab518b9225 data/create/recipes/crafting/materials/
 46cb889dd23d9a8a47f8b340abcbdbec35b21ee3 data/create/recipes/crafting/materials/rose_quartz_tiles_from_conversion.json
 cde25f253da4d9800fd8f879a7d208e40510df82 data/create/recipes/crafting/materials/sand_paper.json
 39d9f3238bffd32a0bbe85f300bee0c71161f2df data/create/recipes/crafting/materials/small_rose_quartz_tiles_from_conversion.json
+909cb6ddb17b7db28d2c67c18762444feb3bfe2b data/create/recipes/crafting/materials/transmitter.json
 24c99b98a2acb744a05f9ff4f22b783689e2b2f9 data/create/recipes/crafting/materials/zinc_block_from_compacting.json
 5effb47ad68c8bacc4b1984a37b63ae3b02b3e88 data/create/recipes/crafting/materials/zinc_ingot_from_compacting.json
 2636700eda7f06a9297af688c8b7963b2611ea42 data/create/recipes/crafting/materials/zinc_ingot_from_decompacting.json

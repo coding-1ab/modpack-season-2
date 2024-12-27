@@ -1915,7 +1915,7 @@ public class AllBlocks {
 			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
 				.sound(SoundType.NETHERITE_BLOCK))
 			.transform(pickaxeOnly())
-			.blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.forPowered(c, p)))
+			.blockstate((c, p) -> p.horizontalFaceBlock(c.get(), AssetLookup.forPowered(c, p)))
 			.item(LogisticallyLinkedBlockItem::new)
 			.transform(customItemModel("_", "block"))
 			.register();

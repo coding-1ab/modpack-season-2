@@ -204,6 +204,9 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 
 					if (prevChainPosition > chainPosition)
 						continue;
+					if (!target.equals(port.connection))
+						continue;
+					
 					boolean notAtPositionYet = box.chainPosition < chainPosition;
 					if (notAtPositionYet && anticipatePosition < chainPosition)
 						continue;

@@ -194,7 +194,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			}
 
 			if (AllBlocks.STOCK_LINK.has(adjacentState)) {
-				if (adjacentState.getValue(PackagerLinkBlock.FACING) != d)
+				if (PackagerLinkBlock.getConnectedDirection(adjacentState) != d)
 					continue;
 				if (!(level.getBlockEntity(worldPosition.relative(d)) instanceof PackagerLinkBlockEntity plbe))
 					continue;
@@ -255,7 +255,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			BlockState adjacentState = level.getBlockState(worldPosition.relative(d));
 			if (!AllBlocks.STOCK_LINK.has(adjacentState))
 				continue;
-			if (adjacentState.getValue(PackagerLinkBlock.FACING) != d)
+			if (PackagerLinkBlock.getConnectedDirection(adjacentState) != d)
 				continue;
 			return true;
 		}

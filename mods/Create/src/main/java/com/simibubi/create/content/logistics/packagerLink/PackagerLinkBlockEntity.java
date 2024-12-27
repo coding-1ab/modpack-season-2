@@ -17,7 +17,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 
 import net.createmod.catnip.utility.Pair;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -101,8 +100,7 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 		BlockState blockState = getBlockState();
 		if (behaviour.redstonePower == 15)
 			return null;
-		BlockPos source = worldPosition.relative(blockState.getOptionalValue(PackagerLinkBlock.FACING)
-			.orElse(Direction.UP)
+		BlockPos source = worldPosition.relative(PackagerLinkBlock.getConnectedDirection(blockState)
 			.getOpposite());
 		if (!(level.getBlockEntity(source) instanceof PackagerBlockEntity packager))
 			return null;

@@ -166,6 +166,14 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.pattern("L")
 				.pattern("N")),
 
+		TRANSMITTER = create(AllItems.TRANSMITTER).unlockedByTag(I::copper)
+			.viaShaped(b -> b.define('L', I.copperSheet())
+				.define('N', Items.LIGHTNING_ROD)
+				.define('R', I.redstone())
+				.pattern(" N ")
+				.pattern("LLL")
+				.pattern(" R ")),
+
 		ROSE_QUARTZ = create(AllItems.ROSE_QUARTZ).unlockedBy(() -> Items.REDSTONE)
 			.viaShapeless(b -> b.requires(Tags.Items.GEMS_QUARTZ)
 				.requires(Ingredient.of(I.redstone()), 8)),
@@ -323,7 +331,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.pattern("C")
 				.pattern("S")
 				.pattern("I")),
-			
+
 		MECHANICAL_PISTON = create(AllBlocks.MECHANICAL_PISTON).unlockedBy(I::andesiteCasing)
 			.viaShaped(b -> b.define('B', ItemTags.WOODEN_SLABS)
 				.define('C', I.andesiteCasing())
@@ -1009,7 +1017,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.define('S', I.stone())
 				.pattern("RCT")
 				.pattern("SSS")),
-			
+
 		PULSE_TIMER = create(AllBlocks.PULSE_TIMER).unlockedByTag(I::redstone)
 			.viaShaped(b -> b.define('T', Blocks.REDSTONE_TORCH)
 				.define('C', I.brassSheet())
@@ -1041,8 +1049,8 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.define('S', I.brassCasing())
 				.pattern("C")
 				.pattern("S")),
-			
-			ITEM_HATCH = create(AllBlocks.ITEM_HATCH).unlockedBy(I::andesiteAlloy)
+
+		ITEM_HATCH = create(AllBlocks.ITEM_HATCH).unlockedBy(I::andesiteAlloy)
 			.viaShapeless(b -> b.requires(I.andesiteAlloy())
 				.requires(Items.IRON_TRAPDOOR)),
 
@@ -1054,7 +1062,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.pattern(" C ")),
 
 		PACKAGER_CYCLE = conversionCycle(ImmutableList.of(AllBlocks.PACKAGER, AllBlocks.REPACKAGER)),
-			
+
 		PACKAGE_FROGPORT = create(AllBlocks.PACKAGE_FROGPORT).unlockedBy(I::cardboard)
 			.viaShaped(b -> b.define('C', I.andesiteAlloy())
 				.define('B', Tags.Items.SLIMEBALLS)
@@ -1064,11 +1072,9 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.pattern("C")),
 
 		STOCK_LINK = create(AllBlocks.STOCK_LINK).unlockedBy(I::cardboard)
-			.viaShaped(b -> b.define('C', Items.REDSTONE_TORCH)
+			.viaShaped(b -> b.define('C', AllItems.TRANSMITTER.get())
 				.define('B', I.vault())
-				.define('A', I.copperSheet())
 				.pattern("C")
-				.pattern("A")
 				.pattern("B")),
 
 		STOCK_TICKER = create(AllBlocks.STOCK_TICKER).unlockedBy(I::cardboard)
@@ -1101,12 +1107,10 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 		FACTORY_PANEL_CLEAR = clearData(AllBlocks.FACTORY_GAUGE),
 
 		DISPLAY_LINK = create(AllBlocks.DISPLAY_LINK).unlockedBy(I::brassCasing)
-			.viaShaped(b -> b.define('C', Blocks.REDSTONE_TORCH)
-				.define('A', I.copperSheet())
+			.viaShaped(b -> b.define('C', AllItems.TRANSMITTER.get())
 				.define('S', I.brassCasing())
 				.pattern("C")
-				.pattern("S")
-				.pattern("A"))
+				.pattern("S"))
 
 	;
 
