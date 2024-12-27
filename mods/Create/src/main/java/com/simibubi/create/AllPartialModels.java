@@ -224,7 +224,7 @@ public class AllPartialModels {
 	public static final List<PartialModel> CONTRAPTION_CONTROLS_INDICATOR = new ArrayList<>();
 
 	public static final Map<ResourceLocation, PartialModel> PACKAGES = new HashMap<>();
-	public static final List<PartialModel> PACKAGES_AS_LIST = new ArrayList<>();
+	public static final List<PartialModel> PACKAGES_TO_HIDE_AS = new ArrayList<>();
 	public static final Map<ResourceLocation, PartialModel> PACKAGE_RIGGING = new HashMap<>();
 
 	static {
@@ -255,7 +255,8 @@ public class AllPartialModels {
 			ResourceLocation key = style.getItemId();
 			PartialModel model = PartialModel.of(Create.asResource("item/" + key.getPath()));
 			PACKAGES.put(key, model);
-			PACKAGES_AS_LIST.add(model);
+			if (!style.rare())
+				PACKAGES_TO_HIDE_AS.add(model);
 			PACKAGE_RIGGING.put(key, PartialModel.of(style.getRiggingModel()));
 		}
 	}

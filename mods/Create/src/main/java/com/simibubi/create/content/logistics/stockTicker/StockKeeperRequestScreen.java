@@ -54,7 +54,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -167,8 +166,16 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		encodeRequester =
 			AllItemTags.TABLE_CLOTHS.matches(itemToProgram) || AllBlocks.REDSTONE_REQUESTER.isIn(itemToProgram);
 
-		if (AllBlocks.CLIPBOARD.isIn(itemToProgram))
+		if (AllBlocks.CLIPBOARD.isIn(itemToProgram)) {
 			clipboardItem = ClipboardEntry.readAll(itemToProgram);
+			boolean anyItems = false;
+			for (List<ClipboardEntry> list : clipboardItem)
+				for (ClipboardEntry entry : list)
+					if (!entry.icon.isEmpty())
+						anyItems = true;
+			if (!anyItems)
+				clipboardItem = null;
+		}
 
 		// Find the keeper for rendering
 		for (int yOffset : Iterate.zeroAndOne) {
@@ -554,18 +561,17 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		if (justSent) {
 			Component msg = CreateLang.translateDirect("gui.stock_keeper.request_sent");
 			float alpha = Mth.clamp((successTicks + partialTicks - 10f) / 5f, 0f, 1f);
-			int msgX = x + windowWidth / 2 - font.width(msg) / 2;
+			int msgX = x + windowWidth / 2 - (font.width(msg) + 10) / 2;
 			int msgY = orderY + 5;
 			if (alpha > 0) {
-				int c1 = new Color(0xB59370).setAlpha(alpha)
+				int c3 = new Color(0x8C5D4B).setAlpha(alpha)
 					.getRGB();
-				int c2 = new Color(0xEDD8BB).setAlpha(alpha * 0)
-					.getRGB();
-				int c3 = new Color(0x714A40).setAlpha(alpha)
-					.getRGB();
-				TooltipRenderUtil.renderTooltipBackground(graphics, msgX - 2, msgY + 2, font.width(msg) + 4,
-					font.lineHeight - 5, 0, c1, c1, c2, c2);
-				graphics.drawString(font, msg, msgX, msgY, c3, false);
+				int w = font.width(msg) + 14;
+				AllGuiTextures.STOCK_KEEPER_REQUEST_BANNER_L.render(graphics, msgX - 8, msgY - 4);
+				UIRenderHelper.drawStretched(graphics, msgX, msgY - 4, w, 16, 0,
+					AllGuiTextures.STOCK_KEEPER_REQUEST_BANNER_M);
+				AllGuiTextures.STOCK_KEEPER_REQUEST_BANNER_R.render(graphics, msgX + font.width(msg) + 10, msgY - 4);
+				graphics.drawString(font, msg, msgX + 5, msgY, c3, false);
 			}
 		}
 

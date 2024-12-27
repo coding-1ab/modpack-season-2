@@ -1077,7 +1077,8 @@
 	"create.gui.factory_panel.crafting_input_tip": "Unpackage into connected",
 	"create.gui.factory_panel.crafting_input_tip_1": "mechanical crafters (3x3)",
 	"create.gui.factory_panel.inactive": " Inactive ",
-	"create.gui.factory_panel.address_missing": "Missing a target address",
+	"create.gui.factory_panel.address_missing": "Inactive: missing a target address",
+	"create.gui.factory_panel.no_target_amount_set": "Inactive: no target amount set",
 	"create.gui.factory_panel.has_link_connections": "Gauge has connected links",
 	
 	"create.gui.redstone_requester.allow_partial": "Allow partial orders",

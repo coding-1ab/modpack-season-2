@@ -153,9 +153,9 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	VALUE_SETTINGS_LABEL_BG("value_settings", 0, 31, 81, 11),
 
 	// HILO
-	FACTORY_GAUGE_RECIPE("factory_gauge", 32, 4, 192, 95),
-	FACTORY_GAUGE_RESTOCK("factory_gauge", 32, 109, 192, 55),
-	FACTORY_GAUGE_BOTTOM("factory_gauge", 32, 174, 200, 57),
+	FACTORY_GAUGE_RECIPE("factory_gauge", 32, 0, 192, 96),
+	FACTORY_GAUGE_RESTOCK("factory_gauge", 32, 112, 192, 40),
+	FACTORY_GAUGE_BOTTOM("factory_gauge", 32, 176, 200, 64),
 	
 	STOCK_KEEPER_REQUEST_HEADER("stock_keeper", 0, 0, 256, 36),
 	STOCK_KEEPER_REQUEST_BODY("stock_keeper", 0, 48, 256, 20),
@@ -173,6 +173,9 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	STOCK_KEEPER_REQUEST_SCROLL_PAD("stock_keeper", 219, 196, 5, 1),
 	STOCK_KEEPER_REQUEST_SCROLL_MID("stock_keeper", 219, 197, 5, 9),
 	STOCK_KEEPER_REQUEST_SCROLL_BOT("stock_keeper", 219, 207, 5, 5),
+	STOCK_KEEPER_REQUEST_BANNER_L("stock_keeper", 64, 228, 8, 16),
+	STOCK_KEEPER_REQUEST_BANNER_M("stock_keeper", 73, 228, 1, 16),
+	STOCK_KEEPER_REQUEST_BANNER_R("stock_keeper", 75, 228, 8, 16),
 	STOCK_KEEPER_REQUEST_BG("stock_keeper", 37, 48, 182, 20),
 	STOCK_KEEPER_CATEGORY_HIDDEN("stock_keeper", 143, 176, 8, 8),
 	STOCK_KEEPER_CATEGORY_SHOWN("stock_keeper", 151, 176, 8, 8),
@@ -188,7 +191,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	STOCK_KEEPER_CATEGORY_UP("stock_keeper_categories", 211, 160, 8, 8),
 	STOCK_KEEPER_CATEGORY_DOWN("stock_keeper_categories", 211, 169, 8, 8),
 	
-	REDSTONE_REQUESTER("restocker_and_requester", 0, 134, 210, 100),
+	REDSTONE_REQUESTER("requester", 16, 16, 232, 120),
 
 	// JEI
 	JEI_SLOT("jei/widgets", 18, 18),

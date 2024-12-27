@@ -70,17 +70,17 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 		int y = getGuiTop();
 
 		if (addressBox == null) {
-			addressBox = new AddressEditBox(this, new NoShadowFontWrapper(font), x + 50, y + 53, 110, 10, false);
+			addressBox = new AddressEditBox(this, new NoShadowFontWrapper(font), x + 55, y + 68, 110, 10, false);
 			addressBox.setValue(menu.contentHolder.encodedTargetAdress);
 			addressBox.setTextColor(0x555555);
 		}
 		addRenderableWidget(addressBox);
 
-		confirmButton = new IconButton(x + bgWidth - 33, y + bgHeight - 24, AllIcons.I_CONFIRM);
+		confirmButton = new IconButton(x + bgWidth - 30, y + bgHeight - 25, AllIcons.I_CONFIRM);
 		confirmButton.withCallback(() -> minecraft.player.closeContainer());
 		addRenderableWidget(confirmButton);
 
-		allowPartial = new IconButton(x + 12, y + bgHeight - 24, AllIcons.I_PARTIAL_REQUESTS);
+		allowPartial = new IconButton(x + 12, y + bgHeight - 25, AllIcons.I_PARTIAL_REQUESTS);
 		allowPartial.withCallback(() -> {
 			allowPartial.green = true;
 			dontAllowPartial.green = false;
@@ -90,7 +90,7 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 			.component());
 		addRenderableWidget(allowPartial);
 
-		dontAllowPartial = new IconButton(x + 12 + 18, y + bgHeight - 24, AllIcons.I_FULL_REQUESTS);
+		dontAllowPartial = new IconButton(x + 12 + 18, y + bgHeight - 25, AllIcons.I_FULL_REQUESTS);
 		dontAllowPartial.withCallback(() -> {
 			allowPartial.green = false;
 			dontAllowPartial.green = true;
@@ -107,18 +107,18 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 	protected void renderBg(GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
 		int x = getGuiLeft();
 		int y = getGuiTop();
-		AllGuiTextures.REDSTONE_REQUESTER.render(pGuiGraphics, x, y);
-		renderPlayerInventory(pGuiGraphics, x - 3, y + 106);
+		AllGuiTextures.REDSTONE_REQUESTER.render(pGuiGraphics, x + 3, y);
+		renderPlayerInventory(pGuiGraphics, x - 3, y + 124);
 
 		ItemStack stack = AllBlocks.REDSTONE_REQUESTER.asStack();
 		Component title = CreateLang.text(stack.getHoverName()
 			.getString())
 			.component();
-		pGuiGraphics.drawString(font, title, x + 100 - font.width(title) / 2, y + 4, 0x3D3C48, false);
+		pGuiGraphics.drawString(font, title, x + 117 - font.width(title) / 2, y + 4, 0x3D3C48, false);
 
 		GuiGameElement.of(stack)
 			.scale(3)
-			.render(pGuiGraphics, x + 220, y + 60);
+			.render(pGuiGraphics, x + 245, y + 80);
 	}
 
 	@Override

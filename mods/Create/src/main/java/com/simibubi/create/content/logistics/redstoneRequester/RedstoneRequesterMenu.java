@@ -58,13 +58,13 @@ public class RedstoneRequesterMenu extends GhostItemMenu<RedstoneRequesterBlockE
 	@Override
 	protected void addSlots() {
 		int playerX = 5;
-		int playerY = 124;
-		int slotX = 21;
-		int slotY = 25;
+		int playerY = 142;
+		int slotX = 27;
+		int slotY = 28;
 
 		addPlayerSlots(playerX, playerY);
 		for (int i = 0; i < 9; i++)
-			addSlot(new SlotItemHandler(ghostInventory, i, slotX + 18 * i, slotY));
+			addSlot(new SlotItemHandler(ghostInventory, i, slotX + 20 * i, slotY));
 	}
 
 	@Override

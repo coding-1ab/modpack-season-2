@@ -28,12 +28,13 @@ public class PackageStyles {
 
 	public static final List<PackageStyle> STYLES = new ArrayList<>(List.of(
 
-		new PackageStyle("cardboard", 12, 12, 23f, false), 
+		new PackageStyle("cardboard", 12, 12, 23f, false),
 		new PackageStyle("cardboard", 10, 12, 22f, false),
-		new PackageStyle("cardboard", 10, 8, 18f, false), 
+		new PackageStyle("cardboard", 10, 8, 18f, false),
 		new PackageStyle("cardboard", 12, 10, 21f, false),
 
-		new PackageStyle("rare_kryppers", 12, 10, 21f, true), 
+		new PackageStyle("rare_kryppers", 12, 10, 21f, true),
+		new PackageStyle("rare_jinx", 12, 10, 21f, true),
 		new PackageStyle("rare_creeper", 12, 10, 21f, true),
 		new PackageStyle("rare_simi", 12, 10, 21f, true)
 

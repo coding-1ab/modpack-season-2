@@ -70,7 +70,7 @@ public class CardboardArmorHandlerClient {
 		float interpolatedYaw = Mth.lerp(event.getPartialTick(), player.yRotO, player.getYRot());
 
 		try {
-			PartialModel model = AllPartialModels.PACKAGES_AS_LIST.get(getCurrentBoxIndex(player));
+			PartialModel model = AllPartialModels.PACKAGES_TO_HIDE_AS.get(getCurrentBoxIndex(player));
 			PackageRenderer.renderBox(player, -interpolatedYaw + -90, ms, event.getMultiBufferSource(),
 				event.getPackedLight(), model);
 		} catch (ExecutionException e) {
@@ -82,7 +82,7 @@ public class CardboardArmorHandlerClient {
 
 	private static Integer getCurrentBoxIndex(Player player) throws ExecutionException {
 		return BOXES_PLAYERS_ARE_HIDING_AS.get(player.getUUID(),
-			() -> player.level().random.nextInt(AllPartialModels.PACKAGES_AS_LIST.size()));
+			() -> player.level().random.nextInt(AllPartialModels.PACKAGES_TO_HIDE_AS.size()));
 	}
 
 }

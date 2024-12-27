@@ -45,6 +45,7 @@ import com.simibubi.create.content.legacy.ChromaticCompoundColor;
 import com.simibubi.create.content.legacy.ChromaticCompoundItem;
 import com.simibubi.create.content.legacy.RefinedRadianceItem;
 import com.simibubi.create.content.legacy.ShadowSteelItem;
+import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.content.logistics.box.PackageStyles.PackageStyle;
 import com.simibubi.create.content.logistics.filter.FilterItem;
@@ -63,7 +64,10 @@ import com.simibubi.create.foundation.data.recipe.CompatMetals;
 import com.simibubi.create.foundation.item.CombustibleItem;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.TagDependentIngredientItem;
+import com.tterrag.registrate.builders.ItemBuilder;
+import com.tterrag.registrate.providers.ProviderType;
 import com.tterrag.registrate.util.entry.ItemEntry;
+import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.ItemTags;
@@ -405,9 +409,18 @@ public class AllItems {
 	// Logistics
 
 	static {
-		for (PackageStyle style : PackageStyles.STYLES)
-			BuilderTransformers.packageItem(style)
-				.register();
+		boolean rareCreated = false;
+		boolean normalCreated = false;
+		for (PackageStyle style : PackageStyles.STYLES) {
+			ItemBuilder<PackageItem, CreateRegistrate> packageItem = BuilderTransformers.packageItem(style);
+
+			if (rareCreated && style.rare() || normalCreated && !style.rare())
+				packageItem.setData(ProviderType.LANG, NonNullBiConsumer.noop());
+
+			rareCreated |= style.rare();
+			normalCreated |= !style.rare();
+			packageItem.register();
+		}
 	}
 	
 	public static final ItemEntry<FilterItem> FILTER = REGISTRATE.item("filter", FilterItem::regular)

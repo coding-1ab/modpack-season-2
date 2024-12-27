@@ -146,7 +146,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		int y = guiTop;
 
 		if (addressBox == null) {
-			addressBox = new AddressEditBox(this, new NoShadowFontWrapper(font), 0, 0, 108, 10, false);
+			addressBox =
+				new AddressEditBox(this, new NoShadowFontWrapper(font), x + 36, y + windowHeight - 51, 108, 10, false);
 			addressBox.setValue(behaviour.recipeAddress);
 			addressBox.setTextColor(0x555555);
 		}
@@ -175,7 +176,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		promiseExpiration.setState(behaviour.promiseClearingInterval);
 		addRenderableWidget(promiseExpiration);
 
-		newInputButton = new IconButton(x + (restocker ? 54 : 34), y + (restocker ? 25 : 65), AllIcons.I_ADD);
+		newInputButton = new IconButton(x + 31, y + 63, AllIcons.I_ADD);
 		newInputButton.withCallback(() -> {
 			FactoryPanelConnectionHandler.startConnection(behaviour);
 			minecraft.setScreen(null);
@@ -187,7 +188,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 		activateCraftingButton = null;
 		if (availableCraftingRecipe != null) {
-			activateCraftingButton = new IconButton(x + 34, y + 44, AllIcons.I_3x3);
+			activateCraftingButton = new IconButton(x + 31, y + 43, AllIcons.I_3x3);
 			activateCraftingButton.withCallback(() -> {
 				craftingActive = !craftingActive;
 				init();
@@ -225,8 +226,11 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 		// BG
 		AllGuiTextures bg = restocker ? FACTORY_GAUGE_RESTOCK : FACTORY_GAUGE_RECIPE;
+		if (restocker)
+			FACTORY_GAUGE_RECIPE.render(graphics, x, y - 16);
 		bg.render(graphics, x, y);
 		FACTORY_GAUGE_BOTTOM.render(graphics, x, y + bg.getHeight());
+		y = guiTop;
 
 		// RECIPE
 		int slot = 0;
@@ -241,8 +245,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			renderInputItem(graphics, slot, new BigItemStack(behaviour.getFilter(), 1), mouseX, mouseY);
 
 		if (!restocker) {
-			int outputX = x + 141;
-			int outputY = y + 66;
+			int outputX = x + 160;
+			int outputY = y + 48;
 			graphics.renderItem(outputConfig.stack, outputX, outputY);
 			graphics.renderItemDecorations(font, behaviour.getFilter(), outputX, outputY, outputConfig.count + "");
 
@@ -281,10 +285,10 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		Component title = CreateLang
 			.translate(restocker ? "gui.factory_panel.title_as_restocker" : "gui.factory_panel.title_as_recipe")
 			.component();
-		graphics.drawString(font, title, x + 97 - font.width(title) / 2, y + 4, 0x3D3C48, false);
+		graphics.drawString(font, title, x + 97 - font.width(title) / 2, y + (restocker ? -12 : 4), 0x3D3C48, false);
 
 		// ITEM PREVIEW
-		int previewY = restocker ? 10 : 50;
+		int previewY = restocker ? 0 : 60;
 
 		ms.pushPose();
 		ms.translate(0, previewY, 0);
@@ -378,7 +382,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 	private void renderInputItem(GuiGraphics graphics, int slot, BigItemStack itemStack, int mouseX, int mouseY) {
 		int inputX = guiLeft + (restocker ? 88 : 68 + (slot % 3 * 20));
-		int inputY = guiTop + 26 + (slot / 3 * 20);
+		int inputY = guiTop + (restocker ? 12 : 28) + (slot / 3 * 20);
 
 		graphics.renderItem(itemStack.stack, inputX, inputY);
 		if (!craftingActive && !restocker && !itemStack.stack.isEmpty())
@@ -510,7 +514,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		if (!craftingActive)
 			for (int i = 0; i < connections.size(); i++) {
 				int inputX = x + 68 + (i % 3 * 20);
-				int inputY = y + 26 + (i / 3 * 20);
+				int inputY = y + 28 + (i / 3 * 20);
 				if (mouseX >= inputX && mouseX < inputX + 16 && mouseY >= inputY && mouseY < inputY + 16) {
 					sendIt(connections.get(i).from, false);
 					return true;
@@ -559,8 +563,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		}
 
 		if (!restocker) {
-			int outputX = x + 141;
-			int outputY = y + 66;
+			int outputX = x + 160;
+			int outputY = y + 48;
 			if (mouseX >= outputX && mouseX < outputX + 16 && mouseY >= outputY && mouseY < outputY + 16) {
 				BigItemStack itemStack = outputConfig;
 				itemStack.count =

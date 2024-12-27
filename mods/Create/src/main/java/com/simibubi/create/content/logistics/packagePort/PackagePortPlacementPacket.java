@@ -46,7 +46,9 @@ public class PackagePortPlacementPacket extends SimplePacketBase {
 			BlockEntity blockEntity = world.getBlockEntity(pos);
 			if (!(blockEntity instanceof PackagePortBlockEntity ppbe))
 				return;
-
+			if (!target.canSupport(ppbe))
+				return;
+			
 			Vec3 targetLocation = target.getExactTargetLocation(ppbe, world, pos);
 			if (targetLocation == Vec3.ZERO || !targetLocation.closerThan(Vec3.atBottomCenterOf(pos),
 				AllConfigs.server().logistics.packagePortRange.get() + 2))

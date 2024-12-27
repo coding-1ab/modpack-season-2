@@ -732,6 +732,11 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public MutableComponent getLabel() {
 		String key = "";
 
+		if (!targetedBy.isEmpty() && count == 0)
+			return CreateLang.translate("gui.factory_panel.no_target_amount_set")
+				.style(ChatFormatting.RED)
+				.component();
+
 		if (isMissingAddress())
 			return CreateLang.translate("gui.factory_panel.address_missing")
 				.style(ChatFormatting.RED)

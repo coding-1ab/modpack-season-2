@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity.ConnectedPort;
@@ -41,6 +42,8 @@ public abstract class PackagePortTarget {
 	public abstract Vec3 getExactTargetLocation(PackagePortBlockEntity ppbe, LevelAccessor level, BlockPos portPos);
 
 	public abstract ItemStack getIcon();
+
+	public abstract boolean canSupport(BlockEntity be);
 
 	public boolean depositImmediately() {
 		return false;
@@ -195,6 +198,11 @@ public abstract class PackagePortTarget {
 			return clbe.getPackagePosition(chainPos, connection);
 		}
 
+		@Override
+		public boolean canSupport(BlockEntity be) {
+			return AllBlockEntityTypes.PACKAGE_FROGPORT.is(be);
+		}
+
 	}
 
 	public static class TrainStationFrogportTarget extends PackagePortTarget {
@@ -240,6 +248,11 @@ public abstract class PackagePortTarget {
 
 		@Override
 		protected void readInternal(CompoundTag tag) {}
+
+		@Override
+		public boolean canSupport(BlockEntity be) {
+			return AllBlockEntityTypes.PACKAGE_POSTBOX.is(be);
+		}
 
 	}
 

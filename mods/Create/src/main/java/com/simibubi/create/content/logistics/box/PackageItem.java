@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.simibubi.create.AllEntityTypes;
+import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.box.PackageStyles.PackageStyle;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 
@@ -52,6 +53,11 @@ public class PackageItem extends Item {
 		this.style = style;
 		PackageStyles.ALL_BOXES.add(this);
 		(style.rare() ? PackageStyles.RARE_BOXES : PackageStyles.STANDARD_BOXES).add(this);
+	}
+
+	@Override
+	public String getDescriptionId() {
+		return "item." + Create.ID + (style.rare() ? ".rare_package" : ".package");
 	}
 
 	public static boolean isPackage(ItemStack stack) {
