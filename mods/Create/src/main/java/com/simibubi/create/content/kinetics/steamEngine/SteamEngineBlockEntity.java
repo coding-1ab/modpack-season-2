@@ -6,7 +6,6 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.contraptions.bearing.WindmillBearingBlockEntity.RotationDirection;
 import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
@@ -26,8 +25,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -208,11 +205,7 @@ public class SteamEngineBlockEntity extends SmartBlockEntity implements IHaveGog
 		if (sourceBE != null) {
 			FluidTankBlockEntity controller = sourceBE.getControllerBE();
 			if (controller != null && controller.boiler != null) {
-				float volume = 3f / Math.max(2, controller.boiler.attachedEngines / 6);
-				float pitch = 1.18f - level.random.nextFloat() * .25f;
-				level.playLocalSound(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
-					SoundEvents.CANDLE_EXTINGUISH, SoundSource.BLOCKS, volume, pitch, false);
-				AllSoundEvents.STEAM.playAt(level, worldPosition, volume / 16, .8f, false);
+				controller.boiler.queueSoundOnSide(worldPosition, SteamEngineBlock.getFacing(getBlockState()));
 			}
 		}
 

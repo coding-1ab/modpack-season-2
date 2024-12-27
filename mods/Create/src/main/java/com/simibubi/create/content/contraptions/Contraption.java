@@ -1151,7 +1151,9 @@ public abstract class Contraption {
 					storage.addStorageToWorld(block, blockEntity);
 				}
 
-				transform.apply(blockEntity);
+				if (blockEntity != null) {
+					transform.apply(blockEntity);
+				}
 			}
 		}
 
