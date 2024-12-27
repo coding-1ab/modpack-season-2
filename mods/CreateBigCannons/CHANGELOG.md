@@ -1,10 +1,10 @@
-Changelog
+# Changelog
 
-5.8.0
+## [5.8.0] - Unreleased
 
-Create Big Cannons 5.8.0. Comes with a few overhauls to cannon mounts.
+**Create Big Cannons 5.8.0. Comes with a few overhauls to cannon mounts.**
 
-Added:
+### Added
 - Added Cannon Mount Extension
  - Replaces Yaw Controller for cannon interface extension
  - Can be placed in six directions as opposed to the Yaw Controller
@@ -12,7 +12,7 @@ Added:
  - Has a range of one block
 - Added Fixed Cannon Mount, a manually-aimed cannon mount variant that cannot be turned with kinetics
  - Made with use in vehicle mods in mind
-Changed:
+### Changed
 - Cannon Mount can now be turned around both axes without the Yaw Controller
 - Cannon Mount now disassembles on rotation with wrench
 - Updated Cannon Mount and Yaw Controller yaw shaft texture to no longer use the special black shaft texture
@@ -22,29 +22,29 @@ Changed:
 - Cannon Mounts can now be placed upside-down
  - Cannon Mounts can also be flipped by using the wrench
 - Changed Cannon Mount item model to be more consistent with in-world appearance
-Fixed:
+### Fixed
 - Fixed rendering of pitch shaft for down-facing cannons
 - Fixed display on some ponders
 - Fixed autocannon tracer lighting and non-tracer rendering
 
-5.7.2
+## [5.7.2] - 2024-12-18
 
-Create Big Cannons 5.7.2. Critical patch for Copycats+ compat.
+**Create Big Cannons 5.7.2. Critical patch for Copycats+ compat.**
 
-Fixed:
+### Fixed
 - Fixed Copycats+ compat
 
-5.7.1
+## [5.7.1] - 2024-12-15
 
-Create Big Cannons 5.7.1. Now supports Create 0.5.1 patch J on Forge/NeoForge and Fabric/Quilt.
+**Create Big Cannons 5.7.1. Now supports Create 0.5.1 patch J on Forge/NeoForge and Fabric/Quilt.
 Only 1.20.1 is supported, as Create 0.5.1.j only supports that version. Mod versions on Minecraft 1.18.2 and 1.19.2 will no longer receive support.
-5.7.0 was initially released but has been bypassed due to critical fixes required.
+5.7.0 was initially released but has been bypassed due to critical fixes required.**
 
-Added:
+### Added
 - Added highlighting and documentation for base fuzes
   - Can be toggled in client config
 - Added fuzed models for big cannon shell items
-Changed:
+### Changed
 - Updated Polish translation courtesy of KarolOfGutovo
 - Changed AP Shell texture to better show base fuze location
 - Changed wording on some tooltips
@@ -52,7 +52,7 @@ Changed:
 - Copycats+ is now supported for 2.1.4
   - Added more support for Copycats+ block armor properties
   - Copycats+ 1.2.5 is the minimum supported version
-Fixed:
+### Fixed
 - Fixed autocannon round duplication glitch
 - Fixed projectile ground tracking
 - Fixed strength attributes for incomplete and unbored sliding breeches to be consistent with complete sliding breeches
@@ -60,40 +60,42 @@ Fixed:
 - Fixed sticky piston loading
 - Fixed pulley sync
 
-5.6.0
+## [5.7.0] - 2024-12-14 [YANKED]
 
-Create Big Cannons 5.6.0. Now supports Create 0.5.1 patch I.
-Comes with a few fixes and updates.
+## [5.6.0] - 2024-10-15
 
-Added:
+**Create Big Cannons 5.6.0. Now supports Create 0.5.1 patch I.\
+Comes with a few fixes and updates.**
+
+### Added
 - Added Create: Unify as a required dependency for obtaining bronze and steel
 - Added Finnish translation courtesy of Apinoita
-Changed:
+### Changed
 - Updated Create Big Cannons logo to new style
 - Updated Ukrainian translation courtesy of kyryloborsch
 - Updated Chinese (Simplified) translation courtesy of Yizhouuu
-Fixed:
+### Fixed
 - Fixed cannon carriages being broken by projectiles
 - Fixed first-person handle autocannon carriage movement jitter
 - Fixed incorrect big cannon failure ponder text
 - Fixed impact fuzes not being activated by entity impact
   - This fix involves code changes that may break Create Big Cannon addons.
-[1.19.2, 1.20.1] - Fixed blast wave effect relying on thread-unsafe level random
+- [1.19.2, 1.20.1] Fixed blast wave effect relying on thread-unsafe level random
 
-5.5.1
+## [5.5.1]
 
-Create Big Cannons 5.5.1. A few critical fixes for 5.5.0 as well as some code changes.
+*Create Big Cannons 5.5.1. A few critical fixes for 5.5.0 as well as some code changes.**
 
-Added:
+### Added
 - Added version checks for compat mods on 1.18.2
-[Development] - Added ability to get big cannon projectile from all big cannon projectile item stacks
-Changed:
+- [Development] - Added ability to get big cannon projectile from all big cannon projectile item stacks
+### Changed
 - Optimized entity bounds for big cannons and autocannons to optimize lighting
 - Changed impact explosion queueing to better allow compatibility with Valkyrien Skies
 - All Autocannon Recoil Springs on an autocannon now play the firing animation
  - Format for storing Autocannon Recoil Spring positions has changed, reassemble autocannons to fix any issues
 - Registered custom shaders properly so that Create Big Cannons shaders don't cause logspam on crash
-Fixed:
+### Fixed
 - Fixed Trinkets compat crashing
 - Fixed gas mask overlay rendering as solid color when holding Just Enough Guns firearm
 - Fixed entity culling for big cannons and autocannons
@@ -108,16 +110,14 @@ Fixed:
 - Fixed illegal autocannon connections on creative block placement
 - Fixed cannon casting connecting blocks that shouldn't connect
 
-===
-
-5.5.0
+## [5.5.0]
 
 "messi messi messi immens messi encara messi encara messi encara messi"
 
-Create Big Cannons 5.5.0, with many bug fixes and QoL changes, as well as an aesthetic overhaul to many of the visual and sound effects.
-Comes with version formatting change, but gameplay changes are otherwise not major.
+**Create Big Cannons 5.5.0, with many bug fixes and QoL changes, as well as an aesthetic overhaul to many of the visual and sound effects.
+Comes with version formatting change, but gameplay changes are otherwise not major.**
 
-Added:
+### Added
 - Added some config options to use subheadings in Create config screen
 - Added durability and fuze position tooltip to Impact Fuze and Delayed Impact Fuze
 - Added config to switch between cannon trail styles
@@ -210,11 +210,11 @@ Added:
  - Cannon smoke falls back to default textures
  - Splinters, glass shards, and leaves use regular block particles
  - Emissive textures are not supported by the mod, please make your own resource pack if you want that.
-[Integration] - Added integration with FramedBlocks content added in 1.19.2 and 1.20.1
-Removed:
+- [Integration] - Added integration with FramedBlocks content added in 1.19.2 and 1.20.1
+### Removed
 - Removed legacy cannon plume appearance client config, can now only turn plumes on or off in clientside config
 - Removed single-projectile shrapnel, grapeshot, and fluid blob entities
-Changed:
+### Changed
 - Updated Ritchie's Projectile Library dependency to 2.0.0
  - Improved chunkloading performance
  - Replaced PreciseProjectile interface with tag #ritchiesprojectilelib:precise_motion
@@ -233,10 +233,10 @@ Changed:
 - Changed all shrapnel projectiles to a single projectile burst entity to reduce entity count
  - Includes: Shrapnel Shell, Bag of Grapeshot, Fluid Shell, and Flak Autocannon Round
  - Harder to create chunkbans with new system
- [Addons, integration] - Fluid Blob effects registry has been changed to work with Fluid Blob bursts rather than single Fluid Blobs. This will break already existing integration.
+ - [Addons, integration] - Fluid Blob effects registry has been changed to work with Fluid Blob bursts rather than single Fluid Blobs. This will break already existing integration.
 - Separated flak burst from shrapnel burst
 - Changed screen shake delay to be on client
-[Addons, integration] - Added ability to register multiple fluid blob effect handlers for a single fluid type
+- [Addons, integration] - Added ability to register multiple fluid blob effect handlers for a single fluid type
 - Refactor projectile properties to be less inheritance-based (BREAKING)
  - New approach involves projectile-specific serializers that projectiles must reference instead of getting wildcard
  - This will break existing serializers and retrieval of properties
@@ -282,7 +282,7 @@ Changed:
 - Rebalanced big cannon materials to be more accurate with shorter barrels for stronger materials
  - Around 25% reduction in barrel size for steel (12 -> 9 for max charge)
  - Almost 50% reduction in barrel size for nethersteel (24 -> 14 for max charge)
-Fixed:
+### Fixed
 - Fixed invalid cannon propellant combinations due to spelling mistake in data pack folder name
 - Fixed cannon loader pushing without head
 - Fixed lag from cannon being tested during explosion, courtesy of Endalion
@@ -307,20 +307,18 @@ Fixed:
 - Fixed autocannons being able to assemble with two breeches
 - Fixed projectile hitbox not centered on visual projectile
 - Fixed projectiles not chunkloading on world load and on spawn
-[Integration] - Fixed FramedBlocks armor values
-[1.20.1] - Fixed issue with drill boring scrap loot in 1.20.1
+- [Integration] - Fixed FramedBlocks armor values
+- [1.20.1] - Fixed issue with drill boring scrap loot in 1.20.1
 
-===
+## [0.5.4]
 
-0.5.4
+"Now, occasionally you're going to get stuck. It's nothing to get upset about. Don't go hurling your controller at the cat, because it might throw something back, and it'll only escalate, and then, well..."\
+\- Stephen Fry, LittleBigPlanet (2008)
 
-"Now, occasionally you're going to get stuck. It's nothing to get upset about. Don't go hurling your controller at the cat, because it might throw something back, and it'll only escalate, and then, well..."
-- Stephen Fry, LittleBigPlanet (2008)
+**Create Big Cannons 0.5.4, with more QoL features and minor fixes.\
+Now supports Create Fabric 0.5.1.f patch 1.**
 
-Create Big Cannons 0.5.4, with more QoL features and minor fixes.
-Now supports Create Fabric 0.5.1.f patch 1.
-
-Added:
+### Added
 - Added ability for some base Create contraptions to load cannons*
  - Mechanical Piston, Gantry, and Rope Pulley
 - Added Cannon Loader breaking features similar to Mechanical Piston
@@ -355,10 +353,10 @@ Added:
  - #forge:ingots/nethersteel and #c:nethersteel_ingots (item)
  - #forge:storage_blocks/nethersteel and #c:nethersteel_blocks (item)
  - #createbigcannons:molten_nethersteel (fluid)
-[Fabric] - Added REI compatibility
-[Fabric] - Added EMI compatibility
-[Forge] - Added block properties compatibility with Framed Blocks
-Changes:
+- [Fabric] - Added REI compatibility
+- [Fabric] - Added EMI compatibility
+- [Forge] - Added block properties compatibility with Framed Blocks
+### Changes
 - Reduced the stress cost of the Cannon Loader to match that of the Mechanical Piston
 - Reduced default blob count of Fluid Shell
 - Changed minimum spread of cannons, varying by material strength
@@ -372,7 +370,7 @@ Changes:
 - Update ponder documentation for base contraption loading, cannon block breaking, and quick-firing breech loading
 - Changed molten cast iron and molten nethersteel recipes to use tag rather than raw fluid
 - Changed nethersteel item melting to use nethersteel item tags instead of Create Big Cannons nethersteel items
-Fixes:
+### Fixes
 - Fixed drop mortar not dropping stored item if disassembled or broken before fired
 - Fixed drop mortar holding entire stack
 - Fixed glitch-loading, with toggle to re-enable it*
