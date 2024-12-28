@@ -99,6 +99,14 @@ public class FactoryPanelBlockEntity extends SmartBlockEntity {
 				result++;
 		return result;
 	}
+	
+	@Override
+	public void remove() {
+		for (FactoryPanelBehaviour panelBehaviour : panels.values())
+			if (panelBehaviour.isActive())
+				panelBehaviour.disconnectAll();
+		super.remove();
+	}
 
 	@Override
 	public void destroy() {

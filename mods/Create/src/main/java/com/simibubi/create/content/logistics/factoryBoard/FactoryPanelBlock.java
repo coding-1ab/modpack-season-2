@@ -6,8 +6,10 @@ import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.AllSoundEvents;
+import com.simibubi.create.api.schematic.requirement.ISpecialBlockItemRequirement;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
+import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -33,6 +35,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
@@ -51,7 +54,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.level.BlockEvent;
 
 public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
-	implements ProperWaterloggedBlock, IBE<FactoryPanelBlockEntity>, IWrenchable {
+	implements ProperWaterloggedBlock, IBE<FactoryPanelBlockEntity>, IWrenchable, ISpecialBlockItemRequirement {
 
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
@@ -318,17 +321,7 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 
 	@Override
 	public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-		boolean blockChanged = !pState.is(pNewState.getBlock());
-		if (!pIsMoving && blockChanged)
-			if (pState.getValue(POWERED))
-				updateNeighbours(pState, pLevel, pPos);
-
 		IBE.onRemove(pState, pLevel, pPos, pNewState);
-	}
-
-	public static void updateNeighbours(BlockState pState, Level pLevel, BlockPos pPos) {
-		pLevel.updateNeighborsAt(pPos, pState.getBlock());
-		pLevel.updateNeighborsAt(pPos.relative(getConnectedDirection(pState).getOpposite()), pState.getBlock());
 	}
 
 	public PanelSlot getTargetedSlot(BlockPos pos, BlockState blockState, Vec3 clickLocation) {
@@ -376,6 +369,11 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 		AttachFace face = state.getOptionalValue(FactoryPanelBlock.FACE)
 			.orElse(AttachFace.FLOOR);
 		return (face == AttachFace.CEILING ? Mth.PI : 0) + AngleHelper.rad(AngleHelper.horizontalAngle(facing));
+	}
+
+	@Override
+	public ItemRequirement getRequiredItems(BlockState state, BlockEntity blockEntity) {
+		return ItemRequirement.NONE;
 	}
 
 }

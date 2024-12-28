@@ -301,11 +301,6 @@ public class TableClothBlockEntity extends SmartBlockEntity {
 		owner = tag.contains("OwnerUUID") ? tag.getUUID("OwnerUUID") : null;
 		facing = Direction.from2DDataValue(Mth.positiveModulo(tag.getInt("Facing"), 4));
 	}
-//
-//	@Override
-//	protected AABB createRenderBoundingBox() {
-//		return new AABB(worldPosition).inflate(1);
-//	}
 
 	@Override
 	public void destroy() {

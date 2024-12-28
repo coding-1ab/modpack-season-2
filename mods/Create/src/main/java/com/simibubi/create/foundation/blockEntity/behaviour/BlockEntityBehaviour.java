@@ -44,6 +44,13 @@ public abstract class BlockEntityBehaviour {
 	public void write(CompoundTag nbt, boolean clientPacket) {
 
 	}
+	
+	/**
+	 * Called when isSafeNBT == true. Defaults to write()
+	 */
+	public void writeSafe(CompoundTag nbt) {
+		write(nbt, false);
+	}
 
 	public boolean isSafeNBT() {
 		return false;

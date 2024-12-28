@@ -33,6 +33,7 @@ import com.simibubi.create.content.logistics.packagerLink.LogisticsManager;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromise;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
+import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBoard;
@@ -605,6 +606,21 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	}
 
 	@Override
+	public void writeSafe(CompoundTag nbt) {
+		if (!active)
+			return;
+
+		CompoundTag panelTag = new CompoundTag();
+		panelTag.put("Filter", getFilter().serializeNBT());
+		panelTag.putInt("FilterAmount", count);
+		panelTag.putUUID("Freq", network);
+		panelTag.putString("RecipeAddress", recipeAddress);
+		panelTag.putInt("PromiseClearingInterval", -1);
+		panelTag.putInt("RecipeOutput", 1);
+		nbt.put(CreateLang.asId(slot.name()), panelTag);
+	}
+
+	@Override
 	public void write(CompoundTag nbt, boolean clientPacket) {
 		if (!active)
 			return;
@@ -843,6 +859,12 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public int getIngredientStatusColor() {
 		return count == 0 || isMissingAddress() || redstonePowered ? 0x888898
 			: waitingForNetwork ? 0x5B3B3B : satisfied ? 0x9EFF7F : promisedSatisfied ? 0x22AFAF : 0x3D6EBD;
+	}
+
+	@Override
+	public ItemRequirement getRequiredItems() {
+		return isActive() ? new ItemRequirement(ItemRequirement.ItemUseType.CONSUME, AllBlocks.FACTORY_GAUGE.asItem())
+			: ItemRequirement.NONE;
 	}
 
 }

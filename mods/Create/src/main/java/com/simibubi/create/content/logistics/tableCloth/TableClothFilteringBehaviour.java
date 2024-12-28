@@ -41,6 +41,11 @@ public class TableClothFilteringBehaviour extends FilteringBehaviour {
 		return dbe().owner == null || player.getUUID()
 			.equals(dbe().owner);
 	}
+	
+	@Override
+	public boolean isSafeNBT() {
+		return false;
+	}
 
 	@Override
 	public MutableComponent getLabel() {
