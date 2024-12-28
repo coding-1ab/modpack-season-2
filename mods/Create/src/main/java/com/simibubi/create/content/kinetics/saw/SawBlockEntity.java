@@ -329,7 +329,7 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity {
 	private void applyRecipe() {
 		ItemStack input = inventory.getStackInSlot(0);
 		List<ItemStack> list = new ArrayList<>();
-		
+
 		if (PackageItem.isPackage(input)) {
 			inventory.clear();
 			ItemStackHandler results = PackageItem.getContents(input);
@@ -342,7 +342,7 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity {
 				inventory.setStackInSlot(slot + 1, list.get(slot));
 			return;
 		}
-		
+
 		List<? extends Recipe<?>> recipes = getRecipes();
 		if (recipes.isEmpty())
 			return;
@@ -382,8 +382,7 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity {
 			return ImmutableList.of(assemblyRecipe.get());
 
 		Predicate<Recipe<?>> types = RecipeConditions.isOfType(AllRecipeTypes.CUTTING.getType(),
-			AllConfigs.server().recipes.allowStonecuttingOnSaw.get() ? RecipeType.STONECUTTING : null,
-			AllConfigs.server().recipes.allowWoodcuttingOnSaw.get() ? woodcuttingRecipeType.get() : null);
+			AllConfigs.server().recipes.allowStonecuttingOnSaw.get() ? RecipeType.STONECUTTING : null);
 
 		List<Recipe<?>> startedSearch = RecipeFinder.get(cuttingRecipesKey, level, types);
 		return startedSearch.stream()
