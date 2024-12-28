@@ -5,10 +5,7 @@ import com.simibubi.create.AllItems;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-/**
- * Implement this interface on the {@link BlockEntity} that wants to change the icon on the goggle overlay
- */
-public interface IHaveCustomOverlayIcon {
+public sealed interface IHaveCustomOverlayIcon permits IHaveGoggleInformation, IHaveHoveringInformation {
 	/**
 	 * This method will be called when looking at a {@link BlockEntity} that implements this interface
 	 * <p>

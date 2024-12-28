@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 /**
  * Implement this interface on the {@link BlockEntity} that wants to add info to the goggle overlay
  */
-public interface IHaveHoveringInformation {
+public non-sealed interface IHaveHoveringInformation extends IHaveCustomOverlayIcon{
 	/**
 	 * This method will be called when looking at a {@link BlockEntity} that implements this interface
 	 *

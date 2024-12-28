@@ -16,7 +16,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 /**
  * Implement this interface on the {@link BlockEntity} that wants to add info to the goggle overlay
  */
-public interface IHaveGoggleInformation {
+public non-sealed interface IHaveGoggleInformation extends IHaveCustomOverlayIcon {
 	/**
 	 * This method will be called when looking at a {@link BlockEntity} that implements this interface
 	 *
