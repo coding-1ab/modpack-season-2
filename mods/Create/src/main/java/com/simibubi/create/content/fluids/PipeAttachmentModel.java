@@ -33,9 +33,19 @@ import net.minecraftforge.client.model.data.ModelProperty;
 public class PipeAttachmentModel extends BakedModelWrapperWithData {
 
 	private static final ModelProperty<PipeModelData> PIPE_PROPERTY = new ModelProperty<>();
+	private boolean ao;
 
-	public PipeAttachmentModel(BakedModel template) {
+	public static PipeAttachmentModel withAO(BakedModel template) {
+		return new PipeAttachmentModel(template, true);
+	}
+	
+	public static PipeAttachmentModel withoutAO(BakedModel template) {
+		return new PipeAttachmentModel(template, false);
+	}
+	
+	public PipeAttachmentModel(BakedModel template, boolean ao) {
 		super(template);
+		this.ao = ao;
 	}
 
 	@Override
@@ -74,6 +84,21 @@ public class PipeAttachmentModel extends BakedModelWrapperWithData {
 			addQuads(quads, state, side, rand, data, pipeData, renderType);
 		}
 		return quads;
+	}
+	
+	@Override
+	public boolean useAmbientOcclusion(BlockState state, RenderType renderType) {
+		return ao;
+	}
+	
+	@Override
+	public boolean useAmbientOcclusion(BlockState state) {
+		return ao;
+	}
+	
+	@Override
+	public boolean useAmbientOcclusion() {
+		return ao;
 	}
 
 	private void addQuads(List<BakedQuad> quads, BlockState state, Direction side, RandomSource rand, ModelData data,

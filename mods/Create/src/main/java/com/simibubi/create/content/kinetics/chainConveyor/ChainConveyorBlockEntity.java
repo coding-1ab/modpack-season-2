@@ -12,6 +12,8 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
+import com.simibubi.create.api.contraption.transformable.ITransformableBlockEntity;
+import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorPackage.ChainConveyorPackagePhysicsData;
@@ -20,6 +22,8 @@ import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorShape.Cha
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.packagePort.frogport.FrogportBlockEntity;
+import com.simibubi.create.content.schematics.requirement.ItemRequirement;
+import com.simibubi.create.content.schematics.requirement.ItemRequirement.ItemUseType;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
@@ -51,7 +55,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class ChainConveyorBlockEntity extends KineticBlockEntity {
+public class ChainConveyorBlockEntity extends KineticBlockEntity implements ITransformableBlockEntity {
 
 	public record ConnectionStats(float tangentAngle, float chainLength, Vec3 start, Vec3 end) {
 	}
@@ -71,11 +75,13 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 
 	public boolean reversed;
 	public boolean cancelDrops;
+	public boolean checkInvalid;
 
 	BlockPos chainDestroyedEffectToSend;
 
 	public ChainConveyorBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
+		checkInvalid = true;
 	}
 
 	@Override
@@ -124,6 +130,11 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 	@Override
 	public void tick() {
 		super.tick();
+
+		if (checkInvalid && !level.isClientSide()) {
+			checkInvalid = false;
+			removeInvalidConnections();
+		}
 
 		float serverSpeed = level.isClientSide() ? ServerSpeedProvider.get() : 1f;
 		float speed = getSpeed() / 360f;
@@ -181,6 +192,8 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 		for (Entry<BlockPos, List<ChainConveyorPackage>> entry : travellingPackages.entrySet()) {
 			BlockPos target = entry.getKey();
 			ConnectionStats stats = connectionStats.get(target);
+			if (stats == null)
+				continue;
 
 			Travelling: for (Iterator<ChainConveyorPackage> iterator = entry.getValue()
 				.iterator(); iterator.hasNext();) {
@@ -206,7 +219,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 						continue;
 					if (!target.equals(port.connection))
 						continue;
-					
+
 					boolean notAtPositionYet = box.chainPosition < chainPosition;
 					if (notAtPositionYet && anticipatePosition < chainPosition)
 						continue;
@@ -298,6 +311,33 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 		updateBoxWorldPositions();
 	}
 
+	public void removeInvalidConnections() {
+		boolean changed = false;
+		for (Iterator<BlockPos> iterator = connections.iterator(); iterator.hasNext();) {
+			BlockPos next = iterator.next();
+			BlockPos target = worldPosition.offset(next);
+			if (!level.isLoaded(target))
+				continue;
+			if (level.getBlockEntity(target) instanceof ChainConveyorBlockEntity ccbe
+				&& ccbe.connections.contains(next.multiply(-1)))
+				continue;
+			iterator.remove();
+			changed = true;
+		}
+		if (changed)
+			notifyUpdate();
+	}
+
+	public void notifyConnectedToValidate() {
+		for (BlockPos blockPos : connections) {
+			BlockPos target = worldPosition.offset(blockPos);
+			if (!level.isLoaded(target))
+				continue;
+			if (level.getBlockEntity(target) instanceof ChainConveyorBlockEntity ccbe)
+				ccbe.checkInvalid = true;
+		}
+	}
+
 	public void tickBoxVisuals() {
 		for (ChainConveyorPackage box : loopingPackages)
 			tickBoxVisuals(box);
@@ -371,6 +411,8 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 		for (Entry<BlockPos, List<ChainConveyorPackage>> entry : travellingPackages.entrySet()) {
 			BlockPos target = entry.getKey();
 			ConnectionStats stats = connectionStats.get(target);
+			if (stats == null)
+				continue;
 			for (ChainConveyorPackage box : entry.getValue()) {
 				box.worldPosition = getPackagePosition(box.chainPosition, target);
 				if (level == null || !level.isClientSide())
@@ -596,7 +638,8 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 	}
 
 	private void drop(ChainConveyorPackage box) {
-		level.addFreshEntity(PackageEntity.fromItemStack(level, box.worldPosition.subtract(0, 0.5, 0), box.item));
+		if (box.worldPosition != null)
+			level.addFreshEntity(PackageEntity.fromItemStack(level, box.worldPosition.subtract(0, 0.5, 0), box.item));
 	}
 
 	@Override
@@ -615,6 +658,12 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 			return 1;
 		}
 		return super.propagateRotationTo(target, stateFrom, stateTo, diff, connectedViaAxes, connectedViaCogs);
+	}
+
+	@Override
+	public void writeSafe(CompoundTag tag) {
+		super.writeSafe(tag);
+		tag.put("Connections", NBTHelper.writeCompoundList(connections, NbtUtils::writeBlockPos));
 	}
 
 	@Override
@@ -715,6 +764,35 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity {
 
 	public Map<BlockPos, List<ChainConveyorPackage>> getTravellingPackages() {
 		return travellingPackages;
+	}
+
+	@Override
+	public ItemRequirement getRequiredItems(BlockState state) {
+		// Uncomment when Schematicannon is able to print these with chains
+//		int totalCost = 0;
+//		for (BlockPos pos : connections)
+//			totalCost += getChainCost(pos);
+//		if (totalCost > 0)
+//			return new ItemRequirement(ItemUseType.CONSUME, new ItemStack(Items.CHAIN, Mth.ceil(totalCost / 2.0)));
+		return super.getRequiredItems(state);
+	}
+
+	@Override
+	public void transform(StructureTransform transform) {
+		if (connections == null || connections.isEmpty())
+			return;
+
+		connections = new HashSet<>(connections.stream()
+			.map(transform::applyWithoutOffset)
+			.toList());
+
+		HashMap<BlockPos, List<ChainConveyorPackage>> newMap = new HashMap<>();
+		travellingPackages.entrySet()
+			.forEach(e -> newMap.put(transform.applyWithoutOffset(e.getKey()), e.getValue()));
+		travellingPackages = newMap;
+
+		connectionStats = null;
+		notifyUpdate();
 	}
 
 }

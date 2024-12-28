@@ -213,7 +213,12 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 	public boolean isSafeNBT() {
 		return true;
 	}
-
+	
+	@Override
+	public void writeSafe(CompoundTag tag) {
+		tag.putUUID("Freq", freqId);
+	}
+	
 	@Override
 	public void write(CompoundTag tag, boolean clientPacket) {
 		super.write(tag, clientPacket);

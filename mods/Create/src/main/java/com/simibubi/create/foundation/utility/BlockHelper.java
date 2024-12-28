@@ -1,6 +1,5 @@
 package com.simibubi.create.foundation.utility;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
@@ -16,7 +15,6 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.foundation.blockEntity.IMergeableBE;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
-
 import com.simibubi.create.impl.schematic.nbt.SchematicSafeNBTRegistryImpl;
 
 import net.createmod.catnip.utility.NBTProcessors;

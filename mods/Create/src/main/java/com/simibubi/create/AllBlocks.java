@@ -554,7 +554,6 @@ public class AllBlocks {
 				.mapColor(MapColor.PODZOL))
 			.transform(axeOrPickaxe())
 			.transform(BlockStressDefaults.setImpact(1))
-			.tag(AllBlockTags.RELOCATION_NOT_SUPPORTED.tag)
 			.blockstate((c, p) -> p.simpleBlock(c.getEntry(), AssetLookup.partialBaseModel(c, p)))
 			.item()
 			.transform(customItemModel())
@@ -883,7 +882,7 @@ public class AllBlocks {
 		.properties(p -> p.forceSolidOn())
 		.transform(pickaxeOnly())
 		.blockstate(BlockStateGen.pipe())
-		.onRegister(CreateRegistrate.blockModel(() -> PipeAttachmentModel::new))
+		.onRegister(CreateRegistrate.blockModel(() -> PipeAttachmentModel::withoutAO))
 		.item()
 		.transform(customItemModel())
 		.register();
@@ -898,7 +897,7 @@ public class AllBlocks {
 			.onRegister(CreateRegistrate.connectedTextures(() -> new EncasedCTBehaviour(AllSpriteShifts.COPPER_CASING)))
 			.onRegister(CreateRegistrate.casingConnectivity((block, cc) -> cc.make(block, AllSpriteShifts.COPPER_CASING,
 				(s, f) -> !s.getValue(EncasedPipeBlock.FACING_TO_PROPERTY_MAP.get(f)))))
-			.onRegister(CreateRegistrate.blockModel(() -> PipeAttachmentModel::new))
+			.onRegister(CreateRegistrate.blockModel(() -> PipeAttachmentModel::withAO))
 			.loot((p, b) -> p.dropOther(b, FLUID_PIPE.get()))
 			.transform(EncasingRegistry.addVariantTo(AllBlocks.FLUID_PIPE))
 			.register();
@@ -922,7 +921,7 @@ public class AllBlocks {
 							.build();
 					}, BlockStateProperties.WATERLOGGED);
 			})
-			.onRegister(CreateRegistrate.blockModel(() -> PipeAttachmentModel::new))
+			.onRegister(CreateRegistrate.blockModel(() -> PipeAttachmentModel::withoutAO))
 			.loot((p, b) -> p.dropOther(b, FLUID_PIPE.get()))
 			.register();
 
@@ -931,7 +930,7 @@ public class AllBlocks {
 		.properties(p -> p.mapColor(MapColor.STONE))
 		.transform(pickaxeOnly())
 		.blockstate(BlockStateGen.directionalBlockProviderIgnoresWaterlogged(true))
-		.onRegister(CreateRegistrate.blockModel(() -> PipeAttachmentModel::new))
+		.onRegister(CreateRegistrate.blockModel(() -> PipeAttachmentModel::withoutAO))
 		.transform(BlockStressDefaults.setImpact(4.0))
 		.item()
 		.transform(customItemModel())
@@ -943,7 +942,7 @@ public class AllBlocks {
 			.properties(p -> p.mapColor(MapColor.TERRACOTTA_YELLOW))
 			.transform(pickaxeOnly())
 			.blockstate(new SmartFluidPipeGenerator()::generate)
-			.onRegister(CreateRegistrate.blockModel(() -> PipeAttachmentModel::new))
+			.onRegister(CreateRegistrate.blockModel(() -> PipeAttachmentModel::withoutAO))
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -951,10 +950,11 @@ public class AllBlocks {
 	public static final BlockEntry<FluidValveBlock> FLUID_VALVE = REGISTRATE.block("fluid_valve", FluidValveBlock::new)
 		.initialProperties(SharedProperties::copperMetal)
 		.transform(pickaxeOnly())
+		.addLayer(() -> RenderType::cutoutMipped)
 		.blockstate((c, p) -> BlockStateGen.directionalAxisBlock(c, p,
 			(state, vertical) -> AssetLookup.partialBaseModel(c, p, vertical ? "vertical" : "horizontal",
 				state.getValue(FluidValveBlock.ENABLED) ? "open" : "closed")))
-		.onRegister(CreateRegistrate.blockModel(() -> PipeAttachmentModel::new))
+		.onRegister(CreateRegistrate.blockModel(() -> PipeAttachmentModel::withoutAO))
 		.item()
 		.transform(customItemModel())
 		.register();

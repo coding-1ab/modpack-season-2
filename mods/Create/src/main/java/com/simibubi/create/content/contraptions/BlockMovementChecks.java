@@ -24,6 +24,7 @@ import com.simibubi.create.content.decoration.steamWhistle.WhistleExtenderBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock;
 import com.simibubi.create.content.kinetics.crank.HandCrankBlock;
 import com.simibubi.create.content.kinetics.fan.NozzleBlock;
+import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.content.logistics.vault.ItemVaultBlock;
 import com.simibubi.create.content.redstone.link.RedstoneLinkBlock;
 import com.simibubi.create.content.trains.bogey.AbstractBogeyBlock;
@@ -237,7 +238,8 @@ public class BlockMovementChecks {
 			return true;
 		if (block instanceof BasePressurePlateBlock)
 			return true;
-		if (block instanceof FaceAttachedHorizontalDirectionalBlock && !(block instanceof GrindstoneBlock))
+		if (block instanceof FaceAttachedHorizontalDirectionalBlock && !(block instanceof GrindstoneBlock)
+			&& !(block instanceof PackagerLinkBlock))
 			return true;
 		if (block instanceof CartAssemblerBlock)
 			return false;

@@ -79,6 +79,14 @@ public class RedstoneRequesterBlockEntity extends StockCheckingBlockEntity imple
 	}
 
 	@Override
+	public void writeSafe(CompoundTag tag) {
+		super.writeSafe(tag);
+		tag.putBoolean("AllowPartial", allowPartialRequests);
+		tag.putString("EncodedAddress", encodedTargetAdress);
+		tag.put("EncodedRequest", encodedRequest.write());
+	}
+	
+	@Override
 	protected void write(CompoundTag tag, boolean clientPacket) {
 		super.write(tag, clientPacket);
 		tag.putBoolean("Powered", redstonePowered);

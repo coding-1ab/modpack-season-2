@@ -45,7 +45,7 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 	public SmartInventory inventory;
 
 	protected AnimatedContainerBehaviour<PackagePortMenu> openTracker;
-	
+
 	protected LazyOptional<IItemHandler> itemHandler;
 
 	public PackagePortBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -203,7 +203,7 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 	public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
 		return PackagePortMenu.create(pContainerId, pPlayerInventory, this);
 	}
-	
+
 	public int getComparatorOutput() {
 		return ItemHandlerHelper.calcRedstoneFromInventory(inventory);
 	}

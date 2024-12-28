@@ -98,7 +98,7 @@ public abstract class SmartBlockEntity extends CachedRenderBBBlockEntity
 		super.saveAdditional(tag);
 		forEachBehaviour(tb -> {
 			if (tb.isSafeNBT())
-				tb.write(tag, false);
+				tb.writeSafe(tag);
 		});
 	}
 
