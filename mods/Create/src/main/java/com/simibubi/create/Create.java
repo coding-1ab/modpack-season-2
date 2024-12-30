@@ -2,6 +2,8 @@ package com.simibubi.create;
 
 import java.util.Random;
 
+import com.simibubi.create.content.logistics.item.filter.attribute.AllItemAttributeTypes;
+
 import org.slf4j.Logger;
 
 import com.google.gson.Gson;
@@ -130,6 +132,7 @@ public class Create {
 
 		AllConfigs.register(modLoadingContext);
 
+		AllItemAttributeTypes.register(modEventBus);
 		BlockSpoutingBehaviour.registerDefaults();
 
 		// FIXME: some of these registrations are not thread-safe
