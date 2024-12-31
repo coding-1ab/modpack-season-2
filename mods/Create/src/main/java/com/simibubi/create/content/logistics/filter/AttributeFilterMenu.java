@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.simibubi.create.AllMenuTypes;
 
+import com.simibubi.create.content.logistics.item.filter.attribute.ItemAttribute;
+
 import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
@@ -135,7 +137,7 @@ public class AttributeFilterMenu extends AbstractFilterMenu {
 			.getList("MatchedAttributes", Tag.TAG_COMPOUND);
 		attributes.forEach(inbt -> {
 			CompoundTag compound = (CompoundTag) inbt;
-			selectedAttributes.add(Pair.of(ItemAttribute.fromNBT(compound), compound.getBoolean("Inverted")));
+			selectedAttributes.add(Pair.of(ItemAttribute.loadStatic(compound), compound.getBoolean("Inverted")));
 		});
 	}
 
@@ -147,9 +149,8 @@ public class AttributeFilterMenu extends AbstractFilterMenu {
 		selectedAttributes.forEach(at -> {
 			if (at == null)
 				return;
-			CompoundTag compoundNBT = new CompoundTag();
-			at.getFirst()
-					.serializeNBT(compoundNBT);
+
+			CompoundTag compoundNBT = ItemAttribute.saveStatic(at.getFirst());
 			compoundNBT.putBoolean("Inverted", at.getSecond());
 			attributes.add(compoundNBT);
 		});

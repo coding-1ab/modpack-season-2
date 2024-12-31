@@ -15,7 +15,8 @@ import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.filter.AttributeFilterMenu.WhitelistMode;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
-import com.simibubi.create.content.logistics.filter.ItemAttribute;
+import com.simibubi.create.content.logistics.item.filter.attribute.ItemAttribute;
+import com.simibubi.create.content.logistics.item.filter.attribute.attributes.InTagAttribute;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.tableCloth.BlueprintOverlayShopContext;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
@@ -447,15 +448,15 @@ public class BlueprintOverlayRenderer {
 					if (!stackInSlot.isEmpty())
 						list.add(stackInSlot);
 				}
-				return list.toArray(new ItemStack[list.size()]);
+				return list.toArray(ItemStack[]::new);
 			}
 
 			if (AllItems.ATTRIBUTE_FILTER.isIn(itemStack)) {
 				WhitelistMode whitelistMode = WhitelistMode.values()[tag.getInt("WhitelistMode")];
 				ListTag attributes = tag.getList("MatchedAttributes", net.minecraft.nbt.Tag.TAG_COMPOUND);
 				if (whitelistMode == WhitelistMode.WHITELIST_DISJ && attributes.size() == 1) {
-					ItemAttribute fromNBT = ItemAttribute.fromNBT((CompoundTag) attributes.get(0));
-					if (fromNBT instanceof ItemAttribute.InTag inTag) {
+					ItemAttribute fromNBT = ItemAttribute.loadStatic((CompoundTag) attributes.get(0));
+					if (fromNBT instanceof InTagAttribute inTag) {
 						ITagManager<Item> tagManager = ForgeRegistries.ITEMS.tags();
 						if (tagManager.isKnownTagName(inTag.tag)) {
 							ITag<Item> taggedItems = tagManager.getTag(inTag.tag);
