@@ -927,6 +927,12 @@ public abstract class AbstractContraptionEntity extends Entity implements IEntit
 		// Contraptions no longer catch fire
 	}
 
+	// Contraptions shouldn't activate pressure plates and tripwires
+	@Override
+	public boolean isIgnoringBlockTriggers() {
+		return true;
+	}
+
 	public boolean isReadyForRender() {
 		return initialized;
 	}
