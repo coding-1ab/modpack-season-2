@@ -4,14 +4,6 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.simibubi.create.content.logistics.item.filter.attribute.attributes.astralsorcery.AstralSorceryAttunementAttribute;
-
-import com.simibubi.create.content.logistics.item.filter.attribute.attributes.astralsorcery.AstralSorceryCrystalAttribute;
-
-import com.simibubi.create.content.logistics.item.filter.attribute.attributes.astralsorcery.AstralSorceryPerkGemAttribute;
-
-import com.simibubi.create.content.logistics.item.filter.attribute.legacydeserializers.AllItemAttributeLegacyDeserializers;
-
 import org.jetbrains.annotations.ApiStatus;
 
 import com.simibubi.create.AllRecipeTypes;
@@ -29,12 +21,17 @@ import com.simibubi.create.content.logistics.item.filter.attribute.attributes.In
 import com.simibubi.create.content.logistics.item.filter.attribute.attributes.ItemNameAttribute;
 import com.simibubi.create.content.logistics.item.filter.attribute.attributes.ShulkerFillLevelAttribute;
 import com.simibubi.create.content.logistics.item.filter.attribute.attributes.astralsorcery.AstralSorceryAmuletAttribute;
+import com.simibubi.create.content.logistics.item.filter.attribute.attributes.astralsorcery.AstralSorceryAttunementAttribute;
+import com.simibubi.create.content.logistics.item.filter.attribute.attributes.astralsorcery.AstralSorceryCrystalAttribute;
+import com.simibubi.create.content.logistics.item.filter.attribute.attributes.astralsorcery.AstralSorceryPerkGemAttribute;
+import com.simibubi.create.content.logistics.item.filter.attribute.legacydeserializers.AllItemAttributeLegacyDeserializers;
 
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
@@ -90,7 +87,7 @@ public class AllItemAttributeTypes {
 		ASTRAL_CRYSTAL = register("astral_crystal", new AstralSorceryCrystalAttribute.Type()),
 		ASTRAL_PERK_GEM = register("astral_perk_gem", new AstralSorceryPerkGemAttribute.Type());
 
-	private static boolean testRecipe(ItemStack s, Level w, RecipeType<? extends AbstractCookingRecipe> type) {
+	private static <T extends Recipe<Container>> boolean testRecipe(ItemStack s, Level w, RecipeType<T> type) {
 		RECIPE_WRAPPER.setItem(0, s.copy());
 		return w.getRecipeManager()
 			.getRecipeFor(type, RECIPE_WRAPPER, w)

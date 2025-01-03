@@ -74,11 +74,6 @@ public class PulleyBlock extends HorizontalAxisKineticBlock implements IBE<Pulle
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-        return AllShapes.PULLEY.get(state.getValue(HORIZONTAL_AXIS));
-    }
-
-    @Override
     public Class<PulleyBlockEntity> getBlockEntityClass() {
         return PulleyBlockEntity.class;
     }

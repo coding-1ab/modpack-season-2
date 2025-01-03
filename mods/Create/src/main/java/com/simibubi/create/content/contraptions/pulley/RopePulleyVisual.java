@@ -3,13 +3,16 @@ package com.simibubi.create.content.contraptions.pulley;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPartialModels;
+import com.simibubi.create.AllSpriteShifts;
+import com.simibubi.create.content.processing.burner.ScrollInstance;
+import com.simibubi.create.foundation.render.AllInstanceTypes;
 
 import dev.engine_room.flywheel.api.instance.Instancer;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.instance.InstanceTypes;
-import dev.engine_room.flywheel.lib.instance.OrientedInstance;
 import dev.engine_room.flywheel.lib.instance.TransformedInstance;
 import dev.engine_room.flywheel.lib.model.Models;
+import net.createmod.catnip.render.SpriteShiftEntry;
 import net.createmod.catnip.render.VirtualRenderHelper;
 
 public class RopePulleyVisual extends AbstractPulleyVisual<PulleyBlockEntity> {
@@ -33,8 +36,8 @@ public class RopePulleyVisual extends AbstractPulleyVisual<PulleyBlockEntity> {
 	}
 
 	@Override
-	protected Instancer<OrientedInstance> getCoilModel() {
-		return instancerProvider().instancer(InstanceTypes.ORIENTED, Models.partial(AllPartialModels.ROPE_COIL, rotatingAbout));
+	protected Instancer<ScrollInstance> getCoilModel() {
+		return instancerProvider().instancer(AllInstanceTypes.SCROLLING, Models.partial(AllPartialModels.ROPE_COIL));
 	}
 
 	@Override
@@ -51,4 +54,10 @@ public class RopePulleyVisual extends AbstractPulleyVisual<PulleyBlockEntity> {
 	protected boolean isRunning() {
 		return PulleyRenderer.isPulleyRunning(blockEntity);
 	}
+	
+	@Override
+	protected SpriteShiftEntry getCoilAnimation() {
+		return AllSpriteShifts.ROPE_PULLEY_COIL;
+	}
+	
 }

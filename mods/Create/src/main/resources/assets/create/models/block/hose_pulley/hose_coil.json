@@ -1,7 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"2": "create:block/rope_pulley_coil"
+		"2": "create:block/hose_pulley_coil",
+		"particle": "create:block/fluid_tank_inner"
 	},
 	"elements": [
 		{

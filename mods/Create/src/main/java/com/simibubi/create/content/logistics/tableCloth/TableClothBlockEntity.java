@@ -125,7 +125,7 @@ public class TableClothBlockEntity extends SmartBlockEntity {
 			return InteractionResult.SUCCESS;
 
 		manuallyAddedItems.add(heldItem.copyWithCount(1));
-		facing = player.getDirection();
+		facing = player.getDirection().getOpposite();
 		heldItem.shrink(1);
 		if (heldItem.isEmpty())
 			player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);

@@ -77,7 +77,9 @@ public class AllSpriteShifts {
 
 	public static final SpriteShiftEntry ELEVATOR_BELT =
 		get("block/elevator_pulley_belt", "block/elevator_pulley_belt_scroll"),
-		ELEVATOR_COIL = get("block/elevator_pulley_coil", "block/elevator_pulley_coil_scroll");
+		ROPE_PULLEY_COIL = get("block/rope_pulley_coil", "block/rope_pulley_coil_scroll"),
+		ELEVATOR_COIL = get("block/elevator_pulley_coil", "block/elevator_pulley_coil_scroll"),
+		HOSE_PULLEY_COIL = get("block/hose_pulley_coil", "block/hose_pulley_coil_scroll");
 
 	public static final SpriteShiftEntry FACTORY_PANEL_CONNECTIONS =
 		get("block/factory_panel_connections", "block/factory_panel_connections_animated");

@@ -178,7 +178,7 @@ public class HosePulleyBlockEntity extends KineticBlockEntity {
 	}
 
 	public float getInterpolatedOffset(float pt) {
-		return offset.getValue(pt);
+		return Math.max(offset.getValue(pt), 3 / 16f);
 	}
 
 	@Override

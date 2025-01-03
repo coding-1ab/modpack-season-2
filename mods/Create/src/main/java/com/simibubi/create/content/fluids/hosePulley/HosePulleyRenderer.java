@@ -1,10 +1,12 @@
 package com.simibubi.create.content.fluids.hosePulley;
 
 import com.simibubi.create.AllPartialModels;
+import com.simibubi.create.AllSpriteShifts;
 import com.simibubi.create.content.contraptions.pulley.AbstractPulleyRenderer;
 
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SpriteShiftEntry;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction.Axis;
@@ -41,6 +43,11 @@ public class HosePulleyRenderer extends AbstractPulleyRenderer<HosePulleyBlockEn
 	@Override
 	protected float getOffset(HosePulleyBlockEntity be, float partialTicks) {
 		return be.getInterpolatedOffset(partialTicks);
+	}
+	
+	@Override
+	protected SpriteShiftEntry getCoilShift() {
+		return AllSpriteShifts.HOSE_PULLEY_COIL;
 	}
 
 	@Override

@@ -176,7 +176,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		promiseExpiration.setState(behaviour.promiseClearingInterval);
 		addRenderableWidget(promiseExpiration);
 
-		newInputButton = new IconButton(x + 31, y + 63, AllIcons.I_ADD);
+		newInputButton = new IconButton(x + 31, y + 67, AllIcons.I_ADD);
 		newInputButton.withCallback(() -> {
 			FactoryPanelConnectionHandler.startConnection(behaviour);
 			minecraft.setScreen(null);
@@ -188,7 +188,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 		activateCraftingButton = null;
 		if (availableCraftingRecipe != null) {
-			activateCraftingButton = new IconButton(x + 31, y + 43, AllIcons.I_3x3);
+			activateCraftingButton = new IconButton(x + 31, y + 47, AllIcons.I_3x3);
 			activateCraftingButton.withCallback(() -> {
 				craftingActive = !craftingActive;
 				init();
