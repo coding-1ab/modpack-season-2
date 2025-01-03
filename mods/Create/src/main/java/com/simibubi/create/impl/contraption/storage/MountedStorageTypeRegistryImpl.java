@@ -13,6 +13,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryBuilder;
+import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -38,12 +40,13 @@ public class MountedStorageTypeRegistryImpl {
 		if (event.getRegistryKey() != MountedStorageTypeRegistry.ITEMS)
 			return;
 
-		System.out.println("aaaaaaaaa");
-		for (Object o : event.getForgeRegistry()) {
-			System.out.println(o);
-		}
+		register(Blocks.CHEST, AllMountedStorageTypes.CHEST);
+		register(Blocks.TRAPPED_CHEST, AllMountedStorageTypes.CHEST);
+		register(Blocks.DISPENSER, AllMountedStorageTypes.DISPENSER);
+		register(Blocks.DROPPER, AllMountedStorageTypes.DISPENSER);
+	}
 
-		MountedStorageTypeRegistry.ITEMS_BY_BLOCK.register(Blocks.DISPENSER, AllMountedStorageTypes.DISPENSER.get());
-		MountedStorageTypeRegistry.ITEMS_BY_BLOCK.register(Blocks.DROPPER, AllMountedStorageTypes.DISPENSER.get());
+	private static void register(Block block, RegistryObject<? extends MountedItemStorageType<?>> type) {
+		MountedStorageTypeRegistry.ITEMS_BY_BLOCK.register(block, type.get());
 	}
 }

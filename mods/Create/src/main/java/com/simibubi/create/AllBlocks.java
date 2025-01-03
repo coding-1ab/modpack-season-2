@@ -1830,6 +1830,7 @@ public class AllBlocks {
 				.rotationY(s.getValue(ItemVaultBlock.HORIZONTAL_AXIS) == Axis.X ? 90 : 0)
 				.build()))
 		.onRegister(connectedTextures(ItemVaultCTBehaviour::new))
+		.transform(mountedItemStorage(AllMountedStorageTypes.VAULT))
 		.item(ItemVaultItem::new)
 		.build()
 		.register();
@@ -2233,6 +2234,7 @@ public class AllBlocks {
 					.texture("0", p.modLoc("block/toolbox/" + colourName)));
 			})
 			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.create.toolbox"))
+			.transform(mountedItemStorage(AllMountedStorageTypes.TOOLBOX))
 			.tag(AllBlockTags.TOOLBOXES.tag)
 			.item(UncontainableBlockItem::new)
 			.model((c, p) -> p.withExistingParent(colourName + "_toolbox", p.modLoc("block/toolbox/item"))
