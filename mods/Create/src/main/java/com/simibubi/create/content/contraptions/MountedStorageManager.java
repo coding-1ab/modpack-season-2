@@ -164,7 +164,8 @@ public class MountedStorageManager {
 	 */
 	@Nullable
 	public MountedItemStorageWrapper getFuelItems() {
-		return Objects.requireNonNull(this.fuelItems, "Cannot get fuelItems for uninitialized manager");
+		Objects.requireNonNull(this.items, "Cannot get fuelItems for uninitialized manager");
+		return this.fuelItems;
 	}
 
 	/**
