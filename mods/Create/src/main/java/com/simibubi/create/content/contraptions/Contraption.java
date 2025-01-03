@@ -126,7 +126,6 @@ import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import net.minecraftforge.registries.GameData;
 
 public abstract class Contraption {
@@ -266,7 +265,7 @@ public abstract class Contraption {
 			stabilizedSubContraptions.put(movedContraption.getUUID(), new BlockFace(toLocalPos(pos), face));
 		}
 
-		storage.createHandlers();
+		storage.initialize();
 		gatherBBsOffThread();
 	}
 
@@ -340,7 +339,7 @@ public abstract class Contraption {
 				&& !BlockMovementChecks.isNotSupportive(world.getBlockState(attached), offset.getOpposite()))
 				frontier.add(attached);
 		}
-		
+
 		if (world.getBlockEntity(pos) instanceof ChainConveyorBlockEntity ccbe)
 			ccbe.notifyConnectedToValidate();
 
@@ -426,7 +425,7 @@ public abstract class Contraption {
 				frontier.add(offsetPos);
 		}
 
-		addBlock(pos, capture(world, pos));
+		addBlock(world, pos, capture(world, pos));
 		if (blocks.size() <= AllConfigs.server().kinetics.maxBlocksMoved.get())
 			return true;
 		else
@@ -565,7 +564,7 @@ public abstract class Contraption {
 					frontier.add(ropePos);
 				break;
 			}
-			addBlock(ropePos, capture(world, ropePos));
+			addBlock(world, ropePos, capture(world, ropePos));
 		}
 	}
 
@@ -637,24 +636,25 @@ public abstract class Contraption {
 		return Pair.of(new StructureBlockInfo(pos, blockstate, compoundnbt), blockEntity);
 	}
 
-	protected void addBlock(BlockPos pos, Pair<StructureBlockInfo, BlockEntity> pair) {
+	protected void addBlock(Level level, BlockPos pos, Pair<StructureBlockInfo, BlockEntity> pair) {
 		StructureBlockInfo captured = pair.getKey();
 		BlockPos localPos = pos.subtract(anchor);
-		StructureBlockInfo structureBlockInfo = new StructureBlockInfo(localPos, captured.state(), captured.nbt());
+		BlockState state = captured.state();
+		StructureBlockInfo structureBlockInfo = new StructureBlockInfo(localPos, state, captured.nbt());
 
 		if (blocks.put(localPos, structureBlockInfo) != null)
 			return;
 		bounds = bounds.minmax(new AABB(localPos));
 
 		BlockEntity be = pair.getValue();
-		storage.addBlock(localPos, be);
+		storage.addBlock(level, state, pos, localPos, be);
 
 		captureMultiblock(localPos, structureBlockInfo, be);
 
-		if (AllMovementBehaviours.getBehaviour(captured.state()) != null)
+		if (AllMovementBehaviours.getBehaviour(state) != null)
 			actors.add(MutablePair.of(structureBlockInfo, null));
 
-		MovingInteractionBehaviour interactionBehaviour = AllInteractionBehaviours.getBehaviour(captured.state());
+		MovingInteractionBehaviour interactionBehaviour = AllInteractionBehaviours.getBehaviour(state);
 		if (interactionBehaviour != null)
 			interactors.put(localPos, interactionBehaviour);
 
@@ -734,6 +734,8 @@ public abstract class Contraption {
 				});
 			});
 
+		storage.read(nbt);
+
 		actors.clear();
 		nbt.getList("Actors", Tag.TAG_COMPOUND)
 			.forEach(c -> {
@@ -774,8 +776,6 @@ public abstract class Contraption {
 			if (behaviour != null)
 				interactors.put(pos, behaviour);
 		});
-
-		storage.read(nbt, presentBlockEntities, spawnData);
 
 		if (nbt.contains("BoundsFront"))
 			bounds = NBTHelper.readAABB(nbt.getList("BoundsFront", Tag.TAG_FLOAT));
@@ -973,8 +973,6 @@ public abstract class Contraption {
 	}
 
 	public void removeBlocksFromWorld(Level world, BlockPos offset) {
-		storage.removeStorageFromWorld();
-
 		glueToRemove.forEach(glue -> {
 			superglue.add(glue.getBoundingBox()
 				.move(Vec3.atLowerCornerOf(offset.offset(anchor))
@@ -1156,8 +1154,9 @@ public abstract class Contraption {
 					}
 
 					blockEntity.load(tag);
-					storage.addStorageToWorld(block, blockEntity);
 				}
+
+				storage.unmount(world, block, targetPos, blockEntity);
 
 				if (blockEntity != null) {
 					transform.apply(blockEntity);
@@ -1179,8 +1178,6 @@ public abstract class Contraption {
 			if (!world.isClientSide)
 				world.addFreshEntity(new SuperGlueEntity(world, box));
 		}
-
-		storage.clear();
 	}
 
 	protected void translateMultiblockControllers(StructureTransform transform) {
@@ -1448,16 +1445,8 @@ public abstract class Contraption {
 		return maxDistSq;
 	}
 
-	public IItemHandlerModifiable getSharedInventory() {
-		return storage.getItems();
-	}
-
-	public IItemHandlerModifiable getSharedFuelInventory() {
-		return storage.getFuelItems();
-	}
-
-	public IFluidHandler getSharedFluidTanks() {
-		return storage.getFluids();
+	public MountedStorageManager getStorage() {
+		return this.storage;
 	}
 
 	public RenderedBlocks getRenderedBlocks() {
@@ -1483,31 +1472,11 @@ public abstract class Contraption {
 	}
 
 	public void handleContraptionFluidPacket(BlockPos localPos, FluidStack containedFluid) {
-		storage.updateContainedFluid(localPos, containedFluid);
-	}
-
-	public static class ContraptionInvWrapper extends CombinedInvWrapper {
-		protected final boolean isExternal;
-
-		public ContraptionInvWrapper(boolean isExternal, IItemHandlerModifiable... itemHandler) {
-			super(itemHandler);
-			this.isExternal = isExternal;
-		}
-
-		public ContraptionInvWrapper(IItemHandlerModifiable... itemHandler) {
-			this(false, itemHandler);
-		}
-
-		public boolean isSlotExternal(int slot) {
-			if (isExternal)
-				return true;
-			IItemHandlerModifiable handler = getHandlerFromIndex(getIndexForSlot(slot));
-			return handler instanceof ContraptionInvWrapper && ((ContraptionInvWrapper) handler).isSlotExternal(slot);
-		}
+//		storage.updateContainedFluid(localPos, containedFluid);
 	}
 
 	public void tickStorage(AbstractContraptionEntity entity) {
-		storage.entityTick(entity);
+//		storage.entityTick(entity);
 	}
 
 	public boolean containsBlockBreakers() {

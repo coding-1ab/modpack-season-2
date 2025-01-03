@@ -6,6 +6,7 @@ import static com.simibubi.create.Create.REGISTRATE;
 import static com.simibubi.create.content.redstone.displayLink.AllDisplayBehaviours.assignDataBehaviour;
 import static com.simibubi.create.foundation.data.BlockStateGen.axisBlock;
 import static com.simibubi.create.foundation.data.BlockStateGen.simpleCubeAll;
+import static com.simibubi.create.foundation.data.BuilderTransformers.mountedItemStorage;
 import static com.simibubi.create.foundation.data.CreateRegistrate.connectedTextures;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.axeOnly;
@@ -15,6 +16,7 @@ import static com.simibubi.create.foundation.data.TagGen.tagBlockAndItem;
 
 import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.AllTags.AllItemTags;
+import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry;
 import com.simibubi.create.content.contraptions.actors.contraptionControls.ContraptionControlsBlock;
 import com.simibubi.create.content.contraptions.actors.contraptionControls.ContraptionControlsMovement;
 import com.simibubi.create.content.contraptions.actors.contraptionControls.ContraptionControlsMovingInteraction;
@@ -1813,6 +1815,7 @@ public class AllBlocks {
 		REGISTRATE.block("creative_crate", CreativeCrateBlock::new)
 			.transform(BuilderTransformers.crate("creative"))
 			.properties(p -> p.mapColor(MapColor.COLOR_PURPLE))
+			.transform(mountedItemStorage(AllMountedStorageTypes.CREATIVE_CRATE))
 			.register();
 
 	public static final BlockEntry<ItemVaultBlock> ITEM_VAULT = REGISTRATE.block("item_vault", ItemVaultBlock::new)
@@ -2540,7 +2543,7 @@ public class AllBlocks {
 		.transform(BuilderTransformers.palettesIronBlock())
 		.lang("Block of Industrial Iron")
 		.register();
-	
+
 	public static final BlockEntry<Block> WEATHERED_IRON_BLOCK = REGISTRATE.block("weathered_iron_block", Block::new)
 		.transform(BuilderTransformers.palettesIronBlock())
 		.lang("Block of Weathered Iron")

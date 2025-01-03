@@ -10,7 +10,6 @@ import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.ContraptionType;
@@ -39,11 +38,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 public class CarriageContraption extends Contraption {
 
@@ -67,8 +61,12 @@ public class CarriageContraption extends Contraption {
 	public int portalCutoffMin;
 	public int portalCutoffMax;
 
-	static final IItemHandlerModifiable fallbackItems = new ItemStackHandler();
-	static final IFluidHandler fallbackFluids = new FluidTank(0);
+	static final MountedStorageManager fallbackStorage;
+
+	static {
+		fallbackStorage = new MountedStorageManager();
+		fallbackStorage.initialize();
+	}
 
 	public CarriageContraption() {
 		conductorSeats = new HashMap<>();
@@ -321,25 +319,7 @@ public class CarriageContraption extends Contraption {
 	}
 
 	@Override
-	public IItemHandlerModifiable getSharedInventory() {
-		return storageProxy == null ? fallbackItems : storageProxy.getItems();
+	public MountedStorageManager getStorage() {
+		return storageProxy == null ? fallbackStorage : storageProxy;
 	}
-
-	@Override
-	public IFluidHandler getSharedFluidTanks() {
-		return storageProxy == null ? fallbackFluids : storageProxy.getFluids();
-	}
-
-	public void handleContraptionFluidPacket(BlockPos localPos, FluidStack containedFluid) {
-		storage.updateContainedFluid(localPos, containedFluid);
-	}
-
-	@Override
-	public void tickStorage(AbstractContraptionEntity entity) {
-		if (entity.level().isClientSide)
-			storage.entityTick(entity);
-		else if (storageProxy != null)
-			storageProxy.entityTick(entity);
-	}
-
 }

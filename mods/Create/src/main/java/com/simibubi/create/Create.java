@@ -2,6 +2,8 @@ package com.simibubi.create;
 
 import java.util.Random;
 
+import com.simibubi.create.impl.contraption.storage.MountedStorageTypeRegistryImpl;
+
 import org.slf4j.Logger;
 
 import com.google.gson.Gson;
@@ -127,6 +129,7 @@ public class Create {
 		AllPackets.registerPackets();
 		AllFeatures.register(modEventBus);
 		AllPlacementModifiers.register(modEventBus);
+		AllMountedStorageTypes.register(modEventBus);
 
 		AllConfigs.register(modLoadingContext);
 

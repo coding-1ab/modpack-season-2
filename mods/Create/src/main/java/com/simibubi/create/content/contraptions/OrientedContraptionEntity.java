@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllEntityTypes;
+import com.simibubi.create.api.contraption.storage.item.MountedItemStorageWrapper;
 import com.simibubi.create.content.contraptions.bearing.StabilizedContraption;
 import com.simibubi.create.content.contraptions.minecart.MinecartSim2020;
 import com.simibubi.create.content.contraptions.minecart.capability.CapabilityMinecartController;
@@ -434,9 +435,12 @@ public class OrientedContraptionEntity extends AbstractContraptionEntity {
 					.normalize()
 					.scale(1));
 		if (fuel < 5 && contraption != null) {
-			ItemStack coal = ItemHelper.extract(contraption.getSharedInventory(), FUEL_ITEMS, 1, false);
-			if (!coal.isEmpty())
-				fuel += 3600;
+			MountedItemStorageWrapper fuelItems = contraption.getStorage().getFuelItems();
+			if (fuelItems != null) {
+				ItemStack coal = ItemHelper.extract(fuelItems, FUEL_ITEMS, 1, false);
+				if (!coal.isEmpty())
+					fuel += 3600;
+			}
 		}
 
 		if (fuel != fuelBefore || pushX != 0 || pushZ != 0) {

@@ -1,11 +1,15 @@
 package com.simibubi.create.content.contraptions.behaviour;
 
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
+import com.google.common.base.Suppliers;
+import com.simibubi.create.api.contraption.storage.item.MountedItemStorage;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
 
 import net.createmod.catnip.utility.VecHelper;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -35,6 +39,8 @@ public class MovementContext {
 
 	private FilterItemStack filter;
 
+	private final Supplier<MountedItemStorage> storage;
+
 	public MovementContext(Level world, StructureBlockInfo info, Contraption contraption) {
 		this.world = world;
 		this.state = info.state();
@@ -51,6 +57,9 @@ public class MovementContext {
 		data = new CompoundTag();
 		stall = false;
 		filter = null;
+		this.storage = Suppliers.memoize(
+			() -> contraption.getStorage().getMountedItems().storages.get(this.localPos)
+		);
 	}
 
 	public float getAnimationSpeed() {
@@ -94,4 +103,7 @@ public class MovementContext {
 		return filter = FilterItemStack.of(blockEntityData.getCompound("Filter"));
 	}
 
+	public MountedItemStorage getStorage() {
+		return this.storage.get();
+	}
 }

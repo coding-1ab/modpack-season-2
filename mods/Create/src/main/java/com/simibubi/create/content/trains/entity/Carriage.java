@@ -647,7 +647,7 @@ public class Carriage {
 		public void read(CompoundTag tag) {
 			cutoff = tag.getFloat("Cutoff");
 			discardTicks = tag.getInt("DiscardTicks");
-			storage.read(tag, null, false);
+			storage.read(tag);
 			if (tag.contains("Pivot"))
 				pivot = TrackNodeLocation.read(tag.getCompound("Pivot"), null);
 			if (positionAnchor != null)

@@ -218,7 +218,7 @@ public class Train {
 				if (shouldActivate)
 					break;
 
-				IItemHandlerModifiable inv = carriage.storage.getItems();
+				IItemHandlerModifiable inv = carriage.storage.getAllItems();
 				if (inv != null) {
 					for (int slot = 0; slot < inv.getSlots(); slot++) {
 						if (shouldActivate)
@@ -269,7 +269,7 @@ public class Train {
 			updateConductors();
 			return;
 		}
-		
+
 		GlobalStation currentStation = getCurrentStation();
 		if (currentStation != null) {
 			ticksSinceLastMailTransfer++;

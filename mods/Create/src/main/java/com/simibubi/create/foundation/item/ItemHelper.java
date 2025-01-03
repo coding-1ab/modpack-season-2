@@ -7,6 +7,8 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
+import net.minecraftforge.items.IItemHandlerModifiable;
+
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import com.simibubi.create.content.logistics.box.PackageEntity;
@@ -29,7 +31,7 @@ public class ItemHelper {
 	public static boolean sameItem(ItemStack stack, ItemStack otherStack) {
 		return !otherStack.isEmpty() && stack.is(otherStack.getItem());
 	}
-	
+
 	public static Predicate<ItemStack> sameItemPredicate(ItemStack stack) {
 		return s -> sameItem(stack, s);
 	}
@@ -287,7 +289,7 @@ public class ItemHelper {
 		}
 		return -1;
 	}
-	
+
 	public static ItemStack fromItemEntity(Entity entityIn) {
 		if (!entityIn.isAlive())
 			return ItemStack.EMPTY;
@@ -308,5 +310,14 @@ public class ItemHelper {
 			stack.setCount(max);
 		return remainder;
 	}
-	
+
+	public static void copyContents(IItemHandler from, IItemHandlerModifiable to) {
+		if (from.getSlots() != to.getSlots()) {
+			throw new IllegalArgumentException("Slot count mismatch");
+		}
+
+		for (int i = 0; i < from.getSlots(); i++) {
+			to.setStackInSlot(i, from.getStackInSlot(i).copy());
+		}
+	}
 }
