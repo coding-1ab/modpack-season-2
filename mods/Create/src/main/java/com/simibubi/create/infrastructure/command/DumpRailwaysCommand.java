@@ -166,7 +166,7 @@ public class DumpRailwaysCommand {
 					Components.literal("Remove").withStyle(style -> style.withColor(orange))
 			).withStyle(style -> style
 				.withColor(blue)
-				.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/c train kill " + train.id.toString()))
+				.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/c train remove " + train.id.toString()))
 				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Components.literal("Click to remove ").append(train.name)))
 			)
 		);
