@@ -7,7 +7,6 @@ import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
 
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -18,33 +17,33 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class SimpleMountedStorageType extends MountedItemStorageType<SimpleMountedStorage> {
-	protected SimpleMountedStorageType(Codec<SimpleMountedStorage> codec) {
+public abstract class SimpleMountedStorageType<T extends SimpleMountedStorage> extends MountedItemStorageType<SimpleMountedStorage> {
+	protected SimpleMountedStorageType(Codec<T> codec) {
 		super(codec);
-	}
-
-	public SimpleMountedStorageType() {
-		this(SimpleMountedStorage.CODEC);
 	}
 
 	@Override
 	@Nullable
 	public SimpleMountedStorage mount(Level level, BlockState state, BlockPos pos, @Nullable BlockEntity be) {
 		return Optional.ofNullable(be)
-			.map(b -> b.getCapability(ForgeCapabilities.ITEM_HANDLER))
-			.flatMap(LazyOptional::resolve)
-			.flatMap(this::validate)
+			.map(this::getHandler)
 			.map(this::createStorage)
 			.orElse(null);
 	}
 
-	public Optional<IItemHandlerModifiable> validate(IItemHandler handler) {
-		return handler instanceof IItemHandlerModifiable modifiable
-			? Optional.of(modifiable)
-			: Optional.empty();
+	protected IItemHandler getHandler(BlockEntity be) {
+		IItemHandler handler = be.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+		// make sure the handler is modifiable so new contents can be moved over on disassembly
+		return handler instanceof IItemHandlerModifiable modifiable ? modifiable : null;
 	}
 
-	protected SimpleMountedStorage createStorage(IItemHandlerModifiable handler) {
+	protected SimpleMountedStorage createStorage(IItemHandler handler) {
 		return new SimpleMountedStorage(this, handler);
+	}
+
+	public static final class Impl extends SimpleMountedStorageType<SimpleMountedStorage> {
+		public Impl() {
+			super(SimpleMountedStorage.CODEC);
+		}
 	}
 }

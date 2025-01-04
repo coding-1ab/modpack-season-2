@@ -2,19 +2,19 @@ package com.simibubi.create.content.contraptions.behaviour.dispenser.storage;
 
 import com.mojang.serialization.Codec;
 import com.simibubi.create.AllMountedStorageTypes;
+import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
 import com.simibubi.create.api.contraption.storage.item.simple.SimpleMountedStorage;
-import com.simibubi.create.api.contraption.storage.item.simple.SimpleMountedStorageType;
 
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.IItemHandler;
 
 public class DispenserMountedStorage extends SimpleMountedStorage {
-	public static final Codec<SimpleMountedStorage> CODEC = SimpleMountedStorage.codec(DispenserMountedStorage::new);
+	public static final Codec<DispenserMountedStorage> CODEC = SimpleMountedStorage.codec(DispenserMountedStorage::new);
 
-	protected DispenserMountedStorage(SimpleMountedStorageType type, IItemHandlerModifiable handler) {
+	protected DispenserMountedStorage(MountedItemStorageType<?> type, IItemHandler handler) {
 		super(type, handler);
 	}
 
-	public DispenserMountedStorage(IItemHandlerModifiable handler) {
+	public DispenserMountedStorage(IItemHandler handler) {
 		this(AllMountedStorageTypes.DISPENSER.get(), handler);
 	}
 

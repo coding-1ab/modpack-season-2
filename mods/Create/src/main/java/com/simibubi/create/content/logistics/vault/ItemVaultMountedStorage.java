@@ -22,7 +22,7 @@ public class ItemVaultMountedStorage extends WrapperMountedItemStorage<ItemStack
 		ItemVaultMountedStorage::new, storage -> storage.wrapped
 	);
 
-	protected ItemVaultMountedStorage(MountedItemStorageType<? extends ItemVaultMountedStorage> type, ItemStackHandler handler) {
+	protected ItemVaultMountedStorage(MountedItemStorageType<?> type, ItemStackHandler handler) {
 		super(type, handler);
 	}
 

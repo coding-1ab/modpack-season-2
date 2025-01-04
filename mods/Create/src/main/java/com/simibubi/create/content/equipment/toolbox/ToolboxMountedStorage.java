@@ -24,7 +24,7 @@ public class ToolboxMountedStorage extends WrapperMountedItemStorage<ToolboxInve
 		ToolboxMountedStorage::new, storage -> storage.wrapped
 	);
 
-	protected ToolboxMountedStorage(MountedItemStorageType<? extends ToolboxMountedStorage> type, ToolboxInventory wrapped) {
+	protected ToolboxMountedStorage(MountedItemStorageType<?> type, ToolboxInventory wrapped) {
 		super(type, wrapped);
 	}
 

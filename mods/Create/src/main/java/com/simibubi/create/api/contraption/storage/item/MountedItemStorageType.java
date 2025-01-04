@@ -17,9 +17,9 @@ public abstract class MountedItemStorageType<T extends MountedItemStorage> {
 		() -> MountedStorageTypeRegistry.getItemsRegistry().getCodec()
 	);
 
-	public final Codec<T> codec;
+	public final Codec<? extends T> codec;
 
-	protected MountedItemStorageType(Codec<T> codec) {
+	protected MountedItemStorageType(Codec<? extends T> codec) {
 		this.codec = codec;
 	}
 

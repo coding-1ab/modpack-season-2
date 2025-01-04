@@ -23,7 +23,7 @@ public class CreativeCrateMountedStorage extends MountedItemStorage {
 	private final ItemStack suppliedStack;
 	private final ItemStack cachedStackInSlot;
 
-	protected CreativeCrateMountedStorage(MountedItemStorageType<? extends CreativeCrateMountedStorage> type, ItemStack suppliedStack) {
+	protected CreativeCrateMountedStorage(MountedItemStorageType<?> type, ItemStack suppliedStack) {
 		super(type);
 		this.suppliedStack = suppliedStack;
 		this.cachedStackInSlot = suppliedStack.copyWithCount(suppliedStack.getMaxStackSize());

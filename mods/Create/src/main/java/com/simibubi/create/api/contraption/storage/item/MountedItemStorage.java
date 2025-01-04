@@ -20,7 +20,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -35,7 +34,7 @@ public abstract class MountedItemStorage implements IItemHandlerModifiable {
 
 	public final MountedItemStorageType<? extends MountedItemStorage> type;
 
-	protected MountedItemStorage(MountedItemStorageType<? extends MountedItemStorage> type) {
+	protected MountedItemStorage(MountedItemStorageType<?> type) {
 		this.type = Objects.requireNonNull(type);
 	}
 
@@ -60,7 +59,8 @@ public abstract class MountedItemStorage implements IItemHandlerModifiable {
 	 * @return true if the interaction was successful
 	 */
 	public boolean handleInteraction(Player player, Contraption contraption, StructureBlockInfo info) {
-		int slots = this.getSlots();
+		IItemHandlerModifiable handler = this.getHandlerForMenu(info, contraption);
+		int slots = handler.getSlots();
 		if (slots == 0 || slots % 9 != 0)
 			return false;
 
@@ -72,7 +72,6 @@ public abstract class MountedItemStorage implements IItemHandlerModifiable {
 		Vec3 globalPos = contraption.entity.toGlobalVector(Vec3.atCenterOf(localPos), 0);
 		Predicate<Player> stillValid = p -> this.isMenuValid(p, contraption, globalPos);
 		Component menuName = this.getMenuName(info, contraption);
-		IItemHandlerModifiable handler = this.getHandlerForMenu(info, contraption);
 
 		player.openMenu(MountedStorageInteraction.createMenuProvider(menuName, handler, rows, stillValid));
 		this.playOpeningSound(player.level(), globalPos);

@@ -1,5 +1,6 @@
 package com.simibubi.create.api.contraption.storage.item;
 
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import net.minecraftforge.items.ItemStackHandler;
@@ -11,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 public abstract class WrapperMountedItemStorage<T extends IItemHandlerModifiable> extends MountedItemStorage {
 	protected final T wrapped;
 
-	protected WrapperMountedItemStorage(MountedItemStorageType<? extends MountedItemStorage> type, T wrapped) {
+	protected WrapperMountedItemStorage(MountedItemStorageType<?> type, T wrapped) {
 		super(type);
 		this.wrapped = wrapped;
 	}
@@ -54,7 +55,7 @@ public abstract class WrapperMountedItemStorage<T extends IItemHandlerModifiable
 		return this.wrapped.isItemValid(slot, stack);
 	}
 
-	public static ItemStackHandler copyToItemStackHandler(IItemHandlerModifiable handler) {
+	public static ItemStackHandler copyToItemStackHandler(IItemHandler handler) {
 		ItemStackHandler copy = new ItemStackHandler(handler.getSlots());
 		for (int i = 0; i < handler.getSlots(); i++) {
 			copy.setStackInSlot(i, handler.getStackInSlot(i).copy());

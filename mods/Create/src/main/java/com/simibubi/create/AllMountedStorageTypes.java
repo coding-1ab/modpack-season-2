@@ -19,7 +19,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class AllMountedStorageTypes {
 	private static final DeferredRegister<MountedItemStorageType<?>> REGISTER = DeferredRegister.create(MountedStorageTypeRegistry.ITEMS, Create.ID);
 
-	public static final RegistryObject<SimpleMountedStorageType> SIMPLE = REGISTER.register("simple", SimpleMountedStorageType::new);
+	public static final RegistryObject<SimpleMountedStorageType.Impl> SIMPLE = REGISTER.register("simple", SimpleMountedStorageType.Impl::new);
 	public static final RegistryObject<FallbackMountedStorageType> FALLBACK = REGISTER.register("fallback", FallbackMountedStorageType::new);
 	public static final RegistryObject<ChestMountedStorageType> CHEST = REGISTER.register("chest", ChestMountedStorageType::new);
 	public static final RegistryObject<DispenserMountedStorageType> DISPENSER = REGISTER.register("dispenser", DispenserMountedStorageType::new);
