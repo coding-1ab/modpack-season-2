@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.world.item.MobBucketItem;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.Multimap;
@@ -335,6 +337,10 @@ public class DeployerHandler {
 			itemUseWorld = new ItemUseWorld(world, face, pos);
 
 		InteractionResultHolder<ItemStack> onItemRightClick = item.use(itemUseWorld, player, hand);
+
+		if (onItemRightClick.getResult().consumesAction() && item instanceof MobBucketItem bucketItem)
+			bucketItem.checkExtraContent(player, world, stack, clickedPos);
+
 		ItemStack resultStack = onItemRightClick.getObject();
 		if (resultStack != stack || resultStack.getCount() != stack.getCount() || resultStack.getUseDuration() > 0
 			|| resultStack.getDamageValue() != stack.getDamageValue()) {
