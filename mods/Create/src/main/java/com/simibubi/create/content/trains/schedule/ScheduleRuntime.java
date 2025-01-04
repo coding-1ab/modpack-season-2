@@ -68,6 +68,7 @@ public class ScheduleRuntime {
 			return;
 		state = State.POST_TRANSIT;
 		conditionProgress.clear();
+		conditionContext.clear();
 		displayLinkUpdateRequested = true;
 		for (Carriage carriage : train.carriages)
 			carriage.storage.resetIdleCargoTracker();
