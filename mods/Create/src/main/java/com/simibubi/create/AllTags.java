@@ -81,7 +81,6 @@ public class AllTags {
 
 		BRITTLE,
 		CASING,
-		CONTRAPTION_INVENTORY_DENY,
 		COPYCAT_ALLOW,
 		COPYCAT_DENY,
 		FAN_PROCESSING_CATALYSTS_BLASTING(MOD, "fan_processing_catalysts/blasting"),
