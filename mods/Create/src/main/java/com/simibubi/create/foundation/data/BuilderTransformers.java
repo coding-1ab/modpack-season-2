@@ -552,12 +552,4 @@ public class BuilderTransformers {
 				c::get, 2))
 			.simpleItem();
 	}
-
-	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> mountedItemStorage(RegistryObject<? extends MountedItemStorageType<?>> type) {
-		return builder -> builder.onRegisterAfter(
-			MountedStorageTypeRegistry.ITEMS,
-			block -> MountedStorageTypeRegistry.ITEMS_BY_BLOCK.register(block, type.get())
-		);
-	}
-
 }

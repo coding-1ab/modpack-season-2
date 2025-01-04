@@ -2,12 +2,15 @@ package com.simibubi.create.api.contraption.storage;
 
 import com.simibubi.create.Create;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
-import com.simibubi.create.foundation.utility.AttachedRegistry;
+import com.simibubi.create.api.lookup.BlockLookup;
 
 import com.simibubi.create.impl.contraption.storage.MountedStorageTypeRegistryImpl;
 
-import net.minecraftforge.registries.ForgeRegistries;
+import com.tterrag.registrate.builders.BlockBuilder;
+import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
+
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegistryObject;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -18,9 +21,20 @@ public class MountedStorageTypeRegistry {
 		Create.asResource("mounted_item_storage_type")
 	);
 
-	public static final AttachedRegistry<Block, MountedItemStorageType<?>> ITEMS_BY_BLOCK = new AttachedRegistry<>(ForgeRegistries.BLOCKS);
+	public static final BlockLookup<MountedItemStorageType<?>> ITEM_LOOKUP = new BlockLookup<>(MountedStorageTypeRegistryImpl::itemFallback);
 
+	/**
+	 * @throws NullPointerException if called before registry registration
+	 */
 	public static IForgeRegistry<MountedItemStorageType<?>> getItemsRegistry() {
 		return MountedStorageTypeRegistryImpl.getItemsRegistry();
+	}
+
+	/**
+	 * Utility for use with Registrate builders. Creates a builder transformer
+	 * that will register the given MountedItemStorageType to a block when ready.
+	 */
+	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> mountedItemStorage(RegistryObject<? extends MountedItemStorageType<?>> type) {
+		return builder -> builder.onRegisterAfter(ITEMS, block -> ITEM_LOOKUP.register(block, type.get()));
 	}
 }

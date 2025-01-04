@@ -3,6 +3,7 @@ package com.simibubi.create.impl.contraption.storage;
 import java.util.Objects;
 
 import com.simibubi.create.AllMountedStorageTypes;
+import com.simibubi.create.AllTags;
 import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
 
@@ -40,13 +41,23 @@ public class MountedStorageTypeRegistryImpl {
 		if (event.getRegistryKey() != MountedStorageTypeRegistry.ITEMS)
 			return;
 
-		register(Blocks.CHEST, AllMountedStorageTypes.CHEST);
-		register(Blocks.TRAPPED_CHEST, AllMountedStorageTypes.CHEST);
 		register(Blocks.DISPENSER, AllMountedStorageTypes.DISPENSER);
 		register(Blocks.DROPPER, AllMountedStorageTypes.DISPENSER);
 	}
 
 	private static void register(Block block, RegistryObject<? extends MountedItemStorageType<?>> type) {
-		MountedStorageTypeRegistry.ITEMS_BY_BLOCK.register(block, type.get());
+		MountedStorageTypeRegistry.ITEM_LOOKUP.register(block, type.get());
+	}
+
+	public static MountedItemStorageType<?> itemFallback(Block block) {
+		if (AllTags.AllBlockTags.CHEST_MOUNTED_STORAGE.matches(block)) {
+			return AllMountedStorageTypes.CHEST.get();
+		}if (AllTags.AllBlockTags.SIMPLE_MOUNTED_STORAGE.matches(block)) {
+			return AllMountedStorageTypes.SIMPLE.get();
+		} else if (!AllTags.AllBlockTags.FALLBACK_MOUNTED_STORAGE_BLACKLIST.matches(block)) {
+			return AllMountedStorageTypes.FALLBACK.get();
+		} else {
+			return null;
+		}
 	}
 }

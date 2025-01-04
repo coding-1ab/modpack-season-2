@@ -6,8 +6,6 @@ import java.util.Objects;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
-import com.simibubi.create.AllMountedStorageTypes;
-import com.simibubi.create.AllTags;
 import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorage;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
@@ -24,11 +22,9 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -82,7 +78,7 @@ public class MountedStorageManager {
 	}
 
 	public void addBlock(Level level, BlockState state, BlockPos globalPos, BlockPos localPos, @Nullable BlockEntity be) {
-		MountedItemStorageType<?> type = getMountedStorageType(state);
+		MountedItemStorageType<?> type = MountedStorageTypeRegistry.ITEM_LOOKUP.find(state);
 		if (type == null)
 			return;
 
@@ -96,10 +92,10 @@ public class MountedStorageManager {
 		BlockPos localPos = info.pos();
 		MountedItemStorage storage = this.items.storages.get(localPos);
 		if (storage != null) {
-			Block block = info.state().getBlock();
-			MountedItemStorageType<?> expectedType = MountedStorageTypeRegistry.ITEMS_BY_BLOCK.get(block);
-			if (typeMatches(expectedType, storage, info, be)) {
-				storage.unmount(level, info.state(), globalPos, be);
+			BlockState state = info.state();
+			MountedItemStorageType<?> expectedType = MountedStorageTypeRegistry.ITEM_LOOKUP.find(state);
+			if (storage.type == expectedType) {
+				storage.unmount(level, state, globalPos, be);
 			}
 		}
 	}
@@ -124,9 +120,6 @@ public class MountedStorageManager {
 	}
 
 	public void write(CompoundTag nbt, boolean clientPacket) {
-		if (clientPacket)
-			return;
-
 		ListTag items = new ListTag();
 		nbt.put("items", items);
 
@@ -184,53 +177,13 @@ public class MountedStorageManager {
 		if (info == null)
 			return false;
 
-		if (player.level().isClientSide()) {
-			return getMountedStorageType(info.state()) != null;
-		}
-
 		MountedStorageManager storageManager = contraption.getStorageForSpawnPacket();
 		MountedItemStorage storage = storageManager.items.storages.get(localPos);
+
 		if (storage != null) {
-			return storage.handleInteraction(player, contraption, info);
+			return player.level().isClientSide || storage.handleInteraction(player, contraption, info);
 		} else {
 			return false;
-		}
-	}
-
-	private static boolean typeMatches(MountedItemStorageType<?> registered, MountedItemStorage storage,
-									   StructureBlockInfo info, @Nullable BlockEntity be) {
-		MountedItemStorageType<?> actual = storage.type;
-		if (registered == actual)
-			return true;
-		if (registered != null)
-			return false;
-
-		BlockState state = info.state();
-		if (actual == AllMountedStorageTypes.SIMPLE.get()) {
-			return AllTags.AllBlockTags.SIMPLE_MOUNTED_STORAGE.matches(state);
-		} else if (actual == AllMountedStorageTypes.FALLBACK.get() && be != null) {
-			return !AllTags.AllBlockTags.FALLBACK_MOUNTED_STORAGE_BLACKLIST.matches(state)
-				&& be.getCapability(ForgeCapabilities.ITEM_HANDLER)
-				.resolve()
-				.flatMap(AllMountedStorageTypes.FALLBACK.get()::validate)
-				.isPresent();
-		} else {
-			return false;
-		}
-	}
-
-	@Nullable
-	private static MountedItemStorageType<?> getMountedStorageType(BlockState state) {
-		MountedItemStorageType<?> registered = MountedStorageTypeRegistry.ITEMS_BY_BLOCK.get(state.getBlock());
-		if (registered != null)
-			return registered;
-
-		if (AllTags.AllBlockTags.SIMPLE_MOUNTED_STORAGE.matches(state)) {
-			return AllMountedStorageTypes.SIMPLE.get();
-		} else if (!AllTags.AllBlockTags.FALLBACK_MOUNTED_STORAGE_BLACKLIST.matches(state)) {
-			return AllMountedStorageTypes.FALLBACK.get();
-		} else {
-			return null;
 		}
 	}
 }
