@@ -6,7 +6,6 @@ import org.joml.Quaternionf;
 import org.joml.Quaternionfc;
 
 import com.mojang.math.Axis;
-import com.simibubi.create.AllSpriteShifts;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.ShaftVisual;
 import com.simibubi.create.content.processing.burner.ScrollInstance;

@@ -421,8 +421,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			blockEntity.refreshClientStockSnapshot();
 
 		LivingEntity keeper = stockKeeper.get();
-		if (keeper == null || !keeper.isAlive())
-			removed();
+		BlazeBurnerBlockEntity blazeKeeper = blaze.get();
+		if ((keeper == null || !keeper.isAlive()) && (blazeKeeper == null || blazeKeeper.isRemoved()))
+			menu.player.closeContainer();
 	}
 
 	@Override

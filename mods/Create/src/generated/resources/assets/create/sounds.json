@@ -59,6 +59,15 @@
     ],
     "subtitle": "create.subtitle.confirm"
   },
+  "confirm_2": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "create:confirm_2"
+      }
+    ],
+    "subtitle": "create.subtitle.confirm_2"
+  },
   "contraption_assemble": {
     "sounds": [
       {
@@ -225,6 +234,69 @@
       }
     ],
     "subtitle": "create.subtitle.desk_bell"
+  },
+  "frogport_catch_1": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "create:frogport_catch_1"
+      }
+    ],
+    "subtitle": "create.subtitle.frogport_catch_1"
+  },
+  "frogport_catch_2": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "create:frogport_catch_2"
+      }
+    ],
+    "subtitle": "create.subtitle.frogport_catch_2"
+  },
+  "frogport_catch_3": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "create:frogport_catch_3"
+      }
+    ],
+    "subtitle": "create.subtitle.frogport_catch_3"
+  },
+  "frogport_catch_4": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "create:frogport_catch_4"
+      }
+    ],
+    "subtitle": "create.subtitle.frogport_catch_4"
+  },
+  "frogport_close": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "create:frogport_close"
+      }
+    ],
+    "subtitle": "create.subtitle.frogport_close"
+  },
+  "frogport_deposit": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.frog.tongue"
+      }
+    ],
+    "subtitle": "create.subtitle.frogport_deposit"
+  },
+  "frogport_open": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "create:frogport_open"
+      }
+    ],
+    "subtitle": "create.subtitle.frogport_open"
   },
   "funnel_flap": {
     "sounds": [
@@ -487,6 +559,24 @@
       }
     ],
     "subtitle": "create.subtitle.steam"
+  },
+  "stock_ticker_request": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "create:stock_ticker_request"
+      }
+    ],
+    "subtitle": "create.subtitle.stock_ticker_request"
+  },
+  "stock_ticker_trade": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "create:stock_ticker_trade"
+      }
+    ],
+    "subtitle": "create.subtitle.stock_ticker_trade"
   },
   "train": {
     "sounds": [

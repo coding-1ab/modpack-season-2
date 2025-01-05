@@ -3,6 +3,7 @@ package com.simibubi.create.content.logistics.packager;
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.block.IBE;
@@ -97,6 +98,7 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 					be.unwrapBox(itemInHand.copy(), false);
 					be.triggerStockCheck();
 					itemInHand.shrink(1);
+					AllSoundEvents.DEPOT_PLOP.playOnServer(worldIn, pos);
 					if (itemInHand.isEmpty())
 						player.setItemInHand(handIn, ItemStack.EMPTY);
 					return InteractionResult.SUCCESS;
@@ -108,6 +110,7 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 			if (!worldIn.isClientSide()) {
 				player.getInventory()
 					.placeItemBackInInventory(be.heldBox.copy());
+				AllSoundEvents.playItemPickup(player);
 				be.heldBox = ItemStack.EMPTY;
 				be.notifyUpdate();
 			}

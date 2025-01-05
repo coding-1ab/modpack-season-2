@@ -3,6 +3,7 @@ package com.simibubi.create.content.logistics.stockTicker;
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.AllShapes;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
 import com.simibubi.create.foundation.block.IBE;
@@ -69,6 +70,7 @@ public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<
 						.placeItemBackInInventory(
 							stbe.receivedPayments.extractItem(i, stbe.receivedPayments.getStackInSlot(i)
 								.getCount(), false));
+				AllSoundEvents.playItemPickup(pPlayer);
 				return InteractionResult.SUCCESS;
 			}
 

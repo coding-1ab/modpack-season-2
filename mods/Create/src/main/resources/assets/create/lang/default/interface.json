@@ -347,7 +347,7 @@
 	"create.stock_keeper.no_price_set": "Shop owner must set a price first",
 	"create.stock_keeper.keeper_missing": "Stock keeper missing",
 	"create.stock_keeper.out_of_stock": "Out of Stock",
-	"create.stock_keeper.limited_stock": "Limited stock available",
+	"create.stock_keeper.limited_stock": "Stock limit reached",
 	"create.stock_keeper.use_list_to_add_purchases": "Use this list to add more to your purchase",
 	"create.stock_keeper.locked": "Interact using a Shopping list, direct access has been locked",
 	"create.stock_keeper.stock_level_too_low": "Purchase cancelled: Stock levels lower than expected",

@@ -238,7 +238,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	TRAIN_PROMPT_R("widgets", 11, 209, 3, 16),
 	TRAIN_PROMPT("widgets", 0, 230, 256, 16),
 
-	TRADE_OVERLAY("widgets", 136, 97, 98, 48),
+	TRADE_OVERLAY("widgets", 128, 98, 96, 46),
 
 	// PlacementIndicator
 	PLACEMENT_INDICATOR_SHEET("placement_indicator", 0, 0, 16, 256),

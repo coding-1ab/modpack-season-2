@@ -184,6 +184,8 @@ public class StockTickerInteractionHandler {
 
 		tickerBE.broadcastPackageRequest(RequestType.PLAYER, order, null, ShoppingListItem.getAddress(mainHandItem));
 		player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+		if (!order.isEmpty())
+			AllSoundEvents.STOCK_TICKER_TRADE.playOnServer(level, tickerBE.getBlockPos());
 	}
 
 	public static BlockPos getStockTickerPosition(Entity entity) {

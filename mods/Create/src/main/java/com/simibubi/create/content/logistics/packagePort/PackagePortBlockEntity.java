@@ -145,11 +145,17 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 			return InteractionResult.PASS;
 		if (player instanceof FakePlayer)
 			return InteractionResult.PASS;
-		if (level.isClientSide)
-			return InteractionResult.SUCCESS;
-
+		
 		ItemStack mainHandItem = player.getMainHandItem();
-		if (AllBlocks.CLIPBOARD.isIn(mainHandItem)) {
+		boolean clipboard = AllBlocks.CLIPBOARD.isIn(mainHandItem);
+		
+		if (level.isClientSide) {
+			if (!clipboard)
+				onOpenedManually();
+			return InteractionResult.SUCCESS;
+		}
+
+		if (clipboard) {
 			addAddressToClipboard(player, mainHandItem);
 			return InteractionResult.SUCCESS;
 		}
@@ -157,6 +163,8 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 		NetworkHooks.openScreen((ServerPlayer) player, this, worldPosition);
 		return InteractionResult.SUCCESS;
 	}
+
+	protected void onOpenedManually() {};
 
 	private void addAddressToClipboard(Player player, ItemStack mainHandItem) {
 		if (addressFilter == null || addressFilter.isBlank())

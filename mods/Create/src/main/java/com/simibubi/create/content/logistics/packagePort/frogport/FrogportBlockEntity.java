@@ -45,9 +45,11 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 	public float passiveYaw;
 
 	private boolean failedLastExport;
+	private FrogportSounds sounds;
 
 	public FrogportBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
+		sounds = new FrogportSounds();
 		animationProgress = LerpedFloat.linear();
 		anticipationProgress = LerpedFloat.linear();
 		manualOpenAnimationProgress = LerpedFloat.linear()
@@ -106,9 +108,13 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 			anticipationProgress.updateChaseTarget(0);
 
 		manualOpenAnimationProgress.updateChaseTarget(openTracker.openCount > 0 ? 1 : 0);
+		boolean wasOpen = manualOpenAnimationProgress.getValue() > 0;
 
 		anticipationProgress.tickChaser();
 		manualOpenAnimationProgress.tickChaser();
+
+		if (level.isClientSide() && wasOpen && manualOpenAnimationProgress.getValue() == 0)
+			sounds.close(level, worldPosition);
 
 		if (!isAnimationInProgress())
 			return;
@@ -135,6 +141,7 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 		anticipationProgress.startWithValue(0);
 		animationProgress.startWithValue(0);
 		if (level.isClientSide()) {
+//			sounds.close(level, worldPosition);
 			animatedPackage = null;
 			return;
 		}
@@ -161,13 +168,18 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 		animatedPackage = box;
 		currentlyDepositing = deposit;
 
-		if (level != null && level.isClientSide() && !currentlyDepositing) {
-			Vec3 vec = target.getExactTargetLocation(this, level, worldPosition);
-			if (vec != null) {
-				for (int i = 0; i < 5; i++) {
-					level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, AllBlocks.ROPE.getDefaultState()),
-						vec.x, vec.y - level.random.nextFloat() * 0.25, vec.z, 0, 0, 0);
-				}
+		if (level != null && level.isClientSide()) {
+			if (currentlyDepositing) {
+				sounds.depositPackage(level, worldPosition);
+
+			} else {
+				sounds.catchPackage(level, worldPosition);
+				Vec3 vec = target.getExactTargetLocation(this, level, worldPosition);
+				if (vec != null)
+					for (int i = 0; i < 5; i++)
+						level.addParticle(
+							new BlockParticleOption(ParticleTypes.BLOCK, AllBlocks.ROPE.getDefaultState()), vec.x,
+							vec.y - level.random.nextFloat() * 0.25, vec.z, 0, 0, 0);
 			}
 		}
 
@@ -296,6 +308,12 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 			return superTip;
 		TooltipHelper.addHint(tooltip, "hint.blocked_frogport");
 		return true;
+	}
+
+	@Override
+	protected void onOpenedManually() {
+		if (level.isClientSide())
+			sounds.open(level, worldPosition);
 	}
 
 }

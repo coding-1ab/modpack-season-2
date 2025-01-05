@@ -108,8 +108,6 @@ public class TableClothBlock extends Block implements IHaveBigOutline, IWrenchab
 
 		if (!world.isClientSide() && !state.getValue(HAS_BE))
 			world.setBlockAndUpdate(pos, state.cycle(HAS_BE));
-		if (world.isClientSide())
-			return InteractionResult.SUCCESS;
 
 		return onBlockEntityUse(world, pos, dcbe -> dcbe.use(player, ray));
 	}

@@ -64,6 +64,9 @@ public class LogisticsManager {
 
 	public static boolean broadcastPackageRequest(UUID freqId, RequestType type, PackageOrder order,
 		IItemHandler ignoredHandler, String address) {
+		if (order.isEmpty())
+			return false;
+		
 		Multimap<PackagerBlockEntity, PackagingRequest> requests =
 			findPackagersForRequest(freqId, order, null, ignoredHandler, address);
 
