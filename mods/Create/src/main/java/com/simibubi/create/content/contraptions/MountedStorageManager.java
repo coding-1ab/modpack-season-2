@@ -2,7 +2,8 @@ package com.simibubi.create.content.contraptions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.function.Predicate;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
@@ -35,6 +36,8 @@ public class MountedStorageManager {
 
 	private ImmutableMap.Builder<BlockPos, MountedItemStorage> itemsBuilder;
 
+	protected ImmutableMap<BlockPos, MountedItemStorage> allItemStorages;
+
 	protected MountedItemStorageWrapper items;
 	@Nullable
 	protected MountedItemStorageWrapper fuelItems;
@@ -51,17 +54,18 @@ public class MountedStorageManager {
 			throw new IllegalStateException("Mounted storage has already been initialized");
 		}
 
-		this.items = new MountedItemStorageWrapper(this.itemsBuilder.build());
+		this.allItemStorages = this.itemsBuilder.build();
+
+		this.items = new MountedItemStorageWrapper(subMap(
+			this.allItemStorages, storage -> !storage.isInternal()
+		));
+
 		this.allItems = this.items;
 		this.itemsBuilder = null;
 
-		ImmutableMap.Builder<BlockPos, MountedItemStorage> fuel = ImmutableMap.builder();
-		this.items.storages.forEach((pos, storage) -> {
-			if (storage.providesFuel()) {
-				fuel.put(pos, storage);
-			}
-		});
-		ImmutableMap<BlockPos, MountedItemStorage> fuelMap = fuel.build();
+		ImmutableMap<BlockPos, MountedItemStorage> fuelMap = subMap(
+			this.allItemStorages, storage -> !storage.isInternal() && storage.providesFuel()
+		);
 		this.fuelItems = fuelMap.isEmpty() ? null : new MountedItemStorageWrapper(fuelMap);
 	}
 
@@ -69,7 +73,14 @@ public class MountedStorageManager {
 		return this.itemsBuilder == null;
 	}
 
+	private void assertInitialized() {
+		if (!this.isInitialized()) {
+			throw new IllegalStateException("MountedStorageManager is uninitialized");
+		}
+	}
+
 	protected void reset() {
+		this.allItemStorages = null;
 		this.items = null;
 		this.fuelItems = null;
 		this.externalHandlers = new ArrayList<>();
@@ -90,7 +101,7 @@ public class MountedStorageManager {
 
 	public void unmount(Level level, StructureBlockInfo info, BlockPos globalPos, @Nullable BlockEntity be) {
 		BlockPos localPos = info.pos();
-		MountedItemStorage storage = this.items.storages.get(localPos);
+		MountedItemStorage storage = this.getAllItemStorages().get(localPos);
 		if (storage != null) {
 			BlockState state = info.state();
 			MountedItemStorageType<?> expectedType = MountedStorageTypeRegistry.ITEM_LOOKUP.find(state);
@@ -123,7 +134,7 @@ public class MountedStorageManager {
 		ListTag items = new ListTag();
 		nbt.put("items", items);
 
-		this.items.storages.forEach(
+		this.getAllItemStorages().forEach(
 			(pos, storage) -> MountedItemStorage.CODEC.encodeStart(NbtOps.INSTANCE, storage)
 				.result().ifPresent(encoded -> {
 					CompoundTag tag = new CompoundTag();
@@ -146,26 +157,45 @@ public class MountedStorageManager {
 	}
 
 	/**
-	 * @return the item handlers for all mounted storages
+	 * Gets a map of all MountedItemStorages in the contraption, irrelevant of them
+	 * being internal or providing fuel. The methods below are likely more useful.
+	 * @see MountedItemStorage#isInternal()
+	 * @see MountedItemStorage#providesFuel()
 	 */
-	public MountedItemStorageWrapper getMountedItems() {
-		return Objects.requireNonNull(this.items, "Cannot get items for uninitialized manager");
+	public ImmutableMap<BlockPos, MountedItemStorage> getAllItemStorages() {
+		this.assertInitialized();
+		return this.allItemStorages;
 	}
 
 	/**
-	 * @return the item handlers for all mounted storages that may contain fuel, or null if none support it
+	 * Gets an item handler wrapping all non-internal mounted storages. This is not
+	 * the whole contraption inventory as it does not include external storages.
+	 * Most often, you want {@link #getAllItems()}, which does.
+	 */
+	public MountedItemStorageWrapper getMountedItems() {
+		this.assertInitialized();
+		return this.items;
+	}
+
+	/**
+	 * Gets an item handler wrapping all non-internal mounted storages that provide fuel.
+	 * May be null if none are present.
 	 */
 	@Nullable
 	public MountedItemStorageWrapper getFuelItems() {
-		Objects.requireNonNull(this.items, "Cannot get fuelItems for uninitialized manager");
+		this.assertInitialized();
 		return this.fuelItems;
 	}
 
 	/**
-	 * @return the item handler representing all mounted storage and all external storage
+	 * Gets an item handler wrapping all non-internal mounted storages and all external storages.
+	 * Non-internal storages are  mounted storages that are intended to be exposed to the entire
+	 * contraption. External storages are non-mounted storages that are still part of a contraption's
+	 * inventory, such as the inventories of chest minecarts.
 	 */
 	public CombinedInvWrapper getAllItems() {
-		return Objects.requireNonNull(this.allItems, "Cannot get allItems for uninitialized manager");
+		this.assertInitialized();
+		return this.allItems;
 	}
 
 	public IFluidHandler getFluids() {
@@ -178,12 +208,22 @@ public class MountedStorageManager {
 			return false;
 
 		MountedStorageManager storageManager = contraption.getStorageForSpawnPacket();
-		MountedItemStorage storage = storageManager.items.storages.get(localPos);
+		MountedItemStorage storage = storageManager.getAllItemStorages().get(localPos);
 
 		if (storage != null) {
 			return player.level().isClientSide || storage.handleInteraction(player, contraption, info);
 		} else {
 			return false;
 		}
+	}
+
+	private static <K, V> ImmutableMap<K, V> subMap(Map<K, V> map, Predicate<V> predicate) {
+		ImmutableMap.Builder<K, V> builder = ImmutableMap.builder();
+		map.forEach((key, value) -> {
+			if (predicate.test(value)) {
+				builder.put(key, value);
+			}
+		});
+		return builder.build();
 	}
 }

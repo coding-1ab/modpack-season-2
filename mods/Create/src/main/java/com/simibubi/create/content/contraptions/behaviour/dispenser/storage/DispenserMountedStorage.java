@@ -19,7 +19,7 @@ public class DispenserMountedStorage extends SimpleMountedStorage {
 	}
 
 	@Override
-	public boolean providesFuel() {
-		return false;
+	public boolean isInternal() {
+		return true;
 	}
 }

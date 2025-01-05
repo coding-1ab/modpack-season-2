@@ -9,6 +9,9 @@ import com.simibubi.create.content.contraptions.Contraption;
 
 import com.simibubi.create.content.contraptions.MountedStorageInteraction;
 
+import com.simibubi.create.content.contraptions.MountedStorageManager;
+import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
+import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -45,8 +48,20 @@ public abstract class MountedItemStorage implements IItemHandlerModifiable {
 	public abstract void unmount(Level level, BlockState state, BlockPos pos, @Nullable BlockEntity be);
 
 	/**
-	 * @return true if train contraptions can search this storage for fuel.
+	 * Internal mounted storages are not exposed to the larger contraption inventory.
+	 * They are only for internal use, such as access from a {@link MovementBehaviour}.
+	 * Internal storages are still accessible through {@link MovementContext#getStorage()}
+	 * as well as {@link MountedStorageManager#getAllItemStorages()}.
+	 * A storage being internal implies that it does not provide fuel either.
 	 * This is only called once on assembly.
+	 */
+	public boolean isInternal() {
+		return false;
+	}
+
+	/**
+	 * Contraptions may search storage for fuel, such as for powering furnace minecarts
+	 * and trains. Return false if this storage should
 	 */
 	public boolean providesFuel() {
 		return true;

@@ -10,6 +10,8 @@ import com.simibubi.create.content.logistics.filter.FilterItemStack;
 
 import net.createmod.catnip.utility.VecHelper;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -58,7 +60,7 @@ public class MovementContext {
 		stall = false;
 		filter = null;
 		this.storage = Suppliers.memoize(
-			() -> contraption.getStorage().getMountedItems().storages.get(this.localPos)
+			() -> contraption.getStorage().getAllItemStorages().get(this.localPos)
 		);
 	}
 
@@ -103,6 +105,7 @@ public class MovementContext {
 		return filter = FilterItemStack.of(blockEntityData.getCompound("Filter"));
 	}
 
+	@Nullable
 	public MountedItemStorage getStorage() {
 		return this.storage.get();
 	}

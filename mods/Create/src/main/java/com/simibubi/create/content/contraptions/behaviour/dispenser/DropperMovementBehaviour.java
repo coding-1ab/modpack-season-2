@@ -3,13 +3,13 @@ package com.simibubi.create.content.contraptions.behaviour.dispenser;
 import java.util.function.Predicate;
 
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorage;
-import com.simibubi.create.content.contraptions.MountedStorageManager;
 import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.foundation.item.ItemHelper;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraftforge.items.IItemHandler;
 
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -34,7 +34,8 @@ public class DropperMovementBehaviour implements MovementBehaviour {
 		ItemStack stack = context.getStorage().getStackInSlot(slot).copy();
 		if (stack.getCount() == 1 && stack.getMaxStackSize() != 1) {
 			// last one, try to top it off
-			if (!tryTopOff(stack, context.getStorage(), context.contraption.getStorage())) {
+			IItemHandler contraptionInventory = context.contraption.getStorage().getAllItems();
+			if (!tryTopOff(stack, contraptionInventory)) {
 				// failed, abort dispense to preserve filters
 				failDispense(context, pos);
 				return;
@@ -50,22 +51,17 @@ public class DropperMovementBehaviour implements MovementBehaviour {
 		return MovedDefaultDispenseItemBehaviour.INSTANCE;
 	}
 
-	private static boolean tryTopOff(ItemStack stack, MountedItemStorage storage, MountedStorageManager manager) {
+	private static boolean tryTopOff(ItemStack stack, IItemHandler from) {
 		Predicate<ItemStack> test = otherStack -> ItemStack.isSameItemSameTags(stack, otherStack);
-		int originalSize = stack.getCount();
+		int needed = stack.getMaxStackSize() - stack.getCount();
 
-		for (MountedItemStorage otherStorage : manager.getMountedItems().storages.values()) {
-			if (storage == otherStorage)
-				continue;
-
-			int needed = stack.getMaxStackSize() - stack.getCount();
-			ItemStack extracted = ItemHelper.extract(storage, test, ItemHelper.ExtractionCountMode.UPTO, needed, false);
+		ItemStack extracted = ItemHelper.extract(from, test, ItemHelper.ExtractionCountMode.UPTO, needed, false);
+		if (!extracted.isEmpty()) {
 			stack.grow(extracted.getCount());
-			if (stack.getCount() >= stack.getMaxStackSize())
-				break;
+			return true;
 		}
 
-		return stack.getCount() != originalSize;
+		return false;
 	}
 
 	private static int getSlot(MountedItemStorage storage, RandomSource random) {
