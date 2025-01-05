@@ -8,8 +8,10 @@ import org.jetbrains.annotations.ApiStatus;
 import com.simibubi.create.content.logistics.item.filter.attribute.AllItemAttributeTypes;
 import com.simibubi.create.content.logistics.item.filter.attribute.ItemAttribute;
 import com.simibubi.create.content.logistics.item.filter.attribute.ItemAttributeType;
+import com.simibubi.create.content.logistics.item.filter.attribute.attributes.EnchantAttribute;
 import com.simibubi.create.content.logistics.item.filter.attribute.attributes.InTagAttribute;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -27,7 +29,8 @@ public class AllItemAttributeLegacyDeserializers {
 		);
 		createLegacyDeserializer("in_item_group", AllItemAttributeTypes.IN_ITEM_GROUP);
 		createLegacyDeserializer("added_by", AllItemAttributeTypes.ADDED_BY);
-		createLegacyDeserializer("has_enchant", AllItemAttributeTypes.HAS_ENCHANT);
+		createLegacyDeserializer("has_enchant", tag ->
+			new EnchantAttribute(BuiltInRegistries.ENCHANTMENT.get(ResourceLocation.tryParse(tag.getString("id")))));
 		createLegacyDeserializer("shulker_fill_level", AllItemAttributeTypes.SHULKER_FILL_LEVEL);
 		createLegacyDeserializer("has_color", AllItemAttributeTypes.HAS_COLOR);
 		createLegacyDeserializer("has_fluid", AllItemAttributeTypes.HAS_FLUID);

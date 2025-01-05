@@ -137,7 +137,9 @@ public class AttributeFilterMenu extends AbstractFilterMenu {
 			.getList("MatchedAttributes", Tag.TAG_COMPOUND);
 		attributes.forEach(inbt -> {
 			CompoundTag compound = (CompoundTag) inbt;
-			selectedAttributes.add(Pair.of(ItemAttribute.loadStatic(compound), compound.getBoolean("Inverted")));
+			ItemAttribute attribute = ItemAttribute.loadStatic(compound);
+			if (attribute != null)
+				selectedAttributes.add(Pair.of(attribute, compound.getBoolean("Inverted")));
 		});
 	}
 

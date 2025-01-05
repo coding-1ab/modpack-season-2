@@ -71,7 +71,7 @@ public class AllItemAttributeTypes {
 		BLASTABLE = singleton("blastable", (s, w) -> testRecipe(s, w, RecipeType.BLASTING)),
 		COMPOSTABLE = singleton("compostable", s -> ComposterBlock.COMPOSTABLES.containsKey(s.getItem())),
 
-	IN_TAG = register("in_tag", new InTagAttribute.Type()),
+		IN_TAG = register("in_tag", new InTagAttribute.Type()),
 		IN_ITEM_GROUP = register("in_item_group", new InItemGroupAttribute.Type()),
 		ADDED_BY = register("added_by", new AddedByAttribute.Type()),
 		HAS_ENCHANT = register("has_enchant", new EnchantAttribute.Type()),
@@ -82,7 +82,7 @@ public class AllItemAttributeTypes {
 		BOOK_AUTHOR = register("book_author", new BookAuthorAttribute.Type()),
 		BOOK_COPY = register("book_copy", new BookCopyAttribute.Type()),
 
-	ASTRAL_AMULET = register("astral_amulet", new AstralSorceryAmuletAttribute.Type()),
+		ASTRAL_AMULET = register("astral_amulet", new AstralSorceryAmuletAttribute.Type()),
 		ASTRAL_ATTUNMENT = register("astral_attunment", new AstralSorceryAttunementAttribute.Type()),
 		ASTRAL_CRYSTAL = register("astral_crystal", new AstralSorceryCrystalAttribute.Type()),
 		ASTRAL_PERK_GEM = register("astral_perk_gem", new AstralSorceryPerkGemAttribute.Type());

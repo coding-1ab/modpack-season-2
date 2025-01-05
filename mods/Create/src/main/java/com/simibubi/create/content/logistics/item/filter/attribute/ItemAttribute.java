@@ -39,9 +39,9 @@ public interface ItemAttribute {
 		}
 
 		ResourceLocation id = ResourceLocation.tryParse(nbt.getString("id"));
-		if (id == null) {
+		if (id == null)
 			return null;
-		}
+
 		ItemAttributeType type = AllRegistries.ITEM_ATTRIBUTE_TYPES.get().getValue(id);
 		if (type == null) {
 			return null;

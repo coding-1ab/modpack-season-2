@@ -3,6 +3,7 @@ package com.simibubi.create.content.logistics.item.filter.attribute.attributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.createmod.catnip.utility.NBTHelper;
 import net.createmod.catnip.utility.lang.Components;
 
 import org.jetbrains.annotations.NotNull;
@@ -57,13 +58,13 @@ public class EnchantAttribute implements ItemAttribute {
 		ResourceLocation id = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
 		if (id == null)
 			return;
-		nbt.putString("id", id.toString());
+		NBTHelper.writeResourceLocation(nbt, "enchantId", id);
 	}
 
 	@Override
 	public void load(CompoundTag nbt) {
-		if (nbt.contains("id")) {
-			enchantment = ForgeRegistries.ENCHANTMENTS.getValue(ResourceLocation.tryParse(nbt.getString("id")));
+		if (nbt.contains("enchantId")) {
+			enchantment = ForgeRegistries.ENCHANTMENTS.getValue(NBTHelper.readResourceLocation(nbt, "enchantId"));
 		}
 	}
 
