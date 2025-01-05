@@ -1,13 +1,14 @@
 package com.simibubi.create.api.contraption.storage.item;
 
 import java.util.Objects;
+import java.util.OptionalInt;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import com.mojang.serialization.Codec;
 
+import com.simibubi.create.api.contraption.storage.item.menu.MountedStorageMenus;
 import com.simibubi.create.content.contraptions.Contraption;
-
-import com.simibubi.create.content.contraptions.MountedStorageInteraction;
 
 import com.simibubi.create.content.contraptions.MountedStorageManager;
 import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
@@ -23,6 +24,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -74,44 +76,35 @@ public abstract class MountedItemStorage implements IItemHandlerModifiable {
 	 * @return true if the interaction was successful
 	 */
 	public boolean handleInteraction(Player player, Contraption contraption, StructureBlockInfo info) {
-		IItemHandlerModifiable handler = this.getHandlerForMenu(info, contraption);
-		int slots = handler.getSlots();
-		if (slots == 0 || slots % 9 != 0)
-			return false;
-
-		int rows = slots / 9;
-		if (rows > 6)
-			return false;
-
 		BlockPos localPos = info.pos();
-		Vec3 globalPos = contraption.entity.toGlobalVector(Vec3.atCenterOf(localPos), 0);
-		Predicate<Player> stillValid = p -> this.isMenuValid(p, contraption, globalPos);
+		Vec3 localPosVec = Vec3.atCenterOf(localPos);
+		Predicate<Player> stillValid = p -> {
+			Vec3 currentPos = contraption.entity.toGlobalVector(localPosVec, 0);
+			return this.isMenuValid(p, contraption, currentPos);
+		};
 		Component menuName = this.getMenuName(info, contraption);
+		IItemHandlerModifiable handler = this.getHandlerForMenu(info, contraption);
+		Consumer<Player> onClose = p -> {
+			Vec3 newPos = contraption.entity.toGlobalVector(localPosVec, 0);
+			this.playClosingSound(p.level(), newPos);
+		};
 
-		player.openMenu(MountedStorageInteraction.createMenuProvider(menuName, handler, rows, stillValid));
-		this.playOpeningSound(player.level(), globalPos);
-		return true;
+		OptionalInt id = player.openMenu(this.createMenuProvider(menuName, handler, stillValid, onClose));
+		if (id.isPresent()) {
+			Vec3 globalPos = contraption.entity.toGlobalVector(localPosVec, 0);
+			this.playOpeningSound(player.level(), globalPos);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
-	 * Play the sound made by opening this storage's GUI.
-	 * @see #handleInteraction(Player, Contraption, StructureBlockInfo)
+	 * Get the item handler that will be used by this storage's menu. This is useful for
+	 * handling multi-blocks, such as double chests.
 	 */
-	protected void playOpeningSound(Level level, Vec3 pos) {
-		level.playSound(
-			null, BlockPos.containing(pos),
-			SoundEvents.BARREL_OPEN, SoundSource.BLOCKS,
-			0.75f, 1f
-		);
-	}
-
-	/**
-	 * @return the title to be shown in the GUI when this storage is opened
-	 * @see #handleInteraction(Player, Contraption, StructureBlockInfo)
-	 */
-	protected Component getMenuName(StructureBlockInfo info, Contraption contraption) {
-		MutableComponent blockName = info.state().getBlock().getName();
-		return CreateLang.translateDirect("contraptions.moving_container", blockName);
+	protected IItemHandlerModifiable getHandlerForMenu(StructureBlockInfo info, Contraption contraption) {
+		return this;
 	}
 
 	/**
@@ -124,10 +117,36 @@ public abstract class MountedItemStorage implements IItemHandlerModifiable {
 	}
 
 	/**
-	 * Get the item handler that will be used by this storage's menu. This is useful for
-	 * handling multi-blocks, such as double chests.
+	 * @return the title to be shown in the GUI when this storage is opened
 	 */
-	protected IItemHandlerModifiable getHandlerForMenu(StructureBlockInfo info, Contraption contraption) {
-		return this;
+	protected Component getMenuName(StructureBlockInfo info, Contraption contraption) {
+		MutableComponent blockName = info.state().getBlock().getName();
+		return CreateLang.translateDirect("contraptions.moving_container", blockName);
+	}
+
+	/**
+	 * @return a MenuProvider that provides the menu players will see when opening this storage
+	 */
+	@Nullable
+	protected MenuProvider createMenuProvider(Component name, IItemHandlerModifiable handler,
+											  Predicate<Player> stillValid, Consumer<Player> onClose) {
+		return MountedStorageMenus.createGeneric(name, handler, stillValid, onClose);
+	}
+
+	/**
+	 * Play the sound made by opening this storage's GUI.
+	 */
+	protected void playOpeningSound(Level level, Vec3 pos) {
+		level.playSound(
+			null, BlockPos.containing(pos),
+			SoundEvents.BARREL_OPEN, SoundSource.BLOCKS,
+			0.75f, 1f
+		);
+	}
+
+	/**
+	 * Play the sound made by closing this storage's GUI.
+	 */
+	protected void playClosingSound(Level level, Vec3 pos) {
 	}
 }

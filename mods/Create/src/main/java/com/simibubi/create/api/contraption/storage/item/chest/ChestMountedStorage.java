@@ -10,6 +10,7 @@ import com.simibubi.create.content.contraptions.Contraption;
 
 import com.simibubi.create.foundation.item.ItemHelper;
 
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -20,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -28,10 +31,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Mounted storage that handles opening a combined GUI for double chests.
  */
+@Mod.EventBusSubscriber
 public class ChestMountedStorage extends SimpleMountedStorage {
 	public static final Codec<ChestMountedStorage> CODEC = SimpleMountedStorage.codec(ChestMountedStorage::new);
 
@@ -89,5 +94,23 @@ public class ChestMountedStorage extends SimpleMountedStorage {
 		return facing == thisFacing && type == thisType.getOpposite()
 			? contraption.getStorage().getMountedItems().storages.get(localPos)
 			: null;
+	}
+
+	@Override
+	protected void playOpeningSound(Level level, Vec3 pos) {
+		level.playSound(
+			null, BlockPos.containing(pos),
+			SoundEvents.CHEST_OPEN, SoundSource.BLOCKS,
+			0.75f, 1f
+		);
+	}
+
+	@Override
+	protected void playClosingSound(Level level, Vec3 pos) {
+		level.playSound(
+			null, BlockPos.containing(pos),
+			SoundEvents.CHEST_CLOSE, SoundSource.BLOCKS,
+			0.75f, 1f
+		);
 	}
 }
