@@ -63,26 +63,33 @@ public class CopperBlockSet {
 	protected final Map<Variant<?>, BlockEntry<?>[]> entries = new HashMap<>();
 	protected final NonNullBiConsumer<DataGenContext<Block, ?>, RegistrateRecipeProvider> mainBlockRecipe;
 	protected final String endTextureName;
+	protected final NonNullBiConsumer<WeatherState, Block> onRegister;
 
 	public CopperBlockSet(AbstractRegistrate<?> registrate, String name, String endTextureName, Variant<?>[] variants) {
-		this(registrate, name, endTextureName, variants, NonNullBiConsumer.noop(), "copper/");
+		this(registrate, name, endTextureName, variants, NonNullBiConsumer.noop(), "copper/", NonNullBiConsumer.noop());
 	}
 
 	public CopperBlockSet(AbstractRegistrate<?> registrate, String name, String endTextureName, Variant<?>[] variants, String generalDirectory) {
-		this(registrate, name, endTextureName, variants, NonNullBiConsumer.noop(), generalDirectory);
+		this(registrate, name, endTextureName, variants, NonNullBiConsumer.noop(), generalDirectory, NonNullBiConsumer.noop());
 	}
 
 	public CopperBlockSet(AbstractRegistrate<?> registrate, String name, String endTextureName, Variant<?>[] variants, NonNullBiConsumer<DataGenContext<Block, ?>, RegistrateRecipeProvider> mainBlockRecipe) {
-		this(registrate, name, endTextureName, variants, mainBlockRecipe, "copper/");
+		this(registrate, name, endTextureName, variants, mainBlockRecipe, "copper/", NonNullBiConsumer.noop());
+	}
+	
+	public CopperBlockSet(AbstractRegistrate<?> registrate, String name, String endTextureName, Variant<?>[] variants, NonNullBiConsumer<DataGenContext<Block, ?>, RegistrateRecipeProvider> mainBlockRecipe, NonNullBiConsumer<WeatherState, Block> onRegister) {
+		this(registrate, name, endTextureName, variants, mainBlockRecipe, "copper/", onRegister);
 	}
 
 	public CopperBlockSet(AbstractRegistrate<?> registrate, String name, String endTextureName, Variant<?>[] variants,
-		NonNullBiConsumer<DataGenContext<Block, ?>, RegistrateRecipeProvider> mainBlockRecipe, String generalDirectory) {
+		NonNullBiConsumer<DataGenContext<Block, ?>, RegistrateRecipeProvider> mainBlockRecipe, String generalDirectory, NonNullBiConsumer<WeatherState, Block> onRegister) {
 		this.name = name;
 		this.generalDirectory = generalDirectory;
 		this.endTextureName = endTextureName;
 		this.variants = variants;
 		this.mainBlockRecipe = mainBlockRecipe;
+		this.onRegister = onRegister;
+		
 		for (boolean waxed : Iterate.falseAndTrue) {
 			for (Variant<?> variant : this.variants) {
 				BlockEntry<?>[] entries =
@@ -128,6 +135,7 @@ public class CopperBlockSet {
 			.blockstate((ctx, prov) -> variant.generateBlockState(ctx, prov, this, state, waxed))
 			.recipe((c, p) -> variant.generateRecipes(entries.get(BlockVariant.INSTANCE)[state.ordinal()], c, p))
 			.transform(TagGen.pickaxeOnly())
+			.onRegister(block -> onRegister.accept(state, block))
 			.tag(BlockTags.NEEDS_STONE_TOOL)
 			.simpleItem();
 

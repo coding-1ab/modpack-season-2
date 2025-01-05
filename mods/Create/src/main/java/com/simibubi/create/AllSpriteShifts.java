@@ -13,12 +13,16 @@ import com.simibubi.create.foundation.block.connected.CTType;
 import net.createmod.catnip.render.SpriteShiftEntry;
 import net.createmod.catnip.render.SpriteShifter;
 import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.lang.Lang;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.WeatheringCopper.WeatherState;
 import net.minecraft.world.level.block.state.properties.WoodType;
 
 public class AllSpriteShifts {
 
 	private static final Map<WoodType, CTSpriteShiftEntry> WOODEN_WINDOWS = new IdentityHashMap<>();
+	public static final Map<WeatherState, CTSpriteShiftEntry> COPPER_SHINGLES = new EnumMap<>(WeatherState.class);
+	public static final Map<WeatherState, CTSpriteShiftEntry> COPPER_TILES = new EnumMap<>(WeatherState.class);
 
 	public static final Map<DyeColor, SpriteShiftEntry> DYED_BELTS = new EnumMap<>(DyeColor.class),
 		DYED_OFFSET_BELTS = new EnumMap<>(DyeColor.class), DYED_DIAGONAL_BELTS = new EnumMap<>(DyeColor.class);
@@ -107,6 +111,12 @@ public class AllSpriteShifts {
 			DYED_OFFSET_BELTS.put(color, get("block/belt_offset", "block/belt/" + id + "_scroll"));
 			DYED_DIAGONAL_BELTS.put(color, get("block/belt_diagonal", "block/belt/" + id + "_diagonal_scroll"));
 		}
+
+		for (WeatherState state : WeatherState.values()) {
+			String pref = "copper/" + (state == WeatherState.UNAFFECTED ? "" : Lang.asId(state.name()) + "_");
+			COPPER_SHINGLES.put(state, getCT(AllCTTypes.ROOF, pref + "copper_roof_top", pref + "copper_shingles_top"));
+			COPPER_TILES.put(state, getCT(AllCTTypes.ROOF, pref + "copper_roof_top", pref + "copper_tiles_top"));
+		}
 	}
 
 	private static Couple<CTSpriteShiftEntry> vault(String name) {
@@ -150,5 +160,5 @@ public class AllSpriteShifts {
 	public static CTSpriteShiftEntry getWoodenWindow(WoodType woodType) {
 		return WOODEN_WINDOWS.get(woodType);
 	}
-
+	
 }
