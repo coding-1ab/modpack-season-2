@@ -75,7 +75,7 @@ public class AnimatedSpout extends AnimatedKinetics {
 		float from = 3f / 16f;
 		float to = 17f / 16f;
 		FluidStack fluidStack = fluids.get(0);
-		FluidRenderer.renderFluidBox(fluidStack.getFluid(), fluidStack.getAmount(), from, from, from, to, to, to, buffer, matrixStack, LightTexture.FULL_BRIGHT, false);
+		FluidRenderer.renderFluidBox(fluidStack.getFluid(), fluidStack.getAmount(), from, from, from, to, to, to, buffer, matrixStack, LightTexture.FULL_BRIGHT, false, true);
 		matrixStack.popPose();
 
 		float width = 1 / 128f * squeeze;
@@ -85,7 +85,7 @@ public class AnimatedSpout extends AnimatedKinetics {
 		matrixStack.translate(-0.5f, 0, -0.5f);
 		from = -width / 2 + 0.5f;
 		to = width / 2 + 0.5f;
-		FluidRenderer.renderFluidBox(fluidStack.getFluid(), fluidStack.getAmount(), from, 0, from, to, 2, to, buffer, matrixStack, LightTexture.FULL_BRIGHT, false);
+		FluidRenderer.renderFluidBox(fluidStack.getFluid(), fluidStack.getAmount(), from, 0, from, to, 2, to, buffer, matrixStack, LightTexture.FULL_BRIGHT, false, true);
 		buffer.endBatch();
 		Lighting.setupFor3DItems();
 
