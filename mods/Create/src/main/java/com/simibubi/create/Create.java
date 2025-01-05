@@ -131,9 +131,9 @@ public class Create {
 
 		AllConfigs.register(modLoadingContext);
 
-		AllItemAttributeTypes.register(modEventBus);
 		AllArmInteractionPointTypes.register(modEventBus);
 		AllFanProcessingTypes.register(modEventBus);
+		AllItemAttributeTypes.register(modEventBus);
 		BlockSpoutingBehaviour.registerDefaults();
 
 		// FIXME: some of these registrations are not thread-safe
