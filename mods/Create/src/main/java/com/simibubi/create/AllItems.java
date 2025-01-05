@@ -29,6 +29,7 @@ import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
 import com.simibubi.create.content.equipment.armor.CardboardHelmetItem;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
 import com.simibubi.create.content.equipment.armor.DivingHelmetItem;
+import com.simibubi.create.content.equipment.armor.TrimmableArmorModelGenerator;
 import com.simibubi.create.content.equipment.blueprint.BlueprintItem;
 import com.simibubi.create.content.equipment.extendoGrip.ExtendoGripItem;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
@@ -322,25 +323,29 @@ public class AllItems {
 	public static final ItemEntry<? extends BaseArmorItem>
 
 	CARDBOARD_HELMET = REGISTRATE.item("cardboard_helmet", p -> new CardboardHelmetItem(ArmorItem.Type.HELMET, p))
-		.tag(forgeItemTag("armors/helmet"))
+		.tag(forgeItemTag("armors/helmet"), ItemTags.TRIMMABLE_ARMOR)
 		.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+		.model(TrimmableArmorModelGenerator::generate)
 		.register(),
 
 		CARDBOARD_CHESTPLATE =
 			REGISTRATE.item("cardboard_chestplate", p -> new CardboardArmorItem(ArmorItem.Type.CHESTPLATE, p))
-				.tag(forgeItemTag("armors/chestplate"))
+				.tag(forgeItemTag("armors/chestplate"), ItemTags.TRIMMABLE_ARMOR)
 				.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+				.model(TrimmableArmorModelGenerator::generate)
 				.register(),
 
 		CARDBOARD_LEGGINGS =
 			REGISTRATE.item("cardboard_leggings", p -> new CardboardArmorItem(ArmorItem.Type.LEGGINGS, p))
-				.tag(forgeItemTag("armors/leggings"))
+				.tag(forgeItemTag("armors/leggings"), ItemTags.TRIMMABLE_ARMOR)
 				.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+				.model(TrimmableArmorModelGenerator::generate)
 				.register(),
 
 		CARDBOARD_BOOTS = REGISTRATE.item("cardboard_boots", p -> new CardboardArmorItem(ArmorItem.Type.BOOTS, p))
-			.tag(forgeItemTag("armors/boots"))
+			.tag(forgeItemTag("armors/boots"), ItemTags.TRIMMABLE_ARMOR)
 			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+			.model(TrimmableArmorModelGenerator::generate)
 			.register();
 
 	public static final ItemEntry<SandPaperItem> SAND_PAPER = REGISTRATE.item("sand_paper", SandPaperItem::new)
@@ -422,7 +427,7 @@ public class AllItems {
 			packageItem.register();
 		}
 	}
-	
+
 	public static final ItemEntry<FilterItem> FILTER = REGISTRATE.item("filter", FilterItem::regular)
 		.lang("List Filter")
 		.register(),

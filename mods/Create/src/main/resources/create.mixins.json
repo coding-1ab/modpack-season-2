@@ -7,6 +7,7 @@
   "refmap": "create.refmap.json",
   "plugin": "com.simibubi.create.foundation.mixin.CreateMixinPlugin",
   "mixins": [
+    "ArmorTrimMixin",
     "BlockItemMixin",
     "ClientboundMapItemDataPacketMixin",
     "ContraptionDriverInteractMixin",
@@ -24,7 +25,9 @@
     "accessor.FlowingFluidAccessor",
     "accessor.FluidInteractionRegistryAccessor",
     "accessor.GameTestHelperAccessor",
+    "accessor.ItemModelGeneratorsAccessor",
     "accessor.LivingEntityAccessor",
+    "accessor.ModelBuilderAccessor",
     "accessor.NbtAccounterAccessor",
     "accessor.ServerLevelAccessor",
     "accessor.SystemReportAccessor",
