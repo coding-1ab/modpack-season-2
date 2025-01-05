@@ -138,6 +138,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 	private List<Rect2i> extraAreas = Collections.emptyList();
 
 	private Set<Integer> hiddenCategories;
+	private InventorySummary forcedEntries;
 
 	public StockKeeperRequestScreen(StockKeeperRequestMenu container, Inventory inv, Component title) {
 		super(container, inv, title);
@@ -161,6 +162,8 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		menu.screenReference = this;
 		hiddenCategories =
 			new HashSet<>(blockEntity.hiddenCategoriesByPlayer.getOrDefault(menu.player.getUUID(), List.of()));
+		
+		forcedEntries = new InventorySummary();
 
 		itemToProgram = menu.player.getMainHandItem();
 		encodeRequester =
@@ -387,6 +390,16 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		super.containerTick();
 		addressBox.tick();
 
+		if (!forcedEntries.isEmpty()) {
+			InventorySummary summary = blockEntity.getLastClientsideStockSnapshotAsSummary();
+			for (BigItemStack stack : forcedEntries.getStacks()) {
+				int limitedAmount = -stack.count - 1;
+				int actualAmount = summary.getCountOf(stack.stack);
+				if (actualAmount <= limitedAmount)
+					summary.erase(stack.stack);
+			}
+		}
+		
 		boolean allEmpty = true;
 		for (List<BigItemStack> list : displayedItems)
 			allEmpty &= list.isEmpty();
@@ -777,8 +790,14 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		int customCount = entry.count;
 		if (!isRenderingOrders) {
 			BigItemStack order = getOrderForItem(entry.stack);
-			if (order != null && entry.count < BigItemStack.INF)
-				customCount -= order.count;
+			if (entry.count < BigItemStack.INF) {
+				int forcedCount = forcedEntries.getCountOf(entry.stack);
+				if (forcedCount != 0)
+					customCount = Math.min(customCount, -forcedCount - 1);
+				if (order != null)
+					customCount -= order.count;
+				customCount = Math.max(0, customCount);
+			}
 			AllGuiTextures.STOCK_KEEPER_REQUEST_SLOT.render(graphics, 0, 0);
 		}
 
@@ -1253,6 +1272,16 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		if (itemsToOrder.isEmpty())
 			return;
 
+		forcedEntries = new InventorySummary();
+		InventorySummary summary = blockEntity.getLastClientsideStockSnapshotAsSummary();
+		for (BigItemStack toOrder : itemsToOrder) {
+			// momentarily cut the displayed stack size until the stock updates come in
+			int countOf = summary.getCountOf(toOrder.stack);
+			if (countOf == BigItemStack.INF)
+				continue;
+			forcedEntries.add(toOrder.stack, -1 - Math.max(0, countOf - toOrder.count));
+		}
+		
 		AllPackets.getChannel()
 			.sendToServer(new PackageOrderRequestPacket(blockEntity.getBlockPos(), new PackageOrder(itemsToOrder),
 				addressBox.getValue(), encodeRequester));

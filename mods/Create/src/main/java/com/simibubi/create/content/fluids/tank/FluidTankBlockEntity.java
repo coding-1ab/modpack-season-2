@@ -118,6 +118,13 @@ public class FluidTankBlockEntity extends SmartBlockEntity implements IHaveGoggl
 		if (isController())
 			boiler.tick(this);
 	}
+	
+	@Override
+	public void lazyTick() {
+		super.lazyTick();
+		if (isController())
+			boiler.updateOcclusion(this);
+	}
 
 	@Override
 	public BlockPos getLastKnownPos() {

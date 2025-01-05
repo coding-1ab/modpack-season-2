@@ -36,6 +36,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -66,6 +67,7 @@ public class BoilerData {
 	private int maxHeatForWater = 0;
 	private int minValue = 0;
 	private int maxValue = 0;
+	public boolean[] occludedDirections = { true, true, true, true };
 
 	public LerpedFloat gauge = LerpedFloat.linear();
 
@@ -122,6 +124,23 @@ public class BoilerData {
 			controller.award(AllAdvancements.STEAM_ENGINE_MAXED);
 
 		controller.notifyUpdate();
+	}
+
+	public void updateOcclusion(FluidTankBlockEntity controller) {
+		if (!controller.getLevel().isClientSide)
+			return;
+		if (attachedEngines + attachedWhistles == 0)
+			return;
+		for (Direction d : Iterate.horizontalDirections) {
+			AABB aabb =
+				new AABB(controller.getBlockPos()).move(controller.width / 2f - .5f, 0, controller.width / 2f - .5f)
+					.deflate(5f / 8);
+			aabb = aabb.move(d.getStepX() * (controller.width / 2f + 1 / 4f), 0,
+				d.getStepZ() * (controller.width / 2f + 1 / 4f));
+			aabb = aabb.inflate(Math.abs(d.getStepZ()) / 2f, 0.25f, Math.abs(d.getStepX()) / 2f);
+			occludedDirections[d.get2DDataValue()] = !controller.getLevel()
+				.noCollision(aabb);
+		}
 	}
 
 	public void queueSoundOnSide(BlockPos pos, Direction side) {
