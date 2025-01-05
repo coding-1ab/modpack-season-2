@@ -58,6 +58,7 @@ import com.simibubi.create.content.decoration.CardboardBlock;
 import com.simibubi.create.content.decoration.CardboardBlockItem;
 import com.simibubi.create.content.decoration.MetalLadderBlock;
 import com.simibubi.create.content.decoration.MetalScaffoldingBlock;
+import com.simibubi.create.content.decoration.RoofBlockCTBehaviour;
 import com.simibubi.create.content.decoration.TrainTrapdoorBlock;
 import com.simibubi.create.content.decoration.TrapdoorCTBehaviour;
 import com.simibubi.create.content.decoration.bracket.BracketBlock;
@@ -2661,13 +2662,15 @@ public class AllBlocks {
 		"copper_roof_top", CopperBlockSet.DEFAULT_VARIANTS, (c, p) -> {
 			p.stonecutting(DataIngredient.tag(AllTags.forgeItemTag("ingots/copper")), RecipeCategory.BUILDING_BLOCKS,
 				c::get, 2);
-		});
+		}, (ws, block) -> connectedTextures(() -> new RoofBlockCTBehaviour(AllSpriteShifts.COPPER_SHINGLES.get(ws)))
+			.accept(block));
 
 	public static final CopperBlockSet COPPER_TILES =
 		new CopperBlockSet(REGISTRATE, "copper_tiles", "copper_roof_top", CopperBlockSet.DEFAULT_VARIANTS, (c, p) -> {
 			p.stonecutting(DataIngredient.tag(AllTags.forgeItemTag("ingots/copper")), RecipeCategory.BUILDING_BLOCKS,
 				c::get, 2);
-		});
+		}, (ws, block) -> connectedTextures(() -> new RoofBlockCTBehaviour(AllSpriteShifts.COPPER_TILES.get(ws)))
+			.accept(block));
 
 	// Load this class
 
