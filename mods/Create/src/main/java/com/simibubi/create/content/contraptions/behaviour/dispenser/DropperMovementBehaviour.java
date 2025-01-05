@@ -11,6 +11,8 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraftforge.items.IItemHandler;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -20,10 +22,14 @@ import net.minecraft.world.level.block.LevelEvent;
 public class DropperMovementBehaviour implements MovementBehaviour {
 	@Override
 	public void visitNewPosition(MovementContext context, BlockPos pos) {
-		if (context.world.isClientSide || context.getStorage() == null)
+		if (context.world.isClientSide)
 			return;
 
-		int slot = getSlot(context.getStorage(), context.world.random);
+		MountedItemStorage storage = context.getStorage();
+		if (storage == null)
+			return;
+
+		int slot = getSlot(storage, context.world.random, context.contraption.getStorage().getAllItems());
 		if (slot == -1) {
 			// all slots empty
 			failDispense(context, pos);
@@ -31,46 +37,34 @@ public class DropperMovementBehaviour implements MovementBehaviour {
 		}
 
 		// copy because dispense behaviors will modify it directly
-		ItemStack stack = context.getStorage().getStackInSlot(slot).copy();
-		if (stack.getCount() == 1 && stack.getMaxStackSize() != 1) {
-			// last one, try to top it off
-			IItemHandler contraptionInventory = context.contraption.getStorage().getAllItems();
-			if (!tryTopOff(stack, contraptionInventory)) {
-				// failed, abort dispense to preserve filters
-				failDispense(context, pos);
-				return;
-			}
-		}
-
+		ItemStack stack = storage.getStackInSlot(slot).copy();
 		IMovedDispenseItemBehaviour behavior = getDispenseBehavior(context, pos, stack);
 		ItemStack remainder = behavior.dispense(stack, context, pos);
-		context.getStorage().setStackInSlot(slot, remainder);
+		storage.setStackInSlot(slot, remainder);
 	}
 
 	protected IMovedDispenseItemBehaviour getDispenseBehavior(MovementContext context, BlockPos pos, ItemStack stack) {
 		return MovedDefaultDispenseItemBehaviour.INSTANCE;
 	}
 
-	private static boolean tryTopOff(ItemStack stack, IItemHandler from) {
-		Predicate<ItemStack> test = otherStack -> ItemStack.isSameItemSameTags(stack, otherStack);
-		int needed = stack.getMaxStackSize() - stack.getCount();
-
-		ItemStack extracted = ItemHelper.extract(from, test, ItemHelper.ExtractionCountMode.UPTO, needed, false);
-		if (!extracted.isEmpty()) {
-			stack.grow(extracted.getCount());
-			return true;
-		}
-
-		return false;
-	}
-
-	private static int getSlot(MountedItemStorage storage, RandomSource random) {
+	/**
+	 * Finds a dispensable slot. Empty slots are skipped and nearly-empty slots are topped off.
+	 */
+	private static int getSlot(MountedItemStorage storage, RandomSource random, IItemHandler contraptionInventory) {
 		IntList filledSlots = new IntArrayList();
 		for (int i = 0; i < storage.getSlots(); i++) {
 			ItemStack stack = storage.getStackInSlot(i);
-			if (!stack.isEmpty()) {
-				filledSlots.add(i);
+			if (stack.isEmpty())
+				continue;
+
+			if (stack.getCount() == 1 && stack.getMaxStackSize() != 1) {
+				stack = tryTopOff(stack, contraptionInventory);
+				if (stack == null) {
+					continue;
+				}
 			}
+
+			filledSlots.add(i);
 		}
 
 		return switch (filledSlots.size()) {
@@ -78,6 +72,15 @@ public class DropperMovementBehaviour implements MovementBehaviour {
 			case 1 -> filledSlots.getInt(0);
 			default -> Util.getRandom(filledSlots, random);
 		};
+	}
+
+	@Nullable
+	private static ItemStack tryTopOff(ItemStack stack, IItemHandler from) {
+		Predicate<ItemStack> test = otherStack -> ItemStack.isSameItemSameTags(stack, otherStack);
+		int needed = stack.getMaxStackSize() - stack.getCount();
+
+		ItemStack extracted = ItemHelper.extract(from, test, ItemHelper.ExtractionCountMode.UPTO, needed, false);
+		return extracted.isEmpty() ? null : stack.copyWithCount(stack.getCount() + extracted.getCount());
 	}
 
 	private static void failDispense(MovementContext ctx, BlockPos pos) {
