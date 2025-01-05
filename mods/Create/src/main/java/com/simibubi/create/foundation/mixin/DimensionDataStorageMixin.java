@@ -30,10 +30,11 @@ public abstract class DimensionDataStorageMixin {
 	private <T extends SavedData> T create$tryLoadingFromDatOldIfFailedToLoad(T original, Function<CompoundTag, T> loadFunction, String name) {
 		// Try loading old data if it's create's SavedData
 		if (original == null && name.startsWith("create_")) {
-			Create.LOGGER.info("Trying to restore {} from .dat_old", name);
 			try {
+				File currentFile = new File(dataFolder, name + ".dat");
 				File oldFile = new File(dataFolder, name + ".dat_old");
-				if (oldFile.exists()) {
+				if (currentFile.exists() && oldFile.exists()) {
+					Create.LOGGER.warn("Trying to restore {}.dat from {}.dat_old", name, name);
 					CompoundTag compoundtag = readTagFromDisk(name, SharedConstants.getCurrentVersion().getDataVersion().getVersion());
 					return loadFunction.apply(compoundtag.getCompound("data"));
 				}
