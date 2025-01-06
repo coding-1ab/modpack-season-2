@@ -439,7 +439,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 	}
 
 	protected SoundEvent getFallSound(int heightIn) {
-		return SoundEvents.WOOL_HIT;
+		return SoundEvents.CHISELED_BOOKSHELF_FALL;
 	}
 
 	@Override
@@ -449,12 +449,12 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 
 	@Override
 	public Fallsounds getFallSounds() {
-		return new LivingEntity.Fallsounds(SoundEvents.WOOL_FALL, SoundEvents.WOOL_FALL);
+		return new LivingEntity.Fallsounds(SoundEvents.CHISELED_BOOKSHELF_FALL, SoundEvents.CHISELED_BOOKSHELF_FALL);
 	}
 
 	@Nullable
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.ARMOR_STAND_HIT;
+		return SoundEvents.CHISELED_BOOKSHELF_BREAK;
 	}
 
 	@Nullable
