@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllSoundEvents;
-import com.simibubi.create.Create;
 import com.simibubi.create.content.decoration.steamWhistle.WhistleBlock;
 import com.simibubi.create.content.decoration.steamWhistle.WhistleBlockEntity;
 import com.simibubi.create.content.kinetics.BlockStressValues;
@@ -88,12 +87,13 @@ public class BoilerData {
 	public void tick(FluidTankBlockEntity controller) {
 		if (!isActive())
 			return;
-		if (controller.getLevel().isClientSide) {
-			pools.values().forEach(p -> p.play(controller.getLevel()));
+		Level level = controller.getLevel();
+		if (level.isClientSide) {
+			pools.values().forEach(p -> p.play(level));
 			gauge.tickChaser();
 			float current = gauge.getValue(1);
-			if (current > 1 && Create.RANDOM.nextFloat() < 1 / 2f)
-				gauge.setValueNoUpdate(current + Math.min(-(current - 1) * Create.RANDOM.nextFloat(), 0));
+			if (current > 1 && level.random.nextFloat() < 1 / 2f)
+				gauge.setValueNoUpdate(current + Math.min(-(current - 1) * level.random.nextFloat(), 0));
 			return;
 		}
 		if (needsHeatLevelUpdate && updateTemperature(controller))

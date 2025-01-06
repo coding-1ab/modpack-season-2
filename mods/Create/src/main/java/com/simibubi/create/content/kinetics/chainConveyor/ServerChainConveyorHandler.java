@@ -25,6 +25,11 @@ public class ServerChainConveyorHandler {
 		if (hangingPlayers.size() != count)
 			sync();
 	}
+	
+	public static void handleStopRidingPacket(Player player) {
+		if (hangingPlayers.removeInt(player.getUUID()) != 0)
+			sync();
+	}
 
 	public static void tick() {
 		ticks++;

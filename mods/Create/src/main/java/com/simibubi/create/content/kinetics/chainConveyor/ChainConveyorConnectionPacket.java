@@ -6,6 +6,8 @@ import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -72,6 +74,8 @@ public class ChainConveyorConnectionPacket extends BlockEntityConfigurationPacke
 				}
 			}
 			be.chainDestroyed(targetPos.subtract(be.getBlockPos()), false, true);
+			be.getLevel()
+				.playSound(null, player.blockPosition(), SoundEvents.CHAIN_BREAK, SoundSource.BLOCKS);
 		}
 
 		if (connect) {

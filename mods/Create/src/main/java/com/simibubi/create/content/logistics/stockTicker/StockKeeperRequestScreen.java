@@ -22,6 +22,7 @@ import com.mojang.math.Axis;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllPartialModels;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;
@@ -59,6 +60,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -252,6 +254,11 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		extraAreas.add(new Rect2i(0, y + windowHeight - 15 - leftHeight, x, height));
 		if (encodeRequester)
 			extraAreas.add(new Rect2i(x + windowWidth, y + windowHeight - 15 - rightHeight, rightHeight, rightHeight));
+		
+		if (initial) {
+			playUiSound(SoundEvents.WOOD_HIT, 0.5f, 1.5f);
+			playUiSound(SoundEvents.BOOK_PAGE_TURN, 1, 1);
+		}
 	}
 
 	private void refreshSearchResults(boolean scrollBackUp) {
@@ -1018,6 +1025,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			isLocked = !isLocked;
 			AllPackets.getChannel()
 				.sendToServer(new StockKeeperLockPacket(blockEntity.getBlockPos(), isLocked));
+			playUiSound(SoundEvents.UI_BUTTON_CLICK.get(), 1, 1);
 			return true;
 		}
 
@@ -1033,6 +1041,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		// Confirm
 		if (lmb && isConfirmHovered((int) pMouseX, (int) pMouseY)) {
 			sendIt();
+			playUiSound(SoundEvents.UI_BUTTON_CLICK.get(), 1, 1);
 			return true;
 		}
 
@@ -1086,14 +1095,19 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			if (itemsToOrder.size() >= cols || rmb)
 				return true;
 			itemsToOrder.add(existingOrder = new BigItemStack(itemStack.copyWithCount(1), 0));
+			playUiSound(SoundEvents.WOOL_STEP, 0.5f, 1.2f);
+			playUiSound(SoundEvents.BAMBOO_WOOD_STEP, 0.5f, 0.8f);
 		}
 
 		int current = existingOrder.count;
 
 		if (rmb || orderClicked) {
 			existingOrder.count = current - transfer;
-			if (existingOrder.count <= 0)
+			if (existingOrder.count <= 0) {
 				itemsToOrder.remove(existingOrder);
+				playUiSound(SoundEvents.WOOL_STEP, 0.5f, 1.8f);
+				playUiSound(SoundEvents.BAMBOO_WOOD_STEP, 0.5f, 1.8f);
+			}
 			return true;
 		}
 
@@ -1145,19 +1159,29 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			if (itemsToOrder.size() >= cols || remove)
 				return true;
 			itemsToOrder.add(existingOrder = new BigItemStack(entry.stack.copyWithCount(1), 0));
+			playUiSound(SoundEvents.WOOL_STEP, 0.5f, 1.2f);
+			playUiSound(SoundEvents.BAMBOO_WOOD_STEP, 0.5f, 0.8f);
 		}
 
 		int current = existingOrder.count;
 
 		if (remove) {
 			existingOrder.count = current - transfer;
-			if (existingOrder.count <= 0)
+			if (existingOrder.count <= 0) {
 				itemsToOrder.remove(existingOrder);
+				playUiSound(SoundEvents.WOOL_STEP, 0.5f, 1.8f);
+				playUiSound(SoundEvents.BAMBOO_WOOD_STEP, 0.5f, 1.8f);
+			} else if (existingOrder.count != current)
+				playUiSound(AllSoundEvents.SCROLL_VALUE.getMainEvent(), 0.25f, 1.2f);
 			return true;
 		}
 
 		existingOrder.count = current + Math.min(transfer, blockEntity.getLastClientsideStockSnapshotAsSummary()
 			.getCountOf(entry.stack) - current);
+		
+		if (existingOrder.count != current && current != 0)
+			playUiSound(AllSoundEvents.SCROLL_VALUE.getMainEvent(), 0.25f, 1.2f);
+		
 		return true;
 	}
 
