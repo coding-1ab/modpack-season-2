@@ -21,6 +21,8 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -121,21 +123,26 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 
 		animationProgress.tickChaser();
 
+		float value = animationProgress.getValue();
 		if (currentlyDepositing) {
 			if (!level.isClientSide()) {
-				if (animationProgress.getValue() > 0.5 && animatedPackage != null) {
+				if (value > 0.5 && animatedPackage != null) {
 					if (target == null
 						|| !target.depositImmediately() && !target.export(level, worldPosition, animatedPackage, false))
 						drop(animatedPackage);
 					animatedPackage = null;
 				}
 			} else {
-				if (animationProgress.getValue() > 0.7)
+				if (value > 0.7 && animatedPackage != null)
 					animatedPackage = null;
+				if (animationProgress.getValue(0) < 0.2 && value > 0.2) {
+					Vec3 v = target.getExactTargetLocation(this, level, worldPosition);
+					level.playLocalSound(v.x, v.y, v.z, SoundEvents.CHAIN_STEP, SoundSource.BLOCKS, 0.25f, 1.2f, false);
+				}
 			}
 		}
 
-		if (animationProgress.getValue() < 1)
+		if (value < 1)
 			return;
 
 		anticipationProgress.startWithValue(0);
@@ -169,6 +176,8 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 		currentlyDepositing = deposit;
 
 		if (level != null && level.isClientSide()) {
+			sounds.open(level, worldPosition);
+			
 			if (currentlyDepositing) {
 				sounds.depositPackage(level, worldPosition);
 

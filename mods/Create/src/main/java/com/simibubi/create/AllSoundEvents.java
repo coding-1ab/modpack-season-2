@@ -138,6 +138,7 @@ public class AllSoundEvents {
 			.build(),
 			
 		FROGPORT_OPEN = create("frogport_open").subtitle("Frogport opens")
+			.playExisting(SoundEvents.WARDEN_TENDRIL_CLICKS, 1f, 2f)
 			.category(SoundSource.BLOCKS)
 			.build(),
 			
