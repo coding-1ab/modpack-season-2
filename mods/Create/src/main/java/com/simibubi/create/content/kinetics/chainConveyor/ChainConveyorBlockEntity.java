@@ -23,7 +23,6 @@ import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.packagePort.frogport.FrogportBlockEntity;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
-import com.simibubi.create.content.schematics.requirement.ItemRequirement.ItemUseType;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
@@ -692,6 +691,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements ITra
 		if (clientPacket && compound.contains("DestroyEffect") && level != null)
 			spawnDestroyParticles(NbtUtils.readBlockPos(compound.getCompound("DestroyEffect")));
 
+		int sizeBefore = connections.size();
 		connections.clear();
 		NBTHelper.iterateCompoundList(compound.getList("Connections", Tag.TAG_COMPOUND),
 			c -> connections.add(NbtUtils.readBlockPos(c)));
@@ -704,6 +704,9 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements ITra
 		connectionStats = null;
 		updateBoxWorldPositions();
 		updateChainShapes();
+		
+		if (connections.size() != sizeBefore && level != null && level.isClientSide)
+			invalidateRenderBoundingBox();
 	}
 
 	public float wrapAngle(float angle) {

@@ -57,6 +57,7 @@ import net.minecraftforge.items.ItemStackHandler;
 public class PackagerBlockEntity extends SmartBlockEntity {
 
 	public boolean redstonePowered;
+	public int buttonCooldown;
 	public String signBasedAddress;
 
 	public InvManipulationBehaviour targetInventory;
@@ -89,6 +90,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		animationInward = true;
 		queuedExitingPackages = new LinkedList<>();
 		signBasedAddress = "";
+		buttonCooldown = 0;
 	}
 
 	@Override
@@ -112,6 +114,9 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	public void tick() {
 		super.tick();
 
+		if (buttonCooldown > 0)
+			buttonCooldown--;
+		
 		if (animationTicks == 0) {
 			previouslyUnwrapped = ItemStack.EMPTY;
 
@@ -281,6 +286,9 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 		updateSignAddress();
 		attemptToSend(null);
+
+		// dont send multiple packages when a button signal length is received
+		buttonCooldown = 40;
 	}
 
 	public boolean unwrapBox(ItemStack box, boolean simulate) {
@@ -388,7 +396,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	}
 
 	public void attemptToSend(List<PackagingRequest> queuedRequests) {
-		if (queuedRequests == null && (!heldBox.isEmpty() || animationTicks != 0))
+		if (queuedRequests == null && (!heldBox.isEmpty() || animationTicks != 0 || buttonCooldown > 0))
 			return;
 
 		IItemHandler targetInv = targetInventory.getInventory();
@@ -606,7 +614,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	}
 
 	public float getTrayOffset(float partialTicks) {
-		float progress = Mth.clamp(Math.max(0, animationTicks - 5 - partialTicks) / (CYCLE * .75f) * 2 - 1, -1, 1);
+		float tickCycle = animationInward ? animationTicks - partialTicks : animationTicks - 5 - partialTicks;
+		float progress = Mth.clamp(tickCycle / (CYCLE - 5) * 2 - 1, -1, 1);
 		progress = 1 - progress * progress;
 		return progress * progress;
 	}

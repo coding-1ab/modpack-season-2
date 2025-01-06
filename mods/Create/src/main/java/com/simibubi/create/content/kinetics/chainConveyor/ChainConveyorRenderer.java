@@ -253,7 +253,7 @@ public class ChainConveyorRenderer extends KineticBlockEntityRenderer<ChainConve
 
 	@Override
 	public boolean shouldRenderOffScreen(ChainConveyorBlockEntity be) {
-		return !be.connections.isEmpty();
+		return true;
 	}
 
 	@Override

@@ -91,15 +91,18 @@ public class FluidTankRenderer extends SafeBlockEntityRenderer<FluidTankBlockEnt
 		float progress = be.boiler.gauge.getValue(partialTicks);
 
 		for (Direction d : Iterate.horizontalDirections) {
+			if (be.boiler.occludedDirections[d.get2DDataValue()])
+				continue;
 			ms.pushPose();
+			float yRot = -d.toYRot() - 90;
 			CachedBuffers.partial(AllPartialModels.BOILER_GAUGE, blockState)
-				.rotateYDegrees(d.toYRot())
+				.rotateYDegrees(yRot)
 				.uncenter()
 				.translate(be.width / 2f - 6 / 16f, 0, 0)
 				.light(light)
 				.renderInto(ms, vb);
 			CachedBuffers.partial(AllPartialModels.BOILER_GAUGE_DIAL, blockState)
-				.rotateYDegrees(d.toYRot())
+				.rotateYDegrees(yRot)
 				.uncenter()
 				.translate(be.width / 2f - 6 / 16f, 0, 0)
 				.translate(0, dialPivotY, dialPivotZ)
