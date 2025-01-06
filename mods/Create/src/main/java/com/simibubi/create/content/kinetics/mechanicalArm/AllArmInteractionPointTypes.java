@@ -89,8 +89,8 @@ public class AllArmInteractionPointTypes {
 		register("respawn_anchor", new RespawnAnchorType());
 	}
 
-	private static <T extends ArmInteractionPointType> Supplier<T> register(String name, T type) {
-		return REGISTER.register(name, () -> type);
+	private static <T extends ArmInteractionPointType> void register(String name, T type) {
+		REGISTER.register(name, () -> type);
 	}
 
 	public static void register(IEventBus eventBus) {
