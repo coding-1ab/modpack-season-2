@@ -16,13 +16,13 @@ public class FrogportSounds {
 		AllSoundEvents.FROGPORT_CATCH_2, AllSoundEvents.FROGPORT_CATCH_3, AllSoundEvents.FROGPORT_CATCH_4);
 
 	public void open(Level level, BlockPos pos) {
-		AllSoundEvents.FROGPORT_OPEN.playAt(level, Vec3.atCenterOf(pos), 1, 1, false);
+		AllSoundEvents.FROGPORT_OPEN.playAt(level, Vec3.atCenterOf(pos), 0.125f, 1, false);
 	}
 
 	public void close(Level level, BlockPos pos) {
 		if (!isPlayerNear(pos))
 			return;
-		AllSoundEvents.FROGPORT_CLOSE.playAt(level, Vec3.atCenterOf(pos), 0.5f, 1.25f + level.random.nextFloat() * 0.25f,
+		AllSoundEvents.FROGPORT_CLOSE.playAt(level, Vec3.atCenterOf(pos), 1.0f, 1.25f + level.random.nextFloat() * 0.25f,
 			true);
 	}
 

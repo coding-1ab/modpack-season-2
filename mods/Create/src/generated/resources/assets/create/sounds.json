@@ -292,8 +292,8 @@
   "frogport_open": {
     "sounds": [
       {
-        "type": "file",
-        "name": "create:frogport_open"
+        "type": "event",
+        "name": "minecraft:entity.warden.tendril_clicks"
       }
     ],
     "subtitle": "create.subtitle.frogport_open"
