@@ -19,6 +19,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.BigItemStack;
@@ -34,6 +35,7 @@ import com.simibubi.create.content.logistics.packagerLink.RequestPromise;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBoard;
@@ -246,6 +248,11 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			&& lastReportedUnloadedLinks == unloadedLinkCount && satisfied == shouldSatisfy
 			&& promisedSatisfied == shouldPromiseSatisfy && waitingForNetwork == shouldWait)
 			return;
+		
+		if (!satisfied && shouldSatisfy) {
+			AllSoundEvents.CONFIRM.playOnServer(getWorld(), getPos(), 0.075f, 1f);
+			AllSoundEvents.CONFIRM_2.playOnServer(getWorld(), getPos(), 0.125f, 0.575f);
+		}
 
 		boolean notifyOutputs = satisfied != shouldSatisfy;
 		lastReportedLevelInStorage = inStorage;
@@ -342,6 +349,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		RequestPromiseQueue promises = Create.LOGISTICS.getQueuedPromises(network);
 		if (promises != null)
 			promises.add(new RequestPromise(new BigItemStack(getFilter(), recipeOutput)));
+		
+		panelBE.advancements.awardPlayer(AllAdvancements.FACTORY_GAUGE);
 	}
 
 	private void tryRestock() {
@@ -658,7 +667,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			active = false;
 			return;
 		}
-
+		
 		active = true;
 		filter = FilterItemStack.of(panelTag.getCompound("Filter"));
 		count = panelTag.getInt("FilterAmount");

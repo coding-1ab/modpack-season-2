@@ -19,6 +19,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllFluids;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags.AllItemTags;
+import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.foundation.advancement.CreateAdvancement.Builder;
 
 import net.minecraft.advancements.Advancement;
@@ -26,8 +27,10 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.PackOutput.PathProvider;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
@@ -121,7 +124,7 @@ public class AllAdvancements implements DataProvider {
 			.after(ANDESITE)),
 
 		WINDMILL = create("windmill", b -> b.icon(AllBlocks.SAIL_FRAME)
-			.title("A Mild Breeze")
+			.title("A mild Breeze")
 			.description("Assemble a windmill and use it to generate torque")
 			.after(WATER_WHEEL)),
 
@@ -147,7 +150,7 @@ public class AllAdvancements implements DataProvider {
 			.after(SUPER_GLUE)),
 
 		PSI = create("portable_storage_interface", b -> b.icon(AllBlocks.PORTABLE_STORAGE_INTERFACE)
-			.title("Drive-By Exchange")
+			.title("Drive-by Exchange")
 			.description("Use a Portable Storage Interface to take or insert items into a Contraption")
 			.after(CONTRAPTION_ACTORS)),
 
@@ -164,7 +167,7 @@ public class AllAdvancements implements DataProvider {
 			.after(WRENCH_GOGGLES)),
 
 		CUCKOO_CLOCK = create("cuckoo_clock", b -> b.icon(AllBlocks.CUCKOO_CLOCK)
-			.title("Is It Time?")
+			.title("Is it Time?")
 			.description("Witness your Cuckoo Clock announce bedtime")
 			.after(STRESSOMETER)
 			.special(NOISY)),
@@ -172,7 +175,7 @@ public class AllAdvancements implements DataProvider {
 		// Andesite - Expert Branch
 
 		WINDMILL_MAXED = create("windmill_maxed", b -> b.icon(AllBlocks.SAIL)
-			.title("A Strong Breeze")
+			.title("A strong Breeze")
 			.description("Assemble a windmill of maximum strength")
 			.after(ANDESITE)
 			.special(EXPERT)),
@@ -227,6 +230,64 @@ public class AllAdvancements implements DataProvider {
 			.after(MIXER)
 			.special(SECRET)),
 
+		// Logistics
+		
+		CARDBOARD = create("cardboard", b -> b.icon(AllItems.CARDBOARD)
+			.title("Part and Parcel")
+			.description("Produce or obtain your first Cardboard")
+			.whenIconCollected()
+			.after(MIXER)),
+		
+		PACKAGER = create("packager", b -> b.icon(AllBlocks.PACKAGER)
+			.title("Post Production")
+			.description("Package items from an inventory using the Packager")
+			.after(CARDBOARD)),
+		
+		STOCK_TICKER = create("stock_ticker", b -> b.icon(AllBlocks.STOCK_TICKER)
+			.title("Order Up!")
+			.description("Employ a mob at your stock ticker and make your first requests")
+			.special(NOISY)
+			.after(PACKAGER)),
+		
+		FROGPORT = create("frogport", b -> b.icon(AllBlocks.PACKAGE_FROGPORT)
+			.title("Hungry hoppers")
+			.description("Catch packages from your Chain Conveyor using a Frogport")
+			.special(NOISY)
+			.after(STOCK_TICKER)),
+		
+		TABLE_CLOTH_SHOP = create("table_cloth_shop", b -> b.icon(AllBlocks.TABLE_CLOTHS.get(DyeColor.RED))
+			.title("Open for business")
+			.description("Put items up for sale using a Table Cloth")
+			.special(NOISY)
+			.after(FROGPORT)),
+		
+		FACTORY_GAUGE = create("factory_gauge", b -> b.icon(AllBlocks.FACTORY_GAUGE)
+			.title("High Logistics")
+			.description("Trigger an automatic package request using Factory Gauges")
+			.special(NOISY)
+			.after(TABLE_CLOTH_SHOP)),
+		
+		CARDBOARD_ARMOR = create("cardboard_armor", b -> b.icon(AllItems.CARDBOARD_CHESTPLATE)
+			.title("Full Stealth")
+			.description("Sneak around in full Cardboard Armor")
+			.after(FACTORY_GAUGE)),
+		
+		// Logistics - Secret
+
+		PACKAGE_CHUTE_THROW = create("package_chute_throw", b -> b.icon(PackageStyles.getDefaultBox())
+			.title("Nothing but net")
+			.description("Land your cardboard package throw in an item chute")
+			.after(CARDBOARD_ARMOR)
+			.special(SECRET)),
+
+		// TODO: award using AllAdvancements.CARDBOARD_ARMOR_TRIM.awardTo() on server
+		CARDBOARD_ARMOR_TRIM = create("cardboard_armor_trim",
+			b -> b.icon(createArmorTrimmedCardboardChestplate())
+				.title("Arts and Crafts")
+				.description("Decorate your cardboard equipment with armor trims")
+				.after(CARDBOARD_ARMOR)
+				.special(SECRET)),
+
 		// Copper - Central Branch
 
 		COPPER = create("copper", b -> b.icon(Items.COPPER_INGOT)
@@ -239,8 +300,7 @@ public class AllAdvancements implements DataProvider {
 		COPPER_CASING = create("copper_casing", b -> b.icon(AllBlocks.COPPER_CASING)
 			.title("The Copper Age")
 			.description("Apply Copper Ingots to stripped wood, creating a waterproof casing for your machines")
-			.after(COPPER)
-			.special(NOISY)),
+			.after(COPPER)),
 
 		SPOUT = create("spout", b -> b.icon(AllBlocks.SPOUT)
 			.title("Sploosh")
@@ -367,7 +427,7 @@ public class AllAdvancements implements DataProvider {
 			.special(NOISY)),
 
 		ROSE_QUARTZ = create("rose_quartz", b -> b.icon(AllItems.POLISHED_ROSE_QUARTZ)
-			.title("Pink Diamonds")
+			.title("Supercharged")
 			.description("Polish some Rose Quartz")
 			.whenIconCollected()
 			.after(BRASS_CASING)),
@@ -401,7 +461,7 @@ public class AllAdvancements implements DataProvider {
 			.after(MECHANICAL_ARM)),
 
 		CRUSHING_WHEEL = create("crushing_wheel", b -> b.icon(AllBlocks.CRUSHING_WHEEL)
-			.title("A Pair of Giants")
+			.title("Wheels of Destruction")
 			.description("Place and power a set of Crushing Wheels")
 			.after(CRAFTER)
 			.special(NOISY)),
@@ -415,7 +475,7 @@ public class AllAdvancements implements DataProvider {
 			.special(NOISY)),
 
 		CLOCKWORK_BEARING = create("clockwork_bearing", b -> b.icon(AllBlocks.CLOCKWORK_BEARING)
-			.title("Contraption O'Clock")
+			.title("Contraption o'Clock")
 			.description("Assemble a structure mounted on a Clockwork Bearing")
 			.after(HAUNTED_BELL)
 			.special(NOISY)),
@@ -423,8 +483,7 @@ public class AllAdvancements implements DataProvider {
 		DISPLAY_LINK = create("display_link", b -> b.icon(AllBlocks.DISPLAY_LINK)
 			.title("Big Data")
 			.description("Use a Display Link to visualise information")
-			.after(CLOCKWORK_BEARING)
-			.special(NOISY)),
+			.after(CLOCKWORK_BEARING)),
 
 		POTATO_CANNON = create("potato_cannon", b -> b.icon(AllItems.POTATO_CANNON)
 			.title("Fwoomp!")
@@ -508,10 +567,9 @@ public class AllAdvancements implements DataProvider {
 			.after(CRUSHING_WHEEL)),
 
 		TRAIN_CASING = create("train_casing_00", b -> b.icon(AllBlocks.RAILWAY_CASING)
-			.title("The Logistical Age")
+			.title("The Locomotive Age")
 			.description("Use Sturdy Sheets to create a casing for railway components")
-			.after(STURDY_SHEET)
-			.special(NOISY)),
+			.after(STURDY_SHEET)),
 
 		TRAIN = create("train", b -> b.icon(AllBlocks.TRACK_STATION)
 			.title("All Aboard!")
@@ -602,6 +660,17 @@ public class AllAdvancements implements DataProvider {
 
 		//
 		END = null;
+
+	private static ItemStack createArmorTrimmedCardboardChestplate() {
+		ItemStack asStack = AllItems.CARDBOARD_CHESTPLATE.asStack();
+		CompoundTag tag = new CompoundTag();
+		CompoundTag trimTag = new CompoundTag();
+		trimTag.putString("material", "minecraft:diamond");
+		trimTag.putString("pattern", "minecraft:sentry");
+		tag.put("Trim", trimTag);
+		asStack.setTag(tag);
+		return asStack;
+	}
 
 	private static CreateAdvancement create(String id, UnaryOperator<Builder> b) {
 		return new CreateAdvancement(id, b);

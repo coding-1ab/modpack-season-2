@@ -8,6 +8,9 @@ import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerItemHandler;
+import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.TooltipHelper;
 
@@ -48,6 +51,8 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 
 	private boolean failedLastExport;
 	private FrogportSounds sounds;
+	
+	private AdvancementBehaviour advancements;
 
 	public FrogportBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -59,6 +64,12 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 			.chase(0, 0.35, Chaser.LINEAR);
 	}
 
+	@Override
+	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+		behaviours.add(advancements = new AdvancementBehaviour(this, AllAdvancements.FROGPORT));
+		super.addBehaviours(behaviours);
+	}
+	
 	public boolean isAnimationInProgress() {
 		return animationProgress.getChaseTarget() == 1;
 	}
@@ -174,6 +185,9 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 		animationProgress.chase(1, 0.1, Chaser.LINEAR);
 		animatedPackage = box;
 		currentlyDepositing = deposit;
+		
+		if (level != null && !deposit && !level.isClientSide())
+			advancements.awardPlayer(AllAdvancements.FROGPORT);
 
 		if (level != null && level.isClientSide()) {
 			sounds.open(level, worldPosition);

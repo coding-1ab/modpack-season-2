@@ -63,6 +63,11 @@ public class AllSoundEvents {
 			.playExisting(SoundEvents.WOOL_BREAK, .0425f, .75f)
 			.category(SoundSource.BLOCKS)
 			.build(),
+			
+		PACKAGER = create("packager").subtitle("Packager packages")
+			.playExisting(SoundEvents.SHULKER_OPEN, 0.125f, 0.75f)
+			.category(SoundSource.BLOCKS)
+			.build(),
 
 		SLIME_ADDED = create("slime_added").subtitle("Slime squishes")
 			.playExisting(SoundEvents.SLIME_BLOCK_PLACE)
@@ -161,6 +166,10 @@ public class AllSoundEvents {
 		FROGPORT_CATCH_4 = create("frogport_catch_4").subtitle("Frogport catches package")
 			.category(SoundSource.BLOCKS)
 			.build(),
+			
+		STOCK_LINK = create("stock_link").subtitle("Stock link reacts")
+			.category(SoundSource.BLOCKS)
+			.build(),
 
 		FROGPORT_DEPOSIT = create("frogport_deposit").subtitle("Frogport places package")
 			.playExisting(SoundEvents.FROG_TONGUE, 1f, 1f)
@@ -196,8 +205,8 @@ public class AllSoundEvents {
 			.build(),
 			
 		PACKAGE_POP = create("package_pop").subtitle("Package breaks")
-			.playExisting(SoundEvents.ARMOR_STAND_BREAK, .25f, .75f)
-			.playExisting(SoundEvents.WOOL_BREAK, .5f, 1.15f)
+			.playExisting(SoundEvents.CHISELED_BOOKSHELF_BREAK, .75f, 1f)
+			.playExisting(SoundEvents.WOOL_BREAK, .25f, 1.15f)
 			.category(SoundSource.BLOCKS)
 			.build(),
 

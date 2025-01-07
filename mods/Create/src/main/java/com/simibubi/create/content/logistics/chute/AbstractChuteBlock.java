@@ -8,6 +8,7 @@ import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.render.ReducedDestroyEffects;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -106,9 +107,14 @@ public abstract class AbstractChuteBlock extends Block implements IWrenchable, I
 		if (!PackageEntity.centerPackage(entityIn, Vec3.atBottomCenterOf(pos.above())))
 			return;
 		ItemStack remainder = input.handleInsertion(stack, Direction.UP, false);
-		if (remainder.isEmpty())
+		if (remainder.isEmpty()) {
 			entityIn.discard();
-		else if (remainder.getCount() < stack.getCount() && entityIn instanceof ItemEntity)
+			if (entityIn instanceof PackageEntity box) {
+				Player player = box.tossedBy.get();
+				if (player != null)
+					AllAdvancements.PACKAGE_CHUTE_THROW.awardTo(player);
+			}
+		} else if (remainder.getCount() < stack.getCount() && entityIn instanceof ItemEntity)
 			((ItemEntity) entityIn).setItem(remainder);
 	}
 

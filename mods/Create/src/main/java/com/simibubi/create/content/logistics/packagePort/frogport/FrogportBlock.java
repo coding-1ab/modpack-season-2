@@ -6,6 +6,7 @@ import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
+import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
 import com.simibubi.create.foundation.block.IBE;
 
 import net.createmod.catnip.utility.VecHelper;
@@ -49,6 +50,7 @@ public class FrogportBlock extends Block implements IBE<FrogportBlockEntity>, IW
 		super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
 		if (pPlacer == null)
 			return;
+		AdvancementBehaviour.setPlacedBy(pLevel, pPos, pPlacer);
 		withBlockEntityDo(pLevel, pPos, be -> {
 			Vec3 diff = VecHelper.getCenterOf(pPos)
 				.subtract(pPlacer.position());

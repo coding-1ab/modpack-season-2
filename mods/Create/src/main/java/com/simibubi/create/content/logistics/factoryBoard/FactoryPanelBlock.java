@@ -10,6 +10,7 @@ import com.simibubi.create.api.schematic.requirement.ISpecialBlockItemRequiremen
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
+import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -179,6 +180,7 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 		super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
 		if (pPlacer == null)
 			return;
+		AdvancementBehaviour.setPlacedBy(pLevel, pPos, pPlacer);
 		double range = pPlacer.getAttribute(ForgeMod.BLOCK_REACH.get())
 			.getValue() + 1;
 		HitResult hitResult = pPlacer.pick(range, 1, false);

@@ -1,10 +1,12 @@
 package com.simibubi.create.content.logistics.box;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
 import com.simibubi.create.AllEntityTypes;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.box.PackageStyles.PackageStyle;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
@@ -285,8 +287,7 @@ public class PackageItem extends Item {
 		}
 
 		Vec3 position = playerIn.position();
-		worldIn.playSound((Player) null, position.x, position.y, position.z, SoundEvents.CHISELED_BOOKSHELF_BREAK,
-			SoundSource.PLAYERS, 0.5F, 1.0F);
+		AllSoundEvents.PACKAGE_POP.playOnServer(worldIn, playerIn.blockPosition());
 
 		if (worldIn.isClientSide()) {
 			for (int i = 0; i < 10; i++) {
@@ -349,9 +350,8 @@ public class PackageItem extends Item {
 
 	@Override
 	public void releaseUsing(ItemStack stack, Level world, LivingEntity entity, int ticks) {
-		if (!(entity instanceof Player))
+		if (!(entity instanceof Player player))
 			return;
-		Player playerentity = (Player) entity;
 		int i = this.getUseDuration(stack) - ticks;
 		if (i < 0)
 			return;
@@ -362,14 +362,14 @@ public class PackageItem extends Item {
 		if (world.isClientSide)
 			return;
 
-		world.playSound(null, playerentity.getX(), playerentity.getY(), playerentity.getZ(), SoundEvents.SNOWBALL_THROW,
+		world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SNOWBALL_THROW,
 			SoundSource.NEUTRAL, 0.5F, 0.5F);
 
 		ItemStack copy = stack.copy();
 		stack.shrink(1);
 
 		if (stack.isEmpty())
-			playerentity.getInventory()
+			player.getInventory()
 				.removeItem(stack);
 
 		Vec3 vec = new Vec3(entity.getX(), entity.getY() + entity.getBoundingBox()
@@ -381,6 +381,7 @@ public class PackageItem extends Item {
 		PackageEntity packageEntity = new PackageEntity(world, vec.x, vec.y, vec.z);
 		packageEntity.setBox(copy);
 		packageEntity.setDeltaMovement(motion);
+		packageEntity.tossedBy = new WeakReference<Player>(player);
 		world.addFreshEntity(packageEntity);
 	}
 

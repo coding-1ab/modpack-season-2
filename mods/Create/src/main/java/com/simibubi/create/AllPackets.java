@@ -68,7 +68,9 @@ import com.simibubi.create.content.logistics.filter.FilterScreenPacket;
 import com.simibubi.create.content.logistics.funnel.FunnelFlapPacket;
 import com.simibubi.create.content.logistics.packagePort.PackagePortConfigurationPacket;
 import com.simibubi.create.content.logistics.packagePort.PackagePortPlacementPacket;
+import com.simibubi.create.content.logistics.packagerLink.PackagerLinkEffectPacket;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterConfigurationPacket;
+import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterEffectPacket;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalStockRequestPacket;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalStockResponsePacket;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrderRequestPacket;
@@ -251,6 +253,8 @@ public enum AllPackets {
 	PACKAGE_DESTROYED(PackageDestroyPacket.class, PackageDestroyPacket::new, PLAY_TO_CLIENT),
 	LOGISTICS_STOCK_RESPONSE(LogisticalStockResponsePacket.class, LogisticalStockResponsePacket::new, PLAY_TO_CLIENT),
 	FACTORY_PANEL_EFFECT(FactoryPanelEffectPacket.class, FactoryPanelEffectPacket::new, PLAY_TO_CLIENT),
+	PACKAGER_LINK_EFFECT(PackagerLinkEffectPacket.class, PackagerLinkEffectPacket::new, PLAY_TO_CLIENT),
+	REDSTONE_REQUESTER_EFFECT(RedstoneRequesterEffectPacket.class, RedstoneRequesterEffectPacket::new, PLAY_TO_CLIENT),
 	KNOCKBACK(KnockbackPacket.class, KnockbackPacket::new, PLAY_TO_CLIENT),
 	TRAIN_MAP_SYNC(TrainMapSyncPacket.class, TrainMapSyncPacket::new, PLAY_TO_CLIENT),
 	CLIENTBOUND_CHAIN_CONVEYOR(ClientboundChainConveyorRidingPacket.class, ClientboundChainConveyorRidingPacket::new, PLAY_TO_CLIENT);

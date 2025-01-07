@@ -10,6 +10,7 @@ import com.simibubi.create.AllShapes;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.logistics.redstoneRequester.AutoRequestData;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.IHaveBigOutline;
 
@@ -80,6 +81,7 @@ public class TableClothBlock extends Block implements IHaveBigOutline, IWrenchab
 			dcbe.owner = player.getUUID();
 			dcbe.facing = player.getDirection()
 				.getOpposite();
+			AllAdvancements.TABLE_CLOTH_SHOP.awardTo(player);
 		});
 	}
 
