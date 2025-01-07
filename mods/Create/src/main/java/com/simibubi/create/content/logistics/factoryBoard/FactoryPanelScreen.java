@@ -35,9 +35,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -237,9 +239,26 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		if (craftingActive) {
 			for (BigItemStack itemStack : craftingIngredients)
 				renderInputItem(graphics, slot++, itemStack, mouseX, mouseY);
-		} else
+		} else {
 			for (BigItemStack itemStack : inputConfig)
 				renderInputItem(graphics, slot++, itemStack, mouseX, mouseY);
+			if (inputConfig.isEmpty()) {
+				int inputX = guiLeft + (restocker ? 88 : 68 + (slot % 3 * 20));
+				int inputY = guiTop + (restocker ? 12 : 28) + (slot / 3 * 20);
+				if (!restocker && mouseY > inputY && mouseY < inputY + 60 && mouseX > inputX && mouseX < inputX + 60)
+					graphics.renderComponentTooltip(font,
+						List.of(CreateLang.translate("gui.factory_panel.unconfigured_input")
+							.color(ScrollInput.HEADER_RGB)
+							.component(),
+							CreateLang.translate("gui.factory_panel.unconfigured_input_tip")
+								.style(ChatFormatting.GRAY)
+								.component(),
+							CreateLang.translate("gui.factory_panel.unconfigured_input_tip_1")
+								.style(ChatFormatting.GRAY)
+								.component()),
+						mouseX, mouseY);
+			}
+		}
 
 		if (restocker)
 			renderInputItem(graphics, slot, new BigItemStack(behaviour.getFilter(), 1), mouseX, mouseY);
@@ -404,7 +423,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 				mouseX, mouseY);
 			return;
 		}
-
+		
 		if (itemStack.stack.isEmpty()) {
 			graphics.renderComponentTooltip(font, List.of(CreateLang.translate("gui.factory_panel.empty_panel")
 				.color(ScrollInput.HEADER_RGB)
@@ -517,6 +536,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 				int inputY = y + 28 + (i / 3 * 20);
 				if (mouseX >= inputX && mouseX < inputX + 16 && mouseY >= inputY && mouseY < inputY + 16) {
 					sendIt(connections.get(i).from, false);
+					playButtonSound();
 					return true;
 				}
 			}
@@ -526,6 +546,7 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		int itemY = y + windowHeight - 24;
 		if (mouseX >= itemX && mouseX < itemX + 16 && mouseY >= itemY && mouseY < itemY + 16) {
 			sendIt(null, true);
+			playButtonSound();
 			return true;
 		}
 		
@@ -535,10 +556,17 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 		if (mouseX >= itemX && mouseX < itemX + 16 && mouseY >= itemY && mouseY < itemY + 16) {
 			sendRedstoneReset = true;
 			sendIt(null, false);
+			playButtonSound();
 			return true;
 		}
 
 		return super.mouseClicked(mouseX, mouseY, pButton);
+	}
+
+	public void playButtonSound() {
+		Minecraft.getInstance()
+			.getSoundManager()
+			.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.get(), 1.0f, 0.25f));
 	}
 
 	@Override

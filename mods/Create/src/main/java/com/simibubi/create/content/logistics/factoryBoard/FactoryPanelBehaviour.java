@@ -19,6 +19,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.BigItemStack;
@@ -93,6 +94,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	private boolean promisePrimedForMarkDirty;
 
 	private boolean active;
+	private boolean queueDing;
 	private int lastReportedUnloadedLinks;
 	private int lastReportedLevelInStorage;
 	private int lastReportedPromises;
@@ -246,6 +248,11 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			&& lastReportedUnloadedLinks == unloadedLinkCount && satisfied == shouldSatisfy
 			&& promisedSatisfied == shouldPromiseSatisfy && waitingForNetwork == shouldWait)
 			return;
+		
+		if (!satisfied && shouldSatisfy) {
+			AllSoundEvents.CONFIRM.playOnServer(getWorld(), getPos(), 0.075f, 1f);
+			AllSoundEvents.CONFIRM_2.playOnServer(getWorld(), getPos(), 0.125f, 0.575f);
+		}
 
 		boolean notifyOutputs = satisfied != shouldSatisfy;
 		lastReportedLevelInStorage = inStorage;
@@ -659,6 +666,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			return;
 		}
 
+		boolean previouslySatisfied = satisfied;
+		
 		active = true;
 		filter = FilterItemStack.of(panelTag.getCompound("Filter"));
 		count = panelTag.getInt("FilterAmount");

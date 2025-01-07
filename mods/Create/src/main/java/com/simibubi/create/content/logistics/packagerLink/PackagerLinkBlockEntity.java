@@ -7,23 +7,28 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
+import com.simibubi.create.AllPackets;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagingRequest;
 import com.simibubi.create.content.logistics.packager.repackager.RepackagerBlockEntity;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
-import com.simibubi.create.content.redstone.displayLink.LinkWithBulbBlockEntity;
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
 import net.createmod.catnip.utility.Pair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.VibrationParticleOption;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.BlockPositionSource;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.IItemHandler;
 
-public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
+public class PackagerLinkBlockEntity extends SmartBlockEntity {
 
 	public LogisticallyLinkedBehaviour behaviour;
 	public UUID placedBy;
@@ -40,10 +45,14 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 			return InventorySummary.EMPTY;
 		if (packager.isTargetingSameInventory(ignoredHandler))
 			return InventorySummary.EMPTY;
-
-		sendPulseNextSync();
-		sendData();
 		return packager.getAvailableItems();
+	}
+
+	public void playEffect() {
+		AllSoundEvents.STOCK_LINK.playAt(level, worldPosition, 1.0f, 1.0f, false);
+		Vec3 vec3 = Vec3.atCenterOf(worldPosition);
+		level.addParticle(new VibrationParticleOption(new BlockPositionSource(worldPosition.above(3)), 6), vec3.x,
+			vec3.y, vec3.z, 1, 1, 1);
 	}
 
 	public Pair<PackagerBlockEntity, PackagingRequest> processRequest(ItemStack stack, int amount, String address,
@@ -59,11 +68,9 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 		int availableCount = summary.getCountOf(stack);
 		if (availableCount == 0)
 			return null;
-
-		sendPulseNextSync();
-		sendData();
-
 		int toWithdraw = Math.min(amount, availableCount);
+		if (toWithdraw != 0)
+			AllPackets.sendToNear(level, worldPosition, 32, new PackagerLinkEffectPacket(worldPosition));
 		return Pair.of(packager,
 			PackagingRequest.create(stack, toWithdraw, address, linkIndex, finalLink, 0, orderId, orderContext));
 	}

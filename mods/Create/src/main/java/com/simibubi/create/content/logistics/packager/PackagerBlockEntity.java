@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceBlockEntity;
 import com.simibubi.create.content.kinetics.crafter.MechanicalCrafterBlockEntity;
@@ -39,6 +40,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
@@ -128,6 +131,14 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			}
 
 			return;
+		}
+
+		if (level.isClientSide) {
+			if (animationTicks == CYCLE - (animationInward ? 5 : 1))
+				AllSoundEvents.PACKAGER.playAt(level, worldPosition, 1, 1, true);
+			if (animationTicks == (animationInward ? 1 : 5))
+				level.playLocalSound(worldPosition, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.075f, 0.75f,
+					true);
 		}
 
 		animationTicks--;

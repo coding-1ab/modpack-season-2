@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.simibubi.create.AllEntityTypes;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.box.PackageStyles.PackageStyle;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
@@ -285,8 +286,7 @@ public class PackageItem extends Item {
 		}
 
 		Vec3 position = playerIn.position();
-		worldIn.playSound((Player) null, position.x, position.y, position.z, SoundEvents.CHISELED_BOOKSHELF_BREAK,
-			SoundSource.PLAYERS, 0.5F, 1.0F);
+		AllSoundEvents.PACKAGE_POP.playOnServer(worldIn, playerIn.blockPosition());
 
 		if (worldIn.isClientSide()) {
 			for (int i = 0; i < 10; i++) {

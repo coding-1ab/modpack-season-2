@@ -1,5 +1,7 @@
 package com.simibubi.create.content.logistics.redstoneRequester;
 
+import com.simibubi.create.AllPackets;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour.RequestType;
@@ -8,6 +10,7 @@ import com.simibubi.create.content.logistics.stockTicker.StockCheckingBlockEntit
 
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,6 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.network.NetworkHooks;
 
@@ -53,18 +57,27 @@ public class RedstoneRequesterBlockEntity extends StockCheckingBlockEntity imple
 		if (encodedRequest.isEmpty())
 			return;
 
-		if (!allowPartialRequests) {
-			InventorySummary summaryOfOrder = new InventorySummary();
-			encodedRequest.stacks()
-				.forEach(summaryOfOrder::add);
+		boolean anySucceeded = false;
 
-			InventorySummary summary = getAccurateSummary();
-			for (BigItemStack entry : summaryOfOrder.getStacks())
-				if (summary.getCountOf(entry.stack) < entry.count)
-					return;
+		InventorySummary summaryOfOrder = new InventorySummary();
+		encodedRequest.stacks()
+			.forEach(summaryOfOrder::add);
+
+		InventorySummary summary = getAccurateSummary();
+		for (BigItemStack entry : summaryOfOrder.getStacks()) {
+			if (summary.getCountOf(entry.stack) >= entry.count) {
+				anySucceeded = true;
+				continue;
+			}
+			if (!allowPartialRequests) {
+				AllPackets.sendToNear(level, worldPosition, 32,
+					new RedstoneRequesterEffectPacket(worldPosition, false));
+				return;
+			}
 		}
 
 		broadcastPackageRequest(RequestType.REDSTONE, encodedRequest, null, encodedTargetAdress);
+		AllPackets.sendToNear(level, worldPosition, 32, new RedstoneRequesterEffectPacket(worldPosition, anySucceeded));
 		lastRequestSucceeded = true;
 	}
 
@@ -85,7 +98,7 @@ public class RedstoneRequesterBlockEntity extends StockCheckingBlockEntity imple
 		tag.putString("EncodedAddress", encodedTargetAdress);
 		tag.put("EncodedRequest", encodedRequest.write());
 	}
-	
+
 	@Override
 	protected void write(CompoundTag tag, boolean clientPacket) {
 		super.write(tag, clientPacket);
@@ -118,6 +131,18 @@ public class RedstoneRequesterBlockEntity extends StockCheckingBlockEntity imple
 	@Override
 	public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
 		return RedstoneRequesterMenu.create(pContainerId, pPlayerInventory, this);
+	}
+
+	public void playEffect(boolean success) {
+		AllSoundEvents.STOCK_LINK.playAt(level, worldPosition, 1.0f, 1.0f, false);
+		Vec3 vec3 = Vec3.atCenterOf(worldPosition);
+		if (success) {
+			AllSoundEvents.CONFIRM.playAt(level, worldPosition, 0.5f, 1.5f, false);
+			level.addParticle(ParticleTypes.NOTE, vec3.x, vec3.y + 1, vec3.z, 0, 0, 0);
+		} else {
+			AllSoundEvents.DENY.playAt(level, worldPosition, 0.5f, 1, false);
+			level.addParticle(ParticleTypes.ENCHANTED_HIT, vec3.x, vec3.y + 1, vec3.z, 0, 0, 0);
+		}
 	}
 
 }

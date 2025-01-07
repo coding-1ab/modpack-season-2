@@ -454,7 +454,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 
 	@Nullable
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.CHISELED_BOOKSHELF_BREAK;
+		return null;
 	}
 
 	@Nullable

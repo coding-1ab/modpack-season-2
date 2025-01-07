@@ -414,7 +414,7 @@
     "sounds": [
       {
         "type": "event",
-        "name": "minecraft:entity.armor_stand.break"
+        "name": "minecraft:block.chiseled_bookshelf.break"
       }
     ],
     "subtitle": "create.subtitle.package_pop"
@@ -426,6 +426,15 @@
         "name": "minecraft:block.wool.break"
       }
     ]
+  },
+  "packager": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.shulker.open"
+      }
+    ],
+    "subtitle": "create.subtitle.packager"
   },
   "peculiar_bell_use": {
     "sounds": [
@@ -559,6 +568,15 @@
       }
     ],
     "subtitle": "create.subtitle.steam"
+  },
+  "stock_link": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "create:stock_link"
+      }
+    ],
+    "subtitle": "create.subtitle.stock_link"
   },
   "stock_ticker_request": {
     "sounds": [

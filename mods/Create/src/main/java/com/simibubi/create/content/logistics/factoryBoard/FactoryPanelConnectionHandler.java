@@ -3,6 +3,7 @@ package com.simibubi.create.content.logistics.factoryBoard;
 import javax.annotation.Nullable;
 
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelSlot;
 import com.simibubi.create.foundation.block.WrenchableDirectionalBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -16,6 +17,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
@@ -51,6 +54,7 @@ public class FactoryPanelConnectionHandler {
 				.component(), true);
 			connectingFrom = null;
 			connectingFromBox = null;
+			AllSoundEvents.DENY.playAt(player.level(), player.blockPosition(), 1, 1, false);
 			return true;
 		}
 
@@ -69,6 +73,10 @@ public class FactoryPanelConnectionHandler {
 
 		connectingFrom = null;
 		connectingFromBox = null;
+		player.level()
+			.playLocalSound(player.blockPosition(), SoundEvents.AMETHYST_BLOCK_PLACE, SoundSource.BLOCKS, 0.5f, 0.5f,
+				false);
+
 		return true;
 	}
 
@@ -80,7 +88,7 @@ public class FactoryPanelConnectionHandler {
 			return "factory_panel.already_connected";
 		if (from.targetedBy.size() >= 9)
 			return "factory_panel.cannot_add_more_inputs";
-		
+
 		BlockState state1 = to.blockEntity.getBlockState();
 		BlockState state2 = from.blockEntity.getBlockState();
 		BlockPos diff = to.getPos()
@@ -115,7 +123,7 @@ public class FactoryPanelConnectionHandler {
 	private static String checkForIssues(FactoryPanelBehaviour from, FactoryPanelSupportBehaviour to) {
 		if (from == null)
 			return "factory_panel.connection_aborted";
-			
+
 		BlockState state1 = from.blockEntity.getBlockState();
 		BlockState state2 = to.blockEntity.getBlockState();
 		BlockPos diff = to.getPos()
@@ -180,6 +188,7 @@ public class FactoryPanelConnectionHandler {
 						.component(), true);
 					connectingFrom = null;
 					connectingFromBox = null;
+					AllSoundEvents.DENY.playAt(mc.level, mc.player.blockPosition(), 1, 1, false);
 					return true;
 				}
 
@@ -209,6 +218,9 @@ public class FactoryPanelConnectionHandler {
 
 				connectingFrom = null;
 				connectingFromBox = null;
+				mc.player.level()
+					.playLocalSound(mc.player.blockPosition(), SoundEvents.AMETHYST_BLOCK_PLACE, SoundSource.BLOCKS,
+						0.5f, 0.5f, false);
 				return true;
 			}
 
