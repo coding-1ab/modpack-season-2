@@ -26,6 +26,8 @@ import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntit
 import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
+import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.CapManipulationBehaviourBase.InterfaceProvider;
@@ -78,6 +80,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 	private InventorySummary availableItems;
 	private VersionedInventoryTrackerBehaviour invVersionTracker;
+	
+	private AdvancementBehaviour advancements;
 
 	//
 
@@ -101,6 +105,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		behaviours.add(targetInventory = new InvManipulationBehaviour(this, InterfaceProvider.oppositeOfBlockFacing())
 			.withFilter(this::supportsBlockEntity));
 		behaviours.add(invVersionTracker = new VersionedInventoryTrackerBehaviour(this));
+		behaviours.add(advancements = new AdvancementBehaviour(this, AllAdvancements.PACKAGER));
 	}
 
 	private boolean supportsBlockEntity(BlockEntity target) {
@@ -535,7 +540,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		heldBox = createdBox;
 		animationInward = false;
 		animationTicks = CYCLE;
-
+		
+		advancements.awardPlayer(AllAdvancements.PACKAGER);
 		triggerStockCheck();
 		notifyUpdate();
 	}

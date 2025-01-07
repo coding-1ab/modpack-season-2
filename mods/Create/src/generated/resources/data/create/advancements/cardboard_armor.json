@@ -1,25 +1,26 @@
 {
-  "parent": "create:clockwork_bearing",
+  "parent": "create:factory_gauge",
   "criteria": {
     "0": {
       "conditions": {},
-      "trigger": "create:display_link_builtin"
+      "trigger": "create:cardboard_armor_builtin"
     }
   },
   "display": {
     "announce_to_chat": false,
     "description": {
       "color": "#DBA213",
-      "translate": "advancement.create.display_link.desc"
+      "translate": "advancement.create.cardboard_armor.desc"
     },
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "create:display_link"
+      "item": "create:cardboard_chestplate",
+      "nbt": "{Damage:0}"
     },
     "show_toast": true,
     "title": {
-      "translate": "advancement.create.display_link"
+      "translate": "advancement.create.cardboard_armor"
     }
   },
   "requirements": [

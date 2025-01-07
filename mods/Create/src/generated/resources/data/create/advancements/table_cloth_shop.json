@@ -1,25 +1,25 @@
 {
-  "parent": "create:clockwork_bearing",
+  "parent": "create:frogport",
   "criteria": {
     "0": {
       "conditions": {},
-      "trigger": "create:display_link_builtin"
+      "trigger": "create:table_cloth_shop_builtin"
     }
   },
   "display": {
-    "announce_to_chat": false,
+    "announce_to_chat": true,
     "description": {
       "color": "#DBA213",
-      "translate": "advancement.create.display_link.desc"
+      "translate": "advancement.create.table_cloth_shop.desc"
     },
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "create:display_link"
+      "item": "create:red_table_cloth"
     },
     "show_toast": true,
     "title": {
-      "translate": "advancement.create.display_link"
+      "translate": "advancement.create.table_cloth_shop"
     }
   },
   "requirements": [

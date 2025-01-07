@@ -3,6 +3,7 @@ package com.simibubi.create.content.logistics.stockTicker;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour.RequestType;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlock;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
 
 import net.minecraft.core.BlockPos;
@@ -45,13 +46,17 @@ public class PackageOrderRequestPacket extends BlockEntityConfigurationPacket<St
 
 	@Override
 	protected void applySettings(ServerPlayer player, StockTickerBlockEntity be) {
-		if (!order.isEmpty())
-			AllSoundEvents.STOCK_TICKER_REQUEST.playOnServer(be.getLevel(), pos);
-
 		if (encodeRequester) {
+			if (!order.isEmpty())
+				AllSoundEvents.CONFIRM.playOnServer(be.getLevel(), pos);
 			player.closeContainer();
 			RedstoneRequesterBlock.programRequester(player, be, order, address);
 			return;
+		}
+		
+		if (!order.isEmpty()) {
+			AllSoundEvents.STOCK_TICKER_REQUEST.playOnServer(be.getLevel(), pos);
+			AllAdvancements.STOCK_TICKER.awardTo(player);
 		}
 
 		be.broadcastPackageRequest(RequestType.PLAYER, order, null, address);

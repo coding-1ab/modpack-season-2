@@ -10,6 +10,8 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelSlot;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.repackager.RepackagerBlockEntity;
+import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
@@ -37,6 +39,8 @@ public class FactoryPanelBlockEntity extends SmartBlockEntity {
 	public boolean restocker;
 
 	private VoxelShape lastShape;
+	
+	public AdvancementBehaviour advancements;
 
 	public FactoryPanelBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -52,6 +56,8 @@ public class FactoryPanelBlockEntity extends SmartBlockEntity {
 			panels.put(slot, e);
 			behaviours.add(e);
 		}
+		
+		behaviours.add(advancements = new AdvancementBehaviour(this, AllAdvancements.FACTORY_GAUGE));
 	}
 
 	@Override

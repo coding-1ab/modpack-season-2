@@ -35,6 +35,7 @@ import com.simibubi.create.content.logistics.packagerLink.RequestPromise;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBoard;
@@ -94,7 +95,6 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	private boolean promisePrimedForMarkDirty;
 
 	private boolean active;
-	private boolean queueDing;
 	private int lastReportedUnloadedLinks;
 	private int lastReportedLevelInStorage;
 	private int lastReportedPromises;
@@ -349,6 +349,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		RequestPromiseQueue promises = Create.LOGISTICS.getQueuedPromises(network);
 		if (promises != null)
 			promises.add(new RequestPromise(new BigItemStack(getFilter(), recipeOutput)));
+		
+		panelBE.advancements.awardPlayer(AllAdvancements.FACTORY_GAUGE);
 	}
 
 	private void tryRestock() {
@@ -665,8 +667,6 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			active = false;
 			return;
 		}
-
-		boolean previouslySatisfied = satisfied;
 		
 		active = true;
 		filter = FilterItemStack.of(panelTag.getCompound("Filter"));

@@ -1,5 +1,6 @@
 package com.simibubi.create.content.logistics.box;
 
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,6 +66,8 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 	public int insertionDelay;
 
 	public Vec3 clientPosition, vec2 = Vec3.ZERO, vec3 = Vec3.ZERO;
+	
+	public WeakReference<Player> tossedBy = new WeakReference<>(null);
 
 	@SuppressWarnings("unchecked")
 	public PackageEntity(EntityType<?> entityTypeIn, Level worldIn) {
@@ -264,7 +267,12 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 
 	@Override
 	public void push(Entity entityIn) {
-		if (entityIn instanceof PackageEntity) {
+		boolean isOtherPackage = entityIn instanceof PackageEntity;
+		
+		if (!isOtherPackage && tossedBy.get() != null)
+			tossedBy = new WeakReference<Player>(null); // no nudging
+		
+		if (isOtherPackage) {
 			if (entityIn.getBoundingBox().minY < this.getBoundingBox().maxY)
 				super.push(entityIn);
 		} else if (entityIn.getBoundingBox().minY <= this.getBoundingBox().minY) {
