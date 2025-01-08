@@ -176,6 +176,7 @@
   "item.farmersdelight.noodle_soup": "Mie Kuah",
   "item.farmersdelight.bone_broth": "Kaldu Tulang",
 
+  "item.farmersdelight.bacon_and_eggs": "Bakon dan Telur",
   "item.farmersdelight.pasta_with_meatballs": "Pasta Bakso",
   "item.farmersdelight.pasta_with_mutton_chop": "Pasta Daging Domba",
   "item.farmersdelight.roasted_mutton_chops": "Daging Domba Panggang",
@@ -198,6 +199,8 @@
 
   "item.farmersdelight.dog_food": "Makanan Serigala",
   "item.farmersdelight.horse_feed": "Pakan Kuda",
+
+  "entity.farmersdelight.rotten_tomato": "Tomat Busuk",
 
   "effect.farmersdelight.nourishment": "Bergizi",
   "effect.farmersdelight.comfort": "Kenyamanan",
