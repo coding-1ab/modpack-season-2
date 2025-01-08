@@ -34,7 +34,7 @@ public abstract class ArmorTrimMixin {
 	private final BiFunction<Boolean, ArmorMaterial, ResourceLocation> create$textureCardboard = Util.memoize((inner, material) -> {
 		String assetPath = pattern.value().assetId().getPath();
 		String colorSuffix = getColorPaletteSuffix(material);
-		return Create.asResource("trims/models/armor/" + assetPath + (inner ? "_leggings_" : "_") + colorSuffix);
+		return Create.asResource("trims/models/armor/card_" + assetPath + (inner ? "_leggings_" : "_") + colorSuffix);
 	});
 
 	@Inject(method = "innerTexture", at = @At("HEAD"), cancellable = true)
@@ -47,7 +47,7 @@ public abstract class ArmorTrimMixin {
 	@Inject(method = "outerTexture", at = @At("HEAD"), cancellable = true)
 	private void create$swapTexturesForCardboardTrimsOuter(ArmorMaterial pArmorMaterial, CallbackInfoReturnable<ResourceLocation> cir) {
 		if (pArmorMaterial == AllArmorMaterials.CARDBOARD) {
-			cir.setReturnValue(create$textureCardboard.apply(true, pArmorMaterial));
+			cir.setReturnValue(create$textureCardboard.apply(false, pArmorMaterial));
 		}
 	}
 }
