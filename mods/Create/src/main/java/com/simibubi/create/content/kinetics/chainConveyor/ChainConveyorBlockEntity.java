@@ -26,7 +26,7 @@ import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
-import dev.engine_room.flywheel.api.backend.BackendManager;
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.NBTHelper;
 import net.createmod.catnip.utility.VecHelper;
@@ -146,9 +146,8 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements ITra
 
 		if (level.isClientSide()) {
 			// We can use TickableVisuals if flywheel is enabled
-			if (!BackendManager.isBackendOn()) {
+			if (!VisualizationManager.supportsVisualization(level))
 				tickBoxVisuals();
-			}
 		}
 
 		if (!level.isClientSide()) {
@@ -207,7 +206,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements ITra
 				anticipatePosition += serverSpeed * distancePerTick * 4;
 				anticipatePosition = Math.min(stats.chainLength, anticipatePosition);
 
-				if (level.isClientSide())
+				if (level.isClientSide() && !isVirtual())
 					continue;
 
 				for (Entry<BlockPos, ConnectedPort> portEntry : travelPorts.entrySet()) {
@@ -376,6 +375,8 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements ITra
 			return false;
 		travellingPackages.computeIfAbsent(connection, $ -> new ArrayList<>())
 			.add(box);
+		if (level.isClientSide)
+			return true;
 		notifyUpdate();
 		return true;
 	}
@@ -450,7 +451,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements ITra
 		ChainConveyorPackagePhysicsData physicsData = box.physicsData(level);
 		physicsData.setBE(this);
 
-		if (!physicsData.shouldTick())
+		if (!physicsData.shouldTick() && !isVirtual())
 			return;
 
 		physicsData.prevTargetPos = physicsData.targetPos;
@@ -652,7 +653,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements ITra
 		boolean connectedViaAxes, boolean connectedViaCogs) {
 		if (connections.contains(target.getBlockPos()
 			.subtract(worldPosition))) {
-			if (!(target instanceof ChainConveyorBlockEntity clbe))
+			if (!(target instanceof ChainConveyorBlockEntity))
 				return 0;
 			return 1;
 		}
