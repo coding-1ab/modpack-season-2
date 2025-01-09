@@ -1,6 +1,9 @@
 package com.simibubi.create;
 
-import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry;
+import static com.simibubi.create.Create.REGISTRATE;
+
+import java.util.function.Supplier;
+
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
 import com.simibubi.create.api.contraption.storage.item.chest.ChestMountedStorageType;
 import com.simibubi.create.content.contraptions.behaviour.dispenser.storage.DispenserMountedStorageType;
@@ -12,22 +15,35 @@ import com.simibubi.create.api.contraption.storage.item.simple.SimpleMountedStor
 import com.simibubi.create.content.logistics.vault.ItemVaultMountedStorageType;
 import com.simibubi.create.impl.contraption.storage.FallbackMountedStorageType;
 
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import com.tterrag.registrate.util.entry.RegistryEntry;
+
+import net.minecraft.world.level.block.Blocks;
 
 public class AllMountedStorageTypes {
-	private static final DeferredRegister<MountedItemStorageType<?>> REGISTER = DeferredRegister.create(MountedStorageTypeRegistry.ITEMS, Create.ID);
+	// fallback is special, provider is registered on lookup creation so it's always last
+	public static final RegistryEntry<FallbackMountedStorageType> FALLBACK = simple("fallback", FallbackMountedStorageType::new);
 
-	public static final RegistryObject<SimpleMountedStorageType.Impl> SIMPLE = REGISTER.register("simple", SimpleMountedStorageType.Impl::new);
-	public static final RegistryObject<FallbackMountedStorageType> FALLBACK = REGISTER.register("fallback", FallbackMountedStorageType::new);
-	public static final RegistryObject<ChestMountedStorageType> CHEST = REGISTER.register("chest", ChestMountedStorageType::new);
-	public static final RegistryObject<DispenserMountedStorageType> DISPENSER = REGISTER.register("dispenser", DispenserMountedStorageType::new);
-	public static final RegistryObject<CreativeCrateMountedStorageType> CREATIVE_CRATE = REGISTER.register("creative_crate", CreativeCrateMountedStorageType::new);
-	public static final RegistryObject<ItemVaultMountedStorageType> VAULT = REGISTER.register("vault", ItemVaultMountedStorageType::new);
-	public static final RegistryObject<ToolboxMountedStorageType> TOOLBOX = REGISTER.register("toolbox", ToolboxMountedStorageType::new);
+	// registrations for these are handled by the blocks, not the types
+	public static final RegistryEntry<CreativeCrateMountedStorageType> CREATIVE_CRATE = simple("creative_crate", CreativeCrateMountedStorageType::new);
+	public static final RegistryEntry<ItemVaultMountedStorageType> VAULT = simple("vault", ItemVaultMountedStorageType::new);
+	public static final RegistryEntry<ToolboxMountedStorageType> TOOLBOX = simple("toolbox", ToolboxMountedStorageType::new);
 
-	public static void register(IEventBus modEventBus) {
-		REGISTER.register(modEventBus);
+	// these are for external blocks, register associations here
+	public static final RegistryEntry<SimpleMountedStorageType.Impl> SIMPLE = REGISTRATE.mountedItemStorage("simple", SimpleMountedStorageType.Impl::new)
+		.registerTo(AllTags.AllBlockTags.SIMPLE_MOUNTED_STORAGE.tag)
+		.register();
+	public static final RegistryEntry<ChestMountedStorageType> CHEST = REGISTRATE.mountedItemStorage("chest", ChestMountedStorageType::new)
+		.registerTo(AllTags.AllBlockTags.CHEST_MOUNTED_STORAGE.tag)
+		.register();
+	public static final RegistryEntry<DispenserMountedStorageType> DISPENSER = REGISTRATE.mountedItemStorage("dispenser", DispenserMountedStorageType::new)
+		.registerTo(Blocks.DISPENSER)
+		.registerTo(Blocks.DROPPER)
+		.register();
+
+	private static <T extends MountedItemStorageType<?>> RegistryEntry<T> simple(String name, Supplier<T> supplier) {
+		return REGISTRATE.mountedItemStorage(name, supplier).register();
+	}
+
+	public static void register() {
 	}
 }

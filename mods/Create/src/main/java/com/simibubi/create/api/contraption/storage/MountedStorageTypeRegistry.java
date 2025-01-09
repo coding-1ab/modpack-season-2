@@ -7,10 +7,10 @@ import com.simibubi.create.api.lookup.BlockLookup;
 import com.simibubi.create.impl.contraption.storage.MountedStorageTypeRegistryImpl;
 
 import com.tterrag.registrate.builders.BlockBuilder;
+import com.tterrag.registrate.util.entry.RegistryEntry;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegistryObject;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -21,7 +21,11 @@ public class MountedStorageTypeRegistry {
 		Create.asResource("mounted_item_storage_type")
 	);
 
-	public static final BlockLookup<MountedItemStorageType<?>> ITEM_LOOKUP = new BlockLookup<>(MountedStorageTypeRegistryImpl::itemFallback);
+	/**
+	 * Lookup used for finding the item storage type associated with a block.
+	 * @see BlockLookup
+	 */
+	public static final BlockLookup<MountedItemStorageType<?>> ITEM_LOOKUP = MountedStorageTypeRegistryImpl.ITEM_LOOKUP;
 
 	/**
 	 * @throws NullPointerException if called before registry registration
@@ -34,7 +38,7 @@ public class MountedStorageTypeRegistry {
 	 * Utility for use with Registrate builders. Creates a builder transformer
 	 * that will register the given MountedItemStorageType to a block when ready.
 	 */
-	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> mountedItemStorage(RegistryObject<? extends MountedItemStorageType<?>> type) {
+	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> mountedItemStorage(RegistryEntry<? extends MountedItemStorageType<?>> type) {
 		return builder -> builder.onRegisterAfter(ITEMS, block -> ITEM_LOOKUP.register(block, type.get()));
 	}
 }

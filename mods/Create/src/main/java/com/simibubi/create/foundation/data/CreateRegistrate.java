@@ -10,6 +10,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
+
+import com.simibubi.create.api.contraption.storage.item.registrate.MountedItemStorageTypeBuilder;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.CreateClient;
@@ -138,6 +142,10 @@ public class CreateRegistrate extends AbstractRegistrate<CreateRegistrate> {
 		return (CreateEntityBuilder<T, P>) this.entry(name, (callback) -> {
 			return CreateEntityBuilder.create(this, parent, name, callback, factory, classification);
 		});
+	}
+
+	public <T extends MountedItemStorageType<?>> MountedItemStorageTypeBuilder<T, CreateRegistrate> mountedItemStorage(String name, Supplier<T> supplier) {
+		return this.entry(name, callback -> new MountedItemStorageTypeBuilder<>(this, this, name, callback, supplier.get()));
 	}
 
 	/* Palettes */

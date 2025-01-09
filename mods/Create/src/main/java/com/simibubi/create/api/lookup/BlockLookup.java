@@ -1,14 +1,11 @@
 package com.simibubi.create.api.lookup;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.simibubi.create.impl.lookup.BlockLookupImpl;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -21,54 +18,44 @@ import net.minecraft.world.level.block.state.BlockState;
  * All providers are expected to be registered synchronously during game init.
  * Adding new ones late is not supported.
  */
-public class BlockLookup<T> {
-	private final Map<Block, T> map;
-	private final Set<Block> blacklist;
-	private final List<Provider<T>> providers;
-
-	public BlockLookup(Provider<T> defaultProvider) {
-		this.map = new HashMap<>();
-		this.blacklist = new HashSet<>();
-		this.providers = new ArrayList<>();
-		this.registerProvider(defaultProvider);
-	}
-
+@ApiStatus.NonExtendable
+public interface BlockLookup<T> {
 	@Nullable
-	public T find(BlockState state) {
-		return this.find(state.getBlock());
-	}
+	T find(Block block);
 
+	/**
+	 * Shortcut to avoid calling getBlock() on a BlockState.
+	 */
 	@Nullable
-	public T find(Block block) {
-		if (this.blacklist.contains(block))
-			return null;
+	T find(BlockState state);
 
-		return this.map.computeIfAbsent(block, $ -> {
-			for (Provider<T> provider : this.providers) {
-				T value = provider.get(block);
-				if (value != null) {
-					return value;
-				}
-			}
+	/**
+	 * Register a value to one block.
+	 */
+	void register(Block block, T value);
 
-			this.blacklist.add(block);
-			return null;
-		});
-	}
-
-	public void register(Block block, T type) {
-		this.map.put(block, type);
-	}
+	/**
+	 * Register a value to all entries of a tag.
+	 */
+	void registerTag(TagKey<Block> tag, T value);
 
 	/**
 	 * Register a new provider that will be queried.
 	 * Providers are queried in reverse-registration order.
 	 */
-	public void registerProvider(Provider<T> provider) {
-		this.providers.add(0, provider);
+	void registerProvider(Provider<T> provider);
+
+	static <T> BlockLookup<T> create() {
+		return new BlockLookupImpl<>();
 	}
 
-	public interface Provider<T> {
+	static <T> BlockLookup<T> create(Provider<T> initialProvider) {
+		BlockLookup<T> lookup = new BlockLookupImpl<>();
+		lookup.registerProvider(initialProvider);
+		return lookup;
+	}
+
+	interface Provider<T> {
 		@Nullable
 		T get(Block block);
 	}
