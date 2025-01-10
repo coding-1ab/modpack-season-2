@@ -135,7 +135,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements ITra
 			removeInvalidConnections();
 		}
 
-		float serverSpeed = level.isClientSide() ? ServerSpeedProvider.get() : 1f;
+		float serverSpeed = level.isClientSide() && !isVirtual() ? ServerSpeedProvider.get() : 1f;
 		float speed = getSpeed() / 360f;
 		float radius = 1.5f;
 		float distancePerTick = Math.abs(speed);
