@@ -201,7 +201,7 @@ public class PackageItem extends Item {
 
 		if (compoundnbt.contains("Address", Tag.TAG_STRING) && !compoundnbt.getString("Address")
 			.isBlank())
-			pTooltipComponents.add(Components.literal("-> " + compoundnbt.getString("Address"))
+			pTooltipComponents.add(Components.literal("\u2192 " + compoundnbt.getString("Address"))
 				.withStyle(ChatFormatting.GOLD));
 
 		/*
