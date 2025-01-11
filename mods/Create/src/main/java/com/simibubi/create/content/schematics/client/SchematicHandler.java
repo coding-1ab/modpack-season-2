@@ -153,7 +153,7 @@ public class SchematicHandler implements IGuiOverlay {
 	private void setupRenderer() {
 		Level clientWorld = Minecraft.getInstance().level;
 		StructureTemplate schematic =
-			SchematicItem.loadSchematic(clientWorld.holderLookup(Registries.BLOCK), activeSchematicItem);
+			SchematicItem.loadSchematic(clientWorld, activeSchematicItem);
 		Vec3i size = schematic.getSize();
 		if (size.equals(Vec3i.ZERO))
 			return;

@@ -51,7 +51,7 @@ public class SchematicInstances {
 			return null;
 
 		StructureTemplate activeTemplate =
-			SchematicItem.loadSchematic(wrapped.holderLookup(Registries.BLOCK), schematic);
+			SchematicItem.loadSchematic(wrapped, schematic);
 
 		if (activeTemplate.getSize()
 			.equals(Vec3i.ZERO))

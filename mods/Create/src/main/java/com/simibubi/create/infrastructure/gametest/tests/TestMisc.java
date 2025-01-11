@@ -40,7 +40,7 @@ public class TestMisc {
 				level, whiteEndBottom, redEndTop
 		);
 		ItemStack schematic =
-			SchematicItem.create(level.holderLookup(Registries.BLOCK), "schematicannon_gametest.nbt", "Deployer");
+			SchematicItem.create(level, "schematicannon_gametest.nbt", "Deployer");
 		// deploy to pos
 		BlockPos anchor = helper.absolutePos(new BlockPos(1, 2, 1));
 		schematic.getOrCreateTag().putBoolean("Deployed", true);
