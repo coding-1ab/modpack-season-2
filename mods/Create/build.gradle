@@ -40,7 +40,6 @@ project.logger.lifecycle("Dependencies included in Workspace: [Catnip: ${catnipI
 
 mixin {
     add sourceSets.main, 'create.refmap.json'
-
     config 'create.mixins.json'
 }
 
@@ -68,6 +67,26 @@ legacyForge {
         mappingsVersion = parchment_version
     }
 
+    mods {
+        create {
+            sourceSet sourceSets.main
+        }
+
+        if (catnipInWorkspace) {
+            catnip {
+                sourceSet project(":catnip:Common").sourceSets.main
+                sourceSet project(":catnip:Forge").sourceSets.main
+            }
+        }
+
+        if (ponderInWorkspace) {
+            ponder {
+                sourceSet project(":ponder:Common").sourceSets.main
+                sourceSet project(":ponder:Forge").sourceSets.main
+            }
+        }
+    }
+
     runs {
         // applies to all the run configs below
         configureEach {
@@ -84,22 +103,6 @@ legacyForge {
 
             programArgument '-mixin.config=create.mixins.json'
             programArgument '-mixin.config=catnip.mixins.json'
-
-            mods {
-                if (catnipInWorkspace) {
-                    catnip {
-                        sourceSet project(":catnip:Common").sourceSets.main
-                        sourceSet project(":catnip:Forge").sourceSets.main
-                    }
-                }
-
-                if (ponderInWorkspace) {
-                    ponder {
-                        sourceSet project(":ponder:Common").sourceSets.main
-                        sourceSet project(":ponder:Forge").sourceSets.main
-                    }
-                }
-            }
         }
 
         client {
@@ -287,10 +290,12 @@ sourceSets.main {
             exclude 'com/simibubi/create/compat/computercraft/implementation/**'
         }
     }
+
     resources {
         srcDir 'src/generated/resources'
         exclude '.cache/'
     }
+
     blossom.javaSources {
         property("version", build_info_mod_version)
         property("gitCommit", gitHash.toString())
