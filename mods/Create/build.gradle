@@ -367,12 +367,10 @@ publishMods {
 
 String calculateGitHash() {
     try {
-        ByteArrayOutputStream stdout = new ByteArrayOutputStream()
-        exec {
+        def output = providers.exec {
             commandLine("git", "rev-parse", "HEAD")
-            standardOutput = stdout
         }
-        return stdout.toString().trim()
+        return output.standardOutput.asText.get().trim()
     } catch(Throwable ignored) {
         return "unknown"
     }
@@ -380,14 +378,12 @@ String calculateGitHash() {
 
 boolean hasUnstaged() {
     try {
-        ByteArrayOutputStream stdout = new ByteArrayOutputStream()
-        exec {
+        def output = providers.exec {
             commandLine("git", "status", "--porcelain")
-            standardOutput = stdout
         }
-        String result = stdout.toString().replace("/M gradlew(\\.bat)?/", "").trim()
+        String result = output.standardOutput.asText.get().replace("/M gradlew(\\.bat)?/", "").trim()
         if (!result.isEmpty())
-            println("Found stageable results:\n${result}\n")
+            println("Found stageable results:\n ${result}\n")
         return !result.isEmpty()
     }  catch(Throwable ignored) {
         return false
