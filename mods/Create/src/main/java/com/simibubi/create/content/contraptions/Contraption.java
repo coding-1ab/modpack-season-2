@@ -1459,6 +1459,10 @@ public abstract class Contraption {
 	public IFluidHandler getSharedFluidTanks() {
 		return storage.getFluids();
 	}
+	
+	public MountedStorageManager getStorageManager() {
+		return storage;
+	}
 
 	public RenderedBlocks getRenderedBlocks() {
 		return new RenderedBlocks(pos -> {
@@ -1484,6 +1488,10 @@ public abstract class Contraption {
 
 	public void handleContraptionFluidPacket(BlockPos localPos, FluidStack containedFluid) {
 		storage.updateContainedFluid(localPos, containedFluid);
+	}
+	
+	public void handleContraptionItemPacket(BlockPos localPos, List<ItemStack> containedItems) {
+		storage.updateContainedItem(localPos, containedItems);
 	}
 
 	public static class ContraptionInvWrapper extends CombinedInvWrapper {

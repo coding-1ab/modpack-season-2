@@ -1,16 +1,26 @@
 package com.simibubi.create.content.contraptions;
 
+import java.util.List;
+
 import com.simibubi.create.AllBlockEntityTypes;
+import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllTags.AllBlockTags;
+import com.simibubi.create.content.contraptions.sync.ContraptionItemPacket;
 import com.simibubi.create.content.equipment.toolbox.ToolboxInventory;
+import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.simibubi.create.content.kinetics.crafter.MechanicalCrafterBlockEntity;
 import com.simibubi.create.content.logistics.crate.BottomlessItemHandler;
+import com.simibubi.create.content.logistics.depot.DepotBehaviour;
+import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.content.logistics.vault.ItemVaultBlockEntity;
 import com.simibubi.create.content.processing.recipe.ProcessingInventory;
+
 import net.createmod.catnip.utility.NBTHelper;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -22,6 +32,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class MountedStorage {
@@ -31,8 +42,11 @@ public class MountedStorage {
 	ItemStackHandler handler;
 	boolean noFuel;
 	boolean valid;
+	
+	private int packetCooldown = 0;
+	private boolean sendPacket = false;
 
-	private BlockEntity blockEntity;
+	BlockEntity blockEntity;
 
 	public static boolean canUseAsStorage(BlockEntity be) {
 		if (be == null)
@@ -48,6 +62,8 @@ public class MountedStorage {
 		if (be instanceof BarrelBlockEntity)
 			return true;
 		if (be instanceof ItemVaultBlockEntity)
+			return true;
+		if (be instanceof DepotBlockEntity)
 			return true;
 
 		try {
@@ -85,9 +101,17 @@ public class MountedStorage {
 
 	public void removeStorageFromWorld() {
 		valid = false;
+		sendPacket = false;
 		if (blockEntity == null)
 			return;
 
+		if (blockEntity instanceof DepotBlockEntity depot) {
+			handler = new SyncedMountedItemStackHandler(1);
+			handler.setStackInSlot(0, depot.getHeldItem());
+			valid = true;
+			return;
+		}
+		
 		if (blockEntity instanceof ChestBlockEntity) {
 			CompoundTag tag = blockEntity.saveWithFullMetadata();
 			if (tag.contains("LootTable", 8))
@@ -140,6 +164,13 @@ public class MountedStorage {
 		if (handler instanceof BottomlessItemHandler)
 			return;
 
+		if (be instanceof DepotBlockEntity depot) {
+			if (handler.getSlots() > 0)
+				depot.getBehaviour(DepotBehaviour.TYPE)
+					.setCenteredHeldItem(new TransportedItemStack(handler.getStackInSlot(0)));
+			return;
+		}
+
 		if (be instanceof ChestBlockEntity) {
 			CompoundTag tag = be.saveWithFullMetadata();
 			tag.remove("Items");
@@ -166,6 +197,29 @@ public class MountedStorage {
 			inv.setStackInSlot(slot, handler.getStackInSlot(slot));
 	}
 
+	public void tick(Entity entity, BlockPos pos, boolean isRemote) {
+		if (isRemote)
+			return;
+		if (packetCooldown > 0) {
+			packetCooldown--;
+			return;
+		}
+		if (sendPacket) {
+			sendPacket = false;
+			AllPackets.getChannel()
+				.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity),
+					new ContraptionItemPacket(entity.getId(), pos, handler));
+			packetCooldown = 8;
+		}
+	}
+
+	public void updateItems(List<ItemStack> containedItems) {
+		for (int i = 0; i < Math.min(containedItems.size(), handler.getSlots()); i++)
+			handler.setStackInSlot(i, containedItems.get(i));
+		if (blockEntity instanceof DepotBlockEntity depot)
+			depot.setHeldItem(handler.getStackInSlot(0));
+	}
+	
 	public IItemHandlerModifiable getItemHandler() {
 		return handler;
 	}
@@ -179,6 +233,9 @@ public class MountedStorage {
 			NBTHelper.putMarker(tag, "NoFuel");
 		if (handler instanceof ToolboxInventory)
 			NBTHelper.putMarker(tag, "Toolbox");
+		if (needsSync())
+			NBTHelper.putMarker(tag, "Synced");
+			
 		if (!(handler instanceof BottomlessItemHandler))
 			return tag;
 
@@ -195,6 +252,8 @@ public class MountedStorage {
 			return storage;
 		if (nbt.contains("Toolbox"))
 			storage.handler = new ToolboxInventory(null);
+		if (nbt.contains("Synced"))
+			storage.handler = storage.new SyncedMountedItemStackHandler(1);
 		
 		storage.valid = true;
 		storage.noFuel = nbt.contains("NoFuel");
@@ -215,6 +274,23 @@ public class MountedStorage {
 
 	public boolean canUseForFuel() {
 		return !noFuel;
+	}
+	
+	public boolean needsSync() {
+		return handler instanceof SyncedMountedItemStackHandler;
+	}
+	
+	public class SyncedMountedItemStackHandler extends ItemStackHandler {
+		
+		public SyncedMountedItemStackHandler(int i) {
+			super(i);
+		}
+
+		@Override
+		protected void onContentsChanged(int slot) {
+			sendPacket = true;
+		}
+		
 	}
 
 }

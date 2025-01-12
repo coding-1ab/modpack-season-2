@@ -333,6 +333,11 @@ public class CarriageContraption extends Contraption {
 	public void handleContraptionFluidPacket(BlockPos localPos, FluidStack containedFluid) {
 		storage.updateContainedFluid(localPos, containedFluid);
 	}
+	
+	@Override
+	public MountedStorageManager getStorageManager() {
+		return storageProxy;
+	}
 
 	@Override
 	public void tickStorage(AbstractContraptionEntity entity) {
