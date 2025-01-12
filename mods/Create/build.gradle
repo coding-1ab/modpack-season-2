@@ -98,8 +98,6 @@ legacyForge {
 
             systemProperty 'mixin.debug.export', 'true'
             systemProperty 'mixin.debug.verbose', 'true'
-            systemProperty 'mixin.env.remapRefMap', 'true'
-            systemProperty 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             programArgument '-mixin.config=create.mixins.json'
             programArgument '-mixin.config=catnip.mixins.json'
