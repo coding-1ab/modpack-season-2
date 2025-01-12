@@ -15,6 +15,7 @@
     "EntityMixin",
     "LavaSwimmingMixin",
     "MapItemSavedDataMixin",
+    "ProjectileUtilMixin",
     "ShulkerBoxBlockMixin",
     "SmithingMenuMixin",
     "TestCommandMixin",
