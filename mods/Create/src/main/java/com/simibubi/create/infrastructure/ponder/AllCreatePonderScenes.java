@@ -43,6 +43,7 @@ import com.simibubi.create.infrastructure.ponder.scenes.fluid.PumpScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.fluid.SpoutScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.FrogAndConveyorScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.PackagerScenes;
+import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.PostboxScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.trains.TrackObserverScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.trains.TrackScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.trains.TrainScenes;
@@ -54,6 +55,7 @@ import com.tterrag.registrate.util.entry.RegistryEntry;
 
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -354,6 +356,8 @@ public class AllCreatePonderScenes {
 			.addStoryBoard("high_logistics/chain_conveyor", FrogAndConveyorScenes::conveyor);
 		HELPER.forComponents(AllBlocks.PACKAGE_FROGPORT)
 			.addStoryBoard("high_logistics/package_frogport", FrogAndConveyorScenes::frogPort);
+		HELPER.forComponents(AllBlocks.PACKAGE_POSTBOXES.toArray())
+			.addStoryBoard("high_logistics/package_postbox", PostboxScenes::postbox);
 		HELPER.forComponents(AllBlocks.PACKAGER)
 			.addStoryBoard("high_logistics/packager", PackagerScenes::packager)
 			.addStoryBoard("high_logistics/packager_address", PackagerScenes::packagerAddress);
