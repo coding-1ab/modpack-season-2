@@ -85,13 +85,13 @@ public class ColorAttribute implements ItemAttribute {
 
 	@Override
 	public void save(CompoundTag nbt) {
-		nbt.putInt("id", color.getId());
+		nbt.putInt("color", color.getId());
 	}
 
 	@Override
 	public void load(CompoundTag nbt) {
-		if (nbt.contains("id")) {
-			color = DyeColor.byId(nbt.getInt("id"));
+		if (nbt.contains("color")) {
+			color = DyeColor.byId(nbt.getInt("color"));
 		}
 	}
 

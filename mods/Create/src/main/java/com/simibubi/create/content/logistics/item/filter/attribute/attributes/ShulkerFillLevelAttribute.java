@@ -55,17 +55,17 @@ public class ShulkerFillLevelAttribute implements ItemAttribute {
 	@Override
 	public void save(CompoundTag nbt) {
 		if (levels != null)
-			nbt.putString("id", levels.key);
+			nbt.putString("level", levels.key);
 	}
 
 	@Override
 	public void load(CompoundTag nbt) {
-		if (nbt.contains("id")) {
-			levels = ShulkerLevels.fromKey(nbt.getString("id"));
+		if (nbt.contains("level")) {
+			levels = ShulkerLevels.fromKey(nbt.getString("level"));
 		}
 	}
 
-	enum ShulkerLevels {
+	public enum ShulkerLevels {
 		EMPTY("empty", amount -> amount == 0),
 		PARTIAL("partial", amount -> amount > 0 && amount < Integer.MAX_VALUE),
 		FULL("full", amount -> amount == Integer.MAX_VALUE);

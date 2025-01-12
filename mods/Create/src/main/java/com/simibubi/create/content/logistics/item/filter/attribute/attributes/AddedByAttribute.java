@@ -48,12 +48,12 @@ public class AddedByAttribute implements ItemAttribute {
 
 	@Override
 	public void save(CompoundTag nbt) {
-		nbt.putString("id", modId);
+		nbt.putString("modId", modId);
 	}
 
 	@Override
 	public void load(CompoundTag nbt) {
-		modId = nbt.getString("id");
+		modId = nbt.getString("modId");
 	}
 
 	@Override

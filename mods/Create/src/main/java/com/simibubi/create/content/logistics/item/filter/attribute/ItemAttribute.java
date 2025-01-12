@@ -25,7 +25,7 @@ public interface ItemAttribute {
 		if (id == null)
 			throw new IllegalArgumentException("Cannot get " + attribute.getType() + "as it does not exist in AllRegistries.ITEM_ATTRIBUTE_TYPES");
 
-		nbt.putString("id", id.toString());
+		nbt.putString("attributeId", id.toString());
 		attribute.save(nbt);
 		return nbt;
 	}

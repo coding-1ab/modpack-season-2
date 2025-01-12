@@ -72,13 +72,13 @@ public class FluidContentsAttribute implements ItemAttribute {
 		ResourceLocation id = ForgeRegistries.FLUIDS.getKey(fluid);
 		if (id == null)
 			return;
-		nbt.putString("id", id.toString());
+		nbt.putString("fluidId", id.toString());
 	}
 
 	@Override
 	public void load(CompoundTag nbt) {
-		if (nbt.contains("id")) {
-			fluid = ForgeRegistries.FLUIDS.getValue(ResourceLocation.tryParse(nbt.getString("id")));
+		if (nbt.contains("fluidId")) {
+			fluid = ForgeRegistries.FLUIDS.getValue(ResourceLocation.tryParse(nbt.getString("fluidId")));
 		}
 	}
 
