@@ -38,7 +38,7 @@ public interface ItemAttribute {
 			}
 		}
 
-		ResourceLocation id = ResourceLocation.tryParse(nbt.getString("id"));
+		ResourceLocation id = ResourceLocation.tryParse(nbt.getString("attributeId"));
 		if (id == null)
 			return null;
 
