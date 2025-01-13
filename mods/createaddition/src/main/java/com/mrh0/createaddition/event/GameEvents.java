@@ -57,6 +57,13 @@ public class GameEvents {
 	}
 
 	@SubscribeEvent
+	public static void LevelUnload(LevelEvent.Unload event) {
+		if (!event.getLevel().isClientSide()) {
+			EnergyNetworkManager.instances.remove(event.getLevel());
+		}
+	}
+
+	@SubscribeEvent
     public static void interact(PlayerInteractEvent.RightClickBlock evt) {
 		try {
 			if(evt.getLevel().isClientSide()) return;
