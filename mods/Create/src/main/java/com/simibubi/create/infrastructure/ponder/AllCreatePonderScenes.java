@@ -44,6 +44,8 @@ import com.simibubi.create.infrastructure.ponder.scenes.fluid.SpoutScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.FrogAndConveyorScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.PackagerScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.PostboxScenes;
+import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.StockLinkScenes;
+import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.StockTickerScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.trains.TrackObserverScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.trains.TrackScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.trains.TrainScenes;
@@ -55,7 +57,6 @@ import com.tterrag.registrate.util.entry.RegistryEntry;
 
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -361,6 +362,11 @@ public class AllCreatePonderScenes {
 		HELPER.forComponents(AllBlocks.PACKAGER)
 			.addStoryBoard("high_logistics/packager", PackagerScenes::packager)
 			.addStoryBoard("high_logistics/packager_address", PackagerScenes::packagerAddress);
+		HELPER.forComponents(AllBlocks.STOCK_LINK)
+			.addStoryBoard("high_logistics/stock_link", StockLinkScenes::stockLink);
+		HELPER.forComponents(AllBlocks.STOCK_TICKER)
+			.addStoryBoard("high_logistics/stock_ticker", StockTickerScenes::stockTicker)
+			.addStoryBoard("high_logistics/stock_ticker_address", StockTickerScenes::stockTickerAddress);
 
 		// Trains
 		HELPER.forComponents(TrackMaterial.allBlocks()
