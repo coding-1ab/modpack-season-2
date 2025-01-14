@@ -134,7 +134,7 @@ legacyForge {
 }
 
 repositories {
-    //maven { url = "https://maven.createmod.net" } // Ponder, Catnip
+    maven { url = "https://maven.createmod.net" } // Ponder, Catnip
     maven { url = "https://maven.tterrag.com" } // Registrate, Flywheel
     maven { url = "https://maven.blamejared.com" } // JEI, Vazkii's Mods
     maven { url = "https://harleyoconnor.com/maven" } // Dynamic Trees
@@ -149,11 +149,6 @@ repositories {
             includeGroup "info.journeymap"
             includeGroup "mysticdrew"
         }
-    }
-
-    // Mirror of maven.createmod.net
-    if (System.getProperty("os.name").contains("Mac") && System.getenv("USER") == "ithundxr") {
-        maven { url = "https://maven.ithundxr.dev/mirror" }
     }
 
     mavenCentral()
