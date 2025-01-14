@@ -183,7 +183,7 @@ public class StockTickerScenes {
 		scene.idle(2);
 		scene.world()
 			.showSection(vault, Direction.NORTH);
-		scene.idle(15);
+		scene.idle(10);
 
 		scene.overlay()
 			.showOutline(PonderPalette.BLUE, link1, util.select()
@@ -404,8 +404,6 @@ public class StockTickerScenes {
 
 		Selection vault = util.select()
 			.fromTo(6, 1, 6, 8, 3, 8);
-		Selection scaff = util.select()
-			.position(7, 1, 5);
 		BlockPos pack = util.grid()
 			.at(7, 2, 5);
 		BlockPos link = util.grid()
@@ -430,10 +428,6 @@ public class StockTickerScenes {
 			.fromTo(2, 1, 6, 2, 2, 6);
 		BlockPos ticker = util.grid()
 			.at(2, 2, 6);
-		Selection packS = util.select()
-			.position(pack);
-		Selection linkS = util.select()
-			.position(link);
 		Selection funnel = util.select()
 			.position(7, 2, 4);
 		Selection linkAndPackager = util.select()
