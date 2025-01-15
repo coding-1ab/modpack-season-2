@@ -48,6 +48,7 @@ import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.Repackager
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.RequesterAndShopScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.StockLinkScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.StockTickerScenes;
+import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.TableClothScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.trains.TrackObserverScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.trains.TrackScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.trains.TrainScenes;
@@ -373,6 +374,10 @@ public class AllCreatePonderScenes {
 			.addStoryBoard("high_logistics/redstone_requester", RequesterAndShopScenes::requester);
 		HELPER.forComponents(AllBlocks.REPACKAGER)
 			.addStoryBoard("high_logistics/repackager", RepackagerScenes::repackager);
+		HELPER.forComponents(AllBlocks.TABLE_CLOTHS.toArray())
+			.addStoryBoard("high_logistics/table_cloth", TableClothScenes::tableCloth);
+		HELPER.forComponents(AllBlocks.ANDESITE_TABLE_CLOTH, AllBlocks.BRASS_TABLE_CLOTH, AllBlocks.COPPER_TABLE_CLOTH)
+			.addStoryBoard("high_logistics/table_cloth", TableClothScenes::tableCloth);
 
 		// Trains
 		HELPER.forComponents(TrackMaterial.allBlocks()
