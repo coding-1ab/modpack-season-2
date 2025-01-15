@@ -1,7 +1,10 @@
 package com.simibubi.create.content.equipment.armor;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
+import java.util.Map;
+
 import com.simibubi.create.Create;
-import com.simibubi.create.foundation.mixin.accessor.ModelBuilderAccessor;
 import com.tterrag.registrate.providers.DataGenContext;
 import com.tterrag.registrate.providers.RegistrateItemModelProvider;
 
@@ -13,10 +16,6 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;
-
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
-import java.util.Map;
 
 public class TrimmableArmorModelGenerator {
 	public static final VarHandle TEXTURES_HANDLE;
