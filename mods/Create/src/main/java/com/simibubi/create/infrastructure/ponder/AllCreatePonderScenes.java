@@ -44,6 +44,7 @@ import com.simibubi.create.infrastructure.ponder.scenes.fluid.SpoutScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.FrogAndConveyorScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.PackagerScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.PostboxScenes;
+import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.RepackagerScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.RequesterAndShopScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.StockLinkScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.StockTickerScenes;
@@ -370,6 +371,8 @@ public class AllCreatePonderScenes {
 			.addStoryBoard("high_logistics/stock_ticker_address", StockTickerScenes::stockTickerAddress);
 		HELPER.forComponents(AllBlocks.REDSTONE_REQUESTER)
 			.addStoryBoard("high_logistics/redstone_requester", RequesterAndShopScenes::requester);
+		HELPER.forComponents(AllBlocks.REPACKAGER)
+			.addStoryBoard("high_logistics/repackager", RepackagerScenes::repackager);
 
 		// Trains
 		HELPER.forComponents(TrackMaterial.allBlocks()
