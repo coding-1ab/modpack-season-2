@@ -7,6 +7,7 @@ import java.util.Map;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.SingleRotatingVisual;
 import com.simibubi.create.content.logistics.box.PackageItem;
+import com.simibubi.create.foundation.render.SpecialModels;
 
 import dev.engine_room.flywheel.api.model.Model;
 import dev.engine_room.flywheel.api.visual.DynamicVisual;
@@ -147,7 +148,7 @@ public class ChainConveyorVisual extends SingleRotatingVisual<ChainConveyorBlock
 	private void setupGuards() {
 		deleteGuards();
 
-		var guardInstancer = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.CHAIN_CONVEYOR_GUARD));
+		var guardInstancer = instancerProvider().instancer(InstanceTypes.TRANSFORMED, SpecialModels.chunkDiffuse(AllPartialModels.CHAIN_CONVEYOR_GUARD));
 
 		for (BlockPos blockPos : blockEntity.connections) {
 			ChainConveyorBlockEntity.ConnectionStats stats = blockEntity.connectionStats.get(blockPos);
