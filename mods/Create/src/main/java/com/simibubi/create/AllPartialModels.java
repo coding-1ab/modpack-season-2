@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
+import com.simibubi.create.content.kinetics.gantry.GantryShaftBlock;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.content.logistics.box.PackageStyles.PackageStyle;
 
@@ -27,6 +28,7 @@ public class AllPartialModels {
 		SHAFTLESS_COGWHEEL = block("cogwheel_shaftless"), SHAFTLESS_LARGE_COGWHEEL = block("large_cogwheel_shaftless"),
 		COGWHEEL_SHAFT = block("cogwheel_shaft"), SHAFT_HALF = block("shaft_half"),
 		SHAFT = block("shaft"),
+		COGWHEEL = block("cogwheel"),
 
 		BELT_PULLEY = block("belt_pulley"), BELT_START = block("belt/start"), BELT_MIDDLE = block("belt/middle"),
 		BELT_END = block("belt/end"), BELT_START_BOTTOM = block("belt/start_bottom"),
@@ -206,6 +208,13 @@ public class AllPartialModels {
 		TABLE_CLOTH_SE = block("table_cloth/south_east"),
 
 		FLYWHEEL = block("flywheel/block"),
+		CRUSHING_WHEEL = block("crushing_wheel/block"),
+		TURNTABLE = block("turntable"),
+		GANTRY_SHAFT_START = block("gantry_shaft/block_start"),
+		GANTRY_SHAFT_END = block("gantry_shaft/block_end"),
+		GANTRY_SHAFT_MIDDLE = block("gantry_shaft/block_middle"),
+		GANTRY_SHAFT_SINGLE = block("gantry_shaft/block_single"),
+		POWERED_SHAFT = block("powered_shaft"),
 
 		CRAFTING_BLUEPRINT_1x1 = entity("crafting_blueprint_small"),
 		CRAFTING_BLUEPRINT_2x2 = entity("crafting_blueprint_medium"),
@@ -233,6 +242,8 @@ public class AllPartialModels {
 	public static final Map<ResourceLocation, PartialModel> PACKAGES = new HashMap<>();
 	public static final List<PartialModel> PACKAGES_TO_HIDE_AS = new ArrayList<>();
 	public static final Map<ResourceLocation, PartialModel> PACKAGE_RIGGING = new HashMap<>();
+
+	public static final Map<GantryShaftKey, PartialModel> GANTRY_SHAFTS = new HashMap<>();
 
 	static {
 		for (FluidTransportBehaviour.AttachmentTypes.ComponentPartials type : FluidTransportBehaviour.AttachmentTypes.ComponentPartials
@@ -265,6 +276,31 @@ public class AllPartialModels {
 			if (!style.rare())
 				PACKAGES_TO_HIDE_AS.add(model);
 			PACKAGE_RIGGING.put(key, PartialModel.of(style.getRiggingModel()));
+		}
+
+		for (boolean flipped : Iterate.trueAndFalse) {
+			for (boolean powered : Iterate.trueAndFalse) {
+				for (GantryShaftBlock.Part part : GantryShaftBlock.Part.values()) {
+					GantryShaftKey key = new GantryShaftKey(part, powered, flipped);
+					GANTRY_SHAFTS.put(key, PartialModel.of(key.name()));
+				}
+			}
+		}
+	}
+
+	public record GantryShaftKey(GantryShaftBlock.Part part, boolean powered, boolean flipped) {
+		private ResourceLocation name() {
+			String partName = part.getSerializedName();
+
+			if (!(flipped || powered)) {
+				// Non-generated
+				return Create.asResource("block/gantry_shaft/block_" + partName);
+			}
+
+			String flipped = this.flipped ? "_flipped" : "";
+			String powered = this.powered ? "_powered" : "";
+
+			return Create.asResource("block/gantry_shaft_" + partName + powered + flipped);
 		}
 	}
 
