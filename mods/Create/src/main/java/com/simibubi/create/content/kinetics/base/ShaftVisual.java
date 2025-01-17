@@ -1,8 +1,10 @@
 package com.simibubi.create.content.kinetics.base;
 
-import dev.engine_room.flywheel.api.model.Model;
+import com.simibubi.create.AllPartialModels;
+import com.simibubi.create.foundation.render.AllInstanceTypes;
+
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
-import net.createmod.catnip.render.VirtualRenderHelper;
+import dev.engine_room.flywheel.lib.model.Models;
 
 public class ShaftVisual<T extends KineticBlockEntity> extends SingleRotatingVisual<T> {
 
@@ -11,7 +13,9 @@ public class ShaftVisual<T extends KineticBlockEntity> extends SingleRotatingVis
 	}
 
 	@Override
-	protected Model model() {
-		return VirtualRenderHelper.blockModel(shaft());
+	public RotatingInstance createRotatingInstance() {
+		return instancerProvider().instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.SHAFT))
+			.createInstance()
+			.rotateToFace(rotationAxis());
 	}
 }

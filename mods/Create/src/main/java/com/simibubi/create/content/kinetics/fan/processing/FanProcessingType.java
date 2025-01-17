@@ -2,9 +2,9 @@ package com.simibubi.create.content.kinetics.fan.processing;
 
 import java.util.List;
 
-import com.simibubi.create.AllRegistries;
-
 import org.jetbrains.annotations.Nullable;
+
+import com.simibubi.create.AllRegistries;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -34,11 +34,11 @@ public interface FanProcessingType {
 	static FanProcessingType parse(String str) {
 		ResourceLocation id = ResourceLocation.tryParse(str);
 		if (id == null) {
-			return AllFanProcessingTypes.NONE.get();
+			return AllFanProcessingTypes.NONE;
 		}
 		FanProcessingType type = AllRegistries.FAN_PROCESSING_TYPES.get().getValue(id);
 		if (type == null) {
-			return AllFanProcessingTypes.NONE.get();
+			return AllFanProcessingTypes.NONE;
 		}
 		return type;
 	}
@@ -49,7 +49,7 @@ public interface FanProcessingType {
 				return type;
 			}
 		}
-		return AllFanProcessingTypes.NONE.get();
+		return AllFanProcessingTypes.NONE;
 	}
 
 	interface AirFlowParticleAccess {

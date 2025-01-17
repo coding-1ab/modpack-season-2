@@ -26,6 +26,7 @@ public class AllPartialModels {
 
 		SHAFTLESS_COGWHEEL = block("cogwheel_shaftless"), SHAFTLESS_LARGE_COGWHEEL = block("large_cogwheel_shaftless"),
 		COGWHEEL_SHAFT = block("cogwheel_shaft"), SHAFT_HALF = block("shaft_half"),
+		SHAFT = block("shaft"),
 
 		BELT_PULLEY = block("belt_pulley"), BELT_START = block("belt/start"), BELT_MIDDLE = block("belt/middle"),
 		BELT_END = block("belt/end"), BELT_START_BOTTOM = block("belt/start_bottom"),
@@ -38,6 +39,8 @@ public class AllPartialModels {
 		BRASS_BELT_COVER_Z = block("belt_cover/brass_belt_cover_z"),
 
 		ENCASED_FAN_INNER = block("encased_fan/propeller"), HAND_CRANK_HANDLE = block("hand_crank/handle"),
+		HAND_CRANK_BASE = block("hand_crank/block"),
+		VALVE_HANDLE = block("valve_handle"),
 		MECHANICAL_PRESS_HEAD = block("mechanical_press/head"), MECHANICAL_MIXER_POLE = block("mechanical_mixer/pole"),
 		MECHANICAL_MIXER_HEAD = block("mechanical_mixer/head"),
 		MECHANICAL_CRAFTER_LID = block("mechanical_crafter/lid"),
@@ -71,6 +74,8 @@ public class AllPartialModels {
 
 		ROPE_COIL = block("rope_pulley/rope_coil"), ROPE_HALF = block("rope_pulley/rope_half"),
 		ROPE_HALF_MAGNET = block("rope_pulley/rope_half_magnet"),
+		ROPE = block("rope_pulley/rope"),
+		PULLEY_MAGNET = block("rope_pulley/pulley_magnet"),
 
 		HOSE_COIL = block("hose_pulley/hose_coil"), HOSE = block("hose_pulley/rope"),
 		HOSE_MAGNET = block("hose_pulley/pulley_magnet"), HOSE_HALF = block("hose_pulley/rope_half"),
@@ -85,7 +90,7 @@ public class AllPartialModels {
 		SYMMETRY_TRIPLEPLANE = block("symmetry_effect/tripleplane"),
 
 		STICKER_HEAD = block("sticker/head"),
-		
+
 		DESK_BELL_PLUNGER = block("desk_bell/plunger"),
 		DESK_BELL_BELL = block("desk_bell/bell"),
 
@@ -127,7 +132,7 @@ public class AllPartialModels {
 
 		PACKAGER_TRAY_REGULAR = block("packager/tray"), PACKAGER_TRAY_DEFRAG = block("repackager/tray"),
 		PACKAGER_HATCH_OPEN = block("packager/hatch_open"), PACKAGER_HATCH_CLOSED = block("packager/hatch_closed"),
-		
+
 		TABLE_CLOTH_PRICE_SIDE = block("table_cloth/price_tag_side"),
 		TABLE_CLOTH_PRICE_TOP = block("table_cloth/price_tag_top"),
 
@@ -187,7 +192,7 @@ public class AllPartialModels {
 
 		WATER_WHEEL = block("water_wheel/wheel"), LARGE_WATER_WHEEL = block("large_water_wheel/block"),
 		LARGE_WATER_WHEEL_EXTENSION = block("large_water_wheel/block_extension"),
-		
+
 		FACTORY_PANEL = block("factory_gauge/panel"),
 		FACTORY_PANEL_WITH_BULB = block("factory_gauge/panel_with_bulb"),
 		FACTORY_PANEL_RESTOCKER = block("factory_gauge/panel_restocker"),
@@ -199,7 +204,9 @@ public class AllPartialModels {
 		TABLE_CLOTH_NE = block("table_cloth/north_east"),
 		TABLE_CLOTH_SW = block("table_cloth/south_west"),
 		TABLE_CLOTH_SE = block("table_cloth/south_east"),
-		
+
+		FLYWHEEL = block("flywheel/block"),
+
 		CRAFTING_BLUEPRINT_1x1 = entity("crafting_blueprint_small"),
 		CRAFTING_BLUEPRINT_2x2 = entity("crafting_blueprint_medium"),
 		CRAFTING_BLUEPRINT_3x3 = entity("crafting_blueprint_large"),
@@ -217,7 +224,7 @@ public class AllPartialModels {
 	public static final Map<Direction, PartialModel> FACTORY_PANEL_ARROWS = new EnumMap<>(Direction.class);
 	public static final Map<Direction, PartialModel> FACTORY_PANEL_LINES = new EnumMap<>(Direction.class);
 	public static final Map<Direction, PartialModel> FACTORY_PANEL_DOTTED = new EnumMap<>(Direction.class);
-	
+
 	public static final Map<Direction, PartialModel> METAL_GIRDER_BRACKETS = new EnumMap<>(Direction.class);
 	public static final Map<DyeColor, PartialModel> TOOLBOX_LIDS = new EnumMap<>(DyeColor.class);
 	public static final Map<ResourceLocation, Couple<PartialModel>> FOLDING_DOORS = new HashMap<>();

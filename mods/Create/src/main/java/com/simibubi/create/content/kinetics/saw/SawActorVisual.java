@@ -17,8 +17,7 @@ public class SawActorVisual extends ActorVisual {
 
 		var state = movementContext.state;
 		var localPos = movementContext.localPos;
-		shaft = instancerProvider.instancer(AllInstanceTypes.ROTATING, SawVisual.shaftModel(simulationWorld, localPos, state))
-				.createInstance();
+		shaft = SawVisual.shaft(instancerProvider, simulationWorld, localPos, state);
 
 		var axis = KineticBlockEntityVisual.rotationAxis(state);
 		shaft.setRotationAxis(axis)
