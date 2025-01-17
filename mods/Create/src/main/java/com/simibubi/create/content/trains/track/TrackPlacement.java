@@ -14,7 +14,6 @@ import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
-import net.createmod.catnip.CatnipClient;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.Pair;
@@ -22,6 +21,7 @@ import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
 import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.catnip.utility.outliner.Outliner;
 import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -50,6 +50,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -653,11 +654,11 @@ public class TrackPlacement {
 			}
 
 			if (hints != null && !hints.either(Collection::isEmpty)) {
-				CatnipClient.OUTLINER.showCluster("track_valid", hints.getFirst())
+				Outliner.getInstance().showCluster("track_valid", hints.getFirst())
 					.withFaceTexture(AllSpecialTextures.THIN_CHECKERED)
 					.colored(0x95CD41)
 					.lineWidth(0);
-				CatnipClient.OUTLINER.showCluster("track_invalid", hints.getSecond())
+				Outliner.getInstance().showCluster("track_invalid", hints.getSecond())
 					.withFaceTexture(AllSpecialTextures.THIN_CHECKERED)
 					.colored(0xEA5C2B)
 					.lineWidth(0);
@@ -737,13 +738,13 @@ public class TrackPlacement {
 					.scale(0.5f);
 				Vec3 middle2 = rail2.add(previous2)
 					.scale(0.5f);
-				CatnipClient.OUTLINER
+				Outliner.getInstance()
 					.showLine(Pair.of(key, i * 2), VecHelper.lerp(s, middle1, previous1),
 						VecHelper.lerp(s, middle1, rail1))
 					.colored(railcolor)
 					.disableLineNormals()
 					.lineWidth(lw);
-				CatnipClient.OUTLINER
+				Outliner.getInstance()
 					.showLine(Pair.of(key, i * 2 + 1), VecHelper.lerp(s, middle2, previous2),
 						VecHelper.lerp(s, middle2, rail2))
 					.colored(railcolor)
@@ -756,8 +757,8 @@ public class TrackPlacement {
 		}
 
 		for (int i = segCount + 1; i <= lastLineCount; i++) {
-			CatnipClient.OUTLINER.remove(Pair.of(key, i * 2));
-			CatnipClient.OUTLINER.remove(Pair.of(key, i * 2 + 1));
+			Outliner.getInstance().remove(Pair.of(key, i * 2));
+			Outliner.getInstance().remove(Pair.of(key, i * 2 + 1));
 		}
 
 		lastLineCount = segCount;
@@ -766,7 +767,7 @@ public class TrackPlacement {
 	@OnlyIn(Dist.CLIENT)
 	private static void line(int id, Vec3 v1, Vec3 o1, Vec3 ex) {
 		int color = Color.mixColors(0xEA5C2B, 0x95CD41, animation.getValue());
-		CatnipClient.OUTLINER.showLine(Pair.of("start", id), v1.subtract(o1), v1.add(ex))
+		Outliner.getInstance().showLine(Pair.of("start", id), v1.subtract(o1), v1.add(ex))
 			.lineWidth(1 / 8f)
 			.disableLineNormals()
 			.colored(color);

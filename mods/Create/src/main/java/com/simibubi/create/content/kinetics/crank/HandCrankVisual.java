@@ -13,7 +13,7 @@ import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.instance.InstanceTypes;
 import dev.engine_room.flywheel.lib.instance.TransformedInstance;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
-import net.createmod.catnip.render.VirtualRenderHelper;
+import net.createmod.ponder.render.VirtualRenderHelper;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 

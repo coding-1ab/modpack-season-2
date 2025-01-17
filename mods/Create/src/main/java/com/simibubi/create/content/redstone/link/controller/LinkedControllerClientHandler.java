@@ -20,9 +20,9 @@ import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.ControlsUtil;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.CatnipClient;
 import net.createmod.catnip.utility.FontHelper.Palette;
 import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.utility.outliner.Outliner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -33,6 +33,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
@@ -189,7 +190,7 @@ public class LinkedControllerClientHandler {
 			VoxelShape shape = mc.level.getBlockState(selectedLocation)
 				.getShape(mc.level, selectedLocation);
 			if (!shape.isEmpty())
-				CatnipClient.OUTLINER.showAABB("controller", shape.bounds()
+				Outliner.getInstance().showAABB("controller", shape.bounds()
 					.move(selectedLocation))
 					.colored(0xB73C2D)
 					.lineWidth(1 / 16f);

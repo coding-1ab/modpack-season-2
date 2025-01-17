@@ -14,8 +14,8 @@ import dev.engine_room.flywheel.lib.instance.InstanceTypes;
 import dev.engine_room.flywheel.lib.instance.TransformedInstance;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
-import net.createmod.catnip.render.VirtualRenderHelper;
 import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.ponder.render.VirtualRenderHelper;
 import net.minecraft.core.Direction;
 
 public class FlywheelVisual extends KineticBlockEntityVisual<FlywheelBlockEntity> implements SimpleDynamicVisual {

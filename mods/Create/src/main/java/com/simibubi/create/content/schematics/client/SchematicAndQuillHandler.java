@@ -16,7 +16,6 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.foundation.utility.RaycastHelper;
 import com.simibubi.create.foundation.utility.RaycastHelper.PredicateTraceResult;
 
-import net.createmod.catnip.CatnipClient;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.VecHelper;
@@ -231,7 +230,7 @@ public class SchematicAndQuillHandler {
 	}
 
 	private Outliner outliner() {
-		return CatnipClient.OUTLINER;
+		return Outliner.getInstance();
 	}
 
 }

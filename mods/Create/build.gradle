@@ -24,19 +24,14 @@ base {
 }
 
 boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.enabled')
-boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
 boolean ponderInWorkspace = rootProject.hasProperty('multiModWorkspace.ponder')
-
-if (catnipInWorkspace) {
-    evaluationDependsOn(":catnip:Forge")
-}
 
 if (ponderInWorkspace) {
     evaluationDependsOn(":ponder:Forge")
 }
 
 project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? 'enabled' : 'disabled'} for project ${project.name}.")
-project.logger.lifecycle("Dependencies included in Workspace: [Catnip: ${catnipInWorkspace}], [Ponder: ${ponderInWorkspace}]")
+project.logger.lifecycle("Dependencies included in Workspace: [Ponder: ${ponderInWorkspace}]")
 
 mixin {
     add sourceSets.main, 'create.refmap.json'
@@ -94,18 +89,11 @@ minecraft {
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             arg '-mixin.config=create.mixins.json'
-            arg '-mixin.config=catnip.mixins.json'
+            arg '-mixin.config=ponder.mixins.json'
 
             mods {
                 create {
                     source sourceSets.main
-                }
-
-                if (catnipInWorkspace) {
-                    catnip {
-                        source project(":catnip:Common").sourceSets.main
-                        source project(":catnip:Forge").sourceSets.main
-                    }
                 }
 
                 if (ponderInWorkspace) {
@@ -193,7 +181,7 @@ repositories {
         }
     }
     maven {
-        // Location of the maven for Ponder, Catnip
+        // Location of the maven for Ponder
         name = 'createmod maven'
         url 'https://maven.createmod.net'
     }
@@ -233,9 +221,6 @@ dependencies {
         jarJar.ranged(it, '[1.0,2.0)')
     }
 
-	jarJar("net.createmod.catnip:Catnip-Forge-${minecraft_version}:${catnip_version}") {
-        jarJar.ranged(it, '[0.7.5,)')
-    }
     jarJar("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}") {
         jarJar.ranged(it, '[0.7.5,)')
     }
@@ -248,13 +233,6 @@ dependencies {
 
     compileOnly fg.deobf("dev.engine_room.flywheel:flywheel-forge-api-${flywheel_minecraft_version}:${flywheel_version}")
     runtimeOnly fg.deobf("dev.engine_room.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
-
-    if (catnipInWorkspace) {
-        implementation project(":catnip:Common")
-        implementation project(":catnip:Forge")
-    } else {
-        implementation fg.deobf("net.createmod.catnip:Catnip-Forge-${minecraft_version}:${catnip_version}")
-    }
 
     if (ponderInWorkspace) {
         implementation project(":ponder:Common")

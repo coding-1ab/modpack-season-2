@@ -9,12 +9,12 @@ import com.simibubi.create.content.contraptions.minecart.capability.MinecartCont
 import com.simibubi.create.content.kinetics.KineticDebugger;
 
 import dev.engine_room.flywheel.lib.transform.TransformStack;
-import net.createmod.catnip.CatnipClient;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.utility.outliner.Outliner;
 import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -227,13 +227,13 @@ public class CouplingRenderer {
 		int color = Color.mixColors(0xabf0e9, 0xee8572, (float) Mth
 			.clamp(Math.abs(first.getCouplingLength(true) - connectedCenter.distanceTo(mainCenter)) * 8, 0, 1));
 
-		CatnipClient.OUTLINER.showLine(mainCart.getId() + "", mainCenter, connectedCenter)
+		Outliner.getInstance().showLine(mainCart.getId() + "", mainCenter, connectedCenter)
 			.colored(color)
 			.lineWidth(1 / 8f);
 
 		Vec3 point = mainCart.position()
 			.add(0, yOffset, 0);
-		CatnipClient.OUTLINER.showLine(mainCart.getId() + "_dot", point, point.add(0, 1 / 128f, 0))
+		Outliner.getInstance().showLine(mainCart.getId() + "_dot", point, point.add(0, 1 / 128f, 0))
 			.colored(0xffffff)
 			.lineWidth(1 / 4f);
 	}

@@ -15,8 +15,8 @@ import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelect
 import com.simibubi.create.foundation.utility.RaycastHelper;
 import com.simibubi.create.foundation.utility.TickBasedCache;
 
-import net.createmod.catnip.CatnipClient;
 import net.createmod.catnip.utility.WorldAttached;
+import net.createmod.catnip.utility.outliner.Outliner;
 import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -26,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraftforge.common.ForgeMod;
@@ -103,7 +104,7 @@ public class ChainConveyorInteractionHandler {
 		selectedBakedPosition = bestShape.getVec(bestLift, selectedChainPosition);
 
 		if (!isWrench) {
-			CatnipClient.OUTLINER
+			Outliner.getInstance()
 				.chaseAABB("ChainPointSelection", new AABB(selectedBakedPosition, selectedBakedPosition))
 				.colored(Color.WHITE)
 				.lineWidth(1 / 6f)

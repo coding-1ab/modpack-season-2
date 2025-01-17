@@ -3,7 +3,7 @@ package com.simibubi.create.content.redstone.displayLink;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.CatnipClient;
+import net.createmod.catnip.utility.outliner.Outliner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -154,7 +155,7 @@ public abstract class ClickToLinkBlockItem extends BlockItem {
 			lastShownPos = selectedPos;
 		}
 
-		CatnipClient.OUTLINER.showAABB("target", lastShownAABB)
+		Outliner.getInstance().showAABB("target", lastShownAABB)
 			.colored(0xffcb74)
 			.lineWidth(1 / 16f);
 	}
