@@ -41,6 +41,7 @@ import com.simibubi.create.infrastructure.ponder.scenes.fluid.HosePulleyScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.fluid.PipeScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.fluid.PumpScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.fluid.SpoutScenes;
+import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.FactoryGaugeScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.FrogAndConveyorScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.PackagerScenes;
 import com.simibubi.create.infrastructure.ponder.scenes.highLogistics.PostboxScenes;
@@ -378,6 +379,11 @@ public class AllCreatePonderScenes {
 			.addStoryBoard("high_logistics/table_cloth", TableClothScenes::tableCloth);
 		HELPER.forComponents(AllBlocks.ANDESITE_TABLE_CLOTH, AllBlocks.BRASS_TABLE_CLOTH, AllBlocks.COPPER_TABLE_CLOTH)
 			.addStoryBoard("high_logistics/table_cloth", TableClothScenes::tableCloth);
+		HELPER.forComponents(AllBlocks.FACTORY_GAUGE)
+			.addStoryBoard("high_logistics/factory_gauge_restocker", FactoryGaugeScenes::restocker)
+			.addStoryBoard("high_logistics/factory_gauge_recipe", FactoryGaugeScenes::recipe)
+			.addStoryBoard("high_logistics/factory_gauge_crafting", FactoryGaugeScenes::crafting)
+			.addStoryBoard("high_logistics/factory_gauge_links", FactoryGaugeScenes::links);
 
 		// Trains
 		HELPER.forComponents(TrackMaterial.allBlocks()

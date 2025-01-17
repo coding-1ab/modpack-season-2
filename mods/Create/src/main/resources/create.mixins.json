@@ -17,6 +17,7 @@
     "MainMixin",
     "MapItemSavedDataMixin",
     "ShulkerBoxBlockMixin",
+    "SmithingMenuMixin",
     "TestCommandMixin",
     "WaterWheelFluidSpreadMixin",
     "accessor.AbstractProjectileDispenseBehaviorAccessor",
