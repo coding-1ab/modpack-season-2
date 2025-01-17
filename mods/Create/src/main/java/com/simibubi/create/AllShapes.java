@@ -10,7 +10,7 @@ import java.util.function.BiFunction;
 import com.simibubi.create.content.logistics.chute.ChuteShapes;
 import com.simibubi.create.content.trains.track.TrackVoxelShapes;
 
-import net.createmod.catnip.utility.VoxelShaper;
+import net.createmod.catnip.math.VoxelShaper;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.level.block.Block;
@@ -180,7 +180,7 @@ public class AllShapes {
 
 		WHISTLE_BASE = shape(1, 0, 1, 15, 3, 15).add(5, 0, 5, 11, 8, 11)
 			.forDirectional(UP),
-			
+
 		DESK_BELL = shape(3, 0, 3, 13, 3, 13).add(4, 0, 4, 12, 9, 12)
 			.forDirectional(UP),
 

@@ -10,7 +10,7 @@ import com.simibubi.create.content.kinetics.BlockStressValues.IStressValueProvid
 
 import net.createmod.catnip.config.ConfigBase;
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.data.Couple;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;

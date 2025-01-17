@@ -10,7 +10,7 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import net.createmod.catnip.gui.ScreenOpener;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -39,7 +39,7 @@ public class OpenCreateMenuButton extends Button {
 	public void renderString(GuiGraphics graphics, Font pFont, int pColor) {
 		graphics.renderItem(ICON, getX() + 2, getY() + 2);
 	}
-	
+
 	public static void click(Button b) {
 		ScreenOpener.open(new CreateMainMenuScreen(Minecraft.getInstance().screen));
 	}

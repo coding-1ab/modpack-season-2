@@ -2,8 +2,8 @@ package com.simibubi.create.content.kinetics.waterwheel;
 
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.Pair;
-import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

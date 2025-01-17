@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.simibubi.create.content.logistics.item.filter.attribute.AllItemAttributeTypes;
 
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.lang.Components;
 
 import org.jetbrains.annotations.NotNull;
 

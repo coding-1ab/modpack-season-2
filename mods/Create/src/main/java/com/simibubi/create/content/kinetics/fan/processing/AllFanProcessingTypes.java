@@ -4,13 +4,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.simibubi.create.AllRegistries;
-import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPointType;
-
-import net.minecraft.resources.ResourceLocation;
 
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -30,8 +26,8 @@ import com.simibubi.create.foundation.damageTypes.CreateDamageSources;
 import com.simibubi.create.foundation.recipe.RecipeApplier;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.particles.BlockParticleOption;

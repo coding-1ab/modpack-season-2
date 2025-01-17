@@ -49,11 +49,11 @@ import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
-import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.Pair;
-import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.nbt.NBTHelper;
+import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -269,7 +269,7 @@ public class Train {
 			updateConductors();
 			return;
 		}
-		
+
 		GlobalStation currentStation = getCurrentStation();
 		if (currentStation != null) {
 			ticksSinceLastMailTransfer++;

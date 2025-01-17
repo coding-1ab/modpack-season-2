@@ -21,8 +21,8 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.IntAttached;
-import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.data.IntAttached;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -114,7 +114,7 @@ public class TableClothBlockEntity extends SmartBlockEntity {
 				return InteractionResult.SUCCESS;
 			player.setItemInHand(InteractionHand.MAIN_HAND, manuallyAddedItems.remove(manuallyAddedItems.size() - 1));
 			level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.5f, 1f);
-			
+
 			if (manuallyAddedItems.isEmpty()) {
 				level.setBlock(worldPosition, getBlockState().setValue(TableClothBlock.HAS_BE, false), 3);
 				AllPackets.getChannel()
@@ -239,7 +239,7 @@ public class TableClothBlockEntity extends SmartBlockEntity {
 			for (IntAttached<BlockPos> entry : list.purchases())
 				if (worldPosition.equals(entry.getValue()))
 					entry.setFirst(Math.min(stockLevel, entry.getFirst()));
-			
+
 			if (clientSide)
 				CreateLang.translate("stock_keeper.limited_stock")
 					.style(ChatFormatting.RED)

@@ -41,15 +41,15 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.GuiGameElement;
-import net.createmod.catnip.utility.AnimationTickHolder;
-import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.Pair;
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
-import net.createmod.catnip.utility.lang.Components;
-import net.createmod.catnip.utility.math.AngleHelper;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.lang.Components;
+import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -164,7 +164,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		menu.screenReference = this;
 		hiddenCategories =
 			new HashSet<>(blockEntity.hiddenCategoriesByPlayer.getOrDefault(menu.player.getUUID(), List.of()));
-		
+
 		forcedEntries = new InventorySummary();
 
 		itemToProgram = menu.player.getMainHandItem();
@@ -254,7 +254,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		extraAreas.add(new Rect2i(0, y + windowHeight - 15 - leftHeight, x, height));
 		if (encodeRequester)
 			extraAreas.add(new Rect2i(x + windowWidth, y + windowHeight - 15 - rightHeight, rightHeight, rightHeight));
-		
+
 		if (initial) {
 			playUiSound(SoundEvents.WOOD_HIT, 0.5f, 1.5f);
 			playUiSound(SoundEvents.BOOK_PAGE_TURN, 1, 1);
@@ -406,7 +406,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 					summary.erase(stack.stack);
 			}
 		}
-		
+
 		boolean allEmpty = true;
 		for (List<BigItemStack> list : displayedItems)
 			allEmpty &= list.isEmpty();
@@ -1178,10 +1178,10 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 		existingOrder.count = current + Math.min(transfer, blockEntity.getLastClientsideStockSnapshotAsSummary()
 			.getCountOf(entry.stack) - current);
-		
+
 		if (existingOrder.count != current && current != 0)
 			playUiSound(AllSoundEvents.SCROLL_VALUE.getMainEvent(), 0.25f, 1.2f);
-		
+
 		return true;
 	}
 
@@ -1305,7 +1305,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 				continue;
 			forcedEntries.add(toOrder.stack, -1 - Math.max(0, countOf - toOrder.count));
 		}
-		
+
 		AllPackets.getChannel()
 			.sendToServer(new PackageOrderRequestPacket(blockEntity.getBlockPos(), new PackageOrder(itemsToOrder),
 				addressBox.getValue(), encodeRequester));
@@ -1314,7 +1314,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		recipesToOrder = new ArrayList<>();
 		blockEntity.ticksSinceLastUpdate = 10;
 		successTicks = 1;
-		
+
 		if (isSchematicListMode())
 			menu.player.closeContainer();
 	}

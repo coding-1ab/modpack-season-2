@@ -14,10 +14,10 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.TooltipHelper;
 
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.nbt.NBTHelper;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.animation.LerpedFloat.Chaser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -51,7 +51,7 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 
 	private boolean failedLastExport;
 	private FrogportSounds sounds;
-	
+
 	private AdvancementBehaviour advancements;
 
 	public FrogportBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -69,7 +69,7 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 		behaviours.add(advancements = new AdvancementBehaviour(this, AllAdvancements.FROGPORT));
 		super.addBehaviours(behaviours);
 	}
-	
+
 	public boolean isAnimationInProgress() {
 		return animationProgress.getChaseTarget() == 1;
 	}
@@ -185,13 +185,13 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 		animationProgress.chase(1, 0.1, Chaser.LINEAR);
 		animatedPackage = box;
 		currentlyDepositing = deposit;
-		
+
 		if (level != null && !deposit && !level.isClientSide())
 			advancements.awardPlayer(AllAdvancements.FROGPORT);
 
 		if (level != null && level.isClientSide()) {
 			sounds.open(level, worldPosition);
-			
+
 			if (currentlyDepositing) {
 				sounds.depositPackage(level, worldPosition);
 

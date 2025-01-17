@@ -60,12 +60,12 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.WorldAttached;
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.nbt.NBTHelper;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.data.WorldAttached;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.animation.LerpedFloat.Chaser;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;

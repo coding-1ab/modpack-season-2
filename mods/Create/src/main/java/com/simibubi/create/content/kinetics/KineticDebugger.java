@@ -6,9 +6,9 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import net.createmod.catnip.render.SuperByteBufferCache;
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.outliner.Outliner;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.outliner.Outliner;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;

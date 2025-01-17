@@ -13,7 +13,7 @@ import com.simibubi.create.foundation.fluid.FluidIngredient;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import com.tterrag.registrate.util.DataIngredient;
 
-import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.data.Pair;
 import net.minecraft.core.NonNullList;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;

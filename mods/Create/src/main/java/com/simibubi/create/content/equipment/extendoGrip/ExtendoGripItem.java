@@ -9,7 +9,7 @@ import com.simibubi.create.content.equipment.armor.BacktankUtil;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;

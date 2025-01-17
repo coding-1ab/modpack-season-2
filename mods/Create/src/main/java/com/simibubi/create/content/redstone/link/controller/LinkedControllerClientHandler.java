@@ -20,9 +20,9 @@ import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.ControlsUtil;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.FontHelper.Palette;
-import net.createmod.catnip.utility.lang.Components;
-import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.catnip.lang.FontHelper.Palette;
+import net.createmod.catnip.lang.Components;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;

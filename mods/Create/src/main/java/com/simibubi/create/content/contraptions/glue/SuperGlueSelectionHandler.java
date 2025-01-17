@@ -12,8 +12,8 @@ import com.simibubi.create.content.contraptions.chassis.AbstractChassisBlock;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.foundation.utility.RaycastHelper;
 
-import net.createmod.catnip.utility.lang.Components;
-import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.catnip.lang.Components;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;

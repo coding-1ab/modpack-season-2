@@ -14,9 +14,9 @@ import com.simibubi.create.content.trains.signal.SignalEdgeGroup;
 import com.simibubi.create.content.trains.signal.TrackEdgePoint;
 import com.simibubi.create.content.trains.track.BezierConnection;
 
-import net.createmod.catnip.utility.Pair;
-import net.createmod.catnip.utility.outliner.Outliner;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.outliner.Outliner;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;

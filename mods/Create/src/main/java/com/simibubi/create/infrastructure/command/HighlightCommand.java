@@ -8,7 +8,7 @@ import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.contraptions.IDisplayAssemblyExceptions;
 
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -59,7 +59,7 @@ public class HighlightCommand {
 	}
 
 	private static void sendMissMessage(CommandSourceStack source) {
-		source.sendSuccess(() -> 
+		source.sendSuccess(() ->
 			Components.literal("Try looking at a Block that has failed to assemble a Contraption and try again."),
 			true);
 	}

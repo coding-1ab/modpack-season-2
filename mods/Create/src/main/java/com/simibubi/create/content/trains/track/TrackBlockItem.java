@@ -7,8 +7,8 @@ import com.simibubi.create.AllTags;
 import com.simibubi.create.content.trains.track.TrackPlacement.PlacementInfo;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.Pair;
-import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

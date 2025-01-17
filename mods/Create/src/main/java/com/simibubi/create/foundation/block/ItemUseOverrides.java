@@ -6,7 +6,7 @@ import java.util.Set;
 import com.simibubi.create.AllItems;
 
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Block;

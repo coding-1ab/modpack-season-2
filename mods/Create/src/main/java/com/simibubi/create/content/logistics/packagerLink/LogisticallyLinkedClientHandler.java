@@ -6,8 +6,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 
-import net.createmod.catnip.utility.AnimationTickHolder;
-import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;

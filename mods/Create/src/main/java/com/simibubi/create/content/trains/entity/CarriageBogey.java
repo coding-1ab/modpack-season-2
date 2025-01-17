@@ -15,12 +15,12 @@ import com.simibubi.create.content.trains.graph.DimensionPalette;
 import com.simibubi.create.content.trains.graph.TrackGraph;
 
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.nbt.NBTHelper;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.math.AngleHelper;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;

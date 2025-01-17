@@ -22,12 +22,12 @@ import com.simibubi.create.infrastructure.config.CClient;
 
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.element.GuiGameElement;
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.lang.Components;
-import net.createmod.catnip.utility.outliner.Outline;
-import net.createmod.catnip.utility.outliner.Outliner;
-import net.createmod.catnip.utility.outliner.Outliner.OutlineEntry;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.lang.Components;
+import net.createmod.catnip.outliner.Outline;
+import net.createmod.catnip.outliner.Outliner;
+import net.createmod.catnip.outliner.Outliner.OutlineEntry;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.GuiGraphics;

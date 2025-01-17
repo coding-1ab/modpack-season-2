@@ -3,7 +3,7 @@ package com.simibubi.create.infrastructure.command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.simibubi.create.CreateClient;
 
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.lang.Components;
 import net.createmod.ponder.PonderClient;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

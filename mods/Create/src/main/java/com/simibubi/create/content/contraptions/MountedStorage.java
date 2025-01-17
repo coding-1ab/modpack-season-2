@@ -15,7 +15,7 @@ import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.content.logistics.vault.ItemVaultBlockEntity;
 import com.simibubi.create.content.processing.recipe.ProcessingInventory;
 
-import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -27,6 +27,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
@@ -42,7 +43,7 @@ public class MountedStorage {
 	ItemStackHandler handler;
 	boolean noFuel;
 	boolean valid;
-	
+
 	private int packetCooldown = 0;
 	private boolean sendPacket = false;
 
@@ -111,7 +112,7 @@ public class MountedStorage {
 			valid = true;
 			return;
 		}
-		
+
 		if (blockEntity instanceof ChestBlockEntity) {
 			CompoundTag tag = blockEntity.saveWithFullMetadata();
 			if (tag.contains("LootTable", 8))
@@ -219,7 +220,7 @@ public class MountedStorage {
 		if (blockEntity instanceof DepotBlockEntity depot)
 			depot.setHeldItem(handler.getStackInSlot(0));
 	}
-	
+
 	public IItemHandlerModifiable getItemHandler() {
 		return handler;
 	}
@@ -235,7 +236,7 @@ public class MountedStorage {
 			NBTHelper.putMarker(tag, "Toolbox");
 		if (needsSync())
 			NBTHelper.putMarker(tag, "Synced");
-			
+
 		if (!(handler instanceof BottomlessItemHandler))
 			return tag;
 
@@ -254,7 +255,7 @@ public class MountedStorage {
 			storage.handler = new ToolboxInventory(null);
 		if (nbt.contains("Synced"))
 			storage.handler = storage.new SyncedMountedItemStackHandler(1);
-		
+
 		storage.valid = true;
 		storage.noFuel = nbt.contains("NoFuel");
 
@@ -275,13 +276,13 @@ public class MountedStorage {
 	public boolean canUseForFuel() {
 		return !noFuel;
 	}
-	
+
 	public boolean needsSync() {
 		return handler instanceof SyncedMountedItemStackHandler;
 	}
-	
+
 	public class SyncedMountedItemStackHandler extends ItemStackHandler {
-		
+
 		public SyncedMountedItemStackHandler(int i) {
 			super(i);
 		}
@@ -290,7 +291,7 @@ public class MountedStorage {
 		protected void onContentsChanged(int slot) {
 			sendPacket = true;
 		}
-		
+
 	}
 
 }

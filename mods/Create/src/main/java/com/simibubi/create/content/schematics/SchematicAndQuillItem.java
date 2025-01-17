@@ -6,7 +6,7 @@ import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.content.contraptions.glue.SuperGlueEntity;
 
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;

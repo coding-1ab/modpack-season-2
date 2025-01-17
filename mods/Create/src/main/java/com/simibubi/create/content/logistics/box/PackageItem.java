@@ -11,8 +11,8 @@ import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.box.PackageStyles.PackageStyle;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

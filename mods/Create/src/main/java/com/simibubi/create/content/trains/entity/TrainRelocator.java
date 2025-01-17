@@ -33,9 +33,9 @@ import com.simibubi.create.content.trains.track.TrackBlockOutline.BezierPointSel
 import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.Pair;
-import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

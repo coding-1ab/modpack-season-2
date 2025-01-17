@@ -16,10 +16,10 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform.Sided;
 
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.Pair;
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;

@@ -12,8 +12,6 @@ import java.util.zip.GZIPInputStream;
 
 import javax.annotation.Nonnull;
 
-import net.createmod.catnip.platform.CatnipServices;
-
 import net.minecraft.core.registries.Registries;
 
 import org.slf4j.Logger;
@@ -24,11 +22,10 @@ import com.simibubi.create.content.schematics.client.SchematicEditScreen;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.ScreenOpener;
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.nbt.NBTHelper;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
@@ -43,7 +40,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;

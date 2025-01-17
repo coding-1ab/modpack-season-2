@@ -21,7 +21,7 @@ import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import net.createmod.catnip.gui.ScreenOpener;
-import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.data.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -330,7 +330,7 @@ public class SymmetryWandItem extends Item {
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		consumer.accept(SimpleCustomRenderer.create(this, new SymmetryWandItemRenderer()));
 	}
-	
+
 	public static boolean presentInHotbar(Player player) {
 		Inventory inv = player.getInventory();
 		for (int i = 0; i < Inventory.getSelectionSize(); i++)

@@ -3,7 +3,7 @@ package com.simibubi.create.infrastructure.command;
 import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 
-import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

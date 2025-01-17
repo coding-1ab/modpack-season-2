@@ -8,7 +8,7 @@ import static com.simibubi.create.AllTags.NameSpace.TIC;
 
 import java.util.Collections;
 
-import net.createmod.catnip.utility.lang.Lang;
+import net.createmod.catnip.lang.Lang;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;

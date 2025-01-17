@@ -20,10 +20,10 @@ import com.simibubi.create.content.trains.graph.TrackGraph;
 import com.simibubi.create.content.trains.graph.TrackNode;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 
-import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.Pair;
-import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -304,11 +304,11 @@ public class CarriageSyncData {
 
 		TrackNode initialNode1 = forward ? current.node1 : current.node2;
 		TrackNode initialNode2 = forward ? current.node2 : current.node1;
-		
+
 		Map<TrackNode, TrackEdge> connectionsFromInitial = graph.getConnectionsFrom(initialNode1);
 		if (connectionsFromInitial == null)
 			return -1;
-		
+
 		TrackEdge initialEdge = connectionsFromInitial.get(initialNode2);
 		if (initialEdge == null)
 			return -1; // graph changed

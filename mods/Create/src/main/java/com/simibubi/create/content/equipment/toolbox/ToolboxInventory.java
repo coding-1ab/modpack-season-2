@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 
 import com.simibubi.create.AllItems;
 
-import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;

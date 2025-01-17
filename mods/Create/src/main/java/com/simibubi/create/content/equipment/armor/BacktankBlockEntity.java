@@ -13,7 +13,7 @@ import com.simibubi.create.foundation.blockEntity.ComparatorUtil;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.particle.AirParticleData;
 
-import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.particles.ParticleTypes;
@@ -120,10 +120,10 @@ public class BacktankBlockEntity extends KineticBlockEntity implements Nameable 
 		compound.putInt("Air", airLevel);
 		compound.putInt("Timer", airLevelTimer);
 		compound.putInt("CapacityEnchantment", capacityEnchantLevel);
-		
+
 		if (this.customName != null)
 			compound.putString("CustomName", Component.Serializer.toJson(this.customName));
-		
+
 		compound.put("VanillaTag", vanillaTag);
 		if (forgeCapsTag != null)
 			compound.put("ForgeCapsTag", forgeCapsTag);
@@ -136,10 +136,10 @@ public class BacktankBlockEntity extends KineticBlockEntity implements Nameable 
 		airLevel = compound.getInt("Air");
 		airLevelTimer = compound.getInt("Timer");
 		capacityEnchantLevel = compound.getInt("CapacityEnchantment");
-		
+
 		if (compound.contains("CustomName", 8))
 			this.customName = Component.Serializer.fromJson(compound.getString("CustomName"));
-		
+
 		vanillaTag = compound.getCompound("VanillaTag");
 		forgeCapsTag = compound.contains("ForgeCapsTag") ? compound.getCompound("ForgeCapsTag") : null;
 
@@ -181,7 +181,7 @@ public class BacktankBlockEntity extends KineticBlockEntity implements Nameable 
 	public void setCapacityEnchantLevel(int capacityEnchantLevel) {
 		this.capacityEnchantLevel = capacityEnchantLevel;
 	}
-	
+
 	public void setTags(CompoundTag vanillaTag, @Nullable CompoundTag forgeCapsTag) {
 		this.vanillaTag = vanillaTag;
 		this.forgeCapsTag = forgeCapsTag;
@@ -190,7 +190,7 @@ public class BacktankBlockEntity extends KineticBlockEntity implements Nameable 
 	public CompoundTag getVanillaTag() {
 		return vanillaTag;
 	}
-	
+
 	public CompoundTag getForgeCapsTag() {
 		return forgeCapsTag;
 	}

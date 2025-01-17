@@ -17,9 +17,9 @@ import com.simibubi.create.foundation.utility.RaycastHelper;
 import com.simibubi.create.foundation.utility.RaycastHelper.PredicateTraceResult;
 
 import net.createmod.catnip.gui.ScreenOpener;
-import net.createmod.catnip.utility.AnimationTickHolder;
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

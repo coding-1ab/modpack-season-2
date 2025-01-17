@@ -27,10 +27,10 @@ import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.nbt.NBTHelper;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.math.AngleHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -705,7 +705,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements ITra
 		connectionStats = null;
 		updateBoxWorldPositions();
 		updateChainShapes();
-		
+
 		if (connections.size() != sizeBefore && level != null && level.isClientSide)
 			invalidateRenderBoundingBox();
 	}

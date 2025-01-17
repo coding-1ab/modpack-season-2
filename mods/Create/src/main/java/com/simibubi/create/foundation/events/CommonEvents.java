@@ -22,8 +22,8 @@ import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 import com.simibubi.create.foundation.utility.TickBasedCache;
 import com.simibubi.create.infrastructure.command.AllCommands;
 
-import net.createmod.catnip.utility.WorldAttached;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.data.WorldAttached;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;

@@ -24,9 +24,9 @@ import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.nbt.NBTHelper;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -100,7 +100,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		notifyUpdate();
 		return result;
 	}
-	
+
 	@Override
 	public InventorySummary getRecentSummary() {
 		InventorySummary recentSummary = super.getRecentSummary();

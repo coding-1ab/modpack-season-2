@@ -5,7 +5,7 @@ import com.simibubi.create.AllShapes;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.WrenchableDirectionalBlock;
 
-import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.data.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -75,7 +75,7 @@ public class RedstoneLinkBlock extends WrenchableDirectionalBlock implements IBE
 	public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
 		IBE.onRemove(pState, pLevel, pPos, pNewState);
 	}
-	
+
 	public void updateTransmittedSignal(BlockState state, Level worldIn, BlockPos pos) {
 		if (worldIn.isClientSide)
 			return;

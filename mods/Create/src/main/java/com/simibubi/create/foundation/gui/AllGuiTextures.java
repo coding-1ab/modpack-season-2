@@ -5,7 +5,7 @@ import com.simibubi.create.Create;
 import net.createmod.catnip.gui.TextureSheetSegment;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.ScreenElement;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -156,7 +156,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	FACTORY_GAUGE_RECIPE("factory_gauge", 32, 0, 192, 96),
 	FACTORY_GAUGE_RESTOCK("factory_gauge", 32, 112, 192, 40),
 	FACTORY_GAUGE_BOTTOM("factory_gauge", 32, 176, 200, 64),
-	
+
 	STOCK_KEEPER_REQUEST_HEADER("stock_keeper", 0, 0, 256, 36),
 	STOCK_KEEPER_REQUEST_BODY("stock_keeper", 0, 48, 256, 20),
 	STOCK_KEEPER_REQUEST_FOOTER("stock_keeper", 0, 80, 256, 80),
@@ -190,7 +190,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	STOCK_KEEPER_CATEGORY_ENTRY("stock_keeper_categories", 38, 159, 171, 18),
 	STOCK_KEEPER_CATEGORY_UP("stock_keeper_categories", 211, 160, 8, 8),
 	STOCK_KEEPER_CATEGORY_DOWN("stock_keeper_categories", 211, 169, 8, 8),
-	
+
 	REDSTONE_REQUESTER("requester", 16, 16, 232, 120),
 
 	// JEI
@@ -259,7 +259,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	COMPUTER("computer", 200, 102);
 
 	;
-	
+
 	public static final int FONT_COLOR = 0x575F7A;
 
 	public final ResourceLocation location;

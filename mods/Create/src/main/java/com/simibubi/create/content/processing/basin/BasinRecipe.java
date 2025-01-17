@@ -20,7 +20,7 @@ import com.simibubi.create.foundation.item.SmartInventory;
 import com.simibubi.create.foundation.recipe.DummyCraftingContainer;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 
-import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.data.Iterate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -150,14 +150,14 @@ public class BasinRecipe extends ProcessingRecipe<SmartInventory> {
 			if (simulate) {
 				if (recipe instanceof BasinRecipe basinRecipe) {
 					recipeOutputItems.addAll(basinRecipe.rollResults());
-					
+
 					for (FluidStack fluidStack : basinRecipe.getFluidResults())
 						if (!fluidStack.isEmpty())
 							recipeOutputFluids.add(fluidStack);
 					for (ItemStack stack : basinRecipe.getRemainingItems(basin.getInputInventory()))
 						if (!stack.isEmpty())
 							recipeOutputItems.add(stack);
-					
+
 				} else {
 					recipeOutputItems.add(recipe.getResultItem(basin.getLevel()
 						.registryAccess()));

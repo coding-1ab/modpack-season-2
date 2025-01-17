@@ -4,7 +4,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -109,7 +109,7 @@ public class FactoryPanelConnection {
 		float yRot = Mth.RAD_TO_DEG * FactoryPanelBlock.getYRot(state);
 		int slotDiffx = to.slot().xOffset - from.slot().xOffset;
 		int slotDiffY = to.slot().yOffset - from.slot().yOffset;
-		
+
 		Vec3 diff = Vec3.atLowerCornerOf(to.pos()
 			.subtract(from.pos()));
 		diff = VecHelper.rotate(diff, -yRot, Axis.Y);

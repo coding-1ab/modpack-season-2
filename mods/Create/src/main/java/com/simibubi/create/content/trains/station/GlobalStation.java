@@ -17,7 +17,7 @@ import com.simibubi.create.content.trains.graph.DimensionPalette;
 import com.simibubi.create.content.trains.graph.TrackNode;
 import com.simibubi.create.content.trains.signal.SingleBlockEntityEdgePoint;
 
-import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -216,7 +216,7 @@ public class GlobalStation extends SingleBlockEntityEdgePoint {
 						box.spawnParticles();
 				}
 			}
-			
+
 			// Export to station
 			for (int slot = 0; slot < carriageInventory.getSlots(); slot++) {
 				ItemStack stack = carriageInventory.getStackInSlot(slot);
@@ -246,7 +246,7 @@ public class GlobalStation extends SingleBlockEntityEdgePoint {
 					carriageInventory.setStackInSlot(slot, ItemStack.EMPTY);
 					if (box != null)
 						box.spawnParticles();
-					
+
 					break;
 				}
 			}

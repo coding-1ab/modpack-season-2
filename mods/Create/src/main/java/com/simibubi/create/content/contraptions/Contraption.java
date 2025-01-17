@@ -75,12 +75,12 @@ import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.ICoordinate;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
-import net.createmod.catnip.utility.BBHelper;
-import net.createmod.catnip.utility.BlockFace;
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.NBTProcessors;
-import net.createmod.catnip.utility.UniqueLinkedList;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.data.UniqueLinkedList;
+import net.createmod.catnip.math.BBHelper;
+import net.createmod.catnip.math.BlockFace;
+import net.createmod.catnip.nbt.NBTHelper;
+import net.createmod.catnip.nbt.NBTProcessors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -122,6 +122,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -340,7 +341,7 @@ public abstract class Contraption {
 				&& !BlockMovementChecks.isNotSupportive(world.getBlockState(attached), offset.getOpposite()))
 				frontier.add(attached);
 		}
-		
+
 		if (world.getBlockEntity(pos) instanceof ChainConveyorBlockEntity ccbe)
 			ccbe.notifyConnectedToValidate();
 
@@ -1459,7 +1460,7 @@ public abstract class Contraption {
 	public IFluidHandler getSharedFluidTanks() {
 		return storage.getFluids();
 	}
-	
+
 	public MountedStorageManager getStorageManager() {
 		return storage;
 	}
@@ -1489,7 +1490,7 @@ public abstract class Contraption {
 	public void handleContraptionFluidPacket(BlockPos localPos, FluidStack containedFluid) {
 		storage.updateContainedFluid(localPos, containedFluid);
 	}
-	
+
 	public void handleContraptionItemPacket(BlockPos localPos, List<ItemStack> containedItems) {
 		storage.updateContainedItem(localPos, containedItems);
 	}

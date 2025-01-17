@@ -3,7 +3,7 @@ package com.simibubi.create.content.redstone.displayLink;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

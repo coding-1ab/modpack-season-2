@@ -25,7 +25,7 @@ import com.tterrag.registrate.util.nullness.NonNullConsumer;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
 
-import net.createmod.catnip.utility.lang.Lang;
+import net.createmod.catnip.lang.Lang;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.Entity;
@@ -69,7 +69,7 @@ public class AllEntityTypes {
 
 	public static final EntityEntry<SeatEntity> SEAT = register("seat", SeatEntity::new, () -> SeatEntity.Render::new,
 		MobCategory.MISC, 5, Integer.MAX_VALUE, false, true, SeatEntity::build).register();
-	
+
 	public static final EntityEntry<PackageEntity> PACKAGE = register("package", PackageEntity::new, () -> PackageRenderer::new,
 		MobCategory.MISC, 10, 3, true, false, PackageEntity::build).register();
 
@@ -99,7 +99,7 @@ public class AllEntityTypes {
 			})
 			.renderer(renderer);
 	}
-	
+
 	public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
 		event.put(PACKAGE.get(), PackageEntity.createPackageAttributes()
 			.build());

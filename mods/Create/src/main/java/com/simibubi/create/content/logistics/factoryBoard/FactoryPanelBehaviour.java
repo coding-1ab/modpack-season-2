@@ -44,10 +44,10 @@ import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringB
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.ScreenOpener;
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.nbt.NBTHelper;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -248,7 +248,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			&& lastReportedUnloadedLinks == unloadedLinkCount && satisfied == shouldSatisfy
 			&& promisedSatisfied == shouldPromiseSatisfy && waitingForNetwork == shouldWait)
 			return;
-		
+
 		if (!satisfied && shouldSatisfy) {
 			AllSoundEvents.CONFIRM.playOnServer(getWorld(), getPos(), 0.075f, 1f);
 			AllSoundEvents.CONFIRM_2.playOnServer(getWorld(), getPos(), 0.125f, 0.575f);
@@ -349,7 +349,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		RequestPromiseQueue promises = Create.LOGISTICS.getQueuedPromises(network);
 		if (promises != null)
 			promises.add(new RequestPromise(new BigItemStack(getFilter(), recipeOutput)));
-		
+
 		panelBE.advancements.awardPlayer(AllAdvancements.FACTORY_GAUGE);
 	}
 
@@ -667,7 +667,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			active = false;
 			return;
 		}
-		
+
 		active = true;
 		filter = FilterItemStack.of(panelTag.getCompound("Filter"));
 		count = panelTag.getInt("FilterAmount");

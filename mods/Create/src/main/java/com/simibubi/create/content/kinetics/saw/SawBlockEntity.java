@@ -29,7 +29,7 @@ import com.simibubi.create.foundation.utility.AbstractBlockBreakQueue;
 import com.simibubi.create.foundation.utility.TreeCutter;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
-import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -329,7 +329,7 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity {
 	private void applyRecipe() {
 		ItemStack input = inventory.getStackInSlot(0);
 		List<ItemStack> list = new ArrayList<>();
-		
+
 		if (PackageItem.isPackage(input)) {
 			inventory.clear();
 			ItemStackHandler results = PackageItem.getContents(input);
@@ -342,7 +342,7 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity {
 				inventory.setStackInSlot(slot + 1, list.get(slot));
 			return;
 		}
-		
+
 		List<? extends Recipe<?>> recipes = getRecipes();
 		if (recipes.isEmpty())
 			return;
