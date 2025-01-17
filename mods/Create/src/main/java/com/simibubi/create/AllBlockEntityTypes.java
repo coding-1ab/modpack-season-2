@@ -95,6 +95,7 @@ import com.simibubi.create.content.kinetics.crank.HandCrankBlockEntity;
 import com.simibubi.create.content.kinetics.crank.HandCrankRenderer;
 import com.simibubi.create.content.kinetics.crank.HandCrankVisual;
 import com.simibubi.create.content.kinetics.crank.ValveHandleBlockEntity;
+import com.simibubi.create.content.kinetics.crank.ValveHandleVisual;
 import com.simibubi.create.content.kinetics.crusher.CrushingWheelBlockEntity;
 import com.simibubi.create.content.kinetics.crusher.CrushingWheelControllerBlockEntity;
 import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
@@ -349,7 +350,7 @@ public class AllBlockEntityTypes {
 
 	public static final BlockEntityEntry<ValveHandleBlockEntity> VALVE_HANDLE = REGISTRATE
 		.blockEntity("valve_handle", ValveHandleBlockEntity::new)
-		.visual(() -> HandCrankVisual::new)
+		.visual(() -> ValveHandleVisual::new)
 		.validBlocks(AllBlocks.COPPER_VALVE_HANDLE)
 		.validBlocks(AllBlocks.DYED_VALVE_HANDLES.toArray())
 		.renderer(() -> HandCrankRenderer::new)
@@ -506,7 +507,7 @@ public class AllBlockEntityTypes {
 		.validBlocks(AllBlocks.PACKAGER)
 		.renderer(() -> PackagerRenderer::new)
 		.register();
-	
+
 	public static final BlockEntityEntry<RepackagerBlockEntity> REPACKAGER = REGISTRATE
 		.blockEntity("repackager", RepackagerBlockEntity::new)
 		.validBlocks(AllBlocks.REPACKAGER)

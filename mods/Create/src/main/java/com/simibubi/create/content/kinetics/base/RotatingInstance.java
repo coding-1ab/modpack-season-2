@@ -43,6 +43,24 @@ public class RotatingInstance extends ColoredLitInstance {
 		return 0xFFFFFF;
 	}
 
+	public RotatingInstance rotateToFace(Direction.Axis axis) {
+		Direction orientation = Direction.get(Direction.AxisDirection.POSITIVE, axis);
+		return rotateToFace(orientation);
+	}
+
+	public RotatingInstance rotateToFace(Direction orientation) {
+		return rotateToFace(orientation.getStepX(), orientation.getStepY(), orientation.getStepZ());
+	}
+
+	public RotatingInstance rotateToFace(float stepX, float stepY, float stepZ) {
+		return rotateTo(0, 1, 0, stepX, stepY, stepZ);
+	}
+
+	public RotatingInstance rotateTo(float fromX, float fromY, float fromZ, float toX, float toY, float toZ) {
+		rotation.rotateTo(fromX, fromY, fromZ, toX, toY, toZ);
+		return this;
+	}
+
 	public RotatingInstance setRotationAxis(Direction.Axis axis) {
         Direction orientation = Direction.get(Direction.AxisDirection.POSITIVE, axis);
         return setRotationAxis(orientation.step());

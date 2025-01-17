@@ -11,12 +11,11 @@ import net.createmod.catnip.render.VirtualRenderHelper;
 
 public class SingleRotatingVisual<T extends KineticBlockEntity> extends KineticBlockEntityVisual<T> {
 
-	protected RotatingInstance rotatingModel;
+	protected final RotatingInstance rotatingModel;
 
 	public SingleRotatingVisual(VisualizationContext context, T blockEntity, float partialTick) {
 		super(context, blockEntity, partialTick);
-		rotatingModel = instancerProvider().instancer(AllInstanceTypes.ROTATING, model())
-				.createInstance();
+		rotatingModel = createRotatingInstance();
 		setup(rotatingModel);
 	}
 
@@ -33,6 +32,11 @@ public class SingleRotatingVisual<T extends KineticBlockEntity> extends KineticB
 	@Override
 	protected void _delete() {
 		rotatingModel.delete();
+	}
+
+	public RotatingInstance createRotatingInstance() {
+		return instancerProvider().instancer(AllInstanceTypes.ROTATING, model())
+				.createInstance();
 	}
 
 	protected Model model() {
