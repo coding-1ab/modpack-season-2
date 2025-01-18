@@ -188,6 +188,7 @@ import com.simibubi.create.content.logistics.packager.PackagerBlock;
 import com.simibubi.create.content.logistics.packager.repackager.RepackagerBlock;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
+import com.simibubi.create.content.logistics.packagerLink.PackagerLinkGenerator;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlock;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlockItem;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlock;
@@ -1923,9 +1924,9 @@ public class AllBlocks {
 			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
 				.sound(SoundType.NETHERITE_BLOCK))
 			.transform(pickaxeOnly())
-			.blockstate((c, p) -> p.horizontalFaceBlock(c.get(), AssetLookup.forPowered(c, p)))
+			.blockstate(new PackagerLinkGenerator()::generate)
 			.item(LogisticallyLinkedBlockItem::new)
-			.transform(customItemModel("_", "block"))
+			.transform(customItemModel("_", "block_vertical"))
 			.register();
 
 	public static final BlockEntry<StockTickerBlock> STOCK_TICKER =

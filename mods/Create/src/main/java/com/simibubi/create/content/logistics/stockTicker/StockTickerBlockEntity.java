@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import com.simibubi.create.content.equipment.goggles.IHaveHoveringInformation;
 import com.simibubi.create.content.logistics.BigItemStack;
@@ -20,6 +21,7 @@ import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour.RequestType;
+import com.simibubi.create.content.logistics.packagerLink.WiFiParticle;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -43,6 +45,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
@@ -255,6 +258,12 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 	public void invalidate() {
 		capability.invalidate();
 		super.invalidate();
+	}
+	
+	public void playEffect() {
+		AllSoundEvents.STOCK_LINK.playAt(level, worldPosition, 1.0f, 1.0f, false);
+		Vec3 vec3 = Vec3.atCenterOf(worldPosition);
+		level.addParticle(new WiFiParticle.Data(), vec3.x, vec3.y, vec3.z, 1, 1, 1);
 	}
 
 	public class CategoryMenuProvider implements MenuProvider {

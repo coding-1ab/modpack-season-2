@@ -24,6 +24,7 @@ import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBeha
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
+import com.simibubi.create.content.logistics.packagerLink.WiFiEffectPacket;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
@@ -80,7 +81,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 	private InventorySummary availableItems;
 	private VersionedInventoryTrackerBehaviour invVersionTracker;
-	
+
 	private AdvancementBehaviour advancements;
 
 	//
@@ -124,7 +125,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 		if (buttonCooldown > 0)
 			buttonCooldown--;
-		
+
 		if (animationTicks == 0) {
 			previouslyUnwrapped = ItemStack.EMPTY;
 
@@ -281,6 +282,18 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			return true;
 		}
 		return false;
+	}
+
+	public void flashLink() {
+		for (Direction d : Iterate.directions) {
+			BlockState adjacentState = level.getBlockState(worldPosition.relative(d));
+			if (!AllBlocks.STOCK_LINK.has(adjacentState))
+				continue;
+			if (PackagerLinkBlock.getConnectedDirection(adjacentState) != d)
+				continue;
+			WiFiEffectPacket.send(level, worldPosition.relative(d));
+			return;
+		}
 	}
 
 	public boolean isTooBusyFor(RequestType type) {
@@ -540,7 +553,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		heldBox = createdBox;
 		animationInward = false;
 		animationTicks = CYCLE;
-		
+
 		advancements.awardPlayer(AllAdvancements.PACKAGER);
 		triggerStockCheck();
 		notifyUpdate();

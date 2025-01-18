@@ -47,7 +47,7 @@ public class PackagerLinkBlock extends FaceAttachedHorizontalDirectionalBlock
 		BlockState placed = super.getStateForPlacement(context);
 		if (placed == null)
 			return null;
-		if (placed.getValue(FACE) == AttachFace.FLOOR)
+		if (placed.getValue(FACE) == AttachFace.CEILING)
 			placed = placed.setValue(FACING, placed.getValue(FACING)
 				.getOpposite());
 		return withWater(placed.setValue(POWERED, getPower(placed, context.getLevel(), pos) > 0), context);

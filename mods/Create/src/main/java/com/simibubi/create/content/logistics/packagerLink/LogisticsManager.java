@@ -66,7 +66,7 @@ public class LogisticsManager {
 		IItemHandler ignoredHandler, String address) {
 		if (order.isEmpty())
 			return false;
-		
+
 		Multimap<PackagerBlockEntity, PackagingRequest> requests =
 			findPackagersForRequest(freqId, order, null, ignoredHandler, address);
 
@@ -144,6 +144,8 @@ public class LogisticsManager {
 			ArrayList<PackagingRequest> queuedRequests = new ArrayList<>(entry.getValue());
 			PackagerBlockEntity packager = entry.getKey();
 
+			if (!queuedRequests.isEmpty())
+				packager.flashLink();
 			for (int i = 0; i < 100; i++) {
 				if (queuedRequests.isEmpty())
 					break;
