@@ -33,11 +33,17 @@ public class PackageStyles {
 		new PackageStyle("cardboard", 10, 8, 18f, false),
 		new PackageStyle("cardboard", 12, 10, 21f, false),
 
-		new PackageStyle("rare_kryppers", 12, 10, 21f, true),
-		new PackageStyle("rare_jinx", 12, 10, 21f, true),
-		new PackageStyle("rare_creeper", 12, 10, 21f, true),
-		new PackageStyle("rare_simi", 12, 10, 21f, true)
-
+		rare("creeper"),
+		rare("darcy"),
+		rare("evan"),
+		rare("jinx"),
+		rare("kryppers"),
+		rare("simi"),
+		rare("starlotte"),
+		rare("thunder"),
+		rare("up"),
+		rare("vector")
+		
 	));
 
 	public static final List<PackageItem> ALL_BOXES = new ArrayList<>();
@@ -45,7 +51,7 @@ public class PackageStyles {
 	public static final List<PackageItem> RARE_BOXES = new ArrayList<>();
 
 	private static final Random STYLE_PICKER = new Random();
-	private static final int RARE_CHANCE = 5000; // addons, have mercy
+	private static final int RARE_CHANCE = 7500; // addons, have mercy
 
 	public static ItemStack getRandomBox() {
 		List<PackageItem> pool = STYLE_PICKER.nextInt(RARE_CHANCE) == 0 ? RARE_BOXES : STANDARD_BOXES;
@@ -54,6 +60,10 @@ public class PackageStyles {
 	
 	public static ItemStack getDefaultBox() {
 		return new ItemStack(ALL_BOXES.get(0));
+	}
+	
+	private static PackageStyle rare(String name) {
+		return new PackageStyle("rare_" + name, 12, 10, 21f, true);
 	}
 
 }
