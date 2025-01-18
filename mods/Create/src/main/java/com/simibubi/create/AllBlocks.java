@@ -291,7 +291,7 @@ import com.tterrag.registrate.providers.loot.RegistrateBlockLootTables;
 import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.entry.BlockEntry;
 
-import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.data.Couple;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
@@ -2549,7 +2549,7 @@ public class AllBlocks {
 		.transform(BuilderTransformers.palettesIronBlock())
 		.lang("Block of Industrial Iron")
 		.register();
-	
+
 	public static final BlockEntry<Block> WEATHERED_IRON_BLOCK = REGISTRATE.block("weathered_iron_block", Block::new)
 		.transform(BuilderTransformers.palettesIronBlock())
 		.lang("Block of Weathered Iron")

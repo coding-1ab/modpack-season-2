@@ -2,7 +2,7 @@ package com.simibubi.create.content.logistics.box;
 
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 
-import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -35,7 +35,7 @@ public class PackageDestroyPacket extends SimplePacketBase {
 		buffer.writeDouble(location.z);
 		buffer.writeItem(box);
 	}
-	
+
 	@Override
 	public boolean handle(Context ctx) {
 		ctx.enqueueWork(() -> {

@@ -9,7 +9,7 @@ import com.simibubi.create.Create;
 
 import com.simibubi.create.foundation.utility.SavedDataUtil;
 
-import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;

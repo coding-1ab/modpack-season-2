@@ -15,8 +15,8 @@ import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.lang.Components;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -230,11 +231,11 @@ public class MountedStorageManager {
 	public IFluidHandler getFluids() {
 		return fluidInventory;
 	}
-	
+
 	public Map<BlockPos, MountedStorage> getMountedItemStorage() {
 		return storage;
 	}
-	
+
 	public Map<BlockPos, MountedFluidStorage> getMountedFluidStorage() {
 		return fluidStorage;
 	}

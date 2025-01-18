@@ -22,8 +22,8 @@ import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.lang.Lang;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.lang.Lang;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -76,7 +76,7 @@ public class CopperBlockSet {
 	public CopperBlockSet(AbstractRegistrate<?> registrate, String name, String endTextureName, Variant<?>[] variants, NonNullBiConsumer<DataGenContext<Block, ?>, RegistrateRecipeProvider> mainBlockRecipe) {
 		this(registrate, name, endTextureName, variants, mainBlockRecipe, "copper/", NonNullBiConsumer.noop());
 	}
-	
+
 	public CopperBlockSet(AbstractRegistrate<?> registrate, String name, String endTextureName, Variant<?>[] variants, NonNullBiConsumer<DataGenContext<Block, ?>, RegistrateRecipeProvider> mainBlockRecipe, NonNullBiConsumer<WeatherState, Block> onRegister) {
 		this(registrate, name, endTextureName, variants, mainBlockRecipe, "copper/", onRegister);
 	}
@@ -89,7 +89,7 @@ public class CopperBlockSet {
 		this.variants = variants;
 		this.mainBlockRecipe = mainBlockRecipe;
 		this.onRegister = onRegister;
-		
+
 		for (boolean waxed : Iterate.falseAndTrue) {
 			for (Variant<?> variant : this.variants) {
 				BlockEntry<?>[] entries =

@@ -9,7 +9,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper.ExtractionCountMode;
 
-import net.createmod.catnip.utility.BlockFace;
+import net.createmod.catnip.math.BlockFace;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -68,7 +68,7 @@ public abstract class CapManipulationBehaviourBase<T, S extends CapManipulationB
 		simulateNext = true;
 		return (S) this;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public S withFilter(Predicate<BlockEntity> filter) {
 		this.filter = filter;

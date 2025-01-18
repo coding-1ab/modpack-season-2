@@ -11,7 +11,7 @@ import org.apache.commons.lang3.mutable.MutableInt;
 
 import com.simibubi.create.content.logistics.box.PackageEntity;
 
-import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.data.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.util.Mth;
@@ -29,7 +29,7 @@ public class ItemHelper {
 	public static boolean sameItem(ItemStack stack, ItemStack otherStack) {
 		return !otherStack.isEmpty() && stack.is(otherStack.getItem());
 	}
-	
+
 	public static Predicate<ItemStack> sameItemPredicate(ItemStack stack) {
 		return s -> sameItem(stack, s);
 	}
@@ -287,7 +287,7 @@ public class ItemHelper {
 		}
 		return -1;
 	}
-	
+
 	public static ItemStack fromItemEntity(Entity entityIn) {
 		if (!entityIn.isAlive())
 			return ItemStack.EMPTY;
@@ -308,5 +308,5 @@ public class ItemHelper {
 			stack.setCount(max);
 		return remainder;
 	}
-	
+
 }

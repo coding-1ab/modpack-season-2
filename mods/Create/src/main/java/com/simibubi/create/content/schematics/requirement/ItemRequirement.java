@@ -3,8 +3,6 @@ package com.simibubi.create.content.schematics.requirement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,7 +15,7 @@ import com.simibubi.create.foundation.data.recipe.Mods;
 
 import com.simibubi.create.impl.schematic.requirement.SchematicRequirementsRegistryImpl;
 
-import net.createmod.catnip.utility.NBTProcessors;
+import net.createmod.catnip.nbt.NBTProcessors;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;

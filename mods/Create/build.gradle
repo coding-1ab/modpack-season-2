@@ -24,19 +24,14 @@ base {
 }
 
 boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.enabled')
-boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
 boolean ponderInWorkspace = rootProject.hasProperty('multiModWorkspace.ponder')
-
-if (catnipInWorkspace) {
-    evaluationDependsOn(":catnip:Forge")
-}
 
 if (ponderInWorkspace) {
     evaluationDependsOn(":ponder:Forge")
 }
 
 project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? 'enabled' : 'disabled'} for project ${project.name}.")
-project.logger.lifecycle("Dependencies included in Workspace: [Catnip: ${catnipInWorkspace}], [Ponder: ${ponderInWorkspace}]")
+project.logger.lifecycle("Dependencies included in Workspace: [Ponder: ${ponderInWorkspace}]")
 
 mixin {
     add sourceSets.main, 'create.refmap.json'
@@ -72,13 +67,6 @@ legacyForge {
             sourceSet sourceSets.main
         }
 
-        if (catnipInWorkspace) {
-            catnip {
-                sourceSet project(":catnip:Common").sourceSets.main
-                sourceSet project(":catnip:Forge").sourceSets.main
-            }
-        }
-
         if (ponderInWorkspace) {
             ponder {
                 sourceSet project(":ponder:Common").sourceSets.main
@@ -100,7 +88,7 @@ legacyForge {
             systemProperty 'mixin.debug.verbose', 'true'
 
             programArgument '-mixin.config=create.mixins.json'
-            programArgument '-mixin.config=catnip.mixins.json'
+            programArgument '-mixin.config=ponder.mixins.json'
         }
 
         client {
@@ -170,11 +158,6 @@ dependencies {
         }
     }
 
-	jarJar("net.createmod.catnip:Catnip-Forge-${minecraft_version}:${catnip_version}") {
-        version {
-            strictly "[0.7.5,)"
-        }
-    }
     jarJar("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}") {
         version {
             strictly "[0.7.5,)"
@@ -192,13 +175,6 @@ dependencies {
     modCompileOnly("dev.engine_room.flywheel:flywheel-forge-api-${flywheel_minecraft_version}:${flywheel_version}")
     modRuntimeOnly("dev.engine_room.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
     modRuntimeOnly("dev.engine_room.vanillin:vanillin-forge-${flywheel_minecraft_version}:${flywheel_version}")
-
-    if (catnipInWorkspace) {
-        implementation project(":catnip:Common")
-        implementation project(":catnip:Forge")
-    } else {
-        modImplementation("net.createmod.catnip:Catnip-Forge-${minecraft_version}:${catnip_version}")
-    }
 
     if (ponderInWorkspace) {
         implementation project(":ponder:Common")

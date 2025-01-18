@@ -23,8 +23,8 @@ import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.element.GuiGameElement;
-import net.createmod.catnip.utility.FontHelper.Palette;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.lang.FontHelper.Palette;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.renderer.Rect2i;

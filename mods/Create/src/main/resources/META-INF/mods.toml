@@ -38,13 +38,6 @@ ${mod_description}
     side="CLIENT"
 
 [[dependencies.create]]
-    modId="catnip"
-    mandatory=true
-    versionRange="[0.8,)"
-    ordering="AFTER"
-    side="BOTH"
-
-[[dependencies.create]]
     modId="ponder"
     mandatory=true
     versionRange="[0.8,)"

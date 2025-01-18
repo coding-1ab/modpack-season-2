@@ -29,7 +29,7 @@ import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
@@ -154,7 +154,7 @@ public class AllCreativeModeTabs {
 					AllItems.CRUSHED_URANIUM,
 					AllItems.CRUSHED_NICKEL
 			);
-			
+
 			exclusions.addAll(PackageStyles.RARE_BOXES);
 
 			for (ItemProviderEntry<?> entry : simpleExclusions) {
@@ -190,7 +190,7 @@ public class AllCreativeModeTabs {
 			simpleAfterOrderings.forEach((entry, otherEntry) -> {
 				orderings.add(ItemOrdering.after(entry.asItem(), otherEntry.asItem()));
 			});
-			
+
 			PackageStyles.STANDARD_BOXES.forEach(item -> {
 				orderings.add(ItemOrdering.after(item, AllBlocks.PACKAGER.asItem()));
 			});
@@ -248,14 +248,14 @@ public class AllCreativeModeTabs {
 					visibilities.put(entry.asItem(), TabVisibility.SEARCH_TAB_ONLY);
 				}
 			}
-			
+
 			for (BlockEntry<TableClothBlock> entry : AllBlocks.TABLE_CLOTHS) {
 				TableClothBlock block = entry.get();
 				if (block.getColor() != DyeColor.RED) {
 					visibilities.put(entry.asItem(), TabVisibility.SEARCH_TAB_ONLY);
 				}
 			}
-			
+
 			for (BlockEntry<PostboxBlock> entry : AllBlocks.PACKAGE_POSTBOXES) {
 				PostboxBlock block = entry.get();
 				if (block.getColor() != DyeColor.WHITE) {

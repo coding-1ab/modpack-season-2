@@ -8,8 +8,9 @@ import com.simibubi.create.compat.trainmap.TrainMapSync.TrainMapSyncEntry;
 import com.simibubi.create.content.trains.graph.DimensionPalette;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 
-import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.data.Pair;
 import net.minecraft.network.FriendlyByteBuf;
+
 import net.minecraftforge.network.NetworkEvent.Context;
 
 public class TrainMapSyncPacket extends SimplePacketBase {

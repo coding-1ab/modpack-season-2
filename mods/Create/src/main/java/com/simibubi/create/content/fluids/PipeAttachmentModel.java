@@ -14,7 +14,7 @@ import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.model.BakedModelWrapperWithData;
 
-import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.data.Iterate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -38,11 +38,11 @@ public class PipeAttachmentModel extends BakedModelWrapperWithData {
 	public static PipeAttachmentModel withAO(BakedModel template) {
 		return new PipeAttachmentModel(template, true);
 	}
-	
+
 	public static PipeAttachmentModel withoutAO(BakedModel template) {
 		return new PipeAttachmentModel(template, false);
 	}
-	
+
 	public PipeAttachmentModel(BakedModel template, boolean ao) {
 		super(template);
 		this.ao = ao;
@@ -85,17 +85,17 @@ public class PipeAttachmentModel extends BakedModelWrapperWithData {
 		}
 		return quads;
 	}
-	
+
 	@Override
 	public boolean useAmbientOcclusion(BlockState state, RenderType renderType) {
 		return ao;
 	}
-	
+
 	@Override
 	public boolean useAmbientOcclusion(BlockState state) {
 		return ao;
 	}
-	
+
 	@Override
 	public boolean useAmbientOcclusion() {
 		return ao;

@@ -7,10 +7,9 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 import com.simibubi.create.api.contraption.transformable.ContraptionTransformableRegistry;
 import com.simibubi.create.api.contraption.transformable.ITransformableBlock;
 import com.simibubi.create.api.contraption.transformable.ITransformableBlockEntity;
-
 import com.simibubi.create.impl.contraption.transformable.ContraptionTransformableRegistryImpl;
 
-import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;

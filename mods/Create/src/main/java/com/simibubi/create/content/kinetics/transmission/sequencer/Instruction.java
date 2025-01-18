@@ -4,7 +4,7 @@ import java.util.Vector;
 
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 
-import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 

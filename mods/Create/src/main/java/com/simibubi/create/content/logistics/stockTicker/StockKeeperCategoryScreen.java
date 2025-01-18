@@ -25,9 +25,9 @@ import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.GuiGameElement;
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -120,7 +120,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 			return;
 
 		playUiSound(SoundEvents.UI_BUTTON_CLICK.get(), 1, 1);
-		
+
 		removeWidget(editorConfirm);
 		removeWidget(editorEditBox);
 
@@ -341,7 +341,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 			renderActionTooltip(graphics, ImmutableList.of(CreateLang.translate("gui.stock_ticker.new_category")
 				.component()), mx, my);
 			if (click == 0) {
-				playUiSound(SoundEvents.UI_BUTTON_CLICK.get(), 1f, 1f);				
+				playUiSound(SoundEvents.UI_BUTTON_CLICK.get(), 1f, 1f);
 				startEditing(-1);
 			}
 		}

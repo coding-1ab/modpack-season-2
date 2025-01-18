@@ -15,7 +15,7 @@ import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalStockResponsePacket;
 
-import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -48,7 +48,7 @@ public class InventorySummary {
 	public void add(BigItemStack entry) {
 		add(entry.stack, entry.count);
 	}
-	
+
 	public Map<Item, List<BigItemStack>> getItemMap() {
 		return items;
 	}
@@ -75,7 +75,7 @@ public class InventorySummary {
 				return;
 			}
 		}
-		
+
 		if (stack.getCount() > stack.getMaxStackSize())
 			stack = stack.copyWithCount(1);
 

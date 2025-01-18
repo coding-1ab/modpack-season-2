@@ -15,7 +15,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.animatedContainer.An
 import com.simibubi.create.foundation.item.SmartInventory;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -145,10 +145,10 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 			return InteractionResult.PASS;
 		if (player instanceof FakePlayer)
 			return InteractionResult.PASS;
-		
+
 		ItemStack mainHandItem = player.getMainHandItem();
 		boolean clipboard = AllBlocks.CLIPBOARD.isIn(mainHandItem);
-		
+
 		if (level.isClientSide) {
 			if (!clipboard)
 				onOpenedManually();
