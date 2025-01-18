@@ -6,7 +6,7 @@ import com.simibubi.create.content.kinetics.crafter.MechanicalCrafterBlockEntity
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 
-import net.createmod.catnip.utility.Pointing;
+import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
@@ -18,6 +18,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
+
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
