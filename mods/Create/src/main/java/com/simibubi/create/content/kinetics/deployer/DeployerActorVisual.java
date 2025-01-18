@@ -23,7 +23,6 @@ import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.nbt.NBTHelper;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.math.AngleHelper;
-import net.createmod.ponder.render.VirtualRenderHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -60,8 +59,9 @@ public class DeployerActorVisual extends ActorVisual {
         hand = instancerProvider.instancer(InstanceTypes.TRANSFORMED, Models.partial(handPose)).createInstance();
 
         Direction.Axis axis = KineticBlockEntityVisual.rotationAxis(state);
-        shaft = instancerProvider.instancer(AllInstanceTypes.ROTATING, VirtualRenderHelper.blockModel(KineticBlockEntityVisual.shaft(axis)))
-				.createInstance();
+        shaft = instancerProvider.instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.SHAFT))
+			.createInstance()
+			.rotateToFace(axis);
 
         int blockLight = localBlockLight();
 

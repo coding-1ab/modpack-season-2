@@ -90,6 +90,8 @@ public class TableClothBlock extends Block implements IHaveBigOutline, IWrenchab
 		BlockHitResult ray) {
 		if (ray.getDirection() == Direction.DOWN)
 			return InteractionResult.PASS;
+		if (world.isClientSide)
+			return InteractionResult.SUCCESS;
 
 		ItemStack heldItem = player.getItemInHand(hand);
 		boolean shiftKeyDown = player.isShiftKeyDown();

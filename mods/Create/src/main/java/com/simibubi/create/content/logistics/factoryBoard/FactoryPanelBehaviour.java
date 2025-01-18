@@ -88,13 +88,13 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public int promiseClearingInterval;
 	public boolean forceClearPromises;
 	public UUID network;
+	public boolean active;
 
 	public boolean redstonePowered;
 
 	public RequestPromiseQueue restockerPromises;
 	private boolean promisePrimedForMarkDirty;
 
-	private boolean active;
 	private int lastReportedUnloadedLinks;
 	private int lastReportedLevelInStorage;
 	private int lastReportedPromises;
@@ -119,7 +119,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		this.promiseClearingInterval = -1;
 		this.bulb = LerpedFloat.linear()
 			.startWithValue(0)
-			.chase(0, 0.125, Chaser.EXP);
+			.chase(0, 0.175, Chaser.EXP);
 		this.restockerPromises = new RequestPromiseQueue(be::setChanged);
 		this.promisePrimedForMarkDirty = true;
 		this.network = UUID.randomUUID();
@@ -179,6 +179,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public void tick() {
 		super.tick();
 		if (getWorld().isClientSide()) {
+			if (blockEntity.isVirtual())
+				tickStorageMonitor();
 			bulb.updateChaseTarget(redstonePowered || satisfied ? 1 : 0);
 			bulb.tickChaser();
 			return;
@@ -261,7 +263,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		promisedSatisfied = shouldPromiseSatisfy;
 		lastReportedUnloadedLinks = unloadedLinkCount;
 		waitingForNetwork = shouldWait;
-		blockEntity.sendData();
+		if (!getWorld().isClientSide)
+			blockEntity.sendData();
 		if (notifyOutputs)
 			notifyRedstoneOutputs();
 	}
@@ -560,6 +563,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	}
 
 	public int getLevelInStorage() {
+		if (blockEntity.isVirtual())
+			return 1;
 		if (getWorld().isClientSide())
 			return lastReportedLevelInStorage;
 		if (getFilter().isEmpty())

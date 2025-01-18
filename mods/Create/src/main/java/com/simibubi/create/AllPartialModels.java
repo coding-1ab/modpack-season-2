@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
+import com.simibubi.create.content.kinetics.gantry.GantryShaftBlock;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.content.logistics.box.PackageStyles.PackageStyle;
 
@@ -26,6 +27,8 @@ public class AllPartialModels {
 
 		SHAFTLESS_COGWHEEL = block("cogwheel_shaftless"), SHAFTLESS_LARGE_COGWHEEL = block("large_cogwheel_shaftless"),
 		COGWHEEL_SHAFT = block("cogwheel_shaft"), SHAFT_HALF = block("shaft_half"),
+		SHAFT = block("shaft"),
+		COGWHEEL = block("cogwheel"),
 
 		BELT_PULLEY = block("belt_pulley"), BELT_START = block("belt/start"), BELT_MIDDLE = block("belt/middle"),
 		BELT_END = block("belt/end"), BELT_START_BOTTOM = block("belt/start_bottom"),
@@ -38,6 +41,8 @@ public class AllPartialModels {
 		BRASS_BELT_COVER_Z = block("belt_cover/brass_belt_cover_z"),
 
 		ENCASED_FAN_INNER = block("encased_fan/propeller"), HAND_CRANK_HANDLE = block("hand_crank/handle"),
+		HAND_CRANK_BASE = block("hand_crank/block"),
+		VALVE_HANDLE = block("valve_handle"),
 		MECHANICAL_PRESS_HEAD = block("mechanical_press/head"), MECHANICAL_MIXER_POLE = block("mechanical_mixer/pole"),
 		MECHANICAL_MIXER_HEAD = block("mechanical_mixer/head"),
 		MECHANICAL_CRAFTER_LID = block("mechanical_crafter/lid"),
@@ -71,6 +76,8 @@ public class AllPartialModels {
 
 		ROPE_COIL = block("rope_pulley/rope_coil"), ROPE_HALF = block("rope_pulley/rope_half"),
 		ROPE_HALF_MAGNET = block("rope_pulley/rope_half_magnet"),
+		ROPE = block("rope_pulley/rope"),
+		PULLEY_MAGNET = block("rope_pulley/pulley_magnet"),
 
 		HOSE_COIL = block("hose_pulley/hose_coil"), HOSE = block("hose_pulley/rope"),
 		HOSE_MAGNET = block("hose_pulley/pulley_magnet"), HOSE_HALF = block("hose_pulley/rope_half"),
@@ -200,6 +207,15 @@ public class AllPartialModels {
 		TABLE_CLOTH_SW = block("table_cloth/south_west"),
 		TABLE_CLOTH_SE = block("table_cloth/south_east"),
 
+		FLYWHEEL = block("flywheel/block"),
+		CRUSHING_WHEEL = block("crushing_wheel/block"),
+		TURNTABLE = block("turntable"),
+		GANTRY_SHAFT_START = block("gantry_shaft/block_start"),
+		GANTRY_SHAFT_END = block("gantry_shaft/block_end"),
+		GANTRY_SHAFT_MIDDLE = block("gantry_shaft/block_middle"),
+		GANTRY_SHAFT_SINGLE = block("gantry_shaft/block_single"),
+		POWERED_SHAFT = block("powered_shaft"),
+
 		CRAFTING_BLUEPRINT_1x1 = entity("crafting_blueprint_small"),
 		CRAFTING_BLUEPRINT_2x2 = entity("crafting_blueprint_medium"),
 		CRAFTING_BLUEPRINT_3x3 = entity("crafting_blueprint_large"),
@@ -226,6 +242,8 @@ public class AllPartialModels {
 	public static final Map<ResourceLocation, PartialModel> PACKAGES = new HashMap<>();
 	public static final List<PartialModel> PACKAGES_TO_HIDE_AS = new ArrayList<>();
 	public static final Map<ResourceLocation, PartialModel> PACKAGE_RIGGING = new HashMap<>();
+
+	public static final Map<GantryShaftKey, PartialModel> GANTRY_SHAFTS = new HashMap<>();
 
 	static {
 		for (FluidTransportBehaviour.AttachmentTypes.ComponentPartials type : FluidTransportBehaviour.AttachmentTypes.ComponentPartials
@@ -258,6 +276,31 @@ public class AllPartialModels {
 			if (!style.rare())
 				PACKAGES_TO_HIDE_AS.add(model);
 			PACKAGE_RIGGING.put(key, PartialModel.of(style.getRiggingModel()));
+		}
+
+		for (boolean flipped : Iterate.trueAndFalse) {
+			for (boolean powered : Iterate.trueAndFalse) {
+				for (GantryShaftBlock.Part part : GantryShaftBlock.Part.values()) {
+					GantryShaftKey key = new GantryShaftKey(part, powered, flipped);
+					GANTRY_SHAFTS.put(key, PartialModel.of(key.name()));
+				}
+			}
+		}
+	}
+
+	public record GantryShaftKey(GantryShaftBlock.Part part, boolean powered, boolean flipped) {
+		private ResourceLocation name() {
+			String partName = part.getSerializedName();
+
+			if (!(flipped || powered)) {
+				// Non-generated
+				return Create.asResource("block/gantry_shaft/block_" + partName);
+			}
+
+			String flipped = this.flipped ? "_flipped" : "";
+			String powered = this.powered ? "_powered" : "";
+
+			return Create.asResource("block/gantry_shaft_" + partName + powered + flipped);
 		}
 	}
 

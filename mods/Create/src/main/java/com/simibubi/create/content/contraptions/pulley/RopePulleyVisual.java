@@ -22,12 +22,12 @@ public class RopePulleyVisual extends AbstractPulleyVisual<PulleyBlockEntity> {
 
 	@Override
 	protected Instancer<TransformedInstance> getRopeModel() {
-		return instancerProvider().instancer(InstanceTypes.TRANSFORMED, VirtualRenderHelper.blockModel(AllBlocks.ROPE.getDefaultState()));
+		return instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.ROPE));
 	}
 
 	@Override
 	protected Instancer<TransformedInstance> getMagnetModel() {
-		return instancerProvider().instancer(InstanceTypes.TRANSFORMED, VirtualRenderHelper.blockModel(AllBlocks.PULLEY_MAGNET.getDefaultState()));
+		return instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(AllPartialModels.PULLEY_MAGNET));
 	}
 
 	@Override

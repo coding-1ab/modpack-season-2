@@ -1,21 +1,21 @@
+import dev.ithundxr.silk.ChangelogText
+
 plugins {
-    id 'idea'
-    id 'eclipse'
-    id 'maven-publish'
-
-    id 'net.minecraftforge.gradle' version "${forgegradle_version}"
-    id 'org.spongepowered.mixin' version "${mixingradle_version}"
-    id 'org.parchmentmc.librarian.forgegradle' version "${librarian_version}"
-
-    id 'com.matthewprenger.cursegradle' version "${cursegradle_version}"
+    id "idea"
+    id "eclipse"
+    id "maven-publish"
+    id "net.neoforged.moddev.legacyforge" version "2.0.74"
+    id "me.modmuss50.mod-publish-plugin" version "0.8.3"
+    id "dev.ithundxr.silk" version "0.11.15"
+    id "net.kyori.blossom" version "2.1.0" // https://github.com/KyoriPowered/blossom
+    id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.8" // https://github.com/JetBrains/gradle-idea-ext-plugin
 }
 
 apply from: './gradle/java.gradle'
 
-jarJar.enable()
-
 boolean dev = System.getenv('RELEASE') == null || System.getenv('RELEASE').equals('false')
 ext.buildNumber = System.getenv('BUILD_NUMBER')
+String gitHash = "\"${calculateGitHash() + (hasUnstaged() ? "-modified" : "")}\""
 
 base {
     archivesName = "create-${artifact_minecraft_version}"
@@ -35,18 +35,10 @@ project.logger.lifecycle("Dependencies included in Workspace: [Ponder: ${ponderI
 
 mixin {
     add sourceSets.main, 'create.refmap.json'
-
     config 'create.mixins.json'
 }
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
-
-mixin {
-    add sourceSets.main, 'create.refmap.json'
-
-    debug.verbose = true
-    debug.export = true
-}
 
 idea {
     module {
@@ -55,273 +47,229 @@ idea {
     }
 }
 
-minecraft {
+legacyForge {
+    version = "$minecraft_version-$forge_version"
 
-    if (Boolean.parseBoolean(use_parchment)) {
-        mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
-    } else {
-        mappings channel: 'official', version: "${minecraft_version}"
-    }
-
-    // This property allows configuring Gradle's ProcessResources task(s) to run on IDE output locations before launching the game.
-    copyIdeResources = true
+    // TODO - Try turning this on later
+    validateAccessTransformers = false
 
     if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
-        accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+        accessTransformers.from "src/main/resources/META-INF/accesstransformer.cfg"
+    }
+
+    parchment {
+        minecraftVersion = minecraft_version
+        mappingsVersion = parchment_version
+    }
+
+    mods {
+        create {
+            sourceSet sourceSets.main
+        }
+
+        if (ponderInWorkspace) {
+            ponder {
+                sourceSet project(":ponder:Common").sourceSets.main
+                sourceSet project(":ponder:Forge").sourceSets.main
+            }
+        }
     }
 
     runs {
         // applies to all the run configs below
         configureEach {
-            if (inMultiModWorkspace)
-                ideaModule "createmod.Create.main"
-            else
-                ideaModule "Create.main"
-
-            property 'forge.logging.markers', ''
-            property 'forge.logging.console.level', 'info'
-            jvmArgs '-XX:+IgnoreUnrecognizedVMOptions', '-XX:+AllowEnhancedClassRedefinition'
+            systemProperty 'forge.logging.markers', ''
+            systemProperty 'forge.logging.console.level', 'info'
+            jvmArguments = ["-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition"]
             //jvmArgs("-XX:-OmitStackTraceInFastThrow") // uncomment when you get exceptions with null messages etc
             //jvmArgs '-XX:+UnlockCommercialFeatures' // uncomment for profiling
 
-            property 'mixin.debug.export', 'true'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            systemProperty 'mixin.debug.export', 'true'
+            systemProperty 'mixin.debug.verbose', 'true'
 
-            arg '-mixin.config=create.mixins.json'
-            arg '-mixin.config=ponder.mixins.json'
-
-            mods {
-                create {
-                    source sourceSets.main
-                }
-
-                if (ponderInWorkspace) {
-                    ponder {
-                        source project(":ponder:Common").sourceSets.main
-                        source project(":ponder:Forge").sourceSets.main
-                    }
-                }
-            }
+            programArgument '-mixin.config=create.mixins.json'
+            programArgument '-mixin.config=ponder.mixins.json'
         }
 
         client {
-            workingDirectory project.file('run')
+            client()
+
+            gameDirectory = project.file('run')
         }
 
         server {
-            workingDirectory project.file('run/server')
+            server()
+
+            gameDirectory = project.file('run/server')
         }
 
         data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-            args '--mod', 'create', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources')
+            data()
+
+            gameDirectory = project.file('run')
+            systemProperty 'forge.logging.markers', 'REGISTRIES,REGISTRYDUMP'
+            systemProperty 'forge.logging.console.level', 'debug'
+            programArguments = ["--mod", mod_id, "--all", "--output", file("src/generated/resources/").getAbsolutePath(), "--existing", file("src/main/resources").getAbsolutePath()]
         }
 
         gameTestServer {
-            workingDirectory project.file('run/gametest')
+            type = "gameTestServer"
+
+            gameDirectory = project.file('run/gametest')
             // setForceExit false <- FIXME 1.20
         }
     }
 }
 
 repositories {
-    maven {
-        // location of the maven for Registrate and Flywheel
-        name = 'tterrag maven'
-        url = 'https://maven.tterrag.com'
-    }
-    maven {
-        // location of the maven that hosts JEI files since January 2023
-        // location of the maven for Vazkii's mods
-        name = "Jared's maven"
-        url = "https://maven.blamejared.com/"
-    }
-    /*maven {
-        // location of a maven mirror for JEI files, as a fallback
-        name = "ModMaven"
-        url = "https://modmaven.dev"
-    }*/
-    maven {
-        // location of the maven for Dynamic Trees
-        url = 'https://harleyoconnor.com/maven'
-    }
-    maven {
-        // location of the maven for Curios API
-        url = "https://maven.theillusivec4.top/"
-    }
-    maven {
-        // location of maven for CC: Tweaked
-        name = "squiddev"
-        url = "https://squiddev.cc/maven/"
-    }
-    maven {
-        name = "ftb"
-        url = "https://maven.saps.dev/releases"
-    }
-	maven {
-        name = "architectury"
-        url = "https://maven.architectury.dev/"
-    }
-	maven {
-        url = "https://jm.gserv.me/repository/maven-public/"
+    maven { url = "https://maven.createmod.net" } // Ponder, Catnip
+    maven { url = "https://maven.tterrag.com" } // Registrate, Flywheel
+    maven { url = "https://maven.blamejared.com" } // JEI, Vazkii's Mods
+    maven { url = "https://harleyoconnor.com/maven" } // Dynamic Trees
+    maven { url = "https://maven.theillusivec4.top/" } // Curios API
+    maven { url = "https://maven.squiddev.cc" } // CC: Tweaked
+    maven { url = "https://www.cursemaven.com" }
+    maven { url = "https://api.modrinth.com/maven" }
+    maven { url = "https://maven.saps.dev/releases" } // FTB Mods
+    maven { url = "https://maven.architectury.dev" } // Arch API
+    maven { url = "https://jm.gserv.me/repository/maven-public" // JourneyMap
         content {
             includeGroup "info.journeymap"
             includeGroup "mysticdrew"
         }
     }
 
-
-    maven {
-        url = 'https://www.cursemaven.com'
-        content {
-            includeGroup "curse.maven"
-        }
-    }
-    maven {
-        // Location of the maven for Ponder
-        name = 'createmod maven'
-        url 'https://maven.createmod.net'
-    }
-    maven {
-        name = "Modrinth"
-        url = "https://api.modrinth.com/maven"
-        content {
-            includeGroup "maven.modrinth"
-        }
-    }
-    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
-
-    // Mirror of maven.createmod.net
-    if (System.getProperty("os.name").contains("Mac") && System.getenv("USER") == "ithundxr") {
-        maven { url = "https://maven.ithundxr.dev/mirror" }
-    }
-
     mavenCentral()
     mavenLocal()
     flatDir {
-        dirs 'libs'
+        dirs "libs"
     }
-}
-
-sourceSets.main.resources {
-    srcDir 'src/generated/resources'
-    exclude '.cache/'
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-
     jarJar("com.tterrag.registrate:Registrate:${registrate_version}") {
-        jarJar.ranged(it, '[MC1.19.3-1.1.10,)')
+        version {
+            strictly "[MC1.20-1.3.3,)"
+        }
     }
     jarJar("dev.engine_room.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}") {
-        jarJar.ranged(it, '[1.0,2.0)')
+        version {
+            strictly "[1.0,2.0)"
+        }
     }
 
     jarJar("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}") {
-        jarJar.ranged(it, '[0.7.5,)')
+        version {
+            strictly "[0.7.5,)"
+        }
     }
 
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}")) {
-        jarJar.ranged(it, "[${mixin_extras_version},)")
+        version {
+            strictly "[${mixin_extras_version},)"
+        }
     }
 
-    implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
+    modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
 
-    compileOnly fg.deobf("dev.engine_room.flywheel:flywheel-forge-api-${flywheel_minecraft_version}:${flywheel_version}")
-    runtimeOnly fg.deobf("dev.engine_room.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
+    modCompileOnly("dev.engine_room.flywheel:flywheel-forge-api-${flywheel_minecraft_version}:${flywheel_version}")
+    modRuntimeOnly("dev.engine_room.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
+    modRuntimeOnly("dev.engine_room.vanillin:vanillin-forge-${flywheel_minecraft_version}:${flywheel_version}")
 
     if (ponderInWorkspace) {
         implementation project(":ponder:Common")
         implementation project(":ponder:Forge")
     } else {
-        implementation fg.deobf("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}")
+        modImplementation("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}")
     }
 
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
 
-    // compileOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}")
-    // compileOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}-forge-api:${jei_version}")
-    implementation fg.deobf("mezz.jei:jei-${jei_minecraft_version}-forge:${jei_version}")
+    // modCompileOnly("mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}")
+    // modCompileOnly("mezz.jei:jei-${jei_minecraft_version}-forge-api:${jei_version}")
+    modImplementation("mezz.jei:jei-${jei_minecraft_version}-forge:${jei_version}")
 
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}+${curios_minecraft_version}:api")
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}+${curios_minecraft_version}")
+    modCompileOnly("top.theillusivec4.curios:curios-forge:${curios_version}+${curios_minecraft_version}:api")
+    modRuntimeOnly("top.theillusivec4.curios:curios-forge:${curios_version}+${curios_minecraft_version}")
 
 	if (cc_tweaked_enable.toBoolean()) {
 	    compileOnly("cc.tweaked:cc-tweaked-${cc_tweaked_minecraft_version}-core-api:${cc_tweaked_version}")
-        compileOnly fg.deobf("cc.tweaked:cc-tweaked-${cc_tweaked_minecraft_version}-forge-api:${cc_tweaked_version}")
-        runtimeOnly fg.deobf("cc.tweaked:cc-tweaked-${cc_tweaked_minecraft_version}-forge:${cc_tweaked_version}")
+        modCompileOnly("cc.tweaked:cc-tweaked-${cc_tweaked_minecraft_version}-forge-api:${cc_tweaked_version}")
+        modRuntimeOnly("cc.tweaked:cc-tweaked-${cc_tweaked_minecraft_version}-forge:${cc_tweaked_version}")
 	}
 
     if (dynamic_trees_enable.toBoolean()) {
-        compileOnly fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${dynamic_trees_minecraft_version}:${dynamic_trees_version}")
+        modCompileOnly("com.ferreusveritas.dynamictrees:DynamicTrees-${dynamic_trees_minecraft_version}:${dynamic_trees_version}")
     }
 
-    // implementation fg.deobf("curse.maven:ic2-classic-242942:5555152")
-    // implementation fg.deobf("curse.maven:druidcraft-340991:3101903")
-    // implementation fg.deobf("com.railwayteam.railways:railways-1.19.2-1.6.4:all") { transitive = false }
+    // modImplementation("curse.maven:ic2-classic-242942:5555152")
+    // modImplementation("curse.maven:druidcraft-340991:3101903")
+    // modImplementation("com.railwayteam.railways:railways-1.19.2-1.6.4:all") { transitive = false }
 
-	implementation fg.deobf("dev.architectury:architectury-forge:9.1.12")
-	implementation fg.deobf("dev.ftb.mods:ftb-chunks-forge:2001.3.1")
-	implementation fg.deobf("dev.ftb.mods:ftb-teams-forge:2001.3.0")
-	implementation fg.deobf("dev.ftb.mods:ftb-library-forge:2001.2.4")
+	modRuntimeOnly("dev.architectury:architectury-forge:9.1.12")
+	modImplementation("dev.ftb.mods:ftb-chunks-forge:2001.3.1")
+	modImplementation("dev.ftb.mods:ftb-teams-forge:2001.3.0")
+	modImplementation("dev.ftb.mods:ftb-library-forge:2001.2.4")
 
-	implementation fg.deobf("curse.maven:journeymap-32274:5457831")
-	// implementation fg.deobf("ignored:journeymap-1.20.1-5.10.1-forge")
+	modImplementation("curse.maven:journeymap-32274:5457831")
+	// modImplementation("ignored:journeymap-1.20.1-5.10.1-forge")
 
-    // runtimeOnly fg.deobf("curse.maven:framedblocks-441647:5399211")
-    // runtimeOnly fg.deobf("curse.maven:galosphere-631098:4574834")
-    // runtimeOnly fg.deobf("curse.maven:elementary-ores-332609:4514276") 1.19.4 only
-    // runtimeOnly fg.deobf("curse.maven:flib-661261:4479544")
-    // runtimeOnly fg.deobf("curse.maven:infernal-expansion-395078:4002091")
-    // runtimeOnly fg.deobf("vazkii.autoreglib:AutoRegLib:1.8.2-58.126")
-    // runtimeOnly fg.deobf("curse.maven:quark-243121:4812006")
-    // runtimeOnly fg.deobf("curse.maven:mantle-74924:5339977")
-    // runtimeOnly fg.deobf("curse.maven:tinkers-construct-74072:5358052")
-    // runtimeOnly fg.deobf("maven.modrinth:rubidium:0.6.2c")
-    // runtimeOnly fg.deobf("maven.modrinth:aether:1.19.2-1.4.2-forge")
-    // runtimeOnly fg.deobf("maven.modrinth:spark:1.10.38-forge")
-    // runtimeOnly fg.deobf("curse.maven:forbidden-arcanus-309858:4852521")
-    // runtimeOnly fg.deobf("curse.maven:valhelsia-core-416935:4181245")
-    // runtimeOnly fg.deobf("curse.maven:modern-ui-352491:5229370")
-    // runtimeOnly fg.deobf("curse.maven:sophisticated-storage-619320:5194750")
-    // runtimeOnly fg.deobf("curse.maven:sophisticated-core-618298:5296313")
-    // runtimeOnly fg.deobf("curse.maven:functional-storage-556861:5499169")
-    // runtimeOnly fg.deobf("curse.maven:titanium-287342:5356458")
-    // runtimeOnly fg.deobf("curse.maven:storage-drawers-223852:3884263")
-    // runtimeOnly fg.deobf("curse.maven:ftb-chunks-forge-314906:5417874")
-    // runtimeOnly fg.deobf("curse.maven:architectury-api-419699:5137942")
-    // runtimeOnly fg.deobf("curse.maven:ftb-library-forge-404465:4661834")
-    // runtimeOnly fg.deobf("curse.maven:ftb-teams-forge-404468:4611938")
-    // runtimeOnly fg.deobf("curse.maven:citadel-331936:4556677")
-    // runtimeOnly fg.deobf("curse.maven:ice-and-fire-dragons-264231:5037952")
-    // runtimeOnly fg.deobf("curse.maven:exnihilosequentia-400012:4993344")
-    // runtimeOnly fg.deobf("curse.maven:upgrade-aquatic-326895:4777515")
-    // runtimeOnly fg.deobf("curse.maven:blueprint-382216:4749000")
-    // runtimeOnly fg.deobf("curse.maven:windsweptmod-636321:4817132")
-    // runtimeOnly fg.deobf("curse.maven:good-ending-690161:4363719")
+    // modRuntimeOnly("curse.maven:framedblocks-441647:5399211")
+    // modRuntimeOnly("curse.maven:galosphere-631098:4574834")
+    // modRuntimeOnly("curse.maven:elementary-ores-332609:4514276") 1.19.4 only
+    // modRuntimeOnly("curse.maven:flib-661261:4479544")
+    // modRuntimeOnly("curse.maven:infernal-expansion-395078:4002091")
+    // modRuntimeOnly("vazkii.autoreglib:AutoRegLib:1.8.2-58.126")
+    // modRuntimeOnly("curse.maven:quark-243121:4812006")
+    // modRuntimeOnly("curse.maven:mantle-74924:5339977")
+    // modRuntimeOnly("curse.maven:tinkers-construct-74072:5358052")
+    // modRuntimeOnly("maven.modrinth:rubidium:0.6.2c")
+    // modRuntimeOnly("maven.modrinth:aether:1.19.2-1.4.2-forge")
+    // modRuntimeOnly("maven.modrinth:spark:1.10.38-forge")
+    // modRuntimeOnly("curse.maven:forbidden-arcanus-309858:4852521")
+    // modRuntimeOnly("curse.maven:valhelsia-core-416935:4181245")
+    // modRuntimeOnly("curse.maven:modern-ui-352491:5229370")
+    // modRuntimeOnly("curse.maven:sophisticated-storage-619320:5194750")
+    // modRuntimeOnly("curse.maven:sophisticated-core-618298:5296313")
+    // modRuntimeOnly("curse.maven:functional-storage-556861:5499169")
+    // modRuntimeOnly("curse.maven:titanium-287342:5356458")
+    // modRuntimeOnly("curse.maven:storage-drawers-223852:3884263")
+    // modRuntimeOnly("curse.maven:ftb-chunks-forge-314906:5417874")
+    // modRuntimeOnly("curse.maven:architectury-api-419699:5137942")
+    // modRuntimeOnly("curse.maven:ftb-library-forge-404465:4661834")
+    // modRuntimeOnly("curse.maven:ftb-teams-forge-404468:4611938")
+    // modRuntimeOnly("curse.maven:citadel-331936:4556677")
+    // modRuntimeOnly("curse.maven:ice-and-fire-dragons-264231:5037952")
+    // modRuntimeOnly("curse.maven:exnihilosequentia-400012:4993344")
+    // modRuntimeOnly("curse.maven:upgrade-aquatic-326895:4777515")
+    // modRuntimeOnly("curse.maven:blueprint-382216:4749000")
+    // modRuntimeOnly("curse.maven:windsweptmod-636321:4817132")
+    // modRuntimeOnly("curse.maven:good-ending-690161:4363719")
 
     // https://discord.com/channels/313125603924639766/725850371834118214/910619168821354497
     // Prevent Mixin annotation processor from getting into IntelliJ's annotation processor settings
     // This allows 'Settings > Build, Execution, and Deployment > Build Tools > Gradle > Build and run using' set to IntelliJ to work correctly
     if (!Boolean.getBoolean('idea.sync.active')) {
-        annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
+        annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
     }
 }
 
-sourceSets.main.java {
-	if (!cc_tweaked_enable.toBoolean()) {
-        exclude 'com/simibubi/create/compat/computercraft/implementation/**'
-	}
-}
+sourceSets.main {
+    java {
+        if (!cc_tweaked_enable.toBoolean()) {
+            exclude 'com/simibubi/create/compat/computercraft/implementation/**'
+        }
+    }
 
-// Workaround for SpongePowered/MixinGradle#38
-afterEvaluate {
-    tasks.configureReobfTaskForReobfJar.mustRunAfter(tasks.compileJava)
-    tasks.configureReobfTaskForReobfJarJar.mustRunAfter(tasks.compileJava)
+    resources {
+        srcDir 'src/generated/resources'
+        exclude '.cache/'
+    }
+
+    blossom.javaSources {
+        property("version", build_info_mod_version)
+        property("gitCommit", gitHash.toString())
+    }
 }
 
 processResources {
@@ -339,31 +287,21 @@ compileJava {
     options.compilerArgs = ['-Xdiags:verbose']
 }
 
-void addLicense(jarTask) {
-    jarTask.from('LICENSE') {
-        rename { "${it}_${project.archivesBaseName}" }
+jar {
+    from('LICENSE') {
+        rename { "${it}_${archivesBaseName}" }
     }
+
+    manifest.attributes([
+        "MixinConfigs": "create.mixins.json",
+        "Git-Hash": gitHash
+    ])
 }
 
-tasks.jar {
-    archiveClassifier = 'slim'
-    finalizedBy('reobfJar')
-    addLicense it
-}
-
-tasks.jarJar {
-    finalizedBy('reobfJarJar')
-    addLicense it
-}
-
-task jarJarRelease {
-    group = 'jarjar'
-    doLast {
-        tasks.jarJar {
-            archiveClassifier = ''
-        }
-    }
-    finalizedBy tasks.jarJar
+tasks.named("sourcesJar") {
+    manifest.attributes([
+       "Git-Hash": gitHash
+    ])
 }
 
 project.publishing {
@@ -371,8 +309,6 @@ project.publishing {
         mavenJava(MavenPublication) {
             artifactId base.archivesName.get()
             from components.java
-            fg.component(it)
-            jarJar.component(it)
         }
     }
 
@@ -383,55 +319,48 @@ project.publishing {
     }
 }
 
-String getChangelogText() {
-    def changelogFile = file('changelog.txt')
-    String str = ''
-    int lineCount = 0
-    boolean done = false
-    changelogFile.eachLine {
-        if (done || it == null) {
-            return
-        }
-        if (it.size() > 1) {
-            def temp = it
-            if (lineCount == 0) {
-                temp = "Create ${version}"
-                temp = "<span style=\"font-size: 18px; color: #333399;\">Create v${mod_version}</span>&nbsp;&nbsp;<em>for Minecraft ${minecraft_version}</em><br/>"
-            } else if (it.startsWith('-')) {
-                temp = "&nbsp;&nbsp;&nbsp;$temp<br/>"
-                temp = temp.replaceAll("(\\S+\\/\\S+)#([0-9]+)\\b", "<a href=\"https://github.com/\$1/issues/\$2\">\$0</a>");
-                temp = temp.replaceAll("#([0-9]+)\\b(?!<\\/a>)", "<a href=\"https://github.com/$github_project/issues/\$1\">\$0</a>");
-            } else {
-                temp = "<h4>$temp</h4>"
-            }
-            str += temp
-            lineCount++
-        } else {
-            str += "<p>Please submit any Issues you come across on the&nbsp;<a href=\"https://github.com/${github_project}/issues\" rel=\"nofollow\">Issue Tracker</a>.</p>"
-            done = true
-        }
+publishMods {
+    file = jar.archiveFile
+    changelog = ChangelogText.getChangelogText(project).toString()
+    type = STABLE
+    displayName = "$mod_name $minecraft_version $mod_version"
+    modLoaders.add("forge")
+    modLoaders.add("neoforge")
+
+    curseforge {
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        projectId = "328085"
+        minecraftVersions.add(minecraft_version)
     }
-    return str
+
+    modrinth {
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        projectId = "LNytGWDc"
+        minecraftVersions.add(minecraft_version)
+    }
 }
 
-// changelog debugging
-// new File("changelog.html").write getChangelogText()
-// tasks.curseforge.enabled = !dev && project.hasProperty('simi_curseforge_key')
-// curseforge {
-//     if (project.hasProperty('simi_curseforge_key')) {
-//         apiKey = project.simi_curseforge_key
-//     }
-//
-//     project {
-//         id = project.projectId
-//         changelog = System.getenv('CHANGELOG') == null || System.getenv('CHANGELOG').equals('none') ? getChangelogText() : System.getenv('CHANGELOG')
-//         changelogType = 'html'
-//         releaseType = project.curse_type
-//         mainArtifact(shadowJar) {
-//             displayName = "Create - ${version}"
-//         }
-//         relations {
-//             optionalDependency 'jei'
-//         }
-//     }
-// }
+String calculateGitHash() {
+    try {
+        def output = providers.exec {
+            commandLine("git", "rev-parse", "HEAD")
+        }
+        return output.standardOutput.asText.get().trim()
+    } catch(Throwable ignored) {
+        return "unknown"
+    }
+}
+
+boolean hasUnstaged() {
+    try {
+        def output = providers.exec {
+            commandLine("git", "status", "--porcelain")
+        }
+        String result = output.standardOutput.asText.get().replace("/M gradlew(\\.bat)?/", "").trim()
+        if (!result.isEmpty())
+            println("Found stageable results:\n ${result}\n")
+        return !result.isEmpty()
+    }  catch(Throwable ignored) {
+        return false
+    }
+}
