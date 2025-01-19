@@ -160,7 +160,7 @@ dependencies {
 
     jarJar("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}") {
         version {
-            strictly "[0.7.5,)"
+            strictly "[${ponder_version},)"
         }
     }
 
