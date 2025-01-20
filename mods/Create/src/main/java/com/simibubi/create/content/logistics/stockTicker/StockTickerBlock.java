@@ -7,6 +7,7 @@ import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
 import com.simibubi.create.foundation.block.IBE;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.minecraft.core.BlockPos;
@@ -74,8 +75,13 @@ public class StockTickerBlock extends HorizontalDirectionalBlock implements IBE<
 				return InteractionResult.SUCCESS;
 			}
 
-			if (pPlayer instanceof ServerPlayer sp && stbe.isKeeperPresent())
-				NetworkHooks.openScreen(sp, stbe.new CategoryMenuProvider(), stbe.getBlockPos());
+			if (pPlayer instanceof ServerPlayer sp) {
+				if (stbe.isKeeperPresent())
+					NetworkHooks.openScreen(sp, stbe.new CategoryMenuProvider(), stbe.getBlockPos());
+				else
+					CreateLang.translate("stock_ticker.keeper_missing")
+						.sendStatus(pPlayer);
+			}
 
 			return InteractionResult.SUCCESS;
 		});

@@ -5,6 +5,7 @@ import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour.RequestType;
+import com.simibubi.create.content.logistics.packagerLink.WiFiParticle;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.logistics.stockTicker.StockCheckingBlockEntity;
 
@@ -138,7 +139,7 @@ public class RedstoneRequesterBlockEntity extends StockCheckingBlockEntity imple
 		Vec3 vec3 = Vec3.atCenterOf(worldPosition);
 		if (success) {
 			AllSoundEvents.CONFIRM.playAt(level, worldPosition, 0.5f, 1.5f, false);
-			level.addParticle(ParticleTypes.NOTE, vec3.x, vec3.y + 1, vec3.z, 0, 0, 0);
+			level.addParticle(new WiFiParticle.Data(), vec3.x, vec3.y, vec3.z, 1, 1, 1);
 		} else {
 			AllSoundEvents.DENY.playAt(level, worldPosition, 0.5f, 1, false);
 			level.addParticle(ParticleTypes.ENCHANTED_HIT, vec3.x, vec3.y + 1, vec3.z, 0, 0, 0);
