@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
+
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -185,6 +186,7 @@ public class AllTags {
 		SLEEPERS,
 		TOOLBOXES,
 		PACKAGES,
+		CHAIN_RIDEABLE,
 		TRACKS,
 		UPRIGHT_ON_BELT,
 		VALVE_HANDLES,
