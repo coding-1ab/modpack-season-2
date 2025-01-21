@@ -1994,6 +1994,7 @@ public class AllBlocks {
 			.recipe((c, p) -> p.stonecutting(DataIngredient.items(AllItems.ANDESITE_ALLOY.get()),
 				RecipeCategory.DECORATIONS, c::get, 2))
 			.transform(pickaxeOnly())
+			.lang("Andesite Table Cover")
 			.register();
 
 	public static final BlockEntry<TableClothBlock> BRASS_TABLE_CLOTH =
@@ -2004,6 +2005,7 @@ public class AllBlocks {
 			.recipe((c, p) -> p.stonecutting(DataIngredient.tag(AllTags.forgeItemTag("ingots/brass")),
 				RecipeCategory.DECORATIONS, c::get, 2))
 			.transform(pickaxeOnly())
+			.lang("Brass Table Cover")
 			.register();
 
 	public static final BlockEntry<TableClothBlock> COPPER_TABLE_CLOTH =
@@ -2013,6 +2015,7 @@ public class AllBlocks {
 			.recipe((c, p) -> p.stonecutting(DataIngredient.tag(AllTags.forgeItemTag("ingots/copper")),
 				RecipeCategory.DECORATIONS, c::get, 2))
 			.transform(pickaxeOnly())
+			.lang("Copper Table Cover")
 			.register();
 
 	public static final BlockEntry<DisplayLinkBlock> DISPLAY_LINK =

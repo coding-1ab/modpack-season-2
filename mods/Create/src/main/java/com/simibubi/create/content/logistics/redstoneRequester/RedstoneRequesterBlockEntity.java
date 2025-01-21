@@ -135,10 +135,10 @@ public class RedstoneRequesterBlockEntity extends StockCheckingBlockEntity imple
 	}
 
 	public void playEffect(boolean success) {
-		AllSoundEvents.STOCK_LINK.playAt(level, worldPosition, 1.0f, 1.0f, false);
 		Vec3 vec3 = Vec3.atCenterOf(worldPosition);
 		if (success) {
 			AllSoundEvents.CONFIRM.playAt(level, worldPosition, 0.5f, 1.5f, false);
+			AllSoundEvents.STOCK_LINK.playAt(level, worldPosition, 1.0f, 1.0f, false);
 			level.addParticle(new WiFiParticle.Data(), vec3.x, vec3.y, vec3.z, 1, 1, 1);
 		} else {
 			AllSoundEvents.DENY.playAt(level, worldPosition, 0.5f, 1, false);
