@@ -57,7 +57,7 @@ public class PackageVisual extends AbstractEntityVisual<PackageEntity> implement
 
 		instance.setIdentityTransform()
 			.translate(x - 0.5 + xNudge, y + yNudge, z - 0.5 + zNudge)
-			.rotateYCenteredDegrees(yaw)
+			.rotateYCenteredDegrees(-yaw - 90)
 			.light(computePackedLight(partialTick))
 			.setChanged();
 	}

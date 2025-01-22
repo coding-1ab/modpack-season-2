@@ -1943,9 +1943,9 @@ public class AllBlocks {
 	public static final BlockEntry<RedstoneRequesterBlock> REDSTONE_REQUESTER =
 		REGISTRATE.block("redstone_requester", RedstoneRequesterBlock::new)
 			.initialProperties(SharedProperties::stone)
-			.properties(p -> p.sound(SoundType.WOOD))
+			.properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
 			.properties(p -> p.noOcclusion())
-			.transform(axeOrPickaxe())
+			.transform(pickaxeOnly())
 			.blockstate((c, p) -> BlockStateGen.horizontalAxisBlock(c, p, AssetLookup.forPowered(c, p)))
 			.item(RedstoneRequesterBlockItem::new)
 			.transform(customItemModel("_", "block"))
