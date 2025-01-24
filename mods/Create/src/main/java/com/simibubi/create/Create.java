@@ -127,7 +127,7 @@ public class Create {
 		AllPackets.registerPackets();
 		AllFeatures.register(modEventBus);
 		AllPlacementModifiers.register(modEventBus);
-		AllMountedStorageTypes.register(modEventBus);
+		AllMountedStorageTypes.register();
 
 		AllConfigs.register(modLoadingContext);
 

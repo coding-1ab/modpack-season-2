@@ -10,7 +10,7 @@ import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.foundation.item.ItemHelper;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -38,7 +38,7 @@ public class ToolboxMountedStorage extends WrapperMountedItemStorage<ToolboxInve
 	}
 
 	@Override
-	public boolean handleInteraction(Player player, Contraption contraption, StructureBlockInfo info) {
+	public boolean handleInteraction(ServerPlayer player, Contraption contraption, StructureBlockInfo info) {
 		// The default impl will fail anyway, might as well cancel trying
 		return false;
 	}

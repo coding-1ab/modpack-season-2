@@ -1,26 +1,18 @@
 package com.simibubi.create.api.contraption.storage.item.chest;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.mojang.serialization.Codec;
 import com.simibubi.create.AllMountedStorageTypes;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorage;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
 import com.simibubi.create.api.contraption.storage.item.simple.SimpleMountedStorage;
-
 import com.simibubi.create.content.contraptions.Contraption;
-
 import com.simibubi.create.foundation.item.ItemHelper;
-
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
-
-import net.minecraftforge.items.wrapper.InvWrapper;
-
-import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
@@ -32,6 +24,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
 /**
  * Mounted storage that handles opening a combined GUI for double chests.
@@ -97,7 +94,7 @@ public class ChestMountedStorage extends SimpleMountedStorage {
 	}
 
 	@Override
-	protected void playOpeningSound(Level level, Vec3 pos) {
+	protected void playOpeningSound(ServerLevel level, Vec3 pos) {
 		level.playSound(
 			null, BlockPos.containing(pos),
 			SoundEvents.CHEST_OPEN, SoundSource.BLOCKS,
@@ -106,7 +103,7 @@ public class ChestMountedStorage extends SimpleMountedStorage {
 	}
 
 	@Override
-	protected void playClosingSound(Level level, Vec3 pos) {
+	protected void playClosingSound(ServerLevel level, Vec3 pos) {
 		level.playSound(
 			null, BlockPos.containing(pos),
 			SoundEvents.CHEST_CLOSE, SoundSource.BLOCKS,

@@ -3,23 +3,21 @@ package com.simibubi.create.content.contraptions.behaviour.dispenser.storage;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.mojang.serialization.Codec;
 import com.simibubi.create.AllMountedStorageTypes;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
+import com.simibubi.create.api.contraption.storage.item.menu.MountedStorageMenus;
 import com.simibubi.create.api.contraption.storage.item.simple.SimpleMountedStorage;
 
-import com.simibubi.create.api.contraption.storage.item.menu.MountedStorageMenus;
-
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class DispenserMountedStorage extends SimpleMountedStorage {
 	public static final Codec<DispenserMountedStorage> CODEC = SimpleMountedStorage.codec(DispenserMountedStorage::new);
@@ -45,7 +43,7 @@ public class DispenserMountedStorage extends SimpleMountedStorage {
 	}
 
 	@Override
-	protected void playOpeningSound(Level level, Vec3 pos) {
+	protected void playOpeningSound(ServerLevel level, Vec3 pos) {
 		// dispensers are silent
 	}
 }

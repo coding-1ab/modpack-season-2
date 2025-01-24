@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorage;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageWrapper;
-
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 
 import net.createmod.catnip.utility.NBTHelper;
@@ -21,6 +22,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -29,8 +31,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
-
-import org.jetbrains.annotations.Nullable;
 
 public class MountedStorageManager {
 
@@ -189,7 +189,7 @@ public class MountedStorageManager {
 
 	/**
 	 * Gets an item handler wrapping all non-internal mounted storages and all external storages.
-	 * Non-internal storages are  mounted storages that are intended to be exposed to the entire
+	 * Non-internal storages are mounted storages that are intended to be exposed to the entire
 	 * contraption. External storages are non-mounted storages that are still part of a contraption's
 	 * inventory, such as the inventories of chest minecarts.
 	 */
@@ -211,7 +211,7 @@ public class MountedStorageManager {
 		MountedItemStorage storage = storageManager.getAllItemStorages().get(localPos);
 
 		if (storage != null) {
-			return player.level().isClientSide || storage.handleInteraction(player, contraption, info);
+			return !(player instanceof ServerPlayer serverPlayer) || storage.handleInteraction(serverPlayer, contraption, info);
 		} else {
 			return false;
 		}

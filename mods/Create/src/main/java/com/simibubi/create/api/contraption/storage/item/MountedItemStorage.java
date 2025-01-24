@@ -18,6 +18,8 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.MenuProvider;
@@ -72,24 +74,25 @@ public abstract class MountedItemStorage implements IItemHandlerModifiable {
 	 * For this to work, this storage must have 1-6 complete rows of 9 slots.
 	 * @return true if the interaction was successful
 	 */
-	public boolean handleInteraction(Player player, Contraption contraption, StructureBlockInfo info) {
+	public boolean handleInteraction(ServerPlayer player, Contraption contraption, StructureBlockInfo info) {
+		ServerLevel level = player.serverLevel();
 		BlockPos localPos = info.pos();
 		Vec3 localPosVec = Vec3.atCenterOf(localPos);
 		Predicate<Player> stillValid = p -> {
 			Vec3 currentPos = contraption.entity.toGlobalVector(localPosVec, 0);
-			return this.isMenuValid(p, contraption, currentPos);
+			return this.isMenuValid(player, contraption, currentPos);
 		};
 		Component menuName = this.getMenuName(info, contraption);
 		IItemHandlerModifiable handler = this.getHandlerForMenu(info, contraption);
 		Consumer<Player> onClose = p -> {
 			Vec3 newPos = contraption.entity.toGlobalVector(localPosVec, 0);
-			this.playClosingSound(p.level(), newPos);
+			this.playClosingSound(level, newPos);
 		};
 
 		OptionalInt id = player.openMenu(this.createMenuProvider(menuName, handler, stillValid, onClose));
 		if (id.isPresent()) {
 			Vec3 globalPos = contraption.entity.toGlobalVector(localPosVec, 0);
-			this.playOpeningSound(player.level(), globalPos);
+			this.playOpeningSound(level, globalPos);
 			return true;
 		} else {
 			return false;
@@ -109,7 +112,7 @@ public abstract class MountedItemStorage implements IItemHandlerModifiable {
 	 * @param pos the center of this storage in-world
 	 * @return true if a GUI opened for this storage is still valid
 	 */
-	protected boolean isMenuValid(Player player, Contraption contraption, Vec3 pos) {
+	protected boolean isMenuValid(ServerPlayer player, Contraption contraption, Vec3 pos) {
 		return contraption.entity.isAlive() && player.distanceToSqr(pos) < (8 * 8);
 	}
 
@@ -133,7 +136,7 @@ public abstract class MountedItemStorage implements IItemHandlerModifiable {
 	/**
 	 * Play the sound made by opening this storage's GUI.
 	 */
-	protected void playOpeningSound(Level level, Vec3 pos) {
+	protected void playOpeningSound(ServerLevel level, Vec3 pos) {
 		level.playSound(
 			null, BlockPos.containing(pos),
 			SoundEvents.BARREL_OPEN, SoundSource.BLOCKS,
@@ -144,6 +147,6 @@ public abstract class MountedItemStorage implements IItemHandlerModifiable {
 	/**
 	 * Play the sound made by closing this storage's GUI.
 	 */
-	protected void playClosingSound(Level level, Vec3 pos) {
+	protected void playClosingSound(ServerLevel level, Vec3 pos) {
 	}
 }
