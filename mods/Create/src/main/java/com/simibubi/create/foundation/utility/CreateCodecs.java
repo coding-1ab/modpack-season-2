@@ -1,7 +1,6 @@
 package com.simibubi.create.foundation.utility;
 
 import com.mojang.serialization.Codec;
-
 import com.mojang.serialization.DataResult;
 
 import com.simibubi.create.foundation.item.ItemSlots;

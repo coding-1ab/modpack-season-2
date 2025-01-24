@@ -5,6 +5,9 @@ import com.simibubi.create.api.contraption.storage.item.simple.SimpleMountedStor
 import net.minecraftforge.items.IItemHandler;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
 public class FallbackMountedStorageType extends SimpleMountedStorageType<FallbackMountedStorage> {
 	public FallbackMountedStorageType() {
 		super(FallbackMountedStorage.CODEC);

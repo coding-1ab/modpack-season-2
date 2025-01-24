@@ -1,10 +1,9 @@
 package com.simibubi.create.api.contraption.storage.item;
 
-import com.mojang.serialization.Codec;
-
-import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry;
-
 import org.jetbrains.annotations.Nullable;
+
+import com.mojang.serialization.Codec;
+import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ExtraCodecs;

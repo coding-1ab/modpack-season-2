@@ -20,8 +20,6 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.Create;
-import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry;
-import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
 import com.simibubi.create.content.contraptions.behaviour.DoorMovingInteraction;
 import com.simibubi.create.content.contraptions.behaviour.TrapdoorMovingInteraction;
 import com.simibubi.create.content.contraptions.piston.MechanicalPistonGenerator;
@@ -93,7 +91,6 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.RegistryObject;
 
 public class BuilderTransformers {
 

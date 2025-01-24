@@ -55,6 +55,7 @@ public interface BlockLookup<T> {
 		return lookup;
 	}
 
+	@FunctionalInterface
 	interface Provider<T> {
 		@Nullable
 		T get(Block block);

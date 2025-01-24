@@ -1,21 +1,18 @@
 package com.simibubi.create.content.logistics.vault;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.mojang.serialization.Codec;
 import com.simibubi.create.AllMountedStorageTypes;
-
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
 import com.simibubi.create.api.contraption.storage.item.WrapperMountedItemStorage;
-
 import com.simibubi.create.foundation.utility.CreateCodecs;
-
-import net.minecraftforge.items.ItemStackHandler;
-
-import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.items.ItemStackHandler;
 
 public class ItemVaultMountedStorage extends WrapperMountedItemStorage<ItemStackHandler> {
 	public static final Codec<ItemVaultMountedStorage> CODEC = CreateCodecs.ITEM_STACK_HANDLER.xmap(

@@ -5,19 +5,15 @@ import java.util.OptionalInt;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import com.mojang.serialization.Codec;
+import org.jetbrains.annotations.Nullable;
 
+import com.mojang.serialization.Codec;
 import com.simibubi.create.api.contraption.storage.item.menu.MountedStorageMenus;
 import com.simibubi.create.content.contraptions.Contraption;
-
 import com.simibubi.create.content.contraptions.MountedStorageManager;
 import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.foundation.utility.CreateLang;
-
-import net.minecraftforge.items.IItemHandlerModifiable;
-
-import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -31,6 +27,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 public abstract class MountedItemStorage implements IItemHandlerModifiable {
 	public static final Codec<MountedItemStorage> CODEC = MountedItemStorageType.CODEC.dispatch(

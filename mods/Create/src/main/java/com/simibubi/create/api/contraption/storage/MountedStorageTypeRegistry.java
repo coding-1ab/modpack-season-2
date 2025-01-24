@@ -3,9 +3,7 @@ package com.simibubi.create.api.contraption.storage;
 import com.simibubi.create.Create;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
 import com.simibubi.create.api.lookup.BlockLookup;
-
 import com.simibubi.create.impl.contraption.storage.MountedStorageTypeRegistryImpl;
-
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;

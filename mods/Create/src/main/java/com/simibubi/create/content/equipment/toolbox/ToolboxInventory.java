@@ -2,7 +2,6 @@ package com.simibubi.create.content.equipment.toolbox;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
@@ -10,9 +9,7 @@ import javax.annotation.Nonnull;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.AllItems;
-
 import com.simibubi.create.foundation.item.ItemSlots;
-import com.simibubi.create.foundation.utility.CreateCodecs;
 
 import net.createmod.catnip.utility.NBTHelper;
 import net.minecraft.nbt.CompoundTag;

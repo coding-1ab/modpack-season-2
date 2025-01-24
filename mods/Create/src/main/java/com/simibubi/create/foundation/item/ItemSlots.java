@@ -5,9 +5,7 @@ import java.util.Map;
 import java.util.function.IntFunction;
 
 import com.mojang.serialization.Codec;
-
 import com.mojang.serialization.DataResult;
-
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.foundation.utility.CreateCodecs;
 
@@ -107,6 +105,7 @@ public class ItemSlots {
 		return slots;
 	}
 
+	@FunctionalInterface
 	public interface SlotConsumer {
 		void accept(int slot, ItemStack stack);
 	}

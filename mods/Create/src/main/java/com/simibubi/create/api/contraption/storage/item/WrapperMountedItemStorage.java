@@ -1,13 +1,11 @@
 package com.simibubi.create.api.contraption.storage.item;
 
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-
-import net.minecraftforge.items.ItemStackHandler;
-
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 
 public abstract class WrapperMountedItemStorage<T extends IItemHandlerModifiable> extends MountedItemStorage {
 	protected final T wrapped;

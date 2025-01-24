@@ -2,20 +2,22 @@ package com.simibubi.create.impl.contraption.storage;
 
 import java.util.Objects;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import com.simibubi.create.AllMountedStorageTypes;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
-
 import com.simibubi.create.api.lookup.BlockLookup;
 
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegistryBuilder;
-import net.minecraft.world.level.block.Block;
 
+@ApiStatus.Internal
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MountedStorageTypeRegistryImpl {
 	public static final BlockLookup<MountedItemStorageType<?>> ITEM_LOOKUP = BlockLookup.create(MountedStorageTypeRegistryImpl::itemFallback);

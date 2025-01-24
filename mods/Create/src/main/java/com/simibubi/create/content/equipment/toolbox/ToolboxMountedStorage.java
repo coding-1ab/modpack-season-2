@@ -1,15 +1,13 @@
 package com.simibubi.create.content.equipment.toolbox;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.mojang.serialization.Codec;
 import com.simibubi.create.AllMountedStorageTypes;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
 import com.simibubi.create.api.contraption.storage.item.WrapperMountedItemStorage;
-
 import com.simibubi.create.content.contraptions.Contraption;
-
 import com.simibubi.create.foundation.item.ItemHelper;
-
-import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
