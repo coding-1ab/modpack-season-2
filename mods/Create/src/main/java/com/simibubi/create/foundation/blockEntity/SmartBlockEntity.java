@@ -184,8 +184,9 @@ public abstract class SmartBlockEntity extends CachedRenderBBBlockEntity
 		return behaviours.values();
 	}
 
-	protected void attachBehaviourLate(BlockEntityBehaviour behaviour) {
+	public void attachBehaviourLate(BlockEntityBehaviour behaviour) {
 		behaviours.put(behaviour.getType(), behaviour);
+		behaviour.blockEntity = this;
 		behaviour.initialize();
 	}
 
@@ -194,7 +195,7 @@ public abstract class SmartBlockEntity extends CachedRenderBBBlockEntity
 			.reduce(ItemRequirement.NONE, (r, b) -> r.union(b.getRequiredItems()), (r, r1) -> r.union(r1));
 	}
 
-	protected void removeBehaviour(BehaviourType<?> type) {
+	public void removeBehaviour(BehaviourType<?> type) {
 		BlockEntityBehaviour remove = behaviours.remove(type);
 		if (remove != null) {
 			remove.unload();
