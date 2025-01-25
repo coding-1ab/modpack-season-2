@@ -11,6 +11,7 @@ import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.box.PackageStyles.PackageStyle;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 
+import net.createmod.catnip.data.Glob;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
@@ -155,8 +156,8 @@ public class PackageItem extends Item {
 			return boxAddress.isBlank();
 		if (address.equals("*") || boxAddress.equals("*"))
 			return true;
-		String matcher = "\\Q" + address.replace("*", "\\E.*\\Q") + "\\E";
-		String boxMatcher = "\\Q" + boxAddress.replace("*", "\\E.*\\Q") + "\\E";
+		String matcher = Glob.toRegexPattern(address, "");
+		String boxMatcher = Glob.toRegexPattern(boxAddress, "");
 		return address.matches(boxMatcher) || boxAddress.matches(matcher);
 	}
 
