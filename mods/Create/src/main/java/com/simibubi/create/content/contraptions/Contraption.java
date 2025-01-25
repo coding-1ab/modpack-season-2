@@ -123,9 +123,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.registries.GameData;
 
 public abstract class Contraption {
@@ -1471,12 +1468,7 @@ public abstract class Contraption {
 		return simplifiedEntityColliders;
 	}
 
-	public void handleContraptionFluidPacket(BlockPos localPos, FluidStack containedFluid) {
-//		storage.updateContainedFluid(localPos, containedFluid);
-	}
-
-	public void tickStorage(AbstractContraptionEntity entity) {
-//		storage.entityTick(entity);
+	public void tick(AbstractContraptionEntity entity) {
 	}
 
 	public boolean containsBlockBreakers() {

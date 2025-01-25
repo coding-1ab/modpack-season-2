@@ -102,7 +102,7 @@ public class MovedDefaultDispenseItemBehaviour implements IMovedDispenseItemBeha
 
 		ItemStack toInsert = output.copy();
 		// try inserting into own inventory first
-		ItemStack remainder = ItemHandlerHelper.insertItem(context.getStorage(), toInsert, false);
+		ItemStack remainder = ItemHandlerHelper.insertItem(context.getItemStorage(), toInsert, false);
 		if (!remainder.isEmpty()) {
 			// next, try the whole contraption inventory
 			// note that this contains the dispenser inventory. That's fine.

@@ -3,15 +3,15 @@ package com.simibubi.create.content.contraptions.behaviour;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.base.Suppliers;
+import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorage;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorage;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
 
 import net.createmod.catnip.utility.VecHelper;
-
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -41,7 +41,8 @@ public class MovementContext {
 
 	private FilterItemStack filter;
 
-	private final Supplier<MountedItemStorage> storage;
+	private final Supplier<MountedItemStorage> itemStorage;
+	private final Supplier<MountedFluidStorage> fluidStorage;
 
 	public MovementContext(Level world, StructureBlockInfo info, Contraption contraption) {
 		this.world = world;
@@ -59,9 +60,8 @@ public class MovementContext {
 		data = new CompoundTag();
 		stall = false;
 		filter = null;
-		this.storage = Suppliers.memoize(
-			() -> contraption.getStorage().getAllItemStorages().get(this.localPos)
-		);
+		this.itemStorage = Suppliers.memoize(() -> contraption.getStorage().getAllItemStorages().get(this.localPos));
+		this.fluidStorage = Suppliers.memoize(() -> contraption.getStorage().getFluids().storages.get(this.localPos));
 	}
 
 	public float getAnimationSpeed() {
@@ -106,7 +106,12 @@ public class MovementContext {
 	}
 
 	@Nullable
-	public MountedItemStorage getStorage() {
-		return this.storage.get();
+	public MountedItemStorage getItemStorage() {
+		return this.itemStorage.get();
+	}
+
+	@Nullable
+	public MountedFluidStorage getFluidStorage() {
+		return this.fluidStorage.get();
 	}
 }

@@ -2,6 +2,8 @@ package com.simibubi.create.content.contraptions.behaviour.dispenser;
 
 import java.util.function.Predicate;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorage;
 import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
@@ -9,15 +11,12 @@ import com.simibubi.create.foundation.item.ItemHelper;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraftforge.items.IItemHandler;
-
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.LevelEvent;
+import net.minecraftforge.items.IItemHandler;
 
 public class DropperMovementBehaviour implements MovementBehaviour {
 	@Override
@@ -25,7 +24,7 @@ public class DropperMovementBehaviour implements MovementBehaviour {
 		if (context.world.isClientSide)
 			return;
 
-		MountedItemStorage storage = context.getStorage();
+		MountedItemStorage storage = context.getItemStorage();
 		if (storage == null)
 			return;
 

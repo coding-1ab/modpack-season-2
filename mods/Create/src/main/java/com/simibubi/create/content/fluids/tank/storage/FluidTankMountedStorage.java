@@ -38,6 +38,10 @@ public class FluidTankMountedStorage extends WrapperMountedFluidStorage<FluidTan
 		}
 	}
 
+	public FluidTank getTank() {
+		return this.wrapped;
+	}
+
 	public static FluidTankMountedStorage fromTank(FluidTankBlockEntity tank) {
 		// tank has update callbacks, make an isolated copy
 		FluidTank inventory = tank.getTankInventory();

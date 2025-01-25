@@ -1,6 +1,7 @@
 package com.simibubi.create.content.contraptions.sync;
 
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
+import com.simibubi.create.content.fluids.tank.FluidTankMovementBehavior;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 
 import net.minecraft.client.Minecraft;
@@ -39,10 +40,9 @@ public class ContraptionFluidPacket extends SimplePacketBase {
 	public boolean handle(Context context) {
 		context.enqueueWork(() -> {
 			Entity entityByID = Minecraft.getInstance().level.getEntity(entityId);
-			if (!(entityByID instanceof AbstractContraptionEntity))
-				return;
-			AbstractContraptionEntity contraptionEntity = (AbstractContraptionEntity) entityByID;
-			contraptionEntity.getContraption().handleContraptionFluidPacket(localPos, containedFluid);
+			if (entityByID instanceof AbstractContraptionEntity entity) {
+				FluidTankMovementBehavior.handlePacket(entity, this.localPos, this.containedFluid);
+			}
 		});
 		return true;
 	}

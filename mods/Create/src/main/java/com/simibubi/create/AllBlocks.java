@@ -106,6 +106,7 @@ import com.simibubi.create.content.fluids.tank.FluidTankBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankGenerator;
 import com.simibubi.create.content.fluids.tank.FluidTankItem;
 import com.simibubi.create.content.fluids.tank.FluidTankModel;
+import com.simibubi.create.content.fluids.tank.FluidTankMovementBehavior;
 import com.simibubi.create.content.kinetics.BlockStressDefaults;
 import com.simibubi.create.content.kinetics.belt.BeltBlock;
 import com.simibubi.create.content.kinetics.belt.BeltGenerator;
@@ -991,6 +992,7 @@ public class AllBlocks {
 		.onRegister(CreateRegistrate.blockModel(() -> FluidTankModel::standard))
 		.onRegister(assignDataBehaviour(new BoilerDisplaySource(), "boiler_status"))
 		.transform(mountedFluidStorage(AllMountedStorageTypes.FLUID_TANK))
+		.onRegister(movementBehaviour(new FluidTankMovementBehavior()))
 		.addLayer(() -> RenderType::cutoutMipped)
 		.item(FluidTankItem::new)
 		.model(AssetLookup.customBlockItemModel("_", "block_single_window"))

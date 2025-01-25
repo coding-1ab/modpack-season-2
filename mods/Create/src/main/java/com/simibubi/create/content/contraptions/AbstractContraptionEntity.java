@@ -375,7 +375,7 @@ public abstract class AbstractContraptionEntity extends Entity implements IEntit
 		if (!initialized)
 			contraptionInitialize();
 
-		contraption.tickStorage(this);
+		contraption.tick(this);
 		tickContraption();
 		super.tick();
 

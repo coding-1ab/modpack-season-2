@@ -55,8 +55,8 @@ public class ElevatorContraption extends PulleyContraption {
 	}
 
 	@Override
-	public void tickStorage(AbstractContraptionEntity entity) {
-		super.tickStorage(entity);
+	public void tick(AbstractContraptionEntity entity) {
+		super.tick(entity);
 
 		if (entity.tickCount % 10 != 0)
 			return;
