@@ -2,14 +2,17 @@ package com.simibubi.create.content.contraptions.minecart;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jetbrains.annotations.Nullable;
+
+import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageWrapper;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageWrapper;
+import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.MountedStorageManager;
-import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class TrainCargoManager extends MountedStorageManager {
 
@@ -28,6 +31,7 @@ public class TrainCargoManager extends MountedStorageManager {
 		if (this.fuelItems != null) {
 			this.fuelItems = new CargoInvWrapper(this.fuelItems);
 		}
+		this.fluids = new CargoTankWrapper(this.fluids);
 	}
 
 	@Override
@@ -37,8 +41,8 @@ public class TrainCargoManager extends MountedStorageManager {
 	}
 
 	@Override
-	public void read(CompoundTag nbt) {
-		super.read(nbt);
+	public void read(CompoundTag nbt, boolean clientPacket, @Nullable Contraption contraption) {
+		super.read(nbt, clientPacket, contraption);
 		ticksSinceLastExchange = nbt.getInt("TicksSinceLastExchange");
 	}
 
@@ -64,7 +68,7 @@ public class TrainCargoManager extends MountedStorageManager {
 	}
 
 	class CargoInvWrapper extends MountedItemStorageWrapper {
-		public CargoInvWrapper(MountedItemStorageWrapper wrapped) {
+		CargoInvWrapper(MountedItemStorageWrapper wrapped) {
 			super(wrapped.storages);
 		}
 
@@ -93,10 +97,9 @@ public class TrainCargoManager extends MountedStorageManager {
 
 	}
 
-	class CargoTankWrapper extends CombinedTankWrapper {
-
-		public CargoTankWrapper(IFluidHandler... fluidHandler) {
-			super(fluidHandler);
+	class CargoTankWrapper extends MountedFluidStorageWrapper {
+		CargoTankWrapper(MountedFluidStorageWrapper wrapped) {
+			super(wrapped.storages);
 		}
 
 		@Override

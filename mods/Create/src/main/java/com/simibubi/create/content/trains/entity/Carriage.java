@@ -30,9 +30,9 @@ import com.simibubi.create.foundation.advancement.AllAdvancements;
 
 import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.data.Iterate;
-import net.createmod.catnip.nbt.NBTHelper;
 import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -46,6 +46,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
@@ -647,7 +648,7 @@ public class Carriage {
 		public void read(CompoundTag tag) {
 			cutoff = tag.getFloat("Cutoff");
 			discardTicks = tag.getInt("DiscardTicks");
-			storage.read(tag);
+			storage.read(tag, false, null);
 			if (tag.contains("Pivot"))
 				pivot = TrackNodeLocation.read(tag.getCompound("Pivot"), null);
 			if (positionAnchor != null)

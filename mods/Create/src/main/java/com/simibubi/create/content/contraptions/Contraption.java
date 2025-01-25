@@ -732,7 +732,7 @@ public abstract class Contraption {
 				});
 			});
 
-		storage.read(nbt);
+		storage.read(nbt, spawnData, this);
 
 		actors.clear();
 		nbt.getList("Actors", Tag.TAG_COMPOUND)
@@ -1447,10 +1447,6 @@ public abstract class Contraption {
 		return this.storage;
 	}
 
-	public MountedStorageManager getStorageManager() {
-		return storage;
-	}
-
 	public RenderedBlocks getRenderedBlocks() {
 		return new RenderedBlocks(pos -> {
 			StructureBlockInfo info = blocks.get(pos);
@@ -1473,7 +1469,8 @@ public abstract class Contraption {
 		return simplifiedEntityColliders;
 	}
 
-	public void tick(AbstractContraptionEntity entity) {
+	public void tickStorage(AbstractContraptionEntity entity) {
+		this.storage.tick(entity);
 	}
 
 	public boolean containsBlockBreakers() {

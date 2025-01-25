@@ -332,6 +332,7 @@ import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.Tags;
@@ -799,6 +800,7 @@ public class AllBlocks {
 		.blockstate((c, p) -> p.simpleBlock(c.getEntry(), AssetLookup.partialBaseModel(c, p)))
 		.onRegister(assignDataBehaviour(new ItemNameDisplaySource(), "combine_item_names"))
 		.onRegister(interactionBehaviour(new MountedDepotInteractionBehaviour()))
+		.transform(mountedItemStorage(AllMountedStorageTypes.DEPOT))
 		.item()
 		.transform(customItemModel("_", "block"))
 		.register();

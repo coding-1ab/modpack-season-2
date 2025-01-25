@@ -16,6 +16,7 @@ import com.simibubi.create.content.contraptions.ContraptionColliderLockPacket.Co
 import com.simibubi.create.content.contraptions.ContraptionDisassemblyPacket;
 import com.simibubi.create.content.contraptions.ContraptionRelocationPacket;
 import com.simibubi.create.content.contraptions.ContraptionStallPacket;
+import com.simibubi.create.content.contraptions.MountedStorageSyncPacket;
 import com.simibubi.create.content.contraptions.TrainCollisionPacket;
 import com.simibubi.create.content.contraptions.actors.contraptionControls.ContraptionDisableActorPacket;
 import com.simibubi.create.content.contraptions.actors.trainControls.ControlsInputPacket;
@@ -30,9 +31,7 @@ import com.simibubi.create.content.contraptions.glue.SuperGlueSelectionPacket;
 import com.simibubi.create.content.contraptions.minecart.CouplingCreationPacket;
 import com.simibubi.create.content.contraptions.minecart.capability.MinecartControllerUpdatePacket;
 import com.simibubi.create.content.contraptions.sync.ClientMotionPacket;
-import com.simibubi.create.content.contraptions.sync.ContraptionFluidPacket;
 import com.simibubi.create.content.contraptions.sync.ContraptionInteractionPacket;
-import com.simibubi.create.content.contraptions.sync.ContraptionItemPacket;
 import com.simibubi.create.content.contraptions.sync.ContraptionSeatMappingPacket;
 import com.simibubi.create.content.contraptions.sync.LimbSwingUpdatePacket;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenuSubmitPacket;
@@ -123,6 +122,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent.Context;
 import net.minecraftforge.network.NetworkRegistry;
@@ -218,8 +218,7 @@ public enum AllPackets {
 	LIMBSWING_UPDATE(LimbSwingUpdatePacket.class, LimbSwingUpdatePacket::new, PLAY_TO_CLIENT),
 	MINECART_CONTROLLER(MinecartControllerUpdatePacket.class, MinecartControllerUpdatePacket::new, PLAY_TO_CLIENT),
 	FLUID_SPLASH(FluidSplashPacket.class, FluidSplashPacket::new, PLAY_TO_CLIENT),
-	CONTRAPTION_FLUID(ContraptionFluidPacket.class, ContraptionFluidPacket::new, PLAY_TO_CLIENT),
-	CONTRAPTION_ITEM(ContraptionItemPacket.class, ContraptionItemPacket::new, PLAY_TO_CLIENT),
+	MOUNTED_STORAGE_SYNC(MountedStorageSyncPacket.class, MountedStorageSyncPacket::new, PLAY_TO_CLIENT),
 	GANTRY_UPDATE(GantryContraptionUpdatePacket.class, GantryContraptionUpdatePacket::new, PLAY_TO_CLIENT),
 	BLOCK_HIGHLIGHT(HighlightPacket.class, HighlightPacket::new, PLAY_TO_CLIENT),
 	TUNNEL_FLAP(TunnelFlapPacket.class, TunnelFlapPacket::new, PLAY_TO_CLIENT),

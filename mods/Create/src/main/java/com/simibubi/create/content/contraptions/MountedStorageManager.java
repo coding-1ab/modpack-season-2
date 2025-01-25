@@ -1,16 +1,24 @@
 package com.simibubi.create.content.contraptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
 import com.mojang.datafixers.util.Pair;
+import com.simibubi.create.AllPackets;
 import com.simibubi.create.Create;
 import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry;
+import com.simibubi.create.api.contraption.storage.SyncedMountedStorage;
 import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorage;
 import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageType;
 import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageWrapper;
@@ -24,7 +32,7 @@ import com.simibubi.create.content.logistics.crate.CreativeCrateMountedStorage;
 import com.simibubi.create.content.logistics.vault.ItemVaultMountedStorage;
 import com.simibubi.create.impl.contraption.storage.FallbackMountedStorage;
 
-import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -38,25 +46,39 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
+
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.minecraftforge.network.PacketDistributor;
 
 public class MountedStorageManager {
 	// builders used during assembly, null afterward
-	private ImmutableMap.Builder<BlockPos, MountedItemStorage> itemsBuilder;
-	private ImmutableMap.Builder<BlockPos, MountedFluidStorage> fluidsBuilder;
+	// ImmutableMap.Builder is not used because it will throw with duplicate keys, not override them
+	private Map<BlockPos, MountedItemStorage> itemsBuilder;
+	private Map<BlockPos, MountedFluidStorage> fluidsBuilder;
+	private Map<BlockPos, SyncedMountedStorage> syncedItemsBuilder;
+	private Map<BlockPos, SyncedMountedStorage> syncedFluidsBuilder;
 
 	// built data structures after assembly, null before
-	protected ImmutableMap<BlockPos, MountedItemStorage> allItemStorages;
+	private ImmutableMap<BlockPos, MountedItemStorage> allItemStorages;
 	// different from allItemStorages, does not contain internal ones
 	protected MountedItemStorageWrapper items;
 	@Nullable
 	protected MountedItemStorageWrapper fuelItems;
 	protected MountedFluidStorageWrapper fluids;
 
+	private ImmutableMap<BlockPos, SyncedMountedStorage> syncedItems;
+	private ImmutableMap<BlockPos, SyncedMountedStorage> syncedFluids;
+
 	private List<IItemHandlerModifiable> externalHandlers;
-	protected CombinedInvWrapper allItems;
+	private CombinedInvWrapper allItems;
+
+	// ticks until storage can sync again
+	private int syncCooldown;
+
+	// client-side: not all storages are synced, this determines which interactions are valid
+	private Set<BlockPos> interactablePositions;
 
 	public MountedStorageManager() {
 		this.reset();
@@ -67,7 +89,7 @@ public class MountedStorageManager {
 			throw new IllegalStateException("Mounted storage has already been initialized");
 		}
 
-		this.allItemStorages = this.itemsBuilder.build();
+		this.allItemStorages = ImmutableMap.copyOf(this.itemsBuilder);
 
 		this.items = new MountedItemStorageWrapper(subMap(
 			this.allItemStorages, storage -> !storage.isInternal()
@@ -81,9 +103,14 @@ public class MountedStorageManager {
 		);
 		this.fuelItems = fuelMap.isEmpty() ? null : new MountedItemStorageWrapper(fuelMap);
 
-		ImmutableMap<BlockPos, MountedFluidStorage> fluids = this.fluidsBuilder.build();
+		ImmutableMap<BlockPos, MountedFluidStorage> fluids = ImmutableMap.copyOf(this.fluidsBuilder);
 		this.fluids = new MountedFluidStorageWrapper(fluids);
 		this.fluidsBuilder = null;
+
+		this.syncedItems = ImmutableMap.copyOf(this.syncedItemsBuilder);
+		this.syncedItemsBuilder = null;
+		this.syncedFluids = ImmutableMap.copyOf(this.syncedFluidsBuilder);
+		this.syncedFluidsBuilder = null;
 	}
 
 	private boolean isInitialized() {
@@ -103,8 +130,11 @@ public class MountedStorageManager {
 		this.fluids = null;
 		this.externalHandlers = new ArrayList<>();
 		this.allItems = null;
-		this.itemsBuilder = ImmutableMap.builder();
-		this.fluidsBuilder = ImmutableMap.builder();
+		this.itemsBuilder = new HashMap<>();
+		this.fluidsBuilder = new HashMap<>();
+		this.syncedItemsBuilder = new HashMap<>();
+		this.syncedFluidsBuilder = new HashMap<>();
+		// interactablePositions intentionally not reset
 	}
 
 	public void addBlock(Level level, BlockState state, BlockPos globalPos, BlockPos localPos, @Nullable BlockEntity be) {
@@ -113,6 +143,9 @@ public class MountedStorageManager {
 			MountedItemStorage storage = itemType.mount(level, state, globalPos, be);
 			if (storage != null) {
 				this.itemsBuilder.put(localPos, storage);
+				if (storage instanceof SyncedMountedStorage synced) {
+					this.syncedItemsBuilder.put(localPos, synced);
+				}
 			}
 		}
 
@@ -121,6 +154,9 @@ public class MountedStorageManager {
 			MountedFluidStorage storage = fluidType.mount(level, state, globalPos, be);
 			if (storage != null) {
 				this.fluidsBuilder.put(localPos, storage);
+				if (storage instanceof SyncedMountedStorage synced) {
+					this.syncedFluidsBuilder.put(localPos, synced);
+				}
 			}
 		}
 	}
@@ -146,7 +182,70 @@ public class MountedStorageManager {
 		}
 	}
 
-	public void read(CompoundTag nbt) {
+	public void tick(AbstractContraptionEntity entity) {
+		if (this.syncCooldown > 0) {
+			this.syncCooldown--;
+			return;
+		}
+
+		Map<BlockPos, MountedItemStorage> items = new HashMap<>();
+		Map<BlockPos, MountedFluidStorage> fluids = new HashMap<>();
+		this.syncedItems.forEach((pos, storage) -> {
+			if (storage.isDirty()) {
+				items.put(pos, (MountedItemStorage) storage);
+				storage.markClean();
+			}
+		});
+		this.syncedFluids.forEach((pos, storage) -> {
+			if (storage.isDirty()) {
+				fluids.put(pos, (MountedFluidStorage) storage);
+				storage.markClean();
+			}
+		});
+
+		if (!items.isEmpty() || !fluids.isEmpty()) {
+			MountedStorageSyncPacket packet = new MountedStorageSyncPacket(entity.getId(), items, fluids);
+			AllPackets.getChannel().send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), packet);
+			this.syncCooldown = 8;
+		}
+	}
+
+	public void handleSync(MountedStorageSyncPacket packet, AbstractContraptionEntity entity) {
+		// packet only contains changed storages, grab existing ones before resetting
+		ImmutableMap<BlockPos, MountedItemStorage> items = this.getAllItemStorages();
+		MountedFluidStorageWrapper fluids = this.getFluids();
+		this.reset();
+
+		// track freshly synced storages
+		Map<SyncedMountedStorage, BlockPos> syncedStorages = new IdentityHashMap<>();
+
+		try {
+			// re-add existing ones
+			this.itemsBuilder.putAll(items);
+			this.fluidsBuilder.putAll(fluids.storages);
+			// add newly synced ones, overriding existing ones if present
+			packet.items.forEach((pos, storage) -> {
+				this.itemsBuilder.put(pos, storage);
+				syncedStorages.put((SyncedMountedStorage) storage, pos);
+			});
+			packet.fluids.forEach((pos, storage) -> {
+				this.fluidsBuilder.put(pos, storage);
+				syncedStorages.put((SyncedMountedStorage) storage, pos);
+			});
+		} catch (Throwable t) {
+			// an exception will leave the manager in an invalid state
+			Create.LOGGER.error("An error occurred while syncing a MountedStorageManager", t);
+		}
+
+		this.initialize();
+
+		// call all afterSync methods
+		Contraption contraption = entity.getContraption();
+		syncedStorages.forEach((storage, pos) -> storage.afterSync(contraption, pos));
+	}
+
+	// contraption is provided on the client for initial afterSync storage callbacks
+	public void read(CompoundTag nbt, boolean clientPacket, @Nullable Contraption contraption) {
 		this.reset();
 
 		try {
@@ -169,41 +268,78 @@ public class MountedStorageManager {
 			});
 
 			this.readLegacy(nbt);
+
+			if (nbt.contains("interactable_positions")) {
+				this.interactablePositions = new HashSet<>();
+				NBTHelper.iterateCompoundList(nbt.getList("interactable_positions", Tag.TAG_COMPOUND), tag -> {
+					BlockPos pos = NbtUtils.readBlockPos(tag);
+					this.interactablePositions.add(pos);
+				});
+			}
 		} catch (Throwable t) {
 			Create.LOGGER.error("Error deserializing mounted storage", t);
 			// an exception will leave the manager in an invalid state, initialize must be called
 		}
 
 		this.initialize();
+
+		// for client sync, run initial afterSync callbacks
+		if (!clientPacket || contraption == null)
+			return;
+
+		this.getAllItemStorages().forEach((pos, storage) -> {
+			if (storage instanceof SyncedMountedStorage synced) {
+				synced.afterSync(contraption, pos);
+			}
+		});
+		this.getFluids().storages.forEach((pos, storage) -> {
+			if (storage instanceof SyncedMountedStorage synced) {
+				synced.afterSync(contraption, pos);
+			}
+		});
 	}
 
 	public void write(CompoundTag nbt, boolean clientPacket) {
-		if (!this.getAllItemStorages().isEmpty()) {
-			ListTag items = new ListTag();
-			this.getAllItemStorages().forEach(
-				(pos, storage) -> MountedItemStorage.CODEC.encodeStart(NbtOps.INSTANCE, storage)
-					.result().ifPresent(encoded -> {
+		ListTag items = new ListTag();
+		this.getAllItemStorages().forEach((pos, storage) -> {
+				if (!clientPacket || storage instanceof SyncedMountedStorage) {
+					MountedItemStorage.CODEC.encodeStart(NbtOps.INSTANCE, storage).result().ifPresent(encoded -> {
 						CompoundTag tag = new CompoundTag();
 						tag.put("pos", NbtUtils.writeBlockPos(pos));
 						tag.put("storage", encoded);
 						items.add(tag);
-					})
-			);
+					});
+				}
+			}
+		);
+		if (!items.isEmpty()) {
 			nbt.put("items", items);
 		}
 
-		if (!this.getFluids().storages.isEmpty()) {
-			ListTag fluids = new ListTag();
-			this.getFluids().storages.forEach(
-				(pos, storage) -> MountedFluidStorage.CODEC.encodeStart(NbtOps.INSTANCE, storage)
-					.result().ifPresent(encoded -> {
+		ListTag fluids = new ListTag();
+		this.getFluids().storages.forEach((pos, storage) -> {
+				if (!clientPacket || storage instanceof SyncedMountedStorage) {
+					MountedFluidStorage.CODEC.encodeStart(NbtOps.INSTANCE, storage).result().ifPresent(encoded -> {
 						CompoundTag tag = new CompoundTag();
 						tag.put("pos", NbtUtils.writeBlockPos(pos));
 						tag.put("storage", encoded);
 						fluids.add(tag);
-					})
-			);
+					});
+				}
+			}
+		);
+		if (!fluids.isEmpty()) {
 			nbt.put("fluids", fluids);
+		}
+
+		if (clientPacket) {
+			// let the client know of all non-synced ones too
+			SetView<BlockPos> positions = Sets.union(this.getAllItemStorages().keySet(), this.getFluids().storages.keySet());
+			ListTag list = new ListTag();
+			for (BlockPos pos : positions) {
+				list.add(NbtUtils.writeBlockPos(pos));
+			}
+			nbt.put("interactable_positions", list);
 		}
 	}
 
@@ -219,8 +355,17 @@ public class MountedStorageManager {
 	}
 
 	/**
+	 * The primary way to access a contraption's inventory. Includes all
+	 * non-internal mounted storages as well as all external storage.
+	 */
+	public CombinedInvWrapper getAllItems() {
+		this.assertInitialized();
+		return this.allItems;
+	}
+
+	/**
 	 * Gets a map of all MountedItemStorages in the contraption, irrelevant of them
-	 * being internal or providing fuel. The methods below are likely more useful.
+	 * being internal or providing fuel.
 	 * @see MountedItemStorage#isInternal()
 	 * @see MountedItemStorage#providesFuel()
 	 */
@@ -250,22 +395,18 @@ public class MountedStorageManager {
 	}
 
 	/**
-	 * Gets an item handler wrapping all non-internal mounted storages and all external storages.
-	 * Non-internal storages are mounted storages that are intended to be exposed to the entire
-	 * contraption. External storages are non-mounted storages that are still part of a contraption's
-	 * inventory, such as the inventories of chest minecarts.
+	 * Gets a fluid handler wrapping all mounted fluid storages.
 	 */
-	public CombinedInvWrapper getAllItems() {
-		this.assertInitialized();
-		return this.allItems;
-	}
-
 	public MountedFluidStorageWrapper getFluids() {
 		this.assertInitialized();
 		return this.fluids;
 	}
 
 	public boolean handlePlayerStorageInteraction(Contraption contraption, Player player, BlockPos localPos) {
+		if (!(player instanceof ServerPlayer serverPlayer)) {
+			return this.interactablePositions != null && this.interactablePositions.contains(localPos);
+		}
+
 		StructureBlockInfo info = contraption.getBlocks().get(localPos);
 		if (info == null)
 			return false;
@@ -274,7 +415,7 @@ public class MountedStorageManager {
 		MountedItemStorage storage = storageManager.getAllItemStorages().get(localPos);
 
 		if (storage != null) {
-			return !(player instanceof ServerPlayer serverPlayer) || storage.handleInteraction(serverPlayer, contraption, info);
+			return storage.handleInteraction(serverPlayer, contraption, info);
 		} else {
 			return false;
 		}

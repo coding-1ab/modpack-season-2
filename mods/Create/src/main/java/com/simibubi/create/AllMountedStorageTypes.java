@@ -13,6 +13,7 @@ import com.simibubi.create.content.equipment.toolbox.ToolboxMountedStorageType;
 import com.simibubi.create.content.fluids.tank.storage.FluidTankMountedStorageType;
 import com.simibubi.create.content.fluids.tank.storage.creative.CreativeFluidTankMountedStorageType;
 import com.simibubi.create.content.logistics.crate.CreativeCrateMountedStorageType;
+import com.simibubi.create.content.logistics.depot.storage.DepotMountedStorageType;
 import com.simibubi.create.content.logistics.vault.ItemVaultMountedStorageType;
 import com.simibubi.create.impl.contraption.storage.FallbackMountedStorageType;
 import com.tterrag.registrate.util.entry.RegistryEntry;
@@ -27,6 +28,7 @@ public class AllMountedStorageTypes {
 	public static final RegistryEntry<CreativeCrateMountedStorageType> CREATIVE_CRATE = simpleItem("creative_crate", CreativeCrateMountedStorageType::new);
 	public static final RegistryEntry<ItemVaultMountedStorageType> VAULT = simpleItem("vault", ItemVaultMountedStorageType::new);
 	public static final RegistryEntry<ToolboxMountedStorageType> TOOLBOX = simpleItem("toolbox", ToolboxMountedStorageType::new);
+	public static final RegistryEntry<DepotMountedStorageType> DEPOT = simpleItem("depot", DepotMountedStorageType::new);
 	public static final RegistryEntry<FluidTankMountedStorageType> FLUID_TANK = simpleFluid("fluid_tank", FluidTankMountedStorageType::new);
 	public static final RegistryEntry<CreativeFluidTankMountedStorageType> CREATIVE_FLUID_TANK = simpleFluid("creative_fluid_tank", CreativeFluidTankMountedStorageType::new);
 
