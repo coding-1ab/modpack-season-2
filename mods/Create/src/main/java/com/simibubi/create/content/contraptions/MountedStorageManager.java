@@ -255,7 +255,11 @@ public class MountedStorageManager {
 				MountedItemStorage.CODEC.decode(NbtOps.INSTANCE, data)
 					.result()
 					.map(Pair::getFirst)
-					.ifPresent(storage -> this.itemsBuilder.put(pos, storage));
+					.ifPresent(storage -> {
+						this.itemsBuilder.put(pos, storage);
+						if (storage instanceof SyncedMountedStorage sms)
+							this.syncedItemsBuilder.put(pos, sms);
+					});
 			});
 
 			NBTHelper.iterateCompoundList(nbt.getList("fluids", Tag.TAG_COMPOUND), tag -> {
@@ -264,7 +268,11 @@ public class MountedStorageManager {
 				MountedFluidStorage.CODEC.decode(NbtOps.INSTANCE, data)
 					.result()
 					.map(Pair::getFirst)
-					.ifPresent(storage -> this.fluidsBuilder.put(pos, storage));
+					.ifPresent(storage -> {
+						this.fluidsBuilder.put(pos, storage);
+						if (storage instanceof SyncedMountedStorage sms)
+							this.syncedFluidsBuilder.put(pos, sms);
+					});
 			});
 
 			this.readLegacy(nbt);
@@ -411,7 +419,7 @@ public class MountedStorageManager {
 		if (info == null)
 			return false;
 
-		MountedStorageManager storageManager = contraption.getStorageForSpawnPacket();
+		MountedStorageManager storageManager = contraption.getStorage();
 		MountedItemStorage storage = storageManager.getAllItemStorages().get(localPos);
 
 		if (storage != null) {

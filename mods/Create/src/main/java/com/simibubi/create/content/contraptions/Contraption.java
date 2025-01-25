@@ -824,8 +824,8 @@ public abstract class Contraption {
 				superglueNBT.add(c);
 			}
 		}
-
-		(spawnPacket ? getStorageForSpawnPacket() : storage).write(nbt, spawnPacket);
+		
+		writeStorage(nbt, spawnPacket);
 
 		ListTag interactorNBT = new ListTag();
 		for (BlockPos pos : interactors.keySet()) {
@@ -867,9 +867,9 @@ public abstract class Contraption {
 
 		return nbt;
 	}
-
-	protected MountedStorageManager getStorageForSpawnPacket() {
-		return storage;
+	
+	public void writeStorage(CompoundTag nbt, boolean spawnPacket) {
+		storage.write(nbt, spawnPacket);
 	}
 
 	private CompoundTag writeBlocksCompound() {
@@ -1470,7 +1470,7 @@ public abstract class Contraption {
 	}
 
 	public void tickStorage(AbstractContraptionEntity entity) {
-		this.storage.tick(entity);
+		getStorage().tick(entity);
 	}
 
 	public boolean containsBlockBreakers() {

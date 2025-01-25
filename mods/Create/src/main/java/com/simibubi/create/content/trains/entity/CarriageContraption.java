@@ -121,7 +121,8 @@ public class CarriageContraption extends Contraption {
 		StructureBlockInfo info = blocks.get(controlsPos);
 		if (!AllBlocks.TRAIN_CONTROLS.has(info.state()))
 			return false;
-		return info.state().getValue(ControlsBlock.FACING) == direction.getOpposite();
+		return info.state()
+			.getValue(ControlsBlock.FACING) == direction.getOpposite();
 	}
 
 	public void swapStorageAfterAssembly(CarriageContraptionEntity cce) {
@@ -227,16 +228,11 @@ public class CarriageContraption extends Contraption {
 	}
 
 	@Override
-	protected MountedStorageManager getStorageForSpawnPacket() {
-		return storageProxy;
-	}
-
-	@Override
 	public ContraptionType getType() {
 		return ContraptionType.CARRIAGE;
 	}
 
-    public Direction getAssemblyDirection() {
+	public Direction getAssemblyDirection() {
 		return assemblyDirection;
 	}
 
@@ -322,4 +318,13 @@ public class CarriageContraption extends Contraption {
 	public MountedStorageManager getStorage() {
 		return storageProxy == null ? fallbackStorage : storageProxy;
 	}
+
+	@Override
+	public void writeStorage(CompoundTag nbt, boolean spawnPacket) {
+		if (!spawnPacket)
+			return;
+		if (storageProxy != null)
+			storageProxy.write(nbt, spawnPacket);
+	}
+
 }
