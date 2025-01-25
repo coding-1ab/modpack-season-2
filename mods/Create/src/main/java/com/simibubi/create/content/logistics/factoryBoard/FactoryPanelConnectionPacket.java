@@ -4,16 +4,19 @@ import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.Pane
 import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 
 public class FactoryPanelConnectionPacket extends BlockEntityConfigurationPacket<FactoryPanelBlockEntity> {
 
 	private FactoryPanelPosition fromPos;
 	private FactoryPanelPosition toPos;
+	private boolean relocate;
 
-	public FactoryPanelConnectionPacket(FactoryPanelPosition fromPos, FactoryPanelPosition toPos) {
+	public FactoryPanelConnectionPacket(FactoryPanelPosition fromPos, FactoryPanelPosition toPos, boolean relocate) {
 		super(toPos.pos());
 		this.fromPos = fromPos;
 		this.toPos = toPos;
+		this.relocate = relocate;
 	}
 
 	public FactoryPanelConnectionPacket(FriendlyByteBuf buffer) {
@@ -28,20 +31,28 @@ public class FactoryPanelConnectionPacket extends BlockEntityConfigurationPacket
 		buffer.writeBlockPos(toPos.pos());
 		buffer.writeVarInt(toPos.slot()
 			.ordinal());
+		buffer.writeBoolean(relocate);
 	}
 
 	@Override
 	protected void readSettings(FriendlyByteBuf buffer) {
 		fromPos = new FactoryPanelPosition(buffer.readBlockPos(), PanelSlot.values()[buffer.readVarInt()]);
 		toPos = new FactoryPanelPosition(buffer.readBlockPos(), PanelSlot.values()[buffer.readVarInt()]);
+		relocate = buffer.readBoolean();
 	}
 
 	@Override
-	protected void applySettings(FactoryPanelBlockEntity be) {
+	protected void applySettings(ServerPlayer player, FactoryPanelBlockEntity be) {
 		FactoryPanelBehaviour behaviour = FactoryPanelBehaviour.at(be.getLevel(), toPos);
 		if (behaviour != null)
-			behaviour.addConnection(fromPos);
+			if (relocate)
+				behaviour.moveTo(fromPos, player);
+			else
+				behaviour.addConnection(fromPos);
 	}
+
+	@Override
+	protected void applySettings(FactoryPanelBlockEntity be) {}
 
 	@Override
 	protected int maxRange() {

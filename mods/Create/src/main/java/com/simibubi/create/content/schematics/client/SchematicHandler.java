@@ -21,17 +21,16 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
-import net.createmod.catnip.utility.AnimationTickHolder;
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.levelWrappers.SchematicLevel;
-import net.createmod.catnip.utility.outliner.AABBOutline;
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.nbt.NBTHelper;
+import net.createmod.catnip.levelWrappers.SchematicLevel;
+import net.createmod.catnip.outliner.AABBOutline;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Vec3i;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
@@ -153,7 +152,7 @@ public class SchematicHandler implements IGuiOverlay {
 	private void setupRenderer() {
 		Level clientWorld = Minecraft.getInstance().level;
 		StructureTemplate schematic =
-			SchematicItem.loadSchematic(clientWorld.holderLookup(Registries.BLOCK), activeSchematicItem);
+			SchematicItem.loadSchematic(clientWorld, activeSchematicItem);
 		Vec3i size = schematic.getSize();
 		if (size.equals(Vec3i.ZERO))
 			return;

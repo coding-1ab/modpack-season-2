@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.simibubi.create.content.logistics.BigItemStack;
 
-import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;

@@ -2,14 +2,19 @@ package com.simibubi.create.content.trains.schedule.destination;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.Create;
+import com.simibubi.create.content.trains.graph.DiscoveredPath;
+import com.simibubi.create.content.trains.schedule.ScheduleRuntime;
+import com.simibubi.create.content.trains.schedule.ScheduleRuntime.State;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.Pair;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -81,6 +86,15 @@ public class ChangeThrottleInstruction extends ScheduleInstruction {
 		return ImmutableList.of(CreateLang.translateDirect("schedule.instruction.throttle_edit_box"),
 			CreateLang.translateDirect("schedule.instruction.throttle_edit_box_1")
 				.withStyle(ChatFormatting.GRAY));
+	}
+
+	@Override
+	@Nullable
+	public DiscoveredPath start(ScheduleRuntime runtime) {
+		runtime.train.throttle = getThrottle();
+		runtime.state = State.PRE_TRANSIT;
+		runtime.currentEntry++;
+		return null;
 	}
 
 }

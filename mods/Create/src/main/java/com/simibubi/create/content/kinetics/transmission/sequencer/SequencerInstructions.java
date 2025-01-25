@@ -6,7 +6,7 @@ import java.util.List;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.lang.Lang;
+import net.createmod.catnip.lang.Lang;
 import net.minecraft.network.chat.Component;
 
 public enum SequencerInstructions {

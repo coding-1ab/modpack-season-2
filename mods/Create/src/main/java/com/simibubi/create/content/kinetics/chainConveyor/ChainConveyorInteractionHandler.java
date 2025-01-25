@@ -15,9 +15,9 @@ import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelect
 import com.simibubi.create.foundation.utility.RaycastHelper;
 import com.simibubi.create.foundation.utility.TickBasedCache;
 
-import net.createmod.catnip.CatnipClient;
-import net.createmod.catnip.utility.WorldAttached;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.data.WorldAttached;
+import net.createmod.catnip.outliner.Outliner;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -26,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraftforge.common.ForgeMod;
@@ -52,7 +53,7 @@ public class ChainConveyorInteractionHandler {
 
 		Minecraft mc = Minecraft.getInstance();
 		ItemStack mainHandItem = mc.player.getMainHandItem();
-		boolean isWrench = AllItemTags.WRENCH.matches(mainHandItem);
+		boolean isWrench = AllItemTags.CHAIN_RIDEABLE.matches(mainHandItem);
 		boolean dismantling = isWrench && mc.player.isShiftKeyDown();
 		double range = mc.player.getAttribute(ForgeMod.BLOCK_REACH.get())
 			.getValue() + 1;
@@ -103,7 +104,7 @@ public class ChainConveyorInteractionHandler {
 		selectedBakedPosition = bestShape.getVec(bestLift, selectedChainPosition);
 
 		if (!isWrench) {
-			CatnipClient.OUTLINER
+			Outliner.getInstance()
 				.chaseAABB("ChainPointSelection", new AABB(selectedBakedPosition, selectedBakedPosition))
 				.colored(Color.WHITE)
 				.lineWidth(1 / 6f)
@@ -114,7 +115,7 @@ public class ChainConveyorInteractionHandler {
 	private static boolean isActive() {
 		Minecraft mc = Minecraft.getInstance();
 		ItemStack mainHandItem = mc.player.getMainHandItem();
-		return AllItemTags.WRENCH.matches(mainHandItem) || AllBlocks.PACKAGE_FROGPORT.isIn(mainHandItem)
+		return AllItemTags.CHAIN_RIDEABLE.matches(mainHandItem) || AllBlocks.PACKAGE_FROGPORT.isIn(mainHandItem)
 			|| PackageItem.isPackage(mainHandItem);
 	}
 
@@ -125,7 +126,7 @@ public class ChainConveyorInteractionHandler {
 		Minecraft mc = Minecraft.getInstance();
 		ItemStack mainHandItem = mc.player.getMainHandItem();
 
-		if (AllItemTags.WRENCH.matches(mainHandItem)) {
+		if (AllItemTags.CHAIN_RIDEABLE.matches(mainHandItem)) {
 			if (!mc.player.isShiftKeyDown()) {
 				ChainConveyorRidingHandler.embark(selectedLift, selectedChainPosition, selectedConnection);
 				return true;

@@ -2,17 +2,24 @@ package com.simibubi.create.content.trains.schedule.destination;
 
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
 import com.simibubi.create.Create;
+import com.simibubi.create.content.trains.graph.DiscoveredPath;
 import com.simibubi.create.content.trains.schedule.Schedule;
 import com.simibubi.create.content.trains.schedule.ScheduleDataEntry;
+import com.simibubi.create.content.trains.schedule.ScheduleRuntime;
 
-import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.data.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
 public abstract class ScheduleInstruction extends ScheduleDataEntry {
 
 	public abstract boolean supportsConditions();
+
+	@Nullable
+	public abstract DiscoveredPath start(ScheduleRuntime runtime);
 
 	public final CompoundTag write() {
 		CompoundTag tag = new CompoundTag();

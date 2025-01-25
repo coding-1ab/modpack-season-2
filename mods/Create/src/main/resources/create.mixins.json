@@ -7,6 +7,7 @@
   "refmap": "create.refmap.json",
   "plugin": "com.simibubi.create.foundation.mixin.CreateMixinPlugin",
   "mixins": [
+    "ArmorTrimMixin",
     "BlockItemMixin",
     "ClientboundMapItemDataPacketMixin",
     "ContraptionDriverInteractMixin",
@@ -16,6 +17,7 @@
     "MainMixin",
     "MapItemSavedDataMixin",
     "ShulkerBoxBlockMixin",
+    "SmithingMenuMixin",
     "TestCommandMixin",
     "WaterWheelFluidSpreadMixin",
     "accessor.AbstractProjectileDispenseBehaviorAccessor",

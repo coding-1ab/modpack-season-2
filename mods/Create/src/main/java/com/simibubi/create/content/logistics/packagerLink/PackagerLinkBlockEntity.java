@@ -1,12 +1,15 @@
 package com.simibubi.create.content.logistics.packagerLink;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagingRequest;
@@ -15,12 +18,18 @@ import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.redstone.displayLink.LinkWithBulbBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
-import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.IItemHandler;
 
 public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
@@ -40,10 +49,30 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 			return InventorySummary.EMPTY;
 		if (packager.isTargetingSameInventory(ignoredHandler))
 			return InventorySummary.EMPTY;
-
-		sendPulseNextSync();
-		sendData();
 		return packager.getAvailableItems();
+	}
+
+	public void playEffect() {
+		AllSoundEvents.STOCK_LINK.playAt(level, worldPosition, 0.75f, 1.25f, false);
+		Vec3 vec3 = Vec3.atCenterOf(worldPosition);
+
+		BlockState state = getBlockState();
+		float f = 1;
+
+		AttachFace face = state.getOptionalValue(PackagerLinkBlock.FACE)
+			.orElse(AttachFace.FLOOR);
+		if (face != AttachFace.FLOOR)
+			f = -1;
+		if (face == AttachFace.WALL)
+			vec3 = vec3.add(0, 0.25, 0);
+
+		vec3 = vec3.add(Vec3.atLowerCornerOf(state.getOptionalValue(PackagerLinkBlock.FACING)
+			.orElse(Direction.SOUTH)
+			.getNormal())
+			.scale(f * 0.125));
+
+		pulse();
+		level.addParticle(new WiFiParticle.Data(), vec3.x, vec3.y, vec3.z, 1, face == AttachFace.CEILING ? -1 : 1, 1);
 	}
 
 	public Pair<PackagerBlockEntity, PackagingRequest> processRequest(ItemStack stack, int amount, String address,
@@ -59,10 +88,6 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 		int availableCount = summary.getCountOf(stack);
 		if (availableCount == 0)
 			return null;
-
-		sendPulseNextSync();
-		sendData();
-
 		int toWithdraw = Math.min(amount, availableCount);
 		return Pair.of(packager,
 			PackagingRequest.create(stack, toWithdraw, address, linkIndex, finalLink, 0, orderId, orderContext));
@@ -107,6 +132,29 @@ public class PackagerLinkBlockEntity extends LinkWithBulbBlockEntity {
 		if (packager instanceof RepackagerBlockEntity)
 			return null;
 		return packager;
+	}
+
+	@Override
+	public Direction getBulbFacing(BlockState state) {
+		return PackagerLinkBlock.getConnectedDirection(state);
+	}
+
+	private static final Map<BlockState, Vec3> bulbOffsets = new HashMap<>();
+
+	@Override
+	public Vec3 getBulbOffset(BlockState state) {
+		return bulbOffsets.computeIfAbsent(state, s -> {
+			Vec3 offset = VecHelper.voxelSpace(5, 6, 11);
+			Vec3 wallOffset = VecHelper.voxelSpace(11, 6, 5);
+			AttachFace face = s.getValue(PackagerLinkBlock.FACE);
+			Vec3 vec = face == AttachFace.WALL ? wallOffset : offset;
+			float angle = AngleHelper.horizontalAngle(s.getValue(PackagerLinkBlock.FACING));
+			if (face == AttachFace.CEILING)
+				angle = -angle;
+			if (face == AttachFace.WALL)
+				angle = 0;
+			return VecHelper.rotateCentered(vec, angle, Axis.Y);
+		});
 	}
 
 }

@@ -15,8 +15,8 @@ import com.simibubi.create.content.logistics.tableCloth.ShoppingListItem;
 import com.simibubi.create.content.logistics.tableCloth.ShoppingListItem.ShoppingList;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.data.Iterate;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -91,7 +91,7 @@ public class StockTickerInteractionHandler {
 			stbe.getRecentSummary()
 				.divideAndSendTo(sp, targetPos);
 		}
-		
+
 		return true;
 	}
 
@@ -184,6 +184,8 @@ public class StockTickerInteractionHandler {
 
 		tickerBE.broadcastPackageRequest(RequestType.PLAYER, order, null, ShoppingListItem.getAddress(mainHandItem));
 		player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+		if (!order.isEmpty())
+			AllSoundEvents.STOCK_TICKER_TRADE.playOnServer(level, tickerBE.getBlockPos());
 	}
 
 	public static BlockPos getStockTickerPosition(Entity entity) {

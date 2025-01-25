@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceBlockEntity;
 import com.simibubi.create.content.kinetics.crafter.MechanicalCrafterBlockEntity;
@@ -23,8 +24,11 @@ import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBeha
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlockEntity;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
+import com.simibubi.create.content.logistics.packagerLink.WiFiEffectPacket;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
+import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.CapManipulationBehaviourBase.InterfaceProvider;
@@ -32,13 +36,15 @@ import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipul
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.VersionedInventoryTrackerBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
 
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
@@ -57,6 +63,7 @@ import net.minecraftforge.items.ItemStackHandler;
 public class PackagerBlockEntity extends SmartBlockEntity {
 
 	public boolean redstonePowered;
+	public int buttonCooldown;
 	public String signBasedAddress;
 
 	public InvManipulationBehaviour targetInventory;
@@ -75,6 +82,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	private InventorySummary availableItems;
 	private VersionedInventoryTrackerBehaviour invVersionTracker;
 
+	private AdvancementBehaviour advancements;
+
 	//
 
 	public PackagerBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
@@ -89,6 +98,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		animationInward = true;
 		queuedExitingPackages = new LinkedList<>();
 		signBasedAddress = "";
+		buttonCooldown = 0;
 	}
 
 	@Override
@@ -96,6 +106,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		behaviours.add(targetInventory = new InvManipulationBehaviour(this, InterfaceProvider.oppositeOfBlockFacing())
 			.withFilter(this::supportsBlockEntity));
 		behaviours.add(invVersionTracker = new VersionedInventoryTrackerBehaviour(this));
+		behaviours.add(advancements = new AdvancementBehaviour(this, AllAdvancements.PACKAGER));
 	}
 
 	private boolean supportsBlockEntity(BlockEntity target) {
@@ -112,6 +123,9 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	public void tick() {
 		super.tick();
 
+		if (buttonCooldown > 0)
+			buttonCooldown--;
+
 		if (animationTicks == 0) {
 			previouslyUnwrapped = ItemStack.EMPTY;
 
@@ -123,6 +137,14 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			}
 
 			return;
+		}
+
+		if (level.isClientSide) {
+			if (animationTicks == CYCLE - (animationInward ? 5 : 1))
+				AllSoundEvents.PACKAGER.playAt(level, worldPosition, 1, 1, true);
+			if (animationTicks == (animationInward ? 1 : 5))
+				level.playLocalSound(worldPosition, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.25f, 0.75f,
+					true);
 		}
 
 		animationTicks--;
@@ -262,6 +284,18 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		return false;
 	}
 
+	public void flashLink() {
+		for (Direction d : Iterate.directions) {
+			BlockState adjacentState = level.getBlockState(worldPosition.relative(d));
+			if (!AllBlocks.STOCK_LINK.has(adjacentState))
+				continue;
+			if (PackagerLinkBlock.getConnectedDirection(adjacentState) != d)
+				continue;
+			WiFiEffectPacket.send(level, worldPosition.relative(d));
+			return;
+		}
+	}
+
 	public boolean isTooBusyFor(RequestType type) {
 		int queue = queuedExitingPackages.size();
 		return queue >= switch (type) {
@@ -281,6 +315,9 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 		updateSignAddress();
 		attemptToSend(null);
+
+		// dont send multiple packages when a button signal length is received
+		buttonCooldown = 40;
 	}
 
 	public boolean unwrapBox(ItemStack box, boolean simulate) {
@@ -388,7 +425,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	}
 
 	public void attemptToSend(List<PackagingRequest> queuedRequests) {
-		if (queuedRequests == null && (!heldBox.isEmpty() || animationTicks != 0))
+		if (queuedRequests == null && (!heldBox.isEmpty() || animationTicks != 0 || buttonCooldown > 0))
 			return;
 
 		IItemHandler targetInv = targetInventory.getInventory();
@@ -517,6 +554,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		animationInward = false;
 		animationTicks = CYCLE;
 
+		advancements.awardPlayer(AllAdvancements.PACKAGER);
 		triggerStockCheck();
 		notifyUpdate();
 	}
@@ -606,7 +644,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	}
 
 	public float getTrayOffset(float partialTicks) {
-		float progress = Mth.clamp(Math.max(0, animationTicks - 5 - partialTicks) / (CYCLE * .75f) * 2 - 1, -1, 1);
+		float tickCycle = animationInward ? animationTicks - partialTicks : animationTicks - 5 - partialTicks;
+		float progress = Mth.clamp(tickCycle / (CYCLE - 5) * 2 - 1, -1, 1);
 		progress = 1 - progress * progress;
 		return progress * progress;
 	}

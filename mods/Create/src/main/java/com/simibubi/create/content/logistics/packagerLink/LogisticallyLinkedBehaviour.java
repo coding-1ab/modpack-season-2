@@ -25,7 +25,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.foundation.utility.TickBasedCache;
 
-import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.data.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
@@ -213,12 +213,12 @@ public class LogisticallyLinkedBehaviour extends BlockEntityBehaviour {
 	public boolean isSafeNBT() {
 		return true;
 	}
-	
+
 	@Override
 	public void writeSafe(CompoundTag tag) {
 		tag.putUUID("Freq", freqId);
 	}
-	
+
 	@Override
 	public void write(CompoundTag tag, boolean clientPacket) {
 		super.write(tag, clientPacket);

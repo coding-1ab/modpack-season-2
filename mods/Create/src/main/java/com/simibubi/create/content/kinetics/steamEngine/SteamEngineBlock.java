@@ -14,10 +14,10 @@ import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.utility.BlockHelper;
 
-import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.placement.IPlacementHelper;
-import net.createmod.catnip.utility.placement.PlacementHelpers;
-import net.createmod.catnip.utility.placement.PlacementOffset;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.placement.IPlacementHelper;
+import net.createmod.catnip.placement.PlacementHelpers;
+import net.createmod.catnip.placement.PlacementOffset;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -201,7 +201,9 @@ public class SteamEngineBlock extends FaceAttachedHorizontalDirectionalBlock
 
 			Axis axis = shaft.getValue(ShaftBlock.AXIS);
 			return PlacementOffset.success(shaftPos,
-				s -> BlockHelper.copyProperties(s, AllBlocks.POWERED_SHAFT.getDefaultState())
+				s -> BlockHelper
+					.copyProperties(s,
+						(world.isClientSide ? AllBlocks.SHAFT : AllBlocks.POWERED_SHAFT).getDefaultState())
 					.setValue(PoweredShaftBlock.AXIS, axis));
 		}
 	}

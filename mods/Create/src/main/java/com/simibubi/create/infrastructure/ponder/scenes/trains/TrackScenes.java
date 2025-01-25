@@ -6,7 +6,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 
-import net.createmod.catnip.utility.Pointing;
+import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.element.ElementLink;
 import net.createmod.ponder.api.element.ParrotElement;
@@ -342,6 +342,7 @@ public class TrackScenes {
 		scene.title("track_chunks", "Traversing unloaded Chunks");
 		scene.configureBasePlate(0, 0, 9);
 		scene.scaleSceneView(.65f);
+		scene.removeShadow();
 		scene.setSceneOffsetY(-1);
 
 		scene.world().cycleBlockProperty(util.grid().at(5, 3, 4), BlazeBurnerBlock.HEAT_LEVEL);

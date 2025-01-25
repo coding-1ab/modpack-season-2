@@ -2,20 +2,24 @@ package com.simibubi.create.content.logistics.factoryBoard;
 
 import javax.annotation.Nullable;
 
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelSlot;
 import com.simibubi.create.foundation.block.WrenchableDirectionalBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.CatnipClient;
-import net.createmod.catnip.utility.AnimationTickHolder;
-import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
@@ -30,6 +34,9 @@ public class FactoryPanelConnectionHandler {
 
 	static FactoryPanelPosition connectingFrom;
 	static AABB connectingFromBox;
+
+	static boolean relocating;
+	static FactoryPanelPosition validRelocationTarget;
 
 	public static boolean panelClicked(LevelAccessor level, Player player, FactoryPanelBehaviour panel) {
 		if (connectingFrom == null)
@@ -51,6 +58,7 @@ public class FactoryPanelConnectionHandler {
 				.component(), true);
 			connectingFrom = null;
 			connectingFromBox = null;
+			AllSoundEvents.DENY.playAt(player.level(), player.blockPosition(), 1, 1, false);
 			return true;
 		}
 
@@ -58,7 +66,7 @@ public class FactoryPanelConnectionHandler {
 		ItemStack filterTo = at.getFilter();
 
 		AllPackets.getChannel()
-			.sendToServer(new FactoryPanelConnectionPacket(panel.getPanelPosition(), connectingFrom));
+			.sendToServer(new FactoryPanelConnectionPacket(panel.getPanelPosition(), connectingFrom, false));
 
 		player.displayClientMessage(CreateLang.translate("factory_panel.panels_connected", filterFrom.getHoverName()
 			.getString(),
@@ -69,6 +77,10 @@ public class FactoryPanelConnectionHandler {
 
 		connectingFrom = null;
 		connectingFromBox = null;
+		player.level()
+			.playLocalSound(player.blockPosition(), SoundEvents.AMETHYST_BLOCK_PLACE, SoundSource.BLOCKS, 0.5f, 0.5f,
+				false);
+
 		return true;
 	}
 
@@ -80,7 +92,7 @@ public class FactoryPanelConnectionHandler {
 			return "factory_panel.already_connected";
 		if (from.targetedBy.size() >= 9)
 			return "factory_panel.cannot_add_more_inputs";
-		
+
 		BlockState state1 = to.blockEntity.getBlockState();
 		BlockState state2 = from.blockEntity.getBlockState();
 		BlockPos diff = to.getPos()
@@ -115,7 +127,7 @@ public class FactoryPanelConnectionHandler {
 	private static String checkForIssues(FactoryPanelBehaviour from, FactoryPanelSupportBehaviour to) {
 		if (from == null)
 			return "factory_panel.connection_aborted";
-			
+
 		BlockState state1 = from.blockEntity.getBlockState();
 		BlockState state2 = to.blockEntity.getBlockState();
 		BlockPos diff = to.getPos()
@@ -151,19 +163,76 @@ public class FactoryPanelConnectionHandler {
 			return;
 		}
 
-		CatnipClient.OUTLINER.showAABB(connectingFrom, connectingFromBox)
+		Outliner.getInstance()
+			.showAABB(connectingFrom, connectingFromBox)
 			.colored(AnimationTickHolder.getTicks() % 16 > 8 ? 0x38b764 : 0xa7f070)
 			.lineWidth(1 / 16f);
 
-		mc.player.displayClientMessage(CreateLang.translate("factory_panel.click_second_panel")
-			.component(), true);
-	}
+		mc.player.displayClientMessage(
+			CreateLang.translate(relocating ? "factory_panel.click_to_relocate" : "factory_panel.click_second_panel")
+				.component(),
+			true);
 
+		if (!relocating)
+			return;
+
+		validRelocationTarget = null;
+
+		if (!(mc.hitResult instanceof BlockHitResult bhr) || bhr.getType() == Type.MISS)
+			return;
+
+		Vec3 offsetPos = bhr.getLocation()
+			.add(Vec3.atLowerCornerOf(bhr.getDirection()
+				.getNormal())
+				.scale(1 / 32f));
+		BlockPos pos = BlockPos.containing(offsetPos);
+		BlockState blockState = at.blockEntity.getBlockState();
+		PanelSlot slot = FactoryPanelBlock.getTargetedSlot(pos, blockState, offsetPos);
+		BlockPos diff = pos.subtract(connectingFrom.pos());
+		Direction facing = FactoryPanelBlock.connectedDirection(blockState);
+
+		if (facing.getAxis()
+			.choose(diff.getX(), diff.getY(), diff.getZ()) != 0)
+			return;
+		if (!AllBlocks.FACTORY_GAUGE.get()
+			.canSurvive(blockState, mc.level, pos))
+			return;
+		if (AllBlocks.PACKAGER.has(mc.level.getBlockState(pos.relative(facing.getOpposite()))))
+			return;
+
+		validRelocationTarget = new FactoryPanelPosition(pos, slot);
+
+		Outliner.getInstance()
+			.showAABB("target", getBB(blockState, validRelocationTarget))
+			.colored(0xeeeeee)
+			.disableLineNormals()
+			.lineWidth(1 / 16f);
+	}
+	
 	public static boolean onRightClick() {
 		if (connectingFrom == null || connectingFromBox == null)
 			return false;
 		Minecraft mc = Minecraft.getInstance();
 		boolean missed = false;
+
+		if (relocating) {
+			if (mc.player.isShiftKeyDown())
+				validRelocationTarget = null;
+			if (validRelocationTarget != null)
+				AllPackets.getChannel()
+					.sendToServer(new FactoryPanelConnectionPacket(validRelocationTarget, connectingFrom, true));
+
+			connectingFrom = null;
+			connectingFromBox = null;
+
+			if (validRelocationTarget == null)
+				mc.player.displayClientMessage(CreateLang.translate("factory_panel.relocation_aborted")
+					.component(), true);
+
+			relocating = false;
+			validRelocationTarget = null;
+			return true;
+		}
 
 		if (mc.hitResult instanceof BlockHitResult bhr && bhr.getType() != Type.MISS) {
 			BlockEntity blockEntity = mc.level.getBlockEntity(bhr.getBlockPos());
@@ -180,6 +249,7 @@ public class FactoryPanelConnectionHandler {
 						.component(), true);
 					connectingFrom = null;
 					connectingFromBox = null;
+					AllSoundEvents.DENY.playAt(mc.level, mc.player.blockPosition(), 1, 1, false);
 					return true;
 				}
 
@@ -198,7 +268,7 @@ public class FactoryPanelConnectionHandler {
 				}
 
 				AllPackets.getChannel()
-					.sendToServer(new FactoryPanelConnectionPacket(bestPosition, connectingFrom));
+					.sendToServer(new FactoryPanelConnectionPacket(bestPosition, connectingFrom, false));
 
 				mc.player.displayClientMessage(CreateLang
 					.translate("factory_panel.link_connected", blockEntity.getBlockState()
@@ -209,6 +279,9 @@ public class FactoryPanelConnectionHandler {
 
 				connectingFrom = null;
 				connectingFromBox = null;
+				mc.player.level()
+					.playLocalSound(mc.player.blockPosition(), SoundEvents.AMETHYST_BLOCK_PLACE, SoundSource.BLOCKS,
+						0.5f, 0.5f, false);
 				return true;
 			}
 
@@ -225,15 +298,22 @@ public class FactoryPanelConnectionHandler {
 		return true;
 	}
 
+	public static void startRelocating(FactoryPanelBehaviour behaviour) {
+		startConnection(behaviour);
+		relocating = true;
+	}
+
 	public static void startConnection(FactoryPanelBehaviour behaviour) {
+		relocating = false;
 		connectingFrom = behaviour.getPanelPosition();
-		BlockState blockState = behaviour.blockEntity.getBlockState();
-		Vec3 location = behaviour.getSlotPositioning()
-			.getLocalOffset(behaviour.getWorld(), behaviour.getPos(), blockState)
-			.add(Vec3.atLowerCornerOf(behaviour.getPos()));
+		connectingFromBox = getBB(behaviour.blockEntity.getBlockState(), connectingFrom);
+	}
+
+	public static AABB getBB(BlockState blockState, FactoryPanelPosition factoryPanelPosition) {
+		Vec3 location = FactoryPanelSlotPositioning.getCenterOfSlot(blockState, factoryPanelPosition.slot())
+			.add(Vec3.atLowerCornerOf(factoryPanelPosition.pos()));
 		Vec3 plane = VecHelper.axisAlingedPlaneOf(FactoryPanelBlock.connectedDirection(blockState));
-		connectingFromBox =
-			new AABB(location, location).inflate(plane.x * 3 / 16f, plane.y * 3 / 16f, plane.z * 3 / 16f);
+		return new AABB(location, location).inflate(plane.x * 3 / 16f, plane.y * 3 / 16f, plane.z * 3 / 16f);
 	}
 
 }

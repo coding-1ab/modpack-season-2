@@ -1,5 +1,6 @@
 package com.simibubi.create.content.logistics.box;
 
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,8 +11,9 @@ import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.logistics.chute.ChuteBlock;
 
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.math.AngleHelper;
+import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -66,11 +68,15 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 
 	public Vec3 clientPosition, vec2 = Vec3.ZERO, vec3 = Vec3.ZERO;
 
+	public WeakReference<Player> tossedBy = new WeakReference<>(null);
+
 	@SuppressWarnings("unchecked")
 	public PackageEntity(EntityType<?> entityTypeIn, Level worldIn) {
 		super((EntityType<? extends LivingEntity>) entityTypeIn, worldIn);
 		box = ItemStack.EMPTY;
 		setYRot(this.random.nextFloat() * 360.0F);
+		setYHeadRot(getYRot());
+		yRotO = getYRot();
 		insertionDelay = 30;
 	}
 
@@ -166,6 +172,13 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 			verifyInitialEntity();
 			originalEntity = null;
 		}
+
+		if (level() instanceof PonderLevel) {
+			setDeltaMovement(getDeltaMovement().add(0, -0.06, 0));
+			if (position().y < 0.125)
+				discard();
+		}
+
 		insertionDelay = Math.min(insertionDelay + 1, 30);
 		super.tick();
 
@@ -264,7 +277,12 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 
 	@Override
 	public void push(Entity entityIn) {
-		if (entityIn instanceof PackageEntity) {
+		boolean isOtherPackage = entityIn instanceof PackageEntity;
+
+		if (!isOtherPackage && tossedBy.get() != null)
+			tossedBy = new WeakReference<Player>(null); // no nudging
+
+		if (isOtherPackage) {
 			if (entityIn.getBoundingBox().minY < this.getBoundingBox().maxY)
 				super.push(entityIn);
 		} else if (entityIn.getBoundingBox().minY <= this.getBoundingBox().minY) {
@@ -439,7 +457,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 	}
 
 	protected SoundEvent getFallSound(int heightIn) {
-		return SoundEvents.WOOL_HIT;
+		return SoundEvents.CHISELED_BOOKSHELF_FALL;
 	}
 
 	@Override
@@ -449,12 +467,12 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 
 	@Override
 	public Fallsounds getFallSounds() {
-		return new LivingEntity.Fallsounds(SoundEvents.WOOL_FALL, SoundEvents.WOOL_FALL);
+		return new LivingEntity.Fallsounds(SoundEvents.CHISELED_BOOKSHELF_FALL, SoundEvents.CHISELED_BOOKSHELF_FALL);
 	}
 
 	@Nullable
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.ARMOR_STAND_HIT;
+		return null;
 	}
 
 	@Nullable

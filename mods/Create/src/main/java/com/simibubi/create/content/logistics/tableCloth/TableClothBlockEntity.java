@@ -21,7 +21,8 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.data.IntAttached;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -110,6 +111,7 @@ public class TableClothBlockEntity extends SmartBlockEntity {
 			if (manuallyAddedItems.isEmpty())
 				return InteractionResult.SUCCESS;
 			player.setItemInHand(InteractionHand.MAIN_HAND, manuallyAddedItems.remove(manuallyAddedItems.size() - 1));
+			level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.5f, 1f);
 
 			if (manuallyAddedItems.isEmpty()) {
 				level.setBlock(worldPosition, getBlockState().setValue(TableClothBlock.HAS_BE, false), 3);
@@ -124,8 +126,10 @@ public class TableClothBlockEntity extends SmartBlockEntity {
 		if (manuallyAddedItems.size() >= 4)
 			return InteractionResult.SUCCESS;
 
+		level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.5f, 1f);
 		manuallyAddedItems.add(heldItem.copyWithCount(1));
-		facing = player.getDirection();
+		facing = player.getDirection()
+			.getOpposite();
 		heldItem.shrink(1);
 		if (heldItem.isEmpty())
 			player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
@@ -140,9 +144,6 @@ public class TableClothBlockEntity extends SmartBlockEntity {
 	}
 
 	public InteractionResult useShop(Player player) {
-		if (level.isClientSide())
-			return InteractionResult.SUCCESS;
-
 		ItemStack itemInHand = player.getItemInHand(InteractionHand.MAIN_HAND);
 		ItemStack prevListItem = ItemStack.EMPTY;
 		boolean addOntoList = false;
@@ -168,14 +169,14 @@ public class TableClothBlockEntity extends SmartBlockEntity {
 		if (!itemInHand.isEmpty() && !addOntoList) {
 			CreateLang.translate("stock_keeper.shopping_list_empty_hand")
 				.sendStatus(player);
-			AllSoundEvents.DENY.playOnServer(level, worldPosition);
+			AllSoundEvents.DENY.playOnServer(level, worldPosition, 0.5f, 1);
 			return InteractionResult.SUCCESS;
 		}
 
 		if (getPaymentItem().isEmpty()) {
 			CreateLang.translate("stock_keeper.no_price_set")
 				.sendStatus(player);
-			AllSoundEvents.DENY.playOnServer(level, worldPosition);
+			AllSoundEvents.DENY.playOnServer(level, worldPosition, 0.5f, 1);
 			return InteractionResult.SUCCESS;
 		}
 
@@ -190,7 +191,7 @@ public class TableClothBlockEntity extends SmartBlockEntity {
 			CreateLang.translate("stock_keeper.keeper_missing")
 				.style(ChatFormatting.RED)
 				.sendStatus(player);
-			AllSoundEvents.DENY.playOnServer(level, worldPosition);
+			AllSoundEvents.DENY.playOnServer(level, worldPosition, 0.5f, 1);
 			return InteractionResult.SUCCESS;
 		}
 
@@ -198,8 +199,7 @@ public class TableClothBlockEntity extends SmartBlockEntity {
 			CreateLang.translate("stock_keeper.out_of_stock")
 				.style(ChatFormatting.RED)
 				.sendStatus(player);
-			AllSoundEvents.DENY.playOnServer(level, worldPosition);
-
+			AllSoundEvents.DENY.playOnServer(level, worldPosition, 0.5f, 1);
 			if (!prevListItem.isEmpty()) {
 				if (player.getItemInHand(InteractionHand.MAIN_HAND)
 					.isEmpty())
@@ -222,13 +222,17 @@ public class TableClothBlockEntity extends SmartBlockEntity {
 				addOntoList = false;
 		}
 
-		if (list.getPurchases(worldPosition) == stockLevel) {
+		if (list.getPurchases(worldPosition) >= stockLevel) {
+			for (IntAttached<BlockPos> entry : list.purchases())
+				if (worldPosition.equals(entry.getValue()))
+					entry.setFirst(Math.min(stockLevel, entry.getFirst()));
+
 			CreateLang.translate("stock_keeper.limited_stock")
 				.style(ChatFormatting.RED)
 				.sendStatus(player);
-			AllSoundEvents.DENY.playOnServer(level, worldPosition);
 
 		} else {
+			AllSoundEvents.CONFIRM_2.playOnServer(level, worldPosition, 0.5f, 1.0f);
 			list.addPurchases(worldPosition, 1);
 			if (!addOntoList)
 				CreateLang.translate("stock_keeper.use_list_to_add_purchases")
@@ -236,7 +240,6 @@ public class TableClothBlockEntity extends SmartBlockEntity {
 					.sendStatus(player);
 			if (!addOntoList)
 				level.playSound(null, worldPosition, SoundEvents.BOOK_PAGE_TURN, SoundSource.BLOCKS, 1, 1.5f);
-			AllSoundEvents.CONFIRM.playOnServer(level, worldPosition);
 		}
 
 		ItemStack newListItem =

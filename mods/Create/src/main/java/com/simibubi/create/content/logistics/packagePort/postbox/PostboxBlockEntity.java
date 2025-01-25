@@ -8,9 +8,9 @@ import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
 import com.simibubi.create.content.trains.station.GlobalStation;
 import com.simibubi.create.content.trains.station.GlobalStation.GlobalPackagePort;
 
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.nbt.NBTHelper;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.animation.LerpedFloat.Chaser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
@@ -25,6 +25,7 @@ public class PostboxBlockEntity extends PackagePortBlockEntity {
 	public WeakReference<GlobalStation> trackedGlobalStation;
 
 	public LerpedFloat flag;
+	public boolean forceFlag;
 
 	private boolean sendParticles;
 
@@ -38,7 +39,7 @@ public class PostboxBlockEntity extends PackagePortBlockEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		if (!level.isClientSide) {
+		if (!level.isClientSide && !isVirtual()) {
 			if (sendParticles)
 				sendData();
 			return;
@@ -46,7 +47,7 @@ public class PostboxBlockEntity extends PackagePortBlockEntity {
 
 		float currentTarget = flag.getChaseTarget();
 		if (currentTarget == 0 || flag.settled()) {
-			int target = inventory.isEmpty() ? 0 : 1;
+			int target = (inventory.isEmpty() && !forceFlag) ? 0 : 1;
 			if (target != currentTarget) {
 				flag.chase(target, 0.1f, Chaser.LINEAR);
 				if (target == 1)

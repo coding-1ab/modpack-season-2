@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import com.google.common.base.Predicates;
 import com.simibubi.create.foundation.gui.AllIcons;
 
-import net.createmod.catnip.utility.lang.Lang;
+import net.createmod.catnip.lang.Lang;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;

@@ -9,10 +9,10 @@ import com.simibubi.create.content.contraptions.pulley.PulleyRenderer;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 
+import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SpriteShiftEntry;
 import net.createmod.catnip.render.SuperByteBuffer;
-import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -57,18 +57,16 @@ public class ElevatorPulleyRenderer extends KineticBlockEntityRenderer<ElevatorP
 			return;
 		}
 
+		AbstractPulleyRenderer.scrollCoil(rotatedCoil, coilShift, offset, 2)
+			.light(light)
+			.renderInto(ms, vb);
+
 		float spriteSize = beltShift.getTarget()
 			.getV1()
 			- beltShift.getTarget()
 				.getV0();
 
-		double coilScroll = -(offset + 3 / 16f) - Math.floor((offset + 3 / 16f) * -2) / 2;
 		double beltScroll = (-(offset + .5) - Math.floor(-(offset + .5))) / 2;
-
-		rotatedCoil.shiftUVScrolling(coilShift, (float) coilScroll * spriteSize)
-			.light(light)
-			.renderInto(ms, vb);
-
 		SuperByteBuffer halfRope = CachedBuffers.partial(AllPartialModels.ELEVATOR_BELT_HALF, blockState);
 		SuperByteBuffer rope = CachedBuffers.partial(AllPartialModels.ELEVATOR_BELT, blockState);
 

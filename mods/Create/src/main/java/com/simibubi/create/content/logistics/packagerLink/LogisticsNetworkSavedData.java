@@ -1,16 +1,21 @@
 package com.simibubi.create.content.logistics.packagerLink;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import com.simibubi.create.Create;
 
-import net.createmod.catnip.utility.NBTHelper;
+import com.simibubi.create.foundation.utility.SavedDataUtil;
+
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
+
+import org.jetbrains.annotations.NotNull;
 
 public class LogisticsNetworkSavedData extends SavedData {
 
@@ -32,6 +37,11 @@ public class LogisticsNetworkSavedData extends SavedData {
 			sd.logisticsNetworks.put(network.id, network);
 		});
 		return sd;
+	}
+
+	@Override
+	public void save(@NotNull File file) {
+		SavedDataUtil.saveWithDatOld(this, file);
 	}
 
 	public Map<UUID, LogisticsNetwork> getLogisticsNetworks() {

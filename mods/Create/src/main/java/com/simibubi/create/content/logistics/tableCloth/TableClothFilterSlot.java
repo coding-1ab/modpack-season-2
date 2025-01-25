@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 
 import dev.engine_room.flywheel.lib.transform.TransformStack;
-import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.level.LevelAccessor;
@@ -21,15 +21,15 @@ class TableClothFilterSlot extends ValueBoxTransform {
 
 	@Override
 	public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
-		Vec3 v = be.sideOccluded ? VecHelper.voxelSpace(8, 0.75, 14.25) : VecHelper.voxelSpace(12, -2.75, 16.75);
+		Vec3 v = be.sideOccluded ? VecHelper.voxelSpace(8, 0.75, 15.25) : VecHelper.voxelSpace(12, -2.75, 16.75);
 		return VecHelper.rotateCentered(v, -be.facing.toYRot(), Axis.Y);
 	}
 
 	@Override
 	public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
 		TransformStack.of(ms)
-			.rotateZDegrees(be.sideOccluded ? -90 : 0)
-			.rotateYDegrees(180 - be.facing.toYRot());
+			.rotateYDegrees(180 - be.facing.toYRot())
+			.rotateXDegrees(be.sideOccluded ? 90 : 0);
 	}
 
 }

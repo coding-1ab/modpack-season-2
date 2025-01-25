@@ -63,6 +63,11 @@ public class AllSoundEvents {
 			.playExisting(SoundEvents.WOOL_BREAK, .0425f, .75f)
 			.category(SoundSource.BLOCKS)
 			.build(),
+			
+		PACKAGER = create("packager").subtitle("Packager packages")
+			.playExisting(SoundEvents.SHULKER_OPEN, 0.5f, 0.75f)
+			.category(SoundSource.BLOCKS)
+			.build(),
 
 		SLIME_ADDED = create("slime_added").subtitle("Slime squishes")
 			.playExisting(SoundEvents.SLIME_BLOCK_PLACE)
@@ -116,6 +121,10 @@ public class AllSoundEvents {
 			.category(SoundSource.PLAYERS)
 			.build(),
 
+		CONFIRM_2 = create("confirm_2").subtitle("Affirmative ding")
+			.category(SoundSource.PLAYERS)
+			.build(),
+
 		DENY = create("deny").subtitle("Declining boop")
 			.playExisting(SoundEvents.NOTE_BLOCK_BASS, 1f, 0.5f)
 			.category(SoundSource.PLAYERS)
@@ -131,6 +140,31 @@ public class AllSoundEvents {
 
 		CARDBOARD_SWORD = create("cardboard_bonk").subtitle("Resonant bonk")
 			.category(SoundSource.PLAYERS)
+			.build(),
+			
+		FROGPORT_OPEN = create("frogport_open").subtitle("Frogport opens")
+			.playExisting(SoundEvents.WARDEN_TENDRIL_CLICKS, 1f, 2f)
+			.category(SoundSource.BLOCKS)
+			.build(),
+			
+		FROGPORT_CLOSE = create("frogport_close").subtitle("Frogport shuts")
+			.category(SoundSource.BLOCKS)
+			.build(),
+
+		FROGPORT_CATCH = create("frogport_catch").subtitle("Frogport catches package")
+			.addVariant("frogport_catch_1")
+			.addVariant("frogport_catch_2")
+			.addVariant("frogport_catch_3")
+			.category(SoundSource.BLOCKS)
+			.build(),
+			
+		STOCK_LINK = create("stock_link").subtitle("Stock link reacts")
+			.category(SoundSource.BLOCKS)
+			.build(),
+
+		FROGPORT_DEPOSIT = create("frogport_deposit").subtitle("Frogport places package")
+			.playExisting(SoundEvents.FROG_TONGUE, 1f, 1f)
+			.category(SoundSource.BLOCKS)
 			.build(),
 
 		POTATO_HIT = create("potato_hit").subtitle("Vegetable impacts")
@@ -162,8 +196,8 @@ public class AllSoundEvents {
 			.build(),
 			
 		PACKAGE_POP = create("package_pop").subtitle("Package breaks")
-			.playExisting(SoundEvents.ARMOR_STAND_BREAK, .25f, .75f)
-			.playExisting(SoundEvents.WOOL_BREAK, .5f, 1.15f)
+			.playExisting(SoundEvents.CHISELED_BOOKSHELF_BREAK, .75f, 1f)
+			.playExisting(SoundEvents.WOOL_BREAK, .25f, 1.15f)
 			.category(SoundSource.BLOCKS)
 			.build(),
 
@@ -326,7 +360,15 @@ public class AllSoundEvents {
 
 		HAUNTED_BELL_USE = create("haunted_bell_use").subtitle("Haunted Bell tolls")
 			.category(SoundSource.BLOCKS)
-				.build(),
+			.build(),
+
+		STOCK_TICKER_REQUEST = create("stock_ticker_request").subtitle("Stock ticker requests")
+			.category(SoundSource.BLOCKS)
+			.build(),
+
+		STOCK_TICKER_TRADE = create("stock_ticker_trade").subtitle("Stock ticker goes 'ka-ching!'")
+			.category(SoundSource.BLOCKS)
+			.build(),
 
 		CLIPBOARD_CHECKMARK = create("clipboard_check").noSubtitle()
 			.category(SoundSource.BLOCKS)
@@ -367,8 +409,9 @@ public class AllSoundEvents {
 	}
 
 	public static void playItemPickup(Player player) {
-		player.level().playSound(null, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, .2f,
-			1f + Create.RANDOM.nextFloat());
+		player.level()
+			.playSound(null, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, .2f,
+				1f + player.level().random.nextFloat());
 	}
 
 //	@SubscribeEvent

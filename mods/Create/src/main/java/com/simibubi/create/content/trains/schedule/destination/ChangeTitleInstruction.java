@@ -2,12 +2,17 @@ package com.simibubi.create.content.trains.schedule.destination;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
 import com.simibubi.create.Create;
+import com.simibubi.create.content.trains.graph.DiscoveredPath;
+import com.simibubi.create.content.trains.schedule.ScheduleRuntime;
+import com.simibubi.create.content.trains.schedule.ScheduleRuntime.State;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.Pair;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -51,6 +56,15 @@ public class ChangeTitleInstruction extends TextScheduleInstruction {
 				.withStyle(ChatFormatting.GRAY),
 			CreateLang.translateDirect("schedule.instruction.name_edit_box_2")
 				.withStyle(ChatFormatting.DARK_GRAY));
+	}
+
+	@Override
+	@Nullable
+	public DiscoveredPath start(ScheduleRuntime runtime) {
+		runtime.currentTitle = getScheduleTitle();
+		runtime.state = State.PRE_TRANSIT;
+		runtime.currentEntry++;
+		return null;
 	}
 
 }

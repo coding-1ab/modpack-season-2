@@ -7,13 +7,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
+import com.simibubi.create.content.kinetics.gantry.GantryShaftBlock;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.content.logistics.box.PackageStyles.PackageStyle;
 
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
-import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.lang.Lang;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.lang.Lang;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
@@ -26,6 +27,8 @@ public class AllPartialModels {
 
 		SHAFTLESS_COGWHEEL = block("cogwheel_shaftless"), SHAFTLESS_LARGE_COGWHEEL = block("large_cogwheel_shaftless"),
 		COGWHEEL_SHAFT = block("cogwheel_shaft"), SHAFT_HALF = block("shaft_half"),
+		SHAFT = block("shaft"),
+		COGWHEEL = block("cogwheel"),
 
 		BELT_PULLEY = block("belt_pulley"), BELT_START = block("belt/start"), BELT_MIDDLE = block("belt/middle"),
 		BELT_END = block("belt/end"), BELT_START_BOTTOM = block("belt/start_bottom"),
@@ -38,6 +41,8 @@ public class AllPartialModels {
 		BRASS_BELT_COVER_Z = block("belt_cover/brass_belt_cover_z"),
 
 		ENCASED_FAN_INNER = block("encased_fan/propeller"), HAND_CRANK_HANDLE = block("hand_crank/handle"),
+		HAND_CRANK_BASE = block("hand_crank/block"),
+		VALVE_HANDLE = block("valve_handle"),
 		MECHANICAL_PRESS_HEAD = block("mechanical_press/head"), MECHANICAL_MIXER_POLE = block("mechanical_mixer/pole"),
 		MECHANICAL_MIXER_HEAD = block("mechanical_mixer/head"),
 		MECHANICAL_CRAFTER_LID = block("mechanical_crafter/lid"),
@@ -71,8 +76,10 @@ public class AllPartialModels {
 
 		ROPE_COIL = block("rope_pulley/rope_coil"), ROPE_HALF = block("rope_pulley/rope_half"),
 		ROPE_HALF_MAGNET = block("rope_pulley/rope_half_magnet"),
+		ROPE = block("rope_pulley/rope"),
+		PULLEY_MAGNET = block("rope_pulley/pulley_magnet"),
 
-		HOSE_COIL = block("hose_pulley/rope_coil"), HOSE = block("hose_pulley/rope"),
+		HOSE_COIL = block("hose_pulley/hose_coil"), HOSE = block("hose_pulley/rope"),
 		HOSE_MAGNET = block("hose_pulley/pulley_magnet"), HOSE_HALF = block("hose_pulley/rope_half"),
 		HOSE_HALF_MAGNET = block("hose_pulley/rope_half_magnet"),
 
@@ -85,7 +92,7 @@ public class AllPartialModels {
 		SYMMETRY_TRIPLEPLANE = block("symmetry_effect/tripleplane"),
 
 		STICKER_HEAD = block("sticker/head"),
-		
+
 		DESK_BELL_PLUNGER = block("desk_bell/plunger"),
 		DESK_BELL_BELL = block("desk_bell/bell"),
 
@@ -119,7 +126,8 @@ public class AllPartialModels {
 
 		EJECTOR_TOP = block("weighted_ejector/top"),
 
-		CHAIN_CONVEYOR_GUARD = block("chain_conveyor/guard"), CHAIN_CONVEYOR_SHAFT = block("chain_conveyor/shaft"),
+		CHAIN_CONVEYOR_WHEEL = block("chain_conveyor/wheel"), CHAIN_CONVEYOR_GUARD = block("chain_conveyor/guard"),
+		CHAIN_CONVEYOR_SHAFT = block("chain_conveyor/shaft"),
 
 		FROGPORT_BODY = block("package_frogport/body"), FROGPORT_HEAD = block("package_frogport/head"),
 		FROGPORT_TONGUE = block("package_frogport/tongue"),
@@ -127,7 +135,7 @@ public class AllPartialModels {
 
 		PACKAGER_TRAY_REGULAR = block("packager/tray"), PACKAGER_TRAY_DEFRAG = block("repackager/tray"),
 		PACKAGER_HATCH_OPEN = block("packager/hatch_open"), PACKAGER_HATCH_CLOSED = block("packager/hatch_closed"),
-		
+
 		TABLE_CLOTH_PRICE_SIDE = block("table_cloth/price_tag_side"),
 		TABLE_CLOTH_PRICE_TOP = block("table_cloth/price_tag_top"),
 
@@ -173,6 +181,7 @@ public class AllPartialModels {
 		SIGNAL_RED = block("track_signal/red_tube"), SIGNAL_YELLOW_CUBE = block("track_signal/yellow_cube"),
 		SIGNAL_YELLOW_GLOW = block("track_signal/yellow_glow"), SIGNAL_YELLOW = block("track_signal/yellow_tube"),
 
+		BLAZE_CAGE = block("blaze_burner/block"),
 		BLAZE_INERT = block("blaze_burner/blaze/inert"), BLAZE_SUPER_ACTIVE = block("blaze_burner/blaze/super_active"),
 		BLAZE_GOGGLES = block("blaze_burner/goggles"), BLAZE_GOGGLES_SMALL = block("blaze_burner/goggles_small"),
 		BLAZE_IDLE = block("blaze_burner/blaze/idle"), BLAZE_ACTIVE = block("blaze_burner/blaze/active"),
@@ -187,7 +196,7 @@ public class AllPartialModels {
 
 		WATER_WHEEL = block("water_wheel/wheel"), LARGE_WATER_WHEEL = block("large_water_wheel/block"),
 		LARGE_WATER_WHEEL_EXTENSION = block("large_water_wheel/block_extension"),
-		
+
 		FACTORY_PANEL = block("factory_gauge/panel"),
 		FACTORY_PANEL_WITH_BULB = block("factory_gauge/panel_with_bulb"),
 		FACTORY_PANEL_RESTOCKER = block("factory_gauge/panel_restocker"),
@@ -199,7 +208,16 @@ public class AllPartialModels {
 		TABLE_CLOTH_NE = block("table_cloth/north_east"),
 		TABLE_CLOTH_SW = block("table_cloth/south_west"),
 		TABLE_CLOTH_SE = block("table_cloth/south_east"),
-		
+
+		FLYWHEEL = block("flywheel/block"),
+		CRUSHING_WHEEL = block("crushing_wheel/block"),
+		TURNTABLE = block("turntable"),
+		GANTRY_SHAFT_START = block("gantry_shaft/block_start"),
+		GANTRY_SHAFT_END = block("gantry_shaft/block_end"),
+		GANTRY_SHAFT_MIDDLE = block("gantry_shaft/block_middle"),
+		GANTRY_SHAFT_SINGLE = block("gantry_shaft/block_single"),
+		POWERED_SHAFT = block("powered_shaft"),
+
 		CRAFTING_BLUEPRINT_1x1 = entity("crafting_blueprint_small"),
 		CRAFTING_BLUEPRINT_2x2 = entity("crafting_blueprint_medium"),
 		CRAFTING_BLUEPRINT_3x3 = entity("crafting_blueprint_large"),
@@ -217,7 +235,7 @@ public class AllPartialModels {
 	public static final Map<Direction, PartialModel> FACTORY_PANEL_ARROWS = new EnumMap<>(Direction.class);
 	public static final Map<Direction, PartialModel> FACTORY_PANEL_LINES = new EnumMap<>(Direction.class);
 	public static final Map<Direction, PartialModel> FACTORY_PANEL_DOTTED = new EnumMap<>(Direction.class);
-	
+
 	public static final Map<Direction, PartialModel> METAL_GIRDER_BRACKETS = new EnumMap<>(Direction.class);
 	public static final Map<DyeColor, PartialModel> TOOLBOX_LIDS = new EnumMap<>(DyeColor.class);
 	public static final Map<ResourceLocation, Couple<PartialModel>> FOLDING_DOORS = new HashMap<>();
@@ -226,6 +244,8 @@ public class AllPartialModels {
 	public static final Map<ResourceLocation, PartialModel> PACKAGES = new HashMap<>();
 	public static final List<PartialModel> PACKAGES_TO_HIDE_AS = new ArrayList<>();
 	public static final Map<ResourceLocation, PartialModel> PACKAGE_RIGGING = new HashMap<>();
+
+	public static final Map<GantryShaftKey, PartialModel> GANTRY_SHAFTS = new HashMap<>();
 
 	static {
 		for (FluidTransportBehaviour.AttachmentTypes.ComponentPartials type : FluidTransportBehaviour.AttachmentTypes.ComponentPartials
@@ -258,6 +278,31 @@ public class AllPartialModels {
 			if (!style.rare())
 				PACKAGES_TO_HIDE_AS.add(model);
 			PACKAGE_RIGGING.put(key, PartialModel.of(style.getRiggingModel()));
+		}
+
+		for (boolean flipped : Iterate.trueAndFalse) {
+			for (boolean powered : Iterate.trueAndFalse) {
+				for (GantryShaftBlock.Part part : GantryShaftBlock.Part.values()) {
+					GantryShaftKey key = new GantryShaftKey(part, powered, flipped);
+					GANTRY_SHAFTS.put(key, PartialModel.of(key.name()));
+				}
+			}
+		}
+	}
+
+	public record GantryShaftKey(GantryShaftBlock.Part part, boolean powered, boolean flipped) {
+		private ResourceLocation name() {
+			String partName = part.getSerializedName();
+
+			if (!(flipped || powered)) {
+				// Non-generated
+				return Create.asResource("block/gantry_shaft/block_" + partName);
+			}
+
+			String flipped = this.flipped ? "_flipped" : "";
+			String powered = this.powered ? "_powered" : "";
+
+			return Create.asResource("block/gantry_shaft_" + partName + powered + flipped);
 		}
 	}
 

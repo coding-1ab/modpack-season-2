@@ -15,7 +15,7 @@ import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.instance.InstanceTypes;
 import dev.engine_room.flywheel.lib.instance.OrientedInstance;
 import dev.engine_room.flywheel.lib.model.Models;
-import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -48,7 +48,7 @@ public class StabilizedBearingVisual extends ActorVisual {
 				.light(blockLight, 0)
 				.setChanged();
 
-		shaft = instancerProvider.instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.SHAFT_HALF, blockState.getValue(BlockStateProperties.FACING).getOpposite()))
+		shaft = instancerProvider.instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.SHAFT_HALF))
 				.createInstance();
 
 		// not rotating so no need to set speed.
@@ -56,6 +56,7 @@ public class StabilizedBearingVisual extends ActorVisual {
 		shaft.setRotationAxis(axis)
 			.setRotationOffset(KineticBlockEntityVisual.rotationOffset(blockState, axis, movementContext.localPos))
 			.setPosition(movementContext.localPos)
+			.rotateToFace(Direction.SOUTH, blockState.getValue(BlockStateProperties.FACING).getOpposite())
 			.light(blockLight, 0)
 			.setChanged();
 	}

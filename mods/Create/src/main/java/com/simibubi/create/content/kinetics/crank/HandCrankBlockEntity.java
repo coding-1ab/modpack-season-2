@@ -9,7 +9,7 @@ import dev.engine_room.flywheel.api.model.Model;
 import dev.engine_room.flywheel.lib.model.Models;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
-import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -98,14 +98,6 @@ public class HandCrankBlockEntity extends GeneratingKineticBlockEntity {
 		Direction facing = blockState.getOptionalValue(HandCrankBlock.FACING)
 			.orElse(Direction.UP);
 		return CachedBuffers.partialFacing(AllPartialModels.HAND_CRANK_HANDLE, blockState, facing.getOpposite());
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	public Model getRenderedHandleInstance() {
-		BlockState blockState = getBlockState();
-		Direction facing = blockState.getOptionalValue(HandCrankBlock.FACING)
-			.orElse(Direction.UP);
-		return Models.partial(AllPartialModels.HAND_CRANK_HANDLE, facing.getOpposite());
 	}
 
 	@OnlyIn(Dist.CLIENT)

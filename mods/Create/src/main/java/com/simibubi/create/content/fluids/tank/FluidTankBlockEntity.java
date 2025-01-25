@@ -18,8 +18,8 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.animation.LerpedFloat.Chaser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -117,6 +117,13 @@ public class FluidTankBlockEntity extends SmartBlockEntity implements IHaveGoggl
 			fluidLevel.tickChaser();
 		if (isController())
 			boiler.tick(this);
+	}
+
+	@Override
+	public void lazyTick() {
+		super.lazyTick();
+		if (isController())
+			boiler.updateOcclusion(this);
 	}
 
 	@Override

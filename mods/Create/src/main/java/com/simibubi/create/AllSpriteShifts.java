@@ -12,13 +12,17 @@ import com.simibubi.create.foundation.block.connected.CTType;
 
 import net.createmod.catnip.render.SpriteShiftEntry;
 import net.createmod.catnip.render.SpriteShifter;
-import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.lang.Lang;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.WeatheringCopper.WeatherState;
 import net.minecraft.world.level.block.state.properties.WoodType;
 
 public class AllSpriteShifts {
 
 	private static final Map<WoodType, CTSpriteShiftEntry> WOODEN_WINDOWS = new IdentityHashMap<>();
+	public static final Map<WeatherState, CTSpriteShiftEntry> COPPER_SHINGLES = new EnumMap<>(WeatherState.class);
+	public static final Map<WeatherState, CTSpriteShiftEntry> COPPER_TILES = new EnumMap<>(WeatherState.class);
 
 	public static final Map<DyeColor, SpriteShiftEntry> DYED_BELTS = new EnumMap<>(DyeColor.class),
 		DYED_OFFSET_BELTS = new EnumMap<>(DyeColor.class), DYED_DIAGONAL_BELTS = new EnumMap<>(DyeColor.class);
@@ -42,7 +46,7 @@ public class AllSpriteShifts {
 		VERTICAL_FRAMED_GLASS = getCT(AllCTTypes.VERTICAL, "palettes/framed_glass", "palettes/vertical_framed_glass"),
 		ORNATE_IRON_WINDOW = vertical("palettes/ornate_iron_window"),
 		INDUSTRIAL_IRON_WINDOW = getCT(AllCTTypes.RECTANGLE, "palettes/industrial_iron_window"),
-		
+
 		OLD_FACTORY_WINDOW_1 = getCT(AllCTTypes.RECTANGLE, "palettes/weathered_iron_window", "palettes/weathered_iron_window_1"),
 		OLD_FACTORY_WINDOW_2 = getCT(AllCTTypes.RECTANGLE, "palettes/weathered_iron_window", "palettes/weathered_iron_window_2"),
 		OLD_FACTORY_WINDOW_3 = getCT(AllCTTypes.RECTANGLE, "palettes/weathered_iron_window", "palettes/weathered_iron_window_3"),
@@ -77,7 +81,9 @@ public class AllSpriteShifts {
 
 	public static final SpriteShiftEntry ELEVATOR_BELT =
 		get("block/elevator_pulley_belt", "block/elevator_pulley_belt_scroll"),
-		ELEVATOR_COIL = get("block/elevator_pulley_coil", "block/elevator_pulley_coil_scroll");
+		ROPE_PULLEY_COIL = get("block/rope_pulley_coil", "block/rope_pulley_coil_scroll"),
+		ELEVATOR_COIL = get("block/elevator_pulley_coil", "block/elevator_pulley_coil_scroll"),
+		HOSE_PULLEY_COIL = get("block/hose_pulley_coil", "block/hose_pulley_coil_scroll");
 
 	public static final SpriteShiftEntry FACTORY_PANEL_CONNECTIONS =
 		get("block/factory_panel_connections", "block/factory_panel_connections_animated");
@@ -104,6 +110,12 @@ public class AllSpriteShifts {
 			DYED_BELTS.put(color, get("block/belt", "block/belt/" + id + "_scroll"));
 			DYED_OFFSET_BELTS.put(color, get("block/belt_offset", "block/belt/" + id + "_scroll"));
 			DYED_DIAGONAL_BELTS.put(color, get("block/belt_diagonal", "block/belt/" + id + "_diagonal_scroll"));
+		}
+
+		for (WeatherState state : WeatherState.values()) {
+			String pref = "copper/" + (state == WeatherState.UNAFFECTED ? "" : Lang.asId(state.name()) + "_");
+			COPPER_SHINGLES.put(state, getCT(AllCTTypes.ROOF, pref + "copper_roof_top", pref + "copper_shingles_top"));
+			COPPER_TILES.put(state, getCT(AllCTTypes.ROOF, pref + "copper_roof_top", pref + "copper_tiles_top"));
 		}
 	}
 

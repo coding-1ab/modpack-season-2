@@ -18,6 +18,7 @@ import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import com.simibubi.create.content.kinetics.TorquePropagator;
 import com.simibubi.create.content.kinetics.fan.processing.AllFanProcessingTypes;
 import com.simibubi.create.content.kinetics.mechanicalArm.AllArmInteractionPointTypes;
+import com.simibubi.create.content.logistics.item.filter.attribute.AllItemAttributeTypes;
 import com.simibubi.create.content.logistics.packagerLink.GlobalLogisticsManager;
 import com.simibubi.create.content.redstone.displayLink.AllDisplayBehaviours;
 import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
@@ -40,8 +41,8 @@ import com.simibubi.create.infrastructure.data.CreateDatagen;
 import com.simibubi.create.infrastructure.worldgen.AllFeatures;
 import com.simibubi.create.infrastructure.worldgen.AllPlacementModifiers;
 
-import net.createmod.catnip.utility.FontHelper;
-import net.createmod.catnip.utility.lang.LangBuilder;
+import net.createmod.catnip.lang.FontHelper;
+import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -60,10 +61,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(Create.ID)
 public class Create {
-
 	public static final String ID = "create";
 	public static final String NAME = "Create";
-	public static final String VERSION = "0.5.2-experimental";
 
 	public static final Logger LOGGER = LogUtils.getLogger();
 
@@ -101,6 +100,8 @@ public class Create {
 	}
 
 	public static void onCtor() {
+		LOGGER.info("{} {} initializing! Commit hash: {}", NAME, CreateBuildInfo.VERSION, CreateBuildInfo.GIT_COMMIT);
+
 		ModLoadingContext modLoadingContext = ModLoadingContext.get();
 
 		IEventBus modEventBus = FMLJavaModLoadingContext.get()
@@ -131,6 +132,9 @@ public class Create {
 
 		AllConfigs.register(modLoadingContext);
 
+		AllArmInteractionPointTypes.register(modEventBus);
+		AllFanProcessingTypes.register(modEventBus);
+		AllItemAttributeTypes.register(modEventBus);
 		BlockSpoutingBehaviour.registerDefaults();
 
 		// FIXME: some of these registrations are not thread-safe
@@ -139,8 +143,6 @@ public class Create {
 		AllPortalTracks.registerDefaults();
 		AllDisplayBehaviours.registerDefaults();
 		ContraptionMovementSetting.registerDefaults();
-		AllArmInteractionPointTypes.register();
-		AllFanProcessingTypes.register();
 		BogeySizes.init();
 		AllBogeyStyles.init();
 		// ----
@@ -186,5 +188,4 @@ public class Create {
 	public static ResourceLocation asResource(String path) {
 		return new ResourceLocation(ID, path);
 	}
-
 }

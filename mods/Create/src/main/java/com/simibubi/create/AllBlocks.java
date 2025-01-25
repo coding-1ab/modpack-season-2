@@ -60,6 +60,7 @@ import com.simibubi.create.content.decoration.CardboardBlock;
 import com.simibubi.create.content.decoration.CardboardBlockItem;
 import com.simibubi.create.content.decoration.MetalLadderBlock;
 import com.simibubi.create.content.decoration.MetalScaffoldingBlock;
+import com.simibubi.create.content.decoration.RoofBlockCTBehaviour;
 import com.simibubi.create.content.decoration.TrainTrapdoorBlock;
 import com.simibubi.create.content.decoration.TrapdoorCTBehaviour;
 import com.simibubi.create.content.decoration.bracket.BracketBlock;
@@ -171,6 +172,7 @@ import com.simibubi.create.content.logistics.crate.CreativeCrateBlock;
 import com.simibubi.create.content.logistics.depot.DepotBlock;
 import com.simibubi.create.content.logistics.depot.EjectorBlock;
 import com.simibubi.create.content.logistics.depot.EjectorItem;
+import com.simibubi.create.content.logistics.depot.MountedDepotInteractionBehaviour;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlockItem;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelModel;
@@ -189,6 +191,7 @@ import com.simibubi.create.content.logistics.packager.PackagerBlock;
 import com.simibubi.create.content.logistics.packager.repackager.RepackagerBlock;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
 import com.simibubi.create.content.logistics.packagerLink.PackagerLinkBlock;
+import com.simibubi.create.content.logistics.packagerLink.PackagerLinkGenerator;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlock;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlockItem;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlock;
@@ -291,7 +294,7 @@ import com.tterrag.registrate.providers.loot.RegistrateBlockLootTables;
 import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.entry.BlockEntry;
 
-import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.data.Couple;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
@@ -795,6 +798,7 @@ public class AllBlocks {
 		.transform(axeOrPickaxe())
 		.blockstate((c, p) -> p.simpleBlock(c.getEntry(), AssetLookup.partialBaseModel(c, p)))
 		.onRegister(assignDataBehaviour(new ItemNameDisplaySource(), "combine_item_names"))
+		.onRegister(interactionBehaviour(new MountedDepotInteractionBehaviour()))
 		.item()
 		.transform(customItemModel("_", "block"))
 		.register();
@@ -867,6 +871,7 @@ public class AllBlocks {
 		.properties(p -> p.sound(SoundType.SCAFFOLDING))
 		.transform(axeOrPickaxe())
 		.item(BracketBlockItem::new)
+		.tag(AllItemTags.INVALID_FOR_TRACK_PAVING.tag)
 		.transform(BracketGenerator.itemModel("wooden"))
 		.register();
 
@@ -875,6 +880,7 @@ public class AllBlocks {
 		.properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
 		.transform(pickaxeOnly())
 		.item(BracketBlockItem::new)
+		.tag(AllItemTags.INVALID_FOR_TRACK_PAVING.tag)
 		.transform(BracketGenerator.itemModel("metal"))
 		.register();
 
@@ -1024,6 +1030,7 @@ public class AllBlocks {
 	public static final BlockEntry<HosePulleyBlock> HOSE_PULLEY = REGISTRATE.block("hose_pulley", HosePulleyBlock::new)
 		.initialProperties(SharedProperties::copperMetal)
 		.properties(BlockBehaviour.Properties::noOcclusion)
+		.addLayer(() -> RenderType::cutoutMipped)
 		.transform(pickaxeOnly())
 		.blockstate(BlockStateGen.horizontalBlockProvider(true))
 		.transform(BlockStressDefaults.setImpact(4.0))
@@ -1209,6 +1216,8 @@ public class AllBlocks {
 	public static final BlockEntry<PulleyBlock> ROPE_PULLEY = REGISTRATE.block("rope_pulley", PulleyBlock::new)
 		.initialProperties(SharedProperties::stone)
 		.properties(p -> p.mapColor(MapColor.PODZOL))
+		.properties(p -> p.noOcclusion())
+		.addLayer(() -> RenderType::cutoutMipped)
 		.transform(axeOrPickaxe())
 		.tag(AllBlockTags.SAFE_NBT.tag)
 		.blockstate(BlockStateGen.horizontalAxisBlockProvider(true))
@@ -1923,9 +1932,9 @@ public class AllBlocks {
 			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BLUE)
 				.sound(SoundType.NETHERITE_BLOCK))
 			.transform(pickaxeOnly())
-			.blockstate((c, p) -> p.horizontalFaceBlock(c.get(), AssetLookup.forPowered(c, p)))
+			.blockstate(new PackagerLinkGenerator()::generate)
 			.item(LogisticallyLinkedBlockItem::new)
-			.transform(customItemModel("_", "block"))
+			.transform(customItemModel("_", "block_vertical"))
 			.register();
 
 	public static final BlockEntry<StockTickerBlock> STOCK_TICKER =
@@ -1942,9 +1951,9 @@ public class AllBlocks {
 	public static final BlockEntry<RedstoneRequesterBlock> REDSTONE_REQUESTER =
 		REGISTRATE.block("redstone_requester", RedstoneRequesterBlock::new)
 			.initialProperties(SharedProperties::stone)
-			.properties(p -> p.sound(SoundType.WOOD))
+			.properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
 			.properties(p -> p.noOcclusion())
-			.transform(axeOrPickaxe())
+			.transform(pickaxeOnly())
 			.blockstate((c, p) -> BlockStateGen.horizontalAxisBlock(c, p, AssetLookup.forPowered(c, p)))
 			.item(RedstoneRequesterBlockItem::new)
 			.transform(customItemModel("_", "block"))
@@ -1993,6 +2002,7 @@ public class AllBlocks {
 			.recipe((c, p) -> p.stonecutting(DataIngredient.items(AllItems.ANDESITE_ALLOY.get()),
 				RecipeCategory.DECORATIONS, c::get, 2))
 			.transform(pickaxeOnly())
+			.lang("Andesite Table Cover")
 			.register();
 
 	public static final BlockEntry<TableClothBlock> BRASS_TABLE_CLOTH =
@@ -2003,6 +2013,7 @@ public class AllBlocks {
 			.recipe((c, p) -> p.stonecutting(DataIngredient.tag(AllTags.forgeItemTag("ingots/brass")),
 				RecipeCategory.DECORATIONS, c::get, 2))
 			.transform(pickaxeOnly())
+			.lang("Brass Table Cover")
 			.register();
 
 	public static final BlockEntry<TableClothBlock> COPPER_TABLE_CLOTH =
@@ -2012,6 +2023,7 @@ public class AllBlocks {
 			.recipe((c, p) -> p.stonecutting(DataIngredient.tag(AllTags.forgeItemTag("ingots/copper")),
 				RecipeCategory.DECORATIONS, c::get, 2))
 			.transform(pickaxeOnly())
+			.lang("Copper Table Cover")
 			.register();
 
 	public static final BlockEntry<DisplayLinkBlock> DISPLAY_LINK =
@@ -2574,6 +2586,7 @@ public class AllBlocks {
 		REGISTRATE.block("cardboard_block", CardboardBlock::new)
 			.initialProperties(() -> Blocks.MUSHROOM_STEM)
 			.properties(p -> p.mapColor(MapColor.COLOR_BROWN)
+				.sound(SoundType.CHISELED_BOOKSHELF)
 				.ignitedByLava())
 			.transform(axeOnly())
 			.blockstate(BlockStateGen.horizontalAxisBlockProvider(false))
@@ -2590,6 +2603,7 @@ public class AllBlocks {
 		REGISTRATE.block("bound_cardboard_block", CardboardBlock::new)
 			.initialProperties(() -> Blocks.MUSHROOM_STEM)
 			.properties(p -> p.mapColor(MapColor.COLOR_BROWN)
+				.sound(SoundType.CHISELED_BOOKSHELF)
 				.ignitedByLava())
 			.transform(axeOnly())
 			.blockstate(BlockStateGen.horizontalAxisBlockProvider(false))
@@ -2667,13 +2681,15 @@ public class AllBlocks {
 		"copper_roof_top", CopperBlockSet.DEFAULT_VARIANTS, (c, p) -> {
 			p.stonecutting(DataIngredient.tag(AllTags.forgeItemTag("ingots/copper")), RecipeCategory.BUILDING_BLOCKS,
 				c::get, 2);
-		});
+		}, (ws, block) -> connectedTextures(() -> new RoofBlockCTBehaviour(AllSpriteShifts.COPPER_SHINGLES.get(ws)))
+			.accept(block));
 
 	public static final CopperBlockSet COPPER_TILES =
 		new CopperBlockSet(REGISTRATE, "copper_tiles", "copper_roof_top", CopperBlockSet.DEFAULT_VARIANTS, (c, p) -> {
 			p.stonecutting(DataIngredient.tag(AllTags.forgeItemTag("ingots/copper")), RecipeCategory.BUILDING_BLOCKS,
 				c::get, 2);
-		});
+		}, (ws, block) -> connectedTextures(() -> new RoofBlockCTBehaviour(AllSpriteShifts.COPPER_TILES.get(ws)))
+			.accept(block));
 
 	// Load this class
 

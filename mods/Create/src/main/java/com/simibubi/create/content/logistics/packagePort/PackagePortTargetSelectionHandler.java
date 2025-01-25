@@ -7,9 +7,9 @@ import com.simibubi.create.content.trains.station.StationBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
-import net.createmod.catnip.CatnipClient;
-import net.createmod.catnip.utility.AnimationTickHolder;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.outliner.Outliner;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -73,21 +73,44 @@ public class PackagePortTargetSelectionHandler {
 	public static void tick() {
 		Minecraft mc = Minecraft.getInstance();
 		LocalPlayer player = mc.player;
-		if (activePackageTarget == null)
-			return;
 		boolean isPostbox = AllItemTags.POSTBOXES.matches(player.getMainHandItem());
-		if (!AllBlocks.PACKAGE_FROGPORT.isIn(player.getMainHandItem()) && !isPostbox)
-			return;
+		boolean isWrench = AllItemTags.WRENCH.matches(player.getMainHandItem());
+
+		if (!isWrench) {
+			if (activePackageTarget == null)
+				return;
+			if (!AllBlocks.PACKAGE_FROGPORT.isIn(player.getMainHandItem()) && !isPostbox)
+				return;
+		}
 
 		HitResult objectMouseOver = mc.hitResult;
-		if (!(objectMouseOver instanceof BlockHitResult))
+		if (!(objectMouseOver instanceof BlockHitResult blockRayTraceResult))
 			return;
 
-		Vec3 target = exactPositionOfTarget;
+		if (isWrench) {
+			if (blockRayTraceResult.getType() == Type.MISS)
+				return;
+			BlockPos pos = blockRayTraceResult.getBlockPos();
+			if (!(mc.level.getBlockEntity(pos) instanceof PackagePortBlockEntity ppbe))
+				return;
+			if (ppbe.target == null)
+				return;
+			Vec3 source = Vec3.atBottomCenterOf(pos);
+			Vec3 target = ppbe.target.getExactTargetLocation(ppbe, mc.level, pos);
+			if (target == Vec3.ZERO)
+				return;
+			Color color = new Color(0x9ede73);
+			animateConnection(mc, source, target, color);
+			Outliner.getInstance().chaseAABB("ChainPointSelected", new AABB(target, target))
+				.colored(color)
+				.lineWidth(1 / 5f)
+				.disableLineNormals();
+			return;
+		}
 
-		BlockHitResult blockRayTraceResult = (BlockHitResult) objectMouseOver;
+		Vec3 target = exactPositionOfTarget;
 		if (blockRayTraceResult.getType() == Type.MISS) {
-			CatnipClient.OUTLINER.chaseAABB("ChainPointSelected", new AABB(target, target))
+			Outliner.getInstance().chaseAABB("ChainPointSelected", new AABB(target, target))
 				.colored(0x9ede73)
 				.lineWidth(1 / 5f)
 				.disableLineNormals();
@@ -108,7 +131,7 @@ public class PackagePortTargetSelectionHandler {
 			.color(color.getRGB())
 			.sendStatus(player);
 
-		CatnipClient.OUTLINER.chaseAABB("ChainPointSelected", new AABB(target, target))
+		Outliner.getInstance().chaseAABB("ChainPointSelected", new AABB(target, target))
 			.colored(color)
 			.lineWidth(1 / 5f)
 			.disableLineNormals();
@@ -117,12 +140,17 @@ public class PackagePortTargetSelectionHandler {
 			.canBeReplaced())
 			return;
 
-		CatnipClient.OUTLINER.chaseAABB("TargetedFrogPos", new AABB(pos).contract(0, 1, 0)
+		Outliner.getInstance().chaseAABB("TargetedFrogPos", new AABB(pos).contract(0, 1, 0)
 			.deflate(0.125, 0, 0.125))
 			.colored(color)
 			.lineWidth(1 / 16f)
 			.disableLineNormals();
 
+		animateConnection(mc, source, target, color);
+
+	}
+
+	public static void animateConnection(Minecraft mc, Vec3 source, Vec3 target, Color color) {
 		DustParticleOptions data = new DustParticleOptions(color.asVectorF(), 1);
 		ClientLevel world = mc.level;
 		double totalFlyingTicks = 10;

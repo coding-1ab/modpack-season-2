@@ -1,5 +1,10 @@
 package com.simibubi.create;
 
+import com.simibubi.create.AllSoundEvents.SoundEntry;
+import com.tterrag.registrate.providers.ProviderType;
+
+import net.minecraftforge.data.loading.DatagenModLoader;
+
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.platform.InputConstants;
@@ -12,25 +17,39 @@ import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
+import java.util.function.BiConsumer;
+
 @EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public enum AllKeys {
 
-	TOOL_MENU("toolmenu", GLFW.GLFW_KEY_LEFT_ALT),
-	ACTIVATE_TOOL("", GLFW.GLFW_KEY_LEFT_CONTROL),
-	TOOLBELT("toolbelt", GLFW.GLFW_KEY_LEFT_ALT),
-	ROTATE_MENU("rotate_menu", GLFW.GLFW_KEY_UNKNOWN),
+	TOOL_MENU("toolmenu", GLFW.GLFW_KEY_LEFT_ALT, "Focus Schematic Overlay"),
+	ACTIVATE_TOOL(GLFW.GLFW_KEY_LEFT_CONTROL),
+	TOOLBELT("toolbelt", GLFW.GLFW_KEY_LEFT_ALT, "Access Nearby Toolboxes"),
+	ROTATE_MENU("rotate_menu", GLFW.GLFW_KEY_UNKNOWN, "Open Block Rotation Menu"),
 
 	;
 
 	private KeyMapping keybind;
-	private String description;
-	private int key;
-	private boolean modifiable;
+	private final String description;
+	private final String translation;
+	private final int key;
+	private final boolean modifiable;
 
-	private AllKeys(String description, int defaultKey) {
+	AllKeys(int defaultKey) {
+		this("", defaultKey, "");
+	}
+
+	AllKeys(String description, int defaultKey, String translation) {
 		this.description = Create.ID + ".keyinfo." + description;
 		this.key = defaultKey;
 		this.modifiable = !description.isEmpty();
+		this.translation = translation;
+	}
+
+	public static void provideLang(BiConsumer<String, String> consumer) {
+		for (AllKeys key : values())
+			if (key.modifiable)
+				consumer.accept(key.description, key.translation);
 	}
 
 	@SubscribeEvent

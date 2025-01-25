@@ -5,10 +5,10 @@ import java.util.List;
 
 import com.simibubi.create.Create;
 
-import net.createmod.catnip.utility.lang.Components;
-import net.createmod.catnip.utility.lang.Lang;
-import net.createmod.catnip.utility.lang.LangBuilder;
-import net.createmod.catnip.utility.lang.LangNumberFormat;
+import net.createmod.catnip.lang.Components;
+import net.createmod.catnip.lang.Lang;
+import net.createmod.catnip.lang.LangBuilder;
+import net.createmod.catnip.lang.LangNumberFormat;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
@@ -64,7 +64,7 @@ public class CreateLang extends Lang {
 	public static LangBuilder text(String text) {
 		return builder().text(text);
 	}
-	
+
 	@Deprecated // Use while implementing and replace all references with Lang.translate
 	public static LangBuilder temporaryText(String text) {
 		return builder().text(text);

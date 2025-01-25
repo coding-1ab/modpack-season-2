@@ -8,19 +8,24 @@ import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerItemHandler;
+import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.TooltipHelper;
 
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.nbt.NBTHelper;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.animation.LerpedFloat.Chaser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -45,14 +50,24 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 	public float passiveYaw;
 
 	private boolean failedLastExport;
+	private FrogportSounds sounds;
+
+	private AdvancementBehaviour advancements;
 
 	public FrogportBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
+		sounds = new FrogportSounds();
 		animationProgress = LerpedFloat.linear();
 		anticipationProgress = LerpedFloat.linear();
 		manualOpenAnimationProgress = LerpedFloat.linear()
 			.startWithValue(0)
 			.chase(0, 0.35, Chaser.LINEAR);
+	}
+
+	@Override
+	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+		behaviours.add(advancements = new AdvancementBehaviour(this, AllAdvancements.FROGPORT));
+		super.addBehaviours(behaviours);
 	}
 
 	public boolean isAnimationInProgress() {
@@ -106,35 +121,45 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 			anticipationProgress.updateChaseTarget(0);
 
 		manualOpenAnimationProgress.updateChaseTarget(openTracker.openCount > 0 ? 1 : 0);
+		boolean wasOpen = manualOpenAnimationProgress.getValue() > 0;
 
 		anticipationProgress.tickChaser();
 		manualOpenAnimationProgress.tickChaser();
+
+		if (level.isClientSide() && wasOpen && manualOpenAnimationProgress.getValue() == 0)
+			sounds.close(level, worldPosition);
 
 		if (!isAnimationInProgress())
 			return;
 
 		animationProgress.tickChaser();
 
+		float value = animationProgress.getValue();
 		if (currentlyDepositing) {
-			if (!level.isClientSide()) {
-				if (animationProgress.getValue() > 0.5 && animatedPackage != null) {
+			if (!level.isClientSide() || isVirtual()) {
+				if (value > 0.5 && animatedPackage != null) {
 					if (target == null
 						|| !target.depositImmediately() && !target.export(level, worldPosition, animatedPackage, false))
 						drop(animatedPackage);
 					animatedPackage = null;
 				}
 			} else {
-				if (animationProgress.getValue() > 0.7)
+				if (value > 0.7 && animatedPackage != null)
 					animatedPackage = null;
+				if (animationProgress.getValue(0) < 0.2 && value > 0.2) {
+					Vec3 v = target.getExactTargetLocation(this, level, worldPosition);
+					level.playLocalSound(v.x, v.y, v.z, SoundEvents.CHAIN_STEP, SoundSource.BLOCKS, 0.25f, 1.2f, false);
+				}
 			}
 		}
 
-		if (animationProgress.getValue() < 1)
+		if (value < 1)
 			return;
 
 		anticipationProgress.startWithValue(0);
 		animationProgress.startWithValue(0);
 		if (level.isClientSide()) {
+//			sounds.close(level, worldPosition);
 			animatedPackage = null;
 			return;
 		}
@@ -161,13 +186,23 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 		animatedPackage = box;
 		currentlyDepositing = deposit;
 
-		if (level != null && level.isClientSide() && !currentlyDepositing) {
-			Vec3 vec = target.getExactTargetLocation(this, level, worldPosition);
-			if (vec != null) {
-				for (int i = 0; i < 5; i++) {
-					level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, AllBlocks.ROPE.getDefaultState()),
-						vec.x, vec.y - level.random.nextFloat() * 0.25, vec.z, 0, 0, 0);
-				}
+		if (level != null && !deposit && !level.isClientSide())
+			advancements.awardPlayer(AllAdvancements.FROGPORT);
+
+		if (level != null && level.isClientSide()) {
+			sounds.open(level, worldPosition);
+
+			if (currentlyDepositing) {
+				sounds.depositPackage(level, worldPosition);
+
+			} else {
+				sounds.catchPackage(level, worldPosition);
+				Vec3 vec = target.getExactTargetLocation(this, level, worldPosition);
+				if (vec != null)
+					for (int i = 0; i < 5; i++)
+						level.addParticle(
+							new BlockParticleOption(ParticleTypes.BLOCK, AllBlocks.ROPE.getDefaultState()), vec.x,
+							vec.y - level.random.nextFloat() * 0.25, vec.z, 0, 0, 0);
 			}
 		}
 
@@ -296,6 +331,12 @@ public class FrogportBlockEntity extends PackagePortBlockEntity implements IHave
 			return superTip;
 		TooltipHelper.addHint(tooltip, "hint.blocked_frogport");
 		return true;
+	}
+
+	@Override
+	protected void onOpenedManually() {
+		if (level.isClientSide())
+			sounds.open(level, worldPosition);
 	}
 
 }

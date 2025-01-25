@@ -11,7 +11,7 @@ import com.simibubi.create.content.trains.schedule.DestinationSuggestions;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -45,6 +45,7 @@ public class AddressEditBox extends EditBox {
 			return true;
 		if (isFocused() && pKeyCode == GLFW.GLFW_KEY_ENTER) {
 			setFocused(false);
+			moveCursorToEnd();
 			mouseClicked(0, 0, 0);
 			return true;
 		}
@@ -60,11 +61,29 @@ public class AddressEditBox extends EditBox {
 
 	@Override
 	public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
-		if (super.mouseClicked(pMouseX, pMouseY, pButton))
+		boolean wasFocused = isFocused();
+		if (super.mouseClicked(pMouseX, pMouseY, pButton)) {
+			if (!wasFocused) {
+				setHighlightPos(getValue().length());
+				setCursorPosition(0);
+			}
 			return true;
+		}
 		if (destinationSuggestions.mouseClicked((int) pMouseX, (int) pMouseY, pButton))
 			return true;
 		return false;
+	}
+	
+	@Override
+	public void setValue(String text) {
+		super.setValue(text);
+	}
+	
+	@Override
+	public void setFocused(boolean focused) {
+		super.setFocused(focused);
+		if (!focused)
+			setHighlightPos(getCursorPosition());
 	}
 
 	@Override

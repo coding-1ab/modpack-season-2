@@ -15,9 +15,9 @@ import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.CatnipClient;
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.lang.Components;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -40,6 +40,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -479,7 +480,7 @@ public class BeltSlicer {
 			mc.player.displayClientMessage(Components.immutableEmpty(), true);
 
 		if (feedback.bb != null)
-			CatnipClient.OUTLINER.chaseAABB("BeltSlicer", feedback.bb)
+			Outliner.getInstance().chaseAABB("BeltSlicer", feedback.bb)
 				.lineWidth(1 / 16f)
 				.colored(feedback.color);
 	}

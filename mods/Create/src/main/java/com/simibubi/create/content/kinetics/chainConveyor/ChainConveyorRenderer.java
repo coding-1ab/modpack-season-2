@@ -15,13 +15,13 @@ import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorPackage.C
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.render.RenderTypes;
 
-import dev.engine_room.flywheel.api.backend.BackendManager;
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.math.AngleHelper;
-import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -55,13 +55,19 @@ public class ChainConveyorRenderer extends KineticBlockEntityRenderer<ChainConve
 
 		renderChains(be, ms, buffer, light, overlay);
 
-		if (!BackendManager.isBackendOn()) {
-			for (ChainConveyorPackage box : be.loopingPackages)
+		if (VisualizationManager.supportsVisualization(be.getLevel()))
+			return;
+
+		CachedBuffers.partial(AllPartialModels.CHAIN_CONVEYOR_WHEEL, be.getBlockState())
+			.light(light)
+			.overlay(overlay)
+			.renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
+
+		for (ChainConveyorPackage box : be.loopingPackages)
+			renderBox(be, ms, buffer, overlay, pos, box, partialTicks);
+		for (Entry<BlockPos, List<ChainConveyorPackage>> entry : be.travellingPackages.entrySet())
+			for (ChainConveyorPackage box : entry.getValue())
 				renderBox(be, ms, buffer, overlay, pos, box, partialTicks);
-			for (Entry<BlockPos, List<ChainConveyorPackage>> entry : be.travellingPackages.entrySet())
-				for (ChainConveyorPackage box : entry.getValue())
-					renderBox(be, ms, buffer, overlay, pos, box, partialTicks);
-		}
 	}
 
 	private void renderBox(ChainConveyorBlockEntity be, PoseStack ms, MultiBufferSource buffer, int overlay,
@@ -128,7 +134,7 @@ public class ChainConveyorRenderer extends KineticBlockEntityRenderer<ChainConve
 
 	private void renderChains(ChainConveyorBlockEntity be, PoseStack ms, MultiBufferSource buffer, int light,
 		int overlay) {
-		float time = LevelTickHolder.getRenderTime(be.getLevel()) / (360f / Math.abs(be.getSpeed()));
+		float time = AnimationTickHolder.getRenderTime(be.getLevel()) / (360f / Math.abs(be.getSpeed()));
 		time %= 1;
 		if (time < 0)
 			time += 1;
@@ -151,10 +157,9 @@ public class ChainConveyorRenderer extends KineticBlockEntityRenderer<ChainConve
 			Vec3 startOffset = stats.start()
 				.subtract(Vec3.atCenterOf(tilePos));
 
-			if (!BackendManager.isBackendOn()) {
+			if (!VisualizationManager.supportsVisualization(be.getLevel())) {
 				SuperByteBuffer guard =
 					CachedBuffers.partial(AllPartialModels.CHAIN_CONVEYOR_GUARD, be.getBlockState());
-				// guard.translate(startOffset.multiply(0, 1, 0));
 				guard.center();
 				guard.rotateYDegrees((float) yaw);
 
@@ -253,7 +258,7 @@ public class ChainConveyorRenderer extends KineticBlockEntityRenderer<ChainConve
 
 	@Override
 	public boolean shouldRenderOffScreen(ChainConveyorBlockEntity be) {
-		return !be.connections.isEmpty();
+		return true;
 	}
 
 	@Override

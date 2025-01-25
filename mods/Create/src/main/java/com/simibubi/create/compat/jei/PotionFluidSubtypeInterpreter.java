@@ -6,11 +6,12 @@ import com.simibubi.create.content.fluids.potion.PotionFluid.BottleType;
 
 import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
 import mezz.jei.api.ingredients.subtypes.UidContext;
-import net.createmod.catnip.utility.NBTHelper;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
+
 import net.minecraftforge.fluids.FluidStack;
 
 /* From JEI's Potion item subtype interpreter */

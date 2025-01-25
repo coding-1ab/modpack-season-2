@@ -2,15 +2,14 @@ package com.simibubi.create.content.contraptions.pulley;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SpriteShiftEntry;
 import net.createmod.catnip.render.SuperByteBuffer;
-import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -51,10 +50,9 @@ public abstract class AbstractPulleyRenderer<T extends KineticBlockEntity> exten
 		float offset = getOffset(be, partialTicks);
 		boolean running = isRunning(be);
 
-		Axis rotationAxis = ((IRotate) be.getBlockState()
-			.getBlock()).getRotationAxis(be.getBlockState());
 		VertexConsumer vb = buffer.getBuffer(RenderType.solid());
-		kineticRotationTransform(getRotatedCoil(be), be, rotationAxis, AngleHelper.rad(offset * 180), light)
+		scrollCoil(getRotatedCoil(be), getCoilShift(), offset, 1)
+			.light(light)
 			.renderInto(ms, vb);
 
 		Level world = be.getLevel();
@@ -92,6 +90,8 @@ public abstract class AbstractPulleyRenderer<T extends KineticBlockEntity> exten
 	protected abstract Axis getShaftAxis(T be);
 
 	protected abstract PartialModel getCoil();
+	
+	protected abstract SpriteShiftEntry getCoilShift();
 
 	protected abstract SuperByteBuffer renderRope(T be);
 
@@ -110,6 +110,18 @@ public abstract class AbstractPulleyRenderer<T extends KineticBlockEntity> exten
 		BlockState blockState = be.getBlockState();
 		return CachedBuffers.partialFacing(getCoil(), blockState,
 			Direction.get(AxisDirection.POSITIVE, getShaftAxis(be)));
+	}
+
+	public static SuperByteBuffer scrollCoil(SuperByteBuffer sbb, SpriteShiftEntry coilShift, float offset, float speedModifier) {
+		if (offset == 0)
+			return sbb;
+		float spriteSize = coilShift.getTarget()
+			.getV1()
+			- coilShift.getTarget()
+				.getV0();
+		offset *= speedModifier / 2;
+		double coilScroll = -(offset + 3 / 16f) - Math.floor((offset + 3 / 16f) * -2) / 2;
+		return sbb.shiftUVScrolling(coilShift, (float) coilScroll * spriteSize);
 	}
 
 	@Override

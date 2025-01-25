@@ -19,6 +19,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.BigItemStack;
@@ -34,6 +35,8 @@ import com.simibubi.create.content.logistics.packagerLink.RequestPromise;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBoard;
@@ -41,11 +44,11 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsFormatt
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.animation.LerpedFloat.Chaser;
 import net.createmod.catnip.gui.ScreenOpener;
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.lang.Components;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -53,11 +56,15 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -86,13 +93,13 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public int promiseClearingInterval;
 	public boolean forceClearPromises;
 	public UUID network;
+	public boolean active;
 
 	public boolean redstonePowered;
 
 	public RequestPromiseQueue restockerPromises;
 	private boolean promisePrimedForMarkDirty;
 
-	private boolean active;
 	private int lastReportedUnloadedLinks;
 	private int lastReportedLevelInStorage;
 	private int lastReportedPromises;
@@ -117,7 +124,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		this.promiseClearingInterval = -1;
 		this.bulb = LerpedFloat.linear()
 			.startWithValue(0)
-			.chase(0, 0.125, Chaser.EXP);
+			.chase(0, 0.175, Chaser.EXP);
 		this.restockerPromises = new RequestPromiseQueue(be::setChanged);
 		this.promisePrimedForMarkDirty = true;
 		this.network = UUID.randomUUID();
@@ -149,7 +156,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			return null;
 		return behaviour;
 	}
-
+	
 	@Nullable
 	public static FactoryPanelSupportBehaviour linkAt(BlockAndTintGetter world, FactoryPanelConnection connection) {
 		Object cached = connection.cachedSource.get();
@@ -167,6 +174,95 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		return BlockEntityBehaviour.get(world, pos.pos(), FactoryPanelSupportBehaviour.TYPE);
 	}
 
+	public void moveTo(FactoryPanelPosition newPos, ServerPlayer player) {
+		Level level = getWorld();
+		BlockState existingState = level.getBlockState(newPos.pos());
+		
+		// Check if target pos is valid
+		if (FactoryPanelBehaviour.at(level, newPos) != null)
+			return;
+		boolean isAddedToOtherGauge = AllBlocks.FACTORY_GAUGE.has(existingState);
+		if (!existingState.isAir() && !isAddedToOtherGauge)
+			return;
+		if (isAddedToOtherGauge && existingState != blockEntity.getBlockState())
+			return;
+		if (!isAddedToOtherGauge)
+			level.setBlock(newPos.pos(), blockEntity.getBlockState(), 3);
+		
+		for (BlockPos blockPos : targetedByLinks.keySet())
+			if (!blockPos.closerThan(newPos.pos(), 24))
+				return;
+		for (FactoryPanelPosition blockPos : targetedBy.keySet())
+			if (!blockPos.pos().closerThan(newPos.pos(), 24))
+				return;
+		for (FactoryPanelPosition blockPos : targeting)
+			if (!blockPos.pos().closerThan(newPos.pos(), 24))
+				return;
+		
+		// Disconnect links
+		for (BlockPos pos : targetedByLinks.keySet()) {
+			FactoryPanelSupportBehaviour at = linkAt(level, new FactoryPanelPosition(pos, slot));
+			if (at != null)
+				at.disconnect(this);
+		}
+		
+		SmartBlockEntity oldBE = blockEntity;
+		FactoryPanelPosition oldPos = getPanelPosition();
+		slot = newPos.slot();
+		
+		// Add to new BE
+		if (level.getBlockEntity(newPos.pos()) instanceof FactoryPanelBlockEntity fpbe) {
+			fpbe.attachBehaviourLate(this);
+			fpbe.panels.put(slot, this);
+			fpbe.redraw = true;
+			fpbe.lastShape = null;
+			fpbe.notifyUpdate();
+		}
+		
+		// Remove from old BE
+		if (oldBE instanceof FactoryPanelBlockEntity fpbe) {
+			FactoryPanelBehaviour newBehaviour = new FactoryPanelBehaviour(fpbe, oldPos.slot());
+			fpbe.attachBehaviourLate(newBehaviour);
+			fpbe.panels.put(oldPos.slot(), newBehaviour);
+			fpbe.redraw = true;
+			fpbe.lastShape = null;
+			fpbe.notifyUpdate();
+		}
+		
+		// Rewire connections
+		for (FactoryPanelPosition position : targeting) {
+			FactoryPanelBehaviour at = at(level, position);
+			if (at != null) {
+				FactoryPanelConnection connection = at.targetedBy.remove(oldPos);
+				connection.from = newPos;
+				at.targetedBy.put(newPos, connection);
+				at.blockEntity.sendData();
+			}
+		}
+		
+		for (FactoryPanelPosition position : targetedBy.keySet()) {
+			FactoryPanelBehaviour at = at(level, position);
+			if (at != null) {
+				at.targeting.remove(oldPos);
+				at.targeting.add(newPos);
+			}
+		}
+		
+		// Reconnect links
+		for (BlockPos pos : targetedByLinks.keySet()) {
+			FactoryPanelSupportBehaviour at = linkAt(level, new FactoryPanelPosition(pos, slot));
+			if (at != null)
+				at.connect(this);
+		}
+		
+		// Tell player
+		player.displayClientMessage(CreateLang.translate("factory_panel.relocated")
+			.style(ChatFormatting.GREEN)
+			.component(), true);
+		player.level()
+			.playSound(null, newPos.pos(), SoundEvents.COPPER_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
+	}
+	
 	@Override
 	public void initialize() {
 		super.initialize();
@@ -177,6 +273,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public void tick() {
 		super.tick();
 		if (getWorld().isClientSide()) {
+			if (blockEntity.isVirtual())
+				tickStorageMonitor();
 			bulb.updateChaseTarget(redstonePowered || satisfied ? 1 : 0);
 			bulb.tickChaser();
 			return;
@@ -247,6 +345,11 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			&& promisedSatisfied == shouldPromiseSatisfy && waitingForNetwork == shouldWait)
 			return;
 
+		if (!satisfied && shouldSatisfy) {
+			AllSoundEvents.CONFIRM.playOnServer(getWorld(), getPos(), 0.075f, 1f);
+			AllSoundEvents.CONFIRM_2.playOnServer(getWorld(), getPos(), 0.125f, 0.575f);
+		}
+
 		boolean notifyOutputs = satisfied != shouldSatisfy;
 		lastReportedLevelInStorage = inStorage;
 		satisfied = shouldSatisfy;
@@ -254,7 +357,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		promisedSatisfied = shouldPromiseSatisfy;
 		lastReportedUnloadedLinks = unloadedLinkCount;
 		waitingForNetwork = shouldWait;
-		blockEntity.sendData();
+		if (!getWorld().isClientSide)
+			blockEntity.sendData();
 		if (notifyOutputs)
 			notifyRedstoneOutputs();
 	}
@@ -342,6 +446,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		RequestPromiseQueue promises = Create.LOGISTICS.getQueuedPromises(network);
 		if (promises != null)
 			promises.add(new RequestPromise(new BigItemStack(getFilter(), recipeOutput)));
+
+		panelBE.advancements.awardPlayer(AllAdvancements.FACTORY_GAUGE);
 	}
 
 	private void tryRestock() {
@@ -423,7 +529,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			return;
 		}
 
-		if (AllItemTags.WRENCH.matches(player.getItemInHand(hand))) {
+		if (targeting.size() + targetedByLinks.size() > 0 && AllItemTags.WRENCH.matches(player.getItemInHand(hand))) {
 			int sharedMode = -1;
 			boolean notifySelf = false;
 
@@ -467,9 +573,6 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 				return;
 
 		if (getFilter().isEmpty()) {
-			if (AllBlocks.FACTORY_GAUGE.isIn(player.getItemInHand(hand)))
-				return;
-
 			super.onShortInteract(player, hand, side, hitResult);
 			return;
 		}
@@ -551,6 +654,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	}
 
 	public int getLevelInStorage() {
+		if (blockEntity.isVirtual())
+			return 1;
 		if (getWorld().isClientSide())
 			return lastReportedLevelInStorage;
 		if (getFilter().isEmpty())
@@ -865,6 +970,21 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	public ItemRequirement getRequiredItems() {
 		return isActive() ? new ItemRequirement(ItemRequirement.ItemUseType.CONSUME, AllBlocks.FACTORY_GAUGE.asItem())
 			: ItemRequirement.NONE;
+	}
+	
+	@Override
+	public boolean canShortInteract(ItemStack toApply) {
+		return true;
+	}
+	
+	@Override
+	public boolean readFromClipboard(CompoundTag tag, Player player, Direction side, boolean simulate) {
+		return false;
+	}
+	
+	@Override
+	public boolean writeToClipboard(CompoundTag tag, Direction side) {
+		return false;
 	}
 
 }

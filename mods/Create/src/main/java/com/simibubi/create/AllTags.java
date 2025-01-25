@@ -8,7 +8,7 @@ import static com.simibubi.create.AllTags.NameSpace.TIC;
 
 import java.util.Collections;
 
-import net.createmod.catnip.utility.lang.Lang;
+import net.createmod.catnip.lang.Lang;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
+
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -173,6 +174,7 @@ public class AllTags {
 		CONTRAPTION_CONTROLLED,
 		CREATE_INGOTS,
 		CRUSHED_RAW_MATERIALS,
+		INVALID_FOR_TRACK_PAVING,
 		DEPLOYABLE_DRINK,
 		MODDED_STRIPPED_LOGS,
 		MODDED_STRIPPED_WOOD,
@@ -186,6 +188,7 @@ public class AllTags {
 		SLEEPERS,
 		TOOLBOXES,
 		PACKAGES,
+		CHAIN_RIDEABLE,
 		TRACKS,
 		UPRIGHT_ON_BELT,
 		VALVE_HANDLES,

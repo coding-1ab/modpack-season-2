@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import com.simibubi.create.AllRecipeTypes;
+import com.simibubi.create.AllRegistries;
 import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.AllTags.AllFluidTags;
 import com.simibubi.create.Create;
@@ -20,8 +21,8 @@ import com.simibubi.create.foundation.damageTypes.CreateDamageSources;
 import com.simibubi.create.foundation.recipe.RecipeApplier;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -52,10 +53,15 @@ import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
+
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
+import net.minecraftforge.registries.DeferredRegister;
 
 public class AllFanProcessingTypes {
+	private static final DeferredRegister<FanProcessingType> REGISTER = DeferredRegister.create(AllRegistries.Keys.FAN_PROCESSING_TYPES, Create.ID);
+
 	public static final NoneType NONE = register("none", new NoneType());
 	public static final BlastingType BLASTING = register("blasting", new BlastingType());
 	public static final HauntingType HAUNTING = register("haunting", new HauntingType());
@@ -75,17 +81,18 @@ public class AllFanProcessingTypes {
 		LEGACY_NAME_MAP = map;
 	}
 
-	private static <T extends FanProcessingType> T register(String id, T type) {
-		FanProcessingTypeRegistry.register(Create.asResource(id), type);
+	private static <T extends FanProcessingType> T register(String name, T type) {
+		REGISTER.register(name, () -> type);
 		return type;
+	}
+
+	public static void register(IEventBus eventBus) {
+		REGISTER.register(eventBus);
 	}
 
 	@Nullable
 	public static FanProcessingType ofLegacyName(String name) {
 		return LEGACY_NAME_MAP.get(name);
-	}
-
-	public static void register() {
 	}
 
 	public static FanProcessingType parseLegacy(String str) {
@@ -142,10 +149,7 @@ public class AllFanProcessingTypes {
 			}
 			BlockState blockState = level.getBlockState(pos);
 			if (AllBlockTags.FAN_PROCESSING_CATALYSTS_BLASTING.matches(blockState)) {
-				if (blockState.hasProperty(BlazeBurnerBlock.HEAT_LEVEL) && !blockState.getValue(BlazeBurnerBlock.HEAT_LEVEL).isAtLeast(BlazeBurnerBlock.HeatLevel.FADING)) {
-					return false;
-				}
-				return true;
+				return !blockState.hasProperty(BlazeBurnerBlock.HEAT_LEVEL) || blockState.getValue(BlazeBurnerBlock.HEAT_LEVEL).isAtLeast(BlazeBurnerBlock.HeatLevel.FADING);
 			}
 			return false;
 		}
@@ -189,7 +193,7 @@ public class AllFanProcessingTypes {
 			Optional<? extends AbstractCookingRecipe> smeltingRecipe = level.getRecipeManager()
 				.getRecipeFor(RecipeType.SMELTING, RECIPE_WRAPPER, level)
 				.filter(AllRecipeTypes.CAN_BE_AUTOMATED);
-			
+
 			if (!smeltingRecipe.isPresent()) {
 				RECIPE_WRAPPER.setItem(0, stack);
 				smeltingRecipe = level.getRecipeManager()
@@ -199,7 +203,7 @@ public class AllFanProcessingTypes {
 			if (smeltingRecipe.isPresent()) {
 				RegistryAccess registryAccess = level.registryAccess();
 				if (!smokingRecipe.isPresent() || !ItemStack.isSameItem(smokingRecipe.get()
-					.getResultItem(registryAccess),
+						.getResultItem(registryAccess),
 					smeltingRecipe.get()
 						.getResultItem(registryAccess))) {
 					return RecipeApplier.applyRecipeOn(level, stack, smeltingRecipe.get());
@@ -252,10 +256,7 @@ public class AllFanProcessingTypes {
 				if (blockState.is(BlockTags.CAMPFIRES) && blockState.hasProperty(CampfireBlock.LIT) && !blockState.getValue(CampfireBlock.LIT)) {
 					return false;
 				}
-				if (blockState.hasProperty(LitBlazeBurnerBlock.FLAME_TYPE) && blockState.getValue(LitBlazeBurnerBlock.FLAME_TYPE) != LitBlazeBurnerBlock.FlameType.SOUL) {
-					return false;
-				}
-				return true;
+				return !blockState.hasProperty(LitBlazeBurnerBlock.FLAME_TYPE) || blockState.getValue(LitBlazeBurnerBlock.FLAME_TYPE) == LitBlazeBurnerBlock.FlameType.SOUL;
 			}
 			return false;
 		}
@@ -375,10 +376,7 @@ public class AllFanProcessingTypes {
 				if (blockState.hasProperty(LitBlazeBurnerBlock.FLAME_TYPE) && blockState.getValue(LitBlazeBurnerBlock.FLAME_TYPE) != LitBlazeBurnerBlock.FlameType.REGULAR) {
 					return false;
 				}
-				if (blockState.hasProperty(BlazeBurnerBlock.HEAT_LEVEL) && blockState.getValue(BlazeBurnerBlock.HEAT_LEVEL) != BlazeBurnerBlock.HeatLevel.SMOULDERING) {
-					return false;
-				}
-				return true;
+				return !blockState.hasProperty(BlazeBurnerBlock.HEAT_LEVEL) || blockState.getValue(BlazeBurnerBlock.HEAT_LEVEL) == BlazeBurnerBlock.HeatLevel.SMOULDERING;
 			}
 			return false;
 		}
@@ -394,7 +392,7 @@ public class AllFanProcessingTypes {
 			Optional<SmokingRecipe> recipe = level.getRecipeManager()
 				.getRecipeFor(RecipeType.SMOKING, RECIPE_WRAPPER, level)
 				.filter(AllRecipeTypes.CAN_BE_AUTOMATED);
-			
+
 			return recipe.isPresent();
 		}
 
@@ -451,10 +449,7 @@ public class AllFanProcessingTypes {
 				return true;
 			}
 			BlockState blockState = level.getBlockState(pos);
-			if (AllBlockTags.FAN_PROCESSING_CATALYSTS_SPLASHING.matches(blockState)) {
-				return true;
-			}
-			return false;
+			return AllBlockTags.FAN_PROCESSING_CATALYSTS_SPLASHING.matches(blockState);
 		}
 
 		@Override

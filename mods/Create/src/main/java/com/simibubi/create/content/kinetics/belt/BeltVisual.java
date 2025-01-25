@@ -7,7 +7,6 @@ import org.joml.Quaternionf;
 
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityVisual;
-import com.simibubi.create.content.kinetics.base.KineticInstance;
 import com.simibubi.create.content.kinetics.base.RotatingInstance;
 import com.simibubi.create.content.processing.burner.ScrollInstance;
 import com.simibubi.create.foundation.render.AllInstanceTypes;
@@ -20,7 +19,7 @@ import dev.engine_room.flywheel.lib.model.Models;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.render.SpriteShiftEntry;
-import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.data.Iterate;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
@@ -61,9 +60,13 @@ public class BeltVisual extends KineticBlockEntityVisual<BeltBlockEntity> {
         }
 
         if (blockEntity.hasPulley()) {
-            pulley = setup(instancerProvider()
+			pulley = instancerProvider()
 				.instancer(AllInstanceTypes.ROTATING, getPulleyModel())
-				.createInstance());
+				.createInstance();
+
+			pulley.setup(BeltVisual.this.blockEntity)
+				.setPosition(getVisualPosition())
+				.setChanged();
         } else {
 			pulley = null;
 		}
@@ -83,8 +86,9 @@ public class BeltVisual extends KineticBlockEntityVisual<BeltBlockEntity> {
         }
 
         if (pulley != null) {
-            updateRotation(pulley);
-        }
+			pulley.setup(blockEntity)
+				.setChanged();
+		}
     }
 
     @Override
@@ -158,7 +162,7 @@ public class BeltVisual extends KineticBlockEntityVisual<BeltBlockEntity> {
 				.rotation(q)
 				.speed(0, speed * MAGIC_SCROLL_MULTIPLIER)
 				.offset(0, bottom ? SCROLL_OFFSET_BOTTOM : SCROLL_OFFSET_OTHERWISE)
-				.colorRgb(KineticInstance.colorFromBE(blockEntity))
+				.colorRgb(RotatingInstance.colorFromBE(blockEntity))
 				.setChanged();
 
         return key;

@@ -1,4 +1,4 @@
-// 1.20.1	2024-12-27T18:05:56.832873	Create's Standard Recipes
+// 1.20.1	2025-01-03T17:19:12.8387789	Create's Standard Recipes
 a8cc4af26f6c7c45a9eef12e92af1452fe042454 data/create/advancements/recipes/combat/crafting/appliances/netherite_backtank.json
 2c2639c7b307ee7c7a4e97e5efebf496788998ad data/create/advancements/recipes/combat/crafting/appliances/netherite_backtank_from_netherite.json
 81dcf0cb1aa99e39bc7d1a386e07cad4cee7d8b9 data/create/advancements/recipes/combat/crafting/appliances/netherite_diving_boots.json
@@ -194,7 +194,7 @@ c443707391ce79dc1ec8cfacee74757b0c00bd3e data/create/advancements/recipes/misc/c
 77c3df89a06fc10cd8bd1cc35f0353441860ec11 data/create/advancements/recipes/misc/crafting/logistics/pulse_repeater.json
 95484003dc94bb919402f72115cdbae9a4eedfb9 data/create/advancements/recipes/misc/crafting/logistics/pulse_timer.json
 96b4998626e624fb79c79fb754c28b21ddc27254 data/create/advancements/recipes/misc/crafting/logistics/redstone_contact.json
-1b50ed47c37e48d1112c76059574eed71ecea4e5 data/create/advancements/recipes/misc/crafting/logistics/redstone_link.json
+e210638d1b198f1ce1379c88fc2f15e0c974bd09 data/create/advancements/recipes/misc/crafting/logistics/redstone_link.json
 8ed69a5a2fcbc6e1cb2de901017ebd3fc3fb3dc3 data/create/advancements/recipes/misc/crafting/logistics/redstone_requester.json
 cea78bc9b093a8a6a85ef1df53ddf11d9c37a114 data/create/advancements/recipes/misc/crafting/logistics/redstone_requester_clear.json
 8ec1937280c6d6ba8b79de8652f3b1c588f4b4e2 data/create/advancements/recipes/misc/crafting/logistics/repackager_from_conversion.json
@@ -472,7 +472,7 @@ aa8a704ad643ff5f06db34f4047f7f740a556236 data/create/recipes/crafting/logistics/
 8b0b342baa18cc47c7a60a3c9812fece28210cf6 data/create/recipes/crafting/logistics/pulse_repeater.json
 ade2e66f03bab8843e2dff82b0f04ca92fff956e data/create/recipes/crafting/logistics/pulse_timer.json
 c81f852f1d1514184ff235e790a6ca907f7b6ad4 data/create/recipes/crafting/logistics/redstone_contact.json
-00877e6b56f28d8691080ef18b654f0a141835ce data/create/recipes/crafting/logistics/redstone_link.json
+ae3ce2ea0f938b65c875b5c227adc0cb93b8adde data/create/recipes/crafting/logistics/redstone_link.json
 06670fd44389b2b1755c80d02898a68c7c490620 data/create/recipes/crafting/logistics/redstone_requester.json
 8446b3ca07575ea978ddde4121900207d54be8b3 data/create/recipes/crafting/logistics/redstone_requester_clear.json
 e156e092a9c719e91cd62e23f8ee2201dce4c2a8 data/create/recipes/crafting/logistics/repackager_from_conversion.json

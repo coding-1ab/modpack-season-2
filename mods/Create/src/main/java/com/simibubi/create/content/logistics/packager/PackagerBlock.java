@@ -3,8 +3,10 @@ package com.simibubi.create.content.logistics.packager;
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.logistics.box.PackageItem;
+import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.WrenchableDirectionalBlock;
 
@@ -12,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -45,6 +48,12 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 		registerDefaultState(defaultBlockState.setValue(POWERED, false));
 	}
 
+	@Override
+	public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, LivingEntity pPlacer, ItemStack pStack) {
+		super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
+		AdvancementBehaviour.setPlacedBy(pLevel, pPos, pPlacer);
+	}
+	
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		Capability<IItemHandler> itemCap = ForgeCapabilities.ITEM_HANDLER;
@@ -97,6 +106,7 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 					be.unwrapBox(itemInHand.copy(), false);
 					be.triggerStockCheck();
 					itemInHand.shrink(1);
+					AllSoundEvents.DEPOT_PLOP.playOnServer(worldIn, pos);
 					if (itemInHand.isEmpty())
 						player.setItemInHand(handIn, ItemStack.EMPTY);
 					return InteractionResult.SUCCESS;
@@ -108,6 +118,7 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 			if (!worldIn.isClientSide()) {
 				player.getInventory()
 					.placeItemBackInInventory(be.heldBox.copy());
+				AllSoundEvents.playItemPickup(player);
 				be.heldBox = ItemStack.EMPTY;
 				be.notifyUpdate();
 			}

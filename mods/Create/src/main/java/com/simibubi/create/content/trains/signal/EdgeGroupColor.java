@@ -1,6 +1,6 @@
 package com.simibubi.create.content.trains.signal;
 
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.theme.Color;
 
 public enum EdgeGroupColor {
 

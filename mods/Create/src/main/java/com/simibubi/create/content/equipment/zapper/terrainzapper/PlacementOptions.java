@@ -2,7 +2,7 @@ package com.simibubi.create.content.equipment.zapper.terrainzapper;
 
 import com.simibubi.create.foundation.gui.AllIcons;
 
-import net.createmod.catnip.utility.lang.Lang;
+import net.createmod.catnip.lang.Lang;
 
 public enum PlacementOptions {
 

@@ -7,8 +7,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.google.common.cache.Cache;
 import com.simibubi.create.foundation.utility.TickBasedCache;
 
-import net.createmod.catnip.utility.AnimationTickHolder;
-import net.createmod.catnip.utility.WorldAttached;
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.data.WorldAttached;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -24,20 +24,20 @@ public class ChainConveyorPackage {
 	private static final int ticksUntilExpired = 30;
 	public static final WorldAttached<Cache<Integer, ChainConveyorPackagePhysicsData>> physicsDataCache =
 		new WorldAttached<>($ -> new TickBasedCache<>(ticksUntilExpired, true));
-	
+
 	public class ChainConveyorPackagePhysicsData {
 		public Vec3 targetPos;
 		public Vec3 prevTargetPos;
 		public Vec3 prevPos;
 		public Vec3 pos;
-		
+
 		public Vec3 motion;
 		public int lastTick;
 		public float yaw;
 		public float prevYaw;
 		public boolean flipped;
 		public ResourceLocation modelKey;
-		
+
 		public WeakReference<ChainConveyorBlockEntity> beReference;
 
 		public ChainConveyorPackagePhysicsData(Vec3 serverPosition) {
@@ -45,7 +45,7 @@ public class ChainConveyorPackage {
 			this.prevTargetPos = null;
 			this.pos = null;
 			this.prevPos = null;
-			
+
 			this.motion = Vec3.ZERO;
 			this.lastTick = AnimationTickHolder.getTicks();
 		}
@@ -56,12 +56,12 @@ public class ChainConveyorPackage {
 			lastTick = AnimationTickHolder.getTicks();
 			return true;
 		}
-		
+
 		public void setBE(ChainConveyorBlockEntity ccbe) {
 			if (beReference == null || beReference.get() != ccbe)
 				beReference = new WeakReference<ChainConveyorBlockEntity>(ccbe);
 		}
-		
+
 	}
 
 	public float chainPosition;

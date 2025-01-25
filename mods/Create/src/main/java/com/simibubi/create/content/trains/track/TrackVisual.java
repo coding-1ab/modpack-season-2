@@ -13,7 +13,7 @@ import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.contraptions.render.ContraptionVisual;
 import com.simibubi.create.content.trains.track.BezierConnection.GirderAngles;
 import com.simibubi.create.content.trains.track.BezierConnection.SegmentAngles;
-import com.simibubi.create.foundation.render.ShaderLightPartial;
+import com.simibubi.create.foundation.render.SpecialModels;
 
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.visual.ShaderLightVisual;
@@ -26,8 +26,8 @@ import dev.engine_room.flywheel.lib.transform.TransformStack;
 import dev.engine_room.flywheel.lib.visual.AbstractBlockEntityVisual;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
-import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.data.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.Level;
@@ -157,11 +157,11 @@ public class TrackVisual extends AbstractBlockEntityVisual<TrackBlockEntity> imp
 
 			TrackMaterial.TrackModelHolder modelHolder = bc.getMaterial().getModelHolder();
 
-			instancerProvider().instancer(InstanceTypes.TRANSFORMED, ShaderLightPartial.flat(modelHolder.tie()))
+			instancerProvider().instancer(InstanceTypes.TRANSFORMED, SpecialModels.flatChunk(modelHolder.tie()))
 				.createInstances(ties);
-			instancerProvider().instancer(InstanceTypes.TRANSFORMED, ShaderLightPartial.flat(modelHolder.leftSegment()))
+			instancerProvider().instancer(InstanceTypes.TRANSFORMED, SpecialModels.flatChunk(modelHolder.leftSegment()))
 				.createInstances(left);
-			instancerProvider().instancer(InstanceTypes.TRANSFORMED, ShaderLightPartial.flat(modelHolder.rightSegment()))
+			instancerProvider().instancer(InstanceTypes.TRANSFORMED, SpecialModels.flatChunk(modelHolder.rightSegment()))
 				.createInstances(right);
 
 			SegmentAngles[] segments = bc.getBakedSegments();

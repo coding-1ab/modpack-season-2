@@ -10,11 +10,13 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelSlot;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.repackager.RepackagerBlockEntity;
+import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.nbt.NBTHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -35,12 +37,18 @@ public class FactoryPanelBlockEntity extends SmartBlockEntity {
 
 	public boolean redraw;
 	public boolean restocker;
+	public VoxelShape lastShape;
 
-	private VoxelShape lastShape;
+	public AdvancementBehaviour advancements;
 
 	public FactoryPanelBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 		restocker = false;
+	}
+	
+	@Override
+	protected AABB createRenderBoundingBox() {
+		return new AABB(worldPosition).inflate(8);
 	}
 
 	@Override
@@ -52,6 +60,8 @@ public class FactoryPanelBlockEntity extends SmartBlockEntity {
 			panels.put(slot, e);
 			behaviours.add(e);
 		}
+
+		behaviours.add(advancements = new AdvancementBehaviour(this, AllAdvancements.FACTORY_GAUGE));
 	}
 
 	@Override
@@ -99,7 +109,7 @@ public class FactoryPanelBlockEntity extends SmartBlockEntity {
 				result++;
 		return result;
 	}
-	
+
 	@Override
 	public void remove() {
 		for (FactoryPanelBehaviour panelBehaviour : panels.values())

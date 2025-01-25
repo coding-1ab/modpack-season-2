@@ -1,15 +1,18 @@
 package com.simibubi.create.content.kinetics.chainConveyor;
 
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity.ConnectionStats;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 
-import net.createmod.catnip.utility.AnimationTickHolder;
-import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
@@ -33,6 +36,8 @@ public class ChainConveyorRidingHandler {
 
 		Component component = Component.translatable("mount.onboard", mc.options.keyShift.getTranslatedKeyMessage());
 		mc.gui.setOverlayMessage(component, false);
+		mc.getSoundManager()
+			.play(SimpleSoundInstance.forUI(SoundEvents.CHAIN_HIT, 1f, 0.5f));
 	}
 
 	public static void clientTick() {
@@ -41,15 +46,17 @@ public class ChainConveyorRidingHandler {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.isPaused())
 			return;
+		if (!AllItemTags.CHAIN_RIDEABLE.matches(mc.player.getMainHandItem())) {
+			stopRiding();
+			return;
+		}
 		BlockEntity blockEntity = mc.level.getBlockEntity(ridingChainConveyor);
 		if (mc.player.isShiftKeyDown() || !(blockEntity instanceof ChainConveyorBlockEntity clbe)) {
-			ridingChainConveyor = null;
-			ridingConnection = null;
+			stopRiding();
 			return;
 		}
 		if (ridingConnection != null && !clbe.connections.contains(ridingConnection)) {
-			ridingChainConveyor = null;
-			ridingConnection = null;
+			stopRiding();
 			return;
 		}
 
@@ -85,9 +92,8 @@ public class ChainConveyorRidingHandler {
 			catchingUp--;
 
 		Vec3 diff = targetPosition.subtract(playerPosition);
-		if (catchingUp == 0 && diff.length() > 3) {
-			ridingChainConveyor = null;
-			ridingConnection = null;
+		if (catchingUp == 0 && (diff.length() > 3 || diff.y < -1)) {
+			stopRiding();
 			return;
 		}
 
@@ -96,7 +102,18 @@ public class ChainConveyorRidingHandler {
 			.add(diff.scale(0.25)));
 		if (AnimationTickHolder.getTicks() % 10 == 0)
 			AllPackets.getChannel()
-				.sendToServer(new ServerboundChainConveyorRidingPacket(ridingChainConveyor));
+				.sendToServer(new ServerboundChainConveyorRidingPacket(ridingChainConveyor, false));
+	}
+
+	private static void stopRiding() {
+		if (ridingChainConveyor != null)
+			AllPackets.getChannel()
+				.sendToServer(new ServerboundChainConveyorRidingPacket(ridingChainConveyor, true));
+		ridingChainConveyor = null;
+		ridingConnection = null;
+		Minecraft.getInstance()
+			.getSoundManager()
+			.play(SimpleSoundInstance.forUI(SoundEvents.CHAIN_HIT, 0.75f, 0.35f));
 	}
 
 	private static void updateTargetPosition(Minecraft mc, ChainConveyorBlockEntity clbe) {

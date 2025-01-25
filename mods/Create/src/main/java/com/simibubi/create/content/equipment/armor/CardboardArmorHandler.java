@@ -3,6 +3,7 @@ package com.simibubi.create.content.equipment.armor;
 import java.util.UUID;
 
 import com.simibubi.create.AllItems;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -25,10 +26,18 @@ public class CardboardArmorHandler {
 
 	@SubscribeEvent
 	public static void playerHitboxChangesWhenHidingAsBox(EntityEvent.Size event) {
-		if (event.getEntity().isAddedToWorld() && testForStealth(event.getEntity())) {
-			event.setNewSize(EntityDimensions.fixed(0.8F, 0.8F));
-			event.setNewEyeHeight(0.6F);
-		}
+		Entity entity = event.getEntity();
+		if (!entity.isAddedToWorld())
+			return;
+		if (!testForStealth(entity))
+			return;
+		
+		event.setNewSize(EntityDimensions.fixed(0.6F, 0.8F));
+		event.setNewEyeHeight(0.6F);
+		
+		if (!entity.level()
+			.isClientSide() && entity instanceof Player p)
+			AllAdvancements.CARDBOARD_ARMOR.awardTo(p);
 	}
 
 	@SubscribeEvent

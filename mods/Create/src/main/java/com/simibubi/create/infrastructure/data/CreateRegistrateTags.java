@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+
 import net.minecraftforge.common.Tags;
 
 public class CreateRegistrateTags {
@@ -158,6 +159,9 @@ public class CreateRegistrateTags {
 	private static void genItemTags(RegistrateTagsProvider<Item> provIn) {
 		CreateTagsProvider<Item> prov = new CreateTagsProvider<>(provIn, Item::builtInRegistryHolder);
 
+		prov.tag(AllItemTags.CHAIN_RIDEABLE.tag)
+			.addTag(AllItemTags.WRENCH.tag);
+
 		prov.tag(AllItemTags.PULPIFIABLE.tag)
 			.add(Items.BAMBOO, Items.SUGAR_CANE)
 			.addTag(ItemTags.SAPLINGS);
@@ -205,7 +209,8 @@ public class CreateRegistrateTags {
 
 		genStrippedWoodItemTags(prov);
 
-		prov.tag(AllItemTags.CURIOS_HEAD.tag).add(AllItems.GOGGLES.get());
+		prov.tag(AllItemTags.CURIOS_HEAD.tag)
+			.add(AllItems.GOGGLES.get());
 
 		TagGen.addOptional(prov.tag(AllItemTags.ALLURITE.tag), Mods.GS, gsPalette("allurite"));
 

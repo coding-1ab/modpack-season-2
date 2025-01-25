@@ -10,12 +10,13 @@ import com.simibubi.create.api.schematic.requirement.ISpecialBlockItemRequiremen
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
+import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -47,6 +48,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.ForgeMod;
@@ -146,7 +148,7 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 		Player player = context.getPlayer();
 		PanelSlot slot = getTargetedSlot(pos, state, context.getClickLocation());
 
-		if (!(world instanceof ServerLevel serverLevel))
+		if (!(world instanceof ServerLevel))
 			return InteractionResult.SUCCESS;
 
 		return onBlockEntityUse(world, pos, be -> {
@@ -179,6 +181,7 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 		super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
 		if (pPlacer == null)
 			return;
+		AdvancementBehaviour.setPlacedBy(pLevel, pPos, pPlacer);
 		double range = pPlacer.getAttribute(ForgeMod.BLOCK_REACH.get())
 			.getValue() + 1;
 		HitResult hitResult = pPlacer.pick(range, 1, false);
@@ -292,6 +295,8 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 	@Override
 	public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos,
 		CollisionContext pContext) {
+		if (pContext instanceof EntityCollisionContext ecc && ecc.getEntity() == null)
+			return getShape(pState, pLevel, pPos, pContext);
 		return Shapes.empty();
 	}
 
@@ -324,7 +329,7 @@ public class FactoryPanelBlock extends FaceAttachedHorizontalDirectionalBlock
 		IBE.onRemove(pState, pLevel, pPos, pNewState);
 	}
 
-	public PanelSlot getTargetedSlot(BlockPos pos, BlockState blockState, Vec3 clickLocation) {
+	public static PanelSlot getTargetedSlot(BlockPos pos, BlockState blockState, Vec3 clickLocation) {
 		double bestDistance = Double.MAX_VALUE;
 		PanelSlot bestSlot = PanelSlot.BOTTOM_LEFT;
 		Vec3 localClick = clickLocation.subtract(Vec3.atLowerCornerOf(pos));

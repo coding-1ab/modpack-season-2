@@ -1,6 +1,7 @@
 package com.simibubi.create.content.logistics.filter;
 
 import com.simibubi.create.content.logistics.filter.AttributeFilterMenu.WhitelistMode;
+import com.simibubi.create.content.logistics.item.filter.attribute.ItemAttribute;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 
 import net.minecraft.nbt.CompoundTag;
@@ -67,9 +68,9 @@ public class FilterScreenPacket extends SimplePacketBase {
 				if (option == Option.BLACKLIST)
 					c.whitelistMode = WhitelistMode.BLACKLIST;
 				if (option == Option.ADD_TAG)
-					c.appendSelectedAttribute(ItemAttribute.fromNBT(data), false);
+					c.appendSelectedAttribute(ItemAttribute.loadStatic(data), false);
 				if (option == Option.ADD_INVERTED_TAG)
-					c.appendSelectedAttribute(ItemAttribute.fromNBT(data), true);
+					c.appendSelectedAttribute(ItemAttribute.loadStatic(data), true);
 			}
 			
 			if (player.containerMenu instanceof PackageFilterMenu c) {

@@ -1044,9 +1044,9 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.pattern("SSS")),
 
 		REDSTONE_LINK = create(AllBlocks.REDSTONE_LINK).returns(2)
-			.unlockedBy(I::brassCasing)
-			.viaShaped(b -> b.define('C', Blocks.REDSTONE_TORCH)
-				.define('S', I.brassCasing())
+			.unlockedBy(I::andesiteCasing)
+			.viaShaped(b -> b.define('C', AllItems.TRANSMITTER)
+				.define('S', I.andesiteCasing())
 				.pattern("C")
 				.pattern("S")),
 

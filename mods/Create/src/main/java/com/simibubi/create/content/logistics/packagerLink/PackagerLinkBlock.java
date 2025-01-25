@@ -2,10 +2,11 @@ package com.simibubi.create.content.logistics.packagerLink;
 
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllShapes;
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
 
-import net.createmod.catnip.utility.Iterate;
+import net.createmod.catnip.data.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,7 +31,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class PackagerLinkBlock extends FaceAttachedHorizontalDirectionalBlock
-	implements IBE<PackagerLinkBlockEntity>, ProperWaterloggedBlock {
+	implements IBE<PackagerLinkBlockEntity>, ProperWaterloggedBlock, IWrenchable {
 
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
@@ -46,7 +47,7 @@ public class PackagerLinkBlock extends FaceAttachedHorizontalDirectionalBlock
 		BlockState placed = super.getStateForPlacement(context);
 		if (placed == null)
 			return null;
-		if (placed.getValue(FACE) == AttachFace.FLOOR)
+		if (placed.getValue(FACE) == AttachFace.CEILING)
 			placed = placed.setValue(FACING, placed.getValue(FACING)
 				.getOpposite());
 		return withWater(placed.setValue(POWERED, getPower(placed, context.getLevel(), pos) > 0), context);

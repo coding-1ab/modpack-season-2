@@ -25,9 +25,9 @@ import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.GuiGameElement;
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -35,6 +35,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
@@ -117,6 +118,8 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		confirmButton.visible = true;
 		if (editingItem == null)
 			return;
+
+		playUiSound(SoundEvents.UI_BUTTON_CLICK.get(), 1, 1);
 
 		removeWidget(editorConfirm);
 		removeWidget(editorEditBox);
@@ -337,8 +340,10 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		if (x > 0 && x <= 16 && y > 0 && y <= 16) {
 			renderActionTooltip(graphics, ImmutableList.of(CreateLang.translate("gui.stock_ticker.new_category")
 				.component()), mx, my);
-			if (click == 0)
+			if (click == 0) {
+				playUiSound(SoundEvents.UI_BUTTON_CLICK.get(), 1f, 1f);
 				startEditing(-1);
+			}
 		}
 
 		return false;
@@ -355,8 +360,10 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 			stopEditing();
 			return true;
 		}
-		if (action(null, pMouseX, pMouseY, pButton))
+		if (action(null, pMouseX, pMouseY, pButton)) {
+			playUiSound(SoundEvents.UI_BUTTON_CLICK.get(), 1f, 1f);
 			return true;
+		}
 
 		boolean wasNotFocused = editorEditBox != null && !editorEditBox.isFocused();
 		boolean mouseClicked = super.mouseClicked(pMouseX, pMouseY, pButton);

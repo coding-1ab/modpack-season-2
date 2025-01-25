@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.simibubi.create.AllRegistries;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.resources.ResourceLocation;
@@ -34,7 +36,7 @@ public interface FanProcessingType {
 		if (id == null) {
 			return AllFanProcessingTypes.NONE;
 		}
-		FanProcessingType type = FanProcessingTypeRegistry.getType(id);
+		FanProcessingType type = AllRegistries.FAN_PROCESSING_TYPES.get().getValue(id);
 		if (type == null) {
 			return AllFanProcessingTypes.NONE;
 		}

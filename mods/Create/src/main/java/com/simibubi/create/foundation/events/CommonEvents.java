@@ -16,14 +16,17 @@ import com.simibubi.create.content.kinetics.chainConveyor.ServerChainConveyorHan
 import com.simibubi.create.content.kinetics.drill.CobbleGenOptimisation;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerServerHandler;
 import com.simibubi.create.content.trains.entity.CarriageEntityHandler;
-import com.simibubi.create.foundation.ModFilePackResources;
+import com.simibubi.create.foundation.pack.DynamicPack;
+import com.simibubi.create.foundation.pack.DynamicPackSource;
+import com.simibubi.create.foundation.pack.ModFilePackResources;
 import com.simibubi.create.foundation.recipe.RecipeFinder;
+import com.simibubi.create.foundation.recipe.RuntimeDataGenerator;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 import com.simibubi.create.foundation.utility.TickBasedCache;
 import com.simibubi.create.infrastructure.command.AllCommands;
 
-import net.createmod.catnip.utility.WorldAttached;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.data.WorldAttached;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
@@ -222,6 +225,12 @@ public class CommonEvents {
 						consumer.accept(pack);
 					}
 				});
+			}
+
+			if (event.getPackType() == PackType.SERVER_DATA) {
+				DynamicPack dynamicPack = new DynamicPack("create:dynamic_data", PackType.SERVER_DATA);
+				RuntimeDataGenerator.insertIntoPack(dynamicPack);
+				event.addRepositorySource(new DynamicPackSource("create:dynamic_data", PackType.SERVER_DATA, Pack.Position.BOTTOM, dynamicPack));
 			}
 		}
 	}

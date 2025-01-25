@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllSoundEvents;
-import com.simibubi.create.Create;
 import com.simibubi.create.content.decoration.steamWhistle.WhistleBlock;
 import com.simibubi.create.content.decoration.steamWhistle.WhistleBlockEntity;
 import com.simibubi.create.content.kinetics.BlockStressValues;
@@ -21,10 +20,10 @@ import com.simibubi.create.foundation.fluid.FluidHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import joptsimple.internal.Strings;
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,6 +35,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -66,6 +66,7 @@ public class BoilerData {
 	private int maxHeatForWater = 0;
 	private int minValue = 0;
 	private int maxValue = 0;
+	public boolean[] occludedDirections = { true, true, true, true };
 
 	public LerpedFloat gauge = LerpedFloat.linear();
 
@@ -86,12 +87,13 @@ public class BoilerData {
 	public void tick(FluidTankBlockEntity controller) {
 		if (!isActive())
 			return;
-		if (controller.getLevel().isClientSide) {
-			pools.values().forEach(p -> p.play(controller.getLevel()));
+		Level level = controller.getLevel();
+		if (level.isClientSide) {
+			pools.values().forEach(p -> p.play(level));
 			gauge.tickChaser();
 			float current = gauge.getValue(1);
-			if (current > 1 && Create.RANDOM.nextFloat() < 1 / 2f)
-				gauge.setValueNoUpdate(current + Math.min(-(current - 1) * Create.RANDOM.nextFloat(), 0));
+			if (current > 1 && level.random.nextFloat() < 1 / 2f)
+				gauge.setValueNoUpdate(current + Math.min(-(current - 1) * level.random.nextFloat(), 0));
 			return;
 		}
 		if (needsHeatLevelUpdate && updateTemperature(controller))
@@ -122,6 +124,23 @@ public class BoilerData {
 			controller.award(AllAdvancements.STEAM_ENGINE_MAXED);
 
 		controller.notifyUpdate();
+	}
+
+	public void updateOcclusion(FluidTankBlockEntity controller) {
+		if (!controller.getLevel().isClientSide)
+			return;
+		if (attachedEngines + attachedWhistles == 0)
+			return;
+		for (Direction d : Iterate.horizontalDirections) {
+			AABB aabb =
+				new AABB(controller.getBlockPos()).move(controller.width / 2f - .5f, 0, controller.width / 2f - .5f)
+					.deflate(5f / 8);
+			aabb = aabb.move(d.getStepX() * (controller.width / 2f + 1 / 4f), 0,
+				d.getStepZ() * (controller.width / 2f + 1 / 4f));
+			aabb = aabb.inflate(Math.abs(d.getStepZ()) / 2f, 0.25f, Math.abs(d.getStepX()) / 2f);
+			occludedDirections[d.get2DDataValue()] = !controller.getLevel()
+				.noCollision(aabb);
+		}
 	}
 
 	public void queueSoundOnSide(BlockPos pos, Direction side) {

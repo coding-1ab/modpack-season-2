@@ -12,7 +12,7 @@ import java.util.zip.GZIPInputStream;
 
 import javax.annotation.Nonnull;
 
-import net.createmod.catnip.platform.CatnipServices;
+import net.minecraft.core.registries.Registries;
 
 import org.slf4j.Logger;
 
@@ -22,11 +22,10 @@ import com.simibubi.create.content.schematics.client.SchematicEditScreen;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.ScreenOpener;
-import net.createmod.catnip.utility.NBTHelper;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.nbt.NBTHelper;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
@@ -41,7 +40,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
@@ -58,7 +56,7 @@ public class SchematicItem extends Item {
 		super(properties);
 	}
 
-	public static ItemStack create(HolderGetter<Block> lookup, String schematic, String owner) {
+	public static ItemStack create(Level level, String schematic, String owner) {
 		ItemStack blueprint = AllItems.SCHEMATIC.asStack();
 
 		CompoundTag tag = new CompoundTag();
@@ -70,7 +68,7 @@ public class SchematicItem extends Item {
 		tag.putString("Mirror", Mirror.NONE.name());
 		blueprint.setTag(tag);
 
-		writeSize(lookup, blueprint);
+		writeSize(level, blueprint);
 		return blueprint;
 	}
 
@@ -88,9 +86,9 @@ public class SchematicItem extends Item {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 	}
 
-	public static void writeSize(HolderGetter<Block> lookup, ItemStack blueprint) {
+	public static void writeSize(Level level, ItemStack blueprint) {
 		CompoundTag tag = blueprint.getTag();
-		StructureTemplate t = loadSchematic(lookup, blueprint);
+		StructureTemplate t = loadSchematic(level, blueprint);
 		tag.put("Bounds", NBTHelper.writeVec3i(t.getSize()));
 		blueprint.setTag(tag);
 		SchematicInstances.clearHash(blueprint);
@@ -110,7 +108,7 @@ public class SchematicItem extends Item {
 		return settings;
 	}
 
-	public static StructureTemplate loadSchematic(HolderGetter<Block> lookup, ItemStack blueprint) {
+	public static StructureTemplate loadSchematic(Level level, ItemStack blueprint) {
 		StructureTemplate t = new StructureTemplate();
 		String owner = blueprint.getTag()
 			.getString("Owner");
@@ -123,7 +121,7 @@ public class SchematicItem extends Item {
 		Path dir;
 		Path file;
 
-		if (CatnipServices.PLATFORM.getEnv().isServer()) {
+		if (!level.isClientSide()) {
 			dir = Paths.get("schematics", "uploaded").toAbsolutePath();
 			file = Paths.get(owner, schematic);
 		} else {
@@ -138,7 +136,7 @@ public class SchematicItem extends Item {
 		try (DataInputStream stream = new DataInputStream(new BufferedInputStream(
 				new GZIPInputStream(Files.newInputStream(path, StandardOpenOption.READ))))) {
 			CompoundTag nbt = NbtIo.read(stream, new NbtAccounter(0x20000000L));
-			t.load(lookup, nbt);
+			t.load(level.holderLookup(Registries.BLOCK), nbt);
 		} catch (IOException e) {
 			LOGGER.warn("Failed to read schematic", e);
 		}

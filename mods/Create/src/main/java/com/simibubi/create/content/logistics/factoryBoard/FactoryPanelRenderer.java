@@ -13,7 +13,7 @@ import com.simibubi.create.foundation.render.RenderTypes;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -86,7 +86,7 @@ public class FactoryPanelRenderer extends SmartBlockEntityRenderer<FactoryPanelB
 	public static void renderPath(FactoryPanelBehaviour behaviour, FactoryPanelConnection connection,
 		float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
 		BlockState blockState = behaviour.blockEntity.getBlockState();
-		List<Direction> path = connection.getPath(blockState, behaviour.getPanelPosition());
+		List<Direction> path = connection.getPath(behaviour.getWorld(), blockState, behaviour.getPanelPosition());
 
 		float xRot = FactoryPanelBlock.getXRot(blockState) + Mth.PI / 2;
 		float yRot = FactoryPanelBlock.getYRot(blockState);

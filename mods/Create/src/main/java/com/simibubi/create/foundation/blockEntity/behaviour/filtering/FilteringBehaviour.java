@@ -21,9 +21,9 @@ import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -281,9 +281,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 		ItemStack itemInHand = player.getItemInHand(hand);
 		ItemStack toApply = itemInHand.copy();
 
-		if (AllItems.WRENCH.isIn(toApply))
-			return;
-		if (AllBlocks.MECHANICAL_ARM.isIn(toApply))
+		if (!canShortInteract(toApply))
 			return;
 		if (level.isClientSide())
 			return;
@@ -316,6 +314,14 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 		}
 
 		level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, .25f, .1f);
+	}
+
+	public boolean canShortInteract(ItemStack toApply) {
+		if (AllItems.WRENCH.isIn(toApply))
+			return false;
+		if (AllBlocks.MECHANICAL_ARM.isIn(toApply))
+			return false;
+		return true;
 	}
 
 	public MutableComponent getLabel() {
@@ -413,7 +419,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	public boolean bypassesInput(ItemStack mainhandItem) {
 		return false;
 	}
-	
+
 	@Override
 	public int netId() {
 		return 1;

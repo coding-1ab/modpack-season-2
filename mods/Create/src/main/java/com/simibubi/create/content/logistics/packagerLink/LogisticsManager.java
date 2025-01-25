@@ -24,7 +24,7 @@ import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBeha
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.foundation.utility.TickBasedCache;
 
-import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.data.Pair;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
@@ -64,6 +64,9 @@ public class LogisticsManager {
 
 	public static boolean broadcastPackageRequest(UUID freqId, RequestType type, PackageOrder order,
 		IItemHandler ignoredHandler, String address) {
+		if (order.isEmpty())
+			return false;
+
 		Multimap<PackagerBlockEntity, PackagingRequest> requests =
 			findPackagersForRequest(freqId, order, null, ignoredHandler, address);
 
@@ -141,6 +144,8 @@ public class LogisticsManager {
 			ArrayList<PackagingRequest> queuedRequests = new ArrayList<>(entry.getValue());
 			PackagerBlockEntity packager = entry.getKey();
 
+			if (!queuedRequests.isEmpty())
+				packager.flashLink();
 			for (int i = 0; i < 100; i++) {
 				if (queuedRequests.isEmpty())
 					break;

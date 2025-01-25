@@ -29,6 +29,7 @@ import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
 import com.simibubi.create.content.equipment.armor.CardboardHelmetItem;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
 import com.simibubi.create.content.equipment.armor.DivingHelmetItem;
+import com.simibubi.create.content.equipment.armor.TrimmableArmorModelGenerator;
 import com.simibubi.create.content.equipment.blueprint.BlueprintItem;
 import com.simibubi.create.content.equipment.extendoGrip.ExtendoGripItem;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
@@ -72,6 +73,8 @@ import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
@@ -151,7 +154,16 @@ public class AllItems {
 
 	public static final ItemEntry<BuildersTeaItem> BUILDERS_TEA = REGISTRATE.item("builders_tea", BuildersTeaItem::new)
 		.tag(AllItemTags.UPRIGHT_ON_BELT.tag)
-		.properties(p -> p.stacksTo(16))
+		.properties(p -> p
+			.stacksTo(16)
+			.food(new FoodProperties.Builder()
+				.nutrition(1)
+				.saturationMod(.6F)
+				.alwaysEat()
+				.effect(() -> new MobEffectInstance(MobEffects.DIG_SPEED, 3 * 60 * 20, 0, false, false, false), 1F)
+				.build()
+			)
+		)
 		.lang("Builder's Tea")
 		.register();
 
@@ -322,25 +334,29 @@ public class AllItems {
 	public static final ItemEntry<? extends BaseArmorItem>
 
 	CARDBOARD_HELMET = REGISTRATE.item("cardboard_helmet", p -> new CardboardHelmetItem(ArmorItem.Type.HELMET, p))
-		.tag(forgeItemTag("armors/helmet"))
+		.tag(forgeItemTag("armors/helmet"), ItemTags.TRIMMABLE_ARMOR)
 		.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+		.model(TrimmableArmorModelGenerator::generate)
 		.register(),
 
 		CARDBOARD_CHESTPLATE =
 			REGISTRATE.item("cardboard_chestplate", p -> new CardboardArmorItem(ArmorItem.Type.CHESTPLATE, p))
-				.tag(forgeItemTag("armors/chestplate"))
+				.tag(forgeItemTag("armors/chestplate"), ItemTags.TRIMMABLE_ARMOR)
 				.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+				.model(TrimmableArmorModelGenerator::generate)
 				.register(),
 
 		CARDBOARD_LEGGINGS =
 			REGISTRATE.item("cardboard_leggings", p -> new CardboardArmorItem(ArmorItem.Type.LEGGINGS, p))
-				.tag(forgeItemTag("armors/leggings"))
+				.tag(forgeItemTag("armors/leggings"), ItemTags.TRIMMABLE_ARMOR)
 				.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+				.model(TrimmableArmorModelGenerator::generate)
 				.register(),
 
 		CARDBOARD_BOOTS = REGISTRATE.item("cardboard_boots", p -> new CardboardArmorItem(ArmorItem.Type.BOOTS, p))
-			.tag(forgeItemTag("armors/boots"))
+			.tag(forgeItemTag("armors/boots"), ItemTags.TRIMMABLE_ARMOR)
 			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+			.model(TrimmableArmorModelGenerator::generate)
 			.register();
 
 	public static final ItemEntry<SandPaperItem> SAND_PAPER = REGISTRATE.item("sand_paper", SandPaperItem::new)
@@ -422,7 +438,7 @@ public class AllItems {
 			packageItem.register();
 		}
 	}
-	
+
 	public static final ItemEntry<FilterItem> FILTER = REGISTRATE.item("filter", FilterItem::regular)
 		.lang("List Filter")
 		.register(),

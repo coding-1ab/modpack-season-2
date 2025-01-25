@@ -15,7 +15,8 @@ import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.filter.AttributeFilterMenu.WhitelistMode;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
-import com.simibubi.create.content.logistics.filter.ItemAttribute;
+import com.simibubi.create.content.logistics.item.filter.attribute.ItemAttribute;
+import com.simibubi.create.content.logistics.item.filter.attribute.attributes.InTagAttribute;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.tableCloth.BlueprintOverlayShopContext;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
@@ -24,12 +25,11 @@ import com.simibubi.create.content.trains.track.TrackPlacement.PlacementInfo;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 
 import net.createmod.catnip.gui.element.GuiGameElement;
-import net.createmod.catnip.utility.AnimationTickHolder;
-import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.Iterate;
-import net.createmod.catnip.utility.Pair;
-import net.createmod.catnip.utility.lang.Components;
-import net.createmod.ponder.utility.LevelTickHolder;
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -348,7 +348,7 @@ public class BlueprintOverlayRenderer {
 			TooltipRenderUtil.renderTooltipBackground(graphics, x - 2, y + 1, w + 4, 19, 0, 0x55_000000, 0x55_000000, 0,
 				0);
 
-			AllGuiTextures.TRADE_OVERLAY.render(graphics, width / 2 - 49, y - 19);
+			AllGuiTextures.TRADE_OVERLAY.render(graphics, width / 2 - 48, y - 19);
 			if (shopContext.purchases() > 0) {
 				graphics.renderItem(AllItems.SHOPPING_LIST.asStack(), width / 2 + 20, y - 20);
 				graphics.drawString(mc.font, Components.literal("x" + shopContext.purchases()), width / 2 + 20 + 16,
@@ -423,7 +423,7 @@ public class BlueprintOverlayRenderer {
 	public static void drawItemStack(GuiGraphics graphics, Minecraft mc, int x, int y, ItemStack itemStack,
 		String count) {
 		if (itemStack.getItem() instanceof FilterItem) {
-			int step = LevelTickHolder.getTicks(mc.level) / 10;
+			int step = AnimationTickHolder.getTicks(mc.level) / 10;
 			ItemStack[] itemsMatchingFilter = getItemsMatchingFilter(itemStack);
 			if (itemsMatchingFilter.length > 0)
 				itemStack = itemsMatchingFilter[step % itemsMatchingFilter.length];
@@ -447,15 +447,15 @@ public class BlueprintOverlayRenderer {
 					if (!stackInSlot.isEmpty())
 						list.add(stackInSlot);
 				}
-				return list.toArray(new ItemStack[list.size()]);
+				return list.toArray(ItemStack[]::new);
 			}
 
 			if (AllItems.ATTRIBUTE_FILTER.isIn(itemStack)) {
 				WhitelistMode whitelistMode = WhitelistMode.values()[tag.getInt("WhitelistMode")];
 				ListTag attributes = tag.getList("MatchedAttributes", net.minecraft.nbt.Tag.TAG_COMPOUND);
 				if (whitelistMode == WhitelistMode.WHITELIST_DISJ && attributes.size() == 1) {
-					ItemAttribute fromNBT = ItemAttribute.fromNBT((CompoundTag) attributes.get(0));
-					if (fromNBT instanceof ItemAttribute.InTag inTag) {
+					ItemAttribute fromNBT = ItemAttribute.loadStatic((CompoundTag) attributes.get(0));
+					if (fromNBT instanceof InTagAttribute inTag) {
 						ITagManager<Item> tagManager = ForgeRegistries.ITEMS.tags();
 						if (tagManager.isKnownTagName(inTag.tag)) {
 							ITag<Item> taggedItems = tagManager.getTag(inTag.tag);

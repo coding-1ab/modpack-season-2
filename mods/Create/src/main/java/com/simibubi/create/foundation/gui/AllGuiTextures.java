@@ -5,7 +5,7 @@ import com.simibubi.create.Create;
 import net.createmod.catnip.gui.TextureSheetSegment;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.ScreenElement;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,13 +24,14 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	CURSEFORGE_LOGO("platform_icons/curseforge", 256, 256),
 	MODRINTH_LOGO("platform_icons/modrinth", 256, 256),
 
-	SCHEMATIC("schematics", 192, 121),
+	SCHEMATIC("schematics", 10, 8, 192, 123),
+	SCHEMATIC_TITLE("schematics_2", 205, 15),
 	SCHEMATIC_SLOT("widgets", 54, 0, 16, 16),
-	SCHEMATIC_PROMPT("schematics_2", 213, 77),
+	SCHEMATIC_PROMPT("schematics_2", 213, 79),
 	HUD_BACKGROUND("overlay", 0, 0, 16, 16),
 
-	SCHEMATIC_TABLE("schematics", 0, 121, 214, 83),
-	SCHEMATIC_TABLE_PROGRESS("schematics", 0, 204, 84, 16),
+	SCHEMATIC_TABLE("schematics", 10, 139, 214, 85),
+	SCHEMATIC_TABLE_PROGRESS("schematics", 10, 224, 84, 16),
 
 	SCHEMATICANNON_TOP("schematics_2", 0, 77, 213, 42),
 	SCHEMATICANNON_BOTTOM("schematics_2", 0, 119, 213, 99),
@@ -156,7 +157,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	FACTORY_GAUGE_RECIPE("factory_gauge", 32, 0, 192, 96),
 	FACTORY_GAUGE_RESTOCK("factory_gauge", 32, 112, 192, 40),
 	FACTORY_GAUGE_BOTTOM("factory_gauge", 32, 176, 200, 64),
-	
+
 	STOCK_KEEPER_REQUEST_HEADER("stock_keeper", 0, 0, 256, 36),
 	STOCK_KEEPER_REQUEST_BODY("stock_keeper", 0, 48, 256, 20),
 	STOCK_KEEPER_REQUEST_FOOTER("stock_keeper", 0, 80, 256, 80),
@@ -190,7 +191,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	STOCK_KEEPER_CATEGORY_ENTRY("stock_keeper_categories", 38, 159, 171, 18),
 	STOCK_KEEPER_CATEGORY_UP("stock_keeper_categories", 211, 160, 8, 8),
 	STOCK_KEEPER_CATEGORY_DOWN("stock_keeper_categories", 211, 169, 8, 8),
-	
+
 	REDSTONE_REQUESTER("requester", 16, 16, 232, 120),
 
 	// JEI
@@ -238,7 +239,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	TRAIN_PROMPT_R("widgets", 11, 209, 3, 16),
 	TRAIN_PROMPT("widgets", 0, 230, 256, 16),
 
-	TRADE_OVERLAY("widgets", 136, 97, 98, 48),
+	TRADE_OVERLAY("widgets", 128, 98, 96, 46),
 
 	// PlacementIndicator
 	PLACEMENT_INDICATOR_SHEET("placement_indicator", 0, 0, 16, 256),
@@ -259,7 +260,7 @@ public enum AllGuiTextures implements ScreenElement, TextureSheetSegment {
 	COMPUTER("computer", 200, 102);
 
 	;
-	
+
 	public static final int FONT_COLOR = 0x575F7A;
 
 	public final ResourceLocation location;
