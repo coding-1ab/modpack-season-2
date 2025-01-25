@@ -11,11 +11,14 @@ import com.simibubi.create.foundation.utility.CreateCodecs;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
+/**
+ * Utility class representing non-empty slots in an item inventory.
+ */
 public class ItemSlots {
 	public static final Codec<ItemSlots> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 		Codec.unboundedMap(CreateCodecs.boundedIntStr(0), ItemStack.CODEC).fieldOf("items").forGetter(ItemSlots::toBoxedMap),

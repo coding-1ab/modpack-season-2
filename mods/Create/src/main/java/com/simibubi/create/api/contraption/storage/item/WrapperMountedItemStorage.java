@@ -7,6 +7,9 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+/**
+ * Partial implementation of a MountedItemStorage that wraps an item handler.
+ */
 public abstract class WrapperMountedItemStorage<T extends IItemHandlerModifiable> extends MountedItemStorage {
 	protected final T wrapped;
 

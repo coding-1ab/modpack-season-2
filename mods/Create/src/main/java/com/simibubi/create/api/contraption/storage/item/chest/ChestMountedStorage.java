@@ -24,7 +24,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -33,7 +32,6 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 /**
  * Mounted storage that handles opening a combined GUI for double chests.
  */
-@Mod.EventBusSubscriber
 public class ChestMountedStorage extends SimpleMountedStorage {
 	public static final Codec<ChestMountedStorage> CODEC = SimpleMountedStorage.codec(ChestMountedStorage::new);
 

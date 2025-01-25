@@ -7,6 +7,7 @@ import org.jetbrains.annotations.ApiStatus;
 import com.simibubi.create.AllMountedStorageTypes;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry;
+import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageType;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
 import com.simibubi.create.api.lookup.BlockLookup;
 
@@ -21,11 +22,17 @@ import net.minecraftforge.registries.RegistryBuilder;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MountedStorageTypeRegistryImpl {
 	public static final BlockLookup<MountedItemStorageType<?>> ITEM_LOOKUP = BlockLookup.create(MountedStorageTypeRegistryImpl::itemFallback);
+	public static final BlockLookup<MountedFluidStorageType<?>> FLUID_LOOKUP = BlockLookup.create();
 
 	private static IForgeRegistry<MountedItemStorageType<?>> itemsRegistry;
+	private static IForgeRegistry<MountedFluidStorageType<?>> fluidsRegistry;
 
 	public static IForgeRegistry<MountedItemStorageType<?>> getItemsRegistry() {
 		return Objects.requireNonNull(itemsRegistry, "Registry accessed too early");
+	}
+
+	public static IForgeRegistry<MountedFluidStorageType<?>> getFluidsRegistry() {
+		return Objects.requireNonNull(fluidsRegistry, "Registry accessed too early");
 	}
 
 	@SubscribeEvent
@@ -35,9 +42,14 @@ public class MountedStorageTypeRegistryImpl {
 				.setName(MountedStorageTypeRegistry.ITEMS.location()),
 			registry -> itemsRegistry = registry
 		);
+		event.create(
+			new RegistryBuilder<MountedFluidStorageType<?>>()
+				.setName(MountedStorageTypeRegistry.FLUIDS.location()),
+			registry -> fluidsRegistry = registry
+		);
 	}
 
-	public static MountedItemStorageType<?> itemFallback(Block block) {
+	private static MountedItemStorageType<?> itemFallback(Block block) {
 		return AllTags.AllBlockTags.FALLBACK_MOUNTED_STORAGE_BLACKLIST.matches(block)
 			? null
 			: AllMountedStorageTypes.FALLBACK.get();

@@ -3,6 +3,7 @@ package com.simibubi.create;
 import static com.simibubi.create.AllInteractionBehaviours.interactionBehaviour;
 import static com.simibubi.create.AllMovementBehaviours.movementBehaviour;
 import static com.simibubi.create.Create.REGISTRATE;
+import static com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry.mountedFluidStorage;
 import static com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry.mountedItemStorage;
 import static com.simibubi.create.content.redstone.displayLink.AllDisplayBehaviours.assignDataBehaviour;
 import static com.simibubi.create.foundation.data.BlockStateGen.axisBlock;
@@ -989,6 +990,7 @@ public class AllBlocks {
 		.blockstate(new FluidTankGenerator()::generate)
 		.onRegister(CreateRegistrate.blockModel(() -> FluidTankModel::standard))
 		.onRegister(assignDataBehaviour(new BoilerDisplaySource(), "boiler_status"))
+		.transform(mountedFluidStorage(AllMountedStorageTypes.FLUID_TANK))
 		.addLayer(() -> RenderType::cutoutMipped)
 		.item(FluidTankItem::new)
 		.model(AssetLookup.customBlockItemModel("_", "block_single_window"))
@@ -1004,6 +1006,7 @@ public class AllBlocks {
 			.tag(AllBlockTags.SAFE_NBT.tag)
 			.blockstate(new FluidTankGenerator("creative_")::generate)
 			.onRegister(CreateRegistrate.blockModel(() -> FluidTankModel::creative))
+			.transform(mountedFluidStorage(AllMountedStorageTypes.CREATIVE_FLUID_TANK))
 			.addLayer(() -> RenderType::cutoutMipped)
 			.item(FluidTankItem::new)
 			.properties(p -> p.rarity(Rarity.EPIC))

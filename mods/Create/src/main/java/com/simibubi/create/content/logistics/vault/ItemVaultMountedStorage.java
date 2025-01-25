@@ -9,6 +9,7 @@ import com.simibubi.create.api.contraption.storage.item.WrapperMountedItemStorag
 import com.simibubi.create.foundation.utility.CreateCodecs;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -42,5 +43,11 @@ public class ItemVaultMountedStorage extends WrapperMountedItemStorage<ItemStack
 	public static ItemVaultMountedStorage fromVault(ItemVaultBlockEntity vault) {
 		// Vault inventories have a world-affecting onContentsChanged, copy to a safe one
 		return new ItemVaultMountedStorage(copyToItemStackHandler(vault.getInventoryOfBlock()));
+	}
+
+	public static ItemVaultMountedStorage fromLegacy(CompoundTag nbt) {
+		ItemStackHandler handler = new ItemStackHandler();
+		handler.deserializeNBT(nbt);
+		return new ItemVaultMountedStorage(handler);
 	}
 }

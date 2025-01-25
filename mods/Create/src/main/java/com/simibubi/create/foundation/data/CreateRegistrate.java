@@ -10,13 +10,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
-
-import com.simibubi.create.api.contraption.storage.item.registrate.MountedItemStorageTypeBuilder;
-
 import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.CreateClient;
+import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageType;
+import com.simibubi.create.api.contraption.storage.fluid.registrate.MountedFluidStorageTypeBuilder;
+import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
+import com.simibubi.create.api.contraption.storage.item.registrate.MountedItemStorageTypeBuilder;
 import com.simibubi.create.content.decoration.encasing.CasingConnectivity;
 import com.simibubi.create.content.fluids.VirtualFluid;
 import com.simibubi.create.foundation.block.connected.CTModel;
@@ -146,6 +146,10 @@ public class CreateRegistrate extends AbstractRegistrate<CreateRegistrate> {
 
 	public <T extends MountedItemStorageType<?>> MountedItemStorageTypeBuilder<T, CreateRegistrate> mountedItemStorage(String name, Supplier<T> supplier) {
 		return this.entry(name, callback -> new MountedItemStorageTypeBuilder<>(this, this, name, callback, supplier.get()));
+	}
+
+	public <T extends MountedFluidStorageType<?>> MountedFluidStorageTypeBuilder<T, CreateRegistrate> mountedFluidStorage(String name, Supplier<T> supplier) {
+		return this.entry(name, callback -> new MountedFluidStorageTypeBuilder<>(this, this, name, callback, supplier.get()));
 	}
 
 	/* Palettes */

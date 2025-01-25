@@ -1,9 +1,9 @@
 package com.simibubi.create.api.lookup;
 
-import com.simibubi.create.impl.lookup.BlockLookupImpl;
-
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+
+import com.simibubi.create.impl.lookup.BlockLookupImpl;
 
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -14,7 +14,10 @@ import net.minecraft.world.level.block.state.BlockState;
  * or found lazily through providers. Providers are only queried once per block.
  * If they return a value, that value is cached. If they don't, that block is recorded
  * as not having a corresponding value.
- * <br>
+ * <p>
+ * Provided values are reset on resource reloads and will be re-queried and re-cached the
+ * next time a block is queried.
+ * <p>
  * All providers are expected to be registered synchronously during game init.
  * Adding new ones late is not supported.
  */

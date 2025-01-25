@@ -10,6 +10,7 @@ import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.foundation.item.ItemHelper;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -49,5 +50,11 @@ public class ToolboxMountedStorage extends WrapperMountedItemStorage<ToolboxInve
 		ItemHelper.copyContents(toolbox.inventory, copy);
 		copy.filters = toolbox.inventory.filters.stream().map(ItemStack::copy).toList();
 		return new ToolboxMountedStorage(copy);
+	}
+
+	public static ToolboxMountedStorage fromLegacy(CompoundTag nbt) {
+		ToolboxInventory inv = new ToolboxInventory(null);
+		inv.deserializeNBT(nbt);
+		return new ToolboxMountedStorage(inv);
 	}
 }
