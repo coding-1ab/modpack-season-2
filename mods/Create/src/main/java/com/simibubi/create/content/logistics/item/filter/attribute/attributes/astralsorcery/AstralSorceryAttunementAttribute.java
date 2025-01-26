@@ -3,7 +3,7 @@ package com.simibubi.create.content.logistics.item.filter.attribute.attributes.a
 import java.util.ArrayList;
 import java.util.List;
 
-import net.createmod.catnip.lang.Components;
+import net.minecraft.network.chat.Component;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +50,7 @@ public class AstralSorceryAttunementAttribute implements ItemAttribute {
 	@Override
 	public Object[] getTranslationParameters() {
 		ResourceLocation constResource = new ResourceLocation(constellationName);
-		String something = Components.translatable(String.format("%s.constellation.%s", constResource.getNamespace(), constResource.getPath())).getString();
+        String something = Component.translatable(String.format("%s.constellation.%s", constResource.getNamespace(), constResource.getPath())).getString();
 		return new Object[]{something};
 	}
 

@@ -12,7 +12,6 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.data.IntAttached;
 import net.createmod.catnip.nbt.NBTHelper;
-import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -127,7 +126,7 @@ public class ShoppingListItem extends Item {
 					boolean cost = items == lists.getSecond();
 
 					if (cost)
-						pTooltipComponents.add(Components.empty());
+                        pTooltipComponents.add(Component.empty());
 
 					if (entries.size() == 1) {
 						BigItemStack entry = entries.get(0);

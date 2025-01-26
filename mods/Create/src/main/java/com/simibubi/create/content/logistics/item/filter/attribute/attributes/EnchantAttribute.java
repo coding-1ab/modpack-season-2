@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.createmod.catnip.nbt.NBTHelper;
-import net.createmod.catnip.lang.Components;
+
+import net.minecraft.network.chat.Component;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +43,7 @@ public class EnchantAttribute implements ItemAttribute {
 	public Object[] getTranslationParameters() {
 		String parameter = "";
 		if (enchantment != null)
-			parameter = Components.translatable(enchantment.getDescriptionId()).getString();
+            parameter = Component.translatable(enchantment.getDescriptionId()).getString();
 		return new Object[]{parameter};
 	}
 

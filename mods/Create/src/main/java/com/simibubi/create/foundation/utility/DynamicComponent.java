@@ -6,7 +6,6 @@ import com.google.gson.JsonParser;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.simibubi.create.Create;
 
-import net.createmod.catnip.lang.Components;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
@@ -47,7 +46,7 @@ public class DynamicComponent {
 	}
 
 	public MutableComponent get() {
-		return parsedCustomText == null ? Components.empty() : parsedCustomText.copy();
+		return parsedCustomText == null ? Component.empty() : parsedCustomText.copy();
 	}
 
 	public void read(Level level, BlockPos pos, CompoundTag nbt) {
@@ -90,7 +89,7 @@ public class DynamicComponent {
 
 	public static CommandSourceStack getCommandSource(ServerLevel level, BlockPos pos) {
 		return new CommandSourceStack(CommandSource.NULL, Vec3.atCenterOf(pos), Vec2.ZERO, level, 2, Create.ID,
-			Components.literal(Create.ID), level.getServer(), null);
+			Component.literal(Create.ID), level.getServer(), null);
 	}
 
 }

@@ -3,6 +3,8 @@ package com.simibubi.create.content.trains.station;
 import java.util.Objects;
 import java.util.Optional;
 
+import net.createmod.catnip.lang.Lang;
+
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -13,7 +15,6 @@ import com.simibubi.create.content.trains.track.TrackTargetingBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.map.CustomRenderedMapDecoration;
 
-import net.createmod.catnip.lang.Components;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -47,7 +48,7 @@ public class StationMarker {
 		BlockPos source = NbtUtils.readBlockPos(tag.getCompound("source"));
 		BlockPos target = NbtUtils.readBlockPos(tag.getCompound("target"));
 		Component name = Component.Serializer.fromJson(tag.getString("name"));
-		if (name == null) name = Components.immutableEmpty();
+		if (name == null) name = Lang.IMMUTABLE_EMPTY;
 
 		return new StationMarker(source, target, name);
 	}
@@ -61,7 +62,7 @@ public class StationMarker {
 		String name = stationOption.get()
 			.getStation().name;
 		return new StationMarker(pos, BlockEntityBehaviour.get(stationOption.get(), TrackTargetingBehaviour.TYPE)
-			.getPositionForMapMarker(), Components.literal(name));
+			.getPositionForMapMarker(), Component.literal(name));
 	}
 
 	public CompoundTag save() {

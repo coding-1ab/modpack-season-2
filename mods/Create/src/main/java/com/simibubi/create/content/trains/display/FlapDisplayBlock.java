@@ -16,7 +16,6 @@ import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import com.simibubi.create.foundation.block.IBE;
 
 import net.createmod.catnip.data.Iterate;
-import net.createmod.catnip.lang.Components;
 import net.createmod.catnip.placement.IPlacementHelper;
 import net.createmod.catnip.placement.PlacementHelpers;
 import net.createmod.catnip.placement.PlacementOffset;
@@ -29,6 +28,7 @@ import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -181,8 +181,9 @@ public class FlapDisplayBlock extends HorizontalKineticBlock
 				int line = lineIndex;
 				for (int i = 0; i < entries.size(); i++) {
 					for (String string : entries.get(i).text.getString()
-						.split("\n"))
-						flapBE.applyTextManually(line++, Component.Serializer.toJson(Components.literal(string)));
+						.split("\n")) {
+                        flapBE.applyTextManually(line++, Component.Serializer.toJson(Component.literal(string)));
+                    }
 				}
 				return InteractionResult.SUCCESS;
 			}

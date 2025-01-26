@@ -19,6 +19,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Predicates;
@@ -53,7 +54,6 @@ import net.createmod.catnip.math.BlockFace;
 import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.math.VecHelper;
-import net.createmod.catnip.lang.Components;
 import net.createmod.catnip.math.AngleHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -297,13 +297,13 @@ public class TrackBlock extends Block
 		Player player = level.getNearestPlayer(pos.getX(), pos.getY(), pos.getZ(), 10, Predicates.alwaysTrue());
 		if (player == null)
 			return;
-		player.displayClientMessage(Components.literal("<!> ")
+        player.displayClientMessage(Component.literal("<!> ")
 			.append(CreateLang.translateDirect("portal_track.failed"))
 			.withStyle(ChatFormatting.GOLD), false);
 		MutableComponent component = failPos != null
 			? CreateLang.translateDirect("portal_track." + fail, failPos.getX(), failPos.getY(), failPos.getZ())
 			: CreateLang.translateDirect("portal_track." + fail);
-		player.displayClientMessage(Components.literal(" - ")
+        player.displayClientMessage(Component.literal(" - ")
 			.withStyle(ChatFormatting.GRAY)
 			.append(component.withStyle(st -> st.withColor(0xFFD3B4))), false);
 	}

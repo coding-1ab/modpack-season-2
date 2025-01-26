@@ -23,7 +23,6 @@ import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.nbt.NBTHelper;
-import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -77,9 +76,10 @@ public class SchematicItem extends Item {
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		if (stack.hasTag()) {
 			if (stack.getTag()
-				.contains("File"))
-				tooltip.add(Components.literal(ChatFormatting.GOLD + stack.getTag()
-					.getString("File")));
+				.contains("File")) {
+                tooltip.add(Component.literal(ChatFormatting.GOLD + stack.getTag()
+                    .getString("File")));
+            }
 		} else {
 			tooltip.add(CreateLang.translateDirect("schematic.invalid").withStyle(ChatFormatting.RED));
 		}

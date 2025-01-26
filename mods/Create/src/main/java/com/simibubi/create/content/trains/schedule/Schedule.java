@@ -24,7 +24,6 @@ import com.simibubi.create.content.trains.schedule.destination.ScheduleInstructi
 
 import net.createmod.catnip.nbt.NBTHelper;
 import net.createmod.catnip.data.Pair;
-import net.createmod.catnip.lang.Components;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -68,7 +67,7 @@ public class Schedule {
 		return list.stream()
 			.map(Pair::getFirst)
 			.map(rl -> rl.getNamespace() + ".schedule." + langSection + rl.getPath())
-			.map(Components::translatable)
+			.map(key -> Component.translatable(key))
 			.toList();
 	}
 

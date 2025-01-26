@@ -9,7 +9,6 @@ import com.simibubi.create.content.redstone.nixieTube.NixieTubeBlockEntity;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 
 import net.createmod.catnip.math.Pointing;
-import net.createmod.catnip.lang.Components;
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.element.ElementLink;
 import net.createmod.ponder.api.element.WorldSectionElement;
@@ -19,6 +18,7 @@ import net.createmod.ponder.api.scene.Selection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
@@ -368,7 +368,7 @@ public class ElevatorScenes {
 		scene.world().showSectionAndMerge(util.select().position(linkPos), Direction.DOWN, camLink);
 		scene.world().flashDisplayLink(linkPos);
 		scene.world().modifyBlockEntityNBT(util.select().position(nixiePos), NixieTubeBlockEntity.class, nbt -> {
-			Component component = Components.literal("0F");
+            Component component = Component.literal("0F");
 			nbt.putString("RawCustomText", component.getString());
 			nbt.putString("CustomText", Component.Serializer.toJson(component));
 		});
@@ -399,7 +399,7 @@ public class ElevatorScenes {
 
 		scene.world().flashDisplayLink(linkPos);
 		scene.world().modifyBlockEntityNBT(util.select().position(nixiePos), NixieTubeBlockEntity.class, nbt -> {
-			Component component = Components.literal("1F");
+            Component component = Component.literal("1F");
 			nbt.putString("RawCustomText", component.getString());
 			nbt.putString("CustomText", Component.Serializer.toJson(component));
 		});
@@ -415,7 +415,7 @@ public class ElevatorScenes {
 
 		scene.world().flashDisplayLink(linkPos);
 		scene.world().modifyBlockEntityNBT(util.select().position(nixiePos), NixieTubeBlockEntity.class, nbt -> {
-			Component component = Components.literal("2F");
+            Component component = Component.literal("2F");
 			nbt.putString("RawCustomText", component.getString());
 			nbt.putString("CustomText", Component.Serializer.toJson(component));
 		});

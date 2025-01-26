@@ -13,7 +13,6 @@ import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 
 import net.createmod.catnip.data.Glob;
 import net.createmod.catnip.math.VecHelper;
-import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -201,20 +200,21 @@ public class PackageItem extends Item {
 		CompoundTag compoundnbt = pStack.getOrCreateTag();
 
 		if (compoundnbt.contains("Address", Tag.TAG_STRING) && !compoundnbt.getString("Address")
-			.isBlank())
-			pTooltipComponents.add(Components.literal("\u2192 " + compoundnbt.getString("Address"))
-				.withStyle(ChatFormatting.GOLD));
+			.isBlank()) {
+            pTooltipComponents.add(Component.literal("\u2192 " + compoundnbt.getString("Address"))
+                .withStyle(ChatFormatting.GOLD));
+        }
 
 		/*
 		 * Debug Fragmentation Data if (compoundnbt.contains("Fragment")) { CompoundTag
 		 * fragTag = compoundnbt.getCompound("Fragment");
-		 * pTooltipComponents.add(Components.literal("Order Information (Temporary)")
+		 * pTooltipComponents.add(Component.literal("Order Information (Temporary)")
 		 * .withStyle(ChatFormatting.GREEN)); pTooltipComponents.add(Components
 		 * .literal(" Link " + fragTag.getInt("LinkIndex") +
 		 * (fragTag.getBoolean("IsFinalLink") ? " Final" : "") + " | Fragment " +
 		 * fragTag.getInt("Index") + (fragTag.getBoolean("IsFinal") ? " Final" : ""))
 		 * .withStyle(ChatFormatting.DARK_GREEN)); if (fragTag.contains("OrderContext"))
-		 * pTooltipComponents.add(Components.literal("Has Context!")
+		 * pTooltipComponents.add(Component.literal("Has Context!")
 		 * .withStyle(ChatFormatting.DARK_GREEN)); }
 		 */
 
@@ -242,7 +242,7 @@ public class PackageItem extends Item {
 		}
 
 		if (skippedNames > 0)
-			pTooltipComponents.add(Components.translatable("container.shulkerBox.more", skippedNames)
+			pTooltipComponents.add(Component.translatable("container.shulkerBox.more", skippedNames)
 				.withStyle(ChatFormatting.ITALIC));
 	}
 

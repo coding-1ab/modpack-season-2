@@ -19,7 +19,6 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.animation.AnimationTickHolder;
-import net.createmod.catnip.lang.Components;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
@@ -138,8 +137,8 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 		int scale = board.maxValue() > 128 ? 1 : 2;
 
 		Component title = board.title();
-		Component tip =
-			CreateLang.translateDirect("gui.value_settings.release_to_confirm", Components.keybind("key.use"));
+        Component tip =
+			CreateLang.translateDirect("gui.value_settings.release_to_confirm", Component.keybind("key.use"));
 		double fadeIn = Math.pow(Mth.clamp((ticksOpen + partialTicks) / 4.0, 0, 1), 1);
 
 		int fattestLabel = Math.max(font.width(tip), font.width(title));

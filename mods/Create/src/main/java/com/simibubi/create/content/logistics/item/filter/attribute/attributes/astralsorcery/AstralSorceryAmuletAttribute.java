@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.simibubi.create.content.logistics.item.filter.attribute.AllItemAttributeTypes;
 
-import net.createmod.catnip.lang.Components;
+import net.minecraft.network.chat.Component;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -55,7 +55,7 @@ public class AstralSorceryAmuletAttribute implements ItemAttribute {
 
 		Enchantment enchant = ForgeRegistries.ENCHANTMENTS.getValue(ResourceLocation.tryParse(enchName));
 		if (enchant != null) {
-			something = Components.translatable(enchant.getDescriptionId()).getString();
+            something = Component.translatable(enchant.getDescriptionId()).getString();
 		}
 
 		if (enchType == 1) something = "existing " + something;

@@ -26,7 +26,8 @@ import com.simibubi.create.foundation.utility.TickBasedCache;
 import com.simibubi.create.infrastructure.command.AllCommands;
 
 import net.createmod.catnip.data.WorldAttached;
-import net.createmod.catnip.lang.Components;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
@@ -220,7 +221,7 @@ public class CommonEvents {
 				}
 				IModFile modFile = modFileInfo.getFile();
 				event.addRepositorySource(consumer -> {
-					Pack pack = Pack.readMetaAndCreate(Create.asResource("legacy_copper").toString(), Components.literal("Create Legacy Copper"), false, id -> new ModFilePackResources(id, modFile, "resourcepacks/legacy_copper"), PackType.CLIENT_RESOURCES, Pack.Position.TOP, PackSource.BUILT_IN);
+                    Pack pack = Pack.readMetaAndCreate(Create.asResource("legacy_copper").toString(), Component.literal("Create Legacy Copper"), false, id -> new ModFilePackResources(id, modFile, "resourcepacks/legacy_copper"), PackType.CLIENT_RESOURCES, Pack.Position.TOP, PackSource.BUILT_IN);
 					if (pack != null) {
 						consumer.accept(pack);
 					}

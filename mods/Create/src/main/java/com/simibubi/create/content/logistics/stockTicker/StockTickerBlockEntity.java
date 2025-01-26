@@ -28,7 +28,6 @@ import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.nbt.NBTHelper;
-import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -226,7 +225,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 			summary.add(receivedPayments.getStackInSlot(i));
 		for (BigItemStack entry : summary.getStacksByCount())
 			CreateLang.builder()
-				.text(Components.translatable(entry.stack.getDescriptionId())
+				.text(Component.translatable(entry.stack.getDescriptionId())
 					.getString() + " x" + entry.count)
 				.style(ChatFormatting.GREEN)
 				.forGoggles(tooltip);
@@ -259,7 +258,7 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		capability.invalidate();
 		super.invalidate();
 	}
-	
+
 	public void playEffect() {
 		AllSoundEvents.STOCK_LINK.playAt(level, worldPosition, 1.0f, 1.0f, false);
 		Vec3 vec3 = Vec3.atCenterOf(worldPosition);
@@ -275,8 +274,8 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 
 		@Override
 		public Component getDisplayName() {
-			return Components.empty();
-		}
+            return Component.empty();
+        }
 
 	}
 
@@ -289,8 +288,8 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 
 		@Override
 		public Component getDisplayName() {
-			return Components.empty();
-		}
+            return Component.empty();
+        }
 
 	}
 

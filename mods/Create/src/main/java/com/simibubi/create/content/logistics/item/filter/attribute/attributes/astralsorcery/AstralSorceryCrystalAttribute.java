@@ -3,7 +3,7 @@ package com.simibubi.create.content.logistics.item.filter.attribute.attributes.a
 import java.util.ArrayList;
 import java.util.List;
 
-import net.createmod.catnip.lang.Components;
+import net.minecraft.network.chat.Component;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +46,7 @@ public class AstralSorceryCrystalAttribute implements ItemAttribute {
 	@Override
 	public Object[] getTranslationParameters() {
 		ResourceLocation traitResource = new ResourceLocation(traitName);
-		String something = Components.translatable(String.format("crystal.property.%s.%s.name", traitResource.getNamespace(), traitResource.getPath())).getString();
+        String something = Component.translatable(String.format("crystal.property.%s.%s.name", traitResource.getNamespace(), traitResource.getPath())).getString();
 		return new Object[]{something};
 	}
 

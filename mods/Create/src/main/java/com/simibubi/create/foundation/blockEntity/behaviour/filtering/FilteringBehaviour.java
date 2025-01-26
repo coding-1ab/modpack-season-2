@@ -23,11 +23,11 @@ import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.math.VecHelper;
-import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -271,8 +271,8 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 		if (value.row() == 0 && value.value() == filter.item()
 			.getMaxStackSize())
 			return CreateLang.translateDirect("logistics.filter.any_amount_short");
-		return Components.literal(((value.row() == 0) ? "\u2264" : "=") + Math.max(1, value.value()));
-	}
+        return Component.literal(((value.row() == 0) ? "\u2264" : "=") + Math.max(1, value.value()));
+    }
 
 	@Override
 	public void onShortInteract(Player player, InteractionHand hand, Direction side, BlockHitResult hitResult) {
@@ -341,9 +341,9 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	}
 
 	public MutableComponent getCountLabelForValueBox() {
-		return Components.literal(isCountVisible() ? upTo && filter.item()
-			.getMaxStackSize() == count ? "*" : String.valueOf(count) : "");
-	}
+        return Component.literal(isCountVisible() ? upTo && filter.item()
+            .getMaxStackSize() == count ? "*" : String.valueOf(count) : "");
+    }
 
 	@Override
 	public String getClipboardKey() {

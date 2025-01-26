@@ -9,7 +9,6 @@ import com.simibubi.create.content.logistics.packagerLink.WiFiParticle;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrder;
 import com.simibubi.create.content.logistics.stockTicker.StockCheckingBlockEntity;
 
-import net.createmod.catnip.lang.Components;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -126,8 +125,8 @@ public class RedstoneRequesterBlockEntity extends StockCheckingBlockEntity imple
 
 	@Override
 	public Component getDisplayName() {
-		return Components.empty();
-	}
+        return Component.empty();
+    }
 
 	@Override
 	public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {

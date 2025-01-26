@@ -29,7 +29,6 @@ import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.data.Pair;
-import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -37,6 +36,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
@@ -351,7 +351,7 @@ public class BlueprintOverlayRenderer {
 			AllGuiTextures.TRADE_OVERLAY.render(graphics, width / 2 - 48, y - 19);
 			if (shopContext.purchases() > 0) {
 				graphics.renderItem(AllItems.SHOPPING_LIST.asStack(), width / 2 + 20, y - 20);
-				graphics.drawString(mc.font, Components.literal("x" + shopContext.purchases()), width / 2 + 20 + 16,
+                graphics.drawString(mc.font, Component.literal("x" + shopContext.purchases()), width / 2 + 20 + 16,
 					y - 20 + 4, 0xff_eeeeee, true);
 			}
 		}

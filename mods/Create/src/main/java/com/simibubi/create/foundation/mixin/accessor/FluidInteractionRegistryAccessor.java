@@ -12,10 +12,8 @@ import net.minecraftforge.fluids.FluidType;
 
 @Mixin(FluidInteractionRegistry.class)
 public interface FluidInteractionRegistryAccessor {
-
-	@Accessor("INTERACTIONS")
-	public static Map<FluidType, List<InteractionInformation>> getInteractions() {
+	@Accessor(value = "INTERACTIONS", remap = false)
+	static Map<FluidType, List<InteractionInformation>> getInteractions() {
 		throw new AssertionError();
 	}
-
 }

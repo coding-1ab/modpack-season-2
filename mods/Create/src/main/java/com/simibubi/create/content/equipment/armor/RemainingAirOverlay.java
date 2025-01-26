@@ -6,7 +6,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllItems;
 
 import net.createmod.catnip.gui.element.GuiGameElement;
-import net.createmod.catnip.lang.Components;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -50,7 +49,7 @@ public class RemainingAirOverlay implements IGuiOverlay {
 		poseStack.translate(width / 2 + 90, height - 53 + (backtank.getItem()
 			.isFireResistant() ? 9 : 0), 0);
 
-		Component text = Components.literal(StringUtil.formatTickDuration(Math.max(0, timeLeft - 1) * 20));
+		Component text = Component.literal(StringUtil.formatTickDuration(Math.max(0, timeLeft - 1) * 20));
 		GuiGameElement.of(backtank)
 			.at(0, 0)
 			.render(graphics);

@@ -3,6 +3,8 @@ package com.simibubi.create.content.logistics.packagePort;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.network.chat.MutableComponent;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +17,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.animatedContainer.An
 import com.simibubi.create.foundation.item.SmartInventory;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.lang.Components;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -193,7 +194,7 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 			list.add(page);
 		}
 
-		page.add(new ClipboardEntry(false, Components.literal("#" + addressFilter)));
+		page.add(new ClipboardEntry(false, Component.literal("#" + addressFilter)));
 		player.displayClientMessage(CreateLang.translate("clipboard.address_added", addressFilter)
 			.component(), true);
 
@@ -204,8 +205,8 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 
 	@Override
 	public Component getDisplayName() {
-		return Components.empty();
-	}
+        return Component.empty();
+    }
 
 	@Override
 	public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {

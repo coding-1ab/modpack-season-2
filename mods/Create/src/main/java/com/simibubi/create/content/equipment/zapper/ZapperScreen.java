@@ -12,8 +12,8 @@ import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.element.GuiGameElement;
+import net.createmod.catnip.lang.Lang;
 import net.createmod.catnip.nbt.NBTHelper;
-import net.createmod.catnip.lang.Components;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -46,7 +46,7 @@ public abstract class ZapperScreen extends AbstractSimiScreen {
 		this.background = background;
 		this.zapper = zapper;
 		this.hand = hand;
-		title = Components.immutableEmpty();
+		title = Lang.IMMUTABLE_EMPTY;
 		brightColor = 0xFEFEFE;
 		fontColor = AllGuiTextures.FONT_COLOR;
 
