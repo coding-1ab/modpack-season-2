@@ -1,4 +1,4 @@
-// 1.20.1	2025-01-25T07:57:37.109242956	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
+// 1.20.1	2025-01-26T16:33:35.178810837	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
 60bbdf92d2ac9824ea6144955c74043a6005f79d assets/create/blockstates/acacia_window.json
 6a67703c2697d81b7dc83e9d72a66f9c9ff08383 assets/create/blockstates/acacia_window_pane.json
 c3ae87b62e81d8e9476eccd793bb1548d74c66a1 assets/create/blockstates/adjustable_chain_gearshift.json
@@ -4817,9 +4817,11 @@ c741ba83b562ae3459d7c4f2db69537f549ea411 data/forge/tags/items/tools/wrench.json
 515a1c773e617dd7e38aa1b893acc7db2dd30e08 data/minecraft/tags/blocks/azalea_root_replaceable.json
 529fa4332dd12a11ebb04e183121a2c63f866761 data/minecraft/tags/blocks/beacon_base_blocks.json
 82274e06b6a9f3bfd83c8b59be38dee4a15b8bf3 data/minecraft/tags/blocks/climbable.json
+ebd7b09daf2f64c0c04d821696b0e145683d8693 data/minecraft/tags/blocks/combination_step_sound_blocks.json
 71aef080a900d9e86818cf579438c3d826d6567e data/minecraft/tags/blocks/doors.json
 515a1c773e617dd7e38aa1b893acc7db2dd30e08 data/minecraft/tags/blocks/dripstone_replaceable_blocks.json
 f8bd9b33238ab9f2f2a83b63bf0c52fbf705b452 data/minecraft/tags/blocks/impermeable.json
+eb080d6f0f7a4fa5e723010e1fcfa781e4d30249 data/minecraft/tags/blocks/inside_step_sound_blocks.json
 515a1c773e617dd7e38aa1b893acc7db2dd30e08 data/minecraft/tags/blocks/lush_ground_replaceable.json
 435e59881e2d9a8cae6c23fc6ce6d43111d40277 data/minecraft/tags/blocks/mineable/axe.json
 47df6c90d9474d7a708063b0207e520ad01f1998 data/minecraft/tags/blocks/mineable/pickaxe.json
