@@ -50,7 +50,7 @@ public class CardboardSwordItem extends SwordItem {
 	public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType) {
 		return 1000;
 	}
-	
+
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
 		return enchantment == Enchantments.KNOCKBACK;
@@ -59,12 +59,6 @@ public class CardboardSwordItem extends SwordItem {
 	@Override
 	public int getDefaultTooltipHideFlags(@NotNull ItemStack stack) {
 		return TooltipPart.MODIFIERS.getMask();
-	}
-
-	@Override
-	public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
-		AllSoundEvents.CARDBOARD_SWORD.playFrom(entity, 0.75f, 1.85f);
-		return super.onLeftClickEntity(stack, player, entity);
 	}
 
 	@SubscribeEvent
@@ -90,6 +84,8 @@ public class CardboardSwordItem extends SwordItem {
 		if (!(attacker instanceof LivingEntity livingAttacker
 			&& AllItems.CARDBOARD_SWORD.isIn(livingAttacker.getItemInHand(InteractionHand.MAIN_HAND))))
 			return;
+
+		AllSoundEvents.CARDBOARD_SWORD.playFrom(attacker, 0.75f, 1.85f);
 
 		event.setCanceled(true);
 
