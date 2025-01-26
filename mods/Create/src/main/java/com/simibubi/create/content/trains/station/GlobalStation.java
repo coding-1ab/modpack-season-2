@@ -182,7 +182,7 @@ public class GlobalStation extends SingleBlockEntityEdgePoint {
 						.getLevel(getBlockEntityDimension());
 			}
 
-			IItemHandlerModifiable carriageInventory = carriage.storage.getItems();
+			IItemHandlerModifiable carriageInventory = carriage.storage.getAllItems();
 			if (carriageInventory == null)
 				continue;
 

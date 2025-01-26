@@ -7,6 +7,8 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
+import net.minecraftforge.items.IItemHandlerModifiable;
+
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import com.simibubi.create.content.logistics.box.PackageEntity;
@@ -309,4 +311,13 @@ public class ItemHelper {
 		return remainder;
 	}
 
+	public static void copyContents(IItemHandler from, IItemHandlerModifiable to) {
+		if (from.getSlots() != to.getSlots()) {
+			throw new IllegalArgumentException("Slot count mismatch");
+		}
+
+		for (int i = 0; i < from.getSlots(); i++) {
+			to.setStackInSlot(i, from.getStackInSlot(i).copy());
+		}
+	}
 }

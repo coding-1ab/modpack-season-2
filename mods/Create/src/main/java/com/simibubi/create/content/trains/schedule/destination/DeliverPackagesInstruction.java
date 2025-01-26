@@ -27,6 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class DeliverPackagesInstruction extends ScheduleInstruction {
@@ -78,7 +79,7 @@ public class DeliverPackagesInstruction extends ScheduleInstruction {
 		}
 
 		for (Carriage carriage : train.carriages) {
-			IItemHandlerModifiable carriageInventory = carriage.storage.getItems();
+			IItemHandlerModifiable carriageInventory = carriage.storage.getAllItems();
 			if (carriageInventory == null)
 				continue;
 
