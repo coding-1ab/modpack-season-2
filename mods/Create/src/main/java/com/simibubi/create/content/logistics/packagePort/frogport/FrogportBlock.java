@@ -3,7 +3,6 @@ package com.simibubi.create.content.logistics.packagePort.frogport;
 import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.AllBlockEntityTypes;
-import com.simibubi.create.AllItems;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
@@ -63,8 +62,6 @@ public class FrogportBlock extends Block implements IBE<FrogportBlockEntity>, IW
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
 		BlockHitResult hit) {
-		if (player != null && AllItems.WRENCH.isIn(player.getItemInHand(handIn)))
-			return InteractionResult.PASS;
 		return onBlockEntityUse(worldIn, pos, be -> be.use(player));
 	}
 

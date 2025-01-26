@@ -410,7 +410,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 				int limitedAmount = -stack.count - 1;
 				int actualAmount = summary.getCountOf(stack.stack);
 				if (actualAmount <= limitedAmount)
-					summary.erase(stack.stack);
+					forcedEntries.erase(stack.stack);
 			}
 		}
 
@@ -1317,7 +1317,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 			int countOf = summary.getCountOf(toOrder.stack);
 			if (countOf == BigItemStack.INF)
 				continue;
-			forcedEntries.add(toOrder.stack, -1 - Math.max(0, countOf - toOrder.count));
+			forcedEntries.add(toOrder.stack.copy(), -1 - Math.max(0, countOf - toOrder.count));
 		}
 
 		AllPackets.getChannel()
