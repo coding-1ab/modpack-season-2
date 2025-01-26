@@ -52,7 +52,7 @@ public class AstralSorceryCrystalAttribute implements ItemAttribute {
 
 	@Override
 	public ItemAttributeType getType() {
-		return AllItemAttributeTypes.ASTRAL_CRYSTAL.get();
+		return AllItemAttributeTypes.ASTRAL_CRYSTAL;
 	}
 
 	@Override

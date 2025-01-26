@@ -48,7 +48,7 @@ public class EnchantAttribute implements ItemAttribute {
 
 	@Override
 	public ItemAttributeType getType() {
-		return AllItemAttributeTypes.HAS_ENCHANT.get();
+		return AllItemAttributeTypes.HAS_ENCHANT;
 	}
 
 	@Override

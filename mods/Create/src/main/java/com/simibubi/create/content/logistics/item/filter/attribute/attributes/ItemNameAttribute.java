@@ -53,7 +53,7 @@ public class ItemNameAttribute implements ItemAttribute {
 
 	@Override
 	public ItemAttributeType getType() {
-		return AllItemAttributeTypes.HAS_NAME.get();
+		return AllItemAttributeTypes.HAS_NAME;
 	}
 
 	@Override

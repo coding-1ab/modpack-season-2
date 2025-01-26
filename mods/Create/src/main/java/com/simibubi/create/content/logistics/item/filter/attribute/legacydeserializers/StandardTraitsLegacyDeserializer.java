@@ -19,7 +19,7 @@ public class StandardTraitsLegacyDeserializer implements ItemAttribute.LegacyDes
 
 	@Override
 	public ItemAttribute readNBT(CompoundTag nbt) {
-		ImmutableBiMap<String, Supplier<ItemAttributeType>> map = ImmutableBiMap.<String, Supplier<ItemAttributeType>>builder()
+		ImmutableBiMap<String, ItemAttributeType> map = ImmutableBiMap.<String, ItemAttributeType>builder()
 			.put("PLACEABLE", AllItemAttributeTypes.PLACEABLE)
 			.put("CONSUMABLE", AllItemAttributeTypes.CONSUMABLE)
 			.put("FLUID_CONTAINER", AllItemAttributeTypes.FLUID_CONTAINER)
@@ -40,9 +40,9 @@ public class StandardTraitsLegacyDeserializer implements ItemAttribute.LegacyDes
 			.put("COMPOSTABLE", AllItemAttributeTypes.COMPOSTABLE)
 			.build();
 
-		for (Map.Entry<String, Supplier<ItemAttributeType>> entry : map.entrySet()) {
+		for (Map.Entry<String, ItemAttributeType> entry : map.entrySet()) {
 			if (nbt.contains(entry.getKey())) {
-				return entry.getValue().get().createAttribute();
+				return entry.getValue().createAttribute();
 			}
 		}
 

@@ -44,7 +44,7 @@ public class InTagAttribute implements ItemAttribute {
 
 	@Override
 	public ItemAttributeType getType() {
-		return AllItemAttributeTypes.IN_TAG.get();
+		return AllItemAttributeTypes.IN_TAG;
 	}
 
 	@Override

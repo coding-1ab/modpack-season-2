@@ -49,7 +49,7 @@ public class ShulkerFillLevelAttribute implements ItemAttribute {
 
 	@Override
 	public ItemAttributeType getType() {
-		return AllItemAttributeTypes.SHULKER_FILL_LEVEL.get();
+		return AllItemAttributeTypes.SHULKER_FILL_LEVEL;
 	}
 
 	@Override

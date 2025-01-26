@@ -53,9 +53,9 @@ public class AllItemAttributeLegacyDeserializers {
 		createLegacyDeserializer("astralsorcery_perk_gem", AllItemAttributeTypes.ASTRAL_PERK_GEM);
 	}
 
-	private static void createLegacyDeserializer(String nbtKey, Supplier<ItemAttributeType> type) {
+	private static void createLegacyDeserializer(String nbtKey, ItemAttributeType type) {
 		createLegacyDeserializer(nbtKey, tag -> {
-			ItemAttribute attribute = type.get().createAttribute();
+			ItemAttribute attribute = type.createAttribute();
 			attribute.load(tag);
 			return attribute;
 		});

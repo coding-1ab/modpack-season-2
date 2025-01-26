@@ -80,7 +80,7 @@ public class ColorAttribute implements ItemAttribute {
 
 	@Override
 	public ItemAttributeType getType() {
-		return AllItemAttributeTypes.HAS_COLOR.get();
+		return AllItemAttributeTypes.HAS_COLOR;
 	}
 
 	@Override

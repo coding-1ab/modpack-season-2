@@ -65,7 +65,7 @@ public class AstralSorceryAmuletAttribute implements ItemAttribute {
 
 	@Override
 	public ItemAttributeType getType() {
-		return AllItemAttributeTypes.ASTRAL_AMULET.get();
+		return AllItemAttributeTypes.ASTRAL_AMULET;
 	}
 
 	@Override

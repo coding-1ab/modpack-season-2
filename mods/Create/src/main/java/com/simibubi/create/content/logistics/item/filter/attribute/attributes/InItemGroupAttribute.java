@@ -66,7 +66,7 @@ public class InItemGroupAttribute implements ItemAttribute {
 
 	@Override
 	public ItemAttributeType getType() {
-		return AllItemAttributeTypes.IN_ITEM_GROUP.get();
+		return AllItemAttributeTypes.IN_ITEM_GROUP;
 	}
 
 	@Override

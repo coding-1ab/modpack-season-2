@@ -62,7 +62,7 @@ public class FluidContentsAttribute implements ItemAttribute {
 
 	@Override
 	public ItemAttributeType getType() {
-		return AllItemAttributeTypes.HAS_FLUID.get();
+		return AllItemAttributeTypes.HAS_FLUID;
 	}
 
 	@Override
