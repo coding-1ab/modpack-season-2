@@ -29,6 +29,7 @@ import com.simibubi.create.content.equipment.toolbox.ToolboxMountedStorage;
 import com.simibubi.create.content.fluids.tank.storage.FluidTankMountedStorage;
 import com.simibubi.create.content.fluids.tank.storage.creative.CreativeFluidTankMountedStorage;
 import com.simibubi.create.content.logistics.crate.CreativeCrateMountedStorage;
+import com.simibubi.create.content.logistics.depot.storage.DepotMountedStorage;
 import com.simibubi.create.content.logistics.vault.ItemVaultMountedStorage;
 import com.simibubi.create.impl.contraption.storage.FallbackMountedStorage;
 
@@ -142,10 +143,7 @@ public class MountedStorageManager {
 		if (itemType != null) {
 			MountedItemStorage storage = itemType.mount(level, state, globalPos, be);
 			if (storage != null) {
-				this.itemsBuilder.put(localPos, storage);
-				if (storage instanceof SyncedMountedStorage synced) {
-					this.syncedItemsBuilder.put(localPos, synced);
-				}
+				this.addStorage(storage, localPos);
 			}
 		}
 
@@ -153,10 +151,7 @@ public class MountedStorageManager {
 		if (fluidType != null) {
 			MountedFluidStorage storage = fluidType.mount(level, state, globalPos, be);
 			if (storage != null) {
-				this.fluidsBuilder.put(localPos, storage);
-				if (storage instanceof SyncedMountedStorage synced) {
-					this.syncedFluidsBuilder.put(localPos, synced);
-				}
+				this.addStorage(storage, localPos);
 			}
 		}
 	}
@@ -255,11 +250,7 @@ public class MountedStorageManager {
 				MountedItemStorage.CODEC.decode(NbtOps.INSTANCE, data)
 					.result()
 					.map(Pair::getFirst)
-					.ifPresent(storage -> {
-						this.itemsBuilder.put(pos, storage);
-						if (storage instanceof SyncedMountedStorage sms)
-							this.syncedItemsBuilder.put(pos, sms);
-					});
+					.ifPresent(storage -> this.addStorage(storage, pos));
 			});
 
 			NBTHelper.iterateCompoundList(nbt.getList("fluids", Tag.TAG_COMPOUND), tag -> {
@@ -268,11 +259,7 @@ public class MountedStorageManager {
 				MountedFluidStorage.CODEC.decode(NbtOps.INSTANCE, data)
 					.result()
 					.map(Pair::getFirst)
-					.ifPresent(storage -> {
-						this.fluidsBuilder.put(pos, storage);
-						if (storage instanceof SyncedMountedStorage sms)
-							this.syncedFluidsBuilder.put(pos, sms);
-					});
+					.ifPresent(storage -> this.addStorage(storage, pos));
 			});
 
 			this.readLegacy(nbt);
@@ -434,19 +421,20 @@ public class MountedStorageManager {
 			BlockPos pos = NbtUtils.readBlockPos(tag.getCompound("Pos"));
 			CompoundTag data = tag.getCompound("Data");
 
-			// note: Synced is ignored, since all are synced
 			if (data.contains("Toolbox")) {
-				this.itemsBuilder.put(pos, ToolboxMountedStorage.fromLegacy(data));
+				this.addStorage(ToolboxMountedStorage.fromLegacy(data), pos);
 			} else if (data.contains("NoFuel")) {
-				this.itemsBuilder.put(pos, ItemVaultMountedStorage.fromLegacy(data));
+				this.addStorage(ItemVaultMountedStorage.fromLegacy(data), pos);
 			} else if (data.contains("Bottomless")) {
 				ItemStack supplied = ItemStack.of(data.getCompound("ProvidedStack"));
-				this.itemsBuilder.put(pos, new CreativeCrateMountedStorage(supplied));
+				this.addStorage(new CreativeCrateMountedStorage(supplied), pos);
+			} else if (data.contains("Synced")) {
+				this.addStorage(DepotMountedStorage.fromLegacy(data), pos);
 			} else {
 				// we can create a fallback storage safely, it will be validated before unmounting
 				ItemStackHandler handler = new ItemStackHandler();
 				handler.deserializeNBT(data);
-				this.itemsBuilder.put(pos, new FallbackMountedStorage(handler));
+				this.addStorage(new FallbackMountedStorage(handler), pos);
 			}
 		});
 
@@ -455,11 +443,23 @@ public class MountedStorageManager {
 			CompoundTag data = tag.getCompound("Data");
 
 			if (data.contains("Bottomless")) {
-				this.fluidsBuilder.put(pos, CreativeFluidTankMountedStorage.fromLegacy(data));
+				this.addStorage(CreativeFluidTankMountedStorage.fromLegacy(data), pos);
 			} else {
-				this.fluidsBuilder.put(pos, FluidTankMountedStorage.fromLegacy(data));
+				this.addStorage(FluidTankMountedStorage.fromLegacy(data), pos);
 			}
 		});
+	}
+
+	private void addStorage(MountedItemStorage storage, BlockPos pos) {
+		this.itemsBuilder.put(pos, storage);
+		if (storage instanceof SyncedMountedStorage synced)
+			this.syncedItemsBuilder.put(pos, synced);
+	}
+
+	private void addStorage(MountedFluidStorage storage, BlockPos pos) {
+		this.fluidsBuilder.put(pos, storage);
+		if (storage instanceof SyncedMountedStorage synced)
+			this.syncedFluidsBuilder.put(pos, synced);
 	}
 
 	private static <K, V> ImmutableMap<K, V> subMap(Map<K, V> map, Predicate<V> predicate) {

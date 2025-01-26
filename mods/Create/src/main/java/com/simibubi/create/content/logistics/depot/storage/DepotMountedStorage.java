@@ -12,6 +12,7 @@ import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.content.logistics.depot.storage.DepotMountedStorage.Handler;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -79,6 +80,17 @@ public class DepotMountedStorage extends WrapperMountedItemStorage<Handler> impl
 	public static DepotMountedStorage fromDepot(DepotBlockEntity depot) {
 		ItemStack held = depot.getHeldItem();
 		return new DepotMountedStorage(held.copy());
+	}
+
+	public static DepotMountedStorage fromLegacy(CompoundTag nbt) {
+		ItemStackHandler handler = new ItemStackHandler();
+		handler.deserializeNBT(nbt);
+		if (handler.getSlots() == 1) {
+			ItemStack stack = handler.getStackInSlot(0);
+			return new DepotMountedStorage(stack);
+		} else {
+			return new DepotMountedStorage(ItemStack.EMPTY);
+		}
 	}
 
 	public static final class Handler extends ItemStackHandler {
