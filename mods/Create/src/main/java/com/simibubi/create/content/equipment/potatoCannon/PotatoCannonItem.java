@@ -231,7 +231,7 @@ public class PotatoCannonItem extends ProjectileWeaponItem implements CustomArmP
 				.withStyle(ChatFormatting.GRAY));
 			PotatoCannonProjectileType type = PotatoProjectileTypeManager.getTypeForStack(ammo)
 				.get();
-			MutableComponent spacing = Component.literal(" ");
+			MutableComponent spacing = CommonComponents.space();
 			ChatFormatting green = ChatFormatting.GREEN;
 			ChatFormatting darkGreen = ChatFormatting.DARK_GREEN;
 
