@@ -18,6 +18,7 @@ import net.minecraftforge.registries.ForgeRegistries;
  */
 public enum Mods {
 	AETHER,
+	BETTEREND,
 	COMPUTERCRAFT,
 	CONNECTIVITY,
 	CURIOS,
