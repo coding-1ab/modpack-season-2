@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
-import net.createmod.catnip.lang.Lang;
-
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.platform.InputConstants;
@@ -31,6 +29,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -192,7 +191,7 @@ public class LinkedControllerClientHandler {
 				.getShape(mc.level, selectedLocation);
 			if (!shape.isEmpty())
 				Outliner.getInstance().showAABB("controller", shape.bounds()
-					.move(selectedLocation))
+						.move(selectedLocation))
 					.colored(0xB73C2D)
 					.lineWidth(1 / 16f);
 
@@ -201,8 +200,8 @@ public class LinkedControllerClientHandler {
 				if (linkBehaviour != null) {
 					AllPackets.getChannel().sendToServer(new LinkedControllerBindPacket(integer, selectedLocation));
 					CreateLang.translate("linked_controller.key_bound", controls.get(integer)
-						.getTranslatedKeyMessage()
-						.getString())
+							.getTranslatedKeyMessage()
+							.getString())
 						.sendStatus(mc.player);
 				}
 				MODE = Mode.IDLE;
@@ -215,7 +214,7 @@ public class LinkedControllerClientHandler {
 	}
 
 	public static void renderOverlay(ForgeGui gui, GuiGraphics graphics, float partialTicks, int width1,
-		int height1) {
+									 int height1) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.options.hideGui)
 			return;
@@ -225,7 +224,7 @@ public class LinkedControllerClientHandler {
 
 		PoseStack poseStack = graphics.pose();
 		poseStack.pushPose();
-		Screen tooltipScreen = new Screen(Lang.IMMUTABLE_EMPTY) {
+		Screen tooltipScreen = new Screen(CommonComponents.EMPTY) {
 		};
 		tooltipScreen.init(mc, width1, height1);
 

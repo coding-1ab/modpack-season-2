@@ -27,16 +27,16 @@ import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
-import net.createmod.catnip.lang.Lang;
-import net.createmod.catnip.nbt.NBTHelper;
-import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -57,6 +57,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -503,14 +504,14 @@ public class DeployerBlockEntity extends KineticBlockEntity {
 			.forGoggles(tooltip);
 
 		if (!heldItem.isEmpty())
-            CreateLang.translate("tooltip.deployer.contains", Component.translatable(heldItem.getDescriptionId())
-                .getString(), heldItem.getCount())
-                .style(ChatFormatting.GREEN)
-                .forGoggles(tooltip);
+			CreateLang.translate("tooltip.deployer.contains", Component.translatable(heldItem.getDescriptionId())
+					.getString(), heldItem.getCount())
+				.style(ChatFormatting.GREEN)
+				.forGoggles(tooltip);
 
 		float stressAtBase = calculateStressApplied();
 		if (StressImpact.isEnabled() && !Mth.equal(stressAtBase, 0)) {
-			tooltip.add(Lang.IMMUTABLE_EMPTY);
+			tooltip.add(CommonComponents.EMPTY);
 			addStressImpactStats(tooltip, stressAtBase);
 		}
 
@@ -556,7 +557,7 @@ public class DeployerBlockEntity extends KineticBlockEntity {
 		if (heldItemMainhand.getItem() instanceof SandPaperItem) {
 			sandpaperInv.setItem(0, stack);
 			Optional<? extends Recipe<? extends Container>> polishingRecipe = checkRecipe(AllRecipeTypes.SANDPAPER_POLISHING, sandpaperInv, level);
-			if (polishingRecipe.isPresent()){
+			if (polishingRecipe.isPresent()) {
 				return polishingRecipe.get();
 			}
 		}
