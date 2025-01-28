@@ -57,10 +57,10 @@ _Now using Flywheel 1.0_
 - Held clipboards can now copy entries from other in-world clipboards
 - Metal ladders no longer require a wall if another ladder block is above them
 - Bells assembled to elevator contraptions now activate when arriving at a floor
-- Sliding doors placed in front of contraption-mounted sliding doors now open and clost automatically
+- Sliding doors placed in front of contraption-mounted sliding doors now open and close automatically
 - Fully outlined text on filter slots for better readability
 - Added recipes where cardboard substitutes leather
-- Play at most 4 steam engine sounds at once per side of a boiler
+- Play at most four steam engine sounds at once per side of a boiler
 - Increased default max rope length to 384
 - Implemented a system for generating certain recipes at runtime to improve mod compat
 - Boiler gauge now disappears when blocks are clipping into it
