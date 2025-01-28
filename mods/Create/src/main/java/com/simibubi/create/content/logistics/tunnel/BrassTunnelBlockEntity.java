@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
 import com.simibubi.create.content.kinetics.belt.BeltHelper;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
@@ -33,8 +33,8 @@ import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.data.Iterate;
-import net.createmod.catnip.nbt.NBTHelper;
 import net.createmod.catnip.lang.Lang;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -51,6 +51,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -172,7 +173,7 @@ public class BrassTunnelBlockEntity extends BeltTunnelBlockEntity implements IHa
 			if (distributionTargets.getFirst()
 				.isEmpty()
 				&& distributionTargets.getSecond()
-					.isEmpty())
+				.isEmpty())
 				return;
 
 			if (newItemArrived) {
@@ -375,7 +376,7 @@ public class BrassTunnelBlockEntity extends BeltTunnelBlockEntity implements IHa
 
 	@Nullable
 	protected ItemStack insertIntoTunnel(BrassTunnelBlockEntity tunnel, Direction side, ItemStack stack,
-		boolean simulate) {
+										 boolean simulate) {
 		if (stack.isEmpty())
 			return stack;
 		if (!tunnel.testFlapFilter(side, stack))
@@ -513,7 +514,7 @@ public class BrassTunnelBlockEntity extends BeltTunnelBlockEntity implements IHa
 	}
 
 	private void addValidOutputsOf(BrassTunnelBlockEntity tunnelBE,
-		List<Pair<BrassTunnelBlockEntity, Direction>> validOutputs) {
+								   List<Pair<BrassTunnelBlockEntity, Direction>> validOutputs) {
 		syncSet.add(tunnelBE);
 		BeltBlockEntity below = BeltHelper.getSegmentBE(level, tunnelBE.worldPosition.below());
 		if (below == null)
@@ -794,9 +795,9 @@ public class BrassTunnelBlockEntity extends BeltTunnelBlockEntity implements IHa
 
 		CreateLang.translate("tooltip.brass_tunnel.contains").style(ChatFormatting.WHITE).forGoggles(tooltip);
 		for (ItemStack item : allStacks) {
-            CreateLang.translate("tooltip.brass_tunnel.contains_entry",
+			CreateLang.translate("tooltip.brass_tunnel.contains_entry",
 					Component.translatable(item.getDescriptionId()).getString(), item.getCount())
-					.style(ChatFormatting.GRAY).forGoggles(tooltip);
+				.style(ChatFormatting.GRAY).forGoggles(tooltip);
 		}
 		CreateLang.translate("tooltip.brass_tunnel.retrieve").style(ChatFormatting.DARK_GRAY).forGoggles(tooltip);
 

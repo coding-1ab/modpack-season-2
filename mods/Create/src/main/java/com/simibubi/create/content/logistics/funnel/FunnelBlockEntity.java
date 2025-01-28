@@ -8,7 +8,7 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllSoundEvents;
-import com.simibubi.create.content.equipment.goggles.IHaveHoveringInformation;
+import com.simibubi.create.api.equipment.goggles.IHaveHoveringInformation;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
 import com.simibubi.create.content.kinetics.belt.BeltHelper;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
@@ -25,10 +25,10 @@ import com.simibubi.create.foundation.item.ItemHelper.ExtractionCountMode;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import dev.engine_room.flywheel.lib.visualization.VisualizationHelper;
-import net.createmod.catnip.math.BlockFace;
-import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.math.BlockFace;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -40,6 +40,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 
@@ -344,14 +345,14 @@ public class FunnelBlockEntity extends SmartBlockEntity implements IHaveHovering
 		if (!(blockState.getBlock() instanceof BeltFunnelBlock))
 			return -1 / 16f;
 		switch (blockState.getValue(BeltFunnelBlock.SHAPE)) {
-		default:
-		case RETRACTED:
-			return 0;
-		case EXTENDED:
-			return 8 / 16f;
-		case PULLING:
-		case PUSHING:
-			return -2 / 16f;
+			default:
+			case RETRACTED:
+				return 0;
+			case EXTENDED:
+				return 8 / 16f;
+			case PULLING:
+			case PUSHING:
+				return -2 / 16f;
 		}
 	}
 
