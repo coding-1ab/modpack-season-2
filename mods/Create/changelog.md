@@ -65,6 +65,7 @@ _Now using Flywheel 1.0_
 - Implemented a system for generating certain recipes at runtime to improve mod compat
 - Boiler gauge now disappears when blocks are clipping into it
 - Added a keybind that opens a radial menu for rotating blocks with the wrench
+- Wood cutting recipes in mechanical saws
 - Added pressing recipes for coarse dirt and rooted dirt which both produce dirt paths (#7186)
 - Updated JEI integration and added potion fluids to the JEI sidebar (#6934)
 

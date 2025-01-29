@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
-import com.simibubi.create.Create;
 import com.tterrag.registrate.AbstractRegistrate;
 import com.tterrag.registrate.builders.BlockEntityBuilder;
 import com.tterrag.registrate.builders.BuilderCallback;
@@ -17,6 +16,7 @@ import dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.util.NonNullPredicate;
 import net.minecraftforge.fml.DistExecutor;
@@ -32,12 +32,12 @@ public class CreateBlockEntityBuilder<T extends BlockEntity, P> extends BlockEnt
 		new ArrayList<>();
 
 	public static <T extends BlockEntity, P> BlockEntityBuilder<T, P> create(AbstractRegistrate<?> owner, P parent,
-		String name, BuilderCallback callback, BlockEntityFactory<T> factory) {
+																			 String name, BuilderCallback callback, BlockEntityFactory<T> factory) {
 		return new CreateBlockEntityBuilder<>(owner, parent, name, callback, factory);
 	}
 
 	protected CreateBlockEntityBuilder(AbstractRegistrate<?> owner, P parent, String name, BuilderCallback callback,
-		BlockEntityFactory<T> factory) {
+									   BlockEntityFactory<T> factory) {
 		super(owner, parent, name, callback, factory);
 	}
 
@@ -81,7 +81,7 @@ public class CreateBlockEntityBuilder<T extends BlockEntity, P> extends BlockEnt
 	}
 
 	protected void registerVisualizer() {
-		OneTimeEventReceiver.addModListener(Create.REGISTRATE, FMLClientSetupEvent.class, $ -> {
+		OneTimeEventReceiver.addModListener(getOwner(), FMLClientSetupEvent.class, $ -> {
 			var visualFactory = this.visualFactory;
 			if (visualFactory != null) {
 				NonNullPredicate<T> renderNormally = this.renderNormally;
