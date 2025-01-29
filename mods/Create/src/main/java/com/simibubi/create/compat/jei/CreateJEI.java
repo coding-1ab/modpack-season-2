@@ -3,12 +3,15 @@ package com.simibubi.create.compat.jei;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -56,7 +59,6 @@ import com.simibubi.create.content.kinetics.fan.processing.SplashingRecipe;
 import com.simibubi.create.content.kinetics.press.MechanicalPressBlockEntity;
 import com.simibubi.create.content.kinetics.press.PressingRecipe;
 import com.simibubi.create.content.kinetics.saw.CuttingRecipe;
-import com.simibubi.create.content.kinetics.saw.SawBlockEntity;
 import com.simibubi.create.content.logistics.filter.AbstractFilterScreen;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterScreen;
 import com.simibubi.create.content.processing.basin.BasinRecipe;
@@ -90,6 +92,7 @@ import net.createmod.catnip.config.ConfigBase.ConfigBool;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
@@ -102,7 +105,6 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 
 @JeiPlugin
@@ -364,14 +366,22 @@ public class CreateJEI implements IModPlugin {
 	public void registerExtraIngredients(IExtraIngredientRegistration registration) {
 		Collection<Potion> potions = ForgeRegistries.POTIONS.getValues();
 		Collection<FluidStack> potionFluids = new ArrayList<>(potions.size() * 3);
+		Set<Set<MobEffect>> visitedEffects = new HashSet<>();
 		for (Potion potion : potions) {
 			// @goshante: Ingame potion fluids always have Bottle tag that specifies
 			// to what bottle type this potion belongs
 			// Potion fluid without this tag wouldn't be recognized by other mods
-			for (PotionFluid.BottleType bottleType : PotionFluid.BottleType.values()) {
-				FluidStack potionFluid = PotionFluid.of(1000, potion, bottleType);
-				potionFluids.add(potionFluid);
-			}
+			
+//			for (PotionFluid.BottleType bottleType : PotionFluid.BottleType.values()) {
+//				FluidStack potionFluid = PotionFluid.of(1000, potion, bottleType);
+//				potionFluids.add(potionFluid);
+//			}
+			
+			if (!potion.getEffects().isEmpty())
+				if (!visitedEffects.add(potion.getEffects().stream().map(mei -> mei.getEffect()).collect(Collectors.toSet())))
+					continue;
+			
+			potionFluids.add(PotionFluid.of(1000, potion, PotionFluid.BottleType.REGULAR));
 		}
 		registration.addExtraIngredients(ForgeTypes.FLUID_STACK, potionFluids);
 	}
