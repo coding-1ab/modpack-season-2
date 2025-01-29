@@ -98,9 +98,13 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			return;
 		}
 
-		craftingIngredients = new ArrayList<>();
-		NonNullList<Ingredient> ingredients = availableCraftingRecipe.getIngredients();
+		craftingIngredients = convertRecipeToPackageOrderContext(availableCraftingRecipe, inputConfig);
+	}
+
+	public static List<BigItemStack> convertRecipeToPackageOrderContext(CraftingRecipe availableCraftingRecipe, List<BigItemStack> inputs) {
+		List<BigItemStack> craftingIngredients = new ArrayList<>();
 		BigItemStack emptyIngredient = new BigItemStack(ItemStack.EMPTY, 1);
+		NonNullList<Ingredient> ingredients = availableCraftingRecipe.getIngredients();
 
 		int width = Math.min(3, ingredients.size());
 		int height = Math.min(3, ingredients.size() / 3 + 1);
@@ -121,11 +125,11 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 			BigItemStack craftingIngredient = emptyIngredient;
 
 			if (!ingredient.isEmpty())
-				for (BigItemStack bigItemStack : inputConfig)
+				for (BigItemStack bigItemStack : inputs)
 					if (ingredient.test(bigItemStack.stack))
-						craftingIngredient = bigItemStack;
-
+						craftingIngredient = new BigItemStack(bigItemStack.stack, 1);
 			craftingIngredients.add(craftingIngredient);
+			
 			if (width < 3 && (i + 1) % width == 0)
 				for (int j = 0; j < 3 - width; j++)
 					craftingIngredients.add(emptyIngredient);
@@ -133,6 +137,8 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 
 		while (craftingIngredients.size() < 9)
 			craftingIngredients.add(emptyIngredient);
+		
+		return craftingIngredients;
 	}
 
 	@Override
