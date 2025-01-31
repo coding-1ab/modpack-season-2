@@ -18,7 +18,6 @@ import com.simibubi.create.content.redstone.link.controller.LinkedControllerServ
 import com.simibubi.create.content.trains.entity.CarriageEntityHandler;
 import com.simibubi.create.foundation.pack.DynamicPack;
 import com.simibubi.create.foundation.pack.DynamicPackSource;
-import com.simibubi.create.foundation.pack.ModFilePackResources;
 import com.simibubi.create.foundation.recipe.RecipeFinder;
 import com.simibubi.create.foundation.recipe.RuntimeDataGenerator;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
@@ -26,18 +25,16 @@ import com.simibubi.create.foundation.utility.TickBasedCache;
 import com.simibubi.create.infrastructure.command.AllCommands;
 
 import net.createmod.catnip.data.WorldAttached;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
-import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -59,10 +56,7 @@ import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
 
 @EventBusSubscriber
 public class CommonEvents {
@@ -213,20 +207,21 @@ public class CommonEvents {
 
 		@SubscribeEvent
 		public static void addPackFinders(AddPackFindersEvent event) {
-			if (event.getPackType() == PackType.CLIENT_RESOURCES) {
-				IModFileInfo modFileInfo = ModList.get().getModFileById(Create.ID);
-				if (modFileInfo == null) {
-					Create.LOGGER.error("Could not find Create mod file info; built-in resource packs will be missing!");
-					return;
-				}
-				IModFile modFile = modFileInfo.getFile();
-				event.addRepositorySource(consumer -> {
-                    Pack pack = Pack.readMetaAndCreate(Create.asResource("legacy_copper").toString(), Component.literal("Create Legacy Copper"), false, id -> new ModFilePackResources(id, modFile, "resourcepacks/legacy_copper"), PackType.CLIENT_RESOURCES, Pack.Position.TOP, PackSource.BUILT_IN);
-					if (pack != null) {
-						consumer.accept(pack);
-					}
-				});
-			}
+			// Uncomment and rename pack to add built in resource packs
+//			if (event.getPackType() == PackType.CLIENT_RESOURCES) {
+//				IModFileInfo modFileInfo = ModList.get().getModFileById(Create.ID);
+//				if (modFileInfo == null) {
+//					Create.LOGGER.error("Could not find Create mod file info; built-in resource packs will be missing!");
+//					return;
+//				}
+//				IModFile modFile = modFileInfo.getFile();
+//				event.addRepositorySource(consumer -> {
+//                    Pack pack = Pack.readMetaAndCreate(Create.asResource("legacy_copper").toString(), Component.literal("Create Legacy Copper"), false, id -> new ModFilePackResources(id, modFile, "resourcepacks/legacy_copper"), PackType.CLIENT_RESOURCES, Pack.Position.TOP, PackSource.BUILT_IN);
+//					if (pack != null) {
+//						consumer.accept(pack);
+//					}
+//				});
+//			}
 
 			if (event.getPackType() == PackType.SERVER_DATA) {
 				DynamicPack dynamicPack = new DynamicPack("create:dynamic_data", PackType.SERVER_DATA);
