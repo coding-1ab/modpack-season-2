@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.7
+
+### Fixes
+- (1.21) Fix Pumpkins always dropping Pumpkin Slices without needing a knife;
+
 ## 1.2.6
 
 ### Additions
