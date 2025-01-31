@@ -6,7 +6,10 @@
 - Knives are now effective at mining Cactus;
 - Added the following blocks to the `unaffected_by_rich_soil` tag:
   - Moss, Nylium, Big Dripleaf, Pink Petals and Tall Flowers;
-- Rich Soil is no longer hardcoded to deny tall flower boosting; they have simply been added to the `unaffected_by_rich_soil` tag.;
+- Rich Soil is no longer hardcoded to deny tall flower boosting; they have simply been added to the `unaffected_by_rich_soil` tag;
+
+### Fixes
+- Fixed wrong UV at the bottom of Pie models when there's 1 slice left;
 
 ## 1.2.6
 
