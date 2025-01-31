@@ -70,6 +70,7 @@ public class BlockTags extends BlockTagsProvider
 				ModBlocks.RICH_SOIL_FARMLAND.get()
 		);
 		tag(ModTags.MINEABLE_WITH_KNIFE).add(
+						Blocks.CACTUS,
 						Blocks.MELON,
 						Blocks.PUMPKIN,
 						Blocks.CARVED_PUMPKIN,
@@ -244,14 +245,21 @@ public class BlockTags extends BlockTagsProvider
 				ModBlocks.RED_MUSHROOM_COLONY.get());
 		tag(ModTags.UNAFFECTED_BY_RICH_SOIL).add(
 						Blocks.GRASS_BLOCK,
+						Blocks.MOSS_BLOCK,
+						Blocks.CRIMSON_NYLIUM,
+						Blocks.WARPED_NYLIUM,
 						Blocks.GRASS,
 						Blocks.FERN,
 						Blocks.TWISTING_VINES,
 						Blocks.TWISTING_VINES_PLANT,
+						Blocks.BIG_DRIPLEAF,
+						Blocks.BIG_DRIPLEAF_STEM,
+						Blocks.PINK_PETALS,
 						ModBlocks.SANDY_SHRUB.get(),
 						ModBlocks.BROWN_MUSHROOM_COLONY.get(),
 						ModBlocks.RED_MUSHROOM_COLONY.get())
-				.addTag(ModTags.WILD_CROPS);
+				.addTag(ModTags.WILD_CROPS)
+				.addTag(net.minecraft.tags.BlockTags.TALL_FLOWERS);
 		tag(ModTags.MUSHROOM_COLONY_GROWABLE_ON).add(ModBlocks.RICH_SOIL.get());
 		tag(ModTags.DROPS_CAKE_SLICE).add(
 				Blocks.CANDLE_CAKE,
