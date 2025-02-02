@@ -9,7 +9,6 @@ import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.content.logistics.filter.FilterScreenPacket.Option;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.widget.IconButton;
-import com.simibubi.create.foundation.gui.widget.Indicator;
 
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.client.gui.GuiGraphics;
@@ -99,11 +98,6 @@ public class PackageFilterScreen extends AbstractFilterScreen<PackageFilterMenu>
 
 	@Override
 	protected boolean isButtonEnabled(IconButton button) {
-		return false;
-	}
-
-	@Override
-	protected boolean isIndicatorOn(Indicator indicator) {
 		return false;
 	}
 
