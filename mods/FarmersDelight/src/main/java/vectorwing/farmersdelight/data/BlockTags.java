@@ -4,13 +4,14 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.registry.ModBlocks;
-import vectorwing.farmersdelight.common.tag.CompatibilityTags;
 import vectorwing.farmersdelight.common.tag.CommonTags;
+import vectorwing.farmersdelight.common.tag.CompatibilityTags;
 import vectorwing.farmersdelight.common.tag.ModTags;
 
 import javax.annotation.Nullable;
@@ -26,7 +27,7 @@ public class BlockTags extends BlockTagsProvider
 	protected void addTags(HolderLookup.@NotNull Provider provider) {
 		this.registerModTags();
 		this.registerMinecraftTags();
-		this.registerForgeTags();
+		this.registerCommonTags();
 		this.registerCompatibilityTags();
 
 		this.registerBlockMineables();
@@ -189,12 +190,12 @@ public class BlockTags extends BlockTagsProvider
 				ModBlocks.WILD_ONIONS.get()
 		);
 		tag(net.minecraft.tags.BlockTags.TALL_FLOWERS).add(ModBlocks.WILD_RICE.get());
+		tag(net.minecraft.tags.BlockTags.DIRT).add(ModBlocks.RICH_SOIL.get());
 	}
 
-	protected void registerForgeTags() {
-		tag(net.minecraft.tags.BlockTags.DIRT).add(
-				ModBlocks.RICH_SOIL.get());
+	protected void registerCommonTags() {
 		tag(CommonTags.MINEABLE_WITH_KNIFE);
+		tag(Tags.Blocks.VILLAGER_FARMLANDS).add(ModBlocks.RICH_SOIL_FARMLAND.get());
 	}
 
 	protected void registerModTags() {
