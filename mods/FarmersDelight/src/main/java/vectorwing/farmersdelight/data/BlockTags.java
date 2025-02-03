@@ -189,12 +189,21 @@ public class BlockTags extends BlockTagsProvider
 				ModBlocks.WILD_ONIONS.get()
 		);
 		tag(net.minecraft.tags.BlockTags.TALL_FLOWERS).add(ModBlocks.WILD_RICE.get());
+		tag(net.minecraft.tags.BlockTags.DIRT).add(
+				ModBlocks.RICH_SOIL.get());
 	}
 
 	protected void registerForgeTags() {
-		tag(net.minecraft.tags.BlockTags.DIRT).add(
-				ModBlocks.RICH_SOIL.get());
 		tag(ForgeTags.MINEABLE_WITH_KNIFE);
+		tag(ForgeTags.STORAGE_BLOCKS_CARROT).add(ModBlocks.CARROT_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_POTATO).add(ModBlocks.POTATO_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_BEETROOT).add(ModBlocks.BEETROOT_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_CABBAGE).add(ModBlocks.CABBAGE_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_TOMATO).add(ModBlocks.TOMATO_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_ONION).add(ModBlocks.ONION_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_RICE).add(ModBlocks.RICE_BAG.get());
+		tag(ForgeTags.STORAGE_BLOCKS_RICE_PANICLE).add(ModBlocks.RICE_BALE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_STRAW).add(ModBlocks.STRAW_BALE.get());
 	}
 
 	protected void registerModTags() {

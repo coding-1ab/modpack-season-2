@@ -1,4 +1,4 @@
-// 1.20.1	2025-01-31T00:57:15.9767991	Tags for minecraft:block mod id farmersdelight
+// 1.20.1	2025-02-03T13:08:28.8405232	Tags for minecraft:block mod id farmersdelight
 97e4acbe405d9adae7df8073ec6e9af828285ec9 data/create/tags/blocks/brittle.json
 89dff4a2813a4b6fe13cde6e775266a1d606a4aa data/create/tags/blocks/passive_boiler_heaters.json
 6644ebda4035b2e597066fa2def42ba14650cfbc data/farmersdelight/tags/blocks/campfire_signal_smoke.json
@@ -15,6 +15,15 @@ e4d28099b3557b120274c2ef7593e202019c4d65 data/farmersdelight/tags/blocks/terrain
 a6e0762960f425f58c494b99225d700f78383d40 data/farmersdelight/tags/blocks/unaffected_by_rich_soil.json
 5596501768488a25c5bcc6ef16c2fc5ca3ab49e9 data/farmersdelight/tags/blocks/wild_crops.json
 35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/forge/tags/blocks/mineable/knife.json
+da0d6934eabdb3acd06d9f7491f75608e9f0641f data/forge/tags/blocks/storage_blocks/beetroot.json
+afd3592ccefe001b743061344b7d2c827f40eef3 data/forge/tags/blocks/storage_blocks/cabbage.json
+5732bc2b22a77e42ce97c02dfb2a353db7f7c496 data/forge/tags/blocks/storage_blocks/carrot.json
+dc41382aa4ff1c9d8989532e2a70d6139fe3985e data/forge/tags/blocks/storage_blocks/onion.json
+38c32fcd46883629fae32771481257fe22079a22 data/forge/tags/blocks/storage_blocks/potato.json
+9d8915524697016a73aca8a902282f939274ddc7 data/forge/tags/blocks/storage_blocks/rice.json
+b1919af26385c8c277cbefc52e2d517cfa896190 data/forge/tags/blocks/storage_blocks/rice_panicle.json
+934b73c62dcc70c5ad128e42c34671a5e8530b46 data/forge/tags/blocks/storage_blocks/straw.json
+7ad993790e1a604a556656dd00b68f9ab8c12638 data/forge/tags/blocks/storage_blocks/tomato.json
 d0812613832bbc602d7ff3274c81d5729e91c2ea data/minecraft/tags/blocks/bamboo_plantable_on.json
 859810b0bf4f36e275af5b6a86c3c7b9a968dbd3 data/minecraft/tags/blocks/ceiling_hanging_signs.json
 f84897a4867a8218f34243fe5553b2ceaba22e2a data/minecraft/tags/blocks/climbable.json

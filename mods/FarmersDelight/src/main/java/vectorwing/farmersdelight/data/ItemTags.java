@@ -35,6 +35,7 @@ public class ItemTags extends ItemTagsProvider
 		this.registerForgeTags();
 		this.registerCompatibilityTags();
 	}
+
 	private void registerMinecraftTags() {
 		tag(net.minecraft.tags.ItemTags.TALL_FLOWERS).add(ModItems.WILD_RICE.get());
 		tag(net.minecraft.tags.ItemTags.PIGLIN_LOVED).add(ModItems.GOLDEN_KNIFE.get());
@@ -167,6 +168,16 @@ public class ItemTags extends ItemTagsProvider
 		tag(ForgeTags.SEEDS_CABBAGE).add(ModItems.CABBAGE_SEEDS.get());
 		tag(ForgeTags.SEEDS_RICE).add(ModItems.RICE.get());
 		tag(ForgeTags.SEEDS_TOMATO).add(ModItems.TOMATO_SEEDS.get());
+
+		tag(ForgeTags.STORAGE_BLOCKS_ITEM_CARROT).add(ModItems.CARROT_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_ITEM_POTATO).add(ModItems.POTATO_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_ITEM_BEETROOT).add(ModItems.BEETROOT_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_ITEM_CABBAGE).add(ModItems.CABBAGE_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_ITEM_TOMATO).add(ModItems.TOMATO_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_ITEM_ONION).add(ModItems.ONION_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_ITEM_RICE).add(ModItems.RICE_BAG.get());
+		tag(ForgeTags.STORAGE_BLOCKS_ITEM_RICE_PANICLE).add(ModItems.RICE_BALE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_ITEM_STRAW).add(ModItems.STRAW_BALE.get());
 
 		tag(ForgeTags.VEGETABLES).addTags(ForgeTags.VEGETABLES_BEETROOT, ForgeTags.VEGETABLES_CARROT, ForgeTags.VEGETABLES_ONION, ForgeTags.VEGETABLES_POTATO, ForgeTags.VEGETABLES_TOMATO);
 		tag(ForgeTags.VEGETABLES_BEETROOT).add(Items.BEETROOT);
