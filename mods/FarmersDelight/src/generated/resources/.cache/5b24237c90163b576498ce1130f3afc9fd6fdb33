@@ -1,4 +1,4 @@
-// 1.21.1	2024-10-30T00:34:53.0444511	Tags for minecraft:item mod id farmersdelight
+// 1.21.1	2025-02-03T13:42:38.090337	Tags for minecraft:item mod id farmersdelight
 65eba9e0353834055ff822059bd7e1784fe218ad data/createaddition/tags/item/plants.json
 f55c336a7c0c249fc90b76c979cfa5d5f6a277bf data/createaddition/tags/item/plant_foods.json
 0c943816d6d2fa986a587d5c13c7d38aaed8e159 data/create/tags/item/upright_on_belt.json
@@ -42,6 +42,15 @@ ef52cc197127c8679eb1c5b78795a4bde37e1d04 data/c/tags/item/foods/raw_bacon.json
 0fe37095f12c7c6a3bca60606cab33162378e60d data/c/tags/item/foods/tomato.json
 918c0f66af478fb6e30369d568b5a8fb9713348b data/c/tags/item/foods/vegetable.json
 72e49310839c0faed01ba86225e802ae4961cb5e data/c/tags/item/seeds.json
+da0d6934eabdb3acd06d9f7491f75608e9f0641f data/c/tags/item/storage_blocks/beetroot.json
+afd3592ccefe001b743061344b7d2c827f40eef3 data/c/tags/item/storage_blocks/cabbage.json
+5732bc2b22a77e42ce97c02dfb2a353db7f7c496 data/c/tags/item/storage_blocks/carrot.json
+dc41382aa4ff1c9d8989532e2a70d6139fe3985e data/c/tags/item/storage_blocks/onion.json
+38c32fcd46883629fae32771481257fe22079a22 data/c/tags/item/storage_blocks/potato.json
+9d8915524697016a73aca8a902282f939274ddc7 data/c/tags/item/storage_blocks/rice.json
+b1919af26385c8c277cbefc52e2d517cfa896190 data/c/tags/item/storage_blocks/rice_panicle.json
+934b73c62dcc70c5ad128e42c34671a5e8530b46 data/c/tags/item/storage_blocks/straw.json
+7ad993790e1a604a556656dd00b68f9ab8c12638 data/c/tags/item/storage_blocks/tomato.json
 ca5d704c80ce87e8088c90a25812a2eb1e56c353 data/c/tags/item/tools.json
 edaf49470d0e1c903468fd6902234bbeec85c337 data/c/tags/item/tools/knife.json
 8b3dc287cc4a3716c52530d67784a1dce8e0f3fb data/farmersdelight/tags/item/cabbage_roll_ingredients.json

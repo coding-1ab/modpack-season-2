@@ -2,7 +2,17 @@
 
 ## 1.2.7
 
+### Updates
+- Knives are now effective at mining Cactus;
+- Added the following blocks to the `unaffected_by_rich_soil` tag:
+  - Moss, Nylium, Big Dripleaf, Pink Petals and Tall Flowers;
+- Added `storage_blocks/<material>` tags for each storage block (crates, bags, bales) in the mod:
+  - In 1.20.1, the namespace is `forge`;
+  - In 1.21.1, the namespace is `c`;
+- Rich Soil is no longer hardcoded to deny tall flower boosting; they have simply been added to the `unaffected_by_rich_soil` tag;
+
 ### Fixes
+- Fixed wrong UV at the bottom of Pie models when there's 1 slice left;
 - (1.21) Fix Pumpkins always dropping Pumpkin Slices without needing a knife;
 
 ## 1.2.6
