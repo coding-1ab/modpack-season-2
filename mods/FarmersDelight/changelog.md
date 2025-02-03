@@ -4,6 +4,7 @@
 
 ### Updates
 - Knives are now effective at mining Cactus;
+- Knives can now instamine Bamboo, just like a Sword;
 - Added the following blocks to the `unaffected_by_rich_soil` tag:
   - Moss, Nylium, Big Dripleaf, Pink Petals and Tall Flowers;
 - Added `storage_blocks/<material>` tags for each storage block (crates, bags, bales) in the mod:
