@@ -15,6 +15,12 @@
 - Fixed wrong UV at the bottom of Pie models when there's 1 slice left;
 - (1.21) Fix Pumpkins always dropping Pumpkin Slices without needing a knife;
 
+### Translations
+- Updated:
+  - es_cl (thanks, Ganbare-Lucifer!);
+  - id_id (thanks, ichirei!);
+  - zh_cn (thanks, Boshigiri!);
+
 ## 1.2.6
 
 ### Additions
