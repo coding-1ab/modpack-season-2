@@ -4,6 +4,8 @@ import java.util.Objects;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllRecipeTypes;
+import com.simibubi.create.AllTags;
+import com.simibubi.create.foundation.data.recipe.CreateRecipeProvider.GeneratedRecipe;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
@@ -29,7 +31,10 @@ public class CuttingRecipeGen extends ProcessingRecipeGen {
 
 		// Regions Unexplored
 		RU_14 = stripOnlyDiffModId(Mods.RU, "silver_birch_log", Mods.MC, "stripped_birch_log"),
-		RU_15 = stripOnlyDiffModId(Mods.RU, "silver_birch_wood", Mods.MC, "stripped_birch_wood")
+		RU_15 = stripOnlyDiffModId(Mods.RU, "silver_birch_wood", Mods.MC, "stripped_birch_wood"),
+		
+		// IE
+		IE_WIRES = ieWires("copper", "electrum", "aluminum", "steel", "lead")
 		;
 
 	GeneratedRecipe stripAndMakePlanks(Block wood, Block stripped, Block planks) {
@@ -96,6 +101,15 @@ public class CuttingRecipeGen extends ProcessingRecipeGen {
 						.output(1, mod, planks, 4)
 						.whenModLoaded(mod.getId()));
 			}
+		return null;
+	}
+
+	GeneratedRecipe ieWires(String... metals) {
+		for (String metal : metals)
+			create(Mods.IE.recipeId("wire_" + metal), b -> b.duration(50)
+				.require(AllTags.forgeItemTag("plates/" + metal))
+				.output(1, Mods.IE, "wire_" + metal, 2)
+				.whenModLoaded(Mods.IE.getId()));
 		return null;
 	}
 

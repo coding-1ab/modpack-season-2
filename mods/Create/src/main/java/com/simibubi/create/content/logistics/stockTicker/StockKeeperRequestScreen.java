@@ -1145,6 +1145,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+		if (addressBox.mouseScrolled(mouseX, mouseY, delta))
+			return true;
+		
 		Couple<Integer> hoveredSlot = getHoveredSlot((int) mouseX, (int) mouseY);
 		boolean noHover = hoveredSlot == noneHovered;
 
