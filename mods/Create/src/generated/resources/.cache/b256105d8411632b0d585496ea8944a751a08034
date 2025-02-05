@@ -1,4 +1,4 @@
-// 1.20.1	2025-02-02T11:59:39.4216053	Create's Processing Recipes
+// 1.20.1	2025-02-05T10:52:51.2045051	Create's Processing Recipes
 3c94326fb730f68c1e44fe1e2ef09c9db6ffd92b data/create/recipes/compacting/andesite_from_flint.json
 8d3d5b31f3601b9f681ff710e0545a483a1494c6 data/create/recipes/compacting/blaze_cake.json
 8bd7f4e3a686ab520b2d55594d2018d0e9a50c91 data/create/recipes/compacting/chocolate.json
@@ -229,6 +229,7 @@ aea7837e33bfcbdd1e0b4386372b6595fd00ad1d data/create/recipes/filling/builders_te
 f158f5e509b43746871722edf802984e2b9cc024 data/create/recipes/filling/compat/alexsmobs/lava_bottle.json
 5770b60bd7e89f2cac74df71b463a1101601d86f data/create/recipes/filling/compat/byg/lush_grass_block.json
 1280689ba81877c6583c6941ed307ca35d4f00e4 data/create/recipes/filling/compat/farmersdelight/milk_bottle.json
+a48a8862847dab2a75f8e2710203ed5f7d00533e data/create/recipes/filling/compat/immersiveengineering/treated_wood_in_spout.json
 fd578bb1e05901d0b959b1f445273619b55cde57 data/create/recipes/filling/compat/neapolitan/milk_bottle.json
 3f0f458c0c044c7b1c4e203d7394d890ba286d86 data/create/recipes/filling/compat/regions_unexplored/peat_grass_block.json
 ff16c74f09edbc67ed969f64270ca376bb8ea955 data/create/recipes/filling/compat/regions_unexplored/silt_grass_block.json

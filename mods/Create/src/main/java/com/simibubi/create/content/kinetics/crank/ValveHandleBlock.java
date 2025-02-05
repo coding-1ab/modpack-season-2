@@ -31,21 +31,19 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber
 public class ValveHandleBlock extends HandCrankBlock {
 
-	private final DyeColor color;
-	private final boolean inCreativeTab;
-
+	public final DyeColor color;
+	
 	public static ValveHandleBlock copper(Properties properties) {
-		return new ValveHandleBlock(properties, null, true);
+		return new ValveHandleBlock(properties, null);
 	}
 
 	public static ValveHandleBlock dyed(Properties properties, DyeColor color) {
-		return new ValveHandleBlock(properties, color, false);
+		return new ValveHandleBlock(properties, color);
 	}
 
-	private ValveHandleBlock(Properties properties, DyeColor color, boolean inCreativeTab) {
+	private ValveHandleBlock(Properties properties, DyeColor color) {
 		super(properties);
 		this.color = color;
-		this.inCreativeTab = inCreativeTab;
 	}
 
 	@Override

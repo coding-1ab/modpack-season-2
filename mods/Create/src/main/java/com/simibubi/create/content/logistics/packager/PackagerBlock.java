@@ -111,10 +111,10 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 						player.setItemInHand(handIn, ItemStack.EMPTY);
 					return InteractionResult.SUCCESS;
 				}
-				return InteractionResult.PASS;
+				return InteractionResult.SUCCESS;
 			}
 			if (be.animationTicks > 0)
-				return InteractionResult.PASS;
+				return InteractionResult.SUCCESS;
 			if (!worldIn.isClientSide()) {
 				player.getInventory()
 					.placeItemBackInInventory(be.heldBox.copy());
@@ -126,7 +126,7 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 		}).consumesAction())
 			return InteractionResult.SUCCESS;
 
-		return InteractionResult.PASS;
+		return InteractionResult.SUCCESS;
 	}
 
 	@Override

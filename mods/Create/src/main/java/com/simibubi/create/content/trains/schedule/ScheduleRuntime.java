@@ -128,7 +128,7 @@ public class ScheduleRuntime {
 			return;
 		}
 
-		DiscoveredPath nextPath = startCurrentInstruction();
+		DiscoveredPath nextPath = startCurrentInstruction(level);
 		if (nextPath == null)
 			return;
 
@@ -181,10 +181,10 @@ public class ScheduleRuntime {
 			carriage.storage.tickIdleCargoTracker();
 	}
 
-	public DiscoveredPath startCurrentInstruction() {
+	public DiscoveredPath startCurrentInstruction(Level level) {
 		ScheduleEntry entry = schedule.entries.get(currentEntry);
 		ScheduleInstruction instruction = entry.instruction;
-		return instruction.start(this);
+		return instruction.start(this, level);
 	}
 
 	public void setSchedule(Schedule schedule, boolean auto) {
