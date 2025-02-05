@@ -838,6 +838,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 		blockEntity.setChanged();
 		blockEntity.sendData();
 		playFeedbackSound(this);
+		if (!getWorld().isClientSide)
+			notifyRedstoneOutputs();
 	}
 
 	@Override
