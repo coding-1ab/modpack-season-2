@@ -88,8 +88,8 @@ public class AllInstanceTypes {
 			})
 			.build();
 
-	// TODO: Switch everything to this? Right now it's only used for bogey belts.
-	//  It takes a decent few more bytes to represent but perhaps it can be packed
+	// TODO: Switch everything using SCROLLING to this? Right now this is only used for bogey belts.
+	//  This takes a decent few more bytes to represent but perhaps it can be packed
 	//  down into 96 by sacrificing precision
 	public static final InstanceType<ScrollTransformedInstance> SCROLLING_TRANSFORMED = SimpleInstanceType.builder(ScrollTransformedInstance::new)
 		.cullShader(asResource("instance/cull/scrolling_transformed.glsl"))
