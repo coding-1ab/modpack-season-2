@@ -13,7 +13,6 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.network.chat.Component;
 import org.joml.Math;
 
 import com.google.common.collect.HashMultimap;
@@ -57,12 +56,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
@@ -71,8 +74,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.network.NetworkHooks;
 
-public class FactoryPanelBehaviour extends FilteringBehaviour {
+public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuProvider {
 
 	public static final BehaviourType<FactoryPanelBehaviour> TOP_LEFT = new BehaviourType<>();
 	public static final BehaviourType<FactoryPanelBehaviour> TOP_RIGHT = new BehaviourType<>();
@@ -526,6 +530,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 	@Override
 	public void onShortInteract(Player player, InteractionHand hand, Direction side, BlockHitResult hitResult) {
+		// Network is protected
 		if (!Create.LOGISTICS.mayInteract(network, player)) {
 			player.displayClientMessage(CreateLang.translate("logistically_linked.protected")
 				.style(ChatFormatting.RED)
@@ -533,6 +538,9 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			return;
 		}
 
+		boolean isClientSide = player.level().isClientSide;
+		
+		// Wrench cycles through arrow bending
 		if (targeting.size() + targetedByLinks.size() > 0 && AllItemTags.WRENCH.matches(player.getItemInHand(hand))) {
 			int sharedMode = -1;
 			boolean notifySelf = false;
@@ -547,7 +555,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 				if (sharedMode == -1)
 					sharedMode = (connection.arrowBendMode + 1) % 4;
 				connection.arrowBendMode = sharedMode;
-				if (!player.level().isClientSide)
+				if (!isClientSide)
 					at.blockEntity.notifyUpdate();
 			}
 
@@ -555,7 +563,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 				if (sharedMode == -1)
 					sharedMode = (connection.arrowBendMode + 1) % 4;
 				connection.arrowBendMode = sharedMode;
-				if (!player.level().isClientSide)
+				if (!isClientSide)
 					notifySelf = true;
 			}
 
@@ -572,23 +580,34 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			return;
 		}
 
-		if (player.level().isClientSide)
+		// Client might be in the process of connecting a panel
+		if (isClientSide)
 			if (FactoryPanelConnectionHandler.panelClicked(getWorld(), player, this))
 				return;
 
+		ItemStack heldItem = player.getItemInHand(hand);
 		if (getFilter().isEmpty()) {
+			// Open screen for setting an item through JEI
+			if (heldItem.isEmpty()) {
+				if (!isClientSide && player instanceof ServerPlayer sp)
+					NetworkHooks.openScreen(sp, this, buf -> getPanelPosition().send(buf));
+				return;
+			}
+			
+			// Use regular filter interaction for setting the item
 			super.onShortInteract(player, hand, side, hitResult);
 			return;
 		}
 		
-		ItemStack heldItem = player.getItemInHand(hand);
+		// Bind logistics items to this panels' frequency
 		if (heldItem.getItem() instanceof LogisticallyLinkedBlockItem) {
-			if (!player.level().isClientSide)
+			if (!isClientSide)
 				LogisticallyLinkedBlockItem.assignFrequency(heldItem, player, network);
 			return;
 		}
 
-		if (player.level().isClientSide)
+		// Open configuration screen
+		if (isClientSide)
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> displayScreen(player));
 	}
 
@@ -1006,6 +1025,18 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	
 	private void tickOutline() {
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> LogisticallyLinkedClientHandler.tickPanel(this));
+	}
+
+	@Override
+	public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+		return FactoryPanelSetItemMenu.create(containerId, playerInventory, this);
+	}
+
+	@Override
+	public Component getDisplayName() {
+		return blockEntity.getBlockState()
+			.getBlock()
+			.getName();
 	}
 
 }
