@@ -1044,7 +1044,7 @@
 	"create.display_link.display_on": "Write data to:",
 	"create.display_link.display_on_multiline": "Start writing at:",
 
-	"create.logistically_linked.tuned": "Tuned to this link",
+	"create.logistically_linked.tuned": "Tuned to this network",
 	"create.logistically_linked.new_network_started": "New link network started",
 	"create.logistically_linked.connected": "Connected to existing network successfully",
 	"create.logistically_linked.tooltip": "Frequency configured",

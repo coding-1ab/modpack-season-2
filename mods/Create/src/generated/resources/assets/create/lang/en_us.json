@@ -1529,7 +1529,7 @@
   "create.logistically_linked.protected": "Logistics Network is Protected",
   "create.logistically_linked.tooltip": "Frequency configured",
   "create.logistically_linked.tooltip_clear": "Place in crafting grid to reset",
-  "create.logistically_linked.tuned": "Tuned to this link",
+  "create.logistically_linked.tuned": "Tuned to this network",
   "create.logistics.crafter.click_to_merge": "Click to merge Inventories",
   "create.logistics.crafter.click_to_separate": "Click to separate Inventories",
   "create.logistics.crafter.connected": "Connected Crafters",

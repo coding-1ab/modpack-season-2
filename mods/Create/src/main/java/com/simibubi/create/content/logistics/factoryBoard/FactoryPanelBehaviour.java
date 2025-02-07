@@ -31,6 +31,8 @@ import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagingRequest;
 import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour.RequestType;
+import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBlockItem;
+import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedClientHandler;
 import com.simibubi.create.content.logistics.packagerLink.LogisticsManager;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromise;
 import com.simibubi.create.content.logistics.packagerLink.RequestPromiseQueue;
@@ -277,6 +279,8 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 				tickStorageMonitor();
 			bulb.updateChaseTarget(redstonePowered || satisfied ? 1 : 0);
 			bulb.tickChaser();
+			if (active)
+				tickOutline();
 			return;
 		}
 
@@ -345,7 +349,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 			&& promisedSatisfied == shouldPromiseSatisfy && waitingForNetwork == shouldWait)
 			return;
 
-		if (!satisfied && shouldSatisfy) {
+		if (!satisfied && shouldSatisfy && demand > 0) {
 			AllSoundEvents.CONFIRM.playOnServer(getWorld(), getPos(), 0.075f, 1f);
 			AllSoundEvents.CONFIRM_2.playOnServer(getWorld(), getPos(), 0.125f, 0.575f);
 		}
@@ -574,6 +578,13 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 
 		if (getFilter().isEmpty()) {
 			super.onShortInteract(player, hand, side, hitResult);
+			return;
+		}
+		
+		ItemStack heldItem = player.getItemInHand(hand);
+		if (heldItem.getItem() instanceof LogisticallyLinkedBlockItem) {
+			if (!player.level().isClientSide)
+				LogisticallyLinkedBlockItem.assignFrequency(heldItem, player, network);
 			return;
 		}
 
@@ -991,6 +1002,10 @@ public class FactoryPanelBehaviour extends FilteringBehaviour {
 	@Override
 	public boolean writeToClipboard(CompoundTag tag, Direction side) {
 		return false;
+	}
+	
+	private void tickOutline() {
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> LogisticallyLinkedClientHandler.tickPanel(this));
 	}
 
 }
