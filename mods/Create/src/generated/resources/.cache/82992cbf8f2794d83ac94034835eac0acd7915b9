@@ -1,4 +1,4 @@
-// 1.20.1	2025-02-07T11:08:37.2861078	Create's Standard Recipes
+// 1.20.1	2025-02-07T11:36:36.6037564	Create's Standard Recipes
 a8cc4af26f6c7c45a9eef12e92af1452fe042454 data/create/advancements/recipes/combat/crafting/appliances/netherite_backtank.json
 2c2639c7b307ee7c7a4e97e5efebf496788998ad data/create/advancements/recipes/combat/crafting/appliances/netherite_backtank_from_netherite.json
 81dcf0cb1aa99e39bc7d1a386e07cad4cee7d8b9 data/create/advancements/recipes/combat/crafting/appliances/netherite_diving_boots.json
@@ -336,6 +336,7 @@ bbf63119e3ee54afd49fe2ccfe2c06baaa9f6f41 data/create/recipes/crafting/appliances
 d0bad974476c54315e4b656c67dbf6165d183bbc data/create/recipes/crafting/appliances/tree_fertilizer.json
 5b499ce4eee741d17813f96274333abfa2de99a9 data/create/recipes/crafting/curiosities/brown_toolbox.json
 05eb422734dcdd4c499437ae564e73af5c2e4673 data/create/recipes/crafting/curiosities/cake.json
+b961ce60986ebfed1b0cc0f7053d6e558de13e86 data/create/recipes/crafting/curiosities/item_copying.json
 c3444000827e1f9553818dedec6d3dba4af9dfcd data/create/recipes/crafting/curiosities/minecart_coupling.json
 1323b7c6d30d4e343e010902b7ebbfa2590a4cf5 data/create/recipes/crafting/curiosities/peculiar_bell.json
 e54646485af774e490409e9912a3799f7ac44e01 data/create/recipes/crafting/curiosities/toolbox_dyeing.json

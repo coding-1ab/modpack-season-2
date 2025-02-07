@@ -202,6 +202,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 			.pattern(" L ")),
 
 		TOOLBOX_DYEING = createSpecial(AllRecipeTypes.TOOLBOX_DYEING::getSerializer, "crafting", "toolbox_dyeing"),
+		ITEM_COPYING = createSpecial(AllRecipeTypes.ITEM_COPYING::getSerializer, "crafting", "item_copying"),
 
 		MINECART_COUPLING = create(AllItems.MINECART_COUPLING).unlockedBy(I::andesiteAlloy)
 			.viaShaped(b -> b.define('E', I.andesiteAlloy())
