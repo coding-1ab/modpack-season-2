@@ -858,6 +858,12 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.requires(I.ironNugget())
 				.requires(I.ironNugget())
 				.requires(I.ironNugget())),
+			
+		ENCASED_CHAIN_DRIVE_ZINC = create(AllBlocks.ENCASED_CHAIN_DRIVE).withSuffix("_from_zinc").unlockedBy(I::andesiteCasing)
+			.viaShapeless(b -> b.requires(I.andesiteCasing())
+				.requires(I.zincNugget())
+				.requires(I.zincNugget())
+				.requires(I.zincNugget())),
 
 		FLYWHEEL = create(AllBlocks.FLYWHEEL).unlockedByTag(I::brass)
 			.viaShaped(b -> b.define('C', I.brass())

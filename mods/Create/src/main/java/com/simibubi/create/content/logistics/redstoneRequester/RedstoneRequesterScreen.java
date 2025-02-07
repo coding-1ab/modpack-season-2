@@ -178,6 +178,9 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 		int x = getGuiLeft();
 		int y = getGuiTop();
 
+		if (addressBox.mouseScrolled(mouseX, mouseY, pDelta))
+			return true;
+		
 		for (int i = 0; i < amounts.size(); i++) {
 			int inputX = x + 27 + i * 20;
 			int inputY = y + 28;

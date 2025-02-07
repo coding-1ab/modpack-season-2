@@ -95,6 +95,8 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 			return InteractionResult.PASS;
 		if (AllBlocks.STOCK_LINK.isIn(itemInHand) && !state.getValue(LINKED))
 			return InteractionResult.PASS;
+		if (AllBlocks.PACKAGE_FROGPORT.isIn(itemInHand))
+			return InteractionResult.PASS;
 
 		if (onBlockEntityUse(worldIn, pos, be -> {
 			if (be.heldBox.isEmpty()) {

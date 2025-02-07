@@ -77,6 +77,13 @@ public class PackageFilterScreen extends AbstractFilterScreen<PackageFilterMenu>
 	public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
 		return super.mouseClicked(pMouseX, pMouseY, pButton);
 	}
+	
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+		if (addressBox.mouseScrolled(mouseX, mouseY, delta))
+			return true;
+		return super.mouseScrolled(mouseX, mouseY, delta);
+	}
 
 	@Override
 	public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {

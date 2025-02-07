@@ -591,6 +591,9 @@ public class FactoryPanelScreen extends AbstractSimiScreen {
 	public boolean mouseScrolled(double mouseX, double mouseY, double pDelta) {
 		int x = guiLeft;
 		int y = guiTop;
+		
+		if (addressBox.mouseScrolled(mouseX, mouseY, pDelta))
+			return true;
 
 		if (craftingActive)
 			return super.mouseScrolled(mouseX, mouseY, pDelta);
