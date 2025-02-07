@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
@@ -13,9 +15,8 @@ import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.DispenserMenu;
 import net.minecraft.world.inventory.MenuConstructor;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
-import org.jetbrains.annotations.Nullable;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 /**
  * Methods for creating generic menus usable by mounted storages.
@@ -31,6 +32,10 @@ public class MountedStorageMenus {
 											 Predicate<Player> stillValid, Consumer<Player> onClose) {
 		int rows = handler.getSlots() / 9;
 		if (rows < 1 || rows > 6)
+			return null;
+
+		// make sure rows are full
+		if (handler.getSlots() % 9 != 0)
 			return null;
 
 		MenuType<?> type = GENERIC_CHEST_MENUS.get(rows - 1);
