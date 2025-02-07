@@ -1,23 +1,30 @@
-package com.simibubi.create.foundation.recipe;
+package com.simibubi.create.foundation.data;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.kinetics.saw.CuttingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
-import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder.DataGenResult;
 import com.simibubi.create.foundation.pack.DynamicPack;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagEntry;
+import net.minecraft.tags.TagFile;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
@@ -25,6 +32,7 @@ import net.minecraft.world.item.Item;
 public class RuntimeDataGenerator {
 	private static final Pattern STRIPPED_WOODS_REGEX = Pattern.compile("stripped_(\\w*)_(log|wood|stem|hyphae)");
 	private static final Pattern NON_STRIPPED_WOODS_REGEX = Pattern.compile("(?!stripped_)([a-z]+)_(log|wood|stem|hyphae)");
+	private static final Multimap<ResourceLocation, TagEntry> TAGS = HashMultimap.create();
 	private static final Object2ObjectOpenHashMap<ResourceLocation, JsonObject> JSON_FILES = new Object2ObjectOpenHashMap<>();
 
 	public static void insertIntoPack(DynamicPack dynamicPack) {
@@ -32,17 +40,22 @@ public class RuntimeDataGenerator {
 			cuttingRecipes(itemId);
 
 		Create.LOGGER.info("Created {} recipes which will be injected into the game", JSON_FILES.size());
-
 		JSON_FILES.forEach(dynamicPack::put);
+
+		Create.LOGGER.info("Created {} tags which will be injected into the game", TAGS.size());
+		for (Map.Entry<ResourceLocation, Collection<TagEntry>> tags : TAGS.asMap().entrySet()) {
+			TagFile tagFile = new TagFile(new ArrayList<>(tags.getValue()), false);
+			dynamicPack.put(tags.getKey().withPrefix("tags/items/"), TagFile.CODEC.encodeStart(JsonOps.INSTANCE, tagFile).result().orElseThrow());
+		}
 
 		JSON_FILES.clear();
 		JSON_FILES.trim();
+		TAGS.clear();
 	}
 
 	// logs/woods -> stripped variants
 	// logs/woods both stripped and non stripped -> planks
 	// planks -> stairs, slabs, fences, fence gates, doors, trapdoors, pressure plates, buttons and signs
-	// also adds stripped logs and woods into the create tag for those
 	private static void cuttingRecipes(ResourceLocation itemId) {
 		String path = itemId.getPath();
 
@@ -59,7 +72,8 @@ public class RuntimeDataGenerator {
 
 		if (hasFoundMatch) {
 			String type = match.group(2);
-			ResourceLocation base = itemId.withPath(match.group(1) + "_");
+			ResourceLocation matched = itemId.withPath(match.group(1));
+			ResourceLocation base = matched.withSuffix("_");
 			ResourceLocation nonStrippedId = base.withSuffix(type);
 			ResourceLocation planksId = base.withSuffix("planks");
 			ResourceLocation stairsId = base.withSuffix("stairs");
@@ -75,8 +89,12 @@ public class RuntimeDataGenerator {
 			if (!noStrippedVariant) {
 				simpleWoodRecipe(nonStrippedId, itemId);
 				simpleWoodRecipe(itemId, planksId, 6);
-			} else {
-				simpleWoodRecipe(TagKey.create(Registries.ITEM, nonStrippedId.withSuffix("s")), planksId, 6);
+			} else if (BuiltInRegistries.ITEM.containsKey(planksId)) {
+				ResourceLocation tag = Create.asResource("runtime_generated/compat/" + matched.getPath());
+				insertIntoTag(tag, itemId);
+				insertIntoTag(tag, nonStrippedId);
+
+				simpleWoodRecipe(TagKey.create(Registries.ITEM, tag), planksId, 6);
 			}
 
 			if (!path.contains("_wood") && !path.contains("_hyphae") && BuiltInRegistries.ITEM.containsKey(planksId)) {
@@ -91,6 +109,11 @@ public class RuntimeDataGenerator {
 				simpleWoodRecipe(planksId, signId);
 			}
 		}
+	}
+
+	private static void insertIntoTag(ResourceLocation tag, ResourceLocation itemId) {
+		if (BuiltInRegistries.ITEM.containsKey(itemId))
+			TAGS.put(tag, TagEntry.optionalElement(itemId));
 	}
 
 	private static void simpleWoodRecipe(ResourceLocation inputId, ResourceLocation outputId) {
