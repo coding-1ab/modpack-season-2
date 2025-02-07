@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
@@ -70,7 +71,7 @@ public class LecternControllerBlockEntity extends SmartBlockEntity {
 	}
 
 	public ItemStack getController() {
-		return getController();
+		return createLinkedController();
 	}
 
 	public boolean hasUser() { return user != null; }
