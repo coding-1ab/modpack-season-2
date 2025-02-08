@@ -4,7 +4,7 @@
   "group": "fd_wheat_dough",
   "ingredients": [
     {
-      "item": "minecraft:water_bucket"
+      "tag": "forge:buckets/water"
     },
     {
       "item": "minecraft:wheat"
