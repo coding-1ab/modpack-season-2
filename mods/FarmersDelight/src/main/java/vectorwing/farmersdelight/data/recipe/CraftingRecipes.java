@@ -195,7 +195,7 @@ public class CraftingRecipes
 				.define('b', Items.BRICK)
 				.define('i', Tags.Items.INGOTS_IRON)
 				.define('S', Items.WOODEN_SHOVEL)
-				.define('W', Items.WATER_BUCKET)
+				.define('W', ForgeTags.BUCKETS_WATER)
 				.unlockedBy("has_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(Items.IRON_INGOT))
 				.save(consumer);
 		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.BASKET.get())
@@ -563,7 +563,7 @@ public class CraftingRecipes
 				.unlockedBy("has_melon_slice", InventoryChangeTrigger.TriggerInstance.hasItems(Items.MELON_SLICE))
 				.save(consumer);
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.WHEAT_DOUGH.get(), 3)
-				.requires(Items.WATER_BUCKET)
+				.requires(ForgeTags.BUCKETS_WATER)
 				.requires(Items.WHEAT)
 				.requires(Items.WHEAT)
 				.requires(Items.WHEAT)

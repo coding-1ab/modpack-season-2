@@ -96,6 +96,8 @@ public class ForgeTags
 	public static final TagKey<Item> TOOLS_PICKAXES = forgeItemTag("tools/pickaxes");
 	public static final TagKey<Item> TOOLS_SHOVELS = forgeItemTag("tools/shovels");
 
+	public static final TagKey<Item> BUCKETS_WATER = forgeItemTag("buckets/water");
+
 	public static final TagKey<Item> STORAGE_BLOCKS_ITEM_CARROT = forgeItemTag("storage_blocks/carrot");
 	public static final TagKey<Item> STORAGE_BLOCKS_ITEM_POTATO = forgeItemTag("storage_blocks/potato");
 	public static final TagKey<Item> STORAGE_BLOCKS_ITEM_BEETROOT = forgeItemTag("storage_blocks/beetroot");
