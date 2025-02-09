@@ -1,4 +1,4 @@
-// 1.20.1	2025-02-05T20:54:03.0689569	Create's Processing Recipes
+// 1.20.1	2025-02-09T10:52:38.3168881	Create's Processing Recipes
 3c94326fb730f68c1e44fe1e2ef09c9db6ffd92b data/create/recipes/compacting/andesite_from_flint.json
 8d3d5b31f3601b9f681ff710e0545a483a1494c6 data/create/recipes/compacting/blaze_cake.json
 8bd7f4e3a686ab520b2d55594d2018d0e9a50c91 data/create/recipes/compacting/chocolate.json
@@ -54,6 +54,9 @@ c9f6c53c34c4891a245dd9515eb573b40b4f3e0b data/create/recipes/crushing/compat/exn
 0fedb41388b4f04e544f45d7182d91b2e9230bc6 data/create/recipes/crushing/compat/galosphere/allurite.json
 9e255904c7a3277d6084183c0921392df0c7918d data/create/recipes/crushing/compat/galosphere/amethyst.json
 b04f95c02f37a0398c209a02ad08a8b0e9aaaaa9 data/create/recipes/crushing/compat/galosphere/lumiere.json
+0e812bd72411b42378fe29efa31a11f087d57e2e data/create/recipes/crushing/compat/immersiveengineering/coal_coke.json
+02bcdd13739c05df6e8cb49908a0103ce8ec896b data/create/recipes/crushing/compat/immersiveengineering/coke_block.json
+113b6dcce9801ee18d5771855c3750c1358f9c65 data/create/recipes/crushing/compat/immersiveengineering/slag.json
 bea05bc584958f479078cd6c16a06c50eae859cc data/create/recipes/crushing/compat/neapolitan/ice.json
 2358ce4b7a3acb08d3d0a3e64295fb97dea2ec02 data/create/recipes/crushing/compat/quark/moss_block.json
 2631b2bdcf091f4d400e0a9d2be6f1f772edfdc9 data/create/recipes/crushing/compat/silentgems/alexandrite_ore.json
