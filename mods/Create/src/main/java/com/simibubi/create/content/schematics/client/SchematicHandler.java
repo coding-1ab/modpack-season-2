@@ -320,7 +320,7 @@ public class SchematicHandler implements IGuiOverlay {
 			return false;
 
 		if (selectionScreen.focused) {
-			selectionScreen.cycle((int) delta);
+			selectionScreen.cycle((int) Math.signum(delta));
 			return true;
 		}
 		if (AllKeys.ctrlDown())
