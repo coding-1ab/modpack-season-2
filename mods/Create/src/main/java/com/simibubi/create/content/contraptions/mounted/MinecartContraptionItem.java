@@ -10,11 +10,11 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.AllMovementBehaviours;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.Contraption;
-import com.simibubi.create.content.contraptions.ContraptionData;
 import com.simibubi.create.content.contraptions.ContraptionMovementSetting;
 import com.simibubi.create.content.contraptions.OrientedContraptionEntity;
 import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceMovement;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
+import com.simibubi.create.content.contraptions.data.ContraptionPickupLimiting;
 import com.simibubi.create.content.kinetics.deployer.DeployerFakePlayer;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -249,7 +249,7 @@ public class MinecartContraptionItem extends Item {
 
 		ItemStack generatedStack = create(type, oce).setHoverName(entity.getCustomName());
 
-		if (ContraptionData.isTooLargeForPickup(generatedStack.serializeNBT())) {
+		if (ContraptionPickupLimiting.isTooLargeForPickup(generatedStack.serializeNBT())) {
 			MutableComponent message = CreateLang.translateDirect("contraption.minecart_contraption_too_big")
 					.withStyle(ChatFormatting.RED);
 			player.displayClientMessage(message, true);
