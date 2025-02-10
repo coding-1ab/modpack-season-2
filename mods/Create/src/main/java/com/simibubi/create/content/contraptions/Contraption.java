@@ -91,6 +91,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.DebugPackets;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
@@ -106,6 +107,7 @@ import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
@@ -138,6 +140,7 @@ public abstract class Contraption {
 	public boolean disassembled;
 
 	protected Map<BlockPos, StructureBlockInfo> blocks;
+	protected Map<BlockPos, CompoundTag> updateTags;
 	protected List<MutablePair<StructureBlockInfo, MovementContext>> actors;
 	protected Map<BlockPos, MovingInteractionBehaviour> interactors;
 	protected List<ItemStack> disabledActors;
@@ -165,6 +168,7 @@ public abstract class Contraption {
 
 	public Contraption() {
 		blocks = new HashMap<>();
+		updateTags = new HashMap<>();
 		seats = new ArrayList<>();
 		actors = new ArrayList<>();
 		disabledActors = new ArrayList<>();
@@ -645,6 +649,15 @@ public abstract class Contraption {
 		bounds = bounds.minmax(new AABB(localPos));
 
 		BlockEntity be = pair.getValue();
+
+		if (be != null) {
+			CompoundTag updateTag = be.getUpdateTag();
+			// the ID needs to be in the tag so the client can properly add the BlockEntity
+			ResourceLocation id = Objects.requireNonNull(BlockEntityType.getKey(be.getType()));
+			updateTag.putString("id", id.toString());
+			updateTags.put(localPos, updateTag);
+		}
+
 		storage.addBlock(level, state, pos, localPos, be);
 
 		captureMultiblock(localPos, structureBlockInfo, be);
@@ -787,7 +800,7 @@ public abstract class Contraption {
 		CompoundTag nbt = new CompoundTag();
 		nbt.putString("Type", getType().id);
 
-		CompoundTag blocksNBT = writeBlocksCompound();
+		CompoundTag blocksNBT = writeBlocksCompound(spawnPacket);
 
 		ListTag multiblocksNBT = new ListTag();
 		capturedMultiblocks.keySet().forEach(controllerPos -> {
@@ -824,7 +837,7 @@ public abstract class Contraption {
 				superglueNBT.add(c);
 			}
 		}
-		
+
 		writeStorage(nbt, spawnPacket);
 
 		ListTag interactorNBT = new ListTag();
@@ -867,12 +880,12 @@ public abstract class Contraption {
 
 		return nbt;
 	}
-	
+
 	public void writeStorage(CompoundTag nbt, boolean spawnPacket) {
 		storage.write(nbt, spawnPacket);
 	}
 
-	private CompoundTag writeBlocksCompound() {
+	private CompoundTag writeBlocksCompound(boolean spawnPacket) {
 		CompoundTag compound = new CompoundTag();
 		HashMapPalette<BlockState> palette = new HashMapPalette<>(GameData.getBlockStateIDMap(), 16, (i, s) -> {
 			throw new IllegalStateException("Palette Map index exceeded maximum");
@@ -881,11 +894,26 @@ public abstract class Contraption {
 
 		for (StructureBlockInfo block : this.blocks.values()) {
 			int id = palette.idFor(block.state());
+			BlockPos pos = block.pos();
 			CompoundTag c = new CompoundTag();
-			c.putLong("Pos", block.pos().asLong());
+			c.putLong("Pos", pos.asLong());
 			c.putInt("State", id);
-			if (block.nbt() != null)
-				c.put("Data", block.nbt());
+
+			CompoundTag updateTag = updateTags.get(pos);
+			if (spawnPacket) {
+				// for client sync, treat the updateTag as the data
+				if (updateTag != null) {
+					c.put("Data", updateTag);
+				}
+			} else {
+				// otherwise, write actual data as the data, save updateTag on its own
+				if (block.nbt() != null) {
+					c.put("Data", block.nbt());
+				}
+				if (updateTag != null) {
+					c.put("UpdateTag", updateTag);
+				}
+			}
 			blockList.add(c);
 		}
 
@@ -927,6 +955,13 @@ public abstract class Contraption {
 				usePalettedDeserialization ? readStructureBlockInfo(c, finalPalette) : legacyReadStructureBlockInfo(c, holderGetter);
 
 			this.blocks.put(info.pos(), info);
+
+			if (c.contains("UpdateTag", Tag.TAG_COMPOUND)) {
+				CompoundTag updateTag = c.getCompound("UpdateTag");
+				if (!updateTag.isEmpty()) {
+					this.updateTags.put(info.pos(), updateTag);
+				}
+			}
 
 			if (!world.isClientSide)
 				return;
