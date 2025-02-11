@@ -905,6 +905,10 @@ public abstract class Contraption {
 				if (updateTag != null) {
 					c.put("Data", updateTag);
 				}
+				// legacy: use full data if update tag is not available
+				if (updateTag == null && block.nbt() != null) {
+					c.put("Data", block.nbt());
+				}
 			} else {
 				// otherwise, write actual data as the data, save updateTag on its own
 				if (block.nbt() != null) {
