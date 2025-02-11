@@ -91,7 +91,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.DebugPackets;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
@@ -103,11 +102,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
@@ -652,9 +651,8 @@ public abstract class Contraption {
 
 		if (be != null) {
 			CompoundTag updateTag = be.getUpdateTag();
-			// the ID needs to be in the tag so the client can properly add the BlockEntity
-			ResourceLocation id = Objects.requireNonNull(BlockEntityType.getKey(be.getType()));
-			updateTag.putString("id", id.toString());
+			// empty tags are intentionally kept, see writeBlocksCompound
+			// for testing, this line can be commented to emulate legacy behavior
 			updateTags.put(localPos, updateTag);
 		}
 
@@ -904,10 +902,12 @@ public abstract class Contraption {
 				// for client sync, treat the updateTag as the data
 				if (updateTag != null) {
 					c.put("Data", updateTag);
-				}
-				// legacy: use full data if update tag is not available
-				if (updateTag == null && block.nbt() != null) {
+				} else if (block.nbt() != null) {
+					// an updateTag is saved for all BlockEntities, even when empty.
+					// this case means that the contraption was assembled pre-updateTags.
+					// in this case, we need to use the full BlockEntity data.
 					c.put("Data", block.nbt());
+					NBTHelper.putMarker(c, "Legacy");
 				}
 			} else {
 				// otherwise, write actual data as the data, save updateTag on its own
@@ -962,29 +962,17 @@ public abstract class Contraption {
 
 			if (c.contains("UpdateTag", Tag.TAG_COMPOUND)) {
 				CompoundTag updateTag = c.getCompound("UpdateTag");
-				if (!updateTag.isEmpty()) {
-					this.updateTags.put(info.pos(), updateTag);
-				}
+				// it's very important that empty tags are read here. see writeBlocksCompound
+				this.updateTags.put(info.pos(), updateTag);
 			}
 
 			if (!world.isClientSide)
 				return;
 
-			CompoundTag tag = info.nbt();
-			if (tag == null)
-				return;
-
-			tag.putInt("x", info.pos().getX());
-			tag.putInt("y", info.pos().getY());
-			tag.putInt("z", info.pos().getZ());
-
-			BlockEntity be = BlockEntity.loadStatic(info.pos(), info.state(), tag);
+			// create the BlockEntity client-side for rendering
+			BlockEntity be = readBlockEntity(world, info, c);
 			if (be == null)
 				return;
-			be.setLevel(world);
-			if (be instanceof KineticBlockEntity kbe)
-				kbe.setSpeed(0);
-			be.getBlockState();
 
 			presentBlockEntities.put(info.pos(), be);
 			modelData.put(info.pos(), be.getModelData());
@@ -994,6 +982,47 @@ public abstract class Contraption {
 				renderedBlockEntities.add(be);
 			}
 		});
+	}
+
+	@Nullable
+	private static BlockEntity readBlockEntity(Level level, StructureBlockInfo info, CompoundTag tag) {
+		BlockState state = info.state();
+		BlockPos pos = info.pos();
+		CompoundTag nbt = info.nbt();
+
+		if (tag.contains("Legacy")) {
+			// for contraptions that were assembled pre-updateTags, we need to use the old strategy.
+			if (nbt == null)
+				return null;
+
+			nbt.putInt("x", pos.getX());
+			nbt.putInt("y", pos.getY());
+			nbt.putInt("z", pos.getZ());
+
+			BlockEntity be = BlockEntity.loadStatic(pos, state, nbt);
+			postprocessReadBlockEntity(level, be);
+			return be;
+		}
+
+		if (!state.hasBlockEntity() || !(state.getBlock() instanceof EntityBlock entityBlock))
+			return null;
+
+		BlockEntity be = entityBlock.newBlockEntity(pos, state);
+		postprocessReadBlockEntity(level, be);
+		if (be != null && nbt != null) {
+			be.handleUpdateTag(nbt);
+		}
+
+		return be;
+	}
+
+	private static void postprocessReadBlockEntity(Level level, @Nullable BlockEntity be) {
+		if (be != null) {
+			be.setLevel(level);
+			if (be instanceof KineticBlockEntity kbe) {
+				kbe.setSpeed(0);
+			}
+		}
 	}
 
 	private static StructureBlockInfo readStructureBlockInfo(CompoundTag blockListEntry,
