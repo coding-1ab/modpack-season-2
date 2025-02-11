@@ -2,12 +2,13 @@ package com.simibubi.create.impl.contraption.transformable;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import com.simibubi.create.api.contraption.transformable.ContraptionTransformableRegistry.TransformableBlock;
-import com.simibubi.create.api.contraption.transformable.ContraptionTransformableRegistry.TransformableBlockEntity;
+import com.simibubi.create.api.contraption.transformable.TransformableBlock;
+import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
 import com.simibubi.create.foundation.utility.AttachedRegistry;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+
 import net.minecraftforge.registries.ForgeRegistries;
 
 @ApiStatus.Internal

@@ -12,8 +12,8 @@ import org.apache.commons.lang3.Validate;
 import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.Create;
+import com.simibubi.create.api.schematic.requirement.SpecialEntityItemRequirement;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
-import com.simibubi.create.api.schematic.requirement.ISpecialEntityItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement.ItemUseType;
 import com.simibubi.create.foundation.networking.ISyncPersistentData;
@@ -59,6 +59,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
@@ -72,7 +73,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.network.NetworkHooks;
 
 public class BlueprintEntity extends HangingEntity
-	implements IEntityAdditionalSpawnData, ISpecialEntityItemRequirement, ISyncPersistentData, IInteractionChecker {
+	implements IEntityAdditionalSpawnData, SpecialEntityItemRequirement, ISyncPersistentData, IInteractionChecker {
 
 	protected int size;
 	protected Direction verticalOrientation;

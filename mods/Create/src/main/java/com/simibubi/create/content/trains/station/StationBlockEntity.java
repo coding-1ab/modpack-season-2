@@ -21,10 +21,10 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.Create;
+import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
 import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.compat.computercraft.ComputerCraftProxy;
 import com.simibubi.create.content.contraptions.AssemblyException;
-import com.simibubi.create.api.contraption.transformable.ITransformableBlockEntity;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.decoration.slidingDoor.DoorControlBehaviour;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
@@ -60,12 +60,12 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
-import net.createmod.catnip.data.Iterate;
-import net.createmod.catnip.nbt.NBTHelper;
-import net.createmod.catnip.math.VecHelper;
-import net.createmod.catnip.data.WorldAttached;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.data.WorldAttached;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
@@ -90,13 +90,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.PacketDistributor;
 
-public class StationBlockEntity extends SmartBlockEntity implements ITransformableBlockEntity {
+public class StationBlockEntity extends SmartBlockEntity implements TransformableBlockEntity {
 
 	public TrackTargetingBehaviour<GlobalStation> edgePoint;
 	public DoorControlBehaviour doorControls;
@@ -970,8 +971,8 @@ public class StationBlockEntity extends SmartBlockEntity implements ITransformab
 	}
 
 	@Override
-	public void transform(StructureTransform transform) {
-		edgePoint.transform(transform);
+	public void transform(BlockEntity be, StructureTransform transform) {
+		edgePoint.transform(be, transform);
 	}
 
 	// Package port integration

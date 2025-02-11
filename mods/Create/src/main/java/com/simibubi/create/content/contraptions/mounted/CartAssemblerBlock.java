@@ -1,14 +1,21 @@
 package com.simibubi.create.content.contraptions.mounted;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
+import com.simibubi.create.api.schematic.requirement.SpecialBlockItemRequirement;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.redstone.rail.ControllerRailBlock;
-import com.simibubi.create.api.schematic.requirement.ISpecialBlockItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement.ItemUseType;
 import com.simibubi.create.foundation.block.IBE;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -52,13 +59,8 @@ import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-
 public class CartAssemblerBlock extends BaseRailBlock
-	implements IBE<CartAssemblerBlockEntity>, IWrenchable, ISpecialBlockItemRequirement {
+	implements IBE<CartAssemblerBlockEntity>, IWrenchable, SpecialBlockItemRequirement {
 
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 	public static final BooleanProperty BACKWARDS = BooleanProperty.create("backwards");

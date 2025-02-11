@@ -12,8 +12,8 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.api.contraption.transformable.ITransformableBlock;
-import com.simibubi.create.api.schematic.requirement.ISpecialBlockItemRequirement;
+import com.simibubi.create.api.contraption.transformable.TransformableBlock;
+import com.simibubi.create.api.schematic.requirement.SpecialBlockItemRequirement;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
 import com.simibubi.create.content.fluids.transfer.GenericItemEmptying;
@@ -88,6 +88,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientBlockExtensions;
@@ -96,7 +97,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 
 public class BeltBlock extends HorizontalKineticBlock
-	implements IBE<BeltBlockEntity>, ISpecialBlockItemRequirement, ITransformableBlock, ProperWaterloggedBlock {
+	implements IBE<BeltBlockEntity>, SpecialBlockItemRequirement, TransformableBlock, ProperWaterloggedBlock {
 
 	public static final Property<BeltSlope> SLOPE = EnumProperty.create("slope", BeltSlope.class);
 	public static final Property<BeltPart> PART = EnumProperty.create("part", BeltPart.class);

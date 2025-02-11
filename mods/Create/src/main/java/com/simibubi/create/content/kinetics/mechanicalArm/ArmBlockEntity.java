@@ -6,7 +6,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.simibubi.create.Create;
-import com.simibubi.create.api.contraption.transformable.ITransformableBlockEntity;
+import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
 import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.mechanicalArm.AllArmInteractionPointTypes.JukeboxPoint;
@@ -22,11 +22,11 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import dev.engine_room.flywheel.lib.visualization.VisualizationHelper;
-import net.createmod.catnip.nbt.NBTHelper;
-import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.lang.Lang;
 import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
@@ -42,15 +42,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.JukeboxBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkSource;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 
-public class ArmBlockEntity extends KineticBlockEntity implements ITransformableBlockEntity {
+public class ArmBlockEntity extends KineticBlockEntity implements TransformableBlockEntity {
 
 	// Server
 	List<ArmInteractionPoint> inputs;
@@ -419,7 +421,7 @@ public class ArmBlockEntity extends KineticBlockEntity implements ITransformable
 	}
 
 	@Override
-	public void transform(StructureTransform transform) {
+	public void transform(BlockEntity be, StructureTransform transform) {
 		if (interactionPointTag == null)
 			return;
 
