@@ -214,7 +214,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 
 		SmartBlockEntity oldBE = blockEntity;
 		FactoryPanelPosition oldPos = getPanelPosition();
-		slot = newPos.slot();
+		moveToSlot(newPos.slot());
 
 		// Add to new BE
 		if (level.getBlockEntity(newPos.pos()) instanceof FactoryPanelBlockEntity fpbe) {
@@ -267,6 +267,12 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 			.component(), true);
 		player.level()
 			.playSound(null, newPos.pos(), SoundEvents.COPPER_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
+	}
+	
+	private void moveToSlot(PanelSlot slot) {
+		this.slot = slot;
+		if (this.getSlotPositioning() instanceof FactoryPanelSlotPositioning fpsp)
+			fpsp.slot = slot;
 	}
 
 	@Override
