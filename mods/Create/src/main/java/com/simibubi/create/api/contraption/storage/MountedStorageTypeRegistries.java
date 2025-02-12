@@ -3,7 +3,7 @@ package com.simibubi.create.api.contraption.storage;
 import com.simibubi.create.Create;
 import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageType;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
-import com.simibubi.create.api.lookup.BlockLookup;
+import com.simibubi.create.api.registry.AttachedRegistry;
 import com.simibubi.create.impl.contraption.storage.MountedStorageTypeRegistryImpl;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.entry.RegistryEntry;
@@ -12,9 +12,10 @@ import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
+
 import net.minecraftforge.registries.IForgeRegistry;
 
-public class MountedStorageTypeRegistry {
+public class MountedStorageTypeRegistries {
 	public static final ResourceKey<Registry<MountedItemStorageType<?>>> ITEMS = ResourceKey.createRegistryKey(
 		Create.asResource("mounted_item_storage_type")
 	);
@@ -22,16 +23,8 @@ public class MountedStorageTypeRegistry {
 		Create.asResource("mounted_fluid_storage_type")
 	);
 
-	/**
-	 * Lookup used for finding the item storage type associated with a block.
-	 * @see BlockLookup
-	 */
-	public static final BlockLookup<MountedItemStorageType<?>> ITEM_LOOKUP = MountedStorageTypeRegistryImpl.ITEM_LOOKUP;
-	/**
-	 * Lookup used for finding the fluid storage type associated with a block.
-	 * @see BlockLookup
-	 */
-	public static final BlockLookup<MountedFluidStorageType<?>> FLUID_LOOKUP = MountedStorageTypeRegistryImpl.FLUID_LOOKUP;
+	public static final AttachedRegistry<Block, MountedItemStorageType<?>> ITEM_STORAGES = MountedStorageTypeRegistryImpl.ITEM_STORAGES;
+	public static final AttachedRegistry<Block, MountedFluidStorageType<?>> FLUID_STORAGES = MountedStorageTypeRegistryImpl.FLUID_STORAGES;
 
 	/**
 	 * @throws NullPointerException if called before registry registration
@@ -52,7 +45,7 @@ public class MountedStorageTypeRegistry {
 	 * that will register the given MountedItemStorageType to a block when ready.
 	 */
 	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> mountedItemStorage(RegistryEntry<? extends MountedItemStorageType<?>> type) {
-		return builder -> builder.onRegisterAfter(ITEMS, block -> ITEM_LOOKUP.register(block, type.get()));
+		return builder -> builder.onRegisterAfter(ITEMS, block -> ITEM_STORAGES.register(block, type.get()));
 	}
 
 	/**
@@ -60,6 +53,6 @@ public class MountedStorageTypeRegistry {
 	 * that will register the given MountedFluidStorageType to a block when ready.
 	 */
 	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> mountedFluidStorage(RegistryEntry<? extends MountedFluidStorageType<?>> type) {
-		return builder -> builder.onRegisterAfter(ITEMS, block -> FLUID_LOOKUP.register(block, type.get()));
+		return builder -> builder.onRegisterAfter(ITEMS, block -> FLUID_STORAGES.register(block, type.get()));
 	}
 }

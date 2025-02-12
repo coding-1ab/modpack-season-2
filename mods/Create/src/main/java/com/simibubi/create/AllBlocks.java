@@ -3,8 +3,8 @@ package com.simibubi.create;
 import static com.simibubi.create.AllInteractionBehaviours.interactionBehaviour;
 import static com.simibubi.create.AllMovementBehaviours.movementBehaviour;
 import static com.simibubi.create.Create.REGISTRATE;
-import static com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry.mountedFluidStorage;
-import static com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry.mountedItemStorage;
+import static com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistries.mountedFluidStorage;
+import static com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistries.mountedItemStorage;
 import static com.simibubi.create.content.redstone.displayLink.AllDisplayBehaviours.assignDataBehaviour;
 import static com.simibubi.create.foundation.data.BlockStateGen.axisBlock;
 import static com.simibubi.create.foundation.data.BlockStateGen.simpleCubeAll;
@@ -768,7 +768,7 @@ public class AllBlocks {
 			.loot((lt, block) -> lt.add(block, BlazeBurnerBlock.buildLootTable()))
 			.blockstate((c, p) -> p.simpleBlock(c.getEntry(), AssetLookup.partialBaseModel(c, p)))
 			.onRegister(movementBehaviour(new BlazeBurnerMovementBehaviour()))
-			.onRegister(block -> TrainConductorHandler.registerBlazeBurner())
+			.onRegister(TrainConductorHandler::registerBlazeBurner)
 			.item(BlazeBurnerBlockItem::withBlaze)
 			.model(AssetLookup.customBlockItemModel("blaze_burner", "block_with_blaze"))
 			.build()

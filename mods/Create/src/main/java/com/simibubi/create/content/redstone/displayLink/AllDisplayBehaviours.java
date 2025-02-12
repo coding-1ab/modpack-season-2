@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import com.simibubi.create.Create;
+import com.simibubi.create.api.registry.AttachedRegistry;
 import com.simibubi.create.compat.Mods;
 import com.simibubi.create.content.redstone.displayLink.source.ComputerDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.source.DeathCounterDisplaySource;
@@ -19,7 +20,6 @@ import com.simibubi.create.content.redstone.displayLink.source.ScoreboardDisplay
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.target.LecternDisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.target.SignDisplayTarget;
-import com.simibubi.create.foundation.utility.AttachedRegistry;
 import com.tterrag.registrate.util.nullness.NonNullConsumer;
 
 import net.createmod.catnip.platform.CatnipServices;
@@ -32,49 +32,22 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class AllDisplayBehaviours {
 	public static final Map<ResourceLocation, DisplayBehaviour> GATHERER_BEHAVIOURS = new HashMap<>();
 
-	private static final AttachedRegistry<Block, List<DisplaySource>> SOURCES_BY_BLOCK = new AttachedRegistry<>(ForgeRegistries.BLOCKS);
-	private static final AttachedRegistry<BlockEntityType<?>, List<DisplaySource>> SOURCES_BY_BLOCK_ENTITY = new AttachedRegistry<>(ForgeRegistries.BLOCK_ENTITY_TYPES);
+	private static final AttachedRegistry<Block, List<DisplaySource>> SOURCES_BY_BLOCK = AttachedRegistry.create();
+	private static final AttachedRegistry<BlockEntityType<?>, List<DisplaySource>> SOURCES_BY_BLOCK_ENTITY = AttachedRegistry.create();
 
-	private static final AttachedRegistry<Block, DisplayTarget> TARGETS_BY_BLOCK = new AttachedRegistry<>(ForgeRegistries.BLOCKS);
-	private static final AttachedRegistry<BlockEntityType<?>, DisplayTarget> TARGETS_BY_BLOCK_ENTITY = new AttachedRegistry<>(ForgeRegistries.BLOCK_ENTITY_TYPES);
+	private static final AttachedRegistry<Block, DisplayTarget> TARGETS_BY_BLOCK = AttachedRegistry.create();
+	private static final AttachedRegistry<BlockEntityType<?>, DisplayTarget> TARGETS_BY_BLOCK_ENTITY = AttachedRegistry.create();
 
 	public static DisplayBehaviour register(ResourceLocation id, DisplayBehaviour behaviour) {
 		behaviour.id = id;
 		GATHERER_BEHAVIOURS.put(id, behaviour);
 		return behaviour;
-	}
-
-	public static void assignBlock(DisplayBehaviour behaviour, ResourceLocation block) {
-		if (behaviour instanceof DisplaySource source) {
-			List<DisplaySource> sources = SOURCES_BY_BLOCK.get(block);
-			if (sources == null) {
-				sources = new ArrayList<>();
-				SOURCES_BY_BLOCK.register(block, sources);
-			}
-			sources.add(source);
-		}
-		if (behaviour instanceof DisplayTarget target) {
-			TARGETS_BY_BLOCK.register(block, target);
-		}
-	}
-
-	public static void assignBlockEntity(DisplayBehaviour behaviour, ResourceLocation beType) {
-		if (behaviour instanceof DisplaySource source) {
-			List<DisplaySource> sources = SOURCES_BY_BLOCK_ENTITY.get(beType);
-			if (sources == null) {
-				sources = new ArrayList<>();
-				SOURCES_BY_BLOCK_ENTITY.register(beType, sources);
-			}
-			sources.add(source);
-		}
-		if (behaviour instanceof DisplayTarget target) {
-			TARGETS_BY_BLOCK_ENTITY.register(beType, target);
-		}
 	}
 
 	public static void assignBlock(DisplayBehaviour behaviour, Block block) {
@@ -105,6 +78,15 @@ public class AllDisplayBehaviours {
 		}
 	}
 
+	public static void tryAssignBlockEntity(DisplayBehaviour behaviour, ResourceLocation id) {
+		if (ForgeRegistries.BLOCK_ENTITY_TYPES.containsKey(id)) {
+			BlockEntityType<?> type = ForgeRegistries.BLOCK_ENTITY_TYPES.getValue(id);
+			assignBlockEntity(behaviour, type);
+		} else {
+			Create.LOGGER.warn("Block entity for display behavior wasn't found: {}. Outdated compat?", id);
+		}
+	}
+
 	public static <B extends Block> NonNullConsumer<? super B> assignDataBehaviour(DisplayBehaviour behaviour,
 		String... suffix) {
 		return b -> {
@@ -113,7 +95,7 @@ public class AllDisplayBehaviours {
 			if (suffix.length > 0)
 				idSuffix += "_" + suffix[0];
 			assignBlock(register(new ResourceLocation(registryName.getNamespace(), registryName.getPath() + idSuffix),
-				behaviour), registryName);
+				behaviour), b);
 		};
 	}
 
@@ -127,7 +109,7 @@ public class AllDisplayBehaviours {
 			assignBlockEntity(
 				register(new ResourceLocation(registryName.getNamespace(), registryName.getPath() + idSuffix),
 					behaviour),
-				registryName);
+				b);
 		};
 	}
 
@@ -237,10 +219,10 @@ public class AllDisplayBehaviours {
 		Mods.COMPUTERCRAFT.executeIfInstalled(() -> () -> {
 			DisplayBehaviour computerDisplaySource = register(Create.asResource("computer_display_source"), new ComputerDisplaySource());
 
-			assignBlockEntity(computerDisplaySource, Mods.COMPUTERCRAFT.rl("wired_modem_full"));
-			assignBlockEntity(computerDisplaySource, Mods.COMPUTERCRAFT.rl("computer_normal"));
-			assignBlockEntity(computerDisplaySource, Mods.COMPUTERCRAFT.rl("computer_advanced"));
-			assignBlockEntity(computerDisplaySource, Mods.COMPUTERCRAFT.rl("computer_command"));
+			tryAssignBlockEntity(computerDisplaySource, Mods.COMPUTERCRAFT.rl("wired_modem_full"));
+			tryAssignBlockEntity(computerDisplaySource, Mods.COMPUTERCRAFT.rl("computer_normal"));
+			tryAssignBlockEntity(computerDisplaySource, Mods.COMPUTERCRAFT.rl("computer_advanced"));
+			tryAssignBlockEntity(computerDisplaySource, Mods.COMPUTERCRAFT.rl("computer_command"));
 		});
 	}
 }

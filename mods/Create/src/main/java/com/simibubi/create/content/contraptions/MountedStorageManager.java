@@ -17,7 +17,7 @@ import com.google.common.collect.Sets.SetView;
 import com.mojang.datafixers.util.Pair;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.Create;
-import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry;
+import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistries;
 import com.simibubi.create.api.contraption.storage.SyncedMountedStorage;
 import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorage;
 import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageType;
@@ -144,7 +144,7 @@ public class MountedStorageManager {
 	}
 
 	public void addBlock(Level level, BlockState state, BlockPos globalPos, BlockPos localPos, @Nullable BlockEntity be) {
-		MountedItemStorageType<?> itemType = MountedStorageTypeRegistry.ITEM_LOOKUP.find(state);
+		MountedItemStorageType<?> itemType = MountedStorageTypeRegistries.ITEM_STORAGES.get(state.getBlock());
 		if (itemType != null) {
 			MountedItemStorage storage = itemType.mount(level, state, globalPos, be);
 			if (storage != null) {
@@ -152,7 +152,7 @@ public class MountedStorageManager {
 			}
 		}
 
-		MountedFluidStorageType<?> fluidType = MountedStorageTypeRegistry.FLUID_LOOKUP.find(state);
+		MountedFluidStorageType<?> fluidType = MountedStorageTypeRegistries.FLUID_STORAGES.get(state.getBlock());
 		if (fluidType != null) {
 			MountedFluidStorage storage = fluidType.mount(level, state, globalPos, be);
 			if (storage != null) {
@@ -167,7 +167,7 @@ public class MountedStorageManager {
 
 		MountedItemStorage itemStorage = this.getAllItemStorages().get(localPos);
 		if (itemStorage != null) {
-			MountedItemStorageType<?> expectedType = MountedStorageTypeRegistry.ITEM_LOOKUP.find(state);
+			MountedItemStorageType<?> expectedType = MountedStorageTypeRegistries.ITEM_STORAGES.get(state.getBlock());
 			if (itemStorage.type == expectedType) {
 				itemStorage.unmount(level, state, globalPos, be);
 			}
@@ -175,7 +175,7 @@ public class MountedStorageManager {
 
 		MountedFluidStorage fluidStorage = this.getFluids().storages.get(localPos);
 		if (fluidStorage != null) {
-			MountedFluidStorageType<?> expectedType = MountedStorageTypeRegistry.FLUID_LOOKUP.find(state);
+			MountedFluidStorageType<?> expectedType = MountedStorageTypeRegistries.FLUID_STORAGES.get(state.getBlock());
 			if (fluidStorage.type == expectedType) {
 				fluidStorage.unmount(level, state, globalPos, be);
 			}

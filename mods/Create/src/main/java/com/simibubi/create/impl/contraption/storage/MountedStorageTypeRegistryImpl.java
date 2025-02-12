@@ -3,15 +3,20 @@ package com.simibubi.create.impl.contraption.storage;
 import java.util.Objects;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.AllMountedStorageTypes;
 import com.simibubi.create.AllTags;
-import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry;
+import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistries;
 import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageType;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
-import com.simibubi.create.api.lookup.BlockLookup;
+import com.simibubi.create.api.registry.AttachedRegistry;
 
+import net.minecraft.Util;
 import net.minecraft.world.level.block.Block;
+
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -21,8 +26,12 @@ import net.minecraftforge.registries.RegistryBuilder;
 @ApiStatus.Internal
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MountedStorageTypeRegistryImpl {
-	public static final BlockLookup<MountedItemStorageType<?>> ITEM_LOOKUP = BlockLookup.create(MountedStorageTypeRegistryImpl::itemFallback);
-	public static final BlockLookup<MountedFluidStorageType<?>> FLUID_LOOKUP = BlockLookup.create();
+	public static final AttachedRegistry<Block, MountedItemStorageType<?>> ITEM_STORAGES = Util.make(() -> {
+		AttachedRegistry<Block, MountedItemStorageType<?>> registry = AttachedRegistry.create();
+		registry.registerProvider(ItemFallbackProvider.INSTANCE);
+		return registry;
+	});
+	public static final AttachedRegistry<Block, MountedFluidStorageType<?>> FLUID_STORAGES = AttachedRegistry.create();
 
 	private static IForgeRegistry<MountedItemStorageType<?>> itemsRegistry;
 	private static IForgeRegistry<MountedFluidStorageType<?>> fluidsRegistry;
@@ -39,19 +48,34 @@ public class MountedStorageTypeRegistryImpl {
 	public static void registerRegistries(NewRegistryEvent event) {
 		event.create(
 			new RegistryBuilder<MountedItemStorageType<?>>()
-				.setName(MountedStorageTypeRegistry.ITEMS.location()),
+				.setName(MountedStorageTypeRegistries.ITEMS.location()),
 			registry -> itemsRegistry = registry
 		);
 		event.create(
 			new RegistryBuilder<MountedFluidStorageType<?>>()
-				.setName(MountedStorageTypeRegistry.FLUIDS.location()),
+				.setName(MountedStorageTypeRegistries.FLUIDS.location()),
 			registry -> fluidsRegistry = registry
 		);
 	}
 
-	private static MountedItemStorageType<?> itemFallback(Block block) {
-		return AllTags.AllBlockTags.FALLBACK_MOUNTED_STORAGE_BLACKLIST.matches(block)
-			? null
-			: AllMountedStorageTypes.FALLBACK.get();
+	private enum ItemFallbackProvider implements AttachedRegistry.Provider<Block, MountedItemStorageType<?>> {
+		INSTANCE;
+
+		@Override
+		@Nullable
+		public MountedItemStorageType<?> get(Block block) {
+			return AllTags.AllBlockTags.FALLBACK_MOUNTED_STORAGE_BLACKLIST.matches(block)
+				? null
+				: AllMountedStorageTypes.FALLBACK.get();
+		}
+
+		@Override
+		public void onRegister(AttachedRegistry<Block, MountedItemStorageType<?>> registry) {
+			MinecraftForge.EVENT_BUS.addListener((TagsUpdatedEvent event) -> {
+				if (event.shouldUpdateStaticData()) {
+					registry.invalidateProvider(this);
+				}
+			});
+		}
 	}
 }

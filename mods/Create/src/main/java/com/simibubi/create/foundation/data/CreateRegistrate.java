@@ -47,6 +47,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -106,10 +107,13 @@ public class CreateRegistrate extends AbstractRegistrate<CreateRegistrate> {
 		Builder<R, T, ?, ?> builder, NonNullSupplier<? extends T> creator,
 		NonNullFunction<RegistryObject<T>, ? extends RegistryEntry<T>> entryFactory) {
 		RegistryEntry<T> entry = super.accept(name, type, builder, creator, entryFactory);
-		if (type.equals(Registries.ITEM)) {
-			if (currentTooltipModifierFactory != null) {
-				TooltipModifier.REGISTRY.registerDeferred(entry.getId(), currentTooltipModifierFactory);
-			}
+		if (type.equals(Registries.ITEM) && currentTooltipModifierFactory != null) {
+			// grab the factory here for the lambda, it can change between now and registration
+			Function<Item, TooltipModifier> factory = currentTooltipModifierFactory;
+			this.addRegisterCallback(name, Registries.ITEM, item -> {
+				TooltipModifier modifier = factory.apply(item);
+				TooltipModifier.REGISTRY.register(item, modifier);
+			});
 		}
 		if (currentTab != null) {
 			TAB_LOOKUP.put(entry, currentTab);

@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.simibubi.create.api.schematic.requirement.ISpecialBlockEntityItemRequirement;
 import com.simibubi.create.api.schematic.requirement.ISpecialBlockItemRequirement;
 import com.simibubi.create.api.schematic.requirement.ISpecialEntityItemRequirement;
-import com.simibubi.create.api.schematic.requirement.SchematicRequirementsRegistry;
+import com.simibubi.create.api.schematic.requirement.SchematicRequirementRegistries;
 import com.simibubi.create.compat.framedblocks.FramedBlocksInSchematics;
 import com.simibubi.create.foundation.data.recipe.Mods;
-
-import com.simibubi.create.impl.schematic.requirement.SchematicRequirementsRegistryImpl;
 
 import net.createmod.catnip.nbt.NBTProcessors;
 import net.minecraft.world.entity.Entity;
@@ -35,9 +35,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraftforge.registries.ForgeRegistries;
 
-import org.jetbrains.annotations.Nullable;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class ItemRequirement {
 	public static final ItemRequirement NONE = new ItemRequirement(Collections.emptyList());
@@ -71,9 +70,9 @@ public class ItemRequirement {
 		Block block = state.getBlock();
 
 		ItemRequirement requirement;
-		SchematicRequirementsRegistry.BlockRequirement blockItemRequirement = SchematicRequirementsRegistryImpl.getRequirementForBlock(block);
-		if (blockItemRequirement != null) {
-			requirement = blockItemRequirement.getRequiredItems(block, state, be);
+		SchematicRequirementRegistries.BlockRequirement blockRequirement = SchematicRequirementRegistries.BLOCKS.get(block);
+		if (blockRequirement != null) {
+			requirement = blockRequirement.getRequiredItems(block, state, be);
 		} else if (block instanceof ISpecialBlockItemRequirement specialBlock) {
 			requirement = specialBlock.getRequiredItems(state, be);
 		} else {
@@ -81,9 +80,9 @@ public class ItemRequirement {
 		}
 
 		if (be != null) {
-			SchematicRequirementsRegistry.BlockEntityRequirement blockEntityItemRequirement = SchematicRequirementsRegistryImpl.getRequirementForBlockEntityType(be.getType());
-			if (blockEntityItemRequirement != null) {
-				requirement = requirement.union(blockEntityItemRequirement.getRequiredItems(be, state));
+			SchematicRequirementRegistries.BlockEntityRequirement beRequirement = SchematicRequirementRegistries.BLOCK_ENTITIES.get(be.getType());
+			if (beRequirement != null) {
+				requirement = requirement.union(beRequirement.getRequiredItems(be, state));
 			} else if (be instanceof ISpecialBlockEntityItemRequirement specialBE) {
 				requirement = requirement.union(specialBE.getRequiredItems(state));
 			} else if (com.simibubi.create.compat.Mods.FRAMEDBLOCKS.contains(block)) {
@@ -134,9 +133,9 @@ public class ItemRequirement {
 	}
 
 	public static ItemRequirement of(Entity entity) {
-		SchematicRequirementsRegistry.EntityRequirement entityItemRequirement = SchematicRequirementsRegistryImpl.getRequirementForEntityType(entity.getType());
-		if (entityItemRequirement != null) {
-			return entityItemRequirement.getRequiredItems(entity);
+		SchematicRequirementRegistries.EntityRequirement requirement = SchematicRequirementRegistries.ENTITIES.get(entity.getType());
+		if (requirement != null) {
+			return requirement.getRequiredItems(entity);
 		} else if (entity instanceof ISpecialEntityItemRequirement specialEntity) {
 			return specialEntity.getRequiredItems();
 		}

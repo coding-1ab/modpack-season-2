@@ -1,7 +1,8 @@
 package com.simibubi.create.api.contraption.storage.fluid.registrate;
 
-import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry;
+import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistries;
 import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageType;
+import com.simibubi.create.api.registry.AttachedRegistry;
 import com.tterrag.registrate.AbstractRegistrate;
 import com.tterrag.registrate.builders.AbstractBuilder;
 import com.tterrag.registrate.builders.BuilderCallback;
@@ -14,17 +15,17 @@ public class MountedFluidStorageTypeBuilder<T extends MountedFluidStorageType<?>
 	private final T type;
 
 	public MountedFluidStorageTypeBuilder(AbstractRegistrate<?> owner, P parent, String name, BuilderCallback callback, T type) {
-		super(owner, parent, name, callback, MountedStorageTypeRegistry.FLUIDS);
+		super(owner, parent, name, callback, MountedStorageTypeRegistries.FLUIDS);
 		this.type = type;
 	}
 
 	public MountedFluidStorageTypeBuilder<T, P> registerTo(Block block) {
-		MountedStorageTypeRegistry.FLUID_LOOKUP.register(block, this.type);
+		MountedStorageTypeRegistries.FLUID_STORAGES.register(block, this.type);
 		return this;
 	}
 
 	public MountedFluidStorageTypeBuilder<T, P> registerTo(TagKey<Block> tag) {
-		MountedStorageTypeRegistry.FLUID_LOOKUP.registerTag(tag, this.type);
+		MountedStorageTypeRegistries.FLUID_STORAGES.registerProvider(AttachedRegistry.Provider.forBlockTag(tag, this.type));
 		return this;
 	}
 

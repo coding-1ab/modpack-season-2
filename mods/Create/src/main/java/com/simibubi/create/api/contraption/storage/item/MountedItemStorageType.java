@@ -3,7 +3,7 @@ package com.simibubi.create.api.contraption.storage.item;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
-import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistry;
+import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistries;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ExtraCodecs;
@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class MountedItemStorageType<T extends MountedItemStorage> {
 	public static final Codec<MountedItemStorageType<?>> CODEC = ExtraCodecs.lazyInitializedCodec(
-		() -> MountedStorageTypeRegistry.getItemsRegistry().getCodec()
+		() -> MountedStorageTypeRegistries.getItemsRegistry().getCodec()
 	);
 
 	public final Codec<? extends T> codec;

@@ -4,10 +4,11 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
-import com.simibubi.create.api.contraption.transformable.ContraptionTransformableRegistry;
 import com.simibubi.create.api.contraption.transformable.ITransformableBlock;
 import com.simibubi.create.api.contraption.transformable.ITransformableBlockEntity;
-import com.simibubi.create.impl.contraption.transformable.ContraptionTransformableRegistryImpl;
+import com.simibubi.create.api.contraption.transformable.MovedBlockTransformerRegistries;
+import com.simibubi.create.api.contraption.transformable.MovedBlockTransformerRegistries.BlockEntityTransformer;
+import com.simibubi.create.api.contraption.transformable.MovedBlockTransformerRegistries.BlockTransformer;
 
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
@@ -133,9 +134,9 @@ public class StructureTransform {
 	}
 
 	public void apply(BlockEntity be) {
-		ContraptionTransformableRegistry.TransformableBlockEntity transformableBlockEntity = ContraptionTransformableRegistryImpl.get(be.getType());
-		if (transformableBlockEntity != null) {
-			transformableBlockEntity.transform(be, this);
+		BlockEntityTransformer transformer = MovedBlockTransformerRegistries.BLOCK_ENTITY_TRANSFORMERS.get(be.getType());
+		if (transformer != null) {
+			transformer.transform(be, this);
 		} else if (be instanceof ITransformableBlockEntity itbe) {
 			itbe.transform(this);
 		}
@@ -148,9 +149,9 @@ public class StructureTransform {
 	 */
 	public BlockState apply(BlockState state) {
 		Block block = state.getBlock();
-		ContraptionTransformableRegistry.TransformableBlock transformableBlock = ContraptionTransformableRegistryImpl.get(block);
-		if (transformableBlock != null) {
-			return transformableBlock.transform(block, state, this);
+		BlockTransformer transformer = MovedBlockTransformerRegistries.BLOCK_TRANSFORMERS.get(block);
+		if (transformer != null) {
+			return transformer.transform(block, state, this);
 		} else if (block instanceof ITransformableBlock transformable) {
 			return transformable.transform(state, this);
 		}
