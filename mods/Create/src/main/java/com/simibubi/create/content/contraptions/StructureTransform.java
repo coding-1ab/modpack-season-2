@@ -4,8 +4,8 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
-import com.simibubi.create.api.contraption.transformable.ITransformableBlock;
-import com.simibubi.create.api.contraption.transformable.ITransformableBlockEntity;
+import com.simibubi.create.api.contraption.transformable.TransformableBlock;
+import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
 import com.simibubi.create.api.contraption.transformable.MovedBlockTransformerRegistries;
 import com.simibubi.create.api.contraption.transformable.MovedBlockTransformerRegistries.BlockEntityTransformer;
 import com.simibubi.create.api.contraption.transformable.MovedBlockTransformerRegistries.BlockTransformer;
@@ -137,7 +137,7 @@ public class StructureTransform {
 		BlockEntityTransformer transformer = MovedBlockTransformerRegistries.BLOCK_ENTITY_TRANSFORMERS.get(be.getType());
 		if (transformer != null) {
 			transformer.transform(be, this);
-		} else if (be instanceof ITransformableBlockEntity itbe) {
+		} else if (be instanceof TransformableBlockEntity itbe) {
 			itbe.transform(this);
 		}
 	}
@@ -152,7 +152,7 @@ public class StructureTransform {
 		BlockTransformer transformer = MovedBlockTransformerRegistries.BLOCK_TRANSFORMERS.get(block);
 		if (transformer != null) {
 			return transformer.transform(block, state, this);
-		} else if (block instanceof ITransformableBlock transformable) {
+		} else if (block instanceof TransformableBlock transformable) {
 			return transformable.transform(state, this);
 		}
 

@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags.AllBlockTags;
-import com.simibubi.create.api.schematic.nbt.IPartialSafeNBT;
+import com.simibubi.create.api.schematic.nbt.PartialSafeNBT;
 import com.simibubi.create.api.schematic.nbt.SafeNbtWriterRegistry;
 import com.simibubi.create.api.schematic.nbt.SafeNbtWriterRegistry.SafeNbtWriter;
 import com.simibubi.create.compat.Mods;
@@ -286,7 +286,7 @@ public class BlockHelper {
 		} else if (writer != null) {
 			data = new CompoundTag();
 			writer.writeSafe(blockEntity, data);
-		} else if (blockEntity instanceof IPartialSafeNBT safeNbtBE) {
+		} else if (blockEntity instanceof PartialSafeNBT safeNbtBE) {
 			data = new CompoundTag();
 			safeNbtBE.writeSafe(data);
 		} else if (Mods.FRAMEDBLOCKS.contains(blockState.getBlock())) {
