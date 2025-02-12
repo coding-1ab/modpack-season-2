@@ -4,11 +4,11 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
-import com.simibubi.create.api.contraption.transformable.TransformableBlock;
-import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
 import com.simibubi.create.api.contraption.transformable.MovedBlockTransformerRegistries;
 import com.simibubi.create.api.contraption.transformable.MovedBlockTransformerRegistries.BlockEntityTransformer;
 import com.simibubi.create.api.contraption.transformable.MovedBlockTransformerRegistries.BlockTransformer;
+import com.simibubi.create.api.contraption.transformable.TransformableBlock;
+import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
 
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
@@ -138,7 +138,7 @@ public class StructureTransform {
 		if (transformer != null) {
 			transformer.transform(be, this);
 		} else if (be instanceof TransformableBlockEntity itbe) {
-			itbe.transform(this);
+			itbe.transform(be, this);
 		}
 	}
 
