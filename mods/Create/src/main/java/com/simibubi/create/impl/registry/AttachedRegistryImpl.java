@@ -16,7 +16,6 @@ import com.simibubi.create.api.registry.AttachedRegistry;
 public class AttachedRegistryImpl<K, V> implements AttachedRegistry<K, V> {
 	private static final Object nullMarker = new Object();
 
-	// all of these have identity semantics
 	private final Map<K, V> registrations = new IdentityHashMap<>();
 	private final List<Provider<K, V>> providers = new ArrayList<>();
 	private final Map<Provider<K, V>, Set<K>> providedKeys = new IdentityHashMap<>();
