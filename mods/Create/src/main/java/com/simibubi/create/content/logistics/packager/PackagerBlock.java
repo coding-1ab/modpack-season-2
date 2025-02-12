@@ -9,6 +9,7 @@ import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.advancement.AdvancementBehaviour;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.WrenchableDirectionalBlock;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,6 +34,7 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.items.IItemHandler;
 
 public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<PackagerBlockEntity>, IWrenchable {
@@ -70,11 +72,22 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 				break;
 			}
 		}
-
+		
+		Player player = context.getPlayer();
 		if (preferredFacing == null) {
 			Direction facing = context.getNearestLookingDirection();
-			preferredFacing = context.getPlayer() != null && context.getPlayer()
+			preferredFacing = player != null && player
 				.isShiftKeyDown() ? facing : facing.getOpposite();
+		}
+
+		if (player != null && !(player instanceof FakePlayer)) {
+			if (AllBlocks.PORTABLE_STORAGE_INTERFACE.has(context.getLevel()
+				.getBlockState(context.getClickedPos()
+					.relative(preferredFacing.getOpposite())))) {
+				CreateLang.translate("packager.no_portable_storage")
+					.sendStatus(player);
+				return null;
+			}
 		}
 
 		return super.getStateForPlacement(context).setValue(POWERED, context.getLevel()
