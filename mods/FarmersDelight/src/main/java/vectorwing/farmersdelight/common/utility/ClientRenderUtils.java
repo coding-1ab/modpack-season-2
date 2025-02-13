@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -27,6 +28,7 @@ public class ClientRenderUtils
 	 * Renders an Item into the GUI, allowing the size to be defined instead of hardcoded.
 	 * This function is ripped right from the game's rendering code. I am probably doing something stupid.
 	 */
+	@Deprecated
 	public static void renderItemIntoGUIScalable(ItemStack stack, float width, float height, BakedModel bakedmodel, ItemRenderer renderer, TextureManager textureManager) {
 		textureManager.getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
 		RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
@@ -57,5 +59,10 @@ public class ClientRenderUtils
 
 		poseStack.popPose();
 		RenderSystem.applyModelViewMatrix();
+	}
+
+	// Necessary to make sure that the server won't load this value whilst it is in a server loaded class.
+	public static Player getClientPlayerHack() {
+		return Minecraft.getInstance().player;
 	}
 }

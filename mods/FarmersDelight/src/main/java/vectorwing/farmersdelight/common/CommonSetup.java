@@ -24,6 +24,7 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import vectorwing.farmersdelight.common.crafting.condition.VanillaCrateEnabledCondition;
 import vectorwing.farmersdelight.common.entity.RottenTomatoEntity;
+import vectorwing.farmersdelight.common.networking.ModNetworking;
 import vectorwing.farmersdelight.common.registry.ModAdvancements;
 import vectorwing.farmersdelight.common.registry.ModItems;
 
@@ -39,6 +40,7 @@ public class CommonSetup
 			registerDispenserBehaviors();
 			registerItemSetAdditions();
 			registerStackSizeOverrides();
+			ModNetworking.register();
 		});
 
 		ModAdvancements.register();
