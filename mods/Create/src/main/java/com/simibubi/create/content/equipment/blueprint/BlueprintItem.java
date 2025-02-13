@@ -1,10 +1,13 @@
 package com.simibubi.create.content.equipment.blueprint;
 
+import java.util.Collection;
+
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.logistics.filter.AttributeFilterMenu.WhitelistMode;
 import com.simibubi.create.content.logistics.filter.FilterItem;
+import com.simibubi.create.content.logistics.item.filter.attribute.ItemAttribute;
+import com.simibubi.create.content.logistics.item.filter.attribute.attributes.InTagAttribute;
 
-import com.simibubi.create.content.logistics.item.filter.attribute.ItemAttribute;import com.simibubi.create.content.logistics.item.filter.attribute.attributes.InTagAttribute;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -26,11 +29,10 @@ import net.minecraft.world.item.crafting.Ingredient.TagValue;
 import net.minecraft.world.item.crafting.Ingredient.Value;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
+
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.common.crafting.MultiItemValue;
 import net.minecraftforge.items.ItemStackHandler;
-
-import java.util.Collection;
 
 public class BlueprintItem extends Item {
 
@@ -44,14 +46,14 @@ public class BlueprintItem extends Item {
 		Player player = ctx.getPlayer();
 		ItemStack stack = ctx.getItemInHand();
 		BlockPos pos = ctx.getClickedPos()
-				.relative(face);
+			.relative(face);
 
 		if (player != null && !player.mayUseItemAt(pos, face, stack))
 			return InteractionResult.FAIL;
 
 		Level world = ctx.getLevel();
 		HangingEntity hangingentity = new BlueprintEntity(world, pos, face, face.getAxis()
-				.isHorizontal() ? Direction.DOWN : ctx.getHorizontalDirection());
+			.isHorizontal() ? Direction.DOWN : ctx.getHorizontalDirection());
 		CompoundTag compoundnbt = stack.getTag();
 
 		if (compoundnbt != null)
@@ -79,12 +81,11 @@ public class BlueprintItem extends Item {
 			inv.setStackInSlot(i, ItemStack.EMPTY);
 		inv.setStackInSlot(9, recipe.getResultItem(level.registryAccess()));
 
-		if (recipe instanceof IShapedRecipe) {
-			IShapedRecipe<?> shapedRecipe = (IShapedRecipe<?>) recipe;
+		if (recipe instanceof IShapedRecipe<?> shapedRecipe) {
 			for (int row = 0; row < shapedRecipe.getRecipeHeight(); row++)
 				for (int col = 0; col < shapedRecipe.getRecipeWidth(); col++)
 					inv.setStackInSlot(row * 3 + col,
-							convertIngredientToFilter(ingredients.get(row * shapedRecipe.getRecipeWidth() + col)));
+						convertIngredientToFilter(ingredients.get(row * shapedRecipe.getRecipeWidth() + col)));
 		} else {
 			for (int i = 0; i < ingredients.size(); i++)
 				inv.setStackInSlot(i, convertIngredientToFilter(ingredients.get(i)));
@@ -105,7 +106,7 @@ public class BlueprintItem extends Item {
 		for (int i = 0; i < acceptedItems.length; i++)
 			filterItems.setStackInSlot(i, convertIItemListToFilter(acceptedItems[i]));
 		result.getOrCreateTag()
-				.put("Items", filterItems.serializeNBT());
+			.put("Items", filterItems.serializeNBT());
 		return result;
 	}
 
@@ -120,13 +121,13 @@ public class BlueprintItem extends Item {
 			ResourceLocation resourcelocation = new ResourceLocation(GsonHelper.getAsString(itemList.serialize(), "tag"));
 			ItemStack filterItem = AllItems.ATTRIBUTE_FILTER.asStack();
 			filterItem.getOrCreateTag()
-					.putInt("WhitelistMode", WhitelistMode.WHITELIST_DISJ.ordinal());
+				.putInt("WhitelistMode", WhitelistMode.WHITELIST_DISJ.ordinal());
 			ListTag attributes = new ListTag();
 			CompoundTag compoundNBT = ItemAttribute.saveStatic(new InTagAttribute(ItemTags.create(resourcelocation)));
 			compoundNBT.putBoolean("Inverted", false);
 			attributes.add(compoundNBT);
 			filterItem.getOrCreateTag()
-					.put("MatchedAttributes", attributes);
+				.put("MatchedAttributes", attributes);
 			return filterItem;
 		}
 

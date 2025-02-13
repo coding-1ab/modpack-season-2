@@ -55,9 +55,8 @@ public class ContraptionSeatMappingPacket extends SimplePacketBase {
 	public boolean handle(Context context) {
 		context.enqueueWork(() -> {
 			Entity entityByID = Minecraft.getInstance().level.getEntity(entityID);
-			if (!(entityByID instanceof AbstractContraptionEntity))
+			if (!(entityByID instanceof AbstractContraptionEntity contraptionEntity))
 				return;
-			AbstractContraptionEntity contraptionEntity = (AbstractContraptionEntity) entityByID;
 
 			if (dismountedID != -1) {
 				Entity dismountedByID = Minecraft.getInstance().level.getEntity(dismountedID);

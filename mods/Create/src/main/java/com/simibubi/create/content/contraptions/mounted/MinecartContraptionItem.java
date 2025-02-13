@@ -111,7 +111,7 @@ public class MinecartContraptionItem extends Item {
 				BlockState blockstate1 = world.getBlockState(blockpos.below());
 				RailShape railshape1 = blockstate1.getBlock() instanceof BaseRailBlock
 					? ((BaseRailBlock) blockstate1.getBlock()).getRailDirection(blockstate1, world, blockpos.below(),
-						null)
+					null)
 					: RailShape.NORTH_SOUTH;
 				if (direction != Direction.DOWN && railshape1.isAscending()) {
 					d3 = -0.4D;
@@ -174,7 +174,7 @@ public class MinecartContraptionItem extends Item {
 	}
 
 	public static void addContraptionToMinecart(Level world, ItemStack itemstack, AbstractMinecart cart,
-		@Nullable Direction newFacing) {
+												@Nullable Direction newFacing) {
 		CompoundTag tag = itemstack.getOrCreateTag();
 		if (tag.contains("Contraption")) {
 			CompoundTag contraptionTag = tag.getCompound("Contraption");
@@ -185,7 +185,7 @@ public class MinecartContraptionItem extends Item {
 			OrientedContraptionEntity contraptionEntity =
 				newFacing == null ? OrientedContraptionEntity.create(world, mountedContraption, intialOrientation)
 					: OrientedContraptionEntity.createAtYaw(world, mountedContraption, intialOrientation,
-						newFacing.toYRot());
+					newFacing.toYRot());
 
 			contraptionEntity.startRiding(cart);
 			contraptionEntity.setPos(cart.getX(), cart.getY(), cart.getZ());
@@ -212,20 +212,18 @@ public class MinecartContraptionItem extends Item {
 			return;
 		if (entity instanceof AbstractContraptionEntity)
 			entity = entity.getVehicle();
-		if (!(entity instanceof AbstractMinecart))
+		if (!(entity instanceof AbstractMinecart cart))
 			return;
 		if (!entity.isAlive())
 			return;
 		if (player instanceof DeployerFakePlayer dfp && dfp.onMinecartContraption)
 			return;
-		AbstractMinecart cart = (AbstractMinecart) entity;
 		Type type = cart.getMinecartType();
 		if (type != Type.RIDEABLE && type != Type.FURNACE && type != Type.CHEST)
 			return;
 		List<Entity> passengers = cart.getPassengers();
-		if (passengers.isEmpty() || !(passengers.get(0) instanceof OrientedContraptionEntity))
+		if (passengers.isEmpty() || !(passengers.get(0) instanceof OrientedContraptionEntity oce))
 			return;
-		OrientedContraptionEntity oce = (OrientedContraptionEntity) passengers.get(0);
 		Contraption contraption = oce.getContraption();
 
 		if (ContraptionMovementSetting.isNoPickup(contraption.getBlocks()
@@ -244,14 +242,14 @@ public class MinecartContraptionItem extends Item {
 		contraption.stop(event.getLevel());
 
 		for (MutablePair<StructureBlockInfo, MovementContext> pair : contraption.getActors())
-			if (AllMovementBehaviours.getBehaviour(pair.left.state())instanceof PortableStorageInterfaceMovement psim)
+			if (AllMovementBehaviours.getBehaviour(pair.left.state()) instanceof PortableStorageInterfaceMovement psim)
 				psim.reset(pair.right);
 
 		ItemStack generatedStack = create(type, oce).setHoverName(entity.getCustomName());
 
 		if (ContraptionPickupLimiting.isTooLargeForPickup(generatedStack.serializeNBT())) {
 			MutableComponent message = CreateLang.translateDirect("contraption.minecart_contraption_too_big")
-					.withStyle(ChatFormatting.RED);
+				.withStyle(ChatFormatting.RED);
 			player.displayClientMessage(message, true);
 			return;
 		}
@@ -272,17 +270,17 @@ public class MinecartContraptionItem extends Item {
 		ItemStack stack = ItemStack.EMPTY;
 
 		switch (type) {
-		case RIDEABLE:
-			stack = AllItems.MINECART_CONTRAPTION.asStack();
-			break;
-		case FURNACE:
-			stack = AllItems.FURNACE_MINECART_CONTRAPTION.asStack();
-			break;
-		case CHEST:
-			stack = AllItems.CHEST_MINECART_CONTRAPTION.asStack();
-			break;
-		default:
-			break;
+			case RIDEABLE:
+				stack = AllItems.MINECART_CONTRAPTION.asStack();
+				break;
+			case FURNACE:
+				stack = AllItems.FURNACE_MINECART_CONTRAPTION.asStack();
+				break;
+			case CHEST:
+				stack = AllItems.CHEST_MINECART_CONTRAPTION.asStack();
+				break;
+			default:
+				break;
 		}
 
 		if (stack.isEmpty())

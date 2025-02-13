@@ -135,10 +135,8 @@ public class ChromaticCompoundItem extends Item {
 			if (state.getBlock() == Blocks.BEACON) {
 				BlockEntity be = world.getBlockEntity(testPos);
 
-				if (!(be instanceof BeaconBlockEntity))
+				if (!(be instanceof BeaconBlockEntity bte))
 					break;
-
-				BeaconBlockEntity bte = (BeaconBlockEntity) be;
 
 				if (!bte.beamSections.isEmpty())
 					isOverBeacon = true;
@@ -180,10 +178,9 @@ public class ChromaticCompoundItem extends Item {
 		behaviour.handleProcessingOnAllItems(ts -> {
 
 			ItemStack heldStack = ts.stack;
-			if (!(heldStack.getItem() instanceof BlockItem))
+			if (!(heldStack.getItem() instanceof BlockItem blockItem))
 				return TransportedResult.doNothing();
 
-			BlockItem blockItem = (BlockItem) heldStack.getItem();
 			if (blockItem.getBlock() == null)
 				return TransportedResult.doNothing();
 
@@ -207,7 +204,7 @@ public class ChromaticCompoundItem extends Item {
 	}
 
 	public boolean checkLight(ItemStack stack, ItemEntity entity, Level world, CompoundTag itemData, Vec3 positionVec,
-		BlockPos randomOffset, BlockState state) {
+							  BlockPos randomOffset, BlockState state) {
 		if (state.getLightEmission(world, randomOffset) == 0)
 			return false;
 		if (state.getDestroySpeed(world, randomOffset) == -1)

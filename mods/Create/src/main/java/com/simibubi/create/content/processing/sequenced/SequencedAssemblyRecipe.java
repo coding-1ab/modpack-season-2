@@ -242,10 +242,9 @@ public class SequencedAssemblyRecipe implements Recipe<RecipeWrapper> {
 		if (!optionalRecipe.isPresent())
 			return;
 		Recipe<?> recipe = optionalRecipe.get();
-		if (!(recipe instanceof SequencedAssemblyRecipe))
+		if (!(recipe instanceof SequencedAssemblyRecipe sequencedAssemblyRecipe))
 			return;
 
-		SequencedAssemblyRecipe sequencedAssemblyRecipe = (SequencedAssemblyRecipe) recipe;
 		int length = sequencedAssemblyRecipe.sequence.size();
 		int step = sequencedAssemblyRecipe.getStep(stack);
 		int total = length * sequencedAssemblyRecipe.loops;

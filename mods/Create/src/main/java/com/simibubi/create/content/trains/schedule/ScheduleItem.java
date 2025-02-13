@@ -33,6 +33,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
@@ -65,7 +66,7 @@ public class ScheduleItem extends Item implements MenuProvider, SupportsItemCopy
 	}
 
 	public InteractionResult handScheduleTo(ItemStack pStack, Player pPlayer, LivingEntity pInteractionTarget,
-		InteractionHand pUsedHand) {
+											InteractionHand pUsedHand) {
 		InteractionResult pass = InteractionResult.PASS;
 
 		Schedule schedule = getSchedule(pStack);
@@ -74,12 +75,11 @@ public class ScheduleItem extends Item implements MenuProvider, SupportsItemCopy
 		if (pInteractionTarget == null)
 			return pass;
 		Entity rootVehicle = pInteractionTarget.getRootVehicle();
-		if (!(rootVehicle instanceof CarriageContraptionEntity))
+		if (!(rootVehicle instanceof CarriageContraptionEntity entity))
 			return pass;
 		if (pPlayer.level().isClientSide)
 			return InteractionResult.SUCCESS;
 
-		CarriageContraptionEntity entity = (CarriageContraptionEntity) rootVehicle;
 		Contraption contraption = entity.getContraption();
 		if (contraption instanceof CarriageContraption cc) {
 
@@ -131,8 +131,8 @@ public class ScheduleItem extends Item implements MenuProvider, SupportsItemCopy
 		if (schedule == null || schedule.entries.isEmpty())
 			return;
 
-        MutableComponent caret = Component.literal("> ").withStyle(ChatFormatting.GRAY);
-        MutableComponent arrow = Component.literal("-> ").withStyle(ChatFormatting.GRAY);
+		MutableComponent caret = Component.literal("> ").withStyle(ChatFormatting.GRAY);
+		MutableComponent arrow = Component.literal("-> ").withStyle(ChatFormatting.GRAY);
 
 		List<ScheduleEntry> entries = schedule.entries;
 		for (int i = 0; i < entries.size(); i++) {
@@ -142,7 +142,7 @@ public class ScheduleItem extends Item implements MenuProvider, SupportsItemCopy
 				continue;
 			ChatFormatting format = current ? ChatFormatting.YELLOW : ChatFormatting.GOLD;
 			MutableComponent prefix = current ? arrow : caret;
-            tooltip.add(prefix.copy()
+			tooltip.add(prefix.copy()
 				.append(Component.literal(destination.getFilter()).withStyle(format)));
 		}
 	}

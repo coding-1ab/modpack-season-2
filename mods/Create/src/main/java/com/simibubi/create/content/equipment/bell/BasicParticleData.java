@@ -15,6 +15,7 @@ import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.FriendlyByteBuf;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -22,12 +23,13 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @MethodsReturnNonnullByDefault
 public abstract class BasicParticleData<T extends Particle> implements ParticleOptions, ICustomParticleDataWithSprite<BasicParticleData<T>> {
 
-	public BasicParticleData() { }
+	public BasicParticleData() {
+	}
 
 	@Override
 	public Deserializer<BasicParticleData<T>> getDeserializer() {
 		BasicParticleData<T> data = this;
-		return new ParticleOptions.Deserializer<BasicParticleData<T>>() {
+		return new ParticleOptions.Deserializer<>() {
 			@Override
 			public BasicParticleData<T> fromCommand(ParticleType<BasicParticleData<T>> arg0, StringReader reader) {
 				return data;
@@ -56,7 +58,7 @@ public abstract class BasicParticleData<T extends Particle> implements ParticleO
 	@OnlyIn(Dist.CLIENT)
 	public ParticleEngine.SpriteParticleRegistration<BasicParticleData<T>> getMetaFactory() {
 		return animatedSprite -> (data, worldIn, x, y, z, vx, vy, vz) ->
-				getBasicFactory().makeParticle(worldIn, x, y, z, vx, vy, vz, animatedSprite);
+			getBasicFactory().makeParticle(worldIn, x, y, z, vx, vy, vz, animatedSprite);
 	}
 
 	@Override
@@ -65,5 +67,6 @@ public abstract class BasicParticleData<T extends Particle> implements ParticleO
 	}
 
 	@Override
-	public void writeToNetwork(FriendlyByteBuf buffer) { }
+	public void writeToNetwork(FriendlyByteBuf buffer) {
+	}
 }

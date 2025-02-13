@@ -35,6 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.network.NetworkHooks;
@@ -223,13 +224,11 @@ public class PotatoProjectileEntity extends AbstractHurtingProjectile implements
 			if (random.nextDouble() <= recoveryChance)
 				recoverItem();
 
-		if (!(target instanceof LivingEntity)) {
+		if (!(target instanceof LivingEntity livingentity)) {
 			playHitSound(level(), position());
 			kill();
 			return;
 		}
-
-		LivingEntity livingentity = (LivingEntity) target;
 
 		if (type.getReloadTicks() < 10)
 			livingentity.invulnerableTime = type.getReloadTicks() + 10;
@@ -254,8 +253,7 @@ public class PotatoProjectileEntity extends AbstractHurtingProjectile implements
 				.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
 		}
 
-		if (onServer && owner instanceof ServerPlayer) {
-			ServerPlayer serverplayerentity = (ServerPlayer) owner;
+		if (onServer && owner instanceof ServerPlayer serverplayerentity) {
 			if (!target.isAlive() && target.getType()
 				.getCategory() == MobCategory.MONSTER || (target instanceof Player && target != owner))
 				AllAdvancements.POTATO_CANNON.awardTo(serverplayerentity);

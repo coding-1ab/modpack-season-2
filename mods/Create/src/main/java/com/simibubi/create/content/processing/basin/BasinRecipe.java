@@ -27,6 +27,7 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
+
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -41,12 +42,11 @@ public class BasinRecipe extends ProcessingRecipe<SmartInventory> {
 
 		boolean filterTest = filter.test(recipe.getResultItem(basin.getLevel()
 			.registryAccess()));
-		if (recipe instanceof BasinRecipe) {
-			BasinRecipe basinRecipe = (BasinRecipe) recipe;
+		if (recipe instanceof BasinRecipe basinRecipe) {
 			if (basinRecipe.getRollableResults()
 				.isEmpty()
 				&& !basinRecipe.getFluidResults()
-					.isEmpty())
+				.isEmpty())
 				filterTest = filter.test(basinRecipe.getFluidResults()
 					.get(0));
 		}
@@ -93,9 +93,8 @@ public class BasinRecipe extends ProcessingRecipe<SmartInventory> {
 			int[] extractedItemsFromSlot = new int[availableItems.getSlots()];
 			int[] extractedFluidsFromTank = new int[availableFluids.getTanks()];
 
-			Ingredients: for (int i = 0; i < ingredients.size(); i++) {
-				Ingredient ingredient = ingredients.get(i);
-
+			Ingredients:
+			for (Ingredient ingredient : ingredients) {
 				for (int slot = 0; slot < availableItems.getSlots(); slot++) {
 					if (simulate && availableItems.getStackInSlot(slot)
 						.getCount() <= extractedItemsFromSlot[slot])
@@ -114,8 +113,8 @@ public class BasinRecipe extends ProcessingRecipe<SmartInventory> {
 			}
 
 			boolean fluidsAffected = false;
-			FluidIngredients: for (int i = 0; i < fluidIngredients.size(); i++) {
-				FluidIngredient fluidIngredient = fluidIngredients.get(i);
+			FluidIngredients:
+			for (FluidIngredient fluidIngredient : fluidIngredients) {
 				int amountRequired = fluidIngredient.getRequiredAmount();
 
 				for (int tank = 0; tank < availableFluids.getTanks(); tank++) {

@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.world.item.MobBucketItem;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.Multimap;
@@ -51,6 +49,7 @@ import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.MobBucketItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
@@ -69,6 +68,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.extensions.IForgeBaseRailBlock;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
@@ -101,7 +101,7 @@ public class DeployerHandler {
 			if (rayMode && (pos.relative(face.getOpposite(), 3)
 				.equals(position)
 				|| pos.relative(face.getOpposite(), 1)
-					.equals(position)))
+				.equals(position)))
 				return Blocks.BEDROCK.defaultBlockState();
 			return level.getBlockState(position);
 		}
@@ -113,8 +113,7 @@ public class DeployerHandler {
 				.getBlock() == ((BlockItem) held.getItem()).getBlock())
 				return false;
 
-		if (held.getItem() instanceof BucketItem) {
-			BucketItem bucketItem = (BucketItem) held.getItem();
+		if (held.getItem() instanceof BucketItem bucketItem) {
 			Fluid fluid = bucketItem.getFluid();
 			if (fluid != Fluids.EMPTY && world.getFluidState(targetPos)
 				.getType() == fluid)
@@ -139,7 +138,7 @@ public class DeployerHandler {
 	}
 
 	private static void activateInner(DeployerFakePlayer player, Vec3 vec, BlockPos clickedPos, Vec3 extensionVector,
-		Mode mode) {
+									  Mode mode) {
 
 		Vec3 rayOrigin = vec.add(extensionVector.scale(3 / 2f + 1 / 64f));
 		Vec3 rayTarget = vec.add(extensionVector.scale(5 / 2f - 1 / 64f));
@@ -171,15 +170,14 @@ public class DeployerHandler {
 				if (cancelResult == null) {
 					if (entity.interact(player, hand)
 						.consumesAction()) {
-						if (entity instanceof AbstractVillager) {
-							AbstractVillager villager = ((AbstractVillager) entity);
+						if (entity instanceof AbstractVillager villager) {
 							if (villager.getTradingPlayer() instanceof DeployerFakePlayer)
 								villager.setTradingPlayer(null);
 						}
 						success = true;
 					} else if (entity instanceof LivingEntity
 						&& stack.interactLivingEntity(player, (LivingEntity) entity, hand)
-							.consumesAction())
+						.consumesAction())
 						success = true;
 				}
 				if (!success && entity instanceof Player playerEntity) {
@@ -412,14 +410,14 @@ public class DeployerHandler {
 	}
 
 	public static InteractionResult safeOnUse(BlockState state, Level world, BlockPos pos, Player player,
-		InteractionHand hand, BlockHitResult ray) {
+											  InteractionHand hand, BlockHitResult ray) {
 		if (state.getBlock() instanceof BeehiveBlock)
 			return safeOnBeehiveUse(state, world, pos, player, hand);
 		return state.use(world, player, hand, ray);
 	}
 
 	protected static InteractionResult safeOnBeehiveUse(BlockState state, Level world, BlockPos pos, Player player,
-		InteractionHand hand) {
+														InteractionHand hand) {
 		// <> BeehiveBlock#onUse
 
 		BeehiveBlock block = (BeehiveBlock) state.getBlock();

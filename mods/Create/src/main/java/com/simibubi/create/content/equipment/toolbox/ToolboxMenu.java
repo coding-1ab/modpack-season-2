@@ -19,6 +19,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+
 import net.minecraftforge.items.SlotItemHandler;
 
 public class ToolboxMenu extends MenuBase<ToolboxBlockEntity> {
@@ -44,8 +45,7 @@ public class ToolboxMenu extends MenuBase<ToolboxBlockEntity> {
 
 		ClientLevel world = Minecraft.getInstance().level;
 		BlockEntity blockEntity = world.getBlockEntity(readBlockPos);
-		if (blockEntity instanceof ToolboxBlockEntity) {
-			ToolboxBlockEntity toolbox = (ToolboxBlockEntity) blockEntity;
+		if (blockEntity instanceof ToolboxBlockEntity toolbox) {
 			toolbox.readClient(readNbt);
 			return toolbox;
 		}
@@ -130,8 +130,8 @@ public class ToolboxMenu extends MenuBase<ToolboxBlockEntity> {
 		int x = 79;
 		int y = 37;
 
-		int[] xOffsets = { x, x + 33, x + 66, x + 66 + 6, x + 66, x + 33, x, x - 6 };
-		int[] yOffsets = { y, y - 6, y, y + 33, y + 66, y + 66 + 6, y + 66, y + 33 };
+		int[] xOffsets = {x, x + 33, x + 66, x + 66 + 6, x + 66, x + 33, x, x - 6};
+		int[] yOffsets = {y, y - 6, y, y + 33, y + 66, y + 66 + 6, y + 66, y + 33};
 
 		for (int compartment = 0; compartment < 8; compartment++) {
 			int baseIndex = compartment * STACKS_PER_COMPARTMENT;

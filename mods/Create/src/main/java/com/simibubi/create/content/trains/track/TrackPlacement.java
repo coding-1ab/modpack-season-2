@@ -14,13 +14,13 @@ import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.animation.LerpedFloat.Chaser;
 import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.data.Pair;
-import net.createmod.catnip.math.VecHelper;
-import net.createmod.catnip.animation.LerpedFloat;
-import net.createmod.catnip.animation.LerpedFloat.Chaser;
 import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
@@ -107,7 +107,7 @@ public class TrackPlacement {
 	static int extraTipWarmup;
 
 	public static PlacementInfo tryConnect(Level level, Player player, BlockPos pos2, BlockState state2,
-		ItemStack stack, boolean girder, boolean maximiseTurn) {
+										   ItemStack stack, boolean girder, boolean maximiseTurn) {
 		Vec3 lookVec = player.getLookAngle();
 		int lookAngle = (int) (22.5 + AngleHelper.deg(Mth.atan2(lookVec.z, lookVec.x)) % 360) / 8;
 		int maxLength = AllConfigs.server().trains.maxTrackPlacementLength.get();
@@ -361,8 +361,8 @@ public class TrackPlacement {
 
 		info.curve = skipCurve ? null
 			: new BezierConnection(Couple.create(targetPos1, targetPos2),
-				Couple.create(end1.add(offset1), end2.add(offset2)), Couple.create(normedAxis1, normedAxis2),
-				Couple.create(normal1, normal2), true, girder, TrackMaterial.fromItem(stack.getItem()));
+			Couple.create(end1.add(offset1), end2.add(offset2)), Couple.create(normedAxis1, normedAxis2),
+			Couple.create(normal1, normal2), true, girder, TrackMaterial.fromItem(stack.getItem()));
 
 		info.valid = true;
 
@@ -481,7 +481,7 @@ public class TrackPlacement {
 	}
 
 	private static PlacementInfo placeTracks(Level level, PlacementInfo info, BlockState state1, BlockState state2,
-		BlockPos targetPos1, BlockPos targetPos2, boolean simulate) {
+											 BlockPos targetPos1, BlockPos targetPos2, boolean simulate) {
 		info.requiredTracks = 0;
 
 		for (boolean first : Iterate.trueAndFalse) {
@@ -493,14 +493,14 @@ public class TrackPlacement {
 				state = state.setValue(TrackBlock.HAS_BE, false);
 
 			switch (state.getValue(TrackBlock.SHAPE)) {
-			case TE, TW:
-				state = state.setValue(TrackBlock.SHAPE, TrackShape.XO);
-				break;
-			case TN, TS:
-				state = state.setValue(TrackBlock.SHAPE, TrackShape.ZO);
-				break;
-			default:
-				break;
+				case TE, TW:
+					state = state.setValue(TrackBlock.SHAPE, TrackShape.XO);
+					break;
+				case TN, TS:
+					state = state.setValue(TrackBlock.SHAPE, TrackShape.ZO);
+					break;
+				default:
+					break;
 			}
 
 			for (int i = 0; i < (info.curve != null ? extent + 1 : extent); i++) {
@@ -533,26 +533,23 @@ public class TrackPlacement {
 			BlockState onto = info.trackMaterial.getBlock().defaultBlockState();
 			BlockState stateAtPos = level.getBlockState(targetPos1);
 			level.setBlock(targetPos1, ProperWaterloggedBlock.withWater(level,
-					(AllTags.AllBlockTags.TRACKS.matches(stateAtPos) ? stateAtPos : BlockHelper.copyProperties(state1, onto))
-							.setValue(TrackBlock.HAS_BE, true), targetPos1), 3);
+				(AllTags.AllBlockTags.TRACKS.matches(stateAtPos) ? stateAtPos : BlockHelper.copyProperties(state1, onto))
+					.setValue(TrackBlock.HAS_BE, true), targetPos1), 3);
 
 			stateAtPos = level.getBlockState(targetPos2);
 			level.setBlock(targetPos2, ProperWaterloggedBlock.withWater(level,
-					(AllTags.AllBlockTags.TRACKS.matches(stateAtPos) ? stateAtPos : BlockHelper.copyProperties(state2, onto))
-							.setValue(TrackBlock.HAS_BE, true), targetPos2), 3);
+				(AllTags.AllBlockTags.TRACKS.matches(stateAtPos) ? stateAtPos : BlockHelper.copyProperties(state2, onto))
+					.setValue(TrackBlock.HAS_BE, true), targetPos2), 3);
 		}
 
 		BlockEntity te1 = level.getBlockEntity(targetPos1);
 		BlockEntity te2 = level.getBlockEntity(targetPos2);
 		int requiredTracksForTurn = (info.curve.getSegmentCount() + 1) / 2;
 
-		if (!(te1 instanceof TrackBlockEntity) || !(te2 instanceof TrackBlockEntity)) {
+		if (!(te1 instanceof TrackBlockEntity tte1) || !(te2 instanceof TrackBlockEntity tte2)) {
 			info.requiredTracks += requiredTracksForTurn;
 			return info;
 		}
-
-		TrackBlockEntity tte1 = (TrackBlockEntity) te1;
-		TrackBlockEntity tte2 = (TrackBlockEntity) te2;
 
 		if (!tte1.getConnections()
 			.containsKey(tte2.getBlockPos()))
@@ -631,7 +628,7 @@ public class TrackPlacement {
 				.withStyle(ChatFormatting.GREEN), true);
 		else if (info.message != null)
 			player.displayClientMessage(CreateLang.translateDirect(info.message)
-				.withStyle(info.message.equals("track.second_point") ? ChatFormatting.WHITE : ChatFormatting.RED),
+					.withStyle(info.message.equals("track.second_point") ? ChatFormatting.WHITE : ChatFormatting.RED),
 				true);
 
 		if (bhr.getDirection() == Direction.UP) {

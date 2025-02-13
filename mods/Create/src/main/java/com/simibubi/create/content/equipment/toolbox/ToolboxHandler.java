@@ -20,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.network.PacketDistributor;
 
 public class ToolboxHandler {
@@ -44,12 +45,11 @@ public class ToolboxHandler {
 			return;
 		if (!(world instanceof ServerLevel))
 			return;
-		if (!(entity instanceof ServerPlayer))
+		if (!(entity instanceof ServerPlayer player))
 			return;
 		if (entity.tickCount % validationTimer != 0)
 			return;
 
-		ServerPlayer player = (ServerPlayer) entity;
 		if (!player.getPersistentData()
 			.contains("CreateToolboxData"))
 			return;
@@ -90,8 +90,8 @@ public class ToolboxHandler {
 		if (player.getPersistentData()
 			.contains("CreateToolboxData")
 			&& !player.getPersistentData()
-				.getCompound("CreateToolboxData")
-				.isEmpty()) {
+			.getCompound("CreateToolboxData")
+			.isEmpty()) {
 			syncData(player);
 		}
 	}
@@ -128,8 +128,7 @@ public class ToolboxHandler {
 		int prevSlot = prevData.getInt("Slot");
 
 		BlockEntity prevBlockEntity = world.getBlockEntity(prevPos);
-		if (prevBlockEntity instanceof ToolboxBlockEntity) {
-			ToolboxBlockEntity toolbox = (ToolboxBlockEntity) prevBlockEntity;
+		if (prevBlockEntity instanceof ToolboxBlockEntity toolbox) {
 			toolbox.unequip(prevSlot, player, hotbarSlot, keepItems || !ToolboxHandler.withinRange(player, toolbox));
 		}
 		compound.remove(key);

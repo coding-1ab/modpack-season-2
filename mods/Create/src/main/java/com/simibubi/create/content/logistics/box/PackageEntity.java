@@ -219,9 +219,8 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 	}
 
 	public static boolean centerPackage(Entity entity, Vec3 target) {
-		if (!(entity instanceof PackageEntity))
+		if (!(entity instanceof PackageEntity packageEntity))
 			return true;
-		PackageEntity packageEntity = (PackageEntity) entity;
 		return packageEntity.decreaseInsertionTimer(target);
 	}
 
@@ -278,7 +277,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 		boolean isOtherPackage = entityIn instanceof PackageEntity;
 
 		if (!isOtherPackage && tossedBy.get() != null)
-			tossedBy = new WeakReference<Player>(null); // no nudging
+			tossedBy = new WeakReference<>(null); // no nudging
 
 		if (isOtherPackage) {
 			if (entityIn.getBoundingBox().minY < this.getBoundingBox().maxY)

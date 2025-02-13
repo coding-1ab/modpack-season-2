@@ -173,15 +173,15 @@ public class BlueprintEntity extends HangingEntity
 		Axis axis = direction.getAxis();
 		if (size == 2)
 			pos = pos.add(Vec3.atLowerCornerOf(axis.isHorizontal() ? direction.getCounterClockWise()
-				.getNormal()
-				: verticalOrientation.getClockWise()
-					.getNormal())
-				.scale(0.5))
+						.getNormal()
+						: verticalOrientation.getClockWise()
+						.getNormal())
+					.scale(0.5))
 				.add(Vec3
 					.atLowerCornerOf(axis.isHorizontal() ? Direction.UP.getNormal()
 						: direction == Direction.UP ? verticalOrientation.getNormal()
-							: verticalOrientation.getOpposite()
-								.getNormal())
+						: verticalOrientation.getOpposite()
+						.getNormal())
 					.scale(0.5));
 
 		d1 = pos.x;
@@ -193,14 +193,14 @@ public class BlueprintEntity extends HangingEntity
 		double d6 = (double) this.getWidth();
 		Direction.Axis direction$axis = this.direction.getAxis();
 		switch (direction$axis) {
-		case X:
-			d4 = 1.0D;
-			break;
-		case Y:
-			d5 = 1.0D;
-			break;
-		case Z:
-			d6 = 1.0D;
+			case X:
+				d4 = 1.0D;
+				break;
+			case Y:
+				d5 = 1.0D;
+				break;
+			case Z:
+				d6 = 1.0D;
 		}
 
 		d4 = d4 / 32.0D;
@@ -225,7 +225,7 @@ public class BlueprintEntity extends HangingEntity
 		BlockPos blockpos = this.pos.relative(this.direction.getOpposite());
 		Direction upDirection = direction.getAxis()
 			.isHorizontal() ? Direction.UP
-				: direction == Direction.UP ? verticalOrientation : verticalOrientation.getOpposite();
+			: direction == Direction.UP ? verticalOrientation : verticalOrientation.getOpposite();
 		Direction newDirection = direction.getAxis()
 			.isVertical() ? verticalOrientation.getClockWise() : direction.getCounterClockWise();
 		BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos();
@@ -262,10 +262,9 @@ public class BlueprintEntity extends HangingEntity
 
 	@Override
 	public boolean skipAttackInteraction(Entity source) {
-		if (!(source instanceof Player) || level().isClientSide)
+		if (!(source instanceof Player player) || level().isClientSide)
 			return super.skipAttackInteraction(source);
 
-		Player player = (Player) source;
 		double attrib = player.getAttribute(ForgeMod.BLOCK_REACH.get())
 			.getValue() + (player.isCreative() ? 0 : -0.5F);
 
@@ -297,8 +296,7 @@ public class BlueprintEntity extends HangingEntity
 			return;
 
 		playSound(SoundEvents.PAINTING_BREAK, 1.0F, 1.0F);
-		if (p_110128_1_ instanceof Player) {
-			Player playerentity = (Player) p_110128_1_;
+		if (p_110128_1_ instanceof Player playerentity) {
 			if (playerentity.getAbilities().instabuild)
 				return;
 		}
@@ -329,7 +327,7 @@ public class BlueprintEntity extends HangingEntity
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void lerpTo(double p_180426_1_, double p_180426_3_, double p_180426_5_, float p_180426_7_, float p_180426_8_,
-		int p_180426_9_, boolean p_180426_10_) {
+					   int p_180426_9_, boolean p_180426_10_) {
 		BlockPos blockpos =
 			this.pos.offset(BlockPos.containing(p_180426_1_ - this.getX(), p_180426_3_ - this.getY(), p_180426_5_ - this.getZ()));
 		this.setPos((double) blockpos.getX(), (double) blockpos.getY(), (double) blockpos.getZ());
@@ -372,7 +370,8 @@ public class BlueprintEntity extends HangingEntity
 				Map<Integer, ItemStack> craftingGrid = new HashMap<>();
 				boolean success = true;
 
-				Search: for (int i = 0; i < 9; i++) {
+				Search:
+				for (int i = 0; i < 9; i++) {
 					FilterItemStack requestedItem = FilterItemStack.of(items.getStackInSlot(i));
 					if (requestedItem.isEmpty()) {
 						craftingGrid.put(i, ItemStack.EMPTY);

@@ -20,8 +20,8 @@ import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
-import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.data.Iterate;
+import net.createmod.catnip.gui.ScreenOpener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -42,6 +42,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
@@ -149,13 +150,13 @@ public class SymmetryWandItem extends Item {
 				playerIn.getCooldowns()
 					.addCooldown(this, 5);
 			}
-			return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, wand);
+			return new InteractionResultHolder<>(InteractionResult.SUCCESS, wand);
 		}
 
 		// No Shift -> Clear Mirror
 		wand.getTag()
 			.putBoolean(ENABLE, false);
-		return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, wand);
+		return new InteractionResultHolder<>(InteractionResult.SUCCESS, wand);
 	}
 
 	@OnlyIn(Dist.CLIENT)

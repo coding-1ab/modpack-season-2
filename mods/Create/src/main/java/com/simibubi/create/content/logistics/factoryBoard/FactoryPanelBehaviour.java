@@ -71,6 +71,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
@@ -147,7 +148,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 		if (cached instanceof FactoryPanelBehaviour fbe && !fbe.blockEntity.isRemoved())
 			return fbe;
 		FactoryPanelBehaviour result = at(world, connection.from);
-		connection.cachedSource = new WeakReference<Object>(result);
+		connection.cachedSource = new WeakReference<>(result);
 		return result;
 	}
 
@@ -169,7 +170,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 		if (cached instanceof FactoryPanelSupportBehaviour fpsb && !fpsb.blockEntity.isRemoved())
 			return fpsb;
 		FactoryPanelSupportBehaviour result = linkAt(world, connection.from);
-		connection.cachedSource = new WeakReference<Object>(result);
+		connection.cachedSource = new WeakReference<>(result);
 		return result;
 	}
 
@@ -268,7 +269,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 		player.level()
 			.playSound(null, newPos.pos(), SoundEvents.COPPER_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
 	}
-	
+
 	private void moveToSlot(PanelSlot slot) {
 		this.slot = slot;
 		if (this.getSlotPositioning() instanceof FactoryPanelSlotPositioning fpsp)
@@ -545,7 +546,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 		}
 
 		boolean isClientSide = player.level().isClientSide;
-		
+
 		// Wrench cycles through arrow bending
 		if (targeting.size() + targetedByLinks.size() > 0 && AllItemTags.WRENCH.matches(player.getItemInHand(hand))) {
 			int sharedMode = -1;
@@ -599,12 +600,12 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 					NetworkHooks.openScreen(sp, this, buf -> getPanelPosition().send(buf));
 				return;
 			}
-			
+
 			// Use regular filter interaction for setting the item
 			super.onShortInteract(player, hand, side, hitResult);
 			return;
 		}
-		
+
 		// Bind logistics items to this panels' frequency
 		if (heldItem.getItem() instanceof LogisticallyLinkedBlockItem) {
 			if (!isClientSide)
@@ -736,11 +737,11 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 
 		return promises == null ? 0 : promises.getTotalPromisedAndRemoveExpired(item, getPromiseExpiryTimeInTicks());
 	}
-	
+
 	public void resetTimer() {
 		timer = REQUEST_INTERVAL;
 	}
-	
+
 	public void resetTimerSlightly() {
 		timer = REQUEST_INTERVAL / 2;
 	}
@@ -893,7 +894,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 		return new ValueSettingsBoard(CreateLang.translate("factory_panel.target_amount")
 			.component(), maxAmount, 10,
 			List.of(CreateLang.translate("schedule.condition.threshold.items")
-				.component(),
+					.component(),
 				CreateLang.translate("schedule.condition.threshold.stacks")
 					.component()),
 			new ValueSettingsFormatter(this::formatValue));
@@ -955,7 +956,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 	@Override
 	public MutableComponent getCountLabelForValueBox() {
 		if (filter.isEmpty())
-            return Component.empty();
+			return Component.empty();
 		if (waitingForNetwork) {
 			return Component.literal("?");
 		}
@@ -999,10 +1000,10 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 
 	public static BehaviourType<?> getTypeForSlot(PanelSlot slot) {
 		return switch (slot) {
-		case BOTTOM_LEFT -> BOTTOM_LEFT;
-		case TOP_LEFT -> TOP_LEFT;
-		case TOP_RIGHT -> TOP_RIGHT;
-		case BOTTOM_RIGHT -> BOTTOM_RIGHT;
+			case BOTTOM_LEFT -> BOTTOM_LEFT;
+			case TOP_LEFT -> TOP_LEFT;
+			case TOP_RIGHT -> TOP_RIGHT;
+			case BOTTOM_RIGHT -> BOTTOM_RIGHT;
 		};
 	}
 
@@ -1037,7 +1038,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 	public boolean writeToClipboard(CompoundTag tag, Direction side) {
 		return false;
 	}
-	
+
 	private void tickOutline() {
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> LogisticallyLinkedClientHandler.tickPanel(this));
 	}

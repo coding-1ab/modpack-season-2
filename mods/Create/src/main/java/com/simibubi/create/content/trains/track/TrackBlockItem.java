@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -137,10 +138,9 @@ public class TrackBlockItem extends BlockItem {
 	public static boolean select(LevelAccessor world, BlockPos pos, Vec3 lookVec, ItemStack heldItem) {
 		BlockState blockState = world.getBlockState(pos);
 		Block block = blockState.getBlock();
-		if (!(block instanceof ITrackBlock))
+		if (!(block instanceof ITrackBlock track))
 			return false;
 
-		ITrackBlock track = (ITrackBlock) block;
 		Pair<Vec3, AxisDirection> nearestTrackAxis = track.getNearestTrackAxis(world, pos, blockState, lookVec);
 		Vec3 axis = nearestTrackAxis.getFirst()
 			.scale(nearestTrackAxis.getSecond() == AxisDirection.POSITIVE ? -1 : 1);

@@ -53,13 +53,13 @@ public class SequencedGearshiftBlock extends HorizontalAxisKineticBlock implemen
 	}
 
 	@Override
-    public boolean shouldCheckWeakPower(BlockState state, SignalGetter level, BlockPos pos, Direction side) {
-        return false;
-    }
+	public boolean shouldCheckWeakPower(BlockState state, SignalGetter level, BlockPos pos, Direction side) {
+		return false;
+	}
 
 	@Override
 	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos,
-		boolean isMoving) {
+								boolean isMoving) {
 		if (level.isClientSide)
 			return;
 		if (!level.getBlockTicks()
@@ -89,12 +89,11 @@ public class SequencedGearshiftBlock extends HorizontalAxisKineticBlock implemen
 
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-		BlockHitResult hit) {
+								 BlockHitResult hit) {
 		ItemStack held = player.getMainHandItem();
 		if (AllItems.WRENCH.isIn(held))
 			return InteractionResult.PASS;
-		if (held.getItem() instanceof BlockItem) {
-			BlockItem blockItem = (BlockItem) held.getItem();
+		if (held.getItem() instanceof BlockItem blockItem) {
 			if (blockItem.getBlock() instanceof KineticBlock && hasShaftTowards(worldIn, pos, state, hit.getDirection()))
 				return InteractionResult.PASS;
 		}
