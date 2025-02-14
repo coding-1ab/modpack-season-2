@@ -22,6 +22,8 @@ import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 
 import net.createmod.catnip.data.Iterate;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -33,7 +35,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class BasinRecipe extends ProcessingRecipe<SmartInventory> {
+public class BasinRecipe extends ProcessingRecipe<Container> {
 
 	public static boolean match(BasinBlockEntity basin, Recipe<?> recipe) {
 		FilteringBehaviour filter = basin.getFilter();
@@ -147,13 +149,15 @@ public class BasinRecipe extends ProcessingRecipe<SmartInventory> {
 			}
 
 			if (simulate) {
+				CraftingContainer remainderContainer = new DummyCraftingContainer(availableItems, extractedItemsFromSlot);
+
 				if (recipe instanceof BasinRecipe basinRecipe) {
 					recipeOutputItems.addAll(basinRecipe.rollResults());
 
 					for (FluidStack fluidStack : basinRecipe.getFluidResults())
 						if (!fluidStack.isEmpty())
 							recipeOutputFluids.add(fluidStack);
-					for (ItemStack stack : basinRecipe.getRemainingItems(basin.getInputInventory()))
+					for (ItemStack stack : basinRecipe.getRemainingItems(remainderContainer))
 						if (!stack.isEmpty())
 							recipeOutputItems.add(stack);
 
@@ -162,8 +166,7 @@ public class BasinRecipe extends ProcessingRecipe<SmartInventory> {
 						.registryAccess()));
 
 					if (recipe instanceof CraftingRecipe craftingRecipe) {
-						for (ItemStack stack : craftingRecipe
-							.getRemainingItems(new DummyCraftingContainer(availableItems, extractedItemsFromSlot)))
+						for (ItemStack stack : craftingRecipe.getRemainingItems(remainderContainer))
 							if (!stack.isEmpty())
 								recipeOutputItems.add(stack);
 					}
@@ -224,7 +227,7 @@ public class BasinRecipe extends ProcessingRecipe<SmartInventory> {
 	}
 
 	@Override
-	public boolean matches(SmartInventory inv, @Nonnull Level worldIn) {
+	public boolean matches(Container inv, @Nonnull Level worldIn) {
 		return false;
 	}
 
