@@ -26,6 +26,7 @@ import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelSlot;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
+import com.simibubi.create.content.logistics.packagePort.frogport.FrogportBlockEntity;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagingRequest;
@@ -1055,6 +1056,16 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 		return blockEntity.getBlockState()
 			.getBlock()
 			.getName();
+	}
+
+	public String getFrogAddress() {
+		PackagerBlockEntity packager = panelBE().getRestockedPackager();
+		if (packager == null)
+			return null;
+		if (packager.getLevel().getBlockEntity(packager.getBlockPos().above()) instanceof FrogportBlockEntity fpbe)
+			if (fpbe.addressFilter != null && !fpbe.addressFilter.isBlank())
+				return fpbe.addressFilter + "";
+		return null;
 	}
 
 }
