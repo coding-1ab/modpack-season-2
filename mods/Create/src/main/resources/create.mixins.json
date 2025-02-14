@@ -10,7 +10,6 @@
     "ArmorTrimMixin",
     "BlockItemMixin",
     "ClientboundMapItemDataPacketMixin",
-    "ContraptionDriverInteractMixin",
     "CustomItemUseEffectsMixin",
     "EntityMixin",
     "LavaSwimmingMixin",
