@@ -778,6 +778,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 		CompoundTag panelTag = new CompoundTag();
 		super.write(panelTag, clientPacket);
 
+		panelTag.putInt("Timer", timer);
 		panelTag.putInt("LastLevel", lastReportedLevelInStorage);
 		panelTag.putInt("LastPromised", lastReportedPromises);
 		panelTag.putInt("LastUnloadedLinks", lastReportedUnloadedLinks);
@@ -813,6 +814,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 		filter = FilterItemStack.of(panelTag.getCompound("Filter"));
 		count = panelTag.getInt("FilterAmount");
 		upTo = panelTag.getBoolean("UpTo");
+		timer = panelTag.getInt("Timer");
 		lastReportedLevelInStorage = panelTag.getInt("LastLevel");
 		lastReportedPromises = panelTag.getInt("LastPromised");
 		lastReportedUnloadedLinks = panelTag.getInt("LastUnloadedLinks");
