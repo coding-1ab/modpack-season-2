@@ -3,7 +3,9 @@ package com.simibubi.create.content.kinetics.belt.transport;
 import java.util.Random;
 
 import com.simibubi.create.content.kinetics.belt.BeltHelper;
+import com.simibubi.create.content.kinetics.fan.processing.AllFanProcessingTypes;
 import com.simibubi.create.content.kinetics.fan.processing.FanProcessingType;
+import com.simibubi.create.content.kinetics.fan.processing.FanProcessingTypeRegistry;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -74,6 +76,12 @@ public class TransportedItemStack implements Comparable<TransportedItemStack> {
 		nbt.putInt("InSegment", insertedAt);
 		nbt.putInt("Angle", angle);
 		nbt.putInt("InDirection", insertedFrom.get3DDataValue());
+		
+		if (processedBy != null && processedBy != AllFanProcessingTypes.NONE) {
+			nbt.putString("FanProcessingType", FanProcessingTypeRegistry.getIdOrThrow(processedBy).toString());
+			nbt.putInt("FanProcessingTime", processingTime);
+		}
+		
 		if (locked)
 			nbt.putBoolean("Locked", locked);
 		if (lockedExternally)
@@ -92,7 +100,18 @@ public class TransportedItemStack implements Comparable<TransportedItemStack> {
 		stack.insertedFrom = Direction.from3DDataValue(nbt.getInt("InDirection"));
 		stack.locked = nbt.getBoolean("Locked");
 		stack.lockedExternally = nbt.getBoolean("LockedExternally");
+		
+		if (nbt.contains("FanProcessingType")) {
+			stack.processedBy = AllFanProcessingTypes.parseLegacy(nbt.getString("FanProcessingType"));
+			stack.processingTime = nbt.getInt("FanProcessingTime");
+		}
+		
 		return stack;
+	}
+	
+	public void clearFanProcessingData() {
+		processedBy = null;
+		processingTime = 0;
 	}
 
 }
