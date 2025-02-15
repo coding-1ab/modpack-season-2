@@ -20,7 +20,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public interface ItemAttribute {
 	static CompoundTag saveStatic(ItemAttribute attribute) {
 		CompoundTag nbt = new CompoundTag();
-		ResourceLocation id = AllRegistries.ITEM_ATTRIBUTE_TYPES.get().getKey(attribute.getType());
+		ResourceLocation id = AllRegistries.ITEM_ATTRIBUTE_TYPE.get().getKey(attribute.getType());
 
 		if (id == null)
 			throw new IllegalArgumentException("Cannot get " + attribute.getType() + "as it does not exist in AllRegistries.ITEM_ATTRIBUTE_TYPES");
@@ -42,7 +42,7 @@ public interface ItemAttribute {
 		if (id == null)
 			return null;
 
-		ItemAttributeType type = AllRegistries.ITEM_ATTRIBUTE_TYPES.get().getValue(id);
+		ItemAttributeType type = AllRegistries.ITEM_ATTRIBUTE_TYPE.get().getValue(id);
 		if (type == null)
 			return null;
 
@@ -53,7 +53,7 @@ public interface ItemAttribute {
 
 	static List<ItemAttribute> getAllAttributes(ItemStack stack, Level level) {
 		List<ItemAttribute> attributes = new ArrayList<>();
-		for (ItemAttributeType type : AllRegistries.ITEM_ATTRIBUTE_TYPES.get()) {
+		for (ItemAttributeType type : AllRegistries.ITEM_ATTRIBUTE_TYPE.get()) {
 			attributes.addAll(type.getAllAttributes(stack, level));
 		}
 		return attributes;

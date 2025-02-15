@@ -80,16 +80,16 @@ public class TransportedItemStack implements Comparable<TransportedItemStack> {
 		nbt.putInt("InSegment", insertedAt);
 		nbt.putInt("Angle", angle);
 		nbt.putInt("InDirection", insertedFrom.get3DDataValue());
-		
+
 		if (processedBy != null && processedBy != AllFanProcessingTypes.NONE) {
-			ResourceLocation key = AllRegistries.FAN_PROCESSING_TYPES.get().getKey(processedBy);
+			ResourceLocation key = AllRegistries.FAN_PROCESSING_TYPE.get().getKey(processedBy);
 			if (key == null)
 				throw new IllegalArgumentException("Could not get id for FanProcessingType " + processedBy + "!");
-			
+
 			nbt.putString("FanProcessingType", key.toString());
 			nbt.putInt("FanProcessingTime", processingTime);
 		}
-		
+
 		if (locked)
 			nbt.putBoolean("Locked", locked);
 		if (lockedExternally)
@@ -108,15 +108,15 @@ public class TransportedItemStack implements Comparable<TransportedItemStack> {
 		stack.insertedFrom = Direction.from3DDataValue(nbt.getInt("InDirection"));
 		stack.locked = nbt.getBoolean("Locked");
 		stack.lockedExternally = nbt.getBoolean("LockedExternally");
-		
+
 		if (nbt.contains("FanProcessingType")) {
 			stack.processedBy = AllFanProcessingTypes.parseLegacy(nbt.getString("FanProcessingType"));
 			stack.processingTime = nbt.getInt("FanProcessingTime");
 		}
-		
+
 		return stack;
 	}
-	
+
 	public void clearFanProcessingData() {
 		processedBy = null;
 		processingTime = 0;

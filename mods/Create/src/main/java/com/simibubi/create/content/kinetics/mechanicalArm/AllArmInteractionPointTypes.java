@@ -64,7 +64,7 @@ import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import net.minecraftforge.registries.DeferredRegister;
 
 public class AllArmInteractionPointTypes {
-	private static final DeferredRegister<ArmInteractionPointType> REGISTER = DeferredRegister.create(AllRegistries.Keys.ARM_INTERACTION_POINT_TYPES, Create.ID);
+	private static final DeferredRegister<ArmInteractionPointType> REGISTER = DeferredRegister.create(AllRegistries.Keys.ARM_INTERACTION_POINT_TYPE, Create.ID);
 
 	static {
 		register("basin", new BasinType());

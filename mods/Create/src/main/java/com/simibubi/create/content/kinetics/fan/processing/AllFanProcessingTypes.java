@@ -60,7 +60,7 @@ import net.minecraftforge.items.wrapper.RecipeWrapper;
 import net.minecraftforge.registries.DeferredRegister;
 
 public class AllFanProcessingTypes {
-	private static final DeferredRegister<FanProcessingType> REGISTER = DeferredRegister.create(AllRegistries.Keys.FAN_PROCESSING_TYPES, Create.ID);
+	private static final DeferredRegister<FanProcessingType> REGISTER = DeferredRegister.create(AllRegistries.Keys.FAN_PROCESSING_TYPE, Create.ID);
 
 	public static final NoneType NONE = register("none", new NoneType());
 	public static final BlastingType BLASTING = register("blasting", new BlastingType());
