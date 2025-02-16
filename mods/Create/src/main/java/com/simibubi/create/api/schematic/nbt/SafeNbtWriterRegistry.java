@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
  * <p>
  * This is used to exclude specific tags that would result in exploits, ex. signs that execute commands when clicked.
  * <p>
- * This is provided as an alternative to {@link IPartialSafeNBT}.
+ * This is provided as an alternative to {@link PartialSafeNBT}.
  */
 public class SafeNbtWriterRegistry {
 	public static final SimpleRegistry<BlockEntityType<?>, SafeNbtWriter> REGISTRY = SimpleRegistry.create();

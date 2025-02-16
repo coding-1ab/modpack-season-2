@@ -18,9 +18,9 @@ import net.minecraft.world.level.block.state.BlockState;
  * <p>
  * This is provided as an alternative to the following interfaces:
  * <ul>
- *     <li>{@link ISpecialBlockItemRequirement}</li>
- *     <li>{@link ISpecialBlockEntityItemRequirement}</li>
- *     <li>{@link ISpecialEntityItemRequirement}</li>
+ *     <li>{@link SpecialBlockItemRequirement}</li>
+ *     <li>{@link SpecialBlockEntityItemRequirement}</li>
+ *     <li>{@link SpecialEntityItemRequirement}</li>
  * </ul>
  */
 public class SchematicRequirementRegistries {

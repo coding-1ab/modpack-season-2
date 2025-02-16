@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.logging.LogUtils;
-import com.simibubi.create.api.behaviour.BlockSpoutingBehaviour;
+import com.simibubi.create.api.behaviour.spouting.BlockSpoutingBehaviour;
 import com.simibubi.create.compat.Mods;
 import com.simibubi.create.compat.computercraft.ComputerCraftProxy;
 import com.simibubi.create.compat.curios.Curios;
@@ -135,7 +135,6 @@ public class Create {
 		AllArmInteractionPointTypes.register(modEventBus);
 		AllFanProcessingTypes.register(modEventBus);
 		AllItemAttributeTypes.register(modEventBus);
-		BlockSpoutingBehaviour.registerDefaults();
 
 		// FIXME: some of these registrations are not thread-safe
 		AllMovementBehaviours.registerDefaults();
@@ -173,6 +172,7 @@ public class Create {
 			BoilerHeaters.registerDefaults();
 			AllPortalTracks.registerDefaults();
 			AllDisplayBehaviours.registerDefaults();
+			BlockSpoutingBehaviour.registerDefaults();
 			// --
 
 			AllAdvancements.register();
