@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import com.simibubi.create.Create;
-import com.simibubi.create.api.registry.AttachedRegistry;
+import com.simibubi.create.api.registry.SimpleRegistry;
 import com.simibubi.create.compat.Mods;
 import com.simibubi.create.content.redstone.displayLink.source.ComputerDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.source.DeathCounterDisplaySource;
@@ -38,11 +38,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class AllDisplayBehaviours {
 	public static final Map<ResourceLocation, DisplayBehaviour> GATHERER_BEHAVIOURS = new HashMap<>();
 
-	private static final AttachedRegistry<Block, List<DisplaySource>> SOURCES_BY_BLOCK = AttachedRegistry.create();
-	private static final AttachedRegistry<BlockEntityType<?>, List<DisplaySource>> SOURCES_BY_BLOCK_ENTITY = AttachedRegistry.create();
+	private static final SimpleRegistry<Block, List<DisplaySource>> SOURCES_BY_BLOCK = SimpleRegistry.create();
+	private static final SimpleRegistry<BlockEntityType<?>, List<DisplaySource>> SOURCES_BY_BLOCK_ENTITY = SimpleRegistry.create();
 
-	private static final AttachedRegistry<Block, DisplayTarget> TARGETS_BY_BLOCK = AttachedRegistry.create();
-	private static final AttachedRegistry<BlockEntityType<?>, DisplayTarget> TARGETS_BY_BLOCK_ENTITY = AttachedRegistry.create();
+	private static final SimpleRegistry<Block, DisplayTarget> TARGETS_BY_BLOCK = SimpleRegistry.create();
+	private static final SimpleRegistry<BlockEntityType<?>, DisplayTarget> TARGETS_BY_BLOCK_ENTITY = SimpleRegistry.create();
 
 	public static DisplayBehaviour register(ResourceLocation id, DisplayBehaviour behaviour) {
 		behaviour.id = id;

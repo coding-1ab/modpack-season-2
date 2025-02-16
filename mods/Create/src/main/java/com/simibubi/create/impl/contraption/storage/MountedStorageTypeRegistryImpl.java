@@ -10,7 +10,7 @@ import com.simibubi.create.AllTags;
 import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistries;
 import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageType;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
-import com.simibubi.create.api.registry.AttachedRegistry;
+import com.simibubi.create.api.registry.SimpleRegistry;
 
 import net.minecraft.Util;
 import net.minecraft.world.level.block.Block;
@@ -26,12 +26,12 @@ import net.minecraftforge.registries.RegistryBuilder;
 @ApiStatus.Internal
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MountedStorageTypeRegistryImpl {
-	public static final AttachedRegistry<Block, MountedItemStorageType<?>> ITEM_STORAGES = Util.make(() -> {
-		AttachedRegistry<Block, MountedItemStorageType<?>> registry = AttachedRegistry.create();
+	public static final SimpleRegistry<Block, MountedItemStorageType<?>> ITEM_STORAGES = Util.make(() -> {
+		SimpleRegistry<Block, MountedItemStorageType<?>> registry = SimpleRegistry.create();
 		registry.registerProvider(ItemFallbackProvider.INSTANCE);
 		return registry;
 	});
-	public static final AttachedRegistry<Block, MountedFluidStorageType<?>> FLUID_STORAGES = AttachedRegistry.create();
+	public static final SimpleRegistry<Block, MountedFluidStorageType<?>> FLUID_STORAGES = SimpleRegistry.create();
 
 	private static IForgeRegistry<MountedItemStorageType<?>> itemsRegistry;
 	private static IForgeRegistry<MountedFluidStorageType<?>> fluidsRegistry;
@@ -58,7 +58,7 @@ public class MountedStorageTypeRegistryImpl {
 		);
 	}
 
-	private enum ItemFallbackProvider implements AttachedRegistry.Provider<Block, MountedItemStorageType<?>> {
+	private enum ItemFallbackProvider implements SimpleRegistry.Provider<Block, MountedItemStorageType<?>> {
 		INSTANCE;
 
 		@Override
@@ -70,7 +70,7 @@ public class MountedStorageTypeRegistryImpl {
 		}
 
 		@Override
-		public void onRegister(AttachedRegistry<Block, MountedItemStorageType<?>> registry) {
+		public void onRegister(SimpleRegistry<Block, MountedItemStorageType<?>> registry) {
 			MinecraftForge.EVENT_BUS.addListener((TagsUpdatedEvent event) -> {
 				if (event.shouldUpdateStaticData()) {
 					registry.invalidateProvider(this);

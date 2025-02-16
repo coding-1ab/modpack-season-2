@@ -2,7 +2,7 @@ package com.simibubi.create.api.contraption.storage.item.registrate;
 
 import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistries;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
-import com.simibubi.create.api.registry.AttachedRegistry;
+import com.simibubi.create.api.registry.SimpleRegistry;
 import com.tterrag.registrate.AbstractRegistrate;
 import com.tterrag.registrate.builders.AbstractBuilder;
 import com.tterrag.registrate.builders.BuilderCallback;
@@ -25,7 +25,7 @@ public class MountedItemStorageTypeBuilder<T extends MountedItemStorageType<?>, 
 	}
 
 	public MountedItemStorageTypeBuilder<T, P> registerTo(TagKey<Block> tag) {
-		MountedStorageTypeRegistries.ITEM_STORAGES.registerProvider(AttachedRegistry.Provider.forBlockTag(tag, this.type));
+		MountedStorageTypeRegistries.ITEM_STORAGES.registerProvider(SimpleRegistry.Provider.forBlockTag(tag, this.type));
 		return this;
 	}
 

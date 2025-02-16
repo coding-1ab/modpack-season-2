@@ -10,10 +10,10 @@ import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.simibubi.create.api.registry.AttachedRegistry;
+import com.simibubi.create.api.registry.SimpleRegistry;
 
 // methods are synchronized since registrations can happen during parallel mod loading
-public class AttachedRegistryImpl<K, V> implements AttachedRegistry<K, V> {
+public class SimpleRegistryImpl<K, V> implements SimpleRegistry<K, V> {
 	private static final Object nullMarker = new Object();
 
 	private final Map<K, V> registrations = new IdentityHashMap<>();

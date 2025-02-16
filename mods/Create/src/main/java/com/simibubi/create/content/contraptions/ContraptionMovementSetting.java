@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
-import com.simibubi.create.api.registry.AttachedRegistry;
+import com.simibubi.create.api.registry.SimpleRegistry;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import net.minecraft.world.level.block.Block;
@@ -17,7 +17,7 @@ import net.minecraftforge.common.extensions.IForgeBlock;
 public enum ContraptionMovementSetting {
 	MOVABLE, NO_PICKUP, UNMOVABLE;
 
-	public static final AttachedRegistry<Block, Supplier<ContraptionMovementSetting>> REGISTRY = AttachedRegistry.create();
+	public static final SimpleRegistry<Block, Supplier<ContraptionMovementSetting>> REGISTRY = SimpleRegistry.create();
 
 	@Nullable
 	public static ContraptionMovementSetting get(Block block) {

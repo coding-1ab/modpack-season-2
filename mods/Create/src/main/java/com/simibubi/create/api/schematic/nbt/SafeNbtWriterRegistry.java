@@ -1,6 +1,6 @@
 package com.simibubi.create.api.schematic.nbt;
 
-import com.simibubi.create.api.registry.AttachedRegistry;
+import com.simibubi.create.api.registry.SimpleRegistry;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
  * This is provided as an alternative to {@link IPartialSafeNBT}.
  */
 public class SafeNbtWriterRegistry {
-	public static final AttachedRegistry<BlockEntityType<?>, SafeNbtWriter> REGISTRY = AttachedRegistry.create();
+	public static final SimpleRegistry<BlockEntityType<?>, SafeNbtWriter> REGISTRY = SimpleRegistry.create();
 
 	@FunctionalInterface
 	public interface SafeNbtWriter {

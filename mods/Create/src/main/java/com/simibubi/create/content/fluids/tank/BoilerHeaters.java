@@ -2,7 +2,7 @@ package com.simibubi.create.content.fluids.tank;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags.AllBlockTags;
-import com.simibubi.create.api.registry.AttachedRegistry;
+import com.simibubi.create.api.registry.SimpleRegistry;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.foundation.utility.BlockHelper;
@@ -16,7 +16,7 @@ public class BoilerHeaters {
 	public static final int PASSIVE_HEAT = 0;
 	public static final int NO_HEAT = -1;
 
-	public static final AttachedRegistry<Block, Heater> REGISTRY = AttachedRegistry.create();
+	public static final SimpleRegistry<Block, Heater> REGISTRY = SimpleRegistry.create();
 
 	public static final Heater PASSIVE_HEATER = (level, pos, state) -> BlockHelper.isNotUnheated(state) ? PASSIVE_HEAT : NO_HEAT;
 
@@ -44,7 +44,7 @@ public class BoilerHeaters {
 			return PASSIVE_HEAT;
 		});
 
-		REGISTRY.registerProvider(AttachedRegistry.Provider.forBlockTag(AllBlockTags.PASSIVE_BOILER_HEATERS.tag, PASSIVE_HEATER));
+		REGISTRY.registerProvider(SimpleRegistry.Provider.forBlockTag(AllBlockTags.PASSIVE_BOILER_HEATERS.tag, PASSIVE_HEATER));
 	}
 
 	@FunctionalInterface

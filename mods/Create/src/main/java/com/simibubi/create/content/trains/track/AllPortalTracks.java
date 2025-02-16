@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 import com.simibubi.create.Create;
-import com.simibubi.create.api.registry.AttachedRegistry;
+import com.simibubi.create.api.registry.SimpleRegistry;
 import com.simibubi.create.compat.Mods;
 import com.simibubi.create.compat.betterend.BetterEndPortalCompat;
 import com.simibubi.create.content.contraptions.glue.SuperGlueEntity;
@@ -49,7 +49,7 @@ public class AllPortalTracks {
 	/**
 	 * Registry mapping portal blocks to their respective {@link PortalTrackProvider}s.
 	 */
-	public static final AttachedRegistry<Block, PortalTrackProvider> REGISTRY = AttachedRegistry.create();
+	public static final SimpleRegistry<Block, PortalTrackProvider> REGISTRY = SimpleRegistry.create();
 
 	/**
 	 * Registers a portal track integration for a given block identified by its {@link ResourceLocation}, if it exists.

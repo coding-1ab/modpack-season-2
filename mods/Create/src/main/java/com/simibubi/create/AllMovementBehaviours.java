@@ -2,7 +2,7 @@ package com.simibubi.create;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.simibubi.create.api.registry.AttachedRegistry;
+import com.simibubi.create.api.registry.SimpleRegistry;
 import com.simibubi.create.content.contraptions.behaviour.BellMovementBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.CampfireMovementBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class AllMovementBehaviours {
-	public static final AttachedRegistry<Block, MovementBehaviour> REGISTRY = AttachedRegistry.create();
+	public static final SimpleRegistry<Block, MovementBehaviour> REGISTRY = SimpleRegistry.create();
 
 	@Nullable
 	public static MovementBehaviour getBehaviour(BlockState state) {

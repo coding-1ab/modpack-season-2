@@ -1,6 +1,6 @@
 package com.simibubi.create.api.contraption.transformable;
 
-import com.simibubi.create.api.registry.AttachedRegistry;
+import com.simibubi.create.api.registry.SimpleRegistry;
 import com.simibubi.create.content.contraptions.StructureTransform;
 
 import net.minecraft.world.level.block.Block;
@@ -13,8 +13,8 @@ import net.minecraft.world.level.block.state.BlockState;
  * These interfaces are alternatives to the {@link ITransformableBlock} and {@link ITransformableBlockEntity} interfaces.
  */
 public class MovedBlockTransformerRegistries {
-	public static final AttachedRegistry<Block, BlockTransformer> BLOCK_TRANSFORMERS = AttachedRegistry.create();
-	public static final AttachedRegistry<BlockEntityType<?>, BlockEntityTransformer> BLOCK_ENTITY_TRANSFORMERS = AttachedRegistry.create();
+	public static final SimpleRegistry<Block, BlockTransformer> BLOCK_TRANSFORMERS = SimpleRegistry.create();
+	public static final SimpleRegistry<BlockEntityType<?>, BlockEntityTransformer> BLOCK_ENTITY_TRANSFORMERS = SimpleRegistry.create();
 
 	@FunctionalInterface
 	public interface BlockTransformer {

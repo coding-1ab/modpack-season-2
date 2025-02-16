@@ -2,7 +2,7 @@ package com.simibubi.create.api.contraption.storage.fluid.registrate;
 
 import com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistries;
 import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageType;
-import com.simibubi.create.api.registry.AttachedRegistry;
+import com.simibubi.create.api.registry.SimpleRegistry;
 import com.tterrag.registrate.AbstractRegistrate;
 import com.tterrag.registrate.builders.AbstractBuilder;
 import com.tterrag.registrate.builders.BuilderCallback;
@@ -25,7 +25,7 @@ public class MountedFluidStorageTypeBuilder<T extends MountedFluidStorageType<?>
 	}
 
 	public MountedFluidStorageTypeBuilder<T, P> registerTo(TagKey<Block> tag) {
-		MountedStorageTypeRegistries.FLUID_STORAGES.registerProvider(AttachedRegistry.Provider.forBlockTag(tag, this.type));
+		MountedStorageTypeRegistries.FLUID_STORAGES.registerProvider(SimpleRegistry.Provider.forBlockTag(tag, this.type));
 		return this;
 	}
 

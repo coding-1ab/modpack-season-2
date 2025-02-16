@@ -4,7 +4,7 @@ import java.util.function.Function;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.simibubi.create.impl.registry.AttachedRegistryImpl;
+import com.simibubi.create.impl.registry.SimpleRegistryImpl;
 import com.simibubi.create.impl.registry.TagProviderImpl;
 
 import net.minecraft.core.Holder;
@@ -13,12 +13,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 /**
- * A mapping of registered objects to something else.
+ * A simple registry mapping between objects. Provides simple registration functionality, as well as lazy providers.
  * This class is thread-safe, and may be safely used during parallel mod init.
  */
-public interface AttachedRegistry<K, V> {
+public interface SimpleRegistry<K, V> {
 	/**
 	 * Register an association between a key and a value.
+	 * Direct registrations here always take priority over providers.
 	 * @throws IllegalArgumentException if the object already has an associated value
 	 */
 	void register(K object, V value);
@@ -41,8 +42,8 @@ public interface AttachedRegistry<K, V> {
 	@Nullable
 	V get(K object);
 
-	static <K, V> AttachedRegistry<K, V> create() {
-		return new AttachedRegistryImpl<>();
+	static <K, V> SimpleRegistry<K, V> create() {
+		return new SimpleRegistryImpl<>();
 	}
 
 	/**
@@ -50,7 +51,7 @@ public interface AttachedRegistry<K, V> {
 	 * associated value, all providers will be queried in reverse-registration order.
 	 * <p>
 	 * The values returned by providers are cached so that repeated queries always return the same value.
-	 * To invalidate the cache of a provider, call {@link AttachedRegistry#invalidateProvider(Provider)}.
+	 * To invalidate the cache of a provider, call {@link SimpleRegistry#invalidateProvider(Provider)}.
 	 */
 	@FunctionalInterface
 	interface Provider<K, V> {
@@ -58,11 +59,11 @@ public interface AttachedRegistry<K, V> {
 		V get(K object);
 
 		/**
-		 * Called by the AttachedRegistry this provider is registered to after it's registered.
+		 * Called by the SimpleRegistry this provider is registered to after it's registered.
 		 * This is useful for behavior that should only happen if a provider is actually registered,
 		 * such as registering event listeners.
 		 */
-		default void onRegister(AttachedRegistry<K, V> registry) {
+		default void onRegister(SimpleRegistry<K, V> registry) {
 		}
 
 		/**

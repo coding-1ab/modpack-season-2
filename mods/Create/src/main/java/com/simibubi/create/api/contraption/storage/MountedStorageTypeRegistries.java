@@ -3,7 +3,7 @@ package com.simibubi.create.api.contraption.storage;
 import com.simibubi.create.Create;
 import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageType;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
-import com.simibubi.create.api.registry.AttachedRegistry;
+import com.simibubi.create.api.registry.SimpleRegistry;
 import com.simibubi.create.impl.contraption.storage.MountedStorageTypeRegistryImpl;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.entry.RegistryEntry;
@@ -23,8 +23,8 @@ public class MountedStorageTypeRegistries {
 		Create.asResource("mounted_fluid_storage_type")
 	);
 
-	public static final AttachedRegistry<Block, MountedItemStorageType<?>> ITEM_STORAGES = MountedStorageTypeRegistryImpl.ITEM_STORAGES;
-	public static final AttachedRegistry<Block, MountedFluidStorageType<?>> FLUID_STORAGES = MountedStorageTypeRegistryImpl.FLUID_STORAGES;
+	public static final SimpleRegistry<Block, MountedItemStorageType<?>> ITEM_STORAGES = MountedStorageTypeRegistryImpl.ITEM_STORAGES;
+	public static final SimpleRegistry<Block, MountedFluidStorageType<?>> FLUID_STORAGES = MountedStorageTypeRegistryImpl.FLUID_STORAGES;
 
 	/**
 	 * @throws NullPointerException if called before registry registration

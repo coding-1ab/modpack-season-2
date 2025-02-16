@@ -2,7 +2,7 @@ package com.simibubi.create.foundation.item;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.simibubi.create.api.registry.AttachedRegistry;
+import com.simibubi.create.api.registry.SimpleRegistry;
 
 import net.minecraft.world.item.Item;
 
@@ -10,7 +10,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 @FunctionalInterface
 public interface TooltipModifier {
-	AttachedRegistry<Item, TooltipModifier> REGISTRY = AttachedRegistry.create();
+	SimpleRegistry<Item, TooltipModifier> REGISTRY = SimpleRegistry.create();
 
 	TooltipModifier EMPTY = new TooltipModifier() {
 		@Override

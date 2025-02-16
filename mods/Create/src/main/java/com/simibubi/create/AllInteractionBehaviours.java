@@ -2,7 +2,7 @@ package com.simibubi.create;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.simibubi.create.api.registry.AttachedRegistry;
+import com.simibubi.create.api.registry.SimpleRegistry;
 import com.simibubi.create.content.contraptions.behaviour.DoorMovingInteraction;
 import com.simibubi.create.content.contraptions.behaviour.LeverMovingInteraction;
 import com.simibubi.create.content.contraptions.behaviour.MovingInteractionBehaviour;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class AllInteractionBehaviours {
-	public static final AttachedRegistry<Block, MovingInteractionBehaviour> REGISTRY = AttachedRegistry.create();
+	public static final SimpleRegistry<Block, MovingInteractionBehaviour> REGISTRY = SimpleRegistry.create();
 
 	@Nullable
 	public static MovingInteractionBehaviour getBehaviour(BlockState state) {
@@ -32,8 +32,8 @@ public class AllInteractionBehaviours {
 	static void registerDefaults() {
 		REGISTRY.register(Blocks.LEVER, new LeverMovingInteraction());
 
-		REGISTRY.registerProvider(AttachedRegistry.Provider.forBlockTag(BlockTags.WOODEN_DOORS, new DoorMovingInteraction()));
-		REGISTRY.registerProvider(AttachedRegistry.Provider.forBlockTag(BlockTags.WOODEN_TRAPDOORS, new TrapdoorMovingInteraction()));
-		REGISTRY.registerProvider(AttachedRegistry.Provider.forBlockTag(BlockTags.FENCE_GATES, new TrapdoorMovingInteraction()));
+		REGISTRY.registerProvider(SimpleRegistry.Provider.forBlockTag(BlockTags.WOODEN_DOORS, new DoorMovingInteraction()));
+		REGISTRY.registerProvider(SimpleRegistry.Provider.forBlockTag(BlockTags.WOODEN_TRAPDOORS, new TrapdoorMovingInteraction()));
+		REGISTRY.registerProvider(SimpleRegistry.Provider.forBlockTag(BlockTags.FENCE_GATES, new TrapdoorMovingInteraction()));
 	}
 }
