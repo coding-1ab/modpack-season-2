@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Registry for custom transformations to apply to blocks after they've been moved by a contraption.
- * These interfaces are alternatives to the {@link ITransformableBlock} and {@link ITransformableBlockEntity} interfaces.
+ * These interfaces are alternatives to the {@link TransformableBlock} and {@link TransformableBlockEntity} interfaces.
  */
 public class MovedBlockTransformerRegistries {
 	public static final SimpleRegistry<Block, BlockTransformer> BLOCK_TRANSFORMERS = SimpleRegistry.create();
@@ -18,7 +18,7 @@ public class MovedBlockTransformerRegistries {
 
 	@FunctionalInterface
 	public interface BlockTransformer {
-		BlockState transform(Block block, BlockState state, StructureTransform transform);
+		BlockState transform(BlockState state, StructureTransform transform);
 	}
 
 	@FunctionalInterface

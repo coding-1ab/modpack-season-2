@@ -151,7 +151,7 @@ public class StructureTransform {
 		Block block = state.getBlock();
 		BlockTransformer transformer = MovedBlockTransformerRegistries.BLOCK_TRANSFORMERS.get(block);
 		if (transformer != null) {
-			return transformer.transform(block, state, this);
+			return transformer.transform(state, this);
 		} else if (block instanceof TransformableBlock transformable) {
 			return transformable.transform(state, this);
 		}

@@ -30,7 +30,7 @@ public class SchematicRequirementRegistries {
 
 	@FunctionalInterface
 	public interface BlockRequirement {
-		ItemRequirement getRequiredItems(Block block, BlockState state, @Nullable BlockEntity blockEntity);
+		ItemRequirement getRequiredItems(BlockState state, @Nullable BlockEntity blockEntity);
 	}
 
 	@FunctionalInterface
