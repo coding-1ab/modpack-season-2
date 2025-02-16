@@ -73,7 +73,7 @@ public class MountedStorageTypeRegistryImpl {
 		public void onRegister(SimpleRegistry<Block, MountedItemStorageType<?>> registry) {
 			MinecraftForge.EVENT_BUS.addListener((TagsUpdatedEvent event) -> {
 				if (event.shouldUpdateStaticData()) {
-					registry.invalidateProvider(this);
+					registry.invalidate();
 				}
 			});
 		}

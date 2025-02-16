@@ -34,7 +34,7 @@ public class TagProviderImpl<K, V> implements SimpleRegistry.Provider<K, V> {
 	public void onRegister(SimpleRegistry<K, V> registry) {
 		MinecraftForge.EVENT_BUS.addListener((TagsUpdatedEvent event) -> {
 			if (event.shouldUpdateStaticData()) {
-				registry.invalidateProvider(this);
+				registry.invalidate();
 			}
 		});
 	}

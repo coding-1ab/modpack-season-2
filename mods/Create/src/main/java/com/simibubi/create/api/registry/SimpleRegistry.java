@@ -31,10 +31,11 @@ public interface SimpleRegistry<K, V> {
 	void registerProvider(Provider<K, V> provider);
 
 	/**
-	 * Invalidate the cached values provided by the given provider, so they get re-computed on the next query.
-	 * @throws IllegalArgumentException if the provider is not registered to this registry
+	 * Invalidate the cached values provided by all providers, so they get re-computed on the next query.
+	 * This should be called by providers when something changes that would affect their results, such as
+	 * a resource reload in the case of providers based on tags.
 	 */
-	void invalidateProvider(Provider<K, V> provider);
+	void invalidate();
 
 	/**
 	 * Query the value associated with the given object. May be null if no association is present.
@@ -48,10 +49,10 @@ public interface SimpleRegistry<K, V> {
 
 	/**
 	 * A provider can provide values to the registry in a lazy fashion. When a key does not have an
-	 * associated value, all providers will be queried in reverse-registration order.
+	 * associated value, all providers will be queried in reverse-registration order (newest first).
 	 * <p>
 	 * The values returned by providers are cached so that repeated queries always return the same value.
-	 * To invalidate the cache of a provider, call {@link SimpleRegistry#invalidateProvider(Provider)}.
+	 * To invalidate the cache of a registry, call {@link SimpleRegistry#invalidate()}.
 	 */
 	@FunctionalInterface
 	interface Provider<K, V> {

@@ -1,12 +1,10 @@
 package com.simibubi.create.impl.registry;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +16,6 @@ public class SimpleRegistryImpl<K, V> implements SimpleRegistry<K, V> {
 
 	private final Map<K, V> registrations = new IdentityHashMap<>();
 	private final List<Provider<K, V>> providers = new ArrayList<>();
-	private final Map<Provider<K, V>, Set<K>> providedKeys = new IdentityHashMap<>();
 	private final Map<K, V> providedValues = new IdentityHashMap<>();
 
 	@Override
@@ -48,20 +45,8 @@ public class SimpleRegistryImpl<K, V> implements SimpleRegistry<K, V> {
 	}
 
 	@Override
-	public synchronized void invalidateProvider(Provider<K, V> provider) {
-		Objects.requireNonNull(provider);
-		if (!this.providers.contains(provider)) {
-			throw new IllegalArgumentException("Cannot invalidate non-registered provider: " + provider);
-		}
-
-		// discard all the values the provider has provided
-		Set<K> keys = providedKeys.remove(provider);
-		if (keys != null) {
-			keys.forEach(providedValues::remove);
-		}
-
-		// when a provider is invalidated, we need to clear all cached values that evaluated to null, so they can be re-queried
-		this.providedValues.values().removeIf(value -> value == nullMarker);
+	public synchronized void invalidate() {
+		this.providedValues.clear();
 	}
 
 	@Override
@@ -75,13 +60,11 @@ public class SimpleRegistryImpl<K, V> implements SimpleRegistry<K, V> {
 		}
 
 		// no value known, check providers
-		// descendingSet: go in reverse-registration order
+		// new providers are added to the start, so normal iteration is reverse-registration order
 		for (Provider<K, V> provider : this.providers) {
 			V value = provider.get(object);
 			if (value != null) {
 				this.providedValues.put(object, value);
-				// track which provider provided the value for invalidation
-				this.providedKeys.computeIfAbsent(provider, $ -> identityHashSet()).add(object);
 				return value;
 			}
 		}
@@ -94,9 +77,5 @@ public class SimpleRegistryImpl<K, V> implements SimpleRegistry<K, V> {
 	@SuppressWarnings("unchecked")
 	private static <T> T nullMarker() {
 		return (T) nullMarker;
-	}
-
-	private static <T> Set<T> identityHashSet() {
-		return Collections.newSetFromMap(new IdentityHashMap<>());
 	}
 }
