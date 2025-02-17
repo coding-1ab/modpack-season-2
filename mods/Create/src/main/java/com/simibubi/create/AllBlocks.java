@@ -1,8 +1,8 @@
 package com.simibubi.create;
 
 import static com.simibubi.create.AllInteractionBehaviours.interactionBehaviour;
-import static com.simibubi.create.AllMovementBehaviours.movementBehaviour;
 import static com.simibubi.create.Create.REGISTRATE;
+import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
 import static com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistries.mountedFluidStorage;
 import static com.simibubi.create.api.contraption.storage.MountedStorageTypeRegistries.mountedItemStorage;
 import static com.simibubi.create.content.redstone.displayLink.AllDisplayBehaviours.assignDataBehaviour;

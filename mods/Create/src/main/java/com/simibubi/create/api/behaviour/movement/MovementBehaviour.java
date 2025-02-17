@@ -1,11 +1,14 @@
-package com.simibubi.create.content.contraptions.behaviour;
+package com.simibubi.create.api.behaviour.movement;
 
 import javax.annotation.Nullable;
 
+import com.simibubi.create.api.registry.SimpleRegistry;
+import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.contraptions.render.ActorVisual;
 import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
 import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 import com.simibubi.create.infrastructure.config.AllConfigs;
+import com.tterrag.registrate.util.nullness.NonNullConsumer;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -14,11 +17,24 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+/**
+ * MovementBehaviors, also known as Actors, provide behavior to blocks mounted on contraptions.
+ * Blocks may be associated with a behavior through {@link #REGISTRY}.
+ */
 public interface MovementBehaviour {
+	SimpleRegistry<Block, MovementBehaviour> REGISTRY = SimpleRegistry.create();
+
+	/**
+	 * Creates a consumer that will register a behavior to a block. Useful for Registrate.
+	 */
+	static <B extends Block> NonNullConsumer<? super B> movementBehaviour(MovementBehaviour behaviour) {
+		return b -> REGISTRY.register(b, behaviour);
+	}
 
 	default boolean isActive(MovementContext context) {
 		return !context.disabled;

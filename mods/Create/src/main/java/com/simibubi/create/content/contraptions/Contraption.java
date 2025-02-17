@@ -30,7 +30,7 @@ import com.google.common.collect.Multimap;
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllInteractionBehaviours;
-import com.simibubi.create.AllMovementBehaviours;
+import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
 import com.simibubi.create.content.contraptions.actors.contraptionControls.ContraptionControlsMovement;
 import com.simibubi.create.content.contraptions.actors.harvester.HarvesterMovementBehaviour;
 import com.simibubi.create.content.contraptions.actors.seat.SeatBlock;
@@ -40,7 +40,6 @@ import com.simibubi.create.content.contraptions.bearing.MechanicalBearingBlock;
 import com.simibubi.create.content.contraptions.bearing.StabilizedContraption;
 import com.simibubi.create.content.contraptions.bearing.WindmillBearingBlock;
 import com.simibubi.create.content.contraptions.bearing.WindmillBearingBlockEntity;
-import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.contraptions.behaviour.MovingInteractionBehaviour;
 import com.simibubi.create.content.contraptions.chassis.AbstractChassisBlock;
@@ -662,7 +661,7 @@ public abstract class Contraption {
 
 		captureMultiblock(localPos, structureBlockInfo, be);
 
-		if (AllMovementBehaviours.getBehaviour(state) != null)
+		if (MovementBehaviour.REGISTRY.get(state) != null)
 			actors.add(MutablePair.of(structureBlockInfo, null));
 
 		MovingInteractionBehaviour interactionBehaviour = AllInteractionBehaviours.getBehaviour(state);
@@ -817,7 +816,7 @@ public abstract class Contraption {
 
 		ListTag actorsNBT = new ListTag();
 		for (MutablePair<StructureBlockInfo, MovementContext> actor : getActors()) {
-			MovementBehaviour behaviour = AllMovementBehaviours.getBehaviour(actor.left.state());
+			MovementBehaviour behaviour = MovementBehaviour.REGISTRY.get(actor.left.state());
 			if (behaviour == null)
 				continue;
 			CompoundTag compound = new CompoundTag();
@@ -989,7 +988,7 @@ public abstract class Contraption {
 			presentBlockEntities.put(info.pos(), be);
 			modelData.put(info.pos(), be.getModelData());
 
-			MovementBehaviour movementBehaviour = AllMovementBehaviours.getBehaviour(info.state());
+			MovementBehaviour movementBehaviour = MovementBehaviour.REGISTRY.get(info.state());
 			if (movementBehaviour == null || !movementBehaviour.disableBlockEntityRendering()) {
 				renderedBlockEntities.add(be);
 			}
@@ -1274,7 +1273,7 @@ public abstract class Contraption {
 
 		for (MutablePair<StructureBlockInfo, MovementContext> pair : actors) {
 			MovementContext context = new MovementContext(world, pair.left, this);
-			MovementBehaviour behaviour = AllMovementBehaviours.getBehaviour(pair.left.state());
+			MovementBehaviour behaviour = MovementBehaviour.REGISTRY.get(pair.left.state());
 			if (behaviour != null)
 				behaviour.startMoving(context);
 			pair.setRight(context);
@@ -1304,7 +1303,7 @@ public abstract class Contraption {
 
 	public void setActorsActive(ItemStack referenceStack, boolean enable) {
 		for (MutablePair<StructureBlockInfo, MovementContext> pair : actors) {
-			MovementBehaviour behaviour = AllMovementBehaviours.getBehaviour(pair.left.state());
+			MovementBehaviour behaviour = MovementBehaviour.REGISTRY.get(pair.left.state());
 			if (behaviour == null)
 				continue;
 			ItemStack behaviourStack = behaviour.canBeDisabledVia(pair.right);
@@ -1334,7 +1333,7 @@ public abstract class Contraption {
 
 	public void forEachActor(Level world, BiConsumer<MovementBehaviour, MovementContext> callBack) {
 		for (MutablePair<StructureBlockInfo, MovementContext> pair : actors) {
-			MovementBehaviour behaviour = AllMovementBehaviours.getBehaviour(pair.getLeft().state());
+			MovementBehaviour behaviour = MovementBehaviour.REGISTRY.get(pair.getLeft().state());
 			if (behaviour == null)
 				continue;
 			callBack.accept(behaviour, pair.getRight());
@@ -1513,7 +1512,7 @@ public abstract class Contraption {
 
 	public boolean containsBlockBreakers() {
 		for (MutablePair<StructureBlockInfo, MovementContext> pair : actors) {
-			MovementBehaviour behaviour = AllMovementBehaviours.getBehaviour(pair.getLeft().state());
+			MovementBehaviour behaviour = MovementBehaviour.REGISTRY.get(pair.getLeft().state());
 			if (behaviour instanceof BlockBreakingMovementBehaviour || behaviour instanceof HarvesterMovementBehaviour)
 				return true;
 		}
