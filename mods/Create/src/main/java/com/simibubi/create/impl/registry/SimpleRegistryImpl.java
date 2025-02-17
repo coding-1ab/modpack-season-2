@@ -9,6 +9,9 @@ import java.util.Objects;
 import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.api.registry.SimpleRegistry;
+import com.simibubi.create.foundation.mixin.accessor.StateHolderAccessor;
+
+import net.minecraft.world.level.block.state.StateHolder;
 
 // methods are synchronized since registrations can happen during parallel mod loading
 public class SimpleRegistryImpl<K, V> implements SimpleRegistry<K, V> {
@@ -72,6 +75,14 @@ public class SimpleRegistryImpl<K, V> implements SimpleRegistry<K, V> {
 		// no provider returned non-null
 		this.providedValues.put(object, nullMarker());
 		return null;
+	}
+
+	@Override
+	@Nullable
+	@SuppressWarnings("unchecked")
+	public synchronized V get(StateHolder<K, ?> state) {
+		K owner = ((StateHolderAccessor<K, ?>) state).getOwner();
+		return this.get(owner);
 	}
 
 	@SuppressWarnings("unchecked")

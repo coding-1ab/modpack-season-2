@@ -2,6 +2,7 @@ package com.simibubi.create.api.registry;
 
 import java.util.function.Function;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.impl.registry.SimpleRegistryImpl;
@@ -11,11 +12,13 @@ import net.minecraft.core.Holder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.StateHolder;
 
 /**
  * A simple registry mapping between objects. Provides simple registration functionality, as well as lazy providers.
  * This class is thread-safe, and may be safely used during parallel mod init.
  */
+@ApiStatus.NonExtendable
 public interface SimpleRegistry<K, V> {
 	/**
 	 * Register an association between a key and a value.
@@ -42,6 +45,12 @@ public interface SimpleRegistry<K, V> {
 	 */
 	@Nullable
 	V get(K object);
+
+	/**
+	 * Shortcut for {@link #get(Object)} that accepts a StateHolder, such as BlockState or FluidState.
+	 */
+	@Nullable
+	V get(StateHolder<K, ?> state);
 
 	static <K, V> SimpleRegistry<K, V> create() {
 		return new SimpleRegistryImpl<>();
