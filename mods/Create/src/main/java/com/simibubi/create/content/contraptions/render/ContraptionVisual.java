@@ -74,6 +74,9 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		setEmbeddingMatrices(partialTick);
 
 		Contraption contraption = entity.getContraption();
+		// The contraption could be null if it wasn't synced (ex. too much data)
+		if (contraption == null)
+			return;
 
 		setupModel(contraption);
 

@@ -771,15 +771,12 @@ public class ContraptionCollider {
 
 			MovementBehaviour movementBehaviour = MovementBehaviour.REGISTRY.get(blockInfo.state());
 			if (movementBehaviour != null) {
-				if (movementBehaviour instanceof BlockBreakingMovementBehaviour) {
-					BlockBreakingMovementBehaviour behaviour = (BlockBreakingMovementBehaviour) movementBehaviour;
+				if (movementBehaviour instanceof BlockBreakingMovementBehaviour behaviour) {
 					if (!behaviour.canBreak(world, colliderPos, collidedState) && !emptyCollider)
 						return true;
 					continue;
 				}
-				if (movementBehaviour instanceof HarvesterMovementBehaviour) {
-					HarvesterMovementBehaviour harvesterMovementBehaviour =
-						(HarvesterMovementBehaviour) movementBehaviour;
+				if (movementBehaviour instanceof HarvesterMovementBehaviour harvesterMovementBehaviour) {
 					if (!harvesterMovementBehaviour.isValidCrop(world, colliderPos, collidedState)
 						&& !harvesterMovementBehaviour.isValidOther(world, colliderPos, collidedState)
 						&& !emptyCollider)

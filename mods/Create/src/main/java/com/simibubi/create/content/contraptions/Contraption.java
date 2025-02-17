@@ -89,7 +89,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.DebugPackets;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
@@ -101,11 +100,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
@@ -206,7 +205,7 @@ public abstract class Contraption {
 	}
 
 	protected boolean addToInitialFrontier(Level world, BlockPos pos, Direction forcedDirection,
-		Queue<BlockPos> frontier) throws AssemblyException {
+										   Queue<BlockPos> frontier) throws AssemblyException {
 		return true;
 	}
 
@@ -297,9 +296,11 @@ public abstract class Contraption {
 		}
 	}
 
-	/** move the first block in frontier queue */
+	/**
+	 * move the first block in frontier queue
+	 */
 	protected boolean moveBlock(Level world, @Nullable Direction forcedDirection, Queue<BlockPos> frontier,
-		Set<BlockPos> visited) throws AssemblyException {
+								Set<BlockPos> visited) throws AssemblyException {
 		BlockPos pos = frontier.poll();
 		if (pos == null)
 			return false;
@@ -323,7 +324,7 @@ public abstract class Contraption {
 		if (AllBlocks.BELT.has(state))
 			moveBelt(pos, frontier, visited, state);
 
-		if (AllBlocks.WINDMILL_BEARING.has(state) && world.getBlockEntity(pos)instanceof WindmillBearingBlockEntity wbbe)
+		if (AllBlocks.WINDMILL_BEARING.has(state) && world.getBlockEntity(pos) instanceof WindmillBearingBlockEntity wbbe)
 			wbbe.disassembleForMovement();
 
 		if (AllBlocks.GANTRY_CARRIAGE.has(state))
@@ -353,7 +354,7 @@ public abstract class Contraption {
 		}
 
 		// Bogeys tend to have sticky sides
-		if (state.getBlock()instanceof AbstractBogeyBlock<?> bogey)
+		if (state.getBlock() instanceof AbstractBogeyBlock<?> bogey)
 			for (Direction d : bogey.getStickySurfaces(world, pos, state))
 				if (!visited.contains(pos.relative(d)))
 					frontier.add(pos.relative(d));
@@ -433,7 +434,7 @@ public abstract class Contraption {
 	}
 
 	protected void movePistonHead(Level world, BlockPos pos, Queue<BlockPos> frontier, Set<BlockPos> visited,
-		BlockState state) {
+								  BlockState state) {
 		Direction direction = state.getValue(MechanicalPistonHeadBlock.FACING);
 		BlockPos offset = pos.relative(direction.getOpposite());
 		if (!visited.contains(offset)) {
@@ -456,7 +457,7 @@ public abstract class Contraption {
 	}
 
 	protected void movePistonPole(Level world, BlockPos pos, Queue<BlockPos> frontier, Set<BlockPos> visited,
-		BlockState state) {
+								  BlockState state) {
 		for (Direction d : Iterate.directionsInAxis(state.getValue(PistonExtensionPoleBlock.FACING)
 			.getAxis())) {
 			BlockPos offset = pos.relative(d);
@@ -479,7 +480,7 @@ public abstract class Contraption {
 	}
 
 	protected void moveGantryPinion(Level world, BlockPos pos, Queue<BlockPos> frontier, Set<BlockPos> visited,
-		BlockState state) {
+									BlockState state) {
 		BlockPos offset = pos.relative(state.getValue(GantryCarriageBlock.FACING));
 		if (!visited.contains(offset))
 			frontier.add(offset);
@@ -495,7 +496,7 @@ public abstract class Contraption {
 	}
 
 	protected void moveGantryShaft(Level world, BlockPos pos, Queue<BlockPos> frontier, Set<BlockPos> visited,
-		BlockState state) {
+								   BlockState state) {
 		for (Direction d : Iterate.directions) {
 			BlockPos offset = pos.relative(d);
 			if (!visited.contains(offset)) {
@@ -569,7 +570,7 @@ public abstract class Contraption {
 	}
 
 	private boolean moveMechanicalPiston(Level world, BlockPos pos, Queue<BlockPos> frontier, Set<BlockPos> visited,
-		BlockState state) throws AssemblyException {
+										 BlockState state) throws AssemblyException {
 		Direction direction = state.getValue(MechanicalPistonBlock.FACING);
 		PistonState pistonState = state.getValue(MechanicalPistonBlock.STATE);
 		if (pistonState == PistonState.MOVING)
@@ -593,11 +594,10 @@ public abstract class Contraption {
 	}
 
 	private boolean moveChassis(Level world, BlockPos pos, Direction movementDirection, Queue<BlockPos> frontier,
-		Set<BlockPos> visited) {
+								Set<BlockPos> visited) {
 		BlockEntity be = world.getBlockEntity(pos);
-		if (!(be instanceof ChassisBlockEntity))
+		if (!(be instanceof ChassisBlockEntity chassis))
 			return false;
-		ChassisBlockEntity chassis = (ChassisBlockEntity) be;
 		chassis.addAttachedChasses(frontier, visited);
 		List<BlockPos> includedBlockPositions = chassis.getIncludedBlockPositions(movementDirection, false);
 		if (includedBlockPositions == null)
@@ -650,9 +650,8 @@ public abstract class Contraption {
 
 		if (be != null) {
 			CompoundTag updateTag = be.getUpdateTag();
-			// the ID needs to be in the tag so the client can properly add the BlockEntity
-			ResourceLocation id = Objects.requireNonNull(BlockEntityType.getKey(be.getType()));
-			updateTag.putString("id", id.toString());
+			// empty tags are intentionally kept, see writeBlocksCompound
+			// for testing, this line can be commented to emulate legacy behavior
 			updateTags.put(localPos, updateTag);
 		}
 
@@ -669,8 +668,8 @@ public abstract class Contraption {
 
 		if (be instanceof CreativeCrateBlockEntity
 			&& ((CreativeCrateBlockEntity) be).getBehaviour(FilteringBehaviour.TYPE)
-				.getFilter()
-				.isEmpty())
+			.getFilter()
+			.isEmpty())
 			hasUniversalCreativeCrate = true;
 	}
 
@@ -680,9 +679,12 @@ public abstract class Contraption {
 
 		CompoundTag nbt = structureBlockInfo.nbt();
 		BlockPos controllerPos = nbt.contains("Controller") ?
-				toLocalPos(NbtUtils.readBlockPos(nbt.getCompound("Controller"))) :
-				localPos;
+			toLocalPos(NbtUtils.readBlockPos(nbt.getCompound("Controller"))) :
+			localPos;
 		nbt.put("Controller", NbtUtils.writeBlockPos(controllerPos));
+		
+		if (updateTags.containsKey(localPos))
+			updateTags.get(localPos).put("Controller", NbtUtils.writeBlockPos(controllerPos));
 
 		if (multiBlockBE.isController() && multiBlockBE.getHeight() <= 1 && multiBlockBE.getWidth() <= 1) {
 			nbt.put("LastKnownPos", NbtUtils.writeBlockPos(BlockPos.ZERO.below(Integer.MAX_VALUE - 1)));
@@ -731,17 +733,17 @@ public abstract class Contraption {
 
 		capturedMultiblocks.clear();
 		nbt.getList("CapturedMultiblocks", Tag.TAG_COMPOUND).forEach(c -> {
-				CompoundTag tag = (CompoundTag) c;
-				if (!tag.contains("Controller", Tag.TAG_COMPOUND) && !tag.contains("Parts", Tag.TAG_LIST))
-					return;
+			CompoundTag tag = (CompoundTag) c;
+			if (!tag.contains("Controller", Tag.TAG_COMPOUND) && !tag.contains("Parts", Tag.TAG_LIST))
+				return;
 
-				BlockPos controllerPos = NbtUtils.readBlockPos(tag.getCompound("Controller"));
-				tag.getList("Parts", Tag.TAG_COMPOUND).forEach(part -> {
-					BlockPos partPos = NbtUtils.readBlockPos((CompoundTag) part);
-					StructureBlockInfo partInfo = this.blocks.get(partPos);
-					capturedMultiblocks.put(controllerPos, partInfo);
-				});
+			BlockPos controllerPos = NbtUtils.readBlockPos(tag.getCompound("Controller"));
+			tag.getList("Parts", Tag.TAG_COMPOUND).forEach(part -> {
+				BlockPos partPos = NbtUtils.readBlockPos((CompoundTag) part);
+				StructureBlockInfo partInfo = this.blocks.get(partPos);
+				capturedMultiblocks.put(controllerPos, partInfo);
 			});
+		});
 
 		storage.read(nbt, spawnData, this);
 
@@ -902,10 +904,12 @@ public abstract class Contraption {
 				// for client sync, treat the updateTag as the data
 				if (updateTag != null) {
 					c.put("Data", updateTag);
-				}
-				// legacy: use full data if update tag is not available
-				if (updateTag == null && block.nbt() != null) {
+				} else if (block.nbt() != null) {
+					// an updateTag is saved for all BlockEntities, even when empty.
+					// this case means that the contraption was assembled pre-updateTags.
+					// in this case, we need to use the full BlockEntity data.
 					c.put("Data", block.nbt());
+					NBTHelper.putMarker(c, "Legacy");
 				}
 			} else {
 				// otherwise, write actual data as the data, save updateTag on its own
@@ -960,29 +964,17 @@ public abstract class Contraption {
 
 			if (c.contains("UpdateTag", Tag.TAG_COMPOUND)) {
 				CompoundTag updateTag = c.getCompound("UpdateTag");
-				if (!updateTag.isEmpty()) {
-					this.updateTags.put(info.pos(), updateTag);
-				}
+				// it's very important that empty tags are read here. see writeBlocksCompound
+				this.updateTags.put(info.pos(), updateTag);
 			}
 
 			if (!world.isClientSide)
 				return;
 
-			CompoundTag tag = info.nbt();
-			if (tag == null)
-				return;
-
-			tag.putInt("x", info.pos().getX());
-			tag.putInt("y", info.pos().getY());
-			tag.putInt("z", info.pos().getZ());
-
-			BlockEntity be = BlockEntity.loadStatic(info.pos(), info.state(), tag);
+			// create the BlockEntity client-side for rendering
+			BlockEntity be = readBlockEntity(world, info, c);
 			if (be == null)
 				return;
-			be.setLevel(world);
-			if (be instanceof KineticBlockEntity kbe)
-				kbe.setSpeed(0);
-			be.getBlockState();
 
 			presentBlockEntities.put(info.pos(), be);
 			modelData.put(info.pos(), be.getModelData());
@@ -994,8 +986,49 @@ public abstract class Contraption {
 		});
 	}
 
+	@Nullable
+	private static BlockEntity readBlockEntity(Level level, StructureBlockInfo info, CompoundTag tag) {
+		BlockState state = info.state();
+		BlockPos pos = info.pos();
+		CompoundTag nbt = info.nbt();
+
+		if (tag.contains("Legacy")) {
+			// for contraptions that were assembled pre-updateTags, we need to use the old strategy.
+			if (nbt == null)
+				return null;
+
+			nbt.putInt("x", pos.getX());
+			nbt.putInt("y", pos.getY());
+			nbt.putInt("z", pos.getZ());
+
+			BlockEntity be = BlockEntity.loadStatic(pos, state, nbt);
+			postprocessReadBlockEntity(level, be);
+			return be;
+		}
+
+		if (!state.hasBlockEntity() || !(state.getBlock() instanceof EntityBlock entityBlock))
+			return null;
+
+		BlockEntity be = entityBlock.newBlockEntity(pos, state);
+		postprocessReadBlockEntity(level, be);
+		if (be != null && nbt != null) {
+			be.handleUpdateTag(nbt);
+		}
+
+		return be;
+	}
+
+	private static void postprocessReadBlockEntity(Level level, @Nullable BlockEntity be) {
+		if (be != null) {
+			be.setLevel(level);
+			if (be instanceof KineticBlockEntity kbe) {
+				kbe.setSpeed(0);
+			}
+		}
+	}
+
 	private static StructureBlockInfo readStructureBlockInfo(CompoundTag blockListEntry,
-		HashMapPalette<BlockState> palette) {
+															 HashMapPalette<BlockState> palette) {
 		return new StructureBlockInfo(BlockPos.of(blockListEntry.getLong("Pos")),
 			Objects.requireNonNull(palette.valueFor(blockListEntry.getInt("State"))),
 			blockListEntry.contains("Data") ? blockListEntry.getCompound("Data") : null);
@@ -1021,7 +1054,7 @@ public abstract class Contraption {
 
 		for (boolean brittles : Iterate.trueAndFalse) {
 			for (Iterator<StructureBlockInfo> iterator = blocks.values()
-				.iterator(); iterator.hasNext();) {
+				.iterator(); iterator.hasNext(); ) {
 				StructureBlockInfo block = iterator.next();
 				if (brittles != BlockMovementChecks.isBrittle(block.state()))
 					continue;
@@ -1126,7 +1159,7 @@ public abstract class Contraption {
 				if (blockState.getDestroySpeed(world, targetPos) == -1 || (state.getCollisionShape(world, targetPos)
 					.isEmpty()
 					&& !blockState.getCollisionShape(world, targetPos)
-						.isEmpty())) {
+					.isEmpty())) {
 					if (targetPos.getY() == world.getMinBuildHeight())
 						targetPos = targetPos.above();
 					world.levelEvent(2001, targetPos, Block.getId(state));
@@ -1147,7 +1180,7 @@ public abstract class Contraption {
 					state = state.setValue(SlidingDoorBlock.VISIBLE, !state.getValue(SlidingDoorBlock.OPEN))
 						.setValue(SlidingDoorBlock.POWERED, false);
 				// Stop Sculk shriekers from getting "stuck" if moved mid-shriek.
-				if(state.is(Blocks.SCULK_SHRIEKER)){
+				if (state.is(Blocks.SCULK_SHRIEKER)) {
 					state = Blocks.SCULK_SHRIEKER.defaultBlockState();
 				}
 
@@ -1166,7 +1199,7 @@ public abstract class Contraption {
 				CompoundTag tag = block.nbt();
 
 				// Temporary fix: Calling load(CompoundTag tag) on a Sculk sensor causes it to not react to vibrations.
-				if(state.is(Blocks.SCULK_SENSOR) || state.is(Blocks.SCULK_SHRIEKER))
+				if (state.is(Blocks.SCULK_SENSOR) || state.is(Blocks.SCULK_SHRIEKER))
 					tag = null;
 
 				if (blockEntity != null)
@@ -1433,19 +1466,19 @@ public abstract class Contraption {
 			simplifiedEntityColliderProvider.cancel(false);
 		}
 		simplifiedEntityColliderProvider = CompletableFuture.supplyAsync(() -> {
-			VoxelShape combinedShape = Shapes.empty();
-			for (Entry<BlockPos, StructureBlockInfo> entry : blocks.entrySet()) {
-				StructureBlockInfo info = entry.getValue();
-				BlockPos localPos = entry.getKey();
-				VoxelShape collisionShape = info.state().getCollisionShape(world, localPos, CollisionContext.empty());
-				if (collisionShape.isEmpty())
-					continue;
-				combinedShape = Shapes.joinUnoptimized(combinedShape,
-					collisionShape.move(localPos.getX(), localPos.getY(), localPos.getZ()), BooleanOp.OR);
-			}
-			return combinedShape.optimize()
-				.toAabbs();
-		})
+				VoxelShape combinedShape = Shapes.empty();
+				for (Entry<BlockPos, StructureBlockInfo> entry : blocks.entrySet()) {
+					StructureBlockInfo info = entry.getValue();
+					BlockPos localPos = entry.getKey();
+					VoxelShape collisionShape = info.state().getCollisionShape(world, localPos, CollisionContext.empty());
+					if (collisionShape.isEmpty())
+						continue;
+					combinedShape = Shapes.joinUnoptimized(combinedShape,
+						collisionShape.move(localPos.getX(), localPos.getY(), localPos.getZ()), BooleanOp.OR);
+				}
+				return combinedShape.optimize()
+					.toAabbs();
+			})
 			.thenAccept(r -> {
 				simplifiedEntityColliders = Optional.of(r);
 			});
@@ -1453,12 +1486,12 @@ public abstract class Contraption {
 
 	public static float getRadius(Set<BlockPos> blocks, Direction.Axis axis) {
 		switch (axis) {
-		case X:
-			return getMaxDistSqr(blocks, BlockPos::getY, BlockPos::getZ);
-		case Y:
-			return getMaxDistSqr(blocks, BlockPos::getX, BlockPos::getZ);
-		case Z:
-			return getMaxDistSqr(blocks, BlockPos::getX, BlockPos::getY);
+			case X:
+				return getMaxDistSqr(blocks, BlockPos::getY, BlockPos::getZ);
+			case Y:
+				return getMaxDistSqr(blocks, BlockPos::getX, BlockPos::getZ);
+			case Z:
+				return getMaxDistSqr(blocks, BlockPos::getX, BlockPos::getY);
 		}
 
 		throw new IllegalStateException("Impossible axis");

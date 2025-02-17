@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.network.PacketDistributor;
 
@@ -60,9 +61,9 @@ public class HighlightCommand {
 
 	private static void sendMissMessage(CommandSourceStack source) {
 		source.sendSuccess(() ->
-                {
-                    return Component.literal("Try looking at a Block that has failed to assemble a Contraption and try again.");
-                },
+			{
+				return Component.literal("Try looking at a Block that has failed to assemble a Contraption and try again.");
+			},
 			true);
 	}
 
@@ -83,12 +84,11 @@ public class HighlightCommand {
 
 		BlockPos pos = ray.getBlockPos();
 		BlockEntity be = world.getBlockEntity(pos);
-		if (!(be instanceof IDisplayAssemblyExceptions)) {
+		if (!(be instanceof IDisplayAssemblyExceptions display)) {
 			sendMissMessage(source);
 			return 0;
 		}
 
-		IDisplayAssemblyExceptions display = (IDisplayAssemblyExceptions) be;
 		AssemblyException exception = display.getLastAssemblyException();
 		if (exception == null) {
 			sendMissMessage(source);
@@ -97,8 +97,8 @@ public class HighlightCommand {
 
 		if (!exception.hasPosition()) {
 			source.sendSuccess(() -> {
-                return Component.literal("Can't highlight a specific position for this issue");
-            }, true);
+				return Component.literal("Can't highlight a specific position for this issue");
+			}, true);
 			return Command.SINGLE_SUCCESS;
 		}
 

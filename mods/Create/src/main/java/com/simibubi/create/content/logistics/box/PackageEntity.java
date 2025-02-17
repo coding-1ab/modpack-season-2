@@ -11,11 +11,10 @@ import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.logistics.chute.ChuteBlock;
 
-import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
@@ -50,6 +49,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.items.ItemStackHandler;
@@ -62,8 +62,6 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 	private Entity originalEntity;
 	public ItemStack box;
 
-	public int extractorAnimationProgress;
-	public Direction extractorSide;
 	public int insertionDelay;
 
 	public Vec3 clientPosition, vec2 = Vec3.ZERO, vec3 = Vec3.ZERO;
@@ -221,9 +219,8 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 	}
 
 	public static boolean centerPackage(Entity entity, Vec3 target) {
-		if (!(entity instanceof PackageEntity))
+		if (!(entity instanceof PackageEntity packageEntity))
 			return true;
-		PackageEntity packageEntity = (PackageEntity) entity;
 		return packageEntity.decreaseInsertionTimer(target);
 	}
 
@@ -280,7 +277,7 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 		boolean isOtherPackage = entityIn instanceof PackageEntity;
 
 		if (!isOtherPackage && tossedBy.get() != null)
-			tossedBy = new WeakReference<Player>(null); // no nudging
+			tossedBy = new WeakReference<>(null); // no nudging
 
 		if (isOtherPackage) {
 			if (entityIn.getBoundingBox().minY < this.getBoundingBox().maxY)
@@ -456,10 +453,6 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 		setDeltaMovement(additionalData.readFloat(), additionalData.readFloat(), additionalData.readFloat());
 	}
 
-	protected SoundEvent getFallSound(int heightIn) {
-		return SoundEvents.CHISELED_BOOKSHELF_FALL;
-	}
-
 	@Override
 	public float getVoicePitch() {
 		return 1.5f;
@@ -480,4 +473,8 @@ public class PackageEntity extends LivingEntity implements IEntityAdditionalSpaw
 		return null;
 	}
 
+	@Override
+	public boolean isAffectedByPotions() {
+		return false;
+	}
 }

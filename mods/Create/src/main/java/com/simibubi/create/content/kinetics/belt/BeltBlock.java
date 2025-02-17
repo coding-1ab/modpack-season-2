@@ -141,7 +141,7 @@ public class BeltBlock extends HorizontalKineticBlock
 
 	@Override
 	public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos,
-		Player player) {
+									   Player player) {
 		return AllItems.BELT_CONNECTOR.asStack();
 	}
 
@@ -191,8 +191,7 @@ public class BeltBlock extends HorizontalKineticBlock
 	public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
 		if (!canTransportObjects(state))
 			return;
-		if (entityIn instanceof Player) {
-			Player player = (Player) entityIn;
+		if (entityIn instanceof Player player) {
 			if (player.isShiftKeyDown() && !AllItems.CARDBOARD_BOOTS.isIn(player.getItemBySlot(EquipmentSlot.FEET)))
 				return;
 			if (player.getAbilities().flying)
@@ -253,7 +252,7 @@ public class BeltBlock extends HorizontalKineticBlock
 
 	@Override
 	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand handIn,
-		BlockHitResult hit) {
+								 BlockHitResult hit) {
 		if (player.isShiftKeyDown() || !player.mayBuild())
 			return InteractionResult.PASS;
 		ItemStack heldItem = player.getItemInHand(handIn);
@@ -403,18 +402,18 @@ public class BeltBlock extends HorizontalKineticBlock
 			return shape;
 
 		return getBlockEntityOptional(worldIn, pos).map(be -> {
-			Entity entity = ((EntityCollisionContext) context).getEntity();
-			if (entity == null)
+				Entity entity = ((EntityCollisionContext) context).getEntity();
+				if (entity == null)
+					return shape;
+
+				BeltBlockEntity controller = be.getControllerBE();
+				if (controller == null)
+					return shape;
+				if (controller.passengers == null || !controller.passengers.containsKey(entity))
+					return BeltShapes.getCollisionShape(state);
 				return shape;
 
-			BeltBlockEntity controller = be.getControllerBE();
-			if (controller == null)
-				return shape;
-			if (controller.passengers == null || !controller.passengers.containsKey(entity))
-				return BeltShapes.getCollisionShape(state);
-			return shape;
-
-		})
+			})
 			.orElse(shape);
 	}
 
@@ -462,8 +461,7 @@ public class BeltBlock extends HorizontalKineticBlock
 			BlockEntity blockEntity = world.getBlockEntity(beltPos);
 			BlockState currentState = world.getBlockState(beltPos);
 
-			if (blockEntity instanceof BeltBlockEntity && AllBlocks.BELT.has(currentState)) {
-				BeltBlockEntity be = (BeltBlockEntity) blockEntity;
+			if (blockEntity instanceof BeltBlockEntity be && AllBlocks.BELT.has(currentState)) {
 				be.setController(currentPos);
 				be.beltLength = beltChain.size();
 				be.index = index;
@@ -505,8 +503,7 @@ public class BeltBlock extends HorizontalKineticBlock
 
 			boolean hasPulley = false;
 			BlockEntity blockEntity = world.getBlockEntity(currentPos);
-			if (blockEntity instanceof BeltBlockEntity) {
-				BeltBlockEntity belt = (BeltBlockEntity) blockEntity;
+			if (blockEntity instanceof BeltBlockEntity belt) {
 				if (belt.isController())
 					belt.getInventory()
 						.ejectAll();
@@ -525,7 +522,7 @@ public class BeltBlock extends HorizontalKineticBlock
 
 	@Override
 	public BlockState updateShape(BlockState state, Direction side, BlockState p_196271_3_, LevelAccessor world,
-		BlockPos pos, BlockPos p_196271_6_) {
+								  BlockPos pos, BlockPos p_196271_6_) {
 		updateWater(world, state, pos);
 		if (side.getAxis()
 			.isHorizontal())
@@ -635,7 +632,7 @@ public class BeltBlock extends HorizontalKineticBlock
 			return rotate;
 		if (state.getValue(HORIZONTAL_FACING)
 			.getAxisDirection() != rotate.getValue(HORIZONTAL_FACING)
-				.getAxisDirection()) {
+			.getAxisDirection()) {
 			if (state.getValue(PART) == BeltPart.START)
 				return rotate.setValue(PART, BeltPart.END);
 			if (state.getValue(PART) == BeltPart.END)

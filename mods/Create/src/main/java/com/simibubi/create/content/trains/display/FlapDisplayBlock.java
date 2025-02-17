@@ -28,7 +28,6 @@ import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -118,7 +117,7 @@ public class FlapDisplayBlock extends HorizontalKineticBlock
 
 	@Override
 	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand,
-		BlockHitResult ray) {
+								 BlockHitResult ray) {
 
 		if (player.isShiftKeyDown())
 			return InteractionResult.PASS;
@@ -140,8 +139,8 @@ public class FlapDisplayBlock extends HorizontalKineticBlock
 
 		double yCoord = ray.getLocation()
 			.add(Vec3.atLowerCornerOf(ray.getDirection()
-				.getOpposite()
-				.getNormal())
+					.getOpposite()
+					.getNormal())
 				.scale(.125f)).y;
 
 		int lineIndex = flapBE.getLineIndexAt(yCoord);
@@ -179,11 +178,11 @@ public class FlapDisplayBlock extends HorizontalKineticBlock
 			if (AllBlocks.CLIPBOARD.isIn(heldItem)) {
 				List<ClipboardEntry> entries = ClipboardEntry.getLastViewedEntries(heldItem);
 				int line = lineIndex;
-				for (int i = 0; i < entries.size(); i++) {
-					for (String string : entries.get(i).text.getString()
+				for (ClipboardEntry entry : entries) {
+					for (String string : entry.text.getString()
 						.split("\n")) {
-                        flapBE.applyTextManually(line++, Component.Serializer.toJson(Component.literal(string)));
-                    }
+						flapBE.applyTextManually(line++, Component.Serializer.toJson(Component.literal(string)));
+					}
 				}
 				return InteractionResult.SUCCESS;
 			}
@@ -230,7 +229,8 @@ public class FlapDisplayBlock extends HorizontalKineticBlock
 		for (Direction connection : Iterate.directionsInAxis(Axis.Y)) {
 			boolean connect = true;
 
-			Move: for (Direction movement : Iterate.directionsInAxis(axis)) {
+			Move:
+			for (Direction movement : Iterate.directionsInAxis(axis)) {
 				currentPos.set(pos);
 				for (int i = 0; i < 1000; i++) {
 					if (!level.isLoaded(currentPos))
@@ -280,12 +280,12 @@ public class FlapDisplayBlock extends HorizontalKineticBlock
 
 	@Override
 	public BlockState updateShape(BlockState state, Direction pDirection, BlockState pNeighborState,
-		LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pNeighborPos) {
+								  LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pNeighborPos) {
 		return updatedShapeInner(state, pDirection, pNeighborState, pLevel, pCurrentPos);
 	}
 
 	private BlockState updatedShapeInner(BlockState state, Direction pDirection, BlockState pNeighborState,
-		LevelAccessor pLevel, BlockPos pCurrentPos) {
+										 LevelAccessor pLevel, BlockPos pCurrentPos) {
 		if (state.getValue(BlockStateProperties.WATERLOGGED))
 			pLevel.scheduleTick(pCurrentPos, Fluids.WATER, Fluids.WATER.getTickDelay(pLevel));
 		if (!canConnect(state, pNeighborState))
@@ -353,7 +353,7 @@ public class FlapDisplayBlock extends HorizontalKineticBlock
 
 		@Override
 		public PlacementOffset getOffset(Player player, Level world, BlockState state, BlockPos pos,
-			BlockHitResult ray) {
+										 BlockHitResult ray) {
 			List<Direction> directions = IPlacementHelper.orderedByDistanceExceptAxis(pos, ray.getLocation(),
 				state.getValue(FlapDisplayBlock.HORIZONTAL_FACING)
 					.getAxis(),
@@ -362,8 +362,8 @@ public class FlapDisplayBlock extends HorizontalKineticBlock
 
 			return directions.isEmpty() ? PlacementOffset.fail()
 				: PlacementOffset.success(pos.relative(directions.get(0)), s -> AllBlocks.DISPLAY_BOARD.get()
-					.updateColumn(world, pos.relative(directions.get(0)),
-						s.setValue(HORIZONTAL_FACING, state.getValue(FlapDisplayBlock.HORIZONTAL_FACING)), true));
+				.updateColumn(world, pos.relative(directions.get(0)),
+					s.setValue(HORIZONTAL_FACING, state.getValue(FlapDisplayBlock.HORIZONTAL_FACING)), true));
 		}
 	}
 

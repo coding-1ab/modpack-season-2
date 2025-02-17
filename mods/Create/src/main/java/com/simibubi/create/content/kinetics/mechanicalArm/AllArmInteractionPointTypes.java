@@ -4,14 +4,10 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-import com.simibubi.create.AllRegistries;
-
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllRegistries;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.BeltBlock;
@@ -44,7 +40,6 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.WorldlyContainer;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.RecordItem;
@@ -61,12 +56,15 @@ import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
+
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
+import net.minecraftforge.registries.DeferredRegister;
 
 public class AllArmInteractionPointTypes {
-	private static final DeferredRegister<ArmInteractionPointType> REGISTER = DeferredRegister.create(AllRegistries.Keys.ARM_INTERACTION_POINT_TYPES, Create.ID);
+	private static final DeferredRegister<ArmInteractionPointType> REGISTER = DeferredRegister.create(AllRegistries.Keys.ARM_INTERACTION_POINT_TYPE, Create.ID);
 
 	static {
 		register("basin", new BasinType());
@@ -202,7 +200,7 @@ public class AllArmInteractionPointTypes {
 			return state.getBlock() instanceof AbstractFunnelBlock
 				&& !(state.hasProperty(FunnelBlock.EXTRACTING) && state.getValue(FunnelBlock.EXTRACTING))
 				&& !(state.hasProperty(BeltFunnelBlock.SHAPE)
-					&& state.getValue(BeltFunnelBlock.SHAPE) == Shape.PUSHING);
+				&& state.getValue(BeltFunnelBlock.SHAPE) == Shape.PUSHING);
 		}
 
 		@Override
@@ -300,12 +298,13 @@ public class AllArmInteractionPointTypes {
 
 	public static class DepositOnlyArmInteractionPoint extends ArmInteractionPoint {
 		public DepositOnlyArmInteractionPoint(ArmInteractionPointType type, Level level, BlockPos pos,
-			BlockState state) {
+											  BlockState state) {
 			super(type, level, pos, state);
 		}
 
 		@Override
-		public void cycleMode() {}
+		public void cycleMode() {
+		}
 
 		@Override
 		public ItemStack extract(int slot, int amount, boolean simulate) {
@@ -406,9 +405,8 @@ public class AllArmInteractionPointTypes {
 		@Override
 		public ItemStack extract(int slot, int amount, boolean simulate) {
 			BlockEntity be = level.getBlockEntity(pos);
-			if (!(be instanceof MechanicalCrafterBlockEntity))
+			if (!(be instanceof MechanicalCrafterBlockEntity crafter))
 				return ItemStack.EMPTY;
-			MechanicalCrafterBlockEntity crafter = (MechanicalCrafterBlockEntity) be;
 			SmartInventory inventory = crafter.getInventory();
 			inventory.allowExtraction();
 			ItemStack extract = super.extract(slot, amount, simulate);
@@ -500,8 +498,7 @@ public class AllArmInteractionPointTypes {
 			ItemStack insert = inserter.insert(stack);
 			if (!simulate && insert.getCount() != stack.getCount()) {
 				BlockEntity blockEntity = level.getBlockEntity(pos);
-				if (blockEntity instanceof FunnelBlockEntity) {
-					FunnelBlockEntity funnelBlockEntity = (FunnelBlockEntity) blockEntity;
+				if (blockEntity instanceof FunnelBlockEntity funnelBlockEntity) {
 					funnelBlockEntity.onTransfer(stack);
 					if (funnelBlockEntity.hasFlap())
 						funnelBlockEntity.flap(true);
@@ -666,7 +663,7 @@ public class AllArmInteractionPointTypes {
 		@Override
 		protected Vec3 getInteractionPositionVector() {
 			return Vec3.atLowerCornerOf(pos)
-					.add(.5f, 1, .5f);
+				.add(.5f, 1, .5f);
 		}
 	}
 }

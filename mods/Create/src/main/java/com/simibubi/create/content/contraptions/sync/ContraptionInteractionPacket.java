@@ -2,6 +2,7 @@ package com.simibubi.create.content.contraptions.sync;
 
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
@@ -9,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
+
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.network.NetworkEvent.Context;
 
@@ -49,9 +51,8 @@ public class ContraptionInteractionPacket extends SimplePacketBase {
 			if (sender == null)
 				return;
 			Entity entityByID = sender.level().getEntity(target);
-			if (!(entityByID instanceof AbstractContraptionEntity))
+			if (!(entityByID instanceof AbstractContraptionEntity contraptionEntity))
 				return;
-			AbstractContraptionEntity contraptionEntity = (AbstractContraptionEntity) entityByID;
 			AABB bb = contraptionEntity.getBoundingBox();
 			double boundsExtra = Math.max(bb.getXsize(), bb.getYsize());
 			double d = sender.getAttribute(ForgeMod.BLOCK_REACH.get()).getValue() + 10 + boundsExtra;

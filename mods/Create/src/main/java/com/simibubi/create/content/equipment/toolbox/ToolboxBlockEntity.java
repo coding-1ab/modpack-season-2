@@ -16,9 +16,9 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.animatedContainer.AnimatedContainerBehaviour;
 import com.simibubi.create.foundation.utility.ResetableLazy;
 
-import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -36,6 +36,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
@@ -114,7 +115,7 @@ public class ToolboxBlockEntity extends SmartBlockEntity implements MenuProvider
 		boolean update = false;
 
 		for (Iterator<Entry<Integer, WeakHashMap<Player, Integer>>> toolboxSlots = connectedPlayers.entrySet()
-			.iterator(); toolboxSlots.hasNext();) {
+			.iterator(); toolboxSlots.hasNext(); ) {
 
 			Entry<Integer, WeakHashMap<Player, Integer>> toolboxSlotEntry = toolboxSlots.next();
 			WeakHashMap<Player, Integer> set = toolboxSlotEntry.getValue();
@@ -124,7 +125,7 @@ public class ToolboxBlockEntity extends SmartBlockEntity implements MenuProvider
 			boolean clear = referenceItem.isEmpty();
 
 			for (Iterator<Entry<Player, Integer>> playerEntries = set.entrySet()
-				.iterator(); playerEntries.hasNext();) {
+				.iterator(); playerEntries.hasNext(); ) {
 				Entry<Player, Integer> playerEntry = playerEntries.next();
 
 				Player player = playerEntry.getKey();
@@ -216,16 +217,11 @@ public class ToolboxBlockEntity extends SmartBlockEntity implements MenuProvider
 
 		Set<ServerPlayer> affected = new HashSet<>();
 
-		for (Iterator<Entry<Integer, WeakHashMap<Player, Integer>>> toolboxSlots = connectedPlayers.entrySet()
-			.iterator(); toolboxSlots.hasNext();) {
+		for (Entry<Integer, WeakHashMap<Player, Integer>> toolboxSlotEntry : connectedPlayers.entrySet()) {
 
-			Entry<Integer, WeakHashMap<Player, Integer>> toolboxSlotEntry = toolboxSlots.next();
 			WeakHashMap<Player, Integer> set = toolboxSlotEntry.getValue();
 
-			for (Iterator<Entry<Player, Integer>> playerEntries = set.entrySet()
-				.iterator(); playerEntries.hasNext();) {
-				Entry<Player, Integer> playerEntry = playerEntries.next();
-
+			for (Entry<Player, Integer> playerEntry : set.entrySet()) {
 				Player player = playerEntry.getKey();
 				int hotbarSlot = playerEntry.getValue();
 
@@ -356,8 +352,8 @@ public class ToolboxBlockEntity extends SmartBlockEntity implements MenuProvider
 	public Component getDisplayName() {
 		return customName != null ? customName
 			: AllBlocks.TOOLBOXES.get(getColor())
-				.get()
-				.getName();
+			.get()
+			.getName();
 	}
 
 	@Override

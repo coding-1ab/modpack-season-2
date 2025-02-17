@@ -20,11 +20,11 @@ import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.animation.AnimationTickHolder;
-import net.createmod.catnip.nbt.NBTHelper;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.createmod.catnip.outliner.AABBOutline;
+import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -49,6 +49,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
@@ -287,8 +288,7 @@ public class SchematicHandler implements IGuiOverlay {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player.isShiftKeyDown())
 			return false;
-		if (mc.hitResult instanceof BlockHitResult) {
-			BlockHitResult blockRayTraceResult = (BlockHitResult) mc.hitResult;
+		if (mc.hitResult instanceof BlockHitResult blockRayTraceResult) {
 			BlockState clickedBlock = mc.level.getBlockState(blockRayTraceResult.getBlockPos());
 			if (AllBlocks.SCHEMATICANNON.has(clickedBlock))
 				return false;
@@ -342,11 +342,11 @@ public class SchematicHandler implements IGuiOverlay {
 	private boolean itemLost(Player player) {
 		for (int i = 0; i < Inventory.getSelectionSize(); i++) {
 			if (player.getInventory()
-					.getItem(i)
-					.is(activeSchematicItem.getItem()))
+				.getItem(i)
+				.is(activeSchematicItem.getItem()))
 				continue;
 			if (!ItemStack.matches(player.getInventory()
-					.getItem(i), activeSchematicItem))
+				.getItem(i), activeSchematicItem))
 				continue;
 			return false;
 		}

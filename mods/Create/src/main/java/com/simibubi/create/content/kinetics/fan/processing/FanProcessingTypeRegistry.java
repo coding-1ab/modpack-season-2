@@ -3,11 +3,11 @@ package com.simibubi.create.content.kinetics.fan.processing;
 import java.util.Collections;
 import java.util.List;
 
+import org.jetbrains.annotations.UnmodifiableView;
+
 import com.simibubi.create.AllRegistries;
 
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
-
-import org.jetbrains.annotations.UnmodifiableView;
 
 public class FanProcessingTypeRegistry {
 	private static List<FanProcessingType> sortedTypes = null;
@@ -19,7 +19,7 @@ public class FanProcessingTypeRegistry {
 		if (sortedTypes == null) {
 			sortedTypes = new ReferenceArrayList<>();
 
-			sortedTypes.addAll(AllRegistries.FAN_PROCESSING_TYPES.get().getValues());
+			sortedTypes.addAll(AllRegistries.FAN_PROCESSING_TYPE.get().getValues());
 			sortedTypes.sort((t1, t2) -> t2.getPriority() - t1.getPriority());
 
 			sortedTypesView = Collections.unmodifiableList(sortedTypes);
