@@ -3,7 +3,7 @@ package com.simibubi.create.api.contraption.train;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import com.simibubi.create.AllInteractionBehaviours;
+import com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour;
 import com.simibubi.create.content.processing.burner.BlockBasedTrainConductorInteractionBehaviour;
 import com.simibubi.create.impl.contraption.train.TrainConductorHandlerImpl;
 
@@ -24,7 +24,7 @@ public interface TrainConductorHandler {
 
 	static void registerConductor(Block block, Predicate<BlockState> isValidConductor, UpdateScheduleCallback updateScheduleCallback) {
 		BlockBasedTrainConductorInteractionBehaviour behavior = new BlockBasedTrainConductorInteractionBehaviour(isValidConductor, updateScheduleCallback);
-		AllInteractionBehaviours.REGISTRY.register(block, behavior);
+		MovingInteractionBehaviour.REGISTRY.register(block, behavior);
 		registerHandler(isValidConductor::test);
 	}
 
