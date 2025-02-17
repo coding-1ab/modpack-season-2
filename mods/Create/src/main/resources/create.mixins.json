@@ -13,6 +13,7 @@
     "CustomItemUseEffectsMixin",
     "EntityMixin",
     "LavaSwimmingMixin",
+    "LootingEnchantFunctionMixin",
     "MapItemSavedDataMixin",
     "ProjectileUtilMixin",
     "ShulkerBoxBlockMixin",
