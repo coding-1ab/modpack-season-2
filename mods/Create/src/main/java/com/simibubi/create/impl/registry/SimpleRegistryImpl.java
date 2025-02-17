@@ -55,6 +55,7 @@ public class SimpleRegistryImpl<K, V> implements SimpleRegistry<K, V> {
 	@Override
 	@Nullable
 	public synchronized V get(K object) {
+		Objects.requireNonNull(object, "object");
 		if (this.registrations.containsKey(object)) {
 			return this.registrations.get(object);
 		} else if (this.providedValues.containsKey(object)) {
@@ -81,6 +82,7 @@ public class SimpleRegistryImpl<K, V> implements SimpleRegistry<K, V> {
 	@Nullable
 	@SuppressWarnings("unchecked")
 	public synchronized V get(StateHolder<K, ?> state) {
+		Objects.requireNonNull(state, "state");
 		K owner = ((StateHolderAccessor<K, ?>) state).getOwner();
 		return this.get(owner);
 	}
