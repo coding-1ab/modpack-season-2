@@ -11,7 +11,6 @@ import com.simibubi.create.api.behaviour.spouting.BlockSpoutingBehaviour;
 import com.simibubi.create.compat.Mods;
 import com.simibubi.create.compat.computercraft.ComputerCraftProxy;
 import com.simibubi.create.compat.curios.Curios;
-import com.simibubi.create.content.contraptions.ContraptionMovementSetting;
 import com.simibubi.create.content.decoration.palettes.AllPaletteBlocks;
 import com.simibubi.create.content.equipment.potatoCannon.BuiltinPotatoProjectileTypes;
 import com.simibubi.create.content.fluids.tank.BoilerHeaters;
@@ -172,7 +171,7 @@ public class Create {
 			BlockSpoutingBehaviour.registerDefaults();
 			AllMovementBehaviours.registerDefaults();
 			AllInteractionBehaviours.registerDefaults();
-			ContraptionMovementSetting.registerDefaults();
+			AllContraptionMovementSettings.registerDefaults();
 			// --
 
 			AllAdvancements.register();
