@@ -61,12 +61,18 @@ public class AllDisplaySources {
 
 	public static final RegistryEntry<NixieTubeDisplaySource> NIXIE_TUBE = simple("nixie_tube", NixieTubeDisplaySource::new);
 	public static final RegistryEntry<ItemNameDisplaySource> ITEM_NAMES = simple("item_names", ItemNameDisplaySource::new);
-	public static final RegistryEntry<TimeOfDayDisplaySource> TIME_OF_DAY = simple("time_of_day", TimeOfDayDisplaySource::new);
-	public static final RegistryEntry<StopWatchDisplaySource> STOPWATCH = simple("stopwatch", StopWatchDisplaySource::new);
-	public static final RegistryEntry<KineticSpeedDisplaySource> KINETIC_SPEED = simple("kinetic_speed", KineticSpeedDisplaySource::new);
-	public static final RegistryEntry<KineticStressDisplaySource> KINETIC_STRESS = simple("kinetic_stress", KineticStressDisplaySource::new);
 	public static final RegistryEntry<BoilerDisplaySource> BOILER = simple("boiler", BoilerDisplaySource::new);
 	public static final RegistryEntry<CurrentFloorDisplaySource> CURRENT_FLOOR = simple("current_floor", CurrentFloorDisplaySource::new);
+	public static final RegistryEntry<FillLevelDisplaySource> FILL_LEVEL = simple("fill_level", FillLevelDisplaySource::new);
+	public static final RegistryEntry<FactoryGaugeDisplaySource> GAUGE_STATUS = simple("gauge_status", FactoryGaugeDisplaySource::new);
+	public static final RegistryEntry<EntityNameDisplaySource> ENTITY_NAME = simple("entity_name", EntityNameDisplaySource::new);
+
+	public static final RegistryEntry<TimeOfDayDisplaySource> TIME_OF_DAY = simple("time_of_day", TimeOfDayDisplaySource::new);
+	public static final RegistryEntry<StopWatchDisplaySource> STOPWATCH = simple("stopwatch", StopWatchDisplaySource::new);
+
+	public static final RegistryEntry<KineticSpeedDisplaySource> KINETIC_SPEED = simple("kinetic_speed", KineticSpeedDisplaySource::new);
+	public static final RegistryEntry<KineticStressDisplaySource> KINETIC_STRESS = simple("kinetic_stress", KineticStressDisplaySource::new);
+
 	public static final RegistryEntry<StationSummaryDisplaySource> STATION_SUMMARY = simple("station_summary", StationSummaryDisplaySource::new);
 	public static final RegistryEntry<TrainStatusDisplaySource> TRAIN_STATUS = simple("train_status", TrainStatusDisplaySource::new);
 	public static final RegistryEntry<ObservedTrainNameSource> OBSERVED_TRAIN_NAME = simple("observed_train_name", ObservedTrainNameSource::new);
@@ -78,12 +84,6 @@ public class AllDisplaySources {
 	public static final RegistryEntry<ItemListDisplaySource> LIST_ITEMS = simple("list_items", ItemListDisplaySource::new);
 	public static final RegistryEntry<FluidAmountDisplaySource> COUNT_FLUIDS = simple("count_fluids", FluidAmountDisplaySource::new);
 	public static final RegistryEntry<FluidListDisplaySource> LIST_FLUIDS = simple("list_fluids", FluidListDisplaySource::new);
-
-	public static final RegistryEntry<FillLevelDisplaySource> FILL_LEVEL = simple("fill_level", FillLevelDisplaySource::new);
-
-	public static final RegistryEntry<FactoryGaugeDisplaySource> GAUGE_STATUS = simple("gauge_status", FactoryGaugeDisplaySource::new);
-
-	public static final RegistryEntry<EntityNameDisplaySource> ENTITY_NAME = simple("entity_name", EntityNameDisplaySource::new);
 
 	public static final RegistryEntry<ComputerDisplaySource> COMPUTER = REGISTRATE.displaySource("computer", ComputerDisplaySource::new)
 		.onRegisterAfter(Registries.BLOCK_ENTITY_TYPE, source -> {
@@ -124,12 +124,12 @@ public class AllDisplaySources {
 		map.put("brass_tunnel_source_accumulate_items", ACCUMULATE_ITEMS);
 		map.put("brass_tunnel_source_item_throughput", ITEM_THROUGHPUT);
 
-		map.put("smart_observer_source_count_items", COUNT_ITEMS);
-		map.put("smart_observer_source_list_items", LIST_ITEMS);
-		map.put("smart_observer_source_count_fluids", COUNT_FLUIDS);
-		map.put("smart_observer_source_list_fluids", LIST_FLUIDS);
+		map.put("content_observer_source_count_items", COUNT_ITEMS);
+		map.put("content_observer_source_list_items", LIST_ITEMS);
+		map.put("content_observer_source_count_fluids", COUNT_FLUIDS);
+		map.put("content_observer_source_list_fluids", LIST_FLUIDS);
 
-		map.put("threshold_switch_source_fill_level", FILL_LEVEL);
+		map.put("stockpile_switch_source_fill_level", FILL_LEVEL);
 
 		map.put("factory_gauge_source_gauge_status", GAUGE_STATUS);
 
