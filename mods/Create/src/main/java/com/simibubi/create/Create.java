@@ -112,6 +112,8 @@ public class Create {
 		AllSoundEvents.prepare();
 		AllTags.init();
 		AllCreativeModeTabs.register(modEventBus);
+		AllDisplaySources.register();
+		AllDisplayTargets.register();
 		AllBlocks.register();
 		AllItems.register();
 		AllFluids.register();
@@ -136,9 +138,6 @@ public class Create {
 		AllItemAttributeTypes.register(modEventBus);
 
 		// FIXME: some of these registrations are not thread-safe
-		AllMovementBehaviours.registerDefaults();
-		AllInteractionBehaviours.registerDefaults();
-		ContraptionMovementSetting.registerDefaults();
 		BogeySizes.init();
 		AllBogeyStyles.init();
 		// ----
@@ -171,6 +170,9 @@ public class Create {
 			BoilerHeaters.registerDefaults();
 			AllPortalTracks.registerDefaults();
 			BlockSpoutingBehaviour.registerDefaults();
+			AllMovementBehaviours.registerDefaults();
+			AllInteractionBehaviours.registerDefaults();
+			ContraptionMovementSetting.registerDefaults();
 			// --
 
 			AllAdvancements.register();

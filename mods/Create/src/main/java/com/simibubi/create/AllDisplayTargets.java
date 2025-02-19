@@ -1,18 +1,17 @@
 package com.simibubi.create;
 
-import static com.simibubi.create.Create.REGISTRATE;
-
-import java.util.Map;
-import java.util.function.Supplier;
-
 import com.simibubi.create.api.behaviour.display.DisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayBoardTarget;
 import com.simibubi.create.content.redstone.displayLink.target.LecternDisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.target.NixieTubeDisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.target.SignDisplayTarget;
 import com.tterrag.registrate.util.entry.RegistryEntry;
-
 import net.minecraft.world.level.block.entity.BlockEntityType;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
+import static com.simibubi.create.Create.REGISTRATE;
 
 public class AllDisplayTargets {
 	public static final RegistryEntry<SignDisplayTarget> SIGN = REGISTRATE.displayTarget("sign", SignDisplayTarget::new)
@@ -34,5 +33,8 @@ public class AllDisplayTargets {
 
 	private static <T extends DisplayTarget> RegistryEntry<T> simple(String name, Supplier<T> supplier) {
 		return REGISTRATE.displayTarget(name, supplier).register();
+	}
+
+	public static void register() {
 	}
 }
