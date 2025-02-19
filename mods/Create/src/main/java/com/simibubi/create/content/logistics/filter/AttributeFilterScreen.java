@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPackets;
-import com.simibubi.create.AllRegistries;
+import com.simibubi.create.api.registry.CreateBuiltInRegistries;
 import com.simibubi.create.content.logistics.filter.AttributeFilterMenu.WhitelistMode;
 import com.simibubi.create.content.logistics.filter.FilterScreenPacket.Option;
 import com.simibubi.create.content.logistics.item.filter.attribute.ItemAttribute;
@@ -146,7 +146,7 @@ public class AttributeFilterScreen extends AbstractFilterScreen<AttributeFilterM
 			.plainCopy()
 			.append("..."));
 		attributesOfItem.clear();
-		for (ItemAttributeType type : AllRegistries.ITEM_ATTRIBUTE_TYPE.get())
+		for (ItemAttributeType type : CreateBuiltInRegistries.ITEM_ATTRIBUTE_TYPE)
 			attributesOfItem.addAll(type.getAllAttributes(stack, minecraft.level));
 		List<Component> options = attributesOfItem.stream()
 			.map(a -> a.format(false))

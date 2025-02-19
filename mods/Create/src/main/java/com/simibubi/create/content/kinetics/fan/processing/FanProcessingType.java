@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.simibubi.create.AllRegistries;
+import com.simibubi.create.api.registry.CreateBuiltInRegistries;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -36,7 +36,7 @@ public interface FanProcessingType {
 		if (id == null) {
 			return AllFanProcessingTypes.NONE;
 		}
-		FanProcessingType type = AllRegistries.FAN_PROCESSING_TYPE.get().getValue(id);
+		FanProcessingType type = CreateBuiltInRegistries.FAN_PROCESSING_TYPE.get(id);
 		if (type == null) {
 			return AllFanProcessingTypes.NONE;
 		}

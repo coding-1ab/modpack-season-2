@@ -8,9 +8,11 @@ import com.simibubi.create.api.registry.SimpleRegistry;
 
 import net.minecraft.core.Holder;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class TagProviderImpl<K, V> implements SimpleRegistry.Provider<K, V> {
 	private final TagKey<K> tag;
@@ -31,11 +33,18 @@ public class TagProviderImpl<K, V> implements SimpleRegistry.Provider<K, V> {
 	}
 
 	@Override
-	public void onRegister(SimpleRegistry<K, V> registry) {
+	public void onRegister(Runnable invalidate) {
 		MinecraftForge.EVENT_BUS.addListener((TagsUpdatedEvent event) -> {
 			if (event.shouldUpdateStaticData()) {
-				registry.invalidate();
+				invalidate.run();
 			}
 		});
+	}
+
+	// eye of the beholder? check the nametag, buddy
+	public static Holder<BlockEntityType<?>> getBeHolder(BlockEntityType<?> type) {
+		return ForgeRegistries.BLOCK_ENTITY_TYPES.getHolder(type).orElseThrow(
+			() -> new IllegalStateException("Unregistered BlockEntityType: " + type)
+		);
 	}
 }

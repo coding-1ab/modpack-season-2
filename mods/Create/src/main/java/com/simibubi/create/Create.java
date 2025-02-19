@@ -20,7 +20,6 @@ import com.simibubi.create.content.kinetics.fan.processing.AllFanProcessingTypes
 import com.simibubi.create.content.kinetics.mechanicalArm.AllArmInteractionPointTypes;
 import com.simibubi.create.content.logistics.item.filter.attribute.AllItemAttributeTypes;
 import com.simibubi.create.content.logistics.packagerLink.GlobalLogisticsManager;
-import com.simibubi.create.content.redstone.displayLink.AllDisplayBehaviours;
 import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
 import com.simibubi.create.content.schematics.ServerSchematicLoader;
 import com.simibubi.create.content.trains.GlobalRailwayManager;
@@ -171,7 +170,6 @@ public class Create {
 			BuiltinPotatoProjectileTypes.register();
 			BoilerHeaters.registerDefaults();
 			AllPortalTracks.registerDefaults();
-			AllDisplayBehaviours.registerDefaults();
 			BlockSpoutingBehaviour.registerDefaults();
 			// --
 

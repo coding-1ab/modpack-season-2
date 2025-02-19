@@ -1,8 +1,10 @@
 package com.simibubi.create.api.registry;
 
+import java.util.List;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.impl.registry.SimpleRegistryImpl;
@@ -10,12 +12,15 @@ import com.simibubi.create.impl.registry.TagProviderImpl;
 
 import net.minecraft.core.Holder;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.StateHolder;
 
 /**
- * A simple registry mapping between objects. Provides simple registration functionality, as well as lazy providers.
+ * A simple registry mapping between objects with identity semantics.
+ * Provides simple registration functionality, as well as lazy providers.
  * This class is thread-safe, and may be safely used during parallel mod init.
  */
 @ApiStatus.NonExtendable
@@ -53,7 +58,7 @@ public interface SimpleRegistry<K, V> {
 	V get(StateHolder<K, ?> state);
 
 	static <K, V> SimpleRegistry<K, V> create() {
-		return new SimpleRegistryImpl<>();
+		return SimpleRegistryImpl.single();
 	}
 
 	/**
@@ -73,8 +78,10 @@ public interface SimpleRegistry<K, V> {
 		 * This is useful for behavior that should only happen if a provider is actually registered,
 		 * such as registering event listeners.
 		 */
-		default void onRegister(SimpleRegistry<K, V> registry) {
+		default void onRegister(Runnable invalidate) {
 		}
+
+		// factory methods for common Providers
 
 		/**
 		 * Create a provider that will return the same value for all entries in a tag.
@@ -93,11 +100,59 @@ public interface SimpleRegistry<K, V> {
 		}
 
 		/**
+		 * Shortcut for {@link #forTag} when the registry's type is BlockEntityType.
+		 */
+		static <V> Provider<BlockEntityType<?>, V> forBlockEntityTag(TagKey<BlockEntityType<?>> tag, V value) {
+			return new TagProviderImpl<>(tag, TagProviderImpl::getBeHolder, value);
+		}
+
+		/**
 		 * Shortcut for {@link #forTag} when the registry's type is Item.
 		 */
 		@SuppressWarnings("deprecation")
 		static <V> Provider<Item, V> forItemTag(TagKey<Item> tag, V value) {
 			return new TagProviderImpl<>(tag, Item::builtInRegistryHolder, value);
+		}
+
+		/**
+		 * Shortcut for {@link #forTag} when the registry's type is EntityType.
+		 */
+		@SuppressWarnings("deprecation")
+		static <V> Provider<EntityType<?>, V> forEntityTag(TagKey<EntityType<?>> tag, V value) {
+			return new TagProviderImpl<>(tag, EntityType::builtInRegistryHolder, value);
+		}
+	}
+
+	/**
+	 * An extension of SimpleRegistry that handles multiple registrations per object.
+	 * {@link #register(Object, Object)} Will set a whole list of registrations - use {@link #add(Object, Object)} to add one.
+	 * Here, all Providers are always queried, and all of their results are returned. Their provided values are also
+	 * provided on top of explicit registrations - they do not take priority.
+	 */
+	interface Multi<K, V> extends SimpleRegistry<K, List<V>> {
+		void add(K object, V value);
+
+		/**
+		 * Shortcut that wraps a single-value provider into one that provides a List.
+		 */
+		void addProvider(Provider<K, V> provider);
+
+		/**
+		 * Never returns null, will return an empty list if no registrations are present
+		 */
+		@Override
+		@NotNull
+		List<V> get(K object);
+
+		/**
+		 * Never returns null, will return an empty list if no registrations are present
+		 */
+		@Override
+		@NotNull
+		List<V> get(StateHolder<K, ?> state);
+
+		static <K, V> Multi<K, V> create() {
+			return SimpleRegistryImpl.multi();
 		}
 	}
 }

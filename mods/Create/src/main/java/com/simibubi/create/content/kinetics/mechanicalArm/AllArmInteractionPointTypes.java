@@ -7,8 +7,8 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllRegistries;
 import com.simibubi.create.Create;
+import com.simibubi.create.api.registry.CreateRegistries;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.BeltBlock;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
@@ -64,7 +64,7 @@ import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import net.minecraftforge.registries.DeferredRegister;
 
 public class AllArmInteractionPointTypes {
-	private static final DeferredRegister<ArmInteractionPointType> REGISTER = DeferredRegister.create(AllRegistries.Keys.ARM_INTERACTION_POINT_TYPE, Create.ID);
+	private static final DeferredRegister<ArmInteractionPointType> REGISTER = DeferredRegister.create(CreateRegistries.ARM_INTERACTION_POINT_TYPE, Create.ID);
 
 	static {
 		register("basin", new BasinType());

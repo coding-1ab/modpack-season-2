@@ -3,7 +3,7 @@ package com.simibubi.create.content.kinetics.fan.processing;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.simibubi.create.AllRegistries;
+import com.simibubi.create.api.registry.CreateBuiltInRegistries;
 import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour.TransportedResult;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.simibubi.create.infrastructure.config.AllConfigs;
@@ -95,9 +95,7 @@ public class FanProcessing {
 		CompoundTag processing = createData.getCompound("Processing");
 
 		if (!processing.contains("Type") || AllFanProcessingTypes.parseLegacy(processing.getString("Type")) != type) {
-			ResourceLocation key = AllRegistries.FAN_PROCESSING_TYPE.get().getKey(type);
-			if (key == null)
-				throw new IllegalArgumentException("Could not get id for FanProcessingType " + type + "!");
+			ResourceLocation key = CreateBuiltInRegistries.FAN_PROCESSING_TYPE.getKey(type);
 
 			processing.putString("Type", key.toString());
 			int timeModifierForStackSize = ((entity.getItem()
