@@ -31,6 +31,7 @@ import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour;
 import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
+import com.simibubi.create.api.contraption.BlockMovementChecks;
 import com.simibubi.create.content.contraptions.actors.contraptionControls.ContraptionControlsMovement;
 import com.simibubi.create.content.contraptions.actors.harvester.HarvesterMovementBehaviour;
 import com.simibubi.create.content.contraptions.actors.seat.SeatBlock;
@@ -682,7 +683,7 @@ public abstract class Contraption {
 			toLocalPos(NbtUtils.readBlockPos(nbt.getCompound("Controller"))) :
 			localPos;
 		nbt.put("Controller", NbtUtils.writeBlockPos(controllerPos));
-		
+
 		if (updateTags.containsKey(localPos))
 			updateTags.get(localPos).put("Controller", NbtUtils.writeBlockPos(controllerPos));
 

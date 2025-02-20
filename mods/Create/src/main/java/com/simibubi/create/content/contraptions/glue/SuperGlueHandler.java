@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
-import com.simibubi.create.content.contraptions.BlockMovementChecks;
+import com.simibubi.create.api.contraption.BlockMovementChecks;
 
 import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.levelWrappers.RayTraceLevel;
