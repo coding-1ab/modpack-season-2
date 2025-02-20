@@ -1,6 +1,10 @@
 var ASMAPI = Java.type('net.minecraftforge.coremod.api.ASMAPI')
 
-// Necessary to fix forge being a terrible loader
+// this is terrible, but Forge has forced our hands.
+// for some reason, Forge loads half the game with Bootstrap.bootStrap *before* loading mods during datagen.
+// this is not the case in other entrypoints.
+// this makes mixins to some important places, like BuiltInRegistries, impossible since mixin isn't
+// initialized when the class is loaded.
 function initializeCoreMod() {
     return {
         "registrycoremod": {

@@ -25,7 +25,7 @@ import net.minecraft.resources.ResourceKey;
  * @see CreateRegistries
  */
 public class CreateBuiltInRegistries {
-	public static final WritableRegistry<WritableRegistry<?>> ROOT_REGISTRY = getRootRegistry();
+	private static final WritableRegistry<WritableRegistry<?>> ROOT_REGISTRY = getRootRegistry();
 
 	public static final Registry<ArmInteractionPointType> ARM_INTERACTION_POINT_TYPE = simple(CreateRegistries.ARM_INTERACTION_POINT_TYPE);
 	public static final Registry<FanProcessingType> FAN_PROCESSING_TYPE = simple(CreateRegistries.FAN_PROCESSING_TYPE);
@@ -62,5 +62,6 @@ public class CreateBuiltInRegistries {
 	@ApiStatus.Internal
 	public static void init() {
 		// make sure the class is loaded.
+		// this method is called at the tail of BuiltInRegistries, injected by a coremod. See it for details.
 	}
 }
