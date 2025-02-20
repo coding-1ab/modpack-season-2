@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.AllTags;
+import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
 import com.simibubi.create.foundation.utility.BlockHelper;
@@ -375,7 +376,7 @@ public class TrackPlacement {
 
 		ItemStack offhandItem = player.getOffhandItem()
 			.copy();
-		boolean shouldPave = offhandItem.getItem() instanceof BlockItem && !offhandItem.is(AllTags.AllItemTags.INVALID_FOR_TRACK_PAVING.tag);
+		boolean shouldPave = offhandItem.getItem() instanceof BlockItem && !AllItemTags.INVALID_FOR_TRACK_PAVING.matches(offhandItem);
 		if (shouldPave) {
 			BlockItem paveItem = (BlockItem) offhandItem.getItem();
 			paveTracks(level, info, paveItem, true);
