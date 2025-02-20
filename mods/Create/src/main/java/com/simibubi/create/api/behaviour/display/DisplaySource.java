@@ -70,18 +70,12 @@ public abstract class DisplaySource {
 	public void onSignalReset(DisplayLinkContext context) {
 	}
 
-	;
-
 	public void populateData(DisplayLinkContext context) {
 	}
-
-	;
 
 	public int getPassiveRefreshTicks() {
 		return 100;
 	}
-
-	;
 
 	public boolean shouldPassiveReset() {
 		return true;
