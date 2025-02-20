@@ -75,39 +75,39 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.material.PushReaction;
 
 public class BlockMovementChecksImpl {
-	private static final List<MovementNecessaryCheck> movementNecessaryChecks = new ArrayList<>();
-	private static final List<MovementAllowedCheck> movementAllowedChecks = new ArrayList<>();
-	private static final List<BrittleCheck> brittleChecks = new ArrayList<>();
-	private static final List<AttachedCheck> attachedChecks = new ArrayList<>();
-	private static final List<NotSupportiveCheck> notSupportiveChecks = new ArrayList<>();
+	private static final List<MovementNecessaryCheck> MOVEMENT_NECESSARY_CHECKS = new ArrayList<>();
+	private static final List<MovementAllowedCheck> MOVEMENT_ALLOWED_CHECKS = new ArrayList<>();
+	private static final List<BrittleCheck> BRITTLE_CHECKS = new ArrayList<>();
+	private static final List<AttachedCheck> ATTACHED_CHECKS = new ArrayList<>();
+	private static final List<NotSupportiveCheck> NOT_SUPPORTIVE_CHECKS = new ArrayList<>();
 
 	// registration adds to the start so newer ones are queried first
 	// synchronize these so they're safe to call in async mod init
 
 	public static synchronized void registerMovementNecessaryCheck(MovementNecessaryCheck check) {
-		BlockMovementChecksImpl.movementNecessaryChecks.add(0, check);
+		MOVEMENT_NECESSARY_CHECKS.add(0, check);
 	}
 
 	public static synchronized void registerMovementAllowedCheck(MovementAllowedCheck check) {
-		BlockMovementChecksImpl.movementAllowedChecks.add(0, check);
+		MOVEMENT_ALLOWED_CHECKS.add(0, check);
 	}
 
 	public static synchronized void registerBrittleCheck(BrittleCheck check) {
-		BlockMovementChecksImpl.brittleChecks.add(0, check);
+		BRITTLE_CHECKS.add(0, check);
 	}
 
 	public static synchronized void registerAttachedCheck(AttachedCheck check) {
-		BlockMovementChecksImpl.attachedChecks.add(0, check);
+		ATTACHED_CHECKS.add(0, check);
 	}
 
 	public static synchronized void registerNotSupportiveCheck(NotSupportiveCheck check) {
-		BlockMovementChecksImpl.notSupportiveChecks.add(0, check);
+		NOT_SUPPORTIVE_CHECKS.add(0, check);
 	}
 
 	// queries
 
 	public static boolean isMovementNecessary(BlockState state, Level world, BlockPos pos) {
-		for (MovementNecessaryCheck check : movementNecessaryChecks) {
+		for (MovementNecessaryCheck check : MOVEMENT_NECESSARY_CHECKS) {
 			CheckResult result = check.isMovementNecessary(state, world, pos);
 			if (result != CheckResult.PASS) {
 				return result.toBoolean();
@@ -117,7 +117,7 @@ public class BlockMovementChecksImpl {
 	}
 
 	public static boolean isMovementAllowed(BlockState state, Level world, BlockPos pos) {
-		for (MovementAllowedCheck check : movementAllowedChecks) {
+		for (MovementAllowedCheck check : MOVEMENT_ALLOWED_CHECKS) {
 			CheckResult result = check.isMovementAllowed(state, world, pos);
 			if (result != CheckResult.PASS) {
 				return result.toBoolean();
@@ -127,7 +127,7 @@ public class BlockMovementChecksImpl {
 	}
 
 	public static boolean isBrittle(BlockState state) {
-		for (BrittleCheck check : brittleChecks) {
+		for (BrittleCheck check : BRITTLE_CHECKS) {
 			CheckResult result = check.isBrittle(state);
 			if (result != CheckResult.PASS) {
 				return result.toBoolean();
@@ -137,7 +137,7 @@ public class BlockMovementChecksImpl {
 	}
 
 	public static boolean isBlockAttachedTowards(BlockState state, Level world, BlockPos pos, Direction direction) {
-		for (AttachedCheck check : attachedChecks) {
+		for (AttachedCheck check : ATTACHED_CHECKS) {
 			CheckResult result = check.isBlockAttachedTowards(state, world, pos, direction);
 			if (result != CheckResult.PASS) {
 				return result.toBoolean();
@@ -147,7 +147,7 @@ public class BlockMovementChecksImpl {
 	}
 
 	public static boolean isNotSupportive(BlockState state, Direction facing) {
-		for (NotSupportiveCheck check : notSupportiveChecks) {
+		for (NotSupportiveCheck check : NOT_SUPPORTIVE_CHECKS) {
 			CheckResult result = check.isNotSupportive(state, facing);
 			if (result != CheckResult.PASS) {
 				return result.toBoolean();
