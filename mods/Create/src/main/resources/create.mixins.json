@@ -9,6 +9,7 @@
   "mixins": [
     "ArmorTrimMixin",
     "BlockItemMixin",
+    "BuiltInRegistriesMixin",
     "ClientboundMapItemDataPacketMixin",
     "CustomItemUseEffectsMixin",
     "EntityMixin",
@@ -21,6 +22,7 @@
     "TestCommandMixin",
     "WaterWheelFluidSpreadMixin",
     "accessor.AbstractProjectileDispenseBehaviorAccessor",
+    "accessor.BuiltInRegistriesAccessor",
     "accessor.DispenserBlockAccessor",
     "accessor.FallingBlockEntityAccessor",
     "accessor.FlowingFluidAccessor",
@@ -29,6 +31,7 @@
     "accessor.LivingEntityAccessor",
     "accessor.NbtAccounterAccessor",
     "accessor.ServerLevelAccessor",
+    "accessor.StateHolderAccessor",
     "accessor.SystemReportAccessor",
     "accessor.UseOnContextAccessor"
   ],

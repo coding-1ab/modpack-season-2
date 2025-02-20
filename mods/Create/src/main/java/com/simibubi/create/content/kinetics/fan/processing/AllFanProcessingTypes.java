@@ -9,10 +9,10 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import com.simibubi.create.AllRecipeTypes;
-import com.simibubi.create.AllRegistries;
 import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.AllTags.AllFluidTags;
 import com.simibubi.create.Create;
+import com.simibubi.create.api.registry.CreateRegistries;
 import com.simibubi.create.content.kinetics.fan.processing.HauntingRecipe.HauntingWrapper;
 import com.simibubi.create.content.kinetics.fan.processing.SplashingRecipe.SplashingWrapper;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
@@ -60,7 +60,7 @@ import net.minecraftforge.items.wrapper.RecipeWrapper;
 import net.minecraftforge.registries.DeferredRegister;
 
 public class AllFanProcessingTypes {
-	private static final DeferredRegister<FanProcessingType> REGISTER = DeferredRegister.create(AllRegistries.Keys.FAN_PROCESSING_TYPE, Create.ID);
+	private static final DeferredRegister<FanProcessingType> REGISTER = DeferredRegister.create(CreateRegistries.FAN_PROCESSING_TYPE, Create.ID);
 
 	public static final NoneType NONE = register("none", new NoneType());
 	public static final BlastingType BLASTING = register("blasting", new BlastingType());

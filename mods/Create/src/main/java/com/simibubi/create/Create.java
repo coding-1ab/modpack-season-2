@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.logging.LogUtils;
-import com.simibubi.create.api.behaviour.BlockSpoutingBehaviour;
+import com.simibubi.create.api.behaviour.spouting.BlockSpoutingBehaviour;
 import com.simibubi.create.compat.Mods;
 import com.simibubi.create.compat.computercraft.ComputerCraftProxy;
 import com.simibubi.create.compat.curios.Curios;
@@ -20,7 +20,6 @@ import com.simibubi.create.content.kinetics.fan.processing.AllFanProcessingTypes
 import com.simibubi.create.content.kinetics.mechanicalArm.AllArmInteractionPointTypes;
 import com.simibubi.create.content.logistics.item.filter.attribute.AllItemAttributeTypes;
 import com.simibubi.create.content.logistics.packagerLink.GlobalLogisticsManager;
-import com.simibubi.create.content.redstone.displayLink.AllDisplayBehaviours;
 import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
 import com.simibubi.create.content.schematics.ServerSchematicLoader;
 import com.simibubi.create.content.trains.GlobalRailwayManager;
@@ -33,7 +32,6 @@ import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
 import com.simibubi.create.foundation.item.TooltipModifier;
-import com.simibubi.create.foundation.utility.AttachedRegistry;
 import com.simibubi.create.foundation.utility.CreateNBTProcessors;
 import com.simibubi.create.infrastructure.command.ServerLagger;
 import com.simibubi.create.infrastructure.config.AllConfigs;
@@ -48,6 +46,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.Level;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
@@ -113,6 +112,8 @@ public class Create {
 		AllSoundEvents.prepare();
 		AllTags.init();
 		AllCreativeModeTabs.register(modEventBus);
+		AllDisplaySources.register();
+		AllDisplayTargets.register();
 		AllBlocks.register();
 		AllItems.register();
 		AllFluids.register();
@@ -135,14 +136,8 @@ public class Create {
 		AllArmInteractionPointTypes.register(modEventBus);
 		AllFanProcessingTypes.register(modEventBus);
 		AllItemAttributeTypes.register(modEventBus);
-		BlockSpoutingBehaviour.registerDefaults();
 
 		// FIXME: some of these registrations are not thread-safe
-		AllMovementBehaviours.registerDefaults();
-		AllInteractionBehaviours.registerDefaults();
-		AllPortalTracks.registerDefaults();
-		AllDisplayBehaviours.registerDefaults();
-		ContraptionMovementSetting.registerDefaults();
 		BogeySizes.init();
 		AllBogeyStyles.init();
 		// ----
@@ -173,9 +168,13 @@ public class Create {
 			// These registrations use Create's registered objects directly so they must run after registration has finished.
 			BuiltinPotatoProjectileTypes.register();
 			BoilerHeaters.registerDefaults();
+			AllPortalTracks.registerDefaults();
+			BlockSpoutingBehaviour.registerDefaults();
+			AllMovementBehaviours.registerDefaults();
+			AllInteractionBehaviours.registerDefaults();
+			ContraptionMovementSetting.registerDefaults();
 			// --
 
-			AttachedRegistry.unwrapAll();
 			AllAdvancements.register();
 			AllTriggers.register();
 		});

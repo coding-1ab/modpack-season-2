@@ -15,13 +15,12 @@ import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.commons.lang3.tuple.MutablePair;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllMovementBehaviours;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour;
+import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity.ContraptionRotationState;
 import com.simibubi.create.content.contraptions.ContraptionColliderLockPacket.ContraptionColliderLockPacketRequest;
 import com.simibubi.create.content.contraptions.actors.harvester.HarvesterMovementBehaviour;
-import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
-import com.simibubi.create.content.contraptions.behaviour.MovingInteractionBehaviour;
 import com.simibubi.create.content.contraptions.sync.ClientMotionPacket;
 import com.simibubi.create.content.kinetics.base.BlockBreakingMovementBehaviour;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
@@ -770,7 +769,7 @@ public class ContraptionCollider {
 			if (collidedState.getBlock() instanceof CocoaBlock)
 				continue;
 
-			MovementBehaviour movementBehaviour = AllMovementBehaviours.getBehaviour(blockInfo.state());
+			MovementBehaviour movementBehaviour = MovementBehaviour.REGISTRY.get(blockInfo.state());
 			if (movementBehaviour != null) {
 				if (movementBehaviour instanceof BlockBreakingMovementBehaviour behaviour) {
 					if (!behaviour.canBreak(world, colliderPos, collidedState) && !emptyCollider)

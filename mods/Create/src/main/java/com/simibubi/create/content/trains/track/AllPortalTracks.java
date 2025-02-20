@@ -5,13 +5,13 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 import com.simibubi.create.Create;
+import com.simibubi.create.api.registry.SimpleRegistry;
 import com.simibubi.create.compat.Mods;
 import com.simibubi.create.compat.betterend.BetterEndPortalCompat;
 import com.simibubi.create.content.contraptions.glue.SuperGlueEntity;
-import com.simibubi.create.foundation.utility.AttachedRegistry;
 
-import net.createmod.catnip.math.BlockFace;
 import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.math.BlockFace;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.phys.AABB;
+
 import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -48,27 +49,22 @@ public class AllPortalTracks {
 	/**
 	 * Registry mapping portal blocks to their respective {@link PortalTrackProvider}s.
 	 */
-	private static final AttachedRegistry<Block, PortalTrackProvider> PORTAL_BEHAVIOURS =
-			new AttachedRegistry<>(ForgeRegistries.BLOCKS);
+	public static final SimpleRegistry<Block, PortalTrackProvider> REGISTRY = SimpleRegistry.create();
 
 	/**
-	 * Registers a portal track integration for a given block identified by its {@link ResourceLocation}.
+	 * Registers a portal track integration for a given block identified by its {@link ResourceLocation}, if it exists.
+	 * If it does not, a warning will be logged.
 	 *
-	 * @param block    The resource location of the portal block.
+	 * @param id    The resource location of the portal block.
 	 * @param provider The portal track provider for the block.
 	 */
-	public static void registerIntegration(ResourceLocation block, PortalTrackProvider provider) {
-		PORTAL_BEHAVIOURS.register(block, provider);
-	}
-
-	/**
-	 * Registers a portal track integration for a given {@link Block}.
-	 *
-	 * @param block    The portal block.
-	 * @param provider The portal track provider for the block.
-	 */
-	public static void registerIntegration(Block block, PortalTrackProvider provider) {
-		PORTAL_BEHAVIOURS.register(block, provider);
+	public static void tryRegisterIntegration(ResourceLocation id, PortalTrackProvider provider) {
+		if (ForgeRegistries.BLOCKS.containsKey(id)) {
+			Block block = ForgeRegistries.BLOCKS.getValue(id);
+			REGISTRY.register(block, provider);
+		} else {
+			Create.LOGGER.warn("Portal for integration wasn't found: {}. Compat outdated?", id);
+		}
 	}
 
 	/**
@@ -78,7 +74,7 @@ public class AllPortalTracks {
 	 * @return {@code true} if the block state represents a supported portal; {@code false} otherwise.
 	 */
 	public static boolean isSupportedPortal(BlockState state) {
-		return PORTAL_BEHAVIOURS.get(state.getBlock()) != null;
+		return REGISTRY.get(state.getBlock()) != null;
 	}
 
 	/**
@@ -92,7 +88,7 @@ public class AllPortalTracks {
 	public static Pair<ServerLevel, BlockFace> getOtherSide(ServerLevel level, BlockFace inboundTrack) {
 		BlockPos portalPos = inboundTrack.getConnectedPos();
 		BlockState portalState = level.getBlockState(portalPos);
-		PortalTrackProvider provider = PORTAL_BEHAVIOURS.get(portalState.getBlock());
+		PortalTrackProvider provider = REGISTRY.get(portalState.getBlock());
 		return provider == null ? null : provider.apply(Pair.of(level, inboundTrack));
 	}
 
@@ -103,11 +99,15 @@ public class AllPortalTracks {
 	 * This includes the Nether and the Aether (if loaded).
 	 */
 	public static void registerDefaults() {
-		registerIntegration(Blocks.NETHER_PORTAL, AllPortalTracks::nether);
-		if (Mods.AETHER.isLoaded())
-			registerIntegration(Mods.AETHER.rl("aether_portal"), AllPortalTracks::aether);
-		if (Mods.BETTEREND.isLoaded())
-			registerIntegration(Mods.BETTEREND.rl("end_portal_block"), AllPortalTracks::betterend);
+		REGISTRY.register(Blocks.NETHER_PORTAL, AllPortalTracks::nether);
+
+		if (Mods.AETHER.isLoaded()) {
+			tryRegisterIntegration(Mods.AETHER.rl("aether_portal"), AllPortalTracks::aether);
+		}
+
+		if (Mods.BETTEREND.isLoaded()) {
+			tryRegisterIntegration(Mods.BETTEREND.rl("end_portal_block"), AllPortalTracks::betterend);
+		}
 	}
 
 	/**

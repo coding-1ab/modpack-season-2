@@ -1,66 +1,39 @@
 package com.simibubi.create.content.fluids.tank;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags.AllBlockTags;
+import com.simibubi.create.api.registry.SimpleRegistry;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
-import com.simibubi.create.foundation.utility.AttachedRegistry;
 import com.simibubi.create.foundation.utility.BlockHelper;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class BoilerHeaters {
-	private static final AttachedRegistry<Block, Heater> BLOCK_HEATERS = new AttachedRegistry<>(ForgeRegistries.BLOCKS);
-	private static final List<HeaterProvider> GLOBAL_HEATERS = new ArrayList<>();
+	public static final int PASSIVE_HEAT = 0;
+	public static final int NO_HEAT = -1;
 
-	public static void registerHeater(ResourceLocation block, Heater heater) {
-		BLOCK_HEATERS.register(block, heater);
-	}
+	public static final SimpleRegistry<Block, Heater> REGISTRY = SimpleRegistry.create();
 
-	public static void registerHeater(Block block, Heater heater) {
-		BLOCK_HEATERS.register(block, heater);
-	}
-
-	public static void registerHeaterProvider(HeaterProvider provider) {
-		GLOBAL_HEATERS.add(provider);
-	}
+	public static final Heater PASSIVE_HEATER = (level, pos, state) -> BlockHelper.isNotUnheated(state) ? PASSIVE_HEAT : NO_HEAT;
 
 	/**
-	 * A return value of {@code -1} represents no heat.
-	 * A return value of {@code 0} represents passive heat.
-	 * All other positive values are used as the amount of active heat.
+	 * Gets the heat at the given location. If a heater is present, queries it for heat. If not, returns {@link #NO_HEAT}.
+	 * @see Heater#getActiveHeat(Level, BlockPos, BlockState)
 	 */
 	public static float getActiveHeat(Level level, BlockPos pos, BlockState state) {
-		Heater heater = BLOCK_HEATERS.get(state.getBlock());
-		if (heater != null) {
-			return heater.getActiveHeat(level, pos, state);
-		}
-
-		for (HeaterProvider provider : GLOBAL_HEATERS) {
-			heater = provider.getHeater(level, pos, state);
-			if (heater != null) {
-				return heater.getActiveHeat(level, pos, state);
-			}
-		}
-
-		return -1;
+		Heater heater = REGISTRY.get(state.getBlock());
+		return heater != null ? heater.getActiveHeat(level, pos, state) : NO_HEAT;
 	}
 
 	public static void registerDefaults() {
-		registerHeater(AllBlocks.BLAZE_BURNER.get(), (level, pos, state) -> {
+		REGISTRY.register(AllBlocks.BLAZE_BURNER.get(), (level, pos, state) -> {
 			HeatLevel value = state.getValue(BlazeBurnerBlock.HEAT_LEVEL);
 			if (value == HeatLevel.NONE) {
-				return -1;
+				return NO_HEAT;
 			}
 			if (value == HeatLevel.SEETHING) {
 				return 2;
@@ -68,28 +41,19 @@ public class BoilerHeaters {
 			if (value.isAtLeast(HeatLevel.FADING)) {
 				return 1;
 			}
-			return 0;
+			return PASSIVE_HEAT;
 		});
 
-		registerHeaterProvider((level, pos, state) -> {
-			if (AllBlockTags.PASSIVE_BOILER_HEATERS.matches(state) && BlockHelper.isNotUnheated(state)) {
-				return (level1, pos1, state1) -> 0;
-			}
-			return null;
-		});
+		REGISTRY.registerProvider(SimpleRegistry.Provider.forBlockTag(AllBlockTags.PASSIVE_BOILER_HEATERS.tag, PASSIVE_HEATER));
 	}
 
+	@FunctionalInterface
 	public interface Heater {
 		/**
-		 * A return value of {@code -1} represents no heat.
-		 * A return value of {@code 0} represents passive heat.
-		 * All other positive values are used as the amount of active heat.
+		 * @return the amount of heat to provide.
+		 * @see #NO_HEAT
+		 * @see #PASSIVE_HEAT
 		 */
 		float getActiveHeat(Level level, BlockPos pos, BlockState state);
-	}
-
-	public interface HeaterProvider {
-		@Nullable
-		Heater getHeater(Level level, BlockPos pos, BlockState state);
 	}
 }

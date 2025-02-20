@@ -3,17 +3,18 @@ package com.simibubi.create.api.contraption.train;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import com.simibubi.create.AllInteractionBehaviours;
+import com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour;
 import com.simibubi.create.content.processing.burner.BlockBasedTrainConductorInteractionBehaviour;
 import com.simibubi.create.impl.contraption.train.TrainConductorHandlerImpl;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 
 /**
  * All required methods to make your block a train conductor similar to the blaze burner
  */
+@FunctionalInterface
 public interface TrainConductorHandler {
 	boolean isValidConductor(BlockState state);
 
@@ -21,8 +22,9 @@ public interface TrainConductorHandler {
 		TrainConductorHandlerImpl.CONDUCTOR_HANDLERS.add(handler);
 	}
 
-	static void registerConductor(ResourceLocation blockRl, Predicate<BlockState> isValidConductor, UpdateScheduleCallback updateScheduleCallback) {
-		AllInteractionBehaviours.registerBehaviour(blockRl, new BlockBasedTrainConductorInteractionBehaviour(isValidConductor, updateScheduleCallback));
+	static void registerConductor(Block block, Predicate<BlockState> isValidConductor, UpdateScheduleCallback updateScheduleCallback) {
+		BlockBasedTrainConductorInteractionBehaviour behavior = new BlockBasedTrainConductorInteractionBehaviour(isValidConductor, updateScheduleCallback);
+		MovingInteractionBehaviour.REGISTRY.register(block, behavior);
 		registerHandler(isValidConductor::test);
 	}
 
