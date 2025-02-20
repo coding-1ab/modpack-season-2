@@ -10,7 +10,8 @@ import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.api.contraption.train.TrainConductorHandler;
+import com.simibubi.create.api.behaviour.interaction.ConductorBlockInteractionBehavior;
+import com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.ContraptionType;
@@ -19,7 +20,6 @@ import com.simibubi.create.content.contraptions.actors.trainControls.ControlsBlo
 import com.simibubi.create.content.contraptions.minecart.TrainCargoManager;
 import com.simibubi.create.content.trains.bogey.AbstractBogeyBlock;
 import com.simibubi.create.foundation.utility.CreateLang;
-import com.simibubi.create.impl.contraption.train.TrainConductorHandlerImpl;
 
 import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.data.Iterate;
@@ -165,11 +165,9 @@ public class CarriageContraption extends Contraption {
 				captureBE ? world.getBlockEntity(pos) : null);
 		}
 
-		for (TrainConductorHandler handler : TrainConductorHandlerImpl.CONDUCTOR_HANDLERS) {
-			if (handler.isValidConductor(blockState)) {
-				assembledBlockConductors.add(toLocalPos(pos));
-				break;
-			}
+		MovingInteractionBehaviour behaviour = MovingInteractionBehaviour.REGISTRY.get(blockState);
+		if (behaviour instanceof ConductorBlockInteractionBehavior conductor && conductor.isValidConductor(blockState)) {
+			assembledBlockConductors.add(toLocalPos(pos));
 		}
 
 		if (AllBlocks.TRAIN_CONTROLS.has(blockState)) {
