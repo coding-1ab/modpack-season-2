@@ -31,7 +31,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 public class AllTags {
 	public static <T> TagKey<T> optionalTag(IForgeRegistry<T> registry,
-		ResourceLocation id) {
+											ResourceLocation id) {
 		return registry.tags()
 			.createOptionalTagKey(id, Collections.emptySet());
 	}
@@ -59,9 +59,7 @@ public class AllTags {
 		TIC("tconstruct"),
 		QUARK("quark"),
 		GS("galosphere"),
-		CURIOS("curios")
-
-		;
+		CURIOS("curios");
 
 		public final String id;
 		public final boolean optionalDefault;
@@ -92,6 +90,7 @@ public class AllTags {
 		GIRDABLE_TRACKS,
 		MOVABLE_EMPTY_COLLIDER,
 		NON_MOVABLE,
+		NON_BREAKABLE,
 		ORE_OVERRIDE_STONE,
 		PASSIVE_BOILER_HEATERS,
 		SAFE_NBT,
@@ -163,7 +162,8 @@ public class AllTags {
 			return state.is(tag);
 		}
 
-		private static void init() {}
+		private static void init() {
+		}
 
 	}
 
@@ -199,17 +199,15 @@ public class AllTags {
 		STRIPPED_LOGS(FORGE),
 		STRIPPED_WOOD(FORGE),
 		PLATES(FORGE),
-		OBSIDIAN_DUST(FORGE,"dusts/obsidian"),
+		OBSIDIAN_DUST(FORGE, "dusts/obsidian"),
 		WRENCH(FORGE, "tools/wrench"),
 
-		ALLURITE(MOD,"stone_types/galosphere/allurite"),
-		AMETHYST(MOD,"stone_types/galosphere/amethyst"),
+		ALLURITE(MOD, "stone_types/galosphere/allurite"),
+		AMETHYST(MOD, "stone_types/galosphere/amethyst"),
 		LUMIERE(MOD, "stone_types/galosphere/lumiere"),
 
 		UA_CORAL(MOD, "upgrade_aquatic/coral"),
-		CURIOS_HEAD(CURIOS, "head")
-
-		;
+		CURIOS_HEAD(CURIOS, "head");
 
 		public final TagKey<Item> tag;
 		public final boolean alwaysDatagen;
@@ -250,7 +248,8 @@ public class AllTags {
 			return stack.is(tag);
 		}
 
-		private static void init() {}
+		private static void init() {
+		}
 
 	}
 
@@ -263,9 +262,7 @@ public class AllTags {
 		FAN_PROCESSING_CATALYSTS_SMOKING(MOD, "fan_processing_catalysts/smoking"),
 		FAN_PROCESSING_CATALYSTS_SPLASHING(MOD, "fan_processing_catalysts/splashing"),
 
-		HONEY(FORGE)
-
-		;
+		HONEY(FORGE);
 
 		public final TagKey<Fluid> tag;
 		public final boolean alwaysDatagen;
@@ -305,7 +302,8 @@ public class AllTags {
 			return state.is(tag);
 		}
 
-		private static void init() {}
+		private static void init() {
+		}
 
 	}
 
@@ -353,7 +351,8 @@ public class AllTags {
 			return matches(entity.getType());
 		}
 
-		private static void init() {}
+		private static void init() {
+		}
 
 	}
 
@@ -396,7 +395,8 @@ public class AllTags {
 			return ForgeRegistries.RECIPE_SERIALIZERS.getHolder(recipeSerializer).orElseThrow().is(tag);
 		}
 
-		private static void init() {}
+		private static void init() {
+		}
 	}
 
 	public static void init() {
