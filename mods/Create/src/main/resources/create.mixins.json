@@ -16,6 +16,7 @@
     "LavaSwimmingMixin",
     "LootingEnchantFunctionMixin",
     "MapItemSavedDataMixin",
+    "PlayerMixin",
     "ProjectileUtilMixin",
     "ShulkerBoxBlockMixin",
     "SmithingMenuMixin",
