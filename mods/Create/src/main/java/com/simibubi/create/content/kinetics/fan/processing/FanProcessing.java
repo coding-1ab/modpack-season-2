@@ -96,6 +96,8 @@ public class FanProcessing {
 
 		if (!processing.contains("Type") || AllFanProcessingTypes.parseLegacy(processing.getString("Type")) != type) {
 			ResourceLocation key = CreateBuiltInRegistries.FAN_PROCESSING_TYPE.getKey(type);
+			if (key == null)
+				throw new IllegalArgumentException("Could not get id for FanProcessingType " + type + "!");
 
 			processing.putString("Type", key.toString());
 			int timeModifierForStackSize = ((entity.getItem()

@@ -31,25 +31,19 @@ public interface FanProcessingType {
 
 	void affectEntity(Entity entity, Level level);
 
+	@Nullable
 	static FanProcessingType parse(String str) {
-		ResourceLocation id = ResourceLocation.tryParse(str);
-		if (id == null) {
-			return AllFanProcessingTypes.NONE;
-		}
-		FanProcessingType type = CreateBuiltInRegistries.FAN_PROCESSING_TYPE.get(id);
-		if (type == null) {
-			return AllFanProcessingTypes.NONE;
-		}
-		return type;
+		return CreateBuiltInRegistries.FAN_PROCESSING_TYPE.get(ResourceLocation.tryParse(str));
 	}
 
+	@Nullable
 	static FanProcessingType getAt(Level level, BlockPos pos) {
 		for (FanProcessingType type : FanProcessingTypeRegistry.getSortedTypesView()) {
 			if (type.isValidAt(level, pos)) {
 				return type;
 			}
 		}
-		return AllFanProcessingTypes.NONE;
+		return null;
 	}
 
 	interface AirFlowParticleAccess {

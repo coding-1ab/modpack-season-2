@@ -81,8 +81,10 @@ public class TransportedItemStack implements Comparable<TransportedItemStack> {
 		nbt.putInt("Angle", angle);
 		nbt.putInt("InDirection", insertedFrom.get3DDataValue());
 
-		if (processedBy != null && processedBy != AllFanProcessingTypes.NONE) {
+		if (processedBy != null) {
 			ResourceLocation key = CreateBuiltInRegistries.FAN_PROCESSING_TYPE.getKey(processedBy);
+			if (key == null)
+				throw new IllegalArgumentException("Could not get id for FanProcessingType " + processedBy + "!");
 
 			nbt.putString("FanProcessingType", key.toString());
 			nbt.putInt("FanProcessingTime", processingTime);
