@@ -1,4 +1,4 @@
-package com.simibubi.create.content.contraptions;
+package com.simibubi.create.impl.contraption;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,13 @@ import java.util.List;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
+import com.simibubi.create.api.contraption.BlockMovementChecks;
+import com.simibubi.create.api.contraption.BlockMovementChecks.AttachedCheck;
+import com.simibubi.create.api.contraption.BlockMovementChecks.BrittleCheck;
+import com.simibubi.create.api.contraption.BlockMovementChecks.CheckResult;
+import com.simibubi.create.api.contraption.BlockMovementChecks.MovementAllowedCheck;
+import com.simibubi.create.api.contraption.BlockMovementChecks.MovementNecessaryCheck;
+import com.simibubi.create.api.contraption.BlockMovementChecks.NotSupportiveCheck;
 import com.simibubi.create.api.contraption.ContraptionMovementSetting;
 import com.simibubi.create.content.contraptions.actors.AttachedActorBlock;
 import com.simibubi.create.content.contraptions.actors.harvester.HarvesterBlock;
@@ -67,46 +74,37 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.material.PushReaction;
 
-public class BlockMovementChecks {
-
+public class BlockMovementChecksImpl {
 	private static final List<MovementNecessaryCheck> MOVEMENT_NECESSARY_CHECKS = new ArrayList<>();
 	private static final List<MovementAllowedCheck> MOVEMENT_ALLOWED_CHECKS = new ArrayList<>();
 	private static final List<BrittleCheck> BRITTLE_CHECKS = new ArrayList<>();
 	private static final List<AttachedCheck> ATTACHED_CHECKS = new ArrayList<>();
 	private static final List<NotSupportiveCheck> NOT_SUPPORTIVE_CHECKS = new ArrayList<>();
 
-	// Registration
-	// Add new checks to the front instead of the end
+	// registration adds to the start so newer ones are queried first
+	// synchronize these so they're safe to call in async mod init
 
-	public static void registerMovementNecessaryCheck(MovementNecessaryCheck check) {
+	public static synchronized void registerMovementNecessaryCheck(MovementNecessaryCheck check) {
 		MOVEMENT_NECESSARY_CHECKS.add(0, check);
 	}
 
-	public static void registerMovementAllowedCheck(MovementAllowedCheck check) {
+	public static synchronized void registerMovementAllowedCheck(MovementAllowedCheck check) {
 		MOVEMENT_ALLOWED_CHECKS.add(0, check);
 	}
 
-	public static void registerBrittleCheck(BrittleCheck check) {
+	public static synchronized void registerBrittleCheck(BrittleCheck check) {
 		BRITTLE_CHECKS.add(0, check);
 	}
 
-	public static void registerAttachedCheck(AttachedCheck check) {
+	public static synchronized void registerAttachedCheck(AttachedCheck check) {
 		ATTACHED_CHECKS.add(0, check);
 	}
 
-	public static void registerNotSupportiveCheck(NotSupportiveCheck check) {
+	public static synchronized void registerNotSupportiveCheck(NotSupportiveCheck check) {
 		NOT_SUPPORTIVE_CHECKS.add(0, check);
 	}
 
-	public static void registerAllChecks(AllChecks checks) {
-		registerMovementNecessaryCheck(checks);
-		registerMovementAllowedCheck(checks);
-		registerBrittleCheck(checks);
-		registerAttachedCheck(checks);
-		registerNotSupportiveCheck(checks);
-	}
-
-	// Actual check methods
+	// queries
 
 	public static boolean isMovementNecessary(BlockState state, Level world, BlockPos pos) {
 		for (MovementNecessaryCheck check : MOVEMENT_NECESSARY_CHECKS) {
@@ -115,7 +113,7 @@ public class BlockMovementChecks {
 				return result.toBoolean();
 			}
 		}
-		return isMovementNecessaryFallback(state, world, pos);
+		return BlockMovementChecksImpl.isMovementNecessaryFallback(state, world, pos);
 	}
 
 	public static boolean isMovementAllowed(BlockState state, Level world, BlockPos pos) {
@@ -125,13 +123,9 @@ public class BlockMovementChecks {
 				return result.toBoolean();
 			}
 		}
-		return isMovementAllowedFallback(state, world, pos);
+		return BlockMovementChecksImpl.isMovementAllowedFallback(state, world, pos);
 	}
 
-	/**
-	 * Brittle blocks will be collected first, as they may break when other blocks
-	 * are removed before them
-	 */
 	public static boolean isBrittle(BlockState state) {
 		for (BrittleCheck check : BRITTLE_CHECKS) {
 			CheckResult result = check.isBrittle(state);
@@ -139,12 +133,9 @@ public class BlockMovementChecks {
 				return result.toBoolean();
 			}
 		}
-		return isBrittleFallback(state);
+		return BlockMovementChecksImpl.isBrittleFallback(state);
 	}
 
-	/**
-	 * Attached blocks will move if blocks they are attached to are moved
-	 */
 	public static boolean isBlockAttachedTowards(BlockState state, Level world, BlockPos pos, Direction direction) {
 		for (AttachedCheck check : ATTACHED_CHECKS) {
 			CheckResult result = check.isBlockAttachedTowards(state, world, pos, direction);
@@ -152,13 +143,9 @@ public class BlockMovementChecks {
 				return result.toBoolean();
 			}
 		}
-		return isBlockAttachedTowardsFallback(state, world, pos, direction);
+		return BlockMovementChecksImpl.isBlockAttachedTowardsFallback(state, world, pos, direction);
 	}
 
-	/**
-	 * Non-Supportive blocks will not continue a chain of blocks picked up by e.g. a
-	 * piston
-	 */
 	public static boolean isNotSupportive(BlockState state, Direction facing) {
 		for (NotSupportiveCheck check : NOT_SUPPORTIVE_CHECKS) {
 			CheckResult result = check.isNotSupportive(state, facing);
@@ -166,22 +153,21 @@ public class BlockMovementChecks {
 				return result.toBoolean();
 			}
 		}
-		return isNotSupportiveFallback(state, facing);
+		return BlockMovementChecksImpl.isNotSupportiveFallback(state, facing);
 	}
 
-	// Fallback checks
+	// fallbacks
 
 	private static boolean isMovementNecessaryFallback(BlockState state, Level world, BlockPos pos) {
-		if (isBrittle(state))
+		if (BlockMovementChecks.isBrittle(state))
 			return true;
 		if (AllBlockTags.MOVABLE_EMPTY_COLLIDER.matches(state))
 			return true;
 		if (state.getCollisionShape(world, pos)
 			.isEmpty())
 			return false;
-		if (state.canBeReplaced())
-			return false;
-		return true;
+
+		return !state.canBeReplaced();
 	}
 
 	private static boolean isMovementAllowedFallback(BlockState state, Level world, BlockPos pos) {
@@ -194,7 +180,7 @@ public class BlockMovementChecks {
 			return false;
 		if (AllBlockTags.NON_MOVABLE.matches(state))
 			return false;
-		if (ContraptionMovementSetting.get(state.getBlock()) == ContraptionMovementSetting.UNMOVABLE)
+		if (ContraptionMovementSetting.get(state) == ContraptionMovementSetting.UNMOVABLE)
 			return false;
 
 		// Move controllers only when they aren't moving
@@ -212,8 +198,8 @@ public class BlockMovementChecks {
 		}
 		if (block instanceof PulleyBlock) {
 			BlockEntity be = world.getBlockEntity(pos);
-			if (be instanceof PulleyBlockEntity)
-				return !((PulleyBlockEntity) be).running;
+			if (be instanceof PulleyBlockEntity pulley)
+				return !pulley.running;
 		}
 
 		if (AllBlocks.BELT.has(state))
@@ -260,8 +246,7 @@ public class BlockMovementChecks {
 		return AllBlockTags.BRITTLE.matches(state);
 	}
 
-	private static boolean isBlockAttachedTowardsFallback(BlockState state, Level world, BlockPos pos,
-		Direction direction) {
+	private static boolean isBlockAttachedTowardsFallback(BlockState state, Level world, BlockPos pos, Direction direction) {
 		Block block = state.getBlock();
 		if (block instanceof LadderBlock)
 			return state.getValue(LadderBlock.FACING) == direction.getOpposite();
@@ -337,7 +322,7 @@ public class BlockMovementChecks {
 			return ConnectivityHandler.isConnected(world, pos, pos.relative(direction));
 		if (AllBlocks.STICKER.has(state) && state.getValue(StickerBlock.EXTENDED)) {
 			return direction == state.getValue(StickerBlock.FACING)
-				&& !isNotSupportive(world.getBlockState(pos.relative(direction)), direction.getOpposite());
+				&& !BlockMovementChecks.isNotSupportive(world.getBlockState(pos.relative(direction)), direction.getOpposite());
 		}
 		if (block instanceof AbstractBogeyBlock<?> bogey)
 			return bogey.getStickySurfaces(world, pos, state)
@@ -357,7 +342,7 @@ public class BlockMovementChecks {
 			return state.getValue(BlockStateProperties.FACING) == facing;
 
 		if (AllBlocks.CART_ASSEMBLER.has(state))
-			return Direction.DOWN == facing;
+			return facing == Direction.DOWN;
 		if (AllBlocks.MECHANICAL_SAW.has(state))
 			return state.getValue(BlockStateProperties.FACING) == facing;
 		if (AllBlocks.PORTABLE_STORAGE_INTERFACE.has(state))
@@ -381,60 +366,6 @@ public class BlockMovementChecks {
 			return facing == state.getValue(StickerBlock.FACING);
 		if (state.getBlock() instanceof SlidingDoorBlock)
 			return false;
-		return isBrittle(state);
+		return BlockMovementChecks.isBrittle(state);
 	}
-
-	// Check classes
-
-	public static interface MovementNecessaryCheck {
-		public CheckResult isMovementNecessary(BlockState state, Level world, BlockPos pos);
-	}
-
-	public static interface MovementAllowedCheck {
-		public CheckResult isMovementAllowed(BlockState state, Level world, BlockPos pos);
-	}
-
-	public static interface BrittleCheck {
-		/**
-		 * Brittle blocks will be collected first, as they may break when other blocks
-		 * are removed before them
-		 */
-		public CheckResult isBrittle(BlockState state);
-	}
-
-	public static interface AttachedCheck {
-		/**
-		 * Attached blocks will move if blocks they are attached to are moved
-		 */
-		public CheckResult isBlockAttachedTowards(BlockState state, Level world, BlockPos pos, Direction direction);
-	}
-
-	public static interface NotSupportiveCheck {
-		/**
-		 * Non-Supportive blocks will not continue a chain of blocks picked up by e.g. a
-		 * piston
-		 */
-		public CheckResult isNotSupportive(BlockState state, Direction direction);
-	}
-
-	public static interface AllChecks
-		extends MovementNecessaryCheck, MovementAllowedCheck, BrittleCheck, AttachedCheck, NotSupportiveCheck {
-	}
-
-	public static enum CheckResult {
-		SUCCESS, FAIL, PASS;
-
-		public Boolean toBoolean() {
-			return this == PASS ? null : (this == SUCCESS ? true : false);
-		}
-
-		public static CheckResult of(boolean b) {
-			return b ? SUCCESS : FAIL;
-		}
-
-		public static CheckResult of(Boolean b) {
-			return b == null ? PASS : (b ? SUCCESS : FAIL);
-		}
-	}
-
 }
