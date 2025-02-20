@@ -1,8 +1,12 @@
 package com.simibubi.create.content.contraptions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
+import com.simibubi.create.api.contraption.ContraptionMovementSetting;
 import com.simibubi.create.content.contraptions.actors.AttachedActorBlock;
 import com.simibubi.create.content.contraptions.actors.harvester.HarvesterBlock;
 import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceBlock;
@@ -30,6 +34,7 @@ import com.simibubi.create.content.redstone.link.RedstoneLinkBlock;
 import com.simibubi.create.content.trains.bogey.AbstractBogeyBlock;
 import com.simibubi.create.content.trains.station.StationBlock;
 import com.simibubi.create.content.trains.track.ITrackBlock;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -61,9 +66,6 @@ import net.minecraft.world.level.block.state.properties.BellAttachType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.material.PushReaction;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BlockMovementChecks {
 
