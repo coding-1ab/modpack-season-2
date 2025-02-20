@@ -62,7 +62,6 @@ import net.minecraftforge.registries.DeferredRegister;
 public class AllFanProcessingTypes {
 	private static final DeferredRegister<FanProcessingType> REGISTER = DeferredRegister.create(CreateRegistries.FAN_PROCESSING_TYPE, Create.ID);
 
-	public static final NoneType NONE = register("none", new NoneType());
 	public static final BlastingType BLASTING = register("blasting", new BlastingType());
 	public static final HauntingType HAUNTING = register("haunting", new HauntingType());
 	public static final SmokingType SMOKING = register("smoking", new SmokingType());
@@ -72,7 +71,6 @@ public class AllFanProcessingTypes {
 
 	static {
 		Object2ReferenceOpenHashMap<String, FanProcessingType> map = new Object2ReferenceOpenHashMap<>();
-		map.put("NONE", NONE);
 		map.put("BLASTING", BLASTING);
 		map.put("HAUNTING", HAUNTING);
 		map.put("SMOKING", SMOKING);
@@ -95,6 +93,7 @@ public class AllFanProcessingTypes {
 		return LEGACY_NAME_MAP.get(name);
 	}
 
+	@Nullable
 	public static FanProcessingType parseLegacy(String str) {
 		FanProcessingType type = ofLegacyName(str);
 		if (type != null) {
