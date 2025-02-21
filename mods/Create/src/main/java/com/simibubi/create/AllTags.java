@@ -8,6 +8,9 @@ import static com.simibubi.create.AllTags.NameSpace.TIC;
 
 import java.util.Collections;
 
+import com.simibubi.create.api.contraption.ContraptionType;
+import com.simibubi.create.api.registry.CreateRegistries;
+
 import net.createmod.catnip.lang.Lang;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -399,11 +402,33 @@ public class AllTags {
 		}
 	}
 
+	public enum AllContraptionTypeTags {
+		OPENS_CONTROLS,
+		REQUIRES_VEHICLE_FOR_RENDER;
+
+		public final TagKey<ContraptionType> tag;
+		public final boolean alwaysDatagen;
+
+		AllContraptionTypeTags() {
+			ResourceLocation tagId = Create.asResource(Lang.asId(this.name()));
+			this.tag = TagKey.create(CreateRegistries.CONTRAPTION_TYPE, tagId);
+			this.alwaysDatagen = true;
+		}
+
+		public boolean matches(ContraptionType type) {
+			return type.is(this.tag);
+		}
+
+		private static void init() {
+		}
+	}
+
 	public static void init() {
 		AllBlockTags.init();
 		AllItemTags.init();
 		AllFluidTags.init();
 		AllEntityTags.init();
 		AllRecipeSerializerTags.init();
+		AllContraptionTypeTags.init();
 	}
 }

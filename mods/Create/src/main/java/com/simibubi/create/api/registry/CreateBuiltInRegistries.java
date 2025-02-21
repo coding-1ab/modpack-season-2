@@ -7,6 +7,7 @@ import org.jetbrains.annotations.ApiStatus;
 import com.mojang.serialization.Lifecycle;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.behaviour.display.DisplayTarget;
+import com.simibubi.create.api.contraption.ContraptionType;
 import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageType;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
 import com.simibubi.create.content.kinetics.fan.processing.FanProcessingType;
@@ -34,9 +35,14 @@ public class CreateBuiltInRegistries {
 	public static final Registry<DisplayTarget> DISPLAY_TARGET = simple(CreateRegistries.DISPLAY_TARGET);
 	public static final Registry<MountedItemStorageType<?>> MOUNTED_ITEM_STORAGE_TYPE = simple(CreateRegistries.MOUNTED_ITEM_STORAGE_TYPE);
 	public static final Registry<MountedFluidStorageType<?>> MOUNTED_FLUID_STORAGE_TYPE = simple(CreateRegistries.MOUNTED_FLUID_STORAGE_TYPE);
+	public static final Registry<ContraptionType> CONTRAPTION_TYPE = withIntrusiveHolders(CreateRegistries.CONTRAPTION_TYPE);
 
 	private static <T> Registry<T> simple(ResourceKey<Registry<T>> key) {
 		return register(key, new MappedRegistry<>(key, Lifecycle.stable(), false));
+	}
+
+	private static <T> Registry<T> withIntrusiveHolders(ResourceKey<Registry<T>> key) {
+		return register(key, new MappedRegistry<>(key, Lifecycle.stable(), true));
 	}
 
 	@SuppressWarnings("unchecked")

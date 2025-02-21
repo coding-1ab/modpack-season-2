@@ -23,6 +23,7 @@ import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 
@@ -42,6 +43,7 @@ public class CreateDatagen {
 		generator.addProvider(event.includeServer(), generatedEntriesProvider);
 
 		generator.addProvider(event.includeServer(), new CreateRecipeSerializerTagsProvider(output, lookupProvider, existingFileHelper));
+		generator.addProvider(event.includeServer(), new CreateContraptionTypeTagsProvider(output, lookupProvider, existingFileHelper));
 		generator.addProvider(event.includeServer(), new DamageTypeTagGen(output, lookupProvider, existingFileHelper));
 		generator.addProvider(event.includeServer(), new AllAdvancements(output));
 		generator.addProvider(event.includeServer(), new StandardRecipeGen(output));

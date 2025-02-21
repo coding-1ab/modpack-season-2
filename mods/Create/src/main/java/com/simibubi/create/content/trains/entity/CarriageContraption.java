@@ -10,11 +10,12 @@ import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllContraptionTypes;
 import com.simibubi.create.api.behaviour.interaction.ConductorBlockInteractionBehavior;
 import com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour;
+import com.simibubi.create.api.contraption.ContraptionType;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.contraptions.Contraption;
-import com.simibubi.create.content.contraptions.ContraptionType;
 import com.simibubi.create.content.contraptions.MountedStorageManager;
 import com.simibubi.create.content.contraptions.actors.trainControls.ControlsBlock;
 import com.simibubi.create.content.contraptions.minecart.TrainCargoManager;
@@ -230,7 +231,7 @@ public class CarriageContraption extends Contraption {
 
 	@Override
 	public ContraptionType getType() {
-		return ContraptionType.CARRIAGE;
+		return AllContraptionTypes.CARRIAGE.get();
 	}
 
 	public Direction getAssemblyDirection() {

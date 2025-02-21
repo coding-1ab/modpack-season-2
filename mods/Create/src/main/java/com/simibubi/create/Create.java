@@ -135,6 +135,7 @@ public class Create {
 		AllArmInteractionPointTypes.register(modEventBus);
 		AllFanProcessingTypes.register(modEventBus);
 		AllItemAttributeTypes.register(modEventBus);
+		AllContraptionTypes.register(modEventBus);
 
 		// FIXME: some of these registrations are not thread-safe
 		BogeySizes.init();
