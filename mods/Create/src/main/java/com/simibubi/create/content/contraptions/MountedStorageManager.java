@@ -16,6 +16,7 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 import com.mojang.datafixers.util.Pair;
 import com.simibubi.create.AllPackets;
+import com.simibubi.create.AllTags.AllMountedItemStorageTypeTags;
 import com.simibubi.create.Create;
 import com.simibubi.create.api.contraption.storage.SyncedMountedStorage;
 import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorage;
@@ -96,16 +97,12 @@ public class MountedStorageManager {
 
 		this.allItemStorages = ImmutableMap.copyOf(this.itemsBuilder);
 
-		this.items = new MountedItemStorageWrapper(subMap(
-			this.allItemStorages, storage -> !storage.isInternal()
-		));
+		this.items = new MountedItemStorageWrapper(subMap(this.allItemStorages, this::isExposed));
 
 		this.allItems = this.items;
 		this.itemsBuilder = null;
 
-		ImmutableMap<BlockPos, MountedItemStorage> fuelMap = subMap(
-			this.allItemStorages, storage -> !storage.isInternal() && storage.providesFuel()
-		);
+		ImmutableMap<BlockPos, MountedItemStorage> fuelMap = subMap(this.allItemStorages, this::canUseForFuel);
 		this.fuelItems = fuelMap.isEmpty() ? null : new MountedItemStorageWrapper(fuelMap);
 
 		ImmutableMap<BlockPos, MountedFluidStorage> fluids = ImmutableMap.copyOf(this.fluidsBuilder);
@@ -116,6 +113,14 @@ public class MountedStorageManager {
 		this.syncedItemsBuilder = null;
 		this.syncedFluids = ImmutableMap.copyOf(this.syncedFluidsBuilder);
 		this.syncedFluidsBuilder = null;
+	}
+
+	private boolean isExposed(MountedItemStorage storage) {
+		return !AllMountedItemStorageTypeTags.INTERNAL.matches(storage);
+	}
+
+	private boolean canUseForFuel(MountedItemStorage storage) {
+		return this.isExposed(storage) && !AllMountedItemStorageTypeTags.FUEL_BLACKLIST.matches(storage);
 	}
 
 	private boolean isInitialized() {
@@ -363,10 +368,7 @@ public class MountedStorageManager {
 	}
 
 	/**
-	 * Gets a map of all MountedItemStorages in the contraption, irrelevant of them
-	 * being internal or providing fuel.
-	 * @see MountedItemStorage#isInternal()
-	 * @see MountedItemStorage#providesFuel()
+	 * Gets a map of all MountedItemStorages in the contraption, irrelevant of them being internal or providing fuel.
 	 */
 	public ImmutableMap<BlockPos, MountedItemStorage> getAllItemStorages() {
 		this.assertInitialized();

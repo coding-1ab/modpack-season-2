@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -28,11 +29,6 @@ public class DispenserMountedStorage extends SimpleMountedStorage {
 
 	public DispenserMountedStorage(IItemHandler handler) {
 		this(AllMountedStorageTypes.DISPENSER.get(), handler);
-	}
-
-	@Override
-	public boolean isInternal() {
-		return true;
 	}
 
 	@Override

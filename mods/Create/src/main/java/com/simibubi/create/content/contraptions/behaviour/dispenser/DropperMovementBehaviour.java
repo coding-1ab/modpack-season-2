@@ -59,8 +59,8 @@ public class DropperMovementBehaviour implements MovementBehaviour {
 
 			if (stack.getCount() == 1 && stack.getMaxStackSize() != 1) {
 				stack = tryTopOff(stack, contraptionInventory);
-				if (stack == null) {
-					continue;
+				if (stack != null) {
+					storage.setStackInSlot(i, stack);
 				}
 			}
 
