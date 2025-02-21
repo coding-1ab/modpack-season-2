@@ -109,7 +109,7 @@ legacyForge {
             gameDirectory = project.file('run')
             systemProperty 'forge.logging.markers', 'REGISTRIES,REGISTRYDUMP'
             systemProperty 'forge.logging.console.level', 'debug'
-            programArguments = ["--mod", mod_id, "--all", "--output", file("src/generated/resources/").getAbsolutePath(), "--existing", file("src/main/resources").getAbsolutePath()]
+            programArguments.addAll("--mod", mod_id as String, "--all", "--output", file("src/generated/resources/").getAbsolutePath(), "--existing", file("src/main/resources").getAbsolutePath())
         }
 
         gameTestServer {
@@ -132,7 +132,8 @@ repositories {
     maven { url = "https://api.modrinth.com/maven" }
     maven { url = "https://maven.saps.dev/releases" } // FTB Mods
     maven { url = "https://maven.architectury.dev" } // Arch API
-    maven { url = "https://jm.gserv.me/repository/maven-public" // JourneyMap
+    maven {
+        url = "https://jm.gserv.me/repository/maven-public" // JourneyMap
         content {
             includeGroup "info.journeymap"
             includeGroup "mysticdrew"
@@ -192,11 +193,11 @@ dependencies {
     modCompileOnly("top.theillusivec4.curios:curios-forge:${curios_version}+${curios_minecraft_version}:api")
     modRuntimeOnly("top.theillusivec4.curios:curios-forge:${curios_version}+${curios_minecraft_version}")
 
-	if (cc_tweaked_enable.toBoolean()) {
-	    compileOnly("cc.tweaked:cc-tweaked-${cc_tweaked_minecraft_version}-core-api:${cc_tweaked_version}")
+    if (cc_tweaked_enable.toBoolean()) {
+        compileOnly("cc.tweaked:cc-tweaked-${cc_tweaked_minecraft_version}-core-api:${cc_tweaked_version}")
         modCompileOnly("cc.tweaked:cc-tweaked-${cc_tweaked_minecraft_version}-forge-api:${cc_tweaked_version}")
         modRuntimeOnly("cc.tweaked:cc-tweaked-${cc_tweaked_minecraft_version}-forge:${cc_tweaked_version}")
-	}
+    }
 
     if (dynamic_trees_enable.toBoolean()) {
         modCompileOnly("com.ferreusveritas.dynamictrees:DynamicTrees-${dynamic_trees_minecraft_version}:${dynamic_trees_version}")
@@ -206,13 +207,13 @@ dependencies {
     // modImplementation("curse.maven:druidcraft-340991:3101903")
     // modImplementation("com.railwayteam.railways:railways-1.19.2-1.6.4:all") { transitive = false }
 
-	modRuntimeOnly("dev.architectury:architectury-forge:9.1.12")
-	modImplementation("dev.ftb.mods:ftb-chunks-forge:2001.3.1")
-	modImplementation("dev.ftb.mods:ftb-teams-forge:2001.3.0")
-	modImplementation("dev.ftb.mods:ftb-library-forge:2001.2.4")
+    modRuntimeOnly("dev.architectury:architectury-forge:9.1.12")
+    modImplementation("dev.ftb.mods:ftb-chunks-forge:2001.3.1")
+    modImplementation("dev.ftb.mods:ftb-teams-forge:2001.3.0")
+    modImplementation("dev.ftb.mods:ftb-library-forge:2001.2.4")
 
-	modImplementation("curse.maven:journeymap-32274:5457831")
-	// modImplementation("ignored:journeymap-1.20.1-5.10.1-forge")
+    modImplementation("curse.maven:journeymap-32274:5457831")
+    // modImplementation("ignored:journeymap-1.20.1-5.10.1-forge")
 
     // modRuntimeOnly("curse.maven:framedblocks-441647:5399211")
     // modRuntimeOnly("curse.maven:galosphere-631098:4574834")
@@ -294,13 +295,13 @@ jar {
 
     manifest.attributes([
         "MixinConfigs": "create.mixins.json",
-        "Git-Hash": gitHash
+        "Git-Hash"    : gitHash
     ])
 }
 
 tasks.named("sourcesJar") {
     manifest.attributes([
-       "Git-Hash": gitHash
+        "Git-Hash": gitHash
     ])
 }
 
@@ -346,7 +347,7 @@ String calculateGitHash() {
             commandLine("git", "rev-parse", "HEAD")
         }
         return output.standardOutput.asText.get().trim()
-    } catch(Throwable ignored) {
+    } catch (Throwable ignored) {
         return "unknown"
     }
 }
@@ -360,7 +361,7 @@ boolean hasUnstaged() {
         if (!result.isEmpty())
             println("Found stageable results:\n ${result}\n")
         return !result.isEmpty()
-    }  catch(Throwable ignored) {
+    } catch (Throwable ignored) {
         return false
     }
 }
