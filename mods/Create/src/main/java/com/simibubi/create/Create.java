@@ -173,6 +173,7 @@ public class Create {
 			AllMovementBehaviours.registerDefaults();
 			AllInteractionBehaviours.registerDefaults();
 			AllContraptionMovementSettings.registerDefaults();
+			AllOpenPipeEffectHandlers.registerDefaults();
 			// --
 
 			AllAdvancements.register();

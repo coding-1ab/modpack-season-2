@@ -17,6 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.StateHolder;
+import net.minecraft.world.level.material.Fluid;
 
 /**
  * A simple registry mapping between objects with identity semantics.
@@ -120,6 +121,14 @@ public interface SimpleRegistry<K, V> {
 		@SuppressWarnings("deprecation")
 		static <V> Provider<EntityType<?>, V> forEntityTag(TagKey<EntityType<?>> tag, V value) {
 			return new TagProviderImpl<>(tag, EntityType::builtInRegistryHolder, value);
+		}
+
+		/**
+		 * Shortcut for {@link #forTag} when the registry's type is Fluid.
+		 */
+		@SuppressWarnings("deprecation")
+		static <V> Provider<Fluid, V> forFluidTag(TagKey<Fluid> tag, V value) {
+			return new TagProviderImpl<>(tag, Fluid::builtInRegistryHolder, value);
 		}
 	}
 
