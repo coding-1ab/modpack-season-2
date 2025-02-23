@@ -7,8 +7,6 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.network.chat.MutableComponent;
-
 import org.lwjgl.glfw.GLFW;
 
 import com.google.common.collect.ImmutableList;
@@ -25,10 +23,10 @@ import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.createmod.catnip.gui.UIRenderHelper;
-import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.gui.UIRenderHelper;
+import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -41,6 +39,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+
 import net.minecraftforge.items.SlotItemHandler;
 
 public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<StockKeeperCategoryMenu>
@@ -92,7 +91,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		editorConfirm = new IconButton(leftPos + 36 + 131, topPos + 59, AllIcons.I_CONFIRM);
 		menu.slotsActive = true;
 
-        editorEditBox = new EditBox(font, leftPos + 47, topPos + 28, 124, 10, Component.empty());
+		editorEditBox = new EditBox(font, leftPos + 47, topPos + 28, 124, 10, Component.empty());
 		editorEditBox.setTextColor(0xffeeeeee);
 		editorEditBox.setBordered(false);
 		editorEditBox.setFocused(false);
@@ -100,10 +99,10 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		editorEditBox.setMaxLength(28);
 		editorEditBox.setValue(index == -1 || schedule.get(index)
 			.isEmpty() ? CreateLang.translate("gui.stock_ticker.new_category")
-				.string()
-				: schedule.get(index)
-					.getHoverName()
-					.getString());
+			.string()
+			: schedule.get(index)
+			.getHoverName()
+			.getString());
 
 		editingIndex = index;
 		editingItem = index == -1 ? ItemStack.EMPTY : schedule.get(index);
@@ -212,7 +211,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 	}
 
 	public int renderScheduleEntry(GuiGraphics graphics, int i, ItemStack entry, int yOffset, int mouseX, int mouseY,
-		float partialTicks) {
+								   float partialTicks) {
 		int cardWidth = CARD_WIDTH;
 		int cardHeader = CARD_HEADER;
 		int cardHeight = cardHeader;
@@ -233,11 +232,11 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 			entry.isEmpty() ? CreateLang.translate("gui.stock_ticker.empty_category_name_placeholder")
 				.string()
 				: entry.getHoverName()
-					.getString(20)
-					.stripTrailing()
-					+ (entry.getHoverName()
-						.getString()
-						.length() > 20 ? "..." : ""),
+				.getString(20)
+				.stripTrailing()
+				+ (entry.getHoverName()
+				.getString()
+				.length() > 20 ? "..." : ""),
 			35, 5, 0x656565, false);
 
 		matrixStack.popPose();
@@ -418,7 +417,7 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		super.renderForeground(graphics, mouseX, mouseY, partialTicks);
 
 		GuiGameElement.of(AllBlocks.STOCK_TICKER.asStack()).<GuiGameElement
-			.GuiRenderBuilder>at(leftPos + AllGuiTextures.STOCK_KEEPER_CATEGORY.getWidth() + 12,
+				.GuiRenderBuilder>at(leftPos + AllGuiTextures.STOCK_KEEPER_CATEGORY.getWidth() + 12,
 				topPos + imageHeight - 39, -190)
 			.scale(3)
 			.render(graphics);
@@ -431,14 +430,14 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		if (hoveredSlot instanceof SlotItemHandler && hoveredSlot.getItem()
 			.isEmpty()) {
 			graphics.renderComponentTooltip(font, List.of(CreateLang.translate("gui.stock_ticker.category_filter")
-				.color(ScrollInput.HEADER_RGB)
-				.component(),
-				CreateLang.translate("gui.stock_ticker.category_filter_tip")
-					.style(ChatFormatting.GRAY)
-					.component(),
-				CreateLang.translate("gui.stock_ticker.category_filter_tip_1")
-					.style(ChatFormatting.GRAY)
-					.component()),
+						.color(ScrollInput.HEADER_RGB)
+						.component(),
+					CreateLang.translate("gui.stock_ticker.category_filter_tip")
+						.style(ChatFormatting.GRAY)
+						.component(),
+					CreateLang.translate("gui.stock_ticker.category_filter_tip_1")
+						.style(ChatFormatting.GRAY)
+						.component()),
 				mouseX, mouseY);
 		}
 

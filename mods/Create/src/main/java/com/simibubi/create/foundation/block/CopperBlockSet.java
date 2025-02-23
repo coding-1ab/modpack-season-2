@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import net.minecraft.tags.ItemTags;
-
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.simibubi.create.foundation.data.TagGen;
@@ -23,9 +21,9 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 
-import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.lang.Lang;
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -41,6 +39,7 @@ import net.minecraft.world.level.block.WeatheringCopperSlabBlock;
 import net.minecraft.world.level.block.WeatheringCopperStairBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
@@ -49,6 +48,7 @@ public class CopperBlockSet {
 	protected static final int WEATHER_STATE_COUNT = WEATHER_STATES.length;
 
 	protected static final Map<WeatherState, Supplier<Block>> BASE_BLOCKS = new EnumMap<>(WeatherState.class);
+
 	static {
 		BASE_BLOCKS.put(WeatherState.UNAFFECTED, () -> Blocks.COPPER_BLOCK);
 		BASE_BLOCKS.put(WeatherState.EXPOSED, () -> Blocks.EXPOSED_COPPER);
@@ -57,7 +57,7 @@ public class CopperBlockSet {
 	}
 
 	public static final Variant<?>[] DEFAULT_VARIANTS =
-		new Variant<?>[] { BlockVariant.INSTANCE, SlabVariant.INSTANCE, StairVariant.INSTANCE };
+		new Variant<?>[]{BlockVariant.INSTANCE, SlabVariant.INSTANCE, StairVariant.INSTANCE};
 
 	protected final String name;
 	protected final String generalDirectory; // Leave empty for root folder
@@ -84,7 +84,7 @@ public class CopperBlockSet {
 	}
 
 	public CopperBlockSet(AbstractRegistrate<?> registrate, String name, String endTextureName, Variant<?>[] variants,
-		NonNullBiConsumer<DataGenContext<Block, ?>, RegistrateRecipeProvider> mainBlockRecipe, String generalDirectory, NonNullBiConsumer<WeatherState, Block> onRegister) {
+						  NonNullBiConsumer<DataGenContext<Block, ?>, RegistrateRecipeProvider> mainBlockRecipe, String generalDirectory, NonNullBiConsumer<WeatherState, Block> onRegister) {
 		this.name = name;
 		this.generalDirectory = generalDirectory;
 		this.endTextureName = endTextureName;
@@ -116,7 +116,7 @@ public class CopperBlockSet {
 	}
 
 	protected <T extends Block> BlockEntry<?> createEntry(AbstractRegistrate<?> registrate, Variant<T> variant,
-		WeatherState state, boolean waxed) {
+														  WeatherState state, boolean waxed) {
 		String name = "";
 		if (waxed) {
 			name += "waxed_";
@@ -211,20 +211,21 @@ public class CopperBlockSet {
 		NonNullFunction<Properties, T> getFactory(CopperBlockSet blocks, WeatherState state, boolean waxed);
 
 		default void generateLootTable(RegistrateBlockLootTables lootTable, T block, CopperBlockSet blocks,
-			WeatherState state, boolean waxed) {
+									   WeatherState state, boolean waxed) {
 			lootTable.dropSelf(block);
 		}
 
 		void generateRecipes(BlockEntry<?> blockVariant, DataGenContext<Block, T> ctx, RegistrateRecipeProvider prov);
 
 		void generateBlockState(DataGenContext<Block, T> ctx, RegistrateBlockstateProvider prov, CopperBlockSet blocks,
-			WeatherState state, boolean waxed);
+								WeatherState state, boolean waxed);
 	}
 
 	public static class BlockVariant implements Variant<Block> {
 		public static final BlockVariant INSTANCE = new BlockVariant();
 
-		protected BlockVariant() {}
+		protected BlockVariant() {
+		}
 
 		@Override
 		public String getSuffix() {
@@ -242,7 +243,7 @@ public class CopperBlockSet {
 
 		@Override
 		public void generateBlockState(DataGenContext<Block, Block> ctx, RegistrateBlockstateProvider prov,
-			CopperBlockSet blocks, WeatherState state, boolean waxed) {
+									   CopperBlockSet blocks, WeatherState state, boolean waxed) {
 			Block block = ctx.get();
 			String path = CatnipServices.REGISTRIES.getKeyOrThrow(block)
 				.getPath();
@@ -256,21 +257,23 @@ public class CopperBlockSet {
 				// End texture and base texture aren't equal, so we should use cube_column.
 				ResourceLocation endTexture = prov.modLoc(baseLoc + blocks.getEndTextureName());
 				prov.simpleBlock(block, prov.models()
-						.cubeColumn(path, texture, endTexture));
+					.cubeColumn(path, texture, endTexture));
 			}
 
 		}
 
 		@Override
 		public void generateRecipes(BlockEntry<?> blockVariant, DataGenContext<Block, Block> ctx,
-			RegistrateRecipeProvider prov) {}
+									RegistrateRecipeProvider prov) {
+		}
 
 	}
 
 	public static class SlabVariant implements Variant<SlabBlock> {
 		public static final SlabVariant INSTANCE = new SlabVariant();
 
-		protected SlabVariant() {}
+		protected SlabVariant() {
+		}
 
 		@Override
 		public String getSuffix() {
@@ -279,7 +282,7 @@ public class CopperBlockSet {
 
 		@Override
 		public NonNullFunction<Properties, SlabBlock> getFactory(CopperBlockSet blocks, WeatherState state,
-			boolean waxed) {
+																 boolean waxed) {
 			if (waxed) {
 				return SlabBlock::new;
 			} else {
@@ -289,13 +292,13 @@ public class CopperBlockSet {
 
 		@Override
 		public void generateLootTable(RegistrateBlockLootTables lootTable, SlabBlock block, CopperBlockSet blocks,
-			WeatherState state, boolean waxed) {
+									  WeatherState state, boolean waxed) {
 			lootTable.add(block, lootTable.createSlabItemTable(block));
 		}
 
 		@Override
 		public void generateBlockState(DataGenContext<Block, SlabBlock> ctx, RegistrateBlockstateProvider prov,
-			CopperBlockSet blocks, WeatherState state, boolean waxed) {
+									   CopperBlockSet blocks, WeatherState state, boolean waxed) {
 			ResourceLocation fullModel =
 				prov.modLoc(ModelProvider.BLOCK_FOLDER + "/" + getWeatherStatePrefix(state) + blocks.getName());
 
@@ -308,7 +311,7 @@ public class CopperBlockSet {
 
 		@Override
 		public void generateRecipes(BlockEntry<?> blockVariant, DataGenContext<Block, SlabBlock> ctx,
-			RegistrateRecipeProvider prov) {
+									RegistrateRecipeProvider prov) {
 			prov.slab(DataIngredient.items(blockVariant.get()), RecipeCategory.BUILDING_BLOCKS, ctx::get, null, true);
 		}
 	}
@@ -329,7 +332,7 @@ public class CopperBlockSet {
 
 		@Override
 		public NonNullFunction<Properties, StairBlock> getFactory(CopperBlockSet blocks, WeatherState state,
-			boolean waxed) {
+																  boolean waxed) {
 			if (!blocks.hasVariant(parent)) {
 				throw new IllegalStateException(
 					"Cannot add StairVariant '" + toString() + "' without parent Variant '" + parent.toString() + "'!");
@@ -353,7 +356,7 @@ public class CopperBlockSet {
 
 		@Override
 		public void generateBlockState(DataGenContext<Block, StairBlock> ctx, RegistrateBlockstateProvider prov,
-			CopperBlockSet blocks, WeatherState state, boolean waxed) {
+									   CopperBlockSet blocks, WeatherState state, boolean waxed) {
 			String baseLoc = ModelProvider.BLOCK_FOLDER + "/" + blocks.generalDirectory + getWeatherStatePrefix(state);
 			ResourceLocation texture = prov.modLoc(baseLoc + blocks.getName());
 			ResourceLocation endTexture = prov.modLoc(baseLoc + blocks.getEndTextureName());
@@ -362,7 +365,7 @@ public class CopperBlockSet {
 
 		@Override
 		public void generateRecipes(BlockEntry<?> blockVariant, DataGenContext<Block, StairBlock> ctx,
-			RegistrateRecipeProvider prov) {
+									RegistrateRecipeProvider prov) {
 			prov.stairs(DataIngredient.items(blockVariant.get()), RecipeCategory.BUILDING_BLOCKS, ctx::get, null, true);
 		}
 	}

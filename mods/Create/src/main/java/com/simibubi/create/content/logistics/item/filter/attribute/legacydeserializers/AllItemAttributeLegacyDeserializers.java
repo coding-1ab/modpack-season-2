@@ -1,7 +1,6 @@
 package com.simibubi.create.content.logistics.item.filter.attribute.legacydeserializers;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.jetbrains.annotations.ApiStatus;
 
