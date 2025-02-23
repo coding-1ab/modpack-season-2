@@ -2,7 +2,7 @@ package com.simibubi.create.content.kinetics.steamEngine;
 
 import java.util.List;
 
-import com.simibubi.create.content.kinetics.BlockStressValues;
+import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 
 import net.createmod.catnip.platform.CatnipServices;
@@ -16,6 +16,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class PoweredShaftBlockEntity extends GeneratingKineticBlockEntity {

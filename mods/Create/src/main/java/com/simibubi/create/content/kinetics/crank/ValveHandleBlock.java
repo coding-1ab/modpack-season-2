@@ -8,7 +8,6 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.foundation.utility.BlockHelper;
 
-import net.createmod.catnip.data.Couple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -22,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -32,7 +32,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 public class ValveHandleBlock extends HandCrankBlock {
 
 	public final DyeColor color;
-	
+
 	public static ValveHandleBlock copper(Properties properties) {
 		return new ValveHandleBlock(properties, null);
 	}
@@ -111,9 +111,4 @@ public class ValveHandleBlock extends HandCrankBlock {
 	public int getRotationSpeed() {
 		return 32;
 	}
-
-	public static Couple<Integer> getSpeedRange() {
-		return Couple.create(32, 32);
-	}
-
 }
