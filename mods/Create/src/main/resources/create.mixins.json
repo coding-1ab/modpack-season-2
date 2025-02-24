@@ -31,9 +31,11 @@
     "accessor.GameTestHelperAccessor",
     "accessor.ItemModelGeneratorsAccessor",
     "accessor.LivingEntityAccessor",
+    "accessor.MobEffectInstanceAccessor",
     "accessor.NbtAccounterAccessor",
     "accessor.ServerLevelAccessor",
     "accessor.StateHolderAccessor",
+    "accessor.SuspiciousStewItemAccessor",
     "accessor.SystemReportAccessor",
     "accessor.UseOnContextAccessor"
   ],

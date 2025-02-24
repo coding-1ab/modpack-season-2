@@ -12,7 +12,9 @@ import com.simibubi.create.compat.Mods;
 import com.simibubi.create.compat.computercraft.ComputerCraftProxy;
 import com.simibubi.create.compat.curios.Curios;
 import com.simibubi.create.content.decoration.palettes.AllPaletteBlocks;
-import com.simibubi.create.content.equipment.potatoCannon.BuiltinPotatoProjectileTypes;
+import com.simibubi.create.content.equipment.potatoCannon.AllPotatoProjectileBlockHitActions;
+import com.simibubi.create.content.equipment.potatoCannon.AllPotatoProjectileEntityHitActions;
+import com.simibubi.create.content.equipment.potatoCannon.AllPotatoProjectileRenderModes;
 import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import com.simibubi.create.content.kinetics.TorquePropagator;
 import com.simibubi.create.content.kinetics.fan.processing.AllFanProcessingTypes;
@@ -56,6 +58,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.RegisterEvent;
 
 @Mod(Create.ID)
 public class Create {
@@ -68,7 +71,9 @@ public class Create {
 		.disableHtmlEscaping()
 		.create();
 
-	/** Use the {@link Random} of a local {@link Level} or {@link Entity} or create one */
+	/**
+	 * Use the {@link Random} of a local {@link Level} or {@link Entity} or create one
+	 */
 	@Deprecated
 	public static final Random RANDOM = new Random();
 
@@ -82,7 +87,7 @@ public class Create {
 	static {
 		REGISTRATE.setTooltipModifierFactory(item ->
 			new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
-			.andThen(TooltipModifier.mapNull(KineticStats.create(item)))
+				.andThen(TooltipModifier.mapNull(KineticStats.create(item)))
 		);
 	}
 
@@ -132,6 +137,7 @@ public class Create {
 
 		AllConfigs.register(modLoadingContext);
 
+		// TODO - Make these use Registry.register and move them into the RegisterEvent
 		AllArmInteractionPointTypes.register(modEventBus);
 		AllFanProcessingTypes.register(modEventBus);
 		AllItemAttributeTypes.register(modEventBus);
@@ -148,6 +154,7 @@ public class Create {
 		CopperRegistries.inject();
 
 		modEventBus.addListener(Create::init);
+		modEventBus.addListener(Create::onRegister);
 		modEventBus.addListener(AllEntityTypes::registerEntityAttributes);
 		modEventBus.addListener(EventPriority.LOWEST, CreateDatagen::gatherData);
 		modEventBus.addListener(AllSoundEvents::register);
@@ -166,7 +173,6 @@ public class Create {
 			// TODO: custom registration should all happen in one place
 			// Most registration happens in the constructor.
 			// These registrations use Create's registered objects directly so they must run after registration has finished.
-			BuiltinPotatoProjectileTypes.register();
 			BoilerHeaters.registerDefaults();
 			AllPortalTracks.registerDefaults();
 			BlockSpoutingBehaviour.registerDefaults();
@@ -180,6 +186,12 @@ public class Create {
 			AllAdvancements.register();
 			AllTriggers.register();
 		});
+	}
+
+	public static void onRegister(final RegisterEvent event) {
+		AllPotatoProjectileRenderModes.init();
+		AllPotatoProjectileEntityHitActions.init();
+		AllPotatoProjectileBlockHitActions.init();
 	}
 
 	public static LangBuilder lang() {

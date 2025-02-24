@@ -1,8 +1,14 @@
-package com.simibubi.create.content.equipment.potatoCannon;
+package com.simibubi.create.api.equipment.potatoCannon;
 
-import static com.simibubi.create.content.equipment.potatoCannon.PotatoProjectileRenderMode.entityRandom;
+import static com.simibubi.create.api.equipment.potatoCannon.PotatoProjectileRenderMode.entityRandom;
+
+import java.util.function.Function;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.simibubi.create.api.registry.CreateBuiltInRegistries;
+import com.simibubi.create.content.equipment.potatoCannon.PotatoProjectileEntity;
 
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.math.AngleHelper;
@@ -10,17 +16,23 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public interface PotatoProjectileRenderMode {
+	Codec<PotatoProjectileRenderMode> CODEC = CreateBuiltInRegistries.POTATO_PROJECTILE_RENDER_MODE.byNameCodec()
+		.dispatch(PotatoProjectileRenderMode::codec, Function.identity());
 
 	@OnlyIn(Dist.CLIENT)
 	void transform(PoseStack ms, PotatoProjectileEntity entity, float pt);
 
-	public static class Billboard implements PotatoProjectileRenderMode {
+	Codec<? extends PotatoProjectileRenderMode> codec();
 
-		public static final Billboard INSTANCE = new Billboard();
+	enum Billboard implements PotatoProjectileRenderMode {
+		INSTANCE;
+
+		public static final Codec<Billboard> CODEC = Codec.unit(INSTANCE);
 
 		@Override
 		@OnlyIn(Dist.CLIENT)
@@ -37,32 +49,37 @@ public interface PotatoProjectileRenderMode {
 				.rotateXDegrees(AngleHelper.deg(Mth.atan2(diff.y, Mth.sqrt((float) (diff.x * diff.x + diff.z * diff.z)))));
 		}
 
+		@Override
+		public Codec<? extends PotatoProjectileRenderMode> codec() {
+			return CODEC;
+		}
 	}
 
-	public static class Tumble extends Billboard {
+	enum Tumble implements PotatoProjectileRenderMode {
+		INSTANCE;
 
-		public static final Tumble INSTANCE = new Tumble();
+		public static final Codec<Tumble> CODEC = Codec.unit(INSTANCE);
 
 		@Override
 		@OnlyIn(Dist.CLIENT)
 		public void transform(PoseStack ms, PotatoProjectileEntity entity, float pt) {
-			super.transform(ms, entity, pt);
+			Billboard.INSTANCE.transform(ms, entity, pt);
 			TransformStack.of(ms)
 				.rotateZDegrees((entity.tickCount + pt) * 2 * entityRandom(entity, 16))
 				.rotateXDegrees((entity.tickCount + pt) * entityRandom(entity, 32));
 		}
 
+		@Override
+		public Codec<? extends PotatoProjectileRenderMode> codec() {
+			return CODEC;
+		}
 	}
 
-	public static class TowardMotion implements PotatoProjectileRenderMode {
-
-		private int spriteAngleOffset;
-		private float spin;
-
-		public TowardMotion(int spriteAngleOffset, float spin) {
-			this.spriteAngleOffset = spriteAngleOffset;
-			this.spin = spin;
-		}
+	record TowardMotion(int spriteAngleOffset, float spin) implements PotatoProjectileRenderMode {
+		public static final Codec<TowardMotion> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			Codec.INT.fieldOf("sprite_angle_offset").forGetter(i -> i.spriteAngleOffset),
+			Codec.FLOAT.fieldOf("spin").forGetter(i -> i.spin)
+		).apply(instance, TowardMotion::new));
 
 		@Override
 		@OnlyIn(Dist.CLIENT)
@@ -77,15 +94,16 @@ public interface PotatoProjectileRenderMode {
 				.rotateZDegrees(-spriteAngleOffset);
 		}
 
+		@Override
+		public Codec<? extends PotatoProjectileRenderMode> codec() {
+			return CODEC;
+		}
 	}
 
-	public static class StuckToEntity implements PotatoProjectileRenderMode {
-
-		private Vec3 offset;
-
-		public StuckToEntity(Vec3 offset) {
-			this.offset = offset;
-		}
+	record StuckToEntity(Vec3 offset) implements PotatoProjectileRenderMode {
+		public static final Codec<StuckToEntity> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			Vec3.CODEC.fieldOf("offset").forGetter(i -> i.offset)
+		).apply(instance, StuckToEntity::new));
 
 		@Override
 		@OnlyIn(Dist.CLIENT)
@@ -93,10 +111,13 @@ public interface PotatoProjectileRenderMode {
 			TransformStack.of(ms).rotateYDegrees(AngleHelper.deg(Mth.atan2(offset.x, offset.z)));
 		}
 
+		@Override
+		public Codec<? extends PotatoProjectileRenderMode> codec() {
+			return CODEC;
+		}
 	}
 
-	public static int entityRandom(Entity entity, int maxValue) {
+	static int entityRandom(Entity entity, int maxValue) {
 		return (System.identityHashCode(entity) * 31) % maxValue;
 	}
-
 }
