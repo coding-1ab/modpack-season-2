@@ -126,14 +126,20 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 
 		ItemStack stackInSlot = menu.proxyInventory.getStackInSlot(0)
 			.copy();
-		if (!stackInSlot.isEmpty()) {
-			stackInSlot.setHoverName(Component.literal(editorEditBox.getValue()));
+		boolean empty = stackInSlot.isEmpty();
+		
+		if (empty && editingIndex != -1)
+			schedule.remove(editingIndex);
+		
+		if (!empty) {
+			String value = editorEditBox.getValue();
+			stackInSlot.setHoverName(value.isBlank() ? null : Component.literal(value));
+			
+			if (editingIndex == -1)
+				schedule.add(stackInSlot);
+			else
+				schedule.set(editingIndex, stackInSlot);
 		}
-
-		if (editingIndex == -1)
-			schedule.add(stackInSlot);
-		else
-			schedule.set(editingIndex, stackInSlot);
 
 		AllPackets.getChannel()
 			.sendToServer(new GhostItemSubmitPacket(ItemStack.EMPTY, 0));

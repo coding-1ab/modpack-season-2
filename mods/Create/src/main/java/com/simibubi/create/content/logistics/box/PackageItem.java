@@ -41,7 +41,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -228,6 +227,8 @@ public class PackageItem extends Item {
 		for (int i = 0; i < contents.getSlots(); i++) {
 			ItemStack itemstack = contents.getStackInSlot(i);
 			if (itemstack.isEmpty())
+				continue;
+			if (itemstack.getItem() instanceof SpawnEggItem)
 				continue;
 			if (visibleNames > 2) {
 				skippedNames++;

@@ -1790,6 +1790,7 @@ public class AllBlocks {
 			.transform(displaySource(AllDisplaySources.LIST_ITEMS))
 			.transform(displaySource(AllDisplaySources.COUNT_FLUIDS))
 			.transform(displaySource(AllDisplaySources.LIST_FLUIDS))
+			.transform(displaySource(AllDisplaySources.READ_PACKAGE_ADDRESS))
 			.lang("Smart Observer")
 			.item()
 			.transform(customItemModel("_", "block"))
