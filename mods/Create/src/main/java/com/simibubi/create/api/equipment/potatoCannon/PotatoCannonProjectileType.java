@@ -9,8 +9,10 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.api.equipment.potatoCannon.PotatoProjectileEntityHitAction.Type;
-import com.simibubi.create.api.equipment.potatoCannon.PotatoProjectileRenderMode.Billboard;
 import com.simibubi.create.api.registry.CreateRegistries;
+import com.simibubi.create.content.equipment.potatoCannon.AllPotatoProjectileRenderModes.Billboard;
+import com.simibubi.create.content.equipment.potatoCannon.AllPotatoProjectileRenderModes.TowardMotion;
+import com.simibubi.create.content.equipment.potatoCannon.AllPotatoProjectileRenderModes.Tumble;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Holder.Reference;
@@ -172,17 +174,17 @@ public record PotatoCannonProjectileType(HolderSet<Item> items, int reloadTicks,
 		}
 
 		public Builder renderBillboard() {
-			renderMode(PotatoProjectileRenderMode.Billboard.INSTANCE);
+			renderMode(Billboard.INSTANCE);
 			return this;
 		}
 
 		public Builder renderTumbling() {
-			renderMode(PotatoProjectileRenderMode.Tumble.INSTANCE);
+			renderMode(Tumble.INSTANCE);
 			return this;
 		}
 
 		public Builder renderTowardMotion(int spriteAngle, float spin) {
-			renderMode(new PotatoProjectileRenderMode.TowardMotion(spriteAngle, spin));
+			renderMode(new TowardMotion(spriteAngle, spin));
 			return this;
 		}
 

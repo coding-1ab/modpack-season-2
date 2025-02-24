@@ -7,6 +7,7 @@ import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.api.equipment.potatoCannon.PotatoCannonProjectileType;
 import com.simibubi.create.api.equipment.potatoCannon.PotatoProjectileRenderMode;
 import com.simibubi.create.api.registry.CreateRegistries;
+import com.simibubi.create.content.equipment.potatoCannon.AllPotatoProjectileRenderModes.StuckToEntity;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.damageTypes.CreateDamageSources;
 import com.simibubi.create.foundation.particle.AirParticleData;
@@ -126,7 +127,7 @@ public class PotatoProjectileEntity extends AbstractHurtingProjectile implements
 	public void setStuckEntity(Entity stuckEntity) {
 		this.stuckEntity = stuckEntity;
 		this.stuckOffset = position().subtract(stuckEntity.position());
-		this.stuckRenderer = new PotatoProjectileRenderMode.StuckToEntity(stuckOffset);
+		this.stuckRenderer = new StuckToEntity(stuckOffset);
 		this.stuckFallSpeed = 0.0;
 		setDeltaMovement(Vec3.ZERO);
 	}

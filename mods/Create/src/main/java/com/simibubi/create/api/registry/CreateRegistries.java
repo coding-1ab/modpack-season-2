@@ -1,7 +1,5 @@
 package com.simibubi.create.api.registry;
 
-import org.jetbrains.annotations.ApiStatus.Internal;
-
 import com.mojang.serialization.Codec;
 import com.simibubi.create.Create;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
@@ -20,17 +18,11 @@ import com.simibubi.create.content.logistics.item.filter.attribute.ItemAttribute
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.registries.DataPackRegistryEvent;
-
 /**
  * Keys for registries added by Create.
  *
  * @see CreateBuiltInRegistries
  */
-@EventBusSubscriber(bus = Bus.MOD)
 public class CreateRegistries {
 	public static final ResourceKey<Registry<ArmInteractionPointType>> ARM_INTERACTION_POINT_TYPE = key("arm_interaction_point_type");
 	public static final ResourceKey<Registry<FanProcessingType>> FAN_PROCESSING_TYPE = key("fan_processing_type");
@@ -47,15 +39,5 @@ public class CreateRegistries {
 
 	private static <T> ResourceKey<Registry<T>> key(String name) {
 		return ResourceKey.createRegistryKey(Create.asResource(name));
-	}
-
-	@Internal
-	@SubscribeEvent
-	public static void registerDatapackRegistries(DataPackRegistryEvent.NewRegistry event) {
-		event.dataPackRegistry(
-			POTATO_PROJECTILE_TYPE,
-			PotatoCannonProjectileType.CODEC,
-			PotatoCannonProjectileType.CODEC
-		);
 	}
 }
