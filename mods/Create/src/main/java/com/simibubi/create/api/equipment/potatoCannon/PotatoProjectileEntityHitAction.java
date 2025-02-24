@@ -225,7 +225,7 @@ public interface PotatoProjectileEntityHitAction {
 			if (ray.getEntity() instanceof LivingEntity livingEntity)
 				SuspiciousStewItemAccessor.create$listPotionEffects(projectile, livingEntity::addEffect);
 
-			return true;
+			return false;
 		}
 
 		@Override
