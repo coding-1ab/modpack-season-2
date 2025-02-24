@@ -1,4 +1,4 @@
-// 1.20.1	2025-02-23T18:42:20.032170723	Create's Generated Registry Entries
+// 1.20.1	2025-02-24T12:59:18.4372587	Create's Generated Registry Entries
 abb9dd2c98388abb430343d4ac02d460e5edc086 data/create/create/potato_projectile/type/apple.json
 1a20cb4e64dc07918a28fbccc73102bca3560f16 data/create/create/potato_projectile/type/baked_potato.json
 8450576952f7723d22250da6f554dd0fda4e9fce data/create/create/potato_projectile/type/beetroot.json
@@ -22,7 +22,7 @@ b58e779803d29d4b36ecf79fde4e918577c71748 data/create/create/potato_projectile/ty
 d15070ca23129e7d4025d86cb4be5701a466e593 data/create/create/potato_projectile/type/pufferfish.json
 0c099b5f1bd7ba3832ea2d29e8c1c22c83ed1c3d data/create/create/potato_projectile/type/pumpkin_block.json
 7d58a0671c55e40cdb728c60152665c89209fb91 data/create/create/potato_projectile/type/pumpkin_pie.json
-2dc21c61b4fd4c60b9ade2974b395df42611ee26 data/create/create/potato_projectile/type/suspicious_stew.json
+0e73e50b02e9afe5f170729935ae5921d22d7091 data/create/create/potato_projectile/type/suspicious_stew.json
 b4a7c10bd9cdcfe67df2a5766e5ec2e35a3f9b24 data/create/create/potato_projectile/type/sweet_berry.json
 030ede1044384c4117ac1e491bf5c78bbd2842f5 data/create/damage_type/crush.json
 92b0416950ffeb3ba68811e587177c2f8811c2c5 data/create/damage_type/cuckoo_surprise.json
