@@ -31,6 +31,7 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RedstoneLampBlock;
+
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -388,6 +389,24 @@ public class TestItems {
 			helper.assertNixiePower(diamondNixie, 15);
 			helper.assertNixiePower(fullPearlNixie, 15);
 			helper.assertNixiePower(halfPearlNixie, 8);
+		});
+	}
+
+	@GameTest(template = "fan_processing", timeoutTicks = CreateGameTestHelper.TEN_SECONDS)
+	public static void fanProcessing(CreateGameTestHelper helper) {
+		// why does the redstone explode
+		BlockPos.betweenClosed(new BlockPos(2, 7, 3), new BlockPos(11, 7, 3)).forEach(
+			pos -> helper.setBlock(pos, Blocks.REDSTONE_WIRE)
+		);
+		helper.pullLever(1, 7, 3);
+		List<BlockPos> lamps = List.of(
+			new BlockPos(1, 2, 1), new BlockPos(5, 2, 1), new BlockPos(7, 2, 1),
+			new BlockPos(9, 2, 1), new BlockPos(11, 2, 1)
+		);
+		helper.succeedWhen(() -> {
+			for (BlockPos lamp : lamps) {
+				helper.assertBlockProperty(lamp, RedstoneLampBlock.LIT, true);
+			}
 		});
 	}
 }
