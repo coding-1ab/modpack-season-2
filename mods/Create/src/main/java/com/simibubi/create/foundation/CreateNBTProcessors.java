@@ -1,4 +1,4 @@
-package com.simibubi.create.foundation.utility;
+package com.simibubi.create.foundation;
 
 import java.util.List;
 
@@ -12,6 +12,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class CreateNBTProcessors {
@@ -29,7 +30,7 @@ public class CreateNBTProcessors {
 			if (!data.contains("Book", Tag.TAG_COMPOUND))
 				return data;
 			CompoundTag book = data.getCompound("Book");
-			
+
 			// Writable books can't have click events, so they're safe to keep
 			ResourceLocation writableBookResource = ForgeRegistries.ITEMS.getKey(Items.WRITABLE_BOOK);
 			if (writableBookResource != null && book.getString("id").equals(writableBookResource.toString()))

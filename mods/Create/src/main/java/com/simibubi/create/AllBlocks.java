@@ -268,7 +268,6 @@ import com.simibubi.create.foundation.data.ModelGen;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.UncontainableBlockItem;
-import com.simibubi.create.foundation.utility.ColorHandlers;
 import com.simibubi.create.foundation.utility.DyeHelper;
 import com.simibubi.create.infrastructure.config.CStress;
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
@@ -296,6 +295,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.IronBarsBlock;
+import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -1259,7 +1259,8 @@ public class AllBlocks {
 			.transform(pickaxeOnly())
 			.blockstate(new ControllerRailGenerator()::generate)
 			.addLayer(() -> RenderType::cutoutMipped)
-			.color(() -> ColorHandlers::getRedstonePower)
+			.color(() -> () -> (state, world, pos, layer) -> RedStoneWireBlock
+				.getColorForPower(pos != null && world != null ? state.getValue(BlockStateProperties.POWER) : 0))
 			.tag(BlockTags.RAILS)
 			.item()
 			.model((c, p) -> p.generated(c, Create.asResource("block/" + c.getName())))

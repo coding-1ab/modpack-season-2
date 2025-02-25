@@ -1,4 +1,4 @@
-package com.simibubi.create.foundation.utility;
+package com.simibubi.create.infrastructure;
 
 import static com.simibubi.create.AllBlocks.ADJUSTABLE_CHAIN_GEARSHIFT;
 import static com.simibubi.create.AllBlocks.ANDESITE_ENCASED_SHAFT;
@@ -65,6 +65,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Fluid;
+
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
