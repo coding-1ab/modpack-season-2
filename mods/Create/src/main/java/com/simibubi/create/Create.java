@@ -137,12 +137,6 @@ public class Create {
 
 		AllConfigs.register(modLoadingContext);
 
-		// TODO - Make these use Registry.register and move them into the RegisterEvent
-		AllArmInteractionPointTypes.register(modEventBus);
-		AllFanProcessingTypes.register(modEventBus);
-		AllItemAttributeTypes.register(modEventBus);
-		AllContraptionTypes.register(modEventBus);
-
 		// FIXME: some of these registrations are not thread-safe
 		BogeySizes.init();
 		AllBogeyStyles.init();
@@ -189,6 +183,10 @@ public class Create {
 	}
 
 	public static void onRegister(final RegisterEvent event) {
+		AllArmInteractionPointTypes.init();
+		AllFanProcessingTypes.init();
+		AllItemAttributeTypes.init();
+		AllContraptionTypes.init();
 		AllPotatoProjectileRenderModes.init();
 		AllPotatoProjectileEntityHitActions.init();
 		AllPotatoProjectileBlockHitActions.init();
