@@ -3,11 +3,9 @@ package com.simibubi.create.content.logistics.item.filter.attribute;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.Create;
-import com.simibubi.create.api.registry.CreateRegistries;
+import com.simibubi.create.api.registry.CreateBuiltInRegistries;
 import com.simibubi.create.content.kinetics.fan.processing.AllFanProcessingTypes;
 import com.simibubi.create.content.logistics.item.filter.attribute.attributes.AddedByAttribute;
 import com.simibubi.create.content.logistics.item.filter.attribute.attributes.BookAuthorAttribute;
@@ -25,6 +23,7 @@ import com.simibubi.create.content.logistics.item.filter.attribute.attributes.as
 import com.simibubi.create.content.logistics.item.filter.attribute.attributes.astralsorcery.AstralSorceryPerkGemAttribute;
 import com.simibubi.create.content.logistics.item.filter.attribute.legacydeserializers.AllItemAttributeLegacyDeserializers;
 
+import net.minecraft.core.Registry;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -38,14 +37,11 @@ import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
-import net.minecraftforge.registries.DeferredRegister;
 
 // TODO - Documentation
 public class AllItemAttributeTypes {
-	private static final DeferredRegister<ItemAttributeType> REGISTER = DeferredRegister.create(CreateRegistries.ITEM_ATTRIBUTE_TYPE, Create.ID);
 	private static final RecipeWrapper RECIPE_WRAPPER = new RecipeWrapper(new ItemStackHandler(1));
 
 	public static final ItemAttributeType
@@ -94,7 +90,6 @@ public class AllItemAttributeTypes {
 			.isPresent();
 	}
 
-	// TODO - Move away from stream()
 	private static boolean maxEnchanted(ItemStack s) {
 		return EnchantmentHelper.getEnchantments(s)
 			.entrySet()
@@ -112,14 +107,10 @@ public class AllItemAttributeTypes {
 	}
 
 	private static ItemAttributeType register(String id, ItemAttributeType type) {
-		REGISTER.register(id, () -> type);
-		return type;
+		return Registry.register(CreateBuiltInRegistries.ITEM_ATTRIBUTE_TYPE, Create.asResource(id), type);
 	}
 
-	@ApiStatus.Internal
-	public static void register(IEventBus modEventBus) {
-		REGISTER.register(modEventBus);
-
+	public static void init() {
 		// Register legacy deserializers to maintain backwards compatability
 		AllItemAttributeLegacyDeserializers.register();
 	}

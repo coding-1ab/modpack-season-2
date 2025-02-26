@@ -25,10 +25,10 @@ public class CreateContraptionTypeTagsProvider extends TagsProvider<ContraptionT
 	@Override
 	protected void addTags(Provider pProvider) {
 		tag(AllContraptionTypeTags.OPENS_CONTROLS.tag).add(
-			TagEntry.element(AllContraptionTypes.CARRIAGE.getId())
+			TagEntry.element(AllContraptionTypes.CARRIAGE.key().location())
 		);
 		tag(AllContraptionTypeTags.REQUIRES_VEHICLE_FOR_RENDER.tag).add(
-			TagEntry.element(AllContraptionTypes.MOUNTED.getId())
+			TagEntry.element(AllContraptionTypes.MOUNTED.key().location())
 		);
 
 		// VALIDATE

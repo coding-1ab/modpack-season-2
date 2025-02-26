@@ -2,6 +2,7 @@ package com.simibubi.create.foundation.events;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.simibubi.create.AllItems;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.Create;
 import com.simibubi.create.CreateClient;
@@ -27,6 +28,7 @@ import com.simibubi.create.content.equipment.clipboard.ClipboardValueSettingsHan
 import com.simibubi.create.content.equipment.extendoGrip.ExtendoGripRenderHandler;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.content.equipment.hats.CreateHatArmorLayer;
+import com.simibubi.create.content.equipment.potatoCannon.PotatoCannonItemRenderer;
 import com.simibubi.create.content.equipment.toolbox.ToolboxHandlerClient;
 import com.simibubi.create.content.equipment.zapper.ZapperItem;
 import com.simibubi.create.content.equipment.zapper.terrainzapper.WorldshaperRenderHandler;
@@ -71,11 +73,11 @@ import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 import com.simibubi.create.foundation.utility.TickBasedCache;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
+import net.createmod.catnip.levelWrappers.WrappedClientLevel;
 import net.createmod.catnip.render.DefaultSuperRenderTypeBuffer;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
-import net.createmod.catnip.animation.AnimationTickHolder;
-import net.createmod.catnip.levelWrappers.WrappedClientLevel;
 import net.createmod.ponder.foundation.PonderTooltipHandler;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -90,12 +92,14 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
+import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
 import net.minecraftforge.client.event.ViewportEvent;
@@ -368,6 +372,11 @@ public class ClientEvents {
 			event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "linked_controller", LinkedControllerClientHandler.OVERLAY);
 			event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "schematic", CreateClient.SCHEMATIC_HANDLER);
 			event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "toolbox", ToolboxHandlerClient.OVERLAY);
+		}
+
+		@SubscribeEvent
+		public static void registerItemDecorations(RegisterItemDecorationsEvent event) {
+			event.register(AllItems.POTATO_CANNON, PotatoCannonItemRenderer.DECORATOR);
 		}
 
 		@SubscribeEvent
