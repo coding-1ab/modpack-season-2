@@ -61,7 +61,7 @@ public class HarvesterMovementBehaviour implements MovementBehaviour {
 			return;
 
 		BlockState stateVisited = world.getBlockState(pos);
-		if (stateVisited.isAir() || AllBlockTags.NOT_HARVESTABLE.matches(stateVisited))
+		if (stateVisited.isAir() || AllBlockTags.NON_HARVESTABLE.matches(stateVisited))
 			return;
 
 		boolean notCropButCuttable = false;

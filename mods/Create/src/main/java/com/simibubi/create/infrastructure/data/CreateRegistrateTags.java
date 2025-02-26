@@ -127,7 +127,7 @@ public class CreateRegistrateTags {
 		prov.tag(AllBlockTags.SUGAR_CANE_VARIANTS.tag)
 			.add(Blocks.SUGAR_CANE);
 
-		prov.tag(AllBlockTags.NOT_HARVESTABLE.tag)
+		prov.tag(AllBlockTags.NON_HARVESTABLE.tag)
 				.add(Blocks.FIRE);
 
 		prov.tag(AllBlockTags.CORALS.tag)
