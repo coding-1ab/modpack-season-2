@@ -29,7 +29,7 @@ public abstract class MountedItemStorageType<T extends MountedItemStorage> {
 	});
 
 	public final Codec<? extends T> codec;
-	public final Holder<MountedItemStorageType<?>> holder;
+	public final Holder.Reference<MountedItemStorageType<?>> holder;
 
 	protected MountedItemStorageType(Codec<? extends T> codec) {
 		this.codec = codec;
