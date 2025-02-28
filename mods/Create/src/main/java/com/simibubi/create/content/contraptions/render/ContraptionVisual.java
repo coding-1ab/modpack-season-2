@@ -30,7 +30,7 @@ import dev.engine_room.flywheel.lib.instance.InstanceTypes;
 import dev.engine_room.flywheel.lib.instance.TransformedInstance;
 import dev.engine_room.flywheel.lib.material.SimpleMaterial;
 import dev.engine_room.flywheel.lib.model.ModelUtil;
-import dev.engine_room.flywheel.lib.model.baked.ForgeMultiBlockModelBuilder;
+import dev.engine_room.flywheel.lib.model.baked.ForgeBlockModelBuilder;
 import dev.engine_room.flywheel.lib.task.ForEachPlan;
 import dev.engine_room.flywheel.lib.task.NestedPlan;
 import dev.engine_room.flywheel.lib.task.PlanMap;
@@ -97,7 +97,7 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 			}
 		};
 
-		model = new ForgeMultiBlockModelBuilder(modelWorld, blocks.positions())
+		model = new ForgeBlockModelBuilder(modelWorld, blocks.positions())
 			.modelDataLookup(pos -> contraption.modelData.getOrDefault(pos, ModelData.EMPTY))
 			.materialFunc((renderType, aBoolean) -> SimpleMaterial.builderOf(ModelUtil.getMaterial(renderType, aBoolean))
 				.cardinalLightingMode(CardinalLightingMode.CHUNK))
