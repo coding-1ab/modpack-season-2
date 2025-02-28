@@ -183,12 +183,12 @@ public class CarriageContraption extends Contraption {
 
 		return super.capture(world, pos);
 	}
-	
+
 	@Override
 	protected BlockEntity readBlockEntity(Level level, StructureBlockInfo info, CompoundTag tag) {
 		if (info.state().getBlock() instanceof AbstractBogeyBlock<?> bogey && !bogey.captureBlockEntityForTrain())
 			return null; // Bogeys are typically rendered by the carriage contraption, not the BE
-		
+
 		return super.readBlockEntity(level, info, tag);
 	}
 
@@ -236,7 +236,7 @@ public class CarriageContraption extends Contraption {
 
 	@Override
 	public ContraptionType getType() {
-		return AllContraptionTypes.CARRIAGE.get();
+		return AllContraptionTypes.CARRIAGE.value();
 	}
 
 	public Direction getAssemblyDirection() {
