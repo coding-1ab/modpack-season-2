@@ -336,7 +336,7 @@ publishMods {
     file = jar.archiveFile
     changelog = ChangelogText.getChangelogText(project).toString()
     type = STABLE
-    displayName = "$mod_name $minecraft_version $mod_version"
+    displayName = "$mod_name $mod_version for mc$minecraft_version"
     modLoaders.add("forge")
     modLoaders.add("neoforge")
 
