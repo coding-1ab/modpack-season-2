@@ -47,7 +47,13 @@ public class ShoppingListItem extends Item {
 		    UUIDUtil.STREAM_CODEC, ShoppingList::shopNetwork,
 		    ShoppingList::new
 		);
-
+		
+		public ShoppingList duplicate() {
+			return new ShoppingList(purchases.stream()
+				.map(ia -> IntAttached.with(ia.getFirst(), ia.getSecond()))
+				.toList(), shopOwner, shopNetwork);
+		}
+		
 		// Y value of clothPos is pixel perfect (x16)
 		public void addPurchases(BlockPos clothPos, int amount) {
 			for (IntAttached<BlockPos> entry : purchases) {

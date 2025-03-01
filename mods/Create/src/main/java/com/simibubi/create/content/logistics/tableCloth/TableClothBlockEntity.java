@@ -218,7 +218,7 @@ public class TableClothBlockEntity extends SmartBlockEntity {
 		ShoppingList list = new ShoppingList(new ArrayList<>(), owner, tickerID);
 
 		if (addOntoList) {
-			ShoppingList prevList = ShoppingListItem.getList(prevListItem);
+			ShoppingList prevList = ShoppingListItem.getList(prevListItem).duplicate();
 			if (owner.equals(prevList.shopOwner()) && tickerID.equals(prevList.shopNetwork()))
 				list = prevList;
 			else
