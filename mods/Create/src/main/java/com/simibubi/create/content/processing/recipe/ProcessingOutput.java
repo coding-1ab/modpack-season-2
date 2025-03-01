@@ -78,23 +78,23 @@ public class ProcessingOutput {
 	}
 
 	private static final Codec<Pair<ResourceLocation, Integer>> COMPAT_CODEC = ResourceLocation.CODEC.comapFlatMap(
-			loc -> DataResult.error(() -> "Compat cannot be deserialized"),
-			Pair::getFirst
+		loc -> DataResult.error(() -> "Compat cannot be deserialized"),
+		Pair::getFirst
 	);
 
 	private static final Codec<Either<ItemStack, Pair<ResourceLocation, Integer>>> ITEM_CODEC = Codec.either(
-			ItemStack.ITEM_NON_AIR_CODEC.xmap(ItemStack::new, ItemStack::getItemHolder),
-			COMPAT_CODEC
+		ItemStack.SINGLE_ITEM_CODEC,
+		COMPAT_CODEC
 	);
 
 	public static final Codec<ProcessingOutput> CODEC = RecordCodecBuilder.create(i -> i.group(
-			ITEM_CODEC.fieldOf("item").forGetter(ProcessingOutput::getCodecStack),
-			Codec.INT.optionalFieldOf("count", 1).forGetter(s -> {
-				if (s.compatDatagenOutput != null)
-					return s.compatDatagenOutput.getSecond();
-				return s.getStack().getCount();
-			}),
-			Codec.FLOAT.optionalFieldOf("chance", 1F).forGetter(s -> s.chance)
+		ITEM_CODEC.fieldOf("item").forGetter(ProcessingOutput::getCodecStack),
+		Codec.INT.optionalFieldOf("count", 1).forGetter(s -> {
+			if (s.compatDatagenOutput != null)
+				return s.compatDatagenOutput.getSecond();
+			return s.getStack().getCount();
+		}),
+		Codec.FLOAT.optionalFieldOf("chance", 1F).forGetter(s -> s.chance)
 	).apply(i, ProcessingOutput::fromCodec));
 
 	public void write(RegistryFriendlyByteBuf buf) {
