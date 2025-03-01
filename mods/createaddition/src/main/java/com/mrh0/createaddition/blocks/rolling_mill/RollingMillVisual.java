@@ -1,9 +1,14 @@
 package com.mrh0.createaddition.blocks.rolling_mill;
 
+import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityVisual;
 import com.simibubi.create.content.kinetics.base.RotatingInstance;
+import com.simibubi.create.foundation.render.AllInstanceTypes;
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
+import dev.engine_room.flywheel.lib.model.Models;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -15,9 +20,26 @@ public class RollingMillVisual extends KineticBlockEntityVisual<RollingMillBlock
     public RollingMillVisual(VisualizationContext context, RollingMillBlockEntity blockEntity, float partialTick) {
         super(context, blockEntity, partialTick);
 
-        this.rotatingModel1 = this.setup((RotatingInstance)this.getModel().createInstance());
-        this.rotatingModel2 = this.setup((RotatingInstance)this.getModel().createInstance());
+        var instancer = instancerProvider().instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.SHAFT));
 
+        this.rotatingModel1 = instancer.createInstance();
+        this.rotatingModel2 = instancer.createInstance();
+
+        final Direction direction = blockState.getValue(RollingMillBlock.HORIZONTAL_FACING);
+        final Direction.Axis axis = direction.getAxis();
+
+        rotatingModel1.setup(blockEntity, axis)
+                .setPosition(getVisualPosition())
+                .rotateToFace(Direction.SOUTH, direction)
+                .setChanged();
+
+        rotatingModel2.setup(blockEntity, axis)
+                .setPosition(getVisualPosition())
+                .setRotationalSpeed(-blockEntity.getSpeed())
+                .rotateToFace(Direction.SOUTH, direction)
+                .setChanged();
+
+        /*
         rotatingModel1.setRotationAxis(axis)
                 .setRotationalSpeed(getBlockEntitySpeed())
                 .setRotationOffset(-getRotationOffset(axis))
@@ -31,13 +53,18 @@ public class RollingMillVisual extends KineticBlockEntityVisual<RollingMillBlock
                 .setPosition(getInstancePosition())
                 .nudge(0, 4f/16f, 0)
                 .setRotationalSpeed(-getBlockEntitySpeed());
+                */
     }
 
     @Override
     public void update(float v) {
-        this.updateRotation(this.rotatingModel1);
-        this.updateRotation(this.rotatingModel2);
-        rotatingModel2.setRotationalSpeed(-getBlockEntitySpeed());
+        //this.updateRotation(this.rotatingModel1);
+        //this.updateRotation(this.rotatingModel2);
+        final Direction direction = blockState.getValue(RollingMillBlock.HORIZONTAL_FACING);
+        final Direction.Axis axis = direction.getAxis();
+        rotatingModel1.setup(blockEntity, axis, blockEntity.getSpeed()).setChanged();
+        rotatingModel2.setup(blockEntity, axis, -blockEntity.getSpeed()).setChanged();
+        //rotatingModel2.setRotationalSpeed(-blockEntity.getSpeed());
     }
 
     public void updateLight(float v) {
