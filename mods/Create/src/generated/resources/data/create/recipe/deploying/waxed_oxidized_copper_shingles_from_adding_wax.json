@@ -11,7 +11,9 @@
   "keep_held_item": true,
   "results": [
     {
-      "item": "create:waxed_oxidized_copper_shingles"
+      "item": {
+        "id": "create:waxed_oxidized_copper_shingles"
+      }
     }
   ]
 }

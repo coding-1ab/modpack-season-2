@@ -9,7 +9,9 @@
   "results": [
     {
       "count": 3,
-      "item": "minecraft:bamboo_planks"
+      "item": {
+        "id": "minecraft:bamboo_planks"
+      }
     }
   ]
 }

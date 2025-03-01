@@ -9,25 +9,35 @@
   "results": [
     {
       "count": 2,
-      "item": "minecraft:iron_ingot"
+      "item": {
+        "id": "minecraft:iron_ingot"
+      }
     },
     {
       "chance": 0.5,
-      "item": "minecraft:leather"
+      "item": {
+        "id": "minecraft:leather"
+      }
     },
     {
       "chance": 0.5,
-      "item": "minecraft:iron_ingot"
+      "item": {
+        "id": "minecraft:iron_ingot"
+      }
     },
     {
       "chance": 0.25,
       "count": 2,
-      "item": "minecraft:string"
+      "item": {
+        "id": "minecraft:string"
+      }
     },
     {
       "chance": 0.25,
       "count": 4,
-      "item": "minecraft:iron_nugget"
+      "item": {
+        "id": "minecraft:iron_nugget"
+      }
     }
   ]
 }

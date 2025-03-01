@@ -7,7 +7,9 @@
   ],
   "results": [
     {
-      "item": "create:polished_rose_quartz"
+      "item": {
+        "id": "create:polished_rose_quartz"
+      }
     }
   ]
 }

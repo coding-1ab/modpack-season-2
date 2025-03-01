@@ -8,7 +8,9 @@
   "processing_time": 20,
   "results": [
     {
-      "item": "minecraft:bamboo_mosaic"
+      "item": {
+        "id": "minecraft:bamboo_mosaic"
+      }
     }
   ]
 }

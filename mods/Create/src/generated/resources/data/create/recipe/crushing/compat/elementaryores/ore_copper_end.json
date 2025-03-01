@@ -20,19 +20,27 @@
   "results": [
     {
       "count": 5,
-      "item": "create:crushed_raw_copper"
+      "item": {
+        "id": "create:crushed_raw_copper"
+      }
     },
     {
       "chance": 0.25,
-      "item": "create:crushed_raw_copper"
+      "item": {
+        "id": "create:crushed_raw_copper"
+      }
     },
     {
       "chance": 0.75,
-      "item": "create:experience_nugget"
+      "item": {
+        "id": "create:experience_nugget"
+      }
     },
     {
       "chance": 0.12,
-      "item": "minecraft:end_stone"
+      "item": {
+        "id": "minecraft:end_stone"
+      }
     }
   ]
 }

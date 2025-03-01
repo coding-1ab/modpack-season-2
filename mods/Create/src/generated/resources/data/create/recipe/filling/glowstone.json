@@ -18,7 +18,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:glowstone_dust"
+      "item": {
+        "id": "minecraft:glowstone_dust"
+      }
     }
   ]
 }

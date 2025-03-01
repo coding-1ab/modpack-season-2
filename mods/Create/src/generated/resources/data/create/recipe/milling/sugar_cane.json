@@ -9,11 +9,15 @@
   "results": [
     {
       "count": 2,
-      "item": "minecraft:sugar"
+      "item": {
+        "id": "minecraft:sugar"
+      }
     },
     {
       "chance": 0.1,
-      "item": "minecraft:sugar"
+      "item": {
+        "id": "minecraft:sugar"
+      }
     }
   ]
 }

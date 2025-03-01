@@ -31,7 +31,9 @@
     },
     {
       "chance": 0.75,
-      "item": "create:experience_nugget"
+      "item": {
+        "id": "create:experience_nugget"
+      }
     }
   ]
 }

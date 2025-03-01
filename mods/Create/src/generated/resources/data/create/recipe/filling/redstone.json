@@ -18,7 +18,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:redstone"
+      "item": {
+        "id": "minecraft:redstone"
+      }
     }
   ]
 }

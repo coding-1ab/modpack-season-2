@@ -7,7 +7,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:poisonous_potato"
+      "item": {
+        "id": "minecraft:poisonous_potato"
+      }
     }
   ]
 }

@@ -18,7 +18,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:gunpowder"
+      "item": {
+        "id": "minecraft:gunpowder"
+      }
     }
   ]
 }

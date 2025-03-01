@@ -11,7 +11,9 @@
   "keep_held_item": true,
   "results": [
     {
-      "item": "create:waxed_weathered_copper_tiles"
+      "item": {
+        "id": "create:waxed_weathered_copper_tiles"
+      }
     }
   ]
 }

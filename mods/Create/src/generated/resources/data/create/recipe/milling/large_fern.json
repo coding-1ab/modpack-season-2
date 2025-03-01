@@ -9,15 +9,21 @@
   "results": [
     {
       "count": 2,
-      "item": "minecraft:green_dye"
+      "item": {
+        "id": "minecraft:green_dye"
+      }
     },
     {
       "chance": 0.5,
-      "item": "minecraft:green_dye"
+      "item": {
+        "id": "minecraft:green_dye"
+      }
     },
     {
       "chance": 0.1,
-      "item": "minecraft:wheat_seeds"
+      "item": {
+        "id": "minecraft:wheat_seeds"
+      }
     }
   ]
 }

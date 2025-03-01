@@ -10,7 +10,9 @@
   ],
   "results": [
     {
-      "item": "create:copper_casing"
+      "item": {
+        "id": "create:copper_casing"
+      }
     }
   ]
 }

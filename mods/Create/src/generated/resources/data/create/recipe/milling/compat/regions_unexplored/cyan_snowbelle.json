@@ -20,7 +20,9 @@
   "results": [
     {
       "count": 2,
-      "item": "minecraft:cyan_dye"
+      "item": {
+        "id": "minecraft:cyan_dye"
+      }
     }
   ]
 }

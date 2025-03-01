@@ -10,7 +10,9 @@
   ],
   "results": [
     {
-      "item": "create:cogwheel"
+      "item": {
+        "id": "create:cogwheel"
+      }
     }
   ]
 }

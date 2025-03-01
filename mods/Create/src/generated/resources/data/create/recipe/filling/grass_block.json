@@ -12,7 +12,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:grass_block"
+      "item": {
+        "id": "minecraft:grass_block"
+      }
     }
   ]
 }

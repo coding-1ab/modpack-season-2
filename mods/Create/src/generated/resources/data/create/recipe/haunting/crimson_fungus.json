@@ -7,7 +7,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:crimson_fungus"
+      "item": {
+        "id": "minecraft:crimson_fungus"
+      }
     }
   ]
 }

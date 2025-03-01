@@ -8,7 +8,9 @@
   "processing_time": 200,
   "results": [
     {
-      "item": "minecraft:cobblestone"
+      "item": {
+        "id": "minecraft:cobblestone"
+      }
     }
   ]
 }

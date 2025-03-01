@@ -31,7 +31,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:ice"
+      "item": {
+        "id": "minecraft:ice"
+      }
     }
   ]
 }

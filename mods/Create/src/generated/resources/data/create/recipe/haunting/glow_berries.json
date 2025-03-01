@@ -7,7 +7,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:glow_berries"
+      "item": {
+        "id": "minecraft:glow_berries"
+      }
     }
   ]
 }

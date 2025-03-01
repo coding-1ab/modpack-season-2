@@ -10,7 +10,9 @@
   ],
   "results": [
     {
-      "item": "create:brass_casing"
+      "item": {
+        "id": "create:brass_casing"
+      }
     }
   ]
 }

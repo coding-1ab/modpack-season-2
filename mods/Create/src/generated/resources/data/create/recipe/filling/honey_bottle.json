@@ -12,7 +12,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:honey_bottle"
+      "item": {
+        "id": "minecraft:honey_bottle"
+      }
     }
   ]
 }

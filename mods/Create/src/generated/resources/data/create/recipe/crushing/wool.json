@@ -9,11 +9,15 @@
   "results": [
     {
       "count": 2,
-      "item": "minecraft:string"
+      "item": {
+        "id": "minecraft:string"
+      }
     },
     {
       "chance": 0.5,
-      "item": "minecraft:string"
+      "item": {
+        "id": "minecraft:string"
+      }
     }
   ]
 }

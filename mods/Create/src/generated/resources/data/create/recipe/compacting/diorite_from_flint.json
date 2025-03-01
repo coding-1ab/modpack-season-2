@@ -18,7 +18,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:diorite"
+      "item": {
+        "id": "minecraft:diorite"
+      }
     }
   ]
 }

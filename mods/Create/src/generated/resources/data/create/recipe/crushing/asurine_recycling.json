@@ -9,11 +9,15 @@
   "results": [
     {
       "chance": 0.3,
-      "item": "create:crushed_raw_zinc"
+      "item": {
+        "id": "create:crushed_raw_zinc"
+      }
     },
     {
       "chance": 0.3,
-      "item": "create:zinc_nugget"
+      "item": {
+        "id": "create:zinc_nugget"
+      }
     }
   ]
 }

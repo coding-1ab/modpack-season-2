@@ -11,7 +11,9 @@
   "keep_held_item": true,
   "results": [
     {
-      "item": "minecraft:waxed_weathered_copper_bulb"
+      "item": {
+        "id": "minecraft:waxed_weathered_copper_bulb"
+      }
     }
   ]
 }

@@ -19,12 +19,16 @@
   "processing_time": 150,
   "results": [
     {
-      "item": "minecraft:string"
+      "item": {
+        "id": "minecraft:string"
+      }
     },
     {
       "chance": 0.25,
       "count": 2,
-      "item": "minecraft:string"
+      "item": {
+        "id": "minecraft:string"
+      }
     },
     {
       "chance": 0.25,

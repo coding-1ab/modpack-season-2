@@ -9,11 +9,15 @@
   "results": [
     {
       "count": 2,
-      "item": "minecraft:red_dye"
+      "item": {
+        "id": "minecraft:red_dye"
+      }
     },
     {
       "chance": 0.1,
-      "item": "minecraft:beetroot_seeds"
+      "item": {
+        "id": "minecraft:beetroot_seeds"
+      }
     }
   ]
 }

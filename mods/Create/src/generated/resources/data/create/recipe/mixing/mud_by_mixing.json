@@ -13,7 +13,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:mud"
+      "item": {
+        "id": "minecraft:mud"
+      }
     }
   ]
 }

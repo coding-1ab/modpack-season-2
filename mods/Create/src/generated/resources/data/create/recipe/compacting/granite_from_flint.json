@@ -18,7 +18,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:granite"
+      "item": {
+        "id": "minecraft:granite"
+      }
     }
   ]
 }

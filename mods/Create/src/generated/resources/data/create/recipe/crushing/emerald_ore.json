@@ -8,19 +8,27 @@
   "processing_time": 350,
   "results": [
     {
-      "item": "minecraft:emerald"
+      "item": {
+        "id": "minecraft:emerald"
+      }
     },
     {
       "chance": 0.75,
-      "item": "minecraft:emerald"
+      "item": {
+        "id": "minecraft:emerald"
+      }
     },
     {
       "chance": 0.75,
-      "item": "create:experience_nugget"
+      "item": {
+        "id": "create:experience_nugget"
+      }
     },
     {
       "chance": 0.125,
-      "item": "minecraft:cobblestone"
+      "item": {
+        "id": "minecraft:cobblestone"
+      }
     }
   ]
 }

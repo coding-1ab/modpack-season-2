@@ -18,7 +18,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:dirt_path"
+      "item": {
+        "id": "minecraft:dirt_path"
+      }
     }
   ]
 }

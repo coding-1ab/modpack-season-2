@@ -8,7 +8,9 @@
   "processing_time": 50,
   "results": [
     {
-      "item": "minecraft:stripped_bamboo_block"
+      "item": {
+        "id": "minecraft:stripped_bamboo_block"
+      }
     }
   ]
 }

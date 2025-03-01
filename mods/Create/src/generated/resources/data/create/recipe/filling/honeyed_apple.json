@@ -12,7 +12,9 @@
   ],
   "results": [
     {
-      "item": "create:honeyed_apple"
+      "item": {
+        "id": "create:honeyed_apple"
+      }
     }
   ]
 }

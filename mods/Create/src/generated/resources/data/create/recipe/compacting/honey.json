@@ -9,7 +9,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:honey_block"
+      "item": {
+        "id": "minecraft:honey_block"
+      }
     }
   ]
 }

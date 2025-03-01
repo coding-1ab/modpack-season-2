@@ -20,15 +20,21 @@
   "results": [
     {
       "count": 2,
-      "item": "minecraft:quartz"
+      "item": {
+        "id": "minecraft:quartz"
+      }
     },
     {
       "chance": 0.25,
-      "item": "minecraft:quartz"
+      "item": {
+        "id": "minecraft:quartz"
+      }
     },
     {
       "chance": 0.75,
-      "item": "create:experience_nugget"
+      "item": {
+        "id": "create:experience_nugget"
+      }
     },
     {
       "chance": 0.125,

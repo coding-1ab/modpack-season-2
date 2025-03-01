@@ -20,7 +20,9 @@
     {
       "chance": 0.125,
       "count": 4,
-      "item": "minecraft:clay_ball"
+      "item": {
+        "id": "minecraft:clay_ball"
+      }
     },
     {
       "chance": 0.05,

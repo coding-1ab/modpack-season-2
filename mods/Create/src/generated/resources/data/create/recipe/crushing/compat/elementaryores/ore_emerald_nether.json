@@ -19,19 +19,27 @@
   "processing_time": 350,
   "results": [
     {
-      "item": "minecraft:emerald"
+      "item": {
+        "id": "minecraft:emerald"
+      }
     },
     {
       "chance": 0.25,
-      "item": "minecraft:emerald"
+      "item": {
+        "id": "minecraft:emerald"
+      }
     },
     {
       "chance": 0.75,
-      "item": "create:experience_nugget"
+      "item": {
+        "id": "create:experience_nugget"
+      }
     },
     {
       "chance": 0.12,
-      "item": "minecraft:netherrack"
+      "item": {
+        "id": "minecraft:netherrack"
+      }
     }
   ]
 }

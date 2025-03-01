@@ -11,7 +11,9 @@
   "keep_held_item": true,
   "results": [
     {
-      "item": "minecraft:waxed_cut_copper"
+      "item": {
+        "id": "minecraft:waxed_cut_copper"
+      }
     }
   ]
 }

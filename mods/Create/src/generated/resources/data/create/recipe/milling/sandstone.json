@@ -8,7 +8,9 @@
   "processing_time": 150,
   "results": [
     {
-      "item": "minecraft:sand"
+      "item": {
+        "id": "minecraft:sand"
+      }
     }
   ]
 }

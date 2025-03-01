@@ -13,7 +13,9 @@
   ],
   "results": [
     {
-      "item": "create:blaze_cake_base"
+      "item": {
+        "id": "create:blaze_cake_base"
+      }
     }
   ]
 }

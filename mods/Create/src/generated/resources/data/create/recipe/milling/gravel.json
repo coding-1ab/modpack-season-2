@@ -8,7 +8,9 @@
   "processing_time": 250,
   "results": [
     {
-      "item": "minecraft:flint"
+      "item": {
+        "id": "minecraft:flint"
+      }
     }
   ]
 }

@@ -7,7 +7,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:soul_lantern"
+      "item": {
+        "id": "minecraft:soul_lantern"
+      }
     }
   ]
 }

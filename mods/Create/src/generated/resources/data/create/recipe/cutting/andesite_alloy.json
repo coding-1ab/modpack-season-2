@@ -9,7 +9,9 @@
   "results": [
     {
       "count": 6,
-      "item": "create:shaft"
+      "item": {
+        "id": "create:shaft"
+      }
     }
   ]
 }

@@ -18,7 +18,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:obsidian"
+      "item": {
+        "id": "minecraft:obsidian"
+      }
     }
   ]
 }

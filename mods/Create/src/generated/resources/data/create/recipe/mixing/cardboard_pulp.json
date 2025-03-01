@@ -21,7 +21,9 @@
   ],
   "results": [
     {
-      "item": "create:pulp"
+      "item": {
+        "id": "create:pulp"
+      }
     }
   ]
 }

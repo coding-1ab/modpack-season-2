@@ -15,19 +15,27 @@
   "results": [
     {
       "count": 2,
-      "item": "minecraft:glowstone"
+      "item": {
+        "id": "minecraft:glowstone"
+      }
     },
     {
       "chance": 0.5,
-      "item": "minecraft:glowstone"
+      "item": {
+        "id": "minecraft:glowstone"
+      }
     },
     {
       "chance": 0.75,
-      "item": "create:experience_nugget"
+      "item": {
+        "id": "create:experience_nugget"
+      }
     },
     {
       "chance": 0.125,
-      "item": "minecraft:netherrack"
+      "item": {
+        "id": "minecraft:netherrack"
+      }
     }
   ]
 }

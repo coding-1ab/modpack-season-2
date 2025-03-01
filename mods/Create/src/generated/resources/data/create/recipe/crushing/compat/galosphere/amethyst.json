@@ -16,7 +16,9 @@
     {
       "chance": 0.8,
       "count": 4,
-      "item": "minecraft:amethyst_shard"
+      "item": {
+        "id": "minecraft:amethyst_shard"
+      }
     }
   ]
 }

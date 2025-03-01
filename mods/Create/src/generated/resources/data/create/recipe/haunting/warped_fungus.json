@@ -7,7 +7,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:warped_fungus"
+      "item": {
+        "id": "minecraft:warped_fungus"
+      }
     }
   ]
 }

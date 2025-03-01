@@ -9,11 +9,15 @@
   "results": [
     {
       "count": 7,
-      "item": "minecraft:amethyst_shard"
+      "item": {
+        "id": "minecraft:amethyst_shard"
+      }
     },
     {
       "chance": 0.5,
-      "item": "minecraft:amethyst_shard"
+      "item": {
+        "id": "minecraft:amethyst_shard"
+      }
     }
   ]
 }

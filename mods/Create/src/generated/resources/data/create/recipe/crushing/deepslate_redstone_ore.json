@@ -9,19 +9,27 @@
   "results": [
     {
       "count": 7,
-      "item": "minecraft:redstone"
+      "item": {
+        "id": "minecraft:redstone"
+      }
     },
     {
       "chance": 0.5,
-      "item": "minecraft:redstone"
+      "item": {
+        "id": "minecraft:redstone"
+      }
     },
     {
       "chance": 0.75,
-      "item": "create:experience_nugget"
+      "item": {
+        "id": "create:experience_nugget"
+      }
     },
     {
       "chance": 0.125,
-      "item": "minecraft:cobbled_deepslate"
+      "item": {
+        "id": "minecraft:cobbled_deepslate"
+      }
     }
   ]
 }

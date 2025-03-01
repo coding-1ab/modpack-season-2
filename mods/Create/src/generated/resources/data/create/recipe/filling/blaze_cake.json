@@ -12,7 +12,9 @@
   ],
   "results": [
     {
-      "item": "create:blaze_cake"
+      "item": {
+        "id": "create:blaze_cake"
+      }
     }
   ]
 }

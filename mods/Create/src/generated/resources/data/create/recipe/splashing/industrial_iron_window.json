@@ -7,7 +7,9 @@
   ],
   "results": [
     {
-      "item": "create:weathered_iron_window"
+      "item": {
+        "id": "create:weathered_iron_window"
+      }
     }
   ]
 }

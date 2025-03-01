@@ -9,11 +9,15 @@
     {
       "chance": 0.125,
       "count": 4,
-      "item": "minecraft:quartz"
+      "item": {
+        "id": "minecraft:quartz"
+      }
     },
     {
       "chance": 0.02,
-      "item": "minecraft:gold_nugget"
+      "item": {
+        "id": "minecraft:gold_nugget"
+      }
     }
   ]
 }

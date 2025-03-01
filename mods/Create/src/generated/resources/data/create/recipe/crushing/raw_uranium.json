@@ -17,11 +17,15 @@
   "processing_time": 400,
   "results": [
     {
-      "item": "create:crushed_raw_uranium"
+      "item": {
+        "id": "create:crushed_raw_uranium"
+      }
     },
     {
       "chance": 0.75,
-      "item": "create:experience_nugget"
+      "item": {
+        "id": "create:experience_nugget"
+      }
     }
   ]
 }

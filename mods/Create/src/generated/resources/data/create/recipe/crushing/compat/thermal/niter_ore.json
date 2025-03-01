@@ -28,11 +28,15 @@
     },
     {
       "chance": 0.12,
-      "item": "minecraft:cobblestone"
+      "item": {
+        "id": "minecraft:cobblestone"
+      }
     },
     {
       "chance": 0.75,
-      "item": "create:experience_nugget"
+      "item": {
+        "id": "create:experience_nugget"
+      }
     }
   ]
 }

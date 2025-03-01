@@ -7,7 +7,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:infested_stone"
+      "item": {
+        "id": "minecraft:infested_stone"
+      }
     }
   ]
 }

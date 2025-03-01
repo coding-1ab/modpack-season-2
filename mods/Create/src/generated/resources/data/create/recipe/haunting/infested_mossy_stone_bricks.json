@@ -7,7 +7,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:infested_mossy_stone_bricks"
+      "item": {
+        "id": "minecraft:infested_mossy_stone_bricks"
+      }
     }
   ]
 }

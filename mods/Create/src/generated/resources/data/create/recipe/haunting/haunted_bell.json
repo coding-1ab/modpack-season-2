@@ -7,7 +7,9 @@
   ],
   "results": [
     {
-      "item": "create:haunted_bell"
+      "item": {
+        "id": "create:haunted_bell"
+      }
     }
   ]
 }

@@ -12,7 +12,9 @@
   ],
   "results": [
     {
-      "item": "create:builders_tea"
+      "item": {
+        "id": "create:builders_tea"
+      }
     }
   ]
 }

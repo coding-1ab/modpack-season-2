@@ -6,7 +6,9 @@
   "loops": 1,
   "results": [
     {
-      "item": "create:sturdy_sheet"
+      "item": {
+        "id": "create:sturdy_sheet"
+      }
     }
   ],
   "sequence": [
@@ -24,7 +26,9 @@
       ],
       "results": [
         {
-          "item": "create:unprocessed_obsidian_sheet"
+          "item": {
+            "id": "create:unprocessed_obsidian_sheet"
+          }
         }
       ]
     },
@@ -37,7 +41,9 @@
       ],
       "results": [
         {
-          "item": "create:unprocessed_obsidian_sheet"
+          "item": {
+            "id": "create:unprocessed_obsidian_sheet"
+          }
         }
       ]
     },
@@ -50,12 +56,16 @@
       ],
       "results": [
         {
-          "item": "create:unprocessed_obsidian_sheet"
+          "item": {
+            "id": "create:unprocessed_obsidian_sheet"
+          }
         }
       ]
     }
   ],
   "transitional_item": {
-    "item": "create:unprocessed_obsidian_sheet"
+    "item": {
+      "id": "create:unprocessed_obsidian_sheet"
+    }
   }
 }

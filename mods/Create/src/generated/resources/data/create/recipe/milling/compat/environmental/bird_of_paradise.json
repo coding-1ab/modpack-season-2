@@ -20,15 +20,21 @@
   "results": [
     {
       "count": 3,
-      "item": "minecraft:orange_dye"
+      "item": {
+        "id": "minecraft:orange_dye"
+      }
     },
     {
       "chance": 0.25,
-      "item": "minecraft:blue_dye"
+      "item": {
+        "id": "minecraft:blue_dye"
+      }
     },
     {
       "chance": 0.25,
-      "item": "minecraft:red_dye"
+      "item": {
+        "id": "minecraft:red_dye"
+      }
     }
   ]
 }

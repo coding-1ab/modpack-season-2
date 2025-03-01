@@ -20,7 +20,9 @@
   "results": [
     {
       "count": 2,
-      "item": "minecraft:black_dye"
+      "item": {
+        "id": "minecraft:black_dye"
+      }
     }
   ]
 }

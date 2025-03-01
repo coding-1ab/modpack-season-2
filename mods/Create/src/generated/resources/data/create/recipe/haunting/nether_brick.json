@@ -7,7 +7,9 @@
   ],
   "results": [
     {
-      "item": "minecraft:nether_brick"
+      "item": {
+        "id": "minecraft:nether_brick"
+      }
     }
   ]
 }

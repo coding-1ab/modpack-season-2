@@ -17,11 +17,15 @@
   "processing_time": 250,
   "results": [
     {
-      "item": "create:cinder_flour"
+      "item": {
+        "id": "create:cinder_flour"
+      }
     },
     {
       "chance": 0.5,
-      "item": "create:cinder_flour"
+      "item": {
+        "id": "create:cinder_flour"
+      }
     }
   ]
 }
