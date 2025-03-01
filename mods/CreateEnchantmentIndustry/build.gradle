@@ -1,79 +1,102 @@
 plugins {
     id 'idea'
-    id 'net.minecraftforge.gradle'
-    id 'org.spongepowered.mixin'
-    id 'org.parchmentmc.librarian.forgegradle'
     id 'maven-publish'
-    id "me.modmuss50.mod-publish-plugin" version "0.7.4"
+    id "net.neoforged.moddev.legacyforge" version "2.0.78"
+    id "me.modmuss50.mod-publish-plugin" version "0.8.3"
 }
 
-version = mod_version
-group = 'plus.dragons.createenchantmentindustry'
-archivesBaseName = "create_enchantment_industry-${artifact_minecraft_version}-for-create-${create_version}"
+base {
+    archivesName = "create_enchantment_industry-${artifact_minecraft_version}-for-create-${create_version}"
+    group = 'plus.dragons.createenchantmentindustry'
+    version = mod_version
+}
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.withSourcesJar()
+java.withJavadocJar()
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
-minecraft {
-    mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+legacyForge {
+    version = "$minecraft_version-$forge_version"
+
+    // TODO - Try turning this on later  see Create
+    validateAccessTransformers = false
+
+    if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
+        accessTransformers.from "src/main/resources/META-INF/accesstransformer.cfg"
+    }
+
+    parchment {
+        minecraftVersion = minecraft_version
+        mappingsVersion = parchment_version
+    }
+
+    mods {
+        create_enchantment_industry {
+            sourceSet sourceSets.main
+        }
+    }
+
     runs {
+        // applies to all the run configs below
+        configureEach {
+            systemProperty 'forge.logging.markers', ''
+            systemProperty 'forge.logging.console.level', 'info'
+            jvmArguments = ["-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition"]
+            //jvmArgs("-XX:-OmitStackTraceInFastThrow") // uncomment when you get exceptions with null messages etc
+            //jvmArgs '-XX:+UnlockCommercialFeatures' // uncomment for profiling
+
+            systemProperty 'mixin.debug.export', 'true'
+            systemProperty 'mixin.debug.verbose', 'true'
+
+            programArgument '-mixin.config=create_enchantment_industry.mixins.json'
+        }
+
         client {
-            workingDirectory project.file('run')
-            arg '-mixin.config=create_enchantment_industry.mixins.json'
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.enabledGameTestNamespaces', 'create_enchantment_industry'
-            mods {
-                create_enchantment_industry {
-                    source sourceSets.main
-                }
-            }
+            client()
+
+            gameDirectory = project.file('run')
         }
+
         server {
-            workingDirectory project.file('run')
-            arg '-mixin.config=create_enchantment_industry.mixins.json'
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'create_enchantment_industry'
-            mods {
-                create_enchantment_industry {
-                    source sourceSets.main
-                }
-            }
+            server()
+
+            gameDirectory = project.file('run/server')
         }
+
         data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            args '--mod', 'create_enchantment_industry',
-                 '--all', '--output', file('src/generated/resources/'),
-                 '--existing', file('src/main/resources/'),
-                 '--existing-mod', 'create'
-            mods {
-                create_enchantment_industry {
-                    source sourceSets.main
-                }
-            }
+            data()
+
+            gameDirectory = project.file('run')
+            systemProperty 'forge.logging.markers', 'REGISTRIES,REGISTRYDUMP'
+            systemProperty 'forge.logging.console.level', 'debug'
+            programArguments.addAll("--mod", "create_enchantment_industry", "--all", "--output", file("src/generated/resources/").getAbsolutePath(), "--existing", file("src/main/resources").getAbsolutePath())
+        }
+
+        gameTestServer {
+            type = "gameTestServer"
+
+            gameDirectory = project.file('run/gametest')
+            // setForceExit false <- FIXME 1.20  see Create
         }
     }
 }
 
-jarJar.enable()
-
 repositories {
-    mavenLocal()
-    maven {
-        name 'Tterrag Maven'
-        url 'https://maven.tterrag.com/'
-    }
-    maven {
-        name 'Blamejared Maven'
-        url 'https://maven.blamejared.com'
-    }
-    maven {
-        name 'TheIllusiveC4 Maven'
-        url 'https://maven.theillusivec4.top/'
-    }
+    maven { url = "https://maven.createmod.net" } // Ponder, Flywheel
+    maven { url = "https://maven.tterrag.com" } // Registrate
+    maven { url = "https://maven.blamejared.com" } // JEI, Vazkii's Mods
+    maven { url = "https://maven.theillusivec4.top/" } // Curios API
+    maven { url = "https://www.cursemaven.com" }
+    maven { url = "https://api.modrinth.com/maven" }
     maven {
         name 'DragonsPlus Maven'
         url "https://maven.dragons.plus/releases"
@@ -81,47 +104,48 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-
-    jarJar(group: 'plus.dragons.createdragonlib', name: "create_dragon_lib-${minecraft_version}", version: "${create_dragon_lib_version_range}") {
+    jarJar("plus.dragons.createdragonlib:create_dragon_lib-${minecraft_version}") {
+        version {
+            strictly "${create_dragon_lib_version_range}"
+        }
         transitive = false
-        jarJar.pin(it, project.create_dragon_lib_version)
     }
 
-    implementation fg.deobf("com.simibubi.create:create-${create_minecraft_version}:${create_version}-${create_version_build}:slim") { transitive = false }
-    implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
-    implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
+    modImplementation("com.simibubi.create:create-${create_minecraft_version}:${create_version}-${create_version_build}") { transitive = false }
+    modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${flywheel_minecraft_version}:${flywheel_version}")
+    modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
+    modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
+    modImplementation("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}")
 
-    implementation fg.deobf("plus.dragons.createdragonlib:create_dragon_lib-${minecraft_version}:${create_dragon_lib_version}")
+    modImplementation("plus.dragons.createdragonlib:create_dragon_lib-${minecraft_version}:${create_dragon_lib_version}")
 
-    compileOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}-forge-api:${jei_version}")
-    implementation fg.deobf("mezz.jei:jei-${jei_minecraft_version}-forge:${jei_version}")
+    modCompileOnly("mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}")
+    modCompileOnly("mezz.jei:jei-${jei_minecraft_version}-forge-api:${jei_version}")
+    modImplementation("mezz.jei:jei-${jei_minecraft_version}-forge:${jei_version}")
 
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_minecraft_version}-${curios_version}:api")
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_minecraft_version}-${curios_version}")
+    modCompileOnly("top.theillusivec4.curios:curios-forge:${curios_version}+${curios_minecraft_version}:api")
+    modRuntimeOnly("top.theillusivec4.curios:curios-forge:${curios_version}+${curios_minecraft_version}")
 
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+    exclude ".cache"
+    exclude "assets/create_enchantment_industry/lang-gen"
+    exclude "assets/create_enchantment_industry/lang/default"
+}
 
 mixin {
     add sourceSets.main, 'create_enchantment_industry.refmap.json'
     config 'create_enchantment_industry.mixins.json'
-
-    debug.verbose = true
-    debug.export = true
 }
 
-idea{
-    module {
-        downloadJavadoc = true
-        downloadSources = true
-    }
-}
+
 jar {
-    archiveClassifier = 'slim'
+    from('LICENSE') {
+        rename { "${it}_${archivesBaseName}" }
+    }
     manifest {
         attributes([
                 "Specification-Title"     : "create_enchantment_industry",
@@ -136,18 +160,8 @@ jar {
     }
 }
 
-void addLicense(jarTask) {
-    jarTask.from('LICENSE')
-}
-
-void removeRedundant(jarTask){
-    jarTask.exclude(".cache")
-    jarTask.exclude("assets/create_enchantment_industry/lang-gen")
-    jarTask.exclude("assets/create_enchantment_industry/lang/default")
-}
-
 publishMods {
-    file = tasks.jarJar.archiveFile
+    file = jar.archiveFile
     changelog = new File("changelog/${mod_version}.md").text
     version = mod_version
     type = STABLE
@@ -176,21 +190,12 @@ publishMods {
     }
 }
 
-jar.finalizedBy('reobfJar')
-addLicense(jar)
-removeRedundant(jar)
-tasks.jarJar.setArchiveClassifier('')
-tasks.jarJar.finalizedBy('reobfJarJar')
-addLicense(tasks.jarJar)
-removeRedundant(tasks.jarJar)
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = archivesBaseName
-
-            fg.component(it)
-            jarJar.component(it)
+            artifactId base.archivesName.get()
+            from components.java
         }
     }
     repositories {
