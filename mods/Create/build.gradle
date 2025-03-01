@@ -240,7 +240,6 @@ final slimJar = tasks.register("slimJar", Jar) {
         "Git-Hash": gitHash
     ])
 }
-obfuscation.reobfuscate(slimJar, sourceSets.main)
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
@@ -297,18 +296,17 @@ publishing {
 }
 
 publishMods {
-    file = reobfJar.archiveFile
+    file = jar.archiveFile
     changelog = ChangelogText.getChangelogText(project).toString()
     type = STABLE
     displayName = "$mod_name $mod_version for mc$minecraft_version"
     modLoaders.add("neoforge")
 
-    // TODO - Uncomment post update 6
-//    curseforge {
-//        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-//        projectId = "328085"
-//        minecraftVersions.add(minecraft_version)
-//    }
+    curseforge {
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        projectId = "328085"
+        minecraftVersions.add(minecraft_version)
+    }
 
     modrinth {
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")

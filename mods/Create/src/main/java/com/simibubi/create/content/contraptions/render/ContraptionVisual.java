@@ -14,8 +14,6 @@ import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.foundation.utility.worldWrappers.WrappedBlockAndTintGetter;
 import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 
-import net.minecraftforge.client.model.data.ModelData;
-
 import dev.engine_room.flywheel.api.material.CardinalLightingMode;
 import dev.engine_room.flywheel.api.model.Model;
 import dev.engine_room.flywheel.api.task.Plan;
