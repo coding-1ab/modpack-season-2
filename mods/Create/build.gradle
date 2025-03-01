@@ -306,8 +306,8 @@ tasks.named("sourcesJar") {
     ])
 }
 
-final slimJar = tasks.register('slimJar', Jar) {
-    archiveClassifier = 'slim'
+final slimJar = tasks.register("slimJar", Jar) {
+    archiveClassifier = "slim"
     from sourceSets.main.output
     manifest.attributes([
         "Git-Hash": gitHash
@@ -320,6 +320,10 @@ project.publishing {
         mavenJava(MavenPublication) {
             artifactId base.archivesName.get()
             from components.java
+
+            artifact(tasks.jar) {
+                classifier = "all"
+            }
         }
     }
 
@@ -339,6 +343,7 @@ project.publishing {
         if (project.hasProperty('mavendir')) {
             maven { url mavendir }
         }
+        mavenLocal()
     }
 }
 
