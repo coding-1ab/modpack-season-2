@@ -14,9 +14,7 @@ public class RollingMillVisual extends KineticBlockEntityVisual<RollingMillBlock
 
     public RollingMillVisual(VisualizationContext context, RollingMillBlockEntity blockEntity, float partialTick) {
         super(context, blockEntity, partialTick);
-    }
 
-    public void init() {
         this.rotatingModel1 = this.setup((RotatingInstance)this.getModel().createInstance());
         this.rotatingModel2 = this.setup((RotatingInstance)this.getModel().createInstance());
 
@@ -45,16 +43,6 @@ public class RollingMillVisual extends KineticBlockEntityVisual<RollingMillBlock
     public void updateLight(float v) {
         this.relight(this.pos, this.rotatingModel1, this.rotatingModel2);
     }
-
-    //@Override
-    //protected BlockState getRenderedBlockState() {
-    //    return AllBlocks.SHAFT.getDefaultState().setValue(ShaftBlock.AXIS, blockState.getValue(RollingMillBlock.HORIZONTAL_FACING).getAxis());
-    //}
-
-    //@Override
-    //protected Instancer<RotatingInstance> getModel() {
-    //    return this.getRotatingMaterial().getModel(this.getRenderedBlockState());
-    //}
 
     @Override
     public void collectCrumblingInstances(Consumer<@Nullable Instance> consumer) {
