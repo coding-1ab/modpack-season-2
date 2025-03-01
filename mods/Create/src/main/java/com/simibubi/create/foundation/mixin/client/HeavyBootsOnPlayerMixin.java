@@ -18,6 +18,6 @@ public abstract class HeavyBootsOnPlayerMixin extends AbstractClientPlayer {
 
 	@ModifyReturnValue(method = "isUnderWater()Z", at = @At("RETURN"))
 	private boolean create$noSwimmingWithHeavyBootsOn(boolean original) {
-		return getPersistentData().contains("HeavyBoots") || original;
+		return original || !getPersistentData().contains("HeavyBoots");
 	}
 }

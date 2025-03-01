@@ -176,7 +176,7 @@ dependencies {
 
     modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${flywheel_minecraft_version}:${flywheel_version}")
     modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
-    modRuntimeOnly("dev.engine-room.vanillin:vanillin-forge-${flywheel_minecraft_version}:${flywheel_version}")
+    modRuntimeOnly("dev.engine-room.vanillin:vanillin-forge-${flywheel_minecraft_version}:${vanillin_version}")
 
     if (ponderInWorkspace) {
         implementation project(":ponder:Common")
@@ -306,11 +306,22 @@ tasks.named("sourcesJar") {
     ])
 }
 
+final slimJar = tasks.register('slimJar', Jar) {
+    archiveClassifier = 'slim'
+    from sourceSets.main
+    manifest.attributes([
+        "Git-Hash": gitHash
+    ])
+}
+obfuscation.reobfuscate(slimJar, sourceSets.main)
+
 project.publishing {
     publications {
         mavenJava(MavenPublication) {
             artifactId base.archivesName.get()
             from components.java
+
+            artifact(tasks.slimJar)
         }
     }
 
