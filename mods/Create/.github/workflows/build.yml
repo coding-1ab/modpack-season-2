@@ -1,6 +1,6 @@
-name: Publish Release
+name: Build
 
-on: workflow_dispatch
+on: [ workflow_dispatch, push, pull_request ]
 
 jobs:
   build:
@@ -15,16 +15,20 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: NeoGradle Cache
+        uses: actions/cache@v4
+        with:
+          path: "**/.gradle/repositories/"
+          key: "${{ runner.os }}-gradle-${{ hashFiles('**/libs.versions.*', '**/*.gradle*', '**/gradle-wrapper.properties') }}"
+          restore-keys: "${{ runner.os }}-gradle-"
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          cache-disabled: true
+          gradle-home-cache-cleanup: true
 
       - name: Validate Gradle Wrapper Integrity
         uses: gradle/wrapper-validation-action@v2
 
-      - name: Build & Publish
-        env:
-          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
-          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
-        run: ./gradlew build publish publishMods
+      - name: Build
+        run: ./gradlew build
