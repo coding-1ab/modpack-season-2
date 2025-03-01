@@ -3,7 +3,7 @@ package com.mrh0.createaddition.index;
 import com.mrh0.createaddition.CreateAddition;
 import com.simibubi.create.foundation.data.CreateEntityBuilder;
 import com.simibubi.create.foundation.data.CreateRegistrate;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
@@ -29,7 +29,7 @@ public class CAEntities {
 			NonNullSupplier<NonNullFunction<Context, EntityRenderer<? super T>>> renderer,
 			MobCategory group, int range, int updateFrequency, boolean sendVelocity, boolean immuneToFire,
 			NonNullConsumer<Builder<T>> propertyBuilder) {
-		String id = Lang.asId(name);
+		String id = CreateLang.asId(name);
 		return (CreateEntityBuilder<T, ?>)
 				CreateAddition.REGISTRATE.entity(id, factory, group)
 			.properties(b -> b.setTrackingRange(range)

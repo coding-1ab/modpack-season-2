@@ -1,8 +1,8 @@
 package com.mrh0.createaddition.shapes;
 
 import java.util.function.BiFunction;
-import com.simibubi.create.foundation.utility.VoxelShaper;
 
+import net.createmod.catnip.math.VoxelShaper;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.level.block.Block;

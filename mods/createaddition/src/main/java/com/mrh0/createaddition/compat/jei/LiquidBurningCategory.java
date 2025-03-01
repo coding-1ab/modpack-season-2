@@ -9,7 +9,7 @@ import com.mrh0.createaddition.util.ClientMinecraftWrapper;
 import com.simibubi.create.compat.jei.category.animations.AnimatedBlazeBurner;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -45,7 +45,7 @@ public class LiquidBurningCategory extends CARecipeCategory<LiquidBurningRecipe>
 			.addSlot(RecipeIngredientRole.INPUT, getBackground().getWidth() / 2 -16, 3)
 			.setBackground(getRenderedSlot(), -1, -1)
 			.addIngredients(ForgeTypes.FLUID_STACK, withImprovedVisibility(recipe.getFluidIngredient().getMatchingFluidStacks()))
-			.addTooltipCallback(addFluidTooltip(recipe.getFluidIngredient().getRequiredAmount()));
+			.addRichTooltipCallback(addFluidTooltip(recipe.getFluidIngredient().getRequiredAmount()));
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class LiquidBurningCategory extends CARecipeCategory<LiquidBurningRecipe>
 		AllGuiTextures.JEI_LIGHT.render(gg, 81, 58 + 30 - 50);
 
 		AllGuiTextures.JEI_HEAT_BAR.render(gg, 4, 80 - 50);
-		gg.drawString(ClientMinecraftWrapper.getFont(), Lang.translateDirect(requiredHeat.getTranslationKey()), 9,
+		gg.drawString(ClientMinecraftWrapper.getFont(), CreateLang.translateDirect(requiredHeat.getTranslationKey()), 9,
 				86 - 50, requiredHeat.getColor());
 
 		heater.withHeat(requiredHeat.visualizeAsBlazeBurner())

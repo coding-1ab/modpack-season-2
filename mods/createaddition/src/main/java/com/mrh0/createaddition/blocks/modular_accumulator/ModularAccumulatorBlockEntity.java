@@ -13,19 +13,19 @@ import com.mrh0.createaddition.network.ObservePacket;
 import com.mrh0.createaddition.sound.CASoundScapes;
 import com.mrh0.createaddition.util.Util;
 import com.simibubi.create.Create;
-import com.simibubi.create.CreateClient;
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.redstone.thresholdSwitch.ThresholdSwitchObservable;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -405,7 +405,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		}
 
 		if (isController())
-			gauge.chase(getFillState(), 0.125f, Chaser.EXP);
+			gauge.chase(getFillState(), 0.125f, LerpedFloat.Chaser.EXP);
 	}
 
 	public float getFillState() {
@@ -527,6 +527,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 
 		ObservePacket.send(worldPosition, 0);
 
+		String spacing = " ";
 		tooltip.add(Component.literal(spacing)
 				.append(Component.translatable(CreateAddition.MODID + ".tooltip.accumulator.info").withStyle(ChatFormatting.WHITE)));
 		tooltip.add(Component.literal(spacing)
@@ -574,13 +575,28 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		if (controller == null) return;
 		// Outline controller.
 		VoxelShape shape = level.getBlockState(controller.getBlockPos()).getBlockSupportShape(level, controller.getBlockPos());
-		CreateClient.OUTLINER.chaseAABB("ca_accumulator", shape.bounds().move(controller.getBlockPos())).lineWidth(0.0625F).colored(0xFF5B5B);
+		Outliner.getInstance().chaseAABB("ca_accumulator", shape.bounds().move(controller.getBlockPos())).lineWidth(0.0625F).colored(0xFF5B5B);
 	}
 
 	@Override
-	public float getPercent() {
+	public int getMaxValue() {
+		return 100;
+	}
+
+	@Override
+	public int getMinValue() {
+		return 0;
+	}
+
+	@Override
+	public int getCurrentValue() {
 		ModularAccumulatorBlockEntity controllerTE = getControllerBE();
-		if (controllerTE == null) return 0f;
-		return controllerTE.getFillState() * 100f;
+		if (controllerTE == null) return 0;
+		return Math.round(controllerTE.getFillState() * 100f);
+	}
+
+	@Override
+	public MutableComponent format(int i) {
+		return Component.literal(getCurrentValue() + "%");
 	}
 }

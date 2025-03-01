@@ -6,11 +6,11 @@ import com.simibubi.create.content.contraptions.elevator.ElevatorColumn;
 import com.simibubi.create.content.contraptions.elevator.ElevatorContactBlock;
 import com.simibubi.create.content.contraptions.elevator.ElevatorContraption;
 import com.simibubi.create.content.contraptions.elevator.ElevatorPulleyBlockEntity;
-import com.simibubi.create.foundation.utility.IntAttached;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import net.createmod.catnip.data.IntAttached;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -197,7 +197,7 @@ public class DigitalAdapterPeripheral implements IPeripheral {
         if(ec == null) return 0;
 
         for(int i = 0; i < ec.namesList.size(); ++i) {
-            if ((int)((IntAttached)ec.namesList.get(i)).getFirst() == ec.getCurrentTargetY(ep.getLevel())) {
+            if ((int) ec.namesList.get(i).getFirst() == ec.getCurrentTargetY(ep.getLevel())) {
                 return i;
             }
         }

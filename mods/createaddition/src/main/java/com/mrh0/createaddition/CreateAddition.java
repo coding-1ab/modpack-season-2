@@ -2,14 +2,15 @@ package com.mrh0.createaddition;
 
 import com.mrh0.createaddition.index.*;
 import com.mrh0.createaddition.index.CASounds;
+import com.mrh0.createaddition.ponder.CAPonderPlugin;
 import com.mrh0.createaddition.trains.schedule.CASchedule;
 import com.simibubi.create.content.fluids.tank.BoilerHeaters;
-import com.simibubi.create.content.kinetics.BlockStressValues;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
-import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.infrastructure.config.AllConfigs;
+import net.createmod.catnip.lang.FontHelper;
+import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.commands.CommandSourceStack;
@@ -43,6 +44,8 @@ import com.mrh0.createaddition.network.EnergyNetworkPacket;
 import com.mrh0.createaddition.network.ObservePacket;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.TooltipModifier;
+import com.simibubi.create.api.stress.BlockStressValues;
+import com.simibubi.create.api.boiler.BoilerHeater;
 
 @Mod(CreateAddition.MODID)
 public class CreateAddition {
@@ -64,7 +67,7 @@ public class CreateAddition {
             .simpleChannel();
 
     static {
-        REGISTRATE.setTooltipModifierFactory(item -> new ItemDescription.Modifier(item, TooltipHelper.Palette.STANDARD_CREATE)
+        REGISTRATE.setTooltipModifierFactory(item -> new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
                 .andThen(TooltipModifier.mapNull(KineticStats.create(item))));
     }
 
@@ -96,25 +99,27 @@ public class CreateAddition {
         CASchedule.register();
         CADamageTypes.register();
         CAArmInteractions.register();
+        CADisplaySources.register();
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> CAPartials::init);
-
     }
 
     private void setup(final FMLCommonSetupEvent event) {
     	CAPotatoCannonProjectiles.register();
-    	BlockStressValues.registerProvider(MODID, AllConfigs.server().kinetics.stressValues);
-    	BoilerHeaters.registerHeater(CABlocks.LIQUID_BLAZE_BURNER.get(), (level, pos, state) -> {
-    		BlazeBurnerBlock.HeatLevel value = state.getValue(LiquidBlazeBurnerBlock.HEAT_LEVEL);
-			if (value == BlazeBurnerBlock.HeatLevel.NONE) return -1;
-			if (value == BlazeBurnerBlock.HeatLevel.SEETHING) return 2;
-			if (value.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING)) return 1;
-			return 0;
-    	});
+    	// BlockStressValues.CAPACITIES.registerProvider(MODID, AllConfigs.server().kinetics.stressValues);
+        BoilerHeater.REGISTRY.register(CABlocks.LIQUID_BLAZE_BURNER.get(), (level, pos, state) -> {
+            BlazeBurnerBlock.HeatLevel value = state.getValue(LiquidBlazeBurnerBlock.HEAT_LEVEL);
+            if (value == BlazeBurnerBlock.HeatLevel.NONE) return -1;
+            if (value == BlazeBurnerBlock.HeatLevel.SEETHING) return 2;
+            if (value.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING)) return 1;
+            return 0;
+        });
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
-    	event.enqueueWork(CAPonder::register);
+    	// event.enqueueWork(CAPonder::register);
         event.enqueueWork(CAItemProperties::register);
+
+        PonderIndex.addPlugin(new CAPonderPlugin());
 
         RenderType cutout = RenderType.cutoutMipped();
 

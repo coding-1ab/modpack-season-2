@@ -1,5 +1,7 @@
 package com.mrh0.createaddition.index;
 
+import static com.simibubi.create.api.behaviour.display.DisplaySource.displaySource;
+import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.CreateRegistrate.connectedTextures;
 import com.mrh0.createaddition.CreateAddition;
@@ -25,16 +27,14 @@ import com.mrh0.createaddition.blocks.rolling_mill.RollingMillBlock;
 import com.mrh0.createaddition.blocks.tesla_coil.TeslaCoilBlock;
 import com.mrh0.createaddition.config.Config;
 import com.mrh0.createaddition.item.BiomassPelletBlock;
-import com.simibubi.create.AllMovementBehaviours;
 import com.simibubi.create.AllTags.AllBlockTags;
-import com.simibubi.create.content.kinetics.BlockStressDefaults;
+import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.SharedProperties;
-import com.simibubi.create.foundation.utility.Couple;
+import com.simibubi.create.infrastructure.config.CStress;
 import com.tterrag.registrate.util.entry.BlockEntry;
-import static com.simibubi.create.content.redstone.displayLink.AllDisplayBehaviours.assignDataBehaviour;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 import net.minecraft.client.renderer.RenderType;
@@ -55,15 +55,15 @@ public class CABlocks {
 	public static final BlockEntry<ElectricMotorBlock> ELECTRIC_MOTOR = CreateAddition.REGISTRATE.block("electric_motor", ElectricMotorBlock::new)
 			.initialProperties(SharedProperties::softMetal)
 			.tag(AllBlockTags.SAFE_NBT.tag) //Dono what this tag means (contraption safe?).
-			.transform(BlockStressDefaults.setCapacity(Config.MAX_STRESS.get()/256f))
-			.transform(BlockStressDefaults.setGeneratorSpeed(() -> Couple.create(0, 256)))
+			.transform(CStress.setCapacity(Config.MAX_STRESS.get()/256f))
+			.onRegister(BlockStressValues.setGeneratorSpeed(256, true))
 			.item()
 			.transform(customItemModel())
 			.register();
 
 	public static final BlockEntry<AlternatorBlock> ALTERNATOR = CreateAddition.REGISTRATE.block("alternator", AlternatorBlock::new)
 			.initialProperties(SharedProperties::softMetal)
-			.transform(BlockStressDefaults.setImpact(Config.MAX_STRESS.get()/256f))
+			.transform(CStress.setImpact(Config.MAX_STRESS.get()/256f))
 			.tag(AllBlockTags.SAFE_NBT.tag) //Dono what this tag means (contraption safe?).
 			.item()
 			.transform(customItemModel())
@@ -71,7 +71,7 @@ public class CABlocks {
 
 	public static final BlockEntry<RollingMillBlock> ROLLING_MILL = CreateAddition.REGISTRATE.block("rolling_mill", RollingMillBlock::new)
 			.initialProperties(SharedProperties::stone)
-			.transform(BlockStressDefaults.setImpact(Config.ROLLING_MILL_STRESS.get()))
+			.transform(CStress.setImpact(Config.ROLLING_MILL_STRESS.get()))
 			.tag(AllBlockTags.SAFE_NBT.tag) //Dono what this tag means (contraption safe?).
 			.item()
 			.transform(customItemModel())
@@ -86,21 +86,21 @@ public class CABlocks {
 
 	public static final BlockEntry<SmallConnectorBlock> SMALL_CONNECTOR = CreateAddition.REGISTRATE.block("connector",  SmallConnectorBlock::new)
 			.initialProperties(SharedProperties::stone)
-			.onRegister(AllMovementBehaviours.movementBehaviour(new NodeMovementBehaviour()))
+			.onRegister(movementBehaviour(new NodeMovementBehaviour()))
 			.item()
 			.transform(customItemModel())
 			.register();
 
 	public static final BlockEntry<SmallLightConnectorBlock> SMALL_LIGHT_CONNECTOR = CreateAddition.REGISTRATE.block("small_light_connector",  SmallLightConnectorBlock::new)
 			.initialProperties(SharedProperties::stone)
-			.onRegister(AllMovementBehaviours.movementBehaviour(new NodeMovementBehaviour()))
+			.onRegister(movementBehaviour(new NodeMovementBehaviour()))
 			.item()
 			.transform(customItemModel())
 			.register();
 
 	public static final BlockEntry<LargeConnectorBlock> LARGE_CONNECTOR = CreateAddition.REGISTRATE.block("large_connector",  LargeConnectorBlock::new)
 			.initialProperties(SharedProperties::stone)
-			.onRegister(AllMovementBehaviours.movementBehaviour(new NodeMovementBehaviour()))
+			.onRegister(movementBehaviour(new NodeMovementBehaviour()))
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -115,7 +115,7 @@ public class CABlocks {
 
 	public static final BlockEntry<RedstoneRelayBlock> REDSTONE_RELAY = CreateAddition.REGISTRATE.block("redstone_relay",  RedstoneRelayBlock::new)
 			.initialProperties(SharedProperties::stone)
-			.onRegister(AllMovementBehaviours.movementBehaviour(new NodeMovementBehaviour()))
+			.onRegister(movementBehaviour(new NodeMovementBehaviour()))
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -157,9 +157,9 @@ public class CABlocks {
 	public static final BlockEntry<ModularAccumulatorBlock> MODULAR_ACCUMULATOR = CreateAddition.REGISTRATE.block("modular_accumulator",  ModularAccumulatorBlock::regular)
 			.initialProperties(SharedProperties::softMetal)
 			.properties(BlockBehaviour.Properties::noOcclusion)
-			.onRegister(AllMovementBehaviours.movementBehaviour(new ModularAccumulatorMovement()))
+			.onRegister(movementBehaviour(new ModularAccumulatorMovement()))
 			.onRegister(connectedTextures(ModularAccumulatorCTBehaviour::new))
-			.onRegister(assignDataBehaviour(new ModularAccumulatorDisplaySource(), "modular_accumulator"))
+			.transform(displaySource(CADisplaySources.MODULAR_ACCUMULATOR))
 			//.onRegister(assignDataBehaviour(ForgeEnergyDisplaySource.INSTANCE, "forge_energy"))
 			.addLayer(() -> RenderType::cutoutMipped)
 			.item(ModularAccumulatorBlockItem::new)
@@ -177,7 +177,7 @@ public class CABlocks {
 
 	public static final BlockEntry<PortableEnergyInterfaceBlock> PORTABLE_ENERGY_INTERFACE = CreateAddition.REGISTRATE.block("portable_energy_interface",  PortableEnergyInterfaceBlock::new)
 			.initialProperties(SharedProperties::softMetal)
-			.onRegister(AllMovementBehaviours.movementBehaviour(new PortableEnergyInterfaceMovement()))
+			.onRegister(movementBehaviour(new PortableEnergyInterfaceMovement()))
 			.addLayer(() -> RenderType::cutoutMipped)
 			.item()
 			.transform(customItemModel())
@@ -197,7 +197,7 @@ public class CABlocks {
 
 	public static final BlockEntry<DigitalAdapterBlock> DIGITAL_ADAPTER = CreateAddition.REGISTRATE.block("digital_adapter",  DigitalAdapterBlock::new)
 			.initialProperties(SharedProperties::softMetal)
-			.onRegister(assignDataBehaviour(new DigitalAdapterDisplaySource(), "digital_adapter"))
+			.transform(displaySource(CADisplaySources.DIGITAL_ADAPTER))
 			.properties(p -> p.mapColor(DyeColor.GRAY))
 			.item(DigitalAdapterBlockItem::new)
 			.transform(customItemModel())

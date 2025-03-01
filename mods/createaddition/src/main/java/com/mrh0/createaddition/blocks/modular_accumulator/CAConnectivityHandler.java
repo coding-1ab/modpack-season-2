@@ -12,10 +12,10 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
+import net.createmod.catnip.data.Iterate;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.mrh0.createaddition.energy.InternalEnergyStorage;
-import com.simibubi.create.foundation.utility.Iterate;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

@@ -2,9 +2,10 @@ package com.mrh0.createaddition.sound;
 
 import com.mrh0.createaddition.config.Config;
 import com.mrh0.createaddition.index.CASounds;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import com.simibubi.create.foundation.utility.Pair;
+
 import com.simibubi.create.infrastructure.config.AllConfigs;
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.data.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;

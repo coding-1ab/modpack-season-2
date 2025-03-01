@@ -1,11 +1,8 @@
 package com.mrh0.createaddition.blocks.modular_accumulator;
 
-import com.jozufozu.flywheel.core.virtual.VirtualRenderWorld;
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyManager;
-import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
+import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
-import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 
 public class ModularAccumulatorMovement implements MovementBehaviour {
@@ -61,10 +58,10 @@ public class ModularAccumulatorMovement implements MovementBehaviour {
 		PortableEnergyManager.untrack(context);
 	}
 
-	@Override
-	public boolean renderAsNormalBlockEntity() {
-		return true;
-	}
+	// @Override
+	// public boolean renderAsNormalBlockEntity() {
+	//	return true;
+	//}
 
 	private static class TemporaryData {
 

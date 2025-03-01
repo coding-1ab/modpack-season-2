@@ -1,16 +1,16 @@
 package com.mrh0.createaddition.blocks.portable_energy_interface;
 
-import com.jozufozu.flywheel.api.MaterialManager;
-import com.jozufozu.flywheel.core.virtual.VirtualRenderWorld;
+import com.simibubi.create.content.contraptions.render.ActorVisual;
+import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
+import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
 import com.simibubi.create.content.contraptions.Contraption;
-import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
-import com.simibubi.create.content.contraptions.render.ActorInstance;
 import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
-import com.simibubi.create.content.contraptions.render.ContraptionRenderDispatcher;
 import com.simibubi.create.content.trains.entity.CarriageContraption;
-import com.simibubi.create.foundation.utility.VecHelper;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
+import dev.engine_room.flywheel.api.visualization.VisualizationContext;
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,29 +27,30 @@ import java.util.Optional;
 
 public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 
+	static final String _workingPos_ = "WorkingPos";
+	static final String _clientPrevPos_ = "ClientPrevPos";
+
 	@Override
 	public Vec3 getActiveAreaOffset(MovementContext context) {
 		return Vec3.atLowerCornerOf(context.state.getValue(PortableEnergyInterfaceBlock.FACING).getNormal()).scale(1.850000023841858D);
 	}
 
-	@Override
-	public boolean hasSpecialInstancedRendering() {
-		return true;
-	}
-
-	@Override
-	@Nullable
-	public ActorInstance createInstance(MaterialManager materialManager, VirtualRenderWorld simulationWorld, MovementContext context) {
-		return new PortableEnergyInterfaceActorInstance(materialManager, simulationWorld, context);
-	}
+	//@Override
+	//public boolean hasSpecialInstancedRendering() {
+	//	return true;
+	//}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void renderInContraption(MovementContext context, VirtualRenderWorld renderWorld, ContraptionMatrices matrices, MultiBufferSource buffer) {
-		if (!ContraptionRenderDispatcher.canInstance()) {
+		if (!VisualizationManager.supportsVisualization(context.world))
 			PortableEnergyInterfaceRenderer.renderInContraption(context, renderWorld, matrices, buffer);
-		}
+	}
 
+	@Override
+	@Nullable
+	public ActorVisual createVisual(VisualizationContext visualizationContext, VirtualRenderWorld simulationWorld, MovementContext movementContext) {
+		return new PEIActorVisual(visualizationContext, simulationWorld, movementContext);
 	}
 
 	@Override
@@ -57,9 +58,8 @@ public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 		boolean onCarriage = context.contraption instanceof CarriageContraption;
 		if (!onCarriage || !(context.motion.length() > 0.25D)) {
 			if (!this.findInterface(context, pos)) {
-				context.data.remove("WorkingPos");
+				context.data.remove(_workingPos_);
 			}
-
 		}
 	}
 
@@ -78,8 +78,8 @@ public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 					this.reset(context);
 				}
 
-			} else if (context.data.contains("WorkingPos")) {
-				pos = NbtUtils.readBlockPos(context.data.getCompound("WorkingPos"));
+			} else if (context.data.contains(_workingPos_)) {
+				pos = NbtUtils.readBlockPos(context.data.getCompound(_workingPos_));
 				Vec3 target = VecHelper.getCenterOf(pos);
 				if (!context.stall && !onCarriage && context.position.closerThan(target, target.distanceTo(context.position.add(context.motion)))) {
 					context.stall = true;
@@ -126,14 +126,14 @@ public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 			} else if (psi.isPowered()) {
 				return false;
 			} else {
-				context.data.put("WorkingPos", NbtUtils.writeBlockPos(psi.getBlockPos()));
+				context.data.put(_workingPos_, NbtUtils.writeBlockPos(psi.getBlockPos()));
 				if (!context.world.isClientSide) {
 					Vec3 diff = VecHelper.getCenterOf(psi.getBlockPos()).subtract(context.position);
 					diff = VecHelper.project(diff, Vec3.atLowerCornerOf(currentFacing.getNormal()));
 					float distance = (float)(diff.length() + 1.850000023841858D - 1.0D);
 					psi.startTransferringTo(context.contraption, distance);
 				} else {
-					context.data.put("ClientPrevPos", NbtUtils.writeBlockPos(pos));
+					context.data.put(_clientPrevPos_, NbtUtils.writeBlockPos(pos));
 					if (context.contraption instanceof CarriageContraption || context.contraption.entity.isStalled() || context.motion.lengthSqr() == 0.0D) {
 						getAnimation(context).chase(psi.getConnectionDistance() / 2.0F, 0.25D, LerpedFloat.Chaser.LINEAR);
 					}
@@ -154,8 +154,8 @@ public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 	}
 
 	public void reset(MovementContext context) {
-		context.data.remove("ClientPrevPos");
-		context.data.remove("WorkingPos");
+		context.data.remove(_clientPrevPos_);
+		context.data.remove(_workingPos_);
 		context.stall = false;
 		getAnimation(context).chase(0.0D, 0.25D, LerpedFloat.Chaser.LINEAR);
 	}

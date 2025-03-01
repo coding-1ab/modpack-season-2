@@ -15,7 +15,7 @@ import com.mrh0.createaddition.network.IObserveTileEntity;
 import com.mrh0.createaddition.network.ObservePacket;
 import com.simibubi.create.CreateClient;
 
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -351,6 +351,7 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		ObservePacket.send(worldPosition, 0);
 
+		String spacing = " ";
 		tooltip.add(Component.literal(spacing)
 				.append(Component.translatable(CreateAddition.MODID + ".tooltip.connector.info").withStyle(ChatFormatting.WHITE)));
 
@@ -414,7 +415,7 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 				color = 0xFF00FF;
 			}
 			// ca_ = Create Addition
-			CreateClient.OUTLINER.chaseAABB("ca_nodes_" + i, shape.bounds().move(pos)).lineWidth(0.0625F).colored(color);
+			net.createmod.catnip.outliner.Outliner.getInstance().chaseAABB("ca_nodes_" + i, shape.bounds().move(pos)).lineWidth(0.0625F).colored(color);
 		}
 		// Outline connected power
 		BlockEntity te = level.getBlockEntity(worldPosition.relative(getBlockState().getValue(AbstractConnectorBlock.FACING)));
@@ -425,6 +426,6 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 
 		if (!cap.isPresent()) return;
 		VoxelShape shape = level.getBlockState(te.getBlockPos()).getBlockSupportShape(level, te.getBlockPos());
-		CreateClient.OUTLINER.chaseAABB("ca_output", shape.bounds().move(te.getBlockPos())).lineWidth(0.0625F).colored(0x5B5BFF);
+		net.createmod.catnip.outliner.Outliner.getInstance().chaseAABB("ca_output", shape.bounds().move(te.getBlockPos())).lineWidth(0.0625F).colored(0x5B5BFF);
 	}
 }
