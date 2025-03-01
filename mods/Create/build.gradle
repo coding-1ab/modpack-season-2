@@ -308,7 +308,7 @@ tasks.named("sourcesJar") {
 
 final slimJar = tasks.register('slimJar', Jar) {
     archiveClassifier = 'slim'
-    from sourceSets.main
+    from sourceSets.main.output
     manifest.attributes([
         "Git-Hash": gitHash
     ])
