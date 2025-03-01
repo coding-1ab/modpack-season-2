@@ -334,18 +334,18 @@ project.publishing {
 }
 
 publishMods {
-    file = jar.archiveFile
+    file = reobfJar.archiveFile
     changelog = ChangelogText.getChangelogText(project).toString()
     type = STABLE
-    displayName = "$mod_name $minecraft_version $mod_version"
+    displayName = "$mod_name $mod_version for mc$minecraft_version"
     modLoaders.add("forge")
     modLoaders.add("neoforge")
 
-//    curseforge {
-//        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-//        projectId = "328085"
-//        minecraftVersions.add(minecraft_version)
-//    }
+    curseforge {
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        projectId = "328085"
+        minecraftVersions.add(minecraft_version)
+    }
 
     modrinth {
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
