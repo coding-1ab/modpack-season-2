@@ -11,6 +11,11 @@ import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.WrenchableDirectionalBlock;
 import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.items.IItemHandler;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -87,7 +92,7 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 		}
 
 		return super.getStateForPlacement(context).setValue(POWERED, context.getLevel()
-			.hasNeighborSignal(context.getClickedPos()))
+				.hasNeighborSignal(context.getClickedPos()))
 			.setValue(FACING, preferredFacing);
 	}
 
@@ -97,7 +102,7 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 		if (AllBlocks.FACTORY_GAUGE.isIn(stack))
 			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-		if (AllBlocks.STOCK_LINK.isIn(stack) && !state.getValue(LINKED))
+		if (AllBlocks.STOCK_LINK.isIn(stack) && !(state.hasProperty(LINKED) && state.getValue(LINKED)))
 			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 		if (AllBlocks.PACKAGE_FROGPORT.isIn(stack))
 			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -146,14 +151,14 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 	public void onNeighborChange(BlockState state, LevelReader level, BlockPos pos, BlockPos neighbor) {
 		super.onNeighborChange(state, level, pos, neighbor);
 		if (neighbor.relative(state.getOptionalValue(FACING)
-			.orElse(Direction.UP))
+				.orElse(Direction.UP))
 			.equals(pos))
 			withBlockEntityDo(level, pos, PackagerBlockEntity::triggerStockCheck);
 	}
 
 	@Override
 	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
-		boolean isMoving) {
+								boolean isMoving) {
 		if (worldIn.isClientSide)
 			return;
 		boolean previouslyPowered = state.getValue(POWERED);
@@ -197,12 +202,12 @@ public class PackagerBlock extends WrenchableDirectionalBlock implements IBE<Pac
 	@Override
 	public int getAnalogOutputSignal(BlockState pState, Level pLevel, BlockPos pPos) {
 		return getBlockEntityOptional(pLevel, pPos).map(pbe -> {
-			boolean empty = pbe.inventory.getStackInSlot(0)
-				.isEmpty();
-			if (pbe.animationTicks != 0)
-				empty = false;
-			return empty ? 0 : 15;
-		})
+				boolean empty = pbe.inventory.getStackInSlot(0)
+					.isEmpty();
+				if (pbe.animationTicks != 0)
+					empty = false;
+				return empty ? 0 : 15;
+			})
 			.orElse(0);
 	}
 

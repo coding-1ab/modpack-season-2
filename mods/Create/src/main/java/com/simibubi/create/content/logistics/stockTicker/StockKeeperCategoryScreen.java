@@ -134,7 +134,6 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		if (!empty) {
 			String value = editorEditBox.getValue();
 			stackInSlot.set(DataComponents.CUSTOM_NAME, value.isBlank() ? null : Component.literal(value));
-
 			if (editingIndex == -1)
 				schedule.add(stackInSlot);
 			else

@@ -233,6 +233,15 @@ tasks.named("sourcesJar") {
     ])
 }
 
+final slimJar = tasks.register("slimJar", Jar) {
+    archiveClassifier = "slim"
+    from sourceSets.main.output
+    manifest.attributes([
+        "Git-Hash": gitHash
+    ])
+}
+obfuscation.reobfuscate(slimJar, sourceSets.main)
+
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
         mod_version            : mod_version,
@@ -262,6 +271,10 @@ publishing {
         register('mavenJava', MavenPublication) {
             artifactId base.archivesName.get()
             from components.java
+
+            artifact(tasks.jar) {
+                classifier = "all"
+            }
         }
     }
     repositories {
@@ -284,7 +297,7 @@ publishing {
 }
 
 publishMods {
-    file = jar.archiveFile
+    file = reobfJar.archiveFile
     changelog = ChangelogText.getChangelogText(project).toString()
     type = STABLE
     displayName = "$mod_name $mod_version for mc$minecraft_version"

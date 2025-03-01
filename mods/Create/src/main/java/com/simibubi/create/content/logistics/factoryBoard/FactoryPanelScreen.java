@@ -46,6 +46,7 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+
 import net.minecraft.world.item.crafting.ShapedRecipe;
 
 public class FactoryPanelScreen extends AbstractSimiScreen {
