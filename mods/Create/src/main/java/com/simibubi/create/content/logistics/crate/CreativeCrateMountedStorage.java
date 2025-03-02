@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class CreativeCrateMountedStorage extends MountedItemStorage {
-	public static final MapCodec<CreativeCrateMountedStorage> CODEC = ItemStack.CODEC.xmap(
+	public static final MapCodec<CreativeCrateMountedStorage> CODEC = ItemStack.OPTIONAL_CODEC.xmap(
 		CreativeCrateMountedStorage::new, storage -> storage.suppliedStack
 	).fieldOf("value");
 
