@@ -351,16 +351,16 @@ publishMods {
     file = reobfJar.archiveFile
     changelog = ChangelogText.getChangelogText(project).toString()
     type = STABLE
+    version = "$minecraft_version-$mod_version"
     displayName = "$mod_name $mod_version for mc$minecraft_version"
     modLoaders.add("forge")
     modLoaders.add("neoforge")
 
-    // TODO - Uncomment post update 6
-//    curseforge {
-//        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-//        projectId = "328085"
-//        minecraftVersions.add(minecraft_version)
-//    }
+    curseforge {
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        projectId = "328085"
+        minecraftVersions.add(minecraft_version)
+    }
 
     modrinth {
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
