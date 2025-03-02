@@ -2,7 +2,6 @@ package plus.dragons.createdragonlib.gui;
 
 import com.google.common.collect.AbstractIterator;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.gui.widget.Label;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;

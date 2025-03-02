@@ -1,6 +1,5 @@
 package plus.dragons.createenchantmentindustry.entry;
 
-import com.simibubi.create.Create;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import plus.dragons.createenchantmentindustry.EnchantmentIndustry;

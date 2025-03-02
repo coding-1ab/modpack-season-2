@@ -2,15 +2,11 @@ package plus.dragons.createdragonlib.advancement.critereon;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,10 +16,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import org.antlr.v4.runtime.misc.NotNull;
 
-import java.lang.reflect.Type;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class AccumulativeTrigger extends SimpleCriterionTrigger<AccumulativeTrigger.TriggerInstance>{
 

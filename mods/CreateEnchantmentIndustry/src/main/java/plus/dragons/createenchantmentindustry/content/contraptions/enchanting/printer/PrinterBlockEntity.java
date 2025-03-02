@@ -31,13 +31,13 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import org.antlr.v4.runtime.misc.NotNull;
-import plus.dragons.createenchantmentindustry.foundation.mixin.dragonLibLegacy.AdvancementBehaviourAccessor;
 import plus.dragons.createenchantmentindustry.content.contraptions.fluids.FilteringFluidTankBehaviour;
 import plus.dragons.createenchantmentindustry.content.contraptions.fluids.experience.ExperienceFluid;
 import plus.dragons.createenchantmentindustry.entry.CeiTags;
 import plus.dragons.createenchantmentindustry.foundation.advancement.CeiAdvancements;
 import plus.dragons.createenchantmentindustry.foundation.advancement.CeiTriggers;
 import plus.dragons.createenchantmentindustry.foundation.config.CeiConfigs;
+import plus.dragons.createenchantmentindustry.foundation.mixin.dragonLibLegacy.AdvancementBehaviourAccessor;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

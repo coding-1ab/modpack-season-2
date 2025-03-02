@@ -7,7 +7,7 @@ import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
-import com.simibubi.create.foundation.utility.*;
+import com.simibubi.create.foundation.utility.BlockHelper;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.data.Pair;

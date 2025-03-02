@@ -8,9 +8,7 @@ import com.simibubi.create.foundation.data.TagGen;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import plus.dragons.createenchantmentindustry.content.contraptions.enchanting.disenchanter.DisenchanterBlock;
 import plus.dragons.createenchantmentindustry.content.contraptions.enchanting.enchanter.BlazeEnchanterBlock;
-import plus.dragons.createenchantmentindustry.content.contraptions.enchanting.enchanter.TargetEnchantmentDisplaySource;
 import plus.dragons.createenchantmentindustry.content.contraptions.enchanting.printer.PrinterBlock;
-import plus.dragons.createenchantmentindustry.content.contraptions.enchanting.printer.PrinterDisplaySource;
 
 import static plus.dragons.createenchantmentindustry.EnchantmentIndustry.REGISTRATE;
 

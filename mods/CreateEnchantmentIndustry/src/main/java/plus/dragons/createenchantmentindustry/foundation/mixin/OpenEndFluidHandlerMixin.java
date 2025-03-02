@@ -1,15 +1,7 @@
 package plus.dragons.createenchantmentindustry.foundation.mixin;
 
-import com.simibubi.create.content.fluids.OpenEndedPipe;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import plus.dragons.createenchantmentindustry.content.contraptions.fluids.experience.ExperienceFluid;
 
 @Mixin(targets = "com.simibubi.create.content.fluids.OpenEndedPipe$OpenEndFluidHandler")
 public abstract class OpenEndFluidHandlerMixin extends FluidTank {  // LEGACY TODO remove

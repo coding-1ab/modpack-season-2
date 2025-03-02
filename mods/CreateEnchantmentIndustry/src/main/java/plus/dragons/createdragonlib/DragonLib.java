@@ -1,13 +1,8 @@
 package plus.dragons.createdragonlib;
 
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import plus.dragons.createdragonlib.tag.TagGen;
 
 public class DragonLib {
     private static final Logger LOGGER = LogManager.getLogger();

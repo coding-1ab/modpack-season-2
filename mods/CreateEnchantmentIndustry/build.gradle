@@ -6,14 +6,12 @@ plugins {
 }
 
 base {
-    archivesName = "create_enchantment_industry-${artifact_minecraft_version}-for-create-${create_version}"
+    archivesName = "create_enchantment_industry"
     group = 'plus.dragons.createenchantmentindustry'
-    version = mod_version
+    version = "${mod_version}-for-create-${create_version}"
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-java.withSourcesJar()
-java.withJavadocJar()
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 
@@ -108,7 +106,7 @@ dependencies {
         transitive = false
     }*/
 
-    modImplementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
+    modImplementation("com.simibubi.create:create-${minecraft_version}:${create_version}-${create_version_number}") { transitive = false }
     modImplementation("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}")
     modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${flywheel_minecraft_version}:${flywheel_version}")
     modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
@@ -162,7 +160,7 @@ publishMods {
     file = jar.archiveFile
     changelog = new File("changelog/${mod_version}.md").text
     version = mod_version
-    type = STABLE
+    type = BETA
     displayName = "CEI ${mod_version} for Create ${minecraft_version}-${create_version}"
     modLoaders.add("forge")
     modLoaders.add("neoforge")
