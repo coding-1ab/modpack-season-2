@@ -12,12 +12,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import plus.dragons.createenchantmentindustry.content.contraptions.fluids.experience.ExperienceFluid;
 
 @Mixin(targets = "com.simibubi.create.content.fluids.OpenEndedPipe$OpenEndFluidHandler")
-public abstract class OpenEndFluidHandlerMixin extends FluidTank {
+public abstract class OpenEndFluidHandlerMixin extends FluidTank {  // LEGACY TODO remove
     public OpenEndFluidHandlerMixin(int capacity) {
         super(capacity);
     }
 
-    @SuppressWarnings("target")
+   /* @SuppressWarnings("target")
     @Final
     @Shadow(remap = false)
     OpenEndedPipe this$0;
@@ -40,6 +40,6 @@ public abstract class OpenEndFluidHandlerMixin extends FluidTank {
             }
             cir.setReturnValue(fill);
         }
-    }
+    }*/
     
 }

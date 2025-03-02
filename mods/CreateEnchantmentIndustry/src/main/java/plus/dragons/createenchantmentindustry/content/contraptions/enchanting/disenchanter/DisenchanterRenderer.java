@@ -1,12 +1,12 @@
 package plus.dragons.createenchantmentindustry.content.contraptions.enchanting.disenchanter;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.simibubi.create.foundation.fluid.FluidRenderer;
 import com.simibubi.create.foundation.render.ShadowRenderHelper;
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -39,7 +39,7 @@ public class DisenchanterRenderer extends SmartBlockEntityRenderer<DisenchanterB
         TransportedItemStack transported = be.heldItem;
         if (transported == null) return;
 
-        TransformStack ts = TransformStack.cast(ps);
+        TransformStack ts = TransformStack.of(ps);
 
         Direction insertedFrom = transported.insertedFrom;
         boolean horizontal = insertedFrom.getAxis().isHorizontal();
@@ -121,8 +121,9 @@ public class DisenchanterRenderer extends SmartBlockEntityRenderer<DisenchanterB
             float yOffset = (7 / 16f) * level;
             ps.pushPose();
             ps.translate(0, yOffset, 0);
-            FluidRenderer.renderFluidBox(tankFluidStack, min, yMin - yOffset, min, max, yMin, max, buffer, ps, light,
-                    false);
+            FluidRenderer.renderFluidBox(tankFluidStack.getFluid(), tankFluidStack.getAmount(),
+                    min, yMin - yOffset, min, max, yMin, max, buffer, ps, light,
+                    true, false);
             ps.popPose();
         }
 
@@ -154,10 +155,10 @@ public class DisenchanterRenderer extends SmartBlockEntityRenderer<DisenchanterB
             itemPosition.add(0, 0.005, 0);
         }
         AABB bb = new AABB(itemPosition.add(0, 13 / 16d, 0), itemPosition.add(0, 1 / 4d, 0)).inflate(radius / 32f);
-        FluidRenderer.renderFluidBox(xp,
+        FluidRenderer.renderFluidBox(xp.getFluid(), xp.getAmount(),
                 (float) bb.minX, (float) bb.minY, (float) bb.minZ,
                 (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ,
-                buffer, ps, light, true
+                buffer, ps, light, true, false
         );
     }
 }

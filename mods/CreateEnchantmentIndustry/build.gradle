@@ -29,10 +29,7 @@ legacyForge {
 
     // TODO - Try turning this on later  see Create
     validateAccessTransformers = false
-
-    if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
-        accessTransformers.from "src/main/resources/META-INF/accesstransformer.cfg"
-    }
+    accessTransformers.from "src/main/resources/META-INF/accesstransformer.cfg"
 
     parchment {
         minecraftVersion = minecraft_version
@@ -104,20 +101,21 @@ repositories {
 }
 
 dependencies {
-    jarJar("plus.dragons.createdragonlib:create_dragon_lib-${minecraft_version}") {
+    /*jarJar("plus.dragons.createdragonlib:create_dragon_lib-${minecraft_version}") {
         version {
             strictly "${create_dragon_lib_version_range}"
         }
         transitive = false
-    }
+    }*/
 
-    modImplementation("com.simibubi.create:create-${create_minecraft_version}:${create_version}-${create_version_build}") { transitive = false }
+    modImplementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
+    modImplementation("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}")
     modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${flywheel_minecraft_version}:${flywheel_version}")
     modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
     modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
-    modImplementation("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}")
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
 
-    modImplementation("plus.dragons.createdragonlib:create_dragon_lib-${minecraft_version}:${create_dragon_lib_version}")
+    // modImplementation("plus.dragons.createdragonlib:create_dragon_lib-${minecraft_version}:${create_dragon_lib_version}")
 
     modCompileOnly("mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}")
     modCompileOnly("mezz.jei:jei-${jei_minecraft_version}-forge-api:${jei_version}")

@@ -1,11 +1,10 @@
 package plus.dragons.createenchantmentindustry.content.contraptions.enchanting.enchanter;
 
 import com.google.common.collect.ImmutableList;
-import com.simibubi.create.foundation.gui.element.GuiGameElement;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
-import com.simibubi.create.foundation.utility.Components;
+import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.BlockPos;
@@ -50,7 +49,7 @@ public class EnchantingGuideScreen extends AbstractSimiContainerScreen<Enchantin
     protected void init() {
         setWindowSize(
                 ENCHANTING_GUIDE.width,
-                ENCHANTING_GUIDE.height + 4 + PLAYER_INVENTORY.height
+                ENCHANTING_GUIDE.height + 4 + PLAYER_INVENTORY.getHeight()
         );
         setWindowOffset(-32, 0);
         super.init();
@@ -62,7 +61,7 @@ public class EnchantingGuideScreen extends AbstractSimiContainerScreen<Enchantin
         );
         index = menu.contentHolder.getOrCreateTag().getInt("index");
         scrollInput = new SelectionScrollInput(guideX + 40, guideY + 22, 120, 16);
-        scrollInputLabel = new ComponentLabel(guideX + 43, guideY + 26, Components.immutableEmpty()).withShadow();
+        scrollInputLabel = new ComponentLabel(guideX + 43, guideY + 26, Component.empty()).withShadow();
         scrollInput.calling(index -> this.index = index).writingTo(scrollInputLabel);
         addRenderableWidget(scrollInputLabel);
         addRenderableWidget(scrollInput);
@@ -71,7 +70,7 @@ public class EnchantingGuideScreen extends AbstractSimiContainerScreen<Enchantin
 
     @Override
     protected void renderBg(GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
-        int invX = getLeftOfCentered(PLAYER_INVENTORY.width);
+        int invX = getLeftOfCentered(PLAYER_INVENTORY.getWidth());
         int invY = topPos + ENCHANTING_GUIDE.height + 4;
         renderPlayerInventory(pGuiGraphics, invX, invY);
 

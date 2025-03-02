@@ -1,16 +1,16 @@
 package plus.dragons.createenchantmentindustry.content.contraptions.enchanting.enchanter;
 
-import com.jozufozu.flywheel.core.PartialModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -132,7 +132,7 @@ public class BlazeEnchanterRenderer extends SmartBlockEntityRenderer<BlazeEnchan
             default -> AllPartialModels.BLAZE_INERT;
         };
 
-        SuperByteBuffer blazeBuffer = CachedBufferer.partial(blazeModel, blockState);
+        SuperByteBuffer blazeBuffer = CachedBuffers.partial(blazeModel, blockState);
         blazeBuffer.translate(0, headY, 0);
         draw(blazeBuffer, horizontalAngle, ps, solid);
 
@@ -140,7 +140,7 @@ public class BlazeEnchanterRenderer extends SmartBlockEntityRenderer<BlazeEnchan
             PartialModel gogglesModel = blazeModel == AllPartialModels.BLAZE_INERT
                     ? AllPartialModels.BLAZE_GOGGLES_SMALL : AllPartialModels.BLAZE_GOGGLES;
 
-            SuperByteBuffer gogglesBuffer = CachedBufferer.partial(gogglesModel, blockState);
+            SuperByteBuffer gogglesBuffer = CachedBuffers.partial(gogglesModel, blockState);
             gogglesBuffer.translate(0, headY + 8 / 16f, 0);
             draw(gogglesBuffer, horizontalAngle, ps, solid);
         }
@@ -152,12 +152,12 @@ public class BlazeEnchanterRenderer extends SmartBlockEntityRenderer<BlazeEnchan
             PartialModel rodsModel2 = heatLevel == HeatLevel.SEETHING
                     ? AllPartialModels.BLAZE_BURNER_SUPER_RODS_2
                     : AllPartialModels.BLAZE_BURNER_RODS_2;
-            SuperByteBuffer rodsBuffer = CachedBufferer.partial(rodsModel, blockState);
+            SuperByteBuffer rodsBuffer = CachedBuffers.partial(rodsModel, blockState);
             rodsBuffer.translate(0, offset1 + animation + .125f, 0)
                     .light(LightTexture.FULL_BRIGHT)
                     .renderInto(ps, solid);
 
-            SuperByteBuffer rodsBuffer2 = CachedBufferer.partial(rodsModel2, blockState);
+            SuperByteBuffer rodsBuffer2 = CachedBuffers.partial(rodsModel2, blockState);
             rodsBuffer2.translate(0, offset2 + animation - 3 / 16f, 0)
                     .light(LightTexture.FULL_BRIGHT)
                     .renderInto(ps, solid);
@@ -187,7 +187,7 @@ public class BlazeEnchanterRenderer extends SmartBlockEntityRenderer<BlazeEnchan
     }
 
     private void draw(SuperByteBuffer buffer, float horizontalAngle, PoseStack ps, VertexConsumer vc) {
-        buffer.rotateCentered(Direction.UP, horizontalAngle)
+        buffer.rotateCentered(horizontalAngle, Direction.UP)
                 .light(LightTexture.FULL_BRIGHT)
                 .renderInto(ps, vc);
     }

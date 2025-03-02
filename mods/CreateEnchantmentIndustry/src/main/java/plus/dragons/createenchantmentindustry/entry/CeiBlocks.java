@@ -1,5 +1,6 @@
 package plus.dragons.createenchantmentindustry.entry;
 
+import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.SharedProperties;
@@ -11,7 +12,6 @@ import plus.dragons.createenchantmentindustry.content.contraptions.enchanting.en
 import plus.dragons.createenchantmentindustry.content.contraptions.enchanting.printer.PrinterBlock;
 import plus.dragons.createenchantmentindustry.content.contraptions.enchanting.printer.PrinterDisplaySource;
 
-import static com.simibubi.create.content.redstone.displayLink.AllDisplayBehaviours.assignDataBehaviour;
 import static plus.dragons.createenchantmentindustry.EnchantmentIndustry.REGISTRATE;
 
 
@@ -27,7 +27,7 @@ public class CeiBlocks {
     public static final BlockEntry<PrinterBlock> PRINTER = REGISTRATE
             .block("printer", PrinterBlock::new)
             .initialProperties(SharedProperties::copperMetal)
-            .onRegister(assignDataBehaviour(new PrinterDisplaySource(), "copy_content"))
+            .transform(DisplaySource.displaySource(CeiDisplaySources.COPY_CONTENT))
             .transform(TagGen.pickaxeOnly())
             .blockstate((ctx, pov) -> pov.simpleBlock(ctx.get(), AssetLookup.partialBaseModel(ctx, pov)))
             .item(AssemblyOperatorBlockItem::new)
@@ -39,7 +39,7 @@ public class CeiBlocks {
             .block("blaze_enchanter", BlazeEnchanterBlock::new)
             .initialProperties(SharedProperties::softMetal)
             .properties(p -> p.lightLevel(BlazeEnchanterBlock::getLight))
-            .onRegister(assignDataBehaviour(new TargetEnchantmentDisplaySource(), "target_enchantment"))
+            .transform(DisplaySource.displaySource(CeiDisplaySources.TARGET_ENCHANTMENT))
             .transform(TagGen.pickaxeOnly())
             .blockstate((ctx, pov) -> pov.simpleBlock(ctx.get(), AssetLookup.standardModel(ctx, pov)))
             .register();

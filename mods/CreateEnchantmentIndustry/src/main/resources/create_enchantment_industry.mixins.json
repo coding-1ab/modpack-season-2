@@ -18,7 +18,12 @@
     "PlayerMixin",
     "SpoutBlockEntityAccessor",
     "SpoutBlockMixin",
-    "TankSegmentAccessor"
+    "TankSegmentAccessor",
+    "dragonLibLegacy.AdvancementBehaviourAccessor",
+    "dragonLibLegacy.CreateAdvancementConstructor",
+    "dragonLibLegacy.CreateAdvancementMixin",
+    "dragonLibLegacy.FluidReactionsMixin",
+    "waitingForAPI.OpenEndedPipeMixin"
   ],
   "client": [
     "CameraMixin"

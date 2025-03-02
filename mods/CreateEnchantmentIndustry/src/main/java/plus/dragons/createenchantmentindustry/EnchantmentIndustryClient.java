@@ -1,6 +1,7 @@
 package plus.dragons.createenchantmentindustry;
 
-import com.simibubi.create.foundation.config.ui.BaseConfigScreen;
+import net.createmod.catnip.config.ui.BaseConfigScreen;
+import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -10,7 +11,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import plus.dragons.createenchantmentindustry.content.contraptions.fluids.ink.InkRenderingCamera;
 import plus.dragons.createenchantmentindustry.entry.CeiBlockPartials;
 import plus.dragons.createenchantmentindustry.foundation.config.CeiConfigs;
-import plus.dragons.createenchantmentindustry.foundation.ponder.content.CeiPonderIndex;
+import plus.dragons.createenchantmentindustry.foundation.ponder.CeiPonderPlugin;
 
 public class EnchantmentIndustryClient {
 
@@ -30,14 +31,13 @@ public class EnchantmentIndustryClient {
 
     @SubscribeEvent
     public void setup(final FMLClientSetupEvent event) {
-        CeiPonderIndex.register();
-        CeiPonderIndex.registerTags();
+        PonderIndex.addPlugin(new CeiPonderPlugin());
     }
     
     @SubscribeEvent
     public void loadComplete(final FMLLoadCompleteEvent event) {
         BaseConfigScreen.setDefaultActionFor(EnchantmentIndustry.ID, screen -> screen
-                .withTitles(null, null, "Gameplay Settings")
+                .withButtonLabels(null, null, "Gameplay Settings")
                 .withSpecs(null, null, CeiConfigs.SERVER_SPEC)
         );
     }

@@ -5,8 +5,8 @@
 	"textures": {
 		"tank": "create:block/spout",
 		"head": "create:block/mechanical_press_head",
-		"particle": "create:block/copper_plating",
-		"hose": "create:block/hose_pulley_magnet"
+		"particle": "create:block/copper_side",
+		"hose": "create:block/hose_pulley_coil"
 	},
 	"elements": [
 		{

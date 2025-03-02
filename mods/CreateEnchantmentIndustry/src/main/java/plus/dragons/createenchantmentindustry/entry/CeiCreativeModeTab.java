@@ -1,8 +1,8 @@
 package plus.dragons.createenchantmentindustry.entry;
 
 import com.simibubi.create.AllCreativeModeTabs;
-import com.simibubi.create.foundation.utility.Components;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -22,7 +22,7 @@ public class CeiCreativeModeTab {
     static {
         REGISTER = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, EnchantmentIndustry.ID);
         CREATIVE_TAB = REGISTER.register("base", () -> {
-            return CreativeModeTab.builder().title(Components.literal("CEI"))
+            return CreativeModeTab.builder().title(Component.literal("CEI"))
                     .withTabsBefore(AllCreativeModeTabs.BASE_CREATIVE_TAB.getKey(),AllCreativeModeTabs.PALETTES_CREATIVE_TAB.getKey())
                     .icon(CeiItems.ENCHANTING_GUIDE::asStack)
                     .displayItems((params, output) -> {

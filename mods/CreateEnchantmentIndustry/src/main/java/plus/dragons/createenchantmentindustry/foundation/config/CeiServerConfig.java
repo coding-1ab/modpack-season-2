@@ -1,12 +1,12 @@
 package plus.dragons.createenchantmentindustry.foundation.config;
 
-import com.simibubi.create.foundation.config.ConfigBase;
-import com.simibubi.create.foundation.config.ui.ConfigAnnotations;
+import net.createmod.catnip.config.ConfigBase;
+import net.createmod.catnip.config.ui.ConfigAnnotations;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class CeiServerConfig extends ConfigBase {
     
-    public final ConfigInt disenchanterTankCapacity = i(1000, 0,
+    public final ConfigBase.ConfigInt disenchanterTankCapacity = i(1000, 0,
         "disenchanterTankCapacity",
         Comments.disenchanterTankCapacity,
         ConfigAnnotations.RequiresRestart.SERVER.asComment());

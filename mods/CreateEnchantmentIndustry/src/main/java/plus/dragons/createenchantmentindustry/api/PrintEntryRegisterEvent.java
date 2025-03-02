@@ -1,7 +1,7 @@
 package plus.dragons.createenchantmentindustry.api;
 
 import net.minecraftforge.eventbus.api.Event;
-import org.jetbrains.annotations.NotNull;
+import org.antlr.v4.runtime.misc.NotNull;
 import plus.dragons.createenchantmentindustry.content.contraptions.enchanting.printer.PrintEntries;
 import plus.dragons.createenchantmentindustry.content.contraptions.enchanting.printer.PrintEntry;
 

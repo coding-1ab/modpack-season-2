@@ -2,8 +2,8 @@ package plus.dragons.createenchantmentindustry.entry;
 
 import com.simibubi.create.Create;
 import com.simibubi.create.foundation.data.TagGen;
-import com.simibubi.create.foundation.utility.Lang;
 import com.tterrag.registrate.providers.RegistrateTagsProvider;
+import net.createmod.catnip.lang.Lang;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;

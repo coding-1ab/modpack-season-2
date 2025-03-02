@@ -9,14 +9,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 public class ExperienceFluid extends VirtualFluid {
     
     protected final int xpRatio;
     
     public ExperienceFluid(int xpRatio, Properties properties) {
-        super(properties);
+        super(properties,true);
         this.xpRatio = xpRatio;
     }
     

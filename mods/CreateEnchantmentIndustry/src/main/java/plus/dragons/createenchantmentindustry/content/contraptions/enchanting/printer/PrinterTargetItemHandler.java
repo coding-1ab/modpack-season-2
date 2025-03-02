@@ -2,7 +2,7 @@ package plus.dragons.createenchantmentindustry.content.contraptions.enchanting.p
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-import org.jetbrains.annotations.NotNull;
+import org.antlr.v4.runtime.misc.NotNull;
 
 public class PrinterTargetItemHandler implements IItemHandler {
     PrinterBlockEntity be;

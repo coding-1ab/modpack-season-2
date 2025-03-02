@@ -2,7 +2,6 @@ package plus.dragons.createenchantmentindustry.content.contraptions.fluids.exper
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public class ExperienceRotorItem extends Item {
 
@@ -11,7 +10,7 @@ public class ExperienceRotorItem extends Item {
     }
 
     @Override
-    public boolean isFoil(@NotNull ItemStack pStack) {
+    public boolean isFoil(ItemStack pStack) {
         return true;
     }
 }
