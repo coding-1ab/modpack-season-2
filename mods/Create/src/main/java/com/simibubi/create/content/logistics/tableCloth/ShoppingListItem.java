@@ -1,5 +1,6 @@
 package com.simibubi.create.content.logistics.tableCloth;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,9 +50,9 @@ public class ShoppingListItem extends Item {
 		);
 		
 		public ShoppingList duplicate() {
-			return new ShoppingList(purchases.stream()
+			return new ShoppingList(new ArrayList<>(purchases.stream()
 				.map(ia -> IntAttached.with(ia.getFirst(), ia.getSecond()))
-				.toList(), shopOwner, shopNetwork);
+				.toList()), shopOwner, shopNetwork);
 		}
 		
 		// Y value of clothPos is pixel perfect (x16)
