@@ -1,5 +1,6 @@
 package com.simibubi.create.content.redstone.displayLink.target;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.simibubi.create.api.behaviour.display.DisplayTarget;
@@ -33,8 +34,8 @@ public class LecternDisplayTarget extends DisplayTarget {
 		if (!book.is(Items.WRITTEN_BOOK))
 			return;
 
-		WrittenBookContent writtenBookContent = book.get(DataComponents.WRITTEN_BOOK_CONTENT);
-		List<Filterable<Component>> pages = writtenBookContent.pages();
+		WrittenBookContent writtenBookContent = book.getOrDefault(DataComponents.WRITTEN_BOOK_CONTENT, WrittenBookContent.EMPTY);
+		List<Filterable<Component>> pages = new ArrayList<>(writtenBookContent.pages());
 
 		boolean changed = false;
 		for (int i = 0; i - line < text.size() && i < 50; i++) {
