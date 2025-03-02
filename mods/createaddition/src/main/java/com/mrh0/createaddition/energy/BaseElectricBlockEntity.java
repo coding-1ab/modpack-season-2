@@ -13,6 +13,8 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
 
 public abstract class BaseElectricBlockEntity extends SmartBlockEntity {
@@ -20,8 +22,8 @@ public abstract class BaseElectricBlockEntity extends SmartBlockEntity {
 	protected final InternalEnergyStorage localEnergy;
 	protected LazyOptional<IEnergyStorage> lazyEnergy;
 
-	private boolean firstTickState = true;
-	// protected final int CAPACITY, MAX_IN, MAX_OUT;
+	private EnumSet<Direction> invalidSides = EnumSet.allOf(Direction.class);
+	private EnumMap<Direction, LazyOptional<IEnergyStorage>> escacheMap = new EnumMap<>(Direction.class);
 
 	public BaseElectricBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
 		super(tileEntityTypeIn, pos, state);
@@ -76,18 +78,18 @@ public abstract class BaseElectricBlockEntity extends SmartBlockEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		if(firstTickState) {
-			firstTickState = false;
-			firstTick();
+		if(!invalidSides.isEmpty()) {
+			invalidSides.forEach(this::updateCache);
+			invalidSides.clear();
 		}
-	}
-
-	public void firstTick() {
-		updateCache();
 	}
 
 	public boolean ignoreCapSide() {
 		return false;
+	}
+
+	private void invalidCache(Direction side) {
+		invalidSides.add(side);
 	}
 
 	public void updateCache() {
@@ -113,54 +115,14 @@ public abstract class BaseElectricBlockEntity extends SmartBlockEntity {
 		// Make sure the side isn't already cached.
 		if (le.equals(getCachedEnergy(side))) return;
 		setCache(side, le);
-		le.addListener((es) -> updateCache(side));
+		le.addListener((es) -> invalidCache(side));
 	}
 
-	private LazyOptional<IEnergyStorage> escacheUp = LazyOptional.empty();
-	private LazyOptional<IEnergyStorage> escacheDown = LazyOptional.empty();
-	private LazyOptional<IEnergyStorage> escacheNorth = LazyOptional.empty();
-	private LazyOptional<IEnergyStorage> escacheEast = LazyOptional.empty();
-	private LazyOptional<IEnergyStorage> escacheSouth = LazyOptional.empty();
-	private LazyOptional<IEnergyStorage> escacheWest = LazyOptional.empty();
-
 	public void setCache(Direction side, LazyOptional<IEnergyStorage> storage) {
-		switch(side) {
-			case DOWN:
-				escacheDown = storage;
-				break;
-			case EAST:
-				escacheEast = storage;
-				break;
-			case NORTH:
-				escacheNorth = storage;
-				break;
-			case SOUTH:
-				escacheSouth = storage;
-				break;
-			case UP:
-				escacheUp = storage;
-				break;
-			case WEST:
-				escacheWest = storage;
-				break;
-		}
+		escacheMap.put(side, storage);
 	}
 
 	public LazyOptional<IEnergyStorage> getCachedEnergy(Direction side) {
-		switch(side) {
-			case DOWN:
-				return escacheDown;
-			case EAST:
-				return escacheEast;
-			case NORTH:
-				return escacheNorth;
-			case SOUTH:
-				return escacheSouth;
-			case UP:
-				return escacheUp;
-			case WEST:
-				return escacheWest;
-		}
-		return LazyOptional.empty();
+		return escacheMap.getOrDefault(side, LazyOptional.empty());
 	}
 }

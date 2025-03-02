@@ -42,6 +42,8 @@ import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
 
 public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, IMultiTileEnergyContainer, IObserveTileEntity, IDebugDrawer, ThresholdSwitchObservable {
@@ -57,8 +59,8 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 	protected int syncCooldown;
 	protected boolean queuedSync;
 
-	private LazyOptional<IEnergyStorage> escacheUp = LazyOptional.empty();
-	private LazyOptional<IEnergyStorage> escacheDown = LazyOptional.empty();
+	private EnumSet<Direction> invalidSides = EnumSet.of(Direction.DOWN, Direction.UP);
+	private EnumMap<Direction, LazyOptional<IEnergyStorage>> escacheMap = new EnumMap<>(Direction.class);
 	protected LazyOptional<ModularAccumulatorPeripheral> peripheral;
 
 	public ModularAccumulatorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -83,22 +85,23 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 
 	public void setCache(Direction side, LazyOptional<IEnergyStorage> storage) {
 		switch (side) {
-			case DOWN -> escacheDown = storage;
-			case UP -> escacheUp = storage;
+			case DOWN, UP -> escacheMap.put(side, storage);
 		}
 	}
 
 	public LazyOptional<IEnergyStorage> getCachedEnergy(Direction side) {
-		return switch (side) {
-			case DOWN -> escacheDown;
-			case UP -> escacheUp;
-			default -> LazyOptional.empty();
-		};
+		return escacheMap.getOrDefault(side, LazyOptional.empty());
 	}
 
 	public void firstTick() {
 		updateCache();
 	};
+
+	private void invalidCache(Direction side) {
+		switch (side) {
+			case DOWN, UP -> invalidSides.add(side);
+		}
+	}
 
 	public void updateCache() {
 		if(level.isClientSide()) return;
@@ -126,7 +129,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		// Make sure the side isn't already cached.
 		if (le.equals(getCachedEnergy(side))) return;
 		setCache(side, le);
-		le.addListener((es) -> updateCache(side));
+		le.addListener((es) -> invalidCache(side));
 	}
 
 	protected void updateConnectivity() {
@@ -141,14 +144,14 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 	public LerpedFloat gauge = LerpedFloat.linear();
 
 	int lastEnergy = 0;
-	boolean firstTickState = true;
 	int energyChangeTick = 0;
 	@Override
 	public void tick() {
 		super.tick();
-		if(firstTickState)
-			firstTick();
-		firstTickState = false;
+		if(!invalidSides.isEmpty()) {
+			invalidSides.forEach(this::updateCache);
+			invalidSides.clear();
+		}
 
 		tickOutput();
 
