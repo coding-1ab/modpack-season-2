@@ -88,6 +88,9 @@ public class AllDisplaySources {
 
 	public static final RegistryEntry<DisplaySource, ComputerDisplaySource> COMPUTER = REGISTRATE.displaySource("computer", ComputerDisplaySource::new)
 		.onRegisterAfter(Registries.BLOCK_ENTITY_TYPE, source -> {
+			if (!Mods.COMPUTERCRAFT.isLoaded())
+				return;
+
 			List<String> types = List.of("wired_modem_full", "computer_normal", "computer_advanced", "computer_command");
 			for (String name : types) {
 				ResourceLocation id = Mods.COMPUTERCRAFT.rl(name);
