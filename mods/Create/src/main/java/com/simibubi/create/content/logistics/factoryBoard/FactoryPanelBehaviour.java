@@ -86,7 +86,6 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 	public static final BehaviourType<FactoryPanelBehaviour> TOP_RIGHT = new BehaviourType<>();
 	public static final BehaviourType<FactoryPanelBehaviour> BOTTOM_LEFT = new BehaviourType<>();
 	public static final BehaviourType<FactoryPanelBehaviour> BOTTOM_RIGHT = new BehaviourType<>();
-//	public static final int REQUEST_INTERVAL = 100;
 
 	public Map<FactoryPanelPosition, FactoryPanelConnection> targetedBy;
 	public Map<BlockPos, FactoryPanelConnection> targetedByLinks;
