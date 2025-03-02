@@ -7,6 +7,12 @@ Create 6.0.1
 - Fixed Shopping lists not updating when adding purchases (1.21) #7449 #7393
 - Fixed Frogport ponder scene not animating correctly (1.21)
 - Fixed broken address filter in second stock ticker ponder scene (1.21)
+- Fixed crash when modifying pipe structures while they are transporting fluids (1.21) #7515
+- Fixed shift-inserting into toolboxes causing items to be voided (1.21) #7519
+- Fixed inconsistent component serialisation in backtank BE (1.21)
+- Fixed table cloths not showing tooltips and enchantment effect when configured (1.21)
+- Fixed shopping list tooltip expanding as its viewed (1.21) #7503
+- Fixed crash when selling enchanted items on a table cloth (1.21) #7516 #7536
 - Added a tooltip for the stock keeper address input
 - Fixed crash when re-packaging a duplicated package fragment #7456
 - Fixed crash when ctrl-click copying a gauge #7431
@@ -21,6 +27,8 @@ Create 6.0.1
 - Fixed item group attribute filters crashing
 - Fixed mixin conflict with immersive portals
 - Fixed processing output not supporting itemstack components
+- Fixed crash when shift-clicking items in the package filter UI #7497
+- Fixed crash caused by the create menu button when loaded too early #7521
 
 ------------------------------------------------------
 Create 6.0.0
