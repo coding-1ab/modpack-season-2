@@ -23,7 +23,7 @@ import plus.dragons.createenchantmentindustry.entry.CeiFluids;
 import plus.dragons.createenchantmentindustry.foundation.advancement.CeiAdvancements;
 
 
-@Mixin(OpenEndedPipe.class)
+@Mixin(value = OpenEndedPipe.class)
 public class OpenEndedPipeMixin {
     // TODO temporary solution. Waiting for API.
 
@@ -53,7 +53,7 @@ public class OpenEndedPipeMixin {
                     orb.setDeltaMovement(speed);
                     world.addFreshEntity(orb);
                     ((OpenEndedPipe) (Object) this).provideHandler().ifPresent(f->f.getFluidInTank(0).setAmount(0));
-                    cir.cancel();
+                    cir.setReturnValue(true);
                 }
                 if (!(world instanceof ServerLevel slevel))
                     return;
@@ -80,7 +80,7 @@ public class OpenEndedPipeMixin {
                     }
                 }
                 ((OpenEndedPipe) (Object) this).provideHandler().ifPresent(f->f.getFluidInTank(0).setAmount(0));
-                cir.cancel();
+                cir.setReturnValue(true);
             }
         }
     }
