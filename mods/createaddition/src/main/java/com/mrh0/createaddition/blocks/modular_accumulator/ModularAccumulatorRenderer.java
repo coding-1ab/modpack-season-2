@@ -42,17 +42,17 @@ public class ModularAccumulatorRenderer extends SafeBlockEntityRenderer<ModularA
 		for (Direction d : Iterate.horizontalDirections) {
 			ms.pushPose();
 			CachedBuffers.partial(CAPartials.ACCUMULATOR_GUAGE, blockState)
-				.rotateY(d.toYRot())
+				.rotateYDegrees(d.toYRot())
 				.uncenter()
 				.translate(te.width / 2f - 6 / 16f, 0, 0)
 				.light(light)
 				.renderInto(ms, vb);
 			CachedBuffers.partial(CAPartials.ACCUMULATOR_DIAL, blockState)
-				.rotateY(d.toYRot())
+				.rotateYDegrees(d.toYRot())
 				.uncenter()
 				.translate(te.width / 2f - 6 / 16f, 0, 0)
 				.translate(0, dialPivotY, dialPivotZ)
-				.rotateX(-180 * progress)
+				.rotateXDegrees(-180 * progress)
 				.translate(0, -dialPivotY, -dialPivotZ)
 				.light(light)
 				.renderInto(ms, vb);

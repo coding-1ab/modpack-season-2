@@ -1,8 +1,10 @@
 package com.mrh0.createaddition.blocks.rolling_mill;
 
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityVisual;
 import com.simibubi.create.content.kinetics.base.RotatingInstance;
+import com.simibubi.create.content.kinetics.simpleRelays.ShaftBlock;
 import com.simibubi.create.foundation.render.AllInstanceTypes;
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
@@ -20,23 +22,26 @@ public class RollingMillVisual extends KineticBlockEntityVisual<RollingMillBlock
     public RollingMillVisual(VisualizationContext context, RollingMillBlockEntity blockEntity, float partialTick) {
         super(context, blockEntity, partialTick);
 
-        var instancer = instancerProvider().instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.SHAFT));
-
-        this.rotatingModel1 = instancer.createInstance();
-        this.rotatingModel2 = instancer.createInstance();
-
         final Direction direction = blockState.getValue(RollingMillBlock.HORIZONTAL_FACING);
         final Direction.Axis axis = direction.getAxis();
 
+        var instancer = instancerProvider().instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.SHAFT));
+
+        this.rotatingModel1 = instancer.createInstance().rotateToFace(Direction.UP, axis);
+        this.rotatingModel2 = instancer.createInstance().rotateToFace(Direction.UP, axis);
+
         rotatingModel1.setup(blockEntity, axis)
+                //.setRotationalSpeed(blockEntity.getSpeed())
+                //.setRotationOffset(-blockEntity.getRotationAngleOffset(axis))
                 .setPosition(getVisualPosition())
-                .rotateToFace(Direction.SOUTH, direction)
                 .setChanged();
 
         rotatingModel2.setup(blockEntity, axis)
+                //.setRotationalSpeed(blockEntity.getSpeed())
+                //.setRotationOffset(blockEntity.getRotationAngleOffset(axis))
                 .setPosition(getVisualPosition())
-                .setRotationalSpeed(-blockEntity.getSpeed())
-                .rotateToFace(Direction.SOUTH, direction)
+                .nudge(0, 4f/16f, 0)
+                .setRotationalSpeed(-blockEntity.getSpeed()*partialTick*8f)
                 .setChanged();
 
         /*

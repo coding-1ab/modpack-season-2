@@ -105,9 +105,7 @@ public class CreateAddition {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-    	CAPotatoCannonProjectiles.register();
     	// BlockStressValues.CAPACITIES.registerProvider(MODID, AllConfigs.server().kinetics.stressValues);
-
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -127,11 +125,6 @@ public class CreateAddition {
         Network.registerMessage(0, ObservePacket.class, ObservePacket::encode, ObservePacket::decode, ObservePacket::handle);
         Network.registerMessage(1, EnergyNetworkPacket.class, EnergyNetworkPacket::encode, EnergyNetworkPacket::decode, EnergyNetworkPacket::handle);
 
-    	System.out.println("Create Crafts & Additions Initialized!");
-    }
-
-    public void onRegister(final RegisterEvent event) {
-        CAArmInteractions.register();
         BoilerHeater.REGISTRY.register(CABlocks.LIQUID_BLAZE_BURNER.get(), (level, pos, state) -> {
             BlazeBurnerBlock.HeatLevel value = state.getValue(LiquidBlazeBurnerBlock.HEAT_LEVEL);
             if (value == BlazeBurnerBlock.HeatLevel.NONE) return -1;
@@ -139,6 +132,12 @@ public class CreateAddition {
             if (value.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING)) return 1;
             return 0;
         });
+
+    	System.out.println("Create Crafts & Additions Initialized!");
+    }
+
+    public void onRegister(final RegisterEvent event) {
+        CAArmInteractions.register();
     }
 
     @SubscribeEvent
