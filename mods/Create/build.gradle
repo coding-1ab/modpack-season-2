@@ -149,13 +149,18 @@ repositories {
 }
 
 dependencies {
-    jarJar(modImplementation("com.tterrag.registrate:Registrate:${registrate_version}"))
+    modImplementation(jarJar("com.tterrag.registrate:Registrate:${registrate_version}"))
     jarJar("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}")
 
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}"))
 
     modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${flywheel_minecraft_version}:${flywheel_version}")
-    jarJar(modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}"))
+    modRuntimeOnly(jarJar("dev.engine-room.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}") {
+        version {
+            strictly "[1.0,2.0)"
+            prefer "1.0.1"
+        }
+    })
     modRuntimeOnly("dev.engine-room.vanillin:vanillin-forge-${flywheel_minecraft_version}:${vanillin_version}")
 
     if (ponderInWorkspace) {
