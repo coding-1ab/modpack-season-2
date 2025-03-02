@@ -93,10 +93,6 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		return escacheMap.getOrDefault(side, LazyOptional.empty());
 	}
 
-	public void firstTick() {
-		updateCache();
-	};
-
 	private void invalidCache(Direction side) {
 		switch (side) {
 			case DOWN, UP -> invalidSides.add(side);
