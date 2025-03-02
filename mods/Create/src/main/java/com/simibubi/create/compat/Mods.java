@@ -36,7 +36,8 @@ public enum Mods {
 	FTBCHUNKS,
 	JOURNEYMAP,
 	FTBLIBRARY,
-	SODIUM;
+	SODIUM,
+	INVENTORYSORTER;
 
 	private final String id;
 

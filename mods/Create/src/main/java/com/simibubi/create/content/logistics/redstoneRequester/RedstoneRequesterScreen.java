@@ -197,15 +197,6 @@ public class RedstoneRequesterScreen extends AbstractSimiContainerScreen<Redston
 		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
 
-	/*
-	 * Fixes InventorySorter nabbing the scroll event. This screen needs it for
-	 * amount control
-	 */
-	@Override
-	public @Nullable Slot getSlotUnderMouse() {
-		return null;
-	}
-
 	@Override
 	protected List<Component> getTooltipFromContainerItem(ItemStack pStack) {
 		List<Component> tooltip = super.getTooltipFromContainerItem(pStack);

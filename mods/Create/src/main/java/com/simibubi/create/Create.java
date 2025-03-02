@@ -2,8 +2,6 @@ package com.simibubi.create;
 
 import java.util.Random;
 
-import com.simibubi.create.foundation.recipe.AllIngredients;
-
 import org.slf4j.Logger;
 
 import com.google.gson.Gson;
@@ -12,6 +10,7 @@ import com.mojang.logging.LogUtils;
 import com.simibubi.create.compat.Mods;
 import com.simibubi.create.compat.computercraft.ComputerCraftProxy;
 import com.simibubi.create.compat.curios.Curios;
+import com.simibubi.create.compat.inventorySorter.InventorySorterCompat;
 import com.simibubi.create.content.decoration.palettes.AllPaletteBlocks;
 import com.simibubi.create.content.equipment.armor.AllArmorMaterials;
 import com.simibubi.create.content.equipment.potatoCannon.AllPotatoProjectileBlockHitActions;
@@ -36,6 +35,7 @@ import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
 import com.simibubi.create.foundation.item.TooltipModifier;
+import com.simibubi.create.foundation.recipe.AllIngredients;
 import com.simibubi.create.infrastructure.command.ServerLagger;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.simibubi.create.infrastructure.data.CreateDatagen;
@@ -50,7 +50,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.Level;
-
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -156,6 +155,7 @@ public class Create {
 
 		// FIXME: this is not thread-safe
 		Mods.CURIOS.executeIfInstalled(() -> () -> Curios.init(modEventBus));
+		Mods.INVENTORYSORTER.executeIfInstalled(() -> () -> InventorySorterCompat.init(modEventBus));
 	}
 
 	public static void init(final FMLCommonSetupEvent event) {
