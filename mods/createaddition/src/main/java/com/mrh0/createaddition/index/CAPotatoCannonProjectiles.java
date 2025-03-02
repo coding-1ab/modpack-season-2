@@ -27,9 +27,7 @@ public class CAPotatoCannonProjectiles {
 			.addItems(CABlocks.HONEY_CAKE.get())
 			.build();
 	
-	public static void register() {
-		
-	}
+	public static void register() {}
 	
 	private static PotatoCannonProjectileType.Builder create(String name) {
 		return new PotatoCannonProjectileType.Builder();

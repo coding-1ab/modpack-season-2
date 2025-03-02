@@ -33,6 +33,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
+import net.minecraftforge.registries.RegisterEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -75,6 +76,7 @@ public class CreateAddition {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::postInit);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegister);
         //FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(RecipeSerializer.class, CARecipes::register);
 
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -98,7 +100,6 @@ public class CreateAddition {
         CASounds.register(eventBus);
         CASchedule.register();
         CADamageTypes.register();
-        CAArmInteractions.register();
         CADisplaySources.register();
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> CAPartials::init);
     }
@@ -106,13 +107,7 @@ public class CreateAddition {
     private void setup(final FMLCommonSetupEvent event) {
     	CAPotatoCannonProjectiles.register();
     	// BlockStressValues.CAPACITIES.registerProvider(MODID, AllConfigs.server().kinetics.stressValues);
-        BoilerHeater.REGISTRY.register(CABlocks.LIQUID_BLAZE_BURNER.get(), (level, pos, state) -> {
-            BlazeBurnerBlock.HeatLevel value = state.getValue(LiquidBlazeBurnerBlock.HEAT_LEVEL);
-            if (value == BlazeBurnerBlock.HeatLevel.NONE) return -1;
-            if (value == BlazeBurnerBlock.HeatLevel.SEETHING) return 2;
-            if (value.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING)) return 1;
-            return 0;
-        });
+
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -133,6 +128,17 @@ public class CreateAddition {
         Network.registerMessage(1, EnergyNetworkPacket.class, EnergyNetworkPacket::encode, EnergyNetworkPacket::decode, EnergyNetworkPacket::handle);
 
     	System.out.println("Create Crafts & Additions Initialized!");
+    }
+
+    public void onRegister(final RegisterEvent event) {
+        CAArmInteractions.register();
+        BoilerHeater.REGISTRY.register(CABlocks.LIQUID_BLAZE_BURNER.get(), (level, pos, state) -> {
+            BlazeBurnerBlock.HeatLevel value = state.getValue(LiquidBlazeBurnerBlock.HEAT_LEVEL);
+            if (value == BlazeBurnerBlock.HeatLevel.NONE) return -1;
+            if (value == BlazeBurnerBlock.HeatLevel.SEETHING) return 2;
+            if (value.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING)) return 1;
+            return 0;
+        });
     }
 
     @SubscribeEvent
