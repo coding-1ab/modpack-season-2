@@ -125,7 +125,8 @@ public class BacktankBlockEntity extends KineticBlockEntity implements Nameable 
 		if (this.customName != null)
 			compound.putString("CustomName", Component.Serializer.toJson(this.customName, registries));
 
-		compound.put("Components", CatnipCodecUtils.encode(DataComponentPatch.CODEC, registries, componentPatch).orElseThrow());
+		compound.put("Components", CatnipCodecUtils.encode(DataComponentPatch.CODEC, registries, componentPatch)
+			.orElse(new CompoundTag()));
 	}
 
 	@Override
@@ -139,7 +140,7 @@ public class BacktankBlockEntity extends KineticBlockEntity implements Nameable 
 		if (compound.contains("CustomName", 8))
 			this.customName = Component.Serializer.fromJson(compound.getString("CustomName"), registries);
 
-		componentPatch = CatnipCodecUtils.decode(DataComponentPatch.CODEC, registries, compound).orElse(DataComponentPatch.EMPTY);
+		componentPatch = CatnipCodecUtils.decode(DataComponentPatch.CODEC, registries, compound.getCompound("Components")).orElse(DataComponentPatch.EMPTY);
 		if (prev != 0 && prev != airLevel && airLevel == BacktankUtil.maxAir(capacityEnchantLevel) && clientPacket)
 			playFilledEffect();
 	}

@@ -21,7 +21,7 @@ public class TableClothBlockItem extends BlockItem {
 
 	@Override
 	public boolean isFoil(ItemStack pStack) {
-		return pStack.has(AllDataComponents.CLICK_TO_LINK_DATA);
+		return pStack.has(AllDataComponents.AUTO_REQUEST_DATA);
 	}
 
 	@Override

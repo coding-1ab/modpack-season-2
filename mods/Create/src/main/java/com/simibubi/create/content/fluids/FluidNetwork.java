@@ -45,7 +45,7 @@ public class FluidNetwork {
 	Set<Pair<BlockFace, PipeConnection>> frontier;
 	Set<BlockPos> visited;
 	FluidStack fluid;
-	List<Pair<BlockFace, @Nullable ICapabilityProvider<IFluidHandler>>> targets;
+	List<Pair<BlockFace, FlowSource>> targets;
 	Map<BlockPos, WeakReference<FluidTransportBehaviour>> cache;
 
 	public FluidNetwork(Level world, BlockFace location, Supplier<@Nullable ICapabilityProvider<IFluidHandler>> sourceSupplier) {
@@ -141,8 +141,7 @@ public class FluidNetwork {
 
 					if (adjacent.source.isPresent() && adjacent.source.get()
 						.isEndpoint()) {
-						targets.add(Pair.of(adjacentLocation, adjacent.source.get()
-							.provideHandler()));
+						targets.add(Pair.of(adjacentLocation, adjacent.source.get()));
 						continue;
 					}
 
@@ -169,7 +168,7 @@ public class FluidNetwork {
 
 		if (targets.isEmpty())
 			return;
-		for (Pair<BlockFace, @Nullable ICapabilityProvider<IFluidHandler>> pair : targets) {
+		for (Pair<BlockFace, FlowSource> pair : targets) {
 			if (pair.getSecond() != null && world.getGameTime() % 40 != 0)
 				continue;
 			PipeConnection pipeConnection = get(pair.getFirst());
@@ -177,7 +176,7 @@ public class FluidNetwork {
 				continue;
 			pipeConnection.source.ifPresent(fs -> {
 				if (fs.isEndpoint())
-					pair.setSecond(fs.provideHandler());
+					pair.setSecond(fs);
 			});
 		}
 
@@ -215,14 +214,13 @@ public class FluidNetwork {
 			if (simulate)
 				flowSpeed = transfer.getAmount();
 
-			List<Pair<BlockFace, @Nullable ICapabilityProvider<IFluidHandler>>> availableOutputs = new ArrayList<>(targets);
+			List<Pair<BlockFace, FlowSource>> availableOutputs = new ArrayList<>(targets);
 			while (!availableOutputs.isEmpty() && transfer.getAmount() > 0) {
 				int dividedTransfer = transfer.getAmount() / availableOutputs.size();
 				int remainder = transfer.getAmount() % availableOutputs.size();
 
-				for (Iterator<Pair<BlockFace, @Nullable ICapabilityProvider<IFluidHandler>>> iterator =
-					 availableOutputs.iterator(); iterator.hasNext();) {
-					Pair<BlockFace, @Nullable ICapabilityProvider<IFluidHandler>> pair = iterator.next();
+				for (Iterator<Pair<BlockFace, FlowSource>> iterator = availableOutputs.iterator(); iterator.hasNext();) {
+					Pair<BlockFace, FlowSource> pair = iterator.next();
 					int toTransfer = dividedTransfer;
 					if (remainder > 0) {
 						toTransfer++;
@@ -231,7 +229,7 @@ public class FluidNetwork {
 
 					if (transfer.isEmpty())
 						break;
-					@Nullable ICapabilityProvider<IFluidHandler> targetHandlerProvider = pair.getSecond();
+					@Nullable ICapabilityProvider<IFluidHandler> targetHandlerProvider = pair.getSecond().provideHandler();
 					if (targetHandlerProvider == null) {
 						iterator.remove();
 						continue;

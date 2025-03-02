@@ -129,7 +129,7 @@ public class ShoppingListItem extends Item {
 						(cost ? CreateLang.translate("table_cloth.total_cost") : CreateLang.text(""))
 							.style(ChatFormatting.GOLD)
 							.add(CreateLang.builder()
-								.add(entry.stack.getHoverName())
+								.add(entry.stack.getHoverName().plainCopy())
 								.text(" x")
 								.text(String.valueOf(entry.count))
 								.style(cost ? ChatFormatting.YELLOW : ChatFormatting.GRAY))
@@ -142,7 +142,7 @@ public class ShoppingListItem extends Item {
 								.addTo(tooltipComponents);
 						for (BigItemStack entry : entries) {
 							CreateLang.builder()
-								.add(entry.stack.getHoverName())
+								.add(entry.stack.getHoverName().plainCopy())
 								.text(" x")
 								.text(String.valueOf(entry.count))
 								.style(cost ? ChatFormatting.YELLOW : ChatFormatting.GRAY)

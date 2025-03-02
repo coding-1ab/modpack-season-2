@@ -20,8 +20,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-import net.neoforged.neoforge.items.SlotItemHandler;
-
 public class ToolboxMenu extends MenuBase<ToolboxBlockEntity> {
 
 	public ToolboxMenu(MenuType<?> type, int id, Inventory inv, RegistryFriendlyByteBuf extraData) {
@@ -65,8 +63,9 @@ public class ToolboxMenu extends MenuBase<ToolboxBlockEntity> {
 		if (index < size) {
 			success = !moveItemStackTo(stack, size, slots.size(), false);
 			contentHolder.inventory.onContentsChanged(index);
-		} else
+		} else {
 			success = !moveItemStackTo(stack, 0, size - 1, false);
+		}
 
 		return success ? ItemStack.EMPTY : stack;
 	}
@@ -137,11 +136,11 @@ public class ToolboxMenu extends MenuBase<ToolboxBlockEntity> {
 			int baseIndex = compartment * STACKS_PER_COMPARTMENT;
 
 			// Representative Slots
-			addSlot(new ToolboxSlot(this, inventory, baseIndex, xOffsets[compartment], yOffsets[compartment]));
+			addSlot(new ToolboxSlot(this, inventory, baseIndex, xOffsets[compartment], yOffsets[compartment], true));
 
 			// Hidden Slots
 			for (int i = 1; i < STACKS_PER_COMPARTMENT; i++)
-				addSlot(new SlotItemHandler(inventory, baseIndex + i, -10000, -10000));
+				addSlot(new ToolboxSlot(this, inventory, baseIndex + i, -10000, -10000, false));
 		}
 
 		addPlayerSlots(8, 165);
