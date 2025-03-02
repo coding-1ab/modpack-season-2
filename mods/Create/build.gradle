@@ -151,7 +151,7 @@ repositories {
 dependencies {
     jarJar(modImplementation("com.tterrag.registrate:Registrate:${registrate_version}"))
     jarJar("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}")
-    
+
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}"))
 
     modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${flywheel_minecraft_version}:${flywheel_version}")
