@@ -136,15 +136,10 @@ repositories {
 
 dependencies {
     jarJar(implementation("com.tterrag.registrate:Registrate:${registrate_version}"))
-
-    jarJar("dev.engine-room.flywheel:flywheel-neoforge-${flywheel_minecraft_version}:${flywheel_version}") {
-        version {
-            strictly "[1.0.0-9,2.0)"
-        }
-    }
+    jarJar("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
 
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${flywheel_minecraft_version}:${flywheel_version}")
-    runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${flywheel_minecraft_version}:${flywheel_version}")
+    jarJar(runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${flywheel_minecraft_version}:${flywheel_version}"))
     runtimeOnly("dev.engine-room.vanillin:vanillin-neoforge-${flywheel_minecraft_version}:${vanillin_version}")
 
     if (ponderInWorkspace) {
@@ -153,8 +148,6 @@ dependencies {
     } else {
         implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
     }
-
-    jarJar("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
 
     //compileOnly("mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}")
     //compileOnly("mezz.jei:jei-${jei_minecraft_version}-neoforge-api:${jei_version}")
