@@ -387,6 +387,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 		if (satisfied || promisedSatisfied || waitingForNetwork || redstonePowered)
 			return;
 		if (timer > 0) {
+			timer = Math.min(timer, getConfigRequestIntervalInTicks());
 			timer--;
 			return;
 		}
@@ -822,7 +823,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 		filter = FilterItemStack.of(panelTag.getCompound("Filter"));
 		count = panelTag.getInt("FilterAmount");
 		upTo = panelTag.getBoolean("UpTo");
-		timer = Math.min(panelTag.getInt("Timer"), getConfigRequestIntervalInTicks());
+		timer = panelTag.getInt("Timer");
 		lastReportedLevelInStorage = panelTag.getInt("LastLevel");
 		lastReportedPromises = panelTag.getInt("LastPromised");
 		lastReportedUnloadedLinks = panelTag.getInt("LastUnloadedLinks");
