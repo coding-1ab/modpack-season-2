@@ -16,7 +16,7 @@ apply from: "gradle/property_loader.gradle"
 
 boolean dev = System.getenv('RELEASE') == null || System.getenv('RELEASE').equals('false')
 ext.buildNumber = System.getenv('BUILD_NUMBER')
-String gitHash = "\"${calculateGitHash() + (hasUnstaged() ? "-modified" : "")}\""
+String gitHash = "${calculateGitHash() + (hasUnstaged() ? "-modified" : "")}"
 
 base {
     archivesName = "create-${artifact_minecraft_version}"
