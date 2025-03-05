@@ -159,7 +159,7 @@ dependencies {
     modRuntimeOnly(jarJar("dev.engine-room.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}") {
         version {
             strictly "[1.0,2.0)"
-            prefer "1.0.1"
+            prefer flywheel_version
         }
     })
     modRuntimeOnly("dev.engine-room.vanillin:vanillin-forge-${flywheel_minecraft_version}:${vanillin_version}")
