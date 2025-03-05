@@ -30,12 +30,20 @@ public enum DefaultUnpackingHandler implements UnpackingHandler {
 		IItemHandler targetInv = targetBE.getCapability(ForgeCapabilities.ITEM_HANDLER, side).resolve().orElse(null);
 		if (targetInv == null)
 			return false;
+		
+		if (!simulate) {
+			/*
+			 * Some mods do not support slot-by-slot precision during simulate = false. 
+			 * Faulty interactions may lead to voiding of items, but the simulate pass should
+			 * already have correctly identified there to be enough space for everything.
+			 */
+			for (ItemStack itemStack : items)
+				ItemHandlerHelper.insertItemStacked(targetInv, itemStack.copy(), false);
+			return true;
+		}
 
 		for (int slot = 0; slot < targetInv.getSlots(); slot++) {
 			ItemStack itemInSlot = targetInv.getStackInSlot(slot);
-			if (!simulate)
-				itemInSlot = itemInSlot.copy();
-
 			int itemsAddedToSlot = 0;
 
 			for (int boxSlot = 0; boxSlot < items.size(); boxSlot++) {
@@ -56,9 +64,6 @@ public enum DefaultUnpackingHandler implements UnpackingHandler {
 						items.set(boxSlot, ItemStack.EMPTY);
 
 					itemInSlot = toInsert;
-					if (!simulate)
-						itemInSlot = itemInSlot.copy();
-
 					targetInv.insertItem(slot, toInsert, simulate);
 					continue;
 				}
