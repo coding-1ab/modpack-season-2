@@ -6,7 +6,9 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.api.packager.InventoryIdentifier;
+import com.simibubi.create.api.registry.SimpleRegistry;
 import com.simibubi.create.content.logistics.vault.ItemVaultBlockEntity;
 
 import net.createmod.catnip.data.Iterate;
@@ -24,6 +26,11 @@ import net.minecraft.world.level.block.state.properties.Property;
 
 public class AllInventoryIdentifiers {
 	public static void registerDefaults() {
+		// identify known single blocks
+		InventoryIdentifier.REGISTRY.registerProvider(SimpleRegistry.Provider.forBlockTag(
+			AllBlockTags.SINGLE_BLOCK_INVENTORIES.tag, AllInventoryIdentifiers::single
+		));
+
 		// connect double chests
 		InventoryIdentifier.REGISTRY.registerProvider(block -> {
 			Collection<Property<?>> properties = block.getStateDefinition().getProperties();
@@ -48,6 +55,10 @@ public class AllInventoryIdentifiers {
 		});
 	}
 
+	private static InventoryIdentifier single(Level level, BlockState state, BlockFace face) {
+		return new InventoryIdentifier.Single(face.getPos());
+	}
+
 	private static InventoryIdentifier chest(Level level, BlockState state, BlockFace face) {
 		ChestType type = state.getValue(ChestBlock.TYPE);
 
@@ -60,7 +71,7 @@ public class AllInventoryIdentifiers {
 			}
 		}
 
-		return null;
+		return new InventoryIdentifier.Single(face.getPos());
 	}
 
 	private static InventoryIdentifier worldlyContainerBlock(Level level, BlockState state, BlockFace face) {

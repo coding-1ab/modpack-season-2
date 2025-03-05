@@ -54,6 +54,13 @@ public interface InventoryIdentifier {
 
 	// common identifier implementations.
 
+	record Single(BlockPos pos) implements InventoryIdentifier {
+		@Override
+		public boolean contains(BlockFace face) {
+			return this.pos.equals(face.getPos());
+		}
+	}
+
 	record Pair(BlockPos first, BlockPos second) implements InventoryIdentifier {
 		@Override
 		public boolean contains(BlockFace face) {
