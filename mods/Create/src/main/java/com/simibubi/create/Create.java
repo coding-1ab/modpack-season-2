@@ -21,6 +21,7 @@ import com.simibubi.create.content.kinetics.TorquePropagator;
 import com.simibubi.create.content.kinetics.fan.processing.AllFanProcessingTypes;
 import com.simibubi.create.content.kinetics.mechanicalArm.AllArmInteractionPointTypes;
 import com.simibubi.create.content.logistics.item.filter.attribute.AllItemAttributeTypes;
+import com.simibubi.create.content.logistics.packager.AllUnpackingHandlers;
 import com.simibubi.create.content.logistics.packagerLink.GlobalLogisticsManager;
 import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
 import com.simibubi.create.content.schematics.ServerSchematicLoader;
@@ -180,6 +181,7 @@ public class Create {
 			AllContraptionMovementSettings.registerDefaults();
 			AllOpenPipeEffectHandlers.registerDefaults();
 			AllMountedDispenseItemBehaviors.registerDefaults();
+			AllUnpackingHandlers.registerDefaults();
 			// --
 
 			AllAdvancements.register();
