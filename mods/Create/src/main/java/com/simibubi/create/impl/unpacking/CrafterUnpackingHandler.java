@@ -40,7 +40,7 @@ public enum CrafterUnpackingHandler implements UnpackingHandler {
 
 		// insert in the order's defined ordering
 		int max = Math.min(inventories.size(), order.stacks().size());
-		for (int i = 0; i < max; i++) {
+		outer: for (int i = 0; i < max; i++) {
 			BigItemStack targetStack = order.stacks().get(i);
 			if (targetStack.stack.isEmpty())
 				continue;
@@ -56,6 +56,8 @@ public enum CrafterUnpackingHandler implements UnpackingHandler {
 					ItemStack toInsert = stack.copyWithCount(1);
 					if (inventory.insertItem(0, toInsert, simulate).isEmpty()) {
 						stack.shrink(1);
+						// one item per crafter, move to next once successful
+						continue outer;
 					}
 				}
 			}
