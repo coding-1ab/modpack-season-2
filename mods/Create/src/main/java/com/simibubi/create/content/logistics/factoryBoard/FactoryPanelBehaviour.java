@@ -1,5 +1,7 @@
 package com.simibubi.create.content.logistics.factoryBoard;
 
+import com.simibubi.create.infrastructure.config.AllConfigs;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -84,7 +86,6 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 	public static final BehaviourType<FactoryPanelBehaviour> TOP_RIGHT = new BehaviourType<>();
 	public static final BehaviourType<FactoryPanelBehaviour> BOTTOM_LEFT = new BehaviourType<>();
 	public static final BehaviourType<FactoryPanelBehaviour> BOTTOM_RIGHT = new BehaviourType<>();
-	public static final int REQUEST_INTERVAL = 100;
 
 	public Map<FactoryPanelPosition, FactoryPanelConnection> targetedBy;
 	public Map<BlockPos, FactoryPanelConnection> targetedByLinks;
@@ -386,7 +387,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 		if (satisfied || promisedSatisfied || waitingForNetwork || redstonePowered)
 			return;
 		if (timer > 0) {
-			timer = Math.min(timer, REQUEST_INTERVAL);
+			timer = Math.min(timer, getConfigRequestIntervalInTicks());
 			timer--;
 			return;
 		}
@@ -743,11 +744,15 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 	}
 
 	public void resetTimer() {
-		timer = REQUEST_INTERVAL;
+		timer = getConfigRequestIntervalInTicks();
 	}
 
 	public void resetTimerSlightly() {
-		timer = REQUEST_INTERVAL / 2;
+		timer = getConfigRequestIntervalInTicks() / 2;
+	}
+
+	private int getConfigRequestIntervalInTicks() {
+		return AllConfigs.server().logistics.factoryGaugeTimer.get();
 	}
 
 	private int getPromiseExpiryTimeInTicks() {
