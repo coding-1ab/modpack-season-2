@@ -37,7 +37,7 @@ public class ProcessingOutput {
 	private final DataComponentPatch patch;
 	private final float chance;
 
-	private ResourceLocation compatDatagenOutput;
+	private ResourceLocation datagenOutput;
 
 	public ProcessingOutput(ItemStack stack, float chance) {
 		this(stack.getItem(), stack.getCount(), stack.getComponentsPatch(), chance);
@@ -56,14 +56,14 @@ public class ProcessingOutput {
 
 	public ProcessingOutput(ResourceLocation item, int count, float chance) {
 		this.item = Items.AIR;
-		this.compatDatagenOutput = item;
+		this.datagenOutput = item;
 		this.count = count;
 		this.patch = DataComponentPatch.EMPTY;
 		this.chance = chance;
 	}
 
 	public ItemStack getStack() {
-		return new ItemStack(compatDatagenOutput != null ? BuiltInRegistries.ITEM.get(compatDatagenOutput) : item, count);
+		return new ItemStack(datagenOutput != null ? BuiltInRegistries.ITEM.get(datagenOutput) : item, count);
 	}
 
 	public float getChance() {
@@ -95,15 +95,13 @@ public class ProcessingOutput {
 	// Remove in 1.22
 	@Deprecated(forRemoval = true)
 	public static final Codec<ProcessingOutput> CODEC_OLD = RecordCodecBuilder.create(i -> i.group(
-		ITEM_CODEC_OLD.fieldOf("item").forGetter(s -> s.compatDatagenOutput != null ? Either.right(Pair.of(s.compatDatagenOutput, s.count)) : Either.left(s.item.getDefaultInstance())),
+		ITEM_CODEC_OLD.fieldOf("item").forGetter(s -> s.datagenOutput != null ? Either.right(Pair.of(s.datagenOutput, s.count)) : Either.left(s.item.getDefaultInstance())),
 		Codec.INT.optionalFieldOf("count", 1).forGetter(s -> s.count),
 		Codec.FLOAT.optionalFieldOf("chance", 1F).forGetter(s -> s.chance)
-	).apply(i, (item, count, chance) -> {
-		return item.map(
-			stack -> new ProcessingOutput(stack.getItem(), count, chance),
-			compat -> new ProcessingOutput(compat.getFirst(), compat.getSecond(), chance)
-		);
-	}));
+	).apply(i, (item, count, chance) -> item.map(
+		stack -> new ProcessingOutput(stack.getItem(), count, chance),
+		compat -> new ProcessingOutput(compat.getFirst(), compat.getSecond(), chance)
+	)));
 
 	private static final Codec<Either<Item, ResourceLocation>> ITEM_CODEC = Codec.either(
 		BuiltInRegistries.ITEM.byNameCodec(),
@@ -112,14 +110,14 @@ public class ProcessingOutput {
 
 	public static final Codec<ProcessingOutput> CODEC_NEW = RecordCodecBuilder.create(i -> i.group(
 		ITEM_CODEC.fieldOf("id").forGetter(s -> {
-			if (s.compatDatagenOutput != null)
-				return Either.right(s.compatDatagenOutput);
+			if (s.datagenOutput != null)
+				return Either.right(s.datagenOutput);
 			return Either.left(s.item);
 		}),
-		DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(s -> s.patch),
 		Codec.INT.optionalFieldOf("count", 1).forGetter(s -> s.count),
+		DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(s -> s.patch),
 		Codec.FLOAT.optionalFieldOf("chance", 1F).forGetter(s -> s.chance)
-	).apply(i, (item, components, count, chance) -> item.map(
+	).apply(i, (item, count, components, chance) -> item.map(
 		stack -> new ProcessingOutput(stack, count, components, chance),
 		compat -> new ProcessingOutput(compat, count, chance)
 	)));
