@@ -10,7 +10,7 @@ Create 6.0.2
 - Fixed Shopping lists disappearing when clicking a different table cloth #7548
 - Fix mixin conflict with immersive portals
 - Fix factory gauge display sources causing crashes #7645
-- Fix BlockEntityRenderHelper ignoring BlockEntityRender#shouldRender #7639
+- Fix Schematics sometimes rendering block entity elements when it shouldn't #7639
 - Fix Chiseled Bookshelves having wrong the blockstates when placed with a schematic cannon #7642
 - Fix horizontal crushing wheels not working properly #7445
 - Fix rotating shader not correctly handling color
@@ -28,10 +28,15 @@ Create 6.0.2
 - Fix rotation keybind not supporting mouse buttons
 - Fixed deployers not being able to harvest honeycomb with modded shears #4570
 - Safety check for schedule pointer exceeding the total count #7492
-- Default packager unwrapping behaviour uses more robust insertion method when not in a simulation #7426
+- Fixed packager unpacking leading to item multiplication in special modded inventories #7426
 - Fixed redstone links not updating neighbours when toggling from receiver to transmitter #7715
 - Fix KineticStressDisplaySource not working properly #7659
 - Fix sequenced assembly not correctly handling errors (1.21.1)
+- The JEI search bar is now synchronised to the stock keeper search bar (configurable)
+- Fixed JEI plugin modifying ingredient fluid amounts for visual purposes
+- Fixed belts moving a sneaking player even when not wearing the full cardboard set #7691
+- Packagers can now read multiple lines on signs for package addressing
+- Factory Gauge request interval is now configurable
 
 #### API Changes
 
