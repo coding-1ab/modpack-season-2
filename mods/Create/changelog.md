@@ -4,7 +4,41 @@ Create 6.0.2
 
 #### Bug Fixes
 
-- Fix warning getting logged when cc: tweaked isn't installed
+- Fix warning getting logged when CC: Tweaked isn't installed
+- Fix crash when using LecternDisplayTarget #7579 #7600
+- Fix crash with fluids on contraptions
+- Fixed Shopping lists disappearing when clicking a different table cloth #7548
+- Fix mixin conflict with immersive portals
+- Fix factory gauge display sources causing crashes #7645
+- Fix BlockEntityRenderHelper ignoring BlockEntityRender#shouldRender #7639
+- Fix Chiseled Bookshelves having wrong the blockstates when placed with a schematic cannon #7642
+- Fix horizontal crushing wheels not working properly #7445
+- Fix rotating shader not correctly handling color
+- Fix StockKeeperCategoryScreen filter buttons being clickable outside the window bounds #7668
+- Fix diving armor being trimmable (1.21.1)
+- Fix diving helmets not having aqua affinity #7433 (1.21.1)
+- Fix crash when using deployers wielding weapons #7704 (1.21.1)
+- Fix threshold switch UI causing a crash if opened too quickly after breaking the storage block it was looking at #7676
+- Fix rotated steam engines still working #7616
+- Fix button of contraption controls not rendering on contraptions #7701
+- Fix error/crash with CurrentFloorDisplaySource #7700
+- Fix the ability to redeem shopping lists at other shop networks #7657
+- Add bowls, mushroom stew and suspicious stew to the upright on belt tag
+- Fix shopping lists not working on servers
+- Fix rotation keybind not supporting mouse buttons
+- Fixed deployers not being able to harvest honeycomb with modded shears #4570
+- Safety check for schedule pointer exceeding the total count #7492
+- Default packager unwrapping behaviour uses more robust insertion method when not in a simulation #7426
+- Fixed redstone links not updating neighbours when toggling from receiver to transmitter #7715
+- Fix KineticStressDisplaySource not working properly #7659
+- Fix sequenced assembly not correctly handling errors (1.21.1)
+
+#### API Changes
+
+- Implement custom unpacking API
+- Implement InventoryIdentifier API
+- Lock Create's registrate instance behind a caller check, prevent other mods and addons from using it
+- Implement CreateRegistrateRegistrationCallback
 
 ------------------------------------------------------
 Create 6.0.1
