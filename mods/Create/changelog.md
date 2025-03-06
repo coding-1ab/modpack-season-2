@@ -34,6 +34,9 @@ Create 6.0.2
 - Fix sequenced assembly not correctly handling errors (1.21.1)
 - The JEI search bar is now synchronised to the stock keeper search bar (configurable)
 - Fixed JEI plugin modifying ingredient fluid amounts for visual purposes
+- Fixed belts moving a sneaking player even when not wearing the full cardboard set #7691
+- Packagers can now read multiple lines on signs for package addressing
+- Factory Gauge request interval is now configurable
 
 #### API Changes
 
