@@ -19,10 +19,10 @@ import net.neoforged.neoforge.common.crafting.CompoundIngredient;
 
 public class SequencedRecipe<T extends ProcessingRecipe<?>> {
 	public static final Codec<SequencedRecipe<?>> CODEC = AllRecipeTypes.CODEC
-			.<ProcessingRecipe<?>>dispatch(ProcessingRecipe::getRecipeType, AllRecipeTypes::processingCodec)
+		.<ProcessingRecipe<?>>dispatch(ProcessingRecipe::getRecipeType, AllRecipeTypes::processingCodec)
 		.validate(r -> r instanceof IAssemblyRecipe ? DataResult.success(r) :
 			DataResult.error(() -> r.getType() + " is not a supported recipe type"))
-			.xmap(SequencedRecipe::new, SequencedRecipe::getRecipe);
+		.xmap(SequencedRecipe::new, SequencedRecipe::getRecipe);
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, SequencedRecipe<?>> STREAM_CODEC = StreamCodec.of(
 			(b, v) -> v.writeToBuffer(b), SequencedRecipe::readFromBuffer
