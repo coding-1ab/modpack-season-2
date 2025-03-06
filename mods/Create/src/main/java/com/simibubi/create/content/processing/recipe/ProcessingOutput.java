@@ -82,6 +82,8 @@ public class ProcessingOutput {
 		return out;
 	}
 
+	// Remove in 1.22
+	@Deprecated(forRemoval = true)
 	private static final Codec<Either<ItemStack, Pair<ResourceLocation, Integer>>> ITEM_CODEC_OLD = Codec.either(
 		ItemStack.SINGLE_ITEM_CODEC,
 		ResourceLocation.CODEC.comapFlatMap(
@@ -90,6 +92,8 @@ public class ProcessingOutput {
 		)
 	);
 
+	// Remove in 1.22
+	@Deprecated(forRemoval = true)
 	public static final Codec<ProcessingOutput> CODEC_OLD = RecordCodecBuilder.create(i -> i.group(
 		ITEM_CODEC_OLD.fieldOf("item").forGetter(s -> s.compatDatagenOutput != null ? Either.right(Pair.of(s.compatDatagenOutput, s.count)) : Either.left(s.item.getDefaultInstance())),
 		Codec.INT.optionalFieldOf("count", 1).forGetter(s -> s.count),
@@ -120,6 +124,7 @@ public class ProcessingOutput {
 		compat -> new ProcessingOutput(compat, count, chance)
 	)));
 
+	// Remove fallback in 1.22
 	public static final Codec<ProcessingOutput> CODEC = Codec.withAlternative(CODEC_NEW, CODEC_OLD);
 
 }
