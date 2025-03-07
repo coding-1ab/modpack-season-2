@@ -1,7 +1,19 @@
 package com.simibubi.create.content.equipment.tool;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
+import net.createmod.catnip.platform.CatnipServices;
+import net.minecraft.core.Holder;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.AllItems;
@@ -10,17 +22,10 @@ import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.LogicalSide;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
-import net.createmod.catnip.platform.CatnipServices;
-import net.minecraft.core.Holder;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
@@ -53,6 +58,16 @@ public class CardboardSwordItem extends SwordItem {
 	@Override
 	public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
 		return enchantment == Enchantments.KNOCKBACK;
+	}
+
+	@Override
+	public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
+		Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(book);
+		for (Enchantment enchantment : enchants.keySet()) {
+			if (enchantment != Enchantments.KNOCKBACK)
+				return false;
+		}
+		return true;
 	}
 
 	@SubscribeEvent
