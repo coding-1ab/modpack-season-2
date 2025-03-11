@@ -92,9 +92,10 @@ public class ParticleEmitter {
         this.forceSpawn = emitterSettings.forceSpawn();
         this.particleData = data.particleData();
 
+        // Perform the removal task first so no more particles are spawned
+        this.reset();
         TickTaskScheduler scheduler = particleManager.getScheduler();
         this.spawnTask = scheduler.scheduleAtFixedRate(this::spawn, 0, data.rate());
-        this.reset();
     }
 
     @ApiStatus.Internal
