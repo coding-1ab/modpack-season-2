@@ -28,6 +28,6 @@ public class TickSubEmitterModule implements UpdateParticleModule {
         }
 
         instance.setPosition(particle.getPosition());
-        particleManager.addParticleSystem(instance);
+        particleManager.getScheduler().execute(() -> particleManager.addParticleSystem(instance));
     }
 }

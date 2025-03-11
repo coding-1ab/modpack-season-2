@@ -25,7 +25,7 @@ public record InitSubEmitterModuleData(ResourceLocation subEmitter) implements P
             }
 
             instance.setPosition(particle.getPosition());
-            particleManager.addParticleSystem(instance);
+            particleManager.getScheduler().execute(() -> particleManager.addParticleSystem(instance));
         }));
     }
 

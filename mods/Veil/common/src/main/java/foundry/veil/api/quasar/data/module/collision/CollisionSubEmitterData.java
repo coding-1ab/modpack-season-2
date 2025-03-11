@@ -25,7 +25,7 @@ public record CollisionSubEmitterData(ResourceLocation subEmitter) implements Pa
             }
 
             instance.setPosition(particle.getPosition());
-            particleManager.addParticleSystem(instance);
+            particleManager.getScheduler().execute(() -> particleManager.addParticleSystem(instance));
         }));
     }
 

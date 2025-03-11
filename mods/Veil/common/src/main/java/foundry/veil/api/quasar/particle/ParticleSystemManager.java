@@ -69,7 +69,9 @@ public class ParticleSystemManager {
     }
 
     public void addParticleSystem(ParticleEmitter particleEmitter) {
-        this.scheduler.execute(() -> this.particleEmitters.add(particleEmitter));
+        this.particleEmitters.add(particleEmitter);
+        // Adds particles immediately
+        particleEmitter.onAdd();
     }
 
     public void clear() {
