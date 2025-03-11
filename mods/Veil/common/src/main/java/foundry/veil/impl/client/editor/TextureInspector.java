@@ -1,6 +1,6 @@
 package foundry.veil.impl.client.editor;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.platform.GlStateManager;
 import foundry.veil.Veil;
 import foundry.veil.api.client.editor.SingleWindowInspector;
 import foundry.veil.api.client.render.VeilRenderSystem;
@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static org.lwjgl.opengl.GL11C.*;
+import static org.lwjgl.opengl.GL13C.GL_TEXTURE_BINDING_CUBE_MAP;
 import static org.lwjgl.opengl.GL13C.GL_TEXTURE_CUBE_MAP;
 import static org.lwjgl.opengl.GL20C.glIsTexture;
 import static org.lwjgl.opengl.GL45C.GL_TEXTURE_TARGET;
@@ -55,6 +56,7 @@ public class TextureInspector extends SingleWindowInspector {
     private final ImBoolean flipY;
     private int[] textures;
     private int selectedTexture;
+    private int selectedTarget;
     private boolean downloadTextures;
     private CompletableFuture<?> downloadFuture;
 
@@ -66,6 +68,7 @@ public class TextureInspector extends SingleWindowInspector {
         this.flipY = new ImBoolean();
         this.textures = new int[0];
         this.selectedTexture = 0;
+        this.selectedTarget = 0;
         this.downloadFuture = null;
     }
 
@@ -118,6 +121,7 @@ public class TextureInspector extends SingleWindowInspector {
         ImGui.setNextItemWidth(ImGui.getContentRegionAvailX() / 2);
         if (ImGui.sliderInt("##textures", value, 0, this.textures.length - 1, selectedId == 0 ? NO_TEXTURE.getString() : Integer.toString(selectedId))) {
             this.selectedTexture = value[0];
+            this.selectedTarget = 0;
         }
         ImGui.endDisabled();
         ImGui.sameLine();
@@ -126,12 +130,14 @@ public class TextureInspector extends SingleWindowInspector {
         ImGui.beginDisabled(this.selectedTexture <= 0);
         if (ImGui.arrowButton("##left", ImGuiDir.Left)) {
             this.selectedTexture--;
+            this.selectedTarget = 0;
         }
         ImGui.endDisabled();
         ImGui.beginDisabled(this.selectedTexture >= this.textures.length - 1);
         ImGui.sameLine(0.0f, ImGui.getStyle().getItemInnerSpacingX());
         if (ImGui.arrowButton("##right", ImGuiDir.Right)) {
             this.selectedTexture++;
+            this.selectedTarget = 0;
         }
         ImGui.endDisabled();
         ImGui.popButtonRepeat();
@@ -251,12 +257,69 @@ public class TextureInspector extends SingleWindowInspector {
         this.cubemapStorage.clear();
         this.textures = new int[0];
         this.selectedTexture = 0;
+        this.selectedTarget = 0;
+    }
+
+    /**
+     * This method tries to guess the texture binding for the specified texture.
+     * <br>
+     * On legacy systems it checks for a binding that doesn't throw an error.
+     *
+     * @param texture The texture to bind
+     * @return The target the texture is bound to or <code>0</code> if unsupported
+     */
+    private int bindTexture(int texture) {
+        if (this.selectedTarget == -1) {
+            return 0;
+        }
+        if (this.selectedTarget == 0) {
+            this.selectedTarget = glGetTextureParameteri(texture, GL_TEXTURE_TARGET);
+        }
+        if (this.selectedTarget != 0) {
+            if (this.selectedTarget == GL_TEXTURE_2D) {
+                GlStateManager._bindTexture(texture);
+            } else {
+                glBindTexture(this.selectedTarget, texture);
+            }
+            return this.selectedTarget;
+        }
+
+        // Clear errors
+        while (glGetError() != GL_NO_ERROR) {
+        }
+
+        // Texture 2D
+        {
+            int old = glGetInteger(GL_TEXTURE_BINDING_2D);
+            GlStateManager._bindTexture(texture);
+            if (glGetError() == GL_NO_ERROR) {
+                return this.selectedTarget = GL_TEXTURE_2D;
+            }
+            GlStateManager._bindTexture(old);
+        }
+
+        // Cubemap
+        {
+            int old = glGetInteger(GL_TEXTURE_BINDING_CUBE_MAP);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+            if (glGetError() == GL_NO_ERROR) {
+                return this.selectedTarget = GL_TEXTURE_CUBE_MAP;
+            }
+            glBindTexture(GL_TEXTURE_CUBE_MAP, old);
+        }
+
+        this.selectedTarget = -1;
+        return 0;
     }
 
     private void addImage(int selectedId, boolean flipX, boolean flipY) {
-        int target = VeilRenderSystem.directStateAccessSupported() ? glGetTextureParameteri(selectedId, GL_TEXTURE_TARGET) : GL_TEXTURE_2D;
+        int target = this.bindTexture(selectedId);
+        if (target == 0) {
+            return;
+        }
+
         if (target == GL_TEXTURE_CUBE_MAP) {
-            CubemapStorage storage = this.cubemapStorage.computeIfAbsent(selectedId, CubemapStorage::new);
+            CubemapStorage storage = this.cubemapStorage.computeIfAbsent(selectedId, unused -> new CubemapStorage());
             float size = ImGui.getContentRegionAvailX();
 
             storage.render((int) size, (int) (size / 2.0F));
@@ -267,7 +330,6 @@ public class TextureInspector extends SingleWindowInspector {
                 storage.free();
             }
 
-            RenderSystem.bindTexture(selectedId);
             int width = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH);
             int height = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT);
             float size = ImGui.getContentRegionAvailX();
@@ -284,12 +346,7 @@ public class TextureInspector extends SingleWindowInspector {
 
     private static final class CubemapStorage implements NativeResource {
 
-        private final int texture;
         private AdvancedFbo fbo;
-
-        private CubemapStorage(int texture) {
-            this.texture = texture;
-        }
 
         public void render(int width, int height) {
             ShaderProgram shaderProgram = VeilRenderSystem.setShader(DEBUG_CUBEMAP_SHADER);
@@ -309,7 +366,6 @@ public class TextureInspector extends SingleWindowInspector {
 
             this.fbo.bind(true);
             this.fbo.clear();
-            glBindTexture(GL_TEXTURE_CUBE_MAP, this.texture);
             shaderProgram.bind();
             VeilRenderSystem.drawScreenQuad();
             AdvancedFbo.unbind();
