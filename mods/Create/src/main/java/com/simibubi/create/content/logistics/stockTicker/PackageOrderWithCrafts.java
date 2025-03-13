@@ -1,15 +1,16 @@
 package com.simibubi.create.content.logistics.stockTicker;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 
-import net.createmod.catnip.nbt.NBTHelper;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.createmod.catnip.codecs.stream.CatnipStreamCodecBuilders;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 /**
  * Package ordering context containing additional information of package orders.
@@ -18,6 +19,29 @@ import net.minecraft.network.FriendlyByteBuf;
  * @param amounts
  */
 public record PackageOrderWithCrafts(PackageOrder orderedStacks, List<CraftingEntry> orderedCrafts) {
+
+	public static final Codec<PackageOrderWithCrafts> CODEC = Codec.withAlternative(
+		
+		RecordCodecBuilder.create(i -> i.group(PackageOrder.CODEC.fieldOf("ordered_stacks")
+			.forGetter(PackageOrderWithCrafts::orderedStacks),
+			CraftingEntry.CODEC.listOf()
+				.fieldOf("ordered_crafts")
+				.forGetter(PackageOrderWithCrafts::orderedCrafts))
+			.apply(i, PackageOrderWithCrafts::new)),
+
+		// Legacy format (6.0.0 - 6.0.2)
+		RecordCodecBuilder.create(instance -> instance.group(Codec.list(BigItemStack.CODEC)
+			.fieldOf("entries")
+			.forGetter(PackageOrderWithCrafts::stacks))
+			.apply(instance, PackageOrderWithCrafts::simple))
+
+	);
+
+	public static final StreamCodec<RegistryFriendlyByteBuf, PackageOrderWithCrafts> STREAM_CODEC =
+		StreamCodec.composite(
+			PackageOrder.STREAM_CODEC, s -> s.orderedStacks,
+			CatnipStreamCodecBuilders.list(CraftingEntry.STREAM_CODEC), s -> s.orderedCrafts,
+			PackageOrderWithCrafts::new);
 	
 	public static PackageOrderWithCrafts empty() {
 		return new PackageOrderWithCrafts(PackageOrder.empty(), List.of());
@@ -33,25 +57,17 @@ public record PackageOrderWithCrafts(PackageOrder orderedStacks, List<CraftingEn
 
 	public record CraftingEntry(PackageOrder pattern, int count) {
 
-		public CompoundTag write() {
-			CompoundTag tag = new CompoundTag();
-			tag.put("Pattern", pattern.write());
-			tag.putInt("Count", count);
-			return tag;
-		}
+		public static final Codec<CraftingEntry> CODEC = RecordCodecBuilder.create(i -> i
+			.group(
+				PackageOrder.CODEC.fieldOf("pattern").forGetter(CraftingEntry::pattern),
+				Codec.INT.fieldOf("count").forGetter(CraftingEntry::count))
+			.apply(i, CraftingEntry::new));
+		
+		public static final StreamCodec<RegistryFriendlyByteBuf, CraftingEntry> STREAM_CODEC = StreamCodec.composite(
+			PackageOrder.STREAM_CODEC, s -> s.pattern, 
+			ByteBufCodecs.VAR_INT, s -> s.count, 
+			CraftingEntry::new);
 
-		public static CraftingEntry read(CompoundTag tag) {
-			return new CraftingEntry(PackageOrder.read(tag.getCompound("Pattern")), tag.getInt("Count"));
-		}
-
-		public void write(FriendlyByteBuf buffer) {
-			pattern.write(buffer);
-			buffer.writeVarInt(count);
-		}
-
-		public static CraftingEntry read(FriendlyByteBuf buffer) {
-			return new CraftingEntry(PackageOrder.read(buffer), buffer.readVarInt());
-		}
 
 	}
 	
@@ -74,36 +90,6 @@ public record PackageOrderWithCrafts(PackageOrder orderedStacks, List<CraftingEn
         return orderedStacks.isEmpty();
     }
 
-    public CompoundTag write() {
-        CompoundTag tag = new CompoundTag();
-        tag.put("OrderedStacks", orderedStacks.write());
-        tag.put("OrderedCrafts", NBTHelper.writeCompoundList(orderedCrafts, CraftingEntry::write));
-        return tag;
-    }
-
-	public static PackageOrderWithCrafts read(CompoundTag tag) {
-		if (tag.contains("Entries", Tag.TAG_LIST)) // legacy format
-			return new PackageOrderWithCrafts(PackageOrder.read(tag), List.of());
-			
-		return new PackageOrderWithCrafts(PackageOrder.read(tag.getCompound("OrderedStacks")),
-			NBTHelper.readCompoundList(tag.getList("OrderedCrafts", Tag.TAG_COMPOUND), CraftingEntry::read));
-	}
-
-    public void write(FriendlyByteBuf buffer) {
-        orderedStacks.write(buffer);
-        buffer.writeVarInt(orderedCrafts.size());
-        orderedCrafts.forEach(ce -> ce.write(buffer));
-    }
-
-    public static PackageOrderWithCrafts read(FriendlyByteBuf buffer) {
-    	PackageOrder orderedStacks = PackageOrder.read(buffer);
-    	List<CraftingEntry> orderedCrafts = new ArrayList<>();
-        int size = buffer.readVarInt();
-        for (int i = 0; i < size; i++)
-        	orderedCrafts.add(CraftingEntry.read(buffer));
-        return new PackageOrderWithCrafts(orderedStacks, orderedCrafts);
-    }
-    
     public boolean orderedStacksMatchOrderedRecipes() {
     	if (orderedCrafts.isEmpty())
     		return false;
