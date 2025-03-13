@@ -14,6 +14,7 @@
     "client.MinecraftMixin",
     "client.RenderTypeMixin",
     "client.debug.vanilla.DebugLevelRendererMixin",
+    "client.dynamicbuffer.LevelRendererMixin",
     "client.perspective.vanilla.LevelRendererMixin",
     "compat.iris.IrisRenderingPipelineAccessor",
     "compat.sodium.BlockRendererMixin",

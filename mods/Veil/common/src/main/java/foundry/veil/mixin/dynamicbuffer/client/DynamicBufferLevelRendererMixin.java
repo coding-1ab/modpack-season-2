@@ -42,10 +42,11 @@ public class DynamicBufferLevelRendererMixin {
         VeilRenderSystem.renderer().getDynamicBufferManger().setEnabled(false);
     }
 
-    @Inject(method = "renderLevel", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V", args = "ldc=destroyProgress"))
-    public void beginTranslucent(CallbackInfo ci) {
-        VeilRenderSystem.renderer().getDynamicBufferManger().setEnabled(true);
-    }
+    // Platform-specific now
+//    @Inject(method = "renderLevel", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V", args = "ldc=destroyProgress"))
+//    public void beginTranslucent(CallbackInfo ci) {
+//        VeilRenderSystem.renderer().getDynamicBufferManger().setEnabled(true);
+//    }
 
     @Inject(method = "renderLevel", at = @At("TAIL"))
     public void blit(CallbackInfo ci) {
