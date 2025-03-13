@@ -1,5 +1,6 @@
 package foundry.veil;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.molang.VeilMolang;
 import foundry.veil.impl.client.imgui.VeilImGui;
@@ -51,7 +52,7 @@ public class Veil {
      * @param task The ImGui task to run
      */
     public static void withImGui(Runnable task) {
-        if (VeilRenderSystem.hasImGui()) {
+        if (RenderSystem.isOnRenderThreadOrInit() && VeilRenderSystem.hasImGui()) {
             beginImGui();
             task.run();
             endImGui();

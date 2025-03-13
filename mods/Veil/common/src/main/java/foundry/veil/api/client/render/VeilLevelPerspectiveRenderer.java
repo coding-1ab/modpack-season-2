@@ -16,13 +16,12 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
-
-import static org.lwjgl.opengl.GL30C.GL_COLOR_ATTACHMENT0;
 
 /**
  * Renders the level from different perspectives.
@@ -34,6 +33,7 @@ public final class VeilLevelPerspectiveRenderer {
     private static final LevelPerspectiveCamera CAMERA = new LevelPerspectiveCamera();
     private static final Matrix4f TRANSFORM = new Matrix4f();
 
+    private static final CameraMatrices BACKUP_CAMERA_MATRICES = new CameraMatrices();
     private static final Matrix4f BACKUP_PROJECTION = new Matrix4f();
     private static final Vector3f BACKUP_LIGHT0_POSITION = new Vector3f();
     private static final Vector3f BACKUP_LIGHT1_POSITION = new Vector3f();
@@ -53,26 +53,30 @@ public final class VeilLevelPerspectiveRenderer {
      * @param cameraOrientation The orientation of the camera
      * @param renderDistance    The chunk render distance
      * @param deltaTracker      The delta tracker instance
+     * @param drawLights        Whether to draw lights to the scene after
+     * @return The full framebuffer including dynamic buffers. This framebuffer is owned by the render system
      */
-    public static void render(AdvancedFbo framebuffer, Matrix4fc modelView, Matrix4fc projection, Vector3dc cameraPosition, Quaternionfc cameraOrientation, float renderDistance, DeltaTracker deltaTracker) {
-        render(framebuffer, Minecraft.getInstance().cameraEntity, modelView, projection, cameraPosition, cameraOrientation, renderDistance, deltaTracker);
+    public static AdvancedFbo render(AdvancedFbo framebuffer, Matrix4fc modelView, Matrix4fc projection, Vector3dc cameraPosition, Quaternionfc cameraOrientation, float renderDistance, DeltaTracker deltaTracker, boolean drawLights) {
+        return render(framebuffer, Minecraft.getInstance().cameraEntity, modelView, projection, cameraPosition, cameraOrientation, renderDistance, deltaTracker, drawLights);
     }
 
     /**
      * Renders the level from another POV. Automatically prevents circular render references.
      *
      * @param framebuffer       The framebuffer to draw into
-     * @param cameraEntity      The entity to draw the camera in relation to. If unsure use {@link #render(AdvancedFbo, Matrix4fc, Matrix4fc, Vector3dc, Quaternionfc, float, DeltaTracker)}
+     * @param cameraEntity      The entity to draw the camera in relation to. If unsure use {@link #render(AdvancedFbo, Matrix4fc, Matrix4fc, Vector3dc, Quaternionfc, float, DeltaTracker, boolean)}
      * @param modelView         The base modelview matrix
      * @param projection        The projection matrix
      * @param cameraPosition    The position of the camera
      * @param cameraOrientation The orientation of the camera
      * @param renderDistance    The chunk render distance
      * @param deltaTracker      The delta tracker instance
+     * @param drawLights        Whether to draw lights to the scene after
+     * @return The full framebuffer including dynamic buffers. This framebuffer is owned by the render system
      */
-    public static void render(AdvancedFbo framebuffer, @Nullable Entity cameraEntity, Matrix4fc modelView, Matrix4fc projection, Vector3dc cameraPosition, Quaternionfc cameraOrientation, float renderDistance, DeltaTracker deltaTracker) {
+    public static AdvancedFbo render(AdvancedFbo framebuffer, @Nullable Entity cameraEntity, Matrix4fc modelView, Matrix4fc projection, Vector3dc cameraPosition, Quaternionfc cameraOrientation, float renderDistance, DeltaTracker deltaTracker, boolean drawLights) {
         if (renderingPerspective) {
-            return;
+            return framebuffer;
         }
 
         // Finish anything previously being rendered for safety
@@ -120,15 +124,13 @@ public final class VeilLevelPerspectiveRenderer {
 
         renderingPerspective = true;
         AdvancedFbo drawFbo = VeilRenderSystem.renderer().getDynamicBufferManger().getDynamicFbo(framebuffer);
-        if (drawFbo != null) {
-            drawFbo.bind(true);
-            renderTargetExtension.veil$setWrapper(drawFbo);
-        } else {
-            framebuffer.bind(true);
-            renderTargetExtension.veil$setWrapper(framebuffer);
-        }
+        drawFbo.bind(true);
+        renderTargetExtension.veil$setWrapper(drawFbo);
 
         Frustum backupFrustum = levelRendererAccessor.getCullingFrustum();
+
+        CameraMatrices matrices = VeilRenderSystem.renderer().getCameraMatrices();
+        matrices.backup(BACKUP_CAMERA_MATRICES);
 
         levelRenderer.prepareCullFrustum(new Vec3(cameraPosition.x(), cameraPosition.y(), cameraPosition.z()), poseStack.last().pose(), TRANSFORM);
         levelRenderer.renderLevel(deltaTracker, false, CAMERA, gameRenderer, gameRenderer.lightTexture(), poseStack.last().pose(), TRANSFORM);
@@ -136,14 +138,21 @@ public final class VeilLevelPerspectiveRenderer {
         bufferSource.endBatch();
         levelRenderer.doEntityOutline();
 
+        // Draw lights
+        if (drawLights) {
+            ProfilerFiller profiler = Minecraft.getInstance().getProfiler();
+            if (VeilRenderSystem.drawLights(profiler, VeilRenderSystem.getCullingFrustum())) {
+                VeilRenderSystem.compositeLights(profiler);
+            } else {
+                AdvancedFbo.unbind();
+            }
+        }
+
+        matrices.restore(BACKUP_CAMERA_MATRICES);
+
         levelRendererAccessor.setCullingFrustum(backupFrustum);
 
         renderTargetExtension.veil$setWrapper(null);
-        if (drawFbo != null) {
-            drawFbo.drawBuffers(GL_COLOR_ATTACHMENT0);
-            drawFbo.resolveToAdvancedFbo(framebuffer);
-            drawFbo.resetDrawBuffers();
-        }
         AdvancedFbo.unbind();
         renderingPerspective = false;
 
@@ -169,6 +178,8 @@ public final class VeilLevelPerspectiveRenderer {
         Camera mainCamera = gameRenderer.getMainCamera();
         minecraft.getBlockEntityRenderDispatcher().prepare(minecraft.level, mainCamera, minecraft.hitResult);
         minecraft.getEntityRenderDispatcher().prepare(minecraft.level, mainCamera, minecraft.crosshairPickEntity);
+
+        return drawFbo;
     }
 
     /**

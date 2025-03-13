@@ -2,6 +2,7 @@ package foundry.veil.impl.client.render.dynamicbuffer;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import foundry.veil.Veil;
+import foundry.veil.api.client.render.VeilLevelPerspectiveRenderer;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.framebuffer.FramebufferStack;
 import net.minecraft.client.renderer.RenderStateShard;
@@ -20,14 +21,16 @@ public class DynamicBufferShard extends RenderStateShard {
     public DynamicBufferShard(ResourceLocation name, Supplier<RenderTarget> targetSupplier) {
         super(Veil.MODID + ":dynamic_buffer", () -> {
             if (!Veil.platform().hasErrors()) {
-                DynamicBufferManger dynamicBufferManger = VeilRenderSystem.renderer().getDynamicBufferManger();
-                if (dynamicBufferManger.isEnabled()) {
-                    FramebufferStack.push(name);
-                    dynamicBufferManger.setupRenderState(name, targetSupplier.get(), true);
+                if (!VeilLevelPerspectiveRenderer.isRenderingPerspective()) {
+                    DynamicBufferManger dynamicBufferManger = VeilRenderSystem.renderer().getDynamicBufferManger();
+                    if (dynamicBufferManger.isEnabled()) {
+                        FramebufferStack.push(name);
+                        dynamicBufferManger.setupRenderState(name, targetSupplier.get(), true);
+                    }
                 }
             }
         }, () -> {
-            if (!Veil.platform().hasErrors() && VeilRenderSystem.renderer().getDynamicBufferManger().isEnabled()) {
+            if (!Veil.platform().hasErrors() && !VeilLevelPerspectiveRenderer.isRenderingPerspective() && VeilRenderSystem.renderer().getDynamicBufferManger().isEnabled()) {
                 FramebufferStack.pop(name);
             }
         });

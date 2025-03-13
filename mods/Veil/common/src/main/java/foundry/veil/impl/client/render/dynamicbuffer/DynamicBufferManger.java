@@ -7,7 +7,6 @@ import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.VeilRenderer;
 import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
-import foundry.veil.api.client.render.framebuffer.FramebufferAttachmentDefinition;
 import foundry.veil.api.compat.SodiumCompat;
 import foundry.veil.ext.RenderTargetExtension;
 import foundry.veil.ext.ShaderInstanceExtension;
@@ -241,19 +240,26 @@ public class DynamicBufferManger implements NativeResource {
      * @param framebuffer The framebuffer to add dynamic buffers to
      * @return The created buffer or <code>null</code> to use the input value
      */
-    public @Nullable AdvancedFbo getDynamicFbo(AdvancedFbo framebuffer) {
+    public AdvancedFbo getDynamicFbo(AdvancedFbo framebuffer) {
         if (this.activeBuffers == 0 || !this.enabled) {
-            return null;
+            return framebuffer;
         }
 
         if (!framebuffer.isColorTextureAttachment(0)) {
-            return null;
+            return framebuffer;
         }
+
+        int colorTexture = framebuffer.getColorTextureAttachment(0).getId();
 
         if (this.dynamicFboPointer < this.dynamicFramebuffers.size()) {
             AdvancedFbo fbo = this.dynamicFramebuffers.get(this.dynamicFboPointer);
             if (fbo.getWidth() == framebuffer.getWidth() && fbo.getHeight() == framebuffer.getHeight()) {
                 this.dynamicFboPointer++;
+                fbo.setColorAttachmentTexture(0, colorTexture);
+                if (framebuffer.isDepthTextureAttachment()) {
+                    fbo.setDepthAttachmentTexture(framebuffer.getDepthTextureAttachment().getId());
+                }
+                fbo.clear(GL_COLOR_BUFFER_BIT, this.clearBuffers);
                 return fbo;
             }
             this.dynamicFramebuffers.remove(this.dynamicFboPointer);
@@ -261,7 +267,7 @@ public class DynamicBufferManger implements NativeResource {
         }
 
         AdvancedFbo.Builder builder = AdvancedFbo.withSize(framebuffer.getWidth(), framebuffer.getHeight());
-        builder.addColorTextureWrapper(framebuffer.getColorTextureAttachment(0).getId());
+        builder.addColorTextureWrapper(colorTexture);
         for (Map.Entry<DynamicBufferType, DynamicBuffer> entry : this.dynamicBuffers.entrySet()) {
             DynamicBufferType type = entry.getKey();
             if ((this.activeBuffers & type.getMask()) != 0) {
@@ -278,7 +284,7 @@ public class DynamicBufferManger implements NativeResource {
         if (framebuffer.isDepthTextureAttachment()) {
             builder.setDepthTextureWrapper(framebuffer.getDepthTextureAttachment().getId());
         } else {
-            builder.setFormat(FramebufferAttachmentDefinition.Format.DEPTH_COMPONENT).setDepthTextureBuffer();
+            builder.setDepthTextureBuffer();
         }
         builder.setDebugLabel(framebuffer.getDebugLabel());
         AdvancedFbo fbo = builder.build(true);

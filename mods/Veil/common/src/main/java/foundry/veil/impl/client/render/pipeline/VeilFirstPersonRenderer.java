@@ -15,8 +15,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.ApiStatus;
 
-import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
-
 @ApiStatus.Internal
 public final class VeilFirstPersonRenderer {
 
@@ -47,13 +45,10 @@ public final class VeilFirstPersonRenderer {
         dynamicBufferManger.setEnabled(true);
         AdvancedFbo fbo = dynamicBufferManger.getDynamicFbo(firstPerson);
         dynamicBufferManger.setEnabled(false);
-        if (fbo == null) {
-            fbo = firstPerson;
-        }
 
         VeilRenderSystem.renderer().getFramebufferManager().setFramebuffer(VeilFramebuffers.FIRST_PERSON, fbo);
+        fbo.clear(mask);
         fbo.bind(false);
-        fbo.clear(GL_COLOR_BUFFER_BIT | mask, dynamicBufferManger.getClearBuffers());
         // This redirects calls to the vanilla framebuffer to the first person buffer instead
         ((RenderTargetExtension) Minecraft.getInstance().getMainRenderTarget()).veil$setWrapper(fbo);
     }

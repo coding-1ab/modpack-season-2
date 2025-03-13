@@ -14,6 +14,10 @@ public class MouseHandlerMixin {
 
     @Inject(method = "onPress", at = @At("HEAD"), cancellable = true)
     public void mouseButtonCallback(long window, int button, int action, int mods, CallbackInfo ci) {
+        if (!RenderSystem.isOnRenderThreadOrInit()) {
+            return;
+        }
+
         try {
             if (Veil.beginImGui().mouseButtonCallback(window, button, action, mods)) {
                 ci.cancel();
@@ -25,6 +29,10 @@ public class MouseHandlerMixin {
 
     @Inject(method = "onScroll", at = @At("HEAD"), cancellable = true)
     public void scrollCallback(long window, double xOffset, double yOffset, CallbackInfo ci) {
+        if (!RenderSystem.isOnRenderThreadOrInit()) {
+            return;
+        }
+
         try {
             if (Veil.beginImGui().scrollCallback(window, xOffset, yOffset)) {
                 ci.cancel();
@@ -36,6 +44,10 @@ public class MouseHandlerMixin {
 
     @Inject(method = "grabMouse", at = @At("HEAD"))
     public void grabMouse(CallbackInfo ci) {
+        if (!RenderSystem.isOnRenderThreadOrInit()) {
+            return;
+        }
+
         try {
             Veil.beginImGui().onGrabMouse();
         } finally {

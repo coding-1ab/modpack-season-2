@@ -72,8 +72,12 @@ public class CameraMatrices {
         this.projectionMatrix.set(projection);
         this.projectionMatrix.invertPerspective(this.inverseProjectionMatrix);
 
-        // Adjust the camera position based on the view bobbing
-        modelView.invert(this.viewMatrix).transformPosition(VeilRenderSystem.getCameraBobOffset(), this.cameraBobOffset);
+        if (VeilLevelPerspectiveRenderer.isRenderingPerspective()) {
+            this.cameraBobOffset.set(0);
+        } else {
+            // Adjust the camera position based on the view bobbing
+            modelView.invert(this.viewMatrix).transformPosition(VeilRenderSystem.getCameraBobOffset(), this.cameraBobOffset);
+        }
 
         // This moves the view bobbing from the projection matrix to the view matrix
         this.viewMatrix.set(modelView).mulLocal(this.inverseProjectionMatrix.mul(RenderSystem.getProjectionMatrix(), new Matrix4f()));
@@ -108,6 +112,48 @@ public class CameraMatrices {
         this.farPlane = this.inverseProjectionMatrix.transformPosition(0, 0, 1, this.cameraPosition).z();
         this.cameraPosition.set(0);
         this.cameraBobOffset.set(0);
+
+        block.set(this);
+        VeilRenderSystem.bind(VeilShaderBufferRegistry.CAMERA.get());
+    }
+
+    /**
+     * Saves the camera values to the specified object.
+     *
+     * @param store The object to backup to
+     */
+    public void backup(CameraMatrices store) {
+        store.projectionMatrix.set(this.projectionMatrix);
+        store.inverseProjectionMatrix.set(this.inverseProjectionMatrix);
+        store.viewMatrix.set(this.viewMatrix);
+        store.inverseViewMatrix.set(this.inverseViewMatrix);
+        store.inverseViewRotMatrix.set(this.inverseViewRotMatrix);
+        store.cameraPosition.set(this.cameraPosition);
+        store.cameraBobOffset.set(this.cameraBobOffset);
+        store.nearPlane = this.nearPlane;
+        store.farPlane = this.farPlane;
+    }
+
+    /**
+     * Loads the camera values from the specified object.
+     *
+     * @param load The object to restore from
+     */
+    public void restore(CameraMatrices load) {
+        ShaderBlock<CameraMatrices> block = VeilRenderSystem.getBlock(VeilShaderBufferRegistry.CAMERA.get());
+        if (block == null) {
+            return;
+        }
+
+        this.projectionMatrix.set(load.projectionMatrix);
+        this.inverseProjectionMatrix.set(load.inverseProjectionMatrix);
+        this.viewMatrix.set(load.viewMatrix);
+        this.inverseViewMatrix.set(load.inverseViewMatrix);
+        this.inverseViewRotMatrix.set(load.inverseViewRotMatrix);
+        this.cameraPosition.set(load.cameraPosition);
+        this.cameraBobOffset.set(load.cameraBobOffset);
+        this.nearPlane = load.nearPlane;
+        this.farPlane = load.farPlane;
 
         block.set(this);
         VeilRenderSystem.bind(VeilShaderBufferRegistry.CAMERA.get());

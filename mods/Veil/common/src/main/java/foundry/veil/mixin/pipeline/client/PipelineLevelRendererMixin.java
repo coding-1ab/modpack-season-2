@@ -9,6 +9,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import foundry.veil.api.client.render.CullFrustum;
+import foundry.veil.api.client.render.VeilLevelPerspectiveRenderer;
 import foundry.veil.api.client.render.VeilRenderBridge;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
@@ -98,10 +99,12 @@ public abstract class PipelineLevelRendererMixin implements LevelRendererExtensi
 
     @Inject(method = "renderLevel", at = @At("TAIL"))
     public void blit(CallbackInfo ci, @Local ProfilerFiller profiler) {
-        if (VeilRenderSystem.drawLights(profiler, VeilRenderSystem.getCullingFrustum())) {
-            VeilRenderSystem.compositeLights(profiler);
-        } else {
-            AdvancedFbo.unbind();
+        if (!VeilLevelPerspectiveRenderer.isRenderingPerspective()) {
+            if (VeilRenderSystem.drawLights(profiler, VeilRenderSystem.getCullingFrustum())) {
+                VeilRenderSystem.compositeLights(profiler);
+            } else {
+                AdvancedFbo.unbind();
+            }
         }
     }
 
