@@ -58,7 +58,7 @@ public class SandPaperItemRenderer extends CustomRenderedItemModelRenderer {
 
 			ItemStack toPolish = stack.get(AllDataComponents.SAND_PAPER_POLISHING).item();
 			//noinspection DataFlowIssue - We call .has, toPolish won't be null
-			itemRenderer.renderStatic(toPolish, ItemDisplayContext.NONE, light, overlay, ms, buffer, player.level(), 0);
+			itemRenderer.renderStatic(toPolish, ItemDisplayContext.GUI, light, overlay, ms, buffer, player.level(), 0);
 
 			ms.popPose();
 		}
