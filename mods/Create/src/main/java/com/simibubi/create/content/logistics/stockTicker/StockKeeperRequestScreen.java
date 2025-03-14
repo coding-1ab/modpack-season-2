@@ -123,7 +123,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 	int windowHeight;
 
 	public EditBox searchBox;
-	AddressEditBox addressBox;
+	public AddressEditBox addressBox;
 
 	int emptyTicks = 0;
 	int successTicks = 0;
@@ -1046,8 +1046,9 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 		}
 
 		if (addressBox.isFocused()) {
-			if (addressBox.isHovered())
-				return addressBox.mouseClicked(pMouseX, pMouseY, pButton);
+			boolean result = addressBox.mouseClicked(pMouseX, pMouseY, pButton);
+			if (addressBox.isHovered() || result)
+				return result;
 			addressBox.setFocused(false);
 		}
 		if (searchBox.isFocused()) {
