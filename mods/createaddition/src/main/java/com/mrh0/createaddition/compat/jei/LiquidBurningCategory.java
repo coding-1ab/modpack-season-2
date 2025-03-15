@@ -41,11 +41,12 @@ public class LiquidBurningCategory extends CARecipeCategory<LiquidBurningRecipe>
 			.addSlot(RecipeIngredientRole.INPUT, getBackground().getWidth() / 2 -36, 3)
 			.setBackground(getRenderedSlot(), -1, -1)
 			.addItemStacks(buckets);
-		builder
+		addFluidSlot(builder, getBackground().getWidth() / 2 -16, 3, recipe.getFluidIngredient());
+		/*builder
 			.addSlot(RecipeIngredientRole.INPUT, getBackground().getWidth() / 2 -16, 3)
 			.setBackground(getRenderedSlot(), -1, -1)
 			.addIngredients(ForgeTypes.FLUID_STACK, withImprovedVisibility(recipe.getFluidIngredient().getMatchingFluidStacks()))
-			.addRichTooltipCallback(addFluidTooltip(recipe.getFluidIngredient().getRequiredAmount()));
+			.addRichTooltipCallback(addStochasticTooltip(recipe.));*/
 	}
 
 	@Override
