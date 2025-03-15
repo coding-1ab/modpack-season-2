@@ -14,6 +14,7 @@ import foundry.veil.api.CodecReloadListener;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.VeilRenderer;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
+import foundry.veil.api.client.render.framebuffer.FramebufferStack;
 import foundry.veil.api.client.render.framebuffer.VeilFramebuffers;
 import foundry.veil.api.client.render.post.stage.CompositePostPipeline;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
@@ -140,6 +141,7 @@ public class PostProcessingManager extends CodecReloadListener<CompositePostPipe
         RenderSystem.depthMask(false);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        FramebufferStack.push(POST);
     }
 
     private void clear() {
@@ -149,6 +151,7 @@ public class PostProcessingManager extends CodecReloadListener<CompositePostPipe
         RenderSystem.depthMask(true);
         RenderSystem.disableBlend();
         RenderSystem.defaultBlendFunc();
+        FramebufferStack.pop(POST);
     }
 
     private void clearPipeline() {
