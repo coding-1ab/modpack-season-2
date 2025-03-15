@@ -589,13 +589,13 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 
 	@Override
 	public int getCurrentValue() {
-		ModularAccumulatorBlockEntity controllerTE = getControllerBE();
-		if (controllerTE == null) return 0;
-		return Math.round(controllerTE.getFillState() * 100f);
+		ModularAccumulatorBlockEntity controllerBE = getControllerBE();
+		if (controllerBE == null) return 0;
+		return (int)((float)controllerBE.energyStorage.getEnergyStored() / (float)controllerBE.energyStorage.getMaxEnergyStored() * 100f);
 	}
 
 	@Override
 	public MutableComponent format(int i) {
-		return Component.literal(getCurrentValue() + "%");
+		return Component.literal(i + "%");
 	}
 }
