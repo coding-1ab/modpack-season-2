@@ -15,6 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ParticleEngine.class)
 public class QuasarParticleEngineMixin {
 
+    @Inject(method = "tick", at=@At("HEAD"))
+    public void tick(CallbackInfo ci){
+        VeilRenderSystem.renderer().getParticleManager().tick();
+    }
+
     @Inject(method = "countParticles", at = @At("RETURN"), cancellable = true)
     public void countParticles(CallbackInfoReturnable<String> cir) {
         ParticleSystemManager particleManager = VeilRenderSystem.renderer().getParticleManager();

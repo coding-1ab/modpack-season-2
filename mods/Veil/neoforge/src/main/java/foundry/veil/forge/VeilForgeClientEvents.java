@@ -26,7 +26,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Locale;
@@ -40,13 +39,6 @@ public class VeilForgeClientEvents {
     @SubscribeEvent
     public static void clientDisconnected(ClientPlayerNetworkEvent.LoggingOut event) {
         VeilRenderSystem.renderer().getLightRenderer().free();
-    }
-
-    @SubscribeEvent
-    public static void tick(LevelTickEvent.Pre event) {
-        if (event.getLevel().isClientSide()) {
-            VeilRenderSystem.renderer().getParticleManager().tick();
-        }
     }
 
     @SubscribeEvent

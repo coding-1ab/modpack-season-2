@@ -19,11 +19,6 @@ public class QuasarParticleHandler {
         }
     }
 
-    public static void setLevel(ClientLevel level) {
-        VeilRenderSystem.renderer().getParticleManager().setLevel(level);
-        free();
-    }
-
     public static void init() {
         VeilEventPlatform.INSTANCE.onFreeNativeResources(QuasarParticleHandler::free);
         VeilEventPlatform.INSTANCE.onVeilRenderLevelStage((stage, levelRenderer, bufferSource, poseStack, modelMatrix, projectionMatrix, renderTick, deltaTracker, camera, frustum) -> {
@@ -35,5 +30,10 @@ public class QuasarParticleHandler {
                 cachedBufferSource.endBatch();
             }
         });
+    }
+
+    public static void setLevel(ClientLevel level) {
+        VeilRenderSystem.renderer().getParticleManager().setLevel(level);
+        free();
     }
 }

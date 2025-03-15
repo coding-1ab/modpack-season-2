@@ -113,6 +113,5 @@ public class VeilFabricClient implements ClientModInitializer {
                 dispatcher.register(debugBuilder);
             }
         });
-        ClientTickEvents.START_WORLD_TICK.register(client -> VeilRenderSystem.renderer().getParticleManager().tick());
     }
 }
