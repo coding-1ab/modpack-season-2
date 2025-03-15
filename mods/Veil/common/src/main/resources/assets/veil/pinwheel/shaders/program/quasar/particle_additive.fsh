@@ -14,11 +14,6 @@ in vec4 lightmapColor;
 
 out vec4 fragColor;
 
-// This is a hack to force-set the normal value with additive blending.
-// The normal value will be wrong, but the alternative is worse.
-// #veil:normal
-const vec3 Normal = vec3(-10.0, -10.0, 10.0);
-
 void main() {
     // #veil:albedo
     vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;

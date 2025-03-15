@@ -163,13 +163,15 @@ public class QuasarParticle {
         for (InitParticleModule initModule : this.modules.getInitModules()) {
             initModule.init(this);
         }
-        this.renderData.tick(this, this.getLightColor());
+        int packedLight = this.renderData.getFixedPackedLight();
+        this.renderData.tick(this, packedLight == -1 ? this.getLightColor() : packedLight);
         this.updateBoundingBox();
     }
 
     @ApiStatus.Internal
     public void tick() {
-        this.renderData.tick(this, this.getLightColor());
+        int packedLight = this.renderData.getFixedPackedLight();
+        this.renderData.tick(this, packedLight == -1 ? this.getLightColor() : packedLight);
         this.modules.updateEnabled();
         for (UpdateParticleModule updateModule : this.modules.getUpdateModules()) {
             updateModule.update(this);

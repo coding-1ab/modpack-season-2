@@ -70,7 +70,7 @@ public interface RenderStyle {
                     builder.addVertex(matrix4f, POS.x, POS.y, POS.z);
                     builder.setUv(u, v);
                     builder.setColor(renderData.getRed(), renderData.getGreen(), renderData.getBlue(), renderData.getAlpha());
-                    builder.setLight(renderData.getLightColor());
+                    builder.setLight(renderData.getPackedLight());
                     builder.setNormal(CUBE_NORMALS[i * 3], CUBE_NORMALS[i * 3 + 1], CUBE_NORMALS[i * 3 + 2]);
                 }
             }
@@ -133,7 +133,7 @@ public interface RenderStyle {
                 builder.addVertex(matrix4f, POS.x, POS.y, POS.z);
                 builder.setUv(u, v);
                 builder.setColor(red, green, blue, alpha);
-                builder.setLight(renderData.getLightColor());
+                builder.setLight(renderData.getPackedLight());
                 builder.setNormal(NORMAL.x, NORMAL.y, NORMAL.z);
             }
         }

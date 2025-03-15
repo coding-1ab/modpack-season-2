@@ -31,7 +31,8 @@ public class RenderData {
     private final Vector3f renderRotation;
     private float prevRadius;
     private float renderRadius;
-    private int lightColor;
+    private int packedLight;
+    private int fixedPackedLight;
     private float red;
     private float green;
     private float blue;
@@ -51,7 +52,8 @@ public class RenderData {
         this.renderRotation = new Vector3f();
         this.prevRadius = 1.0F;
         this.renderRadius = 1.0F;
-        this.lightColor = LightTexture.FULL_BRIGHT;
+        this.packedLight = LightTexture.FULL_BRIGHT;
+        this.fixedPackedLight = -1;
         this.red = 1.0F;
         this.green = 1.0F;
         this.blue = 1.0F;
@@ -75,11 +77,11 @@ public class RenderData {
     }
 
     @ApiStatus.Internal
-    public void tick(QuasarParticle particle, int lightColor) {
+    public void tick(QuasarParticle particle, int packedLight) {
         this.prevPosition.set(particle.getPosition());
         this.prevRotation.set(particle.getRotation());
         this.prevRadius = particle.getRadius();
-        this.lightColor = lightColor;
+        this.packedLight = packedLight;
     }
 
     @ApiStatus.Internal
@@ -111,8 +113,12 @@ public class RenderData {
         return this.agePercent;
     }
 
-    public int getLightColor() {
-        return this.lightColor;
+    public int getPackedLight() {
+        return this.packedLight;
+    }
+
+    public int getFixedPackedLight() {
+        return this.fixedPackedLight;
     }
 
     public float getRed() {
@@ -190,6 +196,10 @@ public class RenderData {
         this.green = color.y();
         this.blue = color.z();
         this.alpha = color.w();
+    }
+
+    public void setFixedPackedLight(int fixedPackedLight) {
+        this.fixedPackedLight = fixedPackedLight;
     }
 
     public void setSpriteData(@Nullable SpriteData spriteData) {

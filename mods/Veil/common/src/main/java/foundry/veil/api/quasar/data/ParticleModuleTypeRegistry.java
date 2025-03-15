@@ -45,6 +45,7 @@ public class ParticleModuleTypeRegistry {
     //    ModuleType<InitRandomColorParticleModule> INIT_RANDOM_COLOR = registerInitModule("init_random_color", InitRandomColorParticleModule.CODEC);
     public static final ModuleType<InitRandomRotationModuleData> INIT_RANDOM_ROTATION = registerInitModule("init_random_rotation", InitRandomRotationModuleData.CODEC);
     public static final ModuleType<LightModuleData> LIGHT = registerInitModule("light", LightModuleData.CODEC);
+    public static final ModuleType<LightmapParticleModuleData> LIGHTMAP = registerInitModule("lightmap", LightmapParticleModuleData.CODEC);
     public static final ModuleType<BlockParticleModuleData> BLOCK_PARTICLE = registerInitModule("block", BlockParticleModuleData.CODEC);
 
     // RENDER
