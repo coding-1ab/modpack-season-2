@@ -10,7 +10,6 @@ import imgui.extension.implot.ImPlot;
 import imgui.extension.implot.ImPlotContext;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
-import imgui.glfw.ImGuiImplGlfw;
 import imgui.internal.ImGuiContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -32,7 +31,7 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
 
     private static VeilImGui instance = new InactiveVeilImGuiImpl();
 
-    private final ImGuiImplGlfw implGlfw;
+    private final VeilImGuiImplGlfw implGlfw;
     private final ImGuiImplGl3 implGl3;
     private final ImguiState state;
     private final ImGuiContext imGuiContext;
@@ -182,7 +181,7 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
     @Override
     public void free() {
         this.start();
-        this.implGlfw.dispose();
+        this.implGlfw.free();
         this.implGl3.dispose();
         ImGui.destroyContext(this.imGuiContext);
         ImPlot.destroyContext(this.imPlotContext);
