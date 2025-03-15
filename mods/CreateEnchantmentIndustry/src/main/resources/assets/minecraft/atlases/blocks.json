@@ -2,12 +2,11 @@
   "sources": [
     {
       "type": "single",
-      "resource": "create_enchantment_industry:block/blaze_enchanter_book"
+      "resource": "create_enchantment_industry:fluid/experience_still"
     },
     {
-      "type": "directory",
-      "source": "fluid",
-      "prefix": "fluid/"
+      "type": "single",
+      "resource": "create_enchantment_industry:fluid/experience_flow"
     }
   ]
 }

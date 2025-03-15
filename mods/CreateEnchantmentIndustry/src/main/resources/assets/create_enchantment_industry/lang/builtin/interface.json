@@ -1,0 +1,13 @@
+{
+  "itemGroup.create_enchantment_industry.base": "Create: Enchantment Industry",
+  "create_enchantment_industry.logistics.filter.requires_actual_item": "Requires actual item %1$s to set filter",
+  "create_enchantment_industry.gui.goggles.copying": "Copying: %1$s",
+  "create_enchantment_industry.gui.goggles.copying.invalid": "Invalid Copy Target",
+  "create_enchantment_industry.gui.goggles.printing": "Printing: %1$s",
+  "create_enchantment_industry.gui.goggles.printing.address": "Printing Address: %1$s",
+  "create_enchantment_industry.gui.goggles.printing.custom_name": "Printing Custom Name: %1$s",
+  "create_enchantment_industry.gui.goggles.printing.template": "Print using template: %1$s",
+  "create_enchantment_industry.gui.goggles.printing.enchanted_book.cost": "Experience Cost: %1$s",
+  "create_enchantment_industry.gui.goggles.printing.written_book.cost": "Ink Cost: %1$s",
+  "create_enchantment_industry.recipe.assembly.printing": "Print using template: %1$s, consumes %2$s"
+}

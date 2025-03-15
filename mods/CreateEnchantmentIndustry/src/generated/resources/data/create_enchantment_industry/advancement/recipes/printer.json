@@ -1,0 +1,43 @@
+{
+  "criteria": {
+    "has_brass_ingot": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:ingots/brass"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_spout": {
+      "conditions": {
+        "items": [
+          {
+            "items": "create:spout"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "create_enchantment_industry:printer"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_brass_ingot",
+      "has_spout"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "create_enchantment_industry:printer"
+    ]
+  },
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,56 @@
+/*
+ * Copyright (C) 2025  DragonsPlus
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package plus.dragons.createenchantmentindustry.config;
+
+import net.createmod.catnip.config.ConfigBase;
+
+public class CEIKineticsConfig extends ConfigBase {
+    public final ConfigBool deployerKillDropXp = b(true, "deployerKillDropXp", Comments.deployerKillDropXp);
+    public final ConfigFloat deployerKillXpScale = f(1, 0, "deployerKillXpScale", Comments.deployerKillXpScale);
+    public final ConfigBool deployerMineDropXp = b(true, "deployerMineDropXp", Comments.deployerMineDropXp);
+    public final ConfigFloat deployerMineXpScale = f(1, 0, "deployerMineXpScale", Comments.deployerMineXpScale);
+    public final ConfigBool deployerCollectXp = b(true, "deployerCollectXp", Comments.deployerCollectXp);
+    public final ConfigBool deployerMendItem = b(true, "deployerMendItem", Comments.deployerMendItem);
+    public final ConfigBool deployerSweepAttack = b(true, "deployerSweepAttack", Comments.deployerSweepAttack);
+    public final CEIStressConfig stressValues = nested(1, CEIStressConfig::new, Comments.stress);
+
+    @Override
+    public String getName() {
+        return "kinetics";
+    }
+
+    static class Comments {
+        static final String deployerKillDropXp =
+                "Whether Deployer killed entities should drop experience.";
+        static final String deployerKillXpScale =
+                "Scale for experience dropped from Deployer killed entities.";
+        static final String deployerMineDropXp =
+                "Whether Deployer mined blocks should drop experience.";
+        static final String deployerMineXpScale =
+                "Scale for experience dropped from Deployer mined blocks.";
+        static final String deployerCollectXp =
+                "Whether Deployer collect dropped experience as Experience Nugget.";
+        static final String deployerMendItem =
+                "Whether Mending enchantment applies to Deployer held item (Needs deployerCollectXp = true).";
+        static final String deployerSweepAttack =
+                "Whether Deployer can perform sweep attack.";
+        static String stress =
+                "Fine tune the kinetic stats of individual components";
+    }
+}
