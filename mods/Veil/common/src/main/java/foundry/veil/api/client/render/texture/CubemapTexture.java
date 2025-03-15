@@ -71,10 +71,6 @@ public abstract class CubemapTexture extends AbstractTexture {
 
     @Override
     public void bind() {
-        if (!RenderSystem.isOnRenderThreadOrInit()) {
-            RenderSystem.recordRenderCall(() -> glBindTexture(GL_TEXTURE_CUBE_MAP, this.getId()));
-        } else {
-            glBindTexture(GL_TEXTURE_CUBE_MAP, this.getId());
-        }
+        VeilRenderSystem.renderThreadExecutor().execute(() -> glBindTexture(GL_TEXTURE_CUBE_MAP, this.getId()));
     }
 }

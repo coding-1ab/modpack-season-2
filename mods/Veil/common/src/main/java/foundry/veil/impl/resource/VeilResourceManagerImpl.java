@@ -171,7 +171,7 @@ public class VeilResourceManagerImpl implements VeilResourceManager, NativeResou
                         if (icon != null) {
                             NativeImage image = NativeImage.read(icon.get());
                             boolean blur = extension.veil$blurIcon();
-                            RenderSystem.recordRenderCall(() -> {
+                            gameExecutor.execute(() -> {
                                 try (image) {
                                     resources.loadIcon(image, blur);
                                 }

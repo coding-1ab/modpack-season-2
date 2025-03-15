@@ -50,4 +50,9 @@ public interface IrisCompat {
      */
     @ApiStatus.Experimental
     void recompile();
+
+    /**
+     * @return The pipeline interface class
+     */
+    Class<?> getPipelineClass();
 }

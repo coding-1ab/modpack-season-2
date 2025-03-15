@@ -115,7 +115,7 @@ public abstract class ShaderChunkRendererMixin implements ShaderChunkRendererExt
                 }
                 SodiumShaderProcessor.free();
 
-                RenderSystem.recordRenderCall(() -> {
+                Minecraft.getInstance().execute(() -> {
                     this.veil$shaderSource = map;
                     GlProgram<ChunkShaderInterface> old = this.programs.put(option, this.createShader("blocks/block_layer_opaque", option));
                     if (old != null) {

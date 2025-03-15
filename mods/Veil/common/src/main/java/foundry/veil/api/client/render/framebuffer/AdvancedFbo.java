@@ -143,35 +143,21 @@ public interface AdvancedFbo extends NativeResource {
             return;
         }
 
-        if (!RenderSystem.isOnRenderThreadOrInit()) {
-            RenderSystem.recordRenderCall(() -> GlStateManager._glBindFramebuffer(GL_FRAMEBUFFER, 0));
-        } else {
-            GlStateManager._glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        }
+        VeilRenderSystem.renderThreadExecutor().execute(() -> GlStateManager._glBindFramebuffer(GL_FRAMEBUFFER, 0));
     }
 
     /**
      * Binds the main Minecraft framebuffer for reading.
      */
     static void unbindRead() {
-        int mainTarget = AdvancedFbo.getMainFramebuffer().getId();
-        if (!RenderSystem.isOnRenderThreadOrInit()) {
-            RenderSystem.recordRenderCall(() -> GlStateManager._glBindFramebuffer(GL_READ_FRAMEBUFFER, mainTarget));
-        } else {
-            GlStateManager._glBindFramebuffer(GL_READ_FRAMEBUFFER, mainTarget);
-        }
+        VeilRenderSystem.renderThreadExecutor().execute(() -> GlStateManager._glBindFramebuffer(GL_READ_FRAMEBUFFER, AdvancedFbo.getMainFramebuffer().getId()));
     }
 
     /**
      * Binds the main Minecraft framebuffer for drawing.
      */
     static void unbindDraw() {
-        int mainTarget = AdvancedFbo.getMainFramebuffer().getId();
-        if (!RenderSystem.isOnRenderThreadOrInit()) {
-            RenderSystem.recordRenderCall(() -> GlStateManager._glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mainTarget));
-        } else {
-            GlStateManager._glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mainTarget);
-        }
+        VeilRenderSystem.renderThreadExecutor().execute(() -> GlStateManager._glBindFramebuffer(GL_DRAW_FRAMEBUFFER, AdvancedFbo.getMainFramebuffer().getId()));
     }
 
 //    /**
@@ -634,9 +620,9 @@ public interface AdvancedFbo extends NativeResource {
 
         private TextureFilter.EdgeType getEdgeType() {
             if (this.format == GL_RED_INTEGER ||
-                    this.format == GL_RG_INTEGER ||
-                    this.format == GL_RGB_INTEGER ||
-                    this.format == GL_RGBA_INTEGER) {
+                this.format == GL_RG_INTEGER ||
+                this.format == GL_RGB_INTEGER ||
+                this.format == GL_RGBA_INTEGER) {
                 return TextureFilter.EdgeType.INT;
             }
             if (this.format == GL_DEPTH_STENCIL) {

@@ -49,20 +49,12 @@ public abstract class PipelineVertexBufferMixin implements VertexBufferExtension
 
     @Override
     public void veil$drawInstanced(int instances) {
-        if (!RenderSystem.isOnRenderThread()) {
-            RenderSystem.recordRenderCall(() -> this._veil$drawInstanced(instances));
-        } else {
-            this._veil$drawInstanced(instances);
-        }
+        VeilRenderSystem.renderThreadExecutor().execute(() -> this._veil$drawInstanced(instances));
     }
 
     @Override
     public void veil$drawIndirect(long indirect, int drawCount, int stride) {
-        if (!RenderSystem.isOnRenderThread()) {
-            RenderSystem.recordRenderCall(() -> this._veil$drawIndirect(indirect, drawCount, stride));
-        } else {
-            this._veil$drawIndirect(indirect, drawCount, stride);
-        }
+        VeilRenderSystem.renderThreadExecutor().execute(() -> this._veil$drawIndirect(indirect, drawCount, stride));
     }
 
     @Override

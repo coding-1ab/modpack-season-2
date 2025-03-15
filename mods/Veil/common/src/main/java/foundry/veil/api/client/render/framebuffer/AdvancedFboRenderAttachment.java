@@ -104,20 +104,12 @@ public class AdvancedFboRenderAttachment implements AdvancedFboAttachment {
 
     @Override
     public void bindAttachment() {
-        if (!RenderSystem.isOnRenderThreadOrInit()) {
-            RenderSystem.recordRenderCall(() -> glBindRenderbuffer(GL_RENDERBUFFER, this.getId()));
-        } else {
-            glBindRenderbuffer(GL_RENDERBUFFER, this.getId());
-        }
+        VeilRenderSystem.renderThreadExecutor().execute(() -> glBindRenderbuffer(GL_RENDERBUFFER, this.getId()));
     }
 
     @Override
     public void unbindAttachment() {
-        if (!RenderSystem.isOnRenderThreadOrInit()) {
-            RenderSystem.recordRenderCall(() -> glBindRenderbuffer(GL_RENDERBUFFER, 0));
-        } else {
-            glBindRenderbuffer(GL_RENDERBUFFER, 0);
-        }
+        VeilRenderSystem.renderThreadExecutor().execute(() -> glBindRenderbuffer(GL_RENDERBUFFER, 0));
     }
 
     /**

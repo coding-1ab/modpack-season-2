@@ -148,11 +148,7 @@ public class AdvancedFboTextureAttachment extends AbstractTexture implements Adv
 
     @Override
     public void unbindAttachment() {
-        if (!RenderSystem.isOnRenderThreadOrInit()) {
-            RenderSystem.recordRenderCall(() -> RenderSystem.bindTexture(0));
-        } else {
-            RenderSystem.bindTexture(0);
-        }
+        VeilRenderSystem.renderThreadExecutor().execute(() -> RenderSystem.bindTexture(0));
     }
 
     @Override

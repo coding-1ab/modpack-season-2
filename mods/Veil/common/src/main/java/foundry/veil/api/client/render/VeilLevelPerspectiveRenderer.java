@@ -6,6 +6,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.ext.RenderTargetExtension;
+import foundry.veil.impl.client.render.perspective.IrisPipelineAccess;
 import foundry.veil.impl.client.render.perspective.LevelPerspectiveCamera;
 import foundry.veil.mixin.perspective.accessor.GameRendererAccessor;
 import foundry.veil.mixin.perspective.accessor.LevelRendererAccessor;
@@ -109,6 +110,8 @@ public final class VeilLevelPerspectiveRenderer {
         window.setWidth(framebuffer.getWidth());
         window.setHeight(framebuffer.getHeight());
 
+        final Object backupPipeline = IrisPipelineAccess.getPipeline(levelRenderer);
+
         BACKUP_PROJECTION.set(RenderSystem.getProjectionMatrix());
         gameRenderer.resetProjectionMatrix(TRANSFORM.set(projection));
         BACKUP_LIGHT0_POSITION.set(VeilRenderSystem.getLight0Direction());
@@ -164,6 +167,8 @@ public final class VeilLevelPerspectiveRenderer {
 
         RenderSystem.setShaderLights(BACKUP_LIGHT0_POSITION, BACKUP_LIGHT1_POSITION);
         gameRenderer.resetProjectionMatrix(BACKUP_PROJECTION);
+
+        IrisPipelineAccess.setPipeline(levelRenderer, backupPipeline);
 
         RenderSystem.setShaderFogStart(backupFogStart);
         RenderSystem.setShaderFogEnd(backupFogEnd);

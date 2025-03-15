@@ -386,7 +386,9 @@ public class VeilImGuiImplGlfw implements NativeResource {
         }
 
         for (int i = 0; i < ImGuiMouseCursor.COUNT; i++) {
-            glfwDestroyCursor(this.mouseCursors[i]);
+            if (this.mouseCursors[i] != 0L) {
+                glfwDestroyCursor(this.mouseCursors[i]);
+            }
         }
     }
 

@@ -12,6 +12,7 @@ import foundry.veil.api.client.render.shader.texture.ShaderTextureSource;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
 import foundry.veil.impl.client.render.shader.program.ShaderProgramImpl;
 import gg.moonflower.molangcompiler.api.MolangRuntime;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
@@ -58,7 +59,7 @@ public final class CompositePostPipeline implements PostPipeline {
         this.stages = stages;
         this.textureSources = Collections.unmodifiableMap(textures);
         this.textures = new HashMap<>(textures.size());
-        VeilRenderSystem.renderThreadExecutor().execute(() -> {
+        Minecraft.getInstance().execute(() -> {
             for (Map.Entry<String, ShaderTextureSource> entry : textures.entrySet()) {
                 this.textures.put(entry.getKey(), ShaderProgramImpl.ShaderTexture.create(entry.getValue()));
             }

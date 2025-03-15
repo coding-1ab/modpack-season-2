@@ -6,6 +6,7 @@ import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.api.client.render.VeilRenderBridge;
+import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.framebuffer.AdvancedFboAttachment;
 import net.minecraft.client.Minecraft;
@@ -202,11 +203,7 @@ public abstract class AdvancedFboImpl implements AdvancedFbo {
 
         @Override
         public void resize(int width, int height, boolean onMac) {
-            if (!RenderSystem.isOnRenderThread()) {
-                RenderSystem.recordRenderCall(() -> this.createBuffers(width, height, onMac));
-            } else {
-                this.createBuffers(width, height, onMac);
-            }
+            VeilRenderSystem.renderThreadExecutor().execute(() -> this.createBuffers(width, height, onMac));
         }
 
         @Override

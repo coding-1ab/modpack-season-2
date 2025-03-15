@@ -51,4 +51,9 @@ public class VeilForgeIrisCompat implements IrisCompat {
     public void recompile() {
         // TODO
     }
+
+    @Override
+    public Class<?> getPipelineClass() {
+        return WorldRenderingPipeline.class;
+    }
 }
