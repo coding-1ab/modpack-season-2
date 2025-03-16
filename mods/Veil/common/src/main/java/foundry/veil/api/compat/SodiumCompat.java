@@ -51,4 +51,16 @@ public interface SodiumCompat {
      * Marks all chunks in the view dirty.
      */
     void markChunksDirty();
+
+    @ApiStatus.Internal
+    Object getSortedRenderLists();
+
+    @ApiStatus.Internal
+    void setSortedRenderLists(@Nullable Object sortedRenderLists);
+
+    @ApiStatus.Internal
+    Object getTaskLists();
+
+    @ApiStatus.Internal
+    void setTaskList(@Nullable Object taskList);
 }

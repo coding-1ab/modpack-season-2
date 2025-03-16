@@ -26,26 +26,12 @@ public abstract class DynamicBufferLevelRendererMixin {
     @Nullable
     public abstract RenderTarget getWeatherTarget();
 
-    @Shadow
-    @Nullable
-    public abstract RenderTarget getParticlesTarget();
-
     @Unique
     private final DynamicBufferShard veil$weatherBufferShard = new DynamicBufferShard("weather", this::getWeatherTarget);
 
     @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;setupRender(Lnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/culling/Frustum;ZZ)V", shift = At.Shift.BEFORE))
     public void setupOpaque(CallbackInfo ci) {
         VeilRenderSystem.renderer().getDynamicBufferManger().setEnabled(true);
-    }
-
-    // Correctly re-binds the main framebuffer
-    @WrapOperation(method = "renderLevel", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/pipeline/RenderTarget;bindWrite(Z)V"))
-    public void bindWrite(RenderTarget instance, boolean setViewport, Operation<Void> original) {
-        if (FramebufferStack.isEmpty()) {
-            original.call(instance, setViewport);
-        } else {
-            FramebufferStack.pop(null);
-        }
     }
 
     // Make sure the correct dynamic buffer state is set

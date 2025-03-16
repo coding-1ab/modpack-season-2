@@ -14,6 +14,7 @@ import foundry.veil.api.client.render.VeilRenderBridge;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.framebuffer.FramebufferManager;
+import foundry.veil.api.client.render.framebuffer.FramebufferStack;
 import foundry.veil.api.client.render.framebuffer.VeilFramebuffers;
 import foundry.veil.api.client.render.rendertype.VeilRenderType;
 import foundry.veil.api.compat.SodiumCompat;
@@ -91,6 +92,16 @@ public abstract class PipelineLevelRendererMixin implements LevelRendererExtensi
     private final Matrix4f veil$tempFrustum = new Matrix4f();
     @Unique
     private final Matrix4f veil$tempProjection = new Matrix4f();
+
+    @Inject(method = "renderLevel", at=@At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V", args = "ldc=entities"))
+    public void saveFramebuffer(CallbackInfo ci){
+        FramebufferStack.push(null);
+    }
+
+    @Inject(method = "renderLevel", at=@At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;getModelViewStack()Lorg/joml/Matrix4fStack;"), remap = false)
+    public void loadFramebuffer(CallbackInfo ci){
+        FramebufferStack.pop(null);
+    }
 
     @Inject(method = "prepareCullFrustum", at = @At("HEAD"))
     public void veil$setupLevelCamera(Vec3 pos, Matrix4f frustumMatrix, Matrix4f projectionMatrix, CallbackInfo ci) {

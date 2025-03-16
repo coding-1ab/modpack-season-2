@@ -5,6 +5,7 @@ import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
+import foundry.veil.api.compat.SodiumCompat;
 import foundry.veil.ext.RenderTargetExtension;
 import foundry.veil.impl.client.render.perspective.IrisPipelineAccess;
 import foundry.veil.impl.client.render.perspective.LevelPerspectiveCamera;
@@ -21,8 +22,11 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Renders the level from different perspectives.
@@ -33,6 +37,7 @@ public final class VeilLevelPerspectiveRenderer {
 
     private static final LevelPerspectiveCamera CAMERA = new LevelPerspectiveCamera();
     private static final Matrix4f TRANSFORM = new Matrix4f();
+    private static final AtomicInteger ID = new AtomicInteger();
 
     private static final CameraMatrices BACKUP_CAMERA_MATRICES = new CameraMatrices();
     private static final Matrix4f BACKUP_PROJECTION = new Matrix4f();
@@ -112,6 +117,17 @@ public final class VeilLevelPerspectiveRenderer {
 
         final Object backupPipeline = IrisPipelineAccess.getPipeline(levelRenderer);
 
+        final Object backupRenderLists;
+        final Object backupTaskLists;
+        if (SodiumCompat.isLoaded()) {
+            backupRenderLists = SodiumCompat.INSTANCE.getSortedRenderLists();
+            backupTaskLists = SodiumCompat.INSTANCE.getTaskLists();
+            ID.getAndIncrement();
+        } else {
+            backupRenderLists = null;
+            backupTaskLists = null;
+        }
+
         BACKUP_PROJECTION.set(RenderSystem.getProjectionMatrix());
         gameRenderer.resetProjectionMatrix(TRANSFORM.set(projection));
         BACKUP_LIGHT0_POSITION.set(VeilRenderSystem.getLight0Direction());
@@ -135,55 +151,61 @@ public final class VeilLevelPerspectiveRenderer {
         CameraMatrices matrices = VeilRenderSystem.renderer().getCameraMatrices();
         matrices.backup(BACKUP_CAMERA_MATRICES);
 
-        levelRenderer.prepareCullFrustum(new Vec3(cameraPosition.x(), cameraPosition.y(), cameraPosition.z()), poseStack.last().pose(), TRANSFORM);
-        levelRenderer.renderLevel(deltaTracker, false, CAMERA, gameRenderer, gameRenderer.lightTexture(), poseStack.last().pose(), TRANSFORM);
-        // Make sure all buffers have been finished
-        bufferSource.endBatch();
-        levelRenderer.doEntityOutline();
+        try {
+            levelRenderer.prepareCullFrustum(new Vec3(cameraPosition.x(), cameraPosition.y(), cameraPosition.z()), poseStack.last().pose(), TRANSFORM);
+            levelRenderer.renderLevel(deltaTracker, false, CAMERA, gameRenderer, gameRenderer.lightTexture(), poseStack.last().pose(), TRANSFORM);
+            // Make sure all buffers have been finished
+            bufferSource.endBatch();
+            levelRenderer.doEntityOutline();
 
-        // Draw lights
-        if (drawLights) {
-            ProfilerFiller profiler = Minecraft.getInstance().getProfiler();
-            if (VeilRenderSystem.drawLights(profiler, VeilRenderSystem.getCullingFrustum())) {
-                VeilRenderSystem.compositeLights(profiler);
-            } else {
-                AdvancedFbo.unbind();
+            // Draw lights
+            if (drawLights) {
+                ProfilerFiller profiler = Minecraft.getInstance().getProfiler();
+                if (VeilRenderSystem.drawLights(profiler, VeilRenderSystem.getCullingFrustum())) {
+                    VeilRenderSystem.compositeLights(profiler);
+                } else {
+                    AdvancedFbo.unbind();
+                }
             }
+        } finally {
+            matrices.restore(BACKUP_CAMERA_MATRICES);
+
+            levelRendererAccessor.setCullingFrustum(backupFrustum);
+
+            renderTargetExtension.veil$setWrapper(null);
+            AdvancedFbo.unbind();
+            renderingPerspective = false;
+
+            minecraft.crosshairPickEntity = backupCrosshairPickEntity;
+            minecraft.hitResult = backupHitResult;
+
+            matrix4fstack.popMatrix();
+            RenderSystem.applyModelViewMatrix();
+
+            RenderSystem.setShaderLights(BACKUP_LIGHT0_POSITION, BACKUP_LIGHT1_POSITION);
+            gameRenderer.resetProjectionMatrix(BACKUP_PROJECTION);
+
+            IrisPipelineAccess.setPipeline(levelRenderer, backupPipeline);
+
+            if (SodiumCompat.isLoaded()) {
+                SodiumCompat.INSTANCE.setSortedRenderLists(backupRenderLists);
+                SodiumCompat.INSTANCE.setTaskList(backupTaskLists);
+            }
+
+            RenderSystem.setShaderFogStart(backupFogStart);
+            RenderSystem.setShaderFogEnd(backupFogEnd);
+            RenderSystem.setShaderFogShape(backupFogShape);
+
+            window.setWidth(backupWidth);
+            window.setHeight(backupHeight);
+
+            accessor.setRenderDistance(backupRenderDistance);
+
+            // Reset the renderers to what they used to be
+            Camera mainCamera = gameRenderer.getMainCamera();
+            minecraft.getBlockEntityRenderDispatcher().prepare(minecraft.level, mainCamera, minecraft.hitResult);
+            minecraft.getEntityRenderDispatcher().prepare(minecraft.level, mainCamera, minecraft.crosshairPickEntity);
         }
-
-        matrices.restore(BACKUP_CAMERA_MATRICES);
-
-        levelRendererAccessor.setCullingFrustum(backupFrustum);
-
-        renderTargetExtension.veil$setWrapper(null);
-        AdvancedFbo.unbind();
-        renderingPerspective = false;
-
-        minecraft.crosshairPickEntity = backupCrosshairPickEntity;
-        minecraft.hitResult = backupHitResult;
-
-        matrix4fstack.popMatrix();
-        RenderSystem.applyModelViewMatrix();
-
-        RenderSystem.setShaderLights(BACKUP_LIGHT0_POSITION, BACKUP_LIGHT1_POSITION);
-        gameRenderer.resetProjectionMatrix(BACKUP_PROJECTION);
-
-        IrisPipelineAccess.setPipeline(levelRenderer, backupPipeline);
-
-        RenderSystem.setShaderFogStart(backupFogStart);
-        RenderSystem.setShaderFogEnd(backupFogEnd);
-        RenderSystem.setShaderFogShape(backupFogShape);
-
-        window.setWidth(backupWidth);
-        window.setHeight(backupHeight);
-
-        accessor.setRenderDistance(backupRenderDistance);
-
-        // Reset the renderers to what they used to be
-        Camera mainCamera = gameRenderer.getMainCamera();
-        minecraft.getBlockEntityRenderDispatcher().prepare(minecraft.level, mainCamera, minecraft.hitResult);
-        minecraft.getEntityRenderDispatcher().prepare(minecraft.level, mainCamera, minecraft.crosshairPickEntity);
-
         return drawFbo;
     }
 
@@ -192,5 +214,10 @@ public final class VeilLevelPerspectiveRenderer {
      */
     public static boolean isRenderingPerspective() {
         return renderingPerspective;
+    }
+
+    @ApiStatus.Internal
+    public static int getID() {
+        return ID.get();
     }
 }

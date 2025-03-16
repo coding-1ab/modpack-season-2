@@ -2,6 +2,7 @@ package foundry.veil.fabric.compat.sodium;
 
 import foundry.veil.api.compat.SodiumCompat;
 import foundry.veil.fabric.ext.ShaderChunkRendererExtension;
+import foundry.veil.fabric.ext.SodiumWorldRendererExtension;
 import foundry.veil.fabric.mixin.compat.sodium.RenderSectionManagerAccessor;
 import foundry.veil.fabric.mixin.compat.sodium.SodiumWorldRendererAccessor;
 import it.unimi.dsi.fastutil.longs.Long2ReferenceMap;
@@ -10,7 +11,9 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import net.caffeinemc.mods.sodium.client.gl.shader.GlProgram;
 import net.caffeinemc.mods.sodium.client.render.SodiumWorldRenderer;
+import net.caffeinemc.mods.sodium.client.render.chunk.ChunkUpdateType;
 import net.caffeinemc.mods.sodium.client.render.chunk.RenderSection;
+import net.caffeinemc.mods.sodium.client.render.chunk.lists.SortedRenderLists;
 import net.caffeinemc.mods.sodium.client.render.chunk.shader.ChunkFogMode;
 import net.caffeinemc.mods.sodium.client.render.chunk.shader.ChunkShaderInterface;
 import net.caffeinemc.mods.sodium.client.render.chunk.shader.ChunkShaderOptions;
@@ -18,7 +21,10 @@ import net.caffeinemc.mods.sodium.client.render.chunk.terrain.TerrainRenderPass;
 import net.minecraft.core.SectionPos;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayDeque;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class VeilFabricSodiumCompat implements SodiumCompat {
@@ -91,6 +97,55 @@ public class VeilFabricSodiumCompat implements SodiumCompat {
                 SectionPos sectionPos = SectionPos.of(longPos);
 
                 ((SodiumWorldRendererAccessor) worldRenderer).getRenderSectionManager().scheduleRebuild(sectionPos.x(), sectionPos.y(), sectionPos.z(), true);
+            }
+        }
+    }
+
+    @Override
+    public Object getSortedRenderLists() {
+        SodiumWorldRenderer worldRenderer = SodiumWorldRenderer.instanceNullable();
+        if (worldRenderer == null) {
+            return SortedRenderLists.empty();
+        }
+        return ((SodiumWorldRendererExtension) worldRenderer).veil$getSortedRenderLists();
+    }
+
+    @Override
+    public void setSortedRenderLists(@Nullable Object sortedRenderLists) {
+        SodiumWorldRenderer worldRenderer = SodiumWorldRenderer.instanceNullable();
+        if (worldRenderer != null) {
+            SortedRenderLists renderLists = sortedRenderLists != null ? (SortedRenderLists) sortedRenderLists : SortedRenderLists.empty();
+            ((SodiumWorldRendererExtension) worldRenderer).veil$setSortedRenderLists(renderLists);
+        }
+    }
+
+    @Override
+    public Object getTaskLists() {
+        SodiumWorldRenderer worldRenderer = SodiumWorldRenderer.instanceNullable();
+        if (worldRenderer != null) {
+            return ((SodiumWorldRendererExtension) worldRenderer).veil$getTaskLists();
+        }
+
+        Map<ChunkUpdateType, ArrayDeque<RenderSection>> taskLists = new EnumMap<>(ChunkUpdateType.class);
+        for (ChunkUpdateType type : ChunkUpdateType.values()) {
+            taskLists.put(type, new ArrayDeque<>());
+        }
+        return taskLists;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void setTaskList(@Nullable Object taskList) {
+        SodiumWorldRenderer worldRenderer = SodiumWorldRenderer.instanceNullable();
+        if (worldRenderer != null) {
+            if (taskList != null) {
+                ((SodiumWorldRendererExtension) worldRenderer).veil$setTaskLists((Map<ChunkUpdateType, ArrayDeque<RenderSection>>) taskList);
+            } else {
+                Map<ChunkUpdateType, ArrayDeque<RenderSection>> taskLists = new EnumMap<>(ChunkUpdateType.class);
+                for (ChunkUpdateType type : ChunkUpdateType.values()) {
+                    taskLists.put(type, new ArrayDeque<>());
+                }
+                ((SodiumWorldRendererExtension) worldRenderer).veil$setTaskLists(taskLists);
             }
         }
     }
