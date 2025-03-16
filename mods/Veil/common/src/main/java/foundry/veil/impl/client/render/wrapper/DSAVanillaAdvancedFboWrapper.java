@@ -3,7 +3,6 @@ package foundry.veil.impl.client.render.wrapper;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
-import foundry.veil.ext.RenderTargetExtension;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.system.MemoryStack;
@@ -96,7 +95,6 @@ public class DSAVanillaAdvancedFboWrapper extends VanillaAdvancedFboWrapper {
 
     @Override
     public void resolveToRenderTarget(RenderTarget target, int mask, int filtering) {
-        RenderTargetExtension extension = (RenderTargetExtension) target;
-        glBlitNamedFramebuffer(this.getId(), extension.veil$getFramebuffer(), 0, 0, this.getWidth(), this.getHeight(), 0, 0, extension.veil$getWidth(), extension.veil$getHeight(), mask, filtering);
+        glBlitNamedFramebuffer(this.getId(), target.frameBufferId, 0, 0, this.getWidth(), this.getHeight(), 0, 0, target.width, target.height, mask, filtering);
     }
 }

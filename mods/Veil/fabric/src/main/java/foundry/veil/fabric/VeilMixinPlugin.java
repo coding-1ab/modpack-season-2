@@ -1,6 +1,7 @@
 package foundry.veil.fabric;
 
 import foundry.veil.Veil;
+import me.fallenbreath.conditionalmixin.api.mixin.RestrictiveMixinConfigPlugin;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class VeilMixinPlugin implements IMixinConfigPlugin {
+public class VeilMixinPlugin extends RestrictiveMixinConfigPlugin {
 
     private static final Set<String> COMPAT = Set.of(
             "foundry.veil.fabric.mixin.client.stage",
@@ -19,10 +20,6 @@ public class VeilMixinPlugin implements IMixinConfigPlugin {
     );
     private static final Set<String> SODIUM_WITHOUT_IRIS_COMPAT = Set.of();
     private final Map<String, Boolean> loadedMods = new HashMap<>();
-
-    @Override
-    public void onLoad(String mixinPackage) {
-    }
 
     @Override
     public String getRefMapperConfig() {
@@ -41,9 +38,9 @@ public class VeilMixinPlugin implements IMixinConfigPlugin {
                 return false;
             }
             String[] parts = mixinClassName.split("\\.");
-            return this.loadedMods.computeIfAbsent(parts[5], Veil.platform()::isModLoaded);
+            return this.loadedMods.computeIfAbsent(parts[5], Veil.platform()::isModLoaded) && super.shouldApplyMixin(targetClassName, mixinClassName);
         }
-        return true;
+        return super.shouldApplyMixin(targetClassName, mixinClassName);
     }
 
     @Override
@@ -57,10 +54,12 @@ public class VeilMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
+        super.preApply(targetClassName, targetClass, mixinClassName, mixinInfo);
     }
 
     @Override
     public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
+        super.postApply(targetClassName, targetClass, mixinClassName, mixinInfo);
     }
 
     // Hack to make sure mixin doesn't have a panic attack

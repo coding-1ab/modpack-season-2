@@ -34,6 +34,8 @@ dependencies {
         parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
     }
 
+    modImplementation(include('me.fallenbreath:conditional-mixin-fabric:0.6.4'))
+
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     implementation 'org.jetbrains:annotations:24.0.1'

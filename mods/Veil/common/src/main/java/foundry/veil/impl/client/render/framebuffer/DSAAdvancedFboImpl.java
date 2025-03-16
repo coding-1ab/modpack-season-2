@@ -6,7 +6,6 @@ import foundry.veil.api.client.render.ext.VeilDebug;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.framebuffer.AdvancedFboAttachment;
 import foundry.veil.api.client.render.framebuffer.AdvancedFboTextureAttachment;
-import foundry.veil.ext.RenderTargetExtension;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -158,7 +157,6 @@ public class DSAAdvancedFboImpl extends AdvancedFboImpl {
 
     @Override
     public void resolveToRenderTarget(RenderTarget target, int mask, int filtering) {
-        RenderTargetExtension extension = (RenderTargetExtension) target;
-        glBlitNamedFramebuffer(this.id, extension.veil$getFramebuffer(), 0, 0, this.getWidth(), this.getHeight(), 0, 0, extension.veil$getWidth(), extension.veil$getHeight(), mask, filtering);
+        glBlitNamedFramebuffer(this.id, target.frameBufferId, 0, 0, this.getWidth(), this.getHeight(), 0, 0, target.width, target.height, mask, filtering);
     }
 }

@@ -65,6 +65,12 @@ repositories {
         name = 'BlameJared'
         url = 'https://maven.blamejared.com'
     }
+    repositories {
+        maven {
+            name = 'Conditional Mixin'
+            url = 'https://maven.fallenbreath.me/releases'
+        }
+    }
 }
 
 // Declare capabilities on the outgoing configurations.

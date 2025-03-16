@@ -81,9 +81,8 @@ public class LegacyVanillaAdvancedFboWrapper extends VanillaAdvancedFboWrapper {
         int oldDraw = glGetInteger(GL_DRAW_FRAMEBUFFER_BINDING);
 
         this.bindRead();
-        RenderTargetExtension extension = (RenderTargetExtension) target;
-        GlStateManager._glBindFramebuffer(GL_DRAW_FRAMEBUFFER, extension.veil$getFramebuffer());
-        glBlitFramebuffer(0, 0, this.getWidth(), this.getHeight(), 0, 0, extension.veil$getWidth(), extension.veil$getHeight(), mask, filtering);
+        GlStateManager._glBindFramebuffer(GL_DRAW_FRAMEBUFFER, target.frameBufferId);
+        glBlitFramebuffer(0, 0, this.getWidth(), this.getHeight(), 0, 0, target.width, target.height, mask, filtering);
 
         GlStateManager._glBindFramebuffer(GL_READ_FRAMEBUFFER, oldRead);
         GlStateManager._glBindFramebuffer(GL_DRAW_FRAMEBUFFER, oldDraw);

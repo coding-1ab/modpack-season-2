@@ -81,7 +81,7 @@ public abstract class VanillaAdvancedFboWrapper implements AdvancedFbo {
     @Override
     public void bindDraw(boolean setViewport) {
         RenderTarget renderTarget = this.toRenderTarget();
-        GlStateManager._glBindFramebuffer(GL_DRAW_FRAMEBUFFER, ((RenderTargetExtension) renderTarget).veil$getFramebuffer());
+        GlStateManager._glBindFramebuffer(GL_DRAW_FRAMEBUFFER, renderTarget.frameBufferId);
         if (setViewport) {
             RenderSystem.viewport(0, 0, renderTarget.viewWidth, renderTarget.viewHeight);
         }
@@ -89,7 +89,7 @@ public abstract class VanillaAdvancedFboWrapper implements AdvancedFbo {
 
     @Override
     public int getId() {
-        return ((RenderTargetExtension) this.toRenderTarget()).veil$getFramebuffer();
+        return this.toRenderTarget().frameBufferId;
     }
 
     @Override

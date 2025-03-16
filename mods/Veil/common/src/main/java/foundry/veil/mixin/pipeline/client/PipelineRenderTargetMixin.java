@@ -18,21 +18,54 @@ public abstract class PipelineRenderTargetMixin implements RenderTargetExtension
     @Shadow
     public int frameBufferId;
     @Shadow
+    public int width;
+    @Shadow
+    public int height;
+    @Shadow
     public int viewWidth;
     @Shadow
     public int viewHeight;
 
     @Unique
     private AdvancedFbo veil$wrapper;
+    @Unique
+    private int veil$vanillaFramebufferId;
+    @Unique
+    private int veil$vanillaWidth;
+    @Unique
+    private int veil$vanillaHeight;
+    @Unique
+    private int veil$vanillaViewWidth;
+    @Unique
+    private int veil$vanillaViewHeight;
 
     @Override
     public void veil$setWrapper(@Nullable AdvancedFbo fbo) {
-        this.veil$wrapper = fbo;
-    }
+        // If the state has changed
+        if (this.veil$wrapper == null ^ fbo != null) {
+            if (fbo != null) {
+                // Save state
+                this.veil$vanillaFramebufferId = this.frameBufferId;
+                this.veil$vanillaWidth = this.width;
+                this.veil$vanillaHeight = this.height;
+                this.veil$vanillaViewWidth = this.viewWidth;
+                this.veil$vanillaViewHeight = this.viewHeight;
 
-    @Override
-    public int veil$getFramebuffer() {
-        return this.veil$wrapper != null ? this.veil$wrapper.getId() : this.frameBufferId;
+                this.frameBufferId = fbo.getId();
+                this.width = fbo.getWidth();
+                this.height = fbo.getHeight();
+                this.viewWidth = this.width;
+                this.viewHeight = this.height;
+            } else {
+                // Load state
+                this.frameBufferId = this.veil$vanillaFramebufferId;
+                this.width = this.veil$vanillaWidth;
+                this.height = this.veil$vanillaHeight;
+                this.viewWidth = this.veil$vanillaViewWidth;
+                this.viewHeight = this.veil$vanillaViewHeight;
+            }
+        }
+        this.veil$wrapper = fbo;
     }
 
     @Override
@@ -41,16 +74,6 @@ public abstract class PipelineRenderTargetMixin implements RenderTargetExtension
             return this.veil$wrapper.getColorTextureAttachment(buffer).getId();
         }
         return -1;
-    }
-
-    @Override
-    public int veil$getWidth() {
-        return this.veil$wrapper != null ? this.veil$wrapper.getWidth() : this.viewWidth;
-    }
-
-    @Override
-    public int veil$getHeight() {
-        return this.veil$wrapper != null ? this.veil$wrapper.getHeight() : this.viewHeight;
     }
 
     @Inject(method = "bindRead", at = @At("HEAD"), cancellable = true)

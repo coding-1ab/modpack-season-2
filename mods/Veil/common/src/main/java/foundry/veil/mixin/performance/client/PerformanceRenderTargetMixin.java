@@ -8,7 +8,8 @@ import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.ext.PerformanceRenderTargetExtension;
-import foundry.veil.ext.RenderTargetExtension;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.NVDrawTexture;
 import org.lwjgl.system.MemoryStack;
@@ -26,6 +27,7 @@ import static org.lwjgl.opengl.ARBDirectStateAccess.glBlitNamedFramebuffer;
 import static org.lwjgl.opengl.ARBDirectStateAccess.glClearNamedFramebufferfv;
 import static org.lwjgl.opengl.GL11C.*;
 
+@Restriction(conflict = @Condition("affinity"))
 @Mixin(RenderTarget.class)
 public abstract class PerformanceRenderTargetMixin implements PerformanceRenderTargetExtension {
 
@@ -58,6 +60,9 @@ public abstract class PerformanceRenderTargetMixin implements PerformanceRenderT
     @Shadow
     public abstract void unbindWrite();
 
+    @Shadow
+    public int frameBufferId;
+
     @SuppressWarnings("ConstantValue")
     @Inject(method = "copyDepthFrom", at = @At("HEAD"), cancellable = true)
     public void copyDepthFrom(RenderTarget otherTarget, CallbackInfo ci) {
@@ -75,7 +80,7 @@ public abstract class PerformanceRenderTargetMixin implements PerformanceRenderT
             glCopyImageSubData(otherTarget.getDepthTextureId(), GL_TEXTURE_2D, 0, 0, 0, 0, this.getDepthTextureId(), GL_TEXTURE_2D, 0, 0, 0, 0, this.width, this.height, 1);
         } else if (VeilRenderSystem.directStateAccessSupported()) {
             ci.cancel();
-            glBlitNamedFramebuffer(((RenderTargetExtension) otherTarget).veil$getFramebuffer(), ((RenderTargetExtension) this).veil$getFramebuffer(), 0, 0, otherTarget.width, otherTarget.height, 0, 0, this.width, this.height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+            glBlitNamedFramebuffer(otherTarget.frameBufferId, this.frameBufferId, 0, 0, otherTarget.width, otherTarget.height, 0, 0, this.width, this.height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
         }
     }
 
@@ -94,19 +99,18 @@ public abstract class PerformanceRenderTargetMixin implements PerformanceRenderT
 
         ci.cancel();
 
-        int framebuffer = ((RenderTargetExtension) this).veil$getFramebuffer();
         try (MemoryStack stack = MemoryStack.stackPush()) {
             if (clearTex) {
                 glClearTexImage(this.getColorTextureId(), 0, GL_RGBA, GL_FLOAT, this.clearChannels);
             } else {
-                glClearNamedFramebufferfv(framebuffer, GL_COLOR, 0, this.clearChannels);
+                glClearNamedFramebufferfv(this.frameBufferId, GL_COLOR, 0, this.clearChannels);
             }
 
             if (this.useDepth) {
                 if (clearTex) {
                     glClearTexImage(this.getDepthTextureId(), 0, GL_DEPTH_COMPONENT, GL_FLOAT, stack.floats(1.0F));
                 } else {
-                    glClearNamedFramebufferfv(framebuffer, GL_DEPTH, 0, stack.floats(1.0F));
+                    glClearNamedFramebufferfv(this.frameBufferId, GL_DEPTH, 0, stack.floats(1.0F));
                 }
             }
         }
@@ -144,7 +148,7 @@ public abstract class PerformanceRenderTargetMixin implements PerformanceRenderT
             ci.cancel();
             RenderSystem.assertOnRenderThread();
             GlStateManager._colorMask(true, true, true, false);
-            glBlitNamedFramebuffer(((RenderTargetExtension) this).veil$getFramebuffer(), 0, 0, 0, this.width, this.height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+            glBlitNamedFramebuffer(this.frameBufferId, 0, 0, 0, this.width, this.height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
         } else {
             ShaderProgram shader = VeilRenderSystem.setShader(veil$BLIT_SHADER);
             if (shader == null) {
@@ -178,7 +182,7 @@ public abstract class PerformanceRenderTargetMixin implements PerformanceRenderT
         if (VeilRenderSystem.clearTextureSupported() && glIsTexture(colorTextureId)) {
             glClearTexImage(colorTextureId, 0, GL_RGBA, GL_FLOAT, this.clearChannels);
         } else if (VeilRenderSystem.directStateAccessSupported()) {
-            glClearNamedFramebufferfv(((RenderTargetExtension) this).veil$getFramebuffer(), GL_COLOR, 0, this.clearChannels);
+            glClearNamedFramebufferfv(this.frameBufferId, GL_COLOR, 0, this.clearChannels);
         } else {
             this.bindWrite(true);
             GlStateManager._clearColor(this.clearChannels[0], this.clearChannels[1], this.clearChannels[2], this.clearChannels[3]);

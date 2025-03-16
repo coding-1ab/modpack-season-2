@@ -9,11 +9,5 @@ public interface RenderTargetExtension {
 
     void veil$setWrapper(@Nullable AdvancedFbo fbo);
 
-    int veil$getFramebuffer();
-
     int veil$getTexture(int index);
-
-    int veil$getWidth();
-
-    int veil$getHeight();
 }
