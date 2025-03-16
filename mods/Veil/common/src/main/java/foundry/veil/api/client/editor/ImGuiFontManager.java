@@ -34,7 +34,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 @ApiStatus.Internal
 public class ImGuiFontManager implements PreparableReloadListener {
 
-    private static final FileToIdConverter FONT_LISTER = new FileToIdConverter("font", ".ttf");
+    private static final FileToIdConverter FONT_LISTER = new FileToIdConverter("imgui_font", ".ttf");
     private static final DecimalFormat FONT_FORMAT = new DecimalFormat("0.#");
     private static final float FONT_SIZE = 20.0f;
 
