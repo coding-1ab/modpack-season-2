@@ -50,8 +50,6 @@ repositories {
 }
 
 dependencies {
-    jarJar(implementation('me.fallenbreath:conditional-mixin-neoforge:0.6.4'))
-
     jarJar(api(additionalRuntimeClasspath("gg.moonflower:molang-compiler:$molang_compiler_version")))
     jarJar(api(additionalRuntimeClasspath("io.github.ocelot:glsl-processor:${glsl_processor_version}")))
 

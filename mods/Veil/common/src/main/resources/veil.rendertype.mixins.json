@@ -4,6 +4,7 @@
   "package": "foundry.veil.mixin.rendertype",
   "compatibilityLevel": "JAVA_21",
   "refmap": "${mod_id}.refmap.json",
+  "plugin": "foundry.veil.VeilMixinPlugin",
   "client": [
     "accessor.RenderStateShardAccessor",
     "accessor.RenderTypeAccessor",

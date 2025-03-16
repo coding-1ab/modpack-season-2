@@ -4,7 +4,7 @@
   "package": "foundry.veil.forge.mixin",
   "compatibilityLevel": "JAVA_21",
   "refmap": "${mod_id}.refmap.json",
-  "plugin": "foundry.veil.forge.VeilMixinPlugin",
+  "plugin": "foundry.veil.VeilMixinPlugin",
   "mixins": [
     "DeferredRegisterMixin",
     "RegistriesMixin",

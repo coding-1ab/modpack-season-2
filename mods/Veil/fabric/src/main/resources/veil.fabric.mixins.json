@@ -4,10 +4,8 @@
   "package": "foundry.veil.fabric.mixin",
   "compatibilityLevel": "JAVA_21",
   "refmap": "${mod_id}.refmap.json",
-  "plugin": "foundry.veil.fabric.VeilMixinPlugin",
+  "plugin": "foundry.veil.VeilMixinPlugin",
   "mixins": [
-    "client.perspective.sodium.RenderRegionMixin",
-    "client.perspective.sodium.RenderSectionManagerMixin",
     "resource.ModNioResourcePackMixin",
     "resource.PathPackResourcesMixin"
   ],
@@ -20,7 +18,9 @@
     "client.dynamicbuffer.LevelRendererMixin",
     "client.perspective.iris.PipelineManagerMixin",
     "client.perspective.sodium.OcclusionCullerMixin",
+    "client.perspective.sodium.RenderRegionMixin",
     "client.perspective.sodium.RenderSectionManagerAccessor",
+    "client.perspective.sodium.RenderSectionManagerMixin",
     "client.perspective.sodium.RenderSectionMixin",
     "client.perspective.sodium.SodiumWorldRendererMixin",
     "client.perspective.vanilla.LevelRendererMixin",

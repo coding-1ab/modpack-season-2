@@ -102,7 +102,7 @@ public class DynamicBufferManger implements NativeResource {
         if ((this.activeBuffers & buffer.getMask()) != 0) {
             int index = 1 + Integer.bitCount(this.activeBuffers & (buffer.getMask() - 1));
             int texture = ((RenderTargetExtension) Minecraft.getInstance().getMainRenderTarget()).veil$getTexture(index);
-            if (texture != -1) {
+            if (texture != 0) {
                 return texture;
             }
             return this.dynamicBuffers.get(buffer).textureId;

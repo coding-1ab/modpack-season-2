@@ -8,8 +8,6 @@ import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.ext.PerformanceRenderTargetExtension;
-import me.fallenbreath.conditionalmixin.api.annotation.Condition;
-import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.NVDrawTexture;
 import org.lwjgl.system.MemoryStack;
@@ -27,7 +25,6 @@ import static org.lwjgl.opengl.ARBDirectStateAccess.glBlitNamedFramebuffer;
 import static org.lwjgl.opengl.ARBDirectStateAccess.glClearNamedFramebufferfv;
 import static org.lwjgl.opengl.GL11C.*;
 
-@Restriction(conflict = @Condition("affinity"))
 @Mixin(RenderTarget.class)
 public abstract class PerformanceRenderTargetMixin implements PerformanceRenderTargetExtension {
 

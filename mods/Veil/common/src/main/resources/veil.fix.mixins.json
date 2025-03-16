@@ -4,6 +4,7 @@
   "package": "foundry.veil.mixin.fix",
   "compatibilityLevel": "JAVA_21",
   "refmap": "${mod_id}.refmap.json",
+  "plugin": "foundry.veil.VeilMixinPlugin",
   "mixins": [
     "MemUtilMixin"
   ],

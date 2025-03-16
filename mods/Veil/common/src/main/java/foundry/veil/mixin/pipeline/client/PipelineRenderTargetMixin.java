@@ -1,6 +1,7 @@
 package foundry.veil.mixin.pipeline.client;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.platform.GlStateManager;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.ext.RenderTargetExtension;
 import org.jetbrains.annotations.Nullable;
@@ -39,30 +40,56 @@ public abstract class PipelineRenderTargetMixin implements RenderTargetExtension
     @Unique
     private int veil$vanillaViewHeight;
 
+    @Unique
+    private void veil$saveState() {
+        this.veil$vanillaFramebufferId = this.frameBufferId;
+        this.veil$vanillaWidth = this.width;
+        this.veil$vanillaHeight = this.height;
+        this.veil$vanillaViewWidth = this.viewWidth;
+        this.veil$vanillaViewHeight = this.viewHeight;
+    }
+
+    @Unique
+    private void veil$loadState() {
+        this.frameBufferId = this.veil$vanillaFramebufferId;
+        this.width = this.veil$vanillaWidth;
+        this.height = this.veil$vanillaHeight;
+        this.viewWidth = this.veil$vanillaViewWidth;
+        this.viewHeight = this.veil$vanillaViewHeight;
+    }
+
+    @Inject(method = "destroyBuffers", at = @At("HEAD"))
+    public void destroyBuffers(CallbackInfo ci) {
+        if (this.veil$wrapper != null) {
+            this.veil$loadState();
+        }
+    }
+
+    @Inject(method = "createBuffers", at = @At("RETURN"))
+    public void createBuffers(CallbackInfo ci) {
+        if (this.veil$wrapper != null) {
+            this.veil$saveState();
+            this.frameBufferId = this.veil$wrapper.getId();
+            this.width = this.veil$wrapper.getWidth();
+            this.height = this.veil$wrapper.getHeight();
+            this.viewWidth = this.width;
+            this.viewHeight = this.height;
+        }
+    }
+
     @Override
     public void veil$setWrapper(@Nullable AdvancedFbo fbo) {
         // If the state has changed
-        if (this.veil$wrapper == null ^ fbo != null) {
+        if (this.veil$wrapper == null ^ fbo == null) {
             if (fbo != null) {
-                // Save state
-                this.veil$vanillaFramebufferId = this.frameBufferId;
-                this.veil$vanillaWidth = this.width;
-                this.veil$vanillaHeight = this.height;
-                this.veil$vanillaViewWidth = this.viewWidth;
-                this.veil$vanillaViewHeight = this.viewHeight;
-
+                this.veil$saveState();
                 this.frameBufferId = fbo.getId();
                 this.width = fbo.getWidth();
                 this.height = fbo.getHeight();
                 this.viewWidth = this.width;
                 this.viewHeight = this.height;
             } else {
-                // Load state
-                this.frameBufferId = this.veil$vanillaFramebufferId;
-                this.width = this.veil$vanillaWidth;
-                this.height = this.veil$vanillaHeight;
-                this.viewWidth = this.veil$vanillaViewWidth;
-                this.viewHeight = this.veil$vanillaViewHeight;
+                this.veil$loadState();
             }
         }
         this.veil$wrapper = fbo;
@@ -73,7 +100,7 @@ public abstract class PipelineRenderTargetMixin implements RenderTargetExtension
         if (this.veil$wrapper != null && this.veil$wrapper.isColorTextureAttachment(buffer)) {
             return this.veil$wrapper.getColorTextureAttachment(buffer).getId();
         }
-        return -1;
+        return 0;
     }
 
     @Inject(method = "bindRead", at = @At("HEAD"), cancellable = true)
@@ -81,6 +108,8 @@ public abstract class PipelineRenderTargetMixin implements RenderTargetExtension
         if (this.veil$wrapper != null) {
             if (this.veil$wrapper.isColorTextureAttachment(0)) {
                 this.veil$wrapper.getColorTextureAttachment(0).bind();
+            } else {
+                GlStateManager._bindTexture(0);
             }
             ci.cancel();
         }
