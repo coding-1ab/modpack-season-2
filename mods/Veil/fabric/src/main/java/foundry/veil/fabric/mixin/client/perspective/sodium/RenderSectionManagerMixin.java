@@ -1,6 +1,7 @@
 package foundry.veil.fabric.mixin.client.perspective.sodium;
 
 import foundry.veil.api.client.render.VeilLevelPerspectiveRenderer;
+import foundry.veil.fabric.ext.RenderSectionExtension;
 import net.caffeinemc.mods.sodium.client.render.chunk.ChunkUpdateType;
 import net.caffeinemc.mods.sodium.client.render.chunk.RenderSection;
 import net.caffeinemc.mods.sodium.client.render.chunk.RenderSectionManager;
@@ -16,6 +17,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayDeque;
 import java.util.Map;
@@ -42,6 +44,9 @@ public abstract class RenderSectionManagerMixin {
     @Shadow
     protected abstract void resetRenderLists();
 
+    @Shadow
+    protected abstract RenderSection getRenderSection(int x, int y, int z);
+
     @Inject(method = "createTerrainRenderList", at = @At("HEAD"), cancellable = true)
     private void createTerrainRenderList(Camera camera, Viewport viewport, int frame, boolean spectator, CallbackInfo ci) {
         if (!VeilLevelPerspectiveRenderer.isRenderingPerspective()) {
@@ -59,5 +64,15 @@ public abstract class RenderSectionManagerMixin {
         for (ArrayDeque<RenderSection> value : this.taskLists.values()) {
             value.clear();
         }
+    }
+
+    @Inject(method = "isSectionVisible", at = @At("HEAD"), cancellable = true)
+    public void isSectionVisible(int x, int y, int z, CallbackInfoReturnable<Boolean> cir) {
+        if (!VeilLevelPerspectiveRenderer.isRenderingPerspective()) {
+            return;
+        }
+
+        RenderSection render = this.getRenderSection(x, y, z);
+        cir.setReturnValue(render != null && !((RenderSectionExtension) render).veil$hasNotRendered());
     }
 }
