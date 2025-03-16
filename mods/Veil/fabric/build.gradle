@@ -45,11 +45,11 @@ dependencies {
     modCompileOnly "maven.modrinth:cameratweaks:1.7.0-1.21.1"
 //    modCompileOnly "maven.modrinth:yacl:3.6.3+1.21.1-fabric"
 
-    modRuntimeOnly "maven.modrinth:sodium:mc1.21.1-${sodium_version}-fabric"
+//    modRuntimeOnly "maven.modrinth:sodium:mc1.21.1-${sodium_version}-fabric"
 //    modRuntimeOnly "maven.modrinth:iris:1.8.8+1.21.1-fabric"
 //    modRuntimeOnly "maven.modrinth:replaymod:1.21-2.6.20"
-    modRuntimeOnly "maven.modrinth:cameratweaks:1.7.0-1.21.1"
-    modRuntimeOnly "maven.modrinth:yacl:3.6.3+1.21.1-fabric"
+//    modRuntimeOnly "maven.modrinth:cameratweaks:1.7.0-1.21.1"
+//    modRuntimeOnly "maven.modrinth:yacl:3.6.3+1.21.1-fabric"
 
     api(include("gg.moonflower:molang-compiler:${molang_compiler_version}"))
     api(include("io.github.ocelot:glsl-processor:${glsl_processor_version}"))
@@ -61,6 +61,6 @@ dependencies {
     }
 
     runtimeOnly(include("io.github.spair:imgui-java-natives-linux:$imgui_version"))
-//    runtimeOnly(include("io.github.spair:imgui-java-natives-macos-ft:$imgui_version"))
+    runtimeOnly(include("io.github.spair:imgui-java-natives-macos:$imgui_version"))
     runtimeOnly(include("io.github.spair:imgui-java-natives-windows:$imgui_version"))
 }
