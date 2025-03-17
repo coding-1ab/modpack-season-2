@@ -82,8 +82,8 @@ public class NecromancerRenderDispatcher {
             boneBlock = ShaderBlock.wrapper(ShaderBlock.BufferBinding.UNIFORM, boneBuffer);
         }
 
-        if (boneBlock.getSize() < (long) Skeleton.UNIFORM_STRIDE * skeletonCount * dataSize) {
-            long newSize = (long) (skeletonCount * 1.5) * dataSize;
+        if (boneBlock.getSize() < Skeleton.UNIFORM_STRIDE * skeletonCount * dataSize) {
+            int newSize = (int) (skeletonCount * 1.5 * dataSize);
             boneBlock.setSize(Skeleton.UNIFORM_STRIDE * newSize);
 
             VeilRenderSystem.renderer().getShaderDefinitions().set("NECROMANCER_BONE_BUFFER_SIZE", Long.toString(newSize));

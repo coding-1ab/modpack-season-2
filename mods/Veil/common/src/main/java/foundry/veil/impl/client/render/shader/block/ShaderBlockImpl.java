@@ -1,10 +1,16 @@
 package foundry.veil.impl.client.render.shader.block;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.shader.block.ShaderBlock;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+
+import java.nio.ByteBuffer;
+
+import static org.lwjgl.opengl.ARBDirectStateAccess.*;
+import static org.lwjgl.opengl.GL15C.*;
 
 /**
  * Abstract implementation of {@link ShaderBlock}.
@@ -14,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
  */
 @ApiStatus.Internal
 public abstract class ShaderBlockImpl<T> implements ShaderBlock<T> {
+
+    private static StorageType storageType;
 
     protected final BufferBinding binding;
     protected int buffer;
@@ -28,6 +36,13 @@ public abstract class ShaderBlockImpl<T> implements ShaderBlock<T> {
         this.value = null;
         this.dirty = false;
         this.index = -1;
+    }
+
+    protected static StorageType getStorageType() {
+        if (storageType == null) {
+            storageType = VeilRenderSystem.directStateAccessSupported() ? StorageType.DSA : StorageType.LEGACY;
+        }
+        return storageType;
     }
 
     @Override
@@ -74,5 +89,48 @@ public abstract class ShaderBlockImpl<T> implements ShaderBlock<T> {
             GlStateManager._glDeleteBuffers(this.buffer);
             this.buffer = 0;
         }
+    }
+
+    public enum StorageType {
+        LEGACY {
+            @Override
+            public int createBuffer(int binding) {
+                return glGenBuffers();
+            }
+
+            @Override
+            public void resize(int binding, int buffer, long size) {
+                RenderSystem.glBindBuffer(binding, buffer);
+                glBufferData(binding, size, GL_DYNAMIC_DRAW);
+            }
+
+            @Override
+            public void write(int binding, int buffer, ByteBuffer upload) {
+                RenderSystem.glBindBuffer(binding, buffer);
+                glBufferSubData(binding, 0L, upload);
+            }
+        },
+        DSA {
+            @Override
+            public int createBuffer(int binding) {
+                return glCreateBuffers();
+            }
+
+            @Override
+            public void resize(int binding, int buffer, long size) {
+                glNamedBufferData(buffer, size, GL_DYNAMIC_DRAW);
+            }
+
+            @Override
+            public void write(int binding, int buffer, ByteBuffer upload) {
+                glNamedBufferSubData(buffer, 0L, upload);
+            }
+        };
+
+        public abstract int createBuffer(int binding);
+
+        public abstract void resize(int binding, int buffer, long size);
+
+        public abstract void write(int binding, int buffer, ByteBuffer upload);
     }
 }

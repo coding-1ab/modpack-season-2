@@ -2,6 +2,7 @@ package foundry.veil.api.resource;
 
 import com.mojang.serialization.Lifecycle;
 import foundry.veil.mixin.registry.accessor.RegistryDataAccessor;
+import net.minecraft.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.RegistryDataLoader;
@@ -15,9 +16,12 @@ import org.jetbrains.annotations.Nullable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 /**
@@ -34,18 +38,21 @@ public class VeilDynamicRegistry {
      *
      * @param resourceManager The manager for all resources
      * @param registries      The registries to load
+     * @param executor        The executor to load all registries on
      * @return All loaded registries and their errors
      */
     @SuppressWarnings("RedundantOperationOnEmptyContainer")
-    public static Data loadRegistries(ResourceManager resourceManager, Collection<RegistryDataLoader.RegistryData<?>> registries) {
-        LOADING.set(true);
-        Map<ResourceKey<?>, Exception> errors = new HashMap<>();
-        List<RegistryDataLoader.Loader<?>> list = registries.stream()
-                .map(data -> ((RegistryDataAccessor) (Object) data).invokeCreate(Lifecycle.stable(), errors))
-                .collect(Collectors.toUnmodifiableList());
-        RegistryOps.RegistryInfoLookup ctx = RegistryDataLoader.createContext(RegistryAccess.EMPTY, list);
-        list.forEach(loader -> loader.loadFromResources(resourceManager, ctx));
-        list.forEach(loader -> {
+    public static CompletableFuture<Data> loadRegistries(ResourceManager resourceManager, Collection<RegistryDataLoader.RegistryData<?>> registries, Executor executor) {
+        Map<ResourceKey<?>, Exception> errors = new ConcurrentHashMap<>();
+        List<RegistryDataLoader.Loader<?>> loaders = registries.stream()
+                .<RegistryDataLoader.Loader<?>>map(data -> ((RegistryDataAccessor) (Object) data).invokeCreate(Lifecycle.stable(), errors))
+                .toList();
+        RegistryOps.RegistryInfoLookup ctx = RegistryDataLoader.createContext(RegistryAccess.EMPTY, loaders);
+        return Util.sequence(loaders.stream().map(loader -> CompletableFuture.supplyAsync(() -> {
+            LOADING.set(true);
+            loader.loadFromResources(resourceManager, ctx);
+            LOADING.set(false);
+
             Registry<?> registry = loader.registry();
 
             try {
@@ -57,11 +64,9 @@ public class VeilDynamicRegistry {
             if (loader.data().requiredNonEmpty() && registry.size() == 0) {
                 errors.put(registry.key(), new IllegalStateException("Registry must be non-empty"));
             }
-        });
-        LOADING.set(false);
 
-        RegistryAccess.Frozen registryAccess = new RegistryAccess.ImmutableRegistryAccess(list.stream().map(RegistryDataLoader.Loader::registry).toList()).freeze();
-        return new Data(registryAccess, errors);
+            return registry;
+        }, executor)).toList()).thenApply(list -> new Data(new RegistryAccess.ImmutableRegistryAccess(list).freeze(), Collections.unmodifiableMap(errors)));
     }
 
     /**

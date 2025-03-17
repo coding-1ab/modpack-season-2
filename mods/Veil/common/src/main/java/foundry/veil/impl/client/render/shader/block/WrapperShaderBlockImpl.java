@@ -11,7 +11,7 @@ import static org.lwjgl.opengl.GL30C.glBindBufferRange;
 @ApiStatus.Internal
 public class WrapperShaderBlockImpl extends ShaderBlockImpl<Object> implements DynamicShaderBlock<Object> {
 
-    private long size;
+    private int size;
 
     public WrapperShaderBlockImpl(BufferBinding binding, int buffer) {
         super(binding);
@@ -43,12 +43,12 @@ public class WrapperShaderBlockImpl extends ShaderBlockImpl<Object> implements D
     }
 
     @Override
-    public long getSize() {
+    public int getSize() {
         return this.size;
     }
 
     @Override
-    public void setSize(long newSize) {
+    public void setSize(int newSize) {
         this.size = newSize;
     }
 

@@ -151,8 +151,8 @@ public abstract class IndirectLightRenderer<T extends Light & IndirectLight<T>> 
             glBufferData(GL_DRAW_INDIRECT_BUFFER, (long) this.maxLights * Integer.BYTES * 5, GL_DYNAMIC_DRAW);
         }
         if (this.sizeVbo != 0) {
-            this.instancedBlock.setSize((long) this.maxLights * this.lightSize);
-            this.indirectBlock.setSize((long) this.maxLights * Integer.BYTES * 5);
+            this.instancedBlock.setSize(this.maxLights * this.lightSize);
+            this.indirectBlock.setSize(this.maxLights * Integer.BYTES * 5);
         }
     }
 

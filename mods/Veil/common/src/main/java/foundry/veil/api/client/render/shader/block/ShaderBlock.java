@@ -36,8 +36,8 @@ public interface ShaderBlock<T> extends NativeResource {
      * @param <T>        The type of data to write
      * @return A new shader block
      */
-    static <T> ShaderBlock<T> withSize(BufferBinding binding, long size, BiConsumer<T, ByteBuffer> serializer) {
-        return new SizedShaderBlockImpl<>(binding, size, VeilRenderSystem.directStateAccessSupported() ? new SizedShaderBlockImpl.DSASerializer<>(serializer) : new SizedShaderBlockImpl.LegacySerializer<>(serializer));
+    static <T> ShaderBlock<T> withSize(BufferBinding binding, int size, BiConsumer<T, ByteBuffer> serializer) {
+        return new SizedShaderBlockImpl<>(binding, size, serializer);
     }
 
     /**
@@ -61,8 +61,8 @@ public interface ShaderBlock<T> extends NativeResource {
      * @param <T>         The type of data to write
      * @return A new shader block
      */
-    static <T> DynamicShaderBlock<T> dynamic(BufferBinding binding, long initialSize, BiConsumer<T, ByteBuffer> serializer) {
-        return new DynamicShaderBlockImpl<>(binding, initialSize, VeilRenderSystem.directStateAccessSupported() ? new DynamicShaderBlockImpl.DSASerializer<>(serializer) : new DynamicShaderBlockImpl.LegacySerializer<>(serializer));
+    static <T> DynamicShaderBlock<T> dynamic(BufferBinding binding, int initialSize, BiConsumer<T, ByteBuffer> serializer) {
+        return new DynamicShaderBlockImpl<>(binding, initialSize, serializer);
     }
 
     /**

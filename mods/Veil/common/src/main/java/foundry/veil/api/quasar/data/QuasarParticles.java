@@ -12,12 +12,15 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public final class QuasarParticles {
 
@@ -58,29 +61,28 @@ public final class QuasarParticles {
     }
 
     @ApiStatus.Internal
-    public static class Reloader extends SimplePreparableReloadListener<VeilDynamicRegistry.Data> {
+    public static class Reloader implements PreparableReloadListener {
 
         @Override
-        protected VeilDynamicRegistry.Data prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
-            return VeilDynamicRegistry.loadRegistries(resourceManager, REGISTRIES);
+        public @NotNull CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller preparationsProfiler, @NotNull ProfilerFiller reloadProfiler, @NotNull Executor backgroundExecutor, @NotNull Executor gameExecutor) {
+            return VeilDynamicRegistry.loadRegistries(resourceManager, REGISTRIES, backgroundExecutor)
+                    .thenCompose(preparationBarrier::wait)
+                    .thenAcceptAsync(data -> {
+                        registryAccess = data.registryAccess();
+                        ParticleEmitter.clearErrors();
+
+                        String msg = VeilDynamicRegistry.printErrors(data.errors());
+                        if (msg != null) {
+                            Veil.LOGGER.error("Quasar registry loading errors:{}", msg);
+                        }
+
+                        Veil.LOGGER.info("Loaded {} quasar particles", registryAccess.registryOrThrow(EMITTER).size());
+                        VeilRenderSystem.renderer().getParticleManager().clear();
+                    });
         }
 
         @Override
-        protected void apply(VeilDynamicRegistry.Data preparations, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
-            registryAccess = preparations.registryAccess();
-            ParticleEmitter.clearErrors();
-
-            String msg = VeilDynamicRegistry.printErrors(preparations.errors());
-            if (msg != null) {
-                Veil.LOGGER.error("Quasar registry loading errors:{}", msg);
-            }
-
-            Veil.LOGGER.info("Loaded {} quasar particles", registryAccess.registryOrThrow(EMITTER).size());
-            VeilRenderSystem.renderer().getParticleManager().clear();
-        }
-
-        @Override
-        public String getName() {
+        public @NotNull String getName() {
             return QuasarParticles.class.getSimpleName();
         }
     }

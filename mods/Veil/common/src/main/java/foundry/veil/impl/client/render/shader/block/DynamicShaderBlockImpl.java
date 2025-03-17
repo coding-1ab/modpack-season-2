@@ -1,51 +1,43 @@
 package foundry.veil.impl.client.render.shader.block;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.shader.block.DynamicShaderBlock;
-import foundry.veil.api.client.render.shader.block.ShaderBlock;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
 import java.util.function.BiConsumer;
 
-import static org.lwjgl.opengl.ARBDirectStateAccess.*;
-import static org.lwjgl.opengl.GL15C.*;
 import static org.lwjgl.opengl.GL30C.glBindBufferBase;
 
-/**
- * Dynamic-size implementation of {@link ShaderBlock}.
- *
- * @param <T> The type of object to serialize
- * @author Ocelot
- */
 @ApiStatus.Internal
 public class DynamicShaderBlockImpl<T> extends ShaderBlockImpl<T> implements DynamicShaderBlock<T> {
 
-    private final Serializer<T> serializer;
-    private long size;
-    private boolean resized;
+    private final BiConsumer<T, ByteBuffer> serializer;
 
-    public DynamicShaderBlockImpl(BufferBinding binding, long initialSize, Serializer<T> serializer) {
+    private int size;
+    private boolean resized;
+    private ByteBuffer upload;
+
+    public DynamicShaderBlockImpl(BufferBinding binding, int initialSize, BiConsumer<T, ByteBuffer> serializer) {
         super(binding);
         this.serializer = serializer;
         this.size = initialSize;
         this.resized = false;
+        this.upload = MemoryUtil.memAlloc(initialSize);
     }
 
     @Override
-    public long getSize() {
+    public int getSize() {
         return this.size;
     }
 
     @Override
-    public void setSize(long size) {
+    public void setSize(int size) {
         this.size = size;
         this.resized = true;
+        this.upload = MemoryUtil.memRealloc(this.upload, size);
     }
 
     @Override
@@ -55,17 +47,26 @@ public class DynamicShaderBlockImpl<T> extends ShaderBlockImpl<T> implements Dyn
 
         if (this.buffer == 0) {
             this.resized = true;
-            this.buffer = GlStateManager._glGenBuffers();
+            this.buffer = getStorageType().createBuffer(binding);
         }
 
         if (this.resized) {
             this.resized = false;
             this.dirty = true;
-            this.serializer.resize(binding, this.buffer, this.size);
+            getStorageType().resize(binding, this.buffer, this.size);
         }
 
-        if (this.dirty && this.serializer.write(this.buffer, binding, this.size, this.value)) {
+        if (this.dirty) {
             this.dirty = false;
+
+            if (this.value != null) {
+                this.serializer.accept(this.value, this.upload);
+                this.upload.rewind();
+            } else {
+                MemoryUtil.memSet(this.upload, 0);
+            }
+
+            getStorageType().write(binding, this.buffer, this.upload);
         }
 
         glBindBufferBase(binding, index, this.buffer);
@@ -78,70 +79,9 @@ public class DynamicShaderBlockImpl<T> extends ShaderBlockImpl<T> implements Dyn
         glBindBufferBase(binding, index, 0);
     }
 
-    public sealed interface Serializer<T> {
-
-        void resize(int binding, int buffer, long size);
-
-        boolean write(int buffer, int binding, long size, @Nullable T value);
-    }
-
-    public static final class DSASerializer<T> implements Serializer<T> {
-
-        private final BiConsumer<T, ByteBuffer> serializer;
-        private ByteBuffer upload;
-
-        public DSASerializer(BiConsumer<T, ByteBuffer> serializer) {
-            this.serializer = serializer;
-        }
-
-        @Override
-        public void resize(int binding, int buffer, long size) {
-            glNamedBufferData(buffer, size, GL_DYNAMIC_DRAW);
-        }
-
-        @Override
-        public boolean write(int binding, int buffer, long size, @Nullable T value) {
-            this.upload = glMapNamedBuffer(buffer, GL_WRITE_ONLY, size, this.upload);
-            if (this.upload != null) {
-                if (value != null) {
-                    this.serializer.accept(value, this.upload);
-                    this.upload.rewind();
-                } else {
-                    MemoryUtil.memSet(this.upload, 0);
-                }
-            }
-            return glUnmapNamedBuffer(buffer);
-        }
-    }
-
-    public static final class LegacySerializer<T> implements Serializer<T> {
-
-        private final BiConsumer<T, ByteBuffer> serializer;
-        private ByteBuffer upload;
-
-        public LegacySerializer(BiConsumer<T, ByteBuffer> serializer) {
-            this.serializer = serializer;
-        }
-
-        @Override
-        public void resize(int binding, int buffer, long size) {
-            RenderSystem.glBindBuffer(binding, buffer);
-            glBufferData(binding, size, GL_DYNAMIC_DRAW);
-        }
-
-        @Override
-        public boolean write(int binding, int buffer, long size, @Nullable T value) {
-            RenderSystem.glBindBuffer(binding, buffer);
-            this.upload = glMapBuffer(binding, GL_WRITE_ONLY, size, this.upload);
-            if (this.upload != null) {
-                if (value != null) {
-                    this.serializer.accept(value, this.upload);
-                    this.upload.rewind();
-                } else {
-                    MemoryUtil.memSet(this.upload, 0);
-                }
-            }
-            return glUnmapBuffer(binding);
-        }
+    @Override
+    public void free() {
+        super.free();
+        MemoryUtil.memFree(this.upload);
     }
 }

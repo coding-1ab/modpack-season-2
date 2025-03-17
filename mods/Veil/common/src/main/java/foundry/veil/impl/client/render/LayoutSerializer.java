@@ -6,7 +6,6 @@ import foundry.veil.api.client.render.VeilShaderBufferLayout;
 import foundry.veil.api.client.render.shader.block.ShaderBlock;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.impl.client.render.shader.block.LayoutShaderBlockImpl;
-import foundry.veil.impl.client.render.shader.block.SizedShaderBlockImpl;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.system.MemoryStack;
 
@@ -60,7 +59,7 @@ public record LayoutSerializer<T>(Field<T>[] fields) implements BiConsumer<T, By
 
                 layoutFields.sort(Comparator.comparingInt(Field::offset));
                 LayoutSerializer<T> serializer = new LayoutSerializer<>(layoutFields.toArray(Field[]::new));
-                return new LayoutShaderBlockImpl<>(binding, size, VeilRenderSystem.directStateAccessSupported() ? new SizedShaderBlockImpl.DSASerializer<>(serializer) : new SizedShaderBlockImpl.LegacySerializer<>(serializer));
+                return new LayoutShaderBlockImpl<>(binding, size, serializer);
             }
         }
 
@@ -86,7 +85,7 @@ public record LayoutSerializer<T>(Field<T>[] fields) implements BiConsumer<T, By
 
         layoutFields.sort(Comparator.comparingInt(Field::offset));
         LayoutSerializer<T> serializer = new LayoutSerializer<>(layoutFields.toArray(Field[]::new));
-        return new LayoutShaderBlockImpl<>(binding, size, VeilRenderSystem.directStateAccessSupported() ? new SizedShaderBlockImpl.DSASerializer<>(serializer) : new SizedShaderBlockImpl.LegacySerializer<>(serializer));
+        return new LayoutShaderBlockImpl<>(binding, size, serializer);
     }
 
     @Override
