@@ -19,7 +19,7 @@
 package plus.dragons.createenchantmentindustry.common.fluids.experience;
 
 import java.util.Optional;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -43,34 +43,30 @@ public class ExperienceHelper {
         }
     }
 
-    public static int getExperienceFromFluid(FluidStack stack) {
-        if (stack.isEmpty())
-            return 0;
-        Fluid fluid = stack.getFluid();
-        int amount = stack.getAmount();
-        if (CEIFluids.EXPERIENCE.is(fluid))
-            return amount;
-        ExperienceRatio ratio = BuiltInRegistries.FLUID
-                .wrapAsHolder(fluid)
-                .getData(CEIDataMaps.FLUID_EXPERIENCE_RATIO);
+    public static int getExperienceFromFluid(FluidStack fluid) {
+        if (fluid.isEmpty()) return 0;
+        int amount = fluid.getAmount();
+        ExperienceRatio ratio = fluid.getFluidHolder().getData(CEIDataMaps.FLUID_EXPERIENCE_RATIO);
         if (ratio == null)
             return 0;
-        return ratio.fromExperience()
-               ? amount / ratio.ratio()
-               : amount * ratio.ratio();
+        return ratio.fromExperience() ? amount / ratio.ratio() : amount * ratio.ratio();
     }
 
-    public static int getFluidFromExperience(Fluid fluid, int amount) {
-        if (CEIFluids.EXPERIENCE.is(fluid))
-            return amount;
-        ExperienceRatio ratio = BuiltInRegistries.FLUID
-                .wrapAsHolder(fluid)
-                .getData(CEIDataMaps.FLUID_EXPERIENCE_RATIO);
+    public static int getFluidFromExperience(FluidStack fluid, int amount) {
+        return getFluidFromExperience(fluid.getFluidHolder(), amount);
+    }
+
+    public static int getFluidFromExperience(Holder<Fluid> fluid, int amount) {
+        ExperienceRatio ratio = fluid.getData(CEIDataMaps.FLUID_EXPERIENCE_RATIO);
         if (ratio == null)
             return 0;
         return ratio.fromExperience()
                ? amount * ratio.ratio()
                : amount / ratio.ratio();
+    }
+
+    public static FluidStack getExperienceFluid(int amount) {
+        return amount == 0 ? FluidStack.EMPTY : new FluidStack(CEIFluids.EXPERIENCE.get(), amount);
     }
 
     public static void award(int amount, ServerPlayer player) {

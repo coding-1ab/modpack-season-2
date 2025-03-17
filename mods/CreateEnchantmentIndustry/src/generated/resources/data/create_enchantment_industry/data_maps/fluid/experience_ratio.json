@@ -1,0 +1,79 @@
+{
+  "values": {
+    "cofh_core:experience": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "cofh_core"
+        }
+      ],
+      "ratio": 25
+    },
+    "create_enchantment_industry:experience": {
+      "ratio": 1
+    },
+    "cyclic:xpjuice": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "cyclic"
+        }
+      ],
+      "ratio": 20
+    },
+    "enderio:xpjuice": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "enderio"
+        }
+      ],
+      "ratio": 20
+    },
+    "industrialforegoing:essence": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "industrialforegoing"
+        }
+      ],
+      "ratio": 20
+    },
+    "mob_grinding_utils:fluid_xp": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "mob_grinding_utils"
+        }
+      ],
+      "ratio": 20
+    },
+    "pneumaticcraft:memory_essence": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "pneumaticcraft"
+        }
+      ],
+      "ratio": 20
+    },
+    "reliquary:xp_juice_still": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "reliquary"
+        }
+      ],
+      "ratio": 20
+    },
+    "sophisticatedcore:xp_still": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "sophisticatedcore"
+        }
+      ],
+      "ratio": 20
+    }
+  }
+}

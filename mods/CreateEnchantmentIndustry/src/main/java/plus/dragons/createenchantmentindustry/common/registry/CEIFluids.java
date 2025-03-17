@@ -24,16 +24,20 @@ import com.simibubi.create.AllTags.AllFluidTags;
 import com.simibubi.create.api.effect.OpenPipeEffectHandler;
 import com.tterrag.registrate.util.entry.FluidEntry;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceFluidType;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceOpenPipeEffect;
 
 public class CEIFluids {
-    public static final FluidEntry<BaseFlowingFluid.Flowing> EXPERIENCE = REGISTRATE
+    public static final FluidEntry<BaseFlowingFluid.Source> EXPERIENCE = new FluidEntry<>(REGISTRATE,
+            DeferredHolder.create(Registries.FLUID, REGISTRATE.asResource("experience")));
+    public static final FluidEntry<BaseFlowingFluid.Flowing> EXPERIENCE_FLOWING = REGISTRATE
             .fluid("experience", ExperienceFluidType.create())
             .lang("Liquid Experience")
             .properties(builder -> builder

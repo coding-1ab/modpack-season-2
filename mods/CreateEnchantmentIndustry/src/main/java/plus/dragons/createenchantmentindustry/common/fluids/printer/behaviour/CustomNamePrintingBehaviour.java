@@ -63,7 +63,7 @@ public class CustomNamePrintingBehaviour implements PrintingBehaviour {
     public int getRequiredFluidAmount(Level level, ItemStack stack, FluidStack fluidStack) {
         int xp = ExperienceHelper.getExperienceFromFluid(fluidStack);
         if (xp > 0)
-            return ExperienceHelper.getFluidFromExperience(fluidStack.getFluid(), 25);
+            return ExperienceHelper.getFluidFromExperience(fluidStack, 25);
         if (fluidStack.getFluidHolder().getData(CDPDataMaps.FLUID_COLORING_CATALYST) != null)
             return 250;
         return 0;

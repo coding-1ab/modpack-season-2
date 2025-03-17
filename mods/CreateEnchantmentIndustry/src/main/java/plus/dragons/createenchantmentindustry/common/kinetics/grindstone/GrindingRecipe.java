@@ -18,14 +18,20 @@
 
 package plus.dragons.createenchantmentindustry.common.kinetics.grindstone;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipe;
+import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipeBuilder;
 import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
 
 public class GrindingRecipe extends CustomProcessingRecipe<SingleRecipeInput, GrindingRecipeParams> {
     public GrindingRecipe(GrindingRecipeParams params) {
         super(CEIRecipes.GRINDING, params);
+    }
+
+    public static Builder builder(ResourceLocation id) {
+        return new Builder(id);
     }
 
     @Override
@@ -44,7 +50,23 @@ public class GrindingRecipe extends CustomProcessingRecipe<SingleRecipeInput, Gr
     }
 
     @Override
+    protected boolean canSpecifyDuration() {
+        return true;
+    }
+
+    @Override
     public boolean matches(SingleRecipeInput input, Level level) {
         return ingredients.getFirst().test(input.item());
+    }
+
+    public static class Builder extends CustomProcessingRecipeBuilder<GrindingRecipeParams, GrindingRecipe> {
+        protected Builder(ResourceLocation id) {
+            super(GrindingRecipe::new, id);
+        }
+
+        @Override
+        protected GrindingRecipeParams createParams(ResourceLocation id) {
+            return new GrindingRecipeParams(id);
+        }
     }
 }

@@ -19,6 +19,7 @@
 package plus.dragons.createenchantmentindustry.common.kinetics.grindstone;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
+import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.tags.EnchantmentTags;
@@ -43,25 +44,25 @@ public class GrindstoneHelper {
         return !computeResult(top, bottom).isEmpty();
     }
 
-    public static Result grindItem(Level level, ItemStack top, ItemStack bottom) {
+    public static Optional<Result> grindItem(Level level, ItemStack top, ItemStack bottom) {
         var place = NeoForge.EVENT_BUS.post(new GrindstoneEvent.OnPlaceItem(top, ItemStack.EMPTY, -1));
         if (place.isCanceled())
-            return new Result(top, bottom, ItemStack.EMPTY, -1);
+            return Optional.empty();
         int xp = place.getXp();
         var output = place.getOutput();
         if (output.isEmpty()) {
             output = computeResult(top, bottom);
             if (output.isEmpty())
-                return new Result(top, bottom, ItemStack.EMPTY, -1);
+                return Optional.empty();
             if (xp == -1) {
                 xp = getExperienceAmount(level, top, bottom);
             }
         }
         var take = NeoForge.EVENT_BUS.post(new GrindstoneEvent.OnTakeItem(top, bottom, xp));
         if (take.isCanceled()) {
-            return new Result(top, bottom, output, 0);
+            return Optional.of(new Result(top, bottom, output, 0));
         }
-        return new Result(take.getNewTopItem(), take.getNewBottomItem(), output, Math.max(take.getXp(), 0));
+        return Optional.of(new Result(take.getNewTopItem(), take.getNewBottomItem(), output, Math.max(take.getXp(), 0)));
     }
 
     private static int getExperienceAmount(Level level, ItemStack top, ItemStack bottom) {

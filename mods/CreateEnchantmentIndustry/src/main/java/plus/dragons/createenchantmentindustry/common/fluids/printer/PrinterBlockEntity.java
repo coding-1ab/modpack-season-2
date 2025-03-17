@@ -51,7 +51,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
-import plus.dragons.createdragonsplus.common.advancements.CriterionStatBehaviour;
+import plus.dragons.createdragonsplus.common.advancements.AdvancementBehaviour;
 import plus.dragons.createdragonsplus.util.FieldsAssertedNonnullByDefault;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour.PrinterFilteringBehaviour;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
@@ -76,7 +76,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         BeltProcessingBehaviour processing = new BeltProcessingBehaviour(this)
                 .whenItemEnters(this::onItemEnters)
                 .whileItemHeld(this::onItemHeld);
-        CriterionStatBehaviour advancement = new CriterionStatBehaviour(this);
+        AdvancementBehaviour advancement = new AdvancementBehaviour(this);
         behaviours.add(tank);
         behaviours.add(filter);
         behaviours.add(processing);

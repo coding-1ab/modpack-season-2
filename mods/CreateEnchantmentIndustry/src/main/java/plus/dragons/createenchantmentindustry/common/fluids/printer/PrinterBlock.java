@@ -41,7 +41,7 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
-import plus.dragons.createdragonsplus.common.advancements.CriterionStatBehaviour;
+import plus.dragons.createdragonsplus.common.advancements.AdvancementBehaviour;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlockEntities;
 
 public class PrinterBlock extends HorizontalDirectionalBlock implements IWrenchable, IBE<PrinterBlockEntity> {
@@ -71,7 +71,7 @@ public class PrinterBlock extends HorizontalDirectionalBlock implements IWrencha
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
-        CriterionStatBehaviour.setPlacedBy(level, pos, placer);
+        AdvancementBehaviour.setPlacedBy(level, pos, placer);
     }
 
     @Override

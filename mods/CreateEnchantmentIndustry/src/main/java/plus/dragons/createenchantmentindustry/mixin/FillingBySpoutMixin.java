@@ -46,19 +46,19 @@ public class FillingBySpoutMixin {
         if (availableXp == 0)
             return;
         int requiredXp = ExperienceHelper.repairItem(availableXp, serverLevel, stack, true);
-        int requiredFluid = ExperienceHelper.getFluidFromExperience(availableFluid.getFluid(), requiredXp);
+        int requiredFluid = ExperienceHelper.getFluidFromExperience(availableFluid, requiredXp);
         if (requiredFluid > 0)
             cir.setReturnValue(requiredFluid);
     }
 
     @Inject(method = "fillItem", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/fluids/transfer/GenericItemFilling;fillItem(Lnet/minecraft/world/level/Level;ILnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/fluids/FluidStack;)Lnet/minecraft/world/item/ItemStack;"), cancellable = true)
     private static void fillItem$mending(Level level, int requiredAmount, ItemStack stack, FluidStack availableFluid, CallbackInfoReturnable<ItemStack> cir) {
-        if (!(level instanceof ServerLevel serverLevel && ExperienceHelper.canRepairItem(stack))) {
-            return;
+        if ((level instanceof ServerLevel serverLevel && ExperienceHelper.canRepairItem(stack))) {
+            int availableXp = ExperienceHelper.getExperienceFromFluid(availableFluid);
+            if (availableXp == 0)
+                return;
+            ExperienceHelper.repairItem(availableXp, serverLevel, stack, false);
+            cir.setReturnValue(stack);
         }
-        int availableXp = ExperienceHelper.getExperienceFromFluid(availableFluid);
-        if (availableXp == 0)
-            return;
-        ExperienceHelper.repairItem(availableXp, serverLevel, stack, false);
     }
 }

@@ -18,13 +18,14 @@
 
 package plus.dragons.createenchantmentindustry.common.kinetics.grindstone;
 
-import com.simibubi.create.content.equipment.sandPaper.SandPaperPolishingRecipe;
+import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
 import com.simibubi.create.content.processing.recipe.ProcessingInventory;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
+import com.simibubi.create.foundation.fluid.FluidIngredient;
 import java.util.List;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
@@ -52,7 +53,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 import plus.dragons.createdragonsplus.util.FieldsAssertedNonnullByDefault;
-import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
+import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
+import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
 
 @FieldsAssertedNonnullByDefault
 public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
@@ -114,60 +116,96 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
         }
     }
 
-    public void start(ItemStack input) {
+    private int getProcessDuration(ItemStack inputStack) {
+        assert level != null;
+        var recipeManager = level.getRecipeManager();
+        var input = new SingleRecipeInput(inputStack);
+        var sizeModifier = Math.max(1, (inputStack.getCount() / 5));
+        var grinding = recipeManager.getRecipeFor(CEIRecipes.GRINDING.getType(), input, level);
+        if (grinding.isPresent()) {
+            return grinding.get().value().getProcessingDuration() * sizeModifier;
+        }
+        if (recipeManager.getRecipeFor(AllRecipeTypes.SANDPAPER_POLISHING.getType(), input, level).isPresent()) {
+            return 50 * sizeModifier;
+        }
+        if (GrindstoneHelper.canItemBeGrinded(level, inputStack, ItemStack.EMPTY)) {
+            return 50 * sizeModifier;
+        }
+        return 10;
+    }
+
+    private boolean fill(FluidStack fluid) {
+        if (tank.getPrimaryHandler().fill(fluid, FluidAction.SIMULATE) == fluid.getAmount()) {
+            tank.getPrimaryHandler().fill(fluid, FluidAction.EXECUTE);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean drain(FluidIngredient fluidIngredient) {
+        FluidStack fluid = tank.getPrimaryHandler().getFluid();
+        int required = fluidIngredient.getRequiredAmount();
+        if (fluidIngredient.test(fluid) && fluid.getAmount() >= required) {
+            fluid.shrink(required);
+            tank.getPrimaryHandler().setFluid(fluid);
+            return true;
+        }
+        return false;
+    }
+
+    private void start(ItemStack inputStack) {
         assert level != null;
         if (inventory.isEmpty())
             return;
         if (level.isClientSide && !isVirtual())
             return;
-        // Sand Paper Polishing
-        if (SandPaperPolishingRecipe.canPolish(level, input)) {
-            inventory.remainingTime = inventory.recipeDuration = 50 * Math.max(1, (input.getCount() / 5));
-            inventory.appliedRecipe = false;
-            sendData();
-            return;
-        }
-        // Grind Stone Disenchanting
-        if (GrindstoneHelper.canItemBeGrinded(level, input, ItemStack.EMPTY)) {
-            inventory.remainingTime = inventory.recipeDuration = 50 * Math.max(1, (input.getCount() / 5));
-            inventory.appliedRecipe = false;
-            sendData();
-            return;
-        }
-        // Idle
-        inventory.remainingTime = inventory.recipeDuration = 10;
+        inventory.remainingTime = inventory.recipeDuration = getProcessDuration(inputStack);
         inventory.appliedRecipe = false;
         sendData();
     }
 
     private void applyRecipe() {
         assert level != null;
-        ItemStack input = inventory.getStackInSlot(0);
+        ItemStack inputStack = inventory.getStackInSlot(0);
+        var input = new SingleRecipeInput(inputStack);
+        // Grinding
+        var grinding = level.getRecipeManager().getRecipeFor(CEIRecipes.GRINDING.getType(), input, level);
+        if (grinding.isPresent()) {
+            var recipe = grinding.get().value();
+            var grinded = recipe.rollResults();
+            boolean applicable = true;
+            var fluidIngredients = recipe.getFluidIngredients();
+            if (!fluidIngredients.isEmpty())
+                applicable = drain(fluidIngredients.getFirst());
+            var fluidResults = recipe.getFluidResults();
+            if (!fluidResults.isEmpty())
+                applicable = fill(fluidResults.getFirst());
+            if (applicable) {
+                inventory.clear();
+                for (int i = 0; i < grinded.size(); i++)
+                    inventory.setStackInSlot(i + 1, grinded.get(i));
+                return;
+            }
+        }
         // Sand Paper Polishing
-        var polishing = SandPaperPolishingRecipe.getMatchingRecipes(level, input);
-        if (!polishing.isEmpty()) {
-            var polished = polishing.getFirst().value().assemble(new SingleRecipeInput(input), level.registryAccess());
+        var polishing = level.getRecipeManager().getRecipeFor(AllRecipeTypes.SANDPAPER_POLISHING.getType(), input, level);
+        if (polishing.isPresent()) {
+            var polished = polishing.get().value().assemble(new SingleRecipeInput(inputStack), level.registryAccess());
             inventory.clear();
             inventory.setStackInSlot(1, polished);
             return;
         }
-        // Grind Stone Disenchanting
-        var grinding = GrindstoneHelper.grindItem(level, input, ItemStack.EMPTY);
-        var xp = grinding.xp();
-        if (xp < 0)
-            return;
-        if (xp > 0) {
-            var fluid = new FluidStack(CEIFluids.EXPERIENCE.get().getSource(), xp);
-            tank.allowInsertion();
-            if (tank.getPrimaryHandler().fill(fluid, FluidAction.SIMULATE) != fluid.getAmount()) {
-                return;
+        // Grind Stone
+        var grindstone = GrindstoneHelper.grindItem(level, inputStack, ItemStack.EMPTY);
+        if (grindstone.isPresent()) {
+            var result = grindstone.get();
+            var fluid = ExperienceHelper.getExperienceFluid(result.xp());
+            if (fill(fluid)) {
+                inventory.clear();
+                inventory.setStackInSlot(0, result.top());
+                inventory.setStackInSlot(1, result.bottom());
+                inventory.setStackInSlot(2, result.output());
             }
-            inventory.clear();
-            inventory.setStackInSlot(0, grinding.top());
-            inventory.setStackInSlot(1, grinding.output());
-            inventory.setStackInSlot(2, grinding.bottom());
-            tank.getPrimaryHandler().fill(fluid, FluidAction.EXECUTE);
-            tank.forbidInsertion();
         }
     }
 

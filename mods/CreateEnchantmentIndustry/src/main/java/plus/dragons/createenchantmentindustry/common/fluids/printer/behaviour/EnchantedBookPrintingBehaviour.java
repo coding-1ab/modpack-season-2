@@ -85,7 +85,7 @@ public class EnchantedBookPrintingBehaviour implements PrintingBehaviour {
 
     @Override
     public int getRequiredFluidAmount(Level level, ItemStack stack, FluidStack fluidStack) {
-        return ExperienceHelper.getFluidFromExperience(fluidStack.getFluid(), cost);
+        return ExperienceHelper.getFluidFromExperience(fluidStack, cost);
     }
 
     @Override

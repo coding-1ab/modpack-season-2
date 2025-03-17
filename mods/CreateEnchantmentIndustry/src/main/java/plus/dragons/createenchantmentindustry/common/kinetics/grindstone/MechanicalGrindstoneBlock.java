@@ -52,7 +52,7 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIBlockEntities;
 public class MechanicalGrindstoneBlock extends RotatedPillarKineticBlock implements IBE<KineticBlockEntity> {
     protected static VoxelShaper SHAPE = new AllShapes.Builder(Block.box(3, 3, 3, 13, 13, 13))
             .add(4, 2, 4, 12, 14, 12)
-            .add(AllShapes.FOUR_VOXEL_POLE.get(Axis.Y))
+            .add(AllShapes.SIX_VOXEL_POLE.get(Axis.Y))
             .forAxis();
 
     public MechanicalGrindstoneBlock(Properties properties) {
@@ -61,7 +61,6 @@ public class MechanicalGrindstoneBlock extends RotatedPillarKineticBlock impleme
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-
         if (player.isSecondaryUseActive())
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         var blockEntity = getBlockEntity(level, pos);
@@ -89,9 +88,10 @@ public class MechanicalGrindstoneBlock extends RotatedPillarKineticBlock impleme
             // Grindstone
             var otherHand = hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
             var otherStack = player.getItemInHand(otherHand);
-            var result = GrindstoneHelper.grindItem(level, stack, otherStack);
-            if (result.xp() == -1)
+            var optional = GrindstoneHelper.grindItem(level, stack, otherStack);
+            if (optional.isEmpty())
                 return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            var result = optional.get();
             if (result.top().isEmpty()) {
                 player.setItemInHand(hand, result.output());
             } else {
