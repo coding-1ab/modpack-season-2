@@ -1144,7 +1144,7 @@ coordinate""",
         definition.setCommentEnd("*/");
         definition.setSingleLineComment("//");
 
-        definition.setAutoIdentation(true);
+        definition.setAutoIndentation(true);
 
         definition.setName("GLSL");
         return definition;

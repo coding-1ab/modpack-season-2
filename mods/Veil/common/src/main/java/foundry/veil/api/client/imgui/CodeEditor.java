@@ -4,6 +4,7 @@ import foundry.veil.Veil;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.extension.texteditor.TextEditor;
+import imgui.extension.texteditor.TextEditorCoordinates;
 import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
@@ -204,8 +205,9 @@ public class CodeEditor implements NativeResource {
                 ImGui.endMenuBar();
             }
 
-            int cposX = this.editor.getCursorPositionLine();
-            int cposY = this.editor.getCursorPositionColumn();
+            TextEditorCoordinates pos = this.editor.getCursorPosition();
+            int cposX = pos.mLine;
+            int cposY = pos.mColumn;
 
             String overwrite = this.editor.isOverwrite() ? "Ovr" : "Ins";
             String canUndo = this.editor.canUndo() ? "*" : " ";

@@ -52,28 +52,17 @@ public class Veil {
      * @param task The ImGui task to run
      */
     public static void withImGui(Runnable task) {
-        if (RenderSystem.isOnRenderThreadOrInit() && VeilRenderSystem.hasImGui()) {
-            beginImGui();
-            task.run();
-            endImGui();
+        if (!RenderSystem.isOnRenderThreadOrInit()) {
+            LOGGER.error("Called Veil#withImGui() on another thread");
+            return;
         }
-    }
 
-    /**
-     * <p>Enables writing ImGui to the screen. This useful for debugging during the normal render loop.</p>
-     * <p>Be sure to call {@link #endImGui()} when done.</p>
-     */
-    public static VeilImGui beginImGui() {
-        VeilImGui imGui = VeilImGuiImpl.get();
-        imGui.start();
-        return imGui;
-    }
-
-    /**
-     * Disables ImGui writing. This should be called after done using ImGui during the main render loop.
-     */
-    public static void endImGui() {
-        VeilImGuiImpl.get().stop();
+        if (VeilRenderSystem.hasImGui()) {
+            VeilImGui imGui = VeilImGuiImpl.get();
+            imGui.start();
+            task.run();
+            imGui.stop();
+        }
     }
 
     public static ResourceLocation veilPath(String path) {

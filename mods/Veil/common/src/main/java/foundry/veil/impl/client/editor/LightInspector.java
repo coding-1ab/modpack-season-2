@@ -149,12 +149,12 @@ public class LightInspector extends SingleWindowInspector {
     private static void renderLightAttributeComponents(Light light) {
         Vector3fc lightColor = light.getColor();
 
-        ImFloat editBrightness = new ImFloat(light.getBrightness());
+        float[] editBrightness = new float[]{light.getBrightness()};
         float[] editLightColor = new float[]{lightColor.x(), lightColor.y(), lightColor.z()};
 
         ImGui.indent();
-        if (ImGui.dragScalar("brightness", ImGuiDataType.Float, editBrightness, 0.02F)) {
-            light.setBrightness(editBrightness.get());
+        if (ImGui.dragScalar("brightness", editBrightness, 0.02F)) {
+            light.setBrightness(editBrightness[0]);
         }
         if (ImGui.colorEdit3("color", editLightColor)) {
             light.setColor(editLightColor[0], editLightColor[1], editLightColor[2]);

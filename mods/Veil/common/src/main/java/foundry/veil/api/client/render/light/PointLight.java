@@ -3,9 +3,6 @@ package foundry.veil.api.client.render.light;
 import foundry.veil.api.client.editor.EditorAttributeProvider;
 import foundry.veil.api.client.registry.LightTypeRegistry;
 import imgui.ImGui;
-import imgui.flag.ImGuiDataType;
-import imgui.type.ImDouble;
-import imgui.type.ImFloat;
 import net.minecraft.client.Camera;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
@@ -91,32 +88,32 @@ public class PointLight extends Light implements IndirectLight<PointLight>, Edit
 
     @Override
     public void renderImGuiAttributes() {
-        ImDouble editX = new ImDouble(this.position.x());
-        ImDouble editY = new ImDouble(this.position.y());
-        ImDouble editZ = new ImDouble(this.position.z());
+        double[] editX = new double[]{this.position.x()};
+        double[] editY = new double[]{this.position.y()};
+        double[] editZ = new double[]{this.position.z()};
 
-        ImFloat editRadius = new ImFloat(this.radius);
+        float[] editRadius = new float[]{this.radius};
 
         float totalWidth = ImGui.calcItemWidth();
         ImGui.pushItemWidth(totalWidth / 3.0F - (ImGui.getStyle().getItemInnerSpacingX() * 0.58F));
-        if (ImGui.dragScalar("##x", ImGuiDataType.Double, editX, 0.02F)) {
-            this.setPosition(editX.get(), this.position.y(), this.position.z());
+        if (ImGui.dragScalar("##x", editX, 0.02F)) {
+            this.setPosition(editX[0], this.position.y(), this.position.z());
         }
         ImGui.sameLine(0, ImGui.getStyle().getItemInnerSpacingX());
-        if (ImGui.dragScalar("##y", ImGuiDataType.Double, editY, 0.02F)) {
-            this.setPosition(this.position.x(), editY.get(), this.position.z());
+        if (ImGui.dragScalar("##y", editY, 0.02F)) {
+            this.setPosition(this.position.x(), editY[0], this.position.z());
         }
         ImGui.sameLine(0, ImGui.getStyle().getItemInnerSpacingX());
-        if (ImGui.dragScalar("##z", ImGuiDataType.Double, editZ, 0.02F)) {
-            this.setPosition(this.position.x(), this.position.y(), editZ.get());
+        if (ImGui.dragScalar("##z", editZ, 0.02F)) {
+            this.setPosition(this.position.x(), this.position.y(), editZ[0]);
         }
 
         ImGui.popItemWidth();
         ImGui.sameLine(0, ImGui.getStyle().getItemInnerSpacingX());
         ImGui.text("position");
 
-        if (ImGui.dragScalar("radius", ImGuiDataType.Float, editRadius, 0.02F, 0.0F)) {
-            this.setRadius(editRadius.get());
+        if (ImGui.dragScalar("radius", editRadius, 0.02F, 0.0F)) {
+            this.setRadius(editRadius[0]);
         }
     }
 }

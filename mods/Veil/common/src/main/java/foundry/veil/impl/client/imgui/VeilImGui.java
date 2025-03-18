@@ -21,21 +21,9 @@ public interface VeilImGui {
 
     void endFrame();
 
-    void onGrabMouse();
-
     void toggle();
 
     void updateFonts();
 
     void addImguiShaders(ObjIntConsumer<ResourceLocation> registry);
-
-    boolean mouseButtonCallback(long window, int button, int action, int mods);
-
-    boolean scrollCallback(long window, double xOffset, double yOffset);
-
-    boolean keyCallback(long window, int key, int scancode, int action, int mods);
-
-    boolean charCallback(long window, int codepoint);
-
-    boolean shouldHideMouse();
 }

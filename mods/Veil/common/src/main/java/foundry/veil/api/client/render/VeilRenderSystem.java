@@ -2,6 +2,7 @@ package foundry.veil.api.client.render;
 
 import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.VertexBuffer;
@@ -1033,8 +1034,9 @@ public final class VeilRenderSystem {
             throw new IllegalStateException("Client resource manager is " + client.getResourceManager().getClass());
         }
 
-        renderer = new VeilRenderer(resourceManager, client.getWindow());
-        VeilImGuiImpl.init(client.getWindow().getWindow());
+        Window window = client.getWindow();
+        renderer = new VeilRenderer(resourceManager, window);
+        VeilImGuiImpl.init(window.getWindow());
         screenQuadVao = directStateAccessSupported() ? glCreateVertexArrays() : glGenVertexArrays();
         VeilDebug.get().objectLabel(GL_VERTEX_ARRAY, screenQuadVao, "Screen Quad Vertex Array");
         emptySamplers = MemoryUtil.memCallocInt(maxCombinedTextureUnits());

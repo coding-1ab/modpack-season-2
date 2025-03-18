@@ -78,7 +78,7 @@ public final class QuasarParticles {
 
                         Veil.LOGGER.info("Loaded {} quasar particles", registryAccess.registryOrThrow(EMITTER).size());
                         VeilRenderSystem.renderer().getParticleManager().clear();
-                    });
+                    }, gameExecutor);
         }
 
         @Override

@@ -1,22 +1,20 @@
 package foundry.veil.impl.client.imgui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import imgui.ImGui;
-import imgui.ImGuiIO;
-import imgui.callback.ImStrConsumer;
-import imgui.callback.ImStrSupplier;
 import imgui.extension.implot.ImPlot;
 import imgui.extension.implot.ImPlotContext;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.internal.ImGuiContext;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.system.NativeResource;
 
-import java.lang.reflect.Field;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.ObjIntConsumer;
 
@@ -28,6 +26,30 @@ import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
  */
 @ApiStatus.Internal
 public class VeilImGuiImpl implements VeilImGui, NativeResource {
+
+    private static final MethodHandle DATA_GETTER;
+    private static final MethodHandle SHADER_GETTER;
+
+    static {
+        MethodHandle dataGetter;
+        MethodHandle shaderGetter;
+
+        try {
+            Class<?> dataClass = Class.forName("imgui.gl3.ImGuiImplGl3$Data");
+            MethodHandles.Lookup dataLookup = MethodHandles.privateLookupIn(ImGuiImplGl3.class, MethodHandles.lookup());
+            dataGetter = dataLookup.findGetter(ImGuiImplGl3.class, "data", dataClass);
+
+            MethodHandles.Lookup shaderLookup = MethodHandles.privateLookupIn(dataClass, dataLookup);
+            shaderGetter = shaderLookup.findGetter(dataClass, "shaderHandle", int.class);
+        } catch (Throwable t) {
+            Veil.LOGGER.error("Failed to get ImGui shader handle", t);
+            dataGetter = null;
+            shaderGetter = null;
+        }
+
+        DATA_GETTER = dataGetter;
+        SHADER_GETTER = shaderGetter;
+    }
 
     private static VeilImGui instance = new InactiveVeilImGuiImpl();
 
@@ -41,33 +63,18 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
         this.implGlfw = new VeilImGuiImplGlfw(this);
         this.implGl3 = new ImGuiImplGl3();
 
-        ImGuiContext oldImGuiContext = new ImGuiContext(ImGui.getCurrentContext().ptr);
-        ImPlotContext oldImPlotContext = new ImPlotContext(ImPlot.getCurrentContext().ptr);
+        ImGuiStateStack.push();
+        try {
+            this.imGuiContext = ImGui.createContext();
+            this.imPlotContext = ImPlot.createContext();
+            this.active = new AtomicBoolean();
+            this.implGlfw.init(window, true);
+            this.implGl3.init("#version 410 core");
 
-        this.imGuiContext = new ImGuiContext(ImGui.createContext().ptr);
-        this.imPlotContext = new ImPlotContext(ImPlot.createContext().ptr);
-        this.active = new AtomicBoolean();
-        this.implGlfw.init(window, true);
-        this.implGl3.init("#version 410 core");
-
-        VeilImGuiStylesheet.initStyles();
-
-        ImGuiIO io = ImGui.getIO();
-        io.setGetClipboardTextFn(new ImStrSupplier() {
-            @Override
-            public String get() {
-                return Minecraft.getInstance().keyboardHandler.getClipboard();
-            }
-        });
-        io.setSetClipboardTextFn(new ImStrConsumer() {
-            @Override
-            public void accept(String str) {
-                Minecraft.getInstance().keyboardHandler.setClipboard(str);
-            }
-        });
-
-        ImGui.setCurrentContext(oldImGuiContext);
-        ImPlot.setCurrentContext(oldImPlotContext);
+            VeilImGuiStylesheet.initStyles();
+        } finally {
+            ImGuiStateStack.forcePop();
+        }
     }
 
     @Override
@@ -80,60 +87,63 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
         if (ImGui.getCurrentContext().isNotValidPtr()) {
             throw new IllegalStateException("ImGui Context is not valid");
         }
+        // These callbacks MUST be called from the main thread
+        RenderSystem.assertOnRenderThread();
     }
 
     @Override
     public void stop() {
+        RenderSystem.assertOnRenderThread();
         ImGuiStateStack.pop();
     }
 
     @Override
     public void beginFrame() {
-        this.start();
+        try {
+            this.start();
 
-        if (this.active.get()) {
-            Veil.LOGGER.error("ImGui failed to render previous frame, disposing");
-            ImGui.endFrame();
+            if (this.active.get()) {
+                Veil.LOGGER.error("ImGui failed to render previous frame, disposing");
+                ImGui.endFrame();
+            }
+            this.active.set(true);
+            this.implGl3.newFrame();
+            this.implGlfw.newFrame();
+            ImGui.newFrame();
+
+            AdvancedFboImGuiAreaImpl.begin();
+            VeilRenderSystem.renderer().getEditorManager().render();
+        } finally {
+            this.stop();
         }
-        this.active.set(true);
-        this.implGlfw.newFrame();
-        ImGui.newFrame();
-
-        AdvancedFboImGuiAreaImpl.begin();
-        VeilRenderSystem.renderer().getEditorManager().render();
-
-        this.stop();
     }
 
     @Override
     public void endFrame() {
         AdvancedFboImGuiAreaImpl.end();
 
-        if (!this.active.get()) {
-            Veil.LOGGER.error("ImGui state de-synced");
-            this.stop();
-            return;
+        try {
+            if (!this.active.get()) {
+                Veil.LOGGER.error("ImGui state de-synced");
+                return;
+            }
+
+            this.start();
+
+            this.active.set(false);
+            VeilRenderSystem.renderer().getEditorManager().renderLast();
+            ImGui.render();
+            this.implGl3.renderDrawData(ImGui.getDrawData());
+
+            if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
+                final long backupWindowPtr = glfwGetCurrentContext();
+                ImGui.updatePlatformWindows();
+                ImGui.renderPlatformWindowsDefault();
+                glfwMakeContextCurrent(backupWindowPtr);
+            }
+        } finally {
+            ImGuiStateStack.forcePop();
         }
-        this.start();
-
-        this.active.set(false);
-        VeilRenderSystem.renderer().getEditorManager().renderLast();
-        ImGui.render();
-        this.implGl3.renderDrawData(ImGui.getDrawData());
-
-        if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
-            final long backupWindowPtr = glfwGetCurrentContext();
-            ImGui.updatePlatformWindows();
-            ImGui.renderPlatformWindowsDefault();
-            glfwMakeContextCurrent(backupWindowPtr);
-        }
-
-        ImGuiStateStack.forcePop();
-    }
-
-    @Override
-    public void onGrabMouse() {
-        ImGui.setWindowFocus(null);
     }
 
     @Override
@@ -143,54 +153,35 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
 
     @Override
     public void updateFonts() {
-        this.implGl3.updateFontsTexture();
-    }
-
-    @Override
-    public void addImguiShaders(ObjIntConsumer<ResourceLocation> registry) {
-        try {
-            Field field = ImGuiImplGl3.class.getDeclaredField("gShaderHandle");
-            field.setAccessible(true);
-            int handle = field.getInt(this.implGl3);
-            registry.accept(ResourceLocation.fromNamespaceAndPath("imgui", "blit"), handle);
-        } catch (Exception e) {
-            Veil.LOGGER.warn("Failed to add ImGui shader", e);
+        this.implGl3.destroyFontsTexture();
+        if (!this.implGl3.createFontsTexture()) {
+            throw new IllegalStateException("Failed to update font texture");
         }
     }
 
     @Override
-    public boolean mouseButtonCallback(long window, int button, int action, int mods) {
-        return ImGui.getIO().getWantCaptureMouse();
-    }
-
-    @Override
-    public boolean scrollCallback(long window, double xOffset, double yOffset) {
-        return ImGui.getIO().getWantCaptureMouse();
-    }
-
-    @Override
-    public boolean keyCallback(long window, int key, int scancode, int action, int mods) {
-        return ImGui.getIO().getWantCaptureKeyboard();
-    }
-
-    @Override
-    public boolean charCallback(long window, int codepoint) {
-        return ImGui.getIO().getWantCaptureKeyboard();
-    }
-
-    @Override
-    public boolean shouldHideMouse() {
-        return ImGui.getIO().getWantCaptureMouse();
+    public void addImguiShaders(ObjIntConsumer<ResourceLocation> registry) {
+        if (DATA_GETTER != null && SHADER_GETTER != null) {
+            try {
+                int handle = (int) SHADER_GETTER.invoke(DATA_GETTER.invoke(this.implGl3));
+                registry.accept(ResourceLocation.fromNamespaceAndPath("imgui", "blit"), handle);
+            } catch (Throwable t) {
+                Veil.LOGGER.warn("Failed to add ImGui shader", t);
+            }
+        }
     }
 
     @Override
     public void free() {
-        this.start();
-        this.implGlfw.free();
-        this.implGl3.dispose();
-        ImGui.destroyContext(this.imGuiContext);
-        ImPlot.destroyContext(this.imPlotContext);
-        this.stop();
+        try {
+            this.start();
+            this.implGlfw.shutdown();
+            this.implGl3.destroyDeviceObjects();
+            ImGui.destroyContext(this.imGuiContext);
+            ImPlot.destroyContext(this.imPlotContext);
+        } finally {
+            this.stop();
+        }
     }
 
     public static void init(long window) {

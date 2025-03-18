@@ -2,6 +2,7 @@ package foundry.veil.mixin.imgui.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.Veil;
+import imgui.ImGui;
 import net.minecraft.client.MouseHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,45 +15,25 @@ public class MouseHandlerMixin {
 
     @Inject(method = "onPress", at = @At("HEAD"), cancellable = true)
     public void mouseButtonCallback(long window, int button, int action, int mods, CallbackInfo ci) {
-        if (!RenderSystem.isOnRenderThreadOrInit()) {
-            return;
-        }
-
-        try {
-            if (Veil.beginImGui().mouseButtonCallback(window, button, action, mods)) {
+        Veil.withImGui(() -> {
+            if (ImGui.getIO().getWantCaptureMouse()) {
                 ci.cancel();
             }
-        } finally {
-            Veil.endImGui();
-        }
+        });
     }
 
     @Inject(method = "onScroll", at = @At("HEAD"), cancellable = true)
     public void scrollCallback(long window, double xOffset, double yOffset, CallbackInfo ci) {
-        if (!RenderSystem.isOnRenderThreadOrInit()) {
-            return;
-        }
-
-        try {
-            if (Veil.beginImGui().scrollCallback(window, xOffset, yOffset)) {
+        Veil.withImGui(() -> {
+            if (ImGui.getIO().getWantCaptureMouse()) {
                 ci.cancel();
             }
-        } finally {
-            Veil.endImGui();
-        }
+        });
     }
 
     @Inject(method = "grabMouse", at = @At("HEAD"))
     public void grabMouse(CallbackInfo ci) {
-        if (!RenderSystem.isOnRenderThreadOrInit()) {
-            return;
-        }
-
-        try {
-            Veil.beginImGui().onGrabMouse();
-        } finally {
-            Veil.endImGui();
-        }
+        Veil.withImGui(() -> ImGui.setWindowFocus(null));
     }
 
     // REI calls these on another thread for some reason, so it's possible other mods may do the same thing
@@ -63,13 +44,11 @@ public class MouseHandlerMixin {
             return;
         }
 
-        try {
-            if (Veil.beginImGui().shouldHideMouse()) {
+        Veil.withImGui(() -> {
+            if (ImGui.getIO().getWantCaptureMouse()) {
                 cir.setReturnValue(Double.MIN_VALUE);
             }
-        } finally {
-            Veil.endImGui();
-        }
+        });
     }
 
     @Inject(method = "ypos", at = @At("HEAD"), cancellable = true)
@@ -78,12 +57,10 @@ public class MouseHandlerMixin {
             return;
         }
 
-        try {
-            if (Veil.beginImGui().shouldHideMouse()) {
+        Veil.withImGui(() -> {
+            if (ImGui.getIO().getWantCaptureMouse()) {
                 cir.setReturnValue(Double.MIN_VALUE);
             }
-        } finally {
-            Veil.endImGui();
-        }
+        });
     }
 }

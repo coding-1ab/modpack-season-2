@@ -8,6 +8,7 @@ import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.impl.client.imgui.AdvancedFboImGuiAreaImpl;
 import imgui.ImFont;
 import imgui.ImGui;
+import imgui.ImVec4;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiStyleVar;
 import net.minecraft.Util;
@@ -166,10 +167,10 @@ public class VeilImGuiUtil {
      * @return A texture ID that can be displayed in ImGui
      */
     public static int renderArea(int width, int height, Consumer<AdvancedFbo> renderer) {
-        float[] colors = ImGui.getStyle().getColors()[ImGuiCol.FrameBg];
+        ImVec4 colors = ImGui.getStyle().getColors()[ImGuiCol.FrameBg];
         AdvancedFbo fbo = AdvancedFboImGuiAreaImpl.allocate(width, height);
         fbo.bind(true);
-        fbo.clear(colors[0], colors[1], colors[2], colors[3], fbo.getClearMask());
+        fbo.clear(colors.x, colors.y, colors.z, colors.w, fbo.getClearMask());
         renderer.accept(fbo);
         AdvancedFbo.unbind();
         return fbo.getColorTextureAttachment(0).getId();
@@ -212,8 +213,8 @@ public class VeilImGuiUtil {
      * @return The ImFont to use
      */
     public static int getColor(int color) {
-        float[] colors = ImGui.getStyle().getColors()[color];
-        return (int) (colors[3] * 255) << 24 | (int) (colors[0] * 255) << 16 | (int) (colors[1] * 255) << 8 | (int) (colors[2] * 255);
+        ImVec4 colors = ImGui.getStyle().getColors()[color];
+        return (int) (colors.w * 255) << 24 | (int) (colors.x * 255) << 16 | (int) (colors.y * 255) << 8 | (int) (colors.z * 255);
     }
 
     /**

@@ -121,33 +121,32 @@ public class ImGuiFontManager implements PreparableReloadListener {
     }
 
     public void rebuildFonts() {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            Veil.beginImGui();
-            ImFontAtlas atlas = ImGui.getIO().getFonts();
-            atlas.clear();
-            this.defaultFont = atlas.addFontDefault();
-            this.fonts.clear();
+        Veil.withImGui(() -> {
+            try (MemoryStack stack = MemoryStack.stackPush()) {
+                ImFontAtlas atlas = ImGui.getIO().getFonts();
+                atlas.clear();
+                this.defaultFont = atlas.addFontDefault();
+                this.fonts.clear();
 
-            FloatBuffer xscale = stack.mallocFloat(1);
-            FloatBuffer yscale = stack.mallocFloat(1);
-            glfwGetMonitorContentScale(glfwGetPrimaryMonitor(), xscale, yscale);
+                FloatBuffer xscale = stack.mallocFloat(1);
+                FloatBuffer yscale = stack.mallocFloat(1);
+                glfwGetMonitorContentScale(glfwGetPrimaryMonitor(), xscale, yscale);
 
-            float scale = Math.max(xscale.get(0), yscale.get(0));
-            // Hack because macs seem to report massive values for some reason
-            if (Minecraft.ON_OSX) {
-                scale /= 2;
+                float scale = Math.max(xscale.get(0), yscale.get(0));
+                // Hack because macs seem to report massive values for some reason
+                if (Minecraft.ON_OSX) {
+                    scale /= 2;
+                }
+                scale = Math.max(1.0F, scale);
+
+                for (Map.Entry<ResourceLocation, FontPackBuilder> entry : this.fontBuilders.entrySet()) {
+                    Veil.LOGGER.info("Built {}", entry.getKey());
+                    this.fonts.put(entry.getKey(), entry.getValue().build(FONT_SIZE * scale));
+                }
+                ImGui.getIO().setFontDefault(this.getFont(EditorManager.DEFAULT_FONT, false, false));
+                VeilImGuiImpl.get().updateFonts();
             }
-            scale = Math.max(1.0F, scale);
-
-            for (Map.Entry<ResourceLocation, FontPackBuilder> entry : this.fontBuilders.entrySet()) {
-                Veil.LOGGER.info("Built {}", entry.getKey());
-                this.fonts.put(entry.getKey(), entry.getValue().build(FONT_SIZE * scale));
-            }
-            ImGui.getIO().setFontDefault(this.getFont(EditorManager.DEFAULT_FONT, false, false));
-            VeilImGuiImpl.get().updateFonts();
-        } finally {
-            Veil.endImGui();
-        }
+        });
     }
 
     private record FontPack(ImFont regular,

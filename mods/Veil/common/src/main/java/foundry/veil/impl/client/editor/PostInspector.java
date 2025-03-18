@@ -106,9 +106,9 @@ public class PostInspector extends SingleWindowInspector {
                 ImGui.setItemAllowOverlap();
                 ImGui.sameLine(ImGui.getContentRegionAvailX() - priorityWidth - 2);
                 ImGui.setNextItemWidth(priorityWidth);
-                ImInt editPriority = new ImInt(entry.getPriority());
-                if (ImGui.dragScalar("##priority", ImGuiDataType.S32, editPriority, 1)) {
-                    entry.setPriority(editPriority.get());
+                int[] editPriority = new int[entry.getPriority()];
+                if (ImGui.dragScalar("##priority", editPriority, 1)) {
+                    entry.setPriority(editPriority[0]);
                 }
                 ImGui.popID();
             }
