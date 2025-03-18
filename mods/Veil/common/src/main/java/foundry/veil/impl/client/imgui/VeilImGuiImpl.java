@@ -42,7 +42,7 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
             MethodHandles.Lookup shaderLookup = MethodHandles.privateLookupIn(dataClass, dataLookup);
             shaderGetter = shaderLookup.findGetter(dataClass, "shaderHandle", int.class);
         } catch (Throwable t) {
-            Veil.LOGGER.error("Failed to get ImGui shader handle", t);
+            Veil.LOGGER.error("Failed to get ImGui shader handle: {}", t.getMessage());
             dataGetter = null;
             shaderGetter = null;
         }
@@ -59,22 +59,37 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
     private final ImPlotContext imPlotContext;
     private final AtomicBoolean active;
 
-    private VeilImGuiImpl(long window) {
+    private VeilImGuiImpl(long window) throws Throwable {
         this.implGlfw = new VeilImGuiImplGlfw(this);
         this.implGl3 = new ImGuiImplGl3();
 
         ImGuiStateStack.push();
+        ImGuiContext imGuiContext = null;
+        ImPlotContext imPlotContext = null;
         try {
-            this.imGuiContext = ImGui.createContext();
-            this.imPlotContext = ImPlot.createContext();
+            imGuiContext = ImGui.createContext();
+            imPlotContext = ImPlot.createContext();
             this.active = new AtomicBoolean();
-            this.implGlfw.init(window, true);
             this.implGl3.init("#version 410 core");
+            this.implGlfw.init(window, true);
 
             VeilImGuiStylesheet.initStyles();
+        } catch (Throwable t) {
+            // Make sure nothing leaks when an error occurs
+            this.implGlfw.shutdown();
+            this.implGl3.destroyDeviceObjects();
+            if (imGuiContext != null) {
+                ImGui.destroyContext(imGuiContext);
+            }
+            if (imPlotContext != null) {
+                ImPlot.destroyContext(imPlotContext);
+            }
+            throw t;
         } finally {
             ImGuiStateStack.forcePop();
         }
+        this.imGuiContext = imGuiContext;
+        this.imPlotContext = imPlotContext;
     }
 
     @Override
@@ -188,7 +203,7 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
         try {
             instance = Veil.IMGUI ? new VeilImGuiImpl(window) : new InactiveVeilImGuiImpl();
         } catch (Throwable t) {
-            Veil.LOGGER.error("Failed to load ImGui", t);
+            Veil.LOGGER.error("Failed to load ImGui, disabling", t);
             instance = new InactiveVeilImGuiImpl();
         }
     }

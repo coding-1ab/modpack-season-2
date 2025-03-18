@@ -88,6 +88,7 @@ public abstract class ShaderInstanceMixin implements Shader {
         }
     }
 
+    @SuppressWarnings("ConstantValue")
     @Inject(method = "updateLocations", at = @At("TAIL"))
     public void updateLocations(CallbackInfo ci) {
         if ((Object) this instanceof ShaderProgramImpl.Wrapper) {
@@ -179,6 +180,21 @@ public abstract class ShaderInstanceMixin implements Shader {
                 }
 
                 for (int j = 0; j < length; j++) {
+                    int location = Uniform.glGetUniformLocation(this.programId, name);
+                    if (location == -1) {
+                        // If the length is not 1, then it must be another mod adding a uniform block, so ignore
+                        if (length == 1) {
+                            Veil.LOGGER.warn("Shader {} could not find uniform named {} in the specified shader program.", this.name, name);
+                        }
+
+                        // Don't leak resources
+                        Uniform old = this.veil$uniforms.remove(name);
+                        if (old != null) {
+                            old.close();
+                        }
+                        continue;
+                    }
+
                     if (length > 1) {
                         name = name.substring(0, name.indexOf('[')) + '[' + j + ']';
                     }
@@ -207,14 +223,9 @@ public abstract class ShaderInstanceMixin implements Shader {
                         MemoryUtil.memSet(floatBuffer, Float.floatToIntBits(0.0F));
                     }
 
-                    int location = Uniform.glGetUniformLocation(this.programId, name);
-                    if (location == -1) {
-                        Veil.LOGGER.warn("Shader {} could not find uniform named {} in the specified shader program.", this.name, name);
-                    } else {
-                        this.uniformLocations.add(location);
-                        uniform.setLocation(location);
-                        this.uniformMap.put(name, uniform);
-                    }
+                    this.uniformLocations.add(location);
+                    uniform.setLocation(location);
+                    this.uniformMap.put(name, uniform);
                 }
             }
         }
