@@ -33,7 +33,6 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
 
     private final VeilImGuiImplGlfw implGlfw;
     private final ImGuiImplGl3 implGl3;
-    private final ImguiState state;
     private final ImGuiContext imGuiContext;
     private final ImPlotContext imPlotContext;
     private final AtomicBoolean active;
@@ -42,7 +41,6 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
         this.implGlfw = new VeilImGuiImplGlfw(this);
         this.implGl3 = new ImGuiImplGl3();
 
-        this.state = new ImguiState();
         ImGuiContext oldImGuiContext = new ImGuiContext(ImGui.getCurrentContext().ptr);
         ImPlotContext oldImPlotContext = new ImPlotContext(ImPlot.getCurrentContext().ptr);
 
@@ -74,12 +72,19 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
 
     @Override
     public void start() {
-        this.state.start(this.imGuiContext, this.imPlotContext);
+        ImGuiStateStack.push();
+        ImGui.setCurrentContext(this.imGuiContext);
+        ImPlot.setCurrentContext(this.imPlotContext);
+
+        // Sanity check
+        if (ImGui.getCurrentContext().isNotValidPtr()) {
+            throw new IllegalStateException("ImGui Context is not valid");
+        }
     }
 
     @Override
     public void stop() {
-        this.state.end();
+        ImGuiStateStack.pop();
     }
 
     @Override
@@ -123,7 +128,7 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
             glfwMakeContextCurrent(backupWindowPtr);
         }
 
-        this.state.forceEnd();
+        ImGuiStateStack.forcePop();
     }
 
     @Override
@@ -207,48 +212,5 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
 
     public static VeilImGui get() {
         return instance;
-    }
-
-    private static class ImguiState {
-
-        private final ImGuiContext oldImGuiContext;
-        private final ImPlotContext oldImPlotContext;
-        private int beginLayer;
-
-        public ImguiState() {
-            this.oldImGuiContext = new ImGuiContext(0L);
-            this.oldImPlotContext = new ImPlotContext(0L);
-        }
-
-        public void start(ImGuiContext imGuiContext, ImPlotContext imPlotContext) {
-            this.beginLayer++;
-
-            if (ImGui.getCurrentContext().ptr == imGuiContext.ptr) {
-                return;
-            }
-
-            this.oldImGuiContext.ptr = ImGui.getCurrentContext().ptr;
-            this.oldImPlotContext.ptr = ImPlot.getCurrentContext().ptr;
-
-            ImGui.setCurrentContext(imGuiContext);
-            ImPlot.setCurrentContext(imPlotContext);
-        }
-
-        public void end() {
-            if (--this.beginLayer == 0) {
-                ImGui.setCurrentContext(this.oldImGuiContext);
-                ImPlot.setCurrentContext(this.oldImPlotContext);
-                this.oldImGuiContext.ptr = 0L;
-                this.oldImPlotContext.ptr = 0L;
-            }
-        }
-
-        public void forceEnd() {
-            if (this.beginLayer > 1) {
-                Veil.LOGGER.error("Mismatched begin/end during frame");
-                this.beginLayer = 1;
-            }
-            this.end();
-        }
     }
 }
