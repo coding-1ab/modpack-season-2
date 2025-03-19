@@ -556,7 +556,7 @@ public class AllArmInteractionPointTypes {
 		public void updateCachedState() {
 			BlockState oldState = cachedState;
 			super.updateCachedState();
-			if (oldState != cachedState)
+			if (cachedHandler != null && oldState != cachedState)
 				level.invalidateCapabilities(cachedHandler.pos());
 		}
 

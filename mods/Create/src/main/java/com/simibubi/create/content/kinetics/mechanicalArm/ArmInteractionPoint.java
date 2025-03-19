@@ -101,10 +101,12 @@ public class ArmInteractionPoint {
 			if (be == null)
 				return null;
 			cachedHandler = BlockCapabilityCache.create(
-					Capabilities.ItemHandler.BLOCK,
-					(ServerLevel) level,
-					pos,
-					Direction.UP
+				Capabilities.ItemHandler.BLOCK,
+				(ServerLevel) level,
+				pos,
+				Direction.UP,
+				() -> !be.isRemoved(),
+				() -> cachedHandler = null
 			);
 		}
 		return cachedHandler.getCapability();
