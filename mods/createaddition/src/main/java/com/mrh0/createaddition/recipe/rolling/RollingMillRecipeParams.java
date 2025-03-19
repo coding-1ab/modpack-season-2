@@ -1,6 +1,6 @@
 package com.mrh0.createaddition.recipe.rolling;
 
-import com.mrh0.createaddition.config.Config;
+import com.mrh0.createaddition.config.CommonConfig;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
@@ -28,7 +28,7 @@ public class RollingMillRecipeParams extends ProcessingRecipeBuilder.ProcessingR
             fluidResults = NonNullList.create();
         }
         fluidResults.clear();
-        processingDuration = Config.ROLLING_MILL_PROCESSING_DURATION.get();
+        processingDuration = CommonConfig.ROLLING_MILL_PROCESSING_DURATION.get();
         requiredHeat = HeatCondition.NONE;
         keepHeldItem = false;
     }

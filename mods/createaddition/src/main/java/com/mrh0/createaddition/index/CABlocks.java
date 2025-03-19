@@ -11,9 +11,7 @@ import com.mrh0.createaddition.blocks.cake.CACakeBlock;
 import com.mrh0.createaddition.blocks.connector.LargeConnectorBlock;
 import com.mrh0.createaddition.blocks.connector.SmallConnectorBlock;
 import com.mrh0.createaddition.blocks.connector.SmallLightConnectorBlock;
-import com.mrh0.createaddition.blocks.crops.HarmfulPlantBlock;
 import com.mrh0.createaddition.blocks.digital_adapter.DigitalAdapterBlock;
-import com.mrh0.createaddition.blocks.digital_adapter.DigitalAdapterDisplaySource;
 import com.mrh0.createaddition.blocks.digital_adapter.DigitalAdapterBlockItem;
 import com.mrh0.createaddition.blocks.modular_accumulator.*;
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceBlock;
@@ -25,15 +23,12 @@ import com.mrh0.createaddition.blocks.liquid_blaze_burner.LiquidBlazeBurnerBlock
 import com.mrh0.createaddition.blocks.redstone_relay.RedstoneRelayBlock;
 import com.mrh0.createaddition.blocks.rolling_mill.RollingMillBlock;
 import com.mrh0.createaddition.blocks.tesla_coil.TeslaCoilBlock;
-import com.mrh0.createaddition.config.Config;
 import com.mrh0.createaddition.item.BiomassPelletBlock;
 import com.simibubi.create.AllTags.AllBlockTags;
-import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.SharedProperties;
-import com.simibubi.create.infrastructure.config.CStress;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
@@ -49,7 +44,7 @@ import net.minecraft.world.level.material.MapColor;
 public class CABlocks {
 
 	static {
-		CreateAddition.REGISTRATE.setCreativeTab(CACreativeModeTabs.MAIN_TAB);
+		CreateAddition.REGISTRATE.setCreativeTab(CreateAddition.MAIN_TAB);
 	}
 
 	public static final BlockEntry<ElectricMotorBlock> ELECTRIC_MOTOR = CreateAddition.REGISTRATE.block("electric_motor", ElectricMotorBlock::new)
@@ -141,26 +136,28 @@ public class CABlocks {
 			.transform(customItemModel())
 			.register();*/
 
-	public static final BlockEntry<BarbedWireBlock> BARBED_WIRE = CreateAddition.REGISTRATE.block("barbed_wire",  BarbedWireBlock::new)
+	public static final BlockEntry<BarbedWireBlock> BARBED_WIRE = CreateAddition.REGISTRATE
+			.block("barbed_wire",  BarbedWireBlock::new)
 			.initialProperties(() -> Blocks.COBWEB)
 			.properties(props -> props.noCollission().requiresCorrectToolForDrops().strength(4.0F))
 			.item()
 			.transform(customItemModel())
 			.register();
 
-	public static final BlockEntry<TeslaCoilBlock> TESLA_COIL = CreateAddition.REGISTRATE.block("tesla_coil",  TeslaCoilBlock::new)
+	public static final BlockEntry<TeslaCoilBlock> TESLA_COIL = CreateAddition.REGISTRATE
+			.block("tesla_coil",  TeslaCoilBlock::new)
 			.initialProperties(SharedProperties::softMetal)
 			.item(AssemblyOperatorBlockItem::new)
 			.transform(customItemModel())
 			.register();
 
-	public static final BlockEntry<ModularAccumulatorBlock> MODULAR_ACCUMULATOR = CreateAddition.REGISTRATE.block("modular_accumulator",  ModularAccumulatorBlock::regular)
+	public static final BlockEntry<ModularAccumulatorBlock> MODULAR_ACCUMULATOR = CreateAddition.REGISTRATE
+			.block("modular_accumulator",  ModularAccumulatorBlock::regular)
 			.initialProperties(SharedProperties::softMetal)
 			.properties(BlockBehaviour.Properties::noOcclusion)
 			.onRegister(movementBehaviour(new ModularAccumulatorMovement()))
 			.onRegister(connectedTextures(ModularAccumulatorCTBehaviour::new))
 			.transform(displaySource(CADisplaySources.MODULAR_ACCUMULATOR))
-			//.onRegister(assignDataBehaviour(ForgeEnergyDisplaySource.INSTANCE, "forge_energy"))
 			.addLayer(() -> RenderType::cutoutMipped)
 			.item(ModularAccumulatorBlockItem::new)
 			.transform(customItemModel())
@@ -188,7 +185,8 @@ public class CABlocks {
 			.transform(BuilderTransformers.casing(() -> CASpriteShifts.COPPER_WIRE_CASING))
 			.register();*/
 
-	public static final BlockEntry<Block> BIOMASS_PALLET = CreateAddition.REGISTRATE.block("biomass_pellet_block", Block::new)
+	public static final BlockEntry<Block> BIOMASS_PALLET = CreateAddition.REGISTRATE
+			.block("biomass_pellet_block", Block::new)
 			.initialProperties(() -> Blocks.DRIED_KELP_BLOCK)
 			.properties(p -> p.mapColor(MapColor.COLOR_GREEN))
 			.item(BiomassPelletBlock::new)
@@ -202,12 +200,12 @@ public class CABlocks {
 			.transform(customItemModel())
 			.register();
 
-	public static final BlockEntry<DigitalAdapterBlock> DIGITAL_ADAPTER = CreateAddition.REGISTRATE.block("digital_adapter",  DigitalAdapterBlock::new)
+	public static final BlockEntry<DigitalAdapterBlock> DIGITAL_ADAPTER = CreateAddition.REGISTRATE
+			.block("digital_adapter",  DigitalAdapterBlock::new)
 			.initialProperties(SharedProperties::softMetal)
 			.transform(displaySource(CADisplaySources.DIGITAL_ADAPTER))
-			.properties(p -> p.mapColor(DyeColor.GRAY))
 			.item(DigitalAdapterBlockItem::new)
-			.transform(customItemModel())
+			//.transform(customItemModel())
 			.register();
 
 	public static void register() {

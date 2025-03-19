@@ -1,6 +1,5 @@
 package com.mrh0.createaddition.sound;
 
-import com.mrh0.createaddition.config.Config;
 import com.mrh0.createaddition.index.CASounds;
 
 import com.simibubi.create.infrastructure.config.AllConfigs;

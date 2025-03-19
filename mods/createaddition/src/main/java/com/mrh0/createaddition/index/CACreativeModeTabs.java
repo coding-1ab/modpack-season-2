@@ -1,5 +1,5 @@
 package com.mrh0.createaddition.index;
-
+/*
 import com.mrh0.createaddition.CreateAddition;
 import com.simibubi.create.AllCreativeModeTabs;
 import com.tterrag.registrate.util.entry.RegistryEntry;
@@ -9,10 +9,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -91,3 +89,4 @@ public class CACreativeModeTabs {
         }
     }
 }
+*/

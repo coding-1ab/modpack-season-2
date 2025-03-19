@@ -2,7 +2,6 @@ package com.mrh0.createaddition.energy.network;
 
 import java.util.Map;
 
-import com.mrh0.createaddition.config.Config;
 import com.mrh0.createaddition.energy.IWireNode;
 
 import net.minecraft.core.BlockPos;

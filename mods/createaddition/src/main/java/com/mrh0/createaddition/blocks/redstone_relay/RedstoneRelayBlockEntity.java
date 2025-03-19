@@ -8,7 +8,7 @@ import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.blocks.connector.ConnectorType;
 import com.mrh0.createaddition.compat.computercraft.Peripherals;
 import com.mrh0.createaddition.compat.computercraft.RedstoneRelayPeripheral;
-import com.mrh0.createaddition.config.Config;
+import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.energy.IWireNode;
 import com.mrh0.createaddition.energy.LocalNode;
 import com.mrh0.createaddition.energy.NodeRotation;
@@ -414,6 +414,6 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 
 	@Override
 	public int getMaxWireLength() {
-		return Config.SMALL_CONNECTOR_MAX_LENGTH.get();
+		return CommonConfig.SMALL_CONNECTOR_MAX_LENGTH.get();
 	}
 }

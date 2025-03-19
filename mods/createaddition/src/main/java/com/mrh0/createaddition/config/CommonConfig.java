@@ -3,12 +3,9 @@ package com.mrh0.createaddition.config;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
-@EventBusSubscriber
-public class Config {
-
+public class CommonConfig {
 	public static final String CATAGORY_GENERAL = "general";
 	public static final String CATAGORY_ELECTRIC_MOTOR = "electric_motor";
 	public static final String CATAGORY_ALTERNATOR = "alternator";
@@ -19,63 +16,63 @@ public class Config {
 	public static final String CATAGORY_TESLA_COIL = "tesla_coil";
 	public static final String CATAGORY_MISC = "misc";
 
-	private static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+	private static final ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
 
-	public static ForgeConfigSpec COMMON_CONFIG;
+	public static ModConfigSpec COMMON_CONFIG;
 
-	public static ForgeConfigSpec.IntValue ELECTRIC_MOTOR_RPM_RANGE;
-	public static ForgeConfigSpec.IntValue ELECTRIC_MOTOR_MAX_INPUT;
-	public static ForgeConfigSpec.IntValue ELECTRIC_MOTOR_MINIMUM_CONSUMPTION;
-	public static ForgeConfigSpec.IntValue ELECTRIC_MOTOR_CAPACITY;
+	public static ModConfigSpec.IntValue ELECTRIC_MOTOR_RPM_RANGE;
+	public static ModConfigSpec.IntValue ELECTRIC_MOTOR_MAX_INPUT;
+	public static ModConfigSpec.IntValue ELECTRIC_MOTOR_MINIMUM_CONSUMPTION;
+	public static ModConfigSpec.IntValue ELECTRIC_MOTOR_CAPACITY;
 
-	public static ForgeConfigSpec.IntValue FE_RPM;
-	public static ForgeConfigSpec.IntValue MAX_STRESS;
+	public static ModConfigSpec.IntValue FE_RPM;
+	public static ModConfigSpec.IntValue MAX_STRESS;
 
-	public static ForgeConfigSpec.BooleanValue AUDIO_ENABLED;
+	public static ModConfigSpec.BooleanValue AUDIO_ENABLED;
 
-	public static ForgeConfigSpec.IntValue ALTERNATOR_MAX_OUTPUT;
-	public static ForgeConfigSpec.IntValue ALTERNATOR_CAPACITY;
-	public static ForgeConfigSpec.DoubleValue ALTERNATOR_EFFICIENCY;
+	public static ModConfigSpec.IntValue ALTERNATOR_MAX_OUTPUT;
+	public static ModConfigSpec.IntValue ALTERNATOR_CAPACITY;
+	public static ModConfigSpec.DoubleValue ALTERNATOR_EFFICIENCY;
 
-	public static ForgeConfigSpec.IntValue ROLLING_MILL_PROCESSING_DURATION;
-	public static ForgeConfigSpec.IntValue ROLLING_MILL_STRESS;
+	public static ModConfigSpec.IntValue ROLLING_MILL_PROCESSING_DURATION;
+	public static ModConfigSpec.IntValue ROLLING_MILL_STRESS;
 
-	public static ForgeConfigSpec.IntValue SMALL_CONNECTOR_MAX_INPUT;
-	public static ForgeConfigSpec.IntValue SMALL_CONNECTOR_MAX_OUTPUT;
-	public static ForgeConfigSpec.IntValue SMALL_CONNECTOR_MAX_LENGTH;
+	public static ModConfigSpec.IntValue SMALL_CONNECTOR_MAX_INPUT;
+	public static ModConfigSpec.IntValue SMALL_CONNECTOR_MAX_OUTPUT;
+	public static ModConfigSpec.IntValue SMALL_CONNECTOR_MAX_LENGTH;
 
-	public static ForgeConfigSpec.IntValue SMALL_LIGHT_CONNECTOR_CONSUMPTION;
+	public static ModConfigSpec.IntValue SMALL_LIGHT_CONNECTOR_CONSUMPTION;
 
-	public static ForgeConfigSpec.IntValue LARGE_CONNECTOR_MAX_INPUT;
-	public static ForgeConfigSpec.IntValue LARGE_CONNECTOR_MAX_OUTPUT;
-	public static ForgeConfigSpec.IntValue LARGE_CONNECTOR_MAX_LENGTH;
+	public static ModConfigSpec.IntValue LARGE_CONNECTOR_MAX_INPUT;
+	public static ModConfigSpec.IntValue LARGE_CONNECTOR_MAX_OUTPUT;
+	public static ModConfigSpec.IntValue LARGE_CONNECTOR_MAX_LENGTH;
 
-	public static ForgeConfigSpec.BooleanValue CONNECTOR_IGNORE_FACE_CHECK;
-	public static ForgeConfigSpec.BooleanValue CONNECTOR_ALLOW_PASSIVE_IO;
+	public static ModConfigSpec.BooleanValue CONNECTOR_IGNORE_FACE_CHECK;
+	public static ModConfigSpec.BooleanValue CONNECTOR_ALLOW_PASSIVE_IO;
 
-	public static ForgeConfigSpec.IntValue ACCUMULATOR_MAX_INPUT;
-	public static ForgeConfigSpec.IntValue ACCUMULATOR_MAX_OUTPUT;
-	public static ForgeConfigSpec.IntValue ACCUMULATOR_CAPACITY;
-	public static ForgeConfigSpec.IntValue ACCUMULATOR_MAX_HEIGHT;
-	public static ForgeConfigSpec.IntValue ACCUMULATOR_MAX_WIDTH;
+	public static ModConfigSpec.IntValue ACCUMULATOR_MAX_INPUT;
+	public static ModConfigSpec.IntValue ACCUMULATOR_MAX_OUTPUT;
+	public static ModConfigSpec.IntValue ACCUMULATOR_CAPACITY;
+	public static ModConfigSpec.IntValue ACCUMULATOR_MAX_HEIGHT;
+	public static ModConfigSpec.IntValue ACCUMULATOR_MAX_WIDTH;
 
-	public static ForgeConfigSpec.IntValue PEI_MAX_INPUT;
-	public static ForgeConfigSpec.IntValue PEI_MAX_OUTPUT;
+	public static ModConfigSpec.IntValue PEI_MAX_INPUT;
+	public static ModConfigSpec.IntValue PEI_MAX_OUTPUT;
 
-	public static ForgeConfigSpec.IntValue TESLA_COIL_MAX_INPUT;
-	public static ForgeConfigSpec.IntValue TESLA_COIL_CHARGE_RATE;
-	public static ForgeConfigSpec.IntValue TESLA_COIL_RECIPE_CHARGE_RATE;
-	public static ForgeConfigSpec.IntValue TESLA_COIL_CAPACITY;
-	public static ForgeConfigSpec.IntValue TESLA_COIL_HURT_ENERGY_REQUIRED;
-	public static ForgeConfigSpec.IntValue TESLA_COIL_HURT_DMG_MOB;
-	public static ForgeConfigSpec.IntValue TESLA_COIL_HURT_DMG_PLAYER;
-	public static ForgeConfigSpec.IntValue TESLA_COIL_HURT_RANGE;
-	public static ForgeConfigSpec.IntValue TESLA_COIL_HURT_EFFECT_TIME_MOB;
-	public static ForgeConfigSpec.IntValue TESLA_COIL_HURT_EFFECT_TIME_PLAYER;
-	public static ForgeConfigSpec.IntValue TESLA_COIL_HURT_FIRE_COOLDOWN;
+	public static ModConfigSpec.IntValue TESLA_COIL_MAX_INPUT;
+	public static ModConfigSpec.IntValue TESLA_COIL_CHARGE_RATE;
+	public static ModConfigSpec.IntValue TESLA_COIL_RECIPE_CHARGE_RATE;
+	public static ModConfigSpec.IntValue TESLA_COIL_CAPACITY;
+	public static ModConfigSpec.IntValue TESLA_COIL_HURT_ENERGY_REQUIRED;
+	public static ModConfigSpec.IntValue TESLA_COIL_HURT_DMG_MOB;
+	public static ModConfigSpec.IntValue TESLA_COIL_HURT_DMG_PLAYER;
+	public static ModConfigSpec.IntValue TESLA_COIL_HURT_RANGE;
+	public static ModConfigSpec.IntValue TESLA_COIL_HURT_EFFECT_TIME_MOB;
+	public static ModConfigSpec.IntValue TESLA_COIL_HURT_EFFECT_TIME_PLAYER;
+	public static ModConfigSpec.IntValue TESLA_COIL_HURT_FIRE_COOLDOWN;
 
-	public static ForgeConfigSpec.IntValue DIAMOND_GRIT_SANDPAPER_USES;
-	public static ForgeConfigSpec.DoubleValue BARBED_WIRE_DAMAGE;
+	public static ModConfigSpec.IntValue DIAMOND_GRIT_SANDPAPER_USES;
+	public static ModConfigSpec.DoubleValue BARBED_WIRE_DAMAGE;
 
 	static {
 		COMMON_BUILDER.comment("Make sure config changes are duplicated on both Clients and the Server when running a dedicated Server,")
@@ -234,7 +231,7 @@ public class Config {
 		COMMON_CONFIG = COMMON_BUILDER.build();
 	}
 
-	public static void loadConfig(ForgeConfigSpec spec, java.nio.file.Path path) {
+	public static void loadConfig(ModConfigSpec spec, java.nio.file.Path path) {
 		final CommentedFileConfig configData = CommentedFileConfig.builder(path)
 			.sync()
 			.autosave()

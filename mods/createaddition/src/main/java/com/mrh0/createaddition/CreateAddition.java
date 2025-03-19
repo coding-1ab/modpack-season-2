@@ -1,35 +1,38 @@
 package com.mrh0.createaddition;
 
+import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.index.*;
 import com.mrh0.createaddition.index.CASounds;
 import com.mrh0.createaddition.ponder.CAPonderPlugin;
 import com.mrh0.createaddition.trains.schedule.CASchedule;
-import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
-import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.createmod.catnip.lang.FontHelper;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
@@ -40,13 +43,13 @@ import org.apache.logging.log4j.Logger;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mrh0.createaddition.blocks.liquid_blaze_burner.LiquidBlazeBurnerBlock;
 import com.mrh0.createaddition.commands.CCApiCommand;
-import com.mrh0.createaddition.config.Config;
 import com.mrh0.createaddition.network.EnergyNetworkPacket;
 import com.mrh0.createaddition.network.ObservePacket;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.TooltipModifier;
-import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.api.boiler.BoilerHeater;
+
+import static net.minecraft.network.chat.Component.translatable;
 
 @Mod(CreateAddition.MODID)
 public class CreateAddition {
@@ -72,24 +75,33 @@ public class CreateAddition {
                 .andThen(TooltipModifier.mapNull(KineticStats.create(item))));
     }
 
-    public CreateAddition() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::postInit);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegister);
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB = CREATIVE_MODE_TABS.register(MODID, () -> CreativeModeTab.builder()
+            .withTabsBefore(CreativeModeTabs.COMBAT)
+            .icon(() -> CABlocks.ELECTRIC_MOTOR.get().asItem().getDefaultInstance())
+            .title(translatable("tab", "main"))
+            .build());
+
+    public CreateAddition(IEventBus eventBus, ModContainer container) {
+        eventBus.addListener(this::setup);
+        eventBus.addListener(this::doClientStuff);
+        eventBus.addListener(this::postInit);
+        eventBus.addListener(this::onRegister);
+        eventBus.addListener(RegisterCapabilitiesEvent.class, CACapabilities::register);
         //FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(RecipeSerializer.class, CARecipes::register);
 
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        MinecraftForge.EVENT_BUS.register(this);
+        //IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        //MinecraftForge.EVENT_BUS.register(this);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
-        Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("createaddition-common.toml"));
+        container.registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG);
+        //CommonConfig.loadConfig(CommonConfig.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("createaddition-common.toml"));
 
         IE_ACTIVE = ModList.get().isLoaded("immersiveengineering");
         CC_ACTIVE = ModList.get().isLoaded("computercraft");
         AE2_ACTIVE = ModList.get().isLoaded("ae2");
 
-        CACreativeModeTabs.register(eventBus);
+        //CACreativeModeTabs.register(eventBus);
         REGISTRATE.registerEventListeners(eventBus);
         CABlocks.register();
         CABlockEntities.register();
@@ -147,6 +159,6 @@ public class CreateAddition {
     }
 
     public static ResourceLocation asResource(String path) {
-        return new ResourceLocation(MODID, path);
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 }

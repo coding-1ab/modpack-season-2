@@ -2,7 +2,7 @@ package com.mrh0.createaddition.compat.computercraft;
 
 import com.mrh0.createaddition.blocks.redstone_relay.RedstoneRelayBlock;
 import com.mrh0.createaddition.blocks.redstone_relay.RedstoneRelayBlockEntity;
-import com.mrh0.createaddition.config.Config;
+import com.mrh0.createaddition.config.CommonConfig;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import org.jetbrains.annotations.NotNull;
@@ -36,12 +36,12 @@ public class RedstoneRelayPeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public int getMaxInsert() {
-        return Config.SMALL_CONNECTOR_MAX_INPUT.get();
+        return CommonConfig.SMALL_CONNECTOR_MAX_INPUT.get();
     }
 
     @LuaFunction(mainThread = true)
     public int getMaxExtract() {
-        return Config.SMALL_CONNECTOR_MAX_OUTPUT.get();
+        return CommonConfig.SMALL_CONNECTOR_MAX_OUTPUT.get();
     }
 
     @LuaFunction(mainThread = true)

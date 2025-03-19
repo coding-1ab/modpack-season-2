@@ -1,7 +1,7 @@
 package com.mrh0.createaddition.compat.computercraft;
 
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceBlockEntity;
-import com.mrh0.createaddition.config.Config;
+import com.mrh0.createaddition.config.CommonConfig;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import org.jetbrains.annotations.NotNull;
@@ -50,11 +50,11 @@ public class PortableEnergyInterfacePeripheral implements IPeripheral {
 
 	@LuaFunction(mainThread = true)
 	public int getMaxInsert() {
-		return Config.PEI_MAX_INPUT.get();
+		return CommonConfig.PEI_MAX_INPUT.get();
 	}
 
 	@LuaFunction(mainThread = true)
 	public int getMaxExtract() {
-		return Config.PEI_MAX_OUTPUT.get();
+		return CommonConfig.PEI_MAX_OUTPUT.get();
 	}
 }

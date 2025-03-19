@@ -3,7 +3,7 @@ package com.mrh0.createaddition.blocks.rolling_mill;
 import java.util.List;
 import java.util.Optional;
 
-import com.mrh0.createaddition.config.Config;
+import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.recipe.rolling.RollingRecipe;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
@@ -292,11 +292,11 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 	}
 
 	public static int getProcessingDuration() {
-		return Config.ROLLING_MILL_PROCESSING_DURATION.get();
+		return CommonConfig.ROLLING_MILL_PROCESSING_DURATION.get();
 	}
 
 	public float calculateStressApplied() {
-		float impact = Config.ROLLING_MILL_STRESS.get();
+		float impact = CommonConfig.ROLLING_MILL_STRESS.get();
 		this.lastStressApplied = impact;
 		return impact;
 	}

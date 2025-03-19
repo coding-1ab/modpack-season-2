@@ -2,7 +2,7 @@ package com.mrh0.createaddition.rendering;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mrh0.createaddition.config.Config;
+import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.energy.IWireNode;
 import com.mrh0.createaddition.energy.WireType;
 import com.mrh0.createaddition.event.ClientEventHandler;
@@ -124,7 +124,7 @@ public class WireNodeRenderer<T extends BlockEntity> implements BlockEntityRende
 	}
 
 	private static float hang(float f, float dis) {
-		return (float) Math.sin(-f * (float) Math.PI) * (HANG * dis / (float) Config.SMALL_CONNECTOR_MAX_LENGTH.get());
+		return (float) Math.sin(-f * (float) Math.PI) * (HANG * dis / (float) CommonConfig.SMALL_CONNECTOR_MAX_LENGTH.get());
 	}
 
 	public static float distanceFromZero(float x, float y, float z) {

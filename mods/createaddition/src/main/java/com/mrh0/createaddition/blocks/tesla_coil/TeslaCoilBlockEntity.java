@@ -1,6 +1,6 @@
 package com.mrh0.createaddition.blocks.tesla_coil;
 
-import com.mrh0.createaddition.config.Config;
+import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.energy.BaseElectricBlockEntity;
 import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.index.CADamageTypes;
@@ -18,7 +18,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -55,12 +54,12 @@ public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHa
 
 	@Override
 	public int getCapacity() {
-		return Util.max(Config.TESLA_COIL_CAPACITY.get(), Config.TESLA_COIL_CHARGE_RATE.get(), Config.TESLA_COIL_RECIPE_CHARGE_RATE.get());
+		return Util.max(CommonConfig.TESLA_COIL_CAPACITY.get(), CommonConfig.TESLA_COIL_CHARGE_RATE.get(), CommonConfig.TESLA_COIL_RECIPE_CHARGE_RATE.get());
 	}
 
 	@Override
 	public int getMaxIn() {
-		return Config.TESLA_COIL_MAX_INPUT.get();
+		return CommonConfig.TESLA_COIL_MAX_INPUT.get();
 	}
 
 	@Override
@@ -90,7 +89,7 @@ public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHa
 	}
 
 	public int getConsumption() {
-		return Config.TESLA_COIL_CHARGE_RATE.get();
+		return CommonConfig.TESLA_COIL_CHARGE_RATE.get();
 	}
 
 	protected float getItemCharge(IEnergyStorage energy) {
@@ -104,9 +103,9 @@ public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHa
 	}
 
 	private void doDmg() {
-		localEnergy.internalConsumeEnergy(Config.TESLA_COIL_HURT_ENERGY_REQUIRED.get());
+		localEnergy.internalConsumeEnergy(CommonConfig.TESLA_COIL_HURT_ENERGY_REQUIRED.get());
 		BlockPos origin = getBlockPos().relative(getBlockState().getValue(TeslaCoilBlock.FACING).getOpposite());
-		List<LivingEntity> ents = getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(origin).inflate(Config.TESLA_COIL_HURT_RANGE.get()));
+		List<LivingEntity> ents = getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(origin).inflate(CommonConfig.TESLA_COIL_HURT_RANGE.get()));
 		boolean zapped = false;
 		for(LivingEntity e : ents) {
 			if(e == null) return;
@@ -122,17 +121,17 @@ public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHa
 			}
 			if(allChain) continue;
 
-			int dmg = Config.TESLA_COIL_HURT_DMG_MOB.get();
-			int time = Config.TESLA_COIL_HURT_EFFECT_TIME_MOB.get();
+			int dmg = CommonConfig.TESLA_COIL_HURT_DMG_MOB.get();
+			int time = CommonConfig.TESLA_COIL_HURT_EFFECT_TIME_MOB.get();
 			if(e instanceof Player) {
-				dmg = Config.TESLA_COIL_HURT_DMG_PLAYER.get();
-				time = Config.TESLA_COIL_HURT_EFFECT_TIME_PLAYER.get();
+				dmg = CommonConfig.TESLA_COIL_HURT_DMG_PLAYER.get();
+				time = CommonConfig.TESLA_COIL_HURT_EFFECT_TIME_PLAYER.get();
 			}
 
 			if(dmg > 0) {
 				e.hurt(CADamageTypes.barbedWire(level), dmg);
 				if (!zapped) {
-					if (Config.AUDIO_ENABLED.get()) level.playSound(null, worldPosition, CASounds.LOUD_ZAP.get(), SoundSource.BLOCKS, 0.6f, 1f);
+					if (CommonConfig.AUDIO_ENABLED.get()) level.playSound(null, worldPosition, CASounds.LOUD_ZAP.get(), SoundSource.BLOCKS, 0.6f, 1f);
 					zapped = true;
 				}
 			}
@@ -153,16 +152,16 @@ public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHa
 			return;
 		}
 		int signal = getLevel().getBestNeighborSignal(getBlockPos());
-		if(signal > 0 && localEnergy.getEnergyStored() >= Config.TESLA_COIL_HURT_ENERGY_REQUIRED.get())
+		if(signal > 0 && localEnergy.getEnergyStored() >= CommonConfig.TESLA_COIL_HURT_ENERGY_REQUIRED.get())
 			poweredTimer = 10;
 
 		dmgTick++;
-		if((dmgTick%=Config.TESLA_COIL_HURT_FIRE_COOLDOWN.get()) == 0 && localEnergy.getEnergyStored() >= Config.TESLA_COIL_HURT_ENERGY_REQUIRED.get() && signal > 0)
+		if((dmgTick%= CommonConfig.TESLA_COIL_HURT_FIRE_COOLDOWN.get()) == 0 && localEnergy.getEnergyStored() >= CommonConfig.TESLA_COIL_HURT_ENERGY_REQUIRED.get() && signal > 0)
 			doDmg();
 
 		if(poweredTimer > 0) {
 			if (zapTimer == 0) {
-				if (Config.AUDIO_ENABLED.get()) level.playSound(null, worldPosition, CASounds.LITTLE_ZAP.get(), SoundSource.BLOCKS, 0.1f, 1f);
+				if (CommonConfig.AUDIO_ENABLED.get()) level.playSound(null, worldPosition, CASounds.LITTLE_ZAP.get(), SoundSource.BLOCKS, 0.1f, 1f);
 				zapTimer = level.random.nextInt(100, 300);
 			}
 			zapTimer--;
@@ -179,7 +178,7 @@ public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHa
 	@OnlyIn(Dist.CLIENT)
 	public void tickAudio() {
 		if (!isPoweredState()) return;
-		if (Config.AUDIO_ENABLED.get()) CASoundScapes.play(CASoundScapes.AmbienceGroup.TESLA, worldPosition, 1f);
+		if (CommonConfig.AUDIO_ENABLED.get()) CASoundScapes.play(CASoundScapes.AmbienceGroup.TESLA, worldPosition, 1f);
 	}
 
 	public boolean isPoweredState() {
@@ -219,7 +218,7 @@ public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHa
 		}
 		if(recipeCache.isPresent()) {
 			ChargingRecipe recipe = recipeCache.get();
-			int energyRemoved = localEnergy.internalConsumeEnergy(Util.min(Config.TESLA_COIL_RECIPE_CHARGE_RATE.get(), recipe.getEnergy() - chargeAccumulator, recipe.getMaxChargeRate()));
+			int energyRemoved = localEnergy.internalConsumeEnergy(Util.min(CommonConfig.TESLA_COIL_RECIPE_CHARGE_RATE.get(), recipe.getEnergy() - chargeAccumulator, recipe.getMaxChargeRate()));
 			chargeAccumulator += energyRemoved;
 			if(chargeAccumulator >= recipe.getEnergy()) {
 				TransportedItemStack remainingStack = transported.copy();
@@ -230,7 +229,7 @@ public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHa
 				outList.add(result);
 				handler.handleProcessingOnItem(transported, TransportedItemStackHandlerBehaviour.TransportedResult.convertToAndLeaveHeld(outList, remainingStack));
 				chargeAccumulator = 0;
-				if (Config.AUDIO_ENABLED.get()) level.playSound(null, worldPosition, CASounds.LITTLE_ZAP.get(), SoundSource.BLOCKS, 0.1f, 1f);
+				if (CommonConfig.AUDIO_ENABLED.get()) level.playSound(null, worldPosition, CASounds.LITTLE_ZAP.get(), SoundSource.BLOCKS, 0.1f, 1f);
 			}
 			return true;
 		}

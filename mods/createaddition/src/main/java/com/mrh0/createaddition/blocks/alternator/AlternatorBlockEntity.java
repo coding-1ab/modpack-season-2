@@ -3,7 +3,8 @@ package com.mrh0.createaddition.blocks.alternator;
 import java.util.List;
 
 import com.mrh0.createaddition.CreateAddition;
-import com.mrh0.createaddition.config.Config;
+import com.mrh0.createaddition.config.CommonConfig;
+import com.mrh0.createaddition.energy.IEnergyProvider;
 import com.mrh0.createaddition.energy.InternalEnergyStorage;
 import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.sound.CASoundScapes;
@@ -22,21 +23,23 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+//import net.neoforged.neoforge.capabilities.BlockCapability;
+//import net.neoforged.neoforge.capabilities.ForgeCapabilities;
+//import net.neoforged.fml.util.LazyOptional;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
-public class AlternatorBlockEntity extends KineticBlockEntity {
+import javax.annotation.Nullable;
+
+public class AlternatorBlockEntity extends KineticBlockEntity implements IEnergyProvider {
 
 	protected final InternalEnergyStorage energy;
-	private LazyOptional<IEnergyStorage> lazyEnergy;
+	//private LazyOptional<IEnergyStorage> lazyEnergy;
 
 	public AlternatorBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
-		energy = new InternalEnergyStorage(Config.ALTERNATOR_CAPACITY.get(), 0, Config.ALTERNATOR_MAX_OUTPUT.get());
+		energy = new InternalEnergyStorage(CommonConfig.ALTERNATOR_CAPACITY.get(), 0, CommonConfig.ALTERNATOR_MAX_OUTPUT.get());
 		lazyEnergy = LazyOptional.of(() -> energy);
 	}
 
@@ -51,7 +54,7 @@ public class AlternatorBlockEntity extends KineticBlockEntity {
 
 	@Override
 	public float calculateStressApplied() {
-		float impact = Config.MAX_STRESS.get()/256f;
+		float impact = CommonConfig.MAX_STRESS.get()/256f;
 		this.lastStressApplied = impact;
 		return impact;
 	}
@@ -98,7 +101,7 @@ public class AlternatorBlockEntity extends KineticBlockEntity {
 			if(!isEnergyOutput(d)) continue;
 			IEnergyStorage ies = getCachedEnergy(d);
 			if(ies == null) continue;
-			int ext = energy.extractEnergy(ies.receiveEnergy(Config.ALTERNATOR_MAX_OUTPUT.get(), true), false);
+			int ext = energy.extractEnergy(ies.receiveEnergy(CommonConfig.ALTERNATOR_MAX_OUTPUT.get(), true), false);
 			ies.receiveEnergy(ext, false);
 		}
 	}
@@ -113,12 +116,12 @@ public class AlternatorBlockEntity extends KineticBlockEntity {
 			return;
 
 		float pitch = Mth.clamp((componentSpeed / 256f) + .5f, .5f, 1.5f);
-		if (Config.AUDIO_ENABLED.get()) CASoundScapes.play(AmbienceGroup.DYNAMO, worldPosition, pitch);
+		if (CommonConfig.AUDIO_ENABLED.get()) CASoundScapes.play(AmbienceGroup.DYNAMO, worldPosition, pitch);
 	}
 
 	public static int getEnergyProductionRate(int rpm) {
 		rpm = Math.abs(rpm);
-		return (int)((double)Config.FE_RPM.get() * ((double)Math.abs(rpm) / 256d) * Config.ALTERNATOR_EFFICIENCY.get());//return (int)((double)Config.FE_TO_SU.get() * ((double)Math.abs(rpm)/256d) * EFFICIENCY);
+		return (int)((double) CommonConfig.FE_RPM.get() * ((double)Math.abs(rpm) / 256d) * CommonConfig.ALTERNATOR_EFFICIENCY.get());//return (int)((double)Config.FE_TO_SU.get() * ((double)Math.abs(rpm)/256d) * EFFICIENCY);
 	}
 
 	@Override
@@ -176,5 +179,10 @@ public class AlternatorBlockEntity extends KineticBlockEntity {
 			case UP -> escacheUp.orElse(null);
 			case WEST -> escacheWest.orElse(null);
 		};
+	}
+
+	@Override
+	public IEnergyStorage getEnergyStorage(@Nullable Direction direction) {
+		return energy;
 	}
 }

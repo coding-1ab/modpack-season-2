@@ -1,7 +1,10 @@
 package com.mrh0.createaddition.energy;
 
-import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraft.core.Direction;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+
+import javax.annotation.Nullable;
 
 public interface IEnergyProvider {
-    IEnergyStorage getEnergyStorage();
+    IEnergyStorage getEnergyStorage(@Nullable Direction direction);
 }

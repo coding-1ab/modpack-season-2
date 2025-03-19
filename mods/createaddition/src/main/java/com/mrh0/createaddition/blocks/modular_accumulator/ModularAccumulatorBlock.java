@@ -27,7 +27,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.util.ForgeSoundType;
+import net.neoforged.neoforge.common.util.DeferredSoundType;
 
 public class ModularAccumulatorBlock extends Block implements IWrenchable, IBE<ModularAccumulatorBlockEntity> {
 
@@ -225,7 +225,7 @@ public class ModularAccumulatorBlock extends Block implements IWrenchable, IBE<M
 
 	// Blocks are less noisy when placed in batch
 	public static final SoundType SILENCED_METAL =
-		new ForgeSoundType(0.1F, 1.5F, () -> SoundEvents.METAL_BREAK, () -> SoundEvents.METAL_STEP,
+		new DeferredSoundType(0.1F, 1.5F, () -> SoundEvents.METAL_BREAK, () -> SoundEvents.METAL_STEP,
 			() -> SoundEvents.METAL_PLACE, () -> SoundEvents.METAL_HIT, () -> SoundEvents.METAL_FALL);
 
 	@Override

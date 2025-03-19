@@ -3,7 +3,7 @@ package com.mrh0.createaddition.blocks.portable_energy_interface;
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.compat.computercraft.Peripherals;
 import com.mrh0.createaddition.compat.computercraft.PortableEnergyInterfacePeripheral;
-import com.mrh0.createaddition.config.Config;
+import com.mrh0.createaddition.config.CommonConfig;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -105,7 +105,7 @@ public class PortableEnergyInterfaceBlockEntity extends PortableStorageInterface
 		@Override
 		public int receiveEnergy(int maxReceive, boolean simulate) {
 			if (!PortableEnergyInterfaceBlockEntity.this.canTransfer()) return 0;
-			maxReceive = Math.min(maxReceive, Config.PEI_MAX_INPUT.get());
+			maxReceive = Math.min(maxReceive, CommonConfig.PEI_MAX_INPUT.get());
 			if (this.wrapped == null) return 0;
 			int received = this.wrapped.receiveEnergy(maxReceive, simulate);
 			if (received != 0 && !simulate) this.keepAlive();
@@ -115,7 +115,7 @@ public class PortableEnergyInterfaceBlockEntity extends PortableStorageInterface
 		@Override
 		public int extractEnergy(int maxExtract, boolean simulate) {
 			if (!PortableEnergyInterfaceBlockEntity.this.canTransfer()) return 0;
-			maxExtract = Math.min(maxExtract, Config.PEI_MAX_OUTPUT.get());
+			maxExtract = Math.min(maxExtract, CommonConfig.PEI_MAX_OUTPUT.get());
 			if (this.wrapped == null) return 0;
 			int extracted = this.wrapped.extractEnergy(maxExtract, simulate);
 			if (extracted != 0 && !simulate) this.keepAlive();

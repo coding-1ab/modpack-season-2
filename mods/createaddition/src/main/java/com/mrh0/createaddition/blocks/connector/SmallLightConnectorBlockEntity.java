@@ -2,7 +2,7 @@ package com.mrh0.createaddition.blocks.connector;
 
 import com.mrh0.createaddition.blocks.connector.base.AbstractConnectorBlock;
 import com.mrh0.createaddition.blocks.connector.base.AbstractConnectorBlockEntity;
-import com.mrh0.createaddition.config.Config;
+import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.energy.network.EnergyNetwork;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
@@ -48,12 +48,12 @@ public class SmallLightConnectorBlockEntity extends AbstractConnectorBlockEntity
 
     @Override
     public int getMaxIn() {
-        return Config.SMALL_CONNECTOR_MAX_INPUT.get();
+        return CommonConfig.SMALL_CONNECTOR_MAX_INPUT.get();
     }
 
     @Override
     public int getMaxOut() {
-        return Config.SMALL_CONNECTOR_MAX_OUTPUT.get();
+        return CommonConfig.SMALL_CONNECTOR_MAX_OUTPUT.get();
     }
 
     @Override
@@ -79,7 +79,7 @@ public class SmallLightConnectorBlockEntity extends AbstractConnectorBlockEntity
     }
 
     public int getMaxWireLength() {
-        return Config.SMALL_CONNECTOR_MAX_LENGTH.get();
+        return CommonConfig.SMALL_CONNECTOR_MAX_LENGTH.get();
     }
 
     private int tickToggleTimer = 0;
@@ -89,7 +89,7 @@ public class SmallLightConnectorBlockEntity extends AbstractConnectorBlockEntity
         if(level.isClientSide()) return;
         EnergyNetwork network = getNetwork(0);
         if (network != null) network.demand(1);
-        boolean hasEnergy = network != null && network.pull(Config.SMALL_LIGHT_CONNECTOR_CONSUMPTION.get(), false) > 0;
+        boolean hasEnergy = network != null && network.pull(CommonConfig.SMALL_LIGHT_CONNECTOR_CONSUMPTION.get(), false) > 0;
         tickToggleTimer = tickToggleTimer + (hasEnergy ? 1 : -1);
 
         if (tickToggleTimer >= posTimeOffset) {

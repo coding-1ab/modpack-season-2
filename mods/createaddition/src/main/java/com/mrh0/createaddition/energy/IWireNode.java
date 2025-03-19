@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Set;
 
 import com.mrh0.createaddition.blocks.connector.ConnectorType;
-import com.mrh0.createaddition.config.Config;
 import com.mrh0.createaddition.energy.network.EnergyNetwork;
 import com.mrh0.createaddition.index.CAItems;
 import com.mrh0.createaddition.util.Util;

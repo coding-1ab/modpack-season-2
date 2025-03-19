@@ -3,7 +3,7 @@ package com.mrh0.createaddition.blocks.modular_accumulator;
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.compat.computercraft.ModularAccumulatorPeripheral;
 import com.mrh0.createaddition.compat.computercraft.Peripherals;
-import com.mrh0.createaddition.config.Config;
+import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.debug.IDebugDrawer;
 import com.mrh0.createaddition.energy.IMultiTileEnergyContainer;
 import com.mrh0.createaddition.energy.InternalEnergyStorage;
@@ -80,7 +80,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 	public void onChunkUnloaded() {}
 
 	protected InternalEnergyStorage createEnergyStorage() {
-		return new InternalEnergyStorage(getCapacityMultiplier(), Config.ACCUMULATOR_MAX_INPUT.get(), Config.ACCUMULATOR_MAX_OUTPUT.get());
+		return new InternalEnergyStorage(getCapacityMultiplier(), CommonConfig.ACCUMULATOR_MAX_INPUT.get(), CommonConfig.ACCUMULATOR_MAX_OUTPUT.get());
 	}
 
 	public void setCache(Direction side, LazyOptional<IEnergyStorage> storage) {
@@ -203,7 +203,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		if (!level.isLoaded(getBlockPos().relative(side))) return;
 		IEnergyStorage ies = getCachedEnergy(side).orElse(null);
 		if(ies == null) return;
-		int ext = getControllerBE().energyStorage.extractEnergy(ies.receiveEnergy(Config.ACCUMULATOR_MAX_OUTPUT.get(), true), false);
+		int ext = getControllerBE().energyStorage.extractEnergy(ies.receiveEnergy(CommonConfig.ACCUMULATOR_MAX_OUTPUT.get(), true), false);
 		int rec = ies.receiveEnergy(ext, false);
 	}
 
@@ -346,7 +346,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 
 	private InternalEnergyStorage handlerForCapability() {
 		return isController() ? energyStorage
-			: (getControllerBE() != null ? getControllerBE().handlerForCapability() : new InternalEnergyStorage(0, Config.ACCUMULATOR_MAX_INPUT.get(), Config.ACCUMULATOR_MAX_OUTPUT.get()));
+			: (getControllerBE() != null ? getControllerBE().handlerForCapability() : new InternalEnergyStorage(0, CommonConfig.ACCUMULATOR_MAX_INPUT.get(), CommonConfig.ACCUMULATOR_MAX_OUTPUT.get()));
 	}
 
 	@Override
@@ -454,16 +454,16 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 	}
 
 	public static int getCapacityMultiplier() {
-		return Config.ACCUMULATOR_CAPACITY.get();
+		return CommonConfig.ACCUMULATOR_CAPACITY.get();
 	}
 
 	public static int getMaxHeight() {
-		return Config.ACCUMULATOR_MAX_HEIGHT.get();
+		return CommonConfig.ACCUMULATOR_MAX_HEIGHT.get();
 	}
 
 	@Override
 	public int getMaxWidth() {
-		return Config.ACCUMULATOR_MAX_WIDTH.get();
+		return CommonConfig.ACCUMULATOR_MAX_WIDTH.get();
 	}
 
 	@Override

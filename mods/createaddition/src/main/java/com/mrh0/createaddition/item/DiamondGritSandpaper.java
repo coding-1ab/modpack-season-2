@@ -2,7 +2,7 @@ package com.mrh0.createaddition.item;
 
 import java.util.function.Consumer;
 
-import com.mrh0.createaddition.config.Config;
+import com.mrh0.createaddition.config.CommonConfig;
 import com.simibubi.create.content.equipment.sandPaper.SandPaperItem;
 import com.simibubi.create.content.equipment.sandPaper.SandPaperItemRenderer;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
@@ -15,7 +15,7 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 public class DiamondGritSandpaper extends SandPaperItem {
 
-	private static final int USES = Config.DIAMOND_GRIT_SANDPAPER_USES.get();
+	private static final int USES = CommonConfig.DIAMOND_GRIT_SANDPAPER_USES.get();
 	
 	public DiamondGritSandpaper(Properties properties) {
 		super(properties);

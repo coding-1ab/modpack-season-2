@@ -2,7 +2,7 @@ package com.mrh0.createaddition.blocks.connector;
 
 import com.mrh0.createaddition.blocks.connector.base.AbstractConnectorBlock;
 import com.mrh0.createaddition.blocks.connector.base.AbstractConnectorBlockEntity;
-import com.mrh0.createaddition.config.Config;
+import com.mrh0.createaddition.config.CommonConfig;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -30,12 +30,12 @@ public class LargeConnectorBlockEntity extends AbstractConnectorBlockEntity {
 
     @Override
     public int getMaxIn() {
-        return Config.LARGE_CONNECTOR_MAX_INPUT.get();
+        return CommonConfig.LARGE_CONNECTOR_MAX_INPUT.get();
     }
 
     @Override
     public int getMaxOut() {
-        return Config.LARGE_CONNECTOR_MAX_OUTPUT.get();
+        return CommonConfig.LARGE_CONNECTOR_MAX_OUTPUT.get();
     }
 
     @Override
@@ -61,6 +61,6 @@ public class LargeConnectorBlockEntity extends AbstractConnectorBlockEntity {
     }
 
     public int getMaxWireLength() {
-        return Config.LARGE_CONNECTOR_MAX_LENGTH.get();
+        return CommonConfig.LARGE_CONNECTOR_MAX_LENGTH.get();
     }
 }

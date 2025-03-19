@@ -3,6 +3,7 @@ package com.mrh0.createaddition.blocks.cake;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -19,18 +20,13 @@ public class CACakeBlock extends CakeBlock {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player,
-			InteractionHand hand, BlockHitResult ray) {
-		if (world.isClientSide) {
-			ItemStack itemstack = player.getItemInHand(hand);
-			if (eat(world, pos, state, player).consumesAction())
-				return InteractionResult.SUCCESS;
-			if (itemstack.isEmpty())
-				return InteractionResult.CONSUME;
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+		if (level.isClientSide) {
+			return InteractionResult.CONSUME;
 		}
-		return eat(world, pos, state, player);
+		return eat(level, pos, state, player);
 	}
-	
+
 	protected static InteractionResult eat(LevelAccessor world, BlockPos pos, BlockState state, Player player) {
 		if (!player.canEat(false))
 			return InteractionResult.PASS;

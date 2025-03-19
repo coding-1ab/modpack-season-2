@@ -1,6 +1,6 @@
 package com.mrh0.createaddition.blocks.connector.base;
 
-import com.mrh0.createaddition.config.Config;
+import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.energy.IWireNode;
 import com.mrh0.createaddition.energy.NodeRotation;
 import com.simibubi.create.api.contraption.transformable.TransformableBlock;
@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -29,6 +30,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractConnectorBlock<BE extends AbstractConnectorBlockEntity> extends Block implements IBE<BE>, IWrenchable, TransformableBlock {
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;
@@ -60,14 +62,14 @@ public abstract class AbstractConnectorBlock<BE extends AbstractConnectorBlockEn
 	}
 
 	@Override
-	public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player) {
-		super.playerWillDestroy(worldIn, pos, state, player);
+	public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
+		super.playerDestroy(level, player, pos, state, blockEntity, tool);
 
-		if (worldIn.isClientSide()) return;
-		BlockEntity te = worldIn.getBlockEntity(pos);
+		if (level.isClientSide()) return;
+		BlockEntity te = level.getBlockEntity(pos);
 		if (te == null) return;
 		if (!(te instanceof IWireNode cte)) return;
-		cte.dropWires(worldIn, !player.isCreative());
+		cte.dropWires(level, !player.isCreative());
 	}
 
 	@Override
@@ -118,7 +120,7 @@ public abstract class AbstractConnectorBlock<BE extends AbstractConnectorBlockEn
 		return
 				!Shapes.joinIsNotEmpty(world.getBlockState(pos.relative(dir)).getBlockSupportShape(world,pos.relative(dir)).getFaceShape(dir.getOpposite()), boxwe, BooleanOp.ONLY_SECOND) ||
 				!Shapes.joinIsNotEmpty(world.getBlockState(pos.relative(dir)).getBlockSupportShape(world,pos.relative(dir)).getFaceShape(dir.getOpposite()), boxsn, BooleanOp.ONLY_SECOND) ||
-				world.getBlockState(pos.relative(dir)).isFaceSturdy(world, pos, dir.getOpposite(), SupportType.CENTER) || Config.CONNECTOR_IGNORE_FACE_CHECK.get();
+				world.getBlockState(pos.relative(dir)).isFaceSturdy(world, pos, dir.getOpposite(), SupportType.CENTER) || CommonConfig.CONNECTOR_IGNORE_FACE_CHECK.get();
 	}
 
 	@Override

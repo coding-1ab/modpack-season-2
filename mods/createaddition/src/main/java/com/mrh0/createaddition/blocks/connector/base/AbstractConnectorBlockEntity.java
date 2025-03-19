@@ -1,11 +1,12 @@
 package com.mrh0.createaddition.blocks.connector.base;
 
+import java.security.DrbgParameters;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.mrh0.createaddition.CreateAddition;
-import com.mrh0.createaddition.config.Config;
+import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.debug.IDebugDrawer;
 import com.mrh0.createaddition.energy.*;
 import com.mrh0.createaddition.energy.network.EnergyNetwork;
@@ -13,32 +14,31 @@ import com.mrh0.createaddition.util.Util;
 import com.mrh0.createaddition.network.EnergyNetworkPacket;
 import com.mrh0.createaddition.network.IObserveTileEntity;
 import com.mrh0.createaddition.network.ObservePacket;
-import com.simibubi.create.CreateClient;
 
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.EnergyStorage;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity implements IWireNode, IObserveTileEntity, IHaveGoggleInformation, IDebugDrawer {
+public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity implements IWireNode, IObserveTileEntity, IHaveGoggleInformation, IDebugDrawer, IEnergyProvider {
 
 	private final Set<LocalNode> wireCache = new HashSet<>();
 	private final LocalNode[] localNodes;
@@ -49,8 +49,8 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 	private boolean wasContraption = false;
 	private boolean firstTick = true;
 
-	protected LazyOptional<IEnergyStorage> capability = this.createEmptyHandler();
-	protected LazyOptional<IEnergyStorage> external = LazyOptional.empty();
+	private InterfaceEnergyHandler internal = new InterfaceEnergyHandler();
+	protected BlockCapabilityCache<IEnergyStorage, Direction> external;
 
 	public AbstractConnectorBlockEntity(BlockEntityType<?> blockEntityTypeIn, BlockPos pos, BlockState state) {
 		super(blockEntityTypeIn, pos, state);
@@ -59,14 +59,10 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 		this.nodeCache = new IWireNode[getNodeCount()];
 	}
 
-	private LazyOptional<IEnergyStorage> createEmptyHandler() {
-		return LazyOptional.of(InterfaceEnergyHandler::new);
-	}
-
 	@Override
-	public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, Direction side) {
-		if (cap == ForgeCapabilities.ENERGY && (isEnergyInput(side) || isEnergyOutput(side))) return this.capability.cast();
-		return super.getCapability(cap, side);
+	public IEnergyStorage getEnergyStorage(@Nullable Direction direction) {
+		if(isEnergyInput(direction) || isEnergyOutput(direction)) return internal;
+		return null;
 	}
 
 	public abstract int getMaxIn();
@@ -80,7 +76,7 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 
 		@Override
 		public int receiveEnergy(int maxReceive, boolean simulate) {
-			if(!Config.CONNECTOR_ALLOW_PASSIVE_IO.get()) return 0;
+			if(!CommonConfig.CONNECTOR_ALLOW_PASSIVE_IO.get()) return 0;
 			if(getMode() != ConnectorMode.Pull) return 0;
 			if (network == null) return 0;
 			maxReceive = Math.min(maxReceive, getMaxIn());
@@ -89,7 +85,7 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 
 		@Override
 		public int extractEnergy(int maxExtract, boolean simulate) {
-			if(!Config.CONNECTOR_ALLOW_PASSIVE_IO.get()) return 0;
+			if(!CommonConfig.CONNECTOR_ALLOW_PASSIVE_IO.get()) return 0;
 			if(getMode() != ConnectorMode.Push) return 0;
 			if (network == null) return 0;
 			maxExtract = Math.min(maxExtract, getMaxOut());
@@ -177,8 +173,8 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 	}
 
 	@Override
-	public void read(CompoundTag nbt, boolean clientPacket) {
-		super.read(nbt, clientPacket);
+	public void read(CompoundTag nbt, HolderLookup.Provider registries, boolean clientPacket) {
+		super.read(nbt, registries, clientPacket);
 		// Convert old nbt data. x0, y0, z0, node0 & type0 etc.
 		if (!clientPacket && nbt.contains("node0")) {
 			convertOldNbt(nbt);
@@ -213,8 +209,8 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 	}
 
 	@Override
-	public void write(CompoundTag nbt, boolean clientPacket) {
-		super.write(nbt, clientPacket);
+	public void write(CompoundTag nbt, HolderLookup.Provider registries, boolean clientPacket) {
+		super.write(nbt,registries, clientPacket);
 		// Write nodes.
 		ListTag nodes = new ListTag();
 		for (int i = 0; i < getNodeCount(); i++) {
@@ -284,19 +280,20 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 
 	}
 
-	private final static IEnergyStorage NULL_ES = new EnergyStorage(0, 0, 0);
 	private void networkTick(EnergyNetwork network) {
 		ConnectorMode mode = getMode();
 		if(level == null) return;
 		if(level.isClientSide()) return;
+		IEnergyStorage otherStorage = external.getCapability();
+		if (otherStorage == null) return;
 
 		if (mode == ConnectorMode.Push) {
-			int pulled = network.pull(network.demand(external.orElse(NULL_ES).receiveEnergy(getMaxOut(), true)));
-			external.orElse(NULL_ES).receiveEnergy(pulled, false);
+			int pulled = network.pull(network.demand(otherStorage.receiveEnergy(getMaxOut(), true)));
+			otherStorage.receiveEnergy(pulled, false);
 		}
 
 		if (mode == ConnectorMode.Pull) {
-			int toPush = external.orElse(NULL_ES).extractEnergy(network.push(getMaxIn(), true), false);
+			int toPush = otherStorage.extractEnergy(network.push(getMaxIn(), true), false);
 			network.push(toPush);
 		}
 	}
@@ -320,7 +317,7 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 		}
 
 		invalidateNodeCache();
-		invalidateCaps();
+		// invalidateCaps();
 
 		// Invalidate
 		if (network != null) network.invalidate();
@@ -374,24 +371,34 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 
 	public void updateExternalEnergyStorage() {
 		if (level == null) return;
+		if (!(level instanceof ServerLevel)) return;
 		if (!level.isLoaded(getBlockPos())) return;
 		externalStorageInvalid = false;
 		var side = getBlockState().getValue(AbstractConnectorBlock.FACING);
-		if (!level.isLoaded(worldPosition.relative(side))) {
-			external = LazyOptional.empty();
-			return;
-		}
-		BlockEntity te = level.getBlockEntity(worldPosition.relative(side));
-		if(te == null) {
-			external = LazyOptional.empty();
-			return;
-		}
-		LazyOptional<IEnergyStorage> le = te.getCapability(ForgeCapabilities.ENERGY, side.getOpposite());
-		if(ignoreCapSide() && !le.isPresent()) le = te.getCapability(ForgeCapabilities.ENERGY);
+		//if (!level.isLoaded(worldPosition.relative(side))) {
+		//	external = LazyOptional.empty();
+		//	return;
+		//}
+		//BlockEntity te = level.getBlockEntity(worldPosition.relative(side));
+		//if(te == null) {
+		//	external = LazyOptional.empty();
+		//	return;
+		//}
+		//LazyOptional<IEnergyStorage> le = te.getCapability(ForgeCapabilities.ENERGY, side.getOpposite());
+		//if(ignoreCapSide() && !le.isPresent()) le = te.getCapability(ForgeCapabilities.ENERGY);
 		// Make sure the side isn't already cached.
-		if (le.equals(external)) return;
-		external = le;
-		le.addListener((es) -> { externalStorageInvalid = true; });
+		//if (le.equals(external)) return;
+		//external = le;
+		//le.addListener((es) -> { externalStorageInvalid = true; });
+
+		external = BlockCapabilityCache.create(
+			Capabilities.EnergyStorage.BLOCK, // capability to cache
+			(ServerLevel) level, // level
+			getPos(),
+			side,
+			() -> !this.isRemoved(), // validity check (because the cache might outlive the object it belongs to)
+			() -> { externalStorageInvalid = true; } // invalidation listener
+		);
 	}
 
 	@Override
@@ -418,14 +425,13 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 			net.createmod.catnip.outliner.Outliner.getInstance().chaseAABB("ca_nodes_" + i, shape.bounds().move(pos)).lineWidth(0.0625F).colored(color);
 		}
 		// Outline connected power
-		BlockEntity te = level.getBlockEntity(worldPosition.relative(getBlockState().getValue(AbstractConnectorBlock.FACING)));
-		if(te == null) return;
+		BlockPos pos = worldPosition.relative(getBlockState().getValue(AbstractConnectorBlock.FACING));
 
-		var cap = te.getCapability(ForgeCapabilities.ENERGY, getBlockState().getValue(AbstractConnectorBlock.FACING).getOpposite());
-		if(ignoreCapSide() && !cap.isPresent()) cap = te.getCapability(ForgeCapabilities.ENERGY);
+		var cap = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, getBlockState().getValue(AbstractConnectorBlock.FACING).getOpposite());
+		//if(ignoreCapSide() && !cap.isPresent()) cap = te.getCapability(ForgeCapabilities.ENERGY);
 
-		if (!cap.isPresent()) return;
-		VoxelShape shape = level.getBlockState(te.getBlockPos()).getBlockSupportShape(level, te.getBlockPos());
-		net.createmod.catnip.outliner.Outliner.getInstance().chaseAABB("ca_output", shape.bounds().move(te.getBlockPos())).lineWidth(0.0625F).colored(0x5B5BFF);
+		if (cap == null) return;
+		VoxelShape shape = level.getBlockState(pos).getBlockSupportShape(level, pos);
+		net.createmod.catnip.outliner.Outliner.getInstance().chaseAABB("ca_output", shape.bounds().move(pos)).lineWidth(0.0625F).colored(0x5B5BFF);
 	}
 }
