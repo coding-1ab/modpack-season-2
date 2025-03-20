@@ -42,7 +42,7 @@ import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipe;
 import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipeBuilder;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
-import plus.dragons.createenchantmentindustry.integration.jei.category.AssemblyPrintingCategory;
+import plus.dragons.createenchantmentindustry.integration.jei.category.assembly.AssemblyPrintingCategory;
 import plus.dragons.createenchantmentindustry.util.CEILang;
 
 public class PrintingRecipe extends CustomProcessingRecipe<PrintingInput, PrintingRecipeParams> implements IAssemblyRecipe {
@@ -90,7 +90,7 @@ public class PrintingRecipe extends CustomProcessingRecipe<PrintingInput, Printi
 
     @Override
     public boolean matches(PrintingInput input, Level level) {
-        return ingredients.get(0).test(input.item()) &&
+        return ingredients.get(0).test(input.base()) &&
                ingredients.get(1).test(input.template()) &&
                (input.fluid().isEmpty() || fluidIngredients.get(0).test(input.fluid()));
     }
@@ -109,8 +109,8 @@ public class PrintingRecipe extends CustomProcessingRecipe<PrintingInput, Printi
     }
 
     @Override
-    public void addRequiredMachines(Set<ItemLike> list) {
-        list.add(CEIBlocks.PRINTER);
+    public void addRequiredMachines(Set<ItemLike> required) {
+        required.add(CEIBlocks.PRINTER);
     }
 
     @Override

@@ -55,7 +55,6 @@ public class CEICreativeModeTabs {
 
     private static void buildBaseContents(CreativeModeTab.ItemDisplayParameters parameters, CreativeModeTab.Output output) {
         output.accept(MECHANICAL_GRINDSTONE);
-        output.accept(GRINDSTONE_DRAIN);
         output.accept(PRINTER);
         output.accept(AllBlocks.EXPERIENCE_BLOCK);
         output.accept(AllItems.EXP_NUGGET);

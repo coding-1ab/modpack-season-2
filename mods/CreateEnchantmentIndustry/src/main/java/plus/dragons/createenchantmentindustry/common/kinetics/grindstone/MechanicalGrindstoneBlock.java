@@ -51,7 +51,6 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIBlockEntities;
 
 public class MechanicalGrindstoneBlock extends RotatedPillarKineticBlock implements IBE<KineticBlockEntity> {
     protected static VoxelShaper SHAPE = new AllShapes.Builder(Block.box(3, 3, 3, 13, 13, 13))
-            .add(4, 2, 4, 12, 14, 12)
             .add(AllShapes.SIX_VOXEL_POLE.get(Axis.Y))
             .forAxis();
 

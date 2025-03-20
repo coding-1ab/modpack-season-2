@@ -53,7 +53,6 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
 import plus.dragons.createdragonsplus.common.advancements.AdvancementBehaviour;
 import plus.dragons.createdragonsplus.util.FieldsAssertedNonnullByDefault;
-import plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour.PrinterFilteringBehaviour;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
 @FieldsAssertedNonnullByDefault
@@ -70,7 +69,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         tank = SmartFluidTankBehaviour.single(this, CEIConfig.fluids().printerFluidCapacity.get());
-        filter = new PrinterFilteringBehaviour(this, new CenteredSideValueBoxTransform(
+        filter = new PrinterFilteringBehaviour(this, tank, new CenteredSideValueBoxTransform(
                 (state, direction) -> state.getValue(PrinterBlock.FACING) == direction
         ));
         BeltProcessingBehaviour processing = new BeltProcessingBehaviour(this)

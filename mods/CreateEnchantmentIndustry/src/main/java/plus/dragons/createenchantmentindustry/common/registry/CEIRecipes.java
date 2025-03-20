@@ -19,6 +19,7 @@
 package plus.dragons.createenchantmentindustry.common.registry;
 
 
+
 import java.util.function.Supplier;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Recipe;
@@ -27,13 +28,13 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import plus.dragons.createdragonsplus.common.CDPCommon;
+import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipeParams;
 import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipeSerializer;
 import plus.dragons.createdragonsplus.common.recipe.RecipeTypeInfo;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrintingRecipe;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrintingRecipeParams;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindingRecipe;
-import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindingRecipeParams;
 
 public class CEIRecipes {
     private static final DeferredRegister<RecipeType<?>> TYPES =
@@ -47,8 +48,8 @@ public class CEIRecipes {
     ));
     public static final RecipeTypeInfo<GrindingRecipe> GRINDING = register("grinding", () -> new CustomProcessingRecipeSerializer<>(
             GrindingRecipe::new,
-            GrindingRecipeParams.CODEC,
-            GrindingRecipeParams.STREAM_CODEC
+            CustomProcessingRecipeParams.CODEC,
+            CustomProcessingRecipeParams.STREAM_CODEC
     ));
 
     public static void register(IEventBus modBus) {

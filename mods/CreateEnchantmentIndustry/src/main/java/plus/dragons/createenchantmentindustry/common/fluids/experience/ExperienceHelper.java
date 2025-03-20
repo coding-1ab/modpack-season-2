@@ -46,7 +46,7 @@ public class ExperienceHelper {
     public static int getExperienceFromFluid(FluidStack fluid) {
         if (fluid.isEmpty()) return 0;
         int amount = fluid.getAmount();
-        ExperienceRatio ratio = fluid.getFluidHolder().getData(CEIDataMaps.FLUID_EXPERIENCE_RATIO);
+        ExperienceRatio ratio = fluid.getFluidHolder().getData(CEIDataMaps.EXPERIENCE_RATIO);
         if (ratio == null)
             return 0;
         return ratio.fromExperience() ? amount / ratio.ratio() : amount * ratio.ratio();
@@ -57,7 +57,7 @@ public class ExperienceHelper {
     }
 
     public static int getFluidFromExperience(Holder<Fluid> fluid, int amount) {
-        ExperienceRatio ratio = fluid.getData(CEIDataMaps.FLUID_EXPERIENCE_RATIO);
+        ExperienceRatio ratio = fluid.getData(CEIDataMaps.EXPERIENCE_RATIO);
         if (ratio == null)
             return 0;
         return ratio.fromExperience()

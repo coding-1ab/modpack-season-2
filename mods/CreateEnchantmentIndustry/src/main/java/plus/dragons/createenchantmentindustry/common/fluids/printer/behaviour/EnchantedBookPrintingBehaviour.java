@@ -18,6 +18,7 @@
 
 package plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour;
 
+import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import java.util.List;
@@ -58,17 +59,15 @@ public class EnchantedBookPrintingBehaviour implements PrintingBehaviour {
         cost = EnchantingHelper.getEnchantmentCost(enchantments);
     }
 
-    public static Optional<PrintingBehaviour> create(Level level, ItemStack stack) {
+    public static Optional<PrintingBehaviour> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
         if (!stack.is(Items.ENCHANTED_BOOK))
             return Optional.empty();
-        var enchantments = stack.get(DataComponents.STORED_ENCHANTMENTS);
-        return Optional.of(new EnchantedBookPrintingBehaviour(level, stack,
-                enchantments == null ? ItemEnchantments.EMPTY : enchantments));
+        return Optional.of(new EnchantedBookPrintingBehaviour(level, stack, stack.getTagEnchantments()));
     }
 
     @Override
     public boolean isValid() {
-        return cost > 0 && cost <= CEIConfig.fluids().printerFluidCapacity.get();
+        return cost > 0;
     }
 
     @Override
@@ -111,7 +110,7 @@ public class EnchantedBookPrintingBehaviour implements PrintingBehaviour {
                         ? ChatFormatting.RED
                         : ChatFormatting.GREEN);
         CEILang.translate("gui.goggles.printing", name).forGoggles(tooltip);
-        CEILang.translate("gui.goggles.printing.enchanted_book.cost", cost).forGoggles(tooltip);
+        CEILang.translate("gui.goggles.printing.cost", cost).forGoggles(tooltip);
         HolderLookup.Provider registries = level.registryAccess();
         var order = registries
                 .lookupOrThrow(Registries.ENCHANTMENT)

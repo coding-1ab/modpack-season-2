@@ -19,14 +19,17 @@
 package plus.dragons.createenchantmentindustry.common.kinetics.grindstone;
 
 import com.simibubi.create.AllRecipeTypes;
+import com.simibubi.create.content.equipment.sandPaper.SandPaperPolishingRecipe;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
 import com.simibubi.create.content.processing.recipe.ProcessingInventory;
+import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.fluid.FluidIngredient;
 import java.util.List;
+import java.util.Optional;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,10 +39,12 @@ import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -166,31 +171,35 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
 
     private void applyRecipe() {
         assert level != null;
-        ItemStack inputStack = inventory.getStackInSlot(0);
+        var recipeManager = level.getRecipeManager();
+        var inputStack = inventory.getStackInSlot(0);
         var input = new SingleRecipeInput(inputStack);
         // Grinding
-        var grinding = level.getRecipeManager().getRecipeFor(CEIRecipes.GRINDING.getType(), input, level);
+        var grinding = SequencedAssemblyRecipe.getRecipe(level, input, CEIRecipes.GRINDING.getType(), GrindingRecipe.class);
+        if (grinding.isEmpty())
+            grinding = recipeManager.getRecipeFor(CEIRecipes.GRINDING.getType(), input, level);
         if (grinding.isPresent()) {
             var recipe = grinding.get().value();
-            var grinded = recipe.rollResults();
-            boolean applicable = true;
             var fluidIngredients = recipe.getFluidIngredients();
+            var fluidResults = recipe.getFluidResults();
+            boolean applicable = true;
             if (!fluidIngredients.isEmpty())
                 applicable = drain(fluidIngredients.getFirst());
-            var fluidResults = recipe.getFluidResults();
-            if (!fluidResults.isEmpty())
+            else if (!fluidResults.isEmpty())
                 applicable = fill(fluidResults.getFirst());
             if (applicable) {
                 inventory.clear();
+                var grinded = recipe.rollResults();
                 for (int i = 0; i < grinded.size(); i++)
                     inventory.setStackInSlot(i + 1, grinded.get(i));
                 return;
             }
         }
         // Sand Paper Polishing
-        var polishing = level.getRecipeManager().getRecipeFor(AllRecipeTypes.SANDPAPER_POLISHING.getType(), input, level);
-        if (polishing.isPresent()) {
-            var polished = polishing.get().value().assemble(new SingleRecipeInput(inputStack), level.registryAccess());
+        Optional<RecipeHolder<SandPaperPolishingRecipe>> polishing = recipeManager
+                .getRecipeFor(AllRecipeTypes.SANDPAPER_POLISHING.getType(), input, level);
+        if (polishing.isPresent() && AllRecipeTypes.CAN_BE_AUTOMATED.test(polishing.get())) {
+            var polished = polishing.get().value().getResultItem(level.registryAccess());
             inventory.clear();
             inventory.setStackInSlot(1, polished);
             return;
@@ -273,7 +282,7 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
         super.read(compound, registries, clientPacket);
         inventory.deserializeNBT(registries, compound.getCompound("Inventory"));
         if (compound.contains("ProcessedItem"))
-            processedItem = ItemStack.parseOptional(registries, compound.getCompound("PlayEvent"));
+            processedItem = ItemStack.parseOptional(registries, compound.getCompound("ProcessedItem"));
     }
 
     @Override
@@ -384,5 +393,12 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
         level.updateNeighbourForOutputSignal(worldPosition, getBlockState().getBlock());
         inventory.remainingTime = -1;
         sendData();
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        boolean added = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        added |= this.containedFluidTooltip(tooltip, isPlayerSneaking, tank.getCapability());
+        return added;
     }
 }

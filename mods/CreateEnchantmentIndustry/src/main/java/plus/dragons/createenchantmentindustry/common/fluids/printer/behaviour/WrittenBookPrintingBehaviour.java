@@ -18,6 +18,7 @@
 
 package plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour;
 
+import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 import java.util.List;
 import java.util.Optional;
@@ -25,41 +26,46 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.WrittenBookContent;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
-import plus.dragons.createdragonsplus.common.registry.CDPDataMaps;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
+import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 import plus.dragons.createenchantmentindustry.util.CEILang;
 
 public class WrittenBookPrintingBehaviour implements PrintingBehaviour {
+    private final SmartFluidTankBehaviour tank;
     private final WrittenBookContent content;
-    private final boolean uncopiable;
+    private final boolean awardAdvancement;
 
-    private WrittenBookPrintingBehaviour(WrittenBookContent content, boolean uncopiable) {
+    private WrittenBookPrintingBehaviour(SmartFluidTankBehaviour tank, WrittenBookContent content, boolean awardAdvancement) {
+        this.tank = tank;
         this.content = content;
-        this.uncopiable = uncopiable;
+        this.awardAdvancement = awardAdvancement;
     }
 
-    public static Optional<PrintingBehaviour> create(Level level, ItemStack stack) {
+    public static Optional<PrintingBehaviour> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
         if (!stack.is(Items.WRITTEN_BOOK))
             return Optional.empty();
         var content = stack.get(DataComponents.WRITTEN_BOOK_CONTENT);
         if (content == null) {
-            return Optional.of(new WrittenBookPrintingBehaviour(WrittenBookContent.EMPTY, false));
+            return Optional.of(new WrittenBookPrintingBehaviour(tank, WrittenBookContent.EMPTY, false));
         }
-        boolean uncopiable = content.generation() >= 2;
+        int generation = content.generation();
+        int change = CEIConfig.fluids().printingGenerationChange.get();
+        int newGeneration = Math.max(0, generation + change);
+        if (newGeneration > 2)
+            return Optional.of(new WrittenBookPrintingBehaviour(tank, WrittenBookContent.EMPTY, false));
         content = new WrittenBookContent(
                 content.title(),
                 content.author(),
-                0,
+                newGeneration,
                 content.pages(),
                 content.resolved());
-        return Optional.of(new WrittenBookPrintingBehaviour(content, uncopiable));
+        return Optional.of(new WrittenBookPrintingBehaviour(tank, content, generation >= 2));
     }
 
     @Override
@@ -84,10 +90,8 @@ public class WrittenBookPrintingBehaviour implements PrintingBehaviour {
 
     @Override
     public int getRequiredFluidAmount(Level level, ItemStack stack, FluidStack fluidStack) {
-        var color = fluidStack.getFluidHolder().getData(CDPDataMaps.FLUID_COLORING_CATALYST);
-        if (color != DyeColor.BLACK)
-            return 0;
-        return content.pages().size() * 10;
+        var amount = fluidStack.getFluidHolder().getData(CEIDataMaps.PRINTING_WRITTEN_BOOK_INGREDIENT);
+        return amount == null ? 0 : amount;
     }
 
     @Override
@@ -99,7 +103,7 @@ public class WrittenBookPrintingBehaviour implements PrintingBehaviour {
 
     @Override
     public void onFinished(Level level, BlockPos pos, PrinterBlockEntity printer) {
-        if (uncopiable) {
+        if (awardAdvancement) {
             // TODO: Trigger advancement
         }
         // Plays SoundEvents.BOOK_PAGE_TURN
@@ -109,15 +113,19 @@ public class WrittenBookPrintingBehaviour implements PrintingBehaviour {
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         var title = Component.literal(content.title().raw());
-        var author = Component.translatable("book.byAuthor", content.author()).withStyle(ChatFormatting.GRAY);
-        var cost = CEILang.number(content.pages().size() * 10)
-                .add(CreateLang.translate("generic.unit.millibuckets"))
-                .style(content.pages().size() * 10 > CEIConfig.fluids().printerFluidCapacity.get()
-                        ? ChatFormatting.RED
-                        : ChatFormatting.GREEN);
         CEILang.translate("gui.goggles.printing", title).forGoggles(tooltip);
+        var author = Component.translatable("book.byAuthor", content.author()).withStyle(ChatFormatting.GRAY);
         CEILang.builder().add(author).forGoggles(tooltip);
-        CEILang.translate("gui.goggles.printing.written_book.cost", cost).forGoggles(tooltip);
+        var fluidStack = tank.getPrimaryHandler().getFluid();
+        var amount = fluidStack.getFluidHolder().getData(CEIDataMaps.PRINTING_WRITTEN_BOOK_INGREDIENT);
+        if (amount != null) {
+            var cost = CEILang.number(content.pages().size() * amount)
+                    .add(CreateLang.translate("generic.unit.millibuckets"))
+                    .style(content.pages().size() * amount > CEIConfig.fluids().printerFluidCapacity.get()
+                            ? ChatFormatting.RED
+                            : ChatFormatting.GREEN);
+            CEILang.translate("gui.goggles.printing.cost", cost).forGoggles(tooltip);
+        }
         return true;
     }
 }

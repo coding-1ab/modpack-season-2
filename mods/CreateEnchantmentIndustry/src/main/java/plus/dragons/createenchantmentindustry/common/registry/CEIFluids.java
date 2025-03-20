@@ -28,11 +28,13 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceEffectHandler;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceFluidType;
-import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceOpenPipeEffect;
 
 public class CEIFluids {
     public static final FluidEntry<BaseFlowingFluid.Source> EXPERIENCE = new FluidEntry<>(REGISTRATE,
@@ -52,7 +54,6 @@ public class CEIFluids {
             .fluidProperties(p -> p.explosionResistance(100f))
             .tag(AllFluidTags.BOTTOMLESS_DENY.tag)
             .source(BaseFlowingFluid.Source::new)
-            .onRegister(source -> OpenPipeEffectHandler.REGISTRY.register(source, new ExperienceOpenPipeEffect()))
             .block()
             .lang("Liquid Experience")
             .build()
@@ -65,5 +66,14 @@ public class CEIFluids {
             .build()
             .register();
 
-    public static void register(IEventBus modBus) {}
+    public static void register(IEventBus modBus) {
+        modBus.register(CEIFluids.class);
+    }
+
+    @SubscribeEvent
+    public static void setup(final FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            OpenPipeEffectHandler.REGISTRY.register(EXPERIENCE.get(), new ExperienceEffectHandler());
+        });
+    }
 }

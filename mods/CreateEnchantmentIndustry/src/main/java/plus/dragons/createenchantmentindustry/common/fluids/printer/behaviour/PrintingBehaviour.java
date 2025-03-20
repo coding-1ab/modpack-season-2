@@ -19,6 +19,7 @@
 package plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour;
 
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,10 +34,10 @@ import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlock
 public interface PrintingBehaviour extends IHaveGoggleInformation {
     @Internal
     List<Provider> PROVIDERS = Util.make(new ArrayList<>(), list -> {
-        list.add(CopyingBehaviour::create);
+        list.add(AddressPrintingBehaviour::create);
+        list.add(CopyPrintingBehaviour::create);
         list.add(CustomNamePrintingBehaviour::create);
         list.add(EnchantedBookPrintingBehaviour::create);
-        list.add(PackageAddressPrintingBehaviour::create);
         list.add(WrittenBookPrintingBehaviour::create);
     });
 
@@ -44,9 +45,9 @@ public interface PrintingBehaviour extends IHaveGoggleInformation {
         PROVIDERS.add(provider);
     }
 
-    static PrintingBehaviour create(Level level, ItemStack stack) {
+    static PrintingBehaviour create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
         for (var provider : PROVIDERS) {
-            var result = provider.create(level, stack);
+            var result = provider.create(level, tank, stack);
             if (result.isPresent())
                 return result.get();
         }
@@ -71,6 +72,6 @@ public interface PrintingBehaviour extends IHaveGoggleInformation {
 
     @FunctionalInterface
     interface Provider {
-        Optional<PrintingBehaviour> create(Level level, ItemStack stack);
+        Optional<PrintingBehaviour> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack);
     }
 }

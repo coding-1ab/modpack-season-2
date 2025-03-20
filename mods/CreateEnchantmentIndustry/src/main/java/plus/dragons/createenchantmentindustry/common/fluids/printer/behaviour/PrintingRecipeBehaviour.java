@@ -74,9 +74,7 @@ public class PrintingRecipeBehaviour implements PrintingBehaviour {
     @Override
     public ItemStack getResult(Level level, ItemStack stack, FluidStack fluidStack) {
         return findRecipe(level, stack, fluidStack)
-                .map(PrintingRecipe::rollResults)
-                .filter(list -> !list.isEmpty())
-                .map(List::getFirst)
+                .map(recipe -> recipe.getRollableResults().getFirst().getStack())
                 .orElse(ItemStack.EMPTY);
     }
 

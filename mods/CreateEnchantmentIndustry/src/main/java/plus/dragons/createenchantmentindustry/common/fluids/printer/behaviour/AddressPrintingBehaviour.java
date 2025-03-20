@@ -1,0 +1,91 @@
+/*
+ * Copyright (C) 2025  DragonsPlus
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour;
+
+import com.simibubi.create.AllDataComponents;
+import com.simibubi.create.content.logistics.box.PackageItem;
+import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
+import java.util.List;
+import java.util.Optional;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.fluids.FluidStack;
+import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
+import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
+import plus.dragons.createenchantmentindustry.util.CEILang;
+
+public class AddressPrintingBehaviour implements PrintingBehaviour {
+    private final String address;
+
+    public AddressPrintingBehaviour(String address) {
+        this.address = address;
+    }
+
+    public static Optional<PrintingBehaviour> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
+        if (stack.getItem() instanceof PackageItem) {
+            String address = stack.get(AllDataComponents.PACKAGE_ADDRESS);
+            return Optional.of(new AddressPrintingBehaviour(address == null ? "" : address));
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean isValid() {
+        return !address.isEmpty();
+    }
+
+    @Override
+    public int getRequiredItemCount(Level level, ItemStack stack) {
+        if (stack.getItem() instanceof PackageItem)
+            return 1;
+        return 0;
+    }
+
+    @Override
+    public int getRequiredFluidAmount(Level level, ItemStack stack, FluidStack fluidStack) {
+        var amount = fluidStack.getFluidHolder().getData(CEIDataMaps.PRINTING_ADDRESS_INGREDIENT);
+        return amount == null ? 0 : amount;
+    }
+
+    @Override
+    public ItemStack getResult(Level level, ItemStack stack, FluidStack fluidStack) {
+        var result = stack.copy();
+        result.set(AllDataComponents.PACKAGE_ADDRESS, address);
+        return result;
+    }
+
+    @Override
+    public void onFinished(Level level, BlockPos pos, PrinterBlockEntity printer) {
+        // TODO: Trigger advancement
+        // Plays SoundEvents.BOOK_PAGE_TURN
+        level.levelEvent(1043, pos.below(), 0);
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        var address = this.address.isEmpty()
+                ? Component.literal("Invalid Address").withStyle(ChatFormatting.RED)
+                : Component.literal(this.address).withStyle(ChatFormatting.GOLD);
+        CEILang.translate("gui.goggles.printing.address", address).forGoggles(tooltip);
+        return true;
+    }
+}

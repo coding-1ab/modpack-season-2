@@ -5,12 +5,13 @@
   "compatibilityLevel": "JAVA_16",
   "refmap": "create_enchantment_industry.refmap.json",
   "mixins": [
-    "SmartBlockEntityMixin",
     "ConnectivityHandlerMixin",
     "DeployerFakePlayerMixin",
     "DeployerHandlerMixin",
     "FillingBySpoutMixin",
-    "PlayerMixin"
+    "PlayerMixin",
+    "SmartBlockEntityMixin",
+    "accessor.CreateRecipeCategoryAccessor"
   ],
   "client": [],
   "injectors": {

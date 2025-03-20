@@ -1,6 +1,6 @@
 {
   "criteria": {
-    "has_andesite_alloy": {
+    "andesite": {
       "conditions": {
         "items": [
           {
@@ -20,7 +20,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_andesite_alloy"
+      "andesite"
     ]
   ],
   "rewards": {

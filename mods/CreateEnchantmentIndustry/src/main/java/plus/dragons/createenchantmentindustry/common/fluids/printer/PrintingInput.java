@@ -22,11 +22,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-public record PrintingInput(ItemStack item, ItemStack template, FluidStack fluid) implements RecipeInput {
+public record PrintingInput(ItemStack base, ItemStack template, FluidStack fluid) implements RecipeInput {
     @Override
     public ItemStack getItem(int index) {
         if (index == 0)
-            return item;
+            return base;
         if (index == 1)
             return template;
         throw new IllegalArgumentException("No item for index " + index);

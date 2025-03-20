@@ -27,9 +27,14 @@ public class CEIFluidsConfig extends ConfigBase {
     public final ConfigInt printerFluidCapacity = i(1000, 1000,
             "printerFluidCapacity",
             Comments.printerFluidCapacity);
-    public final ConfigBool printingCustomNameRemovesItalic = b(false,
-            "printingCustomNameRemovesItalic",
-            Comments.printingCustomNameRemovesItalic);
+    public final ConfigBool printingCustomNameAsItemName = b(false,
+            "printingCustomNameAsItemName",
+            Comments.printingCustomNameAsItemName
+    );
+    public final ConfigInt printingGenerationChange = i(-3, -3, 1,
+            "printingGenerationChange",
+            Comments.printingGenerationChange
+    );
 
     @Override
     public String getName() {
@@ -41,7 +46,10 @@ public class CEIFluidsConfig extends ConfigBase {
                 "Whether Liquid Experience vaporize into Experience Orbs upon placement.";
         static final String printerFluidCapacity =
                 "The amount of liquid a Printer can hold (mB).";
-        static final String printingCustomNameRemovesItalic =
-                "Whether printing custom name to items removes italic style.";
+        static final String printingCustomNameAsItemName =
+                "Whether printing custom name (displayed in italic) as item name (displayed in non-italic).";
+        static final String printingGenerationChange =
+                "The generation change when copy written books, " +
+                "value smaller than 1 will allow copying copy of copy";
     }
 }

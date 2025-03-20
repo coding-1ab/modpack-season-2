@@ -35,5 +35,13 @@ public class CEIData {
     }
 
     @SubscribeEvent
-    public void generate(final GatherDataEvent event) {}
+    public void generate(final GatherDataEvent event) {
+        var generator = event.getGenerator();
+        var existingFileHelper = event.getExistingFileHelper();
+        var lookupProvider = event.getLookupProvider();
+        var output = generator.getPackOutput();
+        var client = event.includeClient();
+        var server = event.includeServer();
+        generator.addProvider(server, new CEIRecipeProvider(output, lookupProvider));
+    }
 }

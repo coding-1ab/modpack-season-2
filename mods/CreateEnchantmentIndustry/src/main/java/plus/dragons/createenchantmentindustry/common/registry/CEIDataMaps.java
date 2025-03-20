@@ -20,23 +20,48 @@ package plus.dragons.createenchantmentindustry.common.registry;
 
 import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE;
 
+import com.mojang.serialization.Codec;
 import com.tterrag.registrate.providers.ProviderType;
 import com.tterrag.registrate.providers.RegistrateDataMapProvider;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.registries.datamaps.DataMapType;
 import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
+import plus.dragons.createdragonsplus.common.registry.CDPFluids;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceRatio;
 
 public class CEIDataMaps {
-    public static final DataMapType<Fluid, ExperienceRatio> FLUID_EXPERIENCE_RATIO = DataMapType
+    public static final DataMapType<Fluid, ExperienceRatio> EXPERIENCE_RATIO = DataMapType
             .builder(CEICommon.asResource("experience_ratio"), Registries.FLUID, ExperienceRatio.CODEC)
             .synced(ExperienceRatio.CODEC, true)
+            .build();
+    public static final DataMapType<Fluid, Integer> PRINTING_ADDRESS_INGREDIENT = DataMapType
+            .builder(CEICommon.asResource("printing/address_ingredient"), Registries.FLUID, ExtraCodecs.POSITIVE_INT)
+            .synced(Codec.INT, true)
+            .build();
+    public static final DataMapType<Fluid, Integer> PRINTING_COPY_INGREDIENT = DataMapType
+            .builder(CEICommon.asResource("printing/copy_ingredient"), Registries.FLUID, ExtraCodecs.POSITIVE_INT)
+            .synced(Codec.INT, true)
+            .build();
+    public static final DataMapType<Fluid, Integer> PRINTING_CUSTOM_NAME_INGREDIENT = DataMapType
+            .builder(CEICommon.asResource("printing/custom_name_ingredient"), Registries.FLUID, ExtraCodecs.POSITIVE_INT)
+            .synced(Codec.INT, true)
+            .build();
+    public static final DataMapType<Fluid, Style> PRINTING_CUSTOM_NAME_STYLE = DataMapType
+            .builder(CEICommon.asResource("printing/custom_name_style"), Registries.FLUID, Style.Serializer.CODEC)
+            .synced(Style.Serializer.CODEC, true)
+            .build();
+    public static final DataMapType<Fluid, Integer> PRINTING_WRITTEN_BOOK_INGREDIENT = DataMapType
+            .builder(CEICommon.asResource("printing/written_book_ingredient"), Registries.FLUID, ExtraCodecs.POSITIVE_INT)
+            .synced(Codec.INT, true)
             .build();
 
     public static void register(IEventBus modBus) {
@@ -46,11 +71,16 @@ public class CEIDataMaps {
 
     @SubscribeEvent
     public static void register(final RegisterDataMapTypesEvent event) {
-        event.register(FLUID_EXPERIENCE_RATIO);
+        event.register(EXPERIENCE_RATIO);
+        event.register(PRINTING_ADDRESS_INGREDIENT);
+        event.register(PRINTING_COPY_INGREDIENT);
+        event.register(PRINTING_CUSTOM_NAME_INGREDIENT);
+        event.register(PRINTING_CUSTOM_NAME_STYLE);
+        event.register(PRINTING_WRITTEN_BOOK_INGREDIENT);
     }
 
     public static void generate(RegistrateDataMapProvider provider) {
-        provider.builder(FLUID_EXPERIENCE_RATIO)
+        provider.builder(EXPERIENCE_RATIO)
                 .add(CEIFluids.EXPERIENCE,
                         new ExperienceRatio(1, true), false)
                 .add(ResourceLocation.fromNamespaceAndPath("cofh_core", "experience"),
@@ -80,5 +110,18 @@ public class CEIDataMaps {
                 .add(ResourceLocation.fromNamespaceAndPath("sophisticatedcore", "xp_still"),
                         new ExperienceRatio(20, true), false,
                         new ModLoadedCondition("sophisticatedcore"));
+        var blackDye = CDPFluids.COMMON_TAGS.dyesByColor.get(DyeColor.BLACK);
+        provider.builder(PRINTING_COPY_INGREDIENT)
+                .add(blackDye, 10, false);
+        provider.builder(PRINTING_CUSTOM_NAME_INGREDIENT)
+                .add(CEIFluids.EXPERIENCE, 10, false)
+                .add(CDPFluids.COMMON_TAGS.dyes, 250, false);
+        var customNameStyles = provider.builder(PRINTING_CUSTOM_NAME_STYLE);
+        CDPFluids.COMMON_TAGS.dyesByColor.forEach((color, tag) -> customNameStyles
+                .add(tag, Style.EMPTY.withColor(color.getTextColor()), false));
+        provider.builder(PRINTING_ADDRESS_INGREDIENT)
+                .add(blackDye, 10, false);
+        provider.builder(PRINTING_WRITTEN_BOOK_INGREDIENT)
+                .add(blackDye, 10, false);
     }
 }

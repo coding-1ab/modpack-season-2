@@ -22,9 +22,9 @@ import net.createmod.catnip.config.ConfigBase;
 
 public class CEIKineticsConfig extends ConfigBase {
     public final ConfigBool deployerKillDropXp = b(true, "deployerKillDropXp", Comments.deployerKillDropXp);
-    public final ConfigFloat deployerKillXpScale = f(1, 0, "deployerKillXpScale", Comments.deployerKillXpScale);
+    public final ConfigFloat deployerKillXpScale = f(1, 0, 1, "deployerKillXpScale", Comments.deployerKillXpScale);
     public final ConfigBool deployerMineDropXp = b(true, "deployerMineDropXp", Comments.deployerMineDropXp);
-    public final ConfigFloat deployerMineXpScale = f(1, 0, "deployerMineXpScale", Comments.deployerMineXpScale);
+    public final ConfigFloat deployerMineXpScale = f(1, 0, 1, "deployerMineXpScale", Comments.deployerMineXpScale);
     public final ConfigBool deployerCollectXp = b(true, "deployerCollectXp", Comments.deployerCollectXp);
     public final ConfigBool deployerMendItem = b(true, "deployerMendItem", Comments.deployerMendItem);
     public final ConfigBool deployerSweepAttack = b(true, "deployerSweepAttack", Comments.deployerSweepAttack);

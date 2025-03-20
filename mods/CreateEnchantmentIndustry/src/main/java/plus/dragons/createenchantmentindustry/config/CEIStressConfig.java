@@ -18,7 +18,6 @@
 
 package plus.dragons.createenchantmentindustry.config;
 
-import com.simibubi.create.Create;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
@@ -33,6 +32,7 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.ModConfigSpec.Builder;
 import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue;
 import org.jetbrains.annotations.Nullable;
+import plus.dragons.createdragonsplus.common.CDPRegistrate;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 
 public class CEIStressConfig extends ConfigBase {
@@ -72,23 +72,23 @@ public class CEIStressConfig extends ConfigBase {
 		return value == null ? null : value::get;
 	}
 
-	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> setNoImpact() {
+	public static <B extends Block, P extends CDPRegistrate> NonNullUnaryOperator<BlockBuilder<B, P>> setNoImpact() {
 		return setImpact(0);
 	}
 
-	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> setImpact(double value) {
+	public static <B extends Block, P extends CDPRegistrate> NonNullUnaryOperator<BlockBuilder<B, P>> setImpact(double value) {
 		return builder -> {
 			assertFromCEI(builder);
-			ResourceLocation id = Create.asResource(builder.getName());
+			ResourceLocation id = builder.getParent().asResource(builder.getName());
 			DEFAULT_IMPACTS.put(id, value);
 			return builder;
 		};
 	}
 
-	public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> setCapacity(double value) {
+	public static <B extends Block, P extends CDPRegistrate> NonNullUnaryOperator<BlockBuilder<B, P>> setCapacity(double value) {
 		return builder -> {
 			assertFromCEI(builder);
-			ResourceLocation id = Create.asResource(builder.getName());
+			ResourceLocation id = builder.getParent().asResource(builder.getName());
 			DEFAULT_CAPACITIES.put(id, value);
 			return builder;
 		};
@@ -96,7 +96,7 @@ public class CEIStressConfig extends ConfigBase {
 
 	private static void assertFromCEI(BlockBuilder<?, ?> builder) {
 		if (!builder.getOwner().getModid().equals(CEICommon.ID)) {
-			throw new IllegalStateException("Non-Create: Enchantment Industry blocks cannot be added to this config.");
+			throw new IllegalStateException("Non-Create: Enchantment Industry blocks cannot be added to this config");
 		}
 	}
 
