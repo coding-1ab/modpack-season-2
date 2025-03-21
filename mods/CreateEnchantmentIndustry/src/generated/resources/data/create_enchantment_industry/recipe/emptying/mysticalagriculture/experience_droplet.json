@@ -5,7 +5,7 @@
       "modid": "mysticalagriculture"
     }
   ],
-  "type": "create_dragons_plus:grinding",
+  "type": "create:emptying",
   "ingredients": [
     {
       "item": "mysticalagriculture:experience_droplet"

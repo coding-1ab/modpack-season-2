@@ -58,7 +58,7 @@ public class CEIFluids {
             .lang("Liquid Experience")
             .build()
             .bucket()
-            .lang("Bucket of Experience")
+            .lang("Bucket o' Enchanting")
             .properties(properties -> properties
                     .rarity(Rarity.UNCOMMON)
                     .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true))

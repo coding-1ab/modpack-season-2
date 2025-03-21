@@ -28,9 +28,10 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import plus.dragons.createdragonsplus.common.fluid.dye.DyeColors;
+import plus.dragons.createdragonsplus.common.fluids.dye.DyeColors;
 import plus.dragons.createdragonsplus.common.registry.CDPFluids;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.util.CEILang;
@@ -58,6 +59,8 @@ public class CEICreativeModeTabs {
         output.accept(PRINTER);
         output.accept(AllBlocks.EXPERIENCE_BLOCK);
         output.accept(AllItems.EXP_NUGGET);
+        output.accept(EXPERIENCE_CAKE_BASE, TabVisibility.SEARCH_TAB_ONLY);
+        output.accept(EXPERIENCE_CAKE);
         output.accept(EXPERIENCE_BUCKET);
         for (var color : DyeColors.CREATIVE_MODE_TAB) {
             CDPFluids.DYES_BY_COLOR.get(color).getBucket().ifPresent(output::accept);

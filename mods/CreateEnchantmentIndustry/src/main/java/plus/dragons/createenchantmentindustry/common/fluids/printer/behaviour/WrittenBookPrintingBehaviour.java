@@ -72,7 +72,7 @@ public class WrittenBookPrintingBehaviour implements PrintingBehaviour {
     public boolean isValid() {
         if (content == WrittenBookContent.EMPTY)
             return false;
-        int capacity = CEIConfig.fluids().printerFluidCapacity.get();
+        int capacity = CEIConfig.fluids().blazeEnchanterFluidCapacity.get();
         return content.pages().size() * 10 <= capacity;
     }
 
@@ -121,7 +121,7 @@ public class WrittenBookPrintingBehaviour implements PrintingBehaviour {
         if (amount != null) {
             var cost = CEILang.number(content.pages().size() * amount)
                     .add(CreateLang.translate("generic.unit.millibuckets"))
-                    .style(content.pages().size() * amount > CEIConfig.fluids().printerFluidCapacity.get()
+                    .style(content.pages().size() * amount > CEIConfig.fluids().blazeEnchanterFluidCapacity.get()
                             ? ChatFormatting.RED
                             : ChatFormatting.GREEN);
             CEILang.translate("gui.goggles.printing.cost", cost).forGoggles(tooltip);

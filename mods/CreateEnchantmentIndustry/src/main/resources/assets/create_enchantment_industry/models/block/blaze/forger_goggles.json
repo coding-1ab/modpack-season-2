@@ -1,0 +1,38 @@
+{
+  "credit": "By F1reW4tch, made with Blockbench",
+  "parent": "villagerhats:item/hat",
+  "textures": {
+    "goggles": "create_enchantment_industry:block/forger_goggles"
+  },
+  "elements": [
+    {
+      "from": [3.9, 5, 3.9],
+      "to": [12.1, 10, 5],
+      "faces": {
+        "north": {"uv": [1, 1, 9, 6], "texture": "#goggles"},
+        "east": {"uv": [0, 1, 1, 6], "texture": "#goggles"},
+        "west": {"uv": [9, 1, 10, 6], "texture": "#goggles"},
+        "up": {"uv": [1, 0, 9, 1], "texture": "#goggles"}
+      }
+    },
+    {
+      "from": [12.1, 10, 4.9],
+      "to": [3.9, 5, 3.9],
+      "faces": {
+        "east": {"uv": [9, 1, 10, 6], "texture": "#goggles"},
+        "south": {"uv": [1, 6, 9, 1], "texture": "#goggles"},
+        "west": {"uv": [0, 1, 1, 6], "texture": "#goggles"},
+        "down": {"uv": [1, 0, 9, 1], "texture": "#goggles"}
+      }
+    },
+    {
+      "from": [3.9, 0, 5],
+      "to": [12.1, 8, 12.1],
+      "faces": {
+        "east": {"uv": [8, 8, 15, 16], "texture": "#goggles"},
+        "south": {"uv": [0, 8, 8, 16], "texture": "#goggles"},
+        "west": {"uv": [15, 8, 8, 16], "texture": "#goggles"}
+      }
+    }
+  ]
+}

@@ -21,13 +21,16 @@ package plus.dragons.createenchantmentindustry.data;
 import static com.simibubi.create.AllBlocks.*;
 import static com.simibubi.create.AllItems.*;
 import static com.simibubi.create.AllTags.commonItemTag;
-import static net.minecraft.world.item.Items.EXPERIENCE_BOTTLE;
+import static net.minecraft.world.item.Items.*;
+import static net.neoforged.neoforge.common.Tags.Items.EGGS;
 import static net.neoforged.neoforge.common.Tags.Items.STORAGE_BLOCKS_IRON;
-import static plus.dragons.createdragonsplus.data.recipe.CreateRecipeBuilders.filling;
+import static plus.dragons.createdragonsplus.data.recipe.CreateRecipeBuilders.*;
 import static plus.dragons.createdragonsplus.data.recipe.VanillaRecipeBuilders.shaped;
 import static plus.dragons.createenchantmentindustry.common.registry.CEIBlocks.MECHANICAL_GRINDSTONE;
 import static plus.dragons.createenchantmentindustry.common.registry.CEIBlocks.PRINTER;
 import static plus.dragons.createenchantmentindustry.common.registry.CEIFluids.EXPERIENCE;
+import static plus.dragons.createenchantmentindustry.common.registry.CEIItems.EXPERIENCE_CAKE;
+import static plus.dragons.createenchantmentindustry.common.registry.CEIItems.EXPERIENCE_CAKE_BASE;
 
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup.Provider;
@@ -51,6 +54,7 @@ public class CEIRecipeProvider extends RecipeProvider {
     @Override
     protected void buildRecipes(RecipeOutput output) {
         buildMachineRecipes(output);
+        buildMaterialRecipes(output);
         buildExperienceRecipes(output);
     }
 
@@ -74,10 +78,34 @@ public class CEIRecipeProvider extends RecipeProvider {
                 .accept(output);
     }
 
+    private void buildMaterialRecipes(RecipeOutput output) {
+        compacting(EXPERIENCE_CAKE_BASE.getId())
+                .require(EGGS)
+                .require(SUGAR)
+                .require(LAPIS_LAZULI)
+                .output(EXPERIENCE_CAKE_BASE)
+                .build(output);
+        filling(EXPERIENCE_CAKE.getId())
+                .require(EXPERIENCE_CAKE_BASE)
+                .require(EXPERIENCE.get(), 1000)
+                .output(EXPERIENCE_CAKE)
+                .build(output);
+    }
+
     private void buildExperienceRecipes(RecipeOutput output) {
+        compacting(CEICommon.asResource("experience_block"))
+                .require(EXPERIENCE.get(), 27)
+                .output(EXPERIENCE_BLOCK)
+                .build(output);
         filling(CEICommon.asResource("experience_bottle"))
                 .require(EXPERIENCE.get(), 10)
+                .require(GLASS_BOTTLE)
                 .output(EXPERIENCE_BOTTLE)
+                .build(output);
+        emptying(CEICommon.asResource("experience_bottle"))
+                .require(EXPERIENCE_BOTTLE)
+                .output(EXPERIENCE.get(), 10)
+                .output(GLASS_BOTTLE)
                 .build(output);
         GrindingRecipe.builder(CEICommon.asResource("experience_nugget"))
                 .require(EXP_NUGGET)
@@ -102,7 +130,7 @@ public class CEIRecipeProvider extends RecipeProvider {
                 .require(IntegrationIngredient.of("ars_nouveau", "greater_experience_gem"))
                 .output(EXPERIENCE.get(), 12)
                 .build(output);
-        GrindingRecipe.builder(CEICommon.asResource("mysticalagriculture/experience_droplet"))
+        emptying(CEICommon.asResource("mysticalagriculture/experience_droplet"))
                 .whenModLoaded("mysticalagriculture")
                 .require(IntegrationIngredient.of("mysticalagriculture", "experience_droplet"))
                 .output(EXPERIENCE.get(), 10)

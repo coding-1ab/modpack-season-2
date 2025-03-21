@@ -18,12 +18,32 @@
 
 package plus.dragons.createenchantmentindustry.common.registry;
 
+import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE;
+
+import com.simibubi.create.AllTags.AllItemTags;
+import com.tterrag.registrate.util.entry.ItemEntry;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 
 public class CEIItems {
+    public static final ItemEntry<Item> EXPERIENCE_CAKE_BASE = REGISTRATE
+            .item("experience_cake_base", Item::new)
+            .lang("Cake Base o' Enchanting")
+            .tag(AllItemTags.UPRIGHT_ON_BELT.tag)
+            .register();
+    public static final ItemEntry<Item> EXPERIENCE_CAKE = REGISTRATE
+            .item("experience_cake", Item::new)
+            .lang("Cake o' Enchanting")
+            .properties(prop -> prop
+                    .rarity(Rarity.UNCOMMON)
+                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true))
+            .tag(AllItemTags.UPRIGHT_ON_BELT.tag)
+            .register();
     public static final DeferredItem<BucketItem> EXPERIENCE_BUCKET = DeferredItem
             .createItem(CEICommon.asResource("experience_bucket"));
 

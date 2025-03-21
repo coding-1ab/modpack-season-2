@@ -25,7 +25,7 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.fluids.FluidStack;
-import plus.dragons.createdragonsplus.common.fluid.ConsumingOpenPipeEffectHandler;
+import plus.dragons.createdragonsplus.common.fluids.pipe.ConsumingOpenPipeEffectHandler;
 
 public class ExperienceEffectHandler implements ConsumingOpenPipeEffectHandler {
     @Override

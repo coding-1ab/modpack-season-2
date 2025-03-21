@@ -32,7 +32,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-import plus.dragons.createdragonsplus.common.fluid.SolidRenderFluidType;
+import plus.dragons.createdragonsplus.common.fluids.SolidRenderFluidType;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
 public class ExperienceFluidType extends SolidRenderFluidType {

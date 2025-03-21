@@ -20,6 +20,8 @@
   "create_enchantment_industry.recipe.printing.custom_name.base": "ɯǝʇı ʎuɐ sʇdǝɔɔⱯ",
   "create_enchantment_industry.recipe.printing.custom_name.template": "ǝɯɐN ɯoʇsnƆ",
   "fluid.create_enchantment_industry.experience": "ǝɔuǝıɹǝdxƎ pınbıꞀ",
-  "item.create_enchantment_industry.experience_bucket": "ǝɔuǝıɹǝdxƎ ɟo ʇǝʞɔnᗺ",
+  "item.create_enchantment_industry.experience_bucket": "buıʇuɐɥɔuƎ ,o ʇǝʞɔnᗺ",
+  "item.create_enchantment_industry.experience_cake": "buıʇuɐɥɔuƎ ,o ǝʞɐƆ",
+  "item.create_enchantment_industry.experience_cake_base": "buıʇuɐɥɔuƎ ,o ǝsɐᗺ ǝʞɐƆ",
   "itemGroup.create_enchantment_industry.base": "ʎɹʇsnpuI ʇuǝɯʇuɐɥɔuƎ :ǝʇɐǝɹƆ"
 }

@@ -19,14 +19,16 @@
 package plus.dragons.createenchantmentindustry.config;
 
 import net.createmod.catnip.config.ConfigBase;
+import net.createmod.catnip.config.ui.ConfigAnnotations.RequiresRestart;
 
 public class CEIFluidsConfig extends ConfigBase {
     public final ConfigBool experienceVaporizeOnPlacement = b(true,
             "experienceVaporizeOnPlacement",
             Comments.experienceVaporizeOnPlacement);
-    public final ConfigInt printerFluidCapacity = i(1000, 1000,
+    public final ConfigInt printerFluidCapacity = i(4000, 1000,
             "printerFluidCapacity",
-            Comments.printerFluidCapacity);
+            Comments.printerFluidCapacity,
+            RequiresRestart.SERVER.asComment());
     public final ConfigBool printingCustomNameAsItemName = b(false,
             "printingCustomNameAsItemName",
             Comments.printingCustomNameAsItemName
@@ -35,6 +37,14 @@ public class CEIFluidsConfig extends ConfigBase {
             "printingGenerationChange",
             Comments.printingGenerationChange
     );
+    public final ConfigInt blazeEnchanterFluidCapacity = i(4000, 1000,
+            "blazeEnchanterFluidCapacity",
+            Comments.blazeEnchanterFluidCapacity,
+            RequiresRestart.SERVER.asComment());
+    public final ConfigInt blazeForgerFluidCapacity = i(4000, 1000,
+            "blazeForgerFluidCapacity",
+            Comments.blazeForgerFluidCapacity,
+            RequiresRestart.SERVER.asComment());
 
     @Override
     public String getName() {
@@ -50,6 +60,10 @@ public class CEIFluidsConfig extends ConfigBase {
                 "Whether printing custom name (displayed in italic) as item name (displayed in non-italic).";
         static final String printingGenerationChange =
                 "The generation change when copy written books, " +
-                "value smaller than 1 will allow copying copy of copy";
+                "value of 1 will prevent copying copy of copy";
+        static final String blazeEnchanterFluidCapacity =
+                "The amount of liquid a Blaze Enchanter can hold (mB).";
+        static final String blazeForgerFluidCapacity =
+                "The amount of liquid a Blaze Forger can hold (mB).";
     }
 }

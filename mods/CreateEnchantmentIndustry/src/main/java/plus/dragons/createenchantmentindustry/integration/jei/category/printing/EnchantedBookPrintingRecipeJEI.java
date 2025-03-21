@@ -39,7 +39,7 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.fluids.FluidStack;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
-import plus.dragons.createenchantmentindustry.common.enchanting.EnchantingHelper;
+import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 
 public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
@@ -56,7 +56,7 @@ public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
                   enchantment.level);
         this.enchantment = enchantment;
         this.enchantmentBook = EnchantedBookItem.createForEnchantment(enchantment);
-        var cost = EnchantingHelper.getEnchantmentCost(enchantment.enchantment, enchantment.level);
+        var cost = ExperienceHelper.getEnchantmentCost(enchantment.enchantment, enchantment.level);
         this.experience = new FluidStack(CEIFluids.EXPERIENCE.get(), cost);
     }
 

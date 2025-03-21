@@ -20,6 +20,8 @@
   "create_enchantment_industry.recipe.printing.custom_name.base": "Accepts any item",
   "create_enchantment_industry.recipe.printing.custom_name.template": "Custom Name",
   "fluid.create_enchantment_industry.experience": "Liquid Experience",
-  "item.create_enchantment_industry.experience_bucket": "Bucket of Experience",
+  "item.create_enchantment_industry.experience_bucket": "Bucket o' Enchanting",
+  "item.create_enchantment_industry.experience_cake": "Cake o' Enchanting",
+  "item.create_enchantment_industry.experience_cake_base": "Cake Base o' Enchanting",
   "itemGroup.create_enchantment_industry.base": "Create: Enchantment Industry"
 }

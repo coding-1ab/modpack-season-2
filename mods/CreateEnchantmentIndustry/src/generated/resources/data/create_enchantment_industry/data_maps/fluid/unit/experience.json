@@ -7,11 +7,9 @@
           "modid": "cofh_core"
         }
       ],
-      "ratio": 25
+      "neoforge:value": 25
     },
-    "create_enchantment_industry:experience": {
-      "ratio": 1
-    },
+    "create_enchantment_industry:experience": 1,
     "cyclic:xpjuice": {
       "neoforge:conditions": [
         {
@@ -19,7 +17,7 @@
           "modid": "cyclic"
         }
       ],
-      "ratio": 20
+      "neoforge:value": 20
     },
     "enderio:xpjuice": {
       "neoforge:conditions": [
@@ -28,7 +26,7 @@
           "modid": "enderio"
         }
       ],
-      "ratio": 20
+      "neoforge:value": 20
     },
     "industrialforegoing:essence": {
       "neoforge:conditions": [
@@ -37,7 +35,7 @@
           "modid": "industrialforegoing"
         }
       ],
-      "ratio": 20
+      "neoforge:value": 20
     },
     "mob_grinding_utils:fluid_xp": {
       "neoforge:conditions": [
@@ -46,7 +44,7 @@
           "modid": "mob_grinding_utils"
         }
       ],
-      "ratio": 20
+      "neoforge:value": 20
     },
     "pneumaticcraft:memory_essence": {
       "neoforge:conditions": [
@@ -55,7 +53,7 @@
           "modid": "pneumaticcraft"
         }
       ],
-      "ratio": 20
+      "neoforge:value": 20
     },
     "reliquary:xp_juice_still": {
       "neoforge:conditions": [
@@ -64,7 +62,7 @@
           "modid": "reliquary"
         }
       ],
-      "ratio": 20
+      "neoforge:value": 20
     },
     "sophisticatedcore:xp_still": {
       "neoforge:conditions": [
@@ -73,7 +71,7 @@
           "modid": "sophisticatedcore"
         }
       ],
-      "ratio": 20
+      "neoforge:value": 20
     }
   }
 }

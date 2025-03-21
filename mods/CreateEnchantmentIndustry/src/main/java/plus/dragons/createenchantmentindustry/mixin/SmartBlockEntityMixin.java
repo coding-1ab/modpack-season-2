@@ -28,12 +28,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import plus.dragons.createdragonsplus.common.fluids.tank.FluidTankBehaviour;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
 
 @Mixin(SmartBlockEntity.class)
@@ -53,9 +55,12 @@ public abstract class SmartBlockEntityMixin extends CachedRenderBBBlockEntity {
             return;
         var state = this.getBlockState();
         for (var behaviour : this.getAllBehaviours()) {
-            if (!(behaviour instanceof SmartFluidTankBehaviour fluidTank))
-                continue;
-            var handler = fluidTank.getCapability();
+            IFluidHandler handler;
+            if (behaviour instanceof SmartFluidTankBehaviour tank) {
+                handler = tank.getCapability();
+            } else if (behaviour instanceof FluidTankBehaviour tank) {
+                handler = tank.getCapability();
+            } else continue;
             int tanks = handler.getTanks();
             for (int tank = 0; tank < tanks; tank++) {
                 var fluid = handler.getFluidInTank(tank);

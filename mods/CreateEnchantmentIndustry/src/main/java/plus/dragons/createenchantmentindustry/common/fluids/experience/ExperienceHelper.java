@@ -25,6 +25,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantedItemInUse;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
@@ -46,10 +47,10 @@ public class ExperienceHelper {
     public static int getExperienceFromFluid(FluidStack fluid) {
         if (fluid.isEmpty()) return 0;
         int amount = fluid.getAmount();
-        ExperienceRatio ratio = fluid.getFluidHolder().getData(CEIDataMaps.EXPERIENCE_RATIO);
-        if (ratio == null)
+        Integer unit = fluid.getFluidHolder().getData(CEIDataMaps.FLUID_UNIT_EXPERIENCE);
+        if (unit == null)
             return 0;
-        return ratio.fromExperience() ? amount / ratio.ratio() : amount * ratio.ratio();
+        return amount / unit;
     }
 
     public static int getFluidFromExperience(FluidStack fluid, int amount) {
@@ -57,12 +58,10 @@ public class ExperienceHelper {
     }
 
     public static int getFluidFromExperience(Holder<Fluid> fluid, int amount) {
-        ExperienceRatio ratio = fluid.getData(CEIDataMaps.EXPERIENCE_RATIO);
-        if (ratio == null)
+        Integer unit = fluid.getData(CEIDataMaps.FLUID_UNIT_EXPERIENCE);
+        if (unit == null)
             return 0;
-        return ratio.fromExperience()
-               ? amount * ratio.ratio()
-               : amount / ratio.ratio();
+        return amount * unit;
     }
 
     public static FluidStack getExperienceFluid(int amount) {
@@ -109,5 +108,22 @@ public class ExperienceHelper {
                    : 0;
         }
         return amount;
+    }
+
+    public static int getEnchantmentCost(Holder<Enchantment> holder, int level) {
+        var enchantment = holder.value();
+        int cost = enchantment.getMinCost(level);
+        int anvilCost = enchantment.getAnvilCost();
+        int experience = 0;
+        for (int i = 0; i < anvilCost; i++) {
+            experience += getExperienceForLevel(cost++);
+        }
+        return experience;
+    }
+
+    public static int getEnchantmentCost(ItemEnchantments enchantments) {
+        return enchantments.entrySet().stream()
+                .mapToInt(entry -> getEnchantmentCost(entry.getKey(), entry.getIntValue()))
+                .sum();
     }
 }

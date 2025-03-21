@@ -40,7 +40,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
-import plus.dragons.createenchantmentindustry.common.enchanting.EnchantingHelper;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
@@ -56,7 +55,7 @@ public class EnchantedBookPrintingBehaviour implements PrintingBehaviour {
         this.level = level;
         this.original = original;
         this.enchantments = enchantments;
-        cost = EnchantingHelper.getEnchantmentCost(enchantments);
+        cost = ExperienceHelper.getEnchantmentCost(enchantments);
     }
 
     public static Optional<PrintingBehaviour> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
@@ -106,7 +105,7 @@ public class EnchantedBookPrintingBehaviour implements PrintingBehaviour {
         var name = original.getHoverName().copy().withStyle(original.getRarity().getStyleModifier());
         var cost = CEILang.number(this.cost)
                 .add(CreateLang.translate("generic.unit.millibuckets"))
-                .style(this.cost > CEIConfig.fluids().printerFluidCapacity.get()
+                .style(this.cost > CEIConfig.fluids().blazeEnchanterFluidCapacity.get()
                         ? ChatFormatting.RED
                         : ChatFormatting.GREEN);
         CEILang.translate("gui.goggles.printing", name).forGoggles(tooltip);

@@ -20,6 +20,8 @@
   "create_enchantment_industry.recipe.printing.custom_name.base": "接受任意物品",
   "create_enchantment_industry.recipe.printing.custom_name.template": "自定义名称",
   "fluid.create_enchantment_industry.experience": "液态经验",
-  "item.create_enchantment_industry.experience_bucket": "桶装经验",
+  "item.create_enchantment_industry.experience_bucket": "附魔之桶",
+  "item.create_enchantment_industry.experience_cake": "附魔蛋糕",
+  "item.create_enchantment_industry.experience_cake_base": "附魔蛋糕胚",
   "itemGroup.create_enchantment_industry.base": "机械动力：附魔工业"
 }
