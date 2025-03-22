@@ -2,6 +2,7 @@ package com.mrh0.createaddition.recipe.charging;
 
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.index.CARecipes;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +12,8 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.wrapper.RecipeWrapper;
+import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
+import org.jetbrains.annotations.NotNull;
 
 public class ChargingRecipe implements Recipe<RecipeWrapper> {
 
@@ -31,18 +33,13 @@ public class ChargingRecipe implements Recipe<RecipeWrapper> {
 
 
 	@Override
-	public boolean matches(RecipeWrapper wrapper, Level world) {
-		if(ingredient == null)
-			return false;
-		if(wrapper == null)
-			return false;
-		if(wrapper.getItem(0) == null)
-			return false;
+	public boolean matches(@NotNull RecipeWrapper wrapper, @NotNull Level world) {
+		if(ingredient == null) return false;
 		return ingredient.test(wrapper.getItem(0));
 	}
 
 	@Override
-	public ItemStack assemble(RecipeWrapper pContainer, RegistryAccess pRegistryAccess) {
+	public @NotNull ItemStack assemble(@NotNull RecipeWrapper recipeWrapper, HolderLookup.@NotNull Provider provider) {
 		return output;
 	}
 
@@ -52,7 +49,7 @@ public class ChargingRecipe implements Recipe<RecipeWrapper> {
 	}
 
 	@Override
-	public ItemStack getResultItem(RegistryAccess pRegistryAccess) {
+	public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider provider) {
 		return output;
 	}
 
@@ -61,19 +58,13 @@ public class ChargingRecipe implements Recipe<RecipeWrapper> {
 	}
 
 	@Override
-	public ResourceLocation getId() {
-		return id;
-	}
-
-
-	@Override
-	public RecipeSerializer<?> getSerializer() {
+	public @NotNull RecipeSerializer<?> getSerializer() {
 		return CARecipes.CHARGING.get();
 	}
 
 
 	@Override
-	public RecipeType<?> getType() {
+	public @NotNull RecipeType<?> getType() {
 		return CARecipes.CHARGING_TYPE.get();
 	}
 

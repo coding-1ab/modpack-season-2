@@ -11,11 +11,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.EnergyStorage;
-import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 
 public class PortableEnergyInterfaceBlockEntity extends PortableStorageInterfaceBlockEntity {
@@ -52,13 +47,6 @@ public class PortableEnergyInterfaceBlockEntity extends PortableStorageInterface
 
 	private LazyOptional<IEnergyStorage> createEmptyHandler() {
 		return LazyOptional.of(() -> new InterfaceEnergyHandler(new EnergyStorage(0)));
-	}
-
-	@Override
-	public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, Direction side) {
-		if (cap == ForgeCapabilities.ENERGY) return this.capability.cast();
-		if (CreateAddition.CC_ACTIVE && Peripherals.isPeripheral(cap)) return this.peripheral.cast();
-		return super.getCapability(cap, side);
 	}
 
 	// Implement protected methods.

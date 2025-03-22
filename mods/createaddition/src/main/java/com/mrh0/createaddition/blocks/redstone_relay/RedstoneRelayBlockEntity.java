@@ -27,6 +27,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -36,8 +37,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -219,26 +218,26 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 	}
 
 	@Override
-	public void read(CompoundTag nbt, boolean clientPacket) {
-		super.read(nbt, clientPacket);
+	protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+		super.read(tag, registries, clientPacket);
 		// Convert old nbt data. x0, y0, z0, node0 & type0 etc.
-		if (!clientPacket && nbt.contains("node0")) {
-			convertOldNbt(nbt);
+		if (!clientPacket && tag.contains("node0")) {
+			convertOldNbt(tag);
 			setChanged();
 		}
 
 		// Read the nodes.
 		invalidateLocalNodes();
 		invalidateNodeCache();
-		ListTag nodes = nbt.getList(LocalNode.NODES, Tag.TAG_COMPOUND);
-		nodes.forEach(tag -> {
-			LocalNode localNode = new LocalNode(this, (CompoundTag) tag);
+		ListTag nodes = tag.getList(LocalNode.NODES, Tag.TAG_COMPOUND);
+		nodes.forEach(itag -> {
+			LocalNode localNode = new LocalNode(this, (CompoundTag) itag);
 			this.localNodes[localNode.getIndex()] = localNode;
 		});
 
 		// Check if this was a contraption.
-		if (nbt.contains("contraption") && !clientPacket) {
-			this.wasContraption = nbt.getBoolean("contraption");
+		if (tag.contains("contraption") && !clientPacket) {
+			this.wasContraption = tag.getBoolean("contraption");
 			NodeRotation rotation = getBlockState().getValue(NodeRotation.ROTATION);
 			if (rotation != NodeRotation.NONE)
 				level.setBlock(getBlockPos(), getBlockState().setValue(NodeRotation.ROTATION, NodeRotation.NONE), 0);
@@ -257,18 +256,18 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 	}
 
 	@Override
-	public void write(CompoundTag nbt, boolean clientPacket) {
-		super.write(nbt, clientPacket);
+	public void writeSafe(CompoundTag tag, HolderLookup.Provider registries) {
+		super.writeSafe(tag, registries);
 		// Write nodes.
 		ListTag nodes = new ListTag();
 		for (int i = 0; i < getNodeCount(); i++) {
 			LocalNode localNode = this.localNodes[i];
 			if (localNode == null) continue;
-			CompoundTag tag = new CompoundTag();
-			localNode.write(tag);
-			nodes.add(tag);
+			CompoundTag newTag = new CompoundTag();
+			localNode.write(newTag);
+			nodes.add(newTag);
 		}
-		nbt.put(LocalNode.NODES, nodes);
+		tag.put(LocalNode.NODES, nodes);
 	}
 
 	/**
@@ -327,6 +326,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 
 	@Override
 	public void remove() {
+		if (level == null) return;
 		if (level.isClientSide()) return;
 		// Remove all nodes.
 		for (int i = 0; i < getNodeCount(); i++) {
@@ -341,7 +341,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 		}
 
 		invalidateNodeCache();
-		invalidateCaps();
+		// invalidateCaps();
 
 		// Invalidate
 		if (networkIn != null) networkIn.invalidate();
@@ -379,16 +379,8 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 			EnergyNetworkPacket.send(worldPosition, getNetwork(pack.getNode()).getPulled(), getNetwork(pack.getNode()).getPushed(), player);
 	}
 
-	@Nonnull
-	@Override
-	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @javax.annotation.Nullable Direction side) {
-		if (CreateAddition.CC_ACTIVE && Peripherals.isPeripheral(cap)) return this.peripheral.cast();
-		return super.getCapability(cap, side);
-	}
-
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		@SuppressWarnings("resource")
 		HitResult ray = Minecraft.getInstance().hitResult;
 		if(ray == null)
 			return false;

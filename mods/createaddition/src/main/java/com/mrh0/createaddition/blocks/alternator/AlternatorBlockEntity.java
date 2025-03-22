@@ -129,19 +129,14 @@ public class AlternatorBlockEntity extends KineticBlockEntity implements IEnergy
 		return CABlocks.ALTERNATOR.get();
 	}
 
-	@Override
-	public void remove() {
-		lazyEnergy.invalidate();
-		super.remove();
-	}
-
 	public void firstTick() {
 		updateCache();
 	};
 
 	public void updateCache() {
-		if(level.isClientSide()) return;
-		for(Direction side : Direction.values()) {
+		if (level == null) return;
+		if (level.isClientSide()) return;
+		for (Direction side : Direction.values()) {
 			BlockEntity te = level.getBlockEntity(worldPosition.relative(side));
 			if(te == null) {
 				setCache(side, LazyOptional.empty());

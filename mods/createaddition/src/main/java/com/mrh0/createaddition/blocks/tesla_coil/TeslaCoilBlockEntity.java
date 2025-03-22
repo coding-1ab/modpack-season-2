@@ -1,7 +1,7 @@
 package com.mrh0.createaddition.blocks.tesla_coil;
 
 import com.mrh0.createaddition.config.CommonConfig;
-import com.mrh0.createaddition.energy.BaseElectricBlockEntity;
+import com.mrh0.createaddition.energy.AbstractElectricBlockEntity;
 import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.index.CADamageTypes;
 import com.mrh0.createaddition.index.CAEffects;
@@ -27,19 +27,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.wrapper.RecipeWrapper;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHaveGoggleInformation {
+public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements IHaveGoggleInformation {
 
 	private Optional<ChargingRecipe> recipeCache = Optional.empty();
 

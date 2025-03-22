@@ -373,8 +373,10 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 		if (level == null) return;
 		if (!(level instanceof ServerLevel)) return;
 		if (!level.isLoaded(getBlockPos())) return;
-		externalStorageInvalid = false;
 		var side = getBlockState().getValue(AbstractConnectorBlock.FACING);
+		if (!level.isLoaded(getBlockPos().relative(side))) return;
+		externalStorageInvalid = false;
+
 		//if (!level.isLoaded(worldPosition.relative(side))) {
 		//	external = LazyOptional.empty();
 		//	return;
@@ -394,8 +396,8 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 		external = BlockCapabilityCache.create(
 			Capabilities.EnergyStorage.BLOCK, // capability to cache
 			(ServerLevel) level, // level
-			getPos(),
-			side,
+			getPos().relative(side),
+			side.getOpposite(),
 			() -> !this.isRemoved(), // validity check (because the cache might outlive the object it belongs to)
 			() -> { externalStorageInvalid = true; } // invalidation listener
 		);

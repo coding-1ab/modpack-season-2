@@ -4,9 +4,10 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.world.item.crafting.RecipeInput;
+import net.neoforged.neoforge.fluids.FluidStack;
 
-public class FluidRecipeWrapper implements Container {
+public class FluidRecipeWrapper implements Container, RecipeInput {
 
 	public FluidStack fluid;
 	
@@ -32,6 +33,11 @@ public class FluidRecipeWrapper implements Container {
 	@Override
 	public ItemStack getItem(int p_70301_1_) {
 		return new ItemStack(Items.AIR);
+	}
+
+	@Override
+	public int size() {
+		return 0;
 	}
 
 	@Override

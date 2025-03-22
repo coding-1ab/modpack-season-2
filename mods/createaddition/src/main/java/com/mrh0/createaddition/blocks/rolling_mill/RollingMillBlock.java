@@ -12,6 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -27,11 +28,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
 
 public class RollingMillBlock extends HorizontalKineticBlock implements IBE<RollingMillBlockEntity> {
 
@@ -42,16 +42,24 @@ public class RollingMillBlock extends HorizontalKineticBlock implements IBE<Roll
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+	public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		return ROLLING_MILL_SHAPE;
 	}
-	
+
+	@Override
+	protected @NotNull ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+		return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+	}
+
+	@Override
+	protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+		return InteractionResult.PASS;
+	}
+
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-		if (!player.getItemInHand(handIn).isEmpty())
-			return InteractionResult.PASS;
-		if (worldIn.isClientSide)
-			return InteractionResult.SUCCESS;
+		if (!player.getItemInHand(handIn).isEmpty()) return InteractionResult.PASS;
+		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
 
 		withBlockEntityDo(worldIn, pos, rollingMill -> {
 			boolean emptyOutput = true;
@@ -83,24 +91,19 @@ public class RollingMillBlock extends HorizontalKineticBlock implements IBE<Roll
 	public void updateEntityAfterFallOn(BlockGetter worldIn, Entity entityIn) {
 		super.updateEntityAfterFallOn(worldIn, entityIn);
 
-		if (entityIn.level().isClientSide)
-			return;
-		if (!(entityIn instanceof ItemEntity))
-			return;
-		if (!entityIn.isAlive())
-			return;
+        if (entityIn.level().isClientSide) return;
+		if (!(entityIn instanceof ItemEntity)) return;
+		if (!entityIn.isAlive()) return;
 
 		RollingMillBlockEntity rollingMill = null;
 		for (BlockPos pos : Iterate.hereAndBelow(entityIn.blockPosition())) {
 			rollingMill = getBlockEntity(worldIn, pos);
 		}
-		if (rollingMill == null)
-			return;
+		if (rollingMill == null) return;
 
 		ItemEntity itemEntity = (ItemEntity) entityIn;
 		LazyOptional<IItemHandler> capability = rollingMill.getCapability(ForgeCapabilities.ITEM_HANDLER);
-		if (!capability.isPresent())
-			return;
+		if (!capability.isPresent()) return;
 
 		ItemStack remainder = capability.orElse(new ItemStackHandler()).insertItem(0, itemEntity.getItem(), false);
 		if (remainder.isEmpty())
@@ -110,14 +113,14 @@ public class RollingMillBlock extends HorizontalKineticBlock implements IBE<Roll
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (state.hasBlockEntity() && state.getBlock() != newState.getBlock()) {
-			withBlockEntityDo(worldIn, pos, te -> {
-				ItemHelper.dropContents(worldIn, pos, te.inputInv);
-				ItemHelper.dropContents(worldIn, pos, te.outputInv);
+			withBlockEntityDo(level, pos, be -> {
+				ItemHelper.dropContents(level, pos, be.inputInv);
+				ItemHelper.dropContents(level, pos, be.outputInv);
 			});
 
-			worldIn.removeBlockEntity(pos);
+			level.removeBlockEntity(pos);
 		}
 	}
 

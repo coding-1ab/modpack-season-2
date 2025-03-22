@@ -6,6 +6,7 @@ import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.energy.network.EnergyNetwork;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,15 +33,15 @@ public class SmallLightConnectorBlockEntity extends AbstractConnectorBlockEntity
     }
 
     @Override
-    public void read(CompoundTag nbt, boolean clientPacket) {
+    public void read(CompoundTag nbt, HolderLookup.Provider registries, boolean clientPacket) {
         tickToggleTimer = nbt.getInt("tick_toggle_timer");
-        super.read(nbt, clientPacket);
+        super.read(nbt, registries, clientPacket);
     }
 
     @Override
-    public void write(CompoundTag nbt, boolean clientPacket) {
+    public void writeSafe(CompoundTag nbt, HolderLookup.Provider registries) {
         nbt.putInt("tick_toggle_timer", tickToggleTimer);
-        super.write(nbt, clientPacket);
+        super.writeSafe(nbt, registries);
     }
 
     @Override

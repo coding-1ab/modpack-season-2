@@ -17,6 +17,7 @@ import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
@@ -28,6 +29,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -37,22 +39,20 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.IFluidTank;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, IObserveTileEntity {
 	public static final int MAX_HEAT_CAPACITY = 10000;
@@ -78,7 +78,6 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 			.orElse(Direction.SOUTH)) + 180) % 360);
 
 		tankInventory = createInventory();
-		fluidCapability = LazyOptional.of(() -> tankInventory);
 	}
 
 	@Override
@@ -87,75 +86,60 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	}
 
 	// Custom fluid handling
-	protected LazyOptional<IFluidHandler> fluidCapability;
 	protected FluidTank tankInventory;
 
-	private Optional<LiquidBurningRecipe> recipeCache = Optional.empty();
+	private Optional<RecipeHolder<LiquidBurningRecipe>> recipeCache = Optional.empty();
 	private Fluid lastFluid = null;
-	private int updateTimeout = 10;
-	private boolean changed = true;
 
 	protected SmartFluidTank createInventory() {
 		return new SmartFluidTank(4000, this::onFluidStackChanged);
 	}
 
 	protected void onFluidStackChanged(FluidStack newFluidStack) {
-		if (!hasLevel())
-			return;
+		if (!hasLevel()) return;
 		update(newFluidStack);
 	}
 
 	private void update(FluidStack stack) {
-		if(level.isClientSide())
-			return;
-		if(stack.getFluid() != lastFluid)
-			recipeCache = find(stack, level);
+		if (level == null) return;
+		if (level.isClientSide()) return;
+		if (stack.getFluid() != lastFluid) recipeCache = find(stack, level);
 		lastFluid = stack.getFluid();
-		changed = true;
 	}
 
-	public Optional<LiquidBurningRecipe> find(FluidStack stack, Level level) {
-		if(stack == null)
-			return Optional.empty();
-		if(level == null)
-			return Optional.empty();
-		if(CARecipes.LIQUID_BURNING_TYPE.get() == null)
-			return Optional.empty();
+	public Optional<RecipeHolder<LiquidBurningRecipe>> find(FluidStack stack, Level level) {
+		if (stack == null) return Optional.empty();
+		if (level == null) return Optional.empty();
+		if (CARecipes.LIQUID_BURNING_TYPE.get() == null) return Optional.empty();
 		return level.getRecipeManager().getRecipeFor(CARecipes.LIQUID_BURNING_TYPE.get(), new FluidRecipeWrapper(stack), level);
-	}
-
-	@Override
-	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-		if (cap == ForgeCapabilities.FLUID_HANDLER)
-			return fluidCapability.cast();
-		return super.getCapability(cap, side);
 	}
 
 	public boolean first = true;
 	public void burningTick() {
-		if(level.isClientSide())
+		if (level == null) return;
+		if (level.isClientSide())
 			return;
 
-		if(first)
+		if (first)
 			update(tankInventory.getFluid());
 		first = false;
 
-		if(remainingBurnTime < 1)
+		if (remainingBurnTime < 1)
+			if (recipeCache.isEmpty()) return;
 
-		if(recipeCache.isEmpty()) return;
-
-		if(tankInventory.getFluidAmount() < 100) return;
-		if(remainingBurnTime > MAX_HEAT_CAPACITY) return;
+		if (tankInventory.getFluidAmount() < 100) return;
+		if (remainingBurnTime > MAX_HEAT_CAPACITY) return;
+		if (recipeCache.isEmpty()) return;
 
 		// Added try catch because this crashes for some reason for a minority of players, very strange.
 		try {
-			remainingBurnTime += recipeCache.get().getBurnTime() / 10;
-			activeFuel = recipeCache.get().isSuperheated() ? FuelType.SPECIAL : FuelType.NORMAL;
+			remainingBurnTime += recipeCache.get().value().getBurnTime() / 10;
+			activeFuel = recipeCache.get().value().isSuperheated() ? FuelType.SPECIAL : FuelType.NORMAL;
 		}
 		catch(Exception e) {
 			return;
 		}
-		tankInventory.drain(100, FluidAction.EXECUTE);
+		tankInventory.drain(100, IFluidHandler.FluidAction.EXECUTE);
 
 		BlazeBurnerBlock.HeatLevel prev = getHeatLevelFromBlock();
 		playSound();
@@ -186,6 +170,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	public void tick() {
 		super.tick();
 
+		if (level == null) return;
 		if (level.isClientSide) {
 			tickAnimation();
 			if (!isVirtual())
@@ -246,26 +231,26 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	}
 
 	@Override
-	public void write(CompoundTag compound, boolean clientPacket) {
+	public void writeSafe(CompoundTag tag, HolderLookup.Provider registries) {
 		if (!isCreative) {
-			compound.putInt("fuelLevel", activeFuel.ordinal());
-			compound.putInt("burnTimeRemaining", remainingBurnTime);
-		} else compound.putBoolean("isCreative", true);
-		if (goggles) compound.putBoolean("Goggles", true);
-		if (hat) compound.putBoolean("TrainHat", true);
-		compound.put("TankContent", tankInventory.writeToNBT(new CompoundTag()));
-		super.write(compound, clientPacket);
+			tag.putInt("fuelLevel", activeFuel.ordinal());
+			tag.putInt("burnTimeRemaining", remainingBurnTime);
+		} else tag.putBoolean("isCreative", true);
+		if (goggles) tag.putBoolean("Goggles", true);
+		if (hat) tag.putBoolean("TrainHat", true);
+		tag.put("TankContent", tankInventory.writeToNBT(registries, new CompoundTag()));
+		super.writeSafe(tag, registries);
 	}
 
 	@Override
-	protected void read(CompoundTag compound, boolean clientPacket) {
-		activeFuel = FuelType.values()[compound.getInt("fuelLevel")];
-		remainingBurnTime = compound.getInt("burnTimeRemaining");
-		isCreative = compound.getBoolean("isCreative");
-		goggles = compound.contains("Goggles");
-		hat = compound.contains("TrainHat");
-		tankInventory.readFromNBT(compound.getCompound("TankContent"));
-		super.read(compound, clientPacket);
+	protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+		activeFuel = FuelType.values()[tag.getInt("fuelLevel")];
+		remainingBurnTime = tag.getInt("burnTimeRemaining");
+		isCreative = tag.getBoolean("isCreative");
+		goggles = tag.contains("Goggles");
+		hat = tag.contains("TrainHat");
+		tankInventory.readFromNBT(registries, tag.getCompound("TankContent"));
+		super.read(tag, registries, clientPacket);
 	}
 
 	public BlazeBurnerBlock.HeatLevel getHeatLevelFromBlock() {
@@ -277,39 +262,34 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	}
 
 	protected void setBlockHeat(BlazeBurnerBlock.HeatLevel heat) {
+		if (level == null) return;
 		BlazeBurnerBlock.HeatLevel inBlockState = getHeatLevelFromBlock();
-		if (inBlockState == heat)
-			return;
+		if (inBlockState == heat) return;
 		level.setBlockAndUpdate(worldPosition, getBlockState().setValue(LiquidBlazeBurnerBlock.HEAT_LEVEL, heat));
 		notifyUpdate();
 	}
 
 	private boolean tryUpdateLiquid(ItemStack itemStack, boolean simulate) {
-		LazyOptional<IFluidHandlerItem> cap = itemStack
-				.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
-		if (!cap.isPresent()) return false;
-		IFluidHandlerItem handler = cap.orElse(null);
-		if (handler.getFluidInTank(0).isEmpty()) return false;
-		FluidStack stack = handler.getFluidInTank(0);
-		Optional<LiquidBurningRecipe> recipe = find(stack, level);
-		if (!recipe.isPresent()) return false;
+		if (level == null) return false;
+		var itemHandler = itemStack.getCapability(Capabilities.FluidHandler.ITEM);
 
-		LazyOptional<IFluidHandler> tecap = getCapability(ForgeCapabilities.FLUID_HANDLER);
-		if (!tecap.isPresent()) return false;
-		IFluidHandler tehandler = tecap.orElse(null);
-		if (tehandler.getTankCapacity(0) - tehandler.getFluidInTank(0).getAmount() < 1000) return false;
+		if (itemHandler == null) return false;
+		if (itemHandler.getFluidInTank(0).isEmpty()) return false;
+		FluidStack stack = itemHandler.getFluidInTank(0);
+		Optional<RecipeHolder<LiquidBurningRecipe>> recipe = find(stack, level);
+		if (recipe.isPresent()) return false;
 
-		if(!simulate) tehandler.fill(new FluidStack(handler.getFluidInTank(0).getFluid(), 1000), FluidAction.EXECUTE);
+		var beHandler = level.getCapability(Capabilities.FluidHandler.BLOCK, getBlockPos(), null);
+		if (beHandler == null) return false;
+		if (beHandler.getTankCapacity(0) - beHandler.getFluidInTank(0).getAmount() < 1000) return false;
+
+		if (!simulate) beHandler.fill(new FluidStack(itemHandler.getFluidInTank(0).getFluid(), 1000), IFluidHandler.FluidAction.EXECUTE);
 		//if (!player.isCreative())
 		//	player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET, 1));
-		if(!simulate) level.playSound(null, getBlockPos(), SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, .125f + level.random.nextFloat() * .125f, .75f - level.random.nextFloat() * .25f);
+		if (!simulate) level.playSound(null, getBlockPos(), SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, .125f + level.random.nextFloat() * .125f, .75f - level.random.nextFloat() * .25f);
 		return true;
 	}
 
-	/**
-	 * @return true if the heater updated its burn time and an item should be
-	 *         consumed
-	 */
 	protected boolean tryUpdateFuel(ItemStack itemStack, boolean forceOverflow, boolean simulate) {
 		if (isCreative) return false;
 
@@ -323,7 +303,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 			newBurnTime = 1000;
 			newFuel = FuelType.SPECIAL;
 		} else {
-			newBurnTime = ForgeHooks.getBurnTime(itemStack, null);
+			newBurnTime = itemStack.getBurnTime(null);
 			if (newBurnTime > 0)
 				newFuel = FuelType.NORMAL;
 			else if (AllItemTags.BLAZE_BURNER_FUEL_REGULAR.matches(itemStack)) {
@@ -346,6 +326,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 		activeFuel = newFuel;
 		remainingBurnTime = newBurnTime;
 
+		if (level == null) return false;
 		if (level.isClientSide) {
 			spawnParticleBurst(activeFuel == FuelType.SPECIAL);
 			return true;
@@ -465,8 +446,9 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+		if (level == null) return false;
 		ObservePacket.send(worldPosition, 0);
-		return containedFluidTooltip(tooltip, isPlayerSneaking, this.getCapability(ForgeCapabilities.FLUID_HANDLER));
+		return containedFluidTooltip(tooltip, isPlayerSneaking, level.getCapability(Capabilities.FluidHandler.BLOCK, getBlockPos(), null));
 	}
 
 	@Override

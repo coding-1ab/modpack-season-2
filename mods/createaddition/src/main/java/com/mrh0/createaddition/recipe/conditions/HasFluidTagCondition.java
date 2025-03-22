@@ -1,63 +1,49 @@
 package com.mrh0.createaddition.recipe.conditions;
 
-import com.google.gson.JsonObject;
-
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistries.Keys;
+import net.neoforged.neoforge.common.conditions.ICondition;
 
-public class HasFluidTagCondition implements ICondition {
-	private static final ResourceLocation NAME = new ResourceLocation("createaddition", "has_fluid_tag");
-	private final ResourceLocation tagName;
+public record HasFluidTagCondition(TagKey<Fluid> tag) implements ICondition {
+	public static final MapCodec<HasFluidTagCondition> CODEC = RecordCodecBuilder.mapCodec((builder) -> {
+		return builder.group(ResourceLocation.CODEC.xmap((loc) -> {
+			return TagKey.create(Registries.FLUID, loc);
+		}, TagKey::location).fieldOf("fluidTag").forGetter(HasFluidTagCondition::tag)).apply(builder, HasFluidTagCondition::new);//
+	});
 
 	public HasFluidTagCondition(String location) {
-		this(new ResourceLocation(location));
+		this(ResourceLocation.parse(location));
 	}
 
 	public HasFluidTagCondition(String namespace, String path) {
-		this(new ResourceLocation(namespace, path));
+		this(ResourceLocation.fromNamespaceAndPath(namespace, path));
 	}
 
 	public HasFluidTagCondition(ResourceLocation tag) {
-		this.tagName = tag;
+		this(TagKey.create(Registries.FLUID, tag));
 	}
 
-	@Override
-	public ResourceLocation getID() {
-		return NAME;
+	public HasFluidTagCondition(TagKey<Fluid> tag) {
+		this.tag = tag;
 	}
 
-	@Override
+	public boolean test(ICondition.IContext context) {
+		return !context.getTag(this.tag).isEmpty();
+	}
+
+	public MapCodec<? extends ICondition> codec() {
+		return CODEC;
+	}
+
 	public String toString() {
-		return "has_fluid_tag(\"" + tagName + "\")";
+		return "has_fluid_tag(\"" + String.valueOf(this.tag.location()) + "\")";
 	}
 
-	public static class Serializer implements IConditionSerializer<HasFluidTagCondition> {
-		public static final Serializer INSTANCE = new Serializer();
-
-		@Override
-		public void write(JsonObject json, HasFluidTagCondition value) {
-			json.addProperty("fluidTag", value.tagName.toString());
-		}
-
-		@Override
-		public HasFluidTagCondition read(JsonObject json) {
-			return new HasFluidTagCondition(new ResourceLocation(GsonHelper.getAsString(json, "fluidTag")));
-		}
-
-		@Override
-		public ResourceLocation getID() {
-			return HasFluidTagCondition.NAME;
-		}
-	}
-
-	@Override
-	public boolean test(IContext context) {
-		return !context.getTag(new TagKey<Fluid>(Keys.FLUIDS, tagName)).isEmpty();
+	public TagKey<Fluid> tag() {
+		return this.tag;
 	}
 }

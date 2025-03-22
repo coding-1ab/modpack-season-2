@@ -5,6 +5,7 @@ import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.recipe.FluidRecipeWrapper;
 import com.simibubi.create.foundation.fluid.FluidIngredient;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -42,7 +43,7 @@ public class LiquidBurningRecipe implements Recipe<FluidRecipeWrapper> {
 	}
 
 	@Override
-	public ItemStack assemble(FluidRecipeWrapper pContainer, RegistryAccess pRegistryAccess) {
+	public ItemStack assemble(FluidRecipeWrapper fluidRecipeWrapper, HolderLookup.Provider provider) {
 		return new ItemStack(Items.AIR);
 	}
 
@@ -52,13 +53,8 @@ public class LiquidBurningRecipe implements Recipe<FluidRecipeWrapper> {
 	}
 
 	@Override
-	public ItemStack getResultItem(RegistryAccess pRegistryAccess) {
+	public ItemStack getResultItem(HolderLookup.Provider provider) {
 		return new ItemStack(Items.AIR);
-	}
-
-	@Override
-	public ResourceLocation getId() {
-		return this.id;
 	}
 
 	@Override
