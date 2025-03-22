@@ -88,7 +88,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setFloat(float value) {
         if (this.type != Type.FLOAT ||
-            this.value.getInt(0) == Float.floatToRawIntBits(value)) {
+            Float.floatToIntBits(this.value.getFloat(0)) == Float.floatToIntBits(value)) {
             return;
         }
 
@@ -99,8 +99,8 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVector(float x, float y) {
         if (this.type != Type.FLOAT_VEC2 ||
-            (this.value.getInt(0) == Float.floatToRawIntBits(x) &&
-             this.value.getInt(4) == Float.floatToRawIntBits(y))) {
+            (Float.floatToIntBits(this.value.getFloat(0)) == Float.floatToIntBits(x) &&
+             Float.floatToIntBits(this.value.getFloat(4)) == Float.floatToIntBits(y))) {
             return;
         }
 
@@ -112,9 +112,9 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVector(float x, float y, float z) {
         if (this.type != Type.FLOAT_VEC3 ||
-            (this.value.getInt(0) == Float.floatToRawIntBits(x) &&
-             this.value.getInt(4) == Float.floatToRawIntBits(y) &&
-             this.value.getInt(8) == Float.floatToRawIntBits(z))) {
+            (Float.floatToIntBits(this.value.getFloat(0)) == Float.floatToIntBits(x) &&
+             Float.floatToIntBits(this.value.getFloat(4)) == Float.floatToIntBits(y) &&
+             Float.floatToIntBits(this.value.getFloat(8)) == Float.floatToIntBits(z))) {
             return;
         }
 
@@ -127,10 +127,10 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVector(float x, float y, float z, float w) {
         if (this.type != Type.FLOAT_VEC4 ||
-            (this.value.getInt(0) == Float.floatToRawIntBits(x) &&
-             this.value.getInt(4) == Float.floatToRawIntBits(y) &&
-             this.value.getInt(8) == Float.floatToRawIntBits(z) &&
-             this.value.getInt(2) == Float.floatToRawIntBits(w))) {
+            (Float.floatToIntBits(this.value.getFloat(0)) == Float.floatToIntBits(x) &&
+             Float.floatToIntBits(this.value.getFloat(4)) == Float.floatToIntBits(y) &&
+             Float.floatToIntBits(this.value.getFloat(8)) == Float.floatToIntBits(z) &&
+             Float.floatToIntBits(this.value.getFloat(2)) == Float.floatToIntBits(w))) {
             return;
         }
 
@@ -205,7 +205,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
 
         int length = Math.min(this.length, values.length);
         for (int i = 0; i < length; i++) {
-            if (this.value.getInt(i * 4) != Float.floatToRawIntBits(values[i])) {
+            if (this.value.getInt(i * 4) != Float.floatToIntBits(values[i])) {
                 this.value.asFloatBuffer().put(0, values, 0, length);
                 this.upload();
                 break;
@@ -355,10 +355,10 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
             return;
         }
 
-        if (this.value.getInt(0) == Float.floatToRawIntBits(value.m00()) &&
-            this.value.getInt(4) == Float.floatToRawIntBits(value.m01()) &&
-            this.value.getInt(8) == Float.floatToRawIntBits(value.m10()) &&
-            this.value.getInt(12) == Float.floatToRawIntBits(value.m11())) {
+        if (Float.floatToIntBits(this.value.getFloat(0)) == Float.floatToIntBits(value.m00()) &&
+            Float.floatToIntBits(this.value.getFloat(4)) == Float.floatToIntBits(value.m01()) &&
+            Float.floatToIntBits(this.value.getFloat(8)) == Float.floatToIntBits(value.m10()) &&
+            Float.floatToIntBits(this.value.getFloat(12)) == Float.floatToIntBits(value.m11())) {
             return;
         }
 
@@ -372,15 +372,15 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
             return;
         }
 
-        if (this.value.getInt(0) == Float.floatToRawIntBits(value.m00()) &&
-            this.value.getInt(4) == Float.floatToRawIntBits(value.m01()) &&
-            this.value.getInt(8) == Float.floatToRawIntBits(value.m02()) &&
-            this.value.getInt(12) == Float.floatToRawIntBits(value.m10()) &&
-            this.value.getInt(16) == Float.floatToRawIntBits(value.m11()) &&
-            this.value.getInt(20) == Float.floatToRawIntBits(value.m12()) &&
-            this.value.getInt(24) == Float.floatToRawIntBits(value.m20()) &&
-            this.value.getInt(28) == Float.floatToRawIntBits(value.m21()) &&
-            this.value.getInt(32) == Float.floatToRawIntBits(value.m22())) {
+        if (Float.floatToIntBits(this.value.getFloat(0)) == Float.floatToIntBits(value.m00()) &&
+            Float.floatToIntBits(this.value.getFloat(4)) == Float.floatToIntBits(value.m01()) &&
+            Float.floatToIntBits(this.value.getFloat(8)) == Float.floatToIntBits(value.m02()) &&
+            Float.floatToIntBits(this.value.getFloat(12)) == Float.floatToIntBits(value.m10()) &&
+            Float.floatToIntBits(this.value.getFloat(16)) == Float.floatToIntBits(value.m11()) &&
+            Float.floatToIntBits(this.value.getFloat(20)) == Float.floatToIntBits(value.m12()) &&
+            Float.floatToIntBits(this.value.getFloat(24)) == Float.floatToIntBits(value.m20()) &&
+            Float.floatToIntBits(this.value.getFloat(28)) == Float.floatToIntBits(value.m21()) &&
+            Float.floatToIntBits(this.value.getFloat(32)) == Float.floatToIntBits(value.m22())) {
             return;
         }
 
@@ -394,22 +394,22 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
             return;
         }
 
-        if (this.value.getInt(0) == Float.floatToRawIntBits(value.m00()) &&
-            this.value.getInt(4) == Float.floatToRawIntBits(value.m01()) &&
-            this.value.getInt(8) == Float.floatToRawIntBits(value.m02()) &&
-            this.value.getInt(12) == Float.floatToRawIntBits(value.m03()) &&
-            this.value.getInt(16) == Float.floatToRawIntBits(value.m10()) &&
-            this.value.getInt(20) == Float.floatToRawIntBits(value.m11()) &&
-            this.value.getInt(24) == Float.floatToRawIntBits(value.m12()) &&
-            this.value.getInt(28) == Float.floatToRawIntBits(value.m13()) &&
-            this.value.getInt(32) == Float.floatToRawIntBits(value.m20()) &&
-            this.value.getInt(36) == Float.floatToRawIntBits(value.m21()) &&
-            this.value.getInt(40) == Float.floatToRawIntBits(value.m22()) &&
-            this.value.getInt(44) == Float.floatToRawIntBits(value.m23()) &&
-            this.value.getInt(48) == Float.floatToRawIntBits(value.m30()) &&
-            this.value.getInt(52) == Float.floatToRawIntBits(value.m31()) &&
-            this.value.getInt(56) == Float.floatToRawIntBits(value.m32()) &&
-            this.value.getInt(60) == Float.floatToRawIntBits(value.m33())) {
+        if (Float.floatToIntBits(this.value.getFloat(0)) == Float.floatToIntBits(value.m00()) &&
+            Float.floatToIntBits(this.value.getFloat(4)) == Float.floatToIntBits(value.m01()) &&
+            Float.floatToIntBits(this.value.getFloat(8)) == Float.floatToIntBits(value.m02()) &&
+            Float.floatToIntBits(this.value.getFloat(12)) == Float.floatToIntBits(value.m03()) &&
+            Float.floatToIntBits(this.value.getFloat(16)) == Float.floatToIntBits(value.m10()) &&
+            Float.floatToIntBits(this.value.getFloat(20)) == Float.floatToIntBits(value.m11()) &&
+            Float.floatToIntBits(this.value.getFloat(24)) == Float.floatToIntBits(value.m12()) &&
+            Float.floatToIntBits(this.value.getFloat(28)) == Float.floatToIntBits(value.m13()) &&
+            Float.floatToIntBits(this.value.getFloat(32)) == Float.floatToIntBits(value.m20()) &&
+            Float.floatToIntBits(this.value.getFloat(36)) == Float.floatToIntBits(value.m21()) &&
+            Float.floatToIntBits(this.value.getFloat(40)) == Float.floatToIntBits(value.m22()) &&
+            Float.floatToIntBits(this.value.getFloat(44)) == Float.floatToIntBits(value.m23()) &&
+            Float.floatToIntBits(this.value.getFloat(48)) == Float.floatToIntBits(value.m30()) &&
+            Float.floatToIntBits(this.value.getFloat(52)) == Float.floatToIntBits(value.m31()) &&
+            Float.floatToIntBits(this.value.getFloat(56)) == Float.floatToIntBits(value.m32()) &&
+            Float.floatToIntBits(this.value.getFloat(60)) == Float.floatToIntBits(value.m33())) {
             return;
         }
 
@@ -433,10 +433,10 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
             return;
         }
 
-        if (this.value.getLong(0) == Double.doubleToLongBits(value.m00()) &&
-            this.value.getLong(8) == Double.doubleToLongBits(value.m01()) &&
-            this.value.getLong(16) == Double.doubleToLongBits(value.m10()) &&
-            this.value.getLong(24) == Double.doubleToLongBits(value.m11())) {
+        if (Double.doubleToLongBits(this.value.getDouble(0)) == Double.doubleToLongBits(value.m00()) &&
+            Double.doubleToLongBits(this.value.getDouble(8)) == Double.doubleToLongBits(value.m01()) &&
+            Double.doubleToLongBits(this.value.getDouble(16)) == Double.doubleToLongBits(value.m10()) &&
+            Double.doubleToLongBits(this.value.getDouble(24)) == Double.doubleToLongBits(value.m11())) {
             return;
         }
 
@@ -450,15 +450,15 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
             return;
         }
 
-        if (this.value.getLong(0) == Double.doubleToLongBits(value.m00()) &&
-            this.value.getLong(8) == Double.doubleToLongBits(value.m01()) &&
-            this.value.getLong(16) == Double.doubleToLongBits(value.m02()) &&
-            this.value.getLong(24) == Double.doubleToLongBits(value.m10()) &&
-            this.value.getLong(32) == Double.doubleToLongBits(value.m11()) &&
-            this.value.getLong(40) == Double.doubleToLongBits(value.m12()) &&
-            this.value.getLong(48) == Double.doubleToLongBits(value.m20()) &&
-            this.value.getLong(56) == Double.doubleToLongBits(value.m21()) &&
-            this.value.getLong(64) == Double.doubleToLongBits(value.m22())) {
+        if (Double.doubleToLongBits(this.value.getDouble(0)) == Double.doubleToLongBits(value.m00()) &&
+            Double.doubleToLongBits(this.value.getDouble(8)) == Double.doubleToLongBits(value.m01()) &&
+            Double.doubleToLongBits(this.value.getDouble(16)) == Double.doubleToLongBits(value.m02()) &&
+            Double.doubleToLongBits(this.value.getDouble(24)) == Double.doubleToLongBits(value.m10()) &&
+            Double.doubleToLongBits(this.value.getDouble(32)) == Double.doubleToLongBits(value.m11()) &&
+            Double.doubleToLongBits(this.value.getDouble(40)) == Double.doubleToLongBits(value.m12()) &&
+            Double.doubleToLongBits(this.value.getDouble(48)) == Double.doubleToLongBits(value.m20()) &&
+            Double.doubleToLongBits(this.value.getDouble(56)) == Double.doubleToLongBits(value.m21()) &&
+            Double.doubleToLongBits(this.value.getDouble(64)) == Double.doubleToLongBits(value.m22())) {
             return;
         }
 
@@ -472,22 +472,22 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
             return;
         }
 
-        if (this.value.getLong(0) == Double.doubleToLongBits(value.m00()) &&
-            this.value.getLong(8) == Double.doubleToLongBits(value.m01()) &&
-            this.value.getLong(16) == Double.doubleToLongBits(value.m02()) &&
-            this.value.getLong(24) == Double.doubleToLongBits(value.m03()) &&
-            this.value.getLong(32) == Double.doubleToLongBits(value.m10()) &&
-            this.value.getLong(40) == Double.doubleToLongBits(value.m11()) &&
-            this.value.getLong(48) == Double.doubleToLongBits(value.m12()) &&
-            this.value.getLong(56) == Double.doubleToLongBits(value.m13()) &&
-            this.value.getLong(64) == Double.doubleToLongBits(value.m20()) &&
-            this.value.getLong(72) == Double.doubleToLongBits(value.m21()) &&
-            this.value.getLong(80) == Double.doubleToLongBits(value.m22()) &&
-            this.value.getLong(88) == Double.doubleToLongBits(value.m23()) &&
-            this.value.getLong(96) == Double.doubleToLongBits(value.m30()) &&
-            this.value.getLong(104) == Double.doubleToLongBits(value.m31()) &&
-            this.value.getLong(112) == Double.doubleToLongBits(value.m32()) &&
-            this.value.getLong(120) == Double.doubleToLongBits(value.m33())) {
+        if (Double.doubleToLongBits(this.value.getDouble(0)) == Double.doubleToLongBits(value.m00()) &&
+            Double.doubleToLongBits(this.value.getDouble(8)) == Double.doubleToLongBits(value.m01()) &&
+            Double.doubleToLongBits(this.value.getDouble(16)) == Double.doubleToLongBits(value.m02()) &&
+            Double.doubleToLongBits(this.value.getDouble(24)) == Double.doubleToLongBits(value.m03()) &&
+            Double.doubleToLongBits(this.value.getDouble(32)) == Double.doubleToLongBits(value.m10()) &&
+            Double.doubleToLongBits(this.value.getDouble(40)) == Double.doubleToLongBits(value.m11()) &&
+            Double.doubleToLongBits(this.value.getDouble(48)) == Double.doubleToLongBits(value.m12()) &&
+            Double.doubleToLongBits(this.value.getDouble(56)) == Double.doubleToLongBits(value.m13()) &&
+            Double.doubleToLongBits(this.value.getDouble(64)) == Double.doubleToLongBits(value.m20()) &&
+            Double.doubleToLongBits(this.value.getDouble(72)) == Double.doubleToLongBits(value.m21()) &&
+            Double.doubleToLongBits(this.value.getDouble(80)) == Double.doubleToLongBits(value.m22()) &&
+            Double.doubleToLongBits(this.value.getDouble(88)) == Double.doubleToLongBits(value.m23()) &&
+            Double.doubleToLongBits(this.value.getDouble(96)) == Double.doubleToLongBits(value.m30()) &&
+            Double.doubleToLongBits(this.value.getDouble(104)) == Double.doubleToLongBits(value.m31()) &&
+            Double.doubleToLongBits(this.value.getDouble(112)) == Double.doubleToLongBits(value.m32()) &&
+            Double.doubleToLongBits(this.value.getDouble(120)) == Double.doubleToLongBits(value.m33())) {
             return;
         }
 
