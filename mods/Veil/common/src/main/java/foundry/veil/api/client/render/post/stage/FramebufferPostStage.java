@@ -3,6 +3,7 @@ package foundry.veil.api.client.render.post.stage;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.post.PostPipeline;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,13 +51,19 @@ public abstract class FramebufferPostStage implements PostPipeline {
             out.clear();
         }
 
-        if (in != null) {
-            shader.setVector("InSize", in.getWidth(), in.getHeight());
-        } else {
-            shader.setVector("InSize", 1.0F, 1.0F);
+        ShaderUniform inSize = shader.getShaderUniform("InSize");
+        if (inSize != null) {
+            if (in != null) {
+                inSize.setVector(in.getWidth(), in.getHeight());
+            } else {
+                inSize.setVector(1.0F, 1.0F);
+            }
         }
 
-        shader.setVector("OutSize", out.getWidth(), out.getHeight());
+        ShaderUniform outSize = shader.getShaderUniform("OutSize");
+        if (outSize != null) {
+            outSize.setVector(out.getWidth(), out.getHeight());
+        }
     }
 
     /**

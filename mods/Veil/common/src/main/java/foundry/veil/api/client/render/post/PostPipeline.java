@@ -9,6 +9,7 @@ import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.api.client.render.shader.program.TextureUniformAccess;
 import foundry.veil.api.client.render.shader.program.UniformAccess;
 import foundry.veil.api.client.render.shader.texture.ShaderTextureSource;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniformAccess;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -50,6 +51,21 @@ public interface PostPipeline extends MutableUniformAccess, NativeResource {
     @Override
     default int getUniform(CharSequence name) {
         throw new UnsupportedOperationException("Cannot get values from post pipeline");
+    }
+
+    @Override
+    default @Nullable ShaderUniformAccess getShaderUniform(CharSequence name) {
+        return null;
+    }
+
+    @Override
+    default ShaderUniformAccess getShaderUniformSafe(CharSequence name) {
+        return ShaderUniformAccess.EMPTY;
+    }
+
+    @Override
+    default ShaderUniformAccess getOrCreateShaderUniform(CharSequence name) {
+        return ShaderUniformAccess.EMPTY;
     }
 
     @Override

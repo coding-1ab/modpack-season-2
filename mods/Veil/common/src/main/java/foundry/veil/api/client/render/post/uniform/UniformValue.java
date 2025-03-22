@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import foundry.veil.api.client.render.shader.program.MutableUniformAccess;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -13,7 +14,7 @@ public sealed interface UniformValue permits FloatUniform, IntUniform, Matrix2Un
 
     Codec<UniformValue> CODEC = Type.CODEC.dispatch(UniformValue::type, Type::getCodec);
 
-    void apply(String name, MutableUniformAccess access);
+    void apply(ShaderUniform uniform);
 
     Type type();
 

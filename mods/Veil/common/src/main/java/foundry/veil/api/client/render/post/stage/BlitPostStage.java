@@ -13,6 +13,7 @@ import foundry.veil.api.client.render.framebuffer.VeilFramebuffers;
 import foundry.veil.api.client.render.post.PostPipeline;
 import foundry.veil.api.client.render.post.uniform.UniformValue;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniformAccess;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
@@ -78,7 +79,7 @@ public class BlitPostStage extends FramebufferPostStage {
         shader.setDefaultUniforms(VertexFormat.Mode.TRIANGLE_STRIP);
         shader.bindSamplers(context, 0);
         for (Map.Entry<String, UniformValue> entry : this.uniforms.entrySet()) {
-            entry.getValue().apply(entry.getKey(), shader);
+            entry.getValue().apply(shader.getShaderUniform(entry.getKey()));
         }
         VeilRenderSystem.drawScreenQuad();
         context.clearSamplers(shader);
@@ -93,6 +94,24 @@ public class BlitPostStage extends FramebufferPostStage {
     public boolean hasUniform(CharSequence name) {
         ShaderProgram shader = this.getShader();
         return shader != null && shader.hasUniform(name);
+    }
+
+    @Override
+    public @Nullable ShaderUniformAccess getShaderUniform(CharSequence name) {
+        ShaderProgram shader = this.getShader();
+        return shader != null ? shader.getShaderUniform(name) : null;
+    }
+
+    @Override
+    public ShaderUniformAccess getShaderUniformSafe(CharSequence name) {
+        ShaderProgram shader = this.getShader();
+        return shader != null ? shader.getShaderUniform(name) : ShaderUniformAccess.EMPTY;
+    }
+
+    @Override
+    public ShaderUniformAccess getOrCreateShaderUniform(CharSequence name) {
+        ShaderProgram shader = this.getShader();
+        return shader != null ? shader.getOrCreateShaderUniform(name) : ShaderUniformAccess.EMPTY;
     }
 
     @Override

@@ -9,6 +9,7 @@ import foundry.veil.api.client.render.light.DirectionalLight;
 import foundry.veil.api.client.render.light.renderer.LightRenderer;
 import foundry.veil.api.client.render.light.renderer.LightTypeRenderer;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
 import foundry.veil.api.client.render.vertex.VertexArray;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
@@ -56,10 +57,18 @@ public class DirectionalLightRenderer implements LightTypeRenderer<DirectionalLi
         ShaderProgram shader = Objects.requireNonNull(VeilRenderSystem.getShader());
         this.vertexArray.bind();
         for (DirectionalLight light : lights) {
-            Vector3fc lightColor = light.getColor();
-            float brightness = light.getBrightness();
-            shader.setVector("LightColor", lightColor.x() * brightness, lightColor.y() * brightness, lightColor.z() * brightness);
-            shader.setVector("LightDirection", DIRECTION.set(light.getDirection()).normalize());
+            ShaderUniform lightColorUniform = shader.getShaderUniform("LightColor");
+            if (lightColorUniform != null) {
+                Vector3fc lightColor = light.getColor();
+                float brightness = light.getBrightness();
+                lightColorUniform.setVector(lightColor.x() * brightness, lightColor.y() * brightness, lightColor.z() * brightness);
+            }
+
+            ShaderUniform lightDirection = shader.getShaderUniform("LightDirection");
+            if (lightDirection != null) {
+                lightDirection.setVector(light.getDirection().normalize(DIRECTION));
+            }
+
             this.vertexArray.draw();
         }
 

@@ -4,6 +4,7 @@ import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.api.client.render.shader.program.ShaderUniformCache;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
@@ -52,6 +53,7 @@ public class ShaderTextureCache {
 
             // If the texture is "missing", then refer back to the bound missing texture and remove
             int textureId = this.textures.getInt(name);
+            ShaderUniform uniform = this.program.getOrCreateShaderUniform(name);
             if (textureId == 0 || textureId == missingTexture) {
                 if (!hasMissing) {
                     hasMissing = true;
@@ -66,7 +68,7 @@ public class ShaderTextureCache {
                         this.boundSamplers.computeInt(boundSampler, (unused, i) -> i + 1);
                     }
                 }
-                this.program.setInt(name, 0);
+                uniform.setInt(0);
                 this.textures.removeInt(name);
                 continue;
             }
@@ -91,7 +93,7 @@ public class ShaderTextureCache {
                         this.boundSamplers.computeInt(boundSampler, (unused, i) -> i + 1);
                     }
                 }
-                this.program.setInt(name, 0);
+                uniform.setInt(0);
             } else {
                 this.textureBindings.put(textureId);
                 this.boundSamplers.put(name, sampler);
@@ -102,7 +104,7 @@ public class ShaderTextureCache {
         }
 
         for (Object2IntMap.Entry<CharSequence> entry : this.boundSamplers.object2IntEntrySet()) {
-            this.program.setInt(entry.getKey(), entry.getIntValue());
+            this.program.getOrCreateShaderUniform(entry.getKey()).setInt(entry.getIntValue());
         }
 
         if (samplerStart + count >= maxSampler) {

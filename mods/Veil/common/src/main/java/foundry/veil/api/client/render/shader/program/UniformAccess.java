@@ -1,5 +1,7 @@
 package foundry.veil.api.client.render.shader.program;
 
+import foundry.veil.api.client.render.shader.uniform.ShaderUniformAccess;
+import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 import org.lwjgl.opengl.GL31C;
 
@@ -29,6 +31,30 @@ public interface UniformAccess {
     default boolean hasUniform(CharSequence name) {
         return this.getUniform(name) != -1;
     }
+
+    /**
+     * Retrieves a uniform by name.
+     *
+     * @param name The name of the uniform to get
+     * @return The uniform with that name or <code>null</code> if the uniform does not exist
+     */
+    @Nullable ShaderUniformAccess getShaderUniform(CharSequence name);
+
+    /**
+     * Retrieves a uniform by name.
+     *
+     * @param name The name of the uniform to get
+     * @return The uniform with that name
+     */
+    ShaderUniformAccess getShaderUniformSafe(CharSequence name);
+
+    /**
+     * Retrieves a uniform by name or creates a reference to one that may exist in the future.
+     *
+     * @param name The name of the uniform to get
+     * @return The uniform instance
+     */
+    ShaderUniformAccess getOrCreateShaderUniform(CharSequence name);
 
     /**
      * Retrieves the location of a uniform block.

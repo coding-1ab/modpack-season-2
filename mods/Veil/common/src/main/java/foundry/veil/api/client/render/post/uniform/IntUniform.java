@@ -3,6 +3,7 @@ package foundry.veil.api.client.render.post.uniform;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import foundry.veil.api.client.render.shader.program.MutableUniformAccess;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
 
 import java.util.Arrays;
 
@@ -13,8 +14,8 @@ public record IntUniform(int[] values) implements UniformValue {
                     uniform -> Arrays.stream(uniform.values).boxed().toList()).fieldOf("value");
 
     @Override
-    public void apply(String name, MutableUniformAccess access) {
-        access.setInts(name, this.values);
+    public void apply(ShaderUniform uniform) {
+        uniform.setVectorI(this.values);
     }
 
     @Override

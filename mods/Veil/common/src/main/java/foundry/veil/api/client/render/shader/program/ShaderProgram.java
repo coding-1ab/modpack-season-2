@@ -4,9 +4,11 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import foundry.veil.api.client.render.VeilRenderBridge;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.shader.ShaderManager;
 import foundry.veil.api.client.render.shader.compiler.CompiledShader;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
 import foundry.veil.impl.client.render.shader.program.ShaderProgramImpl;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.renderer.EffectInstance;
@@ -81,6 +83,12 @@ public interface ShaderProgram extends NativeResource, MutableUniformAccess, Tex
      * @return The OpenGL id of this program
      */
     int getProgram();
+
+    @Override
+    ShaderUniform getShaderUniform(CharSequence name);
+
+    @Override
+    ShaderUniform getOrCreateShaderUniform(CharSequence name);
 
     @Override
     default float getFloat(CharSequence name) {
@@ -562,6 +570,8 @@ public interface ShaderProgram extends NativeResource, MutableUniformAccess, Tex
      * </ul>
      *
      * @return A lazily loaded shader instance wrapper for this program
+     * @deprecated Use {@link VeilRenderBridge#toShaderInstance(ShaderProgram)}
      */
+    @Deprecated
     ShaderInstance toShaderInstance();
 }

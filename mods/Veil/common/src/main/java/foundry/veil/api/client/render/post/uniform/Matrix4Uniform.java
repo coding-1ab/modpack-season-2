@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import foundry.veil.api.client.render.shader.program.MutableUniformAccess;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 
@@ -30,8 +31,8 @@ public record Matrix4Uniform(Matrix4fc value) implements UniformValue {
     ).apply(instance, Matrix4Uniform::new));
 
     @Override
-    public void apply(String name, MutableUniformAccess access) {
-        access.setMatrix(name, this.value);
+    public void apply(ShaderUniform uniform) {
+        uniform.setMatrix(this.value);
     }
 
     @Override

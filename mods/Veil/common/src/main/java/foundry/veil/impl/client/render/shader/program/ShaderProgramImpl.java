@@ -17,11 +17,17 @@ import foundry.veil.api.client.render.shader.compiler.CompiledShader;
 import foundry.veil.api.client.render.shader.compiler.ShaderCompiler;
 import foundry.veil.api.client.render.shader.compiler.ShaderException;
 import foundry.veil.api.client.render.shader.compiler.VeilShaderSource;
-import foundry.veil.api.client.render.shader.program.*;
+import foundry.veil.api.client.render.shader.program.ProgramDefinition;
+import foundry.veil.api.client.render.shader.program.ShaderBlendMode;
+import foundry.veil.api.client.render.shader.program.ShaderProgram;
+import foundry.veil.api.client.render.shader.program.ShaderUniformCache;
 import foundry.veil.api.client.render.shader.texture.ShaderTextureSource;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniformAccess;
 import foundry.veil.api.client.render.texture.SamplerObject;
 import foundry.veil.api.client.render.texture.TextureFilter;
 import foundry.veil.api.client.util.VertexFormatCodec;
+import foundry.veil.impl.client.render.shader.uniform.ShaderUniformImpl;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
@@ -52,6 +58,7 @@ import java.util.function.Supplier;
 import static org.lwjgl.opengl.GL11C.GL_TRUE;
 import static org.lwjgl.opengl.GL20C.*;
 import static org.lwjgl.opengl.GL31C.GL_INVALID_INDEX;
+import static org.lwjgl.opengl.GL42C.GL_UNSIGNED_INT_ATOMIC_COUNTER;
 import static org.lwjgl.opengl.GL43C.GL_COMPUTE_SHADER;
 import static org.lwjgl.opengl.KHRDebug.GL_PROGRAM;
 
@@ -76,6 +83,7 @@ public class ShaderProgramImpl implements ShaderProgram {
     private final Int2ObjectMap<CompiledProgram> programs;
     private final Map<String, ShaderTexture> definitionTextures;
     private final Object2ObjectMap<CharSequence, ShaderBlock<?>> shaderBlocks;
+    private final Map<String, ShaderUniformImpl> uniforms;
     private final Supplier<Wrapper> wrapper;
 
     private VertexFormat vertexFormat;
@@ -88,6 +96,7 @@ public class ShaderProgramImpl implements ShaderProgram {
         this.programs = new Int2ObjectArrayMap<>(1);
         this.definitionTextures = new Object2ObjectArrayMap<>();
         this.shaderBlocks = new Object2ObjectArrayMap<>();
+        this.uniforms = new Object2ObjectArrayMap<>();
         this.wrapper = Suppliers.memoize(() -> {
             Wrapper.constructingProgram = this;
             try {
@@ -143,6 +152,25 @@ public class ShaderProgramImpl implements ShaderProgram {
         this.textures.clear();
         this.compiledProgram = program;
         this.vertexFormat = program.detectVertexFormat();
+
+        Set<ShaderUniformImpl> old = new HashSet<>(this.uniforms.values());
+
+        // Add all new uniforms
+        for (Map.Entry<String, ShaderUniformCache.Uniform> entry : this.compiledProgram.uniformCache.getUniforms().entrySet()) {
+            ShaderUniformCache.Uniform data = entry.getValue();
+            if (data.type() == GL_UNSIGNED_INT_ATOMIC_COUNTER) {
+                continue;
+            }
+
+            ShaderUniformImpl uniform = this.getOrCreateShaderUniform(entry.getKey());
+            old.remove(uniform);
+            uniform.set(data);
+        }
+
+        // Invalidate old uniforms
+        for (ShaderUniformImpl uniform : old) {
+            uniform.set(null);
+        }
     }
 
     protected void attachShaders(CompiledProgram compiledProgram, ShaderSourceSet sourceSet, ShaderCompiler compiler) throws ShaderException, IOException {
@@ -238,6 +266,8 @@ public class ShaderProgramImpl implements ShaderProgram {
         for (CompiledProgram program : this.programs.values()) {
             program.free();
         }
+        this.uniforms.values().forEach(ShaderUniformImpl::free);
+        this.uniforms.clear();
         this.definitionTextures.values().forEach(NativeResource::free);
         this.definitionTextures.clear();
         this.vertexFormat = null;
@@ -279,13 +309,30 @@ public class ShaderProgramImpl implements ShaderProgram {
         if (this.compiledProgram == null) {
             return -1;
         }
-        ShaderUniformCache.Uniform uniform = this.compiledProgram.uniforms.getUniform(name);
+        ShaderUniformCache.Uniform uniform = this.compiledProgram.uniformCache.getUniform(name);
         return uniform != null ? uniform.location() : -1;
     }
 
     @Override
+    public @Nullable ShaderUniformImpl getShaderUniform(CharSequence name) {
+        ShaderUniformImpl uniform = this.uniforms.get(name.toString());
+        return uniform != null && uniform.isValid() ? uniform : null;
+    }
+
+    @Override
+    public ShaderUniformAccess getShaderUniformSafe(CharSequence name) {
+        ShaderUniformImpl uniform = this.uniforms.get(name.toString());
+        return uniform != null ? uniform : ShaderUniformAccess.EMPTY;
+    }
+
+    @Override
+    public ShaderUniformImpl getOrCreateShaderUniform(CharSequence name) {
+        return this.uniforms.computeIfAbsent(name.toString(), key -> new ShaderUniformImpl(this::getProgram, key));
+    }
+
+    @Override
     public boolean hasUniform(CharSequence name) {
-        return this.compiledProgram != null && this.compiledProgram.uniforms.hasUniform(name.toString());
+        return this.compiledProgram != null && this.compiledProgram.uniformCache.hasUniform(name.toString());
     }
 
     @Override
@@ -293,13 +340,13 @@ public class ShaderProgramImpl implements ShaderProgram {
         if (this.compiledProgram == null) {
             return GL_INVALID_INDEX;
         }
-        ShaderUniformCache.UniformBlock block = this.compiledProgram.uniforms.getUniformBlock(name.toString());
+        ShaderUniformCache.UniformBlock block = this.compiledProgram.uniformCache.getUniformBlock(name.toString());
         return block != null ? block.index() : GL_INVALID_INDEX;
     }
 
     @Override
     public boolean hasUniformBlock(CharSequence name) {
-        return this.compiledProgram != null && this.compiledProgram.uniforms.hasUniformBlock(name.toString());
+        return this.compiledProgram != null && this.compiledProgram.uniformCache.hasUniformBlock(name.toString());
     }
 
     @Override
@@ -307,13 +354,13 @@ public class ShaderProgramImpl implements ShaderProgram {
         if (this.compiledProgram == null) {
             return GL_INVALID_INDEX;
         }
-        ShaderUniformCache.StorageBlock block = this.compiledProgram.uniforms.getStorageBlock(name.toString());
+        ShaderUniformCache.StorageBlock block = this.compiledProgram.uniformCache.getStorageBlock(name.toString());
         return block != null ? block.index() : GL_INVALID_INDEX;
     }
 
     @Override
     public boolean hasStorageBlock(CharSequence name) {
-        return this.compiledProgram != null && this.compiledProgram.uniforms.hasStorageBlock(name.toString());
+        return this.compiledProgram != null && this.compiledProgram.uniformCache.hasStorageBlock(name.toString());
     }
 
     @Override
@@ -335,12 +382,12 @@ public class ShaderProgramImpl implements ShaderProgram {
         if (context != null) {
             this.definitionTextures.forEach((name, source) -> this.setSampler(name, source.textureSource.getId(context), source.samplerId()));
         }
-        this.textures.bind(this.compiledProgram.uniforms, samplerStart);
+        this.textures.bind(this.compiledProgram.uniformCache, samplerStart);
     }
 
     @Override
     public void setSampler(CharSequence name, int textureId, int samplerId) {
-        if (this.compiledProgram != null && this.compiledProgram.uniforms.hasSampler(name.toString())) {
+        if (this.compiledProgram != null && this.compiledProgram.uniformCache.hasSampler(name.toString())) {
             this.textures.put(name, textureId, samplerId);
         }
     }
@@ -366,7 +413,7 @@ public class ShaderProgramImpl implements ShaderProgram {
     public record CompiledProgram(int program,
                                   Int2ObjectMap<CompiledShader> shaders,
                                   Int2ObjectMap<CompiledShader> shadersView,
-                                  ShaderUniformCache uniforms,
+                                  ShaderUniformCache uniformCache,
                                   Set<String> definitionDependencies) implements NativeResource {
 
         public static CompiledProgram create(ResourceLocation id) {
@@ -442,7 +489,7 @@ public class ShaderProgramImpl implements ShaderProgram {
                 Veil.LOGGER.warn("Failed to validate shader ({}) : {}", shaderProgram.getName(), log);
             }
 
-            this.uniforms.clear();
+            this.uniformCache.clear();
             this.definitionDependencies.clear();
             this.shaders.values().forEach(shader -> {
                 shader.apply(shaderProgram);
@@ -457,7 +504,7 @@ public class ShaderProgramImpl implements ShaderProgram {
             }
             this.shaders.clear();
             glDeleteProgram(this.program);
-            this.uniforms.clear();
+            this.uniformCache.clear();
             this.definitionDependencies.clear();
         }
     }
@@ -564,7 +611,7 @@ public class ShaderProgramImpl implements ShaderProgram {
             if (this.program != null && this.program.getUniform(name) == -1) {
                 return null;
             }
-            return (UniformWrapper) this.uniformMap.computeIfAbsent(name, unused -> new UniformWrapper(() -> this.program, name));
+            return (UniformWrapper) this.uniformMap.computeIfAbsent(name, unused -> new UniformWrapper(name, () -> Objects.requireNonNull(this.program).getOrCreateShaderUniform(name)));
         }
 
         @Override
@@ -610,12 +657,12 @@ public class ShaderProgramImpl implements ShaderProgram {
         private static final Matrix4x3f MAT4X3 = new Matrix4x3f();
         private static final Matrix4f MAT4X4 = new Matrix4f();
 
-        private final Supplier<MutableUniformAccess> access;
+        private final Supplier<ShaderUniform> uniform;
 
-        public UniformWrapper(Supplier<MutableUniformAccess> access, String name) {
+        public UniformWrapper(String name, Supplier<ShaderUniform> uniform) {
             super(name, UT_INT1, 0, null);
             super.close(); // Free constructor allocated resources
-            this.access = access;
+            this.uniform = Suppliers.memoize(uniform::get);
         }
 
         @Override
@@ -629,32 +676,32 @@ public class ShaderProgramImpl implements ShaderProgram {
 
         @Override
         public void set(float value) {
-            this.access.get().setFloat(this.getName(), value);
+            this.uniform.get().setFloat(value);
         }
 
         @Override
         public void set(float x, float y) {
-            this.access.get().setVector(this.getName(), x, y);
+            this.uniform.get().setVector(x, y);
         }
 
         @Override
         public void set(float x, float y, float z) {
-            this.access.get().setVector(this.getName(), x, y, z);
+            this.uniform.get().setVector(x, y, z);
         }
 
         @Override
         public void set(float x, float y, float z, float w) {
-            this.access.get().setVector(this.getName(), x, y, z, w);
+            this.uniform.get().setVector(x, y, z, w);
         }
 
         @Override
         public void set(@NotNull Vector3f value) {
-            this.access.get().setVector(this.getName(), value);
+            this.uniform.get().setVector(value);
         }
 
         @Override
         public void set(@NotNull Vector4f value) {
-            this.access.get().setVector(this.getName(), value);
+            this.uniform.get().setVector(value);
         }
 
         @Override
@@ -664,22 +711,22 @@ public class ShaderProgramImpl implements ShaderProgram {
 
         @Override
         public void set(int value) {
-            this.access.get().setInt(this.getName(), value);
+            this.uniform.get().setInt(value);
         }
 
         @Override
         public void set(int x, int y) {
-            this.access.get().setVector(this.getName(), x, y);
+            this.uniform.get().setVectorI(x, y);
         }
 
         @Override
         public void set(int x, int y, int z) {
-            this.access.get().setVector(this.getName(), x, y, z);
+            this.uniform.get().setVectorI(x, y, z);
         }
 
         @Override
         public void set(int x, int y, int z, int w) {
-            this.access.get().setVector(this.getName(), x, y, z, w);
+            this.uniform.get().setVectorI(x, y, z, w);
         }
 
         @Override
@@ -689,23 +736,17 @@ public class ShaderProgramImpl implements ShaderProgram {
 
         @Override
         public void set(float[] values) {
-            switch (values.length) {
-                case 1 -> this.set(values[0]);
-                case 2 -> this.set(values[0], values[1]);
-                case 3 -> this.set(values[0], values[1], values[2]);
-                case 4 -> this.set(values[0], values[1], values[2], values[3]);
-                default -> throw new UnsupportedOperationException("Invalid value array: " + Arrays.toString(values));
-            }
+            this.uniform.get().setVector(values);
         }
 
         @Override
         public void setMat2x2(float m00, float m01, float m10, float m11) {
-            this.access.get().setMatrix(this.getName(), MAT2X2.set(m00, m01, m10, m11));
+            this.uniform.get().setMatrix(MAT2X2.set(m00, m01, m10, m11), false);
         }
 
         @Override
         public void setMat2x3(float m00, float m01, float m02, float m10, float m11, float m12) {
-            this.access.get().setMatrix(this.getName(), MAT3X2.set(
+            this.uniform.get().setMatrix(MAT3X2.set(
                     m00, m10,
                     m01, m11,
                     m02, m12
@@ -719,12 +760,12 @@ public class ShaderProgramImpl implements ShaderProgram {
 
         @Override
         public void setMat3x2(float m00, float m01, float m10, float m11, float m20, float m21) {
-            this.access.get().setMatrix(this.getName(), MAT3X2.set(m00, m01, m10, m11, m20, m21));
+            this.uniform.get().setMatrix(MAT3X2.set(m00, m01, m10, m11, m20, m21), false);
         }
 
         @Override
         public void setMat3x3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) {
-            this.access.get().setMatrix(this.getName(), MAT3X3.set(m00, m01, m02, m10, m11, m12, m20, m21, m22));
+            this.uniform.get().setMatrix(MAT3X3.set(m00, m01, m02, m10, m11, m12, m20, m21, m22), false);
         }
 
         @Override
@@ -742,17 +783,12 @@ public class ShaderProgramImpl implements ShaderProgram {
                 float m22,
                 float m23
         ) {
-            this.access.get().setMatrix(this.getName(), MAT4X3.set(
+            this.uniform.get().setMatrix(MAT4X3.set(
                     m00, m10, m20,
                     m01, m11, m21,
                     m02, m12, m22,
                     m03, m13, m23
             ), true);
-        }
-
-        @Override
-        public void setMat4x2(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13) {
-            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -769,7 +805,12 @@ public class ShaderProgramImpl implements ShaderProgram {
                 float m21,
                 float m22,
                 float m23) {
-            this.access.get().setMatrix(this.getName(), MAT4X3.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23));
+            this.uniform.get().setMatrix(MAT4X3.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23), false);
+        }
+
+        @Override
+        public void setMat4x2(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13) {
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -791,17 +832,17 @@ public class ShaderProgramImpl implements ShaderProgram {
                 float m32,
                 float m33
         ) {
-            this.access.get().setMatrix(this.getName(), MAT4X4.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33));
+            this.uniform.get().setMatrix(MAT4X4.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33), false);
         }
 
         @Override
         public void set(@NotNull Matrix3f value) {
-            this.access.get().setMatrix(this.getName(), value);
+            this.uniform.get().setMatrix(value, false);
         }
 
         @Override
         public void set(@NotNull Matrix4f value) {
-            this.access.get().setMatrix(this.getName(), value);
+            this.uniform.get().setMatrix(value, false);
         }
 
         @Override
@@ -814,7 +855,7 @@ public class ShaderProgramImpl implements ShaderProgram {
 
         @Override
         public int getLocation() {
-            return this.access.get().getUniform(this.getName());
+            return this.uniform.get().getLocation();
         }
     }
 

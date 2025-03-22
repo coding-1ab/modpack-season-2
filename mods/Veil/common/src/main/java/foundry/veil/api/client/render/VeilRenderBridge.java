@@ -1,16 +1,21 @@
 package foundry.veil.api.client.render;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.vertex.PoseStack;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.rendertype.VeilRenderTypeBuilder;
+import foundry.veil.api.client.render.shader.ShaderManager;
+import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.impl.client.render.pipeline.AdvancedFboShard;
 import foundry.veil.impl.client.render.pipeline.PatchStateShard;
 import foundry.veil.impl.client.render.pipeline.ShaderProgramShard;
+import foundry.veil.impl.client.render.shader.program.ShaderProgramImpl;
 import foundry.veil.impl.client.render.wrapper.DSAVanillaAdvancedFboWrapper;
 import foundry.veil.impl.client.render.wrapper.LegacyVanillaAdvancedFboWrapper;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.resources.ResourceLocation;
 
@@ -22,6 +27,24 @@ import java.util.function.Supplier;
  * @author Ocelot
  */
 public interface VeilRenderBridge {
+
+    /**
+     * <p>Wraps the specified shader with a vanilla Minecraft shader instance wrapper. There are a few special properties about the shader wrapper.</p>
+     * <ul>
+     *     <li>The shader instance cannot be used to free the shader program. {@link ShaderProgram#free()} must be called separately.
+     *     If the shader is loaded through {@link ShaderManager} then there is no need to free the shader.</li>
+     *     <li>Calling {@link Uniform#upload()} will do nothing since the values are uploaded when the appropriate methods are called</li>
+     *     <li>Uniforms are lazily wrapped and will not crash when the wrong method is called.</li>
+     *     <li>{@link Uniform#set(int, float)} is not supported and will throw an {@link UnsupportedOperationException}.</li>
+     *     <li>{@link Uniform#set(float[])} only works for 1, 2, 3, and 4 float elements. Any other size will throw an {@link UnsupportedOperationException}.</li>
+     * </ul>
+     *
+     * @param program The program to create a shader instance from
+     * @return A lazily loaded shader instance wrapper for this program
+     */
+    static ShaderInstance toShaderInstance(ShaderProgram program) {
+        return ((ShaderProgramImpl) program).toShaderInstance();
+    }
 
     /**
      * Creates a cull frustum helper from the specified vanilla frustum.

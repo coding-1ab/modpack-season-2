@@ -9,9 +9,11 @@ import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.framebuffer.FramebufferDefinition;
 import foundry.veil.api.client.render.post.PostPipeline;
 import foundry.veil.api.client.render.shader.texture.ShaderTextureSource;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniformAccess;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
 import foundry.veil.impl.client.render.shader.program.ShaderProgramImpl;
 import gg.moonflower.molangcompiler.api.MolangRuntime;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -47,6 +49,7 @@ public final class CompositePostPipeline implements PostPipeline {
     private final Map<ResourceLocation, FramebufferDefinition> framebufferDefinitions;
     private final VeilRenderLevelStageEvent.Stage renderStage;
     private final Map<ResourceLocation, AdvancedFbo> framebuffers;
+    private final Map<String, ShaderUniformAccess> uniforms;
     private final DynamicBufferType[] dynamicBuffers;
     private final int dynamicBuffersMask;
     private final int priority;
@@ -67,6 +70,7 @@ public final class CompositePostPipeline implements PostPipeline {
         this.framebufferDefinitions = Collections.unmodifiableMap(framebufferDefinitions);
         this.renderStage = renderStage;
         this.framebuffers = new HashMap<>();
+        this.uniforms = new Object2ObjectArrayMap<>();
         this.dynamicBuffers = DynamicBufferType.decode(dynamicBuffers);
         this.dynamicBuffersMask = dynamicBuffers;
         this.priority = priority;
@@ -136,6 +140,24 @@ public final class CompositePostPipeline implements PostPipeline {
             }
         }
         return false;
+    }
+
+    @Override
+    public @Nullable ShaderUniformAccess getShaderUniform(CharSequence name) {
+        ShaderUniformAccess uniform = this.getOrCreateShaderUniform(name);
+        return uniform == ShaderUniformAccess.EMPTY ? null : uniform;
+    }
+
+    @Override
+    public ShaderUniformAccess getShaderUniformSafe(CharSequence name) {
+        return this.getOrCreateShaderUniform(name);
+    }
+
+    @Override
+    public ShaderUniformAccess getOrCreateShaderUniform(CharSequence name) {
+        return this.uniforms.computeIfAbsent(name.toString(), key -> ShaderUniformAccess.of(Arrays.stream(this.stages)
+                .map(pipeline -> pipeline.getOrCreateShaderUniform(name))
+                .toArray(ShaderUniformAccess[]::new)));
     }
 
     @Override
