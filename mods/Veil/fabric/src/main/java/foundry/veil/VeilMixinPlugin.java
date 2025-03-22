@@ -10,10 +10,11 @@ import java.util.*;
 
 public class VeilMixinPlugin implements IMixinConfigPlugin {
 
+    private static final String PACKAGE_NAME = Veil.platform().getPlatformType().getMixinPackageName();
     private static final Set<String> COMPAT = Set.of(
-            "foundry.veil.fabric.mixin.client.stage",
-            "foundry.veil.fabric.mixin.client.perspective",
-            "foundry.veil.fabric.mixin.client.debug"
+            "foundry.veil." + PACKAGE_NAME + ".mixin.client.stage",
+            "foundry.veil." + PACKAGE_NAME + ".mixin.client.perspective",
+            "foundry.veil." + PACKAGE_NAME + ".mixin.client.debug"
     );
     private static final Set<String> SODIUM_WITHOUT_IRIS_COMPAT = Set.of();
     private static final Map<String, Set<String>> INCOMPATIBLE_MIXINS = new Object2ObjectArrayMap<>();
@@ -47,7 +48,7 @@ public class VeilMixinPlugin implements IMixinConfigPlugin {
                 return Veil.SODIUM ? !mixinClassName.startsWith(compat + ".vanilla") : !mixinClassName.startsWith(compat + ".sodium");
             }
         }
-        if (mixinClassName.startsWith("foundry.veil.fabric.mixin.compat")) {
+        if (mixinClassName.startsWith("foundry.veil." + PACKAGE_NAME + ".mixin.compat")) {
             if (Veil.IRIS && SODIUM_WITHOUT_IRIS_COMPAT.contains(mixinClassName)) {
                 return false;
             }

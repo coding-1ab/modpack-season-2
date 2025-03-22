@@ -39,20 +39,29 @@ public interface VeilPlatform {
     boolean hasErrors();
 
     enum PlatformType {
-        NEOFORGE("NeoForge"),
-        FABRIC("Fabric");
+        NEOFORGE("NeoForge", "forge"),
+        FABRIC("Fabric", "fabric");
 
         private final String platformName;
+        private final String mixinPackageName;
 
-        PlatformType(String platformName) {
+        PlatformType(String platformName, String mixinPackageName) {
             this.platformName = platformName;
+            this.mixinPackageName = mixinPackageName;
         }
 
         /**
-         * @return The name of the current platform.
+         * @return The name of the current platform
          */
         public String getPlatformName() {
-            return platformName;
+            return this.platformName;
+        }
+
+        /**
+         * @return The mixin package name
+         */
+        public String getMixinPackageName() {
+            return this.mixinPackageName;
         }
     }
 }
