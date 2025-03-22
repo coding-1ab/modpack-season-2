@@ -37,6 +37,9 @@ public record DSAVertexAttribBindingBuilder(VertexArray vertexArray, int vao) im
 
     @Override
     public VertexArrayBuilder setVertexLAttribute(int index, int bufferIndex, int size, DataType type, int relativeOffset) {
+        if (!VeilRenderSystem.vertexAttribute64BitSupported()) {
+            throw new UnsupportedOperationException("Long attributes not supported");
+        }
         VertexArrayBuilder.validateRelativeOffset(relativeOffset);
         glEnableVertexArrayAttrib(this.vao, index);
         glVertexArrayAttribLFormat(this.vao, index, size, type.getGlType(), relativeOffset);

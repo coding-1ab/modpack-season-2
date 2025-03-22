@@ -6,10 +6,10 @@
   "refmap": "${mod_id}.refmap.json",
   "plugin": "foundry.veil.VeilMixinPlugin",
   "client": [
+    "accessor.PipelineAutoStorageIndexBufferAccessor",
     "accessor.PipelineBufferSourceAccessor",
     "accessor.PipelineNativeImageAccessor",
     "accessor.PipelineReloadableResourceManagerAccessor",
-    "client.PipelineAutoStorageIndexBufferMixin",
     "client.PipelineDebugScreenOverlayMixin",
     "client.PipelineFrustumMixin",
     "client.PipelineGameRendererMixin",

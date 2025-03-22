@@ -49,7 +49,7 @@ public class ShaderBufferProcessor implements ShaderPreProcessor {
 
                 GlslTree loadedImport = new GlslTree();
                 loadedImport.getBody().add(layout.createNode(this.shaderStorageSupported, interfaceName));
-                ctx.include(tree, "#buffer " + name, loadedImport, IncludeOverloadStrategy.SOURCE);
+                ctx.include(tree, "#buffer " + name, loadedImport, IncludeOverloadStrategy.INCLUDE);
             } catch (ResourceLocationException e) {
                 throw new IOException("Invalid buffer: " + bufferId, e);
             }

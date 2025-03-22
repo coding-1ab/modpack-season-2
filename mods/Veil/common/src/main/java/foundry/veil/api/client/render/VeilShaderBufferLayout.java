@@ -36,7 +36,7 @@ public record VeilShaderBufferLayout<T>(String name,
      *
      * @param shaderStorageSupported Whether shader storage blocks are supported and can be attempted
      * @param interfaceName          The namespace of the shader block in the shader
-     * @return A node for
+     * @return A node for declaring a shader buffer struct
      */
     public GlslNode createNode(boolean shaderStorageSupported, @Nullable String interfaceName) {
         GlslTypeQualifier.StorageType storageType = switch (this.requestedBinding) {

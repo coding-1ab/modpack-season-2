@@ -93,27 +93,31 @@ public final class VeilRenderSystem {
     private static final BooleanSupplier SEPARATE_SHADER_OBJECTS_SUPPORTED = glCapability(caps -> caps.OpenGL41 || caps.GL_ARB_separate_shader_objects);
     private static final BooleanSupplier CLEAR_TEXTURE_SUPPORTED = glCapability(caps -> caps.OpenGL44 || caps.GL_ARB_clear_texture);
     private static final BooleanSupplier COPY_IMAGE_SUPPORTED = glCapability(caps -> caps.OpenGL43 || caps.GL_ARB_copy_image);
-    private static final BooleanSupplier SHADER_STORAGE_BLOCK_SUPPORTED = VeilRenderSystem.glCapability(caps -> caps.OpenGL43 || caps.GL_ARB_shader_storage_buffer_object);
-    private static final BooleanSupplier PROGRAM_INTERFACE_QUERY_SUPPORTED = VeilRenderSystem.glCapability(caps -> caps.OpenGL43 || caps.GL_ARB_program_interface_query);
-    private static final BooleanSupplier TEXTURE_ANISOTROPY_SUPPORTED = VeilRenderSystem.glCapability(caps -> caps.OpenGL46 || caps.GL_ARB_texture_filter_anisotropic || caps.GL_EXT_texture_filter_anisotropic);
-    private static final BooleanSupplier TEXTURE_MIRROR_CLAMP_TO_EDGE_SUPPORTED = VeilRenderSystem.glCapability(caps -> caps.OpenGL44 || caps.GL_ARB_texture_mirror_clamp_to_edge);
-    private static final BooleanSupplier TEXTURE_CUBE_MAP_SEAMLESS_SUPPORTED = VeilRenderSystem.glCapability(caps -> caps.GL_ARB_seamless_cubemap_per_texture);
-    private static final BooleanSupplier NV_DRAW_TEXTURE_SUPPORTED = VeilRenderSystem.glCapability(caps -> caps.GL_NV_draw_texture);
-    private static final BooleanSupplier DRAW_INDIRECT_SUPPORTED = VeilRenderSystem.glCapability(caps -> caps.OpenGL40 || caps.GL_ARB_draw_indirect);
-    private static final BooleanSupplier MULTI_DRAW_INDIRECT_SUPPORTED = VeilRenderSystem.glCapability(caps -> caps.OpenGL43 || caps.GL_ARB_multi_draw_indirect);
-    private static final IntSupplier MAX_COMBINED_TEXTURE_IMAGE_UNITS = VeilRenderSystem.glGetter(() -> glGetInteger(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS));
-    private static final IntSupplier MAX_COLOR_ATTACHMENTS = VeilRenderSystem.glGetter(() -> glGetInteger(GL_MAX_COLOR_ATTACHMENTS));
-    private static final IntSupplier MAX_SAMPLES = VeilRenderSystem.glGetter(() -> glGetInteger(GL_MAX_SAMPLES));
-    private static final IntSupplier MAX_TRANSFORM_FEEDBACK_BUFFERS = VeilRenderSystem.glGetter(() -> TRANSFORM_FEEDBACK_SUPPORTED.getAsBoolean() ? glGetInteger(GL_MAX_TRANSFORM_FEEDBACK_BUFFERS) : 0);
-    private static final IntSupplier MAX_UNIFORM_BUFFER_BINDINGS = VeilRenderSystem.glGetter(() -> glGetInteger(GL_MAX_UNIFORM_BUFFER_BINDINGS));
-    private static final IntSupplier MAX_ATOMIC_COUNTER_BUFFER_BINDINGS = VeilRenderSystem.glGetter(() -> glGetInteger(GL_MAX_ATOMIC_COUNTER_BUFFER_BINDINGS));
-    private static final IntSupplier MAX_SHADER_STORAGE_BUFFER_BINDINGS = VeilRenderSystem.glGetter(() -> SHADER_STORAGE_BLOCK_SUPPORTED.getAsBoolean() ? glGetInteger(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS) : 0);
-    private static final IntSupplier MAX_ARRAY_TEXTURE_LAYERS = VeilRenderSystem.glGetter(() -> glGetInteger(GL_MAX_ARRAY_TEXTURE_LAYERS));
-    private static final Supplier<Float> MAX_TEXTURE_ANISOTROPY = VeilRenderSystem.glGetter(() -> TEXTURE_ANISOTROPY_SUPPORTED.getAsBoolean() ? glGetFloat(GL_MAX_TEXTURE_MAX_ANISOTROPY) : 1.0F);
-    private static final IntSupplier MAX_VERTEX_ATTRIBS = VeilRenderSystem.glGetter(() -> glGetInteger(GL_MAX_VERTEX_ATTRIBS));
-    private static final IntSupplier MAX_VERTEX_ATTRIB_RELATIVE_OFFSET = VeilRenderSystem.glGetter(() -> Math.max(2047, glGetInteger(GL_MAX_VERTEX_ATTRIB_RELATIVE_OFFSET)));
+    private static final BooleanSupplier SHADER_STORAGE_BLOCK_SUPPORTED = glCapability(caps -> caps.OpenGL43 || caps.GL_ARB_shader_storage_buffer_object);
+    private static final BooleanSupplier PROGRAM_INTERFACE_QUERY_SUPPORTED = glCapability(caps -> caps.OpenGL43 || caps.GL_ARB_program_interface_query);
+    private static final BooleanSupplier TEXTURE_ANISOTROPY_SUPPORTED = glCapability(caps -> caps.OpenGL46 || caps.GL_ARB_texture_filter_anisotropic || caps.GL_EXT_texture_filter_anisotropic);
+    private static final BooleanSupplier TEXTURE_MIRROR_CLAMP_TO_EDGE_SUPPORTED = glCapability(caps -> caps.OpenGL44 || caps.GL_ARB_texture_mirror_clamp_to_edge);
+    private static final BooleanSupplier TEXTURE_CUBE_MAP_SEAMLESS_SUPPORTED = glCapability(caps -> caps.GL_ARB_seamless_cubemap_per_texture);
+    private static final BooleanSupplier NV_DRAW_TEXTURE_SUPPORTED = glCapability(caps -> caps.GL_NV_draw_texture);
+    private static final BooleanSupplier DRAW_INDIRECT_SUPPORTED = glCapability(caps -> caps.OpenGL40 || caps.GL_ARB_draw_indirect);
+    private static final BooleanSupplier MULTI_DRAW_INDIRECT_SUPPORTED = glCapability(caps -> caps.OpenGL43 || caps.GL_ARB_multi_draw_indirect);
+    private static final BooleanSupplier GPU_SHADER_FLOAT_64BIT_SUPPORTED = glCapability(caps -> caps.OpenGL40 || caps.GL_ARB_gpu_shader_fp64);
+    private static final BooleanSupplier GPU_SHADER_INT_64BIT_SUPPORTED = glCapability(caps -> caps.GL_ARB_gpu_shader_int64);
+    private static final BooleanSupplier VERTEX_ATTRIB_64BIT_SUPPORTED = glCapability(caps -> caps.OpenGL41 || caps.GL_ARB_vertex_attrib_64bit);
 
-    private static final Supplier<VeilShaderLimits> VERTEX_SHADER_LIMITS = VeilRenderSystem.glGetter(() -> {
+    private static final IntSupplier MAX_COMBINED_TEXTURE_IMAGE_UNITS = glGetter(() -> glGetInteger(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS));
+    private static final IntSupplier MAX_COLOR_ATTACHMENTS = glGetter(() -> glGetInteger(GL_MAX_COLOR_ATTACHMENTS));
+    private static final IntSupplier MAX_SAMPLES = glGetter(() -> glGetInteger(GL_MAX_SAMPLES));
+    private static final IntSupplier MAX_TRANSFORM_FEEDBACK_BUFFERS = glGetter(() -> TRANSFORM_FEEDBACK_SUPPORTED.getAsBoolean() ? glGetInteger(GL_MAX_TRANSFORM_FEEDBACK_BUFFERS) : 0);
+    private static final IntSupplier MAX_UNIFORM_BUFFER_BINDINGS = glGetter(() -> glGetInteger(GL_MAX_UNIFORM_BUFFER_BINDINGS));
+    private static final IntSupplier MAX_ATOMIC_COUNTER_BUFFER_BINDINGS = glGetter(() -> glGetInteger(GL_MAX_ATOMIC_COUNTER_BUFFER_BINDINGS));
+    private static final IntSupplier MAX_SHADER_STORAGE_BUFFER_BINDINGS = glGetter(() -> SHADER_STORAGE_BLOCK_SUPPORTED.getAsBoolean() ? glGetInteger(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS) : 0);
+    private static final IntSupplier MAX_ARRAY_TEXTURE_LAYERS = glGetter(() -> glGetInteger(GL_MAX_ARRAY_TEXTURE_LAYERS));
+    private static final Supplier<Float> MAX_TEXTURE_ANISOTROPY = glGetter(() -> TEXTURE_ANISOTROPY_SUPPORTED.getAsBoolean() ? glGetFloat(GL_MAX_TEXTURE_MAX_ANISOTROPY) : 1.0F);
+    private static final IntSupplier MAX_VERTEX_ATTRIBS = glGetter(() -> glGetInteger(GL_MAX_VERTEX_ATTRIBS));
+    private static final IntSupplier MAX_VERTEX_ATTRIB_RELATIVE_OFFSET = glGetter(() -> Math.max(2047, glGetInteger(GL_MAX_VERTEX_ATTRIB_RELATIVE_OFFSET)));
+
+    private static final Supplier<VeilShaderLimits> VERTEX_SHADER_LIMITS = glGetter(() -> {
         GLCapabilities caps = GL.getCapabilities();
         return new VeilShaderLimits(caps,
                 glGetInteger(GL_MAX_VERTEX_UNIFORM_COMPONENTS),
@@ -126,7 +130,7 @@ public final class VeilRenderSystem {
                 GL_MAX_VERTEX_ATOMIC_COUNTER_BUFFERS,
                 GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS);
     });
-    private static final Supplier<VeilShaderLimits> GL_TESS_CONTROL_SHADER_LIMITS = VeilRenderSystem.glGetter(() -> {
+    private static final Supplier<VeilShaderLimits> GL_TESS_CONTROL_SHADER_LIMITS = glGetter(() -> {
         GLCapabilities caps = GL.getCapabilities();
         return new VeilShaderLimits(caps,
                 glGetInteger(GL_MAX_TESS_CONTROL_UNIFORM_COMPONENTS),
@@ -139,7 +143,7 @@ public final class VeilRenderSystem {
                 GL_MAX_TESS_CONTROL_ATOMIC_COUNTER_BUFFERS,
                 GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS);
     });
-    private static final Supplier<VeilShaderLimits> GL_TESS_EVALUATION_SHADER_LIMITS = VeilRenderSystem.glGetter(() -> {
+    private static final Supplier<VeilShaderLimits> GL_TESS_EVALUATION_SHADER_LIMITS = glGetter(() -> {
         GLCapabilities caps = GL.getCapabilities();
         return new VeilShaderLimits(caps,
                 glGetInteger(GL_MAX_TESS_EVALUATION_UNIFORM_COMPONENTS),
@@ -152,7 +156,7 @@ public final class VeilRenderSystem {
                 GL_MAX_TESS_EVALUATION_ATOMIC_COUNTER_BUFFERS,
                 GL_MAX_TESS_EVALUATION_SHADER_STORAGE_BLOCKS);
     });
-    private static final Supplier<VeilShaderLimits> GL_GEOMETRY_SHADER_LIMITS = VeilRenderSystem.glGetter(() -> {
+    private static final Supplier<VeilShaderLimits> GL_GEOMETRY_SHADER_LIMITS = glGetter(() -> {
         GLCapabilities caps = GL.getCapabilities();
         return new VeilShaderLimits(caps,
                 glGetInteger(GL_MAX_GEOMETRY_UNIFORM_COMPONENTS),
@@ -165,7 +169,7 @@ public final class VeilRenderSystem {
                 GL_MAX_GEOMETRY_ATOMIC_COUNTER_BUFFERS,
                 GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS);
     });
-    private static final Supplier<VeilShaderLimits> GL_FRAGMENT_SHADER_LIMITS = VeilRenderSystem.glGetter(() -> {
+    private static final Supplier<VeilShaderLimits> GL_FRAGMENT_SHADER_LIMITS = glGetter(() -> {
         GLCapabilities caps = GL.getCapabilities();
         return new VeilShaderLimits(caps,
                 glGetInteger(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS),
@@ -178,7 +182,7 @@ public final class VeilRenderSystem {
                 GL_MAX_FRAGMENT_ATOMIC_COUNTER_BUFFERS,
                 GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS);
     });
-    private static final Supplier<VeilShaderLimits> GL_COMPUTE_SHADER_LIMITS = VeilRenderSystem.glGetter(() -> {
+    private static final Supplier<VeilShaderLimits> GL_COMPUTE_SHADER_LIMITS = glGetter(() -> {
         GLCapabilities caps = GL.getCapabilities();
         return new VeilShaderLimits(caps,
                 glGetInteger(GL_MAX_COMPUTE_UNIFORM_COMPONENTS),
@@ -223,10 +227,10 @@ public final class VeilRenderSystem {
         int depth = glGetIntegeri(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2);
         return new Vector3i(width, height, depth);
     });
-    private static final IntSupplier MAX_COMPUTE_WORK_GROUP_INVOCATIONS = VeilRenderSystem.glGetter(() -> COMPUTE_SUPPORTED.getAsBoolean() ? glGetInteger(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS) : 0);
-    private static final LongSupplier MAX_UNIFORM_BLOCK_SIZE = VeilRenderSystem.glGetter(() -> glGetInteger64(GL_MAX_UNIFORM_BLOCK_SIZE));
-    private static final IntSupplier UNIFORM_BUFFER_OFFSET_ALIGNMENT = VeilRenderSystem.glGetter(() -> glGetInteger(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT));
-    private static final LongSupplier MAX_SHADER_STORAGE_BLOCK_SIZE = VeilRenderSystem.glGetter(() -> SHADER_STORAGE_BLOCK_SUPPORTED.getAsBoolean() ? glGetInteger64(GL_MAX_SHADER_STORAGE_BLOCK_SIZE) : 0);
+    private static final IntSupplier MAX_COMPUTE_WORK_GROUP_INVOCATIONS = glGetter(() -> COMPUTE_SUPPORTED.getAsBoolean() ? glGetInteger(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS) : 0);
+    private static final LongSupplier MAX_UNIFORM_BLOCK_SIZE = glGetter(() -> glGetInteger64(GL_MAX_UNIFORM_BLOCK_SIZE));
+    private static final IntSupplier UNIFORM_BUFFER_OFFSET_ALIGNMENT = glGetter(() -> glGetInteger(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT));
+    private static final LongSupplier MAX_SHADER_STORAGE_BLOCK_SIZE = glGetter(() -> SHADER_STORAGE_BLOCK_SUPPORTED.getAsBoolean() ? glGetInteger64(GL_MAX_SHADER_STORAGE_BLOCK_SIZE) : 0);
 
     private static final Vector3f LIGHT0_DIRECTION = new Vector3f();
     private static final Vector3f LIGHT1_DIRECTION = new Vector3f();
@@ -288,7 +292,7 @@ public final class VeilRenderSystem {
     }
 
     private static <T> Supplier<T> glGetter(Supplier<T> delegate) {
-        return new Supplier<T>() {
+        return new Supplier<>() {
             private T value = null;
 
             @Override
@@ -369,8 +373,8 @@ public final class VeilRenderSystem {
      */
     public static @Nullable ShaderProgram setShader(ResourceLocation shader) {
         ShaderManager shaderManager = renderer.getShaderManager();
-        VeilRenderSystem.shaderLocation = shader;
-        return VeilRenderSystem.setShader(() -> shaderManager.getShader(shader));
+        shaderLocation = shader;
+        return setShader(() -> shaderManager.getShader(shader));
     }
 
     /**
@@ -380,8 +384,8 @@ public final class VeilRenderSystem {
      * @return The Veil shader instance applied or <code>null</code> if there was an error
      */
     public static @Nullable ShaderProgram setShader(@Nullable ShaderProgram shader) {
-        VeilRenderSystem.shaderLocation = shader != null ? shader.getName() : null;
-        return VeilRenderSystem.setShader(() -> shader);
+        shaderLocation = shader != null ? shader.getName() : null;
+        return setShader(() -> shader);
     }
 
     /**
@@ -396,9 +400,9 @@ public final class VeilRenderSystem {
             return program != null ? program.toShaderInstance() : null;
         });
 
-        ShaderProgram value = VeilRenderSystem.getShader();
-        if (value == null && VeilRenderSystem.shaderLocation != null && ERRORED_SHADERS.add(VeilRenderSystem.shaderLocation)) {
-            Veil.LOGGER.error("Failed to apply shader: {}", VeilRenderSystem.shaderLocation);
+        ShaderProgram value = getShader();
+        if (value == null && shaderLocation != null && ERRORED_SHADERS.add(shaderLocation)) {
+            Veil.LOGGER.error("Failed to apply shader: {}", shaderLocation);
         }
         return value;
     }
@@ -421,7 +425,7 @@ public final class VeilRenderSystem {
      * @param indirect  A pointer into the currently bound {@link GL40C#GL_DRAW_INDIRECT_BUFFER} or the address of a struct containing draw data
      * @param drawCount The number of primitives to draw
      * @param stride    The offset between indirect elements
-     * @see <a target="_blank" href="http://docs.gl/gl4/glMultiDrawElementsIndirect">Reference Page</a>
+     * @see <a href="http://docs.gl/gl4/glMultiDrawElementsIndirect">Reference Page</a>
      */
     public static void drawIndirect(VertexBuffer vbo, long indirect, int drawCount, int stride) {
         ((VertexBufferExtension) vbo).veil$drawIndirect(indirect, drawCount, stride);
@@ -498,140 +502,161 @@ public final class VeilRenderSystem {
      * @return Whether compute shaders are supported
      */
     public static boolean computeSupported() {
-        return VeilRenderSystem.COMPUTE_SUPPORTED.getAsBoolean();
+        return COMPUTE_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether atomic counters in shaders are supported
      */
     public static boolean atomicCounterSupported() {
-        return VeilRenderSystem.ATOMIC_COUNTER_SUPPORTED.getAsBoolean();
+        return ATOMIC_COUNTER_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether transform feedback from shaders is supported
      */
     public static boolean transformFeedbackSupported() {
-        return VeilRenderSystem.TRANSFORM_FEEDBACK_SUPPORTED.getAsBoolean();
+        return TRANSFORM_FEEDBACK_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether {@link ARBMultiBind} is supported
      */
     public static boolean multibindSupported() {
-        return VeilRenderSystem.MULTIBIND_SUPPORTED.getAsBoolean();
+        return MULTIBIND_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether {@link ARBSparseBuffer} is supported
      */
     public static boolean sparseBuffersSupported() {
-        return VeilRenderSystem.SPARSE_BUFFERS_SUPPORTED.getAsBoolean();
+        return SPARSE_BUFFERS_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether {@link ARBDirectStateAccess} is supported
      */
     public static boolean directStateAccessSupported() {
-        return VeilRenderSystem.DIRECT_STATE_ACCESS_SUPPORTED.getAsBoolean();
+        return DIRECT_STATE_ACCESS_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether {@link ARBSeparateShaderObjects} is supported
      */
     public static boolean separateShaderObjectsSupported() {
-        return VeilRenderSystem.SEPARATE_SHADER_OBJECTS_SUPPORTED.getAsBoolean();
+        return SEPARATE_SHADER_OBJECTS_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether {@link ARBClearTexture} is supported
      */
     public static boolean clearTextureSupported() {
-        return VeilRenderSystem.CLEAR_TEXTURE_SUPPORTED.getAsBoolean();
+        return CLEAR_TEXTURE_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether {@link ARBCopyImage} is supported
      */
     public static boolean copyImageSupported() {
-        return VeilRenderSystem.COPY_IMAGE_SUPPORTED.getAsBoolean();
+        return COPY_IMAGE_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether {@link ARBShaderStorageBufferObject} is supported
      */
     public static boolean shaderStorageBufferSupported() {
-        return VeilRenderSystem.SHADER_STORAGE_BLOCK_SUPPORTED.getAsBoolean();
+        return SHADER_STORAGE_BLOCK_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether {@link ARBProgramInterfaceQuery} is supported
      */
     public static boolean programInterfaceQuerySupported() {
-        return VeilRenderSystem.PROGRAM_INTERFACE_QUERY_SUPPORTED.getAsBoolean();
+        return PROGRAM_INTERFACE_QUERY_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether {@link ARBTextureFilterAnisotropic} is supported
      */
     public static boolean textureAnisotropySupported() {
-        return VeilRenderSystem.TEXTURE_ANISOTROPY_SUPPORTED.getAsBoolean();
+        return TEXTURE_ANISOTROPY_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether {@link ARBTextureMirrorClampToEdge} is supported
      */
     public static boolean textureMirrorClampToEdgeSupported() {
-        return VeilRenderSystem.TEXTURE_MIRROR_CLAMP_TO_EDGE_SUPPORTED.getAsBoolean();
+        return TEXTURE_MIRROR_CLAMP_TO_EDGE_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether {@link ARBSeamlessCubemapPerTexture} is supported
      */
     public static boolean textureCubeMapSeamlessSupported() {
-        return VeilRenderSystem.TEXTURE_CUBE_MAP_SEAMLESS_SUPPORTED.getAsBoolean();
+        return TEXTURE_CUBE_MAP_SEAMLESS_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether {@link NVDrawTexture} is supported
      */
     public static boolean nvDrawTextureSupported() {
-        return VeilRenderSystem.NV_DRAW_TEXTURE_SUPPORTED.getAsBoolean();
+        return NV_DRAW_TEXTURE_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether {@link ARBDrawIndirect} is supported
      */
     public static boolean drawIndirectSupported() {
-        return VeilRenderSystem.DRAW_INDIRECT_SUPPORTED.getAsBoolean();
+        return DRAW_INDIRECT_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return Whether {@link ARBMultiDrawIndirect} is supported
      */
     public static boolean multiDrawIndirectSupported() {
-        return VeilRenderSystem.MULTI_DRAW_INDIRECT_SUPPORTED.getAsBoolean();
+        return MULTI_DRAW_INDIRECT_SUPPORTED.getAsBoolean();
+    }
+
+    /**
+     * @return Whether {@link ARBGPUShaderFP64} is supported
+     */
+    public static boolean gpuShaderFloat64BitSupported() {
+        return GPU_SHADER_FLOAT_64BIT_SUPPORTED.getAsBoolean();
+    }
+
+    /**
+     * @return Whether {@link ARBGPUShaderInt64} is supported
+     */
+    public static boolean gpuShaderInt64BitSupported() {
+        return GPU_SHADER_INT_64BIT_SUPPORTED.getAsBoolean();
+    }
+
+    /**
+     * @return Whether {@link ARBVertexAttrib64Bit} is supported
+     */
+    public static boolean vertexAttribute64BitSupported() {
+        return VERTEX_ATTRIB_64BIT_SUPPORTED.getAsBoolean();
     }
 
     /**
      * @return The GL maximum number of texture units that can be bound
      */
     public static int maxCombinedTextureUnits() {
-        return VeilRenderSystem.MAX_COMBINED_TEXTURE_IMAGE_UNITS.getAsInt();
+        return MAX_COMBINED_TEXTURE_IMAGE_UNITS.getAsInt();
     }
 
     /**
      * @return The GL maximum amount of color attachments a framebuffer can have
      */
     public static int maxColorAttachments() {
-        return VeilRenderSystem.MAX_COLOR_ATTACHMENTS.getAsInt();
+        return MAX_COLOR_ATTACHMENTS.getAsInt();
     }
 
     /**
      * @return The GL maximum amount of samples a render buffer can have
      */
     public static int maxSamples() {
-        return VeilRenderSystem.MAX_SAMPLES.getAsInt();
+        return MAX_SAMPLES.getAsInt();
     }
 
     /**
@@ -674,140 +699,140 @@ public final class VeilRenderSystem {
      * @return The GL maximum number of transform feedback buffers bindings available
      */
     public static int maxTransformFeedbackBindings() {
-        return VeilRenderSystem.MAX_TRANSFORM_FEEDBACK_BUFFERS.getAsInt();
+        return MAX_TRANSFORM_FEEDBACK_BUFFERS.getAsInt();
     }
 
     /**
      * @return The GL maximum number of uniform buffers bindings available
      */
     public static int maxUniformBuffersBindings() {
-        return VeilRenderSystem.MAX_UNIFORM_BUFFER_BINDINGS.getAsInt();
+        return MAX_UNIFORM_BUFFER_BINDINGS.getAsInt();
     }
 
     /**
      * @return The GL maximum number of atomic counter buffers bindings available
      */
     public static int maxAtomicCounterBufferBindings() {
-        return VeilRenderSystem.MAX_ATOMIC_COUNTER_BUFFER_BINDINGS.getAsInt();
+        return MAX_ATOMIC_COUNTER_BUFFER_BINDINGS.getAsInt();
     }
 
     /**
      * @return The GL maximum number of shader storage buffers bindings available
      */
     public static int maxShaderStorageBufferBindings() {
-        return VeilRenderSystem.MAX_SHADER_STORAGE_BUFFER_BINDINGS.getAsInt();
+        return MAX_SHADER_STORAGE_BUFFER_BINDINGS.getAsInt();
     }
 
     /**
      * @return The GL maximum number of array texture layers available
      */
     public static int maxArrayTextureLayers() {
-        return VeilRenderSystem.MAX_ARRAY_TEXTURE_LAYERS.getAsInt();
+        return MAX_ARRAY_TEXTURE_LAYERS.getAsInt();
     }
 
     /**
      * @return The GL maximum texture anisotropy value
      */
     public static float maxTextureAnisotropy() {
-        return VeilRenderSystem.MAX_TEXTURE_ANISOTROPY.get();
+        return MAX_TEXTURE_ANISOTROPY.get();
     }
 
     /**
      * @return The GL maximum number of vertex attributes available
      */
     public static int maxVertexAttributes() {
-        return VeilRenderSystem.MAX_VERTEX_ATTRIBS.getAsInt();
+        return MAX_VERTEX_ATTRIBS.getAsInt();
     }
 
     /**
      * @return The GL maximum offset of vertex attribute relative offsets
      */
     public static int maxVertexAttributeRelativeOffset() {
-        return VeilRenderSystem.MAX_VERTEX_ATTRIB_RELATIVE_OFFSET.getAsInt();
+        return MAX_VERTEX_ATTRIB_RELATIVE_OFFSET.getAsInt();
     }
 
     /**
      * @return The GL maximum width of framebuffers
      */
     public static int maxFramebufferWidth() {
-        return VeilRenderSystem.MAX_FRAMEBUFFER_SIZE.get().x();
+        return MAX_FRAMEBUFFER_SIZE.get().x();
     }
 
     /**
      * @return The GL maximum width of framebuffers
      */
     public static int maxFramebufferHeight() {
-        return VeilRenderSystem.MAX_FRAMEBUFFER_SIZE.get().y();
+        return MAX_FRAMEBUFFER_SIZE.get().y();
     }
 
     /**
      * @return The GL maximum number of work groups in the X
      */
     public static int maxComputeWorkGroupCountX() {
-        return VeilRenderSystem.MAX_COMPUTE_WORK_GROUP_COUNT.get().y();
+        return MAX_COMPUTE_WORK_GROUP_COUNT.get().y();
     }
 
     /**
      * @return The GL maximum number of work groups in the Y
      */
     public static int maxComputeWorkGroupCountY() {
-        return VeilRenderSystem.MAX_COMPUTE_WORK_GROUP_COUNT.get().y();
+        return MAX_COMPUTE_WORK_GROUP_COUNT.get().y();
     }
 
     /**
      * @return The GL maximum number of work groups in the Z
      */
     public static int maxComputeWorkGroupCountZ() {
-        return VeilRenderSystem.MAX_COMPUTE_WORK_GROUP_COUNT.get().y();
+        return MAX_COMPUTE_WORK_GROUP_COUNT.get().y();
     }
 
     /**
      * @return The GL maximum number of local work groups in the X
      */
     public static int maxComputeWorkGroupSizeX() {
-        return VeilRenderSystem.MAX_COMPUTE_WORK_GROUP_SIZE.get().y();
+        return MAX_COMPUTE_WORK_GROUP_SIZE.get().y();
     }
 
     /**
      * @return The GL maximum number of local work groups in the Y
      */
     public static int maxComputeWorkGroupSizeY() {
-        return VeilRenderSystem.MAX_COMPUTE_WORK_GROUP_SIZE.get().y();
+        return MAX_COMPUTE_WORK_GROUP_SIZE.get().y();
     }
 
     /**
      * @return The GL maximum number of local work groups in the Z
      */
     public static int maxComputeWorkGroupSizeZ() {
-        return VeilRenderSystem.MAX_COMPUTE_WORK_GROUP_SIZE.get().y();
+        return MAX_COMPUTE_WORK_GROUP_SIZE.get().y();
     }
 
     /**
      * @return The GL maximum number of total compute shader invocations
      */
     public static int maxComputeWorkGroupInvocations() {
-        return VeilRenderSystem.MAX_COMPUTE_WORK_GROUP_INVOCATIONS.getAsInt();
+        return MAX_COMPUTE_WORK_GROUP_INVOCATIONS.getAsInt();
     }
 
     /**
      * @return The GL maximum size of uniform buffers
      */
     public static long maxUniformBufferSize() {
-        return VeilRenderSystem.MAX_UNIFORM_BLOCK_SIZE.getAsLong();
+        return MAX_UNIFORM_BLOCK_SIZE.getAsLong();
     }
 
     /**
      * @return The GL offset byte alignment requirement of uniform buffers
      */
     public static int uniformBufferAlignment() {
-        return VeilRenderSystem.UNIFORM_BUFFER_OFFSET_ALIGNMENT.getAsInt();
+        return UNIFORM_BUFFER_OFFSET_ALIGNMENT.getAsInt();
     }
 
     /**
      * @return The GL maximum size of shader storage buffers
      */
     public static long maxShaderStorageBufferSize() {
-        return VeilRenderSystem.MAX_SHADER_STORAGE_BLOCK_SIZE.getAsLong();
+        return MAX_SHADER_STORAGE_BLOCK_SIZE.getAsLong();
     }
 
     /**
@@ -1075,7 +1100,7 @@ public final class VeilRenderSystem {
 
     @ApiStatus.Internal
     public static void shaderUpdate() {
-        VeilRenderSystem.shaderLocation = null;
+        shaderLocation = null;
     }
 
     @ApiStatus.Internal

@@ -39,6 +39,9 @@ public record ARBVertexAttribBindingBuilder(VertexArray vertexArray) implements 
 
     @Override
     public VertexArrayBuilder setVertexLAttribute(int index, int bufferIndex, int size, DataType type, int relativeOffset) {
+        if (!VeilRenderSystem.vertexAttribute64BitSupported()) {
+            throw new UnsupportedOperationException("Long attributes not supported");
+        }
         VertexArrayBuilder.validateRelativeOffset(relativeOffset);
         glEnableVertexAttribArray(index);
         glVertexAttribLFormat(index, size, type.getGlType(), relativeOffset);

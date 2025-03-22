@@ -116,6 +116,9 @@ public class DeviceInfoViewer extends SingleWindowInspector {
         flagText("inspector.veil.device_info.opengl.feature_flag.nv_draw_texture", VeilRenderSystem.nvDrawTextureSupported(), "Whether glDrawTextureNV can be used");
         flagText("inspector.veil.device_info.opengl.feature_flag.draw_indirect", VeilRenderSystem.drawIndirectSupported(), "Whether glDrawArraysInstanced and glDrawElementsInstancedBaseVertex can be used");
         flagText("inspector.veil.device_info.opengl.feature_flag.multi_draw_indirect", VeilRenderSystem.multiDrawIndirectSupported(), "Whether multiple indirect commands can be natively drawn in one command");
+        flagText("inspector.veil.device_info.opengl.feature_flag.shader_float64", VeilRenderSystem.gpuShaderFloat64BitSupported(), "Whether 64-bit floats can be used in shader files");
+        flagText("inspector.veil.device_info.opengl.feature_flag.shader_int64", VeilRenderSystem.gpuShaderInt64BitSupported(), "Whether 64-bit integers can be used in shader files");
+        flagText("inspector.veil.device_info.opengl.feature_flag.vertex_attribute_64", VeilRenderSystem.vertexAttribute64BitSupported(), "Whether 64-bit values can be used as vertex attributes");
         ImGui.separator();
 
         GLCapabilities caps = GL.getCapabilities();

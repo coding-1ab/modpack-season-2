@@ -1,9 +1,7 @@
 package foundry.veil.impl.client.render.dynamicbuffer;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Sets;
 import com.mojang.blaze3d.preprocessor.GlslPreprocessor;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderSystem;
@@ -17,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -48,27 +47,31 @@ public class VanillaShaderCompiler {
             try (Reader reader = resourceManager.openAsReader(path)) {
                 String source = IOUtils.toString(reader);
                 GlslPreprocessor preprocessor = new GlslPreprocessor() {
-                    private final Set<String> importedPaths = Sets.newHashSet();
+                    private final Set<String> importedPaths = new HashSet<>();
 
                     @Override
-                    public String applyImport(boolean useFullPath, String directory) {
-                        directory = FileUtil.normalizeResourcePath((useFullPath ? path.getPath() : "shaders/include/") + directory);
+                    public String applyImport(boolean useFullPath, @NotNull String directory) {
+                        if (useFullPath) {
+                            directory = FileUtil.normalizeResourcePath(path.getPath() + directory);
+                        } else {
+                            directory = FileUtil.normalizeResourcePath("shaders/include/" + directory);
+                            if (directory.indexOf(ResourceLocation.NAMESPACE_SEPARATOR) != -1) {
+                                ResourceLocation contained = ResourceLocation.parse(directory);
+                                String finalDirectory = directory;
+                                directory = contained.withPath(path -> path.replace(finalDirectory, path)).toString();
+                            }
+                        }
+
                         if (!this.importedPaths.add(directory)) {
                             return null;
-                        } else {
-                            ResourceLocation resourcelocation = ResourceLocation.parse(directory);
+                        }
 
-                            try {
-                                String s2;
-                                try (Reader reader = resourceManager.openAsReader(resourcelocation)) {
-                                    s2 = IOUtils.toString(reader);
-                                }
-
-                                return s2;
-                            } catch (IOException e) {
-                                Veil.LOGGER.error("Could not open GLSL import {}: {}", directory, e.getMessage());
-                                return "#error " + e.getMessage();
-                            }
+                        ResourceLocation resourcelocation = ResourceLocation.parse(directory);
+                        try (Reader reader = resourceManager.openAsReader(resourcelocation)) {
+                            return IOUtils.toString(reader);
+                        } catch (IOException e) {
+                            Veil.LOGGER.error("Could not open GLSL import {}: {}", directory, e.getMessage());
+                            return "#error " + e.getMessage();
                         }
                     }
                 };
@@ -120,13 +123,14 @@ public class VanillaShaderCompiler {
             return null;
         });
         this.scheduler = scheduler;
+
         CompletableFuture<?> future = scheduler.getCompletedFuture();
         future.thenRunAsync(() -> {
             if (!scheduler.isCancelled()) {
                 Veil.LOGGER.info("Compiled {} vanilla shaders in {}", shaders.size(), stopwatch.stop());
             }
         }, Minecraft.getInstance());
-        return future;
+        return future.isDone() ? CompletableFuture.completedFuture(null) : future;
     }
 
     public boolean isCompilingShaders() {

@@ -3,7 +3,7 @@ package foundry.veil.impl.client.render.vertex;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.MeshData;
 import foundry.veil.api.client.render.vertex.VertexArray;
-import foundry.veil.ext.AutoStorageIndexBufferExtension;
+import foundry.veil.mixin.pipeline.accessor.PipelineAutoStorageIndexBufferAccessor;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.nio.ByteBuffer;
@@ -27,8 +27,9 @@ public class DSAVertexAttribBindingVertexArray extends VertexArray {
 
     @Override
     public void uploadIndexBuffer(MeshData.DrawState drawState) {
-        AutoStorageIndexBufferExtension ext = (AutoStorageIndexBufferExtension) (Object) RenderSystem.getSequentialBuffer(drawState.mode());
-        ext.veil$bind(this.id, drawState.indexCount());
+        super.uploadIndexBuffer(drawState);
+        PipelineAutoStorageIndexBufferAccessor ext = (PipelineAutoStorageIndexBufferAccessor) (Object) RenderSystem.getSequentialBuffer(drawState.mode());
+        glVertexArrayElementBuffer(this.id, ext.getName());
     }
 
     @Override

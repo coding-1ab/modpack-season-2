@@ -9,7 +9,9 @@ import net.caffeinemc.mods.sodium.client.render.chunk.occlusion.OcclusionCuller;
 import net.caffeinemc.mods.sodium.client.render.chunk.region.RenderRegion;
 import net.caffeinemc.mods.sodium.client.render.viewport.Viewport;
 import net.minecraft.core.SectionPos;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public class PerspectiveChunkCollector implements OcclusionCuller.Visitor {
 
     private final ObjectArrayList<ChunkRenderList> sortedRenderLists;
