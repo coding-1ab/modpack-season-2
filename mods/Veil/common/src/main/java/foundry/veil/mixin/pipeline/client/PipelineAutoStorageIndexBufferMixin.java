@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import static org.lwjgl.opengl.ARBDirectStateAccess.glVertexArrayElementBuffer;
+import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER;
 
 @Mixin(RenderSystem.AutoStorageIndexBuffer.class)
 public abstract class PipelineAutoStorageIndexBufferMixin implements AutoStorageIndexBufferExtension {
@@ -27,8 +28,10 @@ public abstract class PipelineAutoStorageIndexBufferMixin implements AutoStorage
         }
 
         if (!this.hasStorage(indexCount)) {
+            GlStateManager._glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this.name);
             this.ensureStorage(indexCount);
+        } else {
+            glVertexArrayElementBuffer(vao, this.name);
         }
-        glVertexArrayElementBuffer(vao, this.name);
     }
 }
