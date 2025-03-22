@@ -57,11 +57,11 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
-import plus.dragons.createdragonsplus.util.FieldsAssertedNonnullByDefault;
+import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
 import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
 
-@FieldsAssertedNonnullByDefault
+@FieldsNullabilityUnknownByDefault
 public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
     public static final int GRINDING_TIME = 20;
     public ProcessingInventory inventory;

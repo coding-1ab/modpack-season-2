@@ -34,9 +34,9 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.effects.PlaySoundEffect;
 import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipeParams;
 import plus.dragons.createdragonsplus.util.CDPCodecs;
-import plus.dragons.createdragonsplus.util.FieldsAssertedNonnullByDefault;
+import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
 
-@FieldsAssertedNonnullByDefault
+@FieldsNullabilityUnknownByDefault
 public class PrintingRecipeParams extends CustomProcessingRecipeParams {
     public static final MapCodec<PrintingRecipeParams> CODEC = RecordCodecBuilder.<PrintingRecipeParams>mapCodec(
             instance -> instance.group(

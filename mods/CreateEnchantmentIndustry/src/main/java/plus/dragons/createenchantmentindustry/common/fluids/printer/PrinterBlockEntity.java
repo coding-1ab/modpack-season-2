@@ -52,10 +52,10 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
 import plus.dragons.createdragonsplus.common.advancements.AdvancementBehaviour;
-import plus.dragons.createdragonsplus.util.FieldsAssertedNonnullByDefault;
+import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
-@FieldsAssertedNonnullByDefault
+@FieldsNullabilityUnknownByDefault
 public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
     public static final int PROCESSING_TIME = 50;
     protected SmartFluidTankBehaviour tank;
