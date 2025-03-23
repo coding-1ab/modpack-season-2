@@ -795,13 +795,13 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         if (this.type != Type.DOUBLE_VEC3 ||
             (this.value.getLong(0) == Double.doubleToLongBits(x) &&
              this.value.getLong(8) == Double.doubleToLongBits(y) &&
-             this.value.getLong(12) == Double.doubleToLongBits(z))) {
+             this.value.getLong(16) == Double.doubleToLongBits(z))) {
             return;
         }
 
         this.value.putDouble(0, x);
         this.value.putDouble(8, y);
-        this.value.putDouble(12, z);
+        this.value.putDouble(16, z);
         this.upload();
     }
 
@@ -810,15 +810,15 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         if (this.type != Type.DOUBLE_VEC4 ||
             (this.value.getLong(0) == Double.doubleToLongBits(x) &&
              this.value.getLong(8) == Double.doubleToLongBits(y) &&
-             this.value.getLong(12) == Double.doubleToLongBits(z) &&
-             this.value.getLong(16) == Double.doubleToLongBits(w))) {
+             this.value.getLong(16) == Double.doubleToLongBits(z) &&
+             this.value.getLong(24) == Double.doubleToLongBits(w))) {
             return;
         }
 
         this.value.putDouble(0, x);
         this.value.putDouble(8, y);
-        this.value.putDouble(12, z);
-        this.value.putDouble(16, w);
+        this.value.putDouble(16, z);
+        this.value.putDouble(24, w);
         this.upload();
     }
 
@@ -851,13 +851,13 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         if ((this.type != Type.LONG_VEC3 && this.type != Type.UNSIGNED_LONG_VEC3) ||
             (this.value.getLong(0) == x &&
              this.value.getLong(8) == y &&
-             this.value.getLong(12) == z)) {
+             this.value.getLong(16) == z)) {
             return;
         }
 
         this.value.putLong(0, x);
         this.value.putLong(8, y);
-        this.value.putLong(12, z);
+        this.value.putLong(16, z);
         this.upload();
     }
 
@@ -866,15 +866,15 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         if ((this.type != Type.LONG_VEC4 && this.type != Type.UNSIGNED_LONG_VEC4) ||
             (this.value.getLong(0) == x &&
              this.value.getLong(8) == y &&
-             this.value.getLong(12) == z &&
-             this.value.getLong(16) == w)) {
+             this.value.getLong(16) == z &&
+             this.value.getLong(24) == w)) {
             return;
         }
 
         this.value.putLong(0, x);
         this.value.putLong(8, y);
-        this.value.putLong(12, z);
-        this.value.putLong(16, w);
+        this.value.putLong(16, z);
+        this.value.putLong(24, w);
         this.upload();
     }
 
@@ -1077,7 +1077,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         boolean changed = false;
         for (int i = 0; i < length; i++) {
             Vector3dc vector = values[i];
-            if (vector.equals(this.value.getDouble(i * 24), this.value.getDouble(i * 24 + 16), this.value.getDouble(i * 24 + 32))) {
+            if (vector.equals(this.value.getDouble(i * 24), this.value.getDouble(i * 24 + 8), this.value.getDouble(i * 24 + 16))) {
                 changed = true;
             }
             vector.get(i * 24, this.value);
@@ -1097,7 +1097,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         boolean changed = false;
         for (int i = 0; i < length; i++) {
             Vector4dc vector = values[i];
-            if (vector.equals(this.value.getDouble(i * 32), this.value.getDouble(i * 32 + 16), this.value.getDouble(i * 32 + 32), this.value.getDouble(i * 32 + 48))) {
+            if (vector.equals(this.value.getDouble(i * 32), this.value.getDouble(i * 32 + 8), this.value.getDouble(i * 32 + 16), this.value.getDouble(i * 32 + 24))) {
                 changed = true;
             }
             vector.get(i * 32, this.value);
