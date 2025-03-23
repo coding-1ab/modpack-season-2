@@ -151,16 +151,30 @@ public record CompositeShaderUniformAccess(ShaderUniformAccess... accesses) impl
     }
 
     @Override
-    public void setMatrix(Matrix4x3fc value, boolean transpose) {
+    public void setMatrix2x3(Matrix3x2fc value, boolean transpose) {
         for (ShaderUniformAccess access : this.accesses) {
-            access.setMatrix(value, transpose);
+            access.setMatrix2x3(value, transpose);
         }
     }
 
     @Override
-    public void setMatrix(Matrix3x2fc value, boolean transpose) {
+    public void setMatrix3x2(Matrix3x2fc value, boolean transpose) {
         for (ShaderUniformAccess access : this.accesses) {
-            access.setMatrix(value, transpose);
+            access.setMatrix3x2(value, transpose);
+        }
+    }
+
+    @Override
+    public void setMatrix3x4(Matrix4x3fc value, boolean transpose) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.setMatrix3x4(value, transpose);
+        }
+    }
+
+    @Override
+    public void setMatrix4x3(Matrix4x3fc value, boolean transpose) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.setMatrix4x3(value, transpose);
         }
     }
 
@@ -186,16 +200,30 @@ public record CompositeShaderUniformAccess(ShaderUniformAccess... accesses) impl
     }
 
     @Override
-    public void setMatrix(Matrix3x2dc value, boolean transpose) {
+    public void setMatrix2x3(Matrix3x2dc value, boolean transpose) {
         for (ShaderUniformAccess access : this.accesses) {
-            access.setMatrix(value, transpose);
+            access.setMatrix2x3(value, transpose);
         }
     }
 
     @Override
-    public void setMatrix(Matrix4x3dc value, boolean transpose) {
+    public void setMatrix3x2(Matrix3x2dc value, boolean transpose) {
         for (ShaderUniformAccess access : this.accesses) {
-            access.setMatrix(value, transpose);
+            access.setMatrix3x2(value, transpose);
+        }
+    }
+
+    @Override
+    public void setMatrix3x4(Matrix4x3dc value, boolean transpose) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.setMatrix3x4(value, transpose);
+        }
+    }
+
+    @Override
+    public void setMatrix4x3(Matrix4x3dc value, boolean transpose) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.setMatrix4x3(value, transpose);
         }
     }
 }

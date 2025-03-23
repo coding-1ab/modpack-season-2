@@ -53,7 +53,7 @@ public class ShaderTextureCache {
 
             // If the texture is "missing", then refer back to the bound missing texture and remove
             int textureId = this.textures.getInt(name);
-            ShaderUniform uniform = this.program.getOrCreateShaderUniform(name);
+            ShaderUniform uniform = this.program.getOrCreateUniform(name);
             if (textureId == 0 || textureId == missingTexture) {
                 if (!hasMissing) {
                     hasMissing = true;
@@ -104,7 +104,7 @@ public class ShaderTextureCache {
         }
 
         for (Object2IntMap.Entry<CharSequence> entry : this.boundSamplers.object2IntEntrySet()) {
-            this.program.getOrCreateShaderUniform(entry.getKey()).setInt(entry.getIntValue());
+            this.program.getOrCreateUniform(entry.getKey()).setInt(entry.getIntValue());
         }
 
         if (samplerStart + count >= maxSampler) {

@@ -2,7 +2,7 @@ package foundry.veil.api.client.render.shader.uniform;
 
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.shader.program.ShaderUniformCache;
-import org.jetbrains.annotations.ApiStatus;
+import org.joml.*;
 
 import java.nio.ByteBuffer;
 
@@ -14,13 +14,12 @@ import static org.lwjgl.opengl.GL30C.*;
 /**
  * A single uniform in a shader program.
  */
-@ApiStatus.Experimental
 public interface ShaderUniform extends ShaderUniformAccess {
 
     /**
      * Invalidates the uniform cache.
      */
-    void invalidate();
+    void invalidateCache();
 
     @Override
     default boolean isValid() {
@@ -42,8 +41,174 @@ public interface ShaderUniform extends ShaderUniformAccess {
      */
     Type getType();
 
-    // TODO getters
+    /**
+     * @return The number of array elements in the uniform
+     */
+    int getArrayLength();
 
+    /**
+     * Retrieves the value of this uniform as a float.
+     *
+     * @return The float value of this uniform
+     */
+    float getFloat();
+
+    /**
+     * Retrieves the values of this uniform as a float array.
+     *
+     * @return A new array with the values of this uniform
+     */
+    default float[] getFloats() {
+        float[] values = new float[this.getArrayLength()];
+        this.getFloats(values, 0, values.length);
+        return values;
+    }
+
+    /**
+     * Retrieves the values of this uniform as a float array and stores them in the specified array.
+     *
+     * @param fill The array to fill
+     */
+    default void getFloats(float[] fill) {
+        this.getFloats(fill, 0, fill.length);
+    }
+
+    /**
+     * Retrieves the values of this uniform as a float array and stores them in the specified array.
+     *
+     * @param dst    The array to fill
+     * @param offset The position to start filling the array at
+     * @param length The number of values to read
+     */
+    void getFloats(float[] dst, int offset, int length);
+
+    /**
+     * Retrieves the value of this uniform as an integer.
+     *
+     * @return The int value of this uniform
+     */
+    int getInt();
+
+    /**
+     * Retrieves the values of this uniform as an int array.
+     *
+     * @return A new array with the values of this uniform
+     */
+    default int[] getInts() {
+        int[] values = new int[this.getArrayLength()];
+        this.getInts(values, 0, values.length);
+        return values;
+    }
+
+    /**
+     * Retrieves the values of this uniform as an int array and stores them in the specified array.
+     *
+     * @param fill The array to fill
+     */
+    default void getInts(int[] fill) {
+        this.getInts(fill, 0, fill.length);
+    }
+
+    /**
+     * Retrieves the values of this uniform as a int array and stores them in the specified array.
+     *
+     * @param dst    The array to fill
+     * @param offset The position to start filling the array at
+     * @param length The number of values to read
+     */
+    void getInts(int[] dst, int offset, int length);
+
+    /**
+     * Retrieves an array of vectors by the specified name.
+     *
+     * @param name   The name of the uniform to get
+     * @param values The values to set
+     */
+    void getVector(CharSequence name, Vector2f... values);
+
+    /**
+     * Retrieves an array of vectors by the specified name.
+     *
+     * @param name   The name of the uniform to get
+     * @param values The values to set
+     */
+    void getVector(CharSequence name, Vector3f... values);
+
+    /**
+     * Retrieves an array of vectors by the specified name.
+     *
+     * @param name   The name of the uniform to get
+     * @param values The values to set
+     */
+    void getVector(CharSequence name, Vector4f... values);
+
+    /**
+     * Retrieves an array of vectors by the specified name.
+     *
+     * @param name   The name of the uniform to get
+     * @param values The values to set
+     */
+    void getVectori(CharSequence name, Vector2i... values);
+
+    /**
+     * Retrieves an array of vectors by the specified name.
+     *
+     * @param name   The name of the uniform to get
+     * @param values The values to set
+     */
+    void getVectori(CharSequence name, Vector3i... values);
+
+    /**
+     * Retrieves an array of vectors by the specified name.
+     *
+     * @param name   The name of the uniform to get
+     * @param values The values to set
+     */
+    void getVectori(CharSequence name, Vector4i... values);
+
+    /**
+     * Retrieves a matrix2x2 by the specified name
+     *
+     * @param name  The name of the uniform to get
+     * @param value The value to set
+     */
+    void getMatrix(CharSequence name, Matrix2f value);
+
+    /**
+     * Retrieves a matrix3x3 by the specified name
+     *
+     * @param name  The name of the uniform to get
+     * @param value The value to set
+     */
+    void getMatrix(CharSequence name, Matrix3f value);
+
+    /**
+     * Retrieves a matrix4x4 by the specified name
+     *
+     * @param name  The name of the uniform to get
+     * @param value The value to set
+     */
+    void getMatrix(CharSequence name, Matrix4f value);
+
+    /**
+     * Retrieves a matrix3x2 by the specified name
+     *
+     * @param name  The name of the uniform to get
+     * @param value The value to set
+     */
+    void getMatrix(CharSequence name, Matrix3x2f value);
+
+    /**
+     * Retrieves a matrix4x3 by the specified name
+     *
+     * @param name  The name of the uniform to get
+     * @param value The value to set
+     */
+    void getMatrix(CharSequence name, Matrix4x3f value);
+
+    /**
+     * Possible uniform types that can be used.
+     */
     enum Type {
         FLOAT(Float.BYTES) {
             @Override

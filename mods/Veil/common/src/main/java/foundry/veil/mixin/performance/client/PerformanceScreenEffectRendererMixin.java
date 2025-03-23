@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LightTexture;
@@ -55,15 +56,21 @@ public class PerformanceScreenEffectRendererMixin {
             yScale = 1;
         }
 
-        float u0 = texture.getU0();
-        float v0 = texture.getV0();
-        float u1 = texture.getU1();
-        float v1 = texture.getV1();
-        float uWidth = u1 - u0;
-        float vHeight = v1 - v0;
+        ShaderUniform colorModulator = shader.getUniform("ColorModulator");
+        if (colorModulator != null) {
+            colorModulator.setVector(0.1F, 0.1F, 0.1F, 1.0F);
+        }
 
-        shader.setVector("ColorModulator", 0.1F, 0.1F, 0.1F, 1.0F);
-        shader.setVector("TexOffset", u0 + uWidth * (1.0F - xScale), v0 + vHeight * (1.0F - yScale), uWidth * xScale, vHeight * yScale);
+        ShaderUniform texOffset = shader.getUniform("TexOffset");
+        if (texOffset != null) {
+            float u0 = texture.getU0();
+            float v0 = texture.getV0();
+            float u1 = texture.getU1();
+            float v1 = texture.getV1();
+            float uWidth = u1 - u0;
+            float vHeight = v1 - v0;
+            texOffset.setVector(u0 + uWidth * (1.0F - xScale), v0 + vHeight * (1.0F - yScale), uWidth * xScale, vHeight * yScale);
+        }
 
         int activeTexture = GlStateManager._getActiveTexture();
         RenderSystem.activeTexture(GL_TEXTURE0);
@@ -87,23 +94,31 @@ public class PerformanceScreenEffectRendererMixin {
         ci.cancel();
 
         LocalPlayer player = minecraft.player;
-        Window window = minecraft.getWindow();
-        float xScale;
-        float yScale;
-        if (window.getWidth() > window.getHeight()) {
-            xScale = 1;
-            yScale = (float) window.getHeight() / window.getWidth();
-        } else {
-            xScale = (float) window.getWidth() / window.getHeight();
-            yScale = 1;
+
+        ShaderUniform colorModulator = shader.getUniform("ColorModulator");
+        if (colorModulator != null) {
+            float brightness = LightTexture.getBrightness(player.level().dimensionType(), player.level().getMaxLocalRawBrightness(player.blockPosition()));
+            colorModulator.setVector(brightness, brightness, brightness, 0.1F);
         }
 
-        float brightness = LightTexture.getBrightness(player.level().dimensionType(), player.level().getMaxLocalRawBrightness(player.blockPosition()));
-        float u = player.getYRot() / 64.0F;
-        float v = -player.getXRot() / 64.0F;
+        ShaderUniform texOffset = shader.getUniform("TexOffset");
+        if (texOffset != null) {
+            Window window = minecraft.getWindow();
+            float xScale;
+            float yScale;
+            if (window.getWidth() > window.getHeight()) {
+                xScale = 1;
+                yScale = (float) window.getHeight() / window.getWidth();
+            } else {
+                xScale = (float) window.getWidth() / window.getHeight();
+                yScale = 1;
+            }
 
-        shader.setVector("ColorModulator", brightness, brightness, brightness, 0.1F);
-        shader.setVector("TexOffset", u + 2.0F * (1.0F - xScale), v + 2.0F * (1.0F - yScale), 2.0F * xScale, 2.0F * yScale);
+            float u = player.getYRot() / 64.0F;
+            float v = -player.getXRot() / 64.0F;
+
+            texOffset.setVector(u + 2.0F * (1.0F - xScale), v + 2.0F * (1.0F - yScale), 2.0F * xScale, 2.0F * yScale);
+        }
 
         int activeTexture = GlStateManager._getActiveTexture();
         RenderSystem.activeTexture(GL_TEXTURE0);

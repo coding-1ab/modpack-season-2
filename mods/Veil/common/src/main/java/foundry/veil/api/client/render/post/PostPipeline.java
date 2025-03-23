@@ -49,33 +49,33 @@ public interface PostPipeline extends MutableUniformAccess, NativeResource {
     PostPipelineStageRegistry.PipelineType<? extends PostPipeline> getType();
 
     @Override
-    default int getUniform(CharSequence name) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
+    default int getUniformLocation(CharSequence name) {
+        throw new UnsupportedOperationException("Cannot get values from post pipelines");
     }
 
     @Override
-    default @Nullable ShaderUniformAccess getShaderUniform(CharSequence name) {
+    default @Nullable ShaderUniformAccess getUniform(CharSequence name) {
         return null;
     }
 
     @Override
-    default ShaderUniformAccess getShaderUniformSafe(CharSequence name) {
+    default ShaderUniformAccess getUniformSafe(CharSequence name) {
         return ShaderUniformAccess.EMPTY;
     }
 
     @Override
-    default ShaderUniformAccess getOrCreateShaderUniform(CharSequence name) {
+    default ShaderUniformAccess getOrCreateUniform(CharSequence name) {
         return ShaderUniformAccess.EMPTY;
     }
 
     @Override
     default int getUniformBlock(CharSequence name) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
+        throw new UnsupportedOperationException("Cannot get values from post pipelines");
     }
 
     @Override
     default int getStorageBlock(CharSequence name) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
+        throw new UnsupportedOperationException("Cannot get values from post pipelines");
     }
 
     @Override
@@ -94,170 +94,11 @@ public interface PostPipeline extends MutableUniformAccess, NativeResource {
     }
 
     @Override
-    default float getFloat(CharSequence name) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
-    }
-
-    @Override
-    default int getInt(CharSequence name) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
-    }
-
-    @Override
-    default void getFloats(CharSequence name, float[] values) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
-    }
-
-    @Override
-    default void getVector(CharSequence name, Vector2f... values) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
-    }
-
-    @Override
-    default void getVector(CharSequence name, Vector3f... values) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
-    }
-
-    @Override
-    default void getVector(CharSequence name, Vector4f... values) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
-    }
-
-    @Override
-    default void getInts(CharSequence name, int[] values) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
-    }
-
-    @Override
-    default void getVector(CharSequence name, Vector2i... values) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
-    }
-
-    @Override
-    default void getVector(CharSequence name, Vector3i... values) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
-    }
-
-    @Override
-    default void getVector(CharSequence name, Vector4i... values) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
-    }
-
-    @Override
-    default void getMatrix(CharSequence name, Matrix2f value) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
-    }
-
-    @Override
-    default void getMatrix(CharSequence name, Matrix3f value) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
-    }
-
-    @Override
-    default void getMatrix(CharSequence name, Matrix3x2f value) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
-    }
-
-    @Override
-    default void getMatrix(CharSequence name, Matrix4f value) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
-    }
-
-    @Override
-    default void getMatrix(CharSequence name, Matrix4x3f value) {
-        throw new UnsupportedOperationException("Cannot get values from post pipeline");
-    }
-
-    @Override
     default void setUniformBlock(CharSequence name, int binding) {
     }
 
     @Override
     default void setStorageBlock(CharSequence name, int binding) {
-    }
-
-    @Override
-    default void setFloat(CharSequence name, float value) {
-    }
-
-    @Override
-    default void setVector(CharSequence name, float x, float y) {
-    }
-
-    @Override
-    default void setVector(CharSequence name, float x, float y, float z) {
-    }
-
-    @Override
-    default void setVector(CharSequence name, float x, float y, float z, float w) {
-    }
-
-    @Override
-    default void setInt(CharSequence name, int value) {
-    }
-
-    @Override
-    default void setVectorI(CharSequence name, int x, int y) {
-    }
-
-    @Override
-    default void setVectorI(CharSequence name, int x, int y, int z) {
-    }
-
-    @Override
-    default void setVectorI(CharSequence name, int x, int y, int z, int w) {
-    }
-
-    @Override
-    default void setFloats(CharSequence name, float... values) {
-    }
-
-    @Override
-    default void setVectors(CharSequence name, Vector2fc... values) {
-    }
-
-    @Override
-    default void setVectors(CharSequence name, Vector3fc... values) {
-    }
-
-    @Override
-    default void setVectors(CharSequence name, Vector4fc... values) {
-    }
-
-    @Override
-    default void setInts(CharSequence name, int... values) {
-    }
-
-    @Override
-    default void setVectors(CharSequence name, Vector2ic... values) {
-    }
-
-    @Override
-    default void setVectors(CharSequence name, Vector3ic... values) {
-    }
-
-    @Override
-    default void setVectors(CharSequence name, Vector4ic... values) {
-    }
-
-    @Override
-    default void setMatrix(CharSequence name, Matrix2fc value, boolean transpose) {
-    }
-
-    @Override
-    default void setMatrix(CharSequence name, Matrix3fc value, boolean transpose) {
-    }
-
-    @Override
-    default void setMatrix(CharSequence name, Matrix3x2fc value, boolean transpose) {
-    }
-
-    @Override
-    default void setMatrix(CharSequence name, Matrix4fc value, boolean transpose) {
-    }
-
-    @Override
-    default void setMatrix(CharSequence name, Matrix4x3fc value, boolean transpose) {
     }
 
     /**

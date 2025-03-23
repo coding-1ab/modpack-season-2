@@ -3,6 +3,7 @@ package foundry.veil.api.client.render.vertex;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import foundry.veil.api.client.render.VeilRenderSystem;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import static org.lwjgl.opengl.GL41C.GL_FIXED;
  */
 public interface VertexArrayBuilder {
 
+    @ApiStatus.Internal
     static void validateRelativeOffset(int offset) {
         if (offset < 0 || offset > VeilRenderSystem.maxVertexAttributeRelativeOffset()) {
             throw new IllegalArgumentException("Vertex array attribute relative offset must be between 0 and " + VeilRenderSystem.maxVertexAttributeRelativeOffset() + ". Was " + offset);

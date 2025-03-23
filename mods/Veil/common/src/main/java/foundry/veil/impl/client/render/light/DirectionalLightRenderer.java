@@ -57,14 +57,14 @@ public class DirectionalLightRenderer implements LightTypeRenderer<DirectionalLi
         ShaderProgram shader = Objects.requireNonNull(VeilRenderSystem.getShader());
         this.vertexArray.bind();
         for (DirectionalLight light : lights) {
-            ShaderUniform lightColorUniform = shader.getShaderUniform("LightColor");
+            ShaderUniform lightColorUniform = shader.getUniform("LightColor");
             if (lightColorUniform != null) {
                 Vector3fc lightColor = light.getColor();
                 float brightness = light.getBrightness();
                 lightColorUniform.setVector(lightColor.x() * brightness, lightColor.y() * brightness, lightColor.z() * brightness);
             }
 
-            ShaderUniform lightDirection = shader.getShaderUniform("LightDirection");
+            ShaderUniform lightDirection = shader.getUniform("LightDirection");
             if (lightDirection != null) {
                 lightDirection.setVector(light.getDirection().normalize(DIRECTION));
             }

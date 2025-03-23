@@ -13,8 +13,9 @@ import org.jetbrains.annotations.Nullable;
 public interface TextureUniformAccess {
 
     /**
-     * Sets <code>DiffuseSampler0</code>-<code>DiffuseSamplerMax</code>
-     * to the color buffers in the specified framebuffer.
+     * Sets <code>DiffuseSampler0</code>-<code>DiffuseSamplerMax</code> to the color buffers in the specified framebuffer.
+     * <br>
+     * Also sets <code>DiffuseDepthSampler</code> if the framebuffer has a depth attachment.
      *
      * @param framebuffer The framebuffer to bind samplers from
      */

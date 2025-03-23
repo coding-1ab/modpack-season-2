@@ -218,6 +218,7 @@ public abstract class VertexArray implements NativeResource {
             } else {
                 this.uploadIndexBuffer(drawState);
             }
+
             this.indexCount = drawState.indexCount();
             this.indexType = IndexType.fromBlaze3D(drawState.indexType());
             this.drawMode = drawState.mode().asGLMode;

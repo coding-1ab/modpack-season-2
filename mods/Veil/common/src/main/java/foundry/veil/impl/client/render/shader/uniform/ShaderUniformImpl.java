@@ -5,13 +5,23 @@ import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.system.NativeResource;
 
 import java.lang.Math;
-import java.lang.ref.Cleaner;
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.Objects;
 import java.util.function.IntSupplier;
+
+import static org.lwjgl.opengl.ARBGPUShaderFP64.glGetUniformd;
+import static org.lwjgl.opengl.ARBGPUShaderFP64.glGetUniformdv;
+import static org.lwjgl.opengl.GL20C.*;
+import static org.lwjgl.opengl.GL30C.glGetUniformui;
+import static org.lwjgl.opengl.GL30C.glGetUniformuiv;
 
 @ApiStatus.Internal
 public class ShaderUniformImpl implements ShaderUniform, NativeResource {
@@ -46,7 +56,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
                 this.value = MemoryUtil.memRealloc(this.value, this.type.getBytes() * this.length);
             }
             this.location = uniform.location();
-            this.invalidate();
+            this.invalidateCache();
         } else {
             this.type = null;
             this.length = 0;
@@ -56,7 +66,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     }
 
     @Override
-    public void invalidate() {
+    public void invalidateCache() {
         if (this.value != null) {
             MemoryUtil.memSet(this.value, 0);
         }
@@ -78,6 +88,402 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     }
 
     @Override
+    public int getArrayLength() {
+        return this.length;
+    }
+
+    @Override
+    public float getFloat() {
+        return switch (this.type) {
+            case FLOAT -> glGetUniformf(this.program.getAsInt(), this.location);
+            case INT -> glGetUniformi(this.program.getAsInt(), this.location);
+            case UNSIGNED_INT -> glGetUniformui(this.program.getAsInt(), this.location);
+            case DOUBLE -> (float) glGetUniformd(this.program.getAsInt(), this.location);
+            default -> 0.0F;
+        };
+    }
+
+    @Override
+    public void getFloats(float[] dst, int offset, int length) {
+        Objects.checkFromIndexSize(offset, length, dst.length);
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            switch (this.type) {
+                case FLOAT -> {
+                    FloatBuffer buffer = stack.mallocFloat(Math.min(this.length, length));
+                    glGetUniformfv(this.program.getAsInt(), this.location, buffer);
+                    buffer.get(dst);
+                }
+                case INT -> {
+                    IntBuffer buffer = stack.mallocInt(Math.min(this.length, length));
+                    glGetUniformiv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < buffer.capacity(); i++) {
+                        dst[i + offset] = buffer.get(i);
+                    }
+                }
+                case UNSIGNED_INT -> {
+                    IntBuffer buffer = stack.mallocInt(Math.min(this.length, length));
+                    glGetUniformuiv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < buffer.capacity(); i++) {
+                        dst[i + offset] = buffer.get(i);
+                    }
+                }
+                case DOUBLE -> {
+                    DoubleBuffer buffer = stack.mallocDouble(Math.min(this.length, length));
+                    glGetUniformdv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < buffer.capacity(); i++) {
+                        dst[i + offset] = (float) buffer.get(i);
+                    }
+                }
+                default -> {
+                    for (int i = 0; i < Math.min(this.length, length); i++) {
+                        dst[i + offset] = 0.0F;
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public int getInt() {
+        return switch (this.type) {
+            case FLOAT -> (int) glGetUniformf(this.program.getAsInt(), this.location);
+            case INT -> glGetUniformi(this.program.getAsInt(), this.location);
+            case UNSIGNED_INT -> glGetUniformui(this.program.getAsInt(), this.location);
+            case DOUBLE -> (int) glGetUniformd(this.program.getAsInt(), this.location);
+            default -> 0;
+        };
+    }
+
+    @Override
+    public void getInts(int[] dst, int offset, int length) {
+        Objects.checkFromIndexSize(offset, length, dst.length);
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            switch (this.type) {
+                case FLOAT -> {
+                    FloatBuffer buffer = stack.mallocFloat(Math.min(this.length, length));
+                    glGetUniformfv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < buffer.capacity(); i++) {
+                        dst[i + offset] = (int) buffer.get(i);
+                    }
+                }
+                case INT -> {
+                    IntBuffer buffer = stack.mallocInt(Math.min(this.length, length));
+                    glGetUniformiv(this.program.getAsInt(), this.location, buffer);
+                    buffer.get(dst);
+                }
+                case UNSIGNED_INT -> {
+                    IntBuffer buffer = stack.mallocInt(Math.min(this.length, length));
+                    glGetUniformuiv(this.program.getAsInt(), this.location, buffer);
+                    buffer.get(dst);
+                }
+                case DOUBLE -> {
+                    DoubleBuffer buffer = stack.mallocDouble(Math.min(this.length, length));
+                    glGetUniformdv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < buffer.capacity(); i++) {
+                        dst[i + offset] = (int) buffer.get(i);
+                    }
+                }
+                default -> {
+                    for (int i = 0; i < Math.min(this.length, length); i++) {
+                        dst[i + offset] = 0;
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void getVector(CharSequence name, Vector2f... values) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            switch (this.type) {
+                case FLOAT_VEC2 -> {
+                    FloatBuffer buffer = stack.mallocFloat(2 * Math.min(this.length, values.length));
+                    glGetUniformfv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(i * 2, buffer);
+                    }
+                }
+                case INT_VEC2 -> {
+                    IntBuffer buffer = stack.mallocInt(2 * Math.min(this.length, values.length));
+                    glGetUniformiv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(buffer.get(i * 2), buffer.get(i * 2 + 1));
+                    }
+                }
+                case UNSIGNED_INT_VEC2 -> {
+                    IntBuffer buffer = stack.mallocInt(2 * Math.min(this.length, values.length));
+                    glGetUniformuiv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(buffer.get(i * 2), buffer.get(i * 2 + 1));
+                    }
+                }
+                case DOUBLE_VEC2 -> {
+                    DoubleBuffer buffer = stack.mallocDouble(2 * Math.min(this.length, values.length));
+                    glGetUniformdv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(buffer.get(i * 2), buffer.get(i * 2 + 1));
+                    }
+                }
+                default -> {
+                    for (int i = 0; i < Math.min(this.length, values.length); i++) {
+                        values[i].set(0.0F);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void getVector(CharSequence name, Vector3f... values) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            switch (this.type) {
+                case FLOAT_VEC3 -> {
+                    FloatBuffer buffer = stack.mallocFloat(3 * Math.min(this.length, values.length));
+                    glGetUniformfv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(i * 3, buffer);
+                    }
+                }
+                case INT_VEC3 -> {
+                    IntBuffer buffer = stack.mallocInt(3 * Math.min(this.length, values.length));
+                    glGetUniformiv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(buffer.get(i * 3), buffer.get(i * 3 + 1), buffer.get(i * 3 + 2));
+                    }
+                }
+                case UNSIGNED_INT_VEC3 -> {
+                    IntBuffer buffer = stack.mallocInt(3 * Math.min(this.length, values.length));
+                    glGetUniformuiv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(buffer.get(i * 3), buffer.get(i * 3 + 1), buffer.get(i * 3 + 2));
+                    }
+                }
+                case DOUBLE_VEC3 -> {
+                    DoubleBuffer buffer = stack.mallocDouble(3 * Math.min(this.length, values.length));
+                    glGetUniformdv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(buffer.get(i * 3), buffer.get(i * 3 + 1), buffer.get(i * 3 + 2));
+                    }
+                }
+                default -> {
+                    for (int i = 0; i < Math.min(this.length, values.length); i++) {
+                        values[i].set(0.0F);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void getVector(CharSequence name, Vector4f... values) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            switch (this.type) {
+                case FLOAT_VEC4 -> {
+                    FloatBuffer buffer = stack.mallocFloat(4 * Math.min(this.length, values.length));
+                    glGetUniformfv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(i * 4, buffer);
+                    }
+                }
+                case INT_VEC4 -> {
+                    IntBuffer buffer = stack.mallocInt(4 * Math.min(this.length, values.length));
+                    glGetUniformiv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(buffer.get(i * 4), buffer.get(i * 4 + 1), buffer.get(i * 4 + 2), buffer.get(i * 4 + 3));
+                    }
+                }
+                case UNSIGNED_INT_VEC4 -> {
+                    IntBuffer buffer = stack.mallocInt(4 * Math.min(this.length, values.length));
+                    glGetUniformuiv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(buffer.get(i * 4), buffer.get(i * 4 + 1), buffer.get(i * 4 + 2), buffer.get(i * 4 + 3));
+                    }
+                }
+                case DOUBLE_VEC4 -> {
+                    DoubleBuffer buffer = stack.mallocDouble(4 * Math.min(this.length, values.length));
+                    glGetUniformdv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(buffer.get(i * 4), buffer.get(i * 4 + 1), buffer.get(i * 4 + 2), buffer.get(i * 4 + 3));
+                    }
+                }
+                default -> {
+                    for (int i = 0; i < Math.min(this.length, values.length); i++) {
+                        values[i].set(0.0F);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void getVectori(CharSequence name, Vector2i... values) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            switch (this.type) {
+                case FLOAT_VEC2 -> {
+                    FloatBuffer buffer = stack.mallocFloat(2 * Math.min(this.length, values.length));
+                    glGetUniformfv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set((int) buffer.get(i * 2), (int) buffer.get(i * 2 + 1));
+                    }
+                }
+                case INT_VEC2 -> {
+                    IntBuffer buffer = stack.mallocInt(2 * Math.min(this.length, values.length));
+                    glGetUniformiv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(i * 2, buffer);
+                    }
+                }
+                case UNSIGNED_INT_VEC2 -> {
+                    IntBuffer buffer = stack.mallocInt(2 * Math.min(this.length, values.length));
+                    glGetUniformuiv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(i * 2, buffer);
+                    }
+                }
+                case DOUBLE_VEC2 -> {
+                    DoubleBuffer buffer = stack.mallocDouble(2 * Math.min(this.length, values.length));
+                    glGetUniformdv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set((int) buffer.get(i * 2), (int) buffer.get(i * 2 + 1));
+                    }
+                }
+                default -> {
+                    for (int i = 0; i < Math.min(this.length, values.length); i++) {
+                        values[i].set(0);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void getVectori(CharSequence name, Vector3i... values) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            switch (this.type) {
+                case FLOAT_VEC3 -> {
+                    FloatBuffer buffer = stack.mallocFloat(3 * Math.min(this.length, values.length));
+                    glGetUniformfv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set((int) buffer.get(i * 3), (int) buffer.get(i * 3 + 1), (int) buffer.get(i * 3 + 2));
+                    }
+                }
+                case INT_VEC3 -> {
+                    IntBuffer buffer = stack.mallocInt(3 * Math.min(this.length, values.length));
+                    glGetUniformiv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(i * 3, buffer);
+                    }
+                }
+                case UNSIGNED_INT_VEC3 -> {
+                    IntBuffer buffer = stack.mallocInt(3 * Math.min(this.length, values.length));
+                    glGetUniformuiv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(i * 3, buffer);
+                    }
+                }
+                case DOUBLE_VEC3 -> {
+                    DoubleBuffer buffer = stack.mallocDouble(3 * Math.min(this.length, values.length));
+                    glGetUniformdv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set((int) buffer.get(i * 3), (int) buffer.get(i * 3 + 1), (int) buffer.get(i * 3 + 2));
+                    }
+                }
+                default -> {
+                    for (int i = 0; i < Math.min(this.length, values.length); i++) {
+                        values[i].set(0);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void getVectori(CharSequence name, Vector4i... values) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            switch (this.type) {
+                case FLOAT_VEC4 -> {
+                    FloatBuffer buffer = stack.mallocFloat(3 * Math.min(this.length, values.length));
+                    glGetUniformfv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set((int) buffer.get(i * 4), (int) buffer.get(i * 4 + 1), (int) buffer.get(i * 4 + 2), (int) buffer.get(i * 4 + 3));
+                    }
+                }
+                case INT_VEC4 -> {
+                    IntBuffer buffer = stack.mallocInt(3 * Math.min(this.length, values.length));
+                    glGetUniformiv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(i * 4, buffer);
+                    }
+                }
+                case UNSIGNED_INT_VEC4 -> {
+                    IntBuffer buffer = stack.mallocInt(3 * Math.min(this.length, values.length));
+                    glGetUniformuiv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set(i * 4, buffer);
+                    }
+                }
+                case DOUBLE_VEC4 -> {
+                    DoubleBuffer buffer = stack.mallocDouble(4 * Math.min(this.length, values.length));
+                    glGetUniformdv(this.program.getAsInt(), this.location, buffer);
+                    for (int i = 0; i < values.length; i++) {
+                        values[i].set((int) buffer.get(i * 4), (int) buffer.get(i * 4 + 1), (int) buffer.get(i * 4 + 2), (int) buffer.get(i * 4 + 3));
+                    }
+                }
+                default -> {
+                    for (int i = 0; i < Math.min(this.length, values.length); i++) {
+                        values[i].set(0);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void getMatrix(CharSequence name, Matrix2f value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(2 * 2);
+            glGetUniformfv(this.program.getAsInt(), this.location, buffer);
+            value.set(0, buffer);
+        }
+    }
+
+    @Override
+    public void getMatrix(CharSequence name, Matrix3f value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(3 * 3);
+            glGetUniformfv(this.program.getAsInt(), this.location, buffer);
+            value.set(0, buffer);
+        }
+    }
+
+    @Override
+    public void getMatrix(CharSequence name, Matrix4f value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(4 * 4);
+            glGetUniformfv(this.program.getAsInt(), this.location, buffer);
+            value.set(0, buffer);
+        }
+    }
+
+    @Override
+    public void getMatrix(CharSequence name, Matrix3x2f value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(3 * 2);
+            glGetUniformfv(this.program.getAsInt(), this.location, buffer);
+            value.set(0, buffer);
+        }
+    }
+
+    @Override
+    public void getMatrix(CharSequence name, Matrix4x3f value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(4 * 3);
+            glGetUniformfv(this.program.getAsInt(), this.location, buffer);
+            value.set(0, buffer);
+        }
+    }
+
+    @Override
     public void free() {
         if (this.value != null) {
             MemoryUtil.memFree(this.value);
@@ -88,7 +494,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setFloat(float value) {
         if (this.type != Type.FLOAT ||
-            Float.floatToIntBits(this.value.getFloat(0)) == Float.floatToIntBits(value)) {
+            this.value.getInt(0) == Float.floatToIntBits(value)) {
             return;
         }
 
@@ -99,8 +505,8 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVector(float x, float y) {
         if (this.type != Type.FLOAT_VEC2 ||
-            (Float.floatToIntBits(this.value.getFloat(0)) == Float.floatToIntBits(x) &&
-             Float.floatToIntBits(this.value.getFloat(4)) == Float.floatToIntBits(y))) {
+            (this.value.getInt(0) == Float.floatToIntBits(x) &&
+             this.value.getInt(4) == Float.floatToIntBits(y))) {
             return;
         }
 
@@ -112,9 +518,9 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVector(float x, float y, float z) {
         if (this.type != Type.FLOAT_VEC3 ||
-            (Float.floatToIntBits(this.value.getFloat(0)) == Float.floatToIntBits(x) &&
-             Float.floatToIntBits(this.value.getFloat(4)) == Float.floatToIntBits(y) &&
-             Float.floatToIntBits(this.value.getFloat(8)) == Float.floatToIntBits(z))) {
+            (this.value.getInt(0) == Float.floatToIntBits(x) &&
+             this.value.getInt(4) == Float.floatToIntBits(y) &&
+             this.value.getInt(8) == Float.floatToIntBits(z))) {
             return;
         }
 
@@ -127,10 +533,10 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVector(float x, float y, float z, float w) {
         if (this.type != Type.FLOAT_VEC4 ||
-            (Float.floatToIntBits(this.value.getFloat(0)) == Float.floatToIntBits(x) &&
-             Float.floatToIntBits(this.value.getFloat(4)) == Float.floatToIntBits(y) &&
-             Float.floatToIntBits(this.value.getFloat(8)) == Float.floatToIntBits(z) &&
-             Float.floatToIntBits(this.value.getFloat(2)) == Float.floatToIntBits(w))) {
+            (this.value.getInt(0) == Float.floatToIntBits(x) &&
+             this.value.getInt(4) == Float.floatToIntBits(y) &&
+             this.value.getInt(8) == Float.floatToIntBits(z) &&
+             this.value.getInt(12) == Float.floatToIntBits(w))) {
             return;
         }
 
@@ -355,10 +761,10 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
             return;
         }
 
-        if (Float.floatToIntBits(this.value.getFloat(0)) == Float.floatToIntBits(value.m00()) &&
-            Float.floatToIntBits(this.value.getFloat(4)) == Float.floatToIntBits(value.m01()) &&
-            Float.floatToIntBits(this.value.getFloat(8)) == Float.floatToIntBits(value.m10()) &&
-            Float.floatToIntBits(this.value.getFloat(12)) == Float.floatToIntBits(value.m11())) {
+        if (this.value.getInt(0) == Float.floatToIntBits(value.m00()) &&
+            this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
+            this.value.getInt(8) == Float.floatToIntBits(value.m10()) &&
+            this.value.getInt(12) == Float.floatToIntBits(value.m11())) {
             return;
         }
 
@@ -372,15 +778,15 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
             return;
         }
 
-        if (Float.floatToIntBits(this.value.getFloat(0)) == Float.floatToIntBits(value.m00()) &&
-            Float.floatToIntBits(this.value.getFloat(4)) == Float.floatToIntBits(value.m01()) &&
-            Float.floatToIntBits(this.value.getFloat(8)) == Float.floatToIntBits(value.m02()) &&
-            Float.floatToIntBits(this.value.getFloat(12)) == Float.floatToIntBits(value.m10()) &&
-            Float.floatToIntBits(this.value.getFloat(16)) == Float.floatToIntBits(value.m11()) &&
-            Float.floatToIntBits(this.value.getFloat(20)) == Float.floatToIntBits(value.m12()) &&
-            Float.floatToIntBits(this.value.getFloat(24)) == Float.floatToIntBits(value.m20()) &&
-            Float.floatToIntBits(this.value.getFloat(28)) == Float.floatToIntBits(value.m21()) &&
-            Float.floatToIntBits(this.value.getFloat(32)) == Float.floatToIntBits(value.m22())) {
+        if (this.value.getInt(0) == Float.floatToIntBits(value.m00()) &&
+            this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
+            this.value.getInt(8) == Float.floatToIntBits(value.m02()) &&
+            this.value.getInt(12) == Float.floatToIntBits(value.m10()) &&
+            this.value.getInt(16) == Float.floatToIntBits(value.m11()) &&
+            this.value.getInt(20) == Float.floatToIntBits(value.m12()) &&
+            this.value.getInt(24) == Float.floatToIntBits(value.m20()) &&
+            this.value.getInt(28) == Float.floatToIntBits(value.m21()) &&
+            this.value.getInt(32) == Float.floatToIntBits(value.m22())) {
             return;
         }
 
@@ -394,22 +800,22 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
             return;
         }
 
-        if (Float.floatToIntBits(this.value.getFloat(0)) == Float.floatToIntBits(value.m00()) &&
-            Float.floatToIntBits(this.value.getFloat(4)) == Float.floatToIntBits(value.m01()) &&
-            Float.floatToIntBits(this.value.getFloat(8)) == Float.floatToIntBits(value.m02()) &&
-            Float.floatToIntBits(this.value.getFloat(12)) == Float.floatToIntBits(value.m03()) &&
-            Float.floatToIntBits(this.value.getFloat(16)) == Float.floatToIntBits(value.m10()) &&
-            Float.floatToIntBits(this.value.getFloat(20)) == Float.floatToIntBits(value.m11()) &&
-            Float.floatToIntBits(this.value.getFloat(24)) == Float.floatToIntBits(value.m12()) &&
-            Float.floatToIntBits(this.value.getFloat(28)) == Float.floatToIntBits(value.m13()) &&
-            Float.floatToIntBits(this.value.getFloat(32)) == Float.floatToIntBits(value.m20()) &&
-            Float.floatToIntBits(this.value.getFloat(36)) == Float.floatToIntBits(value.m21()) &&
-            Float.floatToIntBits(this.value.getFloat(40)) == Float.floatToIntBits(value.m22()) &&
-            Float.floatToIntBits(this.value.getFloat(44)) == Float.floatToIntBits(value.m23()) &&
-            Float.floatToIntBits(this.value.getFloat(48)) == Float.floatToIntBits(value.m30()) &&
-            Float.floatToIntBits(this.value.getFloat(52)) == Float.floatToIntBits(value.m31()) &&
-            Float.floatToIntBits(this.value.getFloat(56)) == Float.floatToIntBits(value.m32()) &&
-            Float.floatToIntBits(this.value.getFloat(60)) == Float.floatToIntBits(value.m33())) {
+        if (this.value.getInt(0) == Float.floatToIntBits(value.m00()) &&
+            this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
+            this.value.getInt(8) == Float.floatToIntBits(value.m02()) &&
+            this.value.getInt(12) == Float.floatToIntBits(value.m03()) &&
+            this.value.getInt(16) == Float.floatToIntBits(value.m10()) &&
+            this.value.getInt(20) == Float.floatToIntBits(value.m11()) &&
+            this.value.getInt(24) == Float.floatToIntBits(value.m12()) &&
+            this.value.getInt(28) == Float.floatToIntBits(value.m13()) &&
+            this.value.getInt(32) == Float.floatToIntBits(value.m20()) &&
+            this.value.getInt(36) == Float.floatToIntBits(value.m21()) &&
+            this.value.getInt(40) == Float.floatToIntBits(value.m22()) &&
+            this.value.getInt(44) == Float.floatToIntBits(value.m23()) &&
+            this.value.getInt(48) == Float.floatToIntBits(value.m30()) &&
+            this.value.getInt(52) == Float.floatToIntBits(value.m31()) &&
+            this.value.getInt(56) == Float.floatToIntBits(value.m32()) &&
+            this.value.getInt(60) == Float.floatToIntBits(value.m33())) {
             return;
         }
 
@@ -417,14 +823,92 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         this.uploadMatrix(transpose);
     }
 
-    // TODO finish these
-
     @Override
-    public void setMatrix(Matrix3x2fc value, boolean transpose) {
+    public void setMatrix2x3(Matrix3x2fc value, boolean transpose) {
+        if (this.type != Type.MATRIX2x3) {
+            return;
+        }
+
+        if (this.value.getInt(0) == Float.floatToIntBits(value.m00()) &&
+            this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
+            this.value.getInt(8) == Float.floatToIntBits(value.m10()) &&
+            this.value.getInt(16) == Float.floatToIntBits(value.m11()) &&
+            this.value.getInt(20) == Float.floatToIntBits(value.m20()) &&
+            this.value.getInt(24) == Float.floatToIntBits(value.m21())) {
+            return;
+        }
+
+        value.get(this.value);
+        this.uploadMatrix(transpose);
     }
 
     @Override
-    public void setMatrix(Matrix4x3fc value, boolean transpose) {
+    public void setMatrix3x2(Matrix3x2fc value, boolean transpose) {
+        if (this.type != Type.MATRIX3x2) {
+            return;
+        }
+
+        if (this.value.getInt(0) == Float.floatToIntBits(value.m00()) &&
+            this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
+            this.value.getInt(8) == Float.floatToIntBits(value.m10()) &&
+            this.value.getInt(16) == Float.floatToIntBits(value.m11()) &&
+            this.value.getInt(20) == Float.floatToIntBits(value.m20()) &&
+            this.value.getInt(24) == Float.floatToIntBits(value.m21())) {
+            return;
+        }
+
+        value.get(this.value);
+        this.uploadMatrix(!transpose);
+    }
+
+    @Override
+    public void setMatrix3x4(Matrix4x3fc value, boolean transpose) {
+        if (this.type != Type.MATRIX3x4) {
+            return;
+        }
+
+        if (this.value.getInt(0) == Float.floatToIntBits(value.m00()) &&
+            this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
+            this.value.getInt(8) == Float.floatToIntBits(value.m02()) &&
+            this.value.getInt(12) == Float.floatToIntBits(value.m10()) &&
+            this.value.getInt(16) == Float.floatToIntBits(value.m11()) &&
+            this.value.getInt(20) == Float.floatToIntBits(value.m12()) &&
+            this.value.getInt(24) == Float.floatToIntBits(value.m20()) &&
+            this.value.getInt(28) == Float.floatToIntBits(value.m21()) &&
+            this.value.getInt(32) == Float.floatToIntBits(value.m22()) &&
+            this.value.getInt(36) == Float.floatToIntBits(value.m30()) &&
+            this.value.getInt(40) == Float.floatToIntBits(value.m31()) &&
+            this.value.getInt(44) == Float.floatToIntBits(value.m32())) {
+            return;
+        }
+
+        value.get(this.value);
+        this.uploadMatrix(!transpose);
+    }
+
+    @Override
+    public void setMatrix4x3(Matrix4x3fc value, boolean transpose) {
+        if (this.type != Type.MATRIX4x3) {
+            return;
+        }
+
+        if (this.value.getInt(0) == Float.floatToIntBits(value.m00()) &&
+            this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
+            this.value.getInt(8) == Float.floatToIntBits(value.m02()) &&
+            this.value.getInt(12) == Float.floatToIntBits(value.m10()) &&
+            this.value.getInt(16) == Float.floatToIntBits(value.m11()) &&
+            this.value.getInt(20) == Float.floatToIntBits(value.m12()) &&
+            this.value.getInt(24) == Float.floatToIntBits(value.m20()) &&
+            this.value.getInt(28) == Float.floatToIntBits(value.m21()) &&
+            this.value.getInt(32) == Float.floatToIntBits(value.m22()) &&
+            this.value.getInt(36) == Float.floatToIntBits(value.m30()) &&
+            this.value.getInt(40) == Float.floatToIntBits(value.m31()) &&
+            this.value.getInt(44) == Float.floatToIntBits(value.m32())) {
+            return;
+        }
+
+        value.get(this.value);
+        this.uploadMatrix(transpose);
     }
 
     @Override
@@ -433,10 +917,10 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
             return;
         }
 
-        if (Double.doubleToLongBits(this.value.getDouble(0)) == Double.doubleToLongBits(value.m00()) &&
-            Double.doubleToLongBits(this.value.getDouble(8)) == Double.doubleToLongBits(value.m01()) &&
-            Double.doubleToLongBits(this.value.getDouble(16)) == Double.doubleToLongBits(value.m10()) &&
-            Double.doubleToLongBits(this.value.getDouble(24)) == Double.doubleToLongBits(value.m11())) {
+        if (this.value.getLong(0) == Double.doubleToLongBits(value.m00()) &&
+            this.value.getLong(8) == Double.doubleToLongBits(value.m01()) &&
+            this.value.getLong(16) == Double.doubleToLongBits(value.m10()) &&
+            this.value.getLong(24) == Double.doubleToLongBits(value.m11())) {
             return;
         }
 
@@ -450,15 +934,15 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
             return;
         }
 
-        if (Double.doubleToLongBits(this.value.getDouble(0)) == Double.doubleToLongBits(value.m00()) &&
-            Double.doubleToLongBits(this.value.getDouble(8)) == Double.doubleToLongBits(value.m01()) &&
-            Double.doubleToLongBits(this.value.getDouble(16)) == Double.doubleToLongBits(value.m02()) &&
-            Double.doubleToLongBits(this.value.getDouble(24)) == Double.doubleToLongBits(value.m10()) &&
-            Double.doubleToLongBits(this.value.getDouble(32)) == Double.doubleToLongBits(value.m11()) &&
-            Double.doubleToLongBits(this.value.getDouble(40)) == Double.doubleToLongBits(value.m12()) &&
-            Double.doubleToLongBits(this.value.getDouble(48)) == Double.doubleToLongBits(value.m20()) &&
-            Double.doubleToLongBits(this.value.getDouble(56)) == Double.doubleToLongBits(value.m21()) &&
-            Double.doubleToLongBits(this.value.getDouble(64)) == Double.doubleToLongBits(value.m22())) {
+        if (this.value.getLong(0) == Double.doubleToLongBits(value.m00()) &&
+            this.value.getLong(8) == Double.doubleToLongBits(value.m01()) &&
+            this.value.getLong(16) == Double.doubleToLongBits(value.m02()) &&
+            this.value.getLong(24) == Double.doubleToLongBits(value.m10()) &&
+            this.value.getLong(32) == Double.doubleToLongBits(value.m11()) &&
+            this.value.getLong(40) == Double.doubleToLongBits(value.m12()) &&
+            this.value.getLong(48) == Double.doubleToLongBits(value.m20()) &&
+            this.value.getLong(56) == Double.doubleToLongBits(value.m21()) &&
+            this.value.getLong(64) == Double.doubleToLongBits(value.m22())) {
             return;
         }
 
@@ -472,22 +956,22 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
             return;
         }
 
-        if (Double.doubleToLongBits(this.value.getDouble(0)) == Double.doubleToLongBits(value.m00()) &&
-            Double.doubleToLongBits(this.value.getDouble(8)) == Double.doubleToLongBits(value.m01()) &&
-            Double.doubleToLongBits(this.value.getDouble(16)) == Double.doubleToLongBits(value.m02()) &&
-            Double.doubleToLongBits(this.value.getDouble(24)) == Double.doubleToLongBits(value.m03()) &&
-            Double.doubleToLongBits(this.value.getDouble(32)) == Double.doubleToLongBits(value.m10()) &&
-            Double.doubleToLongBits(this.value.getDouble(40)) == Double.doubleToLongBits(value.m11()) &&
-            Double.doubleToLongBits(this.value.getDouble(48)) == Double.doubleToLongBits(value.m12()) &&
-            Double.doubleToLongBits(this.value.getDouble(56)) == Double.doubleToLongBits(value.m13()) &&
-            Double.doubleToLongBits(this.value.getDouble(64)) == Double.doubleToLongBits(value.m20()) &&
-            Double.doubleToLongBits(this.value.getDouble(72)) == Double.doubleToLongBits(value.m21()) &&
-            Double.doubleToLongBits(this.value.getDouble(80)) == Double.doubleToLongBits(value.m22()) &&
-            Double.doubleToLongBits(this.value.getDouble(88)) == Double.doubleToLongBits(value.m23()) &&
-            Double.doubleToLongBits(this.value.getDouble(96)) == Double.doubleToLongBits(value.m30()) &&
-            Double.doubleToLongBits(this.value.getDouble(104)) == Double.doubleToLongBits(value.m31()) &&
-            Double.doubleToLongBits(this.value.getDouble(112)) == Double.doubleToLongBits(value.m32()) &&
-            Double.doubleToLongBits(this.value.getDouble(120)) == Double.doubleToLongBits(value.m33())) {
+        if (this.value.getLong(0) == Double.doubleToLongBits(value.m00()) &&
+            this.value.getLong(8) == Double.doubleToLongBits(value.m01()) &&
+            this.value.getLong(16) == Double.doubleToLongBits(value.m02()) &&
+            this.value.getLong(24) == Double.doubleToLongBits(value.m03()) &&
+            this.value.getLong(32) == Double.doubleToLongBits(value.m10()) &&
+            this.value.getLong(40) == Double.doubleToLongBits(value.m11()) &&
+            this.value.getLong(48) == Double.doubleToLongBits(value.m12()) &&
+            this.value.getLong(56) == Double.doubleToLongBits(value.m13()) &&
+            this.value.getLong(64) == Double.doubleToLongBits(value.m20()) &&
+            this.value.getLong(72) == Double.doubleToLongBits(value.m21()) &&
+            this.value.getLong(80) == Double.doubleToLongBits(value.m22()) &&
+            this.value.getLong(88) == Double.doubleToLongBits(value.m23()) &&
+            this.value.getLong(96) == Double.doubleToLongBits(value.m30()) &&
+            this.value.getLong(104) == Double.doubleToLongBits(value.m31()) &&
+            this.value.getLong(112) == Double.doubleToLongBits(value.m32()) &&
+            this.value.getLong(120) == Double.doubleToLongBits(value.m33())) {
             return;
         }
 
@@ -496,11 +980,22 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     }
 
     @Override
-    public void setMatrix(Matrix3x2dc value, boolean transpose) {
+    public void setMatrix2x3(Matrix3x2dc value, boolean transpose) {
+
     }
 
     @Override
-    public void setMatrix(Matrix4x3dc value, boolean transpose) {
+    public void setMatrix3x2(Matrix3x2dc value, boolean transpose) {
+
+    }
+
+    @Override
+    public void setMatrix3x4(Matrix4x3dc value, boolean transpose) {
+
+    }
+
+    @Override
+    public void setMatrix4x3(Matrix4x3dc value, boolean transpose) {
 
     }
 }

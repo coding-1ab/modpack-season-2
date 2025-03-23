@@ -11,6 +11,7 @@ import foundry.veil.api.client.render.light.Light;
 import foundry.veil.api.client.render.shader.block.DynamicShaderBlock;
 import foundry.veil.api.client.render.shader.block.ShaderBlock;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
 import foundry.veil.api.client.render.vertex.VertexArray;
 import foundry.veil.api.client.render.vertex.VertexArrayBuilder;
 import net.minecraft.client.Minecraft;
@@ -197,23 +198,26 @@ public abstract class IndirectLightRenderer<T extends Light & IndirectLight<T>> 
                     int maxX = VeilRenderSystem.maxComputeWorkGroupCountX();
                     int maxY = VeilRenderSystem.maxComputeWorkGroupCountY();
 
-                    shader.setInt("HighResSize", this.highResSize);
-                    shader.setInt("LowResSize", this.lowResSize);
-                    shader.setInt("LightSize", this.lightSize / Float.BYTES);
-                    shader.setInt("PositionOffset", this.positionOffset);
-                    shader.setInt("RangeOffset", this.rangeOffset);
+                    shader.getUniformSafe("HighResSize").setInt(this.highResSize);
+                    shader.getUniformSafe("LowResSize").setInt(this.lowResSize);
+                    shader.getUniformSafe("LightSize").setInt(this.lightSize / Float.BYTES);
+                    shader.getUniformSafe("PositionOffset").setInt(this.positionOffset);
+                    shader.getUniformSafe("RangeOffset").setInt(this.rangeOffset);
 
-                    Vector4fc[] planes = frustum.getPlanes();
-                    float[] values = new float[4 * planes.length];
-                    for (int i = 0; i < planes.length; i++) {
-                        Vector4fc plane = planes[i];
-                        values[i * 4] = plane.x();
-                        values[i * 4 + 1] = plane.y();
-                        values[i * 4 + 2] = plane.z();
-                        values[i * 4 + 3] = plane.w();
+                    ShaderUniform frustumPlanes = shader.getUniform("FrustumPlanes");
+                    if (frustumPlanes != null) {
+                        Vector4fc[] planes = frustum.getPlanes();
+                        float[] values = new float[4 * planes.length];
+                        for (int i = 0; i < planes.length; i++) {
+                            Vector4fc plane = planes[i];
+                            values[i * 4] = plane.x();
+                            values[i * 4 + 1] = plane.y();
+                            values[i * 4 + 2] = plane.z();
+                            values[i * 4 + 3] = plane.w();
+                        }
+                        frustumPlanes.setFloats(values);
                     }
-                    shader.setFloats("FrustumPlanes", values);
-                    shader.setInt("Width", maxX);
+                    shader.getUniformSafe("Width").setInt(maxX);
 
                     shader.bind();
 

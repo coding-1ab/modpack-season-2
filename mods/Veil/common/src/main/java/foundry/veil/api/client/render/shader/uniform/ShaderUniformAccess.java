@@ -11,8 +11,17 @@ import java.lang.Math;
  */
 public interface ShaderUniformAccess {
 
+    /**
+     * NO-OP Uniform Access
+     */
     ShaderUniformAccess EMPTY = EmptyShaderUniformAccess.INSTANCE;
 
+    /**
+     * Creates a composite shader uniform access.
+     *
+     * @param accesses The uniforms to merge together
+     * @return A new {@link ShaderUniformAccess} that sets values in the provided access
+     */
     static ShaderUniformAccess of(ShaderUniformAccess... accesses) {
         if (accesses.length == 0) {
             return ShaderUniformAccess.EMPTY;
@@ -270,8 +279,8 @@ public interface ShaderUniformAccess {
      *
      * @param value The value to set
      */
-    default void setMatrix(Matrix3x2fc value) {
-        this.setMatrix(value, false);
+    default void setMatrix2x3(Matrix3x2fc value) {
+        this.setMatrix2x3(value, false);
     }
 
     /**
@@ -279,8 +288,26 @@ public interface ShaderUniformAccess {
      *
      * @param value The value to set
      */
-    default void setMatrix(Matrix4x3fc value) {
-        this.setMatrix(value, false);
+    default void setMatrix3x2(Matrix3x2fc value) {
+        this.setMatrix3x2(value, false);
+    }
+
+    /**
+     * Sets a matrix in the shader.
+     *
+     * @param value The value to set
+     */
+    default void setMatrix3x4(Matrix4x3fc value) {
+        this.setMatrix3x4(value, false);
+    }
+
+    /**
+     * Sets a matrix in the shader.
+     *
+     * @param value The value to set
+     */
+    default void setMatrix4x3(Matrix4x3fc value) {
+        this.setMatrix4x3(value, false);
     }
 
     /**
@@ -309,17 +336,31 @@ public interface ShaderUniformAccess {
      *
      * @param value The value to set
      */
-    void setMatrix(Matrix4x3fc value, boolean transpose);
+    void setMatrix2x3(Matrix3x2fc value, boolean transpose);
 
     /**
      * Sets a matrix in the shader.
      *
      * @param value The value to set
      */
-    void setMatrix(Matrix3x2fc value, boolean transpose);
+    void setMatrix3x2(Matrix3x2fc value, boolean transpose);
 
     /**
-     * Sets a double matrix in the shader.
+     * Sets a matrix in the shader.
+     *
+     * @param value The value to set
+     */
+    void setMatrix3x4(Matrix4x3fc value, boolean transpose);
+
+    /**
+     * Sets a matrix in the shader.
+     *
+     * @param value The value to set
+     */
+    void setMatrix4x3(Matrix4x3fc value, boolean transpose);
+
+    /**
+     * Sets a matrix in the shader.
      *
      * @param value The value to set
      */
@@ -350,8 +391,8 @@ public interface ShaderUniformAccess {
      *
      * @param value The value to set
      */
-    default void setMatrix(Matrix3x2dc value) {
-        this.setMatrix(value, false);
+    default void setMatrix2x3(Matrix3x2dc value) {
+        this.setMatrix2x3(value, false);
     }
 
     /**
@@ -359,8 +400,26 @@ public interface ShaderUniformAccess {
      *
      * @param value The value to set
      */
-    default void setMatrix(Matrix4x3dc value) {
-        this.setMatrix(value, false);
+    default void setMatrix3x2(Matrix3x2dc value) {
+        this.setMatrix3x2(value, false);
+    }
+
+    /**
+     * Sets a double matrix in the shader.
+     *
+     * @param value The value to set
+     */
+    default void setMatrix3x4(Matrix4x3dc value) {
+        this.setMatrix3x4(value, false);
+    }
+
+    /**
+     * Sets a double matrix in the shader.
+     *
+     * @param value The value to set
+     */
+    default void setMatrix4x3(Matrix4x3dc value) {
+        this.setMatrix4x3(value, false);
     }
 
     /**
@@ -389,12 +448,26 @@ public interface ShaderUniformAccess {
      *
      * @param value The value to set
      */
-    void setMatrix(Matrix3x2dc value, boolean transpose);
+    void setMatrix2x3(Matrix3x2dc value, boolean transpose);
 
     /**
      * Sets a double matrix in the shader.
      *
      * @param value The value to set
      */
-    void setMatrix(Matrix4x3dc value, boolean transpose);
+    void setMatrix3x2(Matrix3x2dc value, boolean transpose);
+
+    /**
+     * Sets a double matrix in the shader.
+     *
+     * @param value The value to set
+     */
+    void setMatrix3x4(Matrix4x3dc value, boolean transpose);
+
+    /**
+     * Sets a double matrix in the shader.
+     *
+     * @param value The value to set
+     */
+    void setMatrix4x3(Matrix4x3dc value, boolean transpose);
 }

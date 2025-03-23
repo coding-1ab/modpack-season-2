@@ -17,7 +17,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
-import org.joml.*;
 
 import java.util.*;
 
@@ -143,20 +142,20 @@ public final class CompositePostPipeline implements PostPipeline {
     }
 
     @Override
-    public @Nullable ShaderUniformAccess getShaderUniform(CharSequence name) {
-        ShaderUniformAccess uniform = this.getOrCreateShaderUniform(name);
+    public @Nullable ShaderUniformAccess getUniform(CharSequence name) {
+        ShaderUniformAccess uniform = this.getOrCreateUniform(name);
         return uniform == ShaderUniformAccess.EMPTY ? null : uniform;
     }
 
     @Override
-    public ShaderUniformAccess getShaderUniformSafe(CharSequence name) {
-        return this.getOrCreateShaderUniform(name);
+    public ShaderUniformAccess getUniformSafe(CharSequence name) {
+        return this.getOrCreateUniform(name);
     }
 
     @Override
-    public ShaderUniformAccess getOrCreateShaderUniform(CharSequence name) {
+    public ShaderUniformAccess getOrCreateUniform(CharSequence name) {
         return this.uniforms.computeIfAbsent(name.toString(), key -> ShaderUniformAccess.of(Arrays.stream(this.stages)
-                .map(pipeline -> pipeline.getOrCreateShaderUniform(name))
+                .map(pipeline -> pipeline.getOrCreateUniform(name))
                 .toArray(ShaderUniformAccess[]::new)));
     }
 
@@ -191,153 +190,6 @@ public final class CompositePostPipeline implements PostPipeline {
     public void setStorageBlock(CharSequence name, int binding) {
         for (PostPipeline pipeline : this.stages) {
             pipeline.setStorageBlock(name, binding);
-        }
-    }
-
-    @Override
-    public void setFloat(CharSequence name, float value) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setFloat(name, value);
-        }
-    }
-
-    @Override
-    public void setVector(CharSequence name, float x, float y) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setVector(name, x, y);
-        }
-    }
-
-    @Override
-    public void setVector(CharSequence name, float x, float y, float z) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setVector(name, x, y, z);
-        }
-    }
-
-    @Override
-    public void setVector(CharSequence name, float x, float y, float z, float w) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setVector(name, x, y, z, w);
-        }
-    }
-
-    @Override
-    public void setInt(CharSequence name, int value) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setInt(name, value);
-        }
-    }
-
-    @Override
-    public void setVectorI(CharSequence name, int x, int y) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setVectorI(name, x, y);
-        }
-    }
-
-    @Override
-    public void setVectorI(CharSequence name, int x, int y, int z) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setVectorI(name, x, y, z);
-        }
-    }
-
-    @Override
-    public void setVectorI(CharSequence name, int x, int y, int z, int w) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setVectorI(name, x, y, z, w);
-        }
-    }
-
-    @Override
-    public void setFloats(CharSequence name, float... values) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setFloats(name, values);
-        }
-    }
-
-    @Override
-    public void setVectors(CharSequence name, Vector2fc... values) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setVectors(name, values);
-        }
-    }
-
-    @Override
-    public void setVectors(CharSequence name, Vector3fc... values) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setVectors(name, values);
-        }
-    }
-
-    @Override
-    public void setVectors(CharSequence name, Vector4fc... values) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setVectors(name, values);
-        }
-    }
-
-    @Override
-    public void setInts(CharSequence name, int... values) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setInts(name, values);
-        }
-    }
-
-    @Override
-    public void setVectors(CharSequence name, Vector2ic... values) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setVectors(name, values);
-        }
-    }
-
-    @Override
-    public void setVectors(CharSequence name, Vector3ic... values) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setVectors(name, values);
-        }
-    }
-
-    @Override
-    public void setVectors(CharSequence name, Vector4ic... values) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setVectors(name, values);
-        }
-    }
-
-    @Override
-    public void setMatrix(CharSequence name, Matrix2fc value, boolean transpose) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setMatrix(name, value, transpose);
-        }
-    }
-
-    @Override
-    public void setMatrix(CharSequence name, Matrix3fc value, boolean transpose) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setMatrix(name, value, transpose);
-        }
-    }
-
-    @Override
-    public void setMatrix(CharSequence name, Matrix3x2fc value, boolean transpose) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setMatrix(name, value, transpose);
-        }
-    }
-
-    @Override
-    public void setMatrix(CharSequence name, Matrix4fc value, boolean transpose) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setMatrix(name, value, transpose);
-        }
-    }
-
-    @Override
-    public void setMatrix(CharSequence name, Matrix4x3fc value, boolean transpose) {
-        for (PostPipeline pipeline : this.stages) {
-            pipeline.setMatrix(name, value, transpose);
         }
     }
 

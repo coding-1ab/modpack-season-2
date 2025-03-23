@@ -51,7 +51,7 @@ public abstract class FramebufferPostStage implements PostPipeline {
             out.clear();
         }
 
-        ShaderUniform inSize = shader.getShaderUniform("InSize");
+        ShaderUniform inSize = shader.getUniform("InSize");
         if (inSize != null) {
             if (in != null) {
                 inSize.setVector(in.getWidth(), in.getHeight());
@@ -60,7 +60,7 @@ public abstract class FramebufferPostStage implements PostPipeline {
             }
         }
 
-        ShaderUniform outSize = shader.getShaderUniform("OutSize");
+        ShaderUniform outSize = shader.getUniform("OutSize");
         if (outSize != null) {
             outSize.setVector(out.getWidth(), out.getHeight());
         }

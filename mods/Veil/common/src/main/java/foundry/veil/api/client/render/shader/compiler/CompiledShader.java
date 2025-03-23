@@ -1,6 +1,7 @@
 package foundry.veil.api.client.render.shader.compiler;
 
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +32,12 @@ public record CompiledShader(@Nullable ResourceLocation sourceFile,
      * Applies the additional attributes of this shader to the specified program.
      */
     public void apply(ShaderProgram program) {
-        this.uniformBindings.forEach(program::setInt);
+        for (Object2IntMap.Entry<String> entry : this.uniformBindings.object2IntEntrySet()) {
+            ShaderUniform uniform = program.getUniform(entry.getKey());
+            if (uniform != null) {
+                uniform.setInt(entry.getIntValue());
+            }
+        }
     }
 
     @Override

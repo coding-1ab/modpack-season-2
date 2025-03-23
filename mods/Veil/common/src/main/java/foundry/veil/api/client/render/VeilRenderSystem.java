@@ -397,7 +397,7 @@ public final class VeilRenderSystem {
     public static @Nullable ShaderProgram setShader(Supplier<ShaderProgram> shader) {
         RenderSystem.setShader(() -> {
             ShaderProgram program = shader.get();
-            return program != null ? program.toShaderInstance() : null;
+            return program != null ? VeilRenderBridge.toShaderInstance(program) : null;
         });
 
         ShaderProgram value = getShader();

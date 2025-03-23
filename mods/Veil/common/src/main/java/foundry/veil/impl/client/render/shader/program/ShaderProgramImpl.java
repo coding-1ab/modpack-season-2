@@ -162,7 +162,7 @@ public class ShaderProgramImpl implements ShaderProgram {
                 continue;
             }
 
-            ShaderUniformImpl uniform = this.getOrCreateShaderUniform(entry.getKey());
+            ShaderUniformImpl uniform = this.getOrCreateUniform(entry.getKey());
             old.remove(uniform);
             uniform.set(data);
         }
@@ -258,7 +258,7 @@ public class ShaderProgramImpl implements ShaderProgram {
 
     @Override
     public void setDefaultUniforms(VertexFormat.Mode mode, Matrix4fc modelViewMatrix, Matrix4fc projectionMatrix) {
-        this.toShaderInstance().setDefaultUniforms(mode, MODEL_VIEW_MATRIX.set(modelViewMatrix), PROJECTION_MATRIX.set(projectionMatrix), Minecraft.getInstance().getWindow());
+        this.wrapper.get().setDefaultUniforms(mode, MODEL_VIEW_MATRIX.set(modelViewMatrix), PROJECTION_MATRIX.set(projectionMatrix), Minecraft.getInstance().getWindow());
     }
 
     private void freeInternal() {
@@ -305,7 +305,7 @@ public class ShaderProgramImpl implements ShaderProgram {
     }
 
     @Override
-    public int getUniform(CharSequence name) {
+    public int getUniformLocation(CharSequence name) {
         if (this.compiledProgram == null) {
             return -1;
         }
@@ -314,19 +314,19 @@ public class ShaderProgramImpl implements ShaderProgram {
     }
 
     @Override
-    public @Nullable ShaderUniformImpl getShaderUniform(CharSequence name) {
+    public @Nullable ShaderUniformImpl getUniform(CharSequence name) {
         ShaderUniformImpl uniform = this.uniforms.get(name.toString());
         return uniform != null && uniform.isValid() ? uniform : null;
     }
 
     @Override
-    public ShaderUniformAccess getShaderUniformSafe(CharSequence name) {
+    public ShaderUniformAccess getUniformSafe(CharSequence name) {
         ShaderUniformImpl uniform = this.uniforms.get(name.toString());
         return uniform != null ? uniform : ShaderUniformAccess.EMPTY;
     }
 
     @Override
-    public ShaderUniformImpl getOrCreateShaderUniform(CharSequence name) {
+    public ShaderUniformImpl getOrCreateUniform(CharSequence name) {
         return this.uniforms.computeIfAbsent(name.toString(), key -> new ShaderUniformImpl(this::getProgram, key));
     }
 
@@ -608,10 +608,10 @@ public class ShaderProgramImpl implements ShaderProgram {
 
         @Override
         public @Nullable UniformWrapper getUniform(String name) {
-            if (this.program != null && this.program.getUniform(name) == -1) {
+            if (this.program != null && this.program.getUniformLocation(name) == -1) {
                 return null;
             }
-            return (UniformWrapper) this.uniformMap.computeIfAbsent(name, unused -> new UniformWrapper(name, () -> Objects.requireNonNull(this.program).getOrCreateShaderUniform(name)));
+            return (UniformWrapper) this.uniformMap.computeIfAbsent(name, unused -> new UniformWrapper(name, () -> Objects.requireNonNull(this.program).getOrCreateUniform(name)));
         }
 
         @Override
@@ -746,11 +746,11 @@ public class ShaderProgramImpl implements ShaderProgram {
 
         @Override
         public void setMat2x3(float m00, float m01, float m02, float m10, float m11, float m12) {
-            this.uniform.get().setMatrix(MAT3X2.set(
+            this.uniform.get().setMatrix2x3(MAT3X2.set(
                     m00, m10,
                     m01, m11,
                     m02, m12
-            ), true);
+            ), false);
         }
 
         @Override
@@ -760,7 +760,7 @@ public class ShaderProgramImpl implements ShaderProgram {
 
         @Override
         public void setMat3x2(float m00, float m01, float m10, float m11, float m20, float m21) {
-            this.uniform.get().setMatrix(MAT3X2.set(m00, m01, m10, m11, m20, m21), false);
+            this.uniform.get().setMatrix3x2(MAT3X2.set(m00, m01, m10, m11, m20, m21), false);
         }
 
         @Override
@@ -783,12 +783,12 @@ public class ShaderProgramImpl implements ShaderProgram {
                 float m22,
                 float m23
         ) {
-            this.uniform.get().setMatrix(MAT4X3.set(
+            this.uniform.get().setMatrix3x4(MAT4X3.set(
                     m00, m10, m20,
                     m01, m11, m21,
                     m02, m12, m22,
                     m03, m13, m23
-            ), true);
+            ), false);
         }
 
         @Override
@@ -805,7 +805,7 @@ public class ShaderProgramImpl implements ShaderProgram {
                 float m21,
                 float m22,
                 float m23) {
-            this.uniform.get().setMatrix(MAT4X3.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23), false);
+            this.uniform.get().setMatrix4x3(MAT4X3.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23), false);
         }
 
         @Override

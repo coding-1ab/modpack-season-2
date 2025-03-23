@@ -11,6 +11,7 @@ import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.light.Light;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
 import foundry.veil.impl.client.render.dynamicbuffer.DynamicBufferManger;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
@@ -57,7 +58,11 @@ public final class LightRenderer implements NativeResource {
         shader.bind();
         AdvancedFbo fbo = AdvancedFbo.getMainFramebuffer();
         shader.setFramebufferSamplers(fbo);
-        shader.setVector("ScreenSize", fbo.getWidth(), fbo.getHeight());
+
+        ShaderUniform screenSize = shader.getUniform("ScreenSize");
+        if (screenSize != null) {
+            screenSize.setVector(fbo.getWidth(), fbo.getHeight());
+        }
 
         DynamicBufferManger bufferManger = VeilRenderSystem.renderer().getDynamicBufferManger();
         for (DynamicBufferType dynamicBuffer : DynamicBufferType.values()) {

@@ -3,6 +3,7 @@ package foundry.veil.mixin.shader.client;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.datafixers.util.Pair;
 import foundry.veil.Veil;
+import foundry.veil.api.client.render.VeilRenderBridge;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.VeilRenderer;
 import foundry.veil.api.client.render.shader.ShaderModificationManager;
@@ -42,7 +43,7 @@ public class ShaderGameRendererMixin {
             if (modifiers.size() == 1 && modifiers.getFirst() instanceof ReplaceShaderModification replaceModification) {
                 ShaderProgram shader = renderer.getShaderManager().getShader(replaceModification.veilShader());
                 if (shader != null) {
-                    pair.getSecond().accept(shader.toShaderInstance());
+                    pair.getSecond().accept(VeilRenderBridge.toShaderInstance(shader));
                     continue;
                 }
 

@@ -2,7 +2,6 @@ package foundry.veil.api.client.render.shader.program;
 
 import foundry.veil.api.client.render.shader.uniform.ShaderUniformAccess;
 import org.jetbrains.annotations.Nullable;
-import org.joml.*;
 import org.lwjgl.opengl.GL31C;
 
 import static org.lwjgl.opengl.GL31C.GL_INVALID_INDEX;
@@ -20,7 +19,7 @@ public interface UniformAccess {
      * @param name The name of the uniform to get
      * @return The location of that uniform or <code>-1</code> if not found
      */
-    int getUniform(CharSequence name);
+    int getUniformLocation(CharSequence name);
 
     /**
      * Checks if the specified uniform exists in the shader.
@@ -29,7 +28,7 @@ public interface UniformAccess {
      * @return Whether that uniform can be set
      */
     default boolean hasUniform(CharSequence name) {
-        return this.getUniform(name) != -1;
+        return this.getUniformLocation(name) != -1;
     }
 
     /**
@@ -38,7 +37,7 @@ public interface UniformAccess {
      * @param name The name of the uniform to get
      * @return The uniform with that name or <code>null</code> if the uniform does not exist
      */
-    @Nullable ShaderUniformAccess getShaderUniform(CharSequence name);
+    @Nullable ShaderUniformAccess getUniform(CharSequence name);
 
     /**
      * Retrieves a uniform by name.
@@ -46,7 +45,7 @@ public interface UniformAccess {
      * @param name The name of the uniform to get
      * @return The uniform with that name
      */
-    ShaderUniformAccess getShaderUniformSafe(CharSequence name);
+    ShaderUniformAccess getUniformSafe(CharSequence name);
 
     /**
      * Retrieves a uniform by name or creates a reference to one that may exist in the future.
@@ -54,7 +53,7 @@ public interface UniformAccess {
      * @param name The name of the uniform to get
      * @return The uniform instance
      */
-    ShaderUniformAccess getOrCreateShaderUniform(CharSequence name);
+    ShaderUniformAccess getOrCreateUniform(CharSequence name);
 
     /**
      * Retrieves the location of a uniform block.
@@ -91,124 +90,4 @@ public interface UniformAccess {
     default boolean hasStorageBlock(CharSequence name) {
         return this.getStorageBlock(name) != GL_INVALID_INDEX;
     }
-
-    /**
-     * Retrieves a single float by the specified name.
-     *
-     * @param name The name of the uniform to get
-     * @return The float value of that uniform
-     */
-    float getFloat(CharSequence name);
-
-    /**
-     * Retrieves a single integer by the specified name.
-     *
-     * @param name The name of the uniform to get
-     * @return The int value of that uniform
-     */
-    int getInt(CharSequence name);
-
-    /**
-     * Retrieves an array of floats by the specified name.
-     *
-     * @param name   The name of the uniform to get
-     * @param values The values to set
-     */
-    void getFloats(CharSequence name, float[] values);
-
-    /**
-     * Retrieves an array of vectors by the specified name.
-     *
-     * @param name   The name of the uniform to get
-     * @param values The values to set
-     */
-    void getVector(CharSequence name, Vector2f... values);
-
-    /**
-     * Retrieves an array of vectors by the specified name.
-     *
-     * @param name   The name of the uniform to get
-     * @param values The values to set
-     */
-    void getVector(CharSequence name, Vector3f... values);
-
-    /**
-     * Retrieves an array of vectors by the specified name.
-     *
-     * @param name   The name of the uniform to get
-     * @param values The values to set
-     */
-    void getVector(CharSequence name, Vector4f... values);
-
-    /**
-     * Retrieves an array of integers by the specified name.
-     *
-     * @param name   The name of the uniform to get
-     * @param values The values to set
-     */
-    void getInts(CharSequence name, int[] values);
-
-    /**
-     * Retrieves an array of vectors by the specified name.
-     *
-     * @param name   The name of the uniform to get
-     * @param values The values to set
-     */
-    void getVector(CharSequence name, Vector2i... values);
-
-    /**
-     * Retrieves an array of vectors by the specified name.
-     *
-     * @param name   The name of the uniform to get
-     * @param values The values to set
-     */
-    void getVector(CharSequence name, Vector3i... values);
-
-    /**
-     * Retrieves an array of vectors by the specified name.
-     *
-     * @param name   The name of the uniform to get
-     * @param values The values to set
-     */
-    void getVector(CharSequence name, Vector4i... values);
-
-    /**
-     * Retrieves a matrix2x2 by the specified name
-     *
-     * @param name  The name of the uniform to get
-     * @param value The value to set
-     */
-    void getMatrix(CharSequence name, Matrix2f value);
-
-    /**
-     * Retrieves a matrix3x3 by the specified name
-     *
-     * @param name  The name of the uniform to get
-     * @param value The value to set
-     */
-    void getMatrix(CharSequence name, Matrix3f value);
-
-    /**
-     * Retrieves a matrix3x2 by the specified name
-     *
-     * @param name  The name of the uniform to get
-     * @param value The value to set
-     */
-    void getMatrix(CharSequence name, Matrix3x2f value);
-
-    /**
-     * Retrieves a matrix4x4 by the specified name
-     *
-     * @param name  The name of the uniform to get
-     * @param value The value to set
-     */
-    void getMatrix(CharSequence name, Matrix4f value);
-
-    /**
-     * Retrieves a matrix4x3 by the specified name
-     *
-     * @param name  The name of the uniform to get
-     * @param value The value to set
-     */
-    void getMatrix(CharSequence name, Matrix4x3f value);
 }
