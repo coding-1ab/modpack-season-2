@@ -13,6 +13,7 @@
   "client": [
     "client.MinecraftMixin",
     "client.RenderTypeMixin",
+    "client.SortedRenderListsAccessor",
     "client.debug.vanilla.DebugLevelRendererMixin",
     "client.dynamicbuffer.LevelRendererMixin",
     "client.perspective.iris.PipelineManagerMixin",

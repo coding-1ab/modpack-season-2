@@ -1,10 +1,13 @@
-package net.caffeinemc.mods.sodium.client.render.chunk.lists;
+package foundry.veil.forge.impl;
 
 import foundry.veil.api.client.render.VeilLevelPerspectiveRenderer;
 import foundry.veil.forge.ext.RenderRegionExtension;
+import foundry.veil.forge.mixin.client.SortedRenderListsAccessor;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.caffeinemc.mods.sodium.client.render.chunk.RenderSection;
+import net.caffeinemc.mods.sodium.client.render.chunk.lists.ChunkRenderList;
+import net.caffeinemc.mods.sodium.client.render.chunk.lists.SortedRenderLists;
 import net.caffeinemc.mods.sodium.client.render.chunk.occlusion.OcclusionCuller;
 import net.caffeinemc.mods.sodium.client.render.chunk.region.RenderRegion;
 import net.caffeinemc.mods.sodium.client.render.viewport.Viewport;
@@ -67,6 +70,6 @@ public class PerspectiveChunkCollector implements OcclusionCuller.Visitor {
             list.sortSections(sectionPos, sortItems);
         }
 
-        return new SortedRenderLists(sorted);
+        return SortedRenderListsAccessor.init(sorted);
     }
 }

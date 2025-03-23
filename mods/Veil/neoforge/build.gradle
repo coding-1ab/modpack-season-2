@@ -65,8 +65,8 @@ dependencies {
 
     compileOnly "maven.modrinth:sodium:mc1.21.1-${sodium_version}-neoforge"
     compileOnly "maven.modrinth:iris:1.8.8+1.21.1-neoforge"
-//    runtimeOnly "maven.modrinth:sodium:mc1.21.1-${sodium_version}-neoforge"
-//    runtimeOnly "maven.modrinth:iris:1.8.8+1.21.1-neoforge"
+    runtimeOnly "maven.modrinth:sodium:mc1.21.1-${sodium_version}-neoforge"
+    runtimeOnly "maven.modrinth:iris:1.8.8+1.21.1-neoforge"
 
     // Allows sodium compat to compile properly
     compileOnly "org.sinytra.forgified-fabric-api:forgified-fabric-api:0.104.0+2.0.19+1.21.1"
