@@ -2,7 +2,7 @@ package foundry.veil.forge.impl;
 
 import foundry.veil.api.client.render.VeilLevelPerspectiveRenderer;
 import foundry.veil.forge.ext.RenderRegionExtension;
-import foundry.veil.forge.mixin.client.SortedRenderListsAccessor;
+import foundry.veil.forge.mixin.compat.sodium.SortedRenderListsAccessor;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.caffeinemc.mods.sodium.client.render.chunk.RenderSection;

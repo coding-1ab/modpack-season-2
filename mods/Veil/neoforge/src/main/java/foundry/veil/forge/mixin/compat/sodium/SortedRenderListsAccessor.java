@@ -1,4 +1,4 @@
-package foundry.veil.forge.mixin.client;
+package foundry.veil.forge.mixin.compat.sodium;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.caffeinemc.mods.sodium.client.render.chunk.lists.ChunkRenderList;
