@@ -192,6 +192,133 @@ public interface ShaderUniformAccess {
     }
 
     /**
+     * Sets a double in the shader.
+     *
+     * @param value The value to set
+     */
+    void setDouble(double value);
+
+    /**
+     * Sets a double vector in the shader.
+     *
+     * @param x The x component of the vector
+     * @param y The y component of the vector
+     */
+    void setVector64(double x, double y);
+
+    /**
+     * Sets a double vector in the shader.
+     *
+     * @param x The x component of the vector
+     * @param y The y component of the vector
+     * @param z The z component of the vector
+     */
+    void setVector64(double x, double y, double z);
+
+    /**
+     * Sets a double vector in the shader.
+     *
+     * @param x The x component of the vector
+     * @param y The y component of the vector
+     * @param z The z component of the vector
+     * @param w The w component of the vector
+     */
+    void setVector64(double x, double y, double z, double w);
+
+    /**
+     * Sets a double vector in the shader.
+     *
+     * @param value The value to set
+     */
+    default void setVector64(Vector2dc value) {
+        this.setVector64(value.x(), value.y());
+    }
+
+    /**
+     * Sets a double vector in the shader.
+     *
+     * @param value The value to set
+     */
+    default void setVector64(Vector3dc value) {
+        this.setVector64(value.x(), value.y(), value.z());
+    }
+
+    /**
+     * Sets a double vector in the shader.
+     *
+     * @param value The value to set
+     */
+    default void setVector64(Vector4dc value) {
+        this.setVector64(value.x(), value.y(), value.z(), value.w());
+    }
+
+    /**
+     * Sets a double vector in the shader.
+     *
+     * @param values The values to set
+     * @throws UnsupportedOperationException If the array passed in is empty
+     */
+    default void setVector64(double[] values) {
+        switch (Math.min(4, values.length)) {
+            case 1 -> this.setDouble(values[0]);
+            case 2 -> this.setVector64(values[0], values[1]);
+            case 3 -> this.setVector64(values[0], values[1], values[2]);
+            case 4 -> this.setVector64(values[0], values[1], values[2], values[3]);
+            default -> throw new UnsupportedOperationException("At least 1 value must be specified");
+        }
+    }
+
+    /**
+     * Sets a long in the shader.
+     *
+     * @param value The value to set
+     */
+    void setLong(long value);
+
+    /**
+     * Sets a long vector in the shader.
+     *
+     * @param x The x component of the vector
+     * @param y The y component of the vector
+     */
+    void setVectorI64(long x, long y);
+
+    /**
+     * Sets a long vector in the shader.
+     *
+     * @param x The x component of the vector
+     * @param y The y component of the vector
+     * @param z The z component of the vector
+     */
+    void setVectorI64(long x, long y, long z);
+
+    /**
+     * Sets a long vector in the shader.
+     *
+     * @param x The x component of the vector
+     * @param y The y component of the vector
+     * @param z The z component of the vector
+     * @param w The w component of the vector
+     */
+    void setVectorI64(long x, long y, long z, long w);
+
+    /**
+     * Sets a long vector in the shader.
+     *
+     * @param values The values to set
+     * @throws UnsupportedOperationException If the array passed in is empty
+     */
+    default void setVectorI64(long[] values) {
+        switch (Math.min(4, values.length)) {
+            case 1 -> this.setLong(values[0]);
+            case 2 -> this.setVectorI64(values[0], values[1]);
+            case 3 -> this.setVectorI64(values[0], values[1], values[2]);
+            case 4 -> this.setVectorI64(values[0], values[1], values[2], values[3]);
+            default -> throw new UnsupportedOperationException("At least 1 value must be specified");
+        }
+    }
+
+    /**
      * Sets an array of floats in the shader.
      *
      * @param values The values to set in order
@@ -246,6 +373,41 @@ public interface ShaderUniformAccess {
      * @param values The values to set in order
      */
     void setIVectors(Vector4ic... values);
+
+    /**
+     * Sets an array of doubles in the shader.
+     *
+     * @param values The values to set in order
+     */
+    void setDoubles(double... values);
+
+    /**
+     * Sets an array of double vectors in the shader.
+     *
+     * @param values The values to set in order
+     */
+    void set64Vectors(Vector2dc... values);
+
+    /**
+     * Sets an array of double vectors in the shader.
+     *
+     * @param values The values to set in order
+     */
+    void set64Vectors(Vector3dc... values);
+
+    /**
+     * Sets an array of double vectors in the shader.
+     *
+     * @param values The values to set in order
+     */
+    void set64Vectors(Vector4dc... values);
+
+    /**
+     * Sets an array of longs in the shader.
+     *
+     * @param values The values to set in order
+     */
+    void setLongs(long... values);
 
     /**
      * Sets a matrix in the shader.

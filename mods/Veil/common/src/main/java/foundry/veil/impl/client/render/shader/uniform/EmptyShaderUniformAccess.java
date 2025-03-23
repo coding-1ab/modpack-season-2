@@ -46,6 +46,38 @@ public enum EmptyShaderUniformAccess implements ShaderUniformAccess {
     }
 
     @Override
+    public void setDouble(double value) {
+    }
+
+    @Override
+    public void setVector64(double x, double y) {
+    }
+
+    @Override
+    public void setVector64(double x, double y, double z) {
+    }
+
+    @Override
+    public void setVector64(double x, double y, double z, double w) {
+    }
+
+    @Override
+    public void setLong(long value) {
+    }
+
+    @Override
+    public void setVectorI64(long x, long y) {
+    }
+
+    @Override
+    public void setVectorI64(long x, long y, long z) {
+    }
+
+    @Override
+    public void setVectorI64(long x, long y, long z, long w) {
+    }
+
+    @Override
     public void setFloats(float... values) {
     }
 
@@ -75,6 +107,26 @@ public enum EmptyShaderUniformAccess implements ShaderUniformAccess {
 
     @Override
     public void setIVectors(Vector4ic... values) {
+    }
+
+    @Override
+    public void setDoubles(double... values) {
+    }
+
+    @Override
+    public void set64Vectors(Vector2dc... values) {
+    }
+
+    @Override
+    public void set64Vectors(Vector3dc... values) {
+    }
+
+    @Override
+    public void set64Vectors(Vector4dc... values) {
+    }
+
+    @Override
+    public void setLongs(long... values) {
     }
 
     @Override

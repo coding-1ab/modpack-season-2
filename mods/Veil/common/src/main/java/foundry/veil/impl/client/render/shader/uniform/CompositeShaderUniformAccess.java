@@ -74,6 +74,62 @@ public record CompositeShaderUniformAccess(ShaderUniformAccess... accesses) impl
     }
 
     @Override
+    public void setDouble(double value) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.setDouble(value);
+        }
+    }
+
+    @Override
+    public void setVector64(double x, double y) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.setVector64(x, y);
+        }
+    }
+
+    @Override
+    public void setVector64(double x, double y, double z) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.setVector64(x, y, z);
+        }
+    }
+
+    @Override
+    public void setVector64(double x, double y, double z, double w) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.setVector64(x, y, z, w);
+        }
+    }
+
+    @Override
+    public void setLong(long value) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.setLong(value);
+        }
+    }
+
+    @Override
+    public void setVectorI64(long x, long y) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.setVectorI64(x, y);
+        }
+    }
+
+    @Override
+    public void setVectorI64(long x, long y, long z) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.setVectorI64(x, y, z);
+        }
+    }
+
+    @Override
+    public void setVectorI64(long x, long y, long z, long w) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.setVectorI64(x, y, z, w);
+        }
+    }
+
+    @Override
     public void setFloats(float... values) {
         for (ShaderUniformAccess access : this.accesses) {
             access.setFloats(values);
@@ -126,6 +182,41 @@ public record CompositeShaderUniformAccess(ShaderUniformAccess... accesses) impl
     public void setIVectors(Vector4ic... values) {
         for (ShaderUniformAccess access : this.accesses) {
             access.setIVectors(values);
+        }
+    }
+
+    @Override
+    public void setDoubles(double... values) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.setDoubles(values);
+        }
+    }
+
+    @Override
+    public void set64Vectors(Vector2dc... values) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.set64Vectors(values);
+        }
+    }
+
+    @Override
+    public void set64Vectors(Vector3dc... values) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.set64Vectors(values);
+        }
+    }
+
+    @Override
+    public void set64Vectors(Vector4dc... values) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.set64Vectors(values);
+        }
+    }
+
+    @Override
+    public void setLongs(long... values) {
+        for (ShaderUniformAccess access : this.accesses) {
+            access.setLongs(values);
         }
     }
 

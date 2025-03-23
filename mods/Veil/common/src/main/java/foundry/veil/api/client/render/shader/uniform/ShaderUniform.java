@@ -7,6 +7,7 @@ import org.joml.*;
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.ARBGPUShaderFP64.*;
+import static org.lwjgl.opengl.ARBGPUShaderInt64.*;
 import static org.lwjgl.opengl.ARBSeparateShaderObjects.*;
 import static org.lwjgl.opengl.GL20C.*;
 import static org.lwjgl.opengl.GL30C.*;
@@ -110,13 +111,85 @@ public interface ShaderUniform extends ShaderUniformAccess {
     }
 
     /**
-     * Retrieves the values of this uniform as a int array and stores them in the specified array.
+     * Retrieves the values of this uniform as an int array and stores them in the specified array.
      *
      * @param dst    The array to fill
      * @param offset The position to start filling the array at
      * @param length The number of values to read
      */
     void getInts(int[] dst, int offset, int length);
+
+    /**
+     * Retrieves the value of this uniform as a double.
+     *
+     * @return The int value of this uniform
+     */
+    double getDouble();
+
+    /**
+     * Retrieves the values of this uniform as a double array.
+     *
+     * @return A new array with the values of this uniform
+     */
+    default double[] getDoubles() {
+        double[] values = new double[this.getArrayLength()];
+        this.getDoubles(values, 0, values.length);
+        return values;
+    }
+
+    /**
+     * Retrieves the values of this uniform as a double array and stores them in the specified array.
+     *
+     * @param fill The array to fill
+     */
+    default void getDoubles(double[] fill) {
+        this.getDoubles(fill, 0, fill.length);
+    }
+
+    /**
+     * Retrieves the values of this uniform as a double array and stores them in the specified array.
+     *
+     * @param dst    The array to fill
+     * @param offset The position to start filling the array at
+     * @param length The number of values to read
+     */
+    void getDoubles(double[] dst, int offset, int length);
+
+    /**
+     * Retrieves the value of this uniform as a long.
+     *
+     * @return The int value of this uniform
+     */
+    long getLong();
+
+    /**
+     * Retrieves the values of this uniform as a long array.
+     *
+     * @return A new array with the values of this uniform
+     */
+    default long[] getLongs() {
+        long[] values = new long[this.getArrayLength()];
+        this.getLongs(values, 0, values.length);
+        return values;
+    }
+
+    /**
+     * Retrieves the values of this uniform as a long array and stores them in the specified array.
+     *
+     * @param fill The array to fill
+     */
+    default void getLongs(long[] fill) {
+        this.getLongs(fill, 0, fill.length);
+    }
+
+    /**
+     * Retrieves the values of this uniform as a long array and stores them in the specified array.
+     *
+     * @param dst    The array to fill
+     * @param offset The position to start filling the array at
+     * @param length The number of values to read
+     */
+    void getLongs(long[] dst, int offset, int length);
 
     /**
      * Retrieves an array of vectors by the specified name.
@@ -473,6 +546,110 @@ public interface ShaderUniform extends ShaderUniformAccess {
                 }
             }
         },
+        LONG(Long.BYTES) {
+            @Override
+            public void upload(int program, int location, ByteBuffer buffer) {
+                if (!VeilRenderSystem.gpuShaderInt64BitSupported()) {
+                    throw new UnsupportedOperationException("64-Bit Integers are not supported");
+                }
+                if (VeilRenderSystem.separateShaderObjectsSupported()) {
+                    glProgramUniform1i64vARB(program, location, buffer.asLongBuffer());
+                } else {
+                    glUniform1i64vARB(location, buffer.asLongBuffer());
+                }
+            }
+        },
+        LONG_VEC2(Long.BYTES * 2) {
+            @Override
+            public void upload(int program, int location, ByteBuffer buffer) {
+                if (!VeilRenderSystem.gpuShaderInt64BitSupported()) {
+                    throw new UnsupportedOperationException("64-Bit Integers are not supported");
+                }
+                if (VeilRenderSystem.separateShaderObjectsSupported()) {
+                    glProgramUniform2i64vARB(program, location, buffer.asLongBuffer());
+                } else {
+                    glUniform2i64vARB(location, buffer.asLongBuffer());
+                }
+            }
+        },
+        LONG_VEC3(Long.BYTES * 3) {
+            @Override
+            public void upload(int program, int location, ByteBuffer buffer) {
+                if (!VeilRenderSystem.gpuShaderInt64BitSupported()) {
+                    throw new UnsupportedOperationException("64-Bit Integers are not supported");
+                }
+                if (VeilRenderSystem.separateShaderObjectsSupported()) {
+                    glProgramUniform3i64vARB(program, location, buffer.asLongBuffer());
+                } else {
+                    glUniform3i64vARB(location, buffer.asLongBuffer());
+                }
+            }
+        },
+        LONG_VEC4(Long.BYTES * 4) {
+            @Override
+            public void upload(int program, int location, ByteBuffer buffer) {
+                if (!VeilRenderSystem.gpuShaderInt64BitSupported()) {
+                    throw new UnsupportedOperationException("64-Bit Integers are not supported");
+                }
+                if (VeilRenderSystem.separateShaderObjectsSupported()) {
+                    glProgramUniform4i64vARB(program, location, buffer.asLongBuffer());
+                } else {
+                    glUniform4i64vARB(location, buffer.asLongBuffer());
+                }
+            }
+        },
+        UNSIGNED_LONG(Long.BYTES) {
+            @Override
+            public void upload(int program, int location, ByteBuffer buffer) {
+                if (!VeilRenderSystem.gpuShaderInt64BitSupported()) {
+                    throw new UnsupportedOperationException("64-Bit Integers are not supported");
+                }
+                if (VeilRenderSystem.separateShaderObjectsSupported()) {
+                    glProgramUniform1ui64vARB(program, location, buffer.asLongBuffer());
+                } else {
+                    glUniform1ui64vARB(location, buffer.asLongBuffer());
+                }
+            }
+        },
+        UNSIGNED_LONG_VEC2(Long.BYTES * 2) {
+            @Override
+            public void upload(int program, int location, ByteBuffer buffer) {
+                if (!VeilRenderSystem.gpuShaderInt64BitSupported()) {
+                    throw new UnsupportedOperationException("64-Bit Integers are not supported");
+                }
+                if (VeilRenderSystem.separateShaderObjectsSupported()) {
+                    glProgramUniform2ui64vARB(program, location, buffer.asLongBuffer());
+                } else {
+                    glUniform2ui64vARB(location, buffer.asLongBuffer());
+                }
+            }
+        },
+        UNSIGNED_LONG_VEC3(Long.BYTES * 3) {
+            @Override
+            public void upload(int program, int location, ByteBuffer buffer) {
+                if (!VeilRenderSystem.gpuShaderInt64BitSupported()) {
+                    throw new UnsupportedOperationException("64-Bit Integers are not supported");
+                }
+                if (VeilRenderSystem.separateShaderObjectsSupported()) {
+                    glProgramUniform3ui64vARB(program, location, buffer.asLongBuffer());
+                } else {
+                    glUniform3ui64vARB(location, buffer.asLongBuffer());
+                }
+            }
+        },
+        UNSIGNED_LONG_VEC4(Long.BYTES * 4) {
+            @Override
+            public void upload(int program, int location, ByteBuffer buffer) {
+                if (!VeilRenderSystem.gpuShaderInt64BitSupported()) {
+                    throw new UnsupportedOperationException("64-Bit Integers are not supported");
+                }
+                if (VeilRenderSystem.separateShaderObjectsSupported()) {
+                    glProgramUniform4ui64vARB(program, location, buffer.asLongBuffer());
+                } else {
+                    glUniform4ui64vARB(location, buffer.asLongBuffer());
+                }
+            }
+        },
         DOUBLE_MATRIX2x2(Double.BYTES * 2 * 2) {
             @Override
             public void uploadAsMatrix(int program, int location, boolean transpose, ByteBuffer buffer) {
@@ -619,6 +796,24 @@ public interface ShaderUniform extends ShaderUniformAccess {
                 case GL_FLOAT_MAT4 -> MATRIX4x4;
                 case GL_FLOAT_MAT2x3 -> MATRIX2x3;
                 case GL_FLOAT_MAT3x4 -> MATRIX3x4;
+                
+                case GL_DOUBLE -> DOUBLE;
+                case GL_DOUBLE_VEC2 -> DOUBLE_VEC2;
+                case GL_DOUBLE_VEC3 -> DOUBLE_VEC3;
+                case GL_DOUBLE_VEC4 -> DOUBLE_VEC4;
+                case GL_INT64_ARB -> LONG;
+                case GL_INT64_VEC2_ARB -> LONG_VEC2;
+                case GL_INT64_VEC3_ARB -> LONG_VEC3;
+                case GL_INT64_VEC4_ARB -> LONG_VEC4;
+                case GL_UNSIGNED_INT64_ARB -> UNSIGNED_LONG;
+                case GL_UNSIGNED_INT64_VEC2_ARB -> UNSIGNED_LONG_VEC2;
+                case GL_UNSIGNED_INT64_VEC3_ARB -> UNSIGNED_LONG_VEC3;
+                case GL_UNSIGNED_INT64_VEC4_ARB -> UNSIGNED_LONG_VEC4;
+                case GL_DOUBLE_MAT2 -> DOUBLE_MATRIX2x2;
+                case GL_DOUBLE_MAT3 -> DOUBLE_MATRIX3x3;
+                case GL_DOUBLE_MAT4 -> DOUBLE_MATRIX4x4;
+                case GL_DOUBLE_MAT2x3 -> DOUBLE_MATRIX2x3;
+                case GL_DOUBLE_MAT3x4 -> DOUBLE_MATRIX3x4;
                 default -> throw new AssertionError("Invalid Uniform Type: " + ShaderUniformCache.getName(type));
             };
         }
