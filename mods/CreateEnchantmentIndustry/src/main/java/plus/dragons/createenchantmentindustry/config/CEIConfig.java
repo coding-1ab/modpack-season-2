@@ -70,6 +70,10 @@ public class CEIConfig {
         return SERVER_CONFIG.fluids;
     }
 
+    public static CEIEnchantmentsConfig enchantments() {
+        return SERVER_CONFIG.enchantments;
+    }
+
     @SubscribeEvent
     public void onLoad(ModConfigEvent.Loading event) {
         var spec = event.getConfig().getSpec();

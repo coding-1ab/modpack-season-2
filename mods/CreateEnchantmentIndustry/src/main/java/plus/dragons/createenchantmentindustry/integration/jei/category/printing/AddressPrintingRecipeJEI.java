@@ -28,9 +28,8 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotDrawable;
 import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.material.FlowingFluid;
+import plus.dragons.createdragonsplus.util.Pairs;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 
@@ -56,14 +55,8 @@ public enum AddressPrintingRecipeJEI implements PrintingRecipeJEI {
 
     @Override
     public void setFluid(IRecipeSlotBuilder slot) {
-        BuiltInRegistries.FLUID.getDataMap(CEIDataMaps.PRINTING_ADDRESS_INGREDIENT)
-                .forEach((key, amount) -> {
-                    var fluid = BuiltInRegistries.FLUID.get(key);
-                    assert fluid != null; // DataMap should not have unregistered key
-                    if (fluid instanceof FlowingFluid flowing && flowing.getSource() != flowing)
-                        return;
-                    slot.addFluidStack(fluid, amount);
-                });
+        CEIDataMaps.getSourceFluidEntries(CEIDataMaps.PRINTING_ADDRESS_INGREDIENT)
+                .forEach(Pairs.accept(slot::addFluidStack));
     }
 
     @Override

@@ -18,10 +18,13 @@
 
 package plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour;
 
+import com.mojang.serialization.DataResult;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalInt;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -31,6 +34,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.WrittenBookContent;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
+import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
@@ -47,33 +51,41 @@ public class WrittenBookPrintingBehaviour implements PrintingBehaviour {
         this.awardAdvancement = awardAdvancement;
     }
 
-    public static Optional<PrintingBehaviour> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
+    public static Optional<DataResult<PrintingBehaviour>> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
         if (!stack.is(Items.WRITTEN_BOOK))
             return Optional.empty();
         var content = stack.get(DataComponents.WRITTEN_BOOK_CONTENT);
-        if (content == null) {
-            return Optional.of(new WrittenBookPrintingBehaviour(tank, WrittenBookContent.EMPTY, false));
-        }
+        if (content == null || content.pages().isEmpty())
+            return Optional.of(DataResult.error(() -> CEICommon.asLocalization("gui.printer.written_book.invalid")));
         int generation = content.generation();
         int change = CEIConfig.fluids().printingGenerationChange.get();
         int newGeneration = Math.max(0, generation + change);
         if (newGeneration > 2)
-            return Optional.of(new WrittenBookPrintingBehaviour(tank, WrittenBookContent.EMPTY, false));
+            return Optional.of(DataResult.error(() -> CEICommon.asLocalization("gui.printer.written_book.invalid")));
         content = new WrittenBookContent(
                 content.title(),
                 content.author(),
                 newGeneration,
                 content.pages(),
                 content.resolved());
-        return Optional.of(new WrittenBookPrintingBehaviour(tank, content, generation >= 2));
+        return Optional.of(DataResult.success(new WrittenBookPrintingBehaviour(tank, content, generation >= 2)));
+    }
+
+    private OptionalInt getCost(FluidStack fluid) {
+        int cost = this.content.pages().size();
+        cost *= Objects.requireNonNullElse(fluid.getFluidHolder().getData(CEIDataMaps.PRINTING_WRITTEN_BOOK_INGREDIENT), 0);
+        if (cost == 0)
+            return OptionalInt.empty();
+        return OptionalInt.of(cost);
     }
 
     @Override
     public boolean isValid() {
-        if (content == WrittenBookContent.EMPTY)
-            return false;
-        int capacity = CEIConfig.fluids().blazeEnchanterFluidCapacity.get();
-        return content.pages().size() * 10 <= capacity;
+        var fluid = tank.getPrimaryHandler().getFluid();
+        if (fluid.isEmpty())
+            return true;
+        var cost = getCost(fluid);
+        return cost.isPresent() && cost.getAsInt() <= CEIConfig.fluids().printerFluidCapacity.get();
     }
 
     @Override
@@ -90,8 +102,7 @@ public class WrittenBookPrintingBehaviour implements PrintingBehaviour {
 
     @Override
     public int getRequiredFluidAmount(Level level, ItemStack stack, FluidStack fluidStack) {
-        var amount = fluidStack.getFluidHolder().getData(CEIDataMaps.PRINTING_WRITTEN_BOOK_INGREDIENT);
-        return amount == null ? 0 : amount;
+        return getCost(fluidStack).orElse(0);
     }
 
     @Override
@@ -112,20 +123,20 @@ public class WrittenBookPrintingBehaviour implements PrintingBehaviour {
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        var title = Component.literal(content.title().raw());
-        CEILang.translate("gui.goggles.printing", title).forGoggles(tooltip);
-        var author = Component.translatable("book.byAuthor", content.author()).withStyle(ChatFormatting.GRAY);
-        CEILang.builder().add(author).forGoggles(tooltip);
-        var fluidStack = tank.getPrimaryHandler().getFluid();
-        var amount = fluidStack.getFluidHolder().getData(CEIDataMaps.PRINTING_WRITTEN_BOOK_INGREDIENT);
-        if (amount != null) {
-            var cost = CEILang.number(content.pages().size() * amount)
-                    .add(CreateLang.translate("generic.unit.millibuckets"))
-                    .style(content.pages().size() * amount > CEIConfig.fluids().blazeEnchanterFluidCapacity.get()
-                            ? ChatFormatting.RED
-                            : ChatFormatting.GREEN);
-            CEILang.translate("gui.goggles.printing.cost", cost).forGoggles(tooltip);
-        }
+        CEILang.translate("gui.goggles.printing").forGoggles(tooltip);
+        CEILang.builder().add(Component.literal(content.title().raw()))
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip, 1);
+        CEILang.builder().add(Component.translatable("book.byAuthor", content.author()))
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip);
+        getCost(tank.getPrimaryHandler().getFluid()).ifPresent(cost -> CEILang.translate("gui.goggles.printing.cost",
+                CEILang.number(cost)
+                        .add(CreateLang.translate("generic.unit.millibuckets"))
+                        .style(cost <= CEIConfig.fluids().printerFluidCapacity.get()
+                                ? ChatFormatting.GREEN
+                                : ChatFormatting.RED)
+        ).forGoggles(tooltip, 1));
         return true;
     }
 }

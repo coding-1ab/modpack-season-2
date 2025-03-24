@@ -18,15 +18,18 @@
 
 package plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour;
 
+import com.mojang.serialization.DataResult;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.recipe.ItemCopyingRecipe.SupportsItemCopying;
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
+import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 import plus.dragons.createenchantmentindustry.util.CEILang;
@@ -40,15 +43,12 @@ public class CopyPrintingBehaviour implements PrintingBehaviour {
         this.original = original;
     }
 
-    public static Optional<PrintingBehaviour> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
+    public static Optional<DataResult<PrintingBehaviour>> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
         if (stack.getItem() instanceof SupportsItemCopying copiable)
-            return Optional.of(new CopyPrintingBehaviour(copiable, stack));
+            return Optional.of(copiable.canCopyFromItem(stack)
+                    ? DataResult.success(new CopyPrintingBehaviour(copiable, stack))
+                    : DataResult.error(() -> CEICommon.asLocalization("gui.printer.copy.invalid")));
         return Optional.empty();
-    }
-
-    @Override
-    public boolean isValid() {
-        return itemCopying.canCopyFromItem(original);
     }
 
     @Override
@@ -78,10 +78,8 @@ public class CopyPrintingBehaviour implements PrintingBehaviour {
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        var name = original.getHoverName().copy().withStyle(original.getRarity().getStyleModifier());
-        CEILang.translate("gui.goggles.printing.copy", name).forGoggles(tooltip);
-        if (!isValid())
-            CEILang.translate("gui.goggles.printing.copy.invalid").forGoggles(tooltip);
+        CEILang.translate("gui.goggles.printing.copy").forGoggles(tooltip);
+        CEILang.item(original).style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
         return true;
     }
 }

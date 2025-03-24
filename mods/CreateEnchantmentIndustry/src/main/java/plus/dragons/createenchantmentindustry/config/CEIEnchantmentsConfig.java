@@ -19,26 +19,25 @@
 package plus.dragons.createenchantmentindustry.config;
 
 import net.createmod.catnip.config.ConfigBase;
-import net.neoforged.neoforge.common.ModConfigSpec;
 
-public class CEIServerConfig extends ConfigBase {
-    public final CEIKineticsConfig kinetics = nested(0, CEIKineticsConfig::new, Comments.kinetics);
-    public final CEIFluidsConfig fluids = nested(0, CEIFluidsConfig::new, Comments.fluids);
-    public final CEIEnchantmentsConfig enchantments = nested(0, CEIEnchantmentsConfig::new, Comments.enchantments);
-
-    @Override
-    public void registerAll(ModConfigSpec.Builder builder) {
-        super.registerAll(builder);
-    }
+public class CEIEnchantmentsConfig extends ConfigBase {
+    public final ConfigInt blazeEnchanterMaxEnchantLevel = i(30, 0,
+            "blazeEnchanterMaxEnchantLevel",
+            Comments.blazeEnchanterMaxEnchantLevel);
+    public final ConfigInt blazeEnchanterMaxSuperEnchantLevel = i(60, 0,
+            "blazeEnchanterMaxSuperEnchantLevel",
+            Comments.blazeEnchanterMaxSuperEnchantLevel
+    );
 
     @Override
     public String getName() {
-        return "server";
+        return "enchantments";
     }
 
     static class Comments {
-        static final String kinetics = "Parameters and abilities of kinetic mechanisms";
-        static String fluids = "Parameters and abilities of fluids and fluid operating components";
-        static String enchantments = "Parameters and abilities of enchantment operating components";
+        static final String blazeEnchanterMaxEnchantLevel =
+                "The max experience level a Blaze Enchanter can use in Enchanting";
+        static final String blazeEnchanterMaxSuperEnchantLevel =
+                "The max experience level a Blaze Enchanter can use in Super Enchanting";
     }
 }

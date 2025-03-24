@@ -18,6 +18,7 @@
 
 package plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour;
 
+import com.mojang.serialization.DataResult;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
@@ -29,6 +30,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
+import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 import plus.dragons.createenchantmentindustry.util.CEILang;
@@ -40,17 +42,14 @@ public class AddressPrintingBehaviour implements PrintingBehaviour {
         this.address = address;
     }
 
-    public static Optional<PrintingBehaviour> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
+    public static Optional<DataResult<PrintingBehaviour>> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
         if (stack.getItem() instanceof PackageItem) {
             String address = stack.get(AllDataComponents.PACKAGE_ADDRESS);
-            return Optional.of(new AddressPrintingBehaviour(address == null ? "" : address));
+            return Optional.of(address == null || address.isEmpty()
+                    ? DataResult.error(() -> CEICommon.asLocalization("gui.printer.adress.invalid"))
+                    : DataResult.success(new AddressPrintingBehaviour(address)));
         }
         return Optional.empty();
-    }
-
-    @Override
-    public boolean isValid() {
-        return !address.isEmpty();
     }
 
     @Override
@@ -82,10 +81,9 @@ public class AddressPrintingBehaviour implements PrintingBehaviour {
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        var address = this.address.isEmpty()
-                ? Component.literal("Invalid Address").withStyle(ChatFormatting.RED)
-                : Component.literal(this.address).withStyle(ChatFormatting.GOLD);
-        CEILang.translate("gui.goggles.printing.address", address).forGoggles(tooltip);
+        var address = Component.literal("→ " + this.address).withStyle(ChatFormatting.GOLD);
+        CEILang.translate("gui.goggles.printing.address").forGoggles(tooltip);
+        CEILang.builder().add(address).forGoggles(tooltip, 1);
         return true;
     }
 }

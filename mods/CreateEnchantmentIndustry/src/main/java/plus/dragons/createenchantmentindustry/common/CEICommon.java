@@ -28,6 +28,7 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIBlockEntities;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 import plus.dragons.createenchantmentindustry.common.registry.CEICreativeModeTabs;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
+import plus.dragons.createenchantmentindustry.common.registry.CEIEnchantments;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 import plus.dragons.createenchantmentindustry.common.registry.CEIItems;
 import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
@@ -45,6 +46,7 @@ public class CEICommon {
         CEIItems.register(modBus);
         CEICreativeModeTabs.register(modBus);
         CEIRecipes.register(modBus);
+        CEIEnchantments.register(modBus);
         CEIDataMaps.register(modBus);
         modBus.register(this);
     }
@@ -54,5 +56,9 @@ public class CEICommon {
 
     public static ResourceLocation asResource(String name) {
         return ResourceLocation.fromNamespaceAndPath(ID, name);
+    }
+
+    public static String asLocalization(String key) {
+        return ID + "." + key;
     }
 }

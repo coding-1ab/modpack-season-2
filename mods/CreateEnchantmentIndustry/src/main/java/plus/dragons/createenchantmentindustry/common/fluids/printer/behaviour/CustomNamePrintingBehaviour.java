@@ -18,6 +18,7 @@
 
 package plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour;
 
+import com.mojang.serialization.DataResult;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +37,6 @@ import plus.dragons.createenchantmentindustry.config.CEIConfig;
 import plus.dragons.createenchantmentindustry.util.CEILang;
 
 public class CustomNamePrintingBehaviour implements PrintingBehaviour {
-    private static final Component EMPTY = Component.empty();
     private final SmartFluidTankBehaviour tank;
     private final Component name;
 
@@ -45,17 +45,14 @@ public class CustomNamePrintingBehaviour implements PrintingBehaviour {
         this.name = name;
     }
 
-    public static Optional<PrintingBehaviour> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
+    public static Optional<DataResult<PrintingBehaviour>> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
         if (stack.is(Items.NAME_TAG)) {
             var name = stack.get(DataComponents.CUSTOM_NAME);
-            return Optional.of(new CustomNamePrintingBehaviour(tank, name == null ? EMPTY : name.copy()));
+            if (name == null)
+                return Optional.empty();
+            return Optional.of(DataResult.success(new CustomNamePrintingBehaviour(tank, name.copy())));
         }
         return Optional.empty();
-    }
-
-    @Override
-    public boolean isValid() {
-        return name != EMPTY;
     }
 
     @Override
@@ -93,8 +90,9 @@ public class CustomNamePrintingBehaviour implements PrintingBehaviour {
         var name = getCustomName(fluidStack);
         if (!CEIConfig.fluids().printingCustomNameAsItemName.get())
             name.withStyle(ChatFormatting.ITALIC);
-        CEILang.translate("gui.goggles.printing.custom_name", name).forGoggles(tooltip);
-        return PrintingBehaviour.super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        CEILang.translate("gui.goggles.printing.custom_name").forGoggles(tooltip);
+        CEILang.builder().add(name).forGoggles(tooltip, 1);
+        return true;
     }
 
     private MutableComponent getCustomName(FluidStack fluidStack) {

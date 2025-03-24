@@ -59,7 +59,7 @@ import plus.dragons.createenchantmentindustry.config.CEIConfig;
 public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
     public static final int PROCESSING_TIME = 50;
     protected SmartFluidTankBehaviour tank;
-    private PrinterFilteringBehaviour filter;
+    private PrinterBehaviour printer;
     public int processingTicks = -1;
 
     public PrinterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -69,7 +69,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         tank = SmartFluidTankBehaviour.single(this, CEIConfig.fluids().blazeEnchanterFluidCapacity.get());
-        filter = new PrinterFilteringBehaviour(this, tank, new CenteredSideValueBoxTransform(
+        printer = new PrinterBehaviour(this, tank, new CenteredSideValueBoxTransform(
                 (state, direction) -> state.getValue(PrinterBlock.FACING) == direction
         ));
         BeltProcessingBehaviour processing = new BeltProcessingBehaviour(this)
@@ -77,7 +77,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
                 .whileItemHeld(this::onItemHeld);
         AdvancementBehaviour advancement = new AdvancementBehaviour(this);
         behaviours.add(tank);
-        behaviours.add(filter);
+        behaviours.add(printer);
         behaviours.add(processing);
         behaviours.add(advancement);
     }
@@ -103,7 +103,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         if (handler.blockEntity.isVirtual())
             return PASS;
 
-        var printing = filter.getPrinting();
+        var printing = printer.getPrintingBehvaiour();
         if (!printing.isValid())
             return PASS;
 
@@ -126,7 +126,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         if (processingTicks != -1 && processingTicks != 5)
             return HOLD;
 
-        var printing = filter.getPrinting();
+        var printing = printer.getPrintingBehvaiour();
         if (!printing.isValid())
             return PASS;
 
@@ -197,7 +197,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         assert level != null;
         var handler = level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition, null);
         boolean added = containedFluidTooltip(tooltip, isPlayerSneaking, handler);
-        added |= filter.getPrinting().addToGoggleTooltip(tooltip, isPlayerSneaking);
+        added |= printer.getPrintingBehvaiour().addToGoggleTooltip(tooltip, isPlayerSneaking);
         return added;
     }
 

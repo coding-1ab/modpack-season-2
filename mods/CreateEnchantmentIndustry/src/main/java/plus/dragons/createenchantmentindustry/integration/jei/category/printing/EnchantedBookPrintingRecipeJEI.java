@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.helpers.ICodecHelper;
-import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.IRecipeManager;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -37,10 +36,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.fluids.FluidStack;
+import plus.dragons.createdragonsplus.util.Pairs;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
-import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
-import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
+import plus.dragons.createenchantmentindustry.common.processing.enchanter.EnchantingHelper;
+import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 
 public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
     public static final PrintingRecipeJEI.Type TYPE = PrintingRecipeJEI
@@ -48,7 +47,7 @@ public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
     private final ResourceLocation id;
     private final EnchantmentInstance enchantment;
     private final ItemStack enchantmentBook;
-    private final FluidStack experience;
+    private final int cost;
 
     public EnchantedBookPrintingRecipeJEI(EnchantmentInstance enchantment) {
         this.id = PrintingRecipeJEI.super.getRegistryName().withSuffix("/" +
@@ -56,8 +55,7 @@ public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
                   enchantment.level);
         this.enchantment = enchantment;
         this.enchantmentBook = EnchantedBookItem.createForEnchantment(enchantment);
-        var cost = ExperienceHelper.getEnchantmentCost(enchantment.enchantment, enchantment.level);
-        this.experience = new FluidStack(CEIFluids.EXPERIENCE.get(), cost);
+        this.cost = EnchantingHelper.getEnchantmentCost(enchantment.enchantment, enchantment.level);
     }
 
     public static MapCodec<EnchantedBookPrintingRecipeJEI> createCodec(ICodecHelper codecHelper, IRecipeManager recipeManager) {
@@ -91,7 +89,8 @@ public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
 
     @Override
     public void setFluid(IRecipeSlotBuilder slot) {
-        slot.addIngredient(NeoForgeTypes.FLUID_STACK, experience);
+        CEIDataMaps.getSourceFluidEntries(CEIDataMaps.FLUID_UNIT_EXPERIENCE)
+                .forEach(Pairs.accept((fluid, unit) -> slot.addFluidStack(fluid, (long) unit * cost)));
     }
 
     @Override

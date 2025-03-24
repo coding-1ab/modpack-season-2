@@ -20,11 +20,15 @@ package plus.dragons.createenchantmentindustry.common.registry;
 
 import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.foundation.fluid.FluidHelper;
 import com.tterrag.registrate.providers.ProviderType;
 import com.tterrag.registrate.providers.RegistrateDataMapProvider;
+import java.util.stream.Stream;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -38,6 +42,7 @@ import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.registries.datamaps.DataMapType;
 import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 import plus.dragons.createdragonsplus.common.registry.CDPFluids;
+import plus.dragons.createdragonsplus.util.Pairs;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceFuel;
 
@@ -85,6 +90,14 @@ public class CEIDataMaps {
         event.register(PRINTING_CUSTOM_NAME_INGREDIENT);
         event.register(PRINTING_CUSTOM_NAME_STYLE);
         event.register(PRINTING_WRITTEN_BOOK_INGREDIENT);
+    }
+
+    public static <T> Stream<Pair<Fluid, T>> getSourceFluidEntries(DataMapType<Fluid, T> type) {
+        return BuiltInRegistries.FLUID.getDataMap(type)
+                .entrySet()
+                .stream()
+                .map(Pairs.mapKey(BuiltInRegistries.FLUID::get))
+                .filter(Pairs.filterFirst(fluid -> FluidHelper.convertToStill(fluid) == fluid));
     }
 
     public static void generate(RegistrateDataMapProvider provider) {

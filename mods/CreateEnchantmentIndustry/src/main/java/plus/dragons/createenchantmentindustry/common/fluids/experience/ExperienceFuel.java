@@ -27,6 +27,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
+import org.jetbrains.annotations.Nullable;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 
 public record ExperienceFuel(int experience, boolean special, Optional<ItemStack> usingConvertTo) {
@@ -59,18 +60,18 @@ public record ExperienceFuel(int experience, boolean special, Optional<ItemStack
         return new ExperienceFuel(experience, true, Optional.of(usingConvertTo));
     }
 
-    public static Optional<ExperienceFuel> get(Level level, ItemStack stack) {
+    public static @Nullable ExperienceFuel get(Level level, ItemStack stack) {
         var fuel = stack.getItemHolder().getData(CEIDataMaps.EXPERIENCE_FUEL);
         if (fuel != null)
-            return Optional.of(fuel);
+            return fuel;
         if (!GenericItemEmptying.canItemBeEmptied(level, stack))
-            return Optional.empty();
+            return null;
         var emptying = GenericItemEmptying.emptyItem(level, stack, true);
         var fluid = emptying.getFirst();
         var experience = ExperienceHelper.getExperienceFromFluid(fluid);
         if (experience == 0)
-            return Optional.empty();
+            return null;
         var item = emptying.getSecond();
-        return Optional.of(normal(experience, item));
+        return normal(experience, item);
     }
 }

@@ -18,11 +18,13 @@
 
 package plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour;
 
+import com.mojang.serialization.DataResult;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -37,36 +39,58 @@ import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
+import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
+import plus.dragons.createenchantmentindustry.common.processing.enchanter.EnchantingHelper;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 import plus.dragons.createenchantmentindustry.util.CEILang;
 
 public class EnchantedBookPrintingBehaviour implements PrintingBehaviour {
     private final Level level;
+    private final SmartFluidTankBehaviour tank;
     private final ItemStack original;
     private final ItemEnchantments enchantments;
     private final int cost;
 
-    private EnchantedBookPrintingBehaviour(Level level, ItemStack original, ItemEnchantments enchantments) {
+    private EnchantedBookPrintingBehaviour(Level level, SmartFluidTankBehaviour tank, ItemStack original, ItemEnchantments enchantments) {
         this.level = level;
+        this.tank = tank;
         this.original = original;
         this.enchantments = enchantments;
-        cost = ExperienceHelper.getEnchantmentCost(enchantments);
+        this.cost = EnchantingHelper.getEnchantmentCost(enchantments);
     }
 
-    public static Optional<PrintingBehaviour> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
+    public static Optional<DataResult<PrintingBehaviour>> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
         if (!stack.is(Items.ENCHANTED_BOOK))
             return Optional.empty();
-        return Optional.of(new EnchantedBookPrintingBehaviour(level, stack, stack.getTagEnchantments()));
+        var enchantments = EnchantmentHelper.getEnchantmentsForCrafting(stack);
+        if (enchantments.isEmpty())
+            return Optional.of(DataResult.error(() -> CEICommon.asLocalization("gui.printer.enchanted_book.invalid")));
+        return Optional.of(DataResult.success(new EnchantedBookPrintingBehaviour(level, tank, stack, enchantments)));
+    }
+
+    private OptionalInt getCost(FluidStack fluid) {
+        int cost = this.cost;
+        cost = ExperienceHelper.getFluidFromExperience(fluid, cost);
+        if (cost == 0)
+            return OptionalInt.empty();
+        return OptionalInt.of(cost);
     }
 
     @Override
     public boolean isValid() {
-        return cost > 0;
+        if (this.cost <= 0)
+            return false;
+        var fluid = tank.getPrimaryHandler().getFluid();
+        if (fluid.isEmpty())
+            return true;
+        var cost = getCost(fluid);
+        return cost.isPresent() && cost.getAsInt() <= CEIConfig.fluids().printerFluidCapacity.get();
     }
 
     @Override
@@ -83,7 +107,7 @@ public class EnchantedBookPrintingBehaviour implements PrintingBehaviour {
 
     @Override
     public int getRequiredFluidAmount(Level level, ItemStack stack, FluidStack fluidStack) {
-        return ExperienceHelper.getFluidFromExperience(fluidStack, cost);
+        return getCost(fluidStack).orElse(0);
     }
 
     @Override
@@ -102,14 +126,15 @@ public class EnchantedBookPrintingBehaviour implements PrintingBehaviour {
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        var name = original.getHoverName().copy().withStyle(original.getRarity().getStyleModifier());
-        var cost = CEILang.number(this.cost)
-                .add(CreateLang.translate("generic.unit.millibuckets"))
-                .style(this.cost > CEIConfig.fluids().blazeEnchanterFluidCapacity.get()
-                        ? ChatFormatting.RED
-                        : ChatFormatting.GREEN);
-        CEILang.translate("gui.goggles.printing", name).forGoggles(tooltip);
-        CEILang.translate("gui.goggles.printing.cost", cost).forGoggles(tooltip);
+        CEILang.translate("gui.goggles.printing").forGoggles(tooltip);
+        CEILang.item(original).style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
+        getCost(tank.getPrimaryHandler().getFluid()).ifPresent(cost -> CEILang.translate("gui.goggles.printing.cost",
+                CEILang.number(cost)
+                        .add(CreateLang.translate("generic.unit.millibuckets"))
+                        .style(cost <= CEIConfig.fluids().printerFluidCapacity.get()
+                                ? ChatFormatting.GREEN
+                                : ChatFormatting.RED)
+        ).style(ChatFormatting.GRAY).forGoggles(tooltip));
         HolderLookup.Provider registries = level.registryAccess();
         var order = registries
                 .lookupOrThrow(Registries.ENCHANTMENT)

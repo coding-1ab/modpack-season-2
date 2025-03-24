@@ -23,22 +23,29 @@ import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE;
 
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllTags.AllBlockTags;
+import com.simibubi.create.Create;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.tterrag.registrate.util.entry.BlockEntry;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.bus.api.IEventBus;
+import plus.dragons.createdragonsplus.common.processing.blaze.BlazeBlock;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlock;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindstoneDrainBlock;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.MechanicalGrindStoneItem;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.MechanicalGrindstoneBlock;
+import plus.dragons.createenchantmentindustry.common.processing.enchanter.BlazeEnchanterBlock;
 import plus.dragons.createenchantmentindustry.config.CEIStressConfig;
 
+@SuppressWarnings("removal")
 public class CEIBlocks {
     public static final BlockEntry<MechanicalGrindstoneBlock> MECHANICAL_GRINDSTONE = REGISTRATE
             .block("mechanical_grindstone", MechanicalGrindstoneBlock::new)
@@ -72,6 +79,21 @@ public class CEIBlocks {
             .blockstate((ctx, prov) -> prov.horizontalBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
             .item(AssemblyOperatorBlockItem::new)
             .transform(customItemModel())
+            .register();
+    public static final BlockEntry<BlazeEnchanterBlock> BLAZE_ENCHANTER = REGISTRATE
+            .block("blaze_enchanter", BlazeEnchanterBlock::new)
+            .initialProperties(SharedProperties::softMetal)
+            .properties(p -> p.mapColor(MapColor.COLOR_GRAY).lightLevel(BlazeBlock::getLight))
+            .transform(pickaxeOnly())
+            .addLayer(() -> RenderType::cutoutMipped)
+            .tag(AllBlockTags.FAN_TRANSPARENT.tag, AllBlockTags.FAN_PROCESSING_CATALYSTS_SMOKING.tag)
+            .blockstate((ctx, prov) -> prov.horizontalBlock(
+                    ctx.getEntry(),
+                    prov.models().getExistingFile(Create.asResource("block/blaze_burner/block"))))
+            .item()
+            .model((ctx, prov) -> prov.withExistingParent(ctx.getName(),
+                    Create.asResource("block/blaze_burner/block_with_blaze")))
+            .build()
             .register();
 
     public static void register(IEventBus modBus) {}

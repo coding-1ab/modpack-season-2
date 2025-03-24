@@ -1,31 +1,22 @@
 {
-  "credit": "By F1reW4tch, made with Blockbench",
+  "credit": "By RaymondBlaze, made with Blockbench",
+  "render_type": "solid",
+  "texture_size": [32, 32],
   "textures": {
     "particle": "create_enchantment_industry:block/enchanter_hat",
     "hat": "create_enchantment_industry:block/enchanter_hat"
   },
   "elements": [
     {
-      "from": [3.9, 3, 3.9],
-      "to": [12.1, 8.1, 12.1],
+      "from": [-5, -1, -5],
+      "to": [5, 7, 5],
       "faces": {
-        "north": {"uv": [8, 0, 16, 5], "texture": "#hat"},
-        "east": {"uv": [0, 10, 8, 15], "texture": "#hat"},
-        "south": {"uv": [8, 5, 16, 10], "texture": "#hat"},
-        "west": {"uv": [8, 10, 16, 15], "texture": "#hat"},
-        "up": {"uv": [0, 0, 8, 8], "texture": "#hat"}
-      }
-    },
-    {
-      "from": [12.1, 8, 12.1],
-      "to": [3.9, 3, 3.9],
-      "rotation": {"angle": 0, "axis": "y", "origin": [8, 0, 8]},
-      "faces": {
-        "north": {"uv": [8, 10, 16, 5], "texture": "#hat"},
-        "east": {"uv": [8, 15, 16, 10], "texture": "#hat"},
-        "south": {"uv": [8, 5, 16, 0], "texture": "#hat"},
-        "west": {"uv": [0, 15, 8, 10], "texture": "#hat"},
-        "down": {"uv": [8, 0, 0, 8], "texture": "#hat"}
+        "north": {"uv": [5, 9, 10, 13], "texture": "#hat"},
+        "east": {"uv": [0, 9, 5, 13], "texture": "#hat"},
+        "south": {"uv": [5, 5, 10, 9], "texture": "#hat"},
+        "west": {"uv": [0, 5, 5, 9], "texture": "#hat"},
+        "up": {"uv": [5, 0, 10, 5], "rotation": 180, "texture": "#hat"},
+        "down": {"uv": [0, 0, 5, 5], "rotation": 180, "texture": "#hat"}
       }
     }
   ]

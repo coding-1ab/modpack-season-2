@@ -18,6 +18,7 @@
 
 package plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour;
 
+import com.mojang.serialization.DataResult;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import java.util.ArrayList;
@@ -45,13 +46,13 @@ public interface PrintingBehaviour extends IHaveGoggleInformation {
         PROVIDERS.add(provider);
     }
 
-    static PrintingBehaviour create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
+    static DataResult<PrintingBehaviour> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
         for (var provider : PROVIDERS) {
             var result = provider.create(level, tank, stack);
             if (result.isPresent())
                 return result.get();
         }
-        return new PrintingRecipeBehaviour(stack);
+        return DataResult.success(new RecipePrintingBehaviour(stack));
     }
 
     default boolean isValid() {
@@ -72,6 +73,6 @@ public interface PrintingBehaviour extends IHaveGoggleInformation {
 
     @FunctionalInterface
     interface Provider {
-        Optional<PrintingBehaviour> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack);
+        Optional<DataResult<PrintingBehaviour>> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack);
     }
 }

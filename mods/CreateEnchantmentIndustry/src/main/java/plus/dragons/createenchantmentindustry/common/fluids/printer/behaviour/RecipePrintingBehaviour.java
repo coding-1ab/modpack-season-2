@@ -21,6 +21,7 @@ package plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
@@ -35,11 +36,12 @@ import plus.dragons.createenchantmentindustry.common.fluids.printer.PrintingReci
 import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
 import plus.dragons.createenchantmentindustry.util.CEILang;
 
-public class PrintingRecipeBehaviour implements PrintingBehaviour {
+public class RecipePrintingBehaviour implements PrintingBehaviour {
+    public static final RecipePrintingBehaviour EMPTY = new RecipePrintingBehaviour(ItemStack.EMPTY);
     private final ItemStack template;
     private @Nullable RecipeHolder<PrintingRecipe> lastRecipe;
 
-    public PrintingRecipeBehaviour(ItemStack template) {
+    public RecipePrintingBehaviour(ItemStack template) {
         this.template = template;
     }
 
@@ -57,6 +59,11 @@ public class PrintingRecipeBehaviour implements PrintingBehaviour {
         }
         lastRecipe = null;
         return Optional.empty();
+    }
+
+    @Override
+    public boolean isValid() {
+        return !template.isEmpty();
     }
 
     @Override
@@ -88,8 +95,8 @@ public class PrintingRecipeBehaviour implements PrintingBehaviour {
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         if (template.isEmpty())
             return false;
-        var name = template.getHoverName().copy().withStyle(template.getRarity().getStyleModifier());
-        CEILang.translate("gui.goggles.printing.template", name).forGoggles(tooltip);
+        CEILang.translate("gui.goggles.printing.template").forGoggles(tooltip);
+        CEILang.item(template).style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
         return true;
     }
 }

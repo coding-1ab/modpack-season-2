@@ -25,11 +25,10 @@ import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.material.FlowingFluid;
 import net.neoforged.neoforge.fluids.FluidStack;
+import plus.dragons.createdragonsplus.util.Pairs;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
@@ -60,14 +59,8 @@ public enum CustomNamePrintingRecipeJEI implements PrintingRecipeJEI {
 
     @Override
     public void setFluid(IRecipeSlotBuilder slot) {
-        BuiltInRegistries.FLUID.getDataMap(CEIDataMaps.PRINTING_CUSTOM_NAME_INGREDIENT)
-                .forEach((key, amount) -> {
-                    var fluid = BuiltInRegistries.FLUID.get(key);
-                    assert fluid != null; // DataMap should not have unregistered key
-                    if (fluid instanceof FlowingFluid flowing && flowing.getSource() != flowing)
-                        return;
-                    slot.addFluidStack(fluid, amount);
-                });
+        CEIDataMaps.getSourceFluidEntries(CEIDataMaps.PRINTING_CUSTOM_NAME_INGREDIENT)
+                .forEach(Pairs.accept(slot::addFluidStack));
     }
 
     @Override

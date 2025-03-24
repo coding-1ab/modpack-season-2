@@ -20,9 +20,8 @@ package plus.dragons.createenchantmentindustry.integration.jei.category.printing
 
 import com.mojang.serialization.MapCodec;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.material.FlowingFluid;
+import plus.dragons.createdragonsplus.util.Pairs;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 
@@ -44,14 +43,8 @@ public enum WrittenBookPrintingRecipeJEI implements PrintingRecipeJEI {
 
     @Override
     public void setFluid(IRecipeSlotBuilder slot) {
-        BuiltInRegistries.FLUID.getDataMap(CEIDataMaps.PRINTING_WRITTEN_BOOK_INGREDIENT)
-                .forEach((key, amount) -> {
-                    var fluid = BuiltInRegistries.FLUID.get(key);
-                    assert fluid != null; // DataMap should not have unregistered key
-                    if (fluid instanceof FlowingFluid flowing && flowing.getSource() != flowing)
-                        return;
-                    slot.addFluidStack(fluid, amount);
-                });
+        CEIDataMaps.getSourceFluidEntries(CEIDataMaps.PRINTING_WRITTEN_BOOK_INGREDIENT)
+                .forEach(Pairs.accept(slot::addFluidStack));
     }
 
     @Override

@@ -18,16 +18,22 @@
 
 package plus.dragons.createenchantmentindustry.common.fluids.experience;
 
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.fluids.tank.CreativeFluidTankBlockEntity.CreativeSmartFluidTank;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
+import com.simibubi.create.foundation.utility.CreateLang;
 import java.util.List;
 import java.util.function.Consumer;
 import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.lang.LangBuilder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -38,9 +44,10 @@ import plus.dragons.createdragonsplus.common.fluids.tank.ConfigurableFluidTank;
 import plus.dragons.createdragonsplus.common.fluids.tank.FluidTankBehaviour;
 import plus.dragons.createdragonsplus.common.processing.blaze.BlazeBlockEntity;
 import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
+import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 
 @FieldsNullabilityUnknownByDefault
-public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity {
+public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity implements IHaveGoggleInformation {
     protected final LerpedFloat headAnimation = LerpedFloat.linear();
     protected final LerpedFloat headAngle = LerpedFloat.angular();
     private boolean isCreative;
@@ -67,19 +74,18 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity {
 
     @Override
     public HeatLevel getHeatLevel() {
-        var special = getSpecialTank().getFluid();
-        if (!special.isEmpty())
+        if (getSpecialExperience() > 0)
             return HeatLevel.SEETHING;
-        var normal = getNormalTank().getFluid();
-        if (!normal.isEmpty()) {
-            boolean lowPercent = normal.getAmount() / (double) getNormalTank().getCapacity() < 0.0125;
+        double experience = getNormalExperience();
+        if (experience > 0) {
+            boolean lowPercent = experience / getNormalTank().getCapacity() < 0.0125;
             return lowPercent ? HeatLevel.FADING : HeatLevel.KINDLED;
         }
         return HeatLevel.SMOULDERING;
     }
 
     @Override
-    public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+    protected void write(CompoundTag compound, Provider registries, boolean clientPacket) {
         super.write(compound, registries, clientPacket);
         compound.putBoolean("isCreative", isCreative);
     }
@@ -98,7 +104,30 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity {
         return tanks.getHandlers()[1];
     }
 
-    public boolean applyFuel(ExperienceFuel fuel, boolean forceOverflow, boolean simulate) {
+    public int getNormalExperience() {
+        return getNormalTank().getFluid().getAmount();
+    }
+
+    public int getSpecialExperience() {
+        return getSpecialTank().getFluid().getAmount();
+    }
+
+    public int getTotalExperience() {
+        return getNormalExperience() + getSpecialExperience();
+    }
+
+    public boolean consumeExperience(int amount, boolean special, boolean simulate) {
+        var fluid = ExperienceHelper.getExperienceFluid(amount);
+        var tank = special ? getSpecialTank() : tanks.getCapability();
+        var drained = tank.drain(fluid, FluidAction.SIMULATE);
+        if (drained.getAmount() != amount)
+            return false;
+        if (!simulate)
+            tank.drain(fluid, FluidAction.EXECUTE);
+        return true;
+    }
+
+    public boolean applyExperienceFuel(ExperienceFuel fuel, boolean forceOverflow, boolean simulate) {
         assert level != null;
         if (isCreative)
             return false;
@@ -107,16 +136,21 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity {
         if (!(tank instanceof ConfigurableFluidTank configurableTank)) {
             return false;
         }
+        var fluid = configurableTank.getFluid();
+        if (!fluid.isEmpty() && !fluid.is(CEIFluids.EXPERIENCE))
+            return false;
         int experience = fuel.experience();
-        var fluid = ExperienceHelper.getExperienceFluid(experience);
-        int fill = configurableTank.fill(fluid, FluidAction.SIMULATE, true);
-        if (fill != experience && !forceOverflow)
+        var experienceFluid = ExperienceHelper.getExperienceFluid(experience);
+        int fill = configurableTank.fill(experienceFluid, FluidAction.SIMULATE, true);
+        if (fill == 0)
+            return false;
+        else if (fill != experience && !forceOverflow)
             return false;
         if (simulate)
             return true;
         if (level.isClientSide)
             spawnParticleBurst(special);
-        configurableTank.fill(fluid, FluidAction.EXECUTE, true);
+        configurableTank.fill(experienceFluid, FluidAction.EXECUTE, true);
 
         HeatLevel heat = getHeatLevelFromBlock();
         playSound();
@@ -124,8 +158,9 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity {
 
         if (heat != getHeatLevelFromBlock())
             level.playSound(null, worldPosition, SoundEvents.BLAZE_AMBIENT, SoundSource.BLOCKS,
-                    .125f + level.random.nextFloat() * .125f, 1.15f - level.random.nextFloat() * .25f);
-
+                    .125f + level.random.nextFloat() * .125f,
+                    1.15f - level.random.nextFloat() * .25f);
+        notifyUpdate();
         return true;
     }
 
@@ -141,13 +176,46 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity {
         if (next == HeatLevel.FADING)
             next = next.nextActiveLevel();
         switch (next) {
-            case KINDLED -> tanks.setTank(0, callback -> new CreativeSmartFluidTank(getNormalTank().getCapacity(), callback));
-            case SEETHING -> tanks.setTank(1, callback -> new CreativeSmartFluidTank(getSpecialTank().getCapacity(), callback));
+            case KINDLED -> {
+                int capacity = getNormalTank().getCapacity();
+                tanks.setTank(0, callback -> new CreativeSmartFluidTank(capacity, callback));
+                getNormalTank().setFluid(ExperienceHelper.getExperienceFluid(capacity));
+            }
+            case SEETHING -> {
+                int capacity = getSpecialTank().getCapacity();
+                tanks.setTank(1, callback -> new CreativeSmartFluidTank(capacity, callback));
+                getSpecialTank().setFluid(ExperienceHelper.getExperienceFluid(capacity));
+            }
             default -> {
                 tanks.setTank(0, this::createNormalTank);
                 tanks.setTank(1, this::createSpecialTank);
             }
         }
         setBlockHeat(next);
+        notifyUpdate();
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
+        CreateLang.translate("gui.goggles.fluid_container")
+                .forGoggles(tooltip);
+        CreateLang.builder().add(CEIFluids.EXPERIENCE.getType().getDescription())
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip, 1);
+        boolean speical = false;
+        for (var tank : tanks.getHandlers()) {
+            CreateLang.builder()
+                    .add(CreateLang.number(tank.getFluid().getAmount())
+                            .add(mb)
+                            .style(speical ? ChatFormatting.BLUE : ChatFormatting.GOLD))
+                    .text(ChatFormatting.GRAY, " / ")
+                    .add(CreateLang.number(tank.getCapacity())
+                            .add(mb)
+                            .style(ChatFormatting.DARK_GRAY))
+                    .forGoggles(tooltip, 1);
+            speical = true;
+        }
+        return true;
     }
 }

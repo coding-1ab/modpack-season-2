@@ -57,6 +57,7 @@ public class CEICreativeModeTabs {
     private static void buildBaseContents(CreativeModeTab.ItemDisplayParameters parameters, CreativeModeTab.Output output) {
         output.accept(MECHANICAL_GRINDSTONE);
         output.accept(PRINTER);
+        output.accept(BLAZE_ENCHANTER);
         output.accept(AllBlocks.EXPERIENCE_BLOCK);
         output.accept(AllItems.EXP_NUGGET);
         output.accept(EXPERIENCE_CAKE_BASE, TabVisibility.SEARCH_TAB_ONLY);

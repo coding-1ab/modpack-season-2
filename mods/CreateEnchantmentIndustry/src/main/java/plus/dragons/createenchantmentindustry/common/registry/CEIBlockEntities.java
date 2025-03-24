@@ -28,11 +28,14 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import plus.dragons.createdragonsplus.common.processing.blaze.BlazeBlockVisual;
 import plus.dragons.createenchantmentindustry.client.model.CEIPartialModels;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterRenderer;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindstoneDrainBlockEntity;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindstoneDrainRenderer;
+import plus.dragons.createenchantmentindustry.common.processing.enchanter.BlazeEnchanterBlockEntity;
+import plus.dragons.createenchantmentindustry.common.processing.enchanter.BlazeEnchanterRenderer;
 
 public class CEIBlockEntities {
     public static final BlockEntityEntry<KineticBlockEntity> MECHANICAL_GRINDSTONE = REGISTRATE
@@ -52,6 +55,12 @@ public class CEIBlockEntities {
             .renderer(() -> PrinterRenderer::new)
             .validBlock(CEIBlocks.PRINTER)
             .register();
+    public static final BlockEntityEntry<BlazeEnchanterBlockEntity> BLAZE_ENCHANTER = REGISTRATE
+            .blockEntity("blaze_enchanter", BlazeEnchanterBlockEntity::new)
+            .visual(() -> BlazeBlockVisual::new)
+            .renderer(() -> BlazeEnchanterRenderer::new)
+            .validBlock(CEIBlocks.BLAZE_ENCHANTER)
+            .register();
 
     public static void register(IEventBus modBus) {
         modBus.register(CEIBlockEntities.class);
@@ -65,5 +74,7 @@ public class CEIBlockEntities {
                 GRINDSTONE_DRAIN.get(), GrindstoneDrainBlockEntity::getFluidHandler);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
                 PRINTER.get(), PrinterBlockEntity::getFluidHandler);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
+                BLAZE_ENCHANTER.get(), BlazeEnchanterBlockEntity::getFluidHandler);
     }
 }
