@@ -1,0 +1,14 @@
+{
+  "type": "create_dragons_plus:grinding",
+  "ingredients": [
+    {
+      "item": "create_enchantment_industry:super_experience_block"
+    }
+  ],
+  "results": [
+    {
+      "amount": 81,
+      "id": "create_enchantment_industry:experience"
+    }
+  ]
+}

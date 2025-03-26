@@ -36,6 +36,8 @@ import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.Grindst
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindstoneDrainRenderer;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.BlazeEnchanterBlockEntity;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.BlazeEnchanterRenderer;
+import plus.dragons.createenchantmentindustry.common.processing.forger.BlazeForgerBlockEntity;
+import plus.dragons.createenchantmentindustry.common.processing.forger.BlazeForgerRenderer;
 
 public class CEIBlockEntities {
     public static final BlockEntityEntry<KineticBlockEntity> MECHANICAL_GRINDSTONE = REGISTRATE
@@ -60,6 +62,12 @@ public class CEIBlockEntities {
             .visual(() -> BlazeBlockVisual::new)
             .renderer(() -> BlazeEnchanterRenderer::new)
             .validBlock(CEIBlocks.BLAZE_ENCHANTER)
+            .register();
+    public static final BlockEntityEntry<BlazeForgerBlockEntity> BLAZE_FORGER = REGISTRATE
+            .blockEntity("blaze_forger", BlazeForgerBlockEntity::new)
+            .visual(() -> BlazeBlockVisual::new)
+            .renderer(() -> BlazeForgerRenderer::new)
+            .validBlock(CEIBlocks.BLAZE_FORGER)
             .register();
 
     public static void register(IEventBus modBus) {

@@ -18,19 +18,39 @@
 
 package plus.dragons.createenchantmentindustry.common.registry;
 
-import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE;
-
 import com.simibubi.create.AllTags.AllItemTags;
+import com.simibubi.create.content.materials.ExperienceNuggetItem;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredItem;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 
+import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE;
+
 public class CEIItems {
+    public static final ItemEntry<ExperienceNuggetItem> SUPER_EXPERIENCE_NUGGET = REGISTRATE
+            .item("super_experience_nugget", ExperienceNuggetItem::new)
+            .tag(Tags.Items.NUGGETS)
+            .properties(p -> p.rarity(Rarity.RARE))
+            .lang("Nugget of Super Experience")
+            .register();
+    public static final ItemEntry<Item> ENCHANTING_TEMPLATE = REGISTRATE
+            .item("enchanting_template", Item::new)
+            .properties(prop -> prop
+                    .rarity(Rarity.UNCOMMON)
+                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true))
+            .register();
+    public static final ItemEntry<Item> SUPER_ENCHANTING_TEMPLATE = REGISTRATE
+            .item("super_enchanting_template", Item::new)
+            .properties(prop -> prop
+                    .rarity(Rarity.RARE)
+                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true))
+            .register();
     public static final ItemEntry<Item> EXPERIENCE_CAKE_BASE = REGISTRATE
             .item("experience_cake_base", Item::new)
             .lang("Cake Base o' Enchanting")
@@ -40,9 +60,16 @@ public class CEIItems {
             .item("experience_cake", Item::new)
             .lang("Cake o' Enchanting")
             .properties(prop -> prop
-                    .rarity(Rarity.UNCOMMON)
+                    .rarity(Rarity.RARE)
                     .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true))
             .tag(AllItemTags.UPRIGHT_ON_BELT.tag)
+            .register();
+    public static final ItemEntry<Item> EXPERIENCE_CAKE_SLICE = REGISTRATE
+            .item("experience_cake_slice", Item::new)
+            .lang("Cake Slice o' Enchanting")
+            .properties(prop -> prop
+                    .rarity(Rarity.RARE)
+                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true))
             .register();
     public static final DeferredItem<BucketItem> EXPERIENCE_BUCKET = DeferredItem
             .createItem(CEICommon.asResource("experience_bucket"));

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package plus.dragons.createenchantmentindustry.common.processing.enchanter;
+package plus.dragons.createenchantmentindustry.common.processing.forger;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModel;
@@ -36,12 +36,12 @@ import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 
 @EventBusSubscriber(value = Dist.CLIENT, bus = Bus.MOD, modid = CEICommon.ID)
-public class BlazeEnchanterItemRenderer extends CustomRenderedItemModelRenderer {
+public class BlazeForgerItemRenderer extends CustomRenderedItemModelRenderer {
     @SubscribeEvent
     public static void register(RegisterClientExtensionsEvent event) {
         event.registerItem(
-                SimpleCustomRenderer.create(CEIBlocks.BLAZE_ENCHANTER.asItem(), new BlazeEnchanterItemRenderer()),
-                CEIBlocks.BLAZE_ENCHANTER.asItem()
+                SimpleCustomRenderer.create(CEIBlocks.BLAZE_FORGER.asItem(), new BlazeForgerItemRenderer()),
+                CEIBlocks.BLAZE_FORGER.asItem()
         );
     }
 
@@ -50,7 +50,7 @@ public class BlazeEnchanterItemRenderer extends CustomRenderedItemModelRenderer 
         renderer.render(model.getOriginalModel(), light);
         poseStack.pushPose();
         poseStack.translate(.5f, .75f, .5f);
-        renderer.render(CEIPartialModels.BLAZE_ENCHANTER_HAT.get(), light);
+        renderer.render(CEIPartialModels.BLAZE_FORGER_HAT.get(), light);
         poseStack.popPose();
     }
 }

@@ -58,10 +58,16 @@ public class CEICreativeModeTabs {
         output.accept(MECHANICAL_GRINDSTONE);
         output.accept(PRINTER);
         output.accept(BLAZE_ENCHANTER);
+        output.accept(BLAZE_FORGER);
         output.accept(AllBlocks.EXPERIENCE_BLOCK);
+        output.accept(SUPER_EXPERIENCE_BLOCK);
         output.accept(AllItems.EXP_NUGGET);
+        output.accept(SUPER_EXPERIENCE_NUGGET);
+        output.accept(ENCHANTING_TEMPLATE);
+        output.accept(SUPER_ENCHANTING_TEMPLATE);
         output.accept(EXPERIENCE_CAKE_BASE, TabVisibility.SEARCH_TAB_ONLY);
         output.accept(EXPERIENCE_CAKE);
+        output.accept(EXPERIENCE_CAKE_SLICE);
         output.accept(EXPERIENCE_BUCKET);
         for (var color : DyeColors.CREATIVE_MODE_TAB) {
             CDPFluids.DYES_BY_COLOR.get(color).getBucket().ifPresent(output::accept);

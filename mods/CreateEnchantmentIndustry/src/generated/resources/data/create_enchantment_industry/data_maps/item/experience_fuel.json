@@ -24,6 +24,18 @@
       "experience": 1000,
       "special": true
     },
+    "create_enchantment_industry:experience_cake_slice": {
+      "experience": 250,
+      "special": true
+    },
+    "create_enchantment_industry:super_experience_block": {
+      "experience": 81,
+      "special": true
+    },
+    "create_enchantment_industry:super_experience_nugget": {
+      "experience": 9,
+      "special": true
+    },
     "create_sa:experience_heap": {
       "neoforge:conditions": [
         {

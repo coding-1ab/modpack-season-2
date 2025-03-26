@@ -25,24 +25,31 @@ import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.Create;
+import com.simibubi.create.content.materials.ExperienceBlock;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.util.DeferredSoundType;
 import plus.dragons.createdragonsplus.common.processing.blaze.BlazeBlock;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlock;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindstoneDrainBlock;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.MechanicalGrindStoneItem;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.MechanicalGrindstoneBlock;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.BlazeEnchanterBlock;
+import plus.dragons.createenchantmentindustry.common.processing.forger.BlazeForgerBlock;
 import plus.dragons.createenchantmentindustry.config.CEIStressConfig;
 
 @SuppressWarnings("removal")
@@ -93,6 +100,43 @@ public class CEIBlocks {
             .item()
             .model((ctx, prov) -> prov.withExistingParent(ctx.getName(),
                     Create.asResource("block/blaze_burner/block_with_blaze")))
+            .build()
+            .register();
+    public static final BlockEntry<BlazeForgerBlock> BLAZE_FORGER = REGISTRATE
+            .block("blaze_forger", BlazeForgerBlock::new)
+            .initialProperties(SharedProperties::softMetal)
+            .properties(p -> p.mapColor(MapColor.COLOR_GRAY).lightLevel(BlazeBlock::getLight))
+            .transform(pickaxeOnly())
+            .addLayer(() -> RenderType::cutoutMipped)
+            .tag(AllBlockTags.FAN_TRANSPARENT.tag, AllBlockTags.FAN_PROCESSING_CATALYSTS_SMOKING.tag)
+            .blockstate((ctx, prov) -> prov.horizontalBlock(
+                    ctx.getEntry(),
+                    prov.models().getExistingFile(Create.asResource("block/blaze_burner/block"))))
+            .item()
+            .model((ctx, prov) -> prov.withExistingParent(ctx.getName(),
+                    Create.asResource("block/blaze_burner/block_with_blaze")))
+            .build()
+            .register();
+    public static final BlockEntry<ExperienceBlock> SUPER_EXPERIENCE_BLOCK = REGISTRATE
+            .block("super_experience_block", ExperienceBlock::new)
+            .initialProperties(SharedProperties::softMetal)
+            .properties(p -> p.mapColor(MapColor.DIAMOND)
+                    .sound(new DeferredSoundType(1, .5f, () -> SoundEvents.AMETHYST_BLOCK_BREAK,
+                            () -> SoundEvents.AMETHYST_BLOCK_STEP, () -> SoundEvents.AMETHYST_BLOCK_PLACE,
+                            () -> SoundEvents.AMETHYST_BLOCK_HIT, () -> SoundEvents.AMETHYST_BLOCK_FALL))
+                    .requiresCorrectToolForDrops()
+                    .lightLevel(state -> 15))
+            .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(), prov.models()
+                    .withExistingParent(ctx.getName(), Create.asResource("block/experience_block"))
+                    .texture("all", ctx.getId().withPrefix("block/"))
+                    .texture("particle", ctx.getId().withPrefix("block/"))))
+            .transform(pickaxeOnly())
+            .lang("Block of Super Experience")
+            .tag(Tags.Blocks.STORAGE_BLOCKS)
+            .tag(BlockTags.BEACON_BASE_BLOCKS)
+            .item()
+            .properties(p -> p.rarity(Rarity.RARE))
+            .tag(Tags.Items.STORAGE_BLOCKS)
             .build()
             .register();
 

@@ -1,9 +1,11 @@
 {
   "block.create_enchantment_industry.blaze_enchanter": "Blaze Enchanter",
+  "block.create_enchantment_industry.blaze_forger": "Blaze Forger",
   "block.create_enchantment_industry.experience": "Liquid Experience",
   "block.create_enchantment_industry.grindstone_drain": "Grindstone Drain",
   "block.create_enchantment_industry.mechanical_grindstone": "Mechanical Grindstone",
   "block.create_enchantment_industry.printer": "Printer",
+  "block.create_enchantment_industry.super_experience_block": "Block of Super Experience",
   "create_enchantment_industry.gui.blaze_enchanter.level": "Enchanting Level",
   "create_enchantment_industry.gui.blaze_enchanter.template.invalid": "Can not use this item as template.",
   "create_enchantment_industry.gui.goggles.enchanting.level": "Enchanting at level: %1$s",
@@ -27,8 +29,12 @@
   "create_enchantment_industry.recipe.printing.custom_name.base": "Accepts any item",
   "create_enchantment_industry.recipe.printing.custom_name.template": "Custom Name",
   "fluid.create_enchantment_industry.experience": "Liquid Experience",
+  "item.create_enchantment_industry.enchanting_template": "Enchanting Template",
   "item.create_enchantment_industry.experience_bucket": "Bucket o' Enchanting",
   "item.create_enchantment_industry.experience_cake": "Cake o' Enchanting",
   "item.create_enchantment_industry.experience_cake_base": "Cake Base o' Enchanting",
+  "item.create_enchantment_industry.experience_cake_slice": "Cake Slice o' Enchanting",
+  "item.create_enchantment_industry.super_enchanting_template": "Super Enchanting Template",
+  "item.create_enchantment_industry.super_experience_nugget": "Nugget of Super Experience",
   "itemGroup.create_enchantment_industry.base": "Create: Enchantment Industry"
 }

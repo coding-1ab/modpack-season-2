@@ -24,19 +24,22 @@ import static com.simibubi.create.AllTags.commonItemTag;
 import static net.minecraft.world.item.Items.*;
 import static net.neoforged.neoforge.common.Tags.Items.EGGS;
 import static net.neoforged.neoforge.common.Tags.Items.STORAGE_BLOCKS_IRON;
+import static plus.dragons.createdragonsplus.common.registry.CDPItems.BLAZE_UPGRADE_SMITHING_TEMPLATE;
 import static plus.dragons.createdragonsplus.data.recipe.CreateRecipeBuilders.*;
 import static plus.dragons.createdragonsplus.data.recipe.VanillaRecipeBuilders.shaped;
-import static plus.dragons.createenchantmentindustry.common.registry.CEIBlocks.MECHANICAL_GRINDSTONE;
-import static plus.dragons.createenchantmentindustry.common.registry.CEIBlocks.PRINTER;
+import static plus.dragons.createdragonsplus.data.recipe.VanillaRecipeBuilders.shapeless;
+import static plus.dragons.createenchantmentindustry.common.registry.CEIBlocks.*;
 import static plus.dragons.createenchantmentindustry.common.registry.CEIFluids.EXPERIENCE;
-import static plus.dragons.createenchantmentindustry.common.registry.CEIItems.EXPERIENCE_CAKE;
-import static plus.dragons.createenchantmentindustry.common.registry.CEIItems.EXPERIENCE_CAKE_BASE;
+import static plus.dragons.createenchantmentindustry.common.registry.CEIItems.*;
 
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
+import net.minecraft.world.item.crafting.Ingredient;
 import plus.dragons.createdragonsplus.data.recipe.integration.IntegrationIngredient;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindingRecipe;
@@ -76,9 +79,42 @@ public class CEIRecipeProvider extends RecipeProvider {
                 .output(PRINTER)
                 .unlockedBy(BRASS, has(BRASS_INGOT))
                 .accept(output);
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(BLAZE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.of(BLAZE_BURNER),
+                        Ingredient.of(ENCHANTING_TABLE),
+                        RecipeCategory.MISC,
+                        BLAZE_ENCHANTER.asItem())
+                .unlocks("has_blaze_burner", has(BLAZE_BURNER))
+                .save(output, BLAZE_ENCHANTER.getId().withPrefix("smithing/"));
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(BLAZE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.of(BLAZE_BURNER),
+                        Ingredient.of(ANVIL),
+                        RecipeCategory.MISC,
+                        BLAZE_FORGER.asItem())
+                .unlocks("has_blaze_burner", has(BLAZE_BURNER))
+                .save(output, BLAZE_FORGER.getId().withPrefix("smithing/"));
     }
 
     private void buildMaterialRecipes(RecipeOutput output) {
+        shapeless().output(SUPER_EXPERIENCE_NUGGET, 9)
+                .require(SUPER_EXPERIENCE_BLOCK)
+                .accept(output);
+        shaped().output(SUPER_EXPERIENCE_BLOCK)
+                .define('n', SUPER_EXPERIENCE_NUGGET)
+                .pattern("nnn")
+                .pattern("nnn")
+                .pattern("nnn")
+                .accept(output);
+        pressing(ENCHANTING_TEMPLATE.getId())
+                .require(EXPERIENCE_BLOCK)
+                .output(ENCHANTING_TEMPLATE)
+                .build(output);
+        pressing(SUPER_ENCHANTING_TEMPLATE.getId())
+                .require(SUPER_EXPERIENCE_BLOCK)
+                .output(SUPER_ENCHANTING_TEMPLATE)
+                .build(output);
         compacting(EXPERIENCE_CAKE_BASE.getId())
                 .require(EGGS)
                 .require(SUGAR)
@@ -89,6 +125,10 @@ public class CEIRecipeProvider extends RecipeProvider {
                 .require(EXPERIENCE_CAKE_BASE)
                 .require(EXPERIENCE.get(), 1000)
                 .output(EXPERIENCE_CAKE)
+                .build(output);
+        cutting(EXPERIENCE_CAKE_SLICE.getId())
+                .require(EXPERIENCE_CAKE)
+                .output(EXPERIENCE_CAKE_SLICE, 4)
                 .build(output);
     }
 
@@ -114,6 +154,14 @@ public class CEIRecipeProvider extends RecipeProvider {
         GrindingRecipe.builder(CEICommon.asResource("experience_block"))
                 .require(EXPERIENCE_BLOCK)
                 .output(EXPERIENCE.get(), 27)
+                .build(output);
+        GrindingRecipe.builder(SUPER_EXPERIENCE_NUGGET.getId())
+                .require(SUPER_EXPERIENCE_NUGGET)
+                .output(EXPERIENCE.get(), 9)
+                .build(output);
+        GrindingRecipe.builder(SUPER_EXPERIENCE_BLOCK.getId())
+                .require(SUPER_EXPERIENCE_BLOCK)
+                .output(EXPERIENCE.get(), 81)
                 .build(output);
         GrindingRecipe.builder(CEICommon.asResource("create_sa/experience_heap"))
                 .whenModLoaded("create_sa")

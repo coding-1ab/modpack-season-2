@@ -3,6 +3,8 @@
     "create_enchantment_industry:mechanical_grindstone",
     "create_enchantment_industry:grindstone_drain",
     "create_enchantment_industry:printer",
-    "create_enchantment_industry:blaze_enchanter"
+    "create_enchantment_industry:blaze_enchanter",
+    "create_enchantment_industry:blaze_forger",
+    "create_enchantment_industry:super_experience_block"
   ]
 }

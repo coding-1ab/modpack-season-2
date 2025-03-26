@@ -16,30 +16,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package plus.dragons.createenchantmentindustry.common.processing.enchanter;
+package plus.dragons.createenchantmentindustry.common.processing.forger;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.BlazeExperienceBlock;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlockEntities;
 
-public class BlazeEnchanterBlock extends BlazeExperienceBlock<BlazeEnchanterBlockEntity> {
-    public BlazeEnchanterBlock(Properties properties) {
+public class BlazeForgerBlock extends BlazeExperienceBlock<BlazeForgerBlockEntity> {
+    public BlazeForgerBlock(Properties properties) {
         super(properties);
     }
 
     @Override
-    protected MapCodec<BlazeEnchanterBlock> codec() {
-        return simpleCodec(BlazeEnchanterBlock::new);
+    protected MapCodec<BlazeForgerBlock> codec() {
+        return simpleCodec(BlazeForgerBlock::new);
     }
 
     @Override
-    public Class<BlazeEnchanterBlockEntity> getBlockEntityClass() {
-        return BlazeEnchanterBlockEntity.class;
+    public Class<BlazeForgerBlockEntity> getBlockEntityClass() {
+        return BlazeForgerBlockEntity.class;
     }
 
     @Override
-    public BlockEntityType<? extends BlazeEnchanterBlockEntity> getBlockEntityType() {
-        return CEIBlockEntities.BLAZE_ENCHANTER.get();
+    public BlockEntityType<? extends BlazeForgerBlockEntity> getBlockEntityType() {
+        return CEIBlockEntities.BLAZE_FORGER.get();
     }
 }
