@@ -18,7 +18,6 @@
 
 package plus.dragons.createenchantmentindustry.config;
 
-import com.simibubi.create.api.stress.BlockStressValues;
 import net.minecraft.Util;
 import net.minecraft.util.Unit;
 import net.neoforged.bus.api.IEventBus;
@@ -48,9 +47,6 @@ public class CEIConfig {
             SERVER_CONFIG.registerAll(builder);
             return Unit.INSTANCE;
         }).getValue(), spec -> container.registerConfig(Type.SERVER, spec));
-        CEIStressConfig stress = SERVER_CONFIG.kinetics.stressValues;
-        BlockStressValues.IMPACTS.registerProvider(stress::getImpact);
-        BlockStressValues.CAPACITIES.registerProvider(stress::getCapacity);
         modBus.register(this);
     }
 

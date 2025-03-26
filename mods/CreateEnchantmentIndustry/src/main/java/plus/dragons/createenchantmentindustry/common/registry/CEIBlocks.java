@@ -44,20 +44,20 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.util.DeferredSoundType;
 import plus.dragons.createdragonsplus.common.processing.blaze.BlazeBlock;
+import plus.dragons.createdragonsplus.common.registry.CDPDataMaps;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlock;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindstoneDrainBlock;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.MechanicalGrindStoneItem;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.MechanicalGrindstoneBlock;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.BlazeEnchanterBlock;
 import plus.dragons.createenchantmentindustry.common.processing.forger.BlazeForgerBlock;
-import plus.dragons.createenchantmentindustry.config.CEIStressConfig;
 
 @SuppressWarnings("removal")
 public class CEIBlocks {
     public static final BlockEntry<MechanicalGrindstoneBlock> MECHANICAL_GRINDSTONE = REGISTRATE
             .block("mechanical_grindstone", MechanicalGrindstoneBlock::new)
             .initialProperties(SharedProperties::stone)
-            .transform(CEIStressConfig.setImpact(4.0))
+            .dataMap(CDPDataMaps.BLOCK_STRESS_IMPACTS, 4.0)
             .transform(pickaxeOnly())
             .blockstate(BlockStateGen.axisBlockProvider(false))
             .item(MechanicalGrindStoneItem::new)
@@ -66,7 +66,7 @@ public class CEIBlocks {
     public static final BlockEntry<GrindstoneDrainBlock> GRINDSTONE_DRAIN = REGISTRATE
             .block("grindstone_drain", prop -> new GrindstoneDrainBlock(MECHANICAL_GRINDSTONE.get(), prop))
             .initialProperties(SharedProperties::copperMetal)
-            .transform(CEIStressConfig.setImpact(4.0))
+            .dataMap(CDPDataMaps.BLOCK_STRESS_IMPACTS, 4.0)
             .transform(pickaxeOnly())
             .blockstate(BlockStateGen.horizontalBlockProvider(true))
             .item()
