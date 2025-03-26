@@ -21,6 +21,7 @@
     "client.PipelineRenderSystemMixin",
     "client.PipelineRenderTargetMixin",
     "client.PipelineShaderInstanceMixin",
+    "client.PipelineTextureManagerMixin",
     "client.PipelineVertexBufferMixin",
     "client.PipelineWindowMixin"
   ],

@@ -20,8 +20,10 @@ import foundry.veil.api.client.render.rendertype.VeilRenderType;
 import foundry.veil.api.client.render.shader.ShaderManager;
 import foundry.veil.api.client.render.shader.block.ShaderBlock;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
+import foundry.veil.api.client.render.texture.VeilPreloadedTexture;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
 import foundry.veil.ext.LevelRendererExtension;
+import foundry.veil.ext.TextureManagerExtension;
 import foundry.veil.ext.VertexBufferExtension;
 import foundry.veil.impl.client.imgui.VeilImGuiImpl;
 import foundry.veil.impl.client.necromancer.render.NecromancerRenderDispatcher;
@@ -32,11 +34,13 @@ import foundry.veil.impl.client.render.pipeline.VeilShaderBufferCache;
 import foundry.veil.impl.client.render.shader.program.ShaderProgramImpl;
 import foundry.veil.mixin.pipeline.accessor.PipelineBufferSourceAccessor;
 import foundry.veil.platform.VeilEventPlatform;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -52,6 +56,7 @@ import java.nio.IntBuffer;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.*;
 
@@ -354,6 +359,31 @@ public final class VeilRenderSystem {
      */
     public static void unbindSamplers(int first, int count) {
         VeilMultiBind.get().bindSamplers(first, emptySamplers.limit(count));
+    }
+
+    /**
+     * Registers the specified texture as a preloaded texture that should be loaded on the background thread.
+     *
+     * @param path    The name of the texture to register as
+     * @param texture The texture to register
+     * @param <T>     The texture type to register
+     * @return A future for when the texture has loaded
+     */
+    public static <T extends AbstractTexture & VeilPreloadedTexture> CompletableFuture<?> registerPreloadedTexture(ResourceLocation path, T texture) {
+        return registerPreloadedTexture(path, texture, Util.backgroundExecutor());
+    }
+
+    /**
+     * Registers the specified texture as a preloaded texture that should be loaded on the background thread.
+     *
+     * @param path     The name of the texture to register as
+     * @param texture  The texture to register
+     * @param executor The executor to load the texture on
+     * @param <T>      The texture type to register
+     * @return A future for when the texture has loaded
+     */
+    public static <T extends AbstractTexture & VeilPreloadedTexture> CompletableFuture<?> registerPreloadedTexture(ResourceLocation path, T texture, Executor executor) {
+        return ((TextureManagerExtension) Minecraft.getInstance().getTextureManager()).veil$registerPreloadedTexture(path, texture, executor);
     }
 
     /**
