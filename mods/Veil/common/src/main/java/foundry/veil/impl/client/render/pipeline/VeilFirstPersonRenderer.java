@@ -3,6 +3,7 @@ package foundry.veil.impl.client.render.pipeline;
 import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.VeilRenderer;
+import foundry.veil.api.client.render.ext.VeilDebug;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.framebuffer.FramebufferAttachmentDefinition;
 import foundry.veil.api.client.render.framebuffer.VeilFramebuffers;
@@ -27,6 +28,8 @@ public final class VeilFirstPersonRenderer {
     }
 
     public static void bind(int mask) {
+        VeilDebug.get().pushDebugGroup("Veil First Person");
+
         AdvancedFbo mainRenderTarget = AdvancedFbo.getMainFramebuffer();
         int w = mainRenderTarget.getWidth();
         int h = mainRenderTarget.getHeight();
@@ -77,6 +80,7 @@ public final class VeilFirstPersonRenderer {
         }
 
         AdvancedFbo.unbind();
+        VeilDebug.get().popDebugGroup();
     }
 
     public static void free() {

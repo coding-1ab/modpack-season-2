@@ -122,32 +122,4 @@ public abstract class IrisRenderTargetMixin implements IrisRenderTargetExtension
             case RGB9_E5 -> FramebufferAttachmentDefinition.Format.RGB9_E5;
         };
     }
-
-    @Override
-    public FramebufferAttachmentDefinition.DataType veil$getDataType() {
-        return switch (this.type) {
-            case BYTE -> FramebufferAttachmentDefinition.DataType.BYTE;
-            case SHORT -> FramebufferAttachmentDefinition.DataType.SHORT;
-            case INT -> FramebufferAttachmentDefinition.DataType.INT;
-            case HALF_FLOAT -> FramebufferAttachmentDefinition.DataType.HALF_FLOAT;
-            case FLOAT -> FramebufferAttachmentDefinition.DataType.FLOAT;
-            case UNSIGNED_BYTE -> FramebufferAttachmentDefinition.DataType.UNSIGNED_BYTE;
-            case UNSIGNED_BYTE_3_3_2 -> FramebufferAttachmentDefinition.DataType.UNSIGNED_BYTE_3_3_2;
-            case UNSIGNED_BYTE_2_3_3_REV -> FramebufferAttachmentDefinition.DataType.UNSIGNED_BYTE_2_3_3_REV;
-            case UNSIGNED_SHORT -> FramebufferAttachmentDefinition.DataType.UNSIGNED_SHORT;
-            case UNSIGNED_SHORT_5_6_5 -> FramebufferAttachmentDefinition.DataType.UNSIGNED_SHORT_5_6_5;
-            case UNSIGNED_SHORT_5_6_5_REV -> FramebufferAttachmentDefinition.DataType.UNSIGNED_SHORT_5_6_5_REV;
-            case UNSIGNED_SHORT_4_4_4_4 -> FramebufferAttachmentDefinition.DataType.UNSIGNED_SHORT_4_4_4_4;
-            case UNSIGNED_SHORT_4_4_4_4_REV -> FramebufferAttachmentDefinition.DataType.UNSIGNED_SHORT_4_4_4_4_REV;
-            case UNSIGNED_SHORT_5_5_5_1 -> FramebufferAttachmentDefinition.DataType.UNSIGNED_SHORT_5_5_5_1;
-            case UNSIGNED_SHORT_1_5_5_5_REV -> FramebufferAttachmentDefinition.DataType.UNSIGNED_SHORT_1_5_5_5_REV;
-            case UNSIGNED_INT -> FramebufferAttachmentDefinition.DataType.UNSIGNED_INT;
-            case UNSIGNED_INT_8_8_8_8 -> FramebufferAttachmentDefinition.DataType.UNSIGNED_INT_8_8_8_8;
-            case UNSIGNED_INT_8_8_8_8_REV -> FramebufferAttachmentDefinition.DataType.UNSIGNED_INT_8_8_8_8_REV;
-            case UNSIGNED_INT_10_10_10_2 -> FramebufferAttachmentDefinition.DataType.UNSIGNED_INT_10_10_10_2;
-            case UNSIGNED_INT_2_10_10_10_REV -> FramebufferAttachmentDefinition.DataType.UNSIGNED_INT_2_10_10_10_REV;
-            case UNSIGNED_INT_10F_11F_11F_REV -> FramebufferAttachmentDefinition.DataType.UNSIGNED_INT_10F_11F_11F_REV;
-            case UNSIGNED_INT_5_9_9_9_REV -> FramebufferAttachmentDefinition.DataType.UNSIGNED_INT_5_9_9_9_REV;
-        };
-    }
 }

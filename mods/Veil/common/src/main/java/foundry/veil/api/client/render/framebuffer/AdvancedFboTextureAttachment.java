@@ -14,6 +14,7 @@ import java.nio.ByteBuffer;
 import java.util.Objects;
 
 import static org.lwjgl.opengl.ARBDirectStateAccess.glNamedFramebufferTexture;
+import static org.lwjgl.opengl.ARBDirectStateAccess.glTextureParameteri;
 import static org.lwjgl.opengl.GL11C.*;
 import static org.lwjgl.opengl.GL12C.*;
 import static org.lwjgl.opengl.GL14C.GL_TEXTURE_LOD_BIAS;
@@ -28,8 +29,7 @@ public class AdvancedFboTextureAttachment extends AbstractTexture implements Adv
 
     private final int attachmentType;
     private final int format;
-    private final int texelFormat;
-    private final int dataType;
+    private final int internalFormat;
     private final int width;
     private final int height;
     private final int mipmapLevels;
@@ -40,18 +40,16 @@ public class AdvancedFboTextureAttachment extends AbstractTexture implements Adv
      * Creates a new attachment that adds a texture.
      *
      * @param attachmentType The attachment point to put this on
-     * @param format         The format of the image data
-     * @param texelFormat    The format of the image texel data
-     * @param dataType       The type of data to store in the texture
+     * @param format         The format of the image data when initializing
+     * @param internalFormat The internal format of the image data
      * @param width          The width of the attachment
      * @param height         The height of the attachment
      * @param mipmapLevels   The number of mipmaps levels to have
      * @param name           The custom name of this attachment for shader references
      */
     public AdvancedFboTextureAttachment(int attachmentType,
+                                        int internalFormat,
                                         int format,
-                                        int texelFormat,
-                                        int dataType,
                                         int width,
                                         int height,
                                         int mipmapLevels,
@@ -59,8 +57,7 @@ public class AdvancedFboTextureAttachment extends AbstractTexture implements Adv
                                         @Nullable String name) {
         this.attachmentType = attachmentType;
         this.format = format;
-        this.texelFormat = texelFormat;
-        this.dataType = dataType;
+        this.internalFormat = internalFormat;
         this.width = width;
         this.height = height;
         this.mipmapLevels = mipmapLevels;
@@ -69,18 +66,28 @@ public class AdvancedFboTextureAttachment extends AbstractTexture implements Adv
     }
 
     @Override
-    public void create() {
-        this.bindAttachment();
-        this.setFilter(this.filter.blur(), this.filter.mipmap());
+    public void setFilter(boolean blur, boolean mipmap) {
+        RenderSystem.assertOnRenderThreadOrInit();
+        this.blur = blur;
+        this.mipmap = mipmap;
+        int minFilter;
+        int magFilter;
+        if (blur) {
+            minFilter = mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
+            magFilter = GL_LINEAR;
+        } else {
+            minFilter = mipmap ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST;
+            magFilter = GL_NEAREST;
+        }
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, this.mipmapLevels - 1);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_LOD, 0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LOD, this.mipmapLevels - 1);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, 0.0F);
-        this.filter.applyToTextureTarget(GL_TEXTURE_2D);
-
-        for (int i = 0; i < this.mipmapLevels; i++) {
-            glTexImage2D(GL_TEXTURE_2D, i, this.format, this.width >> i, this.height >> i, 0, this.texelFormat, this.dataType, (ByteBuffer) null);
+        if (VeilRenderSystem.directStateAccessSupported()) {
+            int texture = this.getId();
+            glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, minFilter);
+            glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, magFilter);
+        } else {
+            this.bind();
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
         }
     }
 
@@ -112,9 +119,35 @@ public class AdvancedFboTextureAttachment extends AbstractTexture implements Adv
         }
     }
 
+    // Don't use DSA here so the unsized internal formats are valid
+    @Override
+    public void create() {
+        this.bind();
+        this.setFilter(this.filter.blur(), this.filter.mipmap());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, this.mipmapLevels - 1);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_LOD, 0);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LOD, this.mipmapLevels - 1);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, 0.0F);
+        this.filter.applyToTextureTarget(GL_TEXTURE_2D);
+
+        for (int i = 0; i < this.mipmapLevels; i++) {
+            glTexImage2D(GL_TEXTURE_2D, i, this.internalFormat, this.width >> i, this.height >> i, 0, this.format, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+        }
+    }
+
+    @Override
+    public int getId() {
+        RenderSystem.assertOnRenderThreadOrInit();
+        if (this.id == -1) {
+            this.id = VeilRenderSystem.createTextures(GL_TEXTURE_2D);
+        }
+
+        return this.id;
+    }
+
     @Override
     public AdvancedFboTextureAttachment clone() {
-        return new AdvancedFboTextureAttachment(this.attachmentType, this.format, this.texelFormat, this.dataType, this.width, this.height, this.mipmapLevels, this.filter, this.name);
+        return new AdvancedFboTextureAttachment(this.attachmentType, this.internalFormat, this.format, this.width, this.height, this.mipmapLevels, this.filter, this.name);
     }
 
     @Override
@@ -124,15 +157,13 @@ public class AdvancedFboTextureAttachment extends AbstractTexture implements Adv
         }
 
         AdvancedFboTextureAttachment that = (AdvancedFboTextureAttachment) o;
-        return this.attachmentType == that.attachmentType && this.format == that.format && this.texelFormat == that.texelFormat && this.dataType == that.dataType && this.width == that.width && this.height == that.height && this.mipmapLevels == that.mipmapLevels && this.filter.equals(that.filter) && Objects.equals(this.name, that.name);
+        return this.attachmentType == that.attachmentType && this.internalFormat == that.internalFormat && this.width == that.width && this.height == that.height && this.mipmapLevels == that.mipmapLevels && this.filter.equals(that.filter) && Objects.equals(this.name, that.name);
     }
 
     @Override
     public int hashCode() {
         int result = this.attachmentType;
-        result = 31 * result + this.format;
-        result = 31 * result + this.texelFormat;
-        result = 31 * result + this.dataType;
+        result = 31 * result + this.internalFormat;
         result = 31 * result + this.width;
         result = 31 * result + this.height;
         result = 31 * result + this.mipmapLevels;
@@ -158,15 +189,7 @@ public class AdvancedFboTextureAttachment extends AbstractTexture implements Adv
 
     @Override
     public int getFormat() {
-        return this.format;
-    }
-
-    public int getTexelFormat() {
-        return this.texelFormat;
-    }
-
-    public int getDataType() {
-        return this.dataType;
+        return this.internalFormat;
     }
 
     public int getWidth() {

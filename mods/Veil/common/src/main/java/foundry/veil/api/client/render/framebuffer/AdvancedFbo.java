@@ -17,11 +17,8 @@ import org.lwjgl.system.NativeResource;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11C.*;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_COMPONENT;
 import static org.lwjgl.opengl.GL30C.*;
-import static org.lwjgl.opengl.GL30C.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL30C.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL30C.GL_NEAREST;
 
 /**
  * <p>A framebuffer that has more capabilities than the vanilla Minecraft {@link RenderTarget}.</p>
@@ -655,7 +652,7 @@ public interface AdvancedFbo extends NativeResource {
          */
         public Builder addAttachments(RenderTarget parent) {
             this.reset();
-            this.addColorTextureBuffer(parent.width, parent.height, GL_UNSIGNED_BYTE);
+            this.addColorTextureBuffer(parent.width, parent.height);
             if (parent.useDepth) {
                 Validate.isTrue(this.depthAttachment == null, "Only one depth attachment can be applied to an FBO.");
                 this.setDepthRenderBuffer(parent.width, parent.height);
@@ -861,46 +858,25 @@ public interface AdvancedFbo extends NativeResource {
         }
 
         /**
-         * Adds a color texture buffer with the size of the framebuffer and {@link GL11C#GL_UNSIGNED_BYTE GL_UNSIGNED_BYTE} as the format.
+         * Adds a color texture buffer with the size of the framebuffer.
          */
         public Builder addColorTextureBuffer() {
-            return this.addColorTextureBuffer(this.width, this.height, GL_UNSIGNED_BYTE);
+            return this.addColorTextureBuffer(this.width, this.height);
         }
 
         /**
-         * Adds a color texture buffer with the specified size and {@link GL11C#GL_UNSIGNED_BYTE GL_UNSIGNED_BYTE} as the format.
-         *
-         * @param width  The width of the texture buffer
-         * @param height The height of the texture buffer
-         */
-        public Builder addColorTextureBuffer(int width, int height) {
-            return this.addColorTextureBuffer(width, height, GL_UNSIGNED_BYTE);
-        }
-
-        /**
-         * Adds a color texture buffer with the specified data type.
-         *
-         * @param dataType The format of the data internally
-         */
-        public Builder addColorTextureBuffer(int dataType) {
-            return this.addColorTextureBuffer(this.width, this.height, dataType);
-        }
-
-        /**
-         * Adds a color texture buffer with the specified size and data type.
+         * Adds a color texture buffer with the specified size.
          *
          * @param width    The width of the texture buffer
          * @param height   The height of the texture buffer
-         * @param dataType The format of the data internally
          */
-        public Builder addColorTextureBuffer(int width, int height, int dataType) {
+        public Builder addColorTextureBuffer(int width, int height) {
             this.setDefaultFormat(FramebufferAttachmentDefinition.Format.RGBA8);
             Validate.isTrue(this.format != GL_DEPTH_COMPONENT && this.format != GL_DEPTH_STENCIL, "A color renderable format must be specified for color attachments");
             return this.addColorBuffer(new AdvancedFboTextureAttachment(
                     GL_COLOR_ATTACHMENT0,
                     this.internalFormat,
                     this.format,
-                    dataType,
                     width,
                     height,
                     this.levels,
@@ -969,31 +945,11 @@ public interface AdvancedFbo extends NativeResource {
         }
 
         /**
-         * Sets the depth texture buffer to the size of the framebuffer and {@link GL11C#GL_FLOAT GL_FLOAT} as the format.
+         * Sets the depth texture buffer to the size of the framebuffer.
          */
         public Builder setDepthTextureBuffer() {
             this.setDefaultFormat(FramebufferAttachmentDefinition.Format.DEPTH_COMPONENT);
-            return this.setDepthTextureBuffer(this.width, this.height, this.format == GL_DEPTH_STENCIL ? GL_UNSIGNED_INT_24_8 : GL_FLOAT);
-        }
-
-        /**
-         * Sets the depth texture buffer to the specified size and {@link GL11C#GL_FLOAT GL_FLOAT} as the format.
-         *
-         * @param width  The width of the texture buffer
-         * @param height The height of the texture buffer
-         */
-        public Builder setDepthTextureBuffer(int width, int height) {
-            this.setDefaultFormat(FramebufferAttachmentDefinition.Format.DEPTH_COMPONENT);
-            return this.setDepthTextureBuffer(width, height, this.format == GL_DEPTH_STENCIL ? GL_UNSIGNED_INT_24_8 : GL_FLOAT);
-        }
-
-        /**
-         * Sets the depth texture buffer to the size of the framebuffer and specified data type.
-         *
-         * @param dataType The format of the data internally
-         */
-        public Builder setDepthTextureBuffer(int dataType) {
-            return this.setDepthTextureBuffer(this.width, this.height, dataType);
+            return this.setDepthTextureBuffer(this.width, this.height);
         }
 
         /**
@@ -1001,16 +957,14 @@ public interface AdvancedFbo extends NativeResource {
          *
          * @param width    The width of the texture buffer
          * @param height   The height of the texture buffer
-         * @param dataType The format of the data internally
          */
-        public Builder setDepthTextureBuffer(int width, int height, int dataType) {
+        public Builder setDepthTextureBuffer(int width, int height) {
             this.setDefaultFormat(FramebufferAttachmentDefinition.Format.DEPTH_COMPONENT);
             Validate.isTrue(this.format == GL_DEPTH_COMPONENT || this.format == GL_DEPTH_STENCIL, "A depth or depth stencil format must be specified for depth attachments");
             return this.setDepthBuffer(new AdvancedFboTextureAttachment(
                     this.format == GL_DEPTH_STENCIL ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT,
                     this.internalFormat,
                     this.format,
-                    dataType,
                     width,
                     height,
                     this.levels,

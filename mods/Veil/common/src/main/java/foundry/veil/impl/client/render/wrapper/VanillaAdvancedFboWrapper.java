@@ -177,7 +177,7 @@ public abstract class VanillaAdvancedFboWrapper implements AdvancedFbo {
         private final IntSupplier id;
 
         private AttachmentWrapper(AdvancedFbo parent, IntSupplier id, int type) {
-            super(type, 0, 0, 0, 0, 0, 0, TextureFilter.CLAMP, null);
+            super(type, 0, 0, 0, 0, 1, TextureFilter.CLAMP, null);
             this.parent = parent;
             this.id = id;
         }

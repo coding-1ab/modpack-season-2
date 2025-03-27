@@ -53,7 +53,6 @@ public record FramebufferDefinition(MolangExpression width,
                                             Optional.of(new FramebufferAttachmentDefinition(
                                                     FramebufferAttachmentDefinition.Type.TEXTURE,
                                                     FramebufferAttachmentDefinition.Format.DEPTH_COMPONENT,
-                                                    FramebufferAttachmentDefinition.DataType.FLOAT,
                                                     true,
                                                     TextureFilter.CLAMP,
                                                     1,
@@ -101,9 +100,6 @@ public record FramebufferDefinition(MolangExpression width,
                     FramebufferAttachmentDefinition.Format.CODEC
                             .optionalFieldOf("format", FramebufferAttachmentDefinition.Format.RGBA8)
                             .forGetter(definition -> definition.colorBuffers[0].format()),
-                    FramebufferAttachmentDefinition.DataType.CODEC
-                            .optionalFieldOf("dataType", FramebufferAttachmentDefinition.DataType.UNSIGNED_BYTE)
-                            .forGetter(definition -> definition.colorBuffers[0].dataType()),
                     TextureFilter.CLAMP_DEFAULT_CODEC.optionalFieldOf("filter", TextureFilter.CLAMP)
                             .forGetter(definition -> definition.colorBuffers[0].filter()),
                     Codec.INT.optionalFieldOf("levels", 1)
@@ -114,13 +110,12 @@ public record FramebufferDefinition(MolangExpression width,
                             .forGetter(definition -> Optional.ofNullable(definition.depthBuffer)),
                     Codec.BOOL.optionalFieldOf("autoClear", true)
                             .forGetter(FramebufferDefinition::autoClear)
-            ).apply(instance, (width, height, type, format, dataType, filter, levels, name, depth, autoClear) ->
+            ).apply(instance, (width, height, type, format, filter, levels, name, depth, autoClear) ->
                     new FramebufferDefinition(width,
                             height,
                             new FramebufferAttachmentDefinition[]{
                                     new FramebufferAttachmentDefinition(type,
                                             format,
-                                            dataType,
                                             false,
                                             filter,
                                             levels,
@@ -189,7 +184,7 @@ public record FramebufferDefinition(MolangExpression width,
             } else {
                 builder.setFilter(definition.filter())
                         .setName(definition.name())
-                        .addColorTextureBuffer(definition.dataType().getId());
+                        .addColorTextureBuffer();
             }
         }
 
@@ -200,7 +195,7 @@ public record FramebufferDefinition(MolangExpression width,
             } else {
                 builder.setFilter(this.depthBuffer.filter())
                         .setName(this.depthBuffer.name())
-                        .setDepthTextureBuffer(this.depthBuffer.dataType().getId());
+                        .setDepthTextureBuffer();
             }
         }
 

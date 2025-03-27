@@ -2,7 +2,6 @@ package foundry.veil.api.client.render.texture;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.api.client.render.VeilRenderSystem;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.NativeResource;
@@ -23,7 +22,6 @@ public class SamplerObject implements NativeResource {
 
     private final int id;
 
-    @ApiStatus.Internal
     private SamplerObject(int id) {
         this.id = id;
     }

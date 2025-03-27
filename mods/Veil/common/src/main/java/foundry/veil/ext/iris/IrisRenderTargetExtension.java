@@ -15,6 +15,4 @@ public interface IrisRenderTargetExtension {
     int veil$getHeight();
 
     FramebufferAttachmentDefinition.Format veil$getFormat();
-
-    FramebufferAttachmentDefinition.DataType veil$getDataType();
 }

@@ -34,7 +34,6 @@ import static org.lwjgl.opengl.GL41C.GL_RGB565;
  */
 public record FramebufferAttachmentDefinition(FramebufferAttachmentDefinition.Type type,
                                               FramebufferAttachmentDefinition.Format format,
-                                              FramebufferAttachmentDefinition.DataType dataType,
                                               boolean depth,
                                               TextureFilter filter,
                                               int levels,
@@ -46,38 +45,34 @@ public record FramebufferAttachmentDefinition(FramebufferAttachmentDefinition.Ty
                             .forGetter(FramebufferAttachmentDefinition::type),
                     Format.CODEC.optionalFieldOf("format", Format.RGBA8)
                             .forGetter(FramebufferAttachmentDefinition::format),
-                    DataType.CODEC.optionalFieldOf("dataType", DataType.UNSIGNED_BYTE)
-                            .forGetter(FramebufferAttachmentDefinition::dataType),
                     TextureFilter.CLAMP_DEFAULT_CODEC.optionalFieldOf("filter", TextureFilter.CLAMP)
                             .forGetter(FramebufferAttachmentDefinition::filter),
                     Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("levels", 1)
                             .forGetter(FramebufferAttachmentDefinition::levels),
                     Codec.STRING.optionalFieldOf("name")
                             .forGetter(attachment -> Optional.ofNullable(attachment.name()))
-            ).apply(instance, (type, format, dataType, filter, levels, name) ->
-                    new FramebufferAttachmentDefinition(type, format, dataType, false, filter, levels, name.orElse(null))));
+            ).apply(instance, (type, format, filter, levels, name) ->
+                    new FramebufferAttachmentDefinition(type, format, false, filter, levels, name.orElse(null))));
     public static final Codec<FramebufferAttachmentDefinition> DEPTH_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
                     Type.CODEC.optionalFieldOf("type", Type.TEXTURE)
                             .forGetter(FramebufferAttachmentDefinition::type),
                     Format.CODEC.optionalFieldOf("format", Format.DEPTH_COMPONENT)
                             .forGetter(FramebufferAttachmentDefinition::format),
-                    DataType.CODEC.optionalFieldOf("dataType", DataType.FLOAT)
-                            .forGetter(FramebufferAttachmentDefinition::dataType),
                     TextureFilter.CLAMP_DEFAULT_CODEC.optionalFieldOf("filter", TextureFilter.CLAMP)
                             .forGetter(FramebufferAttachmentDefinition::filter),
                     Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("levels", 1)
                             .forGetter(FramebufferAttachmentDefinition::levels),
                     Codec.STRING.optionalFieldOf("name")
                             .forGetter(attachment -> Optional.ofNullable(attachment.name()))
-            ).apply(instance, (type, format, dataType, filter, levels, name) ->
-                    new FramebufferAttachmentDefinition(type, format, dataType, true, filter, levels, name.orElse(null))));
+            ).apply(instance, (type, format, filter, levels, name) ->
+                    new FramebufferAttachmentDefinition(type, format, true, filter, levels, name.orElse(null))));
 
     /**
      * @return Whether this attachment can be represented as <code>"depth": true</code> in the JSON
      */
     public boolean isCompactDepthAttachment() {
-        return this.type == Type.TEXTURE && this.format == Format.DEPTH_COMPONENT && this.dataType == DataType.FLOAT && this.filter.equals(TextureFilter.CLAMP) && this.levels == 1 && this.name == null;
+        return this.type == Type.TEXTURE && this.format == Format.DEPTH_COMPONENT && this.filter.equals(TextureFilter.CLAMP) && this.levels == 1 && this.name == null;
     }
 
     /**
@@ -227,60 +222,6 @@ public record FramebufferAttachmentDefinition(FramebufferAttachmentDefinition.Ty
          */
         public int getInternalFormat() {
             return this.internalId;
-        }
-    }
-
-    /**
-     * The formats for attachments.
-     */
-    public enum DataType {
-
-        UNSIGNED_BYTE(GL_UNSIGNED_BYTE),
-        BYTE(GL_BYTE),
-        UNSIGNED_SHORT(GL_UNSIGNED_SHORT),
-        SHORT(GL_SHORT),
-        UNSIGNED_INT(GL_UNSIGNED_INT),
-        INT(GL_INT),
-        HALF_FLOAT(GL_HALF_FLOAT),
-        FLOAT(GL_FLOAT),
-        UNSIGNED_BYTE_3_3_2(GL_UNSIGNED_BYTE_3_3_2),
-        UNSIGNED_BYTE_2_3_3_REV(GL_UNSIGNED_BYTE_2_3_3_REV),
-        UNSIGNED_SHORT_5_6_5(GL_UNSIGNED_SHORT_5_6_5),
-        UNSIGNED_SHORT_5_6_5_REV(GL_UNSIGNED_SHORT_5_6_5_REV),
-        UNSIGNED_SHORT_4_4_4_4(GL_UNSIGNED_SHORT_4_4_4_4),
-        UNSIGNED_SHORT_4_4_4_4_REV(GL_UNSIGNED_SHORT_4_4_4_4_REV),
-        UNSIGNED_SHORT_5_5_5_1(GL_UNSIGNED_SHORT_5_5_5_1),
-        UNSIGNED_SHORT_1_5_5_5_REV(GL_UNSIGNED_SHORT_1_5_5_5_REV),
-        UNSIGNED_INT_8_8_8_8(GL_UNSIGNED_INT_8_8_8_8),
-        UNSIGNED_INT_8_8_8_8_REV(GL_UNSIGNED_INT_8_8_8_8_REV),
-        UNSIGNED_INT_10_10_10_2(GL_UNSIGNED_INT_10_10_10_2),
-        UNSIGNED_INT_2_10_10_10_REV(GL_UNSIGNED_INT_2_10_10_10_REV),
-        UNSIGNED_INT_24_8(GL_UNSIGNED_INT_24_8),
-        UNSIGNED_INT_10F_11F_11F_REV(GL_UNSIGNED_INT_10F_11F_11F_REV),
-        UNSIGNED_INT_5_9_9_9_REV(GL_UNSIGNED_INT_5_9_9_9_REV),
-        FLOAT_32_UNSIGNED_INT_24_8_REV(GL_FLOAT_32_UNSIGNED_INT_24_8_REV);
-
-        public static final DataType[] VALUES = DataType.values();
-        public static final Codec<DataType> CODEC = Codec.STRING.flatXmap(name -> {
-            for (DataType type : VALUES) {
-                if (type.name().equalsIgnoreCase(name)) {
-                    return DataResult.success(type);
-                }
-            }
-            return DataResult.error(() -> "Unknown attachment data type: " + name);
-        }, type -> DataResult.success(type.name()));
-
-        private final int id;
-
-        DataType(int id) {
-            this.id = id;
-        }
-
-        /**
-         * @return The OpenGL id of this data type
-         */
-        public int getId() {
-            return this.id;
         }
     }
 }

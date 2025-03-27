@@ -1121,6 +1121,8 @@ public final class VeilRenderSystem {
 
         UNIFORM_BLOCK_STATE.clearUsedBindings();
         VanillaShaderCompiler.clear();
+
+        VeilDebug.MESSAGE_ID.set(0);
     }
 
     @ApiStatus.Internal
@@ -1156,7 +1158,10 @@ public final class VeilRenderSystem {
     @ApiStatus.Internal
     public static void renderPost(@Nullable VeilRenderLevelStageEvent.Stage stage) {
         if (stage == VeilRenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES || stage == VeilRenderLevelStageEvent.Stage.AFTER_LEVEL) {
+            VeilDebug debug = VeilDebug.get();
+            debug.pushDebugGroup("Veil Draw Bloom");
             VeilBloomRenderer.flush();
+            debug.popDebugGroup();
         }
         renderer.getPostProcessingManager().runDefaultPipeline(stage);
     }
@@ -1181,17 +1186,25 @@ public final class VeilRenderSystem {
             return false;
         }
 
+        VeilDebug debug = VeilDebug.get();
+        debug.pushDebugGroup("Veil Draw Lights");
+
         LightRenderer lightRenderer = renderer.getLightRenderer();
         profiler.push("setup_lights");
         lightRenderer.setup(cullFrustum);
         profiler.popPush("draw_lights");
         boolean rendered = lightRenderer.render(lightFbo);
         profiler.pop();
+
+        debug.popDebugGroup();
         return rendered;
     }
 
     @ApiStatus.Internal
     public static void compositeLights(ProfilerFiller profiler) {
+        VeilDebug debug = VeilDebug.get();
+        debug.pushDebugGroup("Veil Composite Lights");
+
         // Only run the post pipeline if there are lights to display
         PostProcessingManager postProcessingManager = renderer.getPostProcessingManager();
         PostPipeline compositePipeline = postProcessingManager.getPipeline(VeilRenderer.COMPOSITE);
@@ -1200,6 +1213,8 @@ public final class VeilRenderSystem {
             postProcessingManager.runPipeline(compositePipeline);
             profiler.pop();
         }
+
+        debug.popDebugGroup();
     }
 
     @ApiStatus.Internal

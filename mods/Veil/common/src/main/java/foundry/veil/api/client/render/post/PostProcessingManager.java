@@ -13,6 +13,7 @@ import foundry.veil.VeilClient;
 import foundry.veil.api.CodecReloadListener;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.VeilRenderer;
+import foundry.veil.api.client.render.ext.VeilDebug;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.framebuffer.FramebufferStack;
 import foundry.veil.api.client.render.framebuffer.VeilFramebuffers;
@@ -166,6 +167,13 @@ public class PostProcessingManager extends CodecReloadListener<CompositePostPipe
             return;
         }
 
+        VeilDebug debug = VeilDebug.get();
+        if (stage != null) {
+            debug.pushDebugGroup("Veil Post Processing (" + stage.getName() + ")");
+        } else {
+            debug.pushDebugGroup("Veil Post Processing");
+        }
+
         VeilRenderer renderer = VeilRenderSystem.renderer();
         AdvancedFbo postFramebuffer = renderer.getFramebufferManager().getFramebuffer(VeilFramebuffers.POST);
         VeilClientPlatform platform = VeilClient.clientPlatform();
@@ -211,6 +219,8 @@ public class PostProcessingManager extends CodecReloadListener<CompositePostPipe
         RenderSystem.activeTexture(activeTexture);
         this.clear();
         this.context.end();
+
+        debug.popDebugGroup();
     }
 
     /**
