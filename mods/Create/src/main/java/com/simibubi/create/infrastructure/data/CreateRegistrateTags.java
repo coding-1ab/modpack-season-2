@@ -207,7 +207,17 @@ public class CreateRegistrateTags {
 
 		prov.tag(AllItemTags.OBSIDIAN_DUST.tag).add(AllItems.POWDERED_OBSIDIAN.get());
 
-		prov.tag(net.neoforged.neoforge.common.Tags.Items.ENCHANTABLES).addTag(AllItemTags.PRESSURIZED_AIR_SOURCES.tag);
+		prov.tag(Tags.Items.ENCHANTABLES).addTag(AllItemTags.PRESSURIZED_AIR_SOURCES.tag);
+
+		prov.tag(ItemTags.TRIMMABLE_ARMOR)
+			.remove(
+				AllItems.COPPER_DIVING_BOOTS.getId(),
+				AllItems.COPPER_BACKTANK.getId(),
+				AllItems.COPPER_DIVING_HELMET.getId(),
+				AllItems.NETHERITE_DIVING_BOOTS.getId(),
+				AllItems.NETHERITE_BACKTANK.getId(),
+				AllItems.NETHERITE_DIVING_HELMET.getId()
+			);
 
 		// COMPAT
 

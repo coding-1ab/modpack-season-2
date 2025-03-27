@@ -20,7 +20,6 @@
     "ProjectileUtilMixin",
     "ShulkerBoxBlockMixin",
     "SmithingMenuMixin",
-    "SmithingTrimRecipeMixin",
     "TestCommandMixin",
     "WaterWheelFluidSpreadMixin",
     "accessor.AbstractRegistrateAccessor",
