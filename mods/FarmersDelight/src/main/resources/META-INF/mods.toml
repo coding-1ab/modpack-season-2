@@ -5,7 +5,7 @@ license = "MIT License"
 
 [[mods]]
 modId = "farmersdelight"
-version = "1.20.1-1.2.5"
+version = "1.20.1-1.2.7"
 displayName = "Farmer's Delight"
 # updateJSONURL=""
 displayURL = "https://github.com/vectorwing/FarmersDelight"
@@ -27,7 +27,7 @@ side = "BOTH"
 [[dependencies.farmersdelight]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20,)"
+versionRange = "[1.20,1.20.1]"
 ordering = "NONE"
 side = "BOTH"
 

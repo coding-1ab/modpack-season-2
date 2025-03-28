@@ -1,4 +1,4 @@
-// 1.20.1	2024-07-30T16:12:00.0618505	Recipes
+// 1.20.1	2024-11-27T18:13:18.9203899	Recipes
 a498fcc8b72b6631ddbb164a0245b37491e7571a data/farmersdelight/advancements/recipes/building_blocks/cabbage_crate.json
 c941206993bfa59d31b38132b898fb94c29746a6 data/farmersdelight/advancements/recipes/building_blocks/onion_crate.json
 2b93ef657fca92a73775c750079ea1503d8f02cc data/farmersdelight/advancements/recipes/building_blocks/organic_compost_from_rotten_flesh.json
@@ -377,6 +377,7 @@ b09b3a7e2520b586d57036c2cca528c107784f48 data/farmersdelight/recipes/cutting/spr
 bbd6c23739d2328624741819ee680da27982e78f data/farmersdelight/recipes/cutting/stone.json
 60fa88822480492533600890b9b3a95bbe1074a1 data/farmersdelight/recipes/cutting/sweet_berry_cheesecake.json
 d898cca273d4e7032e8edbb29160e5bf85f64696 data/farmersdelight/recipes/cutting/tag_dough.json
+68d1e47973fec3b964cd7382fdc55081d059a706 data/farmersdelight/recipes/cutting/torchflower.json
 66e16593ea76b488b43454ef9b928c77619ab256 data/farmersdelight/recipes/cutting/warped_door.json
 c1c8cc1d009696f83ea49360f868c5eab4b73367 data/farmersdelight/recipes/cutting/warped_hanging_sign.json
 a6609e2650c44cb0587de9c120940d6976549da3 data/farmersdelight/recipes/cutting/warped_hyphae.json

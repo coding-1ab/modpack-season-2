@@ -266,7 +266,7 @@
   "farmersdelight.advancement.place_cooking_pot": "Essen fertig!",
   "farmersdelight.advancement.place_cooking_pot.desc": "Platziere einen Kochtopf und fang an zu kochen!",
   "farmersdelight.advancement.use_skillet": "Mobiles Kochen",
-  "farmersdelight.advancement.use_skillet.desc": "Bratpfannen erlauben es dir unterwegs zu kochen. Stelle dich in die nähe von Hitze, und halte das Essen in deiner anderen Hand.",
+  "farmersdelight.advancement.use_skillet.desc": "Bratpfannen erlauben es dir unterwegs zu Kochen. Stelle dich in die nähe von Hitze, und halte das Essen in deiner anderen Hand.",
   "farmersdelight.advancement.place_skillet": "Brutzelnd heiß",
   "farmersdelight.advancement.place_skillet.desc": "Platziere deine Bratpfanne während du schleichst",
   "farmersdelight.advancement.eat_comfort_food": "Warm und gemütlich",
@@ -294,9 +294,7 @@
   "farmersdelight.block.cutting_board.invalid_item": "Dies scheint nicht zerschneidbar zu sein...",
   "farmersdelight.block.cutting_board.invalid_tool": "Vielleicht mit einem anderen Werkzeug...",
   "farmersdelight.block.skillet.invalid_item": "Das kann nicht gekocht werden...",
-  "farmersdelight.block.skillet.underwater": "Du kannst nichts kochen wenn es geflutet ist...",
   "farmersdelight.item.skillet.how_to_cook": "Benutze deine andere Hand um Zutaten zu halten!",
-  "farmersdelight.item.skillet.underwater": "Du kannst nicht Unterwasser Kochen...",
 
   "death.attack.farmersdelight.stove": "%1$s fand heraus, dass Öfen nicht zum Kuscheln geeignet sind.",
   "death.attack.farmersdelight.stove.player": "%1$s wurde von %2$s zur Perfektion geröstet.",
