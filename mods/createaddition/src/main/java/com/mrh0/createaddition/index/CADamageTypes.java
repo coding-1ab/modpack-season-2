@@ -4,7 +4,6 @@ import com.mrh0.createaddition.CreateAddition;
 import com.simibubi.create.foundation.damageTypes.DamageTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageScaling;
@@ -17,7 +16,7 @@ import net.minecraft.world.level.LevelReader;
 public class CADamageTypes {
 
     private static ResourceKey<DamageType> key(String name) {
-        return ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(CreateAddition.MODID, name));
+        return ResourceKey.create(Registries.DAMAGE_TYPE, CreateAddition.asResource(name));
     }
 
     public static final ResourceKey<DamageType>

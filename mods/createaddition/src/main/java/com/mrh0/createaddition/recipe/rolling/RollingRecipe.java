@@ -8,6 +8,7 @@ import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.sequenced.IAssemblyRecipe;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +18,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.wrapper.RecipeWrapper;
+import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
 import java.util.List;
 import java.util.Set;
@@ -44,8 +45,7 @@ public class RollingRecipe extends ProcessingRecipe<RecipeWrapper> implements IA
 
     @Override
     public boolean matches(RecipeWrapper inv, Level worldIn) {
-        if (inv.isEmpty())
-            return false;
+        if (inv.isEmpty()) return false;
         return ingredient.test(inv.getItem(0));
     }
 
@@ -60,7 +60,7 @@ public class RollingRecipe extends ProcessingRecipe<RecipeWrapper> implements IA
     }
 
     @Override
-    public ItemStack assemble(RecipeWrapper inv, RegistryAccess registryAccess) {
+    public ItemStack assemble(RecipeWrapper recipeWrapper, HolderLookup.Provider provider) {
         return this.output;
     }
 
@@ -70,17 +70,12 @@ public class RollingRecipe extends ProcessingRecipe<RecipeWrapper> implements IA
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess pRegistryAccess) {
+    public ItemStack getResultItem(HolderLookup.Provider provider) {
         return this.output;
     }
 
     public ItemStack getResultItem() {
         return this.output;
-    }
-
-    @Override
-    public ResourceLocation getId() {
-        return this.id;
     }
 
     @Override

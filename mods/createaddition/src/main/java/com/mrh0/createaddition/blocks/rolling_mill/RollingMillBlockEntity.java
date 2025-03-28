@@ -4,54 +4,85 @@ import java.util.List;
 import java.util.Optional;
 
 import com.mrh0.createaddition.config.CommonConfig;
+import com.mrh0.createaddition.index.CABlockEntities;
+import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.recipe.rolling.RollingRecipe;
+import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
+import com.simibubi.create.foundation.item.ItemHelper;
+import com.simibubi.create.foundation.sound.SoundScapes;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
-import net.minecraftforge.items.wrapper.RecipeWrapper;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
+import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
 public class RollingMillBlockEntity extends KineticBlockEntity {
-
 	public ItemStackHandler inputInv;
 	public ItemStackHandler outputInv;
-	public LazyOptional<IItemHandler> capability;
+	public IItemHandler capability;
 	public int timer;
 	private RollingRecipe lastRecipe;
 
-	public RollingMillBlockEntity(BlockEntityType<? extends RollingMillBlockEntity> type, BlockPos pos, BlockState state) {
+	public RollingMillBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 		inputInv = new ItemStackHandler(1);
 		outputInv = new ItemStackHandler(9);
-		capability = LazyOptional.of(RollingMillInventoryHandler::new);
+		capability = new MillstoneInventoryHandler();
+	}
+
+	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+		event.registerBlockEntity(
+				Capabilities.ItemHandler.BLOCK,
+				AllBlockEntityTypes.MILLSTONE.get(),
+				(be, context) -> be.capability
+		);
 	}
 
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-		super.addBehaviours(behaviours);
 		behaviours.add(new DirectBeltInputBehaviour(this));
+		super.addBehaviours(behaviours);
+	}
+
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public void tickAudio() {
+		super.tickAudio();
+
+		if (getSpeed() == 0)
+			return;
+		if (inputInv.getStackInSlot(0)
+				.isEmpty())
+			return;
+
+		float pitch = Mth.clamp((Math.abs(getSpeed()) / 256f) + .45f, .85f, 1f);
+		SoundScapes.play(SoundScapes.AmbienceGroup.MILLING, worldPosition, pitch);
 	}
 
 	@Override
@@ -62,7 +93,7 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 			return;
 		for (int i = 0; i < outputInv.getSlots(); i++)
 			if (outputInv.getStackInSlot(i)
-				.getCount() == outputInv.getSlotLimit(i))
+					.getCount() == outputInv.getSlotLimit(i))
 				return;
 
 		if (timer > 0) {
@@ -77,127 +108,65 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 			return;
 		}
 
-		//Note: this code below is taken and adapted from the Create repo, specifically:
-		//https://github.com/Creators-of-Create/Create/blob/a92855254c9a7b85ba28781e2e3ce7169549cbf7/src/main/java/com/simibubi/create/content/contraptions/components/saw/SawTileEntity.java#L190,
-		var ejectDirection = getEjectDirection();
-		for (int slot = 0; slot < outputInv.getSlots(); slot++) {
-			var stack = outputInv.getStackInSlot(slot);
-			if(stack.isEmpty())
-				continue;
-			ItemStack tryExport = getBehaviour(DirectBeltInputBehaviour.TYPE).tryExportingToBeltFunnel(stack,ejectDirection,false);
-			if(tryExport != null) {
-				if(tryExport.getCount() != stack.getCount()) {
-					outputInv.setStackInSlot(slot,tryExport);
-					setChanged();
-					sendData();
-				}
-			}
-		}
-
-		var step = new Vec3i(ejectDirection.getStepX(),ejectDirection.getStepY(),ejectDirection.getStepZ());
-		BlockPos nextPos = getBlockPos().offset(step);
-		DirectBeltInputBehaviour behaviour = BlockEntityBehaviour.get(level,nextPos,DirectBeltInputBehaviour.TYPE);
-		if(behaviour != null) {
-			boolean changed = false;
-			if(level.isClientSide && !isVirtual())
-				return;
-			for (int slot = 0; slot < outputInv.getSlots(); slot++) {
-				var stack = outputInv.getStackInSlot(slot);
-				if(stack.isEmpty())
-					continue;
-				ItemStack rest = behaviour.handleInsertion(stack, ejectDirection, false);
-				if(rest.equals(stack, false))
-					continue;
-				outputInv.setStackInSlot(slot, rest);
-				changed = true;
-			}
-			if(changed) {
-				setChanged();
-				sendData();
-			}
-		}
-		//end of copied code
-
-		if (inputInv.getStackInSlot(0).isEmpty()) return;
+		if (inputInv.getStackInSlot(0)
+				.isEmpty())
+			return;
 
 		RecipeWrapper inventoryIn = new RecipeWrapper(inputInv);
 		if (lastRecipe == null || !lastRecipe.matches(inventoryIn, level)) {
-			Optional<RollingRecipe> recipe = find(inventoryIn, level);
-			if (recipe.isEmpty()) {
+			Optional<RecipeHolder<RollingRecipe>> recipe = find(inventoryIn, level);
+			if (!recipe.isPresent()) {
 				timer = 100;
+				sendData();
 			} else {
-				lastRecipe = recipe.get();
-				timer = getProcessingDuration();
+				lastRecipe = recipe.get().value();
+				timer = lastRecipe.getProcessingDuration();
+				sendData();
 			}
-			sendData();
 			return;
 		}
 
-		timer = getProcessingDuration();
+		timer = lastRecipe.getProcessingDuration();
 		sendData();
 	}
 
-	private Direction getEjectDirection() {
-		var block = ((RollingMillBlock) getBlockState().getBlock());
-		var speed = getSpeed();
-		block.getRotationAxis(getBlockState());
-		boolean rotation = speed >= 0;
-		Direction ejectDirection = Direction.UP;
-		switch (block.getRotationAxis(getBlockState())) {
-			case X -> {
-				ejectDirection = rotation ? Direction.SOUTH : Direction.NORTH;
-			}
-			case Z -> {
-				ejectDirection = rotation ? Direction.WEST : Direction.EAST;
-			}
-		}
-		return ejectDirection;
+	@Override
+	public void invalidate() {
+		super.invalidate();
+		invalidateCapabilities();
 	}
 
 	@Override
-	public void remove() {
-		capability.invalidate();
-		super.remove();
+	public void destroy() {
+		super.destroy();
+		ItemHelper.dropContents(level, worldPosition, inputInv);
+		ItemHelper.dropContents(level, worldPosition, outputInv);
 	}
 
 	private void process() {
-		if(getLevel() == null) return;
 		RecipeWrapper inventoryIn = new RecipeWrapper(inputInv);
 
-		var sequenced = SequencedAssemblyRecipe.getRecipe(level, inventoryIn.getItem(0), CARecipes.ROLLING_TYPE.get(), RollingRecipe.class);
-		if(sequenced.isPresent()) {
-			var recipe = sequenced.get();
-			var results = recipe.rollResults();
-			if(!results.isEmpty()) {
-				var result = results.get(0);
-				ItemHandlerHelper.insertItemStacked(outputInv, result, false);
-				ItemStack stackInSlot = inputInv.getStackInSlot(0);
-				stackInSlot.shrink(1);
-				inputInv.setStackInSlot(0, stackInSlot);
-				sendData();
-				setChanged();
-				return;
-			}
-		}
-
 		if (lastRecipe == null || !lastRecipe.matches(inventoryIn, level)) {
-			Optional<RollingRecipe> recipe = find(inventoryIn, level);
-			if (recipe.isEmpty()) return;
-			lastRecipe = recipe.get();
+			Optional<RecipeHolder<RollingRecipe>> recipe = find(inventoryIn, level);
+			if (!recipe.isPresent())
+				return;
+			lastRecipe = recipe.get().value();
 		}
 
-		ItemStack result = lastRecipe.assemble(inventoryIn, getLevel().registryAccess()).copy();
-		ItemHandlerHelper.insertItemStacked(outputInv, result, false);
 		ItemStack stackInSlot = inputInv.getStackInSlot(0);
-		stackInSlot.shrink(1); //lastRecipe.getIngredient().getItems()[0].getCount()
+		stackInSlot.shrink(1);
 		inputInv.setStackInSlot(0, stackInSlot);
+		lastRecipe.rollResults()
+				.forEach(stack -> ItemHandlerHelper.insertItemStacked(outputInv, stack, false));
+
 		sendData();
 		setChanged();
 	}
 
 	public void spawnParticles() {
 		ItemStack stackInSlot = inputInv.getStackInSlot(0);
-		if (stackInSlot.isEmpty()) return;
+		if (stackInSlot.isEmpty())
+			return;
 
 		ItemParticleOption data = new ItemParticleOption(ParticleTypes.ITEM, stackInSlot);
 		float angle = level.random.nextFloat() * 360;
@@ -211,30 +180,23 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 	}
 
 	@Override
-	public void write(CompoundTag compound, boolean clientPacket) {
+	public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
 		compound.putInt("Timer", timer);
-		compound.put("InputInventory", inputInv.serializeNBT());
-		compound.put("OutputInventory", outputInv.serializeNBT());
-		super.write(compound, clientPacket);
+		compound.put("InputInventory", inputInv.serializeNBT(registries));
+		compound.put("OutputInventory", outputInv.serializeNBT(registries));
+		super.write(compound, registries, clientPacket);
 	}
 
 	@Override
-	protected void read(CompoundTag compound, boolean clientPacket) {
+	protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
 		timer = compound.getInt("Timer");
-		inputInv.deserializeNBT(compound.getCompound("InputInventory"));
-		outputInv.deserializeNBT(compound.getCompound("OutputInventory"));
-		super.read(compound, clientPacket);
+		inputInv.deserializeNBT(registries, compound.getCompound("InputInventory"));
+		outputInv.deserializeNBT(registries, compound.getCompound("OutputInventory"));
+		super.read(compound, registries, clientPacket);
 	}
 
 	public int getProcessingSpeed() {
 		return Mth.clamp((int) Math.abs(getSpeed() / 16f), 1, 512);
-	}
-
-	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-		if (isItemHandlerCap(cap))
-			return capability.cast();
-		return super.getCapability(cap, side);
 	}
 
 	private boolean canProcess(ItemStack stack) {
@@ -242,20 +204,14 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 		tester.setStackInSlot(0, stack);
 		RecipeWrapper inventoryIn = new RecipeWrapper(tester);
 
-		var sequenced = SequencedAssemblyRecipe.getRecipe(level, stack, CARecipes.ROLLING_TYPE.get(), RollingRecipe.class);
-		if(sequenced.isPresent()) {
-			return true;
-		}
-
 		if (lastRecipe != null && lastRecipe.matches(inventoryIn, level))
 			return true;
-		return find(inventoryIn, level)
-			.isPresent();
+		return find(inventoryIn, level).isPresent();
 	}
 
-	private class RollingMillInventoryHandler extends CombinedInvWrapper {
+	private class MillstoneInventoryHandler extends CombinedInvWrapper {
 
-		public RollingMillInventoryHandler() {
+		public MillstoneInventoryHandler() {
 			super(inputInv, outputInv);
 		}
 
@@ -283,21 +239,13 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 		}
 
 	}
-	public Optional<RollingRecipe> find(RecipeWrapper inv, Level world) {
+
+	public Optional<RecipeHolder<RollingRecipe>> find(RecipeWrapper inv, Level level) {
 		var sequenced = SequencedAssemblyRecipe.getRecipe(level, inv.getItem(0), CARecipes.ROLLING_TYPE.get(), RollingRecipe.class);
 		if(sequenced.isPresent()) {
 			return sequenced;
 		}
-		return world.getRecipeManager().getRecipeFor(CARecipes.ROLLING_TYPE.get(), inv, world);
+		return level.getRecipeManager().getRecipeFor(CARecipes.ROLLING_TYPE.get(), inv, level);
 	}
 
-	public static int getProcessingDuration() {
-		return CommonConfig.ROLLING_MILL_PROCESSING_DURATION.get();
-	}
-
-	public float calculateStressApplied() {
-		float impact = CommonConfig.ROLLING_MILL_STRESS.get();
-		this.lastStressApplied = impact;
-		return impact;
-	}
 }

@@ -23,12 +23,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
@@ -39,7 +41,7 @@ import java.util.Optional;
 
 public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements IHaveGoggleInformation {
 
-	private Optional<ChargingRecipe> recipeCache = Optional.empty();
+	private Optional<RecipeHolder<ChargingRecipe>> recipeCache = Optional.empty();
 
 	private final ItemStackHandler inputInv;
 	private int chargeAccumulator;
@@ -133,7 +135,7 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 					zapped = true;
 				}
 			}
-			if(time > 0) e.addEffect(new MobEffectInstance(CAEffects.SHOCKING.get(), time));
+			if(time > 0) e.addEffect(new MobEffectInstance(CAEffects.SHOCKING, time));
 		}
 	}
 
@@ -145,11 +147,11 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 		super.tick();
 		if(level == null) return;
 
-		if(level.isClientSide()) {
+		if (level.isClientSide()) {
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> this::tickAudio);
 			return;
 		}
-		int signal = getLevel().getBestNeighborSignal(getBlockPos());
+		int signal = level.getBestNeighborSignal(getBlockPos());
 		if(signal > 0 && localEnergy.getEnergyStored() >= CommonConfig.TESLA_COIL_HURT_ENERGY_REQUIRED.get())
 			poweredTimer = 10;
 
@@ -199,8 +201,8 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 	}
 
 	protected boolean chargeStack(ItemStack stack, TransportedItemStack transported, TransportedItemStackHandlerBehaviour handler) {
-		if(!stack.getCapability(ForgeCapabilities.ENERGY).isPresent()) return false;
-		IEnergyStorage es = stack.getCapability(ForgeCapabilities.ENERGY).orElse(null);
+		IEnergyStorage es = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+		if (es == null) return false;
 		if(es.receiveEnergy(1, true) != 1) return false;
 		if(localEnergy.getEnergyStored() < stack.getCount()) return false;
 		localEnergy.internalConsumeEnergy(es.receiveEnergy(Math.min(getConsumption(), localEnergy.getEnergyStored()), false));
@@ -215,7 +217,7 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 			chargeAccumulator = 0;
 		}
 		if(recipeCache.isPresent()) {
-			ChargingRecipe recipe = recipeCache.get();
+			ChargingRecipe recipe = recipeCache.get().value();
 			int energyRemoved = localEnergy.internalConsumeEnergy(Util.min(CommonConfig.TESLA_COIL_RECIPE_CHARGE_RATE.get(), recipe.getEnergy() - chargeAccumulator, recipe.getMaxChargeRate()));
 			chargeAccumulator += energyRemoved;
 			if(chargeAccumulator >= recipe.getEnergy()) {
@@ -234,7 +236,7 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 		return false;
 	}
 
-	public Optional<ChargingRecipe> find(RecipeWrapper wrapper, Level world) {
-		return world.getRecipeManager().getRecipeFor(CARecipes.CHARGING_TYPE.get(), wrapper, world);
+	public Optional<RecipeHolder<ChargingRecipe>> find(RecipeWrapper wrapper, Level level) {
+		return level.getRecipeManager().getRecipeFor(CARecipes.CHARGING_TYPE.get(), wrapper, level);
 	}
 }

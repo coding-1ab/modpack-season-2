@@ -2,22 +2,22 @@ package com.mrh0.createaddition.index;
 
 import com.mrh0.createaddition.CreateAddition;
 import com.simibubi.create.AllFluids;
-import com.tterrag.registrate.util.entry.FluidEntry;
 
+import com.tterrag.registrate.util.entry.FluidEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
+import net.neoforged.neoforge.fluids.BaseFlowingFluid;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 public class CAFluids {
 	static {
-		CreateAddition.REGISTRATE.setCreativeTab(CACreativeModeTabs.MAIN_TAB);
+		CreateAddition.REGISTRATE.setCreativeTab(CreateAddition.MAIN_TAB);
 	}
 
-	public static FluidEntry<ForgeFlowingFluid.Flowing> SEED_OIL;
-	public static FluidEntry<ForgeFlowingFluid.Flowing> BIOETHANOL;
+	public static FluidEntry<BaseFlowingFluid.Flowing> SEED_OIL;
+	public static FluidEntry<BaseFlowingFluid.Flowing> BIOETHANOL;
 
 
 	/**
@@ -45,22 +45,22 @@ public class CAFluids {
 	}
 
 	public static void register() {
-		var seedOil = CreateAddition.REGISTRATE.fluid("seed_oil", new ResourceLocation("createaddition","fluid/seed_oil_still"), new ResourceLocation("createaddition","fluid/seed_oil_flow"),
-				NoColorFluidAttributes::new)//.standardFluid("seed_oil", NoColorFluidAttributes::new)
+		var seedOil = CreateAddition.REGISTRATE.fluid("seed_oil", CreateAddition.asResource("fluid/seed_oil_still"), CreateAddition.asResource("fluid/seed_oil_flow"),
+				NoColorFluidAttributes::new)
 				.properties(b -> b.viscosity(2000)
 						.density(1400))
 				.fluidProperties(p -> p.levelDecreasePerBlock(2)
 						.tickRate(15)
 						.slopeFindDistance(6)
 						.explosionResistance(100f))
-				.source(ForgeFlowingFluid.Source::new);
+				.source(BaseFlowingFluid.Flowing.Source::new);
 
 		var seedOilBucket = seedOil.bucket()
 			.properties(p -> p.stacksTo(1))
 			.register();
 		SEED_OIL = seedOil.register();
 
-		var bioethanol = CreateAddition.REGISTRATE.fluid("bioethanol", new ResourceLocation("createaddition","fluid/bioethanol_still"), new ResourceLocation("createaddition","fluid/bioethanol_flow"),
+		var bioethanol = CreateAddition.REGISTRATE.fluid("bioethanol", CreateAddition.asResource("fluid/bioethanol_still"), CreateAddition.asResource("fluid/bioethanol_flow"),
 				NoColorFluidAttributes::new)
 				.properties(b -> b.viscosity(2500)
 						.density(1600))
@@ -68,13 +68,10 @@ public class CAFluids {
 						.tickRate(15)
 						.slopeFindDistance(6)
 						.explosionResistance(100f))
-				.source(ForgeFlowingFluid.Source::new);
+				.source(BaseFlowingFluid.Flowing.Source::new);
 		var bioethanolBucket = bioethanol.bucket()
 			.properties(p -> p.stacksTo(1))
 			.register();
 		BIOETHANOL = bioethanol.register();
-
-		//REGISTRATE.addToSection(seedOilBucket, AllSections.MATERIALS);
-		//REGISTRATE.addToSection(bioethanolBucket, AllSections.MATERIALS);
 	}
 }

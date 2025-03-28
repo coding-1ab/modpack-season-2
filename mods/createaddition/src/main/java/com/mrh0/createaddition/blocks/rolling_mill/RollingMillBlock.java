@@ -29,7 +29,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,22 +47,10 @@ public class RollingMillBlock extends HorizontalKineticBlock implements IBE<Roll
 
 	@Override
 	protected @NotNull ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-		return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
-	}
-
-	@Override
-	protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-		return InteractionResult.PASS;
-	}
-
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-		if (!player.getItemInHand(handIn).isEmpty()) return InteractionResult.PASS;
-		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
-
-		withBlockEntityDo(worldIn, pos, rollingMill -> {
+		if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+		withBlockEntityDo(level, pos, rollingMill -> {
 			boolean emptyOutput = true;
-			IItemHandlerModifiable inv = rollingMill.outputInv;
+			ItemStackHandler inv = rollingMill.outputInv;
 			for (int slot = 0; slot < inv.getSlots(); slot++) {
 				ItemStack stackInSlot = inv.getStackInSlot(slot);
 				if (!stackInSlot.isEmpty())
@@ -84,7 +71,13 @@ public class RollingMillBlock extends HorizontalKineticBlock implements IBE<Roll
 			rollingMill.sendData();
 		});
 
-		return InteractionResult.SUCCESS;
+		return ItemInteractionResult.SUCCESS;
+	}
+
+	@Override
+	protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+		if (level.isClientSide) return InteractionResult.SUCCESS;
+		return InteractionResult.PASS;
 	}
 
 	@Override

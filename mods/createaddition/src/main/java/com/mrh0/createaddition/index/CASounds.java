@@ -1,25 +1,25 @@
 package com.mrh0.createaddition.index;
 
 import com.mrh0.createaddition.CreateAddition;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class CASounds {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
-            DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, CreateAddition.MODID);
+            DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, CreateAddition.MODID);
 
-    public static final RegistryObject<SoundEvent> ELECTRIC_MOTOR_BUZZ = registerSoundEvent("electric_motor_buzz");
-    public static final RegistryObject<SoundEvent> TESLA_COIL = registerSoundEvent("tesla_coil");
-    public static final RegistryObject<SoundEvent> ELECTRIC_CHARGE = registerSoundEvent("electric_charge");
-    public static final RegistryObject<SoundEvent> LOUD_ZAP = registerSoundEvent("loud_zap");
-    public static final RegistryObject<SoundEvent> LITTLE_ZAP = registerSoundEvent("little_zap");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ELECTRIC_MOTOR_BUZZ = registerSoundEvent("electric_motor_buzz");
+    public static final DeferredHolder<SoundEvent, SoundEvent> TESLA_COIL = registerSoundEvent("tesla_coil");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ELECTRIC_CHARGE = registerSoundEvent("electric_charge");
+    public static final DeferredHolder<SoundEvent, SoundEvent> LOUD_ZAP = registerSoundEvent("loud_zap");
+    public static final DeferredHolder<SoundEvent, SoundEvent> LITTLE_ZAP = registerSoundEvent("little_zap");
 
-    private static RegistryObject<SoundEvent> registerSoundEvent(String name) {
-        ResourceLocation id = new ResourceLocation(CreateAddition.MODID, name);
+    private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
+        ResourceLocation id = CreateAddition.asResource(name);
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(id));
     }
 
