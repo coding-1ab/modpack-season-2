@@ -18,18 +18,15 @@
 
 package plus.dragons.createenchantmentindustry.common.processing.enchanter.behaviour;
 
-import java.util.ArrayList;
-import java.util.List;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.WeightedRandom;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.EnchantingHelper;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.EnchantingTemplateItem;
-import plus.dragons.createenchantmentindustry.common.registry.CEIDataComponents;
 
 public class TemplateEnchantingBehaviour extends EnchantingBehaviour {
     private final ItemStack target;
@@ -39,26 +36,13 @@ public class TemplateEnchantingBehaviour extends EnchantingBehaviour {
     }
 
     @Override
-    protected List<EnchantmentInstance> getAvailableEnchantments(Level level, ItemStack stack, boolean special) {
-        int adjustedLevel = EnchantingHelper.getAdjustedLevel(stack, enchantingLevel);
-        if (adjustedLevel == 0)
-            return new ArrayList<>(0);
-        var possible = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
-                .getTag(enchantmentTag)
-                .stream()
-                .flatMap(HolderSet::stream)
-                .filter(target::isPrimaryItemFor);
-        return EnchantingHelper.getAvailableEnchantmentResults(adjustedLevel, possible, special);
-    }
-
-    @Override
     public boolean canProcess(Level level, ItemStack stack, boolean special) {
         if (enchantments.isEmpty())
             return false;
         if (stack.getItem() instanceof EnchantingTemplateItem template) {
-            if (stack.has(CEIDataComponents.ENCHANTMENT_INSTANCE))
+            if (!stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty())
                 return false;
-            return special || !template.isSpecial();
+            return !special || template.isSpecial();
         }
         return false;
     }
@@ -75,6 +59,8 @@ public class TemplateEnchantingBehaviour extends EnchantingBehaviour {
             enchantments.remove(random.nextInt(enchantments.size()));
         }
         if (struck) {
+            if (enchantments.size() > 1)
+                enchantments.remove(random.nextInt(enchantments.size()));
             var curses = getAvailableCurses(level, target);
             WeightedRandom.getRandomItem(random, curses).ifPresent(curse -> stack.enchant(curse.enchantment, curse.level));
         }

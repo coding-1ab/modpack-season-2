@@ -81,8 +81,6 @@ public class EnchanterBehaviour extends ScrollValueBehaviour implements IHaveGog
     }
 
     public boolean setTemplate(ItemStack stack) {
-        if (ItemStack.isSameItemSameComponents(template, stack))
-            return true;
         if (stack.isEmpty()) {
             template = ItemStack.EMPTY;
             enchanting = new EnchantingBehaviour();
@@ -163,12 +161,12 @@ public class EnchanterBehaviour extends ScrollValueBehaviour implements IHaveGog
         template = ItemStack.parseOptional(registries, nbt.getCompound(TEMPLATE));
         var level = getWorld();
         if (level != null)
-            update(enchanter.heldItem);
+            setTemplate(template);
     }
 
     @Override
     public void initialize() {
-        update(enchanter.heldItem);
+        setTemplate(template);
     }
 
     @Override

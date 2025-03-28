@@ -90,6 +90,8 @@ public class EnchantingBehaviour {
         }
         var result = stack.is(Items.BOOK) ? new ItemStack(Items.ENCHANTED_BOOK) : stack;
         if (struck) {
+            if (enchantments.size() > 1)
+                enchantments.remove(random.nextInt(enchantments.size()));
             var curses = getAvailableCurses(level, stack);
             WeightedRandom.getRandomItem(random, curses).ifPresent(curse -> result.enchant(curse.enchantment, curse.level));
         }

@@ -53,9 +53,8 @@ public class EnchantingHelper {
 
     public static int getAdjustedLevel(ItemStack stack, int level) {
         var value = stack.getEnchantmentValue();
-        if (value == 0)
-            return 0;
-        level += 1 + value / 4;
+        if (value > 0)
+            level += 1 + value / 4;
         float f = 0.15F;
         level = Mth.clamp(Math.round(level + level * f), 1, Integer.MAX_VALUE);
         return level;
