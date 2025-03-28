@@ -9,6 +9,7 @@
     "CreateNBTProcessorsMixin",
     "DeployerFakePlayerMixin",
     "DeployerHandlerMixin",
+    "EnchantmentHelperMixin",
     "FillingBySpoutMixin",
     "PlayerMixin",
     "SmartBlockEntityMixin",

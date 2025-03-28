@@ -18,6 +18,8 @@
 
 package plus.dragons.createenchantmentindustry.common.registry;
 
+import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE;
+
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.materials.ExperienceNuggetItem;
 import com.tterrag.registrate.util.entry.ItemEntry;
@@ -25,12 +27,12 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredItem;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
-
-import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE;
+import plus.dragons.createenchantmentindustry.common.processing.enchanter.EnchantingTemplateItem;
 
 public class CEIItems {
     public static final ItemEntry<ExperienceNuggetItem> SUPER_EXPERIENCE_NUGGET = REGISTRATE
@@ -39,16 +41,18 @@ public class CEIItems {
             .properties(p -> p.rarity(Rarity.RARE))
             .lang("Nugget of Super Experience")
             .register();
-    public static final ItemEntry<Item> ENCHANTING_TEMPLATE = REGISTRATE
-            .item("enchanting_template", Item::new)
+    public static final ItemEntry<EnchantingTemplateItem> ENCHANTING_TEMPLATE = REGISTRATE
+            .item("enchanting_template", EnchantingTemplateItem::normal)
             .properties(prop -> prop
                     .rarity(Rarity.UNCOMMON)
+                    .component(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY)
                     .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true))
             .register();
-    public static final ItemEntry<Item> SUPER_ENCHANTING_TEMPLATE = REGISTRATE
-            .item("super_enchanting_template", Item::new)
+    public static final ItemEntry<EnchantingTemplateItem> SUPER_ENCHANTING_TEMPLATE = REGISTRATE
+            .item("super_enchanting_template", EnchantingTemplateItem::special)
             .properties(prop -> prop
                     .rarity(Rarity.RARE)
+                    .component(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY)
                     .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true))
             .register();
     public static final ItemEntry<Item> EXPERIENCE_CAKE_BASE = REGISTRATE

@@ -18,7 +18,6 @@
 
 package plus.dragons.createenchantmentindustry.common.processing.enchanter;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -27,22 +26,17 @@ import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup.Provider;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.TagKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -56,21 +50,21 @@ import plus.dragons.createdragonsplus.common.fluids.tank.ConfigurableFluidTank;
 import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
 import plus.dragons.createenchantmentindustry.client.model.CEIPartialModels;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.BlazeExperienceBlockEntity;
-import plus.dragons.createenchantmentindustry.common.registry.CEIEnchantments;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
 @FieldsNullabilityUnknownByDefault
 public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
+    public static final int ENCHANTING_TIME = 200;
     protected EnchanterBehaviour enchanter;
-    protected int seed;
+    protected boolean special;
+    protected boolean cursed;
+    protected Long seed;
     protected int processingTime = -1;
     protected ItemStack heldItem = ItemStack.EMPTY;
-    protected List<Holder<Enchantment>> enchantments = ImmutableList.of();
 
     public BlazeEnchanterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        this.seed = -1;
     }
 
     public @Nullable IFluidHandler getFluidHandler(@Nullable Direction side) {
@@ -100,7 +94,7 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
 
     @Override
     public boolean isActive() {
-        return !heldItem.isEmpty();
+        return processingTime > 0;
     }
 
     @Override
@@ -112,116 +106,134 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
     }
 
     @Override
+    public void initialize() {
+        super.initialize();
+        if (seed == null) {
+            nextSeed();
+            setChanged();
+        }
+    }
+
+    @Override
     public void write(CompoundTag compound, Provider registries, boolean clientPacket) {
-        super.write(compound, registries, clientPacket);
-        compound.putInt("Seed", seed);
+        if (seed != null)
+            compound.putLong("Seed", seed);
+        compound.putInt("ProcessingTime", processingTime);
         compound.put("HeldItem", heldItem.saveOptional(registries));
+        super.write(compound, registries, clientPacket);
     }
 
     @Override
     protected void read(CompoundTag compound, Provider registries, boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
-        seed = Math.absExact(compound.getInt("Seed"));
+        if (compound.contains("Seed", Tag.TAG_LONG))
+            seed = compound.getLong("Seed");
+        processingTime = compound.getInt("ProcessingTime");
         heldItem = ItemStack.parseOptional(registries, compound.getCompound("HeldItem"));
-        if (level != null)
-            enchantments = findPossibleEnchantments(heldItem).toList();
-    }
-
-    @Override
-    public void initialize() {
-        super.initialize();
-        if (heldItem != null)
-            enchantments = findPossibleEnchantments(heldItem).toList();
+        super.read(compound, registries, clientPacket);
     }
 
     @Override
     public void tick() {
         super.tick();
+        boolean update = false;
+        boolean special = getHeatLevel() == HeatLevel.SEETHING;
+        if (this.special != special) {
+            this.special = special;
+            update = true;
+        }
+        var strikePos = getStrikePos();
+        boolean cursed = special && !worldPosition.equals(strikePos);
+        if (this.cursed != cursed) {
+            this.cursed = cursed;
+            update = true;
+        }
+        if (!(level instanceof ServerLevel serverLevel))
+            return;
+        if (update) {
+            enchanter.update(heldItem);
+        }
+        if (enchanter.canProcess(heldItem)) {
+            var cost = enchanter.getExperienceCost();
+            if (cost == 0 || !consumeExperience(cost, special, true)) {
+                if (processingTime != -1) {
+                    processingTime = -1;
+                    notifyUpdate();
+                }
+                return;
+            }
+            if (processingTime == -1) {
+                processingTime = ENCHANTING_TIME;
+                notifyUpdate();
+                return;
+            }
+            if (processingTime > 0) {
+                processingTime--;
+                if (processingTime == 2) {
+                    boolean struck = false;
+                    if (special && !cursed) {
+                        struck = strikeLightning(serverLevel, strikePos);
+                    }
+                    heldItem = enchanter.getResult(heldItem, struck);
+                    nextSeed();
+                    consumeExperience(cost, special, false);
+                }
+                notifyUpdate();
+            }
+        } else if (processingTime != -1) {
+            processingTime = -1;
+            notifyUpdate();
+        }
     }
 
-    @Override
-    protected void onHeatChange(HeatLevel currentHeat, HeatLevel newHeat) {
-        if (currentHeat == HeatLevel.SEETHING || newHeat == HeatLevel.SEETHING)
-            enchantments = findPossibleEnchantments(heldItem).toList();
-    }
-
-    public RandomSource getRandom(Level level) {
-        if (seed == -1)
-            updateSeed(level);
+    public RandomSource getRandom() {
         return RandomSource.create(seed);
     }
 
-    public void updateSeed(Level level) {
-        seed = level.random.nextInt(Integer.MAX_VALUE);
-        notifyUpdate();
+    public void nextSeed() {
+        assert level != null;
+        seed = level.random.nextLong();
     }
 
     public int getMaxEnchantLevel() {
         return getMaxEnchantLevel(getHeatLevel() == HeatLevel.SEETHING);
     }
 
-    public int getMaxEnchantLevel(boolean isSuper) {
+    public int getMaxEnchantLevel(boolean special) {
         int max = CEIConfig.enchantments().blazeEnchanterMaxEnchantLevel.get();
         int maxSuper = CEIConfig.enchantments().blazeEnchanterMaxSuperEnchantLevel.get();
-        return isSuper ? Math.max(max, maxSuper) : Math.clamp(max, 0, maxSuper);
-    }
-
-    public boolean isEnchantmentMaterial(ItemStack stack) {
-        return false;
-    }
-
-    private boolean isSuperEnchantingCursed() {
-        if (level == null)
-            return false;
-        var dimension = level.dimensionType();
-        if (!dimension.hasSkyLight())
-            return false;
-        if (dimension.hasCeiling())
-            return false;
-        return level.canSeeSky(worldPosition);
-    }
-
-    public TagKey<Enchantment> getEnchantmentTag() {
-        assert level != null;
-        return getHeatLevel() == HeatLevel.SEETHING
-                ? CEIEnchantments.MOD_TAGS.superEnchanting
-                : CEIEnchantments.MOD_TAGS.enchanting;
-    }
-
-    public Stream<Holder<Enchantment>> findPossibleEnchantments(ItemStack stack) {
-        assert this.level != null;
-        return this.level
-                .registryAccess()
-                .registryOrThrow(Registries.ENCHANTMENT)
-                .getTag(getEnchantmentTag())
-                .stream()
-                .flatMap(HolderSet::stream)
-                .filter(stack::isPrimaryItemFor);
-    }
-
-    public List<Holder<Enchantment>> getPossibleEnchantments() {
-        return isEnchantmentMaterial(heldItem) ? enchanter.enchantments : enchantments;
-    }
-
-    private void setHeldItem(ItemStack stack, List<Holder<Enchantment>> enchantments) {
-        this.heldItem = stack;
-        this.enchantments = enchantments;
-        notifyUpdate();
+        return special ? Math.max(max, maxSuper) : Math.clamp(max, 0, maxSuper);
     }
 
     public boolean insertItem(ItemStack stack, boolean simulate) {
         assert level != null;
         if (!heldItem.isEmpty())
             return false;
-        if (isEnchantmentMaterial(stack)) {
-            setHeldItem(stack, ImmutableList.of());
-            return true;
-        }
-        var enchantments = findPossibleEnchantments(stack).toList();
-        if (enchantments.isEmpty())
+        var input = stack.copyWithCount(1);
+        enchanter.update(input);
+        if (!enchanter.canProcess(input)) {
+            enchanter.update(ItemStack.EMPTY);
             return false;
-        setHeldItem(stack, enchantments);
+        }
+        if (simulate)
+            return true;
+        heldItem = stack.split(1);
+        notifyUpdate();
         return true;
+    }
+
+    public ItemStack extractItem(boolean forced, boolean simulate) {
+        assert level != null;
+        if (heldItem.isEmpty())
+            return ItemStack.EMPTY;
+        if (!forced && processingTime > 0)
+            return ItemStack.EMPTY;
+        ItemStack extracted = heldItem;
+        if (!simulate) {
+            heldItem = ItemStack.EMPTY;
+            processingTime = -1;
+            notifyUpdate();
+        }
+        return extracted;
     }
 
     @Override

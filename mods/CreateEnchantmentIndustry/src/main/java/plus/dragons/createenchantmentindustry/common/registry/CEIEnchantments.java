@@ -39,15 +39,15 @@ public class CEIEnchantments {
     public static class ModTags extends TagRegistry<Enchantment, RegistrateTagsProvider<Enchantment>> {
         public final TagKey<Enchantment> enchanting = tag(
                 "blaze_enchanter/enchanting",
-                "Blaze Enchanter Enchanting Enchantments"
+                "Blaze Enchanter Normal Enchanting Enchantments"
+        );
+        public final TagKey<Enchantment> enchantingExclusive = tag(
+                "blaze_enchanter/enchanting_exclusive",
+                "Blaze Enchanter Normal Enchanting Exclusive Enchantments"
         );
         public final TagKey<Enchantment> superEnchanting = tag(
                 "blaze_enchanter/super_enchanting",
                 "Blaze Enchanter Super Enchanting Enchantments"
-        );
-        public final TagKey<Enchantment> superEnchantingCursed = tag(
-                "blaze_enchanter/super_enchanting_cursed",
-                "Blaze Enchanter Super Enchanting Cursed Enchantments"
         );
         public final TagKey<Enchantment> superEnchantingExclusive = tag(
                 "blaze_enchanter/super_enchanting_exclusive",
@@ -63,12 +63,11 @@ public class CEIEnchantments {
             super.generate(provider);
             provider.addTag(enchanting)
                     .addTag(EnchantmentTags.IN_ENCHANTING_TABLE);
+            provider.addTag(enchantingExclusive);
             provider.addTag(superEnchanting)
                     .addTag(enchanting)
+                    .remove(enchantingExclusive)
                     .addTag(superEnchantingExclusive);
-            provider.addTag(superEnchantingCursed)
-                    .addTag(superEnchanting)
-                    .addTag(EnchantmentTags.CURSE);
             provider.addTag(superEnchantingExclusive)
                     .addTag(EnchantmentTags.TREASURE)
                     .remove(EnchantmentTags.CURSE);

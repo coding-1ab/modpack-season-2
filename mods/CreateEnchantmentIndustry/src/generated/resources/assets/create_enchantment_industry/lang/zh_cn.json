@@ -1,4 +1,5 @@
 {
+  "_comment.unlocalized": "Remove this line after finishing localization.",
   "block.create_enchantment_industry.blaze_enchanter": "烈焰人附魔室",
   "block.create_enchantment_industry.blaze_forger": "烈焰人锻造室",
   "block.create_enchantment_industry.experience": "液态经验",
@@ -8,6 +9,7 @@
   "block.create_enchantment_industry.super_experience_block": "超越经验块",
   "create_enchantment_industry.gui.blaze_enchanter.level": "附魔等级",
   "create_enchantment_industry.gui.blaze_enchanter.template.invalid": "不能使用此物品作为模板",
+  "create_enchantment_industry.gui.goggles.enchanting.cost": "Enchanting consumes: %1$s",
   "create_enchantment_industry.gui.goggles.enchanting.level": "当前附魔等级：%1$s",
   "create_enchantment_industry.gui.goggles.enchanting.template": "当前附魔模板：%1$s",
   "create_enchantment_industry.gui.goggles.printing": "正在打印：%1$s",

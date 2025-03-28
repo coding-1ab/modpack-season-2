@@ -20,7 +20,7 @@ package plus.dragons.createenchantmentindustry.common.processing.enchanter;
 
 import com.google.common.collect.Lists;
 import java.util.List;
-import net.minecraft.Util;
+import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -31,12 +31,13 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
+import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
 public class EnchantingHelper {
     public static int getEnchantmentCost(Holder<Enchantment> holder, int level) {
         var enchantment = holder.value();
         int cost = enchantment.getMinCost(level);
-        int anvilCost = enchantment.getAnvilCost();
+        int anvilCost = Math.max(1, enchantment.getAnvilCost());
         int experience = 0;
         for (int i = 0; i < anvilCost; i++) {
             experience += ExperienceHelper.getExperienceForLevel(cost++);
@@ -50,25 +51,46 @@ public class EnchantingHelper {
                 .sum();
     }
 
-    public static int getAdjustedEnchantLevel(RandomSource random, ItemStack stack, int level) {
-        var enchantmentValue = stack.getEnchantmentValue();
-        if (enchantmentValue > 0)
-            level += 1 + random.nextInt(enchantmentValue / 4 + 1) + random.nextInt(enchantmentValue / 4 + 1);
-        float f = (random.nextFloat() + random.nextFloat() - 1.0F) * 0.15F;
+    public static int getAdjustedLevel(ItemStack stack, int level) {
+        var value = stack.getEnchantmentValue();
+        if (value == 0)
+            return 0;
+        level += 1 + value / 4;
+        float f = 0.15F;
         level = Mth.clamp(Math.round(level + level * f), 1, Integer.MAX_VALUE);
         return level;
     }
 
-    public static List<EnchantmentInstance> selectEnchantments(RandomSource random, int adjustedLevel, List<EnchantmentInstance> available) {
+    public static List<EnchantmentInstance> getAvailableEnchantmentResults(int level, Stream<Holder<Enchantment>> possibleEnchantments, boolean special) {
+        List<EnchantmentInstance> list = Lists.newArrayList();
+        possibleEnchantments.forEach(holder -> {
+            Enchantment enchantment = holder.value();
+            int maxLevel = enchantment.getMaxLevel();
+            if (maxLevel > 1 && special)
+                maxLevel += CEIConfig.enchantments().enchantmentMaxLevelExtension.get();
+            maxLevel = Math.clamp(maxLevel, 1, 255);
+            for (int i = maxLevel; i >= enchantment.getMinLevel(); i--) {
+                if (level >= enchantment.getMinCost(i) && level <= enchantment.getMaxCost(i)) {
+                    list.add(new EnchantmentInstance(holder, i));
+                    break;
+                }
+            }
+        });
+        return list;
+    }
+
+    public static List<EnchantmentInstance> selectEnchantments(RandomSource random, int adjustedLevel, List<EnchantmentInstance> available, boolean special) {
         List<EnchantmentInstance> list = Lists.newArrayList();
         WeightedRandom.getRandomItem(random, available).ifPresent(list::add);
         while (random.nextInt(50) <= adjustedLevel) {
             if (!list.isEmpty())
-                EnchantmentHelper.filterCompatibleEnchantments(available, Util.lastOf(list));
-
+                if (special && CEIConfig.enchantments().canIgnoreEnchantmentCompatibility.get()) {
+                    available.removeIf(instance -> instance.enchantment.equals(list.getLast().enchantment));
+                } else {
+                    EnchantmentHelper.filterCompatibleEnchantments(available, list.getLast());
+                }
             if (available.isEmpty())
                 break;
-
             WeightedRandom.getRandomItem(random, available).ifPresent(list::add);
             adjustedLevel /= 2;
         }

@@ -8,6 +8,7 @@
   "block.create_enchantment_industry.super_experience_block": "Block of Super Experience",
   "create_enchantment_industry.gui.blaze_enchanter.level": "Enchanting Level",
   "create_enchantment_industry.gui.blaze_enchanter.template.invalid": "Can not use this item as template.",
+  "create_enchantment_industry.gui.goggles.enchanting.cost": "Enchanting consumes: %1$s",
   "create_enchantment_industry.gui.goggles.enchanting.level": "Enchanting at level: %1$s",
   "create_enchantment_industry.gui.goggles.enchanting.template": "Enchanting with template:",
   "create_enchantment_industry.gui.goggles.printing": "Printing:",

@@ -18,6 +18,8 @@
 
 package plus.dragons.createenchantmentindustry.common.fluids.printer;
 
+import com.mojang.datafixers.util.Either;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -26,28 +28,36 @@ import com.simibubi.create.foundation.fluid.FluidIngredient;
 import io.netty.buffer.ByteBuf;
 import java.util.function.Function;
 import net.createmod.catnip.codecs.stream.CatnipStreamCodecBuilders;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.valueproviders.ConstantFloat;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.effects.PlaySoundEffect;
 import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipeParams;
-import plus.dragons.createdragonsplus.util.CDPCodecs;
 import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
 
 @FieldsNullabilityUnknownByDefault
 public class PrintingRecipeParams extends CustomProcessingRecipeParams {
+    protected static final Codec<PlaySoundEffect> SOUND_CODEC = Codec.either(
+            BuiltInRegistries.SOUND_EVENT.holderByNameCodec(),
+            PlaySoundEffect.CODEC.codec()
+    ).xmap(either -> either.map(
+            sound -> new PlaySoundEffect(sound, ConstantFloat.of(1f), ConstantFloat.of(1f)),
+            Function.identity()
+    ), Either::right);
+    protected static final StreamCodec<ByteBuf, PlaySoundEffect> SOUND_STREAM_CODEC =
+            ByteBufCodecs.fromCodec(SOUND_CODEC);
     public static final MapCodec<PrintingRecipeParams> CODEC = RecordCodecBuilder.<PrintingRecipeParams>mapCodec(
             instance -> instance.group(
                     codec(PrintingRecipeParams::new).forGetter(Function.identity()),
-                    CDPCodecs.PLAY_SOUND.fieldOf("sound").forGetter(PrintingRecipeParams::getSound)
+                    SOUND_CODEC.fieldOf("sound").forGetter(PrintingRecipeParams::getSound)
             ).apply(instance, PrintingRecipeParams::setSound)
     ).validate(PrintingRecipeParams::validate);
     public static final StreamCodec<RegistryFriendlyByteBuf, PrintingRecipeParams> STREAM_CODEC =
             streamCodec(PrintingRecipeParams::new);
-    protected static final StreamCodec<ByteBuf, PlaySoundEffect> PLAY_SOUND_STREAM_CODEC =
-            ByteBufCodecs.fromCodec(CDPCodecs.PLAY_SOUND);
     protected PlaySoundEffect sound;
 
     protected PrintingRecipeParams(ResourceLocation id) {
@@ -81,7 +91,7 @@ public class PrintingRecipeParams extends CustomProcessingRecipeParams {
         CatnipStreamCodecBuilders.nonNullList(Ingredient.CONTENTS_STREAM_CODEC).encode(buffer, ingredients);
         CatnipStreamCodecBuilders.nonNullList(ProcessingOutput.STREAM_CODEC).encode(buffer, results);
         CatnipStreamCodecBuilders.nonNullList(FluidIngredient.STREAM_CODEC).encode(buffer, fluidIngredients);
-        PLAY_SOUND_STREAM_CODEC.encode(buffer, sound);
+        SOUND_STREAM_CODEC.encode(buffer, sound);
     }
 
     @Override
@@ -89,6 +99,6 @@ public class PrintingRecipeParams extends CustomProcessingRecipeParams {
         ingredients = CatnipStreamCodecBuilders.nonNullList(Ingredient.CONTENTS_STREAM_CODEC).decode(buffer);
         results = CatnipStreamCodecBuilders.nonNullList(ProcessingOutput.STREAM_CODEC).decode(buffer);
         fluidIngredients = CatnipStreamCodecBuilders.nonNullList(FluidIngredient.STREAM_CODEC).decode(buffer);
-        sound = PLAY_SOUND_STREAM_CODEC.decode(buffer);
+        sound = SOUND_STREAM_CODEC.decode(buffer);
     }
 }
