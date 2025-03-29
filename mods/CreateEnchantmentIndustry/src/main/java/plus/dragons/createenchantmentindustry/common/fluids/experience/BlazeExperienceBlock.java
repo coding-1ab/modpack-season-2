@@ -27,6 +27,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.common.util.FakePlayer;
@@ -43,14 +44,8 @@ public abstract class BlazeExperienceBlock<T extends BlazeExperienceBlockEntity>
         if (blockEntity == null)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         boolean notConsume = player.hasInfiniteMaterials();
-        if (stack.is(AllItems.CREATIVE_BLAZE_CAKE)) {
-            blockEntity.applyCreativeFuel();
-            if (!notConsume)
-                stack.shrink(1);
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
-        }
         boolean forceOverflow = !(player instanceof FakePlayer);
-        var resultHolder = applyFuel(level, blockEntity, stack, forceOverflow, notConsume, false);
+        var resultHolder = applyFuel(state, level, pos, stack, forceOverflow, notConsume, false);
         var result = resultHolder.getResult();
         if (result == InteractionResult.PASS)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -64,12 +59,25 @@ public abstract class BlazeExperienceBlock<T extends BlazeExperienceBlockEntity>
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
-    public InteractionResultHolder<ItemStack> applyFuel(Level level, T blockEntity, ItemStack stack, boolean forceOverflow, boolean notConsume, boolean simulate) {
+    public static InteractionResultHolder<ItemStack> applyFuel(BlockState state, Level level, BlockPos pos, ItemStack stack, boolean forceOverflow, boolean notConsume, boolean simulate) {
+        if (!state.hasBlockEntity())
+            return InteractionResultHolder.fail(ItemStack.EMPTY);
+
+        BlockEntity be = level.getBlockEntity(pos);
+        if (!(be instanceof BlazeExperienceBlockEntity blaze))
+            return InteractionResultHolder.fail(ItemStack.EMPTY);
+
+        if (stack.is(AllItems.CREATIVE_BLAZE_CAKE)) {
+            blaze.applyCreativeFuel();
+            if (!notConsume)
+                stack.shrink(1);
+            return InteractionResultHolder.success(ItemStack.EMPTY);
+        }
         var fuel = ExperienceFuel.get(level, stack);
         if (fuel != null) {
-            boolean applied = blockEntity.applyExperienceFuel(fuel, forceOverflow, simulate);
+            boolean applied = blaze.applyExperienceFuel(fuel, forceOverflow, simulate);
             if (applied) {
-                if (!simulate && !notConsume)
+                if (!notConsume)
                     stack.shrink(1);
                 ItemStack remainder = notConsume
                         ? ItemStack.EMPTY

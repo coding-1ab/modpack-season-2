@@ -35,6 +35,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
@@ -136,7 +138,7 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
     public void tick() {
         super.tick();
         boolean update = false;
-        boolean special = getHeatLevel() == HeatLevel.SEETHING;
+        boolean special = getHeatLevelFromBlock() == HeatLevel.SEETHING;
         if (this.special != special) {
             this.special = special;
             update = true;
@@ -176,6 +178,8 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
                     heldItem = enchanter.getResult(heldItem, struck);
                     nextSeed();
                     consumeExperience(cost, special, false);
+                    level.playSound(null, worldPosition, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS,
+                            1.0F, level.random.nextFloat() * 0.1F + 0.9F);
                 }
                 notifyUpdate();
             }
@@ -204,34 +208,34 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
         return special ? Math.max(max, maxSuper) : Math.clamp(max, 0, maxSuper);
     }
 
-    public boolean insertItem(ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(ItemStack stack, boolean simulate) {
         assert level != null;
         if (!heldItem.isEmpty())
-            return false;
-        var input = stack.copyWithCount(1);
-        enchanter.update(input);
-        if (!enchanter.canProcess(input)) {
+            return stack;
+        var input = stack.copy();
+        var inserted = input.split(1);
+        enchanter.update(inserted);
+        if (!enchanter.canProcess(inserted)) {
             enchanter.update(ItemStack.EMPTY);
-            return false;
+            return stack;
         }
         if (simulate)
-            return true;
-        heldItem = stack.split(1);
+            return input;
+        heldItem = inserted;
         notifyUpdate();
-        return true;
+        return input;
     }
 
     public ItemStack extractItem(boolean forced, boolean simulate) {
         assert level != null;
-        if (heldItem.isEmpty())
-            return ItemStack.EMPTY;
-        if (!forced && processingTime > 0)
-            return ItemStack.EMPTY;
-        ItemStack extracted = heldItem;
-        if (!simulate) {
-            heldItem = ItemStack.EMPTY;
-            processingTime = -1;
-            notifyUpdate();
+        ItemStack extracted = ItemStack.EMPTY;
+        if (forced || processingTime <= 0) {
+            extracted = simulate ? heldItem.copy() : heldItem;
+            if (!simulate) {
+                heldItem = ItemStack.EMPTY;
+                processingTime = -1;
+                notifyUpdate();
+            }
         }
         return extracted;
     }

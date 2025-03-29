@@ -88,17 +88,13 @@ public class EnchantingBehaviour {
         if (stack.is(Items.BOOK) && enchantments.size() > 1) {
             enchantments.remove(random.nextInt(enchantments.size()));
         }
-        var result = stack.is(Items.BOOK) ? new ItemStack(Items.ENCHANTED_BOOK) : stack;
         if (struck) {
             if (enchantments.size() > 1)
                 enchantments.remove(random.nextInt(enchantments.size()));
             var curses = getAvailableCurses(level, stack);
-            WeightedRandom.getRandomItem(random, curses).ifPresent(curse -> result.enchant(curse.enchantment, curse.level));
+            WeightedRandom.getRandomItem(random, curses).ifPresent(enchantments::add);
         }
-        for (EnchantmentInstance enchantmentinstance : enchantments) {
-            result.enchant(enchantmentinstance.enchantment, enchantmentinstance.level);
-        }
-        return result;
+        return stack.getItem().applyEnchantments(stack, enchantments);
     }
 
     public int getExperienceCost() {
@@ -107,7 +103,7 @@ public class EnchantingBehaviour {
         int levelCost = Math.ceilDiv(enchantingLevel, 10);
         int experienceCost = 0;
         for (int i = 0; i < levelCost; i++) {
-            experienceCost += ExperienceHelper.getExperienceForLevel(enchantingLevel - i);
+            experienceCost += ExperienceHelper.getExperienceForNextLevel(enchantingLevel - i);
         }
         return experienceCost;
     }

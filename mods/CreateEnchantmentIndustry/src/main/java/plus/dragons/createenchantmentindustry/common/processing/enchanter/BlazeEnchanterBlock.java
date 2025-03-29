@@ -21,6 +21,7 @@ package plus.dragons.createenchantmentindustry.common.processing.enchanter;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -37,23 +38,32 @@ public class BlazeEnchanterBlock extends BlazeExperienceBlock<BlazeEnchanterBloc
     }
 
     @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        var blockEntity = getBlockEntity(level, pos);
+        if (blockEntity == null)
+            return InteractionResult.PASS;
+        ItemStack extrtacted = blockEntity.extractItem(true, false);
+        if (!extrtacted.isEmpty()) {
+            player.getInventory().placeItemBackInInventory(extrtacted);
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        return InteractionResult.PASS;
+    }
+
+    @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (stack.isEmpty())
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         var result = super.useItemOn(stack, state, level, pos, player, hand, hitResult);
         if (result.consumesAction())
             return result;
         var blockEntity = getBlockEntity(level, pos);
         if (blockEntity == null)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (stack.isEmpty()) {
-            var extracted = blockEntity.extractItem(true, false);
-            if (extracted.isEmpty())
-                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-            player.setItemInHand(hand, extracted);
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
-        }
-        return blockEntity.insertItem(stack, false)
-                ? ItemInteractionResult.sidedSuccess(level.isClientSide)
-                : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        var remainder = blockEntity.insertItem(stack, false);
+        return ItemStack.isSameItemSameComponents(stack, remainder)
+                ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+                : ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override

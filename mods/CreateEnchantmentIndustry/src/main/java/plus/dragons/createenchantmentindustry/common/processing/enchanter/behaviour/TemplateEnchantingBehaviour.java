@@ -22,7 +22,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.WeightedRandom;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.EnchantingHelper;
@@ -55,18 +54,14 @@ public class TemplateEnchantingBehaviour extends EnchantingBehaviour {
     @Override
     public ItemStack getResult(Level level, ItemStack stack, RandomSource random, boolean special, boolean struck) {
         var enchantments = EnchantingHelper.selectEnchantments(random, enchantingLevel, this.enchantments, special);
-        if (enchantments.size() > 1) {
+        if (enchantments.size() > 1)
             enchantments.remove(random.nextInt(enchantments.size()));
-        }
         if (struck) {
             if (enchantments.size() > 1)
                 enchantments.remove(random.nextInt(enchantments.size()));
-            var curses = getAvailableCurses(level, target);
-            WeightedRandom.getRandomItem(random, curses).ifPresent(curse -> stack.enchant(curse.enchantment, curse.level));
+            var curses = getAvailableCurses(level, stack);
+            WeightedRandom.getRandomItem(random, curses).ifPresent(enchantments::add);
         }
-        for (EnchantmentInstance enchantmentinstance : enchantments) {
-            stack.enchant(enchantmentinstance.enchantment, enchantmentinstance.level);
-        }
-        return stack;
+        return stack.getItem().applyEnchantments(stack, enchantments);
     }
 }

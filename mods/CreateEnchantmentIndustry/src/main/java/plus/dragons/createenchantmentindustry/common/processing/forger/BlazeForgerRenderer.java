@@ -22,11 +22,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import plus.dragons.createdragonsplus.common.processing.blaze.BlazeBlockRenderer;
 
 public class BlazeForgerRenderer extends BlazeBlockRenderer<BlazeForgerBlockEntity> {
+    private final ItemRenderer itemRenderer;
+
     public BlazeForgerRenderer(Context context) {
         super(context);
+        this.itemRenderer = context.getItemRenderer();
     }
 
     @Override

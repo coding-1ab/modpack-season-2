@@ -35,12 +35,20 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 
 public class ExperienceHelper {
-    public static int getExperienceForLevel(int level) {
+    public static int getExperienceForNextLevel(int level) {
         if (level >= 30) {
             return 112 + (level - 30) * 9;
         } else {
             return level >= 15 ? 37 + (level - 15) * 5 : 7 + level * 2;
         }
+    }
+
+    public static int getExperienceForTotalLevel(int level) {
+        int experience = 0;
+        for (int i = 0; i < level; i++) {
+            experience += getExperienceForNextLevel(i);
+        }
+        return experience;
     }
 
     public static int getExperienceFromFluid(FluidStack fluid) {

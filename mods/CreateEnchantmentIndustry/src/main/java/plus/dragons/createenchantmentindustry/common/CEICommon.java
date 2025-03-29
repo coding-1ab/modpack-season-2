@@ -24,10 +24,10 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import plus.dragons.createdragonsplus.common.CDPRegistrate;
+import plus.dragons.createenchantmentindustry.common.registry.CEIArmInterationPoints;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlockEntities;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 import plus.dragons.createenchantmentindustry.common.registry.CEICreativeModeTabs;
-import plus.dragons.createenchantmentindustry.common.registry.CEIDataComponents;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 import plus.dragons.createenchantmentindustry.common.registry.CEIEnchantments;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
@@ -45,10 +45,10 @@ public class CEICommon {
         CEIBlocks.register(modBus);
         CEIBlockEntities.register(modBus);
         CEIItems.register(modBus);
-        CEIDataComponents.register(modBus);
         CEICreativeModeTabs.register(modBus);
         CEIRecipes.register(modBus);
         CEIEnchantments.register(modBus);
+        CEIArmInterationPoints.register(modBus);
         CEIDataMaps.register(modBus);
         modBus.register(this);
     }

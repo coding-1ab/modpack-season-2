@@ -11,6 +11,8 @@
   "create_enchantment_industry.gui.goggles.enchanting.cost": "Enchanting consumes: %1$s",
   "create_enchantment_industry.gui.goggles.enchanting.level": "Enchanting at level: %1$s",
   "create_enchantment_industry.gui.goggles.enchanting.template": "Enchanting with template:",
+  "create_enchantment_industry.gui.goggles.forging.cost": "Forging consumes: %1$s",
+  "create_enchantment_industry.gui.goggles.forging.enchantments": "Forging Result Enchantments:",
   "create_enchantment_industry.gui.goggles.printing": "Printing:",
   "create_enchantment_industry.gui.goggles.printing.address": "Printing Address:",
   "create_enchantment_industry.gui.goggles.printing.copy": "Copying: %1$s",

@@ -84,5 +84,7 @@ public class CEIBlockEntities {
                 PRINTER.get(), PrinterBlockEntity::getFluidHandler);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
                 BLAZE_ENCHANTER.get(), BlazeEnchanterBlockEntity::getFluidHandler);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
+                BLAZE_FORGER.get(), BlazeForgerBlockEntity::getFluidHandler);
     }
 }
