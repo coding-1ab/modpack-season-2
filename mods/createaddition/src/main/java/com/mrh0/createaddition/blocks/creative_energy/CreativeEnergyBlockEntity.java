@@ -2,21 +2,40 @@ package com.mrh0.createaddition.blocks.creative_energy;
 
 import com.mrh0.createaddition.energy.CreativeEnergyStorage;
 
+import com.mrh0.createaddition.index.CABlockEntities;
 import com.simibubi.create.content.logistics.crate.CrateBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+
+import java.util.EnumMap;
+import java.util.EnumSet;
 
 public class CreativeEnergyBlockEntity extends CrateBlockEntity {
 
-	protected final CreativeEnergyStorage energy;
+	protected final CreativeEnergyStorage capability;
+
+	private final EnumSet<Direction> invalidSides = EnumSet.allOf(Direction.class);
+	private final EnumMap<Direction, BlockCapabilityCache<IEnergyStorage, Direction>> cache = new EnumMap<>(Direction.class);
 	
 	public CreativeEnergyBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
 		super(tileEntityTypeIn, pos, state);
-		energy = new CreativeEnergyStorage();
+		capability = new CreativeEnergyStorage();
+	}
+
+	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+		event.registerBlockEntity(
+				Capabilities.EnergyStorage.BLOCK,
+				CABlockEntities.CREATIVE_ENERGY.get(),
+				(be, context) -> be.capability
+		);
 	}
 	
 	private boolean firstTickState = true;
@@ -24,17 +43,15 @@ public class CreativeEnergyBlockEntity extends CrateBlockEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		if(level.isClientSide())
-			return;
-		if(firstTickState)
-			firstTick();
+		if (level == null) return;
+		if (level.isClientSide()) return;
+		if (firstTickState) firstTick();
 		firstTickState = false;
 		
-		for(Direction d : Direction.values()) {
-			IEnergyStorage ies = getCachedEnergy(d);
-			if(ies == null)
-				continue;
-			int r = ies.receiveEnergy(Integer.MAX_VALUE, false);
+		for (Direction d : Direction.values()) {
+			IEnergyStorage ies = cache.get(d).getCapability();
+			if (ies == null) continue;
+			ies.receiveEnergy(Integer.MAX_VALUE, false);
 		}
 	}
 	
@@ -43,65 +60,17 @@ public class CreativeEnergyBlockEntity extends CrateBlockEntity {
 	};
 	
 	public void updateCache() {
-		if(level.isClientSide())
-			return;
-		for(Direction side : Direction.values()) {
-			BlockEntity te = level.getBlockEntity(worldPosition.relative(side));
-			if(te == null) {
-				setCache(side, LazyOptional.empty());
-				continue;
-			}
-			LazyOptional<IEnergyStorage> le = te.getCapability(ForgeCapabilities.ENERGY, side.getOpposite());
-			setCache(side, le);
-			
+		if (level == null) return;
+		if (level.isClientSide()) return;
+		for (Direction side : Direction.values()) {
+			cache.put(side, BlockCapabilityCache.create(
+				Capabilities.EnergyStorage.BLOCK,
+				(ServerLevel) level,
+				getBlockPos().relative(side),
+				side.getOpposite(),
+				() -> !this.isRemoved(),
+				() -> { invalidSides.add(side); }
+			));
 		}
-	}
-	
-	private LazyOptional<IEnergyStorage> escacheUp = LazyOptional.empty();
-	private LazyOptional<IEnergyStorage> escacheDown = LazyOptional.empty();
-	private LazyOptional<IEnergyStorage> escacheNorth = LazyOptional.empty();
-	private LazyOptional<IEnergyStorage> escacheEast = LazyOptional.empty();
-	private LazyOptional<IEnergyStorage> escacheSouth = LazyOptional.empty();
-	private LazyOptional<IEnergyStorage> escacheWest = LazyOptional.empty();
-	
-	public void setCache(Direction side, LazyOptional<IEnergyStorage> storage) {
-		switch(side) {
-			case DOWN:
-				escacheDown = storage;
-				break;
-			case EAST:
-				escacheEast = storage;
-				break;
-			case NORTH:
-				escacheNorth = storage;
-				break;
-			case SOUTH:
-				escacheSouth = storage;
-				break;
-			case UP:
-				escacheUp = storage;
-				break;
-			case WEST:
-				escacheWest = storage;
-				break;
-		}
-	}
-	
-	public IEnergyStorage getCachedEnergy(Direction side) {
-		switch(side) {
-			case DOWN:
-				return escacheDown.orElse(null);
-			case EAST:
-				return escacheEast.orElse(null);
-			case NORTH:
-				return escacheNorth.orElse(null);
-			case SOUTH:
-				return escacheSouth.orElse(null);
-			case UP:
-				return escacheUp.orElse(null);
-			case WEST:
-				return escacheWest.orElse(null);
-		}
-		return null;
 	}
 }

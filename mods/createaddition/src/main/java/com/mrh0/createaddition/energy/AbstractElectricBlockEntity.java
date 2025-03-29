@@ -21,8 +21,8 @@ public abstract class AbstractElectricBlockEntity extends SmartBlockEntity {
 
 	protected final InternalEnergyStorage localEnergy;
 
-	private EnumSet<Direction> invalidSides = EnumSet.allOf(Direction.class);
-	private EnumMap<Direction, BlockCapabilityCache<IEnergyStorage, Direction>> escacheMap = new EnumMap<>(Direction.class);
+	private final EnumSet<Direction> invalidSides = EnumSet.allOf(Direction.class);
+	private final EnumMap<Direction, BlockCapabilityCache<IEnergyStorage, Direction>> escacheMap = new EnumMap<>(Direction.class);
 
 	public AbstractElectricBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
 		super(tileEntityTypeIn, pos, state);

@@ -15,9 +15,12 @@ import com.simibubi.create.content.kinetics.belt.behaviour.BeltProcessingBehavio
 import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.sound.SoundScapes;
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -147,8 +150,8 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 		super.tick();
 		if(level == null) return;
 
-		if (level.isClientSide()) {
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> this::tickAudio);
+		if (level.isClientSide) {
+			CatnipServices.PLATFORM.executeOnClientOnly(() -> this::tickAudio);
 			return;
 		}
 		int signal = level.getBestNeighborSignal(getBlockPos());
