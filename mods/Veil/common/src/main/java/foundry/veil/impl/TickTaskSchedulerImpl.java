@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @ApiStatus.Internal
 public class TickTaskSchedulerImpl implements TickTaskScheduler {
 
-    private final Queue<Task> tasks;
+    private final Queue<Task<?>> tasks;
     private long tick;
     private volatile boolean stopped;
 
@@ -29,9 +29,9 @@ public class TickTaskSchedulerImpl implements TickTaskScheduler {
      * Runs a single tick and executes all pending tasks for that time.
      */
     public void run() {
-        Iterator<Task> iterator = this.tasks.iterator();
+        Iterator<Task<?>> iterator = this.tasks.iterator();
         while (iterator.hasNext()) {
-            Task task = iterator.next();
+            Task<?> task = iterator.next();
             if (task.isDone()) {
                 iterator.remove();
                 continue;
@@ -58,9 +58,9 @@ public class TickTaskSchedulerImpl implements TickTaskScheduler {
     public void shutdown() {
         this.stopped = true;
 
-        Iterator<Task> iterator = this.tasks.iterator();
+        Iterator<Task<?>> iterator = this.tasks.iterator();
         while (iterator.hasNext()) {
-            Task task = iterator.next();
+            Task<?> task = iterator.next();
             if (task.isDone()) {
                 iterator.remove();
                 continue;
@@ -90,87 +90,95 @@ public class TickTaskSchedulerImpl implements TickTaskScheduler {
     @Override
     public void execute(@NotNull Runnable command) {
         this.validate(command);
-        this.tasks.add(new Task(command, 0));
+        this.tasks.add(new Task<>(command, 0));
     }
 
     @Override
-    public CompletableFuture<?> schedule(@NotNull Runnable command, int delay) {
+    public TickTask<?> schedule(@NotNull Runnable command, long delay) {
         this.validate(command);
         if (delay < 0) {
             throw new IllegalArgumentException();
         }
 
-        CompletableFuture<?> future = new CompletableFuture<>();
-        Task task = new Task(() -> {
+        TickTaskImpl<?> tickTask = new TickTaskImpl<>();
+        Task<?> task = new Task<>(() -> {
             try {
                 command.run();
             } catch (Throwable t) {
-                future.completeExceptionally(t);
+                tickTask.future.completeExceptionally(t);
             }
         }, this.tick + delay);
         this.tasks.add(task);
-        future.exceptionally(e -> {
-            if (future.isCancelled()) {
+        tickTask.setTask(task);
+
+        tickTask.future.exceptionally(e -> {
+            if (tickTask.future.isCancelled()) {
                 task.cancel(false);
             }
             return null;
         });
-        return future;
+        return tickTask;
     }
 
     @Override
-    public <V> CompletableFuture<V> schedule(@NotNull Callable<V> callable, int delay) {
+    public <V> TickTask<V> schedule(@NotNull Callable<V> callable, long delay) {
         this.validate(callable);
         if (delay < 0) {
             throw new IllegalArgumentException();
         }
 
-        CompletableFuture<V> future = new CompletableFuture<>();
-        Task task = new Task(() -> {
+        TickTaskImpl<V> tickTask = new TickTaskImpl<>();
+        Task<?> task = new Task<>(() -> {
             try {
-                future.complete(callable.call());
+                tickTask.future.complete(callable.call());
             } catch (Throwable t) {
-                future.completeExceptionally(t);
+                tickTask.future.completeExceptionally(t);
             }
         }, this.tick + delay);
         this.tasks.add(task);
-        future.exceptionally(e -> {
-            if (future.isCancelled()) {
+        tickTask.setTask(task);
+
+        tickTask.future.exceptionally(e -> {
+            if (tickTask.future.isCancelled()) {
                 task.cancel(false);
             }
             return null;
         });
-        return future;
+        return tickTask;
     }
 
     @Override
-    public CompletableFuture<?> scheduleAtFixedRate(@NotNull Runnable command, int initialDelay, int period) {
+    public TickTask<?> scheduleAtFixedRate(@NotNull Runnable command, long initialDelay, long period) {
         this.validate(command);
         if (initialDelay < 0 || period < 0) {
             throw new IllegalArgumentException();
         }
 
-        CompletableFuture<?> future = new CompletableFuture<>();
-        Task task = this.schedule(future, command, new AtomicBoolean(), initialDelay, period);
+        TickTaskImpl<?> tickTask = new TickTaskImpl<>();
+        Task<?> task = this.schedule(tickTask, command, new AtomicBoolean(), initialDelay, period);
         this.tasks.add(task);
-        future.exceptionally(e -> {
-            if (future.isCancelled()) {
+        tickTask.setTask(task);
+
+        tickTask.future.exceptionally(e -> {
+            if (tickTask.future.isCancelled()) {
                 task.cancel(false);
             }
             return null;
         });
-        return future;
+        return tickTask;
     }
 
-    private Task schedule(CompletableFuture<?> future, Runnable command, AtomicBoolean cancelled, int delay, int period) {
-        return new Task(() -> {
+    private <V> Task<V> schedule(TickTaskImpl<V> tickTask, Runnable command, AtomicBoolean cancelled, long delay, long period) {
+        return new Task<>(() -> {
             try {
                 command.run();
                 if (!this.stopped) {
-                    this.tasks.add(this.schedule(future, command, cancelled, period, period));
+                    Task<V> task = this.schedule(tickTask, command, cancelled, period, period);
+                    this.tasks.add(task);
+                    tickTask.setTask(task);
                 }
             } catch (Throwable t) {
-                future.completeExceptionally(t);
+                tickTask.future.completeExceptionally(t);
             }
         }, cancelled, this.tick + delay);
     }
@@ -180,7 +188,69 @@ public class TickTaskSchedulerImpl implements TickTaskScheduler {
         return this.stopped;
     }
 
-    private class Task implements ScheduledFuture<Object> {
+    private class TickTaskImpl<V> implements TickTask<V> {
+
+        private final CompletableFuture<V> future;
+        private Task<?> task;
+
+        private TickTaskImpl() {
+            this.future = new CompletableFuture<>();
+            this.task = null;
+        }
+
+        @Override
+        public long getDelay() {
+            return this.task.getDelay();
+        }
+
+        @Override
+        public CompletableFuture<V> toCompletableFuture() {
+            return this.future;
+        }
+
+        @Override
+        public long getDelay(@NotNull TimeUnit unit) {
+            return this.task.getDelay(unit);
+        }
+
+        @Override
+        public int compareTo(@NotNull Delayed o) {
+            return this.task.compareTo(o);
+        }
+
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            return this.task.cancel(mayInterruptIfRunning);
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return this.task.isCancelled();
+        }
+
+        @Override
+        public boolean isDone() {
+            return this.task.isDone();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public V get() throws ExecutionException {
+            return (V) this.task.get();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public V get(long timeout, @NotNull TimeUnit unit) throws ExecutionException {
+            return (V) this.task.get(timeout, unit);
+        }
+
+        public void setTask(Task<?> task) {
+            this.task = task;
+        }
+    }
+
+    private class Task<V> implements ScheduledFuture<V> {
 
         private final Runnable runnable;
         private final AtomicBoolean cancelled;
@@ -203,6 +273,10 @@ public class TickTaskSchedulerImpl implements TickTaskScheduler {
             this.error = error;
         }
 
+        public long getDelay() {
+            return this.executionTick - TickTaskSchedulerImpl.this.tick;
+        }
+
         @Override
         public long getDelay(@NotNull TimeUnit unit) {
             return TimeUnit.MILLISECONDS.convert((this.executionTick - TickTaskSchedulerImpl.this.tick) * 50L, unit);
@@ -210,7 +284,7 @@ public class TickTaskSchedulerImpl implements TickTaskScheduler {
 
         @Override
         public int compareTo(@NotNull Delayed o) {
-            return Long.compareUnsigned(this.executionTick, ((Task) o).executionTick);
+            return Long.compareUnsigned(this.executionTick, ((Task<?>) o).executionTick);
         }
 
         @Override
@@ -229,7 +303,7 @@ public class TickTaskSchedulerImpl implements TickTaskScheduler {
         }
 
         @Override
-        public Object get() throws ExecutionException {
+        public V get() throws ExecutionException {
             if (this.error != null) {
                 throw new ExecutionException(this.error);
             }
@@ -237,7 +311,7 @@ public class TickTaskSchedulerImpl implements TickTaskScheduler {
         }
 
         @Override
-        public Object get(long timeout, @NotNull TimeUnit unit) throws ExecutionException {
+        public V get(long timeout, @NotNull TimeUnit unit) throws ExecutionException {
             return this.get();
         }
     }

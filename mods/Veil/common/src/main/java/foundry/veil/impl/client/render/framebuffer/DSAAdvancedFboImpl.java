@@ -43,8 +43,9 @@ public class DSAAdvancedFboImpl extends AdvancedFboImpl {
 
         this.id = glCreateFramebuffers();
 
-        VeilDebug debug = VeilDebug.get();
-        debug.objectLabel(GL_FRAMEBUFFER, this.id, "Advanced Fbo " + this.debugLabel);
+        if (this.debugLabel != null) {
+            VeilDebug.get().objectLabel(GL_FRAMEBUFFER, this.id, "Advanced Fbo " + this.debugLabel);
+        }
 
         for (int i = 0; i < this.colorAttachments.length; i++) {
             this.colorAttachments[i].attach(this, i);

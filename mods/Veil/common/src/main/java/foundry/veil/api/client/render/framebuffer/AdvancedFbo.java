@@ -964,7 +964,7 @@ public interface AdvancedFbo extends NativeResource {
             return this.setDepthBuffer(new AdvancedFboTextureAttachment(
                     this.format == GL_DEPTH_STENCIL ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT,
                     this.internalFormat,
-                    this.format,
+                    GL_DEPTH_COMPONENT,
                     width,
                     height,
                     this.levels,

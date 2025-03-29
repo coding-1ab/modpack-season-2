@@ -1,11 +1,12 @@
 package foundry.veil.api;
 
+import foundry.veil.ext.MinecraftServerExtension;
+import foundry.veil.impl.client.VeilClientSchedulerImpl;
+import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.*;
 
 /**
  * Schedules tasks to be run on future ticks.
@@ -13,6 +14,16 @@ import java.util.concurrent.RejectedExecutionException;
  * @author Ocelot
  */
 public interface TickTaskScheduler extends Executor {
+
+    /**
+     * Retrieves the tick task scheduler for the specified server or client.
+     *
+     * @param server The server to get the scheduler for or <code>null</code> for the client scheduler
+     * @return The scheduler for that server
+     */
+    static TickTaskScheduler get(@Nullable MinecraftServer server) {
+        return server == null ? VeilClientSchedulerImpl.getScheduler() : ((MinecraftServerExtension) server).veil$getOrCreateScheduler();
+    }
 
     /**
      * Executes the specified command on the next particle system tick.
@@ -34,7 +45,7 @@ public interface TickTaskScheduler extends Executor {
      * @throws NullPointerException       if command is null
      * @throws IllegalArgumentException   if delay less than or equal to zero
      */
-    CompletableFuture<?> schedule(@NotNull Runnable command, int delay);
+    TickTask<?> schedule(@NotNull Runnable command, long delay);
 
     /**
      * Schedules the specified command to run in the specified number of ticks.
@@ -46,7 +57,7 @@ public interface TickTaskScheduler extends Executor {
      * @throws NullPointerException       if command is null
      * @throws IllegalArgumentException   if delay less than or equal to zero
      */
-    <V> CompletableFuture<V> schedule(@NotNull Callable<V> callable, int delay);
+    <V> TickTask<V> schedule(@NotNull Callable<V> callable, long delay);
 
     /**
      * Schedules the specified command to run after the specified initial delay in ticks and at each fixed time interval in ticks.
@@ -59,10 +70,26 @@ public interface TickTaskScheduler extends Executor {
      * @throws NullPointerException       if command is null
      * @throws IllegalArgumentException   if delay less than or equal to zero
      */
-    CompletableFuture<?> scheduleAtFixedRate(@NotNull Runnable command, int initialDelay, int period);
+    TickTask<?> scheduleAtFixedRate(@NotNull Runnable command, long initialDelay, long period);
 
     /**
      * @return Whether the executor has shut down and will reject
      */
     boolean isShutdown();
+
+    /**
+     * A single task scheduled to run in the future.
+     */
+    interface TickTask<V> extends ScheduledFuture<V> {
+
+        /**
+         * @return The number of ticks until this task will run
+         */
+        long getDelay();
+
+        /**
+         * @return This task represented as a future
+         */
+        CompletableFuture<V> toCompletableFuture();
+    }
 }

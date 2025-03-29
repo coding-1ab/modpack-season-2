@@ -4,6 +4,11 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.EncoderException;
+import net.minecraft.network.VarInt;
+import net.minecraft.network.codec.StreamCodec;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -23,12 +28,34 @@ public class EnumCodec<T extends Enum<?>> implements Codec<T> {
     private final T[] values;
     private final String valid;
     private final Function<T, String> toString;
+    private final boolean ordinal;
+    private final StreamCodec<ByteBuf, T> streamCodec;
 
-    private EnumCodec(String name, T[] values, Function<T, String> toString) {
+    private EnumCodec(String name, T[] values, Function<T, String> toString, boolean ordinal) {
         this.name = name;
         this.values = values;
         this.valid = Arrays.stream(values).map(toString).collect(Collectors.joining(", "));
         this.toString = toString;
+        this.ordinal = ordinal;
+        this.streamCodec = StreamCodec.of((buf, value) -> VarInt.write(buf, this.getIndex(value)), buf -> {
+            int i = VarInt.read(buf);
+            if (i < 0 || i >= this.values.length) {
+                throw new DecoderException("Unknown " + this.name + " with index: " + i);
+            }
+            return this.values[i];
+        });
+    }
+
+    private int getIndex(T value) {
+        if (this.ordinal) {
+            return value.ordinal();
+        }
+        for (int i = 0; i < this.values.length; i++) {
+            if (this.values[i] == value) {
+                return i;
+            }
+        }
+        throw new EncoderException("Invalid " + this.name + ": " + this.toString.apply(value));
     }
 
     @Override
@@ -56,10 +83,17 @@ public class EnumCodec<T extends Enum<?>> implements Codec<T> {
     @Override
     public <T1> DataResult<T1> encode(T input, DynamicOps<T1> ops, T1 prefix) {
         if (ops.compressMaps()) {
-            return DataResult.success(ops.createInt(input.ordinal()));
+            return DataResult.success(ops.createInt(this.getIndex(input)));
         } else {
             return DataResult.success(ops.createString(this.toString.apply(input)));
         }
+    }
+
+    /**
+     * @return A stream codec for packets
+     */
+    public StreamCodec<ByteBuf, T> streamCodec() {
+        return this.streamCodec;
     }
 
     public static <T extends Enum<?>> Builder<T> builder(String name) {
@@ -143,7 +177,13 @@ public class EnumCodec<T extends Enum<?>> implements Codec<T> {
             if (this.values.length == 0) {
                 throw new IllegalArgumentException("At least 1 value must be specified");
             }
-            return new EnumCodec<>(this.name, this.values, this.toString);
+
+            if (Arrays.stream(this.values).distinct().count() != this.values.length) {
+                throw new IllegalArgumentException("All values must be unique");
+            }
+
+            Enum<?>[] enumValues = this.values[0].getClass().getEnumConstants();
+            return new EnumCodec<>(this.name, this.values, this.toString, enumValues.length == this.values.length);
         }
     }
 }

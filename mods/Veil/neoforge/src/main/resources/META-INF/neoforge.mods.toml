@@ -42,6 +42,8 @@ description='''${description}'''
 [[mixins]]
     config = "${mod_id}.resource.mixins.json"
 [[mixins]]
+    config = "${mod_id}.scheduler.mixins.json"
+[[mixins]]
     config = "${mod_id}.shader.mixins.json"
 [[mixins]]
     config = "${mod_id}.tooltip.mixins.json"

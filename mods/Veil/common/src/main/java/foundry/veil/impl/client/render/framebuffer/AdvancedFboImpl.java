@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
+import static org.lwjgl.opengl.ARBDirectStateAccess.glTextureParameteri;
 import static org.lwjgl.opengl.GL11C.GL_OUT_OF_MEMORY;
 import static org.lwjgl.opengl.GL30C.*;
 
@@ -44,8 +45,8 @@ public abstract class AdvancedFboImpl implements AdvancedFbo {
     public static final Supplier<AdvancedFbo> MAIN_WRAPPER = Suppliers.memoize(() -> VeilRenderBridge.wrap(Minecraft.getInstance()::getMainRenderTarget));
 
     protected int id;
-    protected int width;
-    protected int height;
+    protected final int width;
+    protected final int height;
     protected final AdvancedFboAttachment[] colorAttachments;
     protected final AdvancedFboAttachment depthAttachment;
     protected final boolean hasStencil;
@@ -61,7 +62,7 @@ public abstract class AdvancedFboImpl implements AdvancedFbo {
         this.height = height;
         this.colorAttachments = colorAttachments;
         this.depthAttachment = depthAttachment;
-        this.hasStencil = depthAttachment != null && depthAttachment.getFormat() == GL_DEPTH_STENCIL;
+        this.hasStencil = depthAttachment != null && (depthAttachment.getFormat() == GL_DEPTH24_STENCIL8 || depthAttachment.getFormat() == GL_DEPTH32F_STENCIL8);
         this.debugLabel = debugLabel;
 
         int mask = 0;
@@ -70,6 +71,9 @@ public abstract class AdvancedFboImpl implements AdvancedFbo {
         }
         if (this.hasDepthAttachment()) {
             mask |= GL_DEPTH_BUFFER_BIT;
+        }
+        if (this.hasStencilAttachment()) {
+            mask |= GL_STENCIL_BUFFER_BIT;
         }
         this.clearMask = mask;
         this.drawBuffers = IntStream.range(0, this.colorAttachments.length)
@@ -193,49 +197,71 @@ public abstract class AdvancedFboImpl implements AdvancedFbo {
      */
     public static class Wrapper extends TextureTarget {
 
+        private final float[] clearChannels = new float[]{1.0F, 1.0F, 1.0F, 0.0F};
+
         private final AdvancedFboImpl fbo;
 
         private Wrapper(AdvancedFboImpl fbo) {
             super(fbo.width, fbo.height, fbo.hasDepthAttachment(), Minecraft.ON_OSX);
             this.fbo = fbo;
-            this.createBuffers(this.fbo.getWidth(), this.fbo.getHeight(), Minecraft.ON_OSX);
+            this.width = this.fbo.getWidth();
+            this.height = this.fbo.getHeight();
+            this.viewWidth = this.width;
+            this.viewHeight = this.height;
+            this.frameBufferId = this.fbo.id;
+            this.colorTextureId = this.fbo.isColorTextureAttachment(0) ? this.fbo.getColorTextureAttachment(0).getId() : 0;
+            this.depthBufferId = this.fbo.isDepthTextureAttachment() ? this.fbo.getDepthTextureAttachment().getId() : 0;
         }
 
         @Override
         public void resize(int width, int height, boolean onMac) {
-            VeilRenderSystem.renderThreadExecutor().execute(() -> this.createBuffers(width, height, onMac));
         }
 
         @Override
         public void destroyBuffers() {
-            this.fbo.close();
+            throw new UnsupportedOperationException("Cannot destroy advanced fbo from wrapper");
         }
 
         @Override
         public void createBuffers(int width, int height, boolean onMac) {
-            this.viewWidth = width;
-            this.viewHeight = height;
-            if (this.fbo == null) {
-                return;
-            }
-
-            this.fbo.width = width;
-            this.fbo.height = height;
-            this.width = width;
-            this.height = height;
         }
 
         @Override
         public void setFilterMode(int framebufferFilter) {
             this.filterMode = framebufferFilter;
-            for (int i = 0; i < this.fbo.getColorAttachments(); i++) {
-                this.fbo.getColorAttachment(i).bindAttachment();
-                GlStateManager._texParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, framebufferFilter);
-                GlStateManager._texParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, framebufferFilter);
-                GlStateManager._texParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                GlStateManager._texParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            if (VeilRenderSystem.directStateAccessSupported()) {
+                for (int i = 0; i < this.fbo.getColorAttachments(); i++) {
+                    int texture = this.fbo.getColorTextureAttachment(i).getId();
+                    glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, framebufferFilter);
+                    glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, framebufferFilter);
+                    glTextureParameteri(texture, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                    glTextureParameteri(texture, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                }
+            } else {
+                for (int i = 0; i < this.fbo.getColorAttachments(); i++) {
+                    this.fbo.getColorAttachment(i).bindAttachment();
+                    GlStateManager._texParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, framebufferFilter);
+                    GlStateManager._texParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, framebufferFilter);
+                    GlStateManager._texParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                    GlStateManager._texParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                }
+                GlStateManager._bindTexture(0);
             }
-            GlStateManager._bindTexture(0);
+        }
+
+        @Override
+        public void setClearColor(float red, float green, float blue, float alpha) {
+            super.setClearColor(red, green, blue, alpha);
+            this.clearChannels[0] = red;
+            this.clearChannels[1] = green;
+            this.clearChannels[2] = blue;
+            this.clearChannels[3] = alpha;
+        }
+
+        @Override
+        public void clear(boolean clearError) {
+            RenderSystem.assertOnRenderThreadOrInit();
+            this.fbo.clear(this.clearChannels[0], this.clearChannels[1], this.clearChannels[2], this.clearChannels[3], this.fbo.getClearMask());
         }
 
         @Override

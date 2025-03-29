@@ -40,6 +40,7 @@
     "${mod_id}.rendertype.mixins.json",
     "${mod_id}.resource.mixins.json",
     "${mod_id}.shader.mixins.json",
+    "${mod_id}.scheduler.mixins.json",
     "${mod_id}.tooltip.mixins.json",
     "${mod_id}.fabric.mixins.json"
   ],

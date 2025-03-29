@@ -10,7 +10,11 @@ import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.quasar.data.QuasarParticles;
 import foundry.veil.api.quasar.particle.ParticleEmitter;
 import foundry.veil.api.quasar.particle.ParticleSystemManager;
+import foundry.veil.ext.MinecraftServerExtension;
+import foundry.veil.forge.event.ForgeFreeNativeResourcesEvent;
 import foundry.veil.impl.ClientEnumArgument;
+import foundry.veil.impl.TickTaskSchedulerImpl;
+import foundry.veil.impl.client.VeilClientSchedulerImpl;
 import foundry.veil.impl.client.imgui.VeilImGuiImpl;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -24,8 +28,11 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Locale;
@@ -113,5 +120,15 @@ public class VeilForgeClientEvents {
         if (event.getAction() == GLFW_PRESS && VeilClient.EDITOR_KEY.matchesMouse(event.getButton())) {
             VeilImGuiImpl.get().toggle();
         }
+    }
+
+    @SubscribeEvent
+    public static void clientTick(ClientTickEvent.Pre event) {
+        VeilClientSchedulerImpl.tick();
+    }
+
+    @SubscribeEvent
+    public static void clientStopping(ForgeFreeNativeResourcesEvent event) {
+        VeilClientSchedulerImpl.shutdown();
     }
 }

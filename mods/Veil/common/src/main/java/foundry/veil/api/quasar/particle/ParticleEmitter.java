@@ -95,7 +95,7 @@ public class ParticleEmitter {
         // Perform the removal task first so no more particles are spawned
         this.reset();
         TickTaskScheduler scheduler = particleManager.getScheduler();
-        this.spawnTask = scheduler.scheduleAtFixedRate(this::spawn, 1, data.rate());
+        this.spawnTask = scheduler.scheduleAtFixedRate(this::spawn, 1, data.rate()).toCompletableFuture();
     }
 
     @ApiStatus.Internal
@@ -333,7 +333,7 @@ public class ParticleEmitter {
         if (this.removeTask != null) {
             this.removeTask.cancel(false);
         }
-        this.removeTask = this.particleManager.getScheduler().schedule(this::expire, this.maxLifetime);
+        this.removeTask = this.particleManager.getScheduler().schedule(this::expire, this.maxLifetime).toCompletableFuture();
     }
 
     public @Nullable ResourceLocation getRegistryName() {
