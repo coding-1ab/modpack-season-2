@@ -67,7 +67,7 @@ public class Skin implements NativeResource {
         if (this.instances != skeletons.size()) {
             VertexArrayBuilder format = this.vertexArray.editFormat();
             // The instanced buffer has to be redefined each time it changes size, so re-attach it
-            format.defineVertexBuffer(1, instancedBuffer, 0, 6, 1);
+            format.defineVertexBuffer(1, instancedBuffer, 0, 8, 1);
             if (this.instances == 0) {
                 format.setVertexIAttribute(4, 1, 1, VertexArrayBuilder.DataType.UNSIGNED_BYTE, 0); // Overlay Coordinates
                 format.setVertexIAttribute(5, 1, 1, VertexArrayBuilder.DataType.UNSIGNED_BYTE, 1); // Lightmap Coordinates
@@ -113,7 +113,6 @@ public class Skin implements NativeResource {
         } else {
             glBindBuffer(GL_UNIFORM_BUFFER, boneBuffer);
             glBufferSubData(GL_UNIFORM_BUFFER, 0, buffer);
-            glBindBuffer(GL_UNIFORM_BUFFER, 0);
         }
 
         // Draw
@@ -392,6 +391,10 @@ public class Skin implements NativeResource {
             this.addVertex(x4, y4, z4, u4, v4, normalX, normalY, normalZ);
             this.addQuadIndices(this.nextIndex);
             return this;
+        }
+
+        public int nextIndex() {
+            return this.nextIndex;
         }
 
         private void storeIndices(VertexArray.IndexType indexType, ByteBuffer buffer) {

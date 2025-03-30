@@ -21,6 +21,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Matrix4x3f;
@@ -152,13 +153,40 @@ public class NecromancerRenderDispatcher {
 
     public static class Immediate extends RendererImpl {
 
-        @Override
-        public void draw(RenderType renderType, Skeleton skeleton, Skin skin, float partialTicks) {
+        private final Matrix4x3f affineTransform;
 
+        private Immediate() {
+            this.affineTransform = new Matrix4x3f();
         }
 
         @Override
-        public VertexConsumer getBuffer(RenderType renderType) {
+        public void draw(RenderType renderType, Skeleton skeleton, Skin skin, float partialTicks) {
+            try (MemoryStack stack = MemoryStack.stackPush()) {
+                ByteBuffer instancedData = stack.malloc(8);
+                instancedData.put(0, (byte) this.overlay);
+                instancedData.put(1, (byte) this.light);
+                instancedData.put(2, (byte) this.r);
+                instancedData.put(3, (byte) this.g);
+                instancedData.put(4, (byte) this.b);
+                instancedData.put(5, (byte) this.a);
+                instancedData.put(6, (byte) 0);
+                instancedData.put(7, (byte) 0);
+                this.affineTransform.set(this.transform);
+
+                if (instancedBuffer == 0) {
+                    instancedBuffer = GlStateManager._glGenBuffers();
+                }
+                if (boneBuilder == null) {
+                    boneBuilder = new ByteBufferBuilder(BASE_INSTANCES * Skeleton.UNIFORM_STRIDE);
+                }
+                VertexArray.upload(instancedBuffer, instancedData, VertexArray.DrawUsage.DYNAMIC);
+                updateBlockSize(1, skin.getSkeletonDataSize());
+                skin.render(renderType, List.of(this.affineTransform), List.of(skeleton), instancedBuffer, boneBuilder, boneBuffer, boneBlock, FloatList.of(partialTicks));
+            }
+        }
+
+        @Override
+        public @NotNull VertexConsumer getBuffer(@NotNull RenderType renderType) {
             return Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(renderType);
         }
     }
@@ -184,7 +212,7 @@ public class NecromancerRenderDispatcher {
         }
 
         @Override
-        public VertexConsumer getBuffer(RenderType renderType) {
+        public @NotNull VertexConsumer getBuffer(@NotNull RenderType renderType) {
             BufferBuilder buffer = this.buffers.get(renderType);
             if (buffer != null) {
                 return buffer;
@@ -248,11 +276,11 @@ public class NecromancerRenderDispatcher {
             this.skeletons = new ObjectArrayList<>();
             this.partialTicks = new FloatArrayList();
 
-            this.instancedData = MemoryUtil.memAlloc(BASE_INSTANCES * 6); // Save space for 100 instances
+            this.instancedData = MemoryUtil.memAlloc(BASE_INSTANCES * 8); // Save space for 100 instances
         }
 
         public void add(Matrix4fc transform, Skeleton skeleton, int overlay, int light, int r, int g, int b, int a, float partialTicks) {
-            if (this.instancedData.capacity() - this.instancedData.position() < 6) {
+            if (this.instancedData.capacity() - this.instancedData.position() < 8) {
                 this.instancedData = MemoryUtil.memRealloc(this.instancedData, (int) (this.instancedData.capacity() * 1.5));
             }
             this.instancedData.put((byte) overlay);
@@ -261,6 +289,8 @@ public class NecromancerRenderDispatcher {
             this.instancedData.put((byte) g);
             this.instancedData.put((byte) b);
             this.instancedData.put((byte) a);
+            this.instancedData.put((byte) 0);
+            this.instancedData.put((byte) 0);
             this.transforms.add(new Matrix4x3f().set(transform));
             this.skeletons.add(skeleton);
             this.partialTicks.add(partialTicks);

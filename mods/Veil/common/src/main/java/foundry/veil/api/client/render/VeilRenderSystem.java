@@ -7,6 +7,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import foundry.veil.Veil;
+import foundry.veil.api.client.necromancer.render.NecromancerRenderer;
 import foundry.veil.api.client.render.ext.VeilDebug;
 import foundry.veil.api.client.render.ext.VeilMultiBind;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
@@ -1062,6 +1063,13 @@ public final class VeilRenderSystem {
      */
     public static CullFrustum getCullingFrustum() {
         return ((LevelRendererExtension) Minecraft.getInstance().levelRenderer).veil$getCullFrustum();
+    }
+
+    /**
+     * @return The current necromancer renderer
+     */
+    public static NecromancerRenderer getNecromancerRenderer() {
+        return NecromancerRenderDispatcher.getRenderer();
     }
 
     // Internal
