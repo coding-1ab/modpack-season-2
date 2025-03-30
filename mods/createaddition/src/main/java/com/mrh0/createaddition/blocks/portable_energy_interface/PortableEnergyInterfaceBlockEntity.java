@@ -7,46 +7,50 @@ import com.mrh0.createaddition.config.CommonConfig;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.neoforge.energy.EnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 public class PortableEnergyInterfaceBlockEntity extends PortableStorageInterfaceBlockEntity {
 
-	protected LazyOptional<IEnergyStorage> capability = this.createEmptyHandler();
-	protected LazyOptional<PortableEnergyInterfacePeripheral> peripheral;
+	protected IEnergyStorage capability;
+	//protected LazyOptional<PortableEnergyInterfacePeripheral> peripheral;
 
 	public PortableEnergyInterfaceBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 
-		if (CreateAddition.CC_ACTIVE)
-			this.peripheral = LazyOptional.of(() -> Peripherals.createPortableEnergyInterfacePeripheral(this));
+		capability = this.createEmptyHandler();
+
+		//if (CreateAddition.CC_ACTIVE)
+		//	this.peripheral = LazyOptional.of(() -> Peripherals.createPortableEnergyInterfacePeripheral(this));
 	}
 
 	public void startTransferringTo(Contraption contraption, float distance) {
-		LazyOptional<IEnergyStorage> oldcap = this.capability;
-		this.capability = LazyOptional.of(() -> new InterfaceEnergyHandler(PortableEnergyManager.get(contraption)));
-		oldcap.invalidate();
+		IEnergyStorage oldcap = this.capability;
+		this.capability =  new InterfaceEnergyHandler(PortableEnergyManager.get(contraption));
+		//oldcap.invalidate();
 		super.startTransferringTo(contraption, distance);
 	}
 
 	@Override
 	protected void invalidateCapability() {
-		this.capability.invalidate();
+		if (level == null) return;
+		level.invalidateCapabilities(getBlockPos());
+		// this.capability.invalidate();
 	}
 
 	@Override
 	protected void stopTransferring() {
-		LazyOptional<IEnergyStorage> oldcap = this.capability;
+		IEnergyStorage oldcap = this.capability;
 		this.capability = this.createEmptyHandler();
-		oldcap.invalidate();
+		//oldcap.invalidate();
 		super.stopTransferring();
 	}
 
-	private LazyOptional<IEnergyStorage> createEmptyHandler() {
-		return LazyOptional.of(() -> new InterfaceEnergyHandler(new EnergyStorage(0)));
+	private IEnergyStorage createEmptyHandler() {
+		return new InterfaceEnergyHandler(new EnergyStorage(0));
 	}
 
 	// Implement protected methods.
@@ -75,11 +79,11 @@ public class PortableEnergyInterfaceBlockEntity extends PortableStorageInterface
 	// CC
 
 	public int getEnergy() {
-		return this.capability.map(IEnergyStorage::getEnergyStored).orElse(-1);
+		return this.capability.getEnergyStored();
 	}
 
 	public int getCapacity() {
-		return this.capability.map(IEnergyStorage::getMaxEnergyStored).orElse(-1);
+		return this.capability.getMaxEnergyStored();
 	}
 
 	public class InterfaceEnergyHandler implements IEnergyStorage {

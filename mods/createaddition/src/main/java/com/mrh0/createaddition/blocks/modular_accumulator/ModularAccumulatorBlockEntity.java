@@ -9,7 +9,7 @@ import com.mrh0.createaddition.energy.IMultiTileEnergyContainer;
 import com.mrh0.createaddition.energy.InternalEnergyStorage;
 import com.mrh0.createaddition.network.EnergyNetworkPacket;
 import com.mrh0.createaddition.network.IObserveTileEntity;
-import com.mrh0.createaddition.network.ObservePacket;
+import com.mrh0.createaddition.network.ObservePacketLegacy;
 import com.mrh0.createaddition.sound.CASoundScapes;
 import com.mrh0.createaddition.util.Util;
 import com.simibubi.create.Create;
@@ -524,7 +524,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		ModularAccumulatorBlockEntity controllerTE = getControllerBE();
 		if (controllerTE == null) return false;
 
-		ObservePacket.send(worldPosition, 0);
+		ObservePacketLegacy.send(worldPosition, 0);
 
 		String spacing = " ";
 		tooltip.add(Component.literal(spacing)
@@ -544,7 +544,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 	public void observe() {}
 
 	@Override
-	public void onObserved(ServerPlayer player, ObservePacket pack) {
+	public void onObserved(ServerPlayer player, ObservePacketLegacy pack) {
 		ModularAccumulatorBlockEntity controllerTE = getControllerBE();
 		if (controllerTE == null) return;
 

@@ -1,0 +1,35 @@
+package com.mrh0.createaddition.network;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+public class ServerPayloadHandler {
+    public static void handleObservePayload(final ObservePacketPayload pkt, final IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            try {
+                ServerPlayer player = (ServerPlayer) ctx.player();
+
+                sendUpdate(pkt, player);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private static void sendUpdate(ObservePacketPayload pkt, ServerPlayer player) {
+        BlockEntity be = (BlockEntity) player.level().getBlockEntity(pkt.pos());
+        if (be != null) {
+            if (be instanceof IObserveTileEntity) {
+                IObserveTileEntity ote = (IObserveTileEntity) be;
+                ote.onObserved(player, pkt);
+                Packet<ClientGamePacketListener> supdatepacket = be.getUpdatePacket();
+                if (supdatepacket != null) player.connection.send(supdatepacket);
+            }
+        }
+    }
+}

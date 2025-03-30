@@ -8,6 +8,7 @@ import com.mrh0.createaddition.compat.computercraft.ElectricMotorPeripheral;
 import com.mrh0.createaddition.compat.computercraft.Peripherals;
 import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.energy.InternalEnergyStorage;
+import com.mrh0.createaddition.index.CABlockEntities;
 import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.sound.CASoundScapes;
 import com.mrh0.createaddition.util.Util;
@@ -22,21 +23,22 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 	protected float motorSpeed;
 	protected ScrollValueBehaviour generatedSpeed;
 	protected final InternalEnergyStorage energy;
-	private LazyOptional<net.minecraftforge.energy.IEnergyStorage> lazyEnergy;
-	private LazyOptional<ElectricMotorPeripheral> lazyPeripheral = null;
+	private final IEnergyStorage capability;
+	//private LazyOptional<ElectricMotorPeripheral> lazyPeripheral = null;
 
 	private boolean cc_update_rpm = false;
 	private float cc_new_rpm = 32.0f;
@@ -46,11 +48,21 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 	public ElectricMotorBlockEntity(BlockEntityType<? extends ElectricMotorBlockEntity> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 		energy = new InternalEnergyStorage(CommonConfig.ELECTRIC_MOTOR_CAPACITY.get(), CommonConfig.ELECTRIC_MOTOR_MAX_INPUT.get(), 0);
-		lazyEnergy = LazyOptional.of(() -> energy);
+		capability = energy;
+		/*
 		if(CreateAddition.CC_ACTIVE) {
 			lazyPeripheral = LazyOptional.of(() -> Peripherals.createElectricMotorPeripheral(this));
 		}
+		*/
 		setLazyTickRate(20);
+	}
+
+	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+		event.registerBlockEntity(
+				Capabilities.EnergyStorage.BLOCK,
+				CABlockEntities.ELECTRIC_MOTOR.get(),
+				(be, context) -> be.capability
+		);
 	}
 
 	@Override
@@ -64,7 +76,7 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 		generatedSpeed.between(-CommonConfig.ELECTRIC_MOTOR_RPM_RANGE.get(), CommonConfig.ELECTRIC_MOTOR_RPM_RANGE.get());
 		generatedSpeed.value = 32;
 		//generatedSpeed.withUnit(i -> Lang.translateDirect("generic.unit.rpm"));
-		generatedSpeed.withCallback(i -> this.updateGeneratedRotation(i));
+		generatedSpeed.withCallback(this::updateGeneratedRotation);
 		//generatedSpeed.withStepFunction(ElectricMotorTileEntity::step);
 		behaviours.add(generatedSpeed);
 	}
@@ -126,39 +138,18 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 		return AllBlocks.WATER_WHEEL.get();
 	}
 
-	public InternalEnergyStorage getEnergyStorage() {
-		return energy;
+	@Override
+	protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+		super.read(tag, registries, clientPacket);
+		energy.read(tag);
+		active = tag.getBoolean("active");
 	}
 
 	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-		if(cap == ForgeCapabilities.ENERGY) return lazyEnergy.cast();
-		if(CreateAddition.CC_ACTIVE) {
-			if(Peripherals.isPeripheral(cap)) return lazyPeripheral.cast();
-		}
-		return super.getCapability(cap, side);
-	}
-
-	public boolean isEnergyInput(Direction side) {
-		return true;
-	}
-
-	public boolean isEnergyOutput(Direction side) {
-		return false;
-	}
-
-	@Override
-	public void read(CompoundTag compound, boolean clientPacket) {
-		super.read(compound, clientPacket);
-		energy.read(compound);
-		active = compound.getBoolean("active");
-	}
-
-	@Override
-	public void write(CompoundTag compound, boolean clientPacket) {
-		super.write(compound, clientPacket);
-		energy.write(compound);
-		compound.putBoolean("active", active);
+	public void writeSafe(CompoundTag tag, HolderLookup.Provider registries) {
+		super.writeSafe(tag, registries);
+		energy.write(tag);
+		tag.putBoolean("active", active);
 	}
 
 	@Override
@@ -168,13 +159,6 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 
 	public static int getEnergyConsumptionRate(float rpm) {
 		return Math.abs(rpm) > 0 ? (int)Math.max((double) CommonConfig.FE_RPM.get() * ((double)Math.abs(rpm) / 256d), (double) CommonConfig.ELECTRIC_MOTOR_MINIMUM_CONSUMPTION.get()) : 0;
-	}
-
-	@Override
-	public void remove() {
-		lazyEnergy.invalidate();
-		if(lazyPeripheral != null) lazyPeripheral.invalidate();
-		super.remove();
 	}
 
 	// CC

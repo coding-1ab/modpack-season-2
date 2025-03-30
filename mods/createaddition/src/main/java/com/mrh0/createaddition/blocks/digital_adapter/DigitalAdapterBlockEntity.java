@@ -3,6 +3,7 @@ package com.mrh0.createaddition.blocks.digital_adapter;
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.compat.computercraft.DigitalAdapterPeripheral;
 import com.mrh0.createaddition.compat.computercraft.Peripherals;
+import com.mrh0.createaddition.index.CABlockEntities;
 import com.simibubi.create.content.contraptions.bearing.MechanicalBearingBlockEntity;
 import com.simibubi.create.content.contraptions.elevator.ElevatorPulleyBlockEntity;
 import com.simibubi.create.content.contraptions.piston.MechanicalPistonBlockEntity;
@@ -18,6 +19,8 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -38,6 +41,16 @@ public class DigitalAdapterBlockEntity extends BlockEntity {
         //if (CreateAddition.CC_ACTIVE)
         //    this.peripheral = LazyOptional.of(() -> Peripherals.createDigitalAdapterPeripheral(this));
     }
+
+    /*
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(
+                Capabilities.EnergyStorage.BLOCK,
+                CABlockEntities.ALTERNATOR.get(),
+                (be, context) -> be.capability
+        );
+    }
+    */
 
     private int line = 1;
 

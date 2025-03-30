@@ -18,7 +18,7 @@ import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.util.Util;
 import com.mrh0.createaddition.network.EnergyNetworkPacket;
 import com.mrh0.createaddition.network.IObserveTileEntity;
-import com.mrh0.createaddition.network.ObservePacket;
+import com.mrh0.createaddition.network.ObservePacketLegacy;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -38,8 +38,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-
-import javax.annotation.Nonnull;
 
 public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireNode, IHaveGoggleInformation, IObserveTileEntity {
 
@@ -374,7 +372,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 	}
 
 	@Override
-	public void onObserved(ServerPlayer player, ObservePacket pack) {
+	public void onObserved(ServerPlayer player, ObservePacketLegacy pack) {
 		if(isNetworkValid(pack.getNode()))
 			EnergyNetworkPacket.send(worldPosition, getNetwork(pack.getNode()).getPulled(), getNetwork(pack.getNode()).getPushed(), player);
 	}
@@ -386,7 +384,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 			return false;
 		int node = getAvailableNode(ray.getLocation());
 
-		ObservePacket.send(worldPosition, node);
+		ObservePacketLegacy.send(worldPosition, node);
 
 		String spacing = " ";
 		tooltip.add(Component.literal(spacing)

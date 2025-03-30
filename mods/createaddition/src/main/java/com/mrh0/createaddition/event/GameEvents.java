@@ -1,52 +1,47 @@
 package com.mrh0.createaddition.event;
 
-import com.mrh0.createaddition.blocks.crops.HarmfulPlantBlock;
 import com.mrh0.createaddition.blocks.liquid_blaze_burner.LiquidBlazeBurnerBlock;
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyManager;
 import com.mrh0.createaddition.debug.CADebugger;
 import com.mrh0.createaddition.energy.network.EnergyNetworkManager;
 import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.index.CAItems;
-import com.mrh0.createaddition.network.ObservePacket;
+import com.mrh0.createaddition.network.ObservePacketPayload;
 import com.simibubi.create.AllBlocks;
 
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
-import java.util.Random;
-
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class GameEvents {
-
 	@SubscribeEvent
-	public static void worldTickEvent(TickEvent.LevelTickEvent evt) {
-		if(evt.level.isClientSide()) return;
-		if(evt.phase == Phase.END) return;
-		EnergyNetworkManager.tickWorld(evt.level);
+	public static void levelTickEvent(LevelTickEvent evt) {
+		if(evt.getLevel().isClientSide()) return;
+		// if (evt == Phase.END) return;
+		EnergyNetworkManager.tickWorld(evt.getLevel());
 	}
 
 	@SubscribeEvent
-	public static void serverTickEvent(TickEvent.ServerTickEvent evt) {
-		if(evt.phase == Phase.END) return;
+	public static void serverTickEvent(ServerTickEvent evt) {
+		//if (evt.phase == Phase.END) return;
 		// Using ServerTick instead of WorldTick because some contraptions can switch worlds.
 		PortableEnergyManager.tick();
 	}
 
 	@SubscribeEvent
-	public static void clientTickEvent(TickEvent.ClientTickEvent evt) {
-		if(evt.phase == Phase.START) return;
-		ObservePacket.tick();
+	public static void clientTickEvent(ClientTickEvent evt) {
+		//if (evt.phase == Phase.START) return;
+		ObservePacketPayload.tick();
 		CADebugger.tick();
 	}
 

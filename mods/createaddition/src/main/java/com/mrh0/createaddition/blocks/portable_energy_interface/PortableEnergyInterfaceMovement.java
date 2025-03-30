@@ -19,8 +19,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -57,9 +57,7 @@ public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 	public void visitNewPosition(MovementContext context, BlockPos pos) {
 		boolean onCarriage = context.contraption instanceof CarriageContraption;
 		if (!onCarriage || !(context.motion.length() > 0.25D)) {
-			if (!this.findInterface(context, pos)) {
-				context.data.remove(_workingPos_);
-			}
+			if (!this.findInterface(context, pos)) context.data.remove(_workingPos_);
 		}
 	}
 
@@ -74,12 +72,10 @@ public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 			BlockPos pos;
 			if (context.world.isClientSide) {
 				pos = BlockPos.containing(context.position);
-				if (!this.findInterface(context, pos)) {
-					this.reset(context);
-				}
+				if (!this.findInterface(context, pos)) this.reset(context);
 
 			} else if (context.data.contains(_workingPos_)) {
-				pos = NbtUtils.readBlockPos(context.data.getCompound(_workingPos_));
+				pos = NbtUtils.readBlockPos(context.data, _workingPos_).orElse(BlockPos.ZERO); // Should never orElse
 				Vec3 target = VecHelper.getCenterOf(pos);
 				if (!context.stall && !onCarriage && context.position.closerThan(target, target.distanceTo(context.position.add(context.motion)))) {
 					context.stall = true;
@@ -96,10 +92,7 @@ public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 						}
 						boolean timerBelow = stationaryInterface.getTransferTimer() <= 4;
 						stationaryInterface.keepAlive = 2;
-						if (context.stall && timerBelow) {
-							context.stall = false;
-						}
-
+						if (context.stall && timerBelow) context.stall = false;
 					}
 				}
 			}
@@ -110,22 +103,17 @@ public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 		Contraption var4 = context.contraption;
 		if (var4 instanceof CarriageContraption) {
 			CarriageContraption cc = (CarriageContraption)var4;
-			if (!cc.notInPortal()) {
-				return false;
-			}
+			if (!cc.notInPortal()) return false;
 		}
 
 		Optional<Direction> currentFacingIfValid = this.getCurrentFacingIfValid(context);
-		if (!currentFacingIfValid.isPresent()) {
-			return false;
-		} else {
+		if (!currentFacingIfValid.isPresent()) return false;
+		else {
 			Direction currentFacing = currentFacingIfValid.get();
 			PortableEnergyInterfaceBlockEntity psi = this.findStationaryInterface(context.world, pos, context.state, currentFacing);
-			if (psi == null) {
-				return false;
-			} else if (psi.isPowered()) {
-				return false;
-			} else {
+			if (psi == null) return false;
+			else if (psi.isPowered()) return false;
+			else {
 				context.data.put(_workingPos_, NbtUtils.writeBlockPos(psi.getBlockPos()));
 				if (!context.world.isClientSide) {
 					Vec3 diff = VecHelper.getCenterOf(psi.getBlockPos()).subtract(context.position);
@@ -163,11 +151,8 @@ public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 	private PortableEnergyInterfaceBlockEntity findStationaryInterface(Level world, BlockPos pos, BlockState state, Direction facing) {
 		for(int i = 0; i < 2; ++i) {
 			PortableEnergyInterfaceBlockEntity interfaceAt = this.getStationaryInterfaceAt(world, pos.relative(facing, i), state, facing);
-			if (interfaceAt != null) {
-				return interfaceAt;
-			}
+			if (interfaceAt != null) return interfaceAt;
 		}
-
 		return null;
 	}
 
@@ -176,16 +161,10 @@ public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 		if (te instanceof PortableEnergyInterfaceBlockEntity) {
 			PortableEnergyInterfaceBlockEntity psi = (PortableEnergyInterfaceBlockEntity)te;
 			BlockState blockState = world.getBlockState(pos);
-			if (blockState.getBlock() != state.getBlock()) {
-				return null;
-			} else if (blockState.getValue(PortableEnergyInterfaceBlock.FACING) != facing.getOpposite()) {
-				return null;
-			} else {
-				return psi.isPowered() ? null : psi;
-			}
-		} else {
-			return null;
-		}
+			if (blockState.getBlock() != state.getBlock()) return null;
+			else if (blockState.getValue(PortableEnergyInterfaceBlock.FACING) != facing.getOpposite()) return null;
+			else return psi.isPowered() ? null : psi;
+		} else return null;
 	}
 
 	private Optional<Direction> getCurrentFacingIfValid(MovementContext context) {

@@ -7,19 +7,19 @@ import com.mrh0.createaddition.sound.CASoundScapes;
 import com.mrh0.createaddition.util.ClientMinecraftWrapper;
 import com.mrh0.createaddition.util.Util;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 
-@Mod.EventBusSubscriber(modid = CreateAddition.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@EventBusSubscriber(modid = CreateAddition.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientEventHandler {
 
     public static boolean clientRenderHeldWire = false;
 
     @SubscribeEvent
-    public static void playerRendererEvent(TickEvent.ClientTickEvent evt) {
+    public static void playerRendererEvent(ClientTickEvent evt) {
         if(ClientMinecraftWrapper.getPlayer() == null) return;
         ItemStack stack = ClientMinecraftWrapper.getPlayer().getInventory().getSelected();
         if(stack.isEmpty()) return;
@@ -28,42 +28,11 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void tickSoundscapes(TickEvent.ClientTickEvent event) {
+    public static void tickSoundscapes(ClientTickEvent event) {
         CASoundScapes.tick();
     }
 
-	// Fluid Fog TODO: update!
-	/*@SubscribeEvent
-	public static void getFogDensity(EntityViewRenderEvent.FogDensity event) {
-		Camera info = event.getInfo();
-		FluidState fluidState = info.getFluidInCamera();
-		if (fluidState.isEmpty())
-			return;
-		Fluid fluid = fluidState.getType();
-
-		if (fluid.isSame(CAFluids.SEED_OIL.get())) {
-			event.setDensity(3.5f);
-			event.setCanceled(true);
-			return;
-		}
-	}
-
-	@SubscribeEvent
-	public static void getFogColor(EntityViewRenderEvent.FogColors event) {
-		Camera info = event.getInfo();
-		FluidState fluidState = info.getFluidInCamera();
-		if (fluidState.isEmpty())
-			return;
-		Fluid fluid = fluidState.getType();
-
-		if (fluid.isSame(CAFluids.SEED_OIL.get())) {
-			event.setRed(70 / 256f);
-			event.setGreen(74 / 256f);
-			event.setBlue(52 / 256f);
-		}
-	}*/
-
-    @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
     public static class ModBusEvents {
         @SubscribeEvent
         public static void registerReloadListener(RegisterClientReloadListenersEvent event) {

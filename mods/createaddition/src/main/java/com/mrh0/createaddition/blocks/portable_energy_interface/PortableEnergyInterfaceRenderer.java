@@ -35,8 +35,7 @@ public class PortableEnergyInterfaceRenderer extends SafeBlockEntityRenderer<Por
 	@Override
 	protected void renderSafe(PortableEnergyInterfaceBlockEntity be, float partialTicks, PoseStack ms,
 							  MultiBufferSource buffer, int light, int overlay) {
-		if (VisualizationManager.supportsVisualization(be.getLevel()))
-			return;
+		if (VisualizationManager.supportsVisualization(be.getLevel())) return;
 
 		BlockState blockState = be.getBlockState();
 		float progress = be.getExtensionDistance(partialTicks);
@@ -88,16 +87,13 @@ public class PortableEnergyInterfaceRenderer extends SafeBlockEntityRenderer<Por
 
 	static PortableEnergyInterfaceBlockEntity getTargetPSI(MovementContext context) {
 		String _workingPos_ = PortableEnergyInterfaceMovement._workingPos_;
-		if (!context.data.contains(_workingPos_))
-			return null;
+		if (!context.data.contains(_workingPos_)) return null;
 
-		BlockPos pos = NbtUtils.readBlockPos(context.data.getCompound(_workingPos_));
+		BlockPos pos = NbtUtils.readBlockPos(context.data, _workingPos_).orElse(BlockPos.ZERO); // Should never else
 		BlockEntity blockEntity = context.world.getBlockEntity(pos);
-		if (!(blockEntity instanceof PortableEnergyInterfaceBlockEntity psi))
-			return null;
+		if (!(blockEntity instanceof PortableEnergyInterfaceBlockEntity psi)) return null;
 
-		if (!psi.isTransferring())
-			return null;
+		if (!psi.isTransferring()) return null;
 		return psi;
 	}
 

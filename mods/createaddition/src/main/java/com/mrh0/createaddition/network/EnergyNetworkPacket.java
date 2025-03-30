@@ -1,16 +1,12 @@
 package com.mrh0.createaddition.network;
 
-import java.util.function.Supplier;
-
 import com.mrh0.createaddition.CreateAddition;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
 
-
+/*
 public class EnergyNetworkPacket {
 	private BlockPos pos;
 	private int demand;
@@ -59,3 +55,4 @@ public class EnergyNetworkPacket {
 		CreateAddition.Network.send(PacketDistributor.PLAYER.with(() -> player), new EnergyNetworkPacket(pos, demand, buff));
 	}
 }
+*/
