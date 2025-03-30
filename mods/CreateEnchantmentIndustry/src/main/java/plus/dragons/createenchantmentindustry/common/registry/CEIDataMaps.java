@@ -104,8 +104,8 @@ public class CEIDataMaps {
         provider.builder(EXPERIENCE_FUEL)
                 .add(CEIItems.EXPERIENCE_CAKE, ExperienceFuel.special(1000), false)
                 .add(CEIItems.EXPERIENCE_CAKE_SLICE, ExperienceFuel.special(250), false)
-                .add(CEIBlocks.SUPER_EXPERIENCE_BLOCK.getId(), ExperienceFuel.special(81), false)
-                .add(CEIItems.SUPER_EXPERIENCE_NUGGET, ExperienceFuel.special(9), false)
+                .add(CEIBlocks.SUPER_EXPERIENCE_BLOCK.getId(), ExperienceFuel.special(27), false)
+                .add(CEIItems.SUPER_EXPERIENCE_NUGGET, ExperienceFuel.special(3), false)
                 .add(AllBlocks.EXPERIENCE_BLOCK.getId(), ExperienceFuel.normal(27), false)
                 .add(AllItems.EXP_NUGGET, ExperienceFuel.normal(3), false)
                 .add(ResourceLocation.fromNamespaceAndPath("create_sa", "experience_heap"),

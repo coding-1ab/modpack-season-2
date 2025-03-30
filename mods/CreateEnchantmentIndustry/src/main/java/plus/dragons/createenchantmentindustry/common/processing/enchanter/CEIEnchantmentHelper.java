@@ -33,13 +33,13 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
-public class EnchantingHelper {
+public class CEIEnchantmentHelper {
     public static int getEnchantmentCost(Holder<Enchantment> holder, int level) {
         var enchantment = holder.value();
         int minCost = enchantment.getMinCost(level);
-        int levelCost = Math.max(level, enchantment.getAnvilCost());
+        int experienceLevel = Math.max(level, enchantment.getAnvilCost());
         int experience = 0;
-        for (int i = 0; i < levelCost; i++) {
+        for (int i = 0; i < experienceLevel; i++) {
             experience += ExperienceHelper.getExperienceForNextLevel(minCost++);
         }
         return experience;
@@ -83,7 +83,7 @@ public class EnchantingHelper {
         WeightedRandom.getRandomItem(random, available).ifPresent(list::add);
         while (random.nextInt(50) <= adjustedLevel) {
             if (!list.isEmpty())
-                if (special && CEIConfig.enchantments().canIgnoreEnchantmentCompatibility.get()) {
+                if (special && CEIConfig.enchantments().ignoreEnchantmentCompatibility.get()) {
                     available.removeIf(instance -> instance.enchantment.equals(list.getLast().enchantment));
                 } else {
                     EnchantmentHelper.filterCompatibleEnchantments(available, list.getLast());

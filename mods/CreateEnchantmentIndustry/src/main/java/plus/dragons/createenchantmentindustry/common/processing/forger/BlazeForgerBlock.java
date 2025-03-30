@@ -19,6 +19,7 @@
 package plus.dragons.createenchantmentindustry.common.processing.forger;
 
 import com.mojang.serialization.MapCodec;
+import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -55,15 +56,21 @@ public class BlazeForgerBlock extends BlazeExperienceBlock<BlazeForgerBlockEntit
         if (stack.isEmpty())
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         var result = super.useItemOn(stack, state, level, pos, player, hand, hitResult);
-        if (result.consumesAction())
+        if (result.result() != InteractionResult.PASS)
             return result;
         var blockEntity = getBlockEntity(level, pos);
         if (blockEntity == null)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         var remainder = blockEntity.insertItem(stack, false);
-        return ItemStack.isSameItemSameComponents(stack, remainder)
-                ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
-                : ItemInteractionResult.sidedSuccess(level.isClientSide);
+        if (ItemStack.isSameItemSameComponents(stack, remainder))
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        player.setItemInHand(hand, remainder);
+        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        IBE.onRemove(state, level, pos, newState);
     }
 
     @Override

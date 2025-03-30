@@ -38,7 +38,7 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.neoforged.neoforge.common.CommonHooks;
 import plus.dragons.createdragonsplus.util.Pairs;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
-import plus.dragons.createenchantmentindustry.common.processing.enchanter.EnchantingHelper;
+import plus.dragons.createenchantmentindustry.common.processing.enchanter.CEIEnchantmentHelper;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 
 public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
@@ -55,7 +55,7 @@ public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
                   enchantment.level);
         this.enchantment = enchantment;
         this.enchantmentBook = EnchantedBookItem.createForEnchantment(enchantment);
-        this.cost = EnchantingHelper.getEnchantmentCost(enchantment.enchantment, enchantment.level);
+        this.cost = CEIEnchantmentHelper.getEnchantmentCost(enchantment.enchantment, enchantment.level);
     }
 
     public static MapCodec<EnchantedBookPrintingRecipeJEI> createCodec(ICodecHelper codecHelper, IRecipeManager recipeManager) {

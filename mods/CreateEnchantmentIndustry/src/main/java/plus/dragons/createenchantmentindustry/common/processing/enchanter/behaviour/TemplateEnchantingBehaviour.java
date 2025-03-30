@@ -20,11 +20,10 @@ package plus.dragons.createenchantmentindustry.common.processing.enchanter.behav
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.random.WeightedRandom;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
-import plus.dragons.createenchantmentindustry.common.processing.enchanter.EnchantingHelper;
+import plus.dragons.createenchantmentindustry.common.processing.enchanter.CEIEnchantmentHelper;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.EnchantingTemplateItem;
 
 public class TemplateEnchantingBehaviour extends EnchantingBehaviour {
@@ -39,9 +38,8 @@ public class TemplateEnchantingBehaviour extends EnchantingBehaviour {
         if (enchantments.isEmpty())
             return false;
         if (stack.getItem() instanceof EnchantingTemplateItem template) {
-            if (!stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty())
-                return false;
-            return !special || template.isSpecial();
+            if (stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty())
+                return !special || template.isSpecial();
         }
         return false;
     }
@@ -52,16 +50,10 @@ public class TemplateEnchantingBehaviour extends EnchantingBehaviour {
     }
 
     @Override
-    public ItemStack getResult(Level level, ItemStack stack, RandomSource random, boolean special, boolean struck) {
-        var enchantments = EnchantingHelper.selectEnchantments(random, enchantingLevel, this.enchantments, special);
+    public ItemStack getResult(Level level, ItemStack stack, RandomSource random, boolean special) {
+        var enchantments = CEIEnchantmentHelper.selectEnchantments(random, enchantingLevel, this.enchantments, special);
         if (enchantments.size() > 1)
             enchantments.remove(random.nextInt(enchantments.size()));
-        if (struck) {
-            if (enchantments.size() > 1)
-                enchantments.remove(random.nextInt(enchantments.size()));
-            var curses = getAvailableCurses(level, stack);
-            WeightedRandom.getRandomItem(random, curses).ifPresent(enchantments::add);
-        }
         return stack.getItem().applyEnchantments(stack, enchantments);
     }
 }

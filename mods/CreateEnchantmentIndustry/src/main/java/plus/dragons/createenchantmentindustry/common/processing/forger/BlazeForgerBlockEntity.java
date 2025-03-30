@@ -18,18 +18,28 @@
 
 package plus.dragons.createenchantmentindustry.common.processing.forger;
 
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.item.ItemHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import java.util.List;
 import java.util.function.Consumer;
+import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
@@ -43,6 +53,7 @@ import plus.dragons.createenchantmentindustry.client.model.CEIPartialModels;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.BlazeExperienceBlockEntity;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
+import plus.dragons.createenchantmentindustry.util.CEILang;
 
 @FieldsNullabilityUnknownByDefault
 public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
@@ -50,11 +61,11 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
     protected boolean special;
     protected boolean cursed;
     protected int processingTime = -1;
-    private boolean applied = true;
-
+    protected final BlazeForgerInventory inventory;
 
     public BlazeForgerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+        this.inventory = new BlazeForgerInventory(this);
     }
 
     public @Nullable IFluidHandler getFluidHandler(@Nullable Direction side) {
@@ -97,12 +108,14 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
     public void write(CompoundTag compound, Provider registries, boolean clientPacket) {
         super.write(compound, registries, clientPacket);
         compound.putInt("ProcessingTime", processingTime);
+        compound.put("Inventory", inventory.serializeNBT(registries));
     }
 
     @Override
     protected void read(CompoundTag compound, Provider registries, boolean clientPacket) {
         super.read(compound, registries, clientPacket);
         processingTime = compound.getInt("ProcessingTime");
+        inventory.deserializeNBT(registries, compound.getCompound("Inventory"));
     }
 
     @Override
@@ -111,16 +124,85 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
     }
 
     @Override
+    public void destroy() {
+        super.destroy();
+        if (level != null) {
+            ItemHelper.dropContents(level, worldPosition, inventory);
+        }
+    }
+
+    @Override
     public void tick() {
         super.tick();
+        boolean update = false;
+        boolean special = getHeatLevelFromBlock() == HeatLevel.SEETHING;
+        if (this.special != special) {
+            this.special = special;
+            update = true;
+        }
+        var strikePos = getStrikePos();
+        boolean cursed = special && !worldPosition.equals(strikePos);
+        if (this.cursed != cursed) {
+            this.cursed = cursed;
+            update = true;
+        }
+        if (!(level instanceof ServerLevel serverLevel))
+            return;
+        if (update) {
+            inventory.updateResult();
+            notifyUpdate();
+        }
+        var cost = inventory.getExperienceCost();
+        if (cost > 0 && consumeExperience(cost, special, true)) {
+            if (processingTime < 0) {
+                processingTime = FORGING_TIME;
+                notifyUpdate();
+                return;
+            }
+            if (processingTime > 0) {
+                processingTime--;
+                notifyUpdate();
+                return;
+            }
+            if (special && !cursed && strikeLightning(serverLevel, strikePos)) {
+                serverLevel.destroyBlock(worldPosition, false);
+                serverLevel.setBlockAndUpdate(worldPosition, AllBlocks.LIT_BLAZE_BURNER.getDefaultState());
+                return;
+            }
+            consumeExperience(cost, special, false);
+            processingTime = -1;
+            inventory.clearInput();
+            notifyUpdate();
+            level.playSound(null, worldPosition, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 1.0F, level.random.nextFloat() * 0.1F + 0.9F);
+        } else if (processingTime != -1) {
+            processingTime = -1;
+            notifyUpdate();
+        }
     }
 
     public ItemStack insertItem(ItemStack stack, boolean simulate) {
+        if (!stack.isEmpty())
+            stack = inventory.insertItem(0, stack, simulate);
+        if (!stack.isEmpty())
+            stack = inventory.insertItem(1, stack, simulate);
         return stack;
     }
 
     public ItemStack extractItem(boolean forced, boolean simulate) {
-        return ItemStack.EMPTY;
+        ItemStack extracted;
+        if (forced) {
+            extracted = inventory.extractInput(0, simulate);
+            if (!extracted.isEmpty())
+                return extracted;
+            extracted = inventory.extractInput(1, simulate);
+            if (!extracted.isEmpty())
+                return extracted;
+        }
+        extracted = inventory.extractItem(0, 1, simulate);
+        if (!extracted.isEmpty())
+            return extracted;
+        extracted = inventory.extractItem(1, 1, simulate);
+        return extracted;
     }
 
     @Override
@@ -129,7 +211,27 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
         var style = special
                 ? (cursed ? ChatFormatting.RED : ChatFormatting.BLUE)
                 : ChatFormatting.GOLD;
-
+        int cost = inventory.getExperienceCost();
+        if (cost > 0) {
+            added = true;
+            LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
+            CEILang.translate("gui.goggles.forging.cost", CEILang.number(cost).add(mb).style(style))
+                    .forGoggles(tooltip);
+            for (int i = 0; i < 2; i++) {
+                var result = inventory.getResult(i);
+                if (result.isEmpty())
+                    continue;
+                CEILang.translate("gui.goggles.forging.result").forGoggles(tooltip);
+                CEILang.item(result).style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
+                var enchantments = EnchantmentHelper.getEnchantmentsForCrafting(result);
+                if (!enchantments.isEmpty())
+                    enchantments.addToTooltip(
+                            TooltipContext.of(level),
+                            component -> CEILang.builder().add(component).forGoggles(tooltip, 2),
+                            TooltipFlag.NORMAL
+                    );
+            }
+        }
         return added;
     }
 }

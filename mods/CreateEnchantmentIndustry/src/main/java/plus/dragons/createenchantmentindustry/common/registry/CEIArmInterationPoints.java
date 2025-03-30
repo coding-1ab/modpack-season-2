@@ -25,6 +25,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.BlazeEnchanterArmInteractionPoint;
+import plus.dragons.createenchantmentindustry.common.processing.forger.BlazeForgerArmInteractionPoint;
 
 public class CEIArmInterationPoints {
     public static final DeferredRegister<ArmInteractionPointType> TYPES = DeferredRegister
@@ -32,6 +33,8 @@ public class CEIArmInterationPoints {
 
     public static final Holder<ArmInteractionPointType> BLAZE_ENCHANTER = TYPES
             .register("blaze_enchanter", BlazeEnchanterArmInteractionPoint.Type::new);
+    public static final Holder<ArmInteractionPointType> BLAZE_FORGER = TYPES
+            .register("blaze_forger", BlazeForgerArmInteractionPoint.Type::new);
 
     public static void register(IEventBus modBus) {
         TYPES.register(modBus);

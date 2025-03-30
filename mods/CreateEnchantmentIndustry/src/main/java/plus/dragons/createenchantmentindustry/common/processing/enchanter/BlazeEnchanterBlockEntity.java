@@ -19,6 +19,7 @@
 package plus.dragons.createenchantmentindustry.common.processing.enchanter;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
@@ -38,6 +39,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -117,6 +119,14 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
     }
 
     @Override
+    public void destroy() {
+        super.destroy();
+        if (level != null) {
+            Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), heldItem);
+        }
+    }
+
+    @Override
     public void write(CompoundTag compound, Provider registries, boolean clientPacket) {
         if (seed != null)
             compound.putLong("Seed", seed);
@@ -156,32 +166,33 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
         }
         if (enchanter.canProcess(heldItem)) {
             var cost = enchanter.getExperienceCost();
-            if (cost == 0 || !consumeExperience(cost, special, true)) {
+            if (cost > 0 && consumeExperience(cost, special, true)) {
+                if (processingTime < 0) {
+                    processingTime = ENCHANTING_TIME;
+                    notifyUpdate();
+                    return;
+                }
+                if (processingTime > 0) {
+                    processingTime--;
+                    notifyUpdate();
+                    return;
+                }
+                if (special && !cursed && strikeLightning(serverLevel, strikePos)) {
+                    serverLevel.destroyBlock(worldPosition, false);
+                    serverLevel.setBlockAndUpdate(worldPosition, AllBlocks.LIT_BLAZE_BURNER.getDefaultState());
+                    return;
+                }
+                processingTime = -1;
+                heldItem = enchanter.getResult(heldItem);
+                consumeExperience(cost, special, false);
+                nextSeed();
+                notifyUpdate();
+                level.playSound(null, worldPosition, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, level.random.nextFloat() * 0.1F + 0.9F);
+            } else {
                 if (processingTime != -1) {
                     processingTime = -1;
                     notifyUpdate();
                 }
-                return;
-            }
-            if (processingTime == -1) {
-                processingTime = ENCHANTING_TIME;
-                notifyUpdate();
-                return;
-            }
-            if (processingTime > 0) {
-                processingTime--;
-                if (processingTime == 2) {
-                    boolean struck = false;
-                    if (special && !cursed) {
-                        struck = strikeLightning(serverLevel, strikePos);
-                    }
-                    heldItem = enchanter.getResult(heldItem, struck);
-                    nextSeed();
-                    consumeExperience(cost, special, false);
-                    level.playSound(null, worldPosition, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS,
-                            1.0F, level.random.nextFloat() * 0.1F + 0.9F);
-                }
-                notifyUpdate();
             }
         } else if (processingTime != -1) {
             processingTime = -1;
@@ -230,7 +241,7 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
         assert level != null;
         ItemStack extracted = ItemStack.EMPTY;
         if (forced || processingTime <= 0) {
-            extracted = simulate ? heldItem.copy() : heldItem;
+            extracted = heldItem.copy();
             if (!simulate) {
                 heldItem = ItemStack.EMPTY;
                 processingTime = -1;

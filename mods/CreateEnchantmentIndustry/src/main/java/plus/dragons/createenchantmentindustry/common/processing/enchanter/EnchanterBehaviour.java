@@ -68,8 +68,8 @@ public class EnchanterBehaviour extends ScrollValueBehaviour implements IHaveGog
         enchanting.update(getWorld(), stack, value, enchanter.special, enchanter.cursed);
     }
 
-    public ItemStack getResult(ItemStack stack, boolean cursed) {
-        return enchanting.getResult(getWorld(), stack, enchanter.getRandom(), enchanter.special, cursed);
+    public ItemStack getResult(ItemStack stack) {
+        return enchanting.getResult(getWorld(), stack, enchanter.getRandom(), enchanter.special);
     }
 
     public int getExperienceCost() {

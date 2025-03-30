@@ -31,9 +31,10 @@ public class CEIEnchantmentsConfig extends ConfigBase {
     public final ConfigInt enchantmentMaxLevelExtension = i(1, 0, 255,
             "enchantmentMaxLevelExtension",
             Comments.enchantmentMaxLevelExtension);
-    public final ConfigBool canIgnoreEnchantmentCompatibility = b(true,
-            "canIgnoreEnchantmentCompatibility",
-            Comments.canIgnoreEnchantmentCompatibility);
+    public final ConfigBool ignoreEnchantmentCompatibility = b(true,
+            "ignoreEnchantmentCompatibility",
+            Comments.ignoreEnchantmentCompatibility
+    );
 
     @Override
     public String getName() {
@@ -47,7 +48,7 @@ public class CEIEnchantmentsConfig extends ConfigBase {
                 "The max experience level a Blaze Enchanter can use in Super Enchanting";
         static final String enchantmentMaxLevelExtension =
                 "Max enchantment level in Super Enchanting and Super Forging will be extended by this value";
-        static final String canIgnoreEnchantmentCompatibility =
-                "If Blaze Enchanter and Blaze Forger ignore enchantment compatibility in Super Enchanting and Super Forging";
+        static final String ignoreEnchantmentCompatibility =
+                "If Super Enchanting and Super Forging ignores enchantment compatibility";
     }
 }

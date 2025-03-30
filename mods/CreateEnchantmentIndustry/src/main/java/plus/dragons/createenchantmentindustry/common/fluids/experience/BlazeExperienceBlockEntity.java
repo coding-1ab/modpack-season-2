@@ -56,6 +56,7 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 
 @FieldsNullabilityUnknownByDefault
 public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity implements IHaveGoggleInformation {
+    public static final String LIGHTNING_BOLT_EXPERIENCE_CHARGE_KEY = "ExperienceCharge";
     protected final LerpedFloat headAnimation = LerpedFloat.linear();
     protected final LerpedFloat headAngle = LerpedFloat.angular();
     private boolean isCreative;
@@ -223,6 +224,7 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity implem
         var lightning = EntityType.LIGHTNING_BOLT.create(level);
         if (lightning == null)
             return false;
+        lightning.getPersistentData().putBoolean(LIGHTNING_BOLT_EXPERIENCE_CHARGE_KEY, true);
         Optional<BlockPos> rodPos = level.getPoiManager().findClosest(
                 poi -> poi.is(PoiTypes.LIGHTNING_ROD),
                 pos -> pos.getY() == level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ()) - 1,

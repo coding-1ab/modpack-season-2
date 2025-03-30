@@ -54,11 +54,14 @@ public class BlazeEnchanterRenderer extends BlazeBlockRenderer<BlazeEnchanterBlo
         assert level != null;
         var blockPos = blockEntity.getBlockPos();
         float renderTicks = AnimationTickHolder.getTicks(level);
-        float height = processingTime == -1 ? .25f : (1 + Mth.sin((processingTime + partialTicks) / 20f)) * .25f;
+        float animation = processingTime == -1
+                ? 0
+                : Mth.sin((processingTime + partialTicks) / 20f);
+        float height = 1.25f + (1 + animation) * .25f;
         float xRot = (renderTicks * 5 + blockPos.getX()) % 360;
         float zRot = (renderTicks * 5 + blockPos.getZ()) % 360;
         poseStack.pushPose();
-        poseStack.translate(.5f, 1.25f + height, .5f);
+        poseStack.translate(.5f, height, .5f);
         poseStack.mulPose(Axis.XP.rotationDegrees(xRot));
         poseStack.mulPose(Axis.ZP.rotationDegrees(zRot));
         poseStack.scale(.5f, .5f, .5f);

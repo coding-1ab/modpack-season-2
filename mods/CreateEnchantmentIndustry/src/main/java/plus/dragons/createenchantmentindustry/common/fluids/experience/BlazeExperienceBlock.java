@@ -49,6 +49,8 @@ public abstract class BlazeExperienceBlock<T extends BlazeExperienceBlockEntity>
         var result = resultHolder.getResult();
         if (result == InteractionResult.PASS)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (result == InteractionResult.FAIL)
+            return ItemInteractionResult.FAIL;
         var remainder = resultHolder.getObject();
         if (!remainder.isEmpty()) {
             if (stack.isEmpty())
@@ -84,6 +86,7 @@ public abstract class BlazeExperienceBlock<T extends BlazeExperienceBlockEntity>
                         : fuel.usingConvertTo().orElse(stack.getCraftingRemainingItem());
                 return InteractionResultHolder.success(remainder);
             }
+            return InteractionResultHolder.fail(ItemStack.EMPTY);
         }
         return InteractionResultHolder.pass(ItemStack.EMPTY);
     }

@@ -46,7 +46,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
-import plus.dragons.createenchantmentindustry.common.processing.enchanter.EnchantingHelper;
+import plus.dragons.createenchantmentindustry.common.processing.enchanter.CEIEnchantmentHelper;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 import plus.dragons.createenchantmentindustry.util.CEILang;
 
@@ -62,7 +62,7 @@ public class EnchantedBookPrintingBehaviour implements PrintingBehaviour {
         this.tank = tank;
         this.original = original;
         this.enchantments = enchantments;
-        this.cost = EnchantingHelper.getEnchantmentCost(enchantments);
+        this.cost = CEIEnchantmentHelper.getEnchantmentCost(enchantments);
     }
 
     public static Optional<DataResult<PrintingBehaviour>> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {

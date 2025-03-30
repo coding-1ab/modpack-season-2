@@ -29,11 +29,11 @@
       "special": true
     },
     "create_enchantment_industry:super_experience_block": {
-      "experience": 81,
+      "experience": 27,
       "special": true
     },
     "create_enchantment_industry:super_experience_nugget": {
-      "experience": 9,
+      "experience": 3,
       "special": true
     },
     "create_sa:experience_heap": {

@@ -11,6 +11,7 @@
     "DeployerHandlerMixin",
     "EnchantmentHelperMixin",
     "FillingBySpoutMixin",
+    "LightningBoltMixin",
     "PlayerMixin",
     "SmartBlockEntityMixin",
     "accessor.CreateRecipeCategoryAccessor"

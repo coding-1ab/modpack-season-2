@@ -157,11 +157,11 @@ public class CEIRecipeProvider extends RecipeProvider {
                 .build(output);
         GrindingRecipe.builder(SUPER_EXPERIENCE_NUGGET.getId())
                 .require(SUPER_EXPERIENCE_NUGGET)
-                .output(EXPERIENCE.get(), 9)
+                .output(EXPERIENCE.get(), 3)
                 .build(output);
         GrindingRecipe.builder(SUPER_EXPERIENCE_BLOCK.getId())
                 .require(SUPER_EXPERIENCE_BLOCK)
-                .output(EXPERIENCE.get(), 81)
+                .output(EXPERIENCE.get(), 27)
                 .build(output);
         GrindingRecipe.builder(CEICommon.asResource("create_sa/experience_heap"))
                 .whenModLoaded("create_sa")
