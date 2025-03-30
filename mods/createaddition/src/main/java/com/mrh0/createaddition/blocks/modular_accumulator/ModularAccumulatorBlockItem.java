@@ -15,6 +15,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 public class ModularAccumulatorBlockItem extends BlockItem {
 
@@ -23,20 +24,19 @@ public class ModularAccumulatorBlockItem extends BlockItem {
 	}
 
 	@Override
-	public InteractionResult place(BlockPlaceContext ctx) {
+	public @NotNull InteractionResult place(@NotNull BlockPlaceContext ctx) {
 		InteractionResult initialResult = super.place(ctx);
-		if (!initialResult.consumesAction())
-			return initialResult;
+		if (!initialResult.consumesAction()) return initialResult;
 		tryMultiPlace(ctx);
 		return initialResult;
 	}
 
+	/* Removed from 1.21, not sure if this ever worked anyway
 	@Override
-	protected boolean updateCustomBlockEntityTag(BlockPos pos, Level level, Player player,
-		ItemStack stack, BlockState state) {
+	protected boolean updateCustomBlockEntityTag(@NotNull BlockPos pos, Level level, Player player,
+												 @NotNull ItemStack stack, @NotNull BlockState state) {
 		MinecraftServer minecraftserver = level.getServer();
-		if (minecraftserver == null)
-			return false;
+		if (minecraftserver == null) return false;
 		CompoundTag nbt = stack.getTagElement("BlockEntityTag");
 		if (nbt != null) {
 			nbt.remove("Size");
@@ -55,35 +55,28 @@ public class ModularAccumulatorBlockItem extends BlockItem {
 		}
 		return super.updateCustomBlockEntityTag(pos, level, player, stack, state);
 	}
+	 */
 
 	private void tryMultiPlace(BlockPlaceContext ctx) {
 		Player player = ctx.getPlayer();
-		if (player == null)
-			return;
-		if (player.isShiftKeyDown())
-			return;
+		if (player == null) return;
+		if (player.isShiftKeyDown()) return;
 		Direction face = ctx.getClickedFace();
-		if (!face.getAxis()
-			.isVertical())
-			return;
+		if (!face.getAxis().isVertical()) return;
 		ItemStack stack = ctx.getItemInHand();
 		Level world = ctx.getLevel();
 		BlockPos pos = ctx.getClickedPos();
 		BlockPos placedOnPos = pos.relative(face.getOpposite());
 		BlockState placedOnState = world.getBlockState(placedOnPos);
 
-		if (!ModularAccumulatorBlock.isAccumulator(placedOnState))
-			return;
+		if (!ModularAccumulatorBlock.isAccumulator(placedOnState)) return;
 		ModularAccumulatorBlockEntity accumulatorAt = CAConnectivityHandler.partAt(CABlockEntities.MODULAR_ACCUMULATOR.get(), world, placedOnPos);
-		if (accumulatorAt == null)
-			return;
+		if (accumulatorAt == null) return;
 		ModularAccumulatorBlockEntity controllerTE = accumulatorAt.getControllerBE();
-		if (controllerTE == null)
-			return;
+		if (controllerTE == null) return;
 
 		int width = controllerTE.width;
-		if (width == 1)
-			return;
+		if (width == 1) return;
 
 		int blocksToPlace = 0;
 		BlockPos startPos = face == Direction.DOWN ? controllerTE.getBlockPos()
@@ -91,40 +84,34 @@ public class ModularAccumulatorBlockItem extends BlockItem {
 			: controllerTE.getBlockPos()
 				.above(controllerTE.height);
 
-		if (startPos.getY() != pos.getY())
-			return;
+		if (startPos.getY() != pos.getY()) return;
 
 		for (int xOffset = 0; xOffset < width; xOffset++) {
 			for (int zOffset = 0; zOffset < width; zOffset++) {
 				BlockPos offsetPos = startPos.offset(xOffset, 0, zOffset);
 				BlockState blockState = world.getBlockState(offsetPos);
-				if (ModularAccumulatorBlock.isAccumulator(blockState))
-					continue;
-				if (!blockState.canBeReplaced())
-					return;
+				if (ModularAccumulatorBlock.isAccumulator(blockState)) continue;
+				if (!blockState.canBeReplaced()) return;
 				blocksToPlace++;
 			}
 		}
 
-		if (!player.isCreative() && stack.getCount() < blocksToPlace)
-			return;
+		if (!player.isCreative() && stack.getCount() < blocksToPlace) return;
 
 		for (int xOffset = 0; xOffset < width; xOffset++) {
 			for (int zOffset = 0; zOffset < width; zOffset++) {
 				BlockPos offsetPos = startPos.offset(xOffset, 0, zOffset);
 				BlockState blockState = world.getBlockState(offsetPos);
-				if (ModularAccumulatorBlock.isAccumulator(blockState))
-					continue;
+				if (ModularAccumulatorBlock.isAccumulator(blockState)) continue;
 				BlockPlaceContext context = BlockPlaceContext.at(ctx, offsetPos, face);
-				player.getPersistentData()
-					.putBoolean("SilenceTankSound", true);
+				player.getPersistentData().putBoolean("SilenceTankSound", true);
 				super.place(context);
-				player.getPersistentData()
-					.remove("SilenceTankSound");
+				player.getPersistentData().remove("SilenceTankSound");
 			}
 		}
 	}
 
+	/*
 	private static int getOrCreateEnergy(ItemStack stack) {
 		var tag = stack.getTag();
 		if(tag == null)
@@ -133,4 +120,5 @@ public class ModularAccumulatorBlockItem extends BlockItem {
 			tag.putInt("energy", 0);
 		return tag.getInt("energy");
 	}
+	*/
 }

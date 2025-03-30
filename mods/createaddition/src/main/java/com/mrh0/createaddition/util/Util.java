@@ -4,11 +4,15 @@ import com.mrh0.createaddition.energy.WireType;
 import com.mrh0.createaddition.item.WireSpool;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -105,9 +109,9 @@ public class Util {
 	public static Util.Triple<BlockPos, Integer, WireType> getWireNodeOfSpools(ItemStack...stacks) {
 		for(ItemStack stack : stacks) {
 			if(stack.isEmpty()) continue;
-			if(stack.getTag() == null) continue;
-			if(WireSpool.hasPos(stack.getTag())) {
-				return Util.Triple.of(WireSpool.getPos(stack.getTag()), WireSpool.getNode(stack.getTag()), WireType.of(stack.getItem()));
+			CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.of(new CompoundTag())).copyTag();
+			if(WireSpool.hasPos(tag)) {
+				return Util.Triple.of(WireSpool.getPos(tag), WireSpool.getNode(tag), WireType.of(stack.getItem()));
 			}
 		}
 		return null;

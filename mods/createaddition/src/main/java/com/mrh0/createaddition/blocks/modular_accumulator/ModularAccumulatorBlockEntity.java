@@ -7,9 +7,8 @@ import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.debug.IDebugDrawer;
 import com.mrh0.createaddition.energy.IMultiTileEnergyContainer;
 import com.mrh0.createaddition.energy.InternalEnergyStorage;
-import com.mrh0.createaddition.network.EnergyNetworkPacket;
 import com.mrh0.createaddition.network.IObserveTileEntity;
-import com.mrh0.createaddition.network.ObservePacketLegacy;
+import com.mrh0.createaddition.network.ObservePacketPayload;
 import com.mrh0.createaddition.sound.CASoundScapes;
 import com.mrh0.createaddition.util.Util;
 import com.simibubi.create.Create;
@@ -22,6 +21,7 @@ import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
@@ -33,15 +33,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.DistExecutor;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
@@ -72,8 +65,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		width = 1;
 		refreshCapability();
 
-		if (CreateAddition.CC_ACTIVE)
-			this.peripheral = LazyOptional.of(() -> Peripherals.createModularAccumulatorPeripheral(this));
+		// if (CreateAddition.CC_ACTIVE) this.peripheral = LazyOptional.of(() -> Peripherals.createModularAccumulatorPeripheral(this));
 	}
 
 	@Override
@@ -100,7 +92,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 	}
 
 	public void updateCache() {
-		if(level.isClientSide()) return;
+		if (level.isClientSide()) return;
 		for(Direction side : Direction.values()) {
 			updateCache(side);
 		}
@@ -153,12 +145,10 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 
 		if (syncCooldown > 0) {
 			syncCooldown--;
-			if (syncCooldown == 0 && queuedSync)
-				sendData();
+			if (syncCooldown == 0 && queuedSync) sendData();
 		}
 
-		if (lastKnownPos == null)
-			lastKnownPos = getBlockPos();
+		if (lastKnownPos == null) lastKnownPos = getBlockPos();
 		else if (!lastKnownPos.equals(worldPosition) && worldPosition != null) {
 			onPositionChanged();
 			return;
@@ -364,47 +354,39 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 	}
 
 	@Override
-	protected void read(CompoundTag compound, boolean clientPacket) {
-		super.read(compound, clientPacket);
+	protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+		super.read(tag, registries, clientPacket);
 
 		BlockPos controllerBefore = controller;
 		int prevSize = width;
 		int prevHeight = height;
 
-		updateConnectivity = compound.contains("Uninitialized");
+		updateConnectivity = tag.contains("Uninitialized");
 		controller = null;
 		lastKnownPos = null;
 
-		if (compound.contains("LastKnownPos"))
-			lastKnownPos = NbtUtils.readBlockPos(compound.getCompound("LastKnownPos"));
-		if (compound.contains("Controller"))
-			controller = NbtUtils.readBlockPos(compound.getCompound("Controller"));
+		if (tag.contains("LastKnownPos")) lastKnownPos = NbtUtils.readBlockPos(tag, "LastKnownPos").orElse(BlockPos.ZERO);
+		if (tag.contains("Controller")) controller = NbtUtils.readBlockPos(tag, "Controller").orElse(BlockPos.ZERO);
 
 		if (isController()) {
-			width = compound.getInt("Size");
-			height = compound.getInt("Height");
+			width = tag.getInt("Size");
+			height = tag.getInt("Height");
 			energyStorage.setCapacity(getTotalAccumulatorSize() * getCapacityMultiplier());
-			energyStorage.read(compound.getCompound("EnergyContent"));
+			energyStorage.read(tag.getCompound("EnergyContent"));
 			if (energyStorage.getSpace() < 0)
 				energyStorage.extractEnergy(-energyStorage.getSpace(), true);
 		}
 
+		if (!clientPacket) return;
 
-		if (!clientPacket)
-			return;
-
-		boolean changeOfController =
-			controllerBefore == null ? controller != null : !controllerBefore.equals(controller);
+		boolean changeOfController = controllerBefore == null ? controller != null : !controllerBefore.equals(controller);
 		if (changeOfController || prevSize != width || prevHeight != height) {
-			if (hasLevel())
-				level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 16);
-			if (isController())
-				energyStorage.setCapacity(getCapacityMultiplier() * getTotalAccumulatorSize());
+			if (hasLevel()) level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 16);
+			if (isController()) energyStorage.setCapacity(getCapacityMultiplier() * getTotalAccumulatorSize());
 			invalidateRenderBoundingBox();
 		}
 
-		if (isController())
-			gauge.chase(getFillState(), 0.125f, LerpedFloat.Chaser.EXP);
+		if (isController()) gauge.chase(getFillState(), 0.125f, LerpedFloat.Chaser.EXP);
 	}
 
 	public float getFillState() {
@@ -412,28 +394,24 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 	}
 
 	@Override
-	public void write(CompoundTag compound, boolean clientPacket) {
-		if (updateConnectivity)
-			compound.putBoolean("Uninitialized", true);
-		if (lastKnownPos != null)
-			compound.put("LastKnownPos", NbtUtils.writeBlockPos(lastKnownPos));
-		if (!isController())
-			compound.put("Controller", NbtUtils.writeBlockPos(controller));
+	public void writeSafe(CompoundTag tag, HolderLookup.Provider registries) {
+		if (updateConnectivity) tag.putBoolean("Uninitialized", true);
+		if (lastKnownPos != null) tag.put("LastKnownPos", NbtUtils.writeBlockPos(lastKnownPos));
+		if (!isController()) tag.put("Controller", NbtUtils.writeBlockPos(controller));
 		if (isController()) {
-			compound.put("EnergyContent", energyStorage.write(new CompoundTag()));
+			tag.put("EnergyContent", energyStorage.write(new CompoundTag()));
 			// Used by contraptions.
-			compound.putInt("EnergyCapacity", getTotalAccumulatorSize() * getCapacityMultiplier());
-			compound.putInt("Size", width);
-			compound.putInt("Height", height);
+			tag.putInt("EnergyCapacity", getTotalAccumulatorSize() * getCapacityMultiplier());
+			tag.putInt("Size", width);
+			tag.putInt("Height", height);
 		}
-		super.write(compound, clientPacket);
+		super.writeSafe(tag, registries);
 
-		if (!clientPacket)
-			return;
-		if (queuedSync)
-			compound.putBoolean("LazySync", true);
+		// if (!clientPacket) return;
+		if (queuedSync) tag.putBoolean("LazySync", true);
 	}
 
+	/*
 	@Nonnull
 	@Override
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
@@ -442,10 +420,11 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		if (CreateAddition.CC_ACTIVE && Peripherals.isPeripheral(cap)) return this.peripheral.cast();
 		return super.getCapability(cap, side);
 	}
+	 */
 
 	@Override
 	public void invalidate() {
-		energyCap.invalidate();
+		// energyCap.invalidate();
 		super.invalidate();
 	}
 
@@ -524,7 +503,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		ModularAccumulatorBlockEntity controllerTE = getControllerBE();
 		if (controllerTE == null) return false;
 
-		ObservePacketLegacy.send(worldPosition, 0);
+		ObservePacketPayload.send(worldPosition, 0);
 
 		String spacing = " ";
 		tooltip.add(Component.literal(spacing)
@@ -544,7 +523,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 	public void observe() {}
 
 	@Override
-	public void onObserved(ServerPlayer player, ObservePacketLegacy pack) {
+	public void onObserved(ServerPlayer player, ObservePacketPayload pack) {
 		ModularAccumulatorBlockEntity controllerTE = getControllerBE();
 		if (controllerTE == null) return;
 
