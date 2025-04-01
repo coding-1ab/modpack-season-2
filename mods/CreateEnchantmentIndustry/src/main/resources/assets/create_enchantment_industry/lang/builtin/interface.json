@@ -1,5 +1,8 @@
 {
   "itemGroup.create_enchantment_industry.base": "Create: Enchantment Industry",
+  "create_enchantment_industry.gui.experience_hatch.exchange": "Experience Exchange",
+  "create_enchantment_industry.gui.experience_hatch.points": "Points",
+  "create_enchantment_industry.gui.experience_hatch.all": "All",
   "create_enchantment_industry.gui.blaze_enchanter.level": "Enchanting Level",
   "create_enchantment_industry.gui.blaze_enchanter.template.invalid": "Can not use this item as template.",
   "create_enchantment_industry.gui.goggles.enchanting.template": "Enchanting with template:",

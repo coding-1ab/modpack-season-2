@@ -121,7 +121,6 @@ public class CEIDataMaps {
                         ExperienceFuel.normal(10), false,
                         new ModLoadedCondition("mysticalagriculture"));
         provider.builder(FLUID_UNIT_EXPERIENCE)
-                .add(CEIFluids.EXPERIENCE, 1, false)
                 .add(ResourceLocation.fromNamespaceAndPath("cofh_core", "experience"),
                         25, false,
                         new ModLoadedCondition("cofh_core"))

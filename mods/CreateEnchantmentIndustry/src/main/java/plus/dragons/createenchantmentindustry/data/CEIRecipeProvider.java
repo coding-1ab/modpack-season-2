@@ -24,6 +24,7 @@ import static com.simibubi.create.AllTags.commonItemTag;
 import static net.minecraft.world.item.Items.*;
 import static net.neoforged.neoforge.common.Tags.Items.EGGS;
 import static net.neoforged.neoforge.common.Tags.Items.STORAGE_BLOCKS_IRON;
+import static plus.dragons.createdragonsplus.common.registry.CDPBlocks.FLUID_HATCH;
 import static plus.dragons.createdragonsplus.common.registry.CDPItems.BLAZE_UPGRADE_SMITHING_TEMPLATE;
 import static plus.dragons.createdragonsplus.data.recipe.CreateRecipeBuilders.*;
 import static plus.dragons.createdragonsplus.data.recipe.VanillaRecipeBuilders.shaped;
@@ -70,6 +71,11 @@ public class CEIRecipeProvider extends RecipeProvider {
                 .output(MECHANICAL_GRINDSTONE)
                 .unlockedBy(ANDESITE, has(ANDESITE_ALLOY))
                 .accept(output);
+        manualApplication(EXPERIENCE_HATCH.getId())
+                .require(FLUID_HATCH)
+                .require(EXPERIENCE_BLOCK)
+                .output(EXPERIENCE_HATCH)
+                .build(output);
         shaped().define('-', commonItemTag("plates/brass"))
                 .define('o', SPOUT)
                 .define('=', STORAGE_BLOCKS_IRON)

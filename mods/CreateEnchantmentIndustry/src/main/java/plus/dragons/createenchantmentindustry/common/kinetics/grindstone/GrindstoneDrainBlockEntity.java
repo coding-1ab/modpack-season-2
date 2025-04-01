@@ -58,7 +58,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
-import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
+import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
 
 @FieldsNullabilityUnknownByDefault
@@ -208,7 +208,7 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
         var grindstone = GrindstoneHelper.grindItem(level, inputStack, ItemStack.EMPTY);
         if (grindstone.isPresent()) {
             var result = grindstone.get();
-            var fluid = ExperienceHelper.getExperienceFluid(result.xp());
+            var fluid = new FluidStack(CEIFluids.EXPERIENCE, result.experience());
             if (fill(fluid)) {
                 inventory.clear();
                 inventory.setStackInSlot(0, result.top());

@@ -36,13 +36,10 @@ import plus.dragons.createenchantmentindustry.config.CEIConfig;
 public class CEIEnchantmentHelper {
     public static int getEnchantmentCost(Holder<Enchantment> holder, int level) {
         var enchantment = holder.value();
-        int minCost = enchantment.getMinCost(level);
-        int experienceLevel = Math.max(level, enchantment.getAnvilCost());
-        int experience = 0;
-        for (int i = 0; i < experienceLevel; i++) {
-            experience += ExperienceHelper.getExperienceForNextLevel(minCost++);
-        }
-        return experience;
+        int cost = ExperienceHelper.getExperienceForNextLevel(enchantment.getMinCost(level));
+        if (level == 1)
+            return cost;
+        return cost + getEnchantmentCost(holder, level - 1);
     }
 
     public static int getEnchantmentCost(ItemEnchantments enchantments) {

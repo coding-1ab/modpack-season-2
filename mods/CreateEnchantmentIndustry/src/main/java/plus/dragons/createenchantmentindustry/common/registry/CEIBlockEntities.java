@@ -23,6 +23,7 @@ import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual;
+import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -30,6 +31,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import plus.dragons.createdragonsplus.common.processing.blaze.BlazeBlockVisual;
 import plus.dragons.createenchantmentindustry.client.model.CEIPartialModels;
+import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHatchBlockEntity;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterRenderer;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindstoneDrainBlockEntity;
@@ -51,6 +53,11 @@ public class CEIBlockEntities {
             .visual(() -> SingleAxisRotatingVisual.of(CEIPartialModels.MECHANICAL_GRINDSTONE), false)
             .renderer(() -> GrindstoneDrainRenderer::new)
             .validBlock(CEIBlocks.GRINDSTONE_DRAIN)
+            .register();
+    public static final BlockEntityEntry<ExperienceHatchBlockEntity> EXPERIENCE_HATCH = REGISTRATE
+            .blockEntity("experience_hatch", ExperienceHatchBlockEntity::new)
+            .renderer(() -> SmartBlockEntityRenderer::new)
+            .validBlock(CEIBlocks.EXPERIENCE_HATCH)
             .register();
     public static final BlockEntityEntry<PrinterBlockEntity> PRINTER = REGISTRATE
             .blockEntity("printer", PrinterBlockEntity::new)

@@ -111,18 +111,13 @@ public class EnchanterBehaviour extends ScrollValueBehaviour implements IHaveGog
     }
 
     @Override
-    public boolean isSafeNBT() {
-        return false;
-    }
-
-    @Override
     public ValueSettingsBoard createBoard(Player player, BlockHitResult hitResult) {
         int max = enchanter.getMaxEnchantLevel();
         return new ValueSettingsBoard(
                 label,
                 max,
                 max / 6,
-                ImmutableList.of(Component.literal("Level")),
+                ImmutableList.of(label),
                 new ValueSettingsFormatter(ValueSettings::format)
         );
     }
@@ -153,6 +148,11 @@ public class EnchanterBehaviour extends ScrollValueBehaviour implements IHaveGog
     public void write(CompoundTag nbt, Provider registries, boolean clientPacket) {
         nbt.putInt(LEVEL, value);
         nbt.put(TEMPLATE, template.saveOptional(registries));
+    }
+
+    @Override
+    public void writeSafe(CompoundTag nbt, Provider registries) {
+        nbt.putInt(LEVEL, value);
     }
 
     @Override

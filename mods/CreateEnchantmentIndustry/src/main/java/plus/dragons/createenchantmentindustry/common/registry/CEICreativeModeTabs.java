@@ -18,12 +18,13 @@
 
 package plus.dragons.createenchantmentindustry.common.registry;
 
+import static com.simibubi.create.AllBlocks.EXPERIENCE_BLOCK;
+import static com.simibubi.create.AllItems.EXP_NUGGET;
+import static plus.dragons.createdragonsplus.common.registry.CDPBlocks.FLUID_HATCH;
 import static plus.dragons.createenchantmentindustry.common.registry.CEIBlocks.*;
 import static plus.dragons.createenchantmentindustry.common.registry.CEIItems.*;
 
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllCreativeModeTabs;
-import com.simibubi.create.AllItems;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -49,19 +50,21 @@ public class CEICreativeModeTabs {
         return CreativeModeTab.builder()
                 .title(CEILang.description("itemGroup", id).component())
                 .withTabsBefore(AllCreativeModeTabs.BASE_CREATIVE_TAB.getId())
-                .icon(CEIBlocks.PRINTER::asStack)
+                .icon(BLAZE_ENCHANTER::asStack)
                 .displayItems(CEICreativeModeTabs::buildBaseContents)
                 .build();
     }
 
     private static void buildBaseContents(CreativeModeTab.ItemDisplayParameters parameters, CreativeModeTab.Output output) {
         output.accept(MECHANICAL_GRINDSTONE);
+        output.accept(FLUID_HATCH);
+        output.accept(EXPERIENCE_HATCH);
         output.accept(PRINTER);
         output.accept(BLAZE_ENCHANTER);
         output.accept(BLAZE_FORGER);
-        output.accept(AllBlocks.EXPERIENCE_BLOCK);
+        output.accept(EXPERIENCE_BLOCK);
         output.accept(SUPER_EXPERIENCE_BLOCK);
-        output.accept(AllItems.EXP_NUGGET);
+        output.accept(EXP_NUGGET);
         output.accept(SUPER_EXPERIENCE_NUGGET);
         output.accept(ENCHANTING_TEMPLATE);
         output.accept(SUPER_ENCHANTING_TEMPLATE);

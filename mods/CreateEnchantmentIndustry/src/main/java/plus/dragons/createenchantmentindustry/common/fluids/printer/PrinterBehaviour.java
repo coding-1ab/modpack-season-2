@@ -84,13 +84,14 @@ public class PrinterBehaviour extends FilteringBehaviour {
     }
 
     @Override
-    public boolean isSafeNBT() {
-        return printing.isSafeNBT();
+    public void write(CompoundTag nbt, Provider registries, boolean clientPacket) {
+        nbt.put(TEMPLATE, getFilter().saveOptional(registries));
     }
 
     @Override
-    public void write(CompoundTag nbt, Provider registries, boolean clientPacket) {
-        nbt.put(TEMPLATE, getFilter().saveOptional(registries));
+    public void writeSafe(CompoundTag nbt, Provider registries) {
+        if (printing.isSafeNBT())
+            nbt.put(TEMPLATE, getFilter().saveOptional(registries));
     }
 
     @Override
@@ -104,6 +105,11 @@ public class PrinterBehaviour extends FilteringBehaviour {
             this.filter = FilterItemStack.empty();
             this.printing = RecipePrintingBehaviour.EMPTY;
         }
+    }
+
+    @Override
+    public String getClipboardKey() {
+        return "Printer";
     }
 
     @Override

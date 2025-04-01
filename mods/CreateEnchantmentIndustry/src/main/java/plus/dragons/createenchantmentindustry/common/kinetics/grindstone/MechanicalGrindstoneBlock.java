@@ -99,7 +99,7 @@ public class MechanicalGrindstoneBlock extends RotatedPillarKineticBlock impleme
             }
             player.setItemInHand(otherHand, result.bottom());
             if (player instanceof ServerPlayer serverPlayer)
-                ExperienceHelper.award(result.xp(), serverPlayer);
+                ExperienceHelper.award(result.experience(), serverPlayer);
             level.levelEvent(1042, pos, 0);
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide);

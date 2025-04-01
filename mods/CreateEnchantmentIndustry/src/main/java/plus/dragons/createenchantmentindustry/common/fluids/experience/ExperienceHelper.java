@@ -23,6 +23,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantedItemInUse;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
@@ -36,23 +37,32 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 
 public class ExperienceHelper {
     public static int getExperienceForNextLevel(int level) {
-        if (level >= 30) {
-            return 112 + (level - 30) * 9;
-        } else {
-            return level >= 15 ? 37 + (level - 15) * 5 : 7 + level * 2;
-        }
+        if (level >= 30)
+            return 9 * level - 158;
+        if (level >= 15)
+            return 5 * level - 38;
+        return 2 * level + 7;
     }
 
     public static int getExperienceForTotalLevel(int level) {
-        int experience = 0;
-        for (int i = 0; i < level; i++) {
-            experience += getExperienceForNextLevel(i);
-        }
+        if (level == 0)
+            return 0;
+        if (level >= 31)
+            return (9 * level * level - 325 * level) / 2 + 2220;
+        if (level >= 16)
+            return (5 * level * level - 91 * level) / 2 + 360;
+        return level * level + 6 * level;
+    }
+
+    public static int getExperienceForPlayer(Player player) {
+        int experience = getExperienceForTotalLevel(player.experienceLevel);
+        experience += Math.round(player.experienceProgress * getExperienceForNextLevel(player.experienceLevel));
         return experience;
     }
 
     public static int getExperienceFromFluid(FluidStack fluid) {
         if (fluid.isEmpty()) return 0;
+        if (fluid.is(CEIFluids.EXPERIENCE)) return fluid.getAmount();
         int amount = fluid.getAmount();
         Integer unit = fluid.getFluidHolder().getData(CEIDataMaps.FLUID_UNIT_EXPERIENCE);
         if (unit == null)
@@ -65,14 +75,14 @@ public class ExperienceHelper {
     }
 
     public static int getFluidFromExperience(Holder<Fluid> fluid, int amount) {
-        Integer unit = fluid.getData(CEIDataMaps.FLUID_UNIT_EXPERIENCE);
-        if (unit == null)
-            return 0;
-        return amount * unit;
+        return getExperienceFluidUnit(fluid) * amount;
     }
 
-    public static FluidStack getExperienceFluid(int amount) {
-        return amount == 0 ? FluidStack.EMPTY : new FluidStack(CEIFluids.EXPERIENCE.get(), amount);
+    public static int getExperienceFluidUnit(Holder<Fluid> fluid) {
+        if (fluid.equals(CEIFluids.EXPERIENCE))
+            return 1;
+        Integer unit = fluid.getData(CEIDataMaps.FLUID_UNIT_EXPERIENCE);
+        return unit == null ? 0 : unit;
     }
 
     public static void award(int amount, ServerPlayer player) {

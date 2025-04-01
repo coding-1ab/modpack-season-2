@@ -40,6 +40,7 @@ import plus.dragons.createdragonsplus.util.Pairs;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.CEIEnchantmentHelper;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
+import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 
 public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
     public static final PrintingRecipeJEI.Type TYPE = PrintingRecipeJEI
@@ -89,6 +90,7 @@ public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
 
     @Override
     public void setFluid(IRecipeSlotBuilder slot) {
+        slot.addFluidStack(CEIFluids.EXPERIENCE.get(), cost);
         CEIDataMaps.getSourceFluidEntries(CEIDataMaps.FLUID_UNIT_EXPERIENCE)
                 .forEach(Pairs.accept((fluid, unit) -> slot.addFluidStack(fluid, (long) unit * cost)));
     }

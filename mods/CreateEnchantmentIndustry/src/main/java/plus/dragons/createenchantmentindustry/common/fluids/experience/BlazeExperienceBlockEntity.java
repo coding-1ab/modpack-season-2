@@ -128,7 +128,7 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity implem
     }
 
     public boolean consumeExperience(int amount, boolean special, boolean simulate) {
-        var fluid = ExperienceHelper.getExperienceFluid(amount);
+        var fluid = new FluidStack(CEIFluids.EXPERIENCE, amount);
         var tank = special ? getSpecialTank() : tanks.getCapability();
         var drained = tank.drain(fluid, FluidAction.SIMULATE);
         if (drained.getAmount() != amount)
@@ -151,7 +151,7 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity implem
         if (!fluid.isEmpty() && !fluid.is(CEIFluids.EXPERIENCE))
             return false;
         int experience = fuel.experience();
-        var experienceFluid = ExperienceHelper.getExperienceFluid(experience);
+        var experienceFluid = new FluidStack(CEIFluids.EXPERIENCE, experience);
         int fill = configurableTank.fill(experienceFluid, FluidAction.SIMULATE, true);
         if (fill == 0)
             return false;
@@ -196,12 +196,12 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity implem
             case KINDLED -> {
                 int capacity = getNormalTank().getCapacity();
                 tanks.setTank(0, callback -> new CreativeSmartFluidTank(capacity, callback));
-                getNormalTank().setFluid(ExperienceHelper.getExperienceFluid(capacity));
+                getNormalTank().setFluid(new FluidStack(CEIFluids.EXPERIENCE, capacity));
             }
             case SEETHING -> {
                 int capacity = getSpecialTank().getCapacity();
                 tanks.setTank(1, callback -> new CreativeSmartFluidTank(capacity, callback));
-                getSpecialTank().setFluid(ExperienceHelper.getExperienceFluid(capacity));
+                getSpecialTank().setFluid(new FluidStack(CEIFluids.EXPERIENCE, capacity));
             }
             default -> {
                 tanks.setTank(0, this::createNormalTank);

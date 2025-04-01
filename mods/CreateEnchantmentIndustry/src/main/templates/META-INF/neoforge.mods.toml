@@ -21,6 +21,7 @@ issueTrackerURL="${mod_github}/issues"
 
 [modproperties.${mod_id}]
     "create_dragons_plus:dye_fluids"=true
+    "create_dragons_plus:fluid_hatch"=true
     "create_dragons_plus:blaze_upgrade"=true
 
 [[dependencies.${mod_id}]]

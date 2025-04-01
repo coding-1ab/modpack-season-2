@@ -68,7 +68,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-        tank = SmartFluidTankBehaviour.single(this, CEIConfig.fluids().blazeEnchanterFluidCapacity.get());
+        tank = SmartFluidTankBehaviour.single(this, CEIConfig.fluids().printerFluidCapacity.get());
         printer = new PrinterBehaviour(this, tank, new CenteredSideValueBoxTransform(
                 (state, direction) -> state.getValue(PrinterBlock.FACING) == direction
         ));

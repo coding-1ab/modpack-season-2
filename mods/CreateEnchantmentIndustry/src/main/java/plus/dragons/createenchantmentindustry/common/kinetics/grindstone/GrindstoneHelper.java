@@ -48,24 +48,24 @@ public class GrindstoneHelper {
         var place = NeoForge.EVENT_BUS.post(new GrindstoneEvent.OnPlaceItem(top, ItemStack.EMPTY, -1));
         if (place.isCanceled())
             return Optional.empty();
-        int xp = place.getXp();
+        int experience = place.getXp();
         var output = place.getOutput();
         if (output.isEmpty()) {
             output = computeResult(top, bottom);
             if (output.isEmpty())
                 return Optional.empty();
-            if (xp == -1) {
-                xp = getExperienceAmount(level, top, bottom);
+            if (experience == -1) {
+                experience = getGrindingExperience(level, top, bottom);
             }
         }
-        var take = NeoForge.EVENT_BUS.post(new GrindstoneEvent.OnTakeItem(top, bottom, xp));
+        var take = NeoForge.EVENT_BUS.post(new GrindstoneEvent.OnTakeItem(top, bottom, experience));
         if (take.isCanceled()) {
             return Optional.of(new Result(top, bottom, output, 0));
         }
         return Optional.of(new Result(take.getNewTopItem(), take.getNewBottomItem(), output, Math.max(take.getXp(), 0)));
     }
 
-    private static int getExperienceAmount(Level level, ItemStack top, ItemStack bottom) {
+    private static int getGrindingExperience(Level level, ItemStack top, ItemStack bottom) {
         int experience = 0;
         experience += getExperienceFromItem(top);
         experience += getExperienceFromItem(bottom);
@@ -169,5 +169,5 @@ public class GrindstoneHelper {
         return input;
     }
 
-    public record Result(ItemStack top, ItemStack bottom, ItemStack output, int xp) {}
+    public record Result(ItemStack top, ItemStack bottom, ItemStack output, int experience) {}
 }

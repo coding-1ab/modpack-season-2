@@ -45,6 +45,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.util.DeferredSoundType;
 import plus.dragons.createdragonsplus.common.processing.blaze.BlazeBlock;
 import plus.dragons.createdragonsplus.common.registry.CDPDataMaps;
+import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHatchBlock;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlock;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindstoneDrainBlock;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.MechanicalGrindStoneItem;
@@ -78,6 +79,14 @@ public class CEIBlocks {
                     .withPool(loots.applyExplosionCondition(AllBlocks.ITEM_DRAIN, LootPool.lootPool()
                             .setRolls(ConstantValue.exactly(1.0F))
                             .add(LootItem.lootTableItem(AllBlocks.ITEM_DRAIN))))))
+            .register();
+    public static final BlockEntry<ExperienceHatchBlock> EXPERIENCE_HATCH = REGISTRATE
+            .block("experience_hatch", ExperienceHatchBlock::new)
+            .initialProperties(SharedProperties::copperMetal)
+            .properties(p -> p.mapColor(MapColor.COLOR_GREEN))
+            .transform(pickaxeOnly())
+            .blockstate((ctx, prov) -> prov.horizontalBlock(ctx.get(), AssetLookup.standardModel(ctx, prov)))
+            .simpleItem()
             .register();
     public static final BlockEntry<PrinterBlock> PRINTER = REGISTRATE
             .block("printer", PrinterBlock::new)
