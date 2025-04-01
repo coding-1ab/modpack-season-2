@@ -2,6 +2,13 @@ package com.simibubi.create.content.redstone.displayLink;
 
 import java.util.List;
 
+import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
+
+import com.simibubi.create.content.contraptions.StructureTransform;
+
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +35,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
-public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity {
+public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity  implements TransformableBlockEntity {
 
 	protected BlockPos targetOffset;
 
@@ -228,6 +235,12 @@ public class DisplayLinkBlockEntity extends LinkWithBulbBlockEntity {
 		if (state.getOptionalValue(DisplayLinkBlock.FACING).orElse(Direction.UP).getAxis().isVertical())
 			return bulbOffsetVertical;
 		return bulbOffset;
+	}
+
+	@Override
+	public void transform(BlockEntity be, StructureTransform transform) {
+		targetOffset = transform.applyWithoutOffset(targetOffset);
+		notifyUpdate();
 	}
 
 }
