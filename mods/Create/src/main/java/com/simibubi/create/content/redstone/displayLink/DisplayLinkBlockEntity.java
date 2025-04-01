@@ -2,21 +2,16 @@ package com.simibubi.create.content.redstone.displayLink;
 
 import java.util.List;
 
-import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
-
-import com.simibubi.create.content.contraptions.StructureTransform;
-
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.behaviour.display.DisplayTarget;
+import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
 import com.simibubi.create.api.registry.CreateBuiltInRegistries;
 import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.compat.computercraft.ComputerCraftProxy;
+import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelPosition;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelSupportBehaviour;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
@@ -28,6 +23,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
