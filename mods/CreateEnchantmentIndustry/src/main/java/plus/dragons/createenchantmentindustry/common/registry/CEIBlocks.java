@@ -52,13 +52,14 @@ import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.Mechani
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.MechanicalGrindstoneBlock;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.BlazeEnchanterBlock;
 import plus.dragons.createenchantmentindustry.common.processing.forger.BlazeForgerBlock;
+import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
 @SuppressWarnings("removal")
 public class CEIBlocks {
     public static final BlockEntry<MechanicalGrindstoneBlock> MECHANICAL_GRINDSTONE = REGISTRATE
             .block("mechanical_grindstone", MechanicalGrindstoneBlock::new)
             .initialProperties(SharedProperties::stone)
-            .dataMap(CDPDataMaps.BLOCK_STRESS_IMPACTS, 4.0)
+            .transform(CEIConfig.stress().setImpact(4.0))
             .transform(pickaxeOnly())
             .blockstate(BlockStateGen.axisBlockProvider(false))
             .item(MechanicalGrindStoneItem::new)
@@ -67,7 +68,7 @@ public class CEIBlocks {
     public static final BlockEntry<GrindstoneDrainBlock> GRINDSTONE_DRAIN = REGISTRATE
             .block("grindstone_drain", prop -> new GrindstoneDrainBlock(MECHANICAL_GRINDSTONE.get(), prop))
             .initialProperties(SharedProperties::copperMetal)
-            .dataMap(CDPDataMaps.BLOCK_STRESS_IMPACTS, 4.0)
+            .transform(CEIConfig.stress().setImpact(4.0))
             .transform(pickaxeOnly())
             .blockstate(BlockStateGen.horizontalBlockProvider(true))
             .item()

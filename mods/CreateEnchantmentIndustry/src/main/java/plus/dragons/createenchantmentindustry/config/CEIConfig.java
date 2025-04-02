@@ -62,6 +62,10 @@ public class CEIConfig {
         return SERVER_CONFIG.kinetics;
     }
 
+    public static CEIStressConfig stress() {
+        return SERVER_CONFIG.kinetics.stressValues;
+    }
+
     public static CEIFluidsConfig fluids() {
         return SERVER_CONFIG.fluids;
     }

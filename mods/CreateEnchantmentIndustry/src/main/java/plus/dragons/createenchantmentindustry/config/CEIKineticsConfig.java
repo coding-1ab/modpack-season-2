@@ -18,7 +18,9 @@
 
 package plus.dragons.createenchantmentindustry.config;
 
+import com.simibubi.create.infrastructure.config.CKinetics;
 import net.createmod.catnip.config.ConfigBase;
+import plus.dragons.createdragonsplus.config.StressConfig;
 
 public class CEIKineticsConfig extends ConfigBase {
     public final ConfigBool deployerKillDropXp = b(true, "deployerKillDropXp", Comments.deployerKillDropXp);
@@ -28,6 +30,7 @@ public class CEIKineticsConfig extends ConfigBase {
     public final ConfigBool deployerCollectXp = b(true, "deployerCollectXp", Comments.deployerCollectXp);
     public final ConfigBool deployerMendItem = b(true, "deployerMendItem", Comments.deployerMendItem);
     public final ConfigBool deployerSweepAttack = b(true, "deployerSweepAttack", Comments.deployerSweepAttack);
+    public final CEIStressConfig stressValues = nested(1, CEIStressConfig::new, Comments.stress);
 
     @Override
     public String getName() {
@@ -35,6 +38,7 @@ public class CEIKineticsConfig extends ConfigBase {
     }
 
     static class Comments {
+        static String stress = "Fine tune the kinetic stats of individual components";
         static final String deployerKillDropXp =
                 "Whether Deployer killed entities should drop experience.";
         static final String deployerKillXpScale =
