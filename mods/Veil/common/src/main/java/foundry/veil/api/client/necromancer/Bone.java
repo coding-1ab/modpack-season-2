@@ -11,6 +11,7 @@ import java.util.List;
 public class Bone {
 
     public Vector3f position, previousPosition, basePosition;
+    public Vector3f rotationPoint, previousRotationPoint, baseRotationPoint;
     public Quaternionf rotation, previousRotation, baseRotation;
     public Vector3f size, previousSize, baseSize;
     public Vector4f color, previousColor, baseColor;
@@ -31,6 +32,10 @@ public class Bone {
         this.previousPosition = new Vector3f(0.0F);
         this.basePosition = new Vector3f(0.0F);
 
+        this.rotationPoint = new Vector3f(0.0F);
+        this.previousRotationPoint = new Vector3f(0.0F);
+        this.baseRotationPoint = new Vector3f(0.0F);
+
         this.rotation = new Quaternionf();
         this.previousRotation = new Quaternionf();
         this.baseRotation = new Quaternionf();
@@ -47,7 +52,7 @@ public class Bone {
         this.parentChain = new ArrayList<>();
     }
 
-    public void setBaseAttributes(Vector3fc pos, Quaternionfc rotation, Vector3fc scale, Vector4fc color) {
+    public void setBaseAttributes(Vector3fc pos, Quaternionfc rotation, Vector3f rotationPoint, Vector3fc scale, Vector4fc color) {
         this.basePosition.set(pos);
         this.position.set(this.basePosition);
         this.previousPosition.set(this.basePosition);
@@ -60,6 +65,10 @@ public class Bone {
         this.rotation.set(this.baseRotation);
         this.previousRotation.set(this.baseRotation);
 
+        this.baseRotationPoint.set(rotationPoint);
+        this.rotationPoint.set(this.baseRotationPoint);
+        this.previousRotationPoint.set(this.baseRotationPoint);
+
         this.baseColor.set(color);
         this.color.set(this.baseColor);
         this.previousColor.set(this.baseColor);
@@ -68,6 +77,7 @@ public class Bone {
     public void reset() {
         this.position.set(this.basePosition);
         this.rotation.set(this.baseRotation);
+        this.rotationPoint.set(this.baseRotationPoint);
         this.size.set(this.baseSize);
         this.color.set(this.baseColor);
     }
@@ -75,6 +85,7 @@ public class Bone {
     protected void updatePreviousAttributes() {
         this.previousPosition.set(this.position);
         this.previousRotation.set(this.rotation);
+        this.previousRotationPoint.set(this.rotationPoint);
         this.previousSize.set(this.size);
         this.previousColor.set(this.color);
     }
@@ -99,7 +110,12 @@ public class Bone {
         );
 
         this.previousRotation.slerp(this.rotation, partialTicks, orientation);
+        float rotationPointX = Mth.lerp(partialTicks, this.previousRotationPoint.x, this.rotationPoint.x);
+        float rotationPointY = Mth.lerp(partialTicks, this.previousRotationPoint.y, this.rotationPoint.y);
+        float rotationPointZ = Mth.lerp(partialTicks, this.previousRotationPoint.z, this.rotationPoint.z);
+        matrix.translate(rotationPointX, rotationPointY, rotationPointZ);
         matrix.rotate(orientation.normalize());
+        matrix.translate(-rotationPointX, -rotationPointY, -rotationPointZ);
 
         // technically wrong but whatever
         matrix.scale(
@@ -156,14 +172,17 @@ public class Bone {
         this.position.add(x, y, z);
         return this;
     }
+
     public Bone offsetX(float x) {
         this.position.add(x, 0, 0);
         return this;
     }
+
     public Bone offsetY(float y) {
         this.position.add(0, y, 0);
         return this;
     }
+
     public Bone offsetZ(float z) {
         this.position.add(0, 0, z);
         return this;
