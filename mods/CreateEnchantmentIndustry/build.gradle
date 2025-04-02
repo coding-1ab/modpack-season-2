@@ -160,11 +160,10 @@ publishing {
 publishMods {
     file = jar.archiveFile
     additionalFiles.from sourcesJar.archiveFile
-    changelog = project.file("changelog/${mod_version}.md").text
+    changelog = project.file("CHANGELOG.md").text
     version = mod_version
     type = BETA
-    displayName = "CEI ${mod_version} for Create ${minecraft_version}-${create_version}"
-    modLoaders.add("forge")
+    displayName = "Create: Enchantment Industry ${mod_version} for Create ${minecraft_version}-${create_version_production}"
     modLoaders.add("neoforge")
 
     curseforge {
