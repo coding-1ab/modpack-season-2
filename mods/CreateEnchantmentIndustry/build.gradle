@@ -132,6 +132,11 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 sourceSets.main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
 
+tasks.withType(Jar) {
+    from "LICENSE.txt"
+    exclude ".cache"
+}
+
 spotless {
     java {
         importOrder()
@@ -149,13 +154,19 @@ java {
 
 publishing {
     publications {
-        register("mavenJava", MavenPublication) {
+        register('mavenJava', MavenPublication) {
+            artifactId = mod_artifact_id + "-" + minecraft_version
             from components.java
         }
     }
     repositories {
         maven {
-            url "file://${project.projectDir}/repo"
+            name "DragonsPlus"
+            url "https://maven.dragons.plus/releases"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
         }
     }
 }
