@@ -79,6 +79,7 @@ configurations {
 
 repositories {
     mavenLocal()
+    maven { url "https://maven.plus.dragons" } // Create: Dragons Plus
     maven { url "https://maven.createmod.net" } // Ponder, Flywheel
     maven { url "https://mvn.devos.one/snapshots" } // Registrate
     maven { url "https://maven.blamejared.com" } // JEI
