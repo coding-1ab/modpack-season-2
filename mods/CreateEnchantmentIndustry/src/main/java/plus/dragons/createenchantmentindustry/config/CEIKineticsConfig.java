@@ -18,9 +18,7 @@
 
 package plus.dragons.createenchantmentindustry.config;
 
-import com.simibubi.create.infrastructure.config.CKinetics;
 import net.createmod.catnip.config.ConfigBase;
-import plus.dragons.createdragonsplus.config.StressConfig;
 
 public class CEIKineticsConfig extends ConfigBase {
     public final ConfigBool deployerKillDropXp = b(true, "deployerKillDropXp", Comments.deployerKillDropXp);

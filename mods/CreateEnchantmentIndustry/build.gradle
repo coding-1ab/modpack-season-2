@@ -141,6 +141,8 @@ spotless {
     }
 }
 
+build.dependsOn(spotlessApply)
+
 java {
     withSourcesJar()
 }

@@ -20,14 +20,11 @@ package plus.dragons.createenchantmentindustry.config;
 
 import net.minecraft.Util;
 import net.minecraft.util.Unit;
-import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig.Type;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
-import plus.dragons.createenchantmentindustry.common.CEICommon;
 
 public class CEIConfig {
     private static final CEIClientConfig CLIENT_CONFIG = new CEIClientConfig();
