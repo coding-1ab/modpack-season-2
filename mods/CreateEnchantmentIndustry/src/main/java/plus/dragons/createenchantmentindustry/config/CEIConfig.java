@@ -29,25 +29,21 @@ import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 
-@Mod(CEICommon.ID)
 public class CEIConfig {
-    private static CEIClientConfig CLIENT_CONFIG;
+    private static final CEIClientConfig CLIENT_CONFIG = new CEIClientConfig();
+    private static final CEIServerConfig SERVER_CONFIG = new CEIServerConfig();
     private static ModConfigSpec CLIENT_SPEC;
-    private static CEIServerConfig SERVER_CONFIG;
     private static ModConfigSpec SERVER_SPEC;
 
-    public CEIConfig(IEventBus modBus, ModContainer container) {
+    public CEIConfig(ModContainer modContainer) {
         CLIENT_SPEC = Util.make(new ModConfigSpec.Builder().configure(builder -> {
-            CLIENT_CONFIG = new CEIClientConfig();
             CLIENT_CONFIG.registerAll(builder);
             return Unit.INSTANCE;
-        }).getValue(), spec -> container.registerConfig(Type.CLIENT, spec));
+        }).getValue(), spec -> modContainer.registerConfig(Type.CLIENT, spec));
         SERVER_SPEC = Util.make(new ModConfigSpec.Builder().configure(builder -> {
-            SERVER_CONFIG = new CEIServerConfig();
             SERVER_CONFIG.registerAll(builder);
             return Unit.INSTANCE;
-        }).getValue(), spec -> container.registerConfig(Type.SERVER, spec));
-        modBus.register(this);
+        }).getValue(), spec -> modContainer.registerConfig(Type.SERVER, spec));
     }
 
     public static CEIClientConfig client() {

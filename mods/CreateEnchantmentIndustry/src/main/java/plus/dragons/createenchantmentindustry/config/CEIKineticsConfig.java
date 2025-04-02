@@ -30,7 +30,7 @@ public class CEIKineticsConfig extends ConfigBase {
     public final ConfigBool deployerCollectXp = b(true, "deployerCollectXp", Comments.deployerCollectXp);
     public final ConfigBool deployerMendItem = b(true, "deployerMendItem", Comments.deployerMendItem);
     public final ConfigBool deployerSweepAttack = b(true, "deployerSweepAttack", Comments.deployerSweepAttack);
-    public final CEIStressConfig stressValues = nested(1, CEIStressConfig::new, Comments.stress);
+    public final CEIStressConfig stressValues = nested(0, CEIStressConfig::new, Comments.stress);
 
     @Override
     public String getName() {

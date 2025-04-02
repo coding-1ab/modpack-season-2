@@ -21,6 +21,7 @@ package plus.dragons.createenchantmentindustry.common;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import plus.dragons.createdragonsplus.common.CDPRegistrate;
@@ -33,13 +34,14 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIEnchantments;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 import plus.dragons.createenchantmentindustry.common.registry.CEIItems;
 import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
+import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
 @Mod(CEICommon.ID)
 public class CEICommon {
     public static final String ID = "create_enchantment_industry";
     public static final CDPRegistrate REGISTRATE = new CDPRegistrate(ID);
 
-    public CEICommon(IEventBus modBus) {
+    public CEICommon(IEventBus modBus, ModContainer modContainer) {
         REGISTRATE.registerEventListeners(modBus);
         CEIFluids.register(modBus);
         CEIBlocks.register(modBus);
@@ -51,6 +53,7 @@ public class CEICommon {
         CEIArmInterationPoints.register(modBus);
         CEIDataMaps.register(modBus);
         modBus.register(this);
+        modBus.register(new CEIConfig(modContainer));
     }
 
     @SubscribeEvent
