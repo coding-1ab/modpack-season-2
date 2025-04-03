@@ -116,7 +116,7 @@ public class ImGuiFontManager implements PreparableReloadListener {
             });
 
             Veil.LOGGER.info("Loaded {} ImGui fonts", this.fontBuilders.size());
-            this.rebuildFonts();
+            VeilRenderSystem.rebuildFonts();
         }, gameExecutor);
     }
 

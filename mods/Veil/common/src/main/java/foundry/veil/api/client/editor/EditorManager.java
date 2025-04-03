@@ -49,6 +49,11 @@ public class EditorManager implements VeilEditorEnvironment, PreparableReloadLis
         resourceManager.registerReloadListener(this);
     }
 
+    @ApiStatus.Internal
+    public void rebuildFonts() {
+        this.fonts.rebuildFonts();
+    }
+
     public ImFont getFont(ResourceLocation name, boolean bold, boolean italic) {
         return this.fonts.getFont(name, bold, italic);
     }

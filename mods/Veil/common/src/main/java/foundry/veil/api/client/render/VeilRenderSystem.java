@@ -242,6 +242,7 @@ public final class VeilRenderSystem {
     private static final Vector3f LIGHT1_DIRECTION = new Vector3f();
     private static final Vector3f CAMERA_BOB_OFFSET = new Vector3f();
 
+    private static boolean pendingFontRebuild;
     private static VeilRenderer renderer;
     private static ResourceLocation shaderLocation;
     private static int screenQuadVao;
@@ -1107,6 +1108,10 @@ public final class VeilRenderSystem {
 
     @ApiStatus.Internal
     public static void beginFrame() {
+        if (pendingFontRebuild) {
+            pendingFontRebuild = false;
+            renderer.getEditorManager().rebuildFonts();
+        }
         VeilImGuiImpl.get().beginFrame();
 
         SHADER_BUFFER_CACHE.bind();
@@ -1131,6 +1136,11 @@ public final class VeilRenderSystem {
         VanillaShaderCompiler.clear();
 
         VeilDebug.MESSAGE_ID.set(0);
+    }
+
+    @ApiStatus.Internal
+    public static void rebuildFonts() {
+        pendingFontRebuild = true;
     }
 
     @ApiStatus.Internal
