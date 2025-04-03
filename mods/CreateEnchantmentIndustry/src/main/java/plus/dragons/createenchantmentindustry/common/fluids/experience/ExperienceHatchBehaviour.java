@@ -34,6 +34,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.fluids.FluidStack;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
@@ -52,7 +53,11 @@ public class ExperienceHatchBehaviour extends FilteringBehaviour {
 
     public FluidStack getFluidToDrain() {
         Holder<Fluid> fluid = filter.fluid(getWorld()).getFluidHolder();
-        int unit = ExperienceHelper.getExperienceFluidUnit(fluid);
+        int unit;
+        if(Fluids.EMPTY.isSame(fluid.value())){
+            unit = 1;
+            fluid = CEIFluids.EXPERIENCE;
+        } else unit = ExperienceHelper.getExperienceFluidUnit(fluid);
         if (unit == 0)
             return FluidStack.EMPTY;
         int amount = count * POINTS_PER_SCROLL;
@@ -64,7 +69,11 @@ public class ExperienceHatchBehaviour extends FilteringBehaviour {
         if (available == 0)
             return FluidStack.EMPTY;
         Holder<Fluid> fluid = filter.fluid(getWorld()).getFluidHolder();
-        int unit = ExperienceHelper.getExperienceFluidUnit(fluid);
+        int unit;
+        if(Fluids.EMPTY.isSame(fluid.value())){
+            unit = 1;
+            fluid = CEIFluids.EXPERIENCE;
+        } else unit = ExperienceHelper.getExperienceFluidUnit(fluid);
         if (unit == 0)
             return FluidStack.EMPTY;
         int amount = count * POINTS_PER_SCROLL;
