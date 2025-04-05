@@ -47,7 +47,6 @@ public class ExperienceScene {
 
         scene.overlay().showText(60)
                 .text("This is a tank of Liquid Experience, and it will be your most used form of experience")
-                .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(9, 5, 9));
         for(int i=0;i<6;i++){
@@ -422,7 +421,6 @@ public class ExperienceScene {
         scene.idle(20);
         scene.world().createEntity(level -> {
             var lightning = EntityType.LIGHTNING_BOLT.create(level);
-            lightning.getPersistentData().putBoolean(LIGHTNING_BOLT_EXPERIENCE_CHARGE_KEY, true);
             lightning.moveTo(Vec3.atBottomCenterOf(util.grid().at(1,2,1)));
             return lightning;
         });
