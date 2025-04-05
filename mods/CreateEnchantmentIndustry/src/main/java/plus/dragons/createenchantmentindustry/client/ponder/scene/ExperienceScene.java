@@ -81,7 +81,6 @@ public class ExperienceScene {
         scene.idle(5);
         scene.overlay().showText(40)
                 .text("Liquid Hatch for accessing liquids directly from items")
-                .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(11, 4, 8));
         scene.overlay().showOutline(PonderPalette.GREEN, liquidHatch, liquidHatch, 40);
@@ -92,7 +91,6 @@ public class ExperienceScene {
         scene.idle(5);
         scene.overlay().showText(40)
                 .text("Experience Hatch for accessing experience directly from the player.")
-                .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(8, 4, 11));
         scene.overlay().showOutline(PonderPalette.GREEN, expHatch, expHatch, 40);
@@ -117,7 +115,6 @@ public class ExperienceScene {
 
         scene.overlay().showText(50)
                 .text("You can use Item Drain to pour Liquid Experience out of items")
-                .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(9, 2, 2));
         scene.overlay().showOutline(PonderPalette.GREEN, itemDrain, itemDrain, 50);
@@ -139,7 +136,6 @@ public class ExperienceScene {
         scene.world().showSection(grindStoneDrain, Direction.DOWN);
         scene.overlay().showText(60)
                 .text("You can also use Mechanical GrindStone to pulverize items like Experience Nuggets into Liquid Experience")
-                .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(9, 3, 4));
         scene.overlay().showOutline(PonderPalette.GREEN, grindStoneDrain, grindStoneDrain, 60);
@@ -315,13 +311,13 @@ public class ExperienceScene {
         scene.idle(20);
 
         // leak
+        scene.addKeyframe();
         scene.world().showSection(util.select().fromTo(4, 7,9,8,7,11), Direction.EAST);
         scene.world().setKineticSpeed(util.select().position(8, 7, 11), 256f);
         scene.world().propagatePipeChange(util.grid().at(8, 7, 11));
-        scene.idle(5);
+        scene.idle(40);
         scene.overlay().showText(60)
                 .text("Don't worry, leaked Liquid Experience will turn into experience orbs")
-                .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(4, 7, 9));
         scene.idle(65);
@@ -338,7 +334,6 @@ public class ExperienceScene {
         scene.idle(5);
         scene.overlay().showText(50)
                 .text("You need to know a few more things before you're ready to start working on enchantments")
-                .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(4, 1, 0));
         for(int i=0;i<=4;i++){
@@ -351,7 +346,6 @@ public class ExperienceScene {
         scene.idle(5);
         scene.overlay().showText(55)
                 .text("Block of Experience is no longer purely decorative and storage block. You'll need it later")
-                .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 1, 0));
         scene.overlay().showOutline(PonderPalette.GREEN, util.select().fromTo(4,1,0,0,1,1), util.select().fromTo(4,1,0,0,1,1), 55);
@@ -365,7 +359,6 @@ public class ExperienceScene {
         }
         scene.overlay().showText(40)
                 .text("This is Block of Super Experience. You'll need it for Super Enchanting")
-                .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 3));
         scene.overlay().showOutline(PonderPalette.BLUE, util.select().fromTo(4,1,3,0,2,4), util.select().fromTo(4,1,3,0,2,4), 40);
@@ -437,7 +430,6 @@ public class ExperienceScene {
         scene.idle(5);
         scene.overlay().showText(50)
                 .text("Lighting Strike!")
-                .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(1, 2, 1));
         scene.idle(50);

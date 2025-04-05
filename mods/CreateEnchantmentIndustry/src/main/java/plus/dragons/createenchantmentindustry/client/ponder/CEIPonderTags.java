@@ -1,4 +1,4 @@
-package plus.dragons.createenchantmentindustry.client.ponder.scene;
+package plus.dragons.createenchantmentindustry.client.ponder;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
@@ -19,14 +19,14 @@ public class CEIPonderTags {
 
         helper.registerTag(EXPERIENCE_RELATED)
                 .addToIndex()
-                .item(AllItems.EXP_NUGGET.get(), true, false)
+                .item(AllBlocks.EXPERIENCE_BLOCK.get(), true, false)
                 .title("Experience Related")
                 .description("Things that will be used when processing and applying Experience")
                 .register();
 
         helper.registerTag(SUPER_EXPERIENCE_RELATED)
                 .addToIndex()
-                .item(CEIItems.SUPER_EXPERIENCE_NUGGET.get(), true, false)
+                .item(CEIBlocks.SUPER_EXPERIENCE_BLOCK.get(), true, false)
                 .title("Super Experience Related")
                 .description("Things that will be used when processing and applying Super Experience")
                 .register();
