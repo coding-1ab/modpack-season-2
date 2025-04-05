@@ -225,13 +225,13 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity implem
         if (lightning == null)
             return false;
         lightning.getPersistentData().putBoolean(LIGHTNING_BOLT_EXPERIENCE_CHARGE_KEY, true);
-        Optional<BlockPos> rodPos = level.getPoiManager().findClosest(
+        Optional<BlockPos> rodPos = level.getPoiManager().findAll(
                 poi -> poi.is(PoiTypes.LIGHTNING_ROD),
                 pos -> pos.getY() == level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ()) - 1,
                 strikePos,
                 128,
                 PoiManager.Occupancy.ANY
-        );
+        ).findAny();
         lightning.moveTo(Vec3.atBottomCenterOf(rodPos.orElse(strikePos)));
         level.addFreshEntity(lightning);
         return rodPos.isEmpty();
