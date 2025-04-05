@@ -22,6 +22,7 @@ import net.createmod.ponder.api.registration.PonderPlugin;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
+import plus.dragons.createenchantmentindustry.client.ponder.scene.CEIPonderTags;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 
 public class CEIPonderPlugin implements PonderPlugin {
@@ -31,8 +32,12 @@ public class CEIPonderPlugin implements PonderPlugin {
     }
 
     @Override
-    public void registerScenes(PonderSceneRegistrationHelper<ResourceLocation> helper) {}
+    public void registerScenes(PonderSceneRegistrationHelper<ResourceLocation> helper) {
+        CEIPonderScenes.register(helper);
+    }
 
     @Override
-    public void registerTags(PonderTagRegistrationHelper<ResourceLocation> helper) {}
+    public void registerTags(PonderTagRegistrationHelper<ResourceLocation> helper) {
+        CEIPonderTags.register(helper);
+    }
 }
