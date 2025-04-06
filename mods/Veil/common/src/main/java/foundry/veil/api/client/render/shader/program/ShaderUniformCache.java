@@ -33,6 +33,7 @@ import static org.lwjgl.opengl.GL42C.*;
 public class ShaderUniformCache {
 
     private static final IntSet SAMPLERS = IntSet.of(
+            // Samplers
             GL_SAMPLER_1D,
             GL_SAMPLER_2D,
             GL_SAMPLER_3D,
@@ -68,7 +69,38 @@ public class ShaderUniformCache {
             GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE,
             GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY,
             GL_UNSIGNED_INT_SAMPLER_BUFFER,
-            GL_UNSIGNED_INT_SAMPLER_2D_RECT);
+            GL_UNSIGNED_INT_SAMPLER_2D_RECT,
+            // Images
+            GL_IMAGE_1D,
+            GL_IMAGE_2D,
+            GL_IMAGE_3D,
+            GL_IMAGE_2D_RECT,
+            GL_IMAGE_CUBE,
+            GL_IMAGE_BUFFER,
+            GL_IMAGE_1D_ARRAY,
+            GL_IMAGE_2D_ARRAY,
+            GL_IMAGE_2D_MULTISAMPLE,
+            GL_IMAGE_2D_MULTISAMPLE_ARRAY,
+            GL_INT_IMAGE_1D,
+            GL_INT_IMAGE_2D,
+            GL_INT_IMAGE_3D,
+            GL_INT_IMAGE_2D_RECT,
+            GL_INT_IMAGE_CUBE,
+            GL_INT_IMAGE_BUFFER,
+            GL_INT_IMAGE_1D_ARRAY,
+            GL_INT_IMAGE_2D_ARRAY,
+            GL_INT_IMAGE_2D_MULTISAMPLE,
+            GL_INT_IMAGE_2D_MULTISAMPLE_ARRAY,
+            GL_UNSIGNED_INT_IMAGE_1D,
+            GL_UNSIGNED_INT_IMAGE_2D,
+            GL_UNSIGNED_INT_IMAGE_3D,
+            GL_UNSIGNED_INT_IMAGE_2D_RECT,
+            GL_UNSIGNED_INT_IMAGE_CUBE,
+            GL_UNSIGNED_INT_IMAGE_BUFFER,
+            GL_UNSIGNED_INT_IMAGE_1D_ARRAY,
+            GL_UNSIGNED_INT_IMAGE_2D_ARRAY,
+            GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE,
+            GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY);
 
     private static final Int2ObjectMap<String> NAMES;
 
