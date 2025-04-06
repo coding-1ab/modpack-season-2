@@ -1,7 +1,7 @@
 package org.antarcticgardens.cna.content.nuclear.reactor.vent;
 
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -127,9 +127,9 @@ public class ReactorHeatVentBlockEntity extends RodFindingReactorBlockEntity imp
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         HeatBlockEntity.addToolTips(this, tooltip);
 
-        Lang.translate("tooltip.create_new_age.extracting")
+        CreateLang.translate("tooltip.create_new_age.extracting")
                 .style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
-        Lang.translate("tooltip.create_new_age.temperature", StringFormatUtil.formatFloat(extract))
+        CreateLang.translate("tooltip.create_new_age.temperature", StringFormatUtil.formatFloat(extract))
                 .style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
         return true;
     }

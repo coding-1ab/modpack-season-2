@@ -1,9 +1,9 @@
 package org.antarcticgardens.cna.content.electricity.generation.brushes;
 
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -54,14 +54,14 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements IHav
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        Lang.translate("tooltip.create_new_age.energy_stats")
+        CreateLang.translate("tooltip.create_new_age.energy_stats")
                 .style(ChatFormatting.WHITE).forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_output")
+        CreateLang.translate("tooltip.create_new_age.energy_output")
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_per_tick", StringFormatUtil.formatLong(lastOutput))
+        CreateLang.translate("tooltip.create_new_age.energy_per_tick", StringFormatUtil.formatLong(lastOutput))
                 .style(ChatFormatting.AQUA)
                 .forGoggles(tooltip, 1);
 

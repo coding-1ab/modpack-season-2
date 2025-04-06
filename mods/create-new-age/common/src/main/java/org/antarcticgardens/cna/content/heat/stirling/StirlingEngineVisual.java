@@ -13,13 +13,13 @@ import com.simibubi.create.foundation.utility.AnimationTickHolder;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
-public class StirlingEngineInstance extends KineticBlockEntityInstance<StirlingEngineBlockEntity> implements DynamicInstance {
+public class StirlingEngineVisual extends KineticBlockEntityInstance<StirlingEngineBlockEntity> implements DynamicInstance {
 
     protected final RotatingData shaft;
     protected final ModelData wheel;
     protected float lastAngle = Float.NaN;
 
-    public StirlingEngineInstance(MaterialManager materialManager, StirlingEngineBlockEntity blockEntity) {
+    public StirlingEngineVisual(MaterialManager materialManager, StirlingEngineBlockEntity blockEntity) {
         super(materialManager, blockEntity);
 
         shaft = setup(getRotatingMaterial().getModel(shaft())

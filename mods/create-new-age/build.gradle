@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "dev.architectury.loom" version "1.5-SNAPSHOT" apply false
+    id "dev.architectury.loom" version "1.9-SNAPSHOT" apply false
 }
 
 subprojects {
@@ -18,7 +18,10 @@ subprojects {
         maven { url = "https://api.modrinth.com/maven" } // Modrinth maven
         
         maven { url = "https://maven.parchmentmc.org" } // Parchment mappings
-        maven { url = "https://maven.tterrag.com/" } // Create Forge, Flywheel, Forge Registrate
+        maven { url = "https://maven.tterrag.com/" } // Forge Registrate
+
+        maven { url = "https://maven.createmod.net" } // Create Forge, Ponder, Flywheel
+
         maven { url = "https://mvn.devos.one/snapshots/" } // Create Fabric, Fabric Registrate 
         
         maven { url = "https://maven.blamejared.com/" } // JEI
@@ -43,8 +46,10 @@ subprojects {
         
         if (project.name != "fabric") { 
             modApi("com.tterrag.registrate:Registrate:${rootProject.registrateVersion}")
-            modImplementation("com.jozufozu.flywheel:flywheel-forge-${rootProject.minecraftVersion}:${rootProject.flywheelVersion}")
-            modImplementation("com.simibubi.create:create-${rootProject.minecraftVersion}:${rootProject.createVersion}:slim") { transitive = false } 
+            modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${minecraftVersion}:${flywheelVersion}")
+            modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${minecraftVersion}:${flywheelVersion}")
+            modImplementation("com.simibubi.create:create-${rootProject.minecraftVersion}:${rootProject.createVersion}:slim") { transitive = false }
+            modImplementation("net.createmod.ponder:Ponder-Forge-${minecraftVersion}:${ponderVersion}")
         }
         
         modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraftVersion}-common-api:${rootProject.jeiVersion}")

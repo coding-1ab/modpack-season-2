@@ -1,8 +1,7 @@
 package org.antarcticgardens.cna.content.motor;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
@@ -10,15 +9,17 @@ import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.VecHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.tterrag.registrate.builders.BlockEntityBuilder;
+import dev.engine_room.flywheel.lib.transform.TransformStack;
+import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -72,7 +73,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
-        speedBehavior = new MotorScrollValueBehaviour(Lang.translateDirect("kinetics.creative_motor.rotation_speed"), this, new MotorValueBox());
+        speedBehavior = new MotorScrollValueBehaviour(CreateLang.translateDirect("kinetics.creative_motor.rotation_speed"), this, new MotorValueBox());
         speedBehavior.requiresWrench();
         speedBehavior.value = getDefaultSpeed();
         speedBehavior.withCallback(i -> this.updateGeneratedRotation());
@@ -87,21 +88,21 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
         }
 
         @Override
-        public Vec3 getLocalOffset(BlockState state) {
+        public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
             Direction facing = state.getValue(CreativeMotorBlock.FACING);
-            return super.getLocalOffset(state).add(Vec3.atLowerCornerOf(facing.getNormal())
+            return super.getLocalOffset(level, pos, state).add(Vec3.atLowerCornerOf(facing.getNormal())
                     .scale(-1 / 16f));
         }
 
         @Override
-        public void rotate(BlockState state, PoseStack ms) {
-            super.rotate(state, ms);
+        public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
+            super.rotate(level, pos, state, ms);
             Direction facing = state.getValue(CreativeMotorBlock.FACING);
             if (facing.getAxis() == Direction.Axis.Y)
                 return;
             if (getSide() != Direction.UP)
                 return;
-            TransformStack.cast(ms)
+            TransformStack.of(ms)
                     .rotateZ(-AngleHelper.horizontalAngle(facing) + 180);
         }
 
@@ -151,20 +152,20 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        Lang.translate("tooltip.create_new_age.energy_stored")
+        CreateLang.translate("tooltip.create_new_age.energy_stored")
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_storage", StringFormatUtil.formatLong(storage.getStoredEnergy()), 
+        CreateLang.translate("tooltip.create_new_age.energy_storage", StringFormatUtil.formatLong(storage.getStoredEnergy()),
                         StringFormatUtil.formatLong(storage.getCapacity()))
                 .style(ChatFormatting.AQUA)
                 .forGoggles(tooltip, 1);
 
-        Lang.translate("tooltip.create_new_age.using")
+        CreateLang.translate("tooltip.create_new_age.using")
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_per_tick", StringFormatUtil.formatLong(e))
+        CreateLang.translate("tooltip.create_new_age.energy_per_tick", StringFormatUtil.formatLong(e))
                 .style(ChatFormatting.AQUA)
                 .forGoggles(tooltip, 1);
 

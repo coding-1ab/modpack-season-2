@@ -1,14 +1,14 @@
 package org.antarcticgardens.cna;
 
-import com.simibubi.create.content.kinetics.base.CutoutRotatingInstance;
-import com.simibubi.create.content.kinetics.base.HalfShaftInstance;
+import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
-import com.simibubi.create.content.kinetics.base.ShaftInstance;
+import com.simibubi.create.content.kinetics.base.OrientedRotatingVisual;
+import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import org.antarcticgardens.cna.content.electricity.battery.BatteryBlockEntity;
 import org.antarcticgardens.cna.content.electricity.battery.BatteryRenderer;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlockEntity;
-import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorInstance;
+import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorVisual;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorRenderer;
 import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesBlockEntity;
 import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesRenderer;
@@ -20,7 +20,7 @@ import org.antarcticgardens.cna.content.heat.pipe.HeatPipeBlockEntity;
 import org.antarcticgardens.cna.content.heat.plate.SolarHeatingPlateBlockEntity;
 import org.antarcticgardens.cna.content.heat.pump.HeatPumpBlockEntity;
 import org.antarcticgardens.cna.content.heat.stirling.StirlingEngineBlockEntity;
-import org.antarcticgardens.cna.content.heat.stirling.StirlingEngineInstance;
+import org.antarcticgardens.cna.content.heat.stirling.StirlingEngineVisual;
 import org.antarcticgardens.cna.content.heat.stirling.StirlingEngineRenderer;
 import org.antarcticgardens.cna.content.motor.MotorBlockEntity;
 import org.antarcticgardens.cna.content.motor.extension.MotorExtensionBlockEntity;
@@ -36,28 +36,28 @@ import static org.antarcticgardens.cna.CreateNewAge.REGISTRATE;
 public class CNABlockEntityTypes {
     public static final BlockEntityEntry<EnergiserBlockEntity> ENERGISER = REGISTRATE
             .blockEntity("energiser", EnergiserBlockEntity::new)
-            .instance(() -> ShaftInstance::new)
+            .visual(() -> SingleAxisRotatingVisual::shaft)
             .validBlocks(CNABlocks.BASIC_ENERGISER, CNABlocks.ADVANCED_ENERGISER, CNABlocks.REINFORCED_ENERGISER)
             .renderer(() -> EnergiserRenderer::new)
             .register();
 
     public static final BlockEntityEntry<ElectricalConnectorBlockEntity> ELECTRICAL_CONNECTOR = REGISTRATE
             .blockEntity("electrical_connector", ElectricalConnectorBlockEntity::new)
-            .instance(() -> ElectricalConnectorInstance::new)
+            .visual(() -> ElectricalConnectorVisual::new)
             .validBlocks(CNABlocks.ELECTRICAL_CONNECTOR)
             .renderer(() -> ElectricalConnectorRenderer::new)
             .register();
 
     public static final BlockEntityEntry<GeneratorCoilBlockEntity> GENERATOR_COIL = REGISTRATE
             .blockEntity("generator_coil", GeneratorCoilBlockEntity::new)
-            .instance(() -> CutoutRotatingInstance::new)
+            .visual(() ->  SingleAxisRotatingVisual.of(CNAPartialModels.GENERATOR_COIL), false)
             .validBlocks(CNABlocks.GENERATOR_COIL)
             .renderer(() -> KineticBlockEntityRenderer::new)
             .register();
 
     public static final BlockEntityEntry<CarbonBrushesBlockEntity> CARBON_BRUSHES = REGISTRATE
             .blockEntity("carbon_brushes", CarbonBrushesBlockEntity::new)
-            .instance(() -> ShaftInstance::new)
+            .visual(() -> SingleAxisRotatingVisual::shaft)
             .validBlocks(CNABlocks.CARBON_BRUSHES)
             .renderer(() -> CarbonBrushesRenderer::new)
             .register();
@@ -107,7 +107,7 @@ public class CNABlockEntityTypes {
 
     public static final BlockEntityEntry<StirlingEngineBlockEntity> STIRLING_ENGINE = REGISTRATE
             .blockEntity("stirling_engine", StirlingEngineBlockEntity::new)
-            .instance(() -> StirlingEngineInstance::new)
+            .visual(() -> StirlingEngineVisual::new)
             .validBlocks(CNABlocks.STIRLING_ENGINE)
             .renderer(() -> StirlingEngineRenderer::new)
             .register();
@@ -115,7 +115,7 @@ public class CNABlockEntityTypes {
 
     public static final BlockEntityEntry<MotorBlockEntity> MOTOR = REGISTRATE 
             .blockEntity("motor", MotorBlockEntity.create(new BasicMotorVariant()))
-            .instance(() -> HalfShaftInstance::new)
+            .visual(() -> OrientedRotatingVisual.of(AllPartialModels.SHAFT_HALF))
             .validBlocks(CNABlocks.BASIC_MOTOR, CNABlocks.ADVANCED_MOTOR, CNABlocks.REINFORCED_MOTOR)
             .renderer(() -> HalfShaftRenderer::new)
             .register();

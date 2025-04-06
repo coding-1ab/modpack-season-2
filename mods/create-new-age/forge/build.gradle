@@ -31,12 +31,17 @@ loom {
             convertAccessWideners = true
             mixinConfigs(
                     "create_new_age-common.mixins.json",
-                    "create_new_age-forge.mixins.json"
+                    "create_new_age-forge.mixins.json",
+                    "create.mixins.json"
             )
         }
     }
     
     runs {
+        client {
+            property("mixin.env.remapRefMap", "true")
+            property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
+        }
         datagen {
             data()
             programArgs("--all", "--mod", "${modId}")

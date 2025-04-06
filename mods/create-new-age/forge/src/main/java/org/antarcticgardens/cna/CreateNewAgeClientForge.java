@@ -1,6 +1,6 @@
 package org.antarcticgardens.cna;
 
-import com.simibubi.create.foundation.config.ui.BaseConfigScreen;
+import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;

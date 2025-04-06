@@ -1,7 +1,7 @@
 package org.antarcticgardens.cna.content.heat.pipe;
 
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -75,9 +75,9 @@ public class HeatPipeBlockEntity extends BlockEntity implements HeatBlockEntity,
         HeatBlockEntity.addToolTips(this, tooltip);
 
         if (generating > 0.05) {
-            Lang.translate("tooltip.create_new_age.generating")
+            CreateLang.translate("tooltip.create_new_age.generating")
                     .style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
-            Lang.translate("tooltip.create_new_age.temperature.ps", StringFormatUtil.formatFloat(generating))
+            CreateLang.translate("tooltip.create_new_age.temperature.ps", StringFormatUtil.formatFloat(generating))
                     .style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
         }
 

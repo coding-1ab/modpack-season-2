@@ -19,13 +19,13 @@ import org.joml.Vector3f;
 
 import java.util.*;
 
-public class ElectricalConnectorInstance extends BlockEntityInstance<ElectricalConnectorBlockEntity> implements DynamicInstance {
-    private static final Map<ElectricalConnectorBlockEntity, ElectricalConnectorInstance> instances = new HashMap<>();
+public class ElectricalConnectorVisual extends BlockEntityInstance<ElectricalConnectorBlockEntity> implements DynamicInstance {
+    private static final Map<ElectricalConnectorBlockEntity, ElectricalConnectorVisual> instances = new HashMap<>();
 
     private final Map<BlockPos, Wire> wires = new HashMap<>();
     private final Map<BlockPos, List<Pair<ModelData, Vec3>>> wireInstances = new HashMap<>();
 
-    public ElectricalConnectorInstance(MaterialManager materialManager, ElectricalConnectorBlockEntity connector) {
+    public ElectricalConnectorVisual(MaterialManager materialManager, ElectricalConnectorBlockEntity connector) {
         super(materialManager, connector);
         instances.put(connector, this);
         updateConnections();
@@ -114,7 +114,7 @@ public class ElectricalConnectorInstance extends BlockEntityInstance<ElectricalC
         return new Vector3f(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public static ElectricalConnectorInstance get(ElectricalConnectorBlockEntity connector) {
+    public static ElectricalConnectorVisual get(ElectricalConnectorBlockEntity connector) {
         return instances.get(connector);
     }
 }
