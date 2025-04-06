@@ -231,7 +231,7 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity implem
                 strikePos,
                 128,
                 PoiManager.Occupancy.ANY
-        ).findAny();
+        ).sorted((_p1, _p2) -> level.random.nextInt(-1, 2)).findFirst();
         lightning.moveTo(Vec3.atBottomCenterOf(rodPos.orElse(strikePos)));
         level.addFreshEntity(lightning);
         return rodPos.isEmpty();
