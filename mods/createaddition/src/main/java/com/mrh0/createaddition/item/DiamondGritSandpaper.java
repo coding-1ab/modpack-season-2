@@ -10,7 +10,7 @@ import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 
 public class DiamondGritSandpaper extends SandPaperItem {
