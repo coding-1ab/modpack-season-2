@@ -3,7 +3,9 @@ package com.mrh0.createaddition;
 import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.index.*;
 import com.mrh0.createaddition.index.CASounds;
+import com.mrh0.createaddition.network.EnergyNetworkPacketPayload;
 import com.mrh0.createaddition.network.ObservePacketPayload;
+import com.mrh0.createaddition.network.ServerPayloadHandler;
 import com.mrh0.createaddition.ponder.CAPonderPlugin;
 import com.mrh0.createaddition.trains.schedule.CASchedule;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
@@ -165,6 +167,15 @@ public class CreateAddition {
         registrar.playBidirectional(
                 ObservePacketPayload.TYPE,
                 ObservePacketPayload.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        ClientPayloadHandler::handleDataOnMain,
+                        ServerPayloadHandler::handleObservePayload
+                )
+        );
+
+        registrar.playBidirectional(
+                EnergyNetworkPacketPayload.TYPE,
+                EnergyNetworkPacketPayload.STREAM_CODEC,
                 new DirectionalPayloadHandler<>(
                         ClientPayloadHandler::handleDataOnMain,
                         ServerPayloadHandler::handleDataOnMain

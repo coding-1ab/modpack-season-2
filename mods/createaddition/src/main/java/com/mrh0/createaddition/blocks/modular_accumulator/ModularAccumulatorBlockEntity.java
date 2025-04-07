@@ -7,6 +7,7 @@ import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.debug.IDebugDrawer;
 import com.mrh0.createaddition.energy.IMultiTileEnergyContainer;
 import com.mrh0.createaddition.energy.InternalEnergyStorage;
+import com.mrh0.createaddition.index.CABlockEntities;
 import com.mrh0.createaddition.network.IObserveTileEntity;
 import com.mrh0.createaddition.network.ObservePacketPayload;
 import com.mrh0.createaddition.sound.CASoundScapes;
@@ -18,6 +19,7 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.outliner.Outliner;
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,6 +28,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -33,6 +36,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
 import java.util.EnumMap;
@@ -40,8 +47,8 @@ import java.util.EnumSet;
 import java.util.List;
 
 public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, IMultiTileEnergyContainer, IObserveTileEntity, IDebugDrawer, ThresholdSwitchObservable {
-	protected LazyOptional<IEnergyStorage> energyCap;
-	protected InternalEnergyStorage energyStorage;
+	protected final InternalEnergyStorage energyStorage;
+	private final IEnergyStorage capability;
 	protected BlockPos controller;
 	protected BlockPos lastKnownPos;
 	protected boolean updateConnectivity;
@@ -52,20 +59,28 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 	protected int syncCooldown;
 	protected boolean queuedSync;
 
-	private EnumSet<Direction> invalidSides = EnumSet.of(Direction.DOWN, Direction.UP);
-	private EnumMap<Direction, LazyOptional<IEnergyStorage>> escacheMap = new EnumMap<>(Direction.class);
-	protected LazyOptional<ModularAccumulatorPeripheral> peripheral;
+	private final EnumSet<Direction> invalidSides = EnumSet.allOf(Direction.class);
+	private final EnumMap<Direction, BlockCapabilityCache<IEnergyStorage, Direction>> cache = new EnumMap<>(Direction.class);
+	// protected LazyOptional<ModularAccumulatorPeripheral> peripheral;
 
 	public ModularAccumulatorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 		energyStorage = createEnergyStorage();
-		energyCap = LazyOptional.of(() -> energyStorage);
+		capability = energyStorage;
 		updateConnectivity = false;
 		height = 1;
 		width = 1;
-		refreshCapability();
+		//refreshCapability();
 
 		// if (CreateAddition.CC_ACTIVE) this.peripheral = LazyOptional.of(() -> Peripherals.createModularAccumulatorPeripheral(this));
+	}
+
+	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+		event.registerBlockEntity(
+				Capabilities.EnergyStorage.BLOCK,
+				CABlockEntities.MODULAR_ACCUMULATOR.get(),
+				(be, context) -> be.capability
+		);
 	}
 
 	@Override
@@ -75,49 +90,19 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		return new InternalEnergyStorage(getCapacityMultiplier(), CommonConfig.ACCUMULATOR_MAX_INPUT.get(), CommonConfig.ACCUMULATOR_MAX_OUTPUT.get());
 	}
 
-	public void setCache(Direction side, LazyOptional<IEnergyStorage> storage) {
-		switch (side) {
-			case DOWN, UP -> escacheMap.put(side, storage);
-		}
-	}
-
-	public LazyOptional<IEnergyStorage> getCachedEnergy(Direction side) {
-		return escacheMap.getOrDefault(side, LazyOptional.empty());
-	}
-
-	private void invalidCache(Direction side) {
-		switch (side) {
-			case DOWN, UP -> invalidSides.add(side);
-		}
-	}
-
 	public void updateCache() {
+		if (level == null) return;
 		if (level.isClientSide()) return;
-		for(Direction side : Direction.values()) {
-			updateCache(side);
+		for (Direction side : Direction.values()) {
+			cache.put(side, BlockCapabilityCache.create(
+					Capabilities.EnergyStorage.BLOCK,
+					(ServerLevel) level,
+					getBlockPos().relative(side),
+					side.getOpposite(),
+					() -> !this.isRemoved(),
+					() -> { invalidSides.add(side); }
+			));
 		}
-	}
-
-	public void updateCache(Direction side) {
-		// No need to update the cache if we're removed.
-		if (isRemoved()) return;
-		// Make sure the side we're checking is loaded.
-		if (!level.isLoaded(worldPosition.relative(side))) {
-			setCache(side, LazyOptional.empty());
-			return;
-		}
-		BlockEntity te = level.getBlockEntity(worldPosition.relative(side));
-		if(te == null) {
-			setCache(side, LazyOptional.empty());
-			return;
-		}
-		LazyOptional<IEnergyStorage> le = te.getCapability(ForgeCapabilities.ENERGY, side.getOpposite());
-		// Make sure that the side we're caching can actually be cached.
-		if (side != Direction.UP && side != Direction.DOWN) return;
-		// Make sure the side isn't already cached.
-		if (le.equals(getCachedEnergy(side))) return;
-		setCache(side, le);
-		le.addListener((es) -> invalidCache(side));
 	}
 
 	protected void updateConnectivity() {
@@ -168,7 +153,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 
 		if (level == null) return;
 		if (level.isClientSide()) {
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> this::tickAudio);
+			CatnipServices.PLATFORM.executeOnClientOnly(() -> this::tickAudio);
 			gauge.tickChaser();
 			float current = gauge.getValue(1);
 			if (current > 1 && Create.RANDOM.nextFloat() < 1 / 2f)
@@ -191,7 +176,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		if (level == null) return;
 		if (!level.isLoaded(getBlockPos())) return;
 		if (!level.isLoaded(getBlockPos().relative(side))) return;
-		IEnergyStorage ies = getCachedEnergy(side).orElse(null);
+		IEnergyStorage ies = cache.get(side).getCapability();
 		if(ies == null) return;
 		int ext = getControllerBE().energyStorage.extractEnergy(ies.receiveEnergy(CommonConfig.ACCUMULATOR_MAX_OUTPUT.get(), true), false);
 		int rec = ies.receiveEnergy(ext, false);
@@ -295,7 +280,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 			getLevel().setBlock(worldPosition, state, 22);
 		}
 
-		refreshCapability();
+		//refreshCapability();
 		setChanged();
 		sendData();
 	}
@@ -323,15 +308,8 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		if (level.isClientSide && !isVirtual()) return;
 		if (controller.equals(this.controller)) return;
 		this.controller = controller;
-		refreshCapability();
 		setChanged();
 		sendData();
-	}
-
-	private void refreshCapability() {
-		LazyOptional<IEnergyStorage> oldCap = energyCap;
-		energyCap = LazyOptional.of(this::handlerForCapability);
-		oldCap.invalidate();
 	}
 
 	private InternalEnergyStorage handlerForCapability() {
