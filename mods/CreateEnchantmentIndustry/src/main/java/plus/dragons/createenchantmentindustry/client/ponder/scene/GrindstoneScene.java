@@ -3,6 +3,7 @@ package plus.dragons.createenchantmentindustry.client.ponder.scene;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.PonderPalette;
@@ -13,6 +14,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
+import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindstoneDrainBlockEntity;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 
 public class GrindstoneScene {
@@ -32,6 +34,7 @@ public class GrindstoneScene {
         scene.overlay().showControls(util.vector().centerOf(2, 1, 2), Pointing.UP, 50).rightClick().withItem(CEIBlocks.MECHANICAL_GRINDSTONE.asStack());
         scene.idle(20);
         scene.world().setBlock(util.grid().at(2,1,2),CEIBlocks.GRINDSTONE_DRAIN.getDefaultState().setValue(HorizontalKineticBlock.HORIZONTAL_FACING,Direction.SOUTH),true);
+        scene.world().modifyBlockEntity(util.grid().at(2,1,2), GrindstoneDrainBlockEntity.class, SmartBlockEntity::markVirtual);
         scene.idle(30);
         scene.overlay().showText(50)
                 .text("This is a Grindstone Drain. You will need another Mechanical Grindstone to use with it")
@@ -50,9 +53,9 @@ public class GrindstoneScene {
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().centerOf(2, 2, 2));
-        for(int i=0;i<8;i++){
-            scene.world().createItemOnBelt(util.grid().at(0, 1, 2), Direction.UP, new ItemStack(i<4? AllItems.EXP_NUGGET: AllBlocks.EXPERIENCE_BLOCK));
-            scene.idle(10);
+        for(int i=0;i<4;i++){
+            scene.world().createItemOnBelt(util.grid().at(0, 1, 2), Direction.UP, new ItemStack(i<2? AllItems.EXP_NUGGET: AllBlocks.EXPERIENCE_BLOCK));
+            scene.idle(20);
         }
     }
 
