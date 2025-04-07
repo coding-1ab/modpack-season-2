@@ -146,6 +146,27 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
             this.cursed = cursed;
             update = true;
         }
+        if (level.isClientSide() && isVirtual()){
+            if (update) {
+                inventory.updateResult();
+                notifyUpdate();
+            }
+            var cost = inventory.getExperienceCost();
+            if (cost > 0 && consumeExperience(cost, special, true)) {
+                if (processingTime < 0) {
+                    processingTime = FORGING_TIME / 4;
+                    return;
+                }
+                if (processingTime > 0) {
+                    processingTime--;
+                    return;
+                }
+                consumeExperience(cost, special, false);
+                processingTime = -1;
+                inventory.clearInput();
+            } else if (processingTime != -1) processingTime = -1;
+            return;
+        }
         if (!(level instanceof ServerLevel serverLevel))
             return;
         if (update) {

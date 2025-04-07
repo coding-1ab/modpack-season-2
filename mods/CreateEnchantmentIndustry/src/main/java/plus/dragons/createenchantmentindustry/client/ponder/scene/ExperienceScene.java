@@ -33,8 +33,6 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 import plus.dragons.createenchantmentindustry.common.registry.CEIItems;
 
-import static plus.dragons.createenchantmentindustry.common.fluids.experience.BlazeExperienceBlockEntity.LIGHTNING_BOLT_EXPERIENCE_CHARGE_KEY;
-
 public class ExperienceScene {
     public static void basic(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);

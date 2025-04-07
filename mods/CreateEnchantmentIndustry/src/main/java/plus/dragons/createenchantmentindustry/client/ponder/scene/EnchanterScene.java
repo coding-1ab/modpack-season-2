@@ -111,7 +111,7 @@ public class EnchanterScene {
         scene.idle(5);
         scene.overlay().showText(60)
                 .colored(PonderPalette.BLUE)
-                .text("You may have noticed that the Blaze Enchanter has two 'stomachs'. Try feeding him some Cake o' Enchanting?")
+                .text("You may have noticed that the Blaze Enchanter has two \"stomachs\". Try feeding him some Cake o' Enchanting?")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
 
@@ -176,7 +176,7 @@ public class EnchanterScene {
                 .text("You can cover the Blaze Enchanter with block to avoid lightning strikes, but then curse may appear")
                 .placeNearTarget()
                 .attachKeyFrame()
-                .pointAt(util.vector().topOf(3, 2, 1));
+                .pointAt(util.vector().topOf(2, 2, 1));
         scene.scaleSceneView(.8f);
         scene.idle(20);
         scene.world().setBlock(util.grid().at(2,4,1), Blocks.OBSIDIAN.defaultBlockState(), false);
