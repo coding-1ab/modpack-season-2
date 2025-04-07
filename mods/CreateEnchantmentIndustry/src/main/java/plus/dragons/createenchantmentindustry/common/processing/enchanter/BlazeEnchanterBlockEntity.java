@@ -159,6 +159,22 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
             this.cursed = cursed;
             update = true;
         }
+        if (level.isClientSide() && isVirtual()){
+            if (update) enchanter.update(heldItem);
+            if (enchanter.canProcess(heldItem)) {
+                if (processingTime < 0) {
+                    processingTime = ENCHANTING_TIME / 4;
+                    return;
+                }
+                if (processingTime > 0) {
+                    processingTime--;
+                    return;
+                }
+                processingTime = -1;
+                heldItem = enchanter.getResult(heldItem);
+                return;
+            }
+        }
         if (!(level instanceof ServerLevel serverLevel))
             return;
         if (update) {

@@ -16,7 +16,7 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 public class MiscScene {
     public static void experienceHatch(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("basic", "Introduction to Experience Hatch");
+        scene.title("intro", "Introduction to Experience Hatch");
         scene.configureBasePlate(0, 0, 4);
         scene.showBasePlate();
         scene.idle(5);
@@ -98,5 +98,15 @@ public class MiscScene {
                     be ->  be.getControllerBE().getTankInventory().drain(new FluidStack(CDPFluids.DYES_BY_COLOR.get(DyeColor.CYAN).get(), 3000), IFluidHandler.FluidAction.EXECUTE));
             scene.idle(5);
         }
+    }
+
+    public static void forger(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("intro", "Introduction to Blaze Forger");
+        scene.configureBasePlate(0, 0, 5);
+        scene.showBasePlate();
+        scene.idle(5);
+        scene.world().showSection(util.select().everywhere(), Direction.DOWN);
+        scene.idle(5);
     }
 }

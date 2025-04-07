@@ -5,6 +5,7 @@ import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
+import plus.dragons.createenchantmentindustry.client.ponder.scene.EnchanterScene;
 import plus.dragons.createenchantmentindustry.client.ponder.scene.ExperienceScene;
 import plus.dragons.createenchantmentindustry.client.ponder.scene.GrindstoneScene;
 import plus.dragons.createenchantmentindustry.client.ponder.scene.MiscScene;
@@ -26,5 +27,12 @@ public class CEIPonderScenes {
         HELPER.forComponents(CEIBlocks.MECHANICAL_GRINDSTONE)
                 .addStoryBoard("grindstone/basic", GrindstoneScene::basic, CEIPonderTags.EXPERIENCE_APPLIANCES)
                 .addStoryBoard("grindstone/extra", GrindstoneScene::extra);
+
+        HELPER.forComponents(CEIBlocks.BLAZE_ENCHANTER)
+                .addStoryBoard("enchanter", EnchanterScene::basic, CEIPonderTags.EXPERIENCE_APPLIANCES)
+                .addStoryBoard("enchanter", EnchanterScene::superEnchant, CEIPonderTags.SUPER_EXPERIENCE_APPLIANCES);
+
+        HELPER.forComponents(CEIBlocks.BLAZE_FORGER)
+                .addStoryBoard("forger", MiscScene::forger, CEIPonderTags.EXPERIENCE_APPLIANCES, CEIPonderTags.SUPER_EXPERIENCE_APPLIANCES);
     }
 }
