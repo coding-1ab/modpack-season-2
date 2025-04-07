@@ -220,6 +220,7 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity implem
         return level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, worldPosition).below();
     }
 
+    @SuppressWarnings("all")
     protected boolean strikeLightning(ServerLevel level, BlockPos strikePos) {
         var lightning = EntityType.LIGHTNING_BOLT.create(level);
         if (lightning == null)

@@ -18,6 +18,7 @@
 
 package plus.dragons.createenchantmentindustry.common.kinetics.grindstone;
 
+import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import java.util.Optional;
 import net.minecraft.core.Holder;
@@ -27,12 +28,14 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.GrindstoneEvent;
+import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
 
 public class GrindstoneHelper {
     public static boolean canItemBeGrinded(Level level, ItemStack top, ItemStack bottom) {
@@ -88,6 +91,14 @@ public class GrindstoneHelper {
             }
         }
         return result;
+    }
+
+    public static int getExperienceFromGrindingRecipe(Level level, ItemStack stack){
+        var input = new SingleRecipeInput(stack);
+        var grinding = SequencedAssemblyRecipe.getRecipe(level, input, CEIRecipes.GRINDING.getType(), GrindingRecipe.class);
+        if (grinding.isEmpty())
+            grinding = level.getRecipeManager().getRecipeFor(CEIRecipes.GRINDING.getType(), input, level);
+        return grinding.map(grindingRecipeRecipeHolder -> grindingRecipeRecipeHolder.value().getFluidResults().getFirst().getAmount()).orElse(0);
     }
 
     private static ItemStack computeResult(ItemStack top, ItemStack bottom) {

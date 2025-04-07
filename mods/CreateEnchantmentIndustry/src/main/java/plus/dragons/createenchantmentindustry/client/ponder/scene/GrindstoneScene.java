@@ -48,6 +48,7 @@ public class GrindstoneScene {
         scene.overlay().showText(60)
                 .text("Experience in item form can be crushed into liquid form by Mechanical Grindstone")
                 .placeNearTarget()
+                .attachKeyFrame()
                 .pointAt(util.vector().centerOf(2, 2, 2));
         for(int i=0;i<8;i++){
             scene.world().createItemOnBelt(util.grid().at(0, 1, 2), Direction.UP, new ItemStack(i<4? AllItems.EXP_NUGGET: AllBlocks.EXPERIENCE_BLOCK));
@@ -78,7 +79,7 @@ public class GrindstoneScene {
                 .get().getOrThrow(Enchantments.SWEEPING_EDGE);
         sword.enchant(enchantment,3);
         scene.world().createItemOnBelt(util.grid().at(0, 1, 0), Direction.UP, sword);
-        scene.idle(50);
+        scene.idle(55);
 
         scene.overlay().showText(60)
                 .text("...but it also has the features of sandpaper.")
@@ -87,6 +88,14 @@ public class GrindstoneScene {
                 .pointAt(util.vector().centerOf(2, 1, 2));
         scene.idle(10);
         scene.world().createItemOnBelt(util.grid().at(0, 1, 0), Direction.UP, new ItemStack(AllItems.ROSE_QUARTZ.get()));
-        scene.idle(50);
+        scene.idle(55);
+
+        scene.overlay().showText(60)
+                .text("You can use Mechanical Grindstone with item in your hand. 100% safe and won't hurt your hands :D")
+                .colored(PonderPalette.GREEN)
+                .placeNearTarget()
+                .attachKeyFrame()
+                .pointAt(util.vector().centerOf(2, 1, 2));
+        scene.idle(60);
     }
 }

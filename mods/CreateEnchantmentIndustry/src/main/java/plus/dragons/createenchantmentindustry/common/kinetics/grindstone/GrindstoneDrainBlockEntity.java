@@ -71,7 +71,15 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
 
     public GrindstoneDrainBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        inventory = new ProcessingInventory(this::start).withSlotLimit(true);
+        inventory = new ProcessingInventory(this::start){
+            @Override
+            public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+                var space = tank.getPrimaryHandler().getSpace();
+                if(GrindstoneHelper.getExperienceFromItem(stack)>space) return stack;
+                if(GrindstoneHelper.getExperienceFromGrindingRecipe(level,stack)>space) return stack;
+                return super.insertItem(slot, stack, simulate);
+            }
+        }.withSlotLimit(true);
     }
 
     @Override
@@ -97,7 +105,8 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
 
     private Direction getOutputSide() {
         var facing = getBlockState().getValue(HorizontalKineticBlock.HORIZONTAL_FACING);
-        return getSpeed() > 0 ? facing.getClockWise() : facing.getCounterClockWise();
+        var speed = facing==Direction.WEST || facing==Direction.NORTH ? getSpeed() * -1: getSpeed();
+        return speed > 0 ? facing.getClockWise() : facing.getCounterClockWise();
     }
 
     public float getRelativeSpeed() {
