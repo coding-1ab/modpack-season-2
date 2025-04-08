@@ -159,24 +159,38 @@ public class BlazeForgerInventory extends ItemStackHandler {
                 } else return;
             } else return;
         } else {
-            if (addition.getItem() instanceof EnchantingTemplateItem template) {
-                if (forger.special && !template.isSpecial()) return;
-                if (additionEnchantments.isEmpty()) {
-                    if (!splitEnchantments(base, addition, baseEnchantments, additionEnchantments)) return;
-                } else {
+            if (base.getItem() instanceof EnchantingTemplateItem baseTemplate){
+                if(addition.getItem() instanceof EnchantingTemplateItem addTemplate){
+                    if(forger.special && (!baseTemplate.isSpecial() || !addTemplate.isSpecial())) return;
+                    else {
+                        if(additionEnchantments.isEmpty()){
+                            if (!splitEnchantments(base, addition, baseEnchantments, additionEnchantments)) return;
+                        } else {
+                            if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments))
+                                stacks.set(3, ItemStack.EMPTY);
+                        }
+                    }
+                } else return;
+            } else {
+                if (addition.getItem() instanceof EnchantingTemplateItem template) {
+                    if (forger.special && !template.isSpecial()) return;
+                    if (additionEnchantments.isEmpty()) {
+                        if (!splitEnchantments(base, addition, baseEnchantments, additionEnchantments)) return;
+                    } else {
+                        if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
+                            stacks.set(3, ItemStack.EMPTY);
+                        } else return;
+                    }
+                } else if (additionType == DataComponents.STORED_ENCHANTMENTS) {
                     if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
                         stacks.set(3, ItemStack.EMPTY);
                     } else return;
-                }
-            } else if (additionType == DataComponents.STORED_ENCHANTMENTS) {
-                if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
-                    stacks.set(3, ItemStack.EMPTY);
+                } else if (ItemStack.isSameItem(base, addition)) {
+                    if (combineEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
+                        stacks.set(3, ItemStack.EMPTY);
+                    } else return;
                 } else return;
-            } else if (ItemStack.isSameItem(base, addition)) {
-                if (combineEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
-                    stacks.set(3, ItemStack.EMPTY);
-                } else return;
-            } else return;
+            }
         }
         applyRepairCost(base, addition);
     }
