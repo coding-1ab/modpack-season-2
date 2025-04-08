@@ -202,6 +202,7 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
     }
 
     public ItemStack insertItem(ItemStack stack, boolean simulate) {
+        if (!inventory.outputEmpty()) return stack;
         if (!stack.isEmpty())
             stack = inventory.insertItem(0, stack, simulate);
         if (!stack.isEmpty())
@@ -212,17 +213,17 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
     public ItemStack extractItem(boolean forced, boolean simulate) {
         ItemStack extracted;
         if (forced) {
-            extracted = inventory.extractInput(0, simulate);
-            if (!extracted.isEmpty())
-                return extracted;
             extracted = inventory.extractInput(1, simulate);
             if (!extracted.isEmpty())
                 return extracted;
+            extracted = inventory.extractInput(0, simulate);
+            if (!extracted.isEmpty())
+                return extracted;
         }
-        extracted = inventory.extractItem(0, 1, simulate);
+        extracted = inventory.extractItem(1, 1, simulate);
         if (!extracted.isEmpty())
             return extracted;
-        extracted = inventory.extractItem(1, 1, simulate);
+        extracted = inventory.extractItem(0, 1, simulate);
         return extracted;
     }
 

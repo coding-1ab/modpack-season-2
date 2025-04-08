@@ -65,6 +65,10 @@ public class BlazeForgerInventory extends ItemStackHandler {
         return stack;
     }
 
+    public boolean outputEmpty(){
+        return stacks.get(2).isEmpty() && stacks.get(3).isEmpty();
+    }
+
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         if (stacks.get(slot + 2).isEmpty())
