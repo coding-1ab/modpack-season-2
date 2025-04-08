@@ -1,10 +1,16 @@
 package plus.dragons.createenchantmentindustry.client.ponder;
 
 import com.simibubi.create.AllItems;
+import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.neoforged.neoforge.data.loading.DatagenModLoader;
 import plus.dragons.createenchantmentindustry.client.ponder.scene.*;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 
@@ -35,5 +41,14 @@ public class CEIPonderScenes {
 
         HELPER.forComponents(CEIBlocks.PRINTER)
                 .addStoryBoard("printer", MiscScene::printer, CEIPonderTags.EXPERIENCE_APPLIANCES);
+    }
+
+    public static void enchant(CreateSceneBuilder scene, ItemStack item, ResourceKey<Enchantment> enchantment, int level){
+        if (DatagenModLoader.isRunningDataGen()) // scene.world().getHolderLookupProvider() cause null when get level
+            return;
+        var e = scene.world().getHolderLookupProvider()
+                .lookup(Registries.ENCHANTMENT)
+                .get().getOrThrow(enchantment);
+        item.enchant(e,level);
     }
 }

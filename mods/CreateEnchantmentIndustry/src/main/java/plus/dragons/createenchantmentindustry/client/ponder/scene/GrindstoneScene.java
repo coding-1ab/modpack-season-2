@@ -10,10 +10,12 @@ import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
+import plus.dragons.createenchantmentindustry.client.ponder.CEIPonderScenes;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindstoneDrainBlockEntity;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 
@@ -77,10 +79,7 @@ public class GrindstoneScene {
         scene.world().setKineticSpeed(util.select().fromTo(0,1,0,3,1,0),-128);
         scene.idle(10);
         var sword = new ItemStack(Items.DIAMOND_SWORD);
-        var enchantment = scene.world().getHolderLookupProvider()
-                .lookup(Registries.ENCHANTMENT)
-                .get().getOrThrow(Enchantments.SWEEPING_EDGE);
-        sword.enchant(enchantment,3);
+        CEIPonderScenes.enchant(scene,sword,Enchantments.SWEEPING_EDGE,3);
         scene.world().createItemOnBelt(util.grid().at(0, 1, 0), Direction.UP, sword);
         scene.idle(55);
 

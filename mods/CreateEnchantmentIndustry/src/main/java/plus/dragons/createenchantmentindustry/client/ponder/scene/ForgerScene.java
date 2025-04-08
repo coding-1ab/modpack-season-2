@@ -9,18 +9,15 @@ import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import plus.dragons.createdragonsplus.common.processing.blaze.BlazeBlock;
+import plus.dragons.createenchantmentindustry.client.ponder.CEIPonderScenes;
 import plus.dragons.createenchantmentindustry.common.processing.forger.BlazeForgerBlockEntity;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
@@ -71,8 +68,8 @@ public class ForgerScene {
         scene.idle(65);
         var sword1 = Items.DIAMOND_SWORD.getDefaultInstance();
         var sword2 = Items.DIAMOND_SWORD.getDefaultInstance();
-        enchant(scene,sword1,Enchantments.SWEEPING_EDGE,1);
-        enchant(scene,sword2,Enchantments.SWEEPING_EDGE,1);
+        CEIPonderScenes.enchant(scene,sword1,Enchantments.SWEEPING_EDGE,1);
+        CEIPonderScenes.enchant(scene,sword2,Enchantments.SWEEPING_EDGE,1);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> be.insertItem(sword1,false));
         scene.idle(40);
@@ -91,8 +88,8 @@ public class ForgerScene {
         scene.idle(65);
         var template1 = CEIItems.ENCHANTING_TEMPLATE.asStack();
         var template2 = CEIItems.ENCHANTING_TEMPLATE.asStack();
-        enchant(scene,template1,Enchantments.SWEEPING_EDGE,1);
-        enchant(scene,template2,Enchantments.SWEEPING_EDGE,1);
+        CEIPonderScenes.enchant(scene,template1,Enchantments.SWEEPING_EDGE,1);
+        CEIPonderScenes.enchant(scene,template2,Enchantments.SWEEPING_EDGE,1);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> be.insertItem(template1,false));
         scene.idle(40);
@@ -111,8 +108,8 @@ public class ForgerScene {
         scene.idle(65);
         var sword3 = Items.DIAMOND_SWORD.getDefaultInstance();
         var template3 = CEIItems.ENCHANTING_TEMPLATE.asStack();
-        enchant(scene,sword3,Enchantments.SWEEPING_EDGE,1);
-        enchant(scene,template3,Enchantments.SWEEPING_EDGE,2);
+        CEIPonderScenes.enchant(scene,sword3,Enchantments.SWEEPING_EDGE,1);
+        CEIPonderScenes.enchant(scene,template3,Enchantments.SWEEPING_EDGE,2);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> be.insertItem(sword3,false));
         scene.idle(40);
@@ -130,8 +127,8 @@ public class ForgerScene {
                 .pointAt(util.vector().topOf(2, 2, 1));
         scene.idle(85);
         var sword4 = Items.DIAMOND_SWORD.getDefaultInstance();
-        enchant(scene,sword4,Enchantments.SWEEPING_EDGE,2);
-        enchant(scene,sword4,Enchantments.BANE_OF_ARTHROPODS,2);
+        CEIPonderScenes.enchant(scene,sword4,Enchantments.SWEEPING_EDGE,2);
+        CEIPonderScenes.enchant(scene,sword4,Enchantments.BANE_OF_ARTHROPODS,2);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> be.insertItem(sword4,false));
         scene.idle(40);
@@ -190,8 +187,8 @@ public class ForgerScene {
         scene.idle(45);
         var sword = Items.DIAMOND_SWORD.getDefaultInstance();
         var template = CEIItems.SUPER_ENCHANTING_TEMPLATE.asStack();
-        enchant(scene,sword,Enchantments.SWEEPING_EDGE,3);
-        enchant(scene,template,Enchantments.SWEEPING_EDGE,4);
+        CEIPonderScenes.enchant(scene,sword,Enchantments.SWEEPING_EDGE,3);
+        CEIPonderScenes.enchant(scene,template,Enchantments.SWEEPING_EDGE,4);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> be.insertItem(sword,false));
         scene.idle(40);
@@ -258,12 +255,5 @@ public class ForgerScene {
         });
         scene.world().setBlock(util.grid().at(2,2,1), AllBlocks.LIT_BLAZE_BURNER.getDefaultState(),false);
         scene.idle(20);
-    }
-
-    private static void enchant(CreateSceneBuilder scene, ItemStack item, ResourceKey<Enchantment> enchantment, int level){
-        var e = scene.world().getHolderLookupProvider()
-                .lookup(Registries.ENCHANTMENT)
-                .get().getOrThrow(enchantment);
-        item.enchant(e,level);
     }
 }
