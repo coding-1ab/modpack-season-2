@@ -36,7 +36,7 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIItems;
 public class ExperienceScene {
     public static void basic(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("basic", "Introduction to Experience Handling");
+        scene.title("experience.intro", "Introduction to Experience Handling");
         scene.configureBasePlate(0, 0, 12);
         scene.scaleSceneView(.38f);
         scene.showBasePlate();
@@ -57,8 +57,7 @@ public class ExperienceScene {
         scene.overlay().showText(60)
                 .text("To convert the Experience you carry to liquid form, you will need two components")
                 .attachKeyFrame()
-                .placeNearTarget()
-                .pointAt(util.vector().centerOf(9, 6, 9));
+                .independent();
 
         // Show Exp Block
         scene.idle(10);
@@ -96,8 +95,8 @@ public class ExperienceScene {
         scene.overlay().showText(40)
                 .text("But as part of Create, automation is a must, right?")
                 .attachKeyFrame()
-                .placeNearTarget()
-                .pointAt(util.vector().topOf(9, 2, 8));
+                .colored(PonderPalette.GREEN)
+                .independent();
 
         scene.world().showSection(util.select().fromTo(9, 1, 2, 9, 1, 7), Direction.DOWN);
         scene.world().showSection(util.select().position(9, 2, 3), Direction.DOWN);
@@ -323,7 +322,7 @@ public class ExperienceScene {
 
     public static void advance(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("advance", "Things you might want to know");
+        scene.title("experience.advance", "Things you might want to know");
         scene.configureBasePlate(0, 0, 5);
         scene.showBasePlate();
         scene.idle(5);
@@ -403,7 +402,7 @@ public class ExperienceScene {
 
     public static void prepare(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("prepare_for_super_enchant", "Prepare materials for Super Enchant");
+        scene.title("experience.prepare_for_super_enchant", "Prepare materials for Super Enchant");
         scene.configureBasePlate(0, 0, 3);
         scene.showBasePlate();
         scene.idle(5);

@@ -20,7 +20,7 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 public class GrindstoneScene {
     public static void basic(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("basic", "Introduction to Mechanical Grindstone");
+        scene.title("mechanical_grindstone.intro", "Introduction to Mechanical Grindstone");
         scene.configureBasePlate(0, 0, 5);
         scene.showBasePlate();
         scene.idle(5);
@@ -61,7 +61,7 @@ public class GrindstoneScene {
 
     public static void extra(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("extra", "Mechanical Grindstone, not just Grindstone");
+        scene.title("mechanical_grindstone.extra", "Mechanical Grindstone, not just Grindstone");
         scene.configureBasePlate(0, 0, 5);
         scene.showBasePlate();
         scene.idle(5);

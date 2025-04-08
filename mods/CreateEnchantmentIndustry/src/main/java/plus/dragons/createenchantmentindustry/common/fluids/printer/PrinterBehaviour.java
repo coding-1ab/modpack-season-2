@@ -56,7 +56,7 @@ public class PrinterBehaviour extends FilteringBehaviour {
         this.tank = tank;
     }
 
-    public PrintingBehaviour getPrintingBehvaiour() {
+    public PrintingBehaviour getPrintingBehaviour() {
         return printing;
     }
 

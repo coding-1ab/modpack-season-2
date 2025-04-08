@@ -103,7 +103,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         if (handler.blockEntity.isVirtual())
             return PASS;
 
-        var printing = printer.getPrintingBehvaiour();
+        var printing = printer.getPrintingBehaviour();
         if (!printing.isValid())
             return PASS;
 
@@ -126,7 +126,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         if (processingTicks != -1 && processingTicks != 5)
             return HOLD;
 
-        var printing = printer.getPrintingBehvaiour();
+        var printing = printer.getPrintingBehaviour();
         if (!printing.isValid())
             return PASS;
 
@@ -197,7 +197,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         assert level != null;
         var handler = level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition, null);
         boolean added = containedFluidTooltip(tooltip, isPlayerSneaking, handler);
-        added |= printer.getPrintingBehvaiour().addToGoggleTooltip(tooltip, isPlayerSneaking);
+        added |= printer.getPrintingBehaviour().addToGoggleTooltip(tooltip, isPlayerSneaking);
         return added;
     }
 

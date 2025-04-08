@@ -29,7 +29,7 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIItems;
 public class ForgerScene {
     public static void basic(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("intro", "Introduction to Blaze Forger");
+        scene.title("blaze_forger.intro", "Introduction to Blaze Forger");
         scene.configureBasePlate(0, 0, 5);
         scene.showBasePlate();
         scene.idle(5);
@@ -142,7 +142,7 @@ public class ForgerScene {
 
     public static void superEnchant(SceneBuilder builder, SceneBuildingUtil util){
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("super_enchant", "Super Enchant Time!");
+        scene.title("blaze_forger.super_enchant", "Super Enchant Time!");
         scene.configureBasePlate(0, 0, 5);
         scene.world().showSection(util.select().everywhere(), Direction.DOWN);
         scene.idle(5);
@@ -231,9 +231,8 @@ public class ForgerScene {
 
         scene.overlay().showText(80)
                 .text("You don't want to do anything? Emmmm okay...")
-                .placeNearTarget()
                 .attachKeyFrame()
-                .pointAt(util.vector().topOf(3, 2, 1));
+                .independent();
         scene.idle(5);
         scene.world().setBlock(util.grid().at(2,6,1), Blocks.AIR.defaultBlockState(), true);
         scene.idle(5);

@@ -25,7 +25,7 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIItems;
 public class EnchanterScene {
     public static void basic(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("intro", "Introduction to Blaze Enchanter");
+        scene.title("blaze_enchanter.intro", "Introduction to Blaze Enchanter");
         scene.configureBasePlate(0, 0, 5);
         scene.world().showSection(util.select().everywhere(), Direction.DOWN);
         scene.idle(5);
@@ -105,7 +105,7 @@ public class EnchanterScene {
 
     public static void superEnchant(SceneBuilder builder, SceneBuildingUtil util){
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("super_enchant", "Super Enchant Time!");
+        scene.title("blaze_enchanter.super_enchant", "Super Enchant Time!");
         scene.configureBasePlate(0, 0, 5);
         scene.world().showSection(util.select().everywhere(), Direction.DOWN);
         scene.idle(5);
@@ -187,10 +187,9 @@ public class EnchanterScene {
         scene.idle(25);
 
         scene.overlay().showText(80)
-                .text("You don't want to do anything? Fine, do what you want")
-                .placeNearTarget()
+                .text("You don't want to do anything? Fine")
                 .attachKeyFrame()
-                .pointAt(util.vector().topOf(3, 2, 1));
+                .independent();
         scene.idle(5);
         scene.world().setBlock(util.grid().at(2,6,1), Blocks.AIR.defaultBlockState(), true);
         scene.idle(5);

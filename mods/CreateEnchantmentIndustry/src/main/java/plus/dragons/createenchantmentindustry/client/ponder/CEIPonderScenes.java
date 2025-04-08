@@ -32,5 +32,8 @@ public class CEIPonderScenes {
         HELPER.forComponents(CEIBlocks.BLAZE_FORGER)
                 .addStoryBoard("forger", ForgerScene::basic, CEIPonderTags.EXPERIENCE_APPLIANCES)
                 .addStoryBoard("forger", ForgerScene::superEnchant, CEIPonderTags.SUPER_EXPERIENCE_APPLIANCES);
+
+        HELPER.forComponents(CEIBlocks.PRINTER)
+                .addStoryBoard("printer", MiscScene::printer, CEIPonderTags.EXPERIENCE_APPLIANCES);
     }
 }
