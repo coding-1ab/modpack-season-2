@@ -58,7 +58,7 @@ public class BlazeForgerRenderer extends BlazeBlockRenderer<BlazeForgerBlockEnti
         var blockPos = blockEntity.getBlockPos();
         float renderTicks = AnimationTickHolder.getTicks(level);
         float animation = processingTime == -1
-                ? Mth.sin(slot * Mth.PI)
+                ? Mth.sin(slot * Mth.PI / -2f)
                 : Mth.sin((processingTime + partialTicks) / 20f + slot * Mth.PI);
         float height = 1.25f + (1 + animation) * .25f;
         float xRot = (renderTicks * 5 + blockPos.getX() + slot * 180) % 360;
