@@ -19,14 +19,14 @@ public class CEIPonderTags {
                 .addToIndex()
                 .item(AllBlocks.EXPERIENCE_BLOCK.get(), true, false)
                 .title("Experience Related")
-                .description("Things that will be used when processing and applying Experience")
+                .description("Components which will be used when processing and applying Experience")
                 .register();
 
         helper.registerTag(SUPER_EXPERIENCE_APPLIANCES)
                 .addToIndex()
                 .item(CEIBlocks.SUPER_EXPERIENCE_BLOCK.get(), true, false)
                 .title("Super Experience Related")
-                .description("Things that will be used when processing and applying Super Experience")
+                .description("Components which will be used when processing and applying Super Experience")
                 .register();
 
         HELPER.addToTag(EXPERIENCE_APPLIANCES)

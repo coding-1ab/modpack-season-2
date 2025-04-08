@@ -86,7 +86,7 @@ public class ExperienceScene {
         scene.world().showSection(expHatch, Direction.EAST);
         scene.idle(5);
         scene.overlay().showText(40)
-                .text("Experience Hatch for accessing experience directly from the player.")
+                .text("Experience Hatch for accessing experience directly from the player")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(8, 4, 11));
         scene.overlay().showOutline(PonderPalette.GREEN, expHatch, expHatch, 40);
@@ -166,7 +166,7 @@ public class ExperienceScene {
         var crushingWheel = util.select().fromTo(5, 2, 10,1,4,10);
         scene.world().showSection(crushingWheel, Direction.NORTH);
         scene.overlay().showText(60)
-                .text("Crushing Wheel now has a new mechanism: It has a chance of dropping a very small amount of experience nugget when it kills a creature.")
+                .text("Crushing Wheel now has a new mechanism: It has a chance of dropping a very small amount of experience nugget when it kills a creature")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(3, 3, 10));
@@ -409,7 +409,7 @@ public class ExperienceScene {
         scene.world().showSection(util.select().fromTo(2, 1, 0, 0, 1, 2), Direction.DOWN);
         scene.idle(5);
         scene.overlay().showText(80)
-                .text("First, you need to make Block of Super Experience, which will be used to make the Super Enchanting Template.This requires the use of Block of Experience.")
+                .text("First, you need to make Block of Super Experience, which will be used to make the Super Enchanting Template.This requires the use of Block of Experience")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(1, 1, 1));

@@ -29,7 +29,7 @@ public class GrindstoneScene {
         scene.world().showSection(util.select().fromTo(4, 1, 2, 0, 1, 2), Direction.DOWN);
         scene.idle(5);
         scene.overlay().showText(50)
-                .text("To use Mechanical Grindstone, you need an Item Drain.")
+                .text("To use Mechanical Grindstone, you need an Item Drain")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(2, 1, 2));
         scene.idle(20);
@@ -84,7 +84,7 @@ public class GrindstoneScene {
         scene.idle(55);
 
         scene.overlay().showText(60)
-                .text("...but it also has the features of sandpaper.")
+                .text("...but it also has the features of sandpaper")
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().centerOf(2, 1, 2));

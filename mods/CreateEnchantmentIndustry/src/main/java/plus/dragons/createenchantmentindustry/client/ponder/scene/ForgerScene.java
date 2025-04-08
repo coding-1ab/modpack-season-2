@@ -60,12 +60,12 @@ public class ForgerScene {
         scene.world().modifyBlock(util.grid().at(2, 2, 1),bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED),false);
         scene.idle(50);
 
-        scene.overlay().showText(60)
-                .text("Blaze Forger can merge enchantments of the same item like an anvil")
+        scene.overlay().showText(80)
+                .text("Blaze Forger can merge enchantments of the same item like an anvil, and there is no \"repair cost\"")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
-        scene.idle(65);
+        scene.idle(85);
         var sword1 = Items.DIAMOND_SWORD.getDefaultInstance();
         var sword2 = Items.DIAMOND_SWORD.getDefaultInstance();
         CEIPonderScenes.enchant(scene,sword1,Enchantments.SWEEPING_EDGE,1);
@@ -81,7 +81,7 @@ public class ForgerScene {
         scene.idle(10);
 
         scene.overlay().showText(60)
-                .text("Blaze Forger can also merge Enchanting Templates, and there is no \"repair cost\"")
+                .text("Blaze Forger can also merge Enchanting Templates")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));

@@ -60,7 +60,7 @@ public class EnchanterScene {
         var slotVec = util.vector().of(2, 2.5, 1.5);
         scene.overlay().showFilterSlotInput(slotVec, Direction.WEST, 70);
         scene.overlay().showText(70)
-                .text("Before you can start enchanting with it, you need to set the enchant level via the panel. The level cap of a vanilla enchanting table is 30.")
+                .text("Before you can start enchanting with it, you need to set the enchant level via the panel. The level cap of a vanilla enchanting table is 30")
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(slotVec);
