@@ -81,6 +81,7 @@ public class ForgerScene {
         scene.idle(90);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> be.extractItem(true,false));
+        scene.idle(10);
 
         scene.overlay().showText(60)
                 .text("Blaze Forger can also merge Enchanting Templates, and there is no \"repair cost\"")
@@ -98,6 +99,9 @@ public class ForgerScene {
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> be.insertItem(template2,false));
         scene.idle(90);
+        scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
+                be -> be.extractItem(true,false));
+        scene.idle(10);
 
         scene.overlay().showText(60)
                 .text("Most importantly, Blaze Forger is able to apply Enchanting Templates to items!")
@@ -114,6 +118,25 @@ public class ForgerScene {
         scene.idle(40);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> be.insertItem(template3,false));
+        scene.idle(90);
+        scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
+                be -> be.extractItem(true,false));
+        scene.idle(10);
+
+        scene.overlay().showText(80)
+                .text("Also, Blaze Forger is able to strip enchantment from equipment, book or Enchanting Template to a blank Enchanting Template!")
+                .attachKeyFrame()
+                .placeNearTarget()
+                .pointAt(util.vector().topOf(2, 2, 1));
+        scene.idle(85);
+        var sword4 = Items.DIAMOND_SWORD.getDefaultInstance();
+        enchant(scene,sword4,Enchantments.SWEEPING_EDGE,2);
+        enchant(scene,sword4,Enchantments.BANE_OF_ARTHROPODS,2);
+        scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
+                be -> be.insertItem(sword4,false));
+        scene.idle(40);
+        scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
+                be -> be.insertItem(CEIItems.ENCHANTING_TEMPLATE.asStack(),false));
         scene.idle(90);
     }
 
@@ -146,13 +169,13 @@ public class ForgerScene {
 
         scene.overlay().showText(100)
                 .attachKeyFrame()
-                .text("Now it's ready to do something truly fascinating! Your merging can break the enchantment level cap by 1 more level! Conflicting enchantments can be merged together!")
+                .text("Now it's ready to do something truly fascinating! Your merging can break the enchantment level cap! Conflicting enchantments can be merged together!")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
         scene.idle(105);
 
         scene.overlay().showText(60)
-                .text("Oh, as a side note, Super Enchanting Templates require this state to be applied")
+                .text("Oh, as a side note, Super Enchanting Templates require this state to be applied and processed")
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().topOf(2, 2, 1));
