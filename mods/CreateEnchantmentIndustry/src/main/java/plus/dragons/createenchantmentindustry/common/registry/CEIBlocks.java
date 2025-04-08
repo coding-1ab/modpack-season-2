@@ -83,7 +83,7 @@ public class CEIBlocks {
     public static final BlockEntry<ExperienceHatchBlock> EXPERIENCE_HATCH = REGISTRATE
             .block("experience_hatch", ExperienceHatchBlock::new)
             .initialProperties(SharedProperties::copperMetal)
-            .properties(p -> p.mapColor(MapColor.COLOR_GREEN))
+            .properties(p -> p.mapColor(MapColor.COLOR_GREEN).lightLevel(state -> 12))
             .transform(pickaxeOnly())
             .blockstate((ctx, prov) -> prov.horizontalBlock(ctx.get(), AssetLookup.standardModel(ctx, prov)))
             .simpleItem()
