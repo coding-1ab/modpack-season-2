@@ -50,7 +50,7 @@ public class CEIBlockEntities {
             .register();
     public static final BlockEntityEntry<GrindstoneDrainBlockEntity> GRINDSTONE_DRAIN = REGISTRATE
             .blockEntity("grindstone_drain", GrindstoneDrainBlockEntity::new)
-            .visual(() -> SingleAxisRotatingVisual.of(CEIPartialModels.MECHANICAL_GRINDSTONE), false)
+            .visual(() -> SingleAxisRotatingVisual.of(CEIPartialModels.MECHANICAL_GRINDSTONE), true)
             .renderer(() -> GrindstoneDrainRenderer::new)
             .validBlock(CEIBlocks.GRINDSTONE_DRAIN)
             .register();

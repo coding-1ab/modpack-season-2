@@ -47,9 +47,9 @@ public class GrindstoneDrainRenderer extends KineticBlockEntityRenderer<Grindsto
 
     @Override
     protected void renderSafe(GrindstoneDrainBlockEntity drain, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light, int overlay) {
-        super.renderSafe(drain, partialTicks, poseStack, buffer, light, overlay);
         renderItems(drain, partialTicks, poseStack, buffer, light, overlay);
         renderFluid(drain, partialTicks, poseStack, buffer, light);
+        super.renderSafe(drain, partialTicks, poseStack, buffer, light, overlay);
     }
 
     @Override
