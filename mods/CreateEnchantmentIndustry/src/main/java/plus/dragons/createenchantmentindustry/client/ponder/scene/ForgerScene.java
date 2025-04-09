@@ -77,7 +77,7 @@ public class ForgerScene {
                 be -> be.insertItem(sword2,false));
         scene.idle(90);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.extractItem(true,false));
+                be -> be.extractItem(false));
         scene.idle(10);
 
         scene.overlay().showText(60)
@@ -97,7 +97,7 @@ public class ForgerScene {
                 be -> be.insertItem(template2,false));
         scene.idle(90);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.extractItem(true,false));
+                be -> be.extractItem(false));
         scene.idle(10);
 
         scene.overlay().showText(60)
@@ -117,7 +117,7 @@ public class ForgerScene {
                 be -> be.insertItem(template3,false));
         scene.idle(90);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.extractItem(true,false));
+                be -> be.extractItem(false));
         scene.idle(10);
 
         scene.overlay().showText(80)
@@ -209,7 +209,7 @@ public class ForgerScene {
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 2));
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.extractItem(true,false));
+                be -> be.extractItem(false));
         scene.idle(45);
 
         scene.overlay().showText(80)

@@ -163,7 +163,7 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
                 }
                 consumeExperience(cost, special, false);
                 processingTime = -1;
-                inventory.clearInput();
+                inventory.applyResult();
             } else if (processingTime != -1) processingTime = -1;
             return;
         }
@@ -192,7 +192,7 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
             }
             consumeExperience(cost, special, false);
             processingTime = -1;
-            inventory.clearInput();
+            inventory.applyResult();
             notifyUpdate();
             level.playSound(null, worldPosition, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 1.0F, level.random.nextFloat() * 0.1F + 0.9F);
         } else if (processingTime != -1) {
@@ -202,7 +202,7 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
     }
 
     public ItemStack insertItem(ItemStack stack, boolean simulate) {
-        if (!inventory.outputEmpty()) return stack;
+        if (inventory.hasRemainingOutput()) return stack;
         if (!stack.isEmpty())
             stack = inventory.insertItem(0, stack, simulate);
         if (!stack.isEmpty())
@@ -210,21 +210,13 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
         return stack;
     }
 
-    public ItemStack extractItem(boolean forced, boolean simulate) {
-        ItemStack extracted;
-        if (forced) {
-            extracted = inventory.extractInput(1, simulate);
-            if (!extracted.isEmpty())
-                return extracted;
-            extracted = inventory.extractInput(0, simulate);
+    public ItemStack extractItem(boolean simulate) {
+        for(int i=inventory.getSlots()-1;i>=0;i--){
+            ItemStack extracted = inventory.extractItem(i, 1, simulate);
             if (!extracted.isEmpty())
                 return extracted;
         }
-        extracted = inventory.extractItem(1, 1, simulate);
-        if (!extracted.isEmpty())
-            return extracted;
-        extracted = inventory.extractItem(0, 1, simulate);
-        return extracted;
+        return ItemStack.EMPTY;
     }
 
     @Override

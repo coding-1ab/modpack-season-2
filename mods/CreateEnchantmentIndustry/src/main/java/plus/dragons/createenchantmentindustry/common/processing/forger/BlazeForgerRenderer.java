@@ -41,7 +41,7 @@ public class BlazeForgerRenderer extends BlazeBlockRenderer<BlazeForgerBlockEnti
 
     @Override
     protected void renderSafe(BlazeForgerBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light, int overlay) {
-        for (int slot = 0; slot < 2; slot++) {
+        for (int slot = 0; slot < 4; slot++) {
             var item = blockEntity.inventory.getStackInSlot(slot);
             if (item.isEmpty())
                 continue;

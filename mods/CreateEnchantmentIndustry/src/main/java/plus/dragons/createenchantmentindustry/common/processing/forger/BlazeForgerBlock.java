@@ -43,9 +43,9 @@ public class BlazeForgerBlock extends BlazeExperienceBlock<BlazeForgerBlockEntit
         var blockEntity = getBlockEntity(level, pos);
         if (blockEntity == null)
             return InteractionResult.PASS;
-        ItemStack extrtacted = blockEntity.extractItem(true, false);
-        if (!extrtacted.isEmpty()) {
-            player.getInventory().placeItemBackInInventory(extrtacted);
+        ItemStack extracted = blockEntity.extractItem(false);
+        if (!extracted.isEmpty()) {
+            player.getInventory().placeItemBackInInventory(extracted);
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
         return InteractionResult.PASS;

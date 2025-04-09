@@ -43,7 +43,7 @@ public class BlazeForgerInventory extends ItemStackHandler {
     private int cost;
 
     public BlazeForgerInventory(BlazeForgerBlockEntity forger) {
-        super(4);
+        super(6);
         this.forger = forger;
     }
 
@@ -54,33 +54,14 @@ public class BlazeForgerInventory extends ItemStackHandler {
 
     @Override
     public int getSlots() {
-        return 2;
-    }
-
-    @Override
-    public ItemStack getStackInSlot(int slot) {
-        ItemStack stack = super.getStackInSlot(slot);
-        if (stack.isEmpty())
-            stack = stacks.get(slot + 2);
-        return stack;
-    }
-
-    public boolean outputEmpty(){
-        return stacks.get(2).isEmpty() && stacks.get(3).isEmpty();
+        return 4;
     }
 
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-        if (stacks.get(slot + 2).isEmpty())
-            return super.insertItem(slot, stack, simulate);
-        return stack;
-    }
-
-    @Override
-    public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if (stacks.get(slot).isEmpty())
-            return super.extractItem(slot + 2, amount, simulate);
-        return ItemStack.EMPTY;
+        if (slot>1) return stack;
+        if (!stacks.get(2).isEmpty()||!stacks.get(3).isEmpty()) return stack;
+        return super.insertItem(slot, stack, simulate);
     }
 
     @Override
@@ -110,6 +91,10 @@ public class BlazeForgerInventory extends ItemStackHandler {
         return nbt;
     }
 
+    public boolean hasRemainingOutput(){
+        return !stacks.get(2).isEmpty() || !stacks.get(3).isEmpty();
+    }
+
     protected int getExperienceCost() {
         return cost == 0 ? 0 : ExperienceHelper.getExperienceForTotalLevel(cost);
     }
@@ -125,8 +110,10 @@ public class BlazeForgerInventory extends ItemStackHandler {
     }
 
     protected ItemStack getResult(int slot) {
-        validateSlotIndex(slot);
-        return stacks.get(slot + 2);
+        if (slot < 0 || slot >= 2) {
+            throw new RuntimeException("Slot " + slot + " not in valid range - [0,2)");
+        }
+        return stacks.get(slot + 4);
     }
 
     protected void clearInput() {
@@ -135,14 +122,21 @@ public class BlazeForgerInventory extends ItemStackHandler {
         cost = 0;
     }
 
+    protected void applyResult() {
+        stacks.set(2,stacks.get(4).copy());
+        stacks.set(3,stacks.get(5).copy());
+        clearInput();
+    }
+
     protected void updateResult() {
         var base = stacks.get(0).copy();
         var addition = stacks.get(1).copy();
-        stacks.set(2, base);
-        stacks.set(3, addition);
-        cost = 0;
-        if (base.isEmpty() || addition.isEmpty())
+        stacks.set(4, base);
+        stacks.set(5, addition);
+        if (base.isEmpty() || addition.isEmpty()){
+            cost = 0;
             return;
+        }
         var baseType = EnchantmentHelper.getComponentType(base);
         var baseEnchantments = base.getOrDefault(baseType, ItemEnchantments.EMPTY);
         var additionType = EnchantmentHelper.getComponentType(addition);
@@ -154,12 +148,12 @@ public class BlazeForgerInventory extends ItemStackHandler {
                     if (!splitEnchantments(base, addition, baseEnchantments, additionEnchantments)) return;
                 } else {
                     if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
-                        stacks.set(3, ItemStack.EMPTY);
+                        stacks.set(5, ItemStack.EMPTY);
                     } else return;
                 }
             } else if (additionType == DataComponents.STORED_ENCHANTMENTS) {
                 if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
-                    stacks.set(3, ItemStack.EMPTY);
+                    stacks.set(5, ItemStack.EMPTY);
                 } else return;
             } else return;
         } else {
@@ -171,7 +165,7 @@ public class BlazeForgerInventory extends ItemStackHandler {
                             if (!splitEnchantments(base, addition, baseEnchantments, additionEnchantments)) return;
                         } else {
                             if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments))
-                                stacks.set(3, ItemStack.EMPTY);
+                                stacks.set(5, ItemStack.EMPTY);
                         }
                     }
                 } else return;
@@ -182,16 +176,16 @@ public class BlazeForgerInventory extends ItemStackHandler {
                         if (!splitEnchantments(base, addition, baseEnchantments, additionEnchantments)) return;
                     } else {
                         if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
-                            stacks.set(3, ItemStack.EMPTY);
+                            stacks.set(5, ItemStack.EMPTY);
                         } else return;
                     }
                 } else if (additionType == DataComponents.STORED_ENCHANTMENTS) {
                     if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
-                        stacks.set(3, ItemStack.EMPTY);
+                        stacks.set(5, ItemStack.EMPTY);
                     } else return;
                 } else if (ItemStack.isSameItem(base, addition)) {
                     if (combineEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
-                        stacks.set(3, ItemStack.EMPTY);
+                        stacks.set(5, ItemStack.EMPTY);
                     } else return;
                 } else return;
             }
