@@ -62,7 +62,7 @@ public class BlazeForgerBlock extends BlazeExperienceBlock<BlazeForgerBlockEntit
         if (blockEntity == null)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         var remainder = blockEntity.insertItem(stack, false);
-        if (ItemStack.isSameItemSameComponents(stack, remainder))
+        if (ItemStack.isSameItemSameComponents(stack, remainder) && remainder.getCount() == stack.getCount())
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         player.setItemInHand(hand, remainder);
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
