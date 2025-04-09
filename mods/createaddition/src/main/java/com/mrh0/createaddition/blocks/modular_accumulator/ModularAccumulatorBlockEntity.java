@@ -8,6 +8,7 @@ import com.mrh0.createaddition.debug.IDebugDrawer;
 import com.mrh0.createaddition.energy.IMultiTileEnergyContainer;
 import com.mrh0.createaddition.energy.InternalEnergyStorage;
 import com.mrh0.createaddition.index.CABlockEntities;
+import com.mrh0.createaddition.network.EnergyNetworkPacketPayload;
 import com.mrh0.createaddition.network.IObserveTileEntity;
 import com.mrh0.createaddition.network.ObservePacketPayload;
 import com.mrh0.createaddition.sound.CASoundScapes;
@@ -122,7 +123,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 	public void tick() {
 		super.tick();
 		if(!invalidSides.isEmpty()) {
-			invalidSides.forEach(this::updateCache);
+			updateCache();
 			invalidSides.clear();
 		}
 
@@ -489,7 +490,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		tooltip.add(Component.literal(spacing)
 				.append(Component.translatable(CreateAddition.MODID + ".tooltip.energy.stored").withStyle(ChatFormatting.GRAY)));
 		tooltip.add(Component.literal(spacing).append(Component.literal(" "))
-				.append(Util.format((int)EnergyNetworkPacket.clientBuff)).append("fe").withStyle(ChatFormatting.AQUA));
+				.append(Util.format((int)EnergyNetworkPacketPayload.clientBuff)).append("fe").withStyle(ChatFormatting.AQUA));
 
 		tooltip.add(Component.literal(spacing)
 				.append(Component.translatable(CreateAddition.MODID + ".tooltip.energy.capacity").withStyle(ChatFormatting.GRAY)));
@@ -505,7 +506,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		ModularAccumulatorBlockEntity controllerTE = getControllerBE();
 		if (controllerTE == null) return;
 
-		EnergyNetworkPacket.send(worldPosition, 0, controllerTE.energyStorage.getEnergyStored(), player);
+		EnergyNetworkPacketPayload.send(worldPosition, 0, controllerTE.energyStorage.getEnergyStored(), player);
 	}
 
 	public boolean hasAccumulator() {
