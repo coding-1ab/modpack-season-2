@@ -17,9 +17,9 @@
       "item": "create:wheat_flour"
     },
     {
-      "type": "fluid_stack",
+      "type": "fluid_tag",
       "amount": 250,
-      "fluid": "minecraft:milk"
+      "fluid_tag": "c:milk"
     }
   ],
   "results": [
