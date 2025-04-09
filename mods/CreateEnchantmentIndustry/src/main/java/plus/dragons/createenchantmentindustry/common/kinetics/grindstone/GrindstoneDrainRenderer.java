@@ -87,7 +87,7 @@ public class GrindstoneDrainRenderer extends KineticBlockEntityRenderer<Grindsto
         poseStack.pushPose();
         if (alongZ)
             poseStack.mulPose(Axis.YP.rotationDegrees(90));
-        poseStack.translate(count <= 1 ? .5f : .25f, 0, offset);
+        poseStack.translate(count <= 1 ? .5f : .25f, 0, 1 - offset);
         poseStack.translate(alongZ ? -1 : 0, 0, 0);
         var yDelta = Mth.sin(offset * Mth.PI);
         var yOffset = Mth.lerp(yDelta, 13 / 16f, 1f);
