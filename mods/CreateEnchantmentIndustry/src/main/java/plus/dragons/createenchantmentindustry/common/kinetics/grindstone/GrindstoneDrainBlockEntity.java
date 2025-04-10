@@ -57,9 +57,12 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
+import plus.dragons.createdragonsplus.common.advancements.AdvancementBehaviour;
 import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
+import plus.dragons.createenchantmentindustry.common.registry.CEIStats;
+import plus.dragons.createenchantmentindustry.data.CEIAdvancements;
 
 @FieldsNullabilityUnknownByDefault
 public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
@@ -68,6 +71,7 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
     private ItemStack processedItem = ItemStack.EMPTY;
     protected SmartFluidTankBehaviour tank;
     private DirectBeltInputBehaviour beltInput;
+    private AdvancementBehaviour advancement;
 
     public GrindstoneDrainBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -87,8 +91,10 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
         super.addBehaviours(behaviours);
         tank = SmartFluidTankBehaviour.single(this, 1000);
         beltInput = new DirectBeltInputBehaviour(this).allowingBeltFunnels();
+        advancement = new AdvancementBehaviour(this);
         behaviours.add(tank);
         behaviours.add(beltInput);
+        behaviours.add(advancement);
     }
 
     public @Nullable IItemHandler getItemHandler(@Nullable Direction side) {
@@ -197,6 +203,8 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
             else if (!fluidResults.isEmpty())
                 applicable = fill(fluidResults.getFirst());
             if (applicable) {
+                if(fluidResults.getFirst().is(CEIFluids.EXPERIENCE))
+                    advancement.awardStat(CEIStats.GRINDSTONE_EXPERIENCE_GRIND.get(),fluidResults.getFirst().getAmount());
                 inventory.clear();
                 var grinded = recipe.rollResults();
                 for (int i = 0; i < grinded.size(); i++)
@@ -209,6 +217,7 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
                 .getRecipeFor(AllRecipeTypes.SANDPAPER_POLISHING.getType(), input, level);
         if (polishing.isPresent() && AllRecipeTypes.CAN_BE_AUTOMATED.test(polishing.get())) {
             var polished = polishing.get().value().getResultItem(level.registryAccess());
+            advancement.trigger(CEIAdvancements.ULTIMATE_SANDPAPER.builtinTrigger());
             inventory.clear();
             inventory.setStackInSlot(1, polished);
             return;
@@ -219,6 +228,8 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
             var result = grindstone.get();
             var fluid = new FluidStack(CEIFluids.EXPERIENCE, result.experience());
             if (fill(fluid)) {
+                advancement.trigger(CEIAdvancements.GONE_WITH_THE_FOIL.builtinTrigger());
+                advancement.awardStat(CEIStats.GRINDSTONE_EXPERIENCE_GRIND.get(),fluid.getAmount());
                 inventory.clear();
                 inventory.setStackInSlot(0, result.top());
                 inventory.setStackInSlot(1, result.bottom());

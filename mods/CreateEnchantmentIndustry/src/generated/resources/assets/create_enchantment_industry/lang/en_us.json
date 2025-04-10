@@ -1,4 +1,20 @@
 {
+  "advancement.create_enchantment_industry.a_shower_experience": "A Shower \"Experience\"",
+  "advancement.create_enchantment_industry.a_shower_experience.desc": "Break a Fluid Pipe and bathe in the leaked experience\n§7(Hidden Advancement)",
+  "advancement.create_enchantment_industry.experienced_engineer": "Experienced Engineer",
+  "advancement.create_enchantment_industry.experienced_engineer.desc": "Get some Nuggets of Experience",
+  "advancement.create_enchantment_industry.experienced_recycler": "Experienced Recycler",
+  "advancement.create_enchantment_industry.experienced_recycler.desc": "Get 1,000,000 mB of experience from Mechanical Grindstone",
+  "advancement.create_enchantment_industry.gone_with_the_foil": "Gone with the Foil",
+  "advancement.create_enchantment_industry.gone_with_the_foil.desc": "Watch an enchanted item be disenchanted by a Mechanical Grindstone",
+  "advancement.create_enchantment_industry.root": "Welcome to Create: Enchantment Industry",
+  "advancement.create_enchantment_industry.root.desc": "Road to master enchanting begins",
+  "advancement.create_enchantment_industry.spirit_taking": "Spirit Taking",
+  "advancement.create_enchantment_industry.spirit_taking.desc": "Store your experience through an experience hatch",
+  "advancement.create_enchantment_industry.spiritual_return": "Spiritual Return",
+  "advancement.create_enchantment_industry.spiritual_return.desc": "Retrieve some experience through an experience hatch",
+  "advancement.create_enchantment_industry.ultimate_sandpaper": "Ultimate Sandpaper",
+  "advancement.create_enchantment_industry.ultimate_sandpaper.desc": "Sandpaper? Never heard of it.",
   "block.create_enchantment_industry.blaze_enchanter": "Blaze Enchanter",
   "block.create_enchantment_industry.blaze_forger": "Blaze Forger",
   "block.create_enchantment_industry.experience": "Liquid Experience",
@@ -121,5 +137,6 @@
   "item.create_enchantment_industry.experience_cake_slice": "Cake Slice o' Enchanting",
   "item.create_enchantment_industry.super_enchanting_template": "Super Enchanting Template",
   "item.create_enchantment_industry.super_experience_nugget": "Nugget of Super Experience",
-  "itemGroup.create_enchantment_industry.base": "Create: Enchantment Industry"
+  "itemGroup.create_enchantment_industry.base": "Create: Enchantment Industry",
+  "stat.create_enchantment_industry.grindstone_experience_grind": "Mechanical Grindstone Experience Produce"
 }

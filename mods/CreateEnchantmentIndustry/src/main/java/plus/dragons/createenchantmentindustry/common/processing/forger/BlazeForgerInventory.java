@@ -29,6 +29,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
@@ -168,7 +169,15 @@ public class BlazeForgerInventory extends ItemStackHandler {
                                 stacks.set(5, ItemStack.EMPTY);
                         }
                     }
-                } else return;
+                } else if(base.is(Items.BOOK) && addition.getItem() instanceof EnchantingTemplateItem template){
+                    if(forger.special && (!template.isSpecial())) return;
+                    else {
+                        if(!additionEnchantments.isEmpty()){
+                            if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments))
+                                stacks.set(5, ItemStack.EMPTY);
+                        } else return;
+                    }
+                }
             } else {
                 if (addition.getItem() instanceof EnchantingTemplateItem template) {
                     if (forger.special && !template.isSpecial()) return;
@@ -180,7 +189,7 @@ public class BlazeForgerInventory extends ItemStackHandler {
                         } else return;
                     }
                 } else if (additionType == DataComponents.STORED_ENCHANTMENTS) {
-                    if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
+                    if (applyEnchantmentsToBook(base, addition, baseEnchantments, additionEnchantments)) {
                         stacks.set(5, ItemStack.EMPTY);
                     } else return;
                 } else if (ItemStack.isSameItem(base, addition)) {
@@ -255,6 +264,37 @@ public class BlazeForgerInventory extends ItemStackHandler {
         if (!applied)
             return false;
         EnchantmentHelper.setEnchantments(base, resultEnchantments.toImmutable());
+        this.cost += cost;
+        return true;
+    }
+
+    protected boolean applyEnchantmentsToBook(ItemStack base, ItemStack addition, ItemEnchantments baseEnchantments, ItemEnchantments additionEnchantments) {
+        int cost = 0;
+        var resultEnchantments = new Mutable(ItemEnchantments.EMPTY);
+        boolean applied = false;
+        for (Entry<Holder<Enchantment>> entry : additionEnchantments.entrySet()) {
+            Holder<Enchantment> holder = entry.getKey();
+            Enchantment enchantment = holder.value();
+            boolean applicable = base.supportsEnchantment(holder);
+            for (Holder<Enchantment> holder1 : resultEnchantments.keySet()) {
+                if (!holder1.equals(holder) && !Enchantment.areCompatible(holder, holder1)) {
+                    applicable = forger.special && CEIConfig.enchantments().ignoreEnchantmentCompatibility.get();
+                    cost++;
+                }
+            }
+            if (applicable) {
+                applied = true;
+                resultEnchantments.set(holder, entry.getIntValue());
+                int anvilCost = enchantment.getAnvilCost();
+                anvilCost = Math.max(1, anvilCost / 2);
+                cost += anvilCost * entry.getIntValue();
+            }
+        }
+        if (!applied)
+            return false;
+        base = Items.ENCHANTED_BOOK.getDefaultInstance();
+        EnchantmentHelper.setEnchantments(base, resultEnchantments.toImmutable());
+        stacks.set(4, base);
         this.cost += cost;
         return true;
     }

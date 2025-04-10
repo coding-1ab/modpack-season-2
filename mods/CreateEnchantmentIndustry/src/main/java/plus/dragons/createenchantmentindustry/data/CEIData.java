@@ -36,6 +36,7 @@ public class CEIData {
         REGISTRATE.registerBuiltinLocalization("interface");
         REGISTRATE.registerForeignLocalization();
         REGISTRATE.registerPonderLocalization(CEIPonderPlugin::new);
+        REGISTRATE.registerExtraLocalization(CEIAdvancements::provideLang);
         modBus.register(this);
     }
 
@@ -48,5 +49,6 @@ public class CEIData {
         var client = event.includeClient();
         var server = event.includeServer();
         generator.addProvider(server, new CEIRecipeProvider(output, lookupProvider));
+        generator.addProvider(server, new CEIAdvancements(output, lookupProvider));
     }
 }

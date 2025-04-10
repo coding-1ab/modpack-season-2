@@ -1,4 +1,20 @@
 {
+  "advancement.create_enchantment_industry.a_shower_experience": "\"ǝɔuǝıɹǝdxƎ\" ɹǝʍoɥS Ɐ",
+  "advancement.create_enchantment_industry.a_shower_experience.desc": ")ʇuǝɯǝɔuɐʌpⱯ uǝppıH(ㄥ§\nǝɔuǝıɹǝdxǝ pǝʞɐǝן ǝɥʇ uı ǝɥʇɐq puɐ ǝdıԀ pınןℲ ɐ ʞɐǝɹᗺ",
+  "advancement.create_enchantment_industry.experienced_engineer": "ɹǝǝuıbuƎ pǝɔuǝıɹǝdxƎ",
+  "advancement.create_enchantment_industry.experienced_engineer.desc": "ǝɔuǝıɹǝdxƎ ɟo sʇǝbbnN ǝɯos ʇǝ⅁",
+  "advancement.create_enchantment_industry.experienced_recycler": "ɹǝןɔʎɔǝᴚ pǝɔuǝıɹǝdxƎ",
+  "advancement.create_enchantment_industry.experienced_recycler.desc": "ǝuoʇspuıɹ⅁ ןɐɔıuɐɥɔǝW ɯoɹɟ ǝɔuǝıɹǝdxǝ ɟo ᗺɯ 000'000'Ɩ ʇǝ⅁",
+  "advancement.create_enchantment_industry.gone_with_the_foil": "ןıoℲ ǝɥʇ ɥʇıʍ ǝuo⅁",
+  "advancement.create_enchantment_industry.gone_with_the_foil.desc": "ǝuoʇspuıɹ⅁ ןɐɔıuɐɥɔǝW ɐ ʎq pǝʇuɐɥɔuǝsıp ǝq ɯǝʇı pǝʇuɐɥɔuǝ uɐ ɥɔʇɐM",
+  "advancement.create_enchantment_industry.root": "ʎɹʇsnpuI ʇuǝɯʇuɐɥɔuƎ :ǝʇɐǝɹƆ oʇ ǝɯoɔןǝM",
+  "advancement.create_enchantment_industry.root.desc": "suıbǝq buıʇuɐɥɔuǝ ɹǝʇsɐɯ oʇ pɐoᴚ",
+  "advancement.create_enchantment_industry.spirit_taking": "buıʞɐ⟘ ʇıɹıdS",
+  "advancement.create_enchantment_industry.spirit_taking.desc": "ɥɔʇɐɥ ǝɔuǝıɹǝdxǝ uɐ ɥbnoɹɥʇ ǝɔuǝıɹǝdxǝ ɹnoʎ ǝɹoʇS",
+  "advancement.create_enchantment_industry.spiritual_return": "uɹnʇǝᴚ ןɐnʇıɹıdS",
+  "advancement.create_enchantment_industry.spiritual_return.desc": "ɥɔʇɐɥ ǝɔuǝıɹǝdxǝ uɐ ɥbnoɹɥʇ ǝɔuǝıɹǝdxǝ ǝɯos ǝʌǝıɹʇǝᴚ",
+  "advancement.create_enchantment_industry.ultimate_sandpaper": "ɹǝdɐdpuɐS ǝʇɐɯıʇן∩",
+  "advancement.create_enchantment_industry.ultimate_sandpaper.desc": "˙ʇı ɟo pɹɐǝɥ ɹǝʌǝN ¿ɹǝdɐdpuɐS",
   "block.create_enchantment_industry.blaze_enchanter": "ɹǝʇuɐɥɔuƎ ǝzɐןᗺ",
   "block.create_enchantment_industry.blaze_forger": "ɹǝbɹoℲ ǝzɐןᗺ",
   "block.create_enchantment_industry.experience": "ǝɔuǝıɹǝdxƎ pınbıꞀ",
@@ -121,5 +137,6 @@
   "item.create_enchantment_industry.experience_cake_slice": "buıʇuɐɥɔuƎ ,o ǝɔıןS ǝʞɐƆ",
   "item.create_enchantment_industry.super_enchanting_template": "ǝʇɐןdɯǝ⟘ buıʇuɐɥɔuƎ ɹǝdnS",
   "item.create_enchantment_industry.super_experience_nugget": "ǝɔuǝıɹǝdxƎ ɹǝdnS ɟo ʇǝbbnN",
-  "itemGroup.create_enchantment_industry.base": "ʎɹʇsnpuI ʇuǝɯʇuɐɥɔuƎ :ǝʇɐǝɹƆ"
+  "itemGroup.create_enchantment_industry.base": "ʎɹʇsnpuI ʇuǝɯʇuɐɥɔuƎ :ǝʇɐǝɹƆ",
+  "stat.create_enchantment_industry.grindstone_experience_grind": "ǝɔnpoɹԀ ǝɔuǝıɹǝdxƎ ǝuoʇspuıɹ⅁ ןɐɔıuɐɥɔǝW"
 }

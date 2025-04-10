@@ -18,23 +18,19 @@
 
 package plus.dragons.createenchantmentindustry.common;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import plus.dragons.createdragonsplus.common.CDPRegistrate;
-import plus.dragons.createenchantmentindustry.common.registry.CEIArmInterationPoints;
-import plus.dragons.createenchantmentindustry.common.registry.CEIBlockEntities;
-import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
-import plus.dragons.createenchantmentindustry.common.registry.CEICreativeModeTabs;
-import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
-import plus.dragons.createenchantmentindustry.common.registry.CEIEnchantments;
-import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
-import plus.dragons.createenchantmentindustry.common.registry.CEIItems;
-import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
+import plus.dragons.createenchantmentindustry.common.registry.*;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
+import plus.dragons.createenchantmentindustry.data.CEIAdvancements;
 
 @Mod(CEICommon.ID)
 public class CEICommon {
@@ -52,12 +48,21 @@ public class CEICommon {
         CEIEnchantments.register(modBus);
         CEIArmInterationPoints.register(modBus);
         CEIDataMaps.register(modBus);
+        CEIStats.register(modBus);
         modBus.register(this);
         modBus.register(new CEIConfig(modContainer));
     }
 
     @SubscribeEvent
     public void setup(final FMLCommonSetupEvent event) {}
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void register(final RegisterEvent event) {
+        if (event.getRegistry() == BuiltInRegistries.TRIGGER_TYPES) {
+            CEIAdvancements.register();
+            CEIAdvancements.BuiltinTriggersQuickDeploy.register();
+        }
+    }
 
     public static ResourceLocation asResource(String name) {
         return ResourceLocation.fromNamespaceAndPath(ID, name);

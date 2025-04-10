@@ -54,6 +54,7 @@ import plus.dragons.createdragonsplus.common.features.ConfigFeatureElement;
 import plus.dragons.createdragonsplus.config.CDPConfig;
 import plus.dragons.createdragonsplus.config.FeaturesConfig.ConfigFeature;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlockEntities;
+import plus.dragons.createenchantmentindustry.data.CEIAdvancements;
 
 public class ExperienceHatchBlock extends HorizontalDirectionalBlock
         implements IBE<ExperienceHatchBlockEntity>, IWrenchable, ProperWaterloggedBlock, ConfigFeatureElement {
@@ -125,6 +126,7 @@ public class ExperienceHatchBlock extends HorizontalDirectionalBlock
                 serverLevel.getChunkSource().blockChanged(blockEntity.getBlockPos());
             int experience = ExperienceHelper.getExperienceFromFluid(fluid);
             player.giveExperiencePoints(experience);
+            CEIAdvancements.SPIRITUAL_RETURN.awardTo(player);
             return InteractionResult.SUCCESS;
         } else {
             int experience = ExperienceHelper.getExperienceForPlayer(player);
@@ -137,6 +139,7 @@ public class ExperienceHatchBlock extends HorizontalDirectionalBlock
                 serverLevel.getChunkSource().blockChanged(blockEntity.getBlockPos());
             experience = ExperienceHelper.getExperienceFromFluid(fluid.copyWithAmount(filled));
             player.giveExperiencePoints(-experience);
+            CEIAdvancements.SPIRIT_TAKING.awardTo(player);
             return InteractionResult.SUCCESS;
         }
     }
