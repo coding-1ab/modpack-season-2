@@ -6,7 +6,7 @@
   },
   "display": {
     "announce_to_chat": false,
-    "background": "create_enchantment_industry:textures/gui/advancements.png",
+    "background": "create_enchantment_industry:textures/block/super_experience_block.png",
     "description": {
       "color": "#DBA213",
       "translate": "advancement.create_enchantment_industry.root.desc"

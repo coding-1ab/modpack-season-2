@@ -26,7 +26,7 @@
   "advancement.create_enchantment_industry.gone_with_the_foil.desc": "Watch an enchanted item be disenchanted by a Mechanical Grindstone",
   "advancement.create_enchantment_industry.great_publisher": "Great Publisher",
   "advancement.create_enchantment_industry.great_publisher.desc": "Printer prints 1,000 times",
-  "advancement.create_enchantment_industry.grind_to_polish": "GRIND_TO_POLISH",
+  "advancement.create_enchantment_industry.grind_to_polish": "Grind To Polish",
   "advancement.create_enchantment_industry.grind_to_polish.desc": "Sandpaper? I've gotten better one",
   "advancement.create_enchantment_industry.lightning_catalysis": "Lightning Catalysis",
   "advancement.create_enchantment_industry.lightning_catalysis.desc": "Obtain Super Experience",
@@ -177,11 +177,9 @@
   "item.create_enchantment_industry.super_enchanting_template": "超越附魔模板",
   "item.create_enchantment_industry.super_experience_nugget": "超越经验颗粒",
   "itemGroup.create_enchantment_industry.base": "机械动力：附魔工业",
-  "stat.create_enchantment_industry.enchant": "Blaze Enchanter Usage",
-  "stat.create_enchantment_industry.enchanting_template_applied": "Experience Produced by Mechanical Grindstone",
-  "stat.create_enchantment_industry.enchanting_template_enchanted": "Experience Produced by Mechanical Grindstone",
-  "stat.create_enchantment_industry.forge": "Blaze Forger Usage",
-  "stat.create_enchantment_industry.mechanical_grindstone_experience": "Experience Produced by Mechanical Grindstone",
-  "stat.create_enchantment_industry.print": "Printer Usage",
-  "stat.create_enchantment_industry.super_enchant": "Super Enchant Time (include Blaze Enchanter & Blaze Forger)"
+  "stat.create_enchantment_industry.enchant": "Blaze Enchanter Used",
+  "stat.create_enchantment_industry.forge": "Blaze Forger Used",
+  "stat.create_enchantment_industry.mechanical_grindstone_experience": "Experience Produced (by Mechanical Grindstone)",
+  "stat.create_enchantment_industry.print": "Printer Used",
+  "stat.create_enchantment_industry.super_enchant": "Super-Enchant"
 }

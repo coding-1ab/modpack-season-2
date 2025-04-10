@@ -70,7 +70,7 @@ public class CEIAdvancements implements DataProvider {
             .after(EXPERIENCED_ENGINEER)),
 
     GRIND_TO_POLISH = create("grind_to_polish",b -> b.icon(AllItems.SAND_PAPER) // 磨砺成莹
-            .title("GRIND_TO_POLISH")
+            .title("Grind To Polish")
             .description("Sandpaper? I've gotten better one")
             .special(CDPAdvancement.TaskType.NOISY)
             .after(GONE_WITH_THE_FOIL)),
@@ -192,7 +192,6 @@ public class CEIAdvancements implements DataProvider {
     BRAND_REGISTRY = create("brand_registry",b -> b.icon(CEIBlocks.BLAZE_FORGER) // 商标注册
             .title("Brand Registry")
             .description("Using the printer to name an item")
-            .whenIconCollected()
             .after(COPIABLE_MYSTERY)),
 
     GREAT_PUBLISHER = create("great_publisher",b -> b.icon(CEIBlocks.PRINTER) // 大出版家

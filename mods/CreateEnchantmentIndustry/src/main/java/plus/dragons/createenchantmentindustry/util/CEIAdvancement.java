@@ -26,7 +26,7 @@ public class CEIAdvancement extends CDPAdvancement {
 
     @Override
     protected @NotNull ResourceLocation getBackground() {
-        return CEICommon.asResource("textures/gui/advancements.png");
+        return CEICommon.asResource("textures/block/super_experience_block.png");
     }
 
     @Override

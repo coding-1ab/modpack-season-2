@@ -25,7 +25,7 @@
   "advancement.create_enchantment_industry.gone_with_the_foil.desc": "ǝuoʇspuıɹ⅁ ןɐɔıuɐɥɔǝW ɐ ʎq pǝʇuɐɥɔuǝsıp ǝq ɯǝʇı pǝʇuɐɥɔuǝ uɐ ɥɔʇɐM",
   "advancement.create_enchantment_industry.great_publisher": "ɹǝɥsıןqnԀ ʇɐǝɹ⅁",
   "advancement.create_enchantment_industry.great_publisher.desc": "sǝɯıʇ 000'Ɩ sʇuıɹd ɹǝʇuıɹԀ",
-  "advancement.create_enchantment_industry.grind_to_polish": "HSIꞀOԀ‾O⟘‾ᗡNIᴚ⅁",
+  "advancement.create_enchantment_industry.grind_to_polish": "ɥsıןoԀ o⟘ puıɹ⅁",
   "advancement.create_enchantment_industry.grind_to_polish.desc": "ǝuo ɹǝʇʇǝq uǝʇʇob ǝʌ,I ¿ɹǝdɐdpuɐS",
   "advancement.create_enchantment_industry.lightning_catalysis": "sısʎןɐʇɐƆ buıuʇɥbıꞀ",
   "advancement.create_enchantment_industry.lightning_catalysis.desc": "ǝɔuǝıɹǝdxƎ ɹǝdnS uıɐʇqO",
@@ -176,11 +176,9 @@
   "item.create_enchantment_industry.super_enchanting_template": "ǝʇɐןdɯǝ⟘ buıʇuɐɥɔuƎ ɹǝdnS",
   "item.create_enchantment_industry.super_experience_nugget": "ǝɔuǝıɹǝdxƎ ɹǝdnS ɟo ʇǝbbnN",
   "itemGroup.create_enchantment_industry.base": "ʎɹʇsnpuI ʇuǝɯʇuɐɥɔuƎ :ǝʇɐǝɹƆ",
-  "stat.create_enchantment_industry.enchant": "ǝbɐs∩ ɹǝʇuɐɥɔuƎ ǝzɐןᗺ",
-  "stat.create_enchantment_industry.enchanting_template_applied": "ǝuoʇspuıɹ⅁ ןɐɔıuɐɥɔǝW ʎq pǝɔnpoɹԀ ǝɔuǝıɹǝdxƎ",
-  "stat.create_enchantment_industry.enchanting_template_enchanted": "ǝuoʇspuıɹ⅁ ןɐɔıuɐɥɔǝW ʎq pǝɔnpoɹԀ ǝɔuǝıɹǝdxƎ",
-  "stat.create_enchantment_industry.forge": "ǝbɐs∩ ɹǝbɹoℲ ǝzɐןᗺ",
-  "stat.create_enchantment_industry.mechanical_grindstone_experience": "ǝuoʇspuıɹ⅁ ןɐɔıuɐɥɔǝW ʎq pǝɔnpoɹԀ ǝɔuǝıɹǝdxƎ",
-  "stat.create_enchantment_industry.print": "ǝbɐs∩ ɹǝʇuıɹԀ",
-  "stat.create_enchantment_industry.super_enchant": ")ɹǝbɹoℲ ǝzɐןᗺ & ɹǝʇuɐɥɔuƎ ǝzɐןᗺ ǝpnןɔuı( ǝɯı⟘ ʇuɐɥɔuƎ ɹǝdnS"
+  "stat.create_enchantment_industry.enchant": "pǝs∩ ɹǝʇuɐɥɔuƎ ǝzɐןᗺ",
+  "stat.create_enchantment_industry.forge": "pǝs∩ ɹǝbɹoℲ ǝzɐןᗺ",
+  "stat.create_enchantment_industry.mechanical_grindstone_experience": ")ǝuoʇspuıɹ⅁ ןɐɔıuɐɥɔǝW ʎq( pǝɔnpoɹԀ ǝɔuǝıɹǝdxƎ",
+  "stat.create_enchantment_industry.print": "pǝs∩ ɹǝʇuıɹԀ",
+  "stat.create_enchantment_industry.super_enchant": "ʇuɐɥɔuƎ-ɹǝdnS"
 }

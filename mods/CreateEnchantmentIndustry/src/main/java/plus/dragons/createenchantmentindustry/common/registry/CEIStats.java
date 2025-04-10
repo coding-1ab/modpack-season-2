@@ -11,31 +11,23 @@ import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE
 
 public class CEIStats {
     public static final RegistryEntry<ResourceLocation,ResourceLocation> GRINDSTONE_EXPERIENCE = create("mechanical_grindstone_experience")
-            .lang("Experience Produced by Mechanical Grindstone")
-            .register();
-
-    public static final RegistryEntry<ResourceLocation,ResourceLocation> TEMPLATE_ENCHANTED = create("enchanting_template_enchanted")
-            .lang("Experience Produced by Mechanical Grindstone")
-            .register();
-
-    public static final RegistryEntry<ResourceLocation,ResourceLocation> TEMPLATE_APPLIED = create("enchanting_template_applied")
-            .lang("Experience Produced by Mechanical Grindstone")
+            .lang("Experience Produced (by Mechanical Grindstone)")
             .register();
 
     public static final RegistryEntry<ResourceLocation,ResourceLocation> SUPER_ENCHANT = create("super_enchant")
-            .lang("Super Enchant Time (include Blaze Enchanter & Blaze Forger)")
+            .lang("Super-Enchant")
             .register();
 
     public static final RegistryEntry<ResourceLocation,ResourceLocation> PRINT = create("print")
-            .lang("Printer Usage")
+            .lang("Printer Used")
             .register();
 
     public static final RegistryEntry<ResourceLocation,ResourceLocation> FORGE = create("forge")
-            .lang("Blaze Forger Usage")
+            .lang("Blaze Forger Used")
             .register();
 
     public static final RegistryEntry<ResourceLocation,ResourceLocation> ENCHANT = create("enchant")
-            .lang("Blaze Enchanter Usage")
+            .lang("Blaze Enchanter Used")
             .register();
 
     private static CustomStatBuilder<CDPRegistrate> create(String id){
