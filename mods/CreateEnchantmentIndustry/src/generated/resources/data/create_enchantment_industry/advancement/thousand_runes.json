@@ -1,13 +1,13 @@
 {
-  "parent": "create_enchantment_industry:gone_with_the_foil",
+  "parent": "create_enchantment_industry:sigil_forging",
   "criteria": {
     "0": {
       "conditions": {
         "type": "minecraft:custom",
         "bounds": {
-          "min": 1000000
+          "min": 1000
         },
-        "value": "create_enchantment_industry:mechanical_grindstone_experience"
+        "value": "create_enchantment_industry:enchant"
       },
       "trigger": "create_dragons_plus:stat"
     }
@@ -15,15 +15,15 @@
   "display": {
     "description": {
       "color": "#DBA213",
-      "translate": "advancement.create_enchantment_industry.experienced_recycler.desc"
+      "translate": "advancement.create_enchantment_industry.thousand_runes.desc"
     },
     "frame": "goal",
     "icon": {
       "count": 1,
-      "id": "create_enchantment_industry:grindstone_drain"
+      "id": "create_enchantment_industry:blaze_enchanter"
     },
     "title": {
-      "translate": "advancement.create_enchantment_industry.experienced_recycler"
+      "translate": "advancement.create_enchantment_industry.thousand_runes"
     }
   },
   "requirements": [

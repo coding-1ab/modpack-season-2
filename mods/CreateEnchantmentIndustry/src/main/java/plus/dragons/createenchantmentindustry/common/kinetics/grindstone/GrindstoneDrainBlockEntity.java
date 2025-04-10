@@ -204,7 +204,7 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
                 applicable = fill(fluidResults.getFirst());
             if (applicable) {
                 if(fluidResults.getFirst().is(CEIFluids.EXPERIENCE))
-                    advancement.awardStat(CEIStats.GRINDSTONE_EXPERIENCE_GRIND.get(),fluidResults.getFirst().getAmount());
+                    advancement.awardStat(CEIStats.GRINDSTONE_EXPERIENCE.get(),fluidResults.getFirst().getAmount());
                 inventory.clear();
                 var grinded = recipe.rollResults();
                 for (int i = 0; i < grinded.size(); i++)
@@ -217,7 +217,7 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
                 .getRecipeFor(AllRecipeTypes.SANDPAPER_POLISHING.getType(), input, level);
         if (polishing.isPresent() && AllRecipeTypes.CAN_BE_AUTOMATED.test(polishing.get())) {
             var polished = polishing.get().value().getResultItem(level.registryAccess());
-            advancement.trigger(CEIAdvancements.ULTIMATE_SANDPAPER.builtinTrigger());
+            advancement.trigger(CEIAdvancements.GRIND_TO_POLISH.builtinTrigger());
             inventory.clear();
             inventory.setStackInSlot(1, polished);
             return;
@@ -229,7 +229,7 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
             var fluid = new FluidStack(CEIFluids.EXPERIENCE, result.experience());
             if (fill(fluid)) {
                 advancement.trigger(CEIAdvancements.GONE_WITH_THE_FOIL.builtinTrigger());
-                advancement.awardStat(CEIStats.GRINDSTONE_EXPERIENCE_GRIND.get(),fluid.getAmount());
+                advancement.awardStat(CEIStats.GRINDSTONE_EXPERIENCE.get(),fluid.getAmount());
                 inventory.clear();
                 inventory.setStackInSlot(0, result.top());
                 inventory.setStackInSlot(1, result.bottom());

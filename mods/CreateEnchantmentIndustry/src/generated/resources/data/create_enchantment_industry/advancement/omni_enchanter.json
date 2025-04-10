@@ -1,13 +1,13 @@
 {
-  "parent": "create_enchantment_industry:gone_with_the_foil",
+  "parent": "create_enchantment_industry:paradox_fusion",
   "criteria": {
     "0": {
       "conditions": {
         "type": "minecraft:custom",
         "bounds": {
-          "min": 1000000
+          "min": 100
         },
-        "value": "create_enchantment_industry:mechanical_grindstone_experience"
+        "value": "create_enchantment_industry:super_enchant"
       },
       "trigger": "create_dragons_plus:stat"
     }
@@ -15,15 +15,15 @@
   "display": {
     "description": {
       "color": "#DBA213",
-      "translate": "advancement.create_enchantment_industry.experienced_recycler.desc"
+      "translate": "advancement.create_enchantment_industry.omni_enchanter.desc"
     },
     "frame": "goal",
     "icon": {
       "count": 1,
-      "id": "create_enchantment_industry:grindstone_drain"
+      "id": "minecraft:nether_star"
     },
     "title": {
-      "translate": "advancement.create_enchantment_industry.experienced_recycler"
+      "translate": "advancement.create_enchantment_industry.omni_enchanter"
     }
   },
   "requirements": [

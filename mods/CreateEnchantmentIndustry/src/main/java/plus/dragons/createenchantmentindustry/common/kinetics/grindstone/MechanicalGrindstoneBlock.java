@@ -30,7 +30,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -81,7 +80,7 @@ public class MechanicalGrindstoneBlock extends RotatedPillarKineticBlock impleme
             SandPaperItem.spawnParticles(location, stack, level);
             AllSoundEvents.SANDING_SHORT.play(level, player, pos, 1, 1);
             stack.shrink(1);
-            CEIAdvancements.ULTIMATE_SANDPAPER.awardTo(player);
+            CEIAdvancements.GRIND_TO_POLISH.awardTo(player);
             if (stack.isEmpty()) {
                 player.setItemInHand(hand, polished);
             } else {
@@ -103,7 +102,7 @@ public class MechanicalGrindstoneBlock extends RotatedPillarKineticBlock impleme
             }
             player.setItemInHand(otherHand, result.bottom());
             CEIAdvancements.GONE_WITH_THE_FOIL.awardTo(player);
-            player.awardStat(CEIStats.GRINDSTONE_EXPERIENCE_GRIND.get(),result.experience());
+            player.awardStat(CEIStats.GRINDSTONE_EXPERIENCE.get(),result.experience());
             if (player instanceof ServerPlayer serverPlayer)
                 ExperienceHelper.award(result.experience(), serverPlayer);
             level.levelEvent(1042, pos, 0);
