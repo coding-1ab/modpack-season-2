@@ -42,6 +42,7 @@ import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -53,7 +54,10 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
 import plus.dragons.createdragonsplus.common.advancements.AdvancementBehaviour;
 import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
+import plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour.CustomNamePrintingBehaviour;
+import plus.dragons.createenchantmentindustry.common.registry.CEIStats;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
+import plus.dragons.createenchantmentindustry.data.CEIAdvancements;
 
 @FieldsNullabilityUnknownByDefault
 public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
@@ -61,6 +65,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     protected SmartFluidTankBehaviour tank;
     private PrinterBehaviour printer;
     public int processingTicks = -1;
+    private AdvancementBehaviour advancement;
 
     public PrinterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -75,7 +80,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         BeltProcessingBehaviour processing = new BeltProcessingBehaviour(this)
                 .whenItemEnters(this::onItemEnters)
                 .whileItemHeld(this::onItemHeld);
-        AdvancementBehaviour advancement = new AdvancementBehaviour(this);
+        advancement = new AdvancementBehaviour(this);
         behaviours.add(tank);
         behaviours.add(printer);
         behaviours.add(processing);
@@ -159,11 +164,15 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
             List<TransportedItemStack> resultList = new ArrayList<>();
             resultList.add(result);
             handler.handleProcessingOnItem(transported, TransportedResult.convertToAndLeaveHeld(resultList, held));
+            if (printer.getPrintingBehaviour() instanceof CustomNamePrintingBehaviour) advancement.trigger(CEIAdvancements.BRAND_REGISTRY.builtinTrigger());
+            else if (resultItem.is(Items.WRITTEN_BOOK)) advancement.trigger(CEIAdvancements.COPIABLE_MASTERPIECE.builtinTrigger());
+            else if (resultItem.is(Items.ENCHANTED_BOOK)) advancement.trigger(CEIAdvancements.COPIABLE_MYSTERY.builtinTrigger());
         }
         fluidStack.shrink(requiredFluid);
         setFluidInTank(fluidStack);
         notifyUpdate();
         printing.onFinished(level, worldPosition, this);
+        advancement.awardStat(CEIStats.PRINT.get(),1);
         return HOLD;
     }
 

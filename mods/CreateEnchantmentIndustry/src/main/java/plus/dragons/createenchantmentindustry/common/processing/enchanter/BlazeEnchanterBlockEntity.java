@@ -38,9 +38,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -50,12 +52,15 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
+import plus.dragons.createdragonsplus.common.advancements.AdvancementBehaviour;
 import plus.dragons.createdragonsplus.common.fluids.tank.ConfigurableFluidTank;
 import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
 import plus.dragons.createenchantmentindustry.client.model.CEIPartialModels;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.BlazeExperienceBlockEntity;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
+import plus.dragons.createenchantmentindustry.common.registry.CEIStats;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
+import plus.dragons.createenchantmentindustry.data.CEIAdvancements;
 
 @FieldsNullabilityUnknownByDefault
 public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
@@ -66,6 +71,7 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
     protected Long seed;
     protected int processingTime = -1;
     protected ItemStack heldItem = ItemStack.EMPTY;
+    protected AdvancementBehaviour advancement;
 
     public BlazeEnchanterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -81,7 +87,9 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
         this.enchanter = new EnchanterBehaviour(this, new EnchanterTransform());
+        this.advancement = new AdvancementBehaviour(this);
         behaviours.add(this.enchanter);
+        behaviours.add(this.advancement);
     }
 
     @Override
@@ -194,12 +202,27 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
                     return;
                 }
                 if (special && !cursed && strikeLightning(serverLevel, strikePos)) {
+                    advancement.trigger(CEIAdvancements.OSHA_VIOLATION.builtinTrigger());
                     serverLevel.destroyBlock(worldPosition, false);
                     serverLevel.setBlockAndUpdate(worldPosition, AllBlocks.LIT_BLAZE_BURNER.getDefaultState());
                     return;
                 }
                 processingTime = -1;
                 heldItem = enchanter.getResult(heldItem);
+                advancement.awardStat(CEIStats.ENCHANT.get(),1);
+
+                if(heldItem.getItem() instanceof EnchantingTemplateItem){
+                    advancement.trigger(CEIAdvancements.SIGIL_FORGING.builtinTrigger());
+                } else {
+                    advancement.trigger(CEIAdvancements.BLAZING_ENCHANTMENT.builtinTrigger());
+                }
+                if(special) {
+                    advancement.awardStat(CEIStats.SUPER_ENCHANT.get(),1);
+                    boolean treasure = EnchantmentHelper.getEnchantmentsForCrafting(heldItem).keySet().stream().anyMatch(h->h.is(EnchantmentTags.TREASURE));
+                    if(treasure)
+                        advancement.trigger(CEIAdvancements.PROBABILITY_SPIKE.builtinTrigger());
+                }
+
                 consumeExperience(cost, special, false);
                 nextSeed();
                 notifyUpdate();

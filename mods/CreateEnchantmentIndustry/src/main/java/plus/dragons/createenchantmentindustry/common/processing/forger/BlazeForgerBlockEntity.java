@@ -47,12 +47,14 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
+import plus.dragons.createdragonsplus.common.advancements.AdvancementBehaviour;
 import plus.dragons.createdragonsplus.common.fluids.tank.ConfigurableFluidTank;
 import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
 import plus.dragons.createenchantmentindustry.client.model.CEIPartialModels;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.BlazeExperienceBlockEntity;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
+import plus.dragons.createenchantmentindustry.data.CEIAdvancements;
 import plus.dragons.createenchantmentindustry.util.CEILang;
 
 @FieldsNullabilityUnknownByDefault
@@ -62,6 +64,7 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
     protected boolean cursed;
     protected int processingTime = -1;
     protected final BlazeForgerInventory inventory;
+    protected AdvancementBehaviour advancement;
 
     public BlazeForgerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -77,6 +80,8 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
+        this.advancement = new AdvancementBehaviour(this);
+        behaviours.add(this.advancement);
     }
 
     @Override
@@ -186,6 +191,7 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
                 return;
             }
             if (special && !cursed && strikeLightning(serverLevel, strikePos)) {
+                advancement.trigger(CEIAdvancements.OSHA_VIOLATION.builtinTrigger());
                 serverLevel.destroyBlock(worldPosition, false);
                 serverLevel.setBlockAndUpdate(worldPosition, AllBlocks.LIT_BLAZE_BURNER.getDefaultState());
                 return;

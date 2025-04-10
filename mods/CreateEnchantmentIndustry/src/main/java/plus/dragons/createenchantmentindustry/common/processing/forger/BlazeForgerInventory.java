@@ -37,15 +37,23 @@ import net.minecraft.world.item.enchantment.ItemEnchantments.Mutable;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.EnchantingTemplateItem;
+import plus.dragons.createenchantmentindustry.common.registry.CEIStats;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
+import plus.dragons.createenchantmentindustry.data.CEIAdvancements;
 
 public class BlazeForgerInventory extends ItemStackHandler {
     private final BlazeForgerBlockEntity forger;
     private int cost;
+    private int mode; // Advancement Flag. 0 = merge item 1 = apply template 2 = strip down enchantment
+    private boolean conflicting; // Advancement Flag
+    private boolean overCap; // Advancement Flag
 
     public BlazeForgerInventory(BlazeForgerBlockEntity forger) {
         super(6);
         this.forger = forger;
+        this.mode = 0;
+        this.conflicting = false;
+        this.overCap = false;
     }
 
     @Override
@@ -83,12 +91,18 @@ public class BlazeForgerInventory extends ItemStackHandler {
     public void deserializeNBT(Provider provider, CompoundTag nbt) {
         super.deserializeNBT(provider, nbt);
         cost = nbt.getInt("Cost");
+        mode = nbt.getInt("Mode");
+        conflicting = nbt.getBoolean("Conflicting");
+        overCap = nbt.getBoolean("OverCap");
     }
 
     @Override
     public CompoundTag serializeNBT(Provider provider) {
         var nbt = super.serializeNBT(provider);
         nbt.putInt("Cost", cost);
+        nbt.putInt("Mode", mode);
+        nbt.putBoolean("Conflicting", conflicting);
+        nbt.putBoolean("OverCap", overCap);
         return nbt;
     }
 
@@ -127,6 +141,16 @@ public class BlazeForgerInventory extends ItemStackHandler {
         stacks.set(2,stacks.get(4).copy());
         stacks.set(3,stacks.get(5).copy());
         clearInput();
+
+        forger.advancement.awardStat(CEIStats.FORGE.get(),1);
+        if(forger.special) {
+            forger.advancement.awardStat(CEIStats.SUPER_ENCHANT.get(),1);
+            if(overCap) forger.advancement.trigger(CEIAdvancements.TRANSCENDENT_OVERCLOCK.builtinTrigger());
+            if(conflicting) forger.advancement.trigger(CEIAdvancements.PARADOX_FUSION.builtinTrigger());
+        }
+        forger.advancement.trigger(mode == 0 ? CEIAdvancements.BLAZING_FUSION.builtinTrigger() :
+                mode == 1 ? CEIAdvancements.SIGIL_CASTING.builtinTrigger() : CEIAdvancements.MAGIC_UNBINDING.builtinTrigger());
+        forger.advancement.awardStat(CEIStats.FORGE.get(),1);
     }
 
     protected void updateResult() {
@@ -142,18 +166,21 @@ public class BlazeForgerInventory extends ItemStackHandler {
         var baseEnchantments = base.getOrDefault(baseType, ItemEnchantments.EMPTY);
         var additionType = EnchantmentHelper.getComponentType(addition);
         var additionEnchantments = addition.getOrDefault(additionType, ItemEnchantments.EMPTY);
+        mode = 0;
+        conflicting = false;
+        overCap = false;
         if (baseType == DataComponents.STORED_ENCHANTMENTS) {
             if (addition.getItem() instanceof EnchantingTemplateItem template) {
                 if (forger.special && !template.isSpecial()) return;
                 if (additionEnchantments.isEmpty()) {
                     if (!splitEnchantments(base, addition, baseEnchantments, additionEnchantments)) return;
                 } else {
-                    if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
+                    if (applyEnchantments(base, baseEnchantments, additionEnchantments)) {
                         stacks.set(5, ItemStack.EMPTY);
                     } else return;
                 }
             } else if (additionType == DataComponents.STORED_ENCHANTMENTS) {
-                if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
+                if (combineEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
                     stacks.set(5, ItemStack.EMPTY);
                 } else return;
             } else return;
@@ -165,15 +192,16 @@ public class BlazeForgerInventory extends ItemStackHandler {
                         if(additionEnchantments.isEmpty()){
                             if (!splitEnchantments(base, addition, baseEnchantments, additionEnchantments)) return;
                         } else {
-                            if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments))
+                            if (combineEnchantments(base, addition, baseEnchantments, additionEnchantments))
                                 stacks.set(5, ItemStack.EMPTY);
                         }
                     }
                 } else if(base.is(Items.BOOK) && addition.getItem() instanceof EnchantingTemplateItem template){
                     if(forger.special && (!template.isSpecial())) return;
+                    if(additionEnchantments.isEmpty()) return;
                     else {
                         if(!additionEnchantments.isEmpty()){
-                            if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments))
+                            if (applyEnchantmentsToBook(base, additionEnchantments))
                                 stacks.set(5, ItemStack.EMPTY);
                         } else return;
                     }
@@ -182,14 +210,15 @@ public class BlazeForgerInventory extends ItemStackHandler {
                 if (addition.getItem() instanceof EnchantingTemplateItem template) {
                     if (forger.special && !template.isSpecial()) return;
                     if (additionEnchantments.isEmpty()) {
+                        if (baseEnchantments.isEmpty()) return;
                         if (!splitEnchantments(base, addition, baseEnchantments, additionEnchantments)) return;
                     } else {
-                        if (applyEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
+                        if (applyEnchantments(base, baseEnchantments, additionEnchantments)) {
                             stacks.set(5, ItemStack.EMPTY);
                         } else return;
                     }
                 } else if (additionType == DataComponents.STORED_ENCHANTMENTS) {
-                    if (applyEnchantmentsToBook(base, addition, baseEnchantments, additionEnchantments)) {
+                    if (applyEnchantments(base, baseEnchantments, additionEnchantments)) {
                         stacks.set(5, ItemStack.EMPTY);
                     } else return;
                 } else if (ItemStack.isSameItem(base, addition)) {
@@ -203,6 +232,7 @@ public class BlazeForgerInventory extends ItemStackHandler {
     }
 
     protected boolean splitEnchantments(ItemStack base, ItemStack addition, ItemEnchantments baseEnchantments, ItemEnchantments additionEnchantments) {
+        mode = 2;
         if (baseEnchantments.isEmpty())
             return false;
         var registry = Objects.requireNonNull(forger.getLevel()).registryAccess().registryOrThrow(Registries.ENCHANTMENT);
@@ -225,7 +255,8 @@ public class BlazeForgerInventory extends ItemStackHandler {
         return true;
     }
 
-    protected boolean applyEnchantments(ItemStack base, ItemStack addition, ItemEnchantments baseEnchantments, ItemEnchantments additionEnchantments) {
+    protected boolean applyEnchantments(ItemStack base, ItemEnchantments baseEnchantments, ItemEnchantments additionEnchantments) {
+        mode = 1;
         int cost = 0;
         var resultEnchantments = new Mutable(baseEnchantments);
         boolean applied = false;
@@ -239,6 +270,7 @@ public class BlazeForgerInventory extends ItemStackHandler {
             for (Holder<Enchantment> holder1 : resultEnchantments.keySet()) {
                 if (!holder1.equals(holder) && !Enchantment.areCompatible(holder, holder1)) {
                     applicable = forger.special && CEIConfig.enchantments().ignoreEnchantmentCompatibility.get();
+                    conflicting = true;
                     cost++;
                 }
             }
@@ -253,6 +285,7 @@ public class BlazeForgerInventory extends ItemStackHandler {
                 } else if (resultLevel > maxLevel && !forger.special) {
                     resultLevel = maxLevel;
                 }
+                if (resultLevel > maxLevel) overCap = true;
 
                 resultEnchantments.set(holder, resultLevel);
                 int anvilCost = enchantment.getAnvilCost();
@@ -268,7 +301,8 @@ public class BlazeForgerInventory extends ItemStackHandler {
         return true;
     }
 
-    protected boolean applyEnchantmentsToBook(ItemStack base, ItemStack addition, ItemEnchantments baseEnchantments, ItemEnchantments additionEnchantments) {
+    protected boolean applyEnchantmentsToBook(ItemStack base, ItemEnchantments additionEnchantments) {
+        mode = 1;
         int cost = 0;
         var resultEnchantments = new Mutable(ItemEnchantments.EMPTY);
         boolean applied = false;
@@ -279,6 +313,7 @@ public class BlazeForgerInventory extends ItemStackHandler {
             for (Holder<Enchantment> holder1 : resultEnchantments.keySet()) {
                 if (!holder1.equals(holder) && !Enchantment.areCompatible(holder, holder1)) {
                     applicable = forger.special && CEIConfig.enchantments().ignoreEnchantmentCompatibility.get();
+                    conflicting = applicable;
                     cost++;
                 }
             }
@@ -317,7 +352,8 @@ public class BlazeForgerInventory extends ItemStackHandler {
                 applied = true;
             }
         }
-        applied |= applyEnchantments(base, addition, baseEnchantments, additionEnchantments);
+        applied |= applyEnchantments(base, baseEnchantments, additionEnchantments);
+        mode = 0;
         return applied;
     }
 
