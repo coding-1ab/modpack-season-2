@@ -1,49 +1,49 @@
 package com.mrh0.createaddition.recipe.liquid_burning;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.recipe.FluidRecipeWrapper;
+import com.mrh0.createaddition.recipe.charging.ChargingRecipe;
 import com.simibubi.create.foundation.fluid.FluidIngredient;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 public class LiquidBurningRecipe implements Recipe<FluidRecipeWrapper> {
-
-	protected final ResourceLocation id;
 	protected FluidIngredient fluidIngredients;
 	protected int burnTime;
 	protected boolean superheated;
 	
-	@SuppressWarnings("deprecation")
-	public LiquidBurningRecipe(ResourceLocation id, FluidIngredient fluid, int burnTime, boolean superheated) {
-		this.id = id;
+	public LiquidBurningRecipe(String group, FluidIngredient fluid, int burnTime, boolean superheated) {
 		this.fluidIngredients = fluid;
 		this.burnTime = burnTime;
 		this.superheated = superheated;
 	}
 
 	@Override
-	public boolean matches(FluidRecipeWrapper wrapper, Level world) {
-		if(fluidIngredients == null)
-			return false;
-		if(wrapper == null)
-			return false;
-		if(wrapper.fluid == null)
-			return false;
+	public boolean matches(@NotNull FluidRecipeWrapper wrapper, @NotNull Level world) {
+		if(fluidIngredients == null) return false;
+        if(wrapper.fluid == null) return false;
 		return fluidIngredients.test(wrapper.fluid);
 	}
 
 	@Override
-	public ItemStack assemble(FluidRecipeWrapper fluidRecipeWrapper, HolderLookup.Provider provider) {
+	public @NotNull ItemStack assemble(@NotNull FluidRecipeWrapper fluidRecipeWrapper, HolderLookup.@NotNull Provider provider) {
 		return new ItemStack(Items.AIR);
 	}
 
@@ -53,17 +53,17 @@ public class LiquidBurningRecipe implements Recipe<FluidRecipeWrapper> {
 	}
 
 	@Override
-	public ItemStack getResultItem(HolderLookup.Provider provider) {
+	public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider provider) {
 		return new ItemStack(Items.AIR);
 	}
 
 	@Override
-	public RecipeSerializer<?> getSerializer() {
+	public @NotNull RecipeSerializer<?> getSerializer() {
 		return CARecipes.LIQUID_BURNING.get();
 	}
 
 	@Override
-	public RecipeType<?> getType() {
+	public @NotNull RecipeType<?> getType() {
 		return CARecipes.LIQUID_BURNING_TYPE.get();
 	}
 
@@ -77,5 +77,46 @@ public class LiquidBurningRecipe implements Recipe<FluidRecipeWrapper> {
 	
 	public boolean isSuperheated() {
 		return this.superheated;
+	}
+
+	public static class Serializer implements RecipeSerializer<LiquidBurningRecipe> {
+		private static final MapCodec<LiquidBurningRecipe> CODEC = RecordCodecBuilder.mapCodec(
+				builder -> builder.group(
+						Codec.STRING.optionalFieldOf("group", "").forGetter(LiquidBurningRecipe::getGroup),
+						//CraftingBookCategory.CODEC.fieldOf("category").orElse(CraftingBookCategory.MISC).forGetter(ChargingRecipe::category),
+						FluidIngredient.CODEC.fieldOf("input").forGetter(r -> r.fluidIngredients),
+						Codec.INT.optionalFieldOf("burnTime", 0).forGetter(r -> r.burnTime),
+						Codec.BOOL.optionalFieldOf("superheated", false).forGetter(r -> r.superheated)
+				).apply(builder, LiquidBurningRecipe::new)
+		);
+
+		public static final StreamCodec<RegistryFriendlyByteBuf, LiquidBurningRecipe> STREAM_CODEC = StreamCodec.of(
+				LiquidBurningRecipe.Serializer::toNetwork, LiquidBurningRecipe.Serializer::fromNetwork
+		);
+
+		@Override
+		public MapCodec<LiquidBurningRecipe> codec() {
+			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, LiquidBurningRecipe> streamCodec() {
+			return STREAM_CODEC;
+		}
+
+		private static LiquidBurningRecipe fromNetwork(RegistryFriendlyByteBuf buffer) {
+			String group = buffer.readUtf();
+			boolean superheated = buffer.readBoolean();
+			int burnTime = buffer.readInt();
+			FluidIngredient input = FluidIngredient.STREAM_CODEC.decode(buffer);
+			return new LiquidBurningRecipe(group, input, burnTime, superheated);
+		}
+
+		private static void toNetwork(RegistryFriendlyByteBuf buffer, LiquidBurningRecipe recipe) {
+			buffer.writeUtf(recipe.getGroup());
+			buffer.writeBoolean(recipe.superheated);
+			buffer.writeInt(recipe.burnTime);
+			FluidIngredient.STREAM_CODEC.encode(buffer, recipe.fluidIngredients);
+		}
 	}
 }

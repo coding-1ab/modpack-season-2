@@ -1,16 +1,23 @@
 package com.mrh0.createaddition.recipe.rolling;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrh0.createaddition.compat.jei.RollingMillAssemblySubCategory;
 import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.index.CARecipes;
+import com.mrh0.createaddition.recipe.liquid_burning.LiquidBurningRecipe;
 import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
 import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.sequenced.IAssemblyRecipe;
+import com.simibubi.create.foundation.fluid.FluidIngredient;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -19,6 +26,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
@@ -26,13 +34,11 @@ import java.util.function.Supplier;
 
 public class RollingRecipe extends ProcessingRecipe<RecipeWrapper> implements IAssemblyRecipe {
     protected final ItemStack output;
-    protected final ResourceLocation id;
     protected final Ingredient ingredient;
 
-    protected RollingRecipe(Ingredient ingredient, ItemStack output, ResourceLocation id) {
-        super(new RollingRecipeInfo(id, (SequencedAssemblyRollingRecipeSerializer) CARecipes.ROLLING.get(), CARecipes.ROLLING_TYPE.get()), new RollingMillRecipeParams(id, ingredient, new ProcessingOutput(output, 1f)));
+    protected RollingRecipe(String group, Ingredient ingredient, ItemStack output) {
+        super(new RollingRecipeInfo((SequencedAssemblyRollingRecipeSerializer) CARecipes.ROLLING.get(), CARecipes.ROLLING_TYPE.get()), new RollingMillRecipeParams(ingredient, new ProcessingOutput(output, 1f)));
         this.output = output;
-        this.id = id;
         this.ingredient = ingredient;
     }
 
@@ -44,7 +50,7 @@ public class RollingRecipe extends ProcessingRecipe<RecipeWrapper> implements IA
     }
 
     @Override
-    public boolean matches(RecipeWrapper inv, Level worldIn) {
+    public boolean matches(RecipeWrapper inv, @NotNull Level level) {
         if (inv.isEmpty()) return false;
         return ingredient.test(inv.getItem(0));
     }
@@ -60,7 +66,7 @@ public class RollingRecipe extends ProcessingRecipe<RecipeWrapper> implements IA
     }
 
     @Override
-    public ItemStack assemble(RecipeWrapper recipeWrapper, HolderLookup.Provider provider) {
+    public @NotNull ItemStack assemble(@NotNull RecipeWrapper recipeWrapper, HolderLookup.@NotNull Provider provider) {
         return this.output;
     }
 
@@ -70,7 +76,7 @@ public class RollingRecipe extends ProcessingRecipe<RecipeWrapper> implements IA
     }
 
     @Override
-    public ItemStack getResultItem(HolderLookup.Provider provider) {
+    public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider provider) {
         return this.output;
     }
 
@@ -79,26 +85,21 @@ public class RollingRecipe extends ProcessingRecipe<RecipeWrapper> implements IA
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public @NotNull RecipeSerializer<?> getSerializer() {
         return CARecipes.ROLLING.get();
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public @NotNull RecipeType<?> getType() {
         return CARecipes.ROLLING_TYPE.get();
     }
 
     @Override
-    public ItemStack getToastSymbol() {
+    public @NotNull ItemStack getToastSymbol() {
         return this.output;
     }
 
     @Override
-    public boolean isSpecial() {
-        return true;
-    }
-
-	@Override
     public Component getDescriptionForAssembly() {
         return Component.translatable("createaddition.recipe.rolling.sequence").withStyle(ChatFormatting.DARK_GREEN);
     }
@@ -116,5 +117,43 @@ public class RollingRecipe extends ProcessingRecipe<RecipeWrapper> implements IA
     @Override
     public Supplier<Supplier<SequencedAssemblySubCategory>> getJEISubCategory() {
         return () -> RollingMillAssemblySubCategory::new;
+    }
+
+    public static class Serializer implements RecipeSerializer<RollingRecipe> {
+        private static final MapCodec<RollingRecipe> CODEC = RecordCodecBuilder.mapCodec(
+                builder -> builder.group(
+                        Codec.STRING.optionalFieldOf("group", "").forGetter(RollingRecipe::getGroup),
+                        //CraftingBookCategory.CODEC.fieldOf("category").orElse(CraftingBookCategory.MISC).forGetter(ChargingRecipe::category),
+                        Ingredient.CODEC.fieldOf("input").forGetter(r -> r.ingredient),
+                        ItemStack.CODEC.optionalFieldOf("result", ItemStack.EMPTY).forGetter(r -> r.output)
+                ).apply(builder, RollingRecipe::new)
+        );
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, RollingRecipe> STREAM_CODEC = StreamCodec.of(
+                RollingRecipe.Serializer::toNetwork, RollingRecipe.Serializer::fromNetwork
+        );
+
+        @Override
+        public MapCodec<RollingRecipe> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public StreamCodec<RegistryFriendlyByteBuf, RollingRecipe> streamCodec() {
+            return STREAM_CODEC;
+        }
+
+        private static RollingRecipe fromNetwork(RegistryFriendlyByteBuf buffer) {
+            String group = buffer.readUtf();
+            ItemStack output = ItemStack.STREAM_CODEC.decode(buffer);
+            Ingredient input = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
+            return new RollingRecipe(group, input, output);
+        }
+
+        private static void toNetwork(RegistryFriendlyByteBuf buffer, RollingRecipe recipe) {
+            buffer.writeUtf(recipe.getGroup());
+            ItemStack.STREAM_CODEC.encode(buffer, recipe.output);
+            Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.ingredient);
+        }
     }
 }

@@ -1,25 +1,25 @@
 package com.mrh0.createaddition.recipe.rolling;
 
+import com.mrh0.createaddition.CreateAddition;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 
 public class RollingRecipeInfo implements IRecipeTypeInfo {
-
-    private ResourceLocation id;
     private SequencedAssemblyRollingRecipeSerializer serializer;
     private RecipeType<RollingRecipe> type;
 
-    public RollingRecipeInfo(ResourceLocation id, SequencedAssemblyRollingRecipeSerializer serializer, RecipeType<RollingRecipe> type) {
-        this.id = id;
+    public RollingRecipeInfo(SequencedAssemblyRollingRecipeSerializer serializer, RecipeType<RollingRecipe> type) {
         this.serializer = serializer;
         this.type = type;
     }
 
     @Override
     public ResourceLocation getId() {
-        return id;
+        return CreateAddition.asResource("rolling");
     }
 
     @Override
@@ -28,7 +28,7 @@ public class RollingRecipeInfo implements IRecipeTypeInfo {
     }
 
     @Override
-    public <T extends RecipeType<?>> T getType() {
-        return (T) type;
+    public <I extends RecipeInput, R extends Recipe<I>> RecipeType<R> getType() {
+        return (RecipeType<R>) type;
     }
 }

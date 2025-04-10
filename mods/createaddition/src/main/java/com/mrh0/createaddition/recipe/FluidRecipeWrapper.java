@@ -6,6 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.neoforged.neoforge.fluids.FluidStack;
+import org.jetbrains.annotations.NotNull;
 
 public class FluidRecipeWrapper implements Container, RecipeInput {
 
@@ -31,7 +32,7 @@ public class FluidRecipeWrapper implements Container, RecipeInput {
 	}
 
 	@Override
-	public ItemStack getItem(int p_70301_1_) {
+	public @NotNull ItemStack getItem(int i) {
 		return new ItemStack(Items.AIR);
 	}
 
@@ -41,17 +42,17 @@ public class FluidRecipeWrapper implements Container, RecipeInput {
 	}
 
 	@Override
-	public ItemStack removeItem(int p_70298_1_, int p_70298_2_) {
+	public @NotNull ItemStack removeItem(int p_70298_1_, int p_70298_2_) {
 		return new ItemStack(Items.AIR);
 	}
 
 	@Override
-	public ItemStack removeItemNoUpdate(int p_70304_1_) {
+	public @NotNull ItemStack removeItemNoUpdate(int p_70304_1_) {
 		return new ItemStack(Items.AIR);
 	}
 
 	@Override
-	public void setItem(int p_70299_1_, ItemStack p_70299_2_) {
+	public void setItem(int p_70299_1_, @NotNull ItemStack stack) {
 	}
 
 	@Override
@@ -59,7 +60,7 @@ public class FluidRecipeWrapper implements Container, RecipeInput {
 	}
 
 	@Override
-	public boolean stillValid(Player p_70300_1_) {
+	public boolean stillValid(@NotNull Player player) {
 		return true;
 	}
 

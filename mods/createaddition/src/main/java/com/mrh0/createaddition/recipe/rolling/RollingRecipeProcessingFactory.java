@@ -11,11 +11,11 @@ public class RollingRecipeProcessingFactory implements ProcessingRecipeBuilder.P
         Ingredient ingredient = Ingredient.EMPTY;
         ItemStack result = ItemStack.EMPTY;
         if (!params.getIngredients().isEmpty()) {
-            ingredient = params.getIngredients().get(0);
+            ingredient = params.getIngredients().getFirst();
         }
         if (!params.getResults().isEmpty()) {
-            result = params.getResults().get(0).getStack();
+            result = params.getResults().getFirst().getStack();
         }
-        return new RollingRecipe(ingredient, result, params.getID());
+        return new RollingRecipe(params.getID(), ingredient, result);
     }
 }

@@ -122,5 +122,4 @@ public class ChargingRecipe implements Recipe<CraftingInput> {
 			Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.ingredient);
 		}
 	}
-
 }
