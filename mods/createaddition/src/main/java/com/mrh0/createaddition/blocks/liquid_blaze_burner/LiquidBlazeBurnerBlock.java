@@ -15,7 +15,6 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.block.IBE;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -23,7 +22,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -70,10 +68,9 @@ public class LiquidBlazeBurnerBlock extends HorizontalDirectionalBlock implement
 		if (world.isClientSide)
 			return;
 		BlockEntity tileEntity = world.getBlockEntity(pos.above());
-		if (!(tileEntity instanceof BasinBlockEntity))
+		if (!(tileEntity instanceof BasinBlockEntity basin))
 			return;
-		BasinBlockEntity basin = (BasinBlockEntity) tileEntity;
-		basin.notifyChangeOfContents();
+        basin.notifyChangeOfContents();
 	}
 
 	@Override
@@ -144,11 +141,10 @@ public class LiquidBlazeBurnerBlock extends HorizontalDirectionalBlock implement
 			return InteractionResultHolder.fail(ItemStack.EMPTY);
 
 		BlockEntity te = level.getBlockEntity(pos);
-		if (!(te instanceof LiquidBlazeBurnerBlockEntity))
+		if (!(te instanceof LiquidBlazeBurnerBlockEntity burnerTE))
 			return InteractionResultHolder.fail(ItemStack.EMPTY);
-		LiquidBlazeBurnerBlockEntity burnerTE = (LiquidBlazeBurnerBlockEntity) te;
 
-		if (burnerTE.isCreativeFuel(stack)) {
+        if (burnerTE.isCreativeFuel(stack)) {
 			if (!simulate)
 				burnerTE.applyCreativeFuel();
 			return InteractionResultHolder.success(ItemStack.EMPTY);
@@ -202,8 +198,8 @@ public class LiquidBlazeBurnerBlock extends HorizontalDirectionalBlock implement
 		if (!state.getValue(HEAT_LEVEL)
 			.isAtLeast(BlazeBurnerBlock.HeatLevel.SMOULDERING))
 			return;
-		world.playLocalSound((double) ((float) pos.getX() + 0.5F), (double) ((float) pos.getY() + 0.5F),
-			(double) ((float) pos.getZ() + 0.5F), SoundEvents.CAMPFIRE_CRACKLE, SoundSource.BLOCKS,
+		world.playLocalSound((float) pos.getX() + 0.5F, (float) pos.getY() + 0.5F,
+                (float) pos.getZ() + 0.5F, SoundEvents.CAMPFIRE_CRACKLE, SoundSource.BLOCKS,
 			0.5F + random.nextFloat(), random.nextFloat() * 0.7F + 0.6F, false);
 	}
 }

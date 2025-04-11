@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 public class AlternatorBlock extends DirectionalKineticBlock implements IBE<AlternatorBlockEntity>, IRotate {
 	
@@ -28,7 +29,8 @@ public class AlternatorBlock extends DirectionalKineticBlock implements IBE<Alte
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		return ALTERNATOR_SHAPE.get(state.getValue(FACING));
 	}
-	
+
+	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		Direction preferred = getPreferredFacing(context);
@@ -38,12 +40,7 @@ public class AlternatorBlock extends DirectionalKineticBlock implements IBE<Alte
 		return defaultBlockState().setValue(FACING, preferred);
 	}
 
-	@Override
-	public boolean hideStressImpact() {
-		return false;
-	}
-
-	public AlternatorBlock(Properties properties) {
+    public AlternatorBlock(Properties properties) {
 		super(properties);
 	}
 	

@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.Nullable;
 
 public class ModularAccumulatorDisplaySource extends PercentOrProgressBarDisplaySource {
 
@@ -27,6 +28,7 @@ public class ModularAccumulatorDisplaySource extends PercentOrProgressBarDisplay
 			.getInt("Mode");
 	}
 
+	@Nullable
 	@Override
 	protected Float getProgress(DisplayLinkContext context) {
 		if (!(context.getSourceBlockEntity() instanceof ModularAccumulatorBlockEntity te)) return null;

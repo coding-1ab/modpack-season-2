@@ -28,7 +28,8 @@ public class RollingMillRenderer extends KineticBlockEntityRenderer {
 	protected BlockState getRenderedBlockState(KineticBlockEntity te) {
 		return shaft(getRotationAxisOf(te));
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void renderSafe(KineticBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
 			int light, int overlay) {

@@ -28,32 +28,24 @@ public enum ConnectorMode implements StringRepresentable {
 	}
 
 	public ConnectorMode getNext() {
-		switch (this) {
-			//case Passive:
-			//	return None;
-			case None:
-				return Pull;
-			case Pull:
-				return Push;
-			case Push:
-				return None;
-		}
-		return None;
-	}
+        return switch (this) {
+            //case Passive:
+            //	return None;
+            case None -> Pull;
+            case Pull -> Push;
+            case Push -> None;
+            default -> None;
+        };
+    }
 
 	public MutableComponent getTooltip() {
-		switch (this) {
-			case Passive:
-				return Component.translatable("createaddition.tooltip.energy.passive");
-			case None:
-				return Component.translatable("createaddition.tooltip.energy.none");
-			case Pull:
-				return Component.translatable("createaddition.tooltip.energy.pull");
-			case Push:
-				return Component.translatable("createaddition.tooltip.energy.push");
-		}
-		return Component.translatable("createaddition.tooltip.energy.none");
-	}
+        return switch (this) {
+            case Passive -> Component.translatable("createaddition.tooltip.energy.passive");
+            case None -> Component.translatable("createaddition.tooltip.energy.none");
+            case Pull -> Component.translatable("createaddition.tooltip.energy.pull");
+            case Push -> Component.translatable("createaddition.tooltip.energy.push");
+        };
+    }
 
 	public boolean isActive() {
 		return this == Push || this == Pull;

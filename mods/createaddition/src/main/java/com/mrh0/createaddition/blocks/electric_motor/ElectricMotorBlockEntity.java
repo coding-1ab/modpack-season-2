@@ -4,8 +4,6 @@ import java.util.List;
 
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.blocks.tesla_coil.TeslaCoilBlock;
-import com.mrh0.createaddition.compat.computercraft.ElectricMotorPeripheral;
-import com.mrh0.createaddition.compat.computercraft.Peripherals;
 import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.energy.InternalEnergyStorage;
 import com.mrh0.createaddition.index.CABlockEntities;
@@ -22,7 +20,6 @@ import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;

@@ -38,7 +38,7 @@ public class CAConnectivityHandler {
 		BlockGetter level, SearchCache<T> cache, List<T> frontier) {
 		PriorityQueue<Pair<Integer, T>> creationQueue = makeCreationQueue();
 		Set<BlockPos> visited = new HashSet<>();
-		Direction.Axis mainAxis = frontier.get(0)
+		Direction.Axis mainAxis = frontier.getFirst()
 			.getMainConnectionAxis();
 
 		// essentially, if it's a vertical multi then the search won't be restricted by
@@ -55,17 +55,17 @@ public class CAConnectivityHandler {
 			minZ = Math.min(pos.getZ(), minZ);
 		}
 		if (mainAxis == Direction.Axis.Y)
-			minX -= frontier.get(0)
+			minX -= frontier.getFirst()
 				.getMaxWidth();
 		if (mainAxis != Direction.Axis.Y)
-			minY -= frontier.get(0)
+			minY -= frontier.getFirst()
 				.getMaxWidth();
 		if (mainAxis == Direction.Axis.Y)
-			minZ -= frontier.get(0)
+			minZ -= frontier.getFirst()
 				.getMaxWidth();
 
 		while (!frontier.isEmpty()) {
-			T part = frontier.remove(0);
+			T part = frontier.removeFirst();
 			BlockPos partPos = part.getBlockPos();
 			if (visited.contains(partPos))
 				continue;
@@ -323,7 +323,7 @@ public class CAConnectivityHandler {
 					partAt.removeController(true);
 
 					if (partAt != be) {
-						int copy = toDistribute;
+						int copy;
 						InternalEnergyStorage tank =
 							(partAt instanceof ModularAccumulatorBlockEntity ienergyPart ? ienergyPart.getEnergy() : null);
 							int split = Math.min(maxCapacity, toDistribute);

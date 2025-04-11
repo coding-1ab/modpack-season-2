@@ -101,13 +101,12 @@ public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 
 	protected boolean findInterface(MovementContext context, BlockPos pos) {
 		Contraption var4 = context.contraption;
-		if (var4 instanceof CarriageContraption) {
-			CarriageContraption cc = (CarriageContraption)var4;
-			if (!cc.notInPortal()) return false;
+		if (var4 instanceof CarriageContraption cc) {
+            if (!cc.notInPortal()) return false;
 		}
 
 		Optional<Direction> currentFacingIfValid = this.getCurrentFacingIfValid(context);
-		if (!currentFacingIfValid.isPresent()) return false;
+		if (currentFacingIfValid.isEmpty()) return false;
 		else {
 			Direction currentFacing = currentFacingIfValid.get();
 			PortableEnergyInterfaceBlockEntity psi = this.findStationaryInterface(context.world, pos, context.state, currentFacing);
@@ -132,11 +131,7 @@ public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 		}
 	}
 
-	@Override
-	public void stopMoving(MovementContext context) {
-	}
-
-	@Override
+    @Override
 	public void cancelStall(MovementContext context) {
 		this.reset(context);
 	}
@@ -148,6 +143,7 @@ public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 		getAnimation(context).chase(0.0D, 0.25D, LerpedFloat.Chaser.LINEAR);
 	}
 
+	@Nullable
 	private PortableEnergyInterfaceBlockEntity findStationaryInterface(Level world, BlockPos pos, BlockState state, Direction facing) {
 		for(int i = 0; i < 2; ++i) {
 			PortableEnergyInterfaceBlockEntity interfaceAt = this.getStationaryInterfaceAt(world, pos.relative(facing, i), state, facing);
@@ -156,11 +152,11 @@ public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 		return null;
 	}
 
+	@Nullable
 	private PortableEnergyInterfaceBlockEntity getStationaryInterfaceAt(Level world, BlockPos pos, BlockState state, Direction facing) {
 		BlockEntity te = world.getBlockEntity(pos);
-		if (te instanceof PortableEnergyInterfaceBlockEntity) {
-			PortableEnergyInterfaceBlockEntity psi = (PortableEnergyInterfaceBlockEntity)te;
-			BlockState blockState = world.getBlockState(pos);
+		if (te instanceof PortableEnergyInterfaceBlockEntity psi) {
+            BlockState blockState = world.getBlockState(pos);
 			if (blockState.getBlock() != state.getBlock()) return null;
 			else if (blockState.getValue(PortableEnergyInterfaceBlock.FACING) != facing.getOpposite()) return null;
 			else return psi.isPowered() ? null : psi;
@@ -176,8 +172,7 @@ public class PortableEnergyInterfaceMovement implements MovementBehaviour {
 
 	public static LerpedFloat getAnimation(MovementContext context) {
 		Object var2 = context.temporaryData;
-		if (var2 instanceof LerpedFloat) {
-			LerpedFloat lf = (LerpedFloat)var2;
+		if (var2 instanceof LerpedFloat lf) {
 			return lf;
 		} else {
 			LerpedFloat nlf = LerpedFloat.linear();

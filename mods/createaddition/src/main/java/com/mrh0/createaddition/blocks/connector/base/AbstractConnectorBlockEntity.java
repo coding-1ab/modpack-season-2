@@ -56,6 +56,7 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 		this.nodeCache = new IWireNode[getNodeCount()];
 	}
 
+	@Nullable
 	@Override
 	public IEnergyStorage getEnergyStorage(@Nullable Direction direction) {
 		if(isEnergyInput(direction) || isEnergyOutput(direction)) return internal;
@@ -396,7 +397,7 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 			getPos().relative(side),
 			side.getOpposite(),
 			() -> !this.isRemoved(), // validity check (because the cache might outlive the object it belongs to)
-			() -> { externalStorageInvalid = true; } // invalidation listener
+			() -> externalStorageInvalid = true // invalidation listener
 		);
 	}
 

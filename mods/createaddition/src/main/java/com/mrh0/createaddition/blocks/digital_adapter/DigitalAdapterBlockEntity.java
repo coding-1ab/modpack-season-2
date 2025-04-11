@@ -1,9 +1,5 @@
 package com.mrh0.createaddition.blocks.digital_adapter;
 
-import com.mrh0.createaddition.CreateAddition;
-import com.mrh0.createaddition.compat.computercraft.DigitalAdapterPeripheral;
-import com.mrh0.createaddition.compat.computercraft.Peripherals;
-import com.mrh0.createaddition.index.CABlockEntities;
 import com.simibubi.create.content.contraptions.bearing.MechanicalBearingBlockEntity;
 import com.simibubi.create.content.contraptions.elevator.ElevatorPulleyBlockEntity;
 import com.simibubi.create.content.contraptions.piston.MechanicalPistonBlockEntity;
@@ -19,10 +15,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -155,14 +148,14 @@ public class DigitalAdapterBlockEntity extends BlockEntity {
     public void setTargetSpeed(Direction dir, int speed) {
         SpeedControllerBlockEntity scte = getSpeedController(dir);
         if(scte == null) return;
-        ISpeedControllerAdapter sts = (ISpeedControllerAdapter)((Object)scte);
+        ISpeedControllerAdapter sts = (ISpeedControllerAdapter) scte;
         sts.setTargetSpeed(speed);
     }
 
     public int getTargetSpeed(Direction dir) {
         SpeedControllerBlockEntity scte = getSpeedController(dir);
         if(scte == null) return 0;
-        ISpeedControllerAdapter sts = (ISpeedControllerAdapter)((Object)scte);
+        ISpeedControllerAdapter sts = (ISpeedControllerAdapter) scte;
         return sts.getTargetSpeed();
     }
 }

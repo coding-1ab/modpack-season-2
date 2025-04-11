@@ -24,6 +24,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -59,7 +60,7 @@ public class PortableEnergyInterfaceRenderer extends SafeBlockEntityRenderer<Por
 						.renderInto(matrices.getViewProjection(), vb));
 	}
 
-	private static void render(BlockState blockState, boolean lit, float progress, PoseStack local,
+	private static void render(BlockState blockState, boolean lit, float progress,@Nullable PoseStack local,
 							   Consumer<SuperByteBuffer> drawCallback) {
 		SuperByteBuffer middle = CachedBuffers.partial(getMiddleForState(blockState, lit), blockState);
 		SuperByteBuffer top = CachedBuffers.partial(getTopForState(blockState), blockState);
@@ -85,6 +86,7 @@ public class PortableEnergyInterfaceRenderer extends SafeBlockEntityRenderer<Por
 				.uncenter();
 	}
 
+	@Nullable
 	static PortableEnergyInterfaceBlockEntity getTargetPSI(MovementContext context) {
 		String _workingPos_ = PortableEnergyInterfaceMovement._workingPos_;
 		if (!context.data.contains(_workingPos_)) return null;
