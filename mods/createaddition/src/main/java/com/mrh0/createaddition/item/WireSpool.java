@@ -23,6 +23,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+// This needs to be remade to work with components
 public class WireSpool extends Item {
 
 	public WireSpool(Properties props) {
