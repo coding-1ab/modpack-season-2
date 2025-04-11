@@ -26,7 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.fluids.FluidStack;
 import plus.dragons.createdragonsplus.common.fluids.pipe.ConsumingOpenPipeEffectHandler;
-import plus.dragons.createenchantmentindustry.data.CEIAdvancements;
+import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 
 public class ExperienceEffectHandler implements ConsumingOpenPipeEffectHandler {
     @Override

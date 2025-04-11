@@ -62,7 +62,7 @@ import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
 import plus.dragons.createenchantmentindustry.common.registry.CEIStats;
-import plus.dragons.createenchantmentindustry.data.CEIAdvancements;
+import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 
 @FieldsNullabilityUnknownByDefault
 public class GrindstoneDrainBlockEntity extends KineticBlockEntity {

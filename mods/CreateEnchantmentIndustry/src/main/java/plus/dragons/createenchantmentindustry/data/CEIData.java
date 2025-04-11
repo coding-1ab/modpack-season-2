@@ -27,6 +27,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.data.loading.DatagenModLoader;
 import plus.dragons.createenchantmentindustry.client.ponder.CEIPonderPlugin;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
+import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 
 @Mod(CEICommon.ID)
 public class CEIData {

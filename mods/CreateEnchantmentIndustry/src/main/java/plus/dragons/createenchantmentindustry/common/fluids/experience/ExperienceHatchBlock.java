@@ -54,7 +54,7 @@ import plus.dragons.createdragonsplus.common.features.ConfigFeatureElement;
 import plus.dragons.createdragonsplus.config.CDPConfig;
 import plus.dragons.createdragonsplus.config.FeaturesConfig.ConfigFeature;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlockEntities;
-import plus.dragons.createenchantmentindustry.data.CEIAdvancements;
+import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 
 public class ExperienceHatchBlock extends HorizontalDirectionalBlock
         implements IBE<ExperienceHatchBlockEntity>, IWrenchable, ProperWaterloggedBlock, ConfigFeatureElement {

@@ -39,7 +39,7 @@ import plus.dragons.createenchantmentindustry.common.fluids.experience.Experienc
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.EnchantingTemplateItem;
 import plus.dragons.createenchantmentindustry.common.registry.CEIStats;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
-import plus.dragons.createenchantmentindustry.data.CEIAdvancements;
+import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 
 public class BlazeForgerInventory extends ItemStackHandler {
     private final BlazeForgerBlockEntity forger;

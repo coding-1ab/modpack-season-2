@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import plus.dragons.createdragonsplus.common.advancements.CDPAdvancement;
 import plus.dragons.createdragonsplus.common.advancements.criterion.BuiltinTrigger;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
-import plus.dragons.createenchantmentindustry.data.CEIAdvancements;
+import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 
 import java.util.function.UnaryOperator;
 

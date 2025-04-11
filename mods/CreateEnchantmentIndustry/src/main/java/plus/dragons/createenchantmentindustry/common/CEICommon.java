@@ -30,7 +30,7 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 import plus.dragons.createdragonsplus.common.CDPRegistrate;
 import plus.dragons.createenchantmentindustry.common.registry.*;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
-import plus.dragons.createenchantmentindustry.data.CEIAdvancements;
+import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 
 @Mod(CEICommon.ID)
 public class CEICommon {
