@@ -207,14 +207,15 @@ public class RedstoneRelayBlock extends Block implements IBE<RedstoneRelayBlockE
 	}
 
 	@Override
-	public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player) {
+	public BlockState playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player) {
 		super.playerWillDestroy(worldIn, pos, state, player);
 
-		if (worldIn.isClientSide()) return;
+		if (worldIn.isClientSide()) return state;
 		BlockEntity te = worldIn.getBlockEntity(pos);
-		if (te == null) return;
-		if (!(te instanceof IWireNode cte)) return;
+		if (te == null) return state;
+		if (!(te instanceof IWireNode cte)) return state;
 		cte.dropWires(worldIn, !player.isCreative());
+		return state;
 	}
 
 	@Override
