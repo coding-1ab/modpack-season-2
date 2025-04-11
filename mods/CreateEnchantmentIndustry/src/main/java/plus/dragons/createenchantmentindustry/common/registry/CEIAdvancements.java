@@ -113,19 +113,16 @@ public class CEIAdvancements implements DataProvider {
     BLAZING_FUSION = create("blazing_fusion",b -> b.icon(Items.GOLDEN_SWORD)
             .title("Blazing Fusion")
             .description("Combine two items of same kind using Blaze Forger")
-            .whenIconCollected()
             .after(BORN_TALENT_OF_FIRE)),
 
     SIGIL_CASTING = create("sigil_casting",b -> b.icon(CEIItems.ENCHANTING_TEMPLATE)
             .title("Sigil Casting")
             .description("Apply an Enchanting Template using Blaze Forger")
-            .whenIconCollected()
             .after(BLAZING_FUSION)),
 
     MAGIC_UNBINDING = create("magic_unbinding",b -> b.icon(CEIItems.ENCHANTING_TEMPLATE)
             .title("Magic Unbinding")
             .description("Strip enchantment off item using Blaze Forger")
-            .whenIconCollected()
             .after(SIGIL_CASTING)),
 
     BLAZING_CENTURION = create("blazing_centurion",b -> b.icon(CEIBlocks.BLAZE_FORGER)

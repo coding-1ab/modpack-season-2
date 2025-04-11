@@ -2,14 +2,7 @@
   "parent": "create_enchantment_industry:born_talent_of_fire",
   "criteria": {
     "0": {
-      "conditions": {
-        "items": [
-          {
-            "items": "minecraft:golden_sword"
-          }
-        ]
-      },
-      "trigger": "minecraft:inventory_changed"
+      "trigger": "create_enchantment_industry:blazing_fusion"
     }
   },
   "display": {

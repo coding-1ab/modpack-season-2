@@ -119,7 +119,7 @@ public class EnchanterScene {
         scene.overlay().showControls(util.vector().centerOf(2, 2, 1), Pointing.RIGHT, 20).rightClick().withItem(CEIItems.EXPERIENCE_CAKE.asStack());
         scene.idle(30);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeEnchanterBlockEntity.class,
-                be ->  be.getSpecialTank().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000), IFluidHandler.FluidAction.EXECUTE));
+                be ->  be.getSpecialTank().setFluid(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000)));
         scene.world().modifyBlock(util.grid().at(2, 2, 1),bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SEETHING),false);
         scene.idle(15);
 
@@ -202,7 +202,7 @@ public class EnchanterScene {
         scene.idle(5);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeEnchanterBlockEntity.class,
                 be -> {
-            be.getSpecialTank().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000), IFluidHandler.FluidAction.EXECUTE);
+            be.getSpecialTank().setFluid(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000));
             be.insertItem(CEIItems.SUPER_ENCHANTING_TEMPLATE.asStack(),false);
         });
         scene.overlay().showControls(util.vector().centerOf(2, 2, 1), Pointing.RIGHT, 20).withItem(CEIItems.SUPER_ENCHANTING_TEMPLATE.asStack());

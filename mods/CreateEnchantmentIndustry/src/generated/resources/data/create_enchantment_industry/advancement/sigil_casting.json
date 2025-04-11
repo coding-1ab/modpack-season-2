@@ -2,14 +2,7 @@
   "parent": "create_enchantment_industry:blazing_fusion",
   "criteria": {
     "0": {
-      "conditions": {
-        "items": [
-          {
-            "items": "create_enchantment_industry:enchanting_template"
-          }
-        ]
-      },
-      "trigger": "minecraft:inventory_changed"
+      "trigger": "create_enchantment_industry:sigil_casting"
     }
   },
   "display": {
