@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.network.IObserveTileEntity;
 import com.mrh0.createaddition.network.ObservePacketLegacy;
+import com.mrh0.createaddition.network.ObservePacketPayload;
 import com.mrh0.createaddition.recipe.FluidRecipeWrapper;
 import com.mrh0.createaddition.recipe.liquid_burning.LiquidBurningRecipe;
 import com.simibubi.create.AllBlocks;
@@ -441,12 +442,12 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (level == null) return false;
-		ObservePacketLegacy.send(worldPosition, 0);
+		ObservePacketPayload.send(worldPosition, 0);
 		return containedFluidTooltip(tooltip, isPlayerSneaking, level.getCapability(Capabilities.FluidHandler.BLOCK, getBlockPos(), null));
 	}
 
 	@Override
-	public void onObserved(ServerPlayer player, ObservePacketLegacy pack) {
+	public void onObserved(ServerPlayer player, ObservePacketPayload pack) {
 		notifyUpdate();
 	}
 }

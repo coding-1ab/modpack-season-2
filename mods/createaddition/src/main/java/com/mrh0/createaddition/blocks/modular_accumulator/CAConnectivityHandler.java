@@ -347,7 +347,7 @@ public class CAConnectivityHandler {
 		}
 
 		if (be instanceof ModularAccumulatorBlockEntity ienergy && ienergy.hasAccumulator())
-			be.getCapability(ForgeCapabilities.ENERGY)
+			be.getCapability(Capabilities.EnergyStorage)
 				.invalidate();
 
 		if (tryReconnect)

@@ -15,10 +15,10 @@ import com.mrh0.createaddition.energy.NodeRotation;
 import com.mrh0.createaddition.energy.WireType;
 import com.mrh0.createaddition.energy.network.EnergyNetwork;
 import com.mrh0.createaddition.index.CABlocks;
+import com.mrh0.createaddition.network.EnergyNetworkPacketPayload;
+import com.mrh0.createaddition.network.ObservePacketPayload;
 import com.mrh0.createaddition.util.Util;
-import com.mrh0.createaddition.network.EnergyNetworkPacket;
 import com.mrh0.createaddition.network.IObserveTileEntity;
-import com.mrh0.createaddition.network.ObservePacketLegacy;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -372,9 +372,9 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 	}
 
 	@Override
-	public void onObserved(ServerPlayer player, ObservePacketLegacy pack) {
-		if(isNetworkValid(pack.getNode()))
-			EnergyNetworkPacket.send(worldPosition, getNetwork(pack.getNode()).getPulled(), getNetwork(pack.getNode()).getPushed(), player);
+	public void onObserved(ServerPlayer player, ObservePacketPayload pack) {
+		if(isNetworkValid(pack.node()))
+			EnergyNetworkPacketPayload.send(worldPosition, getNetwork(pack.node()).getPulled(), getNetwork(pack.node()).getPushed(), player);
 	}
 
 	@Override
@@ -384,7 +384,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 			return false;
 		int node = getAvailableNode(ray.getLocation());
 
-		ObservePacketLegacy.send(worldPosition, node);
+		ObservePacketPayload.send(worldPosition, node);
 
 		String spacing = " ";
 		tooltip.add(Component.literal(spacing)
@@ -397,7 +397,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 		tooltip.add(Component.literal(spacing)
 				.append(Component.translatable(CreateAddition.MODID + ".tooltip.energy.usage").withStyle(ChatFormatting.GRAY)));
 		tooltip.add(Component.literal(spacing).append(" ")
-				.append(Util.format((int)EnergyNetworkPacket.clientBuff)).append("fe/t").withStyle(ChatFormatting.AQUA));
+				.append(Util.format((int)EnergyNetworkPacketPayload.clientBuff)).append("fe/t").withStyle(ChatFormatting.AQUA));
 
 		return true;
 	}
