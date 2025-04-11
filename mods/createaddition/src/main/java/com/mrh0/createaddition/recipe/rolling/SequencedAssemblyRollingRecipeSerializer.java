@@ -63,7 +63,7 @@ public class SequencedAssemblyRollingRecipeSerializer extends ProcessingRecipeSe
     protected RollingRecipe readFromJson(ResourceLocation recipeId, JsonObject json) {
         ItemStack output = readOutput(json);
         Ingredient input = readIngredient(json);
-        return new RollingRecipe(input, output, recipeId);
+        return new RollingRecipe(recipeId,input, output);
     }
 
     @Override
@@ -76,6 +76,6 @@ public class SequencedAssemblyRollingRecipeSerializer extends ProcessingRecipeSe
     protected RollingRecipe readFromBuffer(ResourceLocation recipeId, FriendlyByteBuf buffer) {
         ItemStack output = buffer.readItem();
         Ingredient input = Ingredient.fromNetwork(buffer);
-        return new RollingRecipe(input, output, recipeId);
+        return new RollingRecipe(recipeId, input, output);
     }
 }

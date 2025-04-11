@@ -10,9 +10,9 @@ import com.mrh0.createaddition.debug.IDebugDrawer;
 import com.mrh0.createaddition.energy.*;
 import com.mrh0.createaddition.energy.network.EnergyNetwork;
 import com.mrh0.createaddition.util.Util;
-import com.mrh0.createaddition.network.EnergyNetworkPacket;
+import com.mrh0.createaddition.network.EnergyNetworkPacketPayload;
 import com.mrh0.createaddition.network.IObserveTileEntity;
-import com.mrh0.createaddition.network.ObservePacketLegacy;
+import com.mrh0.createaddition.network.ObservePacketPayload;
 
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -336,14 +336,14 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 	}
 
 	@Override
-	public void onObserved(ServerPlayer player, ObservePacketLegacy pack) {
+	public void onObserved(ServerPlayer player, ObservePacketPayload pack) {
 		if(isNetworkValid(0))
-			EnergyNetworkPacket.send(worldPosition, getNetwork(0).getPulled(), getNetwork(0).getPushed(), player);
+			EnergyNetworkPacketPayload.send(worldPosition, getNetwork(0).getPulled(), getNetwork(0).getPushed(), player);
 	}
 
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		ObservePacketLegacy.send(worldPosition, 0);
+		ObservePacketPayload.send(worldPosition, 0);
 
 		String spacing = " ";
 		tooltip.add(Component.literal(spacing)
@@ -357,7 +357,7 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 		tooltip.add(Component.literal(spacing)
 				.append(Component.translatable(CreateAddition.MODID + ".tooltip.energy.usage").withStyle(ChatFormatting.GRAY)));
 		tooltip.add(Component.literal(spacing).append(" ")
-				.append(Util.format((int)EnergyNetworkPacket.clientBuff)).append("fe/t").withStyle(ChatFormatting.AQUA));
+				.append(Util.format((int)EnergyNetworkPacketPayload.clientBuff)).append("fe/t").withStyle(ChatFormatting.AQUA));
 
 		return IHaveGoggleInformation.super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 	}

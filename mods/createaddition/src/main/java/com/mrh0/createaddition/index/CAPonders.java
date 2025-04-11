@@ -15,7 +15,7 @@ public class CAPonders {
 	public static final ResourceLocation ELECTRIC = CreateAddition.asResource("electric");
 
 	public static void registerTags(PonderTagRegistrationHelper<ResourceLocation> helper) {
-		PonderTagRegistrationHelper<RegistryEntry<?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
+		PonderTagRegistrationHelper<RegistryEntry<?,?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
 
 		HELPER.registerTag(ELECTRIC)
 				.addToIndex()
@@ -45,7 +45,7 @@ public class CAPonders {
 	}
 
 	public static void registerScenes(PonderSceneRegistrationHelper<ResourceLocation> helper) {
-		PonderSceneRegistrationHelper<ItemProviderEntry<?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
+		PonderSceneRegistrationHelper<ItemProviderEntry<?,?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
 
 		HELPER.addStoryBoard(CABlocks.ELECTRIC_MOTOR, "electric_motor", PonderScenes::electricMotor, AllCreatePonderTags.KINETIC_SOURCES, ELECTRIC);
 		HELPER.addStoryBoard(CABlocks.ALTERNATOR, "alternator", PonderScenes::alternator, AllCreatePonderTags.KINETIC_APPLIANCES, ELECTRIC);

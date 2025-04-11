@@ -15,18 +15,18 @@ public class CASpriteShifts {
 	public static final CTSpriteShiftEntry
 		ACCUMULATOR = getCT(
 				RECTANGLE,
-				new ResourceLocation(CreateAddition.MODID, "block/modular_accumulator/block"),
-				new ResourceLocation(CreateAddition.MODID, "block/modular_accumulator/block_connected")
+				ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "block/modular_accumulator/block"),
+				ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "block/modular_accumulator/block_connected")
 			),
 		ACCUMULATOR_TOP = getCT(
 				RECTANGLE,
-				new ResourceLocation(CreateAddition.MODID, "block/modular_accumulator/block_top"),
-				new ResourceLocation(CreateAddition.MODID, "block/modular_accumulator/block_top_connected")
+				ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "block/modular_accumulator/block_top"),
+				ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "block/modular_accumulator/block_top_connected")
 			),
 
 		COPPER_WIRE_CASING = getCT(
 				OMNIDIRECTIONAL,
-			new ResourceLocation(CreateAddition.MODID, "block/copper_wire_casing/block"),
-			new ResourceLocation(CreateAddition.MODID, "block/copper_wire_casing/block_connected")
+			ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "block/copper_wire_casing/block"),
+			ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "block/copper_wire_casing/block_connected")
 		);
 }

@@ -81,6 +81,7 @@ public class EnergyThresholdCondition extends CargoThresholdCondition {
         return CreateAddition.asResource("energy_threshold");
     }
 
+    // This needs to be redone OnlyIn is never recommended
     @Override
     @OnlyIn(Dist.CLIENT)
     public void initConfigurationWidgets(ModularGuiLineBuilder builder) {

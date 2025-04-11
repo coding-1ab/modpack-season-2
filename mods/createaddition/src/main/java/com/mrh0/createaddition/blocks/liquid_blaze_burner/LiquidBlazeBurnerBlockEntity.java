@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.network.IObserveTileEntity;
-import com.mrh0.createaddition.network.ObservePacketLegacy;
+import com.mrh0.createaddition.network.ObservePacketPayload;
 import com.mrh0.createaddition.recipe.FluidRecipeWrapper;
 import com.mrh0.createaddition.recipe.liquid_burning.LiquidBurningRecipe;
 import com.simibubi.create.AllBlocks;
@@ -47,6 +47,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import org.jetbrains.annotations.Nullable;
 
 public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, IObserveTileEntity {
 	public static final int MAX_HEAT_CAPACITY = 10000;
@@ -101,9 +102,8 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 		lastFluid = stack.getFluid();
 	}
 
-	public Optional<RecipeHolder<LiquidBurningRecipe>> find(FluidStack stack, Level level) {
-		if (stack == null) return Optional.empty();
-		if (level == null) return Optional.empty();
+	public Optional<RecipeHolder<LiquidBurningRecipe>> find(@Nullable FluidStack stack,@Nullable Level level) {
+		if (stack == null || level == null) return Optional.empty();
 		if (CARecipes.LIQUID_BURNING_TYPE.get() == null) return Optional.empty();
 		return level.getRecipeManager().getRecipeFor(CARecipes.LIQUID_BURNING_TYPE.get(), new FluidRecipeWrapper(stack), level);
 	}
@@ -441,12 +441,12 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (level == null) return false;
-		ObservePacketLegacy.send(worldPosition, 0);
+		ObservePacketPayload.send(worldPosition, 0);
 		return containedFluidTooltip(tooltip, isPlayerSneaking, level.getCapability(Capabilities.FluidHandler.BLOCK, getBlockPos(), null));
 	}
 
 	@Override
-	public void onObserved(ServerPlayer player, ObservePacketLegacy pack) {
+	public void onObserved(ServerPlayer player, ObservePacketPayload pack) {
 		notifyUpdate();
 	}
 }

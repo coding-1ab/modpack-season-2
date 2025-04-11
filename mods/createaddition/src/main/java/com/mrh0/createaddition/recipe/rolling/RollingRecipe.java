@@ -36,8 +36,8 @@ public class RollingRecipe extends ProcessingRecipe<RecipeWrapper> implements IA
     protected final ItemStack output;
     protected final Ingredient ingredient;
 
-    protected RollingRecipe(String group, Ingredient ingredient, ItemStack output) {
-        super(new RollingRecipeInfo((SequencedAssemblyRollingRecipeSerializer) CARecipes.ROLLING.get(), CARecipes.ROLLING_TYPE.get()), new RollingMillRecipeParams(ingredient, new ProcessingOutput(output, 1f)));
+    protected RollingRecipe(ResourceLocation group, Ingredient ingredient, ItemStack output) {
+        super(new RollingRecipeInfo((SequencedAssemblyRollingRecipeSerializer) CARecipes.ROLLING.get(), CARecipes.ROLLING_TYPE.get()), new RollingMillRecipeParams(group,ingredient, new ProcessingOutput(output, 1f)));
         this.output = output;
         this.ingredient = ingredient;
     }

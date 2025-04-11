@@ -25,7 +25,8 @@ public class DiamondGritSandpaper extends SandPaperItem {
 	public int getMaxDamage(ItemStack stack) {
 		return USES;
 	}
-	
+
+	// This needs to be redone OnlyIn is never recommended
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
