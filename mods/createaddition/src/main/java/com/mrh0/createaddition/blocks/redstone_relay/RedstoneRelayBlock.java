@@ -42,6 +42,8 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.ticks.TickPriority;
 
+import javax.annotation.Nullable;
+
 public class RedstoneRelayBlock extends Block implements IBE<RedstoneRelayBlockEntity>, IWrenchable, TransformableBlock {
 
 	public static final BooleanProperty VERTICAL = BooleanProperty.create("vertical");
