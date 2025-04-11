@@ -40,7 +40,7 @@ import net.minecraft.world.level.ItemLike;
 @JeiPlugin
 public class CreateAdditionJEI implements IModPlugin {
 
-	private static final ResourceLocation ID = new ResourceLocation(CreateAddition.MODID, "jei_plugin");
+	private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "jei_plugin");
 
 	@Override
 	@Nonnull
@@ -89,7 +89,7 @@ public class CreateAdditionJEI implements IModPlugin {
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
 		ALL.forEach(c -> c.registerCatalysts(registration));
 
-		registration.getJeiHelpers().getRecipeType(new ResourceLocation("create", "sandpaper_polishing"), SandPaperPolishingRecipe.class).ifPresent(type -> {
+		registration.getJeiHelpers().getRecipeType(ResourceLocation.fromNamespaceAndPath("create", "sandpaper_polishing"), SandPaperPolishingRecipe.class).ifPresent(type -> {
 			registration.addRecipeCatalyst(new ItemStack(CAItems.DIAMOND_GRIT_SANDPAPER.get()), type);
 		});
 		//registration.addRecipeCatalyst(new ItemStack(CAItems.DIAMOND_GRIT_SANDPAPER.get()), new ResourceLocation(Create.ID, "deploying"));
