@@ -3,7 +3,6 @@ package com.mrh0.createaddition.index;
 import com.mojang.serialization.MapCodec;
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.recipe.charging.ChargingRecipe;
-import com.mrh0.createaddition.recipe.charging.ChargingRecipeSerializer;
 import com.mrh0.createaddition.recipe.conditions.HasFluidTagCondition;
 import com.mrh0.createaddition.recipe.liquid_burning.LiquidBurningRecipe;
 import com.mrh0.createaddition.recipe.rolling.RollingRecipe;

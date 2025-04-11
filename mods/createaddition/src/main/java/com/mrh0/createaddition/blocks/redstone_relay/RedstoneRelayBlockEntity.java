@@ -72,7 +72,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 
 	public static final int NODE_COUNT = 8;
 
-	protected LazyOptional<RedstoneRelayPeripheral> peripheral;
+	//protected LazyOptional<RedstoneRelayPeripheral> peripheral;
 
 	public RedstoneRelayBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
 		super(tileEntityTypeIn, pos, state);
@@ -80,8 +80,8 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 		this.localNodes = new LocalNode[getNodeCount()];
 		this.nodeCache = new IWireNode[getNodeCount()];
 
-		if (CreateAddition.CC_ACTIVE)
-			this.peripheral = LazyOptional.of(() -> Peripherals.createRedstoneRelayPeripheral(this));
+		// if (CreateAddition.CC_ACTIVE)
+			// this.peripheral = LazyOptional.of(() -> Peripherals.createRedstoneRelayPeripheral(this));
 	}
 
 	@Override
