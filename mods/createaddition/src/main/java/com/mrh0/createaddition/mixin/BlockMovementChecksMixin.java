@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class BlockMovementChecksMixin {
 
 	@Inject(
-			method = "isBlockAttachedTowardsFallback",
+			method = "isBlockAttachedTowards",
 			at = @At("HEAD"),
 			cancellable = true
 	)
