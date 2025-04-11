@@ -62,9 +62,10 @@ public class CEIEnchantmentHelper {
         possibleEnchantments.forEach(holder -> {
             Enchantment enchantment = holder.value();
             int maxLevel = enchantment.getMaxLevel();
-            if (maxLevel > 1 && special)
+            // Remove since Blaze Enchanter should not break level cap
+            /*if (maxLevel > 1 && special)
                 maxLevel += CEIConfig.enchantments().enchantmentMaxLevelExtension.get();
-            maxLevel = Math.clamp(maxLevel, 1, 255);
+            maxLevel = Math.clamp(maxLevel, 1, 255);*/
             for (int i = maxLevel; i >= enchantment.getMinLevel(); i--) {
                 if (level >= enchantment.getMinCost(i) && level <= enchantment.getMaxCost(i)) {
                     list.add(new EnchantmentInstance(holder, i));
