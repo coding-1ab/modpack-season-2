@@ -22,6 +22,7 @@ import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPoint;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPointType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -37,6 +38,8 @@ public class BlazeForgerArmInteractionPoint extends ArmInteractionPoint {
 
     @Override
     public ItemStack insert(ItemStack stack, boolean simulate) {
+        if (!(level.getBlockEntity(pos) instanceof BlazeForgerBlockEntity forger))
+            return stack;
         ItemStack input = stack.copy();
         InteractionResultHolder<ItemStack> result = BlazeExperienceBlock.applyFuel(cachedState, level, pos, input, false, false, simulate);
         if (result.getResult().consumesAction()) {
@@ -48,8 +51,7 @@ public class BlazeForgerArmInteractionPoint extends ArmInteractionPoint {
                     Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), remainder);
                 return input;
             }
-        }
-        if (level.getBlockEntity(pos) instanceof BlazeForgerBlockEntity forger) {
+        } else if (result.getResult() == InteractionResult.PASS) {
             return forger.insertItem(input, simulate);
         }
         return input;
