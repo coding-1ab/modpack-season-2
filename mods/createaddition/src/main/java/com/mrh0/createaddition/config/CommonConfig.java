@@ -231,6 +231,8 @@ public class CommonConfig {
 		COMMON_CONFIG = COMMON_BUILDER.build();
 	}
 
+
+	// What does this do? Just Load? If yes why not use onLoad event
 	public static void loadConfig(ModConfigSpec spec, java.nio.file.Path path) {
 		final CommentedFileConfig configData = CommentedFileConfig.builder(path)
 			.sync()
