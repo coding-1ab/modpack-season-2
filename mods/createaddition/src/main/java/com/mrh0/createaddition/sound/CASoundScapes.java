@@ -60,7 +60,7 @@ public class CASoundScapes {
 	public static void play(AmbienceGroup group, BlockPos pos, float pitch) {
 		if (!AllConfigs.client().enableAmbientSounds.get()) return;
 		// if (!Config.AUDIO_ENABLED.get()) return;
-		if(!CASounds.ELECTRIC_MOTOR_BUZZ.isPresent() || !CASounds.ELECTRIC_CHARGE.isPresent()) return;
+		if(!CASounds.ELECTRIC_MOTOR_BUZZ.isBound() || !CASounds.ELECTRIC_CHARGE.isBound()) return;
 
 		if (!outOfRange(pos)) addSound(group, pos, pitch);
 	}

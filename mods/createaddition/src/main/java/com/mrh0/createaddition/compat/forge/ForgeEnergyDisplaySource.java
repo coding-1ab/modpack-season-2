@@ -13,11 +13,11 @@ import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 public class ForgeEnergyDisplaySource extends PercentOrProgressBarDisplaySource {
 	public final static ForgeEnergyDisplaySource INSTANCE = new ForgeEnergyDisplaySource();

@@ -2,16 +2,17 @@ package com.mrh0.createaddition.index;
 
 import com.mrh0.createaddition.blocks.digital_adapter.DigitalAdapterDisplaySource;
 import com.mrh0.createaddition.blocks.modular_accumulator.ModularAccumulatorDisplaySource;
+import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 
 import static com.mrh0.createaddition.CreateAddition.REGISTRATE;
 
 public class CADisplaySources {
-    public static final RegistryEntry<ModularAccumulatorDisplaySource> MODULAR_ACCUMULATOR = REGISTRATE.displaySource("modular_accumulator", ModularAccumulatorDisplaySource::new)
+    public static final RegistryEntry<DisplaySource, ModularAccumulatorDisplaySource> MODULAR_ACCUMULATOR = REGISTRATE.displaySource("modular_accumulator", ModularAccumulatorDisplaySource::new)
             //.associate(CABlocks.MODULAR_ACCUMULATOR.get())
             .register();
 
-    public static final RegistryEntry<DigitalAdapterDisplaySource> DIGITAL_ADAPTER = REGISTRATE.displaySource("digital_adapter", DigitalAdapterDisplaySource::new)
+    public static final RegistryEntry<DisplaySource, DigitalAdapterDisplaySource> DIGITAL_ADAPTER = REGISTRATE.displaySource("digital_adapter", DigitalAdapterDisplaySource::new)
             //.associate(CABlocks.DIGITAL_ADAPTER.get())
             .register();
 
