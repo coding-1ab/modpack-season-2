@@ -4,11 +4,11 @@ import com.mrh0.createaddition.blocks.digital_adapter.DigitalAdapterBlockEntity;
 import com.mrh0.createaddition.blocks.modular_accumulator.ModularAccumulatorBlockEntity;
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceBlockEntity;
 import com.mrh0.createaddition.blocks.redstone_relay.RedstoneRelayBlockEntity;
-import net.minecraftforge.common.capabilities.Capability;
 
 import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
 import com.mrh0.createaddition.blocks.electric_motor.ElectricMotorBlockEntity;
+import net.neoforged.neoforge.capabilities.Capabilities;
 
 public class Peripherals {
 	public static boolean isPeripheral(Capability<?> cap) {
