@@ -16,11 +16,11 @@ public class CAPartials {
 	public static final PartialModel PORTABLE_ENERGY_INTERFACE_TOP = block("portable_energy_interface/block_top");
 
 	private static PartialModel block(String path) {
-		return PartialModel.of(new ResourceLocation(CreateAddition.MODID, "block/" + path));
+		return PartialModel.of(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "block/" + path));
 	}
 
 	private static PartialModel entity(String path) {
-		return PartialModel.of(new ResourceLocation(CreateAddition.MODID, "entity/" + path));
+		return PartialModel.of(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "entity/" + path));
 	}
 
 	public static void init() {
