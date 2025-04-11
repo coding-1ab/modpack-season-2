@@ -220,7 +220,7 @@ public class ExperienceScene {
                 .text("Deployer also has a new mechanism: When mob is killed by deployer, experience nuggets are dropped")
                 .attachKeyFrame()
                 .placeNearTarget()
-                .pointAt(util.vector().centerOf(3, 3, 10));
+                .pointAt(util.vector().centerOf(6, 2, 8));
         scene.overlay().showOutline(PonderPalette.GREEN, deployer, deployer, 30);
         scene.idle(5);
         scene.world().showSection(util.select().position(5,2,8), Direction.DOWN);
@@ -409,7 +409,7 @@ public class ExperienceScene {
         scene.world().showSection(util.select().fromTo(2, 1, 0, 0, 1, 2), Direction.DOWN);
         scene.idle(5);
         scene.overlay().showText(80)
-                .text("First, you need to make Block of Super Experience, which will be used to make the Super Enchanting Template.This requires the use of Block of Experience")
+                .text("First, you need to make Block of Super Experience, which will be used to make the Super Enchanting Template. This requires the use of Block of Experience")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(1, 1, 1));

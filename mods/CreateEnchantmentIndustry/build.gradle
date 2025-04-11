@@ -187,6 +187,7 @@ publishMods {
 
         requires {
             slug = "create"
+            slug = "create-dragons-plus"
         }
     }
 
@@ -197,6 +198,7 @@ publishMods {
 
         requires {
             slug = "create"
+            slug = "create-dragons-plus"
         }
     }
 }

@@ -94,7 +94,6 @@ public class GrindstoneScene {
 
         scene.overlay().showText(60)
                 .text("You can use Mechanical Grindstone with item in your hand. 100% safe and won't hurt your hands :D")
-                .colored(PonderPalette.GREEN)
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().centerOf(2, 1, 2));
