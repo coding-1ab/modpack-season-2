@@ -178,6 +178,7 @@ public class BlazeForgerInventory extends ItemStackHandler {
                         } else {
                             if (combineEnchantments(base, addition, baseEnchantments, additionEnchantments))
                                 stacks.set(5, ItemStack.EMPTY);
+                            else return;
                         }
                     }
                 }
@@ -208,10 +209,9 @@ public class BlazeForgerInventory extends ItemStackHandler {
             if (forger.special && (!template.isSpecial())) return;
             if (additionEnchantments.isEmpty()) return;
             else {
-                if (!additionEnchantments.isEmpty()) {
-                    if (applyEnchantmentsToBook(base, additionEnchantments))
-                        stacks.set(5, ItemStack.EMPTY);
-                } else return;
+                if (applyEnchantmentsToBook(base, additionEnchantments))
+                    stacks.set(5, ItemStack.EMPTY);
+                else return;
             }
         } else {
             if (addition.getItem() instanceof EnchantingTemplateItem template) {
@@ -315,7 +315,7 @@ public class BlazeForgerInventory extends ItemStackHandler {
         for (Entry<Holder<Enchantment>> entry : additionEnchantments.entrySet()) {
             Holder<Enchantment> holder = entry.getKey();
             Enchantment enchantment = holder.value();
-            boolean applicable = base.supportsEnchantment(holder);
+            boolean applicable = true;
             for (Holder<Enchantment> holder1 : resultEnchantments.keySet()) {
                 if (!holder1.equals(holder) && !Enchantment.areCompatible(holder, holder1)) {
                     applicable = forger.special && CEIConfig.enchantments().ignoreEnchantmentCompatibility.get();
