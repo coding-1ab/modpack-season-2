@@ -86,7 +86,7 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
-        this.enchanter = new EnchanterBehaviour(this, new EnchanterTransform());
+        this.enchanter = new EnchanterBehaviour(this, new EnchanterTransform(), new TemplateItemTransform());
         this.advancement = new AdvancementBehaviour(this);
         behaviours.add(this.enchanter);
         behaviours.add(this.advancement);
@@ -301,6 +301,24 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
         @Override
         protected Vec3 getSouthLocation() {
             return VecHelper.voxelSpace(8, 8, 13.5);
+        }
+
+        @Override
+        public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack poseStack) {
+            float yRot = AngleHelper.horizontalAngle(getSide()) + 180;
+            TransformStack.of(poseStack).rotateYDegrees(yRot);
+        }
+
+        @Override
+        protected boolean isSideActive(BlockState state, Direction direction) {
+            return direction.getAxis().isHorizontal();
+        }
+    }
+
+    private static class TemplateItemTransform extends ValueBoxTransform.Sided {
+        @Override
+        protected Vec3 getSouthLocation() {
+            return VecHelper.voxelSpace(8, 12, 14.5);
         }
 
         @Override
