@@ -26,15 +26,13 @@ public class CEIEnchantmentsConfig extends ConfigBase {
             Comments.blazeEnchanterMaxEnchantLevel);
     public final ConfigInt blazeEnchanterMaxSuperEnchantLevel = i(60, 0,
             "blazeEnchanterMaxSuperEnchantLevel",
-            Comments.blazeEnchanterMaxSuperEnchantLevel
-    );
+            Comments.blazeEnchanterMaxSuperEnchantLevel);
     public final ConfigInt enchantmentMaxLevelExtension = i(1, 0, 255,
             "enchantmentMaxLevelExtension",
             Comments.enchantmentMaxLevelExtension);
     public final ConfigBool ignoreEnchantmentCompatibility = b(true,
             "ignoreEnchantmentCompatibility",
-            Comments.ignoreEnchantmentCompatibility
-    );
+            Comments.ignoreEnchantmentCompatibility);
 
     @Override
     public String getName() {
@@ -42,13 +40,9 @@ public class CEIEnchantmentsConfig extends ConfigBase {
     }
 
     static class Comments {
-        static final String blazeEnchanterMaxEnchantLevel =
-                "The max experience level a Blaze Enchanter can use in Enchanting";
-        static final String blazeEnchanterMaxSuperEnchantLevel =
-                "The max experience level a Blaze Enchanter can use in Super Enchanting";
-        static final String enchantmentMaxLevelExtension =
-                "Max enchantment level in Super Enchanting and Super Forging will be extended by this value";
-        static final String ignoreEnchantmentCompatibility =
-                "If Super Enchanting and Super Forging ignores enchantment compatibility";
+        static final String blazeEnchanterMaxEnchantLevel = "The max experience level a Blaze Enchanter can use in Enchanting";
+        static final String blazeEnchanterMaxSuperEnchantLevel = "The max experience level a Blaze Enchanter can use in Super Enchanting";
+        static final String enchantmentMaxLevelExtension = "Max enchantment level in Super Enchanting and Super Forging will be extended by this value";
+        static final String ignoreEnchantmentCompatibility = "If Super Enchanting and Super Forging ignores enchantment compatibility";
     }
 }

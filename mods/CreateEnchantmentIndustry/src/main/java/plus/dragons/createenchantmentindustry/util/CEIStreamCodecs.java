@@ -31,6 +31,5 @@ public class CEIStreamCodecs {
                     it -> it.enchantment,
                     ByteBufCodecs.VAR_INT,
                     it -> it.level,
-                    EnchantmentInstance::new
-            );
+                    EnchantmentInstance::new);
 }

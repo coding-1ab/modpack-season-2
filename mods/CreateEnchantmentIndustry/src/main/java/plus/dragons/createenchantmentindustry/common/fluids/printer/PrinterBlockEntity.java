@@ -55,9 +55,9 @@ import org.jetbrains.annotations.Nullable;
 import plus.dragons.createdragonsplus.common.advancements.AdvancementBehaviour;
 import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour.CustomNamePrintingBehaviour;
+import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 import plus.dragons.createenchantmentindustry.common.registry.CEIStats;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
-import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 
 @FieldsNullabilityUnknownByDefault
 public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
@@ -75,8 +75,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         tank = SmartFluidTankBehaviour.single(this, CEIConfig.fluids().printerFluidCapacity.get());
         printer = new PrinterBehaviour(this, tank, new CenteredSideValueBoxTransform(
-                (state, direction) -> state.getValue(PrinterBlock.FACING) == direction
-        ));
+                (state, direction) -> state.getValue(PrinterBlock.FACING) == direction));
         BeltProcessingBehaviour processing = new BeltProcessingBehaviour(this)
                 .whenItemEnters(this::onItemEnters)
                 .whileItemHeld(this::onItemHeld);
@@ -172,7 +171,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         setFluidInTank(fluidStack);
         notifyUpdate();
         printing.onFinished(level, worldPosition, this);
-        advancement.awardStat(CEIStats.PRINT.get(),1);
+        advancement.awardStat(CEIStats.PRINT.get(), 1);
         return HOLD;
     }
 

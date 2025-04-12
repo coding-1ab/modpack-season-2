@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2025  DragonsPlus
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package plus.dragons.createenchantmentindustry.client.ponder.scene;
 
 import com.simibubi.create.AllBlocks;
@@ -35,13 +53,13 @@ public class EnchanterScene {
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
         scene.world().modifyBlockEntity(util.grid().at(3, 1, 3), FluidTankBlockEntity.class,
-                be ->  be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 24000), IFluidHandler.FluidAction.EXECUTE));
+                be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 24000), IFluidHandler.FluidAction.EXECUTE));
         scene.idle(20);
         scene.world().modifyBlockEntity(util.grid().at(1, 1, 3), FluidTankBlockEntity.class,
-                be ->  be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 9000), IFluidHandler.FluidAction.EXECUTE));
+                be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 9000), IFluidHandler.FluidAction.EXECUTE));
         scene.idle(20);
         scene.world().modifyBlockEntity(util.grid().at(2, 1, 3), FluidTankBlockEntity.class,
-                be ->  be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 17000), IFluidHandler.FluidAction.EXECUTE));
+                be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 17000), IFluidHandler.FluidAction.EXECUTE));
         scene.idle(25);
 
         scene.overlay().showText(60)
@@ -50,11 +68,11 @@ public class EnchanterScene {
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
         scene.idle(5);
-        scene.world().setKineticSpeed(util.select().everywhere(),128);
+        scene.world().setKineticSpeed(util.select().everywhere(), 128);
         scene.idle(10);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeEnchanterBlockEntity.class,
-                be ->  be.getNormalTank().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000), IFluidHandler.FluidAction.EXECUTE));
-        scene.world().modifyBlock(util.grid().at(2, 2, 1),bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED),false);
+                be -> be.getNormalTank().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000), IFluidHandler.FluidAction.EXECUTE));
+        scene.world().modifyBlock(util.grid().at(2, 2, 1), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED), false);
         scene.idle(50);
 
         var slotVec = util.vector().of(2, 2.5, 1.5);
@@ -73,11 +91,11 @@ public class EnchanterScene {
 
         scene.addKeyframe();
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeEnchanterBlockEntity.class,
-                be -> be.insertItem(Items.DIAMOND_SWORD.getDefaultInstance(),false));
+                be -> be.insertItem(Items.DIAMOND_SWORD.getDefaultInstance(), false));
         scene.overlay().showControls(util.vector().centerOf(2, 2, 1), Pointing.RIGHT, 20).withItem(Items.DIAMOND_SWORD.getDefaultInstance());
         scene.idle(100);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeEnchanterBlockEntity.class,
-                be -> be.extractItem(true,false));
+                be -> be.extractItem(true, false));
 
         scene.overlay().showText(80)
                 .text("The panel is also a filter slot. Right click that slot with an item to set the item as a template item. This is Template Enchanting Mode")
@@ -98,12 +116,12 @@ public class EnchanterScene {
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeEnchanterBlockEntity.class,
-                be -> be.insertItem(CEIItems.ENCHANTING_TEMPLATE.asStack(),false));
+                be -> be.insertItem(CEIItems.ENCHANTING_TEMPLATE.asStack(), false));
         scene.overlay().showControls(util.vector().centerOf(2, 2, 1), Pointing.RIGHT, 20).withItem(CEIItems.ENCHANTING_TEMPLATE.asStack());
         scene.idle(100);
     }
 
-    public static void superEnchant(SceneBuilder builder, SceneBuildingUtil util){
+    public static void superEnchant(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("blaze_enchanter.super_enchant", "Super Enchant Time!");
         scene.configureBasePlate(0, 0, 5);
@@ -119,8 +137,8 @@ public class EnchanterScene {
         scene.overlay().showControls(util.vector().centerOf(2, 2, 1), Pointing.RIGHT, 20).rightClick().withItem(CEIItems.EXPERIENCE_CAKE.asStack());
         scene.idle(30);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeEnchanterBlockEntity.class,
-                be ->  be.getSpecialTank().setFluid(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000)));
-        scene.world().modifyBlock(util.grid().at(2, 2, 1),bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SEETHING),false);
+                be -> be.getSpecialTank().setFluid(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000)));
+        scene.world().modifyBlock(util.grid().at(2, 2, 1), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SEETHING), false);
         scene.idle(15);
 
         scene.overlay().showText(40)
@@ -144,24 +162,24 @@ public class EnchanterScene {
         scene.idle(105);
 
         scene.addKeyframe();
-        scene.world().setBlock(util.grid().at(3,2,1), Blocks.LIGHTNING_ROD.defaultBlockState(),false);
+        scene.world().setBlock(util.grid().at(3, 2, 1), Blocks.LIGHTNING_ROD.defaultBlockState(), false);
         scene.idle(10);
-        scene.world().setBlock(util.grid().at(1,2,1), Blocks.LIGHTNING_ROD.defaultBlockState(),false);
+        scene.world().setBlock(util.grid().at(1, 2, 1), Blocks.LIGHTNING_ROD.defaultBlockState(), false);
         scene.overlay().showText(40)
                 .text("Trust me, you're gonna need this")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(3, 2, 1));
         scene.idle(10);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeEnchanterBlockEntity.class,
-                be -> be.insertItem(CEIItems.SUPER_ENCHANTING_TEMPLATE.asStack(),false));
+                be -> be.insertItem(CEIItems.SUPER_ENCHANTING_TEMPLATE.asStack(), false));
         scene.overlay().showControls(util.vector().centerOf(2, 2, 1), Pointing.RIGHT, 20).withItem(CEIItems.SUPER_ENCHANTING_TEMPLATE.asStack());
         scene.idle(50);
         scene.world().createEntity(level -> {
             var lightning = EntityType.LIGHTNING_BOLT.create(level);
-            lightning.moveTo(Vec3.atBottomCenterOf(util.grid().at(3,2,1)));
+            lightning.moveTo(Vec3.atBottomCenterOf(util.grid().at(3, 2, 1)));
             return lightning;
         });
-        scene.world().setBlock(util.grid().at(3,1,1), CEIBlocks.SUPER_EXPERIENCE_BLOCK.getDefaultState(),false);
+        scene.world().setBlock(util.grid().at(3, 1, 1), CEIBlocks.SUPER_EXPERIENCE_BLOCK.getDefaultState(), false);
 
         scene.idle(20);
         scene.overlay().showText(40)
@@ -169,7 +187,7 @@ public class EnchanterScene {
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(3, 2, 1));
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeEnchanterBlockEntity.class,
-                be -> be.extractItem(true,false));
+                be -> be.extractItem(true, false));
         scene.idle(45);
 
         scene.overlay().showText(80)
@@ -179,11 +197,11 @@ public class EnchanterScene {
                 .pointAt(util.vector().topOf(2, 2, 1));
         scene.scaleSceneView(.8f);
         scene.idle(20);
-        scene.world().setBlock(util.grid().at(2,4,1), Blocks.OBSIDIAN.defaultBlockState(), false);
+        scene.world().setBlock(util.grid().at(2, 4, 1), Blocks.OBSIDIAN.defaultBlockState(), false);
         scene.idle(20);
-        scene.world().setBlock(util.grid().at(2,5,1), Blocks.OBSIDIAN.defaultBlockState(), false);
+        scene.world().setBlock(util.grid().at(2, 5, 1), Blocks.OBSIDIAN.defaultBlockState(), false);
         scene.idle(20);
-        scene.world().setBlock(util.grid().at(2,6,1), Blocks.OBSIDIAN.defaultBlockState(), false);
+        scene.world().setBlock(util.grid().at(2, 6, 1), Blocks.OBSIDIAN.defaultBlockState(), false);
         scene.idle(25);
 
         scene.overlay().showText(80)
@@ -191,29 +209,29 @@ public class EnchanterScene {
                 .attachKeyFrame()
                 .independent();
         scene.idle(5);
-        scene.world().setBlock(util.grid().at(2,6,1), Blocks.AIR.defaultBlockState(), true);
+        scene.world().setBlock(util.grid().at(2, 6, 1), Blocks.AIR.defaultBlockState(), true);
         scene.idle(5);
-        scene.world().setBlock(util.grid().at(2,5,1), Blocks.AIR.defaultBlockState(), true);
+        scene.world().setBlock(util.grid().at(2, 5, 1), Blocks.AIR.defaultBlockState(), true);
         scene.idle(5);
-        scene.world().setBlock(util.grid().at(2,4,1), Blocks.AIR.defaultBlockState(), true);
+        scene.world().setBlock(util.grid().at(2, 4, 1), Blocks.AIR.defaultBlockState(), true);
         scene.idle(5);
-        scene.world().setBlock(util.grid().at(3,2,1), Blocks.AIR.defaultBlockState(), true);
-        scene.world().setBlock(util.grid().at(1,2,1), Blocks.AIR.defaultBlockState(), true);
+        scene.world().setBlock(util.grid().at(3, 2, 1), Blocks.AIR.defaultBlockState(), true);
+        scene.world().setBlock(util.grid().at(1, 2, 1), Blocks.AIR.defaultBlockState(), true);
         scene.idle(5);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeEnchanterBlockEntity.class,
                 be -> {
-            be.getSpecialTank().setFluid(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000));
-            be.insertItem(CEIItems.SUPER_ENCHANTING_TEMPLATE.asStack(),false);
-        });
+                    be.getSpecialTank().setFluid(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000));
+                    be.insertItem(CEIItems.SUPER_ENCHANTING_TEMPLATE.asStack(), false);
+                });
         scene.overlay().showControls(util.vector().centerOf(2, 2, 1), Pointing.RIGHT, 20).withItem(CEIItems.SUPER_ENCHANTING_TEMPLATE.asStack());
         scene.idle(50);
         scene.world().createEntity(level -> {
             var lightning = EntityType.LIGHTNING_BOLT.create(level);
-            lightning.moveTo(Vec3.atBottomCenterOf(util.grid().at(2,2,1)));
+            lightning.moveTo(Vec3.atBottomCenterOf(util.grid().at(2, 2, 1)));
             return lightning;
         });
-        scene.world().setBlock(util.grid().at(2,2,1), AllBlocks.LIT_BLAZE_BURNER.getDefaultState(),false);
-        scene.world().setBlock(util.grid().at(1,1,1), CEIBlocks.SUPER_EXPERIENCE_BLOCK.getDefaultState(),false);
+        scene.world().setBlock(util.grid().at(2, 2, 1), AllBlocks.LIT_BLAZE_BURNER.getDefaultState(), false);
+        scene.world().setBlock(util.grid().at(1, 1, 1), CEIBlocks.SUPER_EXPERIENCE_BLOCK.getDefaultState(), false);
         scene.idle(20);
     }
 }

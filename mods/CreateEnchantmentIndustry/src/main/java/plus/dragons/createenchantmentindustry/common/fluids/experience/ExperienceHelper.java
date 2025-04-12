@@ -121,8 +121,8 @@ public class ExperienceHelper {
             ItemStack stack = optional.get().itemStack();
             int consumed = repairItem(amount, player.serverLevel(), stack, false);
             return amount > consumed
-                   ? repairPlayerItems(player, amount - consumed)
-                   : 0;
+                    ? repairPlayerItems(player, amount - consumed)
+                    : 0;
         }
         return amount;
     }

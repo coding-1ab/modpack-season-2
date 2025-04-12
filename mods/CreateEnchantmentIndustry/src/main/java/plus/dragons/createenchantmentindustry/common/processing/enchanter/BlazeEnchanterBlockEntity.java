@@ -57,10 +57,10 @@ import plus.dragons.createdragonsplus.common.fluids.tank.ConfigurableFluidTank;
 import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
 import plus.dragons.createenchantmentindustry.client.model.CEIPartialModels;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.BlazeExperienceBlockEntity;
+import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 import plus.dragons.createenchantmentindustry.common.registry.CEIStats;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
-import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 
 @FieldsNullabilityUnknownByDefault
 public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
@@ -167,7 +167,7 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
             this.cursed = cursed;
             update = true;
         }
-        if (level.isClientSide() && isVirtual()){
+        if (level.isClientSide() && isVirtual()) {
             if (update) enchanter.update(heldItem);
             if (enchanter.canProcess(heldItem)) {
                 if (processingTime < 0) {
@@ -209,17 +209,17 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
                 }
                 processingTime = -1;
                 heldItem = enchanter.getResult(heldItem);
-                advancement.awardStat(CEIStats.ENCHANT.get(),1);
+                advancement.awardStat(CEIStats.ENCHANT.get(), 1);
 
-                if(heldItem.getItem() instanceof EnchantingTemplateItem){
+                if (heldItem.getItem() instanceof EnchantingTemplateItem) {
                     advancement.trigger(CEIAdvancements.SIGIL_FORGING.builtinTrigger());
                 } else {
                     advancement.trigger(CEIAdvancements.BLAZING_ENCHANTMENT.builtinTrigger());
                 }
-                if(special) {
-                    advancement.awardStat(CEIStats.SUPER_ENCHANT.get(),1);
-                    boolean treasure = EnchantmentHelper.getEnchantmentsForCrafting(heldItem).keySet().stream().anyMatch(h->h.is(EnchantmentTags.TREASURE));
-                    if(treasure)
+                if (special) {
+                    advancement.awardStat(CEIStats.SUPER_ENCHANT.get(), 1);
+                    boolean treasure = EnchantmentHelper.getEnchantmentsForCrafting(heldItem).keySet().stream().anyMatch(h -> h.is(EnchantmentTags.TREASURE));
+                    if (treasure)
                         advancement.trigger(CEIAdvancements.PROBABILITY_SPIKE.builtinTrigger());
                 }
 

@@ -60,8 +60,8 @@ public class DeployerExtension {
             event.getState().getBlock().popExperience(event.getLevel(), event.getPos(), experience);
         }
         event.getDrops().stream()
-             .map(ItemEntity::getItem)
-             .forEach(deployer.getInventory()::placeItemBackInInventory);
+                .map(ItemEntity::getItem)
+                .forEach(deployer.getInventory()::placeItemBackInInventory);
         event.setCanceled(true);
     }
 

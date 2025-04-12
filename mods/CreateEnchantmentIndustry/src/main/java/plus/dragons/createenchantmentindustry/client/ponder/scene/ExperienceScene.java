@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2025  DragonsPlus
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package plus.dragons.createenchantmentindustry.client.ponder.scene;
 
 import com.simibubi.create.AllBlocks;
@@ -47,9 +65,9 @@ public class ExperienceScene {
                 .text("This is a tank of Liquid Experience, and it will be your most used form of experience")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(9, 5, 9));
-        for(int i=0;i<6;i++){
+        for (int i = 0; i < 6; i++) {
             scene.world().modifyBlockEntity(util.grid().at(9, 4, 9), FluidTankBlockEntity.class,
-                    be ->  be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 10000), IFluidHandler.FluidAction.EXECUTE));
+                    be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 10000), IFluidHandler.FluidAction.EXECUTE));
             scene.idle(10);
         }
         scene.idle(5);
@@ -128,7 +146,7 @@ public class ExperienceScene {
         scene.idle(30);
 
         // GrindStone Drain
-        var grindStoneDrain = util.select().fromTo(9, 2, 4,9,3,4);
+        var grindStoneDrain = util.select().fromTo(9, 2, 4, 9, 3, 4);
         scene.world().showSection(grindStoneDrain, Direction.DOWN);
         scene.overlay().showText(60)
                 .text("You can also use Mechanical GrindStone to pulverize items like Experience Nuggets into Liquid Experience")
@@ -148,8 +166,8 @@ public class ExperienceScene {
         scene.world().setKineticSpeed(util.select().position(9, 3, 4), 64f);
         scene.world().setKineticSpeed(util.select().fromTo(3, 1, 3, 3, 1, 11), -64f);
         scene.world().setKineticSpeed(util.select().position(9, 1, 7), 48f);
-        scene.world().propagatePipeChange(util.grid().at(9,1,7));
-        scene.world().modifyBlockEntity(util.grid().at(3,2,4), BrassTunnelBlockEntity.class,
+        scene.world().propagatePipeChange(util.grid().at(9, 1, 7));
+        scene.world().modifyBlockEntity(util.grid().at(3, 2, 4), BrassTunnelBlockEntity.class,
                 be -> be.getBehaviour(SidedFilteringBehaviour.TYPE).setFilter(Direction.EAST, new ItemStack(AllItems.EXP_NUGGET.get())));
         scene.idle(5);
         scene.world().createItemOnBelt(util.grid().at(3, 1, 11), Direction.UP, new ItemStack(AllItems.EXP_NUGGET.get()));
@@ -161,9 +179,9 @@ public class ExperienceScene {
 
         // Crushing Wheel
         scene.world().showSection(util.select().column(2, 11), Direction.DOWN);
-        scene.world().showSection(util.select().fromTo(4,1, 11,4,3,11), Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(4, 1, 11, 4, 3, 11), Direction.DOWN);
         scene.idle(5);
-        var crushingWheel = util.select().fromTo(5, 2, 10,1,4,10);
+        var crushingWheel = util.select().fromTo(5, 2, 10, 1, 4, 10);
         scene.world().showSection(crushingWheel, Direction.NORTH);
         scene.overlay().showText(60)
                 .text("Crushing Wheel now has a new mechanism: It has a chance of dropping a very small amount of experience nugget when it kills a creature")
@@ -196,7 +214,7 @@ public class ExperienceScene {
         scene.idle(10);
         scene.world().modifyEntity(sheep, Entity::discard);
         scene.effects().emitParticles(util.vector().topOf(util.grid().at(3, 3, 10))
-                        .add(0, -.25, 0),
+                .add(0, -.25, 0),
                 scene.effects().particleEmitterWithinBlockSpace(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.RED_CONCRETE.defaultBlockState()),
                         util.vector().centerOf(0, 0, 0)),
                 25, 1);
@@ -211,10 +229,10 @@ public class ExperienceScene {
         scene.idle(10);
 
         // Deployer
-        scene.world().showSection(util.select().fromTo(6, 1,6,4,1,8), Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(6, 1, 6, 4, 1, 8), Direction.DOWN);
         scene.idle(5);
-        var deployer = util.select().position(6,2,8);
-        var deployerPos = util.grid().at(6,2,8);
+        var deployer = util.select().position(6, 2, 8);
+        var deployerPos = util.grid().at(6, 2, 8);
         scene.world().showSection(deployer, Direction.DOWN);
         scene.overlay().showText(60)
                 .text("Deployer also has a new mechanism: When mob is killed by deployer, experience nuggets are dropped")
@@ -223,12 +241,12 @@ public class ExperienceScene {
                 .pointAt(util.vector().centerOf(6, 2, 8));
         scene.overlay().showOutline(PonderPalette.GREEN, deployer, deployer, 30);
         scene.idle(5);
-        scene.world().showSection(util.select().position(5,2,8), Direction.DOWN);
+        scene.world().showSection(util.select().position(5, 2, 8), Direction.DOWN);
         scene.world().setKineticSpeed(util.select().fromTo(5, 1, 8, 4, 2, 8), 64f);
         scene.idle(5);
-        scene.world().showSection(util.select().fromTo(7,2,5,5,3,7), Direction.DOWN);
-        scene.world().showSection(util.select().position(5,3,8), Direction.DOWN);
-        scene.world().showSection(util.select().column(7,8), Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(7, 2, 5, 5, 3, 7), Direction.DOWN);
+        scene.world().showSection(util.select().position(5, 3, 8), Direction.DOWN);
+        scene.world().showSection(util.select().column(7, 8), Direction.DOWN);
         scene.idle(5);
 
         ItemStack sword = new ItemStack(Items.NETHERITE_SWORD);
@@ -262,7 +280,7 @@ public class ExperienceScene {
         scene.idle(26);
         scene.world().modifyEntity(sheep2, Entity::discard);
         scene.effects().emitParticles(util.vector().topOf(deployerPos.north(2))
-                        .add(0, -.25, 0),
+                .add(0, -.25, 0),
                 scene.effects().particleEmitterWithinBlockSpace(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.PINK_WOOL.defaultBlockState()),
                         util.vector().of(0, 0, 0)),
                 25, 1);
@@ -281,8 +299,8 @@ public class ExperienceScene {
         scene.idle(20);
 
         // spout
-        scene.world().showSection(util.select().fromTo(11, 7,0,11,7,8), Direction.SOUTH);
-        scene.world().showSection(util.select().fromTo(11, 2,0,2,7,0), Direction.SOUTH);
+        scene.world().showSection(util.select().fromTo(11, 7, 0, 11, 7, 8), Direction.SOUTH);
+        scene.world().showSection(util.select().fromTo(11, 2, 0, 2, 7, 0), Direction.SOUTH);
         scene.idle(5);
         scene.world().setKineticSpeed(util.select().position(6, 2, 0), 256f);
         scene.world().setKineticSpeed(util.select().position(11, 7, 2), 256f);
@@ -295,20 +313,20 @@ public class ExperienceScene {
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(2, 3, 0));
         scene.overlay().showOutline(PonderPalette.GREEN, spout, spout, 40);
-        scene.world().showSection(util.select().fromTo(11, 1,0,0,1,0), Direction.SOUTH);
+        scene.world().showSection(util.select().fromTo(11, 1, 0, 0, 1, 0), Direction.SOUTH);
         scene.idle(5);
-        scene.world().setKineticSpeed(util.select().fromTo(11, 1,0,0,1,0), 16f);
+        scene.world().setKineticSpeed(util.select().fromTo(11, 1, 0, 0, 1, 0), 16f);
         scene.idle(5);
-        scene.world().createItemOnBelt(util.grid().at(11,1,0), Direction.DOWN, new ItemStack(Items.GLASS_BOTTLE));
+        scene.world().createItemOnBelt(util.grid().at(11, 1, 0), Direction.DOWN, new ItemStack(Items.GLASS_BOTTLE));
         scene.idle(20);
-        scene.world().createItemOnBelt(util.grid().at(11,1,0), Direction.DOWN, new ItemStack(Items.BUCKET));
+        scene.world().createItemOnBelt(util.grid().at(11, 1, 0), Direction.DOWN, new ItemStack(Items.BUCKET));
         scene.idle(20);
-        scene.world().createItemOnBelt(util.grid().at(11,1,0), Direction.DOWN, new ItemStack(CEIItems.EXPERIENCE_CAKE_BASE.get()));
+        scene.world().createItemOnBelt(util.grid().at(11, 1, 0), Direction.DOWN, new ItemStack(CEIItems.EXPERIENCE_CAKE_BASE.get()));
         scene.idle(20);
 
         // leak
         scene.addKeyframe();
-        scene.world().showSection(util.select().fromTo(4, 7,9,8,7,11), Direction.EAST);
+        scene.world().showSection(util.select().fromTo(4, 7, 9, 8, 7, 11), Direction.EAST);
         scene.world().setKineticSpeed(util.select().position(8, 7, 11), 256f);
         scene.world().propagatePipeChange(util.grid().at(8, 7, 11));
         scene.idle(40);
@@ -317,7 +335,6 @@ public class ExperienceScene {
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(4, 7, 9));
         scene.idle(65);
-
     }
 
     public static void advance(SceneBuilder builder, SceneBuildingUtil util) {
@@ -326,16 +343,16 @@ public class ExperienceScene {
         scene.configureBasePlate(0, 0, 5);
         scene.showBasePlate();
         scene.idle(5);
-        scene.world().showSection(util.select().position(4,1,0), Direction.DOWN);
+        scene.world().showSection(util.select().position(4, 1, 0), Direction.DOWN);
         scene.idle(5);
         scene.overlay().showText(50)
                 .text("You need to know a few more things before you're ready to start working on enchantments")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(4, 1, 0));
-        for(int i=0;i<=4;i++){
-            for(int j=4;j>=0;j--){
-                if(i==0&&j==4) continue;
-                scene.world().showSection(util.select().position(j,1,i), Direction.DOWN);
+        for (int i = 0; i <= 4; i++) {
+            for (int j = 4; j >= 0; j--) {
+                if (i == 0 && j == 4) continue;
+                scene.world().showSection(util.select().position(j, 1, i), Direction.DOWN);
                 scene.idle(2);
             }
         }
@@ -344,12 +361,12 @@ public class ExperienceScene {
                 .text("Block of Experience is no longer purely decorative and storage block. You'll need it later")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 1, 0));
-        scene.overlay().showOutline(PonderPalette.GREEN, util.select().fromTo(4,1,0,0,1,1), util.select().fromTo(4,1,0,0,1,1), 55);
+        scene.overlay().showOutline(PonderPalette.GREEN, util.select().fromTo(4, 1, 0, 0, 1, 1), util.select().fromTo(4, 1, 0, 0, 1, 1), 55);
         scene.idle(40);
 
-        for(int i=3;i<=4;i++){
-            for(int j=4;j>=0;j--){
-                scene.world().showSection(util.select().position(j,2,i), Direction.DOWN);
+        for (int i = 3; i <= 4; i++) {
+            for (int j = 4; j >= 0; j--) {
+                scene.world().showSection(util.select().position(j, 2, i), Direction.DOWN);
                 scene.idle(2);
             }
         }
@@ -357,46 +374,46 @@ public class ExperienceScene {
                 .text("This is Block of Super Experience. You'll need it for Super Enchanting")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 3));
-        scene.overlay().showOutline(PonderPalette.BLUE, util.select().fromTo(4,1,3,0,2,4), util.select().fromTo(4,1,3,0,2,4), 40);
+        scene.overlay().showOutline(PonderPalette.BLUE, util.select().fromTo(4, 1, 3, 0, 2, 4), util.select().fromTo(4, 1, 3, 0, 2, 4), 40);
         scene.idle(40);
 
-        scene.world().showSection(util.select().position(3,2,1), Direction.DOWN);
-        scene.world().showSection(util.select().position(3,3,3), Direction.DOWN);
+        scene.world().showSection(util.select().position(3, 2, 1), Direction.DOWN);
+        scene.world().showSection(util.select().position(3, 3, 3), Direction.DOWN);
         scene.idle(5);
         scene.overlay().showText(40)
                 .text("Blaze Enchanter")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(3, 2, 1));
-        scene.world().modifyBlock(util.grid().at(3,3,3), bs->bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED), false);
-        scene.overlay().showOutline(PonderPalette.GREEN, util.select().position(3,2,1), util.select().position(3,2,1), 40);
+        scene.world().modifyBlock(util.grid().at(3, 3, 3), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED), false);
+        scene.overlay().showOutline(PonderPalette.GREEN, util.select().position(3, 2, 1), util.select().position(3, 2, 1), 40);
         scene.idle(40);
 
-        scene.world().showSection(util.select().position(1,2,1), Direction.DOWN);
-        scene.world().showSection(util.select().position(1,3,3), Direction.DOWN);
+        scene.world().showSection(util.select().position(1, 2, 1), Direction.DOWN);
+        scene.world().showSection(util.select().position(1, 3, 3), Direction.DOWN);
         scene.idle(5);
         scene.overlay().showText(40)
                 .text("Blaze Forger")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(1, 2, 1));
-        scene.world().modifyBlock(util.grid().at(1,3,3), bs->bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED), false);
-        scene.overlay().showOutline(PonderPalette.GREEN, util.select().position(1,2,1), util.select().position(1,2,1), 40);
+        scene.world().modifyBlock(util.grid().at(1, 3, 3), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED), false);
+        scene.overlay().showOutline(PonderPalette.GREEN, util.select().position(1, 2, 1), util.select().position(1, 2, 1), 40);
         scene.idle(40);
 
-        scene.world().modifyBlock(util.grid().at(3,3,3), bs->bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SEETHING), false);
-        scene.world().modifyBlock(util.grid().at(3,2,1), bs->bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED), false);
+        scene.world().modifyBlock(util.grid().at(3, 3, 3), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SEETHING), false);
+        scene.world().modifyBlock(util.grid().at(3, 2, 1), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED), false);
         scene.idle(5);
-        scene.world().modifyBlock(util.grid().at(1,3,3), bs->bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SEETHING), false);
-        scene.world().modifyBlock(util.grid().at(1,2,1), bs->bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED), false);
+        scene.world().modifyBlock(util.grid().at(1, 3, 3), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SEETHING), false);
+        scene.world().modifyBlock(util.grid().at(1, 2, 1), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED), false);
         scene.idle(5);
         scene.overlay().showText(40)
                 .text("Super Enchanting allows you to break the limit!")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(3, 3, 3));
-        scene.overlay().showOutline(PonderPalette.BLUE, util.select().position(3,3,3), util.select().position(3,3,3), 40);
-        scene.overlay().showOutline(PonderPalette.BLUE, util.select().position(1,3,3), util.select().position(1,3,3), 40);
+        scene.overlay().showOutline(PonderPalette.BLUE, util.select().position(3, 3, 3), util.select().position(3, 3, 3), 40);
+        scene.overlay().showOutline(PonderPalette.BLUE, util.select().position(1, 3, 3), util.select().position(1, 3, 3), 40);
         scene.idle(40);
     }
 
@@ -418,7 +435,7 @@ public class ExperienceScene {
         scene.idle(20);
         scene.world().createEntity(level -> {
             var lightning = EntityType.LIGHTNING_BOLT.create(level);
-            lightning.moveTo(Vec3.atBottomCenterOf(util.grid().at(1,2,1)));
+            lightning.moveTo(Vec3.atBottomCenterOf(util.grid().at(1, 2, 1)));
             return lightning;
         });
         scene.world().replaceBlocks(util.select().layer(1), CEIBlocks.SUPER_EXPERIENCE_BLOCK.getDefaultState(), false);
@@ -429,13 +446,13 @@ public class ExperienceScene {
                 .pointAt(util.vector().topOf(1, 2, 1));
         scene.idle(50);
 
-        scene.world().replaceBlocks(util.select().position(1,2,1),Blocks.AIR.defaultBlockState(), true);
-        scene.world().replaceBlocks(util.select().layer(1),Blocks.AIR.defaultBlockState(), true);
-        scene.world().hideSection(util.select().position(1,1,1),Direction.DOWN);
+        scene.world().replaceBlocks(util.select().position(1, 2, 1), Blocks.AIR.defaultBlockState(), true);
+        scene.world().replaceBlocks(util.select().layer(1), Blocks.AIR.defaultBlockState(), true);
+        scene.world().hideSection(util.select().position(1, 1, 1), Direction.DOWN);
         scene.idle(20);
-        scene.world().setBlock(util.grid().at(1,1,1), AllBlocks.DEPOT.getDefaultState(), false);
-        scene.world().showSection(util.select().position(1,1,1),Direction.DOWN);
-        scene.world().modifyBlockEntity(util.grid().at(1,1,1), DepotBlockEntity.class, be-> be.setHeldItem(CEIItems.EXPERIENCE_CAKE.asStack()));
+        scene.world().setBlock(util.grid().at(1, 1, 1), AllBlocks.DEPOT.getDefaultState(), false);
+        scene.world().showSection(util.select().position(1, 1, 1), Direction.DOWN);
+        scene.world().modifyBlockEntity(util.grid().at(1, 1, 1), DepotBlockEntity.class, be -> be.setHeldItem(CEIItems.EXPERIENCE_CAKE.asStack()));
         scene.idle(10);
         scene.overlay().showText(60)
                 .text("Second, you need to make Cake o' Enchanting. Blaze will love eating this")

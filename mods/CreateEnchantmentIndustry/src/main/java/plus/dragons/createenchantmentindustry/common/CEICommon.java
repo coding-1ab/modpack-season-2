@@ -29,8 +29,8 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import plus.dragons.createdragonsplus.common.CDPRegistrate;
 import plus.dragons.createenchantmentindustry.common.registry.*;
-import plus.dragons.createenchantmentindustry.config.CEIConfig;
 import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
+import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
 @Mod(CEICommon.ID)
 public class CEICommon {

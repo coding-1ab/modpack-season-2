@@ -133,8 +133,8 @@ public class EnchantedBookPrintingBehaviour implements PrintingBehaviour {
                         .add(CreateLang.translate("generic.unit.millibuckets"))
                         .style(cost <= CEIConfig.fluids().printerFluidCapacity.get()
                                 ? ChatFormatting.GREEN
-                                : ChatFormatting.RED)
-        ).style(ChatFormatting.GRAY).forGoggles(tooltip));
+                                : ChatFormatting.RED))
+                .style(ChatFormatting.GRAY).forGoggles(tooltip));
         HolderLookup.Provider registries = level.registryAccess();
         var order = registries
                 .lookupOrThrow(Registries.ENCHANTMENT)

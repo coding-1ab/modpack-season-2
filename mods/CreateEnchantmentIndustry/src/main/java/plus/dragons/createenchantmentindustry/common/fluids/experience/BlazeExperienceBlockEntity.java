@@ -63,12 +63,10 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity implem
     public static final String LIGHTNING_BOLT_EXPERIENCE_CHARGE_KEY = "ExperienceCharge";
     public static final TagKey<Block> LIGHTNING_ROD_BLOCKS = TagKey.create(
             Registries.BLOCK,
-            ResourceLocation.fromNamespaceAndPath("c", "lightning_rods")
-    );
+            ResourceLocation.fromNamespaceAndPath("c", "lightning_rods"));
     public static final TagKey<PoiType> LIGHTNING_ROD_POINT_OF_INTEREST_TYPES = TagKey.create(
             Registries.POINT_OF_INTEREST_TYPE,
-            ResourceLocation.fromNamespaceAndPath("c", "lightning_rods")
-    );
+            ResourceLocation.fromNamespaceAndPath("c", "lightning_rods"));
     protected final LerpedFloat headAnimation = LerpedFloat.linear();
     protected final LerpedFloat headAngle = LerpedFloat.angular();
     private boolean isCreative;
@@ -243,8 +241,7 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity implem
                 pos -> pos.getY() == level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ()) - 1,
                 strikePos,
                 128,
-                PoiManager.Occupancy.ANY
-        ).sorted((_p1, _p2) -> level.random.nextInt(-1, 2)).findFirst();
+                PoiManager.Occupancy.ANY).sorted((_p1, _p2) -> level.random.nextInt(-1, 2)).findFirst();
         lightning.moveTo(Vec3.atBottomCenterOf(rodPos.orElse(strikePos)));
         level.addFreshEntity(lightning);
         return rodPos.isEmpty();

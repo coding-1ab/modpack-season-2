@@ -60,7 +60,7 @@ public class BlazeForgerArmInteractionPoint extends ArmInteractionPoint {
     @Override
     public ItemStack extract(int slot, int amount, boolean simulate) {
         if (level.getBlockEntity(pos) instanceof BlazeForgerBlockEntity forger) {
-            slot+=2;
+            slot += 2;
             return forger.inventory.extractItem(slot, amount, simulate);
         }
         return ItemStack.EMPTY;
@@ -77,7 +77,8 @@ public class BlazeForgerArmInteractionPoint extends ArmInteractionPoint {
             return CEIBlocks.BLAZE_FORGER.has(state);
         }
 
-        @Nullable @Override
+        @Nullable
+        @Override
         public ArmInteractionPoint createPoint(Level level, BlockPos pos, BlockState state) {
             return new BlazeForgerArmInteractionPoint(this, level, pos, state);
         }

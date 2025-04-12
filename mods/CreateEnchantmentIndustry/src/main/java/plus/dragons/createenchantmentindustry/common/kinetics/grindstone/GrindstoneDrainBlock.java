@@ -118,8 +118,7 @@ public class GrindstoneDrainBlock extends HorizontalKineticBlock implements IBE<
     public ItemRequirement getRequiredItems(BlockState state) {
         return new ItemRequirement(List.of(
                 new StackRequirement(new ItemStack(this.grindstone), ItemUseType.CONSUME),
-                new StackRequirement(AllBlocks.ITEM_DRAIN.asStack(), ItemUseType.CONSUME)
-        ));
+                new StackRequirement(AllBlocks.ITEM_DRAIN.asStack(), ItemUseType.CONSUME)));
     }
 
     @Override

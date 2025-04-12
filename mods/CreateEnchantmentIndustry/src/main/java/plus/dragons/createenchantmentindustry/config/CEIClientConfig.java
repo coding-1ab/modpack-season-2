@@ -23,8 +23,7 @@ import net.createmod.catnip.config.ConfigBase;
 public class CEIClientConfig extends ConfigBase {
     public final ConfigFloat experienceVisionMultiplier = f(1f, 1f, 256f,
             "experienceVisionMultiplier",
-            Comments.experienceVisionMultiplier
-    );
+            Comments.experienceVisionMultiplier);
 
     @Override
     public String getName() {
@@ -32,7 +31,6 @@ public class CEIClientConfig extends ConfigBase {
     }
 
     static class Comments {
-        static final String experienceVisionMultiplier =
-                "The vision range through Liquid Experience will be multiplied by this factor";
+        static final String experienceVisionMultiplier = "The vision range through Liquid Experience will be multiplied by this factor";
     }
 }

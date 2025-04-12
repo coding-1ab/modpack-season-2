@@ -18,8 +18,6 @@
 
 package plus.dragons.createenchantmentindustry.common.registry;
 
-
-
 import java.util.function.Supplier;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Recipe;
@@ -37,20 +35,16 @@ import plus.dragons.createenchantmentindustry.common.fluids.printer.PrintingReci
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindingRecipe;
 
 public class CEIRecipes {
-    private static final DeferredRegister<RecipeType<?>> TYPES =
-            DeferredRegister.create(BuiltInRegistries.RECIPE_TYPE, CEICommon.ID);
-    private static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS =
-            DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, CDPCommon.ID);
+    private static final DeferredRegister<RecipeType<?>> TYPES = DeferredRegister.create(BuiltInRegistries.RECIPE_TYPE, CEICommon.ID);
+    private static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS = DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, CDPCommon.ID);
     public static final RecipeTypeInfo<PrintingRecipe> PRINTING = register("printing", () -> new CustomProcessingRecipeSerializer<>(
             PrintingRecipe::new,
             PrintingRecipeParams.CODEC,
-            PrintingRecipeParams.STREAM_CODEC
-    ));
+            PrintingRecipeParams.STREAM_CODEC));
     public static final RecipeTypeInfo<GrindingRecipe> GRINDING = register("grinding", () -> new CustomProcessingRecipeSerializer<>(
             GrindingRecipe::new,
             CustomProcessingRecipeParams.CODEC,
-            CustomProcessingRecipeParams.STREAM_CODEC
-    ));
+            CustomProcessingRecipeParams.STREAM_CODEC));
 
     public static void register(IEventBus modBus) {
         TYPES.register(modBus);

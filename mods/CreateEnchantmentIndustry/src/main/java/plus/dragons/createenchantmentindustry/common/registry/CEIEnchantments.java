@@ -39,20 +39,16 @@ public class CEIEnchantments {
     public static class ModTags extends TagRegistry<Enchantment, RegistrateTagsProvider<Enchantment>> {
         public final TagKey<Enchantment> enchanting = tag(
                 "blaze_enchanter/enchanting",
-                "Blaze Enchanter Normal Enchanting Enchantments"
-        );
+                "Blaze Enchanter Normal Enchanting Enchantments");
         public final TagKey<Enchantment> enchantingExclusive = tag(
                 "blaze_enchanter/enchanting_exclusive",
-                "Blaze Enchanter Normal Enchanting Exclusive Enchantments"
-        );
+                "Blaze Enchanter Normal Enchanting Exclusive Enchantments");
         public final TagKey<Enchantment> superEnchanting = tag(
                 "blaze_enchanter/super_enchanting",
-                "Blaze Enchanter Super Enchanting Enchantments"
-        );
+                "Blaze Enchanter Super Enchanting Enchantments");
         public final TagKey<Enchantment> superEnchantingExclusive = tag(
                 "blaze_enchanter/super_enchanting_exclusive",
-                "Blaze Enchanter Super Enchanting Exclusive Enchantments"
-        );
+                "Blaze Enchanter Super Enchanting Exclusive Enchantments");
 
         protected ModTags() {
             super(CEICommon.ID, Registries.ENCHANTMENT);

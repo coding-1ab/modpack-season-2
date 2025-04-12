@@ -66,8 +66,7 @@ public class CEIJeiPlugin implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(
                 new PrintingCategory(),
-                new GrindingCategory()
-        );
+                new GrindingCategory());
     }
 
     @Override
@@ -82,8 +81,7 @@ public class CEIJeiPlugin implements IModPlugin {
                 AddressPrintingRecipeJEI.INSTANCE,
                 CopyPrintingRecipeJEI.INSTANCE,
                 CustomNamePrintingRecipeJEI.INSTANCE,
-                WrittenBookPrintingRecipeJEI.INSTANCE
-        ));
+                WrittenBookPrintingRecipeJEI.INSTANCE));
         registration.addRecipes(PrintingCategory.TYPE, EnchantedBookPrintingRecipeJEI.listAll());
         var manualApplication = registration
                 .getJeiHelpers()

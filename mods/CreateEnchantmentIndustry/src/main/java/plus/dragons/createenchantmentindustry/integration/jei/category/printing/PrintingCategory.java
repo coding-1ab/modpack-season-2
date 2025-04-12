@@ -46,8 +46,7 @@ import plus.dragons.createenchantmentindustry.mixin.accessor.CreateRecipeCategor
 import plus.dragons.createenchantmentindustry.util.CEILang;
 
 public class PrintingCategory implements IRecipeCategory<PrintingRecipeJEI> {
-    public static final RecipeType<PrintingRecipeJEI> TYPE =
-            new RecipeType<>(CEIRecipes.PRINTING.getId(), PrintingRecipeJEI.class);
+    public static final RecipeType<PrintingRecipeJEI> TYPE = new RecipeType<>(CEIRecipes.PRINTING.getId(), PrintingRecipeJEI.class);
     private final Component title = CEILang.translate("recipe.printing").component();
     private final IDrawable icon = new ItemIcon(CEIBlocks.PRINTER::asStack);
     private final AnimatedPrinter printer = new AnimatedPrinter();
@@ -86,8 +85,7 @@ public class PrintingCategory implements IRecipeCategory<PrintingRecipeJEI> {
     public Codec<PrintingRecipeJEI> getCodec(ICodecHelper codecHelper, IRecipeManager recipeManager) {
         return PrintingRecipeJEI.TYPE_CODEC.dispatch(
                 PrintingRecipeJEI::getType,
-                type -> type.codec(codecHelper, recipeManager)
-        );
+                type -> type.codec(codecHelper, recipeManager));
     }
 
     @SuppressWarnings("removal") // See CreateRecipeCategory#addPotionTooltip

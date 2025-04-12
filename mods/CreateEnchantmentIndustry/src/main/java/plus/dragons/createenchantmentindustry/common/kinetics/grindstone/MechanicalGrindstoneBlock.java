@@ -47,9 +47,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
+import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlockEntities;
 import plus.dragons.createenchantmentindustry.common.registry.CEIStats;
-import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 
 public class MechanicalGrindstoneBlock extends RotatedPillarKineticBlock implements IBE<KineticBlockEntity> {
     protected static VoxelShaper SHAPE = new AllShapes.Builder(Block.box(3, 3, 3, 13, 13, 13))
@@ -102,7 +102,7 @@ public class MechanicalGrindstoneBlock extends RotatedPillarKineticBlock impleme
             }
             player.setItemInHand(otherHand, result.bottom());
             CEIAdvancements.GONE_WITH_THE_FOIL.awardTo(player);
-            player.awardStat(CEIStats.GRINDSTONE_EXPERIENCE.get(),result.experience());
+            player.awardStat(CEIStats.GRINDSTONE_EXPERIENCE.get(), result.experience());
             if (player instanceof ServerPlayer serverPlayer)
                 ExperienceHelper.award(result.experience(), serverPlayer);
             level.levelEvent(1042, pos, 0);

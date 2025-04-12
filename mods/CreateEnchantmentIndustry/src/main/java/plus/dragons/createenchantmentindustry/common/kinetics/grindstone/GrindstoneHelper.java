@@ -93,7 +93,7 @@ public class GrindstoneHelper {
         return result;
     }
 
-    public static int getExperienceFromGrindingRecipe(Level level, ItemStack stack){
+    public static int getExperienceFromGrindingRecipe(Level level, ItemStack stack) {
         var input = new SingleRecipeInput(stack);
         var grinding = SequencedAssemblyRecipe.getRecipe(level, input, CEIRecipes.GRINDING.getType(), GrindingRecipe.class);
         if (grinding.isEmpty())

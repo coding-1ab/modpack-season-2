@@ -62,7 +62,8 @@ public class PrinterBlock extends HorizontalDirectionalBlock implements IWrencha
         builder.add(FACING);
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return defaultBlockState()
                 .setValue(FACING, context.getHorizontalDirection().getOpposite());

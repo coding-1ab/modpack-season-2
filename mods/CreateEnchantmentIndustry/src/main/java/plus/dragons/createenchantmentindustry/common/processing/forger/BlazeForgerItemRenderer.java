@@ -41,8 +41,7 @@ public class BlazeForgerItemRenderer extends CustomRenderedItemModelRenderer {
     public static void register(RegisterClientExtensionsEvent event) {
         event.registerItem(
                 SimpleCustomRenderer.create(CEIBlocks.BLAZE_FORGER.asItem(), new BlazeForgerItemRenderer()),
-                CEIBlocks.BLAZE_FORGER.asItem()
-        );
+                CEIBlocks.BLAZE_FORGER.asItem());
     }
 
     @Override

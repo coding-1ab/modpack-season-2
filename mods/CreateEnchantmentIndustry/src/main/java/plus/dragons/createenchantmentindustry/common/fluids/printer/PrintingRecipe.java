@@ -58,8 +58,7 @@ public class PrintingRecipe extends CustomProcessingRecipe<PrintingInput, Printi
         return new Builder(id, new PlaySoundEffect(
                 BuiltInRegistries.SOUND_EVENT.wrapAsHolder(SoundEvents.ENCHANTMENT_TABLE_USE),
                 ConstantFloat.of(1),
-                UniformFloat.of(.9f, 1f)
-        ));
+                UniformFloat.of(.9f, 1f)));
     }
 
     public void playSound(Level level, BlockPos pos, SoundSource source) {
@@ -69,8 +68,7 @@ public class PrintingRecipe extends CustomProcessingRecipe<PrintingInput, Printi
                 sound.soundEvent().value(),
                 source,
                 sound.volume().sample(level.random),
-                sound.pitch().sample(level.random)
-        );
+                sound.pitch().sample(level.random));
     }
 
     @Override
@@ -91,8 +89,8 @@ public class PrintingRecipe extends CustomProcessingRecipe<PrintingInput, Printi
     @Override
     public boolean matches(PrintingInput input, Level level) {
         return ingredients.get(0).test(input.base()) &&
-               ingredients.get(1).test(input.template()) &&
-               (input.fluid().isEmpty() || fluidIngredients.get(0).test(input.fluid()));
+                ingredients.get(1).test(input.template()) &&
+                (input.fluid().isEmpty() || fluidIngredients.get(0).test(input.fluid()));
     }
 
     @Override
@@ -104,8 +102,7 @@ public class PrintingRecipe extends CustomProcessingRecipe<PrintingInput, Printi
         }
         return CEILang.translate("recipe.assembly.printing",
                 matchingStacks[0].getHoverName(),
-                matchingFluidStacks.getFirst().getHoverName()
-        ).component();
+                matchingFluidStacks.getFirst().getHoverName()).component();
     }
 
     @Override

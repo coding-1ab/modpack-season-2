@@ -52,9 +52,9 @@ import plus.dragons.createdragonsplus.common.fluids.tank.ConfigurableFluidTank;
 import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
 import plus.dragons.createenchantmentindustry.client.model.CEIPartialModels;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.BlazeExperienceBlockEntity;
+import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
-import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 import plus.dragons.createenchantmentindustry.util.CEILang;
 
 @FieldsNullabilityUnknownByDefault
@@ -151,7 +151,7 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
             this.cursed = cursed;
             update = true;
         }
-        if (level.isClientSide() && isVirtual()){
+        if (level.isClientSide() && isVirtual()) {
             if (update) {
                 inventory.updateResult();
                 notifyUpdate();
@@ -217,7 +217,7 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
     }
 
     public ItemStack extractItem(boolean simulate) {
-        for(int i=inventory.getSlots()-1;i>=0;i--){
+        for (int i = inventory.getSlots() - 1; i >= 0; i--) {
             ItemStack extracted = inventory.extractItem(i, 1, simulate);
             if (!extracted.isEmpty())
                 return extracted;
@@ -248,8 +248,7 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
                     enchantments.addToTooltip(
                             TooltipContext.of(level),
                             component -> CEILang.builder().add(component).forGoggles(tooltip, 2),
-                            TooltipFlag.NORMAL
-                    );
+                            TooltipFlag.NORMAL);
             }
         }
         return added;

@@ -44,7 +44,7 @@ public class BlazeEnchanterBlock extends BlazeExperienceBlock<BlazeEnchanterBloc
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
-        AdvancementBehaviour.setPlacedBy(level,pos,placer);
+        AdvancementBehaviour.setPlacedBy(level, pos, placer);
     }
 
     @Override

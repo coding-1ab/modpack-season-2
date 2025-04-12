@@ -118,8 +118,7 @@ public class EnchanterBehaviour extends ScrollValueBehaviour implements IHaveGog
                 max,
                 max / 6,
                 ImmutableList.of(label),
-                new ValueSettingsFormatter(ValueSettings::format)
-        );
+                new ValueSettingsFormatter(ValueSettings::format));
     }
 
     @Override

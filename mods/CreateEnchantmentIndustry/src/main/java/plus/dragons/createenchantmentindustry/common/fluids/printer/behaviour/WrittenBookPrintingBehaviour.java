@@ -135,8 +135,8 @@ public class WrittenBookPrintingBehaviour implements PrintingBehaviour {
                         .add(CreateLang.translate("generic.unit.millibuckets"))
                         .style(cost <= CEIConfig.fluids().printerFluidCapacity.get()
                                 ? ChatFormatting.GREEN
-                                : ChatFormatting.RED)
-        ).forGoggles(tooltip, 1));
+                                : ChatFormatting.RED))
+                .forGoggles(tooltip, 1));
         return true;
     }
 }

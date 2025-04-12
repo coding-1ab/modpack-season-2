@@ -77,7 +77,8 @@ public class BlazeEnchanterArmInteractionPoint extends ArmInteractionPoint {
             return CEIBlocks.BLAZE_ENCHANTER.has(state);
         }
 
-        @Nullable @Override
+        @Nullable
+        @Override
         public ArmInteractionPoint createPoint(Level level, BlockPos pos, BlockState state) {
             return new BlazeEnchanterArmInteractionPoint(this, level, pos, state);
         }

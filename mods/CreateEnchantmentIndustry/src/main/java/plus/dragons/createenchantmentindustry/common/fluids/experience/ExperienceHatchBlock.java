@@ -53,8 +53,8 @@ import org.jetbrains.annotations.Nullable;
 import plus.dragons.createdragonsplus.common.features.ConfigFeatureElement;
 import plus.dragons.createdragonsplus.config.CDPConfig;
 import plus.dragons.createdragonsplus.config.FeaturesConfig.ConfigFeature;
-import plus.dragons.createenchantmentindustry.common.registry.CEIBlockEntities;
 import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
+import plus.dragons.createenchantmentindustry.common.registry.CEIBlockEntities;
 
 public class ExperienceHatchBlock extends HorizontalDirectionalBlock
         implements IBE<ExperienceHatchBlockEntity>, IWrenchable, ProperWaterloggedBlock, ConfigFeatureElement {
@@ -76,7 +76,8 @@ public class ExperienceHatchBlock extends HorizontalDirectionalBlock
     }
 
     @Override
-    @Nullable public BlockState getStateForPlacement(BlockPlaceContext context) {
+    @Nullable
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockState state = super.getStateForPlacement(context);
         if (state == null)
             return null;

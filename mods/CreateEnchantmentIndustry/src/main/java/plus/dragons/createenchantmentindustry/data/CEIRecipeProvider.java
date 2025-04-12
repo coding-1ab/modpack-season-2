@@ -86,19 +86,19 @@ public class CEIRecipeProvider extends RecipeProvider {
                 .unlockedBy(BRASS, has(BRASS_INGOT))
                 .accept(output);
         SmithingTransformRecipeBuilder.smithing(
-                        Ingredient.of(BLAZE_UPGRADE_SMITHING_TEMPLATE),
-                        Ingredient.of(BLAZE_BURNER),
-                        Ingredient.of(ENCHANTING_TABLE),
-                        RecipeCategory.MISC,
-                        BLAZE_ENCHANTER.asItem())
+                Ingredient.of(BLAZE_UPGRADE_SMITHING_TEMPLATE),
+                Ingredient.of(BLAZE_BURNER),
+                Ingredient.of(ENCHANTING_TABLE),
+                RecipeCategory.MISC,
+                BLAZE_ENCHANTER.asItem())
                 .unlocks("has_blaze_burner", has(BLAZE_BURNER))
                 .save(output, BLAZE_ENCHANTER.getId().withPrefix("smithing/"));
         SmithingTransformRecipeBuilder.smithing(
-                        Ingredient.of(BLAZE_UPGRADE_SMITHING_TEMPLATE),
-                        Ingredient.of(BLAZE_BURNER),
-                        Ingredient.of(ANVIL),
-                        RecipeCategory.MISC,
-                        BLAZE_FORGER.asItem())
+                Ingredient.of(BLAZE_UPGRADE_SMITHING_TEMPLATE),
+                Ingredient.of(BLAZE_BURNER),
+                Ingredient.of(ANVIL),
+                RecipeCategory.MISC,
+                BLAZE_FORGER.asItem())
                 .unlocks("has_blaze_burner", has(BLAZE_BURNER))
                 .save(output, BLAZE_FORGER.getId().withPrefix("smithing/"));
     }

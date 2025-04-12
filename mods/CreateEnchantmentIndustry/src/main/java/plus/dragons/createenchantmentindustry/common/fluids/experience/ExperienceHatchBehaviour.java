@@ -54,7 +54,7 @@ public class ExperienceHatchBehaviour extends FilteringBehaviour {
     public FluidStack getFluidToDrain() {
         Holder<Fluid> fluid = filter.fluid(getWorld()).getFluidHolder();
         int unit;
-        if(Fluids.EMPTY.isSame(fluid.value())){
+        if (Fluids.EMPTY.isSame(fluid.value())) {
             unit = 1;
             fluid = CEIFluids.EXPERIENCE;
         } else unit = ExperienceHelper.getExperienceFluidUnit(fluid);
@@ -70,7 +70,7 @@ public class ExperienceHatchBehaviour extends FilteringBehaviour {
             return FluidStack.EMPTY;
         Holder<Fluid> fluid = filter.fluid(getWorld()).getFluidHolder();
         int unit;
-        if(Fluids.EMPTY.isSame(fluid.value())){
+        if (Fluids.EMPTY.isSame(fluid.value())) {
             unit = 1;
             fluid = CEIFluids.EXPERIENCE;
         } else unit = ExperienceHelper.getExperienceFluidUnit(fluid);

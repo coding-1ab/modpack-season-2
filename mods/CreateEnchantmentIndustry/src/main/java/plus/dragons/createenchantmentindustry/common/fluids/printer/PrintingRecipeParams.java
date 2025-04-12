@@ -43,21 +43,18 @@ import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
 public class PrintingRecipeParams extends CustomProcessingRecipeParams {
     protected static final Codec<PlaySoundEffect> SOUND_CODEC = Codec.either(
             BuiltInRegistries.SOUND_EVENT.holderByNameCodec(),
-            PlaySoundEffect.CODEC.codec()
-    ).xmap(either -> either.map(
-            sound -> new PlaySoundEffect(sound, ConstantFloat.of(1f), ConstantFloat.of(1f)),
-            Function.identity()
-    ), Either::right);
-    protected static final StreamCodec<ByteBuf, PlaySoundEffect> SOUND_STREAM_CODEC =
-            ByteBufCodecs.fromCodec(SOUND_CODEC);
+            PlaySoundEffect.CODEC.codec()).xmap(
+                    either -> either.map(
+                            sound -> new PlaySoundEffect(sound, ConstantFloat.of(1f), ConstantFloat.of(1f)),
+                            Function.identity()),
+                    Either::right);
+    protected static final StreamCodec<ByteBuf, PlaySoundEffect> SOUND_STREAM_CODEC = ByteBufCodecs.fromCodec(SOUND_CODEC);
     public static final MapCodec<PrintingRecipeParams> CODEC = RecordCodecBuilder.<PrintingRecipeParams>mapCodec(
             instance -> instance.group(
                     codec(PrintingRecipeParams::new).forGetter(Function.identity()),
-                    SOUND_CODEC.fieldOf("sound").forGetter(PrintingRecipeParams::getSound)
-            ).apply(instance, PrintingRecipeParams::setSound)
-    ).validate(PrintingRecipeParams::validate);
-    public static final StreamCodec<RegistryFriendlyByteBuf, PrintingRecipeParams> STREAM_CODEC =
-            streamCodec(PrintingRecipeParams::new);
+                    SOUND_CODEC.fieldOf("sound").forGetter(PrintingRecipeParams::getSound)).apply(instance, PrintingRecipeParams::setSound))
+            .validate(PrintingRecipeParams::validate);
+    public static final StreamCodec<RegistryFriendlyByteBuf, PrintingRecipeParams> STREAM_CODEC = streamCodec(PrintingRecipeParams::new);
     protected PlaySoundEffect sound;
 
     protected PrintingRecipeParams(ResourceLocation id) {

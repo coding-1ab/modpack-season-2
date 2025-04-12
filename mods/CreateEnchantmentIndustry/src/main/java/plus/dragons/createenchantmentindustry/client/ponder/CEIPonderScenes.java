@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2025  DragonsPlus
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package plus.dragons.createenchantmentindustry.client.ponder;
 
 import com.simibubi.create.AllItems;
@@ -21,8 +39,7 @@ public class CEIPonderScenes {
         HELPER.forComponents(AllItems.EXP_NUGGET)
                 .addStoryBoard("experience/basic", ExperienceScene::basic, CEIPonderTags.EXPERIENCE_APPLIANCES)
                 .addStoryBoard("experience/advance", ExperienceScene::advance, CEIPonderTags.SUPER_EXPERIENCE_APPLIANCES)
-                .addStoryBoard("experience/prepare_for_super_enchant",ExperienceScene::prepare);
-
+                .addStoryBoard("experience/prepare_for_super_enchant", ExperienceScene::prepare);
 
         HELPER.forComponents(CEIBlocks.EXPERIENCE_HATCH)
                 .addStoryBoard("experience_hatch", MiscScene::experienceHatch, CEIPonderTags.EXPERIENCE_APPLIANCES);
@@ -43,12 +60,12 @@ public class CEIPonderScenes {
                 .addStoryBoard("printer", MiscScene::printer, CEIPonderTags.EXPERIENCE_APPLIANCES);
     }
 
-    public static void enchant(CreateSceneBuilder scene, ItemStack item, ResourceKey<Enchantment> enchantment, int level){
+    public static void enchant(CreateSceneBuilder scene, ItemStack item, ResourceKey<Enchantment> enchantment, int level) {
         if (DatagenModLoader.isRunningDataGen()) // scene.world().getHolderLookupProvider() cause null when get level
             return;
         var e = scene.world().getHolderLookupProvider()
                 .lookup(Registries.ENCHANTMENT)
                 .get().getOrThrow(enchantment);
-        item.enchant(e,level);
+        item.enchant(e, level);
     }
 }

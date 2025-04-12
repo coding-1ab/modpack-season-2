@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2025  DragonsPlus
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package plus.dragons.createenchantmentindustry.client.ponder.scene;
 
 import com.simibubi.create.AllBlocks;
@@ -37,14 +55,14 @@ public class ForgerScene {
                 .text("This is a Blaze Forger, which functions like an Anvil")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
-        scene.world().setKineticSpeed(util.select().position(4,1,2),128);
-        scene.world().setKineticSpeed(util.select().position(3,2,3),-128);
+        scene.world().setKineticSpeed(util.select().position(4, 1, 2), 128);
+        scene.world().setKineticSpeed(util.select().position(3, 2, 3), -128);
         scene.idle(20);
         scene.world().modifyBlockEntity(util.grid().at(1, 1, 3), FluidTankBlockEntity.class,
-                be ->  be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 8000), IFluidHandler.FluidAction.EXECUTE));
+                be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 8000), IFluidHandler.FluidAction.EXECUTE));
         scene.idle(20);
         scene.world().modifyBlockEntity(util.grid().at(1, 1, 3), FluidTankBlockEntity.class,
-                be ->  be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 8000), IFluidHandler.FluidAction.EXECUTE));
+                be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 8000), IFluidHandler.FluidAction.EXECUTE));
         scene.idle(25);
 
         scene.overlay().showText(60)
@@ -53,11 +71,11 @@ public class ForgerScene {
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
         scene.idle(5);
-        scene.world().setKineticSpeed(util.select().position(1,1,2),128);
+        scene.world().setKineticSpeed(util.select().position(1, 1, 2), 128);
         scene.idle(10);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be ->  be.getNormalTank().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000), IFluidHandler.FluidAction.EXECUTE));
-        scene.world().modifyBlock(util.grid().at(2, 2, 1),bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED),false);
+                be -> be.getNormalTank().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000), IFluidHandler.FluidAction.EXECUTE));
+        scene.world().modifyBlock(util.grid().at(2, 2, 1), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED), false);
         scene.idle(50);
 
         scene.overlay().showText(80)
@@ -68,13 +86,13 @@ public class ForgerScene {
         scene.idle(85);
         var sword1 = Items.DIAMOND_SWORD.getDefaultInstance();
         var sword2 = Items.DIAMOND_SWORD.getDefaultInstance();
-        CEIPonderScenes.enchant(scene,sword1,Enchantments.SWEEPING_EDGE,1);
-        CEIPonderScenes.enchant(scene,sword2,Enchantments.SWEEPING_EDGE,1);
+        CEIPonderScenes.enchant(scene, sword1, Enchantments.SWEEPING_EDGE, 1);
+        CEIPonderScenes.enchant(scene, sword2, Enchantments.SWEEPING_EDGE, 1);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.insertItem(sword1,false));
+                be -> be.insertItem(sword1, false));
         scene.idle(40);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.insertItem(sword2,false));
+                be -> be.insertItem(sword2, false));
         scene.idle(90);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> be.extractItem(false));
@@ -88,13 +106,13 @@ public class ForgerScene {
         scene.idle(65);
         var template1 = CEIItems.ENCHANTING_TEMPLATE.asStack();
         var template2 = CEIItems.ENCHANTING_TEMPLATE.asStack();
-        CEIPonderScenes.enchant(scene,template1,Enchantments.SWEEPING_EDGE,1);
-        CEIPonderScenes.enchant(scene,template2,Enchantments.SWEEPING_EDGE,1);
+        CEIPonderScenes.enchant(scene, template1, Enchantments.SWEEPING_EDGE, 1);
+        CEIPonderScenes.enchant(scene, template2, Enchantments.SWEEPING_EDGE, 1);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.insertItem(template1,false));
+                be -> be.insertItem(template1, false));
         scene.idle(40);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.insertItem(template2,false));
+                be -> be.insertItem(template2, false));
         scene.idle(90);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> be.extractItem(false));
@@ -108,13 +126,13 @@ public class ForgerScene {
         scene.idle(65);
         var sword3 = Items.DIAMOND_SWORD.getDefaultInstance();
         var template3 = CEIItems.ENCHANTING_TEMPLATE.asStack();
-        CEIPonderScenes.enchant(scene,sword3,Enchantments.SWEEPING_EDGE,1);
-        CEIPonderScenes.enchant(scene,template3,Enchantments.SWEEPING_EDGE,2);
+        CEIPonderScenes.enchant(scene, sword3, Enchantments.SWEEPING_EDGE, 1);
+        CEIPonderScenes.enchant(scene, template3, Enchantments.SWEEPING_EDGE, 2);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.insertItem(sword3,false));
+                be -> be.insertItem(sword3, false));
         scene.idle(40);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.insertItem(template3,false));
+                be -> be.insertItem(template3, false));
         scene.idle(90);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> be.extractItem(false));
@@ -127,17 +145,17 @@ public class ForgerScene {
                 .pointAt(util.vector().topOf(2, 2, 1));
         scene.idle(85);
         var sword4 = Items.DIAMOND_SWORD.getDefaultInstance();
-        CEIPonderScenes.enchant(scene,sword4,Enchantments.SWEEPING_EDGE,2);
-        CEIPonderScenes.enchant(scene,sword4,Enchantments.BANE_OF_ARTHROPODS,2);
+        CEIPonderScenes.enchant(scene, sword4, Enchantments.SWEEPING_EDGE, 2);
+        CEIPonderScenes.enchant(scene, sword4, Enchantments.BANE_OF_ARTHROPODS, 2);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.insertItem(sword4,false));
+                be -> be.insertItem(sword4, false));
         scene.idle(40);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.insertItem(CEIItems.ENCHANTING_TEMPLATE.asStack(),false));
+                be -> be.insertItem(CEIItems.ENCHANTING_TEMPLATE.asStack(), false));
         scene.idle(90);
     }
 
-    public static void superEnchant(SceneBuilder builder, SceneBuildingUtil util){
+    public static void superEnchant(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("blaze_forger.super_enchant", "Super Enchant Time!");
         scene.configureBasePlate(0, 0, 5);
@@ -153,8 +171,8 @@ public class ForgerScene {
         scene.overlay().showControls(util.vector().centerOf(2, 2, 1), Pointing.RIGHT, 20).rightClick().withItem(CEIItems.EXPERIENCE_CAKE.asStack());
         scene.idle(30);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be ->  be.getSpecialTank().setFluid(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000)));
-        scene.world().modifyBlock(util.grid().at(2, 2, 1),bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SEETHING),false);
+                be -> be.getSpecialTank().setFluid(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000)));
+        scene.world().modifyBlock(util.grid().at(2, 2, 1), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SEETHING), false);
         scene.idle(15);
 
         scene.overlay().showText(40)
@@ -179,7 +197,7 @@ public class ForgerScene {
         scene.idle(65);
 
         scene.addKeyframe();
-        scene.world().setBlock(util.grid().at(2,2,2), Blocks.LIGHTNING_ROD.defaultBlockState(),false);
+        scene.world().setBlock(util.grid().at(2, 2, 2), Blocks.LIGHTNING_ROD.defaultBlockState(), false);
         scene.overlay().showText(60)
                 .text("Don't forget to place a lighting rod. You'll need it")
                 .placeNearTarget()
@@ -187,21 +205,21 @@ public class ForgerScene {
         scene.idle(45);
         var sword = Items.DIAMOND_SWORD.getDefaultInstance();
         var template = CEIItems.SUPER_ENCHANTING_TEMPLATE.asStack();
-        CEIPonderScenes.enchant(scene,sword,Enchantments.SWEEPING_EDGE,3);
-        CEIPonderScenes.enchant(scene,template,Enchantments.SWEEPING_EDGE,4);
+        CEIPonderScenes.enchant(scene, sword, Enchantments.SWEEPING_EDGE, 3);
+        CEIPonderScenes.enchant(scene, template, Enchantments.SWEEPING_EDGE, 4);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.insertItem(sword,false));
+                be -> be.insertItem(sword, false));
         scene.idle(40);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.insertItem(template,false));
+                be -> be.insertItem(template, false));
         scene.idle(50);
         scene.world().createEntity(level -> {
             var lightning = EntityType.LIGHTNING_BOLT.create(level);
-            lightning.moveTo(Vec3.atBottomCenterOf(util.grid().at(2,2,2)));
+            lightning.moveTo(Vec3.atBottomCenterOf(util.grid().at(2, 2, 2)));
             return lightning;
         });
-        scene.world().setBlock(util.grid().at(3,1,1), CEIBlocks.SUPER_EXPERIENCE_BLOCK.getDefaultState(),false);
-        scene.world().setBlock(util.grid().at(2,2,3), CEIBlocks.SUPER_EXPERIENCE_BLOCK.getDefaultState(),false);
+        scene.world().setBlock(util.grid().at(3, 1, 1), CEIBlocks.SUPER_EXPERIENCE_BLOCK.getDefaultState(), false);
+        scene.world().setBlock(util.grid().at(2, 2, 3), CEIBlocks.SUPER_EXPERIENCE_BLOCK.getDefaultState(), false);
 
         scene.idle(20);
         scene.overlay().showText(40)
@@ -219,11 +237,11 @@ public class ForgerScene {
                 .pointAt(util.vector().topOf(2, 2, 1));
         scene.scaleSceneView(.8f);
         scene.idle(20);
-        scene.world().setBlock(util.grid().at(2,4,1), Blocks.NETHERITE_BLOCK.defaultBlockState(), false);
+        scene.world().setBlock(util.grid().at(2, 4, 1), Blocks.NETHERITE_BLOCK.defaultBlockState(), false);
         scene.idle(20);
-        scene.world().setBlock(util.grid().at(2,5,1), Blocks.NETHERITE_BLOCK.defaultBlockState(), false);
+        scene.world().setBlock(util.grid().at(2, 5, 1), Blocks.NETHERITE_BLOCK.defaultBlockState(), false);
         scene.idle(20);
-        scene.world().setBlock(util.grid().at(2,6,1), Blocks.NETHERITE_BLOCK.defaultBlockState(), false);
+        scene.world().setBlock(util.grid().at(2, 6, 1), Blocks.NETHERITE_BLOCK.defaultBlockState(), false);
         scene.idle(25);
 
         scene.overlay().showText(80)
@@ -231,31 +249,31 @@ public class ForgerScene {
                 .attachKeyFrame()
                 .independent();
         scene.idle(5);
-        scene.world().setBlock(util.grid().at(2,6,1), Blocks.AIR.defaultBlockState(), true);
+        scene.world().setBlock(util.grid().at(2, 6, 1), Blocks.AIR.defaultBlockState(), true);
         scene.idle(5);
-        scene.world().setBlock(util.grid().at(2,5,1), Blocks.AIR.defaultBlockState(), true);
+        scene.world().setBlock(util.grid().at(2, 5, 1), Blocks.AIR.defaultBlockState(), true);
         scene.idle(5);
-        scene.world().setBlock(util.grid().at(2,4,1), Blocks.AIR.defaultBlockState(), true);
+        scene.world().setBlock(util.grid().at(2, 4, 1), Blocks.AIR.defaultBlockState(), true);
         scene.idle(5);
-        scene.world().setBlock(util.grid().at(2,2,2), Blocks.AIR.defaultBlockState(), true);
+        scene.world().setBlock(util.grid().at(2, 2, 2), Blocks.AIR.defaultBlockState(), true);
         scene.idle(5);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> {
                     be.getSpecialTank().setFluid(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000));
-                    be.insertItem(sword,false);
+                    be.insertItem(sword, false);
                 });
         scene.idle(40);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.insertItem(sword,false));
+                be -> be.insertItem(sword, false));
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
-                be -> be.insertItem(template,false));
+                be -> be.insertItem(template, false));
         scene.idle(50);
         scene.world().createEntity(level -> {
             var lightning = EntityType.LIGHTNING_BOLT.create(level);
-            lightning.moveTo(Vec3.atBottomCenterOf(util.grid().at(2,2,1)));
+            lightning.moveTo(Vec3.atBottomCenterOf(util.grid().at(2, 2, 1)));
             return lightning;
         });
-        scene.world().setBlock(util.grid().at(2,2,1), AllBlocks.LIT_BLAZE_BURNER.getDefaultState(),false);
+        scene.world().setBlock(util.grid().at(2, 2, 1), AllBlocks.LIT_BLAZE_BURNER.getDefaultState(), false);
         scene.idle(20);
     }
 }

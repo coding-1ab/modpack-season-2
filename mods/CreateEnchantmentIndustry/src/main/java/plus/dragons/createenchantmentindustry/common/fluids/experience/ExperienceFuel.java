@@ -31,19 +31,17 @@ import org.jetbrains.annotations.Nullable;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 
 public record ExperienceFuel(int experience, boolean special, Optional<ItemStack> usingConvertTo) {
+
     public static final Codec<ExperienceFuel> INLINE_CODEC = ExtraCodecs.POSITIVE_INT.flatComapMap(
             ExperienceFuel::normal,
             fuel -> !fuel.special && fuel.usingConvertTo.isEmpty()
                     ? DataResult.success(fuel.experience())
-                    : DataResult.error(() -> "ExperienceFuel " + fuel + " can not be encoded inline")
-    );
+                    : DataResult.error(() -> "ExperienceFuel " + fuel + " can not be encoded inline"));
     public static final Codec<ExperienceFuel> FULL_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ExtraCodecs.POSITIVE_INT.fieldOf("experience").forGetter(ExperienceFuel::experience),
             Codec.BOOL.optionalFieldOf("special", false).forGetter(ExperienceFuel::special),
-            ItemStack.SINGLE_ITEM_CODEC.optionalFieldOf("using_convert_to").forGetter(ExperienceFuel::usingConvertTo)
-    ).apply(instance, ExperienceFuel::new));
+            ItemStack.SINGLE_ITEM_CODEC.optionalFieldOf("using_convert_to").forGetter(ExperienceFuel::usingConvertTo)).apply(instance, ExperienceFuel::new));
     public static final Codec<ExperienceFuel> CODEC = NeoForgeExtraCodecs.withAlternative(INLINE_CODEC, FULL_CODEC);
-
     public static ExperienceFuel normal(int experience) {
         return new ExperienceFuel(experience, false, Optional.empty());
     }

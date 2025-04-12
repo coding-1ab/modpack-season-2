@@ -42,13 +42,12 @@ public class ExperienceFluidType extends SolidRenderFluidType {
 
     public static FluidTypeFactory create() {
         Vector3f fogColor = new Color(0x52b64c).asVectorF();
-        return (properties, stillTexture, flowingTexture) ->
-                new ExperienceFluidType(properties,
-                        stillTexture,
-                        flowingTexture,
-                        NO_TINT,
-                        fogColor,
-                        ExperienceFluidType::getExperienceFluidVisibility);
+        return (properties, stillTexture, flowingTexture) -> new ExperienceFluidType(properties,
+                stillTexture,
+                flowingTexture,
+                NO_TINT,
+                fogColor,
+                ExperienceFluidType::getExperienceFluidVisibility);
     }
 
     private static float getExperienceFluidVisibility() {

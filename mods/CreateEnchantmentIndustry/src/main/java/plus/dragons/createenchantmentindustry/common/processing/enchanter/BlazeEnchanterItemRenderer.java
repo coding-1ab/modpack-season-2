@@ -41,8 +41,7 @@ public class BlazeEnchanterItemRenderer extends CustomRenderedItemModelRenderer 
     public static void register(RegisterClientExtensionsEvent event) {
         event.registerItem(
                 SimpleCustomRenderer.create(CEIBlocks.BLAZE_ENCHANTER.asItem(), new BlazeEnchanterItemRenderer()),
-                CEIBlocks.BLAZE_ENCHANTER.asItem()
-        );
+                CEIBlocks.BLAZE_ENCHANTER.asItem());
     }
 
     @Override

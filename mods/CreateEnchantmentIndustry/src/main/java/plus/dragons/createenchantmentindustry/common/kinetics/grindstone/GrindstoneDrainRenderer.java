@@ -134,8 +134,7 @@ public class GrindstoneDrainRenderer extends KineticBlockEntityRenderer<Grindsto
                     max, minY + level, max,
                     buffer, poseStack, light,
                     false, false,
-                    fluidStack.getComponentsPatch()
-            );
+                    fluidStack.getComponentsPatch());
         }
     }
 }

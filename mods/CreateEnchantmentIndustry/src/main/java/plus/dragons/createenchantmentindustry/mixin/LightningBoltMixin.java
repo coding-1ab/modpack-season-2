@@ -38,7 +38,8 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 
 @Mixin(LightningBolt.class)
 public abstract class LightningBoltMixin extends Entity {
-    @Shadow protected abstract BlockPos getStrikePosition();
+    @Shadow
+    protected abstract BlockPos getStrikePosition();
 
     private LightningBoltMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);
@@ -68,7 +69,8 @@ public abstract class LightningBoltMixin extends Entity {
         }
     }
 
-    @Unique private static void tick$randomWalkChargeExperience(Level level, BlockPos pos, BlockPos.MutableBlockPos mutable, int steps) {
+    @Unique
+    private static void tick$randomWalkChargeExperience(Level level, BlockPos pos, BlockPos.MutableBlockPos mutable, int steps) {
         mutable.set(pos);
         for (int i = 0; i < steps; i++) {
             Optional<BlockPos> optional = tick$randomWalkChargeExperience(level, mutable);
@@ -79,7 +81,8 @@ public abstract class LightningBoltMixin extends Entity {
         }
     }
 
-    @Unique private static Optional<BlockPos> tick$randomWalkChargeExperience(Level level, BlockPos pos) {
+    @Unique
+    private static Optional<BlockPos> tick$randomWalkChargeExperience(Level level, BlockPos pos) {
         for (BlockPos blockpos : BlockPos.randomInCube(level.random, 10, pos, 1)) {
             BlockState blockstate = level.getBlockState(blockpos);
             if (blockstate.is(AllBlocks.EXPERIENCE_BLOCK)) {

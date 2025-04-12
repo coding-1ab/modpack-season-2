@@ -43,7 +43,8 @@ public abstract class SmartBlockEntityMixin extends CachedRenderBBBlockEntity {
     @Shadow
     public abstract <T extends BlockEntityBehaviour> @Nullable T getBehaviour(BehaviourType<T> type);
 
-    @Shadow public abstract Collection<BlockEntityBehaviour> getAllBehaviours();
+    @Shadow
+    public abstract Collection<BlockEntityBehaviour> getAllBehaviours();
 
     public SmartBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);

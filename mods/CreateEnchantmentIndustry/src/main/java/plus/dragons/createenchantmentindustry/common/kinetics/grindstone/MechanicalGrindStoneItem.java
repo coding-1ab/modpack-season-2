@@ -49,7 +49,8 @@ public class MechanicalGrindStoneItem extends BlockItem {
         return this.place(new PlaceContext(context));
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     protected BlockState getPlacementState(BlockPlaceContext context) {
         if (context instanceof PlaceContext placeContext)
             return placeContext.getPlacementState();
@@ -67,7 +68,8 @@ public class MechanicalGrindStoneItem extends BlockItem {
             this.replaceClicked |= this.clickedDrain;
         }
 
-        @Nullable public BlockState getPlacementState() {
+        @Nullable
+        public BlockState getPlacementState() {
             if (clickedDrain) {
                 var facing = getHorizontalDirection().getOpposite();
                 return CEIBlocks.GRINDSTONE_DRAIN.getDefaultState()

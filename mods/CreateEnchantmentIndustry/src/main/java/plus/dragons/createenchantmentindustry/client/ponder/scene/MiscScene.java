@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2025  DragonsPlus
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package plus.dragons.createenchantmentindustry.client.ponder.scene;
 
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
@@ -37,16 +55,16 @@ public class MiscScene {
                 .text("It is very simple to use. Right click Hatch to store Experience...")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(1, 3, 2));
-        var frontVec = util.vector().blockSurface(util.grid().at(2,3,2), Direction.WEST)
+        var frontVec = util.vector().blockSurface(util.grid().at(2, 3, 2), Direction.WEST)
                 .add(-.125, 0, 0);
         scene.overlay().showControls(frontVec, Pointing.UP, 50).rightClick();
         scene.idle(10);
         scene.world().modifyBlockEntity(util.grid().at(2, 3, 2), FluidTankBlockEntity.class,
-                be ->  be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 10000), IFluidHandler.FluidAction.EXECUTE));
+                be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 10000), IFluidHandler.FluidAction.EXECUTE));
         scene.idle(40);
 
         scene.world().modifyBlockEntity(util.grid().at(3, 2, 1), BasinBlockEntity.class,
-                be ->  be.inputTank.getPrimaryHandler().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 1000), IFluidHandler.FluidAction.EXECUTE));
+                be -> be.inputTank.getPrimaryHandler().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 1000), IFluidHandler.FluidAction.EXECUTE));
         scene.idle(10);
         scene.world().showSection(util.select().fromTo(3, 2, 1, 2, 2, 1), Direction.UP);
         scene.idle(5);
@@ -54,12 +72,12 @@ public class MiscScene {
                 .text("...Shift-Right-Click Hatch to extract stored Experience")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(2, 2, 1));
-        frontVec = util.vector().blockSurface(util.grid().at(3,2,1), Direction.WEST)
+        frontVec = util.vector().blockSurface(util.grid().at(3, 2, 1), Direction.WEST)
                 .add(-.125, 0, 0);
         scene.overlay().showControls(frontVec, Pointing.UP, 50).rightClick().whileSneaking();
         scene.idle(30);
         scene.world().modifyBlockEntity(util.grid().at(3, 2, 1), BasinBlockEntity.class,
-                be ->  be.inputTank.getPrimaryHandler().drain(new FluidStack(CEIFluids.EXPERIENCE.get(), 1000), IFluidHandler.FluidAction.EXECUTE));
+                be -> be.inputTank.getPrimaryHandler().drain(new FluidStack(CEIFluids.EXPERIENCE.get(), 1000), IFluidHandler.FluidAction.EXECUTE));
         scene.idle(30);
 
         scene.overlay().showText(55)
@@ -67,9 +85,9 @@ public class MiscScene {
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(1, 3, 2));
-        for(int i=0;i<12;i++){
+        for (int i = 0; i < 12; i++) {
             scene.world().modifyBlockEntity(util.grid().at(2, 3, 2), FluidTankBlockEntity.class,
-                    be ->  be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 1000), IFluidHandler.FluidAction.EXECUTE));
+                    be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 1000), IFluidHandler.FluidAction.EXECUTE));
             scene.idle(5);
         }
 
@@ -83,7 +101,7 @@ public class MiscScene {
         scene.idle(10);
 
         scene.world().modifyBlockEntity(util.grid().at(1, 1, 1), FluidTankBlockEntity.class,
-                be ->  be.getControllerBE().getTankInventory().fill(new FluidStack(CDPFluids.DYES_BY_COLOR.get(DyeColor.CYAN).get(), 36000), IFluidHandler.FluidAction.EXECUTE));
+                be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CDPFluids.DYES_BY_COLOR.get(DyeColor.CYAN).get(), 36000), IFluidHandler.FluidAction.EXECUTE));
         scene.idle(10);
         scene.overlay().showText(40)
                 .text("Let's assume that Liquid Cyan Dye is experience fluid from another mod...")
@@ -101,9 +119,9 @@ public class MiscScene {
                 .text("Now, you can directly save and extract your experience as 'The Cyan Experience'!")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(0, 1, 1));
-        for(int i=0;i<12;i++){
+        for (int i = 0; i < 12; i++) {
             scene.world().modifyBlockEntity(util.grid().at(1, 1, 1), FluidTankBlockEntity.class,
-                    be ->  be.getControllerBE().getTankInventory().drain(new FluidStack(CDPFluids.DYES_BY_COLOR.get(DyeColor.CYAN).get(), 3000), IFluidHandler.FluidAction.EXECUTE));
+                    be -> be.getControllerBE().getTankInventory().drain(new FluidStack(CDPFluids.DYES_BY_COLOR.get(DyeColor.CYAN).get(), 3000), IFluidHandler.FluidAction.EXECUTE));
             scene.idle(5);
         }
     }
@@ -112,11 +130,11 @@ public class MiscScene {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("printer.intro", "Introduction to Printer");
         scene.configureBasePlate(1, 1, 3);
-        scene.world().showSection(util.select().fromTo(1,0,1,3,0,3), Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(1, 0, 1, 3, 0, 3), Direction.DOWN);
         scene.idle(5);
-        scene.world().showSection(util.select().position(2,1,2), Direction.DOWN);
+        scene.world().showSection(util.select().position(2, 1, 2), Direction.DOWN);
         scene.idle(5);
-        scene.world().showSection(util.select().position(2,3,2), Direction.DOWN);
+        scene.world().showSection(util.select().position(2, 3, 2), Direction.DOWN);
         scene.idle(5);
 
         scene.overlay().showText(40)
@@ -131,11 +149,11 @@ public class MiscScene {
                 .text("Before you can put it to use, you need to set what you want to print via the filter slot...")
                 .placeNearTarget()
                 .attachKeyFrame()
-                .pointAt(util.vector().blockSurface(util.grid().at(2, 3, 2),Direction.WEST));
-        scene.world().modifyBlockEntity(util.grid().at(2,3,2), PrinterBlockEntity.class, be -> {
+                .pointAt(util.vector().blockSurface(util.grid().at(2, 3, 2), Direction.WEST));
+        scene.world().modifyBlockEntity(util.grid().at(2, 3, 2), PrinterBlockEntity.class, be -> {
             var printer = be.getBehaviour(PrinterBehaviour.TYPE);
             var packageItem = CDPItems.RARE_MARBLE_GATE_PACKAGE.asStack();
-            PackageItem.addAddress(packageItem,"1");
+            PackageItem.addAddress(packageItem, "1");
             printer.setFilter(packageItem);
         });
         scene.idle(85);
@@ -146,14 +164,14 @@ public class MiscScene {
                 .attachKeyFrame()
                 .pointAt(util.vector().centerOf(2, 3, 2));
         scene.idle(10);
-        scene.world().showSection(util.select().column(4,2),Direction.WEST);
-        scene.world().showSection(util.select().position(4,0,2),Direction.WEST);
-        scene.world().showSection(util.select().position(3,3,2),Direction.WEST);
+        scene.world().showSection(util.select().column(4, 2), Direction.WEST);
+        scene.world().showSection(util.select().position(4, 0, 2), Direction.WEST);
+        scene.world().showSection(util.select().position(3, 3, 2), Direction.WEST);
         scene.idle(20);
-        scene.world().setKineticSpeed(util.select().position(3,3,2),128f);
+        scene.world().setKineticSpeed(util.select().position(3, 3, 2), 128f);
         scene.idle(20);
-        scene.world().modifyBlockEntity(util.grid().at(2,3,2), PrinterBlockEntity.class,
-                be -> be.getFluidHandler(null).fill(new FluidStack(CDPFluids.DYES_BY_COLOR.get(DyeColor.BLACK),3000), IFluidHandler.FluidAction.EXECUTE));
+        scene.world().modifyBlockEntity(util.grid().at(2, 3, 2), PrinterBlockEntity.class,
+                be -> be.getFluidHandler(null).fill(new FluidStack(CDPFluids.DYES_BY_COLOR.get(DyeColor.BLACK), 3000), IFluidHandler.FluidAction.EXECUTE));
         scene.idle(35);
 
         scene.overlay().showText(80)
@@ -162,12 +180,12 @@ public class MiscScene {
                 .colored(PonderPalette.RED)
                 .independent();
         scene.idle(10);
-        scene.world().modifyBlockEntity(util.grid().at(2,1,2), DepotBlockEntity.class,
+        scene.world().modifyBlockEntity(util.grid().at(2, 1, 2), DepotBlockEntity.class,
                 be -> be.setHeldItem(new ItemStack(PackageStyles.ALL_BOXES.get(1))));
-        scene.world().modifyBlockEntity(util.grid().at(2,3,2), PrinterBlockEntity.class,
+        scene.world().modifyBlockEntity(util.grid().at(2, 3, 2), PrinterBlockEntity.class,
                 be -> be.processingTicks = 50);
         scene.idle(45);
-        scene.world().modifyBlockEntity(util.grid().at(2,1,2), DepotBlockEntity.class,
+        scene.world().modifyBlockEntity(util.grid().at(2, 1, 2), DepotBlockEntity.class,
                 be -> be.setHeldItem(CDPItems.RARE_MARBLE_GATE_PACKAGE.asStack()));
         scene.idle(50);
     }

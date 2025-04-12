@@ -52,8 +52,8 @@ public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
 
     public EnchantedBookPrintingRecipeJEI(EnchantmentInstance enchantment) {
         this.id = PrintingRecipeJEI.super.getRegistryName().withSuffix("/" +
-                  enchantment.enchantment.getRegisteredName().replace(':', '/') +
-                  enchantment.level);
+                enchantment.enchantment.getRegisteredName().replace(':', '/') +
+                enchantment.level);
         this.enchantment = enchantment;
         this.enchantmentBook = EnchantedBookItem.createForEnchantment(enchantment);
         this.cost = CEIEnchantmentHelper.getEnchantmentCost(enchantment.enchantment, enchantment.level);
@@ -62,11 +62,9 @@ public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
     public static MapCodec<EnchantedBookPrintingRecipeJEI> createCodec(ICodecHelper codecHelper, IRecipeManager recipeManager) {
         return RecordCodecBuilder.<EnchantmentInstance>mapCodec(instance -> instance.group(
                 Enchantment.CODEC.fieldOf("enchantment").forGetter(it -> it.enchantment),
-                Codec.INT.fieldOf("level").forGetter(it -> it.level)
-        ).apply(instance, EnchantmentInstance::new)).xmap(
-                EnchantedBookPrintingRecipeJEI::new,
-                recipe -> recipe.enchantment
-        );
+                Codec.INT.fieldOf("level").forGetter(it -> it.level)).apply(instance, EnchantmentInstance::new)).xmap(
+                        EnchantedBookPrintingRecipeJEI::new,
+                        recipe -> recipe.enchantment);
     }
 
     public static List<PrintingRecipeJEI> listAll() {
