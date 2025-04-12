@@ -152,11 +152,34 @@ public record TextureFilter(boolean blur,
         glTexParameteri(target, GL_TEXTURE_WRAP_R, this.wrapZ.id);
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer data = stack.ints((this.borderColor >> 16) & 0xFF, (this.borderColor >> 8) & 0xFF, this.borderColor & 0xFF, (this.borderColor >> 24) & 0xFF);
             switch (this.borderType) {
-                case FLOAT -> glTexParameteriv(target, GL_TEXTURE_BORDER_COLOR, data);
-                case INT -> glTexParameterIiv(target, GL_TEXTURE_BORDER_COLOR, data);
-                case UINT -> glTexParameterIuiv(target, GL_TEXTURE_BORDER_COLOR, data);
+                case FLOAT -> glTexParameterfv(
+                        target,
+                        GL_TEXTURE_BORDER_COLOR,
+                        stack.floats(
+                                ((this.borderColor >> 16) & 0xFF) / 255.0F,
+                                ((this.borderColor >> 8) & 0xFF) / 255.0F,
+                                (this.borderColor & 0xFF) / 255.0F,
+                                ((this.borderColor >> 24) & 0xFF) / 255.0F
+                        ));
+                case INT -> glTexParameterIiv(
+                        target,
+                        GL_TEXTURE_BORDER_COLOR,
+                        stack.ints(
+                                (this.borderColor >> 16) & 0xFF,
+                                (this.borderColor >> 8) & 0xFF,
+                                this.borderColor & 0xFF,
+                                (this.borderColor >> 24) & 0xFF
+                        ));
+                case UINT -> glTexParameterIuiv(
+                        target,
+                        GL_TEXTURE_BORDER_COLOR,
+                        stack.ints(
+                                (this.borderColor >> 16) & 0xFF,
+                                (this.borderColor >> 8) & 0xFF,
+                                this.borderColor & 0xFF,
+                                (this.borderColor >> 24) & 0xFF
+                        ));
             }
         }
 
@@ -190,11 +213,34 @@ public record TextureFilter(boolean blur,
         glTextureParameteri(texture, GL_TEXTURE_WRAP_R, this.wrapZ.id);
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer data = stack.ints((this.borderColor >> 16) & 0xFF, (this.borderColor >> 8) & 0xFF, this.borderColor & 0xFF, (this.borderColor >> 24) & 0xFF);
             switch (this.borderType) {
-                case FLOAT -> glTextureParameteriv(texture, GL_TEXTURE_BORDER_COLOR, data);
-                case INT -> glTextureParameterIiv(texture, GL_TEXTURE_BORDER_COLOR, data);
-                case UINT -> glTextureParameterIuiv(texture, GL_TEXTURE_BORDER_COLOR, data);
+                case FLOAT -> glTextureParameterfv(
+                        texture,
+                        GL_TEXTURE_BORDER_COLOR,
+                        stack.floats(
+                                ((this.borderColor >> 16) & 0xFF) / 255.0F,
+                                ((this.borderColor >> 8) & 0xFF) / 255.0F,
+                                (this.borderColor & 0xFF) / 255.0F,
+                                ((this.borderColor >> 24) & 0xFF) / 255.0F
+                        ));
+                case INT -> glTextureParameterIiv(
+                        texture,
+                        GL_TEXTURE_BORDER_COLOR,
+                        stack.ints(
+                                (this.borderColor >> 16) & 0xFF,
+                                (this.borderColor >> 8) & 0xFF,
+                                this.borderColor & 0xFF,
+                                (this.borderColor >> 24) & 0xFF
+                        ));
+                case UINT -> glTextureParameterIuiv(
+                        texture,
+                        GL_TEXTURE_BORDER_COLOR,
+                        stack.ints(
+                                (this.borderColor >> 16) & 0xFF,
+                                (this.borderColor >> 8) & 0xFF,
+                                this.borderColor & 0xFF,
+                                (this.borderColor >> 24) & 0xFF
+                        ));
             }
         }
 
