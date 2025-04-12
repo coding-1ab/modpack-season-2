@@ -1,5 +1,5 @@
 package com.mrh0.createaddition.recipe.rolling;
-
+/*
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
@@ -79,3 +79,4 @@ public class SequencedAssemblyRollingRecipeSerializer extends ProcessingRecipeSe
         return new RollingRecipe(recipeId, input, output);
     }
 }
+*/

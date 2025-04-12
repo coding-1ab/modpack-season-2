@@ -34,6 +34,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
 
@@ -49,7 +50,7 @@ public class CreateAdditionJEI implements IModPlugin {
 	}
 
 	public IIngredientManager ingredientManager;
-	final List<CreateRecipeCategory<?>> ALL = new ArrayList<>();
+	static final List<CreateRecipeCategory<?>> ALL = new ArrayList<>();
 
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registration) {
@@ -89,7 +90,7 @@ public class CreateAdditionJEI implements IModPlugin {
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
 		ALL.forEach(c -> c.registerCatalysts(registration));
 
-		registration.getJeiHelpers().getRecipeType(ResourceLocation.fromNamespaceAndPath("create", "sandpaper_polishing"), SandPaperPolishingRecipe.class).ifPresent(type -> {
+		registration.getJeiHelpers().getRecipeType(ResourceLocation.fromNamespaceAndPath("create", "sandpaper_polishing")).ifPresent(type -> {
 			registration.addRecipeCatalyst(new ItemStack(CAItems.DIAMOND_GRIT_SANDPAPER.get()), type);
 		});
 		//registration.addRecipeCatalyst(new ItemStack(CAItems.DIAMOND_GRIT_SANDPAPER.get()), new ResourceLocation(Create.ID, "deploying"));
@@ -99,27 +100,27 @@ public class CreateAdditionJEI implements IModPlugin {
 		return new CategoryBuilder<>(recipeClass);
 	}
 
-	private class CategoryBuilder<T extends Recipe<?>> {
+	private static class CategoryBuilder<T extends Recipe<?>> {
 		private final Class<? extends T> recipeClass;
 		private Predicate<CRecipes> predicate = cRecipes -> true;
 
 		private IDrawable background;
 		private IDrawable icon;
 
-		private final List<Consumer<List<T>>> recipeListConsumers = new ArrayList<>();
+		private final List<Consumer<List<RecipeHolder<T>>>> recipeListConsumers = new ArrayList<>();
 		private final List<Supplier<? extends ItemStack>> catalysts = new ArrayList<>();
 
 		public CategoryBuilder(Class<? extends T> recipeClass) {
 			this.recipeClass = recipeClass;
 		}
 
-		public CategoryBuilder<T> addRecipeListConsumer(Consumer<List<T>> consumer) {
+		public CategoryBuilder<T> addRecipeListConsumer(Consumer<List<RecipeHolder<T>>> consumer) {
 			recipeListConsumers.add(consumer);
 			return this;
 		}
 
 		public CategoryBuilder<T> addTypedRecipes(Supplier<RecipeType<? extends T>> recipeType) {
-			return addRecipeListConsumer(recipes -> CreateJEI.<T>consumeTypedRecipes(recipes::add, recipeType.get()));
+			return addRecipeListConsumer(recipes -> CreateJEI.<T>consumeTypedRecipes((holder) -> recipes.add((RecipeHolder<T>) holder), recipeType.get()));
 		}
 
 		public CategoryBuilder<T> catalystStack(Supplier<ItemStack> supplier) {
@@ -152,6 +153,7 @@ public class CreateAdditionJEI implements IModPlugin {
 			return this;
 		}
 
+		/*
 		public CreateRecipeCategory<T> build(String name, CreateRecipeCategory.Factory<T> factory) {
 			Supplier<List<T>> recipesSupplier;
 			if (predicate.test(AllConfigs.server().recipes)) {
@@ -162,13 +164,33 @@ public class CreateAdditionJEI implements IModPlugin {
 					return recipes;
 				};
 			} else {
-				recipesSupplier = () -> Collections.emptyList();
+				recipesSupplier = Collections::emptyList;
+			}
+
+			CreateRecipeCategory.Info<T> info = new CreateRecipeCategory.Info<>(
+					new mezz.jei.api.recipe.RecipeType<>(CreateAddition.asResource(name), recipeClass),
+					Component.translatable(CreateAddition.MODID + ".recipe." + name), background, icon, recipesSupplier, catalysts);
+            return factory.create(info);
+		}*/
+
+		public CreateRecipeCategory<T> build(String name, CreateRecipeCategory.Factory<T> factory) {
+			Supplier<List<RecipeHolder<T>>> recipesSupplier;
+			if (predicate.test(AllConfigs.server().recipes)) {
+				recipesSupplier = () -> {
+					List<RecipeHolder<T>> recipes = new ArrayList<>();
+					for (Consumer<List<RecipeHolder<T>>> consumer : recipeListConsumers)
+						consumer.accept(recipes);
+					return recipes;
+				};
+			} else {
+				recipesSupplier = Collections::emptyList;
 			}
 
 			CreateRecipeCategory.Info<T> info = new CreateRecipeCategory.Info<>(
 					new mezz.jei.api.recipe.RecipeType<>(CreateAddition.asResource(name), recipeClass),
 					Component.translatable(CreateAddition.MODID + ".recipe." + name), background, icon, recipesSupplier, catalysts);
 			CreateRecipeCategory<T> category = factory.create(info);
+			ALL.add(category);
 			return category;
 		}
 	}

@@ -5,15 +5,12 @@ import com.mrh0.createaddition.blocks.modular_accumulator.ModularAccumulatorBloc
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceBlockEntity;
 import com.mrh0.createaddition.blocks.redstone_relay.RedstoneRelayBlockEntity;
 
-import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
-
 import com.mrh0.createaddition.blocks.electric_motor.ElectricMotorBlockEntity;
-import net.neoforged.neoforge.capabilities.Capabilities;
 
 public class Peripherals {
-	public static boolean isPeripheral(Capability<?> cap) {
+	/*public static boolean isPeripheral(Capability<?> cap) {
 		return cap == CAPABILITY_PERIPHERAL;
-	}
+	}*/
 	
 	public static ElectricMotorPeripheral createElectricMotorPeripheral(ElectricMotorBlockEntity te) {
 		return new ElectricMotorPeripheral("electric_motor", te);
