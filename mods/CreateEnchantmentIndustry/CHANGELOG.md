@@ -1,10 +1,5 @@
-### Create: Enchantment Industry 2.0.1
-
-Overhauling Completed. Welcome to C:EI 2.0!
-
-#### Update
-* European Spanish localization (partial) (by @carlosdi0)
-* Mexican Spanish localization (partial) (by @hyehue)
+### Create: Enchantment Industry 2.0.2
 
 #### Fix
-* Fix stripping enchantment off enchanted book might give empty enchanted book
+* Fix Super Enchanting/Forging's lightning only checks for vanilla lightning rod.
+  Now uses the `c:lightning_rods` Poi & Block tag, supports Friends & Foes lightning rods by default.

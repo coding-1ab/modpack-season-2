@@ -33,14 +33,18 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderLookup.Provider;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
-import net.minecraft.world.entity.ai.village.poi.PoiTypes;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -57,6 +61,14 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 @FieldsNullabilityUnknownByDefault
 public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity implements IHaveGoggleInformation {
     public static final String LIGHTNING_BOLT_EXPERIENCE_CHARGE_KEY = "ExperienceCharge";
+    public static final TagKey<Block> LIGHTNING_ROD_BLOCKS = TagKey.create(
+            Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath("c", "lightning_rods")
+    );
+    public static final TagKey<PoiType> LIGHTNING_ROD_POINT_OF_INTEREST_TYPES = TagKey.create(
+            Registries.POINT_OF_INTEREST_TYPE,
+            ResourceLocation.fromNamespaceAndPath("c", "lightning_rods")
+    );
     protected final LerpedFloat headAnimation = LerpedFloat.linear();
     protected final LerpedFloat headAngle = LerpedFloat.angular();
     private boolean isCreative;
@@ -227,7 +239,7 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity implem
             return false;
         lightning.getPersistentData().putBoolean(LIGHTNING_BOLT_EXPERIENCE_CHARGE_KEY, true);
         Optional<BlockPos> rodPos = level.getPoiManager().findAll(
-                poi -> poi.is(PoiTypes.LIGHTNING_ROD),
+                poi -> poi.is(LIGHTNING_ROD_POINT_OF_INTEREST_TYPES),
                 pos -> pos.getY() == level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ()) - 1,
                 strikePos,
                 128,

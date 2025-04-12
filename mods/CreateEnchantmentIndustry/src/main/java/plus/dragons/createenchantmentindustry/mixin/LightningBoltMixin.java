@@ -25,7 +25,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LightningRodBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -52,7 +51,7 @@ public abstract class LightningBoltMixin extends Entity {
         Level level = this.level();
         BlockPos pos = this.getStrikePosition();
         BlockState blockstate = level.getBlockState(pos);
-        if (blockstate.is(Blocks.LIGHTNING_ROD)) {
+        if (blockstate.is(BlazeExperienceBlockEntity.LIGHTNING_ROD_BLOCKS)) {
             pos = pos.relative(blockstate.getValue(LightningRodBlock.FACING).getOpposite());
             blockstate = level.getBlockState(pos);
         }
