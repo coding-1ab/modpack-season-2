@@ -170,21 +170,6 @@ public class BlazeForgerInventory extends ItemStackHandler {
         conflicting = false;
         overCap = false;
         if (baseType == DataComponents.STORED_ENCHANTMENTS) {
-            if (addition.getItem() instanceof EnchantingTemplateItem template) {
-                if (forger.special && !template.isSpecial()) return;
-                if (additionEnchantments.isEmpty()) {
-                    if (!splitEnchantments(base, addition, baseEnchantments, additionEnchantments)) return;
-                } else {
-                    if (applyEnchantments(base, baseEnchantments, additionEnchantments)) {
-                        stacks.set(5, ItemStack.EMPTY);
-                    } else return;
-                }
-            } else if (additionType == DataComponents.STORED_ENCHANTMENTS) {
-                if (combineEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
-                    stacks.set(5, ItemStack.EMPTY);
-                } else return;
-            } else return;
-        } else {
             if (base.getItem() instanceof EnchantingTemplateItem baseTemplate){
                 if(addition.getItem() instanceof EnchantingTemplateItem addTemplate){
                     if(forger.special && (!baseTemplate.isSpecial() || !addTemplate.isSpecial())) return;
@@ -196,37 +181,52 @@ public class BlazeForgerInventory extends ItemStackHandler {
                                 stacks.set(5, ItemStack.EMPTY);
                         }
                     }
-                } else if(base.is(Items.BOOK) && addition.getItem() instanceof EnchantingTemplateItem template){
-                    if(forger.special && (!template.isSpecial())) return;
-                    if(additionEnchantments.isEmpty()) return;
-                    else {
-                        if(!additionEnchantments.isEmpty()){
-                            if (applyEnchantmentsToBook(base, additionEnchantments))
-                                stacks.set(5, ItemStack.EMPTY);
-                        } else return;
-                    }
                 }
-            } else {
+            } else if(base.is(Items.ENCHANTED_BOOK)){
                 if (addition.getItem() instanceof EnchantingTemplateItem template) {
                     if (forger.special && !template.isSpecial()) return;
                     if (additionEnchantments.isEmpty()) {
-                        if (baseEnchantments.isEmpty()) return;
                         if (!splitEnchantments(base, addition, baseEnchantments, additionEnchantments)) return;
                     } else {
                         if (applyEnchantments(base, baseEnchantments, additionEnchantments)) {
                             stacks.set(5, ItemStack.EMPTY);
                         } else return;
                     }
-                } else if (additionType == DataComponents.STORED_ENCHANTMENTS) {
-                    if (applyEnchantments(base, baseEnchantments, additionEnchantments)) {
-                        stacks.set(5, ItemStack.EMPTY);
-                    } else return;
-                } else if (ItemStack.isSameItem(base, addition)) {
+                } else if (addition.is(Items.ENCHANTED_BOOK)) {
                     if (combineEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
                         stacks.set(5, ItemStack.EMPTY);
                     } else return;
                 } else return;
             }
+        } else if(base.is(Items.BOOK) && addition.getItem() instanceof EnchantingTemplateItem template){
+            if(forger.special && (!template.isSpecial())) return;
+            if(additionEnchantments.isEmpty()) return;
+            else {
+                if(!additionEnchantments.isEmpty()){
+                    if (applyEnchantmentsToBook(base, additionEnchantments))
+                        stacks.set(5, ItemStack.EMPTY);
+                } else return;
+            }
+        } else {
+            if (addition.getItem() instanceof EnchantingTemplateItem template) {
+                if (forger.special && !template.isSpecial()) return;
+                if (additionEnchantments.isEmpty()) {
+                    if (baseEnchantments.isEmpty()) return;
+                    if (!splitEnchantments(base, addition, baseEnchantments, additionEnchantments)) return;
+                } else {
+                    if (applyEnchantments(base, baseEnchantments, additionEnchantments)) {
+                        stacks.set(5, ItemStack.EMPTY);
+                    } else return;
+                }
+            } else if (addition.is(Items.ENCHANTED_BOOK)) {
+                if (applyEnchantments(base, baseEnchantments, additionEnchantments)) {
+                    stacks.set(5, ItemStack.EMPTY);
+                } else return;
+            } else if (ItemStack.isSameItem(base, addition)) {
+                if (combineEnchantments(base, addition, baseEnchantments, additionEnchantments)) {
+                    stacks.set(5, ItemStack.EMPTY);
+                } else return;
+            } else return;
         }
         applyRepairCost(base, addition);
     }
