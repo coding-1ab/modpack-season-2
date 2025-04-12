@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class SpeedControllerTileEntityMixin implements ISpeedControllerAdapter {
 
     @Shadow
-    protected ScrollValueBehaviour targetSpeed;
+    public ScrollValueBehaviour targetSpeed;
 
     public void setTargetSpeed(int speed) {
         this.targetSpeed.setValue(speed);

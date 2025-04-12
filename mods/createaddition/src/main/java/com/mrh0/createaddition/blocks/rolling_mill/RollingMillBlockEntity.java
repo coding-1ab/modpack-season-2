@@ -3,9 +3,6 @@ package com.mrh0.createaddition.blocks.rolling_mill;
 import java.util.List;
 import java.util.Optional;
 
-import com.mrh0.createaddition.config.CommonConfig;
-import com.mrh0.createaddition.index.CABlockEntities;
-import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.recipe.rolling.RollingRecipe;
 import com.simibubi.create.AllBlockEntityTypes;
@@ -18,10 +15,8 @@ import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.sound.SoundScapes;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -115,7 +110,7 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 		RecipeWrapper inventoryIn = new RecipeWrapper(inputInv);
 		if (lastRecipe == null || !lastRecipe.matches(inventoryIn, level)) {
 			Optional<RecipeHolder<RollingRecipe>> recipe = find(inventoryIn, level);
-			if (!recipe.isPresent()) {
+			if (recipe.isEmpty()) {
 				timer = 100;
 				sendData();
 			} else {
@@ -148,7 +143,7 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 
 		if (lastRecipe == null || !lastRecipe.matches(inventoryIn, level)) {
 			Optional<RecipeHolder<RollingRecipe>> recipe = find(inventoryIn, level);
-			if (!recipe.isPresent())
+			if (recipe.isEmpty())
 				return;
 			lastRecipe = recipe.get().value();
 		}

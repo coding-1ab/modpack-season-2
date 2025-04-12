@@ -1,8 +1,6 @@
 package com.mrh0.createaddition.blocks.modular_accumulator;
 
 import com.mrh0.createaddition.CreateAddition;
-import com.mrh0.createaddition.compat.computercraft.ModularAccumulatorPeripheral;
-import com.mrh0.createaddition.compat.computercraft.Peripherals;
 import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.debug.IDebugDrawer;
 import com.mrh0.createaddition.energy.IMultiTileEnergyContainer;
@@ -37,7 +35,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -101,7 +98,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 					getBlockPos().relative(side),
 					side.getOpposite(),
 					() -> !this.isRemoved(),
-					() -> { invalidSides.add(side); }
+					() -> invalidSides.add(side)
 			));
 		}
 	}

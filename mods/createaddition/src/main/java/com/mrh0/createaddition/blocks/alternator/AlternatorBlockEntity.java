@@ -141,7 +141,7 @@ public class AlternatorBlockEntity extends KineticBlockEntity implements IEnergy
 
 	public void firstTick() {
 		updateCache();
-	};
+	}
 
 	public void updateCache() {
 		if (level == null) return;
@@ -153,7 +153,7 @@ public class AlternatorBlockEntity extends KineticBlockEntity implements IEnergy
 					getBlockPos().relative(side),
 					side.getOpposite(),
 					() -> !this.isRemoved(),
-					() -> { invalidSides.add(side); }
+					() -> invalidSides.add(side)
 			));
 		}
 	}

@@ -1,7 +1,6 @@
 package com.mrh0.createaddition.blocks.alternator;
 
 import com.simibubi.create.AllPartialModels;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 
 import net.createmod.catnip.render.CachedBuffers;

@@ -7,7 +7,6 @@ import com.simibubi.create.content.logistics.crate.CrateBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
@@ -57,7 +56,7 @@ public class CreativeEnergyBlockEntity extends CrateBlockEntity {
 	
 	public void firstTick() {
 		updateCache();
-	};
+	}
 	
 	public void updateCache() {
 		if (level == null) return;
@@ -69,7 +68,7 @@ public class CreativeEnergyBlockEntity extends CrateBlockEntity {
 				getBlockPos().relative(side),
 				side.getOpposite(),
 				() -> !this.isRemoved(),
-				() -> { invalidSides.add(side); }
+				() -> invalidSides.add(side)
 			));
 		}
 	}

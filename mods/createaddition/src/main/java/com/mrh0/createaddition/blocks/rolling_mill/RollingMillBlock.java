@@ -28,9 +28,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class RollingMillBlock extends HorizontalKineticBlock implements IBE<RollingMillBlockEntity> {
 
@@ -85,7 +87,7 @@ public class RollingMillBlock extends HorizontalKineticBlock implements IBE<Roll
 		super.updateEntityAfterFallOn(worldIn, entityIn);
 
         if (entityIn.level().isClientSide) return;
-		if (!(entityIn instanceof ItemEntity)) return;
+		if (!(entityIn instanceof ItemEntity itemEntity)) return;
 		if (!entityIn.isAlive()) return;
 
 		RollingMillBlockEntity rollingMill = null;
@@ -94,8 +96,7 @@ public class RollingMillBlock extends HorizontalKineticBlock implements IBE<Roll
 		}
 		if (rollingMill == null) return;
 
-		ItemEntity itemEntity = (ItemEntity) entityIn;
-		LazyOptional<IItemHandler> capability = rollingMill.getCapability(ForgeCapabilities.ITEM_HANDLER);
+        LazyOptional<IItemHandler> capability = rollingMill.getCapability(Capabilities.ItemHandler);
 		if (!capability.isPresent()) return;
 
 		ItemStack remainder = capability.orElse(new ItemStackHandler()).insertItem(0, itemEntity.getItem(), false);
@@ -117,6 +118,7 @@ public class RollingMillBlock extends HorizontalKineticBlock implements IBE<Roll
 		}
 	}
 
+	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		Direction preferredSide = getPreferredHorizontalFacing(context);

@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 public class TeslaCoilBlock extends Block implements IBE<TeslaCoilBlockEntity>, IWrenchable {
 	public TeslaCoilBlock(Properties props) {
@@ -67,7 +68,7 @@ public class TeslaCoilBlock extends Block implements IBE<TeslaCoilBlockEntity>, 
 	}
 	
 	@Override
-	public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) {
+	public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos,@Nullable Direction side) {
 		return true;
 	}
 }

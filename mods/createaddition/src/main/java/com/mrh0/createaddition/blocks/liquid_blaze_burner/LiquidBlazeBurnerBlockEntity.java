@@ -379,8 +379,8 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 			boolean lowPercent = (double) remainingBurnTime / MAX_HEAT_CAPACITY < 0.0125;
 			level = lowPercent ? BlazeBurnerBlock.HeatLevel.FADING : BlazeBurnerBlock.HeatLevel.KINDLED;
 			break;
-		default:
 		case NONE:
+		default:
 			break;
 		}
 		return level;
@@ -415,8 +415,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 		} else if (heatLevel.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING)) {
 			level.addParticle(ParticleTypes.FLAME, v2.x, v2.y, v2.z, 0, yMotion, 0);
 		}
-		return;
-	}
+    }
 
 	public void spawnParticleBurst(boolean soulFlame) {
 		Vec3 c = VecHelper.getCenterOf(worldPosition);

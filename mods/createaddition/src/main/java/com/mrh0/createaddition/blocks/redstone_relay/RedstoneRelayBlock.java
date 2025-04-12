@@ -41,8 +41,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.ticks.TickPriority;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class RedstoneRelayBlock extends Block implements IBE<RedstoneRelayBlockEntity>, IWrenchable, TransformableBlock {
 
@@ -110,10 +109,10 @@ public class RedstoneRelayBlock extends Block implements IBE<RedstoneRelayBlockE
 		boolean flag = state.getValue(POWERED);
 		boolean flag1 = this.shouldBePowered(worldIn, pos, state);
 		if (flag && !flag1) {
-			worldIn.setBlock(pos, state.setValue(POWERED, Boolean.valueOf(false)), 2);
+			worldIn.setBlock(pos, state.setValue(POWERED, Boolean.FALSE), 2);
 		}
 		else if (!flag) {
-			worldIn.setBlock(pos, state.setValue(POWERED, Boolean.valueOf(true)), 2);
+			worldIn.setBlock(pos, state.setValue(POWERED, Boolean.TRUE), 2);
 		}
 	}
 
@@ -225,21 +224,20 @@ public class RedstoneRelayBlock extends Block implements IBE<RedstoneRelayBlockE
 		BlockEntity te = c.getLevel().getBlockEntity(c.getClickedPos());
 		if(te == null)
 			return IWrenchable.super.onSneakWrenched(state, c);
-		if(!(te instanceof IWireNode))
+		if(!(te instanceof IWireNode cte))
 			return IWrenchable.super.onSneakWrenched(state, c);
-		IWireNode cte = (IWireNode) te;
 
-		if (!c.getLevel().isClientSide())
+        if (!c.getLevel().isClientSide())
 			cte.dropWires(c.getLevel(), c.getPlayer(), !c.getPlayer().isCreative());
 
 		return IWrenchable.super.onSneakWrenched(state, c);
 	}
 
 	@Override
-	public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) {
+	public boolean canConnectRedstone(@Nullable BlockState state,@Nullable BlockGetter world,@Nullable BlockPos pos,@Nullable Direction side) {
 		if(pos == null || side == null || state == null || world == null)
 			return false;
-		return !state.getValue(VERTICAL).booleanValue() && side.getAxis() != state.getValue(HORIZONTAL_FACING).getAxis();
+		return !state.getValue(VERTICAL) && side.getAxis() != state.getValue(HORIZONTAL_FACING).getAxis();
 	}
 
 	private BlockState fromRotation(BlockState state, Direction dir) {

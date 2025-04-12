@@ -16,6 +16,6 @@ public class RollingRecipeProcessingFactory implements ProcessingRecipeBuilder.P
         if (!params.getResults().isEmpty()) {
             result = params.getResults().getFirst().getStack();
         }
-        return new RollingRecipe(params.getID(), ingredient, result);
+        return new RollingRecipe(params.getID().getPath(), ingredient, result);
     }
 }

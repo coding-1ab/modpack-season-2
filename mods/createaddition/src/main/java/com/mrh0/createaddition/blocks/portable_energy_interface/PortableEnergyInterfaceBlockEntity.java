@@ -1,8 +1,5 @@
 package com.mrh0.createaddition.blocks.portable_energy_interface;
 
-import com.mrh0.createaddition.CreateAddition;
-import com.mrh0.createaddition.compat.computercraft.Peripherals;
-import com.mrh0.createaddition.compat.computercraft.PortableEnergyInterfacePeripheral;
 import com.mrh0.createaddition.config.CommonConfig;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceBlockEntity;

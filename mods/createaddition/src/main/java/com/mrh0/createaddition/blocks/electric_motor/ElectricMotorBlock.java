@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 public class ElectricMotorBlock extends DirectionalKineticBlock implements IBE<ElectricMotorBlockEntity> {
 
@@ -47,6 +48,7 @@ public class ElectricMotorBlock extends DirectionalKineticBlock implements IBE<E
 		return ELECTRIC_MOTOR_SHAPE.get(state.getValue(FACING));
 	}
 
+	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		Direction preferred = getPreferredFacing(context);
@@ -85,7 +87,7 @@ public class ElectricMotorBlock extends DirectionalKineticBlock implements IBE<E
 	}
 
 	@Override
-	public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) {
+	public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, @Nullable Direction side) {
 		return true;
 	}
 

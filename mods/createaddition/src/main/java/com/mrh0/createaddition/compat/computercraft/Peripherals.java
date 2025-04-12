@@ -6,6 +6,7 @@ import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyIn
 import com.mrh0.createaddition.blocks.redstone_relay.RedstoneRelayBlockEntity;
 
 import com.mrh0.createaddition.blocks.electric_motor.ElectricMotorBlockEntity;
+import net.neoforged.neoforge.capabilities.Capabilities;
 
 public class Peripherals {
 	/*public static boolean isPeripheral(Capability<?> cap) {
