@@ -33,15 +33,12 @@ public class WireSpool extends Item {
 	@Override
 	public InteractionResult useOn(UseOnContext c) {
 		CompoundTag nbt = c.getItemInHand().getTag();
-		if(nbt == null)
-			nbt = new CompoundTag();
+		if(nbt == null) nbt = new CompoundTag();
 
 		var clickedPos = c.getClickedPos();
 		BlockEntity te = c.getLevel().getBlockEntity(clickedPos);
-		if(te == null)
-			return InteractionResult.PASS;
-		if(!(te instanceof IWireNode))
-			return InteractionResult.PASS;
+		if(te == null) return InteractionResult.PASS;
+		if(!(te instanceof IWireNode)) return InteractionResult.PASS;
 		IWireNode node = (IWireNode) te;
 		var heldItem = c.getItemInHand().getItem();
 
@@ -101,8 +98,7 @@ public class WireSpool extends Item {
 				}
 			}
 			int index = node.getAvailableNode(c.getClickLocation());
-			if(index < 0)
-				return InteractionResult.PASS;
+			if(index < 0) return InteractionResult.PASS;
 			if(!isRemover(heldItem))
 				c.getPlayer().displayClientMessage(WireConnectResult.getConnect(node.isNodeInput(index), node.isNodeOutput(index)).getMessage(), true);
 			c.getItemInHand().setTag(null);
@@ -112,26 +108,19 @@ public class WireSpool extends Item {
 	}
 
 	public static boolean hasPos(CompoundTag nbt) {
-		if(nbt == null)
-			return false;
-    	return nbt.contains("x") && nbt.contains("y") && nbt.contains("z") && nbt.contains("node");
+        return nbt.contains("x") && nbt.contains("y") && nbt.contains("z") && nbt.contains("node");
     }
 
 	public static BlockPos getPos(CompoundTag nbt){
-		if(nbt == null)
-			return null;
-    	return new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z"));
+        return new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z"));
     }
 
 	public static int getNode(CompoundTag nbt){
-		if(nbt == null)
-			return -1;
-    	return nbt.getInt("node");
+        return nbt.getInt("node");
     }
 
 	public static CompoundTag setContent(CompoundTag nbt, BlockPos pos, int node){
-		if(nbt == null)
-			return new CompoundTag();
+		if(nbt == null) return new CompoundTag();
     	nbt.putInt("x", pos.getX());
     	nbt.putInt("y", pos.getY());
     	nbt.putInt("z", pos.getZ());
@@ -140,12 +129,11 @@ public class WireSpool extends Item {
     }
 
 	@Override
-    public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
 		CompoundTag nbt = stack.getTag();
-    	super.appendHoverText(stack, worldIn, tooltip, flagIn);
-    	if(hasPos(nbt))
-    		tooltip.add(Component.translatable("item."+CreateAddition.MODID+".spool.nbt"));
-    }
+		super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+		if(hasPos(nbt)) tooltipComponents.add(Component.translatable("item."+CreateAddition.MODID+".spool.nbt"));
+	}
 
 	public static boolean isRemover(Item item) {
 		return item == CAItems.SPOOL.get();
