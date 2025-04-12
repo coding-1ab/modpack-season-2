@@ -1,9 +1,7 @@
-### Create: Enchantment Industry 2.0.2
+### Create: Enchantment Industry 2.0.3
 
 #### Update
-* `es_es` translation by @carlosdi0
-* `ja_jp` translation by @yukkuriofuton
+* Blaze Enchanter Target Item now has a visual Indicator
 
 #### Fix
-* Fix Super Enchanting/Forging's lightning only checks for vanilla lightning rod.
-  Now uses the `c:lightning_rods` Poi & Block tag, supports Friends & Foes lightning rods by default.
+* Fix Blaze Forger does not apply enchanting template to book properly

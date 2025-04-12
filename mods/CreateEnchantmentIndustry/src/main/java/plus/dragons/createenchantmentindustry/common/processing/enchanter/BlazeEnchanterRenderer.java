@@ -41,7 +41,7 @@ public class BlazeEnchanterRenderer extends BlazeBlockRenderer<BlazeEnchanterBlo
 
     @Override
     protected void renderSafe(BlazeEnchanterBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light, int overlay) {
-        EnchanterBehaviorExtraItemRenderer.renderOnBlockEntity(blockEntity, partialTicks, poseStack, bufferSource, light, overlay);
+        EnchanterBehaviorTemplateItemRenderer.renderOnBlockEntity(blockEntity, partialTicks, poseStack, bufferSource, light, overlay);
         var item = blockEntity.heldItem;
         if (!item.isEmpty())
             renderItem(blockEntity, item, blockEntity.processingTime, partialTicks, poseStack, bufferSource, light, overlay);

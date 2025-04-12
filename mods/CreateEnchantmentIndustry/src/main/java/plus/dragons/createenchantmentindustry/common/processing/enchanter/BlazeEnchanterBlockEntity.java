@@ -328,6 +328,15 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
         }
 
         @Override
+        public boolean testHit(LevelAccessor level, BlockPos pos, BlockState state, Vec3 localHit) {
+            if(!isSideActive(state, getSide())) return false;
+            Vec3 location = VecHelper.voxelSpace(8, 8, 13.5);
+            location = VecHelper.rotateCentered(location, AngleHelper.horizontalAngle(getSide()), Direction.Axis.Y);
+            location = VecHelper.rotateCentered(location, AngleHelper.verticalAngle(getSide()), Direction.Axis.X);
+            return localHit.distanceTo(location) < scale * 1.2;
+        }
+
+        @Override
         protected boolean isSideActive(BlockState state, Direction direction) {
             return direction.getAxis().isHorizontal();
         }

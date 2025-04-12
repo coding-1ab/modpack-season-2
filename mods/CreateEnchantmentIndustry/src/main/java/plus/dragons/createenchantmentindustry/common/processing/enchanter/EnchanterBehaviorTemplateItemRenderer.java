@@ -7,7 +7,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -15,16 +14,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import plus.dragons.createenchantmentindustry.common.CEICommon;
+import net.minecraft.world.phys.Vec3;
 
-import static net.createmod.ponder.PonderClient.isGameActive;
-
-@EventBusSubscriber(value=Dist.CLIENT,modid= CEICommon.ID)
-public class EnchanterBehaviorExtraItemRenderer {
+public class EnchanterBehaviorTemplateItemRenderer {
     public static void renderOnBlockEntity(SmartBlockEntity be, float partialTicks, PoseStack ms,
                                            MultiBufferSource buffer, int light, int overlay) {
 
@@ -43,6 +35,15 @@ public class EnchanterBehaviorExtraItemRenderer {
             if (behaviour.getTemplate().isEmpty())
                 return;
 
+            Minecraft mc = Minecraft.getInstance();
+            HitResult target = mc.hitResult;
+            if (target == null || !(target instanceof BlockHitResult result))
+                return;
+            Vec3 localHit = target.getLocation().subtract(Vec3.atLowerCornerOf(be.getBlockPos()));
+            boolean highlight = behaviour.templateItemTransform.testHit(level,blockPos,be.getBlockState(),localHit);
+            behaviour.templateItemTransform.fromSide(result.getDirection());
+            if(!highlight) return;
+
             ValueBoxTransform slotPositioning = behaviour.getTemplateItemSlotPositioning();
             BlockState blockState = be.getBlockState();
 
@@ -60,30 +61,9 @@ public class EnchanterBehaviorExtraItemRenderer {
             if (slotPositioning.shouldRender(level, blockPos, blockState)) {
                 ms.pushPose();
                 slotPositioning.transform(level, blockPos, blockState, ms);
-                float scale = 0.75f;
-                ms.scale(scale, scale, scale);
                 ValueBoxRenderer.renderItemIntoValueBox(behaviour.getTemplate(), ms, buffer, light, overlay);
                 ms.popPose();
             }
-        }
-    }
-
-    @SubscribeEvent
-    private static void onTickPost(ClientTickEvent.Post event){
-        if (!isGameActive())
-            return;
-        Minecraft mc = Minecraft.getInstance();
-        HitResult target = mc.hitResult;
-        if (target == null || !(target instanceof BlockHitResult result))
-            return;
-        ClientLevel world = mc.level;
-        BlockPos pos = result.getBlockPos();
-        if (!(world.getBlockEntity(pos) instanceof BlazeEnchanterBlockEntity be))
-            return;
-        for (BlockEntityBehaviour b : be.getAllBehaviours()) {
-            if (!(b instanceof EnchanterBehaviour behaviour))
-                continue;
-            behaviour.templateItemTransform.fromSide(result.getDirection());
         }
     }
 }
