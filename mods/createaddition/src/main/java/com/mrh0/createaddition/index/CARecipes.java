@@ -3,7 +3,6 @@ package com.mrh0.createaddition.index;
 import com.mojang.serialization.MapCodec;
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.recipe.charging.ChargingRecipe;
-import com.mrh0.createaddition.recipe.charging.ChargingRecipeSerializer;
 import com.mrh0.createaddition.recipe.conditions.HasFluidTagCondition;
 import com.mrh0.createaddition.recipe.liquid_burning.LiquidBurningRecipe;
 import com.mrh0.createaddition.recipe.rolling.RollingRecipe;
@@ -38,10 +37,10 @@ public class CARecipes {
 			new SequencedAssemblyRollingRecipeSerializer(new RollingRecipeProcessingFactory()));
 
 	public static final Supplier<RecipeType<ChargingRecipe>> CHARGING_TYPE = registerRecipeType("charging");
-	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ChargingRecipe>> CHARGING = SERIALIZERS.register("charging", ChargingRecipeSerializer::new);
+	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ChargingRecipe>> CHARGING = SERIALIZERS.register("charging", ChargingRecipe.Serializer::new);
 
 	public static final Supplier<RecipeType<LiquidBurningRecipe>> LIQUID_BURNING_TYPE = registerRecipeType("liquid_burning");
-	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<LiquidBurningRecipe>> LIQUID_BURNING = SERIALIZERS.register("liquid_burning", LiquidBurningRecipeSerializer::new);
+	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<LiquidBurningRecipe>> LIQUID_BURNING = SERIALIZERS.register("liquid_burning", LiquidBurningRecipe.Serializer::new);
 
 	public static final Supplier<MapCodec<HasFluidTagCondition>> HAS_FLUID_TAG_CONDITION =
 			CONDITION_CODECS.register("has_fluid_tag", () -> HasFluidTagCondition.CODEC);

@@ -3,6 +3,7 @@ package com.mrh0.createaddition.recipe.rolling;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.compat.jei.RollingMillAssemblySubCategory;
 import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.index.CARecipes;
@@ -36,8 +37,9 @@ public class RollingRecipe extends ProcessingRecipe<RecipeWrapper> implements IA
     protected final ItemStack output;
     protected final Ingredient ingredient;
 
-    protected RollingRecipe(ResourceLocation group, Ingredient ingredient, ItemStack output) {
-        super(new RollingRecipeInfo((SequencedAssemblyRollingRecipeSerializer) CARecipes.ROLLING.get(), CARecipes.ROLLING_TYPE.get()), new RollingMillRecipeParams(group,ingredient, new ProcessingOutput(output, 1f)));
+    protected RollingRecipe(String group, Ingredient ingredient, ItemStack output) {
+        // This line needs to be checked
+        super(new RollingRecipeInfo((SequencedAssemblyRollingRecipeSerializer) CARecipes.ROLLING.get(), CARecipes.ROLLING_TYPE.get()), new RollingMillRecipeParams(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID,group),ingredient, new ProcessingOutput(output, 1f)));
         this.output = output;
         this.ingredient = ingredient;
     }
