@@ -186,7 +186,15 @@ public class BlazeForgerInventory extends ItemStackHandler {
                 if (addition.getItem() instanceof EnchantingTemplateItem template) {
                     if (forger.special && !template.isSpecial()) return;
                     if (additionEnchantments.isEmpty()) {
-                        if (!splitEnchantments(base, addition, baseEnchantments, additionEnchantments)) return;
+                        if(baseEnchantments.size()==1){
+                            var book = Items.BOOK.getDefaultInstance();
+                            EnchantmentHelper.setEnchantments(addition,baseEnchantments);
+                            stacks.set(4, book);
+                            stacks.set(5, addition);
+                            var enchantment = baseEnchantments.entrySet().stream().findFirst().get();
+                            cost += Math.max(1,enchantment.getKey().value().getAnvilCost() * 2) * enchantment.getIntValue();
+                        }
+                        else if (!splitEnchantments(base, addition, baseEnchantments, additionEnchantments)) return;
                     } else {
                         if (applyEnchantments(base, baseEnchantments, additionEnchantments)) {
                             stacks.set(5, ItemStack.EMPTY);
