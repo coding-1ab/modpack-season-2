@@ -31,12 +31,12 @@ import plus.dragons.createenchantmentindustry.common.CEICommon;
 @Mod(value = CEICommon.ID, dist = Dist.CLIENT)
 public class CEIClient {
     public CEIClient(IEventBus modBus) {
-        CEIPartialModels.register();
         modBus.register(this);
     }
 
     @SubscribeEvent
     public void setup(final FMLClientSetupEvent event) {
+        CEIPartialModels.register();
         PonderIndex.addPlugin(new CEIPonderPlugin());
     }
 }

@@ -18,6 +18,7 @@
 
 package plus.dragons.createenchantmentindustry.client.model;
 
+import com.simibubi.create.Create;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 
@@ -26,6 +27,7 @@ public class CEIPartialModels {
     public static final PartialModel PRINTER_NOZZLE_TOP = block("printer/nozzle_top");
     public static final PartialModel PRINTER_NOZZLE_BOTTOM = block("printer/nozzle_bottom");
     public static final PartialModel PRINTER_PISTON = block("printer/piston");
+    public static final PartialModel BLAZE_ITEM = PartialModel.of(Create.asResource("block/blaze_burner/block_with_blaze"));
     public static final PartialModel BLAZE_ENCHANTER_HAT = block("blaze/enchanter_hat");
     public static final PartialModel BLAZE_ENCHANTER_HAT_SMALL = block("blaze/enchanter_hat_small");
     public static final PartialModel BLAZE_FORGER_HAT = block("blaze/forger_hat");

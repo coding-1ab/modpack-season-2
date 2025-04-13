@@ -46,7 +46,7 @@ public class BlazeEnchanterItemRenderer extends CustomRenderedItemModelRenderer 
 
     @Override
     protected void render(ItemStack stack, CustomRenderedItemModel model, PartialItemModelRenderer renderer, ItemDisplayContext transformType, PoseStack poseStack, MultiBufferSource bufferSource, int light, int overlay) {
-        renderer.render(model.getOriginalModel(), light);
+        renderer.render(CEIPartialModels.BLAZE_ITEM.get(), light);
         poseStack.pushPose();
         poseStack.translate(.5f, .75f, .5f);
         renderer.render(CEIPartialModels.BLAZE_ENCHANTER_HAT.get(), light);
