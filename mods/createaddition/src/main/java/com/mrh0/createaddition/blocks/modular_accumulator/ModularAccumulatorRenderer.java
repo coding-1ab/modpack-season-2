@@ -20,11 +20,12 @@ public class ModularAccumulatorRenderer extends SafeBlockEntityRenderer<ModularA
 	public ModularAccumulatorRenderer(BlockEntityRendererProvider.Context context) {}
 
 	@Override
-	protected void renderSafe(ModularAccumulatorBlockEntity te, float partialTicks, PoseStack ms, MultiBufferSource buffer,
+	protected void renderSafe(ModularAccumulatorBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
 							  int light, int overlay) {
-		if (!te.isController()) return;
-		renderDial(te, partialTicks, ms, buffer, light, overlay);
-		te.observe();
+		//System.out.println("BE:" + be.isController() + " ; " + be.getBlockPos());
+		if (!be.isController()) return;
+		renderDial(be, partialTicks, ms, buffer, light, overlay);
+		be.observe();
 	}
 
 	protected void renderDial(ModularAccumulatorBlockEntity te, float partialTicks, PoseStack ms, MultiBufferSource buffer,

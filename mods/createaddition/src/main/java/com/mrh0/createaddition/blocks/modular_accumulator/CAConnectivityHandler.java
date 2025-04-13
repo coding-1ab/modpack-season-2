@@ -38,8 +38,7 @@ public class CAConnectivityHandler {
 		BlockGetter level, SearchCache<T> cache, List<T> frontier) {
 		PriorityQueue<Pair<Integer, T>> creationQueue = makeCreationQueue();
 		Set<BlockPos> visited = new HashSet<>();
-		Direction.Axis mainAxis = frontier.getFirst()
-			.getMainConnectionAxis();
+		Direction.Axis mainAxis = frontier.getFirst().getMainConnectionAxis();
 
 		// essentially, if it's a vertical multi then the search won't be restricted by
 		// Y
@@ -67,29 +66,22 @@ public class CAConnectivityHandler {
 		while (!frontier.isEmpty()) {
 			T part = frontier.removeFirst();
 			BlockPos partPos = part.getBlockPos();
-			if (visited.contains(partPos))
-				continue;
+			if (visited.contains(partPos)) continue;
 
 			visited.add(partPos);
 
 			int amount = tryToFormNewMulti(part, cache, true);
-			if (amount > 1) {
-				creationQueue.add(Pair.of(amount, part));
-			}
+			if (amount > 1) creationQueue.add(Pair.of(amount, part));
 
 			for (Direction.Axis axis : Iterate.axes) {
 				Direction dir = Direction.get(Direction.AxisDirection.NEGATIVE, axis);
 				BlockPos next = partPos.relative(dir);
 
-				if (next.getX() <= minX || next.getY() <= minY || next.getZ() <= minZ)
-					continue;
-				if (visited.contains(next))
-					continue;
+				if (next.getX() <= minX || next.getY() <= minY || next.getZ() <= minZ) continue;
+				if (visited.contains(next)) continue;
 				T nextBe = partAt(type, level, next);
-				if (nextBe == null)
-					continue;
-				if (nextBe.isRemoved())
-					continue;
+				if (nextBe == null) continue;
+				if (nextBe.isRemoved()) continue;
 				frontier.add(nextBe);
 			}
 		}
@@ -98,8 +90,7 @@ public class CAConnectivityHandler {
 		while (!creationQueue.isEmpty()) {
 			Pair<Integer, T> next = creationQueue.poll();
 			T toCreate = next.getValue();
-			if (visited.contains(toCreate.getBlockPos()))
-				continue;
+			if (visited.contains(toCreate.getBlockPos())) continue;
 
 			visited.add(toCreate.getBlockPos());
 			tryToFormNewMulti(toCreate, cache, false);
@@ -110,14 +101,12 @@ public class CAConnectivityHandler {
 		boolean simulate) {
 		int bestWidth = 1;
 		int bestAmount = -1;
-		if (!be.isController())
-			return 0;
+		if (!be.isController()) return 0;
 
 		int radius = be.getMaxWidth();
 		for (int w = 1; w <= radius; w++) {
 			int amount = tryToFormNewMultiOfWidth(be, w, cache, true);
-			if (amount < bestAmount)
-				continue;
+			if (amount < bestAmount) continue;
 			bestWidth = w;
 			bestAmount = amount;
 		}
@@ -147,8 +136,7 @@ public class CAConnectivityHandler {
 		int height = 0;
 		BlockEntityType<?> type = be.getType();
 		Level level = be.getLevel();
-		if (level == null)
-			return 0;
+		if (level == null) return 0;
 		BlockPos origin = be.getBlockPos();
 
 		// optional energy handling
@@ -167,44 +155,30 @@ public class CAConnectivityHandler {
 					case Z -> origin.offset(xOffset, zOffset, yOffset);
 					};
 					Optional<T> part = cache.getOrCache(type, level, pos);
-					if (part.isEmpty())
-						break Search;
+					if (part.isEmpty()) break Search;
 
 					T controller = part.get();
 					int otherWidth = controller.getWidth();
-					if (otherWidth > width)
-						break Search;
-					if (otherWidth == width && controller.getHeight() == be.getMaxLength(axis, width))
-						break Search;
+					if (otherWidth > width) break Search;
+					if (otherWidth == width && controller.getHeight() == be.getMaxLength(axis, width)) break Search;
 
 					Direction.Axis conAxis = controller.getMainConnectionAxis();
-					if (axis != conAxis)
-						break Search;
+					if (axis != conAxis) break Search;
 
 					BlockPos conPos = controller.getBlockPos();
 					if (!conPos.equals(origin)) {
 						if (axis == Direction.Axis.Y) { // vertical multi, like a FluidTank
-							if (conPos.getX() < origin.getX())
-								break Search;
-							if (conPos.getZ() < origin.getZ())
-								break Search;
-							if (conPos.getX() + otherWidth > origin.getX() + width)
-								break Search;
-							if (conPos.getZ() + otherWidth > origin.getZ() + width)
-								break Search;
+							if (conPos.getX() < origin.getX()) break Search;
+							if (conPos.getZ() < origin.getZ()) break Search;
+							if (conPos.getX() + otherWidth > origin.getX() + width) break Search;
+							if (conPos.getZ() + otherWidth > origin.getZ() + width) break Search;
 						} else { // horizontal multi, like an ItemVault
-							if (axis == Direction.Axis.Z && conPos.getX() < origin.getX())
-								break Search;
-							if (conPos.getY() < origin.getY())
-								break Search;
-							if (axis == Direction.Axis.X && conPos.getZ() < origin.getZ())
-								break Search;
-							if (axis == Direction.Axis.Z && conPos.getX() + otherWidth > origin.getX() + width)
-								break Search;
-							if (conPos.getY() + otherWidth > origin.getY() + width)
-								break Search;
-							if (axis == Direction.Axis.X && conPos.getZ() + otherWidth > origin.getZ() + width)
-								break Search;
+							if (axis == Direction.Axis.Z && conPos.getX() < origin.getX()) break Search;
+							if (conPos.getY() < origin.getY()) break Search;
+							if (axis == Direction.Axis.X && conPos.getZ() < origin.getZ()) break Search;
+							if (axis == Direction.Axis.Z && conPos.getX() + otherWidth > origin.getX() + width) break Search;
+							if (conPos.getY() + otherWidth > origin.getY() + width) break Search;
+							if (axis == Direction.Axis.X && conPos.getZ() + otherWidth > origin.getZ() + width) break Search;
 						}
 					}
 					if (controller instanceof ModularAccumulatorBlockEntity ienergyCon && ienergyCon.hasAccumulator()) {
@@ -230,10 +204,8 @@ public class CAConnectivityHandler {
 					case Z -> origin.offset(xOffset, zOffset, yOffset);
 					};
 					T part = partAt(type, level, pos);
-					if (part == null)
-						continue;
-					if (part == be)
-						continue;
+					if (part == null) continue;
+					if (part == be) continue;
 
 					extraData = be.modifyExtraData(extraData);
 
@@ -273,17 +245,14 @@ public class CAConnectivityHandler {
 	private static <T extends BlockEntity & IMultiBlockEntityContainer> void splitMultiAndInvalidate(T be,
 		@Nullable SearchCache<T> cache, boolean tryReconnect) {
 		Level level = be.getLevel();
-		if (level == null)
-			return;
+		if (level == null) return;
 
 		be = be.getControllerBE();
-		if (be == null)
-			return;
+		if (be == null) return;
 
 		int height = be.getHeight();
 		int width = be.getWidth();
-		if (width == 1 && height == 1)
-			return;
+		if (width == 1 && height == 1) return;
 
 		BlockPos origin = be.getBlockPos();
 		List<T> frontier = new ArrayList<>();
@@ -312,11 +281,8 @@ public class CAConnectivityHandler {
 					};
 
 					T partAt = partAt(be.getType(), level, pos);
-					if (partAt == null)
-						continue;
-					if (!partAt.getController()
-						.equals(origin))
-						continue;
+					if (partAt == null) continue;
+					if (!partAt.getController().equals(origin)) continue;
 
 					T controllerBE = partAt.getControllerBE();
 					partAt.setExtraData((controllerBE == null ? null : controllerBE.getExtraData()));
@@ -336,8 +302,7 @@ public class CAConnectivityHandler {
 						frontier.add(partAt);
 						partAt.preventConnectivityUpdate();
 					}
-					if (cache != null)
-						cache.put(pos, partAt);
+					if (cache != null) cache.put(pos, partAt);
 				}
 			}
 		}
@@ -346,12 +311,11 @@ public class CAConnectivityHandler {
 			ienergyBE.getEnergy().setEnergy(toDistribute);
 		}
 
-		if (be instanceof ModularAccumulatorBlockEntity ienergy && ienergy.hasAccumulator())
-			be.invalidateCapabilities();
-			//be.getCapability(Capabilities.EnergyStorage).invalidate();
+		if (be instanceof ModularAccumulatorBlockEntity ienergy && ienergy.hasAccumulator()) {
+			be.getLevel().invalidateCapabilities(be.getBlockPos());
+		}
 
-		if (tryReconnect)
-			formMulti(be.getType(), level, cache == null ? new SearchCache<>() : cache, frontier);
+		if (tryReconnect) formMulti(be.getType(), level, cache == null ? new SearchCache<>() : cache, frontier);
 	}
 
 	private static <T extends BlockEntity & IMultiBlockEntityContainer> PriorityQueue<Pair<Integer, T>> makeCreationQueue() {
@@ -362,17 +326,22 @@ public class CAConnectivityHandler {
 	public static <T extends BlockEntity & IMultiBlockEntityContainer> T partAt(BlockEntityType<?> type, BlockGetter level,
 		BlockPos pos) {
 		BlockEntity be = level.getBlockEntity(pos);
-		if (be != null && be.getType() == type && !be.isRemoved())
-			return checked(be);
+		if (be != null && be.getType() == type && !be.isRemoved()) return checked(be);
 		return null;
 	}
 
 	@Nullable
 	@SuppressWarnings("unchecked")
 	private static <T extends BlockEntity & IMultiBlockEntityContainer> T checked(BlockEntity be) {
-		if (be instanceof IMultiBlockEntityContainer)
-			return (T) be;
+		if (be instanceof IMultiBlockEntityContainer) return (T) be;
 		return null;
+	}
+
+	public static <T extends BlockEntity & IMultiBlockEntityContainer> boolean isConnected(BlockGetter level, BlockPos pos, BlockPos other) {
+		T one = checked(level.getBlockEntity(pos));
+		T two = checked(level.getBlockEntity(other));
+		if (one == null || two == null) return false;
+		return one.getController().equals(two.getController());
 	}
 
 	private static class SearchCache<T extends BlockEntity & IMultiBlockEntityContainer> {
@@ -395,8 +364,7 @@ public class CAConnectivityHandler {
 		}
 
 		Optional<T> getOrCache(BlockEntityType<?> type, BlockGetter level, BlockPos pos) {
-			if (hasVisited(pos))
-				return controllerMap.get(pos);
+			if (hasVisited(pos)) return controllerMap.get(pos);
 
 			T partAt = partAt(type, level, pos);
 			if (partAt == null) {
