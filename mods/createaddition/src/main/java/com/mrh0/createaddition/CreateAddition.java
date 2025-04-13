@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -65,7 +66,12 @@ public class CreateAddition {
     public static boolean CC_ACTIVE = false;
     public static boolean AE2_ACTIVE = false;
 
-    public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(CreateAddition.MODID);
+    public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(CreateAddition.MODID)
+            .defaultCreativeTab((ResourceKey<CreativeModeTab>) null)
+            .setTooltipModifierFactory(item ->
+                    new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
+                            .andThen(TooltipModifier.mapNull(KineticStats.create(item)))
+            );
 
     static {
         REGISTRATE.setTooltipModifierFactory(item -> new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
@@ -75,9 +81,17 @@ public class CreateAddition {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB = CREATIVE_MODE_TABS.register(MODID, () -> CreativeModeTab.builder()
-            .withTabsBefore(CreativeModeTabs.COMBAT)
+            .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
             .icon(() -> CABlocks.ELECTRIC_MOTOR.get().asItem().getDefaultInstance())
             .title(translatable("tab", "main"))
+            .displayItems(new CreativeModeTab.DisplayItemsGenerator() {
+                @Override
+                public void accept(CreativeModeTab.ItemDisplayParameters itemDisplayParameters, CreativeModeTab.Output output) {
+                    REGISTRATE.getAll(Registries.ITEM).forEach((item -> {
+                        output.accept(item.get());
+                    }));
+                }
+            })
             .build());
 
     public CreateAddition(IEventBus eventBus, ModContainer container) {
@@ -99,11 +113,11 @@ public class CreateAddition {
         CC_ACTIVE = ModList.get().isLoaded("computercraft");
         AE2_ACTIVE = ModList.get().isLoaded("ae2");
 
-        //CACreativeModeTabs.register(eventBus);
         REGISTRATE.registerEventListeners(eventBus);
         CABlocks.register();
         CABlockEntities.register();
         CAItems.register();
+        CREATIVE_MODE_TABS.register(eventBus);
         CAFluids.register();
         CAEffects.register(eventBus);
         CARecipes.register(eventBus);
