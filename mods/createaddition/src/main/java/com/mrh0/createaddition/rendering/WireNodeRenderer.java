@@ -34,9 +34,9 @@ public class WireNodeRenderer<T extends BlockEntity> implements BlockEntityRende
 	private float time = 0f;
 
 	@Override
-	public void render(T tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
+	public void render(T be, float partialTicks, PoseStack stack, MultiBufferSource bufferIn,
 			int combinedLightIn, int combinedOverlayIn) {
-		IWireNode te = (IWireNode) tileEntityIn;
+		IWireNode te = (IWireNode) be;
 
 		time += partialTicks;
 
@@ -50,33 +50,33 @@ public class WireNodeRenderer<T extends BlockEntity> implements BlockEntityRende
 			IWireNode wn = te.getWireNode(i);
 			if (wn == null) return;
 
-				Vec3 d2 = wn.getNodeOffset(te.getOtherNodeIndex(i)); // get other
-				float ox2 = ((float) d2.x());
-				float oy2 = ((float) d2.y());
-				float oz2 = ((float) d2.z());
-				BlockPos other = te.getNodePos(i);
+			Vec3 d2 = wn.getNodeOffset(te.getOtherNodeIndex(i)); // get other
+			float ox2 = ((float) d2.x());
+			float oy2 = ((float) d2.y());
+			float oz2 = ((float) d2.z());
+			BlockPos other = te.getNodePos(i);
 
-				float tx = other.getX() - te.getPos().getX();
-				float ty = other.getY() - te.getPos().getY();
-				float tz = other.getZ() - te.getPos().getZ();
-				matrixStackIn.pushPose();
+			float tx = other.getX() - te.getPos().getX();
+			float ty = other.getY() - te.getPos().getY();
+			float tz = other.getZ() - te.getPos().getZ();
+			stack.pushPose();
 
-				float dis = distanceFromZero(tx, ty, tz);
+			float dis = distanceFromZero(tx, ty, tz);
 
-				matrixStackIn.translate(tx + .5f + ox2, ty + .5f + oy2, tz + .5f + oz2);
-				wireRender(
-						tileEntityIn,
-						other,
-						matrixStackIn,
-						bufferIn,
-						-tx - ox2 + ox1,
-						-ty - oy2 + oy1,
-						-tz - oz2 + oz1,
-						te.getNodeType(i),
-						dis
-				);
-				matrixStackIn.popPose();
-			}
+			stack.translate(tx + .5f + ox2, ty + .5f + oy2, tz + .5f + oz2);
+			wireRender(
+					be,
+					other,
+					stack,
+					bufferIn,
+					-tx - ox2 + ox1,
+					-ty - oy2 + oy1,
+					-tz - oz2 + oz1,
+					te.getNodeType(i),
+					dis
+			);
+			stack.popPose();
+		}
 
 		if(ClientEventHandler.clientRenderHeldWire) {
 			LocalPlayer player = ClientMinecraftWrapper.getPlayer();
@@ -97,15 +97,15 @@ public class WireNodeRenderer<T extends BlockEntity> implements BlockEntityRende
 			float tx = (float)playerPos.x - te.getPos().getX();
 			float ty = (float)playerPos.y - te.getPos().getY();
 			float tz = (float)playerPos.z - te.getPos().getZ();
-			matrixStackIn.pushPose();
+			stack.pushPose();
 
 			float dis = distanceFromZero(tx, ty, tz);
 
-			matrixStackIn.translate(tx + .5f, ty + .5f, tz + .5f);
+			stack.translate(tx + .5f, ty + .5f, tz + .5f);
 			wireRender(
-					tileEntityIn,
+					be,
 					player.blockPosition(),
-					matrixStackIn,
+					stack,
 					bufferIn,
 					-tx + ox1,
 					-ty + oy1,
@@ -113,7 +113,7 @@ public class WireNodeRenderer<T extends BlockEntity> implements BlockEntityRende
 					wireType,
 					dis
 			);
-			matrixStackIn.popPose();
+			stack.popPose();
 		}
 	}
 

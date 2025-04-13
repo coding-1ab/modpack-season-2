@@ -19,10 +19,12 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -78,13 +80,21 @@ public class CreateAddition {
                 .andThen(TooltipModifier.mapNull(KineticStats.create(item))));
     }
 
+    private static ItemLike[] excludedItemsList = {
+            CAItems.CAKE_BASE,
+            CAItems.CAKE_BASE_BAKED
+    };
+
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB = CREATIVE_MODE_TABS.register(MODID, () -> CreativeModeTab.builder()
             .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
             .icon(() -> CABlocks.ELECTRIC_MOTOR.get().asItem().getDefaultInstance())
-            .title(translatable("tab", "main"))
+            .title(Component.translatable("itemGroup.createaddition.main"))
             .displayItems((itemDisplayParameters, output) -> REGISTRATE.getAll(Registries.ITEM).forEach((item -> {
+                for (ItemLike excluded : excludedItemsList) {
+                    if (item.is(excluded)) return;
+                }
                 output.accept(item.get());
             })))
             .build());
