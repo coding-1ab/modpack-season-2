@@ -29,6 +29,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.loading.FMLPaths;
@@ -98,7 +99,7 @@ public class CreateAddition {
         //MinecraftForge.EVENT_BUS.register(this);
 
         container.registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG);
-        CommonConfig.loadConfig(CommonConfig.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("createaddition-common.toml"));
+        //
 
         IE_ACTIVE = ModList.get().isLoaded("immersiveengineering");
         CC_ACTIVE = ModList.get().isLoaded("computercraft");
@@ -159,6 +160,11 @@ public class CreateAddition {
     public void onRegisterCommandEvent(RegisterCommandsEvent event) {
     	CommandDispatcher<CommandSourceStack> dispather = event.getDispatcher();
     	CCApiCommand.register(dispather);
+    }
+
+    @SubscribeEvent
+    public static void onLoad(ModConfigEvent.Loading event) {
+        CommonConfig.loadConfig(CommonConfig.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("createaddition-common.toml"));
     }
 
     private static final String PROTOCOL = "1";

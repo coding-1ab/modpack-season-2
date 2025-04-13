@@ -166,7 +166,7 @@ public class CABlocks {
 	public static final BlockEntry<LiquidBlazeBurnerBlock> LIQUID_BLAZE_BURNER = CreateAddition.REGISTRATE.block("liquid_blaze_burner",  LiquidBlazeBurnerBlock::new)
 			.initialProperties(SharedProperties::softMetal)
 			.properties(p -> p.mapColor(DyeColor.GRAY))
-			.properties(p -> p.lightLevel(BlazeBurnerBlock::getLight))
+			.properties(p -> p.lightLevel(LiquidBlazeBurnerBlock::getLight))
 			.transform(pickaxeOnly())
 			.addLayer(() -> RenderType::cutoutMipped)
 			.blockstate((c, p) -> p.simpleBlock(c.getEntry(), AssetLookup.partialBaseModel(c, p)))

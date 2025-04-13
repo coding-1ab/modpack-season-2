@@ -57,6 +57,20 @@ public class LiquidBlazeBurnerBlock extends HorizontalDirectionalBlock implement
 		return CODEC;
 	}
 
+	public static BlazeBurnerBlock.HeatLevel getHeatLevelOf(BlockState blockState) {
+		return blockState.hasProperty(HEAT_LEVEL) ? blockState.getValue(HEAT_LEVEL)
+				: BlazeBurnerBlock.HeatLevel.NONE;
+	}
+
+	public static int getLight(BlockState state) {
+		BlazeBurnerBlock.HeatLevel level = state.getValue(HEAT_LEVEL);
+		return switch (level) {
+			case NONE -> 0;
+			case SMOULDERING -> 8;
+			default -> 15;
+		};
+	}
+
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
 		super.createBlockStateDefinition(builder);

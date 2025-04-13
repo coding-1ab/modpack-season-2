@@ -3,6 +3,8 @@ package com.mrh0.createaddition.config;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class CommonConfig {
@@ -230,7 +232,6 @@ public class CommonConfig {
 
 		COMMON_CONFIG = COMMON_BUILDER.build();
 	}
-
 
 	// What does this do? Just Load? If yes why not use onLoad event
 	public static void loadConfig(ModConfigSpec spec, java.nio.file.Path path) {
