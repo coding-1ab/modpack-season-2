@@ -30,6 +30,8 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsFormatt
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 import java.util.List;
+
+import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -54,14 +56,24 @@ public class EnchanterBehaviour extends ScrollValueBehaviour implements IHaveGog
     private final BlazeEnchanterBlockEntity enchanter;
     private ItemStack template = ItemStack.EMPTY;
     private EnchantingBehaviour enchanting = new EnchantingBehaviour();
+    ValueBoxTransform.Sided templateItemTransform;
 
-    public EnchanterBehaviour(BlazeEnchanterBlockEntity enchanter, ValueBoxTransform transform) {
+    public EnchanterBehaviour(BlazeEnchanterBlockEntity enchanter, ValueBoxTransform transform, ValueBoxTransform.Sided templateItemTransform) {
         super(CEILang.translate("gui.blaze_enchanter.level").component(), enchanter, transform);
         this.enchanter = enchanter;
+        this.templateItemTransform = templateItemTransform;
+    }
+
+    public ValueBoxTransform getTemplateItemSlotPositioning() {
+        return templateItemTransform;
     }
 
     public boolean canProcess(ItemStack stack) {
         return enchanting.canProcess(getWorld(), stack, enchanter.special);
+    }
+
+    public float getRenderDistance() {
+        return AllConfigs.client().filterItemRenderDistance.getF();
     }
 
     public void update(ItemStack stack) {

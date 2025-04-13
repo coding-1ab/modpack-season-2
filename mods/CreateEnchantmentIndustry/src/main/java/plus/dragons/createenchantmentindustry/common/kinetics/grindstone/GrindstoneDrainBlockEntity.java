@@ -30,6 +30,8 @@ import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTank
 import com.simibubi.create.foundation.fluid.FluidIngredient;
 import java.util.List;
 import java.util.Optional;
+
+import com.simibubi.create.foundation.item.ItemHelper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -41,6 +43,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -302,6 +305,12 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
         inventory.deserializeNBT(registries, compound.getCompound("Inventory"));
         if (compound.contains("ProcessedItem"))
             processedItem = ItemStack.parseOptional(registries, compound.getCompound("ProcessedItem"));
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), processedItem);
     }
 
     @Override

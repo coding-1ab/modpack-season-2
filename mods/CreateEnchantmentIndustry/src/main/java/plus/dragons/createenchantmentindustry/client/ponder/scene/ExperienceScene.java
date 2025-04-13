@@ -371,7 +371,7 @@ public class ExperienceScene {
             }
         }
         scene.overlay().showText(40)
-                .text("This is Block of Super Experience. You'll need it for Super Enchanting")
+                .text("This is Block of Super Experience. You'll need it for making Super Enchanting Template")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 3));
         scene.overlay().showOutline(PonderPalette.BLUE, util.select().fromTo(4, 1, 3, 0, 2, 4), util.select().fromTo(4, 1, 3, 0, 2, 4), 40);
@@ -426,7 +426,7 @@ public class ExperienceScene {
         scene.world().showSection(util.select().fromTo(2, 1, 0, 0, 1, 2), Direction.DOWN);
         scene.idle(5);
         scene.overlay().showText(80)
-                .text("First, you need to make Block of Super Experience, which will be used to make the Super Enchanting Template. This requires the use of Block of Experience")
+                .text("First material is Block of Super Experience, which will be used to make the Super Enchanting Template. This requires the use of Block of Experience")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(1, 1, 1));
@@ -455,7 +455,7 @@ public class ExperienceScene {
         scene.world().modifyBlockEntity(util.grid().at(1, 1, 1), DepotBlockEntity.class, be -> be.setHeldItem(CEIItems.EXPERIENCE_CAKE.asStack()));
         scene.idle(10);
         scene.overlay().showText(60)
-                .text("Second, you need to make Cake o' Enchanting. Blaze will love eating this")
+                .text("Second material is Cake o' Enchanting. It works as \"Super Experience\" to support blaze seething mode. Blaze will love eating this")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(1, 1, 1));

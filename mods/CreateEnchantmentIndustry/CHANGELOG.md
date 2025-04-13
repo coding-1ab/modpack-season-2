@@ -1,9 +1,10 @@
-### Create: Enchantment Industry 2.0.2
+### Create: Enchantment Industry 2.0.4
+
+Requires Create: Dragons Plus 1.3.1, which contains an important bugfix
 
 #### Update
-* `es_es` translation by @carlosdi0
-* `ja_jp` translation by @yukkuriofuton
+* Improve ponder to explain Super Enchanting Material more clearly
 
 #### Fix
-* Fix Super Enchanting/Forging's lightning only checks for vanilla lightning rod.
-  Now uses the `c:lightning_rods` Poi & Block tag, supports Friends & Foes lightning rods by default.
+* Fix Spouting liquid experience onto mending tools duplicates the tool
+* Fix Mechanical Grindstone does not drop processing item when be destoryed

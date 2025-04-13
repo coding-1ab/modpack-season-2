@@ -57,8 +57,10 @@ public class FillingBySpoutMixin {
             int availableXp = ExperienceHelper.getExperienceFromFluid(availableFluid);
             if (availableXp == 0)
                 return;
-            ExperienceHelper.repairItem(availableXp, serverLevel, stack, false);
-            cir.setReturnValue(stack);
+            var result = stack.copy();
+            stack.shrink(1);
+            ExperienceHelper.repairItem(availableXp, serverLevel, result, false);
+            cir.setReturnValue(result);
         }
     }
 }

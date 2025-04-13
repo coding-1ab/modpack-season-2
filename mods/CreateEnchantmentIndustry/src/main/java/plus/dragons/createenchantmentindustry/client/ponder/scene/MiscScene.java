@@ -175,9 +175,9 @@ public class MiscScene {
         scene.idle(35);
 
         scene.overlay().showText(80)
-                .text("DO NOT FORGET TO CHECK PRINTING RECIPE!")
+                .text("You can always use JEI or another recipe book mod to check all printing recipes")
                 .attachKeyFrame()
-                .colored(PonderPalette.RED)
+                .colored(PonderPalette.GREEN)
                 .independent();
         scene.idle(10);
         scene.world().modifyBlockEntity(util.grid().at(2, 1, 2), DepotBlockEntity.class,

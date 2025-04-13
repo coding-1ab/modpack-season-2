@@ -67,8 +67,6 @@ public abstract class BlazeExperienceBlockEntity extends BlazeBlockEntity implem
     public static final TagKey<PoiType> LIGHTNING_ROD_POINT_OF_INTEREST_TYPES = TagKey.create(
             Registries.POINT_OF_INTEREST_TYPE,
             ResourceLocation.fromNamespaceAndPath("c", "lightning_rods"));
-    protected final LerpedFloat headAnimation = LerpedFloat.linear();
-    protected final LerpedFloat headAngle = LerpedFloat.angular();
     private boolean isCreative;
     protected FluidTankBehaviour tanks;
 
