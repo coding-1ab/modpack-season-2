@@ -174,7 +174,9 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		if (level == null) return;
 		if (!level.isLoaded(getBlockPos())) return;
 		if (!level.isLoaded(getBlockPos().relative(side))) return;
-		IEnergyStorage ies = cache.get(side).getCapability();
+		var sideCache = cache.get(side);
+		if (sideCache == null) return;
+		IEnergyStorage ies = sideCache.getCapability();
 		if(ies == null) return;
 		int ext = getControllerBE().energyStorage.extractEnergy(ies.receiveEnergy(CommonConfig.ACCUMULATOR_MAX_OUTPUT.get(), true), false);
 		int rec = ies.receiveEnergy(ext, false);

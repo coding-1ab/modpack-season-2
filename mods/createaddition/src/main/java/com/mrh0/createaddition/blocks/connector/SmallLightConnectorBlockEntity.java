@@ -4,6 +4,7 @@ import com.mrh0.createaddition.blocks.connector.base.AbstractConnectorBlock;
 import com.mrh0.createaddition.blocks.connector.base.AbstractConnectorBlockEntity;
 import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.energy.network.EnergyNetwork;
+import com.mrh0.createaddition.index.CABlockEntities;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -11,6 +12,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 import java.util.List;
 
@@ -30,6 +33,14 @@ public class SmallLightConnectorBlockEntity extends AbstractConnectorBlockEntity
         super(blockEntityTypeIn, pos, state);
 
         posTimeOffset = 10 + (Math.abs(pos.getX()*31 + pos.getY()*45 + pos.getZ()*33) % 7) * 3;
+    }
+
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(
+                Capabilities.EnergyStorage.BLOCK,
+                CABlockEntities.SMALL_LIGHT_CONNECTOR.get(),
+                (be, context) -> be.internal
+        );
     }
 
     @Override

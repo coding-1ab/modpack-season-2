@@ -2,11 +2,7 @@ package com.mrh0.createaddition.blocks.tesla_coil;
 
 import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.energy.AbstractElectricBlockEntity;
-import com.mrh0.createaddition.index.CABlocks;
-import com.mrh0.createaddition.index.CADamageTypes;
-import com.mrh0.createaddition.index.CAEffects;
-import com.mrh0.createaddition.index.CARecipes;
-import com.mrh0.createaddition.index.CASounds;
+import com.mrh0.createaddition.index.*;
 import com.mrh0.createaddition.recipe.charging.ChargingRecipe;
 import com.mrh0.createaddition.recipe.rolling.RollingRecipe;
 import com.mrh0.createaddition.sound.CASoundScapes;
@@ -34,6 +30,7 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
@@ -53,6 +50,14 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 	public TeslaCoilBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
 		super(tileEntityTypeIn, pos, state);
 		inputInv = new ItemStackHandler(1);
+	}
+
+	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+		event.registerBlockEntity(
+				Capabilities.EnergyStorage.BLOCK,
+				CABlockEntities.TESLA_COIL.get(),
+				(be, context) -> be.localEnergy
+		);
 	}
 
 	@Override

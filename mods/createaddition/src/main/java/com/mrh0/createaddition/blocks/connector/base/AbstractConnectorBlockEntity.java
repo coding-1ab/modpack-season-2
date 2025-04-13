@@ -9,6 +9,7 @@ import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.debug.IDebugDrawer;
 import com.mrh0.createaddition.energy.*;
 import com.mrh0.createaddition.energy.network.EnergyNetwork;
+import com.mrh0.createaddition.index.CABlockEntities;
 import com.mrh0.createaddition.util.Util;
 import com.mrh0.createaddition.network.EnergyNetworkPacketPayload;
 import com.mrh0.createaddition.network.IObserveTileEntity;
@@ -32,6 +33,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +48,7 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 	private boolean wasContraption = false;
 	private boolean firstTick = true;
 
-	private InterfaceEnergyHandler internal = new InterfaceEnergyHandler();
+	public InterfaceEnergyHandler internal = new InterfaceEnergyHandler();
 	protected BlockCapabilityCache<IEnergyStorage, Direction> external;
 
 	public AbstractConnectorBlockEntity(BlockEntityType<?> blockEntityTypeIn, BlockPos pos, BlockState state) {

@@ -1,12 +1,15 @@
 package com.mrh0.createaddition.blocks.portable_energy_interface;
 
 import com.mrh0.createaddition.config.CommonConfig;
+import com.mrh0.createaddition.index.CABlockEntities;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
@@ -22,6 +25,14 @@ public class PortableEnergyInterfaceBlockEntity extends PortableStorageInterface
 
 		//if (CreateAddition.CC_ACTIVE)
 		//	this.peripheral = LazyOptional.of(() -> Peripherals.createPortableEnergyInterfacePeripheral(this));
+	}
+
+	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+		event.registerBlockEntity(
+				Capabilities.EnergyStorage.BLOCK,
+				CABlockEntities.PORTABLE_ENERGY_INTERFACE.get(),
+				(be, context) -> be.capability
+		);
 	}
 
 	public void startTransferringTo(Contraption contraption, float distance) {
