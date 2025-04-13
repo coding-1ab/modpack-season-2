@@ -17,7 +17,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 import org.jetbrains.annotations.NotNull;
 
-public class ChargingRecipe implements Recipe<CraftingInput> {
+public class ChargingRecipe implements Recipe<RecipeWrapper> {
 
 	public Ingredient ingredient;
 	public ItemStack output;
@@ -36,13 +36,13 @@ public class ChargingRecipe implements Recipe<CraftingInput> {
 	}
 
 	@Override
-	public boolean matches(@NotNull CraftingInput wrapper, @NotNull Level world) {
+	public boolean matches(@NotNull RecipeWrapper wrapper, @NotNull Level world) {
 		if(ingredient == null) return false;
 		return ingredient.test(wrapper.getItem(0));
 	}
 
 	@Override
-	public @NotNull ItemStack assemble(@NotNull CraftingInput recipeWrapper, HolderLookup.@NotNull Provider provider) {
+	public @NotNull ItemStack assemble(@NotNull RecipeWrapper recipeWrapper, HolderLookup.@NotNull Provider provider) {
 		return output;
 	}
 

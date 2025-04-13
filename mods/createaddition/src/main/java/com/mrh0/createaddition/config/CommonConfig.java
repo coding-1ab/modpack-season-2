@@ -240,6 +240,6 @@ public class CommonConfig {
 			.writingMode(WritingMode.REPLACE)
 			.build();
 		configData.load();
-		spec.setConfig(configData);
+		spec.correct(configData);
 	}
 }

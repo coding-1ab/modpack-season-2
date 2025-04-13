@@ -347,8 +347,8 @@ public class CAConnectivityHandler {
 		}
 
 		if (be instanceof ModularAccumulatorBlockEntity ienergy && ienergy.hasAccumulator())
-			be.getCapability(Capabilities.EnergyStorage)
-				.invalidate();
+			be.invalidateCapabilities();
+			//be.getCapability(Capabilities.EnergyStorage).invalidate();
 
 		if (tryReconnect)
 			formMulti(be.getType(), level, cache == null ? new SearchCache<>() : cache, frontier);

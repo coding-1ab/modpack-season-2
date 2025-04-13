@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(value = Contraption.class, remap = false)
 public abstract class ContraptionMixin {
 
+	/*
 	@Shadow
 	private BlockPos anchor;
 
@@ -30,5 +31,5 @@ public abstract class ContraptionMixin {
 			nbt.put("Controller", NbtUtils.writeBlockPos(NbtUtils.readBlockPos(nbt.getCompound("Controller")).subtract(anchor)));
 		}
 	}
-
+	*/
 }

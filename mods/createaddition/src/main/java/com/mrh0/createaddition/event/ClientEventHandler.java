@@ -19,7 +19,7 @@ public class ClientEventHandler {
     public static boolean clientRenderHeldWire = false;
 
     @SubscribeEvent
-    public static void playerRendererEvent(ClientTickEvent evt) {
+    public static void playerRendererEvent(ClientTickEvent.Post evt) {
         if(ClientMinecraftWrapper.getPlayer() == null) return;
         ItemStack stack = ClientMinecraftWrapper.getPlayer().getInventory().getSelected();
         if(stack.isEmpty()) return;
@@ -28,7 +28,7 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void tickSoundscapes(ClientTickEvent event) {
+    public static void tickSoundscapes(ClientTickEvent.Post event) {
         CASoundScapes.tick();
     }
 

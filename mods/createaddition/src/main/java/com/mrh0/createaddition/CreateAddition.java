@@ -6,6 +6,7 @@ import com.mrh0.createaddition.index.CASounds;
 import com.mrh0.createaddition.network.EnergyNetworkPacketPayload;
 import com.mrh0.createaddition.network.ObservePacketPayload;
 import com.mrh0.createaddition.network.ServerPayloadHandler;
+import com.mrh0.createaddition.network.ClientPayloadHandler;
 import com.mrh0.createaddition.ponder.CAPonderPlugin;
 import com.mrh0.createaddition.trains.schedule.CASchedule;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
@@ -30,6 +31,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -96,7 +98,7 @@ public class CreateAddition {
         //MinecraftForge.EVENT_BUS.register(this);
 
         container.registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG);
-        //CommonConfig.loadConfig(CommonConfig.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("createaddition-common.toml"));
+        CommonConfig.loadConfig(CommonConfig.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("createaddition-common.toml"));
 
         IE_ACTIVE = ModList.get().isLoaded("immersiveengineering");
         CC_ACTIVE = ModList.get().isLoaded("computercraft");
@@ -168,7 +170,7 @@ public class CreateAddition {
                 ObservePacketPayload.TYPE,
                 ObservePacketPayload.STREAM_CODEC,
                 new DirectionalPayloadHandler<>(
-                        ClientPayloadHandler::handleDataOnMain,
+                        ClientPayloadHandler::handleObservePayload,
                         ServerPayloadHandler::handleObservePayload
                 )
         );
@@ -177,8 +179,8 @@ public class CreateAddition {
                 EnergyNetworkPacketPayload.TYPE,
                 EnergyNetworkPacketPayload.STREAM_CODEC,
                 new DirectionalPayloadHandler<>(
-                        ClientPayloadHandler::handleDataOnMain,
-                        ServerPayloadHandler::handleDataOnMain
+                        ClientPayloadHandler::handleEnergyNetworkPayload,
+                        ServerPayloadHandler::handleEnergyNetworkPayload
                 )
         );
     }

@@ -65,11 +65,9 @@ public class LiquidBlazeBurnerBlock extends HorizontalDirectionalBlock implement
 
 	@Override
 	public void onPlace(BlockState state, Level world, BlockPos pos, BlockState p_220082_4_, boolean p_220082_5_) {
-		if (world.isClientSide)
-			return;
+		if (world.isClientSide) return;
 		BlockEntity tileEntity = world.getBlockEntity(pos.above());
-		if (!(tileEntity instanceof BasinBlockEntity basin))
-			return;
+		if (!(tileEntity instanceof BasinBlockEntity basin)) return;
         basin.notifyChangeOfContents();
 	}
 
@@ -101,8 +99,7 @@ public class LiquidBlazeBurnerBlock extends HorizontalDirectionalBlock implement
 
 		if (AllItems.GOGGLES.isIn(heldItem) && heat != BlazeBurnerBlock.HeatLevel.NONE)
 			return onBlockEntityUseItemOn(level, pos, be -> {
-				if (be.goggles)
-					return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+				if (be.goggles) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 				be.goggles = true;
 				be.notifyUpdate();
 				return ItemInteractionResult.SUCCESS;
@@ -110,8 +107,7 @@ public class LiquidBlazeBurnerBlock extends HorizontalDirectionalBlock implement
 
 		if (heldItem.isEmpty() && heat != BlazeBurnerBlock.HeatLevel.NONE)
 			return onBlockEntityUseItemOn(level, pos, be -> {
-				if (!be.goggles)
-					return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+				if (!be.goggles) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 				be.goggles = false;
 				be.notifyUpdate();
 				return ItemInteractionResult.SUCCESS;
@@ -137,25 +133,21 @@ public class LiquidBlazeBurnerBlock extends HorizontalDirectionalBlock implement
 
 	public static InteractionResultHolder<ItemStack> tryInsert(BlockState state, Level level, BlockPos pos,
 		ItemStack stack, boolean doNotConsume, boolean forceOverflow, boolean simulate) {
-		if (!state.hasBlockEntity())
-			return InteractionResultHolder.fail(ItemStack.EMPTY);
+		if (!state.hasBlockEntity()) return InteractionResultHolder.fail(ItemStack.EMPTY);
 
 		BlockEntity te = level.getBlockEntity(pos);
 		if (!(te instanceof LiquidBlazeBurnerBlockEntity burnerTE))
 			return InteractionResultHolder.fail(ItemStack.EMPTY);
 
         if (burnerTE.isCreativeFuel(stack)) {
-			if (!simulate)
-				burnerTE.applyCreativeFuel();
+			if (!simulate) burnerTE.applyCreativeFuel();
 			return InteractionResultHolder.success(ItemStack.EMPTY);
 		}
-		if (!burnerTE.tryUpdateFuel(stack, forceOverflow, simulate))
-			return InteractionResultHolder.fail(ItemStack.EMPTY);
+		if (!burnerTE.tryUpdateFuel(stack, forceOverflow, simulate)) return InteractionResultHolder.fail(ItemStack.EMPTY);
 
 		if (!doNotConsume) {
 			ItemStack container = stack.hasCraftingRemainingItem() ? stack.getCraftingRemainingItem() : ItemStack.EMPTY;
-			if (!level.isClientSide) {
-				stack.shrink(1);
+			if (!level.isClientSide) {stack.shrink(1);
 			}
 			return InteractionResultHolder.success(container);
 		}
@@ -170,8 +162,7 @@ public class LiquidBlazeBurnerBlock extends HorizontalDirectionalBlock implement
 	@Override
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter getter, BlockPos pos,
 		CollisionContext context) {
-		if (context == CollisionContext.empty())
-			return AllShapes.HEATER_BLOCK_SPECIAL_COLLISION_SHAPE;
+		if (context == CollisionContext.empty()) return AllShapes.HEATER_BLOCK_SPECIAL_COLLISION_SHAPE;
 		return getShape(state, getter, pos, context);
 	}
 
@@ -193,11 +184,8 @@ public class LiquidBlazeBurnerBlock extends HorizontalDirectionalBlock implement
 
 	@OnlyIn(Dist.CLIENT)
 	public void animateTick(BlockState state, Level world, BlockPos pos, Random random) {
-		if (random.nextInt(10) != 0)
-			return;
-		if (!state.getValue(HEAT_LEVEL)
-			.isAtLeast(BlazeBurnerBlock.HeatLevel.SMOULDERING))
-			return;
+		if (random.nextInt(10) != 0) return;
+		if (!state.getValue(HEAT_LEVEL).isAtLeast(BlazeBurnerBlock.HeatLevel.SMOULDERING)) return;
 		world.playLocalSound((float) pos.getX() + 0.5F, (float) pos.getY() + 0.5F,
                 (float) pos.getZ() + 0.5F, SoundEvents.CAMPFIRE_CRACKLE, SoundSource.BLOCKS,
 			0.5F + random.nextFloat(), random.nextFloat() * 0.7F + 0.6F, false);

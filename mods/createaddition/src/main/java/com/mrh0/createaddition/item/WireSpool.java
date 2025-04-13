@@ -9,6 +9,7 @@ import com.mrh0.createaddition.energy.WireType;
 import com.mrh0.createaddition.index.CAItems;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 
@@ -32,8 +33,8 @@ public class WireSpool extends Item {
 
 	@Override
 	public InteractionResult useOn(UseOnContext c) {
-		CompoundTag nbt = c.getItemInHand().getTag();
-		if(nbt == null) nbt = new CompoundTag();
+		var data1 = c.getItemInHand().get(DataComponents.CUSTOM_DATA);
+		CompoundTag nbt = data1 == null ? new CompoundTag() : data1.copyTag();
 
 		var clickedPos = c.getClickedPos();
 		BlockEntity te = c.getLevel().getBlockEntity(clickedPos);
@@ -54,16 +55,16 @@ public class WireSpool extends Item {
 
 			// Play sound
 			if(result.isLinked()) {
-				c.getLevel().playLocalSound(clickedPos.getX(), clickedPos.getY(), clickedPos.getZ(), SoundEvents.NOTE_BLOCK_XYLOPHONE.get(), SoundSource.BLOCKS, .7f, 1f, false);
+				c.getLevel().playLocalSound(clickedPos.getX(), clickedPos.getY(), clickedPos.getZ(), SoundEvents.NOTE_BLOCK_XYLOPHONE.value(), SoundSource.BLOCKS, .7f, 1f, false);
 			}
 			else if(result.isConnect()) {
 				c.getLevel().playLocalSound(clickedPos.getX(), clickedPos.getY(), clickedPos.getZ(), SoundEvents.BOOK_PUT, SoundSource.BLOCKS, 1f, 1f, false);
 			}
 			else if(result == WireConnectResult.REMOVED) {
-				c.getLevel().playLocalSound(clickedPos.getX(), clickedPos.getY(), clickedPos.getZ(), SoundEvents.NOTE_BLOCK_XYLOPHONE.get(), SoundSource.BLOCKS, .7f, .5f, false);
+				c.getLevel().playLocalSound(clickedPos.getX(), clickedPos.getY(), clickedPos.getZ(), SoundEvents.NOTE_BLOCK_XYLOPHONE.value(), SoundSource.BLOCKS, .7f, .5f, false);
 			}
 			else {
-				c.getLevel().playLocalSound(clickedPos.getX(), clickedPos.getY(), clickedPos.getZ(), SoundEvents.NOTE_BLOCK_DIDGERIDOO.get(), SoundSource.BLOCKS, .7f, 1f, false);
+				c.getLevel().playLocalSound(clickedPos.getX(), clickedPos.getY(), clickedPos.getZ(), SoundEvents.NOTE_BLOCK_DIDGERIDOO.value(), SoundSource.BLOCKS, .7f, 1f, false);
 			}
 
 			te.setChanged();
@@ -84,7 +85,8 @@ public class WireSpool extends Item {
 						c.getPlayer().drop(stack, false);
 				}
 			}
-			c.getItemInHand().setTag(null);
+			var data2 = c.getItemInHand().get(DataComponents.CUSTOM_DATA);
+			if (data2 != null) data2.update((a) -> new CompoundTag());
 			c.getPlayer().displayClientMessage(result.getMessage(), true);
 
 		}
@@ -93,7 +95,7 @@ public class WireSpool extends Item {
 			if(isRemover(heldItem)) {
 				if (!node.hasAnyConnection()) {
 					c.getPlayer().displayClientMessage(WireConnectResult.NO_CONNECTION.getMessage(), true);
-					c.getLevel().playLocalSound(clickedPos.getX(), clickedPos.getY(), clickedPos.getZ(), SoundEvents.NOTE_BLOCK_DIDGERIDOO.get(), SoundSource.BLOCKS, .7f, 1f, false);
+					c.getLevel().playLocalSound(clickedPos.getX(), clickedPos.getY(), clickedPos.getZ(), SoundEvents.NOTE_BLOCK_DIDGERIDOO.value(), SoundSource.BLOCKS, .7f, 1f, false);
 					return InteractionResult.CONSUME;
 				}
 			}
@@ -101,8 +103,8 @@ public class WireSpool extends Item {
 			if(index < 0) return InteractionResult.PASS;
 			if(!isRemover(heldItem))
 				c.getPlayer().displayClientMessage(WireConnectResult.getConnect(node.isNodeInput(index), node.isNodeOutput(index)).getMessage(), true);
-			c.getItemInHand().setTag(null);
-			c.getItemInHand().setTag(setContent(nbt, node.getPos(), index));
+			var data2 = c.getItemInHand().get(DataComponents.CUSTOM_DATA);
+			if (data2 != null) data2.update((a) -> setContent(nbt, node.getPos(), index));
 		}
 		return InteractionResult.CONSUME;
 	}
@@ -130,8 +132,11 @@ public class WireSpool extends Item {
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-		CompoundTag nbt = stack.getTag();
 		super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+		var data = stack.get(DataComponents.CUSTOM_DATA);
+		if (data == null) return;
+		CompoundTag nbt = data.copyTag();
+
 		if(hasPos(nbt)) tooltipComponents.add(Component.translatable("item."+CreateAddition.MODID+".spool.nbt"));
 	}
 

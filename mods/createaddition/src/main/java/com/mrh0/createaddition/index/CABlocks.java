@@ -200,11 +200,12 @@ public class CABlocks {
 			.transform(customItemModel())
 			.register();
 
+
 	public static final BlockEntry<DigitalAdapterBlock> DIGITAL_ADAPTER = CreateAddition.REGISTRATE
 			.block("digital_adapter",  DigitalAdapterBlock::new)
 			.initialProperties(SharedProperties::softMetal)
 			.transform(displaySource(CADisplaySources.DIGITAL_ADAPTER))
-			.item(DigitalAdapterBlockItem::new)
+			//.item(DigitalAdapterBlockItem::new)
 			//.transform(customItemModel())
 			.register();
 

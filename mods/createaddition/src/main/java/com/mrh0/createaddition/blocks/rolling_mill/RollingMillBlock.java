@@ -83,8 +83,8 @@ public class RollingMillBlock extends HorizontalKineticBlock implements IBE<Roll
 	}
 
 	@Override
-	public void updateEntityAfterFallOn(BlockGetter worldIn, Entity entityIn) {
-		super.updateEntityAfterFallOn(worldIn, entityIn);
+	public void updateEntityAfterFallOn(BlockGetter getter, Entity entityIn) {
+		super.updateEntityAfterFallOn(getter, entityIn);
 
         if (entityIn.level().isClientSide) return;
 		if (!(entityIn instanceof ItemEntity itemEntity)) return;
@@ -92,14 +92,16 @@ public class RollingMillBlock extends HorizontalKineticBlock implements IBE<Roll
 
 		RollingMillBlockEntity rollingMill = null;
 		for (BlockPos pos : Iterate.hereAndBelow(entityIn.blockPosition())) {
-			rollingMill = getBlockEntity(worldIn, pos);
+			rollingMill = getBlockEntity(getter, pos);
 		}
 		if (rollingMill == null) return;
 
-        LazyOptional<IItemHandler> capability = rollingMill.getCapability(Capabilities.ItemHandler);
-		if (!capability.isPresent()) return;
+		if (rollingMill.getLevel() == null) return;
+		var capability = rollingMill.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, rollingMill.getBlockPos(), null);
 
-		ItemStack remainder = capability.orElse(new ItemStackHandler()).insertItem(0, itemEntity.getItem(), false);
+		if (capability == null) return;
+
+		ItemStack remainder = capability.insertItem(0, itemEntity.getItem(), false);
 		if (remainder.isEmpty())
 			itemEntity.remove(RemovalReason.KILLED);
 		if (remainder.getCount() < itemEntity.getItem().getCount())

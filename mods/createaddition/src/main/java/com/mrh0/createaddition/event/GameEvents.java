@@ -25,21 +25,21 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 @EventBusSubscriber
 public class GameEvents {
 	@SubscribeEvent
-	public static void levelTickEvent(LevelTickEvent evt) {
+	public static void levelTickEvent(LevelTickEvent.Pre evt) {
 		if(evt.getLevel().isClientSide()) return;
 		// if (evt == Phase.END) return;
 		EnergyNetworkManager.tickWorld(evt.getLevel());
 	}
 
 	@SubscribeEvent
-	public static void serverTickEvent(ServerTickEvent evt) {
+	public static void serverTickEvent(ServerTickEvent.Pre evt) {
 		//if (evt.phase == Phase.END) return;
 		// Using ServerTick instead of WorldTick because some contraptions can switch worlds.
 		PortableEnergyManager.tick();
 	}
 
 	@SubscribeEvent
-	public static void clientTickEvent(ClientTickEvent evt) {
+	public static void clientTickEvent(ClientTickEvent.Post evt) {
 		//if (evt.phase == Phase.START) return;
 		ObservePacketPayload.tick();
 		CADebugger.tick();

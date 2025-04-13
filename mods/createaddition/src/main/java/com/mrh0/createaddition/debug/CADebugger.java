@@ -14,7 +14,7 @@ public class CADebugger {
 	public CADebugger() {}
 
 	public static void tick() {
-		if (!Minecraft.getInstance().options.renderDebug) return;
+		if (Minecraft.getInstance().getDebugOverlay().showDebugScreen()) return;
 		IDebugDrawer drawer = getSelected();
 		if (drawer == null) return;
 		drawer.drawDebug();
