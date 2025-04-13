@@ -66,13 +66,6 @@ public class CreateAddition {
     public static boolean AE2_ACTIVE = false;
 
     public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(CreateAddition.MODID);
-    /*
-	public static final SimpleChannel Network = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(MODID, "main"))
-            .clientAcceptedVersions(PROTOCOL::equals)
-            .serverAcceptedVersions(PROTOCOL::equals)
-            .networkProtocolVersion(() -> PROTOCOL)
-            .simpleChannel();
-     */
 
     static {
         REGISTRATE.setTooltipModifierFactory(item -> new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
@@ -93,6 +86,7 @@ public class CreateAddition {
         eventBus.addListener(this::postInit);
         eventBus.addListener(this::onRegister);
         eventBus.addListener(RegisterCapabilitiesEvent.class, CACapabilities::register);
+        eventBus.addListener(RegisterPayloadHandlersEvent.class, CreateAddition::registerPackets);
         //FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(RecipeSerializer.class, CARecipes::register);
 
         //IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -168,8 +162,7 @@ public class CreateAddition {
     }
 
     private static final String PROTOCOL = "1";
-    @SubscribeEvent
-    public static void register(final RegisterPayloadHandlersEvent event) {
+    public static void registerPackets(final RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(PROTOCOL);
         registrar = registrar.executesOn(HandlerThread.MAIN);
         registrar.playBidirectional(

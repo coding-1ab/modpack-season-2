@@ -72,6 +72,7 @@ public abstract class AbstractElectricBlockEntity extends SmartBlockEntity {
 
 	public void updateCache(Direction side) {
 		if (level == null) return;
+		if (level.isClientSide()) return;
 		if (!level.isLoaded(worldPosition.relative(side))) {
 			escacheMap.put(side, null);
 			return;
