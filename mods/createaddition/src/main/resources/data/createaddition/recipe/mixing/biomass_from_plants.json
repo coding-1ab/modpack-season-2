@@ -1,0 +1,26 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+	{
+      "tag": "createaddition:plants"
+    },
+    {
+      "tag": "createaddition:plants"
+    },
+    {
+      "tag": "createaddition:plants"
+    },
+    {
+      "type": "fluid_tag",
+      "fluid_tag": "c:plantoil",
+      "amount": 100
+    }
+  ],
+  "results": [
+    {
+      "id": "createaddition:biomass",
+      "count": 1
+    }
+  ],
+  "heatRequirement": "heated"
+}

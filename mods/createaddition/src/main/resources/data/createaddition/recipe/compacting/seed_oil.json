@@ -1,0 +1,14 @@
+{
+  "type": "create:compacting",
+  "ingredients": [
+    {
+      "tag": "c:seeds"
+    }
+  ],
+  "results": [
+    {
+      "id": "createaddition:seed_oil",
+      "amount": 100
+    }
+  ]
+}

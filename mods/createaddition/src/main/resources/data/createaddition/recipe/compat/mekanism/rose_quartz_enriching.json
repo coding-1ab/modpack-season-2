@@ -1,0 +1,17 @@
+{
+	"type":"mekanism:enriching",
+	"input":{
+		"ingredient":{
+			"item":"create:rose_quartz"
+		}
+	},
+	"output":{
+		"id":"create:polished_rose_quartz"
+	},
+	"neoforge:conditions": [
+  	{
+      "type": "neoforge:mod_loaded",
+      "modid": "mekanism"
+  	} 
+  ]
+}
