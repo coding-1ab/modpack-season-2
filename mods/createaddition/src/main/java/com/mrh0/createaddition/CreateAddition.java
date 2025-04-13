@@ -84,14 +84,9 @@ public class CreateAddition {
             .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
             .icon(() -> CABlocks.ELECTRIC_MOTOR.get().asItem().getDefaultInstance())
             .title(translatable("tab", "main"))
-            .displayItems(new CreativeModeTab.DisplayItemsGenerator() {
-                @Override
-                public void accept(CreativeModeTab.ItemDisplayParameters itemDisplayParameters, CreativeModeTab.Output output) {
-                    REGISTRATE.getAll(Registries.ITEM).forEach((item -> {
-                        output.accept(item.get());
-                    }));
-                }
-            })
+            .displayItems((itemDisplayParameters, output) -> REGISTRATE.getAll(Registries.ITEM).forEach((item -> {
+                output.accept(item.get());
+            })))
             .build());
 
     public CreateAddition(IEventBus eventBus, ModContainer container) {
