@@ -31,6 +31,9 @@ public class CAPonders {
 				.add(CABlocks.ROLLING_MILL)
 				.add(CABlocks.ALTERNATOR);
 
+		HELPER.addToTag(AllCreatePonderTags.FLUIDS)
+				.add(CAItems.STRAW);
+
 		HELPER.addToTag(AllCreatePonderTags.CONTRAPTION_ACTOR)
 				.add(CABlocks.PORTABLE_ENERGY_INTERFACE);
 
@@ -51,7 +54,7 @@ public class CAPonders {
 		HELPER.addStoryBoard(CABlocks.ROLLING_MILL, "automate_rolling_mill", PonderScenes::automateRollingMill, AllCreatePonderTags.KINETIC_APPLIANCES);
 		HELPER.addStoryBoard(CABlocks.TESLA_COIL, "tesla_coil", PonderScenes::teslaCoil, ELECTRIC);
 		HELPER.addStoryBoard(CABlocks.TESLA_COIL, "tesla_coil_hurt", PonderScenes::teslaCoilHurt, ELECTRIC);
-		HELPER.addStoryBoard(CAItems.STRAW, "liquid_blaze_burner", PonderScenes::liquidBlazeBurner, AllCreatePonderTags.LOGISTICS);
+		HELPER.addStoryBoard(CAItems.STRAW, "liquid_blaze_burner", PonderScenes::liquidBlazeBurner, AllCreatePonderTags.FLUIDS);
 		HELPER.addStoryBoard(AllBlocks.BLAZE_BURNER, "liquid_blaze_burner", PonderScenes::liquidBlazeBurner, AllCreatePonderTags.LOGISTICS);
 		HELPER.addStoryBoard(CABlocks.MODULAR_ACCUMULATOR, "accumulator", PonderScenes::modularAccumulator, ELECTRIC);
 		HELPER.addStoryBoard(CABlocks.PORTABLE_ENERGY_INTERFACE, "pei_transfer", PonderScenes::peiTransfer, AllCreatePonderTags.CONTRAPTION_ACTOR, ELECTRIC);
