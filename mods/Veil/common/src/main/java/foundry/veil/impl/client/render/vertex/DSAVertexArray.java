@@ -12,9 +12,9 @@ import static org.lwjgl.opengl.ARBDirectStateAccess.*;
 import static org.lwjgl.opengl.GL15C.GL_STATIC_DRAW;
 
 @ApiStatus.Internal
-public class DSAVertexAttribBindingVertexArray extends VertexArray {
+public class DSAVertexArray extends VertexArray {
 
-    public DSAVertexAttribBindingVertexArray(int id) {
+    public DSAVertexArray(int id) {
         super(id, vao -> new DSAVertexAttribBindingBuilder(vao, id));
     }
 
@@ -30,11 +30,6 @@ public class DSAVertexAttribBindingVertexArray extends VertexArray {
         super.uploadIndexBuffer(drawState);
         PipelineAutoStorageIndexBufferAccessor ext = (PipelineAutoStorageIndexBufferAccessor) (Object) RenderSystem.getSequentialBuffer(drawState.mode());
         glVertexArrayElementBuffer(this.id, ext.getName());
-    }
-
-    @Override
-    protected int createBuffer() {
-        return glCreateBuffers();
     }
 
     @Override

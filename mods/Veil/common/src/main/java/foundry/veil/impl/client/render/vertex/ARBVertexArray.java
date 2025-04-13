@@ -8,15 +8,10 @@ import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL15C.*;
 
 @ApiStatus.Internal
-public class ARBVertexAttribBindingVertexArray extends VertexArray {
+public class ARBVertexArray extends VertexArray {
 
-    public ARBVertexAttribBindingVertexArray(int id) {
+    public ARBVertexArray(int id) {
         super(id, ARBVertexAttribBindingBuilder::new);
-    }
-
-    @Override
-    protected int createBuffer() {
-        return glGenBuffers();
     }
 
     @Override

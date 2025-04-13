@@ -1,6 +1,5 @@
 package foundry.veil.impl.client.render.vertex;
 
-import com.mojang.blaze3d.vertex.MeshData;
 import foundry.veil.api.client.render.vertex.VertexArray;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -16,23 +15,10 @@ public class LegacyVertexArray extends VertexArray {
     }
 
     @Override
-    public void upload(int attributeStart, MeshData meshData, DrawUsage usage) {
-        int old = glGetInteger(GL_ARRAY_BUFFER_BINDING);
-        try {
-            super.upload(attributeStart, meshData, usage);
-        } finally {
-            glBindBuffer(GL_ARRAY_BUFFER, old);
-        }
-    }
-
-    @Override
-    protected int createBuffer() {
-        return glGenBuffers();
-    }
-
-    @Override
     protected void uploadVertexBuffer(int buffer, ByteBuffer data, int usage) {
+        int old = glGetInteger(GL_ARRAY_BUFFER_BINDING);
         glBindBuffer(GL_ARRAY_BUFFER, buffer);
         glBufferData(GL_ARRAY_BUFFER, data, usage);
+        glBindBuffer(GL_ARRAY_BUFFER, old);
     }
 }

@@ -6,13 +6,16 @@ import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import foundry.veil.api.client.render.VeilRenderSystem;
-import foundry.veil.impl.client.render.vertex.ARBVertexAttribBindingVertexArray;
-import foundry.veil.impl.client.render.vertex.DSAVertexAttribBindingVertexArray;
+import foundry.veil.api.client.render.rendertype.VeilRenderType;
+import foundry.veil.impl.client.render.vertex.ARBVertexArray;
+import foundry.veil.impl.client.render.vertex.DSAVertexArray;
 import foundry.veil.impl.client.render.vertex.LegacyVertexArray;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
 import org.jetbrains.annotations.ApiStatus;
-import org.lwjgl.opengl.ARBMultiDrawIndirect;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL40C;
 import org.lwjgl.opengl.GLCapabilities;
@@ -50,7 +53,7 @@ public abstract class VertexArray implements NativeResource {
     protected final Int2IntMap buffers;
     protected int indexCount;
     protected IndexType indexType;
-    protected int drawMode;
+    protected VertexFormat.Mode drawMode;
 
     @ApiStatus.Internal
     protected VertexArray(int id, Function<VertexArray, VertexArrayBuilder> builder) {
@@ -59,7 +62,24 @@ public abstract class VertexArray implements NativeResource {
         this.buffers = new Int2IntArrayMap();
         this.indexCount = 0;
         this.indexType = IndexType.BYTE;
-        this.drawMode = GL_TRIANGLES;
+        this.drawMode = VertexFormat.Mode.TRIANGLES;
+    }
+
+    private void setup(RenderType renderType) {
+        renderType.setupRenderState();
+        ShaderInstance shader = RenderSystem.getShader();
+        if (shader != null) {
+            shader.apply();
+            shader.setDefaultUniforms(this.drawMode, RenderSystem.getModelViewMatrix(), RenderSystem.getProjectionMatrix(), Minecraft.getInstance().getWindow());
+        }
+    }
+
+    private void clear(RenderType renderType) {
+        ShaderInstance shader = RenderSystem.getShader();
+        if (shader != null) {
+            shader.clear();
+        }
+        renderType.clearRenderState();
     }
 
     private static void loadType() {
@@ -136,7 +156,7 @@ public abstract class VertexArray implements NativeResource {
         if (index < 0) {
             throw new ArrayIndexOutOfBoundsException(index);
         }
-        return this.buffers.computeIfAbsent(index, unused -> this.createBuffer());
+        return this.buffers.computeIfAbsent(index, unused -> GlStateManager._glGenBuffers());
     }
 
     /**
@@ -162,10 +182,9 @@ public abstract class VertexArray implements NativeResource {
 
     /**
      * @return The GL polygon draw type
-     * @see #setDrawMode(int)
      * @see #setDrawMode(VertexFormat.Mode)
      */
-    public int getDrawMode() {
+    public VertexFormat.Mode getDrawMode() {
         return this.drawMode;
     }
 
@@ -221,7 +240,7 @@ public abstract class VertexArray implements NativeResource {
 
             this.indexCount = drawState.indexCount();
             this.indexType = IndexType.fromBlaze3D(drawState.indexType());
-            this.drawMode = drawState.mode().asGLMode;
+            this.drawMode = drawState.mode();
         }
     }
 
@@ -243,11 +262,6 @@ public abstract class VertexArray implements NativeResource {
         GlStateManager._glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this.getOrCreateBuffer(ELEMENT_ARRAY_BUFFER));
         RenderSystem.glBufferData(GL_ELEMENT_ARRAY_BUFFER, data, GL_STATIC_DRAW);
     }
-
-    /**
-     * @return Creates a new vertex buffer
-     */
-    protected abstract int createBuffer();
 
     /**
      * Uploads vertex data to the specified buffer.
@@ -282,22 +296,28 @@ public abstract class VertexArray implements NativeResource {
 
     /**
      * Draws {@link #indexCount} number of indices with the previously defined draw mode.
+     * <br>
+     * {@link #bind()} must be called before this.
      */
     public void draw() {
-        glDrawElements(this.drawMode, this.indexCount, this.indexType.getGlType(), 0L);
+        glDrawElements(this.drawMode.asGLMode, this.indexCount, this.indexType.getGlType(), 0L);
     }
 
     /**
      * Draws {@link #indexCount} number of indices with the previously defined draw mode a number of times.
+     * <br>
+     * {@link #bind()} must be called before this.
      *
      * @param instances The number of instances to draw
      */
     public void drawInstanced(int instances) {
-        glDrawElementsInstanced(this.drawMode, this.indexCount, this.indexType.getGlType(), 0L, instances);
+        glDrawElementsInstanced(this.drawMode.asGLMode, this.indexCount, this.indexType.getGlType(), 0L, instances);
     }
 
     /**
      * Draws {@link #indexCount} number of indices with the previously defined draw mode a number of times.
+     * <br>
+     * {@link #bind()} must be called before this.
      * <br>
      * <strong>Note: This only works if {@link VeilRenderSystem#multiDrawIndirectSupported()} is <code>true</code></strong>
      *
@@ -310,7 +330,75 @@ public abstract class VertexArray implements NativeResource {
             throw new UnsupportedOperationException("Indirect rendering is not supported");
         }
 
-        glMultiDrawElementsIndirect(this.drawMode, this.indexType.getGlType(), indirect, drawCount, stride);
+        glMultiDrawElementsIndirect(this.drawMode.asGLMode, this.indexType.getGlType(), indirect, drawCount, stride);
+    }
+
+    /**
+     * Draws {@link #indexCount} number of indices with the previously defined draw mode.
+     * This method applies the specified render type automatically.
+     * <br>
+     * {@link #bind()} must be called before this.
+     */
+    public void drawWithRenderType(RenderType renderType) {
+        this.setup(renderType);
+        this.draw();
+        this.clear(renderType);
+
+        if (renderType instanceof VeilRenderType.LayeredRenderType layeredRenderType) {
+            for (RenderType layer : layeredRenderType.getLayers()) {
+                this.setup(layer);
+                this.draw();
+                this.clear(layer);
+            }
+        }
+    }
+
+    /**
+     * Draws {@link #indexCount} number of indices with the previously defined draw mode a number of times.
+     * This method applies the specified render type automatically.
+     * <br>
+     * {@link #bind()} must be called before this.
+     *
+     * @param instances The number of instances to draw
+     */
+    public void drawInstancedWithRenderType(RenderType renderType, int instances) {
+        this.setup(renderType);
+        this.drawInstanced(instances);
+        this.clear(renderType);
+
+        if (renderType instanceof VeilRenderType.LayeredRenderType layeredRenderType) {
+            for (RenderType layer : layeredRenderType.getLayers()) {
+                this.setup(layer);
+                this.drawInstanced(instances);
+                this.clear(layer);
+            }
+        }
+    }
+
+    /**
+     * Draws {@link #indexCount} number of indices with the previously defined draw mode a number of times.
+     * This method applies the specified render type automatically.
+     * <br>
+     * {@link #bind()} must be called before this.
+     * <br>
+     * <strong>Note: This only works if {@link VeilRenderSystem#multiDrawIndirectSupported()} is <code>true</code></strong>
+     *
+     * @param indirect  A pointer into the currently bound {@link GL40C#GL_DRAW_INDIRECT_BUFFER} or the address of a struct containing draw data
+     * @param drawCount The number of instances to draw
+     * @param stride    The stride between commands or <code>0</code> if they are tightly packed
+     */
+    public void drawIndirectWithRenderType(RenderType renderType, long indirect, int drawCount, int stride) {
+        this.setup(renderType);
+        this.drawIndirect(indirect, drawCount, stride);
+        this.clear(renderType);
+
+        if (renderType instanceof VeilRenderType.LayeredRenderType layeredRenderType) {
+            for (RenderType layer : layeredRenderType.getLayers()) {
+                this.setup(layer);
+                this.drawIndirect(indirect, drawCount, stride);
+                this.clear(layer);
+            }
+        }
     }
 
     /**
@@ -329,17 +417,8 @@ public abstract class VertexArray implements NativeResource {
      *
      * @param drawMode The new draw mode
      */
-    public void setDrawMode(int drawMode) {
-        this.drawMode = drawMode;
-    }
-
-    /**
-     * Sets the type of polygons draw calls will draw.
-     *
-     * @param drawMode The new draw mode
-     */
     public void setDrawMode(VertexFormat.Mode drawMode) {
-        this.drawMode = drawMode.asGLMode;
+        this.drawMode = drawMode;
     }
 
     @Override
@@ -352,8 +431,8 @@ public abstract class VertexArray implements NativeResource {
 
     private enum VertexArrayType {
         LEGACY(LegacyVertexArray::new),
-        ARB(ARBVertexAttribBindingVertexArray::new),
-        DSA(DSAVertexAttribBindingVertexArray::new);
+        ARB(ARBVertexArray::new),
+        DSA(DSAVertexArray::new);
 
         private final IntFunction<VertexArray> factory;
 
@@ -406,6 +485,11 @@ public abstract class VertexArray implements NativeResource {
         }
     }
 
+    /**
+     * The type of GL draw usages that can be used.
+     *
+     * @author Ocelot
+     */
     public enum DrawUsage {
         STATIC(GL_STATIC_DRAW),
         DYNAMIC(GL_DYNAMIC_DRAW),
