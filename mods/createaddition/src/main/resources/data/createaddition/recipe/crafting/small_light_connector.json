@@ -1,0 +1,18 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{
+		    "tag": "c:wires/iron"
+		},
+		{
+		    "tag": "c:glass_blocks"
+		},
+		{
+		    "item": "createaddition:connector"
+		}
+	],
+	"result":{
+		"id": "createaddition:small_light_connector",
+		"count": 1
+	}
+}

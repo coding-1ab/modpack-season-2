@@ -1,0 +1,57 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:slimeball/blood"
+    },
+    {
+      "tag": "c:slimeball/blood"
+    },
+    {
+      "tag": "c:slimeball/blood"
+    },
+    {
+      "tag": "c:slimeball/blood"
+    },
+    {
+      "tag": "c:slimeball/blood"
+    },
+    {
+      "tag": "c:slimeball/blood"
+    },
+    {
+      "tag": "c:slimeball/blood"
+    },
+    {
+      "tag": "c:slimeball/blood"
+    },
+    {
+      "item": "minecraft:honey_block"
+    }
+  ],
+  "results": [
+    {
+      "id": "tconstruct:pig_iron_ingot",
+      "count": 8
+    }
+  ],
+  "heatRequirement": "heated",
+  "conditions": [
+    {
+    	"type": "forge:mod_loaded",
+    	"modid": "tconstruct"
+  	}
+  ]
+}
