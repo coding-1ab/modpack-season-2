@@ -20,6 +20,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -33,8 +34,8 @@ public class WireSpool extends Item {
 
 	@Override
 	public InteractionResult useOn(UseOnContext c) {
-		var data1 = c.getItemInHand().get(DataComponents.CUSTOM_DATA);
-		CompoundTag nbt = data1 == null ? new CompoundTag() : data1.copyTag();
+		var data1 = c.getItemInHand().getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
+		CompoundTag nbt = data1.copyTag();
 
 		var clickedPos = c.getClickedPos();
 		BlockEntity te = c.getLevel().getBlockEntity(clickedPos);
@@ -48,10 +49,8 @@ public class WireSpool extends Item {
 
 			WireType connectionType = IWireNode.getTypeOfConnection(c.getLevel(), clickedPos, getPos(nbt));
 
-			if(isRemover(heldItem))
-				result = IWireNode.disconnect(c.getLevel(), clickedPos, getPos(nbt));
-			else
-				result = IWireNode.connect(c.getLevel(), getPos(nbt), getNode(nbt), clickedPos, node.getAvailableNode(c.getClickLocation()), WireType.of(c.getItemInHand().getItem()));
+			if(isRemover(heldItem)) result = IWireNode.disconnect(c.getLevel(), clickedPos, getPos(nbt));
+			else result = IWireNode.connect(c.getLevel(), getPos(nbt), getNode(nbt), clickedPos, node.getAvailableNode(c.getClickLocation()), WireType.of(c.getItemInHand().getItem()));
 
 			// Play sound
 			if(result.isLinked()) {
@@ -74,19 +73,16 @@ public class WireSpool extends Item {
 					c.getItemInHand().shrink(1);
 					ItemStack stack = connectionType.getSourceDrop();
 					boolean shouldDrop = !c.getPlayer().addItem(stack);
-					if(shouldDrop)
-						c.getPlayer().drop(stack, false);
+					if(shouldDrop) c.getPlayer().drop(stack, false);
 				}
 				else if(result.isLinked()) {
 					c.getItemInHand().shrink(1);
 					ItemStack stack = new ItemStack(CAItems.SPOOL.get(), 1);
 					boolean shouldDrop = !c.getPlayer().addItem(stack);
-					if(shouldDrop)
-						c.getPlayer().drop(stack, false);
+					if(shouldDrop) c.getPlayer().drop(stack, false);
 				}
 			}
-			var data2 = c.getItemInHand().get(DataComponents.CUSTOM_DATA);
-			if (data2 != null) data2.update((a) -> new CompoundTag());
+			c.getItemInHand().set(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
 			c.getPlayer().displayClientMessage(result.getMessage(), true);
 
 		}
@@ -103,8 +99,7 @@ public class WireSpool extends Item {
 			if(index < 0) return InteractionResult.PASS;
 			if(!isRemover(heldItem))
 				c.getPlayer().displayClientMessage(WireConnectResult.getConnect(node.isNodeInput(index), node.isNodeOutput(index)).getMessage(), true);
-			var data2 = c.getItemInHand().get(DataComponents.CUSTOM_DATA);
-			if (data2 != null) data2.update((a) -> setContent(nbt, node.getPos(), index));
+			c.getItemInHand().set(DataComponents.CUSTOM_DATA, CustomData.of(setContent(nbt, node.getPos(), index)));
 		}
 		return InteractionResult.CONSUME;
 	}

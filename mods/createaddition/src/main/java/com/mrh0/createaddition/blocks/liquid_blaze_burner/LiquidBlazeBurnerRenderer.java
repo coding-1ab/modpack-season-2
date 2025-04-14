@@ -35,19 +35,19 @@ public class LiquidBlazeBurnerRenderer extends SafeBlockEntityRenderer<LiquidBla
 	public LiquidBlazeBurnerRenderer(BlockEntityRendererProvider.Context context) {}
 
 	@Override
-	protected void renderSafe(LiquidBlazeBurnerBlockEntity te, float partialTicks, PoseStack ms, MultiBufferSource bufferSource,
+	protected void renderSafe(LiquidBlazeBurnerBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource bufferSource,
 							  int light, int overlay) {
-		BlazeBurnerBlock.HeatLevel heatLevel = te.getHeatLevelFromBlock();
+		BlazeBurnerBlock.HeatLevel heatLevel = be.getHeatLevelFromBlock();
 		if (heatLevel == BlazeBurnerBlock.HeatLevel.NONE)
 			return;
 
-		Level level = te.getLevel();
-		BlockState blockState = te.getBlockState();
-		float animation = te.headAnimation.getValue(partialTicks) * .175f;
-		float horizontalAngle = AngleHelper.rad(te.headAngle.getValue(partialTicks));
+		Level level = be.getLevel();
+		BlockState blockState = be.getBlockState();
+		float animation = be.headAnimation.getValue(partialTicks) * .175f;
+		float horizontalAngle = AngleHelper.rad(be.headAngle.getValue(partialTicks));
 		boolean canDrawFlame = heatLevel.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING);
-		boolean drawGoggles = te.goggles;
-		int hashCode = te.hashCode();
+		boolean drawGoggles = be.goggles;
+		int hashCode = be.hashCode();
 
 		renderShared(ms, null, bufferSource,
 			level, blockState, heatLevel, animation, horizontalAngle,
@@ -89,10 +89,66 @@ public class LiquidBlazeBurnerRenderer extends SafeBlockEntityRenderer<LiquidBla
 		float offset2 = Mth.sin((float) ((renderTick / 16f + Math.PI / 2) % (2 * Math.PI))) / offsetMult;
 		float headY = offset - (animation * .75f);
 
-		VertexConsumer solid = bufferSource.getBuffer(RenderType.solid());
-		VertexConsumer cutout = bufferSource.getBuffer(RenderType.cutoutMipped());
-
 		ms.pushPose();
+
+		var blazeModel = getBlazeModel(heatLevel, blockAbove);
+
+		SuperByteBuffer blazeBuffer = CachedBuffers.partial(blazeModel, blockState);
+		if (modelTransform != null)
+			blazeBuffer.transform(modelTransform);
+		blazeBuffer.translate(0, headY, 0);
+		draw(blazeBuffer, horizontalAngle, ms, bufferSource.getBuffer(RenderType.solid()));
+
+		if (drawGoggles) {
+			PartialModel gogglesModel = blazeModel == AllPartialModels.BLAZE_INERT
+					? AllPartialModels.BLAZE_GOGGLES_SMALL : AllPartialModels.BLAZE_GOGGLES;
+
+			SuperByteBuffer gogglesBuffer = CachedBuffers.partial(gogglesModel, blockState);
+			if (modelTransform != null)
+				gogglesBuffer.transform(modelTransform);
+			gogglesBuffer.translate(0, headY + 8 / 16f, 0);
+			draw(gogglesBuffer, horizontalAngle, ms, bufferSource.getBuffer(RenderType.solid()));
+		}
+
+		SuperByteBuffer hatBuffer = CachedBuffers.partial(CAPartials.LIQUID_HAT, blockState);
+		if (modelTransform != null)
+			hatBuffer.transform(modelTransform);
+		hatBuffer.translate(0, headY, 0);
+		if (blazeModel == AllPartialModels.BLAZE_INERT) {
+			hatBuffer.translateY(0.5f)
+					.center()
+					.scale(0.75f)
+					.uncenter();
+		} else {
+			hatBuffer.translateY(0.75f);
+		}
+		VertexConsumer cutout = bufferSource.getBuffer(RenderType.cutoutMipped());
+		hatBuffer
+				.rotateCentered(horizontalAngle + Mth.PI, Direction.UP)
+				.translate(0.5f, 0, 0.5f)
+				.light(LightTexture.FULL_BRIGHT)
+				.renderInto(ms, cutout);
+
+		if (heatLevel.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING)) {
+			PartialModel rodsModel = heatLevel == BlazeBurnerBlock.HeatLevel.SEETHING ? AllPartialModels.BLAZE_BURNER_SUPER_RODS
+					: AllPartialModels.BLAZE_BURNER_RODS;
+			PartialModel rodsModel2 = heatLevel == BlazeBurnerBlock.HeatLevel.SEETHING ? AllPartialModels.BLAZE_BURNER_SUPER_RODS_2
+					: AllPartialModels.BLAZE_BURNER_RODS_2;
+
+			SuperByteBuffer rodsBuffer = CachedBuffers.partial(rodsModel, blockState);
+			if (modelTransform != null)
+				rodsBuffer.transform(modelTransform);
+			rodsBuffer.translate(0, offset1 + animation + .125f, 0)
+					.light(LightTexture.FULL_BRIGHT)
+					.renderInto(ms, bufferSource.getBuffer(RenderType.solid()));
+
+			SuperByteBuffer rodsBuffer2 = CachedBuffers.partial(rodsModel2, blockState);
+			if (modelTransform != null)
+				rodsBuffer2.transform(modelTransform);
+			rodsBuffer2.translate(0, offset2 + animation - 3 / 16f, 0)
+					.light(LightTexture.FULL_BRIGHT)
+					.renderInto(ms, bufferSource.getBuffer(RenderType.solid()));
+		}
 
 		if (canDrawFlame && blockAbove) {
 			SpriteShiftEntry spriteShift =
@@ -124,75 +180,18 @@ public class LiquidBlazeBurnerRenderer extends SafeBlockEntityRenderer<LiquidBla
 			flameBuffer.shiftUVScrolling(spriteShift, (float) uScroll, (float) vScroll);
 			draw(flameBuffer, horizontalAngle, ms, cutout);
 		}
-
-		PartialModel blazeModel;
-		if (heatLevel.isAtLeast(BlazeBurnerBlock.HeatLevel.SEETHING)) {
-			blazeModel = blockAbove ? AllPartialModels.BLAZE_SUPER_ACTIVE : AllPartialModels.BLAZE_SUPER;
-		} else if (heatLevel.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING)) {
-			blazeModel = blockAbove && heatLevel.isAtLeast(BlazeBurnerBlock.HeatLevel.KINDLED) ? AllPartialModels.BLAZE_ACTIVE
-				: AllPartialModels.BLAZE_IDLE;
-		} else {
-			blazeModel = AllPartialModels.BLAZE_INERT;
-		}
-
-		SuperByteBuffer blazeBuffer = CachedBuffers.partial(blazeModel, blockState);
-		if (modelTransform != null)
-			blazeBuffer.transform(modelTransform);
-		blazeBuffer.translate(0, headY, 0);
-		draw(blazeBuffer, horizontalAngle, ms, solid);
-
-		if (drawGoggles) {
-			PartialModel gogglesModel = blazeModel == AllPartialModels.BLAZE_INERT
-					? AllPartialModels.BLAZE_GOGGLES_SMALL : AllPartialModels.BLAZE_GOGGLES;
-
-			SuperByteBuffer gogglesBuffer = CachedBuffers.partial(gogglesModel, blockState);
-			if (modelTransform != null)
-				gogglesBuffer.transform(modelTransform);
-			gogglesBuffer.translate(0, headY + 8 / 16f, 0);
-			draw(gogglesBuffer, horizontalAngle, ms, solid);
-		}
-
-		//Draw hat
-		SuperByteBuffer hatBuffer = CachedBuffers.partial(CAPartials.LIQUID_HAT, blockState);
-		if (modelTransform != null)
-			hatBuffer.transform(modelTransform);
-		hatBuffer.translate(0, headY, 0);
-		if (blazeModel == AllPartialModels.BLAZE_INERT) {
-			hatBuffer.translateY(0.5f)
-				.center()
-				.scale(0.75f)
-				.uncenter();
-		} else {
-			hatBuffer.translateY(0.75f);
-		}
-		hatBuffer
-			.rotateCentered(horizontalAngle + Mth.PI, Direction.UP)
-			.translate(0.5f, 0, 0.5f)
-			.light(LightTexture.FULL_BRIGHT)
-			.renderInto(ms, solid);
-
-		if (heatLevel.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING)) {
-			PartialModel rodsModel = heatLevel == BlazeBurnerBlock.HeatLevel.SEETHING ? AllPartialModels.BLAZE_BURNER_SUPER_RODS
-				: AllPartialModels.BLAZE_BURNER_RODS;
-			PartialModel rodsModel2 = heatLevel == BlazeBurnerBlock.HeatLevel.SEETHING ? AllPartialModels.BLAZE_BURNER_SUPER_RODS_2
-				: AllPartialModels.BLAZE_BURNER_RODS_2;
-
-			SuperByteBuffer rodsBuffer = CachedBuffers.partial(rodsModel, blockState);
-			if (modelTransform != null)
-				rodsBuffer.transform(modelTransform);
-			rodsBuffer.translate(0, offset1 + animation + .125f, 0)
-				.light(LightTexture.FULL_BRIGHT)
-				.renderInto(ms, solid);
-
-			SuperByteBuffer rodsBuffer2 = CachedBuffers.partial(rodsModel2, blockState);
-			if (modelTransform != null)
-				rodsBuffer2.transform(modelTransform);
-			rodsBuffer2.translate(0, offset2 + animation - 3 / 16f, 0)
-				.light(LightTexture.FULL_BRIGHT)
-				.renderInto(ms, solid);
-		}
-
 		ms.popPose();
+	}
+
+	public static PartialModel getBlazeModel(BlazeBurnerBlock.HeatLevel heatLevel, boolean blockAbove) {
+		if (heatLevel.isAtLeast(BlazeBurnerBlock.HeatLevel.SEETHING)) {
+			return blockAbove ? AllPartialModels.BLAZE_SUPER_ACTIVE : AllPartialModels.BLAZE_SUPER;
+		} else if (heatLevel.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING)) {
+			return blockAbove && heatLevel.isAtLeast(BlazeBurnerBlock.HeatLevel.KINDLED) ? AllPartialModels.BLAZE_ACTIVE
+					: AllPartialModels.BLAZE_IDLE;
+		} else {
+			return AllPartialModels.BLAZE_INERT;
+		}
 	}
 
 	private static void draw(SuperByteBuffer buffer, float horizontalAngle, PoseStack ms, VertexConsumer vc) {
