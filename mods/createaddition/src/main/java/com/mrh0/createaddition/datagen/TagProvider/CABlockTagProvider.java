@@ -20,14 +20,14 @@ public class CABlockTagProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        tag(AllTags.AllBlockTags.FAN_PROCESSING_CATALYSTS_BLASTING.tag).add(new Block[] {
+        System.out.println("addTags HERE");
+        tag(AllTags.AllBlockTags.FAN_PROCESSING_CATALYSTS_BLASTING.tag).add(
                 CABlocks.LIQUID_BLAZE_BURNER.get()
-        });
-        tag(AllTags.AllBlockTags.FAN_TRANSPARENT.tag).add(new Block[] {
+        );
+        tag(AllTags.AllBlockTags.FAN_TRANSPARENT.tag).add(
                 CABlocks.LIQUID_BLAZE_BURNER.get()
-        });
-
-        tag(BlockTags.MINEABLE_WITH_PICKAXE).add( new Block[] {
+        );
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(
                 CABlocks.ALTERNATOR.get(),
                 CABlocks.ELECTRIC_MOTOR.get(),
                 CABlocks.ROLLING_MILL.get(),
@@ -42,7 +42,6 @@ public class CABlockTagProvider extends BlockTagsProvider {
                 CABlocks.MODULAR_ACCUMULATOR.get(),
                 CABlocks.PORTABLE_ENERGY_INTERFACE.get(),
                 CABlocks.DIGITAL_ADAPTER.get()
-        });
-
+        );
     }
 }

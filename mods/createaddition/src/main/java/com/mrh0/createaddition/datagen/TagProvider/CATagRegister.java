@@ -9,7 +9,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.material.Fluid;
 
 public class CATagRegister {
-
     public static class Items {
         public static final TagKey<Item> DIAMOND_DUSTS = commonTags("dusts","diamond");
         public static final TagKey<Item> OBSIDIAN_DUSTS = commonTags("dusts","obsidian");
@@ -43,17 +42,16 @@ public class CATagRegister {
         public static final TagKey<Item> PLANTS = createAdditionsTags("plants");
         public static final TagKey<Item> SPOOLS = createAdditionsTags("spools");
 
-
-        public static TagKey<Item> commonTags(String folder,String name) {
-            return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", String.format("%s/%s",folder, name)));
+        public static TagKey<Item> commonTags(String folder, String name) {
+            return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", String.format("%s/%s", folder, name)));
         }
 
         public static TagKey<Item> commonTags(String name) {
             return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
         }
 
-        public static TagKey<Item> createAdditionsTags(String folder,String name) {
-            return ItemTags.create(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, String.format("%s/%s",folder, name)));
+        public static TagKey<Item> createAdditionsTags(String folder, String name) {
+            return ItemTags.create(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, String.format("%s/%s", folder, name)));
         }
 
         public static TagKey<Item> createAdditionsTags(String name) {
@@ -67,20 +65,12 @@ public class CATagRegister {
         public static final TagKey<Fluid> CRUDE_OIL = commonTags("crude_oil");
         public static final TagKey<Fluid> PLANTOIL = commonTags("plantoil");
 
-        public static TagKey<Fluid> commonTags(String folder,String name) {
-            return FluidTags.create(ResourceLocation.fromNamespaceAndPath("c", String.format("%s/%s",folder, name)));
+        public static TagKey<Fluid> commonTags(String folder, String name) {
+            return FluidTags.create(ResourceLocation.fromNamespaceAndPath("c", String.format("%s/%s", folder, name)));
         }
 
         public static TagKey<Fluid> commonTags(String name) {
             return FluidTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
         }
-
     }
-
-
-
-
-
-
-
 }

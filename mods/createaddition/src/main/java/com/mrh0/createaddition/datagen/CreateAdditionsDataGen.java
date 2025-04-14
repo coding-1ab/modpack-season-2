@@ -15,19 +15,20 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 import java.util.concurrent.CompletableFuture;
 
-@EventBusSubscriber(modid = CreateAddition.MODID,bus = EventBusSubscriber.Bus.MOD)
-public class CreateAdditionsDatagen {
+@EventBusSubscriber(modid = CreateAddition.MODID, bus = EventBusSubscriber.Bus.MOD)
+public class CreateAdditionsDataGen {
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {
+        System.out.println("gatherData HERE");
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
-//        BlockTagsProvider blockTags = new CABlockTagProvider(output,lookupProvider,existingFileHelper);
-//        generator.addProvider(event.includeServer(),blockTags);
-//        generator.addProvider(event.includeServer(),new CACraftingRecipeProvider(output,lookupProvider));
-        generator.addProvider(event.includeServer(),new CAFluidTagProvider(output,lookupProvider,existingFileHelper));
-//        generator.addProvider(event.includeServer(),new CAItemTagProvider(output,lookupProvider,blockTags.contentsGetter(),existingFileHelper));
+        BlockTagsProvider blockTags = new CABlockTagProvider(output, lookupProvider, existingFileHelper);
+        generator.addProvider(event.includeServer(), blockTags);
+        generator.addProvider(event.includeServer(), new CACraftingRecipeProvider(output, lookupProvider));
+        generator.addProvider(event.includeServer(), new CAFluidTagProvider(output, lookupProvider, existingFileHelper));
+        generator.addProvider(event.includeServer(), new CAItemTagProvider(output, lookupProvider, blockTags.contentsGetter(), existingFileHelper));
     }
 }
