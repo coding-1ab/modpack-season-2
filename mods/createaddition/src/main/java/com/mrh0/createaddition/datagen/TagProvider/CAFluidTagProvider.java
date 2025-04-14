@@ -19,20 +19,21 @@ public class CAFluidTagProvider extends FluidTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        tag(CATagRegister.Fluids.BIOFUEL).add( new Fluid[]{
-                CAFluids.BIOETHANOL.get(),
-                CAFluids.BIOETHANOL.get().getFlowing(),
-        });
-        tag(CATagRegister.Fluids.PLANTOIL).add(new Fluid[] {
-           CAFluids.SEED_OIL.get(),
-           CAFluids.SEED_OIL.get().getFlowing(),
-        });
-
-        tag(FluidTags.WATER).add(new Fluid[] {
-                CAFluids.SEED_OIL.get(),
-                CAFluids.SEED_OIL.get().getFlowing(),
-                CAFluids.BIOETHANOL.get(),
-                CAFluids.BIOETHANOL.get().getFlowing()
-        });
+//        tag(CATagRegister.Fluids.BIOFUEL).add( new Fluid[]{
+//                CAFluids.BIOETHANOL.get(),
+//                CAFluids.BIOETHANOL.get().getFlowing(),
+//        });
+//        tag(CATagRegister.Fluids.PLANTOIL).add(new Fluid[] {
+//           CAFluids.SEED_OIL.get(),
+//           CAFluids.SEED_OIL.get().getFlowing(),
+//        });
+//
+//        tag(FluidTags.WATER).add(new Fluid[] {
+//                CAFluids.SEED_OIL.get(),
+//                CAFluids.SEED_OIL.get().getFlowing(),
+//                CAFluids.BIOETHANOL.get(),
+//                CAFluids.BIOETHANOL.get().getFlowing()
+//        });
+        tag(CATagRegister.Fluids.BIOFUEL).add(CAFluids.BIOETHANOL.get());
     }
 }

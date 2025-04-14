@@ -37,6 +37,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -110,6 +111,8 @@ public class CreateAddition {
 
         //IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         //MinecraftForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(this);
+
 
         container.registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG);
         //
@@ -173,11 +176,6 @@ public class CreateAddition {
     public void onRegisterCommandEvent(RegisterCommandsEvent event) {
     	CommandDispatcher<CommandSourceStack> dispather = event.getDispatcher();
     	CCApiCommand.register(dispather);
-    }
-
-    @SubscribeEvent
-    public static void onLoad(ModConfigEvent.Loading event) {
-        CommonConfig.loadConfig(CommonConfig.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("createaddition-common.toml"));
     }
 
     private static final String PROTOCOL = "1";

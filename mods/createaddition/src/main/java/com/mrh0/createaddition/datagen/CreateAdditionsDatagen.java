@@ -24,10 +24,10 @@ public class CreateAdditionsDatagen {
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
-        BlockTagsProvider blockTags = new CABlockTagProvider(output,lookupProvider,existingFileHelper);
-        generator.addProvider(event.includeServer(),blockTags);
-        generator.addProvider(event.includeServer(),new CACraftingRecipeProvider(output,lookupProvider));
+//        BlockTagsProvider blockTags = new CABlockTagProvider(output,lookupProvider,existingFileHelper);
+//        generator.addProvider(event.includeServer(),blockTags);
+//        generator.addProvider(event.includeServer(),new CACraftingRecipeProvider(output,lookupProvider));
         generator.addProvider(event.includeServer(),new CAFluidTagProvider(output,lookupProvider,existingFileHelper));
-        generator.addProvider(event.includeServer(),new CAItemTagProvider(output,lookupProvider,blockTags.contentsGetter(),existingFileHelper));
+//        generator.addProvider(event.includeServer(),new CAItemTagProvider(output,lookupProvider,blockTags.contentsGetter(),existingFileHelper));
     }
 }
