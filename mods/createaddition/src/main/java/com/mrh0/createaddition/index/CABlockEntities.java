@@ -82,6 +82,7 @@ public class CABlockEntities {
 	
 	public static final BlockEntityEntry<LiquidBlazeBurnerBlockEntity> LIQUID_BLAZE_BURNER = CreateAddition.REGISTRATE
 			.blockEntity("liquid_blaze_burner", LiquidBlazeBurnerBlockEntity::new)
+			.visual(() -> LiquidBlazeBurnerVisual::new, false)
 			.validBlocks(CABlocks.LIQUID_BLAZE_BURNER)
 			.renderer(() -> LiquidBlazeBurnerRenderer::new)
 			.register();

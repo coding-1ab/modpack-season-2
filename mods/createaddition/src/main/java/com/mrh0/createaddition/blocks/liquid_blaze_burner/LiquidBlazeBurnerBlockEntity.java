@@ -13,12 +13,14 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock;
+import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
 
 import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.client.Minecraft;
@@ -37,6 +39,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -59,6 +62,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	protected boolean isCreative;
 	protected boolean goggles;
 	protected boolean hat;
+	public final boolean stockKeeper = false;
 
 	public LiquidBlazeBurnerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -78,6 +82,13 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> list) {
 
+	}
+
+	public BlazeBurnerBlock.HeatLevel getHeatLevelForRender() {
+		BlazeBurnerBlock.HeatLevel heatLevel = getHeatLevelFromBlock();
+		if (!heatLevel.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING) && stockKeeper)
+			return BlazeBurnerBlock.HeatLevel.FADING;
+		return heatLevel;
 	}
 
 	// Custom fluid handling
@@ -190,8 +201,30 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 		updateBlockState();
 	}
 
+	@Override
+	public void lazyTick() {
+		super.lazyTick();
+		//stockKeeper = getStockTicker(level, worldPosition) != null;
+	}
+
+	/*
+	@Nullable
+	public static StockTickerBlockEntity getStockTicker(LevelAccessor level, BlockPos pos) {
+		for (Direction direction : Iterate.horizontalDirections) {
+			if (level instanceof Level l && !l.isLoaded(pos))
+				return null;
+			BlockState blockState = level.getBlockState(pos.relative(direction));
+			if (!AllBlocks.STOCK_TICKER.has(blockState))
+				continue;
+			if (level.getBlockEntity(pos.relative(direction)) instanceof StockTickerBlockEntity stbe)
+				return stbe;
+		}
+		return null;
+	}
+	*/
+
 	@OnlyIn(Dist.CLIENT)
-	private void tickAnimation() {
+    void tickAnimation() {
 		boolean active = getHeatLevelFromBlock().isAtLeast(BlazeBurnerBlock.HeatLevel.FADING) && isValidBlockAbove();
 
 		if (!active) {
