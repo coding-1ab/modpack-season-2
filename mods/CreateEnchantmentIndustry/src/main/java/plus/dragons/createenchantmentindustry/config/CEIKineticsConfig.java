@@ -29,8 +29,8 @@ public class CEIKineticsConfig extends ConfigBase {
     public final ConfigBool deployerMendItem = b(true, "deployerMendItem", Comments.deployerMendItem);
     public final ConfigBool deployerSweepAttack = b(true, "deployerSweepAttack", Comments.deployerSweepAttack);
     public final ConfigBool crushingWheelKillDropXp = b(true, "crushingWheelKillDropXp", Comments.crushingWheelKillDropXp);
-    public final ConfigFloat crushingWheelKillDropXpRate = f(0.3f,0,1, "crushingWheelKillDropXpRate", Comments.crushingWheelKillDropXpRate);
-    public final ConfigFloat crushingWheelKillDropXpScale = f(0.34f,0,1, "crushingWheelKillDropXpScale", Comments.crushingWheelKillDropXpScale);
+    public final ConfigFloat crushingWheelKillDropXpRate = f(0.3f, 0, 1, "crushingWheelKillDropXpRate", Comments.crushingWheelKillDropXpRate);
+    public final ConfigFloat crushingWheelKillDropXpScale = f(0.34f, 0, 1, "crushingWheelKillDropXpScale", Comments.crushingWheelKillDropXpScale);
     public final CEIStressConfig stressValues = nested(0, CEIStressConfig::new, Comments.stress);
 
     @Override
