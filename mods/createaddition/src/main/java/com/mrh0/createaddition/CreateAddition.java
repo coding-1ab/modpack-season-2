@@ -166,7 +166,7 @@ public class CreateAddition {
             return 0;
         });
 
-    	System.out.println("Create Crafts & Additions Initialized!");
+        LOGGER.info("Create Crafts & Additions Initialized!");
     }
 
     public void onRegister(final RegisterEvent event) {
