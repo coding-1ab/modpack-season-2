@@ -81,9 +81,10 @@ public class CreateAddition {
                 .andThen(TooltipModifier.mapNull(KineticStats.create(item))));
     }
 
-    private static ItemLike[] excludedItemsList = {
+    private static final ItemLike[] excludedItemsList = new ItemLike[]{
             CAItems.CAKE_BASE,
-            CAItems.CAKE_BASE_BAKED
+            CAItems.CAKE_BASE_BAKED,
+            CAItems.BIOMASS
     };
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
@@ -94,7 +95,7 @@ public class CreateAddition {
             .title(Component.translatable("itemGroup.createaddition.main"))
             .displayItems((itemDisplayParameters, output) -> REGISTRATE.getAll(Registries.ITEM).forEach((item -> {
                 for (ItemLike excluded : excludedItemsList) {
-                    if (item.is(excluded)) return;
+                    if (item.is(excluded.asItem())) return;
                 }
                 output.accept(item.get());
             })))
