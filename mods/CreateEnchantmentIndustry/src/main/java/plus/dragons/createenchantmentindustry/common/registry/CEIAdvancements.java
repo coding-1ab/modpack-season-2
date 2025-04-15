@@ -148,7 +148,7 @@ public class CEIAdvancements implements DataProvider {
                     .description("Blaze Forger forges 1,000 times")
                     .whenStatReach(Stats.CUSTOM.get(CEIStats.FORGE.get()), MinMaxBounds.Ints.atLeast(1000))
                     .special(CDPAdvancement.TaskType.EXPERT)
-                    .after(SIGIL_FORGING)),
+                    .after(MAGIC_UNBINDING)),
 
             // Super Enchant
             LIGHTNING_CATALYSIS = create("lightning_catalysis", b -> b.icon(CEIBlocks.BLAZE_FORGER)
