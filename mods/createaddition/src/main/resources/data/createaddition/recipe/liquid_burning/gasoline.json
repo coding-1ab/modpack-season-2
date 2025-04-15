@@ -1,14 +1,15 @@
 {
 	"type":"createaddition:liquid_burning",
 	"input": {
-      	"fluidTag": "forge:gasoline",
-      	"amount": 1000
+		"type": "fluid_tag",
+		"fluid_tag": "c:gasoline",
+		"amount": 1000
 	},
 	"burnTime": 48000,
 	"superheated": true,
 	"conditions": [
 	    {
-	        "fluidTag": "forge:gasoline",
+	        "fluidTag": "c:gasoline",
 	        "type": "createaddition:has_fluid_tag"
 	    }
 	]
