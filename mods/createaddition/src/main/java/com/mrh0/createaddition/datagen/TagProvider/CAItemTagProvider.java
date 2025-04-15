@@ -154,6 +154,16 @@ public class CAItemTagProvider extends ItemTagsProvider {
 
         tag(ItemTags.BEACON_PAYMENT_ITEMS).addTag(CATagRegister.Items.ELECTRUM_INGOTS);
 
+        tag(CATagRegister.Items.LARGE_CONNECTOR_USABLE_RODS).addTags(new TagKey[]{
+                CATagRegister.Items.GOLD_RODS,
+                CATagRegister.Items.ELECTRUM_RODS
+        });
+
+        tag(CATagRegister.Items.MODULAR_ACCUMULATOR_USABLE_WIRES).addTags(new TagKey[]{
+                CATagRegister.Items.GOLD_WIRES,
+                CATagRegister.Items.ELECTRUM_WIRES
+        });
+
 
 
 
