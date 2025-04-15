@@ -30,7 +30,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
-import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 import plus.dragons.createenchantmentindustry.util.CEILang;
@@ -45,9 +44,8 @@ public class AddressPrintingBehaviour implements PrintingBehaviour {
     public static Optional<DataResult<PrintingBehaviour>> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
         if (stack.getItem() instanceof PackageItem) {
             String address = stack.get(AllDataComponents.PACKAGE_ADDRESS);
-            return Optional.of(address == null || address.isEmpty()
-                    ? DataResult.error(() -> CEICommon.asLocalization("gui.printer.adress.invalid"))
-                    : DataResult.success(new AddressPrintingBehaviour(address)));
+            if(address!=null && !address.isEmpty())
+                return Optional.of(DataResult.success(new AddressPrintingBehaviour(address)));
         }
         return Optional.empty();
     }
@@ -74,7 +72,6 @@ public class AddressPrintingBehaviour implements PrintingBehaviour {
 
     @Override
     public void onFinished(Level level, BlockPos pos, PrinterBlockEntity printer) {
-        // TODO: Trigger advancement
         // Plays SoundEvents.BOOK_PAGE_TURN
         level.levelEvent(1043, pos.below(), 0);
     }
