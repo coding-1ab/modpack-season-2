@@ -51,6 +51,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.Nullable;
 
+import static com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HEAT_LEVEL;
+
 public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, IObserveTileEntity {
 	public static final int MAX_HEAT_CAPACITY = 10000;
 
@@ -288,7 +290,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	}
 
 	public BlazeBurnerBlock.HeatLevel getHeatLevelFromBlock() {
-		return BlazeBurnerBlock.getHeatLevelOf(getBlockState());
+		return LiquidBlazeBurnerBlock.getHeatLevelOf(getBlockState());
 	}
 
 	public void updateBlockState() {
@@ -299,7 +301,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 		if (level == null) return;
 		BlazeBurnerBlock.HeatLevel inBlockState = getHeatLevelFromBlock();
 		if (inBlockState == heat) return;
-		level.setBlockAndUpdate(worldPosition, getBlockState().setValue(LiquidBlazeBurnerBlock.HEAT_LEVEL, heat));
+		level.setBlockAndUpdate(worldPosition, getBlockState().setValue(HEAT_LEVEL, heat));
 		notifyUpdate();
 	}
 
