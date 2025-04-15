@@ -3,6 +3,7 @@ package com.mrh0.createaddition.blocks.liquid_blaze_burner;
 import java.util.List;
 import java.util.Optional;
 
+import com.mrh0.createaddition.index.CABlockEntities;
 import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.network.IObserveTileEntity;
 import com.mrh0.createaddition.network.ObservePacketPayload;
@@ -13,14 +14,12 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock;
-import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
 
 import net.createmod.catnip.animation.LerpedFloat;
-import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.client.Minecraft;
@@ -39,7 +38,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -47,6 +45,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
@@ -96,6 +95,14 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 
 	private Optional<RecipeHolder<LiquidBurningRecipe>> recipeCache = Optional.empty();
 	private Fluid lastFluid = null;
+
+	public static void registerCapability(RegisterCapabilitiesEvent event) {
+		event.registerBlockEntity(
+				Capabilities.FluidHandler.BLOCK,
+				CABlockEntities.LIQUID_BLAZE_BURNER.get(),
+				(be, direction) -> be.tankInventory
+		);
+	}
 
 	protected SmartFluidTank createInventory() {
 		return new SmartFluidTank(4000, this::onFluidStackChanged);
@@ -258,7 +265,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	}
 
 	@Override
-	public void writeSafe(CompoundTag tag, HolderLookup.Provider registries) {
+	public void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
 		if (!isCreative) {
 			tag.putInt("fuelLevel", activeFuel.ordinal());
 			tag.putInt("burnTimeRemaining", remainingBurnTime);
@@ -266,7 +273,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 		if (goggles) tag.putBoolean("Goggles", true);
 		if (hat) tag.putBoolean("TrainHat", true);
 		tag.put("TankContent", tankInventory.writeToNBT(registries, new CompoundTag()));
-		super.writeSafe(tag, registries);
+		super.write(tag, registries, clientPacket);
 	}
 
 	@Override
@@ -304,7 +311,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 		if (itemHandler.getFluidInTank(0).isEmpty()) return false;
 		FluidStack stack = itemHandler.getFluidInTank(0);
 		Optional<RecipeHolder<LiquidBurningRecipe>> recipe = find(stack, level);
-		if (recipe.isPresent()) return false;
+		if (recipe.isEmpty()) return false;
 
 		var beHandler = level.getCapability(Capabilities.FluidHandler.BLOCK, getBlockPos(), null);
 		if (beHandler == null) return false;

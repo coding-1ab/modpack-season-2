@@ -1,14 +1,15 @@
 {
 	"type":"createaddition:liquid_burning",
 	"input": {
-      	"fluidTag": "forge:diesel",
-      	"amount": 1000
+		"type": "fluid_tag",
+		"fluid_tag": "c:diesel",
+		"amount": 1000
 	},
 	"burnTime": 48000,
 	"superheated": true,
 	"conditions": [
 	    {
-	        "fluidTag": "forge:diesel",
+	        "fluidTag": "c:diesel",
 	        "type": "createaddition:has_fluid_tag"
 	    }
 	]

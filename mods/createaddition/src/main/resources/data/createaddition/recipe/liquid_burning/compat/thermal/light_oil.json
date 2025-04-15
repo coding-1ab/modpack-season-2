@@ -1,8 +1,9 @@
 {
 	"type":"createaddition:liquid_burning",
 	"input": {
-      	"fluid": "thermal:light_oil",
-      	"amount": 1000
+		"type": "fluid_tag",
+		"fluid_tag": "thermal:light_oil",
+		"amount": 1000
 	},
 	"burnTime": 9600,
 	"conditions": [

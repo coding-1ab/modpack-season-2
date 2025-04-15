@@ -3,9 +3,9 @@ package com.mrh0.createaddition.blocks.rolling_mill;
 import java.util.List;
 import java.util.Optional;
 
+import com.mrh0.createaddition.index.CABlockEntities;
 import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.recipe.rolling.RollingRecipe;
-import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
@@ -54,7 +54,7 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
 		event.registerBlockEntity(
 				Capabilities.ItemHandler.BLOCK,
-				AllBlockEntityTypes.MILLSTONE.get(),
+				CABlockEntities.ROLLING_MILL.get(),
 				(be, context) -> be.capability
 		);
 	}
