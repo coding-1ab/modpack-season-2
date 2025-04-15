@@ -6,7 +6,6 @@ import com.simibubi.create.AllTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
@@ -43,5 +42,7 @@ public class CABlockTagProvider extends BlockTagsProvider {
                 CABlocks.PORTABLE_ENERGY_INTERFACE.get(),
                 CABlocks.DIGITAL_ADAPTER.get()
         );
+
+        tag(BlockTags.BEACON_BASE_BLOCKS).add(CABlocks.ELECTRUM_BLOCK.get());
     }
 }

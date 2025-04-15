@@ -14,6 +14,6 @@ public class CACraftingRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes(RecipeOutput recipeOutput) {
-
+        System.out.println("Running");
     }
 }
