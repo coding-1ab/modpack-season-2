@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "createaddition:crafting/electrum_block"
+        "recipe": "createaddition:crafting/electrum_ingot_from_electrum_block"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "createaddition:crafting/electrum_block"
+      "createaddition:crafting/electrum_ingot_from_electrum_block"
     ]
   }
 }

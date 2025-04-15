@@ -1,9 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "category": "building",
   "key": {
     "#": {
-      "item": "createaddition:electrum_block"
+      "item": "createaddition:electrum_ingot"
     }
   },
   "pattern": [
@@ -13,6 +13,6 @@
   ],
   "result": {
     "count": 1,
-    "id": "createaddition:electrum_ingot"
+    "id": "createaddition:electrum_block"
   }
 }

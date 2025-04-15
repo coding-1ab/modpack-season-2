@@ -157,10 +157,10 @@ public class CACraftingRecipeProvider extends RecipeProvider {
         );
         StorageRecipe(
                 utility,
-                RecipeCategory.BUILDING_BLOCKS,
-                CABlocks.ELECTRUM_BLOCK.asItem(),
                 RecipeCategory.MISC,
                 CAItems.ELECTRUM_INGOT.asItem(),
+                RecipeCategory.BUILDING_BLOCKS,
+                CABlocks.ELECTRUM_BLOCK.asItem(),
                 "electrum_block",
                 "electrum_ingot_from_electrum_block",
                 CreateAddition.MODID
