@@ -10,6 +10,7 @@ import com.mrh0.createaddition.debug.IDebugDrawer;
 import com.mrh0.createaddition.energy.*;
 import com.mrh0.createaddition.energy.network.EnergyNetwork;
 import com.mrh0.createaddition.index.CABlockEntities;
+import com.mrh0.createaddition.index.CALang;
 import com.mrh0.createaddition.util.Util;
 import com.mrh0.createaddition.network.EnergyNetworkPacketPayload;
 import com.mrh0.createaddition.network.IObserveTileEntity;
@@ -349,18 +350,14 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 		ObservePacketPayload.send(worldPosition, 0);
 
 		String spacing = " ";
-		tooltip.add(Component.literal(spacing)
-				.append(Component.translatable(CreateAddition.MODID + ".tooltip.connector.info").withStyle(ChatFormatting.WHITE)));
+		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.connector.info").withStyle(ChatFormatting.WHITE)).forGoggles(tooltip);
 
-		tooltip.add(Component.literal(spacing)
-				.append(Component.translatable(CreateAddition.MODID + ".tooltip.energy.mode").withStyle(ChatFormatting.GRAY)));
-		tooltip.add(Component.literal(spacing).append(Component.literal(" "))
-				.append(getBlockState().getValue(AbstractConnectorBlock.MODE).getTooltip().withStyle(ChatFormatting.AQUA)));
+		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.energy.mode").withStyle(ChatFormatting.GRAY)).forGoggles(tooltip);
+		CALang.builder().add(Component.literal(" ")
+				.append(getBlockState().getValue(AbstractConnectorBlock.MODE).getTooltip().withStyle(ChatFormatting.AQUA))).forGoggles(tooltip);
 
-		tooltip.add(Component.literal(spacing)
-				.append(Component.translatable(CreateAddition.MODID + ".tooltip.energy.usage").withStyle(ChatFormatting.GRAY)));
-		tooltip.add(Component.literal(spacing).append(" ")
-				.append(Util.format((int)EnergyNetworkPacketPayload.clientBuff)).append("fe/t").withStyle(ChatFormatting.AQUA));
+		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.energy.usage").withStyle(ChatFormatting.GRAY)).forGoggles(tooltip);
+		CALang.builder().add(Component.literal(" ").append(Util.format((int)EnergyNetworkPacketPayload.clientBuff)).append("fe/t").withStyle(ChatFormatting.AQUA)).forGoggles(tooltip);
 
 		return IHaveGoggleInformation.super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 	}

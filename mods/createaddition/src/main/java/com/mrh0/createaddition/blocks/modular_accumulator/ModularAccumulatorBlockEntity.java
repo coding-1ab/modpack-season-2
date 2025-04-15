@@ -6,6 +6,7 @@ import com.mrh0.createaddition.debug.IDebugDrawer;
 import com.mrh0.createaddition.energy.IMultiTileEnergyContainer;
 import com.mrh0.createaddition.energy.InternalEnergyStorage;
 import com.mrh0.createaddition.index.CABlockEntities;
+import com.mrh0.createaddition.index.CALang;
 import com.mrh0.createaddition.network.EnergyNetworkPacketPayload;
 import com.mrh0.createaddition.network.IObserveTileEntity;
 import com.mrh0.createaddition.network.ObservePacketPayload;
@@ -475,18 +476,14 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 
 		ObservePacketPayload.send(worldPosition, 0);
 
-		String spacing = " ";
-		tooltip.add(Component.literal(spacing)
-				.append(Component.translatable(CreateAddition.MODID + ".tooltip.accumulator.info").withStyle(ChatFormatting.WHITE)));
-		tooltip.add(Component.literal(spacing)
-				.append(Component.translatable(CreateAddition.MODID + ".tooltip.energy.stored").withStyle(ChatFormatting.GRAY)));
-		tooltip.add(Component.literal(spacing).append(Component.literal(" "))
-				.append(Util.format((int)EnergyNetworkPacketPayload.clientBuff)).append("fe").withStyle(ChatFormatting.AQUA));
+		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.accumulator.info").withStyle(ChatFormatting.WHITE)).forGoggles(tooltip);
+		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.energy.stored").withStyle(ChatFormatting.GRAY)).forGoggles(tooltip);
+		CALang.builder().add(Component.literal(" ")
+				.append(Util.format((int)EnergyNetworkPacketPayload.clientBuff)).append("fe").withStyle(ChatFormatting.AQUA)).forGoggles(tooltip);
 
-		tooltip.add(Component.literal(spacing)
-				.append(Component.translatable(CreateAddition.MODID + ".tooltip.energy.capacity").withStyle(ChatFormatting.GRAY)));
-		tooltip.add(Component.literal(spacing).append(Component.literal(" "))
-				.append(Util.format((int)controllerTE.energyCapability.getMaxEnergyStored())).append("fe").withStyle(ChatFormatting.AQUA));
+		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.energy.capacity").withStyle(ChatFormatting.GRAY)).forGoggles(tooltip);
+		CALang.builder().add(Component.literal(" ")
+				.append(Util.format((int)controllerTE.energyCapability.getMaxEnergyStored())).append("fe").withStyle(ChatFormatting.AQUA)).forGoggles(tooltip);
 		return true;
 	}
 
