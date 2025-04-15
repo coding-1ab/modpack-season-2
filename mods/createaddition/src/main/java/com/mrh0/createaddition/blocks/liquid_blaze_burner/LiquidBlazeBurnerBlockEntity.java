@@ -288,7 +288,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	}
 
 	public BlazeBurnerBlock.HeatLevel getHeatLevelFromBlock() {
-		return BlazeBurnerBlock.getHeatLevelOf(getBlockState());
+		return LiquidBlazeBurnerBlock.getHeatLevelOf(getBlockState());
 	}
 
 	public void updateBlockState() {
