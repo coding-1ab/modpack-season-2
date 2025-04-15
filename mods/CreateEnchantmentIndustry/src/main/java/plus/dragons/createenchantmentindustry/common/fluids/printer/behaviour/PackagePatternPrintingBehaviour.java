@@ -54,7 +54,7 @@ public class PackagePatternPrintingBehaviour implements PrintingBehaviour {
 
     @Override
     public int getRequiredItemCount(Level level, ItemStack stack) {
-        if (stack.getItem() instanceof PackageItem)
+        if (stack.getItem() instanceof PackageItem && !stack.is(pattern.getItem()))
             return 1;
         return 0;
     }
