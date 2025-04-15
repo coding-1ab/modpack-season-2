@@ -25,7 +25,7 @@ public class CEIServerConfig extends ConfigBase {
     public final CEIKineticsConfig kinetics = nested(0, CEIKineticsConfig::new, Comments.kinetics);
     public final CEIFluidsConfig fluids = nested(0, CEIFluidsConfig::new, Comments.fluids);
     public final CEIEnchantmentsConfig enchantments = nested(0, CEIEnchantmentsConfig::new, Comments.enchantments);
-    public final CEIProcessingConfig processing = nested(0,CEIProcessingConfig::new, Comments.processing);
+    public final CEIProcessingConfig processing = nested(0, CEIProcessingConfig::new, Comments.processing);
 
     @Override
     public void registerAll(ModConfigSpec.Builder builder) {

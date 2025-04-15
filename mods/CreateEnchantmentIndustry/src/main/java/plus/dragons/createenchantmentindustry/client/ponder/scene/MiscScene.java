@@ -19,7 +19,6 @@
 package plus.dragons.createenchantmentindustry.client.ponder.scene;
 
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
-import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;

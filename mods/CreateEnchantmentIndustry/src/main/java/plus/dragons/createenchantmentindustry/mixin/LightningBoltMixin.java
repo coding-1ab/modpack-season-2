@@ -49,7 +49,7 @@ public abstract class LightningBoltMixin extends Entity {
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LightningBolt;clearCopperOnLightningStrike(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"))
     private void tick$chargeExperienceOnLightingStrike(CallbackInfo ci) {
         if (!this.getPersistentData().getBoolean(BlazeExperienceBlockEntity.LIGHTNING_BOLT_EXPERIENCE_CHARGE_KEY))
-            if(this.random.nextFloat() > CEIConfig.processing().regularLightningStrikeTransformXpBlockChance.get())
+            if (this.random.nextFloat() > CEIConfig.processing().regularLightningStrikeTransformXpBlockChance.get())
                 return;
         Level level = this.level();
         BlockPos pos = this.getStrikePosition();

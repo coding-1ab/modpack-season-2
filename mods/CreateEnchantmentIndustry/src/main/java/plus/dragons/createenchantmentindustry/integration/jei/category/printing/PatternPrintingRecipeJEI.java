@@ -19,9 +19,9 @@
 package plus.dragons.createenchantmentindustry.integration.jei.category.printing;
 
 import com.mojang.serialization.MapCodec;
-import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
+import java.util.List;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotDrawable;
 import mezz.jei.api.recipe.IFocus;
@@ -31,8 +31,6 @@ import net.minecraft.world.item.ItemStack;
 import plus.dragons.createdragonsplus.util.Pairs;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
-
-import java.util.List;
 
 public enum PatternPrintingRecipeJEI implements PrintingRecipeJEI {
     INSTANCE;

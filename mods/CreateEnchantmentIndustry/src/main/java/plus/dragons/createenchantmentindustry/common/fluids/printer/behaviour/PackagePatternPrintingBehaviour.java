@@ -22,19 +22,16 @@ import com.mojang.serialization.DataResult;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
-import net.minecraft.ChatFormatting;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
-import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 import plus.dragons.createenchantmentindustry.util.CEILang;
-
-import java.util.List;
-import java.util.Optional;
 
 public class PackagePatternPrintingBehaviour implements PrintingBehaviour {
     private final ItemStack pattern;
@@ -46,7 +43,7 @@ public class PackagePatternPrintingBehaviour implements PrintingBehaviour {
     public static Optional<DataResult<PrintingBehaviour>> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
         if (stack.getItem() instanceof PackageItem) {
             String address = stack.get(AllDataComponents.PACKAGE_ADDRESS);
-            if(address==null||address.isEmpty())
+            if (address == null || address.isEmpty())
                 return Optional.of(DataResult.success(new PackagePatternPrintingBehaviour(stack.copy())));
         }
         return Optional.empty();

@@ -1,13 +1,13 @@
-### Create: Enchantment Industry 2.0.5
-
-Requires Create: Dragons Plus 1.3.1, which contains an important bugfix
+### Create: Enchantment Industry 2.0.6
 
 #### Update
-* Add Russian Translation (by @Korben)
-* Update Japanese Translation (by @YukkuriOfuton)
-* Add config to Crushing Wheel killed entities drop exp
+* Add 2 new advancements
+* Regular lightning strikes now also have a chance to transform Block of Xp. Ponder explain added. Configurable
+* Printer can now change package pattern or copy package address, depends on whether package put into filter slot has address
 
 #### Fix
-* Fix render crash issue with Ayame PaperDoll
-* Fix render crash issue with cobblemon
+* Fix Exp Nuggets dropped by Deployer increase as total experience collected by Deployer increases
+* Fix blaze forger fluid tank capacity config not correctly applied
+* Fix Printer cannot change package pattern
 * Fix Crushing Wheel killed entities do not drop exp
+* Fix Forge Ponder Base Plate Glitch

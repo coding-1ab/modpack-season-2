@@ -44,7 +44,7 @@ public class AddressPrintingBehaviour implements PrintingBehaviour {
     public static Optional<DataResult<PrintingBehaviour>> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
         if (stack.getItem() instanceof PackageItem) {
             String address = stack.get(AllDataComponents.PACKAGE_ADDRESS);
-            if(address!=null && !address.isEmpty())
+            if (address != null && !address.isEmpty())
                 return Optional.of(DataResult.success(new AddressPrintingBehaviour(address)));
         }
         return Optional.empty();
