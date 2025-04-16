@@ -10,12 +10,12 @@ import net.createmod.catnip.animation.LerpedFloat;
 
 public class PEIActorVisual extends ActorVisual {
 
-	private final PortableEnergyInterfaceVisual.PIInstance instance;
+	private final PEIInstance instance;
 
 	public PEIActorVisual(VisualizationContext context, VirtualRenderWorld world, MovementContext movementContext) {
 		super(context, world, movementContext);
 
-		instance = new PortableEnergyInterfaceVisual.PIInstance(context.instancerProvider(), movementContext.state, movementContext.localPos, false);
+		instance = new PEIInstance(context.instancerProvider(), movementContext.state, movementContext.localPos, false);
 
 		instance.middle.light(localBlockLight(), 0);
 		instance.top.light(localBlockLight(), 0);

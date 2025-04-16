@@ -10,10 +10,12 @@ import com.mrh0.createaddition.energy.IEnergyProvider;
 import com.mrh0.createaddition.energy.InternalEnergyStorage;
 import com.mrh0.createaddition.index.CABlockEntities;
 import com.mrh0.createaddition.index.CABlocks;
+import com.mrh0.createaddition.index.CALang;
 import com.mrh0.createaddition.sound.CASoundScapes;
 import com.mrh0.createaddition.sound.CASoundScapes.AmbienceGroup;
 import com.mrh0.createaddition.util.Util;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.minecraft.ChatFormatting;
@@ -60,10 +62,10 @@ public class AlternatorBlockEntity extends KineticBlockEntity implements IEnergy
 
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		String spacing = " ";
-		tooltip.add(Component.literal(spacing).append(Component.translatable(CreateAddition.MODID + ".tooltip.energy.production").withStyle(ChatFormatting.GRAY)));
-		tooltip.add(Component.literal(spacing).append(Component.literal(" " + Util.format(getEnergyProductionRate((int) (isSpeedRequirementFulfilled() ? getSpeed() : 0))) + "fe/t ") // fix
-				.withStyle(ChatFormatting.AQUA)).append(CreateLang.translateDirect("gui.goggles.at_current_speed").withStyle(ChatFormatting.DARK_GRAY)));
+		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.alternator.info").withStyle(ChatFormatting.WHITE)).forGoggles(tooltip);
+		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.energy.production").withStyle(ChatFormatting.GRAY)).forGoggles(tooltip);
+		CALang.builder().add(Component.literal(" " + Util.format(getEnergyProductionRate((int) (isSpeedRequirementFulfilled() ? getSpeed() : 0))) + "fe/t ")
+				.withStyle(ChatFormatting.AQUA).append(CreateLang.translateDirect("gui.goggles.at_current_speed").withStyle(ChatFormatting.DARK_GRAY))).forGoggles(tooltip);
 		return true;
 	}
 

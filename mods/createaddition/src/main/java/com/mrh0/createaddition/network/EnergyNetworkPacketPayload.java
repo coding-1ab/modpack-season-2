@@ -31,7 +31,7 @@ public record EnergyNetworkPacketPayload(BlockPos pos, int demand, int buff) imp
         return TYPE;
     }
 
-    private static void updateClientCache(BlockPos pos, int demand, int buff) {
+    public static void updateClientCache(BlockPos pos, int demand, int buff) {
         clientDemand = demand;
         clientBuff = buff;
         clientSaturation = buff - demand;

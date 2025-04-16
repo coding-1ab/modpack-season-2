@@ -17,6 +17,7 @@
 	"createaddition.tooltip.energy.passive": "Passive",
 	"createaddition.tooltip.energy.none": "None",
 
+	"createaddition.tooltip.alternator.info": "Alternator Info:",
 	"createaddition.tooltip.accumulator.info": "Accumulator Info:",
 	"createaddition.tooltip.relay.info": "Relay Info:",
 	"createaddition.tooltip.connector.info": "Connector Info:",
