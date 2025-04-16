@@ -18,19 +18,19 @@
 
 package plus.dragons.createenchantmentindustry.common.registry;
 
+import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE;
+
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPointType;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.neoforged.bus.api.IEventBus;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.BlazeEnchanterArmInteractionPoint;
 import plus.dragons.createenchantmentindustry.common.processing.forger.BlazeForgerArmInteractionPoint;
 
-import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE;
-
 public class CEIArmInterationPoints {
-    public static final RegistryEntry<ArmInteractionPointType,BlazeEnchanterArmInteractionPoint.Type> BLAZE_ENCHANTER = REGISTRATE
+    public static final RegistryEntry<ArmInteractionPointType, BlazeEnchanterArmInteractionPoint.Type> BLAZE_ENCHANTER = REGISTRATE
             .armInteractionPoint("blaze_enchanter", BlazeEnchanterArmInteractionPoint.Type::new)
             .register();
-    public static final RegistryEntry<ArmInteractionPointType,BlazeForgerArmInteractionPoint.Type> BLAZE_FORGER = REGISTRATE
+    public static final RegistryEntry<ArmInteractionPointType, BlazeForgerArmInteractionPoint.Type> BLAZE_FORGER = REGISTRATE
             .armInteractionPoint("blaze_forger", BlazeForgerArmInteractionPoint.Type::new)
             .register();
 
