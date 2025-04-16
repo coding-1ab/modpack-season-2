@@ -207,8 +207,7 @@ public class PrinterBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         assert level != null;
-        var handler = level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition, null);
-        boolean added = containedFluidTooltip(tooltip, isPlayerSneaking, handler);
+        boolean added = containedFluidTooltip(tooltip, isPlayerSneaking, tank.getPrimaryHandler());
         added |= printer.getPrintingBehaviour().addToGoggleTooltip(tooltip, isPlayerSneaking);
         return added;
     }
