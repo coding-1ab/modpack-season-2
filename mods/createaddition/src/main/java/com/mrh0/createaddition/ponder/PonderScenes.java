@@ -2,7 +2,6 @@ package com.mrh0.createaddition.ponder;
 
 import com.mrh0.createaddition.blocks.connector.base.AbstractConnectorBlock;
 import com.mrh0.createaddition.blocks.connector.base.ConnectorMode;
-import com.mrh0.createaddition.blocks.liquid_blaze_burner.LiquidBlazeBurnerBlock;
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceBlockEntity;
 import com.mrh0.createaddition.blocks.tesla_coil.TeslaCoilBlock;
 import com.mrh0.createaddition.index.CABlocks;
@@ -345,7 +344,7 @@ public class PonderScenes {
 		scene.overlay().showControls(util.vector().topOf(burner), Pointing.DOWN, 40)
 				.rightClick()
 				.withItem(new ItemStack(CAItems.STRAW.get()));
-		scene.world().setBlock(burner, CABlocks.LIQUID_BLAZE_BURNER.getDefaultState().setValue(LiquidBlazeBurnerBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SMOULDERING), false);
+		scene.world().setBlock(burner, CABlocks.LIQUID_BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SMOULDERING), false);
 		scene.idle(60);
 		scene.overlay().showText(50)
 			.attachKeyFrame()

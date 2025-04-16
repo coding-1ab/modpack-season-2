@@ -13,6 +13,7 @@ import com.mrh0.createaddition.blocks.modular_accumulator.ModularAccumulatorBloc
 import com.mrh0.createaddition.blocks.modular_accumulator.ModularAccumulatorRenderer;
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceRenderer;
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceBlockEntity;
+import com.mrh0.createaddition.blocks.portable_energy_interface.PEIVisual;
 import com.mrh0.createaddition.blocks.redstone_relay.RedstoneRelayBlockEntity;
 import com.mrh0.createaddition.blocks.rolling_mill.RollingMillBlockEntity;
 import com.mrh0.createaddition.blocks.tesla_coil.TeslaCoilBlockEntity;
@@ -95,7 +96,7 @@ public class CABlockEntities {
 
 	public static final BlockEntityEntry<PortableEnergyInterfaceBlockEntity> PORTABLE_ENERGY_INTERFACE = CreateAddition.REGISTRATE
 			.blockEntity("portable_energy_interface", PortableEnergyInterfaceBlockEntity::new)
-			// .visual(() -> PortableEnergyInterfaceVisual::new)
+			.visual(() -> PEIVisual::new)
 			.validBlocks(CABlocks.PORTABLE_ENERGY_INTERFACE)
 			.renderer(() -> PortableEnergyInterfaceRenderer::new)
 			.register();

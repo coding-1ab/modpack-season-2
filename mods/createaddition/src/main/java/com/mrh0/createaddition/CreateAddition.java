@@ -81,9 +81,10 @@ public class CreateAddition {
                 .andThen(TooltipModifier.mapNull(KineticStats.create(item))));
     }
 
-    private static ItemLike[] excludedItemsList = {
+    private static final ItemLike[] excludedItemsList = new ItemLike[]{
             CAItems.CAKE_BASE,
-            CAItems.CAKE_BASE_BAKED
+            CAItems.CAKE_BASE_BAKED,
+            CAItems.BIOMASS
     };
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
@@ -94,7 +95,7 @@ public class CreateAddition {
             .title(Component.translatable("itemGroup.createaddition.main"))
             .displayItems((itemDisplayParameters, output) -> REGISTRATE.getAll(Registries.ITEM).forEach((item -> {
                 for (ItemLike excluded : excludedItemsList) {
-                    if (item.is(excluded)) return;
+                    if (item.is(excluded.asItem())) return;
                 }
                 output.accept(item.get());
             })))
@@ -158,14 +159,14 @@ public class CreateAddition {
         //Network.registerMessage(1, EnergyNetworkPacket.class, EnergyNetworkPacket::encode, EnergyNetworkPacket::decode, EnergyNetworkPacket::handle);
 
         BoilerHeater.REGISTRY.register(CABlocks.LIQUID_BLAZE_BURNER.get(), (level, pos, state) -> {
-            BlazeBurnerBlock.HeatLevel value = state.getValue(LiquidBlazeBurnerBlock.HEAT_LEVEL);
+            BlazeBurnerBlock.HeatLevel value = state.getValue(BlazeBurnerBlock.HEAT_LEVEL);
             if (value == BlazeBurnerBlock.HeatLevel.NONE) return -1;
             if (value == BlazeBurnerBlock.HeatLevel.SEETHING) return 2;
             if (value.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING)) return 1;
             return 0;
         });
 
-    	System.out.println("Create Crafts & Additions Initialized!");
+        LOGGER.info("Create Crafts & Additions Initialized!");
     }
 
     public void onRegister(final RegisterEvent event) {
