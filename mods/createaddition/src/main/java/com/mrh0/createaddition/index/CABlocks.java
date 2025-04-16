@@ -12,7 +12,6 @@ import com.mrh0.createaddition.blocks.connector.LargeConnectorBlock;
 import com.mrh0.createaddition.blocks.connector.SmallConnectorBlock;
 import com.mrh0.createaddition.blocks.connector.SmallLightConnectorBlock;
 import com.mrh0.createaddition.blocks.digital_adapter.DigitalAdapterBlock;
-import com.mrh0.createaddition.blocks.digital_adapter.DigitalAdapterBlockItem;
 import com.mrh0.createaddition.blocks.modular_accumulator.*;
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceBlock;
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceMovement;
@@ -26,7 +25,6 @@ import com.mrh0.createaddition.blocks.tesla_coil.TeslaCoilBlock;
 import com.mrh0.createaddition.item.BiomassPelletBlock;
 import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
-import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.tterrag.registrate.util.entry.BlockEntry;
@@ -175,9 +173,9 @@ public class CABlocks {
 	public static final BlockEntry<PortableEnergyInterfaceBlock> PORTABLE_ENERGY_INTERFACE = CreateAddition.REGISTRATE.block("portable_energy_interface",  PortableEnergyInterfaceBlock::new)
 			.initialProperties(SharedProperties::softMetal)
 			.onRegister(movementBehaviour(new PortableEnergyInterfaceMovement()))
-			.addLayer(() -> RenderType::cutoutMipped)
 			.item()
 			.transform(customItemModel())
+			.addLayer(() -> RenderType::cutoutMipped)
 			.register();
 
 	/*public static final BlockEntry<CasingBlock> COPPER_WIRE_CASING = REGISTRATE.block("copper_wire_casing", CasingBlock::new)
@@ -205,8 +203,10 @@ public class CABlocks {
 			.block("digital_adapter",  DigitalAdapterBlock::new)
 			.initialProperties(SharedProperties::softMetal)
 			.transform(displaySource(CADisplaySources.DIGITAL_ADAPTER))
-			//.item(DigitalAdapterBlockItem::new)
+//			.item(DigitalAdapterBlockItem::new)
 			//.transform(customItemModel())
+			.item()
+			.transform(customItemModel())
 			.register();
 
 	public static void register() {

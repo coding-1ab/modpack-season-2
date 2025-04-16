@@ -42,6 +42,9 @@ public class CATagRegister {
         public static final TagKey<Item> PLANTS = createAdditionsTags("plants");
         public static final TagKey<Item> SPOOLS = createAdditionsTags("spools");
 
+        public static final TagKey<Item> LARGE_CONNECTOR_USABLE_RODS = createAdditionsTags("large_connector_usable_rods");
+        public static final TagKey<Item> MODULAR_ACCUMULATOR_USABLE_WIRES = createAdditionsTags("modular_accumulator_usable_wires");
+
         public static TagKey<Item> commonTags(String folder, String name) {
             return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", String.format("%s/%s", folder, name)));
         }

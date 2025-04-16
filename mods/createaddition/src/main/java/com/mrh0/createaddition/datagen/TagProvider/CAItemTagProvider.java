@@ -4,6 +4,7 @@ import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.index.CAFluids;
 import com.mrh0.createaddition.index.CAItems;
+import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -33,6 +34,7 @@ public class CAItemTagProvider extends ItemTagsProvider {
         tag(CATagRegister.Items.DIAMOND_DUSTS).add(new Item[]{
                 CAItems.DIAMOND_GRIT.asItem()
         });
+        tag(CATagRegister.Items.OBSIDIAN_DUSTS).add(AllItems.POWDERED_OBSIDIAN.asItem());
         tag(CATagRegister.Items.BIO_FUELS).add(new Item[]{
            CAItems.BIOMASS.asItem()
         });
@@ -76,6 +78,7 @@ public class CAItemTagProvider extends ItemTagsProvider {
                 CATagRegister.Items.DIAMOND_DUSTS,
                 CATagRegister.Items.OBSIDIAN_DUSTS
         });
+
 
         tag(CATagRegister.Items.FUELS).addTag(CATagRegister.Items.BIO_FUELS);
         tag(CATagRegister.Items.INGOTS).addTag(CATagRegister.Items.ELECTRUM_INGOTS);
@@ -150,6 +153,16 @@ public class CAItemTagProvider extends ItemTagsProvider {
         });
 
         tag(ItemTags.BEACON_PAYMENT_ITEMS).addTag(CATagRegister.Items.ELECTRUM_INGOTS);
+
+        tag(CATagRegister.Items.LARGE_CONNECTOR_USABLE_RODS).addTags(new TagKey[]{
+                CATagRegister.Items.GOLD_RODS,
+                CATagRegister.Items.ELECTRUM_RODS
+        });
+
+        tag(CATagRegister.Items.MODULAR_ACCUMULATOR_USABLE_WIRES).addTags(new TagKey[]{
+                CATagRegister.Items.GOLD_WIRES,
+                CATagRegister.Items.ELECTRUM_WIRES
+        });
 
 
 
