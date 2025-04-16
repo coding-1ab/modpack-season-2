@@ -40,7 +40,8 @@ public class CABlockTagProvider extends BlockTagsProvider {
                 CABlocks.BARBED_WIRE.get(),
                 CABlocks.MODULAR_ACCUMULATOR.get(),
                 CABlocks.PORTABLE_ENERGY_INTERFACE.get(),
-                CABlocks.DIGITAL_ADAPTER.get()
+                CABlocks.DIGITAL_ADAPTER.get(),
+                CABlocks.ELECTRUM_BLOCK.get()
         );
 
         tag(BlockTags.BEACON_BASE_BLOCKS).add(CABlocks.ELECTRUM_BLOCK.get());
