@@ -1,7 +1,6 @@
 package org.antarcticgardens.cna.content.electricity.connector;
 
-import com.jozufozu.flywheel.util.Pair;
-
+import net.createmod.catnip.data.Pair;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.joml.Vector3f;
 

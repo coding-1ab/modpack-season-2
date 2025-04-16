@@ -1,33 +1,39 @@
 package org.antarcticgardens.cna.content.electricity.connector;
 
-import com.jozufozu.flywheel.api.MaterialManager;
-import com.jozufozu.flywheel.api.instance.DynamicInstance;
-import com.jozufozu.flywheel.backend.instancing.blockentity.BlockEntityInstance;
-import com.jozufozu.flywheel.core.Materials;
-import com.jozufozu.flywheel.core.materials.model.ModelData;
-import com.jozufozu.flywheel.util.Pair;
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.engine_room.flywheel.api.instance.Instance;
+import dev.engine_room.flywheel.api.task.Plan;
+import dev.engine_room.flywheel.api.visual.BlockEntityVisual;
+import dev.engine_room.flywheel.api.visual.DynamicVisual;
+import dev.engine_room.flywheel.api.visualization.VisualizationContext;
+import dev.engine_room.flywheel.lib.material.Materials;
+import dev.engine_room.flywheel.lib.transform.TransformStack;
+import dev.engine_room.flywheel.lib.visual.AbstractBlockEntityVisual;
+import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
+import net.createmod.catnip.data.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.model.data.ModelData;
 import org.antarcticgardens.cna.CNARenderTypes;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.electricity.wire.WireType;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.*;
+import java.util.function.Consumer;
 
-public class ElectricalConnectorVisual extends BlockEntityInstance<ElectricalConnectorBlockEntity> implements DynamicInstance {
+public class ElectricalConnectorVisual extends AbstractBlockEntityVisual<ElectricalConnectorBlockEntity> implements SimpleDynamicVisual {
     private static final Map<ElectricalConnectorBlockEntity, ElectricalConnectorVisual> instances = new HashMap<>();
 
     private final Map<BlockPos, Wire> wires = new HashMap<>();
     private final Map<BlockPos, List<Pair<ModelData, Vec3>>> wireInstances = new HashMap<>();
 
-    public ElectricalConnectorVisual(MaterialManager materialManager, ElectricalConnectorBlockEntity connector) {
-        super(materialManager, connector);
-        instances.put(connector, this);
+    public ElectricalConnectorVisual(VisualizationContext ctx, ElectricalConnectorBlockEntity blockEntity, float partialTick) {
+        super(ctx, blockEntity, partialTick);
+        instances.put(blockEntity, this);
         updateConnections();
     }
 
@@ -46,13 +52,13 @@ public class ElectricalConnectorVisual extends BlockEntityInstance<ElectricalCon
     }
 
     private void createConnection(BlockPos target, WireType wireType) {
-        if (getWorldPosition().hashCode() > target.hashCode()) {
-            Vector3f direction = blockPosToVector3f(target.subtract(getWorldPosition()));
+        if (getVisualPosition().hashCode() > target.hashCode()) {
+            Vector3f direction = blockPosToVector3f(target.subtract(getVisualPosition()));
             float distance = direction.length();
             int sectionsAmount = (int) Math.ceil(CNAConfig.getClient().wireSectionsPerMeter.get() * distance);
             direction.normalize();
             Wire wire = new Wire(direction, distance, sectionsAmount);
-            wireInstances.put(target, createWireInstances(wire, getInstancePosition().getCenter(), wireType.getTextureLocation()));
+            wireInstances.put(target, createWireInstances(wire, getVisualPosition().getCenter(), wireType.getTextureLocation()));
             wires.put(target, wire);
         }
     }
@@ -94,8 +100,21 @@ public class ElectricalConnectorVisual extends BlockEntityInstance<ElectricalCon
         wireInstances.getOrDefault(target, new ArrayList<>()).forEach(p -> p.first().delete());
     }
 
+    private Vector3f blockPosToVector3f(BlockPos pos) {
+        return new Vector3f(pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    public static ElectricalConnectorVisual get(ElectricalConnectorBlockEntity connector) {
+        return instances.get(connector);
+    }
+
     @Override
-    public void beginFrame() {
+    public void collectCrumblingInstances(Consumer<@Nullable Instance> consumer) {
+
+    }
+
+    @Override
+    public void beginFrame(Context context) {
         if (blockEntity.needsInstanceUpdate) {
             updateConnections();
             blockEntity.needsInstanceUpdate = false;
@@ -103,18 +122,20 @@ public class ElectricalConnectorVisual extends BlockEntityInstance<ElectricalCon
     }
 
     @Override
-    public void updateLight() {
-        wires.forEach((k, v) -> 
-                wireInstances.forEach((blockPos, pairs) -> 
-                        pairs.forEach(p -> 
-                                relight(BlockPos.containing(getWorldPosition().getCenter().add(p.second())), p.first()))));
+    public Plan<Context> planFrame() {
+        return null;
     }
 
-    private Vector3f blockPosToVector3f(BlockPos pos) {
-        return new Vector3f(pos.getX(), pos.getY(), pos.getZ());
+    @Override
+    public void updateLight(float v) {
+        wires.forEach((k, w) ->
+                wireInstances.forEach((blockPos, pairs) ->
+                        pairs.forEach(p ->
+                                relight(BlockPos.containing(this.getVisualPosition().getCenter().add(p.getSecond())), p.getFirst()))));
     }
 
-    public static ElectricalConnectorVisual get(ElectricalConnectorBlockEntity connector) {
-        return instances.get(connector);
+    @Override
+    protected void _delete() {
+
     }
 }

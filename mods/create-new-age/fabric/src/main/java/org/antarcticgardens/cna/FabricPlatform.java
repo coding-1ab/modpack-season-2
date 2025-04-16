@@ -5,6 +5,7 @@ import com.jozufozu.flywheel.event.ReloadRenderersEvent;
 import com.jozufozu.flywheel.event.RenderLayerEvent;
 import com.jozufozu.flywheel.fabric.event.FlywheelEvents;
 import com.simibubi.create.compat.recipeViewerCommon.SequencedAssemblySubCategoryType;
+import dev.engine_room.flywheel.api.event.ReloadLevelRendererEvent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import org.antarcticgardens.cna.fabric.FabricRegistrar;
 import org.antarcticgardens.cna.fabric.compat.emi.EmiEnergisingSubcategory;
@@ -43,7 +44,7 @@ public class FabricPlatform extends Platform {
     }
     
     @Override
-    public void subscribeRenderLayerEvent(Consumer<RenderLayerEvent> consumer) {
+    public void subscribeRenderLayerEvent(Consumer<RenderLevelStageEvent> consumer) {
         FlywheelEvents.RENDER_LAYER.register(consumer::accept);
     }
 
@@ -53,7 +54,7 @@ public class FabricPlatform extends Platform {
     }
 
     @Override
-    public void subscribeReloadRenderersEvent(Consumer<ReloadRenderersEvent> consumer) {
+    public void subscribeReloadRenderersEvent(Consumer<ReloadLevelRendererEvent> consumer) {
         FlywheelEvents.RELOAD_RENDERERS.register(consumer::accept);
     }
 }

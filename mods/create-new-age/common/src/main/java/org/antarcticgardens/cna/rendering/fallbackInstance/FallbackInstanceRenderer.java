@@ -1,17 +1,15 @@
 package org.antarcticgardens.cna.rendering.fallbackInstance;
 
-import com.jozufozu.flywheel.api.instance.DynamicInstance;
-import com.jozufozu.flywheel.api.instance.TickableInstance;
-import com.jozufozu.flywheel.backend.Backend;
-import com.jozufozu.flywheel.backend.instancing.InstancedRenderRegistry;
-import com.jozufozu.flywheel.backend.instancing.ParallelTaskEngine;
-import com.jozufozu.flywheel.backend.instancing.TaskEngine;
-import com.jozufozu.flywheel.backend.instancing.blockentity.BlockEntityInstance;
-import com.jozufozu.flywheel.event.BeginFrameEvent;
-import com.jozufozu.flywheel.event.ReloadRenderersEvent;
-import com.jozufozu.flywheel.event.RenderLayerEvent;
-import com.jozufozu.flywheel.light.LightUpdater;
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.engine_room.flywheel.api.event.ReloadLevelRendererEvent;
+import dev.engine_room.flywheel.api.task.TaskExecutor;
+import dev.engine_room.flywheel.api.visual.BlockEntityVisual;
+import dev.engine_room.flywheel.api.visual.DynamicVisual;
+import dev.engine_room.flywheel.api.visual.TickableVisual;
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
+import dev.engine_room.flywheel.impl.task.ParallelTaskExecutor;
+import dev.engine_room.flywheel.lib.visual.AbstractBlockEntityVisual;
+import dev.engine_room.flywheel.lib.visual.SimpleTickableVisual;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -22,11 +20,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FallbackInstanceRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
-    private static final ParallelTaskEngine taskEngine = new ParallelTaskEngine("Create: New Age Fallback Renderer");
+    private static final ParallelTaskExecutor taskEngine =
+//            IDK if this is a good number of threads
+            new ParallelTaskExecutor("Create: New Age Fallback Renderer", 2);
     
-    private final Map<T, BlockEntityInstance<T>> instances = new HashMap<>();
-    private final Map<T, TickableInstance> tickableInstances = new HashMap<>();
-    private final Map<T, DynamicInstance> dynamicInstances = new HashMap<>();
+    private final Map<T, BlockEntityRenderer<T>> instances = new HashMap<>();
+    private final Map<T, SimpleTickableVisual> tickableVisuals = new HashMap<>();
+    private final Map<T, DynamicVisual> dynamicVisuals = new HashMap<>();
 
     private FallbackMaterialManager materialManager = new FallbackMaterialManager();
     private boolean enabled = false;
@@ -40,13 +40,13 @@ public class FallbackInstanceRenderer<T extends BlockEntity> implements BlockEnt
 
     private void onClientTickEnd() {
         if (Backend.isGameActive()) {
-            for (TickableInstance tickableInstance : tickableInstances.values())
-                tickableInstance.tick();
+            for (SimpleTickableVisual tickableVisual : tickableVisuals.values())
+                tickableVisual.tick();
         }
     }
 
     private void onRenderLayer(RenderLayerEvent event) {
-        if (!Backend.canUseInstancing(event.getWorld())) {
+        if (!VisualizationManager.supportsVisualization((event.getWorld()))) {
             if (!enabled) {
                 taskEngine.startWorkers();
                 enabled = true;
@@ -69,12 +69,12 @@ public class FallbackInstanceRenderer<T extends BlockEntity> implements BlockEnt
     
     private void onBeginFrame(BeginFrameEvent event) {
         if (Backend.isGameActive()) {
-            for (DynamicInstance dynamicInstance : dynamicInstances.values())
-                dynamicInstance.beginFrame();
+            for (DynamicVisual dynamicVisual : dynamicVisuals.values())
+                dynamicVisual.planFrame();
         }
     }
 
-    private void onReloadRenderers(ReloadRenderersEvent event) {
+    private void onReloadRenderers(ReloadLevelRendererEvent event) {
         reset();
     }
     
@@ -86,7 +86,7 @@ public class FallbackInstanceRenderer<T extends BlockEntity> implements BlockEnt
     }
     
     public void createInstance(T blockEntity) {
-        BlockEntityInstance<T> instance = (BlockEntityInstance<T>) InstancedRenderRegistry.createInstance(materialManager, blockEntity);
+        BlockEntityRenderer<T> instance = (BlockEntityRenderer<T>) InstancedRenderRegistry.createInstance(materialManager, blockEntity);
         
         if (instance == null) 
             throw new RuntimeException("Cannot create instance for " + blockEntity.getType());
@@ -99,11 +99,11 @@ public class FallbackInstanceRenderer<T extends BlockEntity> implements BlockEnt
 
         instances.put(blockEntity, instance);
         
-        if (instance instanceof TickableInstance tickable) 
-            tickableInstances.put(blockEntity, tickable);
+        if (instance instanceof SimpleTickableVisual tickable)
+            tickableVisuals.put(blockEntity, tickable);
 
-        if (instance instanceof DynamicInstance dynamic)
-            dynamicInstances.put(blockEntity, dynamic);
+        if (instance instanceof DynamicVisual dynamic)
+            dynamicVisuals.put(blockEntity, dynamic);
     }
     
     public void removeInstance(BlockEntity blockEntity) {
@@ -112,23 +112,23 @@ public class FallbackInstanceRenderer<T extends BlockEntity> implements BlockEnt
     }
     
     private void internalRemove(BlockEntity blockEntity) {
-        BlockEntityInstance<?> instance = ((BlockEntityExtension) blockEntity).create_new_age$getFallbackInstance();
+        BlockEntityVisual<?> instance = ((BlockEntityExtension) blockEntity).create_new_age$getFallbackInstance();
         ((BlockEntityExtension) blockEntity).create_new_age$setFallbackInstance(null, null);
         instance.removeAndMark();
-        tickableInstances.remove(blockEntity);
-        dynamicInstances.remove(blockEntity);
+        tickableVisuals.remove(blockEntity);
+        dynamicVisuals.remove(blockEntity);
         LightUpdater.get(blockEntity.getLevel()).removeListener(instance);
     }
 
     @Override
     public void render(T blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
-        if (!Backend.canUseInstancing(blockEntity.getLevel())) {
+        if (!VisualizationManager.supportsVisualization(blockEntity.getLevel())) {
             if (!instances.containsKey(blockEntity) && !blockEntity.isRemoved()) 
                 createInstance(blockEntity);
         } 
     } 
     
-    public static TaskEngine getTaskEngine() {
+    public static TaskExecutor getTaskEngine() {
         return taskEngine;
     }
 }

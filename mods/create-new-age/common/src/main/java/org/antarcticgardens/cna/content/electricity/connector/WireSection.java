@@ -1,10 +1,7 @@
 package org.antarcticgardens.cna.content.electricity.connector;
 
-import com.jozufozu.flywheel.api.vertex.VertexList;
-import com.jozufozu.flywheel.api.vertex.VertexType;
-import com.jozufozu.flywheel.core.Formats;
 import com.jozufozu.flywheel.core.model.Model;
-import com.jozufozu.flywheel.core.vertex.PosTexNormalWriterUnsafe;
+import dev.engine_room.flywheel.api.vertex.VertexList;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;

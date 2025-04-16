@@ -1,41 +1,39 @@
 package org.antarcticgardens.cna.content.heat.stirling;
 
-import com.jozufozu.flywheel.api.MaterialManager;
-import com.jozufozu.flywheel.api.instance.DynamicInstance;
-import com.jozufozu.flywheel.core.materials.model.ModelData;
-import com.jozufozu.flywheel.util.transform.TransformStack;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.simibubi.create.AllBlocks;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntityInstance;
-import com.simibubi.create.content.kinetics.base.flwdata.RotatingData;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.AnimationTickHolder;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import com.simibubi.create.AllPartialModels;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntityVisual;
+import com.simibubi.create.content.kinetics.base.RotatingInstance;
+import com.simibubi.create.foundation.render.AllInstanceTypes;
+import dev.engine_room.flywheel.api.instance.Instance;
+import dev.engine_room.flywheel.api.visualization.VisualizationContext;
+import dev.engine_room.flywheel.lib.model.Models;
+import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
+import org.jetbrains.annotations.Nullable;
 
-public class StirlingEngineVisual extends KineticBlockEntityInstance<StirlingEngineBlockEntity> implements DynamicInstance {
+import java.util.function.Consumer;
 
-    protected final RotatingData shaft;
-    protected final ModelData wheel;
+public class StirlingEngineVisual extends KineticBlockEntityVisual<StirlingEngineBlockEntity> implements SimpleDynamicVisual {
+
+    protected final RotatingInstance shaft;
     protected float lastAngle = Float.NaN;
 
-    public StirlingEngineVisual(MaterialManager materialManager, StirlingEngineBlockEntity blockEntity) {
-        super(materialManager, blockEntity);
+    public StirlingEngineVisual(VisualizationContext context, StirlingEngineBlockEntity blockEntity, float partialTick) {
+        super(context, blockEntity, partialTick);
 
-        shaft = setup(getRotatingMaterial().getModel(shaft())
-                .createInstance());
-        wheel = getTransformMaterial().getModel(AllBlocks.FLYWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,
-                blockEntity.getBlockState().getValue(BlockStateProperties.AXIS))
-                )
+        var axis = rotationAxis();
+        shaft = instancerProvider().instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.SHAFT))
                 .createInstance();
 
-        animate(blockEntity.angle);
+        shaft.setup(StirlingEngineVisual.this.blockEntity)
+                .setPosition(getVisualPosition())
+                .rotateToFace(axis)
+                .setChanged();
     }
 
     @Override
-    public void beginFrame() {
+    public void beginFrame(Context ctx) {
 
-        float partialTicks = AnimationTickHolder.getPartialTicks();
+        float partialTicks = ctx.partialTick();
 
         float speed = blockEntity.visualSpeed.getValue(partialTicks) * 3 / 10f;
         float angle = blockEntity.angle + speed * partialTicks;
@@ -43,38 +41,28 @@ public class StirlingEngineVisual extends KineticBlockEntityInstance<StirlingEng
         if (Math.abs(angle - lastAngle) < 0.001)
             return;
 
-        animate(angle);
-
         lastAngle = angle;
     }
 
-    private void animate(float angle) {
-        PoseStack ms = new PoseStack();
-        TransformStack msr = TransformStack.cast(ms);
-
-        msr.translate(getInstancePosition());
-        msr.centre()
-                .rotate(Direction.get(Direction.AxisDirection.POSITIVE, axis), AngleHelper.rad(angle))
-                .scale(0.2f, 0.2f, 0.2f)
-                .unCentre();
-
-        wheel.setTransform(ms);
+    @Override
+    public void update(float pt) {
+        shaft.setup(blockEntity)
+                .setChanged();
     }
 
     @Override
-    public void update() {
-        updateRotation(shaft);
+    public void updateLight(float partialTick) {
+        relight(pos, shaft);
     }
 
     @Override
-    public void updateLight() {
-        relight(pos, shaft, wheel);
-    }
-
-    @Override
-    public void remove() {
+    public void _delete() {
         shaft.delete();
-        wheel.delete();
     }
 
+    @Override
+    public void collectCrumblingInstances(Consumer<@Nullable Instance> consumer) {
+        consumer.accept(shaft);
+    }
 }
+

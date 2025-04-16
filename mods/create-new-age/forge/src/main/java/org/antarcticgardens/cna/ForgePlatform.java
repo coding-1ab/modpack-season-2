@@ -1,6 +1,7 @@
 package org.antarcticgardens.cna;
 
 import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
+import dev.engine_room.flywheel.api.event.ReloadLevelRendererEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -51,7 +52,7 @@ public class ForgePlatform extends Platform {
     }
 
     @Override
-    public void subscribeReloadRenderersEvent(Consumer<ReloadRenderersEvent> consumer) {
+    public void subscribeReloadRenderersEvent(Consumer<ReloadLevelRendererEvent> consumer) {
         addListener(consumer);
     }
     

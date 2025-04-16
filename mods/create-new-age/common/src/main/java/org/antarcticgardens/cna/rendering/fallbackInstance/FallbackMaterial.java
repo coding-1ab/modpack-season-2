@@ -1,10 +1,7 @@
 package org.antarcticgardens.cna.rendering.fallbackInstance;
 
-import com.jozufozu.flywheel.api.InstanceData;
-import com.jozufozu.flywheel.api.Instancer;
-import com.jozufozu.flywheel.api.Material;
-import com.jozufozu.flywheel.api.struct.Batched;
-import com.jozufozu.flywheel.core.model.Model;
+import dev.engine_room.flywheel.api.instance.Instancer;
+import dev.engine_room.flywheel.api.model.Model;
 
 import java.util.HashMap;
 import java.util.Map;

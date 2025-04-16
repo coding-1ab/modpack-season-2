@@ -1,7 +1,7 @@
 package org.antarcticgardens.cna.content.energising;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.simibubi.create.foundation.render.CachedBufferer;
+import net.createmod.catnip.render.CachedBuffers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -18,7 +18,7 @@ public class EnergiserRenderer implements BlockEntityRenderer<EnergiserBlockEnti
         if (blockEntity.size > 0f && blockEntity.getLevel() != null) {
             var consumer = buffer.getBuffer(RenderType.lightning());
             float scalar = (1 - blockEntity.size * 0.12f) * 0.5f;
-            var buf = CachedBufferer.block(Blocks.WHITE_CONCRETE.defaultBlockState());
+            var buf = CachedBuffers.block(Blocks.WHITE_CONCRETE.defaultBlockState());
 
             buf.color(100, 150, 200, 200)
                     .translate(scalar, -1.2, scalar)
