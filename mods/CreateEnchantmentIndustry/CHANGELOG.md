@@ -1,12 +1,7 @@
-### Create: Enchantment Industry 2.0.7
+### Create: Enchantment Industry 2.0.8
 
-Require Create: Dragons Plus 1.3.2
-
-#### Update
-* Add German Translation by @Sven
-* Update Russian Translation by @Korben
-* Update Japanese Translation by @YukkuriOfuton
+Require Create: Dragons Plus 1.3.3， Which contains an important bugfix.
 
 #### Fix
-* Fix crash when player wearing goggle destroys printer
-* Fix an advancement follows wrong parent node
+* Fix crash when Blaze Forger or Blaze Enchanter is struck by lightning and passed in xp at same time
+* Fix unable to use Grindstone Drain with Schematicannon properly
