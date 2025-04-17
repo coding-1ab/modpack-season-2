@@ -43,6 +43,8 @@ public class CreateAdditionsDataGen {
         generator.addProvider(event.includeServer(), new CAMechanicalCrafterRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new CAPressingRecipeGen(output, lookupProvider));
 
+        generator.addProvider(event.includeServer(), new CAChargingRecipeProvider(output,lookupProvider));
+
         generator.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(output, lookupProvider, new RegistrySetBuilder()
                 .add(Registries.DAMAGE_TYPE, CADamageTypesDatagen::bootstrap)
                 .add(CreateRegistries.POTATO_PROJECTILE_TYPE, CAPotatoProjectileTypesDatagen::bootstrap),

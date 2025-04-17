@@ -1,0 +1,19 @@
+{
+  "type": "createaddition:charging",
+  "energy": 10000000,
+  "ingredient": {
+    "item": "minecraft:book"
+  },
+  "max_charge_rate": 1000,
+  "result": {
+    "components": {
+      "minecraft:stored_enchantments": {
+        "levels": {
+          "minecraft:channeling": 1
+        }
+      }
+    },
+    "count": 1,
+    "id": "minecraft:enchanted_book"
+  }
+}
