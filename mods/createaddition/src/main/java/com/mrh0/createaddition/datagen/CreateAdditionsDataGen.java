@@ -35,7 +35,6 @@ public class CreateAdditionsDataGen {
         generator.addProvider(event.includeServer(), blockTags);
         generator.addProvider(event.includeServer(), new CAFluidTagProvider(output, lookupProvider, existingFileHelper));
         generator.addProvider(event.includeServer(), new CAItemTagProvider(output, lookupProvider, blockTags.contentsGetter(), existingFileHelper));
-//        generator.addProvider(event.includeServer(), new CALootTableProvider(output,lookupProvider));
         generator.addProvider(event.includeServer(), new CACraftingRecipeProvider(output, lookupProvider));
         generator.addProvider(event.includeServer(), new CACrushingRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new CACompactingRecipeGen(output, lookupProvider));
@@ -43,6 +42,8 @@ public class CreateAdditionsDataGen {
         generator.addProvider(event.includeServer(), new CAMixingRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new CAMechanicalCrafterRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new CAPressingRecipeGen(output, lookupProvider));
+
+        generator.addProvider(event.includeServer(), new CAChargingRecipeProvider(output,lookupProvider));
 
         generator.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(output, lookupProvider, new RegistrySetBuilder()
                 .add(Registries.DAMAGE_TYPE, CADamageTypesDatagen::bootstrap)
