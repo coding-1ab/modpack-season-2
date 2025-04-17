@@ -3,6 +3,7 @@ package org.antarcticgardens.cna.content.electricity.connector;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.engine_room.flywheel.api.vertex.VertexList;
+import net.createmod.catnip.data.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LightTexture;
@@ -20,25 +21,18 @@ import org.antarcticgardens.cna.CNARenderTypes;
 import org.antarcticgardens.cna.CreateNewAge;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.electricity.wire.ElectricWireItem;
-import org.antarcticgardens.cna.content.electricity.wire.WireType;
-import org.antarcticgardens.cna.rendering.fallbackInstance.FallbackInstanceRenderer;
 import org.antarcticgardens.cna.util.RaycastUtil;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class ElectricalConnectorRenderer extends FallbackInstanceRenderer<ElectricalConnectorBlockEntity> {
+public class ElectricalConnectorRenderer implements BlockEntityRenderer<ElectricalConnectorBlockEntity> {
     public ElectricalConnectorRenderer(BlockEntityRendererProvider.Context context) {
-        super(context);
+        super();
     }
 
     @Override
     public void render(ElectricalConnectorBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
-        super.render(blockEntity, partialTick, poseStack, buffer, packedLight, packedOverlay);
+//        super.render(blockEntity, partialTick, poseStack, buffer, packedLight, packedOverlay);
 
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null && Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
@@ -112,20 +106,20 @@ public class ElectricalConnectorRenderer extends FallbackInstanceRenderer<Electr
                     
                     for (int i = 0; i < model.getSections().size(); i++) {
                         Pair<WireSection, Float> pair = model.getSections().get(i);
-                        VertexList reader = pair.first().getReader();
+                        VertexList reader = pair.getFirst().getReader();
                         
                         float sectionOffset = model.getSectionLength() * i;
                         Vector3f lightPos = blockEntity.getBlockPos().getCenter().toVector3f()
                                 .add(model.getDirection().mul(sectionOffset))
-                                .add(model.getUp().mul(pair.second()));
+                                .add(model.getUp().mul(pair.getSecond()));
                         BlockPos lightBlockPos = BlockPos.containing(new Vec3(lightPos));
                         int block = blockEntity.getLevel().getBrightness(LightLayer.BLOCK, lightBlockPos);
                         int sky = blockEntity.getLevel().getBrightness(LightLayer.SKY, lightBlockPos);
 
-                        for (int j = 0; j < reader.getVertexCount(); j++) {
-                            consumer.vertex(poseStack.last().pose(), reader.getX(j), reader.getY(j) + pair.second(), reader.getZ(j))
+                        for (int j = 0; j < reader.vertexCount(); j++) {
+                            consumer.vertex(poseStack.last().pose(), reader.x(j), reader.y(j) + pair.getSecond(), reader.z(j))
                                     .color(1.0f, 1.0f, 1.0f, 0.0f)
-                                    .uv(reader.getU(j), reader.getV(j))
+                                    .uv(reader.u(j), reader.v(j))
                                     .uv2(LightTexture.pack(block, sky)) 
                                     .normal(0.0f, 1.0f, 0.0f)
                                     .endVertex();

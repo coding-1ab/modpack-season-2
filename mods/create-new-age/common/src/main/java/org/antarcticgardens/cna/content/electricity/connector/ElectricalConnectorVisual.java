@@ -3,8 +3,6 @@ package org.antarcticgardens.cna.content.electricity.connector;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.task.Plan;
-import dev.engine_room.flywheel.api.visual.BlockEntityVisual;
-import dev.engine_room.flywheel.api.visual.DynamicVisual;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.material.Materials;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
@@ -47,8 +45,6 @@ public class ElectricalConnectorVisual extends AbstractBlockEntityVisual<Electri
 
         blockEntity.getConnectorPositions().entrySet().stream().filter(e -> !wires.containsKey(e.getKey()))
                 .forEach(e -> createConnection(e.getKey(), e.getValue()));
-
-        updateLight();
     }
 
     private void createConnection(BlockPos target, WireType wireType) {
@@ -87,14 +83,6 @@ public class ElectricalConnectorVisual extends AbstractBlockEntityVisual<Electri
         
         return instances;
     }
-
-    @Override
-    protected void remove() {
-        instances.remove(blockEntity);
-        wireInstances.forEach((k, v) -> removeWireInstances(k));
-        wireInstances.clear();
-        wires.clear();
-    }
     
     private void removeWireInstances(BlockPos target) {
         wireInstances.getOrDefault(target, new ArrayList<>()).forEach(p -> p.first().delete());
@@ -127,11 +115,11 @@ public class ElectricalConnectorVisual extends AbstractBlockEntityVisual<Electri
     }
 
     @Override
-    public void updateLight(float v) {
-        wires.forEach((k, w) ->
-                wireInstances.forEach((blockPos, pairs) ->
-                        pairs.forEach(p ->
-                                relight(BlockPos.containing(this.getVisualPosition().getCenter().add(p.getSecond())), p.getFirst()))));
+    public void updateLight(float partialTick) {
+//        wires.forEach((k, w) ->
+//                wireInstances.forEach((blockPos, pairs) ->
+//                        pairs.forEach(p ->
+//                                relight(BlockPos.containing(this.getVisualPosition().getCenter().add(p.getSecond())), p.getFirst()))));
     }
 
     @Override
