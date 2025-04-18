@@ -1,7 +1,5 @@
 package com.mrh0.createaddition.recipe.rolling;
 
-import com.mrh0.createaddition.CreateAddition;
-import com.mrh0.createaddition.config.CommonConfig;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
@@ -10,7 +8,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 
 public class RollingMillRecipeParams extends ProcessingRecipeBuilder.ProcessingRecipeParams {
-
     protected RollingMillRecipeParams(ResourceLocation id, Ingredient input, ProcessingOutput output) {
         super(id);
         if(ingredients == null) {
@@ -29,7 +26,7 @@ public class RollingMillRecipeParams extends ProcessingRecipeBuilder.ProcessingR
             fluidResults = NonNullList.create();
         }
         fluidResults.clear();
-        processingDuration = CommonConfig.ROLLING_MILL_PROCESSING_DURATION.get();
+        processingDuration = 120; // CommonConfig.ROLLING_MILL_PROCESSING_DURATION.get();
         requiredHeat = HeatCondition.NONE;
         keepHeldItem = false;
     }

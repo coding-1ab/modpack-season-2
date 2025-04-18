@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ChargingRecipe implements Recipe<RecipeWrapper> {
-
 	public Ingredient ingredient;
 	public ItemStack output;
 	public int energy;

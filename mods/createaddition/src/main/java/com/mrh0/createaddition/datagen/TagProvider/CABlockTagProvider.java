@@ -19,7 +19,6 @@ public class CABlockTagProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        System.out.println("addTags HERE");
         tag(AllTags.AllBlockTags.FAN_PROCESSING_CATALYSTS_BLASTING.tag).add(
                 CABlocks.LIQUID_BLAZE_BURNER.get()
         );

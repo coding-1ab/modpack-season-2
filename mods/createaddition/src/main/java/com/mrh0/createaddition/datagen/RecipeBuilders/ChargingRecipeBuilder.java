@@ -26,8 +26,6 @@ public class ChargingRecipeBuilder extends CARecipeBuilder {
         this.maxChargeRate = 0;
     }
 
-
-
     public static ChargingRecipeBuilder charging(ItemStack itemStack) {
         return new ChargingRecipeBuilder(itemStack);
     }

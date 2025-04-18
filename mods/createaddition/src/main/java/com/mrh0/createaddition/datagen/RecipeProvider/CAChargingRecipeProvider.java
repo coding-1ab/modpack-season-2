@@ -39,6 +39,7 @@ public class CAChargingRecipeProvider extends ProcessingRecipeGen {
             return (RecipeType<R>) CARecipes.CHARGING_TYPE.get();
         }
     };
+
     private final HolderLookup.Provider provider;
 
     public CAChargingRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
@@ -66,10 +67,8 @@ public class CAChargingRecipeProvider extends ProcessingRecipeGen {
         DeoxidizerRecipeBuilder.special().save(output,"special_deoxidation");
         }
 
-
     @Override
     protected IRecipeTypeInfo getRecipeType() {
        return recipeType;
     }
-
 }
