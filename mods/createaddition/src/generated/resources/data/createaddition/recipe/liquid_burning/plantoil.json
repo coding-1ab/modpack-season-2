@@ -1,10 +1,9 @@
 {
   "type": "createaddition:liquid_burning",
-  "burnTime": 24000,
+  "burnTime": 4800,
   "input": {
     "type": "fluid_tag",
     "amount": 1000,
-    "fluid_tag": "c:biofuel"
-  },
-  "superheated": true
+    "fluid_tag": "c:plantoil"
+  }
 }
