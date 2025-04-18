@@ -89,7 +89,7 @@ public class ChargingRecipeBuilder extends CARecipeBuilder {
     @Override
     public void save(RecipeOutput recipeOutput, ResourceLocation resourceLocation) {
         ChargingRecipe chargingRecipe = new ChargingRecipe(
-                Objects.requireNonNullElse(this.group,""),
+                Objects.requireNonNullElse(this.group, ""),
                 this.ingredient,
                 this.result,
                 this.energy,
@@ -105,6 +105,6 @@ public class ChargingRecipeBuilder extends CARecipeBuilder {
 
     @Override
     public void save(RecipeOutput recipeOutput, String id) {
-        save(recipeOutput, ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID,id));
+        save(recipeOutput, ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, id));
     }
 }
