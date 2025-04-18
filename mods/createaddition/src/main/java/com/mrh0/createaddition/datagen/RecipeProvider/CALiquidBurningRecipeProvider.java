@@ -2,8 +2,12 @@ package com.mrh0.createaddition.datagen.RecipeProvider;
 
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.datagen.RecipeBuilders.CAChargingRecipeBuilder;
+import com.mrh0.createaddition.datagen.RecipeBuilders.CALiquidBurningRecipeBuilder;
+import com.mrh0.createaddition.datagen.TagProvider.CATagRegister;
+import com.mrh0.createaddition.index.CAFluids;
 import com.mrh0.createaddition.index.CARecipes;
 import com.simibubi.create.foundation.data.recipe.ProcessingRecipeGen;
+import com.simibubi.create.foundation.fluid.FluidIngredient;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -22,27 +26,27 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-public class CAChargingRecipeProvider extends ProcessingRecipeGen {
+public class CALiquidBurningRecipeProvider extends ProcessingRecipeGen {
     public static final IRecipeTypeInfo recipeType = new IRecipeTypeInfo() {
         @Override
         public ResourceLocation getId() {
-            return CARecipes.CHARGING.getId();
+            return CARecipes.LIQUID_BURNING.getId();
         }
 
         @Override
         public <T extends RecipeSerializer<?>> T getSerializer() {
-            return (T) CARecipes.CHARGING.get();
+            return (T) CARecipes.LIQUID_BURNING.get();
         }
 
         @Override
         public <V extends RecipeInput, R extends Recipe<V>> RecipeType<R> getType() {
-            return (RecipeType<R>) CARecipes.CHARGING_TYPE.get();
+            return (RecipeType<R>) CARecipes.LIQUID_BURNING_TYPE.get();
         }
     };
 
     private final HolderLookup.Provider provider;
 
-    public CAChargingRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+    public CALiquidBurningRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries);
         try {
             this.provider = registries.get();
@@ -53,18 +57,9 @@ public class CAChargingRecipeProvider extends ProcessingRecipeGen {
 
     @Override
     protected void buildRecipes(@NotNull RecipeOutput output) {
-        CAChargingRecipeBuilder.charging(Items.COPPER_BLOCK)
-                .require(Items.EXPOSED_COPPER)
-                .energy(4000)
-                .maxChargeRate(200)
-                .save(output, ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, BuiltInRegistries.ITEM.getKey(Items.COPPER_BLOCK).getPath()));
-        CAChargingRecipeBuilder.charging(new ItemStack(Items.ENCHANTED_BOOK), Enchantments.CHANNELING, provider)
-                .require(Items.BOOK)
-                .maxChargeRate(1000)
-                .energy(10000000)
-                .save(output, ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, Enchantments.CHANNELING.location().getPath()));
-//        CAChargingRecipeBuilder.charging(AllBlocks.COPPER_SHINGLES.get( CopperBlockSet.SlabVariant.INSTANCE, WeatheringCopper.WeatherState.UNAFFECTED,false).asItem());
-
+        CALiquidBurningRecipeBuilder.liquidBurning(24000)
+                .require(CATagRegister.Fluids.BIOFUEL)
+                .save(output, "biofuel");
     }
 
     @Override

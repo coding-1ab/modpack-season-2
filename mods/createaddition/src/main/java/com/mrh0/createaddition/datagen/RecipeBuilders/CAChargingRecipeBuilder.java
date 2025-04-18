@@ -26,8 +26,6 @@ public class CAChargingRecipeBuilder extends CARecipeBuilder {
         this.maxChargeRate = 0;
     }
 
-
-
     public static CAChargingRecipeBuilder charging(ItemStack itemStack) {
         return new CAChargingRecipeBuilder(itemStack);
     }
@@ -89,7 +87,7 @@ public class CAChargingRecipeBuilder extends CARecipeBuilder {
     @Override
     public void save(RecipeOutput recipeOutput, ResourceLocation resourceLocation) {
         ChargingRecipe chargingRecipe = new ChargingRecipe(
-                Objects.requireNonNullElse(this.group,""),
+                Objects.requireNonNullElse(this.group, ""),
                 this.ingredient,
                 this.result,
                 this.energy,
@@ -105,6 +103,6 @@ public class CAChargingRecipeBuilder extends CARecipeBuilder {
 
     @Override
     public void save(RecipeOutput recipeOutput, String id) {
-        save(recipeOutput, ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID,id));
+        save(recipeOutput, ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, id));
     }
 }

@@ -18,7 +18,6 @@ import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 import org.jetbrains.annotations.NotNull;
 
 public class ChargingRecipe implements Recipe<RecipeWrapper> {
-
 	public Ingredient ingredient;
 	public ItemStack output;
 	public int energy;
