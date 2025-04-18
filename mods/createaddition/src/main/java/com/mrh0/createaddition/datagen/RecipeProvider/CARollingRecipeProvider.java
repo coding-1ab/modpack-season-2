@@ -3,7 +3,6 @@ package com.mrh0.createaddition.datagen.RecipeProvider;
 import com.mrh0.createaddition.datagen.RecipeBuilders.CARollingRecipeBuilder;
 import com.mrh0.createaddition.index.CAItems;
 import com.mrh0.createaddition.index.CARecipes;
-import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.foundation.data.recipe.ProcessingRecipeGen;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
@@ -39,15 +38,9 @@ public class CARollingRecipeProvider extends ProcessingRecipeGen {
             return (RecipeType<R>) CARecipes.ROLLING_TYPE.get();
         }
     };
-    private final HolderLookup.Provider provider;
 
     public CARollingRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries);
-        try {
-            this.provider = registries.get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void metalRolling(@NotNull RecipeOutput output, Item rod, Item wire, String metal) {
@@ -68,7 +61,7 @@ public class CARollingRecipeProvider extends ProcessingRecipeGen {
         metalRolling(output, CAItems.IRON_ROD.get(), CAItems.IRON_WIRE.get(), "iron");
 
         CARollingRecipeBuilder.rolling(CAItems.BRASS_ROD.get(), 2)
-                .require(AllItems.BRASS_INGOT.get())
+                .require(AllTags.commonItemTag("ingots/brass"))
                 .save(output, "brass_ingot");
 
         CARollingRecipeBuilder.rolling(CAItems.STRAW)

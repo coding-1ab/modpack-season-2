@@ -1,7 +1,7 @@
 {
   "type": "createaddition:rolling",
   "input": {
-    "item": "create:brass_ingot"
+    "tag": "c:ingots/brass"
   },
   "result": {
     "count": 2,

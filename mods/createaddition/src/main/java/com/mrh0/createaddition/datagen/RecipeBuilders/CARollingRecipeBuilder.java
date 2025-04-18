@@ -82,7 +82,7 @@ public class CARollingRecipeBuilder extends CARecipeBuilder {
     @Override
     public void save(RecipeOutput recipeOutput, ResourceLocation resourceLocation) {
         RollingRecipe rollingRecipe = new RollingRecipe(
-                "",
+                Objects.requireNonNullElse(this.group,""),
                 this.ingredient,
                 this.result
         );
