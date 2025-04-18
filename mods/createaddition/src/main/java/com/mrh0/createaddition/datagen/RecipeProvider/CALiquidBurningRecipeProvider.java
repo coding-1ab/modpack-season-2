@@ -1,28 +1,20 @@
 package com.mrh0.createaddition.datagen.RecipeProvider;
 
-import com.mrh0.createaddition.CreateAddition;
-import com.mrh0.createaddition.datagen.RecipeBuilders.CAChargingRecipeBuilder;
 import com.mrh0.createaddition.datagen.RecipeBuilders.CALiquidBurningRecipeBuilder;
 import com.mrh0.createaddition.datagen.TagProvider.CATagRegister;
-import com.mrh0.createaddition.index.CAFluids;
 import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.recipe.conditions.HasFluidTagCondition;
 import com.simibubi.create.foundation.data.recipe.ProcessingRecipeGen;
-import com.simibubi.create.foundation.fluid.FluidIngredient;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.enchantment.Enchantments;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;

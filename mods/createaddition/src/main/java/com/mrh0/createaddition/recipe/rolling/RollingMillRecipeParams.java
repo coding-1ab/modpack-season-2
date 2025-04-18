@@ -1,7 +1,5 @@
 package com.mrh0.createaddition.recipe.rolling;
 
-import com.mrh0.createaddition.CreateAddition;
-import com.mrh0.createaddition.config.CommonConfig;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;

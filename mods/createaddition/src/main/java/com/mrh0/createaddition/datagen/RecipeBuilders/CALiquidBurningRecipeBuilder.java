@@ -1,22 +1,12 @@
 package com.mrh0.createaddition.datagen.RecipeBuilders;
 
 import com.mrh0.createaddition.CreateAddition;
-import com.mrh0.createaddition.datagen.TagProvider.CATagRegister;
-import com.mrh0.createaddition.index.CAFluids;
-import com.mrh0.createaddition.recipe.charging.ChargingRecipe;
 import com.mrh0.createaddition.recipe.liquid_burning.LiquidBurningRecipe;
 import com.simibubi.create.foundation.fluid.FluidIngredient;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluid;
 
 import java.util.Objects;

@@ -15,71 +15,71 @@ import net.minecraft.world.level.ItemLike;
 
 import java.util.Objects;
 
-public class CAChargingRecipeBuilder extends CARecipeBuilder {
+public class ChargingRecipeBuilder extends CARecipeBuilder {
     protected Ingredient ingredient;
     protected int energy , maxChargeRate;
 
-    public CAChargingRecipeBuilder(ItemStack result) {
+    public ChargingRecipeBuilder(ItemStack result) {
         super(result);
         this.ingredient = Ingredient.EMPTY;
         this.energy = 0;
         this.maxChargeRate = 0;
     }
 
-    public static CAChargingRecipeBuilder charging(ItemStack itemStack) {
-        return new CAChargingRecipeBuilder(itemStack);
+    public static ChargingRecipeBuilder charging(ItemStack itemStack) {
+        return new ChargingRecipeBuilder(itemStack);
     }
 
-    public static CAChargingRecipeBuilder charging(ItemLike result, int count) {
+    public static ChargingRecipeBuilder charging(ItemLike result, int count) {
         return charging(new ItemStack(result,count));
     }
 
-    public static CAChargingRecipeBuilder charging(ItemLike result) {
+    public static ChargingRecipeBuilder charging(ItemLike result) {
         return charging(new ItemStack(result));
     }
 
-    public static CAChargingRecipeBuilder charging(Item result, int count) {
+    public static ChargingRecipeBuilder charging(Item result, int count) {
         return charging(new ItemStack(result,count));
     }
 
 
-    public static CAChargingRecipeBuilder charging(Item result) {
+    public static ChargingRecipeBuilder charging(Item result) {
         return charging(new ItemStack(result));
     }
 
-    public static CAChargingRecipeBuilder charging(ItemStack item, ResourceKey<Enchantment> enchantmentKey, HolderLookup.Provider provider) {
+    public static ChargingRecipeBuilder charging(ItemStack item, ResourceKey<Enchantment> enchantmentKey, HolderLookup.Provider provider) {
         item.enchant(provider.holderOrThrow(enchantmentKey),1);
         return charging(item);
     }
 
-    public CAChargingRecipeBuilder require(Ingredient ingredient) {
+    public ChargingRecipeBuilder require(Ingredient ingredient) {
         this.ingredient = ingredient;
         return this;
     }
 
-    public CAChargingRecipeBuilder require(ItemLike item) {
+    public ChargingRecipeBuilder require(ItemLike item) {
         this.require(Ingredient.of(item));
         return this;
     }
 
-    public CAChargingRecipeBuilder require(ItemStack item) {
+    public ChargingRecipeBuilder require(ItemStack item) {
         this.require(Ingredient.of(item));
         return this;
     }
 
-    public CAChargingRecipeBuilder require(ItemLike item, int count) {
+    public ChargingRecipeBuilder require(ItemLike item, int count) {
         for(int i=0; i< count; ++i) {
             this.require(Ingredient.of(item));
         }
         return this;
     }
 
-    public CAChargingRecipeBuilder energy(int energy) {
+    public ChargingRecipeBuilder energy(int energy) {
         this.energy = energy;
         return this;
     }
 
-    public CAChargingRecipeBuilder maxChargeRate(int maxChargeRate) {
+    public ChargingRecipeBuilder maxChargeRate(int maxChargeRate) {
         this.maxChargeRate = maxChargeRate;
         return this;
     }
