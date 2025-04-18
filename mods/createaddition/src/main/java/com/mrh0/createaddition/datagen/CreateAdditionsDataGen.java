@@ -44,6 +44,7 @@ public class CreateAdditionsDataGen {
         generator.addProvider(event.includeServer(), new CAPressingRecipeGen(output, lookupProvider));
 
         generator.addProvider(event.includeServer(), new CAChargingRecipeProvider(output,lookupProvider));
+        generator.addProvider(event.includeServer(), new CARollingRecipeProvider(output, lookupProvider));
 
         generator.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(output, lookupProvider, new RegistrySetBuilder()
                 .add(Registries.DAMAGE_TYPE, CADamageTypesDatagen::bootstrap)

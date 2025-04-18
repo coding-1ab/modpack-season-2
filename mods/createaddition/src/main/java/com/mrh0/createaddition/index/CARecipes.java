@@ -6,8 +6,6 @@ import com.mrh0.createaddition.recipe.charging.ChargingRecipe;
 import com.mrh0.createaddition.recipe.conditions.HasFluidTagCondition;
 import com.mrh0.createaddition.recipe.liquid_burning.LiquidBurningRecipe;
 import com.mrh0.createaddition.recipe.rolling.RollingRecipe;
-import com.mrh0.createaddition.recipe.rolling.RollingRecipeProcessingFactory;
-import com.mrh0.createaddition.recipe.rolling.SequencedAssemblyRollingRecipeSerializer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -33,8 +31,7 @@ public class CARecipes {
 	}
 
 	public static final Supplier<RecipeType<RollingRecipe>> ROLLING_TYPE = registerRecipeType("rolling");
-	public static DeferredHolder<RecipeSerializer<?>, RecipeSerializer<RollingRecipe>> ROLLING = SERIALIZERS.register("rolling", () ->
-			new SequencedAssemblyRollingRecipeSerializer(new RollingRecipeProcessingFactory()));
+	public static DeferredHolder<RecipeSerializer<?>, RecipeSerializer<RollingRecipe>> ROLLING = SERIALIZERS.register("rolling", RollingRecipe.Serializer::new);
 
 	public static final Supplier<RecipeType<ChargingRecipe>> CHARGING_TYPE = registerRecipeType("charging");
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ChargingRecipe>> CHARGING = SERIALIZERS.register("charging", ChargingRecipe.Serializer::new);

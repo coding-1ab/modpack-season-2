@@ -3,6 +3,7 @@ package com.mrh0.createaddition.blocks.rolling_mill;
 import java.util.List;
 import java.util.Optional;
 
+import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.index.CABlockEntities;
 import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.recipe.rolling.RollingRecipe;
@@ -23,6 +24,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -115,13 +117,13 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 				sendData();
 			} else {
 				lastRecipe = recipe.get().value();
-				timer = lastRecipe.getProcessingDuration();
+				timer = CommonConfig.ROLLING_MILL_PROCESSING_DURATION.get();
 				sendData();
 			}
 			return;
 		}
 
-		timer = lastRecipe.getProcessingDuration();
+		timer = CommonConfig.ROLLING_MILL_PROCESSING_DURATION.get();
 		sendData();
 	}
 
@@ -151,8 +153,7 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 		ItemStack stackInSlot = inputInv.getStackInSlot(0);
 		stackInSlot.shrink(1);
 		inputInv.setStackInSlot(0, stackInSlot);
-		lastRecipe.rollResults()
-				.forEach(stack -> ItemHandlerHelper.insertItemStacked(outputInv, stack, false));
+		ItemHandlerHelper.insertItemStacked(outputInv, lastRecipe.getResultItem().copy(), false);
 
 		sendData();
 		setChanged();
@@ -236,9 +237,9 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 	}
 
 	public Optional<RecipeHolder<RollingRecipe>> find(RecipeWrapper inv, Level level) {
-		var sequenced = SequencedAssemblyRecipe.getRecipe(level, inv.getItem(0), CARecipes.ROLLING_TYPE.get(), RollingRecipe.class);
-		if(sequenced.isPresent()) {
-			return sequenced;
+		var recipe = level.getRecipeManager().getRecipeFor(CARecipes.ROLLING_TYPE.get(), inv, level);
+		if(recipe.isPresent()) {
+			return recipe;
 		}
 		return level.getRecipeManager().getRecipeFor(CARecipes.ROLLING_TYPE.get(), inv, level);
 	}
