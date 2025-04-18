@@ -256,6 +256,7 @@ public class AllItems {
 	public static final ItemEntry<SuperGlueItem> SUPER_GLUE = REGISTRATE.item("super_glue", SuperGlueItem::new)
 		.properties(p -> p.stacksTo(1)
 			.durability(99))
+		.tag(ItemTags.DURABILITY_ENCHANTABLE)
 		.register();
 
 	public static final ItemEntry<MinecartCouplingItem> MINECART_COUPLING =
@@ -410,11 +411,12 @@ public class AllItems {
 		REGISTRATE.item("potato_cannon", PotatoCannonItem::new)
 			.properties(p -> p.durability(100))
 			.model(AssetLookup.itemModelWithPartials())
-			.tag(net.neoforged.neoforge.common.Tags.Items.ENCHANTABLES)
+			.tag(Tags.Items.ENCHANTABLES, ItemTags.DURABILITY_ENCHANTABLE, ItemTags.BOW_ENCHANTABLE)
 			.register();
 
 	public static final ItemEntry<ExtendoGripItem> EXTENDO_GRIP = REGISTRATE.item("extendo_grip", ExtendoGripItem::new)
 		.properties(p -> p.rarity(Rarity.UNCOMMON))
+		.tag(ItemTags.DURABILITY_ENCHANTABLE)
 		.model(AssetLookup.itemModelWithPartials())
 		.register();
 

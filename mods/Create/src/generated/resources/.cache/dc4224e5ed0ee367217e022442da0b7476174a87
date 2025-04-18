@@ -1,4 +1,4 @@
-// 1.21.1	2025-03-27T13:55:02.837801	Registrate Provider for create [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2025-04-15T21:44:32.918735283	Registrate Provider for create [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 60bbdf92d2ac9824ea6144955c74043a6005f79d assets/create/blockstates/acacia_window.json
 6a67703c2697d81b7dc83e9d72a66f9c9ff08383 assets/create/blockstates/acacia_window_pane.json
 c3ae87b62e81d8e9476eccd793bb1548d74c66a1 assets/create/blockstates/adjustable_chain_gearshift.json
@@ -4841,6 +4841,8 @@ cd2613a4722ce79366433181095c27463e7c61b8 data/minecraft/tags/block/stairs.json
 01d32d3b7b033aff44c047bf289d696de0b0c715 data/minecraft/tags/item/beacon_payment_items.json
 056046998d063e7405c267f1ec2923260ef8c109 data/minecraft/tags/item/chest_armor.json
 71aef080a900d9e86818cf579438c3d826d6567e data/minecraft/tags/item/doors.json
+1b1f3841906d294c4737d5ceaffd8852d950debf data/minecraft/tags/item/enchantable/bow.json
+8af94e2d73f4897c2bb2eeab107b066a476e2506 data/minecraft/tags/item/enchantable/durability.json
 1a9ce7d5f5fe92d3b73e269cd5dbf5cd1f1fe5b8 data/minecraft/tags/item/foot_armor.json
 9eb6474e9336c2c378100b7e2577a6ba9c62e403 data/minecraft/tags/item/head_armor.json
 afdac448376ff5624f49cbf31feedf691ecbc4c5 data/minecraft/tags/item/leg_armor.json

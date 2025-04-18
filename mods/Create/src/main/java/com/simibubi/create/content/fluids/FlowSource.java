@@ -59,7 +59,8 @@ public abstract class FlowSource {
 
 	public abstract boolean isEndpoint();
 
-	public void manageSource(Level world) {}
+	public void manageSource(Level world, BlockEntity networkBE) {
+	}
 
 	public void whileFlowPresent(Level world, boolean pulling) {}
 
@@ -76,7 +77,7 @@ public abstract class FlowSource {
 			fluidHandlerCache = EMPTY;
 		}
 
-		public void manageSource(Level world) {
+		public void manageSource(Level world, BlockEntity networkBE) {
 			if (fluidHandlerCache == null) {
 				BlockEntity blockEntity = world.getBlockEntity(location.getConnectedPos());
 				if (blockEntity != null && world instanceof ServerLevel serverLevel)
@@ -85,7 +86,7 @@ public abstract class FlowSource {
 						serverLevel,
 						blockEntity.getBlockPos(),
 						location.getOppositeFace(),
-						() -> !blockEntity.isRemoved(),
+						() -> !networkBE.isRemoved(),
 						() -> fluidHandlerCache = EMPTY
 					));
 			}
@@ -111,7 +112,7 @@ public abstract class FlowSource {
 		}
 
 		@Override
-		public void manageSource(Level world) {
+		public void manageSource(Level world, BlockEntity networkBE) {
 			if (cached != null && cached.get() != null && !cached.get().blockEntity.isRemoved())
 				return;
 			cached = null;
