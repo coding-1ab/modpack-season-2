@@ -20,7 +20,6 @@ import com.simibubi.create.compat.jei.CreateJEI;
 import com.simibubi.create.compat.jei.ItemIcon;
 import com.simibubi.create.compat.jei.EmptyBackground;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
-import com.simibubi.create.content.equipment.sandPaper.SandPaperPolishingRecipe;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.simibubi.create.infrastructure.config.CRecipes;
 import mezz.jei.api.IModPlugin;
@@ -129,8 +128,7 @@ public class CreateAdditionJEI implements IModPlugin {
 		}
 
 		public CategoryBuilder<T> catalyst(Supplier<ItemLike> supplier) {
-			return catalystStack(() -> new ItemStack(supplier.get()
-					.asItem()));
+			return catalystStack(() -> new ItemStack(supplier.get().asItem()));
 		}
 
 		public CategoryBuilder<T> icon(IDrawable icon) {
@@ -152,26 +150,6 @@ public class CreateAdditionJEI implements IModPlugin {
 			background(new EmptyBackground(width, height));
 			return this;
 		}
-
-		/*
-		public CreateRecipeCategory<T> build(String name, CreateRecipeCategory.Factory<T> factory) {
-			Supplier<List<T>> recipesSupplier;
-			if (predicate.test(AllConfigs.server().recipes)) {
-				recipesSupplier = () -> {
-					List<T> recipes = new ArrayList<>();
-					for (Consumer<List<T>> consumer : recipeListConsumers)
-						consumer.accept(recipes);
-					return recipes;
-				};
-			} else {
-				recipesSupplier = Collections::emptyList;
-			}
-
-			CreateRecipeCategory.Info<T> info = new CreateRecipeCategory.Info<>(
-					new mezz.jei.api.recipe.RecipeType<>(CreateAddition.asResource(name), recipeClass),
-					Component.translatable(CreateAddition.MODID + ".recipe." + name), background, icon, recipesSupplier, catalysts);
-            return factory.create(info);
-		}*/
 
 		public CreateRecipeCategory<T> build(String name, CreateRecipeCategory.Factory<T> factory) {
 			Supplier<List<RecipeHolder<T>>> recipesSupplier;
