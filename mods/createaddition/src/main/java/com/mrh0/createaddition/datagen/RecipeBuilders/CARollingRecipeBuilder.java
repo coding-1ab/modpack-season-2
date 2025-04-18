@@ -24,8 +24,6 @@ public class CARollingRecipeBuilder extends CARecipeBuilder {
         this.ingredient = Ingredient.EMPTY;
     }
 
-
-
     public static CARollingRecipeBuilder rolling(ItemStack itemStack) {
         return new CARollingRecipeBuilder(itemStack);
     }
@@ -82,7 +80,7 @@ public class CARollingRecipeBuilder extends CARecipeBuilder {
     @Override
     public void save(RecipeOutput recipeOutput, ResourceLocation resourceLocation) {
         RollingRecipe rollingRecipe = new RollingRecipe(
-                Objects.requireNonNullElse(this.group,""),
+                Objects.requireNonNullElse(this.group, ""),
                 this.ingredient,
                 this.result
         );
@@ -96,6 +94,6 @@ public class CARollingRecipeBuilder extends CARecipeBuilder {
 
     @Override
     public void save(RecipeOutput recipeOutput, String id) {
-        save(recipeOutput, ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID,id));
+        save(recipeOutput, ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, id));
     }
 }

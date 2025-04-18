@@ -39,8 +39,15 @@ public class CARollingRecipeProvider extends ProcessingRecipeGen {
         }
     };
 
+    private final HolderLookup.Provider provider;
+
     public CARollingRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries);
+        try {
+            this.provider = registries.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void metalRolling(@NotNull RecipeOutput output, Item rod, Item wire, String metal) {
@@ -69,10 +76,8 @@ public class CARollingRecipeProvider extends ProcessingRecipeGen {
                 .save(output);
     }
 
-
     @Override
     protected IRecipeTypeInfo getRecipeType() {
        return recipeType;
     }
-
 }
