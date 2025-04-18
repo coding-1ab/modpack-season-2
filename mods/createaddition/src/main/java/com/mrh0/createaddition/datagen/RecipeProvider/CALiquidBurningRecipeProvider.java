@@ -6,6 +6,7 @@ import com.mrh0.createaddition.datagen.RecipeBuilders.CALiquidBurningRecipeBuild
 import com.mrh0.createaddition.datagen.TagProvider.CATagRegister;
 import com.mrh0.createaddition.index.CAFluids;
 import com.mrh0.createaddition.index.CARecipes;
+import com.mrh0.createaddition.recipe.conditions.HasFluidTagCondition;
 import com.simibubi.create.foundation.data.recipe.ProcessingRecipeGen;
 import com.simibubi.create.foundation.fluid.FluidIngredient;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
@@ -68,6 +69,25 @@ public class CALiquidBurningRecipeProvider extends ProcessingRecipeGen {
         CALiquidBurningRecipeBuilder.liquidBurning(20000)
                 .require(FluidTags.LAVA)
                 .save(output, "lava");
+
+        CALiquidBurningRecipeBuilder.liquidBurning(24000)
+                .require(CATagRegister.Fluids.BIODIESEL)
+                .save(output.withConditions(new HasFluidTagCondition(CATagRegister.Fluids.BIODIESEL)), "biodiesel");
+        CALiquidBurningRecipeBuilder.liquidBurning(4800)
+                .require(CATagRegister.Fluids.CREOSOTE)
+                .save(output.withConditions(new HasFluidTagCondition(CATagRegister.Fluids.CREOSOTE)), "creosote");
+        CALiquidBurningRecipeBuilder.liquidBurning(9600)
+                .require(CATagRegister.Fluids.CRUDE_OIL)
+                .save(output.withConditions(new HasFluidTagCondition(CATagRegister.Fluids.CRUDE_OIL)), "crude_oil");
+        CALiquidBurningRecipeBuilder.liquidBurning(24000)
+                .require(CATagRegister.Fluids.DIESEL)
+                .save(output.withConditions(new HasFluidTagCondition(CATagRegister.Fluids.DIESEL)), "diesel");
+        CALiquidBurningRecipeBuilder.liquidBurning(8000)
+                .require(CATagRegister.Fluids.ETHANOL)
+                .save(output.withConditions(new HasFluidTagCondition(CATagRegister.Fluids.ETHANOL)), "ethanol");
+        CALiquidBurningRecipeBuilder.liquidBurning(24000)
+                .require(CATagRegister.Fluids.GASOLINE)
+                .save(output.withConditions(new HasFluidTagCondition(CATagRegister.Fluids.GASOLINE)), "gasoline");
     }
 
     @Override
