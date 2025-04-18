@@ -1,12 +1,12 @@
 package com.mrh0.createaddition.datagen.RecipeProvider;
 
 import com.mrh0.createaddition.CreateAddition;
-import com.mrh0.createaddition.datagen.RecipeBuilders.CAChargingRecipeBuilder;
+import com.mrh0.createaddition.datagen.RecipeBuilders.ChargingRecipeBuilder;
+import com.mrh0.createaddition.datagen.RecipeBuilders.DeoxidizerRecipeBuilder;
 import com.mrh0.createaddition.index.CARecipes;
 import com.simibubi.create.foundation.data.recipe.ProcessingRecipeGen;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -52,19 +52,19 @@ public class CAChargingRecipeProvider extends ProcessingRecipeGen {
 
     @Override
     protected void buildRecipes(@NotNull RecipeOutput output) {
-        CAChargingRecipeBuilder.charging(Items.COPPER_BLOCK)
-                .require(Items.EXPOSED_COPPER)
-                .energy(4000)
-                .maxChargeRate(200)
-                .save(output, ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, BuiltInRegistries.ITEM.getKey(Items.COPPER_BLOCK).getPath()));
-        CAChargingRecipeBuilder.charging(new ItemStack(Items.ENCHANTED_BOOK), Enchantments.CHANNELING, provider)
+//        CAChargingRecipeBuilder.charging(Items.COPPER_BLOCK)
+//                .require(Items.EXPOSED_COPPER)
+//                .energy(4000)
+//                .maxChargeRate(200)
+//                .save(output, ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, BuiltInRegistries.ITEM.getKey(Items.COPPER_BLOCK).getPath()));
+        ChargingRecipeBuilder.charging(new ItemStack(Items.ENCHANTED_BOOK), Enchantments.CHANNELING, provider)
                 .require(Items.BOOK)
                 .maxChargeRate(1000)
                 .energy(10000000)
                 .save(output, ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, Enchantments.CHANNELING.location().getPath()));
 //        CAChargingRecipeBuilder.charging(AllBlocks.COPPER_SHINGLES.get( CopperBlockSet.SlabVariant.INSTANCE, WeatheringCopper.WeatherState.UNAFFECTED,false).asItem());
-
-    }
+        DeoxidizerRecipeBuilder.special().save(output,"special_deoxidation");
+        }
 
 
     @Override
