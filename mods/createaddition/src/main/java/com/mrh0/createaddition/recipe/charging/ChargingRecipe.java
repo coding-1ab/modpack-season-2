@@ -3,19 +3,16 @@ package com.mrh0.createaddition.recipe.charging;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.index.CARecipes;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ChargingRecipe implements Recipe<RecipeWrapper> {
 	public Ingredient ingredient;
@@ -23,7 +20,7 @@ public class ChargingRecipe implements Recipe<RecipeWrapper> {
 	public int energy;
 	public int maxChargeRate;
 
-	public ChargingRecipe(String group, Ingredient ingredient, ItemStack output, int energy, int maxChargeRate) {
+	public ChargingRecipe(@Nullable String group, Ingredient ingredient, ItemStack output, int energy, int maxChargeRate) {
 		this.ingredient = ingredient;
 		this.output = output;
 		this.energy = energy;

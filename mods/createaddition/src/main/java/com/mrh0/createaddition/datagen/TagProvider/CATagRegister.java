@@ -67,6 +67,10 @@ public class CATagRegister {
         public static final TagKey<Fluid> CREOSOTE = commonTags("creosote");
         public static final TagKey<Fluid> CRUDE_OIL = commonTags("crude_oil");
         public static final TagKey<Fluid> PLANTOIL = commonTags("plantoil");
+        public static final TagKey<Fluid> ETHANOL = commonTags("ethanol");
+        public static final TagKey<Fluid> GASOLINE = commonTags("gasoline");
+        public static final TagKey<Fluid> DIESEL = commonTags("diesel");
+        public static final TagKey<Fluid> BIODIESEL = commonTags("biodiesel");
 
         public static TagKey<Fluid> commonTags(String folder, String name) {
             return FluidTags.create(ResourceLocation.fromNamespaceAndPath("c", String.format("%s/%s", folder, name)));
