@@ -1,5 +1,6 @@
 package com.mrh0.createaddition.index;
 
+import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.blocks.alternator.AlternatorBlockEntity;
 import com.mrh0.createaddition.blocks.connector.LargeConnectorBlockEntity;
 import com.mrh0.createaddition.blocks.connector.SmallConnectorBlockEntity;
@@ -11,6 +12,7 @@ import com.mrh0.createaddition.blocks.modular_accumulator.ModularAccumulatorBloc
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceBlockEntity;
 import com.mrh0.createaddition.blocks.rolling_mill.RollingMillBlockEntity;
 import com.mrh0.createaddition.blocks.tesla_coil.TeslaCoilBlockEntity;
+import com.mrh0.createaddition.compat.computercraft.Peripherals;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 public class CACapabilities {
@@ -26,5 +28,9 @@ public class CACapabilities {
         TeslaCoilBlockEntity.registerCapabilities(event);
         RollingMillBlockEntity.registerCapabilities(event);
         LiquidBlazeBurnerBlockEntity.registerCapability(event);
+
+        if(CreateAddition.CC_ACTIVE) {
+            Peripherals.registerPeripheralCapabilities(event);
+        }
     }
 }
