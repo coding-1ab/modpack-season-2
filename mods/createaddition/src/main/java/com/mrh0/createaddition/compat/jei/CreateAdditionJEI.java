@@ -55,26 +55,26 @@ public class CreateAdditionJEI implements IModPlugin {
 	public void registerCategories(IRecipeCategoryRegistration registration) {
 		ALL.clear();
 
-		ALL.add(builder(RollingRecipe.class)
-				.addTypedRecipes(CARecipes.ROLLING_TYPE::get)
-				.catalyst(CABlocks.ROLLING_MILL::get)
-				.itemIcon(CABlocks.ROLLING_MILL.get())
-				.emptyBackground(177, 53)
-				.build("rolling", RollingMillCategory::new));
-
-		ALL.add(builder(ChargingRecipe.class)
+		builder(ChargingRecipe.class)
 				.addTypedRecipes(CARecipes.CHARGING_TYPE::get)
 				.catalyst(CABlocks.TESLA_COIL::get)
 				.itemIcon(CABlocks.TESLA_COIL.get())
 				.emptyBackground(177, 53)
-				.build("charging", ChargingCategory::new));
+				.build("charging", ChargingCategory::new);
 
-		ALL.add(builder(LiquidBurningRecipe.class)
+		builder(RollingRecipe.class)
+				.addTypedRecipes(CARecipes.ROLLING_TYPE::get)
+				.catalyst(CABlocks.ROLLING_MILL::get)
+				.itemIcon(CABlocks.ROLLING_MILL.get())
+				.emptyBackground(177, 53)
+				.build("rolling", RollingMillCategory::new);
+
+		builder(LiquidBurningRecipe.class)
 				.addTypedRecipes(CARecipes.LIQUID_BURNING_TYPE::get)
 				.catalyst(AllBlocks.BLAZE_BURNER::get)
 				.itemIcon(AllBlocks.BLAZE_BURNER.get())
 				.emptyBackground(177, 53)
-				.build("liquid_burning", LiquidBurningCategory::new));
+				.build("liquid_burning", LiquidBurningCategory::new);
 
 		ALL.forEach(registration::addRecipeCategories);
 	}
