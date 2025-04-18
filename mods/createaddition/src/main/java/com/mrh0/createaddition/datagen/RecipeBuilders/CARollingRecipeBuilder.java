@@ -7,6 +7,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -54,6 +55,11 @@ public class CARollingRecipeBuilder extends CARecipeBuilder {
         return this;
     }
 
+    public CARollingRecipeBuilder require(TagKey<Item> tag) {
+        this.require(Ingredient.of(tag));
+        return this;
+    }
+
     public CARollingRecipeBuilder require(ItemLike item) {
         this.require(Ingredient.of(item));
         return this;
@@ -83,7 +89,7 @@ public class CARollingRecipeBuilder extends CARecipeBuilder {
 
     @Override
     public void save(RecipeOutput recipeOutput) {
-        save(recipeOutput, BuiltInRegistries.ITEM.getKey(this.result.getItem()));
+        save(recipeOutput, BuiltInRegistries.ITEM.getKey(this.result.getItem()).getPath());
     }
 
     @Override

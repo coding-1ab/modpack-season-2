@@ -3,41 +3,25 @@ package com.mrh0.createaddition.recipe.rolling;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mrh0.createaddition.CreateAddition;
-import com.mrh0.createaddition.compat.jei.RollingMillAssemblySubCategory;
-import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.index.CARecipes;
-import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
-import com.simibubi.create.content.processing.recipe.ProcessingOutput;
-import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
-import com.simibubi.create.content.processing.sequenced.IAssemblyRecipe;
-import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
-
-public class RollingRecipe extends ProcessingRecipe<RecipeWrapper> implements IAssemblyRecipe {
+public class RollingRecipe implements Recipe<RecipeWrapper> {
     protected final ItemStack output;
     protected final Ingredient ingredient;
 
     public RollingRecipe(String group, Ingredient ingredient, ItemStack output) {
-        // This line needs to be checked
-        super(new RollingRecipeInfo((SequencedAssemblyRollingRecipeSerializer) CARecipes.ROLLING.get(), CARecipes.ROLLING_TYPE.get()), new RollingMillRecipeParams(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID,group),ingredient, new ProcessingOutput(output, 1f)));
         this.output = output;
         this.ingredient = ingredient;
     }
@@ -53,16 +37,6 @@ public class RollingRecipe extends ProcessingRecipe<RecipeWrapper> implements IA
     public boolean matches(RecipeWrapper inv, @NotNull Level level) {
         if (inv.isEmpty()) return false;
         return ingredient.test(inv.getItem(0));
-    }
-
-    @Override
-    protected int getMaxInputCount() {
-        return 1;
-    }
-
-    @Override
-    protected int getMaxOutputCount() {
-        return 1;
     }
 
     @Override
@@ -97,26 +71,6 @@ public class RollingRecipe extends ProcessingRecipe<RecipeWrapper> implements IA
     @Override
     public @NotNull ItemStack getToastSymbol() {
         return this.output;
-    }
-
-    @Override
-    public Component getDescriptionForAssembly() {
-        return Component.translatable("createaddition.recipe.rolling.sequence").withStyle(ChatFormatting.DARK_GREEN);
-    }
-
-    @Override
-    public void addRequiredMachines(Set<ItemLike> set) {
-        set.add(CABlocks.ROLLING_MILL.get());
-    }
-
-    @Override
-    public void addAssemblyIngredients(List<Ingredient> list) {
-
-    }
-
-    @Override
-    public Supplier<Supplier<SequencedAssemblySubCategory>> getJEISubCategory() {
-        return () -> RollingMillAssemblySubCategory::new;
     }
 
     @MethodsReturnNonnullByDefault

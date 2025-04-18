@@ -1,0 +1,15 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "createaddition:has_fluid_tag",
+      "fluidTag": "c:crude_oil"
+    }
+  ],
+  "type": "createaddition:liquid_burning",
+  "burnTime": 9600,
+  "input": {
+    "type": "fluid_tag",
+    "amount": 1000,
+    "fluid_tag": "c:crude_oil"
+  }
+}
