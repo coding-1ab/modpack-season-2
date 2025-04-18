@@ -91,7 +91,7 @@ public class CARollingRecipeBuilder extends CARecipeBuilder {
 
     @Override
     public void save(RecipeOutput recipeOutput) {
-        save(recipeOutput, BuiltInRegistries.ITEM.getKey(this.result.getItem()));
+        save(recipeOutput, BuiltInRegistries.ITEM.getKey(this.result.getItem()).getPath());
     }
 
     @Override
