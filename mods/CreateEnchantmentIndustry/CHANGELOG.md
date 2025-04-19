@@ -1,7 +1,9 @@
-### Create: Enchantment Industry 2.0.8
+### Create: Enchantment Industry 2.0.9
 
-Require Create: Dragons Plus 1.3.3， Which contains an important bugfix.
+Require Create: Dragons Plus 1.3.5
+
+#### Update
+* Blaze Forger & Blaze Enchanter have proper visual effect on contraption
 
 #### Fix
-* Fix crash when Blaze Forger or Blaze Enchanter is struck by lightning and passed in xp at same time
-* Fix unable to use Grindstone Drain with Schematicannon properly
+* Blaze Forger & Blaze Enchanter cause xp dupe on contraption
