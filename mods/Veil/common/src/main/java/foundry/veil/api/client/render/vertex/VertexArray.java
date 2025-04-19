@@ -270,7 +270,7 @@ public abstract class VertexArray implements NativeResource {
      * @param data   The data to upload
      * @param usage  The data usage
      */
-    protected abstract void uploadVertexBuffer(int buffer, ByteBuffer data, int usage);
+    public abstract void uploadVertexBuffer(int buffer, ByteBuffer data, int usage);
 
     /**
      * @return A builder for applying changes to this array

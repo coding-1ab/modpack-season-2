@@ -33,7 +33,7 @@ public class DSAVertexArray extends VertexArray {
     }
 
     @Override
-    protected void uploadVertexBuffer(int buffer, ByteBuffer data, int usage) {
+    public void uploadVertexBuffer(int buffer, ByteBuffer data, int usage) {
         glNamedBufferData(buffer, data, usage);
     }
 }

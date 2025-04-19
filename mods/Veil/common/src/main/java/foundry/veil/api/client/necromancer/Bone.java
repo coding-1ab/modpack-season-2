@@ -103,19 +103,16 @@ public class Bone {
     }
 
     public void getLocalTransform(Matrix4x3f matrix, Quaternionf orientation, float partialTicks) {
-        matrix.translate(
-                Mth.lerp(partialTicks, this.previousPosition.x, this.position.x),
-                Mth.lerp(partialTicks, this.previousPosition.y, this.position.y),
-                Mth.lerp(partialTicks, this.previousPosition.z, this.position.z)
-        );
+        float x = Mth.lerp(partialTicks, this.previousPosition.x, this.position.x);
+        float y = Mth.lerp(partialTicks, this.previousPosition.y, this.position.y);
+        float z = Mth.lerp(partialTicks, this.previousPosition.z, this.position.z);
+        matrix.translate(x, y, z);
 
         this.previousRotation.slerp(this.rotation, partialTicks, orientation);
         float rotationPointX = Mth.lerp(partialTicks, this.previousRotationPoint.x, this.rotationPoint.x);
         float rotationPointY = Mth.lerp(partialTicks, this.previousRotationPoint.y, this.rotationPoint.y);
         float rotationPointZ = Mth.lerp(partialTicks, this.previousRotationPoint.z, this.rotationPoint.z);
-        matrix.translate(rotationPointX, rotationPointY, rotationPointZ);
-        matrix.rotate(orientation.normalize());
-        matrix.translate(-rotationPointX, -rotationPointY, -rotationPointZ);
+        matrix.rotateAround(orientation.normalize(), rotationPointX - x, rotationPointY - y, rotationPointZ - z);
 
         // technically wrong but whatever
         matrix.scale(

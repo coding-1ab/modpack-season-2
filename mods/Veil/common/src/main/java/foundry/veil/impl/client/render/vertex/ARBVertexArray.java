@@ -15,7 +15,7 @@ public class ARBVertexArray extends VertexArray {
     }
 
     @Override
-    protected void uploadVertexBuffer(int buffer, ByteBuffer data, int usage) {
+    public void uploadVertexBuffer(int buffer, ByteBuffer data, int usage) {
         int old = glGetInteger(GL_ARRAY_BUFFER_BINDING);
         glBindBuffer(GL_ARRAY_BUFFER, buffer);
         glBufferData(GL_ARRAY_BUFFER, data, usage);

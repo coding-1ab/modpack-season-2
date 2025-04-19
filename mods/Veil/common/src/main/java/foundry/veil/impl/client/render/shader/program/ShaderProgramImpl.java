@@ -181,10 +181,8 @@ public class ShaderProgramImpl implements ShaderProgram {
             compiledProgram.attachShader(glType, compiler.compile(glType, sourceSet.getTypeConverter(glType).idToFile(source)));
         }
 
-        // Fragment shaders aren't strictly necessary if the fragment output isn't used,
-        // however mac shaders don't work without a fragment shader. This adds a "dummy" fragment shader
-        // on mac specifically for all rendering shaders.
-        if (Minecraft.ON_OSX && !shaders.containsKey(GL_COMPUTE_SHADER) && !shaders.containsKey(GL_FRAGMENT_SHADER)) {
+        // This allows fragment shaders to be optional
+        if (!shaders.containsKey(GL_COMPUTE_SHADER) && !shaders.containsKey(GL_FRAGMENT_SHADER)) {
             compiledProgram.attachShader(GL_FRAGMENT_SHADER, compiler.compile(GL_FRAGMENT_SHADER, DUMMY_FRAGMENT_SHADER));
         }
     }
