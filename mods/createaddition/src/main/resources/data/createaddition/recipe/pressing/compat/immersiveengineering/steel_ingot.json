@@ -1,13 +1,13 @@
 {
 	"type":"create:pressing",
 	"ingredients": [{
-      	"tag": "forge:ingots/steel"
+      	"tag": "c:ingots/steel"
 	}],
 	"results": [{
 		"id": "immersiveengineering:plate_steel"
 	}],
-	"conditions": [{
-		"type": "forge:mod_loaded",
+	"neoforge:conditions": [{
+		"type": "neoforge:mod_loaded",
 		"modid": "immersiveengineering"
     }]
 }

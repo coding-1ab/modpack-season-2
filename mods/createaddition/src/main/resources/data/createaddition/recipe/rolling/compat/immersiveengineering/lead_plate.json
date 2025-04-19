@@ -4,7 +4,7 @@
       	"tag": "c:plates/lead"
 	},
 	"result": {
-		"item": "immersiveengineering:wire_lead",
+		"id": "immersiveengineering:wire_lead",
 		"count": 2
 	},
 	"neoforge:conditions": [ {

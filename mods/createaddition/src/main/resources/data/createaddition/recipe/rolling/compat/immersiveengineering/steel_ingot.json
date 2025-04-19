@@ -4,7 +4,7 @@
       	"tag": "c:ingots/steel"
 	},
 	"result": {
-		"item": "immersiveengineering:stick_steel",
+		"id": "immersiveengineering:stick_steel",
 		"count": 2
 	},
 	"neoforge:conditions": [ {

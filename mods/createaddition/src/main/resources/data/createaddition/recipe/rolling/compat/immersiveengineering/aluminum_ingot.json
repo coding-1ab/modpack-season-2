@@ -4,7 +4,7 @@
       	"tag": "c:ingots/aluminum"
 	},
 	"result": {
-		"item": "immersiveengineering:stick_aluminum",
+		"id": "immersiveengineering:stick_aluminum",
 		"count": 2
 	},
 	"neoforge:conditions": [ {

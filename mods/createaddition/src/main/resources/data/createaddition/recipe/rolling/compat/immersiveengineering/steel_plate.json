@@ -4,7 +4,7 @@
       	"tag": "c:plates/steel"
 	},
 	"result": {
-		"item": "immersiveengineering:wire_steel",
+		"id": "immersiveengineering:wire_steel",
 		"count": 2
 	},
 	"neoforge:conditions": [ {
