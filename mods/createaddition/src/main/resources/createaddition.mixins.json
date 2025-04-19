@@ -5,8 +5,7 @@
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
 		"BlockMovementChecksMixin",
-		"ContraptionMixin",
-		"SpeedControllerTileEntityMixin"
+		"ContraptionMixin"
 	],
 	"minVersion": "0.8.5"
 }

@@ -44,17 +44,17 @@ public class PortableEnergyInterfacePeripheral implements IPeripheral {
 	}
 
 	@LuaFunction(mainThread = true)
-	public boolean isConnected() {
+	public final boolean isConnected() {
 		return this.tileEntity.isConnected();
 	}
 
 	@LuaFunction(mainThread = true)
-	public int getMaxInsert() {
+	public final int getMaxInsert() {
 		return CommonConfig.PEI_MAX_INPUT.get();
 	}
 
 	@LuaFunction(mainThread = true)
-	public int getMaxExtract() {
+	public final int getMaxExtract() {
 		return CommonConfig.PEI_MAX_OUTPUT.get();
 	}
 }

@@ -148,14 +148,12 @@ public class DigitalAdapterBlockEntity extends BlockEntity {
     public void setTargetSpeed(Direction dir, int speed) {
         SpeedControllerBlockEntity scte = getSpeedController(dir);
         if(scte == null) return;
-        ISpeedControllerAdapter sts = (ISpeedControllerAdapter) scte;
-        sts.setTargetSpeed(speed);
+        scte.targetSpeed.setValue(speed);
     }
 
     public int getTargetSpeed(Direction dir) {
         SpeedControllerBlockEntity scte = getSpeedController(dir);
         if(scte == null) return 0;
-        ISpeedControllerAdapter sts = (ISpeedControllerAdapter) scte;
-        return sts.getTargetSpeed();
+        return scte.targetSpeed.getValue();
     }
 }

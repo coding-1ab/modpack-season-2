@@ -52,22 +52,22 @@ public class ModularAccumulatorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public int getMaxInsert() {
+    public final int getMaxInsert() {
         return CommonConfig.ACCUMULATOR_MAX_INPUT.get();
     }
 
     @LuaFunction(mainThread = true)
-    public int getMaxExtract() {
+    public final int getMaxExtract() {
         return CommonConfig.ACCUMULATOR_MAX_OUTPUT.get();
     }
 
     @LuaFunction(mainThread = true)
-    public int getHeight() {
+    public final int getHeight() {
         return this.tileEntity.getHeight();
     }
 
     @LuaFunction(mainThread = true)
-    public int getWidth() {
+    public final int getWidth() {
         return this.tileEntity.getWidth();
     }
 }

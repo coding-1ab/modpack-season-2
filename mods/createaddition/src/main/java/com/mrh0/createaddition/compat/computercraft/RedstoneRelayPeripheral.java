@@ -35,22 +35,22 @@ public class RedstoneRelayPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public int getMaxInsert() {
+    public final int getMaxInsert() {
         return CommonConfig.SMALL_CONNECTOR_MAX_INPUT.get();
     }
 
     @LuaFunction(mainThread = true)
-    public int getMaxExtract() {
+    public final int getMaxExtract() {
         return CommonConfig.SMALL_CONNECTOR_MAX_OUTPUT.get();
     }
 
     @LuaFunction(mainThread = true)
-    public int getThroughput() {
+    public final int getThroughput() {
         return this.tileEntity.getThroughput();
     }
 
     @LuaFunction(mainThread = true)
-    public boolean isPowered() {
+    public final boolean isPowered() {
         return this.tileEntity.getBlockState().getValue(RedstoneRelayBlock.POWERED);
     }
 }
