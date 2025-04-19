@@ -43,8 +43,6 @@ public class CACraftingRecipeProvider extends RecipeProvider {
                 packedName,
                 modId
                 );
-
-
     }
 
     protected void StorageRecipe(SaveUtility saveUtility, RecipeCategory unpackedCategory, ItemLike unpacked, RecipeCategory packedCategory, ItemLike packed, String packedName, String unpackedName, String modid) {
@@ -105,8 +103,8 @@ public class CACraftingRecipeProvider extends RecipeProvider {
         );
         utility.saveToCraftingFolder(
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, CAItems.CAPACITOR.asItem())
-                        .pattern("Z")
                         .pattern("C")
+                        .pattern("Z")
                         .pattern("T")
                         .define('Z', CATagRegister.Items.ZINC_PLATES)
                         .define('C', CATagRegister.Items.commonTags("plates/copper"))
