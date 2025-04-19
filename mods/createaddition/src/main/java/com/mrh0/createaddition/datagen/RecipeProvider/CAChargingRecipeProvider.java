@@ -3,6 +3,8 @@ package com.mrh0.createaddition.datagen.RecipeProvider;
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.datagen.RecipeBuilders.ChargingRecipeBuilder;
 import com.mrh0.createaddition.index.CARecipes;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.foundation.block.CopperBlockSet;
 import com.simibubi.create.foundation.data.recipe.ProcessingRecipeGen;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.core.HolderLookup;
@@ -17,6 +19,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.WeatheringCopper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -49,6 +52,34 @@ public class CAChargingRecipeProvider extends ProcessingRecipeGen {
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void buildCreateDeoxidizeVariants(CopperBlockSet.Variant<?> variant, @NotNull RecipeOutput output) {
+        ChargingRecipeBuilder.deoxidize(
+                AllBlocks.COPPER_SHINGLES.get(variant, WeatheringCopper.WeatherState.OXIDIZED,false).get(),
+                AllBlocks.COPPER_SHINGLES.get(variant, WeatheringCopper.WeatherState.WEATHERED,false).get()
+        ).save(output);
+        ChargingRecipeBuilder.deoxidize(
+                AllBlocks.COPPER_SHINGLES.get(variant, WeatheringCopper.WeatherState.WEATHERED,false).get(),
+                AllBlocks.COPPER_SHINGLES.get(variant, WeatheringCopper.WeatherState.EXPOSED,false).get()
+        ).save(output);
+        ChargingRecipeBuilder.deoxidize(
+                AllBlocks.COPPER_SHINGLES.get(variant, WeatheringCopper.WeatherState.EXPOSED,false).get(),
+                AllBlocks.COPPER_SHINGLES.get(variant, WeatheringCopper.WeatherState.UNAFFECTED,false).get()
+        ).save(output);
+
+        ChargingRecipeBuilder.deoxidize(
+                AllBlocks.COPPER_TILES.get(variant, WeatheringCopper.WeatherState.OXIDIZED,false).get(),
+                AllBlocks.COPPER_TILES.get(variant, WeatheringCopper.WeatherState.WEATHERED,false).get()
+        ).save(output);
+        ChargingRecipeBuilder.deoxidize(
+                AllBlocks.COPPER_TILES.get(variant, WeatheringCopper.WeatherState.WEATHERED,false).get(),
+                AllBlocks.COPPER_TILES.get(variant, WeatheringCopper.WeatherState.EXPOSED,false).get()
+        ).save(output);
+        ChargingRecipeBuilder.deoxidize(
+                AllBlocks.COPPER_TILES.get(variant, WeatheringCopper.WeatherState.EXPOSED,false).get(),
+                AllBlocks.COPPER_TILES.get(variant, WeatheringCopper.WeatherState.UNAFFECTED,false).get()
+        ).save(output);
     }
 
     @Override
@@ -89,7 +120,9 @@ public class CAChargingRecipeProvider extends ProcessingRecipeGen {
         ChargingRecipeBuilder.deoxidize(Blocks.EXPOSED_CUT_COPPER_SLAB).save(output);
         ChargingRecipeBuilder.deoxidize(Blocks.EXPOSED_CUT_COPPER_STAIRS).save(output);
 
-        //ChargingRecipeBuilder.deoxidize(AllBlocks.COPPER_SHINGLES.get(CopperBlockSet.SlabVariant.INSTANCE, WeatheringCopper.WeatherState.OXIDIZED,false).get()).save(output);
+        buildCreateDeoxidizeVariants(CopperBlockSet.SlabVariant.INSTANCE, output);
+        buildCreateDeoxidizeVariants(CopperBlockSet.BlockVariant.INSTANCE, output);
+        buildCreateDeoxidizeVariants(CopperBlockSet.StairVariant.INSTANCE, output);
     }
 
     @Override

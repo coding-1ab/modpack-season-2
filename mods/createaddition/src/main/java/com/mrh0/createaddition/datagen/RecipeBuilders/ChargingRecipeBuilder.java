@@ -62,6 +62,10 @@ public class ChargingRecipeBuilder extends CARecipeBuilder {
         return charging(deoxidizedBlock.get()).require(Ingredient.of(block)).energy(4000).maxChargeRate(200);
     }
 
+    public static ChargingRecipeBuilder deoxidize(Block block, Block deoxidizedBlock) {
+        return charging(deoxidizedBlock).require(Ingredient.of(block)).energy(4000).maxChargeRate(200);
+    }
+
     public ChargingRecipeBuilder require(Ingredient ingredient) {
         this.ingredient = ingredient;
         return this;
