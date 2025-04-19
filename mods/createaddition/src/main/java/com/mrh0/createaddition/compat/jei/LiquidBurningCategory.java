@@ -42,18 +42,13 @@ public class LiquidBurningCategory extends CARecipeCategory<LiquidBurningRecipe>
 			.setBackground(getRenderedSlot(), -1, -1)
 			.addItemStacks(buckets);
 		addFluidSlot(builder, getBackground().getWidth() / 2 -16, 3, recipe.getFluidIngredient());
-		/*builder
-			.addSlot(RecipeIngredientRole.INPUT, getBackground().getWidth() / 2 -16, 3)
-			.setBackground(getRenderedSlot(), -1, -1)
-			.addIngredients(NeoForgeTypes.FLUID_STACK, withImprovedVisibility(recipe.getFluidIngredient().getMatchingFluidStacks()))
-			.addRichTooltipCallback(addStochasticTooltip(recipe.));*/
 	}
 
 	@Override
 	public void draw(LiquidBurningRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gg, double mouseX,
 			double mouseY) {
 
-		gg.drawString(ClientMinecraftWrapper.getFont(), formatTime(recipe.getBurnTime()), getBackground().getWidth() / 2 + 48, 86 - 50, 4210752);
+		gg.drawString(ClientMinecraftWrapper.getFont(), formatTime(recipe.getBurnTime()), getBackground().getWidth() / 2 + 48, 86 - 50, 16777215);
 
 		HeatCondition requiredHeat = recipe.isSuperheated() ? HeatCondition.SUPERHEATED : HeatCondition.HEATED;
 
