@@ -6,4 +6,4 @@ Require Create: Dragons Plus 1.3.5
 * Blaze Forger & Blaze Enchanter have proper visual effect on contraption
 
 #### Fix
-* Blaze Forger & Blaze Enchanter cause xp dupe on contraption
+* Fix Xp duplicate certain block is in contraption
