@@ -1,0 +1,12 @@
+{
+  "type": "createaddition:charging",
+  "energy": 4000,
+  "ingredient": {
+    "item": "minecraft:exposed_copper"
+  },
+  "max_charge_rate": 200,
+  "result": {
+    "count": 1,
+    "id": "minecraft:copper_block"
+  }
+}

@@ -34,11 +34,10 @@ public class ChargingCategory extends CARecipeCategory<ChargingRecipe> {
 
 	@Override
 	public void draw(ChargingRecipe recipe, IRecipeSlotsView iRecipeSlotsView, GuiGraphics gg, double mouseX, double mouseY) {
-		var matrixStack = gg.pose();
 		AllGuiTextures.JEI_ARROW.render(gg, 85, 32);
 		AllGuiTextures.JEI_DOWN_ARROW.render(gg, 43, 4);
 		tesla_coil.draw(gg, 48, 27);
 
-		gg.drawString(ClientMinecraftWrapper.getFont(), Util.format(recipe.energy) + "fe", 86, 9, 4210752);
+		gg.drawString(ClientMinecraftWrapper.getFont(), Util.format(recipe.energy) + "⚡", 86, 9, 16777215);
 	}
 }

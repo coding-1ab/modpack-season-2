@@ -2,7 +2,6 @@ package com.mrh0.createaddition.datagen.RecipeProvider;
 
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.datagen.RecipeBuilders.ChargingRecipeBuilder;
-import com.mrh0.createaddition.datagen.RecipeBuilders.DeoxidizerRecipeBuilder;
 import com.mrh0.createaddition.index.CARecipes;
 import com.simibubi.create.foundation.data.recipe.ProcessingRecipeGen;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
@@ -17,6 +16,7 @@ import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -53,19 +53,44 @@ public class CAChargingRecipeProvider extends ProcessingRecipeGen {
 
     @Override
     protected void buildRecipes(@NotNull RecipeOutput output) {
-//        CAChargingRecipeBuilder.charging(Items.COPPER_BLOCK)
-//                .require(Items.EXPOSED_COPPER)
-//                .energy(4000)
-//                .maxChargeRate(200)
-//                .save(output, ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, BuiltInRegistries.ITEM.getKey(Items.COPPER_BLOCK).getPath()));
         ChargingRecipeBuilder.charging(new ItemStack(Items.ENCHANTED_BOOK), Enchantments.CHANNELING, provider)
                 .require(Items.BOOK)
                 .maxChargeRate(1000)
                 .energy(10000000)
                 .save(output, ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, Enchantments.CHANNELING.location().getPath()));
-//        CAChargingRecipeBuilder.charging(AllBlocks.COPPER_SHINGLES.get( CopperBlockSet.SlabVariant.INSTANCE, WeatheringCopper.WeatherState.UNAFFECTED,false).asItem());
-        DeoxidizerRecipeBuilder.special().save(output,"special_deoxidation");
-        }
+
+        ChargingRecipeBuilder.deoxidize(Blocks.OXIDIZED_COPPER).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.OXIDIZED_CHISELED_COPPER).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.OXIDIZED_COPPER_BULB).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.OXIDIZED_COPPER_DOOR).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.OXIDIZED_COPPER_GRATE).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.OXIDIZED_COPPER_TRAPDOOR).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.OXIDIZED_CUT_COPPER).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.OXIDIZED_CUT_COPPER_SLAB).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.OXIDIZED_CUT_COPPER_STAIRS).save(output);
+
+        ChargingRecipeBuilder.deoxidize(Blocks.WEATHERED_COPPER).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.WEATHERED_CHISELED_COPPER).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.WEATHERED_COPPER_BULB).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.WEATHERED_COPPER_DOOR).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.WEATHERED_COPPER_GRATE).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.WEATHERED_COPPER_TRAPDOOR).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.WEATHERED_CUT_COPPER).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.WEATHERED_CUT_COPPER_SLAB).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.WEATHERED_CUT_COPPER_STAIRS).save(output);
+
+        ChargingRecipeBuilder.deoxidize(Blocks.EXPOSED_COPPER).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.EXPOSED_CHISELED_COPPER).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.EXPOSED_COPPER_BULB).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.EXPOSED_COPPER_DOOR).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.EXPOSED_COPPER_GRATE).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.EXPOSED_COPPER_TRAPDOOR).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.EXPOSED_CUT_COPPER).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.EXPOSED_CUT_COPPER_SLAB).save(output);
+        ChargingRecipeBuilder.deoxidize(Blocks.EXPOSED_CUT_COPPER_STAIRS).save(output);
+
+        //ChargingRecipeBuilder.deoxidize(AllBlocks.COPPER_SHINGLES.get(CopperBlockSet.SlabVariant.INSTANCE, WeatheringCopper.WeatherState.OXIDIZED,false).get()).save(output);
+    }
 
     @Override
     protected IRecipeTypeInfo getRecipeType() {
