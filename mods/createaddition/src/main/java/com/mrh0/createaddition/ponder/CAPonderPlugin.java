@@ -35,11 +35,6 @@ public class CAPonderPlugin implements PonderPlugin {
     }
 
     @Override
-    public void onPonderLevelRestore(PonderLevel ponderLevel) {
-        PonderWorldBlockEntityFix.fixControllerBlockEntities(ponderLevel);
-    }
-
-    @Override
     public void indexExclusions(IndexExclusionHelper helper) {
         // helper.excludeBlockVariants(ValveHandleBlock.class, AllBlocks.COPPER_VALVE_HANDLE.get());
     }
