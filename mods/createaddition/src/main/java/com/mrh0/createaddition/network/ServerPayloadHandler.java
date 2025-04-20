@@ -33,4 +33,6 @@ public class ServerPayloadHandler {
     }
 
     public static void handleEnergyNetworkPayload(final EnergyNetworkPacketPayload pkt, final IPayloadContext ctx) {}
+
+    public static void handleTimeRemainingPayload(final TimeRemainingPacketPayload pkt, final IPayloadContext ctx) {}
 }

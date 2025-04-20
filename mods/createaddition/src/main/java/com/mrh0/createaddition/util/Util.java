@@ -116,4 +116,10 @@ public class Util {
 		}
 		return null;
 	}
+
+	public static String formatTime(int ticks) {
+		if (ticks > 20*60) return (ticks/(20*60)) + "m";
+		if (ticks > 20) return (ticks/20) + "s";
+		return (ticks) + "t";
+	}
 }

@@ -6,6 +6,7 @@ import com.mrh0.createaddition.energy.AbstractElectricBlockEntity;
 import com.mrh0.createaddition.index.*;
 import com.mrh0.createaddition.network.IObserveBlockEntity;
 import com.mrh0.createaddition.network.ObservePacketPayload;
+import com.mrh0.createaddition.network.TimeRemainingPacketPayload;
 import com.mrh0.createaddition.recipe.charging.ChargingRecipe;
 import com.mrh0.createaddition.sound.CASoundScapes;
 import com.mrh0.createaddition.util.Util;
@@ -250,6 +251,8 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+		if (level == null) return false;
+		ObservePacketPayload.send(worldPosition, 0);
 		// TODO Add networking
 		/*
 		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.energy.consumption").withStyle(ChatFormatting.GRAY)).forGoggles(tooltip);
@@ -260,11 +263,22 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 			CALang.builder().add(Component.literal(" " + Util.format(chargeAccumulator) + " / " + Util.format(recipe.getEnergy()) + "⚡").withStyle(ChatFormatting.AQUA)).forGoggles(tooltip);
 		}
 		*/
-		return false;
+		if (TimeRemainingPacketPayload.clientTimeRemaining <= 20) return false;
+		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.charging.info").withStyle(ChatFormatting.WHITE)).forGoggles(tooltip);
+		CALang.builder().add(Component.literal(" ").append(Component.translatable(CreateAddition.MODID + ".tooltip.charging.time_remaining").withStyle(ChatFormatting.GRAY))
+			.append(Component.literal(" " + Util.formatTime(TimeRemainingPacketPayload.clientTimeRemaining)).withStyle(ChatFormatting.AQUA))).forGoggles(tooltip);
+		return true;
 	}
 
 	@Override
 	public void onObserved(ServerPlayer player, ObservePacketPayload pkt) {
-
+		int timeRemaining = 0;
+		if(recipeCache.isPresent()) {
+			ChargingRecipe recipe = recipeCache.get().value();
+			int chargeRate = Util.min(CommonConfig.TESLA_COIL_RECIPE_CHARGE_RATE.get(), recipe.getEnergy() - chargeAccumulator, recipe.getMaxChargeRate());
+			if (chargeRate == 0) return;
+			timeRemaining = (recipe.getEnergy() - chargeAccumulator) / chargeRate;
+		}
+		TimeRemainingPacketPayload.send(timeRemaining, player);
 	}
 }

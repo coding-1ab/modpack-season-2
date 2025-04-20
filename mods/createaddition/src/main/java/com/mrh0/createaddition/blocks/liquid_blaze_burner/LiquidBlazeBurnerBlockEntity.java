@@ -3,12 +3,16 @@ package com.mrh0.createaddition.blocks.liquid_blaze_burner;
 import java.util.List;
 import java.util.Optional;
 
+import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.index.CABlockEntities;
+import com.mrh0.createaddition.index.CALang;
 import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.network.IObserveBlockEntity;
 import com.mrh0.createaddition.network.ObservePacketPayload;
+import com.mrh0.createaddition.network.TimeRemainingPacketPayload;
 import com.mrh0.createaddition.recipe.FluidRecipeWrapper;
 import com.mrh0.createaddition.recipe.liquid_burning.LiquidBurningRecipe;
+import com.mrh0.createaddition.util.Util;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags.AllItemTags;
@@ -22,6 +26,7 @@ import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -64,6 +69,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	protected boolean goggles;
 	protected boolean hat;
 	public final boolean stockKeeper = false;
+	BlazeBurnerBlock.HeatLevel heatLevel;
 
 	public LiquidBlazeBurnerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -78,6 +84,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 			.orElse(Direction.SOUTH)) + 180) % 360);
 
 		tankInventory = createInventory();
+		heatLevel = getHeatLevelFromBlock();
 	}
 
 	@Override
@@ -86,10 +93,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	}
 
 	public BlazeBurnerBlock.HeatLevel getHeatLevelForRender() {
-		BlazeBurnerBlock.HeatLevel heatLevel = getHeatLevelFromBlock();
-		if (!heatLevel.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING) && stockKeeper)
-			return BlazeBurnerBlock.HeatLevel.FADING;
-		return heatLevel;
+		return getHeatLevelFromBlock();
 	}
 
 	// Custom fluid handling
@@ -131,11 +135,9 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	public boolean first = true;
 	public void burningTick() {
 		if (level == null) return;
-		if (level.isClientSide())
-			return;
+		if (level.isClientSide()) return;
 
-		if (first)
-			update(tankInventory.getFluid());
+		if (first) update(tankInventory.getFluid());
 		first = false;
 
 		if (remainingBurnTime < 1)
@@ -155,11 +157,11 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 		}
 		tankInventory.drain(100, IFluidHandler.FluidAction.EXECUTE);
 
-		BlazeBurnerBlock.HeatLevel prev = getHeatLevelFromBlock();
+		BlazeBurnerBlock.HeatLevel prev = heatLevel;
 		playSound();
 		updateBlockState();
 
-		if (prev != getHeatLevelFromBlock()) {
+		if (prev != heatLevel) {
 			level.playSound(null, worldPosition, SoundEvents.BLAZE_AMBIENT, SoundSource.BLOCKS,
 				.125f + level.random.nextFloat() * .125f, 1.15f - level.random.nextFloat() * .25f);
 
@@ -187,8 +189,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 		if (level == null) return;
 		if (level.isClientSide) {
 			tickAnimation();
-			if (!isVirtual())
-				spawnParticles(getHeatLevelFromBlock(), 1);
+			if (!isVirtual()) spawnParticles(getHeatLevelForRender(), 1);
 			return;
 		}
 
@@ -198,8 +199,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 
 		if (remainingBurnTime > 0) remainingBurnTime--;
 
-		if (activeFuel == FuelType.NORMAL)
-			updateBlockState();
+		// if (activeFuel == FuelType.NORMAL) updateBlockState();
 		if (remainingBurnTime > 0) return;
 
 		if (activeFuel == FuelType.SPECIAL) {
@@ -213,28 +213,12 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	@Override
 	public void lazyTick() {
 		super.lazyTick();
-		//stockKeeper = getStockTicker(level, worldPosition) != null;
 	}
-
-	/*
-	@Nullable
-	public static StockTickerBlockEntity getStockTicker(LevelAccessor level, BlockPos pos) {
-		for (Direction direction : Iterate.horizontalDirections) {
-			if (level instanceof Level l && !l.isLoaded(pos))
-				return null;
-			BlockState blockState = level.getBlockState(pos.relative(direction));
-			if (!AllBlocks.STOCK_TICKER.has(blockState))
-				continue;
-			if (level.getBlockEntity(pos.relative(direction)) instanceof StockTickerBlockEntity stbe)
-				return stbe;
-		}
-		return null;
-	}
-	*/
 
 	@OnlyIn(Dist.CLIENT)
     void tickAnimation() {
-		boolean active = getHeatLevelFromBlock().isAtLeast(BlazeBurnerBlock.HeatLevel.FADING) && isValidBlockAbove();
+		var serverHeatLevel = getHeatLevelForRender();
+		boolean active = serverHeatLevel.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING) && isValidBlockAbove();
 
 		if (!active) {
 			float target = 0;
@@ -299,8 +283,8 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 
 	protected void setBlockHeat(BlazeBurnerBlock.HeatLevel heat) {
 		if (level == null) return;
-		BlazeBurnerBlock.HeatLevel inBlockState = getHeatLevelFromBlock();
-		if (inBlockState == heat) return;
+		if (heatLevel == heat) return;
+		heatLevel = heat;
 		level.setBlockAndUpdate(worldPosition, getBlockState().setValue(HEAT_LEVEL, heat));
 		notifyUpdate();
 	}
@@ -368,11 +352,11 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 			return true;
 		}
 
-		BlazeBurnerBlock.HeatLevel prev = getHeatLevelFromBlock();
+		BlazeBurnerBlock.HeatLevel prev = heatLevel;
 		playSound();
 		updateBlockState();
 
-		if (prev != getHeatLevelFromBlock())
+		if (prev != heatLevel)
 			level.playSound(null, worldPosition, SoundEvents.BLAZE_AMBIENT, SoundSource.BLOCKS,
 				.125f + level.random.nextFloat() * .125f, 1.15f - level.random.nextFloat() * .25f);
 
@@ -384,7 +368,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 		remainingBurnTime = 0;
 		isCreative = true;
 
-		BlazeBurnerBlock.HeatLevel next = getHeatLevelFromBlock().nextActiveLevel();
+		BlazeBurnerBlock.HeatLevel next = heatLevel.nextActiveLevel();
 
 		if (level.isClientSide) {
 			spawnParticleBurst(next.isAtLeast(BlazeBurnerBlock.HeatLevel.SEETHING));
@@ -414,16 +398,16 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	protected BlazeBurnerBlock.HeatLevel getHeatLevelFromFuelType(FuelType fuel) {
 		BlazeBurnerBlock.HeatLevel level = BlazeBurnerBlock.HeatLevel.SMOULDERING;
 		switch (activeFuel) {
-		case SPECIAL:
-			level = BlazeBurnerBlock.HeatLevel.SEETHING;
-			break;
-		case NORMAL:
-			boolean lowPercent = (double) remainingBurnTime / MAX_HEAT_CAPACITY < 0.0125;
-			level = lowPercent ? BlazeBurnerBlock.HeatLevel.FADING : BlazeBurnerBlock.HeatLevel.KINDLED;
-			break;
-		case NONE:
-		default:
-			break;
+			case SPECIAL:
+				level = BlazeBurnerBlock.HeatLevel.SEETHING;
+				break;
+			case NORMAL:
+				boolean lowPercent = (double) remainingBurnTime / MAX_HEAT_CAPACITY < 0.0125;
+				level = lowPercent ? BlazeBurnerBlock.HeatLevel.FADING : BlazeBurnerBlock.HeatLevel.KINDLED;
+				break;
+			case NONE:
+			default:
+				break;
 		}
 		return level;
 	}
@@ -470,8 +454,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 				.add(0, .125, 0);
 			Vec3 m = offset.scale(1 / 32f);
 
-			level.addParticle(soulFlame ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME, v.x, v.y, v.z, m.x, m.y,
-				m.z);
+			level.addParticle(soulFlame ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME, v.x, v.y, v.z, m.x, m.y, m.z);
 		}
 	}
 
@@ -483,11 +466,14 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (level == null) return false;
 		ObservePacketPayload.send(worldPosition, 0);
-		return containedFluidTooltip(tooltip, isPlayerSneaking, level.getCapability(Capabilities.FluidHandler.BLOCK, getBlockPos(), null));
+		containedFluidTooltip(tooltip, isPlayerSneaking, level.getCapability(Capabilities.FluidHandler.BLOCK, getBlockPos(), null));
+		if (TimeRemainingPacketPayload.clientTimeRemaining > 20) CALang.builder().add(Component.literal(" ").append(Component.translatable(CreateAddition.MODID + ".tooltip.liquid_burning.time_remaining").withStyle(ChatFormatting.GRAY))
+				.append(Component.literal(" " + Util.formatTime(TimeRemainingPacketPayload.clientTimeRemaining)).withStyle(ChatFormatting.AQUA))).forGoggles(tooltip);
+		return true;
 	}
 
 	@Override
 	public void onObserved(ServerPlayer player, ObservePacketPayload pack) {
-		notifyUpdate();
+		TimeRemainingPacketPayload.send(remainingBurnTime, player);
 	}
 }
