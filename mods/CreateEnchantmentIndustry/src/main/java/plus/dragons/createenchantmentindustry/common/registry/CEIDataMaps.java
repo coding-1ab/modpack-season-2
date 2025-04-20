@@ -35,6 +35,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -107,6 +108,7 @@ public class CEIDataMaps {
 
     public static void generate(RegistrateDataMapProvider provider) {
         provider.builder(EXPERIENCE_FUEL)
+                .add(CEIItems.EXPERIENCE_BUCKET, ExperienceFuel.normal(1000, Items.BUCKET.getDefaultInstance()), false) // TODO Temporary solution for Create's bug, See https://github.com/Creators-of-Create/Create/pull/8304
                 .add(CEIItems.EXPERIENCE_CAKE, ExperienceFuel.special(1000), false)
                 .add(CEIItems.EXPERIENCE_CAKE_SLICE, ExperienceFuel.special(250), false)
                 .add(CEIBlocks.SUPER_EXPERIENCE_BLOCK.getId(), ExperienceFuel.special(27), false)
