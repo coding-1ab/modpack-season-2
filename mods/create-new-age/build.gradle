@@ -72,6 +72,22 @@ subprojects {
     }
     
     loom {
+        if (project.name == "forge") {
+            forge {
+                convertAccessWideners = true
+                mixinConfigs(
+                        "create_new_age-common.mixins.json",
+                        "create.mixins.json"
+                )
+            }
+
+            runs {
+                client {
+                    property("mixin.env.remapRefMap", "true")
+                    property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
+                }
+            }
+        }
         accessWidenerPath = project(":common").file("src/main/resources/create_new_age-common.accesswidener")
     }
     

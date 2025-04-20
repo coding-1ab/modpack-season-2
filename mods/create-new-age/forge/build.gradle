@@ -26,15 +26,13 @@ compileJava {
 var modId = rootProject.modId
 
 loom {
-    loom {
-        forge {
-            convertAccessWideners = true
-            mixinConfigs(
-                    "create_new_age-common.mixins.json",
-                    "create_new_age-forge.mixins.json",
-                    "create.mixins.json"
-            )
-        }
+    forge {
+        convertAccessWideners = true
+        mixinConfigs(
+                "create_new_age-common.mixins.json",
+                "create_new_age-forge.mixins.json",
+                "create.mixins.json"
+        )
     }
     
     runs {

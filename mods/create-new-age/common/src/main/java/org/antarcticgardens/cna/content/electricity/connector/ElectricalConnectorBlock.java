@@ -94,7 +94,7 @@ public class ElectricalConnectorBlock extends DirectionalBlock implements IBE<El
             if (world.getBlockEntity(context.getClickedPos()) instanceof ElectricalConnectorBlockEntity connector)
                 connector.getNetwork().updateConsumersAndSources();
             
-            playRotateSound(world, context.getClickedPos());
+            IWrenchable.playRotateSound(world, context.getClickedPos());
             
             return InteractionResult.SUCCESS;
         }

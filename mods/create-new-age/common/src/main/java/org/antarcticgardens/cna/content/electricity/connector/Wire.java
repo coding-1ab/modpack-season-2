@@ -10,7 +10,7 @@ public class Wire {
     public static final float SAG_FACTOR = 0.9f;
     private static final Vector3f GLOBAL_UP = new Vector3f(0.0f, 1.0f, 0.0f);
     
-    private final List<Pair<WireSection, Float>> sections = new ArrayList<>();
+//    private final List<Pair<WireSection, Float>> sections = new ArrayList<>();
     
     private final Vector3f direction;
     private final Vector3f up;
@@ -25,10 +25,10 @@ public class Wire {
         float lastCatenary = 0.0f;
         for (int i = 1; i <= sectionsAmount; i++) {
             float catenary = catenary(i, distance, sectionsAmount) * catenaryScalar;
-            WireSection section = WireSection.getOrCreate(sectionLength, CNAConfig.getClient().wireThickness.get().floatValue(), 
-                    catenary - lastCatenary, (i % 2 == 0) ? 0.5f : 0.0f);
+//            WireSection section = WireSection.getOrCreate(sectionLength, CNAConfig.getClient().wireThickness.get().floatValue(),
+//                    catenary - lastCatenary, (i % 2 == 0) ? 0.5f : 0.0f);
             lastCatenary = catenary;
-            sections.add(Pair.of(section, lastCatenary));
+//            sections.add(Pair.of(section, lastCatenary));
         }
     }
 
@@ -57,7 +57,7 @@ public class Wire {
         return sectionLength;
     }
     
-    public List<Pair<WireSection, Float>> getSections() {
-        return Collections.unmodifiableList(sections);
-    }
+//    public List<Pair<WireSection, Float>> getSections() {
+//        return Collections.unmodifiableList(sections);
+//    }
 }

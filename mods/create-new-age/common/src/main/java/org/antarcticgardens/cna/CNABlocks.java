@@ -1,14 +1,17 @@
 package org.antarcticgardens.cna;
 
 import com.mojang.math.Axis;
+import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.ModelGen;
+import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.providers.loot.RegistrateBlockLootTables;
 import com.tterrag.registrate.util.entry.BlockEntry;
+import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -52,6 +55,8 @@ import org.antarcticgardens.cna.rendering.ItemShaftRenderer;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.LinkedList;
+
 import static org.antarcticgardens.cna.CreateNewAge.REGISTRATE;
 
 @SuppressWarnings("removal")
@@ -60,12 +65,30 @@ public class CNABlocks {
         REGISTRATE.defaultCreativeTab(CreateNewAge.CREATIVE_TAB_KEY);
     }
 
+    public static LinkedList<Runnable> doLater = new LinkedList<>();
+
+    public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> setImpact(double value) {
+        return builder -> {
+            doLater.add(() -> BlockStressValues.IMPACTS.register(builder.getEntry(), () -> value));
+            return builder;
+        };
+    }
+
+
+    public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> setCapacity(double value) {
+        return builder -> {
+            doLater.add(() -> BlockStressValues.CAPACITIES.register(builder.getEntry(), () -> value));
+            return builder;
+        };
+    }
+
+
     public static final BlockEntry<EnergiserBlock> BASIC_ENERGISER =
             REGISTRATE.block("basic_energiser", EnergiserBlock::newBasic)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .blockstate(CNABlockStateGen.energiser())
-                    .transform(BlockStressDefaults.setImpact(4.0))
+                    .transform(setImpact(4.0))
                     .tag(BlockTags.MINEABLE_WITH_AXE)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .item(AssemblyOperatorBlockItem::new)
@@ -78,7 +101,7 @@ public class CNABlocks {
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .blockstate(CNABlockStateGen.energiser())
-                    .transform(BlockStressDefaults.setImpact(8.0))
+                    .transform(setImpact(8.0))
                     .tag(BlockTags.MINEABLE_WITH_AXE)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .item(AssemblyOperatorBlockItem::new)
@@ -91,7 +114,7 @@ public class CNABlocks {
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .blockstate(CNABlockStateGen.energiser())
-                    .transform(BlockStressDefaults.setImpact(32.0))
+                    .transform(setImpact(32.0))
                     .tag(BlockTags.MINEABLE_WITH_AXE)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .item(AssemblyOperatorBlockItem::new)
@@ -114,7 +137,7 @@ public class CNABlocks {
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .blockstate((c, p) -> BlockStateGen.axisBlock(c, p, (s) -> p.models().getExistingFile(p.modLoc("block/generator_coil/block"))))
-                    .transform(BlockStressDefaults.setImpact(24.0f))
+                    .transform(setImpact(24.0f))
                     .item()
                     .transform(ModelGen.customItemModel())
                     .register();
@@ -284,7 +307,7 @@ public class CNABlocks {
                     .properties(properties -> properties.strength(2.0f))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .blockstate((c, p) -> p.simpleBlock(c.get(), p.models().getExistingFile(p.modLoc(c.getName()))))
-                    .transform(BlockStressDefaults.setCapacity(32.0))
+                    .transform(setCapacity(32.0))
                     .simpleItem()
                     .register();
 
