@@ -1,21 +1,25 @@
 package com.mrh0.createaddition.blocks.tesla_coil;
 
+import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.energy.AbstractElectricBlockEntity;
 import com.mrh0.createaddition.index.*;
+import com.mrh0.createaddition.network.IObserveBlockEntity;
+import com.mrh0.createaddition.network.ObservePacketPayload;
 import com.mrh0.createaddition.recipe.charging.ChargingRecipe;
-import com.mrh0.createaddition.recipe.rolling.RollingRecipe;
 import com.mrh0.createaddition.sound.CASoundScapes;
 import com.mrh0.createaddition.util.Util;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.belt.behaviour.BeltProcessingBehaviour;
 import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
-import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createmod.catnip.platform.CatnipServices;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,7 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements IHaveGoggleInformation {
+public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements IHaveGoggleInformation, IObserveBlockEntity {
 
 	private Optional<RecipeHolder<ChargingRecipe>> recipeCache = Optional.empty();
 
@@ -106,7 +110,7 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 	}
 
 	protected BeltProcessingBehaviour.ProcessingResult onCharge(TransportedItemStack transported, TransportedItemStackHandlerBehaviour handler) {
-        return chargeCompundAndStack(transported, handler);
+        return chargeCompoundAndStack(transported, handler);
 	}
 
 	private void doDmg() {
@@ -159,12 +163,10 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 			return;
 		}
 		int signal = level.getBestNeighborSignal(getBlockPos());
-		if(signal > 0 && localEnergy.getEnergyStored() >= CommonConfig.TESLA_COIL_HURT_ENERGY_REQUIRED.get())
-			poweredTimer = 10;
+		if(signal > 0 && localEnergy.getEnergyStored() >= CommonConfig.TESLA_COIL_HURT_ENERGY_REQUIRED.get()) poweredTimer = 10;
 
 		dmgTick++;
-		if((dmgTick%= CommonConfig.TESLA_COIL_HURT_FIRE_COOLDOWN.get()) == 0 && localEnergy.getEnergyStored() >= CommonConfig.TESLA_COIL_HURT_ENERGY_REQUIRED.get() && signal > 0)
-			doDmg();
+		if((dmgTick%= CommonConfig.TESLA_COIL_HURT_FIRE_COOLDOWN.get()) == 0 && localEnergy.getEnergyStored() >= CommonConfig.TESLA_COIL_HURT_ENERGY_REQUIRED.get() && signal > 0) doDmg();
 
 		if(poweredTimer > 0) {
 			if (zapTimer == 0) {
@@ -173,13 +175,10 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 			}
 			zapTimer--;
 
-			if(!isPoweredState())
-				CABlocks.TESLA_COIL.get().setPowered(level, getBlockPos(), true);
+			if(!isPoweredState()) CABlocks.TESLA_COIL.get().setPowered(level, getBlockPos(), true);
 			poweredTimer--;
 		}
-		else
-			if(isPoweredState())
-				CABlocks.TESLA_COIL.get().setPowered(level, getBlockPos(), false);
+		else if(isPoweredState()) CABlocks.TESLA_COIL.get().setPowered(level, getBlockPos(), false);
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -192,7 +191,7 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 		return getBlockState().getValue(TeslaCoilBlock.POWERED);
 	}
 
-	protected BeltProcessingBehaviour.ProcessingResult chargeCompundAndStack(TransportedItemStack transported, TransportedItemStackHandlerBehaviour handler) {
+	protected BeltProcessingBehaviour.ProcessingResult chargeCompoundAndStack(TransportedItemStack transported, TransportedItemStackHandlerBehaviour handler) {
 
 		ItemStack stack = transported.stack;
 		if(stack == null) return BeltProcessingBehaviour.ProcessingResult.PASS;
@@ -216,6 +215,7 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 		return true;
 	}
 
+	private int energyRemoved = 0;
 	private boolean chargeRecipe(ItemStack stack, TransportedItemStack transported, TransportedItemStackHandlerBehaviour handler) {
 		if(this.getLevel() == null) return false;
 		if(!inputInv.getStackInSlot(0).is(stack.getItem())) {
@@ -225,7 +225,7 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 		}
 		if(recipeCache.isPresent()) {
 			ChargingRecipe recipe = recipeCache.get().value();
-			int energyRemoved = localEnergy.internalConsumeEnergy(Util.min(CommonConfig.TESLA_COIL_RECIPE_CHARGE_RATE.get(), recipe.getEnergy() - chargeAccumulator, recipe.getMaxChargeRate()));
+			energyRemoved = localEnergy.internalConsumeEnergy(Util.min(CommonConfig.TESLA_COIL_RECIPE_CHARGE_RATE.get(), recipe.getEnergy() - chargeAccumulator, recipe.getMaxChargeRate()));
 			chargeAccumulator += energyRemoved;
 			if(chargeAccumulator >= recipe.getEnergy()) {
 				TransportedItemStack remainingStack = transported.copy();
@@ -246,5 +246,25 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 
 	public Optional<RecipeHolder<ChargingRecipe>> find(RecipeWrapper wrapper, Level level) {
 		return level.getRecipeManager().getRecipeFor(CARecipes.CHARGING_TYPE.get(), wrapper, level);
+	}
+
+	@Override
+	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+		// TODO Add networking
+		/*
+		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.energy.consumption").withStyle(ChatFormatting.GRAY)).forGoggles(tooltip);
+		CALang.builder().add(Component.literal(" " + Util.format(energyRemoved) + "⚡/t ").withStyle(ChatFormatting.AQUA)).forGoggles(tooltip);
+		if (recipeCache.isPresent()) {
+			ChargingRecipe recipe = recipeCache.get().value();
+			CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.energy.consumption").withStyle(ChatFormatting.GRAY)).forGoggles(tooltip);
+			CALang.builder().add(Component.literal(" " + Util.format(chargeAccumulator) + " / " + Util.format(recipe.getEnergy()) + "⚡").withStyle(ChatFormatting.AQUA)).forGoggles(tooltip);
+		}
+		*/
+		return false;
+	}
+
+	@Override
+	public void onObserved(ServerPlayer player, ObservePacketPayload pkt) {
+
 	}
 }

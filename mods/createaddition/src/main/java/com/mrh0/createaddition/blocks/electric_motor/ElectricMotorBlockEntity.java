@@ -104,7 +104,7 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.energy.consumption").withStyle(ChatFormatting.GRAY)).forGoggles(tooltip);
-		CALang.builder().add(Component.literal(" " + Util.format(getEnergyConsumptionRate(generatedSpeed.getValue())) + "fe/t ")
+		CALang.builder().add(Component.literal(" " + Util.format(getEnergyConsumptionRate(generatedSpeed.getValue())) + "⚡/t ")
 				.withStyle(ChatFormatting.AQUA).append(CreateLang.translateDirect("gui.goggles.at_current_speed").withStyle(ChatFormatting.DARK_GRAY))).forGoggles(tooltip);
 		return true;
 	}

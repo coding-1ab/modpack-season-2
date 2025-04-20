@@ -6,8 +6,6 @@ import java.util.Set;
 
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.blocks.connector.ConnectorType;
-import com.mrh0.createaddition.compat.computercraft.Peripherals;
-import com.mrh0.createaddition.compat.computercraft.RedstoneRelayPeripheral;
 import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.energy.IWireNode;
 import com.mrh0.createaddition.energy.LocalNode;
@@ -18,7 +16,7 @@ import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.network.EnergyNetworkPacketPayload;
 import com.mrh0.createaddition.network.ObservePacketPayload;
 import com.mrh0.createaddition.util.Util;
-import com.mrh0.createaddition.network.IObserveTileEntity;
+import com.mrh0.createaddition.network.IObserveBlockEntity;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -39,7 +37,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireNode, IHaveGoggleInformation, IObserveTileEntity {
+public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireNode, IHaveGoggleInformation, IObserveBlockEntity {
 
 	//private final InternalEnergyStorage energyBufferIn;
 	//private final InternalEnergyStorage energyBufferOut;
@@ -397,7 +395,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 		tooltip.add(Component.literal(spacing)
 				.append(Component.translatable(CreateAddition.MODID + ".tooltip.energy.usage").withStyle(ChatFormatting.GRAY)));
 		tooltip.add(Component.literal(spacing).append(" ")
-				.append(Util.format((int)EnergyNetworkPacketPayload.clientBuff)).append("fe/t").withStyle(ChatFormatting.AQUA));
+				.append(Util.format((int)EnergyNetworkPacketPayload.clientBuff)).append("⚡/t").withStyle(ChatFormatting.AQUA));
 
 		return true;
 	}

@@ -9,11 +9,10 @@ import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.debug.IDebugDrawer;
 import com.mrh0.createaddition.energy.*;
 import com.mrh0.createaddition.energy.network.EnergyNetwork;
-import com.mrh0.createaddition.index.CABlockEntities;
 import com.mrh0.createaddition.index.CALang;
 import com.mrh0.createaddition.util.Util;
 import com.mrh0.createaddition.network.EnergyNetworkPacketPayload;
-import com.mrh0.createaddition.network.IObserveTileEntity;
+import com.mrh0.createaddition.network.IObserveBlockEntity;
 import com.mrh0.createaddition.network.ObservePacketPayload;
 
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -34,11 +33,10 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity implements IWireNode, IObserveTileEntity, IHaveGoggleInformation, IDebugDrawer, IEnergyProvider {
+public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity implements IWireNode, IObserveBlockEntity, IHaveGoggleInformation, IDebugDrawer, IEnergyProvider {
 
 	private final Set<LocalNode> wireCache = new HashSet<>();
 	private final LocalNode[] localNodes;
@@ -357,7 +355,7 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 				.append(getBlockState().getValue(AbstractConnectorBlock.MODE).getTooltip().withStyle(ChatFormatting.AQUA))).forGoggles(tooltip);
 
 		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.energy.usage").withStyle(ChatFormatting.GRAY)).forGoggles(tooltip);
-		CALang.builder().add(Component.literal(" ").append(Util.format((int)EnergyNetworkPacketPayload.clientBuff)).append("fe/t").withStyle(ChatFormatting.AQUA)).forGoggles(tooltip);
+		CALang.builder().add(Component.literal(" ").append(Util.format((int)EnergyNetworkPacketPayload.clientBuff)).append("⚡/t").withStyle(ChatFormatting.AQUA)).forGoggles(tooltip);
 
 		return IHaveGoggleInformation.super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 	}

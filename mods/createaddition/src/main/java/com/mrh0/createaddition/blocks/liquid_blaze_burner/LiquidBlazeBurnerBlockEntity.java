@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.mrh0.createaddition.index.CABlockEntities;
 import com.mrh0.createaddition.index.CARecipes;
-import com.mrh0.createaddition.network.IObserveTileEntity;
+import com.mrh0.createaddition.network.IObserveBlockEntity;
 import com.mrh0.createaddition.network.ObservePacketPayload;
 import com.mrh0.createaddition.recipe.FluidRecipeWrapper;
 import com.mrh0.createaddition.recipe.liquid_burning.LiquidBurningRecipe;
@@ -53,7 +53,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HEAT_LEVEL;
 
-public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, IObserveTileEntity {
+public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, IObserveBlockEntity {
 	public static final int MAX_HEAT_CAPACITY = 10000;
 
 	protected FuelType activeFuel;

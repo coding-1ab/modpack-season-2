@@ -1,6 +1,5 @@
 package com.mrh0.createaddition.network;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,8 +23,8 @@ public class ServerPayloadHandler {
     private static void sendUpdate(ObservePacketPayload pkt, ServerPlayer player) {
         BlockEntity be = (BlockEntity) player.level().getBlockEntity(pkt.pos());
         if (be != null) {
-            if (be instanceof IObserveTileEntity) {
-                IObserveTileEntity ote = (IObserveTileEntity) be;
+            if (be instanceof IObserveBlockEntity) {
+                IObserveBlockEntity ote = (IObserveBlockEntity) be;
                 ote.onObserved(player, pkt);
                 Packet<ClientGamePacketListener> supdatepacket = be.getUpdatePacket();
                 if (supdatepacket != null) player.connection.send(supdatepacket);

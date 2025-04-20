@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_electrum_ingot": {
+    "has_electrum_nugget": {
       "conditions": {
         "items": [
           {
-            "items": "createaddition:electrum_ingot"
+            "items": "createaddition:electrum_nugget"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_electrum_ingot"
+      "has_electrum_nugget"
     ]
   ],
   "rewards": {

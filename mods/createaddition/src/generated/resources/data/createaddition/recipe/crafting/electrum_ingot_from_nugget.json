@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "#": {
-      "item": "createaddition:electrum_ingot"
+      "item": "createaddition:electrum_nugget"
     }
   },
   "pattern": [
@@ -13,6 +13,6 @@
   ],
   "result": {
     "count": 1,
-    "id": "createaddition:electrum_nugget"
+    "id": "createaddition:electrum_ingot"
   }
 }

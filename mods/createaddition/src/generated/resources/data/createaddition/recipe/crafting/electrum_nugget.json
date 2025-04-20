@@ -3,11 +3,11 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "createaddition:electrum_nugget"
+      "item": "createaddition:electrum_ingot"
     }
   ],
   "result": {
     "count": 9,
-    "id": "createaddition:electrum_ingot"
+    "id": "createaddition:electrum_nugget"
   }
 }

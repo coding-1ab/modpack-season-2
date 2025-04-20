@@ -24,7 +24,7 @@ public class CAPressingRecipeGen extends ProcessingRecipeGen {
     }
 
     GeneratedRecipe
-    ZINC = create(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID,"zinc_ingot"), b -> b.require(CATagRegister.Items.commonTags("ingots","zinc"))
+    ZINC = create(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID,"zinc_ingot"), b -> b.require(CATagRegister.Items.ZINC_INGOTS)
             .output(CAItems.ZINC_SHEET)
     ),
     ELECTRUM = create(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID,"electrum_ingot"), b -> b.require(CATagRegister.Items.ELECTRUM_INGOTS)

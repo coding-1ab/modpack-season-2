@@ -2,10 +2,12 @@ package com.mrh0.createaddition.datagen.TagProvider;
 
 import com.mrh0.createaddition.CreateAddition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 
 public class CATagRegister {
@@ -18,6 +20,7 @@ public class CATagRegister {
         public static final TagKey<Item> ELECTRUM_NUGGETS = commonTags("nuggets","electrum");
         public static final TagKey<Item> ELECTRUM_PLATES = commonTags("plates","electrum");
         public static final TagKey<Item> ZINC_PLATES = commonTags("plates","zinc");
+        public static final TagKey<Item> ZINC_INGOTS = commonTags("ingots","zinc");
         public static final TagKey<Item> ALL_METAL_RODS = commonTags("rods","all_metal");
         public static final TagKey<Item> BRASS_RODS = commonTags("rods","brass");
         public static final TagKey<Item> COPPER_RODS = commonTags("rods","copper");
@@ -37,6 +40,13 @@ public class CATagRegister {
         public static final TagKey<Item> PLATES = commonTags("plates");
         public static final TagKey<Item> RODS = commonTags("rods");
         public static final TagKey<Item> WIRES = commonTags("wires");
+
+        public static final TagKey<Item> FOODS = commonTags("foods");
+        public static final TagKey<Item> FOODS_EDIBLE = commonTags("foods", "edible_when_placed");
+
+        public static final TagKey<Item> STORAGE_BLOCKS_BIOMASS = commonTags("storage_blocks","biomass");
+        public static final TagKey<Item> STORAGE_BLOCKS_BIO = commonTags("storage_blocks","bio");
+        public static final TagKey<Item> STORAGE_BLOCKS_ELECTRUM = commonTags("storage_blocks","electrum");
 
         public static final TagKey<Item> PLANT_FOODS = createAdditionsTags("plant_foods");
         public static final TagKey<Item> PLANTS = createAdditionsTags("plants");
@@ -59,6 +69,39 @@ public class CATagRegister {
 
         public static TagKey<Item> createAdditionsTags(String name) {
             return ItemTags.create(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, name));
+        }
+
+        public static TagKey<Item> modTags(String mod, String name) {
+            return ItemTags.create(ResourceLocation.fromNamespaceAndPath(mod, name));
+        }
+
+        public static TagKey<Item> modTags(String mod, String folder, String name) {
+            return ItemTags.create(ResourceLocation.fromNamespaceAndPath(mod, String.format("%s/%s", folder, name)));
+        }
+    }
+
+    public static class Blocks {
+        public static final TagKey<Block> STORAGE_BLOCKS = commonTags("storage_blocks");
+        public static final TagKey<Block> STORAGE_BLOCKS_BIOMASS = commonTags("storage_blocks","biomass");
+        public static final TagKey<Block> STORAGE_BLOCKS_BIO = commonTags("storage_blocks","bio");
+        public static final TagKey<Block> STORAGE_BLOCKS_ELECTRUM = commonTags("storage_blocks","electrum");
+
+        public static final TagKey<Block> FARMERSDELIGHT_MINEABLE_KNIFE = modTags("farmersdelight", "mineable", "knife");
+
+        public static TagKey<Block> commonTags(String folder, String name) {
+            return BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", String.format("%s/%s", folder, name)));
+        }
+
+        public static TagKey<Block> commonTags(String name) {
+            return BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
+        }
+
+        public static TagKey<Block> modTags(String mod, String name) {
+            return BlockTags.create(ResourceLocation.fromNamespaceAndPath(mod, name));
+        }
+
+        public static TagKey<Block> modTags(String mod, String folder, String name) {
+            return BlockTags.create(ResourceLocation.fromNamespaceAndPath(mod, String.format("%s/%s", folder, name)));
         }
     }
 

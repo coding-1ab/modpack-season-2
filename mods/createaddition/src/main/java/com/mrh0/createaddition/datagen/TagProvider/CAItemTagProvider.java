@@ -14,6 +14,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -164,8 +165,23 @@ public class CAItemTagProvider extends ItemTagsProvider {
                 CATagRegister.Items.ELECTRUM_WIRES
         });
 
+        tag(Tags.Items.STORAGE_BLOCKS).add(
+                CABlocks.BIOMASS_PALLET.asItem(),
+                CABlocks.ELECTRUM_BLOCK.asItem()
+        );
 
+        tag(CATagRegister.Items.STORAGE_BLOCKS_BIO).add(CABlocks.BIOMASS_PALLET.asItem());
+        tag(CATagRegister.Items.STORAGE_BLOCKS_BIOMASS).add(CABlocks.BIOMASS_PALLET.asItem());
+        tag(CATagRegister.Items.STORAGE_BLOCKS_ELECTRUM).add(CABlocks.ELECTRUM_BLOCK.asItem());
 
+        tag(CATagRegister.Items.FOODS).add(
+                CABlocks.CHOCOLATE_CAKE.asItem(),
+                CABlocks.HONEY_CAKE.asItem()
+        );
 
+        tag(CATagRegister.Items.FOODS_EDIBLE).add(
+                CABlocks.CHOCOLATE_CAKE.asItem(),
+                CABlocks.HONEY_CAKE.asItem()
+        );
     }
 }

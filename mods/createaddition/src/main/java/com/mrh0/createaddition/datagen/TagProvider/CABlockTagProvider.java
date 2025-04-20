@@ -43,6 +43,34 @@ public class CABlockTagProvider extends BlockTagsProvider {
                 CABlocks.ELECTRUM_BLOCK.get()
         );
 
+        tag(BlockTags.MINEABLE_WITH_HOE).add(
+                CABlocks.BIOMASS_PALLET.get()
+        );
+
         tag(BlockTags.BEACON_BASE_BLOCKS).add(CABlocks.ELECTRUM_BLOCK.get());
+
+        tag(CATagRegister.Blocks.STORAGE_BLOCKS).add(
+                CABlocks.ELECTRUM_BLOCK.get(),
+                CABlocks.BIOMASS_PALLET.get()
+        );
+
+        tag(CATagRegister.Blocks.STORAGE_BLOCKS_BIOMASS).add(CABlocks.BIOMASS_PALLET.get());
+        tag(CATagRegister.Blocks.STORAGE_BLOCKS_BIO).add(CABlocks.BIOMASS_PALLET.get());
+        tag(CATagRegister.Blocks.STORAGE_BLOCKS_ELECTRUM).add(CABlocks.ELECTRUM_BLOCK.get());
+
+        tag(BlockTags.NEEDS_IRON_TOOL).add(CABlocks.ELECTRUM_BLOCK.get());
+        tag(BlockTags.INCORRECT_FOR_GOLD_TOOL).add(CABlocks.ELECTRUM_BLOCK.get());
+        tag(BlockTags.INCORRECT_FOR_WOODEN_TOOL).add(CABlocks.ELECTRUM_BLOCK.get());
+        tag(BlockTags.INCORRECT_FOR_STONE_TOOL).add(CABlocks.ELECTRUM_BLOCK.get());
+
+        tag(AllTags.AllBlockTags.BRITTLE.tag).add(
+                CABlocks.CHOCOLATE_CAKE.get(),
+                CABlocks.HONEY_CAKE.get()
+        );
+
+        tag(CATagRegister.Blocks.FARMERSDELIGHT_MINEABLE_KNIFE).add(
+                CABlocks.CHOCOLATE_CAKE.get(),
+                CABlocks.HONEY_CAKE.get()
+        );
     }
 }

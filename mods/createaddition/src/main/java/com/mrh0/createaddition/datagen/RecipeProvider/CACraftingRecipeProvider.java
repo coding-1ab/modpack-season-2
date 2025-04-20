@@ -144,9 +144,9 @@ public class CACraftingRecipeProvider extends RecipeProvider {
         StorageRecipe(
                 utility,
                 RecipeCategory.MISC,
-                CAItems.ELECTRUM_INGOT.asItem(),
-                RecipeCategory.MISC,
                 CAItems.ELECTRUM_NUGGET.asItem(),
+                RecipeCategory.MISC,
+                CAItems.ELECTRUM_INGOT.asItem(),
                 "electrum_ingot_from_nugget",
                 "electrum_nugget",
                 CreateAddition.MODID
