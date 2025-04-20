@@ -10,7 +10,7 @@
 		"tag":"mekanism:redstone"
 	},
 	"output":{
-		"id":"create:rose_quartz"
+		"id": "create:rose_quartz"
 	},
 	"conditions": [ 
   	{
