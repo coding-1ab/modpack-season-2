@@ -71,13 +71,21 @@ public class FabricRenderTypeStageHandler {
         }
     }
 
-    public static List<RenderType> getBlockLayers() {
+    // Some mods add custom block layers by changing the field, so account for that
+    public static List<RenderType> getBlockLayers(ImmutableList<RenderType> base) {
+        if (BLOCK_LAYERS == null || base.size() != BLOCK_LAYERS.size()) {
+            ImmutableList.Builder<RenderType> blockLayers = ImmutableList.builder();
+            blockLayers.addAll(base);
+            if (CUSTOM_BLOCK_LAYERS != null) {
+                blockLayers.addAll(CUSTOM_BLOCK_LAYERS);
+            }
+            BLOCK_LAYERS = blockLayers.build();
+        }
         return BLOCK_LAYERS;
     }
 
-    public static void setBlockLayers(ImmutableList.Builder<RenderType> blockLayers) {
-        CUSTOM_BLOCK_LAYERS = new HashSet<>(blockLayers.build());
-        blockLayers.addAll(RenderType.chunkBufferLayers());
-        BLOCK_LAYERS = blockLayers.build();
+    public static void setBlockLayers(Set<RenderType> blockLayers) {
+        CUSTOM_BLOCK_LAYERS = blockLayers;
+        BLOCK_LAYERS = null;
     }
 }
