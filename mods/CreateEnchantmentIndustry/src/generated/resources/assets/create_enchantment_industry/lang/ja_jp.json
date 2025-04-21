@@ -81,6 +81,7 @@
   "create_enchantment_industry.gui.goggles.printing.copy": "コピー: %1$s",
   "create_enchantment_industry.gui.goggles.printing.cost": "印刷コスト: %1$s",
   "create_enchantment_industry.gui.goggles.printing.custom_name": "アイテム名の印刷:",
+  "create_enchantment_industry.gui.goggles.printing.incorrect_liquid": "Incorrect Liquid!",
   "create_enchantment_industry.gui.goggles.printing.pattern": "小包の見た目変更",
   "create_enchantment_industry.gui.goggles.printing.template": "テンプレートを使用した印刷:",
   "create_enchantment_industry.gui.printer.copy.invalid": "このアイテムにはコピーできるものはありません。",

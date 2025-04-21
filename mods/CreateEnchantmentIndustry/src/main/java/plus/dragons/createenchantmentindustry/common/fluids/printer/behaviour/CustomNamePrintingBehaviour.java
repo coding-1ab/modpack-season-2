@@ -22,6 +22,8 @@ import com.mojang.serialization.DataResult;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import java.util.List;
 import java.util.Optional;
+
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -91,6 +93,18 @@ public class CustomNamePrintingBehaviour implements PrintingBehaviour {
             name.withStyle(ChatFormatting.ITALIC);
         CEILang.translate("gui.goggles.printing.custom_name").forGoggles(tooltip);
         CEILang.builder().add(name).forGoggles(tooltip, 1);
+        var cost = tank.getPrimaryHandler().getFluid().getFluidHolder().getData(CEIDataMaps.PRINTING_PATTERN_INGREDIENT);
+        if (cost != null)
+            CEILang.translate("gui.goggles.printing.cost",
+                            CEILang.number(cost)
+                                    .add(CreateLang.translate("generic.unit.millibuckets"))
+                                    .style(cost <= CEIConfig.fluids().printerFluidCapacity.get()
+                                            ? ChatFormatting.GREEN
+                                            : ChatFormatting.RED))
+                    .forGoggles(tooltip, 1);
+        else if(!tank.getPrimaryHandler().getFluid().isEmpty()){
+            CEILang.translate("gui.goggles.printing.incorrect_liquid").style(ChatFormatting.RED).forGoggles(tooltip);
+        }
         return true;
     }
 
