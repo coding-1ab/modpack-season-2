@@ -22,10 +22,9 @@ import com.mojang.serialization.DataResult;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
+import com.simibubi.create.foundation.utility.CreateLang;
 import java.util.List;
 import java.util.Optional;
-
-import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -86,13 +85,13 @@ public class PackagePatternPrintingBehaviour implements PrintingBehaviour {
         var amount = tank.getPrimaryHandler().getFluid().getFluidHolder().getData(CEIDataMaps.PRINTING_PATTERN_INGREDIENT);
         if (amount != null)
             CEILang.translate("gui.goggles.printing.cost",
-                            CEILang.number(amount)
-                                    .add(CreateLang.translate("generic.unit.millibuckets"))
-                                    .style(amount <= CEIConfig.fluids().printerFluidCapacity.get()
-                                            ? ChatFormatting.GREEN
-                                            : ChatFormatting.RED))
+                    CEILang.number(amount)
+                            .add(CreateLang.translate("generic.unit.millibuckets"))
+                            .style(amount <= CEIConfig.fluids().printerFluidCapacity.get()
+                                    ? ChatFormatting.GREEN
+                                    : ChatFormatting.RED))
                     .forGoggles(tooltip, 1);
-        else if(!tank.getPrimaryHandler().getFluid().isEmpty()){
+        else if (!tank.getPrimaryHandler().getFluid().isEmpty()) {
             CEILang.translate("gui.goggles.printing.incorrect_liquid").style(ChatFormatting.RED).forGoggles(tooltip);
         }
         return true;

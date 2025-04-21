@@ -23,8 +23,8 @@ import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
+import java.util.List;
 import net.createmod.catnip.math.Pointing;
-import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.minecraft.core.Direction;
@@ -44,9 +44,6 @@ import plus.dragons.createenchantmentindustry.client.ponder.CEIPonderScenes;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBehaviour;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MiscScene {
     public static void experienceHatch(SceneBuilder builder, SceneBuildingUtil util) {
@@ -160,7 +157,7 @@ public class MiscScene {
                 .attachKeyFrame()
                 .pointAt(util.vector().blockSurface(util.grid().at(2, 3, 2), Direction.WEST));
         var writtenBook = Items.WRITTEN_BOOK.getDefaultInstance();
-        writtenBook.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(Filterable.passThrough("1"),"1",1, List.of(Filterable.passThrough(Component.literal("1"))),true));
+        writtenBook.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(Filterable.passThrough("1"), "1", 1, List.of(Filterable.passThrough(Component.literal("1"))), true));
         scene.world().modifyBlockEntity(util.grid().at(2, 3, 2), PrinterBlockEntity.class, be -> {
             var printer = be.getBehaviour(PrinterBehaviour.TYPE);
             printer.setFilter(writtenBook);
@@ -221,7 +218,7 @@ public class MiscScene {
                 .attachKeyFrame()
                 .independent();
         var enchantedBook = Items.ENCHANTED_BOOK.getDefaultInstance();
-        CEIPonderScenes.enchant(scene,enchantedBook, Enchantments.CHANNELING,1);
+        CEIPonderScenes.enchant(scene, enchantedBook, Enchantments.CHANNELING, 1);
         scene.world().modifyBlockEntity(util.grid().at(2, 3, 2), PrinterBlockEntity.class, be -> {
             var printer = be.getBehaviour(PrinterBehaviour.TYPE);
             printer.setFilter(enchantedBook);
