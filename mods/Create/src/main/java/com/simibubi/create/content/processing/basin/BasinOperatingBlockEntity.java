@@ -3,8 +3,8 @@ package com.simibubi.create.content.processing.basin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import com.google.common.base.Predicates;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.advancement.CreateAdvancement;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -81,7 +81,8 @@ public abstract class BasinOperatingBlockEntity extends KineticBlockEntity {
 
 	protected abstract boolean isRunning();
 
-	public void startProcessingBasin() {}
+	public void startProcessingBasin() {
+	}
 
 	public boolean continueWithPreviousRecipe() {
 		return true;
@@ -123,15 +124,11 @@ public abstract class BasinOperatingBlockEntity extends KineticBlockEntity {
 		if (getBasin().map(BasinBlockEntity::isEmpty)
 			.orElse(true))
 			return new ArrayList<>();
-		
-		List<Recipe<?>> list = RecipeFinder.get(getRecipeCacheKey(), level, this::matchStaticFilters);
-		return list.stream()
-			.filter(this::matchBasinRecipe)
-			.sorted((r1, r2) -> r2.getIngredients()
-				.size()
-				- r1.getIngredients()
-					.size())
-			.collect(Collectors.toList());
+
+		List<Recipe<?>> list = RecipeFinder.get(getRecipeCacheKey(), level, Predicates.and(this::matchStaticFilters, this::matchBasinRecipe));
+		list.sort((r1, r2) -> r2.getIngredients().size() - r1.getIngredients().size());
+
+		return list;
 	}
 
 	protected abstract void onBasinRemoved();
