@@ -28,16 +28,25 @@ import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.network.Filterable;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.WrittenBookContent;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import plus.dragons.createdragonsplus.common.registry.CDPFluids;
 import plus.dragons.createdragonsplus.common.registry.CDPItems;
+import plus.dragons.createenchantmentindustry.client.ponder.CEIPonderScenes;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBehaviour;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MiscScene {
     public static void experienceHatch(SceneBuilder builder, SceneBuildingUtil util) {
@@ -150,9 +159,11 @@ public class MiscScene {
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().blockSurface(util.grid().at(2, 3, 2), Direction.WEST));
+        var writtenBook = Items.WRITTEN_BOOK.getDefaultInstance();
+        writtenBook.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(Filterable.passThrough("1"),"1",1, List.of(Filterable.passThrough(Component.literal("1"))),true));
         scene.world().modifyBlockEntity(util.grid().at(2, 3, 2), PrinterBlockEntity.class, be -> {
             var printer = be.getBehaviour(PrinterBehaviour.TYPE);
-            printer.setFilter(Items.WRITTEN_BOOK.getDefaultInstance());
+            printer.setFilter(writtenBook);
         });
         scene.idle(85);
 
@@ -209,9 +220,11 @@ public class MiscScene {
                 .text("Duplicating Enchanted Book")
                 .attachKeyFrame()
                 .independent();
+        var enchantedBook = Items.ENCHANTED_BOOK.getDefaultInstance();
+        CEIPonderScenes.enchant(scene,enchantedBook, Enchantments.CHANNELING,1);
         scene.world().modifyBlockEntity(util.grid().at(2, 3, 2), PrinterBlockEntity.class, be -> {
             var printer = be.getBehaviour(PrinterBehaviour.TYPE);
-            printer.setFilter(Items.ENCHANTED_BOOK.getDefaultInstance());
+            printer.setFilter(enchantedBook);
         });
         scene.world().modifyBlockEntity(util.grid().at(2, 3, 2), PrinterBlockEntity.class, be -> {
             be.getFluidHandler(null).drain(3000, IFluidHandler.FluidAction.EXECUTE);
