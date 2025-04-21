@@ -112,7 +112,10 @@ public class Bone {
         float rotationPointX = Mth.lerp(partialTicks, this.previousRotationPoint.x, this.rotationPoint.x);
         float rotationPointY = Mth.lerp(partialTicks, this.previousRotationPoint.y, this.rotationPoint.y);
         float rotationPointZ = Mth.lerp(partialTicks, this.previousRotationPoint.z, this.rotationPoint.z);
-        matrix.rotateAround(orientation.normalize(), rotationPointX - x, rotationPointY - y, rotationPointZ - z);
+
+        matrix.translate(rotationPointX, rotationPointY, rotationPointZ);
+        matrix.rotate(orientation.normalize());
+        matrix.translate(-rotationPointX, -rotationPointY, -rotationPointZ);
 
         // technically wrong but whatever
         matrix.scale(
