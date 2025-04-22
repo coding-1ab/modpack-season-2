@@ -23,7 +23,6 @@
   "create_enchantment_industry.gui.goggles.printing.cost": "Costo de impresión: %1$s",
   "create_enchantment_industry.gui.goggles.printing.custom_name": "Nombre personalizado al imprimir:",
   "create_enchantment_industry.gui.goggles.printing.template": "Imprimiendo con plantilla:",
-  "create_enchantment_industry.gui.printer.address.invalid": "Este paquete no tiene una dirección de copia.",
   "create_enchantment_industry.gui.printer.copy.invalid": "Este objeto no contiene nada que se pueda copiar.",
   "create_enchantment_industry.gui.printer.enchanted_book.invalid": "Este libro no tiene encantamientos que se puedan copiar.",
   "create_enchantment_industry.gui.printer.written_book.invalid": "Este libro no tiene contenido que se pueda copiar.",

@@ -45,7 +45,7 @@ public class GrindstoneScene {
         scene.world().showSection(util.select().fromTo(4, 1, 2, 0, 1, 2), Direction.DOWN);
         scene.idle(5);
         scene.overlay().showText(50)
-                .text("To use Mechanical Grindstone, you need an Item Drain")
+                .text("Right-click an Item Drain with Mechanical Grindstone...")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(2, 1, 2));
         scene.idle(20);
@@ -54,14 +54,14 @@ public class GrindstoneScene {
         scene.world().setBlock(util.grid().at(2, 1, 2), CEIBlocks.GRINDSTONE_DRAIN.getDefaultState().setValue(HorizontalKineticBlock.HORIZONTAL_FACING, Direction.SOUTH), true);
         scene.world().modifyBlockEntity(util.grid().at(2, 1, 2), GrindstoneDrainBlockEntity.class, SmartBlockEntity::markVirtual);
         scene.idle(30);
-        scene.overlay().showText(50)
-                .text("This is a Grindstone Drain. You will need another Mechanical Grindstone to use with it")
+        scene.overlay().showText(60)
+                .text("This is a Grindstone Drain. Place another Mechanical Grindstone on top to use it")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(2, 1, 2));
-        scene.idle(20);
+        scene.idle(30);
         scene.world().showSection(util.select().position(2, 2, 2), Direction.DOWN);
         scene.overlay().showOutline(PonderPalette.GREEN, util.select().fromTo(2, 1, 2, 2, 2, 2), util.select().fromTo(2, 1, 2, 2, 2, 2), 30);
-        scene.idle(30);
+        scene.idle(35);
         scene.world().showSection(util.select().fromTo(0, 1, 0, 4, 2, 1), Direction.DOWN);
         scene.world().showSection(util.select().fromTo(0, 1, 3, 4, 2, 4), Direction.DOWN);
         scene.world().setKineticSpeed(util.select().everywhere(), -64);
@@ -79,7 +79,7 @@ public class GrindstoneScene {
 
     public static void extra(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("mechanical_grindstone.extra", "Mechanical Grindstone, not just Grindstone");
+        scene.title("mechanical_grindstone.extra", "Sanding with Mechanical Grindstone");
         scene.configureBasePlate(0, 0, 5);
         scene.showBasePlate();
         scene.idle(5);
@@ -109,7 +109,7 @@ public class GrindstoneScene {
         scene.idle(55);
 
         scene.overlay().showText(60)
-                .text("You can use Mechanical Grindstone with item in your hand. 100% safe and won't hurt your hands :D")
+                .text("Items can be manually applied to Mechanical Grindstone")
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().centerOf(2, 1, 2));

@@ -64,7 +64,7 @@ public class ForgerScene {
         scene.idle(25);
 
         scene.overlay().showText(60)
-                .text("Pass in Liquid Experience to get it started")
+                .text("Provide it Liquid Experience to activate it")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
@@ -77,7 +77,7 @@ public class ForgerScene {
         scene.idle(50);
 
         scene.overlay().showText(80)
-                .text("Blaze Forger can merge enchantments of the same item like an anvil, and there is no \"repair cost\"")
+                .text("Blaze Forger can merge enchantments of the same item like an anvil, but with no Repair Cost")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
@@ -155,13 +155,13 @@ public class ForgerScene {
 
     public static void superEnchant(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("blaze_forger.super_enchant", "Super Enchant Time!");
+        scene.title("blaze_forger.super_enchant", "Super Enchanting with Blaze Forger");
         scene.configureBasePlate(0, 0, 5);
         scene.world().showSection(util.select().everywhere(), Direction.DOWN);
         scene.idle(5);
         scene.overlay().showText(60)
                 .colored(PonderPalette.BLUE)
-                .text("You may have noticed that the Blaze Forger has two \"stomachs\". Try feeding him some Cake o' Enchanting?")
+                .text("The Blaze Forger has two \"stomachs\". Feed it a Cake o' Enchanting...")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
 
@@ -174,20 +174,20 @@ public class ForgerScene {
         scene.idle(15);
 
         scene.overlay().showText(40)
-                .text("Blaze Forger is in Seething mode, or we call it Super Enchanting mode")
+                .text("...and it will begin seething, and enter Super Enchanting mode")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
         scene.idle(45);
 
         scene.overlay().showText(100)
                 .attachKeyFrame()
-                .text("Blaze Forger in Super Enchanting mode can break the enchantment level cap by merging 2 identical max-level enchantments, and it can merge conflicting enchantments together")
+                .text("While in Super Enchanting mode, Blaze Forger can surpass the vanilla enchantment level cap while merging enchantments. Conflicting enchantments can also be merged together")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
         scene.idle(105);
 
         scene.overlay().showText(60)
-                .text("Blaze Forger in Super Enchanting mode only accepts Super Enchanting Template")
+                .text("Blaze Forger in Super Enchanting mode exclusively processes and applies Super Enchanting Templates")
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().topOf(2, 2, 1));
@@ -196,7 +196,7 @@ public class ForgerScene {
         scene.addKeyframe();
         scene.world().setBlock(util.grid().at(2, 2, 2), Blocks.LIGHTNING_ROD.defaultBlockState(), false);
         scene.overlay().showText(60)
-                .text("Don't forget to place a lighting rod. You'll need it")
+                .text("Make sure to place a Lightning Rod nearby")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 2));
         scene.idle(45);
@@ -228,7 +228,7 @@ public class ForgerScene {
         scene.idle(45);
 
         scene.overlay().showText(80)
-                .text("You can cover the Blaze Forger with block to avoid lightning strikes, but then \"repair cost\" may appear")
+                .text("You can cover the Blaze Forger with a block to avoid lightning strikes, but this may introduce Repair Cost")
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().topOf(2, 2, 1));
@@ -242,7 +242,7 @@ public class ForgerScene {
         scene.idle(25);
 
         scene.overlay().showText(80)
-                .text("Please be careful! If you do nothing to protect it, a lightning strike will destroy everything")
+                .text("If no Lightning Rods are present...")
                 .attachKeyFrame()
                 .independent();
         scene.idle(5);

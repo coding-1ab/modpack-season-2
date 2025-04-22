@@ -62,7 +62,7 @@ public class ExperienceScene {
         scene.world().showSection(util.select().fromTo(11, 1, 9, 9, 7, 11), Direction.DOWN);
 
         scene.overlay().showText(60)
-                .text("This is a tank of Liquid Experience, and it will be your most used form of experience")
+                .text("This is a tank of Liquid Experience, the primary form of Experience used in Enchantment Industry")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(9, 5, 9));
         for (int i = 0; i < 6; i++) {
@@ -73,7 +73,7 @@ public class ExperienceScene {
         scene.idle(5);
 
         scene.overlay().showText(60)
-                .text("To convert the Experience you carry to liquid form, you will need two components")
+                .text("Converting the Experience you carry to liquid form requires two components")
                 .attachKeyFrame()
                 .independent();
 
@@ -149,7 +149,7 @@ public class ExperienceScene {
         var grindStoneDrain = util.select().fromTo(9, 2, 4, 9, 3, 4);
         scene.world().showSection(grindStoneDrain, Direction.DOWN);
         scene.overlay().showText(60)
-                .text("You can also use Mechanical GrindStone to pulverize items like Experience Nuggets into Liquid Experience")
+                .text("Mechanical Grindstone can also pulverize items. For example, it can convert Experience Nuggets into Liquid Experience")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(9, 3, 4));
         scene.overlay().showOutline(PonderPalette.GREEN, grindStoneDrain, grindStoneDrain, 60);
@@ -235,7 +235,7 @@ public class ExperienceScene {
         var deployerPos = util.grid().at(6, 2, 8);
         scene.world().showSection(deployer, Direction.DOWN);
         scene.overlay().showText(60)
-                .text("Deployer also has a new mechanism: When mob is killed by deployer, experience nuggets are dropped")
+                .text("Similarly, Deployer now drops Experience Nuggets after killing a creature")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(6, 2, 8));
@@ -331,7 +331,7 @@ public class ExperienceScene {
         scene.world().propagatePipeChange(util.grid().at(8, 7, 11));
         scene.idle(40);
         scene.overlay().showText(60)
-                .text("Don't worry, leaked Liquid Experience will turn into experience orbs")
+                .text("Liquid Experience leaking from pipes will turn into Experience orbs")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(4, 7, 9));
         scene.idle(65);
@@ -346,7 +346,7 @@ public class ExperienceScene {
         scene.world().showSection(util.select().position(4, 1, 0), Direction.DOWN);
         scene.idle(5);
         scene.overlay().showText(50)
-                .text("You need to know a few more things before you're ready to start working on enchantments")
+                .text("There are a few more things you need to know before you're ready to start using Enchantment Industry")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(4, 1, 0));
         for (int i = 0; i <= 4; i++) {
@@ -379,7 +379,7 @@ public class ExperienceScene {
         }
 
         scene.overlay().showText(55)
-                .text("This is Block of Super Experience. You'll need it for making Super Enchanting Template")
+                .text("This is Block of Super Experience, used to make Super Enchanting Templates")
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().topOf(2, 2, 3));
@@ -417,7 +417,7 @@ public class ExperienceScene {
         scene.world().modifyBlock(util.grid().at(1, 2, 1), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED), false);
         scene.idle(5);
         scene.overlay().showText(55)
-                .text("There are Blaze on Seething mode, which means they're in Super Enchanting mode")
+                .text("Seething Blaze Forgers and Enchanters are in Super Enchanting mode")
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().topOf(3, 3, 3));
@@ -426,13 +426,13 @@ public class ExperienceScene {
         scene.idle(60);
 
         scene.overlay().showText(40)
-                .text("Super Enchanting allows you to break the limit!")
+                .text("Super Enchanting allows you to surpass traditional enchanting limits")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(3, 3, 3));
         scene.idle(40);
 
         scene.overlay().showText(85)
-                .text("Super Enchanting specifically includes exceeding enchantment level cap, merging conflicting enchantments, and obtaining treasure enchantments directly")
+                .text("Specifically, this includes exceeding the vanilla enchantment level cap, merging conflicting enchantments, and obtaining treasure enchantments directly")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(3, 3, 3));
         scene.idle(90);
@@ -440,20 +440,20 @@ public class ExperienceScene {
 
     public static void prepare(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("experience.prepare_for_super_enchant", "Prepare materials for Super Enchant");
+        scene.title("experience.prepare_for_super_enchant", "Prepare materials for Super Enchanting");
         scene.configureBasePlate(0, 0, 3);
         scene.showBasePlate();
         scene.idle(5);
         scene.world().showSection(util.select().fromTo(2, 1, 0, 0, 1, 2), Direction.DOWN);
         scene.idle(5);
-        scene.overlay().showText(80)
-                .text("First material is Block of Super Experience, which will be used to make the Super Enchanting Template. This requires the use of Block of Experience")
+        scene.overlay().showText(75)
+                .text("First, obtain a Block of Super Experience, which will be used to make the Super Enchanting Template. This requires Block of Experience")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(1, 1, 1));
         scene.idle(80);
         scene.overlay().showText(45)
-                .text("And you're supposed to use a lightning rod")
+                .text("Next, place a Lightning Rod")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(1, 2, 1));
@@ -472,11 +472,11 @@ public class ExperienceScene {
                 .pointAt(util.vector().topOf(1, 2, 1));
         scene.idle(50);
 
-        scene.overlay().showText(80)
+        scene.overlay().showText(120)
                 .text("The vast majority of lightning strikes only have a certain probability of transforming Block of Experience, and only lightning strikes caused by Super Enchanting are guaranteed to transform")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(1, 2, 1));
-        scene.idle(85);
+        scene.idle(125);
 
         scene.world().replaceBlocks(util.select().position(1, 2, 1), Blocks.AIR.defaultBlockState(), true);
         scene.world().replaceBlocks(util.select().layer(1), Blocks.AIR.defaultBlockState(), true);
@@ -487,13 +487,13 @@ public class ExperienceScene {
         scene.world().modifyBlockEntity(util.grid().at(1, 1, 1), DepotBlockEntity.class, be -> be.setHeldItem(CEIItems.EXPERIENCE_CAKE.asStack()));
         scene.idle(10);
         scene.overlay().showText(60)
-                .text("Second material is Cake o' Enchanting. It works as \"Super Experience\" to support blaze seething mode. Blaze will love eating this")
+                .text("Second, obtain Cake o' Enchanting. It works as \"Super Experience\" and causes Blazes to enter Super Enchanting mode.")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(1, 1, 1));
         scene.idle(60);
         scene.overlay().showText(80)
-                .text("You might be a little confused, if Cake o' Enchanting is used to put Blaze into Super Enchanting mode, what is Block of Super Experience used for?")
+                .text("If Cake o' Enchanting is used to put Blaze into Super Enchanting mode, what is Block of Super Experience used for?")
                 .attachKeyFrame()
                 .colored(PonderPalette.RED)
                 .placeNearTarget()
@@ -502,13 +502,13 @@ public class ExperienceScene {
         scene.world().modifyBlockEntity(util.grid().at(1, 1, 1), DepotBlockEntity.class, be -> be.setHeldItem(CEIItems.SUPER_ENCHANTING_TEMPLATE.asStack()));
         scene.idle(20);
         scene.overlay().showText(45)
-                .text("The answer is used to make our third item: Super Enchanting Template")
+                .text("Answer: Crafting Super Enchanting Template")
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().topOf(1, 1, 1));
         scene.idle(50);
-        scene.overlay().showText(75)
-                .text("In Super Enchanting mode, Blaze will not accept any normal Enchanting Templates and must use the Super Enchanting Template")
+        scene.overlay().showText(80)
+                .text("In Super Enchanting mode, Blaze Forgers and Enchanters will not accept any normal Enchanting Templates and must use the Super Enchanting Template")
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().topOf(1, 1, 1));

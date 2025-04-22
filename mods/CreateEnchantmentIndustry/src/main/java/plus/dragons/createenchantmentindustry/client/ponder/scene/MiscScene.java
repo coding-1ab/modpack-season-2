@@ -58,7 +58,7 @@ public class MiscScene {
         scene.idle(5);
 
         scene.overlay().showText(50)
-                .text("It is very simple to use. Right click Hatch to store Experience...")
+                .text("The Experience Hatch is simple to use. Right click it to store Experience...")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(1, 3, 2));
         var frontVec = util.vector().blockSurface(util.grid().at(2, 3, 2), Direction.WEST)
@@ -86,8 +86,8 @@ public class MiscScene {
                 be -> be.inputTank.getPrimaryHandler().drain(new FluidStack(CEIFluids.EXPERIENCE.get(), 1000), IFluidHandler.FluidAction.EXECUTE));
         scene.idle(30);
 
-        scene.overlay().showText(55)
-                .text("There are a filter slot and a scroll panel on Hatch. You can configure how much Experience per interaction on the panel")
+        scene.overlay().showText(80)
+                .text("There are a filter slot and a scroll panel on Hatch. You can configure how much Experience is retrieved or deposited per interaction on the panel")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(1, 3, 2));
@@ -96,6 +96,7 @@ public class MiscScene {
                     be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 1000), IFluidHandler.FluidAction.EXECUTE));
             scene.idle(5);
         }
+        scene.idle(25);
 
         scene.overlay().showText(40)
                 .text("The filter slot is used to deal with experience fluids of other mods")
@@ -110,19 +111,19 @@ public class MiscScene {
                 be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CDPFluids.DYES_BY_COLOR.get(DyeColor.CYAN).get(), 36000), IFluidHandler.FluidAction.EXECUTE));
         scene.idle(10);
         scene.overlay().showText(40)
-                .text("Let's assume that Liquid Cyan Dye is experience fluid from another mod...")
+                .text("For example, assume that Liquid Cyan Dye is experience fluid from another mod")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(0, 1, 1));
         scene.idle(40);
         scene.overlay().showText(40)
-                .text("...And place Bucket Cyan Dye in filter slot")
+                .text("Place Bucket of Cyan Dye in the filter slot")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(0, 1, 1));
         scene.overlay().showControls(util.vector().centerOf(0, 1, 1), Pointing.DOWN, 40).withItem(CDPFluids.DYES_BY_COLOR.get(DyeColor.CYAN).getBucket().get().getDefaultInstance());
         scene.idle(40);
 
         scene.overlay().showText(60)
-                .text("Now, you can directly save and extract your experience as 'The Cyan Experience'!")
+                .text("You can now directly insert and extract Cyan Dye as \"Cyan Experience\"")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(0, 1, 1));
         for (int i = 0; i < 12; i++) {
@@ -152,7 +153,7 @@ public class MiscScene {
         var slotVec = util.vector().of(2, 3.5, 2.5);
         scene.overlay().showFilterSlotInput(slotVec, Direction.WEST, 80);
         scene.overlay().showText(80)
-                .text("Before you can put it to use, you need to set what you want to print via the filter slot...")
+                .text("Before use, set the item to print via the filter slot...")
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().blockSurface(util.grid().at(2, 3, 2), Direction.WEST));
@@ -238,7 +239,7 @@ public class MiscScene {
         scene.idle(50);
 
         scene.overlay().showText(80)
-                .text("It can also name items, copy train schedule, copy clipboard, change package address and more. You can use JEI to look up printing recipes")
+                .text("It can also name items, copy train schedule, copy clipboard, change package address and more. Use JEI to look up printing recipe")
                 .attachKeyFrame()
                 .independent();
         scene.idle(80);
