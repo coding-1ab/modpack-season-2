@@ -100,7 +100,7 @@ public class GrindstoneScene {
         scene.idle(55);
 
         scene.overlay().showText(60)
-                .text("...but it also has the features of sandpaper")
+                .text("...but it also has the features of Sand Paper")
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().centerOf(2, 1, 2));
