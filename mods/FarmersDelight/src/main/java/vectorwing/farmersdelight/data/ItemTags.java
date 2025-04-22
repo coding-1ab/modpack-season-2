@@ -187,6 +187,7 @@ public class ItemTags extends ItemTagsProvider
 		tag(Tags.Items.TOOLS).addTag(CommonTags.TOOLS_KNIFE);
 		tag(Tags.Items.SEEDS).add(ModItems.CABBAGE_SEEDS.get(), ModItems.RICE.get(), ModItems.TOMATO_SEEDS.get());
 		tag(Tags.Items.CROPS).addTags(CommonTags.CROPS_CABBAGE, CommonTags.CROPS_ONION, CommonTags.CROPS_RICE, CommonTags.CROPS_TOMATO);
+		tag(Tags.Items.STORAGE_BLOCKS).addTags(CommonTags.STORAGE_BLOCKS_ITEM_CARROT, CommonTags.STORAGE_BLOCKS_ITEM_POTATO, CommonTags.STORAGE_BLOCKS_ITEM_BEETROOT, CommonTags.STORAGE_BLOCKS_ITEM_CABBAGE, CommonTags.STORAGE_BLOCKS_ITEM_TOMATO, CommonTags.STORAGE_BLOCKS_ITEM_ONION, CommonTags.STORAGE_BLOCKS_ITEM_RICE, CommonTags.STORAGE_BLOCKS_ITEM_RICE_PANICLE, CommonTags.STORAGE_BLOCKS_ITEM_STRAW);
 	}
 
 	public void registerCommonTags() {
