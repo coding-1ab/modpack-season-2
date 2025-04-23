@@ -218,7 +218,7 @@ public class EnchanterScene {
 
         scene.overlay().showText(60)
                 .attachKeyFrame()
-                .text("Blaze Enchanter in Super Enchanting mode exclusively processes and applies Super Enchanting Templates")
+                .text("Blaze Enchanter in Super Enchanting mode exclusively processes Super Enchanting Templates")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
         scene.idle(65);

@@ -1,7 +1,10 @@
-### Create: Enchantment Industry 2.0.11
-
-Require Create: Dragons Plus 1.3.5
+### Create: Enchantment Industry 2.0.12
 
 #### Update
-* Improve Ponder Contents
-* Improve goggle tooltip for Printer
+* Ponder texts are now more formal and Create-style (by @IntegralPlusC)
+* Adjust appearing duration of ponder text to make it easier to read
+* Update Russian Translation by Korben
+* Update Japanese Translation by @YukkuriOfuton
+
+#### Fix
+* Fix Create Stuff 'N Additions recipes
