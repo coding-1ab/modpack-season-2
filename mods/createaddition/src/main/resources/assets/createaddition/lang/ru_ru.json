@@ -101,7 +101,7 @@
 
 	"item.createaddition.straw": "Соломинка",
 
-	"item.createaddition.electrum_amulet": "Амулет из бледного золота",
+	"item.createaddition.electrum_amulet": "Амулет из электрума",
 	"item.createaddition.electrum_amulet.tooltip": "ЭЛЕКТРУМОВЫЙ_АМУЛЕТ",
 	"item.createaddition.electrum_amulet.tooltip.summary": "Когда _жизнь_ бьёт под дых, сжатый в кармане _амулет_ внушает ощущение, будто _удача_ вот-вот повернётся лицом.",
 
