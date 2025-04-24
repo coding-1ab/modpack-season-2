@@ -27,7 +27,7 @@ displayName="Create Crafts & Additions" #mandatory
 # A URL for the "homepage" for this mod, displayed in the mod UI
 displayURL="https://github.com/mrh0/createaddition" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="createaddition.png" #optional
+logoFile="icon.png" #optional
 # A text field displayed in the mod UI
 credits="" #optional
 # A text field displayed in the mod UI
