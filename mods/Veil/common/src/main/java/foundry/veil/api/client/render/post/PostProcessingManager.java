@@ -274,6 +274,33 @@ public class PostProcessingManager extends CodecReloadListener<CompositePostPipe
         }
     }
 
+    /**
+     * Resolves the post-processing framebuffer color buffer into the specified framebuffer.
+     *
+     * @param framebuffer The framebuffer to resolve to
+     */
+    public static void resolvePost(@Nullable AdvancedFbo framebuffer) {
+        resolvePost(framebuffer, GL_COLOR_BUFFER_BIT);
+    }
+
+    /**
+     * Resolves the post-processing framebuffer result into the specified framebuffer.
+     *
+     * @param framebuffer The framebuffer to resolve to
+     * @param mask        The buffers to copy
+     */
+    public static void resolvePost(@Nullable AdvancedFbo framebuffer, int mask) {
+        if (framebuffer != null) {
+            AdvancedFbo postFramebuffer = VeilRenderSystem.renderer().getFramebufferManager().getFramebuffer(VeilFramebuffers.POST);
+            if (postFramebuffer != null) {
+                postFramebuffer.resolveToAdvancedFbo(
+                        framebuffer,
+                        mask,
+                        GL_NEAREST);
+            }
+        }
+    }
+
     private CompositePostPipeline loadPipeline(Resource resource) throws IOException {
         try (Reader reader = resource.openAsReader()) {
             JsonElement element = JsonParser.parseReader(reader);
