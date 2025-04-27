@@ -166,7 +166,7 @@ public class ForgerScene {
                 .pointAt(util.vector().topOf(2, 2, 1));
 
         scene.idle(20);
-        scene.overlay().showControls(util.vector().centerOf(2, 2, 1), Pointing.RIGHT, 20).rightClick().withItem(CEIItems.EXPERIENCE_CAKE.asStack());
+        scene.overlay().showControls(util.vector().centerOf(2, 3, 1), Pointing.DOWN, 20).rightClick().withItem(CEIItems.EXPERIENCE_CAKE.asStack());
         scene.idle(30);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> be.getSpecialTank().setFluid(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000)));

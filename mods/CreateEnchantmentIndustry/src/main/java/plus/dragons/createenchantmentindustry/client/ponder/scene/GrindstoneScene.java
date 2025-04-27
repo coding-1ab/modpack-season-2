@@ -49,7 +49,7 @@ public class GrindstoneScene {
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(2, 1, 2));
         scene.idle(20);
-        scene.overlay().showControls(util.vector().centerOf(2, 1, 2), Pointing.UP, 50).rightClick().withItem(CEIBlocks.MECHANICAL_GRINDSTONE.asStack());
+        scene.overlay().showControls(util.vector().centerOf(2, 2, 2), Pointing.DOWN, 50).rightClick().withItem(CEIBlocks.MECHANICAL_GRINDSTONE.asStack());
         scene.idle(20);
         scene.world().setBlock(util.grid().at(2, 1, 2), CEIBlocks.GRINDSTONE_DRAIN.getDefaultState().setValue(HorizontalKineticBlock.HORIZONTAL_FACING, Direction.SOUTH), true);
         scene.world().modifyBlockEntity(util.grid().at(2, 1, 2), GrindstoneDrainBlockEntity.class, SmartBlockEntity::markVirtual);

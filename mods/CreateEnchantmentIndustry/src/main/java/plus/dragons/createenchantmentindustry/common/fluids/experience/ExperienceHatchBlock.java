@@ -50,24 +50,16 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import org.jetbrains.annotations.Nullable;
-import plus.dragons.createdragonsplus.common.features.ConfigFeatureElement;
-import plus.dragons.createdragonsplus.config.CDPConfig;
-import plus.dragons.createdragonsplus.config.FeaturesConfig.ConfigFeature;
 import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlockEntities;
 
 public class ExperienceHatchBlock extends HorizontalDirectionalBlock
-        implements IBE<ExperienceHatchBlockEntity>, IWrenchable, ProperWaterloggedBlock, ConfigFeatureElement {
+        implements IBE<ExperienceHatchBlockEntity>, IWrenchable, ProperWaterloggedBlock {
     public static final MapCodec<ExperienceHatchBlock> CODEC = simpleCodec(ExperienceHatchBlock::new);
 
     public ExperienceHatchBlock(Properties properties) {
         super(properties);
         registerDefaultState(defaultBlockState().setValue(WATERLOGGED, false));
-    }
-
-    @Override
-    public ConfigFeature getFeatureConfig() {
-        return CDPConfig.features().fluidHatch;
     }
 
     @Override
