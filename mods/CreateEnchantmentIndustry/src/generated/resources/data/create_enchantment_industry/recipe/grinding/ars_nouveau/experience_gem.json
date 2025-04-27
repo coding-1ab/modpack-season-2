@@ -5,7 +5,7 @@
       "modid": "ars_nouveau"
     }
   ],
-  "type": "create_dragons_plus:grinding",
+  "type": "create_enchantment_industry:grinding",
   "ingredients": [
     {
       "item": "ars_nouveau:experience_gem"

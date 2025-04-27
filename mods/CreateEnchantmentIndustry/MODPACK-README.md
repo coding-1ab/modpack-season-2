@@ -7,7 +7,7 @@
 
 ## Recipe
 ###  Printing
-`Printing` of Printer supports custom printing recipe. It is the same format as the recipe of Create, with type `create_dragons_plus:grinding`.  
+`Printing` of Printer supports custom printing recipe. It has similar format as the recipe of Create, with type `create_dragons_plus:grinding`. Printing recipe requires extra `sound` field as Printing-Finish-Sound, for example `"sound": "item.book.page_turn"`.   
 Template item is in 2nd position of input, printing material item is in 1st position of input.
 ### Grinding
 `Grinding` of Mechanical Grindstone supports custom grinding recipe. It is the same format as the recipe of Create, with type `create_dragons_plus:printing`.   
