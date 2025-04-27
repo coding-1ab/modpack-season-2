@@ -51,11 +51,11 @@ public class MiscScene {
         scene.title("experience_hatch.intro", "Introduction to Experience Hatch");
         scene.configureBasePlate(0, 0, 4);
         scene.showBasePlate();
-        scene.idle(5);
+        scene.idle(10);
         scene.world().showSection(util.select().fromTo(3, 1, 1, 1, 1, 3), Direction.DOWN);
         scene.world().showSection(util.select().fromTo(3, 2, 2, 2, 3, 3), Direction.DOWN);
         scene.world().showSection(util.select().position(1, 3, 2), Direction.DOWN);
-        scene.idle(5);
+        scene.idle(10);
 
         scene.overlay().showText(50)
                 .text("The Experience Hatch is simple to use. Right click it to store Experience...")
@@ -67,13 +67,13 @@ public class MiscScene {
         scene.idle(10);
         scene.world().modifyBlockEntity(util.grid().at(2, 3, 2), FluidTankBlockEntity.class,
                 be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 10000), IFluidHandler.FluidAction.EXECUTE));
-        scene.idle(40);
+        scene.idle(50);
 
         scene.world().modifyBlockEntity(util.grid().at(3, 2, 1), BasinBlockEntity.class,
                 be -> be.inputTank.getPrimaryHandler().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 1000), IFluidHandler.FluidAction.EXECUTE));
         scene.idle(10);
         scene.world().showSection(util.select().fromTo(3, 2, 1, 2, 2, 1), Direction.UP);
-        scene.idle(5);
+        scene.idle(10);
         scene.overlay().showText(60)
                 .text("...Shift-Right-Click Hatch to extract stored Experience")
                 .placeNearTarget()
@@ -84,7 +84,7 @@ public class MiscScene {
         scene.idle(30);
         scene.world().modifyBlockEntity(util.grid().at(3, 2, 1), BasinBlockEntity.class,
                 be -> be.inputTank.getPrimaryHandler().drain(new FluidStack(CEIFluids.EXPERIENCE.get(), 1000), IFluidHandler.FluidAction.EXECUTE));
-        scene.idle(30);
+        scene.idle(40);
 
         scene.overlay().showText(80)
                 .text("There are a filter slot and a scroll panel on Hatch. You can configure how much Experience is retrieved or deposited per interaction on the panel")
@@ -96,7 +96,7 @@ public class MiscScene {
                     be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 1000), IFluidHandler.FluidAction.EXECUTE));
             scene.idle(5);
         }
-        scene.idle(25);
+        scene.idle(30);
 
         scene.overlay().showText(40)
                 .text("The filter slot is used to deal with experience fluids of other mods")
@@ -105,7 +105,7 @@ public class MiscScene {
                 .pointAt(util.vector().centerOf(1, 3, 2));
         scene.idle(30);
         scene.world().showSection(util.select().position(0, 1, 1), Direction.DOWN);
-        scene.idle(10);
+        scene.idle(20);
 
         scene.world().modifyBlockEntity(util.grid().at(1, 1, 1), FluidTankBlockEntity.class,
                 be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CDPFluids.DYES_BY_COLOR.get(DyeColor.CYAN).get(), 36000), IFluidHandler.FluidAction.EXECUTE));
@@ -114,13 +114,13 @@ public class MiscScene {
                 .text("For example, assume that Liquid Cyan Dye is experience fluid from another mod")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(0, 1, 1));
-        scene.idle(40);
+        scene.idle(50);
         scene.overlay().showText(40)
                 .text("Place Bucket of Cyan Dye in the filter slot")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(0, 1, 1));
         scene.overlay().showControls(util.vector().centerOf(0, 1, 1), Pointing.DOWN, 40).withItem(CDPFluids.DYES_BY_COLOR.get(DyeColor.CYAN).getBucket().get().getDefaultInstance());
-        scene.idle(40);
+        scene.idle(50);
 
         scene.overlay().showText(60)
                 .text("You can now directly insert and extract Cyan Dye as \"Cyan Experience\"")
@@ -129,7 +129,7 @@ public class MiscScene {
         for (int i = 0; i < 12; i++) {
             scene.world().modifyBlockEntity(util.grid().at(1, 1, 1), FluidTankBlockEntity.class,
                     be -> be.getControllerBE().getTankInventory().drain(new FluidStack(CDPFluids.DYES_BY_COLOR.get(DyeColor.CYAN).get(), 3000), IFluidHandler.FluidAction.EXECUTE));
-            scene.idle(5);
+            scene.idle(10);
         }
     }
 
@@ -137,18 +137,17 @@ public class MiscScene {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("printer.intro", "Introduction to Printer");
         scene.configureBasePlate(1, 1, 3);
+        scene.idle(10);
         scene.world().showSection(util.select().fromTo(1, 0, 1, 3, 0, 3), Direction.DOWN);
-        scene.idle(5);
         scene.world().showSection(util.select().position(2, 1, 2), Direction.DOWN);
-        scene.idle(5);
         scene.world().showSection(util.select().position(2, 3, 2), Direction.DOWN);
-        scene.idle(5);
+        scene.idle(10);
 
         scene.overlay().showText(40)
                 .text("This is a Printer")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(2, 3, 2));
-        scene.idle(45);
+        scene.idle(50);
 
         var slotVec = util.vector().of(2, 3.5, 2.5);
         scene.overlay().showFilterSlotInput(slotVec, Direction.WEST, 80);
@@ -163,7 +162,7 @@ public class MiscScene {
             var printer = be.getBehaviour(PrinterBehaviour.TYPE);
             printer.setFilter(writtenBook);
         });
-        scene.idle(85);
+        scene.idle(90);
 
         scene.overlay().showText(80)
                 .text("...and pass in the corresponding fluid")
@@ -179,7 +178,7 @@ public class MiscScene {
         scene.idle(20);
         scene.world().modifyBlockEntity(util.grid().at(2, 3, 2), PrinterBlockEntity.class,
                 be -> be.getFluidHandler(null).fill(new FluidStack(CDPFluids.DYES_BY_COLOR.get(DyeColor.BLACK), 3000), IFluidHandler.FluidAction.EXECUTE));
-        scene.idle(35);
+        scene.idle(40);
 
         scene.overlay().showText(80)
                 .text("Copying written book")

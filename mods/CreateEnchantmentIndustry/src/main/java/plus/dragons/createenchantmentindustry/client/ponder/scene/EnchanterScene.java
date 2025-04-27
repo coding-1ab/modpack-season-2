@@ -46,7 +46,7 @@ public class EnchanterScene {
         scene.title("blaze_enchanter.intro", "Introduction to Blaze Enchanter");
         scene.configureBasePlate(0, 0, 5);
         scene.world().showSection(util.select().everywhere(), Direction.DOWN);
-        scene.idle(5);
+        scene.idle(10);
 
         scene.overlay().showText(60)
                 .text("This is a Blaze Enchanter, which functions like an Enchanting Table")
@@ -60,14 +60,14 @@ public class EnchanterScene {
         scene.idle(20);
         scene.world().modifyBlockEntity(util.grid().at(2, 1, 3), FluidTankBlockEntity.class,
                 be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 17000), IFluidHandler.FluidAction.EXECUTE));
-        scene.idle(25);
+        scene.idle(30);
 
         scene.overlay().showText(60)
                 .text("Provide it Liquid Experience to activate it")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
-        scene.idle(5);
+        scene.idle(10);
         scene.world().setKineticSpeed(util.select().everywhere(), 128);
         scene.idle(10);
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeEnchanterBlockEntity.class,
@@ -87,7 +87,7 @@ public class EnchanterScene {
                     var enchanter = be.getBehaviour(EnchanterBehaviour.TYPE);
                     enchanter.setValue(30);
                 });
-        scene.idle(75);
+        scene.idle(80);
 
         scene.addKeyframe();
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeEnchanterBlockEntity.class,
@@ -108,7 +108,7 @@ public class EnchanterScene {
                     enchanter.setTemplate(Items.DIAMOND_SWORD.getDefaultInstance());
                 });
         scene.overlay().showControls(slotVec, Pointing.UP, 75).rightClick().withItem(Items.DIAMOND_SWORD.getDefaultInstance());
-        scene.idle(85);
+        scene.idle(90);
 
         scene.overlay().showText(80)
                 .text("In Template Enchanting Mode, Blaze Enchanter can enchant Enchanting Template")
@@ -127,7 +127,7 @@ public class EnchanterScene {
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
-        scene.idle(65);
+        scene.idle(70);
         scene.overlay().showText(80)
                 .text("For example, placing diamond chest armor in the filter slot causes only diamond-chest-armor enchantments to be generated")
                 .placeNearTarget()
@@ -138,7 +138,7 @@ public class EnchanterScene {
                     enchanter.setTemplate(Items.DIAMOND_CHESTPLATE.getDefaultInstance());
                 });
         scene.overlay().showControls(slotVec, Pointing.UP, 50).rightClick().withItem(Items.DIAMOND_CHESTPLATE.getDefaultInstance());
-        scene.idle(85);
+        scene.idle(90);
         scene.overlay().showText(80)
                 .text("Give a blank Enchanting Template to Blaze Enchanter, and the aforementioned enchantments will be added to it")
                 .placeNearTarget()
@@ -160,7 +160,7 @@ public class EnchanterScene {
                     enchanter.setTemplate(Items.GOLDEN_CHESTPLATE.getDefaultInstance());
                 });
         scene.overlay().showControls(slotVec, Pointing.UP, 50).rightClick().withItem(Items.GOLDEN_CHESTPLATE.getDefaultInstance());
-        scene.idle(70);
+        scene.idle(75);
         scene.overlay().showText(80)
                 .text("Because golden chest armor has better enchantability compared to diamond chest armor, it produces relatively better enchantments")
                 .placeNearTarget()
@@ -182,7 +182,7 @@ public class EnchanterScene {
         scene.title("blaze_enchanter.super_enchant", "Super Enchanting with Blaze Enchanter");
         scene.configureBasePlate(0, 0, 5);
         scene.world().showSection(util.select().everywhere(), Direction.DOWN);
-        scene.idle(5);
+        scene.idle(10);
         scene.overlay().showText(60)
                 .colored(PonderPalette.BLUE)
                 .text("The Blaze Enchanter has two \"stomachs\". Feed it a Cake o' Enchanting...")
@@ -195,13 +195,13 @@ public class EnchanterScene {
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeEnchanterBlockEntity.class,
                 be -> be.getSpecialTank().setFluid(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000)));
         scene.world().modifyBlock(util.grid().at(2, 2, 1), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SEETHING), false);
-        scene.idle(15);
+        scene.idle(20);
 
         scene.overlay().showText(40)
                 .text("...and it will begin seething. This state is known as Super Enchanting mode")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
-        scene.idle(45);
+        scene.idle(50);
 
         scene.overlay().showText(100)
                 .attachKeyFrame()
@@ -214,14 +214,14 @@ public class EnchanterScene {
                     enchanter.setTemplate(Items.DIAMOND_SWORD.getDefaultInstance());
                     enchanter.setValue(60);
                 });
-        scene.idle(105);
+        scene.idle(110);
 
         scene.overlay().showText(60)
                 .attachKeyFrame()
                 .text("Blaze Enchanter in Super Enchanting mode exclusively processes Super Enchanting Templates")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
-        scene.idle(65);
+        scene.idle(70);
 
         scene.addKeyframe();
         scene.world().setBlock(util.grid().at(3, 2, 1), Blocks.LIGHTNING_ROD.defaultBlockState(), false);
@@ -250,7 +250,7 @@ public class EnchanterScene {
                 .pointAt(util.vector().topOf(3, 2, 1));
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeEnchanterBlockEntity.class,
                 be -> be.extractItem(true, false));
-        scene.idle(45);
+        scene.idle(50);
 
         scene.overlay().showText(80)
                 .text("You can cover the Blaze Enchanter with block to avoid lightning strikes, but then curse may appear")
@@ -264,7 +264,7 @@ public class EnchanterScene {
         scene.world().setBlock(util.grid().at(2, 5, 1), Blocks.OBSIDIAN.defaultBlockState(), false);
         scene.idle(20);
         scene.world().setBlock(util.grid().at(2, 6, 1), Blocks.OBSIDIAN.defaultBlockState(), false);
-        scene.idle(25);
+        scene.idle(30);
 
         scene.overlay().showText(80)
                 .text("If no Lightning Rods are present...")

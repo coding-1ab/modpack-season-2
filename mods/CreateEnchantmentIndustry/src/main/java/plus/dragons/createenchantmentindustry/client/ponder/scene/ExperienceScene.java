@@ -58,7 +58,7 @@ public class ExperienceScene {
         scene.configureBasePlate(0, 0, 12);
         scene.scaleSceneView(.38f);
         scene.showBasePlate();
-        scene.idle(5);
+        scene.idle(10);
         scene.world().showSection(util.select().fromTo(11, 1, 9, 9, 7, 11), Direction.DOWN);
 
         scene.overlay().showText(60)
@@ -70,7 +70,7 @@ public class ExperienceScene {
                     be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 10000), IFluidHandler.FluidAction.EXECUTE));
             scene.idle(10);
         }
-        scene.idle(5);
+        scene.idle(10);
 
         scene.overlay().showText(60)
                 .text("Converting the Experience you carry to liquid form requires two components")
@@ -87,28 +87,28 @@ public class ExperienceScene {
         scene.world().showSection(util.select().fromTo(11, 2, 7, 10, 2, 8), Direction.DOWN);
         scene.idle(10);
         scene.world().showSection(util.select().fromTo(8, 2, 10, 7, 2, 11), Direction.DOWN);
-        scene.idle(25);
+        scene.idle(30);
 
         // Two Hatches
         var liquidHatch = util.select().position(11, 4, 8);
         scene.world().showSection(liquidHatch, Direction.SOUTH);
-        scene.idle(5);
+        scene.idle(10);
         scene.overlay().showText(40)
                 .text("Liquid Hatch for accessing liquids directly from items")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(11, 4, 8));
         scene.overlay().showOutline(PonderPalette.GREEN, liquidHatch, liquidHatch, 40);
-        scene.idle(45);
+        scene.idle(50);
 
         var expHatch = util.select().position(8, 4, 11);
         scene.world().showSection(expHatch, Direction.EAST);
-        scene.idle(5);
+        scene.idle(10);
         scene.overlay().showText(40)
                 .text("Experience Hatch for accessing experience directly from the player")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(8, 4, 11));
         scene.overlay().showOutline(PonderPalette.GREEN, expHatch, expHatch, 40);
-        scene.idle(45);
+        scene.idle(50);
 
         scene.overlay().showText(40)
                 .text("But as part of Create, automation is a must, right?")
@@ -125,7 +125,7 @@ public class ExperienceScene {
         // Item Drain
         var itemDrain = util.select().position(9, 2, 2);
         scene.world().showSection(itemDrain, Direction.DOWN);
-        scene.idle(25);
+        scene.idle(30);
 
         scene.overlay().showText(50)
                 .text("You can use Item Drain to pour Liquid Experience out of items")
@@ -143,7 +143,7 @@ public class ExperienceScene {
         scene.world().createItemOnBelt(util.grid().at(0, 1, 2), Direction.UP, new ItemStack(Items.EXPERIENCE_BOTTLE));
         scene.idle(20);
         scene.world().createItemOnBelt(util.grid().at(0, 1, 2), Direction.UP, new ItemStack(Items.EXPERIENCE_BOTTLE));
-        scene.idle(30);
+        scene.idle(35);
 
         // GrindStone Drain
         var grindStoneDrain = util.select().fromTo(9, 2, 4, 9, 3, 4);
@@ -175,12 +175,12 @@ public class ExperienceScene {
         scene.world().createItemOnBelt(util.grid().at(3, 1, 11), Direction.UP, new ItemStack(AllItems.EXP_NUGGET.get()));
         scene.idle(20);
         scene.world().createItemOnBelt(util.grid().at(3, 1, 11), Direction.UP, new ItemStack(AllItems.EXP_NUGGET.get()));
-        scene.idle(10);
+        scene.idle(15);
 
         // Crushing Wheel
         scene.world().showSection(util.select().column(2, 11), Direction.DOWN);
         scene.world().showSection(util.select().fromTo(4, 1, 11, 4, 3, 11), Direction.DOWN);
-        scene.idle(5);
+        scene.idle(10);
         var crushingWheel = util.select().fromTo(5, 2, 10, 1, 4, 10);
         scene.world().showSection(crushingWheel, Direction.NORTH);
         scene.overlay().showText(60)
@@ -230,7 +230,7 @@ public class ExperienceScene {
 
         // Deployer
         scene.world().showSection(util.select().fromTo(6, 1, 6, 4, 1, 8), Direction.DOWN);
-        scene.idle(5);
+        scene.idle(10);
         var deployer = util.select().position(6, 2, 8);
         var deployerPos = util.grid().at(6, 2, 8);
         scene.world().showSection(deployer, Direction.DOWN);
@@ -301,7 +301,7 @@ public class ExperienceScene {
         // spout
         scene.world().showSection(util.select().fromTo(11, 7, 0, 11, 7, 8), Direction.SOUTH);
         scene.world().showSection(util.select().fromTo(11, 2, 0, 2, 7, 0), Direction.SOUTH);
-        scene.idle(5);
+        scene.idle(10);
         scene.world().setKineticSpeed(util.select().position(6, 2, 0), 256f);
         scene.world().setKineticSpeed(util.select().position(11, 7, 2), 256f);
         scene.world().propagatePipeChange(util.grid().at(6, 2, 0));
@@ -334,7 +334,7 @@ public class ExperienceScene {
                 .text("Liquid Experience leaking from pipes will turn into Experience orbs")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(4, 7, 9));
-        scene.idle(65);
+        scene.idle(70);
     }
 
     public static void advance(SceneBuilder builder, SceneBuildingUtil util) {
@@ -342,9 +342,9 @@ public class ExperienceScene {
         scene.title("experience.advance", "Things you might want to know");
         scene.configureBasePlate(0, 0, 5);
         scene.showBasePlate();
-        scene.idle(5);
+        scene.idle(10);
         scene.world().showSection(util.select().position(4, 1, 0), Direction.DOWN);
-        scene.idle(5);
+        scene.idle(10);
         scene.overlay().showText(50)
                 .text("There are a few more things you need to know before you're ready to start using Enchantment Industry")
                 .placeNearTarget()
@@ -356,20 +356,20 @@ public class ExperienceScene {
                 scene.idle(2);
             }
         }
-        scene.idle(5);
-        scene.overlay().showText(55)
+        scene.idle(10);
+        scene.overlay().showText(60)
                 .text("Block of Experience is no longer purely decorative and storage block. You'll need it later")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 1, 0));
         scene.overlay().showOutline(PonderPalette.GREEN, util.select().fromTo(4, 1, 0, 0, 1, 1), util.select().fromTo(4, 1, 0, 0, 1, 1), 55);
-        scene.idle(60);
+        scene.idle(70);
 
         scene.overlay().showText(55)
                 .text("Block of Experience is required to make both the Enchantment Template and the Block of Super Experience")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 1, 0));
-        scene.idle(40);
+        scene.idle(45);
 
         for (int i = 3; i <= 4; i++) {
             for (int j = 4; j >= 0; j--) {
@@ -384,11 +384,11 @@ public class ExperienceScene {
                 .attachKeyFrame()
                 .pointAt(util.vector().topOf(2, 2, 3));
         scene.overlay().showOutline(PonderPalette.BLUE, util.select().fromTo(4, 1, 3, 0, 2, 4), util.select().fromTo(4, 1, 3, 0, 2, 4), 40);
-        scene.idle(60);
+        scene.idle(65);
 
         scene.world().showSection(util.select().position(3, 2, 1), Direction.DOWN);
         scene.world().showSection(util.select().position(3, 3, 3), Direction.DOWN);
-        scene.idle(5);
+        scene.idle(10);
         scene.overlay().showText(40)
                 .text("Blaze Enchanter")
                 .attachKeyFrame()
@@ -396,11 +396,11 @@ public class ExperienceScene {
                 .pointAt(util.vector().topOf(3, 2, 1));
         scene.world().modifyBlock(util.grid().at(3, 3, 3), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED), false);
         scene.overlay().showOutline(PonderPalette.GREEN, util.select().position(3, 2, 1), util.select().position(3, 2, 1), 40);
-        scene.idle(45);
+        scene.idle(50);
 
         scene.world().showSection(util.select().position(1, 2, 1), Direction.DOWN);
         scene.world().showSection(util.select().position(1, 3, 3), Direction.DOWN);
-        scene.idle(5);
+        scene.idle(10);
         scene.overlay().showText(40)
                 .text("Blaze Forger")
                 .attachKeyFrame()
@@ -408,7 +408,7 @@ public class ExperienceScene {
                 .pointAt(util.vector().topOf(1, 2, 1));
         scene.world().modifyBlock(util.grid().at(1, 3, 3), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED), false);
         scene.overlay().showOutline(PonderPalette.GREEN, util.select().position(1, 2, 1), util.select().position(1, 2, 1), 40);
-        scene.idle(45);
+        scene.idle(50);
 
         scene.world().modifyBlock(util.grid().at(3, 3, 3), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SEETHING), false);
         scene.world().modifyBlock(util.grid().at(3, 2, 1), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED), false);
@@ -423,19 +423,19 @@ public class ExperienceScene {
                 .pointAt(util.vector().topOf(3, 3, 3));
         scene.overlay().showOutline(PonderPalette.BLUE, util.select().position(3, 3, 3), util.select().position(3, 3, 3), 40);
         scene.overlay().showOutline(PonderPalette.BLUE, util.select().position(1, 3, 3), util.select().position(1, 3, 3), 40);
-        scene.idle(60);
+        scene.idle(65);
 
         scene.overlay().showText(40)
                 .text("Super Enchanting allows you to surpass traditional enchanting limits")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(3, 3, 3));
-        scene.idle(40);
+        scene.idle(50);
 
-        scene.overlay().showText(85)
+        scene.overlay().showText(90)
                 .text("Specifically, this includes exceeding the vanilla enchantment level cap, merging conflicting enchantments, and obtaining treasure enchantments directly")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(3, 3, 3));
-        scene.idle(90);
+        scene.idle(100);
     }
 
     public static void prepare(SceneBuilder builder, SceneBuildingUtil util) {
@@ -443,40 +443,40 @@ public class ExperienceScene {
         scene.title("experience.prepare_for_super_enchant", "Prepare materials for Super Enchanting");
         scene.configureBasePlate(0, 0, 3);
         scene.showBasePlate();
-        scene.idle(5);
+        scene.idle(10);
         scene.world().showSection(util.select().fromTo(2, 1, 0, 0, 1, 2), Direction.DOWN);
-        scene.idle(5);
+        scene.idle(10);
         scene.overlay().showText(75)
                 .text("First, obtain a Block of Super Experience, which will be used to make the Super Enchanting Template. This requires Block of Experience")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(1, 1, 1));
-        scene.idle(80);
+        scene.idle(85);
         scene.overlay().showText(45)
                 .text("Next, place a Lightning Rod")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(1, 2, 1));
         scene.world().showSection(util.select().position(1, 2, 1), Direction.DOWN);
-        scene.idle(50);
+        scene.idle(55);
         scene.world().createEntity(level -> {
             var lightning = EntityType.LIGHTNING_BOLT.create(level);
             lightning.moveTo(Vec3.atBottomCenterOf(util.grid().at(1, 2, 1)));
             return lightning;
         });
         scene.world().replaceBlocks(util.select().layer(1), CEIBlocks.SUPER_EXPERIENCE_BLOCK.getDefaultState(), false);
-        scene.idle(5);
+        scene.idle(10);
         scene.overlay().showText(45)
                 .text("Lighting Strike!")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(1, 2, 1));
-        scene.idle(50);
+        scene.idle(55);
 
         scene.overlay().showText(120)
                 .text("The vast majority of lightning strikes only have a certain probability of transforming Block of Experience, and only lightning strikes caused by Super Enchanting are guaranteed to transform")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(1, 2, 1));
-        scene.idle(125);
+        scene.idle(130);
 
         scene.world().replaceBlocks(util.select().position(1, 2, 1), Blocks.AIR.defaultBlockState(), true);
         scene.world().replaceBlocks(util.select().layer(1), Blocks.AIR.defaultBlockState(), true);
@@ -491,7 +491,7 @@ public class ExperienceScene {
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(1, 1, 1));
-        scene.idle(60);
+        scene.idle(70);
         scene.overlay().showText(80)
                 .text("If Cake o' Enchanting is used to put Blaze into Super Enchanting mode, what is Block of Super Experience used for?")
                 .attachKeyFrame()
@@ -500,13 +500,13 @@ public class ExperienceScene {
                 .pointAt(util.vector().topOf(1, 1, 1));
         scene.idle(65);
         scene.world().modifyBlockEntity(util.grid().at(1, 1, 1), DepotBlockEntity.class, be -> be.setHeldItem(CEIItems.SUPER_ENCHANTING_TEMPLATE.asStack()));
-        scene.idle(20);
+        scene.idle(25);
         scene.overlay().showText(45)
                 .text("Answer: Crafting Super Enchanting Template")
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().topOf(1, 1, 1));
-        scene.idle(50);
+        scene.idle(55);
         scene.overlay().showText(80)
                 .text("In Super Enchanting mode, Blaze Forgers and Enchanters will not accept any normal Enchanting Templates and must use the Super Enchanting Template")
                 .placeNearTarget()

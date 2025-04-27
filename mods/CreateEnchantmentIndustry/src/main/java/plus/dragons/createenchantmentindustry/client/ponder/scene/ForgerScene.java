@@ -47,7 +47,7 @@ public class ForgerScene {
         scene.title("blaze_forger.intro", "Introduction to Blaze Forger");
         scene.configureBasePlate(0, 0, 5);
         scene.world().showSection(util.select().everywhere(), Direction.DOWN);
-        scene.idle(5);
+        scene.idle(10);
 
         scene.overlay().showText(60)
                 .text("This is a Blaze Forger, which functions like an Anvil")
@@ -61,7 +61,7 @@ public class ForgerScene {
         scene.idle(20);
         scene.world().modifyBlockEntity(util.grid().at(1, 1, 3), FluidTankBlockEntity.class,
                 be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 8000), IFluidHandler.FluidAction.EXECUTE));
-        scene.idle(25);
+        scene.idle(30);
 
         scene.overlay().showText(60)
                 .text("Provide it Liquid Experience to activate it")
@@ -74,14 +74,14 @@ public class ForgerScene {
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> be.getNormalTank().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000), IFluidHandler.FluidAction.EXECUTE));
         scene.world().modifyBlock(util.grid().at(2, 2, 1), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED), false);
-        scene.idle(50);
+        scene.idle(55);
 
         scene.overlay().showText(80)
                 .text("Blaze Forger can merge enchantments of the same item like an anvil, but with no Repair Cost")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
-        scene.idle(85);
+        scene.idle(90);
         var sword1 = Items.DIAMOND_SWORD.getDefaultInstance();
         var sword2 = Items.DIAMOND_SWORD.getDefaultInstance();
         CEIPonderScenes.enchant(scene, sword1, Enchantments.SWEEPING_EDGE, 1);
@@ -101,7 +101,7 @@ public class ForgerScene {
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
-        scene.idle(65);
+        scene.idle(70);
         var template1 = CEIItems.ENCHANTING_TEMPLATE.asStack();
         var template2 = CEIItems.ENCHANTING_TEMPLATE.asStack();
         CEIPonderScenes.enchant(scene, template1, Enchantments.SWEEPING_EDGE, 1);
@@ -121,7 +121,7 @@ public class ForgerScene {
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
-        scene.idle(65);
+        scene.idle(70);
         var sword3 = Items.DIAMOND_SWORD.getDefaultInstance();
         var template3 = CEIItems.ENCHANTING_TEMPLATE.asStack();
         CEIPonderScenes.enchant(scene, sword3, Enchantments.SWEEPING_EDGE, 1);
@@ -141,7 +141,7 @@ public class ForgerScene {
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
-        scene.idle(85);
+        scene.idle(90);
         var sword4 = Items.DIAMOND_SWORD.getDefaultInstance();
         CEIPonderScenes.enchant(scene, sword4, Enchantments.SWEEPING_EDGE, 2);
         CEIPonderScenes.enchant(scene, sword4, Enchantments.BANE_OF_ARTHROPODS, 2);
@@ -158,7 +158,7 @@ public class ForgerScene {
         scene.title("blaze_forger.super_enchant", "Super Enchanting with Blaze Forger");
         scene.configureBasePlate(0, 0, 5);
         scene.world().showSection(util.select().everywhere(), Direction.DOWN);
-        scene.idle(5);
+        scene.idle(10);
         scene.overlay().showText(60)
                 .colored(PonderPalette.BLUE)
                 .text("The Blaze Forger has two \"stomachs\". Feed it a Cake o' Enchanting...")
@@ -171,27 +171,27 @@ public class ForgerScene {
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> be.getSpecialTank().setFluid(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000)));
         scene.world().modifyBlock(util.grid().at(2, 2, 1), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SEETHING), false);
-        scene.idle(15);
+        scene.idle(20);
 
         scene.overlay().showText(40)
                 .text("...and it will begin seething, and enter Super Enchanting mode")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
-        scene.idle(45);
+        scene.idle(50);
 
         scene.overlay().showText(100)
                 .attachKeyFrame()
                 .text("While in Super Enchanting mode, Blaze Forger can surpass the vanilla enchantment level cap while merging enchantments. Conflicting enchantments can also be merged together")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
-        scene.idle(105);
+        scene.idle(110);
 
         scene.overlay().showText(60)
                 .text("Blaze Forger in Super Enchanting mode exclusively processes and applies Super Enchanting Templates")
                 .placeNearTarget()
                 .attachKeyFrame()
                 .pointAt(util.vector().topOf(2, 2, 1));
-        scene.idle(65);
+        scene.idle(70);
 
         scene.addKeyframe();
         scene.world().setBlock(util.grid().at(2, 2, 2), Blocks.LIGHTNING_ROD.defaultBlockState(), false);
@@ -225,7 +225,7 @@ public class ForgerScene {
                 .pointAt(util.vector().topOf(2, 2, 2));
         scene.world().modifyBlockEntity(util.grid().at(2, 2, 1), BlazeForgerBlockEntity.class,
                 be -> be.extractItem(false));
-        scene.idle(45);
+        scene.idle(50);
 
         scene.overlay().showText(80)
                 .text("You can cover the Blaze Forger with a block to avoid lightning strikes, but this may introduce Repair Cost")
@@ -239,7 +239,7 @@ public class ForgerScene {
         scene.world().setBlock(util.grid().at(2, 5, 1), Blocks.NETHERITE_BLOCK.defaultBlockState(), false);
         scene.idle(20);
         scene.world().setBlock(util.grid().at(2, 6, 1), Blocks.NETHERITE_BLOCK.defaultBlockState(), false);
-        scene.idle(25);
+        scene.idle(30);
 
         scene.overlay().showText(80)
                 .text("If no Lightning Rods are present...")

@@ -41,9 +41,9 @@ public class GrindstoneScene {
         scene.title("mechanical_grindstone.intro", "Introduction to Mechanical Grindstone");
         scene.configureBasePlate(0, 0, 5);
         scene.showBasePlate();
-        scene.idle(5);
+        scene.idle(10);
         scene.world().showSection(util.select().fromTo(4, 1, 2, 0, 1, 2), Direction.DOWN);
-        scene.idle(5);
+        scene.idle(10);
         scene.overlay().showText(50)
                 .text("Right-click an Item Drain with Mechanical Grindstone...")
                 .placeNearTarget()
@@ -61,7 +61,7 @@ public class GrindstoneScene {
         scene.idle(30);
         scene.world().showSection(util.select().position(2, 2, 2), Direction.DOWN);
         scene.overlay().showOutline(PonderPalette.GREEN, util.select().fromTo(2, 1, 2, 2, 2, 2), util.select().fromTo(2, 1, 2, 2, 2, 2), 30);
-        scene.idle(35);
+        scene.idle(40);
         scene.world().showSection(util.select().fromTo(0, 1, 0, 4, 2, 1), Direction.DOWN);
         scene.world().showSection(util.select().fromTo(0, 1, 3, 4, 2, 4), Direction.DOWN);
         scene.world().setKineticSpeed(util.select().everywhere(), -64);
@@ -82,10 +82,9 @@ public class GrindstoneScene {
         scene.title("mechanical_grindstone.extra", "Sanding with Mechanical Grindstone");
         scene.configureBasePlate(0, 0, 5);
         scene.showBasePlate();
-        scene.idle(5);
+        scene.idle(10);
         scene.world().showSection(util.select().everywhere(), Direction.DOWN);
-
-        scene.idle(5);
+        scene.idle(10);
         scene.overlay().showText(60)
                 .text("Mechanical Grindstone not only has all the features of a grindstone...")
                 .placeNearTarget()
@@ -97,7 +96,7 @@ public class GrindstoneScene {
         var sword = new ItemStack(Items.DIAMOND_SWORD);
         CEIPonderScenes.enchant(scene, sword, Enchantments.SWEEPING_EDGE, 3);
         scene.world().createItemOnBelt(util.grid().at(0, 1, 0), Direction.UP, sword);
-        scene.idle(55);
+        scene.idle(60);
 
         scene.overlay().showText(60)
                 .text("...but it also has the features of Sand Paper")
@@ -106,7 +105,7 @@ public class GrindstoneScene {
                 .pointAt(util.vector().centerOf(2, 1, 2));
         scene.idle(10);
         scene.world().createItemOnBelt(util.grid().at(0, 1, 0), Direction.UP, new ItemStack(AllItems.ROSE_QUARTZ.get()));
-        scene.idle(55);
+        scene.idle(60);
 
         scene.overlay().showText(60)
                 .text("Items can be manually applied to Mechanical Grindstone")
