@@ -18,6 +18,8 @@
 
 package plus.dragons.createenchantmentindustry.client.ponder;
 
+import static com.simibubi.create.infrastructure.ponder.AllCreatePonderTags.ARM_TARGETS;
+
 import com.simibubi.create.AllBlocks;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
@@ -25,8 +27,6 @@ import net.minecraft.resources.ResourceLocation;
 import plus.dragons.createdragonsplus.common.registry.CDPBlockEntities;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
-
-import static com.simibubi.create.infrastructure.ponder.AllCreatePonderTags.ARM_TARGETS;
 
 public class CEIPonderTags {
     public static final ResourceLocation EXPERIENCE_APPLIANCES = CEICommon.asResource("experience_appliances");

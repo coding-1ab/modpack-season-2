@@ -71,4 +71,9 @@ public class CEICommon {
     public static String asLocalization(String key) {
         return ID + "." + key;
     }
+
+    // TODO Add Ponder for automation
+    // TODO Add more Option to customize printer behavior
+    // TODO Add Experience Lantern
+    // TODO Add Experience Lantern Stats and Advancement
 }

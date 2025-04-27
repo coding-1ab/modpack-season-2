@@ -1,10 +1,10 @@
-### Create: Enchantment Industry 2.0.12
+### Create: Enchantment Industry 2.0.13
+
+Require Create: Dragons Plus 1.4.0! Which contains breaking change in code.
 
 #### Update
-* Ponder texts are now more formal and Create-style (by @IntegralPlusC)
-* Adjust appearing duration of ponder text to make it easier to read
-* Update Russian Translation by Korben
-* Update Japanese Translation by @YukkuriOfuton
+* Ponder scenes and ponder tags have been improved. Add 1 ponder scene.
+* Improve Creative Tab
 
 #### Fix
-* Fix Create Stuff 'N Additions recipes
+* Fix Recipe Serializers have wrong namespace

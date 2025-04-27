@@ -522,11 +522,11 @@ public class ExperienceScene {
         scene.scaleSceneView(0.8f);
         scene.showBasePlate();
         scene.idle(10);
-        scene.world().showSection(util.select().layer(1),Direction.DOWN);
+        scene.world().showSection(util.select().layer(1), Direction.DOWN);
         scene.idle(20);
-        scene.world().showSection(util.select().layer(2),Direction.DOWN);
+        scene.world().showSection(util.select().layer(2), Direction.DOWN);
         scene.idle(20);
-        scene.world().showSection(util.select().layer(3),Direction.DOWN);
+        scene.world().showSection(util.select().layer(3), Direction.DOWN);
         scene.idle(20);
     }
 }
