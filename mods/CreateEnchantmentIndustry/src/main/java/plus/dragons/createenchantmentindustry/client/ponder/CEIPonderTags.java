@@ -26,12 +26,14 @@ import plus.dragons.createdragonsplus.common.registry.CDPBlockEntities;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 
+import static com.simibubi.create.infrastructure.ponder.AllCreatePonderTags.ARM_TARGETS;
+
 public class CEIPonderTags {
     public static final ResourceLocation EXPERIENCE_APPLIANCES = CEICommon.asResource("experience_appliances");
     public static final ResourceLocation SUPER_EXPERIENCE_APPLIANCES = CEICommon.asResource("super_experience_related");
 
     public static void register(PonderTagRegistrationHelper<ResourceLocation> helper) {
-        PonderTagRegistrationHelper<RegistryEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
+        PonderTagRegistrationHelper<RegistryEntry<?, ?>> entryHelper = helper.withKeyFunction(RegistryEntry::getId);
 
         helper.registerTag(EXPERIENCE_APPLIANCES)
                 .addToIndex()
@@ -47,7 +49,7 @@ public class CEIPonderTags {
                 .description("Components which will be used when processing and applying Super Experience")
                 .register();
 
-        HELPER.addToTag(EXPERIENCE_APPLIANCES)
+        entryHelper.addToTag(EXPERIENCE_APPLIANCES)
                 .add(AllBlocks.ITEM_DRAIN)
                 .add(AllBlocks.SPOUT)
                 .add(CEIBlocks.MECHANICAL_GRINDSTONE)
@@ -57,7 +59,11 @@ public class CEIPonderTags {
                 .add(CEIBlocks.BLAZE_FORGER)
                 .add(CEIBlocks.PRINTER);
 
-        HELPER.addToTag(SUPER_EXPERIENCE_APPLIANCES)
+        entryHelper.addToTag(SUPER_EXPERIENCE_APPLIANCES)
+                .add(CEIBlocks.BLAZE_ENCHANTER)
+                .add(CEIBlocks.BLAZE_FORGER);
+
+        entryHelper.addToTag(ARM_TARGETS)
                 .add(CEIBlocks.BLAZE_ENCHANTER)
                 .add(CEIBlocks.BLAZE_FORGER);
     }
