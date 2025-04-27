@@ -21,6 +21,7 @@ package plus.dragons.createenchantmentindustry.common.registry;
 import static com.simibubi.create.AllBlocks.EXPERIENCE_BLOCK;
 import static com.simibubi.create.AllItems.EXP_NUGGET;
 import static plus.dragons.createdragonsplus.common.registry.CDPBlocks.FLUID_HATCH;
+import static plus.dragons.createdragonsplus.common.registry.CDPItems.BLAZE_UPGRADE_SMITHING_TEMPLATE;
 import static plus.dragons.createenchantmentindustry.common.registry.CEIBlocks.*;
 import static plus.dragons.createenchantmentindustry.common.registry.CEIItems.*;
 
@@ -68,6 +69,7 @@ public class CEICreativeModeTabs {
         output.accept(SUPER_EXPERIENCE_NUGGET);
         output.accept(ENCHANTING_TEMPLATE);
         output.accept(SUPER_ENCHANTING_TEMPLATE);
+        output.accept(BLAZE_UPGRADE_SMITHING_TEMPLATE);
         output.accept(EXPERIENCE_CAKE_BASE, TabVisibility.SEARCH_TAB_ONLY);
         output.accept(EXPERIENCE_CAKE);
         output.accept(EXPERIENCE_CAKE_SLICE);
