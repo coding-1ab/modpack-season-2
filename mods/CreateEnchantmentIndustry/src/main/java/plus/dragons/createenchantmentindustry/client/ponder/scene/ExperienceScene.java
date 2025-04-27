@@ -514,4 +514,19 @@ public class ExperienceScene {
                 .pointAt(util.vector().topOf(1, 1, 1));
         scene.idle(80);
     }
+
+    public static void beaconBase(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("experience.beacon_base_block", "As Beacon base block");
+        scene.configureBasePlate(0, 0, 7);
+        scene.scaleSceneView(0.8f);
+        scene.showBasePlate();
+        scene.idle(10);
+        scene.world().showSection(util.select().layer(1),Direction.DOWN);
+        scene.idle(20);
+        scene.world().showSection(util.select().layer(2),Direction.DOWN);
+        scene.idle(20);
+        scene.world().showSection(util.select().layer(3),Direction.DOWN);
+        scene.idle(20);
+    }
 }

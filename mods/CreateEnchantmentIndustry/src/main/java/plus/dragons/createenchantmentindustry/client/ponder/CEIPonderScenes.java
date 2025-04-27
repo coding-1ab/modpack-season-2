@@ -40,7 +40,8 @@ public class CEIPonderScenes {
         HELPER.forComponents(AllItems.EXP_NUGGET)
                 .addStoryBoard("experience/basic", ExperienceScene::basic, CEIPonderTags.EXPERIENCE_APPLIANCES)
                 .addStoryBoard("experience/advance", ExperienceScene::advance, CEIPonderTags.SUPER_EXPERIENCE_APPLIANCES)
-                .addStoryBoard("experience/prepare_for_super_enchant", ExperienceScene::prepare);
+                .addStoryBoard("experience/prepare_for_super_enchant", ExperienceScene::prepare)
+                .addStoryBoard("experience/beacon_base", ExperienceScene::beaconBase);
 
         HELPER.forComponents(CEIBlocks.EXPERIENCE_HATCH)
                 .addStoryBoard("experience_hatch", MiscScene::experienceHatch, CEIPonderTags.EXPERIENCE_APPLIANCES);
