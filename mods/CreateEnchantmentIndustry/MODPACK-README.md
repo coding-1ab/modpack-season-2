@@ -6,8 +6,12 @@
 * `create_enchantment_industry:blaze_enchanter/enchanting` contains all enchantments exclusive to Blaze Enchanter Super enchanting, which includes `minecraft:treasure` and excludes `minecraft:cures`. (Curse enchantments are still available when Blaze Forger is cursed)
 
 ## Recipe
-* `Printing` of Printer supports custom printing recipe. It is the same format as the recipe of Create, with type `create_dragons_plus:grinding`
-* `Grinding` of Mechanical Grindstone supports custom grinding recipe. It is the same format as the recipe of Create, with type `create_dragons_plus:printing`
+###  Printing
+`Printing` of Printer supports custom printing recipe. It is the same format as the recipe of Create, with type `create_dragons_plus:grinding`.  
+Template item is in 2nd position of input, printing material item is in 1st position of input.
+### Grinding
+`Grinding` of Mechanical Grindstone supports custom grinding recipe. It is the same format as the recipe of Create, with type `create_dragons_plus:printing`.   
+Grinding can have fluid as input. If recipe has fluid as input, corresponding fluid in Grindstone Drain will be consumed.
 
 ## Data Maps
 ### Item
