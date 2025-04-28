@@ -1,5 +1,6 @@
 package org.antarcticgardens.cna.content.motor;
 
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.foundation.block.IBE;
@@ -104,7 +105,7 @@ public class MotorBlock extends DirectionalKineticBlock implements IRotate, IBE<
 
             state.spawnAfterBreak((ServerLevel)world, pos, ItemStack.EMPTY, true);
             world.destroyBlock(pos, false);
-            this.playRemoveSound(world, pos);
+            IWrenchable.playRemoveSound(world, pos);
         }
 
         return InteractionResult.SUCCESS;

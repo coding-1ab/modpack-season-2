@@ -50,6 +50,8 @@ subprojects {
             modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${minecraftVersion}:${flywheelVersion}")
             modImplementation("com.simibubi.create:create-${rootProject.minecraftVersion}:${rootProject.createVersion}:slim") { transitive = false }
             modImplementation("net.createmod.ponder:Ponder-Forge-${minecraftVersion}:${ponderVersion}")
+            compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
+            implementation("io.github.llamalad7:mixinextras-forge:0.4.1")
         }
         
         modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraftVersion}-common-api:${rootProject.jeiVersion}")
@@ -72,22 +74,6 @@ subprojects {
     }
     
     loom {
-        if (project.name == "forge") {
-            forge {
-                convertAccessWideners = true
-                mixinConfigs(
-                        "create_new_age-common.mixins.json",
-                        "create.mixins.json"
-                )
-            }
-
-            runs {
-                client {
-                    property("mixin.env.remapRefMap", "true")
-                    property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
-                }
-            }
-        }
         accessWidenerPath = project(":common").file("src/main/resources/create_new_age-common.accesswidener")
     }
     
