@@ -104,29 +104,29 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                     poseStack.translate(0.5f, 0.5f, 0.5f);
                     poseStack.mulPoseMatrix(new Matrix4f().rotateTowards(model.getDirection(), model.getUp()));
                     
-//                    for (int i = 0; i < model.getSections().size(); i++) {
-//                        Pair<WireSection, Float> pair = model.getSections().get(i);
-//                        VertexList reader = pair.getFirst().getReader();
-//
-//                        float sectionOffset = model.getSectionLength() * i;
-//                        Vector3f lightPos = blockEntity.getBlockPos().getCenter().toVector3f()
-//                                .add(model.getDirection().mul(sectionOffset))
-//                                .add(model.getUp().mul(pair.getSecond()));
-//                        BlockPos lightBlockPos = BlockPos.containing(new Vec3(lightPos));
-//                        int block = blockEntity.getLevel().getBrightness(LightLayer.BLOCK, lightBlockPos);
-//                        int sky = blockEntity.getLevel().getBrightness(LightLayer.SKY, lightBlockPos);
-//
-//                        for (int j = 0; j < reader.vertexCount(); j++) {
-//                            consumer.vertex(poseStack.last().pose(), reader.x(j), reader.y(j) + pair.getSecond(), reader.z(j))
-//                                    .color(1.0f, 1.0f, 1.0f, 0.0f)
-//                                    .uv(reader.u(j), reader.v(j))
-//                                    .uv2(LightTexture.pack(block, sky))
-//                                    .normal(0.0f, 1.0f, 0.0f)
-//                                    .endVertex();
-//                        }
-//
-//                        poseStack.translate(0.0f, 0.0f, model.getSectionLength());
-//                    }
+                    for (int i = 0; i < model.getSections().size(); i++) {
+                        Pair<WireSection, Float> pair = model.getSections().get(i);
+                        VertexList reader = pair.getFirst().getReader();
+
+                        float sectionOffset = model.getSectionLength() * i;
+                        Vector3f lightPos = blockEntity.getBlockPos().getCenter().toVector3f()
+                                .add(model.getDirection().mul(sectionOffset))
+                                .add(model.getUp().mul(pair.getSecond()));
+                        BlockPos lightBlockPos = BlockPos.containing(new Vec3(lightPos));
+                        int block = blockEntity.getLevel().getBrightness(LightLayer.BLOCK, lightBlockPos);
+                        int sky = blockEntity.getLevel().getBrightness(LightLayer.SKY, lightBlockPos);
+
+                        for (int j = 0; j < reader.vertexCount(); j++) {
+                            consumer.vertex(poseStack.last().pose(), reader.x(j), reader.y(j) + pair.getSecond(), reader.z(j))
+                                    .color(1.0f, 1.0f, 1.0f, 0.0f)
+                                    .uv(reader.u(j), reader.v(j))
+                                    .uv2(LightTexture.pack(block, sky))
+                                    .normal(0.0f, 1.0f, 0.0f)
+                                    .endVertex();
+                        }
+
+                        poseStack.translate(0.0f, 0.0f, model.getSectionLength());
+                    }
 
                     poseStack.popPose();
                 }

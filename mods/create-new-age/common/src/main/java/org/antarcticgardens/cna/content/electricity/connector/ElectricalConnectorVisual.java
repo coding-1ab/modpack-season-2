@@ -3,6 +3,7 @@ package org.antarcticgardens.cna.content.electricity.connector;
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.task.Plan;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
+import dev.engine_room.flywheel.lib.instance.TransformedInstance;
 import dev.engine_room.flywheel.lib.visual.AbstractBlockEntityVisual;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
 import net.createmod.catnip.data.Pair;
@@ -57,24 +58,24 @@ public class ElectricalConnectorVisual extends AbstractBlockEntityVisual<Electri
     private List<Pair<Instance, Vec3>> createWireInstances(Wire wire, Vec3 position, ResourceLocation texture) {
         List<Pair<Instance, Vec3>> instances = new ArrayList<>();
         
-//        for (int i = 0; i < wire.getSections().size(); i++) {
-//            Pair<WireSection, Float> pair = wire.getSections().get(i);
+        for (int i = 0; i < wire.getSections().size(); i++) {
+            Pair<WireSection, Float> pair = wire.getSections().get(i);
 
-//            Instance data = instancerProvider().solid(CNARenderTypes.wire(texture))
-//                    .material(Materials.TRANSFORMED)
-//                    .model(pair.first().name(), () -> pair.first())
-//                    .createInstance();
-//
-//            PoseStack ps = new PoseStack();
-//            TransformStack ts = TransformStack.cast(ps);
-//            ts.translate(position);
-//            ps.mulPoseMatrix(new Matrix4f().rotateTowards(wire.getDirection(), wire.getUp()));
-//            ts.translate(0.0f, pair.getSecond(), wire.getSectionLength() * i);
-//            data.setTransform(ps);
-//
-//            instances.add(Pair.of(data, new Vec3(wire.getDirection()).scale(wire.getSectionLength() * i)
-//                    .add(new Vec3(wire.getUp()).scale(pair.getSecond()))));
-//        }
+            TransformedInstance data = instancerProvider().solid(CNARenderTypes.wire(texture))
+                    .material(Materials.TRANSFORMED)
+                    .model(pair.first().name(), () -> pair.first())
+                    .createInstance();
+
+            PoseStack ps = new PoseStack();
+            TransformStack ts = TransformStack.cast(ps);
+            ts.translate(position);
+            ps.mulPoseMatrix(new Matrix4f().rotateTowards(wire.getDirection(), wire.getUp()));
+            ts.translate(0.0f, pair.getSecond(), wire.getSectionLength() * i);
+            data.setTransform(ps);
+
+            instances.add(Pair.of(data, new Vec3(wire.getDirection()).scale(wire.getSectionLength() * i)
+                    .add(new Vec3(wire.getUp()).scale(pair.getSecond()))));
+        }
         
         return instances;
     }
@@ -111,10 +112,10 @@ public class ElectricalConnectorVisual extends AbstractBlockEntityVisual<Electri
 
     @Override
     public void updateLight(float partialTick) {
-//        wires.forEach((k, w) ->
-//                wireInstances.forEach((blockPos, pairs) ->
-//                        pairs.forEach(p ->
-//                                relight(BlockPos.containing(this.getVisualPosition().getCenter().add(p.getSecond())), p.getFirst()))));
+        wires.forEach((k, w) ->
+                wireInstances.forEach((blockPos, pairs) ->
+                        pairs.forEach(p ->
+                                relight(BlockPos.containing(this.getVisualPosition().getCenter().add(p.getSecond())), p.getFirst()))));
     }
 
     @Override
