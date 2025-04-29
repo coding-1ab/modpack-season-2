@@ -180,6 +180,10 @@ public abstract class ShaderInstanceMixin implements Shader {
                 }
 
                 for (int j = 0; j < length; j++) {
+                    if (length > 1) {
+                        name = name.substring(0, name.indexOf('[')) + '[' + j + ']';
+                    }
+
                     int location = Uniform.glGetUniformLocation(this.programId, name);
                     if (location == -1) {
                         // If the length is not 1, then it must be another mod adding a uniform block, so ignore
@@ -193,10 +197,6 @@ public abstract class ShaderInstanceMixin implements Shader {
                             old.close();
                         }
                         continue;
-                    }
-
-                    if (length > 1) {
-                        name = name.substring(0, name.indexOf('[')) + '[' + j + ']';
                     }
 
                     Veil.LOGGER.debug("Shader {} detected uniform: {}", this.name, typeName + " " + name);
