@@ -16,10 +16,6 @@ javadoc {
     options.addStringOption('Xdoclint:none', '-quiet')
 }
 
-if (System.getenv('BUILD_NUMBER') != null) {
-    version += "." + System.getenv('BUILD_NUMBER')
-}
-
 repositories {
 //    mavenLocal()
     mavenCentral()
