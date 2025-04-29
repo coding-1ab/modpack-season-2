@@ -79,8 +79,7 @@ public class ExperienceScene {
 
         // Show Exp Block
         scene.idle(10);
-        scene.world().showSection(util.select().fromTo(11, 1, 6, 10, 1, 8), Direction.DOWN);
-        scene.world().showSection(util.select().position(9, 1, 8), Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(11, 1, 6, 10, 1, 8).add(util.select().position(9, 1, 8)), Direction.DOWN);
         scene.idle(10);
         scene.world().showSection(util.select().fromTo(8, 1, 9, 6, 1, 11), Direction.DOWN);
         scene.idle(10);
@@ -116,10 +115,10 @@ public class ExperienceScene {
                 .colored(PonderPalette.GREEN)
                 .independent();
 
-        scene.world().showSection(util.select().fromTo(9, 1, 2, 9, 1, 7), Direction.DOWN);
-        scene.world().showSection(util.select().position(9, 2, 3), Direction.DOWN);
-        scene.world().showSection(util.select().fromTo(8, 1, 2, 8, 1, 4), Direction.DOWN);
-        scene.world().showSection(util.select().position(7, 1, 3), Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(9, 1, 2, 9, 1, 7)
+                .add(util.select().fromTo(8, 1, 2, 8, 1, 4))
+                .add(util.select().position(9, 2, 3))
+                .add(util.select().position(7, 1, 3)), Direction.DOWN);
         scene.idle(20);
 
         // Item Drain
@@ -133,8 +132,7 @@ public class ExperienceScene {
                 .pointAt(util.vector().topOf(9, 2, 2));
         scene.overlay().showOutline(PonderPalette.GREEN, itemDrain, itemDrain, 50);
 
-        scene.world().showSection(util.select().fromTo(7, 1, 2, 0, 1, 2), Direction.DOWN);
-        scene.world().showSection(util.select().position(8, 2, 2), Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(7, 1, 2, 0, 1, 2).add(util.select().position(8, 2, 2)), Direction.DOWN);
         scene.idle(5);
         scene.world().showSection(util.select().fromTo(11, 1, 2, 10, 2, 2), Direction.DOWN);
         scene.idle(5);
@@ -154,17 +152,16 @@ public class ExperienceScene {
                 .pointAt(util.vector().topOf(9, 3, 4));
         scene.overlay().showOutline(PonderPalette.GREEN, grindStoneDrain, grindStoneDrain, 60);
 
-        scene.world().showSection(util.select().fromTo(7, 1, 4, 0, 2, 4), Direction.DOWN);
-        scene.world().showSection(util.select().position(9, 3, 4), Direction.DOWN);
-        scene.world().showSection(util.select().position(8, 2, 4), Direction.DOWN);
-        scene.world().showSection(util.select().fromTo(3, 1, 3, 3, 1, 11), Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(7, 1, 4, 0, 2, 4)
+                .add(util.select().fromTo(3, 1, 3, 3, 1, 11))
+                .add(util.select().position(9, 3, 4))
+                .add(util.select().position(8, 2, 4)), Direction.DOWN);
         scene.idle(5);
         scene.world().showSection(util.select().fromTo(11, 1, 4, 10, 2, 4), Direction.DOWN);
         scene.idle(5);
-        scene.world().setKineticSpeed(util.select().fromTo(11, 1, 4, 3, 2, 4), -64f);
-        scene.world().setKineticSpeed(util.select().fromTo(2, 1, 4, 0, 1, 4), 64f);
-        scene.world().setKineticSpeed(util.select().position(9, 3, 4), 64f);
-        scene.world().setKineticSpeed(util.select().fromTo(3, 1, 3, 3, 1, 11), -64f);
+        scene.world().setKineticSpeed(util.select().fromTo(11, 1, 4, 3, 2, 4)
+                .add(util.select().fromTo(3, 1, 3, 3, 1, 11)), -64f);
+        scene.world().setKineticSpeed(util.select().fromTo(2, 1, 4, 0, 1, 4).add(util.select().position(9, 3, 4)), 64f);
         scene.world().setKineticSpeed(util.select().position(9, 1, 7), 48f);
         scene.world().propagatePipeChange(util.grid().at(9, 1, 7));
         scene.world().modifyBlockEntity(util.grid().at(3, 2, 4), BrassTunnelBlockEntity.class,
@@ -178,8 +175,7 @@ public class ExperienceScene {
         scene.idle(15);
 
         // Crushing Wheel
-        scene.world().showSection(util.select().column(2, 11), Direction.DOWN);
-        scene.world().showSection(util.select().fromTo(4, 1, 11, 4, 3, 11), Direction.DOWN);
+        scene.world().showSection(util.select().column(2, 11).add(util.select().fromTo(4, 1, 11, 4, 3, 11)), Direction.DOWN);
         scene.idle(10);
         var crushingWheel = util.select().fromTo(5, 2, 10, 1, 4, 10);
         scene.world().showSection(crushingWheel, Direction.NORTH);
@@ -244,9 +240,7 @@ public class ExperienceScene {
         scene.world().showSection(util.select().position(5, 2, 8), Direction.DOWN);
         scene.world().setKineticSpeed(util.select().fromTo(5, 1, 8, 4, 2, 8), 64f);
         scene.idle(5);
-        scene.world().showSection(util.select().fromTo(7, 2, 5, 5, 3, 7), Direction.DOWN);
-        scene.world().showSection(util.select().position(5, 3, 8), Direction.DOWN);
-        scene.world().showSection(util.select().column(7, 8), Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(7, 2, 5, 5, 3, 7).add(util.select().position(5, 3, 8).add(util.select().column(7, 8))), Direction.DOWN);
         scene.idle(5);
 
         ItemStack sword = new ItemStack(Items.NETHERITE_SWORD);
@@ -299,11 +293,9 @@ public class ExperienceScene {
         scene.idle(20);
 
         // spout
-        scene.world().showSection(util.select().fromTo(11, 7, 0, 11, 7, 8), Direction.SOUTH);
-        scene.world().showSection(util.select().fromTo(11, 2, 0, 2, 7, 0), Direction.SOUTH);
+        scene.world().showSection(util.select().fromTo(11, 7, 0, 11, 7, 8).add(util.select().fromTo(11, 2, 0, 2, 7, 0)), Direction.SOUTH);
         scene.idle(10);
-        scene.world().setKineticSpeed(util.select().position(6, 2, 0), 256f);
-        scene.world().setKineticSpeed(util.select().position(11, 7, 2), 256f);
+        scene.world().setKineticSpeed(util.select().position(6, 2, 0).add(util.select().position(11, 7, 2)), 256f);
         scene.world().propagatePipeChange(util.grid().at(6, 2, 0));
         scene.world().propagatePipeChange(util.grid().at(11, 7, 2));
         var spout = util.select().position(2, 3, 0);
@@ -386,8 +378,7 @@ public class ExperienceScene {
         scene.overlay().showOutline(PonderPalette.BLUE, util.select().fromTo(4, 1, 3, 0, 2, 4), util.select().fromTo(4, 1, 3, 0, 2, 4), 40);
         scene.idle(65);
 
-        scene.world().showSection(util.select().position(3, 2, 1), Direction.DOWN);
-        scene.world().showSection(util.select().position(3, 3, 3), Direction.DOWN);
+        scene.world().showSection(util.select().position(3, 2, 1).add(util.select().position(3, 3, 3)), Direction.DOWN);
         scene.idle(10);
         scene.overlay().showText(40)
                 .text("Blaze Enchanter")
@@ -398,8 +389,7 @@ public class ExperienceScene {
         scene.overlay().showOutline(PonderPalette.GREEN, util.select().position(3, 2, 1), util.select().position(3, 2, 1), 40);
         scene.idle(50);
 
-        scene.world().showSection(util.select().position(1, 2, 1), Direction.DOWN);
-        scene.world().showSection(util.select().position(1, 3, 3), Direction.DOWN);
+        scene.world().showSection(util.select().position(1, 2, 1).add(util.select().position(1, 3, 3)), Direction.DOWN);
         scene.idle(10);
         scene.overlay().showText(40)
                 .text("Blaze Forger")

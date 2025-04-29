@@ -62,8 +62,8 @@ public class GrindstoneScene {
         scene.world().showSection(util.select().position(2, 2, 2), Direction.DOWN);
         scene.overlay().showOutline(PonderPalette.GREEN, util.select().fromTo(2, 1, 2, 2, 2, 2), util.select().fromTo(2, 1, 2, 2, 2, 2), 30);
         scene.idle(40);
-        scene.world().showSection(util.select().fromTo(0, 1, 0, 4, 2, 1), Direction.DOWN);
-        scene.world().showSection(util.select().fromTo(0, 1, 3, 4, 2, 4), Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(0, 1, 0, 4, 2, 1)
+                .add(util.select().fromTo(0, 1, 3, 4, 2, 4)), Direction.DOWN);
         scene.world().setKineticSpeed(util.select().everywhere(), -64);
         scene.world().setKineticSpeed(util.select().fromTo(2, 2, 2, 2, 2, 3), 64);
         scene.overlay().showText(60)
@@ -90,8 +90,7 @@ public class GrindstoneScene {
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(2, 2, 2));
         scene.world().setKineticSpeed(util.select().everywhere(), 128);
-        scene.world().setKineticSpeed(util.select().position(2, 2, 2), -128);
-        scene.world().setKineticSpeed(util.select().fromTo(0, 1, 0, 3, 1, 0), -128);
+        scene.world().setKineticSpeed(util.select().fromTo(0, 1, 0, 3, 1, 0).add(util.select().position(2, 2, 2)), -128);
         scene.idle(10);
         var sword = new ItemStack(Items.DIAMOND_SWORD);
         CEIPonderScenes.enchant(scene, sword, Enchantments.SWEEPING_EDGE, 3);

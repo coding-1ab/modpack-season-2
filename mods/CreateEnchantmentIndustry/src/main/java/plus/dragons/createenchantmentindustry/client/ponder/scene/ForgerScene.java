@@ -20,6 +20,8 @@ package plus.dragons.createenchantmentindustry.client.ponder.scene;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
+import com.simibubi.create.content.kinetics.mechanicalArm.ArmBlockEntity;
+import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createmod.catnip.math.Pointing;
@@ -28,6 +30,7 @@ import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
@@ -271,6 +274,111 @@ public class ForgerScene {
             return lightning;
         });
         scene.world().setBlock(util.grid().at(2, 2, 1), AllBlocks.LIT_BLAZE_BURNER.getDefaultState(), false);
+        scene.idle(20);
+    }
+
+    public static void automate(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("blaze_forger.automate", "Automating with Mechanical Arm");
+        scene.configureBasePlate(0, 0, 5);
+        scene.showBasePlate();
+        scene.world().showSection(util.select().position(2, 1, 2), Direction.DOWN);
+        scene.idle(10);
+
+        var input = util.grid().at(4, 1, 1);
+        var inputDepot = util.select().position(4, 1, 1);
+        var input2 = util.grid().at(2, 1, 4);
+        var inputDepot2 = util.select().position(2, 1, 4);
+        var armPos = util.grid().at(4, 1, 3);
+        var arm = util.select().position(4, 1, 3);
+        var enchanter = util.select().position(2, 1, 2);
+        scene.world().modifyBlockEntity(input, DepotBlockEntity.class,
+                depot -> depot.setHeldItem(Items.DIAMOND_SWORD.getDefaultInstance()));
+        var template = CEIItems.ENCHANTING_TEMPLATE.asStack();
+        CEIPonderScenes.enchant(scene, template, Enchantments.SWEEPING_EDGE, 3);
+        scene.world().modifyBlockEntity(input2, DepotBlockEntity.class,
+                depot -> depot.setHeldItem(template));
+
+        scene.world().showSection(arm.add(inputDepot).add(inputDepot2), Direction.DOWN);
+        scene.idle(10);
+        scene.world().setKineticSpeed(arm, 128);
+        scene.overlay().showText(60)
+                .text("Blaze Forger can be automated with Mechanical Arm")
+                .pointAt(util.vector().centerOf(2, 1, 2));
+        scene.overlay().showOutline(PonderPalette.INPUT, inputDepot, inputDepot.add(inputDepot2), 40);
+        scene.overlay().showOutline(PonderPalette.OUTPUT, enchanter, enchanter, 40);
+        scene.idle(70);
+
+        scene.overlay().showText(60)
+                .text("Mechanical Arm can insert item for forging")
+                .attachKeyFrame();
+        scene.world().instructArm(armPos, ArmBlockEntity.Phase.MOVE_TO_INPUT, ItemStack.EMPTY, 0);
+        scene.idle(20);
+        scene.world().modifyBlockEntity(input, DepotBlockEntity.class, depot -> depot.setHeldItem(ItemStack.EMPTY));
+        scene.world().instructArm(armPos, ArmBlockEntity.Phase.SEARCH_OUTPUTS, Items.DIAMOND_SWORD.getDefaultInstance(), -1);
+        scene.idle(20);
+        scene.world().instructArm(armPos, ArmBlockEntity.Phase.MOVE_TO_OUTPUT, Items.DIAMOND_SWORD.getDefaultInstance(), 0);
+        scene.idle(20);
+        scene.world().modifyBlockEntity(util.grid().at(2, 1, 2), BlazeForgerBlockEntity.class,
+                be -> be.insertItem(Items.DIAMOND_SWORD.getDefaultInstance(), false));
+        scene.world().instructArm(armPos, ArmBlockEntity.Phase.MOVE_TO_INPUT, ItemStack.EMPTY, -1);
+        scene.idle(20);
+        scene.world().instructArm(armPos, ArmBlockEntity.Phase.MOVE_TO_INPUT, ItemStack.EMPTY, 1);
+        scene.idle(20);
+        scene.world().modifyBlockEntity(input2, DepotBlockEntity.class, depot -> depot.setHeldItem(ItemStack.EMPTY));
+        scene.world().instructArm(armPos, ArmBlockEntity.Phase.SEARCH_OUTPUTS, template, -1);
+        scene.idle(20);
+        scene.world().instructArm(armPos, ArmBlockEntity.Phase.MOVE_TO_OUTPUT, template, 0);
+        scene.idle(20);
+        scene.world().modifyBlockEntity(util.grid().at(2, 1, 2), BlazeForgerBlockEntity.class,
+                be -> be.insertItem(template, false));
+        scene.world().instructArm(armPos, ArmBlockEntity.Phase.MOVE_TO_INPUT, ItemStack.EMPTY, -1);
+        scene.idle(50);
+
+        scene.overlay().showText(60)
+                .text("Mechanical Arm also can feed experience fuel")
+                .attachKeyFrame();
+        scene.world().modifyBlockEntity(input, DepotBlockEntity.class,
+                depot -> depot.setHeldItem(CEIItems.EXPERIENCE_CAKE.asStack()));
+        scene.idle(10);
+        scene.world().instructArm(armPos, ArmBlockEntity.Phase.MOVE_TO_INPUT, ItemStack.EMPTY, 0);
+        scene.idle(20);
+        scene.world().modifyBlockEntity(input, DepotBlockEntity.class, depot -> depot.setHeldItem(ItemStack.EMPTY));
+        scene.world().instructArm(armPos, ArmBlockEntity.Phase.SEARCH_OUTPUTS, CEIItems.EXPERIENCE_CAKE.asStack(), -1);
+        scene.idle(20);
+        scene.world().instructArm(armPos, ArmBlockEntity.Phase.MOVE_TO_OUTPUT, CEIItems.EXPERIENCE_CAKE.asStack(), 0);
+        scene.idle(20);
+        scene.world().modifyBlockEntity(util.grid().at(2, 1, 2), BlazeForgerBlockEntity.class,
+                be -> be.getSpecialTank().setFluid(new FluidStack(CEIFluids.EXPERIENCE.get(), 4000)));
+        scene.world().modifyBlock(util.grid().at(2, 1, 2), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SEETHING), false);
+        scene.world().instructArm(armPos, ArmBlockEntity.Phase.MOVE_TO_INPUT, ItemStack.EMPTY, -1);
+        scene.idle(20);
+
+        var output = util.grid().at(0, 1, 1);
+        var outputPos = util.select().position(0, 1, 1);
+        var armPos2 = util.grid().at(0, 1, 3);
+        var arm2 = util.select().position(0, 1, 3);
+        scene.world().showSection(arm2.add(outputPos), Direction.DOWN);
+        scene.idle(10);
+        scene.world().setKineticSpeed(arm2, 128);
+        scene.overlay().showText(60)
+                .text("Mechanical Arm can extract forged item")
+                .attachKeyFrame();
+        var enchanted = Items.DIAMOND_SWORD.getDefaultInstance();
+        CEIPonderScenes.enchant(scene, enchanted, Enchantments.SWEEPING_EDGE, 3);
+        scene.overlay().showOutline(PonderPalette.INPUT, enchanter, enchanter, 40);
+        scene.overlay().showOutline(PonderPalette.OUTPUT, outputPos, outputPos, 40);
+        scene.idle(40);
+        scene.world().instructArm(armPos2, ArmBlockEntity.Phase.MOVE_TO_INPUT, ItemStack.EMPTY, 0);
+        scene.idle(20);
+        scene.world().modifyBlockEntity(util.grid().at(2, 1, 2), BlazeForgerBlockEntity.class,
+                be -> be.extractItem(false));
+        scene.world().instructArm(armPos2, ArmBlockEntity.Phase.SEARCH_OUTPUTS, enchanted, -1);
+        scene.idle(20);
+        scene.world().instructArm(armPos2, ArmBlockEntity.Phase.MOVE_TO_OUTPUT, enchanted, 0);
+        scene.idle(20);
+        scene.world().instructArm(armPos2, ArmBlockEntity.Phase.MOVE_TO_INPUT, ItemStack.EMPTY, -1);
+        scene.world().modifyBlockEntity(output, DepotBlockEntity.class, depot -> depot.setHeldItem(enchanted));
         scene.idle(20);
     }
 }

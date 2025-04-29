@@ -52,9 +52,9 @@ public class MiscScene {
         scene.configureBasePlate(0, 0, 4);
         scene.showBasePlate();
         scene.idle(10);
-        scene.world().showSection(util.select().fromTo(3, 1, 1, 1, 1, 3), Direction.DOWN);
-        scene.world().showSection(util.select().fromTo(3, 2, 2, 2, 3, 3), Direction.DOWN);
-        scene.world().showSection(util.select().position(1, 3, 2), Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(3, 1, 1, 1, 1, 3)
+                .add(util.select().fromTo(3, 2, 2, 2, 3, 3))
+                .add(util.select().position(1, 3, 2)), Direction.DOWN);
         scene.idle(10);
 
         scene.overlay().showText(50)
@@ -138,9 +138,9 @@ public class MiscScene {
         scene.title("printer.intro", "Introduction to Printer");
         scene.configureBasePlate(1, 1, 3);
         scene.idle(10);
-        scene.world().showSection(util.select().fromTo(1, 0, 1, 3, 0, 3), Direction.DOWN);
-        scene.world().showSection(util.select().position(2, 1, 2), Direction.DOWN);
-        scene.world().showSection(util.select().position(2, 3, 2), Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(1, 0, 1, 3, 0, 3)
+                .add(util.select().position(2, 1, 2))
+                .add(util.select().position(2, 3, 2)), Direction.DOWN);
         scene.idle(10);
 
         scene.overlay().showText(40)
@@ -170,9 +170,9 @@ public class MiscScene {
                 .attachKeyFrame()
                 .pointAt(util.vector().centerOf(2, 3, 2));
         scene.idle(10);
-        scene.world().showSection(util.select().column(4, 2), Direction.WEST);
-        scene.world().showSection(util.select().position(4, 0, 2), Direction.WEST);
-        scene.world().showSection(util.select().position(3, 3, 2), Direction.WEST);
+        scene.world().showSection(util.select().column(4, 2)
+                .add(util.select().position(4, 0, 2))
+                .add(util.select().position(3, 3, 2)), Direction.WEST);
         scene.idle(20);
         scene.world().setKineticSpeed(util.select().position(3, 3, 2), 128f);
         scene.idle(20);

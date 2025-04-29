@@ -51,12 +51,14 @@ public class CEIPonderScenes {
                 .addStoryBoard("grindstone/extra", GrindstoneScene::extra);
 
         HELPER.forComponents(CEIBlocks.BLAZE_ENCHANTER)
-                .addStoryBoard("enchanter", EnchanterScene::basic, CEIPonderTags.EXPERIENCE_APPLIANCES, AllCreatePonderTags.ARM_TARGETS)
-                .addStoryBoard("enchanter", EnchanterScene::superEnchant, CEIPonderTags.SUPER_EXPERIENCE_APPLIANCES);
+                .addStoryBoard("enchanter", EnchanterScene::basic, CEIPonderTags.EXPERIENCE_APPLIANCES)
+                .addStoryBoard("enchanter", EnchanterScene::superEnchant, CEIPonderTags.SUPER_EXPERIENCE_APPLIANCES)
+                .addStoryBoard("automate_enchanter", EnchanterScene::automate, AllCreatePonderTags.ARM_TARGETS);
 
         HELPER.forComponents(CEIBlocks.BLAZE_FORGER)
-                .addStoryBoard("forger", ForgerScene::basic, CEIPonderTags.EXPERIENCE_APPLIANCES, AllCreatePonderTags.ARM_TARGETS)
-                .addStoryBoard("forger", ForgerScene::superEnchant, CEIPonderTags.SUPER_EXPERIENCE_APPLIANCES);
+                .addStoryBoard("forger", ForgerScene::basic, CEIPonderTags.EXPERIENCE_APPLIANCES)
+                .addStoryBoard("forger", ForgerScene::superEnchant, CEIPonderTags.SUPER_EXPERIENCE_APPLIANCES)
+                .addStoryBoard("automate_forger", ForgerScene::automate, AllCreatePonderTags.ARM_TARGETS);
 
         HELPER.forComponents(CEIBlocks.PRINTER)
                 .addStoryBoard("printer", MiscScene::printer, CEIPonderTags.EXPERIENCE_APPLIANCES);
