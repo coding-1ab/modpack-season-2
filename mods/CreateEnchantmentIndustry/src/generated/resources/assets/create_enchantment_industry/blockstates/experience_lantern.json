@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "create_enchantment_industry:block/experience_lantern",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "create_enchantment_industry:block/experience_lantern",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "create_enchantment_industry:block/experience_lantern",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "create_enchantment_industry:block/experience_lantern",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "create_enchantment_industry:block/experience_lantern"
+    },
+    "facing=west": {
+      "model": "create_enchantment_industry:block/experience_lantern",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

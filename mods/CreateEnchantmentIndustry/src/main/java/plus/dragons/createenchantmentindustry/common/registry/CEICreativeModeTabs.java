@@ -60,6 +60,7 @@ public class CEICreativeModeTabs {
         output.accept(MECHANICAL_GRINDSTONE);
         output.accept(FLUID_HATCH);
         output.accept(EXPERIENCE_HATCH);
+        output.accept(EXPERIENCE_LANTERN);
         output.accept(PRINTER);
         output.accept(BLAZE_ENCHANTER);
         output.accept(BLAZE_FORGER);

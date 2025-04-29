@@ -43,6 +43,14 @@ public class CEIFluidsConfig extends ConfigBase {
             "blazeForgerFluidCapacity",
             Comments.blazeForgerFluidCapacity,
             RequiresRestart.SERVER.asComment());
+    public final ConfigInt experienceLanternFluidCapacity = i(1000, 100,
+            "experienceLanternFluidCapacity",
+            Comments.experienceLanternFluidCapacity,
+            RequiresRestart.SERVER.asComment());
+    public final ConfigInt experienceLanternDrainRate = i(50, 1,
+            "experienceLanternDrainRate",
+            Comments.experienceLanternDrainRate,
+            RequiresRestart.SERVER.asComment());
 
     @Override
     public String getName() {
@@ -57,5 +65,7 @@ public class CEIFluidsConfig extends ConfigBase {
                 "value of 1 will prevent copying copy of copy";
         static final String blazeEnchanterFluidCapacity = "The amount of liquid a Blaze Enchanter can hold (mB).";
         static final String blazeForgerFluidCapacity = "The amount of liquid a Blaze Forger can hold (mB).";
+        static final String experienceLanternFluidCapacity = "The amount of liquid an Experience Lantern can hold (mB).";
+        static final String experienceLanternDrainRate = "The amount of Experience an Experience Lantern can drain from player per 0.5 tick (mB).";
     }
 }

@@ -47,6 +47,7 @@ import net.neoforged.neoforge.common.util.DeferredSoundType;
 import plus.dragons.createdragonsplus.common.processing.blaze.BlazeBlock;
 import plus.dragons.createdragonsplus.common.processing.blaze.BlazeMovementBehaviour;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHatchBlock;
+import plus.dragons.createenchantmentindustry.common.fluids.lantern.ExperienceLanternBlock;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlock;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindstoneDrainBlock;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.MechanicalGrindStoneItem;
@@ -151,6 +152,15 @@ public class CEIBlocks {
             .properties(p -> p.rarity(Rarity.RARE))
             .tag(Tags.Items.STORAGE_BLOCKS)
             .build()
+            .register();
+    public static final BlockEntry<ExperienceLanternBlock> EXPERIENCE_LANTERN = REGISTRATE
+            .block("experience_lantern",ExperienceLanternBlock::new)
+            .initialProperties(SharedProperties::softMetal)
+            .properties(p -> p.mapColor(MapColor.COLOR_LIGHT_GREEN))
+            .transform(pickaxeOnly())
+            .addLayer(() -> RenderType::cutoutMipped)
+            .blockstate((ctx, prov) -> prov.directionalBlock(ctx.get(), AssetLookup.standardModel(ctx, prov)))
+            .simpleItem()
             .register();
 
     public static void register(IEventBus modBus) {}

@@ -32,6 +32,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import plus.dragons.createdragonsplus.common.processing.blaze.BlazeBlockVisual;
 import plus.dragons.createenchantmentindustry.client.model.CEIPartialModels;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHatchBlockEntity;
+import plus.dragons.createenchantmentindustry.common.fluids.lantern.ExperienceLanternBlockEntity;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterRenderer;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindstoneDrainBlockEntity;
@@ -76,6 +77,10 @@ public class CEIBlockEntities {
             .renderer(() -> BlazeForgerRenderer::new)
             .validBlock(CEIBlocks.BLAZE_FORGER)
             .register();
+    public static final BlockEntityEntry<ExperienceLanternBlockEntity> EXPERIENCE_LANTERN = REGISTRATE
+            .blockEntity("experience_lantern", ExperienceLanternBlockEntity::new)
+            .validBlock(CEIBlocks.EXPERIENCE_LANTERN)
+            .register();
 
     public static void register(IEventBus modBus) {
         modBus.register(CEIBlockEntities.class);
@@ -93,5 +98,7 @@ public class CEIBlockEntities {
                 BLAZE_ENCHANTER.get(), BlazeEnchanterBlockEntity::getFluidHandler);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
                 BLAZE_FORGER.get(), BlazeForgerBlockEntity::getFluidHandler);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
+                EXPERIENCE_LANTERN.get(), ExperienceLanternBlockEntity::getFluidHandler);
     }
 }

@@ -1,0 +1,135 @@
+package plus.dragons.createenchantmentindustry.common.fluids.lantern;
+
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import org.jetbrains.annotations.Nullable;
+import plus.dragons.createdragonsplus.common.fluids.tank.ConfigurableFluidTank;
+import plus.dragons.createdragonsplus.common.fluids.tank.FluidTankBehaviour;
+import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
+import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
+import plus.dragons.createenchantmentindustry.config.CEIConfig;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+
+import static net.minecraft.world.level.block.DirectionalBlock.FACING;
+
+public class ExperienceLanternBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
+    protected FluidTankBehaviour tanks;
+    protected AABB effectiveAABB;
+    protected int rate;
+
+    public ExperienceLanternBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+        effectiveAABB = new AABB(getBlockPos()).inflate(0.5);
+        rate = CEIConfig.fluids().experienceLanternDrainRate.get();
+    }
+
+
+    protected ConfigurableFluidTank createTank(Consumer<FluidStack> fluidUpdateCallback) {
+        return new ConfigurableFluidTank(CEIConfig.fluids().experienceLanternFluidCapacity.get(), fluidUpdateCallback.andThen(this::onFluidStackChanged))
+                .allowInsertion(fluidStack -> fluidStack.is(CEIFluids.EXPERIENCE));
+    }
+
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (!level.isClientSide && level.getGameTime() % 10 == 0) {
+            drainExp();
+        }
+    }
+
+    protected void drainExp() {
+        List<Player> players = level.getEntitiesOfClass(Player.class, effectiveAABB, player -> player.isAlive() && !player.isSpectator());
+        if (!players.isEmpty()) {
+            AtomicInteger sum = new AtomicInteger();
+            players.forEach(player -> {
+                var playerExp = ExperienceHelper.getExperienceForPlayer(player);
+                if (playerExp >= rate) sum.addAndGet(rate);
+                else if (playerExp != 0) sum.addAndGet(playerExp);
+            });
+            if (sum.get() != 0) {
+                var inserted = tanks.getPrimaryHandler().fill(new FluidStack(CEIFluids.EXPERIENCE, sum.get()), IFluidHandler.FluidAction.EXECUTE);
+                if (inserted != 0) {
+                    for (var player : players) {
+                        var total = ExperienceHelper.getExperienceForPlayer(player);
+                        if (inserted >= rate) {
+                            if (total >= rate) {
+                                player.giveExperiencePoints(-rate);
+                                inserted -= rate;
+                            } else if (total != 0) {
+                                inserted -= total;
+                                player.giveExperiencePoints(-total);
+                            }
+                        } else if (inserted > 0) {
+                            if (total >= inserted) {
+                                player.giveExperiencePoints(-inserted);
+                                inserted = 0;
+                            } else {
+                                inserted -= total;
+                                player.giveExperiencePoints(-total);
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        List<ExperienceOrb> experienceOrbs = level.getEntitiesOfClass(ExperienceOrb.class, effectiveAABB);
+        if (!experienceOrbs.isEmpty()) {
+            for (var orb : experienceOrbs) {
+                var amount = orb.value;
+                var fluidStack = new FluidStack(CEIFluids.EXPERIENCE.get(), amount);
+                var inserted = tanks.getPrimaryHandler().fill(fluidStack, IFluidHandler.FluidAction.EXECUTE);
+                if (inserted == amount) {
+                    orb.remove(Entity.RemovalReason.DISCARDED);
+                } else {
+                    if (inserted != 0) {
+                        orb.value -= inserted;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+
+    @Override
+    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+        tanks = new FluidTankBehaviour(this, this::createTank);
+        behaviours.add(tanks);
+    }
+
+    protected void onFluidStackChanged(FluidStack newFluidStack) {
+        int light = ((int) (((float) tanks.getPrimaryTank().tank.getFluid().getAmount() / tanks.getPrimaryTank().tank.getCapacity()) * 15f));
+        light = Math.min(Math.max(0, light),15);
+        level.setBlockAndUpdate(getBlockPos(),getBlockState().setValue(ExperienceLanternBlock.LIGHT, light));
+    }
+
+    public @Nullable IFluidHandler getFluidHandler(@Nullable Direction side) {
+        if (side == null || side.getOpposite() == getBlockState().getValue(FACING))
+            return tanks.getCapability();
+        return null;
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        return containedFluidTooltip(tooltip, isPlayerSneaking, level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition, null));
+    }
+}
