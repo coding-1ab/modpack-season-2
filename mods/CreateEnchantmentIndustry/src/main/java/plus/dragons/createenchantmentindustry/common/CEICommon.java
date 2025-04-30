@@ -75,5 +75,4 @@ public class CEICommon {
 
     // TODO Add more Option to customize printer behavior
     // TODO Add Experience Lantern Stats and Advancement
-    // TODO ADD Experience Lantern Ponder
 }

@@ -62,6 +62,9 @@ public class CEIPonderScenes {
 
         HELPER.forComponents(CEIBlocks.PRINTER)
                 .addStoryBoard("printer", MiscScene::printer, CEIPonderTags.EXPERIENCE_APPLIANCES);
+
+        HELPER.forComponents(CEIBlocks.EXPERIENCE_LANTERN)
+                .addStoryBoard("experience_lantern", MiscScene::experienceLantern, CEIPonderTags.EXPERIENCE_APPLIANCES, AllCreatePonderTags.CONTRAPTION_ACTOR);
     }
 
     public static void enchant(CreateSceneBuilder scene, ItemStack item, ResourceKey<Enchantment> enchantment, int level) {

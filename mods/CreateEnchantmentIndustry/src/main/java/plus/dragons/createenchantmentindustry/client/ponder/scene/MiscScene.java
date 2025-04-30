@@ -25,6 +25,8 @@ import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import java.util.List;
 import net.createmod.catnip.math.Pointing;
+import net.createmod.ponder.api.element.ElementLink;
+import net.createmod.ponder.api.element.WorldSectionElement;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.minecraft.core.Direction;
@@ -36,6 +38,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.WrittenBookContent;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import plus.dragons.createdragonsplus.common.registry.CDPFluids;
@@ -242,5 +245,47 @@ public class MiscScene {
                 .attachKeyFrame()
                 .independent();
         scene.idle(80);
+    }
+
+    public static void experienceLantern(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("experience_lantern.intro", "Introduction to Experience Lantern");
+        scene.configureBasePlate(0, 0, 5);
+        scene.showBasePlate();
+        var lantern = scene.world().showIndependentSection(util.select().position(2,6,2),Direction.DOWN);
+        scene.world().moveSection(lantern,new Vec3(0,-5,0),0);
+        scene.idle(10);
+
+        scene.overlay().showText(100)
+                .text("Experience Lantern absorbs experience from nearby players and experience orb. It glows according to the amount of experience stored internally")
+                .placeNearTarget()
+                .pointAt(util.vector().centerOf(2,1,2));
+        scene.idle(100);
+        scene.world().hideIndependentSection(lantern,Direction.UP);
+        scene.idle(10);
+
+        var contraptionSelection = util.select().fromTo(0, 1, 0, 4, 3, 4);
+        scene.world().showSection(util.select().fromTo(2,4,2,2,5,2), Direction.DOWN);
+        ElementLink<WorldSectionElement> contraption = scene.world().showIndependentSection(contraptionSelection, Direction.DOWN);
+        scene.idle(10);
+
+        scene.world().configureCenterOfRotation(contraption, util.vector().centerOf(2, 4, 2));
+        scene.overlay().showText(60)
+                .attachKeyFrame()
+                .pointAt(util.vector().centerOf(util.grid().at(2, 2, 0)))
+                .text("Experience Lantern also works on Contraption");
+        scene.idle(70);
+
+        scene.world().setKineticSpeed(util.select().fromTo(2,4,2,2,5,2),-24);
+        scene.world().rotateBearing(util.grid().at(2, 4, 2), -360, 140);
+        scene.world().rotateSection(contraption, 0, -360, 0, 140);
+        scene.idle(30);
+        scene.world().modifyBlockEntity(util.grid().at(2, 1, 3), FluidTankBlockEntity.class,
+                be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 2000), IFluidHandler.FluidAction.EXECUTE));
+        scene.idle(40);
+        scene.world().modifyBlockEntity(util.grid().at(2, 1, 3), FluidTankBlockEntity.class,
+                be -> be.getControllerBE().getTankInventory().fill(new FluidStack(CEIFluids.EXPERIENCE.get(), 2000), IFluidHandler.FluidAction.EXECUTE));
+        scene.idle(70);
+        scene.world().setKineticSpeed(util.select().fromTo(2,4,2,2,5,2),0);
     }
 }
