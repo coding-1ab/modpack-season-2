@@ -1,10 +1,9 @@
-### Create: Enchantment Industry 2.0.13
-
-Require Create: Dragons Plus 1.4.0! Which contains breaking change in code.
+### Create: Enchantment Industry 2.1.0
 
 #### Update
-* Ponder scenes and ponder tags have been improved. Add 1 ponder scene.
-* Improve Creative Tab
+* Add Experience Lantern, an appliance absorbing XP form player and XP orb directly. Also, a Contraption actor.
+* Add ponder for automation and beacon base.
+* Update Russian Localization by @Korben
 
 #### Fix
-* Fix Recipe Serializers have wrong namespace
+* Fix compat recipe with Farmer's Delight cutting board
