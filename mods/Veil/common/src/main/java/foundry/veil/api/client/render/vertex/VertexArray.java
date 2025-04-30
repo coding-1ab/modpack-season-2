@@ -66,23 +66,6 @@ public abstract class VertexArray implements NativeResource {
         this.drawMode = VertexFormat.Mode.TRIANGLES;
     }
 
-    private void setup(RenderType renderType) {
-        renderType.setupRenderState();
-        ShaderInstance shader = RenderSystem.getShader();
-        if (shader != null) {
-            shader.apply();
-            shader.setDefaultUniforms(this.drawMode, RenderSystem.getModelViewMatrix(), RenderSystem.getProjectionMatrix(), Minecraft.getInstance().getWindow());
-        }
-    }
-
-    private void clear(RenderType renderType) {
-        ShaderInstance shader = RenderSystem.getShader();
-        if (shader != null) {
-            shader.clear();
-        }
-        renderType.clearRenderState();
-    }
-
     private static void loadType() {
         if (vertexArrayType == null) {
             if (VeilRenderSystem.directStateAccessSupported()) {
@@ -145,6 +128,35 @@ public abstract class VertexArray implements NativeResource {
                 fill[i] = vertexArrayType.factory.apply(arrays.get(i));
             }
         }
+    }
+
+    /**
+     * Sets up the draw state with the specified render type.
+     *
+     * @param renderType The render type to set up
+     * @since 1.2.0
+     */
+    public void setup(RenderType renderType) {
+        renderType.setupRenderState();
+        ShaderInstance shader = RenderSystem.getShader();
+        if (shader != null) {
+            shader.apply();
+            shader.setDefaultUniforms(this.drawMode, RenderSystem.getModelViewMatrix(), RenderSystem.getProjectionMatrix(), Minecraft.getInstance().getWindow());
+        }
+    }
+
+    /**
+     * Clears the specified render type.
+     *
+     * @param renderType The render type to clear
+     * @since 1.2.0
+     */
+    public void clear(RenderType renderType) {
+        ShaderInstance shader = RenderSystem.getShader();
+        if (shader != null) {
+            shader.clear();
+        }
+        renderType.clearRenderState();
     }
 
     /**
