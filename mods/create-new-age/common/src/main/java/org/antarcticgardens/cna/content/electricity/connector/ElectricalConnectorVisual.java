@@ -1,15 +1,22 @@
 package org.antarcticgardens.cna.content.electricity.connector;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.task.Plan;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
+import dev.engine_room.flywheel.lib.instance.FlatLit;
+import dev.engine_room.flywheel.lib.instance.InstanceTypes;
 import dev.engine_room.flywheel.lib.instance.TransformedInstance;
+import dev.engine_room.flywheel.lib.model.Models;
+import dev.engine_room.flywheel.lib.transform.PoseTransformStack;
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import dev.engine_room.flywheel.lib.visual.AbstractBlockEntityVisual;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
 import net.createmod.catnip.data.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
+import org.antarcticgardens.cna.CNARenderTypes;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.electricity.wire.WireType;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +30,7 @@ public class ElectricalConnectorVisual extends AbstractBlockEntityVisual<Electri
     private static final Map<ElectricalConnectorBlockEntity, ElectricalConnectorVisual> instances = new HashMap<>();
 
     private final Map<BlockPos, Wire> wires = new HashMap<>();
-    private final Map<BlockPos, List<Pair<Instance, Vec3>>> wireInstances = new HashMap<>();
+    private final Map<BlockPos, List<Pair<TransformedInstance, Vec3>>> wireInstances = new HashMap<>();
 
     public ElectricalConnectorVisual(VisualizationContext ctx, ElectricalConnectorBlockEntity blockEntity, float partialTick) {
         super(ctx, blockEntity, partialTick);
@@ -55,19 +62,17 @@ public class ElectricalConnectorVisual extends AbstractBlockEntityVisual<Electri
         }
     }
     
-    private List<Pair<Instance, Vec3>> createWireInstances(Wire wire, Vec3 position, ResourceLocation texture) {
-        List<Pair<Instance, Vec3>> instances = new ArrayList<>();
+    private List<Pair<TransformedInstance, Vec3>> createWireInstances(Wire wire, Vec3 position, ResourceLocation texture) {
+        List<Pair<TransformedInstance, Vec3>> instances = new ArrayList<>();
         
         for (int i = 0; i < wire.getSections().size(); i++) {
             Pair<WireSection, Float> pair = wire.getSections().get(i);
 
-            TransformedInstance data = instancerProvider().solid(CNARenderTypes.wire(texture))
-                    .material(Materials.TRANSFORMED)
-                    .model(pair.first().name(), () -> pair.first())
+            TransformedInstance data = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(CNARenderTypes.WIRE_MODEL))
                     .createInstance();
 
             PoseStack ps = new PoseStack();
-            TransformStack ts = TransformStack.cast(ps);
+            TransformStack<PoseTransformStack> ts = TransformStack.of(ps);
             ts.translate(position);
             ps.mulPoseMatrix(new Matrix4f().rotateTowards(wire.getDirection(), wire.getUp()));
             ts.translate(0.0f, pair.getSecond(), wire.getSectionLength() * i);

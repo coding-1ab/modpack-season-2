@@ -29,20 +29,20 @@ public class WireSection implements Model {
         this.endYOffset = endYOffset;
         this.vOffset = vOffset;
 
-        ByteBuffer buf = MemoryUtil.memAlloc(size());
+//        ByteBuffer buf = MemoryUtil.memAlloc();
         PosTexNormalVertexView writer = new PosTexNormalVertexView();
 
         float ht = thickness / 2;
 
-        for (int i = -1; i <= 1; i += 2) {
-            writer.putVertex(ht, ht * i, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.5f + vOffset);
-            writer.putVertex(-ht, -ht * i, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f + vOffset);
-            writer.putVertex(-ht, -ht * i + endYOffset, length * 1.01f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f + vOffset);
-            writer.putVertex(ht, ht * i + endYOffset, length * 1.01f, 0.0f, 1.0f, 0.0f, 1.0f, 0.5f + vOffset);
-        }
+//        for (int i = -1; i <= 1; i += 2) {
+//            writer.putVertex(ht, ht * i, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.5f + vOffset);
+//            writer.putVertex(-ht, -ht * i, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f + vOffset);
+//            writer.putVertex(-ht, -ht * i + endYOffset, length * 1.01f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f + vOffset);
+//            writer.putVertex(ht, ht * i + endYOffset, length * 1.01f, 0.0f, 1.0f, 0.0f, 1.0f, 0.5f + vOffset);
+//        }
 
-        list = writer.intoReader();
-        MemoryUtil.memFree(buf);
+        list = writer;
+//        MemoryUtil.memFree(buf);
     }
 
 
