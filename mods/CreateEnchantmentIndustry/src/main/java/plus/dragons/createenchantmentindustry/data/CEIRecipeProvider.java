@@ -85,6 +85,15 @@ public class CEIRecipeProvider extends RecipeProvider {
                 .output(PRINTER)
                 .unlockedBy(BRASS, has(BRASS_INGOT))
                 .accept(output);
+        shaped().define('a', EXPERIENCE_BLOCK)
+                .define('s', SPONGE)
+                .define('c', COPPER_CASING)
+                .pattern("a")
+                .pattern("s")
+                .pattern("c")
+                .output(EXPERIENCE_LANTERN)
+                .unlockedBy(COPPER, has(COPPER_CASING))
+                .accept(output);
         SmithingTransformRecipeBuilder.smithing(
                 Ingredient.of(BLAZE_UPGRADE_SMITHING_TEMPLATE),
                 Ingredient.of(BLAZE_BURNER),

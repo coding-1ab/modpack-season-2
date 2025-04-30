@@ -78,6 +78,12 @@ public class CEIAdvancements implements DataProvider {
                     .special(CDPAdvancement.TaskType.SECRET)
                     .after(SPIRITUAL_RETURN)),
 
+            LUMEN_NEXUS = create("lumen_nexus", b -> b.icon(CEIBlocks.EXPERIENCE_LANTERN)
+                    .title("Lumen Nexus")
+                    .whenIconCollected()
+                    .description("Obtain Experience Lantern")
+                    .after(SPIRITUAL_RETURN)),
+
             // Mechanical Grindstone
             GONE_WITH_THE_FOIL = create("gone_with_the_foil", b -> b.icon(CEIBlocks.MECHANICAL_GRINDSTONE)
                     .title("Gone with the Foil")
