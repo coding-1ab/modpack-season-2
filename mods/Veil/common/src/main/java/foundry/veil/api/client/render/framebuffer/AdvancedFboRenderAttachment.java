@@ -47,15 +47,16 @@ public class AdvancedFboRenderAttachment implements AdvancedFboAttachment {
     @Override
     public void create() {
         if (VeilRenderSystem.directStateAccessSupported()) {
+            int id = this.getId();
             if (this.samples == 1) {
                 glNamedRenderbufferStorage(
-                        this.id,
+                        id,
                         this.attachmentFormat,
                         this.width,
                         this.height);
             } else {
                 glNamedRenderbufferStorageMultisample(
-                        this.id,
+                        id,
                         this.samples,
                         this.attachmentFormat,
                         this.width,

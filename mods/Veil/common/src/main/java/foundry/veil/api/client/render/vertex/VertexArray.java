@@ -486,13 +486,22 @@ public abstract class VertexArray implements NativeResource {
     }
 
     /**
-     * The type of GL draw usages that can be used.
+     * Specifies how the graphics card should manage buffer data.
      *
      * @author Ocelot
      */
     public enum DrawUsage {
+        /**
+         * The data is set only once and used many times.
+         */
         STATIC(GL_STATIC_DRAW),
+        /**
+         * The data is changed a lot and used many times.
+         */
         DYNAMIC(GL_DYNAMIC_DRAW),
+        /**
+         * The data is set only once and used by the GPU at most a few times.
+         */
         STREAM(GL_STREAM_DRAW);
 
         private final int glType;
@@ -505,6 +514,12 @@ public abstract class VertexArray implements NativeResource {
             return this.glType;
         }
 
+        /**
+         * Converts the given Blaze3D type to Veil draw usage.
+         *
+         * @param type The type to convert
+         * @return The Veil draw usage
+         */
         public static DrawUsage fromBlaze3D(VertexBuffer.Usage type) {
             return switch (type) {
                 case STATIC -> STATIC;
