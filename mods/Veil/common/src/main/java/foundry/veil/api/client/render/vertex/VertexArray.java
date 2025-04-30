@@ -264,6 +264,18 @@ public abstract class VertexArray implements NativeResource {
     }
 
     /**
+     * Uploads index data to the vertex array.
+     *
+     * @param data      The data to upload
+     * @param indexType The type of data stored in data
+     * @since 1.2.0
+     */
+    public void uploadIndexBuffer(ByteBuffer data, IndexType indexType) {
+        this.uploadIndexBuffer(data);
+        this.setIndexCount(data.remaining() >> indexType.ordinal(), indexType);
+    }
+
+    /**
      * Uploads vertex data to the specified buffer.
      *
      * @param buffer The buffer to upload into

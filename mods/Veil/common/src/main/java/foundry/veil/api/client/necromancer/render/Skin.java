@@ -421,8 +421,7 @@ public class Skin implements NativeResource {
                 VertexArray.IndexType indexType = VertexArray.IndexType.least(this.nextIndex - 1);
                 indices = MemoryUtil.memAlloc(this.indices.size() * indexType.getBytes());
                 this.storeIndices(indexType, indices);
-                this.vertexArray.setIndexCount(this.indices.size(), indexType);
-                this.vertexArray.uploadIndexBuffer(indices);
+                this.vertexArray.uploadIndexBuffer(indices, indexType);
 
                 Object2IntMap<String> boneIds = new Object2IntArrayMap<>(this.boneNames.size());
                 for (int i = 0; i < this.boneNames.size(); i++) {
