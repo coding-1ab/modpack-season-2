@@ -32,6 +32,7 @@ public class DSAVertexArray extends VertexArray {
         glVertexArrayElementBuffer(this.id, ext.getName());
     }
 
+    @Deprecated
     @Override
     public void uploadVertexBuffer(int buffer, ByteBuffer data, int usage) {
         glNamedBufferData(buffer, data, usage);

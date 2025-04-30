@@ -419,7 +419,7 @@ public class Skin implements NativeResource {
 
                 // Allocate and store index buffer
                 VertexArray.IndexType indexType = VertexArray.IndexType.least(this.nextIndex - 1);
-                indices = MemoryUtil.memAlloc(this.indices.size() * indexType.getBytes());
+                indices = MemoryUtil.memAlloc(this.indices.size() << indexType.ordinal());
                 this.storeIndices(indexType, indices);
                 this.vertexArray.uploadIndexBuffer(indices, indexType);
 

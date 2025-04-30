@@ -14,6 +14,7 @@ public class LegacyVertexArray extends VertexArray {
         super(id, LegacyVertexAttribBindingBuilder::new);
     }
 
+    @Deprecated
     @Override
     public void uploadVertexBuffer(int buffer, ByteBuffer data, int usage) {
         int old = glGetInteger(GL_ARRAY_BUFFER_BINDING);

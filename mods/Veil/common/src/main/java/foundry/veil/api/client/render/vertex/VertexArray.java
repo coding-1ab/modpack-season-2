@@ -15,6 +15,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
+import org.apache.logging.log4j.core.config.Scheduled;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL40C;
@@ -228,7 +229,7 @@ public abstract class VertexArray implements NativeResource {
             VertexArrayBuilder builder = this.editFormat();
 
             int vertexBuffer = this.getOrCreateBuffer(VERTEX_BUFFER);
-            this.uploadVertexBuffer(vertexBuffer, meshData.vertexBuffer(), usage.getGlType());
+            upload(vertexBuffer, meshData.vertexBuffer(), usage);
             builder.applyFrom(VERTEX_BUFFER, vertexBuffer, attributeStart, drawState.format());
 
             ByteBuffer indexBuffer = meshData.indexBuffer();
@@ -281,8 +282,18 @@ public abstract class VertexArray implements NativeResource {
      * @param buffer The buffer to upload into
      * @param data   The data to upload
      * @param usage  The data usage
+     * @deprecated Use {@link #upload(int, MeshData, DrawUsage)} instead
      */
-    public abstract void uploadVertexBuffer(int buffer, ByteBuffer data, int usage);
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
+    @Deprecated
+    public void uploadVertexBuffer(int buffer, ByteBuffer data, int usage) {
+        DrawUsage drawUsage = switch (usage) {
+            case GL_STREAM_DRAW, GL_STREAM_READ, GL_STREAM_COPY -> DrawUsage.STREAM;
+            case GL_DYNAMIC_DRAW, GL_DYNAMIC_READ, GL_DYNAMIC_COPY -> DrawUsage.DYNAMIC;
+            default -> DrawUsage.STATIC;
+        };
+        upload(buffer, data, drawUsage);
+    }
 
     /**
      * @return A builder for applying changes to this array
