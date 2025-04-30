@@ -19,6 +19,7 @@
 package plus.dragons.createenchantmentindustry.client.ponder;
 
 import static com.simibubi.create.infrastructure.ponder.AllCreatePonderTags.ARM_TARGETS;
+import static com.simibubi.create.infrastructure.ponder.AllCreatePonderTags.CONTRAPTION_ACTOR;
 
 import com.simibubi.create.AllBlocks;
 import com.tterrag.registrate.util.entry.RegistryEntry;
@@ -55,6 +56,7 @@ public class CEIPonderTags {
                 .add(CEIBlocks.MECHANICAL_GRINDSTONE)
                 .add(CDPBlockEntities.FLUID_HATCH)
                 .add(CEIBlocks.EXPERIENCE_HATCH)
+                .add(CEIBlocks.EXPERIENCE_LANTERN)
                 .add(CEIBlocks.BLAZE_ENCHANTER)
                 .add(CEIBlocks.BLAZE_FORGER)
                 .add(CEIBlocks.PRINTER);
@@ -66,5 +68,8 @@ public class CEIPonderTags {
         entryHelper.addToTag(ARM_TARGETS)
                 .add(CEIBlocks.BLAZE_ENCHANTER)
                 .add(CEIBlocks.BLAZE_FORGER);
+
+        entryHelper.addToTag(CONTRAPTION_ACTOR)
+                .add(CEIBlocks.EXPERIENCE_LANTERN);
     }
 }

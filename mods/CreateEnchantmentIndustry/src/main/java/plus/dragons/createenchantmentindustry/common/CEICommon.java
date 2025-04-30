@@ -49,6 +49,7 @@ public class CEICommon {
         CEIArmInterationPoints.register(modBus);
         CEIDataMaps.register(modBus);
         CEIStats.register(modBus);
+        CEIMountedStorageTypes.register(modBus);
         modBus.register(this);
         modBus.register(new CEIConfig(modContainer));
     }
@@ -73,6 +74,6 @@ public class CEICommon {
     }
 
     // TODO Add more Option to customize printer behavior
-    // TODO Add Experience Lantern
     // TODO Add Experience Lantern Stats and Advancement
+    // TODO ADD Experience Lantern Ponder
 }

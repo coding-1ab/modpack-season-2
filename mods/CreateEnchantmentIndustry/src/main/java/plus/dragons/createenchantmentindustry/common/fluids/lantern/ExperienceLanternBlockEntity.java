@@ -29,7 +29,7 @@ import java.util.function.Consumer;
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
 public class ExperienceLanternBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
-    protected FluidTankBehaviour tanks;
+    protected FluidTankBehaviour tank;
     protected AABB effectiveAABB;
     protected int rate;
 
@@ -54,6 +54,10 @@ public class ExperienceLanternBlockEntity extends SmartBlockEntity implements IH
         }
     }
 
+    public FluidTankBehaviour getTank() {
+        return tank;
+    }
+
     protected void drainExp() {
         List<Player> players = level.getEntitiesOfClass(Player.class, effectiveAABB, player -> player.isAlive() && !player.isSpectator());
         if (!players.isEmpty()) {
@@ -64,7 +68,7 @@ public class ExperienceLanternBlockEntity extends SmartBlockEntity implements IH
                 else if (playerExp != 0) sum.addAndGet(playerExp);
             });
             if (sum.get() != 0) {
-                var inserted = tanks.getPrimaryHandler().fill(new FluidStack(CEIFluids.EXPERIENCE, sum.get()), IFluidHandler.FluidAction.EXECUTE);
+                var inserted = tank.getPrimaryHandler().fill(new FluidStack(CEIFluids.EXPERIENCE, sum.get()), IFluidHandler.FluidAction.EXECUTE);
                 if (inserted != 0) {
                     for (var player : players) {
                         var total = ExperienceHelper.getExperienceForPlayer(player);
@@ -96,7 +100,7 @@ public class ExperienceLanternBlockEntity extends SmartBlockEntity implements IH
             for (var orb : experienceOrbs) {
                 var amount = orb.value;
                 var fluidStack = new FluidStack(CEIFluids.EXPERIENCE.get(), amount);
-                var inserted = tanks.getPrimaryHandler().fill(fluidStack, IFluidHandler.FluidAction.EXECUTE);
+                var inserted = tank.getPrimaryHandler().fill(fluidStack, IFluidHandler.FluidAction.EXECUTE);
                 if (inserted == amount) {
                     orb.remove(Entity.RemovalReason.DISCARDED);
                 } else {
@@ -112,19 +116,19 @@ public class ExperienceLanternBlockEntity extends SmartBlockEntity implements IH
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-        tanks = new FluidTankBehaviour(this, this::createTank);
-        behaviours.add(tanks);
+        tank = new FluidTankBehaviour(this, this::createTank);
+        behaviours.add(tank);
     }
 
     protected void onFluidStackChanged(FluidStack newFluidStack) {
-        int light = ((int) (((float) tanks.getPrimaryTank().tank.getFluid().getAmount() / tanks.getPrimaryTank().tank.getCapacity()) * 15f));
+        int light = ((int) (((float) tank.getPrimaryTank().tank.getFluid().getAmount() / tank.getPrimaryTank().tank.getCapacity()) * 15f));
         light = Math.min(Math.max(0, light),15);
         level.setBlockAndUpdate(getBlockPos(),getBlockState().setValue(ExperienceLanternBlock.LIGHT, light));
     }
 
     public @Nullable IFluidHandler getFluidHandler(@Nullable Direction side) {
         if (side == null || side.getOpposite() == getBlockState().getValue(FACING))
-            return tanks.getCapability();
+            return tank.getCapability();
         return null;
     }
 
