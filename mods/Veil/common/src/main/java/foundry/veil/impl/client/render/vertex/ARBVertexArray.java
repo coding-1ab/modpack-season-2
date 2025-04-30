@@ -14,6 +14,7 @@ public class ARBVertexArray extends VertexArray {
         super(id, ARBVertexAttribBindingBuilder::new);
     }
 
+    @Deprecated
     @Override
     public void uploadVertexBuffer(int buffer, ByteBuffer data, int usage) {
         int old = glGetInteger(GL_ARRAY_BUFFER_BINDING);
