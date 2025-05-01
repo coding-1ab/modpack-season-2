@@ -4,8 +4,12 @@
   "version": "${version}",
   "name": "${mod_name}",
   "description": "${description}",
+  "icon": "icon.png",
   "authors": [
-    "${mod_author}"
+    ${mod_authors}
+  ],
+  "contributors": [
+    ${mod_contributors}
   ],
   "contact": {
     "homepage": "https://modrinth.com/project/veil",
@@ -23,7 +27,14 @@
     ]
   },
   "custom": {
-    "fabric-renderer-indigo:force_compatibility": true
+    "fabric-renderer-indigo:force_compatibility": true,
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.com/invite/2aqTX9QWKU",
+        "modmenu.modrinth": "https://modrinth.com/mod/veil",
+        "modmenu.wiki": "https://github.com/FoundryMC/Veil/wiki"
+      }
+    }
   },
   "mixins": [
     "${mod_id}.debug.mixins.json",
@@ -46,9 +57,9 @@
   ],
   "depends": {
     "fabricloader": "0.16.x",
-    "fabric-api": "*",
+    "fabric-api": ">=${fabric_version}",
     "minecraft": "${minecraft_version}",
-    "java": ">=17"
+    "java": ">=${java_version}"
   },
   "breaks": {
     "sodium": "<${sodium_version}"

@@ -110,6 +110,9 @@ processResources {
             'fabric_loader_version'        : fabric_loader_version,
             'mod_name'                     : mod_name,
             'mod_author'                   : mod_author,
+            'mod_authors'                  : "\"${mod_author.split(",").collect { it.trim() }.join("\", \"")}\"",
+            'mod_contributor'              : mod_contributor,
+            'mod_contributors'             : "\"${mod_contributor.split(",").collect { it.trim() }.join("\", \"")}\"",
             'mod_id'                       : mod_id,
             'license'                      : license,
             'description'                  : project.description,
@@ -117,7 +120,6 @@ processResources {
             'neoforge_version_range'       : neoforge_version_range,
             'neoforge_loader_version_range': neoforge_loader_version_range,
             'sodium_version'               : sodium_version,
-            'credits'                      : credits,
             'java_version'                 : java_version
     ]
 

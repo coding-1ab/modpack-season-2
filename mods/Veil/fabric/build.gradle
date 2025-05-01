@@ -37,7 +37,6 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     implementation 'org.jetbrains:annotations:24.0.1'
-//    implementation project(path: ":common", configuration: "namedElements")
 
     modCompileOnly "maven.modrinth:sodium:mc1.21.1-${sodium_version}-fabric"
     modCompileOnly "maven.modrinth:iris:1.8.8+1.21.1-fabric"
@@ -45,6 +44,7 @@ dependencies {
     modCompileOnly "maven.modrinth:cameratweaks:1.7.0-1.21.1"
 //    modCompileOnly "maven.modrinth:yacl:3.6.3+1.21.1-fabric"
 
+//    modRuntimeOnly "maven.modrinth:modmenu:11.0.3"
 //    modRuntimeOnly "maven.modrinth:sodium:mc1.21.1-${sodium_version}-fabric"
 //    modRuntimeOnly "maven.modrinth:iris:1.8.8+1.21.1-fabric"
 //    modRuntimeOnly "maven.modrinth:replaymod:1.21-2.6.20"
