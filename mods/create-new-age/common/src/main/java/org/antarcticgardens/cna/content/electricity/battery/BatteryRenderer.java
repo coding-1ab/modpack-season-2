@@ -33,15 +33,17 @@ public class BatteryRenderer extends SafeBlockEntityRenderer<BatteryBlockEntity>
             for (Direction d : Iterate.horizontalDirections) {
                 ms.pushPose();
                 CachedBuffers.partial(AllPartialModels.BOILER_GAUGE, blockState)
-                        .rotateY(d.toYRot())
+                        .rotateYDegrees(d.toYRot())
+                        .uncenter()
                         .translate(be.getWidth() / 2f - 6 / 16f, 0, 0)
                         .light(light)
                         .renderInto(ms, vb);
                 CachedBuffers.partial(AllPartialModels.BOILER_GAUGE_DIAL, blockState)
-                        .rotateY(d.toYRot())
+                        .rotateYDegrees(d.toYRot())
+                        .uncenter()
                         .translate(be.getWidth() / 2f - 6 / 16f, 0, 0)
                         .translate(0, dialPivot, dialPivot)
-                        .rotateX(-90 * progress)
+                        .rotateXDegrees(-145 * progress + 90)
                         .translate(0, -dialPivot, -dialPivot)
                         .light(light)
                         .renderInto(ms, vb);
