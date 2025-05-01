@@ -25,7 +25,7 @@ public class StirlingEngineRenderer extends KineticBlockEntityRenderer<StirlingE
                               int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
 
-        if (VisualizationManager.supportsVisualization((be.getLevel())))
+        if (!VisualizationManager.supportsVisualization((be.getLevel())))
             return;
 
         BlockState blockState = AllBlocks.FLYWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,
