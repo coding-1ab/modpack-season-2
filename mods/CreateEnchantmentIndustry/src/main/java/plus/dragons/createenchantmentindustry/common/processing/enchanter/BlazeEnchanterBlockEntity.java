@@ -78,7 +78,7 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
     }
 
     public @Nullable IFluidHandler getFluidHandler(@Nullable Direction side) {
-        if (side == Direction.DOWN)
+        if (side == Direction.DOWN || side == null && !isRemoved())
             return tanks.getCapability();
         return null;
     }
@@ -205,6 +205,7 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
                     advancement.trigger(CEIAdvancements.OSHA_VIOLATION.builtinTrigger());
                     serverLevel.destroyBlock(worldPosition, false);
                     serverLevel.setBlockAndUpdate(worldPosition, AllBlocks.LIT_BLAZE_BURNER.getDefaultState());
+                    this.setRemoved();
                     return;
                 }
                 processingTime = -1;
