@@ -16,21 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package plus.dragons.createenchantmentindustry.config;
+package plus.dragons.createenchantmentindustry.util;
 
-import net.createmod.catnip.config.ConfigBase;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.ExtraCodecs;
 
-public class CEIProcessingConfig extends ConfigBase {
-    public final ConfigFloat regularLightningStrikeTransformXpBlockChance = f(1, 0, 1,
-            "regularLightningStrikeTransformXpBlockChance",
-            CEIProcessingConfig.Comments.regularLightningStrikeTransformXpBlockChance);
-
-    @Override
-    public String getName() {
-        return "processing";
-    }
-
-    static class Comments {
-        static final String regularLightningStrikeTransformXpBlockChance = "Probability of regular lightning strike transforming Block of Experience.";
-    }
+public record CEIIntIntPair(int level, int value) {
+    public static final Codec<CEIIntIntPair> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            ExtraCodecs.POSITIVE_INT.fieldOf("level").forGetter(CEIIntIntPair::level),
+            ExtraCodecs.POSITIVE_INT.fieldOf("value").forGetter(CEIIntIntPair::value)).apply(instance, CEIIntIntPair::new));
 }

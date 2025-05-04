@@ -88,6 +88,8 @@
   "create_enchantment_industry.gui.goggles.printing.pattern": "Changing Package Pattern",
   "create_enchantment_industry.gui.goggles.printing.template": "Drucken mit Vorlage:",
   "create_enchantment_industry.gui.printer.copy.invalid": "Keine kopierbaren Inhalte vorhanden.",
+  "create_enchantment_industry.gui.printer.enchanted_book.all_denied": "This book has no copiable enchantment.",
+  "create_enchantment_industry.gui.printer.enchanted_book.denied": "This book contains uncopiable enchantment.",
   "create_enchantment_industry.gui.printer.enchanted_book.invalid": "Keine Verzauberungen zum kopieren in dem Buch.",
   "create_enchantment_industry.gui.printer.written_book.invalid": "Aus diesem Buch kann nichts kopiert werden.",
   "create_enchantment_industry.ponder.blaze_enchanter.automate.header": "Automating with Mechanical Arm",

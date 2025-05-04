@@ -87,6 +87,8 @@
   "create_enchantment_industry.gui.goggles.printing.pattern": "uɹǝʇʇɐԀ ǝbɐʞɔɐԀ buıbuɐɥƆ",
   "create_enchantment_industry.gui.goggles.printing.template": ":ǝʇɐןdɯǝʇ ɥʇıʍ buıʇuıɹԀ",
   "create_enchantment_industry.gui.printer.copy.invalid": "˙ɯǝʇı sıɥʇ ɯoɹɟ ʎdoɔ oʇ sʇuǝʇuoɔ ǝןqɐıdoɔ oN",
+  "create_enchantment_industry.gui.printer.enchanted_book.all_denied": "˙ʇuǝɯʇuɐɥɔuǝ ǝןqɐıdoɔ ou sɐɥ ʞooq sıɥ⟘",
+  "create_enchantment_industry.gui.printer.enchanted_book.denied": "˙ʇuǝɯʇuɐɥɔuǝ ǝןqɐıdoɔun suıɐʇuoɔ ʞooq sıɥ⟘",
   "create_enchantment_industry.gui.printer.enchanted_book.invalid": "˙ʞooq sıɥʇ ɯoɹɟ ʎdoɔ oʇ sʇuǝɯʇuɐɥɔuǝ oN",
   "create_enchantment_industry.gui.printer.written_book.invalid": "˙ʞooq sıɥʇ ɯoɹɟ ʎdoɔ oʇ sʇuǝʇuoɔ oN",
   "create_enchantment_industry.ponder.blaze_enchanter.automate.header": "ɯɹⱯ ןɐɔıuɐɥɔǝW ɥʇıʍ buıʇɐɯoʇnⱯ",

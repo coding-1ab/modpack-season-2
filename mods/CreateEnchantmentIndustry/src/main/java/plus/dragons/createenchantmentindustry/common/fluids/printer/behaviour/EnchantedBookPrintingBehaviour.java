@@ -25,6 +25,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.concurrent.atomic.AtomicInteger;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -47,7 +48,10 @@ import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.CEIEnchantmentHelper;
+import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
+import plus.dragons.createenchantmentindustry.common.registry.CEIEnchantments;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
+import plus.dragons.createenchantmentindustry.util.CEIIntIntPair;
 import plus.dragons.createenchantmentindustry.util.CEILang;
 
 public class EnchantedBookPrintingBehaviour implements PrintingBehaviour {
@@ -62,7 +66,16 @@ public class EnchantedBookPrintingBehaviour implements PrintingBehaviour {
         this.tank = tank;
         this.original = original;
         this.enchantments = enchantments;
-        this.cost = CEIEnchantmentHelper.getEnchantmentCost(enchantments);
+        AtomicInteger result = new AtomicInteger(0);
+        enchantments.entrySet().forEach(entry -> {
+            Optional<CEIIntIntPair> optional = Optional.empty();
+            var customCost = entry.getKey().getData(CEIDataMaps.PRINTING_ENCHANTED_BOOK_COST);
+            if (customCost != null) {
+                optional = customCost.stream().filter(pair -> pair.level() == entry.getIntValue()).findFirst();
+            }
+            result.addAndGet(optional.map(CEIIntIntPair::value).orElseGet(() -> CEIEnchantmentHelper.getEnchantmentCost(entry.getKey(), entry.getIntValue())));
+        });
+        this.cost = result.get();
     }
 
     public static Optional<DataResult<PrintingBehaviour>> create(Level level, SmartFluidTankBehaviour tank, ItemStack stack) {
@@ -71,6 +84,20 @@ public class EnchantedBookPrintingBehaviour implements PrintingBehaviour {
         var enchantments = EnchantmentHelper.getEnchantmentsForCrafting(stack);
         if (enchantments.isEmpty())
             return Optional.of(DataResult.error(() -> CEICommon.asLocalization("gui.printer.enchanted_book.invalid")));
+        if (enchantments.keySet().stream().anyMatch(enchantment -> enchantment.is(CEIEnchantments.MOD_TAGS.printingDeny))) {
+            if (CEIConfig.fluids().printingEnchantedBookDenylistStopCopying.get()) {
+                return Optional.of(DataResult.error(() -> CEICommon.asLocalization("gui.printer.enchanted_book.denied")));
+            } else {
+                var rest = enchantments.keySet().stream().filter(enchantment -> !enchantment.is(CEIEnchantments.MOD_TAGS.printingDeny)).toList();
+                if (rest.isEmpty())
+                    return Optional.of(DataResult.error(() -> CEICommon.asLocalization("gui.printer.enchanted_book.all_denied")));
+                else {
+                    var result = new ItemEnchantments.Mutable(enchantments);
+                    result.removeIf(rest::contains);
+                    return Optional.of(DataResult.success(new EnchantedBookPrintingBehaviour(level, tank, stack, result.toImmutable())));
+                }
+            }
+        }
         return Optional.of(DataResult.success(new EnchantedBookPrintingBehaviour(level, tank, stack, enchantments)));
     }
 

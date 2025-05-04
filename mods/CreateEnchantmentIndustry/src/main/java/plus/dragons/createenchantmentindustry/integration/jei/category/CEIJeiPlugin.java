@@ -23,6 +23,7 @@ import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.equipment.sandPaper.SandPaperPolishingRecipe;
 import com.simibubi.create.content.kinetics.deployer.ItemApplicationRecipe;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,10 +41,12 @@ import net.neoforged.fml.loading.FMLLoader;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import plus.dragons.createdragonsplus.util.ErrorMessages;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
+import plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour.*;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindingRecipe;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.MechanicalGrindStoneItem;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
+import plus.dragons.createenchantmentindustry.config.CEIConfig;
 import plus.dragons.createenchantmentindustry.integration.jei.category.grinding.GrindingCategory;
 import plus.dragons.createenchantmentindustry.integration.jei.category.printing.*;
 
@@ -71,13 +74,16 @@ public class CEIJeiPlugin implements IModPlugin {
                 .stream()
                 .map(StandardPrintingRecipeJEI::new)
                 .collect(Collectors.toList()));
-        registration.addRecipes(PrintingCategory.TYPE, List.of(
-                AddressPrintingRecipeJEI.INSTANCE,
-                PatternPrintingRecipeJEI.INSTANCE,
-                CopyPrintingRecipeJEI.INSTANCE,
-                CustomNamePrintingRecipeJEI.INSTANCE,
-                WrittenBookPrintingRecipeJEI.INSTANCE));
-        registration.addRecipes(PrintingCategory.TYPE, EnchantedBookPrintingRecipeJEI.listAll());
+        List<PrintingRecipeJEI> builtinPrinting = new ArrayList<>();
+        if (CEIConfig.fluids().enablePackageAddressPrinting.get()) builtinPrinting.add(AddressPrintingRecipeJEI.INSTANCE);
+        if (CEIConfig.fluids().enablePackagePatternPrinting.get()) builtinPrinting.add(PatternPrintingRecipeJEI.INSTANCE);
+        if (CEIConfig.fluids().enableCreateCopiableItemPrinting.get()) builtinPrinting.add(CopyPrintingRecipeJEI.INSTANCE);
+        if (CEIConfig.fluids().enableCustomNamePrinting.get()) builtinPrinting.add(CustomNamePrintingRecipeJEI.INSTANCE);
+        if (CEIConfig.fluids().enableWrittenBookPrinting.get()) builtinPrinting.add(WrittenBookPrintingRecipeJEI.INSTANCE);
+        if (!builtinPrinting.isEmpty())
+            registration.addRecipes(PrintingCategory.TYPE, builtinPrinting);
+        if (CEIConfig.fluids().enableEnchantedBookPrinting.get())
+            registration.addRecipes(PrintingCategory.TYPE, EnchantedBookPrintingRecipeJEI.listAll());
         var manualApplication = registration
                 .getJeiHelpers()
                 .getRecipeType(Create.asResource("item_application"), ItemApplicationRecipe.class)

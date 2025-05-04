@@ -49,6 +49,9 @@ public class CEIEnchantments {
         public final TagKey<Enchantment> superEnchantingExclusive = tag(
                 "blaze_enchanter/super_enchanting_exclusive",
                 "Blaze Enchanter Super Enchanting Exclusive Enchantments");
+        public final TagKey<Enchantment> printingDeny = tag(
+                "printer/deny",
+                "Printer denied Enchantments");
 
         protected ModTags() {
             super(CEICommon.ID, Registries.ENCHANTMENT);
@@ -67,6 +70,8 @@ public class CEIEnchantments {
             provider.addTag(superEnchantingExclusive)
                     .addTag(EnchantmentTags.TREASURE)
                     .remove(EnchantmentTags.CURSE);
+            provider.addTag(enchantingExclusive);
+            provider.addTag(printingDeny);
         }
     }
 }

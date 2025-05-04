@@ -18,6 +18,7 @@
 
 package plus.dragons.createenchantmentindustry.common.registry;
 
+import static net.minecraft.world.item.enchantment.Enchantments.MENDING;
 import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE;
 
 import com.mojang.datafixers.util.Pair;
@@ -27,6 +28,7 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.fluid.FluidHelper;
 import com.tterrag.registrate.providers.ProviderType;
 import com.tterrag.registrate.providers.RegistrateDataMapProvider;
+import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -36,6 +38,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -46,6 +49,7 @@ import plus.dragons.createdragonsplus.common.registry.CDPFluids;
 import plus.dragons.createdragonsplus.util.Pairs;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceFuel;
+import plus.dragons.createenchantmentindustry.util.CEIIntIntPair;
 
 public class CEIDataMaps {
     public static final DataMapType<Item, ExperienceFuel> EXPERIENCE_FUEL = DataMapType
@@ -80,6 +84,22 @@ public class CEIDataMaps {
             .builder(CEICommon.asResource("printing/written_book/ingredient"), Registries.FLUID, ExtraCodecs.POSITIVE_INT)
             .synced(Codec.INT, true)
             .build();
+    public static final DataMapType<Enchantment, List<CEIIntIntPair>> PRINTING_ENCHANTED_BOOK_COST = DataMapType
+            .builder(CEICommon.asResource("printing/enchanted_book/custom_cost"), Registries.ENCHANTMENT, Codec.list(CEIIntIntPair.CODEC))
+            .synced(Codec.list(CEIIntIntPair.CODEC), true)
+            .build();
+    public static final DataMapType<Enchantment, Float> FORGING_COST_MULTIPLIER = DataMapType
+            .builder(CEICommon.asResource("forging/cost_multiplier"), Registries.ENCHANTMENT, ExtraCodecs.POSITIVE_FLOAT)
+            .synced(ExtraCodecs.POSITIVE_FLOAT, true)
+            .build();
+    public static final DataMapType<Enchantment, Float> SPLITTING_COST_MULTIPLIER = DataMapType
+            .builder(CEICommon.asResource("forging/split_enchantment_cost_multiplier"), Registries.ENCHANTMENT, ExtraCodecs.POSITIVE_FLOAT)
+            .synced(ExtraCodecs.POSITIVE_FLOAT, true)
+            .build();
+    public static final DataMapType<Enchantment, Integer> SUPER_ENCHANTING_LEVEL_EXTENSION = DataMapType
+            .builder(CEICommon.asResource("super_enchanting/custom_level_extension"), Registries.ENCHANTMENT, ExtraCodecs.NON_NEGATIVE_INT)
+            .synced(Codec.INT, true)
+            .build();
 
     public static void register(IEventBus modBus) {
         modBus.register(CEIDataMaps.class);
@@ -96,6 +116,10 @@ public class CEIDataMaps {
         event.register(PRINTING_CUSTOM_NAME_INGREDIENT);
         event.register(PRINTING_CUSTOM_NAME_STYLE);
         event.register(PRINTING_WRITTEN_BOOK_INGREDIENT);
+        event.register(PRINTING_ENCHANTED_BOOK_COST);
+        event.register(FORGING_COST_MULTIPLIER);
+        event.register(SPLITTING_COST_MULTIPLIER);
+        event.register(SUPER_ENCHANTING_LEVEL_EXTENSION);
     }
 
     public static <T> Stream<Pair<Fluid, T>> getSourceFluidEntries(DataMapType<Fluid, T> type) {
@@ -170,5 +194,10 @@ public class CEIDataMaps {
         var customNameStyles = provider.builder(PRINTING_CUSTOM_NAME_STYLE);
         CDPFluids.COMMON_TAGS.dyesByColor.forEach((color, tag) -> customNameStyles
                 .add(tag, Style.EMPTY.withColor(color.getTextColor()), false));
+        provider.builder(PRINTING_ENCHANTED_BOOK_COST);
+        provider.builder(FORGING_COST_MULTIPLIER);
+        provider.builder(SPLITTING_COST_MULTIPLIER);
+        provider.builder(SUPER_ENCHANTING_LEVEL_EXTENSION)
+                .add(MENDING, 0, false);
     }
 }

@@ -156,7 +156,7 @@ public class CEIBlocks {
             .build()
             .register();
     public static final BlockEntry<ExperienceLanternBlock> EXPERIENCE_LANTERN = REGISTRATE
-            .block("experience_lantern",ExperienceLanternBlock::new)
+            .block("experience_lantern", ExperienceLanternBlock::new)
             .initialProperties(SharedProperties::softMetal)
             .properties(p -> p.mapColor(MapColor.COLOR_LIGHT_GREEN))
             .transform(pickaxeOnly())

@@ -31,16 +31,17 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlockEntity;
+import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
 public interface PrintingBehaviour extends IHaveGoggleInformation {
     @Internal
     List<Provider> PROVIDERS = Util.make(new ArrayList<>(), list -> {
-        list.add(AddressPrintingBehaviour::create);
-        list.add(PackagePatternPrintingBehaviour::create);
-        list.add(CopyPrintingBehaviour::create);
-        list.add(CustomNamePrintingBehaviour::create);
-        list.add(EnchantedBookPrintingBehaviour::create);
-        list.add(WrittenBookPrintingBehaviour::create);
+        if (CEIConfig.fluids().enablePackageAddressPrinting.get()) list.add(AddressPrintingBehaviour::create);
+        if (CEIConfig.fluids().enablePackagePatternPrinting.get()) list.add(PackagePatternPrintingBehaviour::create);
+        if (CEIConfig.fluids().enableCreateCopiableItemPrinting.get()) list.add(CopyPrintingBehaviour::create);
+        if (CEIConfig.fluids().enableCustomNamePrinting.get()) list.add(CustomNamePrintingBehaviour::create);
+        if (CEIConfig.fluids().enableEnchantedBookPrinting.get()) list.add(EnchantedBookPrintingBehaviour::create);
+        if (CEIConfig.fluids().enableWrittenBookPrinting.get()) list.add(WrittenBookPrintingBehaviour::create);
     });
 
     static void register(Provider provider) {

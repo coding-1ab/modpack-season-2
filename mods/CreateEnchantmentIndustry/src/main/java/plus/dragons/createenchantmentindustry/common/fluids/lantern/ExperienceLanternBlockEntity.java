@@ -1,8 +1,31 @@
+/*
+ * Copyright (C) 2025  DragonsPlus
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package plus.dragons.createenchantmentindustry.common.fluids.lantern;
+
+import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -22,12 +45,6 @@ import plus.dragons.createenchantmentindustry.common.fluids.experience.Experienc
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-
-import static net.minecraft.world.level.block.DirectionalBlock.FACING;
-
 public class ExperienceLanternBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
     protected FluidTankBehaviour tank;
     protected AABB effectiveAABB;
@@ -39,12 +56,10 @@ public class ExperienceLanternBlockEntity extends SmartBlockEntity implements IH
         rate = CEIConfig.fluids().experienceLanternDrainRate.get();
     }
 
-
     protected ConfigurableFluidTank createTank(Consumer<FluidStack> fluidUpdateCallback) {
         return new ConfigurableFluidTank(CEIConfig.fluids().experienceLanternFluidCapacity.get(), fluidUpdateCallback.andThen(this::onFluidStackChanged))
                 .allowInsertion(fluidStack -> fluidStack.is(CEIFluids.EXPERIENCE));
     }
-
 
     @Override
     public void tick() {
@@ -113,7 +128,6 @@ public class ExperienceLanternBlockEntity extends SmartBlockEntity implements IH
         }
     }
 
-
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         tank = new FluidTankBehaviour(this, this::createTank);
@@ -122,8 +136,8 @@ public class ExperienceLanternBlockEntity extends SmartBlockEntity implements IH
 
     protected void onFluidStackChanged(FluidStack newFluidStack) {
         int light = ((int) (((float) tank.getPrimaryTank().tank.getFluid().getAmount() / tank.getPrimaryTank().tank.getCapacity()) * 15f));
-        light = Math.min(Math.max(0, light),15);
-        level.setBlockAndUpdate(getBlockPos(),getBlockState().setValue(ExperienceLanternBlock.LIGHT, light));
+        light = Math.min(Math.max(0, light), 15);
+        level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(ExperienceLanternBlock.LIGHT, light));
     }
 
     public @Nullable IFluidHandler getFluidHandler(@Nullable Direction side) {

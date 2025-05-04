@@ -29,12 +29,42 @@ public class CEIFluidsConfig extends ConfigBase {
             "printerFluidCapacity",
             Comments.printerFluidCapacity,
             RequiresRestart.SERVER.asComment());
+    public final ConfigBool enableWrittenBookPrinting = b(true,
+            "enableWrittenBookPrinting",
+            Comments.enableWrittenBookPrinting,
+            RequiresRestart.SERVER.asComment());
+    public final ConfigBool enableEnchantedBookPrinting = b(true,
+            "enableEnchantedBookPrinting",
+            Comments.enableEnchantedBookPrinting,
+            RequiresRestart.SERVER.asComment());
+    public final ConfigBool enableCreateCopiableItemPrinting = b(true,
+            "enableCreateCopiableItemPrinting",
+            Comments.enableCreateCopiableItemPrinting,
+            RequiresRestart.SERVER.asComment());
+    public final ConfigBool enablePackagePatternPrinting = b(true,
+            "enablePackagePatternPrinting",
+            Comments.enablePackagePatternPrinting,
+            RequiresRestart.SERVER.asComment());
+    public final ConfigBool enablePackageAddressPrinting = b(true,
+            "enablePackageAddressPrinting",
+            Comments.enablePackageAddressPrinting,
+            RequiresRestart.SERVER.asComment());
+    public final ConfigBool enableCustomNamePrinting = b(true,
+            "enableCustomNamePrinting",
+            Comments.enableCustomNamePrinting,
+            RequiresRestart.SERVER.asComment());
     public final ConfigBool printingCustomNameAsItemName = b(false,
             "printingCustomNameAsItemName",
             Comments.printingCustomNameAsItemName);
     public final ConfigInt printingGenerationChange = i(-3, -3, 1,
             "printingGenerationChange",
             Comments.printingGenerationChange);
+    public final ConfigFloat printingEnchantedBookCostMultiplier = f(1f, 0.01f, 100f,
+            "printingEnchantedBookCostMultiplier",
+            Comments.printingEnchantedBookCostMultiplier);
+    public final ConfigBool printingEnchantedBookDenylistStopCopying = b(true,
+            "printingEnchantedBookDenylistStopCopying",
+            Comments.printingEnchantedBookDenylistStopCopying);
     public final ConfigInt blazeEnchanterFluidCapacity = i(4000, 1000,
             "blazeEnchanterFluidCapacity",
             Comments.blazeEnchanterFluidCapacity,
@@ -60,9 +90,18 @@ public class CEIFluidsConfig extends ConfigBase {
     static class Comments {
         static final String experienceVaporizeOnPlacement = "Whether Liquid Experience vaporize into Experience Orbs upon placement.";
         static final String printerFluidCapacity = "The amount of liquid a Printer can hold (mB).";
+        static final String enableWrittenBookPrinting = "If printing Written Book function of Printer should be enabled.";
+        static final String enableEnchantedBookPrinting = "If printing Enchanted Book function of Printer should be enabled.";
+        static final String enableCreateCopiableItemPrinting = "If printing Create's copiable item of Printer should be enabled.";
+        static final String enablePackagePatternPrinting = "If changing package pattern function of Printer should be enabled.";
+        static final String enablePackageAddressPrinting = "If assigning package address function of Printer should be enabled.";
+        static final String enableCustomNamePrinting = "If assigning custom name function of Printer should be enabled.";
         static final String printingCustomNameAsItemName = "Whether printing custom name (displayed in italic) as item name (displayed in non-italic).";
         static final String printingGenerationChange = "The generation change when copy written books, " +
                 "value of 1 will prevent copying copy of copy";
+        static final String printingEnchantedBookCostMultiplier = "The cost multiplier of printing Enchanted Book.";
+        static final String printingEnchantedBookDenylistStopCopying = "Whether Printer denylist prevents enchanted book from being copying." +
+                "Setting false allows copying enchanted book without denied enchantment";
         static final String blazeEnchanterFluidCapacity = "The amount of liquid a Blaze Enchanter can hold (mB).";
         static final String blazeForgerFluidCapacity = "The amount of liquid a Blaze Forger can hold (mB).";
         static final String experienceLanternFluidCapacity = "The amount of liquid an Experience Lantern can hold (mB).";

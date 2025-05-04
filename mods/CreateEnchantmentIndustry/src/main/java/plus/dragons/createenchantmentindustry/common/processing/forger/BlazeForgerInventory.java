@@ -36,8 +36,10 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments.Mutable;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
+import plus.dragons.createenchantmentindustry.common.processing.enchanter.CEIEnchantmentHelper;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.EnchantingTemplateItem;
 import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
+import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 import plus.dragons.createenchantmentindustry.common.registry.CEIStats;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
@@ -255,9 +257,10 @@ public class BlazeForgerInventory extends ItemStackHandler {
         EnchantmentHelper.setEnchantments(base, removedEnchantments.toImmutable());
         int level = baseEnchantments.getLevel(enchantment);
         if (!forger.special)
-            level = Math.min(level, enchantment.value().getMaxLevel());
+            level = Math.min(level, CEIEnchantmentHelper.maxLevel(enchantment) + (CEIConfig.enchantments().splitEnchantmentRespectLevelExtension.get() ? CEIEnchantmentHelper.levelExtension(enchantment) : 0));
         addition.enchant(enchantment, level);
-        cost += Math.max(1, enchantment.value().getAnvilCost() * 2) * level;
+        var multiplier = enchantment.getData(CEIDataMaps.SPLITTING_COST_MULTIPLIER);
+        cost += (int) (Math.max(1, enchantment.value().getAnvilCost() * 2) * level * (multiplier != null ? multiplier : 1));
         return true;
     }
 
@@ -283,8 +286,8 @@ public class BlazeForgerInventory extends ItemStackHandler {
 
             if (applicable) {
                 applied = true;
-                int maxLevel = enchantment.getMaxLevel();
-                int extendedMaxLevel = maxLevel + CEIConfig.enchantments().enchantmentMaxLevelExtension.get();
+                int maxLevel = CEIEnchantmentHelper.maxLevel(holder);
+                int extendedMaxLevel = maxLevel + CEIEnchantmentHelper.levelExtension(holder);
 
                 if (resultLevel > extendedMaxLevel) {
                     resultLevel = extendedMaxLevel;
@@ -297,7 +300,8 @@ public class BlazeForgerInventory extends ItemStackHandler {
                 int anvilCost = enchantment.getAnvilCost();
                 anvilCost = Math.max(1, anvilCost / 2);
 
-                cost += anvilCost * resultLevel;
+                var multiplier = holder.getData(CEIDataMaps.FORGING_COST_MULTIPLIER);
+                cost += (int) (anvilCost * resultLevel * (multiplier != null ? multiplier : 1));
             }
         }
         if (!applied)
@@ -328,7 +332,8 @@ public class BlazeForgerInventory extends ItemStackHandler {
                 resultEnchantments.set(holder, entry.getIntValue());
                 int anvilCost = enchantment.getAnvilCost();
                 anvilCost = Math.max(1, anvilCost / 2);
-                cost += anvilCost * entry.getIntValue();
+                var multiplier = holder.getData(CEIDataMaps.FORGING_COST_MULTIPLIER);
+                cost += (int) (anvilCost * entry.getIntValue() * (multiplier != null ? multiplier : 1));
             }
         }
         if (!applied)

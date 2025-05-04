@@ -20,7 +20,9 @@ package plus.dragons.createenchantmentindustry.common.processing.enchanter;
 
 import com.google.common.collect.Lists;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 import net.minecraft.core.Holder;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -31,9 +33,13 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
+import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
 public class CEIEnchantmentHelper {
+    @Nullable
+    public static Function<Holder<Enchantment>, Integer> alternativeMaxLevel;
+
     public static int getEnchantmentCost(Holder<Enchantment> holder, int level) {
         var enchantment = holder.value();
         int cost = ExperienceHelper.getExperienceForNextLevel(enchantment.getMinCost(level));
@@ -61,11 +67,7 @@ public class CEIEnchantmentHelper {
         List<EnchantmentInstance> list = Lists.newArrayList();
         possibleEnchantments.forEach(holder -> {
             Enchantment enchantment = holder.value();
-            int maxLevel = enchantment.getMaxLevel();
-            // Remove since Blaze Enchanter should not break level cap
-            /*if (maxLevel > 1 && special)
-                maxLevel += CEIConfig.enchantments().enchantmentMaxLevelExtension.get();
-            maxLevel = Math.clamp(maxLevel, 1, 255);*/
+            int maxLevel = maxLevel(holder);
             for (int i = maxLevel; i >= enchantment.getMinLevel(); i--) {
                 if (level >= enchantment.getMinCost(i) && level <= enchantment.getMaxCost(i)) {
                     list.add(new EnchantmentInstance(holder, i));
@@ -92,5 +94,15 @@ public class CEIEnchantmentHelper {
             adjustedLevel /= 2;
         }
         return list;
+    }
+
+    public static int maxLevel(Holder<Enchantment> enchantment) {
+        if (alternativeMaxLevel == null) return enchantment.value().getMaxLevel();
+        return alternativeMaxLevel.apply(enchantment);
+    }
+
+    public static int levelExtension(Holder<Enchantment> enchantment) {
+        var result = enchantment.getData(CEIDataMaps.SUPER_ENCHANTING_LEVEL_EXTENSION);
+        return result != null ? result.intValue() : CEIConfig.enchantments().enchantmentMaxLevelExtension.get();
     }
 }

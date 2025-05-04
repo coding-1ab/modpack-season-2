@@ -23,6 +23,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
@@ -40,7 +41,9 @@ import plus.dragons.createdragonsplus.util.Pairs;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.CEIEnchantmentHelper;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
+import plus.dragons.createenchantmentindustry.common.registry.CEIEnchantments;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
+import plus.dragons.createenchantmentindustry.util.CEIIntIntPair;
 
 public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
     public static final PrintingRecipeJEI.Type TYPE = PrintingRecipeJEI
@@ -56,7 +59,12 @@ public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
                 enchantment.level);
         this.enchantment = enchantment;
         this.enchantmentBook = EnchantedBookItem.createForEnchantment(enchantment);
-        this.cost = CEIEnchantmentHelper.getEnchantmentCost(enchantment.enchantment, enchantment.level);
+        Optional<CEIIntIntPair> optional = Optional.empty();
+        var customCost = enchantment.enchantment.getData(CEIDataMaps.PRINTING_ENCHANTED_BOOK_COST);
+        if (customCost != null) {
+            optional = customCost.stream().filter(pair -> pair.level() == enchantment.level).findFirst();
+        }
+        this.cost = optional.map(CEIIntIntPair::value).orElseGet(() -> CEIEnchantmentHelper.getEnchantmentCost(enchantment.enchantment, enchantment.level));
     }
 
     public static MapCodec<EnchantedBookPrintingRecipeJEI> createCodec(ICodecHelper codecHelper, IRecipeManager recipeManager) {
@@ -70,8 +78,9 @@ public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
     public static List<PrintingRecipeJEI> listAll() {
         return Objects.requireNonNull(CommonHooks.resolveLookup(Registries.ENCHANTMENT))
                 .listElements()
+                .filter(enchantment -> !enchantment.is(CEIEnchantments.MOD_TAGS.printingDeny))
                 .flatMap(enchantment -> IntStream
-                        .rangeClosed(enchantment.value().getMinLevel(), enchantment.value().getMaxLevel())
+                        .rangeClosed(enchantment.value().getMinLevel(), CEIEnchantmentHelper.maxLevel(enchantment))
                         .mapToObj(level -> new EnchantedBookPrintingRecipeJEI(new EnchantmentInstance(enchantment, level))))
                 .collect(Collectors.toList());
     }

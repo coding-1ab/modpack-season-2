@@ -1,8 +1,28 @@
+/*
+ * Copyright (C) 2025  DragonsPlus
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package plus.dragons.createenchantmentindustry.common.fluids.lantern;
 
 import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
 import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageWrapper;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
@@ -14,15 +34,12 @@ import plus.dragons.createenchantmentindustry.common.fluids.experience.Experienc
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class ExperienceLanternMovementBehavior implements MovementBehaviour {
     @Override
     public void tick(MovementContext context) {
         if (!context.world.isClientSide && context.world.getGameTime() % 10 == 0) {
             drainExp(context.world,
-                    new AABB(context.position.subtract(0.5d,0.5d,0.5d),context.position.add(0.5d,0.5d,0.5d)).inflate(0.5),
+                    new AABB(context.position.subtract(0.5d, 0.5d, 0.5d), context.position.add(0.5d, 0.5d, 0.5d)).inflate(0.5),
                     context.contraption.getStorage().getFluids());
         }
     }
