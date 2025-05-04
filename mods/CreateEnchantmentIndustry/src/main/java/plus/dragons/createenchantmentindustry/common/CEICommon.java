@@ -18,6 +18,10 @@
 
 package plus.dragons.createenchantmentindustry.common;
 
+import com.simibubi.create.foundation.item.ItemDescription;
+import com.simibubi.create.foundation.item.KineticStats;
+import com.simibubi.create.foundation.item.TooltipModifier;
+import net.createmod.catnip.lang.FontHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.EventPriority;
@@ -35,7 +39,10 @@ import plus.dragons.createenchantmentindustry.config.CEIConfig;
 @Mod(CEICommon.ID)
 public class CEICommon {
     public static final String ID = "create_enchantment_industry";
-    public static final CDPRegistrate REGISTRATE = new CDPRegistrate(ID);
+    public static final CDPRegistrate REGISTRATE = new CDPRegistrate(ID)
+            .setTooltipModifier(item ->
+                    new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
+                            .andThen(TooltipModifier.mapNull(KineticStats.create(item))));
 
     public CEICommon(IEventBus modBus, ModContainer modContainer) {
         REGISTRATE.registerEventListeners(modBus);
