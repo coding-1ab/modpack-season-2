@@ -1,4 +1,4 @@
-package org.antarcticgardens.cna.content.motor.extension;
+package org.antarcticgardens.cna.content.ponders;
 
 import com.simibubi.create.content.kinetics.gauge.StressGaugeBlockEntity;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;

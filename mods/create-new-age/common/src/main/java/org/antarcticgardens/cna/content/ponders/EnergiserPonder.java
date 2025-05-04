@@ -1,4 +1,4 @@
-package org.antarcticgardens.cna.content.energising;
+package org.antarcticgardens.cna.content.ponders;
 
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuilder;
@@ -9,6 +9,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 import org.antarcticgardens.cna.CNAItems;
+import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlockEntity;
+import org.antarcticgardens.cna.content.energising.EnergiserBlockEntity;
 
 public class EnergiserPonder {
     public static void ponder(SceneBuilder builder, SceneBuildingUtil util) {
@@ -28,9 +30,9 @@ public class EnergiserPonder {
 
         scene.world().showSection(util.select().position(4, 3, 5), Direction.DOWN);
         scene.world().modifyBlockEntity(new BlockPos(3, 3, 5), EnergiserBlockEntity.class, EnergiserPonder::nomGiveElectricity);
-//        scene.world.modifyBlockEntity(new BlockPos(6, 3, 5), ElectricalConnectorBlockEntity.class, (be) -> {
-//            be.disconnect((ElectricalConnectorBlockEntity) be.getLevel().getBlockEntity(new BlockPos(4, 3, 3)));
-//        });
+        scene.world().modifyBlockEntity(new BlockPos(6, 3, 5), ElectricalConnectorBlockEntity.class, (be) -> {
+            be.disconnect((ElectricalConnectorBlockEntity) be.getLevel().getBlockEntity(new BlockPos(4, 3, 3)));
+        });
         scene.world().showSection(util.select().position(6, 3, 5), Direction.DOWN);
 
         scene.idle(10);

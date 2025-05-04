@@ -34,7 +34,7 @@ dependencies {
     modRuntimeOnly("maven.modrinth:resourceful-lib:YzWNEutS")
     modRuntimeOnly("maven.modrinth:resourceful-config:PlEObkl9")
     modRuntimeOnly("maven.modrinth:botarium:YgOh7n9M")
-    modRuntimeOnly("maven.modrinth:ad-astra:DruFc2hK")
+//    modRuntimeOnly("maven.modrinth:ad-astra:DruFc2hK")
 }
 
 compileJava {

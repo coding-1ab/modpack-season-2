@@ -1,16 +1,13 @@
-package org.antarcticgardens.cna;
+package org.antarcticgardens.cna.content.ponders;
 
-import com.simibubi.create.Create;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.createmod.ponder.api.level.PonderLevel;
 import net.createmod.ponder.api.registration.*;
 import net.minecraft.resources.ResourceLocation;
-import org.antarcticgardens.cna.content.energising.EnergiserPonder;
-import org.antarcticgardens.cna.content.heat.HeatingPonder;
-import org.antarcticgardens.cna.content.motor.MotorPonder;
-import org.antarcticgardens.cna.content.motor.extension.MotorExtensionPonder;
-import org.antarcticgardens.cna.content.nuclear.reactor.ReactorPonder;
+import org.antarcticgardens.cna.CNABlocks;
+import org.antarcticgardens.cna.CNAItems;
+import org.antarcticgardens.cna.CreateNewAge;
 
 public class CNAPonders implements PonderPlugin {
     @Override
@@ -56,7 +53,7 @@ public class CNAPonders implements PonderPlugin {
         HELPER.addStoryBoard(CNABlocks.ADVANCED_SOLAR_HEATING_PLATE, "heating", HeatingPonder::ponder);
         HELPER.addStoryBoard(CNABlocks.STIRLING_ENGINE, "heating", HeatingPonder::ponder);
 
-        HELPER.addStoryBoard(CNABlocks.HEATER, "heater", HeatingPonder::ponder);
+        HELPER.addStoryBoard(CNABlocks.HEATER, "heater", HeaterPonder::ponder);
 
         HELPER.addStoryBoard(CNABlocks.REACTOR_CASING, "reactor", ReactorPonder::ponder);
         HELPER.addStoryBoard(CNABlocks.REACTOR_GLASS, "reactor", ReactorPonder::ponder);
@@ -65,19 +62,19 @@ public class CNAPonders implements PonderPlugin {
         HELPER.addStoryBoard(CNABlocks.REACTOR_HEAT_VENT, "reactor", ReactorPonder::ponder);
         HELPER.addStoryBoard(CNAItems.NUCLEAR_FUEL, "reactor", ReactorPonder::ponder);
 
-//        HELPER.addStoryBoard(CNABlocks.ELECTRICAL_CONNECTOR, "wires", ElectricityPonder::ponder);
-//        HELPER.addStoryBoard(CNABlocks.COPPER_WIRE, "wires", ElectricityPonder::ponder);
-//        HELPER.addStoryBoard(CNABlocks.DIAMOND_WIRE, "wires", ElectricityPonder::ponder);
-//        HELPER.addStoryBoard(CNABlocks.GOLDEN_WIRE, "wires", ElectricityPonder::ponder);
-//        HELPER.addStoryBoard(CNABlocks.IRON_WIRE, "wires", ElectricityPonder::ponder);
+        HELPER.addStoryBoard(CNABlocks.ELECTRICAL_CONNECTOR, "wires", ElectricityPonder::ponder);
+        HELPER.addStoryBoard(CNAItems.COPPER_WIRE, "wires", ElectricityPonder::ponder);
+        HELPER.addStoryBoard(CNAItems.OVERCHARGED_DIAMOND_WIRE, "wires", ElectricityPonder::ponder);
+        HELPER.addStoryBoard(CNAItems.OVERCHARGED_GOLDEN_WIRE, "wires", ElectricityPonder::ponder);
+        HELPER.addStoryBoard(CNAItems.OVERCHARGED_IRON_WIRE, "wires", ElectricityPonder::ponder);
 
-//        HELPER.addStoryBoard(CNABlocks.CARBON_BRUSHES, "generation", GenerationPonder::ponder);
-//        HELPER.addStoryBoard(CNABlocks.GENERATOR_COIL, "generation", GenerationPonder::ponder);
-//        HELPER.addStoryBoard(CNABlocks.MAGNETITE_BLOCK, "generation", GenerationPonder::ponder);
-//        HELPER.addStoryBoard(CNABlocks.REDSTONE_MAGNET, "generation", GenerationPonder::ponder);
-//        HELPER.addStoryBoard(CNABlocks.LAYERED_MAGNET, "generation", GenerationPonder::ponder);
-//        HELPER.addStoryBoard(CNABlocks.FLUXUATED_MAGNETITE, "generation", GenerationPonder::ponder);
-//        HELPER.addStoryBoard(CNABlocks.NETHERITE_MAGNET, "generation", GenerationPonder::ponder);
+        HELPER.addStoryBoard(CNABlocks.CARBON_BRUSHES, "generation", GenerationPonder::ponder);
+        HELPER.addStoryBoard(CNABlocks.GENERATOR_COIL, "generation", GenerationPonder::ponder);
+        HELPER.addStoryBoard(CNABlocks.MAGNETITE_BLOCK, "generation", GenerationPonder::ponder);
+        HELPER.addStoryBoard(CNABlocks.REDSTONE_MAGNET, "generation", GenerationPonder::ponder);
+        HELPER.addStoryBoard(CNABlocks.LAYERED_MAGNET, "generation", GenerationPonder::ponder);
+        HELPER.addStoryBoard(CNABlocks.FLUXUATED_MAGNETITE, "generation", GenerationPonder::ponder);
+        HELPER.addStoryBoard(CNABlocks.NETHERITE_MAGNET, "generation", GenerationPonder::ponder);
 
         HELPER.forComponents(CNABlocks.BASIC_MOTOR, CNABlocks.ADVANCED_MOTOR, CNABlocks.REINFORCED_MOTOR)
                 .addStoryBoard("motor", MotorPonder::motor);
@@ -149,10 +146,10 @@ public class CNAPonders implements PonderPlugin {
         HELPER.addToTag(WIRING)
                 .add(CNABlocks.ELECTRICAL_CONNECTOR)
 
-                .add(CNAItems.COPPER_WIRE);
-//                .add(CNAItems.IRON_WIRE)
-//                .add(CNAItems.GOLDEN_WIRE)
-//                .add(CNAItems.DIAMOND_WIRE);
+                .add(CNAItems.COPPER_WIRE)
+                .add(CNAItems.OVERCHARGED_IRON_WIRE)
+                .add(CNAItems.OVERCHARGED_GOLDEN_WIRE)
+                .add(CNAItems.OVERCHARGED_DIAMOND_WIRE);
 
         HELPER.addToTag(MAGNETS)
                 .add(CNABlocks.MAGNETITE_BLOCK)

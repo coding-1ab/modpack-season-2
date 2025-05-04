@@ -1,4 +1,4 @@
-package org.antarcticgardens.cna.content.nuclear.reactor;
+package org.antarcticgardens.cna.content.ponders;
 
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;

@@ -1,4 +1,4 @@
-package org.antarcticgardens.cna.content.motor;
+package org.antarcticgardens.cna.content.ponders;
 
 import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
@@ -6,7 +6,6 @@ import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
-import net.createmod.ponder.foundation.element.InputWindowElement;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;

@@ -1,4 +1,4 @@
-package org.antarcticgardens.cna.content.heat.heater;
+package org.antarcticgardens.cna.content.ponders;
 
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
@@ -6,6 +6,7 @@ import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
+import org.antarcticgardens.cna.content.heat.heater.HeaterBlock;
 
 public class HeaterPonder {
     public static void ponder(SceneBuilder builder, SceneBuildingUtil util) {

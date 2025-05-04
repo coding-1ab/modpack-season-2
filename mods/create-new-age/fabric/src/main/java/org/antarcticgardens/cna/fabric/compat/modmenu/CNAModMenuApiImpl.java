@@ -1,8 +1,8 @@
 package org.antarcticgardens.cna.fabric.compat.modmenu;
 
-import com.simibubi.create.foundation.config.ui.BaseConfigScreen;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
+import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.minecraft.client.gui.screens.Screen;
 import org.antarcticgardens.cna.CreateNewAge;
 
