@@ -105,7 +105,7 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
     }
 
     public @Nullable IFluidHandler getFluidHandler(@Nullable Direction side) {
-        if (side == getBlockState().getValue(HorizontalKineticBlock.HORIZONTAL_FACING).getOpposite())
+        if (side == getBlockState().getValue(HorizontalKineticBlock.HORIZONTAL_FACING).getOpposite() || side == null)
             return tank.getCapability();
         return null;
     }
