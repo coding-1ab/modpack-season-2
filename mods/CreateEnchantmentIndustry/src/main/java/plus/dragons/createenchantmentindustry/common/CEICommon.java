@@ -40,9 +40,8 @@ import plus.dragons.createenchantmentindustry.config.CEIConfig;
 public class CEICommon {
     public static final String ID = "create_enchantment_industry";
     public static final CDPRegistrate REGISTRATE = new CDPRegistrate(ID)
-            .setTooltipModifier(item ->
-                    new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
-                            .andThen(TooltipModifier.mapNull(KineticStats.create(item))));
+            .setTooltipModifier(item -> new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
+                    .andThen(TooltipModifier.mapNull(KineticStats.create(item))));
 
     public CEICommon(IEventBus modBus, ModContainer modContainer) {
         REGISTRATE.registerEventListeners(modBus);

@@ -10,7 +10,10 @@
 * Update Japanese Translation by @YukkuriOfuton
 
 ### Change
-* Level extension of `Mending` is set to 0
+* Level extension of `Mending` is set to 0 due to the fact that all levels have same effect
 
 #### Fix
+* Fix Breaking a pipe-connected Blaze Forger or Blaze Enchanter causes crash
 * Fix experience cake cutting recipe using wrong tag (@achookh)
+* Fix Grindstone Drain, Blaze Forger and Blaze Enchanter do not have fluid handler when side is null
+* Fix Grindstones missing Kinetic Stress Impact tooltip
