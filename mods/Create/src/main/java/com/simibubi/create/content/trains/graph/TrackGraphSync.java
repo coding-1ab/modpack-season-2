@@ -9,7 +9,6 @@ import java.util.UUID;
 import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
-import javax.sound.midi.Track;
 
 import com.google.common.collect.ImmutableList;
 import com.simibubi.create.AllPackets;
