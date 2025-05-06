@@ -166,17 +166,19 @@ public class BeltSlicer {
 			Search:
 			while (true) {
 				for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
-					if (amountRetrieved == requiredShafts && beltFound)
-						break Search;
-
 					ItemStack itemstack = player.getInventory().getItem(i);
+					if (amountRetrieved == requiredShafts && beltFound) {
+						if (!world.isClientSide)
+							// decrement the previous itemstack
+							player.getInventory().getItem(i - 1).shrink(1);
+						break Search;
+					}
+
 					if (itemstack.isEmpty())
 						continue;
 					int count = itemstack.getCount();
 
 					if (AllItems.BELT_CONNECTOR.isIn(itemstack)) {
-						if (!world.isClientSide)
-							itemstack.shrink(1);
 						beltFound = true;
 						continue;
 					}
