@@ -166,19 +166,17 @@ public class BeltSlicer {
 			Search:
 			while (true) {
 				for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
-					ItemStack itemstack = player.getInventory().getItem(i);
-					if (amountRetrieved == requiredShafts && beltFound) {
-						if (!world.isClientSide)
-							// decrement the previous itemstack
-							player.getInventory().getItem(i - 1).shrink(1);
+					if (amountRetrieved == requiredShafts && beltFound)
 						break Search;
-					}
 
+					ItemStack itemstack = player.getInventory().getItem(i);
 					if (itemstack.isEmpty())
 						continue;
 					int count = itemstack.getCount();
 
 					if (AllItems.BELT_CONNECTOR.isIn(itemstack)) {
+						if (!world.isClientSide)
+							itemstack.shrink(1);
 						beltFound = true;
 						continue;
 					}
@@ -194,8 +192,10 @@ public class BeltSlicer {
 					}
 				}
 
-				if (!world.isClientSide)
+				if (!world.isClientSide){
 					player.getInventory().placeItemBackInInventory(AllBlocks.SHAFT.asStack(amountRetrieved));
+					player.getInventory().placeItemBackInInventory(AllItems.BELT_CONNECTOR.asStack());
+				}
 				return InteractionResult.FAIL;
 			}
 		}
