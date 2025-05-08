@@ -49,6 +49,13 @@ var modId = rootProject.modId
 
 loom {
     runs {
+        client {
+            vmArg("-XX:+AllowEnhancedClassRedefinition")
+            vmArg("-XX:+IgnoreUnrecognizedVMOptions")
+            vmArg("-Dmixin.debug.export=true")
+            vmArg("-Dmixin.env.remapRefMap=true")
+            vmArg("-Dmixin.env.refMapRemappingFile=${projectDir}/build/createSrgToMcp/output.srg")
+        }
         datagen {
             inherit(client)
             vmArg("-Dfabric-api.datagen")

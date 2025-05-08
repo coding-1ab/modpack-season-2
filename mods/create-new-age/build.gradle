@@ -42,8 +42,8 @@ subprojects {
         
         annotationProcessor("systems.manifold:manifold-preprocessor:2024.1.29")
         
-        modImplementation("org.antarcticgardens:esl-${project.name}:${rootProject.eslVersion}")
-        
+        modImplementation("org.antarcticgardens.esl:esl-${project.name}-${rootProject.minecraftVersion}:${rootProject.eslVersion}+${project.name}-mc${rootProject.minecraftVersion}")
+
         if (project.name != "fabric") { 
             modApi("com.tterrag.registrate:Registrate:${rootProject.registrateVersion}")
             modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${minecraftVersion}:${flywheelVersion}")

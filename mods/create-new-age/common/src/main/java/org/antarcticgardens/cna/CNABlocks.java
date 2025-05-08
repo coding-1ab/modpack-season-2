@@ -198,7 +198,7 @@ public class CNABlocks {
                     .register();
     
     public static final BlockEntry<MotorBlock> BASIC_MOTOR =
-            REGISTRATE.block("basic_motor", (p) -> new MotorBlock(p, new BasicMotorVariant()))
+            REGISTRATE.block("basic_motor", (p) -> new MotorBlock(p, CNABlockEntityTypes.BASIC_MOTOR, new BasicMotorVariant()))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
@@ -211,7 +211,7 @@ public class CNABlocks {
                     .register();
 
     public static final BlockEntry<MotorBlock> ADVANCED_MOTOR =
-            REGISTRATE.block("advanced_motor", (p) -> new MotorBlock(p, new AdvancedMotorVariant()))
+            REGISTRATE.block("advanced_motor", (p) -> new MotorBlock(p, CNABlockEntityTypes.ADVANCED_MOTOR, new AdvancedMotorVariant()))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(3.5f))
@@ -225,7 +225,7 @@ public class CNABlocks {
 
 
     public static final BlockEntry<MotorBlock> REINFORCED_MOTOR =
-            REGISTRATE.block("reinforced_motor", (p) -> new MotorBlock(p, new ReinforcedMotorVariant()))
+            REGISTRATE.block("reinforced_motor", (p) -> new MotorBlock(p, CNABlockEntityTypes.REINFORCED_MOTOR, new ReinforcedMotorVariant()))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(4.0f))
@@ -238,7 +238,7 @@ public class CNABlocks {
                     .register();
 
     public static final BlockEntry<MotorExtensionBlock> BASIC_MOTOR_EXTENSION =
-            REGISTRATE.block("basic_motor_extension", (p) -> new MotorExtensionBlock(p, new BasicMotorExtensionVariant()))
+            REGISTRATE.block("basic_motor_extension", (p) -> new MotorExtensionBlock(p, CNABlockEntityTypes.BASIC_MOTOR_EXTENSION, new BasicMotorExtensionVariant()))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(4.0f))
@@ -251,7 +251,7 @@ public class CNABlocks {
                     .register();
 
     public static final BlockEntry<MotorExtensionBlock> ADVANCED_MOTOR_EXTENSION =
-            REGISTRATE.block("advanced_motor_extension", (p) -> new MotorExtensionBlock(p, new AdvancedMotorExtensionVariant()))
+            REGISTRATE.block("advanced_motor_extension", (p) -> new MotorExtensionBlock(p, CNABlockEntityTypes.ADVANCED_MOTOR_EXTENSION, new AdvancedMotorExtensionVariant()))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(4.0f))

@@ -24,8 +24,11 @@ import org.antarcticgardens.cna.content.heat.stirling.StirlingEngineVisual;
 import org.antarcticgardens.cna.content.heat.stirling.StirlingEngineRenderer;
 import org.antarcticgardens.cna.content.motor.MotorBlockEntity;
 import org.antarcticgardens.cna.content.motor.extension.MotorExtensionBlockEntity;
+import org.antarcticgardens.cna.content.motor.extension.variants.AdvancedMotorExtensionVariant;
 import org.antarcticgardens.cna.content.motor.extension.variants.BasicMotorExtensionVariant;
+import org.antarcticgardens.cna.content.motor.variants.AdvancedMotorVariant;
 import org.antarcticgardens.cna.content.motor.variants.BasicMotorVariant;
+import org.antarcticgardens.cna.content.motor.variants.ReinforcedMotorVariant;
 import org.antarcticgardens.cna.content.nuclear.reactor.fuelacceptor.ReactorFuelAcceptorBlockEntity;
 import org.antarcticgardens.cna.content.nuclear.reactor.rod.ReactorRodBlockEntity;
 import org.antarcticgardens.cna.content.nuclear.reactor.vent.ReactorHeatVentBlockEntity;
@@ -113,19 +116,37 @@ public class CNABlockEntityTypes {
             .register();
 
 
-    public static final BlockEntityEntry<MotorBlockEntity> MOTOR = REGISTRATE 
-            .blockEntity("motor", MotorBlockEntity.create(new BasicMotorVariant()))
+    public static final BlockEntityEntry<MotorBlockEntity> BASIC_MOTOR = REGISTRATE
+            .blockEntity("basic_motor", MotorBlockEntity.create(new BasicMotorVariant()))
             .visual(() -> OrientedRotatingVisual.of(AllPartialModels.SHAFT_HALF))
-            .validBlocks(CNABlocks.BASIC_MOTOR, CNABlocks.ADVANCED_MOTOR, CNABlocks.REINFORCED_MOTOR)
+            .validBlocks(CNABlocks.BASIC_MOTOR)
+            .renderer(() -> HalfShaftRenderer::new)
+            .register();
+
+    public static final BlockEntityEntry<MotorBlockEntity> ADVANCED_MOTOR = REGISTRATE
+            .blockEntity("advanced_motor", MotorBlockEntity.create(new AdvancedMotorVariant()))
+            .visual(() -> OrientedRotatingVisual.of(AllPartialModels.SHAFT_HALF))
+            .validBlocks(CNABlocks.ADVANCED_MOTOR)
+            .renderer(() -> HalfShaftRenderer::new)
+            .register();
+
+    public static final BlockEntityEntry<MotorBlockEntity> REINFORCED_MOTOR = REGISTRATE
+            .blockEntity("reinforced_motor", MotorBlockEntity.create(new ReinforcedMotorVariant()))
+            .visual(() -> OrientedRotatingVisual.of(AllPartialModels.SHAFT_HALF))
+            .validBlocks(CNABlocks.REINFORCED_MOTOR)
             .renderer(() -> HalfShaftRenderer::new)
             .register();
 
 
-    public static final BlockEntityEntry<MotorExtensionBlockEntity> MOTOR_EXTENSION = REGISTRATE
+    public static final BlockEntityEntry<MotorExtensionBlockEntity> BASIC_MOTOR_EXTENSION = REGISTRATE
             .blockEntity("motor_extension", MotorExtensionBlockEntity.create(new BasicMotorExtensionVariant()))
-            .validBlocks(CNABlocks.BASIC_MOTOR_EXTENSION, CNABlocks.ADVANCED_MOTOR_EXTENSION)
+            .validBlocks(CNABlocks.BASIC_MOTOR_EXTENSION)
             .register();
 
+    public static final BlockEntityEntry<MotorExtensionBlockEntity> ADVANCED_MOTOR_EXTENSION = REGISTRATE
+            .blockEntity("motor_extension", MotorExtensionBlockEntity.create(new AdvancedMotorExtensionVariant()))
+            .validBlocks(CNABlocks.ADVANCED_MOTOR_EXTENSION)
+            .register();
 
     public static final BlockEntityEntry<BatteryBlockEntity> BATTERY = REGISTRATE
             .blockEntity("battery", BatteryBlockEntity::new)

@@ -108,12 +108,12 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements IHave
         }
     }
 
-//    #if !CNA_FABRIC
+    #if !CNA_FABRIC
     @Override
     public AABB getRenderBoundingBox() {
         return INFINITE_EXTENT_AABB;
     }
-//    #endif
+    #endif
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {

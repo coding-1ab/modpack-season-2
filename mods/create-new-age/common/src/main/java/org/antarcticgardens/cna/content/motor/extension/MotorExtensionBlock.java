@@ -3,6 +3,7 @@ package org.antarcticgardens.cna.content.motor.extension;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.utility.CreateLang;
+import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,10 +38,12 @@ public class MotorExtensionBlock extends Block implements IBE<MotorExtensionBloc
     protected static final VoxelShape Z_AXIS_AABB = Block.box(2.0, 2.0, 0.0, 14.0, 14.0, 16.0);
     protected static final VoxelShape X_AXIS_AABB = Block.box(0.0, 2.0, 2.0, 16.0, 14.0, 14.0);
     private final IMotorExtensionVariant variant;
+    BlockEntityEntry<MotorExtensionBlockEntity> entry;
 
-    public MotorExtensionBlock(Properties properties, IMotorExtensionVariant variant) {
+    public MotorExtensionBlock(Properties properties, BlockEntityEntry<MotorExtensionBlockEntity> entry, IMotorExtensionVariant variant) {
         super(properties);
         this.variant = variant;
+        this.entry = entry;
     }
 
     @Override
@@ -126,6 +129,6 @@ public class MotorExtensionBlock extends Block implements IBE<MotorExtensionBloc
 
     @Override
     public BlockEntityType<? extends MotorExtensionBlockEntity> getBlockEntityType() {
-        return CNABlockEntityTypes.MOTOR_EXTENSION.get();
+        return entry.get();
     }
 }

@@ -57,7 +57,9 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
                 .onFinalCommit(RunnableUtil.createBlockEntityUpdater(this))
                 .setSupportsExtraction(false);
 
-        EnergyStorage.registerForBlockEntity((blockEntity, direction) -> blockEntity.storage, CNABlockEntityTypes.MOTOR.get()); 
+        EnergyStorage.registerForBlockEntity((blockEntity, direction) -> blockEntity.storage, CNABlockEntityTypes.BASIC_MOTOR.get());
+        EnergyStorage.registerForBlockEntity((blockEntity, direction) -> blockEntity.storage, CNABlockEntityTypes.ADVANCED_MOTOR.get());
+        EnergyStorage.registerForBlockEntity((blockEntity, direction) -> blockEntity.storage, CNABlockEntityTypes.REINFORCED_MOTOR.get());
     }
 
     public static BlockEntityBuilder.BlockEntityFactory<MotorBlockEntity> create(IMotorVariant variant) {
