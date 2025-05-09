@@ -23,6 +23,7 @@
     "TestCommandMixin",
     "WaterWheelFluidSpreadMixin",
     "accessor.AbstractRegistrateAccessor",
+    "accessor.BlockLootSubProviderAccessor",
     "accessor.BlockBehaviourAccessor",
     "accessor.DispenserBlockAccessor",
     "accessor.FallingBlockEntityAccessor",
