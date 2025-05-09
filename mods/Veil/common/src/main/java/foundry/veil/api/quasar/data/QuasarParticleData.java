@@ -10,9 +10,11 @@ import foundry.veil.api.quasar.registry.RenderStyleRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -91,90 +93,30 @@ public record QuasarParticleData(boolean shouldCollide,
     }
 
     /**
-     * @return A stream containing all modules in the particle.
+     * @return A stream containing all modules in the particle
+     * @deprecated Use {@link #getAllModules()}
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
+    @Deprecated
     public Stream<Holder<ParticleModuleData>> allModules() {
-        Stream.Builder<Holder<ParticleModuleData>> builder = Stream.builder();
-        for (Holder<ParticleModuleData> initModule : this.initModules) {
-            builder.add(initModule);
-        }
-        for (Holder<ParticleModuleData> initModule : this.updateModules) {
-            builder.add(initModule);
-        }
-        for (Holder<ParticleModuleData> initModule : this.collisionModules) {
-            builder.add(initModule);
-        }
-        for (Holder<ParticleModuleData> initModule : this.forceModules) {
-            builder.add(initModule);
-        }
-        for (Holder<ParticleModuleData> initModule : this.renderModules) {
-            builder.add(initModule);
-        }
-        return builder.build();
+        return this.getAllModules().stream();
+    }
+
+    /**
+     * @return A list containing all modules in the particle
+     * @since 1.3.0
+     */
+    public List<Holder<ParticleModuleData>> getAllModules() {
+        List<Holder<ParticleModuleData>> builder = new LinkedList<>();
+        builder.addAll(this.initModules);
+        builder.addAll(this.updateModules);
+        builder.addAll(this.collisionModules);
+        builder.addAll(this.forceModules);
+        builder.addAll(this.renderModules);
+        return builder;
     }
 
     public @Nullable ResourceLocation getRegistryId() {
         return QuasarParticles.registryAccess().registry(QuasarParticles.PARTICLE_DATA).map(registry -> registry.getKey(this)).orElse(null);
     }
-
-//
-//    @Deprecated
-//    public void addInitModule(InitParticleModule module) {
-//        initModules.add(module);
-//    }
-//
-//    @Deprecated
-//    public void addInitModules(InitParticleModule... modules) {
-//        initModules.addAll(Arrays.asList(modules));
-//    }
-//
-//    @Deprecated
-//    public void addRenderModule(RenderParticleModule module) {
-//        renderModules.add(module);
-//    }
-//
-//    @Deprecated
-//    public void addRenderModules(RenderParticleModule... modules) {
-//        renderModules.addAll(Arrays.asList(modules));
-//    }
-//
-//    @Deprecated
-//    public void addUpdateModule(UpdateParticleModule module) {
-//        updateModules.add(module);
-//    }
-//
-//    @Deprecated
-//    public void addUpdateModules(UpdateParticleModule... modules) {
-//        updateModules.addAll(Arrays.asList(modules));
-//    }
-//
-//    @Deprecated
-//    public void addCollisionModule(CollisionParticleModule module) {
-//        collisionModules.add(module);
-//    }
-//
-//    @Deprecated
-//    public void addCollisionModules(CollisionParticleModule... modules) {
-//        collisionModules.addAll(Arrays.asList(modules));
-//    }
-//
-//    @Deprecated
-//    public void addForce(AbstractParticleForce force) {
-//        forces.add(force);
-//    }
-//
-//    @Deprecated
-//    public void addForces(AbstractParticleForce... forces) {
-//        this.forces.addAll(Arrays.asList(forces));
-//    }
-//
-//    @Deprecated
-//    public void addSubEmitter(ResourceLocation emitter) {
-//        subEmitters.add(emitter);
-//    }
-//
-//    @Deprecated
-//    public void addSubEmitters(ResourceLocation... emitters) {
-//        subEmitters.addAll(Arrays.asList(emitters));
-//    }
 }
