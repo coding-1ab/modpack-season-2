@@ -11,7 +11,6 @@ import javax.annotation.Nullable;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.simibubi.create.Create;
-import com.simibubi.create.foundation.utility.RecipeGenericsUtil;
 
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.item.crafting.Recipe;
@@ -50,9 +49,9 @@ public class RecipeFinder {
 		return Collections.emptyList();
 	}
 
-	private static List<RecipeHolder<? extends Recipe<?>>> startSearch(Level level, Predicate<? super Recipe<?>> conditions) {
-		List<Recipe<?>> recipes = new ArrayList<>();
-		for (Recipe<?> r : level.getRecipeManager().getRecipes())
+	private static List<RecipeHolder<? extends Recipe<?>>> startSearch(Level level, Predicate<? super RecipeHolder<? extends Recipe<?>>> conditions) {
+		List<RecipeHolder<? extends Recipe<?>>> recipes = new ArrayList<>();
+		for (RecipeHolder<? extends Recipe<?>> r : level.getRecipeManager().getRecipes())
 			if (conditions.test(r))
 				recipes.add(r);
 		return recipes;

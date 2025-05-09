@@ -1385,7 +1385,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 							if (patternStack.stack.isEmpty())
 								continue;
 							for (BigItemStack ordered : mutableOrder) {
-								if (!ItemHandlerHelper.canItemStacksStack(ordered.stack, patternStack.stack))
+								if (!ItemStack.isSameItemSameComponents(ordered.stack, patternStack.stack))
 									continue;
 								if (ordered.count == 0)
 									continue;
@@ -1562,7 +1562,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 					if (!ingredient.test(entry.stack))
 						continue;
 					for (BigItemStack visitedStack : alreadyCreated) {
-						if (!ItemHandlerHelper.canItemStacksStack(visitedStack.stack, entry.stack))
+						if (!ItemStack.isSameItemSameComponents(visitedStack.stack, entry.stack))
 							continue;
 						valid.add(visitedStack);
 						continue Entries;

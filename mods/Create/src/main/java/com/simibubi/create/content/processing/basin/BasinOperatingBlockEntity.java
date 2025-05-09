@@ -11,15 +11,12 @@ import com.simibubi.create.foundation.blockEntity.behaviour.simple.DeferralBehav
 import com.simibubi.create.foundation.recipe.RecipeFinder;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-
-import org.checkerframework.checker.units.qual.C;
 
 public abstract class BasinOperatingBlockEntity extends KineticBlockEntity {
 
@@ -129,9 +126,9 @@ public abstract class BasinOperatingBlockEntity extends KineticBlockEntity {
 			return new ArrayList<>();
 
 		List<Recipe<?>> list = new ArrayList<>();
-		for (Recipe<?> r : RecipeFinder.get(getRecipeCacheKey(), level, this::matchStaticFilters))
-			if (matchBasinRecipe(r))
-				list.add(r);
+		for (RecipeHolder<? extends Recipe<?>> r : RecipeFinder.get(getRecipeCacheKey(), level, this::matchStaticFilters))
+			if (matchBasinRecipe(r.value()))
+				list.add(r.value());
 
 		list.sort((r1, r2) -> r2.getIngredients().size() - r1.getIngredients().size());
 

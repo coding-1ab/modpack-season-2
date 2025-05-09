@@ -4,10 +4,6 @@ import java.util.List;
 
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.EntityTickEvent;
-
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup.RegistryLookup;
 import net.minecraft.core.component.DataComponents;
@@ -24,6 +20,10 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
+
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingBreatheEvent;
 
 @EventBusSubscriber
 public class DivingHelmetItem extends BaseArmorItem {
@@ -121,6 +121,6 @@ public class DivingHelmetItem extends BaseArmorItem {
 			AllAdvancements.DIVING_SUIT.awardTo(sp);
 
 		event.setCanBreathe(true);
-		event.setCanRefillAir(true);
+		event.setRefillAirAmount(entity.getMaxAirSupply());
 	}
 }
