@@ -48,6 +48,8 @@ public final class LightRenderer implements NativeResource {
 
     /**
      * Applies the shader set to {@link VeilRenderSystem}.
+     *
+     * @return If the shader failed to apply
      */
     public boolean applyShader() {
         ShaderProgram shader = VeilRenderSystem.getShader();
