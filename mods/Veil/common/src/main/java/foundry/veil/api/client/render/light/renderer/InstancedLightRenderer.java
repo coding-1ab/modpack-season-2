@@ -2,23 +2,20 @@ package foundry.veil.api.client.render.light.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.MeshData;
-import com.mojang.blaze3d.vertex.VertexBuffer;
 import foundry.veil.api.client.render.CullFrustum;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.light.InstancedLight;
 import foundry.veil.api.client.render.light.Light;
-import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.api.client.render.vertex.VertexArray;
 import foundry.veil.api.client.render.vertex.VertexArrayBuilder;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import static org.lwjgl.opengl.GL15C.*;
-import static org.lwjgl.opengl.GL30C.*;
 import static org.lwjgl.opengl.GL45C.glNamedBufferData;
 import static org.lwjgl.system.MemoryUtil.memAddress;
 
@@ -38,7 +35,6 @@ public abstract class InstancedLightRenderer<T extends Light & InstancedLight> i
     private final List<T> visibleLights;
     private final VertexArray vertexArray;
     private final int instancedVbo;
-    private ByteBuffer scratch;
 
     /**
      * Creates a new instanced light renderer with a resizeable light buffer.
@@ -48,7 +44,7 @@ public abstract class InstancedLightRenderer<T extends Light & InstancedLight> i
     public InstancedLightRenderer(int lightSize) {
         this.lightSize = lightSize;
         this.maxLights = 100;
-        this.visibleLights = new ArrayList<>();
+        this.visibleLights = new LinkedList<>();
         this.vertexArray = VertexArray.create();
 
         MeshData mesh = this.createMesh();
@@ -143,33 +139,13 @@ public abstract class InstancedLightRenderer<T extends Light & InstancedLight> i
         RenderSystem.glBindBuffer(GL_ARRAY_BUFFER, this.instancedVbo);
 
         // If there is no space, then resize
-        boolean rebuild = false;
         if (this.visibleLights.size() > this.maxLights) {
-            rebuild = true;
             this.maxLights = (int) Math.max(Math.ceil(this.maxLights / 2.0), this.visibleLights.size() * 1.5);
             glBufferData(GL_ARRAY_BUFFER, (long) this.maxLights * this.lightSize, GL_STREAM_DRAW);
         }
 
-        if (rebuild || !removedLights.isEmpty()) {
-            this.updateAllLights(this.visibleLights);
-        } else {
-            this.scratch = glMapBufferRange(GL_ARRAY_BUFFER, 0, (long) this.visibleLights.size() * this.lightSize, GL_MAP_WRITE_BIT | GL_MAP_FLUSH_EXPLICIT_BIT, this.scratch);
-            for (int i = 0; i < this.visibleLights.size(); i++) {
-                T light = this.visibleLights.get(i);
-                if (light.isDirty()) {
-                    if (this.scratch != null) {
-                        this.scratch.position(i * this.lightSize);
-                        light.clean();
-                        light.store(this.scratch);
-                    }
-                    glFlushMappedBufferRange(GL_ARRAY_BUFFER, (long) i * this.lightSize, this.lightSize);
-                }
-            }
-            if (this.scratch != null) {
-                this.scratch.rewind();
-            }
-            glUnmapBuffer(GL_ARRAY_BUFFER);
-        }
+        // Since culling is done CPU-side, the lights that need to be rendered changes every frame
+        this.updateAllLights(this.visibleLights);
     }
 
     @Override
@@ -182,8 +158,7 @@ public abstract class InstancedLightRenderer<T extends Light & InstancedLight> i
 
         this.vertexArray.bind();
         this.vertexArray.drawInstanced(this.visibleLights.size());
-        VertexBuffer.unbind();
-        ShaderProgram.unbind();
+        VertexArray.unbind();
         this.clearRenderState(lightRenderer, this.visibleLights);
     }
 
