@@ -1,5 +1,5 @@
 #include veil:fog
-#include veil:deferred_utils
+#include veil:space_helper
 
 #define FOG_Y 64.99
 #define THICKNESS 0.1
@@ -43,7 +43,7 @@ void intersectPlane(vec3 ray, Plane p, inout Intersection i) {
 void main() {
     vec4 baseColor = texture(DiffuseSampler0, texCoord);
     float depthSample = texture(DiffuseDepthSampler, texCoord).r;
-    vec3 viewPos = viewPosFromDepthSample(depthSample, texCoord);
+    vec3 viewPos = screenToLocalSpace(texCoord, depthSample).xyz;
 
     float dist;
     if (VeilCamera.CameraPosition.y + VeilCamera.CameraBobOffset.y < FOG_Y) {
