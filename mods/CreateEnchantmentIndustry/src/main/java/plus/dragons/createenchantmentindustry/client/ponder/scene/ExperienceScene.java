@@ -127,7 +127,7 @@ public class ExperienceScene {
         scene.idle(30);
 
         scene.overlay().showText(50)
-                .text("You can use Item Drain to pour Liquid Experience out of items")
+                .text("Use Item Drain to pour Liquid Experience out of items")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(9, 2, 2));
         scene.overlay().showOutline(PonderPalette.GREEN, itemDrain, itemDrain, 50);
@@ -300,7 +300,7 @@ public class ExperienceScene {
         scene.world().propagatePipeChange(util.grid().at(11, 7, 2));
         var spout = util.select().position(2, 3, 0);
         scene.overlay().showText(60)
-                .text("If you need to refill Liquid Experience into a container item, use spout")
+                .text("Use spout to refill Liquid Experience into a container item")
                 .attachKeyFrame()
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(2, 3, 0));
