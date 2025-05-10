@@ -32,7 +32,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -46,6 +48,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 import plus.dragons.createdragonsplus.common.advancements.AdvancementBehaviour;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlockEntities;
@@ -66,6 +70,33 @@ public class GrindstoneDrainBlock extends HorizontalKineticBlock implements IBE<
         if (hitResult.getDirection() == Direction.UP)
             return this.grindstone.useItemOn(stack, state, level, pos, player, hand, hitResult);
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+    }
+
+    @Override
+    public void updateEntityAfterFallOn(BlockGetter worldIn, Entity entityIn) {
+        super.updateEntityAfterFallOn(worldIn, entityIn);
+
+        if (entityIn.level().isClientSide)
+            return;
+        if (!(entityIn instanceof ItemEntity itemEntity))
+            return;
+        if (!entityIn.isAlive())
+            return;
+        GrindstoneDrainBlockEntity drain = getBlockEntity(worldIn, entityIn.blockPosition());
+        if (drain == null)
+            return;
+
+        IItemHandler capability = drain.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, drain.getBlockPos(), null);
+        if (capability == null)
+            return;
+
+        ItemStack remainder = capability
+                .insertItem(0, itemEntity.getItem(), false);
+        if (remainder.isEmpty())
+            itemEntity.discard();
+        if (remainder.getCount() < itemEntity.getItem()
+                .getCount())
+            itemEntity.setItem(remainder);
     }
 
     @Override
