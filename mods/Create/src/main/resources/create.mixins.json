@@ -21,7 +21,6 @@
     "SmithingMenuMixin",
     "TestCommandMixin",
     "WaterWheelFluidSpreadMixin",
-    "accessor.AbstractRegistrateAccessor",
     "accessor.BlockBehaviourAccessor",
     "accessor.BlockLootSubProviderAccessor",
     "accessor.DispenserBlockAccessor",
