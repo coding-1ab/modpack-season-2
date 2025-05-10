@@ -12,7 +12,13 @@ import static com.simibubi.create.foundation.data.recipe.CompatMetals.URANIUM;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
+
+import com.simibubi.create.api.data.recipe.BaseRecipeProvider;
+
+import com.simibubi.create.api.data.recipe.CompactingRecipeGen;
+import com.simibubi.create.foundation.data.recipe.CreateRecipeProvider.I;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -61,8 +67,18 @@ import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 import net.minecraftforge.common.crafting.conditions.NotCondition;
 
+/**
+ * Create's own Data Generation for all vanilla recipe types.
+ * @see ShapedRecipeBuilder
+ * @see ShapelessRecipeBuilder
+ * @see SimpleCookingRecipeBuilder
+ * @see SmithingTransformRecipeBuilder
+ * @see SpecialRecipeBuilder
+ * @see net.minecraftforge.common.crafting.ConditionalRecipe.Builder
+ */
 @SuppressWarnings("unused")
-public class StandardRecipeGen extends CreateRecipeProvider {
+public final class CreateStandardRecipeGen extends BaseRecipeProvider {
+	final List<GeneratedRecipe> all = new ArrayList<>();
 
 	/*
 	 * Recipes are added through fields, so one can navigate to the right one easily
@@ -859,7 +875,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 				.requires(I.ironNugget())
 				.requires(I.ironNugget())
 				.requires(I.ironNugget())),
-			
+
 		ENCASED_CHAIN_DRIVE_ZINC = create(AllBlocks.ENCASED_CHAIN_DRIVE).withSuffix("_from_zinc").unlockedBy(I::andesiteCasing)
 			.viaShapeless(b -> b.requires(I.andesiteCasing())
 				.requires(I.zincNugget())
@@ -1361,6 +1377,9 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 	 * End of recipe list
 	 */
 
+	static class Marker {
+	}
+
 	String currentFolder = "";
 
 	Marker enterFolder(String folder) {
@@ -1381,7 +1400,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 	}
 
 	GeneratedRecipe createSpecial(Supplier<? extends SimpleCraftingRecipeSerializer<?>> serializer, String recipeType,
-		String path) {
+															 String path) {
 		ResourceLocation location = Create.asResource(recipeType + "/" + currentFolder + "/" + path);
 		return register(consumer -> {
 			SpecialRecipeBuilder b = SpecialRecipeBuilder.special(serializer.get());
@@ -1427,7 +1446,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 	}
 
 	GeneratedRecipe metalCompacting(List<ItemProviderEntry<? extends ItemLike>> variants,
-		List<Supplier<TagKey<Item>>> ingredients) {
+															   List<Supplier<TagKey<Item>>> ingredients) {
 		GeneratedRecipe result = null;
 		for (int i = 0; i + 1 < variants.size(); i++) {
 			ItemProviderEntry<? extends ItemLike> currentEntry = variants.get(i);
@@ -1466,6 +1485,17 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 		return create(item).withSuffix("_clear")
 			.unlockedBy(item::get)
 			.viaShapeless(b -> b.requires(item.get()));
+	}
+
+	@Override
+	protected void buildRecipes(Consumer<FinishedRecipe> p_200404_1_) {
+		all.forEach(c -> c.register(p_200404_1_));
+		Create.LOGGER.info(getName() + " registered " + all.size() + " recipe" + (all.size() == 1 ? "" : "s"));
+	}
+
+	protected GeneratedRecipe register(GeneratedRecipe recipe) {
+		all.add(recipe);
+		return recipe;
 	}
 
 	class GeneratedRecipeBuilder {
@@ -1651,7 +1681,7 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 			}
 
 			private GeneratedRecipe create(RecipeSerializer<? extends AbstractCookingRecipe> serializer,
-				UnaryOperator<SimpleCookingRecipeBuilder> builder, float cookingTimeModifier) {
+																	  UnaryOperator<SimpleCookingRecipeBuilder> builder, float cookingTimeModifier) {
 				return register(consumer -> {
 					boolean isOtherMod = compatDatagenOutput != null;
 
@@ -1678,8 +1708,8 @@ public class StandardRecipeGen extends CreateRecipeProvider {
 		return "Create's Standard Recipes";
 	}
 
-	public StandardRecipeGen(PackOutput p_i48262_1_) {
-		super(p_i48262_1_);
+	public CreateStandardRecipeGen(PackOutput p_i48262_1_) {
+		super(p_i48262_1_, Create.ID);
 	}
 
 	private record ModdedCookingRecipeResult(FinishedRecipe wrapped, ResourceLocation outputOverride,

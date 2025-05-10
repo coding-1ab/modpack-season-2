@@ -1,18 +1,24 @@
 package com.simibubi.create.foundation.data.recipe;
 
-import java.util.Objects;
-
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.AllTags;
-import com.simibubi.create.foundation.data.recipe.CreateRecipeProvider.GeneratedRecipe;
+import com.simibubi.create.Create;
+import com.simibubi.create.api.data.recipe.CompactingRecipeGen;
+import com.simibubi.create.api.data.recipe.CuttingRecipeGen;
+
+import com.simibubi.create.foundation.data.recipe.CreateRecipeProvider.I;
 
 import net.minecraft.data.PackOutput;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
+import java.util.Objects;
+
+/**
+ * Create's own Data Generation for Cutting recipes
+ * @see CuttingRecipeGen
+ */
 @SuppressWarnings("unused")
-public class CuttingRecipeGen extends ProcessingRecipeGen {
+public final class CreateCuttingRecipeGen extends CuttingRecipeGen {
 
 	GeneratedRecipe
 		ANDESITE_ALLOY = create(I::andesiteAlloy, b -> b.duration(200)
@@ -21,9 +27,9 @@ public class CuttingRecipeGen extends ProcessingRecipeGen {
 		BAMBOO_PLANKS = create(() -> Blocks.BAMBOO_PLANKS, b -> b.duration(20)
 			.output(Blocks.BAMBOO_MOSAIC, 1)),
 
-		/*
-		 * Mod compat
-		 */
+	/*
+	 * Mod compat
+	 */
 
 		// Ars Nouveau (all logs yield the same plank) (blue is covered by RuntimeDataGenerator to handle the planks into other recipes)
 		ARS_N = cuttingCompat(Mods.ARS_N, "purple_archwood", "green_archwood", "red_archwood"),
@@ -49,15 +55,8 @@ public class CuttingRecipeGen extends ProcessingRecipeGen {
 		IE_WIRES = ieWires("copper", "electrum", "aluminum", "steel", "lead")
 		;
 
-	GeneratedRecipe stripAndMakePlanks(Block wood, Block stripped, Block planks) {
-		return stripAndMakePlanks(wood, stripped, planks, 6);
-	}
-
-	GeneratedRecipe stripAndMakePlanks(Block wood, Block stripped, Block planks, int planksAmount) {
-		create(() -> wood, b -> b.duration(50)
-			.output(stripped));
-		return create(() -> stripped, b -> b.duration(50)
-			.output(planks, planksAmount));
+	public CreateCuttingRecipeGen(PackOutput output) {
+		super(output, Create.ID);
 	}
 
 	GeneratedRecipe cuttingCompat(Mods mod, String... woodtypes) {
@@ -137,14 +136,5 @@ public class CuttingRecipeGen extends ProcessingRecipeGen {
 				.output(1, Mods.IE, "wire_" + metal, 2)
 				.whenModLoaded(Mods.IE.getId()));
 		return null;
-	}
-
-	public CuttingRecipeGen(PackOutput output) {
-		super(output);
-	}
-
-	@Override
-	protected AllRecipeTypes getRecipeType() {
-		return AllRecipeTypes.CUTTING;
 	}
 }
