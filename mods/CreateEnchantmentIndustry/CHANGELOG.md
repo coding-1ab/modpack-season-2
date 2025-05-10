@@ -1,6 +1,6 @@
 ### Create: Enchantment Industry 2.1.2
 
-Require Create: Dragons Plus 1.5.0, which contains significant code changes.
+Require Create: Dragons Plus 1.5.0
 
 #### Update
 * Now you can throw item to Mechanical Grindstone to process it
