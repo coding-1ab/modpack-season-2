@@ -53,12 +53,12 @@ public class CEICreativeModeTabs {
                 .withTabsBefore(AllCreativeModeTabs.BASE_CREATIVE_TAB.getId())
                 .icon(BLAZE_ENCHANTER::asStack)
                 .displayItems(CEICreativeModeTabs::buildBaseContents)
+                .withTabsBefore(ResourceLocation.fromNamespaceAndPath("create_dragons_plus", "base"))
                 .build();
     }
 
     private static void buildBaseContents(CreativeModeTab.ItemDisplayParameters parameters, CreativeModeTab.Output output) {
         output.accept(MECHANICAL_GRINDSTONE);
-        output.accept(FLUID_HATCH);
         output.accept(EXPERIENCE_HATCH);
         output.accept(EXPERIENCE_LANTERN);
         output.accept(PRINTER);
@@ -75,8 +75,5 @@ public class CEICreativeModeTabs {
         output.accept(EXPERIENCE_CAKE);
         output.accept(EXPERIENCE_CAKE_SLICE);
         output.accept(EXPERIENCE_BUCKET);
-        for (var color : DyeColors.CREATIVE_MODE_TAB) {
-            CDPFluids.DYES_BY_COLOR.get(color).getBucket().ifPresent(output::accept);
-        }
     }
 }
