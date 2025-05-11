@@ -176,11 +176,17 @@ public class ForgerScene {
         scene.world().modifyBlock(util.grid().at(2, 2, 1), bs -> bs.setValue(BlazeBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SEETHING), false);
         scene.idle(20);
 
-        scene.overlay().showText(40)
+        scene.overlay().showText(60)
                 .text("...and it will begin seething, and enter Super Enchanting mode")
                 .placeNearTarget()
                 .pointAt(util.vector().topOf(2, 2, 1));
-        scene.idle(50);
+        scene.idle(70);
+
+        scene.overlay().showText(60)
+                .text("The second tank of Blaze Forger can not be piped in for Liquid Experience. An eligible Super Experience item, such as Cake o' Enchanting, must be used")
+                .placeNearTarget()
+                .pointAt(util.vector().topOf(2, 2, 1));
+        scene.idle(70);
 
         scene.overlay().showText(100)
                 .attachKeyFrame()
