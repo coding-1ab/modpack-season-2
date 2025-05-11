@@ -39,7 +39,7 @@ public class TemplateEnchantingBehaviour extends EnchantingBehaviour {
             return false;
         if (stack.getItem() instanceof EnchantingTemplateItem template) {
             if (stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty())
-                return !special || template.isSpecial();
+                return (!special && !template.isSpecial()) || (special && template.isSpecial());
         }
         return false;
     }
