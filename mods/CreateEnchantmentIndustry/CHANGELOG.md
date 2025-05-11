@@ -5,6 +5,7 @@ Require Create: Dragons Plus 1.5.0
 #### Update
 * Now you can throw item to Mechanical Grindstone to process it
 * Improve English grammar. clarity, and consistency (by @Zain)
+* More goggle tooltips has been added to Blaze Forger/Enchanter to indicate why it's not working
 * Added a few more explanation on ponder
 
 #### Change

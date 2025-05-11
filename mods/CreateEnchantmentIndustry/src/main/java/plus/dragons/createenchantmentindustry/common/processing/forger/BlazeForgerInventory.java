@@ -40,6 +40,7 @@ import plus.dragons.createenchantmentindustry.common.processing.enchanter.CEIEnc
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.EnchantingTemplateItem;
 import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
+import plus.dragons.createenchantmentindustry.common.registry.CEIItems;
 import plus.dragons.createenchantmentindustry.common.registry.CEIStats;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
@@ -375,5 +376,21 @@ public class BlazeForgerInventory extends ItemStackHandler {
         int additionCost = addition.getOrDefault(DataComponents.REPAIR_COST, 0);
         int resultCost = AnvilMenu.calculateIncreasedRepairCost(Math.max(baseCost, additionCost));
         base.set(DataComponents.REPAIR_COST, resultCost);
+    }
+
+    boolean forgingCompleted() {
+        return !stacks.get(2).isEmpty() && forger.processingTime == -1;
+    }
+
+    boolean notEnoughItemToForge() {
+        return stacks.get(0).isEmpty() || stacks.get(1).isEmpty();
+    }
+
+    boolean incompatibleEnchantingTemplateType() {
+        var base = stacks.get(0);
+        var addition = stacks.get(1);
+        if (!forger.special && (base.is(CEIItems.SUPER_ENCHANTING_TEMPLATE) || addition.is(CEIItems.SUPER_ENCHANTING_TEMPLATE)))
+            return true;
+        else return forger.special && (base.is(CEIItems.ENCHANTING_TEMPLATE) || addition.is(CEIItems.ENCHANTING_TEMPLATE));
     }
 }

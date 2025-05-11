@@ -43,6 +43,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.BlockHitResult;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.behaviour.EnchantingBehaviour;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.behaviour.TemplateEnchantingBehaviour;
@@ -194,6 +195,8 @@ public class EnchanterBehaviour extends ScrollValueBehaviour implements IHaveGog
             CEILang.translate("gui.goggles.enchanting.level", CEILang.number(value).style(style))
                     .forGoggles(tooltip);
             added = true;
+        } else {
+            CEILang.translate("gui.goggles.enchanting.level.not_set").style(ChatFormatting.RED).forGoggles(tooltip);
         }
         int cost = getExperienceCost();
         if (cost > 0) {
@@ -201,6 +204,11 @@ public class EnchanterBehaviour extends ScrollValueBehaviour implements IHaveGog
             CEILang.translate("gui.goggles.enchanting.cost", CEILang.number(cost).add(mb).style(style))
                     .forGoggles(tooltip);
             added = true;
+        }
+        if (!enchanter.heldItem.isEmpty() && enchanter.processingTime == -1){
+            if(!EnchantmentHelper.getEnchantmentsForCrafting(enchanter.heldItem).isEmpty())
+                CEILang.translate("gui.goggles.enchanting.completed").style(ChatFormatting.GREEN).forGoggles(tooltip);
+            else CEILang.translate("gui.goggles.enchanting.invalid_item").style(ChatFormatting.RED).forGoggles(tooltip);
         }
         return added;
     }
