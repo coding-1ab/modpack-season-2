@@ -20,7 +20,6 @@ package plus.dragons.createenchantmentindustry.common.registry;
 
 import static com.simibubi.create.AllBlocks.EXPERIENCE_BLOCK;
 import static com.simibubi.create.AllItems.EXP_NUGGET;
-import static plus.dragons.createdragonsplus.common.registry.CDPBlocks.FLUID_HATCH;
 import static plus.dragons.createdragonsplus.common.registry.CDPItems.BLAZE_UPGRADE_SMITHING_TEMPLATE;
 import static plus.dragons.createenchantmentindustry.common.registry.CEIBlocks.*;
 import static plus.dragons.createenchantmentindustry.common.registry.CEIItems.*;
@@ -33,8 +32,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import plus.dragons.createdragonsplus.common.fluids.dye.DyeColors;
-import plus.dragons.createdragonsplus.common.registry.CDPFluids;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.util.CEILang;
 

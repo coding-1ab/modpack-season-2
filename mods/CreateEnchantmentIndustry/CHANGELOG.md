@@ -1,15 +1,8 @@
-### Create: Enchantment Industry 2.1.2
-
-Require Create: Dragons Plus 1.5.0
+### Create: Enchantment Industry 2.1.3
 
 #### Update
-* Now you can throw item to Mechanical Grindstone to process it
-* Improve English grammar. clarity, and consistency (by @Zain)
-* More goggle tooltips has been added to Blaze Forger & Blaze Enchanter to indicate why it's not working
-* Added a few more explanation on ponder
+* Update Russian Translation by @Korben
+* Update Japanese Translation by @YukkuriOfuton
 
 #### Change
-* Removed dye buckets and fluid hatch from C:EI creative tab since they already exist in C:DP own creative tab 
-
-#### Fix
-* Fixed Blaze Enchanter accept Super Enchanter Template no matter it's in Super Enchanting mode or not
+* Level extension of `Infinite` is set to 0 according to its effect.

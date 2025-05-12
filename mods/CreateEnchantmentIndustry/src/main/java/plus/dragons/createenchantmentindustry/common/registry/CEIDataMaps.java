@@ -18,6 +18,7 @@
 
 package plus.dragons.createenchantmentindustry.common.registry;
 
+import static net.minecraft.world.item.enchantment.Enchantments.INFINITY;
 import static net.minecraft.world.item.enchantment.Enchantments.MENDING;
 import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE;
 
@@ -198,6 +199,8 @@ public class CEIDataMaps {
         provider.builder(FORGING_COST_MULTIPLIER);
         provider.builder(SPLITTING_COST_MULTIPLIER);
         provider.builder(SUPER_ENCHANTING_LEVEL_EXTENSION)
-                .add(MENDING, 0, false);
+                .add(MENDING, 0, false)
+                .add(INFINITY, 0, false);
+        ;
     }
 }

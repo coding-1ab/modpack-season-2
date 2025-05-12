@@ -252,11 +252,11 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
                             TooltipFlag.NORMAL);
             }
         } else {
-            if(inventory.forgingCompleted())
+            if (inventory.forgingCompleted())
                 CEILang.translate("gui.goggles.forging.completed").style(ChatFormatting.GREEN).forGoggles(tooltip);
-            else if(!inventory.notEnoughItemToForge()){
-                if(inventory.incompatibleEnchantingTemplateType())
-                    CEILang.translate("gui.goggles.forging.invalid_template_type." + (special ? "normal": "special")).style(ChatFormatting.RED).forGoggles(tooltip);
+            else if (!inventory.notEnoughItemToForge()) {
+                if (inventory.incompatibleEnchantingTemplateType())
+                    CEILang.translate("gui.goggles.forging.invalid_template_type." + (special ? "normal" : "special")).style(ChatFormatting.RED).forGoggles(tooltip);
                 else CEILang.translate("gui.goggles.forging.invalid_items").style(ChatFormatting.RED).forGoggles(tooltip);
             }
         }

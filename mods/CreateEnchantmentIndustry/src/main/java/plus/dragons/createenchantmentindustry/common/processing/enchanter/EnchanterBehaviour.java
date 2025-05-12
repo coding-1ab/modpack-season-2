@@ -205,8 +205,8 @@ public class EnchanterBehaviour extends ScrollValueBehaviour implements IHaveGog
                     .forGoggles(tooltip);
             added = true;
         }
-        if (!enchanter.heldItem.isEmpty() && enchanter.processingTime == -1){
-            if(!EnchantmentHelper.getEnchantmentsForCrafting(enchanter.heldItem).isEmpty())
+        if (!enchanter.heldItem.isEmpty() && enchanter.processingTime == -1) {
+            if (!EnchantmentHelper.getEnchantmentsForCrafting(enchanter.heldItem).isEmpty())
                 CEILang.translate("gui.goggles.enchanting.completed").style(ChatFormatting.GREEN).forGoggles(tooltip);
             else CEILang.translate("gui.goggles.enchanting.invalid_item").style(ChatFormatting.RED).forGoggles(tooltip);
         }
