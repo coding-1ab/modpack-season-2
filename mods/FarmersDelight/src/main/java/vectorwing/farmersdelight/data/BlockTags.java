@@ -74,6 +74,7 @@ public class BlockTags extends BlockTagsProvider
 						Blocks.MELON,
 						Blocks.PUMPKIN,
 						Blocks.CARVED_PUMPKIN,
+						Blocks.JACK_O_LANTERN,
 						Blocks.COBWEB,
 						Blocks.CAKE,
 						ModBlocks.APPLE_PIE.get(),

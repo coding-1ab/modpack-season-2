@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.8
+
+### Fixes
+- Fixed Jack-O-Lantern not being mineable with a Knife;
+
 ## 1.2.7
 
 ### Updates
