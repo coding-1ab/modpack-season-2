@@ -60,6 +60,11 @@ description='''${description}'''
 [[dependencies.${mod_id}]]
     modId = "rubidium"
     type = "incompatible"
+    reason = "${mod_name} supports Sodium ${sodium_version} and above"
+[[dependencies.${mod_id}]]
+    modId = "embeddium"
+    type = "incompatible"
+    reason = "${mod_name} supports Sodium ${sodium_version} and above"
 [[dependencies.${mod_id}]]
     modId = "sodium"
     type = "incompatible"
