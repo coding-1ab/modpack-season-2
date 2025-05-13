@@ -15,7 +15,7 @@ import foundry.veil.api.client.render.shader.processor.*;
 import foundry.veil.api.client.render.shader.program.ProgramDefinition;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.impl.ThreadTaskScheduler;
-import foundry.veil.impl.client.render.dynamicbuffer.DynamicBufferManger;
+import foundry.veil.impl.client.render.dynamicbuffer.DynamicBufferManager;
 import foundry.veil.impl.client.render.dynamicbuffer.DynamicBufferProcessor;
 import foundry.veil.impl.client.render.shader.ShaderImporterImpl;
 import foundry.veil.impl.client.render.shader.processor.ShaderProcessorList;
@@ -90,7 +90,7 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
             GL_COMPUTE_SHADER, "compute"
     );
 
-    private final DynamicBufferManger dynamicBufferManager;
+    private final DynamicBufferManager dynamicBufferManager;
     private final ShaderSourceSet sourceSet;
     private final ShaderPreDefinitions definitions;
     private final Map<ResourceLocation, ShaderProgramImpl> shaders;
@@ -108,7 +108,7 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
      * @param shaderPreDefinitions The set of shader pre-definitions
      * @param dynamicBufferManager The manager for dynamic buffers
      */
-    public ShaderManager(ShaderSourceSet sourceSet, ShaderPreDefinitions shaderPreDefinitions, DynamicBufferManger dynamicBufferManager) {
+    public ShaderManager(ShaderSourceSet sourceSet, ShaderPreDefinitions shaderPreDefinitions, DynamicBufferManager dynamicBufferManager) {
         this.dynamicBufferManager = dynamicBufferManager;
         this.sourceSet = sourceSet;
         this.definitions = shaderPreDefinitions;
