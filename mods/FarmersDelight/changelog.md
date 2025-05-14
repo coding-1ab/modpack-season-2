@@ -12,6 +12,11 @@
 ### Fixes
 - Fixed Jack-O-Lantern not being mineable with a Knife;
 
+### Translations
+- Updated:
+  - es_es (thanks, GGlangf!);
+  - zh_cn (thanks, NumberSir!);
+
 ## 1.2.7
 
 ### Updates
