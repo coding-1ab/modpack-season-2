@@ -7,6 +7,7 @@
   - Wheat can be crafted with a Water Bucket to make Dough. The bucket's water won't be depleted, letting you craft dough indefinitely;
   - The bucket acts as a simple technology gate to unlock this recipe;
   - The previous recipes, both water-based and egg-based, were removed;
+- Wheat Dough and Raw Pasta no longer have a chance to cause the Hunger effect when eaten, as those items are no longer crafted with Eggs;
 
 ### Fixes
 - Fixed Jack-O-Lantern not being mineable with a Knife;

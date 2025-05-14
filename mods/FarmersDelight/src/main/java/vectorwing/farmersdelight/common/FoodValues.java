@@ -35,9 +35,9 @@ public class FoodValues
 	public static final FoodProperties TOMATO_SAUCE = (new FoodProperties.Builder())
 			.nutrition(4).saturationMod(0.4f).build();
 	public static final FoodProperties WHEAT_DOUGH = (new FoodProperties.Builder())
-			.nutrition(2).saturationMod(0.3f).effect(() -> new MobEffectInstance(MobEffects.HUNGER, 600, 0), 0.3F).build();
+			.nutrition(2).saturationMod(0.3f).build();
 	public static final FoodProperties RAW_PASTA = (new FoodProperties.Builder())
-			.nutrition(2).saturationMod(0.3F).effect(() -> new MobEffectInstance(MobEffects.HUNGER, 600, 0), 0.3F).build();
+			.nutrition(2).saturationMod(0.3F).build();
 	public static final FoodProperties PIE_CRUST = (new FoodProperties.Builder())
 			.nutrition(2).saturationMod(0.2f).build();
 	public static final FoodProperties PUMPKIN_SLICE = (new FoodProperties.Builder())
