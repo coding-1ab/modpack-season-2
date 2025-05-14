@@ -34,6 +34,7 @@ public class CraftingRecipes
 		recipesFoodBlocks(consumer);
 		recipesCraftedMeals(consumer);
 		SpecialRecipeBuilder.special(ModRecipeSerializers.FOOD_SERVING.get()).save(consumer, "food_serving");
+		SpecialRecipeBuilder.special(ModRecipeSerializers.DOUGH.get()).save(consumer, "dough");
 	}
 
 	public static void canvasSignDyeing(Consumer<FinishedRecipe> consumer, ItemLike canvasSign, ItemLike hangingCanvasSign, TagKey<Item> dyeTag) {
@@ -562,22 +563,6 @@ public class CraftingRecipes
 				.requires(Items.GLASS_BOTTLE)
 				.unlockedBy("has_melon_slice", InventoryChangeTrigger.TriggerInstance.hasItems(Items.MELON_SLICE))
 				.save(consumer);
-		ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.WHEAT_DOUGH.get(), 3)
-				.requires(Items.WATER_BUCKET)
-				.requires(Items.WHEAT)
-				.requires(Items.WHEAT)
-				.requires(Items.WHEAT)
-				.unlockedBy("has_wheat", InventoryChangeTrigger.TriggerInstance.hasItems(Items.WHEAT))
-				.group("fd_wheat_dough")
-				.save(consumer, new ResourceLocation(FarmersDelight.MODID, "wheat_dough_from_water"));
-		ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.WHEAT_DOUGH.get(), 3)
-				.requires(ForgeTags.EGGS)
-				.requires(Items.WHEAT)
-				.requires(Items.WHEAT)
-				.requires(Items.WHEAT)
-				.unlockedBy("has_wheat", InventoryChangeTrigger.TriggerInstance.hasItems(Items.WHEAT))
-				.group("fd_wheat_dough")
-				.save(consumer, new ResourceLocation(FarmersDelight.MODID, "wheat_dough_from_eggs"));
 		ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.PIE_CRUST.get(), 1)
 				.pattern("wMw")
 				.pattern(" w ")

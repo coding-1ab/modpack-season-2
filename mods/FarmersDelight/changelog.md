@@ -2,6 +2,12 @@
 
 ## 1.2.8
 
+### Updates
+- Wheat Dough now has a simpler, less cumbersome crafting recipe:
+  - Wheat can be crafted with a Water Bucket to make Dough. The bucket's water won't be depleted, letting you craft dough indefinitely;
+  - The bucket acts as a simple technology gate to unlock this recipe;
+  - The previous recipes, both water-based and egg-based, were removed;
+
 ### Fixes
 - Fixed Jack-O-Lantern not being mineable with a Knife;
 
