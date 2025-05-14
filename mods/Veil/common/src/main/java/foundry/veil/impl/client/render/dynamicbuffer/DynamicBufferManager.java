@@ -36,7 +36,8 @@ import static org.lwjgl.opengl.GL40C.GL_TESS_CONTROL_SHADER;
 import static org.lwjgl.opengl.GL40C.GL_TESS_EVALUATION_SHADER;
 import static org.lwjgl.opengl.GL43C.GL_COMPUTE_SHADER;
 
-public class DynamicBufferManger implements NativeResource {
+@ApiStatus.Internal
+public class DynamicBufferManager implements NativeResource {
 
     private static final int[] GL_MAPPING = {
             GL_VERTEX_SHADER,
@@ -57,7 +58,7 @@ public class DynamicBufferManger implements NativeResource {
     private final EnumMap<DynamicBufferType, DynamicBuffer> dynamicBuffers;
     private int dynamicFboPointer;
 
-    public DynamicBufferManger(int width, int height) {
+    public DynamicBufferManager(int width, int height) {
         this.activeBuffers = 0;
         this.activeBufferLayers = new Object2IntArrayMap<>();
         this.enabled = false;
