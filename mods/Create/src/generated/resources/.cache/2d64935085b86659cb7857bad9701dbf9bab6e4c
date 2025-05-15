@@ -1,4 +1,4 @@
-// 1.20.1	2025-05-08T21:40:21.540131608	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
+// 1.20.1	2025-05-15T16:00:43.639207126	Registrate Provider for create [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
 60bbdf92d2ac9824ea6144955c74043a6005f79d assets/create/blockstates/acacia_window.json
 6a67703c2697d81b7dc83e9d72a66f9c9ff08383 assets/create/blockstates/acacia_window_pane.json
 c3ae87b62e81d8e9476eccd793bb1548d74c66a1 assets/create/blockstates/adjustable_chain_gearshift.json
@@ -4763,7 +4763,7 @@ e22493305e0cebfb7ededae122e19ee9dd24fc9d data/create/tags/items/stone_types/scor
 5def5088f7fd31b80e6f28c1c4ea146aa9d7d15b data/create/tags/items/toolboxes.json
 2589b135c0e96ad29076569e144528fe32ea5b39 data/create/tags/items/tracks.json
 a5b5711d1798473a9b25db5b7f749570ed0a2769 data/create/tags/items/upgrade_aquatic/coral.json
-c27e162cf1c428d426ff3116bf383ca4c27a54f9 data/create/tags/items/upright_on_belt.json
+531324b3717e7773e986d9119812ddbe195dc870 data/create/tags/items/upright_on_belt.json
 da739ad2160e7df4e0e5cc89587670ce5e9450c3 data/create/tags/items/valve_handles.json
 c59c9fc0cdd45de659aa8023d36f9decb90f708c data/create/tags/items/vanilla_stripped_logs.json
 64441ac1daa64c81601b94b82b21c0ee862b6344 data/create/tags/items/vanilla_stripped_wood.json
