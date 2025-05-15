@@ -2,29 +2,21 @@ package org.antarcticgardens.cna.content.nuclear;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.*;
-import org.antarcticgardens.cna.CreateNewAge;
+import org.antarcticgardens.cna.CNATags;
 import org.antarcticgardens.cna.util.RaycastUtil;
 
 import java.util.List;
 
 public class NuclearUtil {
-    public static final TagKey<Block> STOPS_RADIATION = new TagKey<>(Registries.BLOCK, new ResourceLocation(CreateNewAge.MOD_ID, "stops_radiation"));
-    public static final TagKey<Item> HAZMAT_SUIT = new TagKey<>(Registries.ITEM, new ResourceLocation(CreateNewAge.MOD_ID, "nuclear/hazmat_suit"));
-
     public static void createRadiation(int length, Level world, BlockPos pos) {
         if (world.isClientSide())
             return;
@@ -34,7 +26,7 @@ public class NuclearUtil {
 
         for (LivingEntity le : entities) {
             for (Direction dir : Direction.values()) {
-                if (world.getBlockState(pos.relative(dir)).is(STOPS_RADIATION))
+                if (world.getBlockState(pos.relative(dir)).is(CNATags.Block.STOPS_RADIATION.blockTag))
                     continue;
 
                 Vec3 start = pos.getCenter().relative(dir, 0.5f);
@@ -44,10 +36,10 @@ public class NuclearUtil {
                     continue;
 
                 Vec3 direction = le.getEyePosition().subtract(start).normalize();
-                HitResult hitResult = RaycastUtil.pickFilteredBlockFromPos(world, start, direction, (float) Math.ceil(distance), bs -> bs.is(STOPS_RADIATION));
+                HitResult hitResult = RaycastUtil.pickFilteredBlockFromPos(world, start, direction, (float) Math.ceil(distance), bs -> bs.is(CNATags.Block.STOPS_RADIATION.blockTag));
 
                 if (hitResult instanceof BlockHitResult bhr) {
-                    if (world.getBlockState(bhr.getBlockPos()).is(STOPS_RADIATION))
+                    if (world.getBlockState(bhr.getBlockPos()).is(CNATags.Block.STOPS_RADIATION.blockTag))
                         continue;
 
                     if (bhr.getLocation().distanceTo(start) < distance)
@@ -65,7 +57,7 @@ public class NuclearUtil {
             return true;
 
         for (ItemStack piece : entity.getArmorSlots()) {
-            if (!piece.is(HAZMAT_SUIT))
+            if (!piece.is(CNATags.Item.HAZMAT_SUIT.tag))
                 return false;
         }
 
