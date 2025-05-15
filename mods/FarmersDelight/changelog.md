@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.8
+
+### Fixes
+- (1.21.1) Updated Create Integration to the newest update's syntax (thanks, mpustovoi!);
+- (1.21.1) Fix `storage_blocks` tags not being nested in their parent (thanks, Lucky-56!);
+- (1.21.1) Fix FD recipe ID's not being displayed on debug info on JEI screens (thanks, Abbie5!);
+
 ## 1.2.7
 
 ### Updates
