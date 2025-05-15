@@ -76,6 +76,7 @@ public class BlockTags extends BlockTagsProvider
 						Blocks.MELON,
 						Blocks.PUMPKIN,
 						Blocks.CARVED_PUMPKIN,
+						Blocks.JACK_O_LANTERN,
 						Blocks.COBWEB,
 						Blocks.CAKE,
 						ModBlocks.APPLE_PIE.get(),
@@ -191,7 +192,15 @@ public class BlockTags extends BlockTagsProvider
 				ModBlocks.WILD_ONIONS.get()
 		);
 		tag(net.minecraft.tags.BlockTags.TALL_FLOWERS).add(ModBlocks.WILD_RICE.get());
-		tag(net.minecraft.tags.BlockTags.DIRT).add(ModBlocks.RICH_SOIL.get());
+		tag(net.minecraft.tags.BlockTags.DIRT).add(
+				ModBlocks.RICH_SOIL.get());
+		tag(net.minecraft.tags.BlockTags.MAINTAINS_FARMLAND).add(
+				ModBlocks.CABBAGE_CROP.get(),
+				ModBlocks.BUDDING_TOMATO_CROP.get(),
+				ModBlocks.TOMATO_CROP.get(),
+				ModBlocks.ONION_CROP.get(),
+				ModBlocks.RICE_CROP.get()
+		);
 	}
 
 	protected void registerCommonTags() {

@@ -6,20 +6,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import vectorwing.farmersdelight.FarmersDelight;
+import vectorwing.farmersdelight.common.crafting.DoughRecipe;
 import vectorwing.farmersdelight.common.crafting.FoodServingRecipe;
 import vectorwing.farmersdelight.common.registry.ModBlocks;
 import vectorwing.farmersdelight.common.registry.ModItems;
 import vectorwing.farmersdelight.common.tag.CommonTags;
 import vectorwing.farmersdelight.common.tag.ModTags;
-
-import java.util.stream.Stream;
 
 public class CraftingRecipes
 {
@@ -33,6 +31,7 @@ public class CraftingRecipes
 		recipesFoodBlocks(output);
 		recipesCraftedMeals(output);
 		SpecialRecipeBuilder.special(FoodServingRecipe::new).save(output, "food_serving");
+		SpecialRecipeBuilder.special(DoughRecipe::new).save(output, "dough");
 	}
 
 	public static void canvasSignDyeing(RecipeOutput output, ItemLike canvasSign, ItemLike hangingCanvasSign, TagKey<Item> dyeTag) {
@@ -561,22 +560,6 @@ public class CraftingRecipes
 				.requires(Items.GLASS_BOTTLE)
 				.unlockedBy("has_melon_slice", InventoryChangeTrigger.TriggerInstance.hasItems(Items.MELON_SLICE))
 				.save(output);
-		ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.WHEAT_DOUGH.get(), 3)
-				.requires(Items.WATER_BUCKET)
-				.requires(Items.WHEAT)
-				.requires(Items.WHEAT)
-				.requires(Items.WHEAT)
-				.unlockedBy("has_wheat", InventoryChangeTrigger.TriggerInstance.hasItems(Items.WHEAT))
-				.group("fd_wheat_dough")
-				.save(output, ResourceLocation.fromNamespaceAndPath(FarmersDelight.MODID, "wheat_dough_from_water"));
-		ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.WHEAT_DOUGH.get(), 3)
-				.requires(Tags.Items.EGGS)
-				.requires(Items.WHEAT)
-				.requires(Items.WHEAT)
-				.requires(Items.WHEAT)
-				.unlockedBy("has_wheat", InventoryChangeTrigger.TriggerInstance.hasItems(Items.WHEAT))
-				.group("fd_wheat_dough")
-				.save(output, ResourceLocation.fromNamespaceAndPath(FarmersDelight.MODID, "wheat_dough_from_eggs"));
 		ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.PIE_CRUST.get(), 1)
 				.pattern("wMw")
 				.pattern(" w ")

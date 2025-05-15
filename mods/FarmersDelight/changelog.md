@@ -2,10 +2,23 @@
 
 ## 1.2.8
 
+### Updates
+- Wheat Dough now has a simpler, less cumbersome crafting recipe:
+  - Wheat can be crafted with a Water Bucket to make Dough. The bucket's water won't be depleted, letting you craft dough indefinitely;
+  - The bucket acts as a simple technology gate to unlock this recipe;
+  - The previous recipes, both water-based and egg-based, were removed;
+- Wheat Dough and Raw Pasta no longer have a chance to cause the Hunger effect when eaten, as those items are no longer crafted with Eggs;
+
 ### Fixes
+- Fixed Jack-O-Lantern not being mineable with a Knife;
 - (1.21.1) Updated Create Integration to the newest update's syntax (thanks, mpustovoi!);
 - (1.21.1) Fix `storage_blocks` tags not being nested in their parent (thanks, Lucky-56!);
 - (1.21.1) Fix FD recipe ID's not being displayed on debug info on JEI screens (thanks, Abbie5!);
+
+### Translations
+- Updated:
+  - es_es (thanks, GGlangf!);
+  - zh_cn (thanks, NumberSir!);
 
 ## 1.2.7
 
