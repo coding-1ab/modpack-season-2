@@ -8,10 +8,10 @@
 
 ## Recipe
 ###  Printing
-`Printing` of Printer supports custom printing recipe. It has similar format as the recipe of Create, with type `create_enchantment_indusry:grinding`. Printing recipe requires extra `sound` field as Printing-Finish-Sound, for example `"sound": "item.book.page_turn"`.   
+`Printing` of Printer supports custom printing recipe. It has similar format as the recipe of Create, with type `create_enchantment_industry:grinding`. Printing recipe requires extra `sound` field as Printing-Finish-Sound, for example `"sound": "item.book.page_turn"`.   
 Template item is in 2nd position of input, printing material item is in 1st position of input.
 ### Grinding
-`Grinding` of Mechanical Grindstone supports custom grinding recipe. It is the same format as the recipe of Create, with type `create_enchantment_indusry:printing`.   
+`Grinding` of Mechanical Grindstone supports custom grinding recipe. It is the same format as the recipe of Create, with type `create_enchantment_industry:printing`.   
 Grinding can have fluid as input. If recipe has fluid as input, corresponding fluid in Grindstone Drain will be consumed.
 
 ## Data Maps
