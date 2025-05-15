@@ -48,6 +48,39 @@ public class ItemTags extends ItemTagsProvider
 	}
 
 	private void registerModTags() {
+		tag(ModTags.MEALS).add(
+				ModItems.MIXED_SALAD.get(),
+				ModItems.COOKED_RICE.get(),
+				ModItems.BONE_BROTH.get(),
+				ModItems.BEEF_STEW.get(),
+				ModItems.VEGETABLE_SOUP.get(),
+				ModItems.FISH_STEW.get(),
+				ModItems.CHICKEN_SOUP.get(),
+				ModItems.FRIED_RICE.get(),
+				ModItems.PUMPKIN_SOUP.get(),
+				ModItems.BAKED_COD_STEW.get(),
+				ModItems.NOODLE_SOUP.get(),
+				ModItems.BACON_AND_EGGS.get(),
+				ModItems.RATATOUILLE.get(),
+				ModItems.STEAK_AND_POTATOES.get(),
+				ModItems.PASTA_WITH_MEATBALLS.get(),
+				ModItems.PASTA_WITH_MUTTON_CHOP.get(),
+				ModItems.MUSHROOM_RICE.get(),
+				ModItems.ROASTED_MUTTON_CHOPS.get(),
+				ModItems.VEGETABLE_NOODLES.get(),
+				ModItems.SQUID_INK_PASTA.get(),
+				ModItems.GRILLED_SALMON.get(),
+				ModItems.ROAST_CHICKEN.get(),
+				ModItems.STUFFED_PUMPKIN.get(),
+				ModItems.HONEY_GLAZED_HAM.get(),
+				ModItems.SHEPHERDS_PIE.get()
+		);
+		tag(ModTags.DRINKS).add(
+				ModItems.MILK_BOTTLE.get(),
+				ModItems.APPLE_CIDER.get(),
+				ModItems.MELON_JUICE.get(),
+				ModItems.HOT_COCOA.get()
+		);
 		tag(ModTags.KNIVES).add(ModItems.FLINT_KNIFE.get(), ModItems.IRON_KNIFE.get(), ModItems.DIAMOND_KNIFE.get(), ModItems.GOLDEN_KNIFE.get(), ModItems.NETHERITE_KNIFE.get());
 		tag(ModTags.STRAW_HARVESTERS).addTag(ModTags.KNIVES);
 		tag(ModTags.WOLF_PREY).addTag(ForgeTags.RAW_CHICKEN).addTag(ForgeTags.RAW_MUTTON).add(Items.RABBIT);
@@ -195,10 +228,10 @@ public class ItemTags extends ItemTagsProvider
 
 	public void registerCompatibilityTags() {
 		tag(CompatibilityTags.CREATE_UPRIGHT_ON_BELT)
-				.add(ModItems.MILK_BOTTLE.get())
-				.add(ModItems.HOT_COCOA.get())
-				.add(ModItems.APPLE_CIDER.get())
-				.add(ModItems.MELON_JUICE.get())
+				.addTag(ModTags.MEALS)
+				.addTag(ModTags.DRINKS)
+				.add(ModItems.FRUIT_SALAD.get())
+				.add(ModItems.NETHER_SALAD.get())
 				.add(ModItems.PIE_CRUST.get())
 				.add(ModItems.APPLE_PIE.get())
 				.add(ModItems.SWEET_BERRY_CHEESECAKE.get())
