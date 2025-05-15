@@ -85,7 +85,7 @@ public class CAItemTagProvider extends ItemTagsProvider {
         tag(CATagRegister.Items.INGOTS).addTag(CATagRegister.Items.ELECTRUM_INGOTS);
         tag(CATagRegister.Items.NUGGETS).addTag(CATagRegister.Items.ELECTRUM_NUGGETS);
         tag(CATagRegister.Items.PLATES).addTags(new TagKey[]{
-                CATagRegister.Items.ELECTRUM_INGOTS,
+                CATagRegister.Items.ELECTRUM_PLATES,
                 CATagRegister.Items.ZINC_PLATES
         });
         tag(CATagRegister.Items.RODS).addTag(CATagRegister.Items.ALL_METAL_RODS);

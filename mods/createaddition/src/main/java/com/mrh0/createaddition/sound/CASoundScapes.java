@@ -70,7 +70,7 @@ public class CASoundScapes {
 			.forEach(CASoundScape::tick);
 
 		if (AnimationTickHolder.getTicks() % UPDATE_INTERVAL != 0) return;
-
+		
 		boolean disable = !AllConfigs.client().enableAmbientSounds.get();
 		for (Iterator<Map.Entry<Pair<AmbienceGroup, PitchGroup>, CASoundScape>> iterator = activeSounds.entrySet()
 			.iterator(); iterator.hasNext();) {
