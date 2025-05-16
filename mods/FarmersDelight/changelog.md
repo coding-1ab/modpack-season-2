@@ -11,9 +11,11 @@
 
 ### Fixes
 - Fixed Jack-O-Lantern not being mineable with a Knife;
+- Fixed Create's Potato Cannon integration;
 - (1.21.1) Updated Create Integration to the newest update's syntax (thanks, mpustovoi!);
-- (1.21.1) Fix `storage_blocks` tags not being nested in their parent (thanks, Lucky-56!);
-- (1.21.1) Fix FD recipe ID's not being displayed on debug info on JEI screens (thanks, Abbie5!);
+- (1.21.1) Fixed `storage_blocks` tags not being nested in their parent (thanks, Lucky-56!);
+- (1.21.1) Fixed FD recipe ID's not being displayed on debug info on JEI screens (thanks, Abbie5!);
+- (1.21.1) Fixed Immersive Engineering integration recipes;
 
 ### Translations
 - Updated:
