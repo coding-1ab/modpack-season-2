@@ -29,6 +29,7 @@ import imgui.type.ImInt;
 import imgui.type.ImString;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
@@ -39,6 +40,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
+@ApiStatus.Internal
 public class FramebufferFileEditor implements ResourceFileEditor<FramebufferResource> {
 
     private static final StringBuilder BUILDER = new StringBuilder();

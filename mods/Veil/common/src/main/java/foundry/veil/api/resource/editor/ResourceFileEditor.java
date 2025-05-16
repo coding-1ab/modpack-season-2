@@ -21,6 +21,14 @@ import java.nio.file.StandardOpenOption;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
+/**
+ * Defines an editor type that can interact with one or more resources.
+ *
+ * @param <T> The type of resource this editor handles
+ * @author Ocelot
+ * @see VeilEditorEnvironment
+ * @since 1.0.0
+ */
 public interface ResourceFileEditor<T extends VeilResource<?>> extends Closeable {
 
     /**
@@ -47,6 +55,8 @@ public interface ResourceFileEditor<T extends VeilResource<?>> extends Closeable
     default void close() {
     }
 
+    // TODO return future in 2.0.0
+
     /**
      * Saves the specified json element to the specified resource and hot reloads it.
      *
@@ -62,6 +72,8 @@ public interface ResourceFileEditor<T extends VeilResource<?>> extends Closeable
         Streams.write(element, jsonWriter);
         this.save(stringWriter.toString().getBytes(StandardCharsets.UTF_8), resourceManager, resource);
     }
+
+    // TODO return future in 2.0.0
 
     /**
      * Saves the specified data to the specified resource and hot reloads it.
