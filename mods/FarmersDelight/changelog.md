@@ -21,6 +21,7 @@
 ### Fixes
 - Fixed Jack-O-Lantern not being mineable with a Knife;
 - Fixed Create's Potato Cannon integration;
+- Fixed Knives with Silk Touch slicing Pumpkin blocks;
 
 ### Translations
 - Updated:
