@@ -617,9 +617,9 @@ public interface AdvancedFbo extends NativeResource {
 
         private TextureFilter.EdgeType getEdgeType() {
             if (this.format == GL_RED_INTEGER ||
-                this.format == GL_RG_INTEGER ||
-                this.format == GL_RGB_INTEGER ||
-                this.format == GL_RGBA_INTEGER) {
+                    this.format == GL_RG_INTEGER ||
+                    this.format == GL_RGB_INTEGER ||
+                    this.format == GL_RGBA_INTEGER) {
                 return TextureFilter.EdgeType.INT;
             }
             if (this.format == GL_DEPTH_STENCIL) {
@@ -867,8 +867,8 @@ public interface AdvancedFbo extends NativeResource {
         /**
          * Adds a color texture buffer with the specified size.
          *
-         * @param width    The width of the texture buffer
-         * @param height   The height of the texture buffer
+         * @param width  The width of the texture buffer
+         * @param height The height of the texture buffer
          */
         public Builder addColorTextureBuffer(int width, int height) {
             this.setDefaultFormat(FramebufferAttachmentDefinition.Format.RGBA8);
@@ -955,8 +955,8 @@ public interface AdvancedFbo extends NativeResource {
         /**
          * Sets the depth texture buffer to the specified size and data type.
          *
-         * @param width    The width of the texture buffer
-         * @param height   The height of the texture buffer
+         * @param width  The width of the texture buffer
+         * @param height The height of the texture buffer
          */
         public Builder setDepthTextureBuffer(int width, int height) {
             this.setDefaultFormat(FramebufferAttachmentDefinition.Format.DEPTH_COMPONENT);

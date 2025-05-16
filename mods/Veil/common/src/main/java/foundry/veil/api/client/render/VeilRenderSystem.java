@@ -703,8 +703,7 @@ public final class VeilRenderSystem {
             case GL_UNIFORM_BUFFER -> maxUniformBuffersBindings();
             case GL_ATOMIC_COUNTER_BUFFER -> maxAtomicCounterBufferBindings();
             case GL_SHADER_STORAGE_BUFFER -> maxShaderStorageBufferBindings();
-            default ->
-                    throw new IllegalArgumentException("Invalid Target: 0x" + Integer.toHexString(target).toUpperCase(Locale.ROOT));
+            default -> throw new IllegalArgumentException("Invalid Target: 0x" + Integer.toHexString(target).toUpperCase(Locale.ROOT));
         };
     }
 
@@ -722,8 +721,7 @@ public final class VeilRenderSystem {
             case GL_GEOMETRY_SHADER -> GL_GEOMETRY_SHADER_LIMITS.get();
             case GL_FRAGMENT_SHADER -> GL_FRAGMENT_SHADER_LIMITS.get();
             case GL_COMPUTE_SHADER -> GL_COMPUTE_SHADER_LIMITS.get();
-            default ->
-                    throw new IllegalArgumentException("Invalid Shader Type: 0x" + Integer.toHexString(shader).toUpperCase(Locale.ROOT));
+            default -> throw new IllegalArgumentException("Invalid Shader Type: 0x" + Integer.toHexString(shader).toUpperCase(Locale.ROOT));
         };
     }
 

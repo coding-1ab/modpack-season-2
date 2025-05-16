@@ -93,13 +93,13 @@ public abstract class PipelineLevelRendererMixin implements LevelRendererExtensi
     @Unique
     private final Matrix4f veil$tempProjection = new Matrix4f();
 
-    @Inject(method = "renderLevel", at=@At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V", args = "ldc=entities"))
-    public void saveFramebuffer(CallbackInfo ci){
+    @Inject(method = "renderLevel", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V", args = "ldc=entities"))
+    public void saveFramebuffer(CallbackInfo ci) {
         FramebufferStack.push(null);
     }
 
-    @Inject(method = "renderLevel", at=@At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;getModelViewStack()Lorg/joml/Matrix4fStack;"), remap = false)
-    public void loadFramebuffer(CallbackInfo ci){
+    @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;getModelViewStack()Lorg/joml/Matrix4fStack;"), remap = false)
+    public void loadFramebuffer(CallbackInfo ci) {
         FramebufferStack.pop(null);
     }
 

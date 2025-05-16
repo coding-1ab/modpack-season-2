@@ -796,7 +796,7 @@ public interface ShaderUniform extends ShaderUniformAccess {
                 case GL_FLOAT_MAT4 -> MATRIX4x4;
                 case GL_FLOAT_MAT2x3 -> MATRIX2x3;
                 case GL_FLOAT_MAT3x4 -> MATRIX3x4;
-                
+
                 case GL_DOUBLE -> DOUBLE;
                 case GL_DOUBLE_VEC2 -> DOUBLE_VEC2;
                 case GL_DOUBLE_VEC3 -> DOUBLE_VEC3;

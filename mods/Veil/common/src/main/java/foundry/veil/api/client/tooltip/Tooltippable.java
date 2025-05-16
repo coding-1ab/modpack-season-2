@@ -41,7 +41,7 @@ public interface Tooltippable {
      *
      * @param tooltip the tooltip components to set
      */
-    default void setTooltip(List<Component> tooltip) {        
+    default void setTooltip(List<Component> tooltip) {
     }
 
     /**

@@ -551,7 +551,7 @@ public class FramebufferFileEditor implements ResourceFileEditor<FramebufferReso
         }
 
         public FramebufferAttachmentDefinition getOrCreateDepthBuffer() {
-            return Objects.requireNonNullElseGet(this.depthBuffer, () -> this.depthBuffer = new FramebufferAttachmentDefinition(FramebufferAttachmentDefinition.Type.TEXTURE, FramebufferAttachmentDefinition.Format.DEPTH_COMPONENT,  true, TextureFilter.CLAMP, 1, null));
+            return Objects.requireNonNullElseGet(this.depthBuffer, () -> this.depthBuffer = new FramebufferAttachmentDefinition(FramebufferAttachmentDefinition.Type.TEXTURE, FramebufferAttachmentDefinition.Format.DEPTH_COMPONENT, true, TextureFilter.CLAMP, 1, null));
         }
 
         public FramebufferAttachmentDefinition[] getColorBuffers() {

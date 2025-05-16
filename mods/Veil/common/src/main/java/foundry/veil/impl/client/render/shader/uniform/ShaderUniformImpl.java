@@ -657,7 +657,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setFloat(float value) {
         if (this.type != Type.FLOAT ||
-            this.value.getInt(0) == Float.floatToIntBits(value)) {
+                this.value.getInt(0) == Float.floatToIntBits(value)) {
             return;
         }
 
@@ -668,8 +668,8 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVector(float x, float y) {
         if (this.type != Type.FLOAT_VEC2 ||
-            (this.value.getInt(0) == Float.floatToIntBits(x) &&
-             this.value.getInt(4) == Float.floatToIntBits(y))) {
+                (this.value.getInt(0) == Float.floatToIntBits(x) &&
+                        this.value.getInt(4) == Float.floatToIntBits(y))) {
             return;
         }
 
@@ -681,9 +681,9 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVector(float x, float y, float z) {
         if (this.type != Type.FLOAT_VEC3 ||
-            (this.value.getInt(0) == Float.floatToIntBits(x) &&
-             this.value.getInt(4) == Float.floatToIntBits(y) &&
-             this.value.getInt(8) == Float.floatToIntBits(z))) {
+                (this.value.getInt(0) == Float.floatToIntBits(x) &&
+                        this.value.getInt(4) == Float.floatToIntBits(y) &&
+                        this.value.getInt(8) == Float.floatToIntBits(z))) {
             return;
         }
 
@@ -696,10 +696,10 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVector(float x, float y, float z, float w) {
         if (this.type != Type.FLOAT_VEC4 ||
-            (this.value.getInt(0) == Float.floatToIntBits(x) &&
-             this.value.getInt(4) == Float.floatToIntBits(y) &&
-             this.value.getInt(8) == Float.floatToIntBits(z) &&
-             this.value.getInt(12) == Float.floatToIntBits(w))) {
+                (this.value.getInt(0) == Float.floatToIntBits(x) &&
+                        this.value.getInt(4) == Float.floatToIntBits(y) &&
+                        this.value.getInt(8) == Float.floatToIntBits(z) &&
+                        this.value.getInt(12) == Float.floatToIntBits(w))) {
             return;
         }
 
@@ -713,7 +713,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setInt(int value) {
         if ((this.type != Type.INT && this.type != Type.UNSIGNED_INT) ||
-            this.value.getInt(0) == value) {
+                this.value.getInt(0) == value) {
             return;
         }
 
@@ -724,8 +724,8 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVectorI(int x, int y) {
         if ((this.type != Type.INT_VEC2 && this.type != Type.UNSIGNED_INT_VEC2) ||
-            (this.value.getInt(0) == x &&
-             this.value.getInt(4) == y)) {
+                (this.value.getInt(0) == x &&
+                        this.value.getInt(4) == y)) {
             return;
         }
 
@@ -737,9 +737,9 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVectorI(int x, int y, int z) {
         if ((this.type != Type.INT_VEC3 && this.type != Type.UNSIGNED_INT_VEC3) ||
-            (this.value.getInt(0) == x &&
-             this.value.getInt(4) == y &&
-             this.value.getInt(8) == z)) {
+                (this.value.getInt(0) == x &&
+                        this.value.getInt(4) == y &&
+                        this.value.getInt(8) == z)) {
             return;
         }
 
@@ -752,10 +752,10 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVectorI(int x, int y, int z, int w) {
         if ((this.type != Type.INT_VEC4 && this.type != Type.UNSIGNED_INT_VEC4) ||
-            (this.value.getInt(0) == x &&
-             this.value.getInt(4) == y &&
-             this.value.getInt(8) == z &&
-             this.value.getInt(12) == w)) {
+                (this.value.getInt(0) == x &&
+                        this.value.getInt(4) == y &&
+                        this.value.getInt(8) == z &&
+                        this.value.getInt(12) == w)) {
             return;
         }
 
@@ -769,7 +769,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setDouble(double value) {
         if (this.type != Type.DOUBLE ||
-            this.value.getLong(0) == Double.doubleToLongBits(value)) {
+                this.value.getLong(0) == Double.doubleToLongBits(value)) {
             return;
         }
 
@@ -780,8 +780,8 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVector64(double x, double y) {
         if (this.type != Type.DOUBLE_VEC2 ||
-            (this.value.getLong(0) == Double.doubleToLongBits(x) &&
-             this.value.getLong(8) == Double.doubleToLongBits(y))) {
+                (this.value.getLong(0) == Double.doubleToLongBits(x) &&
+                        this.value.getLong(8) == Double.doubleToLongBits(y))) {
             return;
         }
 
@@ -793,9 +793,9 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVector64(double x, double y, double z) {
         if (this.type != Type.DOUBLE_VEC3 ||
-            (this.value.getLong(0) == Double.doubleToLongBits(x) &&
-             this.value.getLong(8) == Double.doubleToLongBits(y) &&
-             this.value.getLong(16) == Double.doubleToLongBits(z))) {
+                (this.value.getLong(0) == Double.doubleToLongBits(x) &&
+                        this.value.getLong(8) == Double.doubleToLongBits(y) &&
+                        this.value.getLong(16) == Double.doubleToLongBits(z))) {
             return;
         }
 
@@ -808,10 +808,10 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVector64(double x, double y, double z, double w) {
         if (this.type != Type.DOUBLE_VEC4 ||
-            (this.value.getLong(0) == Double.doubleToLongBits(x) &&
-             this.value.getLong(8) == Double.doubleToLongBits(y) &&
-             this.value.getLong(16) == Double.doubleToLongBits(z) &&
-             this.value.getLong(24) == Double.doubleToLongBits(w))) {
+                (this.value.getLong(0) == Double.doubleToLongBits(x) &&
+                        this.value.getLong(8) == Double.doubleToLongBits(y) &&
+                        this.value.getLong(16) == Double.doubleToLongBits(z) &&
+                        this.value.getLong(24) == Double.doubleToLongBits(w))) {
             return;
         }
 
@@ -825,7 +825,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setLong(long value) {
         if ((this.type != Type.LONG && this.type != Type.UNSIGNED_LONG) ||
-            this.value.getLong(0) == value) {
+                this.value.getLong(0) == value) {
             return;
         }
 
@@ -836,8 +836,8 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVectorI64(long x, long y) {
         if ((this.type != Type.LONG_VEC2 && this.type != Type.UNSIGNED_LONG_VEC2) ||
-            (this.value.getLong(0) == x &&
-             this.value.getLong(8) == y)) {
+                (this.value.getLong(0) == x &&
+                        this.value.getLong(8) == y)) {
             return;
         }
 
@@ -849,9 +849,9 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVectorI64(long x, long y, long z) {
         if ((this.type != Type.LONG_VEC3 && this.type != Type.UNSIGNED_LONG_VEC3) ||
-            (this.value.getLong(0) == x &&
-             this.value.getLong(8) == y &&
-             this.value.getLong(16) == z)) {
+                (this.value.getLong(0) == x &&
+                        this.value.getLong(8) == y &&
+                        this.value.getLong(16) == z)) {
             return;
         }
 
@@ -864,10 +864,10 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setVectorI64(long x, long y, long z, long w) {
         if ((this.type != Type.LONG_VEC4 && this.type != Type.UNSIGNED_LONG_VEC4) ||
-            (this.value.getLong(0) == x &&
-             this.value.getLong(8) == y &&
-             this.value.getLong(16) == z &&
-             this.value.getLong(24) == w)) {
+                (this.value.getLong(0) == x &&
+                        this.value.getLong(8) == y &&
+                        this.value.getLong(16) == z &&
+                        this.value.getLong(24) == w)) {
             return;
         }
 
@@ -957,7 +957,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setInts(int... values) {
         if (this.type != Type.INT && this.type != Type.INT_VEC2 && this.type != Type.INT_VEC3 && this.type != Type.INT_VEC4 &&
-            this.type != Type.UNSIGNED_INT && this.type != Type.UNSIGNED_INT_VEC2 && this.type != Type.UNSIGNED_INT_VEC3 && this.type != Type.UNSIGNED_INT_VEC4) {
+                this.type != Type.UNSIGNED_INT && this.type != Type.UNSIGNED_INT_VEC2 && this.type != Type.UNSIGNED_INT_VEC3 && this.type != Type.UNSIGNED_INT_VEC4) {
             return;
         }
 
@@ -1110,7 +1110,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setLongs(long... values) {
         if (this.type != Type.LONG && this.type != Type.LONG_VEC2 && this.type != Type.LONG_VEC3 && this.type != Type.LONG_VEC4 &&
-            this.type != Type.UNSIGNED_LONG && this.type != Type.UNSIGNED_LONG_VEC2 && this.type != Type.UNSIGNED_LONG_VEC3 && this.type != Type.UNSIGNED_LONG_VEC4) {
+                this.type != Type.UNSIGNED_LONG && this.type != Type.UNSIGNED_LONG_VEC2 && this.type != Type.UNSIGNED_LONG_VEC3 && this.type != Type.UNSIGNED_LONG_VEC4) {
             return;
         }
 
@@ -1131,9 +1131,9 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         }
 
         if (this.value.getInt(0) == Float.floatToIntBits(value.m00()) &&
-            this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
-            this.value.getInt(8) == Float.floatToIntBits(value.m10()) &&
-            this.value.getInt(12) == Float.floatToIntBits(value.m11())) {
+                this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
+                this.value.getInt(8) == Float.floatToIntBits(value.m10()) &&
+                this.value.getInt(12) == Float.floatToIntBits(value.m11())) {
             return;
         }
 
@@ -1148,14 +1148,14 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         }
 
         if (this.value.getInt(0) == Float.floatToIntBits(value.m00()) &&
-            this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
-            this.value.getInt(8) == Float.floatToIntBits(value.m02()) &&
-            this.value.getInt(12) == Float.floatToIntBits(value.m10()) &&
-            this.value.getInt(16) == Float.floatToIntBits(value.m11()) &&
-            this.value.getInt(20) == Float.floatToIntBits(value.m12()) &&
-            this.value.getInt(24) == Float.floatToIntBits(value.m20()) &&
-            this.value.getInt(28) == Float.floatToIntBits(value.m21()) &&
-            this.value.getInt(32) == Float.floatToIntBits(value.m22())) {
+                this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
+                this.value.getInt(8) == Float.floatToIntBits(value.m02()) &&
+                this.value.getInt(12) == Float.floatToIntBits(value.m10()) &&
+                this.value.getInt(16) == Float.floatToIntBits(value.m11()) &&
+                this.value.getInt(20) == Float.floatToIntBits(value.m12()) &&
+                this.value.getInt(24) == Float.floatToIntBits(value.m20()) &&
+                this.value.getInt(28) == Float.floatToIntBits(value.m21()) &&
+                this.value.getInt(32) == Float.floatToIntBits(value.m22())) {
             return;
         }
 
@@ -1170,21 +1170,21 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         }
 
         if (this.value.getInt(0) == Float.floatToIntBits(value.m00()) &&
-            this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
-            this.value.getInt(8) == Float.floatToIntBits(value.m02()) &&
-            this.value.getInt(12) == Float.floatToIntBits(value.m03()) &&
-            this.value.getInt(16) == Float.floatToIntBits(value.m10()) &&
-            this.value.getInt(20) == Float.floatToIntBits(value.m11()) &&
-            this.value.getInt(24) == Float.floatToIntBits(value.m12()) &&
-            this.value.getInt(28) == Float.floatToIntBits(value.m13()) &&
-            this.value.getInt(32) == Float.floatToIntBits(value.m20()) &&
-            this.value.getInt(36) == Float.floatToIntBits(value.m21()) &&
-            this.value.getInt(40) == Float.floatToIntBits(value.m22()) &&
-            this.value.getInt(44) == Float.floatToIntBits(value.m23()) &&
-            this.value.getInt(48) == Float.floatToIntBits(value.m30()) &&
-            this.value.getInt(52) == Float.floatToIntBits(value.m31()) &&
-            this.value.getInt(56) == Float.floatToIntBits(value.m32()) &&
-            this.value.getInt(60) == Float.floatToIntBits(value.m33())) {
+                this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
+                this.value.getInt(8) == Float.floatToIntBits(value.m02()) &&
+                this.value.getInt(12) == Float.floatToIntBits(value.m03()) &&
+                this.value.getInt(16) == Float.floatToIntBits(value.m10()) &&
+                this.value.getInt(20) == Float.floatToIntBits(value.m11()) &&
+                this.value.getInt(24) == Float.floatToIntBits(value.m12()) &&
+                this.value.getInt(28) == Float.floatToIntBits(value.m13()) &&
+                this.value.getInt(32) == Float.floatToIntBits(value.m20()) &&
+                this.value.getInt(36) == Float.floatToIntBits(value.m21()) &&
+                this.value.getInt(40) == Float.floatToIntBits(value.m22()) &&
+                this.value.getInt(44) == Float.floatToIntBits(value.m23()) &&
+                this.value.getInt(48) == Float.floatToIntBits(value.m30()) &&
+                this.value.getInt(52) == Float.floatToIntBits(value.m31()) &&
+                this.value.getInt(56) == Float.floatToIntBits(value.m32()) &&
+                this.value.getInt(60) == Float.floatToIntBits(value.m33())) {
             return;
         }
 
@@ -1199,11 +1199,11 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         }
 
         if (this.value.getInt(0) == Float.floatToIntBits(value.m00()) &&
-            this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
-            this.value.getInt(8) == Float.floatToIntBits(value.m10()) &&
-            this.value.getInt(16) == Float.floatToIntBits(value.m11()) &&
-            this.value.getInt(20) == Float.floatToIntBits(value.m20()) &&
-            this.value.getInt(24) == Float.floatToIntBits(value.m21())) {
+                this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
+                this.value.getInt(8) == Float.floatToIntBits(value.m10()) &&
+                this.value.getInt(16) == Float.floatToIntBits(value.m11()) &&
+                this.value.getInt(20) == Float.floatToIntBits(value.m20()) &&
+                this.value.getInt(24) == Float.floatToIntBits(value.m21())) {
             return;
         }
 
@@ -1218,11 +1218,11 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         }
 
         if (this.value.getInt(0) == Float.floatToIntBits(value.m00()) &&
-            this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
-            this.value.getInt(8) == Float.floatToIntBits(value.m10()) &&
-            this.value.getInt(16) == Float.floatToIntBits(value.m11()) &&
-            this.value.getInt(20) == Float.floatToIntBits(value.m20()) &&
-            this.value.getInt(24) == Float.floatToIntBits(value.m21())) {
+                this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
+                this.value.getInt(8) == Float.floatToIntBits(value.m10()) &&
+                this.value.getInt(16) == Float.floatToIntBits(value.m11()) &&
+                this.value.getInt(20) == Float.floatToIntBits(value.m20()) &&
+                this.value.getInt(24) == Float.floatToIntBits(value.m21())) {
             return;
         }
 
@@ -1237,17 +1237,17 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         }
 
         if (this.value.getInt(0) == Float.floatToIntBits(value.m00()) &&
-            this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
-            this.value.getInt(8) == Float.floatToIntBits(value.m02()) &&
-            this.value.getInt(12) == Float.floatToIntBits(value.m10()) &&
-            this.value.getInt(16) == Float.floatToIntBits(value.m11()) &&
-            this.value.getInt(20) == Float.floatToIntBits(value.m12()) &&
-            this.value.getInt(24) == Float.floatToIntBits(value.m20()) &&
-            this.value.getInt(28) == Float.floatToIntBits(value.m21()) &&
-            this.value.getInt(32) == Float.floatToIntBits(value.m22()) &&
-            this.value.getInt(36) == Float.floatToIntBits(value.m30()) &&
-            this.value.getInt(40) == Float.floatToIntBits(value.m31()) &&
-            this.value.getInt(44) == Float.floatToIntBits(value.m32())) {
+                this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
+                this.value.getInt(8) == Float.floatToIntBits(value.m02()) &&
+                this.value.getInt(12) == Float.floatToIntBits(value.m10()) &&
+                this.value.getInt(16) == Float.floatToIntBits(value.m11()) &&
+                this.value.getInt(20) == Float.floatToIntBits(value.m12()) &&
+                this.value.getInt(24) == Float.floatToIntBits(value.m20()) &&
+                this.value.getInt(28) == Float.floatToIntBits(value.m21()) &&
+                this.value.getInt(32) == Float.floatToIntBits(value.m22()) &&
+                this.value.getInt(36) == Float.floatToIntBits(value.m30()) &&
+                this.value.getInt(40) == Float.floatToIntBits(value.m31()) &&
+                this.value.getInt(44) == Float.floatToIntBits(value.m32())) {
             return;
         }
 
@@ -1262,17 +1262,17 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         }
 
         if (this.value.getInt(0) == Float.floatToIntBits(value.m00()) &&
-            this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
-            this.value.getInt(8) == Float.floatToIntBits(value.m02()) &&
-            this.value.getInt(12) == Float.floatToIntBits(value.m10()) &&
-            this.value.getInt(16) == Float.floatToIntBits(value.m11()) &&
-            this.value.getInt(20) == Float.floatToIntBits(value.m12()) &&
-            this.value.getInt(24) == Float.floatToIntBits(value.m20()) &&
-            this.value.getInt(28) == Float.floatToIntBits(value.m21()) &&
-            this.value.getInt(32) == Float.floatToIntBits(value.m22()) &&
-            this.value.getInt(36) == Float.floatToIntBits(value.m30()) &&
-            this.value.getInt(40) == Float.floatToIntBits(value.m31()) &&
-            this.value.getInt(44) == Float.floatToIntBits(value.m32())) {
+                this.value.getInt(4) == Float.floatToIntBits(value.m01()) &&
+                this.value.getInt(8) == Float.floatToIntBits(value.m02()) &&
+                this.value.getInt(12) == Float.floatToIntBits(value.m10()) &&
+                this.value.getInt(16) == Float.floatToIntBits(value.m11()) &&
+                this.value.getInt(20) == Float.floatToIntBits(value.m12()) &&
+                this.value.getInt(24) == Float.floatToIntBits(value.m20()) &&
+                this.value.getInt(28) == Float.floatToIntBits(value.m21()) &&
+                this.value.getInt(32) == Float.floatToIntBits(value.m22()) &&
+                this.value.getInt(36) == Float.floatToIntBits(value.m30()) &&
+                this.value.getInt(40) == Float.floatToIntBits(value.m31()) &&
+                this.value.getInt(44) == Float.floatToIntBits(value.m32())) {
             return;
         }
 
@@ -1287,9 +1287,9 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         }
 
         if (this.value.getLong(0) == Double.doubleToLongBits(value.m00()) &&
-            this.value.getLong(8) == Double.doubleToLongBits(value.m01()) &&
-            this.value.getLong(16) == Double.doubleToLongBits(value.m10()) &&
-            this.value.getLong(24) == Double.doubleToLongBits(value.m11())) {
+                this.value.getLong(8) == Double.doubleToLongBits(value.m01()) &&
+                this.value.getLong(16) == Double.doubleToLongBits(value.m10()) &&
+                this.value.getLong(24) == Double.doubleToLongBits(value.m11())) {
             return;
         }
 
@@ -1304,14 +1304,14 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         }
 
         if (this.value.getLong(0) == Double.doubleToLongBits(value.m00()) &&
-            this.value.getLong(8) == Double.doubleToLongBits(value.m01()) &&
-            this.value.getLong(16) == Double.doubleToLongBits(value.m02()) &&
-            this.value.getLong(24) == Double.doubleToLongBits(value.m10()) &&
-            this.value.getLong(32) == Double.doubleToLongBits(value.m11()) &&
-            this.value.getLong(40) == Double.doubleToLongBits(value.m12()) &&
-            this.value.getLong(48) == Double.doubleToLongBits(value.m20()) &&
-            this.value.getLong(56) == Double.doubleToLongBits(value.m21()) &&
-            this.value.getLong(64) == Double.doubleToLongBits(value.m22())) {
+                this.value.getLong(8) == Double.doubleToLongBits(value.m01()) &&
+                this.value.getLong(16) == Double.doubleToLongBits(value.m02()) &&
+                this.value.getLong(24) == Double.doubleToLongBits(value.m10()) &&
+                this.value.getLong(32) == Double.doubleToLongBits(value.m11()) &&
+                this.value.getLong(40) == Double.doubleToLongBits(value.m12()) &&
+                this.value.getLong(48) == Double.doubleToLongBits(value.m20()) &&
+                this.value.getLong(56) == Double.doubleToLongBits(value.m21()) &&
+                this.value.getLong(64) == Double.doubleToLongBits(value.m22())) {
             return;
         }
 
@@ -1326,21 +1326,21 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         }
 
         if (this.value.getLong(0) == Double.doubleToLongBits(value.m00()) &&
-            this.value.getLong(8) == Double.doubleToLongBits(value.m01()) &&
-            this.value.getLong(16) == Double.doubleToLongBits(value.m02()) &&
-            this.value.getLong(24) == Double.doubleToLongBits(value.m03()) &&
-            this.value.getLong(32) == Double.doubleToLongBits(value.m10()) &&
-            this.value.getLong(40) == Double.doubleToLongBits(value.m11()) &&
-            this.value.getLong(48) == Double.doubleToLongBits(value.m12()) &&
-            this.value.getLong(56) == Double.doubleToLongBits(value.m13()) &&
-            this.value.getLong(64) == Double.doubleToLongBits(value.m20()) &&
-            this.value.getLong(72) == Double.doubleToLongBits(value.m21()) &&
-            this.value.getLong(80) == Double.doubleToLongBits(value.m22()) &&
-            this.value.getLong(88) == Double.doubleToLongBits(value.m23()) &&
-            this.value.getLong(96) == Double.doubleToLongBits(value.m30()) &&
-            this.value.getLong(104) == Double.doubleToLongBits(value.m31()) &&
-            this.value.getLong(112) == Double.doubleToLongBits(value.m32()) &&
-            this.value.getLong(120) == Double.doubleToLongBits(value.m33())) {
+                this.value.getLong(8) == Double.doubleToLongBits(value.m01()) &&
+                this.value.getLong(16) == Double.doubleToLongBits(value.m02()) &&
+                this.value.getLong(24) == Double.doubleToLongBits(value.m03()) &&
+                this.value.getLong(32) == Double.doubleToLongBits(value.m10()) &&
+                this.value.getLong(40) == Double.doubleToLongBits(value.m11()) &&
+                this.value.getLong(48) == Double.doubleToLongBits(value.m12()) &&
+                this.value.getLong(56) == Double.doubleToLongBits(value.m13()) &&
+                this.value.getLong(64) == Double.doubleToLongBits(value.m20()) &&
+                this.value.getLong(72) == Double.doubleToLongBits(value.m21()) &&
+                this.value.getLong(80) == Double.doubleToLongBits(value.m22()) &&
+                this.value.getLong(88) == Double.doubleToLongBits(value.m23()) &&
+                this.value.getLong(96) == Double.doubleToLongBits(value.m30()) &&
+                this.value.getLong(104) == Double.doubleToLongBits(value.m31()) &&
+                this.value.getLong(112) == Double.doubleToLongBits(value.m32()) &&
+                this.value.getLong(120) == Double.doubleToLongBits(value.m33())) {
             return;
         }
 
@@ -1355,11 +1355,11 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         }
 
         if (this.value.getLong(0) == Double.doubleToLongBits(value.m00()) &&
-            this.value.getLong(4) == Double.doubleToLongBits(value.m01()) &&
-            this.value.getLong(8) == Double.doubleToLongBits(value.m10()) &&
-            this.value.getLong(16) == Double.doubleToLongBits(value.m11()) &&
-            this.value.getLong(20) == Double.doubleToLongBits(value.m20()) &&
-            this.value.getLong(24) == Double.doubleToLongBits(value.m21())) {
+                this.value.getLong(4) == Double.doubleToLongBits(value.m01()) &&
+                this.value.getLong(8) == Double.doubleToLongBits(value.m10()) &&
+                this.value.getLong(16) == Double.doubleToLongBits(value.m11()) &&
+                this.value.getLong(20) == Double.doubleToLongBits(value.m20()) &&
+                this.value.getLong(24) == Double.doubleToLongBits(value.m21())) {
             return;
         }
 
@@ -1374,11 +1374,11 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         }
 
         if (this.value.getLong(0) == Double.doubleToLongBits(value.m00()) &&
-            this.value.getLong(4) == Double.doubleToLongBits(value.m01()) &&
-            this.value.getLong(8) == Double.doubleToLongBits(value.m10()) &&
-            this.value.getLong(16) == Double.doubleToLongBits(value.m11()) &&
-            this.value.getLong(20) == Double.doubleToLongBits(value.m20()) &&
-            this.value.getLong(24) == Double.doubleToLongBits(value.m21())) {
+                this.value.getLong(4) == Double.doubleToLongBits(value.m01()) &&
+                this.value.getLong(8) == Double.doubleToLongBits(value.m10()) &&
+                this.value.getLong(16) == Double.doubleToLongBits(value.m11()) &&
+                this.value.getLong(20) == Double.doubleToLongBits(value.m20()) &&
+                this.value.getLong(24) == Double.doubleToLongBits(value.m21())) {
             return;
         }
 
@@ -1393,17 +1393,17 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         }
 
         if (this.value.getLong(0) == Double.doubleToLongBits(value.m00()) &&
-            this.value.getLong(4) == Double.doubleToLongBits(value.m01()) &&
-            this.value.getLong(8) == Double.doubleToLongBits(value.m02()) &&
-            this.value.getLong(12) == Double.doubleToLongBits(value.m10()) &&
-            this.value.getLong(16) == Double.doubleToLongBits(value.m11()) &&
-            this.value.getLong(20) == Double.doubleToLongBits(value.m12()) &&
-            this.value.getLong(24) == Double.doubleToLongBits(value.m20()) &&
-            this.value.getLong(28) == Double.doubleToLongBits(value.m21()) &&
-            this.value.getLong(32) == Double.doubleToLongBits(value.m22()) &&
-            this.value.getLong(36) == Double.doubleToLongBits(value.m30()) &&
-            this.value.getLong(40) == Double.doubleToLongBits(value.m31()) &&
-            this.value.getLong(44) == Double.doubleToLongBits(value.m32())) {
+                this.value.getLong(4) == Double.doubleToLongBits(value.m01()) &&
+                this.value.getLong(8) == Double.doubleToLongBits(value.m02()) &&
+                this.value.getLong(12) == Double.doubleToLongBits(value.m10()) &&
+                this.value.getLong(16) == Double.doubleToLongBits(value.m11()) &&
+                this.value.getLong(20) == Double.doubleToLongBits(value.m12()) &&
+                this.value.getLong(24) == Double.doubleToLongBits(value.m20()) &&
+                this.value.getLong(28) == Double.doubleToLongBits(value.m21()) &&
+                this.value.getLong(32) == Double.doubleToLongBits(value.m22()) &&
+                this.value.getLong(36) == Double.doubleToLongBits(value.m30()) &&
+                this.value.getLong(40) == Double.doubleToLongBits(value.m31()) &&
+                this.value.getLong(44) == Double.doubleToLongBits(value.m32())) {
             return;
         }
 
@@ -1418,17 +1418,17 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
         }
 
         if (this.value.getLong(0) == Double.doubleToLongBits(value.m00()) &&
-            this.value.getLong(4) == Double.doubleToLongBits(value.m01()) &&
-            this.value.getLong(8) == Double.doubleToLongBits(value.m02()) &&
-            this.value.getLong(12) == Double.doubleToLongBits(value.m10()) &&
-            this.value.getLong(16) == Double.doubleToLongBits(value.m11()) &&
-            this.value.getLong(20) == Double.doubleToLongBits(value.m12()) &&
-            this.value.getLong(24) == Double.doubleToLongBits(value.m20()) &&
-            this.value.getLong(28) == Double.doubleToLongBits(value.m21()) &&
-            this.value.getLong(32) == Double.doubleToLongBits(value.m22()) &&
-            this.value.getLong(36) == Double.doubleToLongBits(value.m30()) &&
-            this.value.getLong(40) == Double.doubleToLongBits(value.m31()) &&
-            this.value.getLong(44) == Double.doubleToLongBits(value.m32())) {
+                this.value.getLong(4) == Double.doubleToLongBits(value.m01()) &&
+                this.value.getLong(8) == Double.doubleToLongBits(value.m02()) &&
+                this.value.getLong(12) == Double.doubleToLongBits(value.m10()) &&
+                this.value.getLong(16) == Double.doubleToLongBits(value.m11()) &&
+                this.value.getLong(20) == Double.doubleToLongBits(value.m12()) &&
+                this.value.getLong(24) == Double.doubleToLongBits(value.m20()) &&
+                this.value.getLong(28) == Double.doubleToLongBits(value.m21()) &&
+                this.value.getLong(32) == Double.doubleToLongBits(value.m22()) &&
+                this.value.getLong(36) == Double.doubleToLongBits(value.m30()) &&
+                this.value.getLong(40) == Double.doubleToLongBits(value.m31()) &&
+                this.value.getLong(44) == Double.doubleToLongBits(value.m32())) {
             return;
         }
 
