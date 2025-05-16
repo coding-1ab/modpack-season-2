@@ -1,5 +1,6 @@
 package foundry.veil.api.resource;
 
+import foundry.veil.VeilClient;
 import foundry.veil.api.resource.type.McMetaResource;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
@@ -18,6 +19,20 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface VeilResourceManager {
 
+    /**
+     * @return The resource manager instance for the client
+     * @since 1.3.0
+     */
+    static VeilResourceManager get() {
+        return VeilClient.resourceManager();
+    }
+
+    /**
+     * Retrieves the correct resource manager for the specified resource.
+     *
+     * @param resourceInfo The info of the resource to get
+     * @return The sided resource manager for that resource
+     */
     default ResourceManager resources(VeilResourceInfo resourceInfo) {
         return resourceInfo.packType() == PackType.SERVER_DATA ? this.serverResources() : this.clientResources();
     }
