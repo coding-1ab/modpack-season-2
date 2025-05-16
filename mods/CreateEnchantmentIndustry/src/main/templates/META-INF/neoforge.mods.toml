@@ -20,9 +20,9 @@ issueTrackerURL="${mod_github}/issues"
     #file="META-INF/accesstransformer.cfg"
 
 [modproperties.${mod_id}]
-    "create_dragons_plus:dye_fluids"=true
-    "create_dragons_plus:fluid_hatch"=true
-    "create_dragons_plus:blaze_upgrade_smithing_template"=true
+    "create_dragons_plus:fluid/dye"=true
+    "create_dragons_plus:block/fluid_hatch"=true
+    "create_dragons_plus:item/blaze_upgrade_smithing_template"=true
 
 [[dependencies.${mod_id}]]
     modId="neoforge"

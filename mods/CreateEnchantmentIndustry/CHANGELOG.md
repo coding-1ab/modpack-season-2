@@ -1,8 +1,4 @@
-### Create: Enchantment Industry 2.1.3
+### Create: Enchantment Industry 2.1.4
 
-#### Update
-* Update Russian Translation by @Korben
-* Update Japanese Translation by @YukkuriOfuton
-
-#### Change
-* Level extension of `Infinite` is set to 0 according to its effect.
+#### Fix
+- Fix some crafting recipes (Such as Blaze Smithing Template) unavailable due to C:DP feature config formate changes
