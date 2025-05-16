@@ -8,11 +8,10 @@
   `#drinks` - Groups drinkable FD items that are not potions;
 
 ### Updates
-- Wheat Dough now has a simpler, less cumbersome crafting recipe:
+- Wheat Dough now has a simpler, less cumbersome crafting recipe using a Water Bucket:
   - Wheat can be crafted with a Water Bucket to make Dough. The bucket's water won't be depleted, letting you craft dough indefinitely;
   - The bucket acts as a simple technology gate to unlock this recipe;
-  - The previous recipes, both water-based and egg-based, were removed;
-- Wheat Dough and Raw Pasta no longer have a chance to cause the Hunger effect when eaten, as those items are no longer crafted with Eggs;
+  - The egg recipe is still present, to not break auto-crafting setups;
 - Added knives to the `breaks_decorated_pots` tag;
 - Updated integration with `create:upright_on_belt` to include all bowl, plate and bottle items;
 - Updated the Master Chef advancement with additional meals;

@@ -1,4 +1,4 @@
-// 1.20.1	2025-05-14T17:30:53.4349755	Recipes
+// 1.20.1	2025-05-15T19:16:35.8265228	Recipes
 a498fcc8b72b6631ddbb164a0245b37491e7571a data/farmersdelight/advancements/recipes/building_blocks/cabbage_crate.json
 c941206993bfa59d31b38132b898fb94c29746a6 data/farmersdelight/advancements/recipes/building_blocks/onion_crate.json
 2b93ef657fca92a73775c750079ea1503d8f02cc data/farmersdelight/advancements/recipes/building_blocks/organic_compost_from_rotten_flesh.json
@@ -172,6 +172,7 @@ d8f631e94052de6bdd18196d0cd315765b5ddb65 data/farmersdelight/advancements/recipe
 41a8f433c22b926dcdb403038fcace209896037d data/farmersdelight/advancements/recipes/food/sweet_berry_cheesecake_from_slices.json
 750e03ca49f3e8036e67f652a12ae1773522304b data/farmersdelight/advancements/recipes/food/sweet_berry_cookie.json
 8961836bb9db02b751bf1a132ee7e9ce1ba2737d data/farmersdelight/advancements/recipes/food/tomato.json
+48417098fa370a9e5da2102a4f4313483535581c data/farmersdelight/advancements/recipes/food/wheat_dough.json
 5c3ed2970a46e698db82a2443e9876d5ec3e392e data/farmersdelight/advancements/recipes/misc/book_from_canvas.json
 90b4359cf085beb923f9d155b871cd2593028b77 data/farmersdelight/advancements/recipes/misc/canvas.json
 a5d6ce713aeabd087c672d65a460da47adf81697 data/farmersdelight/advancements/recipes/misc/canvas_from_canvas_rug.json
@@ -492,6 +493,7 @@ e34d4f1aeaddafe8b124c2568a952903a2fdba4e data/farmersdelight/recipes/tomato.json
 a1258ae59f60a3682e5af37ab2b5e4be039e0755 data/farmersdelight/recipes/tomato_crate.json
 5e5364230148a6581f8e1ae12691e5a809b0d51d data/farmersdelight/recipes/tomato_seeds.json
 df8048c6a9b8f363a3bd5a5cfbbe0a2c2ad6845f data/farmersdelight/recipes/warped_cabinet.json
+92c5a6ddb97c8cbbe8bc21064a865f16b2cd3fa2 data/farmersdelight/recipes/wheat_dough.json
 8dd95767ae244d85f1883d61342bfa63995b60d6 data/farmersdelight/recipes/white_canvas_sign.json
 28d34f03b4129ad620322ed41bea0a3d02abc544 data/farmersdelight/recipes/white_hanging_canvas_sign.json
 4a5a7aff5a5eae8759f15cfe58bac5e50ce9a0f4 data/farmersdelight/recipes/yellow_canvas_sign.json
