@@ -13,6 +13,7 @@
   - The bucket acts as a simple technology gate to unlock this recipe;
   - The previous recipes, both water-based and egg-based, were removed;
 - Wheat Dough and Raw Pasta no longer have a chance to cause the Hunger effect when eaten, as those items are no longer crafted with Eggs;
+- Added knives to the `breaks_decorated_pots` tag;
 - Updated integration with `create:upright_on_belt` to include all bowl, plate and bottle items;
 - Updated the Master Chef advancement with additional meals;
   - The meals reflect the "vanilla FD" entries in the `meals` tag, but does not update with the tag itself;

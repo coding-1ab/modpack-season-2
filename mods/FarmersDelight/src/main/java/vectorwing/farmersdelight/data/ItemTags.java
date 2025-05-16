@@ -37,6 +37,7 @@ public class ItemTags extends ItemTagsProvider
 	}
 
 	private void registerMinecraftTags() {
+		tag(net.minecraft.tags.ItemTags.TOOLS).addTag(ModTags.KNIVES);
 		tag(net.minecraft.tags.ItemTags.TALL_FLOWERS).add(ModItems.WILD_RICE.get());
 		tag(net.minecraft.tags.ItemTags.PIGLIN_LOVED).add(ModItems.GOLDEN_KNIFE.get());
 		tag(net.minecraft.tags.ItemTags.SIGNS).addTag(ModTags.CANVAS_SIGNS);
