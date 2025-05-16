@@ -53,7 +53,7 @@ public class ShaderBindingProcessor implements ShaderPreProcessor {
                                 writer.visitSpecifiedType(type);
                                 name = writer.toString();
                             }
-                            
+
                             veilContext.addUniformBinding(name, constantNode.intValue());
                             layoutIdIterator.remove();
                         }

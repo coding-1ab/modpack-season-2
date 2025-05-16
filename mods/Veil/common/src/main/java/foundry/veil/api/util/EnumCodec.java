@@ -9,6 +9,7 @@ import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import net.minecraft.network.VarInt;
 import net.minecraft.network.codec.StreamCodec;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
  *
  * @param <T> The enum type to encode/decode
  * @author Ocelot
+ * @since 1.0.0
  */
 public class EnumCodec<T extends Enum<?>> implements Codec<T> {
 
@@ -116,6 +118,11 @@ public class EnumCodec<T extends Enum<?>> implements Codec<T> {
         private T[] values;
         private Function<T, String> toString;
 
+        /**
+         * @deprecated Use {@link EnumCodec#builder(String)}
+         */
+        @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
+        @Deprecated
         public Builder(String name) {
             this.name = name;
             this.values = null;

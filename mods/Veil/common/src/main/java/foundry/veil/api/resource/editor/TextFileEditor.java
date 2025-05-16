@@ -12,6 +12,7 @@ import imgui.extension.texteditor.TextEditorLanguageDefinition;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
+@ApiStatus.Internal
 public class TextFileEditor implements ResourceFileEditor<VeilTextResource<?>> {
 
     private static final Component SAVE = Component.translatable("gui.veil.save");

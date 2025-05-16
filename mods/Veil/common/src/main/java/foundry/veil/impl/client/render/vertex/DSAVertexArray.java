@@ -8,7 +8,8 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.nio.ByteBuffer;
 
-import static org.lwjgl.opengl.ARBDirectStateAccess.*;
+import static org.lwjgl.opengl.ARBDirectStateAccess.glNamedBufferData;
+import static org.lwjgl.opengl.ARBDirectStateAccess.glVertexArrayElementBuffer;
 import static org.lwjgl.opengl.GL15C.GL_STATIC_DRAW;
 
 @ApiStatus.Internal

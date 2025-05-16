@@ -12,13 +12,13 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 @Mixin(Window.class)
 public class WindowMixin {
 
-    @ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lorg/lwjgl/glfw/GLFW;glfwWindowHint(II)V", ordinal = 4), index = 1)
+    @ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lorg/lwjgl/glfw/GLFW;glfwWindowHint(II)V", ordinal = 4, remap = false), index = 1)
     public int modifyMajorVersion(int value, @Share("major") LocalIntRef major) {
         major.set(value);
         return value;
     }
 
-    @ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lorg/lwjgl/glfw/GLFW;glfwWindowHint(II)V", ordinal = 5), index = 1)
+    @ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lorg/lwjgl/glfw/GLFW;glfwWindowHint(II)V", ordinal = 5, remap = false), index = 1)
     public int modifyMinorVersion(int value, @Share("major") LocalIntRef major) {
         if (major.get() == 3 && value < 3) {
             return 3;

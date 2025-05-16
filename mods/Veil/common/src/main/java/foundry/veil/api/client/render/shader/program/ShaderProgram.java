@@ -15,15 +15,12 @@ import net.minecraft.client.renderer.EffectInstance;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
-import org.joml.*;
-import org.lwjgl.system.MemoryStack;
+import org.joml.Matrix4fc;
 import org.lwjgl.system.NativeResource;
 
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.Set;
 
-import static org.lwjgl.opengl.GL20C.*;
+import static org.lwjgl.opengl.GL20C.GL_VERTEX_SHADER;
 import static org.lwjgl.opengl.GL31C.GL_INVALID_INDEX;
 import static org.lwjgl.opengl.GL31C.glUniformBlockBinding;
 import static org.lwjgl.opengl.GL41C.*;

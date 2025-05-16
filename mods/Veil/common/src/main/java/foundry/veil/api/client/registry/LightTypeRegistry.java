@@ -3,7 +3,6 @@ package foundry.veil.api.client.registry;
 import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.light.*;
-import foundry.veil.api.client.render.light.renderer.IndirectLightRenderer;
 import foundry.veil.api.client.render.light.renderer.LightTypeRenderer;
 import foundry.veil.impl.client.editor.LightInspector;
 import foundry.veil.impl.client.render.light.AreaLightRenderer;
