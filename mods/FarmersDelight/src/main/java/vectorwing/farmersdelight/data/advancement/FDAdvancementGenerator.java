@@ -8,6 +8,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import vectorwing.farmersdelight.FarmersDelight;
@@ -92,14 +93,22 @@ public class FDAdvancementGenerator implements AdvancementProvider.AdvancementGe
 				.save(consumer, getNameId("main/plant_rice"));
 
 		AdvancementHolder tallmato = getAdvancement(cropsOfTheWild, ModItems.TOMATO.get(), "harvest_ropelogged_tomato", AdvancementType.TASK, true, false, false)
-				.addCriterion("harvest_ropelogged_tomato", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
-						LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(ModBlocks.TOMATO_CROP.get()).setProperties(
-								StatePropertiesPredicate.Builder.properties()
-										.hasProperty(TomatoVineBlock.VINE_AGE, 0)
-										.hasProperty(TomatoVineBlock.ROPELOGGED, true)
-						)),
-						ItemPredicate.Builder.item())
-				)
+				.addCriterion("harvest_ropelogged_tomato", CriteriaTriggers.DEFAULT_BLOCK_USE.createCriterion(
+						new DefaultBlockInteractionTrigger.TriggerInstance(
+								Optional.empty(),
+								Optional.of(
+										ContextAwarePredicate.create(
+												LocationCheck.checkLocation(
+														LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(ModBlocks.TOMATO_CROP.get()).setProperties(
+																StatePropertiesPredicate.Builder.properties()
+																		.hasProperty(TomatoVineBlock.VINE_AGE, 0)
+																		.hasProperty(TomatoVineBlock.ROPELOGGED, true)
+														))
+												).build()
+										)
+								)
+						)
+				))
 				.save(consumer, getNameId("main/harvest_ropelogged_tomato"));
 
 		AdvancementHolder booHiss = getAdvancement(tallmato, ModItems.ROTTEN_TOMATO.get(), "hit_raider_with_rotten_tomato", AdvancementType.TASK, true, true, false)
