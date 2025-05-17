@@ -19,6 +19,7 @@
 - (1.21.1) Fixed FD recipe ID's not being displayed on debug info on JEI screens (thanks, Abbie5!);
 - (1.21.1) Fixed Immersive Engineering integration recipes;
 - (1.21.1) Fixed Tall-mato advancement not working properly;
+- (1.21.1) Fixed HUD overlays rendering on top of AppleSkin overlays;
 
 ### Translations
 - Updated:
