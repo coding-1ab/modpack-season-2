@@ -1,15 +1,18 @@
 package com.simibubi.create.api.data.recipe;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 import com.simibubi.create.AllRecipeTypes;
-import com.simibubi.create.AllTags.AllItemTags;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+
+import net.neoforged.neoforge.common.Tags;
 
 /**
  * The base class for Item Application recipe generation.
@@ -37,8 +40,8 @@ public abstract class ItemApplicationRecipeGen extends ProcessingRecipeGen {
 			.output(output.get()));
 	}
 
-	public ItemApplicationRecipeGen(PackOutput output, String defaultNamespace) {
-		super(output, defaultNamespace);
+	public ItemApplicationRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, String defaultNamespace) {
+		super(output, registries, defaultNamespace);
 	}
 
 	@Override

@@ -19,6 +19,7 @@ import com.simibubi.create.content.kinetics.fan.processing.SplashingRecipe;
 import com.simibubi.create.content.kinetics.saw.CuttingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
+import com.simibubi.create.content.processing.recipe.ProcessingRecipeSerializer;
 import com.simibubi.create.foundation.data.recipe.Mods;
 import com.simibubi.create.foundation.mixin.accessor.ConcretePowderBlockAccessor;
 import com.simibubi.create.foundation.pack.DynamicPack;
@@ -33,8 +34,11 @@ import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagFile;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ConcretePowderBlock;
+
+import net.neoforged.neoforge.common.conditions.WithConditions;
 
 @ApiStatus.Internal
 public class RuntimeDataGenerator {
@@ -145,7 +149,7 @@ public class RuntimeDataGenerator {
 	private static void washingRecipes(ResourceLocation itemId) {
 		Block block = BuiltInRegistries.BLOCK.get(itemId);
 		if (block instanceof ConcretePowderBlock concretePowderBlock) {
-			Block concreteBlock = ((ConcretePowderBlockAccessor) concretePowderBlock).create$getConcrete().getBlock();
+			Block concreteBlock = ((ConcretePowderBlockAccessor) concretePowderBlock).create$getConcrete();
 			simpleSplashingRecipe(itemId, BuiltInRegistries.BLOCK.getKey(concreteBlock));
 		}
 	}
@@ -198,7 +202,7 @@ public class RuntimeDataGenerator {
 			IRecipeTypeInfo recipeType = recipe.getTypeInfo();
 			ResourceLocation typeId = recipeType.getId();
 
-			if (!(recipeType.getSerializer() instanceof ProcessingRecipeSerializer))
+			if (!(recipeType.getSerializer() instanceof ProcessingRecipeSerializer<?>))
 				throw new IllegalStateException("Cannot datagen ProcessingRecipe of type: " + typeId);
 
 			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(recipe.id.getNamespace(),

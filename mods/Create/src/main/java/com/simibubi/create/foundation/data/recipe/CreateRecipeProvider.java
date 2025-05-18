@@ -3,16 +3,13 @@ package com.simibubi.create.foundation.data.recipe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletableFuture;
-
-import org.jetbrains.annotations.NotNull;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags;
-
 import com.simibubi.create.api.data.recipe.ProcessingRecipeGen;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
@@ -24,8 +21,9 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+
 import net.neoforged.neoforge.common.Tags;
-import net.minecraftforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.FluidType;
 
 /**
  * The class that handles gathering Create's generated recipes for most types.
@@ -43,22 +41,23 @@ public final class CreateRecipeProvider extends RecipeProvider {
 	}
 
 	@Override
-	protected void buildRecipes(Consumer<FinishedRecipe> writer) {}
+	protected void buildRecipes(RecipeOutput recipeOutput) {
+	}
 
-	public static void registerAllProcessing(DataGenerator gen, PackOutput output) {
-		GENERATORS.add(new CreateCrushingRecipeGen(output));
-		GENERATORS.add(new CreateMillingRecipeGen(output));
-		GENERATORS.add(new CreateCuttingRecipeGen(output));
-		GENERATORS.add(new CreateWashingRecipeGen(output));
-		GENERATORS.add(new CreatePolishingRecipeGen(output));
-		GENERATORS.add(new CreateDeployingRecipeGen(output));
-		GENERATORS.add(new CreateMixingRecipeGen(output));
-		GENERATORS.add(new CreateCompactingRecipeGen(output));
-		GENERATORS.add(new CreatePressingRecipeGen(output));
-		GENERATORS.add(new CreateFillingRecipeGen(output));
-		GENERATORS.add(new CreateEmptyingRecipeGen(output));
-		GENERATORS.add(new CreateHauntingRecipeGen(output));
-		GENERATORS.add(new CreateItemApplicationRecipeGen(output));
+	public static void registerAllProcessing(DataGenerator gen, PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+		GENERATORS.add(new CreateCrushingRecipeGen(output, registries));
+		GENERATORS.add(new CreateMillingRecipeGen(output, registries));
+		GENERATORS.add(new CreateCuttingRecipeGen(output, registries));
+		GENERATORS.add(new CreateWashingRecipeGen(output, registries));
+		GENERATORS.add(new CreatePolishingRecipeGen(output, registries));
+		GENERATORS.add(new CreateDeployingRecipeGen(output, registries));
+		GENERATORS.add(new CreateMixingRecipeGen(output, registries));
+		GENERATORS.add(new CreateCompactingRecipeGen(output, registries));
+		GENERATORS.add(new CreatePressingRecipeGen(output, registries));
+		GENERATORS.add(new CreateFillingRecipeGen(output, registries));
+		GENERATORS.add(new CreateEmptyingRecipeGen(output, registries));
+		GENERATORS.add(new CreateHauntingRecipeGen(output, registries));
+		GENERATORS.add(new CreateItemApplicationRecipeGen(output, registries));
 
 		gen.addProvider(true, new DataProvider() {
 

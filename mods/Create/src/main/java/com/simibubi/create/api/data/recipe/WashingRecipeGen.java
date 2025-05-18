@@ -1,10 +1,12 @@
 package com.simibubi.create.api.data.recipe;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 import com.simibubi.create.AllRecipeTypes;
 import com.tterrag.registrate.util.entry.ItemEntry;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
@@ -29,8 +31,8 @@ public abstract class WashingRecipeGen extends ProcessingRecipeGen {
 			.output(secondaryChance, secondary.get(), 1));
 	}
 
-	public WashingRecipeGen(PackOutput output, String defaultNamespace) {
-		super(output, defaultNamespace);
+	public WashingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, String defaultNamespace) {
+		super(output, registries, defaultNamespace);
 	}
 
 	@Override

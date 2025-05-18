@@ -12,15 +12,15 @@ import static com.simibubi.create.foundation.data.recipe.CompatMetals.URANIUM;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-import com.simibubi.create.api.data.recipe.BaseRecipeProvider;
+import javax.annotation.ParametersAreNonnullByDefault;
 
-import com.simibubi.create.api.data.recipe.CompactingRecipeGen;
-import com.simibubi.create.foundation.data.recipe.CreateRecipeProvider.I;
-
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
@@ -32,9 +32,11 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.Create;
+import com.simibubi.create.api.data.recipe.BaseRecipeProvider;
 import com.simibubi.create.content.decoration.palettes.AllPaletteBlocks;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
 import com.simibubi.create.content.equipment.toolbox.ToolboxDyeingRecipe;
+import com.simibubi.create.foundation.data.recipe.CreateRecipeProvider.I;
 import com.simibubi.create.foundation.mixin.accessor.MappedRegistryAccessor;
 import com.simibubi.create.foundation.recipe.ItemCopyingRecipe;
 import com.tterrag.registrate.util.entry.BlockEntry;
@@ -95,7 +97,6 @@ import net.neoforged.neoforge.common.conditions.NotCondition;
  * @see SimpleCookingRecipeBuilder
  * @see SmithingTransformRecipeBuilder
  * @see SpecialRecipeBuilder
- * @see net.minecraftforge.common.crafting.ConditionalRecipe.Builder
  */
 @SuppressWarnings("unused")
 public final class CreateStandardRecipeGen extends BaseRecipeProvider {
@@ -1509,9 +1510,9 @@ public final class CreateStandardRecipeGen extends BaseRecipeProvider {
 	}
 
 	@Override
-	protected void buildRecipes(Consumer<FinishedRecipe> p_200404_1_) {
-		all.forEach(c -> c.register(p_200404_1_));
-		Create.LOGGER.info(getName() + " registered " + all.size() + " recipe" + (all.size() == 1 ? "" : "s"));
+	protected void buildRecipes(RecipeOutput output) {
+		all.forEach(c -> c.register(output));
+		Create.LOGGER.info("{} registered {} recipe{}", getName(), all.size(), all.size() == 1 ? "" : "s");
 	}
 
 	protected GeneratedRecipe register(GeneratedRecipe recipe) {
@@ -1722,8 +1723,8 @@ public final class CreateStandardRecipeGen extends BaseRecipeProvider {
 		return "Create's Standard Recipes";
 	}
 
-	public CreateStandardRecipeGen(PackOutput p_i48262_1_) {
-		super(p_i48262_1_, Create.ID);
+	public CreateStandardRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+		super(output, registries, Create.ID);
 	}
 
 	@ParametersAreNonnullByDefault

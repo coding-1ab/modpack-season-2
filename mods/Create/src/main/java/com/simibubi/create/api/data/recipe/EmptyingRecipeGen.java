@@ -1,8 +1,10 @@
 package com.simibubi.create.api.data.recipe;
 
+import java.util.concurrent.CompletableFuture;
+
 import com.simibubi.create.AllRecipeTypes;
 
-
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 
 /**
@@ -14,8 +16,8 @@ import net.minecraft.data.PackOutput;
  */
 public abstract class EmptyingRecipeGen extends ProcessingRecipeGen {
 
-	public EmptyingRecipeGen(PackOutput output, String defaultNamespace) {
-		super(output, defaultNamespace);
+	public EmptyingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, String defaultNamespace) {
+		super(output, registries, defaultNamespace);
 	}
 
 	@Override

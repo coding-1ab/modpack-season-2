@@ -1,7 +1,10 @@
 package com.simibubi.create.api.data.recipe;
 
+import java.util.concurrent.CompletableFuture;
+
 import com.simibubi.create.AllRecipeTypes;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 
@@ -25,8 +28,8 @@ public abstract class CuttingRecipeGen extends ProcessingRecipeGen {
 			.output(planks, planksAmount));
 	}
 
-	public CuttingRecipeGen(PackOutput output, String defaultNamespace) {
-		super(output, defaultNamespace);
+	public CuttingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, String defaultNamespace) {
+		super(output, registries, defaultNamespace);
 	}
 
 	@Override

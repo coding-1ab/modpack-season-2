@@ -1,20 +1,23 @@
 package com.simibubi.create.foundation.data.recipe;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.Create;
 import com.simibubi.create.api.data.recipe.MillingRecipeGen;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.ForgeRegistries;
+
+import net.neoforged.neoforge.common.Tags;
 
 /**
  * Create's own Data Generation for Milling recipes
@@ -191,13 +194,13 @@ public final class CreateMillingRecipeGen extends MillingRecipeGen {
 
 	TALL_GRASS = create(() -> Blocks.TALL_GRASS, b -> b.duration(100)
 		.output(.5f, Items.WHEAT_SEEDS)),
-		GRASS = create(() -> Blocks.GRASS, b -> b.duration(50)
+		GRASS = create(() -> Blocks.SHORT_GRASS, b -> b.duration(50)
 			.output(.25f, Items.WHEAT_SEEDS)),
 
 	// AE2
 
 	AE2_CERTUS = create(Mods.AE2.recipeId("certus_quartz"), b -> b.duration(200)
-		.require(AllTags.forgeItemTag("gems/certus_quartz"))
+		.require(AllTags.commonItemTag("gems/certus_quartz"))
 		.output(Mods.AE2, "certus_quartz_dust")
 		.whenModLoaded(Mods.AE2.getId())),
 
@@ -809,8 +812,8 @@ public final class CreateMillingRecipeGen extends MillingRecipeGen {
 	GeneratedRecipe botaniaPetals(String... colors) {
 		for (String color : colors) {
 			create(Mods.BTN.recipeId(color + "_petal"), b -> b.duration(50)
-					.require(AllTags.optionalTag(ForgeRegistries.ITEMS,
-							new ResourceLocation(Mods.BTN.getId(), "petals/" + color)))
+				.require(AllTags.optionalTag(BuiltInRegistries.ITEM,
+					ResourceLocation.fromNamespaceAndPath(Mods.BTN.getId(), "petals/" + color)))
 					.output(Mods.MC, color + "_dye")
 					.whenModLoaded(Mods.BTN.getId()));
 		}
@@ -842,7 +845,7 @@ public final class CreateMillingRecipeGen extends MillingRecipeGen {
 		}
 	}
 
-	public CreateMillingRecipeGen(PackOutput output) {
-		super(output, Create.ID);
+	public CreateMillingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+		super(output, registries, Create.ID);
 	}
 }

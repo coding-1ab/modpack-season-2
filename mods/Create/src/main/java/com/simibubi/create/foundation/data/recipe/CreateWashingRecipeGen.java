@@ -10,6 +10,8 @@ import static com.simibubi.create.foundation.data.recipe.CompatMetals.SILVER;
 import static com.simibubi.create.foundation.data.recipe.CompatMetals.TIN;
 import static com.simibubi.create.foundation.data.recipe.CompatMetals.URANIUM;
 
+import java.util.concurrent.CompletableFuture;
+
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.Create;
@@ -120,8 +122,8 @@ public final class CreateWashingRecipeGen extends WashingRecipeGen {
 	VH = simpleModded(Mods.VH, "ornate_chain", "ornate_chain_rusty");
 
 
-	public CreateWashingRecipeGen(PackOutput output) {
-		super(output, Create.ID);
+	public CreateWashingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+		super(output, registries, Create.ID);
 	}
 
 	public GeneratedRecipe moddedCrushedOre(ItemEntry<? extends Item> crushed, CompatMetals metal) {

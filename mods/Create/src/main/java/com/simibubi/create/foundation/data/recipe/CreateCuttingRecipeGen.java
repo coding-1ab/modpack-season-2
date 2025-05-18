@@ -1,18 +1,17 @@
 package com.simibubi.create.foundation.data.recipe;
 
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.Create;
-import com.simibubi.create.api.data.recipe.CompactingRecipeGen;
 import com.simibubi.create.api.data.recipe.CuttingRecipeGen;
-
 import com.simibubi.create.foundation.data.recipe.CreateRecipeProvider.I;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Blocks;
-
-import java.util.Objects;
 
 /**
  * Create's own Data Generation for Cutting recipes
@@ -56,8 +55,8 @@ public final class CreateCuttingRecipeGen extends CuttingRecipeGen {
 		IE_WIRES = ieWires("copper", "electrum", "aluminum", "steel", "lead")
 		;
 
-	public CreateCuttingRecipeGen(PackOutput output) {
-		super(output, Create.ID);
+	public CreateCuttingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+		super(output, registries, Create.ID);
 	}
 
 	GeneratedRecipe cuttingCompat(Mods mod, String... woodtypes) {
@@ -128,10 +127,6 @@ public final class CreateCuttingRecipeGen extends CuttingRecipeGen {
 						.whenModLoaded(mod.getId()));
 			}
 		return null;
-	}
-
-	public CuttingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-		super(output, registries);
 	}
 
 	GeneratedRecipe ieWires(String... metals) {

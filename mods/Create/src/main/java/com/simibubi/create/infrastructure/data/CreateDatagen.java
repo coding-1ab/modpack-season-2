@@ -59,7 +59,7 @@ public class CreateDatagen {
 		generator.addProvider(event.includeServer(), new CreateMechanicalCraftingRecipeGen(output, lookupProvider));
 		generator.addProvider(event.includeServer(), new CreateSequencedAssemblyRecipeGen(output, lookupProvider));
 		generator.addProvider(event.includeServer(), new CreateDatamapProvider(output, lookupProvider));
-		generator.addProvider(event.includeServer(), new VanillaHatOffsetGenerator(output));
+		generator.addProvider(event.includeServer(), new VanillaHatOffsetGenerator(output, lookupProvider));
 		generator.addProvider(event.includeServer(), new CuriosDataGenerator(output, lookupProvider, existingFileHelper));
 		generator.addProvider(event.includeServer(), new CreateEnchantmentTagsProvider(output, lookupProvider, existingFileHelper));
 

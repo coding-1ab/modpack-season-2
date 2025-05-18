@@ -1,5 +1,6 @@
 package com.simibubi.create.api.data.recipe;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
@@ -9,9 +10,10 @@ import com.simibubi.create.AllTags;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
-
 import com.simibubi.create.foundation.data.recipe.CompatMetals;
+
 import net.createmod.catnip.lang.Lang;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
@@ -19,8 +21,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 
-import net.minecraftforge.common.crafting.conditions.NotCondition;
-import net.minecraftforge.common.crafting.conditions.TagEmptyCondition;
+import net.neoforged.neoforge.common.conditions.NotCondition;
+import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
 
 /**
  * The base class for Crushing recipe generation.
@@ -77,8 +79,8 @@ public abstract class CrushingRecipeGen extends ProcessingRecipeGen {
 		return create(name + "_ore", b -> {
 			String prefix = "ores/";
 			return b.duration(400)
-				.withCondition(new NotCondition(new TagEmptyCondition("forge", prefix + name)))
-				.require(AllTags.forgeItemTag(prefix + name))
+				.withCondition(new NotCondition(new TagEmptyCondition("c", prefix + name)))
+				.require(AllTags.commonItemTag(prefix + name))
 				.output(result.get(), 1)
 				.output(.75f, result.get(), 1)
 				.output(.75f, AllItems.EXP_NUGGET.get());
@@ -117,15 +119,15 @@ public abstract class CrushingRecipeGen extends ProcessingRecipeGen {
 			int amount = block ? 9 : 1;
 			String tagPath = (block ? "storage_blocks/raw_" : "raw_materials/") + name;
 			return b.duration(400)
-				.withCondition(new NotCondition(new TagEmptyCondition("forge", tagPath)))
-				.require(AllTags.forgeItemTag(tagPath))
+				.withCondition(new NotCondition(new TagEmptyCondition("c", tagPath)))
+				.require(AllTags.commonItemTag(tagPath))
 				.output(result.get(), amount)
 				.output(.75f, AllItems.EXP_NUGGET.get(), amount);
 		});
 	}
 
-	public CrushingRecipeGen(PackOutput generator, String defaultNamespace) {
-		super(generator, defaultNamespace);
+	public CrushingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, String defaultNamespace) {
+		super(output, registries, defaultNamespace);
 	}
 
 	@Override

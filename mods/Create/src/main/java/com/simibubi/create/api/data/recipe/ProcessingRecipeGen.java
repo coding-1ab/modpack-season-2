@@ -1,7 +1,10 @@
 package com.simibubi.create.api.data.recipe;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+
+import org.jetbrains.annotations.NotNull;
 
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
@@ -15,8 +18,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * A base class for all processing recipes, containing helper methods
  * for datagenning processing recipes. Addons should extend this for
@@ -24,8 +25,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class ProcessingRecipeGen extends BaseRecipeProvider {
 
-	public ProcessingRecipeGen(PackOutput generator, String defaultNamespace) {
-		super(generator, defaultNamespace);
+	public ProcessingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, String defaultNamespace) {
+		super(output, registries, defaultNamespace);
 	}
 
 	/**
@@ -33,7 +34,7 @@ public abstract class ProcessingRecipeGen extends BaseRecipeProvider {
 	 * as the name of the recipe
 	 */
 	protected <T extends ProcessingRecipe<?>> GeneratedRecipe create(String namespace,
-																								Supplier<ItemLike> singleIngredient, UnaryOperator<ProcessingRecipeBuilder<T>> transform) {
+																	 Supplier<ItemLike> singleIngredient, UnaryOperator<ProcessingRecipeBuilder<T>> transform) {
 		ProcessingRecipeSerializer<T> serializer = getSerializer();
 		GeneratedRecipe generatedRecipe = c -> {
 			ItemLike itemLike = singleIngredient.get();
@@ -52,7 +53,7 @@ public abstract class ProcessingRecipeGen extends BaseRecipeProvider {
 	 * provided by the function
 	 */
 	protected <T extends ProcessingRecipe<?>> GeneratedRecipe createWithDeferredId(Supplier<ResourceLocation> name,
-																											  UnaryOperator<ProcessingRecipeBuilder<T>> transform) {
+																				   UnaryOperator<ProcessingRecipeBuilder<T>> transform) {
 		ProcessingRecipeSerializer<T> serializer = getSerializer();
 		GeneratedRecipe generatedRecipe =
 			c -> transform.apply(new ProcessingRecipeBuilder<>(serializer.getFactory(), name.get()))
@@ -66,7 +67,7 @@ public abstract class ProcessingRecipeGen extends BaseRecipeProvider {
 	 * function
 	 */
 	protected <T extends ProcessingRecipe<?>> GeneratedRecipe create(ResourceLocation name,
-																								UnaryOperator<ProcessingRecipeBuilder<T>> transform) {
+																	 UnaryOperator<ProcessingRecipeBuilder<T>> transform) {
 		return createWithDeferredId(() -> name, transform);
 	}
 
@@ -93,7 +94,8 @@ public abstract class ProcessingRecipeGen extends BaseRecipeProvider {
 	 * Create a new processing recipe, with recipe definitions provided by the
 	 * function, under the default namespace
 	 */
-	protected <T extends ProcessingRecipe<?>> GeneratedRecipe create(String name, UnaryOperator<ProcessingRecipeBuilder<T>> transform) {
+	protected <T extends ProcessingRecipe<?>> GeneratedRecipe create(String name,
+																	 UnaryOperator<ProcessingRecipeBuilder<T>> transform) {
 		return create(asResource(name), transform);
 	}
 
@@ -102,7 +104,7 @@ public abstract class ProcessingRecipeGen extends BaseRecipeProvider {
 	 * as the name of the recipe, under the default namespace
 	 */
 	protected <T extends ProcessingRecipe<?>> GeneratedRecipe create(Supplier<ItemLike> singleIngredient,
-																								UnaryOperator<ProcessingRecipeBuilder<T>> transform) {
+																	 UnaryOperator<ProcessingRecipeBuilder<T>> transform) {
 		return create(modid, singleIngredient, transform);
 	}
 
