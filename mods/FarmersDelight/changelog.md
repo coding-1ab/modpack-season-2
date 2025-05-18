@@ -16,6 +16,7 @@
 - Updated integration with `create:upright_on_belt` to include all bowl, plate and bottle items;
 - Updated the Master Chef advancement with additional meals;
   - The meals reflect the "vanilla FD" entries in the `meals` tag, but does not update with the tag itself;
+- Updated effect description IDs for all langs (thanks, mpustovoi!);
 
 ### Fixes
 - Fixed Jack-O-Lantern not being mineable with a Knife;
