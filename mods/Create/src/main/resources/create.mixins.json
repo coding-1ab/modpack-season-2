@@ -23,6 +23,7 @@
     "WaterWheelFluidSpreadMixin",
     "accessor.BlockBehaviourAccessor",
     "accessor.BlockLootSubProviderAccessor",
+    "accessor.ConcretePowderBlockAccessor",
     "accessor.DispenserBlockAccessor",
     "accessor.FallingBlockEntityAccessor",
     "accessor.FlowingFluidAccessor",
