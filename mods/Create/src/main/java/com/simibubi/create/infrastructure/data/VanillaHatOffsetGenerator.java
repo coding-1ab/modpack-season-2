@@ -16,10 +16,12 @@ public class VanillaHatOffsetGenerator extends TrainHatInfoProvider {
 
 	@Override
 	protected void createOffsets() {
+		this.makeInfoFor(EntityType.ARMADILLO, new Vec3(0.0F, 4.0F, 0.0F), "body/head/head_cube", 0.92F);
 		this.makeInfoFor(EntityType.AXOLOTL, new Vec3(0.0F, 1.0F, -2.0F), "head", 0.75F);
 		this.makeInfoFor(EntityType.BAT, new Vec3(0.0F, 3.0F, 0.0F));
 		this.makeInfoFor(EntityType.BEE, new Vec3(0.0F, 2.0F, -2.0F), "body", 0.5F);
 		this.makeInfoFor(EntityType.BLAZE, new Vec3(0.0F, 4.0F, 0.0F));
+		this.makeInfoFor(EntityType.BREEZE, new Vec3(0.0F, -5.0F, -0.1F), "body/head", 0.8F);
 		this.makeInfoFor(EntityType.CAMEL, new Vec3(0.0F, -8.0F, -11.5F), "body/head", 1, 1.0F);
 		this.makeInfoFor(EntityType.CAT, new Vec3(0.0F, 1.0F, -0.25F));
 		this.makeInfoFor(EntityType.CAVE_SPIDER, new Vec3(0.0F, 2.0F, -3.5F));
