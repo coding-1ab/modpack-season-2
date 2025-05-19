@@ -35,7 +35,7 @@ public class AnimatedItemDrain extends AnimatedKinetics {
 
 		UIRenderHelper.flipForGuiRender(matrixStack);
 		matrixStack.scale(scale, scale, scale);
-		float from = 2/16f;
+		float from = 2 / 16f;
 		float to = 1f - from;
 		NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(fluid, from, from, from, to, 3 / 4f, to, graphics.bufferSource(), matrixStack, LightTexture.FULL_BRIGHT, false, true);
 		graphics.flush();
