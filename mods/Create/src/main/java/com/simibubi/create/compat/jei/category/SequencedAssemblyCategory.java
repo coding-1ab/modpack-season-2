@@ -77,21 +77,17 @@ public class SequencedAssemblyCategory extends CreateRecipeCategory<SequencedAss
 			x += subCategory.getWidth() + margin;
 		}
 
-		if (recipe.getLoops() > 1) {
-			for (int i = 2; i <= recipe.getLoops(); i++) {
-				for (SequencedRecipe<?> sequencedRecipe : recipe.getSequence()) {
-					NonNullList<Ingredient> sequencedIngredients = sequencedRecipe.getRecipe().getIngredients();
-					for (Ingredient ingredient : sequencedIngredients.subList(1, sequencedIngredients.size())) {
-						builder
-								.addInvisibleIngredients(RecipeIngredientRole.INPUT)
-								.addIngredients(ingredient);
-					}
-					for (FluidIngredient fluidIngredient : sequencedRecipe.getRecipe().getFluidIngredients()) {
-						builder
-								.addInvisibleIngredients(RecipeIngredientRole.INPUT)
-								.addIngredients(ForgeTypes.FLUID_STACK, fluidIngredient.getMatchingFluidStacks());
-					}
-				}
+		for (int i = 1; i < recipe.getLoops(); i++) {
+			for (SequencedRecipe<?> sequencedRecipe : recipe.getSequence()) {
+				NonNullList<Ingredient> sequencedIngredients = sequencedRecipe.getRecipe()
+					.getIngredients();
+				for (Ingredient ingredient : sequencedIngredients.subList(1, sequencedIngredients.size()))
+					builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
+						.addIngredients(ingredient);
+				for (FluidIngredient fluidIngredient : sequencedRecipe.getRecipe()
+					.getFluidIngredients())
+					builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
+						.addIngredients(ForgeTypes.FLUID_STACK, fluidIngredient.getMatchingFluidStacks());
 			}
 		}
 	}
