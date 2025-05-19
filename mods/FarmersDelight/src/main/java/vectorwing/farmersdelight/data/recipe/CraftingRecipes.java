@@ -196,7 +196,7 @@ public class CraftingRecipes
 				.define('b', Items.BRICK)
 				.define('i', Tags.Items.INGOTS_IRON)
 				.define('S', Items.WOODEN_SHOVEL)
-				.define('W', Items.WATER_BUCKET)
+				.define('W', ForgeTags.BUCKETS_WATER)
 				.unlockedBy("has_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(Items.IRON_INGOT))
 				.save(consumer);
 		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.BASKET.get())
