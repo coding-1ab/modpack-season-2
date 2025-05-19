@@ -1,12 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
-  "group": "fd_wheat_dough",
   "ingredients": [
     {
-      "tag": "forge:buckets/water"
-    },
-    {
       "item": "minecraft:wheat"
     },
     {
@@ -14,6 +10,9 @@
     },
     {
       "item": "minecraft:wheat"
+    },
+    {
+      "tag": "forge:eggs"
     }
   ],
   "result": {

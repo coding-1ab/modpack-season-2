@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.2.8
+
+### Additions
+- New tags:
+  `#meals` - Groups bowl and plate foods which are considered a "meal" by the mod. Excludes Fruit Saland and Nether Salad;
+  `#drinks` - Groups drinkable FD items that are not potions;
+
+### Updates
+- Wheat Dough now has a simpler, less cumbersome crafting recipe using a Water Bucket:
+  - Wheat can be crafted with a Water Bucket to make Dough. The bucket's water won't be depleted, letting you craft dough indefinitely;
+  - The bucket acts as a simple technology gate to unlock this recipe;
+  - The egg recipe is still present, to not break auto-crafting setups;
+- Added knives to the `breaks_decorated_pots` tag;
+- Updated integration with `create:upright_on_belt` to include all bowl, plate and bottle items;
+- Updated the Master Chef advancement with additional meals;
+  - The meals reflect the "vanilla FD" entries in the `meals` tag, but does not update with the tag itself;
+- Updated effect description IDs for all langs (thanks, mpustovoi!);
+
+### Fixes
+- Fixed Jack-O-Lantern not being mineable with a Knife;
+- Fixed Create's Potato Cannon integration;
+- Fixed Knives with Silk Touch slicing Pumpkin blocks;
+
+### Translations
+- Updated:
+  - es_es (thanks, GGlangf!);
+  - zh_cn (thanks, NumberSir!);
+
 ## 1.2.7
 
 ### Updates
