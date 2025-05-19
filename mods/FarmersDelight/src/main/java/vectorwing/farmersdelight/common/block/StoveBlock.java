@@ -64,7 +64,7 @@ public class StoveBlock extends BaseEntityBlock
 				extinguish(state, level, pos);
 				heldStack.hurtAndBreak(1, player, action -> action.broadcastBreakEvent(hand));
 				return InteractionResult.SUCCESS;
-			} else if (heldItem.builtInRegistryHolder().is(ForgeTags.BUCKETS_WATER)) {
+			} else if (heldStack.is(ForgeTags.BUCKETS_WATER)) {
 				if (!level.isClientSide()) {
 					level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0F, 1.0F);
 				}
