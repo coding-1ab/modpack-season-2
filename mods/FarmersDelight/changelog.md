@@ -4,7 +4,7 @@
 
 ### Additions
 - New tags:
-  `#meals` - Groups bowl and plate foods which are considered a "meal" by the mod. Excludes Fruit Saland and Nether Salad;
+  `#meals` - Groups bowl and plate foods which are considered a "meal" by the mod. Excludes Fruit Salad and Nether Salad;
   `#drinks` - Groups drinkable FD items that are not potions;
 
 ### Updates
@@ -12,6 +12,9 @@
   - Wheat can be crafted with a Water Bucket to make Dough. The bucket's water won't be depleted, letting you craft dough indefinitely;
   - The bucket acts as a simple technology gate to unlock this recipe;
   - The egg recipe is still present, to not break auto-crafting setups;
+- All usages of water buckets in the mod (recipes, interactions etc) now use a common tag (thanks, thelegitdolt!):
+  - 1.20.1: `forge:buckets/water` (unofficial);
+  - 1.21.1: `c:buckets/water`;
 - Added knives to the `breaks_decorated_pots` tag;
 - Updated integration with `create:upright_on_belt` to include all bowl, plate and bottle items;
 - Updated the Master Chef advancement with additional meals;
