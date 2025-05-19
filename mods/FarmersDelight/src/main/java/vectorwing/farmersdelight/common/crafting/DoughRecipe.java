@@ -12,6 +12,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import vectorwing.farmersdelight.common.registry.ModItems;
 import vectorwing.farmersdelight.common.registry.ModRecipeSerializers;
+import vectorwing.farmersdelight.common.tag.ForgeTags;
 
 public class DoughRecipe extends CustomRecipe
 {
@@ -31,7 +32,7 @@ public class DoughRecipe extends CustomRecipe
 					if (!wheatStack.isEmpty()) return false;
 					wheatStack = selectedStack;
 				} else {
-					if (!selectedStack.is(Items.WATER_BUCKET)) {
+					if (!selectedStack.is(ForgeTags.BUCKETS_WATER)) {
 						return false;
 					}
 					waterStack = selectedStack;
@@ -53,7 +54,7 @@ public class DoughRecipe extends CustomRecipe
 
 		for (int index = 0; index < remainders.size(); ++index) {
 			ItemStack selectedStack = container.getItem(index);
-			if (selectedStack.is(Items.WATER_BUCKET)) {
+			if (selectedStack.is(ForgeTags.BUCKETS_WATER)) {
 				remainders.set(index, selectedStack.copy());
 			}
 		}
