@@ -81,6 +81,15 @@ public class CEIFluidsConfig extends ConfigBase {
             "experienceLanternDrainRate",
             Comments.experienceLanternDrainRate,
             RequiresRestart.SERVER.asComment());
+    public final ConfigBool experienceLanternPullToggle = b(true,
+            "experienceLanternPullToggle",
+            Comments.experienceLanternPullToggle);
+    public final ConfigInt experienceLanternPullRadius = i(10, 0,
+            "experienceLanternPullRadius",
+            Comments.experienceLanternPullRadius);
+    public final ConfigFloat experienceLanternPullForceMultiplier = f(.075f, 0.0f, .5f,
+            "experienceLanternPullForceMultiplier",
+            Comments.experienceLanternPullForceMultiplier);
 
     @Override
     public String getName() {
@@ -106,5 +115,8 @@ public class CEIFluidsConfig extends ConfigBase {
         static final String blazeForgerFluidCapacity = "The amount of liquid a Blaze Forger can hold (mB).";
         static final String experienceLanternFluidCapacity = "The amount of liquid an Experience Lantern can hold (mB).";
         static final String experienceLanternDrainRate = "The amount of experience an Experience Lantern can drain from player per 0.5 ticks (mB).";
+        static final String experienceLanternPullToggle = "Whether the Experience Lantern will pull in experience orbs from nearby.";
+        static final String experienceLanternPullRadius = "The range at which experience orbs will be pulled into the lantern.";
+        static final String experienceLanternPullForceMultiplier = "Modifier for the amount of force with which to pull the experience orbs.";
     }
 }
