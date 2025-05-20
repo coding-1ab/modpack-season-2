@@ -104,7 +104,8 @@ public class RichSoilFarmlandBlock extends FarmBlock
 	}
 
 	@Override
-	public void fallOn(Level level, BlockState state, BlockPos pos, Entity entityIn, float fallDistance) {
-		// Rich Soil is immune to trampling
+	public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
+		// Rich Soil is immune to trampling, so the Block::fallOn behavior is restored.
+		entity.causeFallDamage(fallDistance, 1.0F, entity.damageSources().fall());
 	}
 }
