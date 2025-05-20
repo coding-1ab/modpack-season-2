@@ -4,8 +4,8 @@
 
 ### Additions
 - New tags:
-  `#meals` - Groups bowl and plate foods which are considered a "meal" by the mod. Excludes Fruit Salad and Nether Salad;
-  `#drinks` - Groups drinkable FD items that are not potions;
+  - `#meals` - Groups bowl and plate foods which are considered a "meal" by the mod. Excludes Fruit Salad and Nether Salad;
+  - `#drinks` - Groups drinkable FD items that are not potions;
 
 ### Updates
 - Wheat Dough now has a simpler, less cumbersome crafting recipe using a Water Bucket:
