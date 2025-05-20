@@ -215,7 +215,7 @@ public class CookingPotBlockEntity extends SyncedBlockEntity implements MenuProv
 			if (recipe.isPresent() && cookingPot.canCook(recipe.get().value())) {
 				didInventoryChange = cookingPot.processCooking(recipe.get(), cookingPot);
 			} else {
-				cookingPot.cookTime = 0;
+				cookingPot.cookTime = Mth.clamp(cookingPot.cookTime - 2, 0, cookingPot.cookTimeTotal);
 			}
 		} else if (cookingPot.cookTime > 0) {
 			cookingPot.cookTime = Mth.clamp(cookingPot.cookTime - 2, 0, cookingPot.cookTimeTotal);
