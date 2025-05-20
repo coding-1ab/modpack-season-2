@@ -20,6 +20,7 @@
 - Updated the Master Chef advancement with additional meals;
   - The meals reflect the "vanilla FD" entries in the `meals` tag, but does not update with the tag itself;
 - Updated effect description IDs for all langs (thanks, mpustovoi!);
+- Cooking Pot will always "cool down" when the recipe becomes invalid mid-cooking, instead of losing all cooking progress in some circumstances;
 
 ### Fixes
 - Fixed Jack-O-Lantern not being mineable with a Knife;
