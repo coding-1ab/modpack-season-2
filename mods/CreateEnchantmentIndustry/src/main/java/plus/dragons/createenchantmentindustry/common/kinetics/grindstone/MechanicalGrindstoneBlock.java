@@ -62,6 +62,7 @@ public class MechanicalGrindstoneBlock extends RotatedPillarKineticBlock impleme
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (player.isSecondaryUseActive())
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         var blockEntity = getBlockEntity(level, pos);

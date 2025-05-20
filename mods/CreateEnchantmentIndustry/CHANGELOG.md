@@ -1,4 +1,4 @@
-### Create: Enchantment Industry 2.1.4
+### Create: Enchantment Industry 2.1.5
 
 #### Fix
-- Fix some crafting recipes (Such as Blaze Smithing Template) unavailable due to C:DP feature config formate changes
+- Fix right-click Mechanical Grindstone with empty hand causes crash

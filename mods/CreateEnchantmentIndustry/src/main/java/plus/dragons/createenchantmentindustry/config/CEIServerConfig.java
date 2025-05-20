@@ -39,8 +39,8 @@ public class CEIServerConfig extends ConfigBase {
 
     static class Comments {
         static final String kinetics = "Parameters and abilities of kinetic mechanisms";
-        static String fluids = "Parameters and abilities of fluids and fluid operating components";
-        static String enchantments = "Parameters and abilities of enchantment operating components";
-        static String processing = "Parameters and abilities of processing mechanisms and appliances";
+        static final String fluids = "Parameters and abilities of fluids and fluid operating components";
+        static final String enchantments = "Parameters and abilities of enchantment operating components";
+        static final String processing = "Parameters and abilities of processing mechanisms and appliances";
     }
 }
