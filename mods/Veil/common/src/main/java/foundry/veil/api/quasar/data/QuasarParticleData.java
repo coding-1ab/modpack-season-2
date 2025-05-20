@@ -63,8 +63,8 @@ public record QuasarParticleData(boolean shouldCollide,
             ParticleModuleData.RENDER_CODEC.listOf().optionalFieldOf("render_modules", Collections.emptyList()).forGetter(QuasarParticleData::renderModules),
             SpriteData.CODEC.optionalFieldOf("sprite_data").forGetter(data -> Optional.ofNullable(data.spriteData())),
             Codec.BOOL.optionalFieldOf("additive", false).forGetter(QuasarParticleData::additive),
-            RenderStyle.CODEC.optionalFieldOf("render_style", RenderStyleRegistry.BILLBOARD.get()).forGetter(QuasarParticleData::renderStyle)
-    ).apply(instance, (shouldCollide, faceVelocity, velocityStretchFactor, initModules, updateModules, collisionModules, forceModules, renderModules, spriteData, additive, renderStyle) -> new QuasarParticleData(shouldCollide, faceVelocity, velocityStretchFactor, initModules, updateModules, collisionModules, forceModules, renderModules, spriteData.orElse(null), additive, renderStyle)));
+            RenderStyle.CODEC.optionalFieldOf("render_style").forGetter(particleData -> Optional.of(particleData.renderStyle()))
+    ).apply(instance, (shouldCollide, faceVelocity, velocityStretchFactor, initModules, updateModules, collisionModules, forceModules, renderModules, spriteData, additive, renderStyle) -> new QuasarParticleData(shouldCollide, faceVelocity, velocityStretchFactor, initModules, updateModules, collisionModules, forceModules, renderModules, spriteData.orElse(null), additive, renderStyle.orElseGet(RenderStyleRegistry.BILLBOARD))));
     public static final Codec<Holder<QuasarParticleData>> CODEC = RegistryFileCodec.create(QuasarParticles.PARTICLE_DATA, DIRECT_CODEC);
 
     public QuasarParticleData(boolean shouldCollide,
