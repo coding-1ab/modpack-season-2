@@ -322,7 +322,7 @@ public class DeployerHandler {
 		// 'Inert' item use behaviour & block placement
 		InteractionResult onItemUse = stack.useOn(itemusecontext);
 		if (onItemUse.consumesAction()) {
-			if (stack.getItem() instanceof BlockItem bi
+			if (item instanceof BlockItem bi
 				&& (bi.getBlock() instanceof IBaseRailBlockExtension || bi.getBlock() instanceof ITrackBlock))
 				player.placedTracks = true;
 			return;
