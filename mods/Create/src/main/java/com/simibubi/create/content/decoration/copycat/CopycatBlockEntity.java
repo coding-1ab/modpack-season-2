@@ -112,14 +112,14 @@ public class CopycatBlockEntity extends SmartBlockEntity
 	private void redraw() {
 		if (!isVirtual())
 			requestModelDataUpdate();
-		if (hasLevel()) {
+		if (level != null) {
 			level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 16);
 			updateLight();
 		}
 	}
 
 	private void updateLight() {
-		if (hasLevel()) {
+		if (level != null) {
 			AuxiliaryLightManager lightManager = level.getAuxLightManager(getBlockPos());
 			if (lightManager != null)
 				lightManager.setLightAt(getBlockPos(), material.getLightEmission(level, getBlockPos()));

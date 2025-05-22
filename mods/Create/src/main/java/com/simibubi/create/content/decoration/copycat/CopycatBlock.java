@@ -297,6 +297,11 @@ public abstract class CopycatBlock extends Block implements IBE<CopycatBlockEnti
 	}
 
 	@Override
+	public boolean hasDynamicLightEmission(BlockState state) {
+		return true;
+	}
+
+	@Override
 	public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
 		AuxiliaryLightManager lightManager = level.getAuxLightManager(pos);
 		if (lightManager != null)
