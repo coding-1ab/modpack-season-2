@@ -30,6 +30,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -83,10 +84,9 @@ public class ManualApplicationRecipe extends ItemApplicationRecipe {
 
 		boolean creative = event.getEntity() != null && event.getEntity()
 			.isCreative();
-		boolean unbreakable = heldItem.has(DataComponents.UNBREAKABLE);
 		boolean keepHeld = recipe.shouldKeepHeldItem() || creative;
 
-		if (!unbreakable && !keepHeld) {
+		if (!keepHeld) {
 			if (heldItem.isDamageableItem())
 				heldItem.hurtAndBreak(1, event.getEntity(), LivingEntity.getSlotForHand(InteractionHand.MAIN_HAND));
 			else
@@ -122,8 +122,8 @@ public class ManualApplicationRecipe extends ItemApplicationRecipe {
 		ResourceLocation id = ResourceLocation.fromNamespaceAndPath(mar.id.getNamespace(), mar.id.getPath() + "_using_deployer");
 		ProcessingRecipeBuilder<DeployerApplicationRecipe> builder =
 			new ProcessingRecipeBuilder<>(DeployerApplicationRecipe::new, id)
-					.require(mar.ingredients.get(0))
-					.require(mar.ingredients.get(1));
+				.require(mar.ingredients.get(0))
+				.require(mar.ingredients.get(1));
 		for (ProcessingOutput output : mar.results)
 			builder.output(output);
 		if (mar.shouldKeepHeldItem())
