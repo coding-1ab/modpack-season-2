@@ -4,17 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
-
-import net.neoforged.neoforge.common.CommonHooks;
-
-import net.neoforged.neoforge.common.extensions.IBaseRailBlockExtension;
-import net.neoforged.neoforge.common.util.TriState;
-import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
-
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -77,7 +69,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.extensions.IBaseRailBlockExtension;
 import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.EventHooks;

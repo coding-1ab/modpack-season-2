@@ -296,7 +296,7 @@ public class CarriageSounds {
 				subtitleTimer++;
 
 				if (subtitleTimer == 20) {
-					OVERLAY.onPlaySound(this, weighedSoundEvents);
+					OVERLAY.onPlaySound(this, weighedSoundEvents, sound.getAttenuationDistance());
 					subtitleTimer = 0;
 				}
 			}
