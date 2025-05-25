@@ -8,8 +8,10 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
+import com.simibubi.create.content.kinetics.crusher.CrushingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
+import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import com.simibubi.create.foundation.data.recipe.CompatMetals;
 
 import net.createmod.catnip.lang.Lang;
@@ -31,7 +33,7 @@ import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
  * For an example of how you might do this, see Create's implementation: {@link com.simibubi.create.foundation.data.recipe.CreateCrushingRecipeGen}.
  * Needs to be added to a registered recipe provider to do anything, see {@link com.simibubi.create.foundation.data.recipe.CreateRecipeProvider}
  */
-public abstract class CrushingRecipeGen extends ProcessingRecipeGen {
+public abstract class CrushingRecipeGen extends StandardProcessingRecipeGen<CrushingRecipe> {
 
 	protected GeneratedRecipe mineralRecycling(AllPaletteStoneTypes type, Supplier<ItemLike> crushed,
 																		  Supplier<ItemLike> nugget, float chance) {
@@ -40,8 +42,7 @@ public abstract class CrushingRecipeGen extends ProcessingRecipeGen {
 			.output(chance, nugget.get(), 1));
 	}
 
-	protected GeneratedRecipe mineralRecycling(AllPaletteStoneTypes type,
-																		  UnaryOperator<ProcessingRecipeBuilder<ProcessingRecipe<?>>> transform) {
+	protected GeneratedRecipe mineralRecycling(AllPaletteStoneTypes type, UnaryOperator<StandardProcessingRecipe.Builder<CrushingRecipe>> transform) {
 		create(Lang.asId(type.name()) + "_recycling", b -> transform.apply(b.require(type.materialTag)));
 		return create(type.getBaseBlock()::get, transform);
 	}

@@ -17,9 +17,7 @@ import com.mojang.serialization.JsonOps;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.kinetics.fan.processing.SplashingRecipe;
 import com.simibubi.create.content.kinetics.saw.CuttingRecipe;
-import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
-import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
-import com.simibubi.create.content.processing.recipe.ProcessingRecipeSerializer;
+import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import com.simibubi.create.foundation.data.recipe.Mods;
 import com.simibubi.create.foundation.mixin.accessor.ConcretePowderBlockAccessor;
 import com.simibubi.create.foundation.pack.DynamicPack;
@@ -165,7 +163,7 @@ public class RuntimeDataGenerator {
 
 	private static void simpleWoodRecipe(ResourceLocation inputId, ResourceLocation outputId, int amount) {
 		if (BuiltInRegistries.ITEM.containsKey(outputId)) {
-			new Builder<>(inputId.getNamespace(), CuttingRecipe::new, inputId.getPath(), outputId.getPath())
+			new StandardBuilder<>(inputId.getNamespace(), CuttingRecipe::new, inputId.getPath(), outputId.getPath())
 				.require(BuiltInRegistries.ITEM.get(inputId))
 				.output(BuiltInRegistries.ITEM.get(outputId), amount)
 				.duration(50)
@@ -175,7 +173,7 @@ public class RuntimeDataGenerator {
 
 	private static void simpleWoodRecipe(TagKey<Item> inputTag, ResourceLocation outputId, int amount) {
 		if (BuiltInRegistries.ITEM.containsKey(outputId)) {
-			new Builder<>(inputTag.location().getNamespace(), CuttingRecipe::new, "tag_" + inputTag.location().getPath(), outputId.getPath())
+			new StandardBuilder<>(inputTag.location().getNamespace(), CuttingRecipe::new, "tag_" + inputTag.location().getPath(), outputId.getPath())
 				.require(inputTag)
 				.output(BuiltInRegistries.ITEM.get(outputId), amount)
 				.duration(50)
@@ -184,14 +182,14 @@ public class RuntimeDataGenerator {
 	}
 
 	private static void simpleSplashingRecipe(ResourceLocation first, ResourceLocation second) {
-		new Builder<>(first.getNamespace(), SplashingRecipe::new, first.getPath(), second.getPath())
+		new StandardBuilder<>(first.getNamespace(), SplashingRecipe::new, first.getPath(), second.getPath())
 			.require(BuiltInRegistries.BLOCK.get(first))
 			.output(BuiltInRegistries.BLOCK.get(second))
 			.build();
 	}
 
-	private static class Builder<T extends ProcessingRecipe<?>> extends ProcessingRecipeBuilder<T> {
-		public Builder(String modid, ProcessingRecipeBuilder.ProcessingRecipeFactory<T> factory, String from, String to) {
+	private static class StandardBuilder<T extends StandardProcessingRecipe<?>> extends StandardProcessingRecipe.Builder<T> {
+		public StandardBuilder(String modid, StandardProcessingRecipe.Factory<T> factory, String from, String to) {
 			super(factory, Create.asResource("runtime_generated/compat/" + modid + "/" + from + "_to_" + to));
 		}
 
@@ -202,11 +200,11 @@ public class RuntimeDataGenerator {
 			IRecipeTypeInfo recipeType = recipe.getTypeInfo();
 			ResourceLocation typeId = recipeType.getId();
 
-			if (!(recipeType.getSerializer() instanceof ProcessingRecipeSerializer<?>))
+			if (!(recipeType.getSerializer() instanceof StandardProcessingRecipe.Serializer))
 				throw new IllegalStateException("Cannot datagen ProcessingRecipe of type: " + typeId);
 
-			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(recipe.id.getNamespace(),
-				typeId.getPath() + "/" + recipe.id.getPath());
+			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(recipeId.getNamespace(),
+				typeId.getPath() + "/" + recipeId.getPath());
 
 			Optional<JsonElement> serialized = CatnipCodecUtils.encode(Recipe.CONDITIONAL_CODEC, JsonOps.INSTANCE, Optional.of(new WithConditions<>(recipe)));
 			serialized.ifPresent(r -> JSON_FILES.put(id.withPrefix("recipe/"), r));

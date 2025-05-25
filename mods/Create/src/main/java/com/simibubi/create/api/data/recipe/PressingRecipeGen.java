@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import com.simibubi.create.AllRecipeTypes;
 
+import com.simibubi.create.content.kinetics.press.PressingRecipe;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 
@@ -14,7 +15,7 @@ import net.minecraft.data.PackOutput;
  * For an example of how you might do this, see Create's implementation: {@link com.simibubi.create.foundation.data.recipe.CreatePressingRecipeGen}.
  * Needs to be added to a registered recipe provider to do anything, see {@link com.simibubi.create.foundation.data.recipe.CreateRecipeProvider}
  */
-public abstract class PressingRecipeGen extends ProcessingRecipeGen {
+public abstract class PressingRecipeGen extends StandardProcessingRecipeGen<PressingRecipe> {
 
 	public PressingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, String defaultNamespace) {
 		super(output, registries, defaultNamespace);

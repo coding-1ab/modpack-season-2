@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import com.simibubi.create.AllRecipeTypes;
 
+import com.simibubi.create.content.kinetics.fan.processing.HauntingRecipe;
 import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -18,7 +19,7 @@ import net.minecraft.world.level.ItemLike;
  * For an example of how you might do this, see Create's implementation: {@link com.simibubi.create.foundation.data.recipe.CreateHauntingRecipeGen}.
  * Needs to be added to a registered recipe provider to do anything, see {@link com.simibubi.create.foundation.data.recipe.CreateRecipeProvider}
  */
-public abstract class HauntingRecipeGen extends ProcessingRecipeGen {
+public abstract class HauntingRecipeGen extends StandardProcessingRecipeGen<HauntingRecipe> {
 
 	public GeneratedRecipe convert(ItemLike input, ItemLike result) {
 		return convert(() -> Ingredient.of(input), () -> result);

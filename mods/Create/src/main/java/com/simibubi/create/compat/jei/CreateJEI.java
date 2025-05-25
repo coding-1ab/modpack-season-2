@@ -22,6 +22,7 @@ import com.simibubi.create.Create;
 import com.simibubi.create.compat.jei.category.BlockCuttingCategory;
 import com.simibubi.create.compat.jei.category.BlockCuttingCategory.CondensedBlockCuttingRecipe;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
+import com.simibubi.create.compat.jei.category.CreateRecipeCategory.Factory;
 import com.simibubi.create.compat.jei.category.CrushingCategory;
 import com.simibubi.create.compat.jei.category.DeployingCategory;
 import com.simibubi.create.compat.jei.category.FanBlastingCategory;
@@ -122,7 +123,7 @@ public class CreateJEI implements IModPlugin {
 
 	private final List<CreateRecipeCategory<?>> allCategories = new ArrayList<>();
 	private IIngredientManager ingredientManager;
-	
+
 	public static IJeiRuntime runtime;
 
 	private void loadCategories() {
@@ -193,7 +194,7 @@ public class CreateJEI implements IModPlugin {
 				.build("mixing", MixingCategory::standard),
 
 		autoShapeless = builder(BasinRecipe.class)
-				.enableWhen(c -> c.allowShapelessInMixer)
+				.enableWhen(AllConfigs.server().recipes.allowShapelessInMixer)
 				.addAllRecipesIf(r -> r.value() instanceof CraftingRecipe && !(r.value() instanceof ShapedRecipe)
 								&& r.value().getIngredients()
 								.size() > 1
@@ -206,7 +207,7 @@ public class CreateJEI implements IModPlugin {
 				.build("automatic_shapeless", MixingCategory::autoShapeless),
 
 		brewing = builder(BasinRecipe.class)
-				.enableWhen(c -> c.allowBrewingInMixer)
+				.enableWhen(AllConfigs.server().recipes.allowBrewingInMixer)
 				.addRecipes(() -> RecipeGenericsUtil.cast(PotionMixingRecipes.createRecipes(Minecraft.getInstance().level)))
 				.catalyst(AllBlocks.MECHANICAL_MIXER::get)
 				.catalyst(AllBlocks.BASIN::get)
@@ -223,7 +224,7 @@ public class CreateJEI implements IModPlugin {
 				.build("packing", PackingCategory::standard),
 
 		autoSquare = builder(BasinRecipe.class)
-				.enableWhen(c -> c.allowShapedSquareInPress)
+				.enableWhen(AllConfigs.server().recipes.allowShapedSquareInPress)
 				.addAllRecipesIf(
 						r -> (r.value() instanceof CraftingRecipe) && !(r.value() instanceof MechanicalCraftingRecipe)
 								&& MechanicalPressBlockEntity.canCompress(r.value()) && !AllRecipeTypes.shouldIgnoreInAutomation(r),
@@ -242,7 +243,7 @@ public class CreateJEI implements IModPlugin {
 				.build("sawing", SawingCategory::new),
 
 		blockCutting = builder(CondensedBlockCuttingRecipe.class)
-				.enableWhen(c -> c.allowStonecuttingOnSaw)
+				.enableWhen(AllConfigs.server().recipes.allowStonecuttingOnSaw)
 				.addRecipes(() -> BlockCuttingCategory.condenseRecipes(getTypedRecipesExcluding(RecipeType.STONECUTTING, AllRecipeTypes::shouldIgnoreInAutomation)))
 				.catalyst(AllBlocks.MECHANICAL_SAW::get)
 				.doubleItemIcon(AllBlocks.MECHANICAL_SAW.get(), Items.STONE_BRICK_STAIRS)
@@ -293,7 +294,7 @@ public class CreateJEI implements IModPlugin {
 				.build("draining", ItemDrainCategory::new),
 
 		autoShaped = builder(CraftingRecipe.class)
-				.enableWhen(c -> c.allowRegularCraftingInCrafter)
+				.enableWhen(AllConfigs.server().recipes.allowRegularCraftingInCrafter)
 				.addAllRecipesIf(r -> r.value() instanceof CraftingRecipe && !(r.value() instanceof ShapedRecipe)
 						&& r.value().getIngredients()
 						.size() == 1
@@ -382,21 +383,21 @@ public class CreateJEI implements IModPlugin {
 			// @goshante: Ingame potion fluids always have Bottle tag that specifies
 			// to what bottle type this potion belongs
 			// Potion fluid without this tag wouldn't be recognized by other mods
-			
+
 //			for (PotionFluid.BottleType bottleType : PotionFluid.BottleType.values()) {
 //				FluidStack potionFluid = PotionFluid.of(1000, new PotionContents(potion), bottleType);
 //				potionFluids.add(potionFluid);
 //			}
-			
+
 			PotionContents potionContents = new PotionContents(potion);
-			
+
 			if (potionContents.hasEffects()) {
 				Set<Holder<MobEffect>> effectSet = new HashSet<>();
 				potionContents.forEachEffect(mei -> effectSet.add(mei.getEffect()));
 				if (!visitedEffects.add(effectSet))
 					continue;
 			}
-			
+
 			potionFluids.add(PotionFluid.of(1000, potionContents, PotionFluid.BottleType.REGULAR));
 		}
 		registration.addExtraIngredients(NeoForgeTypes.FLUID_STACK, potionFluids);
@@ -415,181 +416,16 @@ public class CreateJEI implements IModPlugin {
 		registration.addGhostIngredientHandler(FactoryPanelSetItemScreen.class, new GhostIngredientHandler());
 	}
 
-	private class CategoryBuilder<T extends Recipe<? extends RecipeInput>> {
-		private final Class<? extends T> recipeClass;
-		private Predicate<CRecipes> predicate = cRecipes -> true;
-
-		private IDrawable background;
-		private IDrawable icon;
-
-		private final List<Consumer<List<RecipeHolder<T>>>> recipeListConsumers = new ArrayList<>();
-		private final List<Supplier<? extends ItemStack>> catalysts = new ArrayList<>();
-
+	private class CategoryBuilder<T extends Recipe<?>> extends CreateRecipeCategory.Builder<T> {
 		public CategoryBuilder(Class<? extends T> recipeClass) {
-			this.recipeClass = recipeClass;
+			super(recipeClass);
 		}
 
-		public CategoryBuilder<T> enableIf(Predicate<CRecipes> predicate) {
-			this.predicate = predicate;
-			return this;
-		}
-
-		public CategoryBuilder<T> enableWhen(Function<CRecipes, ConfigBool> configValue) {
-			predicate = c -> configValue.apply(c).get();
-			return this;
-		}
-
-		public CategoryBuilder<T> addRecipeListConsumer(Consumer<List<RecipeHolder<T>>> consumer) {
-			recipeListConsumers.add(consumer);
-			return this;
-		}
-
-		public CategoryBuilder<T> addRecipes(Supplier<Collection<? extends RecipeHolder<T>>> collection) {
-			return addRecipeListConsumer(recipes -> recipes.addAll(collection.get()));
-		}
-
-		@SuppressWarnings("unchecked")
-		public CategoryBuilder<T> addAllRecipesIf(Predicate<RecipeHolder<T>> pred) {
-			return addRecipeListConsumer(recipes -> consumeAllRecipesOfType(recipe -> {
-				if (pred.test(recipe))
-					recipes.add(recipe);
-			}));
-		}
-
-		public CategoryBuilder<T> addAllRecipesIf(Predicate<RecipeHolder<?>> pred, Function<RecipeHolder<?>, RecipeHolder<T>> converter) {
-			return addRecipeListConsumer(recipes -> consumeAllRecipes(recipe -> {
-				if (pred.test(recipe)) {
-					recipes.add(converter.apply(recipe));
-				}
-			}));
-		}
-
-		public CategoryBuilder<T> addTypedRecipes(IRecipeTypeInfo recipeTypeEntry) {
-			return addTypedRecipes(recipeTypeEntry::getType);
-		}
-		public <I extends RecipeInput, R extends Recipe<I>> CategoryBuilder<T> addTypedRecipes(Supplier<RecipeType<R>> recipeType) {
-			return addRecipeListConsumer(recipes -> CreateJEI.<T>consumeTypedRecipes(recipe -> {
-				if (recipeClass.isInstance(recipe.value()))
-					//noinspection unchecked - checked by if statement above
-					recipes.add((RecipeHolder<T>) recipe);
-			}, recipeType.get()));
-		}
-
-		public CategoryBuilder<T> addTypedRecipes(Supplier<RecipeType<T>> recipeType, Function<RecipeHolder<?>, RecipeHolder<T>> converter) {
-			return addRecipeListConsumer(recipes -> CreateJEI.<T>consumeTypedRecipes(recipe -> recipes.add(converter.apply(recipe)), recipeType.get()));
-		}
-
-		public CategoryBuilder<T> addTypedRecipesIf(Supplier<RecipeType<? extends T>> recipeType, Predicate<RecipeHolder<?>> pred) {
-			return addRecipeListConsumer(recipes -> consumeTypedRecipesTyped(recipe -> {
-				if (pred.test(recipe)) {
-					recipes.add(recipe);
-				}
-			}, recipeType.get()));
-		}
-
-		public CategoryBuilder<T> addTypedRecipesExcluding(Supplier<RecipeType<? extends T>> recipeType,
-			Supplier<RecipeType<? extends T>> excluded) {
-			return addRecipeListConsumer(recipes -> {
-				List<RecipeHolder<?>> excludedRecipes = getTypedRecipes(excluded.get());
-				consumeTypedRecipesTyped(recipe -> {
-					for (RecipeHolder<?> excludedRecipe : excludedRecipes) {
-						if (doInputsMatch(recipe.value(), excludedRecipe.value())) {
-							return;
-						}
-					}
-					recipes.add(recipe);
-				}, recipeType.get());
-			});
-		}
-
-		public CategoryBuilder<T> removeRecipes(Supplier<RecipeType<? extends T>> recipeType) {
-			return addRecipeListConsumer(recipes -> {
-				List<RecipeHolder<?>> excludedRecipes = getTypedRecipes(recipeType.get());
-				recipes.removeIf(recipe -> {
-					for (RecipeHolder<?> excludedRecipe : excludedRecipes)
-						if (doInputsMatch(recipe.value(), excludedRecipe.value()) && doOutputsMatch(recipe.value(), excludedRecipe.value()))
-							return true;
-					return false;
-				});
-			});
-		}
-
-		public CategoryBuilder<T> removeNonAutomation() {
-			return addRecipeListConsumer(recipes -> recipes.removeIf(AllRecipeTypes.CAN_BE_AUTOMATED.negate()));
-		}
-
-		public CategoryBuilder<T> catalystStack(Supplier<ItemStack> supplier) {
-			catalysts.add(supplier);
-			return this;
-		}
-
-		public CategoryBuilder<T> catalyst(Supplier<ItemLike> supplier) {
-			return catalystStack(() -> new ItemStack(supplier.get()
-				.asItem()));
-		}
-
-		public CategoryBuilder<T> icon(IDrawable icon) {
-			this.icon = icon;
-			return this;
-		}
-
-		public CategoryBuilder<T> itemIcon(ItemLike item) {
-			icon(new ItemIcon(() -> new ItemStack(item)));
-			return this;
-		}
-
-		public CategoryBuilder<T> doubleItemIcon(ItemLike item1, ItemLike item2) {
-			icon(new DoubleItemIcon(() -> new ItemStack(item1), () -> new ItemStack(item2)));
-			return this;
-		}
-
-		public CategoryBuilder<T> background(IDrawable background) {
-			this.background = background;
-			return this;
-		}
-
-		public CategoryBuilder<T> emptyBackground(int width, int height) {
-			background(new EmptyBackground(width, height));
-			return this;
-		}
-
-		public CreateRecipeCategory<T> build(String name, CreateRecipeCategory.Factory<T> factory) {
-			Supplier<List<RecipeHolder<T>>> recipesSupplier;
-			if (predicate.test(AllConfigs.server().recipes)) {
-				recipesSupplier = () -> {
-					List<RecipeHolder<T>> recipes = new ArrayList<>();
-					for (Consumer<List<RecipeHolder<T>>> consumer : recipeListConsumers)
-						consumer.accept(recipes);
-					return recipes;
-				};
-			} else {
-				recipesSupplier = Collections::emptyList;
-			}
-
-			CreateRecipeCategory.Info<T> info = new CreateRecipeCategory.Info<>(
-					mezz.jei.api.recipe.RecipeType.createRecipeHolderType(Create.asResource(name)),
-					CreateLang.translateDirect("recipe." + name), background, icon, recipesSupplier, catalysts);
-			CreateRecipeCategory<T> category = factory.create(info);
+		@Override
+		public CreateRecipeCategory<T> build(ResourceLocation id, Factory<T> factory) {
+			CreateRecipeCategory<T> category = super.build(id, factory);
 			allCategories.add(category);
 			return category;
-		}
-
-		private void consumeAllRecipesOfType(Consumer<RecipeHolder<T>> consumer) {
-			consumeAllRecipes(recipeHolder -> {
-				if (recipeClass.isInstance(recipeHolder.value())) {
-					//noinspection unchecked - this is checked by the if statement
-					consumer.accept((RecipeHolder<T>) recipeHolder);
-				}
-			});
-		}
-
-		private void consumeTypedRecipesTyped(Consumer<RecipeHolder<T>> consumer, RecipeType<?> type) {
-			consumeTypedRecipes(recipeHolder -> {
-				if (recipeClass.isInstance(recipeHolder.value())) {
-					//noinspection unchecked - this is checked by the if statement
-					consumer.accept((RecipeHolder<T>) recipeHolder);
-				}
-			}, type);
 		}
 	}
 
@@ -644,7 +480,7 @@ public class CreateJEI implements IModPlugin {
 		RegistryAccess registryAccess = Minecraft.getInstance().level.registryAccess();
 		return ItemHelper.sameItem(recipe1.getResultItem(registryAccess), recipe2.getResultItem(registryAccess));
 	}
-	
+
 	@Override
     public void onRuntimeAvailable(IJeiRuntime runtime) {
         CreateJEI.runtime = runtime;

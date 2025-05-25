@@ -8,6 +8,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.api.data.recipe.ProcessingRecipeGen;
+import com.simibubi.create.api.data.recipe.StandardProcessingRecipeGen;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
@@ -32,7 +33,7 @@ import net.neoforged.neoforge.fluids.FluidType;
  */
 public final class CreateRecipeProvider extends RecipeProvider {
 
-	static final List<ProcessingRecipeGen> GENERATORS = new ArrayList<>();
+	static final List<ProcessingRecipeGen<?, ?, ?>> GENERATORS = new ArrayList<>();
 	static final int BUCKET = FluidType.BUCKET_VOLUME;
 	static final int BOTTLE = 250;
 

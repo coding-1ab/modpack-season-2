@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 import com.simibubi.create.AllRecipeTypes;
+import com.simibubi.create.content.kinetics.fan.processing.SplashingRecipe;
 import com.tterrag.registrate.util.entry.ItemEntry;
 
 import net.minecraft.core.HolderLookup;
@@ -19,7 +20,7 @@ import net.minecraft.world.level.block.Block;
  * For an example of how you might do this, see Create's implementation: {@link com.simibubi.create.foundation.data.recipe.CreateWashingRecipeGen}.
  * Needs to be added to a registered recipe provider to do anything, see {@link com.simibubi.create.foundation.data.recipe.CreateRecipeProvider}
  */
-public abstract class WashingRecipeGen extends ProcessingRecipeGen {
+public abstract class WashingRecipeGen extends StandardProcessingRecipeGen<SplashingRecipe> {
 
 	public GeneratedRecipe convert(Block block, Block result) {
 		return create(() -> block, b -> b.output(result));

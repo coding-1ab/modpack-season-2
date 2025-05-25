@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import com.simibubi.create.AllRecipeTypes;
 
+import com.simibubi.create.content.kinetics.saw.CuttingRecipe;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
@@ -15,7 +16,7 @@ import net.minecraft.world.level.block.Block;
  * For an example of how you might do this, see Create's implementation: {@link com.simibubi.create.foundation.data.recipe.CreateCuttingRecipeGen}.
  * Needs to be added to a registered recipe provider to do anything, see {@link com.simibubi.create.foundation.data.recipe.CreateRecipeProvider}
  */
-public abstract class CuttingRecipeGen extends ProcessingRecipeGen {
+public abstract class CuttingRecipeGen extends StandardProcessingRecipeGen<CuttingRecipe> {
 
 	protected GeneratedRecipe stripAndMakePlanks(Block wood, Block stripped, Block planks) {
 		return stripAndMakePlanks(wood, stripped, planks, 6);

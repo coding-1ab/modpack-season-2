@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.AllTags;
+import com.simibubi.create.content.kinetics.millstone.MillingRecipe;
 import com.tterrag.registrate.util.entry.ItemEntry;
 
 import net.minecraft.core.HolderLookup;
@@ -20,7 +21,7 @@ import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
  * For an example of how you might do this, see Create's implementation: {@link com.simibubi.create.foundation.data.recipe.CreateMillingRecipeGen}.
  * Needs to be added to a registered recipe provider to do anything, see {@link com.simibubi.create.foundation.data.recipe.CreateRecipeProvider}
  */
-public abstract class MillingRecipeGen extends ProcessingRecipeGen {
+public abstract class MillingRecipeGen extends StandardProcessingRecipeGen<MillingRecipe> {
 
 	protected GeneratedRecipe metalOre(String name, ItemEntry<? extends Item> crushed, int duration) {
 		return create(name + "_ore", b -> b.duration(duration)

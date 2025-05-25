@@ -6,8 +6,6 @@ import java.util.Optional;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.content.processing.recipe.ProcessingOutput;
-import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
-import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder.ProcessingRecipeParams;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.advancement.CreateAdvancement;
 import com.simibubi.create.foundation.utility.BlockHelper;
@@ -84,9 +82,10 @@ public class ManualApplicationRecipe extends ItemApplicationRecipe {
 
 		boolean creative = event.getEntity() != null && event.getEntity()
 			.isCreative();
+		boolean unbreakable = heldItem.has(DataComponents.UNBREAKABLE);
 		boolean keepHeld = recipe.shouldKeepHeldItem() || creative;
 
-		if (!keepHeld) {
+		if (!unbreakable && !keepHeld) {
 			if (heldItem.isDamageableItem())
 				heldItem.hurtAndBreak(1, event.getEntity(), LivingEntity.getSlotForHand(InteractionHand.MAIN_HAND));
 			else
@@ -113,17 +112,17 @@ public class ManualApplicationRecipe extends ItemApplicationRecipe {
 		advancement.awardTo(player);
 	}
 
-	public ManualApplicationRecipe(ProcessingRecipeParams params) {
+	public ManualApplicationRecipe(ItemApplicationRecipeParams params) {
 		super(AllRecipeTypes.ITEM_APPLICATION, params);
 	}
 
 	public static RecipeHolder<DeployerApplicationRecipe> asDeploying(RecipeHolder<?> recipe) {
 		ManualApplicationRecipe mar = (ManualApplicationRecipe) recipe.value();
-		ResourceLocation id = ResourceLocation.fromNamespaceAndPath(mar.id.getNamespace(), mar.id.getPath() + "_using_deployer");
-		ProcessingRecipeBuilder<DeployerApplicationRecipe> builder =
-			new ProcessingRecipeBuilder<>(DeployerApplicationRecipe::new, id)
-				.require(mar.ingredients.get(0))
-				.require(mar.ingredients.get(1));
+		ResourceLocation id = recipe.id().withSuffix("_using_deployer");
+		ItemApplicationRecipe.Builder<DeployerApplicationRecipe> builder =
+			new ItemApplicationRecipe.Builder<>(DeployerApplicationRecipe::new, id)
+					.require(mar.ingredients.get(0))
+					.require(mar.ingredients.get(1));
 		for (ProcessingOutput output : mar.results)
 			builder.output(output);
 		if (mar.shouldKeepHeldItem())
