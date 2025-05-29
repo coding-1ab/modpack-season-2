@@ -82,6 +82,13 @@ public class ItemTags extends ItemTagsProvider
 				ModItems.MELON_JUICE.get(),
 				ModItems.HOT_COCOA.get()
 		);
+		tag(ModTags.FEASTS).add(
+				ModItems.ROAST_CHICKEN_BLOCK.get(),
+				ModItems.STUFFED_PUMPKIN_BLOCK.get(),
+				ModItems.SHEPHERDS_PIE_BLOCK.get(),
+				ModItems.HONEY_GLAZED_HAM_BLOCK.get(),
+				ModItems.RICE_ROLL_MEDLEY_BLOCK.get()
+		);
 		tag(ModTags.KNIVES).add(ModItems.FLINT_KNIFE.get(), ModItems.IRON_KNIFE.get(), ModItems.DIAMOND_KNIFE.get(), ModItems.GOLDEN_KNIFE.get(), ModItems.NETHERITE_KNIFE.get());
 		tag(ModTags.STRAW_HARVESTERS).addTag(ModTags.KNIVES);
 		tag(ModTags.WOLF_PREY).addTag(ForgeTags.RAW_CHICKEN).addTag(ForgeTags.RAW_MUTTON).add(Items.RABBIT);
@@ -233,6 +240,9 @@ public class ItemTags extends ItemTagsProvider
 		tag(CompatibilityTags.CREATE_UPRIGHT_ON_BELT)
 				.addTag(ModTags.MEALS)
 				.addTag(ModTags.DRINKS)
+				.addTag(ModTags.FEASTS)
+				.add(ModItems.TOMATO_SAUCE.get())
+				.add(ModItems.DOG_FOOD.get())
 				.add(ModItems.FRUIT_SALAD.get())
 				.add(ModItems.NETHER_SALAD.get())
 				.add(ModItems.PIE_CRUST.get())
