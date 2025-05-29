@@ -2,6 +2,7 @@ package com.mrh0.createaddition.energy.network;
 
 import java.util.Map;
 
+import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.energy.IWireNode;
 
 import net.minecraft.core.BlockPos;
@@ -22,9 +23,7 @@ public class EnergyNetwork {
 	private int pushed = 0;
 
 	private int nodeCount = 0;
-	
-	private static final int MAX_BUFF = 80000;
-	
+
 	public EnergyNetwork(Level world) {
 		this.inBuff = 0;
 		this.outBuff = 0;
@@ -37,7 +36,7 @@ public class EnergyNetwork {
 	}
 
 	public int getMaxBuff() {
-		return Math.min(nodeCount * (outDemand + inDemand * 2 + 10), MAX_BUFF);
+		return Math.min(nodeCount * (outDemand + inDemand * 2 + 10), CommonConfig.CONNECTOR_NETWORK_INTERNAL_BUFFER.get());
 	}
 	
 	public void tick(int index) {

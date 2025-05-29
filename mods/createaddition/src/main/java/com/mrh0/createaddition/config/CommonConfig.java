@@ -46,6 +46,7 @@ public class CommonConfig {
 	public static ModConfigSpec.IntValue ROLLING_MILL_PROCESSING_DURATION;
 	public static ModConfigSpec.IntValue ROLLING_MILL_STRESS;
 
+	public static ModConfigSpec.IntValue CONNECTOR_NETWORK_INTERNAL_BUFFER;
 	public static ModConfigSpec.IntValue SMALL_CONNECTOR_MAX_INPUT;
 	public static ModConfigSpec.IntValue SMALL_CONNECTOR_MAX_OUTPUT;
 	public static ModConfigSpec.IntValue SMALL_CONNECTOR_MAX_LENGTH;
@@ -135,6 +136,9 @@ public class CommonConfig {
 
 
 		COMMON_BUILDER.comment("Wires").push(CATAGORY_WIRES);
+		CONNECTOR_NETWORK_INTERNAL_BUFFER = COMMON_BUILDER.comment("The maximum stored amount in the connector network internal buffer.")
+				.defineInRange("connector_network_internal_buffer", 80000, 80000, Integer.MAX_VALUE);
+
 		SMALL_CONNECTOR_MAX_INPUT = COMMON_BUILDER.comment("Small Connector max input in FE/t (Energy transfer).")
 				.defineInRange("small_connector_max_input", 1000, 0, Integer.MAX_VALUE);
 
