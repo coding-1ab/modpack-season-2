@@ -12,6 +12,6 @@
     "id": "immersiveengineering:ethanol"
   },
   "input": {
-    "tag": "forge:crops/tomato"
+    "tag": "c:crops/tomato"
   }
 }
