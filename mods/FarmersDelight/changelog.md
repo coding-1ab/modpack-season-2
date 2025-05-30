@@ -3,9 +3,10 @@
 ## 1.2.8
 
 ### Additions
-- New tags:
+- New item tags:
   - `#meals` - Groups bowl and plate foods which are considered a "meal" by the mod. Excludes Fruit Salad and Nether Salad;
   - `#drinks` - Groups drinkable FD items that are not potions;
+  - `#feasts` - Groups the full forms of feasts. Their portions reside in `#meals`;
 
 ### Updates
 - Wheat Dough now has a simpler, less cumbersome crafting recipe using a Water Bucket:
@@ -27,6 +28,7 @@
 - Fixed Create's Potato Cannon integration;
 - Fixed Knives with Silk Touch slicing Pumpkin blocks;
 - Fixed budding bushes (Tomato)'s planting rules being hardcoded to vanilla farmland;
+- Fixed Rich Soil negating fall damage (1.21.1) and `turnToDirt` converting it into normal dirt (thanks, SarahIsWeird!);
 - (1.21.1) Fixed Baskets and Cabinets not having an item handler capability (thanks, RaymondBlaze!);
 - (1.21.1) Updated Create Integration to the newest update's syntax (thanks, mpustovoi!);
 - (1.21.1) Fixed `storage_blocks` tags not being nested in their parent (thanks, Lucky-56!);
@@ -39,6 +41,7 @@
 - Updated:
   - es_es (thanks, GGlangf!);
   - zh_cn (thanks, NumberSir!);
+  - zh_tw (thanks, DEEMsss!);
 
 ## 1.2.7
 
