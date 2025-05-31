@@ -8,8 +8,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.function.Supplier;
-
 /**
  * Registry for all render styles.
  */
