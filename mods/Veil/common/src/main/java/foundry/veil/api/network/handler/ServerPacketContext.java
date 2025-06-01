@@ -2,7 +2,9 @@ package foundry.veil.api.network.handler;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Context for server-side packet handling.
@@ -21,4 +23,9 @@ public interface ServerPacketContext extends PacketContext {
     @Override
     @NotNull
     ServerPlayer player();
+
+    @Override
+    default @NotNull Level level() {
+        return this.player().level();
+    }
 }
