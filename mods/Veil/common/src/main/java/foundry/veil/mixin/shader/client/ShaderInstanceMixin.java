@@ -107,6 +107,11 @@ public abstract class ShaderInstanceMixin implements Shader {
             IntBuffer type = stack.mallocInt(1);
             for (int i = 0; i < uniformCount; i++) {
                 String name = glGetActiveUniform(this.programId, i, maxUniformLength, size, type);
+                int length = size.get(0);
+                if (length > 1) {
+                    // Cut off the trailing [0]
+                    name = name.substring(0, name.length() - 3);
+                }
 
                 if (this.uniformMap.containsKey(name) || this.samplerNames.contains(name)) {
                     continue;
@@ -114,14 +119,11 @@ public abstract class ShaderInstanceMixin implements Shader {
 
                 int dataType = type.get(0);
                 String typeName = ShaderUniformCache.getName(dataType);
-                int length = size.get(0);
                 if (ShaderUniformCache.isSampler(dataType)) {
                     for (int j = 0; j < length; j++) {
-                        if (length > 1) {
-                            name = name.substring(0, name.length() - 3) + '[' + j + ']';
-                        }
-                        Veil.LOGGER.debug("Shader {} detected sampler: {}", this.name, typeName + " " + name);
-                        this.samplerNames.add(name);
+                        String samplerName = length > 1 ? name + '[' + j + ']' : name;
+                        Veil.LOGGER.debug("Shader {} detected sampler: {}", this.name, typeName + " " + samplerName);
+                        this.samplerNames.add(samplerName);
                     }
                     continue;
                 }

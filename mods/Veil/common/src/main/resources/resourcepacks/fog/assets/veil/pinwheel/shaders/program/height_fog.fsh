@@ -42,8 +42,7 @@ void intersectPlane(vec3 ray, Plane p, inout Intersection i) {
 
 void main() {
     vec4 baseColor = texture(DiffuseSampler0, texCoord);
-    float depthSample = texture(DiffuseDepthSampler, texCoord).r;
-    vec3 viewPos = screenToLocalSpace(texCoord, depthSample).xyz;
+    vec3 viewPos = screenToLocalSpace(texCoord, texture(DiffuseDepthSampler, texCoord).r).xyz;
 
     float dist;
     if (VeilCamera.CameraPosition.y + VeilCamera.CameraBobOffset.y < FOG_Y) {
