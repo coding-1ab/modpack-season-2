@@ -182,37 +182,35 @@ public abstract class ShaderInstanceMixin implements Shader {
                 }
 
                 for (int j = 0; j < length; j++) {
-                    if (length > 1) {
-                        name = name.substring(0, name.indexOf('[')) + '[' + j + ']';
-                    }
+                    String uniformName = length > 1 ? name + '[' + j + ']' : name;
 
-                    int location = Uniform.glGetUniformLocation(this.programId, name);
+                    int location = Uniform.glGetUniformLocation(this.programId, uniformName);
                     if (location == -1) {
                         // If the length is not 1, then it must be another mod adding a uniform block, so ignore
                         if (length == 1) {
-                            Veil.LOGGER.warn("Shader {} could not find uniform named {} in the specified shader program.", this.name, name);
+                            Veil.LOGGER.warn("Shader {} could not find uniform named {} in the specified shader program.", this.name, uniformName);
                         }
 
                         // Don't leak resources
-                        Uniform old = this.veil$uniforms.remove(name);
+                        Uniform old = this.veil$uniforms.remove(uniformName);
                         if (old != null) {
                             old.close();
                         }
                         continue;
                     }
 
-                    Veil.LOGGER.debug("Shader {} detected uniform: {}", this.name, typeName + " " + name);
-                    Uniform old = this.veil$uniforms.get(name);
+                    Veil.LOGGER.debug("Shader {} detected uniform: {}", this.name, typeName + " " + uniformName);
+                    Uniform old = this.veil$uniforms.get(uniformName);
                     Uniform uniform;
                     if (old != null) {
                         if (old.getType() != minecraftType) {
                             old.close();
-                            this.veil$uniforms.put(name, uniform = new Uniform(name, minecraftType, minecraftCount, this));
+                            this.veil$uniforms.put(uniformName, uniform = new Uniform(uniformName, minecraftType, minecraftCount, this));
                         } else {
                             uniform = old;
                         }
                     } else {
-                        this.veil$uniforms.put(name, uniform = new Uniform(name, minecraftType, minecraftCount, this));
+                        this.veil$uniforms.put(uniformName, uniform = new Uniform(uniformName, minecraftType, minecraftCount, this));
                     }
 
                     IntBuffer intBuffer = uniform.getIntBuffer();
@@ -227,7 +225,7 @@ public abstract class ShaderInstanceMixin implements Shader {
 
                     this.uniformLocations.add(location);
                     uniform.setLocation(location);
-                    this.uniformMap.put(name, uniform);
+                    this.uniformMap.put(uniformName, uniform);
                 }
             }
         }
