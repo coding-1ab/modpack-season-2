@@ -48,6 +48,9 @@ public abstract class ShaderInstanceMixin implements Shader {
     @Final
     private List<String> samplerNames;
 
+    @Shadow
+    @Final
+    private List<Integer> samplerLocations;
     @Unique
     private final Map<String, Uniform> veil$uniforms = new Object2ObjectArrayMap<>();
 
@@ -88,6 +91,11 @@ public abstract class ShaderInstanceMixin implements Shader {
         }
     }
 
+    @Inject(method = "updateLocations", at = @At("HEAD"))
+    public void clearSamplerLocations(CallbackInfo ci) {
+        this.samplerLocations.clear();
+    }
+
     @SuppressWarnings("ConstantValue")
     @Inject(method = "updateLocations", at = @At("TAIL"))
     public void updateLocations(CallbackInfo ci) {
@@ -124,6 +132,7 @@ public abstract class ShaderInstanceMixin implements Shader {
                         String samplerName = length > 1 ? name + '[' + j + ']' : name;
                         Veil.LOGGER.debug("Shader {} detected sampler: {}", this.name, typeName + " " + samplerName);
                         this.samplerNames.add(samplerName);
+                        this.samplerLocations.add(Uniform.glGetUniformLocation(this.programId, samplerName));
                     }
                     continue;
                 }
