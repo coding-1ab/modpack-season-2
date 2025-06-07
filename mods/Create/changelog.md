@@ -1,4 +1,13 @@
 ------------------------------------------------------
+Create 6.0.5
+------------------------------------------------------
+
+#### Bug Fixes
+
+- Fixed duplication glitch with chain conveyors
+- Fixed an exploit that could be used to spawn in arbitrary packages
+
+------------------------------------------------------
 Create 6.0.4
 ------------------------------------------------------
 
@@ -25,7 +34,7 @@ Create 6.0.3
 - Fixed crash when using or viewing sandpaper polishing recipes (1.21)
 - Fixed crash with recent versions of ftb library
 - Fixed belts interacting with horizontal crushing wheels inconsistently #7445
-- Allow Re-Packager to split packages with multiple crafting recipes into single packages 
+- Allow Re-Packager to split packages with multiple crafting recipes into single packages
 - Fixed contraptions not able to break ice blocks #4415
 - Increased rope pulley view distance #4836
 - Fixed create datagen running in addon workspaces (#7862)
