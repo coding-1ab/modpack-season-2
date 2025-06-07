@@ -79,6 +79,10 @@ public abstract class ShaderInstanceMixin implements Shader {
 
     @Inject(method = "close", at = @At("HEAD"))
     public void close(CallbackInfo ci) {
+        if (this.veil$uniforms.isEmpty()) {
+            return;
+        }
+
         for (Uniform uniform : this.veil$uniforms.values()) {
             uniform.close();
         }
@@ -86,6 +90,10 @@ public abstract class ShaderInstanceMixin implements Shader {
 
     @Inject(method = "apply", at = @At("TAIL"))
     public void apply(CallbackInfo ci) {
+        if (this.veil$uniforms.isEmpty()) {
+            return;
+        }
+
         for (Uniform uniform : this.veil$uniforms.values()) {
             uniform.upload();
         }
