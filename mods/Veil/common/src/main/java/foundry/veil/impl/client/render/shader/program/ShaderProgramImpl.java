@@ -320,7 +320,7 @@ public class ShaderProgramImpl implements ShaderProgram {
     @Override
     public ShaderUniformAccess getUniformSafe(CharSequence name) {
         ShaderUniformImpl uniform = this.uniforms.get(name.toString());
-        return uniform != null ? uniform : ShaderUniformAccess.EMPTY;
+        return uniform != null && uniform.isValid() ? uniform : ShaderUniformAccess.EMPTY;
     }
 
     @Override
