@@ -2,15 +2,16 @@ package com.simibubi.create.content.kinetics.chainConveyor;
 
 import java.util.List;
 
+import net.createmod.catnip.platform.CatnipServices;
+import net.minecraft.world.item.ItemStack;
+
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import com.simibubi.create.foundation.utility.RaycastHelper;
 
-import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -46,7 +47,7 @@ public class ChainPackageInteractionHandler {
 				for (ChainConveyorPackage pckg : ccbe.getLoopingPackages()) {
 					if (pckg.netId == i) {
 						CatnipServices.NETWORK.sendToServer(
-								new ChainPackageInteractionPacket(ccbe.getBlockPos(), null, pckg.chainPosition, ItemStack.EMPTY));
+								new ChainPackageInteractionPacket(ccbe.getBlockPos(), null, pckg.chainPosition, true));
 						success.setTrue();
 						return;
 					}
@@ -59,7 +60,7 @@ public class ChainPackageInteractionHandler {
 					for (ChainConveyorPackage pckg : list) {
 						if (pckg.netId == i) {
 							CatnipServices.NETWORK.sendToServer(new ChainPackageInteractionPacket(ccbe.getBlockPos(), connection,
-									pckg.chainPosition, ItemStack.EMPTY));
+									pckg.chainPosition, true));
 							success.setTrue();
 							return;
 						}
