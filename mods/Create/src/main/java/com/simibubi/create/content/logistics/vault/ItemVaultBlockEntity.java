@@ -9,6 +9,7 @@ import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.VersionedInventoryWrapper;
+import com.simibubi.create.foundation.utility.SameSizeCombinedInvWrapper;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import net.minecraft.core.BlockPos;
@@ -346,7 +347,7 @@ public class ItemVaultBlockEntity extends SmartBlockEntity implements IMultiBloc
 			}
 		}
 
-		IItemHandler itemHandler = new VersionedInventoryWrapper(new CombinedInvWrapper(invs));
+		IItemHandler itemHandler = new VersionedInventoryWrapper(SameSizeCombinedInvWrapper.create(invs));
 		itemCapability = LazyOptional.of(() -> itemHandler);
 
 		// build an identifier encompassing all component vaults
