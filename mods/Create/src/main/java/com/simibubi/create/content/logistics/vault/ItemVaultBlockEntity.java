@@ -46,7 +46,6 @@ public class ItemVaultBlockEntity extends SmartBlockEntity implements IMultiBloc
 	protected boolean updateConnectivity;
 	protected int radius;
 	protected int length;
-	protected Axis axis;
 
 	public ItemVaultBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -89,8 +88,10 @@ public class ItemVaultBlockEntity extends SmartBlockEntity implements IMultiBloc
 		int radius = controllerBE.radius;
 		int length = controllerBE.length;
 
-		int zMax = (controllerBE.axis == Axis.X ? radius : length);
-		int xMax = (controllerBE.axis == Axis.Z ? radius : length);
+		Axis axis = controllerBE.getMainConnectionAxis();
+
+		int zMax = (axis == Axis.X ? radius : length);
+		int xMax = (axis == Axis.Z ? radius : length);
 
 		// Mutable position we'll use for the blocks we poke updates at.
 		MutableBlockPos updatePos = new MutableBlockPos();
