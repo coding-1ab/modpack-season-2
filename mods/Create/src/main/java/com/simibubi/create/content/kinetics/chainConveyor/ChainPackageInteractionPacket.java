@@ -32,12 +32,14 @@ public class ChainPackageInteractionPacket extends BlockEntityConfigurationPacke
 	protected void writeSettings(FriendlyByteBuf buffer) {
 		buffer.writeBlockPos(selectedConnection);
 		buffer.writeFloat(chainPosition);
+		buffer.writeBoolean(removingPackage);
 	}
 
 	@Override
 	protected void readSettings(FriendlyByteBuf buffer) {
 		selectedConnection = buffer.readBlockPos();
 		chainPosition = buffer.readFloat();
+		removingPackage = buffer.readBoolean();
 	}
 
 	@Override
@@ -79,7 +81,7 @@ public class ChainPackageInteractionPacket extends BlockEntityConfigurationPacke
 			list.remove(best);
 			be.sendData();
 		} else {
-			ChainConveyorPackage chainConveyorPackage = new ChainConveyorPackage(chainPosition, player.getMainHandItem());
+			ChainConveyorPackage chainConveyorPackage = new ChainConveyorPackage(chainPosition, player.getMainHandItem().copy());
 			if (!be.canAcceptPackagesFor(selectedConnection)) {
 				return;
 			}

@@ -49,7 +49,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -96,16 +95,6 @@ public class AllCreativeModeTabs {
 				});
 			});
 			IS_ITEM_3D_PREDICATE = isItem3d.getValue();
-		}
-
-		@OnlyIn(Dist.CLIENT)
-		private static Predicate<Item> makeClient3dItemPredicate() {
-			return item -> {
-				ItemRenderer itemRenderer = Minecraft.getInstance()
-					.getItemRenderer();
-				BakedModel model = itemRenderer.getModel(new ItemStack(item), null, null, 0);
-				return model.isGui3d();
-			};
 		}
 
 		private final boolean addItems;
