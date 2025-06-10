@@ -44,6 +44,7 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -67,12 +68,12 @@ public class CreateClient {
 
 	public static final ClientResourceReloadListener RESOURCE_RELOAD_LISTENER = new ClientResourceReloadListener();
 
-	public CreateClient(net.neoforged.bus.api.IEventBus modEventBus) {
+	public CreateClient(IEventBus modEventBus) {
 		onCtorClient(modEventBus);
 	}
 
-	public static void onCtorClient(net.neoforged.bus.api.IEventBus modEventBus) {
-		net.neoforged.bus.api.IEventBus neoEventBus = NeoForge.EVENT_BUS;
+	public static void onCtorClient(IEventBus modEventBus) {
+		IEventBus neoEventBus = NeoForge.EVENT_BUS;
 
 		modEventBus.addListener(CreateClient::clientInit);
 		modEventBus.addListener(AllParticleTypes::registerFactories);
