@@ -85,6 +85,8 @@ import net.minecraft.world.item.SwordItem;
 
 import net.neoforged.neoforge.common.Tags;
 
+import net.minecraftforge.common.Tags;
+
 public class AllItems {
 	private static final CreateRegistrate REGISTRATE = Create.registrate();
 
@@ -103,7 +105,7 @@ public class AllItems {
 		TRANSMITTER = ingredient("transmitter"), PULP = ingredient("pulp");
 
 	public static final ItemEntry<CombustibleItem> CARDBOARD = REGISTRATE.item("cardboard", CombustibleItem::new)
-		.tag(commonItemTag("plates/cardboard"))
+		.tag(commonItemTag("plates/cardboard"), PLATES.tag)
 		.onRegister(i -> i.setBurnTime(1000))
 		.register();
 
