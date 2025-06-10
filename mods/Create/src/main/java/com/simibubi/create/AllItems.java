@@ -85,8 +85,6 @@ import net.minecraft.world.item.SwordItem;
 
 import net.neoforged.neoforge.common.Tags;
 
-import net.minecraftforge.common.Tags;
-
 public class AllItems {
 	private static final CreateRegistrate REGISTRATE = Create.registrate();
 
