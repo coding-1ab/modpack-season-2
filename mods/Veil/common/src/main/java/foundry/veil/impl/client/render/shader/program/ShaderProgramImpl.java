@@ -246,7 +246,7 @@ public class ShaderProgramImpl implements ShaderProgram {
         for (Object2ObjectMap.Entry<CharSequence, ShaderBlock<?>> entry : this.shaderBlocks.object2ObjectEntrySet()) {
             VeilRenderSystem.bind(entry.getKey(), entry.getValue());
         }
-        ShaderBlendMode blendMode = this.definition.blendMode();
+        ShaderBlendMode blendMode = this.definition != null ? this.definition.blendMode() : null;
         if (blendMode != null) {
             saveBlendState(blendMode.hasEquation());
             blendMode.apply();
