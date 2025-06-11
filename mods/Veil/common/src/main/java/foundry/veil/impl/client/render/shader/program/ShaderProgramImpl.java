@@ -259,7 +259,7 @@ public class ShaderProgramImpl implements ShaderProgram {
         this.wrapper.get().setDefaultUniforms(mode, MODEL_VIEW_MATRIX.set(modelViewMatrix), PROJECTION_MATRIX.set(projectionMatrix), Minecraft.getInstance().getWindow());
     }
 
-    private void freeInternal() {
+    public void freeInternal() {
         this.textures.clear();
         for (CompiledProgram program : this.programs.values()) {
             program.free();

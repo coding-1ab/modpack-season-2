@@ -598,7 +598,7 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
 
     @Override
     public void close() {
-        this.shaders.values().forEach(ShaderProgram::free);
+        this.shaders.values().forEach(ShaderProgramImpl::freeInternal);
         this.shaders.clear();
     }
 
