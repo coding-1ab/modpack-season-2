@@ -16,6 +16,8 @@ import java.util.Set;
  */
 public interface LightTypeRenderer<T extends Light> extends NativeResource {
 
+    // TODO update in 2.0.0
+
     /**
      * Prepares the specified lights to be rendered.
      *
@@ -23,6 +25,7 @@ public interface LightTypeRenderer<T extends Light> extends NativeResource {
      * @param lights        The lights to render
      * @param removedLights The lights that will be removed this frame
      * @param frustum       The culling view frustum
+     * @apiNote In 2.0.0 the light list will be changed to a set
      */
     @ApiStatus.OverrideOnly
     void prepareLights(LightRenderer lightRenderer, List<T> lights, Set<T> removedLights, CullFrustum frustum);
@@ -33,6 +36,7 @@ public interface LightTypeRenderer<T extends Light> extends NativeResource {
      *
      * @param lightRenderer The light renderer instance
      * @param lights        The lights to render
+     * @apiNote In 2.0.0 the light list will be changed to a set
      */
     @ApiStatus.OverrideOnly
     void renderLights(LightRenderer lightRenderer, List<T> lights);
