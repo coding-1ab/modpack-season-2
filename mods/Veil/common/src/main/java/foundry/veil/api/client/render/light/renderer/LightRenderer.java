@@ -125,6 +125,17 @@ public final class LightRenderer implements NativeResource {
     }
 
     /**
+     * Checks if the specified light has already been added to the renderer.
+     * @since 1.4.0
+     * @param light The light to add
+     * @return Whether that light has been added to the renderer
+     */
+    public boolean hasLight(Light light) {
+        LightData<?> data = this.lights.get(light.getType());
+        return data != null && data.lights.contains(light);
+    }
+
+    /**
      * Adds a light to the renderer.
      *
      * @param light The light to add
