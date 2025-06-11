@@ -115,6 +115,12 @@ public interface ShaderProgram extends NativeResource, MutableUniformAccess, Tex
     Int2ObjectMap<CompiledShader> getShaders();
 
     /**
+     * @return Whether this program has a valid compiled shader
+     * @since 1.4.0
+     */
+    boolean isValid();
+
+    /**
      * @return Whether this program has the vertex stage
      */
     default boolean hasVertex() {

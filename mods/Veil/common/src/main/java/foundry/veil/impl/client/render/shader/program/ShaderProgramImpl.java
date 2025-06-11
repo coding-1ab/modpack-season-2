@@ -283,6 +283,11 @@ public class ShaderProgramImpl implements ShaderProgram {
     }
 
     @Override
+    public boolean isValid() {
+        return this.compiledProgram != null;
+    }
+
+    @Override
     public @Nullable VertexFormat getFormat() {
         return this.vertexFormat;
     }
