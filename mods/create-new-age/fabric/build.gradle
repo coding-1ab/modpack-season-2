@@ -9,11 +9,17 @@ dependencies {
     compileOnly(project(":common"))
     
     modImplementation("net.fabricmc:fabric-loader:${fabricLoaderVersion}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
+    modApi("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
     
-    modImplementation("com.tterrag.registrate_fabric:Registrate:${rootProject.registrateFabricVersion}")
     modImplementation("com.simibubi.create:create-fabric-${rootProject.minecraftVersion}:${createFabricVersion}")
+    modApi("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0")
+
+    modImplementation("com.tterrag.registrate_fabric:Registrate:${rootProject.registrateFabricVersion}")
     modImplementation("net.createmod.ponder:Ponder-Fabric-${rootProject.minecraftVersion}:${ponderVersion}")
+    modCompileOnly("dev.engine-room.flywheel:flywheel-fabric-api-${minecraftVersion}:${flywheelVersion}")
+    modRuntimeOnly("dev.engine-room.flywheel:flywheel-fabric-${minecraftVersion}:${flywheelVersion}")
+
+    annotationProcessor(implementation(include("io.github.llamalad7:mixinextras-fabric:0.4.1")))
 
     // Mods with compat
     modImplementation("com.terraformersmc:modmenu:${modmenuVersion}")
@@ -49,13 +55,6 @@ var modId = rootProject.modId
 
 loom {
     runs {
-        client {
-            vmArg("-XX:+AllowEnhancedClassRedefinition")
-            vmArg("-XX:+IgnoreUnrecognizedVMOptions")
-            vmArg("-Dmixin.debug.export=true")
-            vmArg("-Dmixin.env.remapRefMap=true")
-            vmArg("-Dmixin.env.refMapRemappingFile=${projectDir}/build/createSrgToMcp/output.srg")
-        }
         datagen {
             inherit(client)
             vmArg("-Dfabric-api.datagen")

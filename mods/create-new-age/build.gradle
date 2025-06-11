@@ -1,16 +1,21 @@
 plugins {
     id "java"
+    id "maven-publish"
     id "dev.architectury.loom" version "1.9-SNAPSHOT" apply false
+}
+
+allprojects {
+    group = "org.antarcticgardens.cna"
+    version = "${rootProject.modVersion}+${project.name}-mc${rootProject.minecraftVersion}"
 }
 
 subprojects {
     apply plugin: "java"
+    apply plugin: "maven-publish"
     apply plugin: "dev.architectury.loom"
-    
-    group = "org.antarcticgardens"
-    version = rootProject.modVersion
-    archivesBaseName = "create-new-age-${version}-${project.name}-${rootProject.minecraftVersion}"
-    
+
+    archivesBaseName = "create-new-age"
+
     repositories {
         mavenLocal()
         
@@ -22,8 +27,10 @@ subprojects {
 
         maven { url = "https://maven.createmod.net" } // Create Forge, Ponder, Flywheel
 
-        maven { url = "https://mvn.devos.one/snapshots/" } // Create Fabric, Fabric Registrate 
-        
+        maven { url = "https://mvn.devos.one/snapshots/" } // Create Fabric, Fabric Registrate
+
+        maven { url = "https://maven.idiotss.com/snapshots/" } // ESL
+
         maven { url = "https://maven.blamejared.com/" } // JEI
         
         // Create dependencies
@@ -43,17 +50,6 @@ subprojects {
         annotationProcessor("systems.manifold:manifold-preprocessor:2024.1.29")
         
         modImplementation("org.antarcticgardens.esl:esl-${project.name}-${rootProject.minecraftVersion}:${rootProject.eslVersion}+${project.name}-mc${rootProject.minecraftVersion}")
-
-        if (project.name != "fabric") { 
-            modApi("com.tterrag.registrate:Registrate:${rootProject.registrateVersion}")
-            modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${minecraftVersion}:${flywheelVersion}")
-            modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${minecraftVersion}:${flywheelVersion}")
-            modImplementation("com.simibubi.create:create-${rootProject.minecraftVersion}:${rootProject.createVersion}:slim") { transitive = false }
-            modImplementation("net.createmod.ponder:Ponder-Forge-${minecraftVersion}:${ponderVersion}")
-            compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
-            implementation("io.github.llamalad7:mixinextras-forge:0.4.1")
-        }
-        
         modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraftVersion}-common-api:${rootProject.jeiVersion}")
         
         if (project.name != "common") {
@@ -94,7 +90,16 @@ subprojects {
     java {
         withSourcesJar()
     }
-    
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                artifactId = project.archivesBaseName + "-${project.name}-${rootProject.minecraftVersion}"
+                from components.java
+            }
+        }
+    }
+
     tasks.withType(JavaCompile) {
         options.compilerArgs += ['-Xplugin:Manifold']
     }
