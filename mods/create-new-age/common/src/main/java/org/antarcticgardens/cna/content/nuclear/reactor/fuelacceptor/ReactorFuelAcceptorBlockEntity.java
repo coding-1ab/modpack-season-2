@@ -12,8 +12,16 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+#if !CNA_FABRIC
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.wrapper.InvWrapper;
+#endif
 import org.antarcticgardens.cna.CreateNewAge;
 import org.antarcticgardens.cna.CNATags;
 import org.antarcticgardens.cna.content.nuclear.reactor.RodFindingReactorBlockEntity;
@@ -149,4 +157,31 @@ public class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBlockEntity
             }
         }
     }
+
+// I really can't be bothered making this look pretty
+#if !CNA_FABRIC
+    private LazyOptional<IItemHandlerModifiable> chestHandler;
+
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
+        if (!this.remove && cap == ForgeCapabilities.ITEM_HANDLER) {
+            if (this.chestHandler == null) {
+                this.chestHandler = LazyOptional.of(this::createHandler);
+            }
+
+            return this.chestHandler.cast();
+        } else {
+            return super.getCapability(cap, side);
+        }
+    }
+
+    private IItemHandlerModifiable createHandler() {
+        BlockState state = this.getBlockState();
+        if (!(state.getBlock() instanceof ChestBlock)) {
+            return new InvWrapper(this);
+        } else {
+            Container inv = ChestBlock.getContainer((ChestBlock)state.getBlock(), state, this.getLevel(), this.getBlockPos(), true);
+            return new InvWrapper(inv == null ? this : inv);
+        }
+    }
+#endif
 }
