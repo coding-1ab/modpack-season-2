@@ -217,7 +217,7 @@ public final class LightRenderer implements NativeResource {
 
         private LightData(LightTypeRenderer<T> renderer) {
             this.renderer = renderer;
-            this.lights = new ArrayList<>();
+            this.lights = new LinkedList<>();
             this.lightsView = Collections.unmodifiableList(this.lights);
             this.removedLights = new HashSet<>();
         }
