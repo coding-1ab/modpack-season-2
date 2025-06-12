@@ -10,6 +10,7 @@ import io.github.ocelot.glslprocessor.api.visitor.GlslNodeStringWriter;
 import io.github.ocelot.glslprocessor.lib.anarres.cpp.LexerException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,7 +41,8 @@ public class ShaderBindingProcessor implements ShaderPreProcessor {
             Iterator<GlslTypeQualifier> qualifierIterator = type.getQualifiers().iterator();
             while (qualifierIterator.hasNext()) {
                 GlslTypeQualifier qualifier = qualifierIterator.next();
-                if (qualifier instanceof GlslTypeQualifier.Layout(List<GlslTypeQualifier.LayoutId> layoutIds)) {
+                if (qualifier instanceof GlslTypeQualifier.Layout(List<GlslTypeQualifier.LayoutId> list)) {
+                    List<GlslTypeQualifier.LayoutId> layoutIds = new ArrayList<>(list);
                     Iterator<GlslTypeQualifier.LayoutId> layoutIdIterator = layoutIds.iterator();
                     while (layoutIdIterator.hasNext()) {
                         GlslTypeQualifier.LayoutId layoutId = layoutIdIterator.next();
