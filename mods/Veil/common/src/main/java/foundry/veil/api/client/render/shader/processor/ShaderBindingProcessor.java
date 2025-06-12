@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Adds support for <code>layout(binding = #)</code> in the shader source without needing shader version 420.
@@ -38,7 +39,7 @@ public class ShaderBindingProcessor implements ShaderPreProcessor {
                 return;
             }
 
-            Iterator<GlslTypeQualifier> qualifierIterator = type.getQualifiers().iterator();
+            ListIterator<GlslTypeQualifier> qualifierIterator = type.getQualifiers().listIterator();
             while (qualifierIterator.hasNext()) {
                 GlslTypeQualifier qualifier = qualifierIterator.next();
                 if (qualifier instanceof GlslTypeQualifier.Layout(List<GlslTypeQualifier.LayoutId> list)) {
@@ -60,8 +61,13 @@ public class ShaderBindingProcessor implements ShaderPreProcessor {
                             layoutIdIterator.remove();
                         }
                     }
-                    if (layoutIds.isEmpty()) {
-                        qualifierIterator.remove();
+
+                    if (layoutIds.size() != list.size()) {
+                        if (layoutIds.isEmpty()) {
+                            qualifierIterator.remove();
+                        } else {
+                            qualifierIterator.set(GlslTypeQualifier.layout(layoutIds));
+                        }
                     }
                 }
             }
