@@ -67,6 +67,7 @@ public class LegacyVertexAttribBindingBuilder implements VertexArrayBuilder {
 
     @Override
     public VertexArrayBuilder setVertexAttribute(int index, int bufferIndex, int size, DataType type, boolean normalized, int relativeOffset) {
+        VertexArrayBuilder.validateFloatType(type, size);
         VertexArrayBuilder.validateRelativeOffset(relativeOffset);
         this.bindIndex(bufferIndex);
         glEnableVertexAttribArray(index);
@@ -77,6 +78,7 @@ public class LegacyVertexAttribBindingBuilder implements VertexArrayBuilder {
 
     @Override
     public VertexArrayBuilder setVertexIAttribute(int index, int bufferIndex, int size, DataType type, int relativeOffset) {
+        VertexArrayBuilder.validateIntType(type);
         VertexArrayBuilder.validateRelativeOffset(relativeOffset);
         this.bindIndex(bufferIndex);
         glEnableVertexAttribArray(index);
@@ -87,9 +89,7 @@ public class LegacyVertexAttribBindingBuilder implements VertexArrayBuilder {
 
     @Override
     public VertexArrayBuilder setVertexLAttribute(int index, int bufferIndex, int size, DataType type, int relativeOffset) {
-        if (!VeilRenderSystem.vertexAttribute64BitSupported()) {
-            throw new UnsupportedOperationException("Long attributes not supported");
-        }
+        VertexArrayBuilder.validateLongType(type);
         VertexArrayBuilder.validateRelativeOffset(relativeOffset);
         this.bindIndex(bufferIndex);
         glEnableVertexAttribArray(index);

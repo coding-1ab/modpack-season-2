@@ -1,5 +1,6 @@
 package foundry.veil.impl.client.render.shader.uniform;
 
+import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.shader.program.ShaderUniformCache;
 import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
 import org.jetbrains.annotations.ApiStatus;
@@ -14,6 +15,8 @@ import java.nio.*;
 import java.util.Objects;
 import java.util.function.IntSupplier;
 
+import static org.lwjgl.opengl.ARBBindlessTexture.glProgramUniformHandleui64vARB;
+import static org.lwjgl.opengl.ARBBindlessTexture.glUniformHandleui64vARB;
 import static org.lwjgl.opengl.ARBGPUShaderFP64.glGetUniformd;
 import static org.lwjgl.opengl.ARBGPUShaderFP64.glGetUniformdv;
 import static org.lwjgl.opengl.ARBGPUShaderInt64.glGetnUniformi64vARB;
@@ -95,7 +98,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     public float getFloat() {
         return switch (this.type) {
             case FLOAT -> glGetUniformf(this.program.getAsInt(), this.location);
-            case INT -> glGetUniformi(this.program.getAsInt(), this.location);
+            case SAMPLER, INT -> glGetUniformi(this.program.getAsInt(), this.location);
             case UNSIGNED_INT -> glGetUniformui(this.program.getAsInt(), this.location);
             case DOUBLE -> (float) glGetUniformd(this.program.getAsInt(), this.location);
             case LONG -> glGetnUniformi64vARB(this.program.getAsInt(), this.location);
@@ -114,7 +117,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
                     glGetUniformfv(this.program.getAsInt(), this.location, buffer);
                     buffer.get(dst);
                 }
-                case INT -> {
+                case SAMPLER, INT -> {
                     IntBuffer buffer = stack.mallocInt(Math.min(this.length, length));
                     glGetUniformiv(this.program.getAsInt(), this.location, buffer);
                     for (int i = 0; i < buffer.capacity(); i++) {
@@ -162,7 +165,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     public int getInt() {
         return switch (this.type) {
             case FLOAT -> (int) glGetUniformf(this.program.getAsInt(), this.location);
-            case INT -> glGetUniformi(this.program.getAsInt(), this.location);
+            case SAMPLER, INT -> glGetUniformi(this.program.getAsInt(), this.location);
             case UNSIGNED_INT -> glGetUniformui(this.program.getAsInt(), this.location);
             case DOUBLE -> (int) glGetUniformd(this.program.getAsInt(), this.location);
             case LONG -> (int) glGetnUniformi64vARB(this.program.getAsInt(), this.location);
@@ -183,7 +186,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
                         dst[i + offset] = (int) buffer.get(i);
                     }
                 }
-                case INT -> {
+                case SAMPLER, INT -> {
                     IntBuffer buffer = stack.mallocInt(Math.min(this.length, length));
                     glGetUniformiv(this.program.getAsInt(), this.location, buffer);
                     buffer.get(dst);
@@ -227,7 +230,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     public double getDouble() {
         return switch (this.type) {
             case FLOAT -> glGetUniformf(this.program.getAsInt(), this.location);
-            case INT -> glGetUniformi(this.program.getAsInt(), this.location);
+            case SAMPLER, INT -> glGetUniformi(this.program.getAsInt(), this.location);
             case UNSIGNED_INT -> glGetUniformui(this.program.getAsInt(), this.location);
             case DOUBLE -> glGetUniformd(this.program.getAsInt(), this.location);
             case LONG -> glGetnUniformi64vARB(this.program.getAsInt(), this.location);
@@ -248,7 +251,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
                         dst[i + offset] = buffer.get(i);
                     }
                 }
-                case INT -> {
+                case SAMPLER, INT -> {
                     IntBuffer buffer = stack.mallocInt(Math.min(this.length, length));
                     glGetUniformiv(this.program.getAsInt(), this.location, buffer);
                     for (int i = 0; i < buffer.capacity(); i++) {
@@ -294,7 +297,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     public long getLong() {
         return switch (this.type) {
             case FLOAT -> (long) glGetUniformf(this.program.getAsInt(), this.location);
-            case INT -> glGetUniformi(this.program.getAsInt(), this.location);
+            case SAMPLER, INT -> glGetUniformi(this.program.getAsInt(), this.location);
             case UNSIGNED_INT -> glGetUniformui(this.program.getAsInt(), this.location);
             case DOUBLE -> (long) glGetUniformd(this.program.getAsInt(), this.location);
             case LONG -> glGetnUniformi64vARB(this.program.getAsInt(), this.location);
@@ -315,7 +318,7 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
                         dst[i + offset] = (long) buffer.get(i);
                     }
                 }
-                case INT -> {
+                case SAMPLER, INT -> {
                     IntBuffer buffer = stack.mallocInt(Math.min(this.length, length));
                     glGetUniformiv(this.program.getAsInt(), this.location, buffer);
                     for (int i = 0; i < buffer.capacity(); i++) {
@@ -712,9 +715,13 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
 
     @Override
     public void setInt(int value) {
-        if ((this.type != Type.INT && this.type != Type.UNSIGNED_INT) ||
+        if ((this.type != Type.INT && this.type != Type.UNSIGNED_INT && this.type != Type.SAMPLER) ||
                 this.value.getInt(0) == value) {
             return;
+        }
+
+        if (this.type == Type.SAMPLER) {
+            this.value.limit(Integer.BYTES * this.length);
         }
 
         this.value.putInt(0, value);
@@ -957,13 +964,17 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     @Override
     public void setInts(int... values) {
         if (this.type != Type.INT && this.type != Type.INT_VEC2 && this.type != Type.INT_VEC3 && this.type != Type.INT_VEC4 &&
-                this.type != Type.UNSIGNED_INT && this.type != Type.UNSIGNED_INT_VEC2 && this.type != Type.UNSIGNED_INT_VEC3 && this.type != Type.UNSIGNED_INT_VEC4) {
+                this.type != Type.UNSIGNED_INT && this.type != Type.UNSIGNED_INT_VEC2 && this.type != Type.UNSIGNED_INT_VEC3 && this.type != Type.UNSIGNED_INT_VEC4 &&
+                this.type != Type.SAMPLER) {
             return;
         }
 
-        int length = Math.min(this.value.capacity() / this.type.getBytes(), values.length);
+        int length = Math.min(this.value.capacity() / (this.type == Type.SAMPLER ? Integer.BYTES : this.type.getBytes()), values.length);
         for (int i = 0; i < length; i++) {
             if (this.value.getInt(i * 4) != values[i]) {
+                if (this.type == Type.SAMPLER) {
+                    this.value.limit(Integer.BYTES * this.length);
+                }
                 this.value.asIntBuffer().put(0, values, 0, length);
                 this.upload();
                 break;
@@ -1119,6 +1130,46 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
             if (this.value.getLong(i * 8) != values[i]) {
                 this.value.asLongBuffer().put(0, values, 0, length);
                 this.upload();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void setHandle(long value) {
+        if (this.type != Type.SAMPLER || !VeilRenderSystem.bindlessTextureSupported() ||
+                this.value.getLong(0) == value) {
+            return;
+        }
+
+        this.value.limit(this.type.getBytes() * this.length);
+        this.value.putLong(0, value);
+
+        if (VeilRenderSystem.separateShaderObjectsSupported()) {
+            glProgramUniformHandleui64vARB(this.program.getAsInt(), this.location, this.value.asLongBuffer());
+        } else {
+            glUniformHandleui64vARB(this.location, this.value.asLongBuffer());
+        }
+    }
+
+    @Override
+    public void setHandles(long... values) {
+        if (this.type != Type.SAMPLER || !VeilRenderSystem.bindlessTextureSupported()) {
+            return;
+        }
+
+        int length = Math.min(this.value.capacity() / this.type.getBytes(), values.length);
+        for (int i = 0; i < length; i++) {
+            if (this.value.getLong(i * 8) != values[i]) {
+                this.value.limit(this.type.getBytes() * this.length);
+
+                LongBuffer longBuffer = this.value.asLongBuffer();
+                longBuffer.put(0, values, 0, length);
+                if (VeilRenderSystem.separateShaderObjectsSupported()) {
+                    glProgramUniformHandleui64vARB(this.program.getAsInt(), this.location, longBuffer);
+                } else {
+                    glUniformHandleui64vARB(this.location, longBuffer);
+                }
                 break;
             }
         }

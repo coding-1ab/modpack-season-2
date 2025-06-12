@@ -110,6 +110,8 @@ public final class VeilRenderSystem {
     private static final BooleanSupplier GPU_SHADER_FLOAT_64BIT_SUPPORTED = glCapability(caps -> caps.OpenGL40 || caps.GL_ARB_gpu_shader_fp64);
     private static final BooleanSupplier GPU_SHADER_INT_64BIT_SUPPORTED = glCapability(caps -> caps.GL_ARB_gpu_shader_int64);
     private static final BooleanSupplier VERTEX_ATTRIB_64BIT_SUPPORTED = glCapability(caps -> caps.OpenGL41 || caps.GL_ARB_vertex_attrib_64bit);
+    private static final BooleanSupplier BINDLESS_TEXTURE_SUPPORTED = glCapability(caps -> caps.GL_ARB_bindless_texture);
+    private static final BooleanSupplier VERTEX_TYPE_10F_11F_11F_REV_SUPPORTED = glCapability(caps -> caps.OpenGL44 || caps.GL_ARB_vertex_type_10f_11f_11f_rev);
 
     private static final IntSupplier MAX_COMBINED_TEXTURE_IMAGE_UNITS = glGetter(() -> glGetInteger(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS));
     private static final IntSupplier MAX_COLOR_ATTACHMENTS = glGetter(() -> glGetInteger(GL_MAX_COLOR_ATTACHMENTS));
@@ -668,6 +670,22 @@ public final class VeilRenderSystem {
      */
     public static boolean vertexAttribute64BitSupported() {
         return VERTEX_ATTRIB_64BIT_SUPPORTED.getAsBoolean();
+    }
+
+    /**
+     * @return Whether {@link ARBBindlessTexture} is supported
+     * @since 1.4.0
+     */
+    public static boolean bindlessTextureSupported() {
+        return BINDLESS_TEXTURE_SUPPORTED.getAsBoolean();
+    }
+
+    /**
+     * @return Whether {@link GL30C#GL_UNSIGNED_INT_10F_11F_11F_REV} is supported
+     * @since 1.4.0
+     */
+    public static boolean vertexType10F11F11FRevSupported() {
+        return VERTEX_TYPE_10F_11F_11F_REV_SUPPORTED.getAsBoolean();
     }
 
     /**

@@ -284,6 +284,25 @@ public interface ShaderUniform extends ShaderUniformAccess {
      * Possible uniform types that can be used.
      */
     enum Type {
+        /**
+         * @since 1.4.0
+         */
+        SAMPLER(0) {
+            @Override
+            public void upload(int program, int location, ByteBuffer buffer) {
+                if (VeilRenderSystem.separateShaderObjectsSupported()) {
+                    glProgramUniform1iv(program, location, buffer.asIntBuffer());
+                } else {
+                    if (program != ShaderInstance.lastProgramId) {
+                        glUseProgram(program);
+                    }
+                    glUniform1iv(location, buffer.asIntBuffer());
+                    if (program != ShaderInstance.lastProgramId) {
+                        glUseProgram(ShaderInstance.lastProgramId);
+                    }
+                }
+            }
+        },
         FLOAT(Float.BYTES) {
             @Override
             public void upload(int program, int location, ByteBuffer buffer) {
@@ -1029,7 +1048,7 @@ public interface ShaderUniform extends ShaderUniformAccess {
 
         public static Type byId(int type) {
             if (ShaderUniformCache.isSampler(type)) {
-                return INT;
+                return SAMPLER;
             }
             return switch (type) {
                 case GL_FLOAT -> FLOAT;
@@ -1080,6 +1099,9 @@ public interface ShaderUniform extends ShaderUniformAccess {
         }
 
         public int getBytes() {
+            if (this == SAMPLER) {
+                return VeilRenderSystem.bindlessTextureSupported() ? Long.BYTES : Integer.BYTES;
+            }
             return this.bytes;
         }
     }
