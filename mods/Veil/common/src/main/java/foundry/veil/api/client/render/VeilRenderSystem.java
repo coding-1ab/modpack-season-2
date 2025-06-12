@@ -207,7 +207,8 @@ public final class VeilRenderSystem {
     private static final Supplier<Vector2ic> MAX_FRAMEBUFFER_SIZE = Suppliers.memoize(() -> {
         RenderSystem.assertOnRenderThreadOrInit();
         if (!GL.getCapabilities().OpenGL43) {
-            return new Vector2i(Integer.MAX_VALUE);
+            int maxSupportedTextureSize = RenderSystem.maxSupportedTextureSize();
+            return new Vector2i(maxSupportedTextureSize, maxSupportedTextureSize);
         }
         int width = glGetInteger(GL_MAX_FRAMEBUFFER_WIDTH);
         int height = glGetInteger(GL_MAX_FRAMEBUFFER_HEIGHT);
