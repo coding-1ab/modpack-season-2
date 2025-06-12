@@ -2,7 +2,7 @@
   "type": "create:item_application",
   "ingredients": [
     {
-      "tag": "forge:sandstone"
+      "tag": "c:sandstone/blocks"
     },
     {
       "item": "minecraft:brick"
