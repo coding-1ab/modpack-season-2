@@ -17,6 +17,7 @@ import foundry.veil.api.client.render.framebuffer.VeilFramebuffers;
 import foundry.veil.api.client.render.light.renderer.LightRenderer;
 import foundry.veil.api.client.render.post.PostPipeline;
 import foundry.veil.api.client.render.post.PostProcessingManager;
+import foundry.veil.api.client.render.profiler.VeilRenderProfiler;
 import foundry.veil.api.client.render.rendertype.VeilRenderType;
 import foundry.veil.api.client.render.shader.ShaderManager;
 import foundry.veil.api.client.render.shader.block.ShaderBlock;
@@ -32,6 +33,7 @@ import foundry.veil.impl.client.render.dynamicbuffer.VanillaShaderCompiler;
 import foundry.veil.impl.client.render.pipeline.VeilBloomRenderer;
 import foundry.veil.impl.client.render.pipeline.VeilShaderBlockState;
 import foundry.veil.impl.client.render.pipeline.VeilShaderBufferCache;
+import foundry.veil.impl.client.render.profiler.VeilRenderProfilerImpl;
 import foundry.veil.impl.client.render.shader.program.ShaderProgramImpl;
 import foundry.veil.mixin.pipeline.accessor.PipelineBufferSourceAccessor;
 import foundry.veil.platform.VeilEventPlatform;
@@ -112,6 +114,7 @@ public final class VeilRenderSystem {
     private static final BooleanSupplier VERTEX_ATTRIB_64BIT_SUPPORTED = glCapability(caps -> caps.OpenGL41 || caps.GL_ARB_vertex_attrib_64bit);
     private static final BooleanSupplier BINDLESS_TEXTURE_SUPPORTED = glCapability(caps -> caps.GL_ARB_bindless_texture);
     private static final BooleanSupplier VERTEX_TYPE_10F_11F_11F_REV_SUPPORTED = glCapability(caps -> caps.OpenGL44 || caps.GL_ARB_vertex_type_10f_11f_11f_rev);
+    private static final BooleanSupplier PIPELINE_STATISTICS_QUERY_SUPPORTED = glCapability(caps -> caps.GL_ARB_pipeline_statistics_query);
 
     private static final IntSupplier MAX_COMBINED_TEXTURE_IMAGE_UNITS = glGetter(() -> glGetInteger(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS));
     private static final IntSupplier MAX_COLOR_ATTACHMENTS = glGetter(() -> glGetInteger(GL_MAX_COLOR_ATTACHMENTS));
@@ -689,6 +692,15 @@ public final class VeilRenderSystem {
         return VERTEX_TYPE_10F_11F_11F_REV_SUPPORTED.getAsBoolean();
     }
 
+
+    /**
+     * @return Whether {@link ARBPipelineStatisticsQuery} is supported
+     * @since 1.4.0
+     */
+    public static boolean pipelineStatisticsQuerySupported() {
+        return PIPELINE_STATISTICS_QUERY_SUPPORTED.getAsBoolean();
+    }
+
     /**
      * @return The GL maximum number of texture units that can be bound
      */
@@ -1149,6 +1161,7 @@ public final class VeilRenderSystem {
             AdvancedFbo.unbind();
         }
 
+        VeilRenderProfilerImpl.endFrame();
         UNIFORM_BLOCK_STATE.clearUsedBindings();
         VanillaShaderCompiler.clear();
 
@@ -1224,12 +1237,17 @@ public final class VeilRenderSystem {
         VeilDebug debug = VeilDebug.get();
         debug.pushDebugGroup("Veil Draw Lights");
 
+        VeilRenderProfiler renderProfiler = VeilRenderProfiler.get();
+        renderProfiler.push("veil_lights");
+
         LightRenderer lightRenderer = renderer.getLightRenderer();
         profiler.push("setup_lights");
         lightRenderer.setup(cullFrustum);
         profiler.popPush("draw_lights");
         boolean rendered = lightRenderer.render(lightFbo);
         profiler.pop();
+
+        renderProfiler.pop();
 
         debug.popDebugGroup();
         return rendered;

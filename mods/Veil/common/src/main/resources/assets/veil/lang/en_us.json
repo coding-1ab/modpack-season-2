@@ -63,6 +63,7 @@
   "inspector.veil.device_info.opengl.feature_flag.vertex_attribute_64": "64-Bit Vertex Attributes? %s",
   "inspector.veil.device_info.opengl.feature_flag.bindless_texture": "Bindless Texture? %s",
   "inspector.veil.device_info.opengl.feature_flag.vertex_type_10f_11f_11f_rev": "Vertex Type 10F_11F_11F_REV? %s",
+  "inspector.veil.device_info.opengl.feature_flag.pipeline_statistics_query": "Pipeline Statistics Query? %s",
 
   "inspector.veil.device_info.opengl.shader.max_uniform_components": "Max Uniform Components: %s",
   "inspector.veil.device_info.opengl.shader.max_uniform_blocks": "Max Uniform Blocks: %s",
@@ -104,6 +105,8 @@
   "inspector.veil.device_info.opengl.framebuffer.max_size": "Max Framebuffer Size: %sx%s",
   "inspector.veil.device_info.opengl.framebuffer.max_color_attachments": "Max Framebuffer Color Attachments: %s",
   "inspector.veil.device_info.opengl.framebuffer.max_samples": "Max Framebuffer Samples: %s",
+
+  "inspector.veil.pipeline_statistics.title": "Graphics Profiler",
 
   "inspector.veil.post.title": "Post Processing Editor",
   "inspector.veil.post.inactive": "Inactive Pipelines:",

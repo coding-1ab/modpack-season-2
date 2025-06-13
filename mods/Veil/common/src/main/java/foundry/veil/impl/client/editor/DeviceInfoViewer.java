@@ -121,6 +121,7 @@ public class DeviceInfoViewer extends SingleWindowInspector {
         flagText("inspector.veil.device_info.opengl.feature_flag.vertex_attribute_64", VeilRenderSystem.vertexAttribute64BitSupported(), "Whether 64-bit values can be used as vertex attributes");
         flagText("inspector.veil.device_info.opengl.feature_flag.bindless_texture", VeilRenderSystem.bindlessTextureSupported(), "Whether shaders can reference textures by handle instead of by unit");
         flagText("inspector.veil.device_info.opengl.feature_flag.vertex_type_10f_11f_11f_rev", VeilRenderSystem.vertexType10F11F11FRevSupported(), "Whether Vertex Arrays can use GL_UNSIGNED_INT_10F_11F_11F_REV");
+        flagText("inspector.veil.device_info.opengl.feature_flag.pipeline_statistics_query", VeilRenderSystem.pipelineStatisticsQuerySupported(), "Whether pipeline statistics be queried");
         ImGui.separator();
 
         GLCapabilities caps = GL.getCapabilities();

@@ -55,6 +55,7 @@ public class VeilClient {
 
                 // Debug editors
                 editorManager.add(new DeviceInfoViewer());
+                editorManager.add(new PipelineStatisticsViewer());
                 editorManager.add(new PostInspector());
                 editorManager.add(new ShaderInspector());
                 editorManager.add(new TextureInspector());
