@@ -22,6 +22,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.content.kinetics.deployer.ManualApplicationRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
+import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -37,7 +38,7 @@ public class MechanicalGrindStoneItem extends BlockItem {
     }
 
     public static ManualApplicationRecipe createRecipe() {
-        return new ProcessingRecipeBuilder<>(ManualApplicationRecipe::new, CEIBlocks.GRINDSTONE_DRAIN.getId())
+        return new ManualApplicationRecipe.Builder<>(ManualApplicationRecipe::new, CEIBlocks.GRINDSTONE_DRAIN.getId())
                 .require(AllBlocks.ITEM_DRAIN)
                 .require(CEIBlocks.MECHANICAL_GRINDSTONE)
                 .output(CEIBlocks.GRINDSTONE_DRAIN)

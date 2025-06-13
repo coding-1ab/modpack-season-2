@@ -22,6 +22,8 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
 import com.simibubi.create.content.equipment.sandPaper.SandPaperPolishingRecipe;
+import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
+import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import com.simibubi.create.content.processing.sequenced.IAssemblyRecipe;
 import java.util.List;
 import java.util.Optional;
@@ -35,23 +37,20 @@ import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
-import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipe;
-import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipeBuilder;
-import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipeParams;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
 import plus.dragons.createenchantmentindustry.integration.jei.category.assembly.AssemblyGrindingCategory;
 import plus.dragons.createenchantmentindustry.util.CEILang;
 
-public class GrindingRecipe extends CustomProcessingRecipe<SingleRecipeInput, CustomProcessingRecipeParams> implements IAssemblyRecipe {
-    public GrindingRecipe(CustomProcessingRecipeParams params) {
+public class GrindingRecipe extends StandardProcessingRecipe<SingleRecipeInput> implements IAssemblyRecipe {
+    public GrindingRecipe(ProcessingRecipeParams params) {
         super(CEIRecipes.GRINDING, params);
         if (fluidIngredients.size() + fluidResults.size() > 1)
             throw new IllegalArgumentException("Grinding recipe can only have either 1 fluid input or 1 fluid result");
     }
 
-    public static Builder builder(ResourceLocation id) {
-        return new Builder(id);
+    public static StandardProcessingRecipe.Builder<GrindingRecipe> builder(ResourceLocation id) {
+        return new StandardProcessingRecipe.Builder<>(GrindingRecipe::new, id);
     }
 
     public static Optional<RecipeHolder<GrindingRecipe>> fromPolishing(RecipeHolder<SandPaperPolishingRecipe> recipe) {
@@ -118,16 +117,5 @@ public class GrindingRecipe extends CustomProcessingRecipe<SingleRecipeInput, Cu
     @Override
     public Supplier<Supplier<SequencedAssemblySubCategory>> getJEISubCategory() {
         return () -> AssemblyGrindingCategory::new;
-    }
-
-    public static class Builder extends CustomProcessingRecipeBuilder<CustomProcessingRecipeParams, GrindingRecipe> {
-        protected Builder(ResourceLocation id) {
-            super(GrindingRecipe::new, id);
-        }
-
-        @Override
-        protected CustomProcessingRecipeParams createParams(ResourceLocation id) {
-            return new CustomProcessingRecipeParams(id);
-        }
     }
 }

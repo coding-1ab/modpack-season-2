@@ -43,6 +43,7 @@ import plus.dragons.createenchantmentindustry.common.processing.enchanter.CEIEnc
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 import plus.dragons.createenchantmentindustry.common.registry.CEIEnchantments;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
+import plus.dragons.createenchantmentindustry.config.CEIConfig;
 import plus.dragons.createenchantmentindustry.util.CEIIntIntPair;
 
 public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
@@ -64,7 +65,8 @@ public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
         if (customCost != null) {
             optional = customCost.stream().filter(pair -> pair.level() == enchantment.level).findFirst();
         }
-        this.cost = optional.map(CEIIntIntPair::value).orElseGet(() -> CEIEnchantmentHelper.getEnchantmentCost(enchantment.enchantment, enchantment.level));
+        this.cost = (int) (optional.map(CEIIntIntPair::value).orElseGet(() ->
+                        CEIEnchantmentHelper.getEnchantmentCost(enchantment.enchantment, enchantment.level)) * CEIConfig.fluids().printingEnchantedBookCostMultiplier.get());
     }
 
     public static MapCodec<EnchantedBookPrintingRecipeJEI> createCodec(ICodecHelper codecHelper, IRecipeManager recipeManager) {

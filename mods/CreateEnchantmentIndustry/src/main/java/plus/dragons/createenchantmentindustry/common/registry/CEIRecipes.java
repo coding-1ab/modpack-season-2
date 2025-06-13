@@ -19,31 +19,24 @@
 package plus.dragons.createenchantmentindustry.common.registry;
 
 import java.util.function.Supplier;
+
+import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipeParams;
-import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipeSerializer;
 import plus.dragons.createdragonsplus.common.recipe.RecipeTypeInfo;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrintingRecipe;
-import plus.dragons.createenchantmentindustry.common.fluids.printer.PrintingRecipeParams;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindingRecipe;
 
 public class CEIRecipes {
     private static final DeferredRegister<RecipeType<?>> TYPES = DeferredRegister.create(BuiltInRegistries.RECIPE_TYPE, CEICommon.ID);
     private static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS = DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, CEICommon.ID);
-    public static final RecipeTypeInfo<PrintingRecipe> PRINTING = register("printing", () -> new CustomProcessingRecipeSerializer<>(
-            PrintingRecipe::new,
-            PrintingRecipeParams.CODEC,
-            PrintingRecipeParams.STREAM_CODEC));
-    public static final RecipeTypeInfo<GrindingRecipe> GRINDING = register("grinding", () -> new CustomProcessingRecipeSerializer<>(
-            GrindingRecipe::new,
-            CustomProcessingRecipeParams.CODEC,
-            CustomProcessingRecipeParams.STREAM_CODEC));
+    public static final RecipeTypeInfo<PrintingRecipe> PRINTING = register("printing", () -> new PrintingRecipe.Serializer<>(PrintingRecipe::new));
+    public static final RecipeTypeInfo<GrindingRecipe> GRINDING = register("grinding", () -> new StandardProcessingRecipe.Serializer<>(GrindingRecipe::new));
 
     public static void register(IEventBus modBus) {
         TYPES.register(modBus);

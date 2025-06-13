@@ -25,6 +25,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTank
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.simibubi.create.foundation.fluid.FluidRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import net.createmod.catnip.platform.NeoForgeCatnipServices;
 import net.createmod.catnip.render.CachedBuffers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -58,11 +59,11 @@ public class PrinterRenderer extends SmartBlockEntityRenderer<PrinterBlockEntity
             float max = min + (11 / 16f);
             float minY = top ? (max - fluidLevel) : min;
             float maxY = top ? max : (min + fluidLevel);
-            FluidRenderer.renderFluidBox(fluidStack.getFluid(), fluidStack.getAmount(),
+            NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(fluidStack,
                     min, minY, min,
                     max, maxY, max,
                     buffer, poseStack, light,
-                    false, true, fluidStack.getComponentsPatch());
+                    false, true);
         }
 
         float progress = getProgress(printer.processingTicks - partialTicks);

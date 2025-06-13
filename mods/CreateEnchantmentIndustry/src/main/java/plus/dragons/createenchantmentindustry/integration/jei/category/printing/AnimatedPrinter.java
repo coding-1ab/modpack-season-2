@@ -26,6 +26,7 @@ import com.simibubi.create.compat.jei.category.animations.AnimatedKinetics;
 import com.simibubi.create.foundation.fluid.FluidRenderer;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.gui.UIRenderHelper;
+import net.createmod.catnip.platform.NeoForgeCatnipServices;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -92,7 +93,11 @@ public class AnimatedPrinter extends AnimatedKinetics {
         poseStack.scale(16, 16, 16);
         float from = 3f / 16f;
         float to = 17f / 16f;
-        FluidRenderer.renderFluidBox(fluid.getFluid(), fluid.getAmount(), from, from, from, to, to, to, graphics.bufferSource(), poseStack, LightTexture.FULL_BRIGHT, false, true, fluid.getComponentsPatch());
+        NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(fluid,
+                from, from, from,
+                to, to, to,
+                graphics.bufferSource(), poseStack, LightTexture.FULL_BRIGHT,
+                false, true);
         poseStack.popPose();
         graphics.flush();
         Lighting.setupFor3DItems();

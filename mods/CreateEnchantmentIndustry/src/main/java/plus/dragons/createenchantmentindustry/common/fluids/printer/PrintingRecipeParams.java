@@ -24,6 +24,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.content.processing.recipe.ProcessingOutput;
+import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
 import com.simibubi.create.foundation.fluid.FluidIngredient;
 import io.netty.buffer.ByteBuf;
 import java.util.function.Function;
@@ -32,15 +33,13 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.valueproviders.ConstantFloat;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.effects.PlaySoundEffect;
-import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipeParams;
 import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
 
 @FieldsNullabilityUnknownByDefault
-public class PrintingRecipeParams extends CustomProcessingRecipeParams {
+public class PrintingRecipeParams extends ProcessingRecipeParams {
     protected static final Codec<PlaySoundEffect> SOUND_CODEC = Codec.either(
             BuiltInRegistries.SOUND_EVENT.holderByNameCodec(),
             PlaySoundEffect.CODEC.codec()).xmap(
@@ -57,12 +56,12 @@ public class PrintingRecipeParams extends CustomProcessingRecipeParams {
     public static final StreamCodec<RegistryFriendlyByteBuf, PrintingRecipeParams> STREAM_CODEC = streamCodec(PrintingRecipeParams::new);
     protected PlaySoundEffect sound;
 
-    protected PrintingRecipeParams(ResourceLocation id) {
-        super(id);
+    protected PrintingRecipeParams() {
+        super();
     }
 
-    public PrintingRecipeParams(ResourceLocation id, PlaySoundEffect sound) {
-        super(id);
+    public PrintingRecipeParams(PlaySoundEffect sound) {
+        super();
         this.sound = sound;
     }
 

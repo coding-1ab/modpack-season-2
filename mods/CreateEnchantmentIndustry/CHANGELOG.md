@@ -1,7 +1,10 @@
-### Create: Enchantment Industry 2.1.5
+### Create: Enchantment Industry 2.1.6
+
+Update for Create 6.0.6
 
 #### Update
-- Experience Lanterns now pull in experience orbs (by @Catman06)
+- Update Mexican Spanish Translation by @Oscar Pacheco
 
 #### Fix
-- Fix right-click Mechanical Grindstone with empty hand causes crash
+- Fix printingEnchantedBookCostMultiplier doesn't affect printing cost
+- Fix Blaze Enchanter/Forger crash when be destroyed by lightning strike when being pumped in.

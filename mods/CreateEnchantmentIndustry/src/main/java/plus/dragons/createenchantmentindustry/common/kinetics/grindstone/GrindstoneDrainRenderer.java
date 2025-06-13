@@ -27,6 +27,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTank
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour.TankSegment;
 import com.simibubi.create.foundation.fluid.FluidRenderer;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
+import net.createmod.catnip.platform.NeoForgeCatnipServices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
@@ -128,13 +129,12 @@ public class GrindstoneDrainRenderer extends KineticBlockEntityRenderer<Grindsto
             float max = min + (12 / 16f);
             float minY = 5f / 16f;
             level *= (7 / 16f);
-            FluidRenderer.renderFluidBox(
-                    fluidStack.getFluid(), fluidStack.getAmount(),
+            NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(
+                    fluidStack,
                     min, minY, min,
                     max, minY + level, max,
                     buffer, poseStack, light,
-                    false, false,
-                    fluidStack.getComponentsPatch());
+                    false, false);
         }
     }
 }

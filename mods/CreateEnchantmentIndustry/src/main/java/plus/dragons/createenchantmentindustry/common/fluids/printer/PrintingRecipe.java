@@ -18,7 +18,10 @@
 
 package plus.dragons.createenchantmentindustry.common.fluids.printer;
 
+import com.mojang.serialization.MapCodec;
 import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
+import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
+import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
 import com.simibubi.create.content.processing.sequenced.IAssemblyRecipe;
 import com.simibubi.create.foundation.fluid.FluidIngredient;
 import java.util.List;
@@ -26,7 +29,9 @@ import java.util.Set;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -34,18 +39,17 @@ import net.minecraft.util.valueproviders.ConstantFloat;
 import net.minecraft.util.valueproviders.UniformFloat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.effects.PlaySoundEffect;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
-import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipe;
-import plus.dragons.createdragonsplus.common.recipe.CustomProcessingRecipeBuilder;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
 import plus.dragons.createenchantmentindustry.integration.jei.category.assembly.AssemblyPrintingCategory;
 import plus.dragons.createenchantmentindustry.util.CEILang;
 
-public class PrintingRecipe extends CustomProcessingRecipe<PrintingInput, PrintingRecipeParams> implements IAssemblyRecipe {
+public class PrintingRecipe extends ProcessingRecipe<PrintingInput, PrintingRecipeParams> implements IAssemblyRecipe {
     public PrintingRecipe(PrintingRecipeParams params) {
         super(CEIRecipes.PRINTING, params);
     }
@@ -125,7 +129,7 @@ public class PrintingRecipe extends CustomProcessingRecipe<PrintingInput, Printi
         return () -> AssemblyPrintingCategory::new;
     }
 
-    public static class Builder extends CustomProcessingRecipeBuilder<PrintingRecipeParams, PrintingRecipe> {
+    public static class Builder extends ProcessingRecipeBuilder<PrintingRecipeParams, PrintingRecipe, Builder> {
         protected Builder(ResourceLocation id, PlaySoundEffect sound) {
             super(PrintingRecipe::new, id);
             PrintingRecipeParams params = (PrintingRecipeParams) this.params;
@@ -133,8 +137,33 @@ public class PrintingRecipe extends CustomProcessingRecipe<PrintingInput, Printi
         }
 
         @Override
-        protected PrintingRecipeParams createParams(ResourceLocation id) {
-            return new PrintingRecipeParams(id);
+        protected PrintingRecipeParams createParams() {
+            return new PrintingRecipeParams();
+        }
+
+        @Override
+        public Builder self() {
+            return this;
+        }
+    }
+
+    public static class Serializer<R extends PrintingRecipe> implements RecipeSerializer<R> {
+        private final MapCodec<R> codec;
+        private final StreamCodec<RegistryFriendlyByteBuf, R> streamCodec;
+
+        public Serializer(ProcessingRecipe.Factory<PrintingRecipeParams, R> factory) {
+            this.codec = ProcessingRecipe.codec(factory, PrintingRecipeParams.CODEC);
+            this.streamCodec = ProcessingRecipe.streamCodec(factory, PrintingRecipeParams.STREAM_CODEC);
+        }
+
+        @Override
+        public MapCodec<R> codec() {
+            return codec;
+        }
+
+        @Override
+        public StreamCodec<RegistryFriendlyByteBuf, R> streamCodec() {
+            return streamCodec;
         }
     }
 }

@@ -72,7 +72,7 @@ public class BlazeForgerBlockEntity extends BlazeExperienceBlockEntity {
     }
 
     public @Nullable IFluidHandler getFluidHandler(@Nullable Direction side) {
-        if (side == Direction.DOWN || side == null && !isRemoved())
+        if ((side == Direction.DOWN || side == null ) && !isRemoved())
             return tanks.getCapability();
         return null;
     }
