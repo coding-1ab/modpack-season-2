@@ -8,10 +8,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static org.lwjgl.opengl.GL15C.*;
@@ -22,6 +19,8 @@ public final class VeilRenderProfilerImpl {
 
     private static final Map<String, PathEntry> ENTRIES = new Object2ObjectOpenHashMap<>();
     private static final List<String> paths = new LinkedList<>();
+    private static final BitSet ENABLED_STATISTICS = new BitSet(VeilRenderProfiler.StatisticType.ALL.length);
+    private static final Set<String> ENABLED_PATHS = new HashSet<>();
     private static String path = "";
     private static int[] queries;
 
@@ -30,6 +29,15 @@ public final class VeilRenderProfilerImpl {
 
     public static VeilRenderProfiler get() {
         return isEnabled() ? ActiveProfiler.INSTANCE : InactiveProfiler.INSTANCE;
+    }
+
+    public static void setEnabled(Collection<String> enabledPaths, VeilRenderProfiler.StatisticType[] statistics) {
+        ENABLED_PATHS.clear();
+        ENABLED_PATHS.addAll(enabledPaths);
+        ENABLED_STATISTICS.clear();
+        for (VeilRenderProfiler.StatisticType statistic : statistics) {
+            ENABLED_STATISTICS.set(statistic.ordinal());
+        }
     }
 
     public static void endFrame() {
@@ -89,7 +97,6 @@ public final class VeilRenderProfilerImpl {
 //            list.add(new ResultField("unspecified", (double) ((float) l - f) * 100.0 / (double) l, (double) ((float) l - f) * 100.0 / (double) i, localCount));
 //        }
 
-        Collections.sort(list);
         return list;
     }
 
@@ -155,7 +162,9 @@ public final class VeilRenderProfilerImpl {
             }
 
             for (VeilRenderProfiler.StatisticType statistic : this.statistics) {
-                glBeginQuery(statistic.getId(), queries[statistic.ordinal()]);
+                if (ENABLED_STATISTICS.get(statistic.ordinal())) {
+                    glBeginQuery(statistic.getId(), queries[statistic.ordinal()]);
+                }
             }
 
             this.tracking = true;
@@ -163,22 +172,26 @@ public final class VeilRenderProfilerImpl {
 
         public void stop() {
             for (VeilRenderProfiler.StatisticType statistic : this.statistics) {
-                glEndQuery(statistic.getId());
-                int index = statistic.ordinal();
-                long count = glGetQueryObjecti64(queries[index], GL_QUERY_RESULT);
-                this.accumulatedCounters[index] += count;
+                if (ENABLED_STATISTICS.get(statistic.ordinal())) {
+                    glEndQuery(statistic.getId());
+                    int index = statistic.ordinal();
+                    long count = glGetQueryObjecti64(queries[index], GL_QUERY_RESULT);
+                    this.accumulatedCounters[index] += count;
+                }
             }
         }
 
         public void end(@Nullable PathEntry previous) {
             for (VeilRenderProfiler.StatisticType statistic : this.statistics) {
-                glEndQuery(statistic.getId());
-                int index = statistic.ordinal();
-                long count = glGetQueryObjecti64(queries[index], GL_QUERY_RESULT);
-                if (previous != null) {
-                    previous.accumulatedCounters[index] += count;
+                if (ENABLED_STATISTICS.get(statistic.ordinal())) {
+                    glEndQuery(statistic.getId());
+                    int index = statistic.ordinal();
+                    long count = glGetQueryObjecti64(queries[index], GL_QUERY_RESULT);
+                    if (previous != null) {
+                        previous.accumulatedCounters[index] += count;
+                    }
+                    this.accumulatedCounters[index] += count;
                 }
-                this.accumulatedCounters[index] += count;
             }
             this.tracking = false;
 
@@ -214,15 +227,16 @@ public final class VeilRenderProfilerImpl {
 
             paths.add(path);
             PathEntry entry = ENTRIES.get(path);
-            //noinspection Java8MapApi
             if (entry == null) {
                 entry = new PathEntry(statistics);
                 ENTRIES.put(path, entry);
             }
-            if (old != null && old.tracking) {
-                old.stop();
+            if (ENABLED_PATHS.contains(path)) {
+                if (old != null && old.tracking) {
+                    old.stop();
+                }
+                entry.begin();
             }
-            entry.begin();
         }
 
         @Override
@@ -242,7 +256,7 @@ public final class VeilRenderProfilerImpl {
             path = paths.isEmpty() ? "" : paths.getLast();
 
             PathEntry previous = ENTRIES.get(path);
-            if (current != null) {
+            if (current != null && current.tracking) {
                 current.end(previous != null && previous.tracking ? previous : null);
             }
         }

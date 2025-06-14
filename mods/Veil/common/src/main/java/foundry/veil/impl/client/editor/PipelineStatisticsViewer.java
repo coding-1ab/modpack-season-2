@@ -14,11 +14,11 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
-import org.lwjgl.opengl.GL;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @ApiStatus.Internal
 public class PipelineStatisticsViewer implements Inspector {
@@ -27,6 +27,7 @@ public class PipelineStatisticsViewer implements Inspector {
     public static final int HISTORY_LENGTH = 200;
 
     private final ImBoolean open = new ImBoolean();
+    private final Set<String> enabledPaths = new HashSet<>();
     private final ObjectList<Map<String, VeilRenderProfilerImpl.ResultField>> history = new ObjectArrayList<>(HISTORY_LENGTH);
     private int historyIndex = 0;
 
@@ -42,11 +43,11 @@ public class PipelineStatisticsViewer implements Inspector {
 
     @Override
     public boolean isEnabled() {
-        return GL.getCapabilities().GL_ARB_pipeline_statistics_query;
+        return VeilRenderSystem.pipelineStatisticsQuerySupported();
     }
 
     private void renderComponents() {
-        if (!GL.getCapabilities().GL_ARB_pipeline_statistics_query) {
+        if (!VeilRenderSystem.pipelineStatisticsQuerySupported()) {
             return;
         }
 
@@ -54,6 +55,9 @@ public class PipelineStatisticsViewer implements Inspector {
             this.history.add(new Object2ObjectOpenHashMap<>());
         }
 
+        VeilRenderProfilerImpl.setEnabled(this.enabledPaths, VeilRenderProfiler.StatisticType.ALL);
+
+        this.enabledPaths.clear();
         this.renderCounters("", VeilRenderProfiler.StatisticType.FRAGMENT_SHADER_INVOCATIONS);
         this.historyIndex++;
         this.historyIndex %= HISTORY_LENGTH;
@@ -76,6 +80,7 @@ public class PipelineStatisticsViewer implements Inspector {
                 map.put(label, field);
 
                 if (ImGui.collapsingHeader("Plot")) {
+                    this.enabledPaths.add(path.isBlank() ? path : path + '\u001e' + field.name());
                     VeilRenderProfiler.StatisticType[] statistics = field.statistics();
                     long[] values = new long[HISTORY_LENGTH];
                     for (VeilRenderProfiler.StatisticType statistic : statistics) {

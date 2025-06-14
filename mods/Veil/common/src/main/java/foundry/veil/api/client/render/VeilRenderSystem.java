@@ -1238,7 +1238,15 @@ public final class VeilRenderSystem {
         debug.pushDebugGroup("Veil Draw Lights");
 
         VeilRenderProfiler renderProfiler = VeilRenderProfiler.get();
-        renderProfiler.push("veil_lights");
+        renderProfiler.push("veil_lights",
+                VeilRenderProfiler.StatisticType.VERTICES_SUBMITTED,
+                VeilRenderProfiler.StatisticType.PRIMITIVES_SUBMITTED,
+                VeilRenderProfiler.StatisticType.VERTEX_SHADER_INVOCATIONS,
+                VeilRenderProfiler.StatisticType.FRAGMENT_SHADER_INVOCATIONS,
+                VeilRenderProfiler.StatisticType.COMPUTE_SHADER_INVOCATIONS,
+                VeilRenderProfiler.StatisticType.CLIPPING_INPUT_PRIMITIVES,
+                VeilRenderProfiler.StatisticType.CLIPPING_OUTPUT_PRIMITIVES
+        );
 
         LightRenderer lightRenderer = renderer.getLightRenderer();
         profiler.push("setup_lights");
