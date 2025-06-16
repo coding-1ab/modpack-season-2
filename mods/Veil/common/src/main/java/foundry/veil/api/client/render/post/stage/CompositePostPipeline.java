@@ -60,7 +60,7 @@ public final class CompositePostPipeline implements PostPipeline {
     private CompositePostPipeline(PostPipeline[] stages, Map<String, ShaderTextureSource> textures, Map<ResourceLocation, FramebufferDefinition> framebufferDefinitions, @Nullable VeilRenderLevelStageEvent.Stage renderStage, int dynamicBuffers, int priority, boolean replace) {
         this.stages = stages;
         this.textureSources = Collections.unmodifiableMap(textures);
-        this.textures = new HashMap<>(textures.size());
+        this.textures = new Object2ObjectArrayMap<>(textures.size());
         Minecraft.getInstance().execute(() -> {
             for (Map.Entry<String, ShaderTextureSource> entry : textures.entrySet()) {
                 this.textures.put(entry.getKey(), ShaderProgramImpl.ShaderTexture.create(entry.getValue()));
@@ -68,7 +68,7 @@ public final class CompositePostPipeline implements PostPipeline {
         });
         this.framebufferDefinitions = Collections.unmodifiableMap(framebufferDefinitions);
         this.renderStage = renderStage;
-        this.framebuffers = new HashMap<>();
+        this.framebuffers = new Object2ObjectArrayMap<>();
         this.uniforms = new Object2ObjectArrayMap<>();
         this.dynamicBuffers = DynamicBufferType.decode(dynamicBuffers);
         this.dynamicBuffersMask = dynamicBuffers;
@@ -111,7 +111,10 @@ public final class CompositePostPipeline implements PostPipeline {
         for (DynamicBufferType buffer : this.dynamicBuffers) {
             context.setSampler(buffer.getSourceName(), VeilRenderSystem.renderer().getDynamicBufferManger().getBufferTexture(buffer), 0);
         }
-        this.textures.forEach((name, texture) -> context.setSampler(name, texture.textureSource().getId(context), texture.samplerId()));
+        for (Map.Entry<String, ShaderProgramImpl.ShaderTexture> entry : this.textures.entrySet()) {
+            ShaderProgramImpl.ShaderTexture texture = entry.getValue();
+            context.setSampler(entry.getKey(), texture.textureSource().getId(context), texture.samplerId());
+        }
         for (PostPipeline pipeline : this.stages) {
             pipeline.apply(context);
         }
@@ -155,7 +158,7 @@ public final class CompositePostPipeline implements PostPipeline {
     @Override
     public ShaderUniformAccess getOrCreateUniform(CharSequence name) {
         return this.uniforms.computeIfAbsent(name.toString(), key -> ShaderUniformAccess.of(Arrays.stream(this.stages)
-                .map(pipeline -> pipeline.getOrCreateUniform(name))
+                .map(pipeline -> pipeline.getOrCreateUniform(key))
                 .toArray(ShaderUniformAccess[]::new)));
     }
 
