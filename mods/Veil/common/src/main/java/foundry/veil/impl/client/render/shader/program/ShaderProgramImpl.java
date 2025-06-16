@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.VertexFormatElement;
 import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.ext.VeilDebug;
+import foundry.veil.api.client.render.shader.ShaderFeature;
 import foundry.veil.api.client.render.shader.ShaderSourceSet;
 import foundry.veil.api.client.render.shader.block.ShaderBlock;
 import foundry.veil.api.client.render.shader.compiler.CompiledShader;
@@ -33,6 +34,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -81,9 +84,10 @@ public class ShaderProgramImpl implements ShaderProgram {
     private final ResourceLocation name;
     private final ShaderTextureCache textures;
     private final Int2ObjectMap<CompiledProgram> programs;
-    private final Map<String, ShaderTexture> definitionTextures;
+    private final Object2ObjectMap<String, ShaderTexture> definitionSamplers;
+    private final ObjectSet<ShaderFeature> requiredFeatures;
     private final Object2ObjectMap<CharSequence, ShaderBlock<?>> shaderBlocks;
-    private final Map<String, ShaderUniformImpl> uniforms;
+    private final Object2ObjectMap<String, ShaderUniformImpl> uniforms;
     private final Supplier<Wrapper> wrapper;
 
     private VertexFormat vertexFormat;
@@ -94,7 +98,8 @@ public class ShaderProgramImpl implements ShaderProgram {
         this.name = name;
         this.textures = new ShaderTextureCache(this);
         this.programs = new Int2ObjectArrayMap<>(1);
-        this.definitionTextures = new Object2ObjectArrayMap<>();
+        this.definitionSamplers = new Object2ObjectArrayMap<>();
+        this.requiredFeatures = new ObjectArraySet<>();
         this.shaderBlocks = new Object2ObjectArrayMap<>();
         this.uniforms = new Object2ObjectArrayMap<>();
         this.wrapper = Suppliers.memoize(() -> {
@@ -188,15 +193,23 @@ public class ShaderProgramImpl implements ShaderProgram {
     }
 
     public void compile(int activeBuffers, ShaderSourceSet sourceSet, @Nullable ProgramDefinition definition, ShaderCompiler compiler) throws ShaderException, IOException {
+        ProgramDefinition old = this.definition;
         this.definition = definition;
-        this.recompile(activeBuffers, sourceSet, compiler);
+        try {
+            this.recompile(activeBuffers, sourceSet, compiler);
+        } catch (Throwable t) {
+            this.definition = old;
+            throw t;
+        }
         // Compilation was successful, so update the state of this program
-        this.definitionTextures.values().forEach(NativeResource::free);
-        this.definitionTextures.clear();
+        this.definitionSamplers.values().forEach(NativeResource::free);
+        this.definitionSamplers.clear();
+        this.requiredFeatures.clear();
         if (this.definition != null) {
-            for (Map.Entry<String, ShaderTextureSource> entry : this.definition.textures().entrySet()) {
-                this.definitionTextures.put(entry.getKey(), ShaderTexture.create(entry.getValue()));
+            for (Map.Entry<String, ShaderTextureSource> entry : this.definition.samplers().entrySet()) {
+                this.definitionSamplers.put(entry.getKey(), ShaderTexture.create(entry.getValue()));
             }
+            this.requiredFeatures.addAll(Arrays.asList(this.definition.requiredFeatures()));
         }
     }
 
@@ -266,8 +279,8 @@ public class ShaderProgramImpl implements ShaderProgram {
         }
         this.uniforms.values().forEach(ShaderUniformImpl::free);
         this.uniforms.clear();
-        this.definitionTextures.values().forEach(NativeResource::free);
-        this.definitionTextures.clear();
+        this.definitionSamplers.values().forEach(NativeResource::free);
+        this.definitionSamplers.clear();
         this.vertexFormat = null;
         this.compiledProgram = null;
     }
@@ -285,6 +298,11 @@ public class ShaderProgramImpl implements ShaderProgram {
     @Override
     public boolean isValid() {
         return this.compiledProgram != null;
+    }
+
+    @Override
+    public Set<ShaderFeature> getRequiredFeatures() {
+        return this.requiredFeatures;
     }
 
     @Override
@@ -330,7 +348,7 @@ public class ShaderProgramImpl implements ShaderProgram {
 
     @Override
     public ShaderUniformImpl getOrCreateUniform(CharSequence name) {
-        return this.uniforms.computeIfAbsent(name.toString(), key -> new ShaderUniformImpl(this::getProgram, key));
+        return this.uniforms.computeIfAbsent(name.toString(), key -> new ShaderUniformImpl(this::getProgram, (String) key));
     }
 
     @Override
@@ -383,7 +401,10 @@ public class ShaderProgramImpl implements ShaderProgram {
         }
 
         if (context != null) {
-            this.definitionTextures.forEach((name, source) -> this.setSampler(name, source.textureSource.getId(context), source.samplerId()));
+            for (Map.Entry<String, ShaderTexture> entry : this.definitionSamplers.entrySet()) {
+                ShaderTexture source = entry.getValue();
+                this.setSampler(entry.getKey(), source.textureSource.getId(context), source.samplerId());
+            }
         }
         this.textures.bind(this.compiledProgram.uniformCache, samplerStart);
     }

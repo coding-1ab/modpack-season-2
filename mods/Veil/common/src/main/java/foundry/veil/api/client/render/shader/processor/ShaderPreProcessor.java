@@ -2,6 +2,7 @@ package foundry.veil.api.client.render.shader.processor;
 
 import com.mojang.blaze3d.vertex.VertexFormat;
 import foundry.veil.api.client.render.VeilRenderSystem;
+import foundry.veil.api.client.render.shader.ShaderFeature;
 import foundry.veil.api.client.render.shader.ShaderManager;
 import foundry.veil.api.client.render.shader.ShaderPreDefinitions;
 import foundry.veil.api.client.render.shader.program.ProgramDefinition;
@@ -170,6 +171,17 @@ public interface ShaderPreProcessor {
          */
         default boolean isTessellationEvaluation() {
             return this.type() == GL_TESS_EVALUATION_SHADER;
+        }
+
+        /**
+         * Checks if the requested shader features are available.
+         *
+         * @param features The features to check for
+         * @return Whether those features are supported
+         * @since 1.4.0
+         */
+        default boolean hasFeatures(ShaderFeature... features) {
+            return VeilRenderSystem.renderer().getShaderManager().hasFeatures(features);
         }
 
         /**

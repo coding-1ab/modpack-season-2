@@ -1,6 +1,7 @@
 package foundry.veil.impl.client.render.shader.program;
 
 import foundry.veil.Veil;
+import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.client.render.shader.ShaderManager;
 import foundry.veil.api.client.render.shader.ShaderPreDefinitions;
@@ -90,6 +91,7 @@ public class DynamicShaderProgramImpl extends ShaderProgramImpl {
 
                     Map<String, String> macros = new HashMap<>(definitions.getStaticDefinitions());
                     DynamicBufferType.addMacros(activeBuffers, macros);
+                    VeilRenderSystem.renderer().getShaderManager().addMacros(macros);
                     GlslTree tree = GlslParser.preprocessParse(source, macros);
                     Object2IntMap<String> uniformBindings = new Object2IntArrayMap<>();
                     PreProcessorContext preProcessorContext = new PreProcessorContext(customProgramData, processorList, activeBuffers, type, uniformBindings, macros, null, true);
