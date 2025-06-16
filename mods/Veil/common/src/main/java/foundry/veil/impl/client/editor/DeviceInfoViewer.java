@@ -201,14 +201,6 @@ public class DeviceInfoViewer extends SingleWindowInspector {
         text("inspector.veil.device_info.opengl.framebuffer.max_samples", null, VeilRenderSystem.maxSamples());
     }
 
-    private void renderOpenAL() {
-        ImGui.pushStyleColor(ImGuiCol.Text, 0xFFFFFFFF);
-        text("inspector.veil.device_info.openal.vendor", null, alGetString(AL_VENDOR));
-        text("inspector.veil.device_info.openal.renderer", null, alGetString(AL_RENDERER));
-        text("inspector.veil.device_info.openal.version", null, alGetString(AL_VERSION));
-        ImGui.popStyleColor();
-    }
-
     public static Component getShaderName(int shader) {
         return SHADER_TYPES.get(shader);
     }
@@ -228,21 +220,6 @@ public class DeviceInfoViewer extends SingleWindowInspector {
         ImGui.pushStyleColor(ImGuiCol.Text, TEXT_COLOR);
         this.renderOpenGL();
         ImGui.popStyleColor();
-//        if (ImGui.beginTabBar("##info")) {
-//            if (ImGui.beginTabItem(I18n.get("inspector.veil.device_info.opengl"))) {
-//                ImGui.pushStyleColor(ImGuiCol.Text, TEXT_COLOR);
-//                this.renderOpenGL();
-//                ImGui.popStyleColor();
-//                ImGui.endTabItem();
-//            }
-//            if (ImGui.beginTabItem(I18n.get("inspector.veil.device_info.openal"))) {
-//                ImGui.pushStyleColor(ImGuiCol.Text, TEXT_COLOR);
-//                this.renderOpenAL();
-//                ImGui.popStyleColor();
-//                ImGui.endTabItem();
-//            }
-//            ImGui.endTabBar();
-//        }
     }
 
     @Override
