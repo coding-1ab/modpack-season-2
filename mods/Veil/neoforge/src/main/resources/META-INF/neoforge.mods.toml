@@ -45,8 +45,6 @@ description='''${description}'''
 [[mixins]]
     config = "${mod_id}.shader.mixins.json"
 [[mixins]]
-    config = "${mod_id}.tooltip.mixins.json"
-[[mixins]]
     config = "${mod_id}.neoforge.mixins.json"
 [[accessTransformers]]
     file="META-INF/accesstransformer.cfg"
