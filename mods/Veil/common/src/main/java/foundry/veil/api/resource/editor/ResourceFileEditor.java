@@ -55,25 +55,22 @@ public interface ResourceFileEditor<T extends VeilResource<?>> extends Closeable
     default void close() {
     }
 
-    // TODO return future in 2.0.0
-
     /**
      * Saves the specified json element to the specified resource and hot reloads it.
      *
      * @param element         The json to write to the resource file
      * @param resourceManager The resource manager to write the file to
      * @param resource        The resource to write to
+     * @return A future for when the task is complete
      */
-    default void save(JsonElement element, VeilResourceManager resourceManager, VeilResource<?> resource) throws IOException {
+    default CompletableFuture<?> save(JsonElement element, VeilResourceManager resourceManager, VeilResource<?> resource) throws IOException {
         StringWriter stringWriter = new StringWriter();
         JsonWriter jsonWriter = new JsonWriter(stringWriter);
         jsonWriter.setLenient(true);
         jsonWriter.setIndent("  ");
         Streams.write(element, jsonWriter);
-        this.save(stringWriter.toString().getBytes(StandardCharsets.UTF_8), resourceManager, resource);
+        return this.save(stringWriter.toString().getBytes(StandardCharsets.UTF_8), resourceManager, resource);
     }
-
-    // TODO return future in 2.0.0
 
     /**
      * Saves the specified data to the specified resource and hot reloads it.
@@ -81,10 +78,11 @@ public interface ResourceFileEditor<T extends VeilResource<?>> extends Closeable
      * @param data            The data to write to the resource file
      * @param resourceManager The resource manager to write the file to
      * @param resource        The resource to write to
+     * @return A future for when the task is complete
      */
-    default void save(byte[] data, VeilResourceManager resourceManager, VeilResource<?> resource) {
+    default CompletableFuture<?> save(byte[] data, VeilResourceManager resourceManager, VeilResource<?> resource) {
         VeilResourceInfo info = resource.resourceInfo();
-        CompletableFuture.runAsync(() -> {
+        return CompletableFuture.runAsync(() -> {
             try {
                 if (info.isStatic()) {
                     throw new IOException("Read-only resource");

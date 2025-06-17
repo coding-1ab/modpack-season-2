@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Shader features allow a higher-level way of requesting GLSL functionality without having to manually enable extensions per-shader.
  *
- * @since 1.4.0
+ * @since 2.0.0
  */
 public enum ShaderFeature {
     COMPUTE,

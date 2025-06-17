@@ -1,6 +1,7 @@
 package foundry.veil.api.quasar.particle;
 
 import foundry.veil.Veil;
+import foundry.veil.api.client.color.Colorc;
 import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.client.render.rendertype.VeilRenderType;
 import foundry.veil.api.quasar.data.QuasarParticleData;
@@ -216,6 +217,13 @@ public final class RenderData {
         this.green = color.y();
         this.blue = color.z();
         this.alpha = color.w();
+    }
+
+    public void setColor(Colorc color) {
+        this.red = color.red();
+        this.green = color.green();
+        this.blue = color.blue();
+        this.alpha = color.alpha();
     }
 
     public void setFixedPackedLight(int fixedPackedLight) {

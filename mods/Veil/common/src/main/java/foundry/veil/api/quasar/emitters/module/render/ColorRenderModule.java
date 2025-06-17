@@ -1,6 +1,7 @@
 package foundry.veil.api.quasar.emitters.module.render;
 
 import foundry.veil.Veil;
+import foundry.veil.api.client.color.Color;
 import foundry.veil.api.quasar.emitters.module.RenderParticleModule;
 import foundry.veil.api.quasar.particle.QuasarParticle;
 import foundry.veil.impl.quasar.ColorGradient;
@@ -10,7 +11,7 @@ import org.joml.Vector4f;
 
 public class ColorRenderModule implements RenderParticleModule {
 
-    private static final ThreadLocal<Vector4f> COLOR = ThreadLocal.withInitial(Vector4f::new);
+    private static final ThreadLocal<Color> COLOR = ThreadLocal.withInitial(Color::new);
 
     private final ColorGradient gradient;
     private final MolangExpression interpolant;

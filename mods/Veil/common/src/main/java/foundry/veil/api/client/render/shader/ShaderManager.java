@@ -318,7 +318,7 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
      *
      * @param features The features to check for
      * @return Whether those features are supported
-     * @since 1.4.0
+     * @since 2.0.0
      */
     public boolean hasFeatures(ShaderFeature... features) {
         int mask = 0;

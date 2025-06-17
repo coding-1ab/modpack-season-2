@@ -678,7 +678,7 @@ public final class VeilRenderSystem {
 
     /**
      * @return Whether {@link ARBBindlessTexture} is supported
-     * @since 1.4.0
+     * @since 2.0.0
      */
     public static boolean bindlessTextureSupported() {
         return BINDLESS_TEXTURE_SUPPORTED.getAsBoolean();
@@ -686,7 +686,7 @@ public final class VeilRenderSystem {
 
     /**
      * @return Whether {@link GL30C#GL_UNSIGNED_INT_10F_11F_11F_REV} is supported
-     * @since 1.4.0
+     * @since 2.0.0
      */
     public static boolean vertexType10F11F11FRevSupported() {
         return VERTEX_TYPE_10F_11F_11F_REV_SUPPORTED.getAsBoolean();
@@ -695,7 +695,7 @@ public final class VeilRenderSystem {
 
     /**
      * @return Whether {@link ARBPipelineStatisticsQuery} is supported
-     * @since 1.4.0
+     * @since 2.0.0
      */
     public static boolean pipelineStatisticsQuerySupported() {
         return PIPELINE_STATISTICS_QUERY_SUPPORTED.getAsBoolean();

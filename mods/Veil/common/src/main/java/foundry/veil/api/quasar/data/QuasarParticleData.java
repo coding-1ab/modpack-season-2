@@ -10,14 +10,12 @@ import foundry.veil.api.quasar.registry.RenderStyleRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * <p>Data passed to each particle when it is created.</p>
@@ -90,16 +88,6 @@ public record QuasarParticleData(boolean shouldCollide,
         this.spriteData = spriteData;
         this.additive = additive;
         this.renderStyle = renderStyle;
-    }
-
-    /**
-     * @return A stream containing all modules in the particle
-     * @deprecated Use {@link #getAllModules()}
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
-    @Deprecated
-    public Stream<Holder<ParticleModuleData>> allModules() {
-        return this.getAllModules().stream();
     }
 
     /**

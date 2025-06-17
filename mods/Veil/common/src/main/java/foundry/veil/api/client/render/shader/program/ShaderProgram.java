@@ -119,7 +119,7 @@ public interface ShaderProgram extends NativeResource, MutableUniformAccess, Tex
 
     /**
      * @return Whether this program has a valid compiled shader
-     * @since 1.4.0
+     * @since 2.0.0
      */
     boolean isValid();
 
@@ -161,7 +161,7 @@ public interface ShaderProgram extends NativeResource, MutableUniformAccess, Tex
 
     /**
      * @return The features this program needs to function
-     * @since 1.4.0
+     * @since 2.0.0
      */
     Set<ShaderFeature> getRequiredFeatures();
 

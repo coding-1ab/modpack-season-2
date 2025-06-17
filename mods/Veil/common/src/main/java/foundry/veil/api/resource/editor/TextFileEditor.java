@@ -50,7 +50,7 @@ public class TextFileEditor implements ResourceFileEditor<VeilTextResource<?>> {
     @Override
     public void loadFromDisk() {
         VeilResourceInfo info = this.resource.resourceInfo();
-        TextEditorLanguageDefinition languageDefinition = resource.languageDefinition();
+        TextEditorLanguageDefinition languageDefinition = this.resource.languageDefinition();
         TextEditor editor = this.editor.getEditor();
 
         editor.setReadOnly(true);
@@ -71,7 +71,7 @@ public class TextFileEditor implements ResourceFileEditor<VeilTextResource<?>> {
             }
 
             this.editor.show(info.fileName(), contents);
-            this.editor.setSaveCallback((source, errorMap) -> this.save(source.getBytes(StandardCharsets.UTF_8), resourceManager, resource));
+            this.editor.setSaveCallback((source, errorMap) -> this.save(source.getBytes(StandardCharsets.UTF_8), this.resourceManager, this.resource));
 
             editor.setReadOnly(info.isStatic());
             if (languageDefinition != null) {

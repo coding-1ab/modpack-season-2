@@ -56,16 +56,6 @@ public record ProgramDefinition(@Nullable ResourceLocation vertex,
                                 ShaderFeature[] requiredFeatures,
                                 @Nullable ShaderBlendMode blendMode) {
 
-    /**
-     * @return The samplers to bind when using this shader
-     * @deprecated Use {@link #samplers()}
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
-    @Deprecated
-    public Map<String, ShaderTextureSource> textures() {
-        return this.samplers;
-    }
-
     public Map<String, String> getMacros(Set<String> dependencies, ShaderPreDefinitions definitions) {
         Map<String, String> macros = new HashMap<>(definitions.getStaticDefinitions());
         for (String name : this.definitions) {

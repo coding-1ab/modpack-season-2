@@ -412,14 +412,14 @@ public interface ShaderUniformAccess {
     /**
      * Uploads this uniform as a handle type. Only supported if bindless texture is supported.
      * @param value The handle to upload
-     * @since 1.4.0
+     * @since 2.0.0
      */
     void setHandle(long value);
 
     /**
      * Uploads this uniform as a handle type. Only supported if bindless texture is supported.
      * @param values The handles to upload
-     * @since 1.4.0
+     * @since 2.0.0
      */
     void setHandles(long... values);
 

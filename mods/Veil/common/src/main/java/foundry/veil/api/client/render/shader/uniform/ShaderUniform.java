@@ -285,7 +285,7 @@ public interface ShaderUniform extends ShaderUniformAccess {
      */
     enum Type {
         /**
-         * @since 1.4.0
+         * @since 2.0.0
          */
         SAMPLER(0) {
             @Override

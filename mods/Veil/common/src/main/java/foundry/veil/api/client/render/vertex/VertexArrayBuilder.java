@@ -190,7 +190,7 @@ public interface VertexArrayBuilder {
 
         // ARBBindlessTexture
         /**
-         * @since 1.4.0
+         * @since 2.0.0
          */
         UNSIGNED_INT64_ARB(GL_UNSIGNED_INT64_ARB);
 
@@ -202,7 +202,7 @@ public interface VertexArrayBuilder {
 
         /**
          * Checks if this data type is supported on this platform.
-         * @since 1.4.0
+         * @since 2.0.0
          * @return Whether this data type is supported
          */
         public boolean isSupported() {

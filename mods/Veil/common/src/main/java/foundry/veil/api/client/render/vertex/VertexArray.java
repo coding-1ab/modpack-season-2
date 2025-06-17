@@ -288,25 +288,6 @@ public abstract class VertexArray implements NativeResource {
     }
 
     /**
-     * Uploads vertex data to the specified buffer.
-     *
-     * @param buffer The buffer to upload into
-     * @param data   The data to upload
-     * @param usage  The data usage
-     * @deprecated Use {@link #upload(int, MeshData, DrawUsage)} instead
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
-    @Deprecated
-    public void uploadVertexBuffer(int buffer, ByteBuffer data, int usage) {
-        DrawUsage drawUsage = switch (usage) {
-            case GL_STREAM_DRAW, GL_STREAM_READ, GL_STREAM_COPY -> DrawUsage.STREAM;
-            case GL_DYNAMIC_DRAW, GL_DYNAMIC_READ, GL_DYNAMIC_COPY -> DrawUsage.DYNAMIC;
-            default -> DrawUsage.STATIC;
-        };
-        upload(buffer, data, drawUsage);
-    }
-
-    /**
      * @return A builder for applying changes to this array
      */
     public VertexArrayBuilder editFormat() {

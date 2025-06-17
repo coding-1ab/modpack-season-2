@@ -178,7 +178,7 @@ public interface ShaderPreProcessor {
          *
          * @param features The features to check for
          * @return Whether those features are supported
-         * @since 1.4.0
+         * @since 2.0.0
          */
         default boolean hasFeatures(ShaderFeature... features) {
             return VeilRenderSystem.renderer().getShaderManager().hasFeatures(features);

@@ -8,7 +8,6 @@ import io.github.ocelot.glslprocessor.api.node.GlslTree;
 import io.github.ocelot.glslprocessor.lib.anarres.cpp.LexerException;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,14 +21,6 @@ import java.util.List;
 public class ShaderBufferProcessor implements ShaderPreProcessor {
 
     private static final String BUFFER_KEY = "#veil:buffer ";
-
-    /**
-     * @deprecated Use {@link ShaderBufferProcessor#ShaderBufferProcessor()} instead
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
-    public ShaderBufferProcessor(boolean shaderStorageSupported) {
-    }
 
     public ShaderBufferProcessor() {
     }
