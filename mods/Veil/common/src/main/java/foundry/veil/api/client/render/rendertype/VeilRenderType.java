@@ -11,16 +11,19 @@ import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderBridge;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.vertex.VeilVertexFormat;
+import foundry.veil.api.event.VeilRegisterFixedBuffersEvent;
 import foundry.veil.impl.client.render.pipeline.CullFaceShard;
 import foundry.veil.mixin.rendertype.accessor.RenderStateShardAccessor;
 import foundry.veil.mixin.rendertype.accessor.RenderTypeAccessor;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -260,6 +263,11 @@ public final class VeilRenderType extends RenderType {
         super($$0, $$1, $$2, $$3, $$4, $$5, $$6, $$7);
     }
 
+    /**
+     * Layers multiple render types on top of each other to re-use the same mesh data when rendering.
+     * <br>
+     * Essentially, this acts as "render passes" for a render type.
+     */
     public static class LayeredRenderType extends RenderType {
 
         private final List<RenderType> layers;
@@ -270,22 +278,37 @@ public final class VeilRenderType extends RenderType {
         }
 
         @Override
-        public void draw(MeshData meshData) {
+        public void draw(@NotNull MeshData meshData) {
             super.draw(meshData);
             if (BufferUploader.lastImmediateBuffer != null) {
+                ShaderInstance shader = RenderSystem.getShader();
+                if (shader == null) {
+                    return;
+                }
+
+                Matrix4f modelViewMatrix = RenderSystem.getModelViewMatrix();
+                Matrix4f projectionMatrix = RenderSystem.getProjectionMatrix();
                 for (RenderType layer : this.layers) {
                     layer.setupRenderState();
-                    BufferUploader.lastImmediateBuffer.drawWithShader(RenderSystem.getModelViewMatrix(), RenderSystem.getProjectionMatrix(), RenderSystem.getShader());
+                    BufferUploader.lastImmediateBuffer.drawWithShader(modelViewMatrix, projectionMatrix, shader);
                     layer.clearRenderState();
                 }
             }
         }
 
+        /**
+         * @return All additional render layers this render type should render
+         */
         public List<RenderType> getLayers() {
             return this.layers;
         }
     }
 
+    /**
+     * Wraps a Veil dynamic render type with a static render type. Useful for {@link net.neoforged.neoforge.client.event.RegisterNamedRenderTypesEvent} or {@link VeilRegisterFixedBuffersEvent}.
+     *
+     * @since 2.0.0
+     */
     public static class RenderTypeWrapper extends RenderType {
 
         private static final Object[] NO_PARAMS = new Object[0];
@@ -332,19 +355,19 @@ public final class VeilRenderType extends RenderType {
         }
 
         @Override
-        public VertexFormat format() {
+        public @NotNull VertexFormat format() {
             RenderType renderType = this.get();
             return renderType != null ? renderType.format() : DefaultVertexFormat.POSITION;
         }
 
         @Override
-        public VertexFormat.Mode mode() {
+        public VertexFormat.@NotNull Mode mode() {
             RenderType renderType = this.get();
             return renderType != null ? renderType.mode() : VertexFormat.Mode.QUADS;
         }
 
         @Override
-        public Optional<RenderType> outline() {
+        public @NotNull Optional<RenderType> outline() {
             RenderType renderType = this.get();
             return renderType != null ? renderType.outline() : Optional.empty();
         }
@@ -373,9 +396,14 @@ public final class VeilRenderType extends RenderType {
             return renderType != null && renderType.sortOnUpload();
         }
 
+        /**
+         * Sets the parameters to pass to the render type.
+         *
+         * @param params The new parameters
+         */
         public void setParams(Object... params) {
             if (params.length == 0) {
-                params = NO_PARAMS;
+                this.params = NO_PARAMS;
             } else if (this.params.length == params.length) {
                 System.arraycopy(params, 0, this.params, 0, params.length);
             } else {
@@ -383,6 +411,9 @@ public final class VeilRenderType extends RenderType {
             }
         }
 
+        /**
+         * @return The dynamic render type instance or <code>null</code> if it failed to load
+         */
         public @Nullable RenderType get() {
             return VeilRenderSystem.renderer().getDynamicRenderTypeManager().get(this.id, this.params);
         }
