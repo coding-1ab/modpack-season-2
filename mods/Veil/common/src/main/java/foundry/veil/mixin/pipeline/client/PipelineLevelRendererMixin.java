@@ -169,6 +169,14 @@ public abstract class PipelineLevelRendererMixin implements LevelRendererExtensi
     public void veil$drawBlockLayer(RenderType renderType, double x, double y, double z, Matrix4fc frustum, Matrix4fc projection) {
         RenderSystem.assertOnRenderThread();
 
+        while (renderType instanceof VeilRenderType.RenderTypeWrapper wrapper) {
+            renderType = wrapper.get();
+        }
+
+        if (renderType == null) {
+            return;
+        }
+
         if (renderType instanceof VeilRenderType.LayeredRenderType layeredRenderType) {
             ProfilerFiller profiler = this.minecraft.getProfiler();
 

@@ -18,12 +18,11 @@ import net.minecraft.Util;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -192,6 +191,18 @@ public final class VeilRenderType extends RenderType {
     }
 
     /**
+     * Creates a new wrapper pointing to a.
+     *
+     * @param id The id of the render type to wrap
+     * @return A wrapper render type that points to the specified dynamic render type
+     * @since 2.0.0
+     */
+    @Contract(value = "_->new", pure = true)
+    public static RenderTypeWrapper getWrapper(ResourceLocation id) {
+        return new RenderTypeWrapper(id);
+    }
+
+    /**
      * Retrieves the name of the specified render shard.
      *
      * @param shard The render shard to get the name of
@@ -272,6 +283,108 @@ public final class VeilRenderType extends RenderType {
 
         public List<RenderType> getLayers() {
             return this.layers;
+        }
+    }
+
+    public static class RenderTypeWrapper extends RenderType {
+
+        private static final Object[] NO_PARAMS = new Object[0];
+
+        private final ResourceLocation id;
+        private Object[] params;
+
+        private RenderTypeWrapper(ResourceLocation id) {
+            super(id.toString(), DefaultVertexFormat.POSITION, VertexFormat.Mode.QUADS, 0, false, false, () -> {
+            }, () -> {
+            });
+            this.id = id;
+            this.params = NO_PARAMS;
+        }
+
+        @Override
+        public void setupRenderState() {
+            RenderType renderType = this.get();
+            if (renderType != null) {
+                renderType.setupRenderState();
+            }
+        }
+
+        @Override
+        public void clearRenderState() {
+            RenderType renderType = this.get();
+            if (renderType != null) {
+                renderType.clearRenderState();
+            }
+        }
+
+        @Override
+        public void draw(@NotNull MeshData meshData) {
+            RenderType renderType = this.get();
+            if (renderType != null) {
+                renderType.draw(meshData);
+            }
+        }
+
+        @Override
+        public int bufferSize() {
+            RenderType renderType = this.get();
+            return renderType != null ? renderType.bufferSize() : TRANSIENT_BUFFER_SIZE;
+        }
+
+        @Override
+        public VertexFormat format() {
+            RenderType renderType = this.get();
+            return renderType != null ? renderType.format() : DefaultVertexFormat.POSITION;
+        }
+
+        @Override
+        public VertexFormat.Mode mode() {
+            RenderType renderType = this.get();
+            return renderType != null ? renderType.mode() : VertexFormat.Mode.QUADS;
+        }
+
+        @Override
+        public Optional<RenderType> outline() {
+            RenderType renderType = this.get();
+            return renderType != null ? renderType.outline() : Optional.empty();
+        }
+
+        @Override
+        public boolean isOutline() {
+            RenderType renderType = this.get();
+            return renderType != null && renderType.isOutline();
+        }
+
+        @Override
+        public boolean affectsCrumbling() {
+            RenderType renderType = this.get();
+            return renderType != null && renderType.affectsCrumbling();
+        }
+
+        @Override
+        public boolean canConsolidateConsecutiveGeometry() {
+            RenderType renderType = this.get();
+            return renderType != null && renderType.canConsolidateConsecutiveGeometry();
+        }
+
+        @Override
+        public boolean sortOnUpload() {
+            RenderType renderType = this.get();
+            return renderType != null && renderType.sortOnUpload();
+        }
+
+        public void setParams(Object... params) {
+            if (params.length == 0) {
+                params = NO_PARAMS;
+            } else if (this.params.length == params.length) {
+                System.arraycopy(params, 0, this.params, 0, params.length);
+            } else {
+                this.params = Arrays.copyOf(params, params.length);
+            }
+        }
+
+        public @Nullable RenderType get() {
+            return VeilRenderSystem.renderer().getDynamicRenderTypeManager().get(this.id, this.params);
         }
     }
 }

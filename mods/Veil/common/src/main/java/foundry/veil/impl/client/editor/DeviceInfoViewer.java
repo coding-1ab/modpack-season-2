@@ -17,7 +17,6 @@ import org.lwjgl.opengl.GLCapabilities;
 
 import java.util.*;
 
-import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.opengl.GL11C.*;
 import static org.lwjgl.opengl.GL30C.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL30C.GL_VERTEX_SHADER;

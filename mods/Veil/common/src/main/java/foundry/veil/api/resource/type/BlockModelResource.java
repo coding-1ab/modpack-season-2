@@ -43,7 +43,6 @@ public record BlockModelResource(VeilResourceInfo resourceInfo) implements VeilT
         ModelManager modelManager = client.getModelManager();
         ProfilerFiller profiler = client.getProfiler();
 
-        // TODO: Potentially look at more targeted model reload?
         modelManager.reload(CompletableFuture::completedFuture, resources, profiler, profiler, Util.backgroundExecutor(), client)
                 .thenAcceptAsync(unused -> VeilRenderSystem.rebuildChunks(), client)
                 .exceptionally(e -> {

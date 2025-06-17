@@ -355,6 +355,14 @@ public abstract class VertexArray implements NativeResource {
      * {@link #bind()} must be called before this.
      */
     public void drawWithRenderType(RenderType renderType) {
+        while (renderType instanceof VeilRenderType.RenderTypeWrapper wrapper) {
+            renderType = wrapper.get();
+        }
+
+        if (renderType == null) {
+            return;
+        }
+
         this.setup(renderType);
         this.draw();
         this.clear(renderType);
@@ -377,6 +385,14 @@ public abstract class VertexArray implements NativeResource {
      * @param instances The number of instances to draw
      */
     public void drawInstancedWithRenderType(RenderType renderType, int instances) {
+        while (renderType instanceof VeilRenderType.RenderTypeWrapper wrapper) {
+            renderType = wrapper.get();
+        }
+
+        if (renderType == null) {
+            return;
+        }
+
         this.setup(renderType);
         this.drawInstanced(instances);
         this.clear(renderType);
@@ -403,6 +419,14 @@ public abstract class VertexArray implements NativeResource {
      * @param stride    The stride between commands or <code>0</code> if they are tightly packed
      */
     public void drawIndirectWithRenderType(RenderType renderType, long indirect, int drawCount, int stride) {
+        while (renderType instanceof VeilRenderType.RenderTypeWrapper wrapper) {
+            renderType = wrapper.get();
+        }
+
+        if (renderType == null) {
+            return;
+        }
+
         this.setup(renderType);
         this.drawIndirect(indirect, drawCount, stride);
         this.clear(renderType);
