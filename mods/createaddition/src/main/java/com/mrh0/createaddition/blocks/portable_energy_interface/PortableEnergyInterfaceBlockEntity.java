@@ -37,6 +37,7 @@ public class PortableEnergyInterfaceBlockEntity extends PortableStorageInterface
 
 	public void startTransferringTo(Contraption contraption, float distance) {
 		IEnergyStorage oldcap = this.capability;
+		invalidate();
 		this.capability =  new InterfaceEnergyHandler(PortableEnergyManager.get(contraption));
 		//oldcap.invalidate();
 		super.startTransferringTo(contraption, distance);
@@ -52,6 +53,7 @@ public class PortableEnergyInterfaceBlockEntity extends PortableStorageInterface
 	@Override
 	protected void stopTransferring() {
 		IEnergyStorage oldcap = this.capability;
+		invalidate();
 		this.capability = this.createEmptyHandler();
 		//oldcap.invalidate();
 		super.stopTransferring();
