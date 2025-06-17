@@ -5,16 +5,12 @@ import foundry.veil.api.client.color.ColorTheme;
 import foundry.veil.api.client.color.Colorc;
 import foundry.veil.api.client.tooltip.Tooltippable;
 import foundry.veil.api.client.tooltip.VeilUIItemTooltipDataHolder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -184,15 +180,4 @@ public class TooltipBlockEntityMixin implements Tooltippable {
     public List<VeilUIItemTooltipDataHolder> getItems() {
         return this.veil$tooltipDataHolder;
     }
-
-    @Inject(method = "saveAdditional", at = @At("RETURN"))
-    public void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries, CallbackInfo ci) {
-        pTag.put("tooltipData", this.saveTooltipData());
-    }
-
-    @Inject(method = "loadAdditional", at = @At("RETURN"))
-    public void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries, CallbackInfo ci) {
-        this.loadTooltipData(pTag.getCompound("tooltipData"));
-    }
-
 }
