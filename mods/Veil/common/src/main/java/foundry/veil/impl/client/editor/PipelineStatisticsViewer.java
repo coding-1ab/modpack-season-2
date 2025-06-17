@@ -80,7 +80,7 @@ public class PipelineStatisticsViewer implements Inspector {
                 map.put(label, field);
 
                 if (ImGui.collapsingHeader("Plot")) {
-                    this.enabledPaths.add(path.isBlank() ? path : path + '\u001e' + field.name());
+                    this.enabledPaths.add(path.isBlank() ? field.name() : path + '\u001e' + field.name());
                     VeilRenderProfiler.StatisticType[] statistics = field.statistics();
                     long[] values = new long[HISTORY_LENGTH];
                     for (VeilRenderProfiler.StatisticType statistic : statistics) {
