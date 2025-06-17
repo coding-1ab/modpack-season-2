@@ -21,7 +21,7 @@ import static org.lwjgl.opengl.ARBDirectStateAccess.*;
 import static org.lwjgl.opengl.GL30C.*;
 
 /**
- * Legacy implementation of {@link AdvancedFbo}.
+ * Direct-state implementation of {@link AdvancedFbo}.
  *
  * @author Ocelot
  */
