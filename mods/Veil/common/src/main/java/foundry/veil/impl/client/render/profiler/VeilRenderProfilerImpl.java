@@ -2,6 +2,7 @@ package foundry.veil.impl.client.render.profiler;
 
 import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderSystem;
+import foundry.veil.api.client.render.profiler.RenderProfilerCounter;
 import foundry.veil.api.client.render.profiler.VeilRenderProfiler;
 import foundry.veil.impl.client.editor.PipelineStatisticsViewer;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -19,7 +20,7 @@ public final class VeilRenderProfilerImpl {
 
     private static final Map<String, PathEntry> ENTRIES = new Object2ObjectOpenHashMap<>();
     private static final List<String> paths = new LinkedList<>();
-    private static final BitSet ENABLED_STATISTICS = new BitSet(VeilRenderProfiler.StatisticType.ALL.length);
+    private static final BitSet ENABLED_STATISTICS = new BitSet(RenderProfilerCounter.ALL.length);
     private static final Set<String> ENABLED_PATHS = new HashSet<>();
     private static String path = "";
     private static int[] queries;
@@ -31,11 +32,11 @@ public final class VeilRenderProfilerImpl {
         return isEnabled() ? ActiveProfiler.INSTANCE : InactiveProfiler.INSTANCE;
     }
 
-    public static void setEnabled(Collection<String> enabledPaths, VeilRenderProfiler.StatisticType[] statistics) {
+    public static void setEnabled(Collection<String> enabledPaths, RenderProfilerCounter[] statistics) {
         ENABLED_PATHS.clear();
         ENABLED_PATHS.addAll(enabledPaths);
         ENABLED_STATISTICS.clear();
-        for (VeilRenderProfiler.StatisticType statistic : statistics) {
+        for (RenderProfilerCounter statistic : statistics) {
             ENABLED_STATISTICS.set(statistic.ordinal());
         }
     }
@@ -57,14 +58,14 @@ public final class VeilRenderProfilerImpl {
         return VeilRenderSystem.pipelineStatisticsQuerySupported() && VeilRenderSystem.renderer().getEditorManager().isVisible(inspector -> inspector instanceof PipelineStatisticsViewer);
     }
 
-    public static List<ResultField> getCounters(String sectionPath, VeilRenderProfiler.StatisticType sortedStatistic) {
+    public static List<ResultField> getCounters(String sectionPath, RenderProfilerCounter sortedStatistic) {
         List<ResultField> list = new LinkedList<>();
         if (!sectionPath.isEmpty()) {
             sectionPath = sectionPath + '\u001e';
         }
 
-        long[] globalCount = new long[VeilRenderProfiler.StatisticType.ALL.length];
-        long[] localCount = new long[VeilRenderProfiler.StatisticType.ALL.length];
+        long[] globalCount = new long[RenderProfilerCounter.ALL.length];
+        long[] localCount = new long[RenderProfilerCounter.ALL.length];
         for (Map.Entry<String, VeilRenderProfilerImpl.PathEntry> entry : ENTRIES.entrySet()) {
             String section = entry.getKey();
             boolean directChild = isDirectChild(sectionPath, section);
@@ -72,7 +73,7 @@ public final class VeilRenderProfilerImpl {
             if (directChild || isRoot) {
                 PathEntry value = entry.getValue();
                 long[] counters = value.accumulatedCounters;
-                for (VeilRenderProfiler.StatisticType statistic : value.statistics) {
+                for (RenderProfilerCounter statistic : value.statistics) {
                     int index = statistic.ordinal();
                     long counter = counters[index];
                     if (directChild) {
@@ -109,11 +110,11 @@ public final class VeilRenderProfilerImpl {
             long[] count,
             long[] localCount,
             long[] globalCount,
-            VeilRenderProfiler.StatisticType[] statistics,
-            VeilRenderProfiler.StatisticType sortedStatistic
+            RenderProfilerCounter[] statistics,
+            RenderProfilerCounter sortedStatistic
     ) implements Comparable<ResultField> {
 
-        public double getPercentage(VeilRenderProfiler.StatisticType statistic) {
+        public double getPercentage(RenderProfilerCounter statistic) {
             long total = this.localCount[statistic.ordinal()];
             if (total == 0) {
                 return 0.0;
@@ -121,7 +122,7 @@ public final class VeilRenderProfilerImpl {
             return 100.0 * this.count[statistic.ordinal()] / total;
         }
 
-        public double getGlobalPercentage(VeilRenderProfiler.StatisticType statistic) {
+        public double getGlobalPercentage(RenderProfilerCounter statistic) {
             long total = this.globalCount[statistic.ordinal()];
             if (total == 0) {
                 return 0.0;
@@ -146,22 +147,22 @@ public final class VeilRenderProfilerImpl {
 
     public static class PathEntry {
 
-        private final VeilRenderProfiler.StatisticType[] statistics;
+        private final RenderProfilerCounter[] statistics;
         private final long[] accumulatedCounters;
         private boolean tracking;
 
-        public PathEntry(VeilRenderProfiler.StatisticType[] statistics) {
+        public PathEntry(RenderProfilerCounter[] statistics) {
             this.statistics = statistics;
-            this.accumulatedCounters = new long[VeilRenderProfiler.StatisticType.ALL.length];
+            this.accumulatedCounters = new long[RenderProfilerCounter.ALL.length];
             this.tracking = false;
         }
 
         public void begin() {
             if (queries == null) {
-                glGenQueries(queries = new int[VeilRenderProfiler.StatisticType.ALL.length]);
+                glGenQueries(queries = new int[RenderProfilerCounter.ALL.length]);
             }
 
-            for (VeilRenderProfiler.StatisticType statistic : this.statistics) {
+            for (RenderProfilerCounter statistic : this.statistics) {
                 if (ENABLED_STATISTICS.get(statistic.ordinal())) {
                     glBeginQuery(statistic.getId(), queries[statistic.ordinal()]);
                 }
@@ -171,7 +172,7 @@ public final class VeilRenderProfilerImpl {
         }
 
         public void stop() {
-            for (VeilRenderProfiler.StatisticType statistic : this.statistics) {
+            for (RenderProfilerCounter statistic : this.statistics) {
                 if (ENABLED_STATISTICS.get(statistic.ordinal())) {
                     glEndQuery(statistic.getId());
                     int index = statistic.ordinal();
@@ -182,7 +183,7 @@ public final class VeilRenderProfilerImpl {
         }
 
         public void end(@Nullable PathEntry previous) {
-            for (VeilRenderProfiler.StatisticType statistic : this.statistics) {
+            for (RenderProfilerCounter statistic : this.statistics) {
                 if (ENABLED_STATISTICS.get(statistic.ordinal())) {
                     glEndQuery(statistic.getId());
                     int index = statistic.ordinal();
@@ -204,7 +205,7 @@ public final class VeilRenderProfilerImpl {
             return this.accumulatedCounters;
         }
 
-        public VeilRenderProfiler.StatisticType[] getStatistics() {
+        public RenderProfilerCounter[] getStatistics() {
             return this.statistics;
         }
     }
@@ -213,9 +214,9 @@ public final class VeilRenderProfilerImpl {
         INSTANCE;
 
         @Override
-        public void push(String name, StatisticType... statistics) {
+        public void push(String name, RenderProfilerCounter... statistics) {
             if (statistics.length == 0) {
-                statistics = StatisticType.ALL;
+                statistics = RenderProfilerCounter.ALL;
             }
 
             PathEntry old = ENTRIES.get(path);
@@ -240,7 +241,7 @@ public final class VeilRenderProfilerImpl {
         }
 
         @Override
-        public void push(Supplier<String> name, StatisticType... statistics) {
+        public void push(Supplier<String> name, RenderProfilerCounter... statistics) {
             this.push(name.get(), statistics);
         }
 
@@ -262,13 +263,13 @@ public final class VeilRenderProfilerImpl {
         }
 
         @Override
-        public void popPush(String name, StatisticType... statistics) {
+        public void popPush(String name, RenderProfilerCounter... statistics) {
             this.pop();
             this.push(name, statistics);
         }
 
         @Override
-        public void popPush(Supplier<String> name, StatisticType... statistics) {
+        public void popPush(Supplier<String> name, RenderProfilerCounter... statistics) {
             this.pop();
             this.push(name.get(), statistics);
         }
@@ -278,11 +279,11 @@ public final class VeilRenderProfilerImpl {
         INSTANCE;
 
         @Override
-        public void push(String name, StatisticType... statistics) {
+        public void push(String name, RenderProfilerCounter... statistics) {
         }
 
         @Override
-        public void push(Supplier<String> name, StatisticType... statistics) {
+        public void push(Supplier<String> name, RenderProfilerCounter... statistics) {
         }
 
         @Override
@@ -290,11 +291,11 @@ public final class VeilRenderProfilerImpl {
         }
 
         @Override
-        public void popPush(String name, StatisticType... statistics) {
+        public void popPush(String name, RenderProfilerCounter... statistics) {
         }
 
         @Override
-        public void popPush(Supplier<String> name, StatisticType... statistics) {
+        public void popPush(Supplier<String> name, RenderProfilerCounter... statistics) {
         }
     }
 }

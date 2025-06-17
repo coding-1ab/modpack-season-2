@@ -3,7 +3,7 @@ package foundry.veil.impl.client.editor;
 import foundry.veil.api.client.editor.Inspector;
 import foundry.veil.api.client.imgui.VeilImGuiUtil;
 import foundry.veil.api.client.render.VeilRenderSystem;
-import foundry.veil.api.client.render.profiler.VeilRenderProfiler;
+import foundry.veil.api.client.render.profiler.RenderProfilerCounter;
 import foundry.veil.impl.client.render.profiler.VeilRenderProfilerImpl;
 import imgui.ImGui;
 import imgui.extension.implot.ImPlot;
@@ -55,10 +55,10 @@ public class PipelineStatisticsViewer implements Inspector {
             this.history.add(new Object2ObjectOpenHashMap<>());
         }
 
-        VeilRenderProfilerImpl.setEnabled(this.enabledPaths, VeilRenderProfiler.StatisticType.ALL);
+        VeilRenderProfilerImpl.setEnabled(this.enabledPaths, RenderProfilerCounter.ALL);
 
         this.enabledPaths.clear();
-        this.renderCounters("", VeilRenderProfiler.StatisticType.FRAGMENT_SHADER_INVOCATIONS);
+        this.renderCounters("", RenderProfilerCounter.FRAGMENT_SHADER_INVOCATIONS);
         this.historyIndex++;
         this.historyIndex %= HISTORY_LENGTH;
         this.getHistory(0).clear();
@@ -68,7 +68,7 @@ public class PipelineStatisticsViewer implements Inspector {
         return this.history.get(Math.floorMod(this.historyIndex - past, HISTORY_LENGTH));
     }
 
-    private void renderCounters(String path, VeilRenderProfiler.StatisticType sortedStatistic) {
+    private void renderCounters(String path, RenderProfilerCounter sortedStatistic) {
         List<VeilRenderProfilerImpl.ResultField> fields = VeilRenderProfilerImpl.getCounters(path, sortedStatistic);
         Map<String, VeilRenderProfilerImpl.ResultField> map = this.history.get(this.historyIndex);
 
@@ -81,9 +81,9 @@ public class PipelineStatisticsViewer implements Inspector {
 
                 if (ImGui.collapsingHeader("Plot")) {
                     this.enabledPaths.add(path.isBlank() ? field.name() : path + '\u001e' + field.name());
-                    VeilRenderProfiler.StatisticType[] statistics = field.statistics();
+                    RenderProfilerCounter[] statistics = field.statistics();
                     long[] values = new long[HISTORY_LENGTH];
-                    for (VeilRenderProfiler.StatisticType statistic : statistics) {
+                    for (RenderProfilerCounter statistic : statistics) {
                         if (ImPlot.beginPlot(statistic.name(), ImGui.getContentRegionAvailX(), 150, ImPlotFlags.NoFrame | ImPlotFlags.NoChild | ImPlotFlags.NoMouseText | ImPlotFlags.NoLegend)) {
                             long max = 0;
                             for (int j = 0; j < HISTORY_LENGTH; j++) {

@@ -7,7 +7,6 @@ import foundry.veil.api.quasar.particle.QuasarParticle;
 import foundry.veil.impl.quasar.ColorGradient;
 import gg.moonflower.molangcompiler.api.MolangExpression;
 import gg.moonflower.molangcompiler.api.exception.MolangRuntimeException;
-import org.joml.Vector4f;
 
 public class ColorRenderModule implements RenderParticleModule {
 

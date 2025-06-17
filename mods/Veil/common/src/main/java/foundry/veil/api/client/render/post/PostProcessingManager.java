@@ -18,6 +18,7 @@ import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.framebuffer.FramebufferStack;
 import foundry.veil.api.client.render.framebuffer.VeilFramebuffers;
 import foundry.veil.api.client.render.post.stage.CompositePostPipeline;
+import foundry.veil.api.client.render.profiler.RenderProfilerCounter;
 import foundry.veil.api.client.render.profiler.VeilRenderProfiler;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
@@ -163,7 +164,7 @@ public class PostProcessingManager extends CodecReloadListener<CompositePostPipe
     }
 
     private void setup() {
-        VeilRenderProfiler.get().push("veil_post", VeilRenderProfiler.StatisticType.FRAGMENT_SHADER_INVOCATIONS);
+        VeilRenderProfiler.get().push("veil_post", RenderProfilerCounter.FRAGMENT_SHADER_INVOCATIONS);
         RenderSystem.enableDepthTest();
         RenderSystem.depthFunc(GL_ALWAYS);
         RenderSystem.depthMask(false);

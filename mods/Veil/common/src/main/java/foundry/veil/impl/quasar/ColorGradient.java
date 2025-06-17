@@ -5,11 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import foundry.veil.api.client.color.Color;
 import foundry.veil.api.client.color.Colorc;
-import foundry.veil.api.util.CodecUtil;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
-import org.joml.Vector4f;
-import org.joml.Vector4fc;
 
 import java.util.List;
 

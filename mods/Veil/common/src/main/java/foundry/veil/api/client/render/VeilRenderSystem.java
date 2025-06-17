@@ -17,6 +17,7 @@ import foundry.veil.api.client.render.framebuffer.VeilFramebuffers;
 import foundry.veil.api.client.render.light.renderer.LightRenderer;
 import foundry.veil.api.client.render.post.PostPipeline;
 import foundry.veil.api.client.render.post.PostProcessingManager;
+import foundry.veil.api.client.render.profiler.RenderProfilerCounter;
 import foundry.veil.api.client.render.profiler.VeilRenderProfiler;
 import foundry.veil.api.client.render.rendertype.VeilRenderType;
 import foundry.veil.api.client.render.shader.ShaderManager;
@@ -1239,13 +1240,13 @@ public final class VeilRenderSystem {
 
         VeilRenderProfiler renderProfiler = VeilRenderProfiler.get();
         renderProfiler.push("veil_lights",
-                VeilRenderProfiler.StatisticType.VERTICES_SUBMITTED,
-                VeilRenderProfiler.StatisticType.PRIMITIVES_SUBMITTED,
-                VeilRenderProfiler.StatisticType.VERTEX_SHADER_INVOCATIONS,
-                VeilRenderProfiler.StatisticType.FRAGMENT_SHADER_INVOCATIONS,
-                VeilRenderProfiler.StatisticType.COMPUTE_SHADER_INVOCATIONS,
-                VeilRenderProfiler.StatisticType.CLIPPING_INPUT_PRIMITIVES,
-                VeilRenderProfiler.StatisticType.CLIPPING_OUTPUT_PRIMITIVES
+                RenderProfilerCounter.VERTICES_SUBMITTED,
+                RenderProfilerCounter.PRIMITIVES_SUBMITTED,
+                RenderProfilerCounter.VERTEX_SHADER_INVOCATIONS,
+                RenderProfilerCounter.FRAGMENT_SHADER_INVOCATIONS,
+                RenderProfilerCounter.COMPUTE_SHADER_INVOCATIONS,
+                RenderProfilerCounter.CLIPPING_INPUT_PRIMITIVES,
+                RenderProfilerCounter.CLIPPING_OUTPUT_PRIMITIVES
         );
 
         LightRenderer lightRenderer = renderer.getLightRenderer();
