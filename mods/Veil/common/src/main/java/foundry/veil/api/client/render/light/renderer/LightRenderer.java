@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import static org.lwjgl.opengl.GL11C.*;
+
 /**
  * Renders all lights in a scene.
  * <br>
@@ -65,7 +67,8 @@ public final class LightRenderer implements NativeResource {
 
             if (!hasRendered) {
                 lightFbo.bind(true);
-                lightFbo.clear();
+                lightFbo.clear(GL_COLOR_BUFFER_BIT);
+                AdvancedFbo.getMainFramebuffer().resolveToAdvancedFbo(lightFbo, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
             }
 
             hasRendered = true;

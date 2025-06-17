@@ -11,8 +11,16 @@
       "name": "veil:light/area"
     },
     {
+      "type": "minecraft:write_mask",
+      "depth": false
+    },
+    {
       "type": "minecraft:depth_test",
-      "mode": "equal"
+      "mode": "greater"
+    },
+    {
+      "type": "minecraft:cull",
+      "face": "back"
     },
     {
       "type": "minecraft:transparency",

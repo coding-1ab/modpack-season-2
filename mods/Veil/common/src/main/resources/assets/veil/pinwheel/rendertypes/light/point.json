@@ -15,6 +15,10 @@
       "depth": false
     },
     {
+      "type": "minecraft:depth_test",
+      "mode": "greater"
+    },
+    {
       "type": "minecraft:transparency",
       "mode": "additive"
     }

@@ -139,8 +139,8 @@ public abstract class VertexArray implements NativeResource {
         renderType.setupRenderState();
         ShaderInstance shader = RenderSystem.getShader();
         if (shader != null) {
-            shader.apply();
             shader.setDefaultUniforms(this.drawMode, RenderSystem.getModelViewMatrix(), RenderSystem.getProjectionMatrix(), Minecraft.getInstance().getWindow());
+            shader.apply();
         }
     }
 

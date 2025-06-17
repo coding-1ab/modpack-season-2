@@ -1,6 +1,6 @@
 {
   "depth": {
-    "type": "render_buffer"
+    "type": "RENDER_BUFFER"
   },
   "autoClear": false,
   "format": "RGB16F"
