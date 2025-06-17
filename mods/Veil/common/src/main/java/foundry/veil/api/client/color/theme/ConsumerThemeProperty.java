@@ -1,11 +1,14 @@
 package foundry.veil.api.client.color.theme;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
  * @author amo
  */
+@ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
 @Deprecated
 public class ConsumerThemeProperty implements IThemeProperty<Consumer<?>> {
 

@@ -2,6 +2,7 @@ package foundry.veil.api.client.color;
 
 import foundry.veil.api.client.color.theme.IThemeProperty;
 import foundry.veil.api.client.tooltip.Tooltippable;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import java.util.Objects;
  *
  * @author amo
  */
+@ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
 @Deprecated
 public class ColorTheme {
 

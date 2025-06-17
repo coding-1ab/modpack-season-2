@@ -5,6 +5,7 @@ import foundry.veil.impl.client.render.VeilUITooltipRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 
@@ -29,10 +30,14 @@ public interface Tooltippable {
         return true;
     }
 
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
+    @Deprecated
     default CompoundTag saveTooltipData() {
         return new CompoundTag();
     }
 
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
+    @Deprecated
     default void loadTooltipData(CompoundTag tag) {
     }
 
