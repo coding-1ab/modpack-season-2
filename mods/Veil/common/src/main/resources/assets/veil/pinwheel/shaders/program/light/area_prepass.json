@@ -1,0 +1,4 @@
+{
+  "vertex": "veil:light/area_prepass",
+  "fragment": "veil:light/area_prepass"
+}

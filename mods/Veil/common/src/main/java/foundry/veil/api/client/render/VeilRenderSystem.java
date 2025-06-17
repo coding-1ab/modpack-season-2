@@ -1249,10 +1249,8 @@ public final class VeilRenderSystem {
         );
 
         LightRenderer lightRenderer = renderer.getLightRenderer();
-        profiler.push("setup_lights");
-        lightRenderer.setup(cullFrustum);
-        profiler.popPush("draw_lights");
-        boolean rendered = lightRenderer.render(lightFbo);
+        profiler.push("draw_lights");
+        boolean rendered = lightRenderer.render(cullFrustum, lightFbo);
         profiler.pop();
 
         renderProfiler.pop();

@@ -187,7 +187,7 @@ public class EditorManager implements VeilEditorEnvironment, PreparableReloadLis
     /**
      * Checks all matching visible inspectors.
      * @param filter The filter for what visible inspector to check
-     * @since 1.4.0
+     * @since 2.0.0
      * @return Whether the filtered inspector is visible
      */
     public boolean isVisible(Predicate<Inspector> filter) {

@@ -198,7 +198,9 @@ public class ShaderProgramImpl implements ShaderProgram {
         try {
             this.recompile(activeBuffers, sourceSet, compiler);
         } catch (Throwable t) {
-            this.definition = old;
+            if (old != null) {
+                this.definition = old;
+            }
             throw t;
         }
         // Compilation was successful, so update the state of this program
@@ -639,7 +641,7 @@ public class ShaderProgramImpl implements ShaderProgram {
         }
 
         @Override
-        public void setSampler(String name, Object value) {
+        public void setSampler(@NotNull String name, Object value) {
             int sampler = switch (value) {
                 case RenderTarget target -> target.getColorTextureId();
                 case AbstractTexture texture -> texture.getId();

@@ -7,9 +7,9 @@ import java.nio.ByteBuffer;
 /**
  * A light that can be rendered with an implementation of {@link InstancedLightRenderer}.
  *
- * @author Ocelot
+ * @since 2.0.0
  */
-public interface InstancedLight {
+public interface InstancedLightData {
 
     /**
      * Stores the data of this light into the specified buffer.
