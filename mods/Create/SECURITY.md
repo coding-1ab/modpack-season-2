@@ -6,4 +6,4 @@ The versions currently supported can be found [here](https://wiki.createmod.net/
 
 ## Reporting a Vulnerability
 
-To report a vulnerability please head [here](https://github.com/Creators-of-Create/Create/security)
+To report a vulnerability please head [here](https://github.com/Creators-of-Create/Create/security/advisories/new)
