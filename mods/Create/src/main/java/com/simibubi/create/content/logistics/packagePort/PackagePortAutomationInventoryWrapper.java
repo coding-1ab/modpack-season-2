@@ -8,7 +8,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class PackagePortAutomationInventoryWrapper extends ItemHandlerWrapper {
-
 	private final PackagePortBlockEntity ppbe;
 
 	public PackagePortAutomationInventoryWrapper(IItemHandlerModifiable wrapped, PackagePortBlockEntity ppbe) {
@@ -38,10 +37,5 @@ public class PackagePortAutomationInventoryWrapper extends ItemHandlerWrapper {
 		if (filterString != null && PackageItem.matchAddress(stack, filterString))
 			return stack;
 		return super.insertItem(slot, stack, simulate);
-	}
-
-	@Override
-	public boolean isItemValid(int slot, ItemStack stack) {
-		return PackageItem.isPackage(stack);
 	}
 }
