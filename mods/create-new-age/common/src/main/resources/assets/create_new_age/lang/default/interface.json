@@ -11,6 +11,8 @@
     "item.create_new_age.wire.message.unbound": "Unbound from connector",
     "item.create_new_age.wire.message.connected": "Connected connector",
 
+    "create.scroll.create_new_age.motor.stress_multiplier": "Stress Capacity Multiplier",
+
     "create_new_age.ponder.heating.header": "Heating System",
 
     "create_new_age.ponder.heating.text_1": "You can use a Heating Plate to generate heat during daytime.",

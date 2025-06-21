@@ -50,7 +50,7 @@ public class MotorExtensionBlockEntity extends SmartBlockEntity {
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-        stressBehavior = new MotorExtensionScrollValueBehaviour(CreateLang.translateDirect("new_age.motor.stress_multiplier"), this, new MotorValueBox(), 1);
+        stressBehavior = new MotorExtensionScrollValueBehaviour(CreateLang.translateDirect("scroll.create_new_age.motor.stress_multiplier"), this, new MotorValueBox(), 1);
         stressBehavior.value = 100;
         stressBehavior.withCallback(i -> {
             multiplier = i/100f;

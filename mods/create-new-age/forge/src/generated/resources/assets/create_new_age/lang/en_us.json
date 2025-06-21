@@ -31,6 +31,7 @@
   "block.create_new_age.stirling_engine": "Stirling Engine",
   "block.create_new_age.thorium_ore": "Thorium Ore",
   "category.create_new_age.energising": "Energizing",
+  "create.scroll.create_new_age.motor.stress_multiplier": "Stress Capacity Multiplier",
   "create.tooltip.create_new_age.additional_capacity": "Additional Capacity",
   "create.tooltip.create_new_age.connector_info": "Connector Info: ",
   "create.tooltip.create_new_age.connector_mode.inert": "Inert",
