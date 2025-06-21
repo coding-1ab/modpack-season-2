@@ -18,8 +18,6 @@ import org.antarcticgardens.cna.content.heat.HeatBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static org.antarcticgardens.cna.content.heat.pipe.HeatPipeBlock.massPipe;
-
 public class HeaterBlock extends Block implements EntityBlock, IWrenchable {
     public static final EnumProperty<BlazeBurnerBlock.HeatLevel> STRENGTH = BlazeBurnerBlock.HEAT_LEVEL;
     
@@ -41,13 +39,8 @@ public class HeaterBlock extends Block implements EntityBlock, IWrenchable {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        final int on = massPipe;
-        massPipe++;
-        if (massPipe >= 20) {
-            massPipe = 0;
-        }
         return (world, blockPos, blockState, sel) -> {
-            if ((world.getGameTime() + on) % 20 != 0 || !(sel instanceof HeaterBlockEntity self) || self.getLevel() == null) return;
+            if (world.getGameTime() % 20 != 0 || !(sel instanceof HeaterBlockEntity self) || self.getLevel() == null) return;
             HeatBlockEntity.transferAround(self);
             Double mult = CNAConfig.getCommon().heaterRequiredHeatMultiplier.get();
             HeatBlockEntity.handleOverheat(self);

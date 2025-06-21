@@ -125,7 +125,7 @@ public interface HeatBlockEntity {
         for (int i = 0 ; i < 6 ; i++) {
             Direction value = Direction.values()[i];
             BlockEntity entity = self.getLevel().getBlockEntity(self.getBlockPos().relative(value));
-            if (entity instanceof HeatBlockEntity hbe && hbe.canAdd(value)) {
+            if (entity instanceof HeatBlockEntity hbe && hbe.canAdd(value) && self.canAdd(value.getOpposite())) {
                 setters[i] = hbe;
                 totalToAverage += hbe.getHeat();
                 totalBlocks++;

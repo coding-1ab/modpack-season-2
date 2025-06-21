@@ -5,6 +5,7 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -37,6 +38,11 @@ public class HeaterBlockEntity extends BlockEntity implements HeatBlockEntity, I
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putFloat("heat", heat);
+    }
+
+    @Override
+    public boolean canConnect(Direction from) {
+        return from != Direction.DOWN;
     }
 
 

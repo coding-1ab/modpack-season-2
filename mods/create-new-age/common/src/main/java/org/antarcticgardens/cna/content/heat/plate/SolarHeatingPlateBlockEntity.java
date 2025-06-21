@@ -4,6 +4,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -55,6 +56,10 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
         tag.putFloat("last", last);
     }
 
+    @Override
+    public boolean canConnect(Direction from) {
+        return from != Direction.DOWN;
+    }
 
     @Override
     public float getHeat() {

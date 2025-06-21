@@ -44,7 +44,6 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
     private float actualSpeed = 0;
     private float actualStress = 0;
     private long prvEnergy = -100000;
-    private int energySpam = 0;
 
     private float speed = 0;
     private float stress = 0;
@@ -131,6 +130,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
         stress = compound.getFloat("lastGeneratedStress");
         speed = compound.getFloat("lastGeneratedSpeed");
         e = compound.getLong("eUse");
+        actualStress = compound.getFloat("actualStress");
         super.read(compound, clientPacket);
     }
 
@@ -142,6 +142,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
         compound.putFloat("lastGeneratedStress", stress);
         compound.putFloat("lastGeneratedSpeed", speed);
         compound.putFloat("eUse", e);
+        compound.putFloat("actualStress", actualStress);
         super.write(compound, clientPacket);
     }
 
@@ -262,12 +263,10 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
                 updateGeneratedRotation();
                 speed = actualSpeed;
                 stress = actualStress;
-            } else if (storage.getStoredEnergy() != prvEnergy && energySpam > 10) {
+            } else if (storage.getStoredEnergy() != prvEnergy && level.getGameTime() % 20 == 0) {
                 this.sendData();
                 prvEnergy = storage.getStoredEnergy();
-                energySpam = 0;
             }
         }
-        energySpam++;
     }
 }

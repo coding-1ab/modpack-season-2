@@ -77,8 +77,9 @@ public class MotorExtensionBlockEntity extends SmartBlockEntity {
         @Override
         public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
             Direction facing = state.getValue(CreativeMotorBlock.FACING);
-            return super.getLocalOffset(level, pos, state).add(Vec3.atLowerCornerOf(facing.getNormal())
-                    .scale(-1 / 16f));
+            return super.getLocalOffset(level, pos, state)
+                    .add(Vec3.atLowerCornerOf(facing.getNormal()).scale(-1 / 16f))
+                    .add(new Vec3(facing.step()).scale(2 / 16f));
         }
 
         @Override
