@@ -6,10 +6,10 @@ import java.util.UUID;
 
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
-import net.createmod.catnip.net.base.ClientboundPacketPayload;
 
 import io.netty.buffer.ByteBuf;
 import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.net.base.ClientboundPacketPayload;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -47,7 +47,7 @@ public record ContraptionSeatMappingPacket(int entityId, Map<UUID, Integer> mapp
 		}
 
 		contraptionEntity.getContraption()
-				.setSeatMapping(mapping);
+			.setSeatMapping(new HashMap<>(mapping));
 	}
 
 	@Override
