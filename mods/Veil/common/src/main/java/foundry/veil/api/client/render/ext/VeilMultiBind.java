@@ -135,7 +135,11 @@ public enum VeilMultiBind {
         public void bindTextures(int first, IntBuffer textures) {
             int invalidCount = Math.min(12 - first, textures.limit());
             for (int i = first; i < invalidCount; i++) {
-                GlStateManager.TEXTURES[i].binding = textures.get(i - first);
+                int texture = textures.get(i - first);
+                int target = glGetTextureParameteri(GL_TEXTURE_TARGET, texture);
+                if (target == GL_TEXTURE_2D) {
+                    GlStateManager.TEXTURES[i].binding = texture;
+                }
             }
 
             glBindTextures(first, textures);
@@ -145,7 +149,11 @@ public enum VeilMultiBind {
         public void bindTextures(int first, int... textures) {
             int invalidCount = Math.min(12 - first, textures.length);
             for (int i = first; i < invalidCount; i++) {
-                GlStateManager.TEXTURES[i].binding = textures[i - first];
+                int texture = textures[i - first];
+                int target = glGetTextureParameteri(GL_TEXTURE_TARGET, texture);
+                if (target == GL_TEXTURE_2D) {
+                    GlStateManager.TEXTURES[i].binding = texture;
+                }
             }
 
             glBindTextures(first, textures);
