@@ -104,7 +104,7 @@ public interface TextureUniformAccess {
      * @param framebuffer The framebuffer to bind samplers from
      */
     static void setFramebufferSamplers(ShaderInstance instance, AdvancedFbo framebuffer) {
-        if(instance instanceof ShaderProgramImpl.Wrapper wrapper) {
+        if (instance instanceof ShaderProgramImpl.Wrapper wrapper) {
             wrapper.program().setFramebufferSamplers(framebuffer);
             return;
         }
