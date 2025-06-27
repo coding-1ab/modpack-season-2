@@ -105,6 +105,7 @@ public interface PostPipeline extends MutableUniformAccess, NativeResource {
      *
      * @author Ocelot
      */
+    @ApiStatus.NonExtendable
     interface Context extends ShaderTextureSource.Context {
 
         /**

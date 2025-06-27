@@ -112,6 +112,7 @@ public class DeviceInfoViewer extends SingleWindowInspector {
         flagText("inspector.veil.device_info.opengl.feature_flag.texture_anisotropy", VeilRenderSystem.textureAnisotropySupported(), "Whether GL_TEXTURE_MAX_ANISOTROPY can be set as a texture parameter");
         flagText("inspector.veil.device_info.opengl.feature_flag.texture_mirror_clamp_to_edge", VeilRenderSystem.textureMirrorClampToEdgeSupported(), "Whether GL_MIRROR_CLAMP_TO_EDGE can be set as a texture edge value option");
         flagText("inspector.veil.device_info.opengl.feature_flag.texture_cube_map_seamless", VeilRenderSystem.textureCubeMapSeamlessSupported(), "Whether GL_TEXTURE_CUBE_MAP_SEAMLESS can be set as a texture parameter");
+        flagText("inspector.veil.device_info.opengl.feature_flag.texture_cube_map_array", VeilRenderSystem.textureCubeMapArraySupported(), "Whether GL_TEXTURE_CUBE_MAP_ARRAY can be used as a texture type");
         flagText("inspector.veil.device_info.opengl.feature_flag.nv_draw_texture", VeilRenderSystem.nvDrawTextureSupported(), "Whether glDrawTextureNV can be used");
         flagText("inspector.veil.device_info.opengl.feature_flag.draw_indirect", VeilRenderSystem.drawIndirectSupported(), "Whether glDrawArraysInstanced and glDrawElementsInstancedBaseVertex can be used");
         flagText("inspector.veil.device_info.opengl.feature_flag.multi_draw_indirect", VeilRenderSystem.multiDrawIndirectSupported(), "Whether multiple indirect commands can be natively drawn in one command");

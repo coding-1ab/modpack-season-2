@@ -107,6 +107,7 @@ public final class VeilRenderSystem {
     private static final BooleanSupplier TEXTURE_ANISOTROPY_SUPPORTED = glCapability(caps -> caps.OpenGL46 || caps.GL_ARB_texture_filter_anisotropic || caps.GL_EXT_texture_filter_anisotropic);
     private static final BooleanSupplier TEXTURE_MIRROR_CLAMP_TO_EDGE_SUPPORTED = glCapability(caps -> caps.OpenGL44 || caps.GL_ARB_texture_mirror_clamp_to_edge);
     private static final BooleanSupplier TEXTURE_CUBE_MAP_SEAMLESS_SUPPORTED = glCapability(caps -> caps.GL_ARB_seamless_cubemap_per_texture);
+    private static final BooleanSupplier TEXTURE_CUBE_MAP_ARRAY_SUPPORTED = glCapability(caps -> caps.OpenGL40 || caps.GL_ARB_texture_cube_map_array);
     private static final BooleanSupplier NV_DRAW_TEXTURE_SUPPORTED = glCapability(caps -> caps.GL_NV_draw_texture);
     private static final BooleanSupplier DRAW_INDIRECT_SUPPORTED = glCapability(caps -> caps.OpenGL40 || caps.GL_ARB_draw_indirect);
     private static final BooleanSupplier MULTI_DRAW_INDIRECT_SUPPORTED = glCapability(caps -> caps.OpenGL43 || caps.GL_ARB_multi_draw_indirect);
@@ -633,6 +634,14 @@ public final class VeilRenderSystem {
      */
     public static boolean textureCubeMapSeamlessSupported() {
         return TEXTURE_CUBE_MAP_SEAMLESS_SUPPORTED.getAsBoolean();
+    }
+
+    /**
+     * @return Whether {@link ARBTextureCubeMapArray} is supported
+     * @since 2.1.0
+     */
+    public static boolean textureCubeMapArraySupported() {
+        return TEXTURE_CUBE_MAP_ARRAY_SUPPORTED.getAsBoolean();
     }
 
     /**

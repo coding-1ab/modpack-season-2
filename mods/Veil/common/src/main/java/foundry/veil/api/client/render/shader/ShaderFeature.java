@@ -17,7 +17,11 @@ public enum ShaderFeature {
     COMPUTE,
     SHADER_STORAGE,
     ATOMIC_COUNTER,
-    BINDLESS_TEXTURE;
+    BINDLESS_TEXTURE,
+    /**
+     * @since 2.1.0
+     */
+    CUBE_MAP_ARRAY;
 
     @ApiStatus.Internal
     public static final ShaderFeature[] FEATURES = values();
@@ -40,6 +44,7 @@ public enum ShaderFeature {
             case SHADER_STORAGE -> VeilRenderSystem.shaderStorageBufferSupported();
             case ATOMIC_COUNTER -> VeilRenderSystem.atomicCounterSupported();
             case BINDLESS_TEXTURE -> VeilRenderSystem.bindlessTextureSupported();
+            case CUBE_MAP_ARRAY -> VeilRenderSystem.textureCubeMapArraySupported();
         };
     }
 
