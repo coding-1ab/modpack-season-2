@@ -4,15 +4,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.util.GsonHelper;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-@OnlyIn(Dist.CLIENT)
 public record TextureTypeMetadataSection(TextureType type) {
 
     public static final Serializer SERIALIZER = new Serializer();
