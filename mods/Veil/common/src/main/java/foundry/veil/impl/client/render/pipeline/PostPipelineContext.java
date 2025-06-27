@@ -47,7 +47,7 @@ public class PostPipelineContext implements PostPipeline.Context {
     }
 
     @Override
-    public void setSampler(CharSequence name, TextureUniformAccess.ShaderTextureTarget target, int textureId, int samplerId) {
+    public void setSampler(CharSequence name, int textureId, int samplerId) {
         this.samplers.put(name, (long) samplerId << 32 | textureId);
     }
 
