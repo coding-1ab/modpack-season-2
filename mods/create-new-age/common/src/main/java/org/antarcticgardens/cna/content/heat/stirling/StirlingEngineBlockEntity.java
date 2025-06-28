@@ -139,4 +139,11 @@ public class StirlingEngineBlockEntity extends GeneratingKineticBlockEntity impl
         heat = amount;
         setChanged();
     }
+
+    @Override
+    public float calculateAddedStressCapacity() {
+        float impact = 32.0f;
+        this.lastStressApplied = impact;
+        return impact;
+    }
 }

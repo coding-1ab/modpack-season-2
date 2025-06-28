@@ -96,4 +96,19 @@ public class EnergiserBlockEntity extends KineticBlockEntity {
     public SimpleEnergyStorage getEnergyStorage() {
         return storage;
     }
+
+    @Override
+    public float calculateStressApplied() {
+        float impact;
+        if (this.tier == 1) {
+            impact = 4.0f;
+        } else if (this.tier == 2) {
+            impact = 8.0f;
+        } else {
+            impact = 32.0f;
+        }
+        this.lastStressApplied = impact;
+        return impact;
+    }
+
 }

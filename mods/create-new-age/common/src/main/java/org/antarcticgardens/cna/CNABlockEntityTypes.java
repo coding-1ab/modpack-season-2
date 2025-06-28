@@ -139,12 +139,12 @@ public class CNABlockEntityTypes {
 
 
     public static final BlockEntityEntry<MotorExtensionBlockEntity> BASIC_MOTOR_EXTENSION = REGISTRATE
-            .blockEntity("motor_extension", MotorExtensionBlockEntity.create(new BasicMotorExtensionVariant()))
+            .blockEntity("basic_motor_extension", MotorExtensionBlockEntity.create(new BasicMotorExtensionVariant()))
             .validBlocks(CNABlocks.BASIC_MOTOR_EXTENSION)
             .register();
 
     public static final BlockEntityEntry<MotorExtensionBlockEntity> ADVANCED_MOTOR_EXTENSION = REGISTRATE
-            .blockEntity("motor_extension", MotorExtensionBlockEntity.create(new AdvancedMotorExtensionVariant()))
+            .blockEntity("advanced_motor_extension", MotorExtensionBlockEntity.create(new AdvancedMotorExtensionVariant()))
             .validBlocks(CNABlocks.ADVANCED_MOTOR_EXTENSION)
             .register();
 
