@@ -47,6 +47,24 @@ compileJava {
     source(project(":common").sourceSets.main.allSource)
 }
 
+processResources {
+    from project(":common").sourceSets.main.resources
+    inputs.property "version", rootProject.modVersion
+    inputs.property "minecraftVersion", rootProject.minecraftVersion
+    inputs.property "fabricLoaderVersion", project.fabricLoaderVersion
+    inputs.property "eslVersion", project.eslVersion
+    inputs.property "createVersion", project.createVersionShort
+
+    filesMatching("fabric.mod.json") {
+        expand "version": rootProject.modVersion,
+                "minecraftVersion": rootProject.minecraftVersion,
+                "fabricLoaderVersion": project.fabricLoaderVersion,
+                "eslVersion": project.eslVersion,
+                "createVersion": project.createVersionShort
+    }
+}
+
+
 tasks.withType(JavaCompile) {
     options.compilerArgs += ['-ACNA_FABRIC']
 }

@@ -170,7 +170,7 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
         CreateLang.translate("tooltip.create_new_age.energy_storage", StringFormatUtil.formatLong(storage.getStoredEnergy()), StringFormatUtil.formatLong(storage.getCapacity()))
                 .style(ChatFormatting.AQUA).forGoggles(tooltip);
 
-        return IHaveGoggleInformation.super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        return true;
     }
 
     @Override

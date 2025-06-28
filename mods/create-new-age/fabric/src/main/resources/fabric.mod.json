@@ -43,11 +43,11 @@
     "create_new_age-common.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.21",
-    "minecraft": "~1.20.1",
+    "fabricloader": ">=${fabricLoaderVersion}",
+    "minecraft": "~${minecraftVersion}",
     "java": ">=17",
     "fabric-api": "*",
-    "esl": "*",
-    "create": "*"
+    "esl": ">=${eslVersion}",
+    "create": ">=${createVersion}"
   }
 }

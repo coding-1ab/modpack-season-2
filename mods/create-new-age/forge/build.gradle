@@ -21,9 +21,17 @@ dependencies {
 processResources {
     from(project(":common").sourceSets.main.resources)
     inputs.property "version", project.version
-    
+    inputs.property "minecraftVersion", rootProject.minecraftVersion
+    inputs.property "forgeVersionRange", project.forgeVersionRange
+    inputs.property "eslVersion", project.eslVersion
+    inputs.property "createVersion", project.createVersionShort
+
     filesMatching("META-INF/mods.toml") {
-        expand "version": project.version
+        expand "version": project.version,
+        "minecraftVersion": rootProject.minecraftVersion,
+        "forgeVersionRange": project.forgeVersionRange,
+        "eslVersion": project.eslVersion,
+        "createVersion": project.createVersionShort
     }
 }
 
