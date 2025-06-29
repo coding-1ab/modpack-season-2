@@ -199,7 +199,6 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
             if (!keepContents)
                 applySize(1);
 
-            System.out.println("Removing controller for " + getBlockPos());
             controller = null;
             size = 1;
             height = 1;
@@ -225,6 +224,7 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
     }
 
     private void refreshExposed() {
+        applySize(getTotalSize());
         if (isController()) {
             exposedStorage = storage;
         } else {
@@ -267,8 +267,6 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
 
         if (!pos.equals(controller)) {
             controller = pos;
-
-            System.out.println("Setting controller " + pos + " for " + getBlockPos());
 
             refreshExposed();
             setChanged();
