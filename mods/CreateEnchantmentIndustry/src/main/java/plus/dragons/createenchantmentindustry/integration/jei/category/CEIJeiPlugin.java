@@ -22,11 +22,12 @@ import com.google.common.base.Preconditions;
 import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.equipment.sandPaper.SandPaperPolishingRecipe;
-import com.simibubi.create.content.kinetics.deployer.ItemApplicationRecipe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import com.simibubi.create.content.kinetics.deployer.ManualApplicationRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
@@ -41,7 +42,6 @@ import net.neoforged.fml.loading.FMLLoader;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import plus.dragons.createdragonsplus.util.ErrorMessages;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
-import plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour.*;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindingRecipe;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.MechanicalGrindStoneItem;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
@@ -86,9 +86,10 @@ public class CEIJeiPlugin implements IModPlugin {
             registration.addRecipes(PrintingCategory.TYPE, EnchantedBookPrintingRecipeJEI.listAll());
         var manualApplication = registration
                 .getJeiHelpers()
-                .getRecipeType(Create.asResource("item_application"), ItemApplicationRecipe.class)
+                .getRecipeType(Create.asResource("item_application"))
                 .orElseThrow();
-        registration.addRecipes(manualApplication, List.of(MechanicalGrindStoneItem.createRecipe()));
+        // TODO Check this issue: getRecipeType("item_application",ItemApplicationRecipe.class) cannot get recipeType, since recipeClass is always a RecipeHolder class.
+        registration.addRecipes((mezz.jei.api.recipe.RecipeType<? super ManualApplicationRecipe>)manualApplication, List.of(MechanicalGrindStoneItem.createRecipe()));
         registration.addRecipes(GrindingCategory.TYPE, recipeManager
                 .getAllRecipesFor(CEIRecipes.GRINDING.getType()));
         RecipeType<SandPaperPolishingRecipe> polishing = AllRecipeTypes.SANDPAPER_POLISHING.getType();
