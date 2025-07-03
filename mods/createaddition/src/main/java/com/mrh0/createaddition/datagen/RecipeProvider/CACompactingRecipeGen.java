@@ -5,7 +5,8 @@ import com.mrh0.createaddition.index.CAFluids;
 import com.mrh0.createaddition.index.CAItems;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllRecipeTypes;
-import com.simibubi.create.foundation.data.recipe.ProcessingRecipeGen;
+import com.simibubi.create.api.data.recipe.BaseRecipeProvider;
+import com.simibubi.create.api.data.recipe.ProcessingRecipeGen;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -26,7 +27,7 @@ public class CACompactingRecipeGen extends ProcessingRecipeGen {
         return AllRecipeTypes.COMPACTING;
     }
 
-    GeneratedRecipe
+    BaseRecipeProvider.GeneratedRecipe
 
     BIOMASS_PELLET = create(CAItems.BIOMASS_PELLET.getId(), b -> b.require(CAItems.BIOMASS)
             .output(Fluids.WATER,50)

@@ -3,9 +3,12 @@ package com.mrh0.createaddition.datagen.RecipeProvider;
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.datagen.RecipeBuilders.ChargingRecipeBuilder;
 import com.mrh0.createaddition.index.CARecipes;
+import com.mrh0.createaddition.recipe.charging.ChargingRecipe;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.api.data.recipe.ProcessingRecipeGen;
+import com.simibubi.create.api.data.recipe.StandardProcessingRecipeGen;
+import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
 import com.simibubi.create.foundation.block.CopperBlockSet;
-import com.simibubi.create.foundation.data.recipe.ProcessingRecipeGen;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -25,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-public class CAChargingRecipeProvider extends ProcessingRecipeGen {
+public class CAChargingRecipeProvider extends ProcessingRecipeGen<ChargingRecipe> {
     public static final IRecipeTypeInfo recipeType = new IRecipeTypeInfo() {
         @Override
         public ResourceLocation getId() {
@@ -128,5 +131,10 @@ public class CAChargingRecipeProvider extends ProcessingRecipeGen {
     @Override
     protected IRecipeTypeInfo getRecipeType() {
        return recipeType;
+    }
+
+    @Override
+    protected ProcessingRecipeBuilder getBuilder(ResourceLocation id) {
+        return null;
     }
 }

@@ -4,10 +4,9 @@ import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.datagen.TagProvider.CATagRegister;
 import com.mrh0.createaddition.index.CAItems;
 import com.simibubi.create.*;
+import com.simibubi.create.api.data.recipe.ProcessingRecipeGen;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
-import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
-import com.simibubi.create.foundation.data.recipe.ProcessingRecipeGen;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.createmod.catnip.lang.Lang;
 import net.minecraft.core.HolderLookup;
@@ -17,11 +16,10 @@ import net.neoforged.neoforge.common.conditions.NotCondition;
 import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.function.UnaryOperator;
 
 public class CACrushingRecipeGen extends ProcessingRecipeGen {
-    public CACrushingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
-        super(output, provider);
+    public CACrushingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, String namespace) {
+        super(output, provider, namespace);
     }
 
     @Override
@@ -49,15 +47,11 @@ public class CACrushingRecipeGen extends ProcessingRecipeGen {
         .output(0.2f, CAItems.ELECTRUM_NUGGET)
     ),
     TUFF = mineralRecycling(AllPaletteStoneTypes.TUFF, b -> b.duration(350)
-            .output(0.25f, Items.FLINT)
-            .output(0.1f, Items.GOLD_NUGGET)
-            .output(0.1f, AllItems.COPPER_NUGGET)
-            .output(0.1f, AllItems.ZINC_NUGGET)
-            .output(0.1f, Items.IRON_NUGGET)
-            .output(0.1f, CAItems.ELECTRUM_NUGGET)
-    )
-
-            ;
-
-
+        .output(0.25f, Items.FLINT)
+        .output(0.1f, Items.GOLD_NUGGET)
+        .output(0.1f, AllItems.COPPER_NUGGET)
+        .output(0.1f, AllItems.ZINC_NUGGET)
+        .output(0.1f, Items.IRON_NUGGET)
+        .output(0.1f, CAItems.ELECTRUM_NUGGET)
+    );
 }
