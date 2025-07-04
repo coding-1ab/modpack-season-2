@@ -33,6 +33,12 @@ def average_hsl_in_mask(base_img, mask_img):
     avg_s = sum(s_list) / len(s_list)
     avg_l = sum(l_list) / len(l_list)
     return avg_h, avg_s, avg_l
+    # forcedColor = "b63a3a"
+    # forcedColor = forcedColor.lstrip('#')
+    # r, g, b = (int(forcedColor[i:i+2], 16) for i in (0, 2, 4))
+    # h, l, s = colorsys.rgb_to_hls(r/255, g/255, b/255)
+    return h, s, l
+    
 
 # Apply color to white pixels only, shifting HSL to match target average
 def colorize_image(base_img, mask_img, target_rgb):
@@ -52,19 +58,19 @@ def colorize_image(base_img, mask_img, target_rgb):
     for y, x in zip(*np.where(white_mask)):
         r, g, b, a = arr[y, x]
         h, l, s = colorsys.rgb_to_hls(r/255, g/255, b/255)
-        # If pixel is nearly white (very low saturation), set to target HSL directly
-        if s < 0.05:
-            nh = th
-            ns = ts
-            nl = tl
-        else:
-            nh = (h + h_shift) % 1.0
-            ns = min(max(s + s_shift, 0), 1)
-            nl = min(max(l + l_shift, 0), 1)
-        ns = ns * ns
-        # nl = math.sqrt(nl)
-        nr, ng, nb = colorsys.hls_to_rgb(nh, nl, ns)
-        arr[y, x, 0:3] = [int(nr*255), int(ng*255), int(nb*255)]
+        nh = (h + h_shift) % 1.0
+        ns = min(max(s + s_shift, 0), 1)
+        nl = min(max(l + l_shift, 0), 1)
+        # Reduce contrast in brightness by blending with the average lightness
+        # contrast_blend = max((0.8 - nl) * 0.3, 0) # 0 = no blend, 1 = full average, adjust as needed
+        # nl = nl * (1 - contrast_blend) + avg_l * contrast_blend
+        # USE THIS IF LIGHT
+        nr, ng, nb = colorsys.hls_to_rgb(nh, nl * 1.2, ns)
+        arr[y, x, 0:3] = [
+            min(max(int(nr*255), 0), 255),
+            min(max(int(ng*255), 0), 255),
+            min(max(int(nb*255), 0), 255)
+            ]
     # Restore original alpha channel for all pixels
     arr[..., 3] = alpha_channel
     return Image.fromarray(arr)
