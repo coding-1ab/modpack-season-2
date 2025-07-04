@@ -39,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+//TODO SpecialBlockItemRequirement
 public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity> {
 
     public HeadlampBlock(Properties p_52591_) {

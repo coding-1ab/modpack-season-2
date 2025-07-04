@@ -1,6 +1,10 @@
 package com.kipti.bnb.registry;
 
 import com.kipti.bnb.content.light.headlamp.HeadlampBlockEntity;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.kinetics.base.ShaftRenderer;
+import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
@@ -10,6 +14,14 @@ public class BnbBlockEntities {
     public static final BlockEntityEntry<HeadlampBlockEntity> HEADLAMP = REGISTRATE.blockEntity("headlamp", HeadlampBlockEntity::new)
         .validBlock(BnbBlocks.HEADLAMP)
         .register();
+
+    public static final BlockEntityEntry<KineticBlockEntity> ENCASED_SHAFT = REGISTRATE
+        .blockEntity("encased_shaft", KineticBlockEntity::new)
+        .visual(() -> SingleAxisRotatingVisual::shaft, false)
+        .validBlocks(BnbBlocks.WEATHERED_METAL_GIRDER_ENCASED_SHAFT)
+        .renderer(() -> ShaftRenderer::new)
+        .register();
+
 
     public static void register() {
     }

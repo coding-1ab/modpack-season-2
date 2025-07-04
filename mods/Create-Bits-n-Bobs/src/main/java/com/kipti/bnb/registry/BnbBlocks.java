@@ -7,6 +7,9 @@ import com.kipti.bnb.content.light.headlamp.HeadlampBlock;
 import com.kipti.bnb.content.light.headlamp.HeadlampBlockItem;
 import com.kipti.bnb.content.light.headlamp.HeadlampModelBuilder;
 import com.kipti.bnb.content.light.lightbulb.LightbulbBlock;
+import com.kipti.bnb.content.weathered_girder.EncasedWeatheredGirderBlock;
+import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlock;
+import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlockStateGenerator;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllDisplaySources;
 import com.simibubi.create.AllTags;
@@ -17,6 +20,7 @@ import com.simibubi.create.content.decoration.girder.GirderBlock;
 import com.simibubi.create.content.decoration.girder.GirderBlockStateGenerator;
 import com.simibubi.create.content.decoration.girder.GirderEncasedShaftBlock;
 import com.simibubi.create.foundation.block.DyedBlockList;
+import com.simibubi.create.foundation.data.BuilderTransformers;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.simibubi.create.foundation.utility.DyeHelper;
@@ -29,6 +33,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -103,30 +108,35 @@ public class BnbBlocks {
         .build()
         .register();
 
-    public static final BlockEntry<GirderBlock> WEATHERED_METAL_GIRDER = REGISTRATE.block("weathered_metal_girder", GirderBlock::new)
+    public static final BlockEntry<WeatheredGirderBlock> WEATHERED_METAL_GIRDER = REGISTRATE.block("weathered_metal_girder", WeatheredGirderBlock::new)
         .initialProperties(SharedProperties::softMetal)
         .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
             .sound(SoundType.NETHERITE_BLOCK))
         .transform(pickaxeOnly())
-        .blockstate(GirderBlockStateGenerator::blockState)
+        .blockstate(WeatheredGirderBlockStateGenerator::blockState)
         .onRegister(CreateRegistrate.blockModel(() -> ConnectedGirderModel::new))
         .item()
         .transform(customItemModel())
         .register();
 
-    public static final BlockEntry<GirderEncasedShaftBlock> WEATHERED_METAL_GIRDER_ENCASED_SHAFT =
-        REGISTRATE.block("weathered_metal_girder_encased_shaft", GirderEncasedShaftBlock::new)
+    public static final BlockEntry<EncasedWeatheredGirderBlock> WEATHERED_METAL_GIRDER_ENCASED_SHAFT = // TODO fix the reference to weathered metal girder
+        REGISTRATE.block("weathered_metal_girder_encased_shaft", EncasedWeatheredGirderBlock::new)
             .initialProperties(SharedProperties::softMetal)
             .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
                 .sound(SoundType.NETHERITE_BLOCK))
             .transform(pickaxeOnly())
-            .blockstate(GirderBlockStateGenerator::blockStateWithShaft)
+            .blockstate(WeatheredGirderBlockStateGenerator::blockStateWithShaft)
             .loot((p, b) -> p.add(b, p.createSingleItemTable(WEATHERED_METAL_GIRDER.get())
                 .withPool(p.applyExplosionCondition(AllBlocks.SHAFT.get(), LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1.0F))
                     .add(LootItem.lootTableItem(AllBlocks.SHAFT.get()))))))
             .onRegister(CreateRegistrate.blockModel(() -> ConnectedGirderModel::new))
             .register();
+
+    public static final BlockEntry<Block> INDUSTRIAL_IRON_BLOCK = REGISTRATE.block("weathered_industrial_iron_block", Block::new)
+        .transform(BuilderTransformers.palettesIronBlock())
+        .lang("Block of Weathered Industrial Iron")
+        .register();
 
     public static final DyedBlockList<ChairBlock> CHAIRS = new DyedBlockList<>(colour -> {
         String colourName = colour.getSerializedName();
@@ -142,15 +152,23 @@ public class BnbBlocks {
             .transform(displaySource(AllDisplaySources.ENTITY_NAME))
 //            .onRegister(CreateRegistrate.blockModel(() -> ChairModelBuilder::new))
             .blockstate((c, p) -> {
+
                 BlockModelBuilder chairBlock = p.models().withExistingParent("block/chair/block_" + colourName, p.modLoc("block/chair/block"))
                     .texture("2", p.modLoc("block/chair/chair_" + colourName));
+
                 BlockModelBuilder chairLeftArmrest = p.models().withExistingParent(
                         "block/chair/left_armrest_" + colourName,
                         p.modLoc("block/chair/left_armrest"))
                     .texture("2", p.modLoc("block/chair/chair_" + colourName));
+
                 BlockModelBuilder chairRightArmrest = p.models().withExistingParent(
                         "block/chair/right_armrest_" + colourName,
                         p.modLoc("block/chair/right_armrest"))
+                    .texture("2", p.modLoc("block/chair/chair_" + colourName));
+
+                BlockModelBuilder chairCornerBack = p.models().withExistingParent(
+                        "block/chair/corner_back_" + colourName,
+                        p.modLoc("block/chair/corner_back"))
                     .texture("2", p.modLoc("block/chair/chair_" + colourName));
                 for (Direction direction : Iterate.horizontalDirections) {
                     p.getMultipartBuilder(c.get())
@@ -167,6 +185,7 @@ public class BnbBlocks {
                         .addModel()
                         .condition(ChairBlock.FACING, direction)
                         .condition(ChairBlock.LEFT_ARM, true)
+                        .condition(ChairBlock.CORNER, false)
                         .end();
                     p.getMultipartBuilder(c.get())
                         .part()
@@ -175,6 +194,29 @@ public class BnbBlocks {
                         .addModel()
                         .condition(ChairBlock.FACING, direction)
                         .condition(ChairBlock.RIGHT_ARM, true)
+                        .condition(ChairBlock.CORNER, false)
+                        .end();
+
+                    p.getMultipartBuilder(c.get())
+                        .part()
+                        .modelFile(chairCornerBack)
+                        .rotationY((int) (direction.toYRot() + 180 + 90) % 360)
+                        .addModel()
+                        .condition(ChairBlock.FACING, direction)
+                        .condition(ChairBlock.LEFT_ARM, false)
+                        .condition(ChairBlock.RIGHT_ARM, true)
+                        .condition(ChairBlock.CORNER, true)
+                        .end();
+
+                    p.getMultipartBuilder(c.get())
+                        .part()
+                        .modelFile(chairCornerBack)
+                        .rotationY((int) (direction.toYRot() + 180 - 90) % 360)
+                        .addModel()
+                        .condition(ChairBlock.FACING, direction)
+                        .condition(ChairBlock.RIGHT_ARM, false)
+                        .condition(ChairBlock.LEFT_ARM, true)
+                        .condition(ChairBlock.CORNER, true)
                         .end();
                 }
             })
