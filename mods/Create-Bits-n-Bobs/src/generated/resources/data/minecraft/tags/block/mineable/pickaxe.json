@@ -2,6 +2,8 @@
   "values": [
     "bits_n_bobs:lightbulb",
     "bits_n_bobs:brass_lamp",
-    "bits_n_bobs:headlamp"
+    "bits_n_bobs:headlamp",
+    "bits_n_bobs:weathered_metal_girder",
+    "bits_n_bobs:weathered_metal_girder_encased_shaft"
   ]
 }

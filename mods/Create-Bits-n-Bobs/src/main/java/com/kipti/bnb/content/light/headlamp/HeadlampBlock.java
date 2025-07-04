@@ -162,6 +162,10 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (newState != null && newState.is(state.getBlock())) {
+            super.onRemove(state, level, pos, newState, movedByPiston);
+            return; // Block is being replaced by the same block, do nothing
+        }
         if (level.getBlockEntity(pos) instanceof HeadlampBlockEntity headlampBlockEntity) {
             ItemStack additionalResources = BnbBlocks.HEADLAMP.asStack().copyWithCount(Math.clamp(headlampBlockEntity.getExistingPlacements().size() - 1, 0, 3));
             if (!additionalResources.isEmpty())

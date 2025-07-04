@@ -1,4 +1,4 @@
-// 1.21.1	2025-07-04T17:33:47.9057595	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2025-07-04T17:58:12.7009527	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 d2a73ef86efe0bc0c5235d74787b4a88bb694b8a assets/bits_n_bobs/blockstates/black_chair.json
 f71a1e4222b8b00161325a374c67426e3eac7f65 assets/bits_n_bobs/blockstates/blue_chair.json
 8b26ece188bfdeaee301d35019c9a38783b46547 assets/bits_n_bobs/blockstates/brass_lamp.json
@@ -16,10 +16,12 @@ dbf5b8b8d5f1231e124032047c607e3f9302c569 assets/bits_n_bobs/blockstates/orange_c
 849607004137dc4aefe84123e7db5aa77fb68bbb assets/bits_n_bobs/blockstates/pink_chair.json
 870321293910057ec239c3157ac295f08dba86db assets/bits_n_bobs/blockstates/purple_chair.json
 ccf2f4e19a849f7f6ce06401a59777ebd3f00474 assets/bits_n_bobs/blockstates/red_chair.json
+959bf2c7da267e39c791f1677fd7590048e6a3fc assets/bits_n_bobs/blockstates/weathered_metal_girder.json
+db93f0b6304e85777db8e210ec27877930cd94a5 assets/bits_n_bobs/blockstates/weathered_metal_girder_encased_shaft.json
 b678b2050609855506e440f83d4f2a24b0b9f58b assets/bits_n_bobs/blockstates/white_chair.json
 640778929a3b0cbe4db759f21819da732a828f75 assets/bits_n_bobs/blockstates/yellow_chair.json
-73519642c4afd5eb277cedf6d4373fffbb07d977 assets/bits_n_bobs/lang/en_ud.json
-e6745b68251e76f5734fe445a2eab55b5ac2824c assets/bits_n_bobs/lang/en_us.json
+ae7746e6b92c11a51cd439bb001f26c457e8d73a assets/bits_n_bobs/lang/en_ud.json
+5f660049dfa203c69be7fa5fbe2656bfecac77b0 assets/bits_n_bobs/lang/en_us.json
 2870d164b559adeb431927bf7229f4b00f399129 assets/bits_n_bobs/models/block/chair/block_black.json
 195e827a5aaa89cb3fb7760bb1ff9d391515072c assets/bits_n_bobs/models/block/chair/block_blue.json
 94e3dafe79c04cd499246d44276969f338ad453e assets/bits_n_bobs/models/block/chair/block_brown.json
@@ -85,6 +87,7 @@ e49f7ddde5dadf725a8efdaade459d12abbfa11a assets/bits_n_bobs/models/item/orange_c
 c617953bb092d9dfd12b8b2452192cc29a81df26 assets/bits_n_bobs/models/item/pink_chair.json
 dc1462f5e0c0227c1e355ba5676d8b73cc57160b assets/bits_n_bobs/models/item/purple_chair.json
 2c48ff154be6e749fcf5e3f90f95288447d4b849 assets/bits_n_bobs/models/item/red_chair.json
+a756ec3f1d1ff09079622e814c629a112bbbc14f assets/bits_n_bobs/models/item/weathered_metal_girder.json
 f83d44615309b843be16b656e17b472a3dc22019 assets/bits_n_bobs/models/item/white_chair.json
 630417845e5676a5c4a82321f9f31fc31409420e assets/bits_n_bobs/models/item/yellow_chair.json
 ee22c1dbd9da6728e2722f70ff58857e073486ea data/bits_n_bobs/advancement/recipes/building_blocks/crafting/kinetics/black_chair.json
@@ -136,6 +139,8 @@ a916cbae0b94eee842224b2ace0af7423f01b9a6 data/bits_n_bobs/loot_table/blocks/ligh
 967d1777900ee9af4483a10df2b599c5dba4f25e data/bits_n_bobs/loot_table/blocks/pink_chair.json
 72ea2ea67259be5b3d79bd7d3712a0d023c00f64 data/bits_n_bobs/loot_table/blocks/purple_chair.json
 7231be47864415865e3962af7f7163f77ffb17c8 data/bits_n_bobs/loot_table/blocks/red_chair.json
+4ce5a2bda6bcd26e2231503f09025dd802c21b22 data/bits_n_bobs/loot_table/blocks/weathered_metal_girder.json
+24260b7ebccbe1ec3299331874812af63e1e7c76 data/bits_n_bobs/loot_table/blocks/weathered_metal_girder_encased_shaft.json
 5257aa8bf4427d5f9e41bc6d9f406f5b705b6b4e data/bits_n_bobs/loot_table/blocks/white_chair.json
 e69a6e41b208776e408c43c6a1e4207afda75349 data/bits_n_bobs/loot_table/blocks/yellow_chair.json
 0b057cede982a7c22696e23d01917d6302fb70f2 data/bits_n_bobs/recipe/crafting/kinetics/black_chair.json
@@ -173,4 +178,4 @@ ec56bec2b60fd7f4012fd5b3d345e791f3d0ddac data/bits_n_bobs/recipe/crafting/kineti
 68f2f6978a33b0088959480ad335ef8c29149eb9 data/bits_n_bobs/tags/block/chairs.json
 68f2f6978a33b0088959480ad335ef8c29149eb9 data/bits_n_bobs/tags/item/chairs.json
 68f2f6978a33b0088959480ad335ef8c29149eb9 data/minecraft/tags/block/mineable/axe.json
-5be87de1719c9934ddebe4502fe5d50699d12212 data/minecraft/tags/block/mineable/pickaxe.json
+217e00052fad44e451238b79affeeb956db45e38 data/minecraft/tags/block/mineable/pickaxe.json

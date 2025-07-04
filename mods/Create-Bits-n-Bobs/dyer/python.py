@@ -2,6 +2,7 @@ import os
 from PIL import Image
 import numpy as np
 import colorsys
+import math
 
 # Parse colours.txt to get color names and hex codes
 def parse_colours(colours_path):
@@ -14,46 +15,48 @@ def parse_colours(colours_path):
             colours.append((name, hex_code))
     return colours
 
-# Apply color to white pixels only
-def colorize_image(base_img, mask_img, target_rgb, orig_rgb=None):
+# Compute average HSL in the mask
+def average_hsl_in_mask(base_img, mask_img):
     arr = np.array(base_img.convert('RGBA'))
     mask = np.array(mask_img.convert('L'))
-    # Only apply where mask is white (value >= 250)
     white_mask = mask >= 250
-    target_rgb_f = np.array(target_rgb) / 255.0
-    # Compute luminance and saturation of the target color
-    target_lum = np.dot(target_rgb_f, [0.299, 0.587, 0.114])
-    maxc = np.max(target_rgb_f)
-    minc = np.min(target_rgb_f)
-    target_s = 0 if maxc == 0 else (maxc - minc) / maxc
-    # Convert input to grayscale (luminance)
-    gray = np.dot(arr[...,:3], [0.299, 0.587, 0.114]) / 255.0
+    h_list, s_list, l_list = [], [], []
     for y, x in zip(*np.where(white_mask)):
         r, g, b, a = arr[y, x]
-        # Convert original pixel to HLS
         h, l, s = colorsys.rgb_to_hls(r/255, g/255, b/255)
-        # Convert target color to HLS
-        th, tl, ts = colorsys.rgb_to_hls(*[c/255 for c in target_rgb])
+        h_list.append(h)
+        s_list.append(s)
+        l_list.append(l)
+    if not h_list:
+        return 0, 0, 0
+    avg_h = sum(h_list) / len(h_list)
+    avg_s = sum(s_list) / len(s_list)
+    avg_l = sum(l_list) / len(l_list)
+    return avg_h, avg_s, avg_l
 
-        oh, ol, os = colorsys.rgb_to_hls(*[c/255 for c in orig_rgb]) if orig_rgb else (h, l, s)
-        l_shift = target_lum - ol
-        # For very low-saturation target colors, keep original lightness
-        if ts < 0.05:
-            new_l = l + l_shift
-        elif ts < 0.2:
-            # Blend original and target lightness, but favor original more
-            blend = (ts - 0.05) / 0.15  # 0 at ts=0.05, 1 at ts=0.2
-            new_l = l * (1 - blend) + tl * blend
-        else:
-            new_l = l
-            # ts *= 1.5 + l  # Boost saturation for more vibrant colors
-        # Replace hue and saturation, use new lightness
-        nr, ng, nb = colorsys.hls_to_rgb(th, new_l, ts)
-        rgb_clamped = [max(0, min(255, int(nr*255))),
-                       max(0, min(255, int(ng*255))),
-                       max(0, min(255, int(nb*255)))]
-        arr[y, x, 0:3] = rgb_clamped
-        arr[y, x, 3] = a  # Explicitly preserve alpha
+# Apply color to white pixels only, shifting HSL to match target average
+def colorize_image(base_img, mask_img, target_rgb):
+    arr = np.array(base_img.convert('RGBA'))
+    mask = np.array(mask_img.convert('L'))
+    white_mask = mask >= 250
+    # Compute average HSL in mask
+    avg_h, avg_s, avg_l = average_hsl_in_mask(base_img, mask_img)
+    # Target HSL
+    th, tl, ts = colorsys.rgb_to_hls(*[c/255 for c in target_rgb])
+    # Compute shift
+    h_shift = th - avg_h
+    s_shift = ts - avg_s
+    l_shift = tl - avg_l
+    for y, x in zip(*np.where(white_mask)):
+        r, g, b, a = arr[y, x]
+        h, l, s = colorsys.rgb_to_hls(r/255, g/255, b/255)
+        # Apply shift
+        nh = (h + h_shift) % 1.0
+        ns = min(max(s + s_shift, 0), 1)
+        nl = min(max(l + l_shift, 0), 1)
+        nr, ng, nb = colorsys.hls_to_rgb(nh, nl, ns)
+        arr[y, x, 0:3] = [int(nr*255), int(ng*255), int(nb*255)]
+        arr[y, x, 3] = a
     return Image.fromarray(arr)
 
 def hex_to_rgb(hex_code):
@@ -74,12 +77,9 @@ def main():
     for fname in os.listdir(in_dir):
         if fname.lower().endswith('.png'):
             base_img = Image.open(os.path.join(in_dir, fname)).convert('RGBA')
-            # Set orig_rgb based on filename
-            # orig_rgb is a reference color for the original image
-            orig_rgb = (182,58,58)
             for name, hex_code in colours:
                 rgb = hex_to_rgb(hex_code)
-                out_img = colorize_image(base_img, mask_img, rgb, orig_rgb=orig_rgb)
+                out_img = colorize_image(base_img, mask_img, rgb)
                 out_name = f"{os.path.splitext(fname)[0]}_{name.replace(' ', '_').lower()}.png"
                 out_img.save(os.path.join(out_dir, out_name))
 

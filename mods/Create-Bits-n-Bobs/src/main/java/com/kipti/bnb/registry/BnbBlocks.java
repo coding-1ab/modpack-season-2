@@ -2,42 +2,45 @@ package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.chair.ChairBlock;
-import com.kipti.bnb.content.chair.ChairModelBuilder;
 import com.kipti.bnb.content.light.founation.LightBlock;
 import com.kipti.bnb.content.light.headlamp.HeadlampBlock;
 import com.kipti.bnb.content.light.headlamp.HeadlampBlockItem;
 import com.kipti.bnb.content.light.headlamp.HeadlampModelBuilder;
 import com.kipti.bnb.content.light.lightbulb.LightbulbBlock;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllDisplaySources;
 import com.simibubi.create.AllTags;
-import com.simibubi.create.Create;
-import com.simibubi.create.content.contraptions.actors.seat.SeatBlock;
 import com.simibubi.create.content.contraptions.actors.seat.SeatInteractionBehaviour;
 import com.simibubi.create.content.contraptions.actors.seat.SeatMovementBehaviour;
+import com.simibubi.create.content.decoration.girder.ConnectedGirderModel;
+import com.simibubi.create.content.decoration.girder.GirderBlock;
+import com.simibubi.create.content.decoration.girder.GirderBlockStateGenerator;
+import com.simibubi.create.content.decoration.girder.GirderEncasedShaftBlock;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
-import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.utility.DyeHelper;
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.createmod.catnip.data.Iterate;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.ModelBuilder;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
 
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
 import static com.simibubi.create.api.behaviour.display.DisplaySource.displaySource;
 import static com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour.interactionBehaviour;
 import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
+import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.axeOnly;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
@@ -100,6 +103,30 @@ public class BnbBlocks {
         .build()
         .register();
 
+    public static final BlockEntry<GirderBlock> WEATHERED_METAL_GIRDER = REGISTRATE.block("weathered_metal_girder", GirderBlock::new)
+        .initialProperties(SharedProperties::softMetal)
+        .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
+            .sound(SoundType.NETHERITE_BLOCK))
+        .transform(pickaxeOnly())
+        .blockstate(GirderBlockStateGenerator::blockState)
+        .onRegister(CreateRegistrate.blockModel(() -> ConnectedGirderModel::new))
+        .item()
+        .transform(customItemModel())
+        .register();
+
+    public static final BlockEntry<GirderEncasedShaftBlock> WEATHERED_METAL_GIRDER_ENCASED_SHAFT =
+        REGISTRATE.block("weathered_metal_girder_encased_shaft", GirderEncasedShaftBlock::new)
+            .initialProperties(SharedProperties::softMetal)
+            .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
+                .sound(SoundType.NETHERITE_BLOCK))
+            .transform(pickaxeOnly())
+            .blockstate(GirderBlockStateGenerator::blockStateWithShaft)
+            .loot((p, b) -> p.add(b, p.createSingleItemTable(WEATHERED_METAL_GIRDER.get())
+                .withPool(p.applyExplosionCondition(AllBlocks.SHAFT.get(), LootPool.lootPool()
+                    .setRolls(ConstantValue.exactly(1.0F))
+                    .add(LootItem.lootTableItem(AllBlocks.SHAFT.get()))))))
+            .onRegister(CreateRegistrate.blockModel(() -> ConnectedGirderModel::new))
+            .register();
 
     public static final DyedBlockList<ChairBlock> CHAIRS = new DyedBlockList<>(colour -> {
         String colourName = colour.getSerializedName();
