@@ -1,0 +1,38 @@
+package com.kipti.bnb.registry;
+
+import com.google.gson.JsonArray;
+import com.simibubi.create.AllShapes;
+import net.createmod.catnip.math.VoxelShaper;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+public class BnbShapes {
+
+    public static final VoxelShaper HEADLAMP_INTERACTION = shape(0, 0, 0, 16, 7, 16)
+        .forDirectional();
+
+    public static final VoxelShaper LIGHTBULB_SHAPE = shape(6, 0, 6, 10, 13, 10)
+        .forDirectional();
+    public static final VoxelShaper LIGHTBULB_CAGED_SHAPE = shape(5, 0, 5, 11, 5, 11)
+        .add(cuboid(4, 5, 4, 12, 14, 12))
+        .forDirectional();
+
+    public static final VoxelShaper BRASS_LAMP_SHAPE = shape(1, 0, 1, 15, 3, 15)
+        .add(cuboid(2, 3, 2, 14, 10, 14))
+        .add(cuboid(3, 10, 3, 13, 13, 13))
+        .add(cuboid(6, 13, 6, 9, 16, 9))
+        .forDirectional();
+
+    public static AllShapes.Builder shape(VoxelShape shape) {
+        return new AllShapes.Builder(shape);
+    }
+
+    public static AllShapes.Builder shape(double x1, double y1, double z1, double x2, double y2, double z2) {
+        return shape(cuboid(x1, y1, z1, x2, y2, z2));
+    }
+
+    public static VoxelShape cuboid(double x1, double y1, double z1, double x2, double y2, double z2) {
+        return Block.box(x1, y1, z1, x2, y2, z2);
+    }
+
+}

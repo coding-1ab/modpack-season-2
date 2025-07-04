@@ -1,0 +1,13 @@
+// 1.21.1	2025-07-04T12:55:41.7590636	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+8b26ece188bfdeaee301d35019c9a38783b46547 assets/bits_n_bobs/blockstates/brass_lamp.json
+c9918242c23e4e53c30dc1b1444149933848a3e9 assets/bits_n_bobs/blockstates/headlamp.json
+7481dfb425a070923e18aafcd2303fddecefb503 assets/bits_n_bobs/blockstates/lightbulb.json
+f55a0a35024a7a1717f5c3e8336cb6e0c3185679 assets/bits_n_bobs/lang/en_ud.json
+22caceb12e060eff20660b974650d02efb4d4c6c assets/bits_n_bobs/lang/en_us.json
+eb2648575386ff59794eb509dde6eff42a2b2d18 assets/bits_n_bobs/models/item/brass_lamp.json
+0c5ab6eb4618c5fb2fbb27d78a22add1362cdab9 assets/bits_n_bobs/models/item/headlamp.json
+e16c64d75d3a636beceda8c89260434ceea1ec2c assets/bits_n_bobs/models/item/lightbulb.json
+8d7f79c7e36942b4dddabde12c8f203e3a656fe9 data/bits_n_bobs/loot_table/blocks/brass_lamp.json
+e0d7a9338fec8c68d3b8e100c1356478a88c9ffa data/bits_n_bobs/loot_table/blocks/headlamp.json
+cb08e9889baa220e148c29e0515af34412b266ee data/bits_n_bobs/loot_table/blocks/lightbulb.json
+5be87de1719c9934ddebe4502fe5d50699d12212 data/minecraft/tags/block/mineable/pickaxe.json
