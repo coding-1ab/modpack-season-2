@@ -98,6 +98,11 @@ public class HeadlampBlockEntity extends SmartBlockEntity {
 
         int i = dyeColor.ordinal() + 2;
         if (activePlacements[index] == i) {
+            for (int j = 0; j < activePlacements.length; j++) {
+                if (activePlacements[j] != i && activePlacements[j] != 0) {
+                    return;
+                }
+            }
             tryExtendPlaceDyeColorIntoFullBlock(
                 dyeColor, getBlockState().getValue(HeadlampBlock.FACING), new ArrayList<>(List.of(getBlockPos())), new ArrayList<>()
             );
