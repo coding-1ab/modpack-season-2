@@ -1,6 +1,22 @@
 {
+  "block.bits_n_bobs.black_chair": "Black Chair",
+  "block.bits_n_bobs.blue_chair": "Blue Chair",
   "block.bits_n_bobs.brass_lamp": "Brass Lamp",
+  "block.bits_n_bobs.brown_chair": "Brown Chair",
+  "block.bits_n_bobs.cyan_chair": "Cyan Chair",
+  "block.bits_n_bobs.gray_chair": "Gray Chair",
+  "block.bits_n_bobs.green_chair": "Green Chair",
   "block.bits_n_bobs.headlamp": "Headlamp",
+  "block.bits_n_bobs.light_blue_chair": "Light Blue Chair",
+  "block.bits_n_bobs.light_gray_chair": "Light Gray Chair",
   "block.bits_n_bobs.lightbulb": "Lightbulb",
+  "block.bits_n_bobs.lime_chair": "Lime Chair",
+  "block.bits_n_bobs.magenta_chair": "Magenta Chair",
+  "block.bits_n_bobs.orange_chair": "Orange Chair",
+  "block.bits_n_bobs.pink_chair": "Pink Chair",
+  "block.bits_n_bobs.purple_chair": "Purple Chair",
+  "block.bits_n_bobs.red_chair": "Red Chair",
+  "block.bits_n_bobs.white_chair": "White Chair",
+  "block.bits_n_bobs.yellow_chair": "Yellow Chair",
   "tab.based": "Create: Bits 'n' Bobs"
 }

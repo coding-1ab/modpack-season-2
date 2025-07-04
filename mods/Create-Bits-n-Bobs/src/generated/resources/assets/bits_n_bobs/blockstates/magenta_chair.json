@@ -1,0 +1,117 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_magenta",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/left_armrest_magenta",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "left_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/right_armrest_magenta",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_magenta",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/left_armrest_magenta",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "left_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/right_armrest_magenta",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_magenta"
+      },
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/left_armrest_magenta"
+      },
+      "when": {
+        "facing": "north",
+        "left_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/right_armrest_magenta"
+      },
+      "when": {
+        "facing": "north",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_magenta",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/left_armrest_magenta",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "left_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/right_armrest_magenta",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "right_arm": "true"
+      }
+    }
+  ]
+}

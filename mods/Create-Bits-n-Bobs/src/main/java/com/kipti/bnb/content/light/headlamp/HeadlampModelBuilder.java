@@ -22,6 +22,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.BakedModelWrapper;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -37,7 +38,7 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
     }
 
     @Override
-    public ModelData getModelData(BlockAndTintGetter world, BlockPos pos, BlockState state, ModelData blockEntityData) {
+    public @NotNull ModelData getModelData(BlockAndTintGetter world, BlockPos pos, BlockState state, ModelData blockEntityData) {
         HeadlampModelData data = new HeadlampModelData();
 
         int[] activePlacements = new int[9];
@@ -55,8 +56,7 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
     }
 
     @Override
-    public List<BakedQuad> getQuads(BlockState state, Direction side, RandomSource rand, ModelData data, RenderType
-        renderType) {
+    public List<BakedQuad> getQuads(BlockState state, Direction side, RandomSource rand, ModelData data, RenderType renderType) {
         if (data.has(HEADLAMP_PROPERTY)) {
             List<BakedQuad> model = new ArrayList<>(super.getQuads(state, side, rand, data, renderType));
             HeadlampModelData headlampModelData = data.get(HEADLAMP_PROPERTY);
@@ -87,7 +87,6 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
             int[] vertices = quad.getVertices();
             int[] transformedVertices = Arrays.copyOf(vertices, vertices.length);
 
-            //TODO fetch better
             TextureAtlasSprite oldSprite = quad.getSprite();
             boolean oldSpriteIsBlockTexture = oldSprite.contents().name().equals(CreateBitsnBobs.asResource("block/headlight/headlight"));
             boolean oldSpriteIsOffLampTexture = oldSprite.contents().name().equals(CreateBitsnBobs.asResource("block/headlight/headlight_off"));
@@ -105,7 +104,7 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
                 Vec3 normal = BakedQuadHelper.getNormalXYZ(vertices, i);
                 float uvX = BakedQuadHelper.getU(vertices, i);
                 float uvY = BakedQuadHelper.getV(vertices, i);
-                //todo remove unneccassary scaling shit
+
                 if (!oldSprite.equals(newSprite)) {
                     uvX = (uvX - oldSprite.getU0()) / (oldSprite.getU1() - oldSprite.getU0()) * (newSprite.getU1() - newSprite.getU0()) + newSprite.getU0();
                     uvY = (uvY - oldSprite.getV0()) / (oldSprite.getV1() - oldSprite.getV0()) * (newSprite.getV1() - newSprite.getV0()) + newSprite.getV0();

@@ -11,9 +11,12 @@ public class BnbShapes {
     public static final VoxelShaper HEADLAMP_INTERACTION = shape(0, 0, 0, 16, 7, 16)
         .forDirectional();
 
-    public static final VoxelShaper LIGHTBULB_SHAPE = shape(6, 0, 6, 10, 13, 10)
+    public static final VoxelShaper LIGHTBULB_SHAPE = shape(6, 0, 6, 10, 2, 10)
+        .add(cuboid(5, 2, 5, 11, 13, 11))
         .forDirectional();
-    public static final VoxelShaper LIGHTBULB_CAGED_SHAPE = shape(5, 0, 5, 11, 5, 11)
+
+    public static final VoxelShaper LIGHTBULB_CAGED_SHAPE = shape(6, 0, 6, 10, 2, 10)
+        .add(cuboid(5, 2, 5, 11, 5, 11))
         .add(cuboid(4, 5, 4, 12, 14, 12))
         .forDirectional();
 

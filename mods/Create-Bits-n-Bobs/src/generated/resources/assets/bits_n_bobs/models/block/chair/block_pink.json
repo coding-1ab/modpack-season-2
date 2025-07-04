@@ -1,0 +1,6 @@
+{
+  "parent": "bits_n_bobs:block/chair/block",
+  "textures": {
+    "2": "bits_n_bobs:block/chair/chair_pink"
+  }
+}

@@ -41,6 +41,7 @@ public class CreateBitsnBobs {
         BnbCreativeTabs.register(modEventBus);
         BnbPartialModels.register();
         BnbBlockEntities.register();
+        BnbTags.register();
 
         modContainer.registerConfig(ModConfig.Type.CLIENT, Config.SPEC);
     }

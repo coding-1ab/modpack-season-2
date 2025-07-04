@@ -46,7 +46,7 @@ def colorize_image(base_img, mask_img, target_rgb, orig_rgb=None):
             new_l = l * (1 - blend) + tl * blend
         else:
             new_l = l
-            ts *= 1.5 + l  # Boost saturation for more vibrant colors
+            # ts *= 1.5 + l  # Boost saturation for more vibrant colors
         # Replace hue and saturation, use new lightness
         nr, ng, nb = colorsys.hls_to_rgb(th, new_l, ts)
         rgb_clamped = [max(0, min(255, int(nr*255))),
@@ -75,10 +75,8 @@ def main():
         if fname.lower().endswith('.png'):
             base_img = Image.open(os.path.join(in_dir, fname)).convert('RGBA')
             # Set orig_rgb based on filename
-            if fname.lower() == 'headlight_on.png':
-                orig_rgb = (255, 254, 231)  # #fffee7
-            else:
-                orig_rgb = (255, 169, 142)  # #ffa98e
+            # orig_rgb is a reference color for the original image
+            orig_rgb = (182,58,58)
             for name, hex_code in colours:
                 rgb = hex_to_rgb(hex_code)
                 out_img = colorize_image(base_img, mask_img, rgb, orig_rgb=orig_rgb)
