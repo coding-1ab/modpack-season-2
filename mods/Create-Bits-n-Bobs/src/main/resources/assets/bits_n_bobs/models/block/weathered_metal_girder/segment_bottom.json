@@ -1,7 +1,7 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "create:block/girder"
+		"0": "bits_n_bobs:block/weathered_girder"
 	},
 	"elements": [
 		{

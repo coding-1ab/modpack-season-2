@@ -1,9 +1,9 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"1": "create:block/girder_pole",
-		"2": "create:block/girder_pole_side",
-		"particle": "create:block/industrial_iron_block"
+		"1": "bits_n_bobs:block/weathered_girder_pole",
+		"2": "bits_n_bobs:block/weathered_girder_pole_side",
+		"particle": "bits_n_bobs:block/weathered_industrial_iron_block"
 	},
 	"elements": [
 		{

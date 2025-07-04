@@ -95,8 +95,48 @@ public class HeadlampBlockEntity extends SmartBlockEntity {
             return; // No existing placement found
         }
         int index = placement.ordinal();
-        this.activePlacements[index] = dyeColor.ordinal() + 2; // 0 - no color, 1 - no dye, 2 - red, etc.
+
+        int i = dyeColor.ordinal() + 2;
+        if (activePlacements[index] == i) {
+            tryExtendPlaceDyeColorIntoFullBlock(
+                dyeColor, getBlockState().getValue(HeadlampBlock.FACING), new ArrayList<>(List.of(getBlockPos())), new ArrayList<>()
+            );
+            return; // No change in color
+        }
+        this.activePlacements[index] = i; // 0 - no color, 1 - no dye, 2 - red, etc.
         sendData();
+    }
+
+    private void tryExtendPlaceDyeColorIntoFullBlock(DyeColor dyeColor, Direction facing, List<BlockPos> frontier, List<BlockPos> visited) {
+        if (frontier.isEmpty()) {
+            return; // No frontier to process
+        }
+        if (visited.size() > 32) {
+            return;
+        }
+        BlockPos currentPos = frontier.remove(0);
+        if (visited.contains(currentPos)) {
+            tryExtendPlaceDyeColorIntoFullBlock(dyeColor, facing, frontier, visited);
+            return; // Already visited this position
+        }
+        visited.add(currentPos);
+
+        if (level.getBlockEntity(currentPos) instanceof HeadlampBlockEntity otherHeadlamp) {
+            if (otherHeadlamp.placeDyeColorIntoFullBlock(dyeColor)) {
+                return;
+            }
+        }
+
+        // Check adjacent blocks
+        List<Direction> directions = List.of(
+            Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN
+        ).stream().filter(d -> d.getAxis() != facing.getAxis()).toList();
+        for (Direction direction : directions) {
+            frontier.add(currentPos.relative(direction));
+        }
+
+        // Recursion :D
+        tryExtendPlaceDyeColorIntoFullBlock(dyeColor, facing, frontier, visited);
     }
 
     public boolean removeNearestHeadlamp(Vec3 subtract, Direction value) {
@@ -212,11 +252,21 @@ public class HeadlampBlockEntity extends SmartBlockEntity {
         return builder.forDirectional().get(state.getValue(HeadlampBlock.FACING));
     }
 
-    public void placeDyeColorIntoFullBlock(DyeColor dyeColor) {
+    public boolean placeDyeColorIntoFullBlock(DyeColor dyeColor) {
+        boolean placedAny = false;
+        int toAdd = dyeColor.ordinal() + 2;
         for (int i = 0; i < HeadlampPlacement.values().length; i++) {
-            this.activePlacements[i] = dyeColor.ordinal() + 2; // 0 - no color, 1 - no dye, 2 - red, etc.
+            if (this.activePlacements[i] == 0 || this.activePlacements[i] == toAdd) {
+                continue; // Skip placements without headlamps
+            }
+            placedAny = true;
+            this.activePlacements[i] = toAdd; // 0 - no color, 1 - no dye, 2 - red, etc.
+        }
+        if (!placedAny) {
+            return false; // No headlamps to place dye color into
         }
         sendData();
+        return true;
     }
 
     public enum HeadlampAlignment {

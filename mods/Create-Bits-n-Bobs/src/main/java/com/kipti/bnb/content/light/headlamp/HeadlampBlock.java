@@ -128,17 +128,11 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (stack.getItem() instanceof DyeItem dyeItem) {
             if (level.getBlockEntity(pos) instanceof HeadlampBlockEntity headlampBlockEntity) {
-                if (player.isCrouching()) {
-                    headlampBlockEntity.placeDyeColorIntoFullBlock(
-                        dyeItem.getDyeColor()
-                    );
-                } else {
-                    headlampBlockEntity.placeDyeColorIntoBlock(
-                        dyeItem.getDyeColor(),
-                        hitResult.getLocation().subtract(pos.getCenter()),
-                        state.getValue(FACING)
-                    );
-                }
+                headlampBlockEntity.placeDyeColorIntoBlock(
+                    dyeItem.getDyeColor(),
+                    hitResult.getLocation().subtract(pos.getCenter()),
+                    state.getValue(FACING)
+                );
             }
             return ItemInteractionResult.SUCCESS;
         }
