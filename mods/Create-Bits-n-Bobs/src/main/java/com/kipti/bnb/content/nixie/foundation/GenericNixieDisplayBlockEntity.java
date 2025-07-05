@@ -35,10 +35,10 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
             return false;
         }
         if (
-            !((BnbBlocks.NIXIE_BOARD.is(state1) || BnbBlocks.DYED_NIXIE_BOARD.contains(state2.getBlock()))
-                && (BnbBlocks.NIXIE_BOARD.is(state2) || BnbBlocks.DYED_NIXIE_BOARD.contains(state1.getBlock())))
-            && !((BnbBlocks.LARGE_NIXIE_TUBE.is(state1) || BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(state2.getBlock()))
-                && (BnbBlocks.LARGE_NIXIE_TUBE.is(state2) || BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(state1.getBlock())))
+            !((BnbBlocks.NIXIE_BOARD.is(state1.getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(state1.getBlock()))
+                && (BnbBlocks.NIXIE_BOARD.is(state2.getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(state2.getBlock())))
+            && !((BnbBlocks.LARGE_NIXIE_TUBE.is(state1.getBlock()) || BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(state1.getBlock()))
+                && (BnbBlocks.LARGE_NIXIE_TUBE.is(state2.getBlock()) || BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(state2.getBlock())))
         ) return false;
         if (state1.getValue(DoubleOrientedBlock.FACING) != state2.getValue(DoubleOrientedBlock.FACING)) {
             return false;

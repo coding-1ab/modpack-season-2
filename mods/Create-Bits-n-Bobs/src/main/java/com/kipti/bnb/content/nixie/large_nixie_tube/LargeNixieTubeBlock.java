@@ -74,4 +74,7 @@ public class LargeNixieTubeBlock extends DoubleOrientedBlock implements IBE<Gene
         return BnbBlockEntities.GENERIC_NIXIE_DISPLAY.get();
     }
 
+    public @Nullable DyeColor getDyeColor() {
+        return dyeColor;
+    }
 }

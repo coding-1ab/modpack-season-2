@@ -8,6 +8,8 @@ import com.kipti.bnb.registry.BnbBlocks;
 import com.kipti.bnb.registry.BnbShapes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
+import com.simibubi.create.foundation.utility.DyeHelper;
+import net.createmod.catnip.data.Couple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -51,6 +53,7 @@ public class NixieBoardBlock extends DoubleOrientedBlock implements IBE<GenericN
         Direction facing = state.getValue(FACING);
         Direction orientation = state.getValue(ORIENTATION);
         Direction left = DoubleOrientedBlockModel.getLeft(facing, orientation);
+
         state = state
             .setValue(LEFT, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, context.getLevel().getBlockState(context.getClickedPos().relative(left))))
             .setValue(RIGHT, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, context.getLevel().getBlockState(context.getClickedPos().relative(left.getOpposite()))))
@@ -72,9 +75,9 @@ public class NixieBoardBlock extends DoubleOrientedBlock implements IBE<GenericN
         Direction right = left.getOpposite();
 
         if (direction == left.getOpposite()) {
-            return state.setValue(LEFT, neighborState.is(this));
+            return state.setValue(LEFT, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, neighborState));
         } else if (direction == right.getOpposite()) {
-            return state.setValue(RIGHT, neighborState.is(this));
+            return state.setValue(RIGHT, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, neighborState));
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
