@@ -102,7 +102,7 @@ public class CreateAddition {
         eventBus.addListener(this::setup);
         eventBus.addListener(this::doClientStuff);
         eventBus.addListener(this::postInit);
-        eventBus.addListener(this::onRegister);
+//        eventBus.addListener(this::onRegister);
         eventBus.addListener(RegisterCapabilitiesEvent.class, CACapabilities::register);
         eventBus.addListener(RegisterPayloadHandlersEvent.class, CreateAddition::registerPackets);
         //FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(RecipeSerializer.class, CARecipes::register);
@@ -166,9 +166,9 @@ public class CreateAddition {
         LOGGER.info("Create Crafts & Additions Initialized!");
     }
 
-    public void onRegister(final RegisterEvent event) {
-        CAArmInteractions.register();
-    }
+//    public void onRegister(final RegisterEvent event) {
+//        CAArmInteractions.register();
+//    }
 
     @SubscribeEvent
     public void onRegisterCommandEvent(RegisterCommandsEvent event) {
