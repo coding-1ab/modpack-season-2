@@ -23,6 +23,7 @@ import com.mrh0.createaddition.blocks.redstone_relay.RedstoneRelayBlock;
 import com.mrh0.createaddition.blocks.rolling_mill.RollingMillBlock;
 import com.mrh0.createaddition.blocks.tesla_coil.TeslaCoilBlock;
 import com.mrh0.createaddition.item.BiomassPelletBlock;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.foundation.data.AssetLookup;
@@ -31,6 +32,7 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
@@ -38,6 +40,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 public class CABlocks {
 
@@ -118,6 +125,7 @@ public class CABlocks {
 			.properties(props -> props.sound(SoundType.WOOL).strength(0.5f))
 			.item()
 			.transform(customItemModel())
+			.loot((lt,b) -> lt.add(b, BlockLootSubProvider.noDrop()))
 			.register();
 
 	public static final BlockEntry<CACakeBlock> HONEY_CAKE = CreateAddition.REGISTRATE.block("honey_cake",  CACakeBlock::new)
@@ -125,6 +133,7 @@ public class CABlocks {
 			.properties(props -> props.sound(SoundType.WOOL).strength(0.5f))
 			.item()
 			.transform(customItemModel())
+			.loot((lt,b) -> lt.add(b, BlockLootSubProvider.noDrop()))
 			.register();
 
 	/*public static final BlockEntry<HarmfulPlantBlock> HARMFUL_PLANT = CreateAddition.REGISTRATE.block("harmful_plant",  HarmfulPlantBlock::new)
@@ -156,7 +165,7 @@ public class CABlocks {
 			.onRegister(movementBehaviour(new ModularAccumulatorMovement()))
 			.onRegister(connectedTextures(ModularAccumulatorCTBehaviour::new))
 			.transform(displaySource(CADisplaySources.MODULAR_ACCUMULATOR))
-			.addLayer(() -> RenderType::cutoutMipped)
+//			.addLayer(() -> RenderType::cutoutMipped)
 			.item(ModularAccumulatorBlockItem::new)
 			.transform(customItemModel())
 			.register();
@@ -168,6 +177,19 @@ public class CABlocks {
 			.transform(pickaxeOnly())
 			.addLayer(() -> RenderType::cutoutMipped)
 			.blockstate((c, p) -> p.simpleBlock(c.getEntry(), AssetLookup.partialBaseModel(c, p)))
+			.loot((lt,b) -> lt.add(b, LootTable.lootTable()
+                    .withPool(
+                            LootPool.lootPool()
+                                    .setRolls(ConstantValue.exactly(1))
+                                    .add(LootItem.lootTableItem(AllBlocks.BLAZE_BURNER))
+                                    .when(ExplosionCondition.survivesExplosion())
+                    )
+                    .withPool(
+                            LootPool.lootPool()
+                                    .setRolls(ConstantValue.exactly(1))
+                                    .add(LootItem.lootTableItem(CAItems.STRAW))
+                    )
+            ))
 			.register();
 
 	public static final BlockEntry<PortableEnergyInterfaceBlock> PORTABLE_ENERGY_INTERFACE = CreateAddition.REGISTRATE.block("portable_energy_interface",  PortableEnergyInterfaceBlock::new)
