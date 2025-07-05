@@ -26,6 +26,7 @@ public class BnbBlockEntities {
 
     public static final BlockEntityEntry<GenericNixieDisplayBlockEntity> GENERIC_NIXIE_DISPLAY = REGISTRATE.blockEntity("generic_nixie_display", GenericNixieDisplayBlockEntity::new)
         .validBlock(BnbBlocks.NIXIE_BOARD)
+        .validBlocks(BnbBlocks.DYED_NIXIE_BOARD.toArray())
         .renderer(() -> GenericNixieDisplayBoardRenderer::new)
         .register();
 
