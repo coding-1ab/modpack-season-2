@@ -165,7 +165,7 @@ public class CABlocks {
 			.onRegister(movementBehaviour(new ModularAccumulatorMovement()))
 			.onRegister(connectedTextures(ModularAccumulatorCTBehaviour::new))
 			.transform(displaySource(CADisplaySources.MODULAR_ACCUMULATOR))
-//			.addLayer(() -> RenderType::cutoutMipped)
+			.addLayer(() -> RenderType::cutoutMipped)
 			.item(ModularAccumulatorBlockItem::new)
 			.transform(customItemModel())
 			.register();
