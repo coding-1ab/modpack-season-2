@@ -68,7 +68,7 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
 
     public static Direction getLeft(Direction up, Direction front) {
         if (up.getAxis() == front.getAxis()) {
-            return front;
+            return up.getAxisDirection() == Direction.AxisDirection.POSITIVE ? Direction.NORTH : Direction.SOUTH;
         }
         Direction frontTarget = Arrays.stream(Direction.Axis.values())
             .filter(e -> e != up.getAxis() && e != front.getAxis())

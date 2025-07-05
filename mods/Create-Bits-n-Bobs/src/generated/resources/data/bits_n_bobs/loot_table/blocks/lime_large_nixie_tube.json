@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "bits_n_bobs:weathered_industrial_iron_block"
+          "name": "bits_n_bobs:lime_large_nixie_tube"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "bits_n_bobs:blocks/weathered_industrial_iron_block"
+  "random_sequence": "bits_n_bobs:blocks/lime_large_nixie_tube"
 }

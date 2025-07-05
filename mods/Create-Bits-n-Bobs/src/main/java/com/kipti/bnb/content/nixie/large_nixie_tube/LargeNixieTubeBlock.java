@@ -1,4 +1,4 @@
-package com.kipti.bnb.content.nixie.nixie_board;
+package com.kipti.bnb.content.nixie.large_nixie_tube;
 
 import com.kipti.bnb.content.nixie.foundation.DoubleOrientedBlock;
 import com.kipti.bnb.content.nixie.foundation.DoubleOrientedBlockModel;
@@ -30,53 +30,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class NixieBoardBlock extends DoubleOrientedBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable {
-
-    public static final BooleanProperty LEFT = BooleanProperty.create("left");
-    public static final BooleanProperty RIGHT = BooleanProperty.create("right");
+public class LargeNixieTubeBlock extends DoubleOrientedBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable {
 
     final @Nullable DyeColor dyeColor;
 
-    public NixieBoardBlock(Properties p_52591_, @Nullable DyeColor dyeColor) {
+    public LargeNixieTubeBlock(Properties p_52591_, @Nullable DyeColor dyeColor) {
         super(p_52591_);
         this.dyeColor = dyeColor;
-    }
-
-    @Override
-    public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        BlockState state = super.getStateForPlacement(context);
-        if (state == null) {
-            return null;
-        }
-        Direction facing = state.getValue(FACING);
-        Direction orientation = state.getValue(ORIENTATION);
-        Direction left = DoubleOrientedBlockModel.getLeft(facing, orientation);
-        state = state
-            .setValue(LEFT, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, context.getLevel().getBlockState(context.getClickedPos().relative(left))))
-            .setValue(RIGHT, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, context.getLevel().getBlockState(context.getClickedPos().relative(left.getOpposite()))))
-            .setValue(LIT, false);
-        return state;
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder);
-        builder.add(LEFT, RIGHT);
-    }
-
-    @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        Direction facing = state.getValue(FACING);
-        Direction orientation = state.getValue(ORIENTATION);
-        Direction left = DoubleOrientedBlockModel.getLeft(facing, orientation);
-        Direction right = left.getOpposite();
-
-        if (direction == left.getOpposite()) {
-            return state.setValue(LEFT, neighborState.is(this));
-        } else if (direction == right.getOpposite()) {
-            return state.setValue(RIGHT, neighborState.is(this));
-        }
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
     @Override
@@ -85,11 +45,9 @@ public class NixieBoardBlock extends DoubleOrientedBlock implements IBE<GenericN
         if (heldItem.getItem() instanceof DyeItem dyeItem && dyeItem.getDyeColor() != dyeColor) {
             if (!level.isClientSide) {
                 DyeColor newColor = dyeItem.getDyeColor();
-                BlockState newState = BnbBlocks.DYED_NIXIE_BOARD.get(newColor).getDefaultState()
+                BlockState newState = BnbBlocks.DYED_LARGE_NIXIE_TUBE.get(newColor).getDefaultState()
                     .setValue(FACING, state.getValue(FACING))
                     .setValue(ORIENTATION, state.getValue(ORIENTATION))
-                    .setValue(LEFT, state.getValue(LEFT))
-                    .setValue(RIGHT, state.getValue(RIGHT))
                     .setValue(LIT, state.getValue(LIT));
                 level.setBlockAndUpdate(pos, newState);
             }
@@ -102,8 +60,8 @@ public class NixieBoardBlock extends DoubleOrientedBlock implements IBE<GenericN
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         Direction frontTarget = DoubleOrientedBlockModel.getFront(state.getValue(FACING), state.getValue(ORIENTATION));
         boolean isFront = frontTarget.getAxis() == state.getValue(ORIENTATION).getAxis();
-        return isFront ? BnbShapes.NIXIE_BOARD_SIDE.get(state.getValue(FACING))
-            : BnbShapes.NIXIE_BOARD_FRONT.get(state.getValue(FACING));
+        return isFront ? BnbShapes.LARGE_NIXIE_TUBE_SIDE.get(state.getValue(FACING))
+            : BnbShapes.LARGE_NIXIE_TUBE_FRONT.get(state.getValue(FACING));
     }
 
     @Override
@@ -114,10 +72,6 @@ public class NixieBoardBlock extends DoubleOrientedBlock implements IBE<GenericN
     @Override
     public BlockEntityType<? extends GenericNixieDisplayBlockEntity> getBlockEntityType() {
         return BnbBlockEntities.GENERIC_NIXIE_DISPLAY.get();
-    }
-
-    public @Nullable DyeColor getDyeColor() {
-        return dyeColor;
     }
 
 }

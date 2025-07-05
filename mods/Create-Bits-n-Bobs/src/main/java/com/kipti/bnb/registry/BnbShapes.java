@@ -27,10 +27,20 @@ public class BnbShapes {
         .add(cuboid(6, 13, 6, 9, 16, 9))
         .forDirectional();
 
-    public static final VoxelShaper NIXIE_BOARD_SIDE = shape(7, 0, 0, 9, 18, 16)
+    public static final VoxelShaper NIXIE_BOARD_SIDE = shape(7, 0, 0, 9, 19, 16)
         .forDirectional();
 
-    public static final VoxelShaper NIXIE_BOARD_FRONT = shape(0, 0, 7, 16, 18, 9)
+    public static final VoxelShaper NIXIE_BOARD_FRONT = shape(0, 0, 7, 16, 19, 9)
+        .forDirectional();
+
+    public static final VoxelShaper LARGE_NIXIE_TUBE_SIDE = shape(6, 0, 0, 10, 3, 16)
+        .add(cuboid(2, 0, 2, 14, 3, 14))
+        .add(cuboid(3, 3, 3, 13, 16, 10))
+        .forDirectional();
+
+    public static final VoxelShaper LARGE_NIXIE_TUBE_FRONT = shape(0, 0, 6, 16, 3, 10)
+        .add(cuboid(2, 0, 2, 14, 3, 14))
+        .add(cuboid(3, 3, 3, 13, 16, 10))
         .forDirectional();
 
     public static AllShapes.Builder shape(VoxelShape shape) {

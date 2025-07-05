@@ -1,15 +1,24 @@
 package com.kipti.bnb.content.nixie.foundation;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.NameTagItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +35,7 @@ public class DoubleOrientedBlock extends DirectionalBlock {
 
     public DoubleOrientedBlock(Properties p_52591_) {
         super(p_52591_);
-        registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP).setValue(ORIENTATION, Direction.NORTH));
+        registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP).setValue(ORIENTATION, Direction.NORTH).setValue(LIT, false));
     }
 
     @Override
@@ -52,6 +61,23 @@ public class DoubleOrientedBlock extends DirectionalBlock {
         return stateForPlacement == null ? null : stateForPlacement
             .setValue(FACING, surface)
             .setValue(ORIENTATION, facing.getOpposite());
+    }
+
+    /*
+     * Dont question it, this is how it works.
+     * */
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        ItemStack heldItem = player.getItemInHand(hand);
+        if (heldItem.getItem() instanceof NameTagItem) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof GenericNixieDisplayBlockEntity display) {
+                String name = heldItem.getHoverName().getString();
+                display.findControllerBlockEntity().applyTextToDisplay(name);
+            }
+            return ItemInteractionResult.SUCCESS;
+        }
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override

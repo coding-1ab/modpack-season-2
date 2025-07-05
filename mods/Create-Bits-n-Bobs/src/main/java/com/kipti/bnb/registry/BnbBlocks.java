@@ -8,6 +8,8 @@ import com.kipti.bnb.content.light.headlamp.HeadlampBlockItem;
 import com.kipti.bnb.content.light.headlamp.HeadlampModelBuilder;
 import com.kipti.bnb.content.light.lightbulb.LightbulbBlock;
 import com.kipti.bnb.content.nixie.foundation.DoubleOrientedBlockModel;
+import com.kipti.bnb.content.nixie.large_nixie_tube.LargeNixieTubeBlock;
+import com.kipti.bnb.content.nixie.large_nixie_tube.LargeNixieTubeBlockStateGen;
 import com.kipti.bnb.content.nixie.nixie_board.NixieBoardBlock;
 import com.kipti.bnb.content.nixie.nixie_board.NixieBoardBlockStateGen;
 import com.kipti.bnb.content.weathered_girder.EncasedWeatheredGirderBlock;
@@ -16,12 +18,10 @@ import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlock;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlockStateGenerator;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllDisplaySources;
-import com.simibubi.create.AllDisplayTargets;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.content.contraptions.actors.seat.SeatInteractionBehaviour;
 import com.simibubi.create.content.contraptions.actors.seat.SeatMovementBehaviour;
 import com.simibubi.create.foundation.block.DyedBlockList;
-import com.simibubi.create.foundation.data.BuilderTransformers;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.simibubi.create.foundation.utility.DyeHelper;
@@ -32,9 +32,7 @@ import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
-import net.createmod.catnip.data.Iterate;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.tags.ItemTags;
@@ -46,8 +44,6 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import org.jetbrains.annotations.NotNull;
 
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
 import static com.kipti.bnb.content.chair.ChairBlockStateGen.dyedChair;
@@ -128,10 +124,20 @@ public class BnbBlocks {
             .register();
     });
 
+    public static final BlockEntry<LargeNixieTubeBlock> LARGE_NIXIE_TUBE = REGISTRATE.block("large_nixie_tube", p -> new LargeNixieTubeBlock(p, null))
+        .transform(largeNixieTube())
+        .register();
+
+    public static final DyedBlockList<LargeNixieTubeBlock> DYED_LARGE_NIXIE_TUBE = new DyedBlockList<>(colour -> {String colourName = colour.getSerializedName();
+        return REGISTRATE.block(colourName + "_large_nixie_tube", p -> new LargeNixieTubeBlock(p, colour))
+            .transform(largeNixieTube())
+            .register();
+    });
+
     public static <T extends NixieBoardBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> nixieBoard() {
         return b -> b
             .initialProperties(SharedProperties::softMetal)
-            .transform(displayTarget(BnbDisplayTargets.NIXIE_BOARD))
+            .transform(displayTarget(BnbDisplayTargets.GENERIC_NIXIE_TARGET))
             .transform(pickaxeOnly())
             .blockstate(NixieBoardBlockStateGen::nixieBoard)
             .onRegister(CreateRegistrate.blockModel(() -> DoubleOrientedBlockModel::new))
@@ -141,8 +147,25 @@ public class BnbBlocks {
                 .mapColor(DyeColor.ORANGE)
                 .forceSolidOn())
             .addLayer(() -> RenderType::translucent)
-            .item(HeadlampBlockItem::new)
+            .item()
             .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/nixie_board/nixie_board_single")))
+            .build();
+    }
+    public static <T extends LargeNixieTubeBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> largeNixieTube() {
+        return b -> b
+            .initialProperties(SharedProperties::softMetal)
+            .transform(displayTarget(BnbDisplayTargets.GENERIC_NIXIE_TARGET))
+            .transform(pickaxeOnly())
+            .blockstate(LargeNixieTubeBlockStateGen::nixieTube)
+            .onRegister(CreateRegistrate.blockModel(() -> DoubleOrientedBlockModel::new))
+            .properties(p -> p
+                .noOcclusion()
+                .lightLevel(state -> state.getValue(NixieBoardBlock.LIT) ? 4 : 1)
+                .mapColor(DyeColor.ORANGE)
+                .forceSolidOn())
+            .addLayer(() -> RenderType::translucent)
+            .item()
+            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/large_nixie_tube/large_nixie_tube")))
             .build();
     }
 
