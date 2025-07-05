@@ -7,25 +7,31 @@ import com.kipti.bnb.content.light.headlamp.HeadlampBlock;
 import com.kipti.bnb.content.light.headlamp.HeadlampBlockItem;
 import com.kipti.bnb.content.light.headlamp.HeadlampModelBuilder;
 import com.kipti.bnb.content.light.lightbulb.LightbulbBlock;
+import com.kipti.bnb.content.nixie.foundation.DoubleOrientedBlockModel;
+import com.kipti.bnb.content.nixie.nixie_board.NixieBoardBlock;
+import com.kipti.bnb.content.nixie.nixie_board.NixieBoardBlockStateGen;
 import com.kipti.bnb.content.weathered_girder.EncasedWeatheredGirderBlock;
+import com.kipti.bnb.content.weathered_girder.WeatheredConnectedGirderModel;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlock;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlockStateGenerator;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllDisplaySources;
+import com.simibubi.create.AllDisplayTargets;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.content.contraptions.actors.seat.SeatInteractionBehaviour;
 import com.simibubi.create.content.contraptions.actors.seat.SeatMovementBehaviour;
-import com.simibubi.create.content.decoration.girder.ConnectedGirderModel;
-import com.simibubi.create.content.decoration.girder.GirderBlock;
-import com.simibubi.create.content.decoration.girder.GirderBlockStateGenerator;
-import com.simibubi.create.content.decoration.girder.GirderEncasedShaftBlock;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import com.simibubi.create.foundation.data.BuilderTransformers;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.simibubi.create.foundation.utility.DyeHelper;
+import com.tterrag.registrate.builders.BlockBuilder;
+import com.tterrag.registrate.providers.DataGenContext;
+import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.entry.BlockEntry;
+import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
+import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.createmod.catnip.data.Iterate;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
@@ -35,14 +41,18 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
+import static com.kipti.bnb.content.chair.ChairBlockStateGen.dyedChair;
 import static com.simibubi.create.api.behaviour.display.DisplaySource.displaySource;
+import static com.simibubi.create.api.behaviour.display.DisplayTarget.displayTarget;
 import static com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour.interactionBehaviour;
 import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
@@ -69,7 +79,7 @@ public class BnbBlocks {
         .build()
         .register();
 
-    public static final BlockEntry<LightBlock> BRASS_LAMP = REGISTRATE.block("brass_lamp", (p) -> new LightBlock(p, BnbShapes.BRASS_LAMP_SHAPE))
+    public static final BlockEntry<LightBlock> BRASS_LAMP = REGISTRATE.block("brass_lamp", (p) -> new LightBlock(p, BnbShapes.BRASS_LAMP_SHAPE, true))
         .initialProperties(SharedProperties::softMetal)
         .transform(pickaxeOnly())
         .blockstate((c, p) -> p.directionalBlock(c.get(),
@@ -108,18 +118,46 @@ public class BnbBlocks {
         .build()
         .register();
 
+    public static final BlockEntry<NixieBoardBlock> NIXIE_BOARD = REGISTRATE.block("nixie_board", p -> new NixieBoardBlock(p, null))
+        .transform(nixieBoard())
+        .register();
+
+    public static final DyedBlockList<NixieBoardBlock> DYED_NIXIE_BOARD = new DyedBlockList<>(colour -> {String colourName = colour.getSerializedName();
+        return REGISTRATE.block(colourName + "_nixie_board", p -> new NixieBoardBlock(p, colour))
+            .transform(nixieBoard())
+            .register();
+    });
+
+    public static <T extends NixieBoardBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> nixieBoard() {
+        return b -> b
+            .initialProperties(SharedProperties::softMetal)
+            .transform(displayTarget(BnbDisplayTargets.NIXIE_BOARD))
+            .transform(pickaxeOnly())
+            .blockstate(NixieBoardBlockStateGen::nixieBoard)
+            .onRegister(CreateRegistrate.blockModel(() -> DoubleOrientedBlockModel::new))
+            .properties(p -> p
+                .noOcclusion()
+                .lightLevel(state -> state.getValue(NixieBoardBlock.LIT) ? 4 : 1)
+                .mapColor(DyeColor.ORANGE)
+                .forceSolidOn())
+            .addLayer(() -> RenderType::translucent)
+            .item(HeadlampBlockItem::new)
+            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/nixie_board/nixie_board_single")))
+            .build();
+    }
+
     public static final BlockEntry<WeatheredGirderBlock> WEATHERED_METAL_GIRDER = REGISTRATE.block("weathered_metal_girder", WeatheredGirderBlock::new)
         .initialProperties(SharedProperties::softMetal)
         .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
             .sound(SoundType.NETHERITE_BLOCK))
         .transform(pickaxeOnly())
         .blockstate(WeatheredGirderBlockStateGenerator::blockState)
-        .onRegister(CreateRegistrate.blockModel(() -> ConnectedGirderModel::new))
+        .onRegister(CreateRegistrate.blockModel(() -> WeatheredConnectedGirderModel::new))
         .item()
         .transform(customItemModel())
         .register();
 
-    public static final BlockEntry<EncasedWeatheredGirderBlock> WEATHERED_METAL_GIRDER_ENCASED_SHAFT = // TODO fix the reference to weathered metal girder
+    public static final BlockEntry<EncasedWeatheredGirderBlock> WEATHERED_METAL_GIRDER_ENCASED_SHAFT =
         REGISTRATE.block("weathered_metal_girder_encased_shaft", EncasedWeatheredGirderBlock::new)
             .initialProperties(SharedProperties::softMetal)
             .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
@@ -130,13 +168,8 @@ public class BnbBlocks {
                 .withPool(p.applyExplosionCondition(AllBlocks.SHAFT.get(), LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1.0F))
                     .add(LootItem.lootTableItem(AllBlocks.SHAFT.get()))))))
-            .onRegister(CreateRegistrate.blockModel(() -> ConnectedGirderModel::new))
+            .onRegister(CreateRegistrate.blockModel(() -> WeatheredConnectedGirderModel::new))
             .register();
-
-    public static final BlockEntry<Block> INDUSTRIAL_IRON_BLOCK = REGISTRATE.block("weathered_industrial_iron_block", Block::new)
-        .transform(BuilderTransformers.palettesIronBlock())
-        .lang("Block of Weathered Industrial Iron")
-        .register();
 
     public static final DyedBlockList<ChairBlock> CHAIRS = new DyedBlockList<>(colour -> {
         String colourName = colour.getSerializedName();
@@ -145,81 +178,13 @@ public class BnbBlocks {
         return REGISTRATE.block(colourName + "_chair", p -> new ChairBlock(p, colour))
             .initialProperties(SharedProperties::wooden)
             .properties(p -> p.mapColor(colour))
-            .properties(p -> p.noOcclusion())
+            .properties(BlockBehaviour.Properties::noOcclusion)
             .transform(axeOnly())
             .onRegister(movementBehaviour(movementBehaviour))
             .onRegister(interactionBehaviour(interactionBehaviour))
             .transform(displaySource(AllDisplaySources.ENTITY_NAME))
 //            .onRegister(CreateRegistrate.blockModel(() -> ChairModelBuilder::new))
-            .blockstate((c, p) -> {
-
-                BlockModelBuilder chairBlock = p.models().withExistingParent("block/chair/block_" + colourName, p.modLoc("block/chair/block"))
-                    .texture("2", p.modLoc("block/chair/chair_" + colourName));
-
-                BlockModelBuilder chairLeftArmrest = p.models().withExistingParent(
-                        "block/chair/left_armrest_" + colourName,
-                        p.modLoc("block/chair/left_armrest"))
-                    .texture("2", p.modLoc("block/chair/chair_" + colourName));
-
-                BlockModelBuilder chairRightArmrest = p.models().withExistingParent(
-                        "block/chair/right_armrest_" + colourName,
-                        p.modLoc("block/chair/right_armrest"))
-                    .texture("2", p.modLoc("block/chair/chair_" + colourName));
-
-                BlockModelBuilder chairCornerBack = p.models().withExistingParent(
-                        "block/chair/corner_back_" + colourName,
-                        p.modLoc("block/chair/corner_back"))
-                    .texture("2", p.modLoc("block/chair/chair_" + colourName));
-                for (Direction direction : Iterate.horizontalDirections) {
-                    p.getMultipartBuilder(c.get())
-                        .part()
-                        .modelFile(chairBlock)
-                        .rotationY((int) (direction.toYRot() + 180) % 360)
-                        .addModel()
-                        .condition(ChairBlock.FACING, direction)
-                        .end();
-                    p.getMultipartBuilder(c.get())
-                        .part()
-                        .modelFile(chairLeftArmrest)
-                        .rotationY((int) (direction.toYRot() + 180) % 360)
-                        .addModel()
-                        .condition(ChairBlock.FACING, direction)
-                        .condition(ChairBlock.LEFT_ARM, true)
-                        .condition(ChairBlock.CORNER, false)
-                        .end();
-                    p.getMultipartBuilder(c.get())
-                        .part()
-                        .modelFile(chairRightArmrest)
-                        .rotationY((int) (direction.toYRot() + 180) % 360)
-                        .addModel()
-                        .condition(ChairBlock.FACING, direction)
-                        .condition(ChairBlock.RIGHT_ARM, true)
-                        .condition(ChairBlock.CORNER, false)
-                        .end();
-
-                    p.getMultipartBuilder(c.get())
-                        .part()
-                        .modelFile(chairCornerBack)
-                        .rotationY((int) (direction.toYRot() + 180 + 90) % 360)
-                        .addModel()
-                        .condition(ChairBlock.FACING, direction)
-                        .condition(ChairBlock.LEFT_ARM, false)
-                        .condition(ChairBlock.RIGHT_ARM, true)
-                        .condition(ChairBlock.CORNER, true)
-                        .end();
-
-                    p.getMultipartBuilder(c.get())
-                        .part()
-                        .modelFile(chairCornerBack)
-                        .rotationY((int) (direction.toYRot() + 180 - 90) % 360)
-                        .addModel()
-                        .condition(ChairBlock.FACING, direction)
-                        .condition(ChairBlock.RIGHT_ARM, false)
-                        .condition(ChairBlock.LEFT_ARM, true)
-                        .condition(ChairBlock.CORNER, true)
-                        .end();
-                }
-            })
+            .blockstate(dyedChair(colourName))
             .addLayer(() -> RenderType::cutoutMipped)
             .recipe((c, p) -> {
                 ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, c.get())

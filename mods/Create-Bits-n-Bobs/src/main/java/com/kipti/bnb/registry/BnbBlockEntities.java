@@ -1,6 +1,8 @@
 package com.kipti.bnb.registry;
 
 import com.kipti.bnb.content.light.headlamp.HeadlampBlockEntity;
+import com.kipti.bnb.content.nixie.foundation.GenericNixieDisplayBlockEntity;
+import com.kipti.bnb.content.nixie.foundation.GenericNixieDisplayBoardRenderer;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
@@ -22,6 +24,10 @@ public class BnbBlockEntities {
         .renderer(() -> ShaftRenderer::new)
         .register();
 
+    public static final BlockEntityEntry<GenericNixieDisplayBlockEntity> GENERIC_NIXIE_DISPLAY = REGISTRATE.blockEntity("generic_nixie_display", GenericNixieDisplayBlockEntity::new)
+        .validBlock(BnbBlocks.NIXIE_BOARD)
+        .renderer(() -> GenericNixieDisplayBoardRenderer::new)
+        .register();
 
     public static void register() {
     }

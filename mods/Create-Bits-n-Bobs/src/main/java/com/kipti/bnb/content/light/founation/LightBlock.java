@@ -27,11 +27,18 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
 
     private final VoxelShaper shaper;
 
+    private final boolean forcePlaceUpwards;
+
     public LightBlock(Properties p_52591_, VoxelShaper shaper) {
+        this(p_52591_, shaper, false);
+    }
+
+    public LightBlock(Properties p_52591_, VoxelShaper shaper, boolean forcePlaceUpwards) {
         super(p_52591_);
         this.shaper = shaper;
         registerDefaultState(defaultBlockState().setValue(LIT, false));
-        CODEC = simpleCodec((p) -> new LightBlock(p, shaper));
+        CODEC = simpleCodec((p) -> new LightBlock(p, shaper, true));
+        this.forcePlaceUpwards = forcePlaceUpwards;
     }
 
     @Override
@@ -43,7 +50,7 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         return super.getStateForPlacement(context)
-            .setValue(FACING, context.getClickedFace())
+            .setValue(FACING, forcePlaceUpwards ? Direction.UP : context.getClickedFace())
             .setValue(LIT, Boolean.valueOf(context.getLevel().hasNeighborSignal(context.getClickedPos())));
     }
 
