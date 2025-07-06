@@ -137,11 +137,11 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
+
     @Override
-    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest,
-                                       FluidState fluid) {
+    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         Vec3 location = getPlayerLocationInBlockExact(pos, level, player);
-        if (player.isCrouching() && level.getBlockEntity(pos) instanceof HeadlampBlockEntity headlampBlockEntity &&
+        if (!player.isCrouching() && level.getBlockEntity(pos) instanceof HeadlampBlockEntity headlampBlockEntity &&
             headlampBlockEntity.removeNearestHeadlamp(location.subtract(pos.getCenter()), state.getValue(FACING))) {
             if (!level.isClientSide && !player.isCreative()) {
                 HeadlampBlock.popResource(level, pos, BnbBlocks.HEADLAMP.asStack());

@@ -4,6 +4,7 @@ import numpy as np
 import colorsys
 import math
 
+# stop using chet gepetee smh
 # Parse colours.txt to get color names and hex codes
 def parse_colours(colours_path):
     colours = []
