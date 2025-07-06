@@ -15,8 +15,8 @@ import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
 import java.util.concurrent.CompletableFuture;
 
 public class CACrushingRecipeGen extends CrushingRecipeGen {
-    public CACrushingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, String namespace) {
-        super(output, provider, namespace);
+    public CACrushingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
+        super(output, provider, CreateAddition.MODID);
     }
 
     @SuppressWarnings("unused")
