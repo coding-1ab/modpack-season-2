@@ -1,6 +1,0 @@
-{
-  "parent": "bits_n_bobs:block/chair/corner_back",
-  "textures": {
-    "2": "bits_n_bobs:block/chair/chair_yellow"
-  }
-}

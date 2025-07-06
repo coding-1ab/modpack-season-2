@@ -30,6 +30,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class LargeNixieTubeBlock extends DoubleOrientedBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable {
 
     final @Nullable DyeColor dyeColor;
@@ -43,7 +45,7 @@ public class LargeNixieTubeBlock extends DoubleOrientedBlock implements IBE<Gene
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         ItemStack heldItem = player.getItemInHand(hand);
         if (heldItem.getItem() instanceof DyeItem dyeItem && dyeItem.getDyeColor() != dyeColor) {
-            if (!level.isClientSide) {
+            if (!level.isClientSide) {//TODO update to latest func
                 DyeColor newColor = dyeItem.getDyeColor();
                 BlockState newState = BnbBlocks.DYED_LARGE_NIXIE_TUBE.get(newColor).getDefaultState()
                     .setValue(FACING, state.getValue(FACING))
@@ -77,4 +79,9 @@ public class LargeNixieTubeBlock extends DoubleOrientedBlock implements IBE<Gene
     public @Nullable DyeColor getDyeColor() {
         return dyeColor;
     }
+
+    public List<GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions> getPossibleDisplayOptions() {
+        return List.of(GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions.NONE, GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions.ALWAYS_UP);
+    }
+
 }

@@ -61,15 +61,32 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
 //        Couple<Integer> couple = DyeHelper.getDyeColors(color);
         //TODO
 
-        Matrix4f pose = ms.last().pose();
+        int lineCount = be.currentDisplayOption == GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions.DOUBLE_CHAR_DOUBLE_LINES ? 2 : 1;
+        int charCount = be.currentDisplayOption == GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions.DOUBLE_CHAR_DOUBLE_LINES ||
+            be.currentDisplayOption == GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions.DOUBLE_CHAR ? 2 : 1;
+        float charScale = charCount == 2 ? 7/16f : 1f;
+        ms.scale(charScale, charScale, charScale);
 
-        int glyph = be.getCurrentChar();
+        for (int i = 0; i < lineCount; i++) {
+            for (int j = 0; j < charCount; j++) {
+                ms.pushPose();
+                ms.translate(charCount == 1 ? 0 : j == 0 ? -8 * (8/7f) : 8 * (8/7f), lineCount == 2 ? (i == 0 ? -5 : 10) : charCount == 1 ? 0 : 4, 0);
+                Matrix4f pose = ms.last().pose();
+                String s = i == 0 ? be.currentTextTop : be.currentTextBottom;
+                char glyph = s.length() <= j ? ' ' : s.charAt(j);
 
-        if (TextBlockSubAtlas.NIXIE_TEXT_SUB_ATLAS.isInCharacterSet(glyph))
-            renderGlyphUsingSpecialFont(ms, buffer, overlay, glyph, pose, col);
-        else
-            renderUsingNormalFont(ms, buffer, fontSet, glyph, pose, col);
+                if (glyph == ' ') {
+                    ms.popPose();
+                    continue; // Skip rendering if the character is a space
+                }
 
+                if (TextBlockSubAtlas.NIXIE_TEXT_SUB_ATLAS.isInCharacterSet(glyph))
+                    renderGlyphUsingSpecialFont(ms, buffer, overlay, glyph, pose, col);
+                else
+                    renderUsingNormalFont(ms, buffer, fontSet, glyph, pose, col);
+                ms.popPose();
+            }
+        }
         ms.popPose();
     }
 
@@ -181,10 +198,6 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
         float width = fontSet.getGlyphInfo(glyph, true).getAdvance(false) - 1;
 
         RenderSystem.disableCull();
-//
-//        float r = (colRGBA >> 24 & 0xFF) / 255.0f;
-//        float g = (colRGBA >> 16 & 0xFF) / 255.0f;
-//        float b = (colRGBA >> 8 & 0xFF) / 255.0f;
 
         float r = (colRGBA >> 16 & 0xFF) / 255.0f;
         float g = (colRGBA >> 8 & 0xFF) / 255.0f;

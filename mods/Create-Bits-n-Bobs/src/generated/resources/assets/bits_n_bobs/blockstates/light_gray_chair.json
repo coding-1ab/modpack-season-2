@@ -2,39 +2,42 @@
   "multipart": [
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/block_light_gray",
+        "model": "bits_n_bobs:block/chair/block_single_light_gray",
         "y": 180
       },
       "when": {
+        "corner": "false",
         "facing": "south"
       }
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/left_armrest_light_gray",
+        "model": "bits_n_bobs:block/chair/block_single_light_gray",
         "y": 180
       },
       "when": {
-        "corner": "false",
+        "corner": "true",
         "facing": "south",
-        "left_arm": "true"
+        "left_arm": "false",
+        "right_arm": "false"
       }
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/right_armrest_light_gray",
+        "model": "bits_n_bobs:block/chair/block_single_light_gray",
         "y": 180
       },
       "when": {
-        "corner": "false",
+        "corner": "true",
         "facing": "south",
+        "left_arm": "true",
         "right_arm": "true"
       }
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/corner_back_light_gray",
-        "y": 270
+        "model": "bits_n_bobs:block/chair/block_corner_light_gray",
+        "y": 180
       },
       "when": {
         "corner": "true",
@@ -45,7 +48,7 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/corner_back_light_gray",
+        "model": "bits_n_bobs:block/chair/block_corner_light_gray",
         "y": 90
       },
       "when": {
@@ -57,11 +60,234 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/block_light_gray",
+        "model": "bits_n_bobs:block/chair/left_armrest_light_gray",
+        "y": 180
+      },
+      "when": {
+        "corner": "false",
+        "facing": "south",
+        "left_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/right_armrest_light_gray",
+        "y": 180
+      },
+      "when": {
+        "corner": "false",
+        "facing": "south",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray",
         "y": 270
       },
       "when": {
+        "back_flat": "false",
+        "corner": "true",
+        "facing": "south",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray",
+        "y": 90
+      },
+      "when": {
+        "back_flat": "false",
+        "corner": "true",
+        "facing": "south",
+        "left_arm": "true",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray",
+        "y": 270
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "south",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray",
+        "y": 90
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "south",
+        "left_arm": "true",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray",
+        "y": 180
+      },
+      "when": {
+        "back_flat": "false",
+        "corner": "true",
+        "facing": "south",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray",
+        "y": 180
+      },
+      "when": {
+        "back_flat": "false",
+        "corner": "true",
+        "facing": "south",
+        "left_arm": "true",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray",
+        "y": 180
+      },
+      "when": {
+        "back_flat": "false",
+        "corner": "false",
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_light_gray",
+        "y": 180
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "false",
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_light_gray",
+        "y": 180
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "south",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_light_gray",
+        "y": 180
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "south",
+        "left_arm": "true",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray",
+        "y": 180
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "south",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray",
+        "y": 180
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "south",
+        "left_arm": "true",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_single_light_gray",
+        "y": 270
+      },
+      "when": {
+        "corner": "false",
         "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_single_light_gray",
+        "y": 270
+      },
+      "when": {
+        "corner": "true",
+        "facing": "west",
+        "left_arm": "false",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_single_light_gray",
+        "y": 270
+      },
+      "when": {
+        "corner": "true",
+        "facing": "west",
+        "left_arm": "true",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_corner_light_gray",
+        "y": 270
+      },
+      "when": {
+        "corner": "true",
+        "facing": "west",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_corner_light_gray",
+        "y": 180
+      },
+      "when": {
+        "corner": "true",
+        "facing": "west",
+        "left_arm": "true",
+        "right_arm": "false"
       }
     },
     {
@@ -88,9 +314,10 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/corner_back_light_gray"
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray"
       },
       "when": {
+        "back_flat": "false",
         "corner": "true",
         "facing": "west",
         "left_arm": "false",
@@ -99,10 +326,11 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/corner_back_light_gray",
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray",
         "y": 180
       },
       "when": {
+        "back_flat": "false",
         "corner": "true",
         "facing": "west",
         "left_arm": "true",
@@ -111,10 +339,181 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/block_light_gray"
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray"
       },
       "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "west",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray",
+        "y": 180
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "west",
+        "left_arm": "true",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray",
+        "y": 270
+      },
+      "when": {
+        "back_flat": "false",
+        "corner": "true",
+        "facing": "west",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray",
+        "y": 270
+      },
+      "when": {
+        "back_flat": "false",
+        "corner": "true",
+        "facing": "west",
+        "left_arm": "true",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray",
+        "y": 270
+      },
+      "when": {
+        "back_flat": "false",
+        "corner": "false",
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_light_gray",
+        "y": 270
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "false",
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_light_gray",
+        "y": 270
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "west",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_light_gray",
+        "y": 270
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "west",
+        "left_arm": "true",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray",
+        "y": 270
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "west",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray",
+        "y": 270
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "west",
+        "left_arm": "true",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_single_light_gray"
+      },
+      "when": {
+        "corner": "false",
         "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_single_light_gray"
+      },
+      "when": {
+        "corner": "true",
+        "facing": "north",
+        "left_arm": "false",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_single_light_gray"
+      },
+      "when": {
+        "corner": "true",
+        "facing": "north",
+        "left_arm": "true",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_corner_light_gray"
+      },
+      "when": {
+        "corner": "true",
+        "facing": "north",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_corner_light_gray",
+        "y": 270
+      },
+      "when": {
+        "corner": "true",
+        "facing": "north",
+        "left_arm": "true",
+        "right_arm": "false"
       }
     },
     {
@@ -139,10 +538,11 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/corner_back_light_gray",
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray",
         "y": 90
       },
       "when": {
+        "back_flat": "false",
         "corner": "true",
         "facing": "north",
         "left_arm": "false",
@@ -151,10 +551,11 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/corner_back_light_gray",
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray",
         "y": 270
       },
       "when": {
+        "back_flat": "false",
         "corner": "true",
         "facing": "north",
         "left_arm": "true",
@@ -163,11 +564,177 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/block_light_gray",
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray",
         "y": 90
       },
       "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "north",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray",
+        "y": 270
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "north",
+        "left_arm": "true",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray"
+      },
+      "when": {
+        "back_flat": "false",
+        "corner": "true",
+        "facing": "north",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray"
+      },
+      "when": {
+        "back_flat": "false",
+        "corner": "true",
+        "facing": "north",
+        "left_arm": "true",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray"
+      },
+      "when": {
+        "back_flat": "false",
+        "corner": "false",
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_light_gray"
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "false",
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_light_gray"
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "north",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_light_gray"
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "north",
+        "left_arm": "true",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray"
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "north",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray"
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "north",
+        "left_arm": "true",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_single_light_gray",
+        "y": 90
+      },
+      "when": {
+        "corner": "false",
         "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_single_light_gray",
+        "y": 90
+      },
+      "when": {
+        "corner": "true",
+        "facing": "east",
+        "left_arm": "false",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_single_light_gray",
+        "y": 90
+      },
+      "when": {
+        "corner": "true",
+        "facing": "east",
+        "left_arm": "true",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_corner_light_gray",
+        "y": 90
+      },
+      "when": {
+        "corner": "true",
+        "facing": "east",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/block_corner_light_gray"
+      },
+      "when": {
+        "corner": "true",
+        "facing": "east",
+        "left_arm": "true",
+        "right_arm": "false"
       }
     },
     {
@@ -194,10 +761,11 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/corner_back_light_gray",
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray",
         "y": 180
       },
       "when": {
+        "back_flat": "false",
         "corner": "true",
         "facing": "east",
         "left_arm": "false",
@@ -206,9 +774,135 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/corner_back_light_gray"
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray"
       },
       "when": {
+        "back_flat": "false",
+        "corner": "true",
+        "facing": "east",
+        "left_arm": "true",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray",
+        "y": 180
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "east",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray"
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "east",
+        "left_arm": "true",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray",
+        "y": 90
+      },
+      "when": {
+        "back_flat": "false",
+        "corner": "true",
+        "facing": "east",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray",
+        "y": 90
+      },
+      "when": {
+        "back_flat": "false",
+        "corner": "true",
+        "facing": "east",
+        "left_arm": "true",
+        "right_arm": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_light_gray",
+        "y": 90
+      },
+      "when": {
+        "back_flat": "false",
+        "corner": "false",
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_light_gray",
+        "y": 90
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "false",
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_light_gray",
+        "y": 90
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "east",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_light_gray",
+        "y": 90
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "east",
+        "left_arm": "true",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray",
+        "y": 90
+      },
+      "when": {
+        "back_flat": "true",
+        "corner": "true",
+        "facing": "east",
+        "left_arm": "false",
+        "right_arm": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray",
+        "y": 90
+      },
+      "when": {
+        "back_flat": "true",
         "corner": "true",
         "facing": "east",
         "left_arm": "true",

@@ -24,7 +24,7 @@ public class CreateBitsnBobs {
 
     public static final String MOD_ID = "bits_n_bobs";
     public static final String NAME = "Create: Bits 'n' Bobs";
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID)
         .defaultCreativeTab((ResourceKey<CreativeModeTab>) null)

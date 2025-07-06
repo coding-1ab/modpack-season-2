@@ -73,7 +73,7 @@ public class DoubleOrientedBlock extends DirectionalBlock {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof GenericNixieDisplayBlockEntity display) {
                 String name = heldItem.getHoverName().getString();
-                display.findControllerBlockEntity().applyTextToDisplay(name);
+                display.findControllerBlockEntity().applyTextToDisplay(name, 0);//TODO line specific clickign
             }
             return ItemInteractionResult.SUCCESS;
         }
