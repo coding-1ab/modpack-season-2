@@ -37,7 +37,7 @@ public abstract class BaseRecipeProvider extends RecipeProvider {
 	}
 
 	@Override
-	protected void buildRecipes(RecipeOutput recipeOutput) {
+	public void buildRecipes(RecipeOutput recipeOutput) {
 		all.forEach(c -> c.register(recipeOutput));
 		Create.LOGGER.info("{} registered {} recipe{}", getName(), all.size(), all.size() == 1 ? "" : "s");
 	}

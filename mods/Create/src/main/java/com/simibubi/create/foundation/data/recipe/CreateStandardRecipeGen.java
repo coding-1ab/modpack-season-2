@@ -1510,7 +1510,7 @@ public final class CreateStandardRecipeGen extends BaseRecipeProvider {
 	}
 
 	@Override
-	protected void buildRecipes(RecipeOutput output) {
+	public void buildRecipes(RecipeOutput output) {
 		all.forEach(c -> c.register(output));
 		Create.LOGGER.info("{} registered {} recipe{}", getName(), all.size(), all.size() == 1 ? "" : "s");
 	}
