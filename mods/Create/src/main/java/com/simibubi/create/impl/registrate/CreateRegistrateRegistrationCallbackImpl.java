@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 public class CreateRegistrateRegistrationCallbackImpl {
-	private static final List<CallbackImpl<?>> CALLBACKS = new ArrayList<>();
+	private static final List<CallbackImpl<?>> CALLBACKS = Collections.synchronizedList(new ArrayList<>());
 
 	@UnmodifiableView
 	public static final List<CallbackImpl<?>> CALLBACKS_VIEW = Collections.unmodifiableList(CALLBACKS);
