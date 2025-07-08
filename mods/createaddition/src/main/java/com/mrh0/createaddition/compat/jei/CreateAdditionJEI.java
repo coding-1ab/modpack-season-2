@@ -1,13 +1,5 @@
 package com.mrh0.createaddition.compat.jei;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import javax.annotation.Nonnull;
-
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.index.CAItems;
@@ -16,26 +8,20 @@ import com.mrh0.createaddition.recipe.charging.ChargingRecipe;
 import com.mrh0.createaddition.recipe.liquid_burning.LiquidBurningRecipe;
 import com.mrh0.createaddition.recipe.rolling.RollingRecipe;
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.compat.jei.CreateJEI;
-import com.simibubi.create.compat.jei.ItemIcon;
-import com.simibubi.create.compat.jei.EmptyBackground;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
-import com.simibubi.create.infrastructure.config.AllConfigs;
-import com.simibubi.create.infrastructure.config.CRecipes;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IIngredientManager;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.ItemLike;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 @JeiPlugin
 public class CreateAdditionJEI implements IModPlugin {
@@ -56,21 +42,21 @@ public class CreateAdditionJEI implements IModPlugin {
 		ALL.clear();
 
 		builder(ChargingRecipe.class)
-				.addTypedRecipes(CARecipes.CHARGING_TYPE::get)
+				.addTypedRecipes(CARecipes.CHARGING_TYPE)
 				.catalyst(CABlocks.TESLA_COIL::get)
 				.itemIcon(CABlocks.TESLA_COIL.get())
 				.emptyBackground(177, 53)
 				.build("charging", ChargingCategory::new);
 
 		builder(RollingRecipe.class)
-				.addTypedRecipes(CARecipes.ROLLING_TYPE::get)
+				.addTypedRecipes(CARecipes.ROLLING_TYPE)
 				.catalyst(CABlocks.ROLLING_MILL::get)
 				.itemIcon(CABlocks.ROLLING_MILL.get())
 				.emptyBackground(177, 53)
 				.build("rolling", RollingMillCategory::new);
 
 		builder(LiquidBurningRecipe.class)
-				.addTypedRecipes(CARecipes.LIQUID_BURNING_TYPE::get)
+				.addTypedRecipes(CARecipes.LIQUID_BURNING_TYPE)
 				.catalyst(AllBlocks.BLAZE_BURNER::get)
 				.itemIcon(AllBlocks.BLAZE_BURNER.get())
 				.emptyBackground(177, 53)
@@ -99,75 +85,14 @@ public class CreateAdditionJEI implements IModPlugin {
 		return new CategoryBuilder<>(recipeClass);
 	}
 
-	private static class CategoryBuilder<T extends Recipe<?>> {
-		private final Class<? extends T> recipeClass;
-		private Predicate<CRecipes> predicate = cRecipes -> true;
-
-		private IDrawable background;
-		private IDrawable icon;
-
-		private final List<Consumer<List<RecipeHolder<T>>>> recipeListConsumers = new ArrayList<>();
-		private final List<Supplier<? extends ItemStack>> catalysts = new ArrayList<>();
-
+	private static class CategoryBuilder<T extends Recipe<?>> extends CreateRecipeCategory.Builder<T> {
 		public CategoryBuilder(Class<? extends T> recipeClass) {
-			this.recipeClass = recipeClass;
+			super(recipeClass);
 		}
 
-		public CategoryBuilder<T> addRecipeListConsumer(Consumer<List<RecipeHolder<T>>> consumer) {
-			recipeListConsumers.add(consumer);
-			return this;
-		}
-
-		public CategoryBuilder<T> addTypedRecipes(Supplier<RecipeType<? extends T>> recipeType) {
-			return addRecipeListConsumer(recipes -> CreateJEI.<T>consumeTypedRecipes((holder) -> recipes.add((RecipeHolder<T>) holder), recipeType.get()));
-		}
-
-		public CategoryBuilder<T> catalystStack(Supplier<ItemStack> supplier) {
-			catalysts.add(supplier);
-			return this;
-		}
-
-		public CategoryBuilder<T> catalyst(Supplier<ItemLike> supplier) {
-			return catalystStack(() -> new ItemStack(supplier.get().asItem()));
-		}
-
-		public CategoryBuilder<T> icon(IDrawable icon) {
-			this.icon = icon;
-			return this;
-		}
-
-		public CategoryBuilder<T> itemIcon(ItemLike item) {
-			icon(new ItemIcon(() -> new ItemStack(item)));
-			return this;
-		}
-
-		public CategoryBuilder<T> background(IDrawable background) {
-			this.background = background;
-			return this;
-		}
-
-		public CategoryBuilder<T> emptyBackground(int width, int height) {
-			background(new EmptyBackground(width, height));
-			return this;
-		}
-
-		public CreateRecipeCategory<T> build(String name, CreateRecipeCategory.Factory<T> factory) {
-			Supplier<List<RecipeHolder<T>>> recipesSupplier;
-			if (predicate.test(AllConfigs.server().recipes)) {
-				recipesSupplier = () -> {
-					List<RecipeHolder<T>> recipes = new ArrayList<>();
-					for (Consumer<List<RecipeHolder<T>>> consumer : recipeListConsumers)
-						consumer.accept(recipes);
-					return recipes;
-				};
-			} else {
-				recipesSupplier = Collections::emptyList;
-			}
-
-			CreateRecipeCategory.Info<T> info = new CreateRecipeCategory.Info<>(
-					new mezz.jei.api.recipe.RecipeType<>(CreateAddition.asResource(name), recipeClass),
-					Component.translatable(CreateAddition.MODID + ".recipe." + name), background, icon, recipesSupplier, catalysts);
-			CreateRecipeCategory<T> category = factory.create(info);
+		@Override
+		public CreateRecipeCategory<T> build(ResourceLocation id, CreateRecipeCategory.Factory<T> factory) {
+			CreateRecipeCategory<T> category = super.build(id, factory);
 			ALL.add(category);
 			return category;
 		}

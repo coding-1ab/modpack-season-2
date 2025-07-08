@@ -1,122 +1,126 @@
 package com.mrh0.createaddition.recipe.charging;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrh0.createaddition.index.CARecipes;
-import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
-import net.minecraft.core.HolderLookup;
+import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
+import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
+import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class ChargingRecipe implements Recipe<RecipeWrapper> {
-	public Ingredient ingredient;
-	public ItemStack output;
-	public int energy;
-	public int maxChargeRate;
+public class ChargingRecipe extends ProcessingRecipe<RecipeWrapper, ChargingRecipeParams> {
+    public static final IRecipeTypeInfo TYPE_INFO = new IRecipeTypeInfo() {
+        @Override
+        public ResourceLocation getId() {
+            return CARecipes.CHARGING.getId();
+        }
 
-	public ChargingRecipe(@Nullable String group, Ingredient ingredient, ItemStack output, int energy, int maxChargeRate) {
-		this.ingredient = ingredient;
-		this.output = output;
-		this.energy = energy;
-		this.maxChargeRate = maxChargeRate;
-	}
+        @Override
+        public <T extends RecipeSerializer<?>> T getSerializer() {
+            return (T) CARecipes.CHARGING.get();
+        }
 
-	public CraftingBookCategory category() {
-		return CraftingBookCategory.MISC;
-	}
+        @Override
+        public <V extends RecipeInput, R extends Recipe<V>> RecipeType<R> getType() {
+            return (RecipeType<R>) CARecipes.CHARGING_TYPE.get();
+        }
+    };
 
-	@Override
-	public boolean matches(@NotNull RecipeWrapper wrapper, @NotNull Level world) {
-		if(ingredient == null) return false;
-		return ingredient.test(wrapper.getItem(0));
-	}
+    public int energy;
+    public int maxChargeRate;
 
-	@Override
-	public @NotNull ItemStack assemble(@NotNull RecipeWrapper recipeWrapper, HolderLookup.@NotNull Provider provider) {
-		return output;
-	}
+    public ChargingRecipe(ChargingRecipeParams params) {
+        super(TYPE_INFO, params);
+        this.energy = params.getEnergy();
+        this.maxChargeRate = params.getMaxChargeRate();
+    }
 
-	@Override
-	public boolean canCraftInDimensions(int w, int h) {
-		return true;
-	}
+    @Override
+    public boolean matches(@NotNull RecipeWrapper wrapper, @NotNull Level world) {
+        if (ingredients.get(0) == null) return false;
+        return ingredients.get(0).test(wrapper.getItem(0));
+    }
 
-	@Override
-	public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider provider) {
-		return output;
-	}
+    @Override
+    protected int getMaxInputCount() {
+        return 1;
+    }
 
-	public ItemStack getResultItem() {
-		return output;
-	}
+    @Override
+    protected int getMaxOutputCount() {
+        return 1;
+    }
 
-	@Override
-	public @NotNull RecipeSerializer<?> getSerializer() {
-		return CARecipes.CHARGING.get();
-	}
+    public int getEnergy() {
+        return energy;
+    }
 
+    public int getMaxChargeRate() {
+        return maxChargeRate;
+    }
 
-	@Override
-	public @NotNull RecipeType<?> getType() {
-		return CARecipes.CHARGING_TYPE.get();
-	}
+    public ItemStack getResultStack() {
+        return  getRollableResults().getFirst().getStack();
+    }
 
-	public int getEnergy() {
-		return energy;
-	}
+    @FunctionalInterface
+    public interface Factory<R extends ChargingRecipe> extends ProcessingRecipe.Factory<ChargingRecipeParams, R> {
+        R create(ChargingRecipeParams params);
+    }
 
-	public int getMaxChargeRate() {
-		return maxChargeRate;
-	}
+    public static class Builder<R extends ChargingRecipe> extends ProcessingRecipeBuilder<ChargingRecipeParams, R, ChargingRecipe.Builder<R>> {
+        public Builder(ChargingRecipe.Factory<R> factory, ResourceLocation recipeId) {
+            super(factory, recipeId);
+        }
 
-	public static class Serializer implements RecipeSerializer<ChargingRecipe> {
-		private static final MapCodec<ChargingRecipe> CODEC = RecordCodecBuilder.mapCodec(
-				builder -> builder.group(
-								Codec.STRING.optionalFieldOf("group", "").forGetter(ChargingRecipe::getGroup),
-								//CraftingBookCategory.CODEC.fieldOf("category").orElse(CraftingBookCategory.MISC).forGetter(ChargingRecipe::category),
-								Ingredient.CODEC.fieldOf("ingredient").forGetter(r -> r.ingredient),
-								ItemStack.STRICT_CODEC.fieldOf("result").forGetter(r -> r.output),
-								Codec.INT.optionalFieldOf("energy", 0).forGetter(r -> r.energy),
-						Codec.INT.optionalFieldOf("max_charge_rate", 0).forGetter(r -> r.maxChargeRate)
-						).apply(builder, ChargingRecipe::new)
-		);
+        @Override
+        protected ChargingRecipeParams createParams() {
+            return new ChargingRecipeParams();
+        }
 
-		public static final StreamCodec<RegistryFriendlyByteBuf, ChargingRecipe> STREAM_CODEC = StreamCodec.of(
-				Serializer::toNetwork, Serializer::fromNetwork
-		);
+        @Override
+        public ChargingRecipe.Builder<R> self() {
+            return this;
+        }
 
-		@Override
-		public MapCodec<ChargingRecipe> codec() {
-			return CODEC;
-		}
+        public ChargingRecipe.Builder<R> energy(int energy) {
+            params.energy = energy;
+            return this;
+        }
 
-		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, ChargingRecipe> streamCodec() {
-			return STREAM_CODEC;
-		}
+        public ChargingRecipe.Builder<R> maxChargeRate(int maxChargeRate) {
+            params.maxChargeRate = maxChargeRate;
+            return this;
+        }
+    }
 
-		private static ChargingRecipe fromNetwork(RegistryFriendlyByteBuf buffer) {
-			String group = buffer.readUtf();
-			int maxChargeRate = buffer.readInt();
-			int energy = buffer.readInt();
-			ItemStack output = ItemStack.STREAM_CODEC.decode(buffer);
-			Ingredient input = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
-			return new ChargingRecipe(group, input, output, energy, maxChargeRate);
-		}
+    public static class Serializer<R extends ChargingRecipe> implements RecipeSerializer<R> {
+        private final MapCodec<R> codec;
+        private final StreamCodec<RegistryFriendlyByteBuf, R> streamCodec;
 
-		private static void toNetwork(RegistryFriendlyByteBuf buffer, ChargingRecipe recipe) {
-			buffer.writeUtf(recipe.getGroup());
-			buffer.writeInt(recipe.maxChargeRate);
-			buffer.writeInt(recipe.energy);
-			ItemStack.STREAM_CODEC.encode(buffer, recipe.output);
-			Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.ingredient);
-		}
-	}
+        public Serializer(ProcessingRecipe.Factory<ChargingRecipeParams, R> factory) {
+            this.codec = ProcessingRecipe.codec(factory, ChargingRecipeParams.CODEC);
+            this.streamCodec = ProcessingRecipe.streamCodec(factory, ChargingRecipeParams.STREAM_CODEC);
+        }
+
+        @Override
+        public MapCodec<R> codec() {
+            return codec;
+        }
+
+        @Override
+        public StreamCodec<RegistryFriendlyByteBuf, R> streamCodec() {
+            return streamCodec;
+        }
+    }
+
 }

@@ -2,6 +2,7 @@ package com.mrh0.createaddition.datagen.RecipeBuilders;
 
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.recipe.charging.ChargingRecipe;
+import com.mrh0.createaddition.recipe.charging.ChargingRecipeParams;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -101,11 +102,12 @@ public class ChargingRecipeBuilder extends CARecipeBuilder {
     @Override
     public void save(RecipeOutput recipeOutput, ResourceLocation resourceLocation) {
         ChargingRecipe chargingRecipe = new ChargingRecipe(
-                Objects.requireNonNullElse(this.group, ""),
+                new ChargingRecipeParams()
+              /*  Objects.requireNonNullElse(this.group, ""),
                 this.ingredient,
                 this.result,
                 this.energy,
-                this.maxChargeRate
+                this.maxChargeRate*/
         );
         recipeOutput.accept(resourceLocation.withPrefix("charging/"), chargingRecipe, null);
     }

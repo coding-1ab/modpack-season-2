@@ -2,12 +2,8 @@ package com.mrh0.createaddition.datagen.RecipeProvider;
 
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.datagen.RecipeBuilders.ChargingRecipeBuilder;
-import com.mrh0.createaddition.index.CARecipes;
-import com.mrh0.createaddition.recipe.charging.ChargingRecipe;
+import com.mrh0.createaddition.datagen.RecipeGen.ChargingRecipeGen;
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.api.data.recipe.ProcessingRecipeGen;
-import com.simibubi.create.api.data.recipe.StandardProcessingRecipeGen;
-import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
 import com.simibubi.create.foundation.block.CopperBlockSet;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.core.HolderLookup;
@@ -16,10 +12,6 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeInput;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.WeatheringCopper;
@@ -28,28 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-public class CAChargingRecipeProvider extends ProcessingRecipeGen<ChargingRecipe> {
-    public static final IRecipeTypeInfo recipeType = new IRecipeTypeInfo() {
-        @Override
-        public ResourceLocation getId() {
-            return CARecipes.CHARGING.getId();
-        }
+import static com.mrh0.createaddition.recipe.charging.ChargingRecipe.TYPE_INFO;
 
-        @Override
-        public <T extends RecipeSerializer<?>> T getSerializer() {
-            return (T) CARecipes.CHARGING.get();
-        }
-
-        @Override
-        public <V extends RecipeInput, R extends Recipe<V>> RecipeType<R> getType() {
-            return (RecipeType<R>) CARecipes.CHARGING_TYPE.get();
-        }
-    };
+public class CAChargingRecipeProvider extends ChargingRecipeGen {
 
     private final HolderLookup.Provider provider;
 
-    public CAChargingRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, registries);
+    public CAChargingRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, String defaultNamespace) {
+        super(output, registries, defaultNamespace);
         try {
             this.provider = registries.get();
         } catch (InterruptedException | ExecutionException e) {
@@ -126,15 +104,5 @@ public class CAChargingRecipeProvider extends ProcessingRecipeGen<ChargingRecipe
         buildCreateDeoxidizeVariants(CopperBlockSet.SlabVariant.INSTANCE, output);
         buildCreateDeoxidizeVariants(CopperBlockSet.BlockVariant.INSTANCE, output);
         buildCreateDeoxidizeVariants(CopperBlockSet.StairVariant.INSTANCE, output);
-    }
-
-    @Override
-    protected IRecipeTypeInfo getRecipeType() {
-       return recipeType;
-    }
-
-    @Override
-    protected ProcessingRecipeBuilder getBuilder(ResourceLocation id) {
-        return null;
     }
 }

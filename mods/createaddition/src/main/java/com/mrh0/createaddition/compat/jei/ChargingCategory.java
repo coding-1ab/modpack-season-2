@@ -24,12 +24,12 @@ public class ChargingCategory extends CARecipeCategory<ChargingRecipe> {
 		builder
 				.addSlot(RecipeIngredientRole.INPUT, 15, 9)
 				.setBackground(getRenderedSlot(), -1, -1)
-				.addIngredients(recipe.ingredient);
+				.addIngredients(recipe.getIngredients().getFirst());
 
 		builder
 				.addSlot(RecipeIngredientRole.OUTPUT, 140, 28)
 				.setBackground(getRenderedSlot(), -1, -1)
-				.addItemStack(recipe.getResultItem());
+				.addItemStack(recipe.getResultStack());
 	}
 
 	@Override

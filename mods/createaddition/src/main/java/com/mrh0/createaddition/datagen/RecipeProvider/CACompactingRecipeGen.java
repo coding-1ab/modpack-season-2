@@ -4,10 +4,8 @@ import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.index.CAFluids;
 import com.mrh0.createaddition.index.CAItems;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.api.data.recipe.BaseRecipeProvider;
-import com.simibubi.create.api.data.recipe.ProcessingRecipeGen;
-import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
+import com.simibubi.create.api.data.recipe.CompactingRecipeGen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -17,14 +15,9 @@ import net.neoforged.neoforge.common.Tags;
 
 import java.util.concurrent.CompletableFuture;
 
-public class CACompactingRecipeGen extends ProcessingRecipeGen {
+public class CACompactingRecipeGen extends CompactingRecipeGen {
     public CACompactingRecipeGen(PackOutput generator, CompletableFuture<HolderLookup.Provider> provider) {
-        super(generator, provider);
-    }
-
-    @Override
-    protected IRecipeTypeInfo getRecipeType() {
-        return AllRecipeTypes.COMPACTING;
+        super(generator, provider, CreateAddition.MODID);
     }
 
     BaseRecipeProvider.GeneratedRecipe

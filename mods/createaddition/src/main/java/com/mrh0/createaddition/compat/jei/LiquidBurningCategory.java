@@ -31,7 +31,7 @@ public class LiquidBurningCategory extends CARecipeCategory<LiquidBurningRecipe>
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, LiquidBurningRecipe recipe, IFocusGroup focuses) {
-		List<ItemStack> buckets = recipe.getFluidIngredient().getMatchingFluidStacks().stream()
+		List<ItemStack> buckets = recipe.getRequiredFluid().getMatchingFluidStacks().stream()
 				.filter(e -> e != null)
 				.map((e) -> new ItemStack(e.getFluid().getBucket()))
 				.toList();
@@ -43,7 +43,7 @@ public class LiquidBurningCategory extends CARecipeCategory<LiquidBurningRecipe>
 			.addSlot(RecipeIngredientRole.INPUT, getBackground().getWidth() / 2 -36, 3)
 			.setBackground(getRenderedSlot(), -1, -1)
 			.addItemStacks(buckets);
-		addFluidSlot(builder, getBackground().getWidth() / 2 -16, 3, recipe.getFluidIngredient());
+		addFluidSlot(builder, getBackground().getWidth() / 2 -16, 3, recipe.getRequiredFluid());
 	}
 
 	@Override

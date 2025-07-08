@@ -4,9 +4,7 @@ import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.index.CAItems;
 import com.simibubi.create.AllFluids;
-import com.simibubi.create.AllRecipeTypes;
-import com.simibubi.create.foundation.data.recipe.ProcessingRecipeGen;
-import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
+import com.simibubi.create.api.data.recipe.FillingRecipeGen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -15,14 +13,9 @@ import net.neoforged.neoforge.common.Tags;
 
 import java.util.concurrent.CompletableFuture;
 
-public class CAFillingRecipeGen extends ProcessingRecipeGen {
+public class CAFillingRecipeGen extends FillingRecipeGen {
     public CAFillingRecipeGen(PackOutput generator, CompletableFuture<HolderLookup.Provider> registries) {
-        super(generator, registries);
-    }
-
-    @Override
-    protected IRecipeTypeInfo getRecipeType() {
-        return AllRecipeTypes.FILLING;
+        super(generator, registries, CreateAddition.MODID);
     }
 
     GeneratedRecipe

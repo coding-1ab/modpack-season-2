@@ -5,11 +5,8 @@ import com.mrh0.createaddition.datagen.TagProvider.CATagRegister;
 import com.mrh0.createaddition.index.CAFluids;
 import com.mrh0.createaddition.index.CAItems;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.AllRecipeTypes;
+import com.simibubi.create.api.data.recipe.MixingRecipeGen;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
-import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
-import com.simibubi.create.foundation.data.recipe.ProcessingRecipeGen;
-import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -24,20 +21,14 @@ import net.neoforged.neoforge.common.conditions.NotCondition;
 import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.function.UnaryOperator;
 
-public class CAMixingRecipeGen extends ProcessingRecipeGen {
+public class CAMixingRecipeGen extends MixingRecipeGen {
 
     public CAMixingRecipeGen(PackOutput generator, CompletableFuture<HolderLookup.Provider> registries) {
-        super(generator, registries);
+        super(generator, registries, CreateAddition.MODID);
     }
 
-    @Override
-    protected IRecipeTypeInfo getRecipeType() {
-        return AllRecipeTypes.MIXING;
-    }
-
-    private GeneratedRecipe makeBiomassRecipe(String recipeName, ItemLike itemLike, int amount, UnaryOperator<ProcessingRecipeBuilder<?>> transform) {
+    private GeneratedRecipe makeBiomassRecipe(String recipeName, ItemLike itemLike, int amount) {
         return create(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, recipeName), b -> {
             b.require(CATagRegister.Fluids.PLANTOIL,100)
                     .output(CAItems.BIOMASS)
@@ -47,7 +38,7 @@ public class CAMixingRecipeGen extends ProcessingRecipeGen {
         });
     }
 
-    private GeneratedRecipe makeBiomassRecipe(String recipeName, TagKey<Item> tag, int amount, UnaryOperator<ProcessingRecipeBuilder<?>> transform) {
+    private GeneratedRecipe makeBiomassRecipe(String recipeName, TagKey<Item> tag, int amount) {
         return create(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, recipeName), b -> {
             b.require(CATagRegister.Fluids.PLANTOIL, 100)
                     .output(CAItems.BIOMASS)
@@ -65,14 +56,14 @@ public class CAMixingRecipeGen extends ProcessingRecipeGen {
             .require(CAItems.BIOMASS)
             .output(CAFluids.BIOETHANOL.getSource().getSource(),125)
     ),
-    BIOMASS_FROM_CROPS = makeBiomassRecipe("biomass_from_crops", Tags.Items.CROPS, 2, b -> b),
-    BIOMASS_FROM_FLOWERS = makeBiomassRecipe("biomass_from_flowers", ItemTags.FLOWERS, 2, b -> b),
-    BIOMASS_FROM_HONEYCOMB = makeBiomassRecipe("biomass_from_honeycomb", Items.HONEYCOMB, 1, b -> b),
-    BIOMASS_FROM_LEAVES = makeBiomassRecipe("biomass_from_leaves", ItemTags.LEAVES, 3, b -> b),
-    BIOMASS_FROM_PLANT_FOODS = makeBiomassRecipe("biomass_from_plant_foods", CATagRegister.Items.PLANT_FOODS, 2, b -> b),
-    BIOMASS_FROM_PLANTS = makeBiomassRecipe("biomass_from_plants", CATagRegister.Items.PLANTS, 3, b -> b),
-    BIOMASS_FROM_SAPLINGS = makeBiomassRecipe("biomass_from_saplings", ItemTags.SAPLINGS, 3, b -> b),
-    BIOMASS_FROM_STRICKS = makeBiomassRecipe("biomass_from_stricks", Items.STICK, 8, b -> b),
+    BIOMASS_FROM_CROPS = makeBiomassRecipe("biomass_from_crops", Tags.Items.CROPS, 2),
+    BIOMASS_FROM_FLOWERS = makeBiomassRecipe("biomass_from_flowers", ItemTags.FLOWERS, 2),
+    BIOMASS_FROM_HONEYCOMB = makeBiomassRecipe("biomass_from_honeycomb", Items.HONEYCOMB, 1),
+    BIOMASS_FROM_LEAVES = makeBiomassRecipe("biomass_from_leaves", ItemTags.LEAVES, 3),
+    BIOMASS_FROM_PLANT_FOODS = makeBiomassRecipe("biomass_from_plant_foods", CATagRegister.Items.PLANT_FOODS, 2),
+    BIOMASS_FROM_PLANTS = makeBiomassRecipe("biomass_from_plants", CATagRegister.Items.PLANTS, 3),
+    BIOMASS_FROM_SAPLINGS = makeBiomassRecipe("biomass_from_saplings", ItemTags.SAPLINGS, 3),
+    BIOMASS_FROM_STRICKS = makeBiomassRecipe("biomass_from_stricks", Items.STICK, 8),
     ELECTRUM = create(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID,"electrum"), b -> b.requiresHeat(HeatCondition.HEATED)
             .require(CATagRegister.Items.commonTags("ingots","gold"))
             .require(CATagRegister.Items.commonTags("ingots","silver"))
