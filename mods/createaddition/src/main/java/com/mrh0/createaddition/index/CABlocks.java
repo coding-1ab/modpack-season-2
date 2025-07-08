@@ -15,6 +15,7 @@ import com.mrh0.createaddition.blocks.digital_adapter.DigitalAdapterBlock;
 import com.mrh0.createaddition.blocks.modular_accumulator.*;
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceBlock;
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceMovement;
+import com.mrh0.createaddition.datagen.Models.BlockGenHelper;
 import com.mrh0.createaddition.energy.NodeMovementBehaviour;
 import com.mrh0.createaddition.blocks.creative_energy.CreativeEnergyBlock;
 import com.mrh0.createaddition.blocks.electric_motor.ElectricMotorBlock;
@@ -29,6 +30,8 @@ import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.tterrag.registrate.util.entry.BlockEntry;
+
+import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 import net.minecraft.client.renderer.RenderType;
@@ -57,6 +60,8 @@ public class CABlocks {
 			.tag(AllBlockTags.SAFE_NBT.tag) //Dono what this tag means (contraption safe?).
 			//.transform(CStress.setCapacity(Config.MAX_STRESS.get()/256f))
 			//.onRegister(BlockStressValues.setGeneratorSpeed(256, true))
+			.transform(pickaxeOnly())
+			.blockstate(BlockGenHelper.directionalBlockState())
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -65,6 +70,8 @@ public class CABlocks {
 			.initialProperties(SharedProperties::softMetal)
 			//.transform(CStress.setImpact(Config.MAX_STRESS.get()/256f))
 			.tag(AllBlockTags.SAFE_NBT.tag) //Dono what this tag means (contraption safe?).
+			.transform(pickaxeOnly())
+		.blockstate(BlockGenHelper.directionalBlockState())
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -73,12 +80,13 @@ public class CABlocks {
 			.initialProperties(SharedProperties::stone)
 			//.transform(CStress.setImpact(Config.ROLLING_MILL_STRESS.get()))
 			.tag(AllBlockTags.SAFE_NBT.tag) //Dono what this tag means (contraption safe?).
-			.item()
-			.transform(customItemModel())
+			.transform(axeOrPickaxe())
+			.blockstate(BlockGenHelper.horizontalBlockState())
 			.register();
 
 	public static final BlockEntry<CreativeEnergyBlock> CREATIVE_ENERGY = CreateAddition.REGISTRATE.block("creative_energy", CreativeEnergyBlock::new)
 			.initialProperties(SharedProperties::softMetal)
+			.blockstate(BlockGenHelper.simpleBlock())
 			.item()
 			.properties(p -> p.rarity(Rarity.EPIC))
 			.transform(customItemModel())
@@ -87,6 +95,7 @@ public class CABlocks {
 	public static final BlockEntry<SmallConnectorBlock> SMALL_CONNECTOR = CreateAddition.REGISTRATE.block("connector",  SmallConnectorBlock::new)
 			.initialProperties(SharedProperties::stone)
 			.onRegister(movementBehaviour(new NodeMovementBehaviour()))
+			.blockstate(SmallConnectorBlock::makeBlockState)
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -94,6 +103,7 @@ public class CABlocks {
 	public static final BlockEntry<SmallLightConnectorBlock> SMALL_LIGHT_CONNECTOR = CreateAddition.REGISTRATE.block("small_light_connector",  SmallLightConnectorBlock::new)
 			.initialProperties(SharedProperties::stone)
 			.onRegister(movementBehaviour(new NodeMovementBehaviour()))
+			.blockstate(SmallLightConnectorBlock::makeBlockState)
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -101,6 +111,7 @@ public class CABlocks {
 	public static final BlockEntry<LargeConnectorBlock> LARGE_CONNECTOR = CreateAddition.REGISTRATE.block("large_connector",  LargeConnectorBlock::new)
 			.initialProperties(SharedProperties::stone)
 			.onRegister(movementBehaviour(new NodeMovementBehaviour()))
+			.blockstate(LargeConnectorBlock::makeBlockState)
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -116,6 +127,7 @@ public class CABlocks {
 	public static final BlockEntry<RedstoneRelayBlock> REDSTONE_RELAY = CreateAddition.REGISTRATE.block("redstone_relay",  RedstoneRelayBlock::new)
 			.initialProperties(SharedProperties::stone)
 			.onRegister(movementBehaviour(new NodeMovementBehaviour()))
+			.blockstate(RedstoneRelayBlock::makeBlockState)
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -123,6 +135,7 @@ public class CABlocks {
 	public static final BlockEntry<CACakeBlock> CHOCOLATE_CAKE = CreateAddition.REGISTRATE.block("chocolate_cake",  CACakeBlock::new)
 			.initialProperties(() -> Blocks.CAKE)
 			.properties(props -> props.sound(SoundType.WOOL).strength(0.5f))
+			.blockstate(CACakeBlock::makeBlockState)
 			.item()
 			.transform(customItemModel())
 			.loot((lt,b) -> lt.add(b, BlockLootSubProvider.noDrop()))
@@ -131,6 +144,7 @@ public class CABlocks {
 	public static final BlockEntry<CACakeBlock> HONEY_CAKE = CreateAddition.REGISTRATE.block("honey_cake",  CACakeBlock::new)
 			.initialProperties(() -> Blocks.CAKE)
 			.properties(props -> props.sound(SoundType.WOOL).strength(0.5f))
+			.blockstate(CACakeBlock::makeBlockState)
 			.item()
 			.transform(customItemModel())
 			.loot((lt,b) -> lt.add(b, BlockLootSubProvider.noDrop()))
@@ -147,6 +161,7 @@ public class CABlocks {
 			.block("barbed_wire",  BarbedWireBlock::new)
 			.initialProperties(() -> Blocks.COBWEB)
 			.properties(props -> props.noCollission().requiresCorrectToolForDrops().strength(4.0F))
+			.blockstate(BarbedWireBlock::makeBlockState)
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -154,6 +169,7 @@ public class CABlocks {
 	public static final BlockEntry<TeslaCoilBlock> TESLA_COIL = CreateAddition.REGISTRATE
 			.block("tesla_coil",  TeslaCoilBlock::new)
 			.initialProperties(SharedProperties::softMetal)
+			.blockstate(BlockGenHelper.directionalBlockState())
 			.item(AssemblyOperatorBlockItem::new)
 			.transform(customItemModel())
 			.register();
@@ -166,6 +182,7 @@ public class CABlocks {
 			.onRegister(connectedTextures(ModularAccumulatorCTBehaviour::new))
 			.transform(displaySource(CADisplaySources.MODULAR_ACCUMULATOR))
 			.addLayer(() -> RenderType::cutoutMipped)
+			.blockstate(ModularAccumulatorBlock::makeBlockState)
 			.item(ModularAccumulatorBlockItem::new)
 			.transform(customItemModel())
 			.register();
@@ -195,6 +212,7 @@ public class CABlocks {
 	public static final BlockEntry<PortableEnergyInterfaceBlock> PORTABLE_ENERGY_INTERFACE = CreateAddition.REGISTRATE.block("portable_energy_interface",  PortableEnergyInterfaceBlock::new)
 			.initialProperties(SharedProperties::softMetal)
 			.onRegister(movementBehaviour(new PortableEnergyInterfaceMovement()))
+			.blockstate(BlockGenHelper.directionalBlockState())
 			.item()
 			.transform(customItemModel())
 			.addLayer(() -> RenderType::cutoutMipped)
@@ -209,6 +227,7 @@ public class CABlocks {
 			.block("biomass_pellet_block", Block::new)
 			.initialProperties(() -> Blocks.DRIED_KELP_BLOCK)
 			.properties(p -> p.mapColor(MapColor.COLOR_GREEN))
+			.blockstate(BlockGenHelper.simpleBlock())
 			.item(BiomassPelletBlock::new)
 			.transform(customItemModel())
 			.register();
@@ -216,6 +235,7 @@ public class CABlocks {
 	public static final BlockEntry<Block> ELECTRUM_BLOCK = CreateAddition.REGISTRATE.block("electrum_block", Block::new)
 			.initialProperties(() -> Blocks.GOLD_BLOCK)
 			.properties(p -> p.mapColor(MapColor.TERRACOTTA_YELLOW))
+			.blockstate(BlockGenHelper.simpleBlock())
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -227,6 +247,7 @@ public class CABlocks {
 			.transform(displaySource(CADisplaySources.DIGITAL_ADAPTER))
 //			.item(DigitalAdapterBlockItem::new)
 			//.transform(customItemModel())
+			.blockstate(BlockGenHelper.simpleBlock())
 			.item()
 			.transform(customItemModel())
 			.register();

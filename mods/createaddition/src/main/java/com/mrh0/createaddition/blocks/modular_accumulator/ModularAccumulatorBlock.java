@@ -1,12 +1,16 @@
 package com.mrh0.createaddition.blocks.modular_accumulator;
 
+import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.index.CABlockEntities;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.blockEntity.ComparatorUtil;
 
+import com.tterrag.registrate.providers.DataGenContext;
+import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -27,6 +31,9 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.client.model.generators.BlockModelProvider;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
 import net.neoforged.neoforge.common.util.DeferredSoundType;
 
 public class ModularAccumulatorBlock extends Block implements IWrenchable, IBE<ModularAccumulatorBlockEntity> {
@@ -149,5 +156,41 @@ public class ModularAccumulatorBlock extends Block implements IWrenchable, IBE<M
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		return CABlockEntities.MODULAR_ACCUMULATOR.create(pos, state);
+	}
+
+	public static void makeBlockState(DataGenContext<Block, ModularAccumulatorBlock> ctx, RegistrateBlockstateProvider provider) {
+		BlockModelProvider models = provider.models();
+		String basePath = "block/modular_accumulator/block_";
+		MultiPartBlockStateBuilder builder = provider.getMultipartBuilder(ctx.get());
+
+		ModelFile.ExistingModelFile middle = models.getExistingFile(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, basePath + "middle"));
+		ModelFile.ExistingModelFile bottom = models.getExistingFile(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, basePath + "bottom"));
+		ModelFile.ExistingModelFile top = models.getExistingFile(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, basePath + "top"));
+		ModelFile.ExistingModelFile single = models.getExistingFile(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, basePath + "single"));
+
+		builder.part()
+				.modelFile(middle)
+				.addModel()
+				.condition(BOTTOM, false)
+				.condition(TOP, false)
+				.end()
+				.part()
+				.modelFile(bottom)
+				.addModel()
+				.condition(BOTTOM, true)
+				.condition(TOP, false)
+				.end()
+				.part()
+				.modelFile(top)
+				.addModel()
+				.condition(BOTTOM, false)
+				.condition(TOP, true)
+				.end()
+				.part()
+				.modelFile(single)
+				.addModel()
+				.condition(BOTTOM, true)
+				.condition(TOP, true)
+				.end();
 	}
 }
