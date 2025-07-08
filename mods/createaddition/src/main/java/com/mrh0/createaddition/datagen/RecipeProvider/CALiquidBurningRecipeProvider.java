@@ -1,68 +1,37 @@
 package com.mrh0.createaddition.datagen.RecipeProvider;
 
 import com.mrh0.createaddition.CreateAddition;
-import com.mrh0.createaddition.datagen.RecipeBuilders.CALiquidBurningRecipeBuilder;
+import com.mrh0.createaddition.datagen.RecipeGen.LiquidBurningRecipeGen;
 import com.mrh0.createaddition.datagen.TagProvider.CATagRegister;
 import com.mrh0.createaddition.recipe.conditions.HasFluidTagCondition;
-import com.mrh0.createaddition.recipe.liquid_burning.LiquidBurningRecipe;
-import com.simibubi.create.api.data.recipe.StandardProcessingRecipeGen;
-import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.tags.FluidTags;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.material.Fluid;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
-public class CALiquidBurningRecipeProvider extends StandardProcessingRecipeGen<LiquidBurningRecipe> {
-    private final HolderLookup.Provider provider;
-
+public class CALiquidBurningRecipeProvider extends LiquidBurningRecipeGen {
     public CALiquidBurningRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries, CreateAddition.MODID);
-        try {
-            this.provider = registries.get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
     }
 
-    @Override
-    protected void buildRecipes(@NotNull RecipeOutput output) {
-        CALiquidBurningRecipeBuilder.liquidBurning(24000)
-                .require(CATagRegister.Fluids.BIOFUEL)
-                .superheated()
-                .save(output, "biofuel");
-        CALiquidBurningRecipeBuilder.liquidBurning(4800)
-                .require(CATagRegister.Fluids.PLANTOIL)
-                .save(output, "plantoil");
-        CALiquidBurningRecipeBuilder.liquidBurning(20000)
-                .require(FluidTags.LAVA)
-                .save(output, "lava");
-
-        CALiquidBurningRecipeBuilder.liquidBurning(24000)
-                .require(CATagRegister.Fluids.BIODIESEL)
-                .save(output.withConditions(new HasFluidTagCondition(CATagRegister.Fluids.BIODIESEL)), "biodiesel");
-        CALiquidBurningRecipeBuilder.liquidBurning(4800)
-                .require(CATagRegister.Fluids.CREOSOTE)
-                .save(output.withConditions(new HasFluidTagCondition(CATagRegister.Fluids.CREOSOTE)), "creosote");
-        CALiquidBurningRecipeBuilder.liquidBurning(9600)
-                .require(CATagRegister.Fluids.CRUDE_OIL)
-                .save(output.withConditions(new HasFluidTagCondition(CATagRegister.Fluids.CRUDE_OIL)), "crude_oil");
-        CALiquidBurningRecipeBuilder.liquidBurning(24000)
-                .require(CATagRegister.Fluids.DIESEL)
-                .save(output.withConditions(new HasFluidTagCondition(CATagRegister.Fluids.DIESEL)), "diesel");
-        CALiquidBurningRecipeBuilder.liquidBurning(8000)
-                .require(CATagRegister.Fluids.ETHANOL)
-                .save(output.withConditions(new HasFluidTagCondition(CATagRegister.Fluids.ETHANOL)), "ethanol");
-        CALiquidBurningRecipeBuilder.liquidBurning(24000)
-                .require(CATagRegister.Fluids.GASOLINE)
-                .save(output.withConditions(new HasFluidTagCondition(CATagRegister.Fluids.GASOLINE)), "gasoline");
+    GeneratedRecipe conditional(String name, TagKey<Fluid> fluid, int burnTime) {
+        return create(name, (b) -> b.fluid(fluid)
+                .burnTime(burnTime)
+                .withCondition(new HasFluidTagCondition(fluid))
+        );
     }
 
-    @Override
-    protected IRecipeTypeInfo getRecipeType() {
-       return LiquidBurningRecipe.TYPE_INFO;
-    }
+    GeneratedRecipe
+            BIOFUEL = create("biofuel", (b) -> b.fluid(CATagRegister.Fluids.BIOFUEL).burnTime(2400).superheated()),
+            PLANTOIL = create("plantoil", (b) -> b.fluid(CATagRegister.Fluids.PLANTOIL).burnTime(4800)),
+            LAVA = create("lava", (b) -> b.fluid(FluidTags.LAVA).burnTime(20000)),
+            BIODIESEL = conditional("biodiesel", CATagRegister.Fluids.BIODIESEL, 24000),
+            CREOSOTE = conditional("creosote", CATagRegister.Fluids.CREOSOTE, 4800),
+            CRUDE_OIL = conditional("crude_oil", CATagRegister.Fluids.CRUDE_OIL, 9600),
+            DIESEL = conditional("diesel", CATagRegister.Fluids.DIESEL, 24000),
+            ETHANOL = conditional("ethanol", CATagRegister.Fluids.ETHANOL, 8000),
+            GASOLINE = conditional("gasoline", CATagRegister.Fluids.GASOLINE, 24000);
 }
