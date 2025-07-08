@@ -25,6 +25,6 @@ public class ChargingRecipeGen extends ProcessingRecipeGen<ChargingRecipeParams,
 
     @Override
     protected ChargingRecipe.Builder<ChargingRecipe> getBuilder(ResourceLocation id) {
-        return null;
+        return new ChargingRecipe.Builder<>(ChargingRecipe::new, id);
     }
 }
