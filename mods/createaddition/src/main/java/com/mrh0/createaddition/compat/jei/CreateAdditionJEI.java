@@ -96,5 +96,10 @@ public class CreateAdditionJEI implements IModPlugin {
 			ALL.add(category);
 			return category;
 		}
+
+		@Override
+		public CreateRecipeCategory<T> build(String name, CreateRecipeCategory.Factory<T> factory) {
+			return build(CreateAddition.asResource(name), factory);
+		}
 	}
 }
