@@ -223,7 +223,7 @@ public class ChairBlockStateGen {
                     .condition(ChairBlock.BACK_FLAT, true)
                     .condition(ChairBlock.CORNER, true)
                     .condition(ChairBlock.LEFT_ARM, false)
-                    .condition(ChairBlock.RIGHT_ARM, true)
+                    .condition(ChairBlock.RIGHT_ARM, false)
                     .end();
                 p.getMultipartBuilder(c.get())
                     .part()
@@ -240,7 +240,7 @@ public class ChairBlockStateGen {
                 //Corner trimmed states (avoiding z clipping)
                 p.getMultipartBuilder(c.get())
                     .part()
-                    .modelFile(chairBackFlatTrimmedLeft)
+                    .modelFile(chairBackFlatTrimmedRight)
                     .rotationY((int) (direction.toYRot() + 180) % 360)
                     .addModel()
                     .condition(ChairBlock.FACING, direction)
@@ -252,7 +252,7 @@ public class ChairBlockStateGen {
 
                 p.getMultipartBuilder(c.get())
                     .part()
-                    .modelFile(chairBackFlatTrimmedRight)
+                    .modelFile(chairBackFlatTrimmedLeft)
                     .rotationY((int) (direction.toYRot() + 180) % 360)
                     .addModel()
                     .condition(ChairBlock.FACING, direction)

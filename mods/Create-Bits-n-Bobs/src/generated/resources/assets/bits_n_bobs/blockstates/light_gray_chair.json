@@ -190,7 +190,7 @@
         "corner": "true",
         "facing": "south",
         "left_arm": "false",
-        "right_arm": "true"
+        "right_arm": "false"
       }
     },
     {
@@ -208,7 +208,7 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray",
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray",
         "y": 180
       },
       "when": {
@@ -221,7 +221,7 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray",
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray",
         "y": 180
       },
       "when": {
@@ -420,7 +420,7 @@
         "corner": "true",
         "facing": "west",
         "left_arm": "false",
-        "right_arm": "true"
+        "right_arm": "false"
       }
     },
     {
@@ -438,7 +438,7 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray",
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray",
         "y": 270
       },
       "when": {
@@ -451,7 +451,7 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray",
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray",
         "y": 270
       },
       "when": {
@@ -641,7 +641,7 @@
         "corner": "true",
         "facing": "north",
         "left_arm": "false",
-        "right_arm": "true"
+        "right_arm": "false"
       }
     },
     {
@@ -658,7 +658,7 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray"
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray"
       },
       "when": {
         "back_flat": "true",
@@ -670,7 +670,7 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray"
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray"
       },
       "when": {
         "back_flat": "true",
@@ -867,7 +867,7 @@
         "corner": "true",
         "facing": "east",
         "left_arm": "false",
-        "right_arm": "true"
+        "right_arm": "false"
       }
     },
     {
@@ -885,7 +885,7 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray",
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray",
         "y": 90
       },
       "when": {
@@ -898,7 +898,7 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_right_light_gray",
+        "model": "bits_n_bobs:block/chair/chair_back_flat_trimmed_left_light_gray",
         "y": 90
       },
       "when": {
