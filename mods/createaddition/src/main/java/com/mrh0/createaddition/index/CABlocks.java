@@ -99,7 +99,7 @@ public class CABlocks {
 			.onRegister(movementBehaviour(new NodeMovementBehaviour()))
 			.blockstate(SmallConnectorBlock::makeBlockState)
 			.item()
-			.transform(customItemModel())
+			.transform(customItemModel("connector","small","item"))
 			.register();
 
 	public static final BlockEntry<SmallLightConnectorBlock> SMALL_LIGHT_CONNECTOR = CreateAddition.REGISTRATE.block("small_light_connector",  SmallLightConnectorBlock::new)
@@ -107,7 +107,7 @@ public class CABlocks {
 			.onRegister(movementBehaviour(new NodeMovementBehaviour()))
 			.blockstate(SmallLightConnectorBlock::makeBlockState)
 			.item()
-			.transform(customItemModel())
+			.transform(customItemModel("connector","small_light","item"))
 			.register();
 
 	public static final BlockEntry<LargeConnectorBlock> LARGE_CONNECTOR = CreateAddition.REGISTRATE.block("large_connector",  LargeConnectorBlock::new)
@@ -115,7 +115,7 @@ public class CABlocks {
 			.onRegister(movementBehaviour(new NodeMovementBehaviour()))
 			.blockstate(LargeConnectorBlock::makeBlockState)
 			.item()
-			.transform(customItemModel())
+			.transform(customItemModel("connector","large","item"))
 			.register();
 
 	/*public static final BlockEntry<AccumulatorBlock> ACCUMULATOR = CreateAddition.REGISTRATE.block("accumulator",  AccumulatorBlock::new)
