@@ -10,6 +10,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 import org.antarcticgardens.cna.CNAItems;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlockEntity;
+import org.antarcticgardens.cna.content.electricity.wire.WireType;
 import org.antarcticgardens.cna.content.energising.EnergiserBlockEntity;
 
 public class EnergiserPonder {
@@ -67,9 +68,9 @@ public class EnergiserPonder {
 
         scene.world().showSection(util.select().fromTo(0, 1, 0, 7, 5, 3), Direction.DOWN);
 
-//        scene.world.modifyBlockEntity(new BlockPos(4, 3, 3), ElectricalConnectorBlockEntity.class, (be) -> {
-//            be.connect((ElectricalConnectorBlockEntity) be.getLevel().getBlockEntity(new BlockPos(6, 3, 5)), WireType.COPPER);
-//        });
+        scene.world().modifyBlockEntity(new BlockPos(4, 3, 3), ElectricalConnectorBlockEntity.class, (be) -> {
+            be.connect((ElectricalConnectorBlockEntity) be.getLevel().getBlockEntity(new BlockPos(6, 3, 5)), WireType.COPPER);
+        });
 
         scene.world().setKineticSpeed(util.select().everywhere(), 32);
 
