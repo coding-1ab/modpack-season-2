@@ -82,6 +82,8 @@ public class CABlocks {
 			.tag(AllBlockTags.SAFE_NBT.tag) //Dono what this tag means (contraption safe?).
 			.transform(axeOrPickaxe())
 			.blockstate(BlockGenHelper.horizontalBlockState())
+			.item()
+			.transform(customItemModel())
 			.register();
 
 	public static final BlockEntry<CreativeEnergyBlock> CREATIVE_ENERGY = CreateAddition.REGISTRATE.block("creative_energy", CreativeEnergyBlock::new)
@@ -169,7 +171,7 @@ public class CABlocks {
 	public static final BlockEntry<TeslaCoilBlock> TESLA_COIL = CreateAddition.REGISTRATE
 			.block("tesla_coil",  TeslaCoilBlock::new)
 			.initialProperties(SharedProperties::softMetal)
-			.blockstate(BlockGenHelper.directionalBlockState())
+			.blockstate(TeslaCoilBlock::makeBlockState)
 			.item(AssemblyOperatorBlockItem::new)
 			.transform(customItemModel())
 			.register();
@@ -212,7 +214,7 @@ public class CABlocks {
 	public static final BlockEntry<PortableEnergyInterfaceBlock> PORTABLE_ENERGY_INTERFACE = CreateAddition.REGISTRATE.block("portable_energy_interface",  PortableEnergyInterfaceBlock::new)
 			.initialProperties(SharedProperties::softMetal)
 			.onRegister(movementBehaviour(new PortableEnergyInterfaceMovement()))
-			.blockstate(BlockGenHelper.directionalBlockState())
+			.blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
 			.item()
 			.transform(customItemModel())
 			.addLayer(() -> RenderType::cutoutMipped)

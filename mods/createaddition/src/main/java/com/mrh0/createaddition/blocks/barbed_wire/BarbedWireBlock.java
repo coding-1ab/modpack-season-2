@@ -68,7 +68,7 @@ public class BarbedWireBlock extends Block implements IShearable {
 		builder.forAllStates(state -> ConfiguredModel.builder()
 				.modelFile(model)
 				.rotationX(state.getValue(VERTICAL) ? 90 : 0)
-				.rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180) % 360)
+				.rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + (state.getValue(VERTICAL) ? 0: 90)) % 360)
 				.build()
 		);
 	}

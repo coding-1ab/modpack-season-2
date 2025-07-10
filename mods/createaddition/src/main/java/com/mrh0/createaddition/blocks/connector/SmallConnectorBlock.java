@@ -61,46 +61,41 @@ public class SmallConnectorBlock extends AbstractConnectorBlock<SmallConnectorBl
         ModelFile.ExistingModelFile girderBaseModel = models.getExistingFile(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, basePath + "girder_base"));
 
         for(Direction direction: Direction.values()) {
-            int verticalAngle = direction == Direction.UP ? 90 : direction == Direction.DOWN ? -90 : 0;
-
-            for (ConnectorMode connectorMode: ConnectorMode.values()) {
-                builder.part()
-                        .modelFile(noneModel)
-                        .rotationX(verticalAngle)
-                        .rotationY((int) (direction.toYRot() + (direction.getAxis()
-                                .isVertical() ? 90 : 0)) % 360)
-                        .addModel()
-                        .condition(SmallConnectorBlock.FACING, direction)
-                        .condition(SmallConnectorBlock.MODE, connectorMode)
-                        .end()
-                        .part()
-                        .modelFile(pushModel)
-                        .rotationX(verticalAngle)
-                        .rotationY((int) (direction.toYRot() + (direction.getAxis()
-                                .isVertical() ? 90 : 0)) % 360)
-                        .addModel()
-                        .condition(SmallConnectorBlock.FACING, direction)
-                        .condition(SmallConnectorBlock.MODE, connectorMode)
-                        .end()
-                        .part()
-                        .modelFile(pullModel)
-                        .rotationX(verticalAngle)
-                        .rotationY((int) (direction.toYRot() + (direction.getAxis()
-                                .isVertical() ? 90 : 0)) % 360)
-                        .addModel()
-                        .condition(SmallConnectorBlock.FACING, direction)
-                        .condition(SmallConnectorBlock.MODE, connectorMode)
-                        .end();
-            }
+            int horizontalAngle = direction == Direction.UP ? 180 : direction == Direction.DOWN ? 0 : 90;
+            int  verticalAngle = ((int) direction.toYRot() + (direction.getAxis()
+                    .isVertical() ? 180 : 0))% 360;
+            builder.part()
+                    .modelFile(noneModel)
+                    .rotationX(horizontalAngle)
+                    .rotationY(verticalAngle)
+                    .addModel()
+                    .condition(FACING, direction)
+                    .condition(MODE, ConnectorMode.None)
+                    .end()
+                    .part()
+                    .modelFile(pushModel)
+                    .rotationX(horizontalAngle)
+                    .rotationY(verticalAngle)
+                    .addModel()
+                    .condition(FACING, direction)
+                    .condition(MODE, ConnectorMode.Push)
+                    .end()
+                    .part()
+                    .modelFile(pullModel)
+                    .rotationX(horizontalAngle)
+                    .rotationY(verticalAngle)
+                    .addModel()
+                    .condition(FACING, direction)
+                    .condition(MODE, ConnectorMode.Pull)
+                    .end();
 
             builder.part()
                     .modelFile(girderBaseModel)
-                    .rotationX(verticalAngle)
-                    .rotationY((int) (direction.toYRot() + (direction.getAxis()
-                            .isVertical() ? 90 : 0)) % 360)
+                    .rotationX(horizontalAngle)
+                    .rotationY(verticalAngle)
                     .addModel()
-                    .condition(SmallConnectorBlock.FACING, direction)
-                    .condition(SmallConnectorBlock.VARIANT, ConnectorVariant.Girder)
+                    .condition(FACING, direction)
+                    .condition(VARIANT, ConnectorVariant.Girder)
                     .end();
 
         }

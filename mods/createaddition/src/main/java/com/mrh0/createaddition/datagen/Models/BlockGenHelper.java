@@ -24,11 +24,11 @@ public class BlockGenHelper {
     }
 
     public static NonNullBiConsumer<DataGenContext<Block, ElectricMotorBlock>, RegistrateBlockstateProvider> horizontalBlockState(ResourceLocation resourceLocation) {
-        return (ctx, prov) -> horizontalModel(resourceLocation, ctx, prov, 180);
+        return (ctx, prov) -> horizontalModel(resourceLocation, ctx, prov, 0);
     }
 
     public static <T extends Block> NonNullBiConsumer<DataGenContext<Block, T>, RegistrateBlockstateProvider> horizontalBlockState() {
-        return (ctx, prov) -> horizontalModel(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "block/" + getBlockName(ctx.get()) + "/block"), ctx, prov, 180);
+        return (ctx, prov) -> horizontalModel(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "block/" + getBlockName(ctx.get()) + "/block"), ctx, prov, 90);
     }
 
     public static <T extends Block> void directionalModel(ResourceLocation resourceLocation, DataGenContext<Block, T> ctx, RegistrateBlockstateProvider prov) {
@@ -39,13 +39,13 @@ public class BlockGenHelper {
             Direction dir = state.getValue(BlockStateProperties.FACING);
             return ConfiguredModel.builder()
                     .modelFile(blockModel)
-                    .rotationX(dir == Direction.DOWN ? 180
+                    .rotationX(dir == Direction.DOWN ? 270
                             : dir.getAxis()
-                            .isHorizontal() ? 90 : 0)
+                            .isHorizontal() ? 0 : 90)
                     .rotationY(dir.getAxis()
-                            .isVertical() ? 0 : (((int) dir.toYRot()) + 180) % 360)
+                            .isVertical() ? 90 : (((int) dir.toYRot()) + 360) % 360)
                     .build();
-        }, BlockStateProperties.WATERLOGGED);
+        }, BlockStateProperties.WATERLOGGED, BlockStateProperties.POWERED);
     }
 
     public static <T extends Block> NonNullBiConsumer<DataGenContext<Block, T>, RegistrateBlockstateProvider> simpleBlock(ResourceLocation resourceLocation) {

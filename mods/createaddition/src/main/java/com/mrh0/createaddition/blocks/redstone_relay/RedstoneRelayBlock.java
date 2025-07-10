@@ -285,11 +285,12 @@ public class RedstoneRelayBlock extends Block implements IBE<RedstoneRelayBlockE
 		ModelFile.ExistingModelFile onModel = models.getExistingFile(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, basePath + "redstone_relay_on"));
 		ModelFile.ExistingModelFile offModel = models.getExistingFile(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, basePath + "redstone_relay_off"));
 		VariantBlockStateBuilder builder = provider.getVariantBuilder(ctx.get());
-		builder.forAllStates(state -> ConfiguredModel.builder()
+		builder.forAllStatesExcept(state -> ConfiguredModel.builder()
 				.modelFile(state.getValue(POWERED) ? onModel : offModel)
 				.rotationX(state.getValue(VERTICAL) ? 90 : 0)
-				.rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180) % 360)
-				.build()
+				.rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + (state.getValue(VERTICAL) ? 0: 90)) % 360)
+				.build(),
+				NodeRotation.ROTATION
 		);
 	}
 }
