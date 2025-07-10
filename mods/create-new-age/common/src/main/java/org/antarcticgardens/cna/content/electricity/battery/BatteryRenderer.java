@@ -35,7 +35,7 @@ public class BatteryRenderer extends SafeBlockEntityRenderer<BatteryBlockEntity>
 
         if (be.isController()) {
             BlockState blockState = be.getBlockState();
-            VertexConsumer vb = buffer.getBuffer(RenderType.solid());
+            VertexConsumer vb = buffer.getBuffer(RenderType.cutout());
             ms.pushPose();
             TransformStack msr = TransformStack.of(ms);
             msr.translate(be.getWidth() / 2f, 0.5, be.getWidth() / 2f);
