@@ -3,25 +3,13 @@ package org.antarcticgardens.cna.content.nuclear.reactor.fuelacceptor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-#if !CNA_FABRIC
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.InvWrapper;
-#endif
 import org.antarcticgardens.cna.CreateNewAge;
 import org.antarcticgardens.cna.CNATags;
 import org.antarcticgardens.cna.content.nuclear.reactor.RodFindingReactorBlockEntity;
@@ -29,84 +17,44 @@ import org.antarcticgardens.cna.content.nuclear.reactor.rod.ReactorRodBlockEntit
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+// TODO: Make this fabric compatible
+// import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBlockEntity implements Container {
-    public ReactorFuelAcceptorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
-        super(type, pos, blockState);
-        container = new SimpleContainer(3);
-    }
-
+public class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBlockEntity {
+    public LazyOptional<IItemHandler> capability;
     public SimpleContainer container;
 
-    @Override
-    public int getContainerSize() {
-        return container.getContainerSize();
+    public ReactorFuelAcceptorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
+        super(type, pos, blockState);
+        container = new FuelAcceptorContainer(3);
+        capability = LazyOptional.of(FuelAcceptorInventoryHandler::new);
     }
 
     @Override
-    public boolean isEmpty() {
-        return container.isEmpty();
+    protected void write(CompoundTag compound, boolean clientPacket) {
+        compound.put("contents", container.createTag());
+        super.write(compound, clientPacket);
     }
 
     @Override
-    public ItemStack getItem(int slot) {
-        return container.getItem(slot);
+    protected void read(CompoundTag compound, boolean clientPacket) {
+        container.fromTag(compound.getList("contents", compound.TAG_COMPOUND));
+        super.read(compound, clientPacket);
     }
 
     @Override
-    public ItemStack removeItem(int slot, int amount) {
-        return container.removeItem(slot, amount);
-    }
-
-    @Override
-    public ItemStack removeItemNoUpdate(int slot) {
-        return container.removeItemNoUpdate(slot);
-    }
-
-    @Nullable
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag() {
-        return saveWithoutMetadata();
-    }
-
-    @Override
-    public void setItem(int slot, @NotNull ItemStack stack) {
-        container.setItem(slot, stack);
-    }
-
-    @Override
-    public boolean stillValid(Player player) {
-        return container.stillValid(player);
-    }
-
-    @Override
-    public void clearContent() {
-        container.clearContent();
-    }
-
-    @Override
-    public boolean canPlaceItem(int index, ItemStack stack) {
-        return stack.is(CNATags.Item.NUCLEAR_FUEL.tag);
-    }
-
-    @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
-        container.fromTag(tag.getList("contents", Tag.TAG_COMPOUND));
-    }
-
-    @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
-        tag.put("contents", container.createTag());
+    public void destroy() {
+        super.destroy();
+        for (int i = 0 ; i < container.getContainerSize() ; i++) {
+            Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), container.getItem(i));
+        }
     }
 
     int ticks = 0;
@@ -158,30 +106,35 @@ public class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBlockEntity
         }
     }
 
-// I really can't be bothered making this look pretty
-#if !CNA_FABRIC
-    private LazyOptional<IItemHandlerModifiable> chestHandler;
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        capability.invalidate();
+    }
 
-    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-        if (!this.remove && cap == ForgeCapabilities.ITEM_HANDLER) {
-            if (this.chestHandler == null) {
-                this.chestHandler = LazyOptional.of(this::createHandler);
-            }
+    @Override
+    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+        if (isItemHandlerCap(cap))
+            return capability.cast();
+        return super.getCapability(cap, side);
+    }
 
-            return this.chestHandler.cast();
-        } else {
-            return super.getCapability(cap, side);
+    private class FuelAcceptorContainer extends SimpleContainer {
+
+        FuelAcceptorContainer(int size) {
+            super(size);
+        }
+
+        @Override
+        public boolean canPlaceItem(int index, ItemStack stack) {
+            return stack.is(CNATags.Item.NUCLEAR_FUEL.tag);
         }
     }
 
-    private IItemHandlerModifiable createHandler() {
-        BlockState state = this.getBlockState();
-        if (!(state.getBlock() instanceof ChestBlock)) {
-            return new InvWrapper(this);
-        } else {
-            Container inv = ChestBlock.getContainer((ChestBlock)state.getBlock(), state, this.getLevel(), this.getBlockPos(), true);
-            return new InvWrapper(inv == null ? this : inv);
+    private class FuelAcceptorInventoryHandler extends InvWrapper {
+
+        public FuelAcceptorInventoryHandler() {
+            super(container);
         }
     }
-#endif
 }

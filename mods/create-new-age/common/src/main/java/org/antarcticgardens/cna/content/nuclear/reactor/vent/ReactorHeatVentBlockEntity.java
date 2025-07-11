@@ -7,9 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -20,7 +17,6 @@ import org.antarcticgardens.cna.content.heat.HeatBlockEntity;
 import org.antarcticgardens.cna.content.nuclear.reactor.RodFindingReactorBlockEntity;
 import org.antarcticgardens.cna.content.nuclear.reactor.rod.ReactorRodBlockEntity;
 import org.antarcticgardens.cna.util.StringFormatUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,17 +32,17 @@ public class ReactorHeatVentBlockEntity extends RodFindingReactorBlockEntity imp
     public float heat = 0;
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    protected void read(CompoundTag tag, boolean clientPacket) {
         heat = tag.getFloat("heat");
         extract = tag.getFloat("extract");
+        super.read(tag, clientPacket);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void write(CompoundTag tag, boolean clientPacket) {
         tag.putFloat("heat", heat);
         tag.putFloat("extract", extract);
+        super.write(tag, clientPacket);
     }
 
     @Override
@@ -69,12 +65,6 @@ public class ReactorHeatVentBlockEntity extends RodFindingReactorBlockEntity imp
     public void setHeat(float amount) {
         heat = amount;
         setChanged();
-    }
-
-    @Nullable
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
