@@ -1,10 +1,7 @@
 package com.kipti.bnb.content.nixie.nixie_board;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.kipti.bnb.content.nixie.foundation.DoubleOrientedBlock;
-import com.kipti.bnb.content.nixie.foundation.DoubleOrientedBlockModel;
-import com.kipti.bnb.content.nixie.foundation.GenericNixieDisplayBlockEntity;
-import com.kipti.bnb.content.nixie.foundation.IGenericNixieDisplayBlock;
+import com.kipti.bnb.content.nixie.foundation.*;
 import com.kipti.bnb.registry.BnbBlockEntities;
 import com.kipti.bnb.registry.BnbBlocks;
 import com.kipti.bnb.registry.BnbShapes;
@@ -39,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class NixieBoardBlock extends DoubleOrientedBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable, IGenericNixieDisplayBlock {
+public class NixieBoardBlock extends DoubleOrientedBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable, DyeProviderBlock, IGenericNixieDisplayBlock {
 
     public static final BooleanProperty LEFT = BooleanProperty.create("left");
     public static final BooleanProperty RIGHT = BooleanProperty.create("right");

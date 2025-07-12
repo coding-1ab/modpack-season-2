@@ -57,7 +57,7 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
         ms.scale(-1, -1, 1);
 
         int col = getTextColor(be);
-//        Couple<Integer> couple = DyeHelper.getDyeColors(color);
+        Couple<Integer> couple = DyeHelper.getDyeColors(((DyeProviderBlock) be.getBlockState().getBlock()).getDyeColor());
         //TODO
 
         int lineCount = be.currentDisplayOption == GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions.DOUBLE_CHAR_DOUBLE_LINES ? 2 : 1;
@@ -80,9 +80,9 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
                 }
 
                 if (TextBlockSubAtlas.NIXIE_TEXT_SUB_ATLAS.isInCharacterSet(glyph))
-                    renderGlyphUsingSpecialFont(ms, buffer, overlay, glyph, pose, col);
+                    renderGlyphUsingSpecialFont(ms, buffer, overlay, glyph, pose, couple);
                 else
-                    renderUsingNormalFont(ms, buffer, fontSet, glyph, pose, col);
+                    renderUsingNormalFont(ms, buffer, fontSet, glyph, pose, couple);
                 ms.popPose();
             }
         }
@@ -105,7 +105,7 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
         return col;
     }
 
-    private static void renderGlyphUsingSpecialFont(PoseStack ms, MultiBufferSource buffer, int overlay, int glyph, Matrix4f pose, int col) {
+    private static void renderGlyphUsingSpecialFont(PoseStack ms, MultiBufferSource buffer, int overlay, int glyph, Matrix4f pose, Couple<Integer> col) {
         VertexConsumer cutoutBuffer = buffer.getBuffer(RenderType.cutout());
 
         ms.translate(-6, -3, 0);
@@ -113,22 +113,9 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
         float u0 = characterUv.getU0(), u1 = characterUv.getU1(),
             v0 = characterUv.getV0(), v1 = characterUv.getV1();
 
-        addVerticesForChar(overlay, cutoutBuffer, pose, u0, v1, v0, u1, col);
+        addVerticesForChar(overlay, cutoutBuffer, pose, u0, v1, v0, u1, col.get(true));
         pose = pose.translate(0.5f, 0.5f, 0.1f);
-        addVerticesForChar(overlay, cutoutBuffer, pose, u0, v1, v0, u1, darkenPackedRGB(col));
-    }
-
-    private static int darkenPackedRGB(int colRGBA) {
-        int r = (colRGBA >> 16) & 0xFF;
-        int g = (colRGBA >> 8) & 0xFF;
-        int b = colRGBA & 0xFF;
-
-        // Darken the color by reducing RGB values
-        r = Math.max(0, r - 50);
-        g = Math.max(0, g - 50);
-        b = Math.max(0, b - 50);
-
-        return (colRGBA & 0xFF000000) | (r << 16) | (g << 8) | b; // Preserve alpha channel
+        addVerticesForChar(overlay, cutoutBuffer, pose, u0, v1, v0, u1, col.get(false));
     }
 
     private static void addVerticesForChar(int overlay, VertexConsumer cutoutBuffer, Matrix4f pose, float u0, float v1, float v0, float u1, int col) {
@@ -191,16 +178,19 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
             .setNormal(1, 0, 0);
     }
 
-    private static void renderUsingNormalFont(PoseStack ms, MultiBufferSource buffer, FontSet fontSet, int glyph, Matrix4f pose, int colRGBA) {
+    private static void renderUsingNormalFont(PoseStack ms, MultiBufferSource buffer, FontSet fontSet, int glyph, Matrix4f pose, Couple<Integer> colours) {
         BakedGlyph bakedGlyph = fontSet.getGlyph(glyph);
         VertexConsumer vertexconsumer = buffer.getBuffer(bakedGlyph.renderType(Font.DisplayMode.NORMAL));
         float width = fontSet.getGlyphInfo(glyph, true).getAdvance(false) - 1;
 
         RenderSystem.disableCull();
 
-        float r = (colRGBA >> 16 & 0xFF) / 255.0f;
-        float g = (colRGBA >> 8 & 0xFF) / 255.0f;
-        float b = (colRGBA & 0xFF) / 255.0f;
+        float r = (colours.get(true) >> 16 & 0xFF) / 255.0f;
+        float g = (colours.get(true) >> 8 & 0xFF) / 255.0f;
+        float b = (colours.get(true) & 0xFF) / 255.0f;
+        float rSecondary = (colours.get(false) >> 16 & 0xFF) / 255.0f;
+        float gSecondary = (colours.get(false) >> 8 & 0xFF) / 255.0f;
+        float bSecondary = (colours.get(false) & 0xFF) / 255.0f;
 
         bakedGlyph.render(false, -width / 2, 0, pose, vertexconsumer, r, g, b, 1, LightTexture.FULL_BRIGHT);
 
@@ -208,7 +198,7 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
         ms.translate(0, 0, 0.1f);
         Matrix4f backPose = ms.last().pose();
         bakedGlyph.render(false, -width / 2 + 0.5f, 0.5f, backPose, vertexconsumer,
-            r * 0.65f, g * 0.65f, b * 0.65f,
+            rSecondary, gSecondary, bSecondary,
             1, LightTexture.FULL_BRIGHT);
         ms.popPose();
 

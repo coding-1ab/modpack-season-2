@@ -30,32 +30,32 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
         super(type, pos, state);
     }
 
-    @Override
-    public void tick() {
-        super.tick();
+//    @Override
+//    public void tick() {
+//        super.tick();
+//
+//        Direction leftDir = DoubleOrientedBlockModel.getLeft(
+//            getBlockState().getValue(DoubleOrientedBlock.FACING),
+//            getBlockState().getValue(DoubleOrientedBlock.ORIENTATION)
+//        );
+//
+//        drawArrow(leftDir, 0xff0000);
+//        drawArrow(getBlockState().getValue(DoubleOrientedBlock.FACING), 0x00ff00);
+//        drawArrow(getBlockState().getValue(DoubleOrientedBlock.ORIENTATION), 0x0000ff);
+//    }
 
-        Direction leftDir = DoubleOrientedBlockModel.getLeft(
-            getBlockState().getValue(DoubleOrientedBlock.FACING),
-            getBlockState().getValue(DoubleOrientedBlock.ORIENTATION)
-        );
-
-        drawArrow(leftDir, 0xff0000);
-        drawArrow(getBlockState().getValue(DoubleOrientedBlock.FACING), 0x00ff00);
-        drawArrow(getBlockState().getValue(DoubleOrientedBlock.ORIENTATION), 0x0000ff);
-    }
-
-    private void drawArrow(Direction leftDir, int i) {
-        Vec3 left = Vec3.atLowerCornerOf(leftDir.getNormal());
-        Vec3 up = new Vec3(0, 1, 0).cross(left);
-        if (up.lengthSqr() < 0.01) {
-            up = new Vec3(0, 0, 1); // Fallback to Z axis if no up direction is found
-        }
-
-        //Render an arrow for outliner
-        Outliner.getInstance().showLine(hashCode() + "_" + leftDir + "_arrow_straight", getBlockPos().getCenter().add(left), getBlockPos().getCenter()).colored(i);
-        Outliner.getInstance().showLine(hashCode() + "_" + leftDir + "_arrow_up", getBlockPos().getCenter().add(left), getBlockPos().getCenter().add(left.scale(0.75)).add(up.scale(0.5))).colored(i);
-        Outliner.getInstance().showLine(hashCode() + "_" + leftDir + "_arrow_down", getBlockPos().getCenter().add(left), getBlockPos().getCenter().add(left.scale(0.75)).subtract(up.scale(0.5))).colored(i);
-    }
+//    private void drawArrow(Direction leftDir, int i) {
+//        Vec3 left = Vec3.atLowerCornerOf(leftDir.getNormal());
+//        Vec3 up = new Vec3(0, 1, 0).cross(left);
+//        if (up.lengthSqr() < 0.01) {
+//            up = new Vec3(0, 0, 1); // Fallback to Z axis if no up direction is found
+//        }
+//
+//        //Render an arrow for outliner
+//        Outliner.getInstance().showLine(hashCode() + "_" + leftDir + "_arrow_straight", getBlockPos().getCenter().add(left), getBlockPos().getCenter()).colored(i);
+//        Outliner.getInstance().showLine(hashCode() + "_" + leftDir + "_arrow_up", getBlockPos().getCenter().add(left), getBlockPos().getCenter().add(left.scale(0.75)).add(up.scale(0.5))).colored(i);
+//        Outliner.getInstance().showLine(hashCode() + "_" + leftDir + "_arrow_down", getBlockPos().getCenter().add(left), getBlockPos().getCenter().add(left.scale(0.75)).subtract(up.scale(0.5))).colored(i);
+//    }
 
     public void inheritDataFrom(GenericNixieDisplayBlockEntity be) {
         this.currentTextTop = be.currentTextTop;

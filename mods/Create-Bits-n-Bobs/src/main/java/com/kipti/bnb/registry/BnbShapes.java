@@ -35,12 +35,12 @@ public class BnbShapes {
 
     public static final VoxelShaper LARGE_NIXIE_TUBE_SIDE = shape(6, 0, 0, 10, 3, 16)
         .add(cuboid(2, 0, 2, 14, 3, 14))
-        .add(cuboid(3, 3, 3, 13, 16, 10))
+        .add(cuboid(3, 3, 3, 13, 16, 13))
         .forDirectional();
 
     public static final VoxelShaper LARGE_NIXIE_TUBE_FRONT = shape(0, 0, 6, 16, 3, 10)
         .add(cuboid(2, 0, 2, 14, 3, 14))
-        .add(cuboid(3, 3, 3, 13, 16, 10))
+        .add(cuboid(3, 3, 3, 13, 16, 13))
         .forDirectional();
 
     public static AllShapes.Builder shape(VoxelShape shape) {

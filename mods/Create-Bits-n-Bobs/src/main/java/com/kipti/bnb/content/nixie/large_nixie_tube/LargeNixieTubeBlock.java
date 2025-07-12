@@ -1,8 +1,6 @@
 package com.kipti.bnb.content.nixie.large_nixie_tube;
 
-import com.kipti.bnb.content.nixie.foundation.DoubleOrientedBlock;
-import com.kipti.bnb.content.nixie.foundation.DoubleOrientedBlockModel;
-import com.kipti.bnb.content.nixie.foundation.GenericNixieDisplayBlockEntity;
+import com.kipti.bnb.content.nixie.foundation.*;
 import com.kipti.bnb.registry.BnbBlockEntities;
 import com.kipti.bnb.registry.BnbBlocks;
 import com.kipti.bnb.registry.BnbShapes;
@@ -32,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class LargeNixieTubeBlock extends DoubleOrientedBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable {
+public class LargeNixieTubeBlock extends DoubleOrientedBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable, IGenericNixieDisplayBlock, DyeProviderBlock {
 
     final @Nullable DyeColor dyeColor;
 
