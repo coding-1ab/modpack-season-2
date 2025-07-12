@@ -26,6 +26,16 @@ public class CNAStandardRecipeGen extends CNARecipeProvider {
 
     // ========================================================================================================== Shaped
 
+    GeneratedRecipe BATTERY = builder(CNABlocks.BATTERY)
+            .unlockedBy(CNAItems.COPPER_WIRE)
+            .shaped(b -> b
+                    .define('B', AllItems.BRASS_SHEET)
+                    .define('I', AllBlocks.INDUSTRIAL_IRON_BLOCK)
+                    .define('W', CNAItems.COPPER_WIRE)
+                    .pattern(" B ")
+                    .pattern("WIW")
+                    .pattern(" B "));
+
     GeneratedRecipe ADVANCED_ENERGISER = builder(CNABlocks.ADVANCED_ENERGISER)
             .unlockedBy(CNAItems.OVERCHARGED_GOLD)
             .shaped(b -> b
