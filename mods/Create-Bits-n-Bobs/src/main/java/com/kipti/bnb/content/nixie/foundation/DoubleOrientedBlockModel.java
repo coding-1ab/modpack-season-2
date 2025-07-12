@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,10 +17,9 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
+import org.joml.*;
 
+import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,7 +42,7 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
 
         Direction up = state.getValue(DoubleOrientedBlock.FACING);
         Direction front = state.getValue(DoubleOrientedBlock.ORIENTATION);
-        Quaternionf rotation = getRotation(up, front);
+        Matrix4f rotation = getRotation(up, front);
         data.setRotation(rotation);
 
         return ModelData.builder()
@@ -66,28 +66,23 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
         return Collections.emptyList();
     }
 
+    public static Direction getLeft(BlockState state) {
+        Direction up = state.getValue(DoubleOrientedBlock.FACING);
+        Direction front = state.getValue(DoubleOrientedBlock.ORIENTATION);
+        return getLeft(up, front);
+    }
+
     public static Direction getLeft(Direction up, Direction front) {
-        if (up.getAxis() == front.getAxis()) {
-            return up.getAxisDirection() == Direction.AxisDirection.POSITIVE ? Direction.NORTH : Direction.SOUTH;
+        return getDirectionByNormal(up.getNormal().cross(front.getNormal())).getOpposite();
+    }
+
+    private static Direction getDirectionByNormal(Vec3i cross) {
+        for (Direction direction : Direction.values()) {
+            if (direction.getNormal().equals(cross)) {
+                return direction;
+            }
         }
-        Direction frontTarget = Arrays.stream(Direction.Axis.values())
-            .filter(e -> e != up.getAxis() && e != front.getAxis())
-            .map(a -> Direction.fromAxisAndDirection(a, up.getAxisDirection()))
-            .findFirst()
-            .orElseThrow();
-
-        Direction.Axis secondaryAxis = Arrays.stream(Direction.Axis.values()).filter(e -> e != up.getAxis() && e != frontTarget.getAxis())
-            .findFirst()
-            .orElse(Direction.Axis.X);
-        Direction[] rotationDirections = new Direction[]{
-            frontTarget,
-            Direction.fromAxisAndDirection(secondaryAxis, frontTarget.getAxisDirection()),
-            frontTarget.getOpposite(),
-            Direction.fromAxisAndDirection(secondaryAxis, frontTarget.getOpposite().getAxisDirection()),
-        };
-
-        int rotationIndex = Arrays.asList(rotationDirections).indexOf(front);
-        return rotationDirections[(rotationIndex + 3) % 4];
+        throw new IllegalArgumentException("No Direction found for normal: " + cross);
     }
 
     public static Direction getFront(Direction up, Direction front) {
@@ -97,31 +92,17 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
         return up.getAxis() == Direction.Axis.Y ? Direction.EAST : up.getAxis() != Direction.Axis.Z ? Direction.NORTH : Direction.EAST;
     }
 
-    public static Quaternionf getRotation(Direction up, Direction front) {
-        Direction frontTarget = up.getAxis() != Direction.Axis.Z ? Direction.NORTH : Direction.EAST;
-
-        Direction.Axis secondaryAxis = Arrays.stream(Direction.Axis.values()).filter(e -> e != up.getAxis() && e != frontTarget.getAxis())
-            .findFirst()
-            .orElse(Direction.Axis.X);
-        Direction[] rotationDirections = new Direction[]{
-            frontTarget,
-            Direction.fromAxisAndDirection(secondaryAxis, frontTarget.getAxisDirection()),
-            frontTarget.getOpposite(),
-            Direction.fromAxisAndDirection(secondaryAxis, frontTarget.getOpposite().getAxisDirection()),
-        };
-
-        int rotationIndex = Arrays.asList(rotationDirections).indexOf(front);
-        if (up.getAxis() != Direction.Axis.Y) {
-            rotationIndex = (rotationIndex + 1) % 4; // Adjust for the up direction
-        }
-
-        assert rotationIndex != -1 : "Front direction not found in rotation directions";
-
-        Quaternionf rotation = new Quaternionf();
-        rotation.mul(up.getRotation());
-        rotation.rotateY((float) Math.toRadians(rotationIndex * 90));
-        rotation.mul(up.getRotation().invert());
-        return rotation;
+    /**
+     * Gets the rotation given the direction at the top of the block and the direction in front
+     */
+    public static Matrix4f getRotation(Direction upDir, Direction frontDir) {
+        Direction leftDir = getLeft(upDir, frontDir);
+        return new Matrix4f(
+            leftDir.getStepX(), leftDir.getStepY(), leftDir.getStepZ(), 0,
+            upDir.getStepX(), upDir.getStepY(), upDir.getStepZ(), 0,
+            -frontDir.getStepX(), -frontDir.getStepY(), -frontDir.getStepZ(), 0,
+            0, 0, 0, 1
+        );
     }
 
 
@@ -147,7 +128,8 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
                 BakedQuadHelper.setNormalXYZ(transformedVertices, i, new Vec3(normalJoml.x, normalJoml.y, normalJoml.z));
             }
 
-            Direction newNormal = Direction.fromDelta(Math.round(quadNormalJoml.x), Math.round(quadNormalJoml.y), Math.round(quadNormalJoml.z));
+
+            Direction newNormal = Direction.getNearest(quadNormalJoml.x, quadNormalJoml.y, quadNormalJoml.z).getOpposite();//TODO: from direint
             transformedQuads.add(new BakedQuad(transformedVertices,
                 quad.getTintIndex(),
                 newNormal,
@@ -160,13 +142,13 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
 
     private static class DoubleOrientedModelData {
 
-        Quaternionf rotation;
+        Matrix4f rotation;
 
-        public Quaternionf getRotation() {
+        public Matrix4f getRotation() {
             return rotation;
         }
 
-        public void setRotation(Quaternionf rotation) {
+        public void setRotation(Matrix4f rotation) {
             this.rotation = rotation;
         }
 

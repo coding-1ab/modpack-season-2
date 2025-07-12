@@ -57,9 +57,7 @@ public class NixieBoardBlock extends DoubleOrientedBlock implements IBE<GenericN
         if (state == null) {
             return null;
         }
-        Direction facing = state.getValue(FACING);
-        Direction orientation = state.getValue(ORIENTATION);
-        Direction left = DoubleOrientedBlockModel.getLeft(facing, orientation);
+        Direction left = DoubleOrientedBlockModel.getLeft(state);
 
         state = state
             .setValue(LEFT, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, context.getLevel().getBlockState(context.getClickedPos().relative(left))))
@@ -76,14 +74,12 @@ public class NixieBoardBlock extends DoubleOrientedBlock implements IBE<GenericN
 
     @Override
     protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        Direction facing = state.getValue(FACING);
-        Direction orientation = state.getValue(ORIENTATION);
-        Direction left = DoubleOrientedBlockModel.getLeft(facing, orientation);
+        Direction left = DoubleOrientedBlockModel.getLeft(state);
         Direction right = left.getOpposite();
 
-        if (direction == left.getOpposite()) {
+        if (direction == left) {
             return state.setValue(LEFT, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, neighborState));
-        } else if (direction == right.getOpposite()) {
+        } else if (direction == right) {
             return state.setValue(RIGHT, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, neighborState));
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);

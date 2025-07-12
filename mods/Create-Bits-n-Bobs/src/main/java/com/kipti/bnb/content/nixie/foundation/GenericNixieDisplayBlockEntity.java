@@ -11,13 +11,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
@@ -29,6 +28,33 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
 
     public GenericNixieDisplayBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        Direction leftDir = DoubleOrientedBlockModel.getLeft(
+            getBlockState().getValue(DoubleOrientedBlock.FACING),
+            getBlockState().getValue(DoubleOrientedBlock.ORIENTATION)
+        );
+
+        drawArrow(leftDir, 0xff0000);
+        drawArrow(getBlockState().getValue(DoubleOrientedBlock.FACING), 0x00ff00);
+        drawArrow(getBlockState().getValue(DoubleOrientedBlock.ORIENTATION), 0x0000ff);
+    }
+
+    private void drawArrow(Direction leftDir, int i) {
+        Vec3 left = Vec3.atLowerCornerOf(leftDir.getNormal());
+        Vec3 up = new Vec3(0, 1, 0).cross(left);
+        if (up.lengthSqr() < 0.01) {
+            up = new Vec3(0, 0, 1); // Fallback to Z axis if no up direction is found
+        }
+
+        //Render an arrow for outliner
+        Outliner.getInstance().showLine(hashCode() + "_" + leftDir + "_arrow_straight", getBlockPos().getCenter().add(left), getBlockPos().getCenter()).colored(i);
+        Outliner.getInstance().showLine(hashCode() + "_" + leftDir + "_arrow_up", getBlockPos().getCenter().add(left), getBlockPos().getCenter().add(left.scale(0.75)).add(up.scale(0.5))).colored(i);
+        Outliner.getInstance().showLine(hashCode() + "_" + leftDir + "_arrow_down", getBlockPos().getCenter().add(left), getBlockPos().getCenter().add(left.scale(0.75)).subtract(up.scale(0.5))).colored(i);
     }
 
     public void inheritDataFrom(GenericNixieDisplayBlockEntity be) {
@@ -81,18 +107,19 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
     }
 
     /*
-     * Apparently, comprable isn't a word, but I will use it anyway.
+     * Apparently, comprable isn't a word, i do not care, I will use it anyway.
      * */
     public static boolean areStatesComprableForConnection(BlockState state1, BlockState state2) {
         if (state1 == null || state2 == null) {
             return false;
         }
-        if (
-            !((BnbBlocks.NIXIE_BOARD.is(state1.getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(state1.getBlock()))
-                && (BnbBlocks.NIXIE_BOARD.is(state2.getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(state2.getBlock())))
-                && !((BnbBlocks.LARGE_NIXIE_TUBE.is(state1.getBlock()) || BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(state1.getBlock()))
-                && (BnbBlocks.LARGE_NIXIE_TUBE.is(state2.getBlock()) || BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(state2.getBlock())))
-        ) return false;
+
+        boolean stateOneIsBoard = BnbBlocks.NIXIE_BOARD.is(state1.getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(state1.getBlock());
+        boolean stateTwoIsBoard = BnbBlocks.NIXIE_BOARD.is(state2.getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(state2.getBlock());
+        boolean stateOneIsTube = BnbBlocks.LARGE_NIXIE_TUBE.is(state1.getBlock()) || BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(state1.getBlock());
+        boolean stateTwoIsTube = BnbBlocks.LARGE_NIXIE_TUBE.is(state2.getBlock()) || BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(state2.getBlock());
+
+        if (!(stateOneIsBoard && stateTwoIsBoard) && !(stateOneIsTube && stateTwoIsTube)) return false;
         if (state1.getValue(DoubleOrientedBlock.FACING) != state2.getValue(DoubleOrientedBlock.FACING)) {
             return false;
         }

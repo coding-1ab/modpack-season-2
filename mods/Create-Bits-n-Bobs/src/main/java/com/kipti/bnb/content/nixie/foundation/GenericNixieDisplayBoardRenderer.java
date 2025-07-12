@@ -49,8 +49,7 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
 
         TransformStack.of(ms)
             .center()
-            .rotate(DoubleOrientedBlockModel.getRotation(facing, orientation))
-            .rotate(facing.getRotation())
+            .mulPose(DoubleOrientedBlockModel.getRotation(facing, orientation))
             .uncenter();
 
         ms.translate(0.5, 1 - 1 / 16f - offset, 0.5);
