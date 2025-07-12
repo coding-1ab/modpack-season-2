@@ -113,9 +113,13 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
         float u0 = characterUv.getU0(), u1 = characterUv.getU1(),
             v0 = characterUv.getV0(), v1 = characterUv.getV1();
 
-        addVerticesForChar(overlay, cutoutBuffer, pose, u0, v1, v0, u1, col.get(true));
+        int primary = col.get(true);
+        primary = (primary << 8) | 0x000000ff; // Ensure alpha is set
+        addVerticesForChar(overlay, cutoutBuffer, pose, u0, v1, v0, u1, primary);
         pose = pose.translate(0.5f, 0.5f, 0.1f);
-        addVerticesForChar(overlay, cutoutBuffer, pose, u0, v1, v0, u1, col.get(false));
+        int secondary = col.get(false);
+        secondary = (secondary << 8) | 0x000000ff; // Ensure alpha is set
+        addVerticesForChar(overlay, cutoutBuffer, pose, u0, v1, v0, u1, secondary);
     }
 
     private static void addVerticesForChar(int overlay, VertexConsumer cutoutBuffer, Matrix4f pose, float u0, float v1, float v0, float u1, int col) {
