@@ -9,7 +9,6 @@ import com.simibubi.create.content.kinetics.mixer.MixingRecipe;
 import com.simibubi.create.content.kinetics.press.PressingRecipe;
 import com.simibubi.create.content.kinetics.saw.CuttingRecipe;
 import com.simibubi.create.content.processing.recipe.*;
-import com.simibubi.create.foundation.data.recipe.CreateRecipeProvider;
 import com.simibubi.create.foundation.fluid.FluidIngredient;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Items;
@@ -32,7 +31,7 @@ import net.minecraftforge.common.Tags;
 #endif
 
 @SuppressWarnings("unused")
-public class CNAProcessingRecipeGen extends CreateRecipeProvider {
+public class CNAProcessingRecipeGen extends CNARecipeProvider {
     // ========================================================================================================= Cutting
     
     GeneratedRecipe COPPER_WIRE = builder(CNAItems.COPPER_WIRE)

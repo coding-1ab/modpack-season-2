@@ -1,8 +1,7 @@
 package org.antarcticgardens.cna.data.recipe;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.foundation.data.recipe.CreateRecipeProvider;
-import com.simibubi.create.foundation.data.recipe.MechanicalCraftingRecipeBuilder;
+import com.simibubi.create.api.data.recipe.MechanicalCraftingRecipeBuilder;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.ItemLike;
 import org.antarcticgardens.cna.CNABlocks;
@@ -19,7 +18,7 @@ import net.minecraftforge.common.Tags;
 #endif
 
 @SuppressWarnings("unused")
-public class CNAMechanicalCraftingRecipeGen extends CreateRecipeProvider {
+public class CNAMechanicalCraftingRecipeGen extends CNARecipeProvider {
     GeneratedRecipe ADVANCED_MOTOR_EXTENSION = builder(CNABlocks.ADVANCED_MOTOR_EXTENSION)
             .amount(2)
             .mechanicalCrafting(b -> b

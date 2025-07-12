@@ -2,7 +2,6 @@ package org.antarcticgardens.cna.data.recipe;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.foundation.data.recipe.CreateRecipeProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
@@ -23,7 +22,7 @@ import net.minecraftforge.common.Tags;
 #endif
 
 @SuppressWarnings("unused")
-public class CNAStandardRecipeGen extends CreateRecipeProvider {
+public class CNAStandardRecipeGen extends CNARecipeProvider {
 
     // ========================================================================================================== Shaped
 

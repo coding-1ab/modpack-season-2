@@ -3,7 +3,6 @@ package org.antarcticgardens.cna.data.recipe;
 import com.simibubi.create.content.kinetics.deployer.DeployerApplicationRecipe;
 import com.simibubi.create.content.kinetics.press.PressingRecipe;
 import com.simibubi.create.content.kinetics.saw.CuttingRecipe;
-import com.simibubi.create.foundation.data.recipe.CreateRecipeProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -23,7 +22,7 @@ import net.minecraftforge.common.Tags;
 #endif
 
 @SuppressWarnings("unused")
-public class CNASequencedAssemblyRecipeGen extends CreateRecipeProvider {
+public class CNASequencedAssemblyRecipeGen extends CNARecipeProvider {
     GeneratedRecipe OVERCHARGED_DIAMOND_WIRE = builder(CNAItems.OVERCHARGED_DIAMOND_WIRE)
             .amount(2)
             .sequencedAssembly(b -> b
