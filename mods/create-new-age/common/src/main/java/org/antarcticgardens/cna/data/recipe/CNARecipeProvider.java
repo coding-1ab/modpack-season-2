@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+
+// Based on Steam and Rails' RailwaysRecipeProvider.java
+// https://github.com/Layers-of-Railways/Railway/blob/1.20/dev/common/src/main/java/com/railwayteam/railways/base/data/recipe/RailwaysRecipeProvider.java
+
 public abstract class CNARecipeProvider extends RecipeProvider {
     protected final List<GeneratedRecipe> all = new ArrayList<>();
 
