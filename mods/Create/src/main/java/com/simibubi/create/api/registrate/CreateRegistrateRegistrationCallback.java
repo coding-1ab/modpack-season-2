@@ -16,4 +16,8 @@ public class CreateRegistrateRegistrationCallback {
 	public static <T> void register(ResourceKey<? extends Registry<T>> registry, ResourceLocation id, Consumer<T> callback) {
 		CreateRegistrateRegistrationCallbackImpl.register(registry, id, callback);
 	}
+
+	private CreateRegistrateRegistrationCallback() {
+		throw new AssertionError("This class should not be instantiated");
+	}
 }

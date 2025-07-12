@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import net.createmod.catnip.registry.RegisteredObjectsHelper;
-
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.simibubi.create.foundation.data.TagGen;
@@ -25,6 +23,7 @@ import com.tterrag.registrate.util.nullness.NonNullFunction;
 
 import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.lang.Lang;
+import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -38,7 +37,6 @@ import net.minecraft.world.level.block.WeatheringCopper.WeatherState;
 import net.minecraft.world.level.block.WeatheringCopperFullBlock;
 import net.minecraft.world.level.block.WeatheringCopperSlabBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 
 import net.neoforged.neoforge.client.model.generators.ModelProvider;
 
@@ -101,11 +99,9 @@ public class CopperBlockSet {
 					entries[index] = entry;
 
 					if (waxed) {
-						CopperRegistries.addWaxable(() -> entries[getIndex(state, false)].get(), () -> entry.get());
+						CopperRegistries.addWaxable(entries[getIndex(state, false)], entry);
 					} else if (state != WeatherState.UNAFFECTED) {
-						CopperRegistries.addWeathering(
-							() -> entries[getIndex(WEATHER_STATES[state.ordinal() - 1], false)].get(),
-							() -> entry.get());
+						CopperRegistries.addWeathering(entries[getIndex(WEATHER_STATES[state.ordinal() - 1], false)], entry);
 					}
 				}
 				if (!waxed)

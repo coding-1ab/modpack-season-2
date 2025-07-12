@@ -1,7 +1,5 @@
 package com.simibubi.create.api.registry;
 
-import com.mojang.serialization.Lifecycle;
-
 import org.jetbrains.annotations.ApiStatus.Internal;
 
 import com.mojang.serialization.MapCodec;
@@ -18,7 +16,6 @@ import com.simibubi.create.content.kinetics.fan.processing.FanProcessingTypeRegi
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPointType;
 import com.simibubi.create.content.logistics.item.filter.attribute.ItemAttributeType;
 import com.simibubi.create.content.logistics.packagePort.PackagePortTargetType;
-import com.simibubi.create.impl.registry.MappedRegistryWithFreezeCallback;
 
 import net.minecraft.core.RegistrationInfo;
 import net.minecraft.core.Registry;
@@ -79,5 +76,9 @@ public class CreateBuiltInRegistries {
 	public static void init() {
 		// make sure the class is loaded.
 		// this method is called at the tail of BuiltInRegistries, injected by BuiltInRegistriesMixin.
+	}
+
+	private CreateBuiltInRegistries() {
+		throw new AssertionError("This class should not be instantiated");
 	}
 }

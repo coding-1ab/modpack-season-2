@@ -1,7 +1,6 @@
 package com.simibubi.create.api.equipment.goggles;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.simibubi.create.foundation.utility.CreateLang;
 
@@ -13,6 +12,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
+// TODO: 1.21.7 - Move into api package
 /**
  * Implement this interface on the {@link BlockEntity} that wants to add info to the goggle overlay
  */

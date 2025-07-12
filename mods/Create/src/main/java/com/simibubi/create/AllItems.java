@@ -15,6 +15,8 @@ import static com.simibubi.create.foundation.data.recipe.CompatMetals.TIN;
 import static com.simibubi.create.foundation.data.recipe.CompatMetals.URANIUM;
 
 import com.simibubi.create.AllTags.AllItemTags;
+import com.simibubi.create.api.data.datamaps.BlazeBurnerFuel;
+import com.simibubi.create.api.registry.CreateDataMaps;
 import com.simibubi.create.content.contraptions.glue.SuperGlueItem;
 import com.simibubi.create.content.contraptions.minecart.MinecartCouplingItem;
 import com.simibubi.create.content.contraptions.mounted.MinecartContraptionItem;
@@ -62,7 +64,6 @@ import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BuilderTransformers;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.recipe.CompatMetals;
-import com.simibubi.create.foundation.item.CombustibleItem;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.TagDependentIngredientItem;
 import com.tterrag.registrate.builders.ItemBuilder;
@@ -102,9 +103,9 @@ public class AllItems {
 		CRAFTER_SLOT_COVER = ingredient("crafter_slot_cover"), ELECTRON_TUBE = ingredient("electron_tube"),
 		TRANSMITTER = ingredient("transmitter"), PULP = ingredient("pulp");
 
-	public static final ItemEntry<CombustibleItem> CARDBOARD = REGISTRATE.item("cardboard", CombustibleItem::new)
+	public static final ItemEntry<Item> CARDBOARD = REGISTRATE.item("cardboard", Item::new)
 		.tag(commonItemTag("plates/cardboard"), PLATES.tag)
-		.onRegister(i -> i.setBurnTime(1000))
+		.burnTime(1000)
 		.register();
 
 	public static final ItemEntry<SequencedAssemblyItem>
@@ -119,16 +120,17 @@ public class AllItems {
 		.tag(AllItemTags.UPRIGHT_ON_BELT.tag)
 		.register();
 
-	public static final ItemEntry<CombustibleItem> BLAZE_CAKE = REGISTRATE.item("blaze_cake", CombustibleItem::new)
-		.tag(AllItemTags.BLAZE_BURNER_FUEL_SPECIAL.tag, AllItemTags.UPRIGHT_ON_BELT.tag)
-		.onRegister(i -> i.setBurnTime(6400))
+	public static final ItemEntry<Item> BLAZE_CAKE = REGISTRATE.item("blaze_cake", Item::new)
+		.tag(AllItemTags.UPRIGHT_ON_BELT.tag)
+		.dataMap(CreateDataMaps.SUPERHEATED_BLAZE_BURNER_FUELS, new BlazeBurnerFuel(3200))
+		.burnTime(6400)
 		.register();
 
-	public static final ItemEntry<CombustibleItem> CREATIVE_BLAZE_CAKE =
-		REGISTRATE.item("creative_blaze_cake", CombustibleItem::new)
+	public static final ItemEntry<Item> CREATIVE_BLAZE_CAKE =
+		REGISTRATE.item("creative_blaze_cake", Item::new)
 			.properties(p -> p.rarity(Rarity.EPIC))
 			.tag(AllItemTags.UPRIGHT_ON_BELT.tag)
-			.onRegister(i -> i.setBurnTime(Integer.MAX_VALUE))
+			.burnTime(Integer.MAX_VALUE)
 			.register();
 
 	public static final ItemEntry<Item> BAR_OF_CHOCOLATE = REGISTRATE.item("bar_of_chocolate", Item::new)
@@ -173,6 +175,7 @@ public class AllItems {
 
 	public static final ItemEntry<CardboardSwordItem> CARDBOARD_SWORD =
 		REGISTRATE.item("cardboard_sword", CardboardSwordItem::new)
+			.burnTime(1000)
 			.properties(p -> p.stacksTo(1))
 			.properties(p -> p.attributes(SwordItem.createAttributes(AllToolMaterials.CARDBOARD, 3, 1)))
 			.model(AssetLookup.itemModelWithPartials())
@@ -344,30 +347,32 @@ public class AllItems {
 		CARDBOARD_HELMET = REGISTRATE.item("cardboard_helmet", p -> new CardboardArmorItem(ArmorItem.Type.HELMET, p))
 			.properties(p -> p.durability(Type.HELMET.getDurability(4)))
 			.tag(ItemTags.HEAD_ARMOR)
+		.burnTime(1000)
 			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
 			.model(TrimmableArmorModelGenerator::generate)
 			.clientExtension(() -> () -> new CardboardArmorStealthOverlay())
 			.register(),
 
-		CARDBOARD_CHESTPLATE =
-			REGISTRATE.item("cardboard_chestplate", p -> new CardboardArmorItem(ArmorItem.Type.CHESTPLATE, p))
-				.properties(p -> p.durability(Type.CHESTPLATE.getDurability(4)))
-				.tag(ItemTags.CHEST_ARMOR)
-				.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
-				.model(TrimmableArmorModelGenerator::generate)
-				.register(),
+	CARDBOARD_CHESTPLATE = REGISTRATE.item("cardboard_chestplate", p -> new CardboardArmorItem(ArmorItem.Type.CHESTPLATE, p))
+		.properties(p -> p.durability(Type.CHESTPLATE.getDurability(4)))
+		.tag(ItemTags.CHEST_ARMOR)
+		.burnTime(1000)
+		.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+		.model(TrimmableArmorModelGenerator::generate)
+		.register(),
 
-		CARDBOARD_LEGGINGS =
-			REGISTRATE.item("cardboard_leggings", p -> new CardboardArmorItem(ArmorItem.Type.LEGGINGS, p))
-				.properties(p -> p.durability(Type.LEGGINGS.getDurability(4)))
-				.tag(ItemTags.LEG_ARMOR)
-				.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
-				.model(TrimmableArmorModelGenerator::generate)
-				.register(),
+	CARDBOARD_LEGGINGS = REGISTRATE.item("cardboard_leggings", p -> new CardboardArmorItem(ArmorItem.Type.LEGGINGS, p))
+		.properties(p -> p.durability(Type.LEGGINGS.getDurability(4)))
+		.tag(ItemTags.LEG_ARMOR)
+		.burnTime(1000)
+		.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+		.model(TrimmableArmorModelGenerator::generate)
+		.register(),
 
 		CARDBOARD_BOOTS = REGISTRATE.item("cardboard_boots", p -> new CardboardArmorItem(ArmorItem.Type.BOOTS, p))
 			.properties(p -> p.durability(Type.BOOTS.getDurability(4)))
 			.tag(ItemTags.FOOT_ARMOR)
+			.burnTime(1000)
 			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
 			.model(TrimmableArmorModelGenerator::generate)
 			.register();

@@ -2,6 +2,8 @@ package com.simibubi.create.content.processing.recipe;
 
 import java.util.Random;
 
+import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
+
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -98,8 +100,8 @@ public class ProcessingOutput {
 		}
 	}
 
-	// Remove in 1.22
-	@Deprecated(forRemoval = true)
+	@ScheduledForRemoval(inVersion = "1.21.7 Port")
+	@Deprecated(since = "6.0.3", forRemoval = true)
 	private static final Codec<Either<ItemStack, Pair<ResourceLocation, Integer>>> ITEM_CODEC_OLD = Codec.either(
 		ItemStack.SINGLE_ITEM_CODEC,
 		ResourceLocation.CODEC.comapFlatMap(
@@ -108,8 +110,8 @@ public class ProcessingOutput {
 		)
 	);
 
-	// Remove in 1.22
-	@Deprecated(forRemoval = true)
+	@ScheduledForRemoval(inVersion = "1.21.7 Port")
+	@Deprecated(since = "6.0.3", forRemoval = true)
 	public static final Codec<ProcessingOutput> CODEC_OLD = RecordCodecBuilder.create(i -> i.group(
 		ITEM_CODEC_OLD.fieldOf("item").forGetter(s -> s.datagenOutput != null ? Either.right(Pair.of(s.datagenOutput, s.count)) : Either.left(s.item.getDefaultInstance())),
 		ExtraCodecs.intRange(1, 99).optionalFieldOf("count", 1).forGetter(s -> s.count),
@@ -138,7 +140,8 @@ public class ProcessingOutput {
 		compat -> new ProcessingOutput(compat, count, chance)
 	)));
 
-	// TODO - Remove fallback in 1.22
+	@ScheduledForRemoval(inVersion = "1.21.7 Port")
+	@Deprecated(since = "6.0.3", forRemoval = true)
 	public static final Codec<ProcessingOutput> CODEC = Codec.withAlternative(CODEC_NEW, CODEC_OLD);
 
 }

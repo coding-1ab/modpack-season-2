@@ -8,6 +8,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
 import net.minecraft.world.level.block.entity.BlockEntityType;
+
 import net.neoforged.bus.api.Event;
 
 /**
@@ -43,6 +44,7 @@ public class BlockEntityBehaviourEvent extends Event {
 
 	public <T extends SmartBlockEntity> void forType(BlockEntityType<T> type, Consumer<T> action) {
 		if (smartBlockEntity.getType() == type) {
+			//noinspection unchecked
 			action.accept((T) smartBlockEntity);
 		}
 	}

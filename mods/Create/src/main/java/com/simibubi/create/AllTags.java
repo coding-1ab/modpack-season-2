@@ -6,13 +6,15 @@ import static com.simibubi.create.AllTags.NameSpace.MOD;
 import static com.simibubi.create.AllTags.NameSpace.QUARK;
 import static com.simibubi.create.AllTags.NameSpace.TIC;
 
+import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
+
 import com.simibubi.create.api.contraption.ContraptionType;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorage;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
+import com.simibubi.create.api.registry.CreateDataMaps;
 import com.simibubi.create.api.registry.CreateRegistries;
 
 import net.createmod.catnip.lang.Lang;
-
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -32,6 +34,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
+
+import net.neoforged.neoforge.registries.datamaps.builtin.NeoForgeDataMaps;
 
 public class AllTags {
 	public static <T> TagKey<T> optionalTag(Registry<T> registry, ResourceLocation id) {
@@ -172,7 +176,18 @@ public class AllTags {
 
 	public enum AllItemTags {
 
+
+		/**
+		 * @deprecated <p> Use {@link NeoForgeDataMaps#FURNACE_FUELS} or {@link CreateDataMaps#REGULAR_BLAZE_BURNER_FUELS} instead.
+		 */
+		@ScheduledForRemoval(inVersion = "1.21.7 Port")
+		@Deprecated(since = "6.0.7", forRemoval = true)
 		BLAZE_BURNER_FUEL_REGULAR(MOD, "blaze_burner_fuel/regular"),
+		/**
+		 * @deprecated <p> Use {@link CreateDataMaps#SUPERHEATED_BLAZE_BURNER_FUELS} instead.
+		 */
+		@ScheduledForRemoval(inVersion = "1.21.7 Port")
+		@Deprecated(since = "6.0.7", forRemoval = true)
 		BLAZE_BURNER_FUEL_SPECIAL(MOD, "blaze_burner_fuel/special"),
 		CASING,
 		CONTRAPTION_CONTROLLED,

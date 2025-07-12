@@ -7,6 +7,8 @@ import javax.annotation.Nullable;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags.AllItemTags;
+import com.simibubi.create.api.data.datamaps.BlazeBurnerFuel;
+import com.simibubi.create.api.registry.CreateDataMaps;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.content.processing.basin.BasinBlock;
@@ -24,6 +26,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -31,15 +34,16 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.CommonHooks;
 
 public class BlazeBurnerBlockEntity extends SmartBlockEntity {
 
@@ -236,7 +240,18 @@ public class BlazeBurnerBlockEntity extends SmartBlockEntity {
 		FuelType newFuel = FuelType.NONE;
 		int newBurnTime;
 
-		if (AllItemTags.BLAZE_BURNER_FUEL_SPECIAL.matches(itemStack)) {
+		Holder<Item> holder = itemStack.getItem().builtInRegistryHolder();
+		BlazeBurnerFuel superheatedFuel = holder.getData(CreateDataMaps.SUPERHEATED_BLAZE_BURNER_FUELS);
+		BlazeBurnerFuel normalFuel = holder.getData(CreateDataMaps.REGULAR_BLAZE_BURNER_FUELS);
+
+		// TODO: 1.21.7 - Remove fallback to tags
+		if (superheatedFuel != null) {
+			newBurnTime = superheatedFuel.burnTime();
+			newFuel = FuelType.SPECIAL;
+		} else if (normalFuel != null) {
+			newBurnTime = normalFuel.burnTime();
+			newFuel = FuelType.NORMAL;
+		} else if (AllItemTags.BLAZE_BURNER_FUEL_SPECIAL.matches(itemStack)) {
 			newBurnTime = 3200;
 			newFuel = FuelType.SPECIAL;
 		} else {
@@ -327,16 +342,11 @@ public class BlazeBurnerBlockEntity extends SmartBlockEntity {
 	protected HeatLevel getHeatLevel() {
 		HeatLevel level = HeatLevel.SMOULDERING;
 		switch (activeFuel) {
-		case SPECIAL:
-			level = HeatLevel.SEETHING;
-			break;
-		case NORMAL:
-			boolean lowPercent = (double) remainingBurnTime / MAX_HEAT_CAPACITY < 0.0125;
-			level = lowPercent ? HeatLevel.FADING : HeatLevel.KINDLED;
-			break;
-		default:
-		case NONE:
-			break;
+			case SPECIAL -> level = HeatLevel.SEETHING;
+			case NORMAL -> {
+				boolean lowPercent = (double) remainingBurnTime / MAX_HEAT_CAPACITY < 0.0125;
+				level = lowPercent ? HeatLevel.FADING : HeatLevel.KINDLED;
+			}
 		}
 		return level;
 	}

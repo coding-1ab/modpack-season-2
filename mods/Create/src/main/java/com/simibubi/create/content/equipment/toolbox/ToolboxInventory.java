@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
+import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.serialization.Codec;
@@ -41,8 +42,8 @@ public class ToolboxInventory extends ItemStackHandler {
 		ToolboxInventory::deserialize
 	);
 
-	// TODO - Remove in 1.22
-	@Deprecated(forRemoval = true)
+	@ScheduledForRemoval(inVersion = "1.21.7 Port")
+	@Deprecated(since = "6.0.6", forRemoval = true)
 	public static final Codec<ToolboxInventory> BACKWARDS_COMPAT_CODEC = Codec.withAlternative(
 		CODEC,
 		ItemContainerContents.CODEC.xmap(i -> {
