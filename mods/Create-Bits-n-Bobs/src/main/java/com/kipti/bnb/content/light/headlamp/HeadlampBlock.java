@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity> {
 
     public HeadlampBlock(Properties p_52591_) {
-        super(p_52591_, BnbShapes.LIGHTBULB_SHAPE, true);
+        super(p_52591_, BnbShapes.LIGHTBULB_SHAPE, false);
     }
 
     @Override
