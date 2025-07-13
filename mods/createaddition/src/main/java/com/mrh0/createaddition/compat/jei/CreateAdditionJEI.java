@@ -55,28 +55,28 @@ public class CreateAdditionJEI implements IModPlugin {
 	public void registerCategories(IRecipeCategoryRegistration registration) {
 		ALL.clear();
 
-		builder(ChargingRecipe.class)
-				.addTypedRecipes(CARecipes.CHARGING_TYPE::get)
-				.catalyst(CABlocks.TESLA_COIL::get)
-				.itemIcon(CABlocks.TESLA_COIL.get())
-				.emptyBackground(177, 53)
-				.build("charging", ChargingCategory::new);
-
-		builder(RollingRecipe.class)
-				.addTypedRecipes(CARecipes.ROLLING_TYPE::get)
-				.catalyst(CABlocks.ROLLING_MILL::get)
-				.itemIcon(CABlocks.ROLLING_MILL.get())
-				.emptyBackground(177, 53)
-				.build("rolling", RollingMillCategory::new);
-
-		builder(LiquidBurningRecipe.class)
-				.addTypedRecipes(CARecipes.LIQUID_BURNING_TYPE::get)
-				.catalyst(AllBlocks.BLAZE_BURNER::get)
-				.itemIcon(AllBlocks.BLAZE_BURNER.get())
-				.emptyBackground(177, 53)
-				.build("liquid_burning", LiquidBurningCategory::new);
-
-		ALL.forEach(registration::addRecipeCategories);
+//		builder(ChargingRecipe.class)
+//				.addTypedRecipes(CARecipes.CHARGING_TYPE::get)
+//				.catalyst(CABlocks.TESLA_COIL::get)
+//				.itemIcon(CABlocks.TESLA_COIL.get())
+//				.emptyBackground(177, 53)
+//				.build("charging", ChargingCategory::new);
+//
+//		builder(RollingRecipe.class)
+//				.addTypedRecipes(CARecipes.ROLLING_TYPE::get)
+//				.catalyst(CABlocks.ROLLING_MILL::get)
+//				.itemIcon(CABlocks.ROLLING_MILL.get())
+//				.emptyBackground(177, 53)
+//				.build("rolling", RollingMillCategory::new);
+//
+//		builder(LiquidBurningRecipe.class)
+//				.addTypedRecipes(CARecipes.LIQUID_BURNING_TYPE::get)
+//				.catalyst(AllBlocks.BLAZE_BURNER::get)
+//				.itemIcon(AllBlocks.BLAZE_BURNER.get())
+//				.emptyBackground(177, 53)
+//				.build("liquid_burning", LiquidBurningCategory::new);
+//
+//		ALL.forEach(registration::addRecipeCategories);
 	}
 
 	@Override
@@ -95,12 +95,12 @@ public class CreateAdditionJEI implements IModPlugin {
 		//registration.addRecipeCatalyst(new ItemStack(CAItems.DIAMOND_GRIT_SANDPAPER.get()), new ResourceLocation(Create.ID, "deploying"));
 	}
 
-	private <T extends Recipe<?>> CategoryBuilder<T> builder(Class<? extends T> recipeClass) {
+	private <T extends Recipe<?>> CategoryBuilder<T> builder(Class<? extends RecipeHolder<T>> recipeClass) {
 		return new CategoryBuilder<>(recipeClass);
 	}
 
 	private static class CategoryBuilder<T extends Recipe<?>> {
-		private final Class<? extends T> recipeClass;
+		private final Class<? extends RecipeHolder<T>> recipeClass;
 		private Predicate<CRecipes> predicate = cRecipes -> true;
 
 		private IDrawable background;
@@ -109,7 +109,7 @@ public class CreateAdditionJEI implements IModPlugin {
 		private final List<Consumer<List<RecipeHolder<T>>>> recipeListConsumers = new ArrayList<>();
 		private final List<Supplier<? extends ItemStack>> catalysts = new ArrayList<>();
 
-		public CategoryBuilder(Class<? extends T> recipeClass) {
+		public CategoryBuilder(Class<? extends RecipeHolder<T>> recipeClass) {
 			this.recipeClass = recipeClass;
 		}
 
@@ -165,7 +165,7 @@ public class CreateAdditionJEI implements IModPlugin {
 			}
 
 			CreateRecipeCategory.Info<T> info = new CreateRecipeCategory.Info<>(
-					new mezz.jei.api.recipe.RecipeType<>(CreateAddition.asResource(name), recipeClass),
+                    new mezz.jei.api.recipe.RecipeType<>(CreateAddition.asResource(name), recipeClass),
 					Component.translatable(CreateAddition.MODID + ".recipe." + name), background, icon, recipesSupplier, catalysts);
 			CreateRecipeCategory<T> category = factory.create(info);
 			ALL.add(category);

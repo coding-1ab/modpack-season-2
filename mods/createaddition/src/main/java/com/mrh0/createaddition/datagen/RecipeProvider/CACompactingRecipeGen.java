@@ -4,10 +4,7 @@ import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.index.CAFluids;
 import com.mrh0.createaddition.index.CAItems;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.AllRecipeTypes;
-import com.simibubi.create.api.data.recipe.BaseRecipeProvider;
-import com.simibubi.create.api.data.recipe.ProcessingRecipeGen;
-import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
+import com.simibubi.create.api.data.recipe.CompactingRecipeGen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -17,17 +14,10 @@ import net.neoforged.neoforge.common.Tags;
 
 import java.util.concurrent.CompletableFuture;
 
-public class CACompactingRecipeGen extends ProcessingRecipeGen {
-    public CACompactingRecipeGen(PackOutput generator, CompletableFuture<HolderLookup.Provider> provider) {
-        super(generator, provider);
-    }
+public class CACompactingRecipeGen extends CompactingRecipeGen {
 
-    @Override
-    protected IRecipeTypeInfo getRecipeType() {
-        return AllRecipeTypes.COMPACTING;
-    }
-
-    BaseRecipeProvider.GeneratedRecipe
+    @SuppressWarnings("unused")
+    GeneratedRecipe
 
     BIOMASS_PELLET = create(CAItems.BIOMASS_PELLET.getId(), b -> b.require(CAItems.BIOMASS)
             .output(Fluids.WATER,50)
@@ -43,4 +33,8 @@ public class CACompactingRecipeGen extends ProcessingRecipeGen {
             .output( CAFluids.SEED_OIL.getSource().getSource(), 100)
     )
     ;
+
+    public CACompactingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+        super(output, registries, CreateAddition.MODID);
+    }
 }

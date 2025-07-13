@@ -1,13 +1,17 @@
 package com.mrh0.createaddition.blocks.tesla_coil;
 
+import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.index.CABlockEntities;
 import com.mrh0.createaddition.shapes.CAShapes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 
+import com.tterrag.registrate.providers.DataGenContext;
+import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
 import net.createmod.catnip.math.VoxelShaper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -21,6 +25,10 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.client.model.generators.BlockModelProvider;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import org.jetbrains.annotations.Nullable;
 
 public class TeslaCoilBlock extends Block implements IBE<TeslaCoilBlockEntity>, IWrenchable {
@@ -70,5 +78,21 @@ public class TeslaCoilBlock extends Block implements IBE<TeslaCoilBlockEntity>, 
 	@Override
 	public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos,@Nullable Direction side) {
 		return true;
+	}
+
+    public static void makeBlockState(DataGenContext<Block, TeslaCoilBlock> ctx, RegistrateBlockstateProvider provider) {
+		BlockModelProvider models = provider.models();
+		ModelFile.ExistingModelFile modelFile = models.getExistingFile(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "block/tesla_coil/block"));
+
+		VariantBlockStateBuilder builder = provider.getVariantBuilder(ctx.get());
+		builder.forAllStatesExcept(state -> {
+			Direction direction = state.getValue(FACING);
+			return ConfiguredModel.builder()
+							.modelFile(modelFile)
+							.rotationX(direction == Direction.UP ? 180 : direction == Direction.DOWN ? 0 : 90)
+							.rotationY(((int) direction.toYRot() + (direction.getAxis()
+									.isVertical() ? 180 : 0)) % 360)
+							.build();
+				}, BlockStateProperties.POWERED);
 	}
 }
