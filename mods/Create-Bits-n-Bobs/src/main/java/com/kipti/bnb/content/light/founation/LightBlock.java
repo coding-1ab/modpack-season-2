@@ -37,7 +37,7 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
         super(p_52591_);
         this.shaper = shaper;
         registerDefaultState(defaultBlockState().setValue(LIT, false));
-        CODEC = simpleCodec((p) -> new LightBlock(p, shaper, true));
+        CODEC = simpleCodec((p) -> new LightBlock(p, shaper, forcePlaceUpwards));
         this.forcePlaceUpwards = forcePlaceUpwards;
     }
 

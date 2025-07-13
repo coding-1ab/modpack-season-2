@@ -3,9 +3,14 @@ package com.kipti.bnb.content.nixie.foundation;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.nixie.nixie_board.NixieBoardBlock;
 import com.mojang.serialization.MapCodec;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.equipment.clipboard.ClipboardBlockItem;
+import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -98,11 +103,25 @@ public class DoubleOrientedDisplayBlock extends DirectionalBlock implements IWre
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         ItemStack heldItem = player.getItemInHand(hand);
-        if (heldItem.getItem() instanceof NameTagItem) {
+        if (heldItem.getItem() instanceof NameTagItem && heldItem.has(DataComponents.CUSTOM_NAME)) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof GenericNixieDisplayBlockEntity display) {
                 String name = heldItem.getHoverName().getString();
                 display.findControllerBlockEntity().applyTextToDisplay(name, getLineForPlacement(state, hitResult.getBlockPos(), hitResult, level));
+            }
+            return ItemInteractionResult.SUCCESS;
+        }
+        if (AllBlocks.CLIPBOARD.isIn(stack)) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            List<ClipboardEntry> entries = ClipboardEntry.getLastViewedEntries(stack);
+            int line = getLineForPlacement(state, hitResult.getBlockPos(), hitResult, level);
+            for (ClipboardEntry entry : entries) {
+                for (String string : entry.text.getString()
+                    .split("\n")) {
+                    if (blockEntity instanceof GenericNixieDisplayBlockEntity display) {
+                        display.findControllerBlockEntity().applyTextToDisplay(string, line++);
+                    }
+                }
             }
             return ItemInteractionResult.SUCCESS;
         }
