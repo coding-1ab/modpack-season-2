@@ -116,6 +116,9 @@ public class BnbBlocks {
 
     public static final BlockEntry<NixieBoardBlock> NIXIE_BOARD = REGISTRATE.block("nixie_board", p -> new NixieBoardBlock(p, null))
         .transform(nixieBoard())
+        .item()
+        .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/nixie_board/nixie_board_single")))
+        .build()
         .register();
 
     public static final DyedBlockList<NixieBoardBlock> DYED_NIXIE_BOARD = new DyedBlockList<>(colour -> {String colourName = colour.getSerializedName();
@@ -126,6 +129,9 @@ public class BnbBlocks {
 
     public static final BlockEntry<LargeNixieTubeBlock> LARGE_NIXIE_TUBE = REGISTRATE.block("large_nixie_tube", p -> new LargeNixieTubeBlock(p, null))
         .transform(largeNixieTube())
+        .item()
+        .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/large_nixie_tube/large_nixie_tube")))
+        .build()
         .register();
 
     public static final DyedBlockList<LargeNixieTubeBlock> DYED_LARGE_NIXIE_TUBE = new DyedBlockList<>(colour -> {String colourName = colour.getSerializedName();
@@ -146,10 +152,7 @@ public class BnbBlocks {
                 .lightLevel(state -> state.getValue(NixieBoardBlock.LIT) ? 4 : 1)
                 .mapColor(DyeColor.ORANGE)
                 .forceSolidOn())
-            .addLayer(() -> RenderType::translucent)
-            .item()
-            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/nixie_board/nixie_board_single")))
-            .build();
+            .addLayer(() -> RenderType::translucent);
     }
     public static <T extends LargeNixieTubeBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> largeNixieTube() {
         return b -> b
@@ -163,10 +166,7 @@ public class BnbBlocks {
                 .lightLevel(state -> state.getValue(NixieBoardBlock.LIT) ? 4 : 1)
                 .mapColor(DyeColor.ORANGE)
                 .forceSolidOn())
-            .addLayer(() -> RenderType::translucent)
-            .item()
-            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/large_nixie_tube/large_nixie_tube")))
-            .build();
+            .addLayer(() -> RenderType::translucent);
     }
 
     public static final BlockEntry<WeatheredGirderBlock> WEATHERED_METAL_GIRDER = REGISTRATE.block("weathered_metal_girder", WeatheredGirderBlock::new)

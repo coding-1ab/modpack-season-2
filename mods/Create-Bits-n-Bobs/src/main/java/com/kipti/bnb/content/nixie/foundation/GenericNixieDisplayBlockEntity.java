@@ -1,9 +1,10 @@
 package com.kipti.bnb.content.nixie.foundation;
 
+import com.kipti.bnb.CreateBitsnBobs;
+import com.kipti.bnb.content.nixie.nixie_board.NixieBoardBlock;
 import com.kipti.bnb.registry.BnbBlocks;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -11,13 +12,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
 
@@ -29,33 +30,6 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
     public GenericNixieDisplayBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
-
-//    @Override
-//    public void tick() {
-//        super.tick();
-//
-//        Direction leftDir = DoubleOrientedBlockModel.getLeft(
-//            getBlockState().getValue(DoubleOrientedBlock.FACING),
-//            getBlockState().getValue(DoubleOrientedBlock.ORIENTATION)
-//        );
-//
-//        drawArrow(leftDir, 0xff0000);
-//        drawArrow(getBlockState().getValue(DoubleOrientedBlock.FACING), 0x00ff00);
-//        drawArrow(getBlockState().getValue(DoubleOrientedBlock.ORIENTATION), 0x0000ff);
-//    }
-
-//    private void drawArrow(Direction leftDir, int i) {
-//        Vec3 left = Vec3.atLowerCornerOf(leftDir.getNormal());
-//        Vec3 up = new Vec3(0, 1, 0).cross(left);
-//        if (up.lengthSqr() < 0.01) {
-//            up = new Vec3(0, 0, 1); // Fallback to Z axis if no up direction is found
-//        }
-//
-//        //Render an arrow for outliner
-//        Outliner.getInstance().showLine(hashCode() + "_" + leftDir + "_arrow_straight", getBlockPos().getCenter().add(left), getBlockPos().getCenter()).colored(i);
-//        Outliner.getInstance().showLine(hashCode() + "_" + leftDir + "_arrow_up", getBlockPos().getCenter().add(left), getBlockPos().getCenter().add(left.scale(0.75)).add(up.scale(0.5))).colored(i);
-//        Outliner.getInstance().showLine(hashCode() + "_" + leftDir + "_arrow_down", getBlockPos().getCenter().add(left), getBlockPos().getCenter().add(left.scale(0.75)).subtract(up.scale(0.5))).colored(i);
-//    }
 
     public void inheritDataFrom(GenericNixieDisplayBlockEntity be) {
         this.currentTextTop = be.currentTextTop;
@@ -69,10 +43,21 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
     }
 
     public enum ConfigurableDisplayOptions {
-        NONE,
-        ALWAYS_UP,
-        DOUBLE_CHAR,
-        DOUBLE_CHAR_DOUBLE_LINES
+        NONE(1, 1, () -> ConfigurableDisplayOptionTransform.NONE),
+        ALWAYS_UP(1, 1, () -> ConfigurableDisplayOptionTransform.ALWAYS_UP),
+        DOUBLE_CHAR(2, 1, () -> ConfigurableDisplayOptionTransform.DOUBLE_CHAR),
+        DOUBLE_CHAR_DOUBLE_LINES(3, 2, () -> ConfigurableDisplayOptionTransform.DOUBLE_CHAR_DOUBLE_LINES);
+
+        public final Supplier<ConfigurableDisplayOptionTransform> renderTransform;
+        public final int width;
+        public final int lines;
+
+        ConfigurableDisplayOptions(int width, int lines, Supplier<ConfigurableDisplayOptionTransform> renderTransform) {
+            this.renderTransform = renderTransform;
+            this.width = width;
+            this.lines = lines;
+        }
+
     }
 
     public List<ConfigurableDisplayOptions> getPossibleDisplayOptions() {
@@ -81,8 +66,8 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
 
     public void applyToEachElementOfThisStructure(Consumer<GenericNixieDisplayBlockEntity> consumer) {
         GenericNixieDisplayBlockEntity controller = findControllerBlockEntity();
-        Direction facing = getBlockState().getValue(DoubleOrientedBlock.FACING);
-        Direction orientation = getBlockState().getValue(DoubleOrientedBlock.ORIENTATION);
+        Direction facing = getBlockState().getValue(DoubleOrientedDisplayBlock.FACING);
+        Direction orientation = getBlockState().getValue(DoubleOrientedDisplayBlock.ORIENTATION);
         Direction right = DoubleOrientedBlockModel.getLeft(facing, orientation).getOpposite();
         BlockPos currentPos = controller.getBlockPos();
         for (int i = 0; i < 100; i++) {
@@ -101,8 +86,19 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
             return; // No change
         }
         currentDisplayOption = option;
-//        this.currentTextTop = "";
-//        this.currentTextBottom = "";
+        //Apply clipping to the text
+        EndClipping endClipping = getEndClipping();
+        if (endClipping != EndClipping.NONE) {
+            //Ensure any text inside the clipping region is space
+            String topRaw = currentTextTop.trim();
+            String bottomRaw = currentTextBottom.trim();
+            int displayedCharacterWidth = calculateDisplayedCharacterWidth();
+            currentTextTop = " ".repeat(endClipping.left) + (topRaw.isEmpty() ? "" : topRaw.substring(0, Math.min(displayedCharacterWidth, topRaw.length())));
+            currentTextBottom = " ".repeat(endClipping.left) + (bottomRaw.isEmpty() ? "" : bottomRaw.substring(0, Math.min(displayedCharacterWidth, bottomRaw.length())));
+        } else if (currentDisplayOption == ConfigurableDisplayOptions.NONE) {
+            currentTextTop = currentTextTop.trim();
+            currentTextBottom = currentTextBottom.trim();
+        }
         notifyUpdate();
     }
 
@@ -120,10 +116,10 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
         boolean stateTwoIsTube = BnbBlocks.LARGE_NIXIE_TUBE.is(state2.getBlock()) || BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(state2.getBlock());
 
         if (!(stateOneIsBoard && stateTwoIsBoard) && !(stateOneIsTube && stateTwoIsTube)) return false;
-        if (state1.getValue(DoubleOrientedBlock.FACING) != state2.getValue(DoubleOrientedBlock.FACING)) {
+        if (state1.getValue(DoubleOrientedDisplayBlock.FACING) != state2.getValue(DoubleOrientedDisplayBlock.FACING)) {
             return false;
         }
-        return state1.getValue(DoubleOrientedBlock.ORIENTATION) == state2.getValue(DoubleOrientedBlock.ORIENTATION);
+        return state1.getValue(DoubleOrientedDisplayBlock.ORIENTATION) == state2.getValue(DoubleOrientedDisplayBlock.ORIENTATION);
     }
 
     @Override
@@ -154,8 +150,8 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
     }
 
     public @NotNull GenericNixieDisplayBlockEntity findControllerBlockEntity() {
-        Direction facing = getBlockState().getValue(DoubleOrientedBlock.FACING);
-        Direction orientation = getBlockState().getValue(DoubleOrientedBlock.ORIENTATION);
+        Direction facing = getBlockState().getValue(DoubleOrientedDisplayBlock.FACING);
+        Direction orientation = getBlockState().getValue(DoubleOrientedDisplayBlock.ORIENTATION);
         Direction left = DoubleOrientedBlockModel.getLeft(facing, orientation);
         BlockPos leftPos = getBlockPos().relative(left);
         GenericNixieDisplayBlockEntity lastDisplay = this;
@@ -172,10 +168,9 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
     }
 
     public void applyTextToDisplay(String tagElement, int line) {
-        boolean isDoubleLines = currentDisplayOption == ConfigurableDisplayOptions.DOUBLE_CHAR_DOUBLE_LINES;
-        int consumptionWidth = currentDisplayOption == ConfigurableDisplayOptions.DOUBLE_CHAR ||
-            isDoubleLines ? 2 : 1;
-        String consumed = tagElement.isEmpty() ? "" : tagElement.substring(0, Math.min(consumptionWidth, tagElement.length()));
+        EndClipping endClipping = getEndClipping();
+        int consumptionWidth = calculateDisplayedCharacterWidth();
+        String consumed = " ".repeat(endClipping.left) + (tagElement.isEmpty() ? "" : tagElement.substring(0, Math.min(consumptionWidth, tagElement.length())));
         if (line == 0) {
             this.currentTextTop = consumed;
         } else if (line == 1) {
@@ -184,8 +179,8 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
             return;
         }
         Direction right = DoubleOrientedBlockModel.getLeft(
-            getBlockState().getValue(DoubleOrientedBlock.FACING),
-            getBlockState().getValue(DoubleOrientedBlock.ORIENTATION)
+            getBlockState().getValue(DoubleOrientedDisplayBlock.FACING),
+            getBlockState().getValue(DoubleOrientedDisplayBlock.ORIENTATION)
         ).getOpposite();
         BlockPos rightPos = getBlockPos().relative(right);
         BlockEntity blockEntity = level.getBlockEntity(rightPos);
@@ -193,24 +188,67 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
             nextDisplay.currentDisplayOption = currentDisplayOption;
             nextDisplay.applyTextToDisplay(tagElement.isEmpty() ? "" : tagElement.substring(Math.min(consumptionWidth, tagElement.length())), line);
         }
-        level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(DoubleOrientedBlock.LIT,
-            !this.currentTextTop.trim().isEmpty() && (!isDoubleLines || !this.currentTextTop.trim().isEmpty())));
+        level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(DoubleOrientedDisplayBlock.LIT,
+            !this.currentTextTop.trim().isEmpty() && (currentDisplayOption.lines == 1 || !this.currentTextTop.trim().isEmpty())));
         notifyUpdate();
     }
 
     public int seekWidth() {
         Direction right = DoubleOrientedBlockModel.getLeft(
-            getBlockState().getValue(DoubleOrientedBlock.FACING),
-            getBlockState().getValue(DoubleOrientedBlock.ORIENTATION)
+            getBlockState().getValue(DoubleOrientedDisplayBlock.FACING),
+            getBlockState().getValue(DoubleOrientedDisplayBlock.ORIENTATION)
         ).getOpposite();
-        int characterCount = currentDisplayOption == ConfigurableDisplayOptions.DOUBLE_CHAR ||
-            currentDisplayOption == ConfigurableDisplayOptions.DOUBLE_CHAR_DOUBLE_LINES ? 2 : 1;
+        int characterCount = 0;
         for (int i = 0; i < 100; i++) {
             BlockPos nextPos = getBlockPos().relative(right, i);
+            BlockEntity blockEntity = level.getBlockEntity(nextPos);
             if (!areStatesComprableForConnection(getBlockState(), level.getBlockState(nextPos))) {
-                return i * characterCount; // Return the width based on the number of connected displays
+                break;
+            }
+            if (blockEntity instanceof GenericNixieDisplayBlockEntity currentWalkNixieDisplay) {
+                characterCount += currentWalkNixieDisplay.calculateDisplayedCharacterWidth();
+            } else {
+                CreateBitsnBobs.LOGGER.warn("Found unexpected non-nixie display block entity at {} while seeking width for {}", nextPos, getBlockPos());
+                break;
             }
         }
-        return 1; // Default width if no other displays found
+        return characterCount;
     }
+
+    int calculateDisplayedCharacterWidth() {
+        EndClipping endClipping = getEndClipping();
+        return currentDisplayOption.width - endClipping.left - endClipping.right;
+    }
+
+    public enum EndClipping {
+        NONE(0, 0),
+        LEFT(1, 0),
+        RIGHT(0, 1),
+        BOTH(1, 1);
+
+        public final int left;
+        public final int right;
+
+        EndClipping(int left, int right) {
+            this.left = left;
+            this.right = right;
+        }
+    }
+
+    public EndClipping getEndClipping() {
+        if (!(getBlockState().getBlock() instanceof NixieBoardBlock) || currentDisplayOption != ConfigurableDisplayOptions.DOUBLE_CHAR_DOUBLE_LINES) {
+            return EndClipping.NONE; // Nixie tubes do not have end clipping
+        }
+        boolean left = !getBlockState().getValue(NixieBoardBlock.LEFT);
+        boolean right = !getBlockState().getValue(NixieBoardBlock.RIGHT);
+        if (left && right) {
+            return EndClipping.BOTH;
+        } else if (left) {
+            return EndClipping.LEFT;
+        } else if (right) {
+            return EndClipping.RIGHT;
+        }
+        return EndClipping.NONE;
+    }
+
 }

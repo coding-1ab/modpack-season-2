@@ -3,8 +3,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"2": "bits_n_bobs:block/large_nixie_tube",
-		"particle": "bits_n_bobs:block/large_nixie_tube"
+		"2": "bits_n_bobs:block/nixie/large_nixie_tube",
+		"particle": "bits_n_bobs:block/nixie/large_nixie_tube"
 	},
 	"elements": [
 		{

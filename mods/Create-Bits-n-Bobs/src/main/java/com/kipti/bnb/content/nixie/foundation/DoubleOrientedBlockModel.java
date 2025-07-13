@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 
-import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,8 +39,8 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
     public @NotNull ModelData getModelData(BlockAndTintGetter level, BlockPos pos, BlockState state, ModelData modelData) {
         DoubleOrientedModelData data = new DoubleOrientedModelData();
 
-        Direction up = state.getValue(DoubleOrientedBlock.FACING);
-        Direction front = state.getValue(DoubleOrientedBlock.ORIENTATION);
+        Direction up = state.getValue(DoubleOrientedDisplayBlock.FACING);
+        Direction front = state.getValue(DoubleOrientedDisplayBlock.ORIENTATION);
         Matrix4f rotation = getRotation(up, front);
         data.setRotation(rotation);
 
@@ -67,8 +66,8 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
     }
 
     public static Direction getLeft(BlockState state) {
-        Direction up = state.getValue(DoubleOrientedBlock.FACING);
-        Direction front = state.getValue(DoubleOrientedBlock.ORIENTATION);
+        Direction up = state.getValue(DoubleOrientedDisplayBlock.FACING);
+        Direction front = state.getValue(DoubleOrientedDisplayBlock.ORIENTATION);
         return getLeft(up, front);
     }
 
@@ -82,7 +81,8 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
                 return direction;
             }
         }
-        throw new IllegalArgumentException("No Direction found for normal: " + cross);
+//        throw new IllegalArgumentException("No Direction found for normal: " + cross);
+        return Direction.NORTH;
     }
 
     public static Direction getFront(Direction up, Direction front) {
@@ -113,8 +113,7 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
             int[] vertices = quad.getVertices();
             int[] transformedVertices = Arrays.copyOf(vertices, vertices.length);
 
-            Vec3 quadNormal = Vec3.atLowerCornerOf(quad.getDirection()
-                .getNormal());
+            Vec3 quadNormal = Vec3.atLowerCornerOf(quad.getDirection().getNormal());
             Vector3f quadNormalJoml = pose.transformDirection((float) quadNormal.x, (float) quadNormal.y, (float) quadNormal.z, new Vector3f());
 
             for (int i = 0; i < vertices.length / BakedQuadHelper.VERTEX_STRIDE; i++) {

@@ -14,23 +14,20 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class LargeNixieTubeBlock extends DoubleOrientedBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable, IGenericNixieDisplayBlock, DyeProviderBlock {
+public class LargeNixieTubeBlock extends DoubleOrientedDisplayBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable, IGenericNixieDisplayBlock, DyeProviderBlock {
 
     final @Nullable DyeColor dyeColor;
 
@@ -40,16 +37,26 @@ public class LargeNixieTubeBlock extends DoubleOrientedBlock implements IBE<Gene
     }
 
     @Override
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+        return BnbBlocks.LARGE_NIXIE_TUBE.asItem().getDefaultInstance();
+    }
+
+    @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         ItemStack heldItem = player.getItemInHand(hand);
         if (heldItem.getItem() instanceof DyeItem dyeItem && dyeItem.getDyeColor() != dyeColor) {
-            if (!level.isClientSide) {//TODO update to latest func
-                DyeColor newColor = dyeItem.getDyeColor();
-                BlockState newState = BnbBlocks.DYED_LARGE_NIXIE_TUBE.get(newColor).getDefaultState()
-                    .setValue(FACING, state.getValue(FACING))
-                    .setValue(ORIENTATION, state.getValue(ORIENTATION))
-                    .setValue(LIT, state.getValue(LIT));
-                level.setBlockAndUpdate(pos, newState);
+            if (!level.isClientSide) {
+                GenericNixieDisplayBlockEntity be = (GenericNixieDisplayBlockEntity) level.getBlockEntity(pos);
+                be.applyToEachElementOfThisStructure((display) -> {
+                    DyeColor newColor = dyeItem.getDyeColor();
+                    BlockState newState = BnbBlocks.DYED_LARGE_NIXIE_TUBE.get(newColor).getDefaultState()
+                        .setValue(FACING, display.getBlockState().getValue(FACING))
+                        .setValue(ORIENTATION, display.getBlockState().getValue(ORIENTATION))
+                        .setValue(LIT, display.getBlockState().getValue(LIT));
+                    level.setBlockAndUpdate(display.getBlockPos(), newState);
+                    GenericNixieDisplayBlockEntity newBe = (GenericNixieDisplayBlockEntity) level.getBlockEntity(display.getBlockPos());
+                    newBe.inheritDataFrom(display);
+                });
             }
             return ItemInteractionResult.SUCCESS;
         }

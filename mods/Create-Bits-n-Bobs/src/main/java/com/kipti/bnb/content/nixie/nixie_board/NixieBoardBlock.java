@@ -7,8 +7,6 @@ import com.kipti.bnb.registry.BnbBlocks;
 import com.kipti.bnb.registry.BnbShapes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
-import com.simibubi.create.foundation.utility.DyeHelper;
-import net.createmod.catnip.data.Couple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -23,20 +21,21 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class NixieBoardBlock extends DoubleOrientedBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable, DyeProviderBlock, IGenericNixieDisplayBlock {
+public class NixieBoardBlock extends DoubleOrientedDisplayBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable, DyeProviderBlock, IGenericNixieDisplayBlock {
 
     public static final BooleanProperty LEFT = BooleanProperty.create("left");
     public static final BooleanProperty RIGHT = BooleanProperty.create("right");
@@ -46,6 +45,11 @@ public class NixieBoardBlock extends DoubleOrientedBlock implements IBE<GenericN
     public NixieBoardBlock(Properties p_52591_, @Nullable DyeColor dyeColor) {
         super(p_52591_);
         this.dyeColor = dyeColor;
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+        return BnbBlocks.NIXIE_BOARD.asItem().getDefaultInstance();
     }
 
     @Override
@@ -83,41 +87,22 @@ public class NixieBoardBlock extends DoubleOrientedBlock implements IBE<GenericN
     }
 
     @Override
-    public InteractionResult onWrenched(BlockState state, UseOnContext context) {
-        GenericNixieDisplayBlockEntity be = (GenericNixieDisplayBlockEntity) context.getLevel().getBlockEntity(context.getClickedPos());
-        GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions currentOption = be.getCurrentDisplayOption();
-        List<GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions> options = be.getPossibleDisplayOptions();
-        int currentIndex = options.indexOf(currentOption);
-        if (currentIndex < 0) {
-            CreateBitsnBobs.LOGGER.warn("No valid display option found for {}", be.getBlockPos());
-            return InteractionResult.PASS;
-        }
-        int nextIndex = (currentIndex + 1) % options.size();
-        GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions nextOption = options.get(nextIndex);
-        be.applyToEachElementOfThisStructure((display) -> {
-            display.setDisplayOption(nextOption);
-        });
-        return InteractionResult.SUCCESS;
-    }
-
-    @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         ItemStack heldItem = player.getItemInHand(hand);
         if (heldItem.getItem() instanceof DyeItem dyeItem && dyeItem.getDyeColor() != dyeColor) {
-            if (!level.isClientSide) {//TODO generalize
+            if (!level.isClientSide) {
                 GenericNixieDisplayBlockEntity be = (GenericNixieDisplayBlockEntity) level.getBlockEntity(pos);
                 be.applyToEachElementOfThisStructure((display) -> {
-
                     DyeColor newColor = dyeItem.getDyeColor();
                     BlockState newState = BnbBlocks.DYED_NIXIE_BOARD.get(newColor).getDefaultState()
-                        .setValue(FACING, state.getValue(FACING))
-                        .setValue(ORIENTATION, state.getValue(ORIENTATION))
-                        .setValue(LEFT, state.getValue(LEFT))
-                        .setValue(RIGHT, state.getValue(RIGHT))
-                        .setValue(LIT, state.getValue(LIT));
-                    level.setBlockAndUpdate(pos, newState);
-                    GenericNixieDisplayBlockEntity newBe = (GenericNixieDisplayBlockEntity) level.getBlockEntity(pos);
-                    newBe.inheritDataFrom(be);
+                        .setValue(FACING, display.getBlockState().getValue(FACING))
+                        .setValue(ORIENTATION, display.getBlockState().getValue(ORIENTATION))
+                        .setValue(LEFT, display.getBlockState().getValue(LEFT))
+                        .setValue(RIGHT, display.getBlockState().getValue(RIGHT))
+                        .setValue(LIT, display.getBlockState().getValue(LIT));
+                    level.setBlockAndUpdate(display.getBlockPos(), newState);
+                    GenericNixieDisplayBlockEntity newBe = (GenericNixieDisplayBlockEntity) level.getBlockEntity(display.getBlockPos());
+                    newBe.inheritDataFrom(display);
                 });
             }
             return ItemInteractionResult.SUCCESS;

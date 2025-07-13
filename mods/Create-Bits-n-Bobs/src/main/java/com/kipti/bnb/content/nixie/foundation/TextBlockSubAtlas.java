@@ -19,7 +19,7 @@ public class TextBlockSubAtlas {
      * Additional chars are from Unicode private use area
      * */
     public static final TextBlockSubAtlas NIXIE_TEXT_SUB_ATLAS = new TextBlockSubAtlas(
-        CreateBitsnBobs.asResource("block/nixie_board/text_atlas"),
+        CreateBitsnBobs.asResource("block/nixie/text_atlas"),
         512, 16,
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n1234567890(),.!?#$%\\@;:\n" +
             "\uE000\uE001\uE002\uE003\uE004\uE005\uE006\uE007\uE008\uE009\uE00A\uE00B\uE00C\uE00D\uE00E\uE00F" +

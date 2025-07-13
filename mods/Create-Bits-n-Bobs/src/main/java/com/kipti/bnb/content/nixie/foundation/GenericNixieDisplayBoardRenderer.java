@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.level.block.Block;
 import org.joml.Matrix4f;
 
@@ -40,6 +41,7 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
             return; // No font set available, nothing to render
         }
 
+        //TODO remove these so many BnbBlocks.NIXIE_BOARD.is(be.getBlockState().getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(be.getBlockState().getBlock())
         float scale = (BnbBlocks.NIXIE_BOARD.is(be.getBlockState().getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(be.getBlockState().getBlock())) ? 1f / 16f : 1f / 20f;
         float offset = (BnbBlocks.NIXIE_BOARD.is(be.getBlockState().getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(be.getBlockState().getBlock())) ? 0 : 1f / 8f;
 
@@ -47,45 +49,44 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
         Direction facing = be.getBlockState().getValue(NixieBoardBlock.FACING);
         Direction orientation = be.getBlockState().getValue(NixieBoardBlock.ORIENTATION);
 
-        TransformStack.of(ms)
-            .center()
-            .mulPose(DoubleOrientedBlockModel.getRotation(facing, orientation))
-            .uncenter();
-
-        ms.translate(0.5, 1 - 1 / 16f - offset, 0.5);
-        ms.scale(scale, scale, scale);
-        ms.scale(-1, -1, 1);
-
-        int col = getTextColor(be);
-        Couple<Integer> couple = DyeHelper.getDyeColors(((DyeProviderBlock) be.getBlockState().getBlock()).getDyeColor());
-        //TODO
-
-        int lineCount = be.currentDisplayOption == GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions.DOUBLE_CHAR_DOUBLE_LINES ? 2 : 1;
-        int charCount = be.currentDisplayOption == GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions.DOUBLE_CHAR_DOUBLE_LINES ||
-            be.currentDisplayOption == GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions.DOUBLE_CHAR ? 2 : 1;
-        float charScale = charCount == 2 ? 7/16f : 1f;
-        ms.scale(charScale, charScale, charScale);
-
-        for (int i = 0; i < lineCount; i++) {
-            for (int j = 0; j < charCount; j++) {
-                ms.pushPose();
-                ms.translate(charCount == 1 ? 0 : j == 0 ? -8 * (8/7f) : 8 * (8/7f), lineCount == 2 ? (i == 0 ? -5 : 10) : charCount == 1 ? 0 : 4, 0);
-                Matrix4f pose = ms.last().pose();
-                String s = i == 0 ? be.currentTextTop : be.currentTextBottom;
-                char glyph = s.length() <= j ? ' ' : s.charAt(j);
-
-                if (glyph == ' ') {
-                    ms.popPose();
-                    continue; // Skip rendering if the character is a space
-                }
-
-                if (TextBlockSubAtlas.NIXIE_TEXT_SUB_ATLAS.isInCharacterSet(glyph))
-                    renderGlyphUsingSpecialFont(ms, buffer, overlay, glyph, pose, couple);
-                else
-                    renderUsingNormalFont(ms, buffer, fontSet, glyph, pose, couple);
-                ms.popPose();
-            }
+        float orientationOffset = 0;
+        boolean isLargeNixieTube = be.getBlockState().getBlock() instanceof LargeNixieTubeBlock;
+        if (be.currentDisplayOption != GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions.ALWAYS_UP) {
+            TransformStack.of(ms)
+                .center()
+                .mulPose(DoubleOrientedBlockModel.getRotation(facing, orientation))
+                .uncenter();
+            orientationOffset = isLargeNixieTube ? - 2/16f : 0;
+        } else {
+            TransformStack.of(ms)
+                .center()
+                .mulPose(DoubleOrientedBlockModel.getRotation(Direction.UP, orientation))
+                .uncenter();
+            orientationOffset = - 2/16f;
         }
+
+        ms.translate(0.5, 1f + orientationOffset, 0.5);
+        ms.scale(1/16f, 1/16f, 1/16f);
+        if (isLargeNixieTube) {
+            ms.scale(0.85f, 0.85f, 0.85f); // Scale down for large nixie tubes
+        }
+        ms.scale(-1, -1, +1);
+
+        Couple<Integer> couple = DyeHelper.getDyeColors(((DyeProviderBlock) be.getBlockState().getBlock()).getDyeColor());
+
+        ConfigurableDisplayOptionTransform transform = be.getCurrentDisplayOption().renderTransform.get();
+
+        transform.render(ms, be, glyph -> {
+            if (glyph == ' ') {
+                return; // Skip rendering spaces
+            }
+            int charCode = glyph;
+            if (TextBlockSubAtlas.NIXIE_TEXT_SUB_ATLAS.isInCharacterSet(charCode)) {
+                renderGlyphUsingSpecialFont(ms, buffer, overlay, charCode, ms.last().pose(), couple);
+            } else {
+                renderUsingNormalFont(ms, buffer, fontSet, charCode, ms.last().pose(), couple);
+            }
+        });
         ms.popPose();
     }
 
@@ -113,12 +114,10 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
         float u0 = characterUv.getU0(), u1 = characterUv.getU1(),
             v0 = characterUv.getV0(), v1 = characterUv.getV1();
 
-        int primary = col.get(true);
-        primary = (primary << 8) | 0x000000ff; // Ensure alpha is set
+        int primary = FastColor.ARGB32.opaque(col.get(true));
         addVerticesForChar(overlay, cutoutBuffer, pose, u0, v1, v0, u1, primary);
         pose = pose.translate(0.5f, 0.5f, 0.1f);
-        int secondary = col.get(false);
-        secondary = (secondary << 8) | 0x000000ff; // Ensure alpha is set
+        int secondary = FastColor.ARGB32.opaque(col.get(false));
         addVerticesForChar(overlay, cutoutBuffer, pose, u0, v1, v0, u1, secondary);
     }
 
