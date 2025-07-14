@@ -38,10 +38,10 @@ public class CreateAdditionsDataGen {
         generator.addProvider(event.includeServer(), new CACraftingRecipeProvider(output, lookupProvider));
         generator.addProvider(event.includeServer(), new CACrushingRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new CACompactingRecipeGen(output, lookupProvider));
-        generator.addProvider(event.includeServer(), new CAFillingRecipeGen(output, lookupProvider));
-        generator.addProvider(event.includeServer(), new CAMixingRecipeGen(output, lookupProvider));
-        generator.addProvider(event.includeServer(), new CAMechanicalCrafterRecipeGen(output, lookupProvider));
-        generator.addProvider(event.includeServer(), new CAPressingRecipeGen(output, lookupProvider));
+//        generator.addProvider(event.includeServer(), new CAFillingRecipeGen(output, lookupProvider));
+//        generator.addProvider(event.includeServer(), new CAMixingRecipeGen(output, lookupProvider));
+//        generator.addProvider(event.includeServer(), new CAMechanicalCrafterRecipeGen(output, lookupProvider));
+//        generator.addProvider(event.includeServer(), new CAPressingRecipeGen(output, lookupProvider));
 
         generator.addProvider(event.includeServer(), new CAChargingRecipeProvider(output,lookupProvider, CreateAddition.MODID));
         generator.addProvider(event.includeServer(), new CARollingRecipeGen(output,lookupProvider));

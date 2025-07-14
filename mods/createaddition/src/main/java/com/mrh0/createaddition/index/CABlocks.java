@@ -15,6 +15,7 @@ import com.mrh0.createaddition.blocks.digital_adapter.DigitalAdapterBlock;
 import com.mrh0.createaddition.blocks.modular_accumulator.*;
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceBlock;
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceMovement;
+import com.mrh0.createaddition.datagen.Models.BlockGenHelper;
 import com.mrh0.createaddition.energy.NodeMovementBehaviour;
 import com.mrh0.createaddition.blocks.creative_energy.CreativeEnergyBlock;
 import com.mrh0.createaddition.blocks.electric_motor.ElectricMotorBlock;
@@ -23,14 +24,18 @@ import com.mrh0.createaddition.blocks.redstone_relay.RedstoneRelayBlock;
 import com.mrh0.createaddition.blocks.rolling_mill.RollingMillBlock;
 import com.mrh0.createaddition.blocks.tesla_coil.TeslaCoilBlock;
 import com.mrh0.createaddition.item.BiomassPelletBlock;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.tterrag.registrate.util.entry.BlockEntry;
+
+import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
@@ -38,6 +43,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 @SuppressWarnings("removal")
 public class CABlocks {
@@ -51,6 +61,8 @@ public class CABlocks {
 			.tag(AllBlockTags.SAFE_NBT.tag) //Dono what this tag means (contraption safe?).
 			//.transform(CStress.setCapacity(Config.MAX_STRESS.get()/256f))
 			//.onRegister(BlockStressValues.setGeneratorSpeed(256, true))
+			.transform(pickaxeOnly())
+			.blockstate(BlockGenHelper.directionalBlockState())
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -59,6 +71,8 @@ public class CABlocks {
 			.initialProperties(SharedProperties::softMetal)
 			//.transform(CStress.setImpact(Config.MAX_STRESS.get()/256f))
 			.tag(AllBlockTags.SAFE_NBT.tag) //Dono what this tag means (contraption safe?).
+			.transform(pickaxeOnly())
+		.blockstate(BlockGenHelper.directionalBlockState())
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -67,12 +81,15 @@ public class CABlocks {
 			.initialProperties(SharedProperties::stone)
 			//.transform(CStress.setImpact(Config.ROLLING_MILL_STRESS.get()))
 			.tag(AllBlockTags.SAFE_NBT.tag) //Dono what this tag means (contraption safe?).
+			.transform(axeOrPickaxe())
+			.blockstate(BlockGenHelper.horizontalBlockState())
 			.item()
 			.transform(customItemModel())
 			.register();
 
 	public static final BlockEntry<CreativeEnergyBlock> CREATIVE_ENERGY = CreateAddition.REGISTRATE.block("creative_energy", CreativeEnergyBlock::new)
 			.initialProperties(SharedProperties::softMetal)
+			.blockstate(BlockGenHelper.simpleBlock())
 			.item()
 			.properties(p -> p.rarity(Rarity.EPIC))
 			.transform(customItemModel())
@@ -81,22 +98,25 @@ public class CABlocks {
 	public static final BlockEntry<SmallConnectorBlock> SMALL_CONNECTOR = CreateAddition.REGISTRATE.block("connector",  SmallConnectorBlock::new)
 			.initialProperties(SharedProperties::stone)
 			.onRegister(movementBehaviour(new NodeMovementBehaviour()))
+			.blockstate(SmallConnectorBlock::makeBlockState)
 			.item()
-			.transform(customItemModel())
+			.transform(customItemModel("connector","small","item"))
 			.register();
 
 	public static final BlockEntry<SmallLightConnectorBlock> SMALL_LIGHT_CONNECTOR = CreateAddition.REGISTRATE.block("small_light_connector",  SmallLightConnectorBlock::new)
 			.initialProperties(SharedProperties::stone)
 			.onRegister(movementBehaviour(new NodeMovementBehaviour()))
+			.blockstate(SmallLightConnectorBlock::makeBlockState)
 			.item()
-			.transform(customItemModel())
+			.transform(customItemModel("connector","small_light","item"))
 			.register();
 
 	public static final BlockEntry<LargeConnectorBlock> LARGE_CONNECTOR = CreateAddition.REGISTRATE.block("large_connector",  LargeConnectorBlock::new)
 			.initialProperties(SharedProperties::stone)
 			.onRegister(movementBehaviour(new NodeMovementBehaviour()))
+			.blockstate(LargeConnectorBlock::makeBlockState)
 			.item()
-			.transform(customItemModel())
+			.transform(customItemModel("connector","large","item"))
 			.register();
 
 	/*public static final BlockEntry<AccumulatorBlock> ACCUMULATOR = CreateAddition.REGISTRATE.block("accumulator",  AccumulatorBlock::new)
@@ -110,6 +130,7 @@ public class CABlocks {
 	public static final BlockEntry<RedstoneRelayBlock> REDSTONE_RELAY = CreateAddition.REGISTRATE.block("redstone_relay",  RedstoneRelayBlock::new)
 			.initialProperties(SharedProperties::stone)
 			.onRegister(movementBehaviour(new NodeMovementBehaviour()))
+			.blockstate(RedstoneRelayBlock::makeBlockState)
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -117,15 +138,19 @@ public class CABlocks {
 	public static final BlockEntry<CACakeBlock> CHOCOLATE_CAKE = CreateAddition.REGISTRATE.block("chocolate_cake",  CACakeBlock::new)
 			.initialProperties(() -> Blocks.CAKE)
 			.properties(props -> props.sound(SoundType.WOOL).strength(0.5f))
+			.blockstate(CACakeBlock::makeBlockState)
 			.item()
 			.transform(customItemModel())
+			.loot((lt,b) -> lt.add(b, BlockLootSubProvider.noDrop()))
 			.register();
 
 	public static final BlockEntry<CACakeBlock> HONEY_CAKE = CreateAddition.REGISTRATE.block("honey_cake",  CACakeBlock::new)
 			.initialProperties(() -> Blocks.CAKE)
 			.properties(props -> props.sound(SoundType.WOOL).strength(0.5f))
+			.blockstate(CACakeBlock::makeBlockState)
 			.item()
 			.transform(customItemModel())
+			.loot((lt,b) -> lt.add(b, BlockLootSubProvider.noDrop()))
 			.register();
 
 	/*public static final BlockEntry<HarmfulPlantBlock> HARMFUL_PLANT = CreateAddition.REGISTRATE.block("harmful_plant",  HarmfulPlantBlock::new)
@@ -139,6 +164,7 @@ public class CABlocks {
 			.block("barbed_wire",  BarbedWireBlock::new)
 			.initialProperties(() -> Blocks.COBWEB)
 			.properties(props -> props.noCollission().requiresCorrectToolForDrops().strength(4.0F))
+			.blockstate(BarbedWireBlock::makeBlockState)
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -146,6 +172,7 @@ public class CABlocks {
 	public static final BlockEntry<TeslaCoilBlock> TESLA_COIL = CreateAddition.REGISTRATE
 			.block("tesla_coil",  TeslaCoilBlock::new)
 			.initialProperties(SharedProperties::softMetal)
+			.blockstate(TeslaCoilBlock::makeBlockState)
 			.item(AssemblyOperatorBlockItem::new)
 			.transform(customItemModel())
 			.register();
@@ -158,6 +185,7 @@ public class CABlocks {
 			.onRegister(connectedTextures(ModularAccumulatorCTBehaviour::new))
 			.transform(displaySource(CADisplaySources.MODULAR_ACCUMULATOR))
 			.addLayer(() -> RenderType::cutoutMipped)
+			.blockstate(ModularAccumulatorBlock::makeBlockState)
 			.item(ModularAccumulatorBlockItem::new)
 			.transform(customItemModel())
 			.register();
@@ -169,11 +197,25 @@ public class CABlocks {
 			.transform(pickaxeOnly())
 			.addLayer(() -> RenderType::cutoutMipped)
 			.blockstate((c, p) -> p.simpleBlock(c.getEntry(), AssetLookup.partialBaseModel(c, p)))
+			.loot((lt,b) -> lt.add(b, LootTable.lootTable()
+                    .withPool(
+                            LootPool.lootPool()
+                                    .setRolls(ConstantValue.exactly(1))
+                                    .add(LootItem.lootTableItem(AllBlocks.BLAZE_BURNER))
+                                    .when(ExplosionCondition.survivesExplosion())
+                    )
+                    .withPool(
+                            LootPool.lootPool()
+                                    .setRolls(ConstantValue.exactly(1))
+                                    .add(LootItem.lootTableItem(CAItems.STRAW))
+                    )
+            ))
 			.register();
 
 	public static final BlockEntry<PortableEnergyInterfaceBlock> PORTABLE_ENERGY_INTERFACE = CreateAddition.REGISTRATE.block("portable_energy_interface",  PortableEnergyInterfaceBlock::new)
 			.initialProperties(SharedProperties::softMetal)
 			.onRegister(movementBehaviour(new PortableEnergyInterfaceMovement()))
+			.blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
 			.item()
 			.transform(customItemModel())
 			.addLayer(() -> RenderType::cutoutMipped)
@@ -188,6 +230,7 @@ public class CABlocks {
 			.block("biomass_pellet_block", Block::new)
 			.initialProperties(() -> Blocks.DRIED_KELP_BLOCK)
 			.properties(p -> p.mapColor(MapColor.COLOR_GREEN))
+			.blockstate(BlockGenHelper.simpleBlock())
 			.item(BiomassPelletBlock::new)
 			.transform(customItemModel())
 			.register();
@@ -195,6 +238,7 @@ public class CABlocks {
 	public static final BlockEntry<Block> ELECTRUM_BLOCK = CreateAddition.REGISTRATE.block("electrum_block", Block::new)
 			.initialProperties(() -> Blocks.GOLD_BLOCK)
 			.properties(p -> p.mapColor(MapColor.TERRACOTTA_YELLOW))
+			.blockstate(BlockGenHelper.simpleBlock())
 			.item()
 			.transform(customItemModel())
 			.register();
@@ -206,6 +250,7 @@ public class CABlocks {
 			.transform(displaySource(CADisplaySources.DIGITAL_ADAPTER))
 //			.item(DigitalAdapterBlockItem::new)
 			//.transform(customItemModel())
+			.blockstate(BlockGenHelper.simpleBlock())
 			.item()
 			.transform(customItemModel())
 			.register();

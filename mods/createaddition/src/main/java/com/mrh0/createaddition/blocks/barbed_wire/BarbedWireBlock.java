@@ -1,10 +1,14 @@
 package com.mrh0.createaddition.blocks.barbed_wire;
 
+import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.index.CADamageTypes;
+import com.tterrag.registrate.providers.DataGenContext;
+import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,6 +21,10 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.model.generators.BlockModelProvider;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import net.neoforged.neoforge.common.IShearable;
 
 public class BarbedWireBlock extends Block implements IShearable {
@@ -35,7 +43,7 @@ public class BarbedWireBlock extends Block implements IShearable {
 			if(entity.hurt(CADamageTypes.barbedWire(level), CommonConfig.BARBED_WIRE_DAMAGE.get().floatValue()))
 				entity.playSound(SoundEvents.PLAYER_HURT_SWEET_BERRY_BUSH, 1f, 1f);
 		}
-		entity.makeStuckInBlock(state, new Vec3(0.25D, (double)0.05F, 0.25D));
+		entity.makeStuckInBlock(state, new Vec3(0.25D, 0.05D, 0.25D));
 	}
 
 	@Override
@@ -50,5 +58,18 @@ public class BarbedWireBlock extends Block implements IShearable {
 			return defaultBlockState().setValue(HORIZONTAL_FACING, c.getPlayer().isShiftKeyDown() ? c.getHorizontalDirection().getClockWise() : c.getHorizontalDirection()).setValue(VERTICAL, false);
 		else
 			return defaultBlockState().setValue(HORIZONTAL_FACING, c.getClickedFace().getOpposite()).setValue(VERTICAL, true);
+	}
+
+    public static void makeBlockState(DataGenContext<Block, BarbedWireBlock> ctx, RegistrateBlockstateProvider provider) {
+		BlockModelProvider models = provider.models();
+		String basePath = "block/barbed_wire/block";
+		ModelFile.ExistingModelFile model = models.getExistingFile(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, basePath));
+		VariantBlockStateBuilder builder = provider.getVariantBuilder(ctx.get());
+		builder.forAllStates(state -> ConfiguredModel.builder()
+				.modelFile(model)
+				.rotationX(state.getValue(VERTICAL) ? 90 : 0)
+				.rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + (state.getValue(VERTICAL) ? 0: 90)) % 360)
+				.build()
+		);
 	}
 }

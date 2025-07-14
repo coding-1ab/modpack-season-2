@@ -1,5 +1,6 @@
 package com.mrh0.createaddition.blocks.redstone_relay;
 
+import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.energy.IWireNode;
 import com.mrh0.createaddition.energy.NodeRotation;
 import com.mrh0.createaddition.index.CABlockEntities;
@@ -9,10 +10,13 @@ import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 
+import com.tterrag.registrate.providers.DataGenContext;
+import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
 import net.createmod.catnip.math.VoxelShaper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
@@ -41,6 +45,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.ticks.TickPriority;
+import net.neoforged.neoforge.client.model.generators.*;
 import org.jetbrains.annotations.Nullable;
 
 public class RedstoneRelayBlock extends Block implements IBE<RedstoneRelayBlockEntity>, IWrenchable, TransformableBlock {
@@ -272,5 +277,20 @@ public class RedstoneRelayBlock extends Block implements IBE<RedstoneRelayBlockE
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		return CABlockEntities.REDSTONE_RELAY.create(pos, state);
+	}
+
+	public static void makeBlockState(DataGenContext<Block, RedstoneRelayBlock> ctx, RegistrateBlockstateProvider provider) {
+		BlockModelProvider models = provider.models();
+		String basePath = "block/redstone_relay/";
+		ModelFile.ExistingModelFile onModel = models.getExistingFile(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, basePath + "redstone_relay_on"));
+		ModelFile.ExistingModelFile offModel = models.getExistingFile(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, basePath + "redstone_relay_off"));
+		VariantBlockStateBuilder builder = provider.getVariantBuilder(ctx.get());
+		builder.forAllStatesExcept(state -> ConfiguredModel.builder()
+				.modelFile(state.getValue(POWERED) ? onModel : offModel)
+				.rotationX(state.getValue(VERTICAL) ? 90 : 0)
+				.rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + (state.getValue(VERTICAL) ? 0: 90)) % 360)
+				.build(),
+				NodeRotation.ROTATION
+		);
 	}
 }

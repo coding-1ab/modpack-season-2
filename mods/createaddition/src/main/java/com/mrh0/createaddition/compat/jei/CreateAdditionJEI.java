@@ -81,7 +81,7 @@ public class CreateAdditionJEI implements IModPlugin {
 		//registration.addRecipeCatalyst(new ItemStack(CAItems.DIAMOND_GRIT_SANDPAPER.get()), new ResourceLocation(Create.ID, "deploying"));
 	}
 
-	private <T extends Recipe<?>> CategoryBuilder<T> builder(Class<? extends T> recipeClass) {
+	private <T extends Recipe<?>> CategoryBuilder<T> builder(Class<? extends RecipeHolder<T>> recipeClass) {
 		return new CategoryBuilder<>(recipeClass);
 	}
 
