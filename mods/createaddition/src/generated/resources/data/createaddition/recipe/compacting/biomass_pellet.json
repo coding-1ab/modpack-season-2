@@ -7,11 +7,11 @@
   ],
   "results": [
     {
-      "amount": 50,
-      "id": "minecraft:water"
+      "id": "createaddition:biomass_pellet"
     },
     {
-      "id": "createaddition:biomass_pellet"
+      "amount": 50,
+      "id": "minecraft:water"
     }
   ]
 }

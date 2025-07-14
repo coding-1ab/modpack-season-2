@@ -16,7 +16,6 @@ import java.util.concurrent.ExecutionException;
 
 import static com.mrh0.createaddition.recipe.charging.ChargingRecipe.TYPE_INFO;
 
-
 public class ChargingRecipeGen extends ProcessingRecipeGen<ChargingRecipeParams, ChargingRecipe, ChargingRecipe.Builder<ChargingRecipe>> {
     protected final HolderLookup.Provider provider;
 

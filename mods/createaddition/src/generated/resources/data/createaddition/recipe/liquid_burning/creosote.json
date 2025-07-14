@@ -6,10 +6,13 @@
     }
   ],
   "type": "createaddition:liquid_burning",
-  "burnTime": 4800,
-  "input": {
-    "type": "fluid_tag",
-    "amount": 1000,
-    "fluid_tag": "c:creosote"
-  }
+  "burn_time": 4800,
+  "ingredients": [
+    {
+      "type": "fluid_tag",
+      "amount": 1000,
+      "fluid_tag": "c:creosote"
+    }
+  ],
+  "results": []
 }

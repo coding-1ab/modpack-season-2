@@ -50,7 +50,7 @@ public class CAChargingRecipeProvider extends ChargingRecipeGen {
     GeneratedRecipe
             CHANNELING = create(CreateAddition.asResource(Enchantments.CHANNELING.location().getPath()), (b) -> b.require(Items.BOOK)
             .enchantedOutput(new ItemStack(Items.ENCHANTED_BOOK), Enchantments.CHANNELING, provider)
-            .energy(4000)
+            .energy(4_000_000)
             .maxChargeRate(200)),
 
     OXIDIZED_COPPER = deoxidize(Blocks.OXIDIZED_COPPER),
