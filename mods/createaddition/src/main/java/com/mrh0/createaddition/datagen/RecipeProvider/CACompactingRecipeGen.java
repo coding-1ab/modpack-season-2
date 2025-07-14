@@ -36,8 +36,4 @@ public class CACompactingRecipeGen extends CompactingRecipeGen {
             .output( CAFluids.SEED_OIL.getSource().getSource(), 100)
     )
     ;
-
-    public CACompactingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, registries, CreateAddition.MODID);
-    }
 }
