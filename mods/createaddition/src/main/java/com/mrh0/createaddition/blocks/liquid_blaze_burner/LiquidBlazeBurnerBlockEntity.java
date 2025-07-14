@@ -149,8 +149,11 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 
 		// Added try catch because this crashes for some reason for a minority of players, very strange.
 		try {
-			remainingBurnTime += recipeCache.get().value().getBurnTime() / 10;
-			activeFuel = recipeCache.get().value().isSuperheated() ? FuelType.SPECIAL : FuelType.NORMAL;
+			var recipe = recipeCache.get().value();
+			var burnTime = recipe.getBurnTime() / 10;
+			var fuelType = recipe.isSuperheated() ? FuelType.SPECIAL : FuelType.NORMAL;
+			remainingBurnTime = activeFuel == fuelType ? remainingBurnTime + burnTime : burnTime;
+			activeFuel = fuelType;
 		}
 		catch(Exception e) {
 			return;

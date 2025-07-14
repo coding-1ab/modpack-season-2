@@ -9,7 +9,6 @@ import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.recipe.rolling.RollingRecipe;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
-import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
 import com.simibubi.create.foundation.item.ItemHelper;
@@ -24,7 +23,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -153,7 +151,7 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 		ItemStack stackInSlot = inputInv.getStackInSlot(0);
 		stackInSlot.shrink(1);
 		inputInv.setStackInSlot(0, stackInSlot);
-		ItemHandlerHelper.insertItemStacked(outputInv, lastRecipe.getResultItem().copy(), false);
+		ItemHandlerHelper.insertItemStacked(outputInv, lastRecipe.getResultStack().copy(), false);
 
 		sendData();
 		setChanged();

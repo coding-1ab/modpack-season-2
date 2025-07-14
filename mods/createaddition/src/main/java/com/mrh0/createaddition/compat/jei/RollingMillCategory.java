@@ -1,6 +1,5 @@
 package com.mrh0.createaddition.compat.jei;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrh0.createaddition.recipe.rolling.RollingRecipe;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 
@@ -28,7 +27,7 @@ public class RollingMillCategory extends CARecipeCategory<RollingRecipe> {
 		builder
 				.addSlot(RecipeIngredientRole.OUTPUT, 140, 28)
 				.setBackground(getRenderedSlot(), -1, -1)
-				.addItemStack(recipe.getResultItem());
+				.addItemStack(recipe.getResultStack());
 	}
 
 	@Override

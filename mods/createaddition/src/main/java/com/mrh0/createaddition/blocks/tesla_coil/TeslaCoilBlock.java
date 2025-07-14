@@ -83,16 +83,18 @@ public class TeslaCoilBlock extends Block implements IBE<TeslaCoilBlockEntity>, 
     public static void makeBlockState(DataGenContext<Block, TeslaCoilBlock> ctx, RegistrateBlockstateProvider provider) {
 		BlockModelProvider models = provider.models();
 		ModelFile.ExistingModelFile modelFile = models.getExistingFile(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "block/tesla_coil/block"));
+		ModelFile.ExistingModelFile modelFilePowered = models.getExistingFile(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "block/tesla_coil/powered"));
 
 		VariantBlockStateBuilder builder = provider.getVariantBuilder(ctx.get());
-		builder.forAllStatesExcept(state -> {
+		builder.forAllStates(state -> {
 			Direction direction = state.getValue(FACING);
+			boolean powered = state.getValue(POWERED);
 			return ConfiguredModel.builder()
-							.modelFile(modelFile)
+							.modelFile(powered ? modelFilePowered : modelFile)
 							.rotationX(direction == Direction.UP ? 180 : direction == Direction.DOWN ? 0 : 90)
 							.rotationY(((int) direction.toYRot() + (direction.getAxis()
 									.isVertical() ? 180 : 0)) % 360)
 							.build();
-				}, BlockStateProperties.POWERED);
+				});
 	}
 }

@@ -2,6 +2,7 @@ package com.mrh0.createaddition.datagen.RecipeBuilders;
 
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.recipe.liquid_burning.LiquidBurningRecipe;
+import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
 import com.simibubi.create.foundation.fluid.FluidIngredient;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -49,13 +50,13 @@ public class CALiquidBurningRecipeBuilder extends CARecipeBuilder {
 
     @Override
     public void save(RecipeOutput recipeOutput, ResourceLocation resourceLocation) {
-        LiquidBurningRecipe chargingRecipe = new LiquidBurningRecipe(
-                Objects.requireNonNullElse(this.group, ""),
-                this.ingredient,
-                this.burnTime,
-                this.superheated
-        );
-        recipeOutput.accept(resourceLocation.withPrefix("liquid_burning/"), chargingRecipe, null);
+//        LiquidBurningRecipe chargingRecipe = new LiquidBurningRecipe(
+//                Objects.requireNonNullElse(this.group, ""),
+//                this.ingredient,
+//                this.burnTime,
+//                this.superheated
+//        );
+//        recipeOutput.accept(resourceLocation.withPrefix("liquid_burning/"), chargingRecipe, null);
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.mrh0.createaddition.datagen.RecipeProvider;
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.datagen.TagProvider.CATagRegister;
 import com.mrh0.createaddition.index.CAItems;
-import com.simibubi.create.*;
+import com.simibubi.create.AllItems;
 import com.simibubi.create.api.data.recipe.CrushingRecipeGen;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
 import net.minecraft.core.HolderLookup;
@@ -19,7 +19,6 @@ public class CACrushingRecipeGen extends CrushingRecipeGen {
         super(output, provider, CreateAddition.MODID);
     }
 
-    @SuppressWarnings("unused")
     GeneratedRecipe
 
     DIAMOND = create(CreateAddition.MODID,() -> Items.DIAMOND, b -> b.duration(300)

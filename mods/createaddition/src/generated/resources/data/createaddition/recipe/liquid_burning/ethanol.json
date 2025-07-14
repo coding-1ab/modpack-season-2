@@ -6,10 +6,13 @@
     }
   ],
   "type": "createaddition:liquid_burning",
-  "burnTime": 8000,
-  "input": {
-    "type": "fluid_tag",
-    "amount": 1000,
-    "fluid_tag": "c:ethanol"
-  }
+  "burn_time": 8000,
+  "ingredients": [
+    {
+      "type": "fluid_tag",
+      "amount": 1000,
+      "fluid_tag": "c:ethanol"
+    }
+  ],
+  "results": []
 }
