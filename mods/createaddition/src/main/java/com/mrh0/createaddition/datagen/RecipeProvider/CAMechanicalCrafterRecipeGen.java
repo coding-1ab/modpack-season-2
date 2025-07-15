@@ -18,7 +18,8 @@ public class CAMechanicalCrafterRecipeGen extends MechanicalCraftingRecipeGen {
     }
 
     GeneratedRecipe
-    ALTERNATOR = create(CABlocks.ALTERNATOR::get).recipe(b -> b.key('C', CAItems.CAPACITOR)
+    ALTERNATOR = create(CABlocks.ALTERNATOR::get).recipe(b -> b
+            .key('C', CAItems.CAPACITOR)
             .key('I', CATagRegister.Items.commonTags("plates","iron"))
             .key('R', CATagRegister.Items.IRON_RODS)
             .key('S', CAItems.COPPER_SPOOL)
@@ -28,7 +29,8 @@ public class CAMechanicalCrafterRecipeGen extends MechanicalCraftingRecipeGen {
             .patternLine("ISRSI")
             .patternLine(" ICI ")
     ),
-    ELECTRIC_MOTOR = create(CABlocks.ELECTRIC_MOTOR::get).recipe(b -> b.key('A', AllItems.ANDESITE_ALLOY)
+    ELECTRIC_MOTOR = create(CABlocks.ELECTRIC_MOTOR::get).recipe(b -> b
+            .key('A', AllItems.ANDESITE_ALLOY)
             .key('B', CATagRegister.Items.commonTags("plates","brass"))
             .key('C', CAItems.CAPACITOR)
             .key('R', CATagRegister.Items.IRON_RODS)
@@ -38,7 +40,8 @@ public class CAMechanicalCrafterRecipeGen extends MechanicalCraftingRecipeGen {
             .patternLine("BSRSB")
             .patternLine(" BCB ")
     ),
-    TESLA_COIL = create(CABlocks.TESLA_COIL::get).recipe(b -> b.key('A', AllItems.ANDESITE_ALLOY)
+    TESLA_COIL = create(CABlocks.TESLA_COIL::get).recipe(b -> b
+            .key('A', AllItems.ANDESITE_ALLOY)
             .key('B', AllBlocks.BRASS_CASING.asItem())
             .key('C', CAItems.CAPACITOR)
             .key('P', CATagRegister.Items.commonTags("plates","brass"))
@@ -48,6 +51,5 @@ public class CAMechanicalCrafterRecipeGen extends MechanicalCraftingRecipeGen {
             .patternLine(" A ")
             .patternLine("CBC")
             .patternLine("PEP")
-    )
-    ;
+    );
 }
