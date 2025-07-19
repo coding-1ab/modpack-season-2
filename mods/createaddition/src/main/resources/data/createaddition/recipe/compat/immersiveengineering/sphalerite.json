@@ -21,7 +21,7 @@
     }
   ],
   "spoils": [
-  	{
+    {
       "chance": 0.2,
       "output": {
         "id": "minecraft:gravel"
@@ -40,15 +40,17 @@
       }
     }
   ],
-  "dimensions": [
-    "minecraft:overworld"
+  "biome_predicates": [
+    [
+      "minecraft:is_overworld"
+    ]
   ],
   "weight": 15,
   "fail_chance": 0.05,
   "neoforge:conditions": [
-  	{
+    {
       "type": "neoforge:mod_loaded",
       "modid": "immersiveengineering"
-  	} 
+    }
   ]
 }

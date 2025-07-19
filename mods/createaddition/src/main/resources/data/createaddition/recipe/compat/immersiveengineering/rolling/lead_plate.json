@@ -1,12 +1,16 @@
 {
 	"type":"createaddition:rolling",
-	"input": {
-      	"tag": "c:plates/lead"
-	},
-	"result": {
-		"id": "immersiveengineering:wire_lead",
-		"count": 2
-	},
+	"ingredients": [
+		{
+      		"tag": "c:plates/lead"
+		}
+	],
+	"results": [
+		{
+			"id": "immersiveengineering:wire_lead",
+			"count": 2
+		}
+	],
 	"neoforge:conditions": [ {
 		"type": "neoforge:mod_loaded",
 		"modid": "immersiveengineering"
