@@ -123,8 +123,8 @@ public class CreateRegistrate extends AbstractRegistrate<CreateRegistrate> {
 			String modId = callback.id().getNamespace();
 			String entryId = callback.id().getPath();
 			if (callback.registry().equals(type) && getModid().equals(modId) && name.equals(entryId)) {
-				//noinspection unchecked
-				((Consumer<T>) callback.callback()).accept(entry.get());
+				//noinspection unchecked,rawtypes
+				callback.callback().accept((RegistryEntry) entry);
 			}
 		}
 

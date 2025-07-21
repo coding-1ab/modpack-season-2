@@ -18,14 +18,14 @@ import com.simibubi.create.content.schematics.packet.SchematicPlacePacket;
 import com.simibubi.create.content.schematics.packet.SchematicSyncPacket;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
-import net.createmod.catnip.platform.CatnipServices;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
 import net.createmod.catnip.outliner.AABBOutline;
-import net.minecraft.client.DeltaTracker;
+import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
@@ -297,7 +297,7 @@ public class SchematicHandler implements LayeredDraw.Layer {
 	public void onKeyInput(int key, boolean pressed) {
 		if (!active)
 			return;
-		if (key != AllKeys.TOOL_MENU.getBoundCode())
+		if (!AllKeys.TOOL_MENU.doesModifierAndCodeMatch(key))
 			return;
 
 		if (pressed && !selectionScreen.focused)

@@ -14,6 +14,9 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.Create;
 import com.simibubi.create.api.packager.unpacking.UnpackingHandler;
+import com.simibubi.create.compat.Mods;
+import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
+import com.simibubi.create.compat.computercraft.ComputerCraftProxy;
 import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceBlockEntity;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.box.PackageItem;
@@ -37,6 +40,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipul
 import com.simibubi.create.foundation.blockEntity.behaviour.inventory.VersionedInventoryTrackerBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
 
+import dan200.computercraft.api.peripheral.PeripheralCapability;
 import net.createmod.catnip.codecs.CatnipCodecUtils;
 import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.math.BlockFace;
@@ -82,6 +86,10 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	public int animationTicks;
 	public boolean animationInward;
 
+	public AbstractComputerBehaviour computerBehaviour;
+	public Boolean hasCustomComputerAddress;
+	public String customComputerAddress;
+
 	private InventorySummary availableItems;
 	private VersionedInventoryTrackerBehaviour invVersionTracker;
 
@@ -100,6 +108,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		animationInward = true;
 		queuedExitingPackages = new LinkedList<>();
 		signBasedAddress = "";
+		customComputerAddress = "";
+		hasCustomComputerAddress = false;
 		buttonCooldown = 0;
 	}
 
@@ -109,6 +119,14 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			AllBlockEntityTypes.PACKAGER.get(),
 			(be, context) -> be.inventory
 		);
+
+		if (Mods.COMPUTERCRAFT.isLoaded()) {
+			event.registerBlockEntity(
+				PeripheralCapability.get(),
+				AllBlockEntityTypes.PACKAGER.get(),
+				(be, context) -> be.computerBehaviour.getPeripheralCapability()
+			);
+		}
 	}
 
 	@Override
@@ -117,6 +135,7 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 			.withFilter(this::supportsBlockEntity));
 		behaviours.add(invVersionTracker = new VersionedInventoryTrackerBehaviour(this));
 		behaviours.add(advancements = new AdvancementBehaviour(this, AllAdvancements.PACKAGER));
+		behaviours.add(computerBehaviour = ComputerCraftProxy.behaviour(this));
 	}
 
 	private boolean supportsBlockEntity(BlockEntity target) {
@@ -127,6 +146,12 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 	public void initialize() {
 		super.initialize();
 		recheckIfLinksPresent();
+	}
+
+	@Override
+	public void invalidate() {
+		super.invalidate();
+		computerBehaviour.removePeripheral();
 	}
 
 	@Override
@@ -330,7 +355,9 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		attemptToSend(null);
 
 		// dont send multiple packages when a button signal length is received
-		buttonCooldown = 40;
+		if (buttonCooldown <= 0) { // still on button cooldown, don't prolong it
+			buttonCooldown = 40;
+		}
 	}
 
 	public boolean unwrapBox(ItemStack box, boolean simulate) {
@@ -505,13 +532,18 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		notifyUpdate();
 	}
 
-	protected void updateSignAddress() {
+	public void updateSignAddress() {
 		signBasedAddress = "";
 		for (Direction side : Iterate.directions) {
 			String address = getSign(side);
 			if (address == null || address.isBlank())
 				continue;
 			signBasedAddress = address;
+		}
+		if (computerBehaviour.hasAttachedComputer() && hasCustomComputerAddress) {
+			signBasedAddress = customComputerAddress;
+		} else {
+			hasCustomComputerAddress = false;
 		}
 	}
 
@@ -545,6 +577,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		animationInward = compound.getBoolean("AnimationInward");
 		animationTicks = compound.getInt("AnimationTicks");
 		signBasedAddress = compound.getString("SignAddress");
+		customComputerAddress = compound.getString("ComputerAddress");
+		hasCustomComputerAddress = compound.getBoolean("HasComputerAddress");
 		heldBox = ItemStack.parseOptional(registries, compound.getCompound("HeldBox"));
 		previouslyUnwrapped = ItemStack.parseOptional(registries, compound.getCompound("InsertedBox"));
 		if (clientPacket)
@@ -564,6 +598,8 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 		compound.putBoolean("AnimationInward", animationInward);
 		compound.putInt("AnimationTicks", animationTicks);
 		compound.putString("SignAddress", signBasedAddress);
+		compound.putString("ComputerAddress", customComputerAddress);
+		compound.putBoolean("HasComputerAddress", hasCustomComputerAddress);
 		compound.put("HeldBox", heldBox.saveOptional(registries));
 		compound.put("InsertedBox", previouslyUnwrapped.saveOptional(registries));
 		if (clientPacket)
@@ -638,5 +674,4 @@ public class PackagerBlockEntity extends SmartBlockEntity {
 
 		return false;
 	}
-
 }

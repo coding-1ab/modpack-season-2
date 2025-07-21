@@ -55,10 +55,10 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.HitResult.Type;
 
-
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
+// TODO - Split up into specific overlays
 public class BlueprintOverlayRenderer {
 
 	public static final LayeredDraw.Layer OVERLAY = BlueprintOverlayRenderer::renderOverlay;

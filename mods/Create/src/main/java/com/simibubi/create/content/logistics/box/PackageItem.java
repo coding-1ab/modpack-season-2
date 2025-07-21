@@ -49,11 +49,11 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
 public class PackageItem extends Item {
-
 	public static final int SLOTS = 9;
 
 	public PackageStyle style;
@@ -124,9 +124,47 @@ public class PackageItem extends Item {
 		}
 	}
 
+	public static boolean hasOrderData(ItemStack box) {
+		return box.has(AllDataComponents.PACKAGE_ORDER_DATA);
+	}
+
+	public static int getIndex(ItemStack box) {
+		if (box.has(AllDataComponents.PACKAGE_ORDER_DATA)) {
+			//noinspection DataFlowIssue
+			return box.get(AllDataComponents.PACKAGE_ORDER_DATA).fragmentIndex();
+		} else {
+			return -1;
+		}
+	}
+
+	public static boolean isFinal(ItemStack box) {
+		//noinspection DataFlowIssue
+		return box.has(AllDataComponents.PACKAGE_ORDER_DATA) && box.get(AllDataComponents.PACKAGE_ORDER_DATA).isFinal();
+	}
+
+	public static int getLinkIndex(ItemStack box) {
+		if (box.has(AllDataComponents.PACKAGE_ORDER_DATA)) {
+			//noinspection DataFlowIssue
+			return box.get(AllDataComponents.PACKAGE_ORDER_DATA).linkIndex();
+		} else {
+			return -1;
+		}
+	}
+
+	public static boolean isFinalLink(ItemStack box) {
+		//noinspection DataFlowIssue
+		return box.has(AllDataComponents.PACKAGE_ORDER_DATA) && box.get(AllDataComponents.PACKAGE_ORDER_DATA).isFinalLink();
+	}
+
+	@Nullable
+	/**
+	 * Ordered items and their amount in the original, combined request\n
+	 * (Present in all non-redstone packages)
+	 */
 	public static PackageOrderWithCrafts getOrderContext(ItemStack box) {
 		if (box.has(AllDataComponents.PACKAGE_ORDER_DATA)) {
 			PackageOrderData data = box.get(AllDataComponents.PACKAGE_ORDER_DATA);
+			//noinspection DataFlowIssue
 			return data.orderContext();
 		} else if (box.has(AllDataComponents.PACKAGE_ORDER_CONTEXT)) {
 			return box.get(AllDataComponents.PACKAGE_ORDER_CONTEXT);
@@ -403,8 +441,7 @@ public class PackageItem extends Item {
 			ByteBufCodecs.INT, PackageOrderData::fragmentIndex,
 			ByteBufCodecs.BOOL, PackageOrderData::isFinal,
 			CatnipStreamCodecBuilders.nullable(PackageOrderWithCrafts.STREAM_CODEC), PackageOrderData::orderContext,
-		    PackageOrderData::new
+			PackageOrderData::new
 		);
 	}
-
 }

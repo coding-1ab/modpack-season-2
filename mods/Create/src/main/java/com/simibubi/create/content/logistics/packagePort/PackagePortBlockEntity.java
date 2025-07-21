@@ -7,6 +7,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;
 import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides.ClipboardType;
+import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.animatedContainer.AnimatedContainerBehaviour;
@@ -47,7 +48,13 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 		super(type, pos, state);
 		addressFilter = "";
 		acceptsPackages = true;
-		inventory = new SmartInventory(18, this);
+		inventory = new SmartInventory(18, this, (slot, stack) -> {
+			if (!PackageItem.isPackage(stack))
+				return false;
+
+			String filterString = getFilterString();
+			return filterString != null && PackageItem.matchAddress(stack, filterString);
+		});
 		itemHandler = new PackagePortAutomationInventoryWrapper(inventory, this);
 	}
 
@@ -150,7 +157,10 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 		return ItemInteractionResult.SUCCESS;
 	}
 
-	protected void onOpenedManually() {};
+	protected void onOpenedManually() {
+	}
+
+	;
 
 	private void addAddressToClipboard(Player player, ItemStack mainHandItem) {
 		if (addressFilter == null || addressFilter.isBlank())
@@ -189,8 +199,8 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 
 	@Override
 	public Component getDisplayName() {
-        return Component.empty();
-    }
+		return Component.empty();
+	}
 
 	@Override
 	public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {

@@ -196,7 +196,7 @@ public class BasinRecipe extends StandardProcessingRecipe<RecipeInput> {
 
 	@Override
 	protected int getMaxInputCount() {
-		return 9;
+		return 64;
 	}
 
 	@Override

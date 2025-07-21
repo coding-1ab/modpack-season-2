@@ -21,6 +21,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -113,7 +114,7 @@ public class InputEvents {
 			event.setCanceled(true);
 			return;
 		}
-		
+
 		if (mc.player != null) {
 			ItemStack itemInHand = mc.player.getItemInHand(event.getHand());
 			if (AllItemTags.WRENCH.matches(itemInHand))

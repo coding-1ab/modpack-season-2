@@ -41,7 +41,9 @@ import com.simibubi.create.content.logistics.packagePort.frogport.FrogportBlockE
 import com.simibubi.create.content.logistics.packagePort.postbox.PostboxBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.repackager.RepackagerBlockEntity;
+import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlockEntity;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
+import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import com.simibubi.create.content.logistics.tunnel.BeltTunnelBlockEntity;
 import com.simibubi.create.content.logistics.tunnel.BrassTunnelBlockEntity;
 import com.simibubi.create.content.logistics.vault.ItemVaultBlockEntity;
@@ -72,6 +74,7 @@ import net.minecraft.world.level.LevelAccessor;
 
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.gui.map.RegisterMapDecorationRenderersEvent;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
@@ -257,7 +260,7 @@ public class CommonEvents {
 		}
 
 		@net.neoforged.bus.api.SubscribeEvent
-		public static void registerCapabilities(net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event) {
+		public static void registerCapabilities(RegisterCapabilitiesEvent event) {
 			ChuteBlockEntity.registerCapabilities(event);
 			SmartChuteBlockEntity.registerCapabilities(event);
 			BeltBlockEntity.registerCapabilities(event);
@@ -292,6 +295,8 @@ public class CommonEvents {
 			RepackagerBlockEntity.registerCapabilities(event);
 			PostboxBlockEntity.registerCapabilities(event);
 			FrogportBlockEntity.registerCapabilities(event);
+			RedstoneRequesterBlockEntity.registerCapabilities(event);
+			TableClothBlockEntity.registerCapabilities(event);
 		}
 	}
 }

@@ -115,7 +115,7 @@ configurations {
 
 repositories {
     maven { url = "https://maven.createmod.net" } // Ponder, Flywheel
-    maven { url = "https://mvn.devos.one/snapshots" } // Registrate
+    maven { url = "https://maven.ithundxr.dev/snapshots" } // Registrate
     maven { url = "https://maven.blamejared.com" } // JEI, Vazkii's Mods
     maven { url = "https://harleyoconnor.com/maven" } // Dynamic Trees
     maven { url = "https://maven.theillusivec4.top/" } // Curios API
@@ -272,10 +272,6 @@ publishing {
 
             artifact(slimJar) {
                 classifier = "slim"
-            }
-
-            artifact(tasks.jar) {
-                classifier = "all"
             }
         }
     }

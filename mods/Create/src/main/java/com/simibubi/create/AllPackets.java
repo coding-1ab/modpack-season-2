@@ -72,6 +72,7 @@ import com.simibubi.create.content.logistics.stockTicker.StockKeeperCategoryEdit
 import com.simibubi.create.content.logistics.stockTicker.StockKeeperCategoryHidingPacket;
 import com.simibubi.create.content.logistics.stockTicker.StockKeeperCategoryRefundPacket;
 import com.simibubi.create.content.logistics.stockTicker.StockKeeperLockPacket;
+import com.simibubi.create.content.logistics.tableCloth.ShopUpdatePacket;
 import com.simibubi.create.content.logistics.tunnel.TunnelFlapPacket;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkConfigurationPacket;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerBindPacket;
@@ -234,7 +235,8 @@ public enum AllPackets implements BasePacketPayload.PacketTypeProvider {
 	REDSTONE_REQUESTER_EFFECT(RedstoneRequesterEffectPacket.class, RedstoneRequesterEffectPacket.STREAM_CODEC),
 	KNOCKBACK(KnockbackPacket.class, KnockbackPacket.STREAM_CODEC),
 	TRAIN_MAP_SYNC(TrainMapSyncPacket.class, TrainMapSyncPacket.STREAM_CODEC),
-	CLIENTBOUND_CHAIN_CONVEYOR(ClientboundChainConveyorRidingPacket.class, ClientboundChainConveyorRidingPacket.STREAM_CODEC)
+	CLIENTBOUND_CHAIN_CONVEYOR(ClientboundChainConveyorRidingPacket.class, ClientboundChainConveyorRidingPacket.STREAM_CODEC),
+	SHOP_UPDATE(ShopUpdatePacket.class, ShopUpdatePacket.STREAM_CODEC);
 	;
 
 	static {

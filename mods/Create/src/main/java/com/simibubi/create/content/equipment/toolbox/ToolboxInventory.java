@@ -31,8 +31,9 @@ import net.minecraft.world.item.component.ItemContainerContents;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
 public class ToolboxInventory extends ItemStackHandler {
+	public static final int STACKS_PER_COMPARTMENT = 4;
 	public static final Codec<ToolboxInventory> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		ItemSlots.maxSizeCodec(32).fieldOf("items").forGetter(ItemSlots::fromHandler),
+		ItemSlots.maxSizeCodec(8 * STACKS_PER_COMPARTMENT).fieldOf("items").forGetter(ItemSlots::fromHandler),
 		ItemStack.OPTIONAL_CODEC.listOf().fieldOf("filters").forGetter(toolbox -> toolbox.filters)
 	).apply(instance, ToolboxInventory::deserialize));
 
@@ -53,7 +54,6 @@ public class ToolboxInventory extends ItemStackHandler {
 		}, ItemHelper::containerContentsFromHandler)
 	);
 
-	public static final int STACKS_PER_COMPARTMENT = 4;
 	List<ItemStack> filters;
 	boolean settling;
 	private ToolboxBlockEntity blockEntity;

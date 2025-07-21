@@ -1,8 +1,11 @@
 package com.simibubi.create.foundation.item;
 
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
+
+import org.jetbrains.annotations.NotNull;
 
 import com.simibubi.create.foundation.blockEntity.LegacyRecipeWrapper;
 import com.simibubi.create.foundation.blockEntity.SyncedBlockEntity;
@@ -29,8 +32,20 @@ public class SmartInventory extends LegacyRecipeWrapper
 		this(slots, be, 64, false);
 	}
 
+	public SmartInventory(int slots, SyncedBlockEntity be, BiPredicate<Integer, ItemStack> isValid) {
+		this(slots, be, 64, false, isValid);
+	}
+
 	public SmartInventory(int slots, SyncedBlockEntity be, int stackSize, boolean stackNonStackables) {
-		super(new SyncedStackHandler(slots, be, stackNonStackables, stackSize));
+		this(new SyncedStackHandler(slots, be, stackNonStackables, stackSize), stackSize, stackNonStackables);
+	}
+
+	public SmartInventory(int slots, SyncedBlockEntity be, int stackSize, boolean stackNonStackables, BiPredicate<Integer, ItemStack> isValid) {
+		this(new SyncedStackHandler(slots, be, stackNonStackables, stackSize, isValid), stackSize, stackNonStackables);
+	}
+
+	public SmartInventory(IItemHandlerModifiable inv, int stackSize, boolean stackNonStackables) {
+		super(inv);
 		this.stackNonStackables = stackNonStackables;
 		insertionAllowed = true;
 		extractionAllowed = true;
@@ -131,12 +146,18 @@ public class SmartInventory extends LegacyRecipeWrapper
 		return (SyncedStackHandler) inv;
 	}
 
-	private static class SyncedStackHandler extends ItemStackHandler {
+	protected static class SyncedStackHandler extends ItemStackHandler {
 
 		private SyncedBlockEntity blockEntity;
 		private boolean stackNonStackables;
 		private int stackSize;
+		private BiPredicate<Integer, ItemStack> isValid = super::isItemValid;
 		private Consumer<Integer> updateCallback;
+
+		public SyncedStackHandler(int slots, SyncedBlockEntity be, boolean stackNonStackables, int stackSize, BiPredicate<Integer, ItemStack> isValid) {
+			this(slots, be, stackNonStackables, stackSize);
+			this.isValid = isValid;
+		}
 
 		public SyncedStackHandler(int slots, SyncedBlockEntity be, boolean stackNonStackables, int stackSize) {
 			super(slots);
@@ -156,6 +177,11 @@ public class SmartInventory extends LegacyRecipeWrapper
 		@Override
 		public int getSlotLimit(int slot) {
 			return Math.min(stackNonStackables ? 64 : super.getSlotLimit(slot), stackSize);
+		}
+
+		@Override
+		public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+			return isValid.test(slot, stack);
 		}
 
 		public void whenContentsChange(Consumer<Integer> updateCallback) {
