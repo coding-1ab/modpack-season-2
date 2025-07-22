@@ -1,7 +1,6 @@
-package com.simibubi.create.foundation.mixin.compat;
+package com.simibubi.create.foundation.mixin.compat.xaeros;
 
 import org.spongepowered.asm.mixin.Mixin;
-
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import xaero.map.MapProcessor;

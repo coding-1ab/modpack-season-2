@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.simibubi.create.compat.Mods;
 
 import net.minecraft.client.Minecraft;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
@@ -41,9 +42,8 @@ public class TrainMapEvents {
 			FTBChunksTrainMap.mouseClick(event);
 		if (Mods.JOURNEYMAP.isLoaded())
 			JourneyTrainMap.mouseClick(event);
-		if(Mods.XAEROWORLDMAP.isLoaded()){
+		if (Mods.XAEROWORLDMAP.isLoaded())
 			XaeroTrainMap.mouseClick(event);
-		}
 	}
 
 	@SubscribeEvent

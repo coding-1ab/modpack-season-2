@@ -1,10 +1,12 @@
 package com.simibubi.create.compat.trainmap;
 
+import java.util.List;
+
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.Create;
 import com.simibubi.create.foundation.gui.RemovedGuiUtils;
-import com.simibubi.create.foundation.mixin.compat.XaeroFullscreenMapAccessor;
+import com.simibubi.create.foundation.mixin.compat.xaeros.XaeroFullscreenMapAccessor;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
@@ -15,21 +17,16 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
-
 import net.minecraft.world.level.Level;
-
-import net.minecraftforge.client.event.InputEvent;
-
 import xaero.map.gui.GuiMap;
 import xaero.map.gui.ScreenBase;
 
-import java.util.List;
+import net.minecraftforge.client.event.InputEvent;
 
 public class XaeroTrainMap {
-
 	private static boolean requesting;
 	private static ResourceKey<Level> renderedDimension;
-	private static boolean failedToProcessTrainMap = false;
+	private static boolean encounteredException = false;
 
 	public static void tick() {
 		if (!AllConfigs.client().showTrainMapOverlay.get() || !isMapOpen(Minecraft.getInstance().screen)) {
@@ -44,16 +41,16 @@ public class XaeroTrainMap {
 	}
 
 	public static void mouseClick(InputEvent.MouseButton.Pre event) {
-		if(failedToProcessTrainMap)
+		if (encounteredException)
 			return;
 
 		Minecraft mc = Minecraft.getInstance();
 		try {
 			if (!(mc.screen instanceof GuiMap))
 				return;
-		} catch (Exception e){
-			Create.LOGGER.error("Failed to handle mouseClick for Xaero's World Map train map integration: \n{}", e.toString());
-			failedToProcessTrainMap = true;
+		} catch (Exception e) {
+			Create.LOGGER.error("Failed to handle mouseClick for Xaero's World Map train map integration:", e);
+			encounteredException = true;
 			return;
 		}
 
@@ -66,7 +63,7 @@ public class XaeroTrainMap {
 	}
 
 	// Called by XaeroFullscreenMapMixin, guarded by try-catch
-	public static void onRender(GuiGraphics graphics, GuiMap screen,  int mX, int mY, float pt) {
+	public static void onRender(GuiGraphics graphics, GuiMap screen, int mX, int mY, float pt) {
 		double x = ((XaeroFullscreenMapAccessor) screen).getCameraX();
 		double z = ((XaeroFullscreenMapAccessor) screen).getCameraZ();
 		double mapScale = ((XaeroFullscreenMapAccessor) screen).getScale();
@@ -121,20 +118,20 @@ public class XaeroTrainMap {
 		return true;
 	}
 
-	public static ResourceKey<Level> getRenderedDimension(){
+	public static ResourceKey<Level> getRenderedDimension() {
 		return renderedDimension;
 	}
 
-	public static boolean isMapOpen(Screen screen){
-		if(failedToProcessTrainMap)
+	public static boolean isMapOpen(Screen screen) {
+		if (encounteredException)
 			return false;
 
 		try {
 			return screen instanceof ScreenBase screenBase &&
 				(screenBase instanceof GuiMap || screenBase.parent instanceof GuiMap);
 		} catch (Exception e) {
-			Create.LOGGER.error("Failed to check if Xaero's World Map was open for train map integration: \n{}", e.toString());
-			failedToProcessTrainMap = true;
+			Create.LOGGER.error("Failed to check if Xaero's World Map was open for train map integration:", e);
+			encounteredException = true;
 			return false;
 		}
 	}
