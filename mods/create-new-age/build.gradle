@@ -29,9 +29,6 @@ subprojects {
 
         maven { url = "https://mvn.devos.one/snapshots/" } // Create Fabric, Fabric Registrate
 
-        // TODO: Remove on merge
-        maven { url = "https://maven.idiotss.com/snapshots/" } // ESL
-
         maven { url = "https://maven.blamejared.com/" } // JEI
         
         // Create dependencies
