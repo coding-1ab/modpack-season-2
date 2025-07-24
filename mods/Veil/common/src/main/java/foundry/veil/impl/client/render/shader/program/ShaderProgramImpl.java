@@ -93,6 +93,7 @@ public class ShaderProgramImpl implements ShaderProgram {
     private VertexFormat vertexFormat;
     private ProgramDefinition definition;
     private CompiledProgram compiledProgram;
+    private boolean validated;
 
     public ShaderProgramImpl(ResourceLocation name) {
         this.name = name;
@@ -157,6 +158,7 @@ public class ShaderProgramImpl implements ShaderProgram {
         this.textures.clear();
         this.compiledProgram = program;
         this.vertexFormat = program.detectVertexFormat();
+        this.validated = !Veil.platform().isDevelopmentEnvironment();
 
         Set<ShaderUniformImpl> old = new HashSet<>(this.uniforms.values());
 
@@ -267,6 +269,10 @@ public class ShaderProgramImpl implements ShaderProgram {
             blendMode.apply();
         }
         ShaderProgram.super.bind();
+        if (this.compiledProgram != null && !this.validated) {
+            this.compiledProgram.validate(this);
+            this.validated = true;
+        }
     }
 
     @Override
@@ -502,17 +508,19 @@ public class ShaderProgramImpl implements ShaderProgram {
             return best;
         }
 
+        public void validate(ShaderProgram shaderProgram) {
+            glValidateProgram(this.program);
+            if (glGetProgrami(this.program, GL_VALIDATE_STATUS) != GL_TRUE) {
+                String log = StringUtils.trim(glGetProgramInfoLog(this.program));
+                Veil.LOGGER.warn("Failed to validate shader ({}) : {}", shaderProgram.getName(), log);
+            }
+        }
+
         public void link(ShaderProgram shaderProgram) throws ShaderException {
             glLinkProgram(this.program);
             if (glGetProgrami(this.program, GL_LINK_STATUS) != GL_TRUE) {
                 String log = StringUtils.trim(glGetProgramInfoLog(this.program));
                 throw new ShaderException("Failed to link shader", log);
-            }
-
-            glValidateProgram(this.program);
-            if (glGetProgrami(this.program, GL_VALIDATE_STATUS) != GL_TRUE) {
-                String log = StringUtils.trim(glGetProgramInfoLog(this.program));
-                Veil.LOGGER.warn("Failed to validate shader ({}) : {}", shaderProgram.getName(), log);
             }
 
             this.uniformCache.clear();

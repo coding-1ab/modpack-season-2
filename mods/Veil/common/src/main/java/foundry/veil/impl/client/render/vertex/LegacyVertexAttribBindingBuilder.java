@@ -42,7 +42,11 @@ public class LegacyVertexAttribBindingBuilder implements VertexArrayBuilder {
 
     private void setAttribute(int index, VertexAttribute attribute) {
         this.vertexAttributes[index] = attribute;
-        attribute.apply(index, this.vertexBuffers[this.boundIndex]);
+        VertexBufferRegion buffer = this.vertexBuffers[attribute.bufferIndex()];
+        if (buffer != null) {
+            this.bindIndex(attribute.bufferIndex());
+            attribute.apply(index, buffer);
+        }
     }
 
     @Override
@@ -56,9 +60,9 @@ public class LegacyVertexAttribBindingBuilder implements VertexArrayBuilder {
             throw new IllegalArgumentException("Invalid vertex attribute index. Must be between 0 and " + (this.vertexBuffers.length - 1) + ": " + index);
         }
         this.vertexBuffers[index] = new VertexBufferRegion(buffer, offset, stride, divisor);
+        this.bindIndex(index);
         for (VertexAttribute attribute : this.vertexAttributes) {
-            if (attribute.bufferIndex() == index) {
-                this.bindIndex(index);
+            if (attribute != null && attribute.bufferIndex() == index) {
                 attribute.apply(index, this.vertexBuffers[index]);
             }
         }
@@ -69,10 +73,8 @@ public class LegacyVertexAttribBindingBuilder implements VertexArrayBuilder {
     public VertexArrayBuilder setVertexAttribute(int index, int bufferIndex, int size, DataType type, boolean normalized, int relativeOffset) {
         VertexArrayBuilder.validateFloatType(type, size);
         VertexArrayBuilder.validateRelativeOffset(relativeOffset);
-        this.bindIndex(bufferIndex);
         glEnableVertexAttribArray(index);
         this.setAttribute(index, new FloatAttribute(bufferIndex, size, type, normalized, relativeOffset));
-        glVertexAttribDivisor(index, this.vertexBuffers[this.boundIndex].divisor);
         return this;
     }
 
@@ -80,10 +82,8 @@ public class LegacyVertexAttribBindingBuilder implements VertexArrayBuilder {
     public VertexArrayBuilder setVertexIAttribute(int index, int bufferIndex, int size, DataType type, int relativeOffset) {
         VertexArrayBuilder.validateIntType(type);
         VertexArrayBuilder.validateRelativeOffset(relativeOffset);
-        this.bindIndex(bufferIndex);
         glEnableVertexAttribArray(index);
         this.setAttribute(index, new IntAttribute(bufferIndex, size, type, relativeOffset));
-        glVertexAttribDivisor(index, this.vertexBuffers[this.boundIndex].divisor);
         return this;
     }
 
@@ -91,10 +91,8 @@ public class LegacyVertexAttribBindingBuilder implements VertexArrayBuilder {
     public VertexArrayBuilder setVertexLAttribute(int index, int bufferIndex, int size, DataType type, int relativeOffset) {
         VertexArrayBuilder.validateLongType(type);
         VertexArrayBuilder.validateRelativeOffset(relativeOffset);
-        this.bindIndex(bufferIndex);
         glEnableVertexAttribArray(index);
         this.setAttribute(index, new LongAttribute(bufferIndex, size, type, relativeOffset));
-        glVertexAttribDivisor(index, this.vertexBuffers[this.boundIndex].divisor);
         return this;
     }
 
@@ -139,6 +137,7 @@ public class LegacyVertexAttribBindingBuilder implements VertexArrayBuilder {
         @Override
         public void apply(int index, VertexBufferRegion region) {
             glVertexAttribPointer(index, this.size, this.type.getGlType(), this.normalized, region.stride, region.offset + this.relativeOffset);
+            glVertexAttribDivisor(index, region.divisor);
         }
     }
 
@@ -146,6 +145,7 @@ public class LegacyVertexAttribBindingBuilder implements VertexArrayBuilder {
         @Override
         public void apply(int index, VertexBufferRegion region) {
             glVertexAttribIPointer(index, this.size, this.type.getGlType(), region.stride, region.offset + this.relativeOffset);
+            glVertexAttribDivisor(index, region.divisor);
         }
     }
 
@@ -153,6 +153,7 @@ public class LegacyVertexAttribBindingBuilder implements VertexArrayBuilder {
         @Override
         public void apply(int index, VertexBufferRegion region) {
             glVertexAttribLPointer(index, this.size, this.type.getGlType(), region.stride, region.offset + this.relativeOffset);
+            glVertexAttribDivisor(index, region.divisor);
         }
     }
 
