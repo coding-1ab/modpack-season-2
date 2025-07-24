@@ -214,12 +214,21 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
                             activeBuffers,
                             type,
                             uniformBindings,
+                            dependencies,
                             macros,
                             shaderId,
                             true);
                     processor.modify(preProcessorContext, tree);
                     GlslTree.stripGLMacros(macros);
-                    tree.getMacros().putAll(macros);
+                    Map<String, String> treeMacros = tree.getMacros();
+                    treeMacros.putAll(macros);
+
+                    for (String dependency : dependencies) {
+                        String value = this.definitions.getDefinition(dependency);
+                        if (value != null) {
+                            treeMacros.putIfAbsent(dependency, value);
+                        }
+                    }
 
                     shaderSources.put(location, new VeilShaderSource(shaderId, tree.toSourceString(), uniformBindings, dependencies, new HashSet<>(processorList.getShaderImporter().addedImports())));
                 } catch (Throwable t) {
@@ -664,6 +673,7 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
                                        int activeBuffers,
                                        int type,
                                        Object2IntMap<String> uniformBindings,
+                                       Set<String> definitionDependencies,
                                        Map<String, String> macros,
                                        @Nullable ResourceLocation name,
                                        boolean sourceFile) implements ShaderPreProcessor.VeilContext {
@@ -671,7 +681,7 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
         @Override
         public GlslTree modifyInclude(@Nullable ResourceLocation name, String source) throws IOException, GlslSyntaxException, LexerException {
             GlslTree tree = GlslParser.preprocessParse(source, this.macros);
-            PreProcessorContext context = new PreProcessorContext(this.customProgramData, this.preProcessor, this.definition, this.preDefinitions, this.shaderImporter, this.activeBuffers, this.type, this.uniformBindings, this.macros, name, false);
+            PreProcessorContext context = new PreProcessorContext(this.customProgramData, this.preProcessor, this.definition, this.preDefinitions, this.shaderImporter, this.activeBuffers, this.type, this.uniformBindings, this.definitionDependencies, this.macros, name, false);
             this.preProcessor.modify(context, tree);
             return tree;
         }
@@ -679,6 +689,16 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
         @Override
         public void addUniformBinding(String name, int binding) {
             this.uniformBindings.put(name, binding);
+        }
+
+        @Override
+        public void addDefinitionDependency(String name) {
+            this.definitionDependencies.add(name);
+        }
+
+        @Override
+        public boolean isDynamic() {
+            return false;
         }
 
         @Override
