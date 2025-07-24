@@ -2,10 +2,11 @@ package vectorwing.farmersdelight.client.recipebook;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import net.minecraft.util.StringRepresentable;
 
 import java.util.EnumSet;
 
-public enum CookingPotRecipeBookTab
+public enum CookingPotRecipeBookTab implements StringRepresentable
 {
 	MEALS("meals"),
 	DRINKS("drinks"),
@@ -36,6 +37,11 @@ public enum CookingPotRecipeBookTab
 
 	@Override
 	public String toString() {
+		return this.name;
+	}
+
+	@Override
+	public String getSerializedName() {
 		return this.name;
 	}
 }
