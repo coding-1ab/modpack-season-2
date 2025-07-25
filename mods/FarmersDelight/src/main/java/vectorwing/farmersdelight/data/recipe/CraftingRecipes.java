@@ -33,8 +33,8 @@ public class CraftingRecipes
 		recipesFoodstuffs(consumer);
 		recipesFoodBlocks(consumer);
 		recipesCraftedMeals(consumer);
-		SpecialRecipeBuilder.special(ModRecipeSerializers.FOOD_SERVING.get()).save(consumer, "food_serving");
-		SpecialRecipeBuilder.special(ModRecipeSerializers.DOUGH.get()).save(consumer, "dough");
+		SpecialRecipeBuilder.special(ModRecipeSerializers.FOOD_SERVING.get()).save(consumer, FarmersDelight.MODID + ":food_serving");
+		SpecialRecipeBuilder.special(ModRecipeSerializers.DOUGH.get()).save(consumer, FarmersDelight.MODID + ":wheat_dough_from_water");
 	}
 
 	public static void canvasSignDyeing(Consumer<FinishedRecipe> consumer, ItemLike canvasSign, ItemLike hangingCanvasSign, TagKey<Item> dyeTag) {
@@ -569,7 +569,7 @@ public class CraftingRecipes
 				.requires(Items.WHEAT)
 				.requires(Tags.Items.EGGS)
 				.unlockedBy("has_wheat", InventoryChangeTrigger.TriggerInstance.hasItems(Items.WHEAT))
-				.save(consumer);
+				.save(consumer, new ResourceLocation(FarmersDelight.MODID, "wheat_dough_from_egg"));
 		ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.PIE_CRUST.get(), 1)
 				.pattern("wMw")
 				.pattern(" w ")
