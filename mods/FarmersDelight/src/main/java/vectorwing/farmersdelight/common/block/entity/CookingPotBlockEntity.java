@@ -519,6 +519,11 @@ public class CookingPotBlockEntity extends SyncedBlockEntity implements MenuProv
 		return new ItemStackHandler(INVENTORY_SIZE)
 		{
 			@Override
+			public int getSlotLimit(int slot) {
+				return Item.DEFAULT_MAX_STACK_SIZE;
+			}
+
+			@Override
 			protected void onContentsChanged(int slot) {
 				inventoryChanged();
 			}

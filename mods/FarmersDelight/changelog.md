@@ -3,7 +3,8 @@
 ## 1.2.9
 
 ### Fixes
-- Fix Create integration's milling recipes using invalid field, which caused them to never finish processing;
+- Fixed Cooking Pot allowing players to cook and store up to 99 servings;
+- Fixed Create integration's milling recipes using invalid field, which caused them to never finish processing;
 
 ## 1.2.8
 
