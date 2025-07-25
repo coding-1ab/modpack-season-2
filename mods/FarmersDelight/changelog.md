@@ -10,6 +10,7 @@
 - Fixed FD's special recipes existing in the `minecraft` namespace;
 
 ### Translations
+- Update main langs to include lines for wall canvas signs;
 - Fixed es_ar translation having a JSON error;
 
 ## 1.2.8
