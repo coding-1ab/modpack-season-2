@@ -1,4 +1,4 @@
-// 1.20.1	2025-07-25T12:46:50.8677462	Recipes
+// 1.20.1	2025-07-25T14:42:35.8983919	Recipes
 a498fcc8b72b6631ddbb164a0245b37491e7571a data/farmersdelight/advancements/recipes/building_blocks/cabbage_crate.json
 c941206993bfa59d31b38132b898fb94c29746a6 data/farmersdelight/advancements/recipes/building_blocks/onion_crate.json
 2b93ef657fca92a73775c750079ea1503d8f02cc data/farmersdelight/advancements/recipes/building_blocks/organic_compost_from_rotten_flesh.json
@@ -494,7 +494,7 @@ e34d4f1aeaddafe8b124c2568a952903a2fdba4e data/farmersdelight/recipes/tomato.json
 a1258ae59f60a3682e5af37ab2b5e4be039e0755 data/farmersdelight/recipes/tomato_crate.json
 5e5364230148a6581f8e1ae12691e5a809b0d51d data/farmersdelight/recipes/tomato_seeds.json
 df8048c6a9b8f363a3bd5a5cfbbe0a2c2ad6845f data/farmersdelight/recipes/warped_cabinet.json
-92c5a6ddb97c8cbbe8bc21064a865f16b2cd3fa2 data/farmersdelight/recipes/wheat_dough_from_egg.json
+d35c2457d05676246e9994e70172d69b7f7de055 data/farmersdelight/recipes/wheat_dough_from_egg.json
 41fe143edc521907cc12899c96dff5cd90f2e567 data/farmersdelight/recipes/wheat_dough_from_water.json
 8dd95767ae244d85f1883d61342bfa63995b60d6 data/farmersdelight/recipes/white_canvas_sign.json
 28d34f03b4129ad620322ed41bea0a3d02abc544 data/farmersdelight/recipes/white_hanging_canvas_sign.json

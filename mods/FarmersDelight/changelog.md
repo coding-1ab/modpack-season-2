@@ -2,6 +2,9 @@
 
 ## 1.2.9
 
+### Updates
+- The `offhand_equipment` tag now includes `forge:tools/shields` by default, extending default compatibility;
+
 ### Fixes
 - Fixed Wheat Dough's water-based recipe still displaying in JEI when disabled;
 - Fixed FD's special recipes existing in the `minecraft` namespace;
