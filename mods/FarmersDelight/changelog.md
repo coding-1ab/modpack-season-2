@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.9
+
+### Fixes
+- Fix Create integration's milling recipes using invalid field, which caused them to never finish processing;
+
 ## 1.2.8
 
 ### Additions
