@@ -568,6 +568,7 @@ public class CraftingRecipes
 				.requires(Items.WHEAT)
 				.requires(Items.WHEAT)
 				.requires(Tags.Items.EGGS)
+				.group("fd_dough")
 				.unlockedBy("has_wheat", InventoryChangeTrigger.TriggerInstance.hasItems(Items.WHEAT))
 				.save(consumer, new ResourceLocation(FarmersDelight.MODID, "wheat_dough_from_egg"));
 		ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.PIE_CRUST.get(), 1)
