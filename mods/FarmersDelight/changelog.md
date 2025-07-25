@@ -12,6 +12,8 @@
 ### Translations
 - Update main langs to include lines for wall canvas signs;
 - Fixed es_ar translation having a JSON error;
+- Added:
+  - hu_hu (thanks, bayi!);
 
 ## 1.2.8
 
