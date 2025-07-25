@@ -14,6 +14,9 @@
 - Fixed es_ar translation having a JSON error;
 - Added:
   - hu_hu (thanks, bayi!);
+- Updated:
+  - it_it (thanks, BlackShadow77!);
+  - zh_cn (thanks, Don-Trueno!);
 
 ## 1.2.8
 
