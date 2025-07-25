@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.9
+
+### Fixes
+- Fixed Wheat Dough's water-based recipe still displaying in JEI when disabled;
+- Fixed FD's special recipes existing in the `minecraft` namespace;
+
+### Translations
+- Fixed es_ar translation having a JSON error;
+
 ## 1.2.8
 
 ### Additions
