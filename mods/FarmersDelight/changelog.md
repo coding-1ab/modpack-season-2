@@ -8,6 +8,7 @@
 ### Fixes
 - Fixed Wheat Dough's water-based recipe still displaying in JEI when disabled;
 - Fixed FD's special recipes existing in the `minecraft` namespace;
+- Temporary fix for the Cooking Pot crashing when opened in spectator mode (access is now disabled);
 
 ### Translations
 - Update main langs to include lines for wall canvas signs;
@@ -17,6 +18,7 @@
 - Updated:
   - it_it (thanks, BlackShadow77!);
   - zh_cn (thanks, Don-Trueno!);
+  - zh_tw (thanks, CyanChanges!);
 
 ## 1.2.8
 
