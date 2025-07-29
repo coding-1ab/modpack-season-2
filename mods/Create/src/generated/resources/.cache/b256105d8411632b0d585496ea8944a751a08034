@@ -1,4 +1,4 @@
-// 1.21.1	2025-07-21T11:45:14.632740403	Create's Processing Recipes
+// 1.21.1	2025-07-29T17:05:36.453755127	Create's Processing Recipes
 202c419d3093cc50ef6730a409b8855ba758fee9 data/create/recipe/compacting/andesite_from_flint.json
 d97f4e06363879d033b2151995a5d4f19ad7ef3a data/create/recipe/compacting/blaze_cake.json
 b76c988d1e4493d8e69791d3144d514501d355d0 data/create/recipe/compacting/chocolate.json
@@ -160,12 +160,6 @@ e2265c788c1abd7c3b7a176c64504718ab1d5572 data/create/recipe/crushing/zinc_ore.js
 8013353955c146127a4c560ffa7d3e1fd3059d5b data/create/recipe/cutting/bamboo_planks.json
 8c41adbc250ab9c2a39fa5d5b4f11f1ac4bb579e data/create/recipe/cutting/compat/ars_elemental/stripped_yellow_archwood.json
 076c36950257dd200fc76380459ba6a41ca99e25 data/create/recipe/cutting/compat/ars_elemental/stripped_yellow_archwood_log.json
-70ae61382dcf655f6464866e7fde94b35ceb601a data/create/recipe/cutting/compat/ars_nouveau/green_archwood_log.json
-36aea2203c03339e1b282e44a6e569516a8b99c1 data/create/recipe/cutting/compat/ars_nouveau/green_archwood_wood.json
-4aada5021539e469d4c67d264bde525ca72de91b data/create/recipe/cutting/compat/ars_nouveau/purple_archwood_log.json
-db605e0a47373456fe406a0ad8ba98a12df0a7c4 data/create/recipe/cutting/compat/ars_nouveau/purple_archwood_wood.json
-3d655ea7905ac18d822ce0097c3bdce35a0f7ed4 data/create/recipe/cutting/compat/ars_nouveau/red_archwood_log.json
-6d6a33fad0b0402b243960ecc6f6f3dde5654f75 data/create/recipe/cutting/compat/ars_nouveau/red_archwood_wood.json
 d2da949e2de98d91716a9340792319f7492eb3bd data/create/recipe/cutting/compat/ars_nouveau/stripped_green_archwood_log.json
 4f3585c2f18d6aa1352e893596311744ae7f7ae9 data/create/recipe/cutting/compat/ars_nouveau/stripped_green_archwood_wood.json
 31eb8ef70f639c55b4a7705cf08e6d3a10a7743a data/create/recipe/cutting/compat/ars_nouveau/stripped_purple_archwood_log.json

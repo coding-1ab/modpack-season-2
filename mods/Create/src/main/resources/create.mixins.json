@@ -68,7 +68,10 @@
     "client.HumanoidArmorLayerMixin",
     "client.HumanoidModelMixin",
     "client.LevelRendererMixin",
-    "client.PlayerRendererMixin"
+    "client.PlayerRendererMixin",
+    "compat.xaeros.XaeroFullscreenMapAccessor",
+    "compat.xaeros.XaeroFullscreenMapMixin",
+    "compat.xaeros.XaeroPauseScreenOverrideMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -41,30 +41,40 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<SlidingDoorBlockEntity>, IHaveBigOutline {
-
 	public static final Supplier<BlockSetType> TRAIN_SET_TYPE =
-		() -> new BlockSetType("train", true, true, true,
+		() -> new BlockSetType("create:train", true, true, true,
 			BlockSetType.PressurePlateSensitivity.EVERYTHING, SoundType.NETHERITE_BLOCK, SoundEvents.IRON_DOOR_CLOSE,
 			SoundEvents.IRON_DOOR_OPEN, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundEvents.IRON_TRAPDOOR_OPEN,
 			SoundEvents.METAL_PRESSURE_PLATE_CLICK_OFF, SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON,
 			SoundEvents.STONE_BUTTON_CLICK_OFF, SoundEvents.STONE_BUTTON_CLICK_ON);
 
 	public static final Supplier<BlockSetType> GLASS_SET_TYPE =
-		() -> new BlockSetType("train", true, true, true,
-			BlockSetType.PressurePlateSensitivity.EVERYTHING, SoundType.NETHERITE_BLOCK, SoundEvents.IRON_DOOR_CLOSE,
+		() -> new BlockSetType("create:glass", true, true, true,
+			BlockSetType.PressurePlateSensitivity.EVERYTHING, SoundType.GLASS, SoundEvents.IRON_DOOR_CLOSE,
+			SoundEvents.IRON_DOOR_OPEN, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundEvents.IRON_TRAPDOOR_OPEN,
+			SoundEvents.METAL_PRESSURE_PLATE_CLICK_OFF, SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON,
+			SoundEvents.STONE_BUTTON_CLICK_OFF, SoundEvents.STONE_BUTTON_CLICK_ON);
+
+	public static final Supplier<BlockSetType> STONE_SET_TYPE =
+		() -> new BlockSetType("create:stone", true, true, true,
+			BlockSetType.PressurePlateSensitivity.EVERYTHING, SoundType.STONE, SoundEvents.IRON_DOOR_CLOSE,
 			SoundEvents.IRON_DOOR_OPEN, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundEvents.IRON_TRAPDOOR_OPEN,
 			SoundEvents.METAL_PRESSURE_PLATE_CLICK_OFF, SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON,
 			SoundEvents.STONE_BUTTON_CLICK_OFF, SoundEvents.STONE_BUTTON_CLICK_ON);
 
 	public static final BooleanProperty VISIBLE = BooleanProperty.create("visible");
-	private boolean folds;
+	private final boolean folds;
 
-	public static SlidingDoorBlock metal(Properties p_52737_, boolean folds) {
-		return new SlidingDoorBlock(p_52737_, TRAIN_SET_TYPE.get(), folds);
+	public static SlidingDoorBlock metal(Properties properties, boolean folds) {
+		return new SlidingDoorBlock(properties, TRAIN_SET_TYPE.get(), folds);
 	}
 
-	public static SlidingDoorBlock glass(Properties p_52737_, boolean folds) {
-		return new SlidingDoorBlock(p_52737_, GLASS_SET_TYPE.get(), folds);
+	public static SlidingDoorBlock glass(Properties properties, boolean folds) {
+		return new SlidingDoorBlock(properties, GLASS_SET_TYPE.get(), folds);
+	}
+
+	public static SlidingDoorBlock stone(Properties properties, boolean folds) {
+		return new SlidingDoorBlock(properties, STONE_SET_TYPE.get(), folds);
 	}
 
 	public SlidingDoorBlock(Properties properties, BlockSetType type, boolean folds) {
@@ -275,5 +285,4 @@ public class SlidingDoorBlock extends DoorBlock implements IWrenchable, IBE<Slid
 	public BlockEntityType<? extends SlidingDoorBlockEntity> getBlockEntityType() {
 		return AllBlockEntityTypes.SLIDING_DOOR.get();
 	}
-
 }

@@ -1,40 +1,40 @@
 import dev.ithundxr.silk.ChangelogText
 
 plugins {
-    id "idea"
-    id "eclipse"
-    id "maven-publish"
-    id "net.neoforged.moddev" version "2.0.74"
-    id "me.modmuss50.mod-publish-plugin" version "0.8.3"
-    id "dev.ithundxr.silk" version "0.11.15"
-    id "net.kyori.blossom" version "2.1.0" // https://github.com/KyoriPowered/blossom
-    id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.8" // https://github.com/JetBrains/gradle-idea-ext-plugin
+    id("idea")
+    id("eclipse")
+    id("maven-publish")
+    id("net.kyori.blossom") version "2.1.0" // https://github.com/KyoriPowered/blossom
+    id("dev.ithundxr.silk") version "0.11.15" // https://github.com/ithundxr/silk
+    id("net.neoforged.moddev") version "2.0.105" // https://projects.neoforged.net/neoforged/ModDevGradle
+    id("me.modmuss50.mod-publish-plugin") version "0.8.4" // https://github.com/modmuss50/mod-publish-plugin
+    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.8" // https://github.com/JetBrains/gradle-idea-ext-plugin
 }
 
-apply from: "./gradle/java.gradle"
-apply from: "gradle/property_loader.gradle"
+apply(from: "./gradle/java.gradle")
+apply(from: "gradle/property_loader.gradle")
 
-boolean dev = System.getenv('RELEASE') == null || System.getenv('RELEASE').equals('false')
-ext.buildNumber = System.getenv('BUILD_NUMBER')
-String gitHash = "${calculateGitHash() + (hasUnstaged() ? "-modified" : "")}"
+boolean dev = System.getenv("RELEASE") == null || System.getenv("RELEASE") == "false"
+ext.buildNumber = System.getenv("BUILD_NUMBER")
+String gitHash = calculateGitHash() + (hasUnstaged() ? "-modified" : "")
 
 base {
     archivesName = "create-$minecraft_version"
     group = "com.simibubi.create"
-    version = mod_version + (dev && buildNumber != null ? "-${buildNumber}" : '')
+    version = mod_version + (dev && buildNumber != null ? "-${buildNumber}" : "")
 }
 
-boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.enabled')
-boolean ponderInWorkspace = rootProject.hasProperty('multiModWorkspace.ponder')
+boolean inMultiModWorkspace = rootProject.hasProperty("multiModWorkspace.enabled")
+boolean ponderInWorkspace = rootProject.hasProperty("multiModWorkspace.ponder")
 
 if (ponderInWorkspace) {
     evaluationDependsOn(":ponder:NeoForge")
 }
 
-project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? 'enabled' : 'disabled'} for project ${project.name}.")
+project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? "enabled" : "disabled"} for project ${project.name}.")
 project.logger.lifecycle("Dependencies included in Workspace: [Ponder: ${ponderInWorkspace}]")
 
-println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+println("Java: ${System.getProperty("java.version")}, JVM: ${System.getProperty("java.vm.version")} (${System.getProperty("java.vendor")}), Arch: ${System.getProperty("os.arch")}")
 
 idea {
     module {
@@ -46,7 +46,7 @@ idea {
 neoForge {
     version = project.neo_version
 
-    accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+    accessTransformers = project.files("src/main/resources/META-INF/accesstransformer.cfg")
 
     parchment {
         minecraftVersion = project.parchment_minecraft_version
@@ -69,13 +69,13 @@ neoForge {
 
     runs {
         configureEach {
-            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            systemProperty("forge.logging.markers", "REGISTRIES")
             jvmArguments = ["-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition"]
             //jvmArgs("-XX:-OmitStackTraceInFastThrow") // uncomment when you get exceptions with null messages etc
-            //jvmArgs '-XX:+UnlockCommercialFeatures' // uncomment for profiling
+            //jvmArgs("-XX:+UnlockCommercialFeatures") // uncomment for profiling
 
-            systemProperty 'mixin.debug.verbose', 'true'
-            systemProperty 'mixin.debug.export', 'true'
+            systemProperty("mixin.debug.verbose", "true")
+            systemProperty("mixin.debug.export", "true")
 
             logLevel = org.slf4j.event.Level.DEBUG
         }
@@ -84,27 +84,27 @@ neoForge {
             client()
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty("neoforge.enabledGameTestNamespaces", project.mod_id)
         }
 
         server {
             server()
 
-            gameDirectory = project.file('run/server')
+            gameDirectory = project.file("run/server")
 
-            programArgument '--nogui'
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            programArgument("--nogui")
+            systemProperty("neoforge.enabledGameTestNamespaces", project.mod_id)
         }
 
         data {
             data()
 
-            programArguments.addAll('--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath())
+            programArguments.addAll("--mod", project.mod_id, "--all", "--output", file("src/generated/resources/").getAbsolutePath(), "--existing", file("src/main/resources/").getAbsolutePath())
         }
 
         gameTestServer {
             type = "gameTestServer"
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty("neoforge.enabledGameTestNamespaces", project.mod_id)
         }
     }
 }
@@ -136,7 +136,6 @@ repositories {
 
 dependencies {
     jarJar(implementation("com.tterrag.registrate:Registrate:${registrate_version}"))
-    jarJar("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
 
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${flywheel_minecraft_version}:${flywheel_version}")
     runtimeOnly(jarJar("dev.engine-room.flywheel:flywheel-neoforge-${flywheel_minecraft_version}:${flywheel_version}") {
@@ -148,10 +147,10 @@ dependencies {
     runtimeOnly("dev.engine-room.vanillin:vanillin-neoforge-${flywheel_minecraft_version}:${vanillin_version}")
 
     if (ponderInWorkspace) {
-        implementation(project(":ponder:Common"))
-        implementation(project(":ponder:NeoForge"))
+        jarJar(implementation(project(":ponder:Common")))
+        jarJar(implementation(project(":ponder:NeoForge")))
     } else {
-        implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
+        jarJar(implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}"))
     }
 
     //compileOnly("mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}")
@@ -179,18 +178,20 @@ dependencies {
     implementation("info.journeymap:journeymap-api-neoforge:2.0.0-1.21.1-SNAPSHOT") {
         exclude(group: "curse.maven") // Pulls in a old version of journey map which is for forge
     }
+
+    compileOnly("curse.maven:xaeros-world-map-317780:6778114")
 }
 
 sourceSets.main {
     java {
         if (!cc_tweaked_enable.toBoolean()) {
-            exclude 'com/simibubi/create/compat/computercraft/implementation/**'
+            exclude "com/simibubi/create/compat/computercraft/implementation/**"
         }
     }
 
     resources {
-        srcDir 'src/generated/resources'
-        exclude '.cache/'
+        srcDir("src/generated/resources")
+        exclude(".cache/")
     }
 
     blossom.javaSources {
@@ -203,19 +204,19 @@ processResources {
     def buildProps = project.properties.clone()
 
     // Replaces FML's magic file.jarVersion string with the correct version at build time.
-    buildProps.put('file', [jarVersion: project.version])
+    buildProps.put("file", [jarVersion: project.version])
 
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
-        expand buildProps
+    filesMatching(["META-INF/mods.toml", "pack.mcmeta"]) {
+        expand(buildProps)
     }
 }
 
 compileJava {
-    options.compilerArgs = ['-Xdiags:verbose']
+    options.compilerArgs = ["-Xdiags:verbose"]
 }
 
 jar {
-    from('LICENSE') {
+    from("LICENSE") {
         rename { "${it}_${archivesBaseName}" }
     }
 
@@ -288,7 +289,7 @@ publishing {
             }
         }
 
-        if (project.hasProperty('mavendir')) {
+        if (project.hasProperty("mavendir")) {
             maven { url = mavendir }
         }
     }
@@ -298,7 +299,7 @@ publishMods {
     file = jar.archiveFile
     changelog = ChangelogText.getChangelogText(project).toString()
     type = STABLE
-    version = "$minecraft_version-$mod_version"
+    version = "mc$minecraft_version-$mod_version"
     displayName = "$mod_name $mod_version for mc$minecraft_version"
     modLoaders.add("neoforge")
 
@@ -312,6 +313,17 @@ publishMods {
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         projectId = "LNytGWDc"
         minecraftVersions.add(minecraft_version)
+    }
+
+    github {
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+        repository = "Creators-of-Create/Create"
+        commitish = gitHash
+        tagName = "mc$minecraft_version-$mod_version"
+        file.unset()
+        file.unsetConvention()
+
+        allowEmptyFiles = true
     }
 }
 
