@@ -85,7 +85,7 @@ public enum AllKeys {
 		if (modifier == KeyModifier.NONE) {
 			modifierMatches = true;
 		} else {
-			modifierMatches = modifier.equals(KeyModifier.getActiveModifier());
+			modifierMatches = KeyModifier.getActiveModifiers().contains(modifier);
 		}
 
 		return codeMatches && modifierMatches;

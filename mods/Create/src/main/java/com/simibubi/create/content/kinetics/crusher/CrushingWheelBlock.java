@@ -121,7 +121,7 @@ public class CrushingWheelBlock extends RotatedPillarKineticBlock implements IBE
 				.setValue(CrushingWheelControllerBlock.FACING, controllerNewDirection));
 		}
 
-		((CrushingWheelControllerBlock) AllBlocks.CRUSHING_WHEEL_CONTROLLER.get())
+		AllBlocks.CRUSHING_WHEEL_CONTROLLER.get()
 			.updateSpeed(world.getBlockState(controllerPos), world, controllerPos);
 
 	}
