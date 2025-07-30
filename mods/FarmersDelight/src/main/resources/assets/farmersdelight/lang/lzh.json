@@ -216,7 +216,8 @@
   "itemGroup.farmersdelight": "農家樂",
 
   "farmersdelight.container.recipe_book.cookable": "惟顯可烹者",
-  "farmersdelight.container.cooking_pot": "鼎",
+  "farmersdelight.container.cooking_pot": "鑊",
+
   "farmersdelight.container.cooking_pot.served_on": "宜盛於：%s",
   "farmersdelight.container.cooking_pot.not_heated": "下需熱",
   "farmersdelight.container.cooking_pot.heated": "已熱",
