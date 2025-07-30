@@ -17,7 +17,7 @@
   "createaddition.tooltip.energy.passive": "被动",
   "createaddition.tooltip.energy.none": "无",
 
-  "createaddition.tooltip.liquid_burning.info": "烈焰人流体燃烧室信息：",
+  "createaddition.tooltip.liquid_burning.info": "烈焰人液体燃烧室信息：",
 	"createaddition.tooltip.liquid_burning.time_remaining": "剩余燃烧时间：",
 
   "createaddition.tooltip.charging.info": "特斯拉线圈信息：",
