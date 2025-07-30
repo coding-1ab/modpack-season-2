@@ -308,7 +308,8 @@
   "death.attack.farmersdelight.stove.player": "%1$s為名廚%2$s所棄於灶",
 
   "farmersdelight.jei.cooking": "烹",
-  "farmersdelight.jei.cutting": "砧板",
+  "farmersdelight.jei.cutting": "俎",
+
   "farmersdelight.jei.chance": "%1$s%%之率",
   "farmersdelight.jei.decomposition": "分",
   "farmersdelight.jei.decomposition.light": "日出則速",
