@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.simibubi.create.foundation.blockEntity.LegacyRecipeWrapper;
+import com.simibubi.create.foundation.blockEntity.ItemHandlerContainer;
 import com.simibubi.create.foundation.blockEntity.SyncedBlockEntity;
 
 import net.minecraft.core.HolderLookup;
@@ -19,7 +19,7 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
-public class SmartInventory extends LegacyRecipeWrapper
+public class SmartInventory extends ItemHandlerContainer
 	implements IItemHandlerModifiable, INBTSerializable<CompoundTag> {
 
 	protected boolean extractionAllowed;

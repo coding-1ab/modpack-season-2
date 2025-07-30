@@ -17,7 +17,7 @@ import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.stockTicker.CraftableBigItemStack;
 import com.simibubi.create.content.logistics.stockTicker.StockKeeperRequestMenu;
 import com.simibubi.create.content.logistics.stockTicker.StockKeeperRequestScreen;
-import com.simibubi.create.foundation.blockEntity.LegacyRecipeWrapper;
+import com.simibubi.create.foundation.blockEntity.ItemHandlerContainer;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -39,7 +39,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-
 
 import net.neoforged.neoforge.items.ItemStackHandler;
 
@@ -96,13 +95,13 @@ public class StockKeeperTransferHandler implements IUniversalRecipeTransferHandl
 		if (summary == null)
 			return null;
 
-		Container outputDummy = new LegacyRecipeWrapper(new ItemStackHandler(9));
+		Container outputDummy = new ItemHandlerContainer(new ItemStackHandler(9));
 		List<Slot> craftingSlots = new ArrayList<>();
 		for (int i = 0; i < outputDummy.getContainerSize(); i++)
 			craftingSlots.add(new Slot(outputDummy, i, 0, 0));
 
 		List<BigItemStack> stacksByCount = summary.getStacksByCount();
-		Container inputDummy = new LegacyRecipeWrapper(new ItemStackHandler(stacksByCount.size()));
+		Container inputDummy = new ItemHandlerContainer(new ItemStackHandler(stacksByCount.size()));
 		Map<Slot, ItemStack> availableItemStacks = new HashMap<>();
 		for (int j = 0; j < stacksByCount.size(); j++) {
 			BigItemStack bigItemStack = stacksByCount.get(j);
