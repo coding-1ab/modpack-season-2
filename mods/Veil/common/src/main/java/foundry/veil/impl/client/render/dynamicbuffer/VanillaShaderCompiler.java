@@ -100,7 +100,8 @@ public class VanillaShaderCompiler {
             this.scheduler.cancel();
         }
 
-        Map<String, ShaderInstance> shaderMap = new ConcurrentHashMap<>(shaders.size());
+        int shaderCount = shaders.size();
+        Map<String, ShaderInstance> shaderMap = new ConcurrentHashMap<>(shaderCount);
         for (ShaderInstance shader : shaders) {
             shaderMap.put(shader.getName(), shader);
         }
@@ -128,7 +129,7 @@ public class VanillaShaderCompiler {
         CompletableFuture<?> future = scheduler.getCompletedFuture();
         future.thenRunAsync(() -> {
             if (!scheduler.isCancelled()) {
-                Veil.LOGGER.info("Compiled {} vanilla shaders in {}", shaders.size(), stopwatch.stop());
+                Veil.LOGGER.info("Compiled {} vanilla shaders in {}", shaderCount, stopwatch.stop());
             }
         }, Minecraft.getInstance());
         return future.isDone() ? CompletableFuture.completedFuture(null) : future;

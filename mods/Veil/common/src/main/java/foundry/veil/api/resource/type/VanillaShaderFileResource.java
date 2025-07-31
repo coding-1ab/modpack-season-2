@@ -1,9 +1,12 @@
 package foundry.veil.api.resource.type;
 
+import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.resource.VeilResourceAction;
 import foundry.veil.api.resource.VeilResourceInfo;
 import foundry.veil.api.resource.VeilResourceManager;
 import foundry.veil.impl.resource.action.TextEditAction;
+import foundry.veil.mixin.debug.accessor.DebugGameRendererAccessor;
+import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
@@ -18,10 +21,12 @@ public record VanillaShaderFileResource(VeilResourceInfo resourceInfo) implement
 
     @Override
     public boolean canHotReload() {
-        return false;
+        return true;
     }
 
     @Override
     public void hotReload(VeilResourceManager resourceManager) {
+        // I would rather reload only the specific shader, but it's more compatible to reload all shaders
+        VeilRenderSystem.renderer().getVanillaShaderCompiler().reload(((DebugGameRendererAccessor) Minecraft.getInstance().gameRenderer).getShaders().values());
     }
 }
