@@ -57,9 +57,10 @@ public class ShaderTextureCache {
             if (textureId == 0 || textureId == missingTexture) {
                 if (!hasMissing) {
                     hasMissing = true;
-                    long address = MemoryUtil.memAddress0(this.textureBindings);
                     int position = this.textureBindings.position();
-                    MemoryUtil.memCopy(address, address + Integer.BYTES, position);
+                    for (int i = 0; i < position; i++) {
+                        this.textureBindings.put(i + 1, this.textureBindings.get(i));
+                    }
                     this.textureBindings.position(position + 1);
                     this.textureBindings.put(0, MissingTextureAtlasSprite.getTexture().getId());
 
@@ -78,9 +79,10 @@ public class ShaderTextureCache {
             if (sampler >= maxSampler) {
                 if (!hasMissing) {
                     hasMissing = true;
-                    long address = MemoryUtil.memAddress0(this.textureBindings);
                     int position = this.textureBindings.position();
-                    MemoryUtil.memCopy(address, address + Integer.BYTES, position - 1);
+                    for (int i = 0; i < position - 1; i++) {
+                        this.textureBindings.put(i + 1, this.textureBindings.get(i));
+                    }
                     this.textureBindings.put(0, MissingTextureAtlasSprite.getTexture().getId());
 
                     // Delete the last texture binding
