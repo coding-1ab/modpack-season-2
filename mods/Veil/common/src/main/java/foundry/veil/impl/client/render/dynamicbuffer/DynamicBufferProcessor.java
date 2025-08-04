@@ -104,10 +104,7 @@ public class DynamicBufferProcessor implements ShaderPreProcessor {
 
             for (int i = 0; i < types.length; i++) {
                 DynamicBufferType type = types[i];
-                String sourceName = type.getSourceName();
-                writer.clear();
-                writer.visitTypeSpecifier(type.getType());
-                String output = "layout(location = " + (1 + i) + ") out " + writer + " " + sourceName;
+                String output = type.getOutputDeclaration(1 + i);
 
                 String shaderName = minecraftContext.shaderInstance();
                 if ("rendertype_lines".equals(shaderName)) {

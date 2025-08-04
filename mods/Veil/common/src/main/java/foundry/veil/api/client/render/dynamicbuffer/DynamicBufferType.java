@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import foundry.veil.api.client.render.framebuffer.FramebufferAttachmentDefinition;
 import io.github.ocelot.glslprocessor.api.grammar.GlslTypeSpecifier;
+import io.github.ocelot.glslprocessor.api.visitor.GlslNodeStringWriter;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -45,6 +46,7 @@ public enum DynamicBufferType {
     private final String sourceName;
     private final String macroName;
     private final GlslTypeSpecifier.BuiltinType type;
+    private final String typeGlsl;
     private final int internalFormat;
     private final int texelFormat;
     private final int mask;
@@ -54,6 +56,9 @@ public enum DynamicBufferType {
         this.sourceName = "VeilDynamic" + sourceName;
         this.macroName = "VEIL_" + this.name();
         this.type = type;
+        GlslNodeStringWriter writer = new GlslNodeStringWriter(true);
+        writer.visitTypeSpecifier(type);
+        this.typeGlsl = writer.toString();
         this.internalFormat = format.getInternalFormat();
         this.texelFormat = format.getFormat();
         this.mask = 1 << this.ordinal();
@@ -74,6 +79,15 @@ public enum DynamicBufferType {
     }
 
     /**
+     * @param location The location to output to
+     * @return The full fragment shader output declaration for this buffer type
+     * @since 2.3.0
+     */
+    public String getOutputDeclaration(int location) {
+        return "layout(location = " + location + ") out " + this.typeGlsl + " " + this.sourceName;
+    }
+
+    /**
      * @return The data type stored in this buffer
      */
     public GlslTypeSpecifier.BuiltinType getType() {
@@ -81,14 +95,22 @@ public enum DynamicBufferType {
     }
 
     /**
-     * @return The internal format of the texture
+     * @return The GLSL source code for the fragment shader output
+     * @since 2.3.0
+     */
+    public String getTypeGlsl() {
+        return this.typeGlsl;
+    }
+
+    /**
+     * @return The OpenGL internal format of the texture
      */
     public int getInternalFormat() {
         return this.internalFormat;
     }
 
     /**
-     * @return The format of data assigned to the texture
+     * @return The OpenGL format of data assigned to the texture
      */
     public int getTexelFormat() {
         return this.texelFormat;
