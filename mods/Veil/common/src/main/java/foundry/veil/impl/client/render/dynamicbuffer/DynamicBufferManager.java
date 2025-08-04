@@ -39,14 +39,6 @@ import static org.lwjgl.opengl.GL43C.GL_COMPUTE_SHADER;
 @ApiStatus.Internal
 public class DynamicBufferManager implements NativeResource {
 
-    private static final int[] GL_MAPPING = {
-            GL_VERTEX_SHADER,
-            GL_TESS_CONTROL_SHADER,
-            GL_TESS_EVALUATION_SHADER,
-            GL_GEOMETRY_SHADER,
-            GL_FRAGMENT_SHADER,
-            GL_COMPUTE_SHADER
-    };
     public static final ResourceLocation MAIN_WRAPPER = Veil.veilPath("dynamic_main");
 
     private int activeBuffers;

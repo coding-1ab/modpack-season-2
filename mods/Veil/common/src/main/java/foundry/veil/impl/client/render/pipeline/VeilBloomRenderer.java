@@ -25,7 +25,7 @@ public final class VeilBloomRenderer {
     private static boolean rendered;
     private static AdvancedFbo bloom;
 
-    public static void enable() {
+    public static void tryEnable() {
         boolean wasEnabled = enabled;
         enabled = getPipeline() != null;
         if (wasEnabled != enabled) {

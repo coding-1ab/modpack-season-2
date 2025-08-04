@@ -26,6 +26,7 @@ import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -148,6 +149,17 @@ public class VeilRenderer implements ResourceManagerReloadListener {
     }
 
     /**
+     * Retrieves the currently active dynamic buffers.
+     *
+     * @return The currently active buffers
+     * @see DynamicBufferType#decode(int)
+     * @since 2.3.0
+     */
+    public int getActiveBuffers() {
+        return this.dynamicBufferManager.getActiveBuffers();
+    }
+
+    /**
      * @return The Veil compiler for vanilla shaders
      */
     public VanillaShaderCompiler getVanillaShaderCompiler() {
@@ -157,6 +169,7 @@ public class VeilRenderer implements ResourceManagerReloadListener {
     /**
      * @return The manger for all dynamically added framebuffer attachments
      */
+    @ApiStatus.Internal
     public DynamicBufferManager getDynamicBufferManger() {
         return this.dynamicBufferManager;
     }
@@ -199,6 +212,7 @@ public class VeilRenderer implements ResourceManagerReloadListener {
     /**
      * @return The manager for all data-driven render types
      */
+    @ApiStatus.Internal
     public DynamicRenderTypeManager getDynamicRenderTypeManager() {
         return this.dynamicRenderTypeManager;
     }
@@ -268,7 +282,7 @@ public class VeilRenderer implements ResourceManagerReloadListener {
     }
 
     @Override
-    public void onResourceManagerReload(ResourceManager resourceManager) {
-        VeilBloomRenderer.enable();
+    public void onResourceManagerReload(@NotNull ResourceManager resourceManager) {
+        VeilBloomRenderer.tryEnable();
     }
 }

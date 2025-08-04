@@ -26,7 +26,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.lwjgl.opengl.GL20C.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20C.GL_VERTEX_SHADER;
 
-@ApiStatus.Internal
+/**
+ * Compiles vanilla shaders asynchronously.
+ */
 public class VanillaShaderCompiler {
 
     private static final Set<String> LAST_FRAME_SHADERS = ConcurrentHashMap.newKeySet();
@@ -135,6 +137,9 @@ public class VanillaShaderCompiler {
         return future.isDone() ? CompletableFuture.completedFuture(null) : future;
     }
 
+    /**
+     * @return Whether shaders are currently being rendered
+     */
     public boolean isCompilingShaders() {
         return this.scheduler != null && !this.scheduler.getCompletedFuture().isDone();
     }

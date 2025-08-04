@@ -131,6 +131,9 @@ public enum DynamicBufferType {
 
     /**
      * Decodes the dynamic buffer types from the specified mask.
+     * <br>
+     * The returned values are in the correct attachment order starting at attachment 1.
+     * Attachment 0 will always be the regular vanilla minecraft framebuffer attachment.
      *
      * @param mask The mask of buffers
      * @return An array of all decoded buffers

@@ -70,7 +70,7 @@ public class VanillaShaderProcessor {
         @Override
         public GlslTree modifyInclude(@Nullable ResourceLocation name, String source) throws IOException, GlslSyntaxException, LexerException {
             GlslTree tree = GlslParser.preprocessParse(source, this.macros);
-            this.processor.getImportProcessor().modify(new Context(customProgramData, this.processor, this.shaderInstance, name, this.activeBuffers, this.type, this.vertexFormat, this.macros), tree);
+            this.processor.getImportProcessor().modify(new Context(this.customProgramData, this.processor, this.shaderInstance, name, this.activeBuffers, this.type, this.vertexFormat, this.macros), tree);
             return tree;
         }
 
