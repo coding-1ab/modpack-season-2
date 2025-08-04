@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import foundry.veil.api.client.render.framebuffer.FramebufferAttachmentDefinition;
 import io.github.ocelot.glslprocessor.api.grammar.GlslTypeSpecifier;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -23,8 +22,7 @@ public enum DynamicBufferType {
     LIGHT_COLOR("LightColor", GlslTypeSpecifier.BuiltinType.VEC4, FramebufferAttachmentDefinition.Format.RGB8),
     DEBUG("Debug", GlslTypeSpecifier.BuiltinType.VEC4, FramebufferAttachmentDefinition.Format.RGBA16F);
 
-    @ApiStatus.Internal
-    public static final DynamicBufferType[] BUFFERS = values();
+    private static final DynamicBufferType[] BUFFERS = values();
     private static final int MASK = (1 << BUFFERS.length) - 1;
 
     public static final Codec<DynamicBufferType> CODEC = Codec.STRING.flatXmap(name -> {
@@ -45,6 +43,7 @@ public enum DynamicBufferType {
 
     private final String name;
     private final String sourceName;
+    private final String macroName;
     private final GlslTypeSpecifier.BuiltinType type;
     private final int internalFormat;
     private final int texelFormat;
@@ -53,6 +52,7 @@ public enum DynamicBufferType {
     DynamicBufferType(String sourceName, GlslTypeSpecifier.BuiltinType type, FramebufferAttachmentDefinition.Format format) {
         this.name = this.name().toLowerCase(Locale.ROOT);
         this.sourceName = "VeilDynamic" + sourceName;
+        this.macroName = "VEIL_" + this.name();
         this.type = type;
         this.internalFormat = format.getInternalFormat();
         this.texelFormat = format.getFormat();
@@ -102,6 +102,14 @@ public enum DynamicBufferType {
     }
 
     /**
+     * @return The name of the macro added when this buffer type is enabled
+     * @since 2.3.0
+     */
+    public String getMacroName() {
+        return this.macroName;
+    }
+
+    /**
      * Adds the standard buffer macros to the specified map.
      *
      * @param mask The mask of enabled buffers
@@ -110,7 +118,7 @@ public enum DynamicBufferType {
     public static void addMacros(int mask, Map<String, String> map) {
         for (DynamicBufferType value : BUFFERS) {
             if ((value.mask & mask) != 0) {
-                map.put("VEIL_" + value.name(), "1");
+                map.put(value.getMacroName(), "1");
             }
         }
     }

@@ -40,6 +40,7 @@ import static org.lwjgl.opengl.GL43C.GL_COMPUTE_SHADER;
 public class DynamicBufferManager implements NativeResource {
 
     public static final ResourceLocation MAIN_WRAPPER = Veil.veilPath("dynamic_main");
+    private static final DynamicBufferType[] BUFFERS = DynamicBufferType.values();
 
     private int activeBuffers;
     private final Object2IntMap<ResourceLocation> activeBufferLayers;
@@ -174,8 +175,8 @@ public class DynamicBufferManager implements NativeResource {
     public void free() {
         this.deleteFramebuffers();
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer textures = stack.mallocInt(DynamicBufferType.BUFFERS.length);
-            for (DynamicBufferType value : DynamicBufferType.BUFFERS) {
+            IntBuffer textures = stack.mallocInt(BUFFERS.length);
+            for (DynamicBufferType value : BUFFERS) {
                 textures.put(value.ordinal(), this.dynamicBuffers.get(value).textureId);
             }
             glDeleteTextures(textures);
