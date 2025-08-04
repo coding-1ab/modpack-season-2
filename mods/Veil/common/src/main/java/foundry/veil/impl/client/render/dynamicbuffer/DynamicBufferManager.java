@@ -143,15 +143,6 @@ public class DynamicBufferManager implements NativeResource {
             renderer.getVanillaShaderCompiler().reload(shaders);
         }
 
-        // This rebuild all chunks in view without clearing them if normals need to be corrected
-        if ((this.activeBuffers & DynamicBufferType.NORMAL.getMask()) != (activeBuffers & DynamicBufferType.NORMAL.getMask())) {
-            VeilRenderSystem.rebuildChunks();
-        }
-
-        if (SodiumCompat.INSTANCE != null) {
-            SodiumCompat.INSTANCE.setActiveBuffers(activeBuffers);
-        }
-
         try {
             renderer.getShaderManager().setActiveBuffers(activeBuffers);
         } catch (RuntimeException e) {
@@ -160,7 +151,6 @@ public class DynamicBufferManager implements NativeResource {
             throw new RuntimeException(e);
         }
 
-        VeilRenderSystem.updateActiveBuffers();
         VeilClient.clientPlatform().onVeilDynamicBuffersChanged(new DynamicBuffersChange(oldActiveBuffers, this.activeBuffers));
         return true;
     }

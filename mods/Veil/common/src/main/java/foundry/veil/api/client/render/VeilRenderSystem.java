@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import foundry.veil.Veil;
 import foundry.veil.api.client.necromancer.render.NecromancerRenderer;
+import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.client.render.ext.VeilDebug;
 import foundry.veil.api.client.render.ext.VeilMultiBind;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
@@ -24,6 +25,7 @@ import foundry.veil.api.client.render.shader.ShaderManager;
 import foundry.veil.api.client.render.shader.block.ShaderBlock;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.api.client.render.texture.VeilPreloadedTexture;
+import foundry.veil.api.compat.SodiumCompat;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
 import foundry.veil.ext.LevelRendererExtension;
 import foundry.veil.ext.TextureManagerExtension;
@@ -1128,6 +1130,18 @@ public final class VeilRenderSystem {
                 NecromancerRenderDispatcher.end();
             }
         });
+        VeilEventPlatform.INSTANCE.onVeilDynamicBuffersChanged(change -> {
+            if (SodiumCompat.INSTANCE != null) {
+                SodiumCompat.INSTANCE.setActiveBuffers(change.getEnabledBuffersMask());
+            }
+
+            // This rebuild all chunks in view without clearing them if normals need to be corrected
+            if (change.hasChanged(DynamicBufferType.NORMAL)) {
+                rebuildChunks();
+            }
+
+            UNIFORM_BLOCK_STATE.onShaderCompile();
+        });
     }
 
     @ApiStatus.Internal
@@ -1289,10 +1303,5 @@ public final class VeilRenderSystem {
     @ApiStatus.Internal
     public static void clearLevel() {
         NecromancerRenderDispatcher.delete();
-    }
-
-    @ApiStatus.Internal
-    public static void updateActiveBuffers() {
-        UNIFORM_BLOCK_STATE.onShaderCompile();
     }
 }

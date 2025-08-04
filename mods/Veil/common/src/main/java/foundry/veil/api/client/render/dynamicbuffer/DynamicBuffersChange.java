@@ -1,14 +1,19 @@
 package foundry.veil.api.client.render.dynamicbuffer;
 
+import org.jetbrains.annotations.ApiStatus;
+
 /**
  * A change in the currently active dynamic buffers
+ *
  * @author RyanH
  * @since 2.3.0
  */
 public class DynamicBuffersChange {
+
     private final int previousBuffers;
     private final int newBuffers;
 
+    @ApiStatus.Internal
     public DynamicBuffersChange(final int previousBuffers, final int newBuffers) {
         this.previousBuffers = previousBuffers;
         this.newBuffers = newBuffers;
@@ -49,6 +54,7 @@ public class DynamicBuffersChange {
 
     /**
      * Checks if a specific {@link DynamicBufferType} changed enabled status
+     *
      * @param buffer the buffer type to check
      * @return if the buffer was enabled / disabled
      */
@@ -59,6 +65,7 @@ public class DynamicBuffersChange {
 
     /**
      * Checks if a specific {@link DynamicBufferType} is enabled in the new state
+     *
      * @param buffer the buffer type to check
      * @return if the buffer is now enabled
      */
@@ -68,6 +75,7 @@ public class DynamicBuffersChange {
 
     /**
      * Checks if a specific {@link DynamicBufferType} was enabled in the previous state
+     *
      * @param buffer the buffer type to check
      * @return if the buffer was previously enabled
      */
