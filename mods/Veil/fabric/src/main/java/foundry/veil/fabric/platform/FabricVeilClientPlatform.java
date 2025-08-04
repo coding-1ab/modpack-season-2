@@ -1,9 +1,11 @@
 package foundry.veil.fabric.platform;
 
+import foundry.veil.api.client.render.dynamicbuffer.DynamicBuffersChange;
 import foundry.veil.api.client.render.post.PostPipeline;
 import foundry.veil.api.client.render.shader.ShaderManager;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.fabric.event.FabricVeilAddShaderPreProcessorsEvent;
+import foundry.veil.fabric.event.FabricVeilDynamicBuffersChangedEvent;
 import foundry.veil.fabric.event.FabricVeilPostProcessingEvent;
 import foundry.veil.fabric.event.FabricVeilShaderCompileEvent;
 import foundry.veil.platform.VeilClientPlatform;
@@ -34,5 +36,10 @@ public class FabricVeilClientPlatform implements VeilClientPlatform {
     @Override
     public void onVeilCompileShaders(ShaderManager shaderManager, Map<ResourceLocation, ShaderProgram> updatedPrograms) {
         FabricVeilShaderCompileEvent.EVENT.invoker().onVeilCompileShaders(shaderManager, updatedPrograms);
+    }
+
+    @Override
+    public void onVeilDynamicBuffersChanged(DynamicBuffersChange change) {
+        FabricVeilDynamicBuffersChangedEvent.EVENT.invoker().onVeilDynamicBuffersChanged(change);
     }
 }

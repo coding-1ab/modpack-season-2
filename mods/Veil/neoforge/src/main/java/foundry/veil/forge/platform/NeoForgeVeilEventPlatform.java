@@ -120,6 +120,11 @@ public class NeoForgeVeilEventPlatform implements VeilEventPlatform {
         this.getModBus().<ForgeVeilShaderCompileEvent>addListener(forgeEvent -> event.onVeilCompileShaders(forgeEvent.getShaderManager(), forgeEvent.getUpdatedPrograms()));
     }
 
+    @Override
+    public void onVeilDynamicBuffersChanged(VeilDynamicBuffersChangedEvent event) {
+        this.getModBus().<ForgeVeilDynamicBuffersChangedEvent>addListener(forgeEvent -> event.onVeilDynamicBuffersChanged(forgeEvent.getChange()));
+    }
+
     public static @Nullable RenderLevelStageEvent.Stage getForgeStage(VeilRenderLevelStageEvent.Stage stage) {
         return STAGE_MAPPING.get(stage);
     }

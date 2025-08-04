@@ -52,4 +52,9 @@ public class FabricVeilEventPlatform implements VeilEventPlatform {
     public void onVeilShaderCompile(VeilShaderCompileEvent event) {
         FabricVeilShaderCompileEvent.EVENT.register(event);
     }
+
+    @Override
+    public void onVeilDynamicBuffersChanged(VeilDynamicBuffersChangedEvent event) {
+        FabricVeilDynamicBuffersChangedEvent.EVENT.register(event);
+    }
 }

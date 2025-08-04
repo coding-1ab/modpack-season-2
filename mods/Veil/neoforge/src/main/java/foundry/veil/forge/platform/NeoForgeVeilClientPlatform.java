@@ -1,9 +1,11 @@
 package foundry.veil.forge.platform;
 
+import foundry.veil.api.client.render.dynamicbuffer.DynamicBuffersChange;
 import foundry.veil.api.client.render.post.PostPipeline;
 import foundry.veil.api.client.render.shader.ShaderManager;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.forge.event.ForgeVeilAddShaderProcessorsEvent;
+import foundry.veil.forge.event.ForgeVeilDynamicBuffersChangedEvent;
 import foundry.veil.forge.event.ForgeVeilPostProcessingEvent;
 import foundry.veil.forge.event.ForgeVeilShaderCompileEvent;
 import foundry.veil.platform.VeilClientPlatform;
@@ -36,5 +38,10 @@ public class NeoForgeVeilClientPlatform implements VeilClientPlatform {
     @Override
     public void onVeilCompileShaders(ShaderManager shaderManager, Map<ResourceLocation, ShaderProgram> updatedPrograms) {
         ModLoader.postEvent(new ForgeVeilShaderCompileEvent(shaderManager, updatedPrograms));
+    }
+
+    @Override
+    public void onVeilDynamicBuffersChanged(DynamicBuffersChange change) {
+        ModLoader.postEvent(new ForgeVeilDynamicBuffersChangedEvent(change));
     }
 }

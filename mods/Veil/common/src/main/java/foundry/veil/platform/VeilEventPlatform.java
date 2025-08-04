@@ -30,4 +30,6 @@ public interface VeilEventPlatform {
     void onVeilRenderLevelStage(VeilRenderLevelStageEvent event);
 
     void onVeilShaderCompile(VeilShaderCompileEvent event);
+
+    void onVeilDynamicBuffersChanged(VeilDynamicBuffersChangedEvent event);
 }

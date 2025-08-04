@@ -3,9 +3,11 @@ package foundry.veil.impl.client.render.dynamicbuffer;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import foundry.veil.Veil;
+import foundry.veil.VeilClient;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.VeilRenderer;
 import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
+import foundry.veil.api.client.render.dynamicbuffer.DynamicBuffersChange;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.compat.SodiumCompat;
 import foundry.veil.ext.RenderTargetExtension;
@@ -124,6 +126,7 @@ public class DynamicBufferManager implements NativeResource {
             return false;
         }
 
+        int oldActiveBuffers = this.activeBuffers;
         this.activeBuffers = flags;
         this.deleteFramebuffers();
 
@@ -158,6 +161,7 @@ public class DynamicBufferManager implements NativeResource {
         }
 
         VeilRenderSystem.updateActiveBuffers();
+        VeilClient.clientPlatform().onVeilDynamicBuffersChanged(new DynamicBuffersChange(oldActiveBuffers, this.activeBuffers));
         return true;
     }
 
