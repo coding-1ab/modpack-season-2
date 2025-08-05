@@ -95,8 +95,6 @@ public class VeilRenderer implements ResourceManagerReloadListener {
         consumer.accept("");
         consumer.accept(ChatFormatting.UNDERLINE + "Veil");
 
-        boolean ambientOcclusion = this.lightRenderer.isAmbientOcclusionEnabled();
-        consumer.accept("Ambient Occlusion: " + (ambientOcclusion ? ChatFormatting.GREEN + "On" : ChatFormatting.RED + "Off"));
         this.lightRenderer.addDebugInfo(consumer);
         int mask = this.dynamicBufferManager.getActiveBuffers();
         if (mask != 0) {

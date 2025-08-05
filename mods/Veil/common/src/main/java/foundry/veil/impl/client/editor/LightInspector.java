@@ -104,6 +104,9 @@ public class LightInspector extends SingleWindowInspector {
                 lightRenderer.disableAmbientOcclusion();
             }
         }
+        if (ImGui.isItemHovered()) {
+            ImGui.setTooltip("Deprecated");
+        }
 
         ImGui.beginTabBar("##lights");
         for (ResourceKey<LightTypeRegistry.LightType<?>> key : this.lightTypes) {

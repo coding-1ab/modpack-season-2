@@ -127,7 +127,11 @@ public final class LightRenderer implements NativeResource {
 
     /**
      * Enables ambient occlusion.
+     *
+     * @deprecated This feature is being removed
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "3.0.0")
+    @Deprecated(since = "2.3.0", forRemoval = true)
     public void enableAmbientOcclusion() {
         if (!this.ambientOcclusionEnabled) {
             this.ambientOcclusionEnabled = true;
@@ -137,7 +141,11 @@ public final class LightRenderer implements NativeResource {
 
     /**
      * Disables ambient occlusion.
+     *
+     * @deprecated This feature is being removed
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "3.0.0")
+    @Deprecated(since = "2.3.0", forRemoval = true)
     public void disableAmbientOcclusion() {
         if (this.ambientOcclusionEnabled) {
             this.ambientOcclusionEnabled = false;
@@ -147,7 +155,10 @@ public final class LightRenderer implements NativeResource {
 
     /**
      * @return Whether chunks can have ambient occlusion
+     * @deprecated This feature is being removed
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "3.0.0")
+    @Deprecated(since = "2.3.0", forRemoval = true)
     public boolean isAmbientOcclusionEnabled() {
         return this.ambientOcclusionEnabled;
     }
