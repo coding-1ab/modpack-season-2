@@ -150,7 +150,7 @@ public class VanillaShaderCompiler {
      * @return The active buffers in the specified program
      * @since 2.3.0
      */
-    public static int getActiveBuffers(ShaderInstance shaderInstance) {
+    public static int getActiveDynamicBuffers(ShaderInstance shaderInstance) {
         return ((ShaderInstanceExtension) shaderInstance).veil$getActiveBuffers();
     }
 
