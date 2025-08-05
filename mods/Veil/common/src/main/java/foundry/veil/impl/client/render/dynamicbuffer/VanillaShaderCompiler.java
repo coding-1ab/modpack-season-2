@@ -144,6 +144,16 @@ public class VanillaShaderCompiler {
         return this.scheduler != null && !this.scheduler.getCompletedFuture().isDone();
     }
 
+    /**
+     * Retrieves the active buffers for an existing shader program.
+     *
+     * @return The active buffers in the specified program
+     * @since 2.3.0
+     */
+    public static int getActiveBuffers(ShaderInstance shaderInstance) {
+        return ((ShaderInstanceExtension) shaderInstance).veil$getActiveBuffers();
+    }
+
     @ApiStatus.Internal
     public static void markRendered(String shaderInstace) {
         if (VeilRenderSystem.renderer().getVanillaShaderCompiler().isCompilingShaders()) {

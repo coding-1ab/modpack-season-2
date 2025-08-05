@@ -254,4 +254,9 @@ public abstract class DynamicBufferShaderInstanceMixin implements Shader, Shader
             this.veil$fragmentSource = source;
         }
     }
+
+    @Override
+    public int veil$getActiveBuffers() {
+        return this.veil$activeBuffers;
+    }
 }

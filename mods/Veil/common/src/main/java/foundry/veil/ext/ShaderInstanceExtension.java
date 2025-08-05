@@ -13,4 +13,6 @@ public interface ShaderInstanceExtension {
     void veil$recompile(boolean vertex, String source, int activeBuffers);
 
     Collection<ResourceLocation> veil$getShaderSources();
+
+    int veil$getActiveBuffers();
 }
