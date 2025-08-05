@@ -218,7 +218,7 @@ public class ShaderProgramImpl implements ShaderProgram {
     }
 
     public void recompile(int activeBuffers, ShaderSourceSet sourceSet, ShaderCompiler compiler) throws ShaderException, IOException {
-        CompiledProgram compiledProgram = CompiledProgram.create(this.name);
+        CompiledProgram compiledProgram = CompiledProgram.create(this.name, activeBuffers);
         try {
             this.attachShaders(compiledProgram, sourceSet, compiler);
 
@@ -398,6 +398,11 @@ public class ShaderProgramImpl implements ShaderProgram {
     }
 
     @Override
+    public int getActiveDynamicBuffers() {
+        return this.compiledProgram != null ? this.compiledProgram.activeBuffers : 0;
+    }
+
+    @Override
     public @Nullable ProgramDefinition getDefinition() {
         return this.definition;
     }
@@ -446,16 +451,17 @@ public class ShaderProgramImpl implements ShaderProgram {
                                   Int2ObjectMap<CompiledShader> shaders,
                                   Int2ObjectMap<CompiledShader> shadersView,
                                   ShaderUniformCache uniformCache,
-                                  Set<String> definitionDependencies) implements NativeResource {
+                                  Set<String> definitionDependencies,
+                                  int activeBuffers) implements NativeResource {
 
-        public static CompiledProgram create(ResourceLocation id) {
+        public static CompiledProgram create(ResourceLocation id, int activeBuffers) {
             int program = glCreateProgram();
             VeilDebug.get().objectLabel(GL_PROGRAM, program, "Shader Program " + id);
             Int2ObjectMap<CompiledShader> shaders = new Int2ObjectArrayMap<>(2);
             Int2ObjectMap<CompiledShader> shadersView = Int2ObjectMaps.unmodifiable(shaders);
             ShaderUniformCache uniforms = new ShaderUniformCache(() -> program);
             Set<String> definitionDependencies = new HashSet<>();
-            return new CompiledProgram(program, shaders, shadersView, uniforms, definitionDependencies);
+            return new CompiledProgram(program, shaders, shadersView, uniforms, definitionDependencies, activeBuffers);
         }
 
         public void attachShader(int glType, CompiledShader shader) {

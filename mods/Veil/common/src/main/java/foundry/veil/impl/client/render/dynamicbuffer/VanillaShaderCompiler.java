@@ -8,6 +8,7 @@ import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.ext.ShaderInstanceExtension;
 import foundry.veil.impl.ThreadTaskScheduler;
 import foundry.veil.impl.client.render.shader.processor.VanillaShaderProcessor;
+import foundry.veil.impl.client.render.shader.program.ShaderProgramImpl;
 import net.minecraft.FileUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -151,6 +152,9 @@ public class VanillaShaderCompiler {
      * @since 2.3.0
      */
     public static int getActiveDynamicBuffers(ShaderInstance shaderInstance) {
+        if (shaderInstance instanceof ShaderProgramImpl.Wrapper wrapper) {
+            return wrapper.program().getActiveDynamicBuffers();
+        }
         return ((ShaderInstanceExtension) shaderInstance).veil$getActiveBuffers();
     }
 

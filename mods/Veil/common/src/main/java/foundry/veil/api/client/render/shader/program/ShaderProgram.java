@@ -84,6 +84,12 @@ public interface ShaderProgram extends NativeResource, MutableUniformAccess, Tex
      */
     int getProgram();
 
+    /**
+     * @return The active buffers in the compiled program
+     * @since 2.3.0
+     */
+    int getActiveDynamicBuffers();
+
     @Override
     ShaderUniform getUniform(CharSequence name);
 
