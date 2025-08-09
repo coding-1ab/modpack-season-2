@@ -44,6 +44,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
 public class VeilResourceManagerImpl implements VeilResourceManager, NativeResource {
 
     private static final AtomicInteger WATCHER_ID = new AtomicInteger(1);
+    private final TextResourceLoader textResourceLoader;
     private final ObjectList<VeilResourceLoader> loaders;
     private final List<VeilPackResources> packResources;
     private final Object2ObjectMap<Path, PackResourceListener> watchers;
@@ -51,7 +52,8 @@ public class VeilResourceManagerImpl implements VeilResourceManager, NativeResou
     private ResourceManager serverResourceManager = ResourceManager.Empty.INSTANCE;
 
     public VeilResourceManagerImpl() {
-        this.loaders = new ObjectArrayList<>(8);
+        this.textResourceLoader = new TextResourceLoader();
+        this.loaders = new ObjectArrayList<>(10);
         this.packResources = new LinkedList<>();
         this.watchers = new Object2ObjectArrayMap<>();
     }
@@ -67,7 +69,6 @@ public class VeilResourceManagerImpl implements VeilResourceManager, NativeResou
         this.addLoader(new McMetaResourceLoader());
         this.addLoader(new LanguageResourceLoader());
         this.addLoader(new BlockModelResourceLoader());
-        this.addLoader(new TextResourceLoader());
     }
 
     /**
@@ -125,6 +126,11 @@ public class VeilResourceManagerImpl implements VeilResourceManager, NativeResou
             if (loader.canLoad(packType, loc, path, modResourcePath)) {
                 return loader.load(this, provider, packType, loc, path, modResourcePath);
             }
+        }
+
+        // Treat text as a fallback since it's not very specific
+        if (this.textResourceLoader.canLoad(packType, loc, path, modResourcePath)) {
+            return this.textResourceLoader.load(this, provider, packType, loc, path, modResourcePath);
         }
 
         // If no loaders can load the resource, add it as an unknown resource
