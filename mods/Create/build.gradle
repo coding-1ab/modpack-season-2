@@ -256,6 +256,7 @@ sourceSets.main {
     resources {
         srcDir("src/generated/resources")
         exclude(".cache/")
+        exclude("data/create/.wiki")
     }
 
     blossom.javaSources {
