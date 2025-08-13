@@ -37,8 +37,8 @@ public class CarbonBrushesRenderer extends ShaftRenderer<CarbonBrushesBlockEntit
         buffer.center();
         
         switch (axis) {
-            case X -> buffer.rotate(90, Direction.Axis.Z);
-            case Z -> buffer.rotate(90, Direction.Axis.X);
+            case X -> buffer.rotateDegrees(90, Direction.Axis.Z);
+            case Z -> buffer.rotateDegrees(90, Direction.Axis.X);
         }
         
         buffer.uncenter();
