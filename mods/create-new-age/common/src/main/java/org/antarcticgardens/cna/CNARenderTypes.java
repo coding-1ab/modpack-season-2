@@ -2,9 +2,6 @@ package org.antarcticgardens.cna;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import dev.engine_room.flywheel.api.model.Model;
-import dev.engine_room.flywheel.lib.model.Models;
-import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
@@ -13,8 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.function.Function;
 
 public class CNARenderTypes extends RenderType {
-    public static final PartialModel WIRE_MODEL = PartialModel.of(new ResourceLocation(CreateNewAge.MOD_ID, "wire"));
-
     private static final Function<ResourceLocation, RenderType> WIRE = Util.memoize(arg ->
             RenderType.create(
                     "wire",
@@ -29,7 +24,7 @@ public class CNARenderTypes extends RenderType {
                             .setCullState(RenderStateShard.NO_CULL)
                             .setLightmapState(RenderStateShard.LIGHTMAP)
                             .createCompositeState(false)
-    ));
+            ));
 
     public static RenderType wire(ResourceLocation texture) {
         return WIRE.apply(texture);

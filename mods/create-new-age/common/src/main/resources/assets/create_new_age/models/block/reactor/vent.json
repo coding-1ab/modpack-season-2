@@ -1,4 +1,6 @@
 {
+	"format_version": "1.21.6",
+	"credit": "Made by AndromedaGalaxy29",
 	"texture_size": [32, 32],
 	"textures": {
 		"0": "create_new_age:block/reactor/vent",
@@ -117,13 +119,14 @@
 		{
 			"from": [0, 12, 0],
 			"to": [16, 16, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 14, 8]},
 			"faces": {
 				"north": {"uv": [0, 8, 8, 10], "texture": "#0"},
 				"east": {"uv": [0, 8, 8, 10], "texture": "#0"},
 				"south": {"uv": [0, 8, 8, 10], "texture": "#0"},
 				"west": {"uv": [0, 8, 8, 10], "texture": "#0"},
-				"up": {"uv": [0, 0, 8, 8], "texture": "#0"},
-				"down": {"uv": [0, 0, 8, 8], "texture": "#0"}
+				"up": {"uv": [0, 0, 8, 8], "rotation": 180, "texture": "#0"},
+				"down": {"uv": [0, 0, 8, 8], "rotation": 180, "texture": "#0"}
 			}
 		},
 		{
@@ -191,7 +194,7 @@
 			"scale": [0.4, 0.4, 0.4]
 		},
 		"firstperson_lefthand": {
-			"rotation": [0, 225, 0],
+			"rotation": [0, -135, 0],
 			"scale": [0.4, 0.4, 0.4]
 		},
 		"ground": {
@@ -199,7 +202,7 @@
 			"scale": [0.25, 0.25, 0.25]
 		},
 		"gui": {
-			"rotation": [30, 225, 0],
+			"rotation": [30, -135, 0],
 			"scale": [0.625, 0.625, 0.625]
 		},
 		"fixed": {

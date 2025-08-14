@@ -8,7 +8,6 @@ import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import org.antarcticgardens.cna.content.electricity.battery.BatteryBlockEntity;
 import org.antarcticgardens.cna.content.electricity.battery.BatteryRenderer;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlockEntity;
-import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorVisual;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorRenderer;
 import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesBlockEntity;
 import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesRenderer;
@@ -46,7 +45,6 @@ public class CNABlockEntityTypes {
 
     public static final BlockEntityEntry<ElectricalConnectorBlockEntity> ELECTRICAL_CONNECTOR = REGISTRATE
             .blockEntity("electrical_connector", ElectricalConnectorBlockEntity::new)
-            .visual(() -> ElectricalConnectorVisual::new)
             .validBlocks(CNABlocks.ELECTRICAL_CONNECTOR)
             .renderer(() -> ElectricalConnectorRenderer::new)
             .register();
@@ -90,7 +88,7 @@ public class CNABlockEntityTypes {
             .blockEntity("advanced_solar_heating_plate", SolarHeatingPlateBlockEntity::createAdvanced)
             .validBlocks(CNABlocks.ADVANCED_SOLAR_HEATING_PLATE)
             .register();
-    
+
 
     public static final BlockEntityEntry<ReactorRodBlockEntity> REACTOR_ROD = REGISTRATE
             .blockEntity("reactor_rod", ReactorRodBlockEntity::new)
