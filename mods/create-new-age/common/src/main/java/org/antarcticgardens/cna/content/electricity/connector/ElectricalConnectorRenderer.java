@@ -1,10 +1,8 @@
 package org.antarcticgardens.cna.content.electricity.connector;
 
-import com.jozufozu.flywheel.api.vertex.VertexList;
-import com.jozufozu.flywheel.backend.Backend;
-import com.jozufozu.flywheel.util.Pair;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.createmod.catnip.data.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LightTexture;
@@ -14,6 +12,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -23,25 +22,78 @@ import org.antarcticgardens.cna.CreateNewAge;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.electricity.wire.ElectricWireItem;
 import org.antarcticgardens.cna.content.electricity.wire.WireType;
-import org.antarcticgardens.cna.rendering.fallbackInstance.FallbackInstanceRenderer;
 import org.antarcticgardens.cna.util.RaycastUtil;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class ElectricalConnectorRenderer extends FallbackInstanceRenderer<ElectricalConnectorBlockEntity> {
+public class ElectricalConnectorRenderer implements BlockEntityRenderer<ElectricalConnectorBlockEntity> {
     public ElectricalConnectorRenderer(BlockEntityRendererProvider.Context context) {
-        super(context);
+        super();
     }
 
     @Override
     public void render(ElectricalConnectorBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
-        super.render(blockEntity, partialTick, poseStack, buffer, packedLight, packedOverlay);
+        renderAllConnections(blockEntity, poseStack, buffer);
+        renderHand(blockEntity, partialTick, poseStack, buffer);
+    }
 
+    public void renderAllConnections(ElectricalConnectorBlockEntity blockEntity, PoseStack poseStack, MultiBufferSource buffer) {
+        blockEntity.getConnectorPositions().entrySet().stream().forEach(e ->
+                renderConnection(blockEntity.getBlockPos(), e.getKey(), e.getValue(), poseStack, buffer, blockEntity.getLevel()));
+    }
+
+    //Makes sure that only one of the two connectors renders the wire
+    public boolean shouldRenderConnection(BlockPos pos, BlockPos endPos){
+        if(pos.getX() < endPos.getX()){
+            return true;
+        }else if(pos.getX() == endPos.getX()) {
+            if(pos.getY() < endPos.getY()){
+                return true;
+            }else if(pos.getY() == endPos.getY() && pos.getZ() < endPos.getZ()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void renderConnection(BlockPos pos, BlockPos endPos, WireType wireType, PoseStack poseStack, MultiBufferSource buffer, Level level){
+        if(!shouldRenderConnection(pos, endPos)){
+            return;
+        }
+
+        ResourceLocation texture = wireType.getTextureLocation();
+
+        double distance = pos.getCenter().distanceTo(endPos.getCenter());
+        int sections = (int) Math.ceil(distance * CNAConfig.getClient().wireSectionsPerMeter.get());
+        Vector3f direction = endPos.getCenter().subtract(pos.getCenter()).normalize().toVector3f();
+
+        Wire wire = new Wire(direction, (float) distance, sections);
+        VertexConsumer consumer = buffer.getBuffer(CNARenderTypes.wire(texture));
+
+        poseStack.pushPose();
+        poseStack.translate(0.5f, 0.5f, 0.5f);
+        poseStack.mulPoseMatrix(new Matrix4f().rotateTowards(wire.getDirection(), wire.getUp()));
+
+        for (int i = 0; i < wire.getSections().size(); i++) {
+            Pair<WireSection, Float> pair = wire.getSections().get(i);
+
+            float sectionOffset = wire.getSectionLength() * i;
+            Vector3f lightPos = pos.getCenter().toVector3f()
+                    .add(wire.getDirection().mul(sectionOffset))
+                    .add(wire.getUp().mul(pair.getSecond()));
+            BlockPos lightBlockPos = BlockPos.containing(new Vec3(lightPos));
+            int block = level.getBrightness(LightLayer.BLOCK, lightBlockPos);
+            int sky = level.getBrightness(LightLayer.SKY, lightBlockPos);
+
+            pair.getFirst().render(consumer, poseStack, LightTexture.pack(block, sky), pair.getSecond());
+
+            poseStack.translate(0.0f, 0.0f, wire.getSectionLength());
+        }
+
+        poseStack.popPose();
+    }
+
+    public void renderHand(ElectricalConnectorBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null && Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
             ItemStack itemInHand = player.getMainHandItem();
@@ -49,8 +101,8 @@ public class ElectricalConnectorRenderer extends FallbackInstanceRenderer<Electr
             if (!(itemInHand.getItem() instanceof ElectricWireItem))
                 itemInHand = player.getOffhandItem();
 
-            if (itemInHand.getItem() instanceof ElectricWireItem wire) {
-                BlockPos bound = wire.getBoundConnector(itemInHand);
+            if (itemInHand.getItem() instanceof ElectricWireItem wireItem) {
+                BlockPos bound = wireItem.getBoundConnector(itemInHand);
 
                 if (bound != null && bound.equals(blockEntity.getBlockPos())) {
                     Vec3 eyePos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
@@ -95,7 +147,7 @@ public class ElectricalConnectorRenderer extends FallbackInstanceRenderer<Electr
                         }
                     }
 
-                    ResourceLocation texture = wire.getWireType().getTextureLocation();
+                    ResourceLocation texture = wireItem.getWireType().getTextureLocation();
 
                     if (distance >= maxDistance) {
                         texture = new ResourceLocation(CreateNewAge.MOD_ID, "textures/wire/red.png");
@@ -104,36 +156,28 @@ public class ElectricalConnectorRenderer extends FallbackInstanceRenderer<Electr
                     int sections = (int) Math.ceil(distance * CNAConfig.getClient().wireSectionsPerMeter.get());
 
                     Vector3f direction = new Vector3f(to).normalize();
-                    
-                    Wire model = new Wire(direction, (float) distance, sections);
+
+                    Wire wire = new Wire(direction, (float) distance, sections);
                     VertexConsumer consumer = buffer.getBuffer(CNARenderTypes.wire(texture));
-                    
+
                     poseStack.pushPose();
                     poseStack.translate(0.5f, 0.5f, 0.5f);
-                    poseStack.mulPoseMatrix(new Matrix4f().rotateTowards(model.getDirection(), model.getUp()));
-                    
-                    for (int i = 0; i < model.getSections().size(); i++) {
-                        Pair<WireSection, Float> pair = model.getSections().get(i);
-                        VertexList reader = pair.first().getReader();
-                        
-                        float sectionOffset = model.getSectionLength() * i;
+                    poseStack.mulPoseMatrix(new Matrix4f().rotateTowards(wire.getDirection(), wire.getUp()));
+
+                    for (int i = 0; i < wire.getSections().size(); i++) {
+                        Pair<WireSection, Float> pair = wire.getSections().get(i);
+
+                        float sectionOffset = wire.getSectionLength() * i;
                         Vector3f lightPos = blockEntity.getBlockPos().getCenter().toVector3f()
-                                .add(model.getDirection().mul(sectionOffset))
-                                .add(model.getUp().mul(pair.second()));
+                                .add(wire.getDirection().mul(sectionOffset))
+                                .add(wire.getUp().mul(pair.getSecond()));
                         BlockPos lightBlockPos = BlockPos.containing(new Vec3(lightPos));
                         int block = blockEntity.getLevel().getBrightness(LightLayer.BLOCK, lightBlockPos);
                         int sky = blockEntity.getLevel().getBrightness(LightLayer.SKY, lightBlockPos);
 
-                        for (int j = 0; j < reader.getVertexCount(); j++) {
-                            consumer.vertex(poseStack.last().pose(), reader.getX(j), reader.getY(j) + pair.second(), reader.getZ(j))
-                                    .color(1.0f, 1.0f, 1.0f, 0.0f)
-                                    .uv(reader.getU(j), reader.getV(j))
-                                    .uv2(LightTexture.pack(block, sky)) 
-                                    .normal(0.0f, 1.0f, 0.0f)
-                                    .endVertex();
-                        }
-                        
-                        poseStack.translate(0.0f, 0.0f, model.getSectionLength());
+                        pair.getFirst().render(consumer, poseStack, LightTexture.pack(block, sky), pair.getSecond());
+
+                        poseStack.translate(0.0f, 0.0f, wire.getSectionLength());
                     }
 
                     poseStack.popPose();
@@ -142,8 +186,8 @@ public class ElectricalConnectorRenderer extends FallbackInstanceRenderer<Electr
         }
     }
 
-    @Override
-    public boolean shouldRenderOffScreen(ElectricalConnectorBlockEntity blockEntity) {
-        return true;
-    }
+//    @Override
+//    public boolean shouldRenderOffScreen(ElectricalConnectorBlockEntity blockEntity) {
+//        return true;
+//    }
 }

@@ -1,8 +1,8 @@
 package org.antarcticgardens.cna;
 
-import com.simibubi.create.content.fluids.tank.BoilerHeaters;
+import com.simibubi.create.api.boiler.BoilerHeater;
 import com.simibubi.create.foundation.data.CreateRegistrate;
-import com.simibubi.create.foundation.placement.PlacementHelpers;
+import net.createmod.catnip.placement.PlacementHelpers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -51,7 +51,7 @@ public abstract class CreateNewAge {
         CNAConfig.load();
 
         platform.commonSetup(() -> {
-            BoilerHeaters.registerHeater(CNABlocks.HEATER.get(), ((level, pos, state) -> state.getValue(HeaterBlock.STRENGTH).ordinal() - 1));
+            BoilerHeater.REGISTRY.register(CNABlocks.HEATER.get(), ((level, pos, state) -> state.getValue(HeaterBlock.STRENGTH).ordinal() - 1));
         });
 
         // TODO: Monkey edition?

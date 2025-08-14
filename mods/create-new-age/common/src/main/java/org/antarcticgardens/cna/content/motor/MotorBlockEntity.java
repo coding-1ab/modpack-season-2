@@ -1,8 +1,7 @@
 package org.antarcticgardens.cna.content.motor;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
@@ -10,15 +9,17 @@ import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.VecHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.tterrag.registrate.builders.BlockEntityBuilder;
+import dev.engine_room.flywheel.lib.transform.TransformStack;
+import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -43,7 +44,6 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
     private float actualSpeed = 0;
     private float actualStress = 0;
     private long prvEnergy = -100000;
-    private int energySpam = 0;
 
     private float speed = 0;
     private float stress = 0;
@@ -56,7 +56,9 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
                 .onFinalCommit(RunnableUtil.createBlockEntityUpdater(this))
                 .setSupportsExtraction(false);
 
-        EnergyStorage.registerForBlockEntity((blockEntity, direction) -> blockEntity.storage, CNABlockEntityTypes.MOTOR.get()); 
+        EnergyStorage.registerForBlockEntity((blockEntity, direction) -> blockEntity.storage, CNABlockEntityTypes.BASIC_MOTOR.get());
+        EnergyStorage.registerForBlockEntity((blockEntity, direction) -> blockEntity.storage, CNABlockEntityTypes.ADVANCED_MOTOR.get());
+        EnergyStorage.registerForBlockEntity((blockEntity, direction) -> blockEntity.storage, CNABlockEntityTypes.REINFORCED_MOTOR.get());
     }
 
     public static BlockEntityBuilder.BlockEntityFactory<MotorBlockEntity> create(IMotorVariant variant) {
@@ -72,7 +74,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
-        speedBehavior = new MotorScrollValueBehaviour(Lang.translateDirect("kinetics.creative_motor.rotation_speed"), this, new MotorValueBox());
+        speedBehavior = new MotorScrollValueBehaviour(CreateLang.translateDirect("kinetics.creative_motor.rotation_speed"), this, new MotorValueBox());
         speedBehavior.requiresWrench();
         speedBehavior.value = getDefaultSpeed();
         speedBehavior.withCallback(i -> this.updateGeneratedRotation());
@@ -87,21 +89,21 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
         }
 
         @Override
-        public Vec3 getLocalOffset(BlockState state) {
+        public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
             Direction facing = state.getValue(CreativeMotorBlock.FACING);
-            return super.getLocalOffset(state).add(Vec3.atLowerCornerOf(facing.getNormal())
+            return super.getLocalOffset(level, pos, state).add(Vec3.atLowerCornerOf(facing.getNormal())
                     .scale(-1 / 16f));
         }
 
         @Override
-        public void rotate(BlockState state, PoseStack ms) {
-            super.rotate(state, ms);
+        public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
+            super.rotate(level, pos, state, ms);
             Direction facing = state.getValue(CreativeMotorBlock.FACING);
             if (facing.getAxis() == Direction.Axis.Y)
                 return;
             if (getSide() != Direction.UP)
                 return;
-            TransformStack.cast(ms)
+            TransformStack.of(ms)
                     .rotateZ(-AngleHelper.horizontalAngle(facing) + 180);
         }
 
@@ -128,6 +130,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
         stress = compound.getFloat("lastGeneratedStress");
         speed = compound.getFloat("lastGeneratedSpeed");
         e = compound.getLong("eUse");
+        actualStress = compound.getFloat("actualStress");
         super.read(compound, clientPacket);
     }
 
@@ -139,6 +142,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
         compound.putFloat("lastGeneratedStress", stress);
         compound.putFloat("lastGeneratedSpeed", speed);
         compound.putFloat("eUse", e);
+        compound.putFloat("actualStress", actualStress);
         super.write(compound, clientPacket);
     }
 
@@ -151,20 +155,20 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        Lang.translate("tooltip.create_new_age.energy_stored")
+        CreateLang.translate("tooltip.create_new_age.energy_stored")
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_storage", StringFormatUtil.formatLong(storage.getStoredEnergy()), 
+        CreateLang.translate("tooltip.create_new_age.energy_storage", StringFormatUtil.formatLong(storage.getStoredEnergy()),
                         StringFormatUtil.formatLong(storage.getCapacity()))
                 .style(ChatFormatting.AQUA)
                 .forGoggles(tooltip, 1);
 
-        Lang.translate("tooltip.create_new_age.using")
+        CreateLang.translate("tooltip.create_new_age.using")
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_per_tick", StringFormatUtil.formatLong(e))
+        CreateLang.translate("tooltip.create_new_age.energy_per_tick", StringFormatUtil.formatLong(e))
                 .style(ChatFormatting.AQUA)
                 .forGoggles(tooltip, 1);
 
@@ -259,12 +263,10 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
                 updateGeneratedRotation();
                 speed = actualSpeed;
                 stress = actualStress;
-            } else if (storage.getStoredEnergy() != prvEnergy && energySpam > 10) {
+            } else if (storage.getStoredEnergy() != prvEnergy && level.getGameTime() % 20 == 0) {
                 this.sendData();
                 prvEnergy = storage.getStoredEnergy();
-                energySpam = 0;
             }
         }
-        energySpam++;
     }
 }

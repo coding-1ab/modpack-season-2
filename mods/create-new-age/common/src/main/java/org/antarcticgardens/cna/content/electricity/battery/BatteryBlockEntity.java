@@ -1,12 +1,12 @@
 package org.antarcticgardens.cna.content.electricity.battery;
 
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
+import com.simibubi.create.foundation.utility.CreateLang;
+import net.createmod.catnip.animation.LerpedFloat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -164,13 +164,13 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
 
         SimpleEnergyStorage storage = controller.getEnergyStorage();
 
-        Lang.translate("tooltip.create_new_age.energy_stats")
+        CreateLang.translate("tooltip.create_new_age.energy_stats")
                 .style(ChatFormatting.WHITE).forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_storage", StringFormatUtil.formatLong(storage.getStoredEnergy()), StringFormatUtil.formatLong(storage.getCapacity()))
+        CreateLang.translate("tooltip.create_new_age.energy_storage", StringFormatUtil.formatLong(storage.getStoredEnergy()), StringFormatUtil.formatLong(storage.getCapacity()))
                 .style(ChatFormatting.AQUA).forGoggles(tooltip);
 
-        return IHaveGoggleInformation.super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        return true;
     }
 
     @Override
@@ -199,7 +199,6 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
             if (!keepContents)
                 applySize(1);
 
-            System.out.println("Removing controller for " + getBlockPos());
             controller = null;
             size = 1;
             height = 1;
@@ -225,6 +224,7 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
     }
 
     private void refreshExposed() {
+        applySize(getTotalSize());
         if (isController()) {
             exposedStorage = storage;
         } else {
@@ -267,8 +267,6 @@ public class BatteryBlockEntity extends SmartBlockEntity implements IMultiBlockE
 
         if (!pos.equals(controller)) {
             controller = pos;
-
-            System.out.println("Setting controller " + pos + " for " + getBlockPos());
 
             refreshExposed();
             setChanged();

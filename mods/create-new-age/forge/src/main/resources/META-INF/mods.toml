@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[47,)"
+loaderVersion="${forgeVersionRange}"
 
 license="BSD-3-Clause"
 issueTrackerURL="https://gitlab.com/antarcticgardens/create-new-age"
@@ -18,27 +18,27 @@ displayURL="https://antarcticgardens.org/"
 [[dependencies.create_new_age]]
     modId="forge"
     mandatory=true
-    versionRange="[47,)"
+    versionRange="${forgeVersionRange}"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.create_new_age]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.20.1]"
+    versionRange="[${minecraftVersion}]"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.create_new_age]]
     modId="esl"
     mandatory=true
-    versionRange="[1.0-SNAPSHOT]"
+    versionRange="[${eslVersion}]"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.create_new_age]]
     modId="create"
     mandatory=true
-    versionRange="[0.5.1.f,)"
+    versionRange="[${createVersion},6.1.0)"
     ordering="NONE"
     side="BOTH"

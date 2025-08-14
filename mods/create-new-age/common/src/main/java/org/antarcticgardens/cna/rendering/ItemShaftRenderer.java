@@ -1,6 +1,5 @@
 package org.antarcticgardens.cna.rendering;
 
-import com.jozufozu.flywheel.core.PartialModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.simibubi.create.Create;
@@ -9,6 +8,7 @@ import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRendere
 import com.simibubi.create.foundation.item.render.PartialItemModelRenderer;
 import com.tterrag.registrate.builders.ItemBuilder;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -18,7 +18,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class ItemShaftRenderer extends CustomRenderedItemModelRenderer {
-    private static final PartialModel SHAFT = new PartialModel(Create.asResource("block/shaft"));
+    private static final PartialModel SHAFT = PartialModel.of(Create.asResource("block/shaft"));
 
     protected final Vector3f offset;
     protected final Quaternionf rotation;

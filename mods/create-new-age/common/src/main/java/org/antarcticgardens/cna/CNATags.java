@@ -3,7 +3,7 @@ package org.antarcticgardens.cna;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.foundation.data.TagGen;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.tterrag.registrate.providers.RegistrateTagsProvider;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +22,7 @@ public class CNATags {
         public final TagKey<net.minecraft.world.item.Item> itemTag;
         
         Block() {
-            ResourceLocation location = new ResourceLocation(CreateNewAge.MOD_ID, Lang.asId(name()));
+            ResourceLocation location = new ResourceLocation(CreateNewAge.MOD_ID, CreateLang.asId(name()));
             blockTag = TagKey.create(Registries.BLOCK, location);
             itemTag = TagKey.create(Registries.ITEM, location);
         }

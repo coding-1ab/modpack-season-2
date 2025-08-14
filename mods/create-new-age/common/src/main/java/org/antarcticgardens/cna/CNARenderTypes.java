@@ -24,7 +24,7 @@ public class CNARenderTypes extends RenderType {
                             .setCullState(RenderStateShard.NO_CULL)
                             .setLightmapState(RenderStateShard.LIGHTMAP)
                             .createCompositeState(false)
-    ));
+            ));
 
     public static RenderType wire(ResourceLocation texture) {
         return WIRE.apply(texture);

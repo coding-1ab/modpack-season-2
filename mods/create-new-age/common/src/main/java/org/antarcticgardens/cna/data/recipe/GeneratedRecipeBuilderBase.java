@@ -1,7 +1,7 @@
 package org.antarcticgardens.cna.data.recipe;
 
-import com.simibubi.create.foundation.utility.RegisteredObjects;
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -60,7 +60,7 @@ public abstract class GeneratedRecipeBuilderBase<SELF> {
     }
 
     protected ResourceLocation createLocation(String type) {
-        String name = this.name == null ? RegisteredObjects.getKeyOrThrow(result.asItem()).getPath() : this.name;
+        String name = this.name == null ? CatnipServices.REGISTRIES.getKeyOrThrow(result.asItem()).getPath() : this.name;
         return new ResourceLocation(CreateNewAge.MOD_ID, type + (type.isEmpty() ? "" : "/") + name + suffix);
     }
 }

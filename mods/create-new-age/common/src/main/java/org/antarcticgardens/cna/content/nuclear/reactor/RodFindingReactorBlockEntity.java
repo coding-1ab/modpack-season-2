@@ -1,5 +1,7 @@
 package org.antarcticgardens.cna.content.nuclear.reactor;
 
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -10,10 +12,13 @@ import org.antarcticgardens.cna.content.nuclear.reactor.rod.ReactorRodBlockEntit
 
 import java.util.List;
 
-public class RodFindingReactorBlockEntity extends BlockEntity {
+public abstract class RodFindingReactorBlockEntity extends SmartBlockEntity {
     public RodFindingReactorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
     }
+
+    @Override
+    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
 
     public void findRods(List<ReactorRodBlockEntity> list, Direction dir) {
         if (level == null)

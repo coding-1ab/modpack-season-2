@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -27,20 +27,20 @@ public class CarbonBrushesRenderer extends ShaftRenderer<CarbonBrushesBlockEntit
         BlockState state = be.getBlockState();
         Direction dir = state.getValue(BlockStateProperties.FACING);
 
-        SuperByteBuffer coil = CachedBufferer.partial(CNAPartialModels.COIL, state);
+        SuperByteBuffer coil = CachedBuffers.partial(CNAPartialModels.COIL, state);
         KineticBlockEntityRenderer.standardKineticRotationTransform(coil, be, light);
         rotateToAxis(coil, dir.getAxis());
         coil.renderInto(ms, consumer);
     }
     
     private void rotateToAxis(SuperByteBuffer buffer, Direction.Axis axis) {
-        buffer.centre();
+        buffer.center();
         
         switch (axis) {
-            case X -> buffer.rotate(90, Direction.Axis.Z);
-            case Z -> buffer.rotate(90, Direction.Axis.X);
+            case X -> buffer.rotateDegrees(90, Direction.Axis.Z);
+            case Z -> buffer.rotateDegrees(90, Direction.Axis.X);
         }
         
-        buffer.unCentre();
+        buffer.uncenter();
     }
 }

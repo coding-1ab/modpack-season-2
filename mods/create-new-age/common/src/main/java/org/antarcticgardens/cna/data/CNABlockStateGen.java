@@ -8,10 +8,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import org.antarcticgardens.cna.CNABlocks;
 import org.antarcticgardens.cna.content.energising.EnergiserBlock;
 import org.antarcticgardens.cna.content.heat.heater.HeaterBlock;
 import org.antarcticgardens.cna.content.heat.pipe.HeatPipeBlock;
 import org.antarcticgardens.cna.content.heat.pump.HeatPumpBlock;
+import org.antarcticgardens.cna.content.heat.stirling.StirlingEngineBlock;
 import org.antarcticgardens.cna.content.nuclear.reactor.rod.ReactorRodBlock;
 import org.joml.Vector3f;
 
@@ -62,8 +64,11 @@ public class CNABlockStateGen {
         return (c, p) -> {
             MultiPartBlockStateBuilder builder = p.getMultipartBuilder(c.get());
             ModelFile.ExistingModelFile center = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/center"));
-            ModelFile.ExistingModelFile side = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/side"));
-            
+            ModelFile.ExistingModelFile centerUp = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/center_up"));
+            ModelFile.ExistingModelFile centerDown = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/center_down"));
+            ModelFile.ExistingModelFile front = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/front"));
+            ModelFile.ExistingModelFile side = p.models().getExistingFile(p.modLoc("block/heat_pipe/side"));
+
             for (Direction dir : Direction.values()) {
                 Vector3f euler = new Vector3f();
                 dir.getRotation().getEulerAnglesXYZ(euler);
@@ -75,8 +80,30 @@ public class CNABlockStateGen {
                 int rotX = (int) Math.round(Math.toDegrees(euler.x));
                 int rotY = (int) Math.round(Math.toDegrees(euler.z));
 
+                if(dir == Direction.UP){
+                    builder.part()
+                            .modelFile(centerUp)
+                            .addModel()
+                            .condition(BlockStateProperties.FACING, dir)
+                            .end();
+                }else if(dir == Direction.DOWN){
+                    builder.part()
+                            .modelFile(centerDown)
+                            .addModel()
+                            .condition(BlockStateProperties.FACING, dir)
+                            .end();
+                }else{
+                    builder.part()
+                            .modelFile(center)
+                            .rotationY(rotY)
+                            .addModel()
+                            .condition(BlockStateProperties.FACING, dir)
+                            .end();
+                }
+
+
                 builder.part()
-                        .modelFile(center)
+                        .modelFile(front)
                         .rotationX(rotX)
                         .rotationY(rotY)
                         .addModel()
@@ -127,6 +154,23 @@ public class CNABlockStateGen {
                         .modelFile(lit ? on : off)
                         .rotationX(axis == Direction.Axis.Y ? 0 : 90)
                         .rotationY(axis == Direction.Axis.X ? 90 : axis == Direction.Axis.Z ? 180 : 0)
+                        .build();
+            });
+        };
+    }
+
+    public static <P extends StirlingEngineBlock> NonNullBiConsumer<DataGenContext<Block, P>, RegistrateBlockstateProvider> stirlingEngine() {
+        return (c, p) -> {
+            VariantBlockStateBuilder builder = p.getVariantBuilder(c.get());
+            ModelFile.ExistingModelFile model = p.models().getExistingFile(p.modLoc("block/" + c.getName()));
+
+            builder.forAllStates(state -> {
+                Direction.Axis axis = state.getValue(BlockStateProperties.AXIS);
+
+                return ConfiguredModel.builder()
+                        .modelFile(model)
+                        .rotationX(axis == Direction.Axis.Y ? 90 : 0)
+                        .rotationY(axis == Direction.Axis.Z ? 0 : (axis == Direction.Axis.X ? 90 : 0))
                         .build();
             });
         };

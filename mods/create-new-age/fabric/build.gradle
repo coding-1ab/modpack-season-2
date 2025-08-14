@@ -1,17 +1,26 @@
 repositories {
     maven { url = "https://maven.terraformersmc.com/" } // ModMenu, EMI
     maven { url = "https://maven.shedaniel.me" } // REI
+    maven { url = "https://mvn.devos.one/releases" }  // Porting Lib
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven" } // Forge Config API Port
 }
 
 dependencies {
     compileOnly(project(":common"))
     
     modImplementation("net.fabricmc:fabric-loader:${fabricLoaderVersion}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
+    modApi("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
     
-    modImplementation("com.tterrag.registrate_fabric:Registrate:${rootProject.registrateFabricVersion}")
     modImplementation("com.simibubi.create:create-fabric-${rootProject.minecraftVersion}:${createFabricVersion}")
-    
+    modApi("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0")
+
+    modImplementation("com.tterrag.registrate_fabric:Registrate:${rootProject.registrateFabricVersion}")
+    modImplementation("net.createmod.ponder:Ponder-Fabric-${rootProject.minecraftVersion}:${ponderVersion}")
+    modCompileOnly("dev.engine-room.flywheel:flywheel-fabric-api-${minecraftVersion}:${flywheelVersion}")
+    modRuntimeOnly("dev.engine-room.flywheel:flywheel-fabric-${minecraftVersion}:${flywheelVersion}")
+
+    annotationProcessor(implementation(include("io.github.llamalad7:mixinextras-fabric:0.4.1")))
+
     // Mods with compat
     modImplementation("com.terraformersmc:modmenu:${modmenuVersion}")
     modCompileOnly("dev.emi:emi-fabric:${emiVersion}+${rootProject.minecraftVersion}:api")
@@ -31,12 +40,30 @@ dependencies {
     modRuntimeOnly("maven.modrinth:resourceful-lib:YzWNEutS")
     modRuntimeOnly("maven.modrinth:resourceful-config:PlEObkl9")
     modRuntimeOnly("maven.modrinth:botarium:YgOh7n9M")
-    modRuntimeOnly("maven.modrinth:ad-astra:DruFc2hK")
+//    modRuntimeOnly("maven.modrinth:ad-astra:DruFc2hK")
 }
 
 compileJava {
     source(project(":common").sourceSets.main.allSource)
 }
+
+processResources {
+    from project(":common").sourceSets.main.resources
+    inputs.property "version", rootProject.modVersion
+    inputs.property "minecraftVersion", rootProject.minecraftVersion
+    inputs.property "fabricLoaderVersion", project.fabricLoaderVersion
+    inputs.property "eslVersion", project.eslVersion
+    inputs.property "createVersion", project.createVersionShort
+
+    filesMatching("fabric.mod.json") {
+        expand "version": rootProject.modVersion,
+                "minecraftVersion": rootProject.minecraftVersion,
+                "fabricLoaderVersion": project.fabricLoaderVersion,
+                "eslVersion": project.eslVersion,
+                "createVersion": project.createVersionShort
+    }
+}
+
 
 tasks.withType(JavaCompile) {
     options.compilerArgs += ['-ACNA_FABRIC']

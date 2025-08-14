@@ -1,7 +1,6 @@
 package org.antarcticgardens.cna.content.electricity.connector;
 
-import com.jozufozu.flywheel.util.Pair;
-
+import net.createmod.catnip.data.Pair;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.joml.Vector3f;
 
@@ -26,7 +25,7 @@ public class Wire {
         float lastCatenary = 0.0f;
         for (int i = 1; i <= sectionsAmount; i++) {
             float catenary = catenary(i, distance, sectionsAmount) * catenaryScalar;
-            WireSection section = WireSection.getOrCreate(sectionLength, CNAConfig.getClient().wireThickness.get().floatValue(), 
+            WireSection section = WireSection.getOrCreate(sectionLength, CNAConfig.getClient().wireThickness.get().floatValue(),
                     catenary - lastCatenary, (i % 2 == 0) ? 0.5f : 0.0f);
             lastCatenary = catenary;
             sections.add(Pair.of(section, lastCatenary));

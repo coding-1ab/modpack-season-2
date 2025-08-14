@@ -1,16 +1,21 @@
 plugins {
     id "java"
-    id "dev.architectury.loom" version "1.5-SNAPSHOT" apply false
+    id "maven-publish"
+    id "dev.architectury.loom" version "1.9-SNAPSHOT" apply false
+}
+
+allprojects {
+    group = "org.antarcticgardens.cna"
+    version = "${rootProject.modVersion}+${project.name}-mc${rootProject.minecraftVersion}"
 }
 
 subprojects {
     apply plugin: "java"
+    apply plugin: "maven-publish"
     apply plugin: "dev.architectury.loom"
-    
-    group = "org.antarcticgardens"
-    version = rootProject.modVersion
-    archivesBaseName = "create-new-age-${version}-${project.name}-${rootProject.minecraftVersion}"
-    
+
+    archivesBaseName = "create-new-age"
+
     repositories {
         mavenLocal()
         
@@ -18,9 +23,12 @@ subprojects {
         maven { url = "https://api.modrinth.com/maven" } // Modrinth maven
         
         maven { url = "https://maven.parchmentmc.org" } // Parchment mappings
-        maven { url = "https://maven.tterrag.com/" } // Create Forge, Flywheel, Forge Registrate
-        maven { url = "https://mvn.devos.one/snapshots/" } // Create Fabric, Fabric Registrate 
-        
+        maven { url = "https://maven.tterrag.com/" } // Forge Registrate
+
+        maven { url = "https://maven.createmod.net" } // Create Forge, Ponder, Flywheel
+
+        maven { url = "https://mvn.devos.one/snapshots/" } // Create Fabric, Fabric Registrate
+
         maven { url = "https://maven.blamejared.com/" } // JEI
         
         // Create dependencies
@@ -39,14 +47,7 @@ subprojects {
         
         annotationProcessor("systems.manifold:manifold-preprocessor:2024.1.29")
         
-        modImplementation("org.antarcticgardens:esl-${project.name}:${rootProject.eslVersion}")
-        
-        if (project.name != "fabric") { 
-            modApi("com.tterrag.registrate:Registrate:${rootProject.registrateVersion}")
-            modImplementation("com.jozufozu.flywheel:flywheel-forge-${rootProject.minecraftVersion}:${rootProject.flywheelVersion}")
-            modImplementation("com.simibubi.create:create-${rootProject.minecraftVersion}:${rootProject.createVersion}:slim") { transitive = false } 
-        }
-        
+        modImplementation("org.antarcticgardens.esl:esl-${project.name}-${rootProject.minecraftVersion}:${rootProject.eslVersion}+${project.name}-mc${rootProject.minecraftVersion}")
         modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraftVersion}-common-api:${rootProject.jeiVersion}")
         
         if (project.name != "common") {
@@ -87,7 +88,16 @@ subprojects {
     java {
         withSourcesJar()
     }
-    
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                artifactId = project.archivesBaseName + "-${project.name}-${rootProject.minecraftVersion}"
+                from components.java
+            }
+        }
+    }
+
     tasks.withType(JavaCompile) {
         options.compilerArgs += ['-Xplugin:Manifold']
     }

@@ -3,12 +3,19 @@ repositories {
 }
 
 dependencies {
-    forge("net.neoforged:forge:${rootProject.forgeVersion}:universal")
-    
-    modCompileOnly("net.fabricmc:fabric-loader:0.15.6")
+    forge("net.neoforged:forge:${rootProject.forgeVersion}")
+
+    modCompileOnly("com.simibubi.create:create-${rootProject.minecraftVersion}:${rootProject.createVersion}:slim") { transitive = false }
+    modCompileOnly("com.tterrag.registrate:Registrate:${rootProject.registrateVersion}")
+    modImplementation("dev.engine-room.flywheel:flywheel-forge-${minecraftVersion}:${flywheelVersion}")
+    compileOnly("dev.engine-room.flywheel:flywheel-forge-api-${minecraftVersion}:${flywheelVersion}")
+    modImplementation("net.createmod.ponder:Ponder-Forge-${minecraftVersion}:${ponderVersion}")
+
+    modCompileOnly("net.fabricmc:fabric-loader:${project(":fabric").fabricLoaderVersion}")
     modCompileOnly("curse.maven:forge-config-api-port-fabric-547434:4583000")
-    
+
     modCompileOnly("com.google.code.findbugs:findbugs:3.0.1")
+    annotationProcessor(implementation("io.github.llamalad7:mixinextras-common:0.4.1"))
 }
 
 loom {
