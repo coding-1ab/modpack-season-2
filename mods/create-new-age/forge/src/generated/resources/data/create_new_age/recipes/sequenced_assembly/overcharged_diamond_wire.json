@@ -1,7 +1,7 @@
 {
   "type": "create:sequenced_assembly",
   "ingredient": {
-    "item": "create_new_age:overcharged_diamond_wire"
+    "item": "create_new_age:overcharged_diamond"
   },
   "loops": 3,
   "results": [

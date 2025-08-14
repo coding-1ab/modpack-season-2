@@ -27,7 +27,7 @@ public class CNASequencedAssemblyRecipeGen extends CNARecipeProvider {
             .amount(2)
             .sequencedAssembly(b -> b
                     .transitionTo(CNAItems.INCOMPLETE_WIRE)
-                    .require(CNAItems.OVERCHARGED_DIAMOND_WIRE)
+                    .require(CNAItems.OVERCHARGED_DIAMOND)
                     .loops(3)
                     .addStep(CuttingRecipe::new, rb -> rb)
                     .addEnergisingStep(rb -> rb.energyNeeded(100)));
@@ -40,7 +40,16 @@ public class CNASequencedAssemblyRecipeGen extends CNARecipeProvider {
                     .addStep(DeployerApplicationRecipe::new, rb -> rb.require(Tags.Items.STORAGE_BLOCKS_GOLD))
                     .addStep(DeployerApplicationRecipe::new, rb -> rb.require(Tags.Items.STORAGE_BLOCKS_GOLD))
                     .addEnergisingStep(rb -> rb.energyNeeded(2000000)));
-    
+
+    GeneratedRecipe NUCLEAR_FUEL = builder(CNAItems.NUCLEAR_FUEL)
+            .sequencedAssembly(b -> b
+                    .transitionTo(CNAItems.INCOMPLETE_FUEL)
+                    .require(CNAItems.RADIOACTIVE_THORIUM)
+                    .loops(1)
+                    .addStep(PressingRecipe::new, rb -> rb)
+                    .addStep(DeployerApplicationRecipe::new, rb -> rb.require(CNATags.Common.PLATES_IRON))
+                    .addStep(PressingRecipe::new, rb -> rb));
+
     GeneratedRecipe REACTOR_CASING = builder(CNABlocks.REACTOR_CASING)
             .amount(4)
             .sequencedAssembly(b -> b

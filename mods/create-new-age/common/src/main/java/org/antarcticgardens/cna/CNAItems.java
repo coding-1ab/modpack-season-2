@@ -1,6 +1,7 @@
 package org.antarcticgardens.cna;
 
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyItem;
+import com.simibubi.create.foundation.data.AssetLookup;
 import com.tterrag.registrate.providers.DataGenContext;
 import com.tterrag.registrate.providers.RegistrateItemModelProvider;
 import com.tterrag.registrate.util.entry.ItemEntry;
@@ -54,12 +55,6 @@ public class CNAItems {
 
     public static final ItemEntry<SequencedAssemblyItem> INCOMPLETE_ENCHANTED_GOLDEN_APPLE =
             REGISTRATE.item("incomplete_enchanted_golden_apple", SequencedAssemblyItem::new)
-                    .model(new NonNullBiConsumer<DataGenContext<Item, SequencedAssemblyItem>, RegistrateItemModelProvider>() {
-                        @Override
-                        public void accept(DataGenContext<Item, SequencedAssemblyItem> c, RegistrateItemModelProvider p) {
-                            // TODO
-                        }
-                    })
                     .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
                     .register();
 
