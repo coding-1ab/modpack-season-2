@@ -306,9 +306,11 @@ public class CNABlocks {
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(2.0f))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                    .blockstate((c, p) -> p.simpleBlock(c.get(), p.models().getExistingFile(p.modLoc(c.getName()))))
+                    .blockstate(CNABlockStateGen.stirlingEngine())
                     .transform(setCapacity(32.0))
-                    .simpleItem()
+                    .item()
+                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.5f, 0.0f, 0.0f), Axis.XP.rotationDegrees(90.0f)))
+                    .build()
                     .register();
 
     public static final BlockEntry<SolidCoriumBlock> SOLID_CORIUM =
