@@ -85,6 +85,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SwordItem;
 
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.Tags.Items;
 
 public class AllItems {
 	private static final CreateRegistrate REGISTRATE = Create.registrate();
@@ -134,6 +135,7 @@ public class AllItems {
 			.register();
 
 	public static final ItemEntry<Item> BAR_OF_CHOCOLATE = REGISTRATE.item("bar_of_chocolate", Item::new)
+		.tag(Items.FOODS, AllTags.commonItemTag("foods/chocolate"))
 		.properties(p -> p.food(new FoodProperties.Builder().nutrition(6)
 			.saturationModifier(0.3F)
 			.build()))
@@ -141,25 +143,28 @@ public class AllItems {
 		.register();
 
 	public static final ItemEntry<Item> SWEET_ROLL = REGISTRATE.item("sweet_roll", Item::new)
+		.tag(Items.FOODS)
 		.properties(p -> p.food(new FoodProperties.Builder().nutrition(6)
 			.saturationModifier(0.8F)
 			.build()))
 		.register();
 
 	public static final ItemEntry<Item> CHOCOLATE_BERRIES = REGISTRATE.item("chocolate_glazed_berries", Item::new)
+		.tag(Items.FOODS, Items.FOODS_BERRY)
 		.properties(p -> p.food(new FoodProperties.Builder().nutrition(7)
 			.saturationModifier(0.8F)
 			.build()))
 		.register();
 
 	public static final ItemEntry<Item> HONEYED_APPLE = REGISTRATE.item("honeyed_apple", Item::new)
+		.tag(Items.FOODS, Items.FOODS_FRUIT)
 		.properties(p -> p.food(new FoodProperties.Builder().nutrition(8)
 			.saturationModifier(0.8F)
 			.build()))
 		.register();
 
 	public static final ItemEntry<BuildersTeaItem> BUILDERS_TEA = REGISTRATE.item("builders_tea", BuildersTeaItem::new)
-		.tag(AllItemTags.UPRIGHT_ON_BELT.tag)
+		.tag(AllItemTags.UPRIGHT_ON_BELT.tag, Items.FOODS, Items.DRINKS, AllTags.commonItemTag("drinks/tea"))
 		.properties(p -> p
 			.stacksTo(16)
 			.food(new FoodProperties.Builder()
@@ -298,15 +303,15 @@ public class AllItems {
 			.tag(ItemTags.CHEST_ARMOR)
 			.register(),
 
-		NETHERITE_BACKTANK = REGISTRATE
-			.item("netherite_backtank",
-				p -> new BacktankItem.Layered(ArmorMaterials.NETHERITE, p, Create.asResource("netherite_diving"),
-					NETHERITE_BACKTANK_PLACEABLE))
-			.model(AssetLookup.customGenericItemModel("_", "item"))
-			.properties(p -> p.fireResistant())
-			.tag(AllItemTags.PRESSURIZED_AIR_SOURCES.tag)
-			.tag(ItemTags.CHEST_ARMOR)
-			.register();
+	NETHERITE_BACKTANK = REGISTRATE
+		.item("netherite_backtank",
+			p -> new BacktankItem.Layered(ArmorMaterials.NETHERITE, p, Create.asResource("netherite_diving"),
+				NETHERITE_BACKTANK_PLACEABLE))
+		.model(AssetLookup.customGenericItemModel("_", "item"))
+		.properties(p -> p.fireResistant())
+		.tag(AllItemTags.PRESSURIZED_AIR_SOURCES.tag)
+		.tag(ItemTags.CHEST_ARMOR)
+		.register();
 
 	public static final ItemEntry<? extends DivingHelmetItem>
 
@@ -318,12 +323,12 @@ public class AllItems {
 			.tag(ItemTags.HEAD_ARMOR)
 			.register(),
 
-		NETHERITE_DIVING_HELMET = REGISTRATE
-			.item("netherite_diving_helmet",
-				p -> new DivingHelmetItem(ArmorMaterials.NETHERITE, p, Create.asResource("netherite_diving")))
-			.properties(p -> p.fireResistant().durability(Type.HELMET.getDurability(37)))
-			.tag(ItemTags.HEAD_ARMOR)
-			.register();
+	NETHERITE_DIVING_HELMET = REGISTRATE
+		.item("netherite_diving_helmet",
+			p -> new DivingHelmetItem(ArmorMaterials.NETHERITE, p, Create.asResource("netherite_diving")))
+		.properties(p -> p.fireResistant().durability(Type.HELMET.getDurability(37)))
+		.tag(ItemTags.HEAD_ARMOR)
+		.register();
 
 	public static final ItemEntry<? extends DivingBootsItem>
 
@@ -335,23 +340,23 @@ public class AllItems {
 			.tag(ItemTags.FOOT_ARMOR)
 			.register(),
 
-		NETHERITE_DIVING_BOOTS = REGISTRATE
-			.item("netherite_diving_boots",
-				p -> new DivingBootsItem(ArmorMaterials.NETHERITE, p, Create.asResource("netherite_diving")))
-			.properties(p -> p.fireResistant().durability(Type.BOOTS.getDurability(37)))
-			.tag(ItemTags.FOOT_ARMOR)
-			.register();
+	NETHERITE_DIVING_BOOTS = REGISTRATE
+		.item("netherite_diving_boots",
+			p -> new DivingBootsItem(ArmorMaterials.NETHERITE, p, Create.asResource("netherite_diving")))
+		.properties(p -> p.fireResistant().durability(Type.BOOTS.getDurability(37)))
+		.tag(ItemTags.FOOT_ARMOR)
+		.register();
 
 	public static final ItemEntry<? extends BaseArmorItem>
 
 		CARDBOARD_HELMET = REGISTRATE.item("cardboard_helmet", p -> new CardboardArmorItem(ArmorItem.Type.HELMET, p))
-			.properties(p -> p.durability(Type.HELMET.getDurability(4)))
-			.tag(ItemTags.HEAD_ARMOR)
+		.properties(p -> p.durability(Type.HELMET.getDurability(4)))
+		.tag(ItemTags.HEAD_ARMOR)
 		.burnTime(1000)
-			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
-			.model(TrimmableArmorModelGenerator::generate)
-			.clientExtension(() -> () -> new CardboardArmorStealthOverlay())
-			.register(),
+		.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+		.model(TrimmableArmorModelGenerator::generate)
+		.clientExtension(() -> () -> new CardboardArmorStealthOverlay())
+		.register(),
 
 	CARDBOARD_CHESTPLATE = REGISTRATE.item("cardboard_chestplate", p -> new CardboardArmorItem(ArmorItem.Type.CHESTPLATE, p))
 		.properties(p -> p.durability(Type.CHESTPLATE.getDurability(4)))
@@ -369,13 +374,13 @@ public class AllItems {
 		.model(TrimmableArmorModelGenerator::generate)
 		.register(),
 
-		CARDBOARD_BOOTS = REGISTRATE.item("cardboard_boots", p -> new CardboardArmorItem(ArmorItem.Type.BOOTS, p))
-			.properties(p -> p.durability(Type.BOOTS.getDurability(4)))
-			.tag(ItemTags.FOOT_ARMOR)
-			.burnTime(1000)
-			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
-			.model(TrimmableArmorModelGenerator::generate)
-			.register();
+	CARDBOARD_BOOTS = REGISTRATE.item("cardboard_boots", p -> new CardboardArmorItem(ArmorItem.Type.BOOTS, p))
+		.properties(p -> p.durability(Type.BOOTS.getDurability(4)))
+		.tag(ItemTags.FOOT_ARMOR)
+		.burnTime(1000)
+		.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+		.model(TrimmableArmorModelGenerator::generate)
+		.register();
 
 	public static final ItemEntry<SandPaperItem> SAND_PAPER = REGISTRATE.item("sand_paper", SandPaperItem::new)
 		.tag(AllTags.AllItemTags.SANDPAPER.tag)

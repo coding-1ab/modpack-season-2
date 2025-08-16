@@ -85,7 +85,7 @@ public class AllFluids {
 			.build()
 			.bucket()
 			.onRegister(AllFluids::registerFluidDispenseBehavior)
-			.tag(AllTags.commonItemTag("buckets/honey"))
+			.tag(Tags.Items.BUCKETS, AllTags.commonItemTag("buckets/honey"))
 			.build()
 			.register();
 
@@ -107,6 +107,7 @@ public class AllFluids {
 			.build()
 			.bucket()
 			.onRegister(AllFluids::registerFluidDispenseBehavior)
+			.tag(Tags.Items.BUCKETS, AllTags.commonItemTag("buckets/chocolate"))
 			.build()
 			.register();
 

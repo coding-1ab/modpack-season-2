@@ -124,7 +124,8 @@ repositories {
     maven { url = "https://api.modrinth.com/maven" }
     maven { url = "https://maven.ftb.dev/releases" } // FTB Mods
     maven { url = "https://maven.architectury.dev" } // Arch API
-    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven" } // NeoForge config api port, needed by ponder
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven" }
+    // NeoForge config api port, needed by ponder
     maven {
         url = "https://jm.gserv.me/repository/maven-public" // JourneyMap
         content {
@@ -243,15 +244,16 @@ final slimJar = tasks.register("slimJar", Jar) {
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
-        mod_version            : mod_version,
-        mod_id                 : mod_id,
-        mod_name               : mod_name,
-        mod_author             : mod_author,
-        mod_description        : mod_description,
-        mod_license            : mod_license,
-        minecraft_version_range: minecraft_version_range,
-        neo_version_range      : neo_version_range,
-        flywheel_version_range : flywheel_version_range,
+        mod_version           : mod_version,
+        mod_id                : mod_id,
+        mod_name              : mod_name,
+        mod_author            : mod_author,
+        mod_description       : mod_description,
+        mod_license           : mod_license,
+        neo_version           : neo_version,
+        minecraft_version     : minecraft_version,
+        ponder_version        : ponder_version,
+        flywheel_version_range: flywheel_version_range,
     ]
     inputs.properties replaceProperties
     expand replaceProperties
