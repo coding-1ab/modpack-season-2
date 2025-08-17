@@ -17,6 +17,13 @@
   "createaddition.tooltip.energy.passive": "被动",
   "createaddition.tooltip.energy.none": "无",
 
+  "createaddition.tooltip.liquid_burning.info": "烈焰人液体燃烧室信息：",
+	"createaddition.tooltip.liquid_burning.time_remaining": "剩余燃烧时间：",
+
+  "createaddition.tooltip.charging.info": "特斯拉线圈信息：",
+	"createaddition.tooltip.charging.time_remaining": "剩余充电时间：",
+
+	"createaddition.tooltip.alternator.info": "交流发电机信息：",
   "createaddition.tooltip.accumulator.info": "蓄电池信息：",
   "createaddition.tooltip.relay.info": "红石继电器信息：",
   "createaddition.tooltip.connector.info": "连接器信息：",
@@ -318,6 +325,6 @@
   "death.attack.tesla_coil.player": "%1$s 在与 %2$s 的战斗中受到了致命电击",
   "effect.createaddition.shocking.description": "使移动速度严重下降",
 
-	"createaddition.subtitle.loud_zap": "特斯拉线圈电击",
-	"createaddition.subtitle.little_zap": "特斯拉线圈火花"
+	"createaddition.subtitle.loud_zap": "特斯拉线圈：电击",
+	"createaddition.subtitle.little_zap": "特斯拉线圈：火花"
 }
