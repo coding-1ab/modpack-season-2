@@ -36,6 +36,15 @@
       ],
       "neoforge:value": 20
     },
+    "justdirethings:xp_fluid_source": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "justdirethings"
+        }
+      ],
+      "neoforge:value": 20
+    },
     "mob_grinding_utils:fluid_xp": {
       "neoforge:conditions": [
         {
