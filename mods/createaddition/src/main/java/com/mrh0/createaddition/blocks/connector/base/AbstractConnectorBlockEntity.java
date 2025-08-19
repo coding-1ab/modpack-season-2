@@ -209,7 +209,7 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 
 	@Override
 	public void write(CompoundTag nbt, HolderLookup.Provider registries, boolean clientPacket) {
-		super.write(nbt,registries, clientPacket);
+		super.write(nbt, registries, clientPacket);
 		// Write nodes.
 		ListTag nodes = new ListTag();
 		for (int i = 0; i < getNodeCount(); i++) {

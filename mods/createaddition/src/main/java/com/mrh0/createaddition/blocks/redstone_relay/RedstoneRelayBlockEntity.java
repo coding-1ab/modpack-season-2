@@ -178,8 +178,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 
 
 		for(int i = upper ? 4 : 0; i < (upper ? 8 : 4); i++) {
-			if(hasConnection(i))
-				continue;
+			if(hasConnection(i)) continue;
 			return i;
 		}
 		return -1;
@@ -207,10 +206,8 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 
 	@Override
 	public void setNetwork(int node, EnergyNetwork network) {
-		if(isNodeInput(node))
-			networkIn = network;
-		if(isNodeOutput(node))
-			networkOut = network;
+		if(isNodeInput(node)) networkIn = network;
+		if(isNodeOutput(node)) networkOut = network;
 	}
 
 	@Override
@@ -252,8 +249,8 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 	}
 
 	@Override
-	public void writeSafe(CompoundTag tag, HolderLookup.Provider registries) {
-		super.writeSafe(tag, registries);
+	public void write(CompoundTag nbt, HolderLookup.Provider registries, boolean clientPacket) {
+		super.write(nbt, registries, clientPacket);
 		// Write nodes.
 		ListTag nodes = new ListTag();
 		for (int i = 0; i < getNodeCount(); i++) {
@@ -263,7 +260,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 			localNode.write(newTag);
 			nodes.add(newTag);
 		}
-		tag.put(LocalNode.NODES, nodes);
+		nbt.put(LocalNode.NODES, nodes);
 	}
 
 	/**
@@ -378,8 +375,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		HitResult ray = Minecraft.getInstance().hitResult;
-		if(ray == null)
-			return false;
+		if(ray == null) return false;
 		int node = getAvailableNode(ray.getLocation());
 
 		ObservePacketPayload.send(worldPosition, node);

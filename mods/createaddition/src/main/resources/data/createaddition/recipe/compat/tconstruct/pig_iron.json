@@ -2,10 +2,11 @@
   "type": "create:mixing",
   "ingredients": [
     {
-      "tag": "c:ingots/iron"
+      "tag": "forge:ingots/iron"
     },
     {
-      "tag": "c:slimeball/blood"
+      "fluid": "tconstruct:meat_soup",
+      "amount": 250
     },
     {
       "item": "minecraft:clay_ball"
@@ -13,15 +14,15 @@
   ],
   "results": [
     {
-      "id": "tconstruct:pig_iron_ingot",
+      "item": "tconstruct:pig_iron_ingot",
       "count": 2
     }
   ],
   "heatRequirement": "heated",
-  "neoforge:conditions": [
+  "conditions": [
     {
-    	"type": "neoforge:mod_loaded",
-    	"modid": "tconstruct"
-  	}
+      "type": "forge:mod_loaded",
+      "modid": "tconstruct"
+    }
   ]
 }

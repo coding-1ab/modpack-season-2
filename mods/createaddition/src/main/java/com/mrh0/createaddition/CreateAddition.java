@@ -92,7 +92,10 @@ public class CreateAddition {
             .title(Component.translatable("itemGroup.createaddition.main"))
             .displayItems((itemDisplayParameters, output) -> REGISTRATE.getAll(Registries.ITEM).forEach((item -> {
                 for (ItemLike excluded : excludedItemsList) {
-                    if (item.is(excluded.asItem())) return;
+                    if (item.is(excluded.asItem())) {
+                        output.accept(item.get(), CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
+                        return;
+                    }
                 }
                 output.accept(item.get());
             })))

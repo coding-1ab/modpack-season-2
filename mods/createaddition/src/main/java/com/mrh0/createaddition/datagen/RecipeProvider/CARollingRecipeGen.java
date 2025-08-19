@@ -38,6 +38,7 @@ public class CARollingRecipeGen extends RollingRecipeGen {
             BRASS_ROD = create("brass_rod", b -> b
                     .require(AllTags.commonItemTag("ingots/brass"))
                     .output(CAItems.BRASS_ROD, 2)),
-            STRAW = create(() -> Items.BAMBOO, b -> b.output(CAItems.STRAW));
+            STRAW = create(() -> Items.BAMBOO, b -> b.output(CAItems.STRAW)),
+            STRAW2 = create(() -> Items.PAPER, b -> b.output(CAItems.STRAW));
 
 }

@@ -19,21 +19,22 @@ public class CAFluidTagProvider extends FluidTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        tag(CATagRegister.Fluids.BIOFUEL).add( new Fluid[]{
+        tag(CATagRegister.Fluids.BIOFUEL).add(
                 CAFluids.BIOETHANOL.get(),
                 CAFluids.BIOETHANOL.getSource()
-        });
-        tag(CATagRegister.Fluids.PLANTOIL).add(new Fluid[] {
+        );
+        tag(CATagRegister.Fluids.PLANTOIL).add(
                 CAFluids.SEED_OIL.get(),
                 CAFluids.SEED_OIL.getSource()
-        });
+        );
 
-        tag(FluidTags.WATER).add(new Fluid[] {
+        /*
+        tag(FluidTags.WATER).add(
                 CAFluids.SEED_OIL.get(),
                 CAFluids.SEED_OIL.getSource(),
                 CAFluids.BIOETHANOL.get(),
-                CAFluids.BIOETHANOL.getSource(),
-        });
+                CAFluids.BIOETHANOL.getSource());
+         */
 
         tag(CATagRegister.Fluids.CREOSOTE);
         tag(CATagRegister.Fluids.CRUDE_OIL);

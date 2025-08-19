@@ -88,11 +88,9 @@ public class CAItems {
 			CreateAddition.REGISTRATE.item("brass_rod", Item::new).register();
 
 	public static final ItemEntry<Item> CAKE_BASE =
-			CreateAddition.REGISTRATE.item("cake_base", Item::new) // TODO: Hide in Tab
-				.register();
+			CreateAddition.REGISTRATE.item("cake_base", Item::new).register();
 	public static final ItemEntry<Item> CAKE_BASE_BAKED =
-			CreateAddition.REGISTRATE.item("cake_base_baked", Item::new) // TODO: Hide in Tab
-				.register();
+			CreateAddition.REGISTRATE.item("cake_base_baked", Item::new).register();
 
 	public static final ItemEntry<Item> STRAW =
 			CreateAddition.REGISTRATE.item("straw", Item::new)
