@@ -22,6 +22,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -184,6 +185,12 @@ public class HeadlampBlock extends LightBlock implements IBE<HeadlampBlockEntity
         return level.getBlockEntity(pos) instanceof HeadlampBlockEntity headlampBlockEntity ?
             headlampBlockEntity.getShape(state, level, pos, context) :
             Shapes.block();
+    }
+
+    @Override
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return super.rotate(state, rotation)
+            .setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
