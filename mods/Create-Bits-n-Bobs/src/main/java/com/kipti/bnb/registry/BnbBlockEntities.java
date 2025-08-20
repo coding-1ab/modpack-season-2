@@ -1,9 +1,10 @@
 package com.kipti.bnb.registry;
 
+import com.kipti.bnb.content.girder_strut.GirderStrutBlockEntity;
+import com.kipti.bnb.content.girder_strut.GirderStrutBlockEntityRenderer;
 import com.kipti.bnb.content.light.headlamp.HeadlampBlockEntity;
 import com.kipti.bnb.content.nixie.foundation.GenericNixieDisplayBlockEntity;
 import com.kipti.bnb.content.nixie.foundation.GenericNixieDisplayBoardRenderer;
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
 import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual;
@@ -29,6 +30,11 @@ public class BnbBlockEntities {
         .validBlocks(BnbBlocks.DYED_NIXIE_BOARD.toArray())
         .validBlocks(BnbBlocks.DYED_LARGE_NIXIE_TUBE.toArray())
         .renderer(() -> GenericNixieDisplayBoardRenderer::new)
+        .register();
+
+    public static final BlockEntityEntry<GirderStrutBlockEntity> GIRDER_STRUT = REGISTRATE.blockEntity("girder_strut", GirderStrutBlockEntity::new)
+        .validBlock(BnbBlocks.GIRDER_STRUT)
+        .renderer(() -> GirderStrutBlockEntityRenderer::new)
         .register();
 
     public static void register() {

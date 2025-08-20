@@ -1,4 +1,4 @@
-// 1.21.1	2025-07-13T17:46:04.3404521	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2025-08-20T10:45:01.7975922	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 48912dac50502aaa4e2afa58c6124f5a61f1057a assets/bits_n_bobs/blockstates/black_chair.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/black_large_nixie_tube.json
 5f1d323a930becf0ed2bee64bbb33c152802b2b2 assets/bits_n_bobs/blockstates/black_nixie_board.json
@@ -12,6 +12,7 @@ c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/brown_la
 f04a4a114d260a3eee383c29ee69f0492fcd4dd1 assets/bits_n_bobs/blockstates/cyan_chair.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/cyan_large_nixie_tube.json
 5f1d323a930becf0ed2bee64bbb33c152802b2b2 assets/bits_n_bobs/blockstates/cyan_nixie_board.json
+5e763bdc853348b8b14b9fd7477624d96d57385e assets/bits_n_bobs/blockstates/girder_strut.json
 4b18f95d38c2d98ca176f606443e282c8075f225 assets/bits_n_bobs/blockstates/gray_chair.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/gray_large_nixie_tube.json
 5f1d323a930becf0ed2bee64bbb33c152802b2b2 assets/bits_n_bobs/blockstates/gray_nixie_board.json
@@ -54,8 +55,8 @@ c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/white_la
 c0904de2fdf77d073743019155feab1e81d988f9 assets/bits_n_bobs/blockstates/yellow_chair.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/yellow_large_nixie_tube.json
 5f1d323a930becf0ed2bee64bbb33c152802b2b2 assets/bits_n_bobs/blockstates/yellow_nixie_board.json
-3ed5d7cface60561f277726d96cd22699ced85cc assets/bits_n_bobs/lang/en_ud.json
-539b71b697e5ad01e5991685d260b6d5306401ae assets/bits_n_bobs/lang/en_us.json
+1f612f39df1aaae8a5858d4451beac4e715bb836 assets/bits_n_bobs/lang/en_ud.json
+72228bdd75d3a8309c6f06da1fe352c561aec58d assets/bits_n_bobs/lang/en_us.json
 01cd48d59bddd89c41e73957b954a18b301fdb95 assets/bits_n_bobs/models/block/chair/block_corner_black.json
 2f97ff441590b510b0642b6477c91911a5b76618 assets/bits_n_bobs/models/block/chair/block_corner_blue.json
 b5bec9e8db7db323670137a8aab1073b7943fe27 assets/bits_n_bobs/models/block/chair/block_corner_brown.json
@@ -189,6 +190,7 @@ f41b86576600958bf973feb8658327eb4beec5db assets/bits_n_bobs/models/item/blue_cha
 eb2648575386ff59794eb509dde6eff42a2b2d18 assets/bits_n_bobs/models/item/brass_lamp.json
 eca6cdeeeb3bb0ecb6c0803f7221f9d6cb694c05 assets/bits_n_bobs/models/item/brown_chair.json
 1dfbbb3e0ee9a6af8ece52b61d27dd559cc1380f assets/bits_n_bobs/models/item/cyan_chair.json
+b6097087a006a42d9cf9f48e7ed27f07a111ab28 assets/bits_n_bobs/models/item/girder_strut.json
 62c2ab0aaee1faa5d9505dad7b68e12085a41f99 assets/bits_n_bobs/models/item/gray_chair.json
 ffd5057178e11ce2c87616a54d3bfb4185eef187 assets/bits_n_bobs/models/item/green_chair.json
 0c5ab6eb4618c5fb2fbb27d78a22add1362cdab9 assets/bits_n_bobs/models/item/headlamp.json
@@ -251,6 +253,7 @@ a5c729f5ec514b8051dddba89286eaeea28a309b data/bits_n_bobs/loot_table/blocks/blue
 71582491040d23f67da205ad31a48541c6ed9edd data/bits_n_bobs/loot_table/blocks/cyan_chair.json
 20ac36d14e058f6dd59bcf9be0fc08d13f260803 data/bits_n_bobs/loot_table/blocks/cyan_large_nixie_tube.json
 80e828c265cdfc3c8b65c113580c0415e8d19f1b data/bits_n_bobs/loot_table/blocks/cyan_nixie_board.json
+b768e8a90035e52718c555815c861a8d77db869a data/bits_n_bobs/loot_table/blocks/girder_strut.json
 c9b32cd99b01d82141df1029943975bc71df3d06 data/bits_n_bobs/loot_table/blocks/gray_chair.json
 1823931cae3300a24364851f9a7b5bc7b1c8e864 data/bits_n_bobs/loot_table/blocks/gray_large_nixie_tube.json
 6d650c86824158b623fdde6c59d544e4ee4a898f data/bits_n_bobs/loot_table/blocks/gray_nixie_board.json
@@ -328,4 +331,4 @@ ec56bec2b60fd7f4012fd5b3d345e791f3d0ddac data/bits_n_bobs/recipe/crafting/kineti
 68f2f6978a33b0088959480ad335ef8c29149eb9 data/bits_n_bobs/tags/block/chairs.json
 68f2f6978a33b0088959480ad335ef8c29149eb9 data/bits_n_bobs/tags/item/chairs.json
 68f2f6978a33b0088959480ad335ef8c29149eb9 data/minecraft/tags/block/mineable/axe.json
-13fc9e001e2811b2127975960a3533f14d1aa613 data/minecraft/tags/block/mineable/pickaxe.json
+f5368b2c5f6cb8d5a9e1cb9321f8df59d6a16d6a data/minecraft/tags/block/mineable/pickaxe.json

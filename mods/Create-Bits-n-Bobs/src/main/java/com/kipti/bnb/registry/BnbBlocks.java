@@ -2,6 +2,7 @@ package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.chair.ChairBlock;
+import com.kipti.bnb.content.girder_strut.GirderStrutBlock;
 import com.kipti.bnb.content.light.founation.LightBlock;
 import com.kipti.bnb.content.light.headlamp.HeadlampBlock;
 import com.kipti.bnb.content.light.headlamp.HeadlampBlockItem;
@@ -26,18 +27,14 @@ import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.simibubi.create.foundation.utility.DyeHelper;
 import com.tterrag.registrate.builders.BlockBuilder;
-import com.tterrag.registrate.providers.DataGenContext;
-import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.entry.BlockEntry;
-import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -121,7 +118,8 @@ public class BnbBlocks {
         .build()
         .register();
 
-    public static final DyedBlockList<NixieBoardBlock> DYED_NIXIE_BOARD = new DyedBlockList<>(colour -> {String colourName = colour.getSerializedName();
+    public static final DyedBlockList<NixieBoardBlock> DYED_NIXIE_BOARD = new DyedBlockList<>(colour -> {
+        String colourName = colour.getSerializedName();
         return REGISTRATE.block(colourName + "_nixie_board", p -> new NixieBoardBlock(p, colour))
             .transform(nixieBoard())
             .register();
@@ -134,7 +132,8 @@ public class BnbBlocks {
         .build()
         .register();
 
-    public static final DyedBlockList<LargeNixieTubeBlock> DYED_LARGE_NIXIE_TUBE = new DyedBlockList<>(colour -> {String colourName = colour.getSerializedName();
+    public static final DyedBlockList<LargeNixieTubeBlock> DYED_LARGE_NIXIE_TUBE = new DyedBlockList<>(colour -> {
+        String colourName = colour.getSerializedName();
         return REGISTRATE.block(colourName + "_large_nixie_tube", p -> new LargeNixieTubeBlock(p, colour))
             .transform(largeNixieTube())
             .register();
@@ -154,6 +153,7 @@ public class BnbBlocks {
                 .forceSolidOn())
             .addLayer(() -> RenderType::translucent);
     }
+
     public static <T extends LargeNixieTubeBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> largeNixieTube() {
         return b -> b
             .initialProperties(SharedProperties::softMetal)
@@ -193,6 +193,21 @@ public class BnbBlocks {
                     .add(LootItem.lootTableItem(AllBlocks.SHAFT.get()))))))
             .onRegister(CreateRegistrate.blockModel(() -> WeatheredConnectedGirderModel::new))
             .register();
+
+    public static final BlockEntry<GirderStrutBlock> GIRDER_STRUT = REGISTRATE.block("girder_strut", GirderStrutBlock::new)
+        .initialProperties(SharedProperties::softMetal)
+        .transform(pickaxeOnly())
+        .properties(p -> p.noOcclusion())
+        .blockstate((c, p) -> p.directionalBlock(c.get(),
+            (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                "block/girder_strut/normal_girder_strut_attachment")
+            )))
+        .item()
+        .model((c, p) ->
+            p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/normal_girder_strut_attachment"))
+        )
+        .build()
+        .register();
 
     public static final DyedBlockList<ChairBlock> CHAIRS = new DyedBlockList<>(colour -> {
         String colourName = colour.getSerializedName();

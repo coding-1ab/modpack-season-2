@@ -38,6 +38,7 @@
     "bits_n_bobs:red_large_nixie_tube",
     "bits_n_bobs:black_large_nixie_tube",
     "bits_n_bobs:weathered_metal_girder",
-    "bits_n_bobs:weathered_metal_girder_encased_shaft"
+    "bits_n_bobs:weathered_metal_girder_encased_shaft",
+    "bits_n_bobs:girder_strut"
   ]
 }
