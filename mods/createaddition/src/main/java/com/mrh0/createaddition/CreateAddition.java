@@ -1,5 +1,6 @@
 package com.mrh0.createaddition;
 
+import com.mrh0.createaddition.compat.mekanism.MekanismHeaters;
 import com.mrh0.createaddition.config.CommonConfig;
 import com.mrh0.createaddition.index.*;
 import com.mrh0.createaddition.index.CASounds;
@@ -65,6 +66,7 @@ public class CreateAddition {
     public static boolean IE_ACTIVE = false;
     public static boolean CC_ACTIVE = false;
     public static boolean AE2_ACTIVE = false;
+    public static boolean MEK_ACTIVE = false;
 
     public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(CreateAddition.MODID)
             .defaultCreativeTab((ResourceKey<CreativeModeTab>) null)
@@ -121,6 +123,7 @@ public class CreateAddition {
         IE_ACTIVE = ModList.get().isLoaded("immersiveengineering");
         CC_ACTIVE = ModList.get().isLoaded("computercraft");
         AE2_ACTIVE = ModList.get().isLoaded("ae2");
+        MEK_ACTIVE = ModList.get().isLoaded("mekanism");
 
         REGISTRATE.registerEventListeners(eventBus);
         CABlocks.register();
@@ -165,6 +168,10 @@ public class CreateAddition {
             if (value.isAtLeast(BlazeBurnerBlock.HeatLevel.FADING)) return 1;
             return 0;
         });
+
+        //if (MEK_ACTIVE) {
+        //    MekanismHeaters.registerHeaters();
+        //}
 
         LOGGER.info("Create Crafts & Additions Initialized!");
     }

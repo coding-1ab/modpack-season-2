@@ -5,26 +5,18 @@
       "tag": "forge:ingots/iron"
     },
     {
-      "tag": "forge:ingots/iron"
-    },
-    {
-      "tag": "forge:ingots/iron"
-    },
-    {
-      "tag": "forge:ingots/iron"
-    },
-    {
+      "type": "fluid",
       "fluid": "tconstruct:meat_soup",
       "amount": 250
     },
     {
-      "item": "minecraft:honey_block"
+      "item": "minecraft:clay_ball"
     }
   ],
   "results": [
     {
       "item": "tconstruct:pig_iron_ingot",
-      "count": 8
+      "count": 2
     }
   ],
   "heatRequirement": "heated",
