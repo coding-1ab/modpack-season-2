@@ -5,6 +5,7 @@
 ### Fixes
 - Fixed Cooking Pot allowing players to cook and store up to 99 servings;
 - Fixed Create integration's milling recipes using invalid field, which caused them to never finish processing;
+- Fixed Rabbit Stew not returning bowls after being eaten, due to the Rabbit Stew buff;
 
 ## 1.2.8
 
