@@ -153,11 +153,10 @@ dependencies {
     if (mekanism_enable.toBoolean()) {
         compileOnly "mekanism:Mekanism:${mekanism_version}:api"
 
-        // If you want to test/use Mekanism & its modules during `runClient` invocation, use the following
-        implementation("mekanism:Mekanism:${mekanism_version}")// Mekanism
-        runtimeOnly("mekanism:Mekanism:${mekanism_version}:additions")// Mekanism: Additions
-        runtimeOnly("mekanism:Mekanism:${mekanism_version}:generators")// Mekanism: Generators
-        runtimeOnly("mekanism:Mekanism:${mekanism_version}:tools")// Mekanism: Tools
+        implementation("mekanism:Mekanism:${mekanism_version}")
+        runtimeOnly("mekanism:Mekanism:${mekanism_version}:additions")
+        runtimeOnly("mekanism:Mekanism:${mekanism_version}:generators")
+        runtimeOnly("mekanism:Mekanism:${mekanism_version}:tools")
     }
 
     if (cc_tweaked_enable.toBoolean()) {
@@ -165,6 +164,12 @@ dependencies {
         compileOnly("cc.tweaked:cc-tweaked-${cc_tweaked_minecraft_version}-forge-api:${cc_tweaked_version}")
         runtimeOnly("cc.tweaked:cc-tweaked-${cc_tweaked_minecraft_version}-forge:${cc_tweaked_version}")
     }
+
+    if (ie_enabled.toBoolean()) {
+        // https://mvnrepository.com/artifact/blusunrize.immersiveengineering/ImmersiveEngineering
+        implementation("blusunrize.immersiveengineering:ImmersiveEngineering:${ie_version}")
+    }
+
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
