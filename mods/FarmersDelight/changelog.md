@@ -4,6 +4,7 @@
 
 ### Updates
 - The `offhand_equipment` tag now includes `forge:tools/shields` by default, extending default compatibility;
+- Rich Soil Farmland can now be hydrated by any fluid type capable of hydration;
 
 ### Fixes
 - Fixed Wheat Dough's water-based recipe still displaying in JEI when disabled;
@@ -15,6 +16,7 @@
 - Fixed es_ar translation having a JSON error;
 - Added:
   - hu_hu (thanks, bayi!);
+  - lzh (thanks, BeiDou114514!);
 - Updated:
   - it_it (thanks, BlackShadow77!);
   - zh_cn (thanks, Don-Trueno!);
