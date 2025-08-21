@@ -5,6 +5,7 @@
 ### Updates
 - The `offhand_equipment` tag now includes `forge:tools/shields` by default, extending default compatibility;
 - Rich Soil Farmland can now be hydrated by any fluid type capable of hydration;
+- Wild Cabbage and Sea Beet can now generate on any biome tagged with `minecraft:is_beach` (thanks, lyaneii!);
 
 ### Fixes
 - Fixed Wheat Dough's water-based recipe still displaying in JEI when disabled;
