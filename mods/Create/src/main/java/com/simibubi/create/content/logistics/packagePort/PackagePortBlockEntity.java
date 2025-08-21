@@ -53,7 +53,7 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 				return false;
 
 			String filterString = getFilterString();
-			return filterString != null && PackageItem.matchAddress(stack, filterString);
+			return filterString != null && !PackageItem.matchAddress(stack, filterString);
 		});
 		itemHandler = new PackagePortAutomationInventoryWrapper(inventory, this);
 	}

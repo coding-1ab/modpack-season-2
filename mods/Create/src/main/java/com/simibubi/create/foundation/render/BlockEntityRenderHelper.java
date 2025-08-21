@@ -19,6 +19,8 @@ import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import dev.engine_room.flywheel.lib.visualization.VisualizationHelper;
 import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.levelWrappers.SchematicLevel;
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -27,6 +29,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 
 public class BlockEntityRenderHelper {
 
@@ -75,8 +78,16 @@ public class BlockEntityRenderHelper {
 				continue;
 			}
 
-			if (renderLevel == null && !renderer.shouldRender(blockEntity, Minecraft.getInstance().gameRenderer.getMainCamera()
-				.getPosition())) continue;
+			Vec3 cameraPos = Minecraft.getInstance()
+				.gameRenderer
+				.getMainCamera()
+				.getPosition();
+
+			if (realLevel instanceof SchematicLevel)
+				cameraPos = Vec3.ZERO;
+
+			if (renderLevel == null && !renderer.shouldRender(blockEntity, cameraPos))
+				continue;
 
 			BlockPos pos = blockEntity.getBlockPos();
 			ms.pushPose();

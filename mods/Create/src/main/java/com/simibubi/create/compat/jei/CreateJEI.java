@@ -61,6 +61,7 @@ import com.simibubi.create.content.kinetics.saw.CuttingRecipe;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelSetItemScreen;
 import com.simibubi.create.content.logistics.filter.AbstractFilterScreen;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterScreen;
+import com.simibubi.create.content.logistics.stockTicker.StockKeeperRequestScreen;
 import com.simibubi.create.content.processing.basin.BasinRecipe;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerScreen;
@@ -98,6 +99,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
@@ -112,6 +114,7 @@ import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.SmokingRecipe;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
+
 import net.neoforged.neoforge.fluids.FluidStack;
 
 @JeiPlugin
@@ -131,14 +134,14 @@ public class CreateJEI implements IModPlugin {
 
 		CreateRecipeCategory<?>
 
-		milling = builder(AbstractCrushingRecipe.class)
-				.addTypedRecipes(AllRecipeTypes.MILLING)
-				.catalyst(AllBlocks.MILLSTONE::get)
-				.doubleItemIcon(AllBlocks.MILLSTONE.get(), AllItems.WHEAT_FLOUR.get())
-				.emptyBackground(177, 53)
-				.build("milling", MillingCategory::new),
+			milling = builder(AbstractCrushingRecipe.class)
+			.addTypedRecipes(AllRecipeTypes.MILLING)
+			.catalyst(AllBlocks.MILLSTONE::get)
+			.doubleItemIcon(AllBlocks.MILLSTONE.get(), AllItems.WHEAT_FLOUR.get())
+			.emptyBackground(177, 53)
+			.build("milling", MillingCategory::new),
 
-		crushing = builder(AbstractCrushingRecipe.class)
+			crushing = builder(AbstractCrushingRecipe.class)
 				.addTypedRecipes(AllRecipeTypes.CRUSHING)
 				.addTypedRecipesExcluding(AllRecipeTypes.MILLING::getType, AllRecipeTypes.CRUSHING::getType)
 				.catalyst(AllBlocks.CRUSHING_WHEEL::get)
@@ -146,21 +149,21 @@ public class CreateJEI implements IModPlugin {
 				.emptyBackground(177, 100)
 				.build("crushing", CrushingCategory::new),
 
-		pressing = builder(PressingRecipe.class)
+			pressing = builder(PressingRecipe.class)
 				.addTypedRecipes(AllRecipeTypes.PRESSING)
 				.catalyst(AllBlocks.MECHANICAL_PRESS::get)
 				.doubleItemIcon(AllBlocks.MECHANICAL_PRESS.get(), AllItems.IRON_SHEET.get())
 				.emptyBackground(177, 70)
 				.build("pressing", PressingCategory::new),
 
-		washing = builder(SplashingRecipe.class)
+			washing = builder(SplashingRecipe.class)
 				.addTypedRecipes(AllRecipeTypes.SPLASHING)
 				.catalystStack(ProcessingViaFanCategory.getFan("fan_washing"))
 				.doubleItemIcon(AllItems.PROPELLER.get(), Items.WATER_BUCKET)
 				.emptyBackground(178, 72)
 				.build("fan_washing", FanWashingCategory::new),
 
-		smoking = builder(SmokingRecipe.class)
+			smoking = builder(SmokingRecipe.class)
 				.addTypedRecipes(() -> RecipeType.SMOKING)
 				.removeNonAutomation()
 				.catalystStack(ProcessingViaFanCategory.getFan("fan_smoking"))
@@ -168,7 +171,7 @@ public class CreateJEI implements IModPlugin {
 				.emptyBackground(178, 72)
 				.build("fan_smoking", FanSmokingCategory::new),
 
-		blasting = builder(AbstractCookingRecipe.class)
+			blasting = builder(AbstractCookingRecipe.class)
 				.addTypedRecipesExcluding(() -> RecipeType.SMELTING, () -> RecipeType.BLASTING)
 				.addTypedRecipes(() -> RecipeType.BLASTING)
 				.removeRecipes(() -> RecipeType.SMOKING)
@@ -178,14 +181,14 @@ public class CreateJEI implements IModPlugin {
 				.emptyBackground(178, 72)
 				.build("fan_blasting", FanBlastingCategory::new),
 
-		haunting = builder(HauntingRecipe.class)
+			haunting = builder(HauntingRecipe.class)
 				.addTypedRecipes(AllRecipeTypes.HAUNTING)
 				.catalystStack(ProcessingViaFanCategory.getFan("fan_haunting"))
 				.doubleItemIcon(AllItems.PROPELLER.get(), Items.SOUL_CAMPFIRE)
 				.emptyBackground(178, 72)
 				.build("fan_haunting", FanHauntingCategory::new),
 
-		mixing = builder(BasinRecipe.class)
+			mixing = builder(BasinRecipe.class)
 				.addTypedRecipes(AllRecipeTypes.MIXING)
 				.catalyst(AllBlocks.MECHANICAL_MIXER::get)
 				.catalyst(AllBlocks.BASIN::get)
@@ -193,20 +196,20 @@ public class CreateJEI implements IModPlugin {
 				.emptyBackground(177, 103)
 				.build("mixing", MixingCategory::standard),
 
-		autoShapeless = builder(BasinRecipe.class)
+			autoShapeless = builder(BasinRecipe.class)
 				.enableWhen(AllConfigs.server().recipes.allowShapelessInMixer)
 				.addAllRecipesIf(r -> r.value() instanceof CraftingRecipe && !(r.value() instanceof ShapedRecipe)
-								&& r.value().getIngredients()
-								.size() > 1
-								&& !MechanicalPressBlockEntity.canCompress(r.value()) && !AllRecipeTypes.shouldIgnoreInAutomation(r),
-						BasinRecipe::convertShapeless)
+						&& r.value().getIngredients()
+						.size() > 1
+						&& !MechanicalPressBlockEntity.canCompress(r.value()) && !AllRecipeTypes.shouldIgnoreInAutomation(r),
+					BasinRecipe::convertShapeless)
 				.catalyst(AllBlocks.MECHANICAL_MIXER::get)
 				.catalyst(AllBlocks.BASIN::get)
 				.doubleItemIcon(AllBlocks.MECHANICAL_MIXER.get(), Items.CRAFTING_TABLE)
 				.emptyBackground(177, 85)
 				.build("automatic_shapeless", MixingCategory::autoShapeless),
 
-		brewing = builder(BasinRecipe.class)
+			brewing = builder(BasinRecipe.class)
 				.enableWhen(AllConfigs.server().recipes.allowBrewingInMixer)
 				.addRecipes(() -> RecipeGenericsUtil.cast(PotionMixingRecipes.createRecipes(Minecraft.getInstance().level)))
 				.catalyst(AllBlocks.MECHANICAL_MIXER::get)
@@ -215,7 +218,7 @@ public class CreateJEI implements IModPlugin {
 				.emptyBackground(177, 103)
 				.build("automatic_brewing", MixingCategory::autoBrewing),
 
-		packing = builder(BasinRecipe.class)
+			packing = builder(BasinRecipe.class)
 				.addTypedRecipes(AllRecipeTypes.COMPACTING)
 				.catalyst(AllBlocks.MECHANICAL_PRESS::get)
 				.catalyst(AllBlocks.BASIN::get)
@@ -223,26 +226,26 @@ public class CreateJEI implements IModPlugin {
 				.emptyBackground(177, 103)
 				.build("packing", PackingCategory::standard),
 
-		autoSquare = builder(BasinRecipe.class)
+			autoSquare = builder(BasinRecipe.class)
 				.enableWhen(AllConfigs.server().recipes.allowShapedSquareInPress)
 				.addAllRecipesIf(
-						r -> (r.value() instanceof CraftingRecipe) && !(r.value() instanceof MechanicalCraftingRecipe)
-								&& MechanicalPressBlockEntity.canCompress(r.value()) && !AllRecipeTypes.shouldIgnoreInAutomation(r),
-						BasinRecipe::convertShapeless)
+					r -> (r.value() instanceof CraftingRecipe) && !(r.value() instanceof MechanicalCraftingRecipe)
+						&& MechanicalPressBlockEntity.canCompress(r.value()) && !AllRecipeTypes.shouldIgnoreInAutomation(r),
+					BasinRecipe::convertShapeless)
 				.catalyst(AllBlocks.MECHANICAL_PRESS::get)
 				.catalyst(AllBlocks.BASIN::get)
 				.doubleItemIcon(AllBlocks.MECHANICAL_PRESS.get(), Blocks.CRAFTING_TABLE)
 				.emptyBackground(177, 85)
 				.build("automatic_packing", PackingCategory::autoSquare),
 
-		sawing = builder(CuttingRecipe.class)
+			sawing = builder(CuttingRecipe.class)
 				.addTypedRecipes(AllRecipeTypes.CUTTING)
 				.catalyst(AllBlocks.MECHANICAL_SAW::get)
 				.doubleItemIcon(AllBlocks.MECHANICAL_SAW.get(), Items.OAK_LOG)
 				.emptyBackground(177, 70)
 				.build("sawing", SawingCategory::new),
 
-		blockCutting = builder(CondensedBlockCuttingRecipe.class)
+			blockCutting = builder(CondensedBlockCuttingRecipe.class)
 				.enableWhen(AllConfigs.server().recipes.allowStonecuttingOnSaw)
 				.addRecipes(() -> BlockCuttingCategory.condenseRecipes(getTypedRecipesExcluding(RecipeType.STONECUTTING, AllRecipeTypes::shouldIgnoreInAutomation)))
 				.catalyst(AllBlocks.MECHANICAL_SAW::get)
@@ -250,7 +253,7 @@ public class CreateJEI implements IModPlugin {
 				.emptyBackground(177, 70)
 				.build("block_cutting", BlockCuttingCategory::new),
 
-		polishing = builder(SandPaperPolishingRecipe.class)
+			polishing = builder(SandPaperPolishingRecipe.class)
 				.addTypedRecipes(AllRecipeTypes.SANDPAPER_POLISHING)
 				.catalyst(AllItems.SAND_PAPER::get)
 				.catalyst(AllItems.RED_SAND_PAPER::get)
@@ -258,14 +261,14 @@ public class CreateJEI implements IModPlugin {
 				.emptyBackground(177, 55)
 				.build("sandpaper_polishing", PolishingCategory::new),
 
-		item_application = builder(ItemApplicationRecipe.class)
+			item_application = builder(ItemApplicationRecipe.class)
 				.addTypedRecipes(AllRecipeTypes.ITEM_APPLICATION)
 				.addRecipes(() -> RecipeGenericsUtil.cast(LogStrippingFakeRecipes.createRecipes()))
 				.itemIcon(AllItems.BRASS_HAND.get())
 				.emptyBackground(177, 60)
 				.build("item_application", ItemApplicationCategory::new),
 
-		deploying = builder(DeployerApplicationRecipe.class)
+			deploying = builder(DeployerApplicationRecipe.class)
 				.addTypedRecipes(AllRecipeTypes.DEPLOYING)
 				.addTypedRecipes(AllRecipeTypes.SANDPAPER_POLISHING::getType, DeployerApplicationRecipe::convert)
 				.addTypedRecipes(AllRecipeTypes.ITEM_APPLICATION::getType, ManualApplicationRecipe::asDeploying)
@@ -277,7 +280,7 @@ public class CreateJEI implements IModPlugin {
 				.emptyBackground(177, 70)
 				.build("deploying", DeployingCategory::new),
 
-		spoutFilling = builder(FillingRecipe.class)
+			spoutFilling = builder(FillingRecipe.class)
 				.addTypedRecipes(AllRecipeTypes.FILLING)
 				.addRecipeListConsumer(recipes -> SpoutCategory.consumeRecipes(recipes::add, ingredientManager))
 				.catalyst(AllBlocks.SPOUT::get)
@@ -285,7 +288,7 @@ public class CreateJEI implements IModPlugin {
 				.emptyBackground(177, 70)
 				.build("spout_filling", SpoutCategory::new),
 
-		draining = builder(EmptyingRecipe.class)
+			draining = builder(EmptyingRecipe.class)
 				.addRecipeListConsumer(recipes -> ItemDrainCategory.consumeRecipes(recipes::add, ingredientManager))
 				.addTypedRecipes(AllRecipeTypes.EMPTYING)
 				.catalyst(AllBlocks.ITEM_DRAIN::get)
@@ -293,33 +296,33 @@ public class CreateJEI implements IModPlugin {
 				.emptyBackground(177, 50)
 				.build("draining", ItemDrainCategory::new),
 
-		autoShaped = builder(CraftingRecipe.class)
+			autoShaped = builder(CraftingRecipe.class)
 				.enableWhen(AllConfigs.server().recipes.allowRegularCraftingInCrafter)
 				.addAllRecipesIf(r -> r.value() instanceof CraftingRecipe && !(r.value() instanceof ShapedRecipe)
-						&& r.value().getIngredients()
-						.size() == 1
-						&& !AllRecipeTypes.shouldIgnoreInAutomation(r))
+					&& r.value().getIngredients()
+					.size() == 1
+					&& !AllRecipeTypes.shouldIgnoreInAutomation(r))
 				.addTypedRecipesIf(() -> RecipeType.CRAFTING,
-						recipe -> recipe.value() instanceof ShapedRecipe && !AllRecipeTypes.shouldIgnoreInAutomation(recipe))
+					recipe -> recipe.value() instanceof ShapedRecipe && !AllRecipeTypes.shouldIgnoreInAutomation(recipe))
 				.catalyst(AllBlocks.MECHANICAL_CRAFTER::get)
 				.itemIcon(AllBlocks.MECHANICAL_CRAFTER.get())
 				.emptyBackground(177, 107)
 				.build("automatic_shaped", MechanicalCraftingCategory::new),
 
-		mechanicalCrafting = builder(CraftingRecipe.class)
+			mechanicalCrafting = builder(CraftingRecipe.class)
 				.addTypedRecipes(AllRecipeTypes.MECHANICAL_CRAFTING)
 				.catalyst(AllBlocks.MECHANICAL_CRAFTER::get)
 				.itemIcon(AllBlocks.MECHANICAL_CRAFTER.get())
 				.emptyBackground(177, 107)
 				.build("mechanical_crafting", MechanicalCraftingCategory::new),
 
-		seqAssembly = builder(SequencedAssemblyRecipe.class)
+			seqAssembly = builder(SequencedAssemblyRecipe.class)
 				.addTypedRecipes(AllRecipeTypes.SEQUENCED_ASSEMBLY)
 				.itemIcon(AllItems.PRECISION_MECHANISM.get())
 				.emptyBackground(180, 115)
 				.build("sequenced_assembly", SequencedAssemblyCategory::new),
 
-		mysteryConversion = builder(ConversionRecipe.class)
+			mysteryConversion = builder(ConversionRecipe.class)
 				.addRecipes(() -> MysteriousItemConversionCategory.RECIPES)
 				.itemIcon(AllBlocks.PECULIAR_BELL.get())
 				.emptyBackground(177, 50)
@@ -396,14 +399,14 @@ public class CreateJEI implements IModPlugin {
 				potionContents.forEachEffect(mei -> effectSet.add(mei.getEffect()));
 				if (!visitedEffects.add(effectSet))
 					continue;
-			}
+}
 
 			potionFluids.add(PotionFluid.of(1000, potionContents, PotionFluid.BottleType.REGULAR));
 		}
 		registration.addExtraIngredients(NeoForgeTypes.FLUID_STACK, potionFluids);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public void registerGuiHandlers(IGuiHandlerRegistration registration) {
 		registration.addGenericGuiContainerHandler(AbstractSimiContainerScreen.class, new SlotMover());
@@ -414,6 +417,8 @@ public class CreateJEI implements IModPlugin {
 		registration.addGhostIngredientHandler(ScheduleScreen.class, new GhostIngredientHandler());
 		registration.addGhostIngredientHandler(RedstoneRequesterScreen.class, new GhostIngredientHandler());
 		registration.addGhostIngredientHandler(FactoryPanelSetItemScreen.class, new GhostIngredientHandler());
+
+		registration.addGuiContainerHandler(StockKeeperRequestScreen.class, new StockKeeperGuiContainerHandler(ingredientManager));
 	}
 
 	private class CategoryBuilder<T extends Recipe<?>> extends CreateRecipeCategory.Builder<T> {
@@ -462,7 +467,7 @@ public class CreateJEI implements IModPlugin {
 		if (recipe1.getIngredients()
 			.isEmpty()
 			|| recipe2.getIngredients()
-				.isEmpty()) {
+			.isEmpty()) {
 			return false;
 		}
 		ItemStack[] matchingStacks = recipe1.getIngredients()
@@ -472,8 +477,8 @@ public class CreateJEI implements IModPlugin {
 			return false;
 		}
 		return recipe2.getIngredients()
-				.getFirst()
-				.test(matchingStacks[0]);
+			.getFirst()
+			.test(matchingStacks[0]);
 	}
 
 	public static boolean doOutputsMatch(Recipe<?> recipe1, Recipe<?> recipe2) {
@@ -482,8 +487,8 @@ public class CreateJEI implements IModPlugin {
 	}
 
 	@Override
-    public void onRuntimeAvailable(IJeiRuntime runtime) {
-        CreateJEI.runtime = runtime;
-    }
+	public void onRuntimeAvailable(IJeiRuntime runtime) {
+		CreateJEI.runtime = runtime;
+	}
 
 }

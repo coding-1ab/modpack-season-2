@@ -11,6 +11,7 @@ import com.simibubi.create.api.contraption.storage.fluid.WrapperMountedFluidStor
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.fluids.tank.storage.FluidTankMountedStorage.Handler;
+import com.simibubi.create.foundation.utility.CreateCodecs;
 
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
@@ -96,7 +97,8 @@ public class FluidTankMountedStorage extends WrapperMountedFluidStorage<Handler>
 	}
 
 	public static final class Handler extends FluidTank {
-		private Runnable onChange = () -> {};
+		private Runnable onChange = () -> {
+		};
 
 		public Handler(int capacity, FluidStack stack) {
 			super(capacity);

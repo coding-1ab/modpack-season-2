@@ -7,6 +7,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
+import com.simibubi.create.foundation.utility.CreateCodecs;
 
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -52,7 +53,8 @@ public class CreativeFluidTankBlockEntity extends FluidTankBlockEntity {
 			FluidStack.OPTIONAL_CODEC.fieldOf("fluid").forGetter(FluidTank::getFluid),
 			ExtraCodecs.NON_NEGATIVE_INT.fieldOf("capacity").forGetter(FluidTank::getCapacity)
 		).apply(i, (fluid, capacity) -> {
-			CreativeSmartFluidTank tank = new CreativeSmartFluidTank(capacity, $ -> {});
+			CreativeSmartFluidTank tank = new CreativeSmartFluidTank(capacity, $ -> {
+			});
 			tank.setFluid(fluid);
 			return tank;
 		}));
