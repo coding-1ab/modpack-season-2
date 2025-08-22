@@ -150,7 +150,7 @@ public class BasinRecipe extends StandardProcessingRecipe<RecipeInput> {
 					.asCraftInput();
 
 				if (recipe instanceof BasinRecipe basinRecipe) {
-					recipeOutputItems.addAll(basinRecipe.rollResults());
+					recipeOutputItems.addAll(basinRecipe.rollResults(basin.getLevel().random));
 
 					for (FluidStack fluidStack : basinRecipe.getFluidResults())
 						if (!fluidStack.isEmpty())

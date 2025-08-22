@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import com.google.gson.JsonObject;
 import com.simibubi.create.Create;
 
-import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -28,14 +28,14 @@ public class CreateWikiBlockInfoProvider implements DataProvider {
 	@Override
 	public CompletableFuture<?> run(CachedOutput cachedOutput) {
 		return CompletableFuture.allOf(BuiltInRegistries.BLOCK.stream()
-			.filter(b -> CatnipServices.REGISTRIES.getKeyOrThrow(b).getNamespace().equals(Create.ID))
+			.filter(b -> RegisteredObjectsHelper.getKeyOrThrow(b).getNamespace().equals(Create.ID))
 			.map(block -> {
 				BlockState state = block.defaultBlockState();
-				ResourceLocation id = CatnipServices.REGISTRIES.getKeyOrThrow(block);
+				ResourceLocation id = RegisteredObjectsHelper.getKeyOrThrow(block);
 
 				JsonObject element = new JsonObject();
 
-				Item item = CatnipServices.REGISTRIES.getItem(id);
+				Item item = RegisteredObjectsHelper.getItem(id);
 				if (item != null)
 					element.addProperty("stackable", item.getDefaultInstance().getMaxStackSize());
 

@@ -1,7 +1,5 @@
 package com.simibubi.create.content.processing.recipe;
 
-import java.util.Random;
-
 import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 
 import com.mojang.datafixers.util.Either;
@@ -18,6 +16,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -34,7 +33,6 @@ public class ProcessingOutput {
 		ProcessingOutput::new
 	);
 
-	private static final Random r = new Random();
 	private final Item item;
 	private final int count;
 	private final DataComponentPatch patch;
@@ -86,11 +84,11 @@ public class ProcessingOutput {
 		return chance;
 	}
 
-	public ItemStack rollOutput() {
+	public ItemStack rollOutput(RandomSource randomSource) {
 		if (chance < 1F) {
 			int count = this.count;
 			for (int roll = 0; roll < this.count; roll++)
-				if (r.nextFloat() > chance)
+				if (randomSource.nextFloat() > chance)
 					count--;
 			if (count == 0)
 				return ItemStack.EMPTY;
