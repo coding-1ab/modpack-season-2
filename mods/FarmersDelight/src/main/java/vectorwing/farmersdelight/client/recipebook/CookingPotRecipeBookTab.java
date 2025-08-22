@@ -5,6 +5,8 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.util.StringRepresentable;
 
 import java.util.EnumSet;
+import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
 
 public enum CookingPotRecipeBookTab implements StringRepresentable
 {
@@ -41,7 +43,7 @@ public enum CookingPotRecipeBookTab implements StringRepresentable
 	}
 
 	@Override
-	public String getSerializedName() {
+	public @NotNull String getSerializedName() {
 		return this.name;
 	}
 }

@@ -180,7 +180,7 @@ public class ItemTags extends ItemTagsProvider
 				.add(ModItems.CRIMSON_CABINET.get())
 				.add(ModItems.WARPED_CABINET.get());
 		tag(ModTags.CABINETS).addTag(ModTags.WOODEN_CABINETS);
-		tag(ModTags.OFFHAND_EQUIPMENT).add(Items.SHIELD)
+		tag(ModTags.OFFHAND_EQUIPMENT).addTag(Tags.Items.TOOLS_SHIELD)
 				.addOptional(ResourceLocation.parse("create:extendo_grip"));
 		tag(ModTags.SERVING_CONTAINERS).add(Items.BOWL, Items.GLASS_BOTTLE, Items.BUCKET);
 		tag(ModTags.FLAT_ON_CUTTING_BOARD).add(Items.TRIDENT, Items.SPYGLASS)

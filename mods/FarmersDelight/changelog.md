@@ -2,11 +2,30 @@
 
 ## 1.2.9
 
+### Updates
+- The `offhand_equipment` tag now includes `forge:tools/shields` by default, extending default compatibility;
+- Rich Soil Farmland can now be hydrated by any fluid type capable of hydration;
+- Wild Cabbage and Sea Beet can now generate on any biome tagged with `minecraft:is_beach` (thanks, lyaneii!);
+
 ### Fixes
-- Fixed Cooking Pot allowing players to cook and store up to 99 servings;
-- Fixed Create integration's milling recipes using invalid field, which caused them to never finish processing;
-- Fixed Rabbit Stew not returning bowls after being eaten, due to the Rabbit Stew buff;
-- Fixed a potential datapack error with cooking recipes in KubeJS (thanks, ianm1647!);
+- Fixed Wheat Dough's water-based recipe still displaying in JEI when disabled;
+- Fixed FD's special recipes existing in the `minecraft` namespace;
+- Temporary fix for the Cooking Pot crashing when opened in spectator mode (access is now disabled);
+- (1.21+) Fixed Cooking Pot allowing players to cook and store up to 99 servings;
+- (1.21+) Fixed Create integration's milling recipes using invalid field, which caused them to never finish processing;
+- (1.21+) Fixed Rabbit Stew not returning bowls after being eaten, due to the Rabbit Stew buff;
+- (1.21+) Fixed a potential datapack error with cooking recipes in KubeJS (thanks, ianm1647!);
+
+### Translations
+- Update main langs to include lines for wall canvas signs;
+- Fixed es_ar translation having a JSON error;
+- Added:
+  - hu_hu (thanks, bayi!);
+  - lzh (thanks, BeiDou114514!);
+- Updated:
+  - it_it (thanks, BlackShadow77!);
+  - zh_cn (thanks, Don-Trueno!);
+  - zh_tw (thanks, CyanChanges!);
 
 ## 1.2.8
 
