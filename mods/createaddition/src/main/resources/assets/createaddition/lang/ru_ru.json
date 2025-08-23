@@ -156,7 +156,7 @@
 
 	"block.createaddition.electric_motor": "Электромотор",
 
-	"block.createaddition.alternator": "Генератор",
+	"block.createaddition.alternator": "Альтернатор",
 
 	"block.createaddition.creative_energy": "Творческий генератор",
 	"block.createaddition.creative_energy.tooltip": "ТВОРЧЕСКИЙ_ГЕНЕРАТОР",
@@ -238,7 +238,7 @@
 
 	"block.createaddition.liquid_blaze_burner": "Горелка всполоха с соломинкой",
 
-	"itemGroup.createaddition.main": "Create: Поделки и Дополнения",
+	"itemGroup.createaddition.main": "Create: Crafts & Additions",
 
 	"createaddition.ponder.tag.electric": "Электроприборы",
 	"createaddition.ponder.tag.electric.description": "Компоненты, использующие электричество",
@@ -316,14 +316,20 @@
 	"createaddition.schedule.condition.threshold.unit": "К⚡",
 	"createaddition.schedule.condition.threshold.energy": "Энергия",
 
-	"death.attack.barbed_wire": "%1$s пытался перебраться через колючую проволоку",
-	"death.attack.barbed_wire.player": "%1$s пытался перебраться через колючую проволоку, пока боролся с %2$s",
+	"death.attack.createaddition.barbed_wire": "%1$s пытался перебраться через колючую проволоку",
+	"death.attack.createaddition.barbed_wire.player": "%1$s пытался перебраться через колючую проволоку, пока боролся с %2$s",
 
 	"effect.createaddition.shocking": "Электрошок",
-	"death.attack.tesla_coil": "%1$s получил смертельный удар током",
-	"death.attack.tesla_coil.player": "%1$s получил смертельный удар током, пока боролся с %2$s",
+	"death.attack.createaddition.tesla_coil": "%1$s получил смертельный удар током",
+	"death.attack.createaddition.tesla_coil.player": "%1$s получил смертельный удар током, пока боролся с %2$s",
 	"effect.createaddition.shocking.description": "Приводит к значительному снижению скорости передвижения",
 
-	"createaddition.subtitle.loud_zap": "Катушка Теслы разряжается",
-	"createaddition.subtitle.little_zap": "Катушка Теслы искрит"
+	"createaddition.subtitle.loud_zap": "Разряд катушки Теслы",
+	"createaddition.subtitle.little_zap": "Искрение катушки Теслы",
+
+	"tag.item.createaddition.large_connector_usable_rods": "Используемые на высоковольтных соединителях стержни",
+	"tag.item.createaddition.modular_accumulator_usable_wires": "Используемые многоблочными аккумуляторами провода",
+	"tag.item.createaddition.plant_foods": "Растительная пища",
+	"tag.item.createaddition.plants": "Растения",
+	"tag.item.createaddition.spools": "Катушки"
 }
