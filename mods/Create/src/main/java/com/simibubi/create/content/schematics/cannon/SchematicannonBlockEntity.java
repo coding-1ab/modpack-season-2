@@ -385,7 +385,7 @@ public class SchematicannonBlockEntity extends SmartBlockEntity implements MenuP
 		}
 
 		// Get item requirement
-		ItemRequirement requirement = printer.getCurrentRequirement();
+		ItemRequirement requirement = printer.getCurrentRequirement(level);
 		if (requirement.isInvalid() || !printer.shouldPlaceCurrent(level, this::shouldPlace)) {
 			sendUpdate = !statusMsg.equals("searching");
 			statusMsg = "searching";
@@ -806,7 +806,7 @@ public class SchematicannonBlockEntity extends SmartBlockEntity implements MenuP
 			return;
 		}
 
-		CompoundTag data = BlockHelper.prepareBlockEntityData(blockState, blockEntity);
+		CompoundTag data = BlockHelper.prepareBlockEntityData(level, blockState, blockEntity);
 		launchBlock(target, icon, blockState, data);
 	}
 

@@ -291,11 +291,11 @@ public class BlockHelper {
 			.getBlock(), target.below());
 	}
 
-	public static CompoundTag prepareBlockEntityData(BlockState blockState, BlockEntity blockEntity) {
+	public static CompoundTag prepareBlockEntityData(Level level, BlockState blockState, BlockEntity blockEntity) {
 		CompoundTag data = null;
 		if (blockEntity == null)
 			return null;
-		RegistryAccess access = blockEntity.getLevel().registryAccess();
+		RegistryAccess access = level.registryAccess();
 		SafeNbtWriter writer = SafeNbtWriterRegistry.REGISTRY.get(blockEntity.getType());
 		if (AllBlockTags.SAFE_NBT.matches(blockState)) {
 			data = blockEntity.saveWithFullMetadata(access);

@@ -1,4 +1,5 @@
 import dev.ithundxr.silk.ChangelogText
+import org.slf4j.event.Level
 
 plugins {
     id("idea")
@@ -72,21 +73,21 @@ neoForge {
     runs {
         configureEach {
             systemProperty("forge.logging.markers", "REGISTRIES")
-            jvmArguments = ["-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition"]
-            //jvmArgs("-XX:-OmitStackTraceInFastThrow") // uncomment when you get exceptions with null messages etc
-            //jvmArgs("-XX:+UnlockCommercialFeatures") // uncomment for profiling
+            jvmArgument("-XX:+IgnoreUnrecognizedVMOptions")
+            jvmArgument("-XX:+AllowEnhancedClassRedefinition")
+            //jvmArgument("-XX:-OmitStackTraceInFastThrow") // uncomment when you get exceptions with null messages etc
+            //jvmArgument("-XX:+UnlockCommercialFeatures") // uncomment for profiling
 
             systemProperty("mixin.debug.verbose", "true")
             systemProperty("mixin.debug.export", "true")
 
-            logLevel = org.slf4j.event.Level.DEBUG
+            systemProperty("neoforge.enabledGameTestNamespaces", mod_id as String)
+
+            logLevel = Level.DEBUG
         }
 
         client {
             client()
-
-            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            systemProperty("neoforge.enabledGameTestNamespaces", project.mod_id)
         }
 
         server {
@@ -95,14 +96,13 @@ neoForge {
             gameDirectory = project.file("run/server")
 
             programArgument("--nogui")
-            systemProperty("neoforge.enabledGameTestNamespaces", project.mod_id)
         }
 
         data {
             data()
 
             programArguments.addAll(
-                "--mod", project.mod_id,
+                    "--mod", mod_id as String,
                 "--all",
                 "--output", file("src/generated/resources/").getAbsolutePath(),
                 "--existing", file("src/main/resources/").getAbsolutePath()
@@ -111,7 +111,6 @@ neoForge {
 
         gameTestServer {
             type = "gameTestServer"
-            systemProperty("neoforge.enabledGameTestNamespaces", project.mod_id)
         }
     }
 }
