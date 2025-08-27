@@ -40,37 +40,33 @@ public class LogisticsManager {
 
 	public static InventorySummary getSummaryOfNetwork(UUID freqId, boolean accurate) {
 		try {
-			return (accurate ? LogisticsManager.ACCURATE_SUMMARIES : LogisticsManager.SUMMARIES).get(freqId, () -> {
-				InventorySummary summaryOfLinks = new InventorySummary();
-				Set<InventoryIdentifier> processedInventories = new HashSet<>();
-
-				Collection<LogisticallyLinkedBehaviour> allLinks = LogisticallyLinkedBehaviour.getAllPresent(freqId,
-						false);
-
-				allLinks.forEach(link -> {
-					InventoryIdentifier currentInventoryId = getInventoryIdentifierFromLink(link);
-
-					if (currentInventoryId != null && processedInventories.contains(currentInventoryId)) {
-						return;
-					}
-
-					InventorySummary summary = link.getSummary(null);
-					if (summary != InventorySummary.EMPTY) {
-						summaryOfLinks.contributingLinks++;
-						summaryOfLinks.add(summary);
-
-						if (currentInventoryId != null) {
-							processedInventories.add(currentInventoryId);
-						}
-					}
-				});
-
-				return summaryOfLinks;
-			});
+			Cache<UUID, InventorySummary> cacheToUse =
+				accurate ? LogisticsManager.ACCURATE_SUMMARIES : LogisticsManager.SUMMARIES;
+			return cacheToUse.get(freqId, () -> createSummaryOfNetwork(freqId));
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
 		return InventorySummary.EMPTY;
+	}
+
+	private static InventorySummary createSummaryOfNetwork(UUID freqId) {
+		InventorySummary summaryOfLinks = new InventorySummary();
+		Set<InventoryIdentifier> processedInventories = new HashSet<>();
+		for (LogisticallyLinkedBehaviour link : LogisticallyLinkedBehaviour.getAllPresent(freqId, false)) {
+
+			// Skip inventories already presented by other links
+			InventoryIdentifier currentInventoryId = getInventoryIdentifierFromLink(link);
+			if (currentInventoryId != null && !processedInventories.add(currentInventoryId))
+				continue;
+
+			InventorySummary summary = link.getSummary(null);
+			if (summary != InventorySummary.EMPTY) {
+				summaryOfLinks.contributingLinks++;
+				summaryOfLinks.add(summary);
+			}
+		}
+
+		return summaryOfLinks;
 	}
 
 	public static int getStockOf(UUID freqId, ItemStack stack, @Nullable IdentifiedInventory ignoredHandler) {
