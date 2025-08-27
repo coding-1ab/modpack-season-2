@@ -399,8 +399,8 @@ public class DeployerHandler {
 			&& stateUp.getBlock() == blockstate.getBlock()
 			&& stateUp.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.UPPER) {
 			// hack to prevent DoublePlantBlock from dropping a duplicate item
-			world.setBlock(pos, Blocks.AIR.defaultBlockState(), 35);
-			world.setBlock(posUp, Blocks.AIR.defaultBlockState(), 35);
+			world.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL | Block.UPDATE_SUPPRESS_DROPS);
+			world.setBlock(posUp, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL | Block.UPDATE_SUPPRESS_DROPS);
 		} else {
 			if (!blockstate.onDestroyedByPlayer(world, pos, player, canHarvest, world.getFluidState(pos)))
 				return true;

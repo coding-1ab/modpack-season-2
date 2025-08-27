@@ -37,7 +37,7 @@ public class DynamicTree extends AbstractBlockBreakQueue {
 //			return;
 //
 //		// Play and render block break sound and particles
-//		world.levelEvent(null, 2001, startCutPos, Block.getId(world.getBlockState(startCutPos)));
+//		world.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, startCutPos, Block.getId(world.getBlockState(startCutPos)));
 //
 //		// Actually breaks the tree
 //		BranchDestructionData data = start.destroyBranchFromNode(world, startCutPos, Direction.DOWN, false, playerEntity);

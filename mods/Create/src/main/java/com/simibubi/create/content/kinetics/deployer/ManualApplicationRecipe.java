@@ -76,7 +76,7 @@ public class ManualApplicationRecipe extends ItemApplicationRecipe {
 		level.destroyBlock(pos, false);
 
 		BlockState transformedBlock = recipe.transformBlock(blockState, level.random);
-		level.setBlock(pos, transformedBlock, 3);
+		level.setBlock(pos, transformedBlock, Block.UPDATE_ALL);
 		recipe.rollResults(level.random)
 			.forEach(stack -> Block.popResource(level, pos, stack));
 

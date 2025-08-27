@@ -20,6 +20,7 @@ import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -67,7 +68,7 @@ public class TrackObserverBlockEntity extends SmartBlockEntity implements Transf
 
 		BlockState blockState = getBlockState();
 		if (blockState.hasProperty(TrackObserverBlock.POWERED))
-			level.setBlock(worldPosition, blockState.setValue(TrackObserverBlock.POWERED, shouldBePowered), 3);
+			level.setBlock(worldPosition, blockState.setValue(TrackObserverBlock.POWERED, shouldBePowered), Block.UPDATE_ALL);
 		DisplayLinkBlock.notifyGatherers(level, worldPosition);
 	}
 

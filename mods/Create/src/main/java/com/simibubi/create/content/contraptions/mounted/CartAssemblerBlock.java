@@ -199,7 +199,7 @@ public class CartAssemblerBlock extends BaseRailBlock
 			return;
 		boolean previouslyPowered = state.getValue(POWERED);
 		if (previouslyPowered != worldIn.hasNeighborSignal(pos))
-			worldIn.setBlock(pos, state.cycle(POWERED), 2);
+			worldIn.setBlock(pos, state.cycle(POWERED), Block.UPDATE_CLIENTS);
 		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
 	}
 
@@ -330,7 +330,7 @@ public class CartAssemblerBlock extends BaseRailBlock
 		if (world.isClientSide)
 			return InteractionResult.SUCCESS;
 		BlockPos pos = context.getClickedPos();
-		world.setBlock(pos, rotate(state, Rotation.CLOCKWISE_90), 3);
+		world.setBlock(pos, rotate(state, Rotation.CLOCKWISE_90), Block.UPDATE_ALL);
 		world.updateNeighborsAt(pos.below(), this);
 		return InteractionResult.SUCCESS;
 	}

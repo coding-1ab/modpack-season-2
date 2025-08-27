@@ -78,6 +78,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
@@ -200,7 +201,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 		if (isAddedToOtherGauge && existingState != blockEntity.getBlockState())
 			return;
 		if (!isAddedToOtherGauge)
-			level.setBlock(newPos.pos(), blockEntity.getBlockState(), 3);
+			level.setBlock(newPos.pos(), blockEntity.getBlockState(), Block.UPDATE_ALL);
 
 		for (BlockPos blockPos : targetedByLinks.keySet())
 			if (!blockPos.closerThan(newPos.pos(), 24))

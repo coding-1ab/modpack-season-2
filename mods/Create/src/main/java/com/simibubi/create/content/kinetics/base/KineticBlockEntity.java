@@ -384,7 +384,7 @@ public class KineticBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 		if (currentState == state)
 			return;
 		if (blockEntity == null || !isKinetic) {
-			world.setBlock(pos, state, 3);
+			world.setBlock(pos, state, Block.UPDATE_ALL);
 			return;
 		}
 
@@ -402,7 +402,7 @@ public class KineticBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 			generatingBlockEntity.reActivateSource = true;
 		}
 
-		world.setBlock(pos, state, 3);
+		world.setBlock(pos, state, Block.UPDATE_ALL);
 	}
 
 	@Override

@@ -37,6 +37,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -286,8 +287,8 @@ public class SymmetryWandItem extends Item {
 			BlockState blockstate = world.getBlockState(position);
 			if (!blockstate.isAir()) {
 				targets.add(position);
-				world.levelEvent(2001, position, Block.getId(blockstate));
-				world.setBlock(position, air, 3);
+				world.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, position, Block.getId(blockstate));
+				world.setBlock(position, air, Block.UPDATE_ALL);
 
 				if (!player.isCreative()) {
 					if (!player.getMainHandItem()

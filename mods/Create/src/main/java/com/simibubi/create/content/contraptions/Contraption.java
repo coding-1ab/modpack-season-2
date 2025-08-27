@@ -22,10 +22,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.core.HolderLookup;
-
-import net.minecraft.core.Vec3i;
-
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -89,6 +85,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -108,6 +106,7 @@ import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -1183,7 +1182,7 @@ public abstract class Contraption {
 					.isEmpty())) {
 					if (targetPos.getY() == world.getMinBuildHeight())
 						targetPos = targetPos.above();
-					world.levelEvent(2001, targetPos, Block.getId(state));
+					world.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, targetPos, Block.getId(state));
 					Block.dropResources(state, world, targetPos, null);
 					continue;
 				}

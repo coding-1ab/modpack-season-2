@@ -43,7 +43,7 @@ public class TrainTrapdoorBlock extends TrapDoorBlock implements IWrenchable {
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
 		state = state.cycle(OPEN);
-		level.setBlock(pos, state, 2);
+		level.setBlock(pos, state, UPDATE_CLIENTS);
 		if (state.getValue(WATERLOGGED))
 			level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
 		playSound(player, level, pos, state.getValue(OPEN));

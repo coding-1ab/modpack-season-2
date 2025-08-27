@@ -232,7 +232,7 @@ public class ControllerRailBlock extends BaseRailBlock implements IWrenchable {
 	}
 
 	private void placeAndNotify(BlockState state, BlockPos pos, Level world) {
-		world.setBlock(pos, state, 3);
+		world.setBlock(pos, state, Block.UPDATE_ALL);
 		world.updateNeighborsAt(pos.below(), this);
 		if (state.getValue(SHAPE)
 			.isAscending())

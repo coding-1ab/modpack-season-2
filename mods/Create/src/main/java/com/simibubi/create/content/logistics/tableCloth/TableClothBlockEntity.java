@@ -146,7 +146,7 @@ public class TableClothBlockEntity extends SmartBlockEntity {
 			level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.5f, 1f);
 
 			if (manuallyAddedItems.isEmpty() && !computerBehaviour.hasAttachedComputer()) {
-				level.setBlock(worldPosition, getBlockState().setValue(TableClothBlock.HAS_BE, false), 3);
+				level.setBlock(worldPosition, getBlockState().setValue(TableClothBlock.HAS_BE, false), Block.UPDATE_ALL);
 				if (level instanceof ServerLevel serverLevel)
 					CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(worldPosition), new RemoveBlockEntityPacket(worldPosition));
 			} else
