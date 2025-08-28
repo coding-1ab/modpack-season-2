@@ -34,13 +34,10 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
             }
 
             Vec3i relative = pos.subtract(blockEntity.getBlockPos());
-            if (getRenderPriority(relative) > getRenderPriority(relative.multiply(-1)))
-                continue;
-
             // Calculate the length of the strut segment based on the distance to the connected block
-            Vec3 thisAttachment = Vec3.atCenterOf(blockEntity.getBlockPos()).relative(blockEntity.getBlockState().getValue(GirderStrutBlock.FACING), -0.5);
+            Vec3 thisAttachment = Vec3.atCenterOf(blockEntity.getBlockPos()).relative(blockEntity.getBlockState().getValue(GirderStrutBlock.FACING), -0.4);
             BlockState otherState = blockEntity.getLevel().getBlockState(pos);
-            Vec3 otherAttachment = Vec3.atCenterOf(pos).relative(otherState.getValue(GirderStrutBlock.FACING), -0.5);
+            Vec3 otherAttachment = Vec3.atCenterOf(pos).relative(otherState.getValue(GirderStrutBlock.FACING), -0.4);
 
             double length = thisAttachment.distanceTo(otherAttachment);
             int segments = (int) Math.ceil(length);
@@ -55,13 +52,20 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
             double xRot = (float) Math.atan2(relativeVec.y(), distHorizontal);
 
             TransformStack.of(ms)
-                .translate(Vec3.atLowerCornerOf(blockEntity.getBlockState().getValue(GirderStrutBlock.FACING).getNormal()).scale(-0.5))
+                .translate(Vec3.atLowerCornerOf(blockEntity.getBlockState().getValue(GirderStrutBlock.FACING).getNormal()).scale(-0.4))
                 .center()
                 .rotateY((float) yRot)
                 .rotateX(-(float) xRot)
                 .uncenter();
+
+            ms.pushPose();
+            renderSegments(state, BnbPartialModels.GIRDER_STRUT_JOINT_SEGMENT, ms, 1, buffer, light);
+            ms.popPose();
+
             ms.translate(0, 0, lengthOffset + 0.5); // Adjust the translation based on segment length
-            renderSegments(state, BnbPartialModels.GIRDER_STRUT_SEGMENT, ms, segments, buffer, light);
+            if (getRenderPriority(relative) > getRenderPriority(relative.multiply(-1))) {
+                renderSegments(state, BnbPartialModels.GIRDER_STRUT_SEGMENT, ms, segments, buffer, light);
+            }
             ms.popPose();
         }
     }
