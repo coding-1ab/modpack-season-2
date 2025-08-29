@@ -70,11 +70,8 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 	public void tickAudio() {
 		super.tickAudio();
 
-		if (getSpeed() == 0)
-			return;
-		if (inputInv.getStackInSlot(0)
-				.isEmpty())
-			return;
+		if (getSpeed() == 0) return;
+		if (inputInv.getStackInSlot(0).isEmpty()) return;
 
 		float pitch = Mth.clamp((Math.abs(getSpeed()) / 256f) + .45f, .85f, 1f);
 		SoundScapes.play(SoundScapes.AmbienceGroup.MILLING, worldPosition, pitch);
@@ -84,8 +81,7 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 	public void tick() {
 		super.tick();
 
-		if (getSpeed() == 0)
-			return;
+		if (getSpeed() == 0) return;
 		for (int i = 0; i < outputInv.getSlots(); i++)
 			if (outputInv.getStackInSlot(i)
 					.getCount() == outputInv.getSlotLimit(i))
@@ -98,14 +94,11 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 				spawnParticles();
 				return;
 			}
-			if (timer <= 0)
-				process();
+			if (timer <= 0) process();
 			return;
 		}
 
-		if (inputInv.getStackInSlot(0)
-				.isEmpty())
-			return;
+		if (inputInv.getStackInSlot(0).isEmpty()) return;
 
 		RecipeWrapper inventoryIn = new RecipeWrapper(inputInv);
 		if (lastRecipe == null || !lastRecipe.matches(inventoryIn, level)) {
@@ -143,8 +136,7 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 
 		if (lastRecipe == null || !lastRecipe.matches(inventoryIn, level)) {
 			Optional<RecipeHolder<RollingRecipe>> recipe = find(inventoryIn, level);
-			if (recipe.isEmpty())
-				return;
+			if (recipe.isEmpty()) return;
 			lastRecipe = recipe.get().value();
 		}
 
@@ -159,8 +151,7 @@ public class RollingMillBlockEntity extends KineticBlockEntity {
 
 	public void spawnParticles() {
 		ItemStack stackInSlot = inputInv.getStackInSlot(0);
-		if (stackInSlot.isEmpty())
-			return;
+		if (stackInSlot.isEmpty()) return;
 
 		ItemParticleOption data = new ItemParticleOption(ParticleTypes.ITEM, stackInSlot);
 		float angle = level.random.nextFloat() * 360;

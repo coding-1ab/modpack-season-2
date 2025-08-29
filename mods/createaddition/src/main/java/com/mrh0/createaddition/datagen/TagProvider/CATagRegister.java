@@ -32,6 +32,7 @@ public class CATagRegister {
         public static final TagKey<Item> ELECTRUM_WIRES = commonTags("wires","electrum");
         public static final TagKey<Item> GOLD_WIRES = commonTags("wires","gold");
         public static final TagKey<Item> IRON_WIRES = commonTags("wires","iron");
+        public static final TagKey<Item> BUCKETS = commonTags("buckets");
 
         public static final TagKey<Item> DUSTS = commonTags("dusts");
         public static final TagKey<Item> FUELS = commonTags("fuels");

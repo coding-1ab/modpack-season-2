@@ -183,5 +183,10 @@ public class CAItemTagProvider extends ItemTagsProvider {
                 CABlocks.CHOCOLATE_CAKE.asItem(),
                 CABlocks.HONEY_CAKE.asItem()
         );
+
+        tag(CATagRegister.Items.BUCKETS).add(
+                CAFluids.BIOETHANOL.getBucket().get(),
+                CAFluids.SEED_OIL.getBucket().get()
+        );
     }
 }
