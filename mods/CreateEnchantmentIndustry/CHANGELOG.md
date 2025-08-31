@@ -1,4 +1,3 @@
-### Create: Enchantment Industry 2.1.7
+### Create: Enchantment Industry 2.1.8
 
 #### Fix
-- Fix JEI Plugin load issue.
