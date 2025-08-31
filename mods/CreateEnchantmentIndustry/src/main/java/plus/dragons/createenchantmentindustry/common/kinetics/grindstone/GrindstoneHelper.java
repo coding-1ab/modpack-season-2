@@ -98,7 +98,10 @@ public class GrindstoneHelper {
         var grinding = SequencedAssemblyRecipe.getRecipe(level, input, CEIRecipes.GRINDING.getType(), GrindingRecipe.class);
         if (grinding.isEmpty())
             grinding = level.getRecipeManager().getRecipeFor(CEIRecipes.GRINDING.getType(), input, level);
-        return grinding.map(grindingRecipeRecipeHolder -> grindingRecipeRecipeHolder.value().getFluidResults().getFirst().getAmount()).orElse(0);
+        if (grinding.isEmpty()) return 0;
+        var f = grinding.get().value().getFluidResults();
+        if(f.isEmpty()) return 0;
+        return f.getFirst().getAmount();
     }
 
     private static ItemStack computeResult(ItemStack top, ItemStack bottom) {
