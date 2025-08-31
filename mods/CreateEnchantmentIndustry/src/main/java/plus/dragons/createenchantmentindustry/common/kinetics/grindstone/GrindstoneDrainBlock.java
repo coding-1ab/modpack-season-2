@@ -136,11 +136,6 @@ public class GrindstoneDrainBlock extends HorizontalKineticBlock implements IBE<
 
     @Override
     public ItemStack getCloneItemStack(BlockState state, HitResult hitResult, LevelReader level, BlockPos pos, Player player) {
-        if (hitResult instanceof BlockHitResult blockHitResult) {
-            return blockHitResult.getDirection() == Direction.UP
-                    ? new ItemStack(this.grindstone)
-                    : AllBlocks.ITEM_DRAIN.asStack();
-        }
         return AllBlocks.ITEM_DRAIN.asStack();
     }
 
