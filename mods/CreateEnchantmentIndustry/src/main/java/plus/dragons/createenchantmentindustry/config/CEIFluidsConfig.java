@@ -53,6 +53,10 @@ public class CEIFluidsConfig extends ConfigBase {
             "enableCustomNamePrinting",
             Comments.enableCustomNamePrinting,
             RequiresRestart.SERVER.asComment());
+    public final ConfigBool enableBannerPatternPrinting = b(true,
+            "enableBannerPatternPrinting",
+            Comments.enableBannerPatternPrinting,
+            RequiresRestart.SERVER.asComment());
     public final ConfigBool printingCustomNameAsItemName = b(false,
             "printingCustomNameAsItemName",
             Comments.printingCustomNameAsItemName);
@@ -108,6 +112,7 @@ public class CEIFluidsConfig extends ConfigBase {
         static final String enablePackagePatternPrinting = "If the changing package patterns function of Printers should be enabled.";
         static final String enablePackageAddressPrinting = "If the assigning package addresses function of Printers should be enabled.";
         static final String enableCustomNamePrinting = "If the assigning custom names function of Printers should be enabled.";
+        static final String enableBannerPatternPrinting = "If the printing banner patterns function of Printers should be enabled.";
         static final String printingCustomNameAsItemName = "Whether printing custom names (displayed in italics) should instead print as as item names (displayed in non-italics).";
         static final String printingGenerationChange = "The generation change when copying Written Books; " +
                 "a value of 1 will prevent copying copy of copy";

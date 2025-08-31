@@ -85,6 +85,10 @@ public class CEIDataMaps {
             .builder(CEICommon.asResource("printing/written_book/ingredient"), Registries.FLUID, ExtraCodecs.POSITIVE_INT)
             .synced(Codec.INT, true)
             .build();
+    public static final DataMapType<Fluid, Integer> PRINTING_BANNER_PATTERN_INGREDIENT = DataMapType
+            .builder(CEICommon.asResource("printing/banner_pattern/ingredient"), Registries.FLUID, ExtraCodecs.POSITIVE_INT)
+            .synced(Codec.INT, true)
+            .build();
     public static final DataMapType<Enchantment, List<CEIIntIntPair>> PRINTING_ENCHANTED_BOOK_COST = DataMapType
             .builder(CEICommon.asResource("printing/enchanted_book/custom_cost"), Registries.ENCHANTMENT, Codec.list(CEIIntIntPair.CODEC))
             .synced(Codec.list(CEIIntIntPair.CODEC), true)
@@ -118,6 +122,7 @@ public class CEIDataMaps {
         event.register(PRINTING_CUSTOM_NAME_STYLE);
         event.register(PRINTING_WRITTEN_BOOK_INGREDIENT);
         event.register(PRINTING_ENCHANTED_BOOK_COST);
+        event.register(PRINTING_BANNER_PATTERN_INGREDIENT);
         event.register(FORGING_COST_MULTIPLIER);
         event.register(SPLITTING_COST_MULTIPLIER);
         event.register(SUPER_ENCHANTING_LEVEL_EXTENSION);
@@ -195,6 +200,8 @@ public class CEIDataMaps {
                 .add(CDPFluids.COMMON_TAGS.dyes, 250, false);
         provider.builder(PRINTING_WRITTEN_BOOK_INGREDIENT)
                 .add(blackDye, 10, false);
+        provider.builder(PRINTING_BANNER_PATTERN_INGREDIENT)
+                .add(CDPFluids.COMMON_TAGS.dyes, 100, false);
         var customNameStyles = provider.builder(PRINTING_CUSTOM_NAME_STYLE);
         CDPFluids.COMMON_TAGS.dyesByColor.forEach((color, tag) -> customNameStyles
                 .add(tag, Style.EMPTY.withColor(color.getTextColor()), false));

@@ -42,6 +42,7 @@ public interface PrintingBehaviour extends IHaveGoggleInformation {
         if (CEIConfig.fluids().enableCustomNamePrinting.get()) list.add(CustomNamePrintingBehaviour::create);
         if (CEIConfig.fluids().enableEnchantedBookPrinting.get()) list.add(EnchantedBookPrintingBehaviour::create);
         if (CEIConfig.fluids().enableWrittenBookPrinting.get()) list.add(WrittenBookPrintingBehaviour::create);
+        if (CEIConfig.fluids().enableBannerPatternPrinting.get()) list.add(BannerPatternPrintingBehavior::create);
     });
 
     static void register(Provider provider) {

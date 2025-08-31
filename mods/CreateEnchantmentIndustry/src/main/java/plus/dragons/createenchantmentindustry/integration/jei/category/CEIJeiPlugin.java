@@ -80,6 +80,7 @@ public class CEIJeiPlugin implements IModPlugin {
         if (CEIConfig.fluids().enableCreateCopiableItemPrinting.get()) builtinPrinting.add(CopyPrintingRecipeJEI.INSTANCE);
         if (CEIConfig.fluids().enableCustomNamePrinting.get()) builtinPrinting.add(CustomNamePrintingRecipeJEI.INSTANCE);
         if (CEIConfig.fluids().enableWrittenBookPrinting.get()) builtinPrinting.add(WrittenBookPrintingRecipeJEI.INSTANCE);
+        if (CEIConfig.fluids().enableBannerPatternPrinting.get()) builtinPrinting.add(BannerPatternPrintingRecipeJEI.INSTANCE);
         if (!builtinPrinting.isEmpty())
             registration.addRecipes(PrintingCategory.TYPE, builtinPrinting);
         if (CEIConfig.fluids().enableEnchantedBookPrinting.get())
