@@ -64,6 +64,7 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
 import plus.dragons.createenchantmentindustry.common.registry.CEIStats;
+import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
 @FieldsNullabilityUnknownByDefault
 public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
@@ -90,7 +91,7 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
-        tank = SmartFluidTankBehaviour.single(this, 1000);
+        tank = SmartFluidTankBehaviour.single(this, CEIConfig.fluids().mechanicalGrindstoneFluidCapacity.get());
         beltInput = new DirectBeltInputBehaviour(this).allowingBeltFunnels();
         advancement = new AdvancementBehaviour(this);
         behaviours.add(tank);

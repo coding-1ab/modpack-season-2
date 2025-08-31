@@ -29,13 +29,12 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import plus.dragons.createenchantmentindustry.client.model.CEIPartialModels;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 
-@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.MOD, modid = CEICommon.ID)
+@EventBusSubscriber(value = Dist.CLIENT, modid = CEICommon.ID)
 public class BlazeEnchanterItemRenderer extends CustomRenderedItemModelRenderer {
     @SubscribeEvent
     public static void register(RegisterClientExtensionsEvent event) {
