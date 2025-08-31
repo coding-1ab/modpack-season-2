@@ -103,7 +103,7 @@ public class CustomNamePrintingBehaviour implements PrintingBehaviour {
             name.withStyle(ChatFormatting.ITALIC);
         CEILang.translate("gui.goggles.printing.custom_name").forGoggles(tooltip);
         CEILang.builder().add(name).forGoggles(tooltip, 1);
-        var cost = tank.getPrimaryHandler().getFluid().getFluidHolder().getData(CEIDataMaps.PRINTING_PATTERN_INGREDIENT);
+        var cost = tank.getPrimaryHandler().getFluid().getFluidHolder().getData(CEIDataMaps.PRINTING_CUSTOM_NAME_INGREDIENT);
         if (cost != null)
             CEILang.translate("gui.goggles.printing.cost",
                     CEILang.number(cost)
