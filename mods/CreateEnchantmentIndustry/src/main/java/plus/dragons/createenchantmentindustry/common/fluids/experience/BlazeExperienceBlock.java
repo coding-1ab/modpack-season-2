@@ -83,7 +83,7 @@ public abstract class BlazeExperienceBlock<T extends BlazeExperienceBlockEntity>
                     stack.shrink(1);
                 ItemStack remainder = notConsume
                         ? ItemStack.EMPTY
-                        : fuel.usingConvertTo().orElse(stack.getCraftingRemainingItem());
+                        : fuel.usingConvertTo().orElse(stack.getCraftingRemainingItem()).copy();
                 return InteractionResultHolder.success(remainder);
             }
             return InteractionResultHolder.fail(ItemStack.EMPTY);
