@@ -179,7 +179,10 @@ public class CEIDataMaps {
                         new ModLoadedCondition("reliquary"))
                 .add(ResourceLocation.fromNamespaceAndPath("sophisticatedcore", "xp_still"),
                         20, false,
-                        new ModLoadedCondition("sophisticatedcore"));
+                        new ModLoadedCondition("sophisticatedcore"))
+                .add(ResourceLocation.fromNamespaceAndPath("justdirethings", "xp_fluid_source"),
+                        20, false,
+                        new ModLoadedCondition("justdirethings"));
         var blackDye = CDPFluids.COMMON_TAGS.dyesByColor.get(DyeColor.BLACK);
         provider.builder(PRINTING_ADDRESS_INGREDIENT)
                 .add(blackDye, 10, false);
