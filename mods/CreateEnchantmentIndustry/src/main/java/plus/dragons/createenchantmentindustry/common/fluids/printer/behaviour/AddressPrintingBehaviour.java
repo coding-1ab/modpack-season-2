@@ -62,6 +62,11 @@ public class AddressPrintingBehaviour implements PrintingBehaviour {
     }
 
     @Override
+    public boolean isSafeNBT() {
+        return false;
+    }
+
+    @Override
     public int getRequiredFluidAmount(Level level, ItemStack stack, FluidStack fluidStack) {
         var amount = fluidStack.getFluidHolder().getData(CEIDataMaps.PRINTING_ADDRESS_INGREDIENT);
         return amount == null ? 0 : amount;
