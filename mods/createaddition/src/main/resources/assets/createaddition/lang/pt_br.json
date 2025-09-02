@@ -254,7 +254,7 @@
 	"createaddition.ponder.alternator.text_2": "Ele gera energia elétrica a partir da força rotacional",
 	"createaddition.ponder.alternator.text_3": "Sua produção de energia é determinada pela RPM de entrada",
 
-	"createaddition.ponder.rolling_mill.header": "Laminando metais em Barras e Fios",
+	"createaddition.ponder.rolling_mill.header": "Laminando metais em Hastes e Fios",
 	"createaddition.ponder.rolling_mill.text_1": "A Laminadora usa força rotacional para laminar metais em Hastes e Fios",
 	"createaddition.ponder.rolling_mill.text_2": "Para inserir itens manualmente, derrube Lingotes ou Chapas no topo da máquina",
 	"createaddition.ponder.rolling_mill.text_3": "Clique com o botão direito na Laminadora para recuperar manualmente os itens de saída",
