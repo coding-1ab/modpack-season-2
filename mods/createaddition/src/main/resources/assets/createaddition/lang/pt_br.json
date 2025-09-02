@@ -128,8 +128,8 @@
 	"fluid.createaddition.bioethanol": "Bioetanol",
 
 	"item.createaddition.biomass": "Biomassa",
-	"item.createaddition.biomass_pellet": "Bloco de Biomassa",
-	"item.createaddition.biomass_pellet.tooltip": "BLOCO_DE_BIOMASSA",
+	"item.createaddition.biomass_pellet": "Pelota de Biomassa",
+	"item.createaddition.biomass_pellet.tooltip": "PELOTA_DE_BIOMASSA",
 	"item.createaddition.biomass_pellet.tooltip.summary": "Um poderoso _combustível sólido_.",
 
 	"item.createaddition.spool": "Carretel Vazio",
@@ -182,9 +182,9 @@
 	"block.createaddition.connector.tooltip.condition1": "Baixa Corrente",
 	"block.createaddition.connector.tooltip.behaviour1": "Conectado com _fios de baixa corrente_.",
 	"block.createaddition.connector.tooltip.condition2": "Clicar com o botão direito",
-	"block.createaddition.connector.tooltip.behaviour2": "Enquanto segura um _Carretel de Cobre_, _Carretel de Ouro_ ou _Carretel de Eletro_ para criar uma _conexão por fio_ com até 4 outros conectores.",
+	"block.createaddition.connector.tooltip.behaviour2": "Enquanto segura um _Carretel de Cobre_, _Carretel de Ouro_ ou _Carretel de Eletro_ irá criar uma _conexão por fio_ com até 4 outros conectores.",
 	"block.createaddition.connector.tooltip.condition3": "Clicar com o botão direito com a Chave",
-	"block.createaddition.connector.tooltip.behaviour3": "Para alternar entre os modos _Empurrar_, _Puxar_ e _Nenhum_.",
+	"block.createaddition.connector.tooltip.behaviour3": "Irá alternar entre os modos _Empurrar_, _Puxar_ e _Nenhum_.",
 
 	"block.createaddition.small_light_connector": "Conector Pequeno com Lâmpada",
 	"block.createaddition.small_light_connector.tooltip": "CONECTOR",
@@ -192,9 +192,9 @@
 	"block.createaddition.small_light_connector.tooltip.condition1": "Baixa Corrente",
 	"block.createaddition.small_light_connector.tooltip.behaviour1": "Conectado com _fios de baixa corrente_.",
 	"block.createaddition.small_light_connector.tooltip.condition2": "Clicar com o botão direito",
-	"block.createaddition.small_light_connector.tooltip.behaviour2": "Enquanto segura um _Carretel de Cobre_, _Carretel de Ouro_ ou _Carretel de Eletro_ para criar uma _conexão por fio_ com até 4 outros conectores.",
+	"block.createaddition.small_light_connector.tooltip.behaviour2": "Enquanto segura um _Carretel de Cobre_, _Carretel de Ouro_ ou _Carretel de Eletro_ irá criar uma _conexão por fio_ com até 4 outros conectores.",
 	"block.createaddition.small_light_connector.tooltip.condition3": "Clicar com o botão direito com a Chave",
-	"block.createaddition.small_light_connector.tooltip.behaviour3": "Para alternar entre os modos _Empurrar_, _Puxar_ e _Nenhum_.",
+	"block.createaddition.small_light_connector.tooltip.behaviour3": "Irá alternar entre os modos _Empurrar_, _Puxar_ e _Nenhum_.",
 
 	"block.createaddition.large_connector": "Conector Grande",
 	"block.createaddition.large_connector.tooltip": "CONECTOR",
@@ -202,9 +202,9 @@
 	"block.createaddition.large_connector.tooltip.condition1": "Alta Corrente",
 	"block.createaddition.large_connector.tooltip.behaviour1": "Conectado com _fios de alta corrente_.",
 	"block.createaddition.large_connector.tooltip.condition2": "Clicar com o botão direito",
-	"block.createaddition.large_connector.tooltip.behaviour2": "Enquanto segura um _Carretel de Ouro_ ou _Carretel de Eletro_ para criar uma _conexão por fio_ com até 6 outros conectores.",
+	"block.createaddition.large_connector.tooltip.behaviour2": "Enquanto segura um _Carretel de Ouro_ ou _Carretel de Eletro_ irá criar uma _conexão por fio_ com até 6 outros conectores.",
 	"block.createaddition.large_connector.tooltip.condition3": "Clicar com o botão direito com a Chave",
-	"block.createaddition.large_connector.tooltip.behaviour3": "Para alternar entre os modos _Empurrar_, _Puxar_ e _Nenhum_.",
+	"block.createaddition.large_connector.tooltip.behaviour3": "Irá alternar entre os modos _Empurrar_, _Puxar_ e _Nenhum_.",
 
 	"block.createaddition.redstone_relay": "Relé de Redstone",
 	"block.createaddition.redstone_relay.tooltip": "RELÉ_DE_REDSTONE",
@@ -255,9 +255,9 @@
 	"createaddition.ponder.alternator.text_3": "Sua produção de energia é determinada pela RPM de entrada",
 
 	"createaddition.ponder.rolling_mill.header": "Laminando metais em Barras e Fios",
-	"createaddition.ponder.rolling_mill.text_1": "A Laminadora usa força rotacional para laminar metais em Barras e Fios",
-	"createaddition.ponder.rolling_mill.text_2": "Para inserir itens manualmente, derrube Lingotes ou Placas no topo da Usina",
-	"createaddition.ponder.rolling_mill.text_3": "Clique com o botão direito na Usina para recuperar manualmente os itens de saída",
+	"createaddition.ponder.rolling_mill.text_1": "A Laminadora usa força rotacional para laminar metais em Hastes e Fios",
+	"createaddition.ponder.rolling_mill.text_2": "Para inserir itens manualmente, derrube Lingotes ou Chapas no topo da máquina",
+	"createaddition.ponder.rolling_mill.text_3": "Clique com o botão direito na Laminadora para recuperar manualmente os itens de saída",
 
 	"createaddition.ponder.automated_rolling_mill.header": "Automatizando a Laminadora",
 	"createaddition.ponder.automated_rolling_mill.text_1": "A Laminadora pode ser automatizada usando uma Esteira e dois Funis",
