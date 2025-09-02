@@ -8,6 +8,7 @@ import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.registry.ModBlocks;
+import vectorwing.farmersdelight.common.registry.ModItems;
 import vectorwing.farmersdelight.common.tag.CompatibilityTags;
 import vectorwing.farmersdelight.common.tag.ForgeTags;
 import vectorwing.farmersdelight.common.tag.ModTags;
@@ -235,6 +236,20 @@ public class BlockTags extends BlockTagsProvider
 				ModBlocks.WILD_TOMATOES.get(),
 				ModBlocks.WILD_ONIONS.get(),
 				ModBlocks.WILD_RICE.get());
+		tag(ModTags.WOODEN_CABINETS)
+				.add(ModBlocks.OAK_CABINET.get())
+				.add(ModBlocks.SPRUCE_CABINET.get())
+				.add(ModBlocks.BIRCH_CABINET.get())
+				.add(ModBlocks.JUNGLE_CABINET.get())
+				.add(ModBlocks.ACACIA_CABINET.get())
+				.add(ModBlocks.DARK_OAK_CABINET.get())
+				.add(ModBlocks.MANGROVE_CABINET.get())
+				.add(ModBlocks.CHERRY_CABINET.get())
+				.add(ModBlocks.BAMBOO_CABINET.get())
+				.add(ModBlocks.CRIMSON_CABINET.get())
+				.add(ModBlocks.WARPED_CABINET.get());
+		tag(ModTags.CABINETS).addTag(ModTags.WOODEN_CABINETS);
+
 		tag(ModTags.ROPES).add(ModBlocks.ROPE.get())
 				.addOptional(new ResourceLocation("quark:rope"))
 				.addOptional(new ResourceLocation("supplementaries:rope"));

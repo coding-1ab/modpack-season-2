@@ -28,6 +28,12 @@ public class ModTags
 	// Blocks that represent the wild form of a farmable crop.
 	public static final TagKey<Block> WILD_CROPS = modBlockTag("wild_crops");
 
+	// Blocks that are cabinets.
+	public static final TagKey<Block> CABINETS = modBlockTag("cabinets");
+
+	// Blocks that are cabinets.
+	public static final TagKey<Block> WOODEN_CABINETS = modBlockTag("cabinets/wooden");
+
 	// Blocks that represent a rope, for gameplay purposes.
 	public static final TagKey<Block> ROPES = modBlockTag("ropes");
 
@@ -91,10 +97,10 @@ public class ModTags
 	public static final TagKey<Item> HANGING_CANVAS_SIGNS = modItemTag("hanging_canvas_signs");
 
 	// Wooden Cabinet items for crafting.
-	public static final TagKey<Item> WOODEN_CABINETS = modItemTag("cabinets/wooden");
+	public static final TagKey<Item> WOODEN_CABINET_ITEMS = modItemTag("cabinets/wooden");
 
 	// All Cabinet items for crafting.
-	public static final TagKey<Item> CABINETS = modItemTag("cabinets");
+	public static final TagKey<Item> CABINET_ITEMS = modItemTag("cabinets");
 
 	// Items commonly used to contain products. Used by the Cooking Pot for sneak-clicking actions.
 	public static final TagKey<Item> SERVING_CONTAINERS = modItemTag("serving_containers");
