@@ -91,12 +91,12 @@ public class VeilFabricSodiumCompat implements SodiumCompat {
         if (worldRenderer != null) {
             RenderSectionManagerAccessor renderSectionManager = (RenderSectionManagerAccessor) ((SodiumWorldRendererAccessor) worldRenderer).getRenderSectionManager();
 
-            Long2ReferenceMap<RenderSection> map = renderSectionManager.getSectionByPosition();
-
-            for (long longPos : map.keySet()) {
-                SectionPos sectionPos = SectionPos.of(longPos);
-
-                ((SodiumWorldRendererAccessor) worldRenderer).getRenderSectionManager().scheduleRebuild(sectionPos.x(), sectionPos.y(), sectionPos.z(), true);
+            if (renderSectionManager != null) {
+                Long2ReferenceMap<RenderSection> map = renderSectionManager.getSectionByPosition();
+                for (long longPos : map.keySet()) {
+                    SectionPos sectionPos = SectionPos.of(longPos);
+                    ((SodiumWorldRendererAccessor) worldRenderer).getRenderSectionManager().scheduleRebuild(sectionPos.x(), sectionPos.y(), sectionPos.z(), true);
+                }
             }
         }
     }
