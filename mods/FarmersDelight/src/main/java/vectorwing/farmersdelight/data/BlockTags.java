@@ -277,9 +277,8 @@ public class BlockTags extends BlockTagsProvider
 				Blocks.MYCELIUM,
 				ModBlocks.ORGANIC_COMPOST.get(),
 				ModBlocks.RICH_SOIL.get(),
-				ModBlocks.RICH_SOIL_FARMLAND.get(),
-				ModBlocks.BROWN_MUSHROOM_COLONY.get(),
-				ModBlocks.RED_MUSHROOM_COLONY.get());
+				ModBlocks.RICH_SOIL_FARMLAND.get())
+			.addTag(ModTags.MUSHROOM_COLONIES);
 		tag(ModTags.UNAFFECTED_BY_RICH_SOIL).add(
 						Blocks.GRASS_BLOCK,
 						Blocks.MOSS_BLOCK,
@@ -293,8 +292,8 @@ public class BlockTags extends BlockTagsProvider
 						Blocks.BIG_DRIPLEAF_STEM,
 						Blocks.PINK_PETALS,
 						ModBlocks.SANDY_SHRUB.get())
-				.addTag(ModTags.WILD_CROPS)
 				.addTag(ModTags.MUSHROOM_COLONIES)
+				.addTag(ModTags.WILD_CROPS)
 				.addTag(net.minecraft.tags.BlockTags.TALL_FLOWERS);
 		tag(ModTags.MUSHROOM_COLONY_GROWABLE_ON).add(ModBlocks.RICH_SOIL.get());
 		tag(ModTags.DROPS_CAKE_SLICE).add(
