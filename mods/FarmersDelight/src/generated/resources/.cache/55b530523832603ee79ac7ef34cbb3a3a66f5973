@@ -1,4 +1,4 @@
-// 1.20.1	2025-09-05T20:15:24.057665	Tags for minecraft:block mod id farmersdelight
+// 1.20.1	2025-09-05T20:16:57.500776	Tags for minecraft:block mod id farmersdelight
 97e4acbe405d9adae7df8073ec6e9af828285ec9 data/create/tags/blocks/brittle.json
 89dff4a2813a4b6fe13cde6e775266a1d606a4aa data/create/tags/blocks/passive_boiler_heaters.json
 21d6792ce7de98e9396c3829ab52f8574595557b data/farmersdelight/tags/blocks/cabinets.json
@@ -15,7 +15,7 @@ d0812613832bbc602d7ff3274c81d5729e91c2ea data/farmersdelight/tags/blocks/mushroo
 c58e477c03905a146bd29f728d36bd5ffe7c2e77 data/farmersdelight/tags/blocks/straw_blocks.json
 e4d28099b3557b120274c2ef7593e202019c4d65 data/farmersdelight/tags/blocks/terrain.json
 90c6f0a64d1a682335e4b5dca86a5c85073951a0 data/farmersdelight/tags/blocks/tray_heat_sources.json
-a6e0762960f425f58c494b99225d700f78383d40 data/farmersdelight/tags/blocks/unaffected_by_rich_soil.json
+667c87a818ebf1d81f15dd54c138965fd084e7d0 data/farmersdelight/tags/blocks/unaffected_by_rich_soil.json
 5596501768488a25c5bcc6ef16c2fc5ca3ab49e9 data/farmersdelight/tags/blocks/wild_crops.json
 35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/forge/tags/blocks/mineable/knife.json
 da0d6934eabdb3acd06d9f7491f75608e9f0641f data/forge/tags/blocks/storage_blocks/beetroot.json
