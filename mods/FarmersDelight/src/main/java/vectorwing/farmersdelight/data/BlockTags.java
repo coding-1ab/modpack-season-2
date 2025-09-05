@@ -1,5 +1,6 @@
 package vectorwing.farmersdelight.data;
 
+import com.blamejared.crafttweaker.api.mod.Mod;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -249,6 +250,10 @@ public class BlockTags extends BlockTagsProvider
 				.add(ModBlocks.CRIMSON_CABINET.get())
 				.add(ModBlocks.WARPED_CABINET.get());
 		tag(ModTags.CABINETS).addTag(ModTags.WOODEN_CABINETS);
+
+		tag(ModTags.MUSHROOM_COLONIES)
+				.add(ModBlocks.BROWN_MUSHROOM_COLONY.get())
+				.add(ModBlocks.RED_MUSHROOM_COLONY.get());
 
 		tag(ModTags.ROPES).add(ModBlocks.ROPE.get())
 				.addOptional(new ResourceLocation("quark:rope"))
