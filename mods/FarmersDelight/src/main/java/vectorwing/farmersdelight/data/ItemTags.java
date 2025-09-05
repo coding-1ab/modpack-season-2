@@ -132,6 +132,8 @@ public class ItemTags extends ItemTagsProvider
 		copy(ModTags.CABINETS, ModTags.CABINET_ITEMS);
 		copy(ModTags.WOODEN_CABINETS, ModTags.WOODEN_CABINET_ITEMS);
 
+		copy(ModTags.MUSHROOM_COLONIES, ModTags.MUSHROOM_COLONY_ITEMS);
+
 		tag(ModTags.OFFHAND_EQUIPMENT).addTag(Tags.Items.TOOLS_SHIELDS)
 				.addOptional(new ResourceLocation("create:extendo_grip"));
 		tag(ModTags.SERVING_CONTAINERS).add(Items.BOWL, Items.GLASS_BOTTLE, Items.BUCKET);
