@@ -12,9 +12,8 @@
     "minecraft:big_dripleaf_stem",
     "minecraft:pink_petals",
     "farmersdelight:sandy_shrub",
-    "farmersdelight:brown_mushroom_colony",
-    "farmersdelight:red_mushroom_colony",
     "#farmersdelight:wild_crops",
+    "#farmersdelight:mushroom_colonies",
     "#minecraft:tall_flowers"
   ]
 }

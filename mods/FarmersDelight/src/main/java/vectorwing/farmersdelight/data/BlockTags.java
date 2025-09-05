@@ -292,10 +292,9 @@ public class BlockTags extends BlockTagsProvider
 						Blocks.BIG_DRIPLEAF,
 						Blocks.BIG_DRIPLEAF_STEM,
 						Blocks.PINK_PETALS,
-						ModBlocks.SANDY_SHRUB.get(),
-						ModBlocks.BROWN_MUSHROOM_COLONY.get(),
-						ModBlocks.RED_MUSHROOM_COLONY.get())
+						ModBlocks.SANDY_SHRUB.get())
 				.addTag(ModTags.WILD_CROPS)
+				.addTag(ModTags.MUSHROOM_COLONIES)
 				.addTag(net.minecraft.tags.BlockTags.TALL_FLOWERS);
 		tag(ModTags.MUSHROOM_COLONY_GROWABLE_ON).add(ModBlocks.RICH_SOIL.get());
 		tag(ModTags.DROPS_CAKE_SLICE).add(
