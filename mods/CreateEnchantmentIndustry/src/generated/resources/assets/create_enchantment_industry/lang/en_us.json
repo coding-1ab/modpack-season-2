@@ -224,6 +224,7 @@
   "create_enchantment_industry.recipe.printing.copy.template": "Copiable Contents",
   "create_enchantment_industry.recipe.printing.custom_name.base": "Accepts any item",
   "create_enchantment_industry.recipe.printing.custom_name.template": "Custom Name",
+  "death.attack.create_enchantment_industry.grind": "Mechanical Grindstone blew out %1$s's hand.",
   "fluid.create_enchantment_industry.experience": "Liquid Experience",
   "item.create_enchantment_industry.enchanting_template": "Enchanting Template",
   "item.create_enchantment_industry.experience_bucket": "Bucket o' Enchanting",

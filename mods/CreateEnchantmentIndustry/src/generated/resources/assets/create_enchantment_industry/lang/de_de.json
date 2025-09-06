@@ -225,6 +225,7 @@
   "create_enchantment_industry.recipe.printing.copy.template": "Kopierbare Inhalte",
   "create_enchantment_industry.recipe.printing.custom_name.base": "Akzeptiert jeden Gegenstand",
   "create_enchantment_industry.recipe.printing.custom_name.template": "Benutzerdefinierter Name",
+  "death.attack.create_enchantment_industry.grind": "Mechanical Grindstone blew out %1$s's hand.",
   "fluid.create_enchantment_industry.experience": "Flüssige Erfahrung",
   "item.create_enchantment_industry.enchanting_template": "Verzauberungsvorlage",
   "item.create_enchantment_industry.experience_bucket": "Erfahrungseimer",

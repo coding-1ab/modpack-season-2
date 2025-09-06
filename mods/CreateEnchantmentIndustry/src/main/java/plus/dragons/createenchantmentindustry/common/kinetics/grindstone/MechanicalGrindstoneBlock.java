@@ -45,11 +45,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.items.IItemHandler;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
-import plus.dragons.createenchantmentindustry.common.registry.CEIAdvancements;
-import plus.dragons.createenchantmentindustry.common.registry.CEIBlockEntities;
-import plus.dragons.createenchantmentindustry.common.registry.CEIStats;
+import plus.dragons.createenchantmentindustry.common.registry.*;
 
 public class MechanicalGrindstoneBlock extends RotatedPillarKineticBlock implements IBE<KineticBlockEntity> {
     protected static VoxelShaper SHAPE = new AllShapes.Builder(Block.box(3, 3, 3, 13, 13, 13))
@@ -62,11 +62,33 @@ public class MechanicalGrindstoneBlock extends RotatedPillarKineticBlock impleme
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        var blockEntity = getBlockEntity(level, pos);
+        if (blockEntity == null)
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (stack.isEmpty()) {
+            var be = level.getBlockEntity(pos.below());
+            if(be instanceof GrindstoneDrainBlockEntity drain) {
+                IItemHandler capability = blockEntity.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, drain.getBlockPos(), null);
+                if (capability != null) {
+                    ItemStack extractItem = capability
+                            .extractItem(3000, 64, false);
+                    if (!extractItem.isEmpty()) {
+                        player.setItemInHand(hand, extractItem);
+                        if(!player.isCreative()){
+                            var speed = Math.abs(blockEntity.getSpeed());
+                            if(speed >=32){
+                                player.hurt(CEIDamageSources.grind(level), speed / 32f);
+                            }
+                        }
+                        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+                    }
+                }
+            }
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
         if (player.isSecondaryUseActive())
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        var blockEntity = getBlockEntity(level, pos);
-        if (blockEntity == null || Math.abs(blockEntity.getSpeed()) < 30)
+        if (Math.abs(blockEntity.getSpeed()) < 30)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         var location = hitResult.getLocation();
         // Sandpaper Polishing

@@ -49,6 +49,11 @@ public class CEIData {
         var output = generator.getPackOutput();
         var client = event.includeClient();
         var server = event.includeServer();
+
+        CEIGenerateEntriesProvider generatedEntriesProvider = new CEIGenerateEntriesProvider(output, lookupProvider);
+        lookupProvider = generatedEntriesProvider.getRegistryProvider();
+
+        generator.addProvider(event.includeServer(), generatedEntriesProvider);
         generator.addProvider(server, new CEIRecipeProvider(output, lookupProvider));
         generator.addProvider(server, new CEIAdvancements(output, lookupProvider));
     }

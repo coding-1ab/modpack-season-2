@@ -225,6 +225,7 @@
   "create_enchantment_industry.recipe.printing.copy.template": "Копируемое содержимое",
   "create_enchantment_industry.recipe.printing.custom_name.base": "Принимает любой предмет",
   "create_enchantment_industry.recipe.printing.custom_name.template": "Пользовательское имя",
+  "death.attack.create_enchantment_industry.grind": "Mechanical Grindstone blew out %1$s's hand.",
   "fluid.create_enchantment_industry.experience": "Жидкий опыт",
   "item.create_enchantment_industry.enchanting_template": "Шаблон зачарования",
   "item.create_enchantment_industry.experience_bucket": "Ведро опыта",

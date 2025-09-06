@@ -225,6 +225,7 @@
   "create_enchantment_industry.recipe.printing.copy.template": "コピー可能なコンテンツ",
   "create_enchantment_industry.recipe.printing.custom_name.base": "あらゆるアイテムを受け入れます",
   "create_enchantment_industry.recipe.printing.custom_name.template": "任意の名前",
+  "death.attack.create_enchantment_industry.grind": "Mechanical Grindstone blew out %1$s's hand.",
   "fluid.create_enchantment_industry.experience": "液体経験値",
   "item.create_enchantment_industry.enchanting_template": "エンチャントテンプレート",
   "item.create_enchantment_industry.experience_bucket": "液体経験値入りのバケツ",

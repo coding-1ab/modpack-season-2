@@ -43,5 +43,6 @@
   "create_enchantment_industry.recipe.printing.custom_name.template": "Custom Name",
   "create_enchantment_industry.recipe.printing.banner_pattern.base": "Any Banner",
   "create_enchantment_industry.recipe.printing.banner_pattern.template": "Single Banner Pattern",
-  "create_enchantment_industry.recipe.printing.banner_pattern.color_follow_dye": "Printed Pattern Color follows Fluid Dye"
+  "create_enchantment_industry.recipe.printing.banner_pattern.color_follow_dye": "Printed Pattern Color follows Fluid Dye",
+  "death.attack.create_enchantment_industry.grind": "Mechanical Grindstone blew out %1$s's hand."
 }
