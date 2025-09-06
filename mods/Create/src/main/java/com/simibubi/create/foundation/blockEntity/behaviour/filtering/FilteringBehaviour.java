@@ -38,7 +38,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -75,7 +74,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 		};
 		predicate = stack -> true;
 		isActive = () -> true;
-		count = Item.DEFAULT_MAX_STACK_SIZE;
+		count = 64;
 		showCountPredicate = () -> showCount;
 		recipeFilter = false;
 		fluidFilter = false;
@@ -210,7 +209,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 
 	public int getMaxStackSize(ItemStack filter) {
 		if (filter.isEmpty())
-			return Item.DEFAULT_MAX_STACK_SIZE;
+			return 64;
 		return filter.getMaxStackSize();
 	}
 

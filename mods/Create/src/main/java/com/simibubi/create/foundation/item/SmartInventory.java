@@ -12,7 +12,6 @@ import com.simibubi.create.foundation.blockEntity.SyncedBlockEntity;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import net.neoforged.neoforge.common.util.INBTSerializable;
@@ -29,11 +28,11 @@ public class SmartInventory extends ItemHandlerContainer
 	protected int stackSize;
 
 	public SmartInventory(int slots, SyncedBlockEntity be) {
-		this(slots, be, Item.DEFAULT_MAX_STACK_SIZE, false);
+		this(slots, be, 64, false);
 	}
 
 	public SmartInventory(int slots, SyncedBlockEntity be, BiPredicate<Integer, ItemStack> isValid) {
-		this(slots, be, Item.DEFAULT_MAX_STACK_SIZE, false, isValid);
+		this(slots, be, 64, false, isValid);
 	}
 
 	public SmartInventory(int slots, SyncedBlockEntity be, int stackSize, boolean stackNonStackables) {
@@ -176,7 +175,7 @@ public class SmartInventory extends ItemHandlerContainer
 
 		@Override
 		public int getSlotLimit(int slot) {
-			return Math.min(stackNonStackables ? Item.DEFAULT_MAX_STACK_SIZE : super.getSlotLimit(slot), stackSize);
+			return Math.min(stackNonStackables ? 64 : super.getSlotLimit(slot), stackSize);
 		}
 
 		@Override
