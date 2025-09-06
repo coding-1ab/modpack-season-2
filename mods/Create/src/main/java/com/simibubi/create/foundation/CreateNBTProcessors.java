@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.simibubi.create.AllBlockEntityTypes;
 
+import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.nbt.NBTHelper;
 import net.createmod.catnip.nbt.NBTProcessors;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,10 +19,17 @@ public class CreateNBTProcessors {
 	public static void register() {
 
 		NBTProcessors.addProcessor(BlockEntityType.SIGN, data -> {
-			for (int i = 0; i < 4; ++i) {
-				if (NBTProcessors.textComponentHasClickEvent(data.getString("Text" + (i + 1))))
-					return null;
+			for (boolean front : Iterate.trueAndFalse) {
+				String key = front ? "front_text" : "back_text";
+				CompoundTag text = data.getCompound(key);
+				ListTag messages = text.getList("messages", Tag.TAG_STRING);
+
+				for (int i = 0; i < messages.size(); i++) {
+					if (NBTProcessors.textComponentHasClickEvent(messages.getString(i)))
+						return null;
+				}
 			}
+
 			return data;
 		});
 
