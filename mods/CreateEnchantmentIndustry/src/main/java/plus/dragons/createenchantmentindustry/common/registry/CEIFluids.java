@@ -26,6 +26,7 @@ import com.tterrag.registrate.util.entry.FluidEntry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -33,6 +34,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import plus.dragons.createdragonsplus.common.fluids.StandardDispenserBehaviour;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceEffectHandler;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceFluidType;
 
@@ -72,8 +74,11 @@ public class CEIFluids {
 
     @SubscribeEvent
     public static void setup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            OpenPipeEffectHandler.REGISTRY.register(EXPERIENCE.get(), new ExperienceEffectHandler());
-        });
+        event.enqueueWork(() -> OpenPipeEffectHandler.REGISTRY.register(EXPERIENCE.get(), new ExperienceEffectHandler()));
+        event.enqueueWork(CEIFluids::registerDispenserBehavior);
+    }
+
+    private static void registerDispenserBehavior() {
+        DispenserBlock.registerBehavior(EXPERIENCE.getBucket().get(), StandardDispenserBehaviour.INSTANCE);
     }
 }

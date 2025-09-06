@@ -78,6 +78,4 @@ public class CEICommon {
     public static String asLocalization(String key) {
         return ID + "." + key;
     }
-
-    // TODO Add more Option to customize printer behavior
 }
