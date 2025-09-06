@@ -20,7 +20,6 @@ import com.simibubi.create.foundation.item.ItemSlots;
 import net.createmod.catnip.codecs.stream.CatnipStreamCodecBuilders;
 import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -86,7 +85,7 @@ public class ToolboxInventory extends ItemStackHandler {
 			ItemStack stackInSlot = getStackInSlot(compartment * STACKS_PER_COMPARTMENT + i);
 			totalCount += stackInSlot.getCount();
 			if (!shouldBeEmpty)
-				shouldBeEmpty = stackInSlot.isEmpty() || stackInSlot.getCount() != stackInSlot.getOrDefault(DataComponents.MAX_STACK_SIZE, 64);
+				shouldBeEmpty = stackInSlot.isEmpty() || stackInSlot.getCount() != stackInSlot.getMaxStackSize();
 			else if (!stackInSlot.isEmpty()) {
 				valid = false;
 				sample = stackInSlot;
@@ -113,7 +112,7 @@ public class ToolboxInventory extends ItemStackHandler {
 		} else {
 			for (int i = 0; i < STACKS_PER_COMPARTMENT; i++) {
 				ItemStack copy = totalCount <= 0 ? ItemStack.EMPTY
-					: sample.copyWithCount(Math.min(totalCount, sample.getOrDefault(DataComponents.MAX_STACK_SIZE, 64)));
+					: sample.copyWithCount(Math.min(totalCount, sample.getMaxStackSize()));
 				setStackInSlot(compartment * STACKS_PER_COMPARTMENT + i, copy);
 				totalCount -= copy.getCount();
 			}

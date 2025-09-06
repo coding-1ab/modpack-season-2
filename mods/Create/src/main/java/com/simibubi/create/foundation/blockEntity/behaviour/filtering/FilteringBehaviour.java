@@ -29,7 +29,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -39,16 +38,17 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
 public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSettingsBehaviour {
-
 	public static final BehaviourType<FilteringBehaviour> TYPE = new BehaviourType<>();
 
 	public MutableComponent customLabel;
@@ -75,7 +75,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 		};
 		predicate = stack -> true;
 		isActive = () -> true;
-		count = 64;
+		count = Item.DEFAULT_MAX_STACK_SIZE;
 		showCountPredicate = () -> showCount;
 		recipeFilter = false;
 		fluidFilter = false;
@@ -104,8 +104,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 		// Migrate from previous behaviour
 		if (count == 0) {
 			upTo = true;
-			count = filter.item()
-					.getOrDefault(DataComponents.MAX_STACK_SIZE, 64);
+			count = getMaxStackSize();
 		}
 
 		super.read(nbt, registries, clientPacket);
@@ -160,7 +159,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 			return false;
 		this.filter = FilterItemStack.of(filter);
 		if (!upTo)
-			count = Math.min(count, stack.getOrDefault(DataComponents.MAX_STACK_SIZE, 64));
+			count = Math.min(count, stack.getMaxStackSize());
 		callback.accept(filter);
 		blockEntity.setChanged();
 		blockEntity.sendData();
@@ -171,8 +170,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	public void setValueSettings(Player player, ValueSettings settings, boolean ctrlDown) {
 		if (getValueSettings().equals(settings))
 			return;
-		count = Mth.clamp(settings.value(), 1, filter.item()
-			.getOrDefault(DataComponents.MAX_STACK_SIZE, 64));
+		count = Mth.clamp(settings.value(), 1, getMaxStackSize());
 		upTo = settings.row() == 0;
 		blockEntity.setChanged();
 		blockEntity.sendData();
@@ -181,8 +179,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 
 	@Override
 	public ValueSettings getValueSettings() {
-		return new ValueSettings(upTo ? 0 : 1, count == 0 ? filter.item()
-			.getOrDefault(DataComponents.MAX_STACK_SIZE, 64) : count);
+		return new ValueSettings(upTo ? 0 : 1, count == 0 ? getMaxStackSize() : count);
 	}
 
 	@Override
@@ -190,8 +187,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 		if (filter.isFilterItem()) {
 			Vec3 pos = VecHelper.getCenterOf(getPos());
 			Level world = getWorld();
-			world.addFreshEntity(new ItemEntity(world, pos.x, pos.y, pos.z, filter.item()
-				.copy()));
+			world.addFreshEntity(new ItemEntity(world, pos.x, pos.y, pos.z, getFilter().copy()));
 		}
 		super.destroy();
 	}
@@ -199,9 +195,23 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	@Override
 	public ItemRequirement getRequiredItems() {
 		if (filter.isFilterItem())
-			return new ItemRequirement(ItemRequirement.ItemUseType.CONSUME, filter.item());
+			return new ItemRequirement(ItemRequirement.ItemUseType.CONSUME, getFilter());
 
 		return ItemRequirement.NONE;
+	}
+
+	public int getMaxStackSize() {
+		return getMaxStackSize(getFilter());
+	}
+
+	public int getMaxStackSize(Direction face) {
+		return getMaxStackSize(getFilter(face));
+	}
+
+	public int getMaxStackSize(ItemStack filter) {
+		if (filter.isEmpty())
+			return Item.DEFAULT_MAX_STACK_SIZE;
+		return filter.getMaxStackSize();
 	}
 
 	public ItemStack getFilter(Direction side) {
@@ -213,8 +223,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	}
 
 	public boolean isCountVisible() {
-		return showCountPredicate.get() && filter.item()
-			.getOrDefault(DataComponents.MAX_STACK_SIZE, 64) > 1;
+		return showCountPredicate.get() && getMaxStackSize() > 1;
 	}
 
 	public boolean test(ItemStack stack) {
@@ -262,16 +271,14 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 
 	@Override
 	public ValueSettingsBoard createBoard(Player player, BlockHitResult hitResult) {
-		ItemStack filter = getFilter(hitResult.getDirection());
-		int maxAmount = (filter.getItem() instanceof FilterItem) ? 64 : filter.getOrDefault(DataComponents.MAX_STACK_SIZE, 64);
+		int maxAmount = getMaxStackSize(hitResult.getDirection());
 		return new ValueSettingsBoard(CreateLang.translateDirect("logistics.filter.extracted_amount"), maxAmount, 16,
 			CreateLang.translatedOptions("logistics.filter", "up_to", "exactly"),
 			new ValueSettingsFormatter(this::formatValue));
 	}
 
 	public MutableComponent formatValue(ValueSettings value) {
-		if (value.row() == 0 && value.value() == filter.item()
-			.getOrDefault(DataComponents.MAX_STACK_SIZE, 64))
+		if (value.row() == 0 && value.value() == getMaxStackSize())
 			return CreateLang.translateDirect("logistics.filter.any_amount_short");
         return Component.literal(((value.row() == 0) ? "\u2264" : "=") + Math.max(1, value.value()));
     }
@@ -343,8 +350,8 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	}
 
 	public MutableComponent getCountLabelForValueBox() {
-        return Component.literal(isCountVisible() ? upTo && filter.item()
-            .getMaxStackSize() == count ? "*" : String.valueOf(count) : "");
+		return Component.literal(isCountVisible() ? upTo &&
+			getMaxStackSize() == count ? "*" : String.valueOf(count) : "");
     }
 
 	@Override
@@ -418,11 +425,6 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	}
 
 	@Override
-	public boolean bypassesInput(ItemStack mainhandItem) {
-		return false;
-	}
-
-	@Override
 	public int netId() {
 		return 1;
 	}
@@ -430,5 +432,4 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	public float getRenderDistance() {
 		return AllConfigs.client().filterItemRenderDistance.getF();
 	}
-
 }

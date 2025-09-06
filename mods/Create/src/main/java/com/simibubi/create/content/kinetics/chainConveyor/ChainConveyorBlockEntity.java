@@ -47,6 +47,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -532,7 +533,7 @@ public class ChainConveyorBlockEntity extends KineticBlockEntity implements Tran
 		if (!forPointsAlongChains(target, chainCount,
 			vec -> level.addFreshEntity(new ItemEntity(level, vec.x, vec.y, vec.z, new ItemStack(Items.CHAIN))))) {
 			while (chainCount > 0) {
-				Block.popResource(level, worldPosition, new ItemStack(Blocks.CHAIN.asItem(), Math.min(chainCount, 64)));
+				Block.popResource(level, worldPosition, new ItemStack(Blocks.CHAIN.asItem(), Math.min(chainCount, Item.DEFAULT_MAX_STACK_SIZE)));
 				chainCount -= 64;
 			}
 		}

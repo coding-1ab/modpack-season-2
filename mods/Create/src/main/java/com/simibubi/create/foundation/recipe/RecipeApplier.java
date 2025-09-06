@@ -8,7 +8,6 @@ import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.foundation.item.ItemHelper;
 
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -50,7 +49,7 @@ public class RecipeApplier {
 							continue;
 						if (!ItemStack.isSameItemSameComponents(stack, previouslyRolled))
 							continue;
-						int amount = Math.min(previouslyRolled.getOrDefault(DataComponents.MAX_STACK_SIZE, 64) - previouslyRolled.getCount(),
+						int amount = Math.min(previouslyRolled.getMaxStackSize() - previouslyRolled.getCount(),
 							stack.getCount());
 						previouslyRolled.grow(amount);
 						stack.shrink(amount);
