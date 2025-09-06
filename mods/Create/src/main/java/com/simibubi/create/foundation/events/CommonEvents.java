@@ -224,7 +224,7 @@ public class CommonEvents {
 		}
 	}
 
-	@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+	@EventBusSubscriber
 	public static class ModBusEvents {
 		@SubscribeEvent
 		public static void addPackFinders(AddPackFindersEvent event) {

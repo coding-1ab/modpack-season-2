@@ -4,6 +4,6 @@
   "hardness": 0.0,
   "ignited_by_lava": false,
   "luminous": false,
-  "stackable": 64,
+  "stackable": 1,
   "waterloggable": false
 }

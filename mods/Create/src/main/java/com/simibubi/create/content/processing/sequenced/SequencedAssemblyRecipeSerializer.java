@@ -21,7 +21,7 @@ public class SequencedAssemblyRecipeSerializer implements RecipeSerializer<Seque
 			ProcessingOutput.CODEC.fieldOf("transitional_item").forGetter(r -> r.transitionalItem),
 			SequencedRecipe.CODEC.listOf().fieldOf("sequence").forGetter(SequencedAssemblyRecipe::getSequence),
 			ProcessingOutput.CODEC.listOf().fieldOf("results").forGetter(r -> r.resultPool),
-			ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("loops", 5).forGetter(SequencedAssemblyRecipe::getLoops)
+			ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("loops", 1).forGetter(SequencedAssemblyRecipe::getLoops)
 		).apply(i, (ingredient, transitionalItem, sequence, results, loops) -> {
 			SequencedAssemblyRecipe recipe = new SequencedAssemblyRecipe(this);
 			recipe.ingredient = ingredient;

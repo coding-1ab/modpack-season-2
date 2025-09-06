@@ -12,7 +12,7 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.PackOutput.Target;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -35,9 +35,9 @@ public class CreateWikiBlockInfoProvider implements DataProvider {
 
 				JsonObject element = new JsonObject();
 
-				Item item = RegisteredObjectsHelper.getItem(id);
+				ItemLike item = RegisteredObjectsHelper.getItemOrBlock(id);
 				if (item != null)
-					element.addProperty("stackable", item.getDefaultInstance().getMaxStackSize());
+					element.addProperty("stackable", item.asItem().getDefaultInstance().getMaxStackSize());
 
 				// TODO - Tool
 

@@ -73,7 +73,7 @@ public enum DefaultUnpackingHandler implements UnpackingHandler {
 
 				int insertedAmount = toInsert.getCount() - targetInv.insertItem(slot, toInsert, simulate)
 					.getCount();
-				int slotLimit = itemInSlot.getMaxStackSize();
+				int slotLimit = Math.min(itemInSlot.getMaxStackSize(), targetInv.getSlotLimit(slot));
 				int insertableAmountWithPreviousItems =
 					Math.min(toInsert.getCount(), slotLimit - itemInSlot.getCount() - itemsAddedToSlot);
 

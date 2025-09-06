@@ -244,7 +244,7 @@ public class SchematicPrinter {
 		return predicate.shouldPlace(pos, state, blockEntity, toReplace, toReplaceOther, isNormalCube);
 	}
 
-	public ItemRequirement getCurrentRequirement(Level level) {
+	public ItemRequirement getCurrentRequirement() {
 		if (printStage == PrintStage.ENTITIES)
 			return ItemRequirement.of(blockReader.getEntityList().get(printingEntityIndex));
 
@@ -253,7 +253,7 @@ public class SchematicPrinter {
 		BlockEntity blockEntity = null;
 		if (blockState.hasBlockEntity()) {
 			blockEntity = ((EntityBlock) blockState.getBlock()).newBlockEntity(target, blockState);
-			CompoundTag data = BlockHelper.prepareBlockEntityData(level, blockState, blockEntity);
+			CompoundTag data = BlockHelper.prepareBlockEntityData(blockReader, blockState, blockEntity);
 			if (blockEntity != null && data != null)
 				blockEntity.loadWithComponents(data, blockReader.registryAccess());
 		}

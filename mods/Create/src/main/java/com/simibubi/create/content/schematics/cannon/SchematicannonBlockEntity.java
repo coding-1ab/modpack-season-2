@@ -385,7 +385,7 @@ public class SchematicannonBlockEntity extends SmartBlockEntity implements MenuP
 		}
 
 		// Get item requirement
-		ItemRequirement requirement = printer.getCurrentRequirement(level);
+		ItemRequirement requirement = printer.getCurrentRequirement();
 		if (requirement.isInvalid() || !printer.shouldPlaceCurrent(level, this::shouldPlace)) {
 			sendUpdate = !statusMsg.equals("searching");
 			statusMsg = "searching";
