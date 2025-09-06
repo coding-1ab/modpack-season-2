@@ -324,6 +324,8 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		if (structure != null) {
 			structure.delete();
 		}
+
+		embedding.delete();
 	}
 
 	public static int minLight(double aabbPos) {
