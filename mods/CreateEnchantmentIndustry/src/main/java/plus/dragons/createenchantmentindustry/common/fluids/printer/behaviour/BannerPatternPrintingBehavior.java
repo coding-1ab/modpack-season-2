@@ -1,8 +1,29 @@
+/*
+ * Copyright (C) 2025  DragonsPlus
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package plus.dragons.createenchantmentindustry.common.fluids.printer.behaviour;
 
 import com.mojang.serialization.DataResult;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -21,11 +42,7 @@ import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 import plus.dragons.createenchantmentindustry.util.CEILang;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-public class BannerPatternPrintingBehavior implements PrintingBehaviour{
+public class BannerPatternPrintingBehavior implements PrintingBehaviour {
     private final SmartFluidTankBehaviour tank;
     private final Holder<BannerPattern> pattern;
 
@@ -40,7 +57,7 @@ public class BannerPatternPrintingBehavior implements PrintingBehaviour{
         BannerPatternLayers layers = stack.get(DataComponents.BANNER_PATTERNS);
         if (layers.layers().isEmpty())
             return Optional.of(DataResult.error(() -> CEICommon.asLocalization("gui.printer.banner_pattern.no_pattern")));
-        if (layers.layers().size()>1)
+        if (layers.layers().size() > 1)
             return Optional.of(DataResult.error(() -> CEICommon.asLocalization("gui.printer.banner_pattern.multiple_pattern")));
         return Optional.of(DataResult.success(new BannerPatternPrintingBehavior(tank, layers.layers().getFirst().pattern())));
     }
@@ -61,7 +78,7 @@ public class BannerPatternPrintingBehavior implements PrintingBehaviour{
     @Override
     public int getRequiredFluidAmount(Level level, ItemStack stack, FluidStack fluidStack) {
         var cost = fluidStack.getFluidHolder().getData(CEIDataMaps.PRINTING_BANNER_PATTERN_INGREDIENT);
-        return cost == null? 0 : cost;
+        return cost == null ? 0 : cost;
     }
 
     @Override
@@ -69,7 +86,7 @@ public class BannerPatternPrintingBehavior implements PrintingBehaviour{
         BannerPatternLayers layers = stack.get(DataComponents.BANNER_PATTERNS);
         ArrayList<BannerPatternLayers.Layer> l = new ArrayList<>();
         l.addAll(layers.layers());
-        l.add(new BannerPatternLayers.Layer(pattern,((DyeFluidType)fluidStack.getFluidType()).getColor()));
+        l.add(new BannerPatternLayers.Layer(pattern, ((DyeFluidType) fluidStack.getFluidType()).getColor()));
         var result = stack.copy();
         result.set(DataComponents.BANNER_PATTERNS, new BannerPatternLayers(l));
         return result;
@@ -81,7 +98,6 @@ public class BannerPatternPrintingBehavior implements PrintingBehaviour{
         level.levelEvent(1043, pos.below(), 0);
     }
 
-
     @Override
     public boolean isSafeNBT() {
         return false;
@@ -91,18 +107,17 @@ public class BannerPatternPrintingBehavior implements PrintingBehaviour{
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         CEILang.translate("gui.goggles.printing.banner_pattern").forGoggles(tooltip);
         var amount = tank.getPrimaryHandler().getFluid().getFluidHolder().getData(CEIDataMaps.PRINTING_BANNER_PATTERN_INGREDIENT);
-        if (amount != null){
-            var p = Component.literal("→ ").append(Component.translatable(pattern.value().translationKey() + "." + ((DyeFluidType)tank.getPrimaryHandler().getFluid().getFluidType()).getColor().getName())).withStyle(ChatFormatting.GOLD);
+        if (amount != null) {
+            var p = Component.literal("→ ").append(Component.translatable(pattern.value().translationKey() + "." + ((DyeFluidType) tank.getPrimaryHandler().getFluid().getFluidType()).getColor().getName())).withStyle(ChatFormatting.GOLD);
             CEILang.builder().add(p).forGoggles(tooltip, 1);
             CEILang.translate("gui.goggles.printing.cost",
-                            CEILang.number(amount)
-                                    .add(CreateLang.translate("generic.unit.millibuckets"))
-                                    .style(amount <= CEIConfig.fluids().printerFluidCapacity.get()
-                                            ? ChatFormatting.GREEN
-                                            : ChatFormatting.RED))
+                    CEILang.number(amount)
+                            .add(CreateLang.translate("generic.unit.millibuckets"))
+                            .style(amount <= CEIConfig.fluids().printerFluidCapacity.get()
+                                    ? ChatFormatting.GREEN
+                                    : ChatFormatting.RED))
                     .forGoggles(tooltip, 1);
-        }
-        else if (!tank.getPrimaryHandler().getFluid().isEmpty()) {
+        } else if (!tank.getPrimaryHandler().getFluid().isEmpty()) {
             CEILang.translate("gui.goggles.printing.incorrect_liquid").style(ChatFormatting.RED).forGoggles(tooltip);
         }
         return true;

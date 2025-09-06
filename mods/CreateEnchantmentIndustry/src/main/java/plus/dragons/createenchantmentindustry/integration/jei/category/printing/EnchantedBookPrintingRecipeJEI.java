@@ -65,8 +65,7 @@ public class EnchantedBookPrintingRecipeJEI implements PrintingRecipeJEI {
         if (customCost != null) {
             optional = customCost.stream().filter(pair -> pair.level() == enchantment.level).findFirst();
         }
-        this.cost = (int) (optional.map(CEIIntIntPair::value).orElseGet(() ->
-                        CEIEnchantmentHelper.getEnchantmentCost(enchantment.enchantment, enchantment.level)) * CEIConfig.fluids().printingEnchantedBookCostMultiplier.get());
+        this.cost = (int) (optional.map(CEIIntIntPair::value).orElseGet(() -> CEIEnchantmentHelper.getEnchantmentCost(enchantment.enchantment, enchantment.level)) * CEIConfig.fluids().printingEnchantedBookCostMultiplier.get());
     }
 
     public static MapCodec<EnchantedBookPrintingRecipeJEI> createCodec(ICodecHelper codecHelper, IRecipeManager recipeManager) {

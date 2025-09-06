@@ -1,5 +1,4 @@
 {
-  "_comment.unlocalized": "Remove this line after finishing localization.",
   "advancement.create_enchantment_industry.a_shower_experience": "沐浴“经验”",
   "advancement.create_enchantment_industry.a_shower_experience.desc": "打破管道，沐浴在经验之中\n§7（隐藏进度）",
   "advancement.create_enchantment_industry.assembly_aesthetics": "视觉产线",
@@ -225,7 +224,7 @@
   "create_enchantment_industry.recipe.printing.copy.template": "可复制的内容",
   "create_enchantment_industry.recipe.printing.custom_name.base": "接受任意物品",
   "create_enchantment_industry.recipe.printing.custom_name.template": "自定义名称",
-  "death.attack.create_enchantment_industry.grind": "Mechanical Grindstone blew out %1$s's hand.",
+  "death.attack.create_enchantment_industry.grind": "动力砂轮压爆了%1$s的手。",
   "fluid.create_enchantment_industry.experience": "液态经验",
   "item.create_enchantment_industry.enchanting_template": "附魔模板",
   "item.create_enchantment_industry.experience_bucket": "附魔之桶",

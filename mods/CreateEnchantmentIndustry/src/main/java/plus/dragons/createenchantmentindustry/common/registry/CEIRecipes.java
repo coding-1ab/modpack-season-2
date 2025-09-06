@@ -18,9 +18,8 @@
 
 package plus.dragons.createenchantmentindustry.common.registry;
 
-import java.util.function.Supplier;
-
 import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
+import java.util.function.Supplier;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;

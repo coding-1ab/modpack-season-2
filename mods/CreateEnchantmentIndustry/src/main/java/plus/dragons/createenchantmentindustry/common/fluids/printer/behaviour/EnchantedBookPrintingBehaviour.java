@@ -73,8 +73,7 @@ public class EnchantedBookPrintingBehaviour implements PrintingBehaviour {
             if (customCost != null) {
                 optional = customCost.stream().filter(pair -> pair.level() == entry.getIntValue()).findFirst();
             }
-            result.addAndGet(optional.map(CEIIntIntPair::value).orElseGet(() ->
-                    (int) (CEIEnchantmentHelper.getEnchantmentCost(entry.getKey(), entry.getIntValue()) * CEIConfig.fluids().printingEnchantedBookCostMultiplier.get())));
+            result.addAndGet(optional.map(CEIIntIntPair::value).orElseGet(() -> (int) (CEIEnchantmentHelper.getEnchantmentCost(entry.getKey(), entry.getIntValue()) * CEIConfig.fluids().printingEnchantedBookCostMultiplier.get())));
         });
         this.cost = result.get();
     }

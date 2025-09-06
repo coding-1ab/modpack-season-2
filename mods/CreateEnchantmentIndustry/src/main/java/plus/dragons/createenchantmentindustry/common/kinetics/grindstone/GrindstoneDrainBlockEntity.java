@@ -88,7 +88,7 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
 
             @Override
             public ItemStack extractItem(int slot, int amount, boolean simulate) {
-                if(slot == 3000){ // IMPORTANT: 3000 is for internal usage for extract item in Processing inventory. Normally it won't be call by any other circumstances
+                if (slot == 3000) { // IMPORTANT: 3000 is for internal usage for extract item in Processing inventory. Normally it won't be call by any other circumstances
                     var result = getStackInSlot(0);
                     clear();
                     return result;
@@ -320,7 +320,7 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
     public void destroy() {
         super.destroy();
         Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), processedItem);
-        Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), inventory.extractItem(3000,64,false));
+        Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), inventory.extractItem(3000, 64, false));
     }
 
     @Override

@@ -100,7 +100,7 @@ public class GrindstoneHelper {
             grinding = level.getRecipeManager().getRecipeFor(CEIRecipes.GRINDING.getType(), input, level);
         if (grinding.isEmpty()) return 0;
         var f = grinding.get().value().getFluidResults();
-        if(f.isEmpty()) return 0;
+        if (f.isEmpty()) return 0;
         return f.getFirst().getAmount();
     }
 

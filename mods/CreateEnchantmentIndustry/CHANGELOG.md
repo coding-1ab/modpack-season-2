@@ -7,3 +7,6 @@
 
 ### Fix
 * fix Grindstone Drain destroys items when break
+
+### Translation
+* Update Russian Translation by Karbin Drem

@@ -67,16 +67,16 @@ public class MechanicalGrindstoneBlock extends RotatedPillarKineticBlock impleme
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (stack.isEmpty()) {
             var be = level.getBlockEntity(pos.below());
-            if(be instanceof GrindstoneDrainBlockEntity drain) {
+            if (be instanceof GrindstoneDrainBlockEntity drain) {
                 IItemHandler capability = blockEntity.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, drain.getBlockPos(), null);
                 if (capability != null) {
                     ItemStack extractItem = capability
                             .extractItem(3000, 64, false);
                     if (!extractItem.isEmpty()) {
                         player.setItemInHand(hand, extractItem);
-                        if(!player.isCreative()){
+                        if (!player.isCreative()) {
                             var speed = Math.abs(blockEntity.getSpeed());
-                            if(speed >=32){
+                            if (speed >= 32) {
                                 player.hurt(CEIDamageSources.grind(level), speed / 32f);
                             }
                         }

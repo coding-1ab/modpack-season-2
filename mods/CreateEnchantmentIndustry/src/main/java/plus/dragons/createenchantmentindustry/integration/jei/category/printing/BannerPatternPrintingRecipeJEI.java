@@ -19,18 +19,15 @@
 package plus.dragons.createenchantmentindustry.integration.jei.category.printing;
 
 import com.mojang.serialization.MapCodec;
-import com.simibubi.create.infrastructure.worldgen.LayerPattern;
+import java.util.ArrayList;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotDrawable;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.HolderGetter;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
@@ -38,18 +35,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
-import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import plus.dragons.createdragonsplus.common.fluids.dye.DyeFluidType;
 import plus.dragons.createdragonsplus.common.registry.CDPFluids;
 import plus.dragons.createdragonsplus.util.Pairs;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
-import plus.dragons.createenchantmentindustry.config.CEIConfig;
 import plus.dragons.createenchantmentindustry.util.CEILang;
-
-import java.util.ArrayList;
 
 public enum BannerPatternPrintingRecipeJEI implements PrintingRecipeJEI {
     INSTANCE;
@@ -73,7 +65,7 @@ public enum BannerPatternPrintingRecipeJEI implements PrintingRecipeJEI {
             var stack = new ItemStack(Items.WHITE_BANNER);
             ArrayList<BannerPatternLayers.Layer> l = new ArrayList<>();
             l.add(new BannerPatternLayers.Layer(element.getDelegate(), DyeColor.BLACK));
-            stack.set(DataComponents.BANNER_PATTERNS,new BannerPatternLayers(l));
+            stack.set(DataComponents.BANNER_PATTERNS, new BannerPatternLayers(l));
             slot.addItemStack(stack);
         });
         slot.addRichTooltipCallback((view, tooltip) -> tooltip.add(CEILang
@@ -104,14 +96,14 @@ public enum BannerPatternPrintingRecipeJEI implements PrintingRecipeJEI {
 
     @Override
     public void onDisplayedIngredientsUpdate(IRecipeSlotDrawable baseSlot, IRecipeSlotDrawable templateSlot, IRecipeSlotDrawable fluidSlot, IRecipeSlotDrawable outputSlot, IFocusGroup focuses) {
-        var fluid = fluidSlot.getDisplayedIngredient(NeoForgeTypes.FLUID_STACK).orElse(new FluidStack(CDPFluids.DYES_BY_COLOR.get(DyeColor.BLACK).get(),100)); // Fallback
+        var fluid = fluidSlot.getDisplayedIngredient(NeoForgeTypes.FLUID_STACK).orElse(new FluidStack(CDPFluids.DYES_BY_COLOR.get(DyeColor.BLACK).get(), 100)); // Fallback
         var base = baseSlot.getDisplayedItemStack();
         var template = templateSlot.getDisplayedItemStack();
         var output = base.get().copy();
         ArrayList<BannerPatternLayers.Layer> l = new ArrayList<>();
         var pattern = template.get().get(DataComponents.BANNER_PATTERNS);
-        l.add(new BannerPatternLayers.Layer(pattern.layers().getFirst().pattern(), ((DyeFluidType)fluid.getFluidType()).getColor()));
-        output.set(DataComponents.BANNER_PATTERNS,new BannerPatternLayers(l));
+        l.add(new BannerPatternLayers.Layer(pattern.layers().getFirst().pattern(), ((DyeFluidType) fluid.getFluidType()).getColor()));
+        output.set(DataComponents.BANNER_PATTERNS, new BannerPatternLayers(l));
         outputSlot.createDisplayOverrides().addItemStack(output);
     }
 }

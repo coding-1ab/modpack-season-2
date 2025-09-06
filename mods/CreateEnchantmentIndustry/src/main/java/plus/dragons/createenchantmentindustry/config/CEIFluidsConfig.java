@@ -98,6 +98,7 @@ public class CEIFluidsConfig extends ConfigBase {
             "mechanicalGrindstoneFluidCapacity",
             Comments.mechanicalGrindstoneFluidCapacity,
             RequiresRestart.SERVER.asComment());
+
     @Override
     public String getName() {
         return "fluids";
@@ -127,6 +128,5 @@ public class CEIFluidsConfig extends ConfigBase {
         static final String experienceLanternPullRadius = "The range at which experience orbs will be pulled into the lantern.";
         static final String experienceLanternPullForceMultiplier = "Modifier for the amount of force with which to pull the experience orbs.";
         static final String mechanicalGrindstoneFluidCapacity = "The amount of liquid a Grindstone Drain can hold (mB).";
-
     }
 }

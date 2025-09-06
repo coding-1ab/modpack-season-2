@@ -59,13 +59,12 @@ public class CustomNamePrintingBehaviour implements PrintingBehaviour {
     @Override
     public int getRequiredItemCount(Level level, ItemStack stack) {
         var name = getCustomName(tank.getPrimaryHandler().getFluid());
-        if (CEIConfig.fluids().printingCustomNameAsItemName.get()){
+        if (CEIConfig.fluids().printingCustomNameAsItemName.get()) {
             var n = stack.get(DataComponents.ITEM_NAME);
-            if(n!=null && n.equals(name)) return 0;
-        }
-        else{
+            if (n != null && n.equals(name)) return 0;
+        } else {
             var n = stack.get(DataComponents.CUSTOM_NAME);
-            if(n!=null && n.equals(name)) return 0;
+            if (n != null && n.equals(name)) return 0;
         }
         return 1;
     }
@@ -80,10 +79,9 @@ public class CustomNamePrintingBehaviour implements PrintingBehaviour {
     public ItemStack getResult(Level level, ItemStack stack, FluidStack fluidStack) {
         var result = stack.copy();
         var name = getCustomName(fluidStack);
-        if (CEIConfig.fluids().printingCustomNameAsItemName.get()){
+        if (CEIConfig.fluids().printingCustomNameAsItemName.get()) {
             result.set(DataComponents.ITEM_NAME, name);
-        }
-        else{
+        } else {
             result.set(DataComponents.CUSTOM_NAME, name);
         }
         return result;
