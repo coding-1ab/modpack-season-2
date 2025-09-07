@@ -69,6 +69,8 @@
   "block.create_enchantment_industry.mechanical_grindstone": "Muela mecánica",
   "block.create_enchantment_industry.printer": "Impresora",
   "block.create_enchantment_industry.super_experience_block": "Bloque de súper experiencia",
+  "create.item_attributes.create_enchantment_industry.processable_by_mechanical_grindstone": "can be processed by Mechanical Grindstone",
+  "create.item_attributes.create_enchantment_industry.processable_by_mechanical_grindstone.inverted": "cannot be processed by Mechanical Grindstone",
   "create_enchantment_industry.gui.blaze_enchanter.level": "Nivel de encantamiento",
   "create_enchantment_industry.gui.blaze_enchanter.template.invalid": "No se puede usar este objeto como plantilla.",
   "create_enchantment_industry.gui.experience_hatch.all": "Todo",

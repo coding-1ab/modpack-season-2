@@ -68,6 +68,8 @@
   "block.create_enchantment_industry.mechanical_grindstone": "ǝuoʇspuıɹ⅁ ןɐɔıuɐɥɔǝW",
   "block.create_enchantment_industry.printer": "ɹǝʇuıɹԀ",
   "block.create_enchantment_industry.super_experience_block": "ǝɔuǝıɹǝdxƎ ɹǝdnS ɟo ʞɔoןᗺ",
+  "create.item_attributes.create_enchantment_industry.processable_by_mechanical_grindstone": "ǝuoʇspuıɹ⅁ ןɐɔıuɐɥɔǝW ʎq pǝssǝɔoɹd ǝq uɐɔ",
+  "create.item_attributes.create_enchantment_industry.processable_by_mechanical_grindstone.inverted": "ǝuoʇspuıɹ⅁ ןɐɔıuɐɥɔǝW ʎq pǝssǝɔoɹd ǝq ʇouuɐɔ",
   "create_enchantment_industry.gui.blaze_enchanter.level": "ןǝʌǝꞀ buıʇuɐɥɔuƎ",
   "create_enchantment_industry.gui.blaze_enchanter.template.invalid": "˙ǝʇɐןdɯǝʇ ɐ sɐ ɯǝʇı sıɥʇ ǝsn ʇouuɐƆ",
   "create_enchantment_industry.gui.experience_hatch.all": "ןןⱯ",

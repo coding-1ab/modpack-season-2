@@ -68,6 +68,8 @@
   "block.create_enchantment_industry.mechanical_grindstone": "动力砂轮",
   "block.create_enchantment_industry.printer": "打印机",
   "block.create_enchantment_industry.super_experience_block": "超越经验块",
+  "create.item_attributes.create_enchantment_industry.processable_by_mechanical_grindstone": "可被动力砂轮处理",
+  "create.item_attributes.create_enchantment_industry.processable_by_mechanical_grindstone.inverted": "不可被动力砂轮处理",
   "create_enchantment_industry.gui.blaze_enchanter.level": "附魔等级",
   "create_enchantment_industry.gui.blaze_enchanter.template.invalid": "不能使用此物品作为模板",
   "create_enchantment_industry.gui.experience_hatch.all": "全部",

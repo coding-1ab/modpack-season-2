@@ -1,4 +1,5 @@
 {
+  "_comment.unlocalized": "Remove this line after finishing localization.",
   "advancement.create_enchantment_industry.a_shower_experience": "Uma \"Experiência\" de Banho",
   "advancement.create_enchantment_industry.a_shower_experience.desc": "Quebre um Cano de Fluido e tome banho na experiência vazada\n§7(Avanço Oculto)",
   "advancement.create_enchantment_industry.assembly_aesthetics": "Estética de Montagem",
@@ -68,6 +69,8 @@
   "block.create_enchantment_industry.mechanical_grindstone": "Mó Mecânica",
   "block.create_enchantment_industry.printer": "Impressora",
   "block.create_enchantment_industry.super_experience_block": "Bloco de Super Experiência",
+  "create.item_attributes.create_enchantment_industry.processable_by_mechanical_grindstone": "can be processed by Mechanical Grindstone",
+  "create.item_attributes.create_enchantment_industry.processable_by_mechanical_grindstone.inverted": "cannot be processed by Mechanical Grindstone",
   "create_enchantment_industry.gui.blaze_enchanter.level": "Nível de Encantamento",
   "create_enchantment_industry.gui.blaze_enchanter.template.invalid": "Não é possível usar este item como template.",
   "create_enchantment_industry.gui.experience_hatch.all": "Tudo",

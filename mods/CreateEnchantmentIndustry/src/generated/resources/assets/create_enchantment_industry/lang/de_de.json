@@ -69,6 +69,8 @@
   "block.create_enchantment_industry.mechanical_grindstone": "Mechanischer Schleifstein",
   "block.create_enchantment_industry.printer": "Drucker",
   "block.create_enchantment_industry.super_experience_block": "Super-Erfahrungsblock",
+  "create.item_attributes.create_enchantment_industry.processable_by_mechanical_grindstone": "can be processed by Mechanical Grindstone",
+  "create.item_attributes.create_enchantment_industry.processable_by_mechanical_grindstone.inverted": "cannot be processed by Mechanical Grindstone",
   "create_enchantment_industry.gui.blaze_enchanter.level": "Verzauberungsstufe",
   "create_enchantment_industry.gui.blaze_enchanter.template.invalid": "Kann nicht als Vorlage verwendet werden.",
   "create_enchantment_industry.gui.experience_hatch.all": "Alles",

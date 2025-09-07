@@ -18,8 +18,6 @@
 
 package plus.dragons.createenchantmentindustry.common.registry;
 
-import static plus.dragons.createdragonsplus.common.CDPCommon.REGISTRATE;
-
 import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.api.registry.CreateRegistries;
 import com.simibubi.create.content.logistics.item.filter.attribute.ItemAttributeType;
@@ -32,11 +30,14 @@ import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import plus.dragons.createdragonsplus.common.CDPCommon;
+import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindstoneHelper;
+
+import static plus.dragons.createenchantmentindustry.common.CEICommon.REGISTRATE;
 
 public class CEIItemAttributes {
     private static final DeferredRegister<ItemAttributeType> ITEM_ATTRIBUTES = DeferredRegister
-            .create(CreateRegistries.ITEM_ATTRIBUTE_TYPE, CDPCommon.ID);
+            .create(CreateRegistries.ITEM_ATTRIBUTE_TYPE, CEICommon.ID);
 
     public static final Holder<ItemAttributeType> PROCESSABLE_BY_MECHANICAL_GRINDSTONE = attribute("processable_by_mechanical_grindstone",
             "can be processed by Mechanical Grindstone",
@@ -53,7 +54,7 @@ public class CEIItemAttributes {
             }));
 
     private static Holder<ItemAttributeType> attribute(String name, String description, String invertedDescription, BiPredicate<ItemStack, Level> predicate) {
-        String descriptionKey = "create.item_attributes." + CDPCommon.ID + "." + name;
+        String descriptionKey = "create.item_attributes." + CEICommon.ID + "." + name;
         String invertedDescriptionKey = descriptionKey + ".inverted";
         REGISTRATE.addRawLang(descriptionKey, description);
         REGISTRATE.addRawLang(invertedDescriptionKey, invertedDescription);
