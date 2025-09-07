@@ -57,14 +57,14 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity> exte
 		}
 
 		Level level = entity.level();
-		ContraptionRenderInfo renderInfo = contraption.getRenderInfo();
-		VirtualRenderWorld renderWorld = renderInfo.getRenderWorld();
+		ClientContraption renderInfo = contraption.getClientSideData();
+		VirtualRenderWorld renderWorld = renderInfo.getRenderLevel();
 		ContraptionMatrices matrices = renderInfo.getMatrices();
 		matrices.setup(poseStack, entity);
 
 		if (!VisualizationManager.supportsVisualization(level)) {
 			for (RenderType renderType : RenderType.chunkBufferLayers()) {
-				SuperByteBuffer sbb = ContraptionRenderInfo.getBuffer(contraption, renderWorld, renderType);
+				SuperByteBuffer sbb = ClientContraption.getBuffer(contraption, renderWorld, renderType);
 				if (!sbb.isEmpty()) {
 					VertexConsumer vc = buffers.getBuffer(renderType);
 					sbb.transform(matrices.getModel())
@@ -74,7 +74,7 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity> exte
 			}
 		}
 
-		BlockEntityRenderHelper.renderBlockEntities(level, renderWorld, contraption.getRenderedBEs(),
+		BlockEntityRenderHelper.renderBlockEntities(level, renderWorld, renderInfo.renderedBlockEntities(),
 			matrices.getModelViewProjection(), matrices.getLight(), buffers);
 		renderActors(level, renderWorld, contraption, matrices, buffers);
 

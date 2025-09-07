@@ -50,17 +50,15 @@ public class BlockEntityRenderHelper {
 	public static void renderBlockEntities(Level realLevel, @Nullable VirtualRenderWorld renderLevel,
 										   Iterable<BlockEntity> customRenderBEs, PoseStack ms, @Nullable Matrix4f lightTransform, MultiBufferSource buffer,
 										   float pt) {
-		// First, make sure all BEs have the render level.
-		// Need to do this outside of the main loop in case BEs query the level from other virtual BEs.
-		// e.g. double chests specifically fetch light from both their own and their neighbor's level,
-		// which is honestly kind of silly, but easy to work around here.
-		if (renderLevel != null) {
-			for (var be : customRenderBEs) {
-				be.setLevel(renderLevel);
-			}
-		}
-
 		Set<BlockEntity> toRemove = new HashSet<>();
+
+		Vec3 cameraPos = Minecraft.getInstance()
+			.gameRenderer
+			.getMainCamera()
+			.getPosition();
+
+		if (realLevel instanceof SchematicLevel)
+			cameraPos = Vec3.ZERO;
 
 		// Main loop, time to render.
 		for (BlockEntity blockEntity : customRenderBEs) {
@@ -75,14 +73,6 @@ public class BlockEntityRenderHelper {
 				toRemove.add(blockEntity);
 				continue;
 			}
-
-			Vec3 cameraPos = Minecraft.getInstance()
-				.gameRenderer
-				.getMainCamera()
-				.getPosition();
-
-			if (realLevel instanceof SchematicLevel)
-				cameraPos = Vec3.ZERO;
 
 			if (renderLevel == null && !renderer.shouldRender(blockEntity, cameraPos))
 				continue;
@@ -110,7 +100,7 @@ public class BlockEntityRenderHelper {
 				toRemove.add(blockEntity);
 
 				String message = "BlockEntity " + CatnipServices.REGISTRIES.getKeyOrThrow(blockEntity.getType())
-					.toString() + " could not be rendered virtually.";
+					+ " could not be rendered virtually.";
 				if (AllConfigs.client().explainRenderErrors.get()) Create.LOGGER.error(message, e);
 				else Create.LOGGER.error(message);
 			}
@@ -118,24 +108,20 @@ public class BlockEntityRenderHelper {
 			ms.popPose();
 		}
 
-		// Now reset all the BEs' levels.
 		if (renderLevel != null) {
 			renderLevel.resetExternalLight();
-
-			for (var be : customRenderBEs) {
-				be.setLevel(realLevel);
-			}
 		}
 
-		// And finally, cull any BEs that misbehaved.
-		if (!toRemove.isEmpty()) {
-			var it = customRenderBEs.iterator();
-			while (it.hasNext()) {
-				if (toRemove.contains(it.next())) {
-					it.remove();
-				}
-			}
-		}
+		// FIXME: reintroduce BE culling
+//		// And finally, cull any BEs that misbehaved.
+//		if (!toRemove.isEmpty()) {
+//			var it = customRenderBEs.iterator();
+//			while (it.hasNext()) {
+//				if (toRemove.contains(it.next())) {
+//					it.remove();
+//				}
+//			}
+//		}
 	}
 
 	private static BlockPos getLightPos(@Nullable Matrix4f lightTransform, BlockPos contraptionPos) {

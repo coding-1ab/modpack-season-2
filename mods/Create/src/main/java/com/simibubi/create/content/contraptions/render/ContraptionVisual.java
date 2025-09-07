@@ -44,12 +44,9 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-
-import net.minecraftforge.client.model.data.ModelData;
 
 public class ContraptionVisual<E extends AbstractContraptionEntity> extends AbstractEntityVisual<E> implements DynamicVisual, TickableVisual, LightUpdatedVisual, ShaderLightVisual {
 	protected static final int LIGHT_PADDING = 1;
@@ -59,7 +56,9 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 	protected final List<ActorVisual> actors = new ArrayList<>();
 	protected final PlanMap<DynamicVisual, DynamicVisual.Context> dynamicVisuals = new PlanMap<>();
 	protected final PlanMap<TickableVisual, TickableVisual.Context> tickableVisuals = new PlanMap<>();
-	protected VirtualRenderWorld virtualRenderWorld;
+
+	// This will be reset when we detect an invalidation, so it's safe to hold the reference.
+	protected VirtualRenderWorld renderLevel;
 	protected Model model;
 	protected TransformedInstance structure;
 	protected SectionCollector sectionCollector;
@@ -79,19 +78,15 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		if (contraption == null)
 			return;
 
-		setupModel(contraption);
-
-		setupChildren(partialTick, contraption);
-
-		setupActors(partialTick, contraption);
+		setup(contraption, partialTick);
 	}
 
-	// Must be called before setup children or setup actors as this creates the render world
-	private void setupModel(Contraption contraption) {
-		virtualRenderWorld = contraption.getRenderInfo().getRenderWorld();
+	private void setup(Contraption contraption, float partialTick) {
+		var clientContraption = contraption.getClientSideData();
+		renderLevel = clientContraption.getRenderLevel();
 
-		RenderedBlocks blocks = contraption.getRenderedBlocks();
-		BlockAndTintGetter modelWorld = new WrappedBlockAndTintGetter(virtualRenderWorld) {
+		RenderedBlocks blocks = clientContraption.getRenderedBlocks();
+		BlockAndTintGetter modelWorld = new WrappedBlockAndTintGetter(renderLevel) {
 			@Override
 			public BlockState getBlockState(BlockPos pos) {
 				return blocks.lookup().apply(pos);
@@ -99,7 +94,7 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		};
 
 		model = new ForgeBlockModelBuilder(modelWorld, blocks.positions())
-			.modelDataLookup(pos -> contraption.modelData.getOrDefault(pos, ModelData.EMPTY))
+			.modelDataLookup(clientContraption::getModelData)
 			.materialFunc((renderType, shaded) -> {
 				Material material = ModelUtil.getMaterial(renderType, shaded);
 				if (material != null && material.cardinalLightingMode() == CardinalLightingMode.ENTITY) {
@@ -125,17 +120,14 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 
 		structure.setChanged();
 
-	}
-
-	private void setupChildren(float partialTick, Contraption contraption) {
+		// Setup child visuals.
 		children.forEach(BlockEntityVisual::delete);
 		children.clear();
-		for (BlockEntity be : contraption.getRenderedBEs()) {
+		for (BlockEntity be : contraption.getClientSideData().renderedBlockEntities()) {
 			setupVisualizer(be, partialTick);
 		}
-	}
 
-	private void setupActors(float partialTick, Contraption contraption) {
+		// Setup actor visuals.
 		actors.forEach(ActorVisual::delete);
 		actors.clear();
 		for (var actor : contraption.getActors()) {
@@ -150,8 +142,6 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 			return;
 		}
 
-		Level level = be.getLevel();
-		be.setLevel(virtualRenderWorld);
 		BlockEntityVisual<? super T> visual = visualizer.createVisual(this.embedding, be, partialTicks);
 
 		children.add(visual);
@@ -163,8 +153,6 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		if (visual instanceof TickableVisual tickable) {
 			tickableVisuals.add(tickable, tickable.planTick());
 		}
-
-		be.setLevel(level);
 	}
 
 	private void setupActor(MutablePair<StructureTemplate.StructureBlockInfo, MovementContext> actor, float partialTick) {
@@ -182,7 +170,7 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		if (movementBehaviour == null) {
 			return;
 		}
-		var visual = movementBehaviour.createVisual(this.embedding, virtualRenderWorld, context);
+		var visual = movementBehaviour.createVisual(this.embedding, renderLevel, context);
 
 		if (visual == null) {
 			return;
@@ -221,12 +209,10 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		}
 
 		var contraption = entity.getContraption();
-		if (contraption.deferInvalidate) {
-			setupModel(contraption);
-			setupChildren(partialTick, contraption);
-			setupActors(partialTick, contraption);
+		if (contraption.hasInvalidatedClientData()) {
+			setup(contraption, partialTick);
 
-			contraption.deferInvalidate = false;
+			contraption.clearInvalidatedClientData();
 		}
 	}
 

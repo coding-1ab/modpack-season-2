@@ -1,13 +1,13 @@
 package com.simibubi.create.content.trains.entity;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Unmodifiable;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllContraptionTypes;
@@ -19,6 +19,7 @@ import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.MountedStorageManager;
 import com.simibubi.create.content.contraptions.actors.trainControls.ControlsBlock;
 import com.simibubi.create.content.contraptions.minecart.TrainCargoManager;
+import com.simibubi.create.content.contraptions.render.ClientContraption;
 import com.simibubi.create.content.trains.bogey.AbstractBogeyBlock;
 import com.simibubi.create.foundation.utility.CreateLang;
 
@@ -185,11 +186,11 @@ public class CarriageContraption extends Contraption {
 	}
 
 	@Override
-	protected BlockEntity readBlockEntity(Level level, StructureBlockInfo info, CompoundTag tag) {
+	public BlockEntity readBlockEntity(Level level, StructureBlockInfo info, boolean legacy) {
 		if (info.state().getBlock() instanceof AbstractBogeyBlock<?> bogey && !bogey.captureBlockEntityForTrain())
 			return null; // Bogeys are typically rendered by the carriage contraption, not the BE
 
-		return super.readBlockEntity(level, info, tag);
+		return super.readBlockEntity(level, info, legacy);
 	}
 
 	@Override
@@ -255,36 +256,6 @@ public class CarriageContraption extends Contraption {
 		return secondBogeyPos;
 	}
 
-	private Collection<BlockEntity> renderedBEsOutsidePortal = new ArrayList<>();
-
-	@Override
-	public RenderedBlocks getRenderedBlocks() {
-		if (notInPortal())
-			return super.getRenderedBlocks();
-
-		renderedBEsOutsidePortal = new ArrayList<>();
-		renderedBlockEntities.stream()
-			.filter(be -> !isHiddenInPortal(be.getBlockPos()))
-			.forEach(renderedBEsOutsidePortal::add);
-
-		Map<BlockPos, BlockState> values = new HashMap<>();
-		blocks.forEach((pos, info) -> {
-			if (withinVisible(pos)) {
-				values.put(pos, info.state());
-			} else if (atSeam(pos)) {
-				values.put(pos, Blocks.PURPLE_STAINED_GLASS.defaultBlockState());
-			}
-		});
-		return new RenderedBlocks(pos -> values.getOrDefault(pos, Blocks.AIR.defaultBlockState()), values.keySet());
-	}
-
-	@Override
-	public Collection<BlockEntity> getRenderedBEs() {
-		if (notInPortal())
-			return super.getRenderedBEs();
-		return renderedBEsOutsidePortal;
-	}
-
 	@Override
 	public Optional<List<AABB>> getSimplifiedEntityColliders() {
 		if (notInPortal())
@@ -332,6 +303,46 @@ public class CarriageContraption extends Contraption {
 			return;
 		if (storageProxy != null)
 			storageProxy.write(nbt, spawnPacket);
+	}
+
+	@Override
+	protected ClientContraption createClientContraption() {
+		return new CarriageClientContraption(this);
+	}
+
+	public class CarriageClientContraption extends ClientContraption {
+		public CarriageClientContraption(CarriageContraption contraption) {
+			super(contraption);
+		}
+
+		@Override
+		public RenderedBlocks getRenderedBlocks() {
+			if (notInPortal())
+				return super.getRenderedBlocks();
+
+			Map<BlockPos, BlockState> values = new HashMap<>();
+			blocks.forEach((pos, info) -> {
+				if (withinVisible(pos)) {
+					values.put(pos, info.state());
+				} else if (atSeam(pos)) {
+					values.put(pos, Blocks.PURPLE_STAINED_GLASS.defaultBlockState());
+				}
+			});
+			return new RenderedBlocks(pos -> values.getOrDefault(pos, Blocks.AIR.defaultBlockState()), values.keySet());
+		}
+
+		@Override
+		public @Unmodifiable List<BlockEntity> renderedBlockEntities() {
+			var renderedBlockEntities = super.renderedBlockEntities();
+
+			if (notInPortal()) {
+				return renderedBlockEntities;
+			}
+
+			return renderedBlockEntities.stream()
+				.filter(be -> !isHiddenInPortal(be.getBlockPos()))
+				.toList();
+		}
 	}
 
 }
