@@ -1,4 +1,4 @@
-## Create: Enchantment Industry 2.2.1b
+## Create: Enchantment Industry 2.2.2
 
 ### Fix
-* fix Grindstone Drain not working
+* fix Grindstone Drain does not process recipe containing no exp

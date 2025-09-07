@@ -38,7 +38,7 @@ import net.neoforged.neoforge.event.GrindstoneEvent;
 import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
 
 public class GrindstoneHelper {
-    public static boolean canItemBeGrinded(Level level, ItemStack top, ItemStack bottom) {
+    public static boolean canItemBeGrinded(ItemStack top, ItemStack bottom) {
         var event = NeoForge.EVENT_BUS.post(new GrindstoneEvent.OnPlaceItem(top, bottom, -1));
         if (event.isCanceled())
             return false;
