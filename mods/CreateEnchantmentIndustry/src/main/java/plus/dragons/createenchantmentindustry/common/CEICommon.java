@@ -56,6 +56,7 @@ public class CEICommon {
         CEIDataMaps.register(modBus);
         CEIStats.register(modBus);
         CEIMountedStorageTypes.register(modBus);
+        CEIItemAttributes.register(modBus);
         modBus.register(this);
         modBus.register(new CEIConfig(modContainer));
     }
