@@ -62,7 +62,7 @@ public class LecternControllerBlockEntity extends SmartBlockEntity {
 	protected void read(CompoundTag compound, boolean clientPacket) {
 		super.read(compound, clientPacket);
 
-		// TODO: 1.21.7 - Remove fallback
+		// TODO: 1.21.1+ - Remove fallback
 		// Migrate old data if that is found
 		CompoundTag freqTag;
 		if (compound.contains("Controller")) {

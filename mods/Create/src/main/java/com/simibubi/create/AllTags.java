@@ -6,11 +6,13 @@ import static com.simibubi.create.AllTags.NameSpace.MOD;
 import static com.simibubi.create.AllTags.NameSpace.QUARK;
 import static com.simibubi.create.AllTags.NameSpace.TIC;
 
+import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
+import org.jetbrains.annotations.Nullable;
+
 import com.simibubi.create.api.contraption.ContraptionType;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorage;
 import com.simibubi.create.api.contraption.storage.item.MountedItemStorageType;
 import com.simibubi.create.api.registry.CreateRegistries;
-
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
 import com.simibubi.create.foundation.data.recipe.CommonMetal;
 
@@ -32,31 +34,34 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import org.jetbrains.annotations.Nullable;
-
 public class AllTags {
-	@Deprecated(forRemoval = true)
+	@ScheduledForRemoval(inVersion = "1.21.1+ Port")
+	@Deprecated(since = "6.0.7", forRemoval = true)
 	public static <T> TagKey<T> optionalTag(IForgeRegistry<T> registry,
 											ResourceLocation id) {
 		return TagKey.create(registry.getRegistryKey(), id);
 	}
 
-	@Deprecated(forRemoval = true)
+	@ScheduledForRemoval(inVersion = "1.21.1+ Port")
+	@Deprecated(since = "6.0.7", forRemoval = true)
 	public static <T> TagKey<T> forgeTag(IForgeRegistry<T> registry, String path) {
 		return optionalTag(registry, FORGE.id(path));
 	}
 
-	@Deprecated(forRemoval = true)
+	@ScheduledForRemoval(inVersion = "1.21.1+ Port")
+	@Deprecated(since = "6.0.7", forRemoval = true)
 	public static TagKey<Block> forgeBlockTag(String path) {
 		return forgeTag(ForgeRegistries.BLOCKS, path);
 	}
 
-	@Deprecated(forRemoval = true)
+	@ScheduledForRemoval(inVersion = "1.21.1+ Port")
+	@Deprecated(since = "6.0.7", forRemoval = true)
 	public static TagKey<Item> forgeItemTag(String path) {
 		return forgeTag(ForgeRegistries.ITEMS, path);
 	}
 
-	@Deprecated(forRemoval = true)
+	@ScheduledForRemoval(inVersion = "1.21.1+ Port")
+	@Deprecated(since = "6.0.7", forRemoval = true)
 	public static TagKey<Fluid> forgeFluidTag(String path) {
 		return forgeTag(ForgeRegistries.FLUIDS, path);
 	}
@@ -165,6 +170,7 @@ public class AllTags {
 
 	/**
 	 * Despite the name, not truly all item tags.
+	 *
 	 * @see CommonMetal
 	 * @see AllPaletteStoneTypes#materialTag
 	 */
