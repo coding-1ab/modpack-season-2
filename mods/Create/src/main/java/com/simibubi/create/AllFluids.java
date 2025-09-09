@@ -10,6 +10,8 @@ import org.joml.Vector3f;
 
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.simibubi.create.AllTags.AllFluidTags;
+import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
 import com.simibubi.create.content.fluids.VirtualFluid;
 import com.simibubi.create.content.fluids.potion.PotionFluid;
@@ -64,7 +66,7 @@ public class AllFluids {
 
 	public static final FluidEntry<VirtualFluid> TEA = REGISTRATE.virtualFluid("tea")
 		.lang("Builder's Tea")
-		.tag(AllTags.commonFluidTag("teas"))
+		.tag(AllFluidTags.TEA.tag)
 		.register();
 
 	public static final FluidEntry<BaseFlowingFluid.Flowing> HONEY =
@@ -85,7 +87,7 @@ public class AllFluids {
 			.build()
 			.bucket()
 			.onRegister(AllFluids::registerFluidDispenseBehavior)
-			.tag(Tags.Items.BUCKETS, AllTags.commonItemTag("buckets/honey"))
+			.tag(Tags.Items.BUCKETS, AllItemTags.HONEY_BUCKETS.tag)
 			.build()
 			.register();
 
@@ -94,7 +96,7 @@ public class AllFluids {
 				SolidRenderedPlaceableFluidType.create(0x622020,
 					() -> 1f / 32f * AllConfigs.client().chocolateTransparencyMultiplier.getF()))
 			.lang("Chocolate")
-			.tag(AllTags.commonFluidTag("chocolates"))
+			.tag(AllFluidTags.CHOCOLATE.tag)
 			.properties(b -> b.viscosity(1500)
 				.density(1400))
 			.fluidProperties(p -> p.levelDecreasePerBlock(2)
@@ -107,7 +109,7 @@ public class AllFluids {
 			.build()
 			.bucket()
 			.onRegister(AllFluids::registerFluidDispenseBehavior)
-			.tag(Tags.Items.BUCKETS, AllTags.commonItemTag("buckets/chocolate"))
+			.tag(Tags.Items.BUCKETS, AllItemTags.CHOCOLATE_BUCKETS.tag)
 			.build()
 			.register();
 

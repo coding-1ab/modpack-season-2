@@ -603,10 +603,7 @@ public abstract class AbstractContraptionEntity extends Entity implements IEntit
 		CompoundTag compound = new CompoundTag();
 		writeAdditional(compound, registryFriendlyByteBuf.registryAccess(), true);
 
-		if (!CatnipServices.PLATFORM.getLoader().isNeoForge() && ContraptionSyncLimiting.isTooLargeForSync(compound))
-			compound = null; // don't sync contraption data
-
-		registryFriendlyByteBuf.writeNbt(compound);
+		ContraptionSyncLimiting.writeSafe(compound, registryFriendlyByteBuf);
 	}
 
 	@Override

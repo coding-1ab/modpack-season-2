@@ -86,7 +86,7 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 
 	// Must be called before setup children or setup actors as this creates the render world
 	private void setupModel(Contraption contraption) {
-		virtualRenderWorld = ContraptionRenderInfo.setupRenderWorld(level, contraption);
+		virtualRenderWorld = contraption.getRenderInfo().getRenderWorld();
 
 		RenderedBlocks blocks = contraption.getRenderedBlocks();
 		BlockAndTintGetter modelWorld = new WrappedBlockAndTintGetter(virtualRenderWorld) {

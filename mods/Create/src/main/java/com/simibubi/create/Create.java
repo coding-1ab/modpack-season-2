@@ -113,7 +113,6 @@ public class Create {
 		REGISTRATE.registerEventListeners(modEventBus);
 
 		AllSoundEvents.prepare();
-		AllTags.init();
 		AllCreativeModeTabs.register(modEventBus);
 		AllArmorMaterials.register(modEventBus);
 		AllDisplaySources.register();

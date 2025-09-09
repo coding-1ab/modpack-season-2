@@ -42,7 +42,7 @@ public class ToolboxInventory extends ItemStackHandler {
 		ToolboxInventory::deserialize
 	);
 
-	@ScheduledForRemoval(inVersion = "1.21.7 Port")
+	@ScheduledForRemoval(inVersion = "1.21.1+ Port")
 	@Deprecated(since = "6.0.6", forRemoval = true)
 	public static final Codec<ToolboxInventory> BACKWARDS_COMPAT_CODEC = Codec.withAlternative(
 		CODEC,

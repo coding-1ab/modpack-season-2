@@ -4,12 +4,11 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllTags;
 import com.simibubi.create.Create;
 import com.simibubi.create.api.data.recipe.CuttingRecipeGen;
 import com.simibubi.create.foundation.data.recipe.CreateRecipeProvider.I;
 
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Blocks;
 
@@ -57,10 +56,10 @@ public final class CreateCuttingRecipeGen extends CuttingRecipeGen {
 		ENDERGETIC_2 = stripAndMakePlanks(Mods.ENDER, "glowing_poise_wood", "stripped_poise_wood", null),
 
 		// IE
-		IE_WIRES = ieWires("copper", "electrum", "aluminum", "steel", "lead")
+		IE_WIRES = ieWires(CommonMetal.COPPER, CommonMetal.ELECTRUM, CommonMetal.ALUMINUM, CommonMetal.STEEL, CommonMetal.LEAD)
 		;
 
-	public CreateCuttingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+	public CreateCuttingRecipeGen(PackOutput output, CompletableFuture<Provider> registries) {
 		super(output, registries, Create.ID);
 	}
 
@@ -134,10 +133,10 @@ public final class CreateCuttingRecipeGen extends CuttingRecipeGen {
 		return null;
 	}
 
-	GeneratedRecipe ieWires(String... metals) {
-		for (String metal : metals)
+	GeneratedRecipe ieWires(CommonMetal... metals) {
+		for (CommonMetal metal : metals)
 			create(Mods.IE.recipeId("wire_" + metal), b -> b.duration(50)
-				.require(AllTags.commonItemTag("plates/" + metal))
+				.require(metal.plates)
 				.output(1, Mods.IE, "wire_" + metal, 2)
 				.whenModLoaded(Mods.IE.getId()));
 		return null;

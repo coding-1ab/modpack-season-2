@@ -1,4 +1,4 @@
-// 1.21.1	2025-09-06T15:43:22.931244938	Registrate Provider for create [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2025-09-08T20:51:14.700666532	Registrate Provider for create [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 60bbdf92d2ac9824ea6144955c74043a6005f79d assets/create/blockstates/acacia_window.json
 6a67703c2697d81b7dc83e9d72a66f9c9ff08383 assets/create/blockstates/acacia_window_pane.json
 c3ae87b62e81d8e9476eccd793bb1548d74c66a1 assets/create/blockstates/adjustable_chain_gearshift.json
@@ -642,8 +642,8 @@ b0d8f08968763a5f74e5cd5644377a76a9f39753 assets/create/blockstates/yellow_toolbo
 fe8c497aacc641c2f01cec90bba9f19e59cc2ed2 assets/create/blockstates/yellow_valve_handle.json
 e819e93fdcbe9fd9c050a052d2718ff3b3539365 assets/create/blockstates/zinc_block.json
 64121dcb216381c83b4fe28aa361ea07c24c9ad0 assets/create/blockstates/zinc_ore.json
-6524871dae4e038131793f27a76b724ecad6a9e1 assets/create/lang/en_ud.json
-65d53d631220dfd0496541c02871348d738d867b assets/create/lang/en_us.json
+f2fdfada4001ad3434cf7e62008c663f34b7f85c assets/create/lang/en_ud.json
+4d845d58f7b633f5975c2ede0bcd59967f689ee2 assets/create/lang/en_us.json
 a97e1060e00ae701a02e39cd4ef8054cf345fac4 assets/create/models/block/acacia_window.json
 103e032c0b1a0a6a27c67da8c91179a564bd281c assets/create/models/block/acacia_window_pane_noside.json
 fb00b627abda76ad4fea867ca57dbfadd24fffa3 assets/create/models/block/acacia_window_pane_noside_alt.json
@@ -2580,9 +2580,9 @@ e475ad1c52bffedfc544e5331a87c1f5c45149fd data/c/tags/block/ores_in_ground/deepsl
 bcd593714f43bc6a0aefbd714c24db3cf9e71250 data/c/tags/block/storage_blocks/raw_zinc.json
 41b2a17b5ebcff5623e25dc6232f73cf9aa70387 data/c/tags/block/storage_blocks/zinc.json
 986440996701ed47b9f9f8b8ed4ef9d711571fa4 data/c/tags/entity_type/teleporting_not_supported.json
-8140415f1c16f09167f41eeee25c09706a944be0 data/c/tags/fluid/chocolates.json
+8140415f1c16f09167f41eeee25c09706a944be0 data/c/tags/fluid/chocolate.json
 0ccc9ff76001cdd7db1b79c1371f59d3283abe64 data/c/tags/fluid/honey.json
-cca816b34ac2e9b7933df680aa9778ff2cfe9605 data/c/tags/fluid/teas.json
+cca816b34ac2e9b7933df680aa9778ff2cfe9605 data/c/tags/fluid/tea.json
 a1b994866e427870cb9b9f80cfadc9c8b84ab7ed data/c/tags/item/buckets.json
 a070e35ff35f5548a7f6207d70e3c21f1df2053e data/c/tags/item/buckets/chocolate.json
 06ebf72e8f6c081862236d4b068b5dfb275a8385 data/c/tags/item/buckets/honey.json
@@ -4751,18 +4751,14 @@ c603fae95069714ac3d256dfa31f8d2639efafa7 data/create/tags/block/chest_mounted_st
 c7ec0dbc18e9c1b58e568ed925287b89df11a136 data/create/tags/block/copycat_allow.json
 876eb9210f4a14898a2fe6d225699c66b5bdfeef data/create/tags/block/copycat_deny.json
 7296238b4c6b81251870addce1de8ecda63381dc data/create/tags/block/corals.json
-35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/create/tags/block/fallback_mounted_storage_blacklist.json
 f675c20350ed60da4878b5d6301f02c8c05624bd data/create/tags/block/fan_processing_catalysts/blasting.json
 0592b99f657415f6546564ed8efa1fcbef07ba15 data/create/tags/block/fan_processing_catalysts/haunting.json
 9386dd9a1d234813f9b8ae4ec88866d396aa1d37 data/create/tags/block/fan_processing_catalysts/smoking.json
-35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/create/tags/block/fan_processing_catalysts/splashing.json
 26565004cbd27092d93079628222bfce313fbe99 data/create/tags/block/fan_transparent.json
 2589b135c0e96ad29076569e144528fe32ea5b39 data/create/tags/block/girdable_tracks.json
 02c0a018f2b8540dc2f1fb420172cc716552f321 data/create/tags/block/movable_empty_collider.json
-35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/create/tags/block/non_breakable.json
 7f7eb361dcdaa2f081bfed7582c93d6b1b29f8db data/create/tags/block/non_harvestable.json
 4970078b49ddac1b1d500ed0469cedf42bdc3d35 data/create/tags/block/non_movable.json
-06e13efbb7b0d09ff7ecd1a7dc45a0760b91ad67 data/create/tags/block/ore_override_stone.json
 a5874f73c7dc0a3ae12999e6ae8abf45bc7fb9be data/create/tags/block/passive_boiler_heaters.json
 f400870b8dbcd14238be3ec99c419093073ba3a6 data/create/tags/block/postboxes.json
 9bc8c13fd80bdbe7f767b91ee1a1042e9aff02b0 data/create/tags/block/roots.json
@@ -4781,24 +4777,16 @@ a109dab3eeeae64b2eb909ae1b5027716c5dd271 data/create/tags/block/wrench_pickup.js
 76c0522664726c09461ad4565b6fba80b4f816b2 data/create/tags/entity_type/blaze_burner_capturable.json
 12d4a91606bab3baf3b608bca7860f36a697873a data/create/tags/entity_type/ignore_seat.json
 894e1e4fd1e32712abdda18ec64ab13750d3c039 data/create/tags/fluid/bottomless/allow.json
-35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/create/tags/fluid/bottomless/deny.json
 e191d5f912e05091b3a0b1df17f4c4181e04d96f data/create/tags/fluid/fan_processing_catalysts/blasting.json
-35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/create/tags/fluid/fan_processing_catalysts/haunting.json
-35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/create/tags/fluid/fan_processing_catalysts/smoking.json
 c9ae54a7510073b17edf82f7591e14bdb2c51837 data/create/tags/fluid/fan_processing_catalysts/splashing.json
-35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/create/tags/item/blaze_burner_fuel/regular.json
-35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/create/tags/item/blaze_burner_fuel/special.json
 8b6c0b444b15f7fb2d55b9cbcb68537c1269f877 data/create/tags/item/casing.json
 85434dfa942bd02b48f061627d567bca91caf436 data/create/tags/item/chain_rideable.json
 f43cac8216e2a9347e48cf93a43de95dd810ca20 data/create/tags/item/contraption_controlled.json
 d371dfd35e49a7bef19f59c03e7f4ae20992f03d data/create/tags/item/create_ingots.json
 910d0f5ccbc4c84b224eca1f1588b1695f41447b data/create/tags/item/crushed_raw_materials.json
 0fa526e7e742573b603ad26b09526cf724efa1dc data/create/tags/item/deployable_drink.json
-35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/create/tags/item/dispense_behavior_wrap_blacklist.json
 ebd7b09daf2f64c0c04d821696b0e145683d8693 data/create/tags/item/dyed_table_cloths.json
 d2bb65d893d71d2d9871f81f430c233a93adb4bb data/create/tags/item/invalid_for_track_paving.json
-35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/create/tags/item/not_potion.json
-35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/create/tags/item/not_upright_on_belt.json
 cebf5fd98eddf5c14befdd47052be678eea79542 data/create/tags/item/packages.json
 f400870b8dbcd14238be3ec99c419093073ba3a6 data/create/tags/item/postboxes.json
 695d75b352fd190b303c724d1aaee9bb786a903b data/create/tags/item/pressurized_air_sources.json

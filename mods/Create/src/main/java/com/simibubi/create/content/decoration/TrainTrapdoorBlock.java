@@ -22,7 +22,7 @@ public class TrainTrapdoorBlock extends TrapDoorBlock implements IWrenchable {
 	/**
 	 * @deprecated <p> Use {@link TrainTrapdoorBlock#TrainTrapdoorBlock(BlockSetType, Properties)} instead.
 	 */
-	@ScheduledForRemoval(inVersion = "1.21.7 Port")
+	@ScheduledForRemoval(inVersion = "1.21.1+ Port")
 	@Deprecated(since = "6.0.7", forRemoval = true)
 	public TrainTrapdoorBlock(Properties properties) {
 		super(SlidingDoorBlock.TRAIN_SET_TYPE.get(), properties);

@@ -55,7 +55,7 @@ import java.util.Map;
 
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.Create;
-import com.simibubi.create.foundation.data.recipe.CompatMetals;
+import com.simibubi.create.foundation.data.recipe.CommonMetal;
 
 import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.minecraft.core.Registry;
@@ -188,9 +188,9 @@ public class RemapHelper {
 		// 1.18 crushed ores
 		for (String metal : new String[] { "iron", "gold", "copper", "zinc" })
 			reMap.put("crushed_" + metal + "_ore", Create.asResource("crushed_raw_" + metal));
-		for (CompatMetals compatMetal : CompatMetals.values())
-			reMap.put("crushed_" + compatMetal.getName() + "_ore",
-				Create.asResource("crushed_raw_" + compatMetal.getName()));
+		for (CommonMetal compatMetal : CommonMetal.values())
+			reMap.put("crushed_" + compatMetal.name + "_ore",
+				Create.asResource("crushed_raw_" + compatMetal.name));
 	}
 
 	private static void remapPaletteBlock(String type, String newType, boolean vanilla) {

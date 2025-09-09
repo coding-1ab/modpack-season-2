@@ -98,7 +98,7 @@ public class ProcessingOutput {
 		}
 	}
 
-	@ScheduledForRemoval(inVersion = "1.21.7 Port")
+	@ScheduledForRemoval(inVersion = "1.21.1+ Port")
 	@Deprecated(since = "6.0.3", forRemoval = true)
 	private static final Codec<Either<ItemStack, Pair<ResourceLocation, Integer>>> ITEM_CODEC_OLD = Codec.either(
 		ItemStack.SINGLE_ITEM_CODEC,
@@ -108,7 +108,7 @@ public class ProcessingOutput {
 		)
 	);
 
-	@ScheduledForRemoval(inVersion = "1.21.7 Port")
+	@ScheduledForRemoval(inVersion = "1.21.1+ Port")
 	@Deprecated(since = "6.0.3", forRemoval = true)
 	public static final Codec<ProcessingOutput> CODEC_OLD = RecordCodecBuilder.create(i -> i.group(
 		ITEM_CODEC_OLD.fieldOf("item").forGetter(s -> s.datagenOutput != null ? Either.right(Pair.of(s.datagenOutput, s.count)) : Either.left(s.item.getDefaultInstance())),
@@ -138,7 +138,7 @@ public class ProcessingOutput {
 		compat -> new ProcessingOutput(compat, count, chance)
 	)));
 
-	@ScheduledForRemoval(inVersion = "1.21.7 Port")
+	@ScheduledForRemoval(inVersion = "1.21.1+ Port")
 	@Deprecated(since = "6.0.3", forRemoval = true)
 	public static final Codec<ProcessingOutput> CODEC = Codec.withAlternative(CODEC_NEW, CODEC_OLD);
 

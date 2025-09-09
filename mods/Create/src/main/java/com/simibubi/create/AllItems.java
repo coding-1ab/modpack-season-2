@@ -3,16 +3,15 @@ package com.simibubi.create;
 import static com.simibubi.create.AllTags.AllItemTags.CREATE_INGOTS;
 import static com.simibubi.create.AllTags.AllItemTags.CRUSHED_RAW_MATERIALS;
 import static com.simibubi.create.AllTags.AllItemTags.PLATES;
-import static com.simibubi.create.AllTags.commonItemTag;
-import static com.simibubi.create.foundation.data.recipe.CompatMetals.ALUMINUM;
-import static com.simibubi.create.foundation.data.recipe.CompatMetals.LEAD;
-import static com.simibubi.create.foundation.data.recipe.CompatMetals.NICKEL;
-import static com.simibubi.create.foundation.data.recipe.CompatMetals.OSMIUM;
-import static com.simibubi.create.foundation.data.recipe.CompatMetals.PLATINUM;
-import static com.simibubi.create.foundation.data.recipe.CompatMetals.QUICKSILVER;
-import static com.simibubi.create.foundation.data.recipe.CompatMetals.SILVER;
-import static com.simibubi.create.foundation.data.recipe.CompatMetals.TIN;
-import static com.simibubi.create.foundation.data.recipe.CompatMetals.URANIUM;
+import static com.simibubi.create.foundation.data.recipe.CommonMetal.ALUMINUM;
+import static com.simibubi.create.foundation.data.recipe.CommonMetal.LEAD;
+import static com.simibubi.create.foundation.data.recipe.CommonMetal.NICKEL;
+import static com.simibubi.create.foundation.data.recipe.CommonMetal.OSMIUM;
+import static com.simibubi.create.foundation.data.recipe.CommonMetal.PLATINUM;
+import static com.simibubi.create.foundation.data.recipe.CommonMetal.QUICKSILVER;
+import static com.simibubi.create.foundation.data.recipe.CommonMetal.SILVER;
+import static com.simibubi.create.foundation.data.recipe.CommonMetal.TIN;
+import static com.simibubi.create.foundation.data.recipe.CommonMetal.URANIUM;
 
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.api.data.datamaps.BlazeBurnerFuel;
@@ -63,7 +62,7 @@ import com.simibubi.create.content.trains.schedule.ScheduleItem;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BuilderTransformers;
 import com.simibubi.create.foundation.data.CreateRegistrate;
-import com.simibubi.create.foundation.data.recipe.CompatMetals;
+import com.simibubi.create.foundation.data.recipe.CommonMetal;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.TagDependentIngredientItem;
 import com.tterrag.registrate.builders.ItemBuilder;
@@ -95,22 +94,21 @@ public class AllItems {
 	}
 
 	public static final ItemEntry<Item>
-		WHEAT_FLOUR = taggedIngredient("wheat_flour", commonItemTag("flours/wheat"), commonItemTag("flours")),
-		DOUGH = taggedIngredient("dough", commonItemTag("doughs"), commonItemTag("doughs/wheat")),
+		WHEAT_FLOUR = taggedIngredient("wheat_flour", AllItemTags.WHEAT_FLOURS.tag, AllItemTags.FLOURS.tag),
+		DOUGH = taggedIngredient("dough", AllItemTags.DOUGHS.tag, AllItemTags.WHEAT_DOUGHS.tag),
 		CINDER_FLOUR = ingredient("cinder_flour"), ROSE_QUARTZ = ingredient("rose_quartz"),
 		POLISHED_ROSE_QUARTZ = ingredient("polished_rose_quartz"), POWDERED_OBSIDIAN = ingredient("powdered_obsidian"),
-		STURDY_SHEET = taggedIngredient("sturdy_sheet", commonItemTag("plates/obsidian"), PLATES.tag),
+		STURDY_SHEET = taggedIngredient("sturdy_sheet", AllItemTags.OBSIDIAN_PLATES.tag, PLATES.tag),
 		PROPELLER = ingredient("propeller"), WHISK = ingredient("whisk"), BRASS_HAND = ingredient("brass_hand"),
 		CRAFTER_SLOT_COVER = ingredient("crafter_slot_cover"), ELECTRON_TUBE = ingredient("electron_tube"),
 		TRANSMITTER = ingredient("transmitter"), PULP = ingredient("pulp");
 
 	public static final ItemEntry<Item> CARDBOARD = REGISTRATE.item("cardboard", Item::new)
-		.tag(commonItemTag("plates/cardboard"), PLATES.tag)
+		.tag(AllItemTags.CARDBOARD_PLATES.tag, PLATES.tag)
 		.burnTime(1000)
 		.register();
 
 	public static final ItemEntry<SequencedAssemblyItem>
-
 		INCOMPLETE_PRECISION_MECHANISM = sequencedIngredient("incomplete_precision_mechanism"),
 		INCOMPLETE_REINFORCED_SHEET = sequencedIngredient("unprocessed_obsidian_sheet"),
 		INCOMPLETE_TRACK = sequencedIngredient("incomplete_track");
@@ -135,7 +133,7 @@ public class AllItems {
 			.register();
 
 	public static final ItemEntry<Item> BAR_OF_CHOCOLATE = REGISTRATE.item("bar_of_chocolate", Item::new)
-		.tag(Items.FOODS, AllTags.commonItemTag("foods/chocolate"))
+		.tag(Items.FOODS, AllItemTags.FOODS_CHOCOLATE.tag)
 		.properties(p -> p.food(new FoodProperties.Builder().nutrition(6)
 			.saturationModifier(0.3F)
 			.build()))
@@ -164,7 +162,7 @@ public class AllItems {
 		.register();
 
 	public static final ItemEntry<BuildersTeaItem> BUILDERS_TEA = REGISTRATE.item("builders_tea", BuildersTeaItem::new)
-		.tag(AllItemTags.UPRIGHT_ON_BELT.tag, Items.FOODS, Items.DRINKS, AllTags.commonItemTag("drinks/tea"))
+		.tag(AllItemTags.UPRIGHT_ON_BELT.tag, Items.FOODS, Items.DRINKS, AllItemTags.DRINKS_TEA.tag)
 		.properties(p -> p
 			.stacksTo(16)
 			.food(new FoodProperties.Builder()
@@ -187,11 +185,11 @@ public class AllItems {
 			.register();
 
 	public static final ItemEntry<Item> RAW_ZINC =
-		taggedIngredient("raw_zinc", commonItemTag("raw_materials/zinc"), commonItemTag("raw_materials"));
+		taggedIngredient("raw_zinc", CommonMetal.ZINC.rawOres, Items.RAW_MATERIALS);
 
 	public static final ItemEntry<Item> ANDESITE_ALLOY = taggedIngredient("andesite_alloy", CREATE_INGOTS.tag),
-		ZINC_INGOT = taggedIngredient("zinc_ingot", commonItemTag("ingots/zinc"), CREATE_INGOTS.tag),
-		BRASS_INGOT = taggedIngredient("brass_ingot", commonItemTag("ingots/brass"), CREATE_INGOTS.tag);
+		ZINC_INGOT = taggedIngredient("zinc_ingot", CommonMetal.ZINC.ingots, CREATE_INGOTS.tag),
+		BRASS_INGOT = taggedIngredient("brass_ingot", CommonMetal.BRASS.ingots, CREATE_INGOTS.tag);
 
 	public static final ItemEntry<ChromaticCompoundItem> CHROMATIC_COMPOUND =
 		REGISTRATE.item("chromatic_compound", ChromaticCompoundItem::new)
@@ -209,10 +207,10 @@ public class AllItems {
 			.properties(p -> p.rarity(Rarity.UNCOMMON))
 			.register();
 
-	public static final ItemEntry<Item>
-		COPPER_NUGGET = taggedIngredient("copper_nugget", commonItemTag("nuggets/copper"), net.neoforged.neoforge.common.Tags.Items.NUGGETS),
-		ZINC_NUGGET = taggedIngredient("zinc_nugget", commonItemTag("nuggets/zinc"), net.neoforged.neoforge.common.Tags.Items.NUGGETS),
-		BRASS_NUGGET = taggedIngredient("brass_nugget", commonItemTag("nuggets/brass"), net.neoforged.neoforge.common.Tags.Items.NUGGETS);
+	public static final ItemEntry<Item> COPPER_NUGGET =
+		taggedIngredient("copper_nugget", CommonMetal.COPPER.nuggets, Tags.Items.NUGGETS),
+		ZINC_NUGGET = taggedIngredient("zinc_nugget", CommonMetal.ZINC.nuggets, Tags.Items.NUGGETS),
+		BRASS_NUGGET = taggedIngredient("brass_nugget", CommonMetal.BRASS.nuggets, Tags.Items.NUGGETS);
 
 	public static final ItemEntry<ExperienceNuggetItem> EXP_NUGGET =
 		REGISTRATE.item("experience_nugget", ExperienceNuggetItem::new)
@@ -221,11 +219,11 @@ public class AllItems {
 			.lang("Nugget of Experience")
 			.register();
 
-	public static final ItemEntry<Item>
-		COPPER_SHEET = taggedIngredient("copper_sheet", commonItemTag("plates/copper"), PLATES.tag),
-		BRASS_SHEET = taggedIngredient("brass_sheet", commonItemTag("plates/brass"), PLATES.tag),
-		IRON_SHEET = taggedIngredient("iron_sheet", commonItemTag("plates/iron"), PLATES.tag),
-		GOLDEN_SHEET = taggedIngredient("golden_sheet", commonItemTag("plates/gold"), PLATES.tag, ItemTags.PIGLIN_LOVED),
+	public static final ItemEntry<Item> COPPER_SHEET =
+		taggedIngredient("copper_sheet", CommonMetal.COPPER.plates, PLATES.tag),
+		BRASS_SHEET = taggedIngredient("brass_sheet", CommonMetal.BRASS.plates, PLATES.tag),
+		IRON_SHEET = taggedIngredient("iron_sheet", CommonMetal.IRON.plates, PLATES.tag),
+		GOLDEN_SHEET = taggedIngredient("golden_sheet", CommonMetal.GOLD.plates, PLATES.tag, ItemTags.PIGLIN_LOVED),
 
 	CRUSHED_IRON = taggedIngredient("crushed_raw_iron", CRUSHED_RAW_MATERIALS.tag),
 		CRUSHED_GOLD = taggedIngredient("crushed_raw_gold", CRUSHED_RAW_MATERIALS.tag, ItemTags.PIGLIN_LOVED),
@@ -314,14 +312,12 @@ public class AllItems {
 		.register();
 
 	public static final ItemEntry<? extends DivingHelmetItem>
-
-		COPPER_DIVING_HELMET =
-		REGISTRATE
-			.item("copper_diving_helmet",
-				p -> new DivingHelmetItem(AllArmorMaterials.COPPER, p, Create.asResource("copper_diving")))
-			.properties(p -> p.durability(Type.HELMET.getDurability(7)))
-			.tag(ItemTags.HEAD_ARMOR)
-			.register(),
+		COPPER_DIVING_HELMET = REGISTRATE
+		.item("copper_diving_helmet",
+			p -> new DivingHelmetItem(AllArmorMaterials.COPPER, p, Create.asResource("copper_diving")))
+		.properties(p -> p.durability(Type.HELMET.getDurability(7)))
+		.tag(ItemTags.HEAD_ARMOR)
+		.register(),
 
 	NETHERITE_DIVING_HELMET = REGISTRATE
 		.item("netherite_diving_helmet",
@@ -331,14 +327,12 @@ public class AllItems {
 		.register();
 
 	public static final ItemEntry<? extends DivingBootsItem>
-
-		COPPER_DIVING_BOOTS =
-		REGISTRATE
-			.item("copper_diving_boots",
-				p -> new DivingBootsItem(AllArmorMaterials.COPPER, p, Create.asResource("copper_diving")))
-			.properties(p -> p.durability(Type.BOOTS.getDurability(7)))
-			.tag(ItemTags.FOOT_ARMOR)
-			.register(),
+		COPPER_DIVING_BOOTS = REGISTRATE
+		.item("copper_diving_boots",
+			p -> new DivingBootsItem(AllArmorMaterials.COPPER, p, Create.asResource("copper_diving")))
+		.properties(p -> p.durability(Type.BOOTS.getDurability(7)))
+		.tag(ItemTags.FOOT_ARMOR)
+		.register(),
 
 	NETHERITE_DIVING_BOOTS = REGISTRATE
 		.item("netherite_diving_boots",
@@ -358,21 +352,23 @@ public class AllItems {
 		.clientExtension(() -> () -> new CardboardArmorStealthOverlay())
 		.register(),
 
-	CARDBOARD_CHESTPLATE = REGISTRATE.item("cardboard_chestplate", p -> new CardboardArmorItem(ArmorItem.Type.CHESTPLATE, p))
-		.properties(p -> p.durability(Type.CHESTPLATE.getDurability(4)))
-		.tag(ItemTags.CHEST_ARMOR)
-		.burnTime(1000)
-		.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
-		.model(TrimmableArmorModelGenerator::generate)
-		.register(),
+	CARDBOARD_CHESTPLATE =
+		REGISTRATE.item("cardboard_chestplate", p -> new CardboardArmorItem(ArmorItem.Type.CHESTPLATE, p))
+			.properties(p -> p.durability(Type.CHESTPLATE.getDurability(4)))
+			.tag(ItemTags.CHEST_ARMOR)
+			.burnTime(1000)
+			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+			.model(TrimmableArmorModelGenerator::generate)
+			.register(),
 
-	CARDBOARD_LEGGINGS = REGISTRATE.item("cardboard_leggings", p -> new CardboardArmorItem(ArmorItem.Type.LEGGINGS, p))
-		.properties(p -> p.durability(Type.LEGGINGS.getDurability(4)))
-		.tag(ItemTags.LEG_ARMOR)
-		.burnTime(1000)
-		.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
-		.model(TrimmableArmorModelGenerator::generate)
-		.register(),
+	CARDBOARD_LEGGINGS =
+		REGISTRATE.item("cardboard_leggings", p -> new CardboardArmorItem(ArmorItem.Type.LEGGINGS, p))
+			.properties(p -> p.durability(Type.LEGGINGS.getDurability(4)))
+			.tag(ItemTags.LEG_ARMOR)
+			.burnTime(1000)
+			.onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "item.create.cardboard_armor"))
+			.model(TrimmableArmorModelGenerator::generate)
+			.register(),
 
 	CARDBOARD_BOOTS = REGISTRATE.item("cardboard_boots", p -> new CardboardArmorItem(ArmorItem.Type.BOOTS, p))
 		.properties(p -> p.durability(Type.BOOTS.getDurability(4)))
@@ -394,7 +390,7 @@ public class AllItems {
 	public static final ItemEntry<WrenchItem> WRENCH = REGISTRATE.item("wrench", WrenchItem::new)
 		.properties(p -> p.stacksTo(1))
 		.model(AssetLookup.itemModelWithPartials())
-		.tag(AllItemTags.WRENCH.tag)
+		.tag(Items.TOOLS_WRENCH)
 		.register();
 
 	public static final ItemEntry<MinecartContraptionItem> MINECART_CONTRAPTION =
@@ -523,11 +519,10 @@ public class AllItems {
 			.register();
 	}
 
-	private static ItemEntry<TagDependentIngredientItem> compatCrushedOre(CompatMetals metal) {
-		String metalName = metal.getName();
+	private static ItemEntry<TagDependentIngredientItem> compatCrushedOre(CommonMetal metal) {
 		return REGISTRATE
-			.item("crushed_raw_" + metalName,
-				props -> new TagDependentIngredientItem(props, AllTags.commonItemTag("ores/" + metalName)))
+			.item("crushed_raw_" + metal,
+				props -> new TagDependentIngredientItem(props, metal.ores.items()))
 			.tag(CRUSHED_RAW_MATERIALS.tag)
 			.register();
 	}
