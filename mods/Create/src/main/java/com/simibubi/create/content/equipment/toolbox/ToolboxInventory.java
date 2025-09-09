@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-
 import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 import org.jetbrains.annotations.NotNull;
 
@@ -188,7 +186,7 @@ public class ToolboxInventory extends ItemStackHandler {
 		super.deserializeNBT(registries, nbt);
 	}
 
-	public ItemStack distributeToCompartment(@Nonnull ItemStack stack, int compartment, boolean simulate) {
+	public ItemStack distributeToCompartment(@NotNull ItemStack stack, int compartment, boolean simulate) {
 		if (stack.isEmpty())
 			return stack;
 		if (filters.get(compartment)

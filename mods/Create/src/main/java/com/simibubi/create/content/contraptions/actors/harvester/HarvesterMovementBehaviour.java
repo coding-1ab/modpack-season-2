@@ -1,6 +1,6 @@
 package com.simibubi.create.content.contraptions.actors.harvester;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
 

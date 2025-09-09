@@ -2,7 +2,7 @@ package com.simibubi.create.content.contraptions.mounted;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 

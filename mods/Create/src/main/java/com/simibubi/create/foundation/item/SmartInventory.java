@@ -3,8 +3,6 @@ package com.simibubi.create.foundation.item;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-
 import org.jetbrains.annotations.NotNull;
 
 import com.simibubi.create.foundation.blockEntity.ItemHandlerContainer;
@@ -127,7 +125,7 @@ public class SmartInventory extends ItemHandlerContainer
 		((SyncedStackHandler) inv).setStackInSlot(slot, stack);
 	}
 
-	public int getStackLimit(int slot, @Nonnull ItemStack stack) {
+	public int getStackLimit(int slot, @NotNull ItemStack stack) {
 		return Math.min(getSlotLimit(slot), stack.getMaxStackSize());
 	}
 

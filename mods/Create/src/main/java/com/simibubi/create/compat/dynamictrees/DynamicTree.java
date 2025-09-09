@@ -2,7 +2,7 @@ package com.simibubi.create.compat.dynamictrees;
 
 import java.util.function.BiConsumer;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.foundation.utility.AbstractBlockBreakQueue;
 

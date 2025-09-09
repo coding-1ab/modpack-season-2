@@ -1,6 +1,6 @@
 package com.simibubi.create.content.equipment.bell;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.foundation.block.IBE;

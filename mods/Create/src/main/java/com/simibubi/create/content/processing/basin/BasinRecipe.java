@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
@@ -225,7 +225,7 @@ public class BasinRecipe extends StandardProcessingRecipe<RecipeInput> {
 	}
 
 	@Override
-	public boolean matches(RecipeInput input, @Nonnull Level worldIn) {
+	public boolean matches(RecipeInput input, @NotNull Level worldIn) {
 		return false;
 	}
 
