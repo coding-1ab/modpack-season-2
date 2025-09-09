@@ -1530,6 +1530,7 @@
   "create.linked_controller.frequency_slot_2": "Keybind: %1$s, Freq. #2",
   "create.linked_controller.key_bound": "Frequency bound to %1$s",
   "create.linked_controller.press_keybind": "Press %1$s, %2$s, %3$s, %4$s, %5$s or %6$s, to bind this frequency to the respective key",
+  "create.logistically_linked.cleared": "Cleared connection to network",
   "create.logistically_linked.connected": "Connected to existing network successfully",
   "create.logistically_linked.new_network_started": "New link network started",
   "create.logistically_linked.protected": "Logistics Network is Protected",
