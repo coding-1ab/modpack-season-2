@@ -34,6 +34,7 @@ public class CEIClient {
         // or when PartialModelEventHandler#onRegisterAdditional triggered,
         // PartialModel.ALL won't include all partial model in 'some cases'
         // AllPartialModels#ini does not do this since AllPartialModels is already triggered at AllBlocks.TRACK
+        // Issue: https://github.com/Creators-of-Create/Create/issues/8259
         CEIPartialModels.register();
         modBus.addListener(CEIClient::setup);
     }
