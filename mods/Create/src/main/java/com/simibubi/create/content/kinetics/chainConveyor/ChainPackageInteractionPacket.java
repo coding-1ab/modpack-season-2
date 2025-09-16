@@ -72,11 +72,19 @@ public class ChainPackageInteractionPacket extends BlockEntityConfigurationPacke
 				best = liftPackage;
 			}
 
-			if (player.getMainHandItem().isEmpty()) {
-				player.setItemInHand(InteractionHand.MAIN_HAND, best.item.copy());
-			} else {
-				player.getInventory().placeItemBackInInventory(best.item.copy());
+			if (best == null)
+				return;
+
+			if (player.isHolding(stack -> stack.isEmpty())) {
+				if (player.getMainHandItem().isEmpty()) {
+					player.setItemInHand(InteractionHand.MAIN_HAND, best.item.copy());
+				} else {
+					player.setItemInHand(InteractionHand.OFF_HAND, best.item.copy());
+				}
 			}
+			else
+				player.getInventory()
+					.placeItemBackInInventory(best.item.copy());
 
 			list.remove(best);
 			be.sendData();
@@ -86,12 +94,15 @@ public class ChainPackageInteractionPacket extends BlockEntityConfigurationPacke
 				return;
 			}
 
-			if (!player.isCreative()) {
-				player.getMainHandItem().shrink(1);
+		if (!player.isCreative()) {
+			player.getMainHandItem().shrink(1);
+			player.getOffhandItem().shrink(1);
+			if (player.isHolding(stack -> stack.isEmpty())) { 
 				if (player.getMainHandItem().isEmpty()) {
 					player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+				} else {
+					player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
 				}
-			}
 
 			if (selectedConnection.equals(BlockPos.ZERO)) {
 				be.addLoopingPackage(chainConveyorPackage);
