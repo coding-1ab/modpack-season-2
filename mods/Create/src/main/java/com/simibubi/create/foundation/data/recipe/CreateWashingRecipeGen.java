@@ -135,9 +135,4 @@ public final class CreateWashingRecipeGen extends WashingRecipeGen {
 		}
 		return null;
 	}
-
-	public GeneratedRecipe simpleModded(Mods mod, String input, String output) {
-		return create(mod.getId() + "/" + output, b -> b.require(mod, input)
-			.output(mod, output).whenModLoaded(mod.getId()));
-	}
 }

@@ -2,16 +2,15 @@ package com.simibubi.create.foundation.data.recipe;
 
 import java.util.function.Consumer;
 
+import com.simibubi.create.api.data.recipe.DatagenMod;
 import com.simibubi.create.Create;
-
-import net.minecraft.resources.ResourceLocation;
 
 /**
  * A helper class for mods that Create has built in compatibility for.
  * Not considered part of Create's API, addons wishing to add to this should make
  * their own instead, with their own helper methods in the generation classes.
  */
-public enum Mods {
+public enum Mods implements DatagenMod {
 	VANILLA("minecraft"),
 	CREATE(Create.ID),
 
@@ -80,9 +79,9 @@ public enum Mods {
 
 	private final String id;
 
-	public boolean reversedMetalPrefix;
-	public boolean strippedIsSuffix;
-	public boolean omitWoodSuffix;
+	private boolean reversedMetalPrefix;
+	private boolean strippedIsSuffix;
+	private boolean omitWoodSuffix;
 
 	private Mods(String id) {
 		this(id, b -> {
@@ -94,32 +93,24 @@ public enum Mods {
 		this.id = id;
 	}
 
-	public ResourceLocation ingotOf(String type) {
-		return new ResourceLocation(id, reversedMetalPrefix ? "ingot_" + type : type + "_ingot");
-	}
-
-	public ResourceLocation nuggetOf(String type) {
-		return new ResourceLocation(id, reversedMetalPrefix ? "nugget_" + type : type + "_nugget");
-	}
-
-	public ResourceLocation oreOf(String type) {
-		return new ResourceLocation(id, reversedMetalPrefix ? "ore_" + type : type + "_ore");
-	}
-
-	public ResourceLocation deepslateOreOf(String type) {
-		return new ResourceLocation(id, reversedMetalPrefix ? "deepslate_ore_" + type : "deepslate_" + type + "_ore");
-	}
-
-	public ResourceLocation asResource(String id) {
-		return new ResourceLocation(this.id, id);
-	}
-
-	public String recipeId(String id) {
-		return "compat/" + this.id + "/" + id;
-	}
-
+	@Override
 	public String getId() {
 		return id;
+	}
+
+	@Override
+	public boolean reversedMetalPrefix() {
+		return reversedMetalPrefix;
+	}
+
+	@Override
+	public boolean strippedIsSuffix() {
+		return strippedIsSuffix;
+	}
+
+	@Override
+	public boolean omitWoodSuffix() {
+		return omitWoodSuffix;
 	}
 
 	class Builder {
