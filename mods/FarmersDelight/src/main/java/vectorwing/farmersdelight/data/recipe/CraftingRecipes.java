@@ -678,6 +678,24 @@ public class CraftingRecipes
 				.unlockedBy("has_chocolate_pie_slice", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.CHOCOLATE_PIE_SLICE.get()))
 				.group("fd_chocolate_pie")
 				.save(consumer, new ResourceLocation(FarmersDelight.MODID, "chocolate_pie_from_slices"));
+		ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, Items.PUMPKIN_PIE, 2)
+				.pattern("cec")
+				.pattern("csc")
+				.pattern(" O ")
+				.define('c', ModItems.PUMPKIN_SLICE.get())
+				.define('e', ForgeTags.EGGS)
+				.define('s', Items.SUGAR)
+				.define('O', ModItems.PIE_CRUST.get())
+				.unlockedBy("has_pie_crust", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.PIE_CRUST.get()))
+				.group("fd_pumpkin_pie")
+				.save(consumer, new ResourceLocation(FarmersDelight.MODID, "pumpkin_pie_from_pie_crust"));
+		ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, Items.PUMPKIN_PIE, 1)
+				.pattern("##")
+				.pattern("##")
+				.define('#', ModItems.PUMPKIN_PIE_SLICE.get())
+				.unlockedBy("has_pumpkin_pie_slice", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.PUMPKIN_PIE_SLICE.get()))
+				.group("fd_pumpkin_pie")
+				.save(consumer, new ResourceLocation(FarmersDelight.MODID, "pumpkin_pie_from_slices"));
 	}
 
 	private static void recipesCraftedMeals(Consumer<FinishedRecipe> consumer) {

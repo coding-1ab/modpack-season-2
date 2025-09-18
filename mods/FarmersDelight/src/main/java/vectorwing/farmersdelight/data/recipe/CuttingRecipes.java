@@ -106,6 +106,8 @@ public class CuttingRecipes
 				.save(consumer);
 		CuttingBoardRecipeBuilder.cuttingRecipe(Ingredient.of(ModItems.CHOCOLATE_PIE.get()), Ingredient.of(ForgeTags.TOOLS_KNIVES), ModItems.CHOCOLATE_PIE_SLICE.get(), 4)
 				.save(consumer);
+		CuttingBoardRecipeBuilder.cuttingRecipe(Ingredient.of(Items.PUMPKIN_PIE), Ingredient.of(ForgeTags.TOOLS_KNIVES), ModItems.PUMPKIN_PIE_SLICE.get(), 4)
+				.save(consumer);
 	}
 
 	private static void cuttingFlowers(Consumer<FinishedRecipe> consumer) {
