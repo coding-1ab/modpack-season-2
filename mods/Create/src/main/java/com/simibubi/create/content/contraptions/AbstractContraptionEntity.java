@@ -754,7 +754,7 @@ public abstract class AbstractContraptionEntity extends Entity implements IEntit
 		StructureBlockInfo info = contraption.blocks.get(localPos);
 		contraption.blocks.put(localPos, new StructureBlockInfo(info.pos(), newState, info.nbt()));
 		if (info.state() != newState && !(newState.getBlock() instanceof SlidingDoorBlock))
-			contraption.invalidateClientContraption();
+			contraption.resetClientContraptionRenderLevel();
 		contraption.invalidateColliders();
 	}
 

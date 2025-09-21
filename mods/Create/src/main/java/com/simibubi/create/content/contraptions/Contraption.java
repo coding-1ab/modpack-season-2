@@ -62,7 +62,6 @@ import com.simibubi.create.content.contraptions.render.ClientContraption;
 import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlock;
 import com.simibubi.create.content.kinetics.base.BlockBreakingMovementBehaviour;
 import com.simibubi.create.content.kinetics.base.IRotate;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.BeltBlock;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import com.simibubi.create.content.kinetics.gantry.GantryShaftBlock;
@@ -108,7 +107,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DoorBlock;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -941,7 +939,6 @@ public abstract class Contraption {
 		blocks.clear();
 		updateTags.clear();
 		isLegacy.clear();
-		invalidateClientContraption();
 
 		HolderGetter<Block> holderGetter = world.holderLookup(Registries.BLOCK);
 		HashMapPalette<BlockState> palette = null;
@@ -979,48 +976,8 @@ public abstract class Contraption {
 			// This will be used when creating BlockEntities for the ClientContraption.
 			this.isLegacy.put(info.pos(), c.contains("Legacy"));
 		}
-	}
 
-	@Nullable
-	public BlockEntity readBlockEntity(Level level, StructureBlockInfo info, boolean legacy) {
-		BlockState state = info.state();
-		BlockPos pos = info.pos();
-		CompoundTag nbt = info.nbt();
-
-		if (legacy) {
-			// for contraptions that were assembled pre-updateTags, we need to use the old strategy.
-			if (nbt == null)
-				return null;
-
-			nbt.putInt("x", pos.getX());
-			nbt.putInt("y", pos.getY());
-			nbt.putInt("z", pos.getZ());
-
-			BlockEntity be = BlockEntity.loadStatic(pos, state, nbt);
-			postprocessReadBlockEntity(level, be, state);
-			return be;
-		}
-
-		if (!state.hasBlockEntity() || !(state.getBlock() instanceof EntityBlock entityBlock))
-			return null;
-
-		BlockEntity be = entityBlock.newBlockEntity(pos, state);
-		postprocessReadBlockEntity(level, be, state);
-		if (be != null && nbt != null) {
-			be.handleUpdateTag(nbt);
-		}
-
-		return be;
-	}
-
-	private static void postprocessReadBlockEntity(Level level, @Nullable BlockEntity be, BlockState blockState) {
-		if (be != null) {
-			be.setLevel(level);
-			be.setBlockState(blockState);
-			if (be instanceof KineticBlockEntity kbe) {
-				kbe.setSpeed(0);
-			}
-		}
+		resetClientContraptionRenderLevel();
 	}
 
 	private static StructureBlockInfo readStructureBlockInfo(CompoundTag blockListEntry,
@@ -1572,12 +1529,21 @@ public abstract class Contraption {
 		return new ClientContraption(this);
 	}
 
-	public void invalidateClientContraption() {
+	public void resetClientContraptionRenderLevel() {
 		var maybeNullClientContraption = this.clientContraption.getAcquire();
 
 		// Nothing to invalidate if it hasn't been created yet.
 		if (maybeNullClientContraption != null) {
-			maybeNullClientContraption.invalidate();
+			maybeNullClientContraption.resetRenderLevel();
+		}
+	}
+
+	public void invalidateClientContraptionRendering() {
+		var maybeNullClientContraption = this.clientContraption.getAcquire();
+
+		// Nothing to invalidate if it hasn't been created yet.
+		if (maybeNullClientContraption != null) {
+			maybeNullClientContraption.invalidateRendering();
 		}
 	}
 }

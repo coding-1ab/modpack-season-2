@@ -186,14 +186,6 @@ public class CarriageContraption extends Contraption {
 	}
 
 	@Override
-	public BlockEntity readBlockEntity(Level level, StructureBlockInfo info, boolean legacy) {
-		if (info.state().getBlock() instanceof AbstractBogeyBlock<?> bogey && !bogey.captureBlockEntityForTrain())
-			return null; // Bogeys are typically rendered by the carriage contraption, not the BE
-
-		return super.readBlockEntity(level, info, legacy);
-	}
-
-	@Override
 	public CompoundTag writeNBT(boolean spawnPacket) {
 		CompoundTag tag = super.writeNBT(spawnPacket);
 		NBTHelper.writeEnum(tag, "AssemblyDirection", getAssemblyDirection());
@@ -329,6 +321,14 @@ public class CarriageContraption extends Contraption {
 				}
 			});
 			return new RenderedBlocks(pos -> values.getOrDefault(pos, Blocks.AIR.defaultBlockState()), values.keySet());
+		}
+
+		@Override
+		public BlockEntity readBlockEntity(Level level, StructureBlockInfo info, boolean legacy) {
+			if (info.state().getBlock() instanceof AbstractBogeyBlock<?> bogey && !bogey.captureBlockEntityForTrain())
+				return null; // Bogeys are typically rendered by the carriage contraption, not the BE
+
+			return super.readBlockEntity(level, info, legacy);
 		}
 
 		@Override

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
 import com.simibubi.create.content.contraptions.Contraption;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
@@ -25,9 +26,12 @@ import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -76,15 +80,20 @@ public class ClientContraption {
 		return version;
 	}
 
-	public void invalidate() {
-		for (RenderType renderType : RenderType.chunkBufferLayers()) {
-			SuperByteBufferCache.getInstance().invalidate(CONTRAPTION, Pair.of(contraption, renderType));
-		}
-
+	public void resetRenderLevel() {
 		renderedBlockEntities.clear();
 		renderLevel.clear();
 
 		setupRenderLevelAndRenderedBlockEntities();
+
+		invalidateRendering();
+	}
+
+	public void invalidateRendering() {
+		for (RenderType renderType : RenderType.chunkBufferLayers()) {
+			SuperByteBufferCache.getInstance()
+				.invalidate(CONTRAPTION, Pair.of(contraption, renderType));
+		}
 
 		version++;
 	}
@@ -93,7 +102,7 @@ public class ClientContraption {
 		for (StructureBlockInfo info : contraption.getBlocks().values()) {
 			renderLevel.setBlock(info.pos(), info.state(), 0);
 
-			BlockEntity blockEntity = contraption.readBlockEntity(renderLevel, info, contraption.getIsLegacy().getBoolean(info.pos()));
+			BlockEntity blockEntity = readBlockEntity(renderLevel, info, contraption.getIsLegacy().getBoolean(info.pos()));
 
 			if (blockEntity != null) {
 				renderLevel.setBlockEntity(blockEntity);
@@ -107,6 +116,48 @@ public class ClientContraption {
 		}
 
 		renderLevel.runLightEngine();
+	}
+
+	@Nullable
+	public BlockEntity readBlockEntity(Level level, StructureBlockInfo info, boolean legacy) {
+		BlockState state = info.state();
+		BlockPos pos = info.pos();
+		CompoundTag nbt = info.nbt();
+
+		if (legacy) {
+			// for contraptions that were assembled pre-updateTags, we need to use the old strategy.
+			if (nbt == null)
+				return null;
+
+			nbt.putInt("x", pos.getX());
+			nbt.putInt("y", pos.getY());
+			nbt.putInt("z", pos.getZ());
+
+			BlockEntity be = BlockEntity.loadStatic(pos, state, nbt);
+			postprocessReadBlockEntity(level, be, state);
+			return be;
+		}
+
+		if (!state.hasBlockEntity() || !(state.getBlock() instanceof EntityBlock entityBlock))
+			return null;
+
+		BlockEntity be = entityBlock.newBlockEntity(pos, state);
+		postprocessReadBlockEntity(level, be, state);
+		if (be != null && nbt != null) {
+			be.handleUpdateTag(nbt);
+		}
+
+		return be;
+	}
+
+	protected static void postprocessReadBlockEntity(Level level, @Nullable BlockEntity be, BlockState blockState) {
+		if (be != null) {
+			be.setLevel(level);
+			be.setBlockState(blockState);
+			if (be instanceof KineticBlockEntity kbe) {
+				kbe.setSpeed(0);
+			}
+		}
 	}
 
 	public VirtualRenderWorld getRenderLevel() {
