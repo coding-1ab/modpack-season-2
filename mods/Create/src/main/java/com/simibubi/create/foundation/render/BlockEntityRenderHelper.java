@@ -16,7 +16,6 @@ import com.simibubi.create.infrastructure.config.AllConfigs;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import dev.engine_room.flywheel.lib.visualization.VisualizationHelper;
-import net.createmod.catnip.levelWrappers.SchematicLevel;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -26,7 +25,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.Vec3;
 
 public class BlockEntityRenderHelper {
 	/**
@@ -39,19 +37,6 @@ public class BlockEntityRenderHelper {
 	 */
 	public static void renderBlockEntities(List<BlockEntity> blockEntities, BitSet shouldRenderBEs, BitSet erroredBEsOut, @Nullable VirtualRenderWorld renderLevel, Level realLevel, PoseStack ms, @Nullable Matrix4f lightTransform, MultiBufferSource buffer,
 										   float pt) {
-		if (shouldRenderBEs.isEmpty()) {
-			return;
-		}
-
-		Vec3 cameraPos = Minecraft.getInstance()
-			.gameRenderer
-			.getMainCamera()
-			.getPosition();
-
-		if (realLevel instanceof SchematicLevel)
-			cameraPos = Vec3.ZERO;
-
-		// Main loop, time to render.
 		for (int i = shouldRenderBEs.nextSetBit(0); i >= 0 && i < blockEntities.size(); i = shouldRenderBEs.nextSetBit(i + 1)) {
 			BlockEntity blockEntity = blockEntities.get(i);
 			if (VisualizationManager.supportsVisualization(realLevel) && VisualizationHelper.skipVanillaRender(blockEntity))
@@ -65,8 +50,6 @@ public class BlockEntityRenderHelper {
 				erroredBEsOut.set(i);
 				continue;
 			}
-
-			if (renderLevel == null && !renderer.shouldRender(blockEntity, cameraPos)) continue;
 
 			BlockPos pos = blockEntity.getBlockPos();
 			ms.pushPose();
