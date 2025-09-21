@@ -1,13 +1,13 @@
 package com.simibubi.create.content.trains.entity;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.Unmodifiable;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllContraptionTypes;
@@ -303,6 +303,9 @@ public class CarriageContraption extends Contraption {
 	}
 
 	public class CarriageClientContraption extends ClientContraption {
+		// Parallel array to renderedBlockEntityView. Marks BEs that are outside the portal.
+		public final BitSet scratchBlockEntitiesOutsidePortal = new BitSet();
+
 		public CarriageClientContraption(CarriageContraption contraption) {
 			super(contraption);
 		}
@@ -332,16 +335,22 @@ public class CarriageContraption extends Contraption {
 		}
 
 		@Override
-		public @Unmodifiable List<BlockEntity> renderedBlockEntities() {
-			var renderedBlockEntities = super.renderedBlockEntities();
-
+		public BitSet getAndAdjustShouldRenderBlockEntities() {
 			if (notInPortal()) {
-				return renderedBlockEntities;
+				return super.getAndAdjustShouldRenderBlockEntities();
 			}
 
-			return renderedBlockEntities.stream()
-				.filter(be -> !isHiddenInPortal(be.getBlockPos()))
-				.toList();
+			scratchBlockEntitiesOutsidePortal.clear();
+			scratchBlockEntitiesOutsidePortal.or(shouldRenderBlockEntities);
+
+			for (var i = 0; i < renderedBlockEntityView.size(); i++) {
+				var be = renderedBlockEntityView.get(i);
+				if (isHiddenInPortal(be.getBlockPos())) {
+					scratchBlockEntitiesOutsidePortal.clear(i);
+				}
+			}
+
+			return scratchBlockEntitiesOutsidePortal;
 		}
 	}
 

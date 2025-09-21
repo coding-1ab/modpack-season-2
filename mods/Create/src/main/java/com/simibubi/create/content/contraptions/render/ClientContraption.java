@@ -1,13 +1,13 @@
 package com.simibubi.create.content.contraptions.render;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
@@ -51,7 +51,13 @@ public class ClientContraption {
 	 * All block entities are created with {@link #renderLevel} as their level.
 	 */
 	private final List<BlockEntity> renderedBlockEntities = new ArrayList<>();
-	private final List<BlockEntity> renderedBlockEntityView = Collections.unmodifiableList(renderedBlockEntities);
+	public final List<BlockEntity> renderedBlockEntityView = Collections.unmodifiableList(renderedBlockEntities);
+
+	// Parallel array to renderedBlockEntities, true if the block entity should be rendered.
+	public final BitSet shouldRenderBlockEntities = new BitSet();
+	// Parallel array to renderedBlockEntities. Scratch space for marking block entities that errored during rendering.
+	public final BitSet scratchErroredBlockEntities = new BitSet();
+
 	private final ContraptionMatrices matrices = new ContraptionMatrices();
 	private final Contraption contraption;
 	private int version = 0;
@@ -83,6 +89,7 @@ public class ClientContraption {
 	public void resetRenderLevel() {
 		renderedBlockEntities.clear();
 		renderLevel.clear();
+		shouldRenderBlockEntities.clear();
 
 		setupRenderLevelAndRenderedBlockEntities();
 
@@ -114,6 +121,8 @@ public class ClientContraption {
 				}
 			}
 		}
+
+		shouldRenderBlockEntities.set(0, renderedBlockEntities.size());
 
 		renderLevel.runLightEngine();
 	}
@@ -196,9 +205,13 @@ public class ClientContraption {
 		return renderLevel.getBlockEntity(localPos);
 	}
 
-	@Unmodifiable
-	public List<BlockEntity> renderedBlockEntities() {
-		return renderedBlockEntityView;
+	/**
+	 * Get the BitSet marking which block entities should be rendered, potentially with additional filtering.
+	 *
+	 * <p>Implementors: DO NOT modify {@link #shouldRenderBlockEntities} directly.
+	 */
+	public BitSet getAndAdjustShouldRenderBlockEntities() {
+		return shouldRenderBlockEntities;
 	}
 
 	public static SuperByteBuffer getBuffer(Contraption contraption, VirtualRenderWorld renderWorld, RenderType renderType) {

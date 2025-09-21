@@ -13,6 +13,7 @@ import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -57,9 +58,9 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity> exte
 		}
 
 		Level level = entity.level();
-		ClientContraption renderInfo = contraption.getOrCreateClientContraptionLazy();
-		VirtualRenderWorld renderWorld = renderInfo.getRenderLevel();
-		ContraptionMatrices matrices = renderInfo.getMatrices();
+		ClientContraption clientContraption = contraption.getOrCreateClientContraptionLazy();
+		VirtualRenderWorld renderWorld = clientContraption.getRenderLevel();
+		ContraptionMatrices matrices = clientContraption.getMatrices();
 		matrices.setup(poseStack, entity);
 
 		if (!VisualizationManager.supportsVisualization(level)) {
@@ -74,8 +75,13 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity> exte
 			}
 		}
 
-		BlockEntityRenderHelper.renderBlockEntities(level, renderWorld, renderInfo.renderedBlockEntities(),
-			matrices.getModelViewProjection(), matrices.getLight(), buffers);
+		var adjustRenderedBlockEntities = clientContraption.getAndAdjustShouldRenderBlockEntities();
+
+		clientContraption.scratchErroredBlockEntities.clear();
+
+		BlockEntityRenderHelper.renderBlockEntities(clientContraption.renderedBlockEntityView, adjustRenderedBlockEntities, clientContraption.scratchErroredBlockEntities, renderWorld, level, matrices.getModelViewProjection(), matrices.getLight(), buffers, AnimationTickHolder.getPartialTicks());
+
+		clientContraption.shouldRenderBlockEntities.andNot(clientContraption.scratchErroredBlockEntities);
 		renderActors(level, renderWorld, contraption, matrices, buffers);
 
 		matrices.clear();

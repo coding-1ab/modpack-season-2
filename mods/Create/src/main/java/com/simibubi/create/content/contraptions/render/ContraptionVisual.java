@@ -123,7 +123,7 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		// Setup child visuals.
 		children.forEach(BlockEntityVisual::delete);
 		children.clear();
-		for (BlockEntity be : clientContraption.renderedBlockEntities()) {
+		for (BlockEntity be : clientContraption.renderedBlockEntityView) {
 			setupVisualizer(be, partialTick);
 		}
 

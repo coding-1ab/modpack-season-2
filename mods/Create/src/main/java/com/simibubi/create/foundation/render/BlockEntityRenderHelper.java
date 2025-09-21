@@ -1,7 +1,7 @@
 package com.simibubi.create.foundation.render;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.BitSet;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -16,7 +16,6 @@ import com.simibubi.create.infrastructure.config.AllConfigs;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import dev.engine_room.flywheel.lib.visualization.VisualizationHelper;
-import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.Minecraft;
@@ -30,27 +29,19 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 
 public class BlockEntityRenderHelper {
-
-	public static void renderBlockEntities(Level world, Iterable<BlockEntity> customRenderBEs, PoseStack ms,
-										   MultiBufferSource buffer) {
-		renderBlockEntities(world, null, customRenderBEs, ms, null, buffer);
-	}
-
-	public static void renderBlockEntities(Level world, Iterable<BlockEntity> customRenderBEs, PoseStack ms,
-										   MultiBufferSource buffer, float pt) {
-		renderBlockEntities(world, null, customRenderBEs, ms, null, buffer, pt);
-	}
-
-	public static void renderBlockEntities(Level world, @Nullable VirtualRenderWorld renderWorld,
-										   Iterable<BlockEntity> customRenderBEs, PoseStack ms, @Nullable Matrix4f lightTransform, MultiBufferSource buffer) {
-		renderBlockEntities(world, renderWorld, customRenderBEs, ms, lightTransform, buffer,
-			AnimationTickHolder.getPartialTicks());
-	}
-
-	public static void renderBlockEntities(Level realLevel, @Nullable VirtualRenderWorld renderLevel,
-										   Iterable<BlockEntity> customRenderBEs, PoseStack ms, @Nullable Matrix4f lightTransform, MultiBufferSource buffer,
+	/**
+	 * Renders the given list of BlockEntities, skipping those not marked in shouldRenderBEs,
+	 * and marking those that error in erroredBEsOut.
+	 *
+	 * @param blockEntities The list of BlockEntities to render.
+	 * @param shouldRenderBEs A BitSet marking which BlockEntities in the list should be rendered. This will not be modified.
+	 * @param erroredBEsOut A BitSet to mark BlockEntities that error during rendering. This will be modified.
+	 */
+	public static void renderBlockEntities(List<BlockEntity> blockEntities, BitSet shouldRenderBEs, BitSet erroredBEsOut, @Nullable VirtualRenderWorld renderLevel, Level realLevel, PoseStack ms, @Nullable Matrix4f lightTransform, MultiBufferSource buffer,
 										   float pt) {
-		Set<BlockEntity> toRemove = new HashSet<>();
+		if (shouldRenderBEs.isEmpty()) {
+			return;
+		}
 
 		Vec3 cameraPos = Minecraft.getInstance()
 			.gameRenderer
@@ -61,7 +52,8 @@ public class BlockEntityRenderHelper {
 			cameraPos = Vec3.ZERO;
 
 		// Main loop, time to render.
-		for (BlockEntity blockEntity : customRenderBEs) {
+		for (int i = shouldRenderBEs.nextSetBit(0); i >= 0 && i < blockEntities.size(); i = shouldRenderBEs.nextSetBit(i + 1)) {
+			BlockEntity blockEntity = blockEntities.get(i);
 			if (VisualizationManager.supportsVisualization(realLevel) && VisualizationHelper.skipVanillaRender(blockEntity))
 				continue;
 
@@ -70,12 +62,11 @@ public class BlockEntityRenderHelper {
 				.getRenderer(blockEntity);
 			if (renderer == null) {
 				// Don't bother looping over it again if we can't do anything with it.
-				toRemove.add(blockEntity);
+				erroredBEsOut.set(i);
 				continue;
 			}
 
-			if (renderLevel == null && !renderer.shouldRender(blockEntity, cameraPos))
-				continue;
+			if (renderLevel == null && !renderer.shouldRender(blockEntity, cameraPos)) continue;
 
 			BlockPos pos = blockEntity.getBlockPos();
 			ms.pushPose();
@@ -97,10 +88,9 @@ public class BlockEntityRenderHelper {
 
 			} catch (Exception e) {
 				// Prevent this BE from causing more issues in the future.
-				toRemove.add(blockEntity);
+				erroredBEsOut.set(i);
 
-				String message = "BlockEntity " + CatnipServices.REGISTRIES.getKeyOrThrow(blockEntity.getType())
-					+ " could not be rendered virtually.";
+				String message = "BlockEntity " + CatnipServices.REGISTRIES.getKeyOrThrow(blockEntity.getType()) + " could not be rendered virtually.";
 				if (AllConfigs.client().explainRenderErrors.get()) Create.LOGGER.error(message, e);
 				else Create.LOGGER.error(message);
 			}
@@ -111,17 +101,6 @@ public class BlockEntityRenderHelper {
 		if (renderLevel != null) {
 			renderLevel.resetExternalLight();
 		}
-
-		// FIXME: reintroduce BE culling
-//		// And finally, cull any BEs that misbehaved.
-//		if (!toRemove.isEmpty()) {
-//			var it = customRenderBEs.iterator();
-//			while (it.hasNext()) {
-//				if (toRemove.contains(it.next())) {
-//					it.remove();
-//				}
-//			}
-//		}
 	}
 
 	private static BlockPos getLightPos(@Nullable Matrix4f lightTransform, BlockPos contraptionPos) {
