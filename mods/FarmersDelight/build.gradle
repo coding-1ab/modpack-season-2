@@ -139,6 +139,10 @@ dependencies {
 
 }
 
+processResources {
+    exclude ".cache"
+}
+
 jar {
     manifest {
         attributes([
