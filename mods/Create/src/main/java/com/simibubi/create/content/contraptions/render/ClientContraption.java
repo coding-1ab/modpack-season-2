@@ -60,7 +60,8 @@ public class ClientContraption {
 
 	private final ContraptionMatrices matrices = new ContraptionMatrices();
 	private final Contraption contraption;
-	private int version = 0;
+	private int structureVersion = 0;
+	private int childrenVersion = 0;
 
 	public ClientContraption(Contraption contraption) {
 		var level = contraption.entity.level();
@@ -82,8 +83,12 @@ public class ClientContraption {
 	/**
 	 * A version integer incremented each time the render level changes.
 	 */
-	public int version() {
-		return version;
+	public int structureVersion() {
+		return structureVersion;
+	}
+
+	public int childrenVersion() {
+		return childrenVersion;
 	}
 
 	public void resetRenderLevel() {
@@ -93,16 +98,21 @@ public class ClientContraption {
 
 		setupRenderLevelAndRenderedBlockEntities();
 
-		invalidateRendering();
+		invalidateStructure();
+		invalidateChildren();
 	}
 
-	public void invalidateRendering() {
+	public void invalidateChildren() {
+		childrenVersion++;
+	}
+
+	public void invalidateStructure() {
 		for (RenderType renderType : RenderType.chunkBufferLayers()) {
 			SuperByteBufferCache.getInstance()
 				.invalidate(CONTRAPTION, Pair.of(contraption, renderType));
 		}
 
-		version++;
+		structureVersion++;
 	}
 
 	private void setupRenderLevelAndRenderedBlockEntities() {

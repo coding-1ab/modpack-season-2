@@ -61,7 +61,8 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 	protected long minSection, maxSection;
 	protected long minBlock, maxBlock;
 
-	protected int lastClientContraptionVersion;
+	protected int lastStructureVersion;
+	protected int lastVersionChildren;
 
 	private final PoseStack contraptionMatrix = new PoseStack();
 
@@ -78,10 +79,11 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 
 		var clientContraption = contraption.getOrCreateClientContraptionLazy();
 
-		setup(contraption, clientContraption, partialTick);
+		setupStructure(clientContraption);
+		setupChildren(contraption, clientContraption, partialTick);
 	}
 
-	private void setup(Contraption contraption, ClientContraption clientContraption, float partialTick) {
+	private void setupStructure(ClientContraption clientContraption) {
 		var renderLevel = clientContraption.getRenderLevel();
 
 		RenderedBlocks blocks = clientContraption.getRenderedBlocks();
@@ -89,12 +91,12 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		BlockAndTintGetter modelWorld = new WrappedBlockAndTintGetter(renderLevel) {
 			@Override
 			public BlockState getBlockState(BlockPos pos) {
-				return blocks.lookup().apply(pos);
+				return blocks.lookup()
+					.apply(pos);
 			}
 		};
 
-		var model = new ForgeBlockModelBuilder(modelWorld, blocks.positions())
-			.modelDataLookup(clientContraption::getModelData)
+		var model = new ForgeBlockModelBuilder(modelWorld, blocks.positions()).modelDataLookup(clientContraption::getModelData)
 			.materialFunc((renderType, shaded) -> {
 				Material material = ModelUtil.getMaterial(renderType, shaded);
 				if (material != null && material.cardinalLightingMode() == CardinalLightingMode.ENTITY) {
@@ -120,12 +122,20 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 
 		structure.setChanged();
 
+		lastStructureVersion = clientContraption.structureVersion();
+	}
+
+	private void setupChildren(Contraption contraption, ClientContraption clientContraption, float partialTick) {
 		// Setup child visuals.
 		children.forEach(BlockEntityVisual::delete);
 		children.clear();
+		dynamicVisuals.clear();
+		tickableVisuals.clear();
 		for (BlockEntity be : clientContraption.renderedBlockEntityView) {
 			setupVisualizer(be, partialTick);
 		}
+
+		var renderLevel = clientContraption.getRenderLevel();
 
 		// Setup actor visuals.
 		actors.forEach(ActorVisual::delete);
@@ -134,7 +144,7 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 			setupActor(actor, renderLevel);
 		}
 
-		lastClientContraptionVersion = clientContraption.version();
+		lastVersionChildren = clientContraption.childrenVersion();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -157,7 +167,7 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		}
 	}
 
-	private void setupActor(MutablePair<StructureTemplate.StructureBlockInfo, MovementContext> actor, VirtualRenderWorld renderLevel) {
+	protected void setupActor(MutablePair<StructureTemplate.StructureBlockInfo, MovementContext> actor, VirtualRenderWorld renderLevel) {
 		MovementContext context = actor.getRight();
 		if (context == null) {
 			return;
@@ -191,11 +201,12 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 
 	@Override
 	public Plan<DynamicVisual.Context> planFrame() {
-		return NestedPlan.of(
-			RunnablePlan.of(this::beginFrame),
-			ForEachPlan.of(() -> actors, ActorVisual::beginFrame),
-			dynamicVisuals
-		);
+		// Must run beginFrame first to ensure changes to child visuals are picked up.
+		return RunnablePlan.of(this::beginFrame)
+			.then(NestedPlan.of(
+				ForEachPlan.of(() -> actors, ActorVisual::beginFrame),
+				dynamicVisuals
+			));
 	}
 
 	protected void beginFrame(DynamicVisual.Context context) {
@@ -212,9 +223,13 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 
 		var contraption = entity.getContraption();
 		var clientContraption = contraption.getOrCreateClientContraptionLazy();
-		if (this.lastClientContraptionVersion != clientContraption.version()) {
+		if (this.lastStructureVersion != clientContraption.structureVersion()) {
 			// The contraption has changed, we need to set up everything again.
-			setup(contraption, clientContraption, partialTick);
+			setupStructure(clientContraption);
+		}
+
+		if (this.lastVersionChildren != clientContraption.childrenVersion()) {
+			setupChildren(contraption, clientContraption, partialTick);
 		}
 	}
 

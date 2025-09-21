@@ -807,7 +807,9 @@ public class Carriage {
 			// Update the portal cutoff first to ensure it's reflected in the updated mesh.
 			entity.updateRenderedPortalCutoff();
 			entity.getContraption()
-				.invalidateClientContraptionRendering();
+				.invalidateClientContraptionStructure();
+			entity.getContraption()
+				.invalidateClientContraptionChildren();
 		}
 
 		private void createEntity(Level level, boolean loadPassengers) {

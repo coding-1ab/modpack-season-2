@@ -977,7 +977,7 @@ public abstract class Contraption {
 			this.isLegacy.put(info.pos(), c.contains("Legacy"));
 		}
 
-		resetClientContraptionRenderLevel();
+		resetClientContraption();
 	}
 
 	private static StructureBlockInfo readStructureBlockInfo(CompoundTag blockListEntry,
@@ -1529,7 +1529,10 @@ public abstract class Contraption {
 		return new ClientContraption(this);
 	}
 
-	public void resetClientContraptionRenderLevel() {
+	/**
+	 * Entirely reset the client contraption, rebuilding the client level and re-running light updates.
+	 */
+	public void resetClientContraption() {
 		var maybeNullClientContraption = this.clientContraption.getAcquire();
 
 		// Nothing to invalidate if it hasn't been created yet.
@@ -1538,12 +1541,27 @@ public abstract class Contraption {
 		}
 	}
 
-	public void invalidateClientContraptionRendering() {
+	/**
+	 * Invalidate the structure of the client contraption, triggering a rebuild of the main mesh.
+ 	 */
+	public void invalidateClientContraptionStructure() {
 		var maybeNullClientContraption = this.clientContraption.getAcquire();
 
 		// Nothing to invalidate if it hasn't been created yet.
 		if (maybeNullClientContraption != null) {
-			maybeNullClientContraption.invalidateRendering();
+			maybeNullClientContraption.invalidateStructure();
+		}
+	}
+
+	/**
+	 * Invalidate the children of the client contraption, triggering a rebuild of all child visuals.
+	 */
+	public void invalidateClientContraptionChildren() {
+		var maybeNullClientContraption = this.clientContraption.getAcquire();
+
+		// Nothing to invalidate if it hasn't been created yet.
+		if (maybeNullClientContraption != null) {
+			maybeNullClientContraption.invalidateChildren();
 		}
 	}
 }
