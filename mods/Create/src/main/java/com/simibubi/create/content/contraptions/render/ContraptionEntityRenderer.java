@@ -57,7 +57,7 @@ public class ContraptionEntityRenderer<C extends AbstractContraptionEntity> exte
 		}
 
 		Level level = entity.level();
-		ClientContraption renderInfo = contraption.getClientSideData();
+		ClientContraption renderInfo = contraption.getOrCreateClientContraptionLazy();
 		VirtualRenderWorld renderWorld = renderInfo.getRenderLevel();
 		ContraptionMatrices matrices = renderInfo.getMatrices();
 		matrices.setup(poseStack, entity);

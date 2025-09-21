@@ -1,16 +1,17 @@
 package com.simibubi.create.content.contraptions.render;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
 import com.simibubi.create.content.contraptions.Contraption;
-import com.simibubi.create.content.contraptions.Contraption.RenderedBlocks;
 import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
@@ -45,9 +46,11 @@ public class ClientContraption {
 	 * This will exclude e.g. drills and deployers which are rendered in contraptions as actors.
 	 * All block entities are created with {@link #renderLevel} as their level.
 	 */
-	private final ImmutableList<BlockEntity> renderedBlockEntities;
+	private final List<BlockEntity> renderedBlockEntities = new ArrayList<>();
+	private final List<BlockEntity> renderedBlockEntityView = Collections.unmodifiableList(renderedBlockEntities);
 	private final ContraptionMatrices matrices = new ContraptionMatrices();
 	private final Contraption contraption;
+	private int version = 0;
 
 	public ClientContraption(Contraption contraption) {
 		var level = contraption.entity.level();
@@ -63,8 +66,30 @@ public class ClientContraption {
 			}
 		};
 
-		var renderedBlockEntities = new ImmutableList.Builder<BlockEntity>();
+		setupRenderLevelAndRenderedBlockEntities();
+	}
 
+	/**
+	 * A version integer incremented each time the render level changes.
+	 */
+	public int version() {
+		return version;
+	}
+
+	public void invalidate() {
+		for (RenderType renderType : RenderType.chunkBufferLayers()) {
+			SuperByteBufferCache.getInstance().invalidate(CONTRAPTION, Pair.of(contraption, renderType));
+		}
+
+		renderedBlockEntities.clear();
+		renderLevel.clear();
+
+		setupRenderLevelAndRenderedBlockEntities();
+
+		version++;
+	}
+
+	private void setupRenderLevelAndRenderedBlockEntities() {
 		for (StructureBlockInfo info : contraption.getBlocks().values()) {
 			renderLevel.setBlock(info.pos(), info.state(), 0);
 
@@ -80,8 +105,6 @@ public class ClientContraption {
 				}
 			}
 		}
-
-		this.renderedBlockEntities = renderedBlockEntities.build();
 
 		renderLevel.runLightEngine();
 	}
@@ -124,17 +147,11 @@ public class ClientContraption {
 
 	@Unmodifiable
 	public List<BlockEntity> renderedBlockEntities() {
-		return renderedBlockEntities;
+		return renderedBlockEntityView;
 	}
 
 	public static SuperByteBuffer getBuffer(Contraption contraption, VirtualRenderWorld renderWorld, RenderType renderType) {
 		return SuperByteBufferCache.getInstance().get(CONTRAPTION, Pair.of(contraption, renderType), () -> buildStructureBuffer(contraption, renderWorld, renderType));
-	}
-
-	public static void invalidate(Contraption contraption) {
-		for (RenderType renderType : RenderType.chunkBufferLayers()) {
-			SuperByteBufferCache.getInstance().invalidate(CONTRAPTION, Pair.of(contraption, renderType));
-		}
 	}
 
 	private static SuperByteBuffer buildStructureBuffer(Contraption contraption, VirtualRenderWorld renderWorld, RenderType layer) {
@@ -144,7 +161,7 @@ public class ClientContraption {
 
 		PoseStack poseStack = objects.poseStack;
 		RandomSource random = objects.random;
-		var clientContraption = contraption.getClientSideData();
+		var clientContraption = contraption.getOrCreateClientContraptionLazy();
 		RenderedBlocks blocks = clientContraption.getRenderedBlocks();
 
 		ShadedBlockSbbBuilder sbbBuilder = objects.sbbBuilder;
@@ -176,5 +193,8 @@ public class ClientContraption {
 		public final PoseStack poseStack = new PoseStack();
 		public final RandomSource random = RandomSource.createNewThreadLocalInstance();
 		public final ShadedBlockSbbBuilder sbbBuilder = ShadedBlockSbbBuilder.create();
+	}
+
+	public record RenderedBlocks(Function<BlockPos, BlockState> lookup, Iterable<BlockPos> positions) {
 	}
 }

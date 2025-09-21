@@ -34,7 +34,7 @@ public abstract class MovingInteractionBehaviour {
 		contraptionEntity.getContraption().getActors().add(index, MutablePair.of(info, ctx));
 		if (contraptionEntity.level().isClientSide)
 			contraptionEntity.getContraption()
-				.invalidateClientData();
+				.invalidateClientContraption();
 	}
 
 	protected void setContraptionBlockData(AbstractContraptionEntity contraptionEntity, BlockPos pos,

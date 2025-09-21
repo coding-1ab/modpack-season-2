@@ -138,8 +138,6 @@ public class VirtualRenderWorld extends Level implements VisualizationLevel {
 		});
 
 		nonEmptyBlockCounts.clear();
-
-		runLightEngine();
 	}
 
 	public void setBlockEntities(Collection<BlockEntity> blockEntities) {

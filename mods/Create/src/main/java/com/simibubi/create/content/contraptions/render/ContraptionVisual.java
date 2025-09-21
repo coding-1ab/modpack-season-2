@@ -9,14 +9,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.Contraption;
-import com.simibubi.create.content.contraptions.Contraption.RenderedBlocks;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
+import com.simibubi.create.content.contraptions.render.ClientContraption.RenderedBlocks;
 import com.simibubi.create.foundation.utility.worldWrappers.WrappedBlockAndTintGetter;
 import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 
 import dev.engine_room.flywheel.api.material.CardinalLightingMode;
 import dev.engine_room.flywheel.api.material.Material;
-import dev.engine_room.flywheel.api.model.Model;
 import dev.engine_room.flywheel.api.task.Plan;
 import dev.engine_room.flywheel.api.visual.BlockEntityVisual;
 import dev.engine_room.flywheel.api.visual.DynamicVisual;
@@ -57,13 +56,12 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 	protected final PlanMap<DynamicVisual, DynamicVisual.Context> dynamicVisuals = new PlanMap<>();
 	protected final PlanMap<TickableVisual, TickableVisual.Context> tickableVisuals = new PlanMap<>();
 
-	// This will be reset when we detect an invalidation, so it's safe to hold the reference.
-	protected VirtualRenderWorld renderLevel;
-	protected Model model;
 	protected TransformedInstance structure;
 	protected SectionCollector sectionCollector;
 	protected long minSection, maxSection;
 	protected long minBlock, maxBlock;
+
+	protected int lastClientContraptionVersion;
 
 	private final PoseStack contraptionMatrix = new PoseStack();
 
@@ -78,14 +76,16 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		if (contraption == null)
 			return;
 
-		setup(contraption, partialTick);
+		var clientContraption = contraption.getOrCreateClientContraptionLazy();
+
+		setup(contraption, clientContraption, partialTick);
 	}
 
-	private void setup(Contraption contraption, float partialTick) {
-		var clientContraption = contraption.getClientSideData();
-		renderLevel = clientContraption.getRenderLevel();
+	private void setup(Contraption contraption, ClientContraption clientContraption, float partialTick) {
+		var renderLevel = clientContraption.getRenderLevel();
 
 		RenderedBlocks blocks = clientContraption.getRenderedBlocks();
+		// Must wrap the render level so that the differences between the contraption's actual structure and the rendered blocks are accounted for in e.g. ambient occlusion.
 		BlockAndTintGetter modelWorld = new WrappedBlockAndTintGetter(renderLevel) {
 			@Override
 			public BlockState getBlockState(BlockPos pos) {
@@ -93,7 +93,7 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 			}
 		};
 
-		model = new ForgeBlockModelBuilder(modelWorld, blocks.positions())
+		var model = new ForgeBlockModelBuilder(modelWorld, blocks.positions())
 			.modelDataLookup(clientContraption::getModelData)
 			.materialFunc((renderType, shaded) -> {
 				Material material = ModelUtil.getMaterial(renderType, shaded);
@@ -123,7 +123,7 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		// Setup child visuals.
 		children.forEach(BlockEntityVisual::delete);
 		children.clear();
-		for (BlockEntity be : contraption.getClientSideData().renderedBlockEntities()) {
+		for (BlockEntity be : clientContraption.renderedBlockEntities()) {
 			setupVisualizer(be, partialTick);
 		}
 
@@ -131,8 +131,10 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		actors.forEach(ActorVisual::delete);
 		actors.clear();
 		for (var actor : contraption.getActors()) {
-			setupActor(actor, partialTick);
+			setupActor(actor, renderLevel);
 		}
+
+		lastClientContraptionVersion = clientContraption.version();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -155,7 +157,7 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		}
 	}
 
-	private void setupActor(MutablePair<StructureTemplate.StructureBlockInfo, MovementContext> actor, float partialTick) {
+	private void setupActor(MutablePair<StructureTemplate.StructureBlockInfo, MovementContext> actor, VirtualRenderWorld renderLevel) {
 		MovementContext context = actor.getRight();
 		if (context == null) {
 			return;
@@ -209,10 +211,10 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		}
 
 		var contraption = entity.getContraption();
-		if (contraption.hasInvalidatedClientData()) {
-			setup(contraption, partialTick);
-
-			contraption.clearInvalidatedClientData();
+		var clientContraption = contraption.getOrCreateClientContraptionLazy();
+		if (this.lastClientContraptionVersion != clientContraption.version()) {
+			// The contraption has changed, we need to set up everything again.
+			setup(contraption, clientContraption, partialTick);
 		}
 	}
 

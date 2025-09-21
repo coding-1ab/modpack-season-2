@@ -50,7 +50,7 @@ public class BasinMovementBehaviour implements MovementBehaviour {
 		});
 		// FIXME: Why are we setting client-side data here?
 		if (context.contraption.entity.level().isClientSide) {
-			BlockEntity blockEntity = context.contraption.getClientSideData()
+			BlockEntity blockEntity = context.contraption.getOrCreateClientContraptionLazy()
 				.getBlockEntity(context.localPos);
 			if (blockEntity instanceof BasinBlockEntity)
 				((BasinBlockEntity) blockEntity).readOnlyItems(context.blockEntityData);

@@ -805,7 +805,7 @@ public class Carriage {
 		@OnlyIn(Dist.CLIENT)
 		private void invalidate(CarriageContraptionEntity entity) {
 			entity.getContraption()
-				.invalidateClientData();
+				.invalidateClientContraption();
 			entity.updateRenderedPortalCutoff();
 		}
 

@@ -19,7 +19,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
@@ -169,7 +168,6 @@ public abstract class Contraption {
 	// All client-only data should be encapsulated here.
 	// This field must be atomic as it is lazily constructed from both the render thread and flywheel executors.
 	private final AtomicReference<ClientContraption> clientContraption = new AtomicReference<>();
-	private boolean invalidatedClientData;
 
 	// Thin server and client side level used for generating optimized collision shapes.
 	protected ContraptionWorld collisionLevel;
@@ -943,7 +941,7 @@ public abstract class Contraption {
 		blocks.clear();
 		updateTags.clear();
 		isLegacy.clear();
-		invalidateClientData();
+		invalidateClientContraption();
 
 		HolderGetter<Block> holderGetter = world.holderLookup(Registries.BLOCK);
 		HashMapPalette<BlockState> palette = null;
@@ -1545,7 +1543,7 @@ public abstract class Contraption {
 		return false;
 	}
 
-	public ClientContraption getClientSideData() {
+	public final ClientContraption getOrCreateClientContraptionLazy() {
 		var out = clientContraption.getAcquire();
 		if (out == null) {
 			// Another thread may hit this block in the same moment.
@@ -1563,7 +1561,8 @@ public abstract class Contraption {
 
 	/**
 	 * Create a <em>new</em> {@link ClientContraption} instance.
-	 * This may be called many times, depending on how often the Contraption's client data gets invalidated.
+	 * This will only be called once, when the contraption first has its
+	 * animation processed by either the render thread or a flywheel executor thread.
 	 *
 	 * <p>Most contraptions will not need to implement this.
 	 * @return A new ClientContraption instance.
@@ -1573,21 +1572,12 @@ public abstract class Contraption {
 		return new ClientContraption(this);
 	}
 
-	public boolean hasInvalidatedClientData() {
-		return invalidatedClientData;
-	}
+	public void invalidateClientContraption() {
+		var maybeNullClientContraption = this.clientContraption.getAcquire();
 
-	public void invalidateClientData() {
-		this.invalidatedClientData = true;
-		// It may be good to persist the client contraption instance so we can hold on to existing BEs.
-		this.clientContraption.setRelease(null);
+		// Nothing to invalidate if it hasn't been created yet.
+		if (maybeNullClientContraption != null) {
+			maybeNullClientContraption.invalidate();
+		}
 	}
-
-	public void clearInvalidatedClientData() {
-		this.invalidatedClientData = false;
-	}
-
-	public record RenderedBlocks(Function<BlockPos, BlockState> lookup, Iterable<BlockPos> positions) {
-	}
-
 }
