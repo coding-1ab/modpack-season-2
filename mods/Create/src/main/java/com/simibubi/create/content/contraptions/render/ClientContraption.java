@@ -70,7 +70,7 @@ public class ClientContraption {
 		BlockPos origin = contraption.anchor;
 		int minY = VirtualRenderWorld.nextMultipleOf16(Mth.floor(contraption.bounds.minY - 1));
 		int height = VirtualRenderWorld.nextMultipleOf16(Mth.ceil(contraption.bounds.maxY + 1)) - minY;
-		renderLevel = new VirtualRenderWorld(level, minY, height, origin) {
+		renderLevel = new VirtualRenderWorld(level, minY, height, origin, this::invalidateStructure) {
 			@Override
 			public boolean supportsVisualization() {
 				return VisualizationManager.supportsVisualization(level);
