@@ -2,8 +2,6 @@ package com.simibubi.create.content.schematics.client;
 
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
@@ -69,7 +67,7 @@ public class SchematicHandler implements IGuiOverlay {
 	private ItemStack activeSchematicItem;
 	private AABBOutline outline;
 
-	private final @Nullable SchematicRenderer[] renderers = new SchematicRenderer[3];
+	private final SchematicRenderer[] renderers = new SchematicRenderer[3];
 	private final SchematicHotbarSlotOverlay overlay;
 	private ToolSelectionScreen selectionScreen;
 
@@ -236,18 +234,18 @@ public class SchematicHandler implements IGuiOverlay {
 			.getValue(pt) < 0;
 		boolean fb = transformation.getScaleFB()
 			.getValue(pt) < 0;
-		if (lr && !fb)
+		if (lr && !fb && renderers[2] != null) {
 			renderers[2].render(ms, buffer);
-		else if (fb && !lr)
+		} else if (fb && !lr && renderers[1] != null) {
 			renderers[1].render(ms, buffer);
-		else
+		} else if (renderers[0] != null) {
 			renderers[0].render(ms, buffer);
+		}
 
 		currentTool.getTool()
 			.renderOnSchematic(ms, buffer);
 
 		ms.popPose();
-
 	}
 
 	public void updateRenderers() {
