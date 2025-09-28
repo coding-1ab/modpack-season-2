@@ -35,6 +35,9 @@ public class CarriageContraptionVisual extends ContraptionVisual<CarriageContrap
 	public CarriageContraptionVisual(VisualizationContext context, CarriageContraptionEntity entity, float partialTick) {
 		super(context, entity, partialTick);
 
+		// An extra block because bogeys are always slightly outside the contraption bounds.
+		this.lightPaddingBlocks = DEFAULT_LIGHT_PADDING + 1;
+
 		this.contraption = (CarriageContraption) entity.getContraption();
 
 		animate(partialTick);
@@ -85,7 +88,6 @@ public class CarriageContraptionVisual extends ContraptionVisual<CarriageContrap
 				}
 			}
 
-			updateLight(pt);
 			return true;
 		}
 
@@ -130,16 +132,6 @@ public class CarriageContraptionVisual extends ContraptionVisual<CarriageContrap
 		}
 
 		poseStack.popPose();
-	}
-
-	@Override
-	public void updateLight(float partialTick) {
-		super.updateLight(partialTick);
-
-		for (int bogeyIdx = 0; bogeyIdx < numBogeys; bogeyIdx++) {
-			int packedLight = CarriageContraptionEntityRenderer.getBogeyLightCoords(entity, bogeys[bogeyIdx], partialTick);
-			visuals[bogeyIdx].updateLight(packedLight);
-		}
 	}
 
 	@Override
