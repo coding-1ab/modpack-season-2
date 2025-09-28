@@ -58,9 +58,9 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
                 .rotateX(-(float) xRot)
                 .uncenter();
 
-            ms.pushPose();
-            renderSegments(state, BnbPartialModels.GIRDER_STRUT_JOINT_SEGMENT, ms, 1, buffer, light);
-            ms.popPose();
+//            ms.pushPose();
+//            renderSegments(state, BnbPartialModels.GIRDER_STRUT_JOINT_SEGMENT, ms, 1, buffer, light);
+//            ms.popPose();
 
             ms.translate(0, 0, lengthOffset + 0.5); // Adjust the translation based on segment length
             if (getRenderPriority(relative) > getRenderPriority(relative.multiply(-1))) {

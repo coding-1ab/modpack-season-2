@@ -59,29 +59,7 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
         BlockEntity selfBe = level.getBlockEntity(pos);
         if (!(selfBe instanceof GirderStrutBlockEntity self)) return;
 
-        // Scan partner struts and link them, for now, in future the item directly presses it
 
-        for (int x = -MAX_SPAN; x <= MAX_SPAN; x++) {
-            for (int y = -MAX_SPAN; y <= MAX_SPAN; y++) {
-                for (int z = -MAX_SPAN; z <= MAX_SPAN; z++) {
-                    if (x == 0 && y == 0 && z == 0) continue;
-                    BlockPos scan = pos.offset(x, y, z);
-                    BlockState scanState = level.getBlockState(scan);
-                    if (scanState.getBlock() instanceof GirderStrutBlock) {
-                        BlockEntity otherBe = level.getBlockEntity(scan);
-                        if (otherBe instanceof GirderStrutBlockEntity other) {
-                            // avoid duplicate connection creation by only connecting when this pos is 'smaller' along direction
-                            if (!other.hasConnectionTo(pos)) {
-                                self.addConnection(scan);
-                                other.addConnection(pos);
-                                self.setChanged();
-                                other.setChanged();
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     @Override

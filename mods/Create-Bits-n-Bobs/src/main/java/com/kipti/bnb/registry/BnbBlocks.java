@@ -3,6 +3,7 @@ package com.kipti.bnb.registry;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.chair.ChairBlock;
 import com.kipti.bnb.content.girder_strut.GirderStrutBlock;
+import com.kipti.bnb.content.girder_strut.GirderStrutBlockItem;
 import com.kipti.bnb.content.light.founation.LightBlock;
 import com.kipti.bnb.content.light.headlamp.HeadlampBlock;
 import com.kipti.bnb.content.light.headlamp.HeadlampBlockItem;
@@ -202,7 +203,7 @@ public class BnbBlocks {
             (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
                 "block/girder_strut/normal_girder_strut_attachment")
             )))
-        .item()
+        .item(GirderStrutBlockItem::new)
         .model((c, p) ->
             p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/normal_girder_strut_attachment"))
         )
