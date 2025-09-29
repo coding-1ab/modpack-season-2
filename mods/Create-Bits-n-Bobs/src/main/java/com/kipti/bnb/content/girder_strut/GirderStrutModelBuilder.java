@@ -21,7 +21,7 @@ import java.util.List;
 public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
 
     private static final ModelProperty<GirderStrutModelData> GIRDER_PROPERTY = new ModelProperty<>();
-    private static final double SURFACE_OFFSET = 0.5 + 1e-3;
+    private static final double SURFACE_OFFSET = (6 / 16f) + 1e-3;
 
     public GirderStrutModelBuilder(BakedModel originalModel) {
         super(originalModel);

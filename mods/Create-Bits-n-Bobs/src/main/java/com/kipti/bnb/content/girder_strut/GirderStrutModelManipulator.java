@@ -55,7 +55,8 @@ final class GirderStrutModelManipulator {
         poseStack.translate(connection.start().x, connection.start().y, connection.start().z);
         poseStack.mulPose(new Quaternionf().rotationY(yRot));
         poseStack.mulPose(new Quaternionf().rotationX(-xRot));
-        poseStack.translate(-0.5f, -0.5f, -0.5f);
+        poseStack.translate(-0.5f, -0.5f, 0.0f);
+
 
         PoseStack.Pose last = poseStack.last();
         Matrix4f pose = new Matrix4f(last.pose());
