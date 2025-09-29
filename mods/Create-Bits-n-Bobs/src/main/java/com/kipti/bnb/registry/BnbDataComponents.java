@@ -2,6 +2,7 @@ package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.bus.api.IEventBus;
@@ -17,6 +18,11 @@ public class BnbDataComponents {
     public static final DataComponentType<BlockPos> GIRDER_STRUT_FROM = register(
         "girder_strut_from",
         builder -> builder.persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC)
+    );
+
+    public static final DataComponentType<Direction> GIRDER_STRUT_FROM_FACE = register(
+        "girder_strut_from_face",
+        builder -> builder.persistent(Direction.CODEC).networkSynchronized(Direction.STREAM_CODEC)
     );
 
     private static <T> DataComponentType<T> register(String name, UnaryOperator<DataComponentType.Builder<T>> builder) {

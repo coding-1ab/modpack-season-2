@@ -24,7 +24,7 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
     private static final VoxelShape SHAPE = Shapes.box(4 / 16d, 0, 4 / 16d, 12 / 16d, 12 / 16d, 12 / 16d);
-    private static final int MAX_SPAN = 6;
+    public static final int MAX_SPAN = 8;
 
     public GirderStrutBlock(Properties properties) {
         super(properties);
