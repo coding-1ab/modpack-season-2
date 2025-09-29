@@ -231,6 +231,11 @@ public class GirderStrutBlockItem extends BlockItem {
         }
         from.addConnection(targetPos);
         target.addConnection(fromPos);
+
+        BlockState updatedFromState = level.getBlockState(fromPos);
+        BlockState updatedTargetState = level.getBlockState(targetPos);
+        level.sendBlockUpdated(fromPos, updatedFromState, updatedFromState, Block.UPDATE_ALL);
+        level.sendBlockUpdated(targetPos, updatedTargetState, updatedTargetState, Block.UPDATE_ALL);
     }
 
     private boolean hasRequiredAnchors(Player player, ItemStack heldStack, int required) {

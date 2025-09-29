@@ -9,6 +9,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Block;
 
 import java.util.HashSet;
 import java.util.List;
@@ -23,17 +24,19 @@ public class GirderStrutBlockEntity extends SmartBlockEntity {
     }
 
     public void addConnection(BlockPos other) {
-        if (!other.equals(getBlockPos())) {
-            connections.add(other.immutable());
+        if (!other.equals(getBlockPos()) && connections.add(other.immutable())) {
             setChanged();
             sendData();
+            notifyModelChange();
         }
     }
 
     public void removeConnection(BlockPos pos) {
-        connections.remove(pos);
-        setChanged();
-        sendData();
+        if (connections.remove(pos)) {
+            setChanged();
+            sendData();
+            notifyModelChange();
+        }
     }
 
     public boolean hasConnectionTo(BlockPos pos) {
@@ -74,10 +77,22 @@ public class GirderStrutBlockEntity extends SmartBlockEntity {
                 }
             }
         }
+        if (clientPacket) {
+            notifyModelChange();
+        }
     }
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+    }
+
+    private void notifyModelChange() {
+        if (level != null) {
+            if (level.isClientSide) {
+                requestModelDataUpdate();
+            }
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        }
     }
 
 }
