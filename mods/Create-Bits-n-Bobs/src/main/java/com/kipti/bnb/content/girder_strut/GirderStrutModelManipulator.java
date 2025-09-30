@@ -55,7 +55,7 @@ final class GirderStrutModelManipulator {
         poseStack.translate(connection.start().x, connection.start().y, connection.start().z);
         poseStack.mulPose(new Quaternionf().rotationY(yRot));
         poseStack.mulPose(new Quaternionf().rotationX(-xRot));
-        poseStack.translate(-0.5f, -0.5f, 0.0f);
+        poseStack.translate(-0.5f, -0.5f, -0.5f);
 
 
         PoseStack.Pose last = poseStack.last();
@@ -244,9 +244,16 @@ final class GirderStrutModelManipulator {
                 return this;
             }
             if (maxZ <= minZ + EPSILON) {
-                return null;
+                float translation = maxZ - maxOriginalZ;
+                Vertex[] shifted = new Vertex[vertices.length];
+                for (int i = 0; i < vertices.length; i++) {
+                    Vertex vertex = vertices[i];
+                    Vector3f pos = new Vector3f(vertex.position()).add(0f, 0f, translation);
+                    shifted[i] = new Vertex(pos, new Vector3f(vertex.normal()), vertex.u(), vertex.v(), vertex.color(), vertex.light());
+                }
+                // Move the fully sliced quad back to the cut plane so the end face is preserved.
+                return new MeshQuad(shifted, sprite, nominalFace, tintIndex, shade);
             }
-
             List<Vertex> clipped = new ArrayList<>();
 
             for (int i = 0; i < vertices.length; i++) {

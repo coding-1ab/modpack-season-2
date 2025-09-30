@@ -12,6 +12,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.BakedModelWrapper;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
+import net.neoforged.neoforge.common.util.TriState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -57,6 +58,21 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
         return base;
     }
 
+    @Override
+    public TriState useAmbientOcclusion(BlockState state, ModelData data, RenderType renderType) {
+        return TriState.FALSE;
+    }
+
+    @Override
+    public boolean useAmbientOcclusion() {
+        return false;
+    }
+
+    @Override
+    public boolean usesBlockLight() {
+        return false;
+    }
+
     static final class GirderStrutModelData {
         private final List<GirderConnection> connections;
 
@@ -91,7 +107,7 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
                     continue;
                 }
                 Vec3 halfVector = span.scale(0.5);
-                double renderLength = halfVector.length();
+                double renderLength = halfVector.length() + 0.5f;
                 if (renderLength <= 1.0e-4) {
                     continue;
                 }
