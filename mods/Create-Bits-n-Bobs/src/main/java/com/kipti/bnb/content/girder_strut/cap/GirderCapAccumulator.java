@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -32,13 +33,11 @@ public final class GirderCapAccumulator {
                 continue;
             }
             CapSegment candidate = new CapSegment(start, end, tintIndex, shade);
-            if (!containsEquivalent(candidate)) {
-                segments.add(candidate);
-            }
+            segments.add(candidate);
         }
     }
 
-    public void emitCaps(Vector3f planeNormal, List<BakedQuad> consumer) {
+    public void emitCaps(Vector3f planePoint, Vector3f planeNormal, List<BakedQuad> consumer) {
         if (segments.isEmpty()) {
             return;
         }
@@ -47,84 +46,126 @@ public final class GirderCapAccumulator {
             return;
         }
         normal.normalize();
+        Vector3f point = new Vector3f(planePoint);
 
         TextureAtlasSprite stoneSprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stoneLocation);
 
-        List<CapVertex> uniqueVertices = new ArrayList<>();
-        List<LoopEdge> edges = new ArrayList<>();
+        List<List<CapVertex>> quads = new ArrayList<>();
 
-        for (CapSegment segment : segments) {
-            int startIndex = indexFor(uniqueVertices, segment.start());
-            int endIndex = indexFor(uniqueVertices, segment.end());
-            if (startIndex == endIndex) {
+        // Now, build quads by linking edges into loops
+        while (!segments.isEmpty()) {
+            CapSegment startEdge = segments.getFirst();
+            List<CapSegment> quad = new ArrayList<>();
+            List<CapVertex> quadVertices = new ArrayList<>();
+
+            quad.add(startEdge);
+            quadVertices.add(startEdge.start());
+            segments.removeFirst();
+
+            CapSegment walk = startEdge;
+            boolean found = true;
+            while (found) {
+                found = false;
+                @Nullable CapSegment toRemove = null;
+                for (CapSegment other : segments) {
+                    if (verticesEqual(walk.end(), other.start())) {
+                        toRemove = other;
+                        walk = other;
+                        quad.add(other);
+                        quadVertices.add(other.start());
+                        break;
+                    }
+                }
+                if (toRemove != null) {
+                    segments.remove(toRemove);
+                    found = true;
+                }
+            }
+
+            quads.add(quadVertices);
+        }
+
+        for (List<CapVertex> quadVertices : quads) {
+            if (quadVertices.size() < 3) {
                 continue;
             }
-            edges.add(new LoopEdge(startIndex, endIndex, segment.tintIndex(), segment.shade()));
+            emitLoop(quadVertices.stream().map(quadVertices::indexOf).toList(), quadVertices, quadVertices.get(0).color(), false, normal, point, stoneSprite, consumer);
         }
 
-        while (true) {
-            LoopEdge startEdge = findUnusedEdge(edges);
-            if (startEdge == null) {
-                break;
-            }
-
-            List<Integer> loop = new ArrayList<>();
-            loop.add(startEdge.start());
-            loop.add(startEdge.end());
-            startEdge.markUsed();
-
-            int tintIndex = startEdge.tintIndex();
-            boolean shade = startEdge.shade();
-            int current = startEdge.end();
-            boolean closed = false;
-
-            while (current != loop.get(0)) {
-                LoopEdge nextEdge = findAndUseEdge(edges, current);
-                if (nextEdge == null) {
-                    loop.clear();
-                    break;
-                }
-                int nextVertex = nextEdge.other(current);
-                loop.add(nextVertex);
-                current = nextVertex;
-                if (current == loop.get(0)) {
-                    closed = true;
-                }
-            }
-
-            if (closed && loop.size() > 2) {
-                loop.remove(loop.size() - 1);
-                emitLoop(loop, uniqueVertices, tintIndex, shade, normal, stoneSprite, consumer);
-            }
-        }
+//        for (CapSegment segment : segments) {
+//            int startIndex = indexFor(uniqueVertices, segment.start());
+//            int endIndex = indexFor(uniqueVertices, segment.end());
+//            if (startIndex == endIndex) {
+//                continue;
+//            }
+//            edges.add(new LoopEdge(startIndex, endIndex, segment.tintIndex(), segment.shade()));
+//        }
+//
+//        while (true) {
+//            LoopEdge startEdge = findUnusedEdge(edges);
+//            if (startEdge == null) {
+//                break;
+//            }
+//
+//            List<Integer> loop = new ArrayList<>();
+//            loop.add(startEdge.start());
+//            loop.add(startEdge.end());
+//            startEdge.markUsed();
+//
+//            int tintIndex = startEdge.tintIndex();
+//            boolean shade = startEdge.shade();
+//            int current = startEdge.end();
+//            boolean closed = false;
+//
+//            while (current != loop.get(0)) {
+//                LoopEdge nextEdge = findAndUseEdge(edges, current);
+//                if (nextEdge == null) {
+//                    loop.clear();
+//                    break;
+//                }
+//                int nextVertex = nextEdge.other(current);
+//                loop.add(nextVertex);
+//                current = nextVertex;
+//                if (current == loop.get(0)) {
+//                    closed = true;
+//                }
+//            }
+//
+//            if (closed && loop.size() > 2) {
+//                loop.remove(loop.size() - 1);
+//                emitLoop(loop, uniqueVertices, tintIndex, shade, normal, point, stoneSprite, consumer);
+//            }
+//        }
 
         segments.clear();
     }
 
-    private boolean containsEquivalent(CapSegment candidate) {
-        for (CapSegment existing : segments) {
-            if (verticesEqual(existing.start(), candidate.start()) && verticesEqual(existing.end(), candidate.end())) {
-                return true;
-            }
-            if (verticesEqual(existing.start(), candidate.end()) && verticesEqual(existing.end(), candidate.start())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private boolean verticesEqual(CapVertex a, CapVertex b) {
-        return GirderGeometry.positionsEqual(a.position(), b.position());
+        return positionsClose(a.position(), b.position());
     }
 
     private int indexFor(List<CapVertex> vertices, CapVertex vertex) {
         for (int i = 0; i < vertices.size(); i++) {
-            if (GirderGeometry.positionsEqual(vertices.get(i).position(), vertex.position())) {
+            if (positionsClose(vertices.get(i).position(), vertex.position())) {
                 return i;
             }
         }
         vertices.add(vertex.copy());
         return vertices.size() - 1;
+    }
+
+    /**
+     * Compare two positions using a slightly larger tolerance than the geometry EPSILON
+     * to account for floating point differences between intersection calculations from
+     * adjacent quads. This helps join cap segments that should meet but are off by a
+     * tiny amount.
+     */
+    private static boolean positionsClose(org.joml.Vector3f a, org.joml.Vector3f b) {
+        float dx = a.x - b.x;
+        float dy = a.y - b.y;
+        float dz = a.z - b.z;
+        float tol = GirderGeometry.EPSILON * 10f; // 1e-3
+        return dx * dx + dy * dy + dz * dz <= tol * tol;
     }
 
     private LoopEdge findUnusedEdge(List<LoopEdge> edges) {
@@ -155,17 +196,29 @@ public final class GirderCapAccumulator {
         int tintIndex,
         boolean shade,
         Vector3f planeNormal,
+        Vector3f planePoint,
         TextureAtlasSprite stoneSprite,
         List<BakedQuad> consumer
     ) {
+        // Use the cut-facing normal (flip the supplied plane normal) so the cap
+        // quads face into the cut, not towards the surface.
+        Vector3f normalizedPlane = new Vector3f(planeNormal);
+        Vector3f faceNormal = new Vector3f(normalizedPlane).negate();
+        float planeConstant = normalizedPlane.dot(planePoint);
+
         List<GirderVertex> loopVertices = new ArrayList<>(loopIndices.size());
         for (int index : loopIndices) {
             CapVertex data = vertices.get(index);
+            Vector3f projectedPosition = new Vector3f(data.position());
+            float deviation = normalizedPlane.dot(projectedPosition) - planeConstant;
+            if (Math.abs(deviation) > GirderGeometry.EPSILON) {
+                projectedPosition.fma(-deviation, normalizedPlane);
+            }
             float remappedU = GirderGeometry.remapU(data.u(), data.sourceSprite(), stoneSprite);
             float remappedV = GirderGeometry.remapV(data.v(), data.sourceSprite(), stoneSprite);
             loopVertices.add(new GirderVertex(
-                new Vector3f(data.position()),
-                new Vector3f(planeNormal),
+                projectedPosition,
+                new Vector3f(faceNormal),
                 remappedU,
                 remappedV,
                 data.color(),
@@ -179,11 +232,11 @@ public final class GirderCapAccumulator {
         }
 
         Vector3f polygonNormal = GirderGeometry.computePolygonNormal(cleaned);
-        if (polygonNormal.lengthSquared() > GirderGeometry.EPSILON && polygonNormal.dot(planeNormal) < 0f) {
+        if (polygonNormal.lengthSquared() > GirderGeometry.EPSILON && polygonNormal.dot(faceNormal) < 0f) {
             Collections.reverse(cleaned);
         }
 
-        Direction face = Direction.getNearest(planeNormal.x, planeNormal.y, planeNormal.z);
+        Direction face = Direction.getNearest(faceNormal.x, faceNormal.y, faceNormal.z);
         GirderGeometry.emitPolygon(cleaned, stoneSprite, face, tintIndex, shade, consumer);
     }
 

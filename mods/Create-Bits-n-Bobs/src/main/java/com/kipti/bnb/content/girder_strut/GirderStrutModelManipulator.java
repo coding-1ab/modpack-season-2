@@ -26,7 +26,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 final class GirderStrutModelManipulator {
 
-    private static final ResourceLocation STONE_LOCATION = new ResourceLocation("minecraft", "block/stone");
+    private static final ResourceLocation STONE_LOCATION = ResourceLocation.fromNamespaceAndPath("minecraft", "block/stone");
 
     private static GirderSegmentMesh segmentMesh;
 
@@ -67,7 +67,7 @@ final class GirderStrutModelManipulator {
         for (GirderMeshQuad quad : quads) {
             quad.transformAndEmit(pose, normalMatrix, planePoint, planeNormal, capAccumulator, bakedQuads);
         }
-        capAccumulator.emitCaps(planeNormal, bakedQuads);
+        capAccumulator.emitCaps(planePoint, planeNormal, bakedQuads);
         return bakedQuads;
     }
 
