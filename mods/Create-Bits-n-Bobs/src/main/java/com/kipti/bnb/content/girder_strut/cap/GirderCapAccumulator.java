@@ -9,11 +9,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public final class GirderCapAccumulator {
@@ -50,47 +48,85 @@ public final class GirderCapAccumulator {
 
         TextureAtlasSprite stoneSprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stoneLocation);
 
-        List<List<CapVertex>> quads = new ArrayList<>();
+        // Build unique vertex list and edge list
+        List<CapVertex> uniqueVertices = new ArrayList<>();
+        List<LoopEdge> edges = new ArrayList<>();
 
-        // Now, build quads by linking edges into loops
-        while (!segments.isEmpty()) {
-            CapSegment startEdge = segments.getFirst();
-            List<CapSegment> quad = new ArrayList<>();
-            List<CapVertex> quadVertices = new ArrayList<>();
-
-            quad.add(startEdge);
-            quadVertices.add(startEdge.start());
-            segments.removeFirst();
-
-            CapSegment walk = startEdge;
-            boolean found = true;
-            while (found) {
-                found = false;
-                @Nullable CapSegment toRemove = null;
-                for (CapSegment other : segments) {
-                    if (verticesEqual(walk.end(), other.start())) {
-                        toRemove = other;
-                        walk = other;
-                        quad.add(other);
-                        quadVertices.add(other.start());
-                        break;
-                    }
-                }
-                if (toRemove != null) {
-                    segments.remove(toRemove);
-                    found = true;
-                }
-            }
-
-            quads.add(quadVertices);
-        }
-
-        for (List<CapVertex> quadVertices : quads) {
-            if (quadVertices.size() < 3) {
+        System.out.println("=== Cap Accumulator Debug ===");
+        System.out.println("Total segments: " + segments.size());
+        
+        for (CapSegment segment : segments) {
+            int startIndex = indexFor(uniqueVertices, segment.start());
+            int endIndex = indexFor(uniqueVertices, segment.end());
+            System.out.println("Segment: " + startIndex + " -> " + endIndex + 
+                " (start=" + segment.start().position() + ", end=" + segment.end().position() + ")");
+            if (startIndex == endIndex) {
+                System.out.println("  -> Skipped (degenerate)");
                 continue;
             }
-            emitLoop(quadVertices.stream().map(quadVertices::indexOf).toList(), quadVertices, quadVertices.get(0).color(), false, normal, point, stoneSprite, consumer);
+            edges.add(new LoopEdge(startIndex, endIndex, segment.tintIndex(), segment.shade()));
         }
+        
+        System.out.println("Unique vertices: " + uniqueVertices.size());
+        System.out.println("Edges: " + edges.size());
+
+        // Build closed loops from edges - emit each loop separately
+        int loopCount = 0;
+        while (true) {
+            LoopEdge startEdge = findUnusedEdge(edges);
+            if (startEdge == null) {
+                break;
+            }
+
+            List<Integer> loop = new ArrayList<>();
+            loop.add(startEdge.start());
+            loop.add(startEdge.end());
+            startEdge.markUsed();
+
+            int tintIndex = startEdge.tintIndex();
+            boolean shade = startEdge.shade();
+            int current = startEdge.end();
+            boolean closed = false;
+
+            System.out.println("Building loop " + loopCount + " starting from edge " + startEdge.start() + " -> " + startEdge.end());
+
+            // Keep walking edges until we can't find the next edge or we close the loop
+            int maxSteps = edges.size() + 1; // Prevent infinite loops
+            int steps = 0;
+            while (steps < maxSteps) {
+                steps++;
+                if (current == loop.get(0)) {
+                    // We've returned to the start - loop is closed
+                    System.out.println("  Loop closed after " + steps + " steps with " + loop.size() + " vertices");
+                    closed = true;
+                    break;
+                }
+                
+                LoopEdge nextEdge = findAndUseEdge(edges, current);
+                if (nextEdge == null) {
+                    // Can't close the loop, abandon it
+                    System.out.println("  Loop abandoned - no edge from vertex " + current);
+                    break;
+                }
+                
+                int nextVertex = nextEdge.other(current);
+                loop.add(nextVertex);
+                current = nextVertex;
+            }
+
+            if (closed && loop.size() > 2) {
+                // Remove the duplicate closing vertex
+                loop.remove(loop.size() - 1);
+                System.out.println("  Emitting loop with " + loop.size() + " vertices");
+                emitLoop(loop, uniqueVertices, tintIndex, shade, normal, point, stoneSprite, consumer);
+                loopCount++;
+            } else {
+                System.out.println("  Loop rejected: closed=" + closed + ", size=" + loop.size());
+            }
+        }
+        
+        System.out.println("Total loops emitted: " + loopCount);
+        System.out.println("=== End Debug ===");
 
 //        for (CapSegment segment : segments) {
 //            int startIndex = indexFor(uniqueVertices, segment.start());
@@ -140,10 +176,6 @@ public final class GirderCapAccumulator {
         segments.clear();
     }
 
-    private boolean verticesEqual(CapVertex a, CapVertex b) {
-        return positionsClose(a.position(), b.position());
-    }
-
     private int indexFor(List<CapVertex> vertices, CapVertex vertex) {
         for (int i = 0; i < vertices.size(); i++) {
             if (positionsClose(vertices.get(i).position(), vertex.position())) {
@@ -155,16 +187,16 @@ public final class GirderCapAccumulator {
     }
 
     /**
-     * Compare two positions using a slightly larger tolerance than the geometry EPSILON
-     * to account for floating point differences between intersection calculations from
-     * adjacent quads. This helps join cap segments that should meet but are off by a
-     * tiny amount.
+     * Compare two positions using a very relaxed tolerance to merge vertices that lie on
+     * the same edge of the clipping plane, even if they come from different quads.
+     * This is necessary because each quad generates its own clipped vertices independently.
      */
     private static boolean positionsClose(org.joml.Vector3f a, org.joml.Vector3f b) {
         float dx = a.x - b.x;
         float dy = a.y - b.y;
         float dz = a.z - b.z;
-        float tol = GirderGeometry.EPSILON * 10f; // 1e-3
+        // Use a larger tolerance to merge vertices on the same plane edge
+        float tol = 0.01f; // 1 centimeter in block units
         return dx * dx + dy * dy + dz * dz <= tol * tol;
     }
 
@@ -203,19 +235,26 @@ public final class GirderCapAccumulator {
         // Use the cut-facing normal (flip the supplied plane normal) so the cap
         // quads face into the cut, not towards the surface.
         Vector3f normalizedPlane = new Vector3f(planeNormal);
+        if (normalizedPlane.lengthSquared() > GirderGeometry.EPSILON) {
+            normalizedPlane.normalize();
+        }
         Vector3f faceNormal = new Vector3f(normalizedPlane).negate();
-        float planeConstant = normalizedPlane.dot(planePoint);
 
         List<GirderVertex> loopVertices = new ArrayList<>(loopIndices.size());
         for (int index : loopIndices) {
             CapVertex data = vertices.get(index);
+            // Project the vertex onto the clipping plane
             Vector3f projectedPosition = new Vector3f(data.position());
-            float deviation = normalizedPlane.dot(projectedPosition) - planeConstant;
-            if (Math.abs(deviation) > GirderGeometry.EPSILON) {
-                projectedPosition.fma(-deviation, normalizedPlane);
+            float distance = GirderGeometry.signedDistance(projectedPosition, normalizedPlane, planePoint);
+            if (Math.abs(distance) > GirderGeometry.EPSILON) {
+                projectedPosition.sub(new Vector3f(normalizedPlane).mul(distance));
             }
+            
+            // Use proper UV mapping based on position
+            // Create a coordinate system on the plane for UV mapping
             float remappedU = GirderGeometry.remapU(data.u(), data.sourceSprite(), stoneSprite);
             float remappedV = GirderGeometry.remapV(data.v(), data.sourceSprite(), stoneSprite);
+            
             loopVertices.add(new GirderVertex(
                 projectedPosition,
                 new Vector3f(faceNormal),
@@ -231,9 +270,10 @@ public final class GirderCapAccumulator {
             return;
         }
 
+        // Check winding order and reverse if needed
         Vector3f polygonNormal = GirderGeometry.computePolygonNormal(cleaned);
         if (polygonNormal.lengthSquared() > GirderGeometry.EPSILON && polygonNormal.dot(faceNormal) < 0f) {
-            Collections.reverse(cleaned);
+            java.util.Collections.reverse(cleaned);
         }
 
         Direction face = Direction.getNearest(faceNormal.x, faceNormal.y, faceNormal.z);
