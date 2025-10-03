@@ -3,12 +3,15 @@ package com.kipti.bnb.content.girder_strut.cap;
 import com.kipti.bnb.content.girder_strut.geometry.GirderGeometry;
 import com.kipti.bnb.content.girder_strut.geometry.GirderVertex;
 import com.kipti.bnb.content.girder_strut.mesh.GirderMeshQuad;
+import com.kipti.bnb.foundation.ClientEvents;
+import net.createmod.catnip.data.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -48,86 +51,33 @@ public final class GirderCapAccumulator {
 
         TextureAtlasSprite stoneSprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stoneLocation);
 
-        // Build unique vertex list and edge list
-        List<CapVertex> uniqueVertices = new ArrayList<>();
-        List<LoopEdge> edges = new ArrayList<>();
-
-        System.out.println("=== Cap Accumulator Debug ===");
-        System.out.println("Total segments: " + segments.size());
-        
+        ClientEvents.clearDeferredDebugRenderOutlines();
+        //TEMP DEBUG: put a triangle on each segment to visualize
         for (CapSegment segment : segments) {
-            int startIndex = indexFor(uniqueVertices, segment.start());
-            int endIndex = indexFor(uniqueVertices, segment.end());
-            System.out.println("Segment: " + startIndex + " -> " + endIndex + 
-                " (start=" + segment.start().position() + ", end=" + segment.end().position() + ")");
-            if (startIndex == endIndex) {
-                System.out.println("  -> Skipped (degenerate)");
-                continue;
-            }
-            edges.add(new LoopEdge(startIndex, endIndex, segment.tintIndex(), segment.shade()));
+            List<CapVertex> loop = new ArrayList<>();
+            loop.add(segment.start().copy());
+            loop.add(segment.end().copy());
+            Vector3f midPoint = new Vector3f(segment.start().position()).add(segment.end
+                .position()).mul(0.5f);
+            loop.add(new CapVertex(new Vector3f(midPoint).add(new Vector3f(planeNormal).mul(-0.6f)).add((float) (Math.random() * 0.2f), (float) (Math.random() * 0.2f), (float) (Math.random() * 0.2f)), 0f, 0f,
+                GirderGeometry.DEFAULT_COLOR, GirderGeometry.DEFAULT_LIGHT, segment.start().sourceSprite()));
+            loop.add(loop.get(2)); // Close the loop\
+
+            ClientEvents.pushNewDeferredDebugRenderOutline(
+                Pair.of(
+                    new Vec3(segment.start().position().x, segment.start().position().y, segment.start().position().z),
+                    new Vec3(segment.end().position().x, segment.end().position().y, segment.end().position().z)
+                )
+            );
+
+            emitLoop(loop.stream().map(loop::indexOf).toList(), loop, segment.tintIndex(), segment.shade(), new Vector3f(planeNormal).cross(new Vector3f(segment.start.position).sub(segment.end.position).normalize()), point, stoneSprite, consumer);
         }
-        
-        System.out.println("Unique vertices: " + uniqueVertices.size());
-        System.out.println("Edges: " + edges.size());
+        segments.clear();
 
-        // Build closed loops from edges - emit each loop separately
-        int loopCount = 0;
-        while (true) {
-            LoopEdge startEdge = findUnusedEdge(edges);
-            if (startEdge == null) {
-                break;
-            }
-
-            List<Integer> loop = new ArrayList<>();
-            loop.add(startEdge.start());
-            loop.add(startEdge.end());
-            startEdge.markUsed();
-
-            int tintIndex = startEdge.tintIndex();
-            boolean shade = startEdge.shade();
-            int current = startEdge.end();
-            boolean closed = false;
-
-            System.out.println("Building loop " + loopCount + " starting from edge " + startEdge.start() + " -> " + startEdge.end());
-
-            // Keep walking edges until we can't find the next edge or we close the loop
-            int maxSteps = edges.size() + 1; // Prevent infinite loops
-            int steps = 0;
-            while (steps < maxSteps) {
-                steps++;
-                if (current == loop.get(0)) {
-                    // We've returned to the start - loop is closed
-                    System.out.println("  Loop closed after " + steps + " steps with " + loop.size() + " vertices");
-                    closed = true;
-                    break;
-                }
-                
-                LoopEdge nextEdge = findAndUseEdge(edges, current);
-                if (nextEdge == null) {
-                    // Can't close the loop, abandon it
-                    System.out.println("  Loop abandoned - no edge from vertex " + current);
-                    break;
-                }
-                
-                int nextVertex = nextEdge.other(current);
-                loop.add(nextVertex);
-                current = nextVertex;
-            }
-
-            if (closed && loop.size() > 2) {
-                // Remove the duplicate closing vertex
-                loop.remove(loop.size() - 1);
-                System.out.println("  Emitting loop with " + loop.size() + " vertices");
-                emitLoop(loop, uniqueVertices, tintIndex, shade, normal, point, stoneSprite, consumer);
-                loopCount++;
-            } else {
-                System.out.println("  Loop rejected: closed=" + closed + ", size=" + loop.size());
-            }
-        }
-        
-        System.out.println("Total loops emitted: " + loopCount);
-        System.out.println("=== End Debug ===");
-
+//        // Build unique vertex list and edge list
+//        List<CapVertex> uniqueVertices = new ArrayList<>();
+//        List<LoopEdge> edges = new ArrayList<>();
+//
 //        for (CapSegment segment : segments) {
 //            int startIndex = indexFor(uniqueVertices, segment.start());
 //            int endIndex = indexFor(uniqueVertices, segment.end());
@@ -137,6 +87,8 @@ public final class GirderCapAccumulator {
 //            edges.add(new LoopEdge(startIndex, endIndex, segment.tintIndex(), segment.shade()));
 //        }
 //
+//        // Build closed loops from edges - emit each loop separately
+//        int loopCount = 0;
 //        while (true) {
 //            LoopEdge startEdge = findUnusedEdge(edges);
 //            if (startEdge == null) {
@@ -153,27 +105,38 @@ public final class GirderCapAccumulator {
 //            int current = startEdge.end();
 //            boolean closed = false;
 //
-//            while (current != loop.get(0)) {
-//                LoopEdge nextEdge = findAndUseEdge(edges, current);
-//                if (nextEdge == null) {
-//                    loop.clear();
+//            // Keep walking edges until we can't find the next edge or we close the loop
+//            int maxSteps = edges.size() + 1; // Prevent infinite loops
+//            int steps = 0;
+//            while (steps < maxSteps) {
+//                steps++;
+//                if (current == loop.get(0)) {
+//                    // We've returned to the start - loop is closed
+//                    closed = true;
 //                    break;
 //                }
+//
+//                LoopEdge nextEdge = findAndUseEdge(edges, current);
+//                if (nextEdge == null) {
+//                    // Can't close the loop, abandon it
+//                    break;
+//                }
+//
 //                int nextVertex = nextEdge.other(current);
 //                loop.add(nextVertex);
 //                current = nextVertex;
-//                if (current == loop.get(0)) {
-//                    closed = true;
-//                }
 //            }
 //
 //            if (closed && loop.size() > 2) {
+//                // Remove the duplicate closing vertex
 //                loop.remove(loop.size() - 1);
 //                emitLoop(loop, uniqueVertices, tintIndex, shade, normal, point, stoneSprite, consumer);
+//                loopCount++;
+//            } else {
 //            }
 //        }
-
-        segments.clear();
+//
+//        segments.clear();
     }
 
     private int indexFor(List<CapVertex> vertices, CapVertex vertex) {
@@ -249,12 +212,12 @@ public final class GirderCapAccumulator {
             if (Math.abs(distance) > GirderGeometry.EPSILON) {
                 projectedPosition.sub(new Vector3f(normalizedPlane).mul(distance));
             }
-            
+
             // Use proper UV mapping based on position
             // Create a coordinate system on the plane for UV mapping
             float remappedU = GirderGeometry.remapU(data.u(), data.sourceSprite(), stoneSprite);
             float remappedV = GirderGeometry.remapV(data.v(), data.sourceSprite(), stoneSprite);
-            
+
             loopVertices.add(new GirderVertex(
                 projectedPosition,
                 new Vector3f(faceNormal),

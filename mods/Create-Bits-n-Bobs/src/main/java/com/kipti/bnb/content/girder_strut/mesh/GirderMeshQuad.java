@@ -232,9 +232,9 @@ public final class GirderMeshQuad {
             for (int i = 0; i < projected.size(); i++) {
                 GirderVertex a = projected.get(i);
                 GirderVertex b = projected.get((i + 1) % projected.size());
-                if (!GirderGeometry.positionsEqual(a.position(), b.position())) {
-                    segments.add(new Segment(a, b));
-                }
+//                if (!GirderGeometry.positionsEqual(a.position(), b.position())) {
+//                    segments.add(new Segment(a, b));
+//                }
             }
             return new ClipResult(List.of(), segments, true);
         }
