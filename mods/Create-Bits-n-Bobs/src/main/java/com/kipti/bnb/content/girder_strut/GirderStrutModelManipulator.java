@@ -56,14 +56,11 @@ final class GirderStrutModelManipulator {
         Matrix4f pose = new Matrix4f(last.pose());
         Matrix3f normalMatrix = new Matrix3f(last.normal());
 
-        Plane plane = transformPlane(
-            pose,
-            normalMatrix,
-            toVector3f(connection.surfacePlanePoint()),
-            toVector3f(connection.surfaceNormal())
-        );
-        Vector3f planePoint = plane.point();
-        Vector3f planeNormal = plane.normal();
+        Vector3f planePoint = toVector3f(connection.surfacePlanePoint());
+        Vector3f planeNormal = toVector3f(connection.surfaceNormal());
+        if (planeNormal.lengthSquared() > GirderGeometry.EPSILON) {
+            planeNormal.normalize();
+        }
 
         List<BakedQuad> bakedQuads = new ArrayList<>();
         GirderCapAccumulator capAccumulator = new GirderCapAccumulator(STONE_LOCATION);
@@ -72,19 +69,6 @@ final class GirderStrutModelManipulator {
         }
         capAccumulator.emitCaps(planePoint, planeNormal, bakedQuads);
         return bakedQuads;
-    }
-
-    static Plane transformPlane(Matrix4f pose, Matrix3f normalMatrix, Vector3f planePoint, Vector3f planeNormal) {
-        Vector3f transformedPoint = new Vector3f(planePoint);
-        pose.transformPosition(transformedPoint);
-
-        Vector3f transformedNormal = new Vector3f(planeNormal);
-        normalMatrix.transform(transformedNormal);
-        if (transformedNormal.lengthSquared() > GirderGeometry.EPSILON) {
-            transformedNormal.normalize();
-        }
-
-        return new Plane(transformedPoint, transformedNormal);
     }
 
     private static GirderSegmentMesh getSegmentMesh() {
@@ -106,8 +90,5 @@ final class GirderStrutModelManipulator {
 
     private static Vector3f toVector3f(Vec3 vec) {
         return new Vector3f((float) vec.x, (float) vec.y, (float) vec.z);
-    }
-
-    static record Plane(Vector3f point, Vector3f normal) {
     }
 }
