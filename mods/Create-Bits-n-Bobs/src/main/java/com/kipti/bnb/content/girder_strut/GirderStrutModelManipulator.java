@@ -7,6 +7,7 @@ import com.kipti.bnb.content.girder_strut.mesh.GirderSegmentMesh;
 import com.kipti.bnb.registry.BnbBlocks;
 import com.kipti.bnb.registry.BnbPartialModels;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.simibubi.create.Create;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
@@ -26,7 +27,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 final class GirderStrutModelManipulator {
 
-    private static final ResourceLocation STONE_LOCATION = ResourceLocation.fromNamespaceAndPath("minecraft", "block/stone");
+    private static final ResourceLocation INDUSTRIAL_IRON_BLOCK = Create.asResource("block/industrial_iron_block");
 
     private static GirderSegmentMesh segmentMesh;
 
@@ -63,7 +64,7 @@ final class GirderStrutModelManipulator {
         }
 
         List<BakedQuad> bakedQuads = new ArrayList<>();
-        GirderCapAccumulator capAccumulator = new GirderCapAccumulator(STONE_LOCATION);
+        GirderCapAccumulator capAccumulator = new GirderCapAccumulator(INDUSTRIAL_IRON_BLOCK);
         for (GirderMeshQuad quad : quads) {
             quad.transformAndEmit(pose, normalMatrix, planePoint, planeNormal, capAccumulator, bakedQuads);
         }

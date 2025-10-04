@@ -45,6 +45,9 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
         if (renderType != null && renderType != RenderType.solid()) {
             return base;
         }
+        if (side != null) { //Fuck this shit took me way to long to figure out
+            return base;
+        }
         if (!data.has(GIRDER_PROPERTY)) {
             return base;
         }
@@ -90,7 +93,7 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
             }
             Direction facing = state.getValue(GirderStrutBlock.FACING);
             Vec3 blockOrigin = Vec3.atLowerCornerOf(pos);
-            Vec3 facePoint = Vec3.atCenterOf(pos).relative(facing, -0.5 - 1e-3);
+            Vec3 facePoint = Vec3.atCenterOf(pos).relative(facing, -10 / 16f - 1e-3);
             Vec3 thisSurface = Vec3.atCenterOf(pos).relative(facing, -SURFACE_OFFSET);
 
             List<GirderConnection> connections = new ArrayList<>();

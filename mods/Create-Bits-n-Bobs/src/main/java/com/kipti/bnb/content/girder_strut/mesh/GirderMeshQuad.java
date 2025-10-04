@@ -209,35 +209,35 @@ public final class GirderMeshQuad {
             previousDistance = currentDistance;
             previousInside = currentInside;
         }
-
-        if (!hasInsideVertex && clipped) {
-            List<GirderVertex> projected = new ArrayList<>(input.size());
-            Vector3f normalizedNormal = new Vector3f(planeNormal);
-            if (normalizedNormal.lengthSquared() > GirderGeometry.EPSILON) {
-                normalizedNormal.normalize();
-            }
-            for (GirderVertex vertex : input) {
-                float distance = GirderGeometry.signedDistance(vertex.position(), planeNormal, planePoint);
-                Vector3f projectedPos = new Vector3f(vertex.position()).sub(new Vector3f(planeNormal).mul(distance));
-                GirderVertex projectedVertex = new GirderVertex(
-                    projectedPos,
-                    new Vector3f(normalizedNormal),
-                    vertex.u(),
-                    vertex.v(),
-                    vertex.color(),
-                    vertex.light()
-                );
-                projected.add(projectedVertex);
-            }
-            for (int i = 0; i < projected.size(); i++) {
-                GirderVertex a = projected.get(i);
-                GirderVertex b = projected.get((i + 1) % projected.size());
-//                if (!GirderGeometry.positionsEqual(a.position(), b.position())) {
-//                    segments.add(new Segment(a, b));
-//                }
-            }
-            return new ClipResult(List.of(), segments, true);
-        }
+//
+//        if (!hasInsideVertex && clipped) {
+//            List<GirderVertex> projected = new ArrayList<>(input.size());
+//            Vector3f normalizedNormal = new Vector3f(planeNormal);
+//            if (normalizedNormal.lengthSquared() > GirderGeometry.EPSILON) {
+//                normalizedNormal.normalize();
+//            }
+//            for (GirderVertex vertex : input) {
+//                float distance = GirderGeometry.signedDistance(vertex.position(), planeNormal, planePoint);
+//                Vector3f projectedPos = new Vector3f(vertex.position()).sub(new Vector3f(planeNormal).mul(distance));
+//                GirderVertex projectedVertex = new GirderVertex(
+//                    projectedPos,
+//                    new Vector3f(normalizedNormal),
+//                    vertex.u(),
+//                    vertex.v(),
+//                    vertex.color(),
+//                    vertex.light()
+//                );
+//                projected.add(projectedVertex);
+//            }
+//            for (int i = 0; i < projected.size(); i++) {
+//                GirderVertex a = projected.get(i);
+//                GirderVertex b = projected.get((i + 1) % projected.size());
+////                if (!GirderGeometry.positionsEqual(a.position(), b.position())) {
+////                    segments.add(new Segment(a, b));
+////                }
+//            }
+//            return new ClipResult(List.of(), segments, true);
+//        }
 
         return new ClipResult(result, segments, clipped);
     }
