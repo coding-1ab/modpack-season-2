@@ -27,6 +27,7 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
         super.renderSafe(blockEntity, partialTicks, ms, buffer, light, overlay);
         // Render the girder strut segment
         for (BlockPos pos : blockEntity.getConnectionsCopy()) {
+            pos = pos.offset(blockEntity.getBlockPos());
             BlockState state = blockEntity.getLevel().getBlockState(pos);
             if (!
                 (state.getBlock() instanceof GirderStrutBlock)) {

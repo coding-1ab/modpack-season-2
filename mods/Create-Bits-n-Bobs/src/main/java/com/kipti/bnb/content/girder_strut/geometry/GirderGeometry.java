@@ -146,15 +146,17 @@ public final class GirderGeometry {
             vertexData[baseIndex + BakedQuadHelper.COLOR_OFFSET] = vertex.color();
             vertexData[baseIndex + BakedQuadHelper.LIGHT_OFFSET] = vertex.light();
         }
+        Vector3f avgNormal = GirderGeometry.computePolygonNormal(quadVertices);
 
-        Vector3f avgNormal = new Vector3f();
-        for (GirderVertex vertex : quadVertices) {
-            avgNormal.add(vertex.normal());
-        }
+//        Vector3f avgNormal = new Vector3f();
+//        for (GirderVertex vertex : quadVertices) {
+//            avgNormal.add(vertex.normal());
+//        }
         Direction face = faceOverride;
         if (avgNormal.lengthSquared() > EPSILON) {
             avgNormal.normalize();
-            face = Direction.getNearest(avgNormal.x, avgNormal.y, avgNormal.z);
+            face = Math.abs(avgNormal.y) > EPSILON ? avgNormal.y < 0 ? Direction.DOWN : Direction.UP :
+                Direction.getNearest(avgNormal.x, avgNormal.y, avgNormal.z);
         }
 
         return new BakedQuad(vertexData, tintIndex, face, sprite, shade);

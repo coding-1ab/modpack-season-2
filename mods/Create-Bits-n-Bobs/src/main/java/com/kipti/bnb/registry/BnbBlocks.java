@@ -108,6 +108,7 @@ public class BnbBlocks {
             .mapColor(DyeColor.ORANGE)
             .forceSolidOn())
         .addLayer(() -> RenderType::translucent)
+        .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
         .item(HeadlampBlockItem::new)
         .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/headlamp/headlight")))
         .build()
@@ -205,6 +206,7 @@ public class BnbBlocks {
                 "block/girder_strut/normal_girder_strut_attachment")
             )))
         .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
+        .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
         .item(GirderStrutBlockItem::new)
         .model((c, p) ->
             p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/normal_girder_strut_attachment"))

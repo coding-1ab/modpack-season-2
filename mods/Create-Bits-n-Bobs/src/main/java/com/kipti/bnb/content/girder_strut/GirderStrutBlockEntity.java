@@ -7,9 +7,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Block;
 
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +24,7 @@ public class GirderStrutBlockEntity extends SmartBlockEntity {
     }
 
     public void addConnection(BlockPos other) {
-        if (!other.equals(getBlockPos()) && connections.add(other.immutable())) {
+        if (!other.equals(getBlockPos()) && connections.add(other.immutable().subtract(getBlockPos()))) {
             setChanged();
             sendData();
             notifyModelChange();
@@ -32,7 +32,7 @@ public class GirderStrutBlockEntity extends SmartBlockEntity {
     }
 
     public void removeConnection(BlockPos pos) {
-        if (connections.remove(pos)) {
+        if (connections.remove(pos.subtract(getBlockPos()))) {
             setChanged();
             sendData();
             notifyModelChange();
@@ -40,7 +40,7 @@ public class GirderStrutBlockEntity extends SmartBlockEntity {
     }
 
     public boolean hasConnectionTo(BlockPos pos) {
-        return connections.contains(pos);
+        return connections.contains(pos.subtract(getBlockPos()));
     }
 
     public int connectionCount() {
