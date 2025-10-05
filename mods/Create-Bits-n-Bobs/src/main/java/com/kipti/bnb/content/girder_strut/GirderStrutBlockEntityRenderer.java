@@ -25,6 +25,7 @@ import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<GirderStrutBlockEntity> {
 
@@ -86,13 +87,7 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
             GirderStrutModelBuilder.GirderStrutModelData connectionData = GirderStrutModelBuilder.GirderStrutModelData.collect(blockEntity.getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity);
             List<Consumer<BufferBuilder>> quads = connectionData.connections()
                 .stream()
-                .flatMap(c -> GirderStrutModelManipulator.bakeConnectionToConsumer(c, (position) -> {
-                    if (blockEntity.getLevel() == null) return GirderGeometry.DEFAULT_LIGHT;
-                    Matrix4f lightTransform = new Matrix4f().translate(blockEntity.getBlockPos().getX(), blockEntity.getBlockPos().getY(), blockEntity.getBlockPos().getZ());
-                    Vector3f lightPosition = lightTransform.transformPosition(position, new Vector3f());
-                    BlockPos blockPosition = BlockPos.containing(lightPosition.x, lightPosition.y, lightPosition.z);
-                    return LevelRenderer.getLightColor(blockEntity.getLevel(), blockPosition);
-                }).stream())
+                .flatMap(c -> GirderStrutModelManipulator.bakeConnectionToConsumer(c, createLighter(blockEntity)).stream())
                 .toList();
 
             BufferBuilder builder = new BufferBuilder(new ByteBufferBuilder(256), VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
@@ -107,6 +102,16 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
                 .renderInto(ms, buffer.getBuffer(RenderType.solid()));
         }
 
+    }
+
+    private Function<Vector3f, Integer> createLighter(GirderStrutBlockEntity blockEntity) {
+        return (position) -> {
+            if (blockEntity.getLevel() == null) return GirderGeometry.DEFAULT_LIGHT;
+            Matrix4f lightTransform = new Matrix4f().translate(blockEntity.getBlockPos().getX(), blockEntity.getBlockPos().getY(), blockEntity.getBlockPos().getZ());
+            Vector3f lightPosition = lightTransform.transformPosition(position, new Vector3f());
+            BlockPos blockPosition = BlockPos.containing(lightPosition.x, lightPosition.y, lightPosition.z);
+            return LevelRenderer.getLightColor(blockEntity.getLevel(), blockPosition);
+        };
     }
 
     protected void renderSegments(BlockState state, PartialModel model, PoseStack ms, int length, MultiBufferSource buffer, int light) {

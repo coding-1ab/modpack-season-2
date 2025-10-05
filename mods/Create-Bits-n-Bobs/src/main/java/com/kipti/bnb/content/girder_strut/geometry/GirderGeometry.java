@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.simibubi.create.foundation.model.BakedQuadHelper;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -91,14 +92,14 @@ public final class GirderGeometry {
     public static Vector3f computePolygonNormal(List<GirderVertex> vertices) {
         Vector3f normal = new Vector3f();
         int size = vertices.size();
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < vertices.size(); i++) {
             Vector3f current = vertices.get(i).position();
             Vector3f next = vertices.get((i + 1) % size).position();
             normal.x += (current.y - next.y) * (current.z + next.z);
             normal.y += (current.z - next.z) * (current.x + next.x);
             normal.z += (current.x - next.x) * (current.y + next.y);
         }
-        return normal;
+        return normal.normalize();
     }
 
     public static void emitPolygon(
@@ -180,22 +181,36 @@ public final class GirderGeometry {
         return ((originalV - from.getV0()) / fromSpan) * toSpan + to.getV0();
     }
 
+    public static int maximizeLight(int lightA, int lightB) {
+        int blockA = lightA & 0xFFFF;
+        int skyA = (lightA >>> 16) & 0xFFFF;
+        int blockB = lightB & 0xFFFF;
+        int skyB = (lightB >>> 16) & 0xFFFF;
+        int block = Math.max(blockA, blockB);
+        int sky = Math.max(skyA, skyB);
+        return (sky << 16) | block;
+    }
+
     public static void emitPolygonToConsumer(
         List<GirderVertex> verticesToTestRelight,
         List<Consumer<BufferBuilder>> consumer,
         Function<Vector3f, Integer> lightFunction) {
-        dedupeLoopVertices(verticesToTestRelight);
+        verticesToTestRelight = dedupeLoopVertices(verticesToTestRelight);
         Vector3f normal = GirderGeometry.computePolygonNormal(verticesToTestRelight);
         List<GirderVertex> vertices = new ArrayList<>();
+
+        int light = 0;
         for (GirderVertex v : verticesToTestRelight) {
-            v.normal().set(normal);
+            light = maximizeLight(light, lightFunction.apply(v.position()));
+        }
+
+        for (GirderVertex v : verticesToTestRelight) {
             vertices.add(new GirderVertex(
                 v.position(),
-                v.normal(),
+                normal,
                 v.u(),
                 v.v(),
-                DEFAULT_COLOR,
-                lightFunction.apply(v.position())
+                DEFAULT_COLOR, lightFunction.apply(v.position())
             ));
         }
         if (vertices.size() == 4) {
@@ -220,9 +235,9 @@ public final class GirderGeometry {
                 bufferBuilder.addVertex(vertex.position().x, vertex.position().y, vertex.position().z)
                     .setColor((vertex.color() >> 16) & 0xFF, (vertex.color() >> 8) & 0xFF, vertex.color() & 0xFF, (vertex.color() >> 24) & 0xFF)
                     .setUv(vertex.u(), vertex.v())
-                    .setOverlay(0xF000F0) // Default overlay
+                    .setOverlay(OverlayTexture.NO_OVERLAY) // Default overlay
                     .setLight(vertex.light())
-                    .setNormal(vertex.normal().z, vertex.normal().y, vertex.normal().z);
+                    .setNormal(vertex.normal().x, vertex.normal().y, vertex.normal().z);
             }
         };
     }
