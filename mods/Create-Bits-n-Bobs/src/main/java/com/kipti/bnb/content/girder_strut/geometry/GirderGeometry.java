@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.girder_strut.geometry;
 
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.simibubi.create.foundation.model.BakedQuadHelper;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -12,15 +13,14 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public final class GirderGeometry {
 
     public static final float EPSILON = 1.0e-4f;
     public static final int DEFAULT_COLOR = 0xFFFFFFFF;
     public static final int DEFAULT_LIGHT = LightTexture.pack(15, 15);
-
-    private GirderGeometry() {
-    }
 
     public static float signedDistance(Vector3f point, Vector3f planeNormal, Vector3f planePoint) {
         return new Vector3f(point).sub(planePoint).dot(planeNormal);
@@ -35,7 +35,7 @@ public final class GirderGeometry {
         float u = Mth.lerp(t, start.u(), end.u());
         float v = Mth.lerp(t, start.v(), end.v());
         int color = lerpColor(start.color(), end.color(), t);
-        int light = lerpPackedLight(start.light(), end.light(), t);
+        int light = start.light();
         return new GirderVertex(position, normal, u, v, color, light);
     }
 
@@ -179,4 +179,52 @@ public final class GirderGeometry {
         }
         return ((originalV - from.getV0()) / fromSpan) * toSpan + to.getV0();
     }
+
+    public static void emitPolygonToConsumer(
+        List<GirderVertex> verticesToTestRelight,
+        List<Consumer<BufferBuilder>> consumer,
+        Function<Vector3f, Integer> lightFunction) {
+        dedupeLoopVertices(verticesToTestRelight);
+        Vector3f normal = GirderGeometry.computePolygonNormal(verticesToTestRelight);
+        List<GirderVertex> vertices = new ArrayList<>();
+        for (GirderVertex v : verticesToTestRelight) {
+            v.normal().set(normal);
+            vertices.add(new GirderVertex(
+                v.position(),
+                v.normal(),
+                v.u(),
+                v.v(),
+                DEFAULT_COLOR,
+                lightFunction.apply(v.position())
+            ));
+        }
+        if (vertices.size() == 4) {
+            consumer.add(buildQuadConsumer(vertices));
+            return;
+        }
+        if (vertices.size() == 3) {
+            consumer.add(buildQuadConsumer(Arrays.asList(vertices.get(0), vertices.get(1), vertices.get(2), vertices.get(2))));
+            return;
+        }
+
+        GirderVertex anchor = vertices.get(0);
+        for (int i = 1; i < vertices.size() - 1; i++) {
+            List<GirderVertex> tri = Arrays.asList(anchor, vertices.get(i), vertices.get(i + 1), vertices.get(i + 1));
+            consumer.add(buildQuadConsumer(tri));
+        }
+    }
+
+    private static Consumer<BufferBuilder> buildQuadConsumer(List<GirderVertex> tri) {
+        return bufferBuilder -> {
+            for (GirderVertex vertex : tri) {
+                bufferBuilder.addVertex(vertex.position().x, vertex.position().y, vertex.position().z)
+                    .setColor((vertex.color() >> 16) & 0xFF, (vertex.color() >> 8) & 0xFF, vertex.color() & 0xFF, (vertex.color() >> 24) & 0xFF)
+                    .setUv(vertex.u(), vertex.v())
+                    .setOverlay(0xF000F0) // Default overlay
+                    .setLight(vertex.light())
+                    .setNormal(vertex.normal().z, vertex.normal().y, vertex.normal().z);
+            }
+        };
+    }
+
 }

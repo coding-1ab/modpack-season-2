@@ -3,6 +3,7 @@ package com.kipti.bnb.content.girder_strut.mesh;
 import com.kipti.bnb.content.girder_strut.cap.GirderCapAccumulator;
 import com.kipti.bnb.content.girder_strut.geometry.GirderGeometry;
 import com.kipti.bnb.content.girder_strut.geometry.GirderVertex;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.simibubi.create.foundation.model.BakedQuadHelper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -13,6 +14,8 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public final class GirderMeshQuad {
 
@@ -209,41 +212,36 @@ public final class GirderMeshQuad {
             previousDistance = currentDistance;
             previousInside = currentInside;
         }
-//
-//        if (!hasInsideVertex && clipped) {
-//            List<GirderVertex> projected = new ArrayList<>(input.size());
-//            Vector3f normalizedNormal = new Vector3f(planeNormal);
-//            if (normalizedNormal.lengthSquared() > GirderGeometry.EPSILON) {
-//                normalizedNormal.normalize();
-//            }
-//            for (GirderVertex vertex : input) {
-//                float distance = GirderGeometry.signedDistance(vertex.position(), planeNormal, planePoint);
-//                Vector3f projectedPos = new Vector3f(vertex.position()).sub(new Vector3f(planeNormal).mul(distance));
-//                GirderVertex projectedVertex = new GirderVertex(
-//                    projectedPos,
-//                    new Vector3f(normalizedNormal),
-//                    vertex.u(),
-//                    vertex.v(),
-//                    vertex.color(),
-//                    vertex.light()
-//                );
-//                projected.add(projectedVertex);
-//            }
-//            for (int i = 0; i < projected.size(); i++) {
-//                GirderVertex a = projected.get(i);
-//                GirderVertex b = projected.get((i + 1) % projected.size());
-////                if (!GirderGeometry.positionsEqual(a.position(), b.position())) {
-////                    segments.add(new Segment(a, b));
-////                }
-//            }
-//            return new ClipResult(List.of(), segments, true);
-//        }
 
         return new ClipResult(result, segments, clipped);
     }
 
     private static Vector3f toVector3f(net.minecraft.world.phys.Vec3 vec) {
         return new Vector3f((float) vec.x, (float) vec.y, (float) vec.z);
+    }
+
+    public void transformAndEmitToConsumer(Matrix4f pose, Matrix3f normalMatrix, Vector3f planePoint, Vector3f planeNormal, GirderCapAccumulator capAccumulator, List<Consumer<BufferBuilder>> bufferConsumer, Function<Vector3f, Integer> lightFunction) {
+        List<GirderVertex> transformed = new ArrayList<>(vertices.length);
+        for (GirderVertex vertex : vertices) {
+            Vector3f position = new Vector3f(vertex.position());
+            pose.transformPosition(position);
+            Vector3f normal = new Vector3f(vertex.normal());
+            normalMatrix.transform(normal);
+            if (normal.lengthSquared() > GirderGeometry.EPSILON) {
+                normal.normalize();
+            }
+            transformed.add(new GirderVertex(position, normal, vertex.u(), vertex.v(), vertex.color(), vertex.light()));
+        }
+
+        ClipResult clipResult = clipAgainstPlane(transformed, planePoint, planeNormal);
+        List<GirderVertex> clipped = clipResult.polygon();
+        if (clipped.size() >= 3) {
+            GirderGeometry.emitPolygonToConsumer(clipped, bufferConsumer, lightFunction);
+        }
+
+        if (clipResult.clipped() && planeNormal.lengthSquared() > GirderGeometry.EPSILON) {
+            capAccumulator.addSegments(sprite, tintIndex, shade, clipResult.segments());
+        }
     }
 
     private record ClipResult(List<GirderVertex> polygon, List<Segment> segments, boolean clipped) {

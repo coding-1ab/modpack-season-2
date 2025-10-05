@@ -6,6 +6,7 @@ import com.kipti.bnb.content.girder_strut.mesh.GirderMeshQuad;
 import com.kipti.bnb.content.girder_strut.mesh.GirderSegmentMesh;
 import com.kipti.bnb.registry.BnbBlocks;
 import com.kipti.bnb.registry.BnbPartialModels;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.Create;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -23,11 +24,13 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 @OnlyIn(Dist.CLIENT)
 final class GirderStrutModelManipulator {
 
-    private static final ResourceLocation INDUSTRIAL_IRON_BLOCK = Create.asResource("block/industrial_iron_block");
+    public static final ResourceLocation INDUSTRIAL_IRON_BLOCK = Create.asResource("block/industrial_iron_block");
 
     private static GirderSegmentMesh segmentMesh;
 
@@ -70,6 +73,44 @@ final class GirderStrutModelManipulator {
         }
         capAccumulator.emitCaps(planePoint, planeNormal, bakedQuads);
         return bakedQuads;
+    }
+
+    static List<Consumer<BufferBuilder>> bakeConnectionToConsumer(GirderStrutModelBuilder.GirderConnection connection, Function<Vector3f, Integer> lightFunction) {
+        if (connection.renderLength() <= GirderGeometry.EPSILON) {
+            return List.of();
+        }
+
+        GirderSegmentMesh mesh = getSegmentMesh();
+        List<GirderMeshQuad> quads = mesh.forLength((float) connection.renderLength());
+
+        Vec3 dir = connection.direction();
+        double distHorizontal = Math.sqrt(dir.x * dir.x + dir.z * dir.z);
+        float yRot = distHorizontal == 0 ? 0f : (float) Math.atan2(dir.x, dir.z);
+        float xRot = (float) Math.atan2(dir.y, distHorizontal);
+
+        PoseStack poseStack = new PoseStack();
+        poseStack.translate(connection.start().x, connection.start().y, connection.start().z);
+        poseStack.mulPose(new Quaternionf().rotationY(yRot));
+        poseStack.mulPose(new Quaternionf().rotationX(-xRot));
+        poseStack.translate(-0.5f, -0.5f, -0.5f);
+
+        PoseStack.Pose last = poseStack.last();
+        Matrix4f pose = new Matrix4f(last.pose());
+        Matrix3f normalMatrix = new Matrix3f(last.normal());
+
+        Vector3f planePoint = toVector3f(connection.surfacePlanePoint());
+        Vector3f planeNormal = toVector3f(connection.surfaceNormal());
+        if (planeNormal.lengthSquared() > GirderGeometry.EPSILON) {
+            planeNormal.normalize();
+        }
+
+        List<Consumer<BufferBuilder>> quadConsumer = new ArrayList<>();
+        GirderCapAccumulator capAccumulator = new GirderCapAccumulator(INDUSTRIAL_IRON_BLOCK);
+        for (GirderMeshQuad quad : quads) {
+            quad.transformAndEmitToConsumer(pose, normalMatrix, planePoint, planeNormal, capAccumulator, quadConsumer, lightFunction);
+        }
+        capAccumulator.emitCapsToConsumer(planeNormal, quadConsumer, lightFunction);
+        return quadConsumer;
     }
 
     private static GirderSegmentMesh getSegmentMesh() {

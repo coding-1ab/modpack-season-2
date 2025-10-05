@@ -3,6 +3,7 @@ package com.kipti.bnb.content.girder_strut.cap;
 import com.kipti.bnb.content.girder_strut.geometry.GirderGeometry;
 import com.kipti.bnb.content.girder_strut.geometry.GirderVertex;
 import com.kipti.bnb.content.girder_strut.mesh.GirderMeshQuad;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -14,14 +15,16 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public final class GirderCapAccumulator {
 
-    private final ResourceLocation stoneLocation;
+    private final ResourceLocation capTexture;
     private final List<CapSegment> segments = new ArrayList<>();
 
-    public GirderCapAccumulator(ResourceLocation stoneLocation) {
-        this.stoneLocation = stoneLocation;
+    public GirderCapAccumulator(ResourceLocation capTexture) {
+        this.capTexture = capTexture;
     }
 
     public void addSegments(TextureAtlasSprite sourceSprite, int tintIndex, boolean shade, List<GirderMeshQuad.Segment> newSegments) {
@@ -36,6 +39,144 @@ public final class GirderCapAccumulator {
         }
     }
 
+    public void emitCapsToConsumer(Vector3f planeNormal, List<Consumer<BufferBuilder>> bufferConsumer, Function<Vector3f, Integer> lightFunction) {
+        if (segments.isEmpty()) {
+            return;
+        }
+        Vector3f normal = new Vector3f(planeNormal);
+        if (normal.lengthSquared() <= GirderGeometry.EPSILON) {
+            return;
+        }
+        normal.normalize();
+
+        TextureAtlasSprite capSprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(capTexture);
+
+        // Build unique vertex list and edge list
+        List<CapVertex> uniqueVertices = new ArrayList<>();
+        List<LoopEdge> edges = new ArrayList<>();
+
+        for (CapSegment segment : segments) {
+            int startIndex = indexFor(uniqueVertices, segment.start());
+            int endIndex = indexFor(uniqueVertices, segment.end());
+            if (startIndex == endIndex) {
+                continue;
+            }
+            edges.add(new LoopEdge(startIndex, endIndex, segment.tintIndex(), segment.shade()));
+        }
+
+        // Build closed loops from edges - emit each loop separately
+        int loopCount = 0;
+        while (true) {
+            LoopEdge startEdge = findUnusedEdge(edges);
+            if (startEdge == null) {
+                break;
+            }
+
+            List<Integer> loop = new ArrayList<>();
+            loop.add(startEdge.start());
+            loop.add(startEdge.end());
+            startEdge.markUsed();
+
+            int tintIndex = startEdge.tintIndex();
+            boolean shade = startEdge.shade();
+            int current = startEdge.end();
+            boolean closed = false;
+
+            // Keep walking edges until we can't find the next edge or we close the loop
+            int maxSteps = edges.size() + 1; // Prevent infinite loops
+            int steps = 0;
+            while (steps < maxSteps) {
+                steps++;
+                if (current == loop.get(0)) {
+                    // We've returned to the start - loop is closed
+                    closed = true;
+                    break;
+                }
+
+                LoopEdge nextEdge = findAndUseEdge(edges, current);
+                if (nextEdge == null) {
+                    // Can't close the loop, try find a parrallel edge to link to (This is hack designed to work with the missing inside faces to the girder)
+
+                    int loopPre = loop.get(loop.size() - 2);
+                    int loopPost = loop.get(loop.size() - 1);
+                    Vector3f dir = new Vector3f(uniqueVertices.get(loopPost).position()).sub(uniqueVertices.get(loopPre).position()).normalize();
+
+                    for (LoopEdge edge : edges) {
+                        if (!edge.used() && edge.start() != current && edge.end() != current) {
+                            Vector3f edgeDir = new Vector3f(uniqueVertices.get(edge.end()).position()).sub(uniqueVertices.get(edge.start()).position()).normalize();
+
+                            if (Math.abs(dir.dot(edgeDir)) > 0.999f) {
+                                //Check that the edge is parrallel, so the loop will be planar
+                                Vector3f toStart = new Vector3f(uniqueVertices.get(edge.start()).position()).sub(uniqueVertices.get(loopPost).position()).normalize();
+                                Vector3f toEnd = new Vector3f(uniqueVertices.get(edge.end()).position()).sub(uniqueVertices.get(loopPre).position()).normalize();
+                                if (toStart.dot(toEnd) < 0.01f) {
+                                    edge.markUsed();
+                                    loop.add(edge.end());
+                                    loop.add(edge.start());
+                                    loop.add(edge.end()); // Purposely duplicate the last vertex so that a full quad remains later
+                                    closed = true;
+                                }
+
+                                //Or check reverse combination
+                                Vector3f toStartR = new Vector3f(uniqueVertices.get(edge.start()).position()).sub(uniqueVertices.get(loop.get(0)).position()).normalize();
+                                Vector3f toEndR = new Vector3f(uniqueVertices.get(edge.end()).position()).sub(uniqueVertices.get(loop.get(1)).position()).normalize();
+                                if (toStartR.dot(toEndR) < 0.01f) {
+                                    edge.markUsed();
+                                    loop.add(edge.end());
+                                    loop.add(edge.start());
+                                    loop.add(edge.end()); // Purposely duplicate the last vertex so that a full quad remains later
+                                    closed = true;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+
+                int nextVertex = nextEdge.other(current);
+                loop.add(nextVertex);
+                current = nextVertex;
+            }
+
+            if (closed && loop.size() > 2) {
+                // Remove the duplicate closing vertex
+                loop.remove(loop.size() - 1);
+
+                applyCapUVToVertices(loop, uniqueVertices, normal, capSprite);
+
+                emitLoopToConsumer(loop, uniqueVertices, normal, bufferConsumer, lightFunction);
+                loopCount++;
+            }
+        }
+
+        segments.clear();
+    }
+
+    private void emitLoopToConsumer(List<Integer> loopIndices, List<CapVertex> vertices, Vector3f normal, List<Consumer<BufferBuilder>> bufferConsumer, Function<Vector3f, Integer> lightFunction) {
+        // Use the cut-facing normal (flip the supplied plane normal) so the cap
+        // quads face into the cut, not towards the surface.
+        Vector3f normalizedPlane = new Vector3f(normal);
+        if (normalizedPlane.lengthSquared() > GirderGeometry.EPSILON) {
+            normalizedPlane.normalize();
+        }
+        Vector3f faceNormal = new Vector3f(normalizedPlane).negate();
+
+        List<GirderVertex> loopVertices = getGirderVertices(loopIndices, vertices, faceNormal);
+
+        List<GirderVertex> cleaned = GirderGeometry.dedupeLoopVertices(loopVertices);
+        if (cleaned.size() < 3) {
+            return;
+        }
+
+        // Check winding order and reverse if needed
+        Vector3f polygonNormal = GirderGeometry.computePolygonNormal(cleaned);
+        if (polygonNormal.lengthSquared() > GirderGeometry.EPSILON && polygonNormal.dot(faceNormal) < 0f) {
+            java.util.Collections.reverse(cleaned);
+        }
+
+        GirderGeometry.emitPolygonToConsumer(cleaned, bufferConsumer, lightFunction);
+    }
+
     public void emitCaps(Vector3f planePoint, Vector3f planeNormal, List<BakedQuad> consumer) {
         if (segments.isEmpty()) {
             return;
@@ -46,7 +187,7 @@ public final class GirderCapAccumulator {
         }
         normal.normalize();
 
-        TextureAtlasSprite stoneSprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stoneLocation);
+        TextureAtlasSprite stoneSprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(capTexture);
 
 //        dedupeSegments();
 
