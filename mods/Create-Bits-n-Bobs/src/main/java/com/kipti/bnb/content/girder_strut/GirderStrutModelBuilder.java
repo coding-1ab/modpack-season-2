@@ -33,32 +33,32 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
         if (!(level.getBlockEntity(pos) instanceof GirderStrutBlockEntity blockEntity)) {
             return ModelData.EMPTY;
         }
-        GirderStrutModelData data = GirderStrutModelData.collect(level, pos, state, blockEntity);
+        blockEntity.connectionRenderBufferCache = null; // Invalidate cache on model data request
+//        GirderStrutModelData data = GirderStrutModelData.collect(level, pos, state, blockEntity);
         return ModelData.builder()
-            .with(GIRDER_PROPERTY, data)
+//            .with(GIRDER_PROPERTY, data)
             .build();
     }
 
     @Override
     public List<BakedQuad> getQuads(BlockState state, Direction side, RandomSource rand, ModelData data, RenderType renderType) {
         List<BakedQuad> base = new ArrayList<>(super.getQuads(state, side, rand, data, renderType));
-        if (renderType != null && renderType != RenderType.solid()) {
-            return base;
-        }
-        if (side != null) { //Fuck this shit took me way to long to figure out
-            return base;
-        }
-        if (!data.has(GIRDER_PROPERTY)) {
-            return base;
-        }
-        GirderStrutModelData girderData = data.get(GIRDER_PROPERTY);
-        if (girderData == null || girderData.connections().isEmpty()) {
-            return base;
-        }
-        for (GirderConnection connection : girderData.connections()) {
-            base.addAll(GirderStrutModelManipulator.bakeConnection(connection));
-        }
-
+//        if (renderType != null && renderType != RenderType.solid()) {
+//            return base;
+//        }
+//        if (side != null) { //Fuck this shit took me way to long to figure out
+//            return base;
+//        }
+//        if (!data.has(GIRDER_PROPERTY)) {
+//            return base;
+//        }
+//        GirderStrutModelData girderData = data.get(GIRDER_PROPERTY);
+//        if (girderData == null || girderData.connections().isEmpty()) {
+//            return base;
+//        }
+//        for (GirderConnection connection : girderData.connections()) {
+//            base.addAll(GirderStrutModelManipulator.bakeConnection(connection));
+//        }
         return base;
     }
 

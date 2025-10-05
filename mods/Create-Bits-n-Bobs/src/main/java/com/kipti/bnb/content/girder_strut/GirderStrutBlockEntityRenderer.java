@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -23,15 +24,19 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<GirderStrutBlockEntity> {
 
+    private static float ADJACENT_BLOCK_TOLERANCE = 0.3f;
+
     public GirderStrutBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
         super(context);
     }
+
 
     @Override
     protected void renderSafe(GirderStrutBlockEntity blockEntity, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
@@ -73,33 +78,33 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
                     .rotateX(-(float) xRot)
                     .uncenter();
 
-                //            ms.pushPose();
-                //            renderSegments(state, BnbPartialModels.GIRDER_STRUT_JOINT_SEGMENT, ms, 1, buffer, light);
-                //            ms.popPose();
 
                 ms.translate(0, 0, lengthOffset + 0.5); // Adjust the translation based on segment length
                 if (getRenderPriority(relative) > getRenderPriority(relative.multiply(-1))) {
-                    renderSegments(state, BnbPartialModels.GIRDER_STRUT_SEGMENT, ms, segments, buffer, light);
+                    renderSegments(state, BnbPartialModels.GIRDER_STRUT_SEGMENT, ms, segments, buffer, blockEntity.getLevel() == null ? light : LevelRenderer.getLightColor(blockEntity.getLevel(), pos));
                 }
                 ms.popPose();
             }
         } else { //use GirderStrutModelManipulator
-            GirderStrutModelBuilder.GirderStrutModelData connectionData = GirderStrutModelBuilder.GirderStrutModelData.collect(blockEntity.getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity);
-            List<Consumer<BufferBuilder>> quads = connectionData.connections()
-                .stream()
-                .flatMap(c -> GirderStrutModelManipulator.bakeConnectionToConsumer(c, createLighter(blockEntity)).stream())
-                .toList();
+            if (blockEntity.connectionRenderBufferCache == null) {
+                GirderStrutModelBuilder.GirderStrutModelData connectionData = GirderStrutModelBuilder.GirderStrutModelData.collect(blockEntity.getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity);
+                List<Consumer<BufferBuilder>> quads = connectionData.connections()
+                    .stream()
+                    .flatMap(c -> GirderStrutModelManipulator.bakeConnectionToConsumer(c, createLighter(blockEntity)).stream())
+                    .toList();
 
-            BufferBuilder builder = new BufferBuilder(new ByteBufferBuilder(256), VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+                BufferBuilder builder = new BufferBuilder(new ByteBufferBuilder(256), VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
 
-            for (Consumer<BufferBuilder> quad : quads) {
-                quad.accept(builder);
+                for (Consumer<BufferBuilder> quad : quads) {
+                    quad.accept(builder);
+                }
+                MeshData meshData = builder.build();
+
+                if (meshData == null) return;
+
+                blockEntity.connectionRenderBufferCache = SuperBufferFactory.getInstance().create(meshData);
             }
-            MeshData meshData = builder.build();
-
-            if (meshData == null) return;
-            SuperBufferFactory.getInstance().create(meshData)
-                .renderInto(ms, buffer.getBuffer(RenderType.solid()));
+            blockEntity.connectionRenderBufferCache.renderInto(ms, buffer.getBuffer(RenderType.solid()));
         }
 
     }
@@ -109,9 +114,41 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
             if (blockEntity.getLevel() == null) return GirderGeometry.DEFAULT_LIGHT;
             Matrix4f lightTransform = new Matrix4f().translate(blockEntity.getBlockPos().getX(), blockEntity.getBlockPos().getY(), blockEntity.getBlockPos().getZ());
             Vector3f lightPosition = lightTransform.transformPosition(position, new Vector3f());
-            BlockPos blockPosition = BlockPos.containing(lightPosition.x, lightPosition.y, lightPosition.z);
-            return LevelRenderer.getLightColor(blockEntity.getLevel(), blockPosition);
+            List<BlockPos> positions = getClosePositions(lightPosition.x, lightPosition.y, lightPosition.z);
+            return positions
+                .stream()
+                .map(p -> LevelRenderer.getLightColor(blockEntity.getLevel(), p))
+                .reduce(0, GirderStrutBlockEntityRenderer::maximizeLight);
         };
+    }
+
+    private List<BlockPos> getClosePositions(float x, float y, float z) {
+        float fx = x - Math.round(x);
+        float fy = y - Math.round(y);
+        float fz = z - Math.round(z);
+        BlockPos base = new BlockPos((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z));
+        List<BlockPos> positions = new ArrayList<>();
+        positions.add(base);
+        if (Math.abs(fx) < ADJACENT_BLOCK_TOLERANCE) {
+            positions.add(base.relative(fx > 0 ? Direction.WEST : Direction.EAST));
+        }
+        if (Math.abs(fy) < ADJACENT_BLOCK_TOLERANCE) {
+            positions.add(base.relative(fy > 0 ? Direction.DOWN : Direction.UP));
+        }
+        if (Math.abs(fz) < ADJACENT_BLOCK_TOLERANCE) {
+            positions.add(base.relative(fz > 0 ? Direction.NORTH : Direction.SOUTH));
+        }
+        return positions;
+    }
+
+    public static int maximizeLight(int lightA, int lightB) {
+        int blockA = lightA & 0xFFFF;
+        int skyA = (lightA >>> 16) & 0xFFFF;
+        int blockB = lightB & 0xFFFF;
+        int skyB = (lightB >>> 16) & 0xFFFF;
+        int block = Math.max(blockA, blockB);
+        int sky = Math.max(skyA, skyB);
+        return (sky << 16) | block;
     }
 
     protected void renderSegments(BlockState state, PartialModel model, PoseStack ms, int length, MultiBufferSource buffer, int light) {

@@ -181,16 +181,6 @@ public final class GirderGeometry {
         return ((originalV - from.getV0()) / fromSpan) * toSpan + to.getV0();
     }
 
-    public static int maximizeLight(int lightA, int lightB) {
-        int blockA = lightA & 0xFFFF;
-        int skyA = (lightA >>> 16) & 0xFFFF;
-        int blockB = lightB & 0xFFFF;
-        int skyB = (lightB >>> 16) & 0xFFFF;
-        int block = Math.max(blockA, blockB);
-        int sky = Math.max(skyA, skyB);
-        return (sky << 16) | block;
-    }
-
     public static void emitPolygonToConsumer(
         List<GirderVertex> verticesToTestRelight,
         List<Consumer<BufferBuilder>> consumer,
@@ -198,11 +188,6 @@ public final class GirderGeometry {
         verticesToTestRelight = dedupeLoopVertices(verticesToTestRelight);
         Vector3f normal = GirderGeometry.computePolygonNormal(verticesToTestRelight);
         List<GirderVertex> vertices = new ArrayList<>();
-
-        int light = 0;
-        for (GirderVertex v : verticesToTestRelight) {
-            light = maximizeLight(light, lightFunction.apply(v.position()));
-        }
 
         for (GirderVertex v : verticesToTestRelight) {
             vertices.add(new GirderVertex(
