@@ -4,8 +4,6 @@ import com.kipti.bnb.registry.BnbShapes;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import net.createmod.catnip.outliner.Outliner;
-import net.createmod.catnip.theme.Color;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -14,7 +12,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -174,6 +171,9 @@ public class HeadlampBlockEntity extends SmartBlockEntity {
     @Override
     protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(tag, registries, clientPacket);
+        if (!tag.contains("activePlacements", 11)) {
+            return;
+        }
         int[] placements = tag.getIntArray("activePlacements");
         if (placements.length != activePlacements.length) {
             throw new IllegalStateException("Active placements length mismatch: expected " + activePlacements.length + ", got " + placements.length);

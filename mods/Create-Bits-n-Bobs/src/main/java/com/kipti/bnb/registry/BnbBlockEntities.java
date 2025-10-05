@@ -1,6 +1,7 @@
 package com.kipti.bnb.registry;
 
 import com.kipti.bnb.content.girder_strut.GirderStrutBlockEntity;
+import com.kipti.bnb.content.girder_strut.GirderStrutBlockEntityRenderer;
 import com.kipti.bnb.content.light.headlamp.HeadlampBlockEntity;
 import com.kipti.bnb.content.nixie.foundation.GenericNixieDisplayBlockEntity;
 import com.kipti.bnb.content.nixie.foundation.GenericNixieDisplayBoardRenderer;
@@ -33,6 +34,7 @@ public class BnbBlockEntities {
 
     public static final BlockEntityEntry<GirderStrutBlockEntity> GIRDER_STRUT = REGISTRATE.blockEntity("girder_strut", GirderStrutBlockEntity::new)
         .validBlock(BnbBlocks.GIRDER_STRUT)
+        .renderer(() -> GirderStrutBlockEntityRenderer::new)
         .register();
 
     public static void register() {

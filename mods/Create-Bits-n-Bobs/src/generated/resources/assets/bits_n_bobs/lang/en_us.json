@@ -55,5 +55,6 @@
   "block.bits_n_bobs.yellow_chair": "Yellow Chair",
   "block.bits_n_bobs.yellow_large_nixie_tube": "Yellow Large Nixie Tube",
   "block.bits_n_bobs.yellow_nixie_board": "Yellow Nixie Board",
+  "message.bits_n_bobs.girder_strut.missing_anchors": "You need %s more Girder Struts",
   "tab.based": "Create: Bits 'n' Bobs"
 }

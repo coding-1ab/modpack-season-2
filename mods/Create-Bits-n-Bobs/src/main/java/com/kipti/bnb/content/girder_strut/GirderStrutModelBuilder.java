@@ -33,28 +33,32 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
         if (!(level.getBlockEntity(pos) instanceof GirderStrutBlockEntity blockEntity)) {
             return ModelData.EMPTY;
         }
-        GirderStrutModelData data = GirderStrutModelData.collect(level, pos, state, blockEntity);
+        blockEntity.connectionRenderBufferCache = null; // Invalidate cache on model data request
+//        GirderStrutModelData data = GirderStrutModelData.collect(level, pos, state, blockEntity);
         return ModelData.builder()
-            .with(GIRDER_PROPERTY, data)
+//            .with(GIRDER_PROPERTY, data)
             .build();
     }
 
     @Override
     public List<BakedQuad> getQuads(BlockState state, Direction side, RandomSource rand, ModelData data, RenderType renderType) {
         List<BakedQuad> base = new ArrayList<>(super.getQuads(state, side, rand, data, renderType));
-        if (renderType != null && renderType != RenderType.solid()) {
-            return base;
-        }
-        if (!data.has(GIRDER_PROPERTY)) {
-            return base;
-        }
-        GirderStrutModelData girderData = data.get(GIRDER_PROPERTY);
-        if (girderData == null || girderData.connections().isEmpty()) {
-            return base;
-        }
-        for (GirderConnection connection : girderData.connections()) {
-            base.addAll(GirderStrutModelManipulator.bakeConnection(connection));
-        }
+//        if (renderType != null && renderType != RenderType.solid()) {
+//            return base;
+//        }
+//        if (side != null) { //Fuck this shit took me way to long to figure out
+//            return base;
+//        }
+//        if (!data.has(GIRDER_PROPERTY)) {
+//            return base;
+//        }
+//        GirderStrutModelData girderData = data.get(GIRDER_PROPERTY);
+//        if (girderData == null || girderData.connections().isEmpty()) {
+//            return base;
+//        }
+//        for (GirderConnection connection : girderData.connections()) {
+//            base.addAll(GirderStrutModelManipulator.bakeConnection(connection));
+//        }
         return base;
     }
 
@@ -70,14 +74,20 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
 
     @Override
     public boolean usesBlockLight() {
-        return false;
+        return true;
     }
 
     static final class GirderStrutModelData {
         private final List<GirderConnection> connections;
+        private final BlockPos pos;
 
-        private GirderStrutModelData(List<GirderConnection> connections) {
+        private GirderStrutModelData(List<GirderConnection> connections, BlockPos pos) {
             this.connections = connections;
+            this.pos = pos;
+        }
+
+        public BlockPos getPos() {
+            return pos;
         }
 
         List<GirderConnection> connections() {
@@ -86,16 +96,17 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
 
         static GirderStrutModelData collect(BlockAndTintGetter level, BlockPos pos, BlockState state, GirderStrutBlockEntity blockEntity) {
             if (!(state.getBlock() instanceof GirderStrutBlock)) {
-                return new GirderStrutModelData(List.of());
+                return new GirderStrutModelData(List.of(), pos);
             }
             Direction facing = state.getValue(GirderStrutBlock.FACING);
             Vec3 blockOrigin = Vec3.atLowerCornerOf(pos);
-            Vec3 facePoint = Vec3.atCenterOf(pos).relative(facing, -0.5 - 1e-3);
+            Vec3 facePoint = Vec3.atCenterOf(pos).relative(facing, -10 / 16f - 1e-3);
             Vec3 thisSurface = Vec3.atCenterOf(pos).relative(facing, -SURFACE_OFFSET);
 
             List<GirderConnection> connections = new ArrayList<>();
 
             for (BlockPos otherPos : blockEntity.getConnectionsCopy()) {
+                otherPos = otherPos.offset(pos);
                 BlockState otherState = level.getBlockState(otherPos);
                 if (!(otherState.getBlock() instanceof GirderStrutBlock)) {
                     continue;
@@ -125,7 +136,7 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
                 ));
             }
 
-            return new GirderStrutModelData(Collections.unmodifiableList(connections));
+            return new GirderStrutModelData(Collections.unmodifiableList(connections), pos);
         }
     }
 

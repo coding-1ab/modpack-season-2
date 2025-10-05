@@ -69,6 +69,7 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
                 BlockEntity be = level.getBlockEntity(pos);
                 if (be instanceof GirderStrutBlockEntity self) {
                     for (BlockPos otherPos : self.getConnectionsCopy()) {
+                        otherPos = otherPos.offset(pos);
                         BlockEntity otherBe = level.getBlockEntity(otherPos);
                         if (otherBe instanceof GirderStrutBlockEntity other) {
                             other.removeConnection(pos);
@@ -92,4 +93,5 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
     public BlockEntityType<? extends GirderStrutBlockEntity> getBlockEntityType() {
         return BnbBlockEntities.GIRDER_STRUT.get();
     }
+
 }
