@@ -83,6 +83,7 @@ public class WireSpool extends Item {
 				}
 			}
 			c.getItemInHand().set(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
+			c.getItemInHand().remove(DataComponents.CUSTOM_DATA);
 			c.getPlayer().displayClientMessage(result.getMessage(), true);
 
 		}
