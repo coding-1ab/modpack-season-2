@@ -49,7 +49,7 @@ import plus.dragons.createdragonsplus.common.processing.blaze.BlazeBlock;
 import plus.dragons.createdragonsplus.common.processing.blaze.BlazeMovementBehaviour;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHatchBlock;
 import plus.dragons.createenchantmentindustry.common.fluids.lantern.ExperienceLanternBlock;
-import plus.dragons.createenchantmentindustry.common.fluids.lantern.ExperienceLanternMovementBehavior;
+import plus.dragons.createenchantmentindustry.common.fluids.lantern.ExperienceLanternMovementBehaviour;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrinterBlock;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindstoneDrainBlock;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.MechanicalGrindStoneItem;
@@ -161,7 +161,7 @@ public class CEIBlocks {
             .properties(p -> p.mapColor(MapColor.COLOR_LIGHT_GREEN))
             .transform(pickaxeOnly())
             .transform(mountedFluidStorage(CEIMountedStorageTypes.EXPERIENCE_LANTERN))
-            .onRegister(block -> MovementBehaviour.REGISTRY.register(block, new ExperienceLanternMovementBehavior()))
+            .onRegister(block -> MovementBehaviour.REGISTRY.register(block, new ExperienceLanternMovementBehaviour()))
             .addLayer(() -> RenderType::cutoutMipped)
             .blockstate((ctx, prov) -> prov.directionalBlock(ctx.get(), AssetLookup.standardModel(ctx, prov)))
             .simpleItem()

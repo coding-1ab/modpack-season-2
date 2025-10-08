@@ -83,8 +83,7 @@ public class CEIFluidsConfig extends ConfigBase {
             RequiresRestart.SERVER.asComment());
     public final ConfigInt experienceLanternDrainRate = i(50, 1,
             "experienceLanternDrainRate",
-            Comments.experienceLanternDrainRate,
-            RequiresRestart.SERVER.asComment());
+            Comments.experienceLanternDrainRate);
     public final ConfigBool experienceLanternPullToggle = b(true,
             "experienceLanternPullToggle",
             Comments.experienceLanternPullToggle);

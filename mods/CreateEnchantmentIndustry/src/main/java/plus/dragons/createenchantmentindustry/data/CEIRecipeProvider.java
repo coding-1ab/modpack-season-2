@@ -34,6 +34,8 @@ import static plus.dragons.createenchantmentindustry.common.registry.CEIFluids.E
 import static plus.dragons.createenchantmentindustry.common.registry.CEIItems.*;
 
 import java.util.concurrent.CompletableFuture;
+
+import com.simibubi.create.AllItems;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -41,6 +43,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Blocks;
 import plus.dragons.createdragonsplus.data.recipe.integration.IntegrationIngredient;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindingRecipe;
@@ -169,6 +172,17 @@ public class CEIRecipeProvider extends RecipeProvider {
         GrindingRecipe.builder(CEICommon.asResource("experience_block"))
                 .require(EXPERIENCE_BLOCK)
                 .output(EXPERIENCE.get(), 27)
+                .build(output);
+        crushing(CEICommon.asResource("infested_cobblestone"))
+                .require(Blocks.INFESTED_COBBLESTONE)
+                .output(Blocks.GRAVEL)
+                .output(0.5f, EXP_NUGGET.asStack())
+                .build(output);
+        compacting(CEICommon.asResource("infested_stone"))
+                .require(Blocks.INFESTED_STONE).require(Blocks.INFESTED_STONE)
+                .require(Blocks.INFESTED_STONE).require(Blocks.INFESTED_STONE)
+                .output(Blocks.STONE_BRICKS)
+                .output(EXP_NUGGET.asStack())
                 .build(output);
         GrindingRecipe.builder(SUPER_EXPERIENCE_NUGGET.getId())
                 .require(SUPER_EXPERIENCE_NUGGET)

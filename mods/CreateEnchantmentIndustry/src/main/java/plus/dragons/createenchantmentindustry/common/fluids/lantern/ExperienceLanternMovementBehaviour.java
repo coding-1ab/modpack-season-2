@@ -35,16 +35,17 @@ import plus.dragons.createenchantmentindustry.common.fluids.experience.Experienc
 import plus.dragons.createenchantmentindustry.common.registry.CEIFluids;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
-public class ExperienceLanternMovementBehavior implements MovementBehaviour {
+public class ExperienceLanternMovementBehaviour implements MovementBehaviour {
     @Override
     public void tick(MovementContext context) {
-        var effectiveAABB = new AABB(context.position.subtract(0.5d, 0.5d, 0.5d), context.position.add(0.5d, 0.5d, 0.5d)).inflate(0.5);
         if (!context.world.isClientSide && context.world.getGameTime() % 10 == 0) {
+            var effectiveAABB = new AABB(context.position.subtract(0.5d, 0.5d, 0.5d), context.position.add(0.5d, 0.5d, 0.5d)).inflate(0.5);
             drainExp(context.world,
                     effectiveAABB,
                     context.contraption.getStorage().getFluids());
         }
         if (!context.world.isClientSide && CEIConfig.fluids().experienceLanternPullToggle.get()) {
+            var effectiveAABB = new AABB(context.position.subtract(0.5d, 0.5d, 0.5d), context.position.add(0.5d, 0.5d, 0.5d)).inflate(0.5);
             pullExp(context.world,
                     effectiveAABB,
                     context.position);
