@@ -1,6 +1,7 @@
 package com.simibubi.create.content.equipment.goggles;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -18,8 +19,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
 
 public class GogglesItem extends Item implements Equipable {
+	private static final List<Predicate<Player>> IS_WEARING_PREDICATES = Collections.synchronizedList(new ArrayList<>());
 
-	private static final List<Predicate<Player>> IS_WEARING_PREDICATES = new ArrayList<>();
 	static {
 		addIsWearingPredicate(player -> AllItems.GOGGLES.isIn(player.getItemBySlot(EquipmentSlot.HEAD)));
 	}
@@ -54,5 +55,4 @@ public class GogglesItem extends Item implements Equipable {
 	public static void addIsWearingPredicate(Predicate<Player> predicate) {
 		IS_WEARING_PREDICATES.add(predicate);
 	}
-
 }
