@@ -23,8 +23,6 @@ import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import net.minecraftforge.items.SlotItemHandler;
-
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.animation.LerpedFloat.Chaser;
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -42,6 +40,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
+import net.minecraftforge.items.SlotItemHandler;
+
 public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<StockKeeperCategoryMenu>
 	implements ScreenWithStencils {
 
@@ -50,10 +50,10 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 
 	private List<Rect2i> extraAreas = Collections.emptyList();
 
-	private LerpedFloat scroll = LerpedFloat.linear()
+	private final LerpedFloat scroll = LerpedFloat.linear()
 		.startWithValue(0);
 
-	private List<ItemStack> schedule;
+	private final List<ItemStack> schedule;
 	private IconButton confirmButton;
 	private ItemStack editingItem;
 	private int editingIndex;
