@@ -315,10 +315,10 @@ public class Skin implements NativeResource {
                 this.addVertex(minX, maxY, minZ, u2, v1, -1.0F, 0.0F, 0.0F);
 
                 // North
-                this.addVertex(maxX, minY, minZ, u1, v1, 0.0F, 0.0F, -1.0F);
-                this.addVertex(minX, minY, minZ, u2, v1, 0.0F, 0.0F, -1.0F);
-                this.addVertex(minX, maxY, minZ, u2, v2, 0.0F, 0.0F, -1.0F);
-                this.addVertex(maxX, maxY, minZ, u1, v2, 0.0F, 0.0F, -1.0F);
+                this.addVertex(maxX, minY, minZ, u1, v2, 0.0F, 0.0F, -1.0F);
+                this.addVertex(minX, minY, minZ, u2, v2, 0.0F, 0.0F, -1.0F);
+                this.addVertex(minX, maxY, minZ, u2, v1, 0.0F, 0.0F, -1.0F);
+                this.addVertex(maxX, maxY, minZ, u1, v1, 0.0F, 0.0F, -1.0F);
 
                 // South
                 this.addVertex(minX, minY, maxZ, u3, v2, 0.0F, 0.0F, 1.0F);
@@ -351,10 +351,10 @@ public class Skin implements NativeResource {
                 this.addVertex(minX, maxY, minZ, u1, v1, -1.0F, 0.0F, 0.0F);
 
                 // North, mirrored
-                this.addVertex(maxX, minY, minZ, u2, v1, 0.0F, 0.0F, -1.0F);
-                this.addVertex(minX, minY, minZ, u1, v1, 0.0F, 0.0F, -1.0F);
-                this.addVertex(minX, maxY, minZ, u1, v2, 0.0F, 0.0F, -1.0F);
-                this.addVertex(maxX, maxY, minZ, u2, v2, 0.0F, 0.0F, -1.0F);
+                this.addVertex(maxX, minY, minZ, u2, v2, 0.0F, 0.0F, -1.0F);
+                this.addVertex(minX, minY, minZ, u1, v2, 0.0F, 0.0F, -1.0F);
+                this.addVertex(minX, maxY, minZ, u1, v1, 0.0F, 0.0F, -1.0F);
+                this.addVertex(maxX, maxY, minZ, u2, v1, 0.0F, 0.0F, -1.0F);
 
                 // South, mirrored
                 this.addVertex(minX, minY, maxZ, u4, v2, 0.0F, 0.0F, 1.0F);
