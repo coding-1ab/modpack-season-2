@@ -1,5 +1,6 @@
 package com.mrh0.createaddition.sound;
 
+import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.index.CASounds;
 
 import com.simibubi.create.infrastructure.config.AllConfigs;
@@ -59,7 +60,6 @@ public class CASoundScapes {
 
 	public static void play(AmbienceGroup group, BlockPos pos, float pitch) {
 		if (!AllConfigs.client().enableAmbientSounds.get()) return;
-		// if (!Config.AUDIO_ENABLED.get()) return;
 		if(!CASounds.ELECTRIC_MOTOR_BUZZ.isBound() || !CASounds.ELECTRIC_CHARGE.isBound()) return;
 
 		if (!outOfRange(pos)) addSound(group, pos, pitch);
@@ -70,8 +70,13 @@ public class CASoundScapes {
 			.forEach(CASoundScape::tick);
 
 		if (AnimationTickHolder.getTicks() % UPDATE_INTERVAL != 0) return;
-		
-		boolean disable = !AllConfigs.client().enableAmbientSounds.get();
+
+		boolean disable = false;
+		try {
+			disable = !AllConfigs.client().enableAmbientSounds.get();
+		} catch (Exception error) {
+			CreateAddition.LOGGER.error("Suppressed crash in CASoundScapes");
+		}
 		for (Iterator<Map.Entry<Pair<AmbienceGroup, PitchGroup>, CASoundScape>> iterator = activeSounds.entrySet()
 			.iterator(); iterator.hasNext();) {
 
