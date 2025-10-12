@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import foundry.veil.api.client.necromancer.Bone;
 import foundry.veil.api.client.necromancer.Skeleton;
 import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.client.render.VeilRenderSystem;
@@ -171,8 +172,8 @@ public class Skin implements NativeResource {
         this.vertexArray.free();
     }
 
-    public static Builder builder(int textureWidth, int textureHeight) {
-        return new Builder(textureWidth, textureHeight);
+    public static Builder builder(Skeleton baseInstance, int textureWidth, int textureHeight) {
+        return new Builder(baseInstance, textureWidth, textureHeight);
     }
 
     public static class Builder {
@@ -180,6 +181,7 @@ public class Skin implements NativeResource {
         private static final Vector3f POS = new Vector3f();
         private static final Vector3f NORMAL = new Vector3f();
 
+        private final Skeleton skeleton;
         private final VertexArray vertexArray;
         private final ByteBufferBuilder vertices;
         private final IntList indices;
@@ -189,9 +191,11 @@ public class Skin implements NativeResource {
         private final Matrix4f position;
         private final Matrix3f normal;
 
+        private int currentBoneID;
         private int nextIndex;
 
-        public Builder(float textureWidth, float textureHeight) {
+        public Builder(Skeleton skeleton, float textureWidth, float textureHeight) {
+            this.skeleton = skeleton;
             this.vertexArray = createVertexArray();
             this.vertices = new ByteBufferBuilder(Skeleton.MAX_BONES * 24 * 24);
             this.indices = new IntArrayList();
@@ -215,7 +219,11 @@ public class Skin implements NativeResource {
             if (this.boneNames.size() >= Skeleton.MAX_BONES) {
                 throw new IllegalStateException("Too many bones defined. Max is " + Skeleton.MAX_BONES);
             }
+            if (!this.skeleton.bones.containsKey(boneId)) {
+                throw new IllegalStateException("No bone of name " + boneId + " found in skeleton " + skeleton.getClass().getName());
+            }
 
+            this.currentBoneID = this.skeleton.bones.get(boneId).getIndex();
             this.boneNames.add(boneId);
             return this;
         }
@@ -254,7 +262,7 @@ public class Skin implements NativeResource {
             MemoryUtil.memPutByte(pointer + 20, normalIntValue(NORMAL.x));
             MemoryUtil.memPutByte(pointer + 21, normalIntValue(NORMAL.y));
             MemoryUtil.memPutByte(pointer + 22, normalIntValue(NORMAL.z));
-            MemoryUtil.memPutByte(pointer + 23, (byte) (this.boneNames.size() - 1));
+            MemoryUtil.memPutByte(pointer + 23, (byte) (this.currentBoneID));
             return this;
         }
 
@@ -286,7 +294,7 @@ public class Skin implements NativeResource {
             topBottomU0 /= this.textureWidth; topBottomU1 /= this.textureWidth; topBottomU2 /= this.textureWidth;
 
             float v0 = vOffset, v1 = v0 + zSize, v2 = v1 + ySize;
-            v0 /= this.textureWidth; v1 /= this.textureWidth; v2 /= this.textureWidth;
+            v0 /= this.textureHeight; v1 /= this.textureHeight; v2 /= this.textureHeight;
 
             // A little gross, but should work in every case.
             if (!mirrored) {
@@ -364,7 +372,7 @@ public class Skin implements NativeResource {
             }
 
             for (int i = 0; i < 6; i++) {
-                this.addQuadIndices(this.nextIndex);
+                this.addQuadIndices(this.nextIndex());
             }
 
             return this;
@@ -379,9 +387,9 @@ public class Skin implements NativeResource {
             this.addVertex(x1, y1, z1, u1, v1, normalX, normalY, normalZ);
             this.addVertex(x2, y2, z2, u2, v2, normalX, normalY, normalZ);
             this.addVertex(x3, y3, z3, u3, v3, normalX, normalY, normalZ);
-            this.addIndex(this.nextIndex);
-            this.addIndex(this.nextIndex);
-            this.addIndex(this.nextIndex);
+            this.addIndex(this.nextIndex());
+            this.addIndex(this.nextIndex());
+            this.addIndex(this.nextIndex());
             return this;
         }
 
@@ -397,7 +405,7 @@ public class Skin implements NativeResource {
             this.addVertex(x2, y2, z2, u2, v2, normalX, normalY, normalZ);
             this.addVertex(x3, y3, z3, u3, v3, normalX, normalY, normalZ);
             this.addVertex(x4, y4, z4, u4, v4, normalX, normalY, normalZ);
-            this.addQuadIndices(this.nextIndex);
+            this.addQuadIndices(this.nextIndex());
             return this;
         }
 
@@ -432,8 +440,8 @@ public class Skin implements NativeResource {
                 this.vertexArray.uploadIndexBuffer(indices, indexType);
 
                 Object2IntMap<String> boneIds = new Object2IntArrayMap<>(this.boneNames.size());
-                for (int i = 0; i < this.boneNames.size(); i++) {
-                    boneIds.put(this.boneNames.get(i), i);
+                for (Bone bone : skeleton.bones.values()) {
+                    boneIds.put(bone.identifier, bone.getIndex());
                 }
 
                 return new Skin(this.vertexArray, Object2IntMaps.unmodifiable(boneIds));

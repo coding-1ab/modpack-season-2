@@ -10,7 +10,6 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 public abstract class Skeleton {
-
     public static final int MAX_BONES = 256;
     public static final int UNIFORM_STRIDE = 28 * Float.BYTES;
 
@@ -34,6 +33,7 @@ public abstract class Skeleton {
     }
 
     public void addBone(Bone part) {
+        part.setIndex(this.bones.size());
         this.bones.put(part.identifier, part);
     }
 
