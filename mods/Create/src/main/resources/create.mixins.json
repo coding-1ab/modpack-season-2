@@ -13,6 +13,7 @@
     "CustomItemUseEffectsMixin",
     "EnchantedCountIncreaseFunctionMixin",
     "EntityMixin",
+    "ItemStackMixin",
     "LavaSwimmingMixin",
     "MapItemSavedDataMixin",
     "MobMixin",

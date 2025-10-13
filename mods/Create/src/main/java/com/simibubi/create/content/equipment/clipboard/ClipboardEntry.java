@@ -1,14 +1,16 @@
 package com.simibubi.create.content.equipment.clipboard;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.AllDataComponents;
 
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -64,10 +66,21 @@ public class ClipboardEntry {
 	}
 
 	public static List<List<ClipboardEntry>> readAll(ItemStack clipboardItem) {
-		List<List<ClipboardEntry>> entries = new ArrayList<>();
+		return readAll(clipboardItem.getComponents());
+	}
+
+	public static List<List<ClipboardEntry>> readAll(DataComponentMap components) {
+		return readAll(components.get(AllDataComponents.CLIPBOARD_CONTENT));
+	}
+
+	public static List<List<ClipboardEntry>> readAll(@Nullable ClipboardContent content) {
+		if (content == null)
+			return new ArrayList<>();
 
 		// Both these lists are immutable, so we unfortunately need to re-create them to make them mutable
-		List<List<ClipboardEntry>> saved = clipboardItem.getOrDefault(AllDataComponents.CLIPBOARD_PAGES, Collections.emptyList());
+		List<List<ClipboardEntry>> saved = content.pages();
+
+		List<List<ClipboardEntry>> entries = new ArrayList<>(saved.size());
 		for (List<ClipboardEntry> inner : saved)
 			entries.add(new ArrayList<>(inner));
 
@@ -78,14 +91,10 @@ public class ClipboardEntry {
 		List<List<ClipboardEntry>> pages = ClipboardEntry.readAll(heldItem);
 		if (pages.isEmpty())
 			return new ArrayList<>();
-		int page = !heldItem.has(AllDataComponents.CLIPBOARD_PREVIOUSLY_OPENED_PAGE) ? 0
-			: Math.min(heldItem.getOrDefault(AllDataComponents.CLIPBOARD_PREVIOUSLY_OPENED_PAGE, 0), pages.size() - 1);
-		List<ClipboardEntry> entries = pages.get(page);
-		return entries;
-	}
 
-	public static void saveAll(List<List<ClipboardEntry>> entries, ItemStack clipboardItem) {
-		clipboardItem.set(AllDataComponents.CLIPBOARD_PAGES, entries);
+		int previouslyOpenedPage = heldItem.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY).previouslyOpenedPage();
+		int page = Math.min(previouslyOpenedPage, pages.size() - 1);
+		return pages.get(page);
 	}
 
 	public CompoundTag writeNBT() {
