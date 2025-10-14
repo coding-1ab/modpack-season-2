@@ -99,7 +99,18 @@ public class Skin implements NativeResource {
                 this.matrixStack[j].identity();
             }
             buffer.position(i * skeletonDataSize);
-            skeleton.storeInstancedData(buffer, skeleton.roots, this.boneIds, 0, this.color, this.normalMatrix, transforms.get(i), this.matrixStack, this.orientationStack, partialTicks.getFloat(i));
+            skeleton.storeInstancedData(
+                    buffer,
+                    skeleton.roots,
+                    this.boneIds,
+                    0,
+                    this.color,
+                    this.normalMatrix,
+                    transforms.get(i),
+                    this.matrixStack,
+                    this.orientationStack,
+                    partialTicks.getFloat(i)
+            );
         }
 
         buffer.rewind();
@@ -172,16 +183,14 @@ public class Skin implements NativeResource {
         this.vertexArray.free();
     }
 
-    public static Builder builder(Skeleton baseInstance, int textureWidth, int textureHeight) {
-        return new Builder(baseInstance, textureWidth, textureHeight);
+    public static Builder builder(int textureWidth, int textureHeight) {
+        return new Builder(textureWidth, textureHeight);
     }
 
     public static class Builder {
-
         private static final Vector3f POS = new Vector3f();
         private static final Vector3f NORMAL = new Vector3f();
 
-        private final Skeleton skeleton;
         private final VertexArray vertexArray;
         private final ByteBufferBuilder vertices;
         private final IntList indices;
@@ -191,11 +200,9 @@ public class Skin implements NativeResource {
         private final Matrix4f position;
         private final Matrix3f normal;
 
-        private int currentBoneID;
         private int nextIndex;
 
-        public Builder(Skeleton skeleton, float textureWidth, float textureHeight) {
-            this.skeleton = skeleton;
+        private Builder(float textureWidth, float textureHeight) {
             this.vertexArray = createVertexArray();
             this.vertices = new ByteBufferBuilder(Skeleton.MAX_BONES * 24 * 24);
             this.indices = new IntArrayList();
@@ -219,11 +226,7 @@ public class Skin implements NativeResource {
             if (this.boneNames.size() >= Skeleton.MAX_BONES) {
                 throw new IllegalStateException("Too many bones defined. Max is " + Skeleton.MAX_BONES);
             }
-            if (!this.skeleton.bones.containsKey(boneId)) {
-                throw new IllegalStateException("No bone of name " + boneId + " found in skeleton " + skeleton.getClass().getName());
-            }
 
-            this.currentBoneID = this.skeleton.bones.get(boneId).getIndex();
             this.boneNames.add(boneId);
             return this;
         }
@@ -262,7 +265,7 @@ public class Skin implements NativeResource {
             MemoryUtil.memPutByte(pointer + 20, normalIntValue(NORMAL.x));
             MemoryUtil.memPutByte(pointer + 21, normalIntValue(NORMAL.y));
             MemoryUtil.memPutByte(pointer + 22, normalIntValue(NORMAL.z));
-            MemoryUtil.memPutByte(pointer + 23, (byte) (this.currentBoneID));
+            MemoryUtil.memPutByte(pointer + 23, (byte) (this.boneNames.size() - 1));
             return this;
         }
 
@@ -284,7 +287,11 @@ public class Skin implements NativeResource {
             return this;
         }
 
-        public Skin.Builder addCube(float xSize, float ySize, float zSize, float xOffset, float yOffset, float zOffset, float xInflate, float yInflate, float zInflate, float uOffset, float vOffset, boolean mirrored) {
+        public Skin.Builder addCube(
+                float xSize, float ySize, float zSize,
+                float xOffset, float yOffset, float zOffset,
+                float xInflate, float yInflate, float zInflate,
+                float uOffset, float vOffset, boolean mirrored) {
             float minX = xOffset - xInflate, minY = yOffset - yInflate, minZ = zOffset - zInflate;
             float maxX = xOffset + xSize + xInflate, maxY = yOffset + ySize + yInflate, maxZ = zOffset + zSize + zInflate;
 
@@ -398,8 +405,7 @@ public class Skin implements NativeResource {
                 float x2, float y2, float z2, float u2, float v2,
                 float x3, float y3, float z3, float u3, float v3,
                 float x4, float y4, float z4, float u4, float v4,
-                float normalX, float normalY, float normalZ
-        ) {
+                float normalX, float normalY, float normalZ) {
             this.vertices.reserve(96);
             this.addVertex(x1, y1, z1, u1, v1, normalX, normalY, normalZ);
             this.addVertex(x2, y2, z2, u2, v2, normalX, normalY, normalZ);
@@ -440,9 +446,8 @@ public class Skin implements NativeResource {
                 this.vertexArray.uploadIndexBuffer(indices, indexType);
 
                 Object2IntMap<String> boneIds = new Object2IntArrayMap<>(this.boneNames.size());
-                for (Bone bone : skeleton.bones.values()) {
-                    boneIds.put(bone.identifier, bone.getIndex());
-                }
+                for (int i = 0; i < this.boneNames.size(); i++)
+                    boneIds.put(this.boneNames.get(i), i);
 
                 return new Skin(this.vertexArray, Object2IntMaps.unmodifiable(boneIds));
             } finally {
