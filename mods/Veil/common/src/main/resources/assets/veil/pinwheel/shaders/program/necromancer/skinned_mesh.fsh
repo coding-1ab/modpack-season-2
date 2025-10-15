@@ -17,8 +17,10 @@ in vec3 normal;
 out vec4 fragColor;
 
 void main() {
+    vec4 baseColor = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+
     // #veil:albedo
-    vec4 albedoColor = mix(overlayColor.rgb, texture(Sampler0, texCoord0) * vertexColor * ColorModulator, overlayColor.a);
+    vec4 albedoColor = mix(vec4(overlayColor.rgb, baseColor.a), baseColor, overlayColor.a);
 
     vec4 color = albedoColor * lightMapColor;
     if (color.a < 0.05) discard;
