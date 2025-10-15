@@ -55,6 +55,7 @@ void main() {
 
     // #veil:light_color;
     lightMapColor = texelFetch(Sampler2, UV2, 0);
+
     overlayColor = texelFetch(Sampler1, UV1, 0);
 
     texCoord0 = UV0;
