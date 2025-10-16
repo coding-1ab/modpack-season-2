@@ -14,13 +14,13 @@ import org.antarcticgardens.cna.CreateNewAge;
 import org.antarcticgardens.cna.content.energising.recipe.EnergisingRecipe;
 
 public class CNAEmiPlugin implements EmiPlugin {
-    public static final ResourceLocation ENERGISING_SPRITE_SHEET = new ResourceLocation(CreateNewAge.MOD_ID, "textures/gui/emi_simplified_textures.png");
+    public static final ResourceLocation ENERGISING_SPRITE_SHEET = ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "textures/gui/emi_simplified_textures.png");
     public static final EmiStack ENERGISING_WORKSTATION = EmiStack.of(CNABlocks.BASIC_ENERGISER.asItem().getDefaultInstance());
     public static final EmiStack ENERGISING_WORKSTATION_2 = EmiStack.of(CNABlocks.ADVANCED_ENERGISER.asItem().getDefaultInstance());
     public static final EmiStack ENERGISING_WORKSTATION_3 = EmiStack.of(CNABlocks.REINFORCED_ENERGISER.asItem().getDefaultInstance());
 
     public static final EmiRecipeCategory ENERGISING = 
-            new EmiRecipeCategory(new ResourceLocation(CreateNewAge.MOD_ID, "energising"), ENERGISING_WORKSTATION, new EmiTexture(ENERGISING_SPRITE_SHEET, 0, 0, 16, 16));
+            new EmiRecipeCategory(ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "energising"), ENERGISING_WORKSTATION, new EmiTexture(ENERGISING_SPRITE_SHEET, 0, 0, 16, 16));
     
     @Override
     public void register(EmiRegistry registry) {

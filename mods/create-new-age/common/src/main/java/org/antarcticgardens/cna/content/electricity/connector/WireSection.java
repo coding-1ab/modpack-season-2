@@ -31,12 +31,11 @@ public class WireSection {
     }
 
     private void addVertex(VertexConsumer consumer, float x, float y, float z, float u, float v, PoseStack poseStack, int packedLight) {
-        consumer.vertex(poseStack.last().pose(), x, y, z)
-                .color(1.0f, 1.0f, 1.0f, 1.0f)
-                .uv(u, v)
-                .uv2(packedLight)
-                .normal(0.0f, 1.0f, 0.0f)
-                .endVertex();
+        consumer.addVertex(poseStack.last().pose(), x, y, z)
+                .setColor(1.0f, 1.0f, 1.0f, 1.0f)
+                .setUv(u, v)
+                .setLight(packedLight)
+                .setNormal(0.0f, 1.0f, 0.0f);
     }
 
     public String name() {

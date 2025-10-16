@@ -2,7 +2,10 @@ package org.antarcticgardens.cna.data.recipe;
 
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.registry.RegisteredObjectsHelper;
+import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +22,7 @@ public abstract class GeneratedRecipeBuilderBase<SELF> {
     protected String suffix = "";
     protected RecipeCategory category = RecipeCategory.MISC;
     protected int amount = 1;
-    protected CriterionTriggerInstance trigger;
+    protected Criterion<InventoryChangeTrigger.TriggerInstance> trigger;
 
     public GeneratedRecipeBuilderBase(ItemLike result) {
         this.result = result;
@@ -60,7 +63,7 @@ public abstract class GeneratedRecipeBuilderBase<SELF> {
     }
 
     protected ResourceLocation createLocation(String type) {
-        String name = this.name == null ? CatnipServices.REGISTRIES.getKeyOrThrow(result.asItem()).getPath() : this.name;
-        return new ResourceLocation(CreateNewAge.MOD_ID, type + (type.isEmpty() ? "" : "/") + name + suffix);
+        String name = this.name == null ? RegisteredObjectsHelper.getKeyOrThrow(result.asItem()).getPath() : this.name;
+        return ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, type + (type.isEmpty() ? "" : "/") + name + suffix);
     }
 }

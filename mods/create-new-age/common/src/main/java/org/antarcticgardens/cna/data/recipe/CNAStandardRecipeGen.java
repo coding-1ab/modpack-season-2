@@ -2,6 +2,7 @@ package org.antarcticgardens.cna.data.recipe;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
@@ -12,29 +13,30 @@ import org.antarcticgardens.cna.CNABlocks;
 import org.antarcticgardens.cna.CNAItems;
 import org.antarcticgardens.cna.CNATags;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.UnaryOperator;
 
-#if CNA_FABRIC
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import io.github.fabricators_of_create.porting_lib.tags.Tags;
-#else
-import net.minecraftforge.common.Tags;
-#endif
+//#if CNA_FABRIC
+//import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+//import io.github.fabricators_of_create.porting_lib.tags.Tags;
+//#else
+import net.neoforged.neoforge.common.Tags;
+//#endif
 
 @SuppressWarnings("unused")
 public class CNAStandardRecipeGen extends CNARecipeProvider {
 
     // ========================================================================================================== Shaped
 
-    GeneratedRecipe BATTERY = builder(CNABlocks.BATTERY)
-            .unlockedBy(CNAItems.COPPER_WIRE)
-            .shaped(b -> b
-                    .define('B', AllItems.BRASS_SHEET)
-                    .define('I', AllBlocks.INDUSTRIAL_IRON_BLOCK)
-                    .define('W', CNAItems.COPPER_WIRE)
-                    .pattern(" B ")
-                    .pattern("WIW")
-                    .pattern(" B "));
+//    GeneratedRecipe BATTERY = builder(CNABlocks.BATTERY)
+//            .unlockedBy(CNAItems.COPPER_WIRE)
+//            .shaped(b -> b
+//                    .define('B', AllItems.BRASS_SHEET)
+//                    .define('I', AllBlocks.INDUSTRIAL_IRON_BLOCK)
+//                    .define('W', CNAItems.COPPER_WIRE)
+//                    .pattern(" B ")
+//                    .pattern("WIW")
+//                    .pattern(" B "));
 
     GeneratedRecipe ADVANCED_ENERGISER = builder(CNABlocks.ADVANCED_ENERGISER)
             .unlockedBy(CNAItems.OVERCHARGED_GOLD)
@@ -232,7 +234,7 @@ public class CNAStandardRecipeGen extends CNARecipeProvider {
             .unlockedBy(CNABlocks.REACTOR_CASING)
             .shaped(b -> b
                     .define('C', CNABlocks.REACTOR_CASING)
-                    .define('G', Tags.Items.GLASS)
+                    .define('G', Tags.Items.GLASS_BLOCKS)
                     .pattern("CGC")
                     .pattern("GGG")
                     .pattern("CGC"));
@@ -313,11 +315,11 @@ public class CNAStandardRecipeGen extends CNARecipeProvider {
         return "Create New Age Standard Recipes";
     }
 
-    public CNAStandardRecipeGen(PackOutput output) {
-        #if CNA_FABRIC
-        super((FabricDataOutput) output);
-        #else
-        super(output);
-        #endif
+    public CNAStandardRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+//        #if CNA_FABRIC
+//        super((FabricDataOutput) output);
+//        #else
+        super(output, registries);
+//        #endif
     }
 }

@@ -22,7 +22,7 @@ public class CNATags {
         public final TagKey<net.minecraft.world.item.Item> itemTag;
         
         Block() {
-            ResourceLocation location = new ResourceLocation(CreateNewAge.MOD_ID, CreateLang.asId(name()));
+            ResourceLocation location = ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, CreateLang.asId(name()));
             blockTag = TagKey.create(Registries.BLOCK, location);
             itemTag = TagKey.create(Registries.ITEM, location);
         }
@@ -48,7 +48,7 @@ public class CNATags {
         public final TagKey<net.minecraft.world.item.Item> tag;
         
         Item(String id) {
-            tag = TagKey.create(Registries.ITEM, new ResourceLocation(CreateNewAge.MOD_ID, id));
+            tag = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, id));
         }
         
         public static void load() {  }
@@ -68,27 +68,27 @@ public class CNATags {
     
     public static class Common {
         public static TagKey<net.minecraft.world.item.Item>
-                #if CNA_FABRIC
-                NUGGETS_COPPER = AllTags.forgeItemTag("copper_nuggets"), 
-                NUGGETS_ZINC = AllTags.forgeItemTag("zinc_nuggets"), 
-                PLATES_COPPER = AllTags.forgeItemTag("copper_plates"), 
-                PLATES_IRON = AllTags.forgeItemTag("iron_plates"),
-                PLATES_GOLD = AllTags.forgeItemTag("gold_plates");
-                #else
-                NUGGETS_COPPER = AllTags.forgeItemTag("nuggets/copper"), 
-                NUGGETS_ZINC = AllTags.forgeItemTag("nuggets/zinc"), 
-                PLATES_COPPER = AllTags.forgeItemTag("plates/copper"), 
-                PLATES_IRON = AllTags.forgeItemTag("plates/iron"),
-                PLATES_GOLD = AllTags.forgeItemTag("plates/gold");
-                #endif
+//                #if CNA_FABRIC
+//                NUGGETS_COPPER = AllTags.commonItemTag("copper_nuggets"),
+//                NUGGETS_ZINC = AllTags.commonItemTag("zinc_nuggets"),
+//                PLATES_COPPER = AllTags.commonItemTag("copper_plates"),
+//                PLATES_IRON = AllTags.commonItemTag("iron_plates"),
+//                PLATES_GOLD = AllTags.commonItemTag("gold_plates");
+//                #else
+                NUGGETS_COPPER = AllTags.commonItemTag("nuggets/copper"),
+                NUGGETS_ZINC = AllTags.commonItemTag("nuggets/zinc"),
+                PLATES_COPPER = AllTags.commonItemTag("plates/copper"),
+                PLATES_IRON = AllTags.commonItemTag("plates/iron"),
+                PLATES_GOLD = AllTags.commonItemTag("plates/gold");
+//                #endif
     }
     
     public static TagKey<net.minecraft.world.item.Item> createNuclearEnergyTag(int energy) {
-        return TagKey.create(Registries.ITEM, new ResourceLocation(CreateNewAge.MOD_ID, "nuclear/energy_" + energy));
+        return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "nuclear/energy_" + energy));
     }
 
     public static TagKey<net.minecraft.world.level.block.Block> createMagneticForgeTag(int force) {
-        return TagKey.create(Registries.BLOCK, new ResourceLocation(CreateNewAge.MOD_ID, "magnet/force_" + force));
+        return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "magnet/force_" + force));
     }
     
     static void load() {

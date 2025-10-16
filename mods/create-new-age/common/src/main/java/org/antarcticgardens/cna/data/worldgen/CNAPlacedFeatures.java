@@ -4,7 +4,7 @@ import com.simibubi.create.infrastructure.worldgen.ConfigPlacementFilter;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +19,7 @@ public class CNAPlacedFeatures {
     public static final ResourceKey<PlacedFeature> THORIUM_ORE = key("thorium_ore");
     public static final ResourceKey<PlacedFeature> MAGNETITE_BLOCK = key("magnetite_block");
     
-    public static void bootstrap(BootstapContext<PlacedFeature> ctx) {
+    public static void bootstrap(BootstrapContext<PlacedFeature> ctx) {
         HolderGetter<ConfiguredFeature<?, ?>> featureLookup = ctx.lookup(Registries.CONFIGURED_FEATURE);
         Holder<ConfiguredFeature<?, ?>> thoriumOre = featureLookup.getOrThrow(CNAConfiguredFeatures.THORIUM_ORE);
         Holder<ConfiguredFeature<?, ?>> magnetiteBlock = featureLookup.getOrThrow(CNAConfiguredFeatures.MAGNETITE_BLOCK);
@@ -29,7 +29,7 @@ public class CNAPlacedFeatures {
     }
 
     private static ResourceKey<PlacedFeature> key(String name) {
-        return ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(CreateNewAge.MOD_ID, name));
+        return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, name));
     }
 
     public static List<PlacementModifier> placement(PlacementModifier frequency, int minHeight, int maxHeight) {

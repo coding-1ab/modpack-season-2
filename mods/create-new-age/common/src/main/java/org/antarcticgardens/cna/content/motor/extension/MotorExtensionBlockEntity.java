@@ -12,6 +12,7 @@ import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -104,15 +105,15 @@ public class MotorExtensionBlockEntity extends SmartBlockEntity {
     }
 
     @Override
-    protected void read(CompoundTag compound, boolean clientPacket) {
-        multiplier = compound.getFloat("stressMultiplier");
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        multiplier = tag.getFloat("stressMultiplier");
         stressBehavior.value = (int)multiplier*100;
-        super.read(compound, clientPacket);
+        super.read(tag, registries, clientPacket);
     }
 
     @Override
-    protected void write(CompoundTag compound, boolean clientPacket) {
-        compound.putFloat("stressMultiplier", multiplier);
-        super.write(compound, clientPacket);
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        tag.putFloat("stressMultiplier", multiplier);
+        super.write(tag, registries, clientPacket);
     }
 }

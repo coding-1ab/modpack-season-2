@@ -1,7 +1,7 @@
 package org.antarcticgardens.cna.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.antarcticgardens.cna.CreateNewAge;
 
 public class CNAConfig {
@@ -11,11 +11,11 @@ public class CNAConfig {
     private final CommonConfig common;
 
     private CNAConfig() {
-        var client = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
+        var client = new ModConfigSpec.Builder().configure(ClientConfig::new);
         this.client = client.getLeft();
         CreateNewAge.getInstance().getPlatform().getRegistrar().registerConfig(ModConfig.Type.CLIENT, client.getRight());
 
-        var common = new ForgeConfigSpec.Builder().configure(CommonConfig::new);
+        var common = new ModConfigSpec.Builder().configure(CommonConfig::new);
         this.common = common.getLeft();
         CreateNewAge.getInstance().getPlatform().getRegistrar().registerConfig(ModConfig.Type.COMMON, common.getRight());
     }

@@ -21,7 +21,7 @@ public enum WireType {
     }
 
     public ResourceLocation getTextureLocation() {
-        return new ResourceLocation(CreateNewAge.MOD_ID, "textures/wire/" + name().toLowerCase() + ".png");
+        return ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "textures/wire/" + name().toLowerCase() + ".png");
     }
 
     public long getConductivity() {

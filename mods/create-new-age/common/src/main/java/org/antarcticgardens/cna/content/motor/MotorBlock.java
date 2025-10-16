@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -49,20 +50,20 @@ public class MotorBlock extends DirectionalKineticBlock implements IRotate, IBE<
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(CreateLang.translate("tooltip.create_new_age.generates").style(ChatFormatting.GRAY)
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(CreateLang.translate("tooltip.create_new_age.generates").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(CreateLang.text(" ").add(CreateLang.number(variant.getStress() * CNAConfig.getCommon().motorSUMultiplier.get()).text(" ")
+        tooltipComponents.add(CreateLang.text(" ").add(CreateLang.number(variant.getStress() * CNAConfig.getCommon().motorSUMultiplier.get()).text(" ")
                 .translate("generic.unit.stress").style(ChatFormatting.AQUA)).component());
 
-        tooltip.add(CreateLang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY)
+        tooltipComponents.add(CreateLang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy",
+        tooltipComponents.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy",
                                              StringFormatUtil.formatLong(variant.getMaxCapacity())).style(ChatFormatting.AQUA).component());
 
-        tooltip.add(CreateLang.translate("tooltip.create_new_age.max_speed").style(ChatFormatting.GRAY)
+        tooltipComponents.add(CreateLang.translate("tooltip.create_new_age.max_speed").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(CreateLang.text(" ").translate("tooltip.create_new_age.rpm", variant.getSpeed()).style(ChatFormatting.AQUA).component());
+        tooltipComponents.add(CreateLang.text(" ").translate("tooltip.create_new_age.rpm", variant.getSpeed()).style(ChatFormatting.AQUA).component());
     }
 
     @Override

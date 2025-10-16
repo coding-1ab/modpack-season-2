@@ -41,7 +41,7 @@ public class CNAPonders implements PonderPlugin {
     }
 
     public static void register(PonderSceneRegistrationHelper<ResourceLocation> helper) {
-        PonderSceneRegistrationHelper<ItemProviderEntry<?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
+        PonderSceneRegistrationHelper<ItemProviderEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
 
         HELPER.addStoryBoard(CNABlocks.BASIC_ENERGISER, "energiser", EnergiserPonder::ponder);
         HELPER.addStoryBoard(CNABlocks.REINFORCED_ENERGISER, "energiser", EnergiserPonder::ponder);
@@ -84,16 +84,16 @@ public class CNAPonders implements PonderPlugin {
 
     }
 
-    static ResourceLocation ELECTRICAL = new ResourceLocation(CreateNewAge.MOD_ID, "electrical");
-    static ResourceLocation WIRING = new ResourceLocation(CreateNewAge.MOD_ID, "wiring");
-    static ResourceLocation MAGNETS = new ResourceLocation(CreateNewAge.MOD_ID, "magnets");
-    static ResourceLocation ELECTRICITY_GENERATION = new ResourceLocation(CreateNewAge.MOD_ID, "electricity_generation");
-    static ResourceLocation HEATING = new ResourceLocation(CreateNewAge.MOD_ID, "heating");
-    static ResourceLocation REACTOR = new ResourceLocation(CreateNewAge.MOD_ID, "reactor");
-    static ResourceLocation MOTOR_EXTENSION = new ResourceLocation(CreateNewAge.MOD_ID, "motor_extension");
+    static ResourceLocation ELECTRICAL = ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "electrical");
+    static ResourceLocation WIRING = ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "wiring");
+    static ResourceLocation MAGNETS = ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "magnets");
+    static ResourceLocation ELECTRICITY_GENERATION = ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "electricity_generation");
+    static ResourceLocation HEATING = ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "heating");
+    static ResourceLocation REACTOR = ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "reactor");
+    static ResourceLocation MOTOR_EXTENSION = ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "motor_extension");
 
     public static void register(PonderTagRegistrationHelper<ResourceLocation> helper) {
-        PonderTagRegistrationHelper<RegistryEntry<?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
+        PonderTagRegistrationHelper<RegistryEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
 
         HELPER.registerTag(ELECTRICAL)
                 .item(CNABlocks.ADVANCED_ENERGISER.get())

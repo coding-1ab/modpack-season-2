@@ -46,7 +46,7 @@ public class ReactorRodBlock extends ReactorBlock implements EntityBlock {
     protected static final VoxelShape X_AXIS_AABB = Block.box(0.0, 4.5, 4.5, 16.0, 11.5, 11.5);
 
     public static final BooleanProperty ACTIVE = BlockStateProperties.LIT;
-    public static final EnumProperty<Direction.Axis> AXIS = EnumProperty.create("axis", Direction.Axis.class);
+    public static final EnumProperty<Direction.Axis> AXIS =  BlockStateProperties.AXIS;
 
     public VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();

@@ -1,64 +1,101 @@
 package org.antarcticgardens.cna.content.energising.recipe;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
-import com.simibubi.create.content.processing.recipe.ProcessingRecipeSerializer;
 import com.simibubi.create.content.processing.sequenced.IAssemblyRecipe;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.Container;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 import org.antarcticgardens.cna.CNABlocks;
+import org.antarcticgardens.cna.CNARecipeTypes;
 import org.antarcticgardens.cna.CreateNewAge;
-import org.antarcticgardens.cna.compat.jei.JeiEnergisingSubcategory;
-import org.antarcticgardens.cna.util.RecipeUtil;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
-#if CNA_FABRIC
-import com.simibubi.create.compat.recipeViewerCommon.SequencedAssemblySubCategoryType;
-#else
+//#if CNA_FABRIC
+//import com.simibubi.create.compat.recipeViewerCommon.SequencedAssemblySubCategoryType;
+//#else
 import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
-#endif
+//#endif
 
-public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAssemblyRecipe {
-    public static IRecipeTypeInfo TYPE = RecipeUtil.createIRecipeTypeInfo("energising", new ProcessingRecipeSerializer<>(EnergisingRecipe::new));
+public class EnergisingRecipe extends ProcessingRecipe<RecipeWrapper, EnergisingRecipeParams> implements IAssemblyRecipe {
     private int energyNeeded;
-    
-    public EnergisingRecipe(ProcessingRecipeBuilder.ProcessingRecipeParams params) {
-        super(TYPE, params);
-        
-        if (params instanceof EnergisingRecipeBuilder.EnergisingRecipeParams p) {
-            energyNeeded = p.energyNeeded;
+
+    public EnergisingRecipe(EnergisingRecipeParams params) {
+        super(CNARecipeTypes.ENERGISING, params);
+        energyNeeded = params.energyNeeded;
+    }
+
+    public EnergisingRecipe(IRecipeTypeInfo typeInfo, EnergisingRecipeParams params) {
+        super(typeInfo, params);
+        energyNeeded = params.energyNeeded;
+    }
+
+    @Override
+    public boolean matches(RecipeWrapper input, Level level) {
+        if (input.isEmpty())
+            return false;
+        return ingredients.get(0)
+                .test(input.getItem(0));
+    }
+
+    public static class Builder<R extends EnergisingRecipe> extends ProcessingRecipeBuilder<EnergisingRecipeParams, R, EnergisingRecipe.Builder<R>> {
+        public Builder(EnergisingRecipe.Factory<EnergisingRecipeParams, R> factory, ResourceLocation recipeId) {
+            super(factory, recipeId);
+        }
+
+        @Override
+        protected EnergisingRecipeParams createParams() {
+            return new EnergisingRecipeParams();
+        }
+
+        @Override
+        public EnergisingRecipe.Builder<R> self() {
+            return this;
+        }
+
+        public Builder<R> energyNeeded(int energyNeeded) {
+            params.energyNeeded = energyNeeded;
+            return this;
         }
     }
 
-    @Override
-    public void readAdditional(JsonObject json) {
-        energyNeeded = json.get("energyNeeded").getAsInt();
-    }
+    public static class Serializer<R extends EnergisingRecipe> implements RecipeSerializer<R> {
+        private final MapCodec<R> codec;
+        private final StreamCodec<RegistryFriendlyByteBuf, R> streamCodec;
+        private final ProcessingRecipe.Factory<EnergisingRecipeParams, R> factory;
 
-    @Override
-    public void readAdditional(FriendlyByteBuf buffer) {
-        energyNeeded = buffer.readInt();
-    }
+        public Serializer(ProcessingRecipe.Factory<EnergisingRecipeParams, R> factory) {
+            this.codec = ProcessingRecipe.codec(factory, EnergisingRecipeParams.CODEC);
+            this.streamCodec = ProcessingRecipe.streamCodec(factory, EnergisingRecipeParams.STREAM_CODEC);
+            this.factory = factory;
+        }
 
-    @Override
-    public void writeAdditional(JsonObject json) {
-        json.addProperty("energyNeeded", energyNeeded);
-    }
+        @Override
+        public MapCodec<R> codec() {
+            return codec;
+        }
 
-    @Override
-    public void writeAdditional(FriendlyByteBuf buffer) {
-        buffer.writeInt(energyNeeded);
+        @Override
+        public StreamCodec<RegistryFriendlyByteBuf, R> streamCodec() {
+            return streamCodec;
+        }
+
+        public ProcessingRecipe.Factory<EnergisingRecipeParams, R> factory() {
+            return factory;
+        }
+
     }
     
     public int getEnergyNeeded() {
@@ -90,23 +127,15 @@ public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAs
     
     @SuppressWarnings("unchecked")
     @Override
-    #if CNA_FABRIC
-    public SequencedAssemblySubCategoryType getJEISubCategory() {
-        return (SequencedAssemblySubCategoryType) CreateNewAge.getInstance().getPlatform().getEnergisingRecipeSubCategory();
-    }
-    #else
+//    #if CNA_FABRIC
+//    public SequencedAssemblySubCategoryType getJEISubCategory() {
+//        return (SequencedAssemblySubCategoryType) CreateNewAge.getInstance().getPlatform().getEnergisingRecipeSubCategory();
+//    }
+//    #else
     public Supplier<Supplier<SequencedAssemblySubCategory>> getJEISubCategory() {
         return (Supplier<Supplier<SequencedAssemblySubCategory>>) CreateNewAge.getInstance().getPlatform().getEnergisingRecipeSubCategory();
     }
-    #endif
-
-    @Override
-    public boolean matches(Container container, @NotNull Level level) {
-        if (container.isEmpty())
-            return false;
-        return ingredients.get(0)
-                .test(container.getItem(0));
-    }
+//    #endif
 
     public boolean test(ItemStack stack) {
         return ingredients.get(0)

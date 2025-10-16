@@ -1,7 +1,9 @@
 package org.antarcticgardens.cna.content.nuclear.reactor.fuelacceptor;
 
+import com.simibubi.create.AllBlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Containers;
 import net.minecraft.world.SimpleContainer;
@@ -9,7 +11,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import org.antarcticgardens.cna.CNABlockEntityTypes;
 import org.antarcticgardens.cna.CreateNewAge;
 import org.antarcticgardens.cna.CNATags;
 import org.antarcticgardens.cna.content.nuclear.reactor.RodFindingReactorBlockEntity;
@@ -17,9 +22,7 @@ import org.antarcticgardens.cna.content.nuclear.reactor.rod.ReactorRodBlockEntit
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.items.IItemHandler;
 // TODO: Make this fabric compatible
 // import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler;
 
@@ -28,25 +31,34 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBlockEntity {
-    public LazyOptional<IItemHandler> capability;
+    public IItemHandler capability;
     public SimpleContainer container;
 
     public ReactorFuelAcceptorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
         container = new FuelAcceptorContainer(3);
-        capability = LazyOptional.of(FuelAcceptorInventoryHandler::new);
+        capability = new FuelAcceptorInventoryHandler();
+    }
+
+    // TODO: register this is ModBusEvents.registerCapabilities
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                CNABlockEntityTypes.REACTOR_FUEL_ACCEPTOR.get(),
+                (be, context) -> be.capability
+        );
     }
 
     @Override
-    protected void write(CompoundTag compound, boolean clientPacket) {
-        compound.put("contents", container.createTag());
-        super.write(compound, clientPacket);
+    protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+        compound.put("contents", container.createTag(registries));
+        super.write(compound, registries, clientPacket);
     }
 
     @Override
-    protected void read(CompoundTag compound, boolean clientPacket) {
-        container.fromTag(compound.getList("contents", compound.TAG_COMPOUND));
-        super.read(compound, clientPacket);
+    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+        container.fromTag(compound.getList("contents", compound.TAG_COMPOUND), registries);
+        super.read(compound, registries, clientPacket);
     }
 
     @Override
@@ -108,15 +120,9 @@ public class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBlockEntity
 
     @Override
     public void invalidate() {
+        if (capability != null)
+            invalidateCapabilities();
         super.invalidate();
-        capability.invalidate();
-    }
-
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (isItemHandlerCap(cap))
-            return capability.cast();
-        return super.getCapability(cap, side);
     }
 
     private class FuelAcceptorContainer extends SimpleContainer {

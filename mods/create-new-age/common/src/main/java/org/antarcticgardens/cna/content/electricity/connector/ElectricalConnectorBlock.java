@@ -1,5 +1,6 @@
 package org.antarcticgardens.cna.content.electricity.connector;
 
+import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
@@ -23,9 +24,15 @@ import org.jetbrains.annotations.Nullable;
 
 public class ElectricalConnectorBlock extends DirectionalBlock implements IBE<ElectricalConnectorBlockEntity>, IWrenchable {
     public static final EnumProperty<ElectricalConnectorMode> MODE = EnumProperty.create("mode", ElectricalConnectorMode.class);
-    
+    public static final MapCodec<ElectricalConnectorBlock> CODEC = simpleCodec(ElectricalConnectorBlock::new);
+
     public ElectricalConnectorBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends DirectionalBlock> codec() {
+        return CODEC;
     }
 
     @Override

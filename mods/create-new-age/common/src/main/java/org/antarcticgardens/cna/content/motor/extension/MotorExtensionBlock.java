@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -55,15 +56,15 @@ public class MotorExtensionBlock extends Block implements IBE<MotorExtensionBloc
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.create_new_age.motor_extension").withStyle(ChatFormatting.DARK_GRAY));
-        tooltip.add(CreateLang.translate("tooltip.create_new_age.stress_limit_multiplier").style(ChatFormatting.GRAY)
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.translatable("tooltip.create_new_age.motor_extension").withStyle(ChatFormatting.DARK_GRAY));
+        tooltipComponents.add(CreateLang.translate("tooltip.create_new_age.stress_limit_multiplier").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(CreateLang.text(" ").add(CreateLang.number((int)(variant.getMultiplier() * 100)).text("%").style(ChatFormatting.AQUA)).component());
+        tooltipComponents.add(CreateLang.text(" ").add(CreateLang.number((int)(variant.getMultiplier() * 100)).text("%").style(ChatFormatting.AQUA)).component());
 
-        tooltip.add(CreateLang.translate("tooltip.create_new_age.additional_capacity").style(ChatFormatting.GRAY)
+        tooltipComponents.add(CreateLang.translate("tooltip.create_new_age.additional_capacity").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(CreateLang.text(" ").add(CreateLang.number(variant.getExtraCapacity()).text("⚡").style(ChatFormatting.AQUA)).component());
+        tooltipComponents.add(CreateLang.text(" ").add(CreateLang.number(variant.getExtraCapacity()).text("⚡").style(ChatFormatting.AQUA)).component());
     }
 
     @Nullable

@@ -52,8 +52,8 @@ public class NuclearUtil {
         }
     }
 
-    private static boolean isResistant(Entity entity) {
-        if (entity instanceof Player pl && pl.isCreative())
+    private static boolean isResistant(LivingEntity entity) {
+        if (entity instanceof Player pl && (pl.isCreative() || pl.isSpectator()))
             return true;
 
         for (ItemStack piece : entity.getArmorSlots()) {

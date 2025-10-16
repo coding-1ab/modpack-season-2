@@ -1,41 +1,41 @@
 package org.antarcticgardens.cna.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class CommonConfig {
-    public final ForgeConfigSpec.ConfigValue<Double> suToEnergy;
-    public final ForgeConfigSpec.ConfigValue<Integer> maxRodsInDirection;
-    public final ForgeConfigSpec.ConfigValue<Integer> maxCoils;
-    public final ForgeConfigSpec.ConfigValue<Double> conductivityMultiplier;
-    public final ForgeConfigSpec.ConfigValue<Integer> maxPathfindingDepth;
-    public final ForgeConfigSpec.ConfigValue<Double> energiserSpeedMultiplier;
-    public final ForgeConfigSpec.ConfigValue<Double> passiveHeatSourceMultiplier;
-    public final ForgeConfigSpec.ConfigValue<Double> passivePipeHeatLoss;
-    public final ForgeConfigSpec.ConfigValue<Double> heaterRequiredHeatMultiplier;
-    public final ForgeConfigSpec.ConfigValue<Double> overheatingMultiplier;
-    public final ForgeConfigSpec.ConfigValue<Double> nuclearReactorRodHeat;
-    public final ForgeConfigSpec.ConfigValue<Double> nuclearReactorRodHeatLoss;
-    public final ForgeConfigSpec.ConfigValue<Double> solarPanelHeatMultiplier;
-    public final ForgeConfigSpec.ConfigValue<Integer> maxWireLength;
+    public final ModConfigSpec.ConfigValue<Double> suToEnergy;
+    public final ModConfigSpec.ConfigValue<Integer> maxRodsInDirection;
+    public final ModConfigSpec.ConfigValue<Integer> maxCoils;
+    public final ModConfigSpec.ConfigValue<Double> conductivityMultiplier;
+    public final ModConfigSpec.ConfigValue<Integer> maxPathfindingDepth;
+    public final ModConfigSpec.ConfigValue<Double> energiserSpeedMultiplier;
+    public final ModConfigSpec.ConfigValue<Double> passiveHeatSourceMultiplier;
+    public final ModConfigSpec.ConfigValue<Double> passivePipeHeatLoss;
+    public final ModConfigSpec.ConfigValue<Double> heaterRequiredHeatMultiplier;
+    public final ModConfigSpec.ConfigValue<Double> overheatingMultiplier;
+    public final ModConfigSpec.ConfigValue<Double> nuclearReactorRodHeat;
+    public final ModConfigSpec.ConfigValue<Double> nuclearReactorRodHeatLoss;
+    public final ModConfigSpec.ConfigValue<Double> solarPanelHeatMultiplier;
+    public final ModConfigSpec.ConfigValue<Integer> maxWireLength;
 
-    public final ForgeConfigSpec.ConfigValue<Double> motorSUMultiplier;
-    public final ForgeConfigSpec.ConfigValue<Integer> basicMotorCapacity;
-    public final ForgeConfigSpec.ConfigValue<Double> basicMotorStress;
-    public final ForgeConfigSpec.ConfigValue<Double> basicMotorSpeed;
-    public final ForgeConfigSpec.ConfigValue<Integer> advancedMotorCapacity;
-    public final ForgeConfigSpec.ConfigValue<Double> advancedMotorStress;
-    public final ForgeConfigSpec.ConfigValue<Double> advancedMotorSpeed;
-    public final ForgeConfigSpec.ConfigValue<Integer> reinforcedMotorCapacity;
-    public final ForgeConfigSpec.ConfigValue<Double> reinforcedMotorStress;
-    public final ForgeConfigSpec.ConfigValue<Double> reinforcedMotorSpeed;
-    public final ForgeConfigSpec.ConfigValue<Double> basicMotorExtensionMultiplier;
-    public final ForgeConfigSpec.ConfigValue<Integer> basicMotorExtensionExtraCapacity;
-    public final ForgeConfigSpec.ConfigValue<Integer> basicMotorExtensionScrollStep;
-    public final ForgeConfigSpec.ConfigValue<Double> advancedMotorExtensionMultiplier;
-    public final ForgeConfigSpec.ConfigValue<Integer> advancedMotorExtensionExtraCapacity;
-    public final ForgeConfigSpec.ConfigValue<Integer> advancedMotorExtensionScrollStep;
+    public final ModConfigSpec.ConfigValue<Double> motorSUMultiplier;
+    public final ModConfigSpec.ConfigValue<Integer> basicMotorCapacity;
+    public final ModConfigSpec.ConfigValue<Double> basicMotorStress;
+    public final ModConfigSpec.ConfigValue<Double> basicMotorSpeed;
+    public final ModConfigSpec.ConfigValue<Integer> advancedMotorCapacity;
+    public final ModConfigSpec.ConfigValue<Double> advancedMotorStress;
+    public final ModConfigSpec.ConfigValue<Double> advancedMotorSpeed;
+    public final ModConfigSpec.ConfigValue<Integer> reinforcedMotorCapacity;
+    public final ModConfigSpec.ConfigValue<Double> reinforcedMotorStress;
+    public final ModConfigSpec.ConfigValue<Double> reinforcedMotorSpeed;
+    public final ModConfigSpec.ConfigValue<Double> basicMotorExtensionMultiplier;
+    public final ModConfigSpec.ConfigValue<Integer> basicMotorExtensionExtraCapacity;
+    public final ModConfigSpec.ConfigValue<Integer> basicMotorExtensionScrollStep;
+    public final ModConfigSpec.ConfigValue<Double> advancedMotorExtensionMultiplier;
+    public final ModConfigSpec.ConfigValue<Integer> advancedMotorExtensionExtraCapacity;
+    public final ModConfigSpec.ConfigValue<Integer> advancedMotorExtensionScrollStep;
     
-    public CommonConfig(ForgeConfigSpec.Builder builder) {
+    public CommonConfig(ModConfigSpec.Builder builder) {
         suToEnergy = builder
                 .comment(
                         "Responsible for how much energy is generated per 1 stress unit in a tick",

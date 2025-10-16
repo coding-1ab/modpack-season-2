@@ -5,6 +5,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -48,7 +49,7 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements IHave
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt) {
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         ListTag list = new ListTag();
 
         for (Map.Entry<BlockPos, WireType> e : connectorPositions.entrySet()) {
@@ -59,13 +60,14 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements IHave
             list.add(compound);
         }
 
-        nbt.put("connections", list);
-        super.saveAdditional(nbt);
+        tag.put("connections", list);
+
+        super.saveAdditional(tag, registries);
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        ListTag list = nbt.getList("connections", Tag.TAG_COMPOUND);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        ListTag list = tag.getList("connections", Tag.TAG_COMPOUND);
         connectorPositions.clear();
 
         for (Tag listTag : list.toArray(new Tag[0])) {
@@ -78,6 +80,7 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements IHave
         }
 
         needsInstanceUpdate = true;
+        super.loadAdditional(tag, registries);
     }
 
     @Override
@@ -86,8 +89,8 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements IHave
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        return saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
     }
 
     public Map<BlockPos, WireType> getConnectorPositions() {
@@ -108,12 +111,12 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements IHave
         }
     }
 
-    #if !CNA_FABRIC
-    @Override
-    public AABB getRenderBoundingBox() {
-        return INFINITE_EXTENT_AABB;
-    }
-    #endif
+//    #if !CNA_FABRIC
+//    @Override
+//    public AABB getRenderBoundingBox() {
+//        return INFINITE_EXTENT_AABB;
+//    }
+//    #endif
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
@@ -123,12 +126,12 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements IHave
         CreateLang.translate("tooltip.create_new_age.mode")
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
-        
+
         ElectricalConnectorMode mode = getBlockState().getValue(ElectricalConnectorBlock.MODE);
         CreateLang.translate("tooltip.create_new_age.connector_mode." + mode.getSerializedName())
                 .style(ChatFormatting.AQUA)
                 .forGoggles(tooltip, 1);
-        
+
         return true;
     }
 

@@ -10,8 +10,8 @@ dependencies {
     
     modImplementation("net.fabricmc:fabric-loader:${fabricLoaderVersion}")
     modApi("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
-    
-    modImplementation("com.simibubi.create:create-fabric-${rootProject.minecraftVersion}:${createFabricVersion}")
+
+    modImplementation("com.simibubi.create:create-fucked-up-${rootProject.minecraftVersion}:${createFabricVersion}")
     modApi("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0")
 
     modImplementation("com.tterrag.registrate_fabric:Registrate:${rootProject.registrateFabricVersion}")

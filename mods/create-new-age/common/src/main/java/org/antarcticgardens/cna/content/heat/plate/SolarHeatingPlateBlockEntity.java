@@ -5,6 +5,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -43,15 +44,15 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
     public float heat = 0;
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         heat = tag.getFloat("heat");
         last = tag.getFloat("last");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         tag.putFloat("heat", heat);
         tag.putFloat("last", last);
     }
@@ -84,9 +85,10 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
+
     @Override
-    public CompoundTag getUpdateTag() {
-        return saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return  saveWithoutMetadata(registries);
     }
 
     @Override

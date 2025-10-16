@@ -1,5 +1,6 @@
 package org.antarcticgardens.cna.util;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -14,9 +15,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.function.Predicate;
 
 public class RaycastUtil {
-    public static HitResult pickBlockFromPos(Level world, Vec3 pos, Vec3 dir, float distance) {
+    public static HitResult pickBlockFromPos(Level world, Vec3 pos, Vec3 dir, double distance) {
         Vec3 vec33 = pos.add(dir.x * distance, dir.y * distance, dir.z * distance);
-        return world.clip(new ClipContext(pos, vec33, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, null));
+        return world.clip(new ClipContext(pos, vec33, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, Minecraft.getInstance().player));
     }
 
     public static HitResult pickFilteredBlockFromPos(Level world, Vec3 from, Vec3 dir, float distance, Predicate<BlockState> p) {
