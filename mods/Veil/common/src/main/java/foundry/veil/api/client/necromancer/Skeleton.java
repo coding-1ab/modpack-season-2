@@ -98,9 +98,9 @@ public abstract class Skeleton {
                 bone.getLocalTransform(matrix, orientation, partialTicks);
                 if (hasBufferPosition) {
                     // Turns this into 3 columns, so in the shader we can use the last column for colors
-                    matrix.getTransposed(boneBufferIndex * UNIFORM_STRIDE, buffer);
+                    matrix.getTransposed(buffer.position() + boneBufferIndex * UNIFORM_STRIDE, buffer);
                     bone.getColor(color, partialTicks);
-                    color.get(boneBufferIndex * UNIFORM_STRIDE + 12 * Float.BYTES, buffer);
+                    color.get(buffer.position() + boneBufferIndex * UNIFORM_STRIDE + 12 * Float.BYTES, buffer);
                     matrix.normal(normalMatrix).get3x4(boneBufferIndex * UNIFORM_STRIDE + 16 * Float.BYTES, buffer);
                 }
             }
