@@ -4,31 +4,34 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.content.kinetics.crusher.CrushingRecipe;
 import com.simibubi.create.content.kinetics.deployer.DeployerApplicationRecipe;
+import com.simibubi.create.content.kinetics.deployer.ItemApplicationRecipe;
 import com.simibubi.create.content.kinetics.mixer.CompactingRecipe;
 import com.simibubi.create.content.kinetics.mixer.MixingRecipe;
 import com.simibubi.create.content.kinetics.press.PressingRecipe;
 import com.simibubi.create.content.kinetics.saw.CuttingRecipe;
 import com.simibubi.create.content.processing.recipe.*;
 import com.simibubi.create.foundation.fluid.FluidIngredient;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluids;
 import org.antarcticgardens.cna.CNAItems;
+import org.antarcticgardens.cna.CNARecipeTypes;
 import org.antarcticgardens.cna.CNATags;
 import org.antarcticgardens.cna.content.energising.recipe.EnergisingRecipe;
-import org.antarcticgardens.cna.content.energising.recipe.EnergisingRecipeBuilder;
 import org.antarcticgardens.cna.data.FluidConstants;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.UnaryOperator;
 
-#if CNA_FABRIC
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import io.github.fabricators_of_create.porting_lib.tags.Tags;
-#else
-import net.minecraftforge.common.Tags;
-#endif
+//#if CNA_FABRIC
+//import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+//import io.github.fabricators_of_create.porting_lib.tags.Tags;
+//#else
+import net.neoforged.neoforge.common.Tags;
+//#endif
 
 @SuppressWarnings("unused")
 public class CNAProcessingRecipeGen extends CNARecipeProvider {
@@ -61,32 +64,32 @@ public class CNAProcessingRecipeGen extends CNARecipeProvider {
     // ====================================================================================================== Energising
     
     GeneratedRecipe OVERCHARGED_DIAMOND = builder(CNAItems.OVERCHARGED_DIAMOND)
-            .energising(b -> (EnergisingRecipeBuilder) b
+            .energising(b -> b
                     .energyNeeded(10000)
                     .withItemIngredients(Ingredient.of(Tags.Items.GEMS_DIAMOND)));
 
     GeneratedRecipe OVERCHARGED_GOLD = builder(CNAItems.OVERCHARGED_GOLD)
-            .energising(b -> (EnergisingRecipeBuilder) b
+            .energising(b -> b
                     .energyNeeded(2000)
                     .withItemIngredients(Ingredient.of(Tags.Items.INGOTS_GOLD)));
 
     GeneratedRecipe OVERCHARGED_GOLDEN_SHEET_ENERGISING = builder(CNAItems.OVERCHARGED_GOLDEN_SHEET)
-            .energising(b -> (EnergisingRecipeBuilder) b
+            .energising(b -> b
                     .energyNeeded(2000)
                     .withItemIngredients(Ingredient.of(CNATags.Common.PLATES_GOLD)));
 
     GeneratedRecipe OVERCHARGED_IRON = builder(CNAItems.OVERCHARGED_IRON)
-            .energising(b -> (EnergisingRecipeBuilder) b
+            .energising(b -> b
                     .energyNeeded(1000)
                     .withItemIngredients(Ingredient.of(Tags.Items.INGOTS_IRON)));
 
     GeneratedRecipe OVERCHARGED_IRON_SHEET_ENERGISING = builder(CNAItems.OVERCHARGED_IRON_SHEET)
-            .energising(b -> (EnergisingRecipeBuilder) b
+            .energising(b -> b
                     .energyNeeded(1000)
                     .withItemIngredients(Ingredient.of(CNATags.Common.PLATES_IRON)));
     
     GeneratedRecipe EXPERIENCE_BOTTLE = builder(Items.EXPERIENCE_BOTTLE)
-            .energising(b -> (EnergisingRecipeBuilder) b
+            .energising(b -> b
                     .energyNeeded(50000)
                     .withItemIngredients(Ingredient.of(Items.GLASS_BOTTLE)));
 
@@ -96,7 +99,7 @@ public class CNAProcessingRecipeGen extends CNARecipeProvider {
             .amount(4)
             .compacting(b -> b
                     .withItemIngredients(
-                            Ingredient.of(Tags.Items.STONE), 
+                            Ingredient.of(Tags.Items.STONES),
                             Ingredient.of(Tags.Items.DUSTS_REDSTONE), 
                             Ingredient.of(Tags.Items.INGOTS_IRON), 
                             Ingredient.of(Items.QUARTZ))
@@ -128,7 +131,7 @@ public class CNAProcessingRecipeGen extends CNARecipeProvider {
             .mixing(b -> b
                     .withItemIngredients(
                             Ingredient.of(CNAItems.THORIUM),
-                            Ingredient.of(Tags.Items.STONE),
+                            Ingredient.of(Tags.Items.STONES),
                             Ingredient.of(Items.CLAY))
                     .withFluidIngredients(FluidIngredient.fromFluid(Fluids.WATER, FluidConstants.BUCKET)));
     
@@ -143,40 +146,14 @@ public class CNAProcessingRecipeGen extends CNARecipeProvider {
             super(result);
         }
         
-        protected GeneratedRecipe cutting(UnaryOperator<ProcessingRecipeBuilder<CuttingRecipe>> operator) {
-            ProcessingRecipeSerializer<CuttingRecipe> serializer = AllRecipeTypes.CUTTING.getSerializer();
-            return create(operator, serializer.getFactory());
+        protected GeneratedRecipe cutting(UnaryOperator<StandardProcessingRecipe.Builder<CuttingRecipe>> operator) {
+            StandardProcessingRecipe.Serializer<CuttingRecipe> serializer = AllRecipeTypes.CUTTING.getSerializer();
+            return create(operator, serializer.factory());
         }
         
-        protected GeneratedRecipe deploying(UnaryOperator<ProcessingRecipeBuilder<DeployerApplicationRecipe>> operator) {
-            ProcessingRecipeSerializer<DeployerApplicationRecipe> serializer = AllRecipeTypes.DEPLOYING.getSerializer();
-            return create(operator, serializer.getFactory());
-        }
-        
-        protected GeneratedRecipe compacting(UnaryOperator<ProcessingRecipeBuilder<CompactingRecipe>> operator) {
-            ProcessingRecipeSerializer<CompactingRecipe> serializer = AllRecipeTypes.COMPACTING.getSerializer();
-            return create(operator, serializer.getFactory());
-        }
-
-        protected GeneratedRecipe pressing(UnaryOperator<ProcessingRecipeBuilder<PressingRecipe>> operator) {
-            ProcessingRecipeSerializer<PressingRecipe> serializer = AllRecipeTypes.PRESSING.getSerializer();
-            return create(operator, serializer.getFactory());
-        }
-
-        protected GeneratedRecipe crushing(UnaryOperator<ProcessingRecipeBuilder<CrushingRecipe>> operator) {
-            ProcessingRecipeSerializer<CrushingRecipe> serializer = AllRecipeTypes.CRUSHING.getSerializer();
-            return create(operator, serializer.getFactory());
-        }
-
-        protected GeneratedRecipe mixing(UnaryOperator<ProcessingRecipeBuilder<MixingRecipe>> operator) {
-            ProcessingRecipeSerializer<MixingRecipe> serializer = AllRecipeTypes.MIXING.getSerializer();
-            return create(operator, serializer.getFactory());
-        }
-
-        protected GeneratedRecipe energising(UnaryOperator<EnergisingRecipeBuilder> operator) {
-            ProcessingRecipeSerializer<EnergisingRecipe> serializer = EnergisingRecipe.TYPE.getSerializer();
+        protected GeneratedRecipe deploying(UnaryOperator<ItemApplicationRecipe.Builder<DeployerApplicationRecipe>> operator) {
             return register(consumer -> {
-                EnergisingRecipeBuilder builder = new EnergisingRecipeBuilder(serializer.getFactory(), createLocation());
+                ItemApplicationRecipe.Builder<DeployerApplicationRecipe> builder = new ItemApplicationRecipe.Builder<>(DeployerApplicationRecipe::new, createLocation());
                 if (result != null) {
                     builder.output(result, amount);
                 }
@@ -184,10 +161,41 @@ public class CNAProcessingRecipeGen extends CNARecipeProvider {
             });
         }
         
-        protected <T extends ProcessingRecipe<?>> GeneratedRecipe create(UnaryOperator<ProcessingRecipeBuilder<T>> operator, 
-                                                                         ProcessingRecipeBuilder.ProcessingRecipeFactory<T> factory) {
+        protected GeneratedRecipe compacting(UnaryOperator<StandardProcessingRecipe.Builder<CompactingRecipe>> operator) {
+            StandardProcessingRecipe.Serializer<CompactingRecipe> serializer = AllRecipeTypes.COMPACTING.getSerializer();
+            return create(operator, serializer.factory());
+        }
+
+        protected GeneratedRecipe pressing(UnaryOperator<StandardProcessingRecipe.Builder<PressingRecipe>> operator) {
+            StandardProcessingRecipe.Serializer<PressingRecipe> serializer = AllRecipeTypes.PRESSING.getSerializer();
+            return create(operator, serializer.factory());
+        }
+
+        protected GeneratedRecipe crushing(UnaryOperator<StandardProcessingRecipe.Builder<CrushingRecipe>> operator) {
+            StandardProcessingRecipe.Serializer<CrushingRecipe> serializer = AllRecipeTypes.CRUSHING.getSerializer();
+            return create(operator, serializer.factory());
+        }
+
+        protected GeneratedRecipe mixing(UnaryOperator<StandardProcessingRecipe.Builder<MixingRecipe>> operator) {
+            StandardProcessingRecipe.Serializer<MixingRecipe> serializer = AllRecipeTypes.MIXING.getSerializer();
+            return create(operator, serializer.factory());
+        }
+
+        protected GeneratedRecipe energising(UnaryOperator<EnergisingRecipe.Builder<EnergisingRecipe>> operator) {
+            EnergisingRecipe.Serializer<EnergisingRecipe> serializer = CNARecipeTypes.ENERGISING.getSerializer();
             return register(consumer -> {
-                ProcessingRecipeBuilder<T> builder = new ProcessingRecipeBuilder<>(factory, createLocation());
+                EnergisingRecipe.Builder<EnergisingRecipe> builder = new EnergisingRecipe.Builder<EnergisingRecipe>(serializer.factory(), createLocation());
+                if (result != null) {
+                    builder.output(result, amount);
+                }
+                operator.apply(builder).build(consumer);
+            });
+        }
+
+        protected <T extends StandardProcessingRecipe<?>> GeneratedRecipe create(UnaryOperator<StandardProcessingRecipe.Builder<T>> operator,
+                                                                         StandardProcessingRecipe.Factory<T> factory) {
+            return register(consumer -> {
+                StandardProcessingRecipe.Builder<T> builder = new StandardProcessingRecipe.Builder<>(factory, createLocation());
                 if (result != null) {
                     builder.output(result, amount);
                 }
@@ -201,11 +209,11 @@ public class CNAProcessingRecipeGen extends CNARecipeProvider {
         return "Create New Age Processing Recipes";
     }
 
-    public CNAProcessingRecipeGen(PackOutput output) {
-        #if CNA_FABRIC
-        super((FabricDataOutput) output);
-        #else
-        super(output);
-        #endif
+    public CNAProcessingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+//        #if CNA_FABRIC
+//        super((FabricDataOutput) output);
+//        #else
+        super(output, registries);
+//        #endif
     }
 }

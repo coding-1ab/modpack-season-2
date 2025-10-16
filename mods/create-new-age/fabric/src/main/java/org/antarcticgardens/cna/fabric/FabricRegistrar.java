@@ -27,7 +27,7 @@ public class FabricRegistrar implements PlatformRegistrar {
     @Override
     public RecipeType<?> registerRecipe(String name, RecipeSerializer<?> serializer) {
         RecipeType<?> type = RecipeType.register(name);
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(CreateNewAge.MOD_ID, name), serializer);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, name), serializer);
         return type;
     }
 

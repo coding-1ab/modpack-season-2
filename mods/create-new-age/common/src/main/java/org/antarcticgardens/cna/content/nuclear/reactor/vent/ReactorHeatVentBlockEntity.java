@@ -5,6 +5,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
@@ -32,17 +33,17 @@ public class ReactorHeatVentBlockEntity extends RodFindingReactorBlockEntity imp
     public float heat = 0;
 
     @Override
-    protected void read(CompoundTag tag, boolean clientPacket) {
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         heat = tag.getFloat("heat");
         extract = tag.getFloat("extract");
-        super.read(tag, clientPacket);
+        super.read(tag, registries, clientPacket);
     }
 
     @Override
-    protected void write(CompoundTag tag, boolean clientPacket) {
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         tag.putFloat("heat", heat);
         tag.putFloat("extract", extract);
-        super.write(tag, clientPacket);
+        super.write(tag, registries, clientPacket);
     }
 
     @Override
@@ -68,8 +69,8 @@ public class ReactorHeatVentBlockEntity extends RodFindingReactorBlockEntity imp
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        return saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
     }
 
     int tick = 0;

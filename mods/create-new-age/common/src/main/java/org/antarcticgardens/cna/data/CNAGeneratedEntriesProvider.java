@@ -12,11 +12,11 @@ import org.antarcticgardens.cna.data.worldgen.CNAPlacedFeatures;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-#if CNA_FABRIC
-import io.github.fabricators_of_create.porting_lib.data.DatapackBuiltinEntriesProvider;
-#else
-import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
-#endif
+//#if CNA_FABRIC
+//import io.github.fabricators_of_create.porting_lib.data.DatapackBuiltinEntriesProvider;
+//#else
+import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
+//#endif
 
 public class CNAGeneratedEntriesProvider extends DatapackBuiltinEntriesProvider {
     public static final RegistrySetBuilder BUILDER = Util.make(new RegistrySetBuilder(), CNAGeneratedEntriesProvider::addBootstraps);

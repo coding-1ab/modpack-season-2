@@ -1,5 +1,4 @@
 plugins {
-    id "java"
     id "maven-publish"
     id "dev.architectury.loom" version "1.9-SNAPSHOT" apply false
 }
@@ -18,7 +17,8 @@ subprojects {
 
     repositories {
         mavenLocal()
-        
+
+        maven { url "https://maven.neoforged.net/" }
         maven { url = "https://cursemaven.com" } // CurseForge maven
         maven { url = "https://api.modrinth.com/maven" } // Modrinth maven
         
@@ -46,8 +46,9 @@ subprojects {
         })
         
         annotationProcessor("systems.manifold:manifold-preprocessor:2024.1.29")
-        
+
         modImplementation("org.antarcticgardens.esl:esl-${project.name}-${rootProject.minecraftVersion}:${rootProject.eslVersion}+${project.name}-mc${rootProject.minecraftVersion}")
+        
         modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraftVersion}-common-api:${rootProject.jeiVersion}")
         
         if (project.name != "common") {

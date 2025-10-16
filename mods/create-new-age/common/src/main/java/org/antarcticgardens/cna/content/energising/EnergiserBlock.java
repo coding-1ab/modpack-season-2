@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -81,14 +82,15 @@ public class EnergiserBlock extends HorizontalKineticBlock implements IBE<Energi
         return CNABlockEntityTypes.ENERGISER.get();
     }
 
+
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(CreateLang.translate("tooltip.create_new_age.speed").style(ChatFormatting.GRAY).component());
-        tooltip.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy_per_tick",
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(CreateLang.translate("tooltip.create_new_age.speed").style(ChatFormatting.GRAY).component());
+        tooltipComponents.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy_per_tick",
                         StringFormatUtil.formatLong(getStrength(tier))).style(ChatFormatting.AQUA)
                 .add(CreateLang.text(" ").translate("tooltip.create_new_age.per_rpm", 10).style(ChatFormatting.GRAY)).component());
-        tooltip.add(CreateLang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY).component());
-        tooltip.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy",
+        tooltipComponents.add(CreateLang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY).component());
+        tooltipComponents.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy",
                 StringFormatUtil.formatLong(getCapacity(tier))).style(ChatFormatting.AQUA).component());
     }
 

@@ -1,45 +1,66 @@
 package org.antarcticgardens.cna.compat.jei;
 
+import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
+import org.antarcticgardens.cna.CNARecipeTypes;
 import org.antarcticgardens.cna.CreateNewAge;
 import org.antarcticgardens.cna.CNABlocks;
 import org.antarcticgardens.cna.content.energising.recipe.EnergisingRecipe;
 
+
 @JeiPlugin
 public class CNAJeiPlugin implements IModPlugin {
-    private EnergisingJeiCategory energising;
-    public static RecipeType<EnergisingRecipe> energisingType = new RecipeType<>(new ResourceLocation(CreateNewAge.MOD_ID, "energising"), EnergisingRecipe.class);
-    
+    public static CreateRecipeCategory<?> energisingType;
+
     @Override
     public ResourceLocation getPluginUid() {
-        return new ResourceLocation(CreateNewAge.MOD_ID, "jei_plugin");
+        return ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "jei_plugin");
     }
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        energising = new EnergisingJeiCategory();
+        energisingType = builder(EnergisingRecipe.class)
+                .addTypedRecipes(CNARecipeTypes.ENERGISING)
+                .catalyst(CNABlocks.BASIC_ENERGISER::get)
+                .catalyst(CNABlocks.ADVANCED_ENERGISER::get)
+                .catalyst(CNABlocks.REINFORCED_ENERGISER::get)
+                .itemIcon(CNABlocks.BASIC_ENERGISER.get())
+                .build(ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "energising"), EnergisingJeiCategory::new);
         registration.addRecipeCategories(
-                energising
+                energisingType
         );
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(energisingType,
-                Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(EnergisingRecipe.TYPE.getType()));
+        energisingType.registerRecipes(registration);
     }
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(CNABlocks.BASIC_ENERGISER.asStack(), energisingType);
-        registration.addRecipeCatalyst(CNABlocks.ADVANCED_ENERGISER.asStack(), energisingType);
-        registration.addRecipeCatalyst(CNABlocks.REINFORCED_ENERGISER.asStack(), energisingType);
+        energisingType.registerCatalysts(registration);
+    }
+
+    private <T extends Recipe<? extends RecipeInput>> CategoryBuilder<T> builder(Class<T> recipeClass) {
+        return new CategoryBuilder<>(recipeClass);
+    }
+
+    private class CategoryBuilder<T extends Recipe<?>> extends CreateRecipeCategory.Builder<T> {
+        public CategoryBuilder(Class<? extends T> recipeClass) {
+            super(recipeClass);
+        }
+
+        @Override
+        public CreateRecipeCategory<T> build(ResourceLocation id, CreateRecipeCategory.Factory<T> factory) {
+            CreateRecipeCategory<T> category = super.build(id, factory);
+            return category;
+        }
     }
 }

@@ -9,7 +9,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.electricity.generation.magnet.MagnetPlacementHelper;
-import org.antarcticgardens.cna.content.energising.recipe.EnergisingRecipe;
 import org.antarcticgardens.cna.content.heat.heater.HeaterBlock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +19,7 @@ public abstract class CreateNewAge {
     public static final String MOD_ID = "create_new_age";
     public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID);
     public static final ResourceKey<CreativeModeTab> CREATIVE_TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, 
-            new ResourceLocation(MOD_ID, "tab"));
+            ResourceLocation.fromNamespaceAndPath(MOD_ID, "tab"));
 
     private static CreateNewAge instance;
     
@@ -30,11 +29,11 @@ public abstract class CreateNewAge {
     protected CreateNewAge() {
         instance = this;
     }
-    
+
     protected void initialize(Platform platform) {
         this.platform = platform;
         
-        LOGGER.info("Hello 1.20.1 Create!");
+        LOGGER.info("Hello 1.21.1 Create!");
 
         platform.getRegistrar().beforeRegistration();
         
@@ -43,7 +42,7 @@ public abstract class CreateNewAge {
         CNAItems.load();
         CNATags.load();
         CNAPartialModels.load();
-        EnergisingRecipe.load();
+        CNARecipeTypes.load();
         
         magnetPlacementHelperId = PlacementHelpers.register(new MagnetPlacementHelper());
         

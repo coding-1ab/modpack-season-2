@@ -17,6 +17,7 @@ import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.LevelAccessor;
@@ -123,7 +124,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
     }
 
     @Override
-    protected void read(CompoundTag compound, boolean clientPacket) {
+    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         storage.setStoredEnergy(compound.getLong("energy"));
         actualSpeed = compound.getFloat("aSpeed");
         needsPower = compound.getBoolean("needsPower");
@@ -131,11 +132,11 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
         speed = compound.getFloat("lastGeneratedSpeed");
         e = compound.getLong("eUse");
         actualStress = compound.getFloat("actualStress");
-        super.read(compound, clientPacket);
+        super.read(compound, registries, clientPacket);
     }
 
     @Override
-    protected void write(CompoundTag compound, boolean clientPacket) {
+    protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         compound.putLong("energy", storage.getStoredEnergy());
         compound.putFloat("aSpeed", actualSpeed);
         compound.putBoolean("needsPower", needsPower);
@@ -143,7 +144,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
         compound.putFloat("lastGeneratedSpeed", speed);
         compound.putFloat("eUse", e);
         compound.putFloat("actualStress", actualStress);
-        super.write(compound, clientPacket);
+        super.write(compound, registries, clientPacket);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.antarcticgardens.cna.compat.jei;
 
 import com.simibubi.create.compat.jei.ItemIcon;
+import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -8,8 +9,6 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
-import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -23,10 +22,9 @@ import java.util.Collections;
 
 import static com.simibubi.create.compat.jei.category.CreateRecipeCategory.getRenderedSlot;
 
-public class EnergisingJeiCategory implements IRecipeCategory<EnergisingRecipe> {
-    @Override
-    public RecipeType<EnergisingRecipe> getRecipeType() {
-        return CNAJeiPlugin.energisingType;
+public class EnergisingJeiCategory extends CreateRecipeCategory<EnergisingRecipe> {
+    public EnergisingJeiCategory(Info<EnergisingRecipe> info) {
+        super(info);
     }
 
     @Override
@@ -35,22 +33,13 @@ public class EnergisingJeiCategory implements IRecipeCategory<EnergisingRecipe> 
     }
 
     @Override
-    public IDrawable getBackground() {
-        return new IDrawable() {
-            @Override
-            public int getWidth() {
-                return 130;
-            }
+    public int getWidth() {
+        return 130;
+    }
 
-            @Override
-            public int getHeight() {
-                return 25;
-            }
-
-            @Override
-            public void draw(GuiGraphics guiGraphics, int xOffset, int yOffset) {
-            }
-        };
+    @Override
+    public int getHeight() {
+        return 25;
     }
 
     @Override

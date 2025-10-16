@@ -7,6 +7,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -41,15 +42,15 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements IHav
     }
 
     @Override
-    protected void write(CompoundTag compound, boolean clientPacket) {
+    protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         compound.putInt("lastOutput", lastOutput);
-        super.write(compound, clientPacket);
+        super.write(compound, registries, clientPacket);
     }
 
     @Override
-    protected void read(CompoundTag compound, boolean clientPacket) {
+    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         lastOutput = compound.getInt("lastOutput");
-        super.read(compound, clientPacket);
+        super.read(compound, registries, clientPacket);
     }
 
     @Override

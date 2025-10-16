@@ -1,5 +1,6 @@
 package org.antarcticgardens.cna.content.nuclear;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -13,8 +14,15 @@ import org.antarcticgardens.cna.CNABlocks;
 import org.antarcticgardens.cna.content.heat.HeatBlockEntity;
 
 public class CoriumBlock extends FallingBlock {
+    public static final MapCodec<CoriumBlock> CODEC = simpleCodec(CoriumBlock::new);
+
     public CoriumBlock(Properties properties) {
         super(properties.randomTicks());
+    }
+
+    @Override
+    protected MapCodec<? extends FallingBlock> codec() {
+        return CODEC;
     }
 
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {

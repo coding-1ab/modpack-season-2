@@ -17,9 +17,11 @@ import java.io.FileReader;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import static org.antarcticgardens.cna.CreateNewAge.REGISTRATE;
+
 public class CreateNewAgeDatagen {
-    protected void setupDatagen(DataProviderAdder providerConsumer) {
-        CreateNewAge.REGISTRATE.addDataGenerator(ProviderType.LANG, provider -> {
+    protected static void setupDatagen(DataProviderAdder providerConsumer) {
+        REGISTRATE.addDataGenerator(ProviderType.LANG, provider -> {
             try {
                 File defaultLang = new File(ClassLoader.getSystemResource("assets/create_new_age/lang/default/").toURI());
 
@@ -36,16 +38,16 @@ public class CreateNewAgeDatagen {
                 throw new RuntimeException(e);
             }
         });
-        
-        CreateNewAge.REGISTRATE.addDataGenerator(ProviderType.ITEM_TAGS, provider -> {
+
+        REGISTRATE.addDataGenerator(ProviderType.ITEM_TAGS, provider -> {
             for (CNATags.Block tag : CNATags.Block.values()) {
                 provider.copy(tag.blockTag, tag.itemTag);
             }
         });
-        
-        CreateNewAge.REGISTRATE.addDataGenerator(ProviderType.BLOCK_TAGS, CNATags.Block::generate);
-        CreateNewAge.REGISTRATE.addDataGenerator(ProviderType.ITEM_TAGS, CNATags.Item::generate);
-        
+
+        REGISTRATE.addDataGenerator(ProviderType.BLOCK_TAGS, CNATags.Block::generate);
+        REGISTRATE.addDataGenerator(ProviderType.ITEM_TAGS, CNATags.Item::generate);
+
         providerConsumer.addProvider(CNAStandardRecipeGen::new);
         providerConsumer.addProvider(CNAProcessingRecipeGen::new);
         providerConsumer.addProvider(CNAMechanicalCraftingRecipeGen::new);

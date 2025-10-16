@@ -5,10 +5,10 @@ import net.minecraft.resources.ResourceLocation;
 
 public class CNAPartialModels {
     public static final PartialModel COIL = PartialModel.of(
-            new ResourceLocation(CreateNewAge.MOD_ID, "block/carbon_brushes/coil"));
+            ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "block/carbon_brushes/coil"));
 
     public static final PartialModel GENERATOR_COIL = PartialModel.of(
-            new ResourceLocation(CreateNewAge.MOD_ID, "block/generator_coil/block"));
+            ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "block/generator_coil/block"));
 
 
     public static void load() {  }

@@ -11,8 +11,8 @@ public class CNASpriteShifts {
     public static CTSpriteShiftEntry REACTOR_GLASS = omni("reactor_glass");
     public static CTSpriteShiftEntry REDSTONE_MAGNET = omni("redstone_magnet");
 
-    public static CTSpriteShiftEntry BATTERY_TOP = rect("battery_top");
-    public static CTSpriteShiftEntry BATTERY_SIDE = rect("battery_side");
+//    public static CTSpriteShiftEntry BATTERY_TOP = rect("battery_top");
+//    public static CTSpriteShiftEntry BATTERY_SIDE = rect("battery_side");
 
     private static CTSpriteShiftEntry omni(String name) {
         return getCT(AllCTTypes.OMNIDIRECTIONAL, name);
@@ -23,7 +23,7 @@ public class CNASpriteShifts {
     }
 
     private static CTSpriteShiftEntry getCT(CTType type, String name) {
-        return CTSpriteShifter.getCT(type, new ResourceLocation(CreateNewAge.MOD_ID, "block/" + name),
-                new ResourceLocation(CreateNewAge.MOD_ID, "block/" + name + "_connected"));
+        return CTSpriteShifter.getCT(type, ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "block/" + name),
+                ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "block/" + name + "_connected"));
     }
 }

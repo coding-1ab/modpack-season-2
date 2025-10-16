@@ -4,11 +4,11 @@ import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRendere
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraftforge.fml.config.IConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.config.IConfigSpec;
+import net.neoforged.fml.config.ModConfig;
 
 public interface PlatformRegistrar {
-    void registerConfig(ModConfig.Type type, IConfigSpec<?> spec);
+    void registerConfig(ModConfig.Type type, IConfigSpec spec);
     RecipeType<?> registerRecipe(String name, RecipeSerializer<?> serializer);
     void registerCustomItemRenderer(Item item, CustomRenderedItemModelRenderer renderer);
     

@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CNAReiPlugin implements REIClientPlugin {
-    public static final CategoryIdentifier<EnergiserDisplay> identifier = () -> new ResourceLocation(CreateNewAge.MOD_ID, "rei_plugin");
+    public static final CategoryIdentifier<EnergiserDisplay> identifier = () -> ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "rei_plugin");
 
     @Override
     public void registerCategories(CategoryRegistry registry) {

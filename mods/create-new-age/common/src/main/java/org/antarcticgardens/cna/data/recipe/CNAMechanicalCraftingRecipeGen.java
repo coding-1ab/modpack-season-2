@@ -2,20 +2,23 @@ package org.antarcticgardens.cna.data.recipe;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.api.data.recipe.MechanicalCraftingRecipeBuilder;
+import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.ItemLike;
 import org.antarcticgardens.cna.CNABlocks;
 import org.antarcticgardens.cna.CNAItems;
 import org.antarcticgardens.cna.CNATags;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.UnaryOperator;
 
-#if CNA_FABRIC
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import io.github.fabricators_of_create.porting_lib.tags.Tags;
-#else
-import net.minecraftforge.common.Tags;
-#endif
+//#if CNA_FABRIC
+//import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+//import io.github.fabricators_of_create.porting_lib.tags.Tags;
+//#else
+import net.neoforged.neoforge.common.Tags;
+//#endif
 
 @SuppressWarnings("unused")
 public class CNAMechanicalCraftingRecipeGen extends CNARecipeProvider {
@@ -77,11 +80,11 @@ public class CNAMechanicalCraftingRecipeGen extends CNARecipeProvider {
         return "Create New Age Mechanical Crafting Recipes";
     }
 
-    public CNAMechanicalCraftingRecipeGen(PackOutput output) {
-        #if CNA_FABRIC
-        super((FabricDataOutput) output);
-        #else
-        super(output);
-        #endif
+    public CNAMechanicalCraftingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+//        #if CNA_FABRIC
+//        super((FabricDataOutput) output);
+//        #else
+        super(output, registries);
+//        #endif
     }
 }

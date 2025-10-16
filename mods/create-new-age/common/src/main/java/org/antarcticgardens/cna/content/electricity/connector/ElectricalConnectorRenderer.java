@@ -72,7 +72,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
 
         poseStack.pushPose();
         poseStack.translate(0.5f, 0.5f, 0.5f);
-        poseStack.mulPoseMatrix(new Matrix4f().rotateTowards(wire.getDirection(), wire.getUp()));
+        poseStack.mulPose(new Matrix4f().rotateTowards(wire.getDirection(), wire.getUp()));
 
         for (int i = 0; i < wire.getSections().size(); i++) {
             Pair<WireSection, Float> pair = wire.getSections().get(i);
@@ -109,7 +109,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                     Vec3 endPos = eyePos.add(player.getViewVector(partialTick).normalize().scale(2.0f));
 
                     HitResult hit = RaycastUtil.pickBlockFromPos(blockEntity.getLevel(), eyePos,
-                            player.getViewVector(partialTick), Minecraft.getInstance().gameMode.getPickRange());
+                            player.getViewVector(partialTick), Minecraft.getInstance().player.blockInteractionRange());
 
                     if (hit instanceof BlockHitResult blockHit) {
                         Vec3 vec = eyePos.add(blockHit.getLocation().subtract(eyePos).scale(0.9f));
@@ -150,7 +150,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                     ResourceLocation texture = wireItem.getWireType().getTextureLocation();
 
                     if (distance >= maxDistance) {
-                        texture = new ResourceLocation(CreateNewAge.MOD_ID, "textures/wire/red.png");
+                        texture = ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "textures/wire/red.png");
                     }
 
                     int sections = (int) Math.ceil(distance * CNAConfig.getClient().wireSectionsPerMeter.get());
@@ -162,7 +162,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
 
                     poseStack.pushPose();
                     poseStack.translate(0.5f, 0.5f, 0.5f);
-                    poseStack.mulPoseMatrix(new Matrix4f().rotateTowards(wire.getDirection(), wire.getUp()));
+                    poseStack.mulPose(new Matrix4f().rotateTowards(wire.getDirection(), wire.getUp()));
 
                     for (int i = 0; i < wire.getSections().size(); i++) {
                         Pair<WireSection, Float> pair = wire.getSections().get(i);

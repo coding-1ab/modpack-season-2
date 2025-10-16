@@ -8,11 +8,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-#if CNA_FABRIC
-import io.github.fabricators_of_create.porting_lib.models.generators.ModelFile;
-#else
-import net.minecraftforge.client.model.generators.ModelFile;
-#endif
+//#if CNA_FABRIC
+//import io.github.fabricators_of_create.porting_lib.models.generators.ModelFile;
+//#else
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+//#endif
 
 public class MotorBlockStateGen extends SpecialBlockStateGen {
     private final String parentModelId;

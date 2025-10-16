@@ -3,8 +3,6 @@ package org.antarcticgardens.cna.content.electricity.wire;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -22,9 +20,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlockEntity;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static org.antarcticgardens.cna.CNADataComponents.BOUND_TO;
 
 public class ElectricWireItem extends Item {
     private final WireType wireType;
@@ -58,7 +57,7 @@ public class ElectricWireItem extends Item {
         if (boundToPos != null && player.isShiftKeyDown()) {
             playUnboundSound(player);
             player.displayClientMessage(Component.translatable("item.create_new_age.wire.message.unbound"), true);
-            item.removeTagKey("boundTo");
+            item.remove(BOUND_TO);
             return InteractionResultHolder.success(item);
         }
         return InteractionResultHolder.pass(item);
@@ -71,13 +70,13 @@ public class ElectricWireItem extends Item {
             if (boundToPos == null)
                 return;
             if (!(level.getBlockEntity(boundToPos) instanceof ElectricalConnectorBlockEntity)) {
-                stack.removeTagKey("boundTo");
+                stack.remove(BOUND_TO);
             }
 
             int maxLength = CNAConfig.getCommon().maxWireLength.get();
-            
+
             if (entity.distanceToSqr(boundToPos.getX(), boundToPos.getY(), boundToPos.getZ()) > (maxLength * maxLength * 3)) {
-                stack.removeTagKey("boundTo");
+                stack.remove(BOUND_TO);
                 playUnboundSound(entity);
                 if (entity instanceof Player pl)
                     pl.displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far", maxLength), true);
@@ -101,21 +100,21 @@ public class ElectricWireItem extends Item {
 
                 if (boundToPos.equals(clickedPos)) {
                     context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.self_connect"), true);
-                    context.getItemInHand().removeTagKey("boundTo");
+                    context.getItemInHand().remove(BOUND_TO);
                     return InteractionResult.FAIL;
                 } else if (clickedPos.distSqr(boundToPos) > Mth.square(maxLength)) {
                     context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far", maxLength), true);
                     return InteractionResult.FAIL;
                 } else if (clickedConnector.isConnected(boundToPos)) {
                     context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.already_connected"), true);
-                    context.getItemInHand().removeTagKey("boundTo");
+                    context.getItemInHand().remove(BOUND_TO);
                     return InteractionResult.FAIL;
                 }
 
                 BlockEntity boundToEntity = context.getLevel().getBlockEntity(boundToPos);
 
                 if (boundToEntity instanceof ElectricalConnectorBlockEntity boundToConnector) {
-                    context.getItemInHand().removeTagKey("boundTo");
+                    context.getItemInHand().remove(BOUND_TO);
                     boundToConnector.connect(clickedConnector, wireType);
 
                     if (!context.getPlayer().isCreative())
@@ -143,12 +142,7 @@ public class ElectricWireItem extends Item {
     }
 
     public BlockPos getBoundConnector(ItemStack stack) {
-        CompoundTag tag = stack.getTagElement("boundTo");
-
-        if (tag == null)
-            return null;
-
-        return NbtUtils.readBlockPos(tag);
+        return stack.get(BOUND_TO);
     }
 
     public WireType getWireType() {
@@ -156,13 +150,13 @@ public class ElectricWireItem extends Item {
     }
 
     private void setBoundConnector(ItemStack stack, ElectricalConnectorBlockEntity connector) {
-        stack.addTagElement("boundTo", NbtUtils.writeBlockPos(connector.getBlockPos()));
+        stack.set(BOUND_TO, connector.getBlockPos());
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(CreateLang.translate("tooltip.create_new_age.transfers").style(ChatFormatting.GRAY)
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(CreateLang.translate("tooltip.create_new_age.transfers").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy_per_tick", String.format("%,d", wireType.getConductivity())).style(ChatFormatting.AQUA).component());
+        tooltipComponents.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy_per_tick", String.format("%,d", wireType.getConductivity())).style(ChatFormatting.AQUA).component());
     }
 }

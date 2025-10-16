@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "org.antarcticgardens.cna.neoforge.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "client": [
+    "ItemAccessor"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,13 +1,14 @@
 package org.antarcticgardens.cna.data.recipe;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import org.antarcticgardens.cna.CreateNewAge;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 
 // Based on Steam and Rails' RailwaysRecipeProvider.java
@@ -16,13 +17,14 @@ import java.util.function.Consumer;
 public abstract class CNARecipeProvider extends RecipeProvider {
     protected final List<GeneratedRecipe> all = new ArrayList<>();
 
-    public CNARecipeProvider(PackOutput output) {
-        super(output);
+    public CNARecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+        super(output, registries);
     }
 
+
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> writer) {
-        all.forEach(c -> c.register(writer));
+    protected void buildRecipes(RecipeOutput recipeOutput) {
+        all.forEach(c -> c.register(recipeOutput));
         CreateNewAge.LOGGER.info(getName() + " registered " + all.size() + " recipe" + (all.size() == 1 ? "" : "s"));
     }
 
@@ -33,6 +35,6 @@ public abstract class CNARecipeProvider extends RecipeProvider {
 
     @FunctionalInterface
     public interface GeneratedRecipe {
-        void register(Consumer<FinishedRecipe> consumer);
+        void register(RecipeOutput consumer);
     }
 }
