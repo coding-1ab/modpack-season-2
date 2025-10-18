@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -186,8 +187,13 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
         }
     }
 
-//    @Override
-//    public boolean shouldRenderOffScreen(ElectricalConnectorBlockEntity blockEntity) {
-//        return true;
-//    }
+    @Override
+    public boolean shouldRenderOffScreen(ElectricalConnectorBlockEntity blockEntity) {
+        return true;
+    }
+
+    @Override
+    public AABB getRenderBoundingBox(ElectricalConnectorBlockEntity blockEntity) {
+        return AABB.INFINITE;
+    }
 }
