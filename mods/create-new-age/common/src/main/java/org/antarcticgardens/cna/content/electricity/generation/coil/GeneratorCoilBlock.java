@@ -45,8 +45,8 @@ public class GeneratorCoilBlock extends RotatedPillarKineticBlock implements IBE
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (player.isShiftKeyDown() || !player.mayBuild())
-            return ItemInteractionResult.SUCCESS;
+        if (player.isShiftKeyDown())
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
         ItemStack itemInHand = player.getItemInHand(hand);
 
@@ -55,7 +55,7 @@ public class GeneratorCoilBlock extends RotatedPillarKineticBlock implements IBE
             return helper.getOffset(player, level, state, pos, hitResult)
                     .placeInWorld(level, (BlockItem) itemInHand.getItem(), player, hand, hitResult);
 
-        return  ItemInteractionResult.SUCCESS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override
