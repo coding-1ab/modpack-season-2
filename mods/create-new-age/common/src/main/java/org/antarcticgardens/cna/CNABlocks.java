@@ -127,8 +127,9 @@ public class CNABlocks {
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(0.4f))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                    .blockstate((c, p) -> p.directionalBlock(c.get(), p.models().getExistingFile(p.modLoc(c.getName()))))
-                    .simpleItem()
+                    .blockstate(CNABlockStateGen.electricalConnector())
+                    .item()
+                    .transform(ModelGen.customItemModel())
                     .register();
 
     public static final BlockEntry<GeneratorCoilBlock> GENERATOR_COIL =

@@ -9,6 +9,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.antarcticgardens.cna.CNABlocks;
+import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlock;
+import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorMode;
 import org.antarcticgardens.cna.content.energising.EnergiserBlock;
 import org.antarcticgardens.cna.content.heat.heater.HeaterBlock;
 import org.antarcticgardens.cna.content.heat.pipe.HeatPipeBlock;
@@ -28,6 +30,29 @@ public class CNABlockStateGen {
     public static <P extends EnergiserBlock> NonNullBiConsumer<DataGenContext<Block, P>, RegistrateBlockstateProvider> energiser() {
         return (c, p) -> p.horizontalBlock(c.get(), p.models().withExistingParent(c.getName(), p.modLoc("block/energiser"))
                         .texture("all", "block/" + c.getName()));
+    }
+
+    public static <P extends ElectricalConnectorBlock> NonNullBiConsumer<DataGenContext<Block, P>, RegistrateBlockstateProvider> electricalConnector() {
+        return (c, p) -> {
+            VariantBlockStateBuilder builder = p.getVariantBuilder(c.get());
+
+            ModelFile.ExistingModelFile inert = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/inert"));
+            ModelFile.ExistingModelFile pull = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/pull"));
+
+            builder.forAllStates(state -> {
+                Direction dir = state.getValue(BlockStateProperties.FACING);
+                ElectricalConnectorMode mode = state.getValue(ElectricalConnectorBlock.MODE);
+
+                return ConfiguredModel.builder()
+                        .modelFile(switch(mode) {
+                            case INERT -> inert;
+                            case PULL -> pull;
+                        })
+                        .rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
+                        .rotationY(dir.getAxis().isVertical() ? 0 : (((int) dir.toYRot()) + 180) % 360)
+                        .build();
+            });
+        };
     }
     
     public static <P extends HeatPipeBlock> NonNullBiConsumer<DataGenContext<Block, P>, RegistrateBlockstateProvider> heatPipe() {
