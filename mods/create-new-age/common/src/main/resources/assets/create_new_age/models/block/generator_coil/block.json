@@ -3,7 +3,7 @@
   "ambientocclusion": false,
   "textures": {
     "0": "create_new_age:block/generator_coil",
-    "particle": "create:block/palettes/stone_types/cut/andesite_cut"
+    "particle": "create_new_age:block/generator_coil"
   },
 
   "loader": "${objLoader}",
