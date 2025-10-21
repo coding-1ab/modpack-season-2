@@ -198,6 +198,8 @@ public class PackageItem extends Item {
 			return boxAddress.isBlank();
 		if (address.equals("*") || boxAddress.equals("*"))
 			return true;
+		if (address.equals(boxAddress))
+			return true;
 		return address.matches(Glob.toRegexPattern(boxAddress, "")) ||
 			boxAddress.matches(Glob.toRegexPattern(address, ""));
 	}
