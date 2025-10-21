@@ -6,21 +6,21 @@
     },
     "facing=east": {
       "model": "create_new_age:block/advanced_motor/horizontal",
-      "y": 270
+      "y": 90
     },
     "facing=north": {
-      "model": "create_new_age:block/advanced_motor/horizontal",
-      "y": 180
+      "model": "create_new_age:block/advanced_motor/horizontal"
     },
     "facing=south": {
-      "model": "create_new_age:block/advanced_motor/horizontal"
+      "model": "create_new_age:block/advanced_motor/horizontal",
+      "y": 180
     },
     "facing=up": {
       "model": "create_new_age:block/advanced_motor/vertical"
     },
     "facing=west": {
       "model": "create_new_age:block/advanced_motor/horizontal",
-      "y": 90
+      "y": 270
     }
   }
 }

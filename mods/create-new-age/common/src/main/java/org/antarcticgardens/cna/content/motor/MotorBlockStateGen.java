@@ -30,7 +30,7 @@ public class MotorBlockStateGen extends SpecialBlockStateGen {
     public int getYRotation(BlockState state) {
         return state.getValue(CreativeMotorBlock.FACING)
                 .getAxis()
-                .isVertical() ? 0 : horizontalAngle(state.getValue(CreativeMotorBlock.FACING));
+                .isVertical() ? 0 : 180 + horizontalAngle(state.getValue(CreativeMotorBlock.FACING));
     }
 
     @Override
