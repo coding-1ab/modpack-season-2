@@ -20,7 +20,7 @@ public final class RenderTypeShardRegistry {
 
     private static final Map<String, List<RenderStateShard>> SHARDS = new HashMap<>();
     private static final Set<GenericShard> GENERIC_SHARDS = new HashSet<>();
-    private static final Set<RenderType.CompositeRenderType> CREATED_RENDER_TYPES = new HashSet<>();
+    private static final Set<RenderType.CompositeRenderType> CREATED_RENDER_TYPES = Collections.newSetFromMap(new WeakHashMap<>());
     private RenderTypeShardRegistry() {
     }
 
