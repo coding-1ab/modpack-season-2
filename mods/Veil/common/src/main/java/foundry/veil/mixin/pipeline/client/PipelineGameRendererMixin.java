@@ -1,6 +1,7 @@
 package foundry.veil.mixin.pipeline.client;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.mojang.blaze3d.pipeline.RenderTarget;
 import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilLevelPerspectiveRenderer;
 import foundry.veil.api.client.render.VeilRenderSystem;
@@ -56,9 +57,11 @@ public class PipelineGameRendererMixin {
         this.veil$cameraBobOffset.sub(args.get(0), args.get(1), args.get(2));
     }
 
-    @Inject(method = "resize", at = @At(value = "HEAD"))
-    public void resizeListener(int pWidth, int pHeight, CallbackInfo ci) {
-        VeilRenderSystem.resize(pWidth, pHeight);
+    @Inject(method = "resize", at = @At(value = "TAIL"))
+    public void resizeListener(CallbackInfo ci) {
+        // Use the main render target instead of the actual screen size, so any mod that changes resolutions doesn't break
+        RenderTarget renderTarget = Minecraft.getInstance().getMainRenderTarget();
+        VeilRenderSystem.resize(renderTarget.width, renderTarget.height);
     }
 
     @WrapWithCondition(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;doEntityOutline()V"))
