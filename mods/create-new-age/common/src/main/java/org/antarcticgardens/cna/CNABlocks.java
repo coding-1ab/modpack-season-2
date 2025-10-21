@@ -4,16 +4,17 @@ import com.mojang.math.Axis;
 import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
-import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.ModelGen;
 import com.tterrag.registrate.builders.BlockBuilder;
-import com.tterrag.registrate.providers.loot.RegistrateBlockLootTables;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -410,11 +411,14 @@ public class CNABlocks {
                     .properties((p) -> p.strength(3.5f).requiresCorrectToolForDrops())
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .tag(BlockTags.NEEDS_IRON_TOOL)
-                    // TODO: Registrate stuff
-//                    .loot((lt, b) -> lt.add(b,
-//                            RegistrateBlockLootTables.createSilkTouchDispatchTable(b,
-//                                    lt.applyExplosionDecay(b, LootItem.lootTableItem(CNAItems.THORIUM)
-//                                            .apply(ApplyBonusCount.addOreBonusCount(Enchantments.FORTUNE))))))
+                    .loot((lt, b) ->  {
+                        HolderLookup.RegistryLookup<Enchantment> enchantmentRegistryLookup = lt.getRegistries().lookupOrThrow(Registries.ENCHANTMENT);
+
+                        lt.add(b,
+                                lt.createSilkTouchDispatchTable(b,
+                                        lt.applyExplosionDecay(b, LootItem.lootTableItem(CNAItems.THORIUM.get())
+                                                .apply(ApplyBonusCount.addOreBonusCount(enchantmentRegistryLookup.getOrThrow(Enchantments.FORTUNE))))));
+                    })
                     .item(AssemblyOperatorBlockItem::new)
                     .build()
                     .register();
