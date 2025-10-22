@@ -66,23 +66,31 @@ public class ItemCopyingRecipe extends CustomRecipe {
 			ItemStack itemInSlot = input.getItem(j);
 			if (itemInSlot.isEmpty())
 				continue;
-			if (!itemToCopy.isEmpty() && itemToCopy.getItem() != itemInSlot.getItem())
+			if (!(itemInSlot.getItem() instanceof SupportsItemCopying sic))
+				return null;
+			if (!sic.canCopyFromItem(itemInSlot))
+				continue;
+			itemToCopy = itemInSlot;
+			break;
+		}
+		if (itemToCopy.isEmpty())
+			return null;
+
+		for (int j = 0; j < input.size(); ++j) {
+			ItemStack itemInSlot = input.getItem(j);
+			if (itemInSlot.isEmpty() || itemInSlot == itemToCopy)
+				continue;
+			if (itemToCopy.getItem() != itemInSlot.getItem())
 				return null;
 			if (!(itemInSlot.getItem() instanceof SupportsItemCopying sic))
-				continue;
-
-			if (sic.canCopyFromItem(itemInSlot)) {
-				if (!itemToCopy.isEmpty())
-					return null;
-				itemToCopy = itemInSlot;
-				continue;
-			}
-
-			if (sic.canCopyToItem(itemInSlot))
-				copyTargets++;
+				return null;
+			if (sic.canCopyFromItem(itemInSlot))
+				return null;
+			if (!sic.canCopyToItem(itemInSlot))
+				return null;
+			copyTargets++;
 		}
-
-		if (itemToCopy.isEmpty() || copyTargets == 0)
+		if (copyTargets == 0)
 			return null;
 
 		return IntAttached.with(copyTargets, itemToCopy);

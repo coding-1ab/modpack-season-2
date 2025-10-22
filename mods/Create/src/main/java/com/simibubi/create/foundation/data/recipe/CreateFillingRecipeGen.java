@@ -112,12 +112,4 @@ public final class CreateFillingRecipeGen extends FillingRecipeGen {
 	public CreateFillingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
 		super(output, registries, Create.ID);
 	}
-
-	public GeneratedRecipe moddedGrass(Mods mod, String name) {
-		String grass = name + "_grass_block";
-		return create(mod.recipeId(grass), b -> b.require(Fluids.WATER, 500)
-				.require(mod, name + "_dirt")
-				.output(mod, grass)
-				.whenModLoaded(mod.getId()));
-	}
 }

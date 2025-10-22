@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
-
-import net.createmod.catnip.animation.AnimationTickHolder;
-
 import org.lwjgl.glfw.GLFW;
 
 import com.google.common.collect.ImmutableList;
@@ -24,6 +21,7 @@ import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.animation.LerpedFloat.Chaser;
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -53,10 +51,10 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 
 	private List<Rect2i> extraAreas = Collections.emptyList();
 
-	private LerpedFloat scroll = LerpedFloat.linear()
+	private final LerpedFloat scroll = LerpedFloat.linear()
 		.startWithValue(0);
 
-	private List<ItemStack> schedule;
+	private final List<ItemStack> schedule;
 	private IconButton confirmButton;
 	private ItemStack editingItem;
 	private int editingIndex;

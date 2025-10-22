@@ -116,13 +116,6 @@ public final class CreatePressingRecipeGen extends PressingRecipeGen {
 		super(output, registries, Create.ID);
 	}
 
-	private GeneratedRecipe moddedPaths(Mods mod, String... blocks) {
-		for(String block : blocks) {
-			moddedCompacting(mod, block, block + "_path");
-		}
-		return null;
-	}
-
 	private GeneratedRecipe iePlates() {
 		for (CommonMetal metal : CommonMetal.of(Mods.IE)) {
 			create(Mods.IE.recipeId("plate_" + metal), b -> b.require(metal.ingots)
@@ -130,11 +123,5 @@ public final class CreatePressingRecipeGen extends PressingRecipeGen {
 				.whenModLoaded(Mods.IE.getId()));
 		}
 		return null;
-	}
-
-	GeneratedRecipe moddedCompacting(Mods mod, String input, String output) {
-		return create("compat/" + mod.getId() + "/" + output, b -> b.require(mod, input)
-				.output(mod, output)
-				.whenModLoaded(mod.getId()));
 	}
 }
