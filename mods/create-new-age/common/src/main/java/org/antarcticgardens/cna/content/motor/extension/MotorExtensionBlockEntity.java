@@ -72,7 +72,7 @@ public class MotorExtensionBlockEntity extends SmartBlockEntity {
     static class MotorValueBox extends ValueBoxTransform.Sided {
         @Override
         protected Vec3 getSouthLocation() {
-            return VecHelper.voxelSpace(8, 8, 12.5);
+            return VecHelper.voxelSpace(8, 8, 13.5);
         }
 
         @Override
