@@ -47,11 +47,6 @@ public class NeoForgeRegistrar implements PlatformRegistrar {
         return type;
     }
 
-    @Override
-    public void registerCustomItemRenderer(Item item, CustomRenderedItemModelRenderer renderer) {
-        // TODO: Reimplement
-//        ((ItemAccessor) item).setRenderProperties(SimpleCustomRenderer.create(item, renderer));
-    }
 
     @Override
     public void beforeRegistration() {

@@ -10,7 +10,6 @@ import net.neoforged.fml.config.ModConfig;
 public interface PlatformRegistrar {
     void registerConfig(ModConfig.Type type, IConfigSpec spec);
     RecipeType<?> registerRecipe(String name, RecipeSerializer<?> serializer);
-    void registerCustomItemRenderer(Item item, CustomRenderedItemModelRenderer renderer);
     
     default void beforeRegistration() {  }
     default void afterRegistration() {  }
