@@ -27,16 +27,20 @@ import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 //import org.antarcticgardens.cna.content.electricity.battery.BatteryModel;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesBlock;
+import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesItem;
 import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesItemRenderer;
 import org.antarcticgardens.cna.content.electricity.generation.coil.GeneratorCoilBlock;
 import org.antarcticgardens.cna.content.electricity.generation.magnet.ImplementedMagnetBlock;
 import org.antarcticgardens.cna.content.energising.EnergiserBlock;
+import org.antarcticgardens.cna.content.energising.EnergisingBlockItem;
 import org.antarcticgardens.cna.content.heat.heater.HeaterBlock;
 import org.antarcticgardens.cna.content.heat.pipe.HeatPipeBlock;
 import org.antarcticgardens.cna.content.heat.plate.SolarHeatingPlateBlock;
 import org.antarcticgardens.cna.content.heat.pump.HeatPumpBlock;
 import org.antarcticgardens.cna.content.heat.stirling.StirlingEngineBlock;
+import org.antarcticgardens.cna.content.heat.stirling.StirlingEngineItem;
 import org.antarcticgardens.cna.content.motor.MotorBlock;
+import org.antarcticgardens.cna.content.motor.MotorBlockItem;
 import org.antarcticgardens.cna.content.motor.MotorBlockStateGen;
 import org.antarcticgardens.cna.content.motor.extension.MotorExtensionBlock;
 import org.antarcticgardens.cna.content.motor.extension.variants.AdvancedMotorExtensionVariant;
@@ -92,8 +96,7 @@ public class CNABlocks {
                     .transform(setImpact(4.0))
                     .tag(BlockTags.MINEABLE_WITH_AXE)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                    .item(AssemblyOperatorBlockItem::new)
-                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.5f, 0.0f, 0.0f), Axis.XP.rotationDegrees(90.0f)))
+                    .item(EnergisingBlockItem::new)
                     .build()
                     .register();
 
@@ -105,8 +108,7 @@ public class CNABlocks {
                     .transform(setImpact(8.0))
                     .tag(BlockTags.MINEABLE_WITH_AXE)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                    .item(AssemblyOperatorBlockItem::new)
-                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.5f, 0.0f, 0.0f), Axis.XP.rotationDegrees(90.0f)))
+                    .item(EnergisingBlockItem::new)
                     .build()
                     .register();
 
@@ -118,8 +120,7 @@ public class CNABlocks {
                     .transform(setImpact(32.0))
                     .tag(BlockTags.MINEABLE_WITH_AXE)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                    .item(AssemblyOperatorBlockItem::new)
-                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.5f, 0.0f, 0.0f), Axis.XP.rotationDegrees(90.0f)))
+                    .item(EnergisingBlockItem::new)
                     .build()
                     .register();
 
@@ -193,8 +194,7 @@ public class CNABlocks {
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .blockstate((c, p) -> p.directionalBlock(c.get(), p.models().getExistingFile(p.modLoc("block/carbon_brushes/base"))))
-                    .item()
-                    .transform(CarbonBrushesItemRenderer.itemTransformer(new Vector3f(0.0f), new Quaternionf()))
+                    .item(CarbonBrushesItem::new)
                     .transform(b -> b.model((c, p) -> p.withExistingParent(c.getName(), p.modLoc("block/carbon_brushes/base"))))
                     .build()
                     .register();
@@ -206,8 +206,7 @@ public class CNABlocks {
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .blockstate(new MotorBlockStateGen("motor")::generate)
                     .properties(properties -> properties.strength(3.0f))
-                    .item()
-                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.0f), Axis.XP.rotationDegrees(90.0f)))
+                    .item(MotorBlockItem::new)
                     .transform(b -> b.model((c, p) -> 
                             p.withExistingParent(c.getName(), p.modLoc("block/" + c.getName() + "/horizontal"))).build())
                     .register();
@@ -219,8 +218,7 @@ public class CNABlocks {
                     .properties(properties -> properties.strength(3.5f))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .blockstate(new MotorBlockStateGen("motor")::generate)
-                    .item()
-                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.0f), Axis.XP.rotationDegrees(90.0f)))
+                    .item(MotorBlockItem::new)
                     .transform(b -> b.model((c, p) ->
                             p.withExistingParent(c.getName(), p.modLoc("block/" + c.getName() + "/horizontal"))).build())
                     .register();
@@ -233,8 +231,7 @@ public class CNABlocks {
                     .properties(properties -> properties.strength(4.0f))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .blockstate(new MotorBlockStateGen("motor")::generate)
-                    .item()
-                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.0f), Axis.XP.rotationDegrees(90.0f)))
+                    .item(MotorBlockItem::new)
                     .transform(b -> b.model((c, p) ->
                             p.withExistingParent(c.getName(), p.modLoc("block/" + c.getName() + "/horizontal"))).build())
                     .register();
@@ -310,8 +307,7 @@ public class CNABlocks {
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .blockstate(CNABlockStateGen.stirlingEngine())
                     .transform(setCapacity(32.0))
-                    .item()
-                    .transform(ItemShaftRenderer.itemTransformer(new Vector3f(0.5f, 0.0f, 0.0f), Axis.XP.rotationDegrees(90.0f)))
+                    .item(StirlingEngineItem::new)
                     .build()
                     .register();
 

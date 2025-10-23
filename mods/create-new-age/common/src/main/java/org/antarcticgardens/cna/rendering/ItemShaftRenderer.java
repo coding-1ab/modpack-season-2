@@ -23,7 +23,7 @@ public class ItemShaftRenderer extends CustomRenderedItemModelRenderer {
     protected final Vector3f offset;
     protected final Quaternionf rotation;
 
-    protected ItemShaftRenderer(Vector3f offset, Quaternionf rotation) {
+    public ItemShaftRenderer(Vector3f offset, Quaternionf rotation) {
         this.offset = offset.div(16.0f);
         this.rotation = rotation;
     }
@@ -37,13 +37,5 @@ public class ItemShaftRenderer extends CustomRenderedItemModelRenderer {
         ms.mulPose(Axis.YP.rotation(1.0f));
         ms.translate(offset.x, offset.y, offset.z);
         renderer.render(SHAFT.get(), light);
-    }
-
-    public static <T extends Item, P> NonNullUnaryOperator<ItemBuilder<T, P>> itemTransformer(Vector3f offset, Quaternionf rotation) {
-        return b -> {
-            b.onRegister(item -> CreateNewAge.getInstance().getPlatform().getRegistrar()
-                    .registerCustomItemRenderer(item, new ItemShaftRenderer(offset, rotation)));
-            return b;
-        };
     }
 }

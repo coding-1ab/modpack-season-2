@@ -40,7 +40,6 @@ public class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBlockEntity
         capability = new FuelAcceptorInventoryHandler();
     }
 
-    // TODO: register this is ModBusEvents.registerCapabilities
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
