@@ -105,7 +105,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
             if (getSide() != Direction.UP)
                 return;
             TransformStack.of(ms)
-                    .rotateZ(-AngleHelper.horizontalAngle(facing) + 180);
+                    .rotateZDegrees(-AngleHelper.horizontalAngle(facing) + 180);
         }
 
         @Override
