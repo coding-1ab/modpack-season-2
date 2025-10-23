@@ -18,6 +18,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
@@ -417,6 +418,58 @@ public class CNABlocks {
                     })
                     .item(AssemblyOperatorBlockItem::new)
                     .build()
+                    .register();
+
+    public static final BlockEntry<RotatedPillarBlock> COPPER_WIRE_BLOCK =
+            REGISTRATE.block("copper_wire_block", RotatedPillarBlock::new)
+                    .initialProperties(() -> Blocks.COPPER_BLOCK)
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .blockstate((c, p) ->
+                            p.axisBlock(c.get(), p.models().getExistingFile(p.modLoc(c.getName())), p.models().getExistingFile(p.modLoc(c.getName()))))
+                    .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .tag(BlockTags.MINEABLE_WITH_AXE)
+                    .tag(BlockTags.NEEDS_STONE_TOOL)
+                    .simpleItem()
+                    .register();
+
+    public static final BlockEntry<RotatedPillarBlock> OVERCHARGED_IRON_WIRE_BLOCK =
+            REGISTRATE.block("overcharged_iron_wire_block", RotatedPillarBlock::new)
+                    .initialProperties(() -> Blocks.IRON_BLOCK)
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .blockstate((c, p) ->
+                            p.axisBlock(c.get(), p.models().getExistingFile(p.modLoc(c.getName())), p.models().getExistingFile(p.modLoc(c.getName()))))
+                    .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .tag(BlockTags.MINEABLE_WITH_AXE)
+                    .tag(BlockTags.NEEDS_STONE_TOOL)
+                    .simpleItem()
+                    .register();
+
+    public static final BlockEntry<RotatedPillarBlock> OVERCHARGED_GOLDEN_WIRE_BLOCK =
+            REGISTRATE.block("overcharged_golden_wire_block", RotatedPillarBlock::new)
+                    .initialProperties(() -> Blocks.GOLD_BLOCK)
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .blockstate((c, p) ->
+                            p.axisBlock(c.get(), p.models().getExistingFile(p.modLoc(c.getName())), p.models().getExistingFile(p.modLoc(c.getName()))))
+                    .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .tag(BlockTags.MINEABLE_WITH_AXE)
+                    .tag(BlockTags.NEEDS_IRON_TOOL)
+                    .simpleItem()
+                    .register();
+
+    public static final BlockEntry<RotatedPillarBlock> OVERCHARGED_DIAMOND_WIRE_BLOCK =
+            REGISTRATE.block("overcharged_diamond_wire_block", RotatedPillarBlock::new)
+                    .initialProperties(() -> Blocks.DIAMOND_BLOCK)
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .blockstate((c, p) ->
+                            p.axisBlock(c.get(), p.models().getExistingFile(p.modLoc(c.getName())), p.models().getExistingFile(p.modLoc(c.getName()))))
+                    .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .tag(BlockTags.MINEABLE_WITH_AXE)
+                    .tag(BlockTags.NEEDS_IRON_TOOL)
+                    .simpleItem()
                     .register();
 
 
