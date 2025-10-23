@@ -5,13 +5,13 @@
       "modid": "atmospheric"
     }
   ],
-  "type": "create:milling",
+  "type": "create:cutting",
   "ingredients": [
     {
       "type": "neoforge:compound",
       "ingredients": [
         {
-          "item": "atmospheric:warm_monkey_brush"
+          "item": "atmospheric:crustose_log"
         }
       ]
     }
@@ -19,17 +19,7 @@
   "processing_time": 50,
   "results": [
     {
-      "count": 2,
-      "id": "minecraft:yellow_dye"
-    },
-    {
-      "chance": 0.1,
-      "count": 2,
-      "id": "minecraft:yellow_dye"
-    },
-    {
-      "chance": 0.1,
-      "id": "minecraft:orange_dye"
+      "id": "atmospheric:aspen_log"
     }
   ]
 }

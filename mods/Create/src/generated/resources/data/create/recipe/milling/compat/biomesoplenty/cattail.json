@@ -2,7 +2,7 @@
   "neoforge:conditions": [
     {
       "type": "neoforge:mod_loaded",
-      "modid": "atmospheric"
+      "modid": "biomesoplenty"
     }
   ],
   "type": "create:milling",
@@ -11,7 +11,7 @@
       "type": "neoforge:compound",
       "ingredients": [
         {
-          "item": "atmospheric:warm_monkey_brush"
+          "item": "biomesoplenty:cattail"
         }
       ]
     }
@@ -19,17 +19,18 @@
   "processing_time": 50,
   "results": [
     {
-      "count": 2,
-      "id": "minecraft:yellow_dye"
+      "count": 3,
+      "id": "minecraft:brown_dye"
     },
     {
-      "chance": 0.1,
+      "chance": 0.05,
       "count": 2,
-      "id": "minecraft:yellow_dye"
+      "id": "minecraft:green_dye"
     },
     {
-      "chance": 0.1,
-      "id": "minecraft:orange_dye"
+      "chance": 0.25,
+      "count": 2,
+      "id": "minecraft:brown_dye"
     }
   ]
 }

@@ -11,25 +11,15 @@
       "type": "neoforge:compound",
       "ingredients": [
         {
-          "item": "atmospheric:warm_monkey_brush"
+          "item": "atmospheric:arid_sandstone"
         }
       ]
     }
   ],
-  "processing_time": 50,
+  "processing_time": 150,
   "results": [
     {
-      "count": 2,
-      "id": "minecraft:yellow_dye"
-    },
-    {
-      "chance": 0.1,
-      "count": 2,
-      "id": "minecraft:yellow_dye"
-    },
-    {
-      "chance": 0.1,
-      "id": "minecraft:orange_dye"
+      "id": "atmospheric:arid_sand"
     }
   ]
 }

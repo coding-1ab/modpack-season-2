@@ -14,7 +14,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.AllIcons;
-import com.simibubi.create.foundation.gui.ScreenWithStencils;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.simibubi.create.foundation.gui.menu.GhostItemSubmitPacket;
 import com.simibubi.create.foundation.gui.widget.IconButton;
@@ -24,7 +23,6 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.animation.LerpedFloat.Chaser;
-import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.ChatFormatting;
@@ -43,8 +41,7 @@ import net.minecraft.world.item.ItemStack;
 
 import net.neoforged.neoforge.items.SlotItemHandler;
 
-public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<StockKeeperCategoryMenu>
-	implements ScreenWithStencils {
+public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<StockKeeperCategoryMenu> {
 
 	private static final int CARD_HEADER = 20;
 	private static final int CARD_WIDTH = 160;
@@ -181,22 +178,23 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 
 	protected void renderCategories(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		PoseStack matrixStack = graphics.pose();
-		UIRenderHelper.swapAndBlitColor(minecraft.getMainRenderTarget(), UIRenderHelper.framebuffer);
 
 		int yOffset = 25;
 		List<ItemStack> entries = schedule;
 		float scrollOffset = -scroll.getValue(partialTicks);
 
+		graphics.enableScissor(
+			leftPos + 3, topPos + 16,
+			leftPos + 187, topPos + 19 + (AllGuiTextures.STOCK_KEEPER_CATEGORY.getHeight() * slices)
+		);
+
 		for (int i = 0; i <= entries.size(); i++) {
-			startStencil(graphics, leftPos + 3, topPos + 16, 184,
-				3 + AllGuiTextures.STOCK_KEEPER_CATEGORY.getHeight() * slices);
 			matrixStack.pushPose();
 			matrixStack.translate(0, scrollOffset, 0);
 
 			if (i == entries.size()) {
 				AllGuiTextures.STOCK_KEEPER_CATEGORY_NEW.render(graphics, leftPos + 7, topPos + yOffset);
 				matrixStack.popPose();
-				endStencil();
 				break;
 			}
 
@@ -206,10 +204,9 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 			yOffset += cardHeight;
 
 			matrixStack.popPose();
-			endStencil();
 		}
 
-		UIRenderHelper.swapAndBlitColor(UIRenderHelper.framebuffer, minecraft.getMainRenderTarget());
+		graphics.disableScissor();
 	}
 
 	public int renderScheduleEntry(GuiGraphics graphics, int i, ItemStack entry, int yOffset, int mouseX, int mouseY,
@@ -474,10 +471,11 @@ public class StockKeeperCategoryScreen extends AbstractSimiContainerScreen<Stock
 		int center = leftPos + (AllGuiTextures.STOCK_KEEPER_CATEGORY.getWidth()) / 2;
 		graphics.drawString(font, formattedcharsequence, (float) (center - font.width(formattedcharsequence) / 2),
 			(float) topPos + 4, 0x3D3C48, false);
-		renderCategories(graphics, pMouseX, pMouseY, pPartialTick);
 
-		if (editingItem == null)
+		if (editingItem == null) {
+			renderCategories(graphics, pMouseX, pMouseY, pPartialTick);
 			return;
+		}
 
 		graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
 
