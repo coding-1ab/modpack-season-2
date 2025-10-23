@@ -1,6 +1,8 @@
 package org.antarcticgardens.cna.content.energising;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
+import com.simibubi.create.content.kinetics.base.ShaftRenderer;
 import net.createmod.catnip.render.CachedBuffers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -8,13 +10,13 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.level.block.Blocks;
 
-public class EnergiserRenderer implements BlockEntityRenderer<EnergiserBlockEntity> {
+public class EnergiserRenderer extends ShaftRenderer<EnergiserBlockEntity> {
     public EnergiserRenderer(BlockEntityRendererProvider.Context context) {
-        super();
+        super(context);
     }
-    
+
     @Override
-    public void render(EnergiserBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    protected void renderSafe(EnergiserBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light, int overlay) {
         if (blockEntity.size > 0f && blockEntity.getLevel() != null) {
             var consumer = buffer.getBuffer(RenderType.lightning());
             float scalar = (1 - blockEntity.size * 0.12f) * 0.5f;
@@ -24,6 +26,8 @@ public class EnergiserRenderer implements BlockEntityRenderer<EnergiserBlockEnti
                     .translate(scalar, -1.2, scalar)
                     .scale(blockEntity.size * 0.12f, 1.3f, blockEntity.size * 0.12f)
                     .renderInto(poseStack, consumer);
+
         }
+        super.renderSafe(blockEntity, partialTicks, poseStack, buffer, light, overlay);
     }
 }

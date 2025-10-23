@@ -9,6 +9,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 import org.antarcticgardens.cna.CNAItems;
+import org.antarcticgardens.cna.CreateNewAge;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlockEntity;
 import org.antarcticgardens.cna.content.electricity.wire.WireType;
 import org.antarcticgardens.cna.content.energising.EnergiserBlockEntity;
@@ -17,7 +18,7 @@ public class EnergiserPonder {
     public static void ponder(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
 
-        scene.configureBasePlate(0, 0, 5);
+        scene.configureBasePlate(0, 0, 7);
         scene.title("energiser", "Using an energiser.");
         scene.addKeyframe();
         scene.scaleSceneView(0.7f);
@@ -37,6 +38,9 @@ public class EnergiserPonder {
         scene.world().showSection(util.select().position(6, 3, 5), Direction.DOWN);
 
         scene.idle(10);
+
+        scene.world().modifyBlockEntity(util.grid().at(4, 3, 5), ElectricalConnectorBlockEntity.class,
+                (en) -> en.connect((ElectricalConnectorBlockEntity) en.getLevel().getBlockEntity(util.grid().at(6, 3, 5)), WireType.OVERCHARGED_IRON));
 
         scene.world().setKineticSpeed(util.select().position(3, 3, 5), 32);
         scene.effects().rotationSpeedIndicator(new BlockPos(3, 3, 5));
