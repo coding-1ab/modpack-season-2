@@ -19,6 +19,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
@@ -425,6 +426,7 @@ public class CNABlocks {
                     .initialProperties(() -> Blocks.COPPER_BLOCK)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(p -> p.sound(SoundType.COPPER))
                     .blockstate((c, p) ->
                             p.axisBlock(c.get(), p.models().getExistingFile(p.modLoc(c.getName())), p.models().getExistingFile(p.modLoc(c.getName()))))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
@@ -438,6 +440,7 @@ public class CNABlocks {
                     .initialProperties(() -> Blocks.IRON_BLOCK)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(p -> p.sound(SoundType.COPPER))
                     .blockstate((c, p) ->
                             p.axisBlock(c.get(), p.models().getExistingFile(p.modLoc(c.getName())), p.models().getExistingFile(p.modLoc(c.getName()))))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
@@ -451,6 +454,7 @@ public class CNABlocks {
                     .initialProperties(() -> Blocks.GOLD_BLOCK)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(p -> p.sound(SoundType.COPPER))
                     .blockstate((c, p) ->
                             p.axisBlock(c.get(), p.models().getExistingFile(p.modLoc(c.getName())), p.models().getExistingFile(p.modLoc(c.getName()))))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
@@ -464,6 +468,7 @@ public class CNABlocks {
                     .initialProperties(() -> Blocks.DIAMOND_BLOCK)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(p -> p.sound(SoundType.COPPER))
                     .blockstate((c, p) ->
                             p.axisBlock(c.get(), p.models().getExistingFile(p.modLoc(c.getName())), p.models().getExistingFile(p.modLoc(c.getName()))))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
