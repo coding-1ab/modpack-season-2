@@ -47,7 +47,7 @@ subprojects {
         
         annotationProcessor("systems.manifold:manifold-preprocessor:2024.1.29")
 
-        modImplementation("org.antarcticgardens.esl:esl-${project.name}-${rootProject.minecraftVersion}:${rootProject.eslVersion}+${project.name}-mc${rootProject.minecraftVersion}")
+        modImplementation(include("org.antarcticgardens.esl:esl-${project.name}-${rootProject.minecraftVersion}:${rootProject.eslVersion}+${project.name}-mc${rootProject.minecraftVersion}"))
         
         modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraftVersion}-common-api:${rootProject.jeiVersion}")
         
