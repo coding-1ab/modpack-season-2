@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.packagePort.postbox.PostboxBlockEntity;
+import com.simibubi.create.compat.computercraft.events.PackageEvent;
 import com.simibubi.create.content.trains.entity.Carriage;
 import com.simibubi.create.content.trains.entity.Train;
 import com.simibubi.create.content.trains.graph.DimensionPalette;
@@ -196,6 +197,8 @@ public class GlobalStation extends SingleBlockEntityEdgePoint {
 						continue;
 
 					ItemStack result = ItemHandlerHelper.insertItemStacked(carriageInventory, stack, false);
+					if (box != null)
+						box.computerBehaviour.prepareComputerEvent(new PackageEvent(stack, "package_sent"));
 					if (!result.isEmpty())
 						continue;
 
@@ -233,6 +236,8 @@ public class GlobalStation extends SingleBlockEntityEdgePoint {
 					}
 
 					ItemStack result = ItemHandlerHelper.insertItemStacked(postboxInventory, stack, false);
+					if (box != null)
+						box.computerBehaviour.prepareComputerEvent(new PackageEvent(stack, "package_received"));
 					if (!result.isEmpty())
 						continue;
 

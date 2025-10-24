@@ -9,11 +9,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.AllDataComponents;
 
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -95,25 +92,6 @@ public class ClipboardEntry {
 		int previouslyOpenedPage = heldItem.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY).previouslyOpenedPage();
 		int page = Math.min(previouslyOpenedPage, pages.size() - 1);
 		return pages.get(page);
-	}
-
-	public CompoundTag writeNBT() {
-		CompoundTag nbt = new CompoundTag();
-		nbt.putBoolean("Checked", checked);
-		nbt.putString("Text", Component.Serializer.toJson(text, RegistryAccess.EMPTY));
-		if (icon.isEmpty())
-			return nbt;
-		nbt.put("Icon", icon.saveOptional(RegistryAccess.EMPTY));
-		nbt.putInt("ItemAmount", itemAmount);
-		return nbt;
-	}
-
-	public static ClipboardEntry readNBT(CompoundTag tag) {
-		ClipboardEntry clipboardEntry =
-			new ClipboardEntry(tag.getBoolean("Checked"), Component.Serializer.fromJson(tag.getString("Text"), RegistryAccess.EMPTY));
-		if (tag.contains("Icon"))
-			clipboardEntry.displayItem(ItemStack.parseOptional(RegistryAccess.EMPTY, tag.getCompound("Icon")), tag.getInt("ItemAmount"));
-		return clipboardEntry;
 	}
 
 	@Override
