@@ -17,6 +17,7 @@ Create 6.0.7
 - Implement overstress animation for rotating visuals
 - Optimize package address checking #8189
 - Update BOP & Atmospheric compat #4709 #9338
+- Update BYG/BWG compat #7193 #7320
 
 #### Optimizations
 
