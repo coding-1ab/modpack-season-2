@@ -24,7 +24,7 @@ public enum Mods implements DatagenMod {
 	FA("forbidden_arcanus"),
 	HEX("hexcasting"),
 	ID("integrateddynamics", b -> b.strippedWoodIsSuffix()),
-	BYG("byg"),
+	BWG("biomeswevegone"),
 	SG("silentgear"),
 	TIC("tconstruct"),
 	AP("architects_palette"),
