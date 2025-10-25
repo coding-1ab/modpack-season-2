@@ -112,7 +112,9 @@ Create 6.0.7
 - Fix missing refmap warning #8742 #9022 (1.21.1)
 - Fix items and fluids missing some tags #9097 (1.21.1)
 - Fix ClipboardEntry having a wrong hashCode implementation #9116 (1.21.1)
-- Fix crash with empty clipboard #9117 #9141 (1.21.1)
+- Fix crash with empty clipboard #9117 #9141 (1.21.1)\
+- Fix a rare crash with malformed schematics #9217 (1.21.1)
+- Fix harvesters not destroying flowers #8811 #8813 (1.21.1)
 
 #### API Changes
 
@@ -125,6 +127,7 @@ Create 6.0.7
 - Regular and superheated fuel tags are now deprecated
 - Deprecated stuff is now marked with @ScheduledForRemoval
 - Constructors for singleton API classes are now private
+- Add support for using NeoForge's fluid ingredients (1.21.1)
 
 ------------------------------------------------------
 Create 6.0.6
@@ -221,8 +224,6 @@ Create 6.0.6
 - Fix copycats not properly saving light level when leaving and opening a world (1.21.1) #4889
 - Fix crash when using sandpaper (1.21.1) #8536 #8503
 - Fix crash with spouts (1.21.1) #8531
-- Fix a rare crash with malformed schematics #9217 (1.21.1)
-- Fix harvesters not destroying flowers #8811 #8813 (1.21.1)
 
 #### API Changes
 
@@ -230,7 +231,6 @@ Create 6.0.6
   #8322
 - Refactored datagen so that addons have a clear API to follow. #7861
 - Reworked ProcessingRecipe (Addon developers will need to adjust to these changes for their addon to work with 6.0.6) (1.21.1) #7945
-- Add support for using NeoForge's fluid ingredients (1.21.1)
 
 ------------------------------------------------------
 Create 6.0.5
