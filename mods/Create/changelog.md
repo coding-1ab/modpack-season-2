@@ -112,7 +112,7 @@ Create 6.0.7
 - Fix missing refmap warning #8742 #9022 (1.21.1)
 - Fix items and fluids missing some tags #9097 (1.21.1)
 - Fix ClipboardEntry having a wrong hashCode implementation #9116 (1.21.1)
-- Fix crash with empty clipboard #9117 #9141 (1.21.1)\
+- Fix crash with empty clipboard #9117 #9141 (1.21.1)
 - Fix a rare crash with malformed schematics #9217 (1.21.1)
 - Fix harvesters not destroying flowers #8811 #8813 (1.21.1)
 
@@ -123,10 +123,10 @@ Create 6.0.7
 - Add #not_potion tag to prevent automatic draining and spouting #9147
 - Implement API for filters #7706 #8132
 - Change compat datagen from enum to interface #8895
-- Create datamap for regular and superheated blaze burner fuels #8911
-- Regular and superheated fuel tags are now deprecated
-- Deprecated stuff is now marked with @ScheduledForRemoval
-- Constructors for singleton API classes are now private
+- Create datamap for regular and superheated blaze burner fuels #8911 (1.21.1)
+- Regular and superheated fuel tags are now deprecated (1.21.1)
+- Deprecated stuff is now marked with @ScheduledForRemoval (1.21.1)
+- Constructors for singleton API classes are now private (1.21.1)
 - Add support for using NeoForge's fluid ingredients (1.21.1)
 
 ------------------------------------------------------
