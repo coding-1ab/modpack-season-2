@@ -46,6 +46,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
+import net.neoforged.neoforge.client.model.data.ModelData;
+
 public class ContraptionVisual<E extends AbstractContraptionEntity> extends AbstractEntityVisual<E> implements DynamicVisual, TickableVisual, ShaderLightVisual {
 	protected static final int DEFAULT_LIGHT_PADDING = 1;
 
@@ -91,13 +93,16 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		BlockAndTintGetter modelWorld = new WrappedBlockAndTintGetter(renderLevel) {
 			@Override
 			public BlockState getBlockState(BlockPos pos) {
-				return blocks.lookup()
-					.apply(pos);
+				return blocks.lookup().apply(pos);
+			}
+
+			@Override
+			public ModelData getModelData(BlockPos pos) {
+				return clientContraption.getModelData(pos);
 			}
 		};
 
 		var model = new BlockModelBuilder(modelWorld, blocks.positions())
-			//.modelDataLookup(clientContraption::getModelData) TODO - Is this needed? Is there a replacement?
 			.materialFunc((renderType, shaded) -> {
 				Material material = ModelUtil.getMaterial(renderType, shaded);
 				if (material != null && material.cardinalLightingMode() == CardinalLightingMode.ENTITY) {
