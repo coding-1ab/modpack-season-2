@@ -1328,7 +1328,7 @@ public class StockKeeperRequestScreen extends AbstractSimiContainerScreen<StockK
 	@Override
 	public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
 		ignoreTextInput = false;
-		if (!searchBox.isFocused() && minecraft.options.keyChat.matches(pKeyCode, pScanCode)) {
+		if (!addressBox.isFocused() && !searchBox.isFocused() && minecraft.options.keyChat.matches(pKeyCode, pScanCode)) {
 			ignoreTextInput = true;
 			searchBox.setFocused(true);
 			return true;
