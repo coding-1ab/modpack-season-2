@@ -55,6 +55,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.ticks.LevelTickAccess;
 
+import net.neoforged.neoforge.client.model.data.ModelData;
+
 public class VirtualRenderWorld extends Level implements VisualizationLevel {
 	protected final Level level;
 	protected final int minBuildHeight;
@@ -269,6 +271,15 @@ public class VirtualRenderWorld extends Level implements VisualizationLevel {
 		if (!isOutsideBuildHeight(pos)) {
 			blockEntities.remove(pos);
 		}
+	}
+
+	@Override
+	public ModelData getModelData(BlockPos pos) {
+		var blockEntity = level.getBlockEntity(pos);
+		if (blockEntity != null) {
+			return blockEntity.getModelData();
+		}
+		return ModelData.EMPTY;
 	}
 
 	@Override
