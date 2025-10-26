@@ -1,4 +1,14 @@
 ------------------------------------------------------
+Create 6.0.8
+------------------------------------------------------
+
+#### Bug Fixes
+
+- Fix StockKeeperRequestScreen focusing search box if the chat key is pressed when typing in the address box
+- Fix copycat blocks and other blocks depending on ModelData not being rendered correctly on contraptions when using indirect or instanced rendering #9410 (1.21.1)
+- Fix threshold switches not correctly counting empty slots #9420 (1.21.1)
+
+------------------------------------------------------
 Create 6.0.7
 ------------------------------------------------------
 
