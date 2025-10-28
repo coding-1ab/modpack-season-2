@@ -275,7 +275,7 @@ public class VirtualRenderWorld extends Level implements VisualizationLevel {
 
 	@Override
 	public ModelData getModelData(BlockPos pos) {
-		var blockEntity = level.getBlockEntity(pos);
+		var blockEntity = getBlockEntity(pos);
 		if (blockEntity != null) {
 			return blockEntity.getModelData();
 		}
