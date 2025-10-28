@@ -27,7 +27,6 @@ import com.simibubi.create.content.processing.recipe.ProcessingInventory;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
-import com.simibubi.create.foundation.fluid.FluidIngredient;
 import java.util.List;
 import java.util.Optional;
 import net.createmod.catnip.math.VecHelper;
@@ -56,6 +55,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 import plus.dragons.createdragonsplus.common.advancements.AdvancementBehaviour;
@@ -175,9 +175,9 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
         return false;
     }
 
-    private boolean drain(FluidIngredient fluidIngredient) {
+    private boolean drain(SizedFluidIngredient fluidIngredient) {
         FluidStack fluid = tank.getPrimaryHandler().getFluid();
-        int required = fluidIngredient.getRequiredAmount();
+        int required = fluidIngredient.amount();
         if (fluidIngredient.test(fluid) && fluid.getAmount() >= required) {
             fluid.shrink(required);
             tank.getPrimaryHandler().setFluid(fluid);
@@ -219,7 +219,7 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
                 if (fluidResults.getFirst().is(CEIFluids.EXPERIENCE))
                     advancement.awardStat(CEIStats.GRINDSTONE_EXPERIENCE.get(), fluidResults.getFirst().getAmount());
                 inventory.clear();
-                var grinded = recipe.rollResults();
+                var grinded = recipe.rollResults(level.random);
                 for (int i = 0; i < grinded.size(); i++)
                     inventory.setStackInSlot(i + 1, grinded.get(i));
                 return;

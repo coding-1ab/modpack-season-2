@@ -19,7 +19,9 @@
 package plus.dragons.createenchantmentindustry.integration.jei.category.printing;
 
 import com.mojang.serialization.MapCodec;
+import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.equipment.clipboard.ClipboardBlockItem;
+import com.simibubi.create.content.equipment.clipboard.ClipboardContent;
 import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides;
 import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides.ClipboardType;
 import com.simibubi.create.foundation.recipe.ItemCopyingRecipe.SupportsItemCopying;
@@ -58,7 +60,8 @@ public enum CopyPrintingRecipeJEI implements PrintingRecipeJEI {
         for (Item item : BuiltInRegistries.ITEM) {
             if (item instanceof ClipboardBlockItem) {
                 ItemStack stack = new ItemStack(item);
-                ClipboardOverrides.switchTo(ClipboardType.WRITTEN, stack);
+                ClipboardContent content = ClipboardContent.EMPTY.setType(ClipboardType.WRITTEN);
+                stack.set(AllDataComponents.CLIPBOARD_CONTENT, content);
                 slot.addItemStack(stack);
             } else if (item instanceof SupportsItemCopying) {
                 slot.addItemLike(item);

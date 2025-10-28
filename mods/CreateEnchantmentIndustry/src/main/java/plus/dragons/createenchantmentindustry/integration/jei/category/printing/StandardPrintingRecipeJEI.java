@@ -28,6 +28,8 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.fluids.printer.PrintingRecipe;
 
+import java.util.Arrays;
+
 public class StandardPrintingRecipeJEI implements PrintingRecipeJEI {
     public static final PrintingRecipeJEI.Type TYPE = PrintingRecipeJEI
             .register(CEICommon.asResource("standard"), StandardPrintingRecipeJEI::createCodec);
@@ -56,7 +58,7 @@ public class StandardPrintingRecipeJEI implements PrintingRecipeJEI {
     @Override
     public void setFluid(IRecipeSlotBuilder slot) {
         var fluid = recipe.value().getFluidIngredients().getFirst();
-        slot.addIngredients(NeoForgeTypes.FLUID_STACK, fluid.getMatchingFluidStacks());
+        slot.addIngredients(NeoForgeTypes.FLUID_STACK, Arrays.asList(fluid.getFluids()));
     }
 
     @Override

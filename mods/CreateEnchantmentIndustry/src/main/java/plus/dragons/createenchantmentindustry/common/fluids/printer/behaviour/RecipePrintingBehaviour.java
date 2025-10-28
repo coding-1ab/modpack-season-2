@@ -76,7 +76,7 @@ public class RecipePrintingBehaviour implements PrintingBehaviour {
     @Override
     public int getRequiredFluidAmount(Level level, ItemStack stack, FluidStack fluidStack) {
         return findRecipe(level, stack, fluidStack)
-                .map(recipe -> recipe.getFluidIngredients().getFirst().getRequiredAmount())
+                .map(recipe -> recipe.getFluidIngredients().getFirst().amount())
                 .orElse(0);
     }
 

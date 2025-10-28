@@ -23,7 +23,8 @@ import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemb
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
 import com.simibubi.create.content.processing.sequenced.IAssemblyRecipe;
-import com.simibubi.create.foundation.fluid.FluidIngredient;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -44,6 +45,7 @@ import net.minecraft.world.item.enchantment.effects.PlaySoundEffect;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
 import plus.dragons.createenchantmentindustry.common.registry.CEIRecipes;
 import plus.dragons.createenchantmentindustry.integration.jei.category.assembly.AssemblyPrintingCategory;
@@ -94,13 +96,13 @@ public class PrintingRecipe extends ProcessingRecipe<PrintingInput, PrintingReci
     public boolean matches(PrintingInput input, Level level) {
         return ingredients.get(0).test(input.base()) &&
                 ingredients.get(1).test(input.template()) &&
-                (input.fluid().isEmpty() || fluidIngredients.get(0).test(input.fluid()));
+                (input.fluid().isEmpty() || fluidIngredients.getFirst().test(input.fluid()));
     }
 
     @Override
     public Component getDescriptionForAssembly() {
         ItemStack[] matchingStacks = ingredients.get(1).getItems();
-        List<FluidStack> matchingFluidStacks = fluidIngredients.getFirst().getMatchingFluidStacks();
+        List<FluidStack> matchingFluidStacks = Arrays.asList(fluidIngredients.getFirst().getFluids());
         if (matchingStacks.length == 0 || matchingFluidStacks.isEmpty()) {
             return Component.literal("Invalid");
         }
@@ -120,7 +122,7 @@ public class PrintingRecipe extends ProcessingRecipe<PrintingInput, PrintingReci
     }
 
     @Override
-    public void addAssemblyFluidIngredients(List<FluidIngredient> list) {
+    public void addAssemblyFluidIngredients(List<SizedFluidIngredient> list) {
         list.add(getFluidIngredients().getFirst());
     }
 

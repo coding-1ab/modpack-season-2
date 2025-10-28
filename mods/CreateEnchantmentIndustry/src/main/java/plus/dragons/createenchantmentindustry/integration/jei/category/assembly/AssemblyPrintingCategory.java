@@ -22,11 +22,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedRecipe;
-import com.simibubi.create.foundation.fluid.FluidIngredient;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.gui.GuiGraphics;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import plus.dragons.createenchantmentindustry.integration.jei.category.printing.AnimatedPrinter;
 
 public class AssemblyPrintingCategory extends SequencedAssemblySubCategory {
@@ -41,7 +41,7 @@ public class AssemblyPrintingCategory extends SequencedAssemblySubCategory {
         builder.addSlot(RecipeIngredientRole.INPUT, x, 15)
                 .setBackground(CreateRecipeCategory.getRenderedSlot(), -1, -1)
                 .addIngredients(recipe.getRecipe().getIngredients().get(1));
-        FluidIngredient fluidIngredient = recipe.getRecipe()
+        SizedFluidIngredient fluidIngredient = recipe.getRecipe()
                 .getFluidIngredients()
                 .getFirst();
         CreateRecipeCategory.addFluidSlot(builder, x + 18, 15, fluidIngredient);
@@ -49,7 +49,7 @@ public class AssemblyPrintingCategory extends SequencedAssemblySubCategory {
 
     @Override
     public void draw(SequencedRecipe<?> recipe, GuiGraphics graphics, double mouseX, double mouseY, int index) {
-        var fluid = recipe.getRecipe().getFluidIngredients().getFirst().getMatchingFluidStacks().getFirst();
+        var fluid = recipe.getRecipe().getFluidIngredients().getFirst().getFluids()[0];
         PoseStack poseStack = graphics.pose();
         printer.offset = index;
         poseStack.pushPose();

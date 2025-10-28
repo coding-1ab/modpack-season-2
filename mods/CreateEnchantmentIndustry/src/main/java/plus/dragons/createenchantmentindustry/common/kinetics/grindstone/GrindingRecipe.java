@@ -25,6 +25,8 @@ import com.simibubi.create.content.equipment.sandPaper.SandPaperPolishingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
 import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import com.simibubi.create.content.processing.sequenced.IAssemblyRecipe;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -96,7 +98,7 @@ public class GrindingRecipe extends StandardProcessingRecipe<SingleRecipeInput> 
         if (fluidIngredients.isEmpty()) {
             return CEILang.translate("recipe.assembly.grinding").component();
         } else {
-            List<FluidStack> matchingFluidStacks = fluidIngredients.getFirst().getMatchingFluidStacks();
+            List<FluidStack> matchingFluidStacks = Arrays.asList(fluidIngredients.getFirst().getFluids());
             if (matchingFluidStacks.isEmpty()) {
                 return Component.literal("Invalid");
             }

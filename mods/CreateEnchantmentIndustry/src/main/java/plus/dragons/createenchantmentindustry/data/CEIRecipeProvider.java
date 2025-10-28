@@ -20,7 +20,6 @@ package plus.dragons.createenchantmentindustry.data;
 
 import static com.simibubi.create.AllBlocks.*;
 import static com.simibubi.create.AllItems.*;
-import static com.simibubi.create.AllTags.commonItemTag;
 import static net.minecraft.world.item.Items.*;
 import static net.neoforged.neoforge.common.Tags.Items.EGGS;
 import static net.neoforged.neoforge.common.Tags.Items.STORAGE_BLOCKS_IRON;
@@ -36,6 +35,7 @@ import static plus.dragons.createenchantmentindustry.common.registry.CEIItems.*;
 import java.util.concurrent.CompletableFuture;
 
 import com.simibubi.create.AllItems;
+import com.simibubi.create.foundation.data.recipe.CommonMetal;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -79,7 +79,7 @@ public class CEIRecipeProvider extends RecipeProvider {
                 .require(EXPERIENCE_BLOCK)
                 .output(EXPERIENCE_HATCH)
                 .build(output);
-        shaped().define('-', commonItemTag("plates/brass"))
+        shaped().define('-', CommonMetal.BRASS.plates)
                 .define('o', SPOUT)
                 .define('=', STORAGE_BLOCKS_IRON)
                 .pattern("-")
