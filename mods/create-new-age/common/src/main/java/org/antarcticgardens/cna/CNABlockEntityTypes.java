@@ -96,7 +96,7 @@ public class CNABlockEntityTypes {
             .register();
 
     public static final BlockEntityEntry<ReactorFuelAcceptorBlockEntity> REACTOR_FUEL_ACCEPTOR = REGISTRATE
-            .blockEntity("reactor_fuel_acceptor", ReactorFuelAcceptorBlockEntity::new)
+            .blockEntity("reactor_fuel_acceptor", CreateNewAge.getInstance().getPlatform()::platformReactorFuelAcceptorBlockEntity)
             .validBlocks(CNABlocks.REACTOR_FUEL_ACCEPTOR)
             .register();
 

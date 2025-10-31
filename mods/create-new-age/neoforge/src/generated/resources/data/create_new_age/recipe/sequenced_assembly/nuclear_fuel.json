@@ -3,7 +3,6 @@
   "ingredient": {
     "item": "create_new_age:radioactive_thorium"
   },
-  "loops": 1,
   "results": [
     {
       "id": "create_new_age:nuclear_fuel"
