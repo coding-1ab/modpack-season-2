@@ -18,14 +18,14 @@ import org.joml.Vector3f;
 
 public class GirderStrutPlacementEffects {
 
-    private static final float PARTICLE_DENSITY = 0.3f;
+    private static final float PARTICLE_DENSITY = 0.1f;
 
     public static void tick(LocalPlayer player) {
         if (Minecraft.getInstance().isPaused() || Minecraft.getInstance().hitResult == null) return;
 
         //Get held item
-        ItemStack heldItem = player.getMainHandItem().getItem() instanceof GirderStrutBlockItem girderStrutMainHand ? player.getMainHandItem() :
-            player.getOffhandItem().getItem() instanceof GirderStrutBlockItem girderStrutOffHand ? player.getOffhandItem() : null;
+        ItemStack heldItem = player.getMainHandItem().getItem() instanceof GirderStrutBlockItem ? player.getMainHandItem() :
+            player.getOffhandItem().getItem() instanceof GirderStrutBlockItem ? player.getOffhandItem() : null;
         if (heldItem != null) {
             display(player, heldItem);
         }
@@ -49,7 +49,7 @@ public class GirderStrutPlacementEffects {
         }
 
         BlockPos targetPos = resolvePlacementPos(level, hit.getBlockPos(), hit.getDirection());
-        if (targetPos == null) {
+        if (targetPos == null || targetPos.distSqr(fromPos) > GirderStrutBlock.MAX_SPAN * GirderStrutBlock.MAX_SPAN * 1.5) {
             return;
         }
 

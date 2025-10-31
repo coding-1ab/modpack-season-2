@@ -119,7 +119,7 @@ public class HeadlampBlockEntity extends SmartBlockEntity {
         BlockPos currentPos = frontier.remove(0);
         if (visited.contains(currentPos)) {
             tryExtendPlaceDyeColorIntoFullBlock(dyeColor, facing, frontier, visited);
-            return; // Already visited this position
+            return; // Already visited this relativePos
         }
         visited.add(currentPos);
 
@@ -158,7 +158,7 @@ public class HeadlampBlockEntity extends SmartBlockEntity {
     }
 
     private static @NotNull Vec3 getLocalSurfacePosition(Vec3 position, Direction value) {
-        // Transform the position into a point on the xz plane, where x = leftright, z = updown.
+        // Transform the relativePos into a point on the xz plane, where x = leftright, z = updown.
         Vector3f jomlLocalPosition = value.getRotation().transformInverse(new Vector3f((float) position.x, (float) position.y, (float) position.z));
         Vec3 localPosition = new Vec3(
             jomlLocalPosition.x,

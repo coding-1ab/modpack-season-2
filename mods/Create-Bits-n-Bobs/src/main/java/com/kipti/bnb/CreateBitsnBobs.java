@@ -34,6 +34,7 @@ public class CreateBitsnBobs {
     public CreateBitsnBobs(IEventBus modEventBus, ModContainer modContainer) {
         REGISTRATE.registerEventListeners(modEventBus);
 
+        BnbItems.register();
         BnbBlocks.register();
         BnbLangEntries.register();
         BnbCreativeTabs.register(modEventBus);

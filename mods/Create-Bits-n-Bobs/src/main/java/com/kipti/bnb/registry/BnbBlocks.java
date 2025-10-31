@@ -2,6 +2,7 @@ package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.chair.ChairBlock;
+import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlock;
 import com.kipti.bnb.content.girder_strut.GirderStrutBlock;
 import com.kipti.bnb.content.girder_strut.GirderStrutBlockItem;
 import com.kipti.bnb.content.girder_strut.GirderStrutModelBuilder;
@@ -24,7 +25,9 @@ import com.simibubi.create.AllDisplaySources;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.content.contraptions.actors.seat.SeatInteractionBehaviour;
 import com.simibubi.create.content.contraptions.actors.seat.SeatMovementBehaviour;
+import com.simibubi.create.content.kinetics.simpleRelays.BracketedKineticBlockModel;
 import com.simibubi.create.foundation.block.DyedBlockList;
+import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.simibubi.create.foundation.utility.DyeHelper;
@@ -51,8 +54,7 @@ import static com.simibubi.create.api.behaviour.display.DisplayTarget.displayTar
 import static com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour.interactionBehaviour;
 import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
-import static com.simibubi.create.foundation.data.TagGen.axeOnly;
-import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
+import static com.simibubi.create.foundation.data.TagGen.*;
 
 public class BnbBlocks {
 
@@ -141,6 +143,25 @@ public class BnbBlocks {
             .transform(largeNixieTube())
             .register();
     });
+
+    public static final BlockEntry<CogwheelChainBlock> SMALL_COGWHEEL_CHAIN = REGISTRATE.block("small_cogwheel_chain", CogwheelChainBlock::small)
+        .initialProperties(SharedProperties::stone)
+        .properties(p -> p.sound(SoundType.WOOD)
+            .mapColor(MapColor.DIRT))
+        .transform(axeOrPickaxe())
+        .blockstate(BlockStateGen.axisBlockProvider(false))
+        .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
+        .register();
+
+    public static final BlockEntry<CogwheelChainBlock> LARGE_COGWHEEL_CHAIN =
+        REGISTRATE.block("large_cogwheel_chain", CogwheelChainBlock::large)
+            .initialProperties(SharedProperties::stone)
+            .properties(p -> p.sound(SoundType.WOOD)
+                .mapColor(MapColor.DIRT))
+            .transform(axeOrPickaxe())
+            .blockstate(BlockStateGen.axisBlockProvider(false))
+            .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
+            .register();
 
     public static <T extends NixieBoardBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> nixieBoard() {
         return b -> b

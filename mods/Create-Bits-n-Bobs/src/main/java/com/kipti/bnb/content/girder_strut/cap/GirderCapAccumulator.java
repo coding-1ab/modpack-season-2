@@ -198,20 +198,20 @@ public final class GirderCapAccumulator {
 //            List<CapVertex> loop = new ArrayList<>();
 //            loop.add(segment.start().copy());
 //            loop.add(segment.end().copy());
-//            Vector3f midPoint = new Vector3f(segment.start().position()).add(segment.end
-//                .position()).mul(0.5f);
+//            Vector3f midPoint = new Vector3f(segment.start().relativePos()).add(segment.end
+//                .relativePos()).mul(0.5f);
 //            loop.add(new CapVertex(new Vector3f(midPoint).add(new Vector3f(planeNormal).mul(-0.6f)).add((float) (Math.random() * 0.2f), (float) (Math.random() * 0.2f), (float) (Math.random() * 0.2f)), 0f, 0f,
 //                GirderGeometry.DEFAULT_COLOR, GirderGeometry.DEFAULT_LIGHT, segment.start().sourceSprite()));
 //
 //            ClientEvents.pushNewDeferredDebugRenderOutline(
 //                Pair.of(
-//                    new Vec3(segment.start().position().x, segment.start().position().y, segment.start().position().z),
-//                    new Vec3(segment.end().position().x, segment.end().position().y, segment.end().position().z)
+//                    new Vec3(segment.start().relativePos().x, segment.start().relativePos().y, segment.start().relativePos().z),
+//                    new Vec3(segment.end().relativePos().x, segment.end().relativePos().y, segment.end().relativePos().z)
 //                )
 //            );
 //
 //            System.out.println("Emitting loop with " + loop.size() + " vertices");
-//            emitLoop(loop.stream().map(loop::indexOf).toList(), loop, segment.tintIndex(), segment.shade(), new Vector3f(planeNormal).cross(new Vector3f(segment.start.position).sub(segment.end.position).normalize()), stoneSprite, consumer);
+//            emitLoop(loop.stream().map(loop::indexOf).toList(), loop, segment.tintIndex(), segment.shade(), new Vector3f(planeNormal).cross(new Vector3f(segment.start.relativePos).sub(segment.end.relativePos).normalize()), stoneSprite, consumer);
 //        }
 //        segments.clear();
 

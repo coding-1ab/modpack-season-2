@@ -17,6 +17,8 @@ public class BnbPartialModels {
     public static final PartialModel CHAIR_LEFT_ARM = block("chair/chair_left_armrest");
     public static final PartialModel CHAIR_RIGHT_ARM = block("chair/chair_right_armrest");
 
+    public static final PartialModel SMALL_COGWHEEL_BLOCK = block("small_cogwheel_chain/block");
+
     public static final Map<Direction, PartialModel> WEATHERED_METAL_GIRDER_BRACKETS = new EnumMap<>(Direction.class);
 
     static {

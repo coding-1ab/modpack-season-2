@@ -1,7 +1,6 @@
 package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.simibubi.create.AllTags;
 import net.createmod.catnip.lang.Lang;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -12,10 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-import static com.simibubi.create.AllTags.NameSpace.MOD;
-
 public class BnbTags {
-
 
     public enum BnbItemTags {
 
