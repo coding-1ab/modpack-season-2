@@ -10,13 +10,13 @@ import com.simibubi.create.content.kinetics.mixer.MixingRecipe;
 import com.simibubi.create.content.kinetics.press.PressingRecipe;
 import com.simibubi.create.content.kinetics.saw.CuttingRecipe;
 import com.simibubi.create.content.processing.recipe.*;
-import com.simibubi.create.foundation.fluid.FluidIngredient;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import org.antarcticgardens.cna.CNAItems;
 import org.antarcticgardens.cna.CNARecipeTypes;
 import org.antarcticgardens.cna.CNATags;
@@ -133,7 +133,7 @@ public class CNAProcessingRecipeGen extends CNARecipeProvider {
                             Ingredient.of(CNAItems.THORIUM),
                             Ingredient.of(Tags.Items.STONES),
                             Ingredient.of(Items.CLAY))
-                    .withFluidIngredients(FluidIngredient.fromFluid(Fluids.WATER, FluidConstants.BUCKET)));
+                    .withFluidIngredients(SizedFluidIngredient.of(Fluids.WATER.getSource(), FluidConstants.BUCKET)));
     
     // =================================================================================================================
     

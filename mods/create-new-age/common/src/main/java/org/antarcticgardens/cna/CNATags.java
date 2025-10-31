@@ -67,6 +67,7 @@ public class CNATags {
     }
     
     public static class Common {
+        @SuppressWarnings("removal")
         public static TagKey<net.minecraft.world.item.Item>
 //                #if CNA_FABRIC
 //                NUGGETS_COPPER = AllTags.commonItemTag("copper_nuggets"),
