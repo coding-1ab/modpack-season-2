@@ -16,10 +16,10 @@ import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.utility.CreateLang;
 
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
@@ -91,8 +91,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 		boolean milestonesOnly = hasShiftDown();
 
 		double bestDiff = Double.MAX_VALUE;
-		for (; row < board.rows()
-			.size(); row++) {
+		for (; row < board.rows().size(); row++) {
 			Vec2 coord = getCoordinateOfValue(row, 0);
 			double diff = Math.abs(coord.y - mouseY);
 			if (bestDiff < diff)
@@ -110,6 +109,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 			bestDiff = diff;
 		}
 		column -= 1;
+		column = Math.max(board.minValue(), column);
 
 		return new ValueSettings(row,
 			milestonesOnly ? Math.min(column * board.milestoneInterval(), board.maxValue()) : column);

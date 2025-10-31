@@ -3,6 +3,7 @@ package com.simibubi.create.foundation.blockEntity.behaviour.scrollValue;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
 import com.google.common.collect.ImmutableList;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
@@ -30,7 +31,6 @@ public class ScrollValueBehaviour extends BlockEntityBehaviour implements ValueS
 	public static final BehaviourType<ScrollValueBehaviour> TYPE = new BehaviourType<>();
 
 	ValueBoxTransform slotPositioning;
-	Vec3 textShift;
 
 	int min = 0;
 	protected int max = 1;

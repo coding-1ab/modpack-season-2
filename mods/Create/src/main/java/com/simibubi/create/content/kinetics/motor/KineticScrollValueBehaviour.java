@@ -28,7 +28,7 @@ public class KineticScrollValueBehaviour extends ScrollValueBehaviour {
 			Component.literal("\u27f2")
 				.withStyle(ChatFormatting.BOLD));
 		ValueSettingsFormatter formatter = new ValueSettingsFormatter(this::formatSettings);
-		return new ValueSettingsBoard(label, 256, 32, rows, formatter);
+		return new ValueSettingsBoard(label, 1, 256, 32, rows, formatter);
 	}
 
 	@Override

@@ -13,6 +13,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
+import com.simibubi.create.infrastructure.config.AllConfigs;
 
 import dan200.computercraft.api.peripheral.PeripheralCapability;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
@@ -29,9 +30,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 public class CreativeMotorBlockEntity extends GeneratingKineticBlockEntity {
-
 	public static final int DEFAULT_SPEED = 16;
-	public static final int MAX_SPEED = 256;
 
 	public ScrollValueBehaviour generatedSpeed;
 	public AbstractComputerBehaviour computerBehaviour;
@@ -53,7 +52,7 @@ public class CreativeMotorBlockEntity extends GeneratingKineticBlockEntity {
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
 		super.addBehaviours(behaviours);
-		int max = MAX_SPEED;
+		int max = AllConfigs.server().kinetics.maxRotationSpeed.get();
 		generatedSpeed = new KineticScrollValueBehaviour(CreateLang.translateDirect("kinetics.creative_motor.rotation_speed"),
 			this, new MotorValueBox());
 		generatedSpeed.between(-max, max);
@@ -117,5 +116,4 @@ public class CreativeMotorBlockEntity extends GeneratingKineticBlockEntity {
 		super.invalidate();
 		computerBehaviour.removePeripheral();
 	}
-
 }
