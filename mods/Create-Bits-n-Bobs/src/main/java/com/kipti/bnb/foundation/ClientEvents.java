@@ -54,6 +54,24 @@ public class ClientEvents {
             GirderStrutPlacementEffects.tick(mc.player);
             CogwheelChainPlacementEffect.tick(mc.player);
         }
+
+//        //Debugging for the cogwheel chain geo builder
+//        CogwheelChain chain = new CogwheelChain(new PartialCogwheelChain(List.of(
+//            new PartialCogwheelChainNode(new BlockPos(1, 2, 5), Direction.Axis.Y, true),
+//            new PartialCogwheelChainNode(new BlockPos(3, 2, 0), Direction.Axis.Y, true),
+//            new PartialCogwheelChainNode(new BlockPos(0, 1, -1), Direction.Axis.Z, true),
+//            new PartialCogwheelChainNode(new BlockPos(-1, -2, 0), Direction.Axis.X, true),
+//            new PartialCogwheelChainNode(new BlockPos(3, 0, 3), Direction.Axis.Y, true)
+//        )));
+//
+//        for (int i = 0; i < chain.getNodes().size(); i++) {
+//            Outliner.getInstance().showLine(
+//                "cogwheel_chain_debug_line_" + i,
+//                chain.getNodes().get(i).getPosition(),
+//                chain.getNodes().get((i + 1) % chain.getNodes().size()).getPosition()
+//            );
+//        }
+
     }
 
 }
