@@ -54,7 +54,9 @@ public class PartialCogwheelChain {
         Direction.Axis axis = newBlockState.getValue(CogWheelBlock.AXIS);
         boolean isLarge = newBlockState.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isLargeCog();
 
-        boolean isValid = axis == lastNode.rotationAxis() || isValidLargeCogConnection(lastNode, newPos, axis);
+        int differenceOnAxis = Math.abs(newPos.get(axis) - lastNode.pos().get(axis));
+
+        boolean isValid = (axis == lastNode.rotationAxis() && differenceOnAxis == 0) || isValidLargeCogConnection(lastNode, newPos, axis);
 
         PartialCogwheelChainNode newNode = new PartialCogwheelChainNode(
             newPos, axis, isLarge
