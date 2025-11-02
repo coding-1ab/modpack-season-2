@@ -1,17 +1,13 @@
 package com.simibubi.create.content.logistics.filter;
 
-import com.simibubi.create.foundation.gui.menu.GhostItemMenu;
+import com.simibubi.create.foundation.gui.menu.HeldItemGhostItemMenu;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-public abstract class AbstractFilterMenu extends GhostItemMenu<ItemStack> {
+public abstract class AbstractFilterMenu extends HeldItemGhostItemMenu {
 
 	protected AbstractFilterMenu(MenuType<?> type, int id, Inventory inv, FriendlyByteBuf extraData) {
 		super(type, id, inv, extraData);
@@ -22,21 +18,8 @@ public abstract class AbstractFilterMenu extends GhostItemMenu<ItemStack> {
 	}
 
 	@Override
-	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
-		if (slotId == playerInventory.selected && clickTypeIn != ClickType.THROW)
-			return;
-		super.clicked(slotId, dragType, clickTypeIn, player);
-	}
-
-	@Override
 	protected boolean allowRepeats() {
 		return false;
-	}
-
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	protected ItemStack createOnClient(FriendlyByteBuf extraData) {
-		return extraData.readItem();
 	}
 
 	protected abstract int getPlayerInventoryXOffset();
@@ -55,11 +38,6 @@ public abstract class AbstractFilterMenu extends GhostItemMenu<ItemStack> {
 	protected void saveData(ItemStack contentHolder) {
 		contentHolder.getOrCreateTag()
 				.put("Items", ghostInventory.serializeNBT());
-	}
-
-	@Override
-	public boolean stillValid(Player player) {
-		return playerInventory.getSelected() == contentHolder;
 	}
 
 }
