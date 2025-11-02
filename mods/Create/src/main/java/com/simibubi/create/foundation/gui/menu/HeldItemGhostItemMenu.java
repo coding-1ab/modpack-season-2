@@ -38,7 +38,7 @@ public abstract class HeldItemGhostItemMenu extends GhostItemMenu<ItemStack> {
 
 	@Override
 	public boolean canTakeItemForPickAll(ItemStack stack, Slot slot) {
-		// prevent pick-all from taking this schedule out of its slot
+		// prevent pick-all from taking the owner item out of its slot
 		return super.canTakeItemForPickAll(stack, slot) && !this.isInSlot(slot.index);
 	}
 
