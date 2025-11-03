@@ -25,7 +25,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity {
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound, registries, clientPacket);
         isController = compound.getBoolean("IsController");
-        if (compound.contains("ControllerOffset")) {
+        if (compound.contains("ControllerOffsetX")) {
             controllerOffset = new Vec3i(
                 compound.getInt("ControllerOffsetX"),
                 compound.getInt("ControllerOffsetY"),

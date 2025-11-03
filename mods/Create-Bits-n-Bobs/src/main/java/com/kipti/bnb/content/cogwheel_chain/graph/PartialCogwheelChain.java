@@ -12,6 +12,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +46,7 @@ public class PartialCogwheelChain {
         return state.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isDedicatedCogWheel();
     }
 
-    public boolean tryAddNode(Level level, BlockPos newPos, BlockState newBlockState) {
+    public boolean tryAddNode(Level level, BlockPos newPos, BlockState newBlockState) throws ChainAdditionAbortedException {
         PartialCogwheelChainNode lastNode = getLastNode();
 
         if (!PartialCogwheelChain.isValidBlockTarget(level, newPos, newBlockState)) {
@@ -55,19 +57,61 @@ public class PartialCogwheelChain {
         boolean isLarge = newBlockState.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isLargeCog();
 
         int differenceOnAxis = Math.abs(newPos.get(axis) - lastNode.pos().get(axis));
+        @Nullable PartialCogwheelChainNode lastLastNode = getSize() >= 2 ? visitedNodes.get(visitedNodes.size() - 2) : null;
+        boolean isPrecededByAxisChange = lastLastNode != null && lastLastNode.rotationAxis() != lastNode.rotationAxis();
 
-        boolean isValid = (axis == lastNode.rotationAxis() && differenceOnAxis == 0) || isValidLargeCogConnection(lastNode, newPos, axis);
+        boolean isFlat = differenceOnAxis == 0;
+        boolean isSameAxis = axis == lastNode.rotationAxis();
+        double totalRadius = (isLarge ? 1 : 0.5) + (lastNode.isLarge() ? 1 : 0.5);
+        boolean isAdjacent = isFlat && newPos.distSqr(lastNode.pos()) <= totalRadius * totalRadius;
+        boolean isValidFlat = isSameAxis && isFlat && !isAdjacent;
+        boolean isValidByConsecutiveChange = !isPrecededByAxisChange || isValidConsecutiveAxisChange(lastLastNode, lastNode, newPos, axis);
+        boolean isValidAxisChange = isValidLargeCogConnection(lastNode, newPos, axis) && isValidByConsecutiveChange;
+        boolean isValid = isValidFlat || isValidAxisChange;
+
+        if (!isValid) {
+            if (isAdjacent) {
+                throw new ChainAdditionAbortedException("Cogwheels must not touch!");
+            }
+
+            if (!isSameAxis) {
+                if (!isValidByConsecutiveChange) {
+                    throw new ChainAdditionAbortedException("Invalid axis change, must be on same side of pivot!");
+                } else {
+                    throw new ChainAdditionAbortedException("Not a valid axis change!");
+                }
+            }
+            //Else it wasn't accepted cause it wasnt flat
+            throw new ChainAdditionAbortedException("Connection must be flat when on the same axis!");
+        }
 
         PartialCogwheelChainNode newNode = new PartialCogwheelChainNode(
             newPos, axis, isLarge
         );
 
-        if (isValid) {
-            visitedNodes.add(newNode);
+        visitedNodes.add(newNode);
+        return true;
+    }
+
+    private boolean isValidConsecutiveAxisChange(@NotNull PartialCogwheelChainNode lastNode, PartialCogwheelChainNode pivotNode, BlockPos newPos, Direction.Axis axis) {
+        //Get the signed difference to the pivot on the node's rotation axis
+        int diffToPivotOnLastNodeAxis = lastNode.pos().get(lastNode.rotationAxis()) - pivotNode.pos().get(lastNode.rotationAxis());
+
+        //Get the signed difference to the pivot on the new node's rotation axis
+        int diffToPivotOnNewNodeAxis = newPos.get(axis) - pivotNode.pos().get(axis);
+
+        if (diffToPivotOnLastNodeAxis == diffToPivotOnNewNodeAxis) {
             return true;
-        } else {
-            return false;
         }
+
+        //Check if it's like a wrap around the pivot, in which case its safe
+        //Get the other axis, and if they are on the same side along this other axis
+        int safeAxisOrdinal = Integer.numberOfTrailingZeros(7 & ~(1 << axis.ordinal()) & ~(1 << lastNode.rotationAxis().ordinal()));
+        Direction.Axis safeAxis = Direction.Axis.values()[safeAxisOrdinal];
+
+        int lastDiffOnSafeAxis = lastNode.pos().get(safeAxis) - pivotNode.pos().get(safeAxis);
+        int newDiffOnSafeAxis = newPos.get(safeAxis) - pivotNode.pos().get(safeAxis);
+        return Math.signum(lastDiffOnSafeAxis) == Math.signum(newDiffOnSafeAxis);
     }
 
     private boolean isValidLargeCogConnection(PartialCogwheelChainNode lastNode, BlockPos newPos, Direction.Axis axis) {
@@ -138,6 +182,14 @@ public class PartialCogwheelChain {
 
     public int getSize() {
         return visitedNodes.size();
+    }
+
+    public static class ChainAdditionAbortedException extends Exception {
+
+        public ChainAdditionAbortedException(String message) {
+            super(message);
+        }
+
     }
 
 }

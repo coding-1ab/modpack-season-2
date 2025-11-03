@@ -4,6 +4,7 @@ import com.kipti.bnb.content.cogwheel_chain.graph.PartialCogwheelChain;
 import com.kipti.bnb.registry.BnbDataComponents;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -30,7 +31,14 @@ public class CogwheelChainItem extends Item {
             }
 
             PartialCogwheelChain chain = stack.get(BnbDataComponents.PARTIAL_COGWHEEL_CHAIN);
-            boolean added = chain.tryAddNode(context.getLevel(), context.getClickedPos(), clickedBlockState);
+            boolean added;
+            try {
+                assert chain != null;
+                added = chain.tryAddNode(context.getLevel(), context.getClickedPos(), clickedBlockState);
+            } catch (PartialCogwheelChain.ChainAdditionAbortedException e) {
+                context.getPlayer().displayClientMessage(Component.literal(e.getMessage()).withColor(0xff0000), true);
+                return InteractionResult.FAIL;
+            }
 
             boolean completed = chain.completeIfLooping(context.getLevel());
             if (completed) {//TODO: cost chains or something

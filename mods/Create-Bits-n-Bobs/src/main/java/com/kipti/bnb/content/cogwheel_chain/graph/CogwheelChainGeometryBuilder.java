@@ -1,7 +1,9 @@
 package com.kipti.bnb.content.cogwheel_chain.graph;
 
 import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
@@ -236,20 +238,20 @@ public class CogwheelChainGeometryBuilder {
 //            angleBetween = (2 * Math.PI) - angleBetween;
 //        }
 
-//        Outliner.getInstance().showLine(
-//            currentNode + "_incoming",
-//            currentNode.pos().getCenter(),
-//            incomingDirection.normalize().scale(-1).add(currentNode.pos().getCenter())
-//        ).colored(0xff0022);
-//        Outliner.getInstance().showLine(
-//            currentNode + "_outgoing",
-//            currentNode.pos().getCenter(),
-//            outgoingDirection.normalize().add(currentNode.pos().getCenter())
-//        ).colored(0x00ff00);
-//        Outliner.getInstance().showAABB(
-//            currentNode + "_concavity",
-//            new AABB(currentNode.pos())
-//        ).colored(currentConcavity == -1 ? 0x00ff00 : 0xff0000);
+        Outliner.getInstance().showLine(
+            currentNode + "_incoming",
+            currentNode.pos().getCenter(),
+            incomingDirection.normalize().scale(-1).add(currentNode.pos().getCenter())
+        ).colored(0xff0022);
+        Outliner.getInstance().showLine(
+            currentNode + "_outgoing",
+            currentNode.pos().getCenter(),
+            outgoingDirection.normalize().add(currentNode.pos().getCenter())
+        ).colored(0x00ff00);
+        Outliner.getInstance().showAABB(
+            currentNode + "_concavity",
+            new AABB(currentNode.pos())
+        ).colored(currentConcavity == -1 ? 0x00ff00 : 0xff0000);
 
 //        double radius = currentNode.isLarge() ? 1.0f : 0.5f;
 //        double arcLength = angleBetween * radius;
