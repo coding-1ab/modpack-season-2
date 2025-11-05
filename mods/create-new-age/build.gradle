@@ -5,7 +5,7 @@ plugins {
 
 allprojects {
     group = "org.antarcticgardens.cna"
-    version = "${rootProject.modVersion}+${project.name}-mc${rootProject.minecraftVersion}"
+    version = "${rootProject.modVersion}+mc${rootProject.minecraftVersion}"
 }
 
 subprojects {
