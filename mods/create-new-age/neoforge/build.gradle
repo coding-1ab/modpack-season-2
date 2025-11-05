@@ -16,14 +16,14 @@ dependencies {
 
 processResources {
     from(project(":common").sourceSets.main.resources)
-    inputs.property "version", rootProject.version
+    inputs.property "version", rootProject.version.replaceAll("\\+.*-mc", "\\+mc")
     inputs.property "minecraftVersion", rootProject.minecraftVersion
     inputs.property "neoforgeVersionRange", project.neoforgeVersionRange
     inputs.property "eslVersion", rootProject.eslVersion
     inputs.property "createVersion", rootProject.createVersionShort
 
     filesMatching("META-INF/neoforge.mods.toml") {
-        expand "version": rootProject.version,
+        expand "version": rootProject.version.replaceAll("\\+.*-mc", "\\+mc"),
         "minecraftVersion": rootProject.minecraftVersion,
         "neoforgeVersionRange": project.neoforgeVersionRange,
         "eslVersion": rootProject.eslVersion,
