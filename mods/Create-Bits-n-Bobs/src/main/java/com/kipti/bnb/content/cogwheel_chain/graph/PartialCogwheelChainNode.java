@@ -8,6 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.phys.Vec3;
 
 public record PartialCogwheelChainNode(BlockPos pos, Direction.Axis rotationAxis, boolean isLarge) {
 
@@ -29,5 +30,18 @@ public record PartialCogwheelChainNode(BlockPos pos, Direction.Axis rotationAxis
         PartialCogwheelChainNode::isLarge,
         PartialCogwheelChainNode::new
     );
+
+    public Vec3 center() {
+        return this.pos.getCenter();
+    }
+
+    public Vec3 axis() {
+        return Vec3.atLowerCornerOf(Direction.fromAxisAndDirection(this.rotationAxis, Direction.AxisDirection.POSITIVE).getNormal());
+    }
+
+    public Vec3 projectToAxis(Vec3 vec) {
+        Vec3 axisDir = this.axis();
+        return axisDir.scale(vec.dot(axisDir));
+    }
 
 }

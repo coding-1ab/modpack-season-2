@@ -318,7 +318,7 @@ public class CogwheelChainGeometryBuilder {
         double factor = previousRadius / (previousRadius + currentRadius);
 
         Vec3 tangentOrigin = incoming.scale(factor);
-        double distance = tangentOrigin.length();
+        double distance = (isIncoming ? 1 : -1) * tangentOrigin.length();
 
         double sineRatio = currentRadius / distance;
 
@@ -330,7 +330,7 @@ public class CogwheelChainGeometryBuilder {
         double lengthAlongIncoming = sineRatio * currentRadius;
 
         return incoming.normalize().cross(axis).scale(-perpendicularHeight * currentConcavity)
-            .add(incoming.normalize().scale((isIncoming ? 1 : -1) * -lengthAlongIncoming));
+            .add(incoming.normalize().scale(-lengthAlongIncoming));
     }
 
     public static int getNodeConcavity(PartialCogwheelChainNode previousNode, PartialCogwheelChainNode currentNode, PartialCogwheelChainNode nextNode) {
