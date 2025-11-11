@@ -12,14 +12,14 @@ import java.util.List;
 
 public class CogwheelChainGeometryBuilder {
 
-    public static List<CogwheelChainNode> buildFullChainFromPathNodes(List<CogwheelChainGeometryBuilderV3.PathNode> pathNodes) {
+    public static List<CogwheelChainNode> buildFullChainFromPathNodes(List<CogwheelChainPathfinder.PathNode> pathNodes) {
         List<CogwheelChainNode> resultNodes = new ArrayList<>();
         List<Pair<Vec3, Vec3>> offsetsAtNodes = new ArrayList<>();
         int n = pathNodes.size();
         for (int i = 0; i < n; i++) {
-            CogwheelChainGeometryBuilderV3.PathNode previousNode = pathNodes.get((n + i - 1) % n);
-            CogwheelChainGeometryBuilderV3.PathNode currentNode = pathNodes.get(i);
-            CogwheelChainGeometryBuilderV3.PathNode nextNode = pathNodes.get((i + 1) % n);
+            CogwheelChainPathfinder.PathNode previousNode = pathNodes.get((n + i - 1) % n);
+            CogwheelChainPathfinder.PathNode currentNode = pathNodes.get(i);
+            CogwheelChainPathfinder.PathNode nextNode = pathNodes.get((i + 1) % n);
 
             Pair<Vec3, Vec3> inOutPositionsAtThisNode = calculateOffsets(
                 previousNode.chainNode(),
@@ -33,9 +33,9 @@ public class CogwheelChainGeometryBuilder {
         }
 
         for (int i = 0; i < n; i++) {
-            CogwheelChainGeometryBuilderV3.PathNode previousNode = pathNodes.get((n + i - 1) % n);
-            CogwheelChainGeometryBuilderV3.PathNode currentNode = pathNodes.get(i);
-            CogwheelChainGeometryBuilderV3.PathNode nextNode = pathNodes.get((i + 1) % n);
+            CogwheelChainPathfinder.PathNode previousNode = pathNodes.get((n + i - 1) % n);
+            CogwheelChainPathfinder.PathNode currentNode = pathNodes.get(i);
+            CogwheelChainPathfinder.PathNode nextNode = pathNodes.get((i + 1) % n);
 
             Pair<Vec3, Vec3> previousOffsets = offsetsAtNodes.get((i - 1 + n) % n);
             Pair<Vec3, Vec3> currentOffsets = offsetsAtNodes.get(i);

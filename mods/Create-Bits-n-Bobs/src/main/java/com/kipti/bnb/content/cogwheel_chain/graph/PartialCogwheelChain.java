@@ -66,7 +66,7 @@ public class PartialCogwheelChain {
         boolean isAdjacent = isFlat && newPos.distSqr(lastNode.pos()) <= totalRadius * totalRadius;
         boolean isValidFlat = isSameAxis && isFlat && !isAdjacent;
         boolean isValidByConsecutiveChange = !isPrecededByAxisChange || isValidConsecutiveAxisChange(lastLastNode, lastNode, newPos, axis);
-        boolean isValidAxisChange = isValidLargeCogConnection(lastNode, newPos, axis) && isValidByConsecutiveChange;
+        boolean isValidAxisChange = isValidLargeCogAxisConnection(lastNode, newPos, axis, isLarge) && isValidByConsecutiveChange;
         boolean isValid = isValidFlat || isValidAxisChange;
 
         if (!isValid) {
@@ -114,7 +114,11 @@ public class PartialCogwheelChain {
         return Math.signum(lastDiffOnSafeAxis) == Math.signum(newDiffOnSafeAxis);
     }
 
-    private boolean isValidLargeCogConnection(PartialCogwheelChainNode lastNode, BlockPos newPos, Direction.Axis axis) {
+    private boolean isValidLargeCogAxisConnection(PartialCogwheelChainNode lastNode, BlockPos newPos, Direction.Axis axis, boolean isLarge) {
+        if (!lastNode.isLarge() || !isLarge) {
+            return true;
+        }
+
         // Check that they are one block apart on the two axes perpendicular to the rotation axes
         Vec3i diff = newPos.subtract(lastNode.pos());
 

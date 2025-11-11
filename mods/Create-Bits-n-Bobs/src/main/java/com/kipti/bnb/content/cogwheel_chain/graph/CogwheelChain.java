@@ -25,9 +25,9 @@ public class CogwheelChain {
 
     public CogwheelChain(PartialCogwheelChain source) throws InvalidGeometryException {
 //        this.nodes = CogwheelChainGeometryBuilder.buildFullChainFromPartial(source);
-        List<CogwheelChainGeometryBuilderV3.PathNode> pathNodes = CogwheelChainGeometryBuilderV3.buildChainPath(source);
+        List<CogwheelChainPathfinder.PathNode> pathNodes = CogwheelChainPathfinder.buildChainPath(source);
         if (pathNodes == null) {
-            throw new InvalidGeometryException("Cannot build CogwheelChain from given PartialCogwheelChain");
+            throw new InvalidGeometryException("Couldn't find a valid chain path for the given cogwheels");
         }
         this.nodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(pathNodes);
         this.cogWheelPositions = new ArrayList<>(source.visitedNodes.stream().map((e) -> e.pos().subtract(source.getFirstNode().pos())).toList());

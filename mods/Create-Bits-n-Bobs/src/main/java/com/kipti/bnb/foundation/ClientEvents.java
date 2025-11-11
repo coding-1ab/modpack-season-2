@@ -58,7 +58,7 @@ public class ClientEvents {
 //        //Debugging for the cogwheel chain geo builder
 //        List<PartialCogwheelChainNode> chain = List.of(
 //
-//            new PartialCogwheelChainNode(new BlockPos(0, 0, 0), Direction.Axis.Z, true),
+//            new PartialCogwheelChainNode(new BlockPos(2, 0, 0), Direction.Axis.Z, true),
 //            new PartialCogwheelChainNode(new BlockPos(6, 0, 0), Direction.Axis.Z, true),
 //            new PartialCogwheelChainNode(new BlockPos(8, 0, 0), Direction.Axis.Z, true),
 //            new PartialCogwheelChainNode(new BlockPos(3, 2, 0), Direction.Axis.Z, true)
@@ -97,43 +97,43 @@ public class ClientEvents {
 //        }
 //
 //        //Show a white line for each valid path
-//
-//        for (int from = -1; from <= 1; from += 2) {
-//            for (int to = -1; to <= 1; to += 2) {
-//                for (int i = 0; i < chain.size(); i++) {
-//                    PartialCogwheelChainNode nodeFrom = chain.get(i);
-//                    PartialCogwheelChainNode nodeTo = chain.get((i + 1) % chain.size());
-//
-//                    if (CogwheelChainGeometryBuilderV3.isValidPathStep(nodeFrom, from, nodeTo, to)) {
-//                        Vec3 tangentFrom = CogwheelChainGeometryBuilderV3.getPathingTangentOnCog(
-//                            nodeTo,
-//                            nodeFrom,
-//                            -from
-//                        );
-//                        Vec3 tangentTo = CogwheelChainGeometryBuilderV3.getPathingTangentOnCog(
-//                            nodeFrom,
-//                            nodeTo,
-//                            to
-//                        );
-//                        Outliner.getInstance().showLine(
-//                            "cogwheel_chain_debug_line_v3_" + (from == 1 ? "pos" : "neg") + "_" + (to == 1 ? "pos" : "neg") + "_" + i,
-//                            tangentFrom.add(nodeFrom.pos().getCenter()),
-//                            tangentTo.add(nodeTo.pos().getCenter())
-//                        ).colored(0xFFFFFF);
-//
-////                        Outliner.getInstance().showAABB(
-////                            "cogwheel_chain_debug_to_side_line_v3_" + (to == 1 ? "pos" : "neg") + "_" + (to == 1 ? "pos" : "neg") + "_" + i,
-////                            new AABB(tangentTo.add(nodeTo.pos().getCenter()).subtract(0.2, to == 1 ? 0.2 : 0.3, 0.2), tangentTo.add(nodeTo.pos().getCenter()).add(0.2, 0.2, 0.2))
-////                        ).colored(to == 1 ? 0x00FF00 : 0x0000FF);
 ////
-////                        Outliner.getInstance().showAABB(
-////                            "cogwheel_chain_debug_from_side_line_v3_" + (from == 1 ? "pos" : "neg") + "_" + (to == 1 ? "pos" : "neg") + "_" + i,
-////                            new AABB(tangentFrom.add(nodeFrom.pos().getCenter()).subtract(0.1, from == 1 ? 0.1 : 0.25, 0.1), tangentFrom.add(nodeFrom.pos().getCenter()).add(0.1, 0.1, 0.1))
-////                        ).colored(from == 1 ? 0x00FF00 : 0x0000FF);
-//                    }
-//                }
-//            }
-//        }
+////        for (int from = -1; from <= 1; from += 2) {
+////            for (int to = -1; to <= 1; to += 2) {
+////                for (int i = 0; i < chain.size(); i++) {
+////                    PartialCogwheelChainNode nodeFrom = chain.get(i);
+////                    PartialCogwheelChainNode nodeTo = chain.get((i + 1) % chain.size());
+////
+////                    if (CogwheelChainGeometryBuilderV3.isValidPathStep(nodeFrom, from, nodeTo, to)) {
+////                        Vec3 tangentFrom = CogwheelChainGeometryBuilderV3.getPathingTangentOnCog(
+////                            nodeTo,
+////                            nodeFrom,
+////                            -from
+////                        );
+////                        Vec3 tangentTo = CogwheelChainGeometryBuilderV3.getPathingTangentOnCog(
+////                            nodeFrom,
+////                            nodeTo,
+////                            to
+////                        );
+////                        Outliner.getInstance().showLine(
+////                            "cogwheel_chain_debug_line_v3_" + (from == 1 ? "pos" : "neg") + "_" + (to == 1 ? "pos" : "neg") + "_" + i,
+////                            tangentFrom.add(nodeFrom.pos().getCenter()),
+////                            tangentTo.add(nodeTo.pos().getCenter())
+////                        ).colored(0xFFFFFF);
+////
+//////                        Outliner.getInstance().showAABB(
+//////                            "cogwheel_chain_debug_to_side_line_v3_" + (to == 1 ? "pos" : "neg") + "_" + (to == 1 ? "pos" : "neg") + "_" + i,
+//////                            new AABB(tangentTo.add(nodeTo.pos().getCenter()).subtract(0.2, to == 1 ? 0.2 : 0.3, 0.2), tangentTo.add(nodeTo.pos().getCenter()).add(0.2, 0.2, 0.2))
+//////                        ).colored(to == 1 ? 0x00FF00 : 0x0000FF);
+//////
+//////                        Outliner.getInstance().showAABB(
+//////                            "cogwheel_chain_debug_from_side_line_v3_" + (from == 1 ? "pos" : "neg") + "_" + (to == 1 ? "pos" : "neg") + "_" + i,
+//////                            new AABB(tangentFrom.add(nodeFrom.pos().getCenter()).subtract(0.1, from == 1 ? 0.1 : 0.25, 0.1), tangentFrom.add(nodeFrom.pos().getCenter()).add(0.1, 0.1, 0.1))
+//////                        ).colored(from == 1 ? 0x00FF00 : 0x0000FF);
+////                    }
+////                }
+////            }
+////        }
 //
 //
 //        //
@@ -159,7 +159,7 @@ public class ClientEvents {
 ////            Vec3 axis = Vec3.atLowerCornerOf(Direction.fromAxisAndDirection(nodeA.rotationAxis(), Direction.AxisDirection.POSITIVE).getNormal());
 ////        }
     }
-//
+
 //    private static void renderstretch(List<CogwheelChainGeometryBuilderV3.PathNode> pathNodes) {
 //        for (int i = 0; i < pathNodes.size(); i++) {
 //            CogwheelChainGeometryBuilderV3.PathNode fromNode = pathNodes.get(i);
