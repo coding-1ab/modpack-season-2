@@ -54,7 +54,7 @@ public class NixieTubePeripheral extends SyncedPeripheral<NixieTubeBlockEntity> 
 		NixieTubeBlock.walkNixies(world, blockEntity.getBlockPos(), false,
 				(currentPos, rowPosition) -> {
 					if (world.getBlockEntity(currentPos) instanceof NixieTubeBlockEntity ntbe) {
-						NixieTubeBlock.updateDisplayedRedstoneValue(ntbe, true);
+						NixieTubeBlock.updateDisplayedRedstoneValue(ntbe, state, true);
 					}
 				});
 	}
