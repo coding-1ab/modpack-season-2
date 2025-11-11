@@ -39,9 +39,9 @@ public record PartialCogwheelChainNode(BlockPos pos, Direction.Axis rotationAxis
         return Vec3.atLowerCornerOf(Direction.fromAxisAndDirection(this.rotationAxis, Direction.AxisDirection.POSITIVE).getNormal());
     }
 
-    public Vec3 projectToAxis(Vec3 vec) {
+    public Vec3 projectDirToAxisPlane(Vec3 vec) {
         Vec3 axisDir = this.axis();
-        return axisDir.scale(vec.dot(axisDir));
+        return vec.subtract(axisDir.multiply(vec));
     }
 
 }

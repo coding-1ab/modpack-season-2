@@ -37,7 +37,7 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
     @Override
     protected void renderSafe(CogwheelChainBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
-        //For now, if controller, render an outliner between each node
+        //For now, if controller, render an outliner between each chainNode
         if (be.isController && be.chain != null)
             for (int i = 0; i < be.chain.getNodes().size(); i++) {
                 CogwheelChainNode nodeA = be.chain.getNodes().get(i);

@@ -12,6 +12,51 @@ import java.util.List;
 
 public class CogwheelChainGeometryBuilder {
 
+    public static List<CogwheelChainNode> buildFullChainFromPathNodes(List<CogwheelChainGeometryBuilderV3.PathNode> pathNodes) {
+        List<CogwheelChainNode> resultNodes = new ArrayList<>();
+        List<Pair<Vec3, Vec3>> offsetsAtNodes = new ArrayList<>();
+        int n = pathNodes.size();
+        for (int i = 0; i < n; i++) {
+            CogwheelChainGeometryBuilderV3.PathNode previousNode = pathNodes.get((n + i - 1) % n);
+            CogwheelChainGeometryBuilderV3.PathNode currentNode = pathNodes.get(i);
+            CogwheelChainGeometryBuilderV3.PathNode nextNode = pathNodes.get((i + 1) % n);
+
+            Pair<Vec3, Vec3> inOutPositionsAtThisNode = calculateOffsets(
+                previousNode.chainNode(),
+                previousNode.side(),
+                currentNode.chainNode(),
+                currentNode.side(),
+                nextNode.chainNode(),
+                nextNode.side()
+            );
+            offsetsAtNodes.add(inOutPositionsAtThisNode);
+        }
+
+        for (int i = 0; i < n; i++) {
+            CogwheelChainGeometryBuilderV3.PathNode previousNode = pathNodes.get((n + i - 1) % n);
+            CogwheelChainGeometryBuilderV3.PathNode currentNode = pathNodes.get(i);
+            CogwheelChainGeometryBuilderV3.PathNode nextNode = pathNodes.get((i + 1) % n);
+
+            Pair<Vec3, Vec3> previousOffsets = offsetsAtNodes.get((i - 1 + n) % n);
+            Pair<Vec3, Vec3> currentOffsets = offsetsAtNodes.get(i);
+            Pair<Vec3, Vec3> nextOffsets = offsetsAtNodes.get((i + 1) % n);
+
+            resultNodes.add(new CogwheelChainNode(currentNode.chainNode().pos(), currentOffsets.getFirst()));
+            resultNodes.addAll(
+                wrappedArcBetweenPoints(
+                    currentNode.chainNode(),
+                    previousOffsets.getSecond().add(previousNode.chainNode().center()),
+                    currentOffsets.getFirst().add(currentNode.chainNode().center()),
+                    currentOffsets.getSecond().add(currentNode.chainNode().center()),
+                    nextOffsets.getFirst().add(nextNode.chainNode().center())
+                )
+            );
+            resultNodes.add(new CogwheelChainNode(currentNode.chainNode().pos(), currentOffsets.getSecond()));
+        }
+
+        return resultNodes;
+    }
+
     public static List<CogwheelChainNode> buildFullChainFromPartial(PartialCogwheelChain source) {
         List<PartialCogwheelChainNode> sourceNodes = source.getNodes();
         List<CogwheelChainNode> resultNodes = new ArrayList<>();
@@ -110,7 +155,7 @@ public class CogwheelChainGeometryBuilder {
 //
 //        return result;
 
-        // Move to node-local frame (center = origin) for rotation math
+        // Move to chainNode-local frame (center = origin) for rotation math
         Vec3 center = currentNode.pos().getCenter();
 
         Vec3 prevLocal = outPreviousPositionWorld.subtract(center);
@@ -134,7 +179,7 @@ public class CogwheelChainGeometryBuilder {
         outDirection = outDirection.normalize();
 
         Vec3 axis = getDirectionOfAxis(currentNode).normalize();
-        if (axis == null) throw new IllegalStateException("axis null for node " + currentNode);
+        if (axis == null) throw new IllegalStateException("axis null for chainNode " + currentNode);
 
         Vec3 u = startLocal.normalize();
         Vec3 w = endLocal.normalize();

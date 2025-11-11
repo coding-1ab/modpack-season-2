@@ -94,10 +94,10 @@ public class PartialCogwheelChain {
     }
 
     private boolean isValidConsecutiveAxisChange(@NotNull PartialCogwheelChainNode lastNode, PartialCogwheelChainNode pivotNode, BlockPos newPos, Direction.Axis axis) {
-        //Get the signed difference to the pivot on the node's rotation axis
+        //Get the signed difference to the pivot on the chainNode's rotation axis
         int diffToPivotOnLastNodeAxis = lastNode.pos().get(lastNode.rotationAxis()) - pivotNode.pos().get(lastNode.rotationAxis());
 
-        //Get the signed difference to the pivot on the new node's rotation axis
+        //Get the signed difference to the pivot on the new chainNode's rotation axis
         int diffToPivotOnNewNodeAxis = newPos.get(axis) - pivotNode.pos().get(axis);
 
         if (diffToPivotOnLastNodeAxis == diffToPivotOnNewNodeAxis) {
@@ -147,13 +147,13 @@ public class PartialCogwheelChain {
         return Objects.hashCode(visitedNodes);
     }
 
-    public boolean completeIfLooping(Level level) {
+    public boolean completeIfLooping(Level level) throws CogwheelChain.InvalidGeometryException {
         if (getSize() < 2 || level.isClientSide) return false;
         PartialCogwheelChainNode firstNode = visitedNodes.getFirst();
         PartialCogwheelChainNode lastNode = getLastNode();
         if (!firstNode.pos().equals(lastNode.pos())) return false;
 
-        // Remove last node to avoid duplication
+        // Remove last chainNode to avoid duplication
         visitedNodes.removeLast();
         CogwheelChain completedChain = new CogwheelChain(this);
         completedChain.placeInLevel(level, this);

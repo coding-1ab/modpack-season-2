@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.cogwheel_chain.item;
 
+import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.cogwheel_chain.graph.PartialCogwheelChain;
 import com.kipti.bnb.registry.BnbDataComponents;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
@@ -40,7 +41,13 @@ public class CogwheelChainItem extends Item {
                 return InteractionResult.FAIL;
             }
 
-            boolean completed = chain.completeIfLooping(context.getLevel());
+            boolean completed = false;
+            try {
+                completed = chain.completeIfLooping(context.getLevel());
+            } catch (CogwheelChain.InvalidGeometryException e) {
+                context.getPlayer().displayClientMessage(Component.literal(e.getMessage()).withColor(0xff0000), true);
+                return InteractionResult.FAIL;
+            }
             if (completed) {//TODO: cost chains or something
                 if (!context.getLevel().isClientSide) stack.remove(BnbDataComponents.PARTIAL_COGWHEEL_CHAIN);
             }

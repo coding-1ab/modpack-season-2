@@ -45,12 +45,12 @@ public class CogwheelChainPlacementEffect {
             return;
         }
 
-        //Get last node to calculate a chain preview
+        //Get last chainNode to calculate a chain preview
         PartialCogwheelChainNode lastNode = chain.getLastNode();
         Vec3 lastNodePos = Vec3.atCenterOf(lastNode.pos());
         Direction.Axis axis = lastNode.rotationAxis();
 
-        //Project the current targeted position onto the plane defined by the last node's axis
+        //Project the current targeted position onto the plane defined by the last chainNode's axis
         Vec3 targetedOrigin = hit.getLocation();
         Vec3 toTargeted = targetedOrigin.subtract(lastNodePos);
 

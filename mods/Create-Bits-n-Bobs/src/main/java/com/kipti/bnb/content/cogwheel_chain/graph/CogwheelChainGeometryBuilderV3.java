@@ -3,9 +3,11 @@ package com.kipti.bnb.content.cogwheel_chain.graph;
 import com.google.common.collect.ImmutableList;
 import com.kipti.bnb.CreateBitsnBobs;
 import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -19,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * -> Put list of cogs together, which should have ANY valid path, this validation is good "enough"
  *
- * -> Use non tangential tangents to calculate the cw / ccw of the best path on each node
+ * -> Use non tangential tangents to calculate the cw / ccw of the best path on each chainNode
  * 	-> Reject if no valid path found, but ultimatley should not be possible, maybe say
  * 		"Couldn't resolve valid chain path. Please report!"
  *
@@ -30,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class CogwheelChainGeometryBuilderV3 {
 
-    public record PathNode(PartialCogwheelChainNode node, int side) {
+    public record PathNode(PartialCogwheelChainNode chainNode, int side) {
     }
 
     public record PartialPathFrontierData(
@@ -42,7 +44,7 @@ public class CogwheelChainGeometryBuilderV3 {
             if (this.chainIntersections != other.chainIntersections) {
                 return this.chainIntersections < other.chainIntersections ? this : other;
             }
-            return this.distance > other.distance ? this : other;
+            return this.distance < other.distance ? this : other;
         }
 
         public PartialPathFrontierData extend(PathNode nextNode, double additionalDistance, int additionalSelfIntersections) {
@@ -60,7 +62,7 @@ public class CogwheelChainGeometryBuilderV3 {
             StringBuilder sb = new StringBuilder();
             sb.append("Path: ");
             for (PathNode pn : traversed) {
-                sb.append(String.format("[%s @ %d] -> ", pn.node.pos(), pn.side));
+                sb.append(String.format("[%s @ %d] -> ", pn.chainNode.pos(), pn.side));
             }
             sb.append(String.format(" | Distance: %.2f | Intersections: %d",
                 distance,
@@ -83,13 +85,12 @@ public class CogwheelChainGeometryBuilderV3 {
         ));
 
         PartialCogwheelChainNode prevNode = chain.getNodes().get(0);
-        for (int i = 1; i < chain.getNodes().size() + 1; i++) {
+        for (int i = 1; i < chain.getNodes().size() * 2; i++) {
             PartialCogwheelChainNode nextNode = chain.getNodes().get(i % chain.getNodes().size());
             PartialCogwheelChainNode nextNextNode = chain.getNodes().get((i + 1) % chain.getNodes().size());
 
             AtomicReference<PartialPathFrontierData> nextLeftPath = new AtomicReference<>(null);
             AtomicReference<PartialPathFrontierData> nextRightPath = new AtomicReference<>(null);
-            ;
 
             for (Pair<AtomicReference<PartialPathFrontierData>, Integer> pathChannel : List.of(Pair.of(leftPath, 1), Pair.of(rightPath, -1))) {
                 AtomicReference<PartialPathFrontierData> fromPath = pathChannel.getFirst();
@@ -101,8 +102,13 @@ public class CogwheelChainGeometryBuilderV3 {
                 for (int toSide = 1; toSide >= -1; toSide -= 2) {
 //                for (int toSide = 1; toSide <= -1; toSide -= 2) {
                     if (isValidPathStep(prevNode, fromSide, nextNode, toSide)) {
-                        Vec3 tangent = getPathingTangentOnCog(prevNode, nextNode, toSide);
-                        double distance = tangent.length();
+                        Vec3 fromPos = prevNode.center().add(
+                            getPathingTangentOnCog(nextNode, prevNode, -fromSide)
+                        );
+                        Vec3 toPos = nextNode.center().add(
+                            getPathingTangentOnCog(prevNode, nextNode, toSide)
+                        );
+                        double distance = fromPos.subtract(toPos).length();
 
                         int selfIntersections = nextNextNode == prevNode ? 0 : getSelfIntersection(
                             prevNode,
@@ -124,6 +130,13 @@ public class CogwheelChainGeometryBuilderV3 {
                         } else {
                             targetPath.set(targetPath.get().compare(extendedPath));
                         }
+                    } else {
+                        Outliner.getInstance().showLine("Invalid" + i + fromSide + "to" + toSide,
+                                getPathingTangentOnCog(nextNode, prevNode, -fromSide).add(prevNode.center()),
+                                getPathingTangentOnCog(prevNode, nextNode, toSide).add(nextNode.center()))
+
+                            .colored(0xFF0000);
+//                        isValidPathStep(prevNode, fromSide, nextNode, toSide);
                     }
 
                 }
@@ -132,7 +145,7 @@ public class CogwheelChainGeometryBuilderV3 {
             rightPath = nextRightPath;
 
             if (leftPath == null && rightPath == null) {
-                CreateBitsnBobs.LOGGER.warn("Failed to build cogwheel chain path at node index {}", i);
+                CreateBitsnBobs.LOGGER.warn("Failed to build cogwheel chain path at chainNode index {}", i);
                 return List.of();
             }
             prevNode = nextNode;
@@ -140,10 +153,23 @@ public class CogwheelChainGeometryBuilderV3 {
         PartialPathFrontierData finalPath = (leftPath.get() != null && rightPath.get() != null)
             ? leftPath.get().compare(rightPath.get())
             : (leftPath.get() != null ? leftPath.get() : rightPath.get());
-//        System.out.println(finalPath);
+        if (finalPath == null) return null;
         ArrayList<PathNode> finalTraversed = new ArrayList<>(finalPath.traversed);
-        finalTraversed.removeFirst(); //Remove duplicate final node
+        for (int i = 0; i < chain.getNodes().size(); i++) {
+            finalTraversed.removeFirst();
+        }
         return finalTraversed;
+    }
+
+    private static Collection<PathNode> createDummyFallback(PartialCogwheelChain chain) {
+        ArrayList<PathNode> dummyPath = new ArrayList<>();
+        for (PartialCogwheelChainNode node : chain.getNodes()) {
+            dummyPath.add(new PathNode(node, 1));
+        }
+        for (PartialCogwheelChainNode node : chain.getNodes()) {
+            dummyPath.add(new PathNode(node, -1));
+        }
+        return dummyPath;
     }
 
     public static int getSelfIntersection(PartialCogwheelChainNode from, PartialCogwheelChainNode current, PartialCogwheelChainNode to, int side) {
@@ -151,13 +177,25 @@ public class CogwheelChainGeometryBuilderV3 {
             return 0;
         }
 
+//        Vec3 fromPathTangent = getPathingTangentOnCog(from, current, side);
+//        Vec3 fromStart = fromPathTangent.add(from.center()).subtract(current.center());
+//        Vec3 fromEnd = fromPathTangent;
+//
+//        Vec3 toPathTangent = getPathingTangentOnCog(current, to, side);
+//        Vec3 toStart = toPathTangent;
+//        Vec3 toEnd = toPathTangent.add(to.center()).subtract(current.center());
+
+        Vec3 incomingBuffer = to.center().subtract(current.center()).normalize().scale(0.1);
+
         Vec3 fromPathTangent = getPathingTangentOnCog(from, current, side);
-        Vec3 fromStart = fromPathTangent.add(from.center()).subtract(current.center());
-        Vec3 fromEnd = fromPathTangent;
+        Vec3 fromStart = fromPathTangent.add(from.center().subtract(incomingBuffer)).subtract(current.center());
+        Vec3 fromEnd = fromPathTangent.add(incomingBuffer);
+
+        Vec3 outgoingBuffer = current.center().subtract(to.center()).normalize().scale(0.1);
 
         Vec3 toPathTangent = getPathingTangentOnCog(current, to, side);
-        Vec3 toStart = toPathTangent;
-        Vec3 toEnd = toPathTangent.add(to.center()).subtract(current.center());
+        Vec3 toStart = toPathTangent.subtract(outgoingBuffer);
+        Vec3 toEnd = toPathTangent.add(to.center().add(outgoingBuffer)).subtract(current.center());
 
         return doLinesIntersectOnPlane(current.axis(), fromStart, fromEnd, toStart, toEnd) ? 1 : 0;
     }
@@ -188,33 +226,31 @@ public class CogwheelChainGeometryBuilderV3 {
             return true;
         }
 
-        Vec3 incoming = from.projectToAxis(to.projectToAxis(to.center().subtract(from.center()).normalize()));
+        Vec3 diff = to.center().subtract(from.center());
 
-        Vec3 pathTangentFrom = getPathingTangentOnCog(from, to, fromSide);
-        Vec3 pathTangentTo = getPathingTangentOnCog(to, from, toSide);
+        int checkCongruence = fromSide * toSide;
 
-        if (pathTangentFrom.lengthSqr() < 1e-7 || pathTangentTo.lengthSqr() < 1e-7) {
-            CreateBitsnBobs.LOGGER.warn("Recived unpathable tangent request between cogwheels at {} and {}", from.pos(), to.pos());
-            return false;
-        }
+        Vec3 sideAxis = to.axis();
+        Vec3 upAxis = from.axis();
 
-        return pathTangentFrom.cross(pathTangentTo).distanceToSqr(incoming) < 1e-5;
+        Vec3 fromTangentOffset = getPathingTangentOnCog(to, from, -fromSide);
+        Vec3 toTangentOffset = getPathingTangentOnCog(from, to, toSide);
+
+        return sideAxis.multiply(diff).dot(fromTangentOffset) == 1 && upAxis.multiply(diff).dot(toTangentOffset) == -1;
     }
 
     public static Vec3 getPathingTangentOnCog(PartialCogwheelChainNode from, PartialCogwheelChainNode to, int toSide) {
         double toRadius = to.isLarge() ? 1.0f : 0.5f;
 
-        Vec3 incoming = to.center().subtract(from.center()).normalize();
+        Vec3 differenceTo = to.center().subtract(from.center());
 
         if (from.rotationAxis() != to.rotationAxis()) {
-            Vec3 projectedTo = to.projectToAxis(from.projectToAxis(incoming));
-            if (projectedTo.lengthSqr() < 1e-7) {
-                CreateBitsnBobs.LOGGER.warn("Recived unpathable tangent request between cogwheels at {} and {}", from.pos(), to.pos());
-                return Vec3.ZERO;
-            }
+            differenceTo = from.projectDirToAxisPlane(
+                to.projectDirToAxisPlane(differenceTo)
+            );
         }
 
-        return to.axis().cross(incoming.scale(toSide * toRadius));
+        return to.axis().cross(differenceTo).normalize().scale(toSide * toRadius);
     }
 
 }
