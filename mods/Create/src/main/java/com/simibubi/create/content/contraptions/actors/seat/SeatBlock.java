@@ -2,8 +2,9 @@ package com.simibubi.create.content.contraptions.actors.seat;
 
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Optional;
 import com.simibubi.create.AllBlocks;
@@ -122,7 +123,7 @@ public class SeatBlock extends Block implements ProperWaterloggedBlock {
 	@Override
 	public VoxelShape getCollisionShape(BlockState p_220071_1_, BlockGetter p_220071_2_, BlockPos p_220071_3_,
 										CollisionContext ctx) {
-		if (ctx instanceof EntityCollisionContext ecc && ecc.getEntity() instanceof Player)
+		if (ctx instanceof EntityCollisionContext ecc && ecc.getEntity() instanceof Player player)
 			return AllShapes.SEAT_COLLISION_PLAYERS;
 		return AllShapes.SEAT_COLLISION;
 	}

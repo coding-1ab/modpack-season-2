@@ -19,7 +19,7 @@ public abstract class XaeroFullscreenMapMixin {
 
 	@Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V", at = @At(value = "INVOKE",
 		target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"), require = 0)
-	public void create$xaeroMapFullscreenRender(GuiGraphics graphics, int mouseX, int mouseY, float pt, CallbackInfo ci) {
+	private void create$xaeroMapFullscreenRender(GuiGraphics graphics, int mouseX, int mouseY, float pt, CallbackInfo ci) {
 		try {
 			if (!create$failedToRenderTrainMap)
 				XaeroTrainMap.onRender(graphics, (GuiMap) (Object) this, mouseX, mouseY, pt);
