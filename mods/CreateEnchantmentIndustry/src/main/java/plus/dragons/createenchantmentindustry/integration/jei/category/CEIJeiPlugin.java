@@ -34,6 +34,7 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.api.distmarker.Dist;
@@ -84,12 +85,8 @@ public class CEIJeiPlugin implements IModPlugin {
             registration.addRecipes(PrintingCategory.TYPE, builtinPrinting);
         if (CEIConfig.fluids().enableEnchantedBookPrinting.get())
             registration.addRecipes(PrintingCategory.TYPE, EnchantedBookPrintingRecipeJEI.listAll());
-        var manualApplication = registration
-                .getJeiHelpers()
-                .getRecipeType(Create.asResource("item_application"))
-                .orElseThrow();
-        // TODO Check this issue: getRecipeType("item_application",ItemApplicationRecipe.class) cannot get recipeType, since recipeClass is always a RecipeHolder class.
-        registration.addRecipes((mezz.jei.api.recipe.RecipeType<? super ManualApplicationRecipe>) manualApplication, List.of(MechanicalGrindStoneItem.createRecipe()));
+        mezz.jei.api.recipe.RecipeType<RecipeHolder<ManualApplicationRecipe>> manualApplication = mezz.jei.api.recipe.RecipeType.createRecipeHolderType(Create.asResource("item_application"));
+        registration.addRecipes(manualApplication, List.of(MechanicalGrindStoneItem.createRecipe()));
         registration.addRecipes(GrindingCategory.TYPE, recipeManager
                 .getAllRecipesFor(CEIRecipes.GRINDING.getType()));
         RecipeType<SandPaperPolishingRecipe> polishing = AllRecipeTypes.SANDPAPER_POLISHING.getType();
