@@ -165,7 +165,7 @@ public class CogwheelChainPathfinder {
         if (finalPath == null) return null;
         ArrayList<PathNode> finalTraversed = new ArrayList<>(finalPath.traversed);
         finalTraversed.removeLast();
-        for (int i = 0; i < chain.getNodes().size() - 1; i++) {
+        for (int i = 0; i < chain.getNodes().size() - 1; i++) {//TODO reduce the amount its "overpathing" to just the 2 extra nodes on each side
             finalTraversed.removeFirst();
         }
         return finalTraversed;

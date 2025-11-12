@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
-import com.simibubi.create.foundation.render.RenderTypes;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.animation.AnimationTickHolder;
@@ -102,8 +101,7 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
 
         boolean far = Minecraft.getInstance().level == be.getLevel() && !Minecraft.getInstance()
             .getBlockEntityRenderDispatcher().camera.getPosition()
-            .closerThan(Vec3.atCenterOf(tilePos)
-                .add(blockPos.getX() / 2f, blockPos.getY() / 2f, blockPos.getZ() / 2f), MIP_DISTANCE);
+            .closerThan(from.lerp(to, 0.5), MIP_DISTANCE);
 
         renderChain(ms, buffer, animation, (float) from.distanceTo(to), light1, light2, far);
 
@@ -121,7 +119,7 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
         ms.pushPose();
         ms.translate(0.5D, 0.0D, 0.5D);
 
-        VertexConsumer vc = buffer.getBuffer(RenderTypes.chain(CHAIN_LOCATION));
+        VertexConsumer vc = buffer.getBuffer(RenderType.entityCutout(CHAIN_LOCATION));
         renderPart(ms, vc, length, 0.0F, radius, radius, 0.0F, -radius, 0.0F, 0.0F, -radius, minU, maxU, minV, maxV,
             light1, light2, far);
 
