@@ -37,7 +37,6 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
         super(context);
     }
 
-
     @Override
     protected void renderSafe(GirderStrutBlockEntity blockEntity, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         super.renderSafe(blockEntity, partialTicks, ms, buffer, light, overlay);
@@ -77,7 +76,6 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
                     .rotateY((float) yRot)
                     .rotateX(-(float) xRot)
                     .uncenter();
-
 
                 ms.translate(0, 0, lengthOffset + 0.5); // Adjust the translation based on segment length
                 if (getRenderPriority(relative) > getRenderPriority(relative.multiply(-1))) {

@@ -164,7 +164,8 @@ public class CogwheelChainPathfinder {
             : (leftPath.get() != null ? leftPath.get() : rightPath.get());
         if (finalPath == null) return null;
         ArrayList<PathNode> finalTraversed = new ArrayList<>(finalPath.traversed);
-        for (int i = 0; i < chain.getNodes().size(); i++) {
+        finalTraversed.removeLast();
+        for (int i = 0; i < chain.getNodes().size() - 1; i++) {
             finalTraversed.removeFirst();
         }
         return finalTraversed;
