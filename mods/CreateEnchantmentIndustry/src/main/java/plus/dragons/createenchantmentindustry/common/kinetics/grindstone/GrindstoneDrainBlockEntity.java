@@ -214,7 +214,7 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
             if (!fluidIngredients.isEmpty())
                 applicable = drain(fluidIngredients.getFirst());
             else if (!fluidResults.isEmpty())
-                applicable = fill(fluidResults.getFirst());
+                applicable = tank.getPrimaryHandler().fill(fluidResults.getFirst(), FluidAction.SIMULATE) == fluidResults.getFirst().getAmount();
             if (applicable) {
                 if (fluidResults.getFirst().is(CEIFluids.EXPERIENCE))
                     advancement.awardStat(CEIStats.GRINDSTONE_EXPERIENCE.get(), fluidResults.getFirst().getAmount());
