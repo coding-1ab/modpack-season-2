@@ -210,11 +210,11 @@ public class GrindstoneDrainBlockEntity extends KineticBlockEntity {
             var recipe = grinding.get().value();
             var fluidIngredients = recipe.getFluidIngredients();
             var fluidResults = recipe.getFluidResults();
-            boolean applicable = true;
+            boolean applicable = false;
             if (!fluidIngredients.isEmpty())
                 applicable = drain(fluidIngredients.getFirst());
             else if (!fluidResults.isEmpty())
-                applicable = tank.getPrimaryHandler().fill(fluidResults.getFirst(), FluidAction.SIMULATE) == fluidResults.getFirst().getAmount();
+                applicable = fill(fluidResults.getFirst());
             if (applicable) {
                 if (fluidResults.getFirst().is(CEIFluids.EXPERIENCE))
                     advancement.awardStat(CEIStats.GRINDSTONE_EXPERIENCE.get(), fluidResults.getFirst().getAmount());
