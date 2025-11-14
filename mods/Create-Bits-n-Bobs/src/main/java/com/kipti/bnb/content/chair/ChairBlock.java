@@ -70,8 +70,10 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
             (stateFront.getValue(FACING) == facing.getCounterClockWise() || stateFront.getValue(FACING) == facing.getClockWise());
 
         BlockState stateBack = pLevel.getBlockState(pCurrentPos.relative(facing.getOpposite()));
-        boolean isFlatBack = stateBack.getBlock() instanceof ChairBlock &&
-            (stateBack.getValue(FACING) == facing.getOpposite() || stateBack.getValue(CORNER) && stateBack.getValue(FACING) != facing);
+//        boolean isFlatBack = stateBack.getBlock() instanceof ChairBlock &&
+//            (stateBack.getValue(FACING) == facing.getOpposite() || stateBack.getValue(CORNER) && stateBack.getValue(FACING) != facing);
+
+        boolean isFlatBack = stateBack.isCollisionShapeFullBlock(pLevel, pCurrentPos.relative(facing.getOpposite()));
 
         boolean corner = hasConnectableFront && (hasConnectableLeft != hasConnectableRight);
         if (hasConnectableFront) {

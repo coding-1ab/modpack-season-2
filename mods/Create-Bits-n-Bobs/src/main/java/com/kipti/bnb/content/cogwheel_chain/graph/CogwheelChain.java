@@ -4,11 +4,14 @@ import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlock;
 import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlockEntity;
 import com.kipti.bnb.registry.BnbBlocks;
 import com.simibubi.create.AllBlocks;
+import net.createmod.catnip.data.Pair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +19,8 @@ import java.util.Objects;
 
 public class CogwheelChain {
 
-    List<CogwheelChainNode> nodes = new ArrayList<>();
-    List<BlockPos> cogWheelPositions = new ArrayList<>();
+    List<ChainPathNode> nodes = new ArrayList<>();
+    List<ChainPathCogwheelNode> cogwheelNodes = new ArrayList<>();
 
     public CogwheelChain(CompoundTag tag) {
         read(tag);
@@ -25,12 +28,23 @@ public class CogwheelChain {
 
     public CogwheelChain(PartialCogwheelChain source) throws InvalidGeometryException {
 //        this.nodes = CogwheelChainGeometryBuilder.buildFullChainFromPartial(source);
-        List<CogwheelChainPathfinder.PathNode> pathNodes = CogwheelChainPathfinder.buildChainPath(source);
+        Pair<List<CogwheelChainPathfinder.PathNode>, List<ChainPathCogwheelNode>> pathNodes = CogwheelChainPathfinder.buildChainPath(source);
         if (pathNodes == null) {
-            throw new InvalidGeometryException("Couldn't find a valid chain path for the given cogwheels");
+            throw new InvalidGeometryException("Couldn't build a valid path, try inserting more nodes.");
         }
-        this.nodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(pathNodes);
-        this.cogWheelPositions = new ArrayList<>(source.visitedNodes.stream().map((e) -> e.pos().subtract(source.getFirstNode().pos())).toList());
+        this.nodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(pathNodes.getFirst());
+        this.cogwheelNodes = pathNodes.getSecond();
+    }
+
+    public @Nullable ChainPathCogwheelNode getNodeFromControllerOffset(Vec3i controllerOffset) {
+        Vec3i offsetFromStart = controllerOffset.multiply(-1);
+
+        for (ChainPathCogwheelNode cogwheelNode : cogwheelNodes) {
+            if (cogwheelNode.offsetFromStart().equals(offsetFromStart)) {
+                return cogwheelNode;
+            }
+        }
+        return null;
     }
 
     public static class InvalidGeometryException extends Exception {
@@ -41,22 +55,20 @@ public class CogwheelChain {
 
     public void write(CompoundTag tag) {
         for (int i = 0; i < nodes.size(); i++) {
-            CogwheelChainNode node = nodes.get(i);
+            ChainPathNode node = nodes.get(i);
             CompoundTag nodeTag = new CompoundTag();
             node.write(nodeTag);
             tag.put("node_" + i, nodeTag);
         }
         tag.putInt("node_count", nodes.size());
 
-        for (int i = 0; i < cogWheelPositions.size(); i++) {
-            BlockPos pos = cogWheelPositions.get(i);
+        for (int i = 0; i < cogwheelNodes.size(); i++) {
+            ChainPathCogwheelNode pos = cogwheelNodes.get(i);
             CompoundTag posTag = new CompoundTag();
-            posTag.putInt("x", pos.getX());
-            posTag.putInt("y", pos.getY());
-            posTag.putInt("z", pos.getZ());
+            pos.write(posTag);
             tag.put("cogwheel_pos_" + i, posTag);
         }
-        tag.putInt("cogwheel_pos_count", cogWheelPositions.size());
+        tag.putInt("cogwheel_pos_count", cogwheelNodes.size());
     }
 
     public void read(CompoundTag tag) {
@@ -64,20 +76,20 @@ public class CogwheelChain {
         int nodeCount = tag.getInt("node_count");
         for (int i = 0; i < nodeCount; i++) {
             CompoundTag nodeTag = tag.getCompound("node_" + i);
-            CogwheelChainNode node = CogwheelChainNode.read(nodeTag);
+            ChainPathNode node = ChainPathNode.read(nodeTag);
             nodes.add(node);
         }
 
-        cogWheelPositions.clear();
+        cogwheelNodes.clear();
         int cogWheelPosCount = tag.getInt("cogwheel_pos_count");
         for (int i = 0; i < cogWheelPosCount; i++) {
             CompoundTag posTag = tag.getCompound("cogwheel_pos_" + i);
-            BlockPos pos = new BlockPos(posTag.getInt("x"), posTag.getInt("y"), posTag.getInt("z"));
-            cogWheelPositions.add(pos);
+            ChainPathCogwheelNode pos = ChainPathCogwheelNode.read(posTag);
+            cogwheelNodes.add(pos);
         }
     }
 
-    protected CogwheelChainNode getLastNode() {
+    protected ChainPathNode getLastNode() {
         if (nodes.isEmpty()) {
             return null;
         }
@@ -123,8 +135,8 @@ public class CogwheelChain {
     }
 
     public void destroy(Level level, BlockPos worldPosition) {
-        for (BlockPos offset : cogWheelPositions) {
-            BlockPos pos = worldPosition.offset(offset);
+        for (ChainPathCogwheelNode cogwheel : cogwheelNodes) {
+            BlockPos pos = worldPosition.offset(cogwheel.offsetFromStart());
             removeChainCogwheelFromLevelIfPresent(level, pos);
         }
     }
@@ -133,13 +145,22 @@ public class CogwheelChain {
         BlockEntity be = level.getBlockEntity(pos);
         BlockState state = level.getBlockState(pos);
         if (be instanceof CogwheelChainBlockEntity && (state.getBlock() instanceof CogwheelChainBlock cogwheelChainBlock)) {
-            level.setBlockAndUpdate(pos, (cogwheelChainBlock.isLargeCog() ? AllBlocks.LARGE_COGWHEEL : AllBlocks.COGWHEEL).getDefaultState()
+            level.setBlockAndUpdate(pos, (cogwheelChainBlock.isLargeChainCog() ? AllBlocks.LARGE_COGWHEEL : AllBlocks.COGWHEEL).getDefaultState()
                 .setValue(CogwheelChainBlock.AXIS, state.getValue(CogwheelChainBlock.AXIS)));
         }
     }
 
-    public List<CogwheelChainNode> getNodes() {
+    /**
+     * All nodes in the chain, there are typically multiple, as the path wraps around cogwheels
+     */
+    public List<ChainPathNode> getChainPathNodes() {
         return nodes;
     }
 
+    /**
+     * Each cogwheel in the chain
+     */
+    public List<ChainPathCogwheelNode> getChainPathCogwheelNodes() {
+        return cogwheelNodes;
+    }
 }

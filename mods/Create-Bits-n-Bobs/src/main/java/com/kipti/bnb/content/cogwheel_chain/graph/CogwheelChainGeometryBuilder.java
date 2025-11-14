@@ -12,8 +12,8 @@ import java.util.List;
 
 public class CogwheelChainGeometryBuilder {
 
-    public static List<CogwheelChainNode> buildFullChainFromPathNodes(List<CogwheelChainPathfinder.PathNode> pathNodes) {
-        List<CogwheelChainNode> resultNodes = new ArrayList<>();
+    public static List<ChainPathNode> buildFullChainFromPathNodes(List<CogwheelChainPathfinder.PathNode> pathNodes) {
+        List<ChainPathNode> resultNodes = new ArrayList<>();
         List<Pair<Vec3, Vec3>> offsetsAtNodes = new ArrayList<>();
         int n = pathNodes.size();
         for (int i = 0; i < n; i++) {
@@ -41,7 +41,7 @@ public class CogwheelChainGeometryBuilder {
             Pair<Vec3, Vec3> currentOffsets = offsetsAtNodes.get(i);
             Pair<Vec3, Vec3> nextOffsets = offsetsAtNodes.get((i + 1) % n);
 
-            resultNodes.add(new CogwheelChainNode(currentNode.chainNode().pos(), currentOffsets.getFirst()));
+            resultNodes.add(new ChainPathNode(currentNode.chainNode().pos(), currentOffsets.getFirst()));
             resultNodes.addAll(
                 wrappedArcBetweenPoints(
                     currentNode.chainNode(),
@@ -51,15 +51,15 @@ public class CogwheelChainGeometryBuilder {
                     nextOffsets.getFirst().add(nextNode.chainNode().center())
                 )
             );
-            resultNodes.add(new CogwheelChainNode(currentNode.chainNode().pos(), currentOffsets.getSecond()));
+            resultNodes.add(new ChainPathNode(currentNode.chainNode().pos(), currentOffsets.getSecond()));
         }
 
         return resultNodes;
     }
 
-    public static List<CogwheelChainNode> buildFullChainFromPartial(PartialCogwheelChain source) {
+    public static List<ChainPathNode> buildFullChainFromPartial(PartialCogwheelChain source) {
         List<PartialCogwheelChainNode> sourceNodes = source.getNodes();
-        List<CogwheelChainNode> resultNodes = new ArrayList<>();
+        List<ChainPathNode> resultNodes = new ArrayList<>();
 
         int[] concavities = new int[sourceNodes.size()];
         for (int i = 0; i < sourceNodes.size(); i++) {
@@ -96,7 +96,7 @@ public class CogwheelChainGeometryBuilder {
             Pair<Vec3, Vec3> currentOffsets = offsetsAtNodes.get(i);
             Pair<Vec3, Vec3> nextOffsets = offsetsAtNodes.get((i + 1) % n);
 
-            resultNodes.add(new CogwheelChainNode(currentNode.pos(), currentOffsets.getFirst()));
+            resultNodes.add(new ChainPathNode(currentNode.pos(), currentOffsets.getFirst()));
             resultNodes.addAll(
                 wrappedArcBetweenPoints(
                     currentNode,
@@ -106,13 +106,13 @@ public class CogwheelChainGeometryBuilder {
                     nextOffsets.getFirst().add(nextNode.pos().getCenter())
                 )
             );
-            resultNodes.add(new CogwheelChainNode(currentNode.pos(), currentOffsets.getSecond()));
+            resultNodes.add(new ChainPathNode(currentNode.pos(), currentOffsets.getSecond()));
         }
 
         return resultNodes;
     }
 
-    private static List<CogwheelChainNode> wrappedArcBetweenPoints(
+    private static List<ChainPathNode> wrappedArcBetweenPoints(
         PartialCogwheelChainNode currentNode,
         Vec3 outPreviousPositionWorld, Vec3 inCurrentOffsetWorld,
         Vec3 outCurrentOffsetWorld, Vec3 inNextPositionWorld) {
@@ -229,14 +229,14 @@ public class CogwheelChainGeometryBuilder {
         double absAngle = Math.abs(signedAngle);
         double approxArcLength = r * absAngle;
         int segments = Math.max(1, (int) Math.ceil(approxArcLength));
-        List<CogwheelChainNode> result = new ArrayList<>();
+        List<ChainPathNode> result = new ArrayList<>();
 
         // generate interior points (exclude endpoints)
         for (int i = 1; i < segments; i++) {
             double t = (double) i / (double) segments;
             double theta = signedAngle * t;
             Vec3 rotatedLocal = rotateAroundAxis(startLocal, axis, theta);
-            result.add(new CogwheelChainNode(currentNode.pos(), rotatedLocal));
+            result.add(new ChainPathNode(currentNode.pos(), rotatedLocal));
         }
 
         return result;

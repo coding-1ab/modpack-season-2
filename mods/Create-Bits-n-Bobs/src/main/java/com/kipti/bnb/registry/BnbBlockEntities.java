@@ -7,7 +7,6 @@ import com.kipti.bnb.content.girder_strut.GirderStrutBlockEntityRenderer;
 import com.kipti.bnb.content.light.headlamp.HeadlampBlockEntity;
 import com.kipti.bnb.content.nixie.foundation.GenericNixieDisplayBlockEntity;
 import com.kipti.bnb.content.nixie.foundation.GenericNixieDisplayBoardRenderer;
-import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
 import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual;
@@ -44,7 +43,7 @@ public class BnbBlockEntities {
 
     public static final BlockEntityEntry<CogwheelChainBlockEntity> COGWHEEL_CHAIN = REGISTRATE.blockEntity("cogwheel_chain", CogwheelChainBlockEntity::new)
         .visual(() -> (context, blockEntity, partialTick) -> {
-            Model model = Models.partial(blockEntity.getBlockState().is(BnbBlocks.LARGE_COGWHEEL_CHAIN) ? AllPartialModels.SHAFTLESS_LARGE_COGWHEEL : BnbPartialModels.SMALL_COGWHEEL_BLOCK);
+            Model model = Models.partial(blockEntity.getBlockState().is(BnbBlocks.LARGE_COGWHEEL_CHAIN) ? BnbPartialModels.LARGE_COGWHEEL_CHAIN_BLOCK : BnbPartialModels.SMALL_COGWHEEL_CHAIN_BLOCK);
             return new SingleAxisRotatingVisual<>(context, blockEntity, partialTick, model);
         }, true)
         .validBlocks(BnbBlocks.SMALL_COGWHEEL_CHAIN, BnbBlocks.LARGE_COGWHEEL_CHAIN)

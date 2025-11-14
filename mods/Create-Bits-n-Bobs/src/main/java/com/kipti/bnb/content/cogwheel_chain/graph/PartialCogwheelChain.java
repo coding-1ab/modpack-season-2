@@ -65,8 +65,8 @@ public class PartialCogwheelChain {
         double totalRadius = (isLarge ? 1 : 0.5) + (lastNode.isLarge() ? 1 : 0.5);
         boolean isAdjacent = isFlat && newPos.distSqr(lastNode.pos()) <= totalRadius * totalRadius;
         boolean isValidFlat = isSameAxis && isFlat && !isAdjacent;
-        boolean isValidByConsecutiveChange = !isPrecededByAxisChange || isValidConsecutiveAxisChange(lastLastNode, lastNode, newPos, axis);
-        boolean isValidAxisChange = isValidLargeCogAxisConnection(lastNode, newPos, axis, isLarge) && isValidByConsecutiveChange;
+//        boolean isValidByConsecutiveChange = !isPrecededByAxisChange || isValidConsecutiveAxisChange(lastLastNode, lastNode, newPos, axis);
+        boolean isValidAxisChange = isValidLargeCogAxisConnection(lastNode, newPos, axis, isLarge);
         boolean isValid = isValidFlat || isValidAxisChange;
 
         if (!isValid) {
@@ -75,11 +75,7 @@ public class PartialCogwheelChain {
             }
 
             if (!isSameAxis) {
-                if (!isValidByConsecutiveChange) {
-                    throw new ChainAdditionAbortedException("Invalid axis change, must be on same side of pivot!");
-                } else {
-                    throw new ChainAdditionAbortedException("Not a valid axis change!");
-                }
+                throw new ChainAdditionAbortedException("Not a valid axis change!");
             }
             //Else it wasn't accepted cause it wasnt flat
             throw new ChainAdditionAbortedException("Connection must be flat when on the same axis!");

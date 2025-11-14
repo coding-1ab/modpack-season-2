@@ -20,6 +20,7 @@
   "block.bits_n_bobs.green_large_nixie_tube": "Green Large Nixie Tube",
   "block.bits_n_bobs.green_nixie_board": "Green Nixie Board",
   "block.bits_n_bobs.headlamp": "Headlamp",
+  "block.bits_n_bobs.large_cogwheel_chain": "Large Cogwheel Chain",
   "block.bits_n_bobs.large_nixie_tube": "Large Nixie Tube",
   "block.bits_n_bobs.light_blue_chair": "Light Blue Chair",
   "block.bits_n_bobs.light_blue_large_nixie_tube": "Light Blue Large Nixie Tube",
@@ -47,6 +48,7 @@
   "block.bits_n_bobs.red_chair": "Red Chair",
   "block.bits_n_bobs.red_large_nixie_tube": "Red Large Nixie Tube",
   "block.bits_n_bobs.red_nixie_board": "Red Nixie Board",
+  "block.bits_n_bobs.small_cogwheel_chain": "Small Cogwheel Chain",
   "block.bits_n_bobs.weathered_metal_girder": "Weathered Metal Girder",
   "block.bits_n_bobs.weathered_metal_girder_encased_shaft": "Weathered Metal Girder Encased Shaft",
   "block.bits_n_bobs.white_chair": "White Chair",
@@ -55,6 +57,7 @@
   "block.bits_n_bobs.yellow_chair": "Yellow Chair",
   "block.bits_n_bobs.yellow_large_nixie_tube": "Yellow Large Nixie Tube",
   "block.bits_n_bobs.yellow_nixie_board": "Yellow Nixie Board",
+  "item.bits_n_bobs.cogwheel_chain_placing_chain": "Cogwheel Chain Placing Chain",
   "message.bits_n_bobs.girder_strut.missing_anchors": "You need %s more Girder Struts",
   "tab.based": "Create: Bits 'n' Bobs"
 }

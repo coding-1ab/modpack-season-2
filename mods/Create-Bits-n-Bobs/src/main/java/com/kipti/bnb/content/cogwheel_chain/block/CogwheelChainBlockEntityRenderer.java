@@ -1,17 +1,12 @@
 package com.kipti.bnb.content.cogwheel_chain.block;
 
-import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChainNode;
+import com.kipti.bnb.content.cogwheel_chain.graph.ChainPathNode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
-import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.animation.AnimationTickHolder;
-import net.createmod.catnip.render.CachedBuffers;
-import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -19,10 +14,11 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+import java.util.function.Function;
 
 public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer<CogwheelChainBlockEntity> {
 
@@ -36,53 +32,40 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
     @Override
     protected void renderSafe(CogwheelChainBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
+
+        float rotationsPerTick = -be.getChainRotationDirection() * be.getSpeed() / (60 * 20);
+        float radius = be.getBlockState().getBlock() instanceof CogwheelChainBlock cbb ? cbb.getRadius() : 1f;
+        float time = AnimationTickHolder.getRenderTime();
+
+        float offset = rotationsPerTick == 0 ? 0 : (float) ((((radius * Math.PI * 2) * rotationsPerTick * time) % 1f) + 1f) % 1f;
+
         //For now, if controller, render an outliner between each chainNode
-        if (be.isController && be.chain != null)
-            for (int i = 0; i < be.chain.getNodes().size(); i++) {
-                CogwheelChainNode nodeA = be.chain.getNodes().get(i);
-                CogwheelChainNode nodeB = be.chain.getNodes().get((i + 1) % be.chain.getNodes().size());
+        Function<Vector3f, Integer> lighter = be.createGlobalLighter();
+        if (be.isController && be.chain != null) {
+            for (int i = 0; i < be.chain.getChainPathNodes().size(); i++) {
+                ChainPathNode nodeA = be.chain.getChainPathNodes().get(i);
+                ChainPathNode nodeB = be.chain.getChainPathNodes().get((i + 1) % be.chain.getChainPathNodes().size());
 
 //                Outliner.getInstance()
 //                    .showLine(nodeA, nodeA.getPosition(), nodeB.getPosition())
 //                    .colored(0xff00ff00)
 //                    .lineWidth(0.2f);
-                renderChain(be, ms, buffer, light, overlay, nodeA.getPosition(), nodeB.getPosition());
+                renderChain(be, ms, buffer, light, overlay, nodeA.getPosition(), nodeB.getPosition(), lighter, offset);
             }
+        }
     }
 
     //Mostly just copied from create's chain renderer
 
-    private void renderChain(CogwheelChainBlockEntity be, PoseStack ms, MultiBufferSource buffer, int light, int overlay, Vec3 from, Vec3 to) {
-        float time = AnimationTickHolder.getRenderTime(be.getLevel()) / (360f / Math.abs(be.getSpeed()));
-        time %= 1;
-        if (time < 0)
-            time += 1;
-
-        float animation = time - 0.5f;
-
-
+    private void renderChain(CogwheelChainBlockEntity be, PoseStack ms, MultiBufferSource buffer, int light, int overlay, Vec3 from, Vec3 to, Function<Vector3f, Integer> lighter, float offset) {
         Vec3 diff = to.subtract(from);
         double yaw = (float) Mth.RAD_TO_DEG * Mth.atan2(diff.x, diff.z);
         double pitch = (float) Mth.RAD_TO_DEG * Mth.atan2(diff.y, diff.multiply(1, 0, 1)
             .length());
 
-        Level level = be.getLevel();
         BlockPos tilePos = be.getBlockPos();
-        BlockPos blockPos = BlockPos.containing(to);
 
         Vec3 startOffset = from.subtract(Vec3.atCenterOf(tilePos));
-
-        if (!VisualizationManager.supportsVisualization(be.getLevel())) {
-            SuperByteBuffer guard =
-                CachedBuffers.partial(AllPartialModels.CHAIN_CONVEYOR_GUARD, be.getBlockState());
-            guard.center();
-            guard.rotateYDegrees((float) yaw);
-
-            guard.uncenter();
-            guard.light(light)
-                .overlay(overlay)
-                .renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
-        }
 
         ms.pushPose();
         var chain = TransformStack.of(ms);
@@ -94,24 +77,22 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
         chain.translate(0, 8 / 16f, 0);
         chain.uncenter();
 
-        int light1 = LightTexture.pack(level.getBrightness(LightLayer.BLOCK, tilePos),
-            level.getBrightness(LightLayer.SKY, tilePos));
-        int light2 = LightTexture.pack(level.getBrightness(LightLayer.BLOCK, tilePos.offset(blockPos)),
-            level.getBrightness(LightLayer.SKY, tilePos.offset(blockPos)));
+        int light1 = lighter.apply(new Vector3f((float) from.x, (float) from.y, (float) from.z));
+        int light2 = lighter.apply(new Vector3f((float) to.x, (float) to.y, (float) to.z));
 
         boolean far = Minecraft.getInstance().level == be.getLevel() && !Minecraft.getInstance()
             .getBlockEntityRenderDispatcher().camera.getPosition()
             .closerThan(from.lerp(to, 0.5), MIP_DISTANCE);
 
-        renderChain(ms, buffer, animation, (float) from.distanceTo(to), light1, light2, far);
+        renderChain(ms, buffer, offset, (float) from.distanceTo(to), light1, light2, far);
 
         ms.popPose();
     }
 
-    public static void renderChain(PoseStack ms, MultiBufferSource buffer, float animation, float length, int light1,
+    public static void renderChain(PoseStack ms, MultiBufferSource buffer, float offset, float length, int light1,
                                    int light2, boolean far) {
         float radius = far ? 1f / 16f : 1.5f / 16f;
-        float minV = far ? 0 : animation;
+        float minV = far ? 0 : offset;
         float maxV = far ? 1 / 16f : length + minV;
         float minU = far ? 3 / 16f : 0;
         float maxU = far ? 4 / 16f : 3 / 16f;
@@ -171,4 +152,5 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
     public boolean shouldRenderOffScreen(CogwheelChainBlockEntity blockEntity) {
         return true;
     }
+
 }

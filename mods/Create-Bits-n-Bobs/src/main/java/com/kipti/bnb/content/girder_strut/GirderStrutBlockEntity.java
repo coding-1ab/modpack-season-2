@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GirderStrutBlockEntity extends SmartBlockEntity {
+public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEntityRelighter {
 
     private final Set<BlockPos> connections = new HashSet<>();
     public @Nullable SuperByteBuffer connectionRenderBufferCache;

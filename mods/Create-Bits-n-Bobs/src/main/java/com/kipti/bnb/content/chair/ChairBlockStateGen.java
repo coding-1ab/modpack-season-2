@@ -14,37 +14,45 @@ public class ChairBlockStateGen {
     public static @NotNull NonNullBiConsumer<DataGenContext<Block, ChairBlock>, RegistrateBlockstateProvider> dyedChair(String colourName) {
         return (c, p) -> {
             BlockModelBuilder chairBaseBlock = p.models().withExistingParent("block/chair/block_single_" + colourName, p.modLoc("block/chair/block_single"))
-                .texture("2", p.modLoc("block/chair/chair_" + colourName));
+                .texture("2", p.modLoc("block/chair/chair_" + colourName))
+                .ao(false);
             BlockModelBuilder chairCornerBaseBlock = p.models().withExistingParent("block/chair/block_corner_" + colourName, p.modLoc("block/chair/block_corner"))
-                .texture("2", p.modLoc("block/chair/chair_" + colourName));
+                .texture("2", p.modLoc("block/chair/chair_" + colourName))
+                .ao(false);
 
             BlockModelBuilder chairLeftArmrest = p.models().withExistingParent(
                     "block/chair/left_armrest_" + colourName,
                     p.modLoc("block/chair/left_armrest"))
-                .texture("2", p.modLoc("block/chair/chair_" + colourName));
+                .texture("2", p.modLoc("block/chair/chair_" + colourName))
+                .ao(false);
 
             BlockModelBuilder chairRightArmrest = p.models().withExistingParent(
                     "block/chair/right_armrest_" + colourName,
                     p.modLoc("block/chair/right_armrest"))
-                .texture("2", p.modLoc("block/chair/chair_" + colourName));
+                .texture("2", p.modLoc("block/chair/chair_" + colourName))
+                .ao(false);
 
             BlockModelBuilder chairBack = p.models().withExistingParent(
                     "block/chair/chair_back_" + colourName,
                     p.modLoc("block/chair/chair_back"))
-                .texture("2", p.modLoc("block/chair/chair_" + colourName));
+                .texture("2", p.modLoc("block/chair/chair_" + colourName))
+                .ao(false);
             BlockModelBuilder chairBackFlat = p.models().withExistingParent(
                     "block/chair/chair_back_flat_" + colourName,
                     p.modLoc("block/chair/chair_back_flat"))
-                .texture("2", p.modLoc("block/chair/chair_" + colourName));
+                .texture("2", p.modLoc("block/chair/chair_" + colourName))
+                .ao(false);
 
             BlockModelBuilder chairBackFlatTrimmedRight = p.models().withExistingParent(
                     "block/chair/chair_back_flat_trimmed_right_" + colourName,
                     p.modLoc("block/chair/chair_back_flat_trimmed_right"))
-                .texture("2", p.modLoc("block/chair/chair_" + colourName));
+                .texture("2", p.modLoc("block/chair/chair_" + colourName))
+                .ao(false);
             BlockModelBuilder chairBackFlatTrimmedLeft = p.models().withExistingParent(
                     "block/chair/chair_back_flat_trimmed_left_" + colourName,
                     p.modLoc("block/chair/chair_back_flat_trimmed_left"))
-                .texture("2", p.modLoc("block/chair/chair_" + colourName));
+                .texture("2", p.modLoc("block/chair/chair_" + colourName))
+                .ao(false);
 
             for (Direction direction : Iterate.horizontalDirections) {
                 //Base seat model

@@ -1,0 +1,6 @@
+{
+  "parent": "bits_n_bobs:block/small_cogwheel_chain/small_cogwheel_chain",
+  "loader": "neoforge:obj",
+  "flip_v": true,
+  "model": "bits_n_bobs:models/block/small_cogwheel_chain/cogwheel.obj"
+}

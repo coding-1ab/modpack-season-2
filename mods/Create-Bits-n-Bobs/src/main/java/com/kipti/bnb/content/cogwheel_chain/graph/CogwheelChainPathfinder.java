@@ -3,7 +3,9 @@ package com.kipti.bnb.content.cogwheel_chain.graph;
 import com.google.common.collect.ImmutableList;
 import com.kipti.bnb.CreateBitsnBobs;
 import net.createmod.catnip.data.Pair;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +72,7 @@ public class CogwheelChainPathfinder {
         }
     }
 
-    public static List<PathNode> buildChainPath(PartialCogwheelChain chain) {
+    public static Pair<List<PathNode>, List<ChainPathCogwheelNode>> buildChainPath(PartialCogwheelChain chain) {
         AtomicReference<PartialPathFrontierData> leftPath = new AtomicReference<>(new PartialPathFrontierData(
             ImmutableList.of(new PathNode(chain.getNodes().getFirst(), 1)),
             0,
@@ -155,7 +157,7 @@ public class CogwheelChainPathfinder {
 
             if (leftPath == null && rightPath == null) {
                 CreateBitsnBobs.LOGGER.warn("Failed to build cogwheel chain path at chainNode index {}", i);
-                return List.of();
+                return null;
             }
             prevNode = nextNode;
         }
@@ -168,7 +170,28 @@ public class CogwheelChainPathfinder {
         for (int i = 0; i < chain.getNodes().size() - 1; i++) {//TODO reduce the amount its "overpathing" to just the 2 extra nodes on each side
             finalTraversed.removeFirst();
         }
-        return finalTraversed;
+
+        return Pair.of(finalTraversed, getPathCogwheelNodesOfPath(chain, finalTraversed));
+    }
+
+    /**
+     * Walk through the final path and extract cogwheel positions.
+     * Should maybe be replaced with a direct generation but its fine this way.
+     */
+    private static @NotNull ArrayList<ChainPathCogwheelNode> getPathCogwheelNodesOfPath(PartialCogwheelChain chain, ArrayList<PathNode> finalTraversed) {
+        ArrayList<ChainPathCogwheelNode> cogwheelPositions = new ArrayList<>();
+
+        BlockPos lastPos = null;
+        BlockPos startPos = chain.getFirstNode().pos();
+        for (PathNode pathNode : finalTraversed) {
+            PartialCogwheelChainNode chainNode = pathNode.chainNode;
+            if (chainNode.pos() == lastPos) continue;
+            int side = pathNode.side;
+            BlockPos offsetToStart = chainNode.pos().subtract(startPos);
+            cogwheelPositions.add(new ChainPathCogwheelNode(side, offsetToStart));
+            lastPos = chainNode.pos();
+        }
+        return cogwheelPositions;
     }
 
     private static double getArcDistanceOnCog(PartialCogwheelChainNode prevNode, int incomingSide, PartialCogwheelChainNode currentNode, int outgoingSide, PartialCogwheelChainNode nextNode) {

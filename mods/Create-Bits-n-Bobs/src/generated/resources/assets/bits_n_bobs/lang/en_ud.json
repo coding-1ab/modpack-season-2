@@ -20,6 +20,7 @@
   "block.bits_n_bobs.green_large_nixie_tube": "ǝqn⟘ ǝıxıN ǝbɹɐꞀ uǝǝɹ⅁",
   "block.bits_n_bobs.green_nixie_board": "pɹɐoᗺ ǝıxıN uǝǝɹ⅁",
   "block.bits_n_bobs.headlamp": "dɯɐןpɐǝH",
+  "block.bits_n_bobs.large_cogwheel_chain": "uıɐɥƆ ןǝǝɥʍboƆ ǝbɹɐꞀ",
   "block.bits_n_bobs.large_nixie_tube": "ǝqn⟘ ǝıxıN ǝbɹɐꞀ",
   "block.bits_n_bobs.light_blue_chair": "ɹıɐɥƆ ǝnןᗺ ʇɥbıꞀ",
   "block.bits_n_bobs.light_blue_large_nixie_tube": "ǝqn⟘ ǝıxıN ǝbɹɐꞀ ǝnןᗺ ʇɥbıꞀ",
@@ -47,6 +48,7 @@
   "block.bits_n_bobs.red_chair": "ɹıɐɥƆ pǝᴚ",
   "block.bits_n_bobs.red_large_nixie_tube": "ǝqn⟘ ǝıxıN ǝbɹɐꞀ pǝᴚ",
   "block.bits_n_bobs.red_nixie_board": "pɹɐoᗺ ǝıxıN pǝᴚ",
+  "block.bits_n_bobs.small_cogwheel_chain": "uıɐɥƆ ןǝǝɥʍboƆ ןןɐɯS",
   "block.bits_n_bobs.weathered_metal_girder": "ɹǝpɹı⅁ ןɐʇǝW pǝɹǝɥʇɐǝM",
   "block.bits_n_bobs.weathered_metal_girder_encased_shaft": "ʇɟɐɥS pǝsɐɔuƎ ɹǝpɹı⅁ ןɐʇǝW pǝɹǝɥʇɐǝM",
   "block.bits_n_bobs.white_chair": "ɹıɐɥƆ ǝʇıɥM",
@@ -55,6 +57,7 @@
   "block.bits_n_bobs.yellow_chair": "ɹıɐɥƆ ʍoןןǝʎ",
   "block.bits_n_bobs.yellow_large_nixie_tube": "ǝqn⟘ ǝıxıN ǝbɹɐꞀ ʍoןןǝʎ",
   "block.bits_n_bobs.yellow_nixie_board": "pɹɐoᗺ ǝıxıN ʍoןןǝʎ",
+  "item.bits_n_bobs.cogwheel_chain_placing_chain": "uıɐɥƆ buıɔɐןԀ uıɐɥƆ ןǝǝɥʍboƆ",
   "message.bits_n_bobs.girder_strut.missing_anchors": "sʇnɹʇS ɹǝpɹı⅁ ǝɹoɯ %s pǝǝu noʎ",
   "tab.based": "sqoᗺ ,u, sʇıᗺ :ǝʇɐǝɹƆ"
 }

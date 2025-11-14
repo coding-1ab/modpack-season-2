@@ -17,11 +17,15 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class CogwheelChainBlock extends RotatedPillarKineticBlock
-    implements IBE<CogwheelChainBlockEntity>, ICogWheel { //TODO : waterlog state
+    implements IBE<CogwheelChainBlockEntity> { //TODO : waterlog state
 
     protected CogwheelChainBlock(boolean large, Properties properties) {
         super(properties);
         isLarge = large;
+    }
+
+    public boolean isLargeChainCog() {
+        return isLarge;
     }
 
     boolean isLarge;
@@ -32,16 +36,6 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
 
     public static CogwheelChainBlock large(Properties properties) {
         return new CogwheelChainBlock(true, properties);
-    }
-
-    @Override
-    public boolean isLargeCog() {
-        return isLarge;
-    }
-
-    @Override
-    public boolean isSmallCog() {
-        return !isLarge;
     }
 
     @Override
@@ -69,9 +63,17 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
         return BnbBlockEntities.COGWHEEL_CHAIN.get();
     }
 
-
     @Override
     public Direction.Axis getRotationAxis(BlockState state) {
         return state.getValue(AXIS);
+    }
+
+    @Override
+    public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face) {
+        return face.getAxis() == state.getValue(AXIS);
+    }
+
+    public float getRadius() {
+        return isLarge ? 1f : 0.5f;
     }
 }

@@ -46,6 +46,7 @@ public class CogwheelChainItem extends Item {
                 completed = chain.completeIfLooping(context.getLevel());
             } catch (CogwheelChain.InvalidGeometryException e) {
                 context.getPlayer().displayClientMessage(Component.literal(e.getMessage()).withColor(0xff0000), true);
+                if (!context.getLevel().isClientSide) stack.remove(BnbDataComponents.PARTIAL_COGWHEEL_CHAIN);
                 return InteractionResult.FAIL;
             }
             if (completed) {//TODO: cost chains or something
