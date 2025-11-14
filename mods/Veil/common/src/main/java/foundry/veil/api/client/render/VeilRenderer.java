@@ -12,6 +12,7 @@ import foundry.veil.api.client.render.post.PostProcessingManager;
 import foundry.veil.api.client.render.shader.ShaderManager;
 import foundry.veil.api.client.render.shader.ShaderModificationManager;
 import foundry.veil.api.client.render.shader.ShaderPreDefinitions;
+import foundry.veil.api.flare.FlareEffectManager;
 import foundry.veil.api.quasar.particle.ParticleSystemManager;
 import foundry.veil.impl.client.render.dynamicbuffer.DynamicBufferManager;
 import foundry.veil.impl.client.render.dynamicbuffer.VanillaShaderCompiler;
@@ -57,6 +58,7 @@ public class VeilRenderer implements ResourceManagerReloadListener {
     private final PostProcessingManager postProcessingManager;
     private final DynamicRenderTypeManager dynamicRenderTypeManager;
     private final ParticleSystemManager quasarParticleManager;
+    private final FlareEffectManager flareEffectManager;
     private final EditorManager editorManager;
     private final CameraMatrices cameraMatrices;
     private final LightRenderer lightRenderer;
@@ -73,6 +75,7 @@ public class VeilRenderer implements ResourceManagerReloadListener {
         this.postProcessingManager = new PostProcessingManager();
         this.dynamicRenderTypeManager = new DynamicRenderTypeManager();
         this.quasarParticleManager = new ParticleSystemManager();
+        this.flareEffectManager = new FlareEffectManager();
         this.editorManager = new EditorManager(resourceManager);
         this.cameraMatrices = new CameraMatrices();
         this.lightRenderer = new LightRenderer();
@@ -87,6 +90,7 @@ public class VeilRenderer implements ResourceManagerReloadListener {
         resourceManager.registerReloadListener(this.framebufferManager);
         resourceManager.registerReloadListener(this.postProcessingManager);
         resourceManager.registerReloadListener(this.dynamicRenderTypeManager);
+        resourceManager.registerReloadListener(this.flareEffectManager.getShellManager());
         resourceManager.registerReloadListener(this);
     }
 
@@ -223,6 +227,14 @@ public class VeilRenderer implements ResourceManagerReloadListener {
     }
 
     /**
+     * @return The manager for rendering and managing effects
+     * @since 2.5.0
+     */
+    public FlareEffectManager getEffectManager() {
+        return this.flareEffectManager;
+    }
+
+    /**
      * @return The manager for all editors
      */
     public EditorManager getEditorManager() {
@@ -276,6 +288,7 @@ public class VeilRenderer implements ResourceManagerReloadListener {
         this.framebufferManager.free();
         this.postProcessingManager.free();
         this.quasarParticleManager.clear();
+        this.flareEffectManager.getShellManager().free();
         this.lightRenderer.free();
     }
 
