@@ -33,7 +33,7 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
     protected void renderSafe(CogwheelChainBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
 
-        float rotationsPerTick = -be.getChainRotationDirection() * be.getSpeed() / (60 * 20);
+        float rotationsPerTick = -be.getChainRotationFactor() * be.getSpeed() / (60 * 20);
         float radius = be.getBlockState().getBlock() instanceof CogwheelChainBlock cbb ? cbb.getRadius() : 1f;
         float time = AnimationTickHolder.getRenderTime();
 

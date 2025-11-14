@@ -365,7 +365,7 @@ public class CogwheelChainGeometryBuilder {
         Vec3 tangentOrigin = incoming.scale(factor);
         double distance = (isIncoming ? 1 : -1) * tangentOrigin.length();
 
-        double sineRatio = currentRadius / distance;
+        double sineRatio = previousRadius / distance;
 
         double cosRatio = Math.sqrt(1 - sineRatio * sineRatio);
 

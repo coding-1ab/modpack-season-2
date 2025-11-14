@@ -1,11 +1,15 @@
 package com.kipti.bnb.foundation;
 
+import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChainGeometryBuilder;
+import com.kipti.bnb.content.cogwheel_chain.graph.PartialCogwheelChainNode;
 import com.kipti.bnb.content.cogwheel_chain.item.CogwheelChainPlacementEffect;
 import com.kipti.bnb.content.girder_strut.GirderStrutPlacementEffects;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderWrenchBehaviour;
 import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -54,6 +58,13 @@ public class ClientEvents {
             GirderStrutPlacementEffects.tick(mc.player);
             CogwheelChainPlacementEffect.tick(mc.player);
         }
+
+        var a = CogwheelChainGeometryBuilder.getTangentPointOnCircle(new Vec3(0, 1, 0), new Vec3(5, 0, 0),
+            new PartialCogwheelChainNode(new BlockPos(0, 0, 0), Direction.Axis.Y, true),
+            1,
+            new PartialCogwheelChainNode(new BlockPos(5, 0, 0), Direction.Axis.Y, false),
+            -1, false);
+
 //
 //        //Debugging for the cogwheel chain geo builder
 //        List<PartialCogwheelChainNode> chain = List.of(
@@ -164,21 +175,21 @@ public class ClientEvents {
 //        for (int i = 0; i < pathNodes.size(); i++) {
 //            CogwheelChainGeometryBuilderV3.PathNode fromNode = pathNodes.get(i);
 //            CogwheelChainGeometryBuilderV3.PathNode toNode = pathNodes.get((i + 1) % pathNodes.size());
-//            Vec3 toPos = CogwheelChainGeometryBuilderV3.getPathingTangentOnCog(fromNode.chainNode(), toNode.chainNode(), toNode.side()).add(toNode.chainNode().pos().getCenter());
-//            Vec3 fromPos = CogwheelChainGeometryBuilderV3.getPathingTangentOnCog(toNode.chainNode(), fromNode.chainNode(), -fromNode.side()).add(fromNode.chainNode().pos().getCenter());
+//            Vec3 toPos = CogwheelChainGeometryBuilderV3.getPathingTangentOnCog(fromNode.chainNode(), toNode.chainNode(), toNode.sideFactor()).add(toNode.chainNode().pos().getCenter());
+//            Vec3 fromPos = CogwheelChainGeometryBuilderV3.getPathingTangentOnCog(toNode.chainNode(), fromNode.chainNode(), -fromNode.sideFactor()).add(fromNode.chainNode().pos().getCenter());
 //            Outliner.getInstance().showLine(
-//                "cogwheel_chain_debug_line_path_" + i + " side " + toNode.side(),
+//                "cogwheel_chain_debug_line_path_" + i + " sideFactor " + toNode.sideFactor(),
 //                fromPos,
 //                toPos
 //            ).colored(0xFFFF00).lineWidth(0.2f);
 //
-//            int toNodeColor = toNode.side() == 1 ? 0x00FF00 : 0x0000FF;
-//            Outliner.getInstance().showAABB("cogwheel_chain_debug_aabb_to_" + i + " side " + toNode.side(),
+//            int toNodeColor = toNode.sideFactor() == 1 ? 0x00FF00 : 0x0000FF;
+//            Outliner.getInstance().showAABB("cogwheel_chain_debug_aabb_to_" + i + " sideFactor " + toNode.sideFactor(),
 //                new AABB(toPos.subtract(0.1, 0.1, 0.1), toPos.add(0.1, 0.1, 0.1))
 //            ).colored(toNodeColor);
 //
-//            int fromNodeColor = fromNode.side() == 1 ? 0x00FF00 : 0x0000FF;
-//            Outliner.getInstance().showAABB("cogwheel_chain_debug_aabb_from_" + i + " side " + toNode.side(),
+//            int fromNodeColor = fromNode.sideFactor() == 1 ? 0x00FF00 : 0x0000FF;
+//            Outliner.getInstance().showAABB("cogwheel_chain_debug_aabb_from_" + i + " sideFactor " + toNode.sideFactor(),
 //                new AABB(fromPos.subtract(0.1, 0.1, 0.1), fromPos.add(0.1, 0.1, 0.1))
 //            ).colored(fromNodeColor);
 //            Outliner.getInstance().showAABB("cogwheel_chain_node_" + i,

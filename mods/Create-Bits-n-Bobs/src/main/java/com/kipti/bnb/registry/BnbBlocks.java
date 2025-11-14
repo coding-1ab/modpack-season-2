@@ -149,7 +149,7 @@ public class BnbBlocks {
         .properties(p -> p.sound(SoundType.WOOD)
             .mapColor(MapColor.DIRT))
         .transform(axeOrPickaxe())
-        .blockstate(BlockStateGen.axisBlockProvider(true))
+        .blockstate(BlockStateGen.axisBlockProvider(false))
         .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
         .register();
 

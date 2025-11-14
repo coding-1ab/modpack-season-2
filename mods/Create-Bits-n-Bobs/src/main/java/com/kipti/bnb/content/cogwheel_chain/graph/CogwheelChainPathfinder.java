@@ -167,7 +167,7 @@ public class CogwheelChainPathfinder {
         if (finalPath == null) return null;
         ArrayList<PathNode> finalTraversed = new ArrayList<>(finalPath.traversed);
         finalTraversed.removeLast();
-        for (int i = 0; i < chain.getNodes().size() - 1; i++) {//TODO reduce the amount its "overpathing" to just the 2 extra nodes on each side
+        for (int i = 0; i < chain.getNodes().size() - 1; i++) {//TODO reduce the amount its "overpathing" to just the 2 extra nodes on each sideFactor
             finalTraversed.removeFirst();
         }
 
@@ -186,7 +186,7 @@ public class CogwheelChainPathfinder {
         for (PathNode pathNode : finalTraversed) {
             PartialCogwheelChainNode chainNode = pathNode.chainNode;
             if (chainNode.pos() == lastPos) continue;
-            int side = pathNode.side;
+            float side = pathNode.side * chainNode.getRadius();
             BlockPos offsetToStart = chainNode.pos().subtract(startPos);
             cogwheelPositions.add(new ChainPathCogwheelNode(side, offsetToStart));
             lastPos = chainNode.pos();

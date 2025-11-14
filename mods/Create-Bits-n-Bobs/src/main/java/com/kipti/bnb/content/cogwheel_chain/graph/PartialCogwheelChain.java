@@ -101,7 +101,7 @@ public class PartialCogwheelChain {
         }
 
         //Check if it's like a wrap around the pivot, in which case its safe
-        //Get the other axis, and if they are on the same side along this other axis
+        //Get the other axis, and if they are on the same sideFactor along this other axis
         int safeAxisOrdinal = Integer.numberOfTrailingZeros(7 & ~(1 << axis.ordinal()) & ~(1 << lastNode.rotationAxis().ordinal()));
         Direction.Axis safeAxis = Direction.Axis.values()[safeAxisOrdinal];
 

@@ -125,7 +125,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
 
     @Override
     public float propagateRotationTo(KineticBlockEntity target, BlockState stateFrom, BlockState stateTo, BlockPos diff, boolean connectedViaAxes, boolean connectedViaCogs) {
-        if (connectedViaAxes && Math.abs(diff.get(target.getBlockState().getValue(CogwheelChainBlock.AXIS))) == 1)
+        if (connectedViaAxes && Math.abs(diff.get(getBlockState().getValue(CogwheelChainBlock.AXIS))) == 1)
             return 0;
 
         //Else, check if this is the same chain structure.
@@ -143,22 +143,22 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
                     this.controllerOffset.offset(this.getBlockPos()).equals(chainTarget.controllerOffset.offset(target.getBlockPos()));
 
             if (isControlledBySame) {
-                int currentSide = this.getChainRotationDirection();
-                int otherSide = chainTarget.getChainRotationDirection();
-                return currentSide * otherSide;
+                float currentSide = this.getChainRotationFactor();
+                float otherSide = chainTarget.getChainRotationFactor();
+                return currentSide / otherSide;
             }
         }
         return 0;
     }
 
-    public int getChainRotationDirection() {
+    public float getChainRotationFactor() {
         if (isController) {
             if (chain == null) return 0;
 
             ChainPathCogwheelNode controllerNode = chain.getNodeFromControllerOffset(new Vec3i(0, 0, 0));
             if (controllerNode == null) return 0;
 
-            return controllerNode.side();
+            return controllerNode.sideFactor();
         }
 
         if (level == null || controllerOffset == null) return 0;
@@ -171,7 +171,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
             if (controllerChain == null) return 0;
 
             ChainPathCogwheelNode nodeInChain = controllerChain.getNodeFromControllerOffset(controllerOffset);
-            return nodeInChain == null ? 0 : nodeInChain.side();
+            return nodeInChain == null ? 0 : nodeInChain.sideFactor();
         }
         return 0;
     }

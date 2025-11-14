@@ -44,4 +44,8 @@ public record PartialCogwheelChainNode(BlockPos pos, Direction.Axis rotationAxis
         return vec.subtract(axisDir.multiply(vec));
     }
 
+    public float getRadius() {
+        return isLarge ? 1.0f : 0.5f;
+    }
+
 }

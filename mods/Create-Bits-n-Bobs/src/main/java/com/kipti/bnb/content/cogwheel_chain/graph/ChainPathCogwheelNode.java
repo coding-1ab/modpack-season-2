@@ -3,16 +3,16 @@ package com.kipti.bnb.content.cogwheel_chain.graph;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 
-public record ChainPathCogwheelNode(int side, BlockPos offsetFromStart) {
+public record ChainPathCogwheelNode(float sideFactor, BlockPos offsetFromStart) {
     public void write(CompoundTag posTag) {
-        posTag.putInt("Side", side);
+        posTag.putFloat("Side", sideFactor);
         posTag.putInt("OffsetX", offsetFromStart.getX());
         posTag.putInt("OffsetY", offsetFromStart.getY());
         posTag.putInt("OffsetZ", offsetFromStart.getZ());
     }
 
     public static ChainPathCogwheelNode read(CompoundTag posTag) {
-        int side = posTag.getInt("Side");
+        float side = posTag.getFloat("Side");
         BlockPos offset = new BlockPos(
             posTag.getInt("OffsetX"),
             posTag.getInt("OffsetY"),

@@ -46,7 +46,7 @@ public class GirderStrutModelBuilder extends BakedModelWrapper<BakedModel> {
 //        if (renderType != null && renderType != RenderType.solid()) {
 //            return base;
 //        }
-//        if (side != null) { //Fuck this shit took me way to long to figure out
+//        if (sideFactor != null) { //Fuck this shit took me way to long to figure out
 //            return base;
 //        }
 //        if (!data.has(GIRDER_PROPERTY)) {
