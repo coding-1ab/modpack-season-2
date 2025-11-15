@@ -1,4 +1,4 @@
-// 1.21.1	2025-11-14T17:17:13.9035234	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2025-11-15T18:35:58.510234	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 48912dac50502aaa4e2afa58c6124f5a61f1057a assets/bits_n_bobs/blockstates/black_chair.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/black_large_nixie_tube.json
 5f1d323a930becf0ed2bee64bbb33c152802b2b2 assets/bits_n_bobs/blockstates/black_nixie_board.json
@@ -12,7 +12,7 @@ c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/brown_la
 f04a4a114d260a3eee383c29ee69f0492fcd4dd1 assets/bits_n_bobs/blockstates/cyan_chair.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/cyan_large_nixie_tube.json
 5f1d323a930becf0ed2bee64bbb33c152802b2b2 assets/bits_n_bobs/blockstates/cyan_nixie_board.json
-5e763bdc853348b8b14b9fd7477624d96d57385e assets/bits_n_bobs/blockstates/girder_strut.json
+48500ea148ccc1668ec3ca7800576a2be9de10e6 assets/bits_n_bobs/blockstates/girder_strut.json
 4b18f95d38c2d98ca176f606443e282c8075f225 assets/bits_n_bobs/blockstates/gray_chair.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/gray_large_nixie_tube.json
 5f1d323a930becf0ed2bee64bbb33c152802b2b2 assets/bits_n_bobs/blockstates/gray_nixie_board.json
@@ -193,7 +193,7 @@ eb2648575386ff59794eb509dde6eff42a2b2d18 assets/bits_n_bobs/models/item/brass_la
 eca6cdeeeb3bb0ecb6c0803f7221f9d6cb694c05 assets/bits_n_bobs/models/item/brown_chair.json
 82bb7da970be67647eba48bae9b05e9ff8f54193 assets/bits_n_bobs/models/item/cogwheel_chain_placing_chain.json
 1dfbbb3e0ee9a6af8ece52b61d27dd559cc1380f assets/bits_n_bobs/models/item/cyan_chair.json
-b6097087a006a42d9cf9f48e7ed27f07a111ab28 assets/bits_n_bobs/models/item/girder_strut.json
+5d4b2fcf463e5db87a7d823fec8f67c60e04f7f1 assets/bits_n_bobs/models/item/girder_strut.json
 62c2ab0aaee1faa5d9505dad7b68e12085a41f99 assets/bits_n_bobs/models/item/gray_chair.json
 ffd5057178e11ce2c87616a54d3bfb4185eef187 assets/bits_n_bobs/models/item/green_chair.json
 0c5ab6eb4618c5fb2fbb27d78a22add1362cdab9 assets/bits_n_bobs/models/item/headlamp.json

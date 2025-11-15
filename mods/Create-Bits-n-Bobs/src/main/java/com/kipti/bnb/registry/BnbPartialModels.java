@@ -29,8 +29,7 @@ public class BnbPartialModels {
         }
     }
 
-    public static final PartialModel GIRDER_STRUT_SEGMENT = block("girder_strut/normal_girder");
-    public static final PartialModel GIRDER_STRUT_JOINT_SEGMENT = block("girder_strut/normal_girder_joint");
+    public static final PartialModel GIRDER_STRUT_SEGMENT = block("girder_strut/girder");
 
     private static PartialModel block(String path) {
         return PartialModel.of(CreateBitsnBobs.asResource("block/" + path));

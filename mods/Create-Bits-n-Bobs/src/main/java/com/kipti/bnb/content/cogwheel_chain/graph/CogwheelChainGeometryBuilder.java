@@ -226,7 +226,7 @@ public class CogwheelChainGeometryBuilder {
         // Choose segments based on arc length for consistent spacing
         double absAngle = Math.abs(signedAngle);
         double approxArcLength = r * absAngle;
-        int segments = Math.max(1, (int) Math.ceil(approxArcLength));
+        int segments = Math.max(1, (int) (Math.ceil(approxArcLength) * 1.5f));
         List<ChainPathNode> result = new ArrayList<>();
 
         // generate interior points (exclude endpoints)

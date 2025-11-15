@@ -224,13 +224,13 @@ public class BnbBlocks {
         .properties(p -> p.noOcclusion())
         .blockstate((c, p) -> p.directionalBlock(c.get(),
             (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                "block/girder_strut/normal_girder_strut_attachment")
+                "block/girder_strut/girder_strut_attachment")
             )))
         .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
         .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
         .item(GirderStrutBlockItem::new)
         .model((c, p) ->
-            p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/normal_girder_strut_attachment"))
+            p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/girder_strut_attachment"))
         )
         .build()
         .register();
