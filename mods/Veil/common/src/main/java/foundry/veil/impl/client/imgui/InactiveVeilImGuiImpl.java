@@ -25,14 +25,6 @@ public class InactiveVeilImGuiImpl implements VeilImGui {
     }
 
     @Override
-    public void toggle() {
-    }
-
-    @Override
     public void updateFonts() {
-    }
-
-    @Override
-    public void addImguiShaders(ObjIntConsumer<ResourceLocation> registry) {
     }
 }

@@ -1,6 +1,7 @@
 package foundry.veil.fabric.mixin.client;
 
 import foundry.veil.VeilClient;
+import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.impl.client.imgui.VeilImGuiImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
@@ -23,7 +24,7 @@ public class MouseHandlerMixin {
     @Inject(method = "onPress", at = @At("HEAD"))
     public void keyPress(long window, int button, int action, int mods, CallbackInfo ci) {
         if (window == this.minecraft.getWindow().getWindow() && action == GLFW_PRESS && VeilClient.EDITOR_KEY.matchesMouse(button)) {
-            VeilImGuiImpl.get().toggle();
+            VeilRenderSystem.renderer().getEditorManager().toggle();
         }
     }
 }

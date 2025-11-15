@@ -31,6 +31,7 @@ import foundry.veil.api.flare.modifier.RandomnessController;
 import foundry.veil.ext.LevelRendererExtension;
 import foundry.veil.ext.TextureManagerExtension;
 import foundry.veil.ext.VertexBufferExtension;
+import foundry.veil.impl.client.imgui.AdvancedFboImGuiAreaImpl;
 import foundry.veil.impl.client.imgui.VeilImGuiImpl;
 import foundry.veil.impl.client.necromancer.render.NecromancerRenderDispatcher;
 import foundry.veil.impl.client.render.dynamicbuffer.VanillaShaderCompiler;
@@ -1176,6 +1177,7 @@ public final class VeilRenderSystem {
 
     @ApiStatus.Internal
     public static void endFrame() {
+        AdvancedFboImGuiAreaImpl.end();
         VeilImGuiImpl.get().endFrame();
 
         if (Veil.platform().hasErrors()) {

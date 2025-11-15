@@ -771,7 +771,6 @@ public class ShaderInspector extends SingleWindowInspector implements ResourceMa
                 for (ShaderProgram shader : shaders.values()) {
                     registry.accept(shader.getName(), shader.getProgram());
                 }
-                VeilImGuiImpl.get().addImguiShaders(registry);
             }
         },
         IRIS(Component.translatable("inspector.veil.shader.source.iris"), () -> IrisCompat.INSTANCE != null) {

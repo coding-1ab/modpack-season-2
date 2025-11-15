@@ -47,7 +47,7 @@ public class VeilForgeClientEvents {
     @SubscribeEvent
     public static void keyPressed(InputEvent.Key event) {
         if (event.getAction() == GLFW_PRESS && VeilClient.EDITOR_KEY.matches(event.getKey(), event.getScanCode())) {
-            VeilImGuiImpl.get().toggle();
+            VeilRenderSystem.renderer().getEditorManager().toggle();
         }
     }
 
@@ -114,7 +114,7 @@ public class VeilForgeClientEvents {
     @SubscribeEvent
     public static void mousePressed(InputEvent.MouseButton.Pre event) {
         if (event.getAction() == GLFW_PRESS && VeilClient.EDITOR_KEY.matchesMouse(event.getButton())) {
-            VeilImGuiImpl.get().toggle();
+            VeilRenderSystem.renderer().getEditorManager().toggle();
         }
     }
 

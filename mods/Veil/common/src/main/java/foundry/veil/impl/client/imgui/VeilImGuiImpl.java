@@ -9,14 +9,10 @@ import imgui.extension.implot.ImPlotContext;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.internal.ImGuiContext;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.system.NativeResource;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.ObjIntConsumer;
 
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
@@ -27,30 +23,6 @@ import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 @ApiStatus.Internal
 public class VeilImGuiImpl implements VeilImGui, NativeResource {
 
-    private static final MethodHandle DATA_GETTER;
-    private static final MethodHandle SHADER_GETTER;
-
-    static {
-        MethodHandle dataGetter;
-        MethodHandle shaderGetter;
-
-        try {
-            Class<?> dataClass = Class.forName("imgui.gl3.ImGuiImplGl3$Data");
-            MethodHandles.Lookup dataLookup = MethodHandles.privateLookupIn(ImGuiImplGl3.class, MethodHandles.lookup());
-            dataGetter = dataLookup.findGetter(ImGuiImplGl3.class, "data", dataClass);
-
-            MethodHandles.Lookup shaderLookup = MethodHandles.privateLookupIn(dataClass, dataLookup);
-            shaderGetter = shaderLookup.findGetter(dataClass, "shaderHandle", int.class);
-        } catch (Throwable t) {
-            Veil.LOGGER.error("Failed to get ImGui shader handle: {}", t.getMessage());
-            dataGetter = null;
-            shaderGetter = null;
-        }
-
-        DATA_GETTER = dataGetter;
-        SHADER_GETTER = shaderGetter;
-    }
-
     private static VeilImGui instance = new InactiveVeilImGuiImpl();
 
     private final VeilImGuiImplGlfw implGlfw;
@@ -59,7 +31,7 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
     private final ImPlotContext imPlotContext;
     private final AtomicBoolean active;
 
-    private VeilImGuiImpl(long window) throws Throwable {
+    private VeilImGuiImpl(long window) {
         this.implGlfw = new VeilImGuiImplGlfw(this);
         this.implGl3 = new ImGuiImplGl3();
 
@@ -135,8 +107,6 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
 
     @Override
     public void endFrame() {
-        AdvancedFboImGuiAreaImpl.end();
-
         try {
             if (!this.active.get()) {
                 Veil.LOGGER.error("ImGui state de-synced");
@@ -162,27 +132,10 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
     }
 
     @Override
-    public void toggle() {
-        VeilRenderSystem.renderer().getEditorManager().toggle();
-    }
-
-    @Override
     public void updateFonts() {
         this.implGl3.destroyFontsTexture();
         if (!this.implGl3.createFontsTexture()) {
             throw new IllegalStateException("Failed to update font texture");
-        }
-    }
-
-    @Override
-    public void addImguiShaders(ObjIntConsumer<ResourceLocation> registry) {
-        if (DATA_GETTER != null && SHADER_GETTER != null) {
-            try {
-                int handle = (int) SHADER_GETTER.invoke(DATA_GETTER.invoke(this.implGl3));
-                registry.accept(ResourceLocation.fromNamespaceAndPath("imgui", "blit"), handle);
-            } catch (Throwable t) {
-                Veil.LOGGER.warn("Failed to add ImGui shader", t);
-            }
         }
     }
 
