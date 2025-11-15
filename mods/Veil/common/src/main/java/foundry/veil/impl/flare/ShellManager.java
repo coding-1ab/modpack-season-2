@@ -78,6 +78,6 @@ public class ShellManager extends SimplePreparableReloadListener<Map<ResourceLoc
         for (BakedShell shell : this.shells.values()) {
             shell.free();
         }
-        this.shells.clear();
+        this.shells = Map.of();
     }
 }
