@@ -58,6 +58,7 @@
   "block.bits_n_bobs.yellow_large_nixie_tube": "Yellow Large Nixie Tube",
   "block.bits_n_bobs.yellow_nixie_board": "Yellow Nixie Board",
   "item.bits_n_bobs.cogwheel_chain_placing_chain": "Cogwheel Chain Placing Chain",
+  "item.bits_n_bobs.crushed_deepslate": "Crushed Deepslate",
   "message.bits_n_bobs.girder_strut.missing_anchors": "You need %s more Girder Struts",
   "tab.based": "Create: Bits 'n' Bobs"
 }
