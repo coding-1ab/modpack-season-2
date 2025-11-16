@@ -293,7 +293,7 @@ public class BnbBlocks {
             .register();
     });
 
-    public static final BlockEntry<ColoredFallingBlock> CALCINATED_FLINT = REGISTRATE.block("calcinated_flint", (p) -> new ColoredFallingBlock(new ColorRGBA(14406560), p))
+    public static final BlockEntry<ColoredFallingBlock> CALCINATED_FLINT_GRAVEL = REGISTRATE.block("calcinated_gravel", (p) -> new ColoredFallingBlock(new ColorRGBA(14406560), p))
         .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
             .sound(SoundType.SAND))
         .transform(b -> b.tag(BlockTags.MINEABLE_WITH_SHOVEL))

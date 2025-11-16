@@ -1,0 +1,14 @@
+{
+  "type": "create:splashing",
+  "ingredients": [
+    {
+      "item": "bits_n_bobs:crushed_deepslate"
+    }
+  ],
+  "results": [
+    {
+      "chance": 0.15,
+      "id": "create:zinc_nugget"
+    }
+  ]
+}

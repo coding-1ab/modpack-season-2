@@ -2,7 +2,7 @@
   "type": "create:splashing",
   "ingredients": [
     {
-      "item": "bits_n_bobs:calcinated_flint_ball"
+      "item": "bits_n_bobs:calcinated_flint"
     }
   ],
   "results": [

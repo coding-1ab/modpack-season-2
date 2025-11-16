@@ -13,7 +13,7 @@ public class BnbItems {
     public static final ItemEntry<Item> CRUSHED_DEEPSLATE = CreateBitsnBobs.REGISTRATE.item("crushed_deepslate", Item::new)
         .register();
 
-    public static final ItemEntry<Item> CALCINATED_FLINT_BALL = CreateBitsnBobs.REGISTRATE.item("calcinated_flint_ball", Item::new)
+    public static final ItemEntry<Item> CALCINATED_FLINT = CreateBitsnBobs.REGISTRATE.item("calcinated_flint", Item::new)
         .register();
 
     public static void register() {

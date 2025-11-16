@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "bits_n_bobs:calcinated_flint"
+          "name": "bits_n_bobs:calcinated_gravel"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "bits_n_bobs:blocks/calcinated_flint"
+  "random_sequence": "bits_n_bobs:blocks/calcinated_gravel"
 }

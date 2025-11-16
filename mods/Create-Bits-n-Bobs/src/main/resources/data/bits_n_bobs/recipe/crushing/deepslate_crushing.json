@@ -1,0 +1,23 @@
+{
+  "type": "create:crushing",
+  "ingredients": [
+    {
+      "item": "minecraft:deepslate"
+    }
+  ],
+  "processing_time": 450,
+  "results": [
+    {
+      "count": 3,
+      "id": "bits_n_bobs:crushed_deepslate"
+    },
+    {
+      "chance": 0.25,
+      "id": "bits_n_bobs:crushed_deepslate"
+    },
+    {
+      "chance": 0.5,
+      "id": "minecraft:cobbled_deepslate"
+    }
+  ]
+}

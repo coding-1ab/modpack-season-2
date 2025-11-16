@@ -3,11 +3,11 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "bits_n_bobs:calcinated_flint"
+      "item": "bits_n_bobs:calcinated_gravel"
     }
   ],
   "result": {
     "count": 4,
-    "id": "bits_n_bobs:calcinated_flint_ball"
+    "id": "bits_n_bobs:calcinated_flint"
   }
 }
