@@ -34,10 +34,9 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
 
         float rotationsPerTick = -be.getChainRotationFactor() * be.getSpeed() / (60 * 20);
-        float radius = be.getBlockState().getBlock() instanceof CogwheelChainBlock cbb ? cbb.getRadius() : 1f;
         float time = AnimationTickHolder.getRenderTime();
 
-        float offset = rotationsPerTick == 0 ? 0 : (float) ((((radius * Math.PI * 2) * rotationsPerTick * time) % 1f) + 1f) % 1f;
+        float offset = rotationsPerTick == 0 ? 0 : (float) (((Math.PI * 2 * rotationsPerTick * time) % 1f) + 1f) % 1f;
 
         //For now, if controller, render an outliner between each chainNode
         Function<Vector3f, Integer> lighter = be.createGlobalLighter();
