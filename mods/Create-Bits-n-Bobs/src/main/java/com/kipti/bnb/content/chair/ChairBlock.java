@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.chair;
 
+import com.kipti.bnb.registry.BnbBlocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.contraptions.actors.seat.SeatBlock;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
@@ -72,14 +73,14 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
 //        boolean isFlatBack = stateBack.getBlock() instanceof ChairBlock &&
 //            (stateBack.getValue(FACING) == facing.getOpposite() || stateBack.getValue(CORNER) && stateBack.getValue(FACING) != facing);
 
-        boolean isFlatBack = stateBack.isCollisionShapeFullBlock(pLevel, pCurrentPos.relative(facing.getOpposite()));
+        boolean isFlatBack = BnbBlocks.CHAIRS.contains(stateBack.getBlock()) || stateBack.isCollisionShapeFullBlock(pLevel, pCurrentPos.relative(facing.getOpposite()));
 
         boolean corner = hasConnectableFront && (hasConnectableLeft != hasConnectableRight);
         if (hasConnectableFront) {
             Direction cornerFacing = hasConnectableLeft ? facing.getCounterClockWise() : facing.getClockWise();
             BlockPos cornerPos = pCurrentPos.relative(cornerFacing);
             BlockState stateBackCorner = pLevel.getBlockState(cornerPos);
-            isFlatBack = isFlatBack || stateBackCorner.isCollisionShapeFullBlock(pLevel, cornerPos);
+            isFlatBack = isFlatBack || BnbBlocks.CHAIRS.contains(stateBackCorner.getBlock()) || stateBackCorner.isCollisionShapeFullBlock(pLevel, cornerPos);
         }
 
         return blockState

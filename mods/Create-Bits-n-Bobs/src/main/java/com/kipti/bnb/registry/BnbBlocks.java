@@ -38,8 +38,11 @@ import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.ColorRGBA;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.ColoredFallingBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -218,7 +221,7 @@ public class BnbBlocks {
             .onRegister(CreateRegistrate.blockModel(() -> WeatheredConnectedGirderModel::new))
             .register();
 
-    public static final BlockEntry<GirderStrutBlock> GIRDER_STRUT = REGISTRATE.block("girder_strut", GirderStrutBlock::new)
+    public static final BlockEntry<GirderStrutBlock> GIRDER_STRUT = REGISTRATE.block("girder_strut", GirderStrutBlock.normal())
         .initialProperties(SharedProperties::softMetal)
         .transform(pickaxeOnly())
         .properties(p -> p.noOcclusion())
@@ -231,6 +234,23 @@ public class BnbBlocks {
         .item(GirderStrutBlockItem::new)
         .model((c, p) ->
             p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/girder_strut_attachment"))
+        )
+        .build()
+        .register();
+
+    public static final BlockEntry<GirderStrutBlock> WEATHERED_GIRDER_STRUT = REGISTRATE.block("weathered_girder_strut", GirderStrutBlock.weathered())
+        .initialProperties(SharedProperties::softMetal)
+        .transform(pickaxeOnly())
+        .properties(p -> p.noOcclusion())
+        .blockstate((c, p) -> p.directionalBlock(c.get(),
+            (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                "block/girder_strut/weathered_girder_strut_attachment")
+            )))
+        .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
+        .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+        .item(GirderStrutBlockItem::new)
+        .model((c, p) ->
+            p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/weathered_girder_strut_attachment"))
         )
         .build()
         .register();
@@ -272,6 +292,13 @@ public class BnbBlocks {
             .build()
             .register();
     });
+
+    public static final BlockEntry<ColoredFallingBlock> CALCINATED_FLINT = REGISTRATE.block("calcinated_flint", (p) -> new ColoredFallingBlock(new ColorRGBA(14406560), p))
+        .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
+            .sound(SoundType.SAND))
+        .transform(b -> b.tag(BlockTags.MINEABLE_WITH_SHOVEL))
+        .simpleItem()
+        .register();
 
     public static void register() {
     }

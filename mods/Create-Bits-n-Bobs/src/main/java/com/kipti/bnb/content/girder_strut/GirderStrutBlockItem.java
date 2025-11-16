@@ -46,7 +46,7 @@ public class GirderStrutBlockItem extends BlockItem {
 
         BlockPos placementPos = resolvePlacementPos(level, clickedPos, face);
         Direction placementFace = face;
-        if (placementPos != null && level.getBlockState(placementPos).getBlock() instanceof GirderStrutBlock) {
+        if (placementPos != null && level.getBlockState(placementPos).getBlock().equals(getBlock())) {
             placementFace = level.getBlockState(placementPos).getValue(GirderStrutBlock.FACING);
         }
 
@@ -74,7 +74,7 @@ public class GirderStrutBlockItem extends BlockItem {
 
         if (fromFace == null) {
             BlockState fromState = level.getBlockState(fromPos);
-            if (fromState.getBlock() instanceof GirderStrutBlock) {
+            if (fromState.getBlock().equals(getBlock())) {
                 fromFace = fromState.getValue(GirderStrutBlock.FACING);
             } else {
                 fromFace = placementFace.getOpposite();
@@ -165,8 +165,8 @@ public class GirderStrutBlockItem extends BlockItem {
         BlockState fromState = level.getBlockState(fromPos);
         BlockState targetState = level.getBlockState(targetPos);
 
-        boolean fromNeedsPlacement = !(fromState.getBlock() instanceof GirderStrutBlock);
-        boolean targetNeedsPlacement = !(targetState.getBlock() instanceof GirderStrutBlock);
+        boolean fromNeedsPlacement = !(fromState.getBlock().equals(getBlock()));
+        boolean targetNeedsPlacement = !(targetState.getBlock().equals(getBlock()));
 
         int requiredAnchors = (fromNeedsPlacement ? 1 : 0) + (targetNeedsPlacement ? 1 : 0);
 
@@ -210,7 +210,7 @@ public class GirderStrutBlockItem extends BlockItem {
         BlockState newFromState = level.getBlockState(fromPos);
         BlockState newTargetState = level.getBlockState(targetPos);
 
-        if (!(newFromState.getBlock() instanceof GirderStrutBlock) || !(newTargetState.getBlock() instanceof GirderStrutBlock)) {
+        if (!(newFromState.getBlock().equals(getBlock())) || !(newTargetState.getBlock().equals(getBlock()))) {
             return ConnectionResult.INVALID;
         }
 
@@ -335,17 +335,17 @@ public class GirderStrutBlockItem extends BlockItem {
 
     private boolean canOccupy(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
-        return state.isAir() || state.getBlock() instanceof GirderStrutBlock;
+        return state.isAir() || state.getBlock().equals(getBlock());
     }
 
     private BlockPos resolvePlacementPos(Level level, BlockPos clickedPos, Direction face) {
         BlockState clickedState = level.getBlockState(clickedPos);
-        if (clickedState.getBlock() instanceof GirderStrutBlock) {
+        if (clickedState.getBlock().equals(getBlock())) {
             return clickedPos;
         }
         BlockPos pos = clickedPos.relative(face);
         BlockState state = level.getBlockState(pos);
-        if (!state.isAir() && !(state.getBlock() instanceof GirderStrutBlock)) {
+        if (!state.isAir() && !(state.getBlock().equals(getBlock()))) {
             return null;
         }
         return pos;
@@ -356,4 +356,5 @@ public class GirderStrutBlockItem extends BlockItem {
         INVALID,
         MISSING_ITEMS
     }
+
 }

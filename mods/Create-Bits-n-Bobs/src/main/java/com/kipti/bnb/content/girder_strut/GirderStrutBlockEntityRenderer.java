@@ -1,6 +1,5 @@
 package com.kipti.bnb.content.girder_strut;
 
-import com.kipti.bnb.registry.BnbPartialModels;
 import com.mojang.blaze3d.vertex.*;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
@@ -33,6 +32,13 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
     @Override
     protected void renderSafe(GirderStrutBlockEntity blockEntity, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         super.renderSafe(blockEntity, partialTicks, ms, buffer, light, overlay);
+
+        StrutModelType modelType;
+        if (blockEntity.getBlockState().getBlock() instanceof GirderStrutBlock girderStrutBlock) {
+            modelType = girderStrutBlock.modelType;
+        } else {
+            return;
+        }
 
         // Fast, pure partial based approach, which actually looks ok so ill leave it for fast graphics
         if (Minecraft.getInstance().options.graphicsMode().get() == GraphicsStatus.FAST) {
@@ -72,7 +78,7 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
 
                 ms.translate(0, 0, lengthOffset + 0.5); // Adjust the translation based on segment length
                 if (getRenderPriority(relative) > getRenderPriority(relative.multiply(-1))) {
-                    renderSegments(state, BnbPartialModels.GIRDER_STRUT_SEGMENT, ms, segments, buffer, blockEntity.getLevel() == null ? light : LevelRenderer.getLightColor(blockEntity.getLevel(), pos));
+                    renderSegments(state, modelType.getPartialModel(), ms, segments, buffer, blockEntity.getLevel() == null ? light : LevelRenderer.getLightColor(blockEntity.getLevel(), pos));
                 }
                 ms.popPose();
             }
@@ -81,7 +87,7 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
                 GirderStrutModelBuilder.GirderStrutModelData connectionData = GirderStrutModelBuilder.GirderStrutModelData.collect(blockEntity.getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity);
                 List<Consumer<BufferBuilder>> quads = connectionData.connections()
                     .stream()
-                    .flatMap(c -> GirderStrutModelManipulator.bakeConnectionToConsumer(c, blockEntity.createLighter()).stream())
+                    .flatMap(c -> GirderStrutModelManipulator.bakeConnectionToConsumer(c, modelType, blockEntity.createLighter()).stream())
                     .toList();
 
                 BufferBuilder builder = new BufferBuilder(new ByteBufferBuilder(256), VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);

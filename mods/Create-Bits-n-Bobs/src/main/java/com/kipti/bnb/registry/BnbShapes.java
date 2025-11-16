@@ -1,6 +1,5 @@
 package com.kipti.bnb.registry;
 
-import com.google.gson.JsonArray;
 import com.simibubi.create.AllShapes;
 import net.createmod.catnip.math.VoxelShaper;
 import net.minecraft.core.Direction;
@@ -12,6 +11,11 @@ public class BnbShapes {
     public static final VoxelShaper HEADLAMP_INTERACTION = shape(0, 0, 0, 16, 7, 16)
         .forDirectional();
 
+    public static final VoxelShaper SIX_VOXEL_POLE = shape(5, 0, 5, 11, 16, 11).forAxis(),
+        SMALL_GEAR = shape(cuboid(2, 4, 2, 14, 12, 14)).add(SIX_VOXEL_POLE.get(Direction.Axis.Y))
+            .forAxis(),
+        LARGE_GEAR = shape(cuboid(0, 4, 0, 16, 12, 16)).add(SIX_VOXEL_POLE.get(Direction.Axis.Y))
+            .forAxis();
     public static final VoxelShaper LIGHTBULB_SHAPE = shape(6, 0, 6, 10, 2, 10)
         .add(cuboid(5, 2, 5, 11, 13, 11))
         .forDirectional();

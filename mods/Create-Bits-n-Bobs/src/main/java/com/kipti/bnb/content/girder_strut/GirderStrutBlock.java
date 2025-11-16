@@ -2,6 +2,7 @@ package com.kipti.bnb.content.girder_strut;
 
 import com.kipti.bnb.registry.BnbBlockEntities;
 import com.simibubi.create.foundation.block.IBE;
+import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -26,9 +27,20 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
     private static final VoxelShape SHAPE = Shapes.box(4 / 16d, 0, 4 / 16d, 12 / 16d, 12 / 16d, 12 / 16d);
     public static final int MAX_SPAN = 8;
 
-    public GirderStrutBlock(Properties properties) {
+    StrutModelType modelType;
+
+    public GirderStrutBlock(Properties properties, StrutModelType modelType) {
         super(properties);
         registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP));
+        this.modelType = modelType;
+    }
+
+    public static NonNullFunction<Properties, GirderStrutBlock> normal() {
+        return properties -> new GirderStrutBlock(properties, StrutModelType.NORMAL);
+    }
+
+    public static NonNullFunction<Properties, GirderStrutBlock> weathered() {
+        return properties -> new GirderStrutBlock(properties, StrutModelType.WEATHERED);
     }
 
     @Override
@@ -58,7 +70,7 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
         if (level.isClientSide) return;
         BlockEntity selfBe = level.getBlockEntity(pos);
         if (!(selfBe instanceof GirderStrutBlockEntity self)) return;
-
+        //TODO idk what this is for so remove it later
 
     }
 
