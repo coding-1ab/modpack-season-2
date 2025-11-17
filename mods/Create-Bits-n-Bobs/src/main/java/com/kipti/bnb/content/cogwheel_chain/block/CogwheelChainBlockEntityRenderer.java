@@ -33,34 +33,58 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
     protected void renderSafe(CogwheelChainBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
 
-        final float rotationsPerTick = -be.getChainRotationFactor() * be.getSpeed() / (60 * 20);
-        final float time = be.getLevel() != null ? AnimationTickHolder.getRenderTime(be.getLevel()) : AnimationTickHolder.getRenderTime();
-
-        final float offset = rotationsPerTick == 0 ? 0 : (float) (((Math.PI * 2 * rotationsPerTick * time) % 1f) + 1f) % 1f;
-
-        //For now, if controller, render an outliner between each chainNode
         Function<Vector3f, Integer> lighter = be.createGlobalLighter();
         if (be.isController && be.chain != null) {
+            final float rotationsPerTick = be.getChainRotationFactor() * be.getSpeed() / (60 * 20);
+            final float time = be.getLevel() != null ? AnimationTickHolder.getRenderTime(be.getLevel()) : AnimationTickHolder.getRenderTime();
+
+            final float offset = rotationsPerTick == 0 ? 0 : (float) (Math.PI * 2 * rotationsPerTick * time);
+
+            final double totalChainDistance = calculateTotalChainDistance(be);
+            final double chainTextureSquish = Math.ceil(totalChainDistance) / totalChainDistance;
+
+            double accumulatedUV = 0f;
+
             final Vec3 origin = Vec3.atLowerCornerOf(be.getBlockPos());
             for (int i = 0; i < be.chain.getChainPathNodes().size(); i++) {
                 final ChainPathNode nodeA = be.chain.getChainPathNodes().get(i);
                 final ChainPathNode nodeB = be.chain.getChainPathNodes().get((i + 1) % be.chain.getChainPathNodes().size());
 
-//                Outliner.getInstance()
-//                    .showLine(nodeA, nodeA.getPosition(), nodeB.getPosition())
-//                    .colored(0xff00ff00)
-//                    .lineWidth(0.2f);
-                renderChain(be, ms, buffer, light, overlay, nodeA.getPosition().add(origin), nodeB.getPosition().add(origin), lighter, offset);
+                final double stretchOffset = offset + accumulatedUV;
+
+                final double distance = nodeA.getPosition().add(origin).distanceTo(nodeB.getPosition().add(origin));
+                accumulatedUV += Math.signum(rotationsPerTick) * distance;
+
+                renderChain(be, ms, buffer, nodeB.getPosition().add(origin), nodeA.getPosition().add(origin), lighter, (float) stretchOffset, (float) chainTextureSquish);
             }
         }
     }
 
+    private double calculateTotalChainDistance(CogwheelChainBlockEntity be) {
+        double totalDistance = 0f;
+        final Vec3 origin = Vec3.atLowerCornerOf(be.getBlockPos());
+        for (int i = 0; i < be.chain.getChainPathNodes().size(); i++) {
+            final ChainPathNode nodeA = be.chain.getChainPathNodes().get(i);
+            final ChainPathNode nodeB = be.chain.getChainPathNodes().get((i + 1) % be.chain.getChainPathNodes().size());
+
+            totalDistance += nodeA.getPosition().add(origin).distanceTo(nodeB.getPosition().add(origin));
+        }
+        return totalDistance;
+    }
+
     //Mostly just copied from create's chain renderer
 
-    private void renderChain(CogwheelChainBlockEntity be, PoseStack ms, MultiBufferSource buffer, int light, int overlay, Vec3 from, Vec3 to, Function<Vector3f, Integer> lighter, float offset) {
+    private void renderChain(CogwheelChainBlockEntity be,
+                             PoseStack ms,
+                             MultiBufferSource buffer,
+                             Vec3 from,
+                             Vec3 to,
+                             Function<Vector3f, Integer> lighter,
+                             float offset,
+                             float textureSquish) {
         Vec3 diff = to.subtract(from);
-        double yaw = (float) Mth.RAD_TO_DEG * Mth.atan2(diff.x, diff.z);
-        double pitch = (float) Mth.RAD_TO_DEG * Mth.atan2(diff.y, diff.multiply(1, 0, 1)
+        double yaw = Mth.RAD_TO_DEG * Mth.atan2(diff.x, diff.z);
+        double pitch = Mth.RAD_TO_DEG * Mth.atan2(diff.y, diff.multiply(1, 0, 1)
                 .length());
 
         BlockPos tilePos = be.getBlockPos();
@@ -84,16 +108,16 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
                 .getBlockEntityRenderDispatcher().camera.getPosition()
                 .closerThan(from.lerp(to, 0.5), MIP_DISTANCE);
 
-        renderChain(ms, buffer, offset, (float) from.distanceTo(to), light1, light2, far);
+        renderChain(ms, buffer, offset, textureSquish, (float) from.distanceTo(to), light1, light2, far);
 
         ms.popPose();
     }
 
-    public static void renderChain(PoseStack ms, MultiBufferSource buffer, float offset, float length, int light1,
+    public static void renderChain(PoseStack ms, MultiBufferSource buffer, float offset, float textureSquish, float length, int light1,
                                    int light2, boolean far) {
         float radius = far ? 1f / 16f : 1.5f / 16f;
-        float minV = far ? 0 : offset;
-        float maxV = far ? 1 / 16f : length + minV;
+        float minV = far ? 0 : offset * textureSquish;
+        float maxV = far ? 1 / 16f : length * textureSquish + minV;
         float minU = far ? 3 / 16f : 0;
         float maxU = far ? 4 / 16f : 3 / 16f;
 
