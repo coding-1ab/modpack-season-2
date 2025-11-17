@@ -5,7 +5,9 @@ import com.simibubi.create.AllCreativeModeTabs;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -25,9 +27,21 @@ public class BnbCreativeTabs {
             .icon(BnbBlocks.LIGHTBULB::asStack)
             .displayItems((parameters, output) -> {
                 for (RegistryEntry<Item, Item> item : CreateBitsnBobs.REGISTRATE.getAll(Registries.ITEM)) {
-                    output.accept(item.get());
+                    if (item.get() instanceof BlockItem blockItem && matchesBlockFilter(blockItem))
+                        output.accept(item.get());
+                }
+                for (RegistryEntry<Item, Item> item : CreateBitsnBobs.REGISTRATE.getAll(Registries.ITEM)) {
+                    if (!(item.get() instanceof BlockItem))
+                        output.accept(item.get());
                 }
             }).build());
+
+    private static boolean matchesBlockFilter(BlockItem item) {
+        if (BnbBlocks.CHAIRS.contains(item.getBlock()) && !BnbBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock())) {
+            return false;
+        }
+        return true;
+    }
 
     @ApiStatus.Internal
     public static void register(IEventBus modEventBus) {

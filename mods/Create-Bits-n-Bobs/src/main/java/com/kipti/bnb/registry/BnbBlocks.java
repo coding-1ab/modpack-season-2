@@ -61,24 +61,6 @@ import static com.simibubi.create.foundation.data.TagGen.*;
 
 public class BnbBlocks {
 
-    public static final BlockEntry<LightbulbBlock> LIGHTBULB = REGISTRATE.block("lightbulb", LightbulbBlock::new)
-        .initialProperties(SharedProperties::softMetal)
-        .transform(pickaxeOnly())
-        .blockstate((c, p) -> p.directionalBlock(c.get(),
-            (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                "block/lightbulb/lightbulb" + (state.getValue(LightbulbBlock.CAGE) ? "" : "_uncaged") + (state.getValue(LightBlock.LIT) ? "_on" : "")
-            ))))
-        .properties(p -> p
-            .noOcclusion()
-            .lightLevel(state -> state.getValue(LightBlock.LIT) ? 10 : 0)
-            .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.LIT))
-            .forceSolidOn())
-        .addLayer(() -> RenderType::translucent)
-        .item()
-        .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/lightbulb/lightbulb")))
-        .build()
-        .register();
-
     public static final BlockEntry<LightBlock> BRASS_LAMP = REGISTRATE.block("brass_lamp", (p) -> new LightBlock(p, BnbShapes.BRASS_LAMP_SHAPE, true))
         .initialProperties(SharedProperties::softMetal)
         .transform(pickaxeOnly())
@@ -94,6 +76,24 @@ public class BnbBlocks {
         .addLayer(() -> RenderType::translucent)
         .item()
         .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/brass_lamp/brass_lamp")))
+        .build()
+        .register();
+
+    public static final BlockEntry<LightbulbBlock> LIGHTBULB = REGISTRATE.block("lightbulb", LightbulbBlock::new)
+        .initialProperties(SharedProperties::softMetal)
+        .transform(pickaxeOnly())
+        .blockstate((c, p) -> p.directionalBlock(c.get(),
+            (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                "block/lightbulb/lightbulb" + (state.getValue(LightbulbBlock.CAGE) ? "" : "_uncaged") + (state.getValue(LightBlock.LIT) ? "_on" : "")
+            ))))
+        .properties(p -> p
+            .noOcclusion()
+            .lightLevel(state -> state.getValue(LightBlock.LIT) ? 10 : 0)
+            .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.LIT))
+            .forceSolidOn())
+        .addLayer(() -> RenderType::translucent)
+        .item()
+        .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/lightbulb/lightbulb")))
         .build()
         .register();
 
@@ -221,23 +221,6 @@ public class BnbBlocks {
             .onRegister(CreateRegistrate.blockModel(() -> WeatheredConnectedGirderModel::new))
             .register();
 
-    public static final BlockEntry<GirderStrutBlock> GIRDER_STRUT = REGISTRATE.block("girder_strut", GirderStrutBlock.normal())
-        .initialProperties(SharedProperties::softMetal)
-        .transform(pickaxeOnly())
-        .properties(p -> p.noOcclusion())
-        .blockstate((c, p) -> p.directionalBlock(c.get(),
-            (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                "block/girder_strut/girder_strut_attachment")
-            )))
-        .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
-        .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-        .item(GirderStrutBlockItem::new)
-        .model((c, p) ->
-            p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/girder_strut_attachment"))
-        )
-        .build()
-        .register();
-
     public static final BlockEntry<GirderStrutBlock> WEATHERED_GIRDER_STRUT = REGISTRATE.block("weathered_girder_strut", GirderStrutBlock.weathered())
         .initialProperties(SharedProperties::softMetal)
         .transform(pickaxeOnly())
@@ -251,6 +234,23 @@ public class BnbBlocks {
         .item(GirderStrutBlockItem::new)
         .model((c, p) ->
             p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/weathered_girder_strut_attachment"))
+        )
+        .build()
+        .register();
+
+    public static final BlockEntry<GirderStrutBlock> GIRDER_STRUT = REGISTRATE.block("girder_strut", GirderStrutBlock.normal())
+        .initialProperties(SharedProperties::softMetal)
+        .transform(pickaxeOnly())
+        .properties(p -> p.noOcclusion())
+        .blockstate((c, p) -> p.directionalBlock(c.get(),
+            (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                "block/girder_strut/girder_strut_attachment")
+            )))
+        .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
+        .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+        .item(GirderStrutBlockItem::new)
+        .model((c, p) ->
+            p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/girder_strut_attachment"))
         )
         .build()
         .register();

@@ -68,6 +68,9 @@ public class GirderStrutPlacementEffects {
 
         Vec3 dir = delta.normalize();
         double step = 0.25;
+        // 95CD41 valid and EA5C2B invalid
+        Vector3f color = valid ? new Vector3f(.3f, .9f, .5f) : new Vector3f(.9f, .3f, .5f);
+        Vector3f outlinerColor = valid ? new Vector3f(.35f, .85f, .55f) : new Vector3f(.85f, .35f, .55f);
         for (double t = 0; t <= length; t += step) {
             Vec3 lerped = renderFrom.add(dir.scale(t));
 
@@ -76,15 +79,15 @@ public class GirderStrutPlacementEffects {
             }
 
             level.addParticle(
-                new DustParticleOptions(new Vector3f(valid ? .3f : .9f, valid ? .9f : .3f, .5f), 1), true,
+                new DustParticleOptions(color, 1), true,
                 lerped.x, lerped.y, lerped.z, 0, 0, 0);
         }
         level.addParticle(
-            new DustParticleOptions(new Vector3f(valid ? .3f : .9f, valid ? .9f : .3f, .5f), 1), true,
+            new DustParticleOptions(color, 1), true,
             renderTo.x, renderTo.y, renderTo.z, 0, 0, 0);
 
-        showAnchorBox(fromPos, fromFace.getOpposite(), "from", valid ? 76 : 229, valid ? 229 : 76, 128);
-        showAnchorBox(targetPos, targetFace.getOpposite(), "to", valid ? 76 : 229, valid ? 229 : 76, 128);
+        showAnchorBox(fromPos, fromFace.getOpposite(), "from", (int) (outlinerColor.x * 256), (int) (outlinerColor.y * 256), (int) (outlinerColor.z * 256));
+        showAnchorBox(targetPos, targetFace.getOpposite(), "to", (int) (outlinerColor.x * 256), (int) (outlinerColor.y * 256), (int) (outlinerColor.z * 256));
 
     }
 
@@ -96,7 +99,7 @@ public class GirderStrutPlacementEffects {
             .move(targetPos.getX(), targetPos.getY(), targetPos.getZ())
             .move(-box.getXsize() * 0.5f + 0.5f, -box.getYsize() * 0.5f + 0.5f, -box.getZsize() * 0.5f + 0.5f)
             .move(targetFace.getStepX() * 0.5f, targetFace.getStepY() * 0.5f, targetFace.getStepZ() * 0.5f);
-        Outliner.getInstance().showAABB(id, box).colored(new Color(r, g, b));
+        Outliner.getInstance().showAABB(id, box).colored(new Color(r, g, b)).lineWidth(1 / 16f);
     }
 
     private static BlockPos resolvePlacementPos(ClientLevel level, BlockPos clickedPos, Direction face) {

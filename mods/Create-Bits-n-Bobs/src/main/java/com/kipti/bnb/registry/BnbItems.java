@@ -7,13 +7,13 @@ import net.minecraft.world.item.Item;
 
 public class BnbItems {
 
-    public static final ItemEntry<CogwheelChainItem> COGWHEEL_CHAIN_TO_BE_REPLACED = CreateBitsnBobs.REGISTRATE.item("cogwheel_chain_placing_chain", CogwheelChainItem::new)
+    public static final ItemEntry<Item> CALCINATED_FLINT = CreateBitsnBobs.REGISTRATE.item("calcinated_flint", Item::new)
         .register();
 
     public static final ItemEntry<Item> CRUSHED_DEEPSLATE = CreateBitsnBobs.REGISTRATE.item("crushed_deepslate", Item::new)
         .register();
 
-    public static final ItemEntry<Item> CALCINATED_FLINT = CreateBitsnBobs.REGISTRATE.item("calcinated_flint", Item::new)
+    public static final ItemEntry<CogwheelChainItem> COGWHEEL_CHAIN_TO_BE_REPLACED = CreateBitsnBobs.REGISTRATE.item("cogwheel_chain_placing_chain", CogwheelChainItem::new)
         .register();
 
     public static void register() {
