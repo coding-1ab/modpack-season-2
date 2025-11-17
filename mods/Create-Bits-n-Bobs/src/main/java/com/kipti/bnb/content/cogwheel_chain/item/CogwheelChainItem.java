@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.state.BlockState;
 
+@Deprecated(forRemoval = true)
 public class CogwheelChainItem extends Item {
 
     public CogwheelChainItem(Properties properties) {
@@ -25,7 +26,7 @@ public class CogwheelChainItem extends Item {
         BlockState clickedBlockState = context.getLevel().getBlockState(context.getClickedPos());
 
         if (stack.has(BnbDataComponents.PARTIAL_COGWHEEL_CHAIN)) {
-            if (context.getPlayer() != null && context.getPlayer().isCrouching()) {
+            if (context.getPlayer() != null && context.getPlayer().isShiftKeyDown()) {
                 //If the player is crouching, remove the existing chain
                 if (!context.getLevel().isClientSide) stack.remove(BnbDataComponents.PARTIAL_COGWHEEL_CHAIN);
                 return InteractionResult.SUCCESS;
@@ -35,7 +36,7 @@ public class CogwheelChainItem extends Item {
             boolean added;
             try {
                 assert chain != null;
-                added = chain.tryAddNode(context.getLevel(), context.getClickedPos(), clickedBlockState);
+                added = chain.tryAddNode(context.getClickedPos(), clickedBlockState);
             } catch (PartialCogwheelChain.ChainAdditionAbortedException e) {
                 context.getPlayer().displayClientMessage(Component.literal(e.getMessage()).withColor(0xff0000), true);
                 return InteractionResult.FAIL;
@@ -56,7 +57,7 @@ public class CogwheelChainItem extends Item {
             return added ? InteractionResult.SUCCESS : InteractionResult.PASS;
         }
         //If it is a valid target, create a new PartialCogwheelChain and store it in the item
-        if (PartialCogwheelChain.isValidBlockTarget(context.getLevel(), context.getClickedPos(), clickedBlockState) && clickedBlockState.getBlock() instanceof ICogWheel cogWheel) {
+        if (PartialCogwheelChain.isValidBlockTarget(clickedBlockState) && clickedBlockState.getBlock() instanceof ICogWheel cogWheel) {
             if (!context.getLevel().isClientSide) {
                 PartialCogwheelChain chain = new PartialCogwheelChain(context.getClickedPos(), clickedBlockState.getValue(CogWheelBlock.AXIS), cogWheel.isLargeCog());
                 stack.set(BnbDataComponents.PARTIAL_COGWHEEL_CHAIN, chain);

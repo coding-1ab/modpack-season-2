@@ -27,10 +27,11 @@ public class PartialCogwheelChain {
     public static final Codec<PartialCogwheelChain> CODEC = PartialCogwheelChainNode.CODEC.listOf().xmap(PartialCogwheelChain::new, chain -> chain.visitedNodes);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, PartialCogwheelChain> STREAM_CODEC = StreamCodec.composite(
-        CatnipStreamCodecBuilders.list(PartialCogwheelChainNode.STREAM_CODEC),
-        chain -> chain.visitedNodes,
-        PartialCogwheelChain::new
+            CatnipStreamCodecBuilders.list(PartialCogwheelChainNode.STREAM_CODEC),
+            chain -> chain.visitedNodes,
+            PartialCogwheelChain::new
     );
+    public static final Integer MAX_CHAIN_BOUNDS = 32;
 
     List<PartialCogwheelChainNode> visitedNodes;
 
@@ -42,19 +43,20 @@ public class PartialCogwheelChain {
         visitedNodes = new ArrayList<>(nodes);
     }
 
-    public static boolean isValidBlockTarget(Level level, BlockPos clickedPos, BlockState state) {
-        return state.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isDedicatedCogWheel();
+    public static boolean isValidBlockTarget(final BlockState state) {
+        return state.getBlock() instanceof final ICogWheel iCogWheel && iCogWheel.isDedicatedCogWheel();
     }
 
-    public boolean tryAddNode(Level level, BlockPos newPos, BlockState newBlockState) throws ChainAdditionAbortedException {
-        PartialCogwheelChainNode lastNode = getLastNode();
+    //TODO: dimemsion check, try break down this logic
+    public boolean tryAddNode(final BlockPos newPos, final BlockState newBlockState) throws ChainAdditionAbortedException {
+        final PartialCogwheelChainNode lastNode = getLastNode();
 
-        if (!PartialCogwheelChain.isValidBlockTarget(level, newPos, newBlockState)) {
+        if (!isValidBlockTarget(newBlockState)) {
             return false;
         }
 
         Direction.Axis axis = newBlockState.getValue(CogWheelBlock.AXIS);
-        boolean isLarge = newBlockState.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isLargeCog();
+        boolean isLarge = newBlockState.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isLargeCog(); //TODO: replace with more explicit block check
 
         int differenceOnAxis = Math.abs(newPos.get(axis) - lastNode.pos().get(axis));
         @Nullable PartialCogwheelChainNode lastLastNode = getSize() >= 2 ? visitedNodes.get(visitedNodes.size() - 2) : null;
@@ -82,7 +84,7 @@ public class PartialCogwheelChain {
         }
 
         PartialCogwheelChainNode newNode = new PartialCogwheelChainNode(
-            newPos, axis, isLarge
+                newPos, axis, isLarge
         );
 
         visitedNodes.add(newNode);
@@ -148,16 +150,23 @@ public class PartialCogwheelChain {
     }
 
     public boolean completeIfLooping(Level level) throws CogwheelChain.InvalidGeometryException {
-        if (getSize() < 2 || level.isClientSide) return false;
+        if (level.isClientSide) return false;
+        CogwheelChain completedChain = buildChainIfLooping();
+        if (completedChain == null) return false;
+        completedChain.placeInLevel(level, this);
+        return true;
+    }
+
+    public @Nullable CogwheelChain buildChainIfLooping() throws CogwheelChain.InvalidGeometryException {
+        if (getSize() < 2) return null;
         PartialCogwheelChainNode firstNode = visitedNodes.getFirst();
         PartialCogwheelChainNode lastNode = getLastNode();
-        if (!firstNode.pos().equals(lastNode.pos())) return false;
+        if (!firstNode.pos().equals(lastNode.pos())) return null;
 
         // Remove last chainNode to avoid duplication
         visitedNodes.removeLast();
         CogwheelChain completedChain = new CogwheelChain(this);
-        completedChain.placeInLevel(level, this);
-        return true;
+        return completedChain;
     }
 
     public List<PartialCogwheelChainNode> getNodes() {
@@ -182,6 +191,42 @@ public class PartialCogwheelChain {
 
     public int getSize() {
         return visitedNodes.size();
+    }
+
+    public int maxBounds() {
+        Vec3i min = new Vec3i(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        Vec3i max = new Vec3i(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
+
+        for (PartialCogwheelChainNode node : visitedNodes) {
+            BlockPos pos = node.pos();
+            min = new Vec3i(
+                    Math.min(min.getX(), pos.getX()),
+                    Math.min(min.getY(), pos.getY()),
+                    Math.min(min.getZ(), pos.getZ())
+            );
+            max = new Vec3i(
+                    Math.max(max.getX(), pos.getX()),
+                    Math.max(max.getY(), pos.getY()),
+                    Math.max(max.getZ(), pos.getZ())
+            );
+        }
+
+        return Math.max(Math.max(max.getX() - min.getX(), max.getY() - min.getY()), max.getZ() - min.getZ());
+    }
+
+    public boolean checkMatchingNodesInLevel(Level level) {
+        for (PartialCogwheelChainNode node : visitedNodes) {
+            BlockState state = level.getBlockState(node.pos());
+            if (!isValidBlockTarget(state)) {
+                return false;
+            }
+            Direction.Axis axis = state.getValue(CogWheelBlock.AXIS);
+            boolean isLarge = state.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isLargeCog();
+            if (axis != node.rotationAxis() || isLarge != node.isLarge()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static class ChainAdditionAbortedException extends Exception {

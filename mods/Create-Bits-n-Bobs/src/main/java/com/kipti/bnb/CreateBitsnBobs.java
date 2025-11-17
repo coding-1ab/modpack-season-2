@@ -1,5 +1,6 @@
 package com.kipti.bnb;
 
+import com.kipti.bnb.network.BnbPackets;
 import com.kipti.bnb.registry.*;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.foundation.data.CreateRegistrate;
@@ -41,6 +42,7 @@ public class CreateBitsnBobs {
         BnbPartialModels.register();
         BnbBlockEntities.register();
         BnbTags.register();
+        BnbPackets.register();
         BnbDataComponents.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.CLIENT, Config.SPEC);

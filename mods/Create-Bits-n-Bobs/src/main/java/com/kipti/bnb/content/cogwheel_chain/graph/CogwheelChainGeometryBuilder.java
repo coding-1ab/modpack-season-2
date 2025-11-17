@@ -55,6 +55,7 @@ public class CogwheelChainGeometryBuilder {
         return resultNodes;
     }
 
+    @Deprecated(forRemoval = true)
     public static List<ChainPathNode> buildFullChainFromPartial(PartialCogwheelChain source) {
         List<PartialCogwheelChainNode> sourceNodes = source.getNodes();
         List<ChainPathNode> resultNodes = new ArrayList<>();
@@ -114,7 +115,8 @@ public class CogwheelChainGeometryBuilder {
         PartialCogwheelChainNode currentNode,
         Vec3 outPreviousPositionWorld, Vec3 inCurrentOffsetWorld,
         Vec3 outCurrentOffsetWorld, Vec3 inNextPositionWorld) {
-
+//TODO delete this
+        //
 //        Vec3 inDirection = outPreviousPosition.subtract(inCurrentPosition).normalize();
 //        Vec3 outDirection = inNextPosition.subtract(outCurrentPosition).normalize();
 //        Vec3 axis = getDirectionOfAxis(currentNode).normalize();

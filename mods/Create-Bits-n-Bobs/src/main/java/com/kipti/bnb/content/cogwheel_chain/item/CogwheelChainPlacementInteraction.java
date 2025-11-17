@@ -1,0 +1,123 @@
+package com.kipti.bnb.content.cogwheel_chain.item;
+
+import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChain;
+import com.kipti.bnb.content.cogwheel_chain.graph.PartialCogwheelChain;
+import com.kipti.bnb.network.packets.from_client.PlaceCogwheelChainPacket;
+import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
+import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
+import net.createmod.catnip.platform.CatnipServices;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.InputEvent;
+import org.jetbrains.annotations.Nullable;
+
+@EventBusSubscriber(Dist.CLIENT)
+public class CogwheelChainPlacementInteraction {
+
+    protected static @Nullable PartialCogwheelChain currentBuildingChain = null;
+    protected static @Nullable ResourceKey<Level> currentChainLevel = null;
+
+    @SubscribeEvent
+    public static void onClickInput(final InputEvent.InteractionKeyMappingTriggered event) {
+        final Minecraft mc = Minecraft.getInstance();
+        if (mc.screen != null)
+            return;
+
+        final KeyMapping key = event.getKeyMapping();
+
+        if (key == mc.options.keyUse && onRightClick(event)) {
+            event.setCanceled(true);
+        }
+    }
+
+    private static boolean onRightClick(final InputEvent.InteractionKeyMappingTriggered event) {
+        final LocalPlayer player = Minecraft.getInstance().player;
+        final ClientLevel level = Minecraft.getInstance().level;
+        if (player == null || level == null)
+            return false;
+
+        //If crouching, try clear
+        if (player.isShiftKeyDown() && currentBuildingChain != null) {
+            currentBuildingChain = null;
+            currentChainLevel = null;
+            return true;
+        }
+
+        //If it is a chain targeting a cogwheel
+        final ItemStack itemInHand = player.getMainHandItem().is(Items.CHAIN) ? player.getMainHandItem() :
+                player.getOffhandItem().is(Items.CHAIN) ? player.getOffhandItem() : null;
+
+        if (itemInHand == null) {
+            return false;
+        }
+
+        final HitResult hitResult = Minecraft.getInstance().hitResult;
+
+        if (hitResult == null || hitResult.getType() != HitResult.Type.BLOCK) {
+            return currentBuildingChain != null;
+        }
+
+        final BlockHitResult bhr = (BlockHitResult) hitResult;
+        final BlockPos hitPos = bhr.getBlockPos();
+        final BlockState targetedState = level.getBlockState(hitPos);
+
+        if (!PartialCogwheelChain.isValidBlockTarget(targetedState)) {
+            return currentBuildingChain != null;
+        }
+
+        //Cancel normal interaction
+        event.setSwingHand(true);
+
+        if (currentBuildingChain == null || currentChainLevel == null || !currentChainLevel.equals(level.dimension())) {
+            //Start a new chain
+            currentBuildingChain = new PartialCogwheelChain(hitPos,
+                    targetedState.getValue(CogWheelBlock.AXIS),
+                    targetedState.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isLargeCog());
+            currentChainLevel = level.dimension();
+        } else {
+            //Try to add to existing chain
+            try {
+                final boolean added = currentBuildingChain.tryAddNode(hitPos, targetedState);
+
+                if (!added) { //Only happens with invalid target, ignore quietly
+                    return true;
+                }
+
+                final boolean completed;
+                try {
+                    completed = currentBuildingChain.buildChainIfLooping() != null;
+                } catch (final CogwheelChain.InvalidGeometryException exception) {
+                    player.displayClientMessage(Component.literal(exception.getMessage()).withColor(0xff0000), true);
+                    return true;
+                }
+
+                if (completed) {
+                    //If completed, send to server, clear current chain
+                    CatnipServices.NETWORK.sendToServer(new PlaceCogwheelChainPacket(currentBuildingChain, event.getHand().ordinal()));
+
+                    currentBuildingChain = null;
+                    currentChainLevel = null;
+                }
+            } catch (final PartialCogwheelChain.ChainAdditionAbortedException exception) {
+                //Send message on fail
+                player.displayClientMessage(net.minecraft.network.chat.Component.literal(exception.getMessage()).withColor(0xff0000), true);//TODO: translate
+            }
+        }
+        return true;
+    }
+
+}

@@ -36,6 +36,11 @@ public class CogwheelChain {
         this.cogwheelNodes = pathNodes.getSecond();
     }
 
+    public CogwheelChain(Pair<List<CogwheelChainPathfinder.PathNode>, List<ChainPathCogwheelNode>> path) {
+        this.nodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(path.getFirst());
+        this.cogwheelNodes = path.getSecond();
+    }
+
     public @Nullable ChainPathCogwheelNode getNodeFromControllerOffset(Vec3i controllerOffset) {
         Vec3i offsetFromStart = controllerOffset.multiply(-1);
 
