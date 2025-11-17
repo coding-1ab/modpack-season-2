@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CogwheelChainTangents {
 
-    public static Vec3 getTangentOnCog(PartialCogwheelChainNode previousNode, int previousSide, PartialCogwheelChainNode currentNode, int currentSide) {
+    public static Vec3 getTangentOnCog(PlacingCogwheelNode previousNode, int previousSide, PlacingCogwheelNode currentNode, int currentSide) {
         double previousRadius = previousNode.isLarge() ? 1.0f : 0.5f;
         double currentRadius = currentNode.isLarge() ? 1.0f : 0.5f;
 
@@ -14,9 +14,9 @@ public class CogwheelChainTangents {
 
         if (previousNode.rotationAxis() != currentNode.rotationAxis()) {
             Vec3 projectedIncoming = incoming
-                .subtract(getDirectionOfAxis(currentNode).scale(incoming.dot(getDirectionOfAxis(currentNode))))
-                .subtract(getDirectionOfAxis(previousNode).scale(incoming.dot(getDirectionOfAxis(previousNode))))
-                .normalize();
+                    .subtract(getDirectionOfAxis(currentNode).scale(incoming.dot(getDirectionOfAxis(currentNode))))
+                    .subtract(getDirectionOfAxis(previousNode).scale(incoming.dot(getDirectionOfAxis(previousNode))))
+                    .normalize();
             if (projectedIncoming.lengthSqr() < 1e-7) {
                 return null;
             }
@@ -47,10 +47,10 @@ public class CogwheelChainTangents {
         double lengthAlongIncoming = sineRatio * currentRadius;
 
         return incoming.normalize().cross(getDirectionOfAxis(currentNode)).scale(-perpendicularHeight * currentSide)
-            .add(incoming.normalize().scale(-lengthAlongIncoming));
+                .add(incoming.normalize().scale(-lengthAlongIncoming));
     }
 
-    private static @NotNull Vec3 getDirectionOfAxis(PartialCogwheelChainNode currentNode) {
+    private static @NotNull Vec3 getDirectionOfAxis(PlacingCogwheelNode currentNode) {
         return Vec3.atLowerCornerOf(Direction.fromAxisAndDirection(currentNode.rotationAxis(), Direction.AxisDirection.POSITIVE).getNormal());
     }
 

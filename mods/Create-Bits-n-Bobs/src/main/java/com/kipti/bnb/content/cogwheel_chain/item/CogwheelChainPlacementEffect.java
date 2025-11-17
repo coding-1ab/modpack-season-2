@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.cogwheel_chain.item;
 
-import com.kipti.bnb.content.cogwheel_chain.graph.PartialCogwheelChainNode;
+import com.kipti.bnb.content.cogwheel_chain.graph.PlacingCogwheelNode;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -60,7 +60,7 @@ public class CogwheelChainPlacementEffect {
         }
 
         //Get last chainNode to calculate a chain preview
-        final PartialCogwheelChainNode lastNode = currentBuildingChain.getLastNode();
+        final PlacingCogwheelNode lastNode = currentBuildingChain.getLastNode();
         final Vec3 lastNodePos = Vec3.atCenterOf(lastNode.pos());
         final Direction.Axis axis = lastNode.rotationAxis();
 

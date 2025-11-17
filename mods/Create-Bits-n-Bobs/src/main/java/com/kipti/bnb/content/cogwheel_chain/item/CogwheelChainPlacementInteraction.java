@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.cogwheel_chain.item;
 
 import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChain;
-import com.kipti.bnb.content.cogwheel_chain.graph.PartialCogwheelChain;
+import com.kipti.bnb.content.cogwheel_chain.graph.PlacingCogwheelChain;
 import com.kipti.bnb.network.packets.from_client.PlaceCogwheelChainPacket;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 @EventBusSubscriber(Dist.CLIENT)
 public class CogwheelChainPlacementInteraction {
 
-    protected static @Nullable PartialCogwheelChain currentBuildingChain = null;
+    protected static @Nullable PlacingCogwheelChain currentBuildingChain = null;
     protected static @Nullable ResourceKey<Level> currentChainLevel = null;
 
     @SubscribeEvent
@@ -75,7 +75,7 @@ public class CogwheelChainPlacementInteraction {
         final BlockPos hitPos = bhr.getBlockPos();
         final BlockState targetedState = level.getBlockState(hitPos);
 
-        if (!PartialCogwheelChain.isValidBlockTarget(targetedState)) {
+        if (!PlacingCogwheelChain.isValidBlockTarget(targetedState)) {
             return currentBuildingChain != null;
         }
 
@@ -84,7 +84,7 @@ public class CogwheelChainPlacementInteraction {
 
         if (currentBuildingChain == null || currentChainLevel == null || !currentChainLevel.equals(level.dimension())) {
             //Start a new chain
-            currentBuildingChain = new PartialCogwheelChain(hitPos,
+            currentBuildingChain = new PlacingCogwheelChain(hitPos,
                     targetedState.getValue(CogWheelBlock.AXIS),
                     targetedState.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isLargeCog());
             currentChainLevel = level.dimension();
@@ -125,7 +125,7 @@ public class CogwheelChainPlacementInteraction {
                     currentBuildingChain = null;
                     currentChainLevel = null;
                 }
-            } catch (final PartialCogwheelChain.ChainAdditionAbortedException exception) {
+            } catch (final PlacingCogwheelChain.ChainAdditionAbortedException exception) {
                 //Send message on fail
                 player.displayClientMessage(net.minecraft.network.chat.Component.literal(exception.getMessage()).withColor(0xff0000), true);//TODO: translate
             }

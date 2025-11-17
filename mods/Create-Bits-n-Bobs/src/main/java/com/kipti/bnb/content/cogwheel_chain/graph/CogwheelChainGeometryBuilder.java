@@ -10,151 +10,52 @@ import java.util.List;
 
 public class CogwheelChainGeometryBuilder {
 
-    public static List<ChainPathNode> buildFullChainFromPathNodes(List<CogwheelChainPathfinder.PathNode> pathNodes) {
-        List<ChainPathNode> resultNodes = new ArrayList<>();
-        List<Pair<Vec3, Vec3>> offsetsAtNodes = new ArrayList<>();
-        int n = pathNodes.size();
+    public static List<RenderedChainPathNode> buildFullChainFromPathNodes(List<PathedCogwheelNode> pathNodes) {
+        final List<RenderedChainPathNode> resultNodes = new ArrayList<>();
+        final List<Pair<Vec3, Vec3>> offsetsAtNodes = new ArrayList<>();
+        final int n = pathNodes.size();
         for (int i = 0; i < n; i++) {
-            CogwheelChainPathfinder.PathNode previousNode = pathNodes.get((n + i - 1) % n);
-            CogwheelChainPathfinder.PathNode currentNode = pathNodes.get(i);
-            CogwheelChainPathfinder.PathNode nextNode = pathNodes.get((i + 1) % n);
+            final PathedCogwheelNode previousNode = pathNodes.get((n + i - 1) % n);
+            final PathedCogwheelNode currentNode = pathNodes.get(i);
+            final PathedCogwheelNode nextNode = pathNodes.get((i + 1) % n);
 
-            Pair<Vec3, Vec3> inOutPositionsAtThisNode = calculateOffsets(
-                previousNode.chainNode(),
-                previousNode.side(),
-                currentNode.chainNode(),
-                currentNode.side(),
-                nextNode.chainNode(),
-                nextNode.side()
-            );
-            offsetsAtNodes.add(inOutPositionsAtThisNode);
-        }
-
-        for (int i = 0; i < n; i++) {
-            CogwheelChainPathfinder.PathNode previousNode = pathNodes.get((n + i - 1) % n);
-            CogwheelChainPathfinder.PathNode currentNode = pathNodes.get(i);
-            CogwheelChainPathfinder.PathNode nextNode = pathNodes.get((i + 1) % n);
-
-            Pair<Vec3, Vec3> previousOffsets = offsetsAtNodes.get((i - 1 + n) % n);
-            Pair<Vec3, Vec3> currentOffsets = offsetsAtNodes.get(i);
-            Pair<Vec3, Vec3> nextOffsets = offsetsAtNodes.get((i + 1) % n);
-
-            resultNodes.add(new ChainPathNode(currentNode.chainNode().pos(), currentOffsets.getFirst()));
-            resultNodes.addAll(
-                wrappedArcBetweenPoints(
-                    currentNode.chainNode(),
-                    previousOffsets.getSecond().add(previousNode.chainNode().center()),
-                    currentOffsets.getFirst().add(currentNode.chainNode().center()),
-                    currentOffsets.getSecond().add(currentNode.chainNode().center()),
-                    nextOffsets.getFirst().add(nextNode.chainNode().center())
-                )
-            );
-            resultNodes.add(new ChainPathNode(currentNode.chainNode().pos(), currentOffsets.getSecond()));
-        }
-
-        return resultNodes;
-    }
-
-    @Deprecated(forRemoval = true)
-    public static List<ChainPathNode> buildFullChainFromPartial(PartialCogwheelChain source) {
-        List<PartialCogwheelChainNode> sourceNodes = source.getNodes();
-        List<ChainPathNode> resultNodes = new ArrayList<>();
-
-        int[] concavities = new int[sourceNodes.size()];
-        for (int i = 0; i < sourceNodes.size(); i++) {
-            PartialCogwheelChainNode previousNode = source.getNodeLooped(i - 1);
-            PartialCogwheelChainNode currentNode = sourceNodes.get(i);
-            PartialCogwheelChainNode nextNode = source.getNodeLooped(i + 1);
-            concavities[i] = getNodeConcavity(previousNode, currentNode, nextNode);
-        }
-
-        List<Pair<Vec3, Vec3>> offsetsAtNodes = new ArrayList<>();
-        for (int i = 0; i < sourceNodes.size(); i++) {
-            PartialCogwheelChainNode previousNode = source.getNodeLooped(i - 1);
-            PartialCogwheelChainNode currentNode = sourceNodes.get(i);
-            PartialCogwheelChainNode nextNode = source.getNodeLooped(i + 1);
-
-            Pair<Vec3, Vec3> inOutPositionsAtThisNode = calculateOffsets(
-                previousNode,
-                getLooped(concavities, i - 1),
-                currentNode,
-                concavities[i],
-                nextNode,
-                getLooped(concavities, i + 1)
-            );
-            offsetsAtNodes.add(inOutPositionsAtThisNode);
-        }
-
-        for (int i = 0; i < sourceNodes.size(); i++) {
-            PartialCogwheelChainNode previousNode = source.getNodeLooped(i - 1);
-            PartialCogwheelChainNode currentNode = sourceNodes.get(i);
-            PartialCogwheelChainNode nextNode = source.getNodeLooped(i + 1);
-
-            int n = sourceNodes.size();
-            Pair<Vec3, Vec3> previousOffsets = offsetsAtNodes.get((i - 1 + n) % n);
-            Pair<Vec3, Vec3> currentOffsets = offsetsAtNodes.get(i);
-            Pair<Vec3, Vec3> nextOffsets = offsetsAtNodes.get((i + 1) % n);
-
-            resultNodes.add(new ChainPathNode(currentNode.pos(), currentOffsets.getFirst()));
-            resultNodes.addAll(
-                wrappedArcBetweenPoints(
+            final Pair<Vec3, Vec3> inOutPositionsAtThisNode = calculateOffsets(
+                    previousNode,
                     currentNode,
-                    previousOffsets.getSecond().add(previousNode.pos().getCenter()),
-                    currentOffsets.getFirst().add(currentNode.pos().getCenter()),
-                    currentOffsets.getSecond().add(currentNode.pos().getCenter()),
-                    nextOffsets.getFirst().add(nextNode.pos().getCenter())
-                )
+                    nextNode
             );
-            resultNodes.add(new ChainPathNode(currentNode.pos(), currentOffsets.getSecond()));
+            offsetsAtNodes.add(inOutPositionsAtThisNode);
+        }
+
+        for (int i = 0; i < n; i++) {
+            final PathedCogwheelNode previousNode = pathNodes.get((n + i - 1) % n);
+            final PathedCogwheelNode currentNode = pathNodes.get(i);
+            final PathedCogwheelNode nextNode = pathNodes.get((i + 1) % n);
+
+            final Pair<Vec3, Vec3> previousOffsets = offsetsAtNodes.get((i - 1 + n) % n);
+            final Pair<Vec3, Vec3> currentOffsets = offsetsAtNodes.get(i);
+            final Pair<Vec3, Vec3> nextOffsets = offsetsAtNodes.get((i + 1) % n);
+
+            resultNodes.add(new RenderedChainPathNode(currentNode.pos(), currentOffsets.getFirst()));
+            resultNodes.addAll(
+                    wrappedArcBetweenPoints(
+                            currentNode,
+                            previousOffsets.getSecond().add(previousNode.center()),
+                            currentOffsets.getFirst().add(currentNode.center()),
+                            currentOffsets.getSecond().add(currentNode.center()),
+                            nextOffsets.getFirst().add(nextNode.center())
+                    )
+            );
+            resultNodes.add(new RenderedChainPathNode(currentNode.pos(), currentOffsets.getSecond()));
         }
 
         return resultNodes;
     }
 
-    private static List<ChainPathNode> wrappedArcBetweenPoints(
-        PartialCogwheelChainNode currentNode,
-        Vec3 outPreviousPositionWorld, Vec3 inCurrentOffsetWorld,
-        Vec3 outCurrentOffsetWorld, Vec3 inNextPositionWorld) {
-//TODO delete this
-        //
-//        Vec3 inDirection = outPreviousPosition.subtract(inCurrentPosition).normalize();
-//        Vec3 outDirection = inNextPosition.subtract(outCurrentPosition).normalize();
-//        Vec3 axis = getDirectionOfAxis(currentNode).normalize();
-//
-//        Vec3 start = inCurrentPosition;
-//        Vec3 end = outCurrentPosition;
-//        double radius = start.length();
-//
-//        Vec3 u = start.normalize();
-//        Vec3 w = end.normalize();
-//
-//        // Clamp dot product to [-1, 1] to avoid NaN due to floating error
-//        double dot = Math.max(-1.0, Math.min(1.0, u.dot(w)));
-//        double angle = Math.acos(dot);
-//
-//        // Determine rotation direction using triple product (robust)
-//        double dirSign = Math.signum(axis.dot(u.cross(w)));
-//        angle *= dirSign; // positive means CCW around axis (right-hand rule)
-//
-//        // Now check incoming direction alignment — flip if opposite of tangent
-//        Vec3 tangentAtStart = axis.cross(start).normalize();
-//        if (inDirection.dot(tangentAtStart) < 0) {
-//            angle = -angle;
-//        }
-//
-//        int segments = 16;
-//        List<CogwheelChainNode> result = new ArrayList<>();
-//
-//        for (int i = 1; i < segments; i++) {
-//            double t = (double) i / segments;
-//            double theta = angle * t;
-//
-//            Vec3 rotated = rotateAroundAxis(start, axis, theta);
-//            result.add(new CogwheelChainNode(currentNode.pos(), rotated));
-//        }
-//
-//        return result;
-
+    private static List<RenderedChainPathNode> wrappedArcBetweenPoints(
+            PathedCogwheelNode currentNode,
+            Vec3 outPreviousPositionWorld, Vec3 inCurrentOffsetWorld,
+            Vec3 outCurrentOffsetWorld, Vec3 inNextPositionWorld) {
         // Move to chainNode-local frame (center = origin) for rotation math
         Vec3 center = currentNode.pos().getCenter();
 
@@ -222,21 +123,18 @@ public class CogwheelChainGeometryBuilder {
             }
         }
 
-        // Optionally: ensure axis orientation consistency with neighbour (uncomment if you track prevAxis)
-        // Vec3 prevAxis = ...; if (prevAxis != null && prevAxis.dot(axis) < 0) axis = axis.scale(-1);
-
         // Choose segments based on arc length for consistent spacing
         double absAngle = Math.abs(signedAngle);
         double approxArcLength = r * absAngle;
-        int segments = Math.max(1, (int) (Math.ceil(approxArcLength) * 1.5f));
-        List<ChainPathNode> result = new ArrayList<>();
+        int segments = Math.max(1, (int) (Math.ceil(approxArcLength) * 2f));
+        List<RenderedChainPathNode> result = new ArrayList<>();
 
         // generate interior points (exclude endpoints)
         for (int i = 1; i < segments; i++) {
             double t = (double) i / (double) segments;
             double theta = signedAngle * t;
             Vec3 rotatedLocal = rotateAroundAxis(startLocal, axis, theta);
-            result.add(new ChainPathNode(currentNode.pos(), rotatedLocal));
+            result.add(new RenderedChainPathNode(currentNode.pos(), rotatedLocal));
         }
 
         return result;
@@ -246,102 +144,48 @@ public class CogwheelChainGeometryBuilder {
         double cos = Math.cos(angle);
         double sin = Math.sin(angle);
         return v.scale(cos)
-            .add(axis.cross(v).scale(sin))
-            .add(axis.scale(axis.dot(v) * (1 - cos)));
+                .add(axis.cross(v).scale(sin))
+                .add(axis.scale(axis.dot(v) * (1 - cos)));
     }
 
     private static int getLooped(int[] concavities, int i) {
         return concavities[(i + concavities.length) % concavities.length];
     }
 
-    public static Pair<Vec3, Vec3> calculateOffsets(PartialCogwheelChainNode previousNode,
-                                                    int previousConcavity,
-                                                    PartialCogwheelChainNode currentNode,
-                                                    int currentConcavity,
-                                                    PartialCogwheelChainNode nextNode,
-                                                    int nextConcavity) {
+    public static Pair<Vec3, Vec3> calculateOffsets(PathedCogwheelNode previousNode,
+                                                    PathedCogwheelNode currentNode,
+                                                    PathedCogwheelNode nextNode) {
         Vec3 axis = getDirectionOfAxis(currentNode);
 
-//        Vec3 incomingPointOnCircle = get3DTangentOffset(currentNode, previousNode, currentConcavity, previousConcavity);
-//        Vec3 outgoingPointOnCircle = get3DTangentOffset(nextNode, currentNode, nextConcavity, currentConcavity);
+//        Vec3 incomingDirection = getConnectionDirection(previousNode, currentNode);
+//        Vec3 outgoingDirection = getConnectionDirection(currentNode, nextNode);
 
-        Vec3 incomingDirection = getConnectionDirection(previousNode, currentNode);
-        Vec3 outgoingDirection = getConnectionDirection(currentNode, nextNode);
+        Vec3 incomingPointOnCircle = getTangentPointOnCircle(axis, getConnectionDirection(previousNode, currentNode), previousNode, currentNode, true);
+        Vec3 outgoingPointOnCircle = getTangentPointOnCircle(axis, getConnectionDirection(currentNode, nextNode), nextNode, currentNode, false);
 
-        Vec3 incomingPointOnCircle = getTangentPointOnCircle(axis, getConnectionDirection(previousNode, currentNode), previousNode, previousConcavity, currentNode, currentConcavity, true);
-        Vec3 outgoingPointOnCircle = getTangentPointOnCircle(axis, getConnectionDirection(currentNode, nextNode), nextNode, nextConcavity, currentNode, currentConcavity, false);
-
-        //Calculate arc
-//        List<Vec3> result = new ArrayList<>();
-//        result.add(incomingPointOnCircle);
-//
-//        double angleBetween = Math.acos(
-//            incomingPointOnCircle.normalize().dot(outgoingPointOnCircle.normalize())
-//        );
-
-//        if (currentConcavity != previousConcavity && currentConcavity != nextConcavity && currentConcavity == 1 && angleBetween < Math.PI) {
-//            angleBetween = (2 * Math.PI) - angleBetween;
-//        }
-
-//        Outliner.getInstance().showLine(
-//            currentNode + "_incoming",
-//            currentNode.pos().getCenter(),
-//            incomingDirection.normalize().scale(-1).add(currentNode.pos().getCenter())
-//        ).colored(0xff0022);
-//        Outliner.getInstance().showLine(
-//            currentNode + "_outgoing",
-//            currentNode.pos().getCenter(),
-//            outgoingDirection.normalize().add(currentNode.pos().getCenter())
-//        ).colored(0x00ff00);
-//        Outliner.getInstance().showAABB(
-//            currentNode + "_concavity",
-//            new AABB(currentNode.pos())
-//        ).colored(currentConcavity == -1 ? 0x00ff00 : 0xff0000);
-
-//        double radius = currentNode.isLarge() ? 1.0f : 0.5f;
-//        double arcLength = angleBetween * radius;
-//        int segments = (int) Math.ceil(arcLength / (6 / 16f));
-
-//        for (int i = 1; i < segments; i++) {
-//            double t = (double) i / (double) segments;
-//            //Slerp
-//            double sinTotal = Math.sin(angleBetween);
-//            double sinStart = Math.sin((1 - t) * angleBetween);
-//            double sinEnd = Math.sin(t * angleBetween);
-//
-//            Vec3 pointOnCircle = incomingPointOnCircle.scale(sinStart / sinTotal).add(
-//                outgoingPointOnCircle.scale(sinEnd / sinTotal)
-//            ).normalize().scale(radius);
-//
-//            result.add(pointOnCircle);
-//        }
-
-//        result.add(outgoingPointOnCircle);
         return Pair.of(incomingPointOnCircle, outgoingPointOnCircle);
     }
 
-    private static @NotNull Vec3 getDirectionOfAxis(PartialCogwheelChainNode currentNode) {
+    private static @NotNull Vec3 getDirectionOfAxis(final PathedCogwheelNode currentNode) {
         return Vec3.atLowerCornerOf(Direction.fromAxisAndDirection(currentNode.rotationAxis(), Direction.AxisDirection.POSITIVE).getNormal());
     }
 
-    private static @NotNull Vec3 getConnectionDirection(PartialCogwheelChainNode previousNode, PartialCogwheelChainNode currentNode) {
-        Vec3 incomingADiff = currentNode.pos().getCenter().subtract(previousNode.pos().getCenter());
+    private static @NotNull Vec3 getConnectionDirection(final PathedCogwheelNode previousNode, final PathedCogwheelNode currentNode) {
+        Vec3 incomingADiff = currentNode.center().subtract(previousNode.center());
 
         if (previousNode.rotationAxis() != currentNode.rotationAxis()) {
-            Vec3 previousAxis = getDirectionOfAxis(previousNode);
+            final Vec3 previousAxis = getDirectionOfAxis(previousNode);
             incomingADiff = incomingADiff.subtract(previousAxis.scale(incomingADiff.dot(previousAxis)));
         }
 
-        Vec3 axis = getDirectionOfAxis(currentNode);
+        final Vec3 axis = getDirectionOfAxis(currentNode);
         return incomingADiff.subtract(axis.scale(axis.dot(incomingADiff)));
     }
 
     public static Vec3 getTangentPointOnCircle(Vec3 axis,
                                                Vec3 incoming,
-                                               PartialCogwheelChainNode previousNode,
-                                               int previousConcavity,
-                                               PartialCogwheelChainNode currentNode,
-                                               int currentConcavity,
+                                               PathedCogwheelNode previousNode,
+                                               PathedCogwheelNode currentNode,
                                                boolean isIncoming) {
         double previousRadius = previousNode.isLarge() ? 1.0f : 0.5f;
         double currentRadius = currentNode.isLarge() ? 1.0f : 0.5f;
@@ -356,8 +200,8 @@ public class CogwheelChainGeometryBuilder {
             return getDirectionOfAxis(previousNode).scale(previousNode.pos().subtract(currentNode.pos()).get(previousNode.rotationAxis()));
         }
 
-        if (previousConcavity == currentConcavity) {
-            return incoming.normalize().cross(axis).scale(-currentRadius * currentConcavity);
+        if (previousNode.side() == currentNode.side()) {
+            return incoming.normalize().cross(axis).scale(-currentRadius * currentNode.side());
         }
 
         double factor = previousRadius / (previousRadius + currentRadius);
@@ -374,33 +218,8 @@ public class CogwheelChainGeometryBuilder {
 
         double lengthAlongIncoming = sineRatio * currentRadius;
 
-        return incoming.normalize().cross(axis).scale(-perpendicularHeight * currentConcavity)
-            .add(incoming.normalize().scale(-lengthAlongIncoming));
-    }
-
-    public static int getNodeConcavity(PartialCogwheelChainNode previousNode, PartialCogwheelChainNode currentNode, PartialCogwheelChainNode nextNode) {
-        Vec3 axis = getDirectionOfAxis(currentNode);
-
-        Vec3 incomingDiff = currentNode.pos().getCenter().subtract(previousNode.pos().getCenter());
-        Vec3 outgoingDiff = nextNode.pos().getCenter().subtract(currentNode.pos().getCenter());
-
-        if (previousNode.rotationAxis() != currentNode.rotationAxis()) {
-            Vec3 previousAxis = getDirectionOfAxis(previousNode);
-            incomingDiff = incomingDiff.subtract(previousAxis.scale(incomingDiff.dot(previousAxis)));
-        }
-        if (nextNode.rotationAxis() != currentNode.rotationAxis()) {
-            Vec3 nextAxis = getDirectionOfAxis(nextNode);
-            outgoingDiff = outgoingDiff.subtract(nextAxis.scale(outgoingDiff.dot(nextAxis)));
-        }
-
-        Vec3 incoming = incomingDiff.normalize();
-        Vec3 outgoing = outgoingDiff.normalize();
-
-        incoming = incoming.subtract(axis.scale(incoming.dot(axis))).normalize();
-        outgoing = outgoing.subtract(axis.scale(outgoing.dot(axis))).normalize();
-
-        double dot = axis.dot(incoming.cross(outgoing));
-        return (dot == 0 ? 1 : (int) -Math.signum(dot));
+        return incoming.normalize().cross(axis).scale(-perpendicularHeight * currentNode.side())
+                .add(incoming.normalize().scale(-lengthAlongIncoming));
     }
 
 }

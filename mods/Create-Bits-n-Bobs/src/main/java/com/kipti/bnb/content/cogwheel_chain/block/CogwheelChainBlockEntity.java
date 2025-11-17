@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.cogwheel_chain.block;
 
-import com.kipti.bnb.content.cogwheel_chain.graph.ChainPathCogwheelNode;
 import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChain;
+import com.kipti.bnb.content.cogwheel_chain.graph.PathedCogwheelNode;
 import com.kipti.bnb.content.girder_strut.IBlockEntityRelighter;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
@@ -155,7 +155,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
         if (isController) {
             if (chain == null) return 0;
 
-            ChainPathCogwheelNode controllerNode = chain.getNodeFromControllerOffset(new Vec3i(0, 0, 0));
+            PathedCogwheelNode controllerNode = chain.getNodeFromControllerOffset(new Vec3i(0, 0, 0));
             if (controllerNode == null) return 0;
 
             return controllerNode.sideFactor();
@@ -170,7 +170,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
             CogwheelChain controllerChain = controllerBE.chain;
             if (controllerChain == null) return 0;
 
-            ChainPathCogwheelNode nodeInChain = controllerChain.getNodeFromControllerOffset(controllerOffset);
+            PathedCogwheelNode nodeInChain = controllerChain.getNodeFromControllerOffset(controllerOffset);
             return nodeInChain == null ? 0 : nodeInChain.sideFactor();
         }
         return 0;
@@ -179,7 +179,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     private void addPropogationLocationsFromController(List<BlockPos> toPropagate, BlockPos exclude) {
         assert chain != null;
         for (var cogwheelNode : chain.getChainPathCogwheelNodes()) {
-            BlockPos cogwheelPos = worldPosition.offset(cogwheelNode.offsetFromStart());
+            BlockPos cogwheelPos = worldPosition.offset(cogwheelNode.localPos());
             if (!toPropagate.contains(cogwheelPos) && !cogwheelPos.equals(exclude)) {
                 toPropagate.add(cogwheelPos);
             }

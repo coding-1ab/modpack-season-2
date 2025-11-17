@@ -22,24 +22,24 @@ import java.util.Objects;
 /**
  * Used during the construction of a cogwheel chain
  */
-public class PartialCogwheelChain {
+public class PlacingCogwheelChain {
 
-    public static final Codec<PartialCogwheelChain> CODEC = PartialCogwheelChainNode.CODEC.listOf().xmap(PartialCogwheelChain::new, chain -> chain.visitedNodes);
+    public static final Codec<PlacingCogwheelChain> CODEC = PlacingCogwheelNode.CODEC.listOf().xmap(PlacingCogwheelChain::new, chain -> chain.visitedNodes);
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, PartialCogwheelChain> STREAM_CODEC = StreamCodec.composite(
-            CatnipStreamCodecBuilders.list(PartialCogwheelChainNode.STREAM_CODEC),
+    public static final StreamCodec<RegistryFriendlyByteBuf, PlacingCogwheelChain> STREAM_CODEC = StreamCodec.composite(
+            CatnipStreamCodecBuilders.list(PlacingCogwheelNode.STREAM_CODEC),
             chain -> chain.visitedNodes,
-            PartialCogwheelChain::new
+            PlacingCogwheelChain::new
     );
     public static final Integer MAX_CHAIN_BOUNDS = 32;
 
-    List<PartialCogwheelChainNode> visitedNodes;
+    List<PlacingCogwheelNode> visitedNodes;
 
-    public PartialCogwheelChain(BlockPos startPos, Direction.Axis startAxis, boolean isLarge) {
-        this.visitedNodes = new ArrayList<>(List.of(new PartialCogwheelChainNode(startPos, startAxis, isLarge)));
+    public PlacingCogwheelChain(BlockPos startPos, Direction.Axis startAxis, boolean isLarge) {
+        this.visitedNodes = new ArrayList<>(List.of(new PlacingCogwheelNode(startPos, startAxis, isLarge)));
     }
 
-    public PartialCogwheelChain(List<PartialCogwheelChainNode> nodes) {
+    public PlacingCogwheelChain(List<PlacingCogwheelNode> nodes) {
         visitedNodes = new ArrayList<>(nodes);
     }
 
@@ -49,7 +49,7 @@ public class PartialCogwheelChain {
 
     //TODO: dimemsion check, try break down this logic
     public boolean tryAddNode(final BlockPos newPos, final BlockState newBlockState) throws ChainAdditionAbortedException {
-        final PartialCogwheelChainNode lastNode = getLastNode();
+        final PlacingCogwheelNode lastNode = getLastNode();
 
         if (!isValidBlockTarget(newBlockState)) {
             return false;
@@ -59,7 +59,7 @@ public class PartialCogwheelChain {
         boolean isLarge = newBlockState.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isLargeCog(); //TODO: replace with more explicit block check
 
         int differenceOnAxis = Math.abs(newPos.get(axis) - lastNode.pos().get(axis));
-        @Nullable PartialCogwheelChainNode lastLastNode = getSize() >= 2 ? visitedNodes.get(visitedNodes.size() - 2) : null;
+        @Nullable PlacingCogwheelNode lastLastNode = getSize() >= 2 ? visitedNodes.get(visitedNodes.size() - 2) : null;
         boolean isPrecededByAxisChange = lastLastNode != null && lastLastNode.rotationAxis() != lastNode.rotationAxis();
 
         boolean isFlat = differenceOnAxis == 0;
@@ -83,7 +83,7 @@ public class PartialCogwheelChain {
             throw new ChainAdditionAbortedException("Connection must be flat when on the same axis!");
         }
 
-        PartialCogwheelChainNode newNode = new PartialCogwheelChainNode(
+        PlacingCogwheelNode newNode = new PlacingCogwheelNode(
                 newPos, axis, isLarge
         );
 
@@ -91,7 +91,7 @@ public class PartialCogwheelChain {
         return true;
     }
 
-    private boolean isValidConsecutiveAxisChange(@NotNull PartialCogwheelChainNode lastNode, PartialCogwheelChainNode pivotNode, BlockPos newPos, Direction.Axis axis) {
+    private boolean isValidConsecutiveAxisChange(@NotNull PlacingCogwheelNode lastNode, PlacingCogwheelNode pivotNode, BlockPos newPos, Direction.Axis axis) {
         //Get the signed difference to the pivot on the chainNode's rotation axis
         int diffToPivotOnLastNodeAxis = lastNode.pos().get(lastNode.rotationAxis()) - pivotNode.pos().get(lastNode.rotationAxis());
 
@@ -112,7 +112,7 @@ public class PartialCogwheelChain {
         return Math.signum(lastDiffOnSafeAxis) == Math.signum(newDiffOnSafeAxis);
     }
 
-    private boolean isValidLargeCogAxisConnection(PartialCogwheelChainNode lastNode, BlockPos newPos, Direction.Axis axis, boolean isLarge) {
+    private boolean isValidLargeCogAxisConnection(PlacingCogwheelNode lastNode, BlockPos newPos, Direction.Axis axis, boolean isLarge) {
         if (!lastNode.isLarge() || !isLarge) {
             return true;
         }
@@ -140,7 +140,7 @@ public class PartialCogwheelChain {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        PartialCogwheelChain that = (PartialCogwheelChain) o;
+        PlacingCogwheelChain that = (PlacingCogwheelChain) o;
         return Objects.equals(visitedNodes, that.visitedNodes);
     }
 
@@ -151,8 +151,8 @@ public class PartialCogwheelChain {
 
     public boolean canBuildChainIfLooping() throws CogwheelChain.InvalidGeometryException {
         if (getSize() < 2) return false;
-        final PartialCogwheelChainNode firstNode = visitedNodes.getFirst();
-        final PartialCogwheelChainNode lastNode = getLastNode();
+        final PlacingCogwheelNode firstNode = visitedNodes.getFirst();
+        final PlacingCogwheelNode lastNode = getLastNode();
         if (!firstNode.pos().equals(lastNode.pos())) return false;
 
         // Remove last chainNode to avoid duplication
@@ -163,19 +163,19 @@ public class PartialCogwheelChain {
         return true;
     }
 
-    public List<PartialCogwheelChainNode> getNodes() {
+    public List<PlacingCogwheelNode> getNodes() {
         return visitedNodes;
     }
 
-    public PartialCogwheelChainNode getNodeLooped(int i) {
+    public PlacingCogwheelNode getNodeLooped(int i) {
         return visitedNodes.get((visitedNodes.size() + (i % visitedNodes.size())) % visitedNodes.size());
     }
 
-    public PartialCogwheelChainNode getFirstNode() {
+    public PlacingCogwheelNode getFirstNode() {
         return visitedNodes.getFirst();
     }
 
-    public PartialCogwheelChainNode getLastNode() {
+    public PlacingCogwheelNode getLastNode() {
         return visitedNodes.getLast();
     }
 
@@ -191,7 +191,7 @@ public class PartialCogwheelChain {
         Vec3i min = new Vec3i(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
         Vec3i max = new Vec3i(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
 
-        for (PartialCogwheelChainNode node : visitedNodes) {
+        for (PlacingCogwheelNode node : visitedNodes) {
             BlockPos pos = node.pos();
             min = new Vec3i(
                     Math.min(min.getX(), pos.getX()),
@@ -209,7 +209,7 @@ public class PartialCogwheelChain {
     }
 
     public boolean checkMatchingNodesInLevel(Level level) {
-        for (PartialCogwheelChainNode node : visitedNodes) {
+        for (PlacingCogwheelNode node : visitedNodes) {
             BlockState state = level.getBlockState(node.pos());
             if (!isValidBlockTarget(state)) {
                 return false;
@@ -223,14 +223,14 @@ public class PartialCogwheelChain {
         return true;
     }
 
-    public PartialCogwheelChain toLocalSpaceChain() {
+    public PlacingCogwheelChain toLocalSpaceChain() {
         final BlockPos origin = getFirstNode().pos();
-        final List<PartialCogwheelChainNode> localNodes = new ArrayList<>();
-        for (final PartialCogwheelChainNode node : visitedNodes) {
+        final List<PlacingCogwheelNode> localNodes = new ArrayList<>();
+        for (final PlacingCogwheelNode node : visitedNodes) {
             final BlockPos localPos = node.pos().subtract(origin);
-            localNodes.add(new PartialCogwheelChainNode(localPos, node.rotationAxis(), node.isLarge()));
+            localNodes.add(new PlacingCogwheelNode(localPos, node.rotationAxis(), node.isLarge()));
         }
-        return new PartialCogwheelChain(localNodes);
+        return new PlacingCogwheelChain(localNodes);
     }
 
     public static class ChainAdditionAbortedException extends Exception {

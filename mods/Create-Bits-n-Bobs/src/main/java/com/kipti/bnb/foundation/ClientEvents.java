@@ -1,15 +1,11 @@
 package com.kipti.bnb.foundation;
 
-import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChainGeometryBuilder;
-import com.kipti.bnb.content.cogwheel_chain.graph.PartialCogwheelChainNode;
 import com.kipti.bnb.content.cogwheel_chain.item.CogwheelChainPlacementEffect;
 import com.kipti.bnb.content.girder_strut.GirderStrutPlacementEffects;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderWrenchBehaviour;
 import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -59,11 +55,11 @@ public class ClientEvents {
             CogwheelChainPlacementEffect.tick(mc.player);
         }
 
-        var a = CogwheelChainGeometryBuilder.getTangentPointOnCircle(new Vec3(0, 1, 0), new Vec3(5, 0, 0),
-            new PartialCogwheelChainNode(new BlockPos(0, 0, 0), Direction.Axis.Y, true),
-            1,
-            new PartialCogwheelChainNode(new BlockPos(5, 0, 0), Direction.Axis.Y, false),
-            -1, false);
+//        var a = CogwheelChainGeometryBuilder.getTangentPointOnCircle(new Vec3(0, 1, 0), new Vec3(5, 0, 0),
+//                new PlacingCogwheelNode(new BlockPos(0, 0, 0), Direction.Axis.Y, true),
+//                1,
+//                new PlacingCogwheelNode(new BlockPos(5, 0, 0), Direction.Axis.Y, false),
+//                -1, false);
 
 //
 //        //Debugging for the cogwheel chain geo builder

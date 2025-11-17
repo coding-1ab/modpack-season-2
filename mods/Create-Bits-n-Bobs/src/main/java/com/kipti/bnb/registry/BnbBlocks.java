@@ -154,7 +154,7 @@ public class BnbBlocks {
             .transform(axeOrPickaxe())
             .blockstate(BlockStateGen.axisBlockProvider(false))
             .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+//            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .register();
 
     public static final BlockEntry<CogwheelChainBlock> LARGE_COGWHEEL_CHAIN =
@@ -165,7 +165,7 @@ public class BnbBlocks {
                     .transform(axeOrPickaxe())
                     .blockstate(BlockStateGen.axisBlockProvider(false))
                     .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+//                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
                     .register();
 
     public static <T extends NixieBoardBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> nixieBoard() {

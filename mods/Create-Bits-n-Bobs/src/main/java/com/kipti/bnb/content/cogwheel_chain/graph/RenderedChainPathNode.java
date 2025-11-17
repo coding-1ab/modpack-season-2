@@ -9,22 +9,22 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.phys.Vec3;
 
-public record ChainPathNode(BlockPos relativePos, Vec3 nodeOffset) {
+public record RenderedChainPathNode(BlockPos relativePos, Vec3 nodeOffset) {
 
-    public static final Codec<ChainPathNode> CODEC = RecordCodecBuilder.create(
-        p_337946_ -> p_337946_.group(
-                BlockPos.CODEC.fieldOf("relativePos").forGetter(ChainPathNode::relativePos),
-                Vec3.CODEC.fieldOf("nodeEnter").forGetter(ChainPathNode::nodeOffset)
-            )
-            .apply(p_337946_, ChainPathNode::new)
+    public static final Codec<RenderedChainPathNode> CODEC = RecordCodecBuilder.create(
+            p_337946_ -> p_337946_.group(
+                            BlockPos.CODEC.fieldOf("relativePos").forGetter(RenderedChainPathNode::relativePos),
+                            Vec3.CODEC.fieldOf("nodeEnter").forGetter(RenderedChainPathNode::nodeOffset)
+                    )
+                    .apply(p_337946_, RenderedChainPathNode::new)
     );
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ChainPathNode> STREAM_CODEC = StreamCodec.composite(
-        BlockPos.STREAM_CODEC,
-        ChainPathNode::relativePos,
-        CatnipStreamCodecs.VEC3,
-        ChainPathNode::nodeOffset,
-        ChainPathNode::new
+    public static final StreamCodec<RegistryFriendlyByteBuf, RenderedChainPathNode> STREAM_CODEC = StreamCodec.composite(
+            BlockPos.STREAM_CODEC,
+            RenderedChainPathNode::relativePos,
+            CatnipStreamCodecs.VEC3,
+            RenderedChainPathNode::nodeOffset,
+            RenderedChainPathNode::new
     );
 
     public Vec3 getPosition() {
@@ -40,10 +40,10 @@ public record ChainPathNode(BlockPos relativePos, Vec3 nodeOffset) {
         tag.putDouble("OffsetZ", nodeOffset.z);
     }
 
-    public static ChainPathNode read(CompoundTag tag) {
+    public static RenderedChainPathNode read(CompoundTag tag) {
         BlockPos pos = new BlockPos(tag.getInt("X"), tag.getInt("Y"), tag.getInt("Z"));
         Vec3 offset = new Vec3(tag.getDouble("OffsetX"), tag.getDouble("OffsetY"), tag.getDouble("OffsetZ"));
-        return new ChainPathNode(pos, offset);
+        return new RenderedChainPathNode(pos, offset);
     }
 
 }

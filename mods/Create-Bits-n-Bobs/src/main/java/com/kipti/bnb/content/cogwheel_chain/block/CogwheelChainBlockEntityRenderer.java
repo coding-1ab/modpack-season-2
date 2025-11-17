@@ -1,6 +1,6 @@
 package com.kipti.bnb.content.cogwheel_chain.block;
 
-import com.kipti.bnb.content.cogwheel_chain.graph.ChainPathNode;
+import com.kipti.bnb.content.cogwheel_chain.graph.RenderedChainPathNode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
@@ -47,13 +47,13 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
 
             final Vec3 origin = Vec3.atLowerCornerOf(be.getBlockPos());
             for (int i = 0; i < be.chain.getChainPathNodes().size(); i++) {
-                final ChainPathNode nodeA = be.chain.getChainPathNodes().get(i);
-                final ChainPathNode nodeB = be.chain.getChainPathNodes().get((i + 1) % be.chain.getChainPathNodes().size());
+                final RenderedChainPathNode nodeA = be.chain.getChainPathNodes().get(i);
+                final RenderedChainPathNode nodeB = be.chain.getChainPathNodes().get((i + 1) % be.chain.getChainPathNodes().size());
 
                 final double stretchOffset = offset + accumulatedUV;
 
                 final double distance = nodeA.getPosition().add(origin).distanceTo(nodeB.getPosition().add(origin));
-                accumulatedUV += Math.signum(rotationsPerTick) * distance;
+                accumulatedUV += distance;
 
                 renderChain(be, ms, buffer, nodeB.getPosition().add(origin), nodeA.getPosition().add(origin), lighter, (float) stretchOffset, (float) chainTextureSquish);
             }
@@ -64,8 +64,8 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
         double totalDistance = 0f;
         final Vec3 origin = Vec3.atLowerCornerOf(be.getBlockPos());
         for (int i = 0; i < be.chain.getChainPathNodes().size(); i++) {
-            final ChainPathNode nodeA = be.chain.getChainPathNodes().get(i);
-            final ChainPathNode nodeB = be.chain.getChainPathNodes().get((i + 1) % be.chain.getChainPathNodes().size());
+            final RenderedChainPathNode nodeA = be.chain.getChainPathNodes().get(i);
+            final RenderedChainPathNode nodeB = be.chain.getChainPathNodes().get((i + 1) % be.chain.getChainPathNodes().size());
 
             totalDistance += nodeA.getPosition().add(origin).distanceTo(nodeB.getPosition().add(origin));
         }
