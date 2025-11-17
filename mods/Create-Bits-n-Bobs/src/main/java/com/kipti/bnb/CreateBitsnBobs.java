@@ -26,13 +26,14 @@ public class CreateBitsnBobs {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID)
-        .defaultCreativeTab((ResourceKey<CreativeModeTab>) null)
-        .setTooltipModifierFactory(item ->
-            new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
-                .andThen(TooltipModifier.mapNull(KineticStats.create(item)))
-        );
+            .defaultCreativeTab((ResourceKey<CreativeModeTab>) null)
+            .setTooltipModifierFactory(item ->
+                    new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
+                            .andThen(TooltipModifier.mapNull(KineticStats.create(item)))
+            );
 
     public CreateBitsnBobs(IEventBus modEventBus, ModContainer modContainer) {
+        modEventBus.addListener(CreateBitsnBobsData::gatherData);
         REGISTRATE.registerEventListeners(modEventBus);
 
         BnbItems.register();

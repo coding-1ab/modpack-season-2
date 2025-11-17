@@ -36,9 +36,9 @@ public class CogwheelChainPathfinder {
     }
 
     public record PartialPathFrontierData(
-        ImmutableList<PathNode> traversed,
-        double distance,
-        int chainIntersections
+            ImmutableList<PathNode> traversed,
+            double distance,
+            int chainIntersections
     ) {
         public PartialPathFrontierData compare(PartialPathFrontierData other) {
             if (this.chainIntersections != other.chainIntersections) {
@@ -51,9 +51,9 @@ public class CogwheelChainPathfinder {
             ArrayList<PathNode> newTraversed = new ArrayList<>(this.traversed);
             newTraversed.add(nextNode);
             return new PartialPathFrontierData(
-                ImmutableList.copyOf(newTraversed),
-                this.distance + additionalDistance,
-                this.chainIntersections + additionalSelfIntersections
+                    ImmutableList.copyOf(newTraversed),
+                    this.distance + additionalDistance,
+                    this.chainIntersections + additionalSelfIntersections
             );
         }
 
@@ -65,23 +65,26 @@ public class CogwheelChainPathfinder {
                 sb.append(String.format("[%s @ %d] -> ", pn.chainNode.pos(), pn.side));
             }
             sb.append(String.format(" | Distance: %.2f | Intersections: %d",
-                distance,
-                chainIntersections
+                    distance,
+                    chainIntersections
             ));
             return sb.toString();
         }
     }
 
-    public static Pair<List<PathNode>, List<ChainPathCogwheelNode>> buildChainPath(PartialCogwheelChain chain) {
+    public static Pair<List<PathNode>, List<ChainPathCogwheelNode>> buildChainPath(PartialCogwheelChain worldSpaceChain) {
+        //Reconstruct chain to local space
+        final PartialCogwheelChain chain = worldSpaceChain.toLocalSpaceChain();
+
         AtomicReference<PartialPathFrontierData> leftPath = new AtomicReference<>(new PartialPathFrontierData(
-            ImmutableList.of(new PathNode(chain.getNodes().getFirst(), 1)),
-            0,
-            0
+                ImmutableList.of(new PathNode(chain.getNodes().getFirst(), 1)),
+                0,
+                0
         ));
         AtomicReference<PartialPathFrontierData> rightPath = new AtomicReference<>(new PartialPathFrontierData(
-            ImmutableList.of(new PathNode(chain.getNodes().getFirst(), -1)),
-            0,
-            0
+                ImmutableList.of(new PathNode(chain.getNodes().getFirst(), -1)),
+                0,
+                0
         ));
 
         PartialCogwheelChainNode prevNode = chain.getNodes().get(0);
@@ -102,35 +105,35 @@ public class CogwheelChainPathfinder {
                 for (int toSide = 1; toSide >= -1; toSide -= 2) {
                     if (isValidPathStep(prevNode, fromSide, nextNode, toSide)) {
                         Vec3 fromPos = prevNode.center().add(
-                            getPathingTangentOnCog(nextNode, prevNode, -fromSide)
+                                getPathingTangentOnCog(nextNode, prevNode, -fromSide)
                         );
                         Vec3 toPos = nextNode.center().add(
-                            getPathingTangentOnCog(prevNode, nextNode, toSide)
+                                getPathingTangentOnCog(prevNode, nextNode, toSide)
                         );
                         ImmutableList<PathNode> traversed = fromPath.get().traversed;
                         int traversedSize = traversed.size();
 
                         double distance = fromPos.distanceTo(toPos) + (getArcDistanceOnCog(
-                            prevNode,
-                            fromSide,
-                            nextNode,
-                            toSide,
-                            nextNextNode
+                                prevNode,
+                                fromSide,
+                                nextNode,
+                                toSide,
+                                nextNextNode
                         ));
 
                         int selfIntersections = nextNextNode == prevNode ? 0 : (traversedSize < 2 ? 0 : getSelfIntersection(
-                            traversed.get(traversedSize - 2).chainNode,
-                            traversed.get(traversedSize - 2).side,
-                            traversed.get(traversedSize - 1).chainNode,
-                            traversed.get(traversedSize - 1).side,
-                            nextNode,
-                            toSide
+                                traversed.get(traversedSize - 2).chainNode,
+                                traversed.get(traversedSize - 2).side,
+                                traversed.get(traversedSize - 1).chainNode,
+                                traversed.get(traversedSize - 1).side,
+                                nextNode,
+                                toSide
                         ));
 
                         PartialPathFrontierData extendedPath = fromPath.get().extend(
-                            new PathNode(nextNode, toSide),
-                            distance,
-                            selfIntersections
+                                new PathNode(nextNode, toSide),
+                                distance,
+                                selfIntersections
                         );
 
                         AtomicReference<PartialPathFrontierData> targetPath = (toSide == 1) ? nextLeftPath : nextRightPath;
@@ -162,8 +165,8 @@ public class CogwheelChainPathfinder {
             prevNode = nextNode;
         }
         PartialPathFrontierData finalPath = (leftPath.get() != null && rightPath.get() != null)
-            ? leftPath.get().compare(rightPath.get())
-            : (leftPath.get() != null ? leftPath.get() : rightPath.get());
+                ? leftPath.get().compare(rightPath.get())
+                : (leftPath.get() != null ? leftPath.get() : rightPath.get());
         if (finalPath == null) return null;
         ArrayList<PathNode> finalTraversed = new ArrayList<>(finalPath.traversed);
         finalTraversed.removeLast();
@@ -204,9 +207,9 @@ public class CogwheelChainPathfinder {
         }
 
         double angle = Math.acos(
-            Math.max(-1.0, Math.min(1.0,
-                fromTangent.normalize().dot(toTangent.normalize())
-            ))
+                Math.max(-1.0, Math.min(1.0,
+                        fromTangent.normalize().dot(toTangent.normalize())
+                ))
         );
 
         double radius = currentNode.isLarge() ? 1.0f : 0.5f;
@@ -231,11 +234,11 @@ public class CogwheelChainPathfinder {
         Vec3 nextToPathPos = getPathingTangentOnCog(middle, to, side).add(to.center());
 
         return doLinesIntersectOnPlane(
-            middle.axis(),
-            prevFromPathPos.subtract(middle.center()),
-            prevToPathPos.subtract(middle.center()),
-            nextFromPathPos.subtract(middle.center()),
-            nextToPathPos.subtract(middle.center())
+                middle.axis(),
+                prevFromPathPos.subtract(middle.center()),
+                prevToPathPos.subtract(middle.center()),
+                nextFromPathPos.subtract(middle.center()),
+                nextToPathPos.subtract(middle.center())
         ) ? 1 : 0;
     }
 
@@ -286,7 +289,7 @@ public class CogwheelChainPathfinder {
 
         if (from.rotationAxis() != to.rotationAxis()) {
             differenceTo = from.projectDirToAxisPlane(
-                to.projectDirToAxisPlane(differenceTo)
+                    to.projectDirToAxisPlane(differenceTo)
             );
         }
 

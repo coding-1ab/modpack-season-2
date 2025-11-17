@@ -62,243 +62,245 @@ import static com.simibubi.create.foundation.data.TagGen.*;
 public class BnbBlocks {
 
     public static final BlockEntry<LightBlock> BRASS_LAMP = REGISTRATE.block("brass_lamp", (p) -> new LightBlock(p, BnbShapes.BRASS_LAMP_SHAPE, true))
-        .initialProperties(SharedProperties::softMetal)
-        .transform(pickaxeOnly())
-        .blockstate((c, p) -> p.directionalBlock(c.get(),
-            (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                "block/brass_lamp/brass_lamp" + (state.getValue(LightBlock.LIT) ? "_on" : "")
-            ))))
-        .properties(p -> p
-            .noOcclusion()
-            .lightLevel(state -> state.getValue(LightBlock.LIT) ? 15 : 0)
-            .mapColor(DyeColor.ORANGE)
-            .forceSolidOn())
-        .addLayer(() -> RenderType::translucent)
-        .item()
-        .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/brass_lamp/brass_lamp")))
-        .build()
-        .register();
+            .initialProperties(SharedProperties::softMetal)
+            .transform(pickaxeOnly())
+            .blockstate((c, p) -> p.directionalBlock(c.get(),
+                    (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                            "block/brass_lamp/brass_lamp" + (state.getValue(LightBlock.LIT) ? "_on" : "")
+                    ))))
+            .properties(p -> p
+                    .noOcclusion()
+                    .lightLevel(state -> state.getValue(LightBlock.LIT) ? 15 : 0)
+                    .mapColor(DyeColor.ORANGE)
+                    .forceSolidOn())
+            .addLayer(() -> RenderType::translucent)
+            .item()
+            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/brass_lamp/brass_lamp")))
+            .build()
+            .register();
 
     public static final BlockEntry<LightbulbBlock> LIGHTBULB = REGISTRATE.block("lightbulb", LightbulbBlock::new)
-        .initialProperties(SharedProperties::softMetal)
-        .transform(pickaxeOnly())
-        .blockstate((c, p) -> p.directionalBlock(c.get(),
-            (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                "block/lightbulb/lightbulb" + (state.getValue(LightbulbBlock.CAGE) ? "" : "_uncaged") + (state.getValue(LightBlock.LIT) ? "_on" : "")
-            ))))
-        .properties(p -> p
-            .noOcclusion()
-            .lightLevel(state -> state.getValue(LightBlock.LIT) ? 10 : 0)
-            .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.LIT))
-            .forceSolidOn())
-        .addLayer(() -> RenderType::translucent)
-        .item()
-        .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/lightbulb/lightbulb")))
-        .build()
-        .register();
+            .initialProperties(SharedProperties::softMetal)
+            .transform(pickaxeOnly())
+            .blockstate((c, p) -> p.directionalBlock(c.get(),
+                    (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                            "block/lightbulb/lightbulb" + (state.getValue(LightbulbBlock.CAGE) ? "" : "_uncaged") + (state.getValue(LightBlock.LIT) ? "_on" : "")
+                    ))))
+            .properties(p -> p
+                    .noOcclusion()
+                    .lightLevel(state -> state.getValue(LightBlock.LIT) ? 10 : 0)
+                    .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.LIT))
+                    .forceSolidOn())
+            .addLayer(() -> RenderType::translucent)
+            .item()
+            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/lightbulb/lightbulb")))
+            .build()
+            .register();
 
     public static final BlockEntry<HeadlampBlock> HEADLAMP = REGISTRATE.block("headlamp", HeadlampBlock::new)
-        .initialProperties(SharedProperties::softMetal)
-        .transform(pickaxeOnly())
-        .blockstate((c, p) -> p.simpleBlock(c.get(),
-            p.models().getExistingFile(CreateBitsnBobs.asResource(
-                "block/headlamp/headlight_block"
+            .initialProperties(SharedProperties::softMetal)
+            .transform(pickaxeOnly())
+            .blockstate((c, p) -> p.simpleBlock(c.get(),
+                    p.models().getExistingFile(CreateBitsnBobs.asResource(
+                            "block/headlamp/headlight_block"
+                    ))
             ))
-        ))
-        .onRegister(CreateRegistrate.blockModel(() -> HeadlampModelBuilder::new))
-        .properties(p -> p
-            .noOcclusion()
-            .lightLevel(state -> state.getValue(LightBlock.LIT) ? 15 : 0)
-            .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.LIT))
-            .mapColor(DyeColor.ORANGE)
-            .forceSolidOn())
-        .addLayer(() -> RenderType::translucent)
-        .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-        .item(HeadlampBlockItem::new)
-        .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/headlamp/headlight")))
-        .build()
-        .register();
+            .onRegister(CreateRegistrate.blockModel(() -> HeadlampModelBuilder::new))
+            .properties(p -> p
+                    .noOcclusion()
+                    .lightLevel(state -> state.getValue(LightBlock.LIT) ? 15 : 0)
+                    .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.LIT))
+                    .mapColor(DyeColor.ORANGE)
+                    .forceSolidOn())
+            .addLayer(() -> RenderType::translucent)
+            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+            .item(HeadlampBlockItem::new)
+            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/headlamp/headlight")))
+            .build()
+            .register();
 
     public static final BlockEntry<NixieBoardBlock> NIXIE_BOARD = REGISTRATE.block("nixie_board", p -> new NixieBoardBlock(p, null))
-        .transform(nixieBoard())
-        .item()
-        .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/nixie_board/nixie_board_single")))
-        .build()
-        .register();
+            .transform(nixieBoard())
+            .item()
+            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/nixie_board/nixie_board_single")))
+            .build()
+            .register();
 
     public static final DyedBlockList<NixieBoardBlock> DYED_NIXIE_BOARD = new DyedBlockList<>(colour -> {
         String colourName = colour.getSerializedName();
         return REGISTRATE.block(colourName + "_nixie_board", p -> new NixieBoardBlock(p, colour))
-            .transform(nixieBoard())
-            .register();
+                .transform(nixieBoard())
+                .register();
     });
 
     public static final BlockEntry<LargeNixieTubeBlock> LARGE_NIXIE_TUBE = REGISTRATE.block("large_nixie_tube", p -> new LargeNixieTubeBlock(p, null))
-        .transform(largeNixieTube())
-        .item()
-        .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/large_nixie_tube/large_nixie_tube")))
-        .build()
-        .register();
+            .transform(largeNixieTube())
+            .item()
+            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/large_nixie_tube/large_nixie_tube")))
+            .build()
+            .register();
 
     public static final DyedBlockList<LargeNixieTubeBlock> DYED_LARGE_NIXIE_TUBE = new DyedBlockList<>(colour -> {
         String colourName = colour.getSerializedName();
         return REGISTRATE.block(colourName + "_large_nixie_tube", p -> new LargeNixieTubeBlock(p, colour))
-            .transform(largeNixieTube())
-            .register();
+                .transform(largeNixieTube())
+                .register();
     });
 
     public static final BlockEntry<CogwheelChainBlock> SMALL_COGWHEEL_CHAIN = REGISTRATE.block("small_cogwheel_chain", CogwheelChainBlock::small)
-        .initialProperties(SharedProperties::stone)
-        .properties(p -> p.sound(SoundType.WOOD)
-            .mapColor(MapColor.DIRT))
-        .transform(axeOrPickaxe())
-        .blockstate(BlockStateGen.axisBlockProvider(false))
-        .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-        .register();
-
-    public static final BlockEntry<CogwheelChainBlock> LARGE_COGWHEEL_CHAIN =
-        REGISTRATE.block("large_cogwheel_chain", CogwheelChainBlock::large)
             .initialProperties(SharedProperties::stone)
             .properties(p -> p.sound(SoundType.WOOD)
-                .mapColor(MapColor.DIRT))
+                    .mapColor(MapColor.DIRT))
             .transform(axeOrPickaxe())
             .blockstate(BlockStateGen.axisBlockProvider(false))
             .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
+            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .register();
+
+    public static final BlockEntry<CogwheelChainBlock> LARGE_COGWHEEL_CHAIN =
+            REGISTRATE.block("large_cogwheel_chain", CogwheelChainBlock::large)
+                    .initialProperties(SharedProperties::stone)
+                    .properties(p -> p.sound(SoundType.WOOD)
+                            .mapColor(MapColor.DIRT))
+                    .transform(axeOrPickaxe())
+                    .blockstate(BlockStateGen.axisBlockProvider(false))
+                    .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
+                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+                    .register();
 
     public static <T extends NixieBoardBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> nixieBoard() {
         return b -> b
-            .initialProperties(SharedProperties::softMetal)
-            .transform(displayTarget(BnbDisplayTargets.GENERIC_NIXIE_TARGET))
-            .transform(pickaxeOnly())
-            .blockstate(NixieBoardBlockStateGen::nixieBoard)
-            .onRegister(CreateRegistrate.blockModel(() -> DoubleOrientedBlockModel::new))
-            .properties(p -> p
-                .noOcclusion()
-                .lightLevel(state -> state.getValue(NixieBoardBlock.LIT) ? 4 : 1)
-                .mapColor(DyeColor.ORANGE)
-                .forceSolidOn())
-            .addLayer(() -> RenderType::translucent);
+                .initialProperties(SharedProperties::softMetal)
+                .transform(displayTarget(BnbDisplayTargets.GENERIC_NIXIE_TARGET))
+                .transform(pickaxeOnly())
+                .blockstate(NixieBoardBlockStateGen::nixieBoard)
+                .onRegister(CreateRegistrate.blockModel(() -> DoubleOrientedBlockModel::new))
+                .properties(p -> p
+                        .noOcclusion()
+                        .lightLevel(state -> state.getValue(NixieBoardBlock.LIT) ? 4 : 1)
+                        .mapColor(DyeColor.ORANGE)
+                        .forceSolidOn())
+                .addLayer(() -> RenderType::translucent);
     }
 
     public static <T extends LargeNixieTubeBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> largeNixieTube() {
         return b -> b
-            .initialProperties(SharedProperties::softMetal)
-            .transform(displayTarget(BnbDisplayTargets.GENERIC_NIXIE_TARGET))
-            .transform(pickaxeOnly())
-            .blockstate(LargeNixieTubeBlockStateGen::nixieTube)
-            .onRegister(CreateRegistrate.blockModel(() -> DoubleOrientedBlockModel::new))
-            .properties(p -> p
-                .noOcclusion()
-                .lightLevel(state -> state.getValue(NixieBoardBlock.LIT) ? 4 : 1)
-                .mapColor(DyeColor.ORANGE)
-                .forceSolidOn())
-            .addLayer(() -> RenderType::translucent);
+                .initialProperties(SharedProperties::softMetal)
+                .transform(displayTarget(BnbDisplayTargets.GENERIC_NIXIE_TARGET))
+                .transform(pickaxeOnly())
+                .blockstate(LargeNixieTubeBlockStateGen::nixieTube)
+                .onRegister(CreateRegistrate.blockModel(() -> DoubleOrientedBlockModel::new))
+                .properties(p -> p
+                        .noOcclusion()
+                        .lightLevel(state -> state.getValue(NixieBoardBlock.LIT) ? 4 : 1)
+                        .mapColor(DyeColor.ORANGE)
+                        .forceSolidOn())
+                .addLayer(() -> RenderType::translucent);
     }
 
     public static final BlockEntry<WeatheredGirderBlock> WEATHERED_METAL_GIRDER = REGISTRATE.block("weathered_metal_girder", WeatheredGirderBlock::new)
-        .initialProperties(SharedProperties::softMetal)
-        .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
-            .sound(SoundType.NETHERITE_BLOCK))
-        .transform(pickaxeOnly())
-        .blockstate(WeatheredGirderBlockStateGenerator::blockState)
-        .onRegister(CreateRegistrate.blockModel(() -> WeatheredConnectedGirderModel::new))
-        .item()
-        .transform(customItemModel())
-        .register();
-
-    public static final BlockEntry<EncasedWeatheredGirderBlock> WEATHERED_METAL_GIRDER_ENCASED_SHAFT =
-        REGISTRATE.block("weathered_metal_girder_encased_shaft", EncasedWeatheredGirderBlock::new)
             .initialProperties(SharedProperties::softMetal)
             .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
-                .sound(SoundType.NETHERITE_BLOCK))
+                    .sound(SoundType.NETHERITE_BLOCK))
             .transform(pickaxeOnly())
-            .blockstate(WeatheredGirderBlockStateGenerator::blockStateWithShaft)
-            .loot((p, b) -> p.add(b, p.createSingleItemTable(WEATHERED_METAL_GIRDER.get())
-                .withPool(p.applyExplosionCondition(AllBlocks.SHAFT.get(), LootPool.lootPool()
-                    .setRolls(ConstantValue.exactly(1.0F))
-                    .add(LootItem.lootTableItem(AllBlocks.SHAFT.get()))))))
+            .blockstate(WeatheredGirderBlockStateGenerator::blockState)
             .onRegister(CreateRegistrate.blockModel(() -> WeatheredConnectedGirderModel::new))
+            .item()
+            .transform(customItemModel())
             .register();
 
+    public static final BlockEntry<EncasedWeatheredGirderBlock> WEATHERED_METAL_GIRDER_ENCASED_SHAFT =
+            REGISTRATE.block("weathered_metal_girder_encased_shaft", EncasedWeatheredGirderBlock::new)
+                    .initialProperties(SharedProperties::softMetal)
+                    .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
+                            .sound(SoundType.NETHERITE_BLOCK))
+                    .transform(pickaxeOnly())
+                    .blockstate(WeatheredGirderBlockStateGenerator::blockStateWithShaft)
+                    .loot((p, b) -> p.add(b, p.createSingleItemTable(WEATHERED_METAL_GIRDER.get())
+                            .withPool(p.applyExplosionCondition(AllBlocks.SHAFT.get(), LootPool.lootPool()
+                                    .setRolls(ConstantValue.exactly(1.0F))
+                                    .add(LootItem.lootTableItem(AllBlocks.SHAFT.get()))))))
+                    .onRegister(CreateRegistrate.blockModel(() -> WeatheredConnectedGirderModel::new))
+                    .register();
+
     public static final BlockEntry<GirderStrutBlock> WEATHERED_GIRDER_STRUT = REGISTRATE.block("weathered_girder_strut", GirderStrutBlock.weathered())
-        .initialProperties(SharedProperties::softMetal)
-        .transform(pickaxeOnly())
-        .properties(p -> p.noOcclusion())
-        .blockstate((c, p) -> p.directionalBlock(c.get(),
-            (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                "block/girder_strut/weathered_girder_strut_attachment")
-            )))
-        .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
-        .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-        .item(GirderStrutBlockItem::new)
-        .model((c, p) ->
-            p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/weathered_girder_strut_attachment"))
-        )
-        .build()
-        .register();
+            .initialProperties(SharedProperties::softMetal)
+            .transform(pickaxeOnly())
+            .properties(p -> p.noOcclusion())
+            .blockstate((c, p) -> p.directionalBlock(c.get(),
+                    (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                            "block/girder_strut/weathered_girder_strut_attachment")
+                    )))
+            .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
+            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+            .item(GirderStrutBlockItem::new)
+            .model((c, p) ->
+                    p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/weathered_girder_strut_attachment"))
+            )
+            .build()
+            .register();
 
     public static final BlockEntry<GirderStrutBlock> GIRDER_STRUT = REGISTRATE.block("girder_strut", GirderStrutBlock.normal())
-        .initialProperties(SharedProperties::softMetal)
-        .transform(pickaxeOnly())
-        .properties(p -> p.noOcclusion())
-        .blockstate((c, p) -> p.directionalBlock(c.get(),
-            (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                "block/girder_strut/girder_strut_attachment")
-            )))
-        .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
-        .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-        .item(GirderStrutBlockItem::new)
-        .model((c, p) ->
-            p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/girder_strut_attachment"))
-        )
-        .build()
-        .register();
+            .initialProperties(SharedProperties::softMetal)
+            .transform(pickaxeOnly())
+            .properties(p -> p.noOcclusion())
+            .blockstate((c, p) -> p.directionalBlock(c.get(),
+                    (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                            "block/girder_strut/girder_strut_attachment")
+                    )))
+            .onRegister(CreateRegistrate.blockModel(() -> GirderStrutModelBuilder::new))
+            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+            .item(GirderStrutBlockItem::new)
+            .model((c, p) ->
+                    p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/girder_strut_attachment"))
+            )
+            .build()
+            .register();
 
     public static final DyedBlockList<ChairBlock> CHAIRS = new DyedBlockList<>(colour -> {
         String colourName = colour.getSerializedName();
         SeatMovementBehaviour movementBehaviour = new SeatMovementBehaviour();
         SeatInteractionBehaviour interactionBehaviour = new SeatInteractionBehaviour();
         return REGISTRATE.block(colourName + "_chair", p -> new ChairBlock(p, colour))
-            .initialProperties(SharedProperties::wooden)
-            .properties(p -> p.mapColor(colour))
-            .properties(BlockBehaviour.Properties::noOcclusion)
-            .transform(axeOnly())
-            .onRegister(movementBehaviour(movementBehaviour))
-            .onRegister(interactionBehaviour(interactionBehaviour))
-            .transform(displaySource(AllDisplaySources.ENTITY_NAME))
+                .initialProperties(SharedProperties::wooden)
+                .properties(p -> p.mapColor(colour))
+                .properties(BlockBehaviour.Properties::noOcclusion)
+                .transform(axeOnly())
+                .onRegister(movementBehaviour(movementBehaviour))
+                .onRegister(interactionBehaviour(interactionBehaviour))
+                .transform(displaySource(AllDisplaySources.ENTITY_NAME))
 //            .onRegister(CreateRegistrate.blockModel(() -> ChairModelBuilder::new))
-            .blockstate(dyedChair(colourName))
-            .addLayer(() -> RenderType::cutoutMipped)
-            .recipe((c, p) -> {
-                ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, c.get())
-                    .requires(DyeHelper.getWoolOfDye(colour))
-                    .requires(ItemTags.WOODEN_SLABS)
-                    .unlockedBy("has_wool", RegistrateRecipeProvider.has(ItemTags.WOOL))
-                    .save(p, CreateBitsnBobs.asResource("crafting/kinetics/" + c.getName()));
-                ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, c.get())
-                    .requires(colour.getTag())
-                    .requires(AllTags.AllItemTags.SEATS.tag)
-                    .unlockedBy("has_seat", RegistrateRecipeProvider.has(AllTags.AllItemTags.SEATS.tag))
-                    .save(p, CreateBitsnBobs.asResource("crafting/kinetics/" + c.getName() + "_from_other_chair"));
-            })
+                .blockstate(dyedChair(colourName))
+                .addLayer(() -> RenderType::cutoutMipped)
+                .recipe((c, p) -> {
+                    ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, c.get())
+                            .requires(DyeHelper.getWoolOfDye(colour))
+                            .requires(ItemTags.WOODEN_SLABS)
+                            .unlockedBy("has_wool", RegistrateRecipeProvider.has(ItemTags.WOOL))
+                            .save(p, CreateBitsnBobs.asResource("crafting/kinetics/" + c.getName()));
+                    ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, c.get())
+                            .requires(colour.getTag())
+                            .requires(AllTags.AllItemTags.SEATS.tag)
+                            .unlockedBy("has_seat", RegistrateRecipeProvider.has(AllTags.AllItemTags.SEATS.tag))
+                            .save(p, CreateBitsnBobs.asResource("crafting/kinetics/" + c.getName() + "_from_other_chair"));
+                })
 //            .onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.create.seat"))
-            .tag(BnbTags.BnbBlockTags.CHAIRS.tag)
-            .item()
-            .model((c, p) ->
-                p.withExistingParent("item/" + colourName + "_chair", p.modLoc("block/chair/item"))
-                    .texture("2", p.modLoc("block/chair/chair_" + colourName)))
-            .tag(BnbTags.BnbItemTags.CHAIRS.tag)
-            .build()
-            .register();
+                .tag(BnbTags.BnbBlockTags.CHAIRS.tag)
+                .item()
+                .model((c, p) ->
+                        p.withExistingParent("item/" + colourName + "_chair", p.modLoc("block/chair/item"))
+                                .texture("2", p.modLoc("block/chair/chair_" + colourName)))
+                .tag(BnbTags.BnbItemTags.CHAIRS.tag)
+                .build()
+                .register();
     });
 
     public static final BlockEntry<ColoredFallingBlock> CALCINATED_FLINT_GRAVEL = REGISTRATE.block("calcinated_gravel", (p) -> new ColoredFallingBlock(new ColorRGBA(14406560), p))
-        .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
-            .sound(SoundType.SAND))
-        .transform(b -> b.tag(BlockTags.MINEABLE_WITH_SHOVEL))
-        .simpleItem()
-        .register();
+            .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
+                    .sound(SoundType.SAND))
+            .transform(b -> b.tag(BlockTags.MINEABLE_WITH_SHOVEL))
+            .simpleItem()
+            .register();
 
     public static void register() {
     }

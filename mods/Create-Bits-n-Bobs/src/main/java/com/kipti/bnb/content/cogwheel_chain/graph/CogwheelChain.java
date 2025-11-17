@@ -26,16 +26,6 @@ public class CogwheelChain {
         read(tag);
     }
 
-    public CogwheelChain(PartialCogwheelChain source) throws InvalidGeometryException {
-//        this.nodes = CogwheelChainGeometryBuilder.buildFullChainFromPartial(source);
-        Pair<List<CogwheelChainPathfinder.PathNode>, List<ChainPathCogwheelNode>> pathNodes = CogwheelChainPathfinder.buildChainPath(source);
-        if (pathNodes == null) {
-            throw new InvalidGeometryException("Couldn't build a valid path, try inserting more nodes.");
-        }
-        this.nodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(pathNodes.getFirst());
-        this.cogwheelNodes = pathNodes.getSecond();
-    }
-
     public CogwheelChain(Pair<List<CogwheelChainPathfinder.PathNode>, List<ChainPathCogwheelNode>> path) {
         this.nodes = CogwheelChainGeometryBuilder.buildFullChainFromPathNodes(path.getFirst());
         this.cogwheelNodes = path.getSecond();
@@ -53,8 +43,8 @@ public class CogwheelChain {
     }
 
     public static class InvalidGeometryException extends Exception {
-        public InvalidGeometryException(String message) {
-            super(message);
+        public InvalidGeometryException() {
+            super();
         }
     }
 
@@ -125,7 +115,7 @@ public class CogwheelChain {
 
     private void placeChainCogwheelInLevel(Level level, PartialCogwheelChainNode node, boolean isController, BlockPos controllerPos) {
         level.setBlockAndUpdate(node.pos(), (node.isLarge() ? BnbBlocks.LARGE_COGWHEEL_CHAIN : BnbBlocks.SMALL_COGWHEEL_CHAIN).getDefaultState()
-            .setValue(CogwheelChainBlock.AXIS, node.rotationAxis()));
+                .setValue(CogwheelChainBlock.AXIS, node.rotationAxis()));
 
         BlockEntity be = level.getBlockEntity(node.pos());
         if (be instanceof CogwheelChainBlockEntity chainBE) {
@@ -151,7 +141,7 @@ public class CogwheelChain {
         BlockState state = level.getBlockState(pos);
         if (be instanceof CogwheelChainBlockEntity && (state.getBlock() instanceof CogwheelChainBlock cogwheelChainBlock)) {
             level.setBlockAndUpdate(pos, (cogwheelChainBlock.isLargeChainCog() ? AllBlocks.LARGE_COGWHEEL : AllBlocks.COGWHEEL).getDefaultState()
-                .setValue(CogwheelChainBlock.AXIS, state.getValue(CogwheelChainBlock.AXIS)));
+                    .setValue(CogwheelChainBlock.AXIS, state.getValue(CogwheelChainBlock.AXIS)));
         }
     }
 

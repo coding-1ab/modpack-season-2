@@ -35,9 +35,9 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
         isController = compound.getBoolean("IsController");
         if (compound.contains("ControllerOffsetX")) {
             controllerOffset = new Vec3i(
-                compound.getInt("ControllerOffsetX"),
-                compound.getInt("ControllerOffsetY"),
-                compound.getInt("ControllerOffsetZ")
+                    compound.getInt("ControllerOffsetX"),
+                    compound.getInt("ControllerOffsetY"),
+                    compound.getInt("ControllerOffsetZ")
             );
         } else {
             controllerOffset = null;
@@ -55,7 +55,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     }
 
     @Override
-    protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+    protected void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.write(compound, registries, clientPacket);
         compound.putBoolean("IsController", isController);
         if (controllerOffset != null) {
@@ -131,16 +131,16 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
         //Else, check if this is the same chain structure.
         if (target instanceof CogwheelChainBlockEntity chainTarget) {
             boolean isControlledBySame = this.isController &&
-                chainTarget.controllerOffset != null &&
-                chainTarget.controllerOffset.equals(this.getBlockPos().subtract(target.getBlockPos())) ||
+                    chainTarget.controllerOffset != null &&
+                    chainTarget.controllerOffset.equals(this.getBlockPos().subtract(target.getBlockPos())) ||
 
-                chainTarget.isController &&
-                    this.controllerOffset != null &&
-                    this.controllerOffset.equals(target.getBlockPos().subtract(this.getBlockPos())) ||
+                    chainTarget.isController &&
+                            this.controllerOffset != null &&
+                            this.controllerOffset.equals(target.getBlockPos().subtract(this.getBlockPos())) ||
 
-                chainTarget.controllerOffset != null &&
-                    this.controllerOffset != null &&
-                    this.controllerOffset.offset(this.getBlockPos()).equals(chainTarget.controllerOffset.offset(target.getBlockPos()));
+                    chainTarget.controllerOffset != null &&
+                            this.controllerOffset != null &&
+                            this.controllerOffset.offset(this.getBlockPos()).equals(chainTarget.controllerOffset.offset(target.getBlockPos()));
 
             if (isControlledBySame) {
                 float currentSide = this.getChainRotationFactor();

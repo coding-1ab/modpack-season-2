@@ -1,4 +1,6 @@
 {
+  "bits_n_bobs.ponder.chain_cog_flat.header": "uıɐɥɔ ɐ ɥʇıʍ sןǝǝɥʍboɔ buıʇɔǝuuoƆ",
+  "bits_n_bobs.ponder.chain_cog_flat.text_1": "sןǝǝɥʍboɔ ǝɹoɯ ɹo ᄅ ʇɔǝuuoɔ oʇ pǝsn ǝq uɐɔ uıɐɥɔ Ɐ",
   "block.bits_n_bobs.black_chair": "ɹıɐɥƆ ʞɔɐןᗺ",
   "block.bits_n_bobs.black_large_nixie_tube": "ǝqn⟘ ǝıxıN ǝbɹɐꞀ ʞɔɐןᗺ",
   "block.bits_n_bobs.black_nixie_board": "pɹɐoᗺ ǝıxıN ʞɔɐןᗺ",
@@ -60,7 +62,6 @@
   "block.bits_n_bobs.yellow_large_nixie_tube": "ǝqn⟘ ǝıxıN ǝbɹɐꞀ ʍoןןǝʎ",
   "block.bits_n_bobs.yellow_nixie_board": "pɹɐoᗺ ǝıxıN ʍoןןǝʎ",
   "item.bits_n_bobs.calcinated_flint": "ʇuıןℲ pǝʇɐuıɔןɐƆ",
-  "item.bits_n_bobs.cogwheel_chain_placing_chain": "uıɐɥƆ buıɔɐןԀ uıɐɥƆ ןǝǝɥʍboƆ",
   "item.bits_n_bobs.crushed_deepslate": "ǝʇɐןsdǝǝᗡ pǝɥsnɹƆ",
   "message.bits_n_bobs.girder_strut.missing_anchors": "sʇnɹʇS ɹǝpɹı⅁ ǝɹoɯ %s pǝǝu noʎ",
   "tab.based": "sqoᗺ ,u, sʇıᗺ :ǝʇɐǝɹƆ"

@@ -149,24 +149,18 @@ public class PartialCogwheelChain {
         return Objects.hashCode(visitedNodes);
     }
 
-    public boolean completeIfLooping(Level level) throws CogwheelChain.InvalidGeometryException {
-        if (level.isClientSide) return false;
-        CogwheelChain completedChain = buildChainIfLooping();
-        if (completedChain == null) return false;
-        completedChain.placeInLevel(level, this);
-        return true;
-    }
-
-    public @Nullable CogwheelChain buildChainIfLooping() throws CogwheelChain.InvalidGeometryException {
-        if (getSize() < 2) return null;
-        PartialCogwheelChainNode firstNode = visitedNodes.getFirst();
-        PartialCogwheelChainNode lastNode = getLastNode();
-        if (!firstNode.pos().equals(lastNode.pos())) return null;
+    public boolean canBuildChainIfLooping() throws CogwheelChain.InvalidGeometryException {
+        if (getSize() < 2) return false;
+        final PartialCogwheelChainNode firstNode = visitedNodes.getFirst();
+        final PartialCogwheelChainNode lastNode = getLastNode();
+        if (!firstNode.pos().equals(lastNode.pos())) return false;
 
         // Remove last chainNode to avoid duplication
         visitedNodes.removeLast();
-        CogwheelChain completedChain = new CogwheelChain(this);
-        return completedChain;
+        if (CogwheelChainPathfinder.buildChainPath(this) == null) {
+            throw new CogwheelChain.InvalidGeometryException();
+        }
+        return true;
     }
 
     public List<PartialCogwheelChainNode> getNodes() {
@@ -227,6 +221,16 @@ public class PartialCogwheelChain {
             }
         }
         return true;
+    }
+
+    public PartialCogwheelChain toLocalSpaceChain() {
+        final BlockPos origin = getFirstNode().pos();
+        final List<PartialCogwheelChainNode> localNodes = new ArrayList<>();
+        for (final PartialCogwheelChainNode node : visitedNodes) {
+            final BlockPos localPos = node.pos().subtract(origin);
+            localNodes.add(new PartialCogwheelChainNode(localPos, node.rotationAxis(), node.isLarge()));
+        }
+        return new PartialCogwheelChain(localNodes);
     }
 
     public static class ChainAdditionAbortedException extends Exception {

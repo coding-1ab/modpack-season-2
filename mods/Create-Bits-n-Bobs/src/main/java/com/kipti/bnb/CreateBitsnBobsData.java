@@ -1,7 +1,8 @@
 package com.kipti.bnb;
 
+import com.kipti.bnb.foundation.ponder.BnbPonderPlugin;
 import com.tterrag.registrate.providers.ProviderType;
-import com.tterrag.registrate.providers.RegistrateDataProvider;
+import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -19,6 +20,9 @@ public class CreateBitsnBobsData {
 
         CreateBitsnBobs.REGISTRATE.addDataGenerator(ProviderType.LANG, provider -> {
             BiConsumer<String, String> langConsumer = provider::add;
+            // Register this since FMLClientSetupEvent does not run during datagen
+            PonderIndex.addPlugin(new BnbPonderPlugin());
+            PonderIndex.getLangAccess().provideLang(CreateBitsnBobs.MOD_ID, langConsumer);
 
 //            PonderIndex.addPlugin(new DDPonderPlugin());
 //            PonderIndex.getLangAccess().provideLang(CreateBitsnBobs.MOD_ID, langConsumer);

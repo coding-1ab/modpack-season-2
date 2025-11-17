@@ -99,9 +99,11 @@ public class CogwheelChainPlacementInteraction {
 
                 final boolean completed;
                 try {
-                    completed = currentBuildingChain.buildChainIfLooping() != null;
+                    completed = currentBuildingChain.canBuildChainIfLooping();
                 } catch (final CogwheelChain.InvalidGeometryException exception) {
                     player.displayClientMessage(Component.literal(exception.getMessage()).withColor(0xff0000), true);
+                    currentBuildingChain = null;
+                    currentChainLevel = null;
                     return true;
                 }
 

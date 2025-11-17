@@ -4,11 +4,11 @@ import com.kipti.bnb.content.cogwheel_chain.graph.ChainPathNode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
+import com.simibubi.create.foundation.render.RenderTypes;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -33,23 +33,24 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
     protected void renderSafe(CogwheelChainBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
 
-        float rotationsPerTick = -be.getChainRotationFactor() * be.getSpeed() / (60 * 20);
-        float time = AnimationTickHolder.getRenderTime();
+        final float rotationsPerTick = -be.getChainRotationFactor() * be.getSpeed() / (60 * 20);
+        final float time = be.getLevel() != null ? AnimationTickHolder.getRenderTime(be.getLevel()) : AnimationTickHolder.getRenderTime();
 
-        float offset = rotationsPerTick == 0 ? 0 : (float) (((Math.PI * 2 * rotationsPerTick * time) % 1f) + 1f) % 1f;
+        final float offset = rotationsPerTick == 0 ? 0 : (float) (((Math.PI * 2 * rotationsPerTick * time) % 1f) + 1f) % 1f;
 
         //For now, if controller, render an outliner between each chainNode
         Function<Vector3f, Integer> lighter = be.createGlobalLighter();
         if (be.isController && be.chain != null) {
+            final Vec3 origin = Vec3.atLowerCornerOf(be.getBlockPos());
             for (int i = 0; i < be.chain.getChainPathNodes().size(); i++) {
-                ChainPathNode nodeA = be.chain.getChainPathNodes().get(i);
-                ChainPathNode nodeB = be.chain.getChainPathNodes().get((i + 1) % be.chain.getChainPathNodes().size());
+                final ChainPathNode nodeA = be.chain.getChainPathNodes().get(i);
+                final ChainPathNode nodeB = be.chain.getChainPathNodes().get((i + 1) % be.chain.getChainPathNodes().size());
 
 //                Outliner.getInstance()
 //                    .showLine(nodeA, nodeA.getPosition(), nodeB.getPosition())
 //                    .colored(0xff00ff00)
 //                    .lineWidth(0.2f);
-                renderChain(be, ms, buffer, light, overlay, nodeA.getPosition(), nodeB.getPosition(), lighter, offset);
+                renderChain(be, ms, buffer, light, overlay, nodeA.getPosition().add(origin), nodeB.getPosition().add(origin), lighter, offset);
             }
         }
     }
@@ -60,7 +61,7 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
         Vec3 diff = to.subtract(from);
         double yaw = (float) Mth.RAD_TO_DEG * Mth.atan2(diff.x, diff.z);
         double pitch = (float) Mth.RAD_TO_DEG * Mth.atan2(diff.y, diff.multiply(1, 0, 1)
-            .length());
+                .length());
 
         BlockPos tilePos = be.getBlockPos();
 
@@ -80,8 +81,8 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
         int light2 = lighter.apply(new Vector3f((float) to.x, (float) to.y, (float) to.z));
 
         boolean far = Minecraft.getInstance().level == be.getLevel() && !Minecraft.getInstance()
-            .getBlockEntityRenderDispatcher().camera.getPosition()
-            .closerThan(from.lerp(to, 0.5), MIP_DISTANCE);
+                .getBlockEntityRenderDispatcher().camera.getPosition()
+                .closerThan(from.lerp(to, 0.5), MIP_DISTANCE);
 
         renderChain(ms, buffer, offset, (float) from.distanceTo(to), light1, light2, far);
 
@@ -99,9 +100,9 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
         ms.pushPose();
         ms.translate(0.5D, 0.0D, 0.5D);
 
-        VertexConsumer vc = buffer.getBuffer(RenderType.entityCutout(CHAIN_LOCATION));
+        VertexConsumer vc = buffer.getBuffer(RenderTypes.chain(CHAIN_LOCATION));
         renderPart(ms, vc, length, 0.0F, radius, radius, 0.0F, -radius, 0.0F, 0.0F, -radius, minU, maxU, minV, maxV,
-            light1, light2, far);
+                light1, light2, far);
 
         ms.popPose();
     }
@@ -114,13 +115,13 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
 
         float uO = far ? 0f : 3 / 16f;
         renderQuad(matrix4f, posestack$pose, pConsumer, 0, pMaxY, pX0, pZ0, pX3, pZ3, pMinU, pMaxU, pMinV, pMaxV, light1,
-            light2);
+                light2);
         renderQuad(matrix4f, posestack$pose, pConsumer, 0, pMaxY, pX3, pZ3, pX0, pZ0, pMinU, pMaxU, pMinV, pMaxV, light1,
-            light2);
+                light2);
         renderQuad(matrix4f, posestack$pose, pConsumer, 0, pMaxY, pX1, pZ1, pX2, pZ2, pMinU + uO, pMaxU + uO, pMinV, pMaxV,
-            light1, light2);
+                light1, light2);
         renderQuad(matrix4f, posestack$pose, pConsumer, 0, pMaxY, pX2, pZ2, pX1, pZ1, pMinU + uO, pMaxU + uO, pMinV, pMaxV,
-            light1, light2);
+                light1, light2);
     }
 
     private static void renderQuad(Matrix4f pPose, PoseStack.Pose pNormal, VertexConsumer pConsumer, float pMinY, float pMaxY,
@@ -135,11 +136,11 @@ public class CogwheelChainBlockEntityRenderer extends KineticBlockEntityRenderer
     private static void addVertex(Matrix4f pPose, PoseStack.Pose pNormal, VertexConsumer pConsumer, float pY, float pX,
                                   float pZ, float pU, float pV, int light) {
         pConsumer.addVertex(pPose, pX, pY, pZ)
-            .setColor(1.0f, 1.0f, 1.0f, 1.0f)
-            .setUv(pU, pV)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(light)
-            .setNormal(pNormal, 0.0F, 1.0F, 0.0F);
+                .setColor(1.0f, 1.0f, 1.0f, 1.0f)
+                .setUv(pU, pV)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(pNormal, 0.0F, 1.0F, 0.0F);
     }
 
     @Override
