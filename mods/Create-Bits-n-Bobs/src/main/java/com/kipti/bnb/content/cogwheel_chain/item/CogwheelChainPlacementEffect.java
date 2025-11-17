@@ -1,9 +1,11 @@
 package com.kipti.bnb.content.cogwheel_chain.item;
 
 import com.kipti.bnb.content.cogwheel_chain.graph.PartialCogwheelChainNode;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.world.item.ItemStack;
@@ -12,6 +14,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.kipti.bnb.content.cogwheel_chain.item.CogwheelChainPlacementInteraction.currentBuildingChain;
 import static com.kipti.bnb.content.cogwheel_chain.item.CogwheelChainPlacementInteraction.currentChainLevel;
@@ -70,13 +74,27 @@ public class CogwheelChainPlacementEffect {
         Vec3 lastPos = currentBuildingChain.getNodeCenter(0);
         for (int i = 1; i < currentBuildingChain.getSize(); i++) {
             final Vec3 currentPos = currentBuildingChain.getNodeCenter(i);
-            renderParticlesBetween(level, lastPos, currentPos, true);
+            renderParticlesBetween(level, lastPos, currentPos);
             lastPos = currentPos;
         }
-        renderParticlesBetween(level, lastPos, projected, true);
+        for (int i = 0; i < currentBuildingChain.getSize(); i++) {
+            showBlockOutline(level, currentBuildingChain.getNodes().get(i).pos());
+        }
+        renderParticlesBetween(level, lastPos, projected);
     }
 
-    private static void renderParticlesBetween(final ClientLevel level, final Vec3 from, final Vec3 to, boolean valid) {
+    private static void showBlockOutline(final ClientLevel level, final BlockPos pos) {
+        final AtomicInteger counter = new AtomicInteger(0);
+        level.getBlockState(pos).getShape(level, pos).forAllEdges((fx, fy, fz, tx, ty, tz) -> {
+            Outliner.getInstance().showLine("cogwheel_chain_placement_" + pos + "_outline_" + counter.getAndIncrement(),
+                            new Vec3(fx, fy, fz).add(Vec3.atLowerCornerOf(pos)),
+                            new Vec3(tx, ty, tz).add(Vec3.atLowerCornerOf(pos)))
+                    .colored(0x95CD41)
+                    .lineWidth(1 / 16f);
+        });
+    }
+
+    private static void renderParticlesBetween(final ClientLevel level, final Vec3 from, final Vec3 to) {
         final Vec3 delta = to.subtract(from);
         final double length = delta.length();
         final Vec3 dir = delta.normalize();
@@ -88,7 +106,7 @@ public class CogwheelChainPlacementEffect {
             }
             final Vec3 lerped = from.add(dir.scale(t));
             level.addParticle(
-                    new DustParticleOptions(new Vector3f(valid ? .3f : .9f, valid ? .9f : .3f, .5f), 1), true,
+                    new DustParticleOptions(new Vector3f(0x95 / 256f, 0xCD / 256f, 0x41 / 256f), 1), true,
                     lerped.x, lerped.y, lerped.z, 0, 0, 0);
         }
     }

@@ -43,8 +43,8 @@ public class CogwheelChain {
     }
 
     public static class InvalidGeometryException extends Exception {
-        public InvalidGeometryException() {
-            super();
+        public InvalidGeometryException(final String reason) {
+            super(reason);
         }
     }
 

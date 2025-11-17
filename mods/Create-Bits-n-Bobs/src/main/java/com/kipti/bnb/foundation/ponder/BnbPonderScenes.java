@@ -15,9 +15,11 @@ public class BnbPonderScenes {
         final PonderSceneRegistrationHelper<ItemProviderEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
 
         helper.addStoryBoard(BuiltInRegistries.ITEM.getKey(Items.CHAIN), "chain_cog/flat", CogwheelChainScenes::flatCogwheelChain);
+        helper.addStoryBoard(BuiltInRegistries.ITEM.getKey(Items.CHAIN), "chain_cog/axis_change", CogwheelChainScenes::changingAxisCogwheelChain);
 
         HELPER.forComponents(AllBlocks.COGWHEEL, AllBlocks.LARGE_COGWHEEL)
-                .addStoryBoard("chain_cog/flat", CogwheelChainScenes::flatCogwheelChain);
+                .addStoryBoard("chain_cog/flat", CogwheelChainScenes::flatCogwheelChain)
+                .addStoryBoard("chain_cog/axis_change", CogwheelChainScenes::changingAxisCogwheelChain);
 
     }
 }

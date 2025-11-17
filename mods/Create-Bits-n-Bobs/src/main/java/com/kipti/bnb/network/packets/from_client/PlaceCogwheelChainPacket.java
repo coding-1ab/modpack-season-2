@@ -39,7 +39,12 @@ public record PlaceCogwheelChainPacket(
 
         //TODO: check item cost and take the chains as necessary
 
-        final Pair<List<CogwheelChainPathfinder.PathNode>, List<ChainPathCogwheelNode>> chainGeometry = CogwheelChainPathfinder.buildChainPath(worldSpacePartialChain);
+        final Pair<List<CogwheelChainPathfinder.PathNode>, List<ChainPathCogwheelNode>> chainGeometry;
+        try {
+            chainGeometry = CogwheelChainPathfinder.buildChainPath(worldSpacePartialChain);
+        } catch (final CogwheelChain.InvalidGeometryException ignored) {
+            return;
+        }
         if (chainGeometry == null)
             return;
 

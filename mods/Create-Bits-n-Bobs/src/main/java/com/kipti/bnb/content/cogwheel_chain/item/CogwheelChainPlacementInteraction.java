@@ -89,6 +89,17 @@ public class CogwheelChainPlacementInteraction {
                     targetedState.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isLargeCog());
             currentChainLevel = level.dimension();
         } else {
+            //if this is the last node, then remove the last one
+            if (currentBuildingChain.getLastNode().pos().equals(hitPos)) {
+                currentBuildingChain.getNodes().removeLast();
+                //If no nodes left, clear chain
+                if (currentBuildingChain.getNodes().isEmpty()) {
+                    currentBuildingChain = null;
+                    currentChainLevel = null;
+                }
+                return true;
+            }
+
             //Try to add to existing chain
             try {
                 final boolean added = currentBuildingChain.tryAddNode(hitPos, targetedState);

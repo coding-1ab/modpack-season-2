@@ -1,7 +1,6 @@
 package com.kipti.bnb.content.cogwheel_chain.graph;
 
 import com.google.common.collect.ImmutableList;
-import com.kipti.bnb.CreateBitsnBobs;
 import net.createmod.catnip.data.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
@@ -72,7 +71,7 @@ public class CogwheelChainPathfinder {
         }
     }
 
-    public static Pair<List<PathNode>, List<ChainPathCogwheelNode>> buildChainPath(PartialCogwheelChain worldSpaceChain) {
+    public static Pair<List<PathNode>, List<ChainPathCogwheelNode>> buildChainPath(PartialCogwheelChain worldSpaceChain) throws CogwheelChain.InvalidGeometryException {
         //Reconstruct chain to local space
         final PartialCogwheelChain chain = worldSpaceChain.toLocalSpaceChain();
 
@@ -104,63 +103,15 @@ public class CogwheelChainPathfinder {
 
                 for (int toSide = 1; toSide >= -1; toSide -= 2) {
                     if (isValidPathStep(prevNode, fromSide, nextNode, toSide)) {
-                        Vec3 fromPos = prevNode.center().add(
-                                getPathingTangentOnCog(nextNode, prevNode, -fromSide)
-                        );
-                        Vec3 toPos = nextNode.center().add(
-                                getPathingTangentOnCog(prevNode, nextNode, toSide)
-                        );
-                        ImmutableList<PathNode> traversed = fromPath.get().traversed;
-                        int traversedSize = traversed.size();
-
-                        double distance = fromPos.distanceTo(toPos) + (getArcDistanceOnCog(
-                                prevNode,
-                                fromSide,
-                                nextNode,
-                                toSide,
-                                nextNextNode
-                        ));
-
-                        int selfIntersections = nextNextNode == prevNode ? 0 : (traversedSize < 2 ? 0 : getSelfIntersection(
-                                traversed.get(traversedSize - 2).chainNode,
-                                traversed.get(traversedSize - 2).side,
-                                traversed.get(traversedSize - 1).chainNode,
-                                traversed.get(traversedSize - 1).side,
-                                nextNode,
-                                toSide
-                        ));
-
-                        PartialPathFrontierData extendedPath = fromPath.get().extend(
-                                new PathNode(nextNode, toSide),
-                                distance,
-                                selfIntersections
-                        );
-
-                        AtomicReference<PartialPathFrontierData> targetPath = (toSide == 1) ? nextLeftPath : nextRightPath;
-
-                        if (targetPath.get() == null) {
-                            targetPath.set(extendedPath);
-                        } else {
-                            targetPath.set(targetPath.get().compare(extendedPath));
-                        }
+                        stepPathfinding(prevNode, nextNode, fromSide, toSide, fromPath, nextNextNode, nextLeftPath, nextRightPath);
                     }
-//                    else {
-////                        Outliner.getInstance().showLine("Invalid" + i + fromSide + "to" + toSide,
-////                                getPathingTangentOnCog(nextNode, prevNode, -fromSide).add(prevNode.center()),
-////                                getPathingTangentOnCog(prevNode, nextNode, toSide).add(nextNode.center()))
-////
-////                            .colored(0xFF0000);
-////                        isValidPathStep(prevNode, fromSide, nextNode, toSide);
-//                    }
-
                 }
             }
             leftPath = nextLeftPath;
             rightPath = nextRightPath;
 
-            if (leftPath == null && rightPath == null) {
-                CreateBitsnBobs.LOGGER.warn("Failed to build cogwheel chain path at chainNode index {}", i);
-                return null;
+            if (leftPath.get() == null && rightPath.get() == null) {
+                throw new CogwheelChain.InvalidGeometryException("missing_path_between_nodes");
             }
             prevNode = nextNode;
         }
@@ -168,13 +119,61 @@ public class CogwheelChainPathfinder {
                 ? leftPath.get().compare(rightPath.get())
                 : (leftPath.get() != null ? leftPath.get() : rightPath.get());
         if (finalPath == null) return null;
+
+        if (finalPath.chainIntersections > 0) {
+            throw new CogwheelChain.InvalidGeometryException("self_intersections_forbidden");
+        }
+
         ArrayList<PathNode> finalTraversed = new ArrayList<>(finalPath.traversed);
+
         finalTraversed.removeLast();
         for (int i = 0; i < chain.getNodes().size() - 1; i++) {//TODO reduce the amount its "overpathing" to just the 2 extra nodes on each sideFactor
             finalTraversed.removeFirst();
         }
 
         return Pair.of(finalTraversed, getPathCogwheelNodesOfPath(chain, finalTraversed));
+    }
+
+    private static void stepPathfinding(PartialCogwheelChainNode prevNode, PartialCogwheelChainNode nextNode, int fromSide, int toSide, AtomicReference<PartialPathFrontierData> fromPath, PartialCogwheelChainNode nextNextNode, AtomicReference<PartialPathFrontierData> nextLeftPath, AtomicReference<PartialPathFrontierData> nextRightPath) {
+        Vec3 fromPos = prevNode.center().add(
+                getPathingTangentOnCog(nextNode, prevNode, -fromSide)
+        );
+        Vec3 toPos = nextNode.center().add(
+                getPathingTangentOnCog(prevNode, nextNode, toSide)
+        );
+        ImmutableList<PathNode> traversed = fromPath.get().traversed;
+        int traversedSize = traversed.size();
+
+        double distance = fromPos.distanceTo(toPos) + (getArcDistanceOnCog(
+                prevNode,
+                fromSide,
+                nextNode,
+                toSide,
+                nextNextNode
+        ));
+
+        int selfIntersections = nextNextNode == prevNode ? 0 : (traversedSize < 2 ? 0 : getSelfIntersection(
+                traversed.get(traversedSize - 2).chainNode,
+                traversed.get(traversedSize - 2).side,
+                traversed.get(traversedSize - 1).chainNode,
+                traversed.get(traversedSize - 1).side,
+                nextNode,
+                toSide
+        ));
+
+        PartialPathFrontierData extendedPath = fromPath.get().extend(
+                new PathNode(nextNode, toSide),
+                distance,
+                selfIntersections
+        );
+
+        AtomicReference<PartialPathFrontierData> targetPath = (toSide == 1) ? nextLeftPath : nextRightPath;
+
+        if (targetPath.get() == null) {
+            targetPath.set(extendedPath);
+        } else {
+            targetPath.set(targetPath.get().compare(extendedPath));
+        }
     }
 
     /**

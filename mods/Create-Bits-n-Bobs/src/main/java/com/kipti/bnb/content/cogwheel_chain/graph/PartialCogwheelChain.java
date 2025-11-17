@@ -124,7 +124,7 @@ public class PartialCogwheelChain {
         int[] component = {diff.getX(), diff.getY(), diff.getZ()};
         for (int i = 0; i < 3; i++) {
             if (0b1 << i == safeAxisOrdinal) {
-                if (Math.abs(component[i]) <= 1) {
+                if (Math.abs(component[i]) < 1) {
                     return false;
                 }
             } else {
@@ -158,7 +158,7 @@ public class PartialCogwheelChain {
         // Remove last chainNode to avoid duplication
         visitedNodes.removeLast();
         if (CogwheelChainPathfinder.buildChainPath(this) == null) {
-            throw new CogwheelChain.InvalidGeometryException();
+            throw new CogwheelChain.InvalidGeometryException("try_inserting_more_nodes");
         }
         return true;
     }
