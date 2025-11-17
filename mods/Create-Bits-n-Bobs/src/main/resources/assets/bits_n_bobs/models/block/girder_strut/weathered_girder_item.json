@@ -1,10 +1,9 @@
 {
 	"format_version": "1.21.6",
 	"credit": "Made with Blockbench",
-	"parent": "block/block",
 	"textures": {
-		"0": "create:block/girder",
-		"particle": "create:block/industrial_iron_block"
+		"0": "bits_n_bobs:block/weathered_girder_attachment",
+		"particle": "bits_n_bobs:block/weathered_industrial_iron_block"
 	},
 	"elements": [
 		{
@@ -21,7 +20,6 @@
 		{
 			"from": [4, 2, 0],
 			"to": [12, 4, 16],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
 			"faces": {
 				"north": {"uv": [12, 2, 16, 3], "texture": "#0"},
 				"east": {"uv": [0, 4, 8, 5], "rotation": 180, "texture": "#0"},
@@ -34,7 +32,7 @@
 		{
 			"from": [4, 12, 0],
 			"to": [12, 14, 16],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 13, 8]},
 			"faces": {
 				"north": {"uv": [12, 1, 16, 2], "texture": "#0"},
 				"east": {"uv": [0, 4, 8, 5], "texture": "#0"},
@@ -42,6 +40,32 @@
 				"west": {"uv": [0, 4, 8, 5], "texture": "#0"},
 				"up": {"uv": [0, 0, 8, 4], "rotation": 270, "texture": "#0"},
 				"down": {"uv": [8, 0, 16, 4], "rotation": 270, "texture": "#0"}
+			}
+		},
+		{
+			"from": [3, 3, -2],
+			"to": [13, 13, 4],
+			"rotation": {"angle": 0, "axis": "x", "origin": [8, 8, 1]},
+			"faces": {
+				"north": {"uv": [8, 8, 13, 13], "rotation": 180, "texture": "#0"},
+				"east": {"uv": [13, 8, 16, 13], "rotation": 180, "texture": "#0"},
+				"south": {"uv": [8, 8, 13, 13], "rotation": 180, "texture": "#0"},
+				"west": {"uv": [13, 8, 16, 13], "texture": "#0"},
+				"up": {"uv": [13, 8, 16, 13], "rotation": 90, "texture": "#0"},
+				"down": {"uv": [13, 8, 16, 13], "rotation": 270, "texture": "#0"}
+			}
+		},
+		{
+			"from": [3, 3, 12],
+			"to": [13, 13, 18],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 15]},
+			"faces": {
+				"north": {"uv": [8, 8, 13, 13], "rotation": 180, "texture": "#0"},
+				"east": {"uv": [13, 8, 16, 13], "rotation": 180, "texture": "#0"},
+				"south": {"uv": [8, 8, 13, 13], "rotation": 180, "texture": "#0"},
+				"west": {"uv": [13, 8, 16, 13], "texture": "#0"},
+				"up": {"uv": [13, 8, 16, 13], "rotation": 90, "texture": "#0"},
+				"down": {"uv": [13, 8, 16, 13], "rotation": 270, "texture": "#0"}
 			}
 		}
 	],
@@ -78,19 +102,13 @@
 	},
 	"groups": [
 		{
-			"name": "Beam X",
+			"name": "Beam Z",
 			"origin": [8, 13, 8],
 			"color": 0,
 			"children": [0, 1, 2]
 		},
 		{
-			"name": "Brace",
-			"origin": [0, 0, 0],
-			"color": 0,
-			"children": []
-		},
-		{
-			"name": "girder_strut_attachment",
+			"name": "weathered_girder_strut_attachment",
 			"origin": [8, 8, 8],
 			"color": 0,
 			"children": [
@@ -98,10 +116,10 @@
 					"name": "Brace",
 					"origin": [0, 0, 0],
 					"color": 0,
-					"children": []
+					"children": [3]
 				},
 				{
-					"name": "girder_strut_attachment",
+					"name": "weathered_girder_strut_attachment",
 					"origin": [8, 8, 8],
 					"color": 0,
 					"children": [
@@ -109,7 +127,7 @@
 							"name": "Brace",
 							"origin": [0, 0, 0],
 							"color": 0,
-							"children": []
+							"children": [4]
 						}
 					]
 				}

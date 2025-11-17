@@ -235,7 +235,7 @@ public class BnbBlocks {
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .item(GirderStrutBlockItem::new)
             .model((c, p) ->
-                    p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/weathered_girder_strut_attachment"))
+                    p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/weathered_girder_item"))
             )
             .build()
             .register();
@@ -252,7 +252,7 @@ public class BnbBlocks {
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .item(GirderStrutBlockItem::new)
             .model((c, p) ->
-                    p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/girder_strut_attachment"))
+                    p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/girder_strut/girder_item"))
             )
             .build()
             .register();

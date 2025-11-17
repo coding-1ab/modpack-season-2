@@ -1,4 +1,4 @@
-// 1.21.1	2025-11-17T12:37:16.4969887	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2025-11-17T16:28:49.3931437	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 48912dac50502aaa4e2afa58c6124f5a61f1057a assets/bits_n_bobs/blockstates/black_chair.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/black_large_nixie_tube.json
 5f1d323a930becf0ed2bee64bbb33c152802b2b2 assets/bits_n_bobs/blockstates/black_nixie_board.json
@@ -198,7 +198,7 @@ db0d3fa32090c16ae7e007f6e6e53ac575409364 assets/bits_n_bobs/models/item/calcinat
 7b042d5c21f296d4a0c95da228bb1c9a89f0a3bb assets/bits_n_bobs/models/item/calcinated_gravel.json
 0fbd699023a5d765091049c52d76791d8196e110 assets/bits_n_bobs/models/item/crushed_deepslate.json
 1dfbbb3e0ee9a6af8ece52b61d27dd559cc1380f assets/bits_n_bobs/models/item/cyan_chair.json
-5d4b2fcf463e5db87a7d823fec8f67c60e04f7f1 assets/bits_n_bobs/models/item/girder_strut.json
+e4b469885e1079719d1e6a5d7ad76c20faf73480 assets/bits_n_bobs/models/item/girder_strut.json
 62c2ab0aaee1faa5d9505dad7b68e12085a41f99 assets/bits_n_bobs/models/item/gray_chair.json
 ffd5057178e11ce2c87616a54d3bfb4185eef187 assets/bits_n_bobs/models/item/green_chair.json
 0c5ab6eb4618c5fb2fbb27d78a22add1362cdab9 assets/bits_n_bobs/models/item/headlamp.json
@@ -213,7 +213,7 @@ e49f7ddde5dadf725a8efdaade459d12abbfa11a assets/bits_n_bobs/models/item/orange_c
 c617953bb092d9dfd12b8b2452192cc29a81df26 assets/bits_n_bobs/models/item/pink_chair.json
 dc1462f5e0c0227c1e355ba5676d8b73cc57160b assets/bits_n_bobs/models/item/purple_chair.json
 2c48ff154be6e749fcf5e3f90f95288447d4b849 assets/bits_n_bobs/models/item/red_chair.json
-2a89545c1656150e03ceb74290cc62432bdaac2e assets/bits_n_bobs/models/item/weathered_girder_strut.json
+68776d40fde2d21196c2624efac34cef4cf937ec assets/bits_n_bobs/models/item/weathered_girder_strut.json
 a756ec3f1d1ff09079622e814c629a112bbbc14f assets/bits_n_bobs/models/item/weathered_metal_girder.json
 f83d44615309b843be16b656e17b472a3dc22019 assets/bits_n_bobs/models/item/white_chair.json
 630417845e5676a5c4a82321f9f31fc31409420e assets/bits_n_bobs/models/item/yellow_chair.json
