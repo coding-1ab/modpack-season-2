@@ -96,8 +96,8 @@ public class ContraptionVisual<E extends AbstractContraptionEntity> extends Abst
 		};
 
 		var model = new BlockModelBuilder(modelWorld, blocks.positions())
-			.materialFunc((renderType, shaded) -> {
-				Material material = ModelUtil.getMaterial(renderType, shaded);
+			.materialFunc((renderType, shaded, ao) -> {
+				Material material = ModelUtil.getMaterial(renderType, shaded, ao);
 				if (material != null && material.cardinalLightingMode() == CardinalLightingMode.ENTITY) {
 					return SimpleMaterial.builderOf(material)
 						.cardinalLightingMode(CardinalLightingMode.CHUNK)
