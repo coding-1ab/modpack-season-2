@@ -1,4 +1,4 @@
-// 1.21.1	2025-11-02T10:48:42.5816036	Create's Processing Recipes
+// 1.21.1	2025-11-17T18:16:14.466885779	Create's Processing Recipes
 cb988d3be6b4a28e4d13dc73d61eed3670520e8e data/create/recipe/compacting/andesite_from_flint.json
 d97f4e06363879d033b2151995a5d4f19ad7ef3a data/create/recipe/compacting/blaze_cake.json
 7879a7ba9019a2938363449d3a0e13013a4ad606 data/create/recipe/compacting/chocolate.json
@@ -468,7 +468,7 @@ b0eb49032833950997ca0d5ae74c205e243b537e data/create/recipe/milling/bone.json
 54a0d4d045884f9780441fa043436fa2964dcb6e data/create/recipe/milling/cactus.json
 cdb1e22a2c3fe61118596b1dda9b31050eb50921 data/create/recipe/milling/calcite.json
 c1cc76218d3258bf722ce31994497d1d4669676a data/create/recipe/milling/charcoal.json
-b2410791a170ed7f7f9b0864866000d07735fab5 data/create/recipe/milling/clay.json
+c693e0392307195893d0fc9556c1ddcd65263f77 data/create/recipe/milling/clay.json
 327a07e241b4d48414e3568a461b27104996828e data/create/recipe/milling/coal.json
 a91ebb9516f2267b395d872ba802bfcc55b88156 data/create/recipe/milling/cobblestone.json
 c5fbc261de0ee7eb24ba7d52141d9604bb6dd45c data/create/recipe/milling/cocoa_beans.json
