@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Nici un ambalaj legat",
   "create.gui.stock_keeper.no_search_results": "Nu s-au găsit elemente potrivite",
   "create.gui.stock_keeper.not_in_stock": "Elementele necesare nu sunt în stoc",
-  "create.gui.stock_keeper.package_adress": "Adresă pachet",
+  "create.gui.stock_keeper.package_address": "Adresă pachet",
   "create.gui.stock_keeper.program_requester": "Solicitant de program",
   "create.gui.stock_keeper.request_sent": "Cerere trimisă!",
   "create.gui.stock_keeper.schematic_list.no_results": "Nici un articol din lista de verificare nu este în stoc",

@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Ingen pakkere i nettverket",
   "create.gui.stock_keeper.no_search_results": "Ingen passende gjenstander funnet",
   "create.gui.stock_keeper.not_in_stock": "Nødvendige gjenstander er ikke på lager",
-  "create.gui.stock_keeper.package_adress": "Pakkeadressen",
+  "create.gui.stock_keeper.package_address": "Pakkeadressen",
   "create.gui.stock_keeper.program_requester": "Programmer lagerplukker",
   "create.gui.stock_keeper.recipe_result_empty": "Denne oppskriften har ingen resultat. Dette er ikke godtatt og må rapporteres til skaperne av modden eller datapakken som la til denne oppskriften.",
   "create.gui.stock_keeper.request_sent": "Forespørsel sendt!",

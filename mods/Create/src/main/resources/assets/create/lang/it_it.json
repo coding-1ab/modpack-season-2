@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Nessun imballatore collegato",
   "create.gui.stock_keeper.no_search_results": "Nessun oggetto corrispondente trovato",
   "create.gui.stock_keeper.not_in_stock": "Gli oggetti richiesti non sono in magazzino",
-  "create.gui.stock_keeper.package_adress": "Indirizzo del pacco",
+  "create.gui.stock_keeper.package_address": "Indirizzo del pacco",
   "create.gui.stock_keeper.program_requester": "Programma richieditore",
   "create.gui.stock_keeper.recipe_result_empty": "Questa ricetta ha un risultato vuoto, questo non è consentito e dovrebbe essere segnalato alla mod o datapack che aggiunge questa ricetta.",
   "create.gui.stock_keeper.request_sent": "Richiesta inviata!",

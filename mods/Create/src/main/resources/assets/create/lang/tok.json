@@ -1116,7 +1116,7 @@
   "create.gui.stock_keeper.inventories_empty": "poki lon poka li jo ala e ijo",
   "create.gui.stock_keeper.no_packagers_linked": "mi ken ala alasa e ilo pi poki lipu",
   "create.gui.stock_keeper.no_search_results": "mi ken ala alasa e ijo sama",
-  "create.gui.stock_keeper.package_adress": "nimi wile tawa pi poki lipu",
+  "create.gui.stock_keeper.package_address": "nimi wile tawa pi poki lipu",
   "create.gui.stock_keeper.request_sent": "wile li pana a!",
   "create.gui.stock_keeper.schematic_list.no_results": "mi jo ala e ijo tan lipu sona sina",
   "create.gui.stock_keeper.search_items": "o alasa e ijo",

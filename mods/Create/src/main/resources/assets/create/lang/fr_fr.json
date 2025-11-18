@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Aucuns emballeurs liés",
   "create.gui.stock_keeper.no_search_results": "Aucun objet correspondant trouvé",
   "create.gui.stock_keeper.not_in_stock": "Les objets requis ne sont pas en stock",
-  "create.gui.stock_keeper.package_adress": "Adresse du colis",
+  "create.gui.stock_keeper.package_address": "Adresse du colis",
   "create.gui.stock_keeper.program_requester": "Programmer le commandeur",
   "create.gui.stock_keeper.request_sent": "Demande envoyée !",
   "create.gui.stock_keeper.schematic_list.no_results": "Aucun article de votre liste n'est en stock",

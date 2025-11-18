@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Žádné balíkovače propojeny",
   "create.gui.stock_keeper.no_search_results": "Nenalezeny žádné odpovídající předměty",
   "create.gui.stock_keeper.not_in_stock": "Požadované předměty nejsou skladem",
-  "create.gui.stock_keeper.package_adress": "Adresa balíčku",
+  "create.gui.stock_keeper.package_address": "Adresa balíčku",
   "create.gui.stock_keeper.program_requester": "Naprogramovat žadatel",
   "create.gui.stock_keeper.recipe_result_empty": "Tento recept má prázdný výsledek, toto není povoleno a mělo by být nahlášeno módu nebo datapacku, který tento recept přidává.",
   "create.gui.stock_keeper.request_sent": "Požadavek odeslán!",

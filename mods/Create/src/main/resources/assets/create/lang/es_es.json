@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "No hay empaquetadores vinculados",
   "create.gui.stock_keeper.no_search_results": "No se encuentran objetos que coincidan",
   "create.gui.stock_keeper.not_in_stock": "No quedan existencias de los artículos requeridos",
-  "create.gui.stock_keeper.package_adress": "Dirección del paquete",
+  "create.gui.stock_keeper.package_address": "Dirección del paquete",
   "create.gui.stock_keeper.program_requester": "Programa solicitador",
   "create.gui.stock_keeper.request_sent": "¡Solicitud enviada!",
   "create.gui.stock_keeper.schematic_list.no_results": "No quedan existencias de los artículos de tu lista",

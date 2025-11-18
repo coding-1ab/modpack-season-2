@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "No Packers Linked",
   "create.gui.stock_keeper.no_search_results": "No matching things found",
   "create.gui.stock_keeper.not_in_stock": "Needed things are not in Stock",
-  "create.gui.stock_keeper.package_adress": "Pack Callword",
+  "create.gui.stock_keeper.package_address": "Pack Callword",
   "create.gui.stock_keeper.program_requester": "Foredraft Asker",
   "create.gui.stock_keeper.request_sent": "Ask Sent!",
   "create.gui.stock_keeper.schematic_list.no_results": "No things from your ticklist are in stock",

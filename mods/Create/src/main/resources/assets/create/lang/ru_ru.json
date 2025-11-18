@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Нет подключённых упаковщиков",
   "create.gui.stock_keeper.no_search_results": "Подходящие предметы не найдены",
   "create.gui.stock_keeper.not_in_stock": "Запрашиваемых предметов нет в наличии",
-  "create.gui.stock_keeper.package_adress": "Адрес отправления",
+  "create.gui.stock_keeper.package_address": "Адрес отправления",
   "create.gui.stock_keeper.program_requester": "Настройка запрашивателя",
   "create.gui.stock_keeper.recipe_result_empty": "У этого рецепта отсутствует результат. Это недопустимо, и об этом следует сообщить разработчикам мода или набора данных, добавившего этот рецепт.",
   "create.gui.stock_keeper.request_sent": "Запрос отправлен!",

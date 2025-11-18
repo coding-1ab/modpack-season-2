@@ -1358,7 +1358,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Inga Paketerare länkade",
   "create.gui.stock_keeper.no_search_results": "Inga matchande objekt hittades",
   "create.gui.stock_keeper.not_in_stock": "Nödvändiga objekt finns inte i lager",
-  "create.gui.stock_keeper.package_adress": "Paketets adress",
+  "create.gui.stock_keeper.package_address": "Paketets adress",
   "create.gui.stock_keeper.program_requester": "Programsbegäran",
   "create.gui.stock_keeper.request_sent": "Förfrågan skickad!",
   "create.gui.stock_keeper.schematic_list.no_results": "Inga objekt från din checklista finns i lager",

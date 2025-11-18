@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Geen Verpakkers Gekoppeld",
   "create.gui.stock_keeper.no_search_results": "Geen overeenkomende items gevonden",
   "create.gui.stock_keeper.not_in_stock": "Vereiste items zijn niet op voorraad",
-  "create.gui.stock_keeper.package_adress": "Pakket Adres",
+  "create.gui.stock_keeper.package_address": "Pakket Adres",
   "create.gui.stock_keeper.program_requester": "",
   "create.gui.stock_keeper.request_sent": "Verzoek verzonden!",
   "create.gui.stock_keeper.schematic_list.no_results": "Geen artikelen uit uw materiaallijst zijn op voorraad",

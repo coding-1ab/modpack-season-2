@@ -1309,7 +1309,7 @@
   "create.gui.stock_keeper.network_locked": "הרשת נעולה",
   "create.gui.stock_keeper.network_open": "הרשת פתוחה",
   "create.gui.stock_keeper.no_packagers_linked": "אין חברות אריזה מקושרות",
-  "create.gui.stock_keeper.package_adress": "כתובת חבילה",
+  "create.gui.stock_keeper.package_address": "כתובת חבילה",
   "create.gui.stock_keeper.recipe_result_empty": "למתכון הזה יש תוצאה ריקה, זה לא מותר ויש לדווח על כך למנהל או לחבילת הנתונים שמוסיפים את המתכון הזה.",
   "create.gui.stock_keeper.schematic_list.requesting": "לחץ על 'שלח' כדי לבקש את כל הפריטים הזמינים מרשימת התיוג שלך",
   "create.gui.stock_keeper.send": "שלח",

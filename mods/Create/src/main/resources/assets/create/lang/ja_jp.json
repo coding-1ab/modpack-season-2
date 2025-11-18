@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "梱包機が接続されていません",
   "create.gui.stock_keeper.no_search_results": "一致するアイテムが見つかりませんでした",
   "create.gui.stock_keeper.not_in_stock": "必要なアイテムが在庫にありません",
-  "create.gui.stock_keeper.package_adress": "小包の住所",
+  "create.gui.stock_keeper.package_address": "小包の住所",
   "create.gui.stock_keeper.program_requester": "リクエスターをプログラム",
   "create.gui.stock_keeper.recipe_result_empty": "このレシピには空の結果があります。これは許可されておらず、このレシピを追加するModまたはデータパックに報告する必要があります。",
   "create.gui.stock_keeper.request_sent": "リクエストを送信しました！",

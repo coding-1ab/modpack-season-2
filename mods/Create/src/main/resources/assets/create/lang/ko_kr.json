@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "연결된 포장기가 없습니다",
   "create.gui.stock_keeper.no_search_results": "일치하는 아이템이 없습니다",
   "create.gui.stock_keeper.not_in_stock": "재고가 부족합니다",
-  "create.gui.stock_keeper.package_adress": "택배 주소",
+  "create.gui.stock_keeper.package_address": "택배 주소",
   "create.gui.stock_keeper.program_requester": "프로그램 요청기",
   "create.gui.stock_keeper.request_sent": "요청이 전달되었습니다!",
   "create.gui.stock_keeper.schematic_list.no_results": "체크리스트에 있는 아이템이 재고에 없습니다",

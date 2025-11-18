@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Няма падлучаных пакавальнікаў",
   "create.gui.stock_keeper.no_search_results": "Адпаведныя прадметы ня знойдзены",
   "create.gui.stock_keeper.not_in_stock": "Неабходных прадметаў няма ў наяўнасьці",
-  "create.gui.stock_keeper.package_adress": "Адрас пасылкі",
+  "create.gui.stock_keeper.package_address": "Адрас пасылкі",
   "create.gui.stock_keeper.program_requester": "Наладзіць запытвальнік",
   "create.gui.stock_keeper.request_sent": "Запыт адпраўлены!",
   "create.gui.stock_keeper.schematic_list.no_results": "Ніводнага прадмета з вашага сьпіса няма ў наяўнасьці",

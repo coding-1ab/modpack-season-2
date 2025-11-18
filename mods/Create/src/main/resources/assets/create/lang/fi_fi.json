@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Ei yhdistettyjä paketoijia",
   "create.gui.stock_keeper.no_search_results": "Vastaavia esineitä ei löytynyt",
   "create.gui.stock_keeper.not_in_stock": "Vaadittuja esineitä ei ole varastossa",
-  "create.gui.stock_keeper.package_adress": "Paketin osoite",
+  "create.gui.stock_keeper.package_address": "Paketin osoite",
   "create.gui.stock_keeper.program_requester": "Ohjelman Pyytäjä",
   "create.gui.stock_keeper.request_sent": "Pyyntö lähetetty!",
   "create.gui.stock_keeper.schematic_list.no_results": "Esineitä tehtävälistaltasi ei ole varastossa",

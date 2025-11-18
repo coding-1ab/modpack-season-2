@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Немає підключених пакувальників",
   "create.gui.stock_keeper.no_search_results": "Не знайдено відповідних предметів",
   "create.gui.stock_keeper.not_in_stock": "Потрібних предметів немає в наявності",
-  "create.gui.stock_keeper.package_adress": "Адреса пакунка",
+  "create.gui.stock_keeper.package_address": "Адреса пакунка",
   "create.gui.stock_keeper.program_requester": "Налаштувати редстоуновий запитувач",
   "create.gui.stock_keeper.recipe_result_empty": "Цей рецепт має порожній результат, що неприпустимо та має бути відзвітовано авторам моду чи пакету даних, який додав цей рецепт.",
   "create.gui.stock_keeper.request_sent": "Запит надіслано!",

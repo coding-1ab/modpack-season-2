@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "没有已链接的打包机",
   "create.gui.stock_keeper.no_search_results": "未找到匹配的物品",
   "create.gui.stock_keeper.not_in_stock": "所需的物品不在库存中",
-  "create.gui.stock_keeper.package_adress": "包裹地址",
+  "create.gui.stock_keeper.package_address": "包裹地址",
   "create.gui.stock_keeper.program_requester": "配置红石请求器",
   "create.gui.stock_keeper.recipe_result_empty": "此配方的结果为空，应向添加此配方的模组或数据包报告此问题。",
   "create.gui.stock_keeper.request_sent": "请求已发送！",
