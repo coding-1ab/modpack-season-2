@@ -2,6 +2,7 @@ package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
 import com.simibubi.create.AllCreativeModeTabs;
+import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -14,27 +15,26 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.function.Supplier;
+
 public class BnbCreativeTabs {
 
-
     private static final DeferredRegister<CreativeModeTab> REGISTER =
-        DeferredRegister.create(Registries.CREATIVE_MODE_TAB, CreateBitsnBobs.MOD_ID);
+            DeferredRegister.create(Registries.CREATIVE_MODE_TAB, CreateBitsnBobs.MOD_ID);
 
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> BASE_CREATIVE_TAB = REGISTER.register("based",
-        () -> CreativeModeTab.builder()
-            .title(Component.literal(CreateBitsnBobs.NAME))
-            .withTabsBefore(AllCreativeModeTabs.PALETTES_CREATIVE_TAB.getId())
-            .icon(BnbBlocks.LIGHTBULB::asStack)
-            .displayItems((parameters, output) -> {
-                for (RegistryEntry<Item, Item> item : CreateBitsnBobs.REGISTRATE.getAll(Registries.ITEM)) {
-                    if (item.get() instanceof BlockItem blockItem && matchesBlockFilter(blockItem))
-                        output.accept(item.get());
-                }
-                for (RegistryEntry<Item, Item> item : CreateBitsnBobs.REGISTRATE.getAll(Registries.ITEM)) {
-                    if (!(item.get() instanceof BlockItem))
-                        output.accept(item.get());
-                }
-            }).build());
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> BASE_CREATIVE_TAB = REGISTER.register("bnb_based",
+            () -> CreativeModeTab.builder()
+                    .title(Component.literal(CreateBitsnBobs.NAME))
+                    .withTabsBefore(AllCreativeModeTabs.PALETTES_CREATIVE_TAB.getId())
+                    .icon(BnbBlocks.LIGHTBULB::asStack)
+                    .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.BASE_CREATIVE_TAB)).build());
+
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> DECO_CREATIVE_TAB = REGISTER.register("bnb_deco",
+            () -> CreativeModeTab.builder()
+                    .title(Component.literal(CreateBitsnBobs.DECO_NAME))
+                    .withTabsBefore(BnbCreativeTabs.BASE_CREATIVE_TAB.getId())
+                    .icon(() -> BnbPaletteStoneTypes.ASURINE.getVariants().registeredBlocks.getFirst().asStack())
+                    .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.DECO_CREATIVE_TAB)).build());
 
     private static boolean matchesBlockFilter(BlockItem item) {
         if (BnbBlocks.CHAIRS.contains(item.getBlock()) && !BnbBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock())) {
@@ -43,9 +43,32 @@ public class BnbCreativeTabs {
         return true;
     }
 
+    private static boolean matchesSearchOnlyBlockFilter(BlockItem item) {
+        if (BnbBlocks.CHAIRS.contains(item.getBlock()) && !BnbBlocks.CHAIRS.get(DyeColor.RED).is(item.getBlock())) {
+            return true;
+        }
+        return false;
+    }
+
     @ApiStatus.Internal
     public static void register(IEventBus modEventBus) {
         REGISTER.register(modEventBus);
+    }
+
+    private static void buildCreativeTabContents(final CreativeModeTab.ItemDisplayParameters parameters, final CreativeModeTab.Output output, final Supplier<DeferredHolder<CreativeModeTab, CreativeModeTab>> tabToGet) {
+        for (final RegistryEntry<Item, Item> item : CreateBitsnBobs.REGISTRATE.getAll(Registries.ITEM)) {
+            if (!(CreateRegistrate.isInCreativeTab(item, tabToGet.get()) && item.get() instanceof final BlockItem blockItem))
+                continue;
+
+            if (matchesSearchOnlyBlockFilter(blockItem))
+                output.accept(item.get(), CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
+            else if (matchesBlockFilter(blockItem))
+                output.accept(item.get());
+        }
+        for (final RegistryEntry<Item, Item> item : CreateBitsnBobs.REGISTRATE.getAll(Registries.ITEM)) {
+            if (CreateRegistrate.isInCreativeTab(item, tabToGet.get()) && !(item.get() instanceof BlockItem))
+                output.accept(item.get());
+        }
     }
 
 }

@@ -38,11 +38,8 @@ import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ColorRGBA;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.block.ColoredFallingBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -294,13 +291,6 @@ public class BnbBlocks {
                 .build()
                 .register();
     });
-
-    public static final BlockEntry<ColoredFallingBlock> CALCINATED_FLINT_GRAVEL = REGISTRATE.block("calcinated_gravel", (p) -> new ColoredFallingBlock(new ColorRGBA(14406560), p))
-            .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
-                    .sound(SoundType.SAND))
-            .transform(b -> b.tag(BlockTags.MINEABLE_WITH_SHOVEL))
-            .simpleItem()
-            .register();
 
     public static void register() {
     }

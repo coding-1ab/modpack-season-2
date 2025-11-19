@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/template_wall_side_tall",
+  "textures": {
+    "wall": "bits_n_bobs:block/palettes/stone_types/tiles/limestone_cut_tiles"
+  }
+}

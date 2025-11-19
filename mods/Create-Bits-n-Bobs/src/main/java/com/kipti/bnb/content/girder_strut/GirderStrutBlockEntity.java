@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.girder_strut;
 
+import com.simibubi.create.api.schematic.requirement.SpecialBlockEntityItemRequirement;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createmod.catnip.render.SuperByteBuffer;
@@ -17,7 +18,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEntityRelighter {
+//TODO: impl SpecialBlockEntityItemRequirement
+public class GirderStrutBlockEntity extends SmartBlockEntity implements IBlockEntityRelighter, SpecialBlockEntityItemRequirement {
 
     private final Set<BlockPos> connections = new HashSet<>();
     public @Nullable SuperByteBuffer connectionRenderBufferCache;

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/wall_inventory",
+  "textures": {
+    "wall": "bits_n_bobs:block/palettes/stone_types/tiles/calcite_cut_tiles"
+  }
+}

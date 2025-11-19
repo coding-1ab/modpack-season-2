@@ -36,10 +36,6 @@ public record PathedCogwheelNode(int side, boolean isLarge, Direction.Axis rotat
         return side * (isLarge ? 1 : 0.5f);
     }
 
-    public BlockPos pos() {
-        return localPos;
-    }
-
     public Vec3 center() {
         return localPos.getCenter();
     }

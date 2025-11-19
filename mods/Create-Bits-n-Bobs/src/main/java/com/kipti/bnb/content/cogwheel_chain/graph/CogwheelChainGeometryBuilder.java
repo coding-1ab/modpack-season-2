@@ -36,7 +36,7 @@ public class CogwheelChainGeometryBuilder {
             final Pair<Vec3, Vec3> currentOffsets = offsetsAtNodes.get(i);
             final Pair<Vec3, Vec3> nextOffsets = offsetsAtNodes.get((i + 1) % n);
 
-            resultNodes.add(new RenderedChainPathNode(currentNode.pos(), currentOffsets.getFirst()));
+            resultNodes.add(new RenderedChainPathNode(currentNode.localPos(), currentOffsets.getFirst()));
             resultNodes.addAll(
                     wrappedArcBetweenPoints(
                             currentNode,
@@ -46,7 +46,7 @@ public class CogwheelChainGeometryBuilder {
                             nextOffsets.getFirst().add(nextNode.center())
                     )
             );
-            resultNodes.add(new RenderedChainPathNode(currentNode.pos(), currentOffsets.getSecond()));
+            resultNodes.add(new RenderedChainPathNode(currentNode.localPos(), currentOffsets.getSecond()));
         }
 
         return resultNodes;
@@ -57,7 +57,7 @@ public class CogwheelChainGeometryBuilder {
             Vec3 outPreviousPositionWorld, Vec3 inCurrentOffsetWorld,
             Vec3 outCurrentOffsetWorld, Vec3 inNextPositionWorld) {
         // Move to chainNode-local frame (center = origin) for rotation math
-        Vec3 center = currentNode.pos().getCenter();
+        Vec3 center = currentNode.localPos().getCenter();
 
         Vec3 prevLocal = outPreviousPositionWorld.subtract(center);
         Vec3 startLocal = inCurrentOffsetWorld.subtract(center);
@@ -134,7 +134,7 @@ public class CogwheelChainGeometryBuilder {
             double t = (double) i / (double) segments;
             double theta = signedAngle * t;
             Vec3 rotatedLocal = rotateAroundAxis(startLocal, axis, theta);
-            result.add(new RenderedChainPathNode(currentNode.pos(), rotatedLocal));
+            result.add(new RenderedChainPathNode(currentNode.localPos(), rotatedLocal));
         }
 
         return result;
@@ -197,7 +197,7 @@ public class CogwheelChainGeometryBuilder {
 //            return otherAxis.cross(axis).normalize().scale(
 //                currentNode.pos().subtract(previousNode.pos()).get(previousNode.rotationAxis()) * (isIncoming ? 1 : -1)
 //            );
-            return getDirectionOfAxis(previousNode).scale(previousNode.pos().subtract(currentNode.pos()).get(previousNode.rotationAxis()));
+            return getDirectionOfAxis(previousNode).scale(previousNode.localPos().subtract(currentNode.localPos()).get(previousNode.rotationAxis()));
         }
 
         if (previousNode.side() == currentNode.side()) {

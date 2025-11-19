@@ -19,18 +19,21 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: lazy tick and item requirement
 public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implements IBlockEntityRelighter {
 
-    boolean isController = false;
-    @Nullable CogwheelChain chain = null;
-    @Nullable Vec3i controllerOffset = null;
+    private boolean isController = false;
+    @Nullable
+    private CogwheelChain chain = null;
+    @Nullable
+    private Vec3i controllerOffset = null;
 
-    public CogwheelChainBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public CogwheelChainBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
     }
 
     @Override
-    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+    protected void read(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.read(compound, registries, clientPacket);
         isController = compound.getBoolean("IsController");
         if (compound.contains("ControllerOffsetX")) {
@@ -65,7 +68,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
         }
 
         if (isController && chain != null) {
-            CompoundTag chainTag = new CompoundTag();
+            final CompoundTag chainTag = new CompoundTag();
             chain.write(chainTag);
             compound.put("Chain", chainTag);
         }
@@ -77,21 +80,22 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
         if (isController && chain != null) {
             chain.destroy(level, worldPosition);
         }
-        if (!isController && controllerOffset != null) {
-            BlockPos controllerPos = worldPosition.offset(controllerOffset);
-            BlockEntity be = level.getBlockEntity(controllerPos);
-            if (be instanceof CogwheelChainBlockEntity controllerBE) {
+        if (!isController && controllerOffset != null && level != null) {
+            final BlockPos controllerPos = worldPosition.offset(controllerOffset);
+            final BlockEntity be = level.getBlockEntity(controllerPos);
+            if (be instanceof final CogwheelChainBlockEntity controllerBE) {
+                assert controllerBE.chain != null;
                 controllerBE.chain.destroy(level, controllerPos);
             }
         }
     }
 
-    public void setController(Vec3i offset) {
+    public void setController(final Vec3i offset) {
         this.isController = false;
         this.controllerOffset = offset;
     }
 
-    public void setAsController(CogwheelChain cogwheelChain) {
+    public void setAsController(final CogwheelChain cogwheelChain) {
         this.isController = true;
         this.chain = cogwheelChain;
     }
@@ -102,19 +106,17 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     }
 
     @Override
-    public List<BlockPos> addPropagationLocations(IRotate block, BlockState state, List<BlockPos> neighbours) {
-        List<BlockPos> toPropagate = new ArrayList<>(super.addPropagationLocations(block, state, neighbours));
+    public List<BlockPos> addPropagationLocations(final IRotate block, final BlockState state, final List<BlockPos> neighbours) {
+        final List<BlockPos> toPropagate = new ArrayList<>(super.addPropagationLocations(block, state, neighbours));
 
         if (isController && chain != null) {
             addPropogationLocationsFromController(toPropagate, getBlockPos());
         } else {
-//            if (controllerOffset != null)
-//                toPropagate.add(getBlockPos().offset(controllerOffset));
             //Test putting child to child connections
-            if (controllerOffset != null) {
-                BlockPos controllerPos = worldPosition.offset(controllerOffset);
-                BlockEntity be = level.getBlockEntity(controllerPos);
-                if (be instanceof CogwheelChainBlockEntity controllerBE) {
+            if (controllerOffset != null && level != null) {
+                final BlockPos controllerPos = worldPosition.offset(controllerOffset);
+                final BlockEntity be = level.getBlockEntity(controllerPos);
+                if (be instanceof final CogwheelChainBlockEntity controllerBE) {
                     controllerBE.addPropogationLocationsFromController(toPropagate, getBlockPos());
                 }
             }
@@ -124,13 +126,13 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     }
 
     @Override
-    public float propagateRotationTo(KineticBlockEntity target, BlockState stateFrom, BlockState stateTo, BlockPos diff, boolean connectedViaAxes, boolean connectedViaCogs) {
+    public float propagateRotationTo(final KineticBlockEntity target, final BlockState stateFrom, final BlockState stateTo, final BlockPos diff, final boolean connectedViaAxes, final boolean connectedViaCogs) {
         if (connectedViaAxes && Math.abs(diff.get(getBlockState().getValue(CogwheelChainBlock.AXIS))) == 1)
             return 0;
 
         //Else, check if this is the same chain structure.
-        if (target instanceof CogwheelChainBlockEntity chainTarget) {
-            boolean isControlledBySame = this.isController &&
+        if (target instanceof final CogwheelChainBlockEntity chainTarget) {
+            final boolean isControlledBySame = this.isController &&
                     chainTarget.controllerOffset != null &&
                     chainTarget.controllerOffset.equals(this.getBlockPos().subtract(target.getBlockPos())) ||
 
@@ -143,8 +145,8 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
                             this.controllerOffset.offset(this.getBlockPos()).equals(chainTarget.controllerOffset.offset(target.getBlockPos()));
 
             if (isControlledBySame) {
-                float currentSide = this.getChainRotationFactor();
-                float otherSide = chainTarget.getChainRotationFactor();
+                final float currentSide = this.getChainRotationFactor();
+                final float otherSide = chainTarget.getChainRotationFactor();
                 return currentSide / otherSide;
             }
         }
@@ -155,7 +157,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
         if (isController) {
             if (chain == null) return 0;
 
-            PathedCogwheelNode controllerNode = chain.getNodeFromControllerOffset(new Vec3i(0, 0, 0));
+            final PathedCogwheelNode controllerNode = chain.getNodeFromControllerOffset(new Vec3i(0, 0, 0));
             if (controllerNode == null) return 0;
 
             return controllerNode.sideFactor();
@@ -163,26 +165,50 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
 
         if (level == null || controllerOffset == null) return 0;
 
-        BlockPos controllerPos = worldPosition.offset(controllerOffset);
-        BlockEntity be = level.getBlockEntity(controllerPos);
-        if (be instanceof CogwheelChainBlockEntity controllerBE) {
+        final BlockPos controllerPos = worldPosition.offset(controllerOffset);
+        final BlockEntity be = level.getBlockEntity(controllerPos);
+        if (be instanceof final CogwheelChainBlockEntity controllerBE) {
 
-            CogwheelChain controllerChain = controllerBE.chain;
+            final CogwheelChain controllerChain = controllerBE.chain;
             if (controllerChain == null) return 0;
 
-            PathedCogwheelNode nodeInChain = controllerChain.getNodeFromControllerOffset(controllerOffset);
+            final PathedCogwheelNode nodeInChain = controllerChain.getNodeFromControllerOffset(controllerOffset);
             return nodeInChain == null ? 0 : nodeInChain.sideFactor();
         }
         return 0;
     }
 
-    private void addPropogationLocationsFromController(List<BlockPos> toPropagate, BlockPos exclude) {
+    private void addPropogationLocationsFromController(final List<BlockPos> toPropagate, final BlockPos exclude) {
         assert chain != null;
-        for (var cogwheelNode : chain.getChainPathCogwheelNodes()) {
-            BlockPos cogwheelPos = worldPosition.offset(cogwheelNode.localPos());
+        for (final var cogwheelNode : chain.getChainPathCogwheelNodes()) {
+            final BlockPos cogwheelPos = worldPosition.offset(cogwheelNode.localPos());
             if (!toPropagate.contains(cogwheelPos) && !cogwheelPos.equals(exclude)) {
                 toPropagate.add(cogwheelPos);
             }
         }
+    }
+
+    public boolean isController() {
+        return isController;
+    }
+
+    public void setController(final boolean controller) {
+        isController = controller;
+    }
+
+    public @Nullable CogwheelChain getChain() {
+        return chain;
+    }
+
+    public void setChain(@Nullable final CogwheelChain chain) {
+        this.chain = chain;
+    }
+
+    public @Nullable Vec3i getControllerOffset() {
+        return controllerOffset;
+    }
+
+    public void setControllerOffset(@Nullable final Vec3i controllerOffset) {
+        this.controllerOffset = controllerOffset;
     }
 }

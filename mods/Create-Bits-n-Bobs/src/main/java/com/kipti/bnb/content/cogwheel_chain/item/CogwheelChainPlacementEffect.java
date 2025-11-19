@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.cogwheel_chain.item;
 
+import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChainPathfinder;
 import com.kipti.bnb.content.cogwheel_chain.graph.PlacingCogwheelNode;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
@@ -80,6 +81,31 @@ public class CogwheelChainPlacementEffect {
         for (int i = 0; i < currentBuildingChain.getSize(); i++) {
             showBlockOutline(level, currentBuildingChain.getNodes().get(i).pos());
         }
+
+        for (int side = -1; side <= 1; side += 2) {
+            for (int i = 0; i < currentBuildingChain.getSize() - 1; i++) {
+                final PlacingCogwheelNode nodeA = currentBuildingChain.getNodes().get(i);
+                final PlacingCogwheelNode nodeB = currentBuildingChain.getNodes().get(i + 1);
+                if (CogwheelChainPathfinder.isValidPathStep(nodeA, side, nodeB, side)) {
+                    final Vec3 pathingTangentB = CogwheelChainPathfinder.getPathingTangentOnCog(nodeA, nodeB, side);
+                    final Vec3 pathingTangentA = CogwheelChainPathfinder.getPathingTangentOnCog(nodeB, nodeA, -side);
+                    Outliner.getInstance().showLine("cogwheel_chain_placement_pathing_" + nodeA.pos() + "_" + nodeB.pos() + "_side_" + side,
+                                    nodeA.center().add(pathingTangentA),
+                                    nodeB.center().add(pathingTangentB))
+                            .colored(0x95CD41)
+                            .lineWidth(1 / 16f);
+                } else if (CogwheelChainPathfinder.isValidPathStep(nodeA, side, nodeB, -side)) {
+                    final Vec3 pathingTangentB = CogwheelChainPathfinder.getPathingTangentOnCog(nodeA, nodeB, -side);
+                    final Vec3 pathingTangentA = CogwheelChainPathfinder.getPathingTangentOnCog(nodeB, nodeA, -side);
+                    Outliner.getInstance().showLine("cogwheel_chain_placement_pathing_" + nodeA.pos() + "_" + nodeB.pos() + "_side_" + side + "_switching",
+                                    nodeA.center().add(pathingTangentA),
+                                    nodeB.center().add(pathingTangentB))
+                            .colored(0x95CD41)
+                            .lineWidth(1 / 16f);
+                }
+            }
+        }
+
         renderParticlesBetween(level, lastPos, projected);
     }
 

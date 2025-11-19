@@ -15,6 +15,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
@@ -23,6 +24,7 @@ public class CreateBitsnBobs {
 
     public static final String MOD_ID = "bits_n_bobs";
     public static final String NAME = "Create: Bits 'n' Bobs";
+    public static final String DECO_NAME = "Bits 'n' Bobs's Building blocks";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID)
@@ -36,6 +38,8 @@ public class CreateBitsnBobs {
         modEventBus.addListener(CreateBitsnBobsData::gatherData);
         REGISTRATE.registerEventListeners(modEventBus);
 
+        REGISTRATE.setCreativeTab(BnbCreativeTabs.BASE_CREATIVE_TAB);
+
         BnbItems.register();
         BnbBlocks.register();
         BnbLangEntries.register();
@@ -45,8 +49,14 @@ public class CreateBitsnBobs {
         BnbTags.register();
         BnbPackets.register();
         BnbDataComponents.register(modEventBus);
+        BnbDecoBlocks.register();
+
+        modEventBus.addListener(CreateBitsnBobs::commonSetup);
 
         modContainer.registerConfig(ModConfig.Type.CLIENT, Config.SPEC);
+    }
+
+    private static void commonSetup(FMLCommonSetupEvent event) {
     }
 
     public static ResourceLocation asResource(String s) {
