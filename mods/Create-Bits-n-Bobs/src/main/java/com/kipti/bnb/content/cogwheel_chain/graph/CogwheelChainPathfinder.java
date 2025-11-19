@@ -102,9 +102,9 @@ public class CogwheelChainPathfinder {
                 : (leftPath.get() != null ? leftPath.get() : rightPath.get());
         if (finalPath == null) return null;
 
-        if (finalPath.chainIntersections > 0) {
-            throw new CogwheelChain.InvalidGeometryException("self_intersections_forbidden");
-        }
+//        if (finalPath.chainIntersections > 0) {
+//            throw new CogwheelChain.InvalidGeometryException("self_intersections_forbidden");
+//        }
 
         ArrayList<PathedCogwheelNode> finalTraversed = new ArrayList<>(finalPath.traversed);
 
@@ -128,7 +128,6 @@ public class CogwheelChainPathfinder {
 
         double distance = fromPos.distanceTo(toPos) + (getArcDistanceOnCog(
                 prevNode,
-                fromSide,
                 nextNode,
                 toSide,
                 nextNextNode
@@ -156,11 +155,15 @@ public class CogwheelChainPathfinder {
         }
     }
 
-    private static double getArcDistanceOnCog(PlacingCogwheelNode prevNode, int incomingSide, PlacingCogwheelNode currentNode, int outgoingSide, PlacingCogwheelNode nextNode) {
-        Vec3 fromTangent = getPathingTangentOnCog(prevNode, currentNode, incomingSide);
+    private static double getArcDistanceOnCog(PlacingCogwheelNode prevNode, PlacingCogwheelNode currentNode, int outgoingSide, PlacingCogwheelNode nextNode) {
+        Vec3 fromTangent = getPathingTangentOnCog(prevNode, currentNode, outgoingSide);
         Vec3 toTangent = getPathingTangentOnCog(nextNode, currentNode, -outgoingSide);
 
         Vec3 incomingDiff = currentNode.center().subtract(prevNode.center());
+        if (toTangent.distanceToSqr(fromTangent) < 1e-4) {
+            return 0;
+        }
+
         if (incomingDiff.normalize().dot(toTangent.subtract(fromTangent)) < 0) {
             return 0;
         }

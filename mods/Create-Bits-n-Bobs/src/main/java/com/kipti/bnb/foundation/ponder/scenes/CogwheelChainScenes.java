@@ -1,6 +1,7 @@
 package com.kipti.bnb.foundation.ponder.scenes;
 
-import com.kipti.bnb.foundation.client.ExpandingOutlineInstruction;
+import com.kipti.bnb.foundation.ponder.instruction.ConveyChainRotationsInstruction;
+import com.kipti.bnb.foundation.ponder.instruction.ExpandingOutlineInstruction;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createmod.catnip.math.Pointing;
@@ -16,8 +17,8 @@ import static com.simibubi.create.content.kinetics.base.RotatedPillarKineticBloc
 
 public class CogwheelChainScenes {
 
-    public static void flatCogwheelChain(SceneBuilder builder, SceneBuildingUtil util) {
-        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+    public static void flatCogwheelChain(final SceneBuilder builder, final SceneBuildingUtil util) {
+        final CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("chain_cog_flat", "Connecting cogwheels with a chain");
         scene.configureBasePlate(0, 0, 7);
         scene.world().showSection(util.select().layer(0), Direction.UP);
@@ -93,8 +94,8 @@ public class CogwheelChainScenes {
         scene.markAsFinished();
     }
 
-    public static void changingAxisCogwheelChain(SceneBuilder builder, SceneBuildingUtil util) {
-        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+    public static void changingAxisCogwheelChain(final SceneBuilder builder, final SceneBuildingUtil util) {
+        final CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("chain_cog_changing_axis", "Changing axes on cogwheel chains");
         scene.configureBasePlate(0, 0, 6);
         scene.world().showSection(util.select().layer(0), Direction.UP);
@@ -120,17 +121,18 @@ public class CogwheelChainScenes {
         scene.world().showSection(util.select().position(4, 1, 1), Direction.DOWN);
         scene.idle(5);
         scene.world().showSection(util.select().position(1, 2, 2), Direction.DOWN);
-        scene.idle(20);
+        scene.idle(10);
 
         //Start of the ponder
         scene.addKeyframe();
+        scene.idle(20);
 
-        scene.overlay().showText(90)
+        scene.overlay().showText(70)
                 .text("Chains can change axis when connecting two large cogwheels")
                 .placeNearTarget()
                 .pointAt(util.vector().centerOf(1, 2, 2));
 
-        scene.idle(100);
+        scene.idle(80);
 
         scene.addInstruction(new ExpandingOutlineInstruction(PonderPalette.BLUE, new Vec3(5.5f, 1.5, 2.5), new Vec3(0.5f, 1.5, 2.5), 80, 20));
         scene.idle(20);
@@ -187,12 +189,54 @@ public class CogwheelChainScenes {
         scene.world().restoreBlocks(util.select().everywhere());
         scene.world().setKineticSpeed(util.select().everywhere(), 16f);
         //Fix more specific speeds
-        scene.world().setKineticSpeed(util.select().position(2, 1, 0), -32f);
+        scene.world().setKineticSpeed(util.select().position(2, 1, 0), 32f);
         scene.world().setKineticSpeed(util.select().position(0, 1, 1), 32f);
         scene.world().setKineticSpeed(util.select().position(0, 1, 5), 32f);
         scene.world().setKineticSpeed(util.select().position(2, 2, 4), -16f);
 
         scene.idle(20);
+        scene.markAsFinished();
+    }
+
+    public static void cogwheelChainPathingBehaviour(final SceneBuilder builder, final SceneBuildingUtil util) {
+        final CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("chain_cog_pathing_behaviour", "Behaviour of chain paths");
+        scene.configureBasePlate(0, 0, 8);
+        scene.world().showSection(util.select().everywhere(), Direction.UP);
+
+        scene.addInstruction(new ConveyChainRotationsInstruction(new BlockPos(1, 1, 1), 16));
+
+        scene.idle(30);
+        scene.overlay().showText(70)
+                .text("Chains can follow very complex paths with an unlimited number of axis changes");
+        scene.idle(80);
+
+        scene.rotateCameraY(90);
+
+        scene.idle(10);
+        scene.addKeyframe();
+        scene.idle(30);
+        scene.overlay().showText(70)
+                .text("Chains will always take the longest path around the cogwheels");
+        scene.idle(80);
+
+        scene.rotateCameraY(90);
+
+        scene.idle(10);
+        scene.addKeyframe();
+        scene.idle(30);
+        scene.overlay().showText(70)
+                .text("Chains are allowed to self-intersect around nodes, but only when necessary");
+        scene.idle(80);
+
+        scene.addKeyframe();
+
+        scene.rotateCameraY(90);
+        scene.idle(60);
+
+        scene.rotateCameraY(90);
+        scene.idle(40);
+
         scene.markAsFinished();
     }
 
