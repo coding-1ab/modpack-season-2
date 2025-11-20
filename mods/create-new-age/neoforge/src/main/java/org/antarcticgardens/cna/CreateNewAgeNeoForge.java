@@ -20,6 +20,7 @@ public class CreateNewAgeNeoForge extends CreateNewAge {
 
 //        eventBus.addListener(new CreateNewAgeClientNeoForge()::onClientSetup);
         eventBus.addListener(EventPriority.HIGHEST, CreateNewAgeDatagenNeoForge::gatherData);
+        eventBus.addListener(NeoForgePlatform::registerDatapack);
         eventBus.addListener(NeoForgeReactorFuelAcceptorBlockEntity::registerCapabilities);
     }
 }
