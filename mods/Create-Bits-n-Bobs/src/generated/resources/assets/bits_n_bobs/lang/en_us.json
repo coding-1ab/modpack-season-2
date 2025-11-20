@@ -52,6 +52,7 @@
   "block.bits_n_bobs.dripstone_tile_stairs": "Dripstone Tile Stairs",
   "block.bits_n_bobs.dripstone_tile_wall": "Dripstone Tile Wall",
   "block.bits_n_bobs.dripstone_tiles": "Dripstone Tiles",
+  "block.bits_n_bobs.flywheel_bearing": "Flywheel Bearing",
   "block.bits_n_bobs.girder_strut": "Girder Strut",
   "block.bits_n_bobs.granite_tile_slab": "Granite Tile Slab",
   "block.bits_n_bobs.granite_tile_stairs": "Granite Tile Stairs",
@@ -126,9 +127,8 @@
   "block.bits_n_bobs.yellow_chair": "Yellow Chair",
   "block.bits_n_bobs.yellow_large_nixie_tube": "Yellow Large Nixie Tube",
   "block.bits_n_bobs.yellow_nixie_board": "Yellow Nixie Board",
+  "entity.bits_n_bobs.inert_stationary_contraption": "Inert Stationary Contraption",
   "item.bits_n_bobs.calcined_flint": "Calcined Flint",
   "item.bits_n_bobs.crushed_deepslate": "Crushed Deepslate",
-  "message.bits_n_bobs.girder_strut.missing_anchors": "You need %s more Girder Struts",
-  "tab.bnb_based": "Create: Bits 'n' Bobs",
-  "tab.bnb_deco": "Create: Bits 'n' Bobs Decoration"
+  "message.bits_n_bobs.girder_strut.missing_anchors": "You need %s more Girder Struts"
 }

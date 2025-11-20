@@ -52,6 +52,7 @@
   "block.bits_n_bobs.dripstone_tile_stairs": "sɹıɐʇS ǝןı⟘ ǝuoʇsdıɹᗡ",
   "block.bits_n_bobs.dripstone_tile_wall": "ןןɐM ǝןı⟘ ǝuoʇsdıɹᗡ",
   "block.bits_n_bobs.dripstone_tiles": "sǝןı⟘ ǝuoʇsdıɹᗡ",
+  "block.bits_n_bobs.flywheel_bearing": "buıɹɐǝᗺ ןǝǝɥʍʎןℲ",
   "block.bits_n_bobs.girder_strut": "ʇnɹʇS ɹǝpɹı⅁",
   "block.bits_n_bobs.granite_tile_slab": "qɐןS ǝןı⟘ ǝʇıuɐɹ⅁",
   "block.bits_n_bobs.granite_tile_stairs": "sɹıɐʇS ǝןı⟘ ǝʇıuɐɹ⅁",
@@ -126,9 +127,8 @@
   "block.bits_n_bobs.yellow_chair": "ɹıɐɥƆ ʍoןןǝʎ",
   "block.bits_n_bobs.yellow_large_nixie_tube": "ǝqn⟘ ǝıxıN ǝbɹɐꞀ ʍoןןǝʎ",
   "block.bits_n_bobs.yellow_nixie_board": "pɹɐoᗺ ǝıxıN ʍoןןǝʎ",
+  "entity.bits_n_bobs.inert_stationary_contraption": "uoıʇdɐɹʇuoƆ ʎɹɐuoıʇɐʇS ʇɹǝuI",
   "item.bits_n_bobs.calcined_flint": "ʇuıןℲ pǝuıɔןɐƆ",
   "item.bits_n_bobs.crushed_deepslate": "ǝʇɐןsdǝǝᗡ pǝɥsnɹƆ",
-  "message.bits_n_bobs.girder_strut.missing_anchors": "sʇnɹʇS ɹǝpɹı⅁ ǝɹoɯ %s pǝǝu noʎ",
-  "tab.bnb_based": "sqoᗺ ,u, sʇıᗺ :ǝʇɐǝɹƆ",
-  "tab.bnb_deco": "uoıʇɐɹoɔǝᗡ sqoᗺ ,u, sʇıᗺ :ǝʇɐǝɹƆ"
+  "message.bits_n_bobs.girder_strut.missing_anchors": "sʇnɹʇS ɹǝpɹı⅁ ǝɹoɯ %s pǝǝu noʎ"
 }

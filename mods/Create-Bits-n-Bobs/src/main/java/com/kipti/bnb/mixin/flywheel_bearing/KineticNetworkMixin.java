@@ -1,0 +1,165 @@
+package com.kipti.bnb.mixin.flywheel_bearing;
+
+import com.kipti.bnb.content.flywheel_bearing.FlywheelBearingBlockEntity;
+import com.kipti.bnb.mixin_accessor.FlywheelAccessibleKineticNetwork;
+import com.simibubi.create.content.kinetics.KineticNetwork;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Iterator;
+import java.util.Map;
+
+//TODO: silent add and remove handling, i think that can just be flat
+
+///  dont actually need serialization in KBE, do, clear kinetic info. I think thats it, then go back and finish the flywheel mechanics
+/// //Ok looking at this more, i think i can avoid getting the flywheel capacity from the block, i just get from the network directly :D
+
+@Mixin(KineticNetwork.class)
+public abstract class KineticNetworkMixin implements FlywheelAccessibleKineticNetwork {
+
+    @Shadow
+    public Map<KineticBlockEntity, Float> members;
+
+    @Shadow
+    public abstract void sync();
+
+    @Shadow
+    private float currentStress;
+
+    /**
+     * Tracking for how much stress within the network flywheels are able to take (excluding full bearings)
+     * Unloaded flywheels are not tracked in the network
+     */
+    @Unique
+    private float currentFlywheelStressAbsorptionCapacity = 0f;
+    /**
+     * Tracking for how much stress within the network flywheels specifically are able to generate
+     * Unloaded flywheels are not tracked in the network
+     */
+    @Unique
+    private float currentFlywheelStressReleaseCapacity = 0f;
+
+    @Unique
+    private float bits_n_bobs$calculateFlywheelStressAbsorbtionCapacity() {
+        float presentFlywheelStressCapacity = 0;
+        for (final Iterator<KineticBlockEntity> iterator = members.keySet()
+                .iterator(); iterator.hasNext(); ) {
+            KineticBlockEntity be = iterator.next();
+            if (be.getLevel()
+                    .getBlockEntity(be.getBlockPos()) != be) {
+                iterator.remove();
+                continue;
+            }
+            if (!(be instanceof FlywheelBearingBlockEntity flywheelBearing))
+                continue;
+            presentFlywheelStressCapacity += flywheelBearing.getFlywheelStressAbsorbtionCapacity();
+        }
+        return presentFlywheelStressCapacity;
+    }
+
+    @Unique
+    private float bits_n_bobs$calculateFlywheelStressReleaseCapacity() {
+        float presentFlywheelStressCapacity = 0;
+        for (final Iterator<KineticBlockEntity> iterator = members.keySet()
+                .iterator(); iterator.hasNext(); ) {
+            KineticBlockEntity be = iterator.next();
+            if (be.getLevel()
+                    .getBlockEntity(be.getBlockPos()) != be) {
+                iterator.remove();
+                continue;
+            }
+            if (!(be instanceof FlywheelBearingBlockEntity flywheelBearing))
+                continue;
+            presentFlywheelStressCapacity += flywheelBearing.getFlywheelStressReleaseCapacity();
+        }
+        return presentFlywheelStressCapacity;
+    }
+
+    @Unique
+    public void bits_n_bobs$updateFlywheelStresses() {
+        final float newFlywheelStressAbsorptionCapacity = bits_n_bobs$calculateFlywheelStressAbsorbtionCapacity();
+        final float newFlywheelStressReleaseCapacity = bits_n_bobs$calculateFlywheelStressReleaseCapacity();
+        if (currentFlywheelStressAbsorptionCapacity != newFlywheelStressAbsorptionCapacity ||
+                currentFlywheelStressReleaseCapacity != newFlywheelStressReleaseCapacity) {
+            currentFlywheelStressAbsorptionCapacity = newFlywheelStressAbsorptionCapacity;
+            currentFlywheelStressReleaseCapacity = newFlywheelStressReleaseCapacity;
+            bits_n_bob$syncToFlywheels();
+        }
+    }
+
+    @Unique
+    private void bits_n_bob$syncToFlywheels() {
+        for (final Iterator<KineticBlockEntity> iterator = members.keySet()
+                .iterator(); iterator.hasNext(); ) {
+            KineticBlockEntity be = iterator.next();
+            if (be.getLevel()
+                    .getBlockEntity(be.getBlockPos()) != be) {
+                iterator.remove();
+                continue;
+            }
+            if (!(be instanceof FlywheelBearingBlockEntity flywheelBearing))
+                continue;
+            flywheelBearing.updateFlywheelStressesFromNetwork();
+        }
+    }
+
+    @Inject(method = "updateNetwork", at = @At("HEAD"))
+    public void bits_n_bobs$updateNetworkHead(CallbackInfo ci) {
+        final float flywheelCapacity = bits_n_bobs$calculateFlywheelStressAbsorbtionCapacity();
+        // trigger a sync if flywheel capacity has changed, by changing the stress capacity local, very cheeky, but faster than doing another injection at the end, and somehow cleaner
+        if (currentFlywheelStressAbsorptionCapacity != flywheelCapacity) {
+            currentFlywheelStressAbsorptionCapacity = flywheelCapacity;
+            currentStress = -1;
+        }
+    }
+
+    @Inject(method = "addSilently", at = @At("HEAD"))
+    public void addSilently(KineticBlockEntity be, float lastCapacity, float lastStress, CallbackInfo ci) {
+        if (members.containsKey(be))
+            return;
+
+        if (be instanceof FlywheelBearingBlockEntity flywheelBearing) {
+            currentFlywheelStressAbsorptionCapacity += flywheelBearing.getFlywheelStressAbsorbtionCapacity();
+            currentFlywheelStressReleaseCapacity += flywheelBearing.getFlywheelStressReleaseCapacity();
+        }
+    }
+
+    @Inject(method = "add", at = @At("HEAD"))
+    public void add(KineticBlockEntity be, CallbackInfo ci) {
+        if (members.containsKey(be))
+            return;
+
+        if (be instanceof FlywheelBearingBlockEntity flywheelBearing) {
+            currentFlywheelStressAbsorptionCapacity += flywheelBearing.getFlywheelStressAbsorbtionCapacity();
+            currentFlywheelStressReleaseCapacity += flywheelBearing.getFlywheelStressReleaseCapacity();
+        }
+    }
+
+    @Inject(method = "remove", at = @At("HEAD"))
+    public void remove(KineticBlockEntity be, CallbackInfo ci) {
+        if (!members.containsKey(be))
+            return;
+
+        if (be instanceof FlywheelBearingBlockEntity flywheelBearing) {
+            currentFlywheelStressAbsorptionCapacity -= flywheelBearing.getFlywheelStressAbsorbtionCapacity();
+            currentFlywheelStressReleaseCapacity -= flywheelBearing.getFlywheelStressReleaseCapacity();
+        }
+    }
+
+    @Override
+    public float bits_n_bobs$getFlywheelStressAbsoptionCapacity() {
+        return currentFlywheelStressAbsorptionCapacity;
+    }
+
+    @Override
+    public float bits_n_bobs$getFlywheelStressReleaseCapacity() {
+        return currentFlywheelStressReleaseCapacity;
+    }
+
+
+}

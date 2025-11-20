@@ -1,4 +1,4 @@
-// 1.21.1	2025-11-19T14:42:11.0126039	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2025-11-20T17:42:58.0967938	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 55ef065722d329b3c054797cd63a36d59f1634a8 assets/bits_n_bobs/blockstates/andesite_tiles.json
 8810b9385c4f0297369a2d35ef8435b216bae4bb assets/bits_n_bobs/blockstates/andesite_tile_slab.json
 34dc52222f8843bc859869e1572ba2e8b0721252 assets/bits_n_bobs/blockstates/andesite_tile_stairs.json
@@ -42,6 +42,7 @@ d44e4cd23c748fa098c35b83974d8b19bdc14bd0 assets/bits_n_bobs/blockstates/diorite_
 620ea1727448ffb4a5e98f9e9920d31ef8e3219c assets/bits_n_bobs/blockstates/dripstone_tile_slab.json
 c6529102b8c3c4c0c84c612d7e8cd1add7f5e5ff assets/bits_n_bobs/blockstates/dripstone_tile_stairs.json
 96e44679c0b1578b2f75b41e2a7b4c31349940b2 assets/bits_n_bobs/blockstates/dripstone_tile_wall.json
+945aa14fe01a9661ed3f80860150d73284bf6fc9 assets/bits_n_bobs/blockstates/flywheel_bearing.json
 48500ea148ccc1668ec3ca7800576a2be9de10e6 assets/bits_n_bobs/blockstates/girder_strut.json
 416f0c064c0fb3b051125278c317f919bf597bc5 assets/bits_n_bobs/blockstates/granite_tiles.json
 cf7282424d3ae45c34efcbc0447be669486ef1a5 assets/bits_n_bobs/blockstates/granite_tile_slab.json
@@ -116,8 +117,8 @@ c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/white_la
 c0904de2fdf77d073743019155feab1e81d988f9 assets/bits_n_bobs/blockstates/yellow_chair.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/yellow_large_nixie_tube.json
 5f1d323a930becf0ed2bee64bbb33c152802b2b2 assets/bits_n_bobs/blockstates/yellow_nixie_board.json
-71d6696a725407b61bc3708ca9b5e115174dafc8 assets/bits_n_bobs/lang/en_ud.json
-acad524e3e4029a47e0467dac78469312729af43 assets/bits_n_bobs/lang/en_us.json
+cdc08c65eb59b2190bd0f11c3188db6e3d7d3635 assets/bits_n_bobs/lang/en_ud.json
+5ca2d179b9fe31ef43a1588447e2592af7952e7e assets/bits_n_bobs/lang/en_us.json
 dd02349289c5f8a6619c90dfed5ccf5c7e34fe4c assets/bits_n_bobs/models/block/andesite_tiles.json
 8f729225dc596e1cd2d0e94b2b22a420a7904d36 assets/bits_n_bobs/models/block/andesite_tiles_wall_post.json
 b03a7743a9b7c00f0ad9542b4f1007befcafef0d assets/bits_n_bobs/models/block/andesite_tiles_wall_side.json
@@ -411,6 +412,7 @@ ec9ac04e52b279bdaea1077f6d00fcf54624bc49 assets/bits_n_bobs/models/item/diorite_
 d00e6df783cc9d2038e38707f94a2de440472338 assets/bits_n_bobs/models/item/dripstone_tile_slab.json
 eb7dd3beee6c327215b017e5671d0230b444cbe7 assets/bits_n_bobs/models/item/dripstone_tile_stairs.json
 678ae724844f435b648429851a869eb25e0f8092 assets/bits_n_bobs/models/item/dripstone_tile_wall.json
+911b38bbfd8c3cfebb2cc485b0670f56d9715902 assets/bits_n_bobs/models/item/flywheel_bearing.json
 e4b469885e1079719d1e6a5d7ad76c20faf73480 assets/bits_n_bobs/models/item/girder_strut.json
 858ae037a6cca6fe2857fb2fb9c52bbbe4bfd760 assets/bits_n_bobs/models/item/granite_tiles.json
 30ab6ba209e7f282bce1bfb4c397b632a68648d9 assets/bits_n_bobs/models/item/granite_tile_slab.json
@@ -645,6 +647,7 @@ e6efe1814db8353f18aa8b56338975ce3735609c data/bits_n_bobs/loot_table/blocks/dior
 5618814a1377229b4d2c3c03f7af8b5fe03fe165 data/bits_n_bobs/loot_table/blocks/dripstone_tile_slab.json
 dfe4103baee3c62563086322ff2c0b7801ae9708 data/bits_n_bobs/loot_table/blocks/dripstone_tile_stairs.json
 c269f51c58aebf400e1375a4d3e5c44e3b83177f data/bits_n_bobs/loot_table/blocks/dripstone_tile_wall.json
+1fa21743f2a57f1e526a663f6f9baf3fefc92834 data/bits_n_bobs/loot_table/blocks/flywheel_bearing.json
 b768e8a90035e52718c555815c861a8d77db869a data/bits_n_bobs/loot_table/blocks/girder_strut.json
 1995596300553cc2210ea9d26e91e174dc5366f1 data/bits_n_bobs/loot_table/blocks/granite_tiles.json
 c83126a83f9099a133739a1460cb89682c3fcdcb data/bits_n_bobs/loot_table/blocks/granite_tile_slab.json
@@ -893,7 +896,7 @@ e01bef21e13d8b0631e5c142ea4d5b52f8969f04 data/create/recipe/scorchia_tile_slab_r
 483f7fbf4224a6b5d050d62b9d656014b6107c42 data/create/recipe/scoria_tile_slab_recycling.json
 690e550f067c987e5df0a4756dbc56b5aa98bbd5 data/create/recipe/tuff_tile_slab_recycling.json
 06a34b592f1b52713d7169f76edda32173980e4a data/create/recipe/veridium_tile_slab_recycling.json
-8e4e963e8dc2849b5eedb349faa945216372076c data/create/tags/block/safe_nbt.json
+308e4361c505eb6c8b9b69423840c9ccb6ba07b2 data/create/tags/block/safe_nbt.json
 b2746ad5fb6e8a9bd43915d905fd9a3c218c3c63 data/create/tags/item/stone_types/andesite.json
 82481f615fec3a1f1dc8e14a2d59c8a56ce7ec28 data/create/tags/item/stone_types/asurine.json
 d44460e748a7bd8eca3fdc8aee0be3940826edce data/create/tags/item/stone_types/calcite.json
@@ -908,8 +911,9 @@ f02db96ec16a6e2ca46b8b0f86125a7fec3cfbdd data/create/tags/item/stone_types/ochru
 8955ab716f47c8aa4d7b315cd28ef13a8baa464b data/create/tags/item/stone_types/scoria.json
 bed0d6245b47c5fffc58a0c1d98679c1c4bbdc85 data/create/tags/item/stone_types/tuff.json
 f1f656352662478775cd9db2d1ca8f7aac574145 data/create/tags/item/stone_types/veridium.json
-304b090b10139ca45554567555d6e7e336b5c243 data/minecraft/tags/block/mineable/axe.json
-ce8cf37e177b7f10cc8bb827beba0bbbfc2eb1b5 data/minecraft/tags/block/mineable/pickaxe.json
+1a62100f1b509d1f48d00fcd9b3a518ef390899a data/c/tags/entity_type/teleporting_not_supported.json
+b5b2c294db8e00e6326bc1b1c5a38b52f02ba359 data/minecraft/tags/block/mineable/axe.json
+96f9805f016d4c341468e4cc11c18be59ad747ae data/minecraft/tags/block/mineable/pickaxe.json
 41a003123f0a15d601163b1f07565d22dcf8a062 data/minecraft/tags/block/mineable/shovel.json
 ed62c06140a0397feee5c79128d399c64719a198 data/minecraft/tags/block/slabs.json
 10c05d7d5af60bb17cc6d8618bd4354ba3dd741a data/minecraft/tags/block/stairs.json

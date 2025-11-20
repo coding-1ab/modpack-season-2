@@ -3,6 +3,7 @@ package com.kipti.bnb.registry;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.chair.ChairBlock;
 import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlock;
+import com.kipti.bnb.content.flywheel_bearing.FlywheelBearingBlock;
 import com.kipti.bnb.content.girder_strut.GirderStrutBlock;
 import com.kipti.bnb.content.girder_strut.GirderStrutBlockItem;
 import com.kipti.bnb.content.girder_strut.GirderStrutModelBuilder;
@@ -23,6 +24,7 @@ import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlockStateGenerator
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllDisplaySources;
 import com.simibubi.create.AllTags;
+import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.contraptions.actors.seat.SeatInteractionBehaviour;
 import com.simibubi.create.content.contraptions.actors.seat.SeatMovementBehaviour;
 import com.simibubi.create.content.kinetics.simpleRelays.BracketedKineticBlockModel;
@@ -156,13 +158,30 @@ public class BnbBlocks {
 
     public static final BlockEntry<CogwheelChainBlock> LARGE_COGWHEEL_CHAIN =
             REGISTRATE.block("large_cogwheel_chain", CogwheelChainBlock::large)
-                    .initialProperties(SharedProperties::stone)
+                    .initialProperties(SharedProperties::wooden)
                     .properties(p -> p.sound(SoundType.WOOD)
                             .mapColor(MapColor.DIRT))
                     .transform(axeOrPickaxe())
                     .blockstate(BlockStateGen.axisBlockProvider(false))
                     .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
 //                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+                    .register();
+
+    public static final BlockEntry<FlywheelBearingBlock> FLYWHEEL_BEARING =
+            REGISTRATE.block("flywheel_bearing", FlywheelBearingBlock::new)
+                    .transform(axeOrPickaxe())
+                    .properties(p -> p.mapColor(MapColor.GOLD))
+                    .onRegister(BlockStressValues.setGeneratorSpeed(16, true))
+                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+                    .blockstate((c, p) -> p.directionalBlock(c.get(),
+                            (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                                    "block/flywheel_bearing/block")
+                            )))
+                    .item()
+                    .model((c, p) ->
+                            p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/flywheel_bearing/item"))
+                    )
+                    .build()
                     .register();
 
     public static <T extends NixieBoardBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> nixieBoard() {

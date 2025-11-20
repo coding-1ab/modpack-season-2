@@ -42,7 +42,7 @@ public class CreateBitsnBobs {
 
         BnbItems.register();
         BnbBlocks.register();
-        BnbLangEntries.register();
+        BnbEntityTypes.register();
         BnbCreativeTabs.register(modEventBus);
         BnbPartialModels.register();
         BnbBlockEntities.register();
@@ -50,6 +50,8 @@ public class CreateBitsnBobs {
         BnbPackets.register();
         BnbDataComponents.register(modEventBus);
         BnbDecoBlocks.register();
+
+        BnbLangEntries.register();
 
         modEventBus.addListener(CreateBitsnBobs::commonSetup);
 
