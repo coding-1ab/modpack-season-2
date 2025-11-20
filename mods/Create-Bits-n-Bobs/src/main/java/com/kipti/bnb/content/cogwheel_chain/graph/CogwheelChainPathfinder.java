@@ -85,7 +85,7 @@ public class CogwheelChainPathfinder {
 
                 for (int toSide = 1; toSide >= -1; toSide -= 2) {
                     if (isValidPathStep(prevNode, fromSide, nextNode, toSide)) {
-                        stepPathfinding(prevNode, nextNode, fromSide, toSide, fromPath, nextNextNode, nextLeftPath, nextRightPath);
+                        stepPathfinding(prevNode, nextNode, fromSide, toSide, fromPath, nextNextNode, nextLeftPath, nextRightPath, chain.getSize());
                     }
                 }
             }
@@ -116,7 +116,7 @@ public class CogwheelChainPathfinder {
         return finalTraversed;
     }
 
-    private static void stepPathfinding(PlacingCogwheelNode prevNode, PlacingCogwheelNode nextNode, int fromSide, int toSide, AtomicReference<PartialPathFrontierData> fromPath, PlacingCogwheelNode nextNextNode, AtomicReference<PartialPathFrontierData> nextLeftPath, AtomicReference<PartialPathFrontierData> nextRightPath) {
+    private static void stepPathfinding(PlacingCogwheelNode prevNode, PlacingCogwheelNode nextNode, int fromSide, int toSide, AtomicReference<PartialPathFrontierData> fromPath, PlacingCogwheelNode nextNextNode, AtomicReference<PartialPathFrontierData> nextLeftPath, AtomicReference<PartialPathFrontierData> nextRightPath, int size) {
         Vec3 fromPos = prevNode.center().add(
                 getPathingTangentOnCog(nextNode, prevNode, -fromSide)
         );
@@ -133,12 +133,13 @@ public class CogwheelChainPathfinder {
                 nextNextNode
         ));
 
-        int selfIntersections = nextNextNode == prevNode ? 0 : (traversedSize < 2 ? 0 : getSelfIntersection(
-                traversed.get(traversedSize - 2),
-                traversed.get(traversedSize - 1),
-                nextNode,
-                toSide
-        ));
+        int selfIntersections = nextNextNode == prevNode ? (toSide != fromSide ? 1 : 0) : (traversedSize < 2 ? 0 :
+                getSelfIntersection(
+                        traversed.get(traversedSize - 2),
+                        traversed.get(traversedSize - 1),
+                        nextNode,
+                        toSide
+                ));
 
         PartialPathFrontierData extendedPath = fromPath.get().extend(
                 new PathedCogwheelNode(nextNode, toSide),
