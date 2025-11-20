@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.flywheel_bearing.mechanics;
 
+import com.kipti.bnb.BnbServerConfig;
 import com.kipti.bnb.content.flywheel_bearing.FlywheelBearingBlockEntity;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import net.minecraft.core.BlockPos;
@@ -48,6 +49,12 @@ public class FlywheelMovementMechanics {
 //            maxAngularVelocity = compound.getFloat("MaxAngularVelocity");
         if (compound.contains("AngularVelocity"))
             angularVelocity = compound.getFloat("AngularVelocity");
+
+        if (BnbServerConfig.enableFlywheelStorage) {
+            if (angularVelocity < 0)
+                angularVelocity = 0; //Flywheel storage only works with positive angular velocity
+        }
+
         if (compound.contains("PrevAngle"))
             prevAngle = compound.getFloat("PrevAngle");
         if (compound.contains("Angle"))
@@ -56,7 +63,7 @@ public class FlywheelMovementMechanics {
             angularMass = compound.getFloat("AngularMass");
     }
 
-    public void tick(final FlywheelBearingBlockEntity be) {
+    public void tickForStorageBehaviour(final FlywheelBearingBlockEntity be) {
         prevAngle = angle;
 
         final boolean canReceiveStressBefore = canReceiveStress();
@@ -106,6 +113,14 @@ public class FlywheelMovementMechanics {
         be.updateFlywheelStressesInNetwork();
     }
 
+    public void tick(FlywheelBearingBlockEntity flywheelBearingBlockEntity) {
+        prevAngle = angle;
+        final float targetAngularVelocity = flywheelBearingBlockEntity.getSpeed() * 360 / (20f * 60f);
+        final float reactivity = Math.clamp(1f / angularMass, 0.005f, 1f);
+        angularVelocity = targetAngularVelocity * reactivity + angularVelocity * (1 - reactivity);
+        angle += angularVelocity;
+    }
+
     private float getMassOfBlock(BlockState state) {
         return 1f;
     }
@@ -134,4 +149,5 @@ public class FlywheelMovementMechanics {
     public float getMaxAngularVelocity() {
         return maxAngularVelocity;
     }
+
 }

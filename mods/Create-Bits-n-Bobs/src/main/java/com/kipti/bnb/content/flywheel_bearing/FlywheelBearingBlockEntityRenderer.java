@@ -14,6 +14,6 @@ public class FlywheelBearingBlockEntityRenderer extends KineticBlockEntityRender
 
     @Override
     protected SuperByteBuffer getRotatedModel(final FlywheelBearingBlockEntity be, final BlockState state) {
-        return CachedBuffers.partial(AllPartialModels.SHAFTLESS_LARGE_COGWHEEL, state);
+        return CachedBuffers.partialFacing(AllPartialModels.SHAFTLESS_LARGE_COGWHEEL, state);
     }
 }

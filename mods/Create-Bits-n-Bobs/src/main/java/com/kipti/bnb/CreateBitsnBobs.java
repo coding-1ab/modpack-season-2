@@ -55,7 +55,7 @@ public class CreateBitsnBobs {
 
         modEventBus.addListener(CreateBitsnBobs::commonSetup);
 
-        modContainer.registerConfig(ModConfig.Type.CLIENT, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.SERVER, BnbServerConfig.SPEC);
     }
 
     private static void commonSetup(FMLCommonSetupEvent event) {

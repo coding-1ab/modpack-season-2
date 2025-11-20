@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.flywheel_bearing;
 
+import com.kipti.bnb.BnbServerConfig;
 import com.kipti.bnb.content.flywheel_bearing.contraption.InertControlledContraptionEntity;
 import com.kipti.bnb.content.flywheel_bearing.mechanics.FlywheelMovementMechanics;
 import com.kipti.bnb.mixin_accessor.FlywheelAccessibleKineticNetwork;
@@ -55,9 +56,10 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
         FlywheelAccessibleKineticNetwork net = getOrCreateFlywheelNetwork();
         tooltip.add(1, Component.literal("Network flywheel absorb capacity " + (level.isClientSide ? clientFlywheelAbsorptionCapacityInNetwork + " (client)" : (net == null ? "null" : net.bits_n_bobs$getFlywheelStressAbsoptionCapacity()))));
         tooltip.add(2, Component.literal("Network flywheel release capacity " + (level.isClientSide ? clientFlywheelReleaseCapacityInNetwork + " (client)" : (net == null ? "null" : net.bits_n_bobs$getFlywheelStressAbsoptionCapacity()))));
-        tooltip.add(3, Component.literal("This flywheel capacity " + getFlywheelStressAbsorbtionCapacity()));
+        tooltip.add(3, Component.literal("This flywheel capacity " + getFlywheelStressAbsorptionCapacity()));
         tooltip.add(4, Component.literal("Stored in this flywheel (sut) " + flywheelMovement.getStoredStressTicks()));
         tooltip.add(5, Component.literal("Angular velocity " + (flywheelMovement.angularVelocity * 20) + " dps" + ((20 * 60 * flywheelMovement.angularVelocity) / 360) + " rpm"));
+        tooltip.add(6, Component.literal("StorageEnabled: " + BnbServerConfig.enableFlywheelStorage));
 
         return true;
     }
@@ -242,8 +244,11 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
         if (!running)
             return;
 
-        flywheelMovement.tick(this);
-
+        if (BnbServerConfig.enableFlywheelStorage) {
+            flywheelMovement.tickForStorageBehaviour(this);
+        } else {
+            flywheelMovement.tick(this);
+        }
         applyRotation();
     }
 
@@ -331,7 +336,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     }
 
     public float getFlywheelStressDelta() {
-        if (!hasNetwork()) {
+        if (!hasNetwork() || !BnbServerConfig.enableFlywheelStorage) {
             return 0;
         }
 
@@ -344,7 +349,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
 
         final float stressDifferenceInNetwork = capacity - flywheelReleaseCapacityInNetwork - stress;
 
-        final float flywheelAbsorptionStressCapacity = getFlywheelStressAbsorbtionCapacity();
+        final float flywheelAbsorptionStressCapacity = getFlywheelStressAbsorptionCapacity();
         final float flywheelReleaseStressCapacity = getFlywheelStressReleaseCapacity();
 
         if (stressDifferenceInNetwork > 0) {
@@ -364,18 +369,20 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
         return (FlywheelAccessibleKineticNetwork) getOrCreateNetwork();
     }
 
-    public float getFlywheelStressAbsorbtionCapacity() {
+    public float getFlywheelStressAbsorptionCapacity() {
         return running ? flywheelMovement.getFlywheelStressCapacity() : 0;
     }
 
     public void updateFlywheelStressesInNetwork() {
-        if (!hasNetwork())
+        if (!BnbServerConfig.enableFlywheelStorage || !hasNetwork())
             return;
         getOrCreateFlywheelNetwork().bits_n_bobs$updateFlywheelStresses();
     }
 
     @Override
     public float getGeneratedSpeed() {
+        if (!BnbServerConfig.enableFlywheelStorage) return 0;
+
         final float currentSpeed = getTheoreticalSpeed();
 
         if (currentSpeed != 0) {
@@ -391,6 +398,8 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
 
     @Override
     public float calculateAddedStressCapacity() {
+        if (!BnbServerConfig.enableFlywheelStorage) return 0;
+
         final float capacity = getFlywheelStressReleaseCapacity();
         this.lastCapacityProvided = capacity;
         float currentSpeed = getGeneratedSpeed();
@@ -404,4 +413,5 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     public void updateFlywheelStressesFromNetwork() {
         sendData();
     }
+
 }
