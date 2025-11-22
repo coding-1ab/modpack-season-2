@@ -24,14 +24,14 @@ public class BnbCreativeTabs {
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> BASE_CREATIVE_TAB = REGISTER.register("bnb_based",
             () -> CreativeModeTab.builder()
-                    .title(Component.literal(CreateBitsnBobs.NAME))
+                    .title(Component.translatable("tab." + CreateBitsnBobs.MOD_ID + ".base"))
                     .withTabsBefore(AllCreativeModeTabs.PALETTES_CREATIVE_TAB.getId())
                     .icon(BnbBlocks.LIGHTBULB::asStack)
                     .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.BASE_CREATIVE_TAB)).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> DECO_CREATIVE_TAB = REGISTER.register("bnb_deco",
             () -> CreativeModeTab.builder()
-                    .title(Component.literal(CreateBitsnBobs.DECO_NAME))
+                    .title(Component.translatable("tab." + CreateBitsnBobs.MOD_ID + ".deco"))
                     .withTabsBefore(BnbCreativeTabs.BASE_CREATIVE_TAB.getId())
                     .icon(() -> BnbPaletteStoneTypes.ASURINE.getVariants().registeredBlocks.getFirst().asStack())
                     .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.DECO_CREATIVE_TAB)).build());
