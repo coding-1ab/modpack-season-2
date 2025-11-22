@@ -1,6 +1,5 @@
 package com.kipti.bnb.content.palette;
 
-
 import com.kipti.bnb.CreateBitsnBobs;
 import com.simibubi.create.content.decoration.palettes.ConnectedPillarBlock;
 import com.simibubi.create.foundation.block.connected.*;
@@ -32,7 +31,8 @@ import java.util.function.Supplier;
 public class BnbPaletteBlockPattern {
 
     public static final BnbPaletteBlockPattern
-            TILES = create("tiles", BnbPatternNameType.SUFFIX, BnbPaletteBlockPartial.ALL_PARTIALS);
+            TILES = create("tiles", BnbPatternNameType.SUFFIX, BnbPaletteBlockPartial.ALL_PARTIALS_TILE)
+            .blockStateFactory(p -> p::cubeTile);
 
     public enum BnbPatternNameType {
         PREFIX, SUFFIX, WRAP
@@ -139,6 +139,14 @@ public class BnbPaletteBlockPattern {
         final ResourceLocation all = toLocation(variant, textures[0]);
         return (ctx, prov) -> prov.simpleBlock(ctx.get(), prov.models()
                 .cubeAll(createName(variant), all));
+    }
+
+    public IBlockStateProvider cubeTile(final String variant) {
+        final ResourceLocation all = toLocation(variant, textures[0]);
+        final ResourceLocation flipped = toLocation(variant, textures[0] + "_flipped");
+        return (ctx, prov) -> prov.simpleBlock(ctx.get(), prov.models()
+                .cube(createName(variant), all, all, flipped, flipped, all, all)
+                .texture("particle", all));
     }
 
     public IBlockStateProvider cubeBottomTop(final String variant) {

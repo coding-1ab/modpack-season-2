@@ -10,7 +10,7 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/scoria_tiles_wall_side",
+        "model": "bits_n_bobs:block/scoria_tiles_wall_side_alternate",
         "uvlock": true,
         "y": 90
       },
@@ -20,7 +20,7 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/scoria_tiles_wall_side_tall",
+        "model": "bits_n_bobs:block/scoria_tiles_wall_side_tall_alternate",
         "uvlock": true,
         "y": 90
       },
@@ -68,7 +68,7 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/scoria_tiles_wall_side",
+        "model": "bits_n_bobs:block/scoria_tiles_wall_side_alternate",
         "uvlock": true,
         "y": 270
       },
@@ -78,7 +78,7 @@
     },
     {
       "apply": {
-        "model": "bits_n_bobs:block/scoria_tiles_wall_side_tall",
+        "model": "bits_n_bobs:block/scoria_tiles_wall_side_tall_alternate",
         "uvlock": true,
         "y": 270
       },
