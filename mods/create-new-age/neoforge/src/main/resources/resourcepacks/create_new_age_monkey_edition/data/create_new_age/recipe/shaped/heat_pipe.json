@@ -13,7 +13,7 @@
   ],
   "result": {
     "count": 4,
-    "item": "create_new_age:heat_pipe"
+    "id": "create_new_age:heat_pipe"
   },
   "show_notification": true
 }

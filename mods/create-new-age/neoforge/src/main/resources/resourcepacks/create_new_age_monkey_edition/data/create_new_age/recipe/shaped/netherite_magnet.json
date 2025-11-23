@@ -16,7 +16,7 @@
   ],
   "result": {
     "count": 2,
-    "item": "create_new_age:netherite_magnet"
+    "id": "create_new_age:netherite_magnet"
   },
   "show_notification": true
 }
