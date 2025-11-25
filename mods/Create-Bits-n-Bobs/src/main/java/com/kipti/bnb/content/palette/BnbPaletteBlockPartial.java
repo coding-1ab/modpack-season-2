@@ -281,8 +281,17 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
 
     }
 
-    private static class TileWall extends Wall {
+    private static class TileWall extends BnbPaletteBlockPartial<WallBlock> {
 
+        public TileWall() {
+            super("wall");
+        }
+
+        @Override
+        protected WallBlock createBlock(final Supplier<? extends Block> block) {
+            return new WallBlock(BlockBehaviour.Properties.ofFullCopy(block.get()).forceSolidOn());
+        }
+        
         @Override
         protected ItemBuilder<BlockItem, BlockBuilder<WallBlock, CreateRegistrate>> transformItem(
                 final ItemBuilder<BlockItem, BlockBuilder<WallBlock, CreateRegistrate>> builder, final String variantName,
@@ -369,6 +378,29 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
             tileWallBlock(prov, ctx.get(), pattern.createName(variantName), getTexture(variantName, pattern, 0), getFlippedTexture(variantName, pattern, 0));
         }
 
+        @Override
+        protected Iterable<TagKey<Block>> getBlockTags() {
+            return List.of(BlockTags.WALLS);
+        }
+
+        @Override
+        protected Iterable<TagKey<Item>> getItemTags() {
+            return List.of(ItemTags.WALLS);
+        }
+
+        @Override
+        protected void createRecipes(final BnbPaletteStoneTypes type, final BlockEntry<? extends Block> patternBlock,
+                                     final DataGenContext<Block, ? extends Block> c, final RegistrateRecipeProvider p) {
+            final RecipeCategory category = RecipeCategory.BUILDING_BLOCKS;
+            p.stonecutting(DataIngredient.tag(type.materialTag), category, c, 1);
+            final DataIngredient ingredient = DataIngredient.items(patternBlock.get());
+            ShapedRecipeBuilder.shaped(category, c.get(), 6)
+                    .pattern("XXX")
+                    .pattern("XXX")
+                    .define('X', ingredient.toVanilla())
+                    .unlockedBy("has_" + p.safeName(ingredient), ingredient.getCriterion(p))
+                    .save(p, p.safeId(c.get()));
+        }
     }
 }
 

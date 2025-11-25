@@ -24,7 +24,7 @@ public class CreateBitsnBobs {
 
     public static final String MOD_ID = "bits_n_bobs";
     public static final String NAME = "Create: Bits 'n' Bobs";
-    public static final String DECO_NAME = "Bits 'n' Bobs's Building Blocks";
+    public static final String DECO_NAME = "Bits 'n' Bobs' Building Blocks";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID)
@@ -34,7 +34,7 @@ public class CreateBitsnBobs {
                             .andThen(TooltipModifier.mapNull(KineticStats.create(item)))
             );
 
-    public CreateBitsnBobs(IEventBus modEventBus, ModContainer modContainer) {
+    public CreateBitsnBobs(final IEventBus modEventBus, final ModContainer modContainer) {
         modEventBus.addListener(CreateBitsnBobsData::gatherData);
         REGISTRATE.registerEventListeners(modEventBus);
 
@@ -58,10 +58,10 @@ public class CreateBitsnBobs {
         modContainer.registerConfig(ModConfig.Type.SERVER, BnbServerConfig.SPEC);
     }
 
-    private static void commonSetup(FMLCommonSetupEvent event) {
+    private static void commonSetup(final FMLCommonSetupEvent event) {
     }
 
-    public static ResourceLocation asResource(String s) {
+    public static ResourceLocation asResource(final String s) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, s);
     }
 
