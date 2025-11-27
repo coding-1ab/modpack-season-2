@@ -2,6 +2,8 @@ package com.kipti.bnb.content.cogwheel_chain.item;
 
 import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChainPathfinder;
 import com.kipti.bnb.content.cogwheel_chain.graph.PlacingCogwheelNode;
+import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -35,6 +37,7 @@ public class CogwheelChainPlacementEffect {
         if (!currentChainLevel.equals(level.dimension())) {
             currentBuildingChain = null;
             currentChainLevel = null;
+            return;
         }
 
         //Get held chain
@@ -42,6 +45,13 @@ public class CogwheelChainPlacementEffect {
                 isChain(player.getOffhandItem()) ? player.getOffhandItem() : null;
         if (heldItem != null) {
             display();
+
+            if (!player.hasInfiniteMaterials()) {
+                final int chainsRequired = currentBuildingChain.getChainsRequired(); //TODO include the block your looking at for the complete chain count
+
+                final boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(player, Items.CHAIN.getDefaultInstance(), chainsRequired, true);
+                BlueprintOverlayRenderer.displayChainRequirements(Items.CHAIN, chainsRequired, hasEnough);
+            }
         }
     }
 

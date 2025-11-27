@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
@@ -56,9 +57,17 @@ public class ClientEvents {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level != null && mc.player != null) {
             GirderStrutPlacementEffects.tick(mc.player);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onTickPre(ClientTickEvent.Post event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level != null && mc.player != null) {
             CogwheelChainPlacementEffect.tick(mc.player);
         }
     }
+
 
     @SubscribeEvent
     public static void modify(ItemTooltipEvent context) {

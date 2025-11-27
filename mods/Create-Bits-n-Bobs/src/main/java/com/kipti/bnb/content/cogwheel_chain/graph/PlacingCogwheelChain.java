@@ -35,12 +35,21 @@ public class PlacingCogwheelChain {
 
     List<PlacingCogwheelNode> visitedNodes;
 
-    public PlacingCogwheelChain(BlockPos startPos, Direction.Axis startAxis, boolean isLarge) {
+    public PlacingCogwheelChain(final BlockPos startPos, final Direction.Axis startAxis, final boolean isLarge) {
         this.visitedNodes = new ArrayList<>(List.of(new PlacingCogwheelNode(startPos, startAxis, isLarge)));
     }
 
-    public PlacingCogwheelChain(List<PlacingCogwheelNode> nodes) {
+    public PlacingCogwheelChain(final List<PlacingCogwheelNode> nodes) {
         visitedNodes = new ArrayList<>(nodes);
+    }
+
+    public int getChainsRequired() {
+        double length = 0;
+        for (int i = 0; i < visitedNodes.size() - 1; i++) {
+            final Vec3i offset = visitedNodes.get(i + 1).pos().subtract(visitedNodes.get(i).pos());
+            length += Vec3.atLowerCornerOf(offset).length();
+        }
+        return (int) Math.max(Math.round(length / 2.5), 1);
     }
 
     public static boolean isValidBlockTarget(final BlockState state) {
@@ -55,21 +64,21 @@ public class PlacingCogwheelChain {
             return false;
         }
 
-        Direction.Axis axis = newBlockState.getValue(CogWheelBlock.AXIS);
-        boolean isLarge = newBlockState.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isLargeCog(); //TODO: replace with more explicit block check
+        final Direction.Axis axis = newBlockState.getValue(CogWheelBlock.AXIS);
+        final boolean isLarge = newBlockState.getBlock() instanceof final ICogWheel iCogWheel && iCogWheel.isLargeCog(); //TODO: replace with more explicit block check
 
-        int differenceOnAxis = Math.abs(newPos.get(axis) - lastNode.pos().get(axis));
-        @Nullable PlacingCogwheelNode lastLastNode = getSize() >= 2 ? visitedNodes.get(visitedNodes.size() - 2) : null;
-        boolean isPrecededByAxisChange = lastLastNode != null && lastLastNode.rotationAxis() != lastNode.rotationAxis();
+        final int differenceOnAxis = Math.abs(newPos.get(axis) - lastNode.pos().get(axis));
+        @Nullable final PlacingCogwheelNode lastLastNode = getSize() >= 2 ? visitedNodes.get(visitedNodes.size() - 2) : null;
+        final boolean isPrecededByAxisChange = lastLastNode != null && lastLastNode.rotationAxis() != lastNode.rotationAxis();
 
-        boolean isFlat = differenceOnAxis == 0;
-        boolean isSameAxis = axis == lastNode.rotationAxis();
-        double totalRadius = (isLarge ? 1 : 0.5) + (lastNode.isLarge() ? 1 : 0.5);
-        boolean isAdjacent = isFlat && newPos.distSqr(lastNode.pos()) <= totalRadius * totalRadius;
-        boolean isValidFlat = isSameAxis && isFlat && !isAdjacent;
+        final boolean isFlat = differenceOnAxis == 0;
+        final boolean isSameAxis = axis == lastNode.rotationAxis();
+        final double totalRadius = (isLarge ? 1 : 0.5) + (lastNode.isLarge() ? 1 : 0.5);
+        final boolean isAdjacent = isFlat && newPos.distSqr(lastNode.pos()) <= totalRadius * totalRadius;
+        final boolean isValidFlat = isSameAxis && isFlat && !isAdjacent;
 //        boolean isValidByConsecutiveChange = !isPrecededByAxisChange || isValidConsecutiveAxisChange(lastLastNode, lastNode, newPos, axis);
-        boolean isValidAxisChange = isValidLargeCogAxisConnection(lastNode, newPos, axis, isLarge);
-        boolean isValid = isValidFlat || isValidAxisChange;
+        final boolean isValidAxisChange = isValidLargeCogAxisConnection(lastNode, newPos, axis, isLarge);
+        final boolean isValid = isValidFlat || isValidAxisChange;
 
         if (!isValid) {
             if (isAdjacent) {
@@ -83,7 +92,7 @@ public class PlacingCogwheelChain {
             throw new ChainAdditionAbortedException("Connection must be flat when on the same axis!");
         }
 
-        PlacingCogwheelNode newNode = new PlacingCogwheelNode(
+        final PlacingCogwheelNode newNode = new PlacingCogwheelNode(
                 newPos, axis, isLarge
         );
 
@@ -91,12 +100,12 @@ public class PlacingCogwheelChain {
         return true;
     }
 
-    private boolean isValidConsecutiveAxisChange(@NotNull PlacingCogwheelNode lastNode, PlacingCogwheelNode pivotNode, BlockPos newPos, Direction.Axis axis) {
+    private boolean isValidConsecutiveAxisChange(@NotNull final PlacingCogwheelNode lastNode, final PlacingCogwheelNode pivotNode, final BlockPos newPos, final Direction.Axis axis) {
         //Get the signed difference to the pivot on the chainNode's rotation axis
-        int diffToPivotOnLastNodeAxis = lastNode.pos().get(lastNode.rotationAxis()) - pivotNode.pos().get(lastNode.rotationAxis());
+        final int diffToPivotOnLastNodeAxis = lastNode.pos().get(lastNode.rotationAxis()) - pivotNode.pos().get(lastNode.rotationAxis());
 
         //Get the signed difference to the pivot on the new chainNode's rotation axis
-        int diffToPivotOnNewNodeAxis = newPos.get(axis) - pivotNode.pos().get(axis);
+        final int diffToPivotOnNewNodeAxis = newPos.get(axis) - pivotNode.pos().get(axis);
 
         if (diffToPivotOnLastNodeAxis == diffToPivotOnNewNodeAxis) {
             return true;
@@ -104,24 +113,24 @@ public class PlacingCogwheelChain {
 
         //Check if it's like a wrap around the pivot, in which case its safe
         //Get the other axis, and if they are on the same sideFactor along this other axis
-        int safeAxisOrdinal = Integer.numberOfTrailingZeros(7 & ~(1 << axis.ordinal()) & ~(1 << lastNode.rotationAxis().ordinal()));
-        Direction.Axis safeAxis = Direction.Axis.values()[safeAxisOrdinal];
+        final int safeAxisOrdinal = Integer.numberOfTrailingZeros(7 & ~(1 << axis.ordinal()) & ~(1 << lastNode.rotationAxis().ordinal()));
+        final Direction.Axis safeAxis = Direction.Axis.values()[safeAxisOrdinal];
 
-        int lastDiffOnSafeAxis = lastNode.pos().get(safeAxis) - pivotNode.pos().get(safeAxis);
-        int newDiffOnSafeAxis = newPos.get(safeAxis) - pivotNode.pos().get(safeAxis);
+        final int lastDiffOnSafeAxis = lastNode.pos().get(safeAxis) - pivotNode.pos().get(safeAxis);
+        final int newDiffOnSafeAxis = newPos.get(safeAxis) - pivotNode.pos().get(safeAxis);
         return Math.signum(lastDiffOnSafeAxis) == Math.signum(newDiffOnSafeAxis);
     }
 
-    private boolean isValidLargeCogAxisConnection(PlacingCogwheelNode lastNode, BlockPos newPos, Direction.Axis axis, boolean isLarge) {
+    private boolean isValidLargeCogAxisConnection(final PlacingCogwheelNode lastNode, final BlockPos newPos, final Direction.Axis axis, final boolean isLarge) {
         if (!lastNode.isLarge() || !isLarge) {
             return true;
         }
 
         // Check that they are one block apart on the two axes perpendicular to the rotation axes
-        Vec3i diff = newPos.subtract(lastNode.pos());
+        final Vec3i diff = newPos.subtract(lastNode.pos());
 
-        int safeAxisOrdinal = 0x7 & ~(1 << axis.ordinal()) & ~(1 << lastNode.rotationAxis().ordinal());
-        int[] component = {diff.getX(), diff.getY(), diff.getZ()};
+        final int safeAxisOrdinal = 0x7 & ~(1 << axis.ordinal()) & ~(1 << lastNode.rotationAxis().ordinal());
+        final int[] component = {diff.getX(), diff.getY(), diff.getZ()};
         for (int i = 0; i < 3; i++) {
             if (0b1 << i == safeAxisOrdinal) {
                 if (Math.abs(component[i]) < 1) {
@@ -138,9 +147,9 @@ public class PlacingCogwheelChain {
 
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        PlacingCogwheelChain that = (PlacingCogwheelChain) o;
+        final PlacingCogwheelChain that = (PlacingCogwheelChain) o;
         return Objects.equals(visitedNodes, that.visitedNodes);
     }
 
@@ -167,7 +176,7 @@ public class PlacingCogwheelChain {
         return visitedNodes;
     }
 
-    public PlacingCogwheelNode getNodeLooped(int i) {
+    public PlacingCogwheelNode getNodeLooped(final int i) {
         return visitedNodes.get((visitedNodes.size() + (i % visitedNodes.size())) % visitedNodes.size());
     }
 
@@ -179,7 +188,7 @@ public class PlacingCogwheelChain {
         return visitedNodes.getLast();
     }
 
-    public Vec3 getNodeCenter(int i) {
+    public Vec3 getNodeCenter(final int i) {
         return visitedNodes.get(i).pos().getCenter();
     }
 
@@ -191,8 +200,8 @@ public class PlacingCogwheelChain {
         Vec3i min = new Vec3i(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
         Vec3i max = new Vec3i(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
 
-        for (PlacingCogwheelNode node : visitedNodes) {
-            BlockPos pos = node.pos();
+        for (final PlacingCogwheelNode node : visitedNodes) {
+            final BlockPos pos = node.pos();
             min = new Vec3i(
                     Math.min(min.getX(), pos.getX()),
                     Math.min(min.getY(), pos.getY()),
@@ -208,14 +217,14 @@ public class PlacingCogwheelChain {
         return Math.max(Math.max(max.getX() - min.getX(), max.getY() - min.getY()), max.getZ() - min.getZ());
     }
 
-    public boolean checkMatchingNodesInLevel(Level level) {
-        for (PlacingCogwheelNode node : visitedNodes) {
-            BlockState state = level.getBlockState(node.pos());
+    public boolean checkMatchingNodesInLevel(final Level level) {
+        for (final PlacingCogwheelNode node : visitedNodes) {
+            final BlockState state = level.getBlockState(node.pos());
             if (!isValidBlockTarget(state)) {
                 return false;
             }
-            Direction.Axis axis = state.getValue(CogWheelBlock.AXIS);
-            boolean isLarge = state.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isLargeCog();
+            final Direction.Axis axis = state.getValue(CogWheelBlock.AXIS);
+            final boolean isLarge = state.getBlock() instanceof final ICogWheel iCogWheel && iCogWheel.isLargeCog();
             if (axis != node.rotationAxis() || isLarge != node.isLarge()) {
                 return false;
             }
@@ -235,7 +244,7 @@ public class PlacingCogwheelChain {
 
     public static class ChainAdditionAbortedException extends Exception {
 
-        public ChainAdditionAbortedException(String message) {
+        public ChainAdditionAbortedException(final String message) {
             super(message);
         }
 
