@@ -308,7 +308,7 @@ public class GirderStrutBlockItem extends BlockItem {
             return;
         }
         Component message = Component.translatable("message.bits_n_bobs.girder_strut.missing_anchors", missing)
-            .withStyle(ChatFormatting.RED);
+                .withStyle(ChatFormatting.RED); //TODO: proper red color this is ew, and for the chains
         if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.displayClientMessage(message, true);
         } else {
@@ -327,8 +327,8 @@ public class GirderStrutBlockItem extends BlockItem {
 
         SoundType soundType = newState.getSoundType();
         level.playSound(player, pos, soundType.getPlaceSound(), SoundSource.BLOCKS,
-            (soundType.getVolume() + 1.0F) / 2.0F,
-            soundType.getPitch() * 0.8F);
+                (soundType.getVolume() + 1.0F) / 2.0F,
+                soundType.getPitch() * 0.8F);
         level.gameEvent(player, net.minecraft.world.level.gameevent.GameEvent.BLOCK_PLACE, pos);
         return true;
     }
