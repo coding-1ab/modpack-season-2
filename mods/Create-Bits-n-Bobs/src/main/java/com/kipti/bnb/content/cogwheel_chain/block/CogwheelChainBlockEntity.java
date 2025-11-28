@@ -97,6 +97,18 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     }
 
     private void destroyChain() {
+        //Try drop chains from the current block for convenience
+        int chainsToReturn = chainsToRefund;
+        if (!isController) {
+            final BlockPos controllerPos = worldPosition.offset(controllerOffset);
+            final BlockEntity be = level.getBlockEntity(controllerPos);
+            if (be instanceof final CogwheelChainBlockEntity controllerBE) {
+                chainsToReturn = controllerBE.chainsToRefund;
+                controllerBE.chainsToRefund = 0;
+            }
+        }
+        Block.popResource(level, worldPosition, Items.CHAIN.getDefaultInstance().copyWithCount(chainsToReturn));
+
         if (isController && chain != null) {
             chain.destroy(level, worldPosition);
         }
@@ -108,7 +120,6 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
                 controllerBE.chain.destroy(level, controllerPos);
             }
         }
-        Block.popResource(level, worldPosition, Items.CHAIN.getDefaultInstance().copyWithCount(chainsToRefund));
     }
 
     public void setController(final Vec3i offset) {
