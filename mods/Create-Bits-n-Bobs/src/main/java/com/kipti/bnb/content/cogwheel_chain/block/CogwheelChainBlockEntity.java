@@ -10,6 +10,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -106,6 +108,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
                 controllerBE.chain.destroy(level, controllerPos);
             }
         }
+        Block.popResource(level, worldPosition, Items.CHAIN.getDefaultInstance().copyWithCount(chainsToRefund));
     }
 
     public void setController(final Vec3i offset) {

@@ -106,7 +106,7 @@ public class CogwheelChain {
     public void placeInLevel(final Level level, final PlacingCogwheelChain source) {
         boolean isController = true;
         final BlockPos controllerPos = source.getFirstNode().pos();
-        final int chainsUsed = source.getChainsRequired();
+        final int chainsUsed = source.getChainsRequiredInLoop();
         for (final PlacingCogwheelNode node : source.visitedNodes) {
             placeChainCogwheelInLevel(level, node, isController, chainsUsed, controllerPos);
             isController = false;

@@ -38,7 +38,7 @@ public record PlaceCogwheelChainPacket(
         if (!worldSpacePartialChain.checkMatchingNodesInLevel(player.level()))
             return;
 
-        final int chainsRequired = worldSpacePartialChain.getChainsRequired(); //TODO include the block your looking at for the complete chain count
+        final int chainsRequired = worldSpacePartialChain.getChainsRequiredInLoop();
 
         final boolean hasEnough = player.hasInfiniteMaterials() || ChainConveyorBlockEntity.getChainsFromInventory(player, Items.CHAIN.getDefaultInstance(), chainsRequired, true);
         if (!hasEnough)

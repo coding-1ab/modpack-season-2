@@ -1,6 +1,7 @@
 package com.kipti.bnb.content.cogwheel_chain.item;
 
 import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChainPathfinder;
+import com.kipti.bnb.content.cogwheel_chain.graph.PlacingCogwheelChain;
 import com.kipti.bnb.content.cogwheel_chain.graph.PlacingCogwheelNode;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
@@ -13,9 +14,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,10 +47,12 @@ public class CogwheelChainPlacementEffect {
         final ItemStack heldItem = isChain(player.getMainHandItem()) ? player.getMainHandItem() :
                 isChain(player.getOffhandItem()) ? player.getOffhandItem() : null;
         if (heldItem != null) {
-            display();
+            final BlockPos targetedPos = getTargetedBlockAndDisplay();
 
             if (!player.hasInfiniteMaterials()) {
-                final int chainsRequired = currentBuildingChain.getChainsRequired(); //TODO include the block your looking at for the complete chain count
+                final double additionalDistance = targetedPos != null ?
+                        Vec3.atLowerCornerOf(targetedPos.subtract(currentBuildingChain.getLastNode().pos())).length() : 0;
+                final int chainsRequired = currentBuildingChain.getChainsRequired(additionalDistance); //TODO include the block your looking at for the complete chain count
 
                 final boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(player, Items.CHAIN.getDefaultInstance(), chainsRequired, true);
                 BlueprintOverlayRenderer.displayChainRequirements(Items.CHAIN, chainsRequired, hasEnough);
@@ -59,15 +64,15 @@ public class CogwheelChainPlacementEffect {
         return offhandItem.is(Items.CHAIN);
     }
 
-    private static void display() {
+    private static @Nullable BlockPos getTargetedBlockAndDisplay() {
         if (currentBuildingChain == null)
-            return;
+            return null;
 
         final ClientLevel level = Minecraft.getInstance().level;
 
         final HitResult genericHit = Minecraft.getInstance().hitResult;
         if (!(genericHit instanceof BlockHitResult hit)) {
-            return;
+            return null;
         }
 
         //Get last chainNode to calculate a chain preview
@@ -117,6 +122,10 @@ public class CogwheelChainPlacementEffect {
         }
 
         renderParticlesBetween(level, lastPos, projected);
+
+        final BlockPos targetedPos = hit.getBlockPos();
+        final BlockState targetedState = level.getBlockState(targetedPos);
+        return PlacingCogwheelChain.isValidBlockTarget(targetedState) ? targetedPos : null;
     }
 
     private static void showBlockOutline(final ClientLevel level, final BlockPos pos) {

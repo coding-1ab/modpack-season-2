@@ -43,8 +43,14 @@ public class PlacingCogwheelChain {
         visitedNodes = new ArrayList<>(nodes);
     }
 
-    public int getChainsRequired() {
-        double length = 0;
+    public int getChainsRequiredInLoop() {
+        return getChainsRequired(Vec3.atLowerCornerOf(visitedNodes.getLast().pos().subtract(visitedNodes.getFirst().pos())).length());
+    }
+
+    /**
+     * Get the number of chains required to build this chain, given an extra length
+     */
+    public int getChainsRequired(double length) {
         for (int i = 0; i < visitedNodes.size() - 1; i++) {
             final Vec3i offset = visitedNodes.get(i + 1).pos().subtract(visitedNodes.get(i).pos());
             length += Vec3.atLowerCornerOf(offset).length();
