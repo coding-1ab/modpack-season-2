@@ -19,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: lazy tick and item requirement
 public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implements IBlockEntityRelighter {
 
     private boolean isController = false;
@@ -27,9 +26,21 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     private CogwheelChain chain = null;
     @Nullable
     private Vec3i controllerOffset = null;
+    private int chainsToRefund = 0;
 
     public CogwheelChainBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
+        setLazyTickRate(5);
+    }
+
+    @Override
+    public void lazyTick() {
+        super.lazyTick();
+        if (isController && chain != null) {
+            if (!chain.checkIntegrity(level, worldPosition)) {
+                destroyChain();
+            }
+        }
     }
 
     @Override
@@ -49,6 +60,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
         if (isController) {
             if (chain != null && compound.contains("Chain")) {
                 chain.read(compound.getCompound("Chain"));
+                chainsToRefund = compound.getInt("ChainsToRefund");
             } else {
                 chain = new CogwheelChain(compound.getCompound("Chain"));
             }
@@ -61,6 +73,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     protected void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.write(compound, registries, clientPacket);
         compound.putBoolean("IsController", isController);
+
         if (controllerOffset != null) {
             compound.putInt("ControllerOffsetX", controllerOffset.getX());
             compound.putInt("ControllerOffsetY", controllerOffset.getY());
@@ -71,12 +84,17 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
             final CompoundTag chainTag = new CompoundTag();
             chain.write(chainTag);
             compound.put("Chain", chainTag);
+            compound.putInt("ChainsToRefund", chainsToRefund);
         }
     }
 
     @Override
     public void destroy() {
         super.destroy();
+        destroyChain();
+    }
+
+    private void destroyChain() {
         if (isController && chain != null) {
             chain.destroy(level, worldPosition);
         }
@@ -211,4 +229,9 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     public void setControllerOffset(@Nullable final Vec3i controllerOffset) {
         this.controllerOffset = controllerOffset;
     }
+
+    public void setChainsUsed(final int chainsUsed) {
+        this.chainsToRefund = chainsUsed;
+    }
+
 }

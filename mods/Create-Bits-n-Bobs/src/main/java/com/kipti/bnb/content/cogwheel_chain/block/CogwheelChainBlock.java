@@ -1,25 +1,30 @@
 package com.kipti.bnb.content.cogwheel_chain.block;
 
 import com.kipti.bnb.registry.BnbBlockEntities;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
+import com.simibubi.create.api.schematic.requirement.SpecialBlockItemRequirement;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
+import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 public class CogwheelChainBlock extends RotatedPillarKineticBlock
-    implements IBE<CogwheelChainBlockEntity> { //TODO : waterlog state
+        implements IBE<CogwheelChainBlockEntity>, SpecialBlockItemRequirement { //TODO : waterlog state
 
-    protected CogwheelChainBlock(boolean large, Properties properties) {
+    protected CogwheelChainBlock(final boolean large, final Properties properties) {
         super(properties);
         isLarge = large;
     }
@@ -30,26 +35,26 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
 
     boolean isLarge;
 
-    public static CogwheelChainBlock small(Properties properties) {
+    public static CogwheelChainBlock small(final Properties properties) {
         return new CogwheelChainBlock(false, properties);
     }
 
-    public static CogwheelChainBlock large(Properties properties) {
+    public static CogwheelChainBlock large(final Properties properties) {
         return new CogwheelChainBlock(true, properties);
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context) {
         return (isLarge ? AllShapes.LARGE_GEAR : AllShapes.SMALL_GEAR).get(state.getValue(AXIS));
     }
 
     @Override
-    public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
+    public boolean canSurvive(final BlockState state, final LevelReader worldIn, final BlockPos pos) {
         return CogWheelBlock.isValidCogwheelPosition(ICogWheel.isLargeCog(state), worldIn, pos, state.getValue(AXIS));
     }
 
     @Override
-    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(final BlockState state, final Level world, final BlockPos pos, final BlockState newState, final boolean isMoving) {
         IBE.onRemove(state, world, pos, newState);
     }
 
@@ -64,16 +69,21 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
     }
 
     @Override
-    public Direction.Axis getRotationAxis(BlockState state) {
+    public Direction.Axis getRotationAxis(final BlockState state) {
         return state.getValue(AXIS);
     }
 
     @Override
-    public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face) {
+    public boolean hasShaftTowards(final LevelReader world, final BlockPos pos, final BlockState state, final Direction face) {
         return face.getAxis() == state.getValue(AXIS);
     }
 
     public float getRadius() {
         return isLarge ? 1f : 0.5f;
+    }
+
+    @Override
+    public ItemRequirement getRequiredItems(final BlockState state, @Nullable final BlockEntity be) {
+        return ItemRequirement.of(isLarge ? AllBlocks.LARGE_COGWHEEL.getDefaultState() : AllBlocks.COGWHEEL.getDefaultState(), be);
     }
 }

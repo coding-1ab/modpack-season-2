@@ -153,6 +153,7 @@ public class BnbBlocks {
             .transform(axeOrPickaxe())
             .blockstate(BlockStateGen.axisBlockProvider(false))
             .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
+            .loot((lt, block) -> lt.dropOther(block, AllBlocks.COGWHEEL.get()))
 //            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .register();
 
@@ -165,6 +166,7 @@ public class BnbBlocks {
                     .blockstate(BlockStateGen.axisBlockProvider(false))
                     .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
 //                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+                    .loot((lt, block) -> lt.dropOther(block, AllBlocks.LARGE_COGWHEEL.get()))
                     .register();
 
     public static final BlockEntry<FlywheelBearingBlock> FLYWHEEL_BEARING =
