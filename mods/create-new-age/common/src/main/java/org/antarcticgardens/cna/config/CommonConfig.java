@@ -71,7 +71,7 @@ public class CommonConfig {
                 .defineInRange("passiveHeatSourceMultiplier", 1.0, 0, Double.MAX_VALUE);
 
         passivePipeHeatLoss = builder
-                .comment("How much heat do pipes loose per second.")
+                .comment("How much heat do pipes lose per second.")
                 .defineInRange("passivePipeHeatLoss", 1.0, 0, Double.MAX_VALUE);
 
         heaterRequiredHeatMultiplier = builder
@@ -83,7 +83,7 @@ public class CommonConfig {
                 .defineInRange("ReactorRodHeat", 30.0, 0, Double.MAX_VALUE);
 
         nuclearReactorRodHeatLoss = builder
-                .comment("How much heat per tick a nuclear reactor rod looses above the 16000*overheatingMultiplier.")
+                .comment("How much heat per tick a nuclear reactor rod loses above the 16000*overheatingMultiplier.")
                 .defineInRange("ReactorRodHeatLoss", 25.0, 0, Double.MAX_VALUE);
 
         solarPanelHeatMultiplier = builder
