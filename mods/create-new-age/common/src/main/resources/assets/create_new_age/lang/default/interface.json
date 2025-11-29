@@ -1,6 +1,7 @@
 {
     "tab.create_new_age.tab": "Create: New Age",
-    
+    "create_new_age.monkey_edition": "Create: New Age [Monkey Edition]",
+
     "category.create_new_age.energising": "Energizing",
     "recipe.assembly.energising": "Energizing",
     "emi.category.create_new_age.energising": "Energizing",

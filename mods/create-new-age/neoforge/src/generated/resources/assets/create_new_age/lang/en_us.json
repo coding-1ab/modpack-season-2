@@ -65,6 +65,7 @@
   "create.tooltip.create_new_age.temperature.ps": "%s ˚T/s",
   "create.tooltip.create_new_age.transfers": "Transfers: ",
   "create.tooltip.create_new_age.using": "Using: ",
+  "create_new_age.monkey_edition": "Create: New Age [Monkey Edition]",
   "create_new_age.ponder.energiser.header": "Energizer",
   "create_new_age.ponder.energiser.text_1": "When provided with electricity and rotation, the Energizer will energize items in depots and on belts under it.",
   "create_new_age.ponder.generation.header": "Generating Electricity",
