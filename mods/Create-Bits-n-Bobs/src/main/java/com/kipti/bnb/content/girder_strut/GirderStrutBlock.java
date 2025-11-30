@@ -1,6 +1,7 @@
 package com.kipti.bnb.content.girder_strut;
 
 import com.kipti.bnb.registry.BnbBlockEntities;
+import com.kipti.bnb.registry.BnbShapes;
 import com.simibubi.create.foundation.block.IBE;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.core.BlockPos;
@@ -17,14 +18,12 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntity> {
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
-    private static final VoxelShape SHAPE = Shapes.box(4 / 16d, 0, 4 / 16d, 12 / 16d, 12 / 16d, 12 / 16d);
     public static final int MAX_SPAN = 8;
 
     StrutModelType modelType;
@@ -56,7 +55,7 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return BnbShapes.GIRDER_STRUT.get(state.getValue(FACING));
     }
 
     @Override

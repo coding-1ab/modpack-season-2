@@ -10,7 +10,12 @@ public class BnbLangEntries {
         CreateBitsnBobs.REGISTRATE.addRawLang("message.bits_n_bobs.girder_strut.missing_anchors", "You need %s more Girder Struts");
 
         final String[] entries = {
+                //Tooltips
                 "block.bits_n_bobs.headlamp.tooltip.summary", "Can be dyed and placed _multiple times in same block_. Useful for trains or fancy signage too!",
+
+                "block.bits_n_bobs.girder_strut.tooltip.summary", "A type of girder used to span a distance between two anchor points.",
+                "block.bits_n_bobs.weathered_girder_strut.tooltip.summary", "A type of girder used to span a distance between two anchor points.",
+
         };
 
         for (int i = 0; i < entries.length; i += 2) {
