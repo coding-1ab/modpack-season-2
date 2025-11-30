@@ -2,6 +2,8 @@ package org.antarcticgardens.cna.content.motor;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.compat.Mods;
+import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
@@ -11,6 +13,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.tterrag.registrate.builders.BlockEntityBuilder;
+import dan200.computercraft.api.peripheral.PeripheralCapability;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
@@ -24,10 +27,15 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.antarcticgardens.cna.CNABlockEntityTypes;
+import org.antarcticgardens.cna.compat.computercraft.CNAComputerCraftProxy;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.motor.extension.MotorExtensionBlockEntity;
+import org.antarcticgardens.cna.content.motor.variants.AdvancedMotorVariant;
+import org.antarcticgardens.cna.content.motor.variants.BasicMotorVariant;
 import org.antarcticgardens.cna.content.motor.variants.IMotorVariant;
+import org.antarcticgardens.cna.content.motor.variants.ReinforcedMotorVariant;
 import org.antarcticgardens.cna.util.RunnableUtil;
 import org.antarcticgardens.cna.util.StringFormatUtil;
 import org.antarcticgardens.esl.energy.EnergyStorage;
@@ -40,11 +48,14 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
     
     public boolean needsPower = false;
     private final IMotorVariant variant;
+    public final int tier;
     public MotorScrollValueBehaviour speedBehavior;
     public boolean powered = false;
     private float actualSpeed = 0;
     private float actualStress = 0;
     private long prvEnergy = -100000;
+
+    public AbstractComputerBehaviour computerBehaviour;
 
     private float speed = 0;
     private float stress = 0;
@@ -52,7 +63,15 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
     public MotorBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, IMotorVariant variant) {
         super(arg, arg2, arg3);
         this.variant = variant;
-        
+        if (variant instanceof BasicMotorVariant)
+            this.tier = 1;
+        else if (variant instanceof AdvancedMotorVariant)
+            this.tier = 2;
+        else if (variant instanceof ReinforcedMotorVariant)
+            this.tier = 3;
+        else
+            this.tier = 0;
+
         storage = new SimpleEnergyStorage(variant.getMaxCapacity())
                 .onFinalCommit(RunnableUtil.createBlockEntityUpdater(this))
                 .setSupportsExtraction(false);
@@ -80,6 +99,35 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
         speedBehavior.value = getDefaultSpeed();
         speedBehavior.withCallback(i -> this.updateGeneratedRotation());
         behaviours.add(speedBehavior);
+        behaviours.add(computerBehaviour = CNAComputerCraftProxy.behaviour(this));
+    }
+
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        if (Mods.COMPUTERCRAFT.isLoaded()) {
+            event.registerBlockEntity(
+                    PeripheralCapability.get(),
+                    CNABlockEntityTypes.BASIC_MOTOR.get(),
+                    (be, context) -> be.computerBehaviour.getPeripheralCapability()
+            );
+
+            event.registerBlockEntity(
+                    PeripheralCapability.get(),
+                    CNABlockEntityTypes.ADVANCED_MOTOR.get(),
+                    (be, context) -> be.computerBehaviour.getPeripheralCapability()
+            );
+            
+            event.registerBlockEntity(
+                    PeripheralCapability.get(),
+                    CNABlockEntityTypes.REINFORCED_MOTOR.get(),
+                    (be, context) -> be.computerBehaviour.getPeripheralCapability()
+            );
+        }
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        computerBehaviour.removePeripheral();
     }
 
     static class MotorValueBox extends ValueBoxTransform.Sided {
