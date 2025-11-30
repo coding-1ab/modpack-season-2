@@ -3,7 +3,7 @@
 	"parent": "block/block",
 	"textures": {
 		"0": "create:block/axis",
-		"1": "create:block/rope_pulley",
+		"1": "bits_n_bobs:block/chain_pulley",
 		"2": "bits_n_bobs:block/chain_pulley_coil",
 		"6": "bits_n_bobs:block/chain_pulley_magnet",
 		"1_1": "create:block/axis_top",

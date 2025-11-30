@@ -5,7 +5,7 @@
       "y": 90
     },
     "axis=z": {
-      "model": "bits_n_bobs:block/chain_pulley/block"
+      "model": "bits_n_bobs:block/chain_pulley/block_z"
     }
   }
 }

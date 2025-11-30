@@ -1,7 +1,7 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"1": "bits_n_bobs:block/chain_pulley",
+		"1": "bits_n_bobs:block/chain_pulley_z",
 		"particle": "create:block/gearbox"
 	},
 	"elements": [

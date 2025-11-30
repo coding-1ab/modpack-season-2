@@ -31,6 +31,7 @@ import com.simibubi.create.content.contraptions.actors.seat.SeatMovementBehaviou
 import com.simibubi.create.content.contraptions.pulley.PulleyBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.BracketedKineticBlockModel;
 import com.simibubi.create.foundation.block.DyedBlockList;
+import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
@@ -40,6 +41,7 @@ import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.tags.BlockTags;
@@ -47,10 +49,12 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
 import static com.kipti.bnb.content.chair.ChairBlockStateGen.dyedChair;
@@ -70,7 +74,14 @@ public class BnbBlocks {
             .addLayer(() -> RenderType::cutoutMipped)
             .transform(axeOrPickaxe())
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-            .blockstate(BlockStateGen.horizontalAxisBlockProvider(true))
+            .blockstate((ctx, prov) -> prov.getVariantBuilder(ctx.getEntry())
+                    .forAllStates(state -> {
+                        Direction.Axis axis = state.getValue(BlockStateProperties.HORIZONTAL_AXIS);
+                        return ConfiguredModel.builder()
+                                .modelFile(axis == Direction.Axis.Z ? AssetLookup.partialBaseModel(ctx, prov, "z") : AssetLookup.partialBaseModel(ctx, prov))
+                                .rotationY(axis == Direction.Axis.X ? 90 : 0)
+                                .build();
+                    }))
             .item()
             .transform(customItemModel())
             .register();
@@ -170,7 +181,7 @@ public class BnbBlocks {
             )
             .build()
             .register();
-    
+
     public static final BlockEntry<NixieBoardBlock> NIXIE_BOARD = REGISTRATE.block("nixie_board", p -> new NixieBoardBlock(p, null))
             .transform(nixieBoard())
             .item()

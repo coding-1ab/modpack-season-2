@@ -1,4 +1,4 @@
-// 1.21.1	2025-11-30T10:34:09.46028	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2025-11-30T17:19:24.7239482	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 55ef065722d329b3c054797cd63a36d59f1634a8 assets/bits_n_bobs/blockstates/andesite_tiles.json
 8810b9385c4f0297369a2d35ef8435b216bae4bb assets/bits_n_bobs/blockstates/andesite_tile_slab.json
 34dc52222f8843bc859869e1572ba2e8b0721252 assets/bits_n_bobs/blockstates/andesite_tile_stairs.json
@@ -17,12 +17,11 @@ c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/blue_lar
 26353f6b8bf6dc2fdc4e4396f84c504ec9ad8f45 assets/bits_n_bobs/blockstates/brown_chair.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/brown_large_nixie_tube.json
 5f1d323a930becf0ed2bee64bbb33c152802b2b2 assets/bits_n_bobs/blockstates/brown_nixie_board.json
-6b41f45fd7de093c0c371482816270f9dc95ce74 assets/bits_n_bobs/blockstates/calcined_gravel.json
 cecda21d45a8243a23b12088b3fc31ae22eae23b assets/bits_n_bobs/blockstates/calcite_tiles.json
 662b6c23ef124ef40131f84698bc9a603641db2c assets/bits_n_bobs/blockstates/calcite_tile_slab.json
 92b0e0a8e7bdf315280daac7fd9265838cdc020d assets/bits_n_bobs/blockstates/calcite_tile_stairs.json
 a3f6e516ec29d43ee1b6eb10ae894fc7b1a05ccc assets/bits_n_bobs/blockstates/calcite_tile_wall.json
-fcf22bfe5312712b3bcb68a0ecadb4dc1c14ee71 assets/bits_n_bobs/blockstates/chain_pulley.json
+a4e82b3ce8e7d78c156dc689de8ab45f770eb9d4 assets/bits_n_bobs/blockstates/chain_pulley.json
 c0f965a0697e1fc54d90fc711126417640cd3553 assets/bits_n_bobs/blockstates/chain_pulley_magnet.json
 28b7a44360d3a7ff797b89a7e758648260d26e41 assets/bits_n_bobs/blockstates/chain_rope.json
 76c9e5ad3acec45cd608e68ccc8183902608ab2b assets/bits_n_bobs/blockstates/crimsite_tiles.json
@@ -36,7 +35,6 @@ f4a43066bac7dc7606fe3072e9a776054f3394df assets/bits_n_bobs/blockstates/deepslat
 b98d19fd950bf290fadff471e0961bea1797a405 assets/bits_n_bobs/blockstates/deepslate_tile_slab.json
 fc53e28d0373bd34cca3b78731dbc76863cdfdfb assets/bits_n_bobs/blockstates/deepslate_tile_stairs.json
 06207ed81a4c63ab03888cb5c7f6c67a12f9e3a9 assets/bits_n_bobs/blockstates/deepslate_tile_wall.json
-8135a5b29ddc3f54b27f283663ceecb2d08bc43c assets/bits_n_bobs/blockstates/deep_gravel.json
 60707b258baeef108c29566daa32ffeed376ca58 assets/bits_n_bobs/blockstates/diorite_tiles.json
 a4d2410d3ff1d080c04eb27defae5ce53ee0cb8c assets/bits_n_bobs/blockstates/diorite_tile_slab.json
 d44e4cd23c748fa098c35b83974d8b19bdc14bd0 assets/bits_n_bobs/blockstates/diorite_tile_stairs.json
@@ -120,8 +118,8 @@ c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/white_la
 c0904de2fdf77d073743019155feab1e81d988f9 assets/bits_n_bobs/blockstates/yellow_chair.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/yellow_large_nixie_tube.json
 5f1d323a930becf0ed2bee64bbb33c152802b2b2 assets/bits_n_bobs/blockstates/yellow_nixie_board.json
-f44b11bc6c8ecf93573865a7d1263cd915e61c23 assets/bits_n_bobs/lang/en_ud.json
-17c83fe44daaa2d5d9824e7fd84e5db620085625 assets/bits_n_bobs/lang/en_us.json
+390d541af66c4310a1f51a887c0d3bd5b75a6e0b assets/bits_n_bobs/lang/en_ud.json
+c60243b264fd9f1b8c78641c969a359656cf7143 assets/bits_n_bobs/lang/en_us.json
 dd3ce69870709f327e97fc59a8b18e1c5d5b95f8 assets/bits_n_bobs/models/block/andesite_tiles.json
 a99f4d460e7cf7d1d2b275317d29f3ea5262e484 assets/bits_n_bobs/models/block/andesite_tiles_wall_post.json
 ac0fde7943f06d74d97bf2fcbdb6d6d114fa4f1f assets/bits_n_bobs/models/block/andesite_tiles_wall_side.json
@@ -144,7 +142,6 @@ c04d87bf971a69a2470339404fcd8364a327632a assets/bits_n_bobs/models/block/asurine
 9c89f2af2ce69f0b57504a19bfa48ed82557172b assets/bits_n_bobs/models/block/asurine_tile_stairs.json
 426bd01af2804b47a1c217ffd8194ad079943dad assets/bits_n_bobs/models/block/asurine_tile_stairs_inner.json
 1c86c601bd10a2116906615d84951a4607cb636f assets/bits_n_bobs/models/block/asurine_tile_stairs_outer.json
-e07e8f3f330ce7b579bd71f1f39404ef44b81bef assets/bits_n_bobs/models/block/calcined_gravel.json
 f25aa3b67fdb7ce7fc24cda6aebaa6aa9c70b808 assets/bits_n_bobs/models/block/calcite_tiles.json
 a17c377ddce5c607a32486f86e477a346816c06a assets/bits_n_bobs/models/block/calcite_tiles_wall_post.json
 91520b65e68da89290cf93737d20a4f22ddef53c assets/bits_n_bobs/models/block/calcite_tiles_wall_side.json
@@ -306,7 +303,6 @@ bff40ffe390ece5249767e846cf987d01e752a50 assets/bits_n_bobs/models/block/deepsla
 664701719b1e10f46cd5f047b3b9ab3cf90afd72 assets/bits_n_bobs/models/block/deepslate_tile_stairs.json
 3ef2b5fc9fb82261e810d3a7db964c176efa8460 assets/bits_n_bobs/models/block/deepslate_tile_stairs_inner.json
 8bf3fa56452cb4f1a236b0e266277eb2dc25a147 assets/bits_n_bobs/models/block/deepslate_tile_stairs_outer.json
-c2963b1461536b6c0237e56666676b71b9286096 assets/bits_n_bobs/models/block/deep_gravel.json
 1f53f5cdd5ff8e5ee8994f8c79fc53a4c52e0ee9 assets/bits_n_bobs/models/block/diorite_tiles.json
 60cbd8117ff211674a68e08c5bd83b00e59b50c1 assets/bits_n_bobs/models/block/diorite_tiles_wall_post.json
 63202501e698698cf1e81b44a982fb0e2b84b893 assets/bits_n_bobs/models/block/diorite_tiles_wall_side.json
@@ -418,8 +414,6 @@ f08208db79fbccd64c437bcc0fabb2e770998e2e assets/bits_n_bobs/models/item/asurine_
 f41b86576600958bf973feb8658327eb4beec5db assets/bits_n_bobs/models/item/blue_chair.json
 eb2648575386ff59794eb509dde6eff42a2b2d18 assets/bits_n_bobs/models/item/brass_lamp.json
 eca6cdeeeb3bb0ecb6c0803f7221f9d6cb694c05 assets/bits_n_bobs/models/item/brown_chair.json
-a6c8b1064d83ec2c4d6f4912e02a5b34b930ef6e assets/bits_n_bobs/models/item/calcined_flint.json
-37939a851801b5a3f37c3cc68a33a4d164214d4a assets/bits_n_bobs/models/item/calcined_gravel.json
 1dde72a2eb974bc8b1a3f47e464b2f12b33859d6 assets/bits_n_bobs/models/item/calcite_tiles.json
 e4ee5b420a4ad62d2bb1e473eaf7e5a368335174 assets/bits_n_bobs/models/item/calcite_tile_slab.json
 046b4eff28f9ecf3cdf7b0f8fe51320fb36a89a5 assets/bits_n_bobs/models/item/calcite_tile_stairs.json
@@ -435,7 +429,6 @@ e4ee5b420a4ad62d2bb1e473eaf7e5a368335174 assets/bits_n_bobs/models/item/calcite_
 94261b393fe33a2344dc661c93977c16f30de021 assets/bits_n_bobs/models/item/deepslate_tile_slab.json
 7a55aa7e0da0cf821b05686243a30d3174c0e189 assets/bits_n_bobs/models/item/deepslate_tile_stairs.json
 cac9801e6d13abb25707a6534e417b180f6ee24a assets/bits_n_bobs/models/item/deepslate_tile_wall.json
-42208816dc9a090a28e268003caeac5b5bdee483 assets/bits_n_bobs/models/item/deep_gravel.json
 6491753b86760bb2e9af3d4c693bb0c599ec7de6 assets/bits_n_bobs/models/item/diorite_tiles.json
 ec9ac04e52b279bdaea1077f6d00fcf54624bc49 assets/bits_n_bobs/models/item/diorite_tile_slab.json
 806175d05f40428ffd399af784b37f554810425d assets/bits_n_bobs/models/item/diorite_tile_stairs.json
@@ -654,7 +647,6 @@ a5c729f5ec514b8051dddba89286eaeea28a309b data/bits_n_bobs/loot_table/blocks/blue
 0c49e341b39bd7b85230983c86eaec078d2af739 data/bits_n_bobs/loot_table/blocks/brown_chair.json
 340fe9dedc86741f670ff888006fbe6b0810387c data/bits_n_bobs/loot_table/blocks/brown_large_nixie_tube.json
 4cb22f488c1edf31486e073ef41f1d4ba92e2f55 data/bits_n_bobs/loot_table/blocks/brown_nixie_board.json
-b6db4f648d80435616046b5c5048c77a078dc399 data/bits_n_bobs/loot_table/blocks/calcined_gravel.json
 6c72d000dc54641ac87f78971da207752bbc3bb1 data/bits_n_bobs/loot_table/blocks/calcite_tiles.json
 80a513861da4948070244e99bc79eff79ba9a7bc data/bits_n_bobs/loot_table/blocks/calcite_tile_slab.json
 5beec61715a902900641a6ef29f00ac63ac3a7b1 data/bits_n_bobs/loot_table/blocks/calcite_tile_stairs.json
@@ -673,7 +665,6 @@ a29b16f717d8f8479683ac568f6aacc862ae13f3 data/bits_n_bobs/loot_table/blocks/calc
 7f4746918727831cb1ecd96725aae411d7971504 data/bits_n_bobs/loot_table/blocks/deepslate_tile_slab.json
 b69e63b18dc94fb1b1d311ae58e051a41b719344 data/bits_n_bobs/loot_table/blocks/deepslate_tile_stairs.json
 652e19f5a296e0a2dfa953538e23d76502b0aece data/bits_n_bobs/loot_table/blocks/deepslate_tile_wall.json
-d1f1b07fb6f63e9d47196eb4208398fed9434c65 data/bits_n_bobs/loot_table/blocks/deep_gravel.json
 cd61494cbe40db0f6605e9b51aa80d6fcab20dcf data/bits_n_bobs/loot_table/blocks/diorite_tiles.json
 59c6e487ba6bf849bb72a4a75be8a1aee84839fb data/bits_n_bobs/loot_table/blocks/diorite_tile_slab.json
 e6efe1814db8353f18aa8b56338975ce3735609c data/bits_n_bobs/loot_table/blocks/diorite_tile_stairs.json
@@ -932,7 +923,7 @@ e01bef21e13d8b0631e5c142ea4d5b52f8969f04 data/create/recipe/scorchia_tile_slab_r
 690e550f067c987e5df0a4756dbc56b5aa98bbd5 data/create/recipe/tuff_tile_slab_recycling.json
 06a34b592f1b52713d7169f76edda32173980e4a data/create/recipe/veridium_tile_slab_recycling.json
 033f75b4c401f8616e1d2b8a61c46886cd9a5bc2 data/create/tags/block/brittle.json
-0b45d584b1fa99fefb3b8b1b2e853bfb697bbf4c data/create/tags/block/safe_nbt.json
+2bf76cfbb67f7741a0bee5bb4d46b1374e35c999 data/create/tags/block/safe_nbt.json
 b2746ad5fb6e8a9bd43915d905fd9a3c218c3c63 data/create/tags/item/stone_types/andesite.json
 82481f615fec3a1f1dc8e14a2d59c8a56ce7ec28 data/create/tags/item/stone_types/asurine.json
 d44460e748a7bd8eca3fdc8aee0be3940826edce data/create/tags/item/stone_types/calcite.json
@@ -949,9 +940,8 @@ bed0d6245b47c5fffc58a0c1d98679c1c4bbdc85 data/create/tags/item/stone_types/tuff.
 f1f656352662478775cd9db2d1ca8f7aac574145 data/create/tags/item/stone_types/veridium.json
 1a62100f1b509d1f48d00fcd9b3a518ef390899a data/c/tags/entity_type/teleporting_not_supported.json
 033f75b4c401f8616e1d2b8a61c46886cd9a5bc2 data/minecraft/tags/block/climbable.json
-24f8df4ce78a2f1658171875c39c32a3157cdbbc data/minecraft/tags/block/mineable/axe.json
-7a4244cbd28da89829d104118305c641594ca389 data/minecraft/tags/block/mineable/pickaxe.json
-41a003123f0a15d601163b1f07565d22dcf8a062 data/minecraft/tags/block/mineable/shovel.json
+74ec0a8de3c1a5e5c45372764c681942ba9b36c3 data/minecraft/tags/block/mineable/axe.json
+61d7087c73c6d062e13e4f176b7c74a9b8b64d8b data/minecraft/tags/block/mineable/pickaxe.json
 ed62c06140a0397feee5c79128d399c64719a198 data/minecraft/tags/block/slabs.json
 10c05d7d5af60bb17cc6d8618bd4354ba3dd741a data/minecraft/tags/block/stairs.json
 b8e4b52b0eaeafeb7c3642ce0fe41d29e6b0dbb0 data/minecraft/tags/block/walls.json
