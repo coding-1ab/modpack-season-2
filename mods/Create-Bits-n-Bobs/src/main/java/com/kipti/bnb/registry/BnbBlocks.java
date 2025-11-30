@@ -87,7 +87,7 @@ public class BnbBlocks {
             .register();
 
     public static final BlockEntry<PulleyBlock.RopeBlock> CHAIN_ROPE = REGISTRATE.block("chain_rope", PulleyBlock.RopeBlock::new)
-            .properties(p -> p.sound(SoundType.WOOL)
+            .properties(p -> p.sound(SoundType.CHAIN)
                     .mapColor(MapColor.COLOR_GRAY))
             .tag(AllTags.AllBlockTags.BRITTLE.tag)
             .addLayer(() -> RenderType::cutout)
