@@ -53,6 +53,8 @@ public class CreateBitsnBobs {
         BnbDecoBlocks.register();
         BnbSpriteShifts.register();
 
+        BnbCreateStresses.register();
+
         BnbLangEntries.register();
 
         modEventBus.addListener(CreateBitsnBobs::commonSetup);
