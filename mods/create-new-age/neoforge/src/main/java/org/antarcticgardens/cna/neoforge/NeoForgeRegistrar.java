@@ -52,6 +52,7 @@ public class NeoForgeRegistrar implements PlatformRegistrar {
     public void beforeRegistration() {
         IEventBus eventBus = Objects.requireNonNull(ModLoadingContext.get().getActiveContainer().getEventBus());
 
+        CreateNewAge.REGISTRATE.registerEventListeners(eventBus);
         DeferredHolder<CreativeModeTab, CreativeModeTab> tab = TAB_REGISTER.register("tab",
                 () -> CreativeModeTab.builder()
                         .title(Component.translatable("tab." + CreateNewAge.MOD_ID + ".tab"))
@@ -71,6 +72,5 @@ public class NeoForgeRegistrar implements PlatformRegistrar {
     @Override
     public void afterRegistration() {
         IEventBus eventBus = Objects.requireNonNull(ModLoadingContext.get().getActiveContainer().getEventBus());
-        CreateNewAge.REGISTRATE.registerEventListeners(eventBus);
     }
 }
