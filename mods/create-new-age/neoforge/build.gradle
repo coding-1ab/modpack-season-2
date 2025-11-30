@@ -14,14 +14,14 @@ dependencies {
     annotationProcessor(implementation(include("io.github.llamalad7:mixinextras-neoforge:0.5.0")))
 
     compileOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge-api:${rootProject.cctVersion}")
-    runtimeOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge:${rootProject.cctVersion}")
+    modRuntimeOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge:${rootProject.cctVersion}")
 }
 
 processResources {
     from(project(":common").sourceSets.main.resources)
     inputs.property "version", rootProject.version.replaceAll("\\+.*-mc", "\\+mc")
     inputs.property "minecraftVersion", rootProject.minecraftVersion
-    inputs.property "neoforgeVersionRange", project.neoforgeVersionRange
+    inputs.property "neoforgeVersion", project.neoforgeVersion
     inputs.property "eslVersion", rootProject.eslVersion
     inputs.property "createVersion", rootProject.createVersionShort
     inputs.property "cctVersion", rootProject.cctVersion
@@ -29,7 +29,7 @@ processResources {
     filesMatching("META-INF/neoforge.mods.toml") {
         expand "version": rootProject.version.replaceAll("\\+.*-mc", "\\+mc"),
         "minecraftVersion": rootProject.minecraftVersion,
-        "neoforgeVersionRange": project.neoforgeVersionRange,
+        "neoforgeVersion": project.neoforgeVersion,
         "eslVersion": rootProject.eslVersion,
         "createVersion": rootProject.createVersionShort,
         "cctVersion": rootProject.cctVersion
