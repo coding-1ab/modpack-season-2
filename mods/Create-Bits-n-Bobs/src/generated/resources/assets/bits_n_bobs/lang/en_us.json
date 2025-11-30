@@ -66,6 +66,7 @@
   "block.bits_n_bobs.green_large_nixie_tube": "Green Large Nixie Tube",
   "block.bits_n_bobs.green_nixie_board": "Green Nixie Board",
   "block.bits_n_bobs.headlamp": "Headlamp",
+  "block.bits_n_bobs.headlamp.tooltip.summary": "Lamp which can be placed _multiple times in same block_. Can be dyed and useful for fancy signage too!",
   "block.bits_n_bobs.large_cogwheel_chain": "Large Cogwheel Chain",
   "block.bits_n_bobs.large_nixie_tube": "Large Nixie Tube",
   "block.bits_n_bobs.light_blue_chair": "Light Blue Chair",
@@ -131,6 +132,6 @@
   "entity.bits_n_bobs.inert_stationary_contraption": "Inert Stationary Contraption",
   "item.bits_n_bobs.crushed_deepslate": "Crushed Deepslate",
   "message.bits_n_bobs.girder_strut.missing_anchors": "You need %s more Girder Struts",
-  "tab.bits_n_bobs.base": "Create: Bits 'n' Bobs",
+  "tab.bits_n_bobs.base": "Bits 'n' Bobs",
   "tab.bits_n_bobs.deco": "Bits 'n' Bobs' Building Blocks"
 }

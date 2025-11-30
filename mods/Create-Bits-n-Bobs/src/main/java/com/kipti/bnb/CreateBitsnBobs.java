@@ -24,6 +24,7 @@ public class CreateBitsnBobs {
 
     public static final String MOD_ID = "bits_n_bobs";
     public static final String NAME = "Create: Bits 'n' Bobs";
+    public static final String TAB_NAME = "Bits 'n' Bobs";
     public static final String DECO_NAME = "Bits 'n' Bobs' Building Blocks";
     public static final Logger LOGGER = LogUtils.getLogger();
 
