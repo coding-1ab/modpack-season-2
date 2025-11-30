@@ -57,8 +57,6 @@ subprojects {
         
         modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraftVersion}-common-api:${rootProject.jeiVersion}")
 
-        compileOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-common-api:${rootProject.cctVersion}")
-
         if (project.name != "common") {
             if (recipeViewer == "jei") {
                 modRuntimeOnly("mezz.jei:jei-${rootProject.minecraftVersion}-${project.name}:${rootProject.jeiVersion}")

@@ -4,7 +4,7 @@ dependencies {
 
     modImplementation("com.simibubi.create:create-${rootProject.minecraftVersion}:${rootProject.createVersion}:slim") { transitive = false }
     modImplementation("net.createmod.ponder:Ponder-NeoForge-${minecraftVersion}:${ponderVersion}")
-    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraftVersion}:${flywheelVersion}")
+    modCompileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraftVersion}:${flywheelVersion}")
     modRuntimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraftVersion}:${flywheelVersion}")
     modApi("com.tterrag.registrate:Registrate:${rootProject.registrateVersion}")
 
@@ -13,8 +13,11 @@ dependencies {
     compileOnly("io.github.llamalad7:mixinextras-common:0.5.0")
     annotationProcessor(implementation(include("io.github.llamalad7:mixinextras-neoforge:0.5.0")))
 
-    compileOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge-api:${rootProject.cctVersion}")
+    // Computer Craft stuffs
+    modCompileOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge-api:${rootProject.cctVersion}")
     modRuntimeOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge:${rootProject.cctVersion}")
+    // Required to be able to run CC:Tweaked
+    forgeRuntimeLibrary("cc.tweaked:cobalt:0.9.7")
 }
 
 processResources {
