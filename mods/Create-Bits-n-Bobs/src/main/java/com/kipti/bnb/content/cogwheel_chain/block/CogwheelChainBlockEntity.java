@@ -108,6 +108,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
             }
         }
         Block.popResource(level, worldPosition, Items.CHAIN.getDefaultInstance().copyWithCount(chainsToReturn));
+        this.chainsToRefund = 0; // Reset after dropping
 
         if (isController && chain != null) {
             chain.destroy(level, worldPosition);
