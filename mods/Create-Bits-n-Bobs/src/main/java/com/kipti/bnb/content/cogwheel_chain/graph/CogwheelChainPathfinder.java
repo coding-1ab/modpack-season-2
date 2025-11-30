@@ -130,7 +130,7 @@ public class CogwheelChainPathfinder {
                 new PathedCogwheelNode(prevNode, fromSide),
                 new PathedCogwheelNode(nextNode, toSide),
                 new PathedCogwheelNode(nextNextNode, isValidPathStep(nextNode, toSide, nextNextNode, toSide) ? toSide : -toSide)
-        ));
+        )) * 2f;
 
         final int selfIntersections = nextNextNode == prevNode ? (toSide != fromSide ? 1 : 0) : (traversedSize < 2 ? 0 :
                 getSelfIntersection(

@@ -9,6 +9,7 @@
     "AllPaletteStoneTypesMixin",
     "ContraptionColliderMixin",
     "FontAccessMixin",
+    "GuiGameElementMixin",
     "RotationPropagatorMixin",
     "flywheel_bearing.KineticNetworkMixin"
   ],

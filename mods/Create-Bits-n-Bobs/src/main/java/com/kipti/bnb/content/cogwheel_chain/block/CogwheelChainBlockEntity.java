@@ -60,9 +60,9 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
         }
 
         if (isController) {
+            chainsToRefund = compound.getInt("ChainsToRefund");
             if (chain != null && compound.contains("Chain")) {
                 chain.read(compound.getCompound("Chain"));
-                chainsToRefund = compound.getInt("ChainsToRefund");
             } else {
                 chain = new CogwheelChain(compound.getCompound("Chain"));
             }

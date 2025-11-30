@@ -1,6 +1,7 @@
 package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
+import com.simibubi.create.Create;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.lang.Lang;
@@ -28,7 +29,9 @@ public class BnbPartialModels {
             CHAIN_ROPE = block("chain_pulley/chain_rope"),
             CHAIN_PULLEY_MAGNET_NO_CHAIN = block("chain_pulley/chain_pulley_magnet_no_chain"),
             CHAIN_PULLEY_MAGNET_CHAIN = block("chain_pulley/chain_pulley_magnet_chain"),
-            CHAIN_PULLEY_MAGNET_CHAIN_HALF = block("chain_pulley/chain_pulley_magnet_chain_half");
+            CHAIN_PULLEY_MAGNET_CHAIN_HALF = block("chain_pulley/chain_pulley_magnet_chain_half"),
+
+    ROPE_PULLEY_JEI = createBlock("rope_pulley/item");
 
 
     public static final Map<Direction, PartialModel> WEATHERED_METAL_GIRDER_BRACKETS = new EnumMap<>(Direction.class);
@@ -44,6 +47,10 @@ public class BnbPartialModels {
 
     private static PartialModel block(String path) {
         return PartialModel.of(CreateBitsnBobs.asResource("block/" + path));
+    }
+
+    private static PartialModel createBlock(String path) {
+        return PartialModel.of(Create.asResource("block/" + path));
     }
 
     public static void register() {
