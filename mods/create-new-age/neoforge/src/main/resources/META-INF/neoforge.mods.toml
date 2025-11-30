@@ -14,6 +14,10 @@ authors="Antarctic Gardens"
 description="An addon for the Create mod that adds integration with electricity"
 displayTest="MATCH_VERSION"
 displayURL="https://antarcticgardens.org/"
+[[mixins]]
+config="create_new_age-neoforge.mixins.json"
+[[mixins]]
+config="create_new_age-common.mixins.json"
 
 [[dependencies.create_new_age]]
     modId="neoforge"
@@ -40,5 +44,12 @@ displayURL="https://antarcticgardens.org/"
     modId="create"
     type="required"
     versionRange="[${createVersion},6.1.0)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.create_new_age]]
+    modId="computercraft"
+    type="optional"
+    versionRange="[${cctVersion},)"
     ordering="NONE"
     side="BOTH"

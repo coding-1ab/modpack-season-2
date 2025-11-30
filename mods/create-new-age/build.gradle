@@ -35,6 +35,12 @@ subprojects {
         maven { url = "https://maven.jamieswhiteshirt.com/libs-release" } // Reach Entity Attributes
         
         maven { url = "https://jitpack.io/" } // Mixin Extras
+
+        maven { url "https://maven.squiddev.cc" // Computer Craft Tweaked
+            content {
+                includeGroup("cc.tweaked")
+            }
+        }
     }
     
     dependencies {
@@ -50,7 +56,9 @@ subprojects {
         modImplementation(include("org.antarcticgardens.esl:esl-${project.name}-${rootProject.minecraftVersion}:${rootProject.eslVersion}+${project.name}-mc${rootProject.minecraftVersion}"))
         
         modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraftVersion}-common-api:${rootProject.jeiVersion}")
-        
+
+        compileOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-common-api:${rootProject.cctVersion}")
+
         if (project.name != "common") {
             if (recipeViewer == "jei") {
                 modRuntimeOnly("mezz.jei:jei-${rootProject.minecraftVersion}-${project.name}:${rootProject.jeiVersion}")
@@ -101,5 +109,7 @@ subprojects {
 
     tasks.withType(JavaCompile) {
         options.compilerArgs += ['-Xplugin:Manifold']
+        options.encoding = "UTF-8"
+        options.release = 21
     }
 }
