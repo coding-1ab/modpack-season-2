@@ -95,115 +95,6 @@ public class BnbBlocks {
                             .getExistingFile(p.modLoc("block/chain_pulley/" + c.getName()))))
                     .register();
 
-    public static final BlockEntry<LightBlock> BRASS_LAMP = REGISTRATE.block("brass_lamp", (p) -> new LightBlock(p, BnbShapes.BRASS_LAMP_SHAPE, true))
-            .initialProperties(SharedProperties::softMetal)
-            .transform(pickaxeOnly())
-            .blockstate((c, p) -> p.directionalBlock(c.get(),
-                    (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                            "block/brass_lamp/brass_lamp" + (state.getValue(LightBlock.LIT) ? "_on" : "")
-                    ))))
-            .properties(p -> p
-                    .noOcclusion()
-                    .lightLevel(state -> state.getValue(LightBlock.LIT) ? 15 : 0)
-                    .mapColor(DyeColor.ORANGE)
-                    .forceSolidOn())
-            .addLayer(() -> RenderType::translucent)
-            .item()
-            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/brass_lamp/brass_lamp")))
-            .build()
-            .register();
-
-    public static final BlockEntry<LightbulbBlock> LIGHTBULB = REGISTRATE.block("lightbulb", LightbulbBlock::new)
-            .initialProperties(SharedProperties::softMetal)
-            .transform(pickaxeOnly())
-            .blockstate((c, p) -> p.directionalBlock(c.get(),
-                    (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                            "block/lightbulb/lightbulb" + (state.getValue(LightbulbBlock.CAGE) ? "" : "_uncaged") + (state.getValue(LightBlock.LIT) ? "_on" : "")
-                    ))))
-            .properties(p -> p
-                    .noOcclusion()
-                    .lightLevel(state -> state.getValue(LightBlock.LIT) ? 10 : 0)
-                    .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.LIT))
-                    .forceSolidOn())
-            .addLayer(() -> RenderType::translucent)
-            .item()
-            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/lightbulb/lightbulb")))
-            .build()
-            .register();
-
-    public static final BlockEntry<HeadlampBlock> HEADLAMP = REGISTRATE.block("headlamp", HeadlampBlock::new)
-            .initialProperties(SharedProperties::softMetal)
-            .transform(pickaxeOnly())
-            .blockstate((c, p) -> p.simpleBlock(c.get(),
-                    p.models().getExistingFile(CreateBitsnBobs.asResource(
-                            "block/headlamp/headlight_block"
-                    ))
-            ))
-            .onRegister(CreateRegistrate.blockModel(() -> HeadlampModelBuilder::new))
-            .properties(p -> p
-                    .noOcclusion()
-                    .lightLevel(state -> state.getValue(LightBlock.LIT) ? 15 : 0)
-                    .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.LIT))
-                    .mapColor(DyeColor.ORANGE)
-                    .forceSolidOn())
-            .addLayer(() -> RenderType::translucent)
-            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-            .item(HeadlampBlockItem::new)
-            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/headlamp/headlight")))
-            .build()
-            .register();
-
-    public static final BlockEntry<NixieBoardBlock> NIXIE_BOARD = REGISTRATE.block("nixie_board", p -> new NixieBoardBlock(p, null))
-            .transform(nixieBoard())
-            .item()
-            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/nixie_board/nixie_board_single")))
-            .build()
-            .register();
-
-    public static final DyedBlockList<NixieBoardBlock> DYED_NIXIE_BOARD = new DyedBlockList<>(colour -> {
-        String colourName = colour.getSerializedName();
-        return REGISTRATE.block(colourName + "_nixie_board", p -> new NixieBoardBlock(p, colour))
-                .transform(nixieBoard())
-                .register();
-    });
-
-    public static final BlockEntry<LargeNixieTubeBlock> LARGE_NIXIE_TUBE = REGISTRATE.block("large_nixie_tube", p -> new LargeNixieTubeBlock(p, null))
-            .transform(largeNixieTube())
-            .item()
-            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/large_nixie_tube/large_nixie_tube")))
-            .build()
-            .register();
-
-    public static final DyedBlockList<LargeNixieTubeBlock> DYED_LARGE_NIXIE_TUBE = new DyedBlockList<>(colour -> {
-        String colourName = colour.getSerializedName();
-        return REGISTRATE.block(colourName + "_large_nixie_tube", p -> new LargeNixieTubeBlock(p, colour))
-                .transform(largeNixieTube())
-                .register();
-    });
-
-    public static final BlockEntry<CogwheelChainBlock> SMALL_COGWHEEL_CHAIN = REGISTRATE.block("small_cogwheel_chain", CogwheelChainBlock::small)
-            .initialProperties(SharedProperties::stone)
-            .properties(p -> p.sound(SoundType.WOOD)
-                    .mapColor(MapColor.DIRT))
-            .transform(axeOrPickaxe())
-            .blockstate(BlockStateGen.axisBlockProvider(false))
-            .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-            .loot((lt, block) -> lt.dropOther(block, AllBlocks.COGWHEEL.get()))
-//            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-            .register();
-
-    public static final BlockEntry<CogwheelChainBlock> LARGE_COGWHEEL_CHAIN =
-            REGISTRATE.block("large_cogwheel_chain", CogwheelChainBlock::large)
-                    .initialProperties(SharedProperties::wooden)
-                    .properties(p -> p.sound(SoundType.WOOD)
-                            .mapColor(MapColor.DIRT))
-                    .transform(axeOrPickaxe())
-                    .blockstate(BlockStateGen.axisBlockProvider(false))
-                    .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-//                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-                    .loot((lt, block) -> lt.dropOther(block, AllBlocks.LARGE_COGWHEEL.get()))
-                    .register();
-
     public static final BlockEntry<FlywheelBearingBlock> FLYWHEEL_BEARING =
             REGISTRATE.block("flywheel_bearing", FlywheelBearingBlock::new)
                     .transform(axeOrPickaxe())
@@ -220,36 +111,6 @@ public class BnbBlocks {
                     )
                     .build()
                     .register();
-
-    public static <T extends NixieBoardBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> nixieBoard() {
-        return b -> b
-                .initialProperties(SharedProperties::softMetal)
-                .transform(displayTarget(BnbDisplayTargets.GENERIC_NIXIE_TARGET))
-                .transform(pickaxeOnly())
-                .blockstate(NixieBoardBlockStateGen::nixieBoard)
-                .onRegister(CreateRegistrate.blockModel(() -> DoubleOrientedBlockModel::new))
-                .properties(p -> p
-                        .noOcclusion()
-                        .lightLevel(state -> state.getValue(NixieBoardBlock.LIT) ? 4 : 1)
-                        .mapColor(DyeColor.ORANGE)
-                        .forceSolidOn())
-                .addLayer(() -> RenderType::translucent);
-    }
-
-    public static <T extends LargeNixieTubeBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> largeNixieTube() {
-        return b -> b
-                .initialProperties(SharedProperties::softMetal)
-                .transform(displayTarget(BnbDisplayTargets.GENERIC_NIXIE_TARGET))
-                .transform(pickaxeOnly())
-                .blockstate(LargeNixieTubeBlockStateGen::nixieTube)
-                .onRegister(CreateRegistrate.blockModel(() -> DoubleOrientedBlockModel::new))
-                .properties(p -> p
-                        .noOcclusion()
-                        .lightLevel(state -> state.getValue(NixieBoardBlock.LIT) ? 4 : 1)
-                        .mapColor(DyeColor.ORANGE)
-                        .forceSolidOn())
-                .addLayer(() -> RenderType::translucent);
-    }
 
     public static final BlockEntry<WeatheredGirderBlock> WEATHERED_METAL_GIRDER = REGISTRATE.block("weathered_metal_girder", WeatheredGirderBlock::new)
             .initialProperties(SharedProperties::softMetal)
@@ -309,6 +170,145 @@ public class BnbBlocks {
             )
             .build()
             .register();
+    
+    public static final BlockEntry<NixieBoardBlock> NIXIE_BOARD = REGISTRATE.block("nixie_board", p -> new NixieBoardBlock(p, null))
+            .transform(nixieBoard())
+            .item()
+            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/nixie_board/nixie_board_single")))
+            .build()
+            .register();
+
+    public static final DyedBlockList<NixieBoardBlock> DYED_NIXIE_BOARD = new DyedBlockList<>(colour -> {
+        String colourName = colour.getSerializedName();
+        return REGISTRATE.block(colourName + "_nixie_board", p -> new NixieBoardBlock(p, colour))
+                .transform(nixieBoard())
+                .register();
+    });
+
+    public static final BlockEntry<LargeNixieTubeBlock> LARGE_NIXIE_TUBE = REGISTRATE.block("large_nixie_tube", p -> new LargeNixieTubeBlock(p, null))
+            .transform(largeNixieTube())
+            .item()
+            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/large_nixie_tube/large_nixie_tube")))
+            .build()
+            .register();
+
+    public static final DyedBlockList<LargeNixieTubeBlock> DYED_LARGE_NIXIE_TUBE = new DyedBlockList<>(colour -> {
+        String colourName = colour.getSerializedName();
+        return REGISTRATE.block(colourName + "_large_nixie_tube", p -> new LargeNixieTubeBlock(p, colour))
+                .transform(largeNixieTube())
+                .register();
+    });
+
+    public static final BlockEntry<LightbulbBlock> LIGHTBULB = REGISTRATE.block("lightbulb", LightbulbBlock::new)
+            .initialProperties(SharedProperties::softMetal)
+            .transform(pickaxeOnly())
+            .blockstate((c, p) -> p.directionalBlock(c.get(),
+                    (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                            "block/lightbulb/lightbulb" + (state.getValue(LightbulbBlock.CAGE) ? "" : "_uncaged") + (state.getValue(LightBlock.LIT) ? "_on" : "")
+                    ))))
+            .properties(p -> p
+                    .noOcclusion()
+                    .lightLevel(state -> state.getValue(LightBlock.LIT) ? 10 : 0)
+                    .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.LIT))
+                    .forceSolidOn())
+            .addLayer(() -> RenderType::translucent)
+            .item()
+            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/lightbulb/lightbulb")))
+            .build()
+            .register();
+
+    public static final BlockEntry<HeadlampBlock> HEADLAMP = REGISTRATE.block("headlamp", HeadlampBlock::new)
+            .initialProperties(SharedProperties::softMetal)
+            .transform(pickaxeOnly())
+            .blockstate((c, p) -> p.simpleBlock(c.get(),
+                    p.models().getExistingFile(CreateBitsnBobs.asResource(
+                            "block/headlamp/headlight_block"
+                    ))
+            ))
+            .onRegister(CreateRegistrate.blockModel(() -> HeadlampModelBuilder::new))
+            .properties(p -> p
+                    .noOcclusion()
+                    .lightLevel(state -> state.getValue(LightBlock.LIT) ? 15 : 0)
+                    .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.LIT))
+                    .mapColor(DyeColor.ORANGE)
+                    .forceSolidOn())
+            .addLayer(() -> RenderType::translucent)
+            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+            .item(HeadlampBlockItem::new)
+            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/headlamp/headlight")))
+            .build()
+            .register();
+
+    public static final BlockEntry<LightBlock> BRASS_LAMP = REGISTRATE.block("brass_lamp", (p) -> new LightBlock(p, BnbShapes.BRASS_LAMP_SHAPE, true))
+            .initialProperties(SharedProperties::softMetal)
+            .transform(pickaxeOnly())
+            .blockstate((c, p) -> p.directionalBlock(c.get(),
+                    (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
+                            "block/brass_lamp/brass_lamp" + (state.getValue(LightBlock.LIT) ? "_on" : "")
+                    ))))
+            .properties(p -> p
+                    .noOcclusion()
+                    .lightLevel(state -> state.getValue(LightBlock.LIT) ? 15 : 0)
+                    .mapColor(DyeColor.ORANGE)
+                    .forceSolidOn())
+            .addLayer(() -> RenderType::translucent)
+            .item()
+            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/brass_lamp/brass_lamp")))
+            .build()
+            .register();
+
+    public static final BlockEntry<CogwheelChainBlock> SMALL_COGWHEEL_CHAIN = REGISTRATE.block("small_cogwheel_chain", CogwheelChainBlock::small)
+            .initialProperties(SharedProperties::stone)
+            .properties(p -> p.sound(SoundType.WOOD)
+                    .mapColor(MapColor.DIRT))
+            .transform(axeOrPickaxe())
+            .blockstate(BlockStateGen.axisBlockProvider(false))
+            .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
+            .loot((lt, block) -> lt.dropOther(block, AllBlocks.COGWHEEL.get()))
+//            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+            .register();
+
+    public static final BlockEntry<CogwheelChainBlock> LARGE_COGWHEEL_CHAIN =
+            REGISTRATE.block("large_cogwheel_chain", CogwheelChainBlock::large)
+                    .initialProperties(SharedProperties::wooden)
+                    .properties(p -> p.sound(SoundType.WOOD)
+                            .mapColor(MapColor.DIRT))
+                    .transform(axeOrPickaxe())
+                    .blockstate(BlockStateGen.axisBlockProvider(false))
+                    .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
+//                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+                    .loot((lt, block) -> lt.dropOther(block, AllBlocks.LARGE_COGWHEEL.get()))
+                    .register();
+
+    public static <T extends NixieBoardBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> nixieBoard() {
+        return b -> b
+                .initialProperties(SharedProperties::softMetal)
+                .transform(displayTarget(BnbDisplayTargets.GENERIC_NIXIE_TARGET))
+                .transform(pickaxeOnly())
+                .blockstate(NixieBoardBlockStateGen::nixieBoard)
+                .onRegister(CreateRegistrate.blockModel(() -> DoubleOrientedBlockModel::new))
+                .properties(p -> p
+                        .noOcclusion()
+                        .lightLevel(state -> state.getValue(NixieBoardBlock.LIT) ? 4 : 1)
+                        .mapColor(DyeColor.ORANGE)
+                        .forceSolidOn())
+                .addLayer(() -> RenderType::translucent);
+    }
+
+    public static <T extends LargeNixieTubeBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> largeNixieTube() {
+        return b -> b
+                .initialProperties(SharedProperties::softMetal)
+                .transform(displayTarget(BnbDisplayTargets.GENERIC_NIXIE_TARGET))
+                .transform(pickaxeOnly())
+                .blockstate(LargeNixieTubeBlockStateGen::nixieTube)
+                .onRegister(CreateRegistrate.blockModel(() -> DoubleOrientedBlockModel::new))
+                .properties(p -> p
+                        .noOcclusion()
+                        .lightLevel(state -> state.getValue(NixieBoardBlock.LIT) ? 4 : 1)
+                        .mapColor(DyeColor.ORANGE)
+                        .forceSolidOn())
+                .addLayer(() -> RenderType::translucent);
+    }
 
     public static final DyedBlockList<ChairBlock> CHAIRS = new DyedBlockList<>(colour -> {
         String colourName = colour.getSerializedName();

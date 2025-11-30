@@ -3,11 +3,19 @@ package com.kipti.bnb.content.chair;
 import com.kipti.bnb.registry.BnbBlocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.contraptions.actors.seat.SeatBlock;
+import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
+import com.simibubi.create.foundation.utility.BlockHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -15,7 +23,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class ChairBlock extends SeatBlock implements IWrenchable {
 
@@ -29,12 +42,46 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
     public ChairBlock(Properties properties, DyeColor color) {
         super(properties, color);
         this.registerDefaultState(
-            defaultBlockState()
-                .setValue(LEFT_ARM, true)
-                .setValue(RIGHT_ARM, true)
-                .setValue(CORNER, false)
-                .setValue(BACK_FLAT, false)
+                defaultBlockState()
+                        .setValue(LEFT_ARM, true)
+                        .setValue(RIGHT_ARM, true)
+                        .setValue(CORNER, false)
+                        .setValue(BACK_FLAT, false)
         );
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (player.isShiftKeyDown() || player instanceof FakePlayer)
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+
+        DyeColor color = DyeColor.getColor(stack);
+        if (color != null && color != this.color) {
+            if (level.isClientSide)
+                return ItemInteractionResult.SUCCESS;
+            BlockState newState = BlockHelper.copyProperties(state, BnbBlocks.CHAIRS.get(color)
+                    .getDefaultState());
+            level.setBlockAndUpdate(pos, newState);
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        List<SeatEntity> seats = level.getEntitiesOfClass(SeatEntity.class, new AABB(pos));
+        if (!seats.isEmpty()) {
+            SeatEntity seatEntity = seats.get(0);
+            List<Entity> passengers = seatEntity.getPassengers();
+            if (!passengers.isEmpty() && passengers.get(0) instanceof Player)
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            if (!level.isClientSide) {
+                seatEntity.ejectPassengers();
+                player.startRiding(seatEntity);
+            }
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        if (level.isClientSide)
+            return ItemInteractionResult.SUCCESS;
+        sitDown(level, pos, getLeashed(level, player).or(player));
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override
@@ -59,15 +106,15 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
 
         BlockState stateLeft = pLevel.getBlockState(pCurrentPos.relative(facing.getClockWise()));
         boolean hasConnectableLeft = AllBlocks.SEATS.contains(stateLeft.getBlock()) || stateLeft.getBlock() instanceof ChairBlock &&
-            (stateLeft.getValue(FACING) == facing || stateLeft.getValue(FACING) == facing.getCounterClockWise());
+                (stateLeft.getValue(FACING) == facing || stateLeft.getValue(FACING) == facing.getCounterClockWise());
 
         BlockState stateRight = pLevel.getBlockState(pCurrentPos.relative(facing.getCounterClockWise()));
         boolean hasConnectableRight = AllBlocks.SEATS.contains(stateRight.getBlock()) || stateRight.getBlock() instanceof ChairBlock &&
-            (stateRight.getValue(FACING) == facing || stateRight.getValue(FACING) == facing.getClockWise());
+                (stateRight.getValue(FACING) == facing || stateRight.getValue(FACING) == facing.getClockWise());
 
         BlockState stateFront = pLevel.getBlockState(pCurrentPos.relative(facing));
         boolean hasConnectableFront = stateFront.getBlock() instanceof ChairBlock &&
-            (stateFront.getValue(FACING) == facing.getCounterClockWise() || stateFront.getValue(FACING) == facing.getClockWise());
+                (stateFront.getValue(FACING) == facing.getCounterClockWise() || stateFront.getValue(FACING) == facing.getClockWise());
 
         BlockState stateBack = pLevel.getBlockState(pCurrentPos.relative(facing.getOpposite()));
 //        boolean isFlatBack = stateBack.getBlock() instanceof ChairBlock &&
@@ -84,16 +131,16 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
         }
 
         return blockState
-            .setValue(LEFT_ARM, !hasConnectableLeft)
-            .setValue(RIGHT_ARM, !hasConnectableRight)
-            .setValue(CORNER, corner)
-            .setValue(BACK_FLAT, isFlatBack);
+                .setValue(LEFT_ARM, !hasConnectableLeft)
+                .setValue(RIGHT_ARM, !hasConnectableRight)
+                .setValue(CORNER, corner)
+                .setValue(BACK_FLAT, isFlatBack);
     }
 
     private static boolean getFlatObstructing(LevelAccessor pLevel, BlockState thisState, BlockPos pCurrentPos, Direction facing, BlockState blockState, BooleanProperty property) {
         BlockState sideState = pLevel.getBlockState(pCurrentPos.relative(facing));
         return (sideState.getBlock() instanceof ChairBlock &&
-            (sideState.getValue(FACING) == facing));
+                (sideState.getValue(FACING) == facing));
     }
 
 //    private static boolean getFlatObstructing(LevelAccessor pLevel, BlockState thisState, BlockPos pCurrentPos, Direction facing, BlockState blockState, BooleanProperty property) {

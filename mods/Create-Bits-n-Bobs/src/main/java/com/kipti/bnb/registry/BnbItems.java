@@ -6,9 +6,6 @@ import net.minecraft.world.item.Item;
 
 public class BnbItems {
 
-    public static final ItemEntry<Item> CALCINED_FLINT = CreateBitsnBobs.REGISTRATE.item("calcined_flint", Item::new)
-            .register();
-
     public static final ItemEntry<Item> CRUSHED_DEEPSLATE = CreateBitsnBobs.REGISTRATE.item("crushed_deepslate", Item::new)
             .register();
 
