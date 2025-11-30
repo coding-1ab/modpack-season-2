@@ -1,0 +1,17 @@
+{
+  "type": "create:item_application",
+  "ingredients": [
+    {
+      "item": "create:rope_pulley"
+    },
+    {
+      "item": "minecraft:chain"
+    }
+  ],
+  "keep_held_item": true,
+  "results": [
+    {
+      "id": "bits_n_bobs:chain_pulley"
+    }
+  ]
+}
