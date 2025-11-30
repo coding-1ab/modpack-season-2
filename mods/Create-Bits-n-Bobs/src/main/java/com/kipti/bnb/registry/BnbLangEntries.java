@@ -13,8 +13,8 @@ public class BnbLangEntries {
                 //Tooltips
                 "block.bits_n_bobs.headlamp.tooltip.summary", "Can be dyed and placed _multiple times in same block_. Useful for trains or fancy signage too!",
 
-                "block.bits_n_bobs.girder_strut.tooltip.summary", "A type of girder used to span a distance between two anchor points.",
-                "block.bits_n_bobs.weathered_girder_strut.tooltip.summary", "A type of girder used to span a distance between two anchor points.",
+                "block.bits_n_bobs.girder_strut.tooltip.summary", "A type of girder used to span a distance _between two anchor points_.",
+                "block.bits_n_bobs.weathered_girder_strut.tooltip.summary", "A type of girder used to span a distance _between two anchor points_.",
 
         };
 
