@@ -22,16 +22,6 @@ base {
     version = mod_version + (dev && buildNumber != null ? "-${buildNumber}" : "")
 }
 
-boolean inMultiModWorkspace = rootProject.hasProperty("multiModWorkspace.enabled")
-boolean ponderInWorkspace = rootProject.hasProperty("multiModWorkspace.ponder")
-
-if (ponderInWorkspace) {
-    evaluationDependsOn(":ponder:NeoForge")
-}
-
-project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? "enabled" : "disabled"} for project ${project.name}.")
-project.logger.lifecycle("Dependencies included in Workspace: [Ponder: ${ponderInWorkspace}]")
-
 println("Java: ${System.getProperty("java.version")}, JVM: ${System.getProperty("java.vm.version")} (${System.getProperty("java.vendor")}), Arch: ${System.getProperty("os.arch")}")
 
 idea {
@@ -57,13 +47,6 @@ neoForge {
         "${mod_id}" {
             sourceSet(sourceSets.main)
         }
-
-        if (ponderInWorkspace) {
-            ponder {
-                sourceSet(project(":ponder:Common").sourceSets.main)
-                sourceSet(project(":ponder:NeoForge").sourceSets.main)
-            }
-        }
     }
 
 
@@ -79,8 +62,6 @@ neoForge {
             systemProperty("mixin.debug.export", "true")
 
             systemProperty("neoforge.enabledGameTestNamespaces", mod_id as String)
-
-//            logLevel = Level.DEBUG
         }
 
         client {
@@ -99,7 +80,7 @@ neoForge {
             data()
 
             programArguments.addAll(
-                    "--mod", mod_id as String,
+                "--mod", mod_id as String,
                 "--all",
                 "--output", file("src/generated/resources/").getAbsolutePath(),
                 "--existing", file("src/main/resources/").getAbsolutePath()
@@ -150,12 +131,7 @@ dependencies {
     })
     runtimeOnly("dev.engine-room.vanillin:vanillin-neoforge-$minecraft_version:$vanillin_version")
 
-    if (ponderInWorkspace) {
-        jarJar(implementation(project(":ponder:Common")))
-        jarJar(implementation(project(":ponder:NeoForge")))
-    } else {
-        jarJar(implementation("net.createmod.ponder:Ponder-NeoForge-$minecraft_version:$ponder_version"))
-    }
+    jarJar(implementation("net.createmod.ponder:ponder-neoforge:$ponder_version+mc$minecraft_version"))
 
     //compileOnly("mezz.jei:jei-minecraft_version-common-api:$jei_version")
     //compileOnly("mezz.jei:jei-minecraft_version-neoforge-api:$jei_version")
