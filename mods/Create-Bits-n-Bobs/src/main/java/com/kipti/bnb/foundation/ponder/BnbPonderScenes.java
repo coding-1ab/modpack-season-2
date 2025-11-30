@@ -22,6 +22,5 @@ public class BnbPonderScenes {
                 .addStoryBoard("chain_cog/flat", CogwheelChainScenes::flatCogwheelChain)
                 .addStoryBoard("chain_cog/axis_change", CogwheelChainScenes::changingAxisCogwheelChain)
                 .addStoryBoard("chain_cog/pathing_behaviour", CogwheelChainScenes::cogwheelChainPathingBehaviour);
-
     }
 }
