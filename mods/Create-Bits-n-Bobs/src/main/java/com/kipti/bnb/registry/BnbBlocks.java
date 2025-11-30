@@ -1,6 +1,7 @@
 package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
+import com.kipti.bnb.content.chain_pulley.ChainPulleyBlock;
 import com.kipti.bnb.content.chair.ChairBlock;
 import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlock;
 import com.kipti.bnb.content.flywheel_bearing.FlywheelBearingBlock;
@@ -27,6 +28,7 @@ import com.simibubi.create.AllTags;
 import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.contraptions.actors.seat.SeatInteractionBehaviour;
 import com.simibubi.create.content.contraptions.actors.seat.SeatMovementBehaviour;
+import com.simibubi.create.content.contraptions.pulley.PulleyBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.BracketedKineticBlockModel;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import com.simibubi.create.foundation.data.BlockStateGen;
@@ -40,6 +42,7 @@ import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.SoundType;
@@ -59,6 +62,38 @@ import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.*;
 
 public class BnbBlocks {
+
+    public static final BlockEntry<ChainPulleyBlock> CHAIN_PULLEY = REGISTRATE.block("chain_pulley", ChainPulleyBlock::new)
+            .initialProperties(SharedProperties::stone)
+            .properties(p -> p.mapColor(MapColor.PODZOL))
+            .properties(p -> p.noOcclusion())
+            .addLayer(() -> RenderType::cutoutMipped)
+            .transform(axeOrPickaxe())
+            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+            .blockstate(BlockStateGen.horizontalAxisBlockProvider(true))
+            .item()
+            .transform(customItemModel())
+            .register();
+
+    public static final BlockEntry<PulleyBlock.RopeBlock> CHAIN_ROPE = REGISTRATE.block("chain_rope", PulleyBlock.RopeBlock::new)
+            .properties(p -> p.sound(SoundType.WOOL)
+                    .mapColor(MapColor.COLOR_GRAY))
+            .tag(AllTags.AllBlockTags.BRITTLE.tag)
+            .addLayer(() -> RenderType::cutout)
+            .tag(BlockTags.CLIMBABLE)
+            .blockstate((c, p) -> p.simpleBlock(c.get(), p.models()
+                    .getExistingFile(p.modLoc("block/chain_pulley/" + c.getName()))))
+            .register();
+
+    public static final BlockEntry<PulleyBlock.MagnetBlock> CHAIN_PULLEY_MAGNET =
+            REGISTRATE.block("chain_pulley_magnet", PulleyBlock.MagnetBlock::new)
+                    .initialProperties(SharedProperties::stone)
+                    .tag(AllTags.AllBlockTags.BRITTLE.tag)
+                    .tag(BlockTags.CLIMBABLE)
+                    .addLayer(() -> RenderType::cutout)
+                    .blockstate((c, p) -> p.simpleBlock(c.get(), p.models()
+                            .getExistingFile(p.modLoc("block/chain_pulley/" + c.getName()))))
+                    .register();
 
     public static final BlockEntry<LightBlock> BRASS_LAMP = REGISTRATE.block("brass_lamp", (p) -> new LightBlock(p, BnbShapes.BRASS_LAMP_SHAPE, true))
             .initialProperties(SharedProperties::softMetal)

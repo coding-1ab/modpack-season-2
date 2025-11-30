@@ -6,6 +6,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AllPaletteStoneTypesMixin",
+    "ContraptionColliderMixin",
     "FontAccessMixin",
     "RotationPropagatorMixin",
     "flywheel_bearing.KineticNetworkMixin"

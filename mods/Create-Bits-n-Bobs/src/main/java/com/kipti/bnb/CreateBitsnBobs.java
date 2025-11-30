@@ -50,6 +50,7 @@ public class CreateBitsnBobs {
         BnbPackets.register();
         BnbDataComponents.register(modEventBus);
         BnbDecoBlocks.register();
+        BnbSpriteShifts.register();
 
         BnbLangEntries.register();
 

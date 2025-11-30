@@ -11,15 +11,25 @@ import java.util.Map;
 
 public class BnbPartialModels {
 
-    public static final PartialModel HEADLAMP_OFF = block("headlamp/headlight");
-    public static final PartialModel HEADLAMP_ON = block("headlamp/headlight_on");
 
-    public static final PartialModel CHAIR_LEFT_ARM = block("chair/chair_left_armrest");
-    public static final PartialModel CHAIR_RIGHT_ARM = block("chair/chair_right_armrest");
+//    public static final PartialModel CHAIR_LEFT_ARM = block("chair/chair_left_armrest");
+//    public static final PartialModel CHAIR_RIGHT_ARM = block("chair/chair_right_armrest");
 
     public static final PartialModel
-        SMALL_COGWHEEL_CHAIN_BLOCK = block("small_cogwheel_chain"),
-        LARGE_COGWHEEL_CHAIN_BLOCK = block("large_cogwheel_chain");
+            HEADLAMP_OFF = block("headlamp/headlight"),
+            HEADLAMP_ON = block("headlamp/headlight_on"),
+
+    SMALL_COGWHEEL_CHAIN_BLOCK = block("small_cogwheel_chain"),
+            LARGE_COGWHEEL_CHAIN_BLOCK = block("large_cogwheel_chain"),
+
+
+    CHAIN_ROPE_COIL = block("chain_pulley/chain_coil"), CHAIN_ROPE_HALF = block("chain_pulley/chain_rope_half"),
+            CHAIN_ROPE_HALF_MAGNET = block("chain_pulley/chain_rope_half_magnet"),
+            CHAIN_ROPE = block("chain_pulley/chain_rope"),
+            CHAIN_PULLEY_MAGNET_NO_CHAIN = block("chain_pulley/chain_pulley_magnet_no_chain"),
+            CHAIN_PULLEY_MAGNET_CHAIN = block("chain_pulley/chain_pulley_magnet_chain"),
+            CHAIN_PULLEY_MAGNET_CHAIN_HALF = block("chain_pulley/chain_pulley_magnet_chain_half");
+
 
     public static final Map<Direction, PartialModel> WEATHERED_METAL_GIRDER_BRACKETS = new EnumMap<>(Direction.class);
 

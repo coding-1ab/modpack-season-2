@@ -1,5 +1,7 @@
 package com.kipti.bnb.registry;
 
+import com.kipti.bnb.content.chain_pulley.ChainPulleyBlockEntity;
+import com.kipti.bnb.content.chain_pulley.ChainPulleyRenderer;
 import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlockEntity;
 import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlockEntityRenderer;
 import com.kipti.bnb.content.flywheel_bearing.FlywheelBearingBlockEntity;
@@ -58,6 +60,12 @@ public class BnbBlockEntities {
             .renderer(() -> FlywheelBearingBlockEntityRenderer::new)
             .register();
 
+    public static final BlockEntityEntry<ChainPulleyBlockEntity> CHAIN_ROPE_PULLEY = REGISTRATE
+            .blockEntity("chain_pulley", ChainPulleyBlockEntity::new)
+//            .visual(() -> ChainPulleyVisual::new, false)
+            .validBlocks(BnbBlocks.CHAIN_PULLEY)
+            .renderer(() -> ChainPulleyRenderer::new)
+            .register();
 
     public static void register() {
     }
