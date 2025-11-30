@@ -155,13 +155,12 @@ public class CogwheelChainGeometryBuilder {
     public static Pair<Vec3, Vec3> calculateOffsets(PathedCogwheelNode previousNode,
                                                     PathedCogwheelNode currentNode,
                                                     PathedCogwheelNode nextNode) {
-        Vec3 axis = getDirectionOfAxis(currentNode);
 
 //        Vec3 incomingDirection = getConnectionDirection(previousNode, currentNode);
 //        Vec3 outgoingDirection = getConnectionDirection(currentNode, nextNode);
 
-        Vec3 incomingPointOnCircle = getTangentPointOnCircle(axis, getConnectionDirection(previousNode, currentNode), previousNode, currentNode, true);
-        Vec3 outgoingPointOnCircle = getTangentPointOnCircle(axis, getConnectionDirection(currentNode, nextNode), nextNode, currentNode, false);
+        Vec3 incomingPointOnCircle = getTangentPointOnCircle(previousNode, currentNode, true);
+        Vec3 outgoingPointOnCircle = getTangentPointOnCircle(nextNode, currentNode, false);
 
         return Pair.of(incomingPointOnCircle, outgoingPointOnCircle);
     }
@@ -182,11 +181,12 @@ public class CogwheelChainGeometryBuilder {
         return incomingADiff.subtract(axis.scale(axis.dot(incomingADiff)));
     }
 
-    public static Vec3 getTangentPointOnCircle(Vec3 axis,
-                                               Vec3 incoming,
-                                               PathedCogwheelNode previousNode,
+    public static Vec3 getTangentPointOnCircle(PathedCogwheelNode previousNode,
                                                PathedCogwheelNode currentNode,
                                                boolean isIncoming) {
+        Vec3 axis = getDirectionOfAxis(currentNode);
+        Vec3 incoming = isIncoming ? getConnectionDirection(previousNode, currentNode) : getConnectionDirection(currentNode, previousNode);
+
         double previousRadius = previousNode.isLarge() ? 1.0f : 0.5f;
         double currentRadius = currentNode.isLarge() ? 1.0f : 0.5f;
 

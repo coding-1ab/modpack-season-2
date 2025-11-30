@@ -70,6 +70,13 @@ public class PlacingCogwheelChain {
             return false;
         }
 
+        //For each node, check if this is already in the list
+        for (int i = 1; i < visitedNodes.size(); i++) {
+            if (visitedNodes.get(i).pos().equals(newPos)) {
+                throw new ChainAdditionAbortedException("Cannot self-intersect!");
+            }
+        }
+
         final Direction.Axis axis = newBlockState.getValue(CogWheelBlock.AXIS);
         final boolean isLarge = newBlockState.getBlock() instanceof final ICogWheel iCogWheel && iCogWheel.isLargeCog(); //TODO: replace with more explicit block check
 

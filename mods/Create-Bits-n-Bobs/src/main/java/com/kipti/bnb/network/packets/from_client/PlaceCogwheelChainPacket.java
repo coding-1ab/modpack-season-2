@@ -43,7 +43,8 @@ public record PlaceCogwheelChainPacket(
         final boolean hasEnough = player.hasInfiniteMaterials() || ChainConveyorBlockEntity.getChainsFromInventory(player, Items.CHAIN.getDefaultInstance(), chainsRequired, true);
         if (!hasEnough)
             return;
-        ChainConveyorBlockEntity.getChainsFromInventory(player, Items.CHAIN.getDefaultInstance(), chainsRequired, false);
+        if (!player.hasInfiniteMaterials())
+            ChainConveyorBlockEntity.getChainsFromInventory(player, Items.CHAIN.getDefaultInstance(), chainsRequired, false);
 
         final List<PathedCogwheelNode> chainGeometry;
         try {
