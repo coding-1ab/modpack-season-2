@@ -341,14 +341,14 @@ public class BnbBlocks {
                 .recipe((c, p) -> {
                     ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, c.get())
                             .requires(DyeHelper.getWoolOfDye(colour))
-                            .requires(ItemTags.WOODEN_SLABS)
+                            .requires(ItemTags.WOODEN_STAIRS)
                             .unlockedBy("has_wool", RegistrateRecipeProvider.has(ItemTags.WOOL))
-                            .save(p, CreateBitsnBobs.asResource("crafting/kinetics/" + c.getName()));
+                            .save(p, CreateBitsnBobs.asResource("crafting/" + c.getName()));
                     ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, c.get())
                             .requires(colour.getTag())
-                            .requires(AllTags.AllItemTags.SEATS.tag)
-                            .unlockedBy("has_seat", RegistrateRecipeProvider.has(AllTags.AllItemTags.SEATS.tag))
-                            .save(p, CreateBitsnBobs.asResource("crafting/kinetics/" + c.getName() + "_from_other_chair"));
+                            .requires(BnbTags.BnbItemTags.CHAIRS.tag)
+                            .unlockedBy("has_seat", RegistrateRecipeProvider.has(BnbTags.BnbItemTags.CHAIRS.tag))
+                            .save(p, CreateBitsnBobs.asResource("crafting/" + c.getName() + "_from_other_chair"));
                 })
                 .onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.create.seat"))
                 .tag(BnbTags.BnbBlockTags.CHAIRS.tag)

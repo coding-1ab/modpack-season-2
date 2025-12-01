@@ -1,0 +1,13 @@
+{
+  "type": "create:splashing",
+  "ingredients": [
+    {
+      "item": "create:metal_girder"
+    }
+  ],
+  "results": [
+    {
+      "id": "bits_n_bobs:weathered_metal_girder"
+    }
+  ]
+}
