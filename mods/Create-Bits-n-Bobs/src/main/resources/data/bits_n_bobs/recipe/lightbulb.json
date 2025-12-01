@@ -9,7 +9,7 @@
       "item": "minecraft:glowstone_dust"
     },
     {
-      "tag": "minecraft:glass"
+      "tag": "c:glass_blocks"
     }
   ],
   "result": {
