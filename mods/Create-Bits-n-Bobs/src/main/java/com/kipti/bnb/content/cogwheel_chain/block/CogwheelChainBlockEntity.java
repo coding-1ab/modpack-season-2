@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -40,7 +41,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
         super.lazyTick();
         if (isController && chain != null) {
             if (!chain.checkIntegrity(level, worldPosition)) {
-                destroyChain();
+                destroyChain(true);
             }
         }
     }
@@ -93,10 +94,10 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     @Override
     public void destroy() {
         super.destroy();
-        destroyChain();
+        destroyChain(true);
     }
 
-    private void destroyChain() {
+    public ItemStack destroyChain(boolean dropItemsInWorld) {
         //Try drop chains from the current block for convenience
         int chainsToReturn = chainsToRefund;
         if (!isController) {
@@ -107,7 +108,10 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
                 controllerBE.chainsToRefund = 0;
             }
         }
-        Block.popResource(level, worldPosition, Items.CHAIN.getDefaultInstance().copyWithCount(chainsToReturn));
+        final ItemStack drops = Items.CHAIN.getDefaultInstance().copyWithCount(chainsToReturn);
+        if (dropItemsInWorld) {
+            Block.popResource(level, worldPosition, drops);
+        }
         this.chainsToRefund = 0; // Reset after dropping
 
         if (isController && chain != null) {
@@ -121,6 +125,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
                 controllerBE.chain.destroy(level, controllerPos);
             }
         }
+        return drops;
     }
 
     public void setController(final Vec3i offset) {

@@ -11,9 +11,15 @@ import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -41,6 +47,28 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
 
     public static CogwheelChainBlock large(final Properties properties) {
         return new CogwheelChainBlock(true, properties);
+    }
+
+    @Override
+    public InteractionResult onSneakWrenched(final BlockState state, final UseOnContext context) {
+        final Level world = context.getLevel();
+        final BlockPos pos = context.getClickedPos();
+        final Player player = context.getPlayer();
+
+        if (!(world instanceof final ServerLevel serverLevel))
+            return InteractionResult.SUCCESS;
+
+        final BlockEntity be = world.getBlockEntity(pos);
+        if (!(be instanceof final CogwheelChainBlockEntity cogwheelChainBE))
+            return InteractionResult.SUCCESS;
+
+        final ItemStack drops = cogwheelChainBE.destroyChain(player == null);
+        if (player != null && !player.hasInfiniteMaterials())
+            player.getInventory().placeItemBackInInventory(drops);
+        state.spawnAfterBreak(serverLevel, pos, ItemStack.EMPTY, true);
+        context.getLevel()
+                .levelEvent(2001, context.getClickedPos(), Block.getId(state));
+        return InteractionResult.SUCCESS;
     }
 
     @Override
