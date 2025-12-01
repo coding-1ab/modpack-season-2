@@ -110,10 +110,10 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
             return false;
         }
 
-        boolean stateOneIsBoard = BnbBlocks.NIXIE_BOARD.is(state1.getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(state1.getBlock());
-        boolean stateTwoIsBoard = BnbBlocks.NIXIE_BOARD.is(state2.getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(state2.getBlock());
-        boolean stateOneIsTube = BnbBlocks.LARGE_NIXIE_TUBE.is(state1.getBlock()) || BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(state1.getBlock());
-        boolean stateTwoIsTube = BnbBlocks.LARGE_NIXIE_TUBE.is(state2.getBlock()) || BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(state2.getBlock());
+        final boolean stateOneIsBoard = BnbBlocks.NIXIE_BOARD.is(state1.getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(state1.getBlock());
+        final boolean stateTwoIsBoard = BnbBlocks.NIXIE_BOARD.is(state2.getBlock()) || BnbBlocks.DYED_NIXIE_BOARD.contains(state2.getBlock());
+        final boolean stateOneIsTube = BnbBlocks.LARGE_NIXIE_TUBE.is(state1.getBlock()) || BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(state1.getBlock());
+        final boolean stateTwoIsTube = BnbBlocks.LARGE_NIXIE_TUBE.is(state2.getBlock()) || BnbBlocks.DYED_LARGE_NIXIE_TUBE.contains(state2.getBlock());
 
         if (!(stateOneIsBoard && stateTwoIsBoard) && !(stateOneIsTube && stateTwoIsTube)) return false;
         if (state1.getValue(DoubleOrientedDisplayBlock.FACING) != state2.getValue(DoubleOrientedDisplayBlock.FACING)) {
@@ -179,8 +179,8 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
             return;
         }
         Direction right = DoubleOrientedBlockModel.getLeft(
-            getBlockState().getValue(DoubleOrientedDisplayBlock.FACING),
-            getBlockState().getValue(DoubleOrientedDisplayBlock.ORIENTATION)
+                getBlockState().getValue(DoubleOrientedDisplayBlock.FACING),
+                getBlockState().getValue(DoubleOrientedDisplayBlock.ORIENTATION)
         ).getOpposite();
         BlockPos rightPos = getBlockPos().relative(right);
         BlockEntity blockEntity = level.getBlockEntity(rightPos);
@@ -189,14 +189,14 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
             nextDisplay.applyTextToDisplay(tagElement.isEmpty() ? "" : tagElement.substring(Math.min(consumptionWidth, tagElement.length())), line);
         }
         level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(DoubleOrientedDisplayBlock.LIT,
-            !this.currentTextTop.trim().isEmpty() && (currentDisplayOption.lines == 1 || !this.currentTextTop.trim().isEmpty())));
+                !this.currentTextTop.trim().isEmpty() && (currentDisplayOption.lines == 1 || !this.currentTextTop.trim().isEmpty())));
         notifyUpdate();
     }
 
     public int seekWidth() {
         Direction right = DoubleOrientedBlockModel.getLeft(
-            getBlockState().getValue(DoubleOrientedDisplayBlock.FACING),
-            getBlockState().getValue(DoubleOrientedDisplayBlock.ORIENTATION)
+                getBlockState().getValue(DoubleOrientedDisplayBlock.FACING),
+                getBlockState().getValue(DoubleOrientedDisplayBlock.ORIENTATION)
         ).getOpposite();
         int characterCount = 0;
         for (int i = 0; i < 100; i++) {

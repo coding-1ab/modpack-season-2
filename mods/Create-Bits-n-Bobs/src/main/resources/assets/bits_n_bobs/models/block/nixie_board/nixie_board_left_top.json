@@ -1,0 +1,22 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"texture_size": [64, 64],
+	"textures": {
+		"1": "bits_n_bobs:block/nixie/nixie_board",
+		"particle": "bits_n_bobs:block/nixie/large_nixie_tube"
+	},
+	"elements": [
+		{
+			"from": [0, 3, 7.5],
+			"to": [15, 19, 8.5],
+			"rotation": {"angle": 0, "axis": "x", "origin": [8, 6.25, 8]},
+			"faces": {
+				"north": {"uv": [4.5, 9, 8.25, 13], "texture": "#1"},
+				"east": {"uv": [6.25, 9, 6.5, 13], "texture": "#1"},
+				"south": {"uv": [4.25, 9, 8, 13], "texture": "#1"},
+				"up": {"uv": [0.25, 9, 4, 9.25], "rotation": 180, "texture": "#1"}
+			}
+		}
+	]
+}

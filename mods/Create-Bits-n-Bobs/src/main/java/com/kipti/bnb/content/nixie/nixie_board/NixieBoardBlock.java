@@ -1,6 +1,5 @@
 package com.kipti.bnb.content.nixie.nixie_board;
 
-import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.nixie.foundation.*;
 import com.kipti.bnb.registry.BnbBlockEntities;
 import com.kipti.bnb.registry.BnbBlocks;
@@ -10,14 +9,12 @@ import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -39,6 +36,7 @@ public class NixieBoardBlock extends DoubleOrientedDisplayBlock implements IBE<G
 
     public static final BooleanProperty LEFT = BooleanProperty.create("left");
     public static final BooleanProperty RIGHT = BooleanProperty.create("right");
+    public static final BooleanProperty BOTTOM = BooleanProperty.create("bottom");
 
     final @Nullable DyeColor dyeColor;
 
@@ -59,29 +57,34 @@ public class NixieBoardBlock extends DoubleOrientedDisplayBlock implements IBE<G
             return null;
         }
         Direction left = DoubleOrientedBlockModel.getLeft(state);
+        Direction below = state.getValue(FACING).getOpposite();
 
         state = state
-            .setValue(LEFT, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, context.getLevel().getBlockState(context.getClickedPos().relative(left))))
-            .setValue(RIGHT, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, context.getLevel().getBlockState(context.getClickedPos().relative(left.getOpposite()))))
-            .setValue(LIT, false);
+                .setValue(LEFT, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, context.getLevel().getBlockState(context.getClickedPos().relative(left))))
+                .setValue(RIGHT, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, context.getLevel().getBlockState(context.getClickedPos().relative(left.getOpposite()))))
+                .setValue(BOTTOM, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, context.getLevel().getBlockState(context.getClickedPos().relative(below))))
+                .setValue(LIT, false);
         return state;
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(LEFT, RIGHT);
+        builder.add(LEFT, RIGHT, BOTTOM);
     }
 
     @Override
     protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         Direction left = DoubleOrientedBlockModel.getLeft(state);
         Direction right = left.getOpposite();
+        Direction bottom = state.getValue(FACING).getOpposite();
 
         if (direction == left) {
             return state.setValue(LEFT, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, neighborState));
         } else if (direction == right) {
             return state.setValue(RIGHT, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, neighborState));
+        } else if (direction == bottom) {
+            return state.setValue(BOTTOM, GenericNixieDisplayBlockEntity.areStatesComprableForConnection(state, neighborState));
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
@@ -95,11 +98,12 @@ public class NixieBoardBlock extends DoubleOrientedDisplayBlock implements IBE<G
                 be.applyToEachElementOfThisStructure((display) -> {
                     DyeColor newColor = dyeItem.getDyeColor();
                     BlockState newState = BnbBlocks.DYED_NIXIE_BOARD.get(newColor).getDefaultState()
-                        .setValue(FACING, display.getBlockState().getValue(FACING))
-                        .setValue(ORIENTATION, display.getBlockState().getValue(ORIENTATION))
-                        .setValue(LEFT, display.getBlockState().getValue(LEFT))
-                        .setValue(RIGHT, display.getBlockState().getValue(RIGHT))
-                        .setValue(LIT, display.getBlockState().getValue(LIT));
+                            .setValue(FACING, display.getBlockState().getValue(FACING))
+                            .setValue(ORIENTATION, display.getBlockState().getValue(ORIENTATION))
+                            .setValue(LEFT, display.getBlockState().getValue(LEFT))
+                            .setValue(RIGHT, display.getBlockState().getValue(RIGHT))
+                            .setValue(BOTTOM, display.getBlockState().getValue(BOTTOM))
+                            .setValue(LIT, display.getBlockState().getValue(LIT));
                     level.setBlockAndUpdate(display.getBlockPos(), newState);
                     GenericNixieDisplayBlockEntity newBe = (GenericNixieDisplayBlockEntity) level.getBlockEntity(display.getBlockPos());
                     newBe.inheritDataFrom(display);
@@ -112,10 +116,10 @@ public class NixieBoardBlock extends DoubleOrientedDisplayBlock implements IBE<G
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        Direction frontTarget = DoubleOrientedBlockModel.getFront(state.getValue(FACING), state.getValue(ORIENTATION));
-        boolean isFront = frontTarget.getAxis() == state.getValue(ORIENTATION).getAxis();
+        final Direction frontTarget = DoubleOrientedBlockModel.getFront(state.getValue(FACING), state.getValue(ORIENTATION));
+        final boolean isFront = frontTarget.getAxis() == state.getValue(ORIENTATION).getAxis();
         return isFront ? BnbShapes.NIXIE_BOARD_SIDE.get(state.getValue(FACING))
-            : BnbShapes.NIXIE_BOARD_FRONT.get(state.getValue(FACING));
+                : BnbShapes.NIXIE_BOARD_FRONT.get(state.getValue(FACING));
     }
 
     @Override

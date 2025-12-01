@@ -8,7 +8,7 @@ import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 
 public class NixieBoardBlockStateGen {
 
-    public static <T extends NixieBoardBlock> void nixieBoard(DataGenContext<Block, T> c, RegistrateBlockstateProvider p) {
+    public static <T extends NixieBoardBlock> void nixieBoard(final DataGenContext<Block, T> c, final RegistrateBlockstateProvider p) {
 //        p.directionalBlock(c.get(), (state) -> {
 //                boolean left = state.getValue(NixieBoardBlock.LEFT);
 //                boolean right = state.getValue(NixieBoardBlock.RIGHT);
@@ -20,17 +20,18 @@ public class NixieBoardBlockStateGen {
 //            }
 //        );
         p.getVariantBuilder(c.get())
-            .forAllStates(state -> {
-                boolean left = !state.getValue(NixieBoardBlock.LEFT);
-                boolean right = !state.getValue(NixieBoardBlock.RIGHT);
+                .forAllStates(state -> {
+                    final boolean left = !state.getValue(NixieBoardBlock.LEFT);
+                    final boolean right = !state.getValue(NixieBoardBlock.RIGHT);
+                    final boolean bottom = !state.getValue(NixieBoardBlock.BOTTOM);
 
-                String modelName = left ? (right ? "nixie_board_single" : "nixie_board_left") :
-                    (right ? "nixie_board_right" : "nixie_board_middle");
+                    final String modelName = (left ? (right ? "nixie_board_single" : "nixie_board_left") :
+                            (right ? "nixie_board_right" : "nixie_board_middle")) + (bottom ? "" : "_top");
 
-                return ConfiguredModel.builder()
-                    .modelFile(p.models().getExistingFile(CreateBitsnBobs.asResource("block/nixie_board/" + modelName)))
-                    .build();
-            });
+                    return ConfiguredModel.builder()
+                            .modelFile(p.models().getExistingFile(CreateBitsnBobs.asResource("block/nixie_board/" + modelName)))
+                            .build();
+                });
     }
 
 }
