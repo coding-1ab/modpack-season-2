@@ -16,11 +16,11 @@ public class BnbPonderScenes {
 
         helper.addStoryBoard(BuiltInRegistries.ITEM.getKey(Items.CHAIN), "chain_cog/flat", CogwheelChainScenes::flatCogwheelChain);
         helper.addStoryBoard(BuiltInRegistries.ITEM.getKey(Items.CHAIN), "chain_cog/axis_change", CogwheelChainScenes::changingAxisCogwheelChain);
-        helper.addStoryBoard(BuiltInRegistries.ITEM.getKey(Items.CHAIN), "chain_cog/pathing_behaviour", CogwheelChainScenes::cogwheelChainPathingBehaviour);
+//        helper.addStoryBoard(BuiltInRegistries.ITEM.getKey(Items.CHAIN), "chain_cog/pathing_behaviour", CogwheelChainScenes::cogwheelChainPathingBehaviour);
 
         HELPER.forComponents(AllBlocks.COGWHEEL, AllBlocks.LARGE_COGWHEEL)
                 .addStoryBoard("chain_cog/flat", CogwheelChainScenes::flatCogwheelChain)
-                .addStoryBoard("chain_cog/axis_change", CogwheelChainScenes::changingAxisCogwheelChain)
-                .addStoryBoard("chain_cog/pathing_behaviour", CogwheelChainScenes::cogwheelChainPathingBehaviour);
+                .addStoryBoard("chain_cog/axis_change", CogwheelChainScenes::changingAxisCogwheelChain);
+//                .addStoryBoard("chain_cog/pathing_behaviour", CogwheelChainScenes::cogwheelChainPathingBehaviour);
     }
 }
