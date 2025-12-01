@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "bits_n_bobs:clinker"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "id": "bits_n_bobs:clinker_shard"
+  }
+}

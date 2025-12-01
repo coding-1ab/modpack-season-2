@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/inner_stairs",
-  "textures": {
-    "bottom": "bits_n_bobs:block/palettes/stone_types/tiles/ochrum_cut_tiles",
-    "side": "bits_n_bobs:block/palettes/stone_types/tiles/ochrum_cut_tiles",
-    "top": "bits_n_bobs:block/palettes/stone_types/tiles/ochrum_cut_tiles"
-  }
-}

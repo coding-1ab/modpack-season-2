@@ -9,6 +9,9 @@ public class BnbItems {
     public static final ItemEntry<Item> CRUSHED_DEEPSLATE = CreateBitsnBobs.REGISTRATE.item("crushed_deepslate", Item::new)
             .register();
 
+    public static final ItemEntry<Item> CLINKER_SHARD = CreateBitsnBobs.REGISTRATE.item("clinker_shard", Item::new)
+            .register();
+    
     public static void register() {
     }
 
