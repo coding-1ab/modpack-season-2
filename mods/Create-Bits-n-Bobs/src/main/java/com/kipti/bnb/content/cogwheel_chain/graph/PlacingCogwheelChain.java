@@ -55,7 +55,7 @@ public class PlacingCogwheelChain {
             final Vec3i offset = visitedNodes.get(i + 1).pos().subtract(visitedNodes.get(i).pos());
             length += Vec3.atLowerCornerOf(offset).length();
         }
-        return (int) Math.max(Math.round(length / 2.5), 1);
+        return (int) Math.max(Math.round(length / 5), 1);
     }
 
     public static boolean isValidBlockTarget(final BlockState state) {
