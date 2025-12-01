@@ -226,7 +226,7 @@ public class BnbBlocks {
                     .forceSolidOn())
             .addLayer(() -> RenderType::translucent)
             .item()
-            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/lightbulb/lightbulb")))
+            .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/lightbulb/lightbulb_uncaged")))
             .build()
             .register();
 

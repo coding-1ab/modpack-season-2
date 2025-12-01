@@ -26,7 +26,7 @@ public class BnbCreativeTabs {
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("tab." + CreateBitsnBobs.MOD_ID + ".base"))
                     .withTabsBefore(AllCreativeModeTabs.PALETTES_CREATIVE_TAB.getId())
-                    .icon(BnbBlocks.LIGHTBULB::asStack)
+                    .icon(BnbItems.ICON_LIGHTBULB::asStack)
                     .displayItems((p, o) -> buildCreativeTabContents(p, o, () -> BnbCreativeTabs.BASE_CREATIVE_TAB)).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> DECO_CREATIVE_TAB = REGISTER.register("bnb_deco",
@@ -66,9 +66,16 @@ public class BnbCreativeTabs {
                 output.accept(item.get());
         }
         for (final RegistryEntry<Item, Item> item : CreateBitsnBobs.REGISTRATE.getAll(Registries.ITEM)) {
-            if (CreateRegistrate.isInCreativeTab(item, tabToGet.get()) && !(item.get() instanceof BlockItem))
+            if (!CreateRegistrate.isInCreativeTab(item, tabToGet.get()) || (item.get() instanceof BlockItem))
+                continue;
+
+            if (matchesItemFilter(item.get()))
                 output.accept(item.get());
         }
+    }
+
+    private static boolean matchesItemFilter(final Item item) {
+        return !BnbItems.ICON_LIGHTBULB.is(item);
     }
 
 }
