@@ -49,4 +49,8 @@ public enum ConfigurableDisplayOptionTransform {
         }
         stack.popPose();
     }
+
+    public boolean isMoreThanOneCharacter() {
+        return this.width > 1 || this.lines > 1;
+    }
 }
