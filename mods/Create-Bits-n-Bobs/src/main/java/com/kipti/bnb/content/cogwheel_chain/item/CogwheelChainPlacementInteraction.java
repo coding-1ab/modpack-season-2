@@ -127,7 +127,7 @@ public class CogwheelChainPlacementInteraction {
                 }
             } catch (final PlacingCogwheelChain.ChainAdditionAbortedException exception) {
                 //Send message on fail
-                player.displayClientMessage(net.minecraft.network.chat.Component.literal(exception.getMessage()).withColor(0xff0000), true);//TODO: translate
+                player.displayClientMessage(exception.getTranslatedMessage().withColor(0xFF_ff5d6c), true);
             }
         }
         return true;

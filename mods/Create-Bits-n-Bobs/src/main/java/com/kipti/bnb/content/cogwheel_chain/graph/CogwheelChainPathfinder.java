@@ -242,6 +242,19 @@ public class CogwheelChainPathfinder {
         return sideAxis.multiply(diff).dot(fromTangentOffset) == 1 && upAxis.multiply(diff).dot(toTangentOffset) == -1;
     }
 
+    /*
+     * Get a list of sides (on the last node) which have any valid path to the new node
+     * */
+    public static List<Integer> getValidPathSteps(PlacingCogwheelNode lastNode, PlacingCogwheelNode newNode) {
+        final List<Integer> validSides = new ArrayList<>();
+        for (int side = 1; side >= -1; side -= 2) {
+            if (isValidPathStep(lastNode, side, newNode, 1) || isValidPathStep(lastNode, side, newNode, -1)) {
+                validSides.add(side);
+            }
+        }
+        return validSides;
+    }
+
     public static Vec3 getPathingTangentOnCog(final PathedCogwheelNode from, final PathedCogwheelNode to, final int toSide) {
         return getPathingTangentOnCog(from.center(), from.rotationAxisVec(), to.center(), to.isLarge(), to.rotationAxisVec(), toSide);
     }

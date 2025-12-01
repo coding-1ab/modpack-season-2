@@ -3,11 +3,14 @@ package com.kipti.bnb.content.cogwheel_chain.graph;
 import com.mojang.serialization.Codec;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
+import com.simibubi.create.foundation.data.CreateRegistrate;
 import net.createmod.catnip.codecs.stream.CatnipStreamCodecBuilders;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,7 +34,7 @@ public class PlacingCogwheelChain {
             chain -> chain.visitedNodes,
             PlacingCogwheelChain::new
     );
-    public static final Integer MAX_CHAIN_BOUNDS = 32;
+    public static final Integer MAX_CHAIN_BOUNDS = 32;//TODO config
 
     List<PlacingCogwheelNode> visitedNodes;
 
@@ -62,7 +65,6 @@ public class PlacingCogwheelChain {
         return state.getBlock() instanceof final ICogWheel iCogWheel && iCogWheel.isDedicatedCogWheel();
     }
 
-    //TODO: dimemsion check, try break down this logic
     public boolean tryAddNode(final BlockPos newPos, final BlockState newBlockState) throws ChainAdditionAbortedException {
         final PlacingCogwheelNode lastNode = getLastNode();
 
@@ -73,41 +75,62 @@ public class PlacingCogwheelChain {
         //For each node, check if this is already in the list
         for (int i = 1; i < visitedNodes.size(); i++) {
             if (visitedNodes.get(i).pos().equals(newPos)) {
-                throw new ChainAdditionAbortedException("Cannot self-intersect!");
+                throw new ChainAdditionAbortedException("cannot_revisit_node");
             }
         }
-
         final Direction.Axis axis = newBlockState.getValue(CogWheelBlock.AXIS);
-        final boolean isLarge = newBlockState.getBlock() instanceof final ICogWheel iCogWheel && iCogWheel.isLargeCog(); //TODO: replace with more explicit block check
+        final boolean isLarge = newBlockState.getBlock() instanceof final ICogWheel iCogWheel && iCogWheel.isLargeCog(); //TODO: replace with more explicit block check (later me: what the f**k does that even mean?)
+
+        final PlacingCogwheelNode newNode = new PlacingCogwheelNode(newPos, axis, isLarge);
+
+        final boolean isWithinBounds = !exceedsMaxBounds(newNode);
+        if (!isWithinBounds) {
+            throw new ChainAdditionAbortedException("out_of_bounds");
+        }
 
         final int differenceOnAxis = Math.abs(newPos.get(axis) - lastNode.pos().get(axis));
-        @Nullable final PlacingCogwheelNode lastLastNode = getSize() >= 2 ? visitedNodes.get(visitedNodes.size() - 2) : null;
-        final boolean isPrecededByAxisChange = lastLastNode != null && lastLastNode.rotationAxis() != lastNode.rotationAxis();
+        final @Nullable PlacingCogwheelNode lastLastNode = getSize() >= 2 ? visitedNodes.get(visitedNodes.size() - 2) : null;
 
         final boolean isFlat = differenceOnAxis == 0;
         final boolean isSameAxis = axis == lastNode.rotationAxis();
         final double totalRadius = (isLarge ? 1 : 0.5) + (lastNode.isLarge() ? 1 : 0.5);
         final boolean isAdjacent = isFlat && newPos.distSqr(lastNode.pos()) <= totalRadius * totalRadius;
         final boolean isValidFlat = isSameAxis && isFlat && !isAdjacent;
-//        boolean isValidByConsecutiveChange = !isPrecededByAxisChange || isValidConsecutiveAxisChange(lastLastNode, lastNode, newPos, axis);
         final boolean isValidAxisChange = isValidLargeCogAxisConnection(lastNode, newPos, axis, isLarge);
-        final boolean isValid = isValidFlat || isValidAxisChange;
 
-        if (!isValid) {
+        final boolean isValidCandidate = isValidFlat || isValidAxisChange;
+
+        if (!isValidCandidate) {
             if (isAdjacent) {
-                throw new ChainAdditionAbortedException("Cogwheels must not touch!");
+                throw new ChainAdditionAbortedException("cogwheels_cannot_touch");
             }
 
             if (!isSameAxis) {
-                throw new ChainAdditionAbortedException("Not a valid axis change!");
+                throw new ChainAdditionAbortedException("not_valid_axis_change");
             }
-            //Else it wasn't accepted cause it wasnt flat
-            throw new ChainAdditionAbortedException("Connection must be flat when on the same axis!");
+            //Else it wasn't accepted because it wasn't flat
+            throw new ChainAdditionAbortedException("not_flat_connection");
         }
 
-        final PlacingCogwheelNode newNode = new PlacingCogwheelNode(
-                newPos, axis, isLarge
-        );
+        //Final validity check, look by pathfinding if this cogwheel can connect to the last one
+
+        //Check there is a side which it can connect backwards by, and that that connection can go back
+        final List<Integer> backwardsConnections = CogwheelChainPathfinder.getValidPathSteps(lastNode, newNode);
+        if (backwardsConnections.isEmpty()) {
+            throw new ChainAdditionAbortedException("no_cogwheel_connection");
+        }
+
+        if (lastLastNode != null) {
+            boolean hasPathBack = false;
+            for (final Integer side : backwardsConnections) {
+                hasPathBack = hasPathBack ||
+                        CogwheelChainPathfinder.isValidPathStep(lastLastNode, 1, newNode, side) ||
+                        CogwheelChainPathfinder.isValidPathStep(newNode, -1, lastLastNode, side);
+            }
+            if (!hasPathBack) {
+                throw new ChainAdditionAbortedException("no_path_to_cogwheel");
+            }
+        }
 
         visitedNodes.add(newNode);
         return true;
@@ -210,10 +233,21 @@ public class PlacingCogwheelChain {
     }
 
     public int maxBounds() {
+        return getMaxBoundsOfNodes(visitedNodes);
+    }
+
+    public boolean exceedsMaxBounds(final PlacingCogwheelNode candidate) {
+        final List<PlacingCogwheelNode> nodesWithCandidate = new ArrayList<>(visitedNodes);
+        nodesWithCandidate.add(candidate);
+        final int newMaxBounds = getMaxBoundsOfNodes(nodesWithCandidate);
+        return newMaxBounds > MAX_CHAIN_BOUNDS;
+    }
+
+    private int getMaxBoundsOfNodes(final List<PlacingCogwheelNode> nodes) {
         Vec3i min = new Vec3i(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
         Vec3i max = new Vec3i(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
 
-        for (final PlacingCogwheelNode node : visitedNodes) {
+        for (final PlacingCogwheelNode node : nodes) {
             final BlockPos pos = node.pos();
             min = new Vec3i(
                     Math.min(min.getX(), pos.getX()),
@@ -257,8 +291,23 @@ public class PlacingCogwheelChain {
 
     public static class ChainAdditionAbortedException extends Exception {
 
+        public static final String ABORTED_PLACEMENT_PREFIX = "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.";
+
         public ChainAdditionAbortedException(final String message) {
             super(message);
+        }
+
+        public MutableComponent getTranslatedMessage() {
+            return Component.translatable("message.bnb.cogwheel_chain.chain_addition_aborted." + getMessage());
+        }
+
+        public static void addTranslationLangs(final CreateRegistrate registrate, final String... keyValuePairs) {
+            if (keyValuePairs.length % 2 != 0) {
+                throw new IllegalArgumentException("KeyValuePairs length must be even");
+            }
+            for (int i = 0; i < keyValuePairs.length; i += 2) {
+                registrate.addRawLang(ABORTED_PLACEMENT_PREFIX + keyValuePairs[i], keyValuePairs[i + 1]);
+            }
         }
 
     }
