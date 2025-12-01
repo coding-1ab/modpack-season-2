@@ -18,7 +18,7 @@ public class BnbDecoBlocks {
 
     public static final BlockEntry<ColoredFallingBlock> CLINKER = REGISTRATE.block("clinker", (p) -> new ColoredFallingBlock(new ColorRGBA(0xd2d5d6), p))
             .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
-                    .sound(SoundType.SAND))
+                    .sound(SoundType.GRAVEL))
             .transform(b -> b.tag(BlockTags.MINEABLE_WITH_SHOVEL))
             .simpleItem()
             .register();

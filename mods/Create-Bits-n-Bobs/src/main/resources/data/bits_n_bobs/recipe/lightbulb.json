@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:redstone"
+    },
+    {
+      "item": "minecraft:glowstone_dust"
+    },
+    {
+      "tag": "minecraft:glass"
+    }
+  ],
+  "result": {
+    "count": 3,
+    "id": "bits_n_bobs:lightbulb"
+  }
+}

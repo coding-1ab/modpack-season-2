@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "Q": {
+      "item": "create:polished_rose_quartz"
+    },
+    "P": {
+      "item": "create:iron_sheet"
+    }
+  },
+  "pattern": [
+    "QQQ",
+    "QQQ",
+    " P "
+  ],
+  "result": {
+    "count": 8,
+    "id": "bits_n_bobs:nixie_Board"
+  }
+}
