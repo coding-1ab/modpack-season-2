@@ -79,17 +79,6 @@ public class EnergiserBlockEntity extends KineticBlockEntity {
         behaviours.add(computerBehaviour = CNAComputerCraftProxy.behaviour(this));
     }
 
-    // TODO: Make this platform agnostic
-    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        if (Mods.COMPUTERCRAFT.isLoaded()) {
-            event.registerBlockEntity(
-                    PeripheralCapability.get(),
-                    CNABlockEntityTypes.ENERGISER.get(),
-                    (be, context) -> be.computerBehaviour.getPeripheralCapability()
-            );
-        }
-    }
-
     @Override
     public void invalidate() {
         super.invalidate();

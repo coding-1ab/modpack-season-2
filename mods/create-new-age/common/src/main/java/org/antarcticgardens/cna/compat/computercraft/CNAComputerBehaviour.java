@@ -5,8 +5,10 @@ import com.simibubi.create.compat.computercraft.implementation.peripherals.Synce
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import net.minecraft.core.registries.BuiltInRegistries;
+import org.antarcticgardens.cna.compat.computercraft.peripherals.CarbonBrushesBlockEntityPeripheral;
 import org.antarcticgardens.cna.compat.computercraft.peripherals.EnergiserBlockEntityPeripheral;
 import org.antarcticgardens.cna.compat.computercraft.peripherals.MotorBlockEntityPeripheral;
+import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesBlockEntity;
 import org.antarcticgardens.cna.content.energising.EnergiserBlockEntity;
 import org.antarcticgardens.cna.content.motor.MotorBlockEntity;
 
@@ -26,6 +28,8 @@ public class CNAComputerBehaviour extends AbstractComputerBehaviour {
             return () -> new EnergiserBlockEntityPeripheral(energiserBlockEntity);
         if (be instanceof MotorBlockEntity motorBlockEntity)
             return () -> new MotorBlockEntityPeripheral(motorBlockEntity);
+        if (be instanceof CarbonBrushesBlockEntity carbonBrushesBlockEntity)
+            return () -> new CarbonBrushesBlockEntityPeripheral(carbonBrushesBlockEntity);
 
         throw new IllegalArgumentException(
                 "No peripheral registered for " + BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(be.getType()));

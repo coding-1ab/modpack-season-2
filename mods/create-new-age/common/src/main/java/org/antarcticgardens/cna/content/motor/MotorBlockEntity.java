@@ -102,28 +102,6 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
         behaviours.add(computerBehaviour = CNAComputerCraftProxy.behaviour(this));
     }
 
-    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        if (Mods.COMPUTERCRAFT.isLoaded()) {
-            event.registerBlockEntity(
-                    PeripheralCapability.get(),
-                    CNABlockEntityTypes.BASIC_MOTOR.get(),
-                    (be, context) -> be.computerBehaviour.getPeripheralCapability()
-            );
-
-            event.registerBlockEntity(
-                    PeripheralCapability.get(),
-                    CNABlockEntityTypes.ADVANCED_MOTOR.get(),
-                    (be, context) -> be.computerBehaviour.getPeripheralCapability()
-            );
-            
-            event.registerBlockEntity(
-                    PeripheralCapability.get(),
-                    CNABlockEntityTypes.REINFORCED_MOTOR.get(),
-                    (be, context) -> be.computerBehaviour.getPeripheralCapability()
-            );
-        }
-    }
-
     @Override
     public void invalidate() {
         super.invalidate();
