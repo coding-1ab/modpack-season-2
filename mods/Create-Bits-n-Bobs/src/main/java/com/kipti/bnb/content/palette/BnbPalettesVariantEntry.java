@@ -25,26 +25,26 @@ public class BnbPalettesVariantEntry {
     public final ImmutableList<BlockEntry<? extends Block>> registeredBlocks;
     public final ImmutableList<BlockEntry<? extends Block>> registeredPartials;
 
-    public BnbPalettesVariantEntry(String name, BnbPaletteStoneTypes paletteStoneVariants) {
-        ImmutableList.Builder<BlockEntry<? extends Block>> registeredBlocks = ImmutableList.builder();
-        ImmutableList.Builder<BlockEntry<? extends Block>> registeredPartials = ImmutableList.builder();
-        NonNullSupplier<Block> baseBlock = paletteStoneVariants.baseBlock;
+    public BnbPalettesVariantEntry(final String name, final BnbPaletteStoneTypes paletteStoneVariants) {
+        final ImmutableList.Builder<BlockEntry<? extends Block>> registeredBlocks = ImmutableList.builder();
+        final ImmutableList.Builder<BlockEntry<? extends Block>> registeredPartials = ImmutableList.builder();
+        final NonNullSupplier<Block> baseBlock = paletteStoneVariants.baseBlock;
 
-        for (BnbPaletteBlockPattern pattern : paletteStoneVariants.variantTypes) {
-            BlockBuilder<? extends Block, CreateRegistrate> builder =
+        for (final BnbPaletteBlockPattern pattern : paletteStoneVariants.variantTypes) {
+            final BlockBuilder<? extends Block, CreateRegistrate> builder =
                     paletteStoneVariants.modifyProperties.apply(REGISTRATE.block(pattern.createName(name), pattern.getBlockFactory()))
                             .transform(pickaxeOnly())
                             .blockstate(pattern.getBlockStateGenerator()
                                     .apply(pattern)
                                     .apply(name)::accept);
 
-            ItemBuilder<BlockItem, ? extends BlockBuilder<? extends Block, CreateRegistrate>> itemBuilder =
+            final ItemBuilder<BlockItem, ? extends BlockBuilder<? extends Block, CreateRegistrate>> itemBuilder =
                     builder.item();
 
-            TagKey<Block>[] blockTags = pattern.getBlockTags();
+            final TagKey<Block>[] blockTags = pattern.getBlockTags();
             if (blockTags != null)
                 builder.tag(blockTags);
-            TagKey<Item>[] itemTags = pattern.getItemTags();
+            final TagKey<Item>[] itemTags = pattern.getItemTags();
             if (itemTags != null)
                 itemBuilder.tag(itemTags);
 
@@ -61,10 +61,10 @@ public class BnbPalettesVariantEntry {
             });
 
             itemBuilder.register();
-            BlockEntry<? extends Block> block = builder.register();
+            final BlockEntry<? extends Block> block = builder.register();
             registeredBlocks.add(block);
 
-            for (BnbPaletteBlockPartial<? extends Block> partialBlock : pattern.getPartials())
+            for (final BnbPaletteBlockPartial<? extends Block> partialBlock : pattern.getPartials())
                 registeredPartials.add(partialBlock.create(name, pattern, block, paletteStoneVariants)
                         .register());
         }

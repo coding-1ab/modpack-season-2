@@ -1,8 +1,8 @@
 package com.kipti.bnb.mixin.flywheel_bearing;
 
-import com.kipti.bnb.BnbServerConfig;
 import com.kipti.bnb.content.flywheel_bearing.FlywheelBearingBlockEntity;
 import com.kipti.bnb.mixin_accessor.FlywheelAccessibleKineticNetwork;
+import com.kipti.bnb.registry.BnbConfigs;
 import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -47,7 +47,7 @@ public abstract class KineticNetworkMixin implements FlywheelAccessibleKineticNe
 
     @Unique
     private boolean bits_n_bobs$flywheelCapacitiesAllowedInServer() {
-        return BnbServerConfig.enableFlywheelStorage;
+        return BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get();
     }
 
     @Unique

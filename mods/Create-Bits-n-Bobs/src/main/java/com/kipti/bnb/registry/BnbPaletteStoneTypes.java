@@ -75,11 +75,10 @@ public enum BnbPaletteStoneTypes {
         return variants;
     }
 
-    public static void register(CreateRegistrate registrate) {
-        for (BnbPaletteStoneTypes paletteStoneVariants : values()) {
-            NonNullSupplier<Block> baseBlock = paletteStoneVariants.factory.apply(registrate);
-            paletteStoneVariants.baseBlock = baseBlock;
-            String id = Lang.asId(paletteStoneVariants.name());
+    public static void register(final CreateRegistrate registrate) {
+        for (final BnbPaletteStoneTypes paletteStoneVariants : values()) {
+            paletteStoneVariants.baseBlock = paletteStoneVariants.factory.apply(registrate);
+            final String id = Lang.asId(paletteStoneVariants.name());
             paletteStoneVariants.materialTag =
                     AllTags.optionalTag(BuiltInRegistries.ITEM, Create.asResource("stone_types/" + id));
             paletteStoneVariants.variants = new BnbPalettesVariantEntry(id, paletteStoneVariants);

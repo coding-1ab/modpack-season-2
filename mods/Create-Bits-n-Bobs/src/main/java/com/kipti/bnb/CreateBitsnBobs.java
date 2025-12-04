@@ -13,8 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.slf4j.Logger;
 
@@ -37,6 +37,8 @@ public class CreateBitsnBobs {
 
     public CreateBitsnBobs(final IEventBus modEventBus, final ModContainer modContainer) {
         modEventBus.addListener(CreateBitsnBobsData::gatherData);
+        ModLoadingContext modLoadingContext = ModLoadingContext.get();
+
         REGISTRATE.registerEventListeners(modEventBus);
 
         REGISTRATE.setCreativeTab(BnbCreativeTabs.BASE_CREATIVE_TAB);
@@ -57,9 +59,11 @@ public class CreateBitsnBobs {
 
         BnbLangEntries.register();
 
+        BnbDataConditions.register(modEventBus);
+
         modEventBus.addListener(CreateBitsnBobs::commonSetup);
 
-        modContainer.registerConfig(ModConfig.Type.SERVER, BnbServerConfig.SPEC);
+        BnbConfigs.register(modLoadingContext, modContainer);
     }
 
     private static void commonSetup(final FMLCommonSetupEvent event) {

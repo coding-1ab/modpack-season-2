@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.flywheel_bearing.mechanics;
 
-import com.kipti.bnb.BnbServerConfig;
 import com.kipti.bnb.content.flywheel_bearing.FlywheelBearingBlockEntity;
+import com.kipti.bnb.registry.BnbConfigs;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -50,7 +50,7 @@ public class FlywheelMovementMechanics {
         if (compound.contains("AngularVelocity"))
             angularVelocity = compound.getFloat("AngularVelocity");
 
-        if (BnbServerConfig.enableFlywheelStorage) {
+        if (BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()) {
             if (angularVelocity < 0)
                 angularVelocity = 0; //Flywheel storage only works with positive angular velocity
         }

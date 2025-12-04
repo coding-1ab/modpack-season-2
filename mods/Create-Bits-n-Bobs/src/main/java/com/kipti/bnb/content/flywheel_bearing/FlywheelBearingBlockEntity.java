@@ -1,9 +1,9 @@
 package com.kipti.bnb.content.flywheel_bearing;
 
-import com.kipti.bnb.BnbServerConfig;
 import com.kipti.bnb.content.flywheel_bearing.contraption.InertControlledContraptionEntity;
 import com.kipti.bnb.content.flywheel_bearing.mechanics.FlywheelMovementMechanics;
 import com.kipti.bnb.mixin_accessor.FlywheelAccessibleKineticNetwork;
+import com.kipti.bnb.registry.BnbConfigs;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.contraptions.*;
 import com.simibubi.create.content.contraptions.bearing.BearingBlock;
@@ -44,7 +44,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
 
     protected FlywheelMovementMechanics flywheelMovement = new FlywheelMovementMechanics();
 
-    public FlywheelBearingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public FlywheelBearingBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
     }
 
@@ -53,19 +53,19 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
 
         super.addToGoggleTooltip(tooltip, isPlayerSneaking);
         tooltip.add(0, Component.literal(""));
-        FlywheelAccessibleKineticNetwork net = getOrCreateFlywheelNetwork();
+        final FlywheelAccessibleKineticNetwork net = getOrCreateFlywheelNetwork();
         tooltip.add(1, Component.literal("Network flywheel absorb capacity " + (level.isClientSide ? clientFlywheelAbsorptionCapacityInNetwork + " (client)" : (net == null ? "null" : net.bits_n_bobs$getFlywheelStressAbsoptionCapacity()))));
         tooltip.add(2, Component.literal("Network flywheel release capacity " + (level.isClientSide ? clientFlywheelReleaseCapacityInNetwork + " (client)" : (net == null ? "null" : net.bits_n_bobs$getFlywheelStressAbsoptionCapacity()))));
         tooltip.add(3, Component.literal("This flywheel capacity " + getFlywheelStressAbsorptionCapacity()));
         tooltip.add(4, Component.literal("Stored in this flywheel (sut) " + flywheelMovement.getStoredStressTicks()));
         tooltip.add(5, Component.literal("Angular velocity " + (flywheelMovement.angularVelocity * 20) + " dps" + ((20 * 60 * flywheelMovement.angularVelocity) / 360) + " rpm"));
-        tooltip.add(6, Component.literal("StorageEnabled: " + BnbServerConfig.enableFlywheelStorage));
+        tooltip.add(6, Component.literal("StorageEnabled: " + BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()));
 
         return true;
     }
 
     @Override
-    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+    public void addBehaviours(final List<BlockEntityBehaviour> behaviours) {
 
     }
 
@@ -77,7 +77,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     }
 
     @Override
-    public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+    public void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
         compound.putBoolean("Running", running);
 
         compound.putFloat("NetworkFlywheelAbsorptionCapacity", hasNetwork() ? getOrCreateFlywheelNetwork().bits_n_bobs$getFlywheelStressAbsoptionCapacity() : 0);
@@ -91,7 +91,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     }
 
     @Override
-    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+    protected void read(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
         if (wasMoved) {
             super.read(compound, registries, clientPacket);
             return;
@@ -102,7 +102,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
             clientFlywheelReleaseCapacityInNetwork = compound.getFloat("NetworkFlywheelReleaseCapacity");
         }
 
-        float angleBefore = flywheelMovement.angle;
+        final float angleBefore = flywheelMovement.angle;
         running = compound.getBoolean("Running");
         lastGeneratorDirection = compound.getInt("LastGeneratorDirection");
         flywheelMovement.readAdditional(compound);
@@ -124,7 +124,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     }
 
     @Override
-    public void onSpeedChanged(float prevSpeed) {
+    public void onSpeedChanged(final float prevSpeed) {
         super.onSpeedChanged(prevSpeed);
         checkAssemblyNextTick = true;
 
@@ -154,14 +154,14 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
                 .getBlock() instanceof FlywheelBearingBlock))
             return;
 
-        Direction direction = getBlockState().getValue(FlywheelBearingBlock.FACING);
-        BearingContraption contraption = new BearingContraption(false, direction);
+        final Direction direction = getBlockState().getValue(FlywheelBearingBlock.FACING);
+        final BearingContraption contraption = new BearingContraption(false, direction);
         try {
             if (!contraption.assemble(level, worldPosition))
                 return;
 
             lastException = null;
-        } catch (AssemblyException e) {
+        } catch (final AssemblyException e) {
             lastException = e;
             sendData();
             return;
@@ -169,7 +169,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
 
         contraption.removeBlocksFromWorld(level, BlockPos.ZERO);
         movedContraption = InertControlledContraptionEntity.create(level, this, contraption);
-        BlockPos anchor = worldPosition.relative(direction);
+        final BlockPos anchor = worldPosition.relative(direction);
         movedContraption.setPos(anchor.getX(), anchor.getY(), anchor.getZ());
         movedContraption.setRotationAxis(direction.getAxis());
         level.addFreshEntity(movedContraption);
@@ -205,7 +205,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     }
 
     @Override
-    public List<BlockPos> addPropagationLocations(IRotate block, BlockState state, List<BlockPos> neighbours) {
+    public List<BlockPos> addPropagationLocations(final IRotate block, final BlockState state, final List<BlockPos> neighbours) {
         if (!ICogWheel.isLargeCog(state))
             return super.addPropagationLocations(block, state, neighbours);
 
@@ -244,7 +244,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
         if (!running)
             return;
 
-        if (BnbServerConfig.enableFlywheelStorage) {
+        if (BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()) {
             flywheelMovement.tickForStorageBehaviour(this);
         } else {
             flywheelMovement.tick(this);
@@ -263,25 +263,25 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
         if (movedContraption == null)
             return;
         movedContraption.setAngle(flywheelMovement.angle);
-        BlockState blockState = getBlockState();
+        final BlockState blockState = getBlockState();
         if (blockState.hasProperty(BlockStateProperties.FACING))
             movedContraption.setRotationAxis(blockState.getValue(BlockStateProperties.FACING)
                     .getAxis());
     }
 
     @Override
-    public boolean addToTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+    public boolean addToTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
         if (super.addToTooltip(tooltip, isPlayerSneaking))
             return true;
         if (isPlayerSneaking)
             return false;
         if (running)
             return false;
-        BlockState state = getBlockState();
+        final BlockState state = getBlockState();
         if (!(state.getBlock() instanceof BearingBlock))
             return false;
 
-        BlockState attachedState = level.getBlockState(worldPosition.relative(state.getValue(BearingBlock.FACING)));
+        final BlockState attachedState = level.getBlockState(worldPosition.relative(state.getValue(BearingBlock.FACING)));
         if (attachedState.canBeReplaced())
             return false;
         TooltipHelper.addHint(tooltip, "hint.empty_bearing");
@@ -289,23 +289,23 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     }
 
     @Override
-    public boolean isAttachedTo(AbstractContraptionEntity contraption) {
+    public boolean isAttachedTo(final AbstractContraptionEntity contraption) {
         return movedContraption == contraption;
     }
 
     @Override
-    public void attach(ControlledContraptionEntity contraption) {
-        BlockState blockState = getBlockState();
+    public void attach(final ControlledContraptionEntity contraption) {
+        final BlockState blockState = getBlockState();
         if (!(contraption.getContraption() instanceof BearingContraption))
             return;
-        if (!(contraption instanceof InertControlledContraptionEntity inertControlledContraptionEntity))
+        if (!(contraption instanceof final InertControlledContraptionEntity inertControlledContraptionEntity))
             return;
         if (!blockState.hasProperty(BearingBlock.FACING))
             return;
 
         this.movedContraption = inertControlledContraptionEntity;
         setChanged();
-        BlockPos anchor = worldPosition.relative(blockState.getValue(BearingBlock.FACING));
+        final BlockPos anchor = worldPosition.relative(blockState.getValue(BearingBlock.FACING));
         movedContraption.setPos(anchor.getX(), anchor.getY(), anchor.getZ());
         this.running = true;
         if (!level.isClientSide) {
@@ -336,7 +336,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     }
 
     public float getFlywheelStressDelta() {
-        if (!hasNetwork() || !BnbServerConfig.enableFlywheelStorage) {
+        if (!hasNetwork() || !BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()) {
             return 0;
         }
 
@@ -374,14 +374,14 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     }
 
     public void updateFlywheelStressesInNetwork() {
-        if (!BnbServerConfig.enableFlywheelStorage || !hasNetwork())
+        if (!BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get() || !hasNetwork())
             return;
         getOrCreateFlywheelNetwork().bits_n_bobs$updateFlywheelStresses();
     }
 
     @Override
     public float getGeneratedSpeed() {
-        if (!BnbServerConfig.enableFlywheelStorage) return 0;
+        if (!BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()) return 0;
 
         final float currentSpeed = getTheoreticalSpeed();
 
@@ -398,11 +398,11 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
 
     @Override
     public float calculateAddedStressCapacity() {
-        if (!BnbServerConfig.enableFlywheelStorage) return 0;
+        if (!BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()) return 0;
 
         final float capacity = getFlywheelStressReleaseCapacity();
         this.lastCapacityProvided = capacity;
-        float currentSpeed = getGeneratedSpeed();
+        final float currentSpeed = getGeneratedSpeed();
         return currentSpeed == 0 ? capacity : capacity / Math.abs(currentSpeed);
     }
 
