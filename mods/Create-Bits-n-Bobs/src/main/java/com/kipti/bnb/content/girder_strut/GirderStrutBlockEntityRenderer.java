@@ -35,7 +35,7 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
 
         StrutModelType modelType;
         if (blockEntity.getBlockState().getBlock() instanceof GirderStrutBlock girderStrutBlock) {
-            modelType = girderStrutBlock.modelType;
+            modelType = girderStrutBlock.getModelType();
         } else {
             return;
         }

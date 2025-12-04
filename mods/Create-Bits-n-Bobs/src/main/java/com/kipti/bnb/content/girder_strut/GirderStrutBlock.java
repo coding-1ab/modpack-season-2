@@ -9,28 +9,34 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntity> {
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
+
+public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntity>, SimpleWaterloggedBlock {
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
     public static final int MAX_SPAN = 8;
 
-    StrutModelType modelType;
+    private StrutModelType modelType;
 
-    public GirderStrutBlock(Properties properties, StrutModelType modelType) {
+    public GirderStrutBlock(final Properties properties, final StrutModelType modelType) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP));
+        registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP).setValue(WATERLOGGED, false));
         this.modelType = modelType;
     }
 
@@ -43,46 +49,55 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+    public BlockState updateShape(final BlockState state, final Direction direction, final BlockState neighbourState, final LevelAccessor world,
+                                  final BlockPos pos, final BlockPos neighbourPos) {
+        if (state.getValue(WATERLOGGED))
+            world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+        return state;
+    }
+
+    @Override
+    public FluidState getFluidState(final BlockState state) {
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
+    }
+
+    @Override
+    protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING, WATERLOGGED);
     }
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState().setValue(FACING, context.getClickedFace());
+    public BlockState getStateForPlacement(final BlockPlaceContext context) {
+        final Level level = context.getLevel();
+        final BlockPos pos = context.getClickedPos();
+        final FluidState ifluidstate = level.getFluidState(pos);
+        final BlockState state = super.getStateForPlacement(context);
+        if (state == null)
+            return null;
+        return state.setValue(FACING, context.getClickedFace()).setValue(WATERLOGGED, Boolean.valueOf(ifluidstate.getType() == Fluids.WATER));
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext context) {
         return BnbShapes.GIRDER_STRUT.get(state.getValue(FACING));
     }
 
     @Override
-    public PushReaction getPistonPushReaction(BlockState state) {
+    public PushReaction getPistonPushReaction(final BlockState state) {
         return PushReaction.NORMAL;
     }
 
     @Override
-    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
-        super.onPlace(state, level, pos, oldState, isMoving);
-        if (level.isClientSide) return;
-        BlockEntity selfBe = level.getBlockEntity(pos);
-        if (!(selfBe instanceof GirderStrutBlockEntity self)) return;
-        //TODO idk what this is for so remove it later
-
-    }
-
-    @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(final BlockState state, final Level level, final BlockPos pos, final BlockState newState, final boolean isMoving) {
         if (!state.is(newState.getBlock())) {
             if (!level.isClientSide) {
-                BlockEntity be = level.getBlockEntity(pos);
-                if (be instanceof GirderStrutBlockEntity self) {
+                final BlockEntity be = level.getBlockEntity(pos);
+                if (be instanceof final GirderStrutBlockEntity self) {
                     for (BlockPos otherPos : self.getConnectionsCopy()) {
                         otherPos = otherPos.offset(pos);
-                        BlockEntity otherBe = level.getBlockEntity(otherPos);
-                        if (otherBe instanceof GirderStrutBlockEntity other) {
+                        final BlockEntity otherBe = level.getBlockEntity(otherPos);
+                        if (otherBe instanceof final GirderStrutBlockEntity other) {
                             other.removeConnection(pos);
                             if (other.connectionCount() == 0) {
                                 level.destroyBlock(otherPos, true);
@@ -105,4 +120,11 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
         return BnbBlockEntities.GIRDER_STRUT.get();
     }
 
+    public StrutModelType getModelType() {
+        return modelType;
+    }
+
+    public void setModelType(final StrutModelType modelType) {
+        this.modelType = modelType;
+    }
 }
