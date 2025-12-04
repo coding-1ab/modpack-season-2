@@ -1,4 +1,4 @@
-// 1.21.1	2025-12-04T19:23:19.1974032	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2025-12-04T20:21:25.2496199	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 55ef065722d329b3c054797cd63a36d59f1634a8 assets/bits_n_bobs/blockstates/andesite_tiles.json
 8810b9385c4f0297369a2d35ef8435b216bae4bb assets/bits_n_bobs/blockstates/andesite_tile_slab.json
 34dc52222f8843bc859869e1572ba2e8b0721252 assets/bits_n_bobs/blockstates/andesite_tile_stairs.json
@@ -44,7 +44,7 @@ ef59cf755e5af37758df3761c75f22476245aa52 assets/bits_n_bobs/blockstates/diorite_
 c6529102b8c3c4c0c84c612d7e8cd1add7f5e5ff assets/bits_n_bobs/blockstates/dripstone_tile_stairs.json
 4cea5e6e1cdace4ee944c7b0f773e98421298e49 assets/bits_n_bobs/blockstates/dripstone_tile_wall.json
 945aa14fe01a9661ed3f80860150d73284bf6fc9 assets/bits_n_bobs/blockstates/flywheel_bearing.json
-48500ea148ccc1668ec3ca7800576a2be9de10e6 assets/bits_n_bobs/blockstates/girder_strut.json
+6a0ac2241185490eaf2da8778ea49cf4325ca760 assets/bits_n_bobs/blockstates/girder_strut.json
 416f0c064c0fb3b051125278c317f919bf597bc5 assets/bits_n_bobs/blockstates/granite_tiles.json
 cf7282424d3ae45c34efcbc0447be669486ef1a5 assets/bits_n_bobs/blockstates/granite_tile_slab.json
 5a70b61933c8f9638c6163e92719ee63829fe449 assets/bits_n_bobs/blockstates/granite_tile_stairs.json
@@ -109,7 +109,7 @@ b0f7060e6d2970ce4b98ab0755eed3ef3f4ece95 assets/bits_n_bobs/blockstates/veridium
 a34ad7e7327d467d226f28acfc0d84129e0ad54f assets/bits_n_bobs/blockstates/veridium_tile_slab.json
 089a486ba8f7b989524b76c20b37b6c21010c549 assets/bits_n_bobs/blockstates/veridium_tile_stairs.json
 4c17b1398c1f6ebed5d04ae858c1227afde2f7be assets/bits_n_bobs/blockstates/veridium_tile_wall.json
-6a2f53674096701f109243f934bd8a65277e3cab assets/bits_n_bobs/blockstates/weathered_girder_strut.json
+fc576b4d7f9cd924c8c9970c1a4c6163255cb41f assets/bits_n_bobs/blockstates/weathered_girder_strut.json
 959bf2c7da267e39c791f1677fd7590048e6a3fc assets/bits_n_bobs/blockstates/weathered_metal_girder.json
 db93f0b6304e85777db8e210ec27877930cd94a5 assets/bits_n_bobs/blockstates/weathered_metal_girder_encased_shaft.json
 2d6578c15b45f9e484932fa77e20313a585fe06d assets/bits_n_bobs/blockstates/white_chair.json
@@ -118,8 +118,8 @@ c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/white_la
 c0904de2fdf77d073743019155feab1e81d988f9 assets/bits_n_bobs/blockstates/yellow_chair.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/yellow_large_nixie_tube.json
 82d3ce33787f2bc56e8eb5625701787db3fcb97d assets/bits_n_bobs/blockstates/yellow_nixie_board.json
-e718d48886812b6983db56ec5f8815bd88b00b69 assets/bits_n_bobs/lang/en_ud.json
-89989b5d7472daee82fe4a162889807386870848 assets/bits_n_bobs/lang/en_us.json
+27d7f693b7dd1a2c9b37aecd90bbf3240ccffee7 assets/bits_n_bobs/lang/en_ud.json
+7da2284b56b07400464b5a6470f4fd9e4557c2e3 assets/bits_n_bobs/lang/en_us.json
 dd3ce69870709f327e97fc59a8b18e1c5d5b95f8 assets/bits_n_bobs/models/block/andesite_tiles.json
 a99f4d460e7cf7d1d2b275317d29f3ea5262e484 assets/bits_n_bobs/models/block/andesite_tiles_wall_post.json
 ac0fde7943f06d74d97bf2fcbdb6d6d114fa4f1f assets/bits_n_bobs/models/block/andesite_tiles_wall_side.json

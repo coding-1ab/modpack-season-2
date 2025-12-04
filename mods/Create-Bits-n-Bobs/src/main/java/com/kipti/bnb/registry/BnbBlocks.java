@@ -351,7 +351,7 @@ public class BnbBlocks {
                             .unlockedBy("has_seat", RegistrateRecipeProvider.has(BnbTags.BnbItemTags.CHAIRS.tag))
                             .save(p.withConditions(new BnbFeatureEnabledCondition("chair")), CreateBitsnBobs.asResource("crafting/" + c.getName() + "_from_other_chair"));
                 })
-                .onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.create.seat"))
+                .onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.bits_n_bobs.chair"))
                 .tag(BnbTags.BnbBlockTags.CHAIRS.tag)
                 .item()
                 .model((c, p) ->

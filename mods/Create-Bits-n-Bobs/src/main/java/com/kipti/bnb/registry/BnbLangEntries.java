@@ -29,6 +29,11 @@ public class BnbLangEntries {
 
                 "block.bits_n_bobs.girder_strut.tooltip.summary", "A type of girder used to span a distance _between two anchor points_.",
                 "block.bits_n_bobs.weathered_girder_strut.tooltip.summary", "A type of girder used to span a distance _between two anchor points_.",
+
+
+                "block.bits_n_bobs.chair.tooltip.summary", "Sit yourself down and enjoy the ride! Will anchor a player onto a moving _contraption_. Even _fancier than a seat_ for static furniture too! Comes in a variety of colours.",
+                "block.bits_n_bobs.chair.tooltip.condition1", "Right click on Chair",
+                "block.bits_n_bobs.chair.tooltip.behaviour1", "Sits the player on the _Chair_. Press L-shift to leave the _Chair_.",
         };
 
         for (int i = 0; i < entries.length; i += 2) {
