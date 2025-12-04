@@ -49,7 +49,7 @@ public class FlywheelMovementMechanics {
     /**
      * Reads the fields directly from the tag, be sure not to conflict
      */
-    public void readAdditional(final CompoundTag compound, boolean clientPacket) {
+    public void readAdditional(final CompoundTag compound) {
 //        if (compound.contains("MaxAngularVelocity"))
 //            maxAngularVelocity = compound.getFloat("MaxAngularVelocity");
         if (compound.contains("AngularVelocity"))
@@ -69,7 +69,8 @@ public class FlywheelMovementMechanics {
 
     public void tickForStorageBehaviour(final FlywheelBearingBlockEntity be) {
         final Level level = be.getLevel();
-        prevClientAngle = level != null && level.isClientSide && clientAngle != null ? clientAngle : angle;
+        final float displayAngle = level != null && level.isClientSide && clientAngle != null ? clientAngle : angle;
+        prevClientAngle = displayAngle;
 
         final boolean canReceiveStressBefore = canReceiveStress();
         final boolean canProvideStressBefore = canProvideStress();
@@ -90,7 +91,7 @@ public class FlywheelMovementMechanics {
 
         angle += angularVelocity;
 
-        clientAngle = Mth.lerp(0.9f, clientAngle, angle);
+        clientAngle = Mth.lerp(0.9f, displayAngle, angle);
 
         final boolean canNowProvideStress = canProvideStress();
         if (canProvideStressBefore != canNowProvideStress) {
@@ -122,12 +123,13 @@ public class FlywheelMovementMechanics {
 
     public void tick(final FlywheelBearingBlockEntity be) {
         final Level level = be.getLevel();
-        prevClientAngle = level != null && level.isClientSide && clientAngle != null ? clientAngle : angle;
+        final float displayAngle = level != null && level.isClientSide && clientAngle != null ? clientAngle : angle;
+        prevClientAngle = displayAngle;
         final float targetAngularVelocity = be.getSpeed() * 360 / (20f * 60f);
         final float reactivity = Math.clamp(1f / angularMass, 0.005f, 1f);
         angularVelocity = targetAngularVelocity * reactivity + angularVelocity * (1 - reactivity);
         angle += angularVelocity;
-        clientAngle = Mth.lerp(0.99f, clientAngle, angle);
+        clientAngle = Mth.lerp(0.99f, displayAngle, angle);
     }
 
     public boolean canReceiveStress() {

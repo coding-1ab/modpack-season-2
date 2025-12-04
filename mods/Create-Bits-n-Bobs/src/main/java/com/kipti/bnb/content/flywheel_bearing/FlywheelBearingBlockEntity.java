@@ -106,13 +106,15 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
         final float angleBefore = flywheelMovement.angle;
         running = compound.getBoolean("Running");
         lastGeneratorDirection = compound.getInt("LastGeneratorDirection");
-        flywheelMovement.readAdditional(compound, clientPacket);
+        flywheelMovement.readAdditional(compound);
         lastException = AssemblyException.read(compound, registries);
         super.read(compound, registries, clientPacket);
         if (!clientPacket)
             return;
-        if (!running)
+        if (!running) {
+            flywheelMovement.clientAngle = null;
             movedContraption = null;
+        }
     }
 
     public float getInterpolatedAngle(float partialTicks) {
