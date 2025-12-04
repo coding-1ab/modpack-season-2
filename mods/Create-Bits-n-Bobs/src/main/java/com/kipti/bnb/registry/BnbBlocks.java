@@ -112,7 +112,7 @@ public class BnbBlocks {
     public static final BlockEntry<FlywheelBearingBlock> FLYWHEEL_BEARING =
             REGISTRATE.block("flywheel_bearing", FlywheelBearingBlock::new)
                     .transform(axeOrPickaxe())
-                    .properties(p -> p.mapColor(MapColor.GOLD))
+                    .properties(p -> p.mapColor(MapColor.GOLD).noOcclusion())
                     .onRegister(BlockStressValues.setGeneratorSpeed(16, true))
                     .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
                     .blockstate((c, p) -> p.directionalBlock(c.get(),

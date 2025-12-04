@@ -14,8 +14,8 @@ public class BnbServerConfig extends ConfigBase {
 
     public final ConfigBool FLYWHEEL_STORAGE_CAPACITY = b(
             false,
-            "flywheelStorageCapacity",
-            "Determines whether the flywheel storage functionality should be enabled, or if the flywheel should be purely decorative."
+            "flywheelBearingStorageCapability",
+            "Determines whether the flywheel bearing should be able to store and release kinetic stress based on it's angular mass, or if it remains purely decorative."
     );
 
     public final Map<BnbFeatureFlag, ConfigBool> FEATURE_FLAGS = createFeatureFlagConfigs();

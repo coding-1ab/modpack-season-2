@@ -2,9 +2,13 @@ package com.kipti.bnb.content.flywheel_bearing.mechanics;
 
 import com.kipti.bnb.content.flywheel_bearing.FlywheelBearingBlockEntity;
 import com.kipti.bnb.registry.BnbConfigs;
+import com.kipti.bnb.registry.BnbTags;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.Vec3;
@@ -26,8 +30,9 @@ public class FlywheelMovementMechanics {
 
     public float maxAngularVelocity = (360f * 64) / (60 * 20);
     public float angularVelocity = 0;
-    public float prevAngle = 0;
+    public float prevClientAngle = 0;
     public float angle = 0;
+    public Float clientAngle = null;
     public float angularMass = 1f;
 
     /**
@@ -36,7 +41,7 @@ public class FlywheelMovementMechanics {
     public void writeAdditional(final CompoundTag compound) {
 //        compound.putFloat("MaxAngularVelocity", maxAngularVelocity);
         compound.putFloat("AngularVelocity", angularVelocity);
-        compound.putFloat("PrevAngle", prevAngle);
+        compound.putFloat("PrevAngle", prevClientAngle);
         compound.putFloat("Angle", angle);
         compound.putFloat("AngularMass", angularMass);
     }
@@ -44,7 +49,7 @@ public class FlywheelMovementMechanics {
     /**
      * Reads the fields directly from the tag, be sure not to conflict
      */
-    public void readAdditional(final CompoundTag compound) {
+    public void readAdditional(final CompoundTag compound, boolean clientPacket) {
 //        if (compound.contains("MaxAngularVelocity"))
 //            maxAngularVelocity = compound.getFloat("MaxAngularVelocity");
         if (compound.contains("AngularVelocity"))
@@ -55,16 +60,16 @@ public class FlywheelMovementMechanics {
                 angularVelocity = 0; //Flywheel storage only works with positive angular velocity
         }
 
-        if (compound.contains("PrevAngle"))
-            prevAngle = compound.getFloat("PrevAngle");
-        if (compound.contains("Angle"))
-            angle = compound.getFloat("Angle");
-        if (compound.contains("AngularMass"))
-            angularMass = compound.getFloat("AngularMass");
+        prevClientAngle = compound.getFloat("PrevAngle");
+        angle = compound.getFloat("Angle");
+        if (clientAngle == null)
+            clientAngle = angle;
+        angularMass = compound.getFloat("AngularMass");
     }
 
     public void tickForStorageBehaviour(final FlywheelBearingBlockEntity be) {
-        prevAngle = angle;
+        final Level level = be.getLevel();
+        prevClientAngle = level != null && level.isClientSide && clientAngle != null ? clientAngle : angle;
 
         final boolean canReceiveStressBefore = canReceiveStress();
         final boolean canProvideStressBefore = canProvideStress();
@@ -85,6 +90,8 @@ public class FlywheelMovementMechanics {
 
         angle += angularVelocity;
 
+        clientAngle = Mth.lerp(0.9f, clientAngle, angle);
+
         final boolean canNowProvideStress = canProvideStress();
         if (canProvideStressBefore != canNowProvideStress) {
             be.updateGeneratedRotation();
@@ -100,7 +107,7 @@ public class FlywheelMovementMechanics {
         }
     }
 
-    public void assemble(final FlywheelBearingBlockEntity be, BearingContraption contraption) {
+    public void assemble(final FlywheelBearingBlockEntity be, final BearingContraption contraption) {
         angularMass = 0f;
         final Vec3 axis = Vec3.atLowerCornerOf(contraption.getFacing().getNormal());
         final Vec3 anchor = Vec3.atCenterOf(BlockPos.ZERO);
@@ -113,16 +120,14 @@ public class FlywheelMovementMechanics {
         be.updateFlywheelStressesInNetwork();
     }
 
-    public void tick(FlywheelBearingBlockEntity flywheelBearingBlockEntity) {
-        prevAngle = angle;
-        final float targetAngularVelocity = flywheelBearingBlockEntity.getSpeed() * 360 / (20f * 60f);
+    public void tick(final FlywheelBearingBlockEntity be) {
+        final Level level = be.getLevel();
+        prevClientAngle = level != null && level.isClientSide && clientAngle != null ? clientAngle : angle;
+        final float targetAngularVelocity = be.getSpeed() * 360 / (20f * 60f);
         final float reactivity = Math.clamp(1f / angularMass, 0.005f, 1f);
         angularVelocity = targetAngularVelocity * reactivity + angularVelocity * (1 - reactivity);
         angle += angularVelocity;
-    }
-
-    private float getMassOfBlock(BlockState state) {
-        return 1f;
+        clientAngle = Mth.lerp(0.99f, clientAngle, angle);
     }
 
     public boolean canReceiveStress() {
@@ -150,4 +155,21 @@ public class FlywheelMovementMechanics {
         return maxAngularVelocity;
     }
 
+    private float getMassOfBlock(final BlockState state) {
+        final Block block = state.getBlock();
+        if (BnbTags.BnbBlockTags.SUPER_HEAVY.matches(block))
+            return 4f;
+        else if (BnbTags.BnbBlockTags.HEAVY.matches(block))
+            return 2f;
+        else if (BnbTags.BnbBlockTags.LIGHT.matches(block))
+            return 0.5f;
+        return 1f;
+    }
+
+    public void zero() {
+        angularVelocity = 0;
+        angle = 0;
+        clientAngle = 0f;
+        prevClientAngle = 0;
+    }
 }

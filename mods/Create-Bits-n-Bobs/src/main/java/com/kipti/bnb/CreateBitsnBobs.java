@@ -58,6 +58,7 @@ public class CreateBitsnBobs {
         BnbCreateStresses.register();
 
         BnbLangEntries.register();
+        BnbTags.registerDataGenerators();
 
         BnbDataConditions.register(modEventBus);
 

@@ -31,7 +31,9 @@ public class BnbPartialModels {
             CHAIN_PULLEY_MAGNET_CHAIN = block("chain_pulley/chain_pulley_magnet_chain"),
             CHAIN_PULLEY_MAGNET_CHAIN_HALF = block("chain_pulley/chain_pulley_magnet_chain_half"),
 
-    ROPE_PULLEY_JEI = createBlock("rope_pulley/item");
+    ROPE_PULLEY_JEI = createBlock("rope_pulley/item"),
+
+    FLYWHEEL_BEARING_TOP = block("flywheel_bearing/head");
 
 
     public static final Map<Direction, PartialModel> WEATHERED_METAL_GIRDER_BRACKETS = new EnumMap<>(Direction.class);

@@ -46,6 +46,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
 
     public FlywheelBearingBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
+        lazyTickRate = 5;
     }
 
     @Override
@@ -105,7 +106,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
         final float angleBefore = flywheelMovement.angle;
         running = compound.getBoolean("Running");
         lastGeneratorDirection = compound.getInt("LastGeneratorDirection");
-        flywheelMovement.readAdditional(compound);
+        flywheelMovement.readAdditional(compound, clientPacket);
         lastException = AssemblyException.read(compound, registries);
         super.read(compound, registries, clientPacket);
         if (!clientPacket)
@@ -116,11 +117,10 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
 
     public float getInterpolatedAngle(float partialTicks) {
         if (isVirtual())
-            return Mth.lerp(partialTicks + .5f, flywheelMovement.prevAngle, flywheelMovement.angle);
+            return Mth.lerp(partialTicks + .5f, flywheelMovement.prevClientAngle, flywheelMovement.clientAngle == null ? flywheelMovement.angle : flywheelMovement.clientAngle);
         if (movedContraption == null || movedContraption.isStalled() || !running)
             partialTicks = 0;
-        final float angularSpeed = getAngularSpeed();
-        return Mth.lerp(partialTicks, flywheelMovement.angle, flywheelMovement.angle + angularSpeed);
+        return Mth.lerp(partialTicks, flywheelMovement.prevClientAngle, flywheelMovement.clientAngle == null ? flywheelMovement.angle : flywheelMovement.clientAngle);
     }
 
     @Override
@@ -179,7 +179,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
         AllSoundEvents.CONTRAPTION_ASSEMBLE.playOnServer(level, worldPosition);
 
         running = true;
-        flywheelMovement.angle = 0;
+        flywheelMovement.zero();
         sendData();
         updateGeneratedRotation();
         updateFlywheelStressesInNetwork();
@@ -188,8 +188,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     public void disassemble() {
         if (!running && movedContraption == null)
             return;
-        flywheelMovement.angle = 0;
-        flywheelMovement.angularVelocity = 0;
+        flywheelMovement.zero();
         if (movedContraption != null) {
             movedContraption.setAngle(0);
             movedContraption.disassemble();
@@ -241,8 +240,9 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
             }
         }
 
-        if (!running)
+        if (!running) {
             return;
+        }
 
         if (BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()) {
             flywheelMovement.tickForStorageBehaviour(this);
@@ -255,14 +255,14 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     @Override
     public void lazyTick() {
         super.lazyTick();
-        if (movedContraption != null && !level.isClientSide)
+        if (movedContraption != null && running && !level.isClientSide)
             sendData();
     }
 
     protected void applyRotation() {
         if (movedContraption == null)
             return;
-        movedContraption.setAngle(flywheelMovement.angle);
+        movedContraption.setAngle(level.isClientSide ? flywheelMovement.clientAngle : flywheelMovement.angle);
         final BlockState blockState = getBlockState();
         if (blockState.hasProperty(BlockStateProperties.FACING))
             movedContraption.setRotationAxis(blockState.getValue(BlockStateProperties.FACING)
