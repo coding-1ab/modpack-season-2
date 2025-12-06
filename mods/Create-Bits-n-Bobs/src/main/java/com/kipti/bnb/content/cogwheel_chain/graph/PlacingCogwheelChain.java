@@ -124,8 +124,8 @@ public class PlacingCogwheelChain {
             boolean hasPathBack = false;
             for (final Integer side : backwardsConnections) {
                 hasPathBack = hasPathBack ||
-                        CogwheelChainPathfinder.isValidPathStep(lastLastNode, 1, newNode, side) ||
-                        CogwheelChainPathfinder.isValidPathStep(newNode, -1, lastLastNode, side);
+                        CogwheelChainPathfinder.isValidPathStep(lastLastNode, 1, lastNode, side) ||
+                        CogwheelChainPathfinder.isValidPathStep(lastLastNode, -1, lastNode, side);
             }
             if (!hasPathBack) {
                 throw new ChainAdditionAbortedException("no_path_to_cogwheel");

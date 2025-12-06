@@ -16,7 +16,7 @@ public enum BnbFeatureFlag {
 
     CHAIN_PULLEY("Availability of the Chain Pulley block.", BnbBlocks.CHAIN_PULLEY::get),
 
-    FLYWHEEL_BEARING("Availability of the Flywheel Bearing block.", BnbBlocks.FLYWHEEL_BEARING::get),
+    EXPERIMENTAL_FLYWHEEL_BEARING("Availability of the Flywheel Bearing block. (In development)", false, BnbBlocks.FLYWHEEL_BEARING::get),
 
     WEATHERED_GIRDER("Availability of the weathered girder block.", BnbBlocks.WEATHERED_METAL_GIRDER::get, BnbBlocks.WEATHERED_GIRDER_STRUT::get),
     GIRDER_STRUT("Availability of the girder strut blocks.", BnbBlocks.GIRDER_STRUT::get, BnbBlocks.WEATHERED_GIRDER_STRUT::get),
@@ -60,16 +60,26 @@ public enum BnbFeatureFlag {
 
     private final String description;
     private final Lazy<Supplier<Block>[]> associatedBlocks;
+    private final boolean defaultState;
 
     @SafeVarargs
     BnbFeatureFlag(final String description, final Supplier<Block>... associatedBlocks) {
         this.description = description;
         this.associatedBlocks = Lazy.of(() -> associatedBlocks);
+        this.defaultState = true;
+    }
+
+    @SafeVarargs
+    BnbFeatureFlag(final String description, final boolean defaultState, final Supplier<Block>... associatedBlocks) {
+        this.description = description;
+        this.associatedBlocks = Lazy.of(() -> associatedBlocks);
+        this.defaultState = defaultState;
     }
 
     BnbFeatureFlag(final String description, final Lazy<Supplier<Block>[]> associatedBlocks) {
         this.description = description;
         this.associatedBlocks = associatedBlocks;
+        this.defaultState = true;
     }
 
     public static boolean isEnabled(final Item item) {
@@ -115,6 +125,10 @@ public enum BnbFeatureFlag {
 
     public String getDescription() {
         return description;
+    }
+
+    public boolean getDefaultState() {
+        return defaultState;
     }
 
     public Supplier<Block>[] getAssociatedBlocks() {

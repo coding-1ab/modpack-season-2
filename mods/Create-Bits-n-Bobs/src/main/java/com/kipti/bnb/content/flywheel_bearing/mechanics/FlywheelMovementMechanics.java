@@ -41,7 +41,6 @@ public class FlywheelMovementMechanics {
     public void writeAdditional(final CompoundTag compound) {
 //        compound.putFloat("MaxAngularVelocity", maxAngularVelocity);
         compound.putFloat("AngularVelocity", angularVelocity);
-        compound.putFloat("PrevAngle", prevClientAngle);
         compound.putFloat("Angle", angle);
         compound.putFloat("AngularMass", angularMass);
     }
@@ -60,10 +59,7 @@ public class FlywheelMovementMechanics {
                 angularVelocity = 0; //Flywheel storage only works with positive angular velocity
         }
 
-        prevClientAngle = compound.getFloat("PrevAngle");
         angle = compound.getFloat("Angle");
-        if (clientAngle == null)
-            clientAngle = angle;
         angularMass = compound.getFloat("AngularMass");
     }
 
