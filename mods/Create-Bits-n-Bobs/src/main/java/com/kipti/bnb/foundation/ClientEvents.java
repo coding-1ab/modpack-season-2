@@ -27,18 +27,18 @@ public class ClientEvents {
     static final List<Pair<Vec3, Vec3>> deferredDebugRenderOutlines = Collections.synchronizedList(new ArrayList<>());
 
     @SubscribeEvent
-    public static void onTickPost(ClientTickEvent.Post event) {
+    public static void onTickPost(final ClientTickEvent.Post event) {
         WeatheredGirderWrenchBehaviour.tick();
 
         //Render deferred debug outlines
         synchronized (deferredDebugRenderOutlines) {
-            for (Pair<Vec3, Vec3> outline : deferredDebugRenderOutlines) {
+            for (final Pair<Vec3, Vec3> outline : deferredDebugRenderOutlines) {
                 Outliner.getInstance().showLine(outline, outline.getFirst(), outline.getSecond());
             }
         }
     }
 
-    public static void pushNewDeferredDebugRenderOutline(Pair<Vec3, Vec3> outline) {
+    public static void pushNewDeferredDebugRenderOutline(final Pair<Vec3, Vec3> outline) {
         //Synchronized list to avoid concurrent modification exceptions
         synchronized (deferredDebugRenderOutlines) {
             deferredDebugRenderOutlines.add(outline);
@@ -52,28 +52,27 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void onTickPre(ClientTickEvent.Pre event) {
+    public static void onTickPre(final ClientTickEvent.Pre event) {
         //If in a level, there is a player, and the player is holding a girder strut block item, update the preview
-        Minecraft mc = Minecraft.getInstance();
+        final Minecraft mc = Minecraft.getInstance();
         if (mc.level != null && mc.player != null) {
             GirderStrutPlacementEffects.tick(mc.player);
         }
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
-    public static void onTickPre(ClientTickEvent.Post event) {
-        Minecraft mc = Minecraft.getInstance();
+    public static void onTickPre(final ClientTickEvent.Post event) {
+        final Minecraft mc = Minecraft.getInstance();
         if (mc.level != null && mc.player != null) {
             CogwheelChainPlacementEffect.tick(mc.player);
         }
     }
 
-
     @SubscribeEvent
-    public static void modify(ItemTooltipEvent context) {
+    public static void modify(final ItemTooltipEvent context) {
         if (context.getItemStack().is(AllBlocks.COGWHEEL.asItem()) ||
                 context.getItemStack().is(AllBlocks.LARGE_COGWHEEL.asItem())) {
-            context.getToolTip().add(1, Component.literal("Can be connected with chains")
+            context.getToolTip().add(1, Component.literal("New ponder")
                     .withColor(FontHelper.Palette.STANDARD_CREATE.primary().getColor().getValue()));
         }
     }

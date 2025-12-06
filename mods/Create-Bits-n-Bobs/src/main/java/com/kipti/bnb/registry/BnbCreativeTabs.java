@@ -1,7 +1,6 @@
 package com.kipti.bnb.registry;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllCreativeModeTabs;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.RegistryEntry;
@@ -72,11 +71,6 @@ public class BnbCreativeTabs {
 
             if (matchesItemFilter(item.get()))
                 output.accept(item.get());
-        }
-
-        if (tabToGet.get() == BASE_CREATIVE_TAB) {
-            output.accept(AllBlocks.COGWHEEL.get());
-            output.accept(AllBlocks.LARGE_COGWHEEL.get());
         }
     }
 
