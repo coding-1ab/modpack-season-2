@@ -2,7 +2,6 @@ package com.kipti.bnb.content.flywheel_bearing;
 
 import com.kipti.bnb.registry.BnbPartialModels;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
@@ -35,6 +34,6 @@ public class FlywheelBearingBlockEntityRenderer extends KineticBlockEntityRender
 
     @Override
     protected SuperByteBuffer getRotatedModel(final FlywheelBearingBlockEntity be, final BlockState state) {
-        return CachedBuffers.partialFacingVertical(AllPartialModels.SHAFTLESS_LARGE_COGWHEEL, state, state.getValue(FlywheelBearingBlock.FACING));
+        return CachedBuffers.partialFacingVertical(BnbPartialModels.LARGE_STONE_COG_SHAFTLESS, state, state.getValue(FlywheelBearingBlock.FACING));
     }
 }

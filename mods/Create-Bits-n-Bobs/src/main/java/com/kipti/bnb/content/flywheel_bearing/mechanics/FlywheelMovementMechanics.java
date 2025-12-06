@@ -91,7 +91,7 @@ public class FlywheelMovementMechanics {
 
         angle += angularVelocity;
 
-        clientAngle = Mth.lerp(0.9f, displayAngle, angle);
+        clientAngle = Mth.lerp(0.1f, displayAngle + angularVelocity, angle);
 
         final boolean canNowProvideStress = canProvideStress();
         if (canProvideStressBefore != canNowProvideStress) {
@@ -129,7 +129,7 @@ public class FlywheelMovementMechanics {
         final float reactivity = Math.clamp(1f / angularMass, 0.005f, 1f);
         angularVelocity = targetAngularVelocity * reactivity + angularVelocity * (1 - reactivity);
         angle += angularVelocity;
-        clientAngle = Mth.lerp(0.99f, displayAngle, angle);
+        clientAngle = Mth.lerp(0.1f, displayAngle + angularVelocity, angle);
     }
 
     public boolean canReceiveStress() {
