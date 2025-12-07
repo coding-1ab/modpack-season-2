@@ -1,16 +1,14 @@
 package com.kipti.bnb.content.cogwheel_chain.graph;
 
+import com.kipti.bnb.registry.BnbConfigs;
 import com.mojang.serialization.Codec;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
-import com.simibubi.create.foundation.data.CreateRegistrate;
 import net.createmod.catnip.codecs.stream.CatnipStreamCodecBuilders;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,18 +52,23 @@ public class PlacingCogwheelChain {
      * Get the number of chains required to build this chain, given an extra length
      */
     public int getChainsRequired(double length) {
+        final float factor = BnbConfigs.server().COGWHEEL_CHAIN_DRIVE_COST_FACTOR.getF();
+        if (factor == 0) {
+            return 0;
+        }
+
         for (int i = 0; i < visitedNodes.size() - 1; i++) {
             final Vec3i offset = visitedNodes.get(i + 1).pos().subtract(visitedNodes.get(i).pos());
             length += Vec3.atLowerCornerOf(offset).length();
         }
-        return (int) Math.max(Math.round(length / 5), 1);
+        return (int) Math.max(Math.round(factor * length / 5), 1);
     }
 
     public static boolean isValidBlockTarget(final BlockState state) {
         return state.getBlock() instanceof final ICogWheel iCogWheel && iCogWheel.isDedicatedCogWheel();
     }
 
-    public boolean tryAddNode(final BlockPos newPos, final BlockState newBlockState) throws ChainAdditionAbortedException {
+    public boolean tryAddNode(final BlockPos newPos, final BlockState newBlockState) throws ChainInteractionFailedException {
         final PlacingCogwheelNode lastNode = getLastNode();
 
         if (!isValidBlockTarget(newBlockState)) {
@@ -75,7 +78,7 @@ public class PlacingCogwheelChain {
         //For each node, check if this is already in the list
         for (int i = 1; i < visitedNodes.size(); i++) {
             if (visitedNodes.get(i).pos().equals(newPos)) {
-                throw new ChainAdditionAbortedException("cannot_revisit_node");
+                throw new ChainInteractionFailedException("cannot_revisit_node");
             }
         }
         final Direction.Axis axis = newBlockState.getValue(CogWheelBlock.AXIS);
@@ -85,7 +88,7 @@ public class PlacingCogwheelChain {
 
         final boolean isWithinBounds = !exceedsMaxBounds(newNode);
         if (!isWithinBounds) {
-            throw new ChainAdditionAbortedException("out_of_bounds");
+            throw new ChainInteractionFailedException("out_of_bounds");
         }
 
         final int differenceOnAxis = Math.abs(newPos.get(axis) - lastNode.pos().get(axis));
@@ -102,14 +105,14 @@ public class PlacingCogwheelChain {
 
         if (!isValidCandidate) {
             if (isAdjacent) {
-                throw new ChainAdditionAbortedException("cogwheels_cannot_touch");
+                throw new ChainInteractionFailedException("cogwheels_cannot_touch");
             }
 
             if (!isSameAxis) {
-                throw new ChainAdditionAbortedException("not_valid_axis_change");
+                throw new ChainInteractionFailedException("not_valid_axis_change");
             }
             //Else it wasn't accepted because it wasn't flat
-            throw new ChainAdditionAbortedException("not_flat_connection");
+            throw new ChainInteractionFailedException("not_flat_connection");
         }
 
         //Final validity check, look by pathfinding if this cogwheel can connect to the last one
@@ -117,7 +120,7 @@ public class PlacingCogwheelChain {
         //Check there is a side which it can connect backwards by, and that that connection can go back
         final List<Integer> backwardsConnections = CogwheelChainPathfinder.getValidPathSteps(lastNode, newNode);
         if (backwardsConnections.isEmpty()) {
-            throw new ChainAdditionAbortedException("no_cogwheel_connection");
+            throw new ChainInteractionFailedException("no_cogwheel_connection");
         }
 
         if (lastLastNode != null) {
@@ -128,7 +131,7 @@ public class PlacingCogwheelChain {
                         CogwheelChainPathfinder.isValidPathStep(lastLastNode, -1, lastNode, side);
             }
             if (!hasPathBack) {
-                throw new ChainAdditionAbortedException("no_path_to_cogwheel");
+                throw new ChainInteractionFailedException("no_path_to_cogwheel");
             }
         }
 
@@ -194,7 +197,7 @@ public class PlacingCogwheelChain {
         return Objects.hashCode(visitedNodes);
     }
 
-    public boolean canBuildChainIfLooping() throws CogwheelChain.InvalidGeometryException {
+    public boolean canBuildChainIfLooping() throws ChainInteractionFailedException {
         if (getSize() < 2) return false;
         final PlacingCogwheelNode firstNode = visitedNodes.getFirst();
         final PlacingCogwheelNode lastNode = getLastNode();
@@ -203,7 +206,7 @@ public class PlacingCogwheelChain {
         // Remove last chainNode to avoid duplication
         visitedNodes.removeLast();
         if (CogwheelChainPathfinder.buildChainPath(this) == null) {
-            throw new CogwheelChain.InvalidGeometryException("try_inserting_more_nodes");
+            throw new ChainInteractionFailedException("pathfinding_failed");
         }
         return true;
     }
@@ -287,29 +290,6 @@ public class PlacingCogwheelChain {
             localNodes.add(new PlacingCogwheelNode(localPos, node.rotationAxis(), node.isLarge()));
         }
         return new PlacingCogwheelChain(localNodes);
-    }
-
-    public static class ChainAdditionAbortedException extends Exception {
-
-        public static final String ABORTED_PLACEMENT_PREFIX = "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.";
-
-        public ChainAdditionAbortedException(final String message) {
-            super(message);
-        }
-
-        public MutableComponent getTranslatedMessage() {
-            return Component.translatable("message.bnb.cogwheel_chain.chain_addition_aborted." + getMessage());
-        }
-
-        public static void addTranslationLangs(final CreateRegistrate registrate, final String... keyValuePairs) {
-            if (keyValuePairs.length % 2 != 0) {
-                throw new IllegalArgumentException("KeyValuePairs length must be even");
-            }
-            for (int i = 0; i < keyValuePairs.length; i += 2) {
-                registrate.addRawLang(ABORTED_PLACEMENT_PREFIX + keyValuePairs[i], keyValuePairs[i + 1]);
-            }
-        }
-
     }
 
 }

@@ -53,7 +53,7 @@ public class CogwheelChainPathfinder {
 
     }
 
-    public static List<PathedCogwheelNode> buildChainPath(final PlacingCogwheelChain worldSpaceChain) throws CogwheelChain.InvalidGeometryException {
+    public static List<PathedCogwheelNode> buildChainPath(final PlacingCogwheelChain worldSpaceChain) throws ChainInteractionFailedException {
         //Reconstruct chain to local space
         final PlacingCogwheelChain chain = worldSpaceChain.toLocalSpaceChain();
 
@@ -93,7 +93,7 @@ public class CogwheelChainPathfinder {
             rightPath = nextRightPath;
 
             if (leftPath.get() == null && rightPath.get() == null) {
-                throw new CogwheelChain.InvalidGeometryException("missing_path_between_nodes");
+                throw new ChainInteractionFailedException("pathfinding_failed_at_node");
             }
             prevNode = nextNode;
         }

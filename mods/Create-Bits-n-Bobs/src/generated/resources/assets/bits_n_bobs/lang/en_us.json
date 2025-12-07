@@ -137,10 +137,13 @@
   "item.bits_n_bobs.icon_lightbulb": "Icon Lightbulb",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.cannot_revisit_node": "You cannot self-intersect the chain!",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.cogwheels_cannot_touch": "Cogwheels must not touch each other!",
+  "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.config_forbids": "Server has disabled chain drives!",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.no_cogwheel_connection": "Connections with cogwheels must be at right angles!",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.no_path_to_cogwheel": "No valid path to cogwheel!",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.not_flat_connection": "Connections of the same direction must be flat!",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.out_of_bounds": "Cogwheel exceeds maximum bounds!",
+  "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.pathfinding_failed": "Couldn't find valid path across chain! (Try inserting more nodes?)",
+  "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.pathfinding_failed_at_node": "Couldn't find valid path between two nodes! (Try inserting more nodes?)",
   "message.bits_n_bobs.girder_strut.missing_anchors": "You need %s more Girder Struts",
   "tab.bits_n_bobs.base": "Bits 'n' Bobs",
   "tab.bits_n_bobs.deco": "Bits 'n' Bobs' Building Blocks"
