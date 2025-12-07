@@ -18,10 +18,9 @@ import java.util.Map;
 public class FlywheelMovementMechanics {
 
     /**
-     * Should be a config value
-     * Converts literal kinetic energy in joules to stress units
+     * Base factor for the conversion literal kinetic energy in joules to stress units, read with {@link FlywheelMovementMechanics#getActualStressUnitsPerKeJoule()} to include config multiplier
      */
-    public static float STRESS_UNITS_PER_KE_JOULE = 1 / 512f;
+    public static float STRESS_UNITS_PER_KE_JOULE = 8f;
 
     /**
      * Should be a config value too
@@ -71,11 +70,9 @@ public class FlywheelMovementMechanics {
         final boolean canReceiveStressBefore = canReceiveStress();
         final boolean canProvideStressBefore = canProvideStress();
 
-        STRESS_UNITS_PER_KE_JOULE = 8f;
-
         final float maxTransferCapacity = getMaxTransferCapacity();
         final float availableExcessKineticStrength = Math.clamp(be.getFlywheelStressDelta(), -maxTransferCapacity, maxTransferCapacity);
-        final float kejEnergyChange = availableExcessKineticStrength / STRESS_UNITS_PER_KE_JOULE;
+        final float kejEnergyChange = availableExcessKineticStrength / getActualStressUnitsPerKeJoule();
         final float currentKejEnergy = 0.5f * angularMass * angularVelocity * angularVelocity;
         final float newKejEnergy = Math.max(currentKejEnergy + kejEnergyChange, 0);
 
@@ -134,7 +131,7 @@ public class FlywheelMovementMechanics {
 
     public float getStoredStressTicks() {
         final float kejEnergy = 0.5f * angularMass * angularVelocity * angularVelocity;
-        return kejEnergy * STRESS_UNITS_PER_KE_JOULE;
+        return kejEnergy * getActualStressUnitsPerKeJoule();
     }
 
     public boolean canProvideStress() {
@@ -162,6 +159,10 @@ public class FlywheelMovementMechanics {
         else if (BnbTags.BnbBlockTags.LIGHT.matches(block))
             return 0.5f;
         return 1f;
+    }
+
+    public static float getActualStressUnitsPerKeJoule() {
+        return (float) (STRESS_UNITS_PER_KE_JOULE * BnbConfigs.server().FLYWHEEL_STORAGE_FACTOR.get());
     }
 
     public void zero() {
