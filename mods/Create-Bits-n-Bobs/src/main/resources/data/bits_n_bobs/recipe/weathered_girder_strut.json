@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "bits_n_bobs:feature_item_enabled",
+      "item": "bits_n_bobs:weathered_girder_strut"
+    }
+  ],
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {

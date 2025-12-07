@@ -2,7 +2,7 @@
   "neoforge:conditions": [
     {
       "type": "bits_n_bobs:feature_enabled",
-      "feature": "chair"
+      "feature": "chairs"
     }
   ],
   "parent": "minecraft:recipes/root",

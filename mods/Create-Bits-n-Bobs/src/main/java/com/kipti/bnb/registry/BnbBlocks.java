@@ -22,7 +22,6 @@ import com.kipti.bnb.content.weathered_girder.EncasedWeatheredGirderBlock;
 import com.kipti.bnb.content.weathered_girder.WeatheredConnectedGirderModel;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlock;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlockStateGenerator;
-import com.kipti.bnb.foundation.config.conditions.BnbFeatureEnabledCondition;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllDisplaySources;
 import com.simibubi.create.AllTags;
@@ -344,12 +343,12 @@ public class BnbBlocks {
                             .requires(DyeHelper.getWoolOfDye(colour))
                             .requires(ItemTags.WOODEN_STAIRS)
                             .unlockedBy("has_wool", RegistrateRecipeProvider.has(ItemTags.WOOL))
-                            .save(p.withConditions(new BnbFeatureEnabledCondition("chair")), CreateBitsnBobs.asResource("crafting/" + c.getName()));
+                            .save(p.withConditions(BnbFeatureFlag.CHAIRS.getDataCondition()), CreateBitsnBobs.asResource("crafting/" + c.getName()));
                     ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, c.get())
                             .requires(colour.getTag())
                             .requires(BnbTags.BnbItemTags.CHAIRS.tag)
                             .unlockedBy("has_seat", RegistrateRecipeProvider.has(BnbTags.BnbItemTags.CHAIRS.tag))
-                            .save(p.withConditions(new BnbFeatureEnabledCondition("chair")), CreateBitsnBobs.asResource("crafting/" + c.getName() + "_from_other_chair"));
+                            .save(p.withConditions((BnbFeatureFlag.CHAIRS.getDataCondition())), CreateBitsnBobs.asResource("crafting/" + c.getName() + "_from_other_chair"));
                 })
                 .onRegisterAfter(Registries.ITEM, v -> ItemDescription.useKey(v, "block.bits_n_bobs.chair"))
                 .tag(BnbTags.BnbBlockTags.CHAIRS.tag)

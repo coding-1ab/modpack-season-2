@@ -1,5 +1,6 @@
 package com.kipti.bnb.registry;
 
+import com.kipti.bnb.foundation.config.conditions.BnbFeatureEnabledCondition;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -120,7 +121,7 @@ public enum BnbFeatureFlag {
             return false;
         }
 
-        return BnbConfigs.server().getFeatureFlagState(flag);
+        return BnbConfigs.common().getFeatureFlagState(flag);
     }
 
     public String getDescription() {
@@ -136,7 +137,11 @@ public enum BnbFeatureFlag {
     }
 
     public boolean get() {
-        return BnbConfigs.server().getFeatureFlagState(this);
+        return BnbConfigs.common().getFeatureFlagState(this);
+    }
+
+    public BnbFeatureEnabledCondition getDataCondition() {
+        return new BnbFeatureEnabledCondition(this.name().toLowerCase());
     }
 
 }

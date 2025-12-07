@@ -1,5 +1,6 @@
 package com.kipti.bnb.registry;
 
+import com.kipti.bnb.foundation.config.BnbCommonConfig;
 import com.kipti.bnb.foundation.config.BnbServerConfig;
 import net.createmod.catnip.config.ConfigBase;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -24,16 +25,16 @@ public class BnbConfigs {
     private static final Map<ModConfig.Type, ConfigBase> CONFIGS = new EnumMap<>(ModConfig.Type.class);
 
     //    private static CClient client;
-//    private static CCommon common;
+    private static BnbCommonConfig common;
     private static BnbServerConfig server;
 
 //    public static CClient client() {
 //        return client;
 //    }
-//
-//    public static CCommon common() {
-//        return common;
-//    }
+
+    public static BnbCommonConfig common() {
+        return common;
+    }
 
     public static BnbServerConfig server() {
         return server;
@@ -58,7 +59,7 @@ public class BnbConfigs {
 
     public static void register(final ModLoadingContext context, final ModContainer container) {
 //        client = register(CClient::new, ModConfig.Type.CLIENT);
-//        common = register(CCommon::new, ModConfig.Type.COMMON);
+        common = register(BnbCommonConfig::new, ModConfig.Type.COMMON);
         server = register(BnbServerConfig::new, ModConfig.Type.SERVER);
 
         for (final Map.Entry<ModConfig.Type, ConfigBase> pair : CONFIGS.entrySet())

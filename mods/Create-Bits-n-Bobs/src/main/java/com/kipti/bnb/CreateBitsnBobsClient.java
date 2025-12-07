@@ -24,8 +24,8 @@ public class CreateBitsnBobsClient {
         PonderIndex.addPlugin(new BnbPonderPlugin());
 
         BaseConfigScreen.setDefaultActionFor(CreateBitsnBobs.MOD_ID, base -> base
-                .withButtonLabels(null, null, "Gameplay Settings")
-                .withSpecs(null, null, BnbConfigs.server().specification)
+                .withButtonLabels(null, "Feature Settings", "Balancing Settings")
+                .withSpecs(null, BnbConfigs.common().specification, BnbConfigs.server().specification)
         );
     }
 
