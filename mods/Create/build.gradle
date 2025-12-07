@@ -133,8 +133,8 @@ dependencies {
 
     jarJar(implementation("net.createmod.ponder:ponder-neoforge:$ponder_version+mc$minecraft_version"))
 
-    //compileOnly("mezz.jei:jei-minecraft_version-common-api:$jei_version")
-    //compileOnly("mezz.jei:jei-minecraft_version-neoforge-api:$jei_version")
+    //compileOnly("mezz.jei:jei-$minecraft_version-common-api:$jei_version")
+    //compileOnly("mezz.jei:jei-$minecraft_version-neoforge-api:$jei_version")
     implementation("mezz.jei:jei-$minecraft_version-neoforge:$jei_version")
 
     compileOnly("top.theillusivec4.curios:curios-neoforge:$curios_version+$minecraft_version:api")
@@ -148,7 +148,7 @@ dependencies {
         runtimeOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge:$cc_tweaked_version")
     }
 
-    runtimeOnly("dev.architectury:architectury-neoforge:13.0.8")
+    runtimeOnly("dev.architectury:architectury-neoforge:13d.0.8")
     implementation("dev.ftb.mods:ftb-chunks-neoforge:2101.1.1")
     implementation("dev.ftb.mods:ftb-teams-neoforge:2101.1.0")
     implementation("dev.ftb.mods:ftb-library-neoforge:2101.1.3")

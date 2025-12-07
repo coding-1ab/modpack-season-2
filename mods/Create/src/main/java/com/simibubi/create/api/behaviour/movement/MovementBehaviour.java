@@ -1,5 +1,6 @@
 package com.simibubi.create.api.behaviour.movement;
 
+import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.api.registry.SimpleRegistry;
@@ -67,10 +68,11 @@ public interface MovementBehaviour {
 	}
 
 	/**
-	 * @deprecated since 6.0.9 - use {@link #collectOrDropItem(context, stack)} instead.
+	 * @deprecated since 6.0.9 - use {@link MovementBehaviour#collectOrDropItem(MovementContext, ItemStack)} instead.
 	 * No behaviours altered, simply a rename to reflect that we do collect items when
 	 * applicable before considering dropping the remainder into the world.
 	 */
+	@ScheduledForRemoval(inVersion = "1.21.1+ Port")
 	@Deprecated(since = "6.0.9", forRemoval = true)
 	default void dropItem(MovementContext context, ItemStack stack) {
 		collectOrDropItem(context, stack);
