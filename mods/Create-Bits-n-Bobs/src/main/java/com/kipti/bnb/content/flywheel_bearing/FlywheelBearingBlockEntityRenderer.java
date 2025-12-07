@@ -2,6 +2,7 @@ package com.kipti.bnb.content.flywheel_bearing;
 
 import com.kipti.bnb.registry.BnbPartialModels;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
@@ -24,7 +25,7 @@ public class FlywheelBearingBlockEntityRenderer extends KineticBlockEntityRender
         renderRotatingBuffer(be, getRotatedModel(be, state), ms, buffer.getBuffer(type), light);
 
         final Direction facing = state.getValue(FlywheelBearingBlock.FACING);
-        CachedBuffers.partialFacingVertical(BnbPartialModels.FLYWHEEL_BEARING_TOP, state, facing)
+        CachedBuffers.partialFacingVertical(AllPartialModels.BEARING_TOP, state, facing)
                 .center()
                 .rotate(facing.getAxis(), (float) Math.toRadians(be.getInterpolatedAngle(partialTicks)))
                 .uncenter()
