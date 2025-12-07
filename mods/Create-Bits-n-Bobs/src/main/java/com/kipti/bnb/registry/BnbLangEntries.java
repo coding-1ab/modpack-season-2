@@ -14,6 +14,7 @@ public class BnbLangEntries {
                 "cannot_revisit_node", "You cannot self-intersect the chain!",
                 "out_of_bounds", "Cogwheel exceeds maximum bounds!",
                 "cogwheels_cannot_touch", "Cogwheels must not touch each other!",
+                "not_valid_axis_change", "Large cogwheels must share a tangent to change axis!",
                 "not_flat_connection", "Connections of the same direction must be flat!",
                 "no_cogwheel_connection", "Connections with cogwheels must be at right angles!",
                 "no_path_to_cogwheel", "No valid path to cogwheel!",

@@ -141,6 +141,7 @@
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.no_cogwheel_connection": "¡sǝןbuɐ ʇɥbıɹ ʇɐ ǝq ʇsnɯ sןǝǝɥʍboɔ ɥʇıʍ suoıʇɔǝuuoƆ",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.no_path_to_cogwheel": "¡ןǝǝɥʍboɔ oʇ ɥʇɐd pıןɐʌ oN",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.not_flat_connection": "¡ʇɐןɟ ǝq ʇsnɯ uoıʇɔǝɹıp ǝɯɐs ǝɥʇ ɟo suoıʇɔǝuuoƆ",
+  "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.not_valid_axis_change": "¡sıxɐ ǝbuɐɥɔ oʇ ʇuǝbuɐʇ ɐ ǝɹɐɥs ʇsnɯ sןǝǝɥʍboɔ ǝbɹɐꞀ",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.out_of_bounds": "¡spunoq ɯnɯıxɐɯ spǝǝɔxǝ ןǝǝɥʍboƆ",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.pathfinding_failed": ")¿sǝpou ǝɹoɯ buıʇɹǝsuı ʎɹ⟘( ¡uıɐɥɔ ssoɹɔɐ ɥʇɐd pıןɐʌ puıɟ ʇ,upןnoƆ",
   "message.bits_n_bobs.cogwheel_chain.chain_addition_aborted.pathfinding_failed_at_node": ")¿sǝpou ǝɹoɯ buıʇɹǝsuı ʎɹ⟘( ¡sǝpou oʍʇ uǝǝʍʇǝq ɥʇɐd pıןɐʌ puıɟ ʇ,upןnoƆ",

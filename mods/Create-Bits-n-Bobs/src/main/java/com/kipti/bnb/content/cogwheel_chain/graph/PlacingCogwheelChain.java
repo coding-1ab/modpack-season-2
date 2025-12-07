@@ -13,7 +13,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -137,27 +136,6 @@ public class PlacingCogwheelChain {
 
         visitedNodes.add(newNode);
         return true;
-    }
-
-    private boolean isValidConsecutiveAxisChange(@NotNull final PlacingCogwheelNode lastNode, final PlacingCogwheelNode pivotNode, final BlockPos newPos, final Direction.Axis axis) {
-        //Get the signed difference to the pivot on the chainNode's rotation axis
-        final int diffToPivotOnLastNodeAxis = lastNode.pos().get(lastNode.rotationAxis()) - pivotNode.pos().get(lastNode.rotationAxis());
-
-        //Get the signed difference to the pivot on the new chainNode's rotation axis
-        final int diffToPivotOnNewNodeAxis = newPos.get(axis) - pivotNode.pos().get(axis);
-
-        if (diffToPivotOnLastNodeAxis == diffToPivotOnNewNodeAxis) {
-            return true;
-        }
-
-        //Check if it's like a wrap around the pivot, in which case its safe
-        //Get the other axis, and if they are on the same sideFactor along this other axis
-        final int safeAxisOrdinal = Integer.numberOfTrailingZeros(7 & ~(1 << axis.ordinal()) & ~(1 << lastNode.rotationAxis().ordinal()));
-        final Direction.Axis safeAxis = Direction.Axis.values()[safeAxisOrdinal];
-
-        final int lastDiffOnSafeAxis = lastNode.pos().get(safeAxis) - pivotNode.pos().get(safeAxis);
-        final int newDiffOnSafeAxis = newPos.get(safeAxis) - pivotNode.pos().get(safeAxis);
-        return Math.signum(lastDiffOnSafeAxis) == Math.signum(newDiffOnSafeAxis);
     }
 
     private boolean isValidLargeCogAxisConnection(final PlacingCogwheelNode lastNode, final BlockPos newPos, final Direction.Axis axis, final boolean isLarge) {
