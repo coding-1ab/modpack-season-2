@@ -30,7 +30,7 @@ public class CogwheelChainPlacementEffect {
 
     private static final float PARTICLE_DENSITY = 0.1f;
 
-    public static void tick(LocalPlayer player) {
+    public static void tick(final LocalPlayer player) {
         if (Minecraft.getInstance().isPaused() || Minecraft.getInstance().hitResult == null) return;
 
         final ClientLevel level = Minecraft.getInstance().level;
@@ -52,7 +52,7 @@ public class CogwheelChainPlacementEffect {
             if (!player.hasInfiniteMaterials()) {
                 final double additionalDistance = targetedPos != null ?
                         Vec3.atLowerCornerOf(targetedPos.subtract(currentBuildingChain.getLastNode().pos())).length() : 0;
-                final int chainsRequired = currentBuildingChain.getChainsRequired(additionalDistance); //TODO include the block your looking at for the complete chain count
+                final int chainsRequired = currentBuildingChain.getChainsRequired(additionalDistance);
 
                 final boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(player, Items.CHAIN.getDefaultInstance(), chainsRequired, true);
                 BlueprintOverlayRenderer.displayChainRequirements(Items.CHAIN, chainsRequired, hasEnough);
@@ -87,12 +87,12 @@ public class CogwheelChainPlacementEffect {
         final Vec3 axisNormal = Vec3.atLowerCornerOf(Direction.get(Direction.AxisDirection.POSITIVE, axis).getNormal());
         final Vec3 projected = toTargeted.subtract(axisNormal.scale(toTargeted.dot(axisNormal))).add(lastNodePos);
 
-        Vec3 lastPos = currentBuildingChain.getNodeCenter(0);
-        for (int i = 1; i < currentBuildingChain.getSize(); i++) {
-            final Vec3 currentPos = currentBuildingChain.getNodeCenter(i);
-            renderParticlesBetween(level, lastPos, currentPos);
-            lastPos = currentPos;
-        }
+//        Vec3 lastPos = currentBuildingChain.getNodeCenter(0);
+//        for (int i = 1; i < currentBuildingChain.getSize(); i++) {
+//            final Vec3 currentPos = currentBuildingChain.getNodeCenter(i);
+//            renderParticlesBetween(level, lastPos, currentPos);
+//            lastPos = currentPos;
+//        }
         for (int i = 0; i < currentBuildingChain.getSize(); i++) {
             showBlockOutline(level, currentBuildingChain.getNodes().get(i).pos());
         }
@@ -121,6 +121,7 @@ public class CogwheelChainPlacementEffect {
             }
         }
 
+        final Vec3 lastPos = currentBuildingChain.getLastNode().center();
         renderParticlesBetween(level, lastPos, projected);
 
         final BlockPos targetedPos = hit.getBlockPos();
@@ -151,7 +152,7 @@ public class CogwheelChainPlacementEffect {
             }
             final Vec3 lerped = from.add(dir.scale(t));
             level.addParticle(
-                    new DustParticleOptions(new Vector3f(0x95 / 256f, 0xCD / 256f, 0x41 / 256f), 1), true,
+                    new DustParticleOptions(new Vector3f(0xab / 256f, 0xe6 / 256f, 0x53 / 256f), 1), true,
                     lerped.x, lerped.y, lerped.z, 0, 0, 0);
         }
     }
