@@ -9,24 +9,17 @@ import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 public class NixieBoardBlockStateGen {
 
     public static <T extends NixieBoardBlock> void nixieBoard(final DataGenContext<Block, T> c, final RegistrateBlockstateProvider p) {
-//        p.directionalBlock(c.get(), (state) -> {
-//                boolean left = state.getValue(NixieBoardBlock.LEFT);
-//                boolean right = state.getValue(NixieBoardBlock.RIGHT);
-//
-//                return p.models().getExistingFile(CreateBitsnBobs.asResource(
-//                    left ? (right ? "block/nixie_board/nixie_board_middle" : "block/nixie_board/nixie_board_left") :
-//                        (right ? "block/nixie_board/nixie_board_right" : "block/nixie_board/nixie_board_single")
-//                ));
-//            }
-//        );
+
         p.getVariantBuilder(c.get())
                 .forAllStates(state -> {
-                    final boolean left = !state.getValue(NixieBoardBlock.LEFT);
-                    final boolean right = !state.getValue(NixieBoardBlock.RIGHT);
-                    final boolean bottom = !state.getValue(NixieBoardBlock.BOTTOM);
+                    final boolean left = state.getValue(NixieBoardBlock.LEFT);
+                    final boolean right = state.getValue(NixieBoardBlock.RIGHT);
+                    final boolean bottom = state.getValue(NixieBoardBlock.BOTTOM);
+                    final boolean top = state.getValue(NixieBoardBlock.TOP);
 
-                    final String modelName = (left ? (right ? "nixie_board_single" : "nixie_board_left") :
-                            (right ? "nixie_board_right" : "nixie_board_middle")) + (bottom ? "" : "_top");
+                    final String modelName = "nixie_board"
+                            + (left ? right ? "_middle" : "_right" : right ? "_left" : "_single")
+                            + (bottom ? top ? "_middle" : "_top" : top ? "_bottom" : "");
 
                     return ConfiguredModel.builder()
                             .modelFile(p.models().getExistingFile(CreateBitsnBobs.asResource("block/nixie_board/" + modelName)))

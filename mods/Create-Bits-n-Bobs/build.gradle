@@ -2,6 +2,8 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'net.neoforged.gradle.userdev' version '7.0.190'
+    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
+    id "co.uzzu.dotenv.gradle" version "1.1.0"
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -150,5 +152,57 @@ idea {
     module {
         downloadSources = true
         downloadJavadoc = true
+    }
+}
+
+def getRelevantChangelog(String version) {
+    def changelogFile = file("CHANGELOG.md")
+    if (!changelogFile.exists()) {
+        println("Couldn't read changelog for version " + version + ", file does not exist.")
+        return "No changelog provided."
+    }
+    println("Reading changelog for version " + version)
+    def versionChangelogMap = [:]
+
+    def currentBlockVersion = null
+    def currentBlockLines = []
+    changelogFile.eachLine { line ->
+        def headerDefinition = "# "
+        def isHeader = line.startsWith(headerDefinition)
+        if (isHeader) {
+            currentBlockVersion = line.substring(headerDefinition.length()).trim()
+            currentBlockLines = []
+        } else if (currentBlockVersion != null) {
+            currentBlockLines << line
+        }
+    }
+
+    if (currentBlockVersion != null) {
+        versionChangelogMap[currentBlockVersion] = currentBlockLines.join("\n").trim()
+    }
+    return versionChangelogMap.getOrDefault(version.trim(), "No changelog provided.")
+}
+
+publishMods {
+    file = jar.archiveFile
+    def changelogText = getRelevantChangelog(minecraft_version + "-" + mod_version)
+    changelog = changelogText
+    println("Using changelog:\n" + changelogText + "\n")
+    type = STABLE
+    modLoaders.add("neoforge")
+    displayName = mod_name + " " + mod_version + "NeoForge" + minecraft_version
+
+    curseforge {
+        projectId = "1398383"
+        projectSlug = "create-bits-n-bobs"
+        accessToken = env.fetch("CURSEFORGE_TOKEN")
+        minecraftVersions.add("1.21.1")
+        requires("create")
+    }
+    modrinth {
+        projectId = "T8bvmqVZ"
+        accessToken = env.fetch("MODRINTH_TOKEN")
+        minecraftVersions.add("1.21.1")
+        requires("create")
     }
 }
