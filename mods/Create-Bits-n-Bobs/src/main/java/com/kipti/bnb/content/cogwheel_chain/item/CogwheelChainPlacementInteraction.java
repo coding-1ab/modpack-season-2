@@ -50,6 +50,14 @@ public class CogwheelChainPlacementInteraction {
         if (player == null || level == null)
             return false;
 
+        //If it is a chain targeting a cogwheel
+        final ItemStack itemInHand = player.getMainHandItem().is(Items.CHAIN) ? player.getMainHandItem() :
+                player.getOffhandItem().is(Items.CHAIN) ? player.getOffhandItem() : null;
+
+        if (itemInHand == null) {
+            return false;
+        }
+
         //If crouching, try clear
         if (player.isShiftKeyDown()) {
             if (currentBuildingChain != null) {
@@ -57,14 +65,6 @@ public class CogwheelChainPlacementInteraction {
                 currentChainLevel = null;
             }
             return true;
-        }
-
-        //If it is a chain targeting a cogwheel
-        final ItemStack itemInHand = player.getMainHandItem().is(Items.CHAIN) ? player.getMainHandItem() :
-                player.getOffhandItem().is(Items.CHAIN) ? player.getOffhandItem() : null;
-
-        if (itemInHand == null) {
-            return false;
         }
 
         final HitResult hitResult = Minecraft.getInstance().hitResult;
