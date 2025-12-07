@@ -6,6 +6,7 @@ import com.simibubi.create.foundation.block.IBE;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
@@ -49,15 +51,15 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
     }
 
     @Override
-    public BlockState updateShape(final BlockState state, final Direction direction, final BlockState neighbourState, final LevelAccessor world,
-                                  final BlockPos pos, final BlockPos neighbourPos) {
+    public @NotNull BlockState updateShape(final BlockState state, final @NotNull Direction direction, final @NotNull BlockState neighbourState, final @NotNull LevelAccessor world,
+                                           final @NotNull BlockPos pos, final @NotNull BlockPos neighbourPos) {
         if (state.getValue(WATERLOGGED))
             world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         return state;
     }
 
     @Override
-    public FluidState getFluidState(final BlockState state) {
+    public @NotNull FluidState getFluidState(final BlockState state) {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
     }
 
@@ -79,32 +81,46 @@ public class GirderStrutBlock extends Block implements IBE<GirderStrutBlockEntit
     }
 
     @Override
-    public VoxelShape getShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext context) {
+    public @NotNull VoxelShape getShape(final BlockState state, final @NotNull BlockGetter level, final @NotNull BlockPos pos, final @NotNull CollisionContext context) {
         return BnbShapes.GIRDER_STRUT.get(state.getValue(FACING));
     }
 
     @Override
-    public PushReaction getPistonPushReaction(final BlockState state) {
+    public PushReaction getPistonPushReaction(final @NotNull BlockState state) {
         return PushReaction.NORMAL;
     }
 
     @Override
-    public void onRemove(final BlockState state, final Level level, final BlockPos pos, final BlockState newState, final boolean isMoving) {
-        if (!state.is(newState.getBlock())) {
-            if (!level.isClientSide) {
-                final BlockEntity be = level.getBlockEntity(pos);
-                if (be instanceof final GirderStrutBlockEntity self) {
-                    for (BlockPos otherPos : self.getConnectionsCopy()) {
-                        otherPos = otherPos.offset(pos);
-                        final BlockEntity otherBe = level.getBlockEntity(otherPos);
-                        if (otherBe instanceof final GirderStrutBlockEntity other) {
-                            other.removeConnection(pos);
-                            if (other.connectionCount() == 0) {
-                                level.destroyBlock(otherPos, true);
-                            }
-                        }
+    public @NotNull BlockState playerWillDestroy(final @NotNull Level level, final @NotNull BlockPos pos, final @NotNull BlockState state, final Player player) {
+        final boolean shouldPreventDrops = player.hasInfiniteMaterials();
+
+        if (shouldPreventDrops && !level.isClientSide) {
+            destroyConnectedStrut(level, pos, false);
+        }
+
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    private void destroyConnectedStrut(final Level level, final BlockPos pos, final boolean dropBlock) {
+        withBlockEntityDo(level, pos, (gbe) -> {
+            for (BlockPos otherPos : gbe.getConnectionsCopy()) {
+                otherPos = otherPos.offset(pos);
+                final BlockEntity otherBe = level.getBlockEntity(otherPos);
+                if (otherBe instanceof final GirderStrutBlockEntity other) {
+                    other.removeConnection(pos);
+                    if (other.connectionCount() == 0) {
+                        level.destroyBlock(otherPos, dropBlock);
                     }
                 }
+            }
+        });
+    }
+
+    @Override
+    public void onRemove(final BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final BlockState newState, final boolean isMoving) {
+        if (!state.is(newState.getBlock())) {
+            if (!level.isClientSide) {
+                destroyConnectedStrut(level, pos, true);
             }
         }
         super.onRemove(state, level, pos, newState, isMoving);

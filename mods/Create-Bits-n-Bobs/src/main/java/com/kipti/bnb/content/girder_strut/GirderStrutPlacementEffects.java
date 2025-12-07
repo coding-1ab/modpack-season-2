@@ -20,89 +20,89 @@ public class GirderStrutPlacementEffects {
 
     private static final float PARTICLE_DENSITY = 0.1f;
 
-    public static void tick(LocalPlayer player) {
+    public static void tick(final LocalPlayer player) {
         if (Minecraft.getInstance().isPaused() || Minecraft.getInstance().hitResult == null) return;
 
         //Get held item
-        ItemStack heldItem = player.getMainHandItem().getItem() instanceof GirderStrutBlockItem ? player.getMainHandItem() :
-            player.getOffhandItem().getItem() instanceof GirderStrutBlockItem ? player.getOffhandItem() : null;
+        final ItemStack heldItem = player.getMainHandItem().getItem() instanceof GirderStrutBlockItem ? player.getMainHandItem() :
+                player.getOffhandItem().getItem() instanceof GirderStrutBlockItem ? player.getOffhandItem() : null;
         if (heldItem != null) {
             display(player, heldItem);
         }
     }
 
-    private static void display(LocalPlayer player, ItemStack heldItem) {
-        ClientLevel level = Minecraft.getInstance().level;
+    private static void display(final LocalPlayer player, final ItemStack heldItem) {
+        final ClientLevel level = Minecraft.getInstance().level;
         if (level == null) {
             return;
         }
-        BlockPos fromPos = heldItem.get(BnbDataComponents.GIRDER_STRUT_FROM);
-        Direction fromFace = heldItem.get(BnbDataComponents.GIRDER_STRUT_FROM_FACE);
+        final BlockPos fromPos = heldItem.get(BnbDataComponents.GIRDER_STRUT_FROM);
+        final Direction fromFace = heldItem.get(BnbDataComponents.GIRDER_STRUT_FROM_FACE);
 
         if (fromPos == null) {
             return;
         }
 
-        HitResult genericHit = Minecraft.getInstance().hitResult;
-        if (!(genericHit instanceof BlockHitResult hit)) {
+        final HitResult genericHit = Minecraft.getInstance().hitResult;
+        if (!(genericHit instanceof final BlockHitResult hit) || genericHit.getType() != HitResult.Type.BLOCK) {
             return;
         }
 
-        BlockPos targetPos = resolvePlacementPos(level, hit.getBlockPos(), hit.getDirection());
+        final BlockPos targetPos = resolvePlacementPos(level, hit.getBlockPos(), hit.getDirection());
         if (targetPos == null || targetPos.distSqr(fromPos) > GirderStrutBlock.MAX_SPAN * GirderStrutBlock.MAX_SPAN * 1.5) {
             return;
         }
 
-        Direction targetFace = hit.getDirection();
+        final Direction targetFace = hit.getDirection();
 
-        Vec3 renderFrom = Vec3.atCenterOf(fromPos);
-        Vec3 renderTo = Vec3.atCenterOf(targetPos);
+        final Vec3 renderFrom = Vec3.atCenterOf(fromPos);
+        final Vec3 renderTo = Vec3.atCenterOf(targetPos);
 
-        Vec3 delta = renderTo.subtract(renderFrom);
-        double length = delta.length();
+        final Vec3 delta = renderTo.subtract(renderFrom);
+        final double length = delta.length();
         if (length < 1.0E-3) {
             return;
         }
 
-        boolean valid = GirderStrutBlockItem.isValidConnection(level, fromPos, fromFace, targetPos, targetFace);
+        final boolean valid = GirderStrutBlockItem.isValidConnection(level, fromPos, fromFace, targetPos, targetFace);
 
-        Vec3 dir = delta.normalize();
-        double step = 0.25;
+        final Vec3 dir = delta.normalize();
+        final double step = 0.25;
         // 95CD41 valid and EA5C2B invalid
-        Vector3f color = valid ? new Vector3f(.3f, .9f, .5f) : new Vector3f(.9f, .3f, .5f);
-        Vector3f outlinerColor = valid ? new Vector3f(.35f, .85f, .55f) : new Vector3f(.85f, .35f, .55f);
+        final Vector3f color = valid ? new Vector3f(.3f, .9f, .5f) : new Vector3f(.9f, .3f, .5f);
+        final Vector3f outlinerColor = valid ? new Vector3f(.35f, .85f, .55f) : new Vector3f(.85f, .35f, .55f);
         for (double t = 0; t <= length; t += step) {
-            Vec3 lerped = renderFrom.add(dir.scale(t));
+            final Vec3 lerped = renderFrom.add(dir.scale(t));
 
             if (level.getRandom().nextFloat() > PARTICLE_DENSITY) {
                 continue;
             }
 
             level.addParticle(
-                new DustParticleOptions(color, 1), true,
-                lerped.x, lerped.y, lerped.z, 0, 0, 0);
+                    new DustParticleOptions(color, 1), true,
+                    lerped.x, lerped.y, lerped.z, 0, 0, 0);
         }
         level.addParticle(
-            new DustParticleOptions(color, 1), true,
-            renderTo.x, renderTo.y, renderTo.z, 0, 0, 0);
+                new DustParticleOptions(color, 1), true,
+                renderTo.x, renderTo.y, renderTo.z, 0, 0, 0);
 
         showAnchorBox(fromPos, fromFace.getOpposite(), "from", (int) (outlinerColor.x * 256), (int) (outlinerColor.y * 256), (int) (outlinerColor.z * 256));
         showAnchorBox(targetPos, targetFace.getOpposite(), "to", (int) (outlinerColor.x * 256), (int) (outlinerColor.y * 256), (int) (outlinerColor.z * 256));
 
     }
 
-    private static void showAnchorBox(BlockPos targetPos, Direction targetFace, String id, int r, int g, int b) {
+    private static void showAnchorBox(final BlockPos targetPos, final Direction targetFace, final String id, final int r, final int g, final int b) {
         AABB box = new AABB(
-            0, 0, 0, (targetFace.getStepX() == 0 ? 0.25f : 0f) + 0.25f, (targetFace.getStepY() == 0 ? 0.25f : 0f) + 0.25f, (targetFace.getStepZ() == 0 ? 0.25f : 0f) + 0.25f
+                0, 0, 0, (targetFace.getStepX() == 0 ? 0.25f : 0f) + 0.25f, (targetFace.getStepY() == 0 ? 0.25f : 0f) + 0.25f, (targetFace.getStepZ() == 0 ? 0.25f : 0f) + 0.25f
         );
         box = box
-            .move(targetPos.getX(), targetPos.getY(), targetPos.getZ())
-            .move(-box.getXsize() * 0.5f + 0.5f, -box.getYsize() * 0.5f + 0.5f, -box.getZsize() * 0.5f + 0.5f)
-            .move(targetFace.getStepX() * 0.5f, targetFace.getStepY() * 0.5f, targetFace.getStepZ() * 0.5f);
+                .move(targetPos.getX(), targetPos.getY(), targetPos.getZ())
+                .move(-box.getXsize() * 0.5f + 0.5f, -box.getYsize() * 0.5f + 0.5f, -box.getZsize() * 0.5f + 0.5f)
+                .move(targetFace.getStepX() * 0.5f, targetFace.getStepY() * 0.5f, targetFace.getStepZ() * 0.5f);
         Outliner.getInstance().showAABB(id, box).colored(new Color(r, g, b)).lineWidth(1 / 16f);
     }
 
-    private static BlockPos resolvePlacementPos(ClientLevel level, BlockPos clickedPos, Direction face) {
+    private static BlockPos resolvePlacementPos(final ClientLevel level, final BlockPos clickedPos, final Direction face) {
         BlockPos pos = clickedPos;
         if (!(level.getBlockState(pos).getBlock() instanceof GirderStrutBlock)) {
             pos = pos.relative(face);
