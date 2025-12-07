@@ -31,30 +31,30 @@ public class LargeNixieTubeBlock extends DoubleOrientedDisplayBlock implements I
 
     final @Nullable DyeColor dyeColor;
 
-    public LargeNixieTubeBlock(Properties p_52591_, @Nullable DyeColor dyeColor) {
+    public LargeNixieTubeBlock(final Properties p_52591_, @Nullable final DyeColor dyeColor) {
         super(p_52591_);
         this.dyeColor = dyeColor;
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(final BlockState state, final HitResult target, final LevelReader level, final BlockPos pos, final Player player) {
         return BnbBlocks.LARGE_NIXIE_TUBE.asItem().getDefaultInstance();
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        ItemStack heldItem = player.getItemInHand(hand);
-        if (heldItem.getItem() instanceof DyeItem dyeItem && dyeItem.getDyeColor() != dyeColor) {
+    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+        final ItemStack heldItem = player.getItemInHand(hand);
+        if (heldItem.getItem() instanceof final DyeItem dyeItem && dyeItem.getDyeColor() != dyeColor) {
             if (!level.isClientSide) {
-                GenericNixieDisplayBlockEntity be = (GenericNixieDisplayBlockEntity) level.getBlockEntity(pos);
+                final GenericNixieDisplayBlockEntity be = (GenericNixieDisplayBlockEntity) level.getBlockEntity(pos);
                 be.applyToEachElementOfThisStructure((display) -> {
-                    DyeColor newColor = dyeItem.getDyeColor();
-                    BlockState newState = BnbBlocks.DYED_LARGE_NIXIE_TUBE.get(newColor).getDefaultState()
-                        .setValue(FACING, display.getBlockState().getValue(FACING))
-                        .setValue(ORIENTATION, display.getBlockState().getValue(ORIENTATION))
-                        .setValue(LIT, display.getBlockState().getValue(LIT));
+                    final DyeColor newColor = dyeItem.getDyeColor();
+                    final BlockState newState = BnbBlocks.DYED_LARGE_NIXIE_TUBE.get(newColor).getDefaultState()
+                            .setValue(FACING, display.getBlockState().getValue(FACING))
+                            .setValue(ORIENTATION, display.getBlockState().getValue(ORIENTATION))
+                            .setValue(LIT, display.getBlockState().getValue(LIT));
                     level.setBlockAndUpdate(display.getBlockPos(), newState);
-                    GenericNixieDisplayBlockEntity newBe = (GenericNixieDisplayBlockEntity) level.getBlockEntity(display.getBlockPos());
+                    final GenericNixieDisplayBlockEntity newBe = (GenericNixieDisplayBlockEntity) level.getBlockEntity(display.getBlockPos());
                     newBe.inheritDataFrom(display);
                 });
             }
@@ -64,11 +64,11 @@ public class LargeNixieTubeBlock extends DoubleOrientedDisplayBlock implements I
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        Direction frontTarget = DoubleOrientedBlockModel.getFront(state.getValue(FACING), state.getValue(ORIENTATION));
-        boolean isFront = frontTarget.getAxis() == state.getValue(ORIENTATION).getAxis();
+    protected VoxelShape getShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext context) {
+        final Direction frontTarget = DoubleOrientedDirections.getFront(state.getValue(FACING), state.getValue(ORIENTATION));
+        final boolean isFront = frontTarget.getAxis() == state.getValue(ORIENTATION).getAxis();
         return isFront ? BnbShapes.LARGE_NIXIE_TUBE_SIDE.get(state.getValue(FACING))
-            : BnbShapes.LARGE_NIXIE_TUBE_FRONT.get(state.getValue(FACING));
+                : BnbShapes.LARGE_NIXIE_TUBE_FRONT.get(state.getValue(FACING));
     }
 
     @Override

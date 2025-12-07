@@ -190,7 +190,7 @@ publishMods {
     println("Using changelog:\n" + changelogText + "\n")
     type = STABLE
     modLoaders.add("neoforge")
-    displayName = mod_name + " " + mod_version + "NeoForge" + minecraft_version
+    displayName = mod_name + " " + mod_version + " NeoForge " + minecraft_version
 
     curseforge {
         projectId = "1398383"

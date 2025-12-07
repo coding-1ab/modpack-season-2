@@ -47,13 +47,11 @@ public class CreateBitsnBobs {
         BnbBlocks.register();
         BnbEntityTypes.register();
         BnbCreativeTabs.register(modEventBus);
-        BnbPartialModels.register();
         BnbBlockEntities.register();
         BnbTags.register();
         BnbPackets.register();
         BnbDataComponents.register(modEventBus);
         BnbDecoBlocks.register();
-        BnbSpriteShifts.register();
 
         BnbCreateStresses.register();
 

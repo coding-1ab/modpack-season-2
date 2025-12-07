@@ -68,7 +68,7 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
         GenericNixieDisplayBlockEntity controller = findControllerBlockEntity();
         Direction facing = getBlockState().getValue(DoubleOrientedDisplayBlock.FACING);
         Direction orientation = getBlockState().getValue(DoubleOrientedDisplayBlock.ORIENTATION);
-        Direction right = DoubleOrientedBlockModel.getLeft(facing, orientation).getOpposite();
+        Direction right = DoubleOrientedDirections.getLeft(facing, orientation).getOpposite();
         BlockPos currentPos = controller.getBlockPos();
         for (int i = 0; i < 100; i++) {
             BlockEntity blockEntity = controller.level.getBlockEntity(currentPos);
@@ -152,7 +152,7 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
     public @NotNull GenericNixieDisplayBlockEntity findControllerBlockEntity() {
         Direction facing = getBlockState().getValue(DoubleOrientedDisplayBlock.FACING);
         Direction orientation = getBlockState().getValue(DoubleOrientedDisplayBlock.ORIENTATION);
-        Direction left = DoubleOrientedBlockModel.getLeft(facing, orientation);
+        Direction left = DoubleOrientedDirections.getLeft(facing, orientation);
         BlockPos leftPos = getBlockPos().relative(left);
         GenericNixieDisplayBlockEntity lastDisplay = this;
         for (int i = 0; i < 100; i++) {
@@ -178,7 +178,7 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
         } else {
             return;
         }
-        Direction right = DoubleOrientedBlockModel.getLeft(
+        Direction right = DoubleOrientedDirections.getLeft(
                 getBlockState().getValue(DoubleOrientedDisplayBlock.FACING),
                 getBlockState().getValue(DoubleOrientedDisplayBlock.ORIENTATION)
         ).getOpposite();
@@ -194,7 +194,7 @@ public class GenericNixieDisplayBlockEntity extends SmartBlockEntity {
     }
 
     public int seekWidth() {
-        Direction right = DoubleOrientedBlockModel.getLeft(
+        Direction right = DoubleOrientedDirections.getLeft(
                 getBlockState().getValue(DoubleOrientedDisplayBlock.FACING),
                 getBlockState().getValue(DoubleOrientedDisplayBlock.ORIENTATION)
         ).getOpposite();

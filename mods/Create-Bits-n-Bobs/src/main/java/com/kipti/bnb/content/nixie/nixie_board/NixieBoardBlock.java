@@ -58,7 +58,7 @@ public class NixieBoardBlock extends DoubleOrientedDisplayBlock implements IBE<G
         if (state == null) {
             return null;
         }
-        final Direction left = DoubleOrientedBlockModel.getLeft(state);
+        final Direction left = DoubleOrientedDirections.getLeft(state);
         final Direction below = state.getValue(FACING).getOpposite();
 
         state = state
@@ -78,7 +78,7 @@ public class NixieBoardBlock extends DoubleOrientedDisplayBlock implements IBE<G
 
     @Override
     protected BlockState updateShape(final BlockState state, final Direction direction, final BlockState neighborState, final LevelAccessor level, final BlockPos pos, final BlockPos neighborPos) {
-        final Direction left = DoubleOrientedBlockModel.getLeft(state);
+        final Direction left = DoubleOrientedDirections.getLeft(state);
         final Direction right = left.getOpposite();
         final Direction bottom = state.getValue(FACING).getOpposite();
         final Direction top = state.getValue(FACING);
@@ -125,7 +125,7 @@ public class NixieBoardBlock extends DoubleOrientedDisplayBlock implements IBE<G
 
     @Override
     protected @NotNull VoxelShape getShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext context) {
-        final Direction frontTarget = DoubleOrientedBlockModel.getFront(state.getValue(FACING), state.getValue(ORIENTATION));
+        final Direction frontTarget = DoubleOrientedDirections.getFront(state.getValue(FACING), state.getValue(ORIENTATION));
         final boolean isFront = frontTarget.getAxis() == state.getValue(ORIENTATION).getAxis();
         return isFront ? BnbShapes.NIXIE_BOARD_SIDE.get(state.getValue(FACING))
                 : BnbShapes.NIXIE_BOARD_FRONT.get(state.getValue(FACING));

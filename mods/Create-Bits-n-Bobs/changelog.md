@@ -15,3 +15,5 @@
 # 1.21.1-0.0.10
 - Changes:
   - Added proper nixie board tiling
+- Fixes:
+  - Fixed server crash due to client resources being loaded

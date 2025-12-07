@@ -2,6 +2,8 @@ package com.kipti.bnb;
 
 import com.kipti.bnb.foundation.ponder.BnbPonderPlugin;
 import com.kipti.bnb.registry.BnbConfigs;
+import com.kipti.bnb.registry.BnbPartialModels;
+import com.kipti.bnb.registry.BnbSpriteShifts;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.neoforged.api.distmarker.Dist;
@@ -23,13 +25,16 @@ public class CreateBitsnBobsClient {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         PonderIndex.addPlugin(new BnbPonderPlugin());
 
+        BnbPartialModels.register();
+        BnbSpriteShifts.register();
+
         BaseConfigScreen.setDefaultActionFor(CreateBitsnBobs.MOD_ID, base -> base
                 .withButtonLabels(null, "Feature Settings", "Balancing Settings")
                 .withSpecs(null, BnbConfigs.common().specification, BnbConfigs.server().specification)
         );
     }
 
-    @EventBusSubscriber
+    @EventBusSubscriber(Dist.CLIENT)
     private static class ModBusEvents {
 
         @SubscribeEvent
