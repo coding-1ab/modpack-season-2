@@ -37,7 +37,7 @@ public class CogwheelChainPlacementEffect {
         if (level == null || currentChainLevel == null || currentBuildingChain == null) {
             return;
         }
-        if (!currentChainLevel.equals(level.dimension())) {
+        if (!currentChainLevel.equals(level.dimension()) || !currentBuildingChain.checkMatchingNodesInLevel(level)) {
             currentBuildingChain = null;
             currentChainLevel = null;
             return;
