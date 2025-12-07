@@ -162,7 +162,7 @@ public class PlacingCogwheelChain {
 
     private boolean isValidLargeCogAxisConnection(final PlacingCogwheelNode lastNode, final BlockPos newPos, final Direction.Axis axis, final boolean isLarge) {
         if (!lastNode.isLarge() || !isLarge) {
-            return true;
+            return false;
         }
 
         // Check that they are one block apart on the two axes perpendicular to the rotation axes
