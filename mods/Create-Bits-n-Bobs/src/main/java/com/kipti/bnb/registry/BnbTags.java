@@ -95,7 +95,6 @@ public class BnbTags {
                     .addTag(BlockTags.WOODEN_STAIRS)
                     .remove(AllBlocks.INDUSTRIAL_IRON_BLOCK.getKey());
         });
-
     }
 
     public static void register() {

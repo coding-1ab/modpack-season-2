@@ -26,6 +26,8 @@ public class BnbLangEntries {
         );
 
         final String[] entries = {
+                "generator.bits_n_bobs.ponderous_planes", "Ponderflat",
+                "tooltip.bits_n_bobs.new_ponder_notification", "New ponder",
                 //Tooltips
                 "block.bits_n_bobs.headlamp.tooltip.summary", "Can be dyed and placed _multiple times in same block_. Useful for trains or fancy signage too!",
 

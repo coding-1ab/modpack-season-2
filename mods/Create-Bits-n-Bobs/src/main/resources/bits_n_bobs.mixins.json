@@ -11,7 +11,11 @@
     "FontAccessMixin",
     "GuiGameElementMixin",
     "RotationPropagatorMixin",
-    "flywheel_bearing.KineticNetworkMixin"
+    "flywheel_bearing.KineticNetworkMixin",
+    "presets.ChunkGeneratorsMixin",
+    "presets.WorldDimensionsMixin",
+    "presets.WorldPresetsBootstrapMixin",
+    "presets.WorldPresetsMixin"
   ],
   "client": [
   ],
