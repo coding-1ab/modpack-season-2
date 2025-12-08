@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.AABB;
@@ -23,13 +24,17 @@ import org.antarcticgardens.cna.CreateNewAge;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.electricity.wire.ElectricWireItem;
 import org.antarcticgardens.cna.content.electricity.wire.WireType;
-import org.antarcticgardens.cna.util.RaycastUtil;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class ElectricalConnectorRenderer implements BlockEntityRenderer<ElectricalConnectorBlockEntity> {
     public ElectricalConnectorRenderer(BlockEntityRendererProvider.Context context) {
         super();
+    }
+
+    public static HitResult pickBlockFromPos(Level world, Vec3 pos, Vec3 dir, double distance) {
+        Vec3 vec33 = pos.add(dir.x * distance, dir.y * distance, dir.z * distance);
+        return world.clip(new ClipContext(pos, vec33, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, Minecraft.getInstance().player));
     }
 
     @Override
@@ -109,7 +114,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                     Vec3 eyePos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
                     Vec3 endPos = eyePos.add(player.getViewVector(partialTick).normalize().scale(2.0f));
 
-                    HitResult hit = RaycastUtil.pickBlockFromPos(blockEntity.getLevel(), eyePos,
+                    HitResult hit = pickBlockFromPos(blockEntity.getLevel(), eyePos,
                             player.getViewVector(partialTick), Minecraft.getInstance().player.blockInteractionRange());
 
                     if (hit instanceof BlockHitResult blockHit) {
