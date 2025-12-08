@@ -17,3 +17,9 @@
   - Added proper nixie board tiling
 - Fixes:
   - Fixed server crash due to client resources being loaded
+# 1.21.1-0.0.11
+- New feature:
+  - Created "ponderflat" world type, a flat world with no structures and a ponder-style floor
+# 1.21.1-0.0.12
+- New features:
+  - Added brass lamp crafting recipe

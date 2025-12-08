@@ -3,6 +3,10 @@
     {
       "type": "bits_n_bobs:feature_item_enabled",
       "item": "bits_n_bobs:headlamp"
+    },
+    {
+      "type": "bits_n_bobs:feature_item_enabled",
+      "item": "bits_n_bobs:lightbulb"
     }
   ],
   "type": "minecraft:crafting_shapeless",
