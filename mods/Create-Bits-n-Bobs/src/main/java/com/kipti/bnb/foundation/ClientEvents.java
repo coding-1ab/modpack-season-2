@@ -72,7 +72,7 @@ public class ClientEvents {
     public static void modify(final ItemTooltipEvent context) {
         if (context.getItemStack().is(AllBlocks.COGWHEEL.asItem()) ||
                 context.getItemStack().is(AllBlocks.LARGE_COGWHEEL.asItem())) {
-            context.getToolTip().add(1, Component.literal("New ponder")
+            context.getToolTip().add(1, Component.translatable("tooltip.bits_n_bobs.new_ponder_notification")
                     .withColor(FontHelper.Palette.STANDARD_CREATE.primary().getColor().getValue()));
         }
     }
