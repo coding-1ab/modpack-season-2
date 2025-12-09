@@ -14,8 +14,8 @@ public class DoubleOrientedDirections {
     }
 
     public static Direction getLeft(final BlockState state) {
-        final Direction up = state.getValue(DoubleOrientedDisplayBlock.FACING);
-        final Direction front = state.getValue(DoubleOrientedDisplayBlock.ORIENTATION);
+        final Direction up = state.getValue(GenericNixieDisplayBlock.FACING);
+        final Direction front = state.getValue(GenericNixieDisplayBlock.ORIENTATION);
         return getLeft(up, front);
     }
 
@@ -31,5 +31,5 @@ public class DoubleOrientedDirections {
     public static Direction getLeft(final Direction up, final Direction front) {
         return getDirectionByNormal(up.getNormal().cross(front.getNormal())).getOpposite();
     }
-    
+
 }

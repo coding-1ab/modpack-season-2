@@ -24,10 +24,18 @@ public class TextBlockSubAtlas {
     public static final TextBlockSubAtlas NIXIE_TEXT_SUB_ATLAS = new TextBlockSubAtlas(
             CreateBitsnBobs.asResource("block/nixie/text_atlas"),
             512, 16,
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n1234567890(),.!?#$%\\@;:\n" +
-                    "\uE000\uE001\uE002\uE003\uE004\uE005\uE006\uE007\uE008\uE009\uE00A\uE00B\uE00C\uE00D\uE00E\uE00F" +
-                    "\uE010\uE011\uE012\uE013\uE014\uE015\uE016\uE017\uE018\uE019\uE01A\uE01B\uE01C\uE01D\uE01E\uE01F"
-    );
+            """
+                    ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                    abcdefghijklmnopqrstuvwxyz
+                    1234567890(),.!?#$%\\@;:
+                    \uE000\uE001\uE002\uE003\uE004\uE005\uE006\uE007\uE008\uE009\uE00A\uE00B\uE00C\uE00D\uE00E\uE00F\
+                    \uE010\uE011\uE012\uE013\uE014\uE015\uE016\uE017\uE018\uE019\uE01A\uE01B\uE01C\uE01D\uE01E\uE01F
+                    """.trim()
+    ).andExcludeColorsFor(
+            "\uE000\uE001\uE002\uE003\uE004\uE005\uE006\uE007\uE008\uE009\uE00A\uE00B\uE00C\uE00D\uE00E\uE00F" +
+                    "\uE010\uE011\uE012\uE014\uE015\uE016\uE017\uE018\uE019\uE01A\uE01B\uE01C\uE01D\uE01E\uE01F"
+    ); //\uE013 is the heart emoji, which should be colorable
+
     /**
      * Additional chars are from Unicode private use area
      */
@@ -42,9 +50,14 @@ public class TextBlockSubAtlas {
      * Used to select only a certain part of the atlas to be avaliable, such as for the small text to only keep the special characters and use normal rendering when possible.
      */
     private final @Nullable Set<Integer> allowedCharacters;
+    /**
+     * Characters to exclude from color rendering, such as emojis that should always be rendered in white.
+     */
+    private @Nullable Set<Integer> colorExcludedCharacters;
 
     public TextBlockSubAtlas(final ResourceLocation atlasLocation, final int textureSize, final int elementSize, final String characterSet, @Nullable final String allowedCharacters) {
         this.atlasLocation = atlasLocation;
+        this.colorExcludedCharacters = null;
 
         this.allowedCharacters = allowedCharacters != null ? allowedCharacters.chars().boxed().collect(Collectors.toSet()) : null;
 
@@ -83,8 +96,8 @@ public class TextBlockSubAtlas {
         final Map<Integer, Uv> blockAtlasUvs = new HashMap<>();
         final TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(atlasLocation);
         final float u0 = sprite.getU0();
-        float v0 = sprite.getV0();
-        float u1 = sprite.getU1();
+        final float v0 = sprite.getV0();
+        final float u1 = sprite.getU1();
         final float v1 = sprite.getV1();
         for (final Map.Entry<Character, Uv> entry : localUvs.entrySet()) {
             final char c = entry.getKey();
@@ -107,10 +120,16 @@ public class TextBlockSubAtlas {
         this.atlasLocation = parent.atlasLocation;
         this.allowedCharacters = allowedCharacters.chars().boxed().collect(Collectors.toSet());
         this.characterUvs = parent.characterUvs;
+        this.colorExcludedCharacters = parent.colorExcludedCharacters;
     }
 
-    public TextBlockSubAtlas withAllowedCharacters(String allowedCharacters) {
+    public TextBlockSubAtlas withAllowedCharacters(final String allowedCharacters) {
         return new TextBlockSubAtlas(this, allowedCharacters);
+    }
+
+    private TextBlockSubAtlas andExcludeColorsFor(final String colorExcludedCharacters) {
+        this.colorExcludedCharacters = colorExcludedCharacters.chars().boxed().collect(Collectors.toSet());
+        return this;
     }
 
     public ResourceLocation getAtlasLocation() {
@@ -123,6 +142,10 @@ public class TextBlockSubAtlas {
 
     public Uv getUvForCharacter(final int c) {
         return characterUvs.getOrDefault(c, new Uv(0, 0, 0, 0)); // Return empty UVs if character not found
+    }
+
+    public boolean isInColorExcludedCharacterSet(final int charCode) {
+        return colorExcludedCharacters != null && colorExcludedCharacters.contains(charCode);
     }
 
     public static class Uv {

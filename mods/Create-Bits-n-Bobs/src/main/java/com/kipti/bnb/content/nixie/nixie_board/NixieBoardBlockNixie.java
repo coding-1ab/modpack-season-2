@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class NixieBoardBlock extends DoubleOrientedDisplayBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable, DyeProviderBlock, IGenericNixieDisplayBlock {
+public class NixieBoardBlockNixie extends GenericNixieDisplayBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable, DyeProviderBlock, IGenericNixieDisplayBlock {
 
     public static final BooleanProperty LEFT = BooleanProperty.create("left");
     public static final BooleanProperty RIGHT = BooleanProperty.create("right");
@@ -42,7 +42,7 @@ public class NixieBoardBlock extends DoubleOrientedDisplayBlock implements IBE<G
 
     final @Nullable DyeColor dyeColor;
 
-    public NixieBoardBlock(final Properties p_52591_, @Nullable final DyeColor dyeColor) {
+    public NixieBoardBlockNixie(final Properties p_52591_, @Nullable final DyeColor dyeColor) {
         super(p_52591_);
         this.dyeColor = dyeColor;
     }
@@ -141,8 +141,8 @@ public class NixieBoardBlock extends DoubleOrientedDisplayBlock implements IBE<G
         return BnbBlockEntities.GENERIC_NIXIE_DISPLAY.get();
     }
 
-    public @Nullable DyeColor getDyeColor() {
-        return dyeColor;
+    public DyeColor getDyeColor() {
+        return dyeColor != null ? dyeColor : DyeColor.ORANGE;
     }
 
     @Override

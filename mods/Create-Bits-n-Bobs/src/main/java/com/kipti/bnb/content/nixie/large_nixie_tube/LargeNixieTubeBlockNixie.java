@@ -27,11 +27,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class LargeNixieTubeBlock extends DoubleOrientedDisplayBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable, IGenericNixieDisplayBlock, DyeProviderBlock {
+public class LargeNixieTubeBlockNixie extends GenericNixieDisplayBlock implements IBE<GenericNixieDisplayBlockEntity>, IWrenchable, IGenericNixieDisplayBlock, DyeProviderBlock {
 
     final @Nullable DyeColor dyeColor;
 
-    public LargeNixieTubeBlock(final Properties p_52591_, @Nullable final DyeColor dyeColor) {
+    public LargeNixieTubeBlockNixie(final Properties p_52591_, @Nullable final DyeColor dyeColor) {
         super(p_52591_);
         this.dyeColor = dyeColor;
     }
@@ -81,8 +81,8 @@ public class LargeNixieTubeBlock extends DoubleOrientedDisplayBlock implements I
         return BnbBlockEntities.GENERIC_NIXIE_DISPLAY.get();
     }
 
-    public @Nullable DyeColor getDyeColor() {
-        return dyeColor;
+    public DyeColor getDyeColor() {
+        return dyeColor != null ? dyeColor : DyeColor.ORANGE;
     }
 
     public List<GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions> getPossibleDisplayOptions() {

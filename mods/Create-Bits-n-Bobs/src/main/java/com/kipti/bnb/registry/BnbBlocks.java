@@ -14,9 +14,9 @@ import com.kipti.bnb.content.light.headlamp.HeadlampBlockItem;
 import com.kipti.bnb.content.light.headlamp.HeadlampModelBuilder;
 import com.kipti.bnb.content.light.lightbulb.LightbulbBlock;
 import com.kipti.bnb.content.nixie.foundation.DoubleOrientedBlockModel;
-import com.kipti.bnb.content.nixie.large_nixie_tube.LargeNixieTubeBlock;
+import com.kipti.bnb.content.nixie.large_nixie_tube.LargeNixieTubeBlockNixie;
 import com.kipti.bnb.content.nixie.large_nixie_tube.LargeNixieTubeBlockStateGen;
-import com.kipti.bnb.content.nixie.nixie_board.NixieBoardBlock;
+import com.kipti.bnb.content.nixie.nixie_board.NixieBoardBlockNixie;
 import com.kipti.bnb.content.nixie.nixie_board.NixieBoardBlockStateGen;
 import com.kipti.bnb.content.weathered_girder.EncasedWeatheredGirderBlock;
 import com.kipti.bnb.content.weathered_girder.WeatheredConnectedGirderModel;
@@ -184,30 +184,30 @@ public class BnbBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<NixieBoardBlock> NIXIE_BOARD = REGISTRATE.block("nixie_board", p -> new NixieBoardBlock(p, null))
+    public static final BlockEntry<NixieBoardBlockNixie> NIXIE_BOARD = REGISTRATE.block("nixie_board", p -> new NixieBoardBlockNixie(p, null))
             .transform(nixieBoard())
             .item()
             .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/nixie_board/nixie_board_single")))
             .build()
             .register();
 
-    public static final DyedBlockList<NixieBoardBlock> DYED_NIXIE_BOARD = new DyedBlockList<>(colour -> {
+    public static final DyedBlockList<NixieBoardBlockNixie> DYED_NIXIE_BOARD = new DyedBlockList<>(colour -> {
         String colourName = colour.getSerializedName();
-        return REGISTRATE.block(colourName + "_nixie_board", p -> new NixieBoardBlock(p, colour))
+        return REGISTRATE.block(colourName + "_nixie_board", p -> new NixieBoardBlockNixie(p, colour))
                 .transform(nixieBoard())
                 .register();
     });
 
-    public static final BlockEntry<LargeNixieTubeBlock> LARGE_NIXIE_TUBE = REGISTRATE.block("large_nixie_tube", p -> new LargeNixieTubeBlock(p, null))
+    public static final BlockEntry<LargeNixieTubeBlockNixie> LARGE_NIXIE_TUBE = REGISTRATE.block("large_nixie_tube", p -> new LargeNixieTubeBlockNixie(p, null))
             .transform(largeNixieTube())
             .item()
             .model((c, p) -> p.withExistingParent(c.getName(), CreateBitsnBobs.asResource("block/large_nixie_tube/large_nixie_tube")))
             .build()
             .register();
 
-    public static final DyedBlockList<LargeNixieTubeBlock> DYED_LARGE_NIXIE_TUBE = new DyedBlockList<>(colour -> {
+    public static final DyedBlockList<LargeNixieTubeBlockNixie> DYED_LARGE_NIXIE_TUBE = new DyedBlockList<>(colour -> {
         String colourName = colour.getSerializedName();
-        return REGISTRATE.block(colourName + "_large_nixie_tube", p -> new LargeNixieTubeBlock(p, colour))
+        return REGISTRATE.block(colourName + "_large_nixie_tube", p -> new LargeNixieTubeBlockNixie(p, colour))
                 .transform(largeNixieTube())
                 .register();
     });
@@ -293,7 +293,7 @@ public class BnbBlocks {
                     .loot((lt, block) -> lt.dropOther(block, AllBlocks.LARGE_COGWHEEL.get()))
                     .register();
 
-    public static <T extends NixieBoardBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> nixieBoard() {
+    public static <T extends NixieBoardBlockNixie, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> nixieBoard() {
         return b -> b
                 .initialProperties(SharedProperties::softMetal)
                 .transform(displayTarget(BnbDisplayTargets.GENERIC_NIXIE_TARGET))
@@ -302,13 +302,13 @@ public class BnbBlocks {
                 .onRegister(CreateRegistrate.blockModel(() -> DoubleOrientedBlockModel::new))
                 .properties(p -> p
                         .noOcclusion()
-                        .lightLevel(state -> state.getValue(NixieBoardBlock.LIT) ? 4 : 1)
+                        .lightLevel(state -> state.getValue(NixieBoardBlockNixie.LIT) ? 4 : 1)
                         .mapColor(DyeColor.ORANGE)
                         .forceSolidOn())
                 .addLayer(() -> RenderType::translucent);
     }
 
-    public static <T extends LargeNixieTubeBlock, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> largeNixieTube() {
+    public static <T extends LargeNixieTubeBlockNixie, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> largeNixieTube() {
         return b -> b
                 .initialProperties(SharedProperties::softMetal)
                 .transform(displayTarget(BnbDisplayTargets.GENERIC_NIXIE_TARGET))
@@ -317,7 +317,7 @@ public class BnbBlocks {
                 .onRegister(CreateRegistrate.blockModel(() -> DoubleOrientedBlockModel::new))
                 .properties(p -> p
                         .noOcclusion()
-                        .lightLevel(state -> state.getValue(NixieBoardBlock.LIT) ? 4 : 1)
+                        .lightLevel(state -> state.getValue(NixieBoardBlockNixie.LIT) ? 4 : 1)
                         .mapColor(DyeColor.ORANGE)
                         .forceSolidOn())
                 .addLayer(() -> RenderType::translucent);

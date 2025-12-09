@@ -39,8 +39,8 @@ public class DoubleOrientedBlockModel extends BakedModelWrapper<BakedModel> {
     public @NotNull ModelData getModelData(final BlockAndTintGetter level, final BlockPos pos, final BlockState state, final ModelData modelData) {
         final DoubleOrientedModelData data = new DoubleOrientedModelData();
 
-        final Direction up = state.getValue(DoubleOrientedDisplayBlock.FACING);
-        final Direction front = state.getValue(DoubleOrientedDisplayBlock.ORIENTATION);
+        final Direction up = state.getValue(GenericNixieDisplayBlock.FACING);
+        final Direction front = state.getValue(GenericNixieDisplayBlock.ORIENTATION);
         final Matrix4f rotation = getRotation(up, front);
         data.setRotation(rotation);
 

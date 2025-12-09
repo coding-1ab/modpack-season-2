@@ -23,3 +23,12 @@
 # 1.21.1-0.0.12
 - New features:
   - Added brass lamp crafting recipe
+# 1.21.1-0.0.13
+- Temporary Fixes:
+  - Wrapped nixie tube target handling in a try-catch to prevent a crash until proper redo can be done
+# 1.21.1-0.0.14
+- Changes:
+  - Changed default color of nixie tubes and boards to the default orange color
+  - Added hint text to placing the cogwheel chains
+- Fixes:
+  - Redid large nixie tube and board handling to match full base create functionality

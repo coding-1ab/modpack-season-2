@@ -43,6 +43,7 @@ public class CogwheelChainPlacementEffect {
             return;
         }
 
+
         //Get held chain
         final ItemStack heldItem = isChain(player.getMainHandItem()) ? player.getMainHandItem() :
                 isChain(player.getOffhandItem()) ? player.getOffhandItem() : null;

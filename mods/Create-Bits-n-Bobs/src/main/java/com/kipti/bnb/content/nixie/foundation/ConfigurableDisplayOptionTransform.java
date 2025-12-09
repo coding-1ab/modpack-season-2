@@ -37,12 +37,7 @@ public enum ConfigurableDisplayOptionTransform {
             for (int j = 0; j < width; j++) {
                 stack.pushPose();
                 transform(stack, j, i);
-                char glyph = ' ';
-                if (i == 0) {
-                    glyph = be.currentTextTop.length() <= j ? ' ' : be.currentTextTop.charAt(j);
-                } else if (i == 1) {
-                    glyph = be.currentTextBottom.length() <= j ? ' ' : be.currentTextBottom.charAt(j);
-                }
+                char glyph = be.getRenderedText(i, j);
                 consumer.accept(glyph);
                 stack.popPose();
             }

@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -96,6 +97,8 @@ public class CogwheelChainPlacementInteraction {
                     targetedState.getValue(CogWheelBlock.AXIS),
                     targetedState.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isLargeCog());
             currentChainLevel = level.dimension();
+
+            player.displayClientMessage(Component.translatable("tooltip.bits_n_bobs.chain_drive_placing_hint"), true);
         } else {
             //if this is the last node, then remove the last one
             if (currentBuildingChain.getLastNode().pos().equals(hitPos)) {

@@ -1,43 +1,62 @@
 package com.kipti.bnb.content.nixie.foundation;
 
-import com.google.gson.JsonParser;
 import com.simibubi.create.api.behaviour.display.DisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
+import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GenericNixieDisplayTarget extends DisplayTarget {
+    public static void walkNixies(final Level level, final BlockPos pos, final TriConsumer<BlockPos, Integer, GenericNixieDisplayBlockEntity> consumer) {
+        final BlockEntity be = level.getBlockEntity(pos);
+        if (!(be instanceof final GenericNixieDisplayBlockEntity displayBlockEntity)) {
+            return;
+        }
+        final AtomicInteger consumedWidthOfCharacters = new AtomicInteger();
+        displayBlockEntity.applyToEachElementOfThisStructure((nixieBE) -> {
+            consumer.accept(nixieBE.getBlockPos(), consumedWidthOfCharacters.get(), nixieBE);
+            consumedWidthOfCharacters.addAndGet(nixieBE.calculateDisplayedCharacterWidth());
+        });
+    }
+
     @Override
-    public void acceptText(int line, List<MutableComponent> text, DisplayLinkContext context) {
-        String tagElement = JsonParser.parseString(Component.Serializer.toJson(text.get(0), context.level().registryAccess())).getAsString();
-        if (context.getTargetBlockEntity() instanceof GenericNixieDisplayBlockEntity blockEntity) {
-            blockEntity.findControllerBlockEntity().applyTextToDisplay(tagElement, line);
+    public void acceptText(int line, final List<MutableComponent> text, final DisplayLinkContext context) {
+        for (final MutableComponent lineComponent : text) {
+            final String tagElement = Component.Serializer.toJson(lineComponent, context.level().registryAccess());
+            final int finalLine = line;
+            GenericNixieDisplayTarget.walkNixies(context.level(), context.getTargetPos(), (nixiePos, consumedWidth, nixieBE) -> {
+                nixieBE.displayCustomText(tagElement, consumedWidth, finalLine);
+            });
+            line++;
         }
     }
 
     @Override
-    public DisplayTargetStats provideStats(DisplayLinkContext context) {
-        GenericNixieDisplayBlockEntity displayBlockEntity = (GenericNixieDisplayBlockEntity) context.getTargetBlockEntity();
+    public DisplayTargetStats provideStats(final DisplayLinkContext context) {
+        final GenericNixieDisplayBlockEntity displayBlockEntity = (GenericNixieDisplayBlockEntity) context.getTargetBlockEntity();
         return new DisplayTargetStats(
-            displayBlockEntity.currentDisplayOption == GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions.DOUBLE_CHAR_DOUBLE_LINES
-                ? 2 : 1,
-            displayBlockEntity.seekWidth(),
-            this
+                displayBlockEntity.currentDisplayOption == GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions.DOUBLE_CHAR_DOUBLE_LINES
+                        ? 2 : 1,
+                displayBlockEntity.seekWidth(),
+                this
         );
     }
 
     @Override
-    public AABB getMultiblockBounds(LevelAccessor level, BlockPos pos) {
-        GenericNixieDisplayBlockEntity displayBlockEntity = (GenericNixieDisplayBlockEntity) level.getBlockEntity(pos);
+    public AABB getMultiblockBounds(final LevelAccessor level, final BlockPos pos) {
+        final GenericNixieDisplayBlockEntity displayBlockEntity = (GenericNixieDisplayBlockEntity) level.getBlockEntity(pos);
         final AABB[] bounds = {super.getMultiblockBounds(level, pos)};
         displayBlockEntity.applyToEachElementOfThisStructure((be) -> {
-            AABB elementBounds = bounds[0].move(be.getBlockPos().subtract(pos));
+            final AABB elementBounds = bounds[0].move(be.getBlockPos().subtract(pos));
             bounds[0] = bounds[0].minmax(elementBounds);
         });
         return bounds[0];

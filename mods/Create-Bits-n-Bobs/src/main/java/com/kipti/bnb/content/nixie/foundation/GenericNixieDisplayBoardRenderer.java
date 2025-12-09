@@ -1,7 +1,7 @@
 package com.kipti.bnb.content.nixie.foundation;
 
-import com.kipti.bnb.content.nixie.large_nixie_tube.LargeNixieTubeBlock;
-import com.kipti.bnb.content.nixie.nixie_board.NixieBoardBlock;
+import com.kipti.bnb.content.nixie.large_nixie_tube.LargeNixieTubeBlockNixie;
+import com.kipti.bnb.content.nixie.nixie_board.NixieBoardBlockNixie;
 import com.kipti.bnb.mixin_accessor.FontAccess;
 import com.kipti.bnb.registry.BnbBlocks;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -22,6 +22,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -48,11 +49,11 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
         final float offset = isNixieBoard ? 0 : 1f / 8f;
 
         ms.pushPose();
-        final Direction facing = be.getBlockState().getValue(NixieBoardBlock.FACING);
-        final Direction orientation = be.getBlockState().getValue(NixieBoardBlock.ORIENTATION);
+        final Direction facing = be.getBlockState().getValue(NixieBoardBlockNixie.FACING);
+        final Direction orientation = be.getBlockState().getValue(NixieBoardBlockNixie.ORIENTATION);
 
         float orientationOffset = 0;
-        final boolean isLargeNixieTube = be.getBlockState().getBlock() instanceof LargeNixieTubeBlock;
+        final boolean isLargeNixieTube = be.getBlockState().getBlock() instanceof LargeNixieTubeBlockNixie;
         if (be.currentDisplayOption != GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions.ALWAYS_UP && facing != Direction.UP) {
             TransformStack.of(ms)
                     .center()
@@ -75,7 +76,7 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
         }
         ms.scale(-1, -1, +1);
 
-        final Couple<Integer> couple = DyeHelper.getDyeColors(((DyeProviderBlock) be.getBlockState().getBlock()).getDyeColor());
+        final Couple<Integer> baseColor = DyeHelper.getDyeColors(be.getBlockState().getBlock() instanceof final DyeProviderBlock dyeProviderBlock ? dyeProviderBlock.getDyeColor() : DyeColor.ORANGE);
 
         final ConfigurableDisplayOptionTransform transform = be.getCurrentDisplayOption().renderTransform.get();
 
@@ -85,10 +86,11 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
                 return; // Skip rendering spaces
             }
             final int charCode = glyph;
+            final Couple<Integer> color = subAtlas.isInColorExcludedCharacterSet(charCode) ? DyeHelper.getDyeColors(DyeColor.WHITE) : baseColor;
             if (subAtlas.isInCharacterSet(charCode)) {
-                renderGlyphUsingSpecialFont(ms, buffer, overlay, charCode, ms.last().pose(), couple);
+                renderGlyphUsingSpecialFont(ms, buffer, overlay, charCode, ms.last().pose(), color);
             } else {
-                renderUsingNormalFont(ms, buffer, fontSet, charCode, ms.last().pose(), couple);
+                renderUsingNormalFont(ms, buffer, fontSet, charCode, ms.last().pose(), color);
             }
         });
         ms.popPose();
@@ -97,12 +99,12 @@ public class GenericNixieDisplayBoardRenderer extends SmartBlockEntityRenderer<G
     private static int getTextColor(final GenericNixieDisplayBlockEntity be) {
         int col = 0xffffffff;
         final Block block = be.getBlockState().getBlock();
-        if (block instanceof final NixieBoardBlock nbb) {
+        if (block instanceof final NixieBoardBlockNixie nbb) {
             if (nbb.getDyeColor() != null) {
                 col = nbb.getDyeColor().getTextureDiffuseColor() | 0x000000ff; // Ensure alpha is set
             }
         }
-        if (block instanceof final LargeNixieTubeBlock lnb) {
+        if (block instanceof final LargeNixieTubeBlockNixie lnb) {
             if (lnb.getDyeColor() != null) {
                 col = lnb.getDyeColor().getTextureDiffuseColor() | 0x000000ff;
             }

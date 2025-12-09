@@ -8,14 +8,14 @@ import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 
 public class NixieBoardBlockStateGen {
 
-    public static <T extends NixieBoardBlock> void nixieBoard(final DataGenContext<Block, T> c, final RegistrateBlockstateProvider p) {
+    public static <T extends NixieBoardBlockNixie> void nixieBoard(final DataGenContext<Block, T> c, final RegistrateBlockstateProvider p) {
 
         p.getVariantBuilder(c.get())
                 .forAllStates(state -> {
-                    final boolean left = state.getValue(NixieBoardBlock.LEFT);
-                    final boolean right = state.getValue(NixieBoardBlock.RIGHT);
-                    final boolean bottom = state.getValue(NixieBoardBlock.BOTTOM);
-                    final boolean top = state.getValue(NixieBoardBlock.TOP);
+                    final boolean left = state.getValue(NixieBoardBlockNixie.LEFT);
+                    final boolean right = state.getValue(NixieBoardBlockNixie.RIGHT);
+                    final boolean bottom = state.getValue(NixieBoardBlockNixie.BOTTOM);
+                    final boolean top = state.getValue(NixieBoardBlockNixie.TOP);
 
                     final String modelName = "nixie_board"
                             + (left ? right ? "_middle" : "_right" : right ? "_left" : "_single")
