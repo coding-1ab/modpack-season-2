@@ -1,11 +1,9 @@
 package org.antarcticgardens.cna.content.energising;
 
-import com.simibubi.create.compat.Mods;
 import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
-import dan200.computercraft.api.peripheral.PeripheralCapability;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -15,7 +13,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.antarcticgardens.cna.CNABlockEntityTypes;
 import org.antarcticgardens.cna.CNABlocks;
 import org.antarcticgardens.cna.compat.computercraft.CNAComputerCraftProxy;

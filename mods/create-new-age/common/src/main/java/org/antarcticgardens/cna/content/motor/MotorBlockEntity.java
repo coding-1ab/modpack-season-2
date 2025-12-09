@@ -2,7 +2,6 @@ package org.antarcticgardens.cna.content.motor;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.compat.Mods;
 import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
@@ -13,7 +12,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.tterrag.registrate.builders.BlockEntityBuilder;
-import dan200.computercraft.api.peripheral.PeripheralCapability;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
@@ -27,7 +25,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.antarcticgardens.cna.CNABlockEntityTypes;
 import org.antarcticgardens.cna.compat.computercraft.CNAComputerCraftProxy;
 import org.antarcticgardens.cna.config.CNAConfig;
@@ -63,14 +60,12 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements IH
     public MotorBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, IMotorVariant variant) {
         super(arg, arg2, arg3);
         this.variant = variant;
-        if (variant instanceof BasicMotorVariant)
-            this.tier = 1;
-        else if (variant instanceof AdvancedMotorVariant)
-            this.tier = 2;
-        else if (variant instanceof ReinforcedMotorVariant)
-            this.tier = 3;
-        else
-            this.tier = 0;
+        switch (variant) {
+            case BasicMotorVariant basicMotorVariant -> this.tier = 1;
+            case AdvancedMotorVariant advancedMotorVariant -> this.tier = 2;
+            case ReinforcedMotorVariant reinforcedMotorVariant -> this.tier = 3;
+            case null, default -> this.tier = 0;
+        }
 
         storage = new SimpleEnergyStorage(variant.getMaxCapacity())
                 .onFinalCommit(RunnableUtil.createBlockEntityUpdater(this))
