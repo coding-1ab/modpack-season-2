@@ -54,11 +54,12 @@ public class GenericNixieDisplayTarget extends DisplayTarget {
     @Override
     public AABB getMultiblockBounds(final LevelAccessor level, final BlockPos pos) {
         final GenericNixieDisplayBlockEntity displayBlockEntity = (GenericNixieDisplayBlockEntity) level.getBlockEntity(pos);
-        final AABB[] bounds = {super.getMultiblockBounds(level, pos)};
+        final AABB blockBounds = super.getMultiblockBounds(level, pos);
+        final AABB[] resultBounds = {blockBounds};
         displayBlockEntity.applyToEachElementOfThisStructure((be) -> {
-            final AABB elementBounds = bounds[0].move(be.getBlockPos().subtract(pos));
-            bounds[0] = bounds[0].minmax(elementBounds);
+            final AABB elementBounds = blockBounds.move(be.getBlockPos().subtract(pos));
+            resultBounds[0] = resultBounds[0].minmax(elementBounds);
         });
-        return bounds[0];
+        return resultBounds[0];
     }
 }

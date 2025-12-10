@@ -32,3 +32,6 @@
   - Added hint text to placing the cogwheel chains
 - Fixes:
   - Redid large nixie tube and board handling to match full base create functionality
+# 1.21.1-0.0.15
+- Fixes:
+  - Fixed nixie board multiblock bounds
