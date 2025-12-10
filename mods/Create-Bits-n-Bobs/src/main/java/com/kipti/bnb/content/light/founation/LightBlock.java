@@ -14,7 +14,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +25,7 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
 
     public final MapCodec<LightBlock> CODEC;
 
-    public static final BooleanProperty LIT = BooleanProperty.create("powered");
+    public static final IntegerProperty POWER = BlockStateProperties.POWER;
 
     private final VoxelShaper shaper;
 
@@ -37,7 +38,7 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
     public LightBlock(final Properties p_52591_, final VoxelShaper shaper, final boolean forcePlaceUpwards) {
         super(p_52591_);
         this.shaper = shaper;
-        registerDefaultState(defaultBlockState().setValue(LIT, false));
+        registerDefaultState(defaultBlockState().setValue(POWER, 0));
         CODEC = simpleCodec((p) -> new LightBlock(p, shaper, forcePlaceUpwards));
         this.forcePlaceUpwards = forcePlaceUpwards;
     }
@@ -45,7 +46,7 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
     @Override
     protected void createBlockStateDefinition(final StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(LIT, FACING);
+        builder.add(POWER, FACING);
     }
 
     @Override
@@ -56,7 +57,7 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
                                 ((context.getPlayer() != null && context.getPlayer().isCrouching()) ? context.getClickedFace().getOpposite() : Direction.UP) :
                                 context.getClickedFace()
                 )
-                .setValue(LIT, context.getLevel().hasNeighborSignal(context.getClickedPos()));
+                .setValue(POWER, context.getLevel().getBestNeighborSignal(context.getClickedPos()));
     }
 
     @Override
@@ -72,12 +73,13 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
     @Override
     protected void neighborChanged(@NotNull final BlockState state, final Level level, @NotNull final BlockPos pos, @NotNull final Block block, @NotNull final BlockPos fromPos, final boolean isMoving) {
         if (!level.isClientSide) {
-            final boolean flag = state.getValue(LIT);
-            if (flag != level.hasNeighborSignal(pos)) {
-                if (flag) {
+            final int currentPower = state.getValue(POWER);
+            final int signal = level.getBestNeighborSignal(pos);
+            if (currentPower != signal) {
+                if (currentPower > 0) {
                     level.scheduleTick(pos, this, 4);
                 } else {
-                    level.setBlock(pos, state.cycle(LIT), 2);
+                    level.setBlock(pos, state.setValue(POWER, signal), 2);
                 }
             }
         }
@@ -85,8 +87,9 @@ public class LightBlock extends DirectionalBlock implements IWrenchable {
 
     @Override
     protected void tick(final BlockState state, @NotNull final ServerLevel level, @NotNull final BlockPos pos, @NotNull final RandomSource random) {
-        if (state.getValue(LIT) && !level.hasNeighborSignal(pos)) {
-            level.setBlock(pos, state.cycle(LIT), 2);
+        final int signal = level.getBestNeighborSignal(pos);
+        if (state.getValue(POWER) != signal) {
+            level.setBlock(pos, state.setValue(POWER, signal), 2);
         }
     }
 

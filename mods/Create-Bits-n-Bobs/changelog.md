@@ -35,3 +35,6 @@
 # 1.21.1-0.0.15
 - Fixes:
   - Fixed nixie board multiblock bounds
+# 1.21.1-0.0.16
+- Changes:
+  - Lamp blocks in the mod have analogue brightness now

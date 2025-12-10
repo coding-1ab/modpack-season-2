@@ -18,7 +18,7 @@ public class LightbulbBlock extends LightBlock {
 
     public static final BooleanProperty CAGE = BooleanProperty.create("cage");
 
-    public LightbulbBlock(Properties properties) {
+    public LightbulbBlock(final Properties properties) {
         super(properties, BnbShapes.LIGHTBULB_SHAPE);
         this.registerDefaultState(this.defaultBlockState().setValue(CAGE, false));
     }
