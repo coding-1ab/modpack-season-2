@@ -20,8 +20,10 @@ public class BnbPartialModels {
             HEADLAMP_OFF = block("headlamp/headlight"),
             HEADLAMP_ON = block("headlamp/headlight_on"),
 
-    SMALL_COGWHEEL_CHAIN_BLOCK = block("small_cogwheel_chain"),
-            LARGE_COGWHEEL_CHAIN_BLOCK = block("large_cogwheel_chain"),
+    SMALL_SPROCKET_COGWHEEL_BLOCK = block("sprocket/small_cogwheel"),
+            LARGE_SPROCKET_COGWHEEL_BLOCK = block("sprocket/large_cogwheel"),
+            SMALL_FLANGED_COGWHEEL_BLOCK = block("flanged_gear/small_cogwheel"),
+            LARGE_FLANGED_COGWHEEL_BLOCK = block("flanged_gear/large_cogwheel"),
 
 
     CHAIN_ROPE_COIL = block("chain_pulley/chain_coil"), CHAIN_ROPE_HALF = block("chain_pulley/chain_rope_half"),

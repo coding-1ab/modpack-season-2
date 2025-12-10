@@ -43,6 +43,14 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
             if (!chain.checkIntegrity(level, worldPosition)) {
                 destroyChain(true);
             }
+        } else {
+            if (controllerOffset != null && level != null) {
+                final BlockPos controllerPos = worldPosition.offset(controllerOffset);
+                final BlockEntity be = level.getBlockEntity(controllerPos);
+                if (!(be instanceof CogwheelChainBlockEntity)) {
+                    CogwheelChain.removeChainCogwheelFromLevelIfPresent(level, getBlockPos());
+                }
+            }
         }
     }
 
@@ -97,7 +105,7 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
         destroyChain(true);
     }
 
-    public ItemStack destroyChain(boolean dropItemsInWorld) {
+    public ItemStack destroyChain(final boolean dropItemsInWorld) {
         //Try drop chains from the current block for convenience
         int chainsToReturn = chainsToRefund;
         if (!isController) {

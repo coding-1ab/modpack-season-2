@@ -1,9 +1,9 @@
 package com.kipti.bnb.content.cogwheel_chain.graph;
 
+import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlock;
 import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlockEntity;
 import com.kipti.bnb.registry.BnbBlocks;
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -61,7 +61,8 @@ public class CogwheelChain {
     }
 
     private boolean isValidChainCogwheel(final BlockState state) {
-        return BnbBlocks.LARGE_COGWHEEL_CHAIN.is(state.getBlock()) || BnbBlocks.SMALL_COGWHEEL_CHAIN.is(state.getBlock());
+        return BnbBlocks.LARGE_SPROCKET_COGWHEEL_CHAIN.is(state.getBlock()) || BnbBlocks.SMALL_SPROCKET_COGWHEEL_CHAIN.is(state.getBlock()) ||
+                BnbBlocks.LARGE_FLANGED_COGWHEEL_CHAIN.is(state.getBlock()) || BnbBlocks.SMALL_FLANGED_COGWHEEL_CHAIN.is(state.getBlock());
     }
 
     public static class InvalidGeometryException extends Exception {
@@ -107,7 +108,7 @@ public class CogwheelChain {
         boolean isController = true;
         final BlockPos controllerPos = source.getFirstNode().pos();
         final int chainsUsed = source.getChainsRequiredInLoop();
-        for (final PlacingCogwheelNode node : source.visitedNodes) {
+        for (final PlacingCogwheelNode node : source.getVisitedNodes()) {
             placeChainCogwheelInLevel(level, node, isController, chainsUsed, controllerPos);
             isController = false;
         }
@@ -115,8 +116,15 @@ public class CogwheelChain {
     }
 
     private void placeChainCogwheelInLevel(final Level level, final PlacingCogwheelNode node, final boolean isController, final int chainsUsed, final BlockPos controllerPos) {
-        level.setBlockAndUpdate(node.pos(), (node.isLarge() ? BnbBlocks.LARGE_COGWHEEL_CHAIN : BnbBlocks.SMALL_COGWHEEL_CHAIN).getDefaultState()
-                .setValue(CogwheelChainBlock.AXIS, node.rotationAxis()));
+        final BlockState existingState = level.getBlockState(node.pos());
+
+        @Nullable final BlockState newState = CogwheelChainBlock.getChainState(existingState, node.isLarge(), node.rotationAxis());
+
+        if (newState == null) {
+            CreateBitsnBobs.LOGGER.error("Failed to place cogwheel chain at {}, existing block {}, because the chain state could not be resolved", node.pos(), existingState);
+            return;
+        }
+        level.setBlockAndUpdate(node.pos(), newState);
 
         final BlockEntity be = level.getBlockEntity(node.pos());
         if (be instanceof final CogwheelChainBlockEntity chainBE) {
@@ -138,11 +146,11 @@ public class CogwheelChain {
         }
     }
 
-    private void removeChainCogwheelFromLevelIfPresent(final Level level, final BlockPos pos) {
+    public static void removeChainCogwheelFromLevelIfPresent(final Level level, final BlockPos pos) {
         final BlockEntity be = level.getBlockEntity(pos);
         final BlockState state = level.getBlockState(pos);
         if (be instanceof CogwheelChainBlockEntity && (state.getBlock() instanceof final CogwheelChainBlock cogwheelChainBlock)) {
-            level.setBlockAndUpdate(pos, (cogwheelChainBlock.isLargeChainCog() ? AllBlocks.LARGE_COGWHEEL : AllBlocks.COGWHEEL).getDefaultState()
+            level.setBlockAndUpdate(pos, cogwheelChainBlock.getSourceBlockState()
                     .setValue(CogwheelChainBlock.AXIS, state.getValue(CogwheelChainBlock.AXIS)));
         }
     }

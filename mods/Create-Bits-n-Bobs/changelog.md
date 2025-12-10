@@ -38,3 +38,11 @@
 # 1.21.1-0.0.16
 - Changes:
   - Lamp blocks in the mod have analogue brightness now
+# 1.21.1-0.0.17
+- New features:
+  - Created separate "flanged cogwheel" blocks which takes the model of the original cogwheel chain drive
+  - Craftable with a respective cogwheel and an iron nugget
+- Changes:
+  - Chain drives on existing create drives now keep a visually consistent mode
+  - Chain geometry will be offset 2px to match the model in the case of base create cogwheels
+  - Chain drives NO LONGER HAVE GAPS between segments (this took way too long, but it's beautiful now)

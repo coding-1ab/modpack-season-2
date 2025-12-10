@@ -5,7 +5,6 @@ import com.kipti.bnb.content.cogwheel_chain.graph.PlacingCogwheelChain;
 import com.kipti.bnb.network.packets.from_client.PlaceCogwheelChainPacket;
 import com.kipti.bnb.registry.BnbFeatureFlag;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
-import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -93,9 +92,7 @@ public class CogwheelChainPlacementInteraction {
 
         if (currentBuildingChain == null || currentChainLevel == null || !currentChainLevel.equals(level.dimension())) {
             //Start a new chain
-            currentBuildingChain = new PlacingCogwheelChain(hitPos,
-                    targetedState.getValue(CogWheelBlock.AXIS),
-                    targetedState.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isLargeCog());
+            currentBuildingChain = new PlacingCogwheelChain(hitPos, targetedState.getValue(CogWheelBlock.AXIS), PlacingCogwheelChain.isLargeBlockTarget(targetedState), PlacingCogwheelChain.hasSmallCogwheelOffset(targetedState));
             currentChainLevel = level.dimension();
 
             player.displayClientMessage(Component.translatable("tooltip.bits_n_bobs.chain_drive_placing_hint"), true);

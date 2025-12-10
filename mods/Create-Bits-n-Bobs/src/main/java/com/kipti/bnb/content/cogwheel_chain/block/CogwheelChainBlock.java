@@ -1,6 +1,7 @@
 package com.kipti.bnb.content.cogwheel_chain.block;
 
 import com.kipti.bnb.registry.BnbBlockEntities;
+import com.kipti.bnb.registry.BnbBlocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.api.schematic.requirement.SpecialBlockItemRequirement;
@@ -9,6 +10,7 @@ import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.foundation.block.IBE;
+import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -20,33 +22,68 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.common.util.Lazy;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class CogwheelChainBlock extends RotatedPillarKineticBlock
         implements IBE<CogwheelChainBlockEntity>, SpecialBlockItemRequirement { //TODO : waterlog state
+    private static final List<CogwheelChainBlock> ALL_CHAIN_BLOCKS = new ArrayList<>();
+    private static final Lazy<Map<Block, CogwheelChainBlock>> DEFAULT_CHAIN_BLOCKS_BY_SOURCE = Lazy.of(() -> {
+        Map<Block, CogwheelChainBlock> map = new java.util.HashMap<>();
+        for (CogwheelChainBlock chainBlock : ALL_CHAIN_BLOCKS) {
+            BlockEntry<?> source = chainBlock.sourceBlock.get();
+            map.put(source.get(), chainBlock);
+        }
+        return map;
+    });
 
-    protected CogwheelChainBlock(final boolean large, final Properties properties) {
+    protected CogwheelChainBlock(final boolean large, final Properties properties, final Supplier<BlockEntry<?>> sourceBlock) {
         super(properties);
-        isLarge = large;
+        this.isLarge = large;
+        this.sourceBlock = sourceBlock;
+        ALL_CHAIN_BLOCKS.add(this);
+    }
+
+    public static @Nullable BlockState getChainState(final BlockState existingState, final boolean large, final Direction.Axis axis) {
+        final Block chainBlock = DEFAULT_CHAIN_BLOCKS_BY_SOURCE.get().get(existingState.getBlock());
+        if (chainBlock == null)
+            return null;
+        return chainBlock.defaultBlockState().setValue(AXIS, axis);
     }
 
     public boolean isLargeChainCog() {
         return isLarge;
     }
 
-    boolean isLarge;
+    private final boolean isLarge;
+    private final Supplier<BlockEntry<?>> sourceBlock;
 
     public static CogwheelChainBlock small(final Properties properties) {
-        return new CogwheelChainBlock(false, properties);
+        return new CogwheelChainBlock(false, properties, () -> AllBlocks.COGWHEEL);
     }
 
     public static CogwheelChainBlock large(final Properties properties) {
-        return new CogwheelChainBlock(true, properties);
+        return new CogwheelChainBlock(true, properties, () -> AllBlocks.LARGE_COGWHEEL);
+    }
+
+    public static CogwheelChainBlock smallFlanged(final Properties properties) {
+        return new CogwheelChainBlock(false, properties, () -> BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL);
+    }
+
+    public static CogwheelChainBlock largeFlanged(final Properties properties) {
+        return new CogwheelChainBlock(true, properties, () -> BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL);
     }
 
     @Override
@@ -72,12 +109,12 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
     }
 
     @Override
-    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context) {
+    public @NotNull VoxelShape getShape(final BlockState state, final @NotNull BlockGetter worldIn, final @NotNull BlockPos pos, final @NotNull CollisionContext context) {
         return (isLarge ? AllShapes.LARGE_GEAR : AllShapes.SMALL_GEAR).get(state.getValue(AXIS));
     }
 
     @Override
-    public boolean canSurvive(final BlockState state, final LevelReader worldIn, final BlockPos pos) {
+    public boolean canSurvive(final @NotNull BlockState state, final @NotNull LevelReader worldIn, final @NotNull BlockPos pos) {
         return CogWheelBlock.isValidCogwheelPosition(ICogWheel.isLargeCog(state), worldIn, pos, state.getValue(AXIS));
     }
 
@@ -106,12 +143,22 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
         return face.getAxis() == state.getValue(AXIS);
     }
 
-    public float getRadius() {
-        return isLarge ? 1f : 0.5f;
+    public final float getGeometryChainShift() {
+        return BnbBlocks.SMALL_FLANGED_COGWHEEL_CHAIN.is(this) ? 1f / 8f : 0f;
+    }
+
+    @Override
+    protected @NotNull RenderShape getRenderShape(final @NotNull BlockState state) {
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
     public ItemRequirement getRequiredItems(final BlockState state, @Nullable final BlockEntity be) {
-        return ItemRequirement.of(isLarge ? AllBlocks.LARGE_COGWHEEL.getDefaultState() : AllBlocks.COGWHEEL.getDefaultState(), be);
+        return ItemRequirement.of(sourceBlock.get().getDefaultState(), be);
     }
+
+    public BlockState getSourceBlockState() {
+        return sourceBlock.get().getDefaultState();
+    }
+
 }

@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 
 public enum BnbFeatureFlag {
     COGWHEEL_CHAIN_DRIVES("Ability for the player to create chain drives using create's cogwheels."),
+    FLANGED_CHAIN_DRIVES("Ability for the player to create chain drives using the flanged gear cogwheels.", BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL::get, BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL::get),
 
     CHAIN_PULLEY("Availability of the Chain Pulley block.", BnbBlocks.CHAIN_PULLEY::get),
 

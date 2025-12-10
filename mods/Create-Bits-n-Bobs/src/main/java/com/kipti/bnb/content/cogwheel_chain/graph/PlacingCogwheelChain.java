@@ -1,9 +1,10 @@
 package com.kipti.bnb.content.cogwheel_chain.graph;
 
+import com.kipti.bnb.registry.BnbBlocks;
 import com.kipti.bnb.registry.BnbConfigs;
 import com.mojang.serialization.Codec;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
-import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import net.createmod.catnip.codecs.stream.CatnipStreamCodecBuilders;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,10 +34,10 @@ public class PlacingCogwheelChain {
     );
     public static final Integer MAX_CHAIN_BOUNDS = 32;//TODO config
 
-    List<PlacingCogwheelNode> visitedNodes;
+    private List<PlacingCogwheelNode> visitedNodes;
 
-    public PlacingCogwheelChain(final BlockPos startPos, final Direction.Axis startAxis, final boolean isLarge) {
-        this.visitedNodes = new ArrayList<>(List.of(new PlacingCogwheelNode(startPos, startAxis, isLarge)));
+    public PlacingCogwheelChain(final BlockPos startPos, final Direction.Axis startAxis, final boolean isLarge, final boolean hasSmallCogwheelOffset) {
+        this.visitedNodes = new ArrayList<>(List.of(new PlacingCogwheelNode(startPos, startAxis, isLarge, hasSmallCogwheelOffset)));
     }
 
     public PlacingCogwheelChain(final List<PlacingCogwheelNode> nodes) {
@@ -64,8 +65,18 @@ public class PlacingCogwheelChain {
     }
 
     public static boolean isValidBlockTarget(final BlockState state) {
-        return state.getBlock() instanceof final ICogWheel iCogWheel && iCogWheel.isDedicatedCogWheel();
+        return state.is(AllBlocks.COGWHEEL) || state.is(AllBlocks.LARGE_COGWHEEL) ||
+                state.is(BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL) || state.is(BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL);
     }
+
+    public static boolean isLargeBlockTarget(final BlockState state) {
+        return state.is(AllBlocks.LARGE_COGWHEEL) || state.is(BnbBlocks.LARGE_EMPTY_FLANGED_COGWHEEL);
+    }
+
+    public static boolean hasSmallCogwheelOffset(final BlockState state) {
+        return state.is(AllBlocks.COGWHEEL);
+    }
+
 
     public boolean tryAddNode(final BlockPos newPos, final BlockState newBlockState) throws ChainInteractionFailedException {
         final PlacingCogwheelNode lastNode = getLastNode();
@@ -81,9 +92,10 @@ public class PlacingCogwheelChain {
             }
         }
         final Direction.Axis axis = newBlockState.getValue(CogWheelBlock.AXIS);
-        final boolean isLarge = newBlockState.getBlock() instanceof final ICogWheel iCogWheel && iCogWheel.isLargeCog(); //TODO: replace with more explicit block check (later me: what the f**k does that even mean?)
+        final boolean isLarge = isLargeBlockTarget(newBlockState);
+        final boolean hasSmallCogwheelOffset = hasSmallCogwheelOffset(newBlockState);
 
-        final PlacingCogwheelNode newNode = new PlacingCogwheelNode(newPos, axis, isLarge);
+        final PlacingCogwheelNode newNode = new PlacingCogwheelNode(newPos, axis, isLarge, hasSmallCogwheelOffset);
 
         final boolean isWithinBounds = !exceedsMaxBounds(newNode);
         if (!isWithinBounds) {
@@ -252,8 +264,9 @@ public class PlacingCogwheelChain {
                 return false;
             }
             final Direction.Axis axis = state.getValue(CogWheelBlock.AXIS);
-            final boolean isLarge = state.getBlock() instanceof final ICogWheel iCogWheel && iCogWheel.isLargeCog();
-            if (axis != node.rotationAxis() || isLarge != node.isLarge()) {
+            final boolean isLarge = isLargeBlockTarget(state);
+            final boolean hasSmallCogwheelOffset = hasSmallCogwheelOffset(state);
+            if (axis != node.rotationAxis() || isLarge != node.isLarge() || hasSmallCogwheelOffset != node.hasOffsetForSmallCogwheel()) {
                 return false;
             }
         }
@@ -265,9 +278,17 @@ public class PlacingCogwheelChain {
         final List<PlacingCogwheelNode> localNodes = new ArrayList<>();
         for (final PlacingCogwheelNode node : visitedNodes) {
             final BlockPos localPos = node.pos().subtract(origin);
-            localNodes.add(new PlacingCogwheelNode(localPos, node.rotationAxis(), node.isLarge()));
+            localNodes.add(new PlacingCogwheelNode(localPos, node.rotationAxis(), node.isLarge(), node.hasOffsetForSmallCogwheel()));
         }
         return new PlacingCogwheelChain(localNodes);
+    }
+
+    public List<PlacingCogwheelNode> getVisitedNodes() {
+        return visitedNodes;
+    }
+
+    public void setVisitedNodes(final List<PlacingCogwheelNode> visitedNodes) {
+        this.visitedNodes = visitedNodes;
     }
 
 }
