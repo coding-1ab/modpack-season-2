@@ -225,8 +225,8 @@ public class CogwheelChainBlockEntity extends SimpleKineticBlockEntity implement
     }
 
     private void addPropogationLocationsFromController(final List<BlockPos> toPropagate, final BlockPos exclude) {
-        assert chain != null;
-        for (final var cogwheelNode : chain.getChainPathCogwheelNodes()) {
+        if (chain == null) return;
+        for (final PathedCogwheelNode cogwheelNode : chain.getChainPathCogwheelNodes()) {
             final BlockPos cogwheelPos = worldPosition.offset(cogwheelNode.localPos());
             if (!toPropagate.contains(cogwheelPos) && !cogwheelPos.equals(exclude)) {
                 toPropagate.add(cogwheelPos);

@@ -49,3 +49,6 @@
 # 1.21.1-0.0.18
 - Changes:
   - Added item requirement for printing headlamps
+# 1.21.1-0.0.19
+- Fixes:
+  - Fixed crash related to chains
