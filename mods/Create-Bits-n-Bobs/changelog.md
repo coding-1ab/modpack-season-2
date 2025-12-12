@@ -46,3 +46,6 @@
   - Chain drives on existing create drives now keep a visually consistent mode
   - Chain geometry will be offset 2px to match the model in the case of base create cogwheels
   - Chain drives NO LONGER HAVE GAPS between segments (this took way too long, but it's beautiful now)
+# 1.21.1-0.0.18
+- Changes:
+  - Added item requirement for printing headlamps
