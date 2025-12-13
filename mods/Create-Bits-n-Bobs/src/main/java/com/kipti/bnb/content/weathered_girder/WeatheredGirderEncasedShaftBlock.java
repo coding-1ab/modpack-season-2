@@ -14,9 +14,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
-public class EncasedWeatheredGirderBlock extends GirderEncasedShaftBlock {
+public class WeatheredGirderEncasedShaftBlock extends GirderEncasedShaftBlock {
 
-    public EncasedWeatheredGirderBlock(Properties properties) {
+    public WeatheredGirderEncasedShaftBlock(Properties properties) {
         super(properties);
     }
 
@@ -24,18 +24,18 @@ public class EncasedWeatheredGirderBlock extends GirderEncasedShaftBlock {
     @Override
     public BlockState getRotatedBlockState(BlockState originalState, Direction targetedFace) {
         return BnbBlocks.WEATHERED_METAL_GIRDER.getDefaultState()
-            .setValue(WATERLOGGED, originalState.getValue(WATERLOGGED))
-            .setValue(GirderBlock.X, originalState.getValue(HORIZONTAL_AXIS) == Direction.Axis.Z)
-            .setValue(GirderBlock.Z, originalState.getValue(HORIZONTAL_AXIS) == Direction.Axis.X)
-            .setValue(GirderBlock.AXIS, originalState.getValue(HORIZONTAL_AXIS) == Direction.Axis.X ? Direction.Axis.Z : Direction.Axis.X)
-            .setValue(GirderBlock.BOTTOM, originalState.getValue(BOTTOM))
-            .setValue(GirderBlock.TOP, originalState.getValue(TOP));
+                .setValue(WATERLOGGED, originalState.getValue(WATERLOGGED))
+                .setValue(GirderBlock.X, originalState.getValue(HORIZONTAL_AXIS) == Direction.Axis.Z)
+                .setValue(GirderBlock.Z, originalState.getValue(HORIZONTAL_AXIS) == Direction.Axis.X)
+                .setValue(GirderBlock.AXIS, originalState.getValue(HORIZONTAL_AXIS) == Direction.Axis.X ? Direction.Axis.Z : Direction.Axis.X)
+                .setValue(GirderBlock.BOTTOM, originalState.getValue(BOTTOM))
+                .setValue(GirderBlock.TOP, originalState.getValue(TOP));
     }
 
     @Override
     public ItemRequirement getRequiredItems(BlockState state, BlockEntity be) {
         return ItemRequirement.of(AllBlocks.SHAFT.getDefaultState(), be)
-            .union(ItemRequirement.of(BnbBlocks.WEATHERED_METAL_GIRDER.getDefaultState(), be));
+                .union(ItemRequirement.of(BnbBlocks.WEATHERED_METAL_GIRDER.getDefaultState(), be));
     }
 
     @Override

@@ -19,10 +19,10 @@ import com.kipti.bnb.content.nixie.large_nixie_tube.LargeNixieTubeBlockNixie;
 import com.kipti.bnb.content.nixie.large_nixie_tube.LargeNixieTubeBlockStateGen;
 import com.kipti.bnb.content.nixie.nixie_board.NixieBoardBlockNixie;
 import com.kipti.bnb.content.nixie.nixie_board.NixieBoardBlockStateGen;
-import com.kipti.bnb.content.weathered_girder.EncasedWeatheredGirderBlock;
 import com.kipti.bnb.content.weathered_girder.WeatheredConnectedGirderModel;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlock;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderBlockStateGenerator;
+import com.kipti.bnb.content.weathered_girder.WeatheredGirderEncasedShaftBlock;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllDisplaySources;
 import com.simibubi.create.AllTags;
@@ -136,8 +136,8 @@ public class BnbBlocks {
             .transform(customItemModel())
             .register();
 
-    public static final BlockEntry<EncasedWeatheredGirderBlock> WEATHERED_METAL_GIRDER_ENCASED_SHAFT =
-            REGISTRATE.block("weathered_metal_girder_encased_shaft", EncasedWeatheredGirderBlock::new)
+    public static final BlockEntry<WeatheredGirderEncasedShaftBlock> WEATHERED_METAL_GIRDER_ENCASED_SHAFT =
+            REGISTRATE.block("weathered_metal_girder_encased_shaft", WeatheredGirderEncasedShaftBlock::new)
                     .initialProperties(SharedProperties::softMetal)
                     .properties(p -> p.mapColor(MapColor.COLOR_GRAY)
                             .sound(SoundType.NETHERITE_BLOCK))
