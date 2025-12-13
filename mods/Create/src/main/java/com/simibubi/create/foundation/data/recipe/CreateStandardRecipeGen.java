@@ -1604,7 +1604,7 @@ public final class CreateStandardRecipeGen extends BaseRecipeProvider {
 
 				RecipeOutput conditionalOutput = recipeOutput.withConditions(recipeConditions.toArray(new ICondition[0]));
 
-				b.save(recipeOutput, createLocation("crafting"));
+				b.save(conditionalOutput, createLocation("crafting"));
 			});
 		}
 
