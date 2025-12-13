@@ -154,5 +154,18 @@
   "tab.bits_n_bobs.base": "Bits 'n' Bobs",
   "tab.bits_n_bobs.deco": "Bits 'n' Bobs' Building Blocks",
   "tooltip.bits_n_bobs.chain_drive_placing_hint": "Placing chain drive, create a complete loop to finish.",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass": "Angular Mass:",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.absurdly_heavy": "(absurdly heavy)",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.heavy": "(heavy)",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.light": "(light)",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.medium": "(medium)",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.none": "(none)",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.super_heavy": "(super heavy)",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.super_light": "(super light)",
+  "tooltip.bits_n_bobs.flywheel_bearing.empty": "(empty)",
+  "tooltip.bits_n_bobs.flywheel_bearing.flywheel_stats": "Flywheel Stats:",
+  "tooltip.bits_n_bobs.flywheel_bearing.full": "(full)",
+  "tooltip.bits_n_bobs.flywheel_bearing.kinetic_transfer": "Kinetic Transfer:",
+  "tooltip.bits_n_bobs.flywheel_bearing.stored_stress": "Stored Stress:",
   "tooltip.bits_n_bobs.new_ponder_notification": "New ponder"
 }

@@ -6,6 +6,7 @@ import com.kipti.bnb.registry.BnbTags;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 public class FlywheelMovementMechanics {
 
+    private static final double ANGULAR_MASS_EPSILON = 10e-3;
     /**
      * Base factor for the conversion literal kinetic energy in joules to stress units, read with {@link FlywheelMovementMechanics#getActualStressUnitsPerKeJoule()} to include config multiplier
      */
@@ -33,6 +35,9 @@ public class FlywheelMovementMechanics {
     public float angle = 0;
     public Float clientAngle = null;
     public float angularMass = 1f;
+    public float lastStoredStressTicks = 0;
+    public float currentStoredStressTicks = 0;
+    public float kineticTransfer = 0;
 
     /**
      * Writes the fields directly into the tag, be sure not to conflict
@@ -47,7 +52,7 @@ public class FlywheelMovementMechanics {
     /**
      * Reads the fields directly from the tag, be sure not to conflict
      */
-    public void readAdditional(final CompoundTag compound) {
+    public void readAdditional(final CompoundTag compound, final boolean clientPacket) {
 //        if (compound.contains("MaxAngularVelocity"))
 //            maxAngularVelocity = compound.getFloat("MaxAngularVelocity");
         if (compound.contains("AngularVelocity"))
@@ -66,17 +71,19 @@ public class FlywheelMovementMechanics {
         final Level level = be.getLevel();
         final float displayAngle = level != null && level.isClientSide && clientAngle != null ? clientAngle : angle;
         prevClientAngle = displayAngle;
+        lastStoredStressTicks = getStoredStressTicks();
 
         final boolean canReceiveStressBefore = canReceiveStress();
         final boolean canProvideStressBefore = canProvideStress();
 
         final float maxTransferCapacity = getMaxTransferCapacity();
         final float availableExcessKineticStrength = Math.clamp(be.getFlywheelStressDelta(), -maxTransferCapacity, maxTransferCapacity);
+        kineticTransfer = availableExcessKineticStrength;
         final float kejEnergyChange = availableExcessKineticStrength / getActualStressUnitsPerKeJoule();
         final float currentKejEnergy = 0.5f * angularMass * angularVelocity * angularVelocity;
         final float newKejEnergy = Math.max(currentKejEnergy + kejEnergyChange, 0);
 
-        angularVelocity = angularMass == 0 ? 0 : (float) Math.sqrt((2f * newKejEnergy) / angularMass);
+        angularVelocity = angularMass <= ANGULAR_MASS_EPSILON ? 0 : (float) Math.sqrt((2f * newKejEnergy) / angularMass);
 
         if (angularVelocity > maxAngularVelocity) {
             angularVelocity = maxAngularVelocity;
@@ -99,6 +106,8 @@ public class FlywheelMovementMechanics {
         if (canReceiveStressBefore != canReceiveStress()) {
             be.updateFlywheelStressesInNetwork();
         }
+
+        currentStoredStressTicks = getStoredStressTicks();
     }
 
     public void assemble(final FlywheelBearingBlockEntity be, final BearingContraption contraption) {
@@ -107,7 +116,7 @@ public class FlywheelMovementMechanics {
         final Vec3 anchor = Vec3.atCenterOf(BlockPos.ZERO);
 
         for (final Map.Entry<BlockPos, StructureTemplate.StructureBlockInfo> block : contraption.getBlocks().entrySet()) {
-            final float angularDistance = Math.max((float) block.getKey().getCenter().subtract(anchor).cross(axis).length(), 1 / 16f);
+            final float angularDistance = (float) block.getKey().getCenter().subtract(anchor).cross(axis).length() + 1f;
             final float mass = getMassOfBlock(block.getValue().state());
             angularMass += mass * angularDistance * angularDistance;
         }
@@ -119,7 +128,7 @@ public class FlywheelMovementMechanics {
         final float displayAngle = level != null && level.isClientSide && clientAngle != null ? clientAngle : angle;
         prevClientAngle = displayAngle;
         final float targetAngularVelocity = be.getSpeed() * 360 / (20f * 60f);
-        final float reactivity = Math.clamp(1f / angularMass, 0.005f, 1f);
+        final float reactivity = angularMass <= ANGULAR_MASS_EPSILON ? 1 : Math.clamp(1f / angularMass, 0.005f, 1f);
         angularVelocity = targetAngularVelocity * reactivity + angularVelocity * (1 - reactivity);
         angle += angularVelocity;
         clientAngle = Mth.lerp(0.1f, displayAngle + angularVelocity, angle);
@@ -132,6 +141,11 @@ public class FlywheelMovementMechanics {
     public float getStoredStressTicks() {
         final float kejEnergy = 0.5f * angularMass * angularVelocity * angularVelocity;
         return kejEnergy * getActualStressUnitsPerKeJoule();
+    }
+
+    public float getMaxStoredStressTicks() {
+        final float maxKejEnergy = 0.5f * angularMass * maxAngularVelocity * maxAngularVelocity;
+        return maxKejEnergy * getActualStressUnitsPerKeJoule();
     }
 
     public boolean canProvideStress() {
@@ -170,5 +184,34 @@ public class FlywheelMovementMechanics {
         angle = 0;
         clientAngle = 0f;
         prevClientAngle = 0;
+        lastStoredStressTicks = 0;
+        currentStoredStressTicks = 0;
+        kineticTransfer = 0;
     }
+
+    //cg is cug gram
+    public String formatAngularMass() {
+        if (angularMass <= ANGULAR_MASS_EPSILON)
+            return "0 cg·m²";
+        if (angularMass < 0.1f)
+            return "<0.1 cg·m²";
+        return String.format("%.1f cg·m²", angularMass);
+    }
+
+    public Component getAngularMassDescription() {
+        if (angularMass <= ANGULAR_MASS_EPSILON)
+            return Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.angular_mass.none");
+        if (angularMass <= 1f)
+            return Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.angular_mass.super_light");
+        if (angularMass <= 10f)
+            return Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.angular_mass.light");
+        if (angularMass <= 100f)
+            return Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.angular_mass.medium");
+        if (angularMass <= 1_000f)
+            return Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.angular_mass.heavy");
+        if (angularMass <= 10_000f)
+            return Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.angular_mass.super_heavy");
+        return Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.angular_mass.absurdly_heavy");
+    }
+
 }

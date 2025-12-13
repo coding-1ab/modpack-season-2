@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.flywheel_bearing;
 
+import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.flywheel_bearing.contraption.InertControlledContraptionEntity;
 import com.kipti.bnb.content.flywheel_bearing.mechanics.FlywheelMovementMechanics;
 import com.kipti.bnb.mixin_accessor.FlywheelAccessibleKineticNetwork;
@@ -13,7 +14,10 @@ import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.item.TooltipHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
+import net.createmod.catnip.lang.Lang;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -51,18 +55,105 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
 
     @Override
     public boolean addToGoggleTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
+        //Debug tooltips
+//        tooltip.add(0, Component.literal(""));
+//        final FlywheelAccessibleKineticNetwork net = getOrCreateFlywheelNetwork();
+//        tooltip.add(1, Component.literal("Network flywheel absorb capacity " + (level.isClientSide ? clientFlywheelAbsorptionCapacityInNetwork + " (client)" : (net == null ? "null" : net.bits_n_bobs$getFlywheelStressAbsoptionCapacity()))));
+//        tooltip.add(2, Component.literal("Network flywheel release capacity " + (level.isClientSide ? clientFlywheelReleaseCapacityInNetwork + " (client)" : (net == null ? "null" : net.bits_n_bobs$getFlywheelStressAbsoptionCapacity()))));
+//        tooltip.add(3, Component.literal("This flywheel capacity " + getFlywheelStressAbsorptionCapacity()));
+//        tooltip.add(4, Component.literal("Stored in this flywheel (sut) " + flywheelMovement.getStoredStressTicks()));
+//        tooltip.add(5, Component.literal("Angular velocity " + (flywheelMovement.angularVelocity * 20) + " dps" + ((20 * 60 * flywheelMovement.angularVelocity) / 360) + " rpm"));
+//        tooltip.add(6, Component.literal("StorageEnabled: " + BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()));
+
+        if (!running) {
+            return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        }
+
+        Lang.builder(CreateBitsnBobs.MOD_ID)
+                .add(Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.flywheel_stats"))
+                .forGoggles(tooltip);
+
+        Lang.builder(CreateBitsnBobs.MOD_ID)
+                .add(Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.angular_mass"))
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip);
+
+        Lang.builder(CreateBitsnBobs.MOD_ID)
+                .add(Component.literal(flywheelMovement.formatAngularMass() + " "))
+                .style(ChatFormatting.AQUA)
+                .add(flywheelMovement.getAngularMassDescription().copy().withStyle(ChatFormatting.DARK_GRAY))
+                .forGoggles(tooltip, 1);
+
+        if (BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()) {
+            Lang.builder(CreateBitsnBobs.MOD_ID)
+                    .add(Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.stored_stress"))
+                    .style(ChatFormatting.GRAY)
+                    .forGoggles(tooltip);
+            final float currentStoredStress = flywheelMovement.currentStoredStressTicks;
+            final float lastStoredStress = flywheelMovement.lastStoredStressTicks;
+            final float maxStoredStress = flywheelMovement.getMaxStoredStressTicks();
+
+            final int direction = Float.compare(currentStoredStress, lastStoredStress);
+            final int changeStrength = Mth.clamp(Math.round(1500 * Math.abs(currentStoredStress - lastStoredStress) / maxStoredStress), 1, 5);
+
+            final int maxBars = 100;
+            final int filledBars = Mth.clamp(Math.round(currentStoredStress / maxStoredStress * maxBars), 0, maxBars);
+            Lang.builder(CreateBitsnBobs.MOD_ID)
+                    .add(Component.literal("|".repeat(filledBars)))
+                    .style(ChatFormatting.AQUA)
+                    .add(Component.literal("|".repeat(maxBars - filledBars))
+                            .withStyle(ChatFormatting.DARK_GRAY))
+                    .add(Component.literal(direction == 0 ? "" : direction > 0 ? " " + ">".repeat(changeStrength) : " " + "<".repeat(changeStrength))
+                            .withStyle(direction == 0 ? ChatFormatting.DARK_GRAY : ChatFormatting.AQUA))
+                    .forGoggles(tooltip, 1);
+
+            Lang.builder(CreateBitsnBobs.MOD_ID)
+                    .add(Component.literal(String.format("%.1fsut", currentStoredStress)))
+                    .style(ChatFormatting.AQUA)
+                    .add(Component.literal(String.format("/%.1fsut ", maxStoredStress))
+                            .withStyle(ChatFormatting.GRAY))
+                    .add((!flywheelMovement.canProvideStress() ? Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.empty") :
+                            flywheelMovement.canReceiveStress() ? Component.empty() : Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.full"))
+                            .withStyle(ChatFormatting.DARK_GRAY))
+                    .forGoggles(tooltip, 1);
+
+            Lang.builder(CreateBitsnBobs.MOD_ID)
+                    .add(Component.translatable("tooltip.bits_n_bobs.flywheel_bearing.kinetic_transfer"))
+                    .style(ChatFormatting.GRAY)
+                    .forGoggles(tooltip);
+
+            Lang.builder(CreateBitsnBobs.MOD_ID)
+                    .add(Component.literal(String.format("%.1fsu", flywheelMovement.kineticTransfer)))
+                    .style(ChatFormatting.AQUA)
+                    .forGoggles(tooltip, 1);
+        }
 
         super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-        tooltip.add(0, Component.literal(""));
-        final FlywheelAccessibleKineticNetwork net = getOrCreateFlywheelNetwork();
-        tooltip.add(1, Component.literal("Network flywheel absorb capacity " + (level.isClientSide ? clientFlywheelAbsorptionCapacityInNetwork + " (client)" : (net == null ? "null" : net.bits_n_bobs$getFlywheelStressAbsoptionCapacity()))));
-        tooltip.add(2, Component.literal("Network flywheel release capacity " + (level.isClientSide ? clientFlywheelReleaseCapacityInNetwork + " (client)" : (net == null ? "null" : net.bits_n_bobs$getFlywheelStressAbsoptionCapacity()))));
-        tooltip.add(3, Component.literal("This flywheel capacity " + getFlywheelStressAbsorptionCapacity()));
-        tooltip.add(4, Component.literal("Stored in this flywheel (sut) " + flywheelMovement.getStoredStressTicks()));
-        tooltip.add(5, Component.literal("Angular velocity " + (flywheelMovement.angularVelocity * 20) + " dps" + ((20 * 60 * flywheelMovement.angularVelocity) / 360) + " rpm"));
-        tooltip.add(6, Component.literal("StorageEnabled: " + BnbConfigs.server().FLYWHEEL_STORAGE_CAPACITY.get()));
-
+        addGenerationAsZeroIfNeeded(tooltip);
         return true;
+    }
+
+    private void addGenerationAsZeroIfNeeded(final List<Component> tooltip) {
+        if (!IRotate.StressImpact.isEnabled())
+            return;
+
+        float stressBase = calculateAddedStressCapacity();
+        if (!Mth.equal(stressBase, 0))
+            return;
+
+        CreateLang.translate("gui.goggles.generator_stats")
+                .forGoggles(tooltip);
+        CreateLang.translate("tooltip.capacityProvided")
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip);
+        CreateLang.number(0)
+                .translate("generic.unit.stress")
+                .style(ChatFormatting.AQUA)
+                .space()
+                .add(CreateLang.translate("gui.goggles.at_current_speed")
+                        .style(ChatFormatting.DARK_GRAY))
+                .forGoggles(tooltip, 1);
+
     }
 
     @Override
@@ -106,7 +197,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
         final float angleBefore = flywheelMovement.angle;
         running = compound.getBoolean("Running");
         lastGeneratorDirection = compound.getInt("LastGeneratorDirection");
-        flywheelMovement.readAdditional(compound);
+        flywheelMovement.readAdditional(compound, clientPacket);
         lastException = AssemblyException.read(compound, registries);
         super.read(compound, registries, clientPacket);
         if (!clientPacket)
@@ -243,6 +334,7 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
         }
 
         if (!running) {
+            flywheelMovement.zero();
             return;
         }
 

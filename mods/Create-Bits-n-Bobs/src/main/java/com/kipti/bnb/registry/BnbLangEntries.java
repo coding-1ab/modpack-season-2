@@ -42,6 +42,22 @@ public class BnbLangEntries {
                 "block.bits_n_bobs.chair.tooltip.summary", "Sit yourself down and enjoy the ride! Will anchor a player onto a moving _contraption_. Even _fancier than a seat_ for static furniture too! Comes in a variety of colours. Will form _corners_ and _flat backs_ when placed against other chairs and blocks accordingly",
                 "block.bits_n_bobs.chair.tooltip.condition1", "Right click on Chair",
                 "block.bits_n_bobs.chair.tooltip.behaviour1", "Sits the player on the _Chair_. Press L-shift to leave the _Chair_.",
+
+                "tooltip.bits_n_bobs.flywheel_bearing.flywheel_stats", "Flywheel Stats:",
+                "tooltip.bits_n_bobs.flywheel_bearing.angular_mass", "Angular Mass:",
+                "tooltip.bits_n_bobs.flywheel_bearing.stored_stress", "Stored Stress:",
+                "tooltip.bits_n_bobs.flywheel_bearing.kinetic_transfer", "Kinetic Transfer:",
+
+                "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.none", "(none)",
+                "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.super_light", "(super light)",
+                "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.light", "(light)",
+                "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.medium", "(medium)",
+                "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.heavy", "(heavy)",
+                "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.super_heavy", "(super heavy)",
+                "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.absurdly_heavy", "(absurdly heavy)",
+
+                "tooltip.bits_n_bobs.flywheel_bearing.empty", "(empty)",
+                "tooltip.bits_n_bobs.flywheel_bearing.full", "(full)",
         };
 
         for (int i = 0; i < entries.length; i += 2) {

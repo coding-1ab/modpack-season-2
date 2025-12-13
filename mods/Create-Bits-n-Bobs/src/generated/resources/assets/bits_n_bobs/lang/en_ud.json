@@ -154,5 +154,18 @@
   "tab.bits_n_bobs.base": "sqoᗺ ,u, sʇıᗺ",
   "tab.bits_n_bobs.deco": "sʞɔoןᗺ buıpןınᗺ ,sqoᗺ ,u, sʇıᗺ",
   "tooltip.bits_n_bobs.chain_drive_placing_hint": "˙ɥsıuıɟ oʇ dooן ǝʇǝןdɯoɔ ɐ ǝʇɐǝɹɔ 'ǝʌıɹp uıɐɥɔ buıɔɐןԀ",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass": ":ssɐW ɹɐןnbuⱯ",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.absurdly_heavy": ")ʎʌɐǝɥ ʎןpɹnsqɐ(",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.heavy": ")ʎʌɐǝɥ(",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.light": ")ʇɥbıן(",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.medium": ")ɯnıpǝɯ(",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.none": ")ǝuou(",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.super_heavy": ")ʎʌɐǝɥ ɹǝdns(",
+  "tooltip.bits_n_bobs.flywheel_bearing.angular_mass.super_light": ")ʇɥbıן ɹǝdns(",
+  "tooltip.bits_n_bobs.flywheel_bearing.empty": ")ʎʇdɯǝ(",
+  "tooltip.bits_n_bobs.flywheel_bearing.flywheel_stats": ":sʇɐʇS ןǝǝɥʍʎןℲ",
+  "tooltip.bits_n_bobs.flywheel_bearing.full": ")ןןnɟ(",
+  "tooltip.bits_n_bobs.flywheel_bearing.kinetic_transfer": ":ɹǝɟsuɐɹ⟘ ɔıʇǝuıʞ",
+  "tooltip.bits_n_bobs.flywheel_bearing.stored_stress": ":ssǝɹʇS pǝɹoʇS",
   "tooltip.bits_n_bobs.new_ponder_notification": "ɹǝpuod ʍǝN"
 }
