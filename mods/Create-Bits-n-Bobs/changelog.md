@@ -52,3 +52,7 @@
 # 1.21.1-0.0.19
 - Fixes:
   - Fixed crash related to chains
+# 1.21.1-0.0.20
+- Fixes:
+  - Weathered girder vertical CT
+  - Fixed small flanged cogwheel not getting ponder
