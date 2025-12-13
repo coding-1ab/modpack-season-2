@@ -3,12 +3,9 @@ package com.kipti.bnb.foundation;
 import com.kipti.bnb.content.cogwheel_chain.item.CogwheelChainPlacementEffect;
 import com.kipti.bnb.content.girder_strut.GirderStrutPlacementEffects;
 import com.kipti.bnb.content.weathered_girder.WeatheredGirderWrenchBehaviour;
-import com.simibubi.create.AllBlocks;
 import net.createmod.catnip.data.Pair;
-import net.createmod.catnip.lang.FontHelper;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
@@ -70,11 +67,11 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void modify(final ItemTooltipEvent context) {
-        if (context.getItemStack().is(AllBlocks.COGWHEEL.asItem()) ||
-                context.getItemStack().is(AllBlocks.LARGE_COGWHEEL.asItem())) {
-            context.getToolTip().add(1, Component.translatable("tooltip.bits_n_bobs.new_ponder_notification")
-                    .withColor(FontHelper.Palette.STANDARD_CREATE.primary().getColor().getValue()));
-        }
+//        if (context.getItemStack().is(AllBlocks.COGWHEEL.asItem()) ||
+//                context.getItemStack().is(AllBlocks.LARGE_COGWHEEL.asItem())) {
+//            context.getToolTip().add(1, Component.translatable("tooltip.bits_n_bobs.new_ponder_notification")
+//                    .withColor(FontHelper.Palette.STANDARD_CREATE.primary().getColor().getValue()));
+//        }
     }
 
 }

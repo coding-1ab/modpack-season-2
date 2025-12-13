@@ -166,6 +166,5 @@
   "tooltip.bits_n_bobs.flywheel_bearing.flywheel_stats": "Flywheel Stats:",
   "tooltip.bits_n_bobs.flywheel_bearing.full": "(full)",
   "tooltip.bits_n_bobs.flywheel_bearing.kinetic_transfer": "Kinetic Transfer:",
-  "tooltip.bits_n_bobs.flywheel_bearing.stored_stress": "Stored Stress:",
-  "tooltip.bits_n_bobs.new_ponder_notification": "New ponder"
+  "tooltip.bits_n_bobs.flywheel_bearing.stored_stress": "Stored Stress:"
 }
