@@ -56,3 +56,6 @@
 - Fixes:
   - Weathered girder vertical CT
   - Fixed small flanged cogwheel not getting ponder
+# 1.21.1-0.0.21
+- Changes:
+  - Finished the flywheel bearing tooltip
