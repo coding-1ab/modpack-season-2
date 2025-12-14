@@ -59,3 +59,6 @@
 # 1.21.1-0.0.21
 - Changes:
   - Finished the flywheel bearing tooltip
+# 1.21.1-0.0.22
+- Changes:
+  - Full spanish localization
