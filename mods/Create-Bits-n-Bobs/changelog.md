@@ -62,3 +62,6 @@
 # 1.21.1-0.0.22
 - Changes:
   - Full spanish localization
+# 1.21.1-0.0.23
+- Changes:
+  - Fixed chairs not rotating when disassembled

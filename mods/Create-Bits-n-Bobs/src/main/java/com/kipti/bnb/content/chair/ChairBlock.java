@@ -19,6 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -143,7 +144,13 @@ public class ChairBlock extends SeatBlock implements IWrenchable {
                 (sideState.getValue(FACING) == facing));
     }
 
-//    private static boolean getFlatObstructing(LevelAccessor pLevel, BlockState thisState, BlockPos pCurrentPos, Direction facing, BlockState blockState, BooleanProperty property) {
+    @Override
+    protected BlockState rotate(final BlockState state, final Rotation rotation) {
+        return super.rotate(state, rotation)
+                .setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    //    private static boolean getFlatObstructing(LevelAccessor pLevel, BlockState thisState, BlockPos pCurrentPos, Direction facing, BlockState blockState, BooleanProperty property) {
 //        BlockState sideState = pLevel.getBlockState(pCurrentPos.relative(facing));
 //        return (sideState.getBlock() instanceof ChairBlock &&
 //            (sideState.getValue(FACING) == facing));
