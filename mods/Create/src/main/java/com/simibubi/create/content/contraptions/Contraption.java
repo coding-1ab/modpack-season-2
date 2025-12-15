@@ -72,6 +72,8 @@ import com.simibubi.create.content.redstone.contact.RedstoneContactBlock;
 import com.simibubi.create.content.trains.bogey.AbstractBogeyBlock;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
+import com.simibubi.create.foundation.collision.CollisionList;
+import com.simibubi.create.foundation.collision.CollisionList.Populate;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
@@ -133,7 +135,7 @@ import net.neoforged.neoforge.registries.GameData;
 
 public abstract class Contraption {
 
-	public Optional<List<AABB>> simplifiedEntityColliders;
+	public CollisionList simplifiedEntityColliders;
 	public AbstractContraptionEntity entity;
 
 	public AABB bounds;
@@ -197,7 +199,7 @@ public abstract class Contraption {
 		initialPassengers = new HashMap<>();
 		pendingSubContraptions = new ArrayList<>();
 		stabilizedSubContraptions = new HashMap<>();
-		simplifiedEntityColliders = Optional.empty();
+		simplifiedEntityColliders = null;
 		storage = new MountedStorageManager();
 		capturedMultiblocks = ArrayListMultimap.create();
 	}
@@ -1151,8 +1153,8 @@ public abstract class Contraption {
 				}
 				if (state.getBlock() instanceof SimpleWaterloggedBlock
 					&& state.hasProperty(BlockStateProperties.WATERLOGGED)) {
-					FluidState FluidState = world.getFluidState(targetPos);
-					state = state.setValue(BlockStateProperties.WATERLOGGED, FluidState.getType() == Fluids.WATER);
+					FluidState fluidState = world.getFluidState(targetPos);
+					state = state.setValue(BlockStateProperties.WATERLOGGED, fluidState.getType() == Fluids.WATER);
 				}
 
 				world.destroyBlock(targetPos, shouldDropBlocks);
@@ -1443,7 +1445,7 @@ public abstract class Contraption {
 	}
 
 	public void invalidateColliders() {
-		simplifiedEntityColliders = Optional.empty();
+		simplifiedEntityColliders = null;
 		gatherBBsOffThread();
 	}
 
@@ -1463,12 +1465,12 @@ public abstract class Contraption {
 					combinedShape = Shapes.joinUnoptimized(combinedShape,
 						collisionShape.move(localPos.getX(), localPos.getY(), localPos.getZ()), BooleanOp.OR);
 				}
-				return combinedShape.optimize()
-					.toAabbs();
+
+				CollisionList out = new CollisionList();
+				combinedShape.forAllBoxes(new Populate(out));
+				return out;
 			})
-			.thenAccept(r -> {
-				simplifiedEntityColliders = Optional.of(r);
-			});
+			.thenAccept(r -> simplifiedEntityColliders = r);
 	}
 
 	public static double getRadius(Iterable<? extends Vec3i> blocks, Axis axis) {
@@ -1513,8 +1515,8 @@ public abstract class Contraption {
 		return false;
 	}
 
-	public Optional<List<AABB>> getSimplifiedEntityColliders() {
-		return simplifiedEntityColliders;
+	public Optional<CollisionList> getSimplifiedEntityColliders() {
+		return Optional.of(simplifiedEntityColliders);
 	}
 
 	public void tickStorage(AbstractContraptionEntity entity) {
