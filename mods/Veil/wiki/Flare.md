@@ -21,19 +21,19 @@ some hold shader uniforms, some hold model data, and some may hold both.
 {
   //Required
   //This name is used when applying a uniform to a shader
-  "name": "name",
+  "name": "Color",
   //Required
   //This defines what type of data this property should hold
   //By default veil implements: bool, int, float, vec2, vec3, vec4, mat3, mat4, sampler2d
   //If the built-in types don't match your needs, you may register your own ones
   //Types registered by other mods must begin with "modid:"
-  "type": "type",
+  "type": "vec3",
   //Required
   //The beginning value of the property, it must fit the type, ie:
   //floats are single numbers ( 1.52 ), vectors are arrays ( [1.2, 1.3] )
   //matrices are arrays of arrays ( [[1.2, 0 ,0], [0, 1.2, 0], [0, 0, 1.2]] )
   //and sampler2d s are textures ( "veil:textures/foo/bar.png" )
-  "value": 1
+  "value": [0.3, 0.6, 0.9]
 }
 ```
 
@@ -51,7 +51,7 @@ and append the result it in a property.
   //The class the modifier should apply to.
   //If this field isn't present or the output property holds model data,
   //the modifier will apply to all classes in the effect.
-  "class": "class",
+  "class": "plumeA",
   //Required
   //Input controller
   "controller": "throttle",
@@ -79,10 +79,10 @@ and append the result it in a property.
 }
 ```
 
-#### Controllers and Global Controllers
+#### Host-Bound Controllers and Global Controllers
 
 When rendering an effect, an `EffectHost` has to be present,
-controllers collect data from these hosts to use it to evaluate `Property Modifiers`.
+host-bound controllers collect data from these hosts to use it to evaluate `Property Modifiers`.
 To do this, the `EffectHost#getValue` method is called with the name of the controller.
 
 Global controllers on the other hand, do not use a host, they gather their data locally.
@@ -97,10 +97,10 @@ Materials describe the render type and uniforms used when rendering.
 {
   //Required
   //Used to decide whether a Property Modifier should apply here or not
-  "class": "class",
+  "class": "plumeA",
   //Required
   //The veil render type used to render things with the material
-  "renderType": "rendertype",
+  "renderType": "veil:rendertype",
   //Optional
   //Whether the built in "_Seed" property should be added
   "randomizeSeed": false,
