@@ -159,10 +159,11 @@ def getRelevantChangelog(String version) {
     def changelogFile = file("CHANGELOG.md")
     if (!changelogFile.exists()) {
         println("Couldn't read changelog for version " + version + ", file does not exist.")
-        return "No changelog provided."
+        throw new GradleException("Changelog file CHANGELOG.md does not exist.")
+//        return "No changelog provided."
     }
     println("Reading changelog for version " + version)
-    def versionChangelogMap = [:]
+    Map<String, String> versionChangelogMap = [:]
 
     def currentBlockVersion = null
     def currentBlockLines = []
@@ -180,7 +181,11 @@ def getRelevantChangelog(String version) {
     if (currentBlockVersion != null) {
         versionChangelogMap[currentBlockVersion] = currentBlockLines.join("\n").trim()
     }
-    return versionChangelogMap.getOrDefault(version.trim(), "No changelog provided.")
+    var log = versionChangelogMap.get(version.trim())
+    if (log == null) {
+        throw new GradleException("Couldn't find changelog for version " + version)
+    }
+    return log
 }
 
 publishMods {
