@@ -68,3 +68,6 @@
 # 1.21.1-0.0.24
 - Changes:
   - Allowed chain cogwheels (that aren't flanged) to connect like normal cogwheels
+# 1.21.1-0.0.25
+- Changes:
+  - Ru_ru localisation update
