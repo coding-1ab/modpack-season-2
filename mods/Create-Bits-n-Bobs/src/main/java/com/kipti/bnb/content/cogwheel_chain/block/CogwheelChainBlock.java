@@ -2,7 +2,6 @@ package com.kipti.bnb.content.cogwheel_chain.block;
 
 import com.kipti.bnb.registry.BnbBlockEntities;
 import com.kipti.bnb.registry.BnbBlocks;
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.api.schematic.requirement.SpecialBlockItemRequirement;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
@@ -69,14 +68,6 @@ public class CogwheelChainBlock extends RotatedPillarKineticBlock
 
     private final boolean isLarge;
     private final Supplier<BlockEntry<?>> sourceBlock;
-
-    public static CogwheelChainBlock small(final Properties properties) {
-        return new CogwheelChainBlock(false, properties, () -> AllBlocks.COGWHEEL);
-    }
-
-    public static CogwheelChainBlock large(final Properties properties) {
-        return new CogwheelChainBlock(true, properties, () -> AllBlocks.LARGE_COGWHEEL);
-    }
 
     public static CogwheelChainBlock smallFlanged(final Properties properties) {
         return new CogwheelChainBlock(false, properties, () -> BnbBlocks.SMALL_EMPTY_FLANGED_COGWHEEL);

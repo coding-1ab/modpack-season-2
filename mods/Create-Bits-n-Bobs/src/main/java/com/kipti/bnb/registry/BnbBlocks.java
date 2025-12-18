@@ -4,6 +4,7 @@ import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.chain_pulley.ChainPulleyBlock;
 import com.kipti.bnb.content.chair.ChairBlock;
 import com.kipti.bnb.content.cogwheel_chain.block.CogwheelChainBlock;
+import com.kipti.bnb.content.cogwheel_chain.block.ConnectingCogwheelChainBlock;
 import com.kipti.bnb.content.cogwheel_chain.flanged_gear.EmptyFlangedGearBlock;
 import com.kipti.bnb.content.flywheel_bearing.FlywheelBearingBlock;
 import com.kipti.bnb.content.girder_strut.GirderStrutBlock;
@@ -271,7 +272,7 @@ public class BnbBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<CogwheelChainBlock> SMALL_SPROCKET_COGWHEEL_CHAIN = REGISTRATE.block("small_cogwheel_chain", CogwheelChainBlock::small)
+    public static final BlockEntry<ConnectingCogwheelChainBlock> SMALL_SPROCKET_COGWHEEL_CHAIN = REGISTRATE.block("small_cogwheel_chain", ConnectingCogwheelChainBlock::small)
             .initialProperties(SharedProperties::stone)
             .properties(p -> p.sound(SoundType.WOOD)
                     .mapColor(MapColor.DIRT))
@@ -281,7 +282,7 @@ public class BnbBlocks {
             .loot((lt, block) -> lt.dropOther(block, AllBlocks.COGWHEEL.get()))
             .register();
 
-    public static final BlockEntry<CogwheelChainBlock> LARGE_SPROCKET_COGWHEEL_CHAIN = REGISTRATE.block("large_cogwheel_chain", CogwheelChainBlock::large)
+    public static final BlockEntry<ConnectingCogwheelChainBlock> LARGE_SPROCKET_COGWHEEL_CHAIN = REGISTRATE.block("large_cogwheel_chain", ConnectingCogwheelChainBlock::large)
             .initialProperties(SharedProperties::wooden)
             .properties(p -> p.sound(SoundType.WOOD)
                     .mapColor(MapColor.DIRT))
