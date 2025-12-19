@@ -218,11 +218,11 @@ public class BnbBlocks {
             .transform(pickaxeOnly())
             .blockstate((c, p) -> p.directionalBlock(c.get(),
                     (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                            "block/lightbulb/lightbulb" + (state.getValue(LightbulbBlock.CAGE) ? "" : "_uncaged") + (state.getValue(LightBlock.POWER) > 6 ? "_on" : "")
+                            "block/lightbulb/lightbulb" + (state.getValue(LightbulbBlock.CAGE) ? "" : "_uncaged") + (LightBlock.shouldUseOnLightModel(state) ? "_on" : "")
                     ))))
             .properties(p -> p
                     .noOcclusion()
-                    .lightLevel(state -> state.getValue(LightBlock.POWER))
+                    .lightLevel(LightBlock::getLightLevel)
                     .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.POWER) > 0)
                     .forceSolidOn())
             .addLayer(() -> RenderType::translucent)
@@ -242,7 +242,7 @@ public class BnbBlocks {
             .onRegister(CreateRegistrate.blockModel(() -> HeadlampModelBuilder::new))
             .properties(p -> p
                     .noOcclusion()
-                    .lightLevel(state -> state.getValue(LightBlock.POWER))
+                    .lightLevel(LightBlock::getLightLevel)
                     .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.POWER) > 0)
                     .mapColor(DyeColor.ORANGE)
                     .forceSolidOn())
@@ -258,11 +258,11 @@ public class BnbBlocks {
             .transform(pickaxeOnly())
             .blockstate((c, p) -> p.directionalBlock(c.get(),
                     (state) -> p.models().getExistingFile(CreateBitsnBobs.asResource(
-                            "block/brass_lamp/brass_lamp" + (state.getValue(LightBlock.POWER) > 6 ? "_on" : "")
+                            "block/brass_lamp/brass_lamp" + (LightBlock.shouldUseOnLightModel(state) ? "_on" : "")
                     ))))
             .properties(p -> p
                     .noOcclusion()
-                    .lightLevel(state -> state.getValue(LightBlock.POWER))
+                    .lightLevel(LightBlock::getLightLevel)
                     .emissiveRendering((state, level, pos) -> state.getValue(LightBlock.POWER) > 0)
                     .mapColor(DyeColor.ORANGE)
                     .forceSolidOn())

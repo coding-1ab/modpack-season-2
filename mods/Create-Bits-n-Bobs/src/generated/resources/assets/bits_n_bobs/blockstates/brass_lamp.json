@@ -1,417 +1,833 @@
 {
   "variants": {
-    "facing=down,power=0": {
+    "facing=down,forced_on=false,power=0": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 180
     },
-    "facing=down,power=1": {
+    "facing=down,forced_on=false,power=1": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 180
     },
-    "facing=down,power=10": {
+    "facing=down,forced_on=false,power=10": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 180
     },
-    "facing=down,power=11": {
+    "facing=down,forced_on=false,power=11": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 180
     },
-    "facing=down,power=12": {
+    "facing=down,forced_on=false,power=12": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 180
     },
-    "facing=down,power=13": {
+    "facing=down,forced_on=false,power=13": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 180
     },
-    "facing=down,power=14": {
+    "facing=down,forced_on=false,power=14": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 180
     },
-    "facing=down,power=15": {
+    "facing=down,forced_on=false,power=15": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 180
     },
-    "facing=down,power=2": {
+    "facing=down,forced_on=false,power=2": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 180
     },
-    "facing=down,power=3": {
+    "facing=down,forced_on=false,power=3": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 180
     },
-    "facing=down,power=4": {
+    "facing=down,forced_on=false,power=4": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 180
     },
-    "facing=down,power=5": {
+    "facing=down,forced_on=false,power=5": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 180
     },
-    "facing=down,power=6": {
+    "facing=down,forced_on=false,power=6": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 180
     },
-    "facing=down,power=7": {
+    "facing=down,forced_on=false,power=7": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 180
     },
-    "facing=down,power=8": {
+    "facing=down,forced_on=false,power=8": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 180
     },
-    "facing=down,power=9": {
+    "facing=down,forced_on=false,power=9": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 180
     },
-    "facing=east,power=0": {
+    "facing=down,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=down,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=down,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=down,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=down,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=down,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=down,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=down,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=down,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=down,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=down,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=down,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=down,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=down,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=down,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=down,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 180
+    },
+    "facing=east,forced_on=false,power=0": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 90
     },
-    "facing=east,power=1": {
+    "facing=east,forced_on=false,power=1": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 90
     },
-    "facing=east,power=10": {
+    "facing=east,forced_on=false,power=10": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 90
     },
-    "facing=east,power=11": {
+    "facing=east,forced_on=false,power=11": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 90
     },
-    "facing=east,power=12": {
+    "facing=east,forced_on=false,power=12": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 90
     },
-    "facing=east,power=13": {
+    "facing=east,forced_on=false,power=13": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 90
     },
-    "facing=east,power=14": {
+    "facing=east,forced_on=false,power=14": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 90
     },
-    "facing=east,power=15": {
+    "facing=east,forced_on=false,power=15": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 90
     },
-    "facing=east,power=2": {
+    "facing=east,forced_on=false,power=2": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 90
     },
-    "facing=east,power=3": {
+    "facing=east,forced_on=false,power=3": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 90
     },
-    "facing=east,power=4": {
+    "facing=east,forced_on=false,power=4": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 90
     },
-    "facing=east,power=5": {
+    "facing=east,forced_on=false,power=5": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 90
     },
-    "facing=east,power=6": {
+    "facing=east,forced_on=false,power=6": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 90
     },
-    "facing=east,power=7": {
+    "facing=east,forced_on=false,power=7": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 90
     },
-    "facing=east,power=8": {
+    "facing=east,forced_on=false,power=8": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 90
     },
-    "facing=east,power=9": {
+    "facing=east,forced_on=false,power=9": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 90
     },
-    "facing=north,power=0": {
+    "facing=east,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north,forced_on=false,power=0": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90
     },
-    "facing=north,power=1": {
+    "facing=north,forced_on=false,power=1": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90
     },
-    "facing=north,power=10": {
+    "facing=north,forced_on=false,power=10": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90
     },
-    "facing=north,power=11": {
+    "facing=north,forced_on=false,power=11": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90
     },
-    "facing=north,power=12": {
+    "facing=north,forced_on=false,power=12": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90
     },
-    "facing=north,power=13": {
+    "facing=north,forced_on=false,power=13": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90
     },
-    "facing=north,power=14": {
+    "facing=north,forced_on=false,power=14": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90
     },
-    "facing=north,power=15": {
+    "facing=north,forced_on=false,power=15": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90
     },
-    "facing=north,power=2": {
+    "facing=north,forced_on=false,power=2": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90
     },
-    "facing=north,power=3": {
+    "facing=north,forced_on=false,power=3": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90
     },
-    "facing=north,power=4": {
+    "facing=north,forced_on=false,power=4": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90
     },
-    "facing=north,power=5": {
+    "facing=north,forced_on=false,power=5": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90
     },
-    "facing=north,power=6": {
+    "facing=north,forced_on=false,power=6": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90
     },
-    "facing=north,power=7": {
+    "facing=north,forced_on=false,power=7": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90
     },
-    "facing=north,power=8": {
+    "facing=north,forced_on=false,power=8": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90
     },
-    "facing=north,power=9": {
+    "facing=north,forced_on=false,power=9": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90
     },
-    "facing=south,power=0": {
+    "facing=north,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=north,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=north,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=north,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=north,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=north,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=north,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=north,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=north,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=north,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=north,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=north,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=north,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=north,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=north,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=north,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90
+    },
+    "facing=south,forced_on=false,power=0": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 180
     },
-    "facing=south,power=1": {
+    "facing=south,forced_on=false,power=1": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 180
     },
-    "facing=south,power=10": {
+    "facing=south,forced_on=false,power=10": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 180
     },
-    "facing=south,power=11": {
+    "facing=south,forced_on=false,power=11": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 180
     },
-    "facing=south,power=12": {
+    "facing=south,forced_on=false,power=12": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 180
     },
-    "facing=south,power=13": {
+    "facing=south,forced_on=false,power=13": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 180
     },
-    "facing=south,power=14": {
+    "facing=south,forced_on=false,power=14": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 180
     },
-    "facing=south,power=15": {
+    "facing=south,forced_on=false,power=15": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 180
     },
-    "facing=south,power=2": {
+    "facing=south,forced_on=false,power=2": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 180
     },
-    "facing=south,power=3": {
+    "facing=south,forced_on=false,power=3": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 180
     },
-    "facing=south,power=4": {
+    "facing=south,forced_on=false,power=4": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 180
     },
-    "facing=south,power=5": {
+    "facing=south,forced_on=false,power=5": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 180
     },
-    "facing=south,power=6": {
+    "facing=south,forced_on=false,power=6": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 180
     },
-    "facing=south,power=7": {
+    "facing=south,forced_on=false,power=7": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 180
     },
-    "facing=south,power=8": {
+    "facing=south,forced_on=false,power=8": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 180
     },
-    "facing=south,power=9": {
+    "facing=south,forced_on=false,power=9": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 180
     },
-    "facing=up,power=0": {
+    "facing=south,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up,forced_on=false,power=0": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp"
     },
-    "facing=up,power=1": {
+    "facing=up,forced_on=false,power=1": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp"
     },
-    "facing=up,power=10": {
+    "facing=up,forced_on=false,power=10": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
     },
-    "facing=up,power=11": {
+    "facing=up,forced_on=false,power=11": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
     },
-    "facing=up,power=12": {
+    "facing=up,forced_on=false,power=12": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
     },
-    "facing=up,power=13": {
+    "facing=up,forced_on=false,power=13": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
     },
-    "facing=up,power=14": {
+    "facing=up,forced_on=false,power=14": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
     },
-    "facing=up,power=15": {
+    "facing=up,forced_on=false,power=15": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
     },
-    "facing=up,power=2": {
+    "facing=up,forced_on=false,power=2": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp"
     },
-    "facing=up,power=3": {
+    "facing=up,forced_on=false,power=3": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp"
     },
-    "facing=up,power=4": {
+    "facing=up,forced_on=false,power=4": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp"
     },
-    "facing=up,power=5": {
+    "facing=up,forced_on=false,power=5": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp"
     },
-    "facing=up,power=6": {
+    "facing=up,forced_on=false,power=6": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp"
     },
-    "facing=up,power=7": {
+    "facing=up,forced_on=false,power=7": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
     },
-    "facing=up,power=8": {
+    "facing=up,forced_on=false,power=8": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
     },
-    "facing=up,power=9": {
+    "facing=up,forced_on=false,power=9": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
     },
-    "facing=west,power=0": {
+    "facing=up,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=up,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=up,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=up,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=up,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=up,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=up,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=up,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=up,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=up,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=up,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=up,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=up,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=up,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=up,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=up,forced_on=true,power=9": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on"
+    },
+    "facing=west,forced_on=false,power=0": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 270
     },
-    "facing=west,power=1": {
+    "facing=west,forced_on=false,power=1": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 270
     },
-    "facing=west,power=10": {
+    "facing=west,forced_on=false,power=10": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 270
     },
-    "facing=west,power=11": {
+    "facing=west,forced_on=false,power=11": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 270
     },
-    "facing=west,power=12": {
+    "facing=west,forced_on=false,power=12": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 270
     },
-    "facing=west,power=13": {
+    "facing=west,forced_on=false,power=13": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 270
     },
-    "facing=west,power=14": {
+    "facing=west,forced_on=false,power=14": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 270
     },
-    "facing=west,power=15": {
+    "facing=west,forced_on=false,power=15": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 270
     },
-    "facing=west,power=2": {
+    "facing=west,forced_on=false,power=2": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 270
     },
-    "facing=west,power=3": {
+    "facing=west,forced_on=false,power=3": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 270
     },
-    "facing=west,power=4": {
+    "facing=west,forced_on=false,power=4": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 270
     },
-    "facing=west,power=5": {
+    "facing=west,forced_on=false,power=5": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 270
     },
-    "facing=west,power=6": {
+    "facing=west,forced_on=false,power=6": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp",
       "x": 90,
       "y": 270
     },
-    "facing=west,power=7": {
+    "facing=west,forced_on=false,power=7": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 270
     },
-    "facing=west,power=8": {
+    "facing=west,forced_on=false,power=8": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 270
     },
-    "facing=west,power=9": {
+    "facing=west,forced_on=false,power=9": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=0": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=1": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=10": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=11": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=12": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=13": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=14": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=15": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=2": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=3": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=4": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=5": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=6": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=7": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=8": {
+      "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,forced_on=true,power=9": {
       "model": "bits_n_bobs:block/brass_lamp/brass_lamp_on",
       "x": 90,
       "y": 270

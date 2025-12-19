@@ -74,3 +74,6 @@
 # 1.21.1-0.0.26
 - Changes:
   - Fixed crash chaz found related to nixie tubes
+# 1.21.1-0.0.27
+- Changes:
+  - Allowed light force-on when interacting with an empty hand for all lights

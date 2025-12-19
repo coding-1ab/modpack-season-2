@@ -1,4 +1,4 @@
-// 1.21.1	2025-12-13T21:57:54.0929596	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2025-12-19T18:49:10.3781332	Registrate Provider for bits_n_bobs [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 55ef065722d329b3c054797cd63a36d59f1634a8 assets/bits_n_bobs/blockstates/andesite_tiles.json
 8810b9385c4f0297369a2d35ef8435b216bae4bb assets/bits_n_bobs/blockstates/andesite_tile_slab.json
 34dc52222f8843bc859869e1572ba2e8b0721252 assets/bits_n_bobs/blockstates/andesite_tile_stairs.json
@@ -13,7 +13,7 @@ c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/black_la
 9c0c64d89914cc48c9f8dafb6ff703dbe5ff4b7b assets/bits_n_bobs/blockstates/blue_chair.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/blue_large_nixie_tube.json
 472bc201ee93bf45466a99d1bc5fc65874330d22 assets/bits_n_bobs/blockstates/blue_nixie_board.json
-157f2f0d73de4fc6bebcd1830bf5cb77a832f11c assets/bits_n_bobs/blockstates/brass_lamp.json
+e07cb75a2d97a1f1db6381a7c7c373779143afc8 assets/bits_n_bobs/blockstates/brass_lamp.json
 26353f6b8bf6dc2fdc4e4396f84c504ec9ad8f45 assets/bits_n_bobs/blockstates/brown_chair.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/brown_large_nixie_tube.json
 472bc201ee93bf45466a99d1bc5fc65874330d22 assets/bits_n_bobs/blockstates/brown_nixie_board.json
@@ -60,7 +60,7 @@ ccad384accdf505efaba4fd79ed6fe43ef30c67d assets/bits_n_bobs/blockstates/large_co
 e8136731cacd838e4a712612bb730ec2dc7a41cc assets/bits_n_bobs/blockstates/large_flanged_cogwheel.json
 e8136731cacd838e4a712612bb730ec2dc7a41cc assets/bits_n_bobs/blockstates/large_flanged_cogwheel_chain.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/large_nixie_tube.json
-7fa03d944b133411d2e61b83560eb1692bba0132 assets/bits_n_bobs/blockstates/lightbulb.json
+8cbed5c28515cb83f03dd9d53dda918ebfaa8768 assets/bits_n_bobs/blockstates/lightbulb.json
 49f43eef4d5c8267116f3c068a1ff398140ea7b4 assets/bits_n_bobs/blockstates/light_blue_chair.json
 c47e4c8876e8e41c49b2566699526098893b2c92 assets/bits_n_bobs/blockstates/light_blue_large_nixie_tube.json
 472bc201ee93bf45466a99d1bc5fc65874330d22 assets/bits_n_bobs/blockstates/light_blue_nixie_board.json

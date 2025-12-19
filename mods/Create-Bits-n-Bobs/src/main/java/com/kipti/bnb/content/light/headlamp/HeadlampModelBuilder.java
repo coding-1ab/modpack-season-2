@@ -1,6 +1,7 @@
 package com.kipti.bnb.content.light.headlamp;
 
 import com.kipti.bnb.CreateBitsnBobs;
+import com.kipti.bnb.content.light.founation.LightBlock;
 import com.kipti.bnb.registry.BnbPartialModels;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.model.BakedQuadHelper;
@@ -71,7 +72,7 @@ public class HeadlampModelBuilder extends BakedModelWrapper<BakedModel> {
                     poseStack.translate(-0.5f, -0.5f, -0.5f);
                     poseStack.translate(placement.horizontalAlignment().getOffset(), 0, placement.verticalAlignment().getOffset());
 
-                    model.addAll(transformQuadsForLamp((state.getValue(HeadlampBlock.POWER) > 6 ? BnbPartialModels.HEADLAMP_ON : BnbPartialModels.HEADLAMP_OFF).get()
+                    model.addAll(transformQuadsForLamp((LightBlock.shouldUseOnLightModel(state) ? BnbPartialModels.HEADLAMP_ON : BnbPartialModels.HEADLAMP_OFF).get()
                             .getQuads(state, side, rand, data, renderType), poseStack, placementValue));
                 }
             }
