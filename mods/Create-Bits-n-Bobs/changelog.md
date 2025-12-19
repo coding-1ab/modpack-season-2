@@ -77,3 +77,6 @@
 # 1.21.1-0.0.27
 - Changes:
   - Allowed light force-on when interacting with an empty hand for all lights
+# 1.21.1-0.0.28
+- Changes:
+  - Allowed chairs to have inverse corners (pretty much appearing like seats)
