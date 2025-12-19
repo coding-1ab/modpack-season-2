@@ -114,11 +114,14 @@ public class GenericNixieDisplayBlock extends DirectionalBlock implements IWrenc
         Component component = stack.getOrDefault(DataComponents.CUSTOM_NAME, Component.empty());
         @Nullable Component secondRowComponent = null;
 
+        boolean forceFromTop = false;
+
         if (AllBlocks.CLIPBOARD.isIn(stack)) {
             final List<ClipboardEntry> entries = ClipboardEntry.getLastViewedEntries(stack);
-            component = entries.getFirst().text;
+            component = !entries.isEmpty() ? entries.getFirst().text : Component.empty();
             if (entries.size() > 1) {
                 secondRowComponent = entries.get(1).text;
+                forceFromTop = true;
             }
         }
 
@@ -129,7 +132,7 @@ public class GenericNixieDisplayBlock extends DirectionalBlock implements IWrenc
         final @Nullable String secondRowTagUsed = secondRowComponent == null ? null :
                 Component.Serializer.toJson(secondRowComponent, level.registryAccess());
 
-        final int startLine = getLineForPlacement(state, pos, hitResult, level);
+        final int startLine = forceFromTop ? 0 : getLineForPlacement(state, pos, hitResult, level);
 
         final GenericNixieDisplayBlockEntity.ConfigurableDisplayOptions currentDisplay = startBlockEntity.getCurrentDisplayOption();
         GenericNixieDisplayTarget.walkNixies(level, pos, (currentPos, consumedCharsOnRow, blockEntity) -> {

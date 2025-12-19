@@ -71,3 +71,6 @@
 # 1.21.1-0.0.25
 - Changes:
   - Ru_ru localisation update
+# 1.21.1-0.0.26
+- Changes:
+  - Fixed crash chaz found related to nixie tubes
