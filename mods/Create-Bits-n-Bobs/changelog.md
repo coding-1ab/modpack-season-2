@@ -80,3 +80,6 @@
 # 1.21.1-0.0.28
 - Changes:
   - Allowed chairs to have inverse corners (pretty much appearing like seats)
+# 1.21.1-0.0.29
+- Changes:
+  - Fixed spanish translation being invalid
