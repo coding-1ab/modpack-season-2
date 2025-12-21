@@ -87,3 +87,8 @@
 - Changes:
   - Turkish translation, thank you to @erdemarikaneskici
   - Fixed concurrent modification exception crash, thanks to @MarioSMB for the solution
+# 1.21.1-0.0.31
+- Changes:
+  - Chain drives no longer drop chains when you are in creative mode
+  - Chairs can now be wrenched to force an upwright back
+  - Ru_Ru tweaks / fixes, thank you @VladisCrafter and @WatermelonGuy
