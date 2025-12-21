@@ -21,6 +21,7 @@ import com.simibubi.create.content.contraptions.actors.trainControls.ControlsBlo
 import com.simibubi.create.content.contraptions.minecart.TrainCargoManager;
 import com.simibubi.create.content.contraptions.render.ClientContraption;
 import com.simibubi.create.content.trains.bogey.AbstractBogeyBlock;
+import com.simibubi.create.foundation.collision.CollisionList;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import net.createmod.catnip.data.Couple;
@@ -40,7 +41,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
-import net.minecraft.world.phys.AABB;
 
 public class CarriageContraption extends Contraption {
 
@@ -250,7 +250,7 @@ public class CarriageContraption extends Contraption {
 	}
 
 	@Override
-	public Optional<List<AABB>> getSimplifiedEntityColliders() {
+	public Optional<CollisionList> getSimplifiedEntityColliders() {
 		if (notInPortal())
 			return super.getSimplifiedEntityColliders();
 		return Optional.empty();
