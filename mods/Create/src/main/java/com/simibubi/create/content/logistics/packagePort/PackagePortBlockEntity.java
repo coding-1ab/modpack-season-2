@@ -20,6 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -34,8 +35,7 @@ import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 
-public abstract class PackagePortBlockEntity extends SmartBlockEntity implements MenuProvider {
-
+public abstract class PackagePortBlockEntity extends SmartBlockEntity implements MenuProvider, Clearable {
 	public boolean acceptsPackages;
 	public String addressFilter;
 	public PackagePortTarget target;
@@ -104,6 +104,11 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 	@Override
 	public void invalidate() {
 		super.invalidate();
+	}
+
+	@Override
+	public void clearContent() {
+		inventory.clearContent();
 	}
 
 	@Override
@@ -205,5 +210,4 @@ public abstract class PackagePortBlockEntity extends SmartBlockEntity implements
 	public int getComparatorOutput() {
 		return ItemHandlerHelper.calcRedstoneFromInventory(inventory);
 	}
-
 }

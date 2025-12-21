@@ -26,6 +26,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import dan200.computercraft.api.peripheral.PeripheralCapability;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -37,8 +38,7 @@ import net.minecraft.world.phys.Vec3;
 
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
-public class TrackObserverBlockEntity extends SmartBlockEntity implements TransformableBlockEntity {
-
+public class TrackObserverBlockEntity extends SmartBlockEntity implements TransformableBlockEntity, Clearable {
 	public TrackTargetingBehaviour<TrackObserver> edgePoint;
 
 	private FilteringBehaviour filtering;
@@ -154,4 +154,8 @@ public class TrackObserverBlockEntity extends SmartBlockEntity implements Transf
 		computerBehaviour.removePeripheral();
 	}
 
+	@Override
+	public void clearContent() {
+		filtering.setFilter(ItemStack.EMPTY);
+	}
 }

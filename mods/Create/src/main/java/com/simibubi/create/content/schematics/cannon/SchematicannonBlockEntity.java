@@ -27,6 +27,7 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.ItemHelper.ExtractionCountMode;
+import com.simibubi.create.foundation.mixin.accessor.ItemStackHandlerAccessor;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
@@ -47,6 +48,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
@@ -73,8 +75,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.wrapper.EmptyItemHandler;
 
-public class SchematicannonBlockEntity extends SmartBlockEntity implements MenuProvider {
-
+public class SchematicannonBlockEntity extends SmartBlockEntity implements MenuProvider, Clearable {
 	public static final int NEIGHBOUR_CHECKING = 100;
 	public static final int MAX_ANCHOR_DISTANCE = 256;
 
@@ -151,6 +152,11 @@ public class SchematicannonBlockEntity extends SmartBlockEntity implements MenuP
 				}
 			}
 		}
+	}
+
+	@Override
+	public void clearContent() {
+		((ItemStackHandlerAccessor) inventory).create$getStacks().clear();
 	}
 
 	@Override
@@ -919,5 +925,4 @@ public class SchematicannonBlockEntity extends SmartBlockEntity implements MenuP
 				SchematicannonOptions::new
 		);
 	}
-
 }

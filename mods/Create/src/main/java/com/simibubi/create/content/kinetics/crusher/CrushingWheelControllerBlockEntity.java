@@ -33,6 +33,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -50,8 +51,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
-public class CrushingWheelControllerBlockEntity extends SmartBlockEntity {
-
+public class CrushingWheelControllerBlockEntity extends SmartBlockEntity implements Clearable {
 	public Entity processingEntity;
 	private UUID entityUUID;
 	protected boolean searchForEntity;
@@ -352,6 +352,11 @@ public class CrushingWheelControllerBlockEntity extends SmartBlockEntity {
 		inventory.deserializeNBT(registries, compound.getCompound("Inventory"));
 	}
 
+	@Override
+	public void clearContent() {
+		inventory.clear();
+	}
+
 	public void startCrushing(Entity entity) {
 		processingEntity = entity;
 		entityUUID = entity.getUUID();
@@ -376,5 +381,4 @@ public class CrushingWheelControllerBlockEntity extends SmartBlockEntity {
 	public boolean hasEntity() {
 		return processingEntity != null;
 	}
-
 }

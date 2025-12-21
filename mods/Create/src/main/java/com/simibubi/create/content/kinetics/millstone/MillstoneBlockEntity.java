@@ -10,6 +10,7 @@ import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehavi
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
+import com.simibubi.create.foundation.mixin.accessor.ItemStackHandlerAccessor;
 import com.simibubi.create.foundation.sound.SoundScapes;
 import com.simibubi.create.foundation.sound.SoundScapes.AmbienceGroup;
 
@@ -21,6 +22,7 @@ import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -37,8 +39,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
-public class MillstoneBlockEntity extends KineticBlockEntity {
-
+public class MillstoneBlockEntity extends KineticBlockEntity implements Clearable {
 	public ItemStackHandler inputInv;
 	public ItemStackHandler outputInv;
 	public IItemHandler capability;
@@ -134,6 +135,11 @@ public class MillstoneBlockEntity extends KineticBlockEntity {
 	}
 
 	@Override
+	public void clearContent() {
+		((ItemStackHandlerAccessor) inputInv).create$getStacks().clear();
+	}
+
+	@Override
 	public void destroy() {
 		super.destroy();
 		ItemHelper.dropContents(level, worldPosition, inputInv);
@@ -145,7 +151,7 @@ public class MillstoneBlockEntity extends KineticBlockEntity {
 
 		if (lastRecipe == null || !lastRecipe.matches(inventoryIn, level)) {
 			Optional<RecipeHolder<MillingRecipe>> recipe = AllRecipeTypes.MILLING.find(inventoryIn, level);
-			if (!recipe.isPresent())
+			if (recipe.isEmpty())
 				return;
 			lastRecipe = recipe.get().value();
 		}
@@ -242,5 +248,4 @@ public class MillstoneBlockEntity extends KineticBlockEntity {
 		}
 
 	}
-
 }
