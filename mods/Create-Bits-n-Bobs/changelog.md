@@ -83,3 +83,7 @@
 # 1.21.1-0.0.29
 - Changes:
   - Fixed spanish translation being invalid
+# 1.21.1-0.0.30
+- Changes:
+  - Turkish translation, thank you to @erdemarikaneskici
+  - Fixed concurrent modification exception crash, thanks to @MarioSMB for the solution
