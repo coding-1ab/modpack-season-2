@@ -9,6 +9,7 @@ dependencies {
     modApi("com.tterrag.registrate:Registrate:${rootProject.registrateVersion}")
 
     modRuntimeOnly("maven.modrinth:createaddition:neoforge-1.21.1-1.5.8")
+    modRuntimeOnly("org.appliedenergistics:appliedenergistics2:${appliedEnergisticsVersion}")
 
     compileOnly("io.github.llamalad7:mixinextras-common:0.5.0")
     annotationProcessor(implementation(include("io.github.llamalad7:mixinextras-neoforge:0.5.0")))

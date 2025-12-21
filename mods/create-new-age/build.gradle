@@ -17,6 +17,7 @@ subprojects {
 
     repositories {
         mavenLocal()
+        mavenCentral()
 
         maven { url "https://maven.neoforged.net/" }
         maven { url = "https://cursemaven.com" } // CurseForge maven
