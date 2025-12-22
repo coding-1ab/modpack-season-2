@@ -1,0 +1,28 @@
+image: eclipse-temurin:21
+
+before_script:
+  - GRADLE_USER_HOME="$(pwd)/.gradle"
+  - export GRADLE_USER_HOME
+  - export MAVEN_NAME=$MAVEN_NAME
+  - export MAVEN_SECRET=$MAVEN_SECRET
+  - export GIT_SHA=$CI_COMMIT_SHORT_SHA
+
+deploy:
+  stage: deploy
+  script: ./gradlew build publish
+  tags:
+    - linux
+    - self-hosted
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push
+
+release:
+  stage: deploy
+  script: export RELEASE=true && ./gradlew build publish
+  tags:
+    - linux
+    - self-hosted
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: manual

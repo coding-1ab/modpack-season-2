@@ -97,9 +97,22 @@ subprojects {
         publications {
             maven(MavenPublication) {
                 artifactId = project.archivesBaseName + "-${project.name}-${rootProject.minecraftVersion}"
+                if (!System.getenv("RELEASE").asBoolean())
+                    version = project.version + "-build.${System.getenv("GIT_SHA")}"
                 from components.java
             }
         }
+        var mavenURL = System.getenv("RELEASE").asBoolean() ? "releases" : "snapshots"
+        repositories {
+            maven {
+                url = "https://maven.idiotss.com/" + mavenURL
+                credentials{
+                    username = System.getenv("MAVEN_NAME")
+                    password = System.getenv("MAVEN_SECRET")
+                }
+            }
+        }
+
     }
 
     tasks.withType(JavaCompile) {
