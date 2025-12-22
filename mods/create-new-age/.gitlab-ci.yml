@@ -19,7 +19,7 @@ snapshot:
       - .gradle/
       - common/build
       - neoforge/build
-    policy: push
+    policy: pull-push
 
 release:
   stage: deploy
