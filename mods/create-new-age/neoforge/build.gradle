@@ -53,8 +53,7 @@ loom {
 // https://modmuss50.github.io/mod-publish-plugin/
 publishMods {
     file = jar.archiveFile
-    changelog = "TEST AUTO RELEASE" // Eventually want to setup changelog.md and use silk
-//    changelog = silk.changelog
+    changelog = rootProject.silk.changelog
     type = STABLE
     version = "$modVersion+mc$minecraftVersion"
     displayName = "$modVersion+mc$minecraftVersion"
