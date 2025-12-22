@@ -31,7 +31,7 @@ import java.util.*;
 public class ForgeRenderTypeStageHandler {
 
     private static final Map<RenderLevelStageEvent.Stage, Set<RenderType>> STAGE_RENDER_TYPES = new HashMap<>();
-    private static Set<RenderType> CUSTOM_BLOCK_LAYERS;
+    private static Set<RenderType> CUSTOM_BLOCK_LAYERS = Set.of();
     private static List<RenderType> BLOCK_LAYERS;
 
     public static synchronized void register(@Nullable RenderLevelStageEvent.Stage stage, RenderType renderType) {
@@ -75,13 +75,25 @@ public class ForgeRenderTypeStageHandler {
         }
     }
 
-    public static List<RenderType> getBlockLayers() {
+    // Some mods add custom block layers by changing the field, so account for that
+    public static List<RenderType> getBlockLayers(List<RenderType> base) {
+        if (CUSTOM_BLOCK_LAYERS.isEmpty()) {
+            return base;
+        }
+
+        if (BLOCK_LAYERS == null || base.size() != BLOCK_LAYERS.size()) {
+            ImmutableList.Builder<RenderType> blockLayers = ImmutableList.builder();
+            blockLayers.addAll(base);
+            if (CUSTOM_BLOCK_LAYERS != null) {
+                blockLayers.addAll(CUSTOM_BLOCK_LAYERS);
+            }
+            BLOCK_LAYERS = blockLayers.build();
+        }
         return BLOCK_LAYERS;
     }
 
-    public static void setBlockLayers(ImmutableList.Builder<RenderType> blockLayers) {
-        CUSTOM_BLOCK_LAYERS = new HashSet<>(blockLayers.build());
-        blockLayers.addAll(RenderType.chunkBufferLayers());
-        BLOCK_LAYERS = blockLayers.build();
+    public static void setBlockLayers(Set<RenderType> blockLayers) {
+        CUSTOM_BLOCK_LAYERS = Set.copyOf(blockLayers);
+        BLOCK_LAYERS = null;
     }
 }

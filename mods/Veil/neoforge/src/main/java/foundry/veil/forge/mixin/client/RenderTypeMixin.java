@@ -9,12 +9,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
-@Mixin(RenderType.class)
+@Mixin(value = RenderType.class, priority = 500)
 public class RenderTypeMixin {
 
-    @Inject(method = "chunkBufferLayers", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "chunkBufferLayers", at = @At("RETURN"), cancellable = true)
     private static void injectChunkBufferLayers(CallbackInfoReturnable<List<RenderType>> cir) {
-        List<RenderType> renderTypes = ForgeRenderTypeStageHandler.getBlockLayers();
+        List<RenderType> renderTypes = ForgeRenderTypeStageHandler.getBlockLayers(cir.getReturnValue());
         if (renderTypes != null) {
             cir.setReturnValue(renderTypes);
         }

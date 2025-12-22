@@ -40,15 +40,6 @@ public class VeilForgeClient {
         modEventBus.addListener(VeilForgeClient::registerListeners);
         modEventBus.addListener(VeilForgeClient::registerShaders);
         modEventBus.addListener(VeilForgeClient::addPackFinders);
-
-        ImmutableList.Builder<RenderType> blockLayers = ImmutableList.builder();
-        ModLoader.postEvent(new ForgeVeilRegisterBlockLayersEvent(renderType -> {
-            if (Veil.platform().isDevelopmentEnvironment() && renderType.bufferSize() > RenderType.SMALL_BUFFER_SIZE) {
-                Veil.LOGGER.warn("Block render layer '{}' uses a large buffer size: {}. If this is intended you can ignore this message", VeilRenderType.getName(renderType), renderType.bufferSize());
-            }
-            blockLayers.add(renderType);
-        }));
-        ForgeRenderTypeStageHandler.setBlockLayers(blockLayers);
     }
 
     private static void registerListeners(RegisterClientReloadListenersEvent event) {

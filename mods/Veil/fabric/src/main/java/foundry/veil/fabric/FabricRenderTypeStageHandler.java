@@ -31,7 +31,7 @@ import java.util.*;
 public class FabricRenderTypeStageHandler {
 
     private static final Map<VeilRenderLevelStageEvent.Stage, Set<RenderType>> STAGE_RENDER_TYPES = new EnumMap<>(VeilRenderLevelStageEvent.Stage.class);
-    private static Set<RenderType> CUSTOM_BLOCK_LAYERS;
+    private static Set<RenderType> CUSTOM_BLOCK_LAYERS = Set.of();
     private static List<RenderType> BLOCK_LAYERS;
 
     public static void register(@Nullable VeilRenderLevelStageEvent.Stage stage, RenderType renderType) {
@@ -72,7 +72,11 @@ public class FabricRenderTypeStageHandler {
     }
 
     // Some mods add custom block layers by changing the field, so account for that
-    public static List<RenderType> getBlockLayers(ImmutableList<RenderType> base) {
+    public static List<RenderType> getBlockLayers(List<RenderType> base) {
+        if (CUSTOM_BLOCK_LAYERS.isEmpty()) {
+            return base;
+        }
+
         if (BLOCK_LAYERS == null || base.size() != BLOCK_LAYERS.size()) {
             ImmutableList.Builder<RenderType> blockLayers = ImmutableList.builder();
             blockLayers.addAll(base);
@@ -85,7 +89,7 @@ public class FabricRenderTypeStageHandler {
     }
 
     public static void setBlockLayers(Set<RenderType> blockLayers) {
-        CUSTOM_BLOCK_LAYERS = blockLayers;
+        CUSTOM_BLOCK_LAYERS = Set.copyOf(blockLayers);
         BLOCK_LAYERS = null;
     }
 }
