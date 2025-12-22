@@ -7,7 +7,7 @@ before_script:
   - export MAVEN_SECRET=$MAVEN_SECRET
   - export GIT_SHA=$CI_COMMIT_SHORT_SHA
 
-deploy:
+snapshot:
   stage: deploy
   script: ./gradlew build publish
   tags:
@@ -15,6 +15,10 @@ deploy:
     - self-hosted
   cache:
     key: "$CI_COMMIT_REF_NAME"
+    paths:
+      - .gradle/
+      - common/build
+      - neoforge/build
     policy: push
 
 release:
