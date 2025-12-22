@@ -49,3 +49,26 @@ loom {
         }
     }
 }
+
+// https://modmuss50.github.io/mod-publish-plugin/
+publishMods {
+    file = jar.archiveFile
+    changelog = "TEST AUTO RELEASE" // Eventually want to setup changelog.md and use silk
+//    changelog = silk.changelog
+    type = STABLE
+    version = "$modVersion+mc$minecraftVersion"
+    displayName = "$modVersion+mc$minecraftVersion"
+    modLoaders.add("neoforge")
+
+    curseforge {
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        projectId = "905861"
+        minecraftVersions.add(minecraftVersion)
+    }
+
+    modrinth {
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        projectId = "FTeXqI9v"
+        minecraftVersions.add(minecraftVersion)
+    }
+}

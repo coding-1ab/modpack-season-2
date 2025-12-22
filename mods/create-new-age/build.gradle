@@ -1,6 +1,8 @@
 plugins {
     id "maven-publish"
     id "dev.architectury.loom" version "1.9-SNAPSHOT" apply false
+    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
+    id "dev.ithundxr.silk" version "1.0.1"
 }
 
 allprojects {
@@ -12,6 +14,8 @@ subprojects {
     apply plugin: "java"
     apply plugin: "maven-publish"
     apply plugin: "dev.architectury.loom"
+    apply plugin: "me.modmuss50.mod-publish-plugin"
+    apply plugin: "dev.ithundxr.silk"
 
     archivesBaseName = "create-new-age"
 
