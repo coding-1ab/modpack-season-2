@@ -56,18 +56,24 @@ publishMods {
     changelog = rootProject.silk.changelog
     type = STABLE
     version = "$modVersion+mc$minecraftVersion"
-    displayName = "$modVersion+mc$minecraftVersion"
+    displayName = "$modVersion for Neoforge $minecraftVersion"
     modLoaders.add("neoforge")
 
     curseforge {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
         projectId = "905861"
+        clientRequired = true
+        serverRequired = true
+        requires("create")
         minecraftVersions.add(minecraftVersion)
     }
 
     modrinth {
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         projectId = "FTeXqI9v"
+        requires { // Requires Create
+            id = "LNytGWDc"
+        }
         minecraftVersions.add(minecraftVersion)
     }
 }
