@@ -1515,8 +1515,9 @@ public abstract class Contraption {
 		return false;
 	}
 
-	public Optional<CollisionList> getSimplifiedEntityColliders() {
-		return Optional.of(simplifiedEntityColliders);
+	@Nullable
+	public CollisionList getSimplifiedEntityColliders() {
+		return simplifiedEntityColliders;
 	}
 
 	public void tickStorage(AbstractContraptionEntity entity) {

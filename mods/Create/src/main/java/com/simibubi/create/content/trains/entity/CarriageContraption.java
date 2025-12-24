@@ -5,9 +5,9 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllContraptionTypes;
@@ -250,10 +250,11 @@ public class CarriageContraption extends Contraption {
 	}
 
 	@Override
-	public Optional<CollisionList> getSimplifiedEntityColliders() {
+	@Nullable
+	public CollisionList getSimplifiedEntityColliders() {
 		if (notInPortal())
 			return super.getSimplifiedEntityColliders();
-		return Optional.empty();
+		return null;
 	}
 
 	@Override
