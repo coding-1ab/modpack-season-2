@@ -37,3 +37,11 @@ release:
 #   At the time of writing this the protected branches are 1.20.1 & 1.21.1
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_REF_PROTECTED == "true"
       when: manual
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    paths:
+      - build
+      - .gradle/
+      - common/build
+      - neoforge/build
+    policy: pull-push
