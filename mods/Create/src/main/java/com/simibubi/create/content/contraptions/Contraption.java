@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
@@ -126,16 +125,14 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import net.neoforged.neoforge.registries.GameData;
 
 public abstract class Contraption {
 
-	public CollisionList simplifiedEntityColliders;
+	public final CollisionList simplifiedEntityColliders = new CollisionList();
 	public AbstractContraptionEntity entity;
 
 	public AABB bounds;
@@ -162,8 +159,6 @@ public abstract class Contraption {
 	private Set<SuperGlueEntity> glueToRemove;
 	private Map<BlockPos, Entity> initialPassengers;
 	private List<BlockFace> pendingSubContraptions;
-
-	private CompletableFuture<Void> simplifiedEntityColliderProvider;
 
 	/**
 	 * All client-only data should be encapsulated here.
@@ -199,7 +194,6 @@ public abstract class Contraption {
 		initialPassengers = new HashMap<>();
 		pendingSubContraptions = new ArrayList<>();
 		stabilizedSubContraptions = new HashMap<>();
-		simplifiedEntityColliders = null;
 		storage = new MountedStorageManager();
 		capturedMultiblocks = ArrayListMultimap.create();
 	}
@@ -234,7 +228,7 @@ public abstract class Contraption {
 		Contraption contraption = ContraptionType.fromType(type);
 		contraption.readNBT(world, nbt, spawnData);
 		contraption.collisionLevel = new ContraptionWorld(world, contraption);
-		contraption.gatherBBsOffThread();
+		contraption.invalidateColliders();
 		return contraption;
 	}
 
@@ -285,14 +279,7 @@ public abstract class Contraption {
 		}
 
 		storage.initialize();
-		gatherBBsOffThread();
-	}
-
-	public void onEntityRemoved(AbstractContraptionEntity entity) {
-		if (simplifiedEntityColliderProvider != null) {
-			simplifiedEntityColliderProvider.cancel(false);
-			simplifiedEntityColliderProvider = null;
-		}
+		invalidateColliders();
 	}
 
 	public void onEntityInitialize(Level world, AbstractContraptionEntity contraptionEntity) {
@@ -1445,32 +1432,23 @@ public abstract class Contraption {
 	}
 
 	public void invalidateColliders() {
-		simplifiedEntityColliders = null;
-		gatherBBsOffThread();
-	}
-
-	private void gatherBBsOffThread() {
 		getContraptionWorld();
-		if (simplifiedEntityColliderProvider != null) {
-			simplifiedEntityColliderProvider.cancel(false);
-		}
-		simplifiedEntityColliderProvider = CompletableFuture.supplyAsync(() -> {
-				VoxelShape combinedShape = Shapes.empty();
-				for (Entry<BlockPos, StructureBlockInfo> entry : blocks.entrySet()) {
-					StructureBlockInfo info = entry.getValue();
-					BlockPos localPos = entry.getKey();
-					VoxelShape collisionShape = info.state().getCollisionShape(collisionLevel, localPos, CollisionContext.empty());
-					if (collisionShape.isEmpty())
-						continue;
-					combinedShape = Shapes.joinUnoptimized(combinedShape,
-						collisionShape.move(localPos.getX(), localPos.getY(), localPos.getZ()), BooleanOp.OR);
-				}
+		simplifiedEntityColliders.size = 0;
 
-				CollisionList out = new CollisionList();
-				combinedShape.forAllBoxes(new Populate(out));
-				return out;
-			})
-			.thenAccept(r -> simplifiedEntityColliders = r);
+		var populate = new Populate(simplifiedEntityColliders);
+
+		for (Entry<BlockPos, StructureBlockInfo> entry : blocks.entrySet()) {
+			StructureBlockInfo info = entry.getValue();
+			BlockPos localPos = entry.getKey();
+			VoxelShape collisionShape = info.state().getCollisionShape(collisionLevel, localPos, CollisionContext.empty());
+			if (collisionShape.isEmpty())
+				continue;
+
+			populate.offsetX = localPos.getX();
+			populate.offsetY = localPos.getY();
+			populate.offsetZ = localPos.getZ();
+			collisionShape.forAllBoxes(populate);
+		}
 	}
 
 	public static double getRadius(Iterable<? extends Vec3i> blocks, Axis axis) {
