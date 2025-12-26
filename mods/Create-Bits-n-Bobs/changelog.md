@@ -104,3 +104,7 @@
 - Changes:
   - Fixed a corrupted state with the chair blocks
   - Nudged the chair armrest arms to be slightly inset to avoid z-fighting with certain blocks
+# 1.21.1-0.0.35
+- Changes:
+  - Proper dist for mixins
+  - Flipped 9 number texture in the atlas for nixie tubes and boards
