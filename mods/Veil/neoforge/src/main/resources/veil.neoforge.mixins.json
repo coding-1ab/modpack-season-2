@@ -12,6 +12,7 @@
   ],
   "client": [
     "client.MinecraftMixin",
+    "client.RenderBuffersMixin",
     "client.RenderTypeMixin",
     "client.debug.vanilla.DebugLevelRendererMixin",
     "client.dynamicbuffer.LevelRendererMixin",

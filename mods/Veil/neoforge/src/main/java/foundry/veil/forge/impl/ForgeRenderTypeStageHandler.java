@@ -86,6 +86,12 @@ public class ForgeRenderTypeStageHandler {
             blockLayers.addAll(base);
             if (CUSTOM_BLOCK_LAYERS != null) {
                 blockLayers.addAll(CUSTOM_BLOCK_LAYERS);
+
+                // Assign NeoForge chunk layer ids
+                int i = base.getLast().chunkLayerId;
+                for (RenderType blockLayer : CUSTOM_BLOCK_LAYERS) {
+                    blockLayer.chunkLayerId = ++i;
+                }
             }
             BLOCK_LAYERS = blockLayers.build();
         }
