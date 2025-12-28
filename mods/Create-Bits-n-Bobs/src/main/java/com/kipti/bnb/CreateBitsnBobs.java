@@ -13,8 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.slf4j.Logger;
 
@@ -24,7 +24,8 @@ public class CreateBitsnBobs {
 
     public static final String MOD_ID = "bits_n_bobs";
     public static final String NAME = "Create: Bits 'n' Bobs";
-    public static final String DECO_NAME = "Bits 'n' Bobs's Building Blocks";
+    public static final String TAB_NAME = "Bits 'n' Bobs";
+    public static final String DECO_NAME = "Bits 'n' Bobs' Building Blocks";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID)
@@ -34,8 +35,10 @@ public class CreateBitsnBobs {
                             .andThen(TooltipModifier.mapNull(KineticStats.create(item)))
             );
 
-    public CreateBitsnBobs(IEventBus modEventBus, ModContainer modContainer) {
+    public CreateBitsnBobs(final IEventBus modEventBus, final ModContainer modContainer) {
         modEventBus.addListener(CreateBitsnBobsData::gatherData);
+        ModLoadingContext modLoadingContext = ModLoadingContext.get();
+
         REGISTRATE.registerEventListeners(modEventBus);
 
         REGISTRATE.setCreativeTab(BnbCreativeTabs.BASE_CREATIVE_TAB);
@@ -44,24 +47,28 @@ public class CreateBitsnBobs {
         BnbBlocks.register();
         BnbEntityTypes.register();
         BnbCreativeTabs.register(modEventBus);
-        BnbPartialModels.register();
         BnbBlockEntities.register();
         BnbTags.register();
         BnbPackets.register();
         BnbDataComponents.register(modEventBus);
         BnbDecoBlocks.register();
 
+        BnbCreateStresses.register();
+
         BnbLangEntries.register();
+        BnbTags.registerDataGenerators();
+
+        BnbDataConditions.register(modEventBus);
 
         modEventBus.addListener(CreateBitsnBobs::commonSetup);
 
-        modContainer.registerConfig(ModConfig.Type.SERVER, BnbServerConfig.SPEC);
+        BnbConfigs.register(modLoadingContext, modContainer);
     }
 
-    private static void commonSetup(FMLCommonSetupEvent event) {
+    private static void commonSetup(final FMLCommonSetupEvent event) {
     }
 
-    public static ResourceLocation asResource(String s) {
+    public static ResourceLocation asResource(final String s) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, s);
     }
 

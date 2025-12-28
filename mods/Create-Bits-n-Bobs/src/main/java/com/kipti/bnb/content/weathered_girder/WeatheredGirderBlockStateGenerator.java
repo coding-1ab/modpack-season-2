@@ -13,38 +13,38 @@ import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder
 /**
  * My famous, patented, and trademarked block state generator for the weathered girder block.
  * (copy-pasted from the original girder block state generator)
- * */
+ */
 public class WeatheredGirderBlockStateGenerator {
 
-    public static void blockStateWithShaft(DataGenContext<Block, EncasedWeatheredGirderBlock> c,
+    public static void blockStateWithShaft(DataGenContext<Block, WeatheredGirderEncasedShaftBlock> c,
                                            RegistrateBlockstateProvider p) {
         MultiPartBlockStateBuilder builder = p.getMultipartBuilder(c.get());
 
         builder.part()
-            .modelFile(AssetLookup.partialBaseModel(c, p))
-            .rotationY(0)
-            .addModel()
-            .condition(GirderEncasedShaftBlock.HORIZONTAL_AXIS, Direction.Axis.Z)
-            .end();
+                .modelFile(AssetLookup.partialBaseModel(c, p))
+                .rotationY(0)
+                .addModel()
+                .condition(GirderEncasedShaftBlock.HORIZONTAL_AXIS, Direction.Axis.Z)
+                .end();
 
         builder.part()
-            .modelFile(AssetLookup.partialBaseModel(c, p))
-            .rotationY(90)
-            .addModel()
-            .condition(GirderEncasedShaftBlock.HORIZONTAL_AXIS, Direction.Axis.X)
-            .end();
+                .modelFile(AssetLookup.partialBaseModel(c, p))
+                .rotationY(90)
+                .addModel()
+                .condition(GirderEncasedShaftBlock.HORIZONTAL_AXIS, Direction.Axis.X)
+                .end();
 
         builder.part()
-            .modelFile(AssetLookup.partialBaseModel(c, p, "top"))
-            .addModel()
-            .condition(GirderEncasedShaftBlock.TOP, true)
-            .end();
+                .modelFile(AssetLookup.partialBaseModel(c, p, "top"))
+                .addModel()
+                .condition(GirderEncasedShaftBlock.TOP, true)
+                .end();
 
         builder.part()
-            .modelFile(AssetLookup.partialBaseModel(c, p, "bottom"))
-            .addModel()
-            .condition(GirderEncasedShaftBlock.BOTTOM, true)
-            .end();
+                .modelFile(AssetLookup.partialBaseModel(c, p, "bottom"))
+                .addModel()
+                .condition(GirderEncasedShaftBlock.BOTTOM, true)
+                .end();
 
     }
 
@@ -52,46 +52,46 @@ public class WeatheredGirderBlockStateGenerator {
         MultiPartBlockStateBuilder builder = p.getMultipartBuilder(c.get());
 
         builder.part()
-            .modelFile(AssetLookup.partialBaseModel(c, p, "pole"))
-            .addModel()
-            .condition(GirderBlock.X, false)
-            .condition(GirderBlock.Z, false)
-            .end();
-
-        builder.part()
-            .modelFile(AssetLookup.partialBaseModel(c, p, "x"))
-            .addModel()
-            .condition(GirderBlock.X, true)
-            .end();
-
-        builder.part()
-            .modelFile(AssetLookup.partialBaseModel(c, p, "z"))
-            .addModel()
-            .condition(GirderBlock.Z, true)
-            .end();
-
-        for (boolean x : Iterate.trueAndFalse)
-            builder.part()
-                .modelFile(AssetLookup.partialBaseModel(c, p, "top"))
+                .modelFile(AssetLookup.partialBaseModel(c, p, "pole"))
                 .addModel()
-                .condition(GirderBlock.TOP, true)
-                .condition(GirderBlock.X, x)
-                .condition(GirderBlock.Z, !x)
-                .end()
-                .part()
-                .modelFile(AssetLookup.partialBaseModel(c, p, "bottom"))
-                .addModel()
-                .condition(GirderBlock.BOTTOM, true)
-                .condition(GirderBlock.X, x)
-                .condition(GirderBlock.Z, !x)
+                .condition(GirderBlock.X, false)
+                .condition(GirderBlock.Z, false)
                 .end();
 
         builder.part()
-            .modelFile(AssetLookup.partialBaseModel(c, p, "cross"))
-            .addModel()
-            .condition(GirderBlock.X, true)
-            .condition(GirderBlock.Z, true)
-            .end();
+                .modelFile(AssetLookup.partialBaseModel(c, p, "x"))
+                .addModel()
+                .condition(GirderBlock.X, true)
+                .end();
+
+        builder.part()
+                .modelFile(AssetLookup.partialBaseModel(c, p, "z"))
+                .addModel()
+                .condition(GirderBlock.Z, true)
+                .end();
+
+        for (boolean x : Iterate.trueAndFalse)
+            builder.part()
+                    .modelFile(AssetLookup.partialBaseModel(c, p, "top"))
+                    .addModel()
+                    .condition(GirderBlock.TOP, true)
+                    .condition(GirderBlock.X, x)
+                    .condition(GirderBlock.Z, !x)
+                    .end()
+                    .part()
+                    .modelFile(AssetLookup.partialBaseModel(c, p, "bottom"))
+                    .addModel()
+                    .condition(GirderBlock.BOTTOM, true)
+                    .condition(GirderBlock.X, x)
+                    .condition(GirderBlock.Z, !x)
+                    .end();
+
+        builder.part()
+                .modelFile(AssetLookup.partialBaseModel(c, p, "cross"))
+                .addModel()
+                .condition(GirderBlock.X, true)
+                .condition(GirderBlock.Z, true)
+                .end();
 
     }
 

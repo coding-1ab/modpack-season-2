@@ -1,15 +1,14 @@
 package com.kipti.bnb.network.packets.from_client;
 
-import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChain;
-import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChainPathfinder;
-import com.kipti.bnb.content.cogwheel_chain.graph.PathedCogwheelNode;
-import com.kipti.bnb.content.cogwheel_chain.graph.PlacingCogwheelChain;
+import com.kipti.bnb.content.cogwheel_chain.graph.*;
 import com.kipti.bnb.network.BnbPackets;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import net.createmod.catnip.net.base.ServerboundPacketPayload;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Items;
 
 import java.util.List;
 
@@ -36,12 +35,19 @@ public record PlaceCogwheelChainPacket(
         if (!worldSpacePartialChain.checkMatchingNodesInLevel(player.level()))
             return;
 
-        //TODO: check item cost and take the chains as necessary
+        final int chainsRequired = worldSpacePartialChain.getChainsRequiredInLoop();
+
+        final boolean hasEnough = player.hasInfiniteMaterials() || ChainConveyorBlockEntity.getChainsFromInventory(player, Items.CHAIN.getDefaultInstance(), chainsRequired, true);
+        if (!hasEnough)
+            return;
+        if (!player.hasInfiniteMaterials())
+            ChainConveyorBlockEntity.getChainsFromInventory(player, Items.CHAIN.getDefaultInstance(), chainsRequired, false);
 
         final List<PathedCogwheelNode> chainGeometry;
         try {
             chainGeometry = CogwheelChainPathfinder.buildChainPath(worldSpacePartialChain);
-        } catch (final CogwheelChain.InvalidGeometryException ignored) {
+        } catch (final
+        ChainInteractionFailedException ignored) { //We assume the client has been notified if the path was invalid, anything else is tampering
             return;
         }
         if (chainGeometry == null)

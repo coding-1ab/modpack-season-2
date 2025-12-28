@@ -1,8 +1,6 @@
 package com.kipti.bnb.foundation.ponder;
 
 import com.kipti.bnb.CreateBitsnBobs;
-import com.simibubi.create.foundation.ponder.PonderWorldBlockEntityFix;
-import net.createmod.ponder.api.level.PonderLevel;
 import net.createmod.ponder.api.registration.PonderPlugin;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
@@ -27,11 +25,6 @@ public class BnbPonderPlugin implements PonderPlugin {
 
     @Override
     public void registerSharedText(SharedTextRegistrationHelper helper) {
-    }
-
-    @Override
-    public void onPonderLevelRestore(PonderLevel ponderLevel) {
-        PonderWorldBlockEntityFix.fixControllerBlockEntities(ponderLevel);
     }
 
 }

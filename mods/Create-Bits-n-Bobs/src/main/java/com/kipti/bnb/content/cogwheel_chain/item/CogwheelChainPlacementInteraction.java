@@ -1,10 +1,10 @@
 package com.kipti.bnb.content.cogwheel_chain.item;
 
-import com.kipti.bnb.content.cogwheel_chain.graph.CogwheelChain;
+import com.kipti.bnb.content.cogwheel_chain.graph.ChainInteractionFailedException;
 import com.kipti.bnb.content.cogwheel_chain.graph.PlacingCogwheelChain;
 import com.kipti.bnb.network.packets.from_client.PlaceCogwheelChainPacket;
+import com.kipti.bnb.registry.BnbFeatureFlag;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
-import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -50,19 +50,21 @@ public class CogwheelChainPlacementInteraction {
         if (player == null || level == null)
             return false;
 
-        //If crouching, try clear
-        if (player.isShiftKeyDown() && currentBuildingChain != null) {
-            currentBuildingChain = null;
-            currentChainLevel = null;
-            return true;
-        }
-
         //If it is a chain targeting a cogwheel
         final ItemStack itemInHand = player.getMainHandItem().is(Items.CHAIN) ? player.getMainHandItem() :
                 player.getOffhandItem().is(Items.CHAIN) ? player.getOffhandItem() : null;
 
         if (itemInHand == null) {
             return false;
+        }
+
+        //If crouching, try clear
+        if (player.isShiftKeyDown()) {
+            if (currentBuildingChain != null) {
+                currentBuildingChain = null;
+                currentChainLevel = null;
+            }
+            return true;
         }
 
         final HitResult hitResult = Minecraft.getInstance().hitResult;
@@ -75,19 +77,25 @@ public class CogwheelChainPlacementInteraction {
         final BlockPos hitPos = bhr.getBlockPos();
         final BlockState targetedState = level.getBlockState(hitPos);
 
-        if (!PlacingCogwheelChain.isValidBlockTarget(targetedState)) {
-            return currentBuildingChain != null;
+        final boolean validBlockTarget = PlacingCogwheelChain.isValidBlockTarget(targetedState);
+
+        if (validBlockTarget && !BnbFeatureFlag.COGWHEEL_CHAIN_DRIVES.get()) {
+            player.displayClientMessage(new ChainInteractionFailedException("config_forbids").getComponent(), true);
+            return true;
         }
 
+        if (!validBlockTarget) {
+            return currentBuildingChain != null;
+        }
         //Cancel normal interaction
         event.setSwingHand(true);
 
         if (currentBuildingChain == null || currentChainLevel == null || !currentChainLevel.equals(level.dimension())) {
             //Start a new chain
-            currentBuildingChain = new PlacingCogwheelChain(hitPos,
-                    targetedState.getValue(CogWheelBlock.AXIS),
-                    targetedState.getBlock() instanceof ICogWheel iCogWheel && iCogWheel.isLargeCog());
+            currentBuildingChain = new PlacingCogwheelChain(hitPos, targetedState.getValue(CogWheelBlock.AXIS), PlacingCogwheelChain.isLargeBlockTarget(targetedState), PlacingCogwheelChain.hasSmallCogwheelOffset(targetedState));
             currentChainLevel = level.dimension();
+
+            player.displayClientMessage(Component.translatable("tooltip.bits_n_bobs.chain_drive_placing_hint"), true);
         } else {
             //if this is the last node, then remove the last one
             if (currentBuildingChain.getLastNode().pos().equals(hitPos)) {
@@ -111,8 +119,8 @@ public class CogwheelChainPlacementInteraction {
                 final boolean completed;
                 try {
                     completed = currentBuildingChain.canBuildChainIfLooping();
-                } catch (final CogwheelChain.InvalidGeometryException exception) {
-                    player.displayClientMessage(Component.literal(exception.getMessage()).withColor(0xff0000), true);
+                } catch (final ChainInteractionFailedException exception) {
+                    player.displayClientMessage(exception.getComponent(), true);
                     currentBuildingChain = null;
                     currentChainLevel = null;
                     return true;
@@ -125,9 +133,9 @@ public class CogwheelChainPlacementInteraction {
                     currentBuildingChain = null;
                     currentChainLevel = null;
                 }
-            } catch (final PlacingCogwheelChain.ChainAdditionAbortedException exception) {
+            } catch (final ChainInteractionFailedException exception) {
                 //Send message on fail
-                player.displayClientMessage(net.minecraft.network.chat.Component.literal(exception.getMessage()).withColor(0xff0000), true);//TODO: translate
+                player.displayClientMessage(exception.getComponent(), true);
             }
         }
         return true;

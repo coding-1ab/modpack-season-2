@@ -5,12 +5,21 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AllCreatePonderScenesMixin",
     "AllPaletteStoneTypesMixin",
-    "FontAccessMixin",
+    "ContraptionColliderMixin",
+    "DynamicComponentMixin",
     "RotationPropagatorMixin",
-    "flywheel_bearing.KineticNetworkMixin"
+    "flywheel_bearing.KineticNetworkMixin",
+    "presets.ChunkGeneratorsMixin",
+    "presets.WorldDimensionsMixin",
+    "presets.WorldPresetsBootstrapMixin",
+    "presets.WorldPresetsMixin"
   ],
   "client": [
+    "FontAccessMixin",
+    "GirderCTBehaviourMixin",
+    "GuiGameElementMixin"
   ],
   "server": [
   ],

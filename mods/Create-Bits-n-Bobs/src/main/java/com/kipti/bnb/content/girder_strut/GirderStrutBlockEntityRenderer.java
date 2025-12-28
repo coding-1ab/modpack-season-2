@@ -35,7 +35,7 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
 
         StrutModelType modelType;
         if (blockEntity.getBlockState().getBlock() instanceof GirderStrutBlock girderStrutBlock) {
-            modelType = girderStrutBlock.modelType;
+            modelType = girderStrutBlock.getModelType();
         } else {
             return;
         }
@@ -47,7 +47,7 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
                 pos = pos.offset(blockEntity.getBlockPos());
                 BlockState state = blockEntity.getLevel().getBlockState(pos);
                 if (!
-                    (state.getBlock() instanceof GirderStrutBlock)) {
+                        (state.getBlock() instanceof GirderStrutBlock)) {
                     continue; // Skip if the block is not a Girder Strut
                 }
 
@@ -70,11 +70,11 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
                 double xRot = (float) Math.atan2(relativeVec.y(), distHorizontal);
 
                 TransformStack.of(ms)
-                    .translate(Vec3.atLowerCornerOf(blockEntity.getBlockState().getValue(GirderStrutBlock.FACING).getNormal()).scale(-0.4))
-                    .center()
-                    .rotateY((float) yRot)
-                    .rotateX(-(float) xRot)
-                    .uncenter();
+                        .translate(Vec3.atLowerCornerOf(blockEntity.getBlockState().getValue(GirderStrutBlock.FACING).getNormal()).scale(-0.4))
+                        .center()
+                        .rotateY((float) yRot)
+                        .rotateX(-(float) xRot)
+                        .uncenter();
 
                 ms.translate(0, 0, lengthOffset + 0.5); // Adjust the translation based on segment length
                 if (getRenderPriority(relative) > getRenderPriority(relative.multiply(-1))) {
@@ -86,9 +86,9 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
             if (blockEntity.connectionRenderBufferCache == null) {
                 GirderStrutModelBuilder.GirderStrutModelData connectionData = GirderStrutModelBuilder.GirderStrutModelData.collect(blockEntity.getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity);
                 List<Consumer<BufferBuilder>> quads = connectionData.connections()
-                    .stream()
-                    .flatMap(c -> GirderStrutModelManipulator.bakeConnectionToConsumer(c, modelType, blockEntity.createLighter()).stream())
-                    .toList();
+                        .stream()
+                        .flatMap(c -> GirderStrutModelManipulator.bakeConnectionToConsumer(c, modelType, blockEntity.createLighter()).stream())
+                        .toList();
 
                 BufferBuilder builder = new BufferBuilder(new ByteBufferBuilder(256), VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
 
@@ -113,8 +113,8 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
             ms.pushPose();
             ms.translate(0, 0, i); // Adjust the translation based on segment height
             CachedBuffers.partial(model, state)
-                .light(light)
-                .renderInto(ms, buffer.getBuffer(RenderType.solid()));
+                    .light(light)
+                    .renderInto(ms, buffer.getBuffer(RenderType.solid()));
             ms.popPose();
         }
     }
@@ -130,4 +130,15 @@ public class GirderStrutBlockEntityRenderer extends SmartBlockEntityRenderer<Gir
     public @NotNull AABB getRenderBoundingBox(@NotNull GirderStrutBlockEntity blockEntity) {
         return super.getRenderBoundingBox(blockEntity).inflate(10);
     }
+
+    @Override
+    public boolean shouldRender(final GirderStrutBlockEntity blockEntity, final Vec3 cameraPos) {
+        return true;
+    }
+
+    @Override
+    public boolean shouldRenderOffScreen(final GirderStrutBlockEntity blockEntity) {
+        return true;
+    }
+
 }

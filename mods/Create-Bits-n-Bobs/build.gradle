@@ -2,6 +2,8 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'net.neoforged.gradle.userdev' version '7.0.190'
+    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
+    id "co.uzzu.dotenv.gradle" version "1.1.0"
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -150,5 +152,131 @@ idea {
     module {
         downloadSources = true
         downloadJavadoc = true
+    }
+}
+
+def getRelevantChangelog(String version) {
+    def changelogFile = file("CHANGELOG.md")
+    if (!changelogFile.exists()) {
+        println("Couldn't read changelog for version " + version + ", file does not exist.")
+        throw new GradleException("Changelog file CHANGELOG.md does not exist.")
+    }
+
+    // 1. Read the file
+    Map<String, String> versionChangelogMap = [:] as LinkedHashMap
+    def currentBlockVersion = null
+    def currentBlockLines = []
+
+    changelogFile.eachLine { line ->
+        def headerDefinition = "# "
+        if (line.startsWith(headerDefinition)) {
+            if (currentBlockVersion != null) {
+                versionChangelogMap[currentBlockVersion] = currentBlockLines.join("\n").trim()
+            }
+            currentBlockVersion = line.substring(headerDefinition.length()).trim()
+            currentBlockLines = []
+        } else if (currentBlockVersion != null) {
+            currentBlockLines << line
+        }
+    }
+    if (currentBlockVersion != null) {
+        versionChangelogMap[currentBlockVersion] = currentBlockLines.join("\n").trim()
+    }
+
+    def cleanVersion = version.trim()
+    def log = versionChangelogMap.get(cleanVersion)
+
+    if (log == null) {
+        throw new GradleException("Couldn't find changelog for version " + version)
+    }
+
+    // --- 2. Smart Comparison Logic ---
+
+    // Helper: Split version into parts (e.g., "1.21-0.3jolly" -> [1, 21, 0, 3])
+    // This extracts only numbers for comparison to avoid "9 > 33" text issues.
+    def getVersionParts = { String v ->
+        return v.split(/[-.]/).collect { part ->
+            // Extract the first number found in the segment (handles "33jolly" -> 33)
+            def matcher = (part =~ /^(\d+)/)
+            return matcher.find() ? matcher[0][1].toInteger() : -1
+        }
+    }
+
+    // Helper: Returns true if vCandidate > vTarget
+    def isNewer = { String vCandidate, String vTarget ->
+        def p1 = getVersionParts(vCandidate)
+        def p2 = getVersionParts(vTarget)
+
+        // Compare segment by segment
+        for (int i = 0; i < Math.min(p1.size(), p2.size()); i++) {
+            if (p1[i] != p2[i]) {
+                return p1[i] > p2[i]
+            }
+        }
+        return p1.size() > p2.size() // If all match, longer one is "newer" (usually)
+    }
+
+    // Helper: Extract MC version (assumes format MC-MOD or similar)
+    def getMcPrefix = { String v -> v.split("-")[0] }
+    def currentMcVersion = getMcPrefix(cleanVersion)
+
+    // --- 3. Check for Newer Versions ---
+
+    // Filter map keys to find warnings
+    def newerVersions = versionChangelogMap.keySet().findAll { candidateVersion ->
+        // Only check if candidate is distinct from current
+        if (candidateVersion == cleanVersion) return false
+
+        // strict check: Must be same Minecraft version
+        if (getMcPrefix(candidateVersion) != currentMcVersion) return false
+
+        // Check if candidate is actually newer numerically
+        return isNewer(candidateVersion, cleanVersion)
+    }
+
+    if (!newerVersions.isEmpty()) {
+        println "\n**************************************************"
+        println " WARNING: You are generating a changelog for ${cleanVersion}, but newer version(s) were detected for this MC version:"
+        newerVersions.each { println "  - ${it}" }
+        println "**************************************************\n"
+    }
+
+    return log
+}
+
+publishMods {
+    file = jar.archiveFile
+    def changelogText = getRelevantChangelog(minecraft_version + "-" + mod_version)
+    changelog = changelogText
+    println("Using changelog:\n" + changelogText + "\n")
+    type = STABLE
+    modLoaders.add("neoforge")
+    displayName = mod_name + " " + mod_version + " NeoForge " + minecraft_version
+
+    curseforge {
+        projectId = "1398383"
+        projectSlug = "create-bits-n-bobs"
+        accessToken = env.fetch("CURSEFORGE_TOKEN")
+        minecraftVersions.add("1.21.1")
+        requires("create")
+    }
+    modrinth {
+        projectId = "T8bvmqVZ"
+        accessToken = env.fetch("MODRINTH_TOKEN")
+        minecraftVersions.add("1.21.1")
+        requires("create")
+    }
+
+    discord {
+        webhookUrl = env.fetch("DISCORD_WEBHOOK_URL")
+        username = "bits n bober version bot"
+        avatarUrl = "https://cataas.com/cat?width=500&height=500"
+        content = """
+        # New Mod Release: ${getDisplayName().get()}
+        ${changelogText}
+        """.trim()
+        style {
+            look = "CLASSIC"
+        }
     }
 }

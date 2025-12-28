@@ -13,25 +13,17 @@ import java.util.function.BiConsumer;
 
 public class CreateBitsnBobsData {
 
-    public static void gatherData(GatherDataEvent event) {
-        DataGenerator generator = event.getGenerator();
-        PackOutput output = generator.getPackOutput();
-        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+    public static void gatherData(final GatherDataEvent event) {
+        final DataGenerator generator = event.getGenerator();
+        final PackOutput output = generator.getPackOutput();
+        final CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
         CreateBitsnBobs.REGISTRATE.addDataGenerator(ProviderType.LANG, provider -> {
-            BiConsumer<String, String> langConsumer = provider::add;
+            final BiConsumer<String, String> langConsumer = provider::add;
             // Register this since FMLClientSetupEvent does not run during datagen
             PonderIndex.addPlugin(new BnbPonderPlugin());
             PonderIndex.getLangAccess().provideLang(CreateBitsnBobs.MOD_ID, langConsumer);
-
-//            PonderIndex.addPlugin(new DDPonderPlugin());
-//            PonderIndex.getLangAccess().provideLang(CreateBitsnBobs.MOD_ID, langConsumer);
         });
-//        event.getGenerator().addProvider(true,
-//            CreateBitsnBobs.REGISTRATE.setDataProvider(
-//                new RegistrateDataProvider(CreateBitsnBobs.REGISTRATE, CreateBitsnBobs.MOD_ID, event)
-//            )
-//        );
     }
 
 }

@@ -1,5 +1,6 @@
 package com.kipti.bnb.content.palette;
 
+import com.google.common.collect.ImmutableMap;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.registry.BnbPaletteStoneTypes;
 import com.simibubi.create.Create;
@@ -13,6 +14,7 @@ import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonnullType;
 import net.createmod.catnip.lang.Lang;
+import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
@@ -27,9 +29,15 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.state.properties.WallSide;
+import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
@@ -40,8 +48,10 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
     public static final BnbPaletteBlockPartial<SlabBlock> SLAB = new BnbPaletteBlockPartial.Slab(false);
     public static final BnbPaletteBlockPartial<SlabBlock> UNIQUE_SLAB = new BnbPaletteBlockPartial.Slab(true);
     public static final BnbPaletteBlockPartial<WallBlock> WALL = new BnbPaletteBlockPartial.Wall();
+    public static final BnbPaletteBlockPartial<WallBlock> TILE_WALL = new BnbPaletteBlockPartial.TileWall();
 
     public static final BnbPaletteBlockPartial<?>[] ALL_PARTIALS = {STAIR, SLAB, WALL};
+    public static final BnbPaletteBlockPartial<?>[] ALL_PARTIALS_TILE = {STAIR, SLAB, TILE_WALL};
     public static final BnbPaletteBlockPartial<?>[] FOR_POLISHED = {STAIR, UNIQUE_SLAB, WALL};
 
     private final String name;
@@ -72,6 +82,10 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
 
     protected ResourceLocation getTexture(final String variantName, final BnbPaletteBlockPattern pattern, final int index) {
         return BnbPaletteBlockPattern.toLocation(variantName, pattern.getTexture(index));
+    }
+
+    protected ResourceLocation getFlippedTexture(final String variantName, final BnbPaletteBlockPattern pattern, final int index) {
+        return BnbPaletteBlockPattern.toLocation(variantName, pattern.getTexture(index) + "_flipped");
     }
 
     protected BlockBuilder<B, CreateRegistrate> transformBlock(final BlockBuilder<B, CreateRegistrate> builder,
@@ -267,5 +281,126 @@ public abstract class BnbPaletteBlockPartial<B extends Block> {
 
     }
 
+    private static class TileWall extends BnbPaletteBlockPartial<WallBlock> {
+
+        public TileWall() {
+            super("wall");
+        }
+
+        @Override
+        protected WallBlock createBlock(final Supplier<? extends Block> block) {
+            return new WallBlock(BlockBehaviour.Properties.ofFullCopy(block.get()).forceSolidOn());
+        }
+        
+        @Override
+        protected ItemBuilder<BlockItem, BlockBuilder<WallBlock, CreateRegistrate>> transformItem(
+                final ItemBuilder<BlockItem, BlockBuilder<WallBlock, CreateRegistrate>> builder, final String variantName,
+                final BnbPaletteBlockPattern pattern) {
+            final ResourceLocation wallTexture = getTexture(variantName, pattern, 0);
+            final ResourceLocation wallTextureFlipped = getFlippedTexture(variantName, pattern, 0);
+
+            builder.model((c, p) -> p.singleTexture(c.getName(), CreateBitsnBobs.asResource("block/tile_wall/wall_inventory"), "wall", wallTexture)
+                    .texture("wall_flipped", wallTextureFlipped));
+
+            return super.transformItem(builder, variantName, pattern);
+        }
+
+
+        public BlockModelBuilder tileWallPost(final RegistrateBlockstateProvider p, String name, ResourceLocation wall, ResourceLocation wallFlipped) {
+            return p.models().singleTexture(name, CreateBitsnBobs.asResource("block/tile_wall/template_wall_post"), "wall", wall)
+                    .texture("wall_flipped", wallFlipped);
+        }
+
+        public BlockModelBuilder tileWallSide(final RegistrateBlockstateProvider p, String name, ResourceLocation wall, ResourceLocation wallFlipped) {
+            return p.models().singleTexture(name, CreateBitsnBobs.asResource("block/tile_wall/template_wall_side"), "wall", wall)
+                    .texture("wall_flipped", wallFlipped);
+        }
+
+        public BlockModelBuilder tileWallSideTall(final RegistrateBlockstateProvider p, String name, ResourceLocation wall, ResourceLocation wallFlipped) {
+            return p.models().singleTexture(name, CreateBitsnBobs.asResource("block/tile_wall/template_wall_side_tall"), "wall", wall)
+                    .texture("wall_flipped", wallFlipped);
+        }
+
+        public BlockModelBuilder tileWallSideAlternate(final RegistrateBlockstateProvider p, String name, ResourceLocation wall, ResourceLocation wallFlipped) {
+            return p.models().singleTexture(name, CreateBitsnBobs.asResource("block/tile_wall/template_wall_side_alternate"), "wall", wall)
+                    .texture("wall_flipped", wallFlipped);
+        }
+
+        public BlockModelBuilder tileWallSideTallAlternate(final RegistrateBlockstateProvider p, String name, ResourceLocation wall, ResourceLocation wallFlipped) {
+            return p.models().singleTexture(name, CreateBitsnBobs.asResource("block/tile_wall/template_wall_side_tall_alternate"), "wall", wall)
+                    .texture("wall_flipped", wallFlipped);
+        }
+
+        private void tileWallBlockInternal(final RegistrateBlockstateProvider p, final WallBlock block, final String baseName, final ResourceLocation texture, final ResourceLocation flippedTexture) {
+            tileWallBlock(p, block, tileWallPost(p, baseName + "_post", texture, flippedTexture),
+                    tileWallSide(p, baseName + "_side", texture, flippedTexture),
+                    tileWallSideAlternate(p, baseName + "_side_alternate", texture, flippedTexture),
+                    tileWallSideTall(p, baseName + "_side_tall", texture, flippedTexture),
+                    tileWallSideTallAlternate(p, baseName + "_side_tall_alternate", texture, flippedTexture));
+        }
+
+        public static final ImmutableMap<Direction, Property<WallSide>> WALL_PROPS = ImmutableMap.<Direction, Property<WallSide>>builder()
+                .put(Direction.EAST, BlockStateProperties.EAST_WALL)
+                .put(Direction.NORTH, BlockStateProperties.NORTH_WALL)
+                .put(Direction.SOUTH, BlockStateProperties.SOUTH_WALL)
+                .put(Direction.WEST, BlockStateProperties.WEST_WALL)
+                .build();
+
+        public void tileWallBlock(final RegistrateBlockstateProvider p, final WallBlock block, final ModelFile post, final ModelFile side, final ModelFile sideAlternate, final ModelFile sideTall, final ModelFile sideTallAlternate) {
+            final MultiPartBlockStateBuilder builder = p.getMultipartBuilder(block)
+                    .part().modelFile(post).addModel()
+                    .condition(WallBlock.UP, true).end();
+            WALL_PROPS.entrySet().stream()
+                    .filter(e -> e.getKey().getAxis().isHorizontal())
+                    .forEach(e -> {
+                        tileWallSidePart(builder, side, sideAlternate, e, WallSide.LOW);
+                        tileWallSidePart(builder, sideTall, sideTallAlternate, e, WallSide.TALL);
+                    });
+        }
+
+        private void tileWallSidePart(final MultiPartBlockStateBuilder builder, final ModelFile model, final ModelFile modelAlternate, final Map.Entry<Direction, Property<WallSide>> entry, final WallSide height) {
+            int yRot = (((int) entry.getKey().toYRot()) + 180) % 360;
+            builder.part()
+                    .modelFile((yRot == 0 || yRot == 180) ? model : modelAlternate)
+                    .rotationY(yRot)
+                    .uvLock(true)
+                    .addModel()
+                    .condition(entry.getValue(), height);
+        }
+
+        public void tileWallBlock(final RegistrateBlockstateProvider p, final WallBlock block, final String name, final ResourceLocation texture, final ResourceLocation flippedTexture) {
+            tileWallBlockInternal(p, block, name + "_wall", texture, flippedTexture);
+        }
+
+        @Override
+        protected void generateBlockState(final DataGenContext<Block, WallBlock> ctx, final RegistrateBlockstateProvider prov,
+                                          final String variantName, final BnbPaletteBlockPattern pattern, final Supplier<? extends Block> block) {
+            tileWallBlock(prov, ctx.get(), pattern.createName(variantName), getTexture(variantName, pattern, 0), getFlippedTexture(variantName, pattern, 0));
+        }
+
+        @Override
+        protected Iterable<TagKey<Block>> getBlockTags() {
+            return List.of(BlockTags.WALLS);
+        }
+
+        @Override
+        protected Iterable<TagKey<Item>> getItemTags() {
+            return List.of(ItemTags.WALLS);
+        }
+
+        @Override
+        protected void createRecipes(final BnbPaletteStoneTypes type, final BlockEntry<? extends Block> patternBlock,
+                                     final DataGenContext<Block, ? extends Block> c, final RegistrateRecipeProvider p) {
+            final RecipeCategory category = RecipeCategory.BUILDING_BLOCKS;
+            p.stonecutting(DataIngredient.tag(type.materialTag), category, c, 1);
+            final DataIngredient ingredient = DataIngredient.items(patternBlock.get());
+            ShapedRecipeBuilder.shaped(category, c.get(), 6)
+                    .pattern("XXX")
+                    .pattern("XXX")
+                    .define('X', ingredient.toVanilla())
+                    .unlockedBy("has_" + p.safeName(ingredient), ingredient.getCriterion(p))
+                    .save(p, p.safeId(c.get()));
+        }
+    }
 }
 

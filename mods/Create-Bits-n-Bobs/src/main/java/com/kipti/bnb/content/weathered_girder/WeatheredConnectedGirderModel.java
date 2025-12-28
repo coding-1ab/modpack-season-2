@@ -1,10 +1,6 @@
 package com.kipti.bnb.content.weathered_girder;
 
 import com.kipti.bnb.registry.BnbPartialModels;
-import com.simibubi.create.AllPartialModels;
-import com.simibubi.create.content.decoration.girder.ConnectedGirderModel;
-import com.simibubi.create.content.decoration.girder.GirderBlock;
-import com.simibubi.create.content.decoration.girder.GirderCTBehaviour;
 import com.simibubi.create.foundation.block.connected.CTModel;
 import net.createmod.catnip.data.Iterate;
 import net.minecraft.client.renderer.RenderType;
@@ -24,13 +20,13 @@ import java.util.List;
 
 /**
  * Back at it again with another mirror of the original class.
- * */
+ */
 public class WeatheredConnectedGirderModel extends CTModel {
 
     protected static final ModelProperty<ConnectionData> CONNECTION_PROPERTY = new ModelProperty<>();
 
     public WeatheredConnectedGirderModel(BakedModel originalModel) {
-        super(originalModel, new GirderCTBehaviour());
+        super(originalModel, new WeatheredGirderCTBehaviour());
     }
 
     @Override
@@ -39,7 +35,7 @@ public class WeatheredConnectedGirderModel extends CTModel {
         super.gatherModelData(builder, world, pos, state, blockEntityData);
         ConnectionData connectionData = new ConnectionData();
         for (Direction d : Iterate.horizontalDirections)
-            connectionData.setConnected(d, GirderBlock.isConnected(world, pos, state, d));
+            connectionData.setConnected(d, WeatheredGirderBlock.isConnected(world, pos, state, d));
         return builder.with(CONNECTION_PROPERTY, connectionData);
     }
 
@@ -53,8 +49,8 @@ public class WeatheredConnectedGirderModel extends CTModel {
         for (Direction d : Iterate.horizontalDirections)
             if (data.isConnected(d))
                 quads.addAll(BnbPartialModels.WEATHERED_METAL_GIRDER_BRACKETS.get(d)
-                    .get()
-                    .getQuads(state, side, rand, extraData, renderType));
+                        .get()
+                        .getQuads(state, side, rand, extraData, renderType));
         return quads;
     }
 
