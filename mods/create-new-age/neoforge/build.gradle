@@ -52,7 +52,7 @@ loom {
 
 // https://modmuss50.github.io/mod-publish-plugin/
 publishMods {
-    file = jar.archiveFile
+    file = remapJar.archiveFile
     changelog = rootProject.silk.changelog
     type = STABLE
     version = "$modVersion+mc$minecraftVersion"
