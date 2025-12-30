@@ -12,6 +12,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import org.antarcticgardens.cna.content.electricity.network.NetworkTicker;
+import org.antarcticgardens.cna.neoforge.compat.computercraft.NeoComputerCraftCompat;
 import org.antarcticgardens.cna.neoforge.content.nuclear.reactor.fuelacceptor.NeoForgeReactorFuelAcceptorBlockEntity;
 import org.antarcticgardens.cna.neoforge.data.CreateNewAgeDatagenNeoForge;
 import org.antarcticgardens.esl.ESLNeoForge;

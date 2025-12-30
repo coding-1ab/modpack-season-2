@@ -4,7 +4,7 @@ dependencies {
 
     modImplementation("com.simibubi.create:create-${rootProject.minecraftVersion}:${rootProject.createVersion}:slim") { transitive = false }
     modImplementation("net.createmod.ponder:Ponder-NeoForge-${minecraftVersion}:${ponderVersion}")
-    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraftVersion}:${flywheelVersion}")
+    modCompileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraftVersion}:${flywheelVersion}")
     modRuntimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraftVersion}:${flywheelVersion}")
     modApi("com.tterrag.registrate:Registrate:${rootProject.registrateVersion}")
 
@@ -13,22 +13,30 @@ dependencies {
 
     compileOnly("io.github.llamalad7:mixinextras-common:0.5.0")
     annotationProcessor(implementation(include("io.github.llamalad7:mixinextras-neoforge:0.5.0")))
+
+    // Computer Craft stuffs
+    modCompileOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge-api:${rootProject.cctVersion}")
+    modRuntimeOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge:${rootProject.cctVersion}")
+    // Required to be able to run CC:Tweaked
+    forgeRuntimeLibrary("cc.tweaked:cobalt:0.9.7")
 }
 
 processResources {
     from(project(":common").sourceSets.main.resources)
     inputs.property "version", rootProject.version.replaceAll("\\+.*-mc", "\\+mc")
     inputs.property "minecraftVersion", rootProject.minecraftVersion
-    inputs.property "neoforgeVersionRange", project.neoforgeVersionRange
+    inputs.property "neoforgeVersion", project.neoforgeVersion
     inputs.property "eslVersion", rootProject.eslVersion
     inputs.property "createVersion", rootProject.createVersionShort
+    inputs.property "cctVersion", rootProject.cctVersion
 
     filesMatching("META-INF/neoforge.mods.toml") {
         expand "version": rootProject.version.replaceAll("\\+.*-mc", "\\+mc"),
         "minecraftVersion": rootProject.minecraftVersion,
-        "neoforgeVersionRange": project.neoforgeVersionRange,
+        "neoforgeVersion": project.neoforgeVersion,
         "eslVersion": rootProject.eslVersion,
-        "createVersion": rootProject.createVersionShort
+        "createVersion": rootProject.createVersionShort,
+        "cctVersion": rootProject.cctVersion
     }
 }
 

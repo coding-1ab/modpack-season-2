@@ -3,9 +3,7 @@
   "package": "org.antarcticgardens.cna.neoforge.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
-  "client": [
-    "ItemAccessor"
-  ],
+  "client": [],
   "server": [],
   "injectors": {
     "defaultRequire": 1

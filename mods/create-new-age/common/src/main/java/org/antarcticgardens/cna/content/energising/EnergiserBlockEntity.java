@@ -1,5 +1,6 @@
 package org.antarcticgardens.cna.content.energising;
 
+import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -14,6 +15,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.antarcticgardens.cna.CNABlockEntityTypes;
 import org.antarcticgardens.cna.CNABlocks;
+import org.antarcticgardens.cna.compat.computercraft.CNAComputerCraftProxy;
 import org.antarcticgardens.cna.util.RunnableUtil;
 import org.antarcticgardens.cna.util.StringFormatUtil;
 import org.antarcticgardens.esl.energy.EnergyStorage;
@@ -27,6 +29,8 @@ public class EnergiserBlockEntity extends KineticBlockEntity {
     public int tier;
     public float size = 0f;
     private EnergiserBehaviour energisingBehaviour;
+
+    public AbstractComputerBehaviour computerBehaviour;
 
     public EnergiserBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -69,6 +73,13 @@ public class EnergiserBlockEntity extends KineticBlockEntity {
         super.addBehaviours(behaviours);
         energisingBehaviour = new EnergiserBehaviour(this);
         behaviours.add(energisingBehaviour);
+        behaviours.add(computerBehaviour = CNAComputerCraftProxy.behaviour(this));
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        computerBehaviour.removePeripheral();
     }
 
     public long lastCharged = -1;

@@ -7,6 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
+import org.antarcticgardens.cna.compat.computercraft.CNAComputerCraftProxy;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.electricity.generation.magnet.MagnetPlacementHelper;
 import org.antarcticgardens.cna.content.heat.heater.HeaterBlock;
@@ -48,6 +49,8 @@ public abstract class CreateNewAge {
         
         platform.getRegistrar().afterRegistration();
         CNAConfig.load();
+
+        CNAComputerCraftProxy.register();
 
         platform.commonSetup(() -> {
             BoilerHeater.REGISTRY.register(CNABlocks.HEATER.get(), ((level, pos, state) -> state.getValue(HeaterBlock.STRENGTH).ordinal() - 1));

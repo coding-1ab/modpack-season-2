@@ -7,6 +7,10 @@ dependencies {
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraftVersion}:${flywheelVersion}")
     modCompileOnly("com.tterrag.registrate:Registrate:${rootProject.registrateVersion}")
 
+    modCompileOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-common-api:${rootProject.cctVersion}")
+    // TODO: Make this platform agnostic
+    modCompileOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge-api:${rootProject.cctVersion}")
+
 //    modCompileOnly("net.fabricmc:fabric-loader:${project(":fabric").fabricLoaderVersion}")
 //    modCompileOnly("curse.maven:forge-config-api-port-fabric-547434:4583000")
 
