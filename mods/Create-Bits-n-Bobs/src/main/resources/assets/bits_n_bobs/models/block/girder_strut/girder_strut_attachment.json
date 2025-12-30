@@ -1,47 +1,106 @@
 {
-	"format_version": "1.21.6",
-	"credit": "Made with Blockbench",
-	"texture_size": [32, 32],
-	"textures": {
-		"2": "bits_n_bobs:block/girder_attachment",
-		"particle": "create:block/industrial_iron_block"
-	},
-	"elements": [
-		{
-			"from": [3, -6, 1],
-			"to": [13, -1, 15],
-			"rotation": {"angle": 0, "axis": "y", "origin": [3, -4, 3]},
-			"faces": {
-				"north": {"uv": [5.5, 3, 10.5, 5.5], "texture": "#2"},
-				"east": {"uv": [4.5, 4.5, 11.5, 7], "texture": "#2"},
-				"south": {"uv": [5.5, 3, 10.5, 5.5], "texture": "#2"},
-				"west": {"uv": [4.5, 4.5, 11.5, 7], "texture": "#2"},
-				"up": {"uv": [4.5, 7, 11.5, 12], "rotation": 90, "texture": "#2"},
-				"down": {"uv": [4.5, 7, 11.5, 12], "rotation": 90, "texture": "#2"}
-			}
-		},
-		{
-			"from": [3, -1, 3],
-			"to": [13, 2, 13],
-			"rotation": {"angle": 0, "axis": "y", "origin": [3, -4, 3]},
-			"faces": {
-				"north": {"uv": [5.5, 3, 10.5, 4.5], "texture": "#2"},
-				"east": {"uv": [5.5, 3, 10.5, 4.5], "texture": "#2"},
-				"south": {"uv": [5.5, 3, 10.5, 4.5], "texture": "#2"},
-				"west": {"uv": [5.5, 3, 10.5, 4.5], "texture": "#2"},
-				"up": {"uv": [5, 5, 0, 0], "texture": "#2"},
-				"down": {"uv": [5, 0, 0, 5], "texture": "#2"}
-			}
-		}
-	],
-	"groups": [
-		{
-			"name": "Brace",
-			"origin": [0, 0, 0],
-			"color": 0,
-			"stepParentName": "",
-			"backdrop": false,
-			"children": [0, 1]
-		}
-	]
+  "format_version": "1.21.6",
+  "credit": "Made with Blockbench",
+  "textures": {
+    "0": "bits_n_bobs:block/girder_attachment",
+    "particle": "create:block/industrial_iron_block"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        -5,
+        3
+      ],
+      "to": [
+        13,
+        1,
+        13
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          8,
+          -1.5,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            13,
+            8,
+            16,
+            13
+          ],
+          "rotation": 270,
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            13,
+            8,
+            16,
+            13
+          ],
+          "rotation": 270,
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            13,
+            8,
+            16,
+            13
+          ],
+          "rotation": 270,
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            13,
+            8,
+            16,
+            13
+          ],
+          "rotation": 270,
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [
+            8,
+            8,
+            13,
+            13
+          ],
+          "rotation": 180,
+          "texture": "#0"
+        },
+        "down": {
+          "uv": [
+            8,
+            8,
+            13,
+            13
+          ],
+          "texture": "#0"
+        }
+      }
+    }
+  ],
+  "groups": [
+    {
+      "name": "Brace",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "color": 0,
+      "children": [
+        0
+      ]
+    }
+  ]
 }
