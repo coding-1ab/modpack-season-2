@@ -10,8 +10,8 @@
 	"elements": [
 		{
 			"name": "bulbglass",
-			"from": [5, 5, 5],
-			"to": [11, 13, 11],
+			"from": [4.5, 5, 4.5],
+			"to": [11.5, 13.5, 11.5],
 			"faces": {
 				"north": {"uv": [0, 0, 3, 4], "texture": "#1"},
 				"east": {"uv": [0, 0, 3, 4], "texture": "#1"},
@@ -94,6 +94,8 @@
 			"name": "log by bulb",
 			"origin": [0, 0, 0],
 			"color": 0,
+			"stepParentName": "",
+			"backdrop": false,
 			"children": [0, 1, 2, 3]
 		}
 	]

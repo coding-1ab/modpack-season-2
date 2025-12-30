@@ -111,3 +111,7 @@
 # 1.21.1-0.0.36
 - Changes:
   - Girder strut memory leak fix
+# 1.21.1-0.0.37
+- Changes:
+  - Chain drive middle click
+  - Reverted asset changes

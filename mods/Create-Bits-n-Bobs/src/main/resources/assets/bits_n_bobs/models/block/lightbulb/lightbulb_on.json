@@ -9,10 +9,8 @@
 	"elements": [
 		{
 			"name": "bulbglass",
-			"from": [4.5, 5, 4.5],
-			"to": [11.5, 13.5, 11.5],
-			"shade": false,
-			"light_emission": 15,
+			"from": [5, 5, 5],
+			"to": [11, 13, 11],
 			"faces": {
 				"north": {"uv": [0, 0, 3, 4], "texture": "#2"},
 				"east": {"uv": [0, 0, 3, 4], "texture": "#2"},
@@ -60,7 +58,7 @@
 		},
 		{
 			"name": "cage",
-			"from": [4, 4.5, 4],
+			"from": [4, 5, 4],
 			"to": [12, 14, 12],
 			"faces": {
 				"north": {"uv": [6, 0, 10, 4.5], "texture": "#2"},
@@ -74,7 +72,7 @@
 		{
 			"name": "cage inverted",
 			"from": [12, 14, 12],
-			"to": [4, 4.5, 4],
+			"to": [4, 5, 4],
 			"faces": {
 				"north": {"uv": [6, 4.5, 10, 0], "texture": "#2"},
 				"east": {"uv": [6, 4.5, 10, 0], "texture": "#2"},
@@ -121,8 +119,6 @@
 			"name": "log by bulb",
 			"origin": [0, 0, 0],
 			"color": 0,
-			"stepParentName": "",
-			"backdrop": false,
 			"children": [0, 1, 2, 3]
 		},
 		4,
