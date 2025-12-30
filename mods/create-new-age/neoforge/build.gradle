@@ -9,6 +9,7 @@ dependencies {
     modApi("com.tterrag.registrate:Registrate:${rootProject.registrateVersion}")
 
     modRuntimeOnly("maven.modrinth:createaddition:neoforge-1.21.1-1.5.8")
+    modRuntimeOnly("org.appliedenergistics:appliedenergistics2:${appliedEnergisticsVersion}")
 
     compileOnly("io.github.llamalad7:mixinextras-common:0.5.0")
     annotationProcessor(implementation(include("io.github.llamalad7:mixinextras-neoforge:0.5.0")))
@@ -54,5 +55,33 @@ loom {
             programArgs("--output", file("src/generated/resources").absolutePath)
             programArgs("--existing", file("../common/src/main/resources").absolutePath)
         }
+    }
+}
+
+// https://modmuss50.github.io/mod-publish-plugin/
+publishMods {
+    file = remapJar.archiveFile
+    changelog = rootProject.silk.changelog
+    type = STABLE
+    version = "$modVersion+mc$minecraftVersion"
+    displayName = "$modVersion for Neoforge $minecraftVersion"
+    modLoaders.add("neoforge")
+
+    curseforge {
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        projectId = "905861"
+        clientRequired = true
+        serverRequired = true
+        requires("create")
+        minecraftVersions.add(minecraftVersion)
+    }
+
+    modrinth {
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        projectId = "FTeXqI9v"
+        requires { // Requires Create
+            id = "LNytGWDc"
+        }
+        minecraftVersions.add(minecraftVersion)
     }
 }

@@ -1,6 +1,8 @@
 plugins {
     id "maven-publish"
     id "dev.architectury.loom" version "1.9-SNAPSHOT" apply false
+    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
+    id "dev.ithundxr.silk" version "1.0.1"
 }
 
 allprojects {
@@ -12,11 +14,14 @@ subprojects {
     apply plugin: "java"
     apply plugin: "maven-publish"
     apply plugin: "dev.architectury.loom"
+    apply plugin: "me.modmuss50.mod-publish-plugin"
+    apply plugin: "dev.ithundxr.silk"
 
     archivesBaseName = "create-new-age"
 
     repositories {
         mavenLocal()
+        mavenCentral()
 
         maven { url "https://maven.neoforged.net/" }
         maven { url = "https://cursemaven.com" } // CurseForge maven
@@ -28,6 +33,8 @@ subprojects {
         maven { url = "https://maven.createmod.net" } // Create Forge, Ponder, Flywheel
 
         maven { url = "https://mvn.devos.one/snapshots/" } // Create Fabric, Fabric Registrate
+
+        maven { url = "https://maven.idiotss.com/releases/" } // ESL
 
         maven { url = "https://maven.blamejared.com/" } // JEI
         
@@ -100,9 +107,22 @@ subprojects {
         publications {
             maven(MavenPublication) {
                 artifactId = project.archivesBaseName + "-${project.name}-${rootProject.minecraftVersion}"
+                if (!System.getenv("RELEASE").asBoolean())
+                    version = project.version + "-build.${System.getenv("GIT_SHA")}"
                 from components.java
             }
         }
+        var mavenURL = System.getenv("RELEASE").asBoolean() ? "releases" : "snapshots"
+        repositories {
+            maven {
+                url = "https://maven.idiotss.com/" + mavenURL
+                credentials{
+                    username = System.getenv("MAVEN_NAME")
+                    password = System.getenv("MAVEN_SECRET")
+                }
+            }
+        }
+
     }
 
     tasks.withType(JavaCompile) {
