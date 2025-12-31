@@ -115,3 +115,6 @@
 - Changes:
   - Chain drive middle click
   - Reverted asset changes
+# 1.21.1-0.0.38
+- Changes:
+  - Portuguese and Brazilian localization, thank you to @Aquila_Limonida
