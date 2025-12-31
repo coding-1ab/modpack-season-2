@@ -5,7 +5,7 @@ Avaliable on [Curseforge](https://www.curseforge.com/minecraft/mc-mods/create-bi
 ## Translations [![Crowdin](https://badges.crowdin.net/create-bits-n-bobs/localized.svg)](https://crowdin.com/project/create-bits-n-bobs)
 Translation contributions are avaliable on [crowdin](https://crowdin.oreostack.uk)! Please [join the discord](https://discord.com/invite/CA2dfuFxcV) for communications about translating or to request a new language.
 
-The following languages have been machine translated and we would be very greatful to have completed:
+The following languages have been machine translated and we would be very greatful to have proper translations for:
 - Polish
 - French
 - French (Canadian)
