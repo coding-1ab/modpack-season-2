@@ -14,7 +14,7 @@ import net.minecraft.client.gui.screens.Screen;
 public class XaeroPauseScreenOverrideMixin {
 
 	@Inject(method = "isPauseScreen", at = @At("HEAD"), cancellable = true)
-	public void create$xaeroPauseScreenOverride(CallbackInfoReturnable<Boolean> cir) {
+	private void create$xaeroPauseScreenOverride(CallbackInfoReturnable<Boolean> cir) {
 		if (Mods.XAEROWORLDMAP.isLoaded()) {
 			if (XaeroTrainMap.isMapOpen((Screen) (Object) this))
 				cir.setReturnValue(false);

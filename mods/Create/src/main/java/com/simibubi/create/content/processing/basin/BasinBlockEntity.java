@@ -55,6 +55,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -74,7 +75,7 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
-public class BasinBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
+public class BasinBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, Clearable {
 
 	private boolean areFluidsMoving;
 	LerpedFloat ingredientRotationSpeed;
@@ -209,6 +210,15 @@ public class BasinBlockEntity extends SmartBlockEntity implements IHaveGoggleInf
 		visualizedOutputItems.clear();
 		visualizedOutputFluids.clear();
 	}
+
+	@Override
+	public void clearContent() {
+		spoutputBuffer.clear();
+		inputInventory.clearContent();
+		outputInventory.clearContent();
+		filtering.setFilter(ItemStack.EMPTY);
+	}
+
 
 	@Override
 	public void destroy() {

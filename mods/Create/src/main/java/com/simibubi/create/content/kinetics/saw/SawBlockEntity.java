@@ -44,6 +44,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -74,8 +75,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class SawBlockEntity extends BlockBreakingKineticBlockEntity {
-
+public class SawBlockEntity extends BlockBreakingKineticBlockEntity implements Clearable {
 	private static final Object cuttingRecipesKey = new Object();
 	public static final Supplier<RecipeType<?>> woodcuttingRecipeType =
 		Suppliers.memoize(() -> BuiltInRegistries.RECIPE_TYPE.get(ResourceLocation.fromNamespaceAndPath("druidcraft", "woodcutting")));
@@ -271,6 +271,12 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity {
 	public void invalidate() {
 		super.invalidate();
 		invalidateCapabilities();
+	}
+
+	@Override
+	public void clearContent() {
+		inventory.clear();
+		filtering.setFilter(ItemStack.EMPTY);
 	}
 
 	@Override
@@ -526,5 +532,4 @@ public class SawBlockEntity extends BlockBreakingKineticBlockEntity {
 			return true;
 		return false;
 	}
-
 }

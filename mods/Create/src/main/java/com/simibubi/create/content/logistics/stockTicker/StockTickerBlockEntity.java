@@ -39,6 +39,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -56,8 +57,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 
-public class StockTickerBlockEntity extends StockCheckingBlockEntity implements IHaveHoveringInformation {
-
+public class StockTickerBlockEntity extends StockCheckingBlockEntity implements IHaveHoveringInformation, Clearable {
 	public AbstractComputerBehaviour computerBehaviour;
 
 	// Player-interface Feature
@@ -272,6 +272,12 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 	}
 
 	@Override
+	public void clearContent() {
+		categories.clear();
+		receivedPayments.clearContent();
+	}
+
+	@Override
 	public void destroy() {
 		ItemHelper.dropContents(level, worldPosition, receivedPayments);
 		for (ItemStack filter : categories)
@@ -288,7 +294,6 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 	}
 
 	public class CategoryMenuProvider implements MenuProvider {
-
 		@Override
 		public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
 			return StockKeeperCategoryMenu.create(pContainerId, pPlayerInventory, StockTickerBlockEntity.this);
@@ -298,11 +303,9 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		public Component getDisplayName() {
 			return Component.empty();
 		}
-
 	}
 
 	public class RequestMenuProvider implements MenuProvider {
-
 		@Override
 		public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
 			return StockKeeperRequestMenu.create(pContainerId, pPlayerInventory, StockTickerBlockEntity.this);
@@ -312,7 +315,5 @@ public class StockTickerBlockEntity extends StockCheckingBlockEntity implements 
 		public Component getDisplayName() {
 			return Component.empty();
 		}
-
 	}
-
 }

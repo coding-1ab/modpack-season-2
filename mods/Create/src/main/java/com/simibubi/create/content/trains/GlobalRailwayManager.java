@@ -10,31 +10,29 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.jetbrains.annotations.Nullable;
-
-import com.simibubi.create.content.trains.entity.RemoveTrainPacket;
-
 import org.apache.commons.lang3.mutable.MutableObject;
+import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.kinetics.KineticDebugger;
 import com.simibubi.create.content.trains.display.GlobalTrainDisplayData;
-import com.simibubi.create.content.trains.entity.Train;
 import com.simibubi.create.content.trains.entity.AddTrainPacket;
+import com.simibubi.create.content.trains.entity.RemoveTrainPacket;
+import com.simibubi.create.content.trains.entity.Train;
 import com.simibubi.create.content.trains.graph.TrackGraph;
 import com.simibubi.create.content.trains.graph.TrackGraphSync;
 import com.simibubi.create.content.trains.graph.TrackGraphVisualizer;
 import com.simibubi.create.content.trains.graph.TrackNodeLocation;
 import com.simibubi.create.content.trains.signal.SignalEdgeGroup;
-import net.createmod.catnip.platform.CatnipServices;
-import com.simibubi.create.foundation.utility.DistExecutor;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -59,8 +57,9 @@ public class GlobalRailwayManager {
 	public void playerLogin(Player player) {
 		if (player instanceof ServerPlayer serverPlayer) {
 			loadTrackData(serverPlayer.getServer());
-			trackNetworks.values()
-				.forEach(g -> sync.sendFullGraphTo(g, serverPlayer));
+			for (TrackGraph g : trackNetworks.values()) {
+				sync.sendFullGraphTo(g, serverPlayer);
+			}
 			ArrayList<SignalEdgeGroup> asList = new ArrayList<>(signalEdgeGroups.values());
 			sync.sendEdgeGroups(asList.stream()
 				.map(g -> g.id)
@@ -92,8 +91,7 @@ public class GlobalRailwayManager {
 		trains = savedData.getTrains();
 		trackNetworks = savedData.getTrackNetworks();
 		signalEdgeGroups = savedData.getSignalBlocks();
-		trains.values()
-			.forEach(movingTrains::add);
+		movingTrains.addAll(trains.values());
 	}
 
 	public void cleanUp() {
@@ -159,7 +157,9 @@ public class GlobalRailwayManager {
 
 	public void updateSplitGraph(LevelAccessor level, TrackGraph graph) {
 		Set<TrackGraph> disconnected = graph.findDisconnectedGraphs(level, null);
-		disconnected.forEach(this::putGraphWithDefaultGroup);
+		for (TrackGraph d : disconnected) {
+			putGraphWithDefaultGroup(d);
+		}
 		if (!disconnected.isEmpty()) {
 			sync.graphSplit(graph, disconnected);
 			markTracksDirty();
@@ -190,19 +190,21 @@ public class GlobalRailwayManager {
 		if (level.dimension() != Level.OVERWORLD)
 			return;
 
-		signalEdgeGroups.forEach((id, group) -> {
+		for (SignalEdgeGroup group : signalEdgeGroups.values()) {
 			group.trains.clear();
 			group.reserved = null;
-		});
+		}
 
-		trackNetworks.forEach((id, graph) -> {
+		for (TrackGraph graph : trackNetworks.values()) {
 			graph.tickPoints(true);
 			graph.resolveIntersectingEdgeGroups(level);
-		});
+		}
 
 		tickTrains(level);
 
-		trackNetworks.forEach((id, graph) -> graph.tickPoints(false));
+		for (TrackGraph graph : trackNetworks.values()) {
+			graph.tickPoints(false);
+		}
 
 		GlobalTrainDisplayData.updateTick = level.getGameTime() % 100 == 0;
 		if (GlobalTrainDisplayData.updateTick)

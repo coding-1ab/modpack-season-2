@@ -1,12 +1,9 @@
-import dev.ithundxr.silk.ChangelogText
-import org.slf4j.event.Level
-
 plugins {
     id("idea")
     id("eclipse")
     id("maven-publish")
     id("net.kyori.blossom") version "2.1.0" // https://github.com/KyoriPowered/blossom
-    id("dev.ithundxr.silk") version "0.11.15" // https://github.com/ithundxr/silk
+    id("dev.ithundxr.silk") version "1.0.1" // https://github.com/ithundxr/silk
     id("net.neoforged.moddev") version "2.0.107" // https://projects.neoforged.net/neoforged/ModDevGradle
     id("me.modmuss50.mod-publish-plugin") version "0.8.4" // https://github.com/modmuss50/mod-publish-plugin
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.8" // https://github.com/JetBrains/gradle-idea-ext-plugin
@@ -24,16 +21,6 @@ base {
     group = "com.simibubi.create"
     version = mod_version + (dev && buildNumber != null ? "-${buildNumber}" : "")
 }
-
-boolean inMultiModWorkspace = rootProject.hasProperty("multiModWorkspace.enabled")
-boolean ponderInWorkspace = rootProject.hasProperty("multiModWorkspace.ponder")
-
-if (ponderInWorkspace) {
-    evaluationDependsOn(":ponder:NeoForge")
-}
-
-project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? "enabled" : "disabled"} for project ${project.name}.")
-project.logger.lifecycle("Dependencies included in Workspace: [Ponder: ${ponderInWorkspace}]")
 
 println("Java: ${System.getProperty("java.version")}, JVM: ${System.getProperty("java.vm.version")} (${System.getProperty("java.vendor")}), Arch: ${System.getProperty("os.arch")}")
 
@@ -60,13 +47,6 @@ neoForge {
         "${mod_id}" {
             sourceSet(sourceSets.main)
         }
-
-        if (ponderInWorkspace) {
-            ponder {
-                sourceSet(project(":ponder:Common").sourceSets.main)
-                sourceSet(project(":ponder:NeoForge").sourceSets.main)
-            }
-        }
     }
 
 
@@ -82,8 +62,6 @@ neoForge {
             systemProperty("mixin.debug.export", "true")
 
             systemProperty("neoforge.enabledGameTestNamespaces", mod_id as String)
-
-            logLevel = Level.DEBUG
         }
 
         client {
@@ -102,7 +80,7 @@ neoForge {
             data()
 
             programArguments.addAll(
-                    "--mod", mod_id as String,
+                "--mod", mod_id as String,
                 "--all",
                 "--output", file("src/generated/resources/").getAbsolutePath(),
                 "--existing", file("src/main/resources/").getAbsolutePath()
@@ -153,15 +131,10 @@ dependencies {
     })
     runtimeOnly("dev.engine-room.vanillin:vanillin-neoforge-$minecraft_version:$vanillin_version")
 
-    if (ponderInWorkspace) {
-        jarJar(implementation(project(":ponder:Common")))
-        jarJar(implementation(project(":ponder:NeoForge")))
-    } else {
-        jarJar(implementation("net.createmod.ponder:Ponder-NeoForge-$minecraft_version:$ponder_version"))
-    }
+    jarJar(implementation("net.createmod.ponder:ponder-neoforge:$ponder_version+mc$minecraft_version"))
 
-    //compileOnly("mezz.jei:jei-minecraft_version-common-api:$jei_version")
-    //compileOnly("mezz.jei:jei-minecraft_version-neoforge-api:$jei_version")
+    //compileOnly("mezz.jei:jei-$minecraft_version-common-api:$jei_version")
+    //compileOnly("mezz.jei:jei-$minecraft_version-neoforge-api:$jei_version")
     implementation("mezz.jei:jei-$minecraft_version-neoforge:$jei_version")
 
     compileOnly("top.theillusivec4.curios:curios-neoforge:$curios_version+$minecraft_version:api")
@@ -175,7 +148,7 @@ dependencies {
         runtimeOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge:$cc_tweaked_version")
     }
 
-    runtimeOnly("dev.architectury:architectury-neoforge:13.0.8")
+    runtimeOnly("dev.architectury:architectury-neoforge:13d.0.8")
     implementation("dev.ftb.mods:ftb-chunks-neoforge:2101.1.1")
     implementation("dev.ftb.mods:ftb-teams-neoforge:2101.1.0")
     implementation("dev.ftb.mods:ftb-library-neoforge:2101.1.3")
@@ -294,7 +267,7 @@ publishing {
 
 publishMods {
     file = jar.archiveFile
-    changelog = ChangelogText.getChangelogText(project).toString()
+    changelog = silk.changelog
     type = STABLE
     version = "mc$minecraft_version-$mod_version"
     displayName = "$mod_name $mod_version for mc$minecraft_version"

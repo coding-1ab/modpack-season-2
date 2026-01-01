@@ -34,6 +34,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -44,8 +45,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public class FunnelBlockEntity extends SmartBlockEntity implements IHaveHoveringInformation {
-
+public class FunnelBlockEntity extends SmartBlockEntity implements IHaveHoveringInformation, Clearable {
 	private FilteringBehaviour filtering;
 	private InvManipulationBehaviour invManipulation;
 	private VersionedInventoryTrackerBehaviour invVersionTracker;
@@ -127,25 +127,15 @@ public class FunnelBlockEntity extends SmartBlockEntity implements IHaveHovering
 		if (facing == null)
 			return;
 
-		boolean trackingEntityPresent = true;
-		AABB area = getEntityOverflowScanningArea();
-
 		// Check if last item is still blocking the extractor
-		if (lastObserved == null) {
-			trackingEntityPresent = false;
-		} else {
-			Entity lastEntity = lastObserved.get();
-			if (lastEntity == null || !lastEntity.isAlive() || !lastEntity.getBoundingBox()
-				.intersects(area)) {
-				trackingEntityPresent = false;
-				lastObserved = null;
-			}
+		Entity lastEntity = lastObserved != null ? lastObserved.get() : null;
+		if (lastEntity != null && lastEntity.isAlive()) {
+			AABB area = getEntityOverflowScanningArea();
+			if (lastEntity.getBoundingBox().intersects(area))
+				return;
+			lastObserved = null;
 		}
 
-		if (trackingEntityPresent)
-			return;
-
-		// Find other entities blocking the extract (only if necessary)
 		int amountToExtract = getAmountToExtract();
 		ExtractionCountMode mode = getModeToExtract();
 		ItemStack stack = invManipulation.simulate()
@@ -154,6 +144,9 @@ public class FunnelBlockEntity extends SmartBlockEntity implements IHaveHovering
 			invVersionTracker.awaitNewVersion(invManipulation);
 			return;
 		}
+
+		// Only scan for blocking entities if there's something to extract
+		AABB area = getEntityOverflowScanningArea();
 		for (Entity entity : level.getEntities(null, area)) {
 			if (entity instanceof ItemEntity || entity instanceof PackageEntity) {
 				lastObserved = new WeakReference<>(entity);
@@ -363,6 +356,11 @@ public class FunnelBlockEntity extends SmartBlockEntity implements IHaveHovering
 			CatnipServices.PLATFORM.executeOnClientOnly(() -> () -> VisualizationHelper.queueUpdate(this));
 	}
 
+	@Override
+	public void clearContent() {
+		filtering.setFilter(ItemStack.EMPTY);
+	}
+
 	public void onTransfer(ItemStack stack) {
 		AllBlocks.SMART_OBSERVER.get()
 			.onFunnelTransfer(level, worldPosition, stack);
@@ -374,5 +372,4 @@ public class FunnelBlockEntity extends SmartBlockEntity implements IHaveHovering
 			.startWithValue(.25f)
 			.chase(0, .05f, Chaser.EXP);
 	}
-
 }
