@@ -48,7 +48,7 @@ public class XaeroTrainMap {
 		try {
 			if (!(mc.screen instanceof GuiMap))
 				return;
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			Create.LOGGER.error("Failed to handle mouseClick for Xaero's World Map train map integration:", e);
 			encounteredException = true;
 			return;
@@ -129,7 +129,7 @@ public class XaeroTrainMap {
 		try {
 			return screen instanceof ScreenBase screenBase &&
 				(screenBase instanceof GuiMap || screenBase.parent instanceof GuiMap);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			Create.LOGGER.error("Failed to check if Xaero's World Map was open for train map integration:", e);
 			encounteredException = true;
 			return false;

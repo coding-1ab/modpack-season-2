@@ -23,7 +23,7 @@ public abstract class XaeroFullscreenMapMixin {
 		try {
 			if (!create$failedToRenderTrainMap)
 				XaeroTrainMap.onRender(graphics, (GuiMap) (Object) this, mouseX, mouseY, pt);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			Create.LOGGER.error("Failed to render Xaero's World Map train map integration:", e);
 			create$failedToRenderTrainMap = true;
 		}
