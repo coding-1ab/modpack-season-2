@@ -18,8 +18,8 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import xaero.lib.client.gui.ScreenBase;
 import xaero.map.gui.GuiMap;
-import xaero.map.gui.ScreenBase;
 
 import net.neoforged.neoforge.client.event.InputEvent;
 
@@ -78,7 +78,8 @@ public class XaeroTrainMap {
 		Window window = mc.getWindow();
 
 		double guiScale = (double) window.getScreenWidth() / window.getGuiScaledWidth();
-		double scale = mapScale / guiScale;
+		double interfaceScale = (double) window.getWidth() / window.getScreenWidth();
+		double scale = mapScale / guiScale / interfaceScale;
 
 		PoseStack pose = graphics.pose();
 		pose.pushPose();
