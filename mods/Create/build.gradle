@@ -101,7 +101,6 @@ repositories {
     maven { url = "https://maven.createmod.net" } // Ponder, Flywheel
     maven { url = "https://maven.ithundxr.dev/snapshots" } // Registrate
     maven { url = "https://maven.blamejared.com" } // JEI, Vazkii's Mods
-    maven { url = "https://harleyoconnor.com/maven" } // Dynamic Trees
     maven { url = "https://maven.theillusivec4.top/" } // Curios API
     maven { url = "https://maven.squiddev.cc" } // CC: Tweaked
     maven { url = "https://www.cursemaven.com" }
@@ -117,7 +116,7 @@ repositories {
             includeGroup "mysticdrew"
         }
     }
-    maven {url "https://chocolateminecraft.com/maven" } // Xaero
+    maven { url "https://chocolateminecraft.com/maven" } // Xaero
 }
 
 dependencies {
