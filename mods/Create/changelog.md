@@ -42,6 +42,7 @@ Create 6.0.9
 - Fix encased fan shaft texture being rotated incorrectly #9762
 - Fix crash when disassembling train at station with cc tweaked computer attached #9720
 - Fix bottomless limit being over by 1 #9750
+- Fix copycat blocks dropping items when /fill'd
 
 ------------------------------------------------------
 Create 6.0.8
