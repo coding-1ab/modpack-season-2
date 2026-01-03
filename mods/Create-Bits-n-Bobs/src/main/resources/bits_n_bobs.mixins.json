@@ -18,6 +18,7 @@
   ],
   "client": [
     "BakedGlyphMixin",
+    "CreateClientMixin",
     "FontAccessMixin",
     "GirderCTBehaviourMixin",
     "GuiGameElementMixin"
