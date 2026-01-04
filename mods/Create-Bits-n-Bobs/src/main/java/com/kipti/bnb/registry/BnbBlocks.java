@@ -31,9 +31,6 @@ import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.contraptions.actors.seat.SeatInteractionBehaviour;
 import com.simibubi.create.content.contraptions.actors.seat.SeatMovementBehaviour;
 import com.simibubi.create.content.contraptions.pulley.PulleyBlock;
-import com.simibubi.create.content.decoration.bracket.BracketBlock;
-import com.simibubi.create.content.decoration.bracket.BracketBlockItem;
-import com.simibubi.create.content.decoration.bracket.BracketGenerator;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BlockStateGen;
@@ -405,15 +402,6 @@ public class BnbBlocks {
                 .build()
                 .register();
     });
-
-    public static final BlockEntry<BracketBlock> WEATHERED_METAL_BRACKET = REGISTRATE.block("weathered_metal_bracket", BracketBlock::new)
-            .blockstate(new BracketGenerator("weathered_metal")::generate)
-            .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
-            .transform(pickaxeOnly())
-            .item(BracketBlockItem::new)
-            .tag(AllTags.AllItemTags.INVALID_FOR_TRACK_PAVING.tag)
-            .transform(BracketGenerator.itemModel("weathered_metal"))
-            .register();
 
     public static void register() {
     }
