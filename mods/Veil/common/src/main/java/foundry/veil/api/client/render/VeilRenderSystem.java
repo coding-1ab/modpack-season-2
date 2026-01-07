@@ -457,6 +457,7 @@ public final class VeilRenderSystem {
      * @param vbo       The vertex buffer to draw
      * @param instances The number of instances to draw
      * @see <a target="_blank" href="http://docs.gl/gl4/glDrawArraysInstanced">Reference Page</a>
+     * @see VeilRenderBridge#patchState(int) for tesselation
      */
     public static void drawInstanced(VertexBuffer vbo, int instances) {
         ((VertexBufferExtension) vbo).veil$drawInstanced(instances);
@@ -470,6 +471,7 @@ public final class VeilRenderSystem {
      * @param drawCount The number of primitives to draw
      * @param stride    The offset between indirect elements
      * @see <a href="http://docs.gl/gl4/glMultiDrawElementsIndirect">Reference Page</a>
+     * @see VeilRenderBridge#patchState(int) for tesselation
      */
     public static void drawIndirect(VertexBuffer vbo, long indirect, int drawCount, int stride) {
         ((VertexBufferExtension) vbo).veil$drawIndirect(indirect, drawCount, stride);
