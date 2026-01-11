@@ -12,7 +12,7 @@ The following languages have been machine translated and we would be very greatf
 - Swedish
 - Dutch
 
-The following languages are supported from human translators, but help is still greatly appreciated, especially if you find issues, or if there are missing translations:
+The following languages are supported from human translators (❤️), but help is still greatly appreciated to resolve issues and add to complete translations:
 - Chinese simplified
 - Portugese
 - Portugese (Brazilian)
@@ -22,3 +22,4 @@ The following languages are supported from human translators, but help is still 
 - Ukranian
 - Spanish (Mexican)
 - Pirate english
+- Italian
