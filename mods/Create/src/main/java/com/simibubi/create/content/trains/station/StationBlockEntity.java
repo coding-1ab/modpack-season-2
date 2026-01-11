@@ -294,10 +294,11 @@ public class StationBlockEntity extends SmartBlockEntity implements Transformabl
 				if (trainPresent) {
 					computerBehaviour.prepareComputerEvent(
 						new StationTrainPresenceEvent(StationTrainPresenceEvent.Type.ARRIVAL, imminentTrain));
-				} else if (this.imminentTrain != null) {
-					computerBehaviour.prepareComputerEvent(
-						new StationTrainPresenceEvent(StationTrainPresenceEvent.Type.DEPARTURE,
-							Create.RAILWAYS.trains.get(this.imminentTrain)));
+				} else {
+					Train train = Create.RAILWAYS.trains.get(this.imminentTrain);
+					if (train != null)
+						computerBehaviour.prepareComputerEvent(
+							new StationTrainPresenceEvent(StationTrainPresenceEvent.Type.DEPARTURE, train));
 				}
 			}
 		}
