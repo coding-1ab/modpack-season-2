@@ -128,7 +128,6 @@
   "block.bits_n_bobs.veridium_tile_wall": "Ограда из веридиевой плитки",
   "block.bits_n_bobs.veridium_tiles": "Веридиевая плитка",
   "block.bits_n_bobs.weathered_girder_strut": "Состаренная поперечная металлическая балка",
-  "block.bits_n_bobs.weathered_girder_strut.tooltip.summary": "Альтернативная версия состаренной металлической балки, протягиваемая _между двумя точками_ на разных поверхностях. Возможно и _диагональное_ размещение!",
   "block.bits_n_bobs.weathered_metal_girder": "Состаренная металлическая балка",
   "block.bits_n_bobs.weathered_metal_girder_encased_shaft": "Вал в состаренной металлической балке",
   "block.bits_n_bobs.white_chair": "Белое кресло",

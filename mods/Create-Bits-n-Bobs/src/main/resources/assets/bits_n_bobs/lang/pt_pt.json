@@ -128,7 +128,6 @@
   "block.bits_n_bobs.veridium_tile_wall": "Muro de ladrilhos de malaquite",
   "block.bits_n_bobs.veridium_tiles": "Ladrilhos de malaquite",
   "block.bits_n_bobs.weathered_girder_strut": "Viga de suporte desgastada",
-  "block.bits_n_bobs.weathered_girder_strut.tooltip.summary": "Um tipo de viga que permite fazer uma ligação entre _dois pontos_.",
   "block.bits_n_bobs.weathered_metal_girder": "Viga de metal desgastada",
   "block.bits_n_bobs.weathered_metal_girder_encased_shaft": "Eixo revestido de viga de metal desgastada",
   "block.bits_n_bobs.white_chair": "Cadeira branca",
