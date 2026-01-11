@@ -80,7 +80,7 @@ public class VirtualRenderWorld extends Level implements VisualizationLevel {
 
 	public VirtualRenderWorld(Level level, int minBuildHeight, int height, Vec3i biomeOffset, Runnable onBlockUpdated) {
 		super((WritableLevelData) level.getLevelData(), level.dimension(), level.registryAccess(), level.dimensionTypeRegistration(), level.getProfilerSupplier(),
-				true, false, 0, 0);
+			true, false, 0, 0);
 		this.level = level;
 		this.minBuildHeight = nextMultipleOf16(minBuildHeight);
 		this.height = nextMultipleOf16(height);
@@ -265,7 +265,10 @@ public class VirtualRenderWorld extends Level implements VisualizationLevel {
 	@Override
 	public void removeBlockEntity(BlockPos pos) {
 		if (!isOutsideBuildHeight(pos)) {
-			blockEntities.remove(pos);
+			BlockEntity blockEntity = blockEntities.remove(pos);
+			if (blockEntity != null) {
+				blockEntity.setRemoved();
+			}
 		}
 	}
 
@@ -408,12 +411,12 @@ public class VirtualRenderWorld extends Level implements VisualizationLevel {
 
 	@Override
 	public void playSeededSound(Player player, double x, double y, double z, Holder<SoundEvent> soundEvent,
-			SoundSource soundSource, float volume, float pitch, long seed) {
+								SoundSource soundSource, float volume, float pitch, long seed) {
 	}
 
 	@Override
 	public void playSeededSound(Player player, Entity entity, Holder<SoundEvent> soundEvent, SoundSource soundSource,
-			float volume, float pitch, long seed) {
+								float volume, float pitch, long seed) {
 	}
 
 	@Override
@@ -439,7 +442,8 @@ public class VirtualRenderWorld extends Level implements VisualizationLevel {
 	}
 
 	@Override
-	public void setMapData(MapId mapId, MapItemSavedData mapItemSavedData) {}
+	public void setMapData(MapId mapId, MapItemSavedData mapItemSavedData) {
+	}
 
 	@NotNull
 	@Override
