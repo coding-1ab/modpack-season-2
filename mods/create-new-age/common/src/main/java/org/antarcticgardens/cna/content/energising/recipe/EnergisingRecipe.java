@@ -23,11 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
-//#if CNA_FABRIC
-//import com.simibubi.create.compat.recipeViewerCommon.SequencedAssemblySubCategoryType;
-//#else
 import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
-//#endif
 
 public class EnergisingRecipe extends ProcessingRecipe<RecipeWrapper, EnergisingRecipeParams> implements IAssemblyRecipe {
     private int energyNeeded;
@@ -127,15 +123,9 @@ public class EnergisingRecipe extends ProcessingRecipe<RecipeWrapper, Energising
     
     @SuppressWarnings("unchecked")
     @Override
-//    #if CNA_FABRIC
-//    public SequencedAssemblySubCategoryType getJEISubCategory() {
-//        return (SequencedAssemblySubCategoryType) CreateNewAge.getInstance().getPlatform().getEnergisingRecipeSubCategory();
-//    }
-//    #else
     public Supplier<Supplier<SequencedAssemblySubCategory>> getJEISubCategory() {
         return (Supplier<Supplier<SequencedAssemblySubCategory>>) CreateNewAge.getInstance().getPlatform().getEnergisingRecipeSubCategory();
     }
-//    #endif
 
     public boolean test(ItemStack stack) {
         return ingredients.get(0)

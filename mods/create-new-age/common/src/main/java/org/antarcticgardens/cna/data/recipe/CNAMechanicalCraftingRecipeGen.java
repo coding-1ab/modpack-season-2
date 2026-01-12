@@ -13,12 +13,7 @@ import org.antarcticgardens.cna.CNATags;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.UnaryOperator;
 
-//#if CNA_FABRIC
-//import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-//import io.github.fabricators_of_create.porting_lib.tags.Tags;
-//#else
 import net.neoforged.neoforge.common.Tags;
-//#endif
 
 @SuppressWarnings("unused")
 public class CNAMechanicalCraftingRecipeGen extends CNARecipeProvider {
@@ -81,10 +76,6 @@ public class CNAMechanicalCraftingRecipeGen extends CNARecipeProvider {
     }
 
     public CNAMechanicalCraftingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-//        #if CNA_FABRIC
-//        super((FabricDataOutput) output);
-//        #else
         super(output, registries);
-//        #endif
     }
 }
