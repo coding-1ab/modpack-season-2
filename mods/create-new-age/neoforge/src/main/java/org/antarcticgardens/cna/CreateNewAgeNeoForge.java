@@ -25,7 +25,6 @@ public class CreateNewAgeNeoForge extends CreateNewAge {
         this.initialize(new NeoForgePlatform(eventBus));
         NeoForge.EVENT_BUS.addListener((LevelTickEvent.Pre e) -> NetworkTicker.tickWorld(e.getLevel()));
 
-//        eventBus.addListener(new CreateNewAgeClientNeoForge()::onClientSetup);
         eventBus.addListener(EventPriority.HIGHEST, CreateNewAgeDatagenNeoForge::gatherData);
         eventBus.addListener(NeoForgePlatform::registerDatapack);
         eventBus.addListener(NeoForgeReactorFuelAcceptorBlockEntity::registerCapabilities);

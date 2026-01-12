@@ -19,12 +19,7 @@ import org.antarcticgardens.cna.content.heat.stirling.StirlingEngineBlock;
 import org.antarcticgardens.cna.content.nuclear.reactor.rod.ReactorRodBlock;
 import org.joml.Vector3f;
 
-//#if CNA_FABRIC
-//import io.github.fabricators_of_create.porting_lib.models.generators.*;
-//import io.github.fabricators_of_create.porting_lib.models.generators.block.*;
-//#else
 import net.neoforged.neoforge.client.model.generators.*;
-//#endif
 
 public class CNABlockStateGen {
     public static <P extends EnergiserBlock> NonNullBiConsumer<DataGenContext<Block, P>, RegistrateBlockstateProvider> energiser() {

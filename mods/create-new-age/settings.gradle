@@ -7,6 +7,4 @@ pluginManagement {
     }
 }
 
-// TODO: Fabric
-//include("common", "fabric", "forge")
 include("common", "neoforge")

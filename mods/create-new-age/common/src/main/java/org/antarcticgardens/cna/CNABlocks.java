@@ -23,10 +23,6 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
-//import org.antarcticgardens.cna.content.electricity.battery.BatteryBlock;
-//import org.antarcticgardens.cna.content.electricity.battery.BatteryBlockStateGen;
-//import org.antarcticgardens.cna.content.electricity.battery.BatteryItem;
-//import org.antarcticgardens.cna.content.electricity.battery.BatteryModel;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesBlock;
 import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesItem;
@@ -476,18 +472,6 @@ public class CNABlocks {
                     .tag(BlockTags.NEEDS_IRON_TOOL)
                     .simpleItem()
                     .register();
-
-
-//    public static final BlockEntry<BatteryBlock> BATTERY =
-//            REGISTRATE.block("battery", BatteryBlock::new)
-//                    .properties(BlockBehaviour.Properties::noOcclusion)
-//                    .blockstate(new BatteryBlockStateGen()::generate)
-//                    .onRegister(CreateRegistrate.blockModel(() -> BatteryModel::new))
-//                    .addLayer(() -> RenderType::cutoutMipped)
-//                    .item(BatteryItem::new)
-//                    .model(AssetLookup.customBlockItemModel("battery_single"))
-//                    .build()
-//                    .register();
 
     public static void load() {  }
 }

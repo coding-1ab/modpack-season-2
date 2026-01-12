@@ -16,27 +16,12 @@ import org.antarcticgardens.cna.CNATags;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.UnaryOperator;
 
-//#if CNA_FABRIC
-//import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-//import io.github.fabricators_of_create.porting_lib.tags.Tags;
-//#else
 import net.neoforged.neoforge.common.Tags;
-//#endif
 
 @SuppressWarnings("unused")
 public class CNAStandardRecipeGen extends CNARecipeProvider {
 
     // ========================================================================================================== Shaped
-
-//    GeneratedRecipe BATTERY = builder(CNABlocks.BATTERY)
-//            .unlockedBy(CNAItems.COPPER_WIRE)
-//            .shaped(b -> b
-//                    .define('B', AllItems.BRASS_SHEET)
-//                    .define('I', AllBlocks.INDUSTRIAL_IRON_BLOCK)
-//                    .define('W', CNAItems.COPPER_WIRE)
-//                    .pattern(" B ")
-//                    .pattern("WIW")
-//                    .pattern(" B "));
 
     GeneratedRecipe ADVANCED_ENERGISER = builder(CNABlocks.ADVANCED_ENERGISER)
             .unlockedBy(CNAItems.OVERCHARGED_GOLD)
@@ -364,10 +349,6 @@ public class CNAStandardRecipeGen extends CNARecipeProvider {
     }
 
     public CNAStandardRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-//        #if CNA_FABRIC
-//        super((FabricDataOutput) output);
-//        #else
         super(output, registries);
-//        #endif
     }
 }

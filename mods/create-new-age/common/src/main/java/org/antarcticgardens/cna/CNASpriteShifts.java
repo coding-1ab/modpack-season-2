@@ -11,8 +11,6 @@ public class CNASpriteShifts {
     public static CTSpriteShiftEntry REACTOR_GLASS = omni("reactor_glass");
     public static CTSpriteShiftEntry REDSTONE_MAGNET = omni("redstone_magnet");
 
-//    public static CTSpriteShiftEntry BATTERY_TOP = rect("battery_top");
-//    public static CTSpriteShiftEntry BATTERY_SIDE = rect("battery_side");
 
     private static CTSpriteShiftEntry omni(String name) {
         return getCT(AllCTTypes.OMNIDIRECTIONAL, name);

@@ -3,6 +3,7 @@ package org.antarcticgardens.cna;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.foundation.data.TagGen;
+import com.simibubi.create.foundation.data.recipe.CommonMetal;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.tterrag.registrate.providers.RegistrateTagsProvider;
 import net.minecraft.core.registries.Registries;
@@ -67,21 +68,12 @@ public class CNATags {
     }
     
     public static class Common {
-        @SuppressWarnings("removal")
         public static TagKey<net.minecraft.world.item.Item>
-//                #if CNA_FABRIC
-//                NUGGETS_COPPER = AllTags.commonItemTag("copper_nuggets"),
-//                NUGGETS_ZINC = AllTags.commonItemTag("zinc_nuggets"),
-//                PLATES_COPPER = AllTags.commonItemTag("copper_plates"),
-//                PLATES_IRON = AllTags.commonItemTag("iron_plates"),
-//                PLATES_GOLD = AllTags.commonItemTag("gold_plates");
-//                #else
-                NUGGETS_COPPER = AllTags.commonItemTag("nuggets/copper"),
-                NUGGETS_ZINC = AllTags.commonItemTag("nuggets/zinc"),
-                PLATES_COPPER = AllTags.commonItemTag("plates/copper"),
-                PLATES_IRON = AllTags.commonItemTag("plates/iron"),
-                PLATES_GOLD = AllTags.commonItemTag("plates/gold");
-//                #endif
+                NUGGETS_COPPER = CommonMetal.COPPER.nuggets,
+                NUGGETS_ZINC = CommonMetal.ZINC.nuggets,
+                PLATES_COPPER = CommonMetal.COPPER.plates,
+                PLATES_IRON = CommonMetal.IRON.plates,
+                PLATES_GOLD = CommonMetal.GOLD.plates;
     }
     
     public static TagKey<net.minecraft.world.item.Item> createNuclearEnergyTag(int energy) {
