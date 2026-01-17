@@ -133,7 +133,12 @@ dependencies {
     })
     runtimeOnly("dev.engine-room.vanillin:vanillin-neoforge-$minecraft_version:$vanillin_version")
 
-    jarJar(implementation("net.createmod.ponder:ponder-neoforge:$ponder_version+mc$minecraft_version"))
+    implementation(jarJar("net.createmod.ponder:ponder-neoforge:$ponder_version+mc$minecraft_version") {
+        version {
+            strictly "[${ponder_version},)"
+            prefer ponder_version
+        }
+    })
 
     //compileOnly("mezz.jei:jei-$minecraft_version-common-api:$jei_version")
     //compileOnly("mezz.jei:jei-$minecraft_version-neoforge-api:$jei_version")
