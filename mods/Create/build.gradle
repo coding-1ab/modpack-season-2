@@ -135,8 +135,8 @@ dependencies {
 
     implementation(jarJar("net.createmod.ponder:ponder-neoforge:$ponder_version+mc$minecraft_version") {
         version {
-            strictly "[${ponder_version},)"
-            prefer ponder_version
+            strictly "[$ponder_version+mc$minecraft_version,)"
+            prefer "$ponder_version+mc$minecraft_version"
         }
     })
 
