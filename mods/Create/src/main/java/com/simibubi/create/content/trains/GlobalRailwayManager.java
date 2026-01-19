@@ -23,6 +23,7 @@ import com.simibubi.create.content.trains.graph.TrackGraph;
 import com.simibubi.create.content.trains.graph.TrackGraphSync;
 import com.simibubi.create.content.trains.graph.TrackGraphVisualizer;
 import com.simibubi.create.content.trains.graph.TrackNodeLocation;
+import com.simibubi.create.content.trains.signal.EdgeGroupColor;
 import com.simibubi.create.content.trains.signal.SignalEdgeGroup;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 
@@ -60,20 +61,23 @@ public class GlobalRailwayManager {
 			for (TrackGraph g : trackNetworks.values()) {
 				sync.sendFullGraphTo(g, serverPlayer);
 			}
-			ArrayList<SignalEdgeGroup> asList = new ArrayList<>(signalEdgeGroups.values());
-			sync.sendEdgeGroups(asList.stream()
-				.map(g -> g.id)
-				.toList(),
-				asList.stream()
-					.map(g -> g.color)
-					.toList(),
-				serverPlayer);
-			for (Train train : trains.values())
+
+			List<UUID> ids = new ArrayList<>(signalEdgeGroups.size());
+			List<EdgeGroupColor> colors = new ArrayList<>(signalEdgeGroups.size());
+			for (SignalEdgeGroup group : signalEdgeGroups.values()) {
+				ids.add(group.id);
+				colors.add(group.color);
+			}
+			sync.sendEdgeGroups(ids, colors, serverPlayer);
+
+			for (Train train : trains.values()) {
 				CatnipServices.NETWORK.sendToClient(serverPlayer, new AddTrainPacket(train));
+			}
 		}
 	}
 
-	public void playerLogout(Player player) {}
+	public void playerLogout(Player player) {
+	}
 
 	public void levelLoaded(LevelAccessor level) {
 		MinecraftServer server = level.getServer();
@@ -229,7 +233,7 @@ public class GlobalRailwayManager {
 		for (Train train : movingTrains)
 			train.tick(level);
 
-		for (Iterator<Train> iterator = waitingTrains.iterator(); iterator.hasNext();) {
+		for (Iterator<Train> iterator = waitingTrains.iterator(); iterator.hasNext(); ) {
 			Train train = iterator.next();
 
 			if (train.invalid) {
@@ -245,7 +249,7 @@ public class GlobalRailwayManager {
 			iterator.remove();
 		}
 
-		for (Iterator<Train> iterator = movingTrains.iterator(); iterator.hasNext();) {
+		for (Iterator<Train> iterator = movingTrains.iterator(); iterator.hasNext(); ) {
 			Train train = iterator.next();
 
 			if (train.invalid) {
@@ -260,7 +264,6 @@ public class GlobalRailwayManager {
 			waitingTrains.add(train);
 			iterator.remove();
 		}
-
 	}
 
 	public void tickSignalOverlay() {
@@ -295,5 +298,4 @@ public class GlobalRailwayManager {
 	private void clientManager(MutableObject<GlobalRailwayManager> m) {
 		m.setValue(CreateClient.RAILWAYS);
 	}
-
 }
