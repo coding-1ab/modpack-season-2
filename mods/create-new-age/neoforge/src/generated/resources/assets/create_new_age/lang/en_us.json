@@ -129,6 +129,8 @@
   "create_new_age.ponder.wires.text_2": "This block automatically pushes its energy to neighboring blocks. But what if it didn't do that?",
   "create_new_age.ponder.wires.text_3": "Connector can pull energy from the block it stands on when 'Pull' mode is enabled. Modes are switched with a wrench",
   "create_new_age.ponder.wires.text_4": "Note that 'Pull' mode is only for compatibility with other mods and can't be used to extract energy from energizer/motor internal storage",
+  "create_new_age.subtitle.geiger_counter": "Geiger Counter Clicking",
+  "effect.create_new_age.radiation_poisoning": "Radiation Poisoning",
   "emi.category.create_new_age.energising": "Energizing",
   "item.create_new_age.blank_circuit": "Blank Circuit",
   "item.create_new_age.copper_circuit": "Copper Circuit",

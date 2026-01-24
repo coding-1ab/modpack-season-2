@@ -3,6 +3,7 @@ package org.antarcticgardens.cna.data;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.tterrag.registrate.providers.ProviderType;
+import org.antarcticgardens.cna.CNASounds;
 import org.antarcticgardens.cna.CreateNewAge;
 import org.antarcticgardens.cna.CNATags;
 import org.antarcticgardens.cna.data.recipe.CNAMechanicalCraftingRecipeGen;
@@ -53,5 +54,6 @@ public class CreateNewAgeDatagen {
         providerConsumer.addProvider(CNAMechanicalCraftingRecipeGen::new);
         providerConsumer.addProvider(CNASequencedAssemblyRecipeGen::new);
         providerConsumer.addProvider(CNAGeneratedEntriesProvider::new);
+        providerConsumer.addProvider(CNASounds.SoundEntryProvider::new);
     }
 }

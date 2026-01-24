@@ -35,7 +35,9 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
         if (multiplier > 0 && this.heat > 16000*multiplier) {
             heat-=common.nuclearReactorRodHeatLoss.get();
             setChanged();
-            HeatBlockEntity.handleOverheat(this, () -> world.setBlock(pos, CNABlocks.CORIUM.getDefaultState(), 3));
+            float explosionRadius = CNAConfig.getCommon().radiationDamageExplosionScale.get().floatValue() * CNAConfig.getCommon().reactorOverheatExplosionMultiplier.get().floatValue();
+            HeatBlockEntity.handleOverheat(this, () -> ((ReactorRodBlock) state.getBlock()).explode(level, pos, state, explosionRadius,
+                    CNAConfig.getCommon().radiationDamageExplosionFire.get() && CNAConfig.getCommon().reactorOverheatExplosionMultiplier.get().floatValue() > 0));
         }
         twoSeconds++;
         if (twoSeconds > 40) {

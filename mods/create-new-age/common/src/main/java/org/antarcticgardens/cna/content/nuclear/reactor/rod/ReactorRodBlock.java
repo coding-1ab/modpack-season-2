@@ -26,6 +26,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.antarcticgardens.cna.CNABlockEntityTypes;
 import org.antarcticgardens.cna.CNABlocks;
+import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.nuclear.reactor.ReactorBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,11 +69,21 @@ public class ReactorRodBlock extends ReactorBlock implements EntityBlock {
 
     @Override
     public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
+        this.explode(level, pos, state, CNAConfig.getCommon().radiationDamageExplosionScale.get().floatValue(),
+                CNAConfig.getCommon().radiationDamageExplosionFire.get());
+    }
+
+    public void explode(LevelAccessor level, BlockPos pos, BlockState state, float explosionRadius, boolean useFire) {
         if (state.getValue(ACTIVE)) {
-            level.setBlock(pos, CNABlocks.CORIUM.getDefaultState(), 3);
-            if (level instanceof ServerLevel lvl) {
-                lvl.explode(null, pos.getX(), pos.getY(), pos.getZ(), 2.0f, true, Level.ExplosionInteraction.TNT);
+            if (level instanceof ServerLevel lvl && explosionRadius > 0) {
+                //Remove block first, so that explosion rays are not stopped immediately
+                lvl.removeBlock(pos, false);
+
+                //Explosion Logic, uses Config for Scale and fire
+                lvl.explode(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, explosionRadius, useFire, Level.ExplosionInteraction.TNT);
             }
+            //Add block after explosion logic
+            level.setBlock(pos, CNABlocks.CORIUM.getDefaultState(), 3);
         }
     }
 

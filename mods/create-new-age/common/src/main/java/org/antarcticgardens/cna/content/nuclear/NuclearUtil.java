@@ -3,14 +3,13 @@ package org.antarcticgardens.cna.content.nuclear;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.*;
+import org.antarcticgardens.cna.CNAEffects;
 import org.antarcticgardens.cna.CNATags;
 import org.antarcticgardens.cna.util.RaycastUtil;
 
@@ -65,9 +64,6 @@ public class NuclearUtil {
     }
 
     private static void irradiate(LivingEntity entity) {
-        entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 400, 1));
-        entity.addEffect(new MobEffectInstance(MobEffects.POISON, 200, 1));
-        entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 300, 1));
-        entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 1));
+        entity.addEffect(new MobEffectInstance(CNAEffects.RADIATION_POISONING, 400, 1));
     }
 }

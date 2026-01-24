@@ -12,6 +12,10 @@
     "item.create_new_age.wire.message.unbound": "Unbound from connector",
     "item.create_new_age.wire.message.connected": "Connected connector",
 
+    "effect.create_new_age.radiation_poisoning": "Radiation Poisoning",
+
+    "create_new_age.subtitle.geiger_counter": "Geiger Counter Clicking",
+
     "create.scroll.create_new_age.motor.stress_multiplier": "Stress Capacity Multiplier",
 
     "create_new_age.ponder.heating.header": "Heating System",

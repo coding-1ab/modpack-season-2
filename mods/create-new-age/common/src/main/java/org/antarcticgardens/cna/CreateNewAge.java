@@ -41,6 +41,8 @@ public abstract class CreateNewAge {
         CNABlocks.load();
         CNABlockEntityTypes.load();
         CNAItems.load();
+        CNAEffects.load();
+        CNASounds.load();
         CNATags.load();
         CNAPartialModels.load();
         CNARecipeTypes.load();
