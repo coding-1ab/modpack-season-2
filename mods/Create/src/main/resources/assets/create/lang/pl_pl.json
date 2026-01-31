@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Brak połączonych pakowaczy",
   "create.gui.stock_keeper.no_search_results": "Nie znaleziono pasujących przedmiotów",
   "create.gui.stock_keeper.not_in_stock": "Wymagane przedmioty nie są dostępne w magazynie",
-  "create.gui.stock_keeper.package_adress": "Adres paczki",
+  "create.gui.stock_keeper.package_address": "Adres paczki",
   "create.gui.stock_keeper.program_requester": "Wnioskodawca programu",
   "create.gui.stock_keeper.recipe_result_empty": "Ta Receptura ma pustą wartościowość wyjściową, albo nie ma pozwolenia i powinna być zgłoszona do modyfikacji lub paczki daty, która dodaję tę recepturę.",
   "create.gui.stock_keeper.request_sent": "Prośba wysłana!",

@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Nenhuma Empacotadora Conectada",
   "create.gui.stock_keeper.no_search_results": "Nenhum ‘item’ correspondente encontrado",
   "create.gui.stock_keeper.not_in_stock": "Itens solicitados não estão em estoque",
-  "create.gui.stock_keeper.package_adress": "Endereço do Pacote",
+  "create.gui.stock_keeper.package_address": "Endereço do Pacote",
   "create.gui.stock_keeper.program_requester": "Solicitador de Programa",
   "create.gui.stock_keeper.recipe_result_empty": "Essa receita não tem resultado, isso não é permitido e deve ser reportada ao mod ou datapack que a adiciona....",
   "create.gui.stock_keeper.request_sent": "Solicitação enviada!",

@@ -1105,7 +1105,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Няма Сързани Опаковачи",
   "create.gui.stock_keeper.no_search_results": "Не бяха намерени съвпадащи предмети",
   "create.gui.stock_keeper.not_in_stock": "Нужните предмети не са намерени",
-  "create.gui.stock_keeper.package_adress": "Адрес на Пратката",
+  "create.gui.stock_keeper.package_address": "Адрес на Пратката",
   "create.gui.stock_keeper.request_sent": "Искане Изпратено!",
   "create.gui.stock_keeper.search_items": "Търсене на Предмети",
   "create.gui.stock_keeper.send": "Изпращане",

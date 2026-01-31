@@ -1353,7 +1353,7 @@
   "create.gui.stock_keeper.network_open": "Hálózat nyitva",
   "create.gui.stock_keeper.no_packagers_linked": "Nincs hozzácsatolt csomagoló",
   "create.gui.stock_keeper.not_in_stock": "A szükséges tárgyak nincsenek a Raktáron",
-  "create.gui.stock_keeper.package_adress": "Csomag cím",
+  "create.gui.stock_keeper.package_address": "Csomag cím",
   "create.gui.stock_keeper.recipe_result_empty": "Ez a recept üres eredményt ad, ez nem megengedett, és jelentenie kell a modnak vagy az adatcsomagnak, amely ezt a receptet hozzáadja.",
   "create.gui.stock_keeper.request_sent": "Kérelem elküldve!",
   "create.gui.stock_keeper.search_items": "Tárgyak keresése",

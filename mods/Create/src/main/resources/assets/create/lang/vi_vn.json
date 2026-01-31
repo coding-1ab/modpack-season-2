@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Không có gói hàng nào được kết nối",
   "create.gui.stock_keeper.no_search_results": "Không tìm thấy vật phẩm phù hợp",
   "create.gui.stock_keeper.not_in_stock": "Vật phẩm yêu cầu không có trong Kho",
-  "create.gui.stock_keeper.package_adress": "Địa chỉ gói hàng",
+  "create.gui.stock_keeper.package_address": "Địa chỉ gói hàng",
   "create.gui.stock_keeper.program_requester": "Bộ yêu cầu chương trình",
   "create.gui.stock_keeper.recipe_result_empty": "Công thức này có kết quả trống, điều này không được phép và nên được báo cáo cho mod hoặc datapack thêm công thức này.",
   "create.gui.stock_keeper.request_sent": "Yêu cầu được gửi!",

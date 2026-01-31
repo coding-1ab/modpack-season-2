@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "No hay paquetes vinculados",
   "create.gui.stock_keeper.no_search_results": "No se encontraron items relacionado",
   "create.gui.stock_keeper.not_in_stock": "Los items requeridos no están en existencias",
-  "create.gui.stock_keeper.package_adress": "Dirección de paquete",
+  "create.gui.stock_keeper.package_address": "Dirección de paquete",
   "create.gui.stock_keeper.program_requester": "Solicitante del programa",
   "create.gui.stock_keeper.recipe_result_empty": "",
   "create.gui.stock_keeper.request_sent": "¡Solicitud enviada!",

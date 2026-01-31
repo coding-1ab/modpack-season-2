@@ -1361,7 +1361,7 @@
   "create.gui.stock_keeper.no_packagers_linked": "Bağlı Paketleyici Yok",
   "create.gui.stock_keeper.no_search_results": "Eşleşen eşya bulunamadı",
   "create.gui.stock_keeper.not_in_stock": "Gerekli eşyalar Stokta yok",
-  "create.gui.stock_keeper.package_adress": "Paket Adresi",
+  "create.gui.stock_keeper.package_address": "Paket Adresi",
   "create.gui.stock_keeper.program_requester": "Program Talep Edici",
   "create.gui.stock_keeper.recipe_result_empty": "Bu tarif boş bir sonuca sahip, buna izin verilmez ve bu tarifi ekleyen mod veya veri paketine bildirilmelidir.",
   "create.gui.stock_keeper.request_sent": "Talep gönderildi!",
