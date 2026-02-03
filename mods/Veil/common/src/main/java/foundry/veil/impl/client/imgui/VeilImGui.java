@@ -7,6 +7,7 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * @author Ocelot
  */
+@Deprecated
 @ApiStatus.Internal
 public interface VeilImGui {
 

@@ -20,6 +20,7 @@ import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 /**
  * Manages the internal ImGui state.
  */
+@Deprecated
 @ApiStatus.Internal
 public class VeilImGuiImpl implements VeilImGui, NativeResource {
 

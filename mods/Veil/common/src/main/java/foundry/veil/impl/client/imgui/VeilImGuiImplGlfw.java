@@ -16,6 +16,7 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+@Deprecated
 public class VeilImGuiImplGlfw extends ImGuiImplGlfw {
 
     private final VeilImGuiImpl impl;

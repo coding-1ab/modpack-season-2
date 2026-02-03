@@ -10,6 +10,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 @ApiStatus.Internal
 public class ImGuiStateStack {
 

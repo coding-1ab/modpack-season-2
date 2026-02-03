@@ -19,6 +19,10 @@ public class Veil {
     public static final String MODID = "veil";
     public static final Logger LOGGER = LoggerFactory.getLogger("Veil");
     public static final boolean DEBUG;
+    /**
+     * @deprecated This will be replaced with an optional ImGui mod
+     */
+    @Deprecated(since = "3.0.0", forRemoval = true)
     public static final boolean IMGUI;
     public static final boolean VERBOSE_SHADER_ERRORS;
     public static boolean RENDERDOC;
@@ -50,7 +54,9 @@ public class Veil {
      * Runs the specified code with the correct ImGui context.
      *
      * @param task The ImGui task to run
+     * @deprecated This will be replaced with an optional ImGui mod
      */
+    @Deprecated(since = "3.0.0", forRemoval = true)
     public static void withImGui(Runnable task) {
         if (!RenderSystem.isOnRenderThreadOrInit()) {
             LOGGER.error("Called Veil#withImGui() on another thread");
