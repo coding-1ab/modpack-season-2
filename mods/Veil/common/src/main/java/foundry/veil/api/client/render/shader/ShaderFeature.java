@@ -21,7 +21,19 @@ public enum ShaderFeature {
     /**
      * @since 2.1.0
      */
-    CUBE_MAP_ARRAY;
+    CUBE_MAP_ARRAY,
+    /**
+     * @since 3.0.0
+     */
+    FLOAT64,
+    /**
+     * @since 3.0.0
+     */
+    INT64,
+    /**
+     * @since 3.0.0
+     */
+    VERTEX_ATTRIBUTE64;
 
     @ApiStatus.Internal
     public static final ShaderFeature[] FEATURES = values();
@@ -45,6 +57,9 @@ public enum ShaderFeature {
             case ATOMIC_COUNTER -> VeilRenderSystem.atomicCounterSupported();
             case BINDLESS_TEXTURE -> VeilRenderSystem.bindlessTextureSupported();
             case CUBE_MAP_ARRAY -> VeilRenderSystem.textureCubeMapArraySupported();
+            case FLOAT64 -> VeilRenderSystem.gpuShaderFloat64BitSupported();
+            case INT64 -> VeilRenderSystem.gpuShaderInt64BitSupported();
+            case VERTEX_ATTRIBUTE64 -> VeilRenderSystem.vertexAttribute64BitSupported();
         };
     }
 
@@ -70,6 +85,9 @@ public enum ShaderFeature {
                 directives.add("#extension GL_NV_gpu_shader5 : enable");
                 directives.add("#extension GL_EXT_nonuniform_qualifier : enable");
             }
+            case FLOAT64 -> directives.add("#extension GL_ARB_gpu_shader_fp64 : require");
+            case INT64 -> directives.add("#extension GL_ARB_gpu_shader_int64 : require");
+            case VERTEX_ATTRIBUTE64 -> directives.add("#extension GL_ARB_vertex_attrib_64bit : require");
         }
     }
 }
