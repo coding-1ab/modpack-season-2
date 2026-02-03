@@ -36,14 +36,11 @@ public final class LightRenderer implements NativeResource {
     private static final ResourceLocation BUFFER_ID = Veil.veilPath("lights");
     private final Map<LightTypeRegistry.LightType<?>, LightTypeRenderer<?>> renderers;
 
-    private boolean ambientOcclusionEnabled;
-
     /**
      * Creates a new light renderer.
      */
     public LightRenderer() {
         this.renderers = new Object2ObjectArrayMap<>();
-        this.ambientOcclusionEnabled = true;
     }
 
     /**
@@ -123,44 +120,6 @@ public final class LightRenderer implements NativeResource {
     public <T extends LightData> Collection<? extends LightRenderHandle<T>> getLights(LightTypeRegistry.LightType<? extends T> type) {
         LightTypeRenderer<?> renderer = this.renderers.get(type);
         return renderer != null ? (Collection<? extends LightRenderHandle<T>>) renderer.getLights() : Collections.emptyList();
-    }
-
-    /**
-     * Enables ambient occlusion.
-     *
-     * @deprecated This feature is being removed
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.0.0")
-    @Deprecated(since = "2.3.0", forRemoval = true)
-    public void enableAmbientOcclusion() {
-        if (!this.ambientOcclusionEnabled) {
-            this.ambientOcclusionEnabled = true;
-            VeilRenderSystem.rebuildChunks();
-        }
-    }
-
-    /**
-     * Disables ambient occlusion.
-     *
-     * @deprecated This feature is being removed
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.0.0")
-    @Deprecated(since = "2.3.0", forRemoval = true)
-    public void disableAmbientOcclusion() {
-        if (this.ambientOcclusionEnabled) {
-            this.ambientOcclusionEnabled = false;
-            VeilRenderSystem.rebuildChunks();
-        }
-    }
-
-    /**
-     * @return Whether chunks can have ambient occlusion
-     * @deprecated This feature is being removed
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.0.0")
-    @Deprecated(since = "2.3.0", forRemoval = true)
-    public boolean isAmbientOcclusionEnabled() {
-        return this.ambientOcclusionEnabled;
     }
 
     @Override

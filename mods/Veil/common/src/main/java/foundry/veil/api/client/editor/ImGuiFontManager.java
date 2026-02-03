@@ -31,6 +31,7 @@ import java.util.concurrent.Executor;
 import static org.lwjgl.glfw.GLFW.glfwGetMonitorContentScale;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 
+@Deprecated
 @ApiStatus.Internal
 public class ImGuiFontManager implements PreparableReloadListener {
 

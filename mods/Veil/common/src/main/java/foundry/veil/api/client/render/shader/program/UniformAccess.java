@@ -1,11 +1,8 @@
 package foundry.veil.api.client.render.shader.program;
 
 import foundry.veil.api.client.render.shader.uniform.ShaderUniformAccess;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL31C;
-
-import static org.lwjgl.opengl.GL31C.GL_INVALID_INDEX;
 
 /**
  * Provides read and write access to all uniform variables in a shader program.
@@ -28,9 +25,7 @@ public interface UniformAccess {
      * @param name The name of the uniform to check
      * @return Whether that uniform can be set
      */
-    default boolean hasUniform(CharSequence name) {
-        return this.getUniformLocation(name) != -1;
-    }
+    boolean hasUniform(CharSequence name);
 
     /**
      * Retrieves a uniform by name.
@@ -49,17 +44,6 @@ public interface UniformAccess {
     ShaderUniformAccess getUniformSafe(CharSequence name);
 
     /**
-     * Retrieves a uniform by name or creates a reference to one that may exist in the future.
-     *
-     * @param name The name of the uniform to get
-     * @return The uniform instance
-     * @deprecated Use {@link #getUniformSafe(CharSequence)} instead
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.0.0")
-    ShaderUniformAccess getOrCreateUniform(CharSequence name);
-
-    /**
      * Retrieves the location of a uniform block.
      *
      * @param name The name of the uniform block to get
@@ -73,9 +57,7 @@ public interface UniformAccess {
      * @param name The name of the uniform block to check
      * @return Whether that uniform block can be set
      */
-    default boolean hasUniformBlock(CharSequence name) {
-        return this.getUniformBlock(name) != GL_INVALID_INDEX;
-    }
+    boolean hasUniformBlock(CharSequence name);
 
     /**
      * Retrieves the location of a storage block.
@@ -91,7 +73,5 @@ public interface UniformAccess {
      * @param name The name of the storage block to check
      * @return Whether that storage block can be set
      */
-    default boolean hasStorageBlock(CharSequence name) {
-        return this.getStorageBlock(name) != GL_INVALID_INDEX;
-    }
+    boolean hasStorageBlock(CharSequence name);
 }

@@ -108,12 +108,6 @@ public class BlitPostStage extends FramebufferPostStage {
     }
 
     @Override
-    public ShaderUniformAccess getOrCreateUniform(CharSequence name) {
-        ShaderProgram shader = this.getShader();
-        return shader != null ? shader.getOrCreateUniform(name) : ShaderUniformAccess.EMPTY;
-    }
-
-    @Override
     public boolean hasUniformBlock(CharSequence name) {
         ShaderProgram shader = this.getShader();
         return shader != null && shader.hasUniformBlock(name);

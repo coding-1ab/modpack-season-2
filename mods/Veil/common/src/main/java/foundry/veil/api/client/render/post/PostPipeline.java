@@ -63,11 +63,6 @@ public interface PostPipeline extends MutableUniformAccess, NativeResource {
     }
 
     @Override
-    default ShaderUniformAccess getOrCreateUniform(CharSequence name) {
-        return ShaderUniformAccess.EMPTY;
-    }
-
-    @Override
     default int getUniformBlock(CharSequence name) {
         throw new UnsupportedOperationException("Cannot get values from post pipelines");
     }

@@ -23,11 +23,6 @@ public interface ShaderUniform extends ShaderUniformAccess {
      */
     void invalidateCache();
 
-    @Override
-    default boolean isValid() {
-        return this.getLocation() != -1;
-    }
-
     /**
      * @return The name assigned to this uniform in the shader
      */

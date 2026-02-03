@@ -2,9 +2,11 @@ package foundry.veil.api.client.render.shader.uniform;
 
 import foundry.veil.impl.client.render.shader.uniform.CompositeShaderUniformAccess;
 import foundry.veil.impl.client.render.shader.uniform.EmptyShaderUniformAccess;
+import foundry.veil.impl.client.render.shader.uniform.WrapperUniformAccess;
 import org.joml.*;
 
 import java.lang.Math;
+import java.util.function.Supplier;
 
 /**
  * Provides access to 1 or more shader uniforms.
@@ -30,6 +32,17 @@ public interface ShaderUniformAccess {
             return accesses[0];
         }
         return new CompositeShaderUniformAccess(accesses);
+    }
+
+    /**
+     * Wraps a uniform access so the value is evaluated every time any method is called.
+     *
+     * @param getter The supplier for the uniform access to defer to
+     * @return A new {@link ShaderUniformAccess} that defers to the value provided if not null
+     * @since 3.0.0
+     */
+    static ShaderUniformAccess wrapped(Supplier<ShaderUniformAccess> getter) {
+        return new WrapperUniformAccess(getter);
     }
 
     /**
@@ -411,6 +424,7 @@ public interface ShaderUniformAccess {
 
     /**
      * Uploads this uniform as a handle type. Only supported if bindless texture is supported.
+     *
      * @param value The handle to upload
      * @since 2.0.0
      */
@@ -418,6 +432,7 @@ public interface ShaderUniformAccess {
 
     /**
      * Uploads this uniform as a handle type. Only supported if bindless texture is supported.
+     *
      * @param values The handles to upload
      * @since 2.0.0
      */

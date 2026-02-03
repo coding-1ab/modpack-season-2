@@ -75,6 +75,11 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     }
 
     @Override
+    public boolean isValid() {
+        return this.location != -1;
+    }
+
+    @Override
     public String getName() {
         return this.name;
     }

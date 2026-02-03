@@ -148,21 +148,18 @@ public final class CompositePostPipeline implements PostPipeline {
     }
 
     @Override
-    public @Nullable ShaderUniformAccess getUniform(CharSequence name) {
-        ShaderUniformAccess uniform = this.getOrCreateUniform(name);
-        return uniform == ShaderUniformAccess.EMPTY ? null : uniform;
+    public ShaderUniformAccess getUniform(CharSequence name) {
+        return this.getUniformSafe(name);
     }
 
     @Override
     public ShaderUniformAccess getUniformSafe(CharSequence name) {
-        return this.getOrCreateUniform(name);
-    }
-
-    @Override
-    public ShaderUniformAccess getOrCreateUniform(CharSequence name) {
-        return this.uniforms.computeIfAbsent(name.toString(), key -> ShaderUniformAccess.of(Arrays.stream(this.stages)
-                .map(pipeline -> pipeline.getOrCreateUniform(key))
-                .toArray(ShaderUniformAccess[]::new)));
+        return this.uniforms.computeIfAbsent(name.toString(), key -> {
+            ShaderUniformAccess[] uniforms = Arrays.stream(this.stages)
+                    .map(pipeline -> ShaderUniformAccess.wrapped(() -> pipeline.getUniformSafe(key)))
+                    .toArray(ShaderUniformAccess[]::new);
+            return ShaderUniformAccess.of(uniforms);
+        });
     }
 
     @Override

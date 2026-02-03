@@ -95,19 +95,6 @@ public class LightInspector extends SingleWindowInspector {
             VeilImGuiUtil.setTooltip(REMOVE_ALL_DESC);
         }
 
-        ImGui.sameLine();
-        this.enableAmbientOcclusion.set(lightRenderer.isAmbientOcclusionEnabled());
-        if (ImGui.checkbox(ENABLE_AO.getString(), this.enableAmbientOcclusion)) {
-            if (this.enableAmbientOcclusion.get()) {
-                lightRenderer.enableAmbientOcclusion();
-            } else {
-                lightRenderer.disableAmbientOcclusion();
-            }
-        }
-        if (ImGui.isItemHovered()) {
-            ImGui.setTooltip("Deprecated");
-        }
-
         ImGui.beginTabBar("##lights");
         for (ResourceKey<LightTypeRegistry.LightType<?>> key : this.lightTypes) {
             ResourceLocation id = key.location();
