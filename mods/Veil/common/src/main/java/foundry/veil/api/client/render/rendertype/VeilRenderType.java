@@ -1,6 +1,5 @@
 package foundry.veil.api.client.render.rendertype;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -25,7 +24,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -189,6 +191,7 @@ public final class VeilRenderType extends RenderType {
      * @param params Additional parameters to configure the render type
      * @return The render type created or <code>null</code> if unregistered or an error occurs
      */
+    @Contract(pure = true)
     public static @Nullable RenderType get(ResourceLocation id, Object... params) {
         return VeilRenderSystem.renderer().getDynamicRenderTypeManager().get(id, params);
     }
@@ -211,10 +214,12 @@ public final class VeilRenderType extends RenderType {
      * @param shard The render shard to get the name of
      * @return The name of the render type to get
      */
+    @Contract(pure = true)
     public static String getName(RenderStateShard shard) {
         return ((RenderStateShardAccessor) shard).getName();
     }
 
+    @Contract(pure = true)
     public static VeilRenderTypeAccessor getShards(RenderType renderType) {
         if (!(renderType instanceof CompositeRenderType compositeRenderType)) {
             throw new IllegalArgumentException("Expected composite render type to be an instance of " + CompositeRenderType.class.getName() + ", but was " + renderType.getClass());
@@ -229,6 +234,7 @@ public final class VeilRenderType extends RenderType {
      * @return A render type that draws all layers from a single buffer
      * @throws IllegalStateException If there are zero layers, the vertex formats don't all match, or the primitive modes don't match
      */
+    @Contract(pure = true)
     public static RenderType layered(RenderType... layers) {
         if (layers.length == 0) {
             throw new IllegalArgumentException("At least 1 render type must be specified");
@@ -236,11 +242,13 @@ public final class VeilRenderType extends RenderType {
         if (layers.length == 1) {
             return layers[0];
         }
-        ImmutableList.Builder<RenderType> builder = ImmutableList.builder();
+
+        RenderType[] array = new RenderType[layers.length - 1];
         VertexFormat format = layers[0].format();
         VertexFormat.Mode mode = layers[0].mode();
         int bufferSize = layers[0].bufferSize();
         boolean sortOnUpload = ((RenderTypeAccessor) layers[0]).isSortOnUpload();
+
         for (int i = 1; i < layers.length; i++) {
             RenderType layer = layers[i];
             if (!layer.format().equals(format)) {
@@ -250,17 +258,12 @@ public final class VeilRenderType extends RenderType {
                 throw new IllegalArgumentException("Expected " + layer + " to use " + mode + ", but was " + layer.mode());
             }
             bufferSize = Math.max(bufferSize, layer.bufferSize());
-            if (((RenderTypeAccessor) layer).
-                    isSortOnUpload()) {
+            if (((RenderTypeAccessor) layer).isSortOnUpload()) {
                 sortOnUpload = true;
             }
-            builder.add(layer);
+            array[i - 1] = layer;
         }
-        return new LayeredRenderType(layers[0], builder.build(), "LayeredRenderType[" + Arrays.stream(layers).map(VeilRenderType::getName).collect(Collectors.joining(", ")) + "]", bufferSize, sortOnUpload);
-    }
-
-    private VeilRenderType(String $$0, VertexFormat $$1, VertexFormat.Mode $$2, int $$3, boolean $$4, boolean $$5, Runnable $$6, Runnable $$7) {
-        super($$0, $$1, $$2, $$3, $$4, $$5, $$6, $$7);
+        return new LayeredRenderType(layers[0], array, "LayeredRenderType[" + Arrays.stream(layers).map(VeilRenderType::getName).collect(Collectors.joining(", ")) + "]", bufferSize, sortOnUpload);
     }
 
     /**
@@ -270,9 +273,9 @@ public final class VeilRenderType extends RenderType {
      */
     public static class LayeredRenderType extends RenderType {
 
-        private final List<RenderType> layers;
+        private final RenderType[] layers;
 
-        private LayeredRenderType(RenderType defaultValue, List<RenderType> layers, String name, int bufferSize, boolean sortOnUpload) {
+        private LayeredRenderType(RenderType defaultValue, RenderType[] layers, String name, int bufferSize, boolean sortOnUpload) {
             super(name, defaultValue.format(), defaultValue.mode(), bufferSize, defaultValue.affectsCrumbling(), sortOnUpload, defaultValue::setupRenderState, defaultValue::clearRenderState);
             this.layers = layers;
         }
@@ -286,11 +289,12 @@ public final class VeilRenderType extends RenderType {
                 Matrix4f projectionMatrix = RenderSystem.getProjectionMatrix();
                 for (RenderType layer : this.layers) {
                     layer.setupRenderState();
+
                     ShaderInstance shader = RenderSystem.getShader();
-                    if (shader == null) {
-                        return;
+                    if (shader != null) {
+                        BufferUploader.lastImmediateBuffer.drawWithShader(modelViewMatrix, projectionMatrix, shader);
                     }
-                    BufferUploader.lastImmediateBuffer.drawWithShader(modelViewMatrix, projectionMatrix, shader);
+
                     layer.clearRenderState();
                 }
             }
@@ -299,7 +303,7 @@ public final class VeilRenderType extends RenderType {
         /**
          * @return All additional render layers this render type should render
          */
-        public List<RenderType> getLayers() {
+        public RenderType[] getLayers() {
             return this.layers;
         }
     }
@@ -417,5 +421,9 @@ public final class VeilRenderType extends RenderType {
         public @Nullable RenderType get() {
             return VeilRenderSystem.renderer().getDynamicRenderTypeManager().get(this.id, this.params);
         }
+    }
+
+    private VeilRenderType(String name, VertexFormat format, VertexFormat.Mode mode, int bufferSize, boolean affectsCrumbling, boolean sortOnUpload, Runnable setupState, Runnable clearState) {
+        super(name, format, mode, bufferSize, affectsCrumbling, sortOnUpload, setupState, clearState);
     }
 }

@@ -22,6 +22,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,18 +30,18 @@ import java.util.Optional;
 /**
  * @since 2.5.0
  */
-public class FlareModel {
+public final class FlareModel {
 
     public static final Codec<FlareModel> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("path").forGetter(FlareModel::getShell),
             CodecUtil.VECTOR3FC_CODEC.fieldOf("positionOffset").forGetter(FlareModel::getPositionOffset),
             CodecUtil.VECTOR3FC_CODEC.fieldOf("rotationOffset").forGetter(FlareModel::getRotationOffset),
             CodecUtil.VECTOR3FC_CODEC.fieldOf("scaleOffset").forGetter(FlareModel::getScaleOffset),
-            CodecUtil.singleOrList(FlareMaterial.CODEC).fieldOf("materials").forGetter(FlareModel::getMaterials)
+            CodecUtil.singleOrList(FlareMaterial.CODEC).fieldOf("materials").forGetter(model -> List.of(model.getMaterials()))
     ).apply(instance, FlareModel::new));
-    
-    public static final Matrix4f MODEL_TO_LOCAL_MATRIX = new Matrix4f();
-    public static final Matrix4f MATRIX4F = new Matrix4f();
+
+    private static final Matrix4f MODEL_TO_LOCAL_MATRIX = new Matrix4f();
+    private static final Matrix4f MATRIX4F = new Matrix4f();
 
     public static final String POSITION_PROPERTY_NAME = "model::position";
     public static final String ROTATION_PROPERTY_NAME = "model::rotation";
@@ -51,33 +52,33 @@ public class FlareModel {
     final RotationModelProperty rotationOffset;
     final Vec3ModelProperty scaleOffset;
     final Mat4ModelProperty modelToWorld;
-    private final List<FlareMaterial> materials;
+    private final FlareMaterial[] materials;
 
-    public FlareModel(ResourceLocation shell, Vector3fc position, Vector3fc rotation, Vector3fc scale, List<FlareMaterial> materials) {
+    public FlareModel(ResourceLocation shell, Vector3fc position, Vector3fc rotation, Vector3fc scale, Collection<FlareMaterial> materials) {
         this.shell = shell;
         this.positionOffset = new Vec3ModelProperty(new Vector3f(position));
         this.rotationOffset = new RotationModelProperty(new Vector3f(rotation));
         this.scaleOffset = new Vec3ModelProperty(new Vector3f(scale));
         this.modelToWorld = new Mat4ModelProperty(new Matrix4f());
-        this.materials = materials;
+        this.materials = materials.toArray(FlareMaterial[]::new);
     }
 
     public void render(EffectHost host, MatrixStack matrixStack, Map<String, List<PropertyModifier<?>>> modifiers, @Nullable Map<ResourceLocation, BakedShell> shellOverrides) {
         Vector3fc positionOffset = this.positionOffset.getValue();
         Quaternionfc rotationOffset = this.rotationOffset.getRotation();
         Vector3fc scaleOffset = this.scaleOffset.getValue();
-        
+
         MODEL_TO_LOCAL_MATRIX.set(matrixStack.position());
         MODEL_TO_LOCAL_MATRIX.translate(positionOffset.x(), positionOffset.y(), positionOffset.z());
         MODEL_TO_LOCAL_MATRIX.rotate(rotationOffset);
         MODEL_TO_LOCAL_MATRIX.scale(scaleOffset.x(), scaleOffset.y(), scaleOffset.z());
-        
+
         BakedShell bakedShell = (shellOverrides != null && shellOverrides.containsKey(this.shell)) ?
                 shellOverrides.get(this.shell) :
                 FlareEffectManager.getInstance().getBakedShell(this.shell);
-        
+
         Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-        
+
         this.modelToWorld.modify(
                 MODEL_TO_LOCAL_MATRIX.translate((float) cameraPos.x, (float) cameraPos.y, (float) cameraPos.z, MATRIX4F),
                 PropertyModifier.PropertyModifierMode.REPLACE,
@@ -88,22 +89,20 @@ public class FlareModel {
         MATRIX4F.set(modelViewStack);
         modelViewStack.mul(MODEL_TO_LOCAL_MATRIX);
         RenderSystem.applyModelViewMatrix();
-        
+
         VertexArray vertexArray = bakedShell.getVertexArray();
         vertexArray.bind();
-        
-        List<FlareMaterial> flareMaterials = this.materials;
-        for (int i = 0, size = flareMaterials.size(); i < size; i++) {
-            FlareMaterial material = flareMaterials.get(i);
+
+        for (FlareMaterial material : this.materials) {
             RenderType renderType = VeilRenderType.get(material.renderTypeLocation());
             if (renderType == null) {
                 continue;
             }
-            
+
             this.draw(renderType, vertexArray, host, material, modifiers);
         }
         VertexArray.unbind();
-        
+
         modelViewStack.set(MATRIX4F);
         RenderSystem.applyModelViewMatrix();
     }
@@ -125,9 +124,7 @@ public class FlareModel {
         vertexArray.clear(renderType);
 
         if (renderType instanceof VeilRenderType.LayeredRenderType layeredRenderType) {
-            List<RenderType> layers = layeredRenderType.getLayers();
-            for (int i = 0, size = layers.size(); i < size; i++) {
-                RenderType layer = layers.get(i);
+            for (RenderType layer : layeredRenderType.getLayers()) {
                 vertexArray.setup(layer);
                 currentShader = RenderSystem.getShader();
                 material.applyProperties(host, currentShader, modifiers);
@@ -154,7 +151,7 @@ public class FlareModel {
         return this.scaleOffset.getValue();
     }
 
-    public List<FlareMaterial> getMaterials() {
+    public FlareMaterial[] getMaterials() {
         return this.materials;
     }
 }

@@ -46,7 +46,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 @Mixin(LevelRenderer.class)
@@ -184,7 +183,7 @@ public abstract class PipelineLevelRendererMixin implements LevelRendererExtensi
             this.veil$tempProjection.set(projection);
             Window window = this.minecraft.getWindow();
 
-            List<RenderType> layers = layeredRenderType.getLayers();
+            RenderType[] layers = layeredRenderType.getLayers();
             boolean rendered = false;
 
             profiler.push("render_" + VeilRenderType.getName(renderType));
@@ -250,10 +249,12 @@ public abstract class PipelineLevelRendererMixin implements LevelRendererExtensi
             profiler.pop();
 
             if (!validSections.isEmpty()) {
+                String name = "render_" + VeilRenderType.getName(layers[0]);
+
                 // Loop again to draw each layer, making sure not to loop through EVERY section
                 for (RenderType layer : layers) {
                     layer.setupRenderState();
-                    profiler.push("render_" + VeilRenderType.getName(layers.getFirst()));
+                    profiler.push(name);
                     shaderInstance = RenderSystem.getShader();
                     if (shaderInstance != null) {
                         shaderInstance.setDefaultUniforms(VertexFormat.Mode.QUADS, this.veil$tempFrustum, this.veil$tempProjection, window);

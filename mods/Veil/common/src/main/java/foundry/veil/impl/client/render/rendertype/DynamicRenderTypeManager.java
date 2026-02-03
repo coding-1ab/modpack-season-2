@@ -18,6 +18,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,6 +42,7 @@ public class DynamicRenderTypeManager extends SimplePreparableReloadListener<Map
 
     private final Map<ResourceLocation, RenderTypeCache> renderTypes = new Object2ObjectArrayMap<>();
 
+    @Contract(pure = true)
     public @Nullable RenderType get(ResourceLocation id, Object... params) {
         RenderTypeCache cache = this.renderTypes.get(id);
         if (cache == null) {

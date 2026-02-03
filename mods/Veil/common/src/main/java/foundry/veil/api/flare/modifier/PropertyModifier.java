@@ -120,7 +120,7 @@ public abstract class PropertyModifier<T> {
         return MapCodec.unit(Pair.of(Optional.empty(), mode));
     }
 
-    public static void modifyProperty(EffectHost host, @Nullable String clazz, Property<?> property, Iterable<PropertyModifier<?>> modifiers) {
+    public static void modifyProperty(EffectHost host, @Nullable String clazz, Property<?> property, @Nullable Iterable<PropertyModifier<?>> modifiers) {
         if (modifiers == null) {
             return;
         }

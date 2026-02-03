@@ -17,12 +17,15 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @since 2.5.0
  */
-public class FlareEffectLayer {
+public final class FlareEffectLayer {
 
     public static final Codec<FlareEffectLayer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").forGetter(FlareEffectLayer::getName),
@@ -31,26 +34,29 @@ public class FlareEffectLayer {
             CodecUtil.registryOrLegacyCodec(PropertyModifierRegistry.REGISTRY)
                     .<PropertyModifier<?>>dispatch(PropertyModifier::type, PropertyModifierRegistry.PropertyModifierType::codec)
                     .listOf()
-                    .optionalFieldOf("modifiers", new ArrayList<>())
-                    .forGetter(FlareEffectLayer::getModifiers)
+                    .optionalFieldOf("modifiers", List.of())
+                    .forGetter(layer -> List.of(layer.originalModifiers))
     ).apply(instance, FlareEffectLayer::new));
 
     private final String name;
     private final boolean disabled;
     private final FlareModel model;
     private final Map<String, List<PropertyModifier<?>>> modifiers;
-    private final List<PropertyModifier<?>> originalModifiers;
+    private final PropertyModifier<?>[] originalModifiers;
+
+    private final List<PropertyModifier<?>> positionModifier;
+    private final List<PropertyModifier<?>> rotationModifier;
+    private final List<PropertyModifier<?>> scaleModifier;
 
     public FlareEffectLayer(String name, boolean disabled, FlareModel model, List<PropertyModifier<?>> modifiers) {
         this.name = name;
         this.disabled = disabled;
         this.model = model;
-        this.originalModifiers = Collections.unmodifiableList(modifiers);
+        this.originalModifiers = modifiers.toArray(PropertyModifier[]::new);
 
-        List<FlareMaterial> materials = model.getMaterials();
         Map<String, List<PropertyModifier<?>>> modifierMap = new HashMap<>();
 
-        for (FlareMaterial material : materials) {
+        for (FlareMaterial material : model.getMaterials()) {
             this.putModelProperties(material.properties());
         }
 
@@ -61,6 +67,10 @@ public class FlareEffectLayer {
 
         modifierMap.replaceAll((key, value) -> Collections.unmodifiableList(value));
         this.modifiers = Collections.unmodifiableMap(new Object2ObjectArrayMap<>(modifierMap));
+
+        this.positionModifier = modifierMap.get(FlareModel.POSITION_PROPERTY_NAME);
+        this.rotationModifier = modifierMap.get(FlareModel.ROTATION_PROPERTY_NAME);
+        this.scaleModifier = modifierMap.get(FlareModel.SCALE_PROPERTY_NAME);
     }
 
     public void putModelProperties(Map<String, Property<?>> materialProperties) {
@@ -72,21 +82,15 @@ public class FlareEffectLayer {
     }
 
     public void render(EffectHost host, MatrixStack matrixStack, float partialTick, @Nullable Map<ResourceLocation, BakedShell> shellOverrides) {
-        if (this.disabled) {
-            return;
-        }
-
         ControllerManager controllerManager = FlareEffectManager.getInstance().getControllerManager();
-        
-        List<PropertyModifier<?>> size = this.originalModifiers;
-        for (int i = 0, propertyModifiersSize = size.size(); i < propertyModifiersSize; i++) {
-            PropertyModifier<?> modifier = size.get(i);
+
+        for (PropertyModifier<?> modifier : this.originalModifiers) {
             controllerManager.getOrCreateController(modifier.inputControllerName(), host).update(partialTick);
         }
 
-        PropertyModifier.modifyProperty(host, null, this.model.positionOffset, this.modifiers.get(FlareModel.POSITION_PROPERTY_NAME));
-        PropertyModifier.modifyProperty(host, null, this.model.rotationOffset, this.modifiers.get(FlareModel.ROTATION_PROPERTY_NAME));
-        PropertyModifier.modifyProperty(host, null, this.model.scaleOffset, this.modifiers.get(FlareModel.SCALE_PROPERTY_NAME));
+        PropertyModifier.modifyProperty(host, null, this.model.positionOffset, this.positionModifier);
+        PropertyModifier.modifyProperty(host, null, this.model.rotationOffset, this.rotationModifier);
+        PropertyModifier.modifyProperty(host, null, this.model.scaleOffset, this.scaleModifier);
 
         this.model.render(host, matrixStack, this.modifiers, shellOverrides);
 
@@ -104,7 +108,11 @@ public class FlareEffectLayer {
         return this.model;
     }
 
-    public List<PropertyModifier<?>> getModifiers() {
+    public Map<String, List<PropertyModifier<?>>> getModifiers() {
+        return this.modifiers;
+    }
+
+    public PropertyModifier<?>[] getOriginalModifiers() {
         return this.originalModifiers;
     }
 

@@ -142,7 +142,7 @@ public class CodecUtil {
         return Codec.either(
                         codec.flatComapMap(List::of,
                                 l -> l.size() == 1
-                                        ? DataResult.success(l.get(0))
+                                        ? DataResult.success(l.getFirst())
                                         : DataResult.error(() -> "List must have exactly one element.")),
                         ExtraCodecs.nonEmptyList(codec.listOf()))
                 .xmap(e -> e.map(Function.identity(), Function.identity()),
