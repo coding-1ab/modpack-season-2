@@ -10,6 +10,8 @@
   - Comparator signal will now be based on the fill percentage for the item's max stack size;
   - All off-hand interaction has been removed. Placing, removing and processing items is done entirely with the main hand;
   - The `offhand_equipment` tag has been removed.
+- Pumpkin Pie can now be placed as a block, like the other pies!
+  - By default, it is placeable without secondary action. A config exists to require sneaking, if preferred;
 - Tomato crops have been updated:
   - The crop no longer uses the standard growth speed checks of `CropBlock`, which was slowing down hanging vines. They grow at a fixed rate now, regardless of height;
   - Applying bone meal to a mature tomato vine (sneaking, rich soil etc) will pass the boost to the vine above it, if possible;

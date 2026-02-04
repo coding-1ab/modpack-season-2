@@ -30,6 +30,7 @@ public class Configuration
 	public static final String CATEGORY_OVERRIDES = "overrides";
 	public static ForgeConfigSpec.BooleanValue VANILLA_SOUP_EXTRA_EFFECTS;
 	public static ForgeConfigSpec.BooleanValue RABBIT_STEW_JUMP_BOOST;
+	public static ForgeConfigSpec.BooleanValue PUMPKIN_PIE_SNEAK_TO_PLACE;
 	public static ForgeConfigSpec.BooleanValue DISPENSER_TOOLS_CUTTING_BOARD;
 
 	public static final String CATEGORY_OVERRIDES_STACK_SIZE = "stack_size";
@@ -105,6 +106,8 @@ public class Configuration
 				.define("vanillaSoupExtraEffects", true);
 		RABBIT_STEW_JUMP_BOOST = COMMON_BUILDER.comment("Should Rabbit Stew grant users the jumping prowess of a rabbit when eaten?")
 				.define("rabbitStewJumpBoost", true);
+		PUMPKIN_PIE_SNEAK_TO_PLACE = COMMON_BUILDER.comment("Should Pumpkin Pie require the user to sneak to place it down as a block?")
+				.define("pumpkinPieSneakToPlace", false);
 		DISPENSER_TOOLS_CUTTING_BOARD = COMMON_BUILDER.comment("Should the Dispenser be able to operate a Cutting Board in front of it?")
 				.define("dispenserUsesToolsOnCuttingBoard", true);
 

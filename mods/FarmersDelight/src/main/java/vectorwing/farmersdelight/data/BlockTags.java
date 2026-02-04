@@ -80,6 +80,7 @@ public class BlockTags extends BlockTagsProvider
 						ModBlocks.APPLE_PIE.get(),
 						ModBlocks.SWEET_BERRY_CHEESECAKE.get(),
 						ModBlocks.CHOCOLATE_PIE.get(),
+						ModBlocks.PUMPKIN_PIE.get(),
 						ModBlocks.ROAST_CHICKEN_BLOCK.get(),
 						ModBlocks.HONEY_GLAZED_HAM_BLOCK.get(),
 						ModBlocks.SHEPHERDS_PIE_BLOCK.get(),

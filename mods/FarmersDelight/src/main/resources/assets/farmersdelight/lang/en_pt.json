@@ -127,6 +127,7 @@
   "block.farmersdelight.apple_pie": "Tart o' Apple Mash",
   "block.farmersdelight.sweet_berry_cheesecake": "Cheesy Tart o' Land Capers",
   "block.farmersdelight.chocolate_pie": "Tart o' Cacao",
+  "block.farmersdelight.pumpkin_pie": "Tart o' Gourd",
 
   "item.farmersdelight.tomato": "Tomato",
   "item.farmersdelight.cabbage": "Head o' Leafer",
@@ -170,6 +171,7 @@
   "item.farmersdelight.cake_slice": "Slice o' Duff",
   "item.farmersdelight.apple_pie_slice": "Cut Tart o' Apple Mash",
   "item.farmersdelight.sweet_berry_cheesecake_slice": "Cut Cheesy Tart o' Land Capers",
+  "item.farmersdelight.pumpkin_pie_slice": "Cut Tart o' Gourd",
   "item.farmersdelight.chocolate_pie_slice": "Cut Tart o' Cacao",
   "item.farmersdelight.fruit_salad": "Bowl o' Fruit",
   "item.farmersdelight.sweet_berry_cookie": "Land Caper Biscuit",
@@ -265,6 +267,7 @@
   "farmersdelight.tooltip.milk_bottle": "Scrub Off 1 Effect",
   "farmersdelight.tooltip.hot_cocoa": "Scrub Off 1 Cursed Ache",
   "farmersdelight.tooltip.melon_juice": "Wee Quick Healin'",
+  "farmersdelight.tooltip.debug_item": "Debug item - Not meant for gameplay",
 
   "farmersdelight.advancement.root": "Farmer's Delight",
   "farmersdelight.advancement.root.desc": "A great sea o' flavor awaits ye!",

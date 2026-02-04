@@ -1,4 +1,4 @@
-// 1.20.1	2023-07-10T23:57:14.5390226	Item Models: farmersdelight
+// 1.20.1	2026-02-04T19:21:05.7795551	Item Models: farmersdelight
 01e23a47f469a0c2107b2a1b6fc7f7c8f0c23d55 assets/farmersdelight/models/item/acacia_cabinet.json
 a58cc863fafd0f13d1235a2f7344b446f853ae55 assets/farmersdelight/models/item/apple_cider.json
 8348e66b9efe6a92614cca78c3463d3efaea57fa assets/farmersdelight/models/item/apple_pie.json
@@ -52,6 +52,7 @@ c31f20fa9fa0742e64a448a1c49a5c9e484ae31c assets/farmersdelight/models/item/cooki
 a691864348915a571a4a9928eba459db5a0187f3 assets/farmersdelight/models/item/cyan_canvas_sign.json
 c9224c94911851e0b3d6c18a6b0911425e44a9d7 assets/farmersdelight/models/item/cyan_hanging_canvas_sign.json
 cdf2a07752514b7aaffb8cc63b8c1a53efcd4901 assets/farmersdelight/models/item/dark_oak_cabinet.json
+eddeaac38c032ffb2b9070e62bba663d8d0bb7ba assets/farmersdelight/models/item/debug_pumpkin_pie.json
 62c4845186802120d39f2e52610dc51cc5186c9f assets/farmersdelight/models/item/diamond_knife.json
 3871c48190a671fa457aa0a2b9b8791e410845c8 assets/farmersdelight/models/item/dog_food.json
 9f8fc38ac6e5e8f49dc27599fd50d75d98c2665a assets/farmersdelight/models/item/dumplings.json
@@ -114,6 +115,7 @@ c0b29eebb55c1f8de26693df4de719e52b5c0c89 assets/farmersdelight/models/item/organ
 810e3872fd42a96f9b3b0f63ff3706e57a6d9cdf assets/farmersdelight/models/item/pink_canvas_sign.json
 5ba1c9f67fa35c404f397071208c6d6868297281 assets/farmersdelight/models/item/pink_hanging_canvas_sign.json
 ffc94c7a973136fda794828ab5f015d6f0d06553 assets/farmersdelight/models/item/potato_crate.json
+2e4db83eacf20bc99113960e1257b4120d6cd35f assets/farmersdelight/models/item/pumpkin_pie_slice.json
 74fafba2f812b545a7a9d040eb1f81555a1945c7 assets/farmersdelight/models/item/pumpkin_slice.json
 b69b0a3497b81b2046748f1339af526a8920a1f1 assets/farmersdelight/models/item/pumpkin_soup.json
 56dbbbdcb21b258b8a94c6b9c8c7efb31eb689a4 assets/farmersdelight/models/item/purple_canvas_sign.json
