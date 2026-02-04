@@ -347,7 +347,7 @@ public class ModItems
 			() -> new Item(foodItem(FoodValues.PIE_SLICE)));
 	public static final RegistryObject<Item> CHOCOLATE_PIE_SLICE = registerWithTab("chocolate_pie_slice",
 			() -> new Item(foodItem(FoodValues.PIE_SLICE)));
-	public static final RegistryObject<Item> PUMPKIN_PIE_SLICE = ITEMS.register("pumpkin_pie_slice",
+	public static final RegistryObject<Item> PUMPKIN_PIE_SLICE = registerWithTab("pumpkin_pie_slice",
 			() -> new Item(foodItem(FoodValues.PIE_SLICE)));
 	public static final RegistryObject<Item> SWEET_BERRY_COOKIE = registerWithTab("sweet_berry_cookie",
 			() -> new Item(foodItem(FoodValues.COOKIES)));
