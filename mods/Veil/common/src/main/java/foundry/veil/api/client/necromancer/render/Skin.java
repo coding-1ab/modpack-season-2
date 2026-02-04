@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import foundry.veil.api.client.necromancer.Skeleton;
 import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.client.render.VeilRenderSystem;
+import foundry.veil.api.client.render.rendertype.VeilRenderType;
 import foundry.veil.api.client.render.shader.block.DynamicShaderBlock;
 import foundry.veil.api.client.render.vertex.VertexArray;
 import foundry.veil.api.client.render.vertex.VertexArrayBuilder;
@@ -128,8 +129,25 @@ public class Skin implements NativeResource {
 
         // Draw
         this.vertexArray.bind();
-        renderType.setupRenderState();
         VeilRenderSystem.bind("NecromancerBones", boneBlock);
+
+        // TODO query uniform block size
+        renderType.setupRenderState();
+        this.render();
+        renderType.clearRenderState();
+
+        if (renderType instanceof VeilRenderType.LayeredRenderType layeredRenderType) {
+            for (RenderType layer : layeredRenderType.getLayers()) {
+                layer.setupRenderState();
+                this.render();
+                layer.clearRenderState();
+            }
+        }
+
+        VeilRenderSystem.unbind(boneBlock);
+    }
+
+    private void render() {
         ShaderInstance shader = RenderSystem.getShader();
         if (shader != null) {
             shader.setDefaultUniforms(VertexFormat.Mode.TRIANGLES, RenderSystem.getModelViewMatrix(), RenderSystem.getProjectionMatrix(), Minecraft.getInstance().getWindow());
@@ -141,15 +159,11 @@ public class Skin implements NativeResource {
             }
         }
 
-        // TODO query uniform block size
-        this.vertexArray.drawInstanced(skeletons.size());
+        this.vertexArray.drawInstanced(this.instances);
 
         if (shader != null) {
             shader.clear();
         }
-
-        VeilRenderSystem.unbind(boneBlock);
-        renderType.clearRenderState();
     }
 
     public VertexArray getVertexArray() {
