@@ -267,6 +267,7 @@
   "farmersdelight.tooltip.milk_bottle": "Clears 1 Effect",
   "farmersdelight.tooltip.hot_cocoa": "Clears 1 Harmful Effect",
   "farmersdelight.tooltip.melon_juice": "Minor Instant Health",
+  "farmersdelight.tooltip.debug_item": "Debug item - Not meant for gameplay",
 
   "farmersdelight.advancement.root": "Farmer's Delight",
   "farmersdelight.advancement.root.desc": "A world of flavor awaits you!",

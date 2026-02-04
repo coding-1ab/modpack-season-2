@@ -21,8 +21,7 @@ public class PlacePumpkinPieMixin
 	{
 		if (ctx.getItemInHand().is(Items.PUMPKIN_PIE))
 		{
-			ModItems.STRAW_BALE.get().useOn(ctx);
-			cir.setReturnValue(InteractionResult.SUCCESS);
+			cir.setReturnValue(ModItems.DEBUG_PUMPKIN_PIE.get().useOn(ctx));
 		}
 	}
 }
