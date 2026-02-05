@@ -245,7 +245,7 @@
   "effect.farmersdelight.comfort.description": "無視飢餓值，提供玩家自然回復效果。",
 
   "enchantment.farmersdelight.backstabbing": "背刺",
-  "enchantment.farmersdelight.backstabbing.desc": "從背後攻擊時的傷害增加。",
+  "enchantment.farmersdelight.backstabbing.desc": "從背後攻擊時嘅傷害增加。",
 
   "itemGroup.farmersdelight": "農夫樂事",
 
@@ -308,9 +308,9 @@
   "farmersdelight.advancement.eat_comfort_food": "飽肚暖胃！",
   "farmersdelight.advancement.eat_comfort_food.desc": "無論幾咁肚餓，碗裏面溫暖嘅食物都能持續為你提供回復效果。",
   "farmersdelight.advancement.eat_nourishing_food": "斤両十足！",
-  "farmersdelight.advancement.eat_nourishing_food.desc": "盤上的食物可以讓你喺一段時間之內都感覺唔到飢餓！",
+  "farmersdelight.advancement.eat_nourishing_food.desc": "盤上嘅食物可以讓你喺一段時間之內都感覺唔到飢餓！",
   "farmersdelight.advancement.place_feast": "大排筵席",
-  "farmersdelight.advancement.place_feast.desc": "有些餐點份量夠多，可以叫埋朋友一齊享用！",
+  "farmersdelight.advancement.place_feast.desc": "有啲餐點份量夠多，可以叫埋朋友一齊享用！",
   "farmersdelight.advancement.master_chef": "我要做廚神",
   "farmersdelight.advancement.master_chef.desc": "吃勻每道菜餚！",
 
@@ -347,13 +347,13 @@
 
   "farmersdelight.jei.info.dough": "小麥與水桶可以合成為小麥麵團。無需擔心，水唔會因此被消耗！",
   "farmersdelight.jei.info.straw": "乾燥嘅植物纖維。用刀切割雜草等植物獲得。",
-  "farmersdelight.jei.info.knife": "刀是小型的近戰武器。佢可以喺草中收集禾稈草，並保證能夠喺動物身上獲得副掉落物。",
-  "farmersdelight.jei.info.ham": "豬或野豬獸腿上的肉。你需要用比劍更輕嘅工具來切……",
+  "farmersdelight.jei.info.knife": "刀是小型嘅近戰武器。佢可以喺草中收集禾稈草，並保證能夠喺動物身上獲得副掉落物。",
+  "farmersdelight.jei.info.ham": "豬或野豬獸腿上嘅肉。你需要用比劍更輕嘅工具來切……",
   "farmersdelight.jei.info.wild_cabbages": "野生椰菜多數生長於沙灘沿岸。",
   "farmersdelight.jei.info.wild_beetroots": "野生紅菜頭多數生長於沙灘沿岸。",
   "farmersdelight.jei.info.wild_carrots": "野生紅蘿蔔多數生長於平原同森林中。",
   "farmersdelight.jei.info.wild_onions": "野生洋蔥多數生長於平原同森林中。",
-  "farmersdelight.jei.info.wild_potatoes": "野生薯仔多數生長於較寒冷的地區，例如山峰同針葉林。",
-  "farmersdelight.jei.info.wild_tomatoes": "野生蕃茄藤多數生長於較乾燥的地區，例如熱帶稀樹草原同沙漠。",
+  "farmersdelight.jei.info.wild_potatoes": "野生薯仔多數生長於較寒冷嘅地區，例如山峰同針葉林。",
+  "farmersdelight.jei.info.wild_tomatoes": "野生蕃茄藤多數生長於較乾燥嘅地區，例如熱帶稀樹草原同沙漠。",
   "farmersdelight.jei.info.wild_rice": "野生水稻多數生長於較潮濕嘅地區，例如沼澤同叢林。"
 }
