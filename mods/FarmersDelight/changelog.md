@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.10
+
+### Updates
+- The JEI widget for the Cooking Pot now has its own image file, to allow custom widget editing;
+  - The UI icons are still located in the main Cooking Pot UI file;
+
 ## 1.2.9
 
 ### Updates
