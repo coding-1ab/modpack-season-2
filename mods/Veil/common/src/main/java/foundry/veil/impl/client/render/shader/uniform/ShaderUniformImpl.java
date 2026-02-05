@@ -51,20 +51,18 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
     }
 
     public void set(@Nullable ShaderUniformCache.Uniform uniform) {
-        if (uniform != null) {
-            this.type = Type.byId(uniform.type());
-            this.length = uniform.arrayLength();
-            if (this.value == null || this.value.capacity() != this.type.getBytes() * this.length) {
-                this.value = MemoryUtil.memRealloc(this.value, this.type.getBytes() * this.length);
-            }
-            this.location = uniform.location();
-            this.invalidateCache();
-        } else {
-            this.type = null;
-            this.length = 0;
+        if (uniform == null) {
             this.free();
-            this.location = -1;
+            return;
         }
+
+        this.type = Type.byId(uniform.type());
+        this.length = uniform.arrayLength();
+        if (this.value == null || this.value.capacity() != this.type.getBytes() * this.length) {
+            this.value = MemoryUtil.memRealloc(this.value, this.type.getBytes() * this.length);
+        }
+        this.location = uniform.location();
+        this.invalidateCache();
     }
 
     @Override
@@ -656,6 +654,9 @@ public class ShaderUniformImpl implements ShaderUniform, NativeResource {
 
     @Override
     public void free() {
+        this.type = null;
+        this.length = 0;
+        this.location = -1;
         if (this.value != null) {
             MemoryUtil.memFree(this.value);
             this.value = null;

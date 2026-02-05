@@ -172,17 +172,16 @@ public class ShaderProgramImpl implements ShaderProgram {
 
             String name = entry.getKey();
             ShaderUniformImpl uniform = old.remove(name);
-            if (uniform != null) {
-                uniform.set(data);
-                this.uniforms.put(name, uniform);
-            } else {
-                this.uniforms.put(name, new ShaderUniformImpl(this::getProgram, name));
+            if (uniform == null) {
+                uniform = new ShaderUniformImpl(this::getProgram, name);
             }
+            uniform.set(data);
+            this.uniforms.put(name, uniform);
         }
 
         // Invalidate old uniforms
         for (ShaderUniformImpl uniform : old.values()) {
-            uniform.set(null);
+            uniform.free();
         }
     }
 
@@ -586,22 +585,23 @@ public class ShaderProgramImpl implements ShaderProgram {
                 }
                 """.getBytes(StandardCharsets.UTF_8);
 
+        @SuppressWarnings("DataFlowIssue")
         public DummyShaderResource() {
             super(null, () -> new ByteArrayInputStream(DUMMY_SHADER));
         }
 
         @Override
-        public PackResources source() {
+        public @NotNull PackResources source() {
             throw new UnsupportedOperationException("No pack source");
         }
 
         @Override
-        public String sourcePackId() {
+        public @NotNull String sourcePackId() {
             return "dummy";
         }
 
         @Override
-        public Optional<KnownPack> knownPackInfo() {
+        public @NotNull Optional<KnownPack> knownPackInfo() {
             return Optional.empty();
         }
     }
@@ -648,8 +648,8 @@ public class ShaderProgramImpl implements ShaderProgram {
         }
 
         @Override
-        public @Nullable UniformWrapper getUniform(String name) {
-            if (this.program != null && this.program.getUniformLocation(name) == -1) {
+        public @Nullable UniformWrapper getUniform(@NotNull String name) {
+            if (this.program != null && !this.program.hasUniform(name)) {
                 return null;
             }
             return (UniformWrapper) this.uniformMap.computeIfAbsent(name, unused -> new UniformWrapper(name, () -> Objects.requireNonNull(this.program).getUniform(name)));
@@ -674,7 +674,7 @@ public class ShaderProgramImpl implements ShaderProgram {
         }
 
         @Override
-        public VertexFormat getVertexFormat() {
+        public @NotNull VertexFormat getVertexFormat() {
             VertexFormat format = this.program.getFormat();
             return format != null ? format : super.getVertexFormat();
         }
@@ -700,10 +700,11 @@ public class ShaderProgramImpl implements ShaderProgram {
 
         private final Supplier<ShaderUniform> uniform;
 
+        @SuppressWarnings("DataFlowIssue")
         public UniformWrapper(String name, Supplier<ShaderUniform> uniform) {
             super(name, UT_INT1, 0, null);
             super.close(); // Free constructor allocated resources
-            this.uniform = Suppliers.memoize(uniform::get);
+            this.uniform = uniform;
         }
 
         private ShaderUniformAccess getUniform() {
@@ -781,7 +782,7 @@ public class ShaderProgramImpl implements ShaderProgram {
         }
 
         @Override
-        public void set(float[] values) {
+        public void set(float @NotNull [] values) {
             this.getUniform().setVector(values);
         }
 
@@ -939,7 +940,7 @@ public class ShaderProgramImpl implements ShaderProgram {
         }
 
         @Override
-        public void attachToShader(Shader shader) {
+        public void attachToShader(@NotNull Shader shader) {
         }
 
         @Override
@@ -947,7 +948,7 @@ public class ShaderProgramImpl implements ShaderProgram {
         }
 
         @Override
-        public String getName() {
+        public @NotNull String getName() {
             return getName(this.type, this.program);
         }
 

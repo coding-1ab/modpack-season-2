@@ -139,6 +139,10 @@ public final class CompositePostPipeline implements PostPipeline {
 
     @Override
     public boolean hasUniform(CharSequence name) {
+        ShaderUniformAccess uniform = this.uniforms.get(name.toString());
+        if (uniform != null && uniform.isValid()) {
+            return true;
+        }
         for (PostPipeline pipeline : this.stages) {
             if (pipeline.hasUniform(name)) {
                 return true;

@@ -111,7 +111,13 @@ public class ShaderTextureCache {
         }
 
         for (Object2IntMap.Entry<CharSequence> entry : this.boundSamplers.object2IntEntrySet()) {
-            this.program.getUniformSafe(entry.getKey()).setInt(entry.getIntValue());
+            ShaderUniform uniform = this.program.getUniform(entry.getKey());
+            if (uniform == null) {
+                Veil.LOGGER.warn("Tried to bind sampler to unknown uniform '{}' for shader: {}", entry.getKey(), this.program.getName());
+                continue;
+            }
+
+            uniform.setInt(entry.getIntValue());
         }
 
         if (samplerStart + count >= maxSampler) {
