@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.rendertype.VeilRenderType;
+import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.impl.client.render.vertex.ARBVertexArray;
 import foundry.veil.impl.client.render.vertex.DSAVertexArray;
 import foundry.veil.impl.client.render.vertex.LegacyVertexArray;
@@ -33,9 +34,12 @@ import static org.lwjgl.opengl.ARBDirectStateAccess.glNamedBufferData;
 import static org.lwjgl.opengl.ARBMultiDrawIndirect.glMultiDrawElementsIndirect;
 import static org.lwjgl.opengl.GL11C.*;
 import static org.lwjgl.opengl.GL15C.*;
+import static org.lwjgl.opengl.GL20C.GL_CURRENT_PROGRAM;
 import static org.lwjgl.opengl.GL30C.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
+import static org.lwjgl.opengl.GL31C.glDrawArraysInstanced;
 import static org.lwjgl.opengl.GL31C.glDrawElementsInstanced;
+import static org.lwjgl.opengl.GL40C.GL_PATCHES;
 
 /**
  * More generic alternative to {@link VertexBuffer} that uses the latest available OpenGL version.
@@ -330,6 +334,19 @@ public abstract class VertexArray implements NativeResource {
      * {@link #bind()} must be called before this.
      */
     public void draw() {
+        ShaderProgram shader = VeilRenderSystem.getShader();
+        if (shader != null && shader.hasTesselation() && shader.getProgram() == glGetInteger(GL_CURRENT_PROGRAM)) {
+            if (this.drawMode == VertexFormat.Mode.QUADS) {
+                // Quads are internally switched to triangles with indices in vanilla mc, so just use draw arrays
+                // This will be wrong if custom indices are used! (transparent objects)
+                glDrawArrays(GL_PATCHES, 0, this.indexCount * 4 / 6);
+                return;
+            }
+
+            glDrawElements(GL_PATCHES, this.indexCount, this.indexType.getGlType(), 0L);
+            return;
+        }
+
         glDrawElements(this.drawMode.asGLMode, this.indexCount, this.indexType.getGlType(), 0L);
     }
 
@@ -341,6 +358,19 @@ public abstract class VertexArray implements NativeResource {
      * @param instances The number of instances to draw
      */
     public void drawInstanced(int instances) {
+        ShaderProgram shader = VeilRenderSystem.getShader();
+        if (shader != null && shader.hasTesselation() && shader.getProgram() == glGetInteger(GL_CURRENT_PROGRAM)) {
+            if (this.drawMode == VertexFormat.Mode.QUADS) {
+                // Quads are internally switched to triangles with indices in vanilla mc, so just use draw arrays
+                // This will be wrong if custom indices are used! (transparent objects)
+                glDrawArraysInstanced(GL_PATCHES, 0, this.indexCount * 4 / 6, instances);
+                return;
+            }
+
+            glDrawElementsInstanced(GL_PATCHES, this.indexCount, this.indexType.getGlType(), 0L, instances);
+            return;
+        }
+
         glDrawElementsInstanced(this.drawMode.asGLMode, this.indexCount, this.indexType.getGlType(), 0L, instances);
     }
 
