@@ -9,6 +9,16 @@
 ### Fixes
 - Fixed `foodEffectTooltip` config not affecting the tooltip of vanilla foods with FD effect overrides;
 
+### Translations
+- Added:
+  - kk_kz (thanks, ninsent!);
+  - zh_hk (thanks, Duppy-Conqueror!);
+- Updated:
+  - hu_hu (thanks, bayi!);
+  - ja_jp (thanks, Abbage230!);
+  - lzh (thanks, BeiDou114514!);
+  - ru_ru (thanks, pansangg!);
+
 ## 1.2.9
 
 ### Updates
