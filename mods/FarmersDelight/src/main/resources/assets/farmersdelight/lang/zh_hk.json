@@ -270,11 +270,11 @@
   "farmersdelight.advancement.root.desc": "更有風味的世界正等著你！",
 
   "farmersdelight.advancement.craft_knife": "狩獵採集",
-  "farmersdelight.advancement.craft_knife.desc": "製作刀從動植物上獲取更多資源。",
+  "farmersdelight.advancement.craft_knife.desc": "整一把刀從動植物上獲取更多資源。",
   "farmersdelight.advancement.harvest_straw": "緊握救命草",
   "farmersdelight.advancement.harvest_straw.desc": "破壞草、小麥或水稻來收集禾稈草。",
   "farmersdelight.advancement.place_organic_compost": "高級堆肥",
-  "farmersdelight.advancement.place_organic_compost.desc": "放置一啲有機堆肥。與陽光、水和蘑菇接觸，堆肥效果更佳！",
+  "farmersdelight.advancement.place_organic_compost.desc": "放置一啲有機堆肥。與陽光、水和蘑菇接觸嘅話，堆肥效果更佳！",
   "farmersdelight.advancement.get_rich_soil": "植物養分",
   "farmersdelight.advancement.get_rich_soil.desc": "有機堆肥慢慢分解成沃土，使農地更為豐饒！",
   "farmersdelight.advancement.get_ham": "荒野屠夫",
@@ -285,7 +285,7 @@
   "farmersdelight.advancement.obtain_netherite_knife.desc": "用地獄合金為你把刀升級！唔係就快啲離開廚房。",
 
   "farmersdelight.advancement.get_fd_seed": "野生作物",
-  "farmersdelight.advancement.get_fd_seed.desc": "野外有 4 種新的植物，它們橫跨各種氣候……或者能在某些地方的箱子中找到。",
+  "farmersdelight.advancement.get_fd_seed.desc": "野外有 4 種新的植物，佢哋橫跨各種氣候……或者埋藏喺某些地方嘅箱入面。",
   "farmersdelight.advancement.plant_rice": "浸濕對腳",
   "farmersdelight.advancement.plant_rice.desc": "喺淺水坑中種植水稻",
   "farmersdelight.advancement.harvest_ropelogged_tomato": "蕃茄「高」",
