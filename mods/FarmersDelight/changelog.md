@@ -6,6 +6,9 @@
 - The JEI widget for the Cooking Pot now has its own image file, to allow custom widget editing;
   - The UI icons are still located in the main Cooking Pot UI file;
 
+### Fixes
+- Fixed `foodEffectTooltip` config not affecting the tooltip of vanilla foods with FD effect overrides;
+
 ## 1.2.9
 
 ### Updates
