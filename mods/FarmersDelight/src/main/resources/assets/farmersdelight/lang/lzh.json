@@ -208,8 +208,8 @@
   "effect.farmersdelight.nourishment": "滋補",
   "effect.farmersdelight.comfort": "養怡",
 
-  "effect.farmersdelight.nourishment.0.desc": "非假以復生而弗飢君也。",
-  "effect.farmersdelight.comfort.0.desc": "免君於飢、緩、虛也。",
+  "effect.farmersdelight.nourishment.description": "非假以復生而弗飢君也。",
+  "effect.farmersdelight.comfort.description": "免君於飢、緩、虛也。",
 
   "enchantment.farmersdelight.backstabbing": "腹背攻敵",
   "enchantment.farmersdelight.backstabbing.desc": "增后入之傷。",
