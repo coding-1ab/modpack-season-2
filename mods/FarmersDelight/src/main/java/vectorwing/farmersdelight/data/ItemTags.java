@@ -204,6 +204,7 @@ public class ItemTags extends ItemTagsProvider
 		tag(Tags.Items.DRINKS_MILK).add(ModItems.MILK_BOTTLE.get()).addTag(CommonTags.FOODS_MILK);
 		tag(Tags.Items.FOODS_VEGETABLE).add(ModItems.ONION.get(), ModItems.TOMATO.get());
 		tag(Tags.Items.FOODS_COOKIE).add(ModItems.HONEY_COOKIE.get(), ModItems.SWEET_BERRY_COOKIE.get());
+		tag(Tags.Items.FOODS_DOUGH).addTag(CommonTags.FOODS_DOUGH_WHEAT);
 		tag(Tags.Items.FOODS_RAW_MEAT).addTags(CommonTags.FOODS_RAW_CHICKEN, CommonTags.FOODS_RAW_PORK, CommonTags.FOODS_RAW_BEEF, CommonTags.FOODS_RAW_MUTTON);
 		tag(Tags.Items.FOODS_RAW_FISH).addTags(CommonTags.FOODS_RAW_COD, CommonTags.FOODS_RAW_SALMON);
 		tag(Tags.Items.FOODS_COOKED_MEAT).addTags(CommonTags.FOODS_COOKED_CHICKEN, CommonTags.FOODS_COOKED_PORK, CommonTags.FOODS_COOKED_BEEF, CommonTags.FOODS_COOKED_MUTTON);
@@ -247,7 +248,7 @@ public class ItemTags extends ItemTagsProvider
 		tag(CommonTags.FOODS_TOMATO).add(ModItems.TOMATO.get());
 		tag(CommonTags.FOODS_ONION).add(ModItems.ONION.get());
 
-		tag(CommonTags.FOODS_DOUGH).add(ModItems.WHEAT_DOUGH.get());
+		tag(CommonTags.FOODS_DOUGH_WHEAT).add(ModItems.WHEAT_DOUGH.get());
 		tag(CommonTags.CROPS_GRAIN).add(Items.WHEAT, ModItems.RICE.get());
 		tag(CommonTags.FOODS_PASTA).add(ModItems.RAW_PASTA.get());
 		tag(CommonTags.FOODS_LEAFY_GREEN).addTag(CommonTags.FOODS_CABBAGE);

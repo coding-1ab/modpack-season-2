@@ -1,4 +1,4 @@
-// 1.21.1	2026-02-05T16:39:46.0596448	Tags for minecraft:item mod id farmersdelight
+// 1.21.1	2026-02-05T21:51:58.4597873	Tags for minecraft:item mod id farmersdelight
 65eba9e0353834055ff822059bd7e1784fe218ad data/createaddition/tags/item/plants.json
 f55c336a7c0c249fc90b76c979cfa5d5f6a277bf data/createaddition/tags/item/plant_foods.json
 578c1c9a03e76fe2831f34ee8a74b0d5396e7c0e data/create/tags/item/upright_on_belt.json
@@ -22,7 +22,8 @@ aed89f4d52bf4812e716038b56f18584ee06db82 data/c/tags/item/foods/cooked_meat.json
 57b96a97b0785ba40705a7fa69474ceda4e8fd7d data/c/tags/item/foods/cooked_pork.json
 9abb7a585095d238db90289d9239fc7cf980070f data/c/tags/item/foods/cooked_salmon.json
 139eb819e6cdc4f3a30b90708f4b0fab277fb3a0 data/c/tags/item/foods/cookie.json
-009e3ca74df76edfe88b0b1f2a043b3bc593957a data/c/tags/item/foods/dough.json
+e2f69da8312f6b119d15ab810d2f7bc859f85e12 data/c/tags/item/foods/dough.json
+009e3ca74df76edfe88b0b1f2a043b3bc593957a data/c/tags/item/foods/dough/wheat.json
 5ccd79d73caa229f776ae0a83842851ff7935ae1 data/c/tags/item/foods/edible_when_placed.json
 8333de3a0f3744e31f72b90f2f3b770138452af9 data/c/tags/item/foods/food_poisoning.json
 475e2e580d3e2d9e7d241515a791d6925591ca65 data/c/tags/item/foods/leafy_green.json

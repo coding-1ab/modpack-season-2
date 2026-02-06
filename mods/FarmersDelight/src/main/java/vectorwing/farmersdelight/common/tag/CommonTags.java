@@ -13,6 +13,11 @@ import net.minecraft.world.level.block.Block;
  */
 public class CommonTags
 {
+	// The following tags are marked for removal in the next minor release.
+	// They were kept temporarily, for backwards compatibility.
+	@Deprecated
+	public static final TagKey<Item> FOODS_MILK = commonItemTag("foods/milk");
+
 	// Blocks that are efficiently mined with a Knife.
 	public static final TagKey<Block> MINEABLE_WITH_KNIFE = commonBlockTag("mineable/knife");
 
@@ -40,10 +45,9 @@ public class CommonTags
 
 	public static final TagKey<Item> FOODS_LEAFY_GREEN = commonItemTag("foods/leafy_green");
 	public static final TagKey<Item> FOODS_DOUGH = commonItemTag("foods/dough");
+	public static final TagKey<Item> FOODS_DOUGH_WHEAT = commonItemTag("foods/dough/wheat");
 	public static final TagKey<Item> FOODS_PASTA = commonItemTag("foods/pasta");
 
-	@Deprecated // Will be removed in version 1.3, in favor of the "c:drinks/milk" tag
-	public static final TagKey<Item> FOODS_MILK = commonItemTag("foods/milk");
 
 	public static final TagKey<Item> FOODS_RAW_BACON = commonItemTag("foods/raw_bacon");
 	public static final TagKey<Item> FOODS_RAW_BEEF = commonItemTag("foods/raw_beef");

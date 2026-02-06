@@ -2,6 +2,14 @@
 
 ## 1.2.10
 
+### Updates
+- Tag changes:
+  - Added `c:foods/dough/wheat` to accomodate Wheat Dough within `c:foods/dough`, as per NeoForge specs;
+    - FD recipes still use `c:foods/dough`, as any type of grain is allowed;
+  - `c:foods/milk` is being sunsetted in favor of the official `c:drinks/milk` tag;
+    - All FD recipes now use `c:drinks/milk`;
+    - `c:foods/milk` still exists for backwards compatibility, but will be removed in the next minor release.
+
 ### Fixes
 - (1.21+) Create Integration - Fixed Chocolate Pie spouting recipe to use correct fluid tag
 
