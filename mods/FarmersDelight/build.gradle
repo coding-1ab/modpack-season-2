@@ -111,6 +111,7 @@ repositories {
 }
 
 sourceSets.main.resources {
+    exclude(".cache")
     srcDirs += 'src/generated/resources'
 }
 
@@ -137,10 +138,6 @@ dependencies {
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-}
-
-processResources {
-    exclude ".cache"
 }
 
 jar {
