@@ -9,6 +9,7 @@
 
 ### Fixes
 - Fixed `foodEffectTooltip` config not affecting the tooltip of vanilla foods with FD effect overrides;
+- Fixed Cutting Board playing sounds at the zero corner, instead of at the center of itself;
 - Fixed non-contained meals (example: Dumplings) being deleted if sitting on the meal slot, and using the same meal against the pot to serve it (thanks, VBlackCAT!);
 
 ### Translations
