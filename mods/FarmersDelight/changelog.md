@@ -20,6 +20,28 @@
 - FD's recipes now call for `assemble()` in most places, allowing extenders of most workstations to use the inventory when creating their result (thanks, ColonelPanic!);
 - Cutting recipes now accept arrays of ingredients in the `tool` field (thanks, BobVarioa!).
 
+## 1.2.10
+
+### Updates
+- The JEI widget for the Cooking Pot now has its own image file, to allow custom widget editing;
+  - The UI icons are still located in the main Cooking Pot UI file;
+- Villagers can now consume FD crops to become willing to breed (thanks, isErenG!);
+
+### Fixes
+- Fixed `foodEffectTooltip` config not affecting the tooltip of vanilla foods with FD effect overrides;
+- Fixed Cutting Board playing sounds at the zero corner, instead of at the center of itself;
+- Fixed non-contained meals (example: Dumplings) being deleted if sitting on the meal slot, and using the same meal against the pot to serve it (thanks, VBlackCAT!);
+
+### Translations
+- Added:
+  - kk_kz (thanks, ninsent!);
+  - zh_hk (thanks, Duppy-Conqueror!);
+- Updated:
+  - hu_hu (thanks, bayi!);
+  - ja_jp (thanks, Abbage230!);
+  - lzh (thanks, BeiDou114514!);
+  - ru_ru (thanks, pansangg!);
+
 ## 1.2.9
 
 ### Updates

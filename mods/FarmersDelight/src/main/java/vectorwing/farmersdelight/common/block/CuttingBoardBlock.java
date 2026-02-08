@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -67,7 +68,8 @@ public class CuttingBoardBlock extends BaseEntityBlock implements SimpleWaterlog
 			if (!player.isCreative()) {
 				player.getInventory().add(removedStack);
 			}
-			level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), ModSounds.BLOCK_CUTTING_BOARD_REMOVE.get(), SoundSource.BLOCKS, 0.25F, 0.5F);
+			Vec3 centerPos = pos.getCenter();
+			level.playSound(null, centerPos.x(), centerPos.y(), centerPos.z(), ModSounds.BLOCK_CUTTING_BOARD_REMOVE.get(), SoundSource.BLOCKS, 0.25F, 0.5F);
 			return InteractionResult.SUCCESS;
 		}
 		if (cuttingBoard.canAddItem(mainHandStack)) {
@@ -78,7 +80,8 @@ public class CuttingBoardBlock extends BaseEntityBlock implements SimpleWaterlog
 			if (!player.isCreative()) {
 				player.setItemSlot(EquipmentSlot.MAINHAND, remainderStack);
 			}
-			level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), ModSounds.BLOCK_CUTTING_BOARD_PLACE.get(), SoundSource.BLOCKS, 1.0F, 0.8F);
+			Vec3 centerPos = pos.getCenter();
+			level.playSound(null, centerPos.x(), centerPos.y(), centerPos.z(), ModSounds.BLOCK_CUTTING_BOARD_PLACE.get(), SoundSource.BLOCKS, 1.0F, 0.8F);
 			return InteractionResult.SUCCESS;
 		} else {
 			if (cuttingBoard.processStoredItemUsingTool(mainHandStack, player)) {
@@ -211,7 +214,8 @@ public class CuttingBoardBlock extends BaseEntityBlock implements SimpleWaterlog
 				if (!player.isCreative()) {
 					player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
 				}
-				level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), ModSounds.BLOCK_CUTTING_BOARD_CARVE.get(), SoundSource.BLOCKS, 1.0F, 0.8F);
+				Vec3 centerPos = pos.getCenter();
+				level.playSound(null, centerPos.x(), centerPos.y(), centerPos.z(), ModSounds.BLOCK_CUTTING_BOARD_CARVE.get(), SoundSource.BLOCKS, 1.0F, 0.8F);
 				event.setCanceled(true);
 				event.setCancellationResult(InteractionResult.SUCCESS);
 			}
