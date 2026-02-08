@@ -8,8 +8,8 @@
 - Villagers can now consume FD crops to become willing to breed (thanks, isErenG!);
 - (1.21+) Tag changes:
   - New mod tags:
-    - `farmersdelight:snacks`: Foods made of multiple ingredients, but which don't need containers;
-    - `farmersdelight:sweets`: Foods made of multiple ingredients, and are sweet, such as desserts;
+    - `farmersdelight:snacks`: Non-sweet foods made of multiple ingredients, which don't need containers;
+    - `farmersdelight:sweets`: Sweet foods made of multiple ingredients, such as desserts;
   - Properly tagged all FD foods inside `c:foods`, as well as adding them to relevant sub-tags:
     - Wheat Dough, Raw Pasta and Nether Salad were added to `c:foods/food_poisoning`;
     - All pie slices were added to `c:foods/pie`. The full pies already exist in `c:foods/edible_when_placed`;
