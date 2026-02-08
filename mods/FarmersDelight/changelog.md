@@ -7,6 +7,12 @@
   - The UI icons are still located in the main Cooking Pot UI file;
 - Villagers can now consume FD crops to become willing to breed (thanks, isErenG!);
 - (1.21+) Tag changes:
+  - New mod tags:
+    - `farmersdelight:snacks`: Foods made of multiple ingredients, but which don't need containers;
+    - `farmersdelight:sweets`: Foods made of multiple ingredients, and are sweet, such as desserts;
+  - Properly tagged all FD foods inside `c:foods`, as well as adding them to relevant sub-tags:
+    - Wheat Dough, Raw Pasta and Nether Salad were added to `c:foods/food_poisoning`;
+    - All pie slices were added to `c:foods/pie`. The full pies already exist in `c:foods/edible_when_placed`;
   - Added `c:foods/dough/wheat` to accomodate Wheat Dough within `c:foods/dough`, as per NeoForge specs;
     - FD recipes still use `c:foods/dough`, as any type of grain is allowed;
   - `c:foods/milk` is being sunsetted in favor of the official `c:drinks/milk` tag;
@@ -17,7 +23,7 @@
 - Fixed `foodEffectTooltip` config not affecting the tooltip of vanilla foods with FD effect overrides;
 - Fixed Cutting Board playing sounds at the zero corner, instead of at the center of itself;
 - Fixed non-contained meals (example: Dumplings) being deleted if sitting on the meal slot, and using the same meal against the pot to serve it (thanks, VBlackCAT!);
-- (1.21+) Create Integration - Fixed Chocolate Pie spouting recipe to use correct fluid tag
+- (1.21+) Create Integration - Fixed Chocolate Pie spouting recipe to use correct fluid tag;
 
 ### Translations
 - Added:

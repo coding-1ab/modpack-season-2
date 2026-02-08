@@ -48,7 +48,6 @@ public class CommonTags
 	public static final TagKey<Item> FOODS_DOUGH_WHEAT = commonItemTag("foods/dough/wheat");
 	public static final TagKey<Item> FOODS_PASTA = commonItemTag("foods/pasta");
 
-
 	public static final TagKey<Item> FOODS_RAW_BACON = commonItemTag("foods/raw_bacon");
 	public static final TagKey<Item> FOODS_RAW_BEEF = commonItemTag("foods/raw_beef");
 	public static final TagKey<Item> FOODS_RAW_CHICKEN = commonItemTag("foods/raw_chicken");

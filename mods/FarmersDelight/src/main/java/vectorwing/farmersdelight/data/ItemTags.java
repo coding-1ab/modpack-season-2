@@ -13,8 +13,8 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.registry.ModItems;
-import vectorwing.farmersdelight.common.tag.CompatibilityTags;
 import vectorwing.farmersdelight.common.tag.CommonTags;
+import vectorwing.farmersdelight.common.tag.CompatibilityTags;
 import vectorwing.farmersdelight.common.tag.ModTags;
 
 import javax.annotation.Nullable;
@@ -87,6 +87,21 @@ public class ItemTags extends ItemTagsProvider
 	}
 
 	private void registerModTags() {
+		tag(ModTags.SNACKS).add(
+				ModItems.BARBECUE_STICK.get(),
+				ModItems.EGG_SANDWICH.get(),
+				ModItems.CHICKEN_SANDWICH.get(),
+				ModItems.HAMBURGER.get(),
+				ModItems.BACON_SANDWICH.get(),
+				ModItems.MUTTON_WRAP.get(),
+				ModItems.DUMPLINGS.get(),
+				ModItems.STUFFED_POTATO.get(),
+				ModItems.CABBAGE_ROLLS.get(),
+				ModItems.SALMON_ROLL.get(),
+				ModItems.COD_ROLL.get(),
+				ModItems.KELP_ROLL.get(),
+				ModItems.KELP_ROLL_SLICE.get()
+		);
 		tag(ModTags.MEALS).add(
 				ModItems.MIXED_SALAD.get(),
 				ModItems.COOKED_RICE.get(),
@@ -119,6 +134,17 @@ public class ItemTags extends ItemTagsProvider
 				ModItems.APPLE_CIDER.get(),
 				ModItems.MELON_JUICE.get(),
 				ModItems.HOT_COCOA.get()
+		);
+		tag(ModTags.SWEETS).add(
+				ModItems.CAKE_SLICE.get(),
+				ModItems.APPLE_PIE_SLICE.get(),
+				ModItems.SWEET_BERRY_CHEESECAKE_SLICE.get(),
+				ModItems.CHOCOLATE_PIE_SLICE.get(),
+				ModItems.SWEET_BERRY_COOKIE.get(),
+				ModItems.HONEY_COOKIE.get(),
+				ModItems.MELON_POPSICLE.get(),
+				ModItems.GLOW_BERRY_CUSTARD.get(),
+				ModItems.FRUIT_SALAD.get()
 		);
 		tag(ModTags.FEASTS).add(
 				ModItems.ROAST_CHICKEN_BLOCK.get(),
@@ -194,7 +220,18 @@ public class ItemTags extends ItemTagsProvider
 		// Add our custom tags to "common" tag groups
 		tag(Tags.Items.CROPS)
 				.addTag(CommonTags.CROPS_GRAIN);
+		tag(Tags.Items.DRINKS)
+				.addTag(ModTags.DRINKS);
 		tag(Tags.Items.FOODS)
+				.add(ModItems.TOMATO_SAUCE.get())
+				.add(ModItems.PIE_CRUST.get())
+				.add(ModItems.PUMPKIN_SLICE.get())
+				.add(ModItems.HAM.get())
+				.add(ModItems.SMOKED_HAM.get())
+				.add(ModItems.DOG_FOOD.get())
+				.addTag(ModTags.SNACKS)
+				.addTag(ModTags.MEALS)
+				.addTag(ModTags.SWEETS)
 				.addTag(CommonTags.FOODS_LEAFY_GREEN)
 				.addTag(CommonTags.FOODS_DOUGH)
 				.addTag(CommonTags.FOODS_PASTA)
@@ -202,6 +239,7 @@ public class ItemTags extends ItemTagsProvider
 
 		// TODO: FOODS_MILK will be deprecated in 1.3, but is used here for now to not break add-on compat.
 		tag(Tags.Items.DRINKS_MILK).add(ModItems.MILK_BOTTLE.get()).addTag(CommonTags.FOODS_MILK);
+
 		tag(Tags.Items.FOODS_VEGETABLE).add(ModItems.ONION.get(), ModItems.TOMATO.get());
 		tag(Tags.Items.FOODS_COOKIE).add(ModItems.HONEY_COOKIE.get(), ModItems.SWEET_BERRY_COOKIE.get());
 		tag(Tags.Items.FOODS_DOUGH).addTag(CommonTags.FOODS_DOUGH_WHEAT);
@@ -209,7 +247,12 @@ public class ItemTags extends ItemTagsProvider
 		tag(Tags.Items.FOODS_RAW_FISH).addTags(CommonTags.FOODS_RAW_COD, CommonTags.FOODS_RAW_SALMON);
 		tag(Tags.Items.FOODS_COOKED_MEAT).addTags(CommonTags.FOODS_COOKED_CHICKEN, CommonTags.FOODS_COOKED_PORK, CommonTags.FOODS_COOKED_BEEF, CommonTags.FOODS_COOKED_MUTTON);
 		tag(Tags.Items.FOODS_COOKED_FISH).addTags(CommonTags.FOODS_COOKED_COD, CommonTags.FOODS_COOKED_SALMON);
-		tag(Tags.Items.FOODS_FOOD_POISONING).add(ModItems.CHICKEN_CUTS.get());
+		tag(Tags.Items.FOODS_FOOD_POISONING).add(
+				ModItems.WHEAT_DOUGH.get(),
+				ModItems.RAW_PASTA.get(),
+				ModItems.CHICKEN_CUTS.get(),
+				ModItems.NETHER_SALAD.get()
+		);
 		tag(Tags.Items.FOODS_EDIBLE_WHEN_PLACED)
 				.add(ModItems.APPLE_PIE.get())
 				.add(ModItems.SWEET_BERRY_CHEESECAKE.get())
@@ -228,11 +271,25 @@ public class ItemTags extends ItemTagsProvider
 				.add(ModItems.PUMPKIN_SOUP.get())
 				.add(ModItems.BAKED_COD_STEW.get())
 				.add(ModItems.NOODLE_SOUP.get());
+		tag(Tags.Items.FOODS_PIE)
+				.add(ModItems.APPLE_PIE_SLICE.get())
+				.add(ModItems.SWEET_BERRY_CHEESECAKE_SLICE.get())
+				.add(ModItems.CHOCOLATE_PIE_SLICE.get());
 
 		tag(Tags.Items.TOOLS).addTag(CommonTags.TOOLS_KNIFE);
 		tag(Tags.Items.SEEDS).add(ModItems.CABBAGE_SEEDS.get(), ModItems.RICE.get(), ModItems.TOMATO_SEEDS.get());
 		tag(Tags.Items.CROPS).addTags(CommonTags.CROPS_CABBAGE, CommonTags.CROPS_ONION, CommonTags.CROPS_RICE, CommonTags.CROPS_TOMATO);
-		tag(Tags.Items.STORAGE_BLOCKS).addTags(CommonTags.STORAGE_BLOCKS_ITEM_CARROT, CommonTags.STORAGE_BLOCKS_ITEM_POTATO, CommonTags.STORAGE_BLOCKS_ITEM_BEETROOT, CommonTags.STORAGE_BLOCKS_ITEM_CABBAGE, CommonTags.STORAGE_BLOCKS_ITEM_TOMATO, CommonTags.STORAGE_BLOCKS_ITEM_ONION, CommonTags.STORAGE_BLOCKS_ITEM_RICE, CommonTags.STORAGE_BLOCKS_ITEM_RICE_PANICLE, CommonTags.STORAGE_BLOCKS_ITEM_STRAW);
+		tag(Tags.Items.STORAGE_BLOCKS).addTags(
+				CommonTags.STORAGE_BLOCKS_ITEM_CARROT,
+				CommonTags.STORAGE_BLOCKS_ITEM_POTATO,
+				CommonTags.STORAGE_BLOCKS_ITEM_BEETROOT,
+				CommonTags.STORAGE_BLOCKS_ITEM_CABBAGE,
+				CommonTags.STORAGE_BLOCKS_ITEM_TOMATO,
+				CommonTags.STORAGE_BLOCKS_ITEM_ONION,
+				CommonTags.STORAGE_BLOCKS_ITEM_RICE,
+				CommonTags.STORAGE_BLOCKS_ITEM_RICE_PANICLE,
+				CommonTags.STORAGE_BLOCKS_ITEM_STRAW
+		);
 	}
 
 	public void registerCommonTags() {
