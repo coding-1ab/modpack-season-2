@@ -53,7 +53,7 @@ void main() {
     ivec2 UV2 = ivec2(PackedLight & 15u, (PackedLight >> 4u) & 15u);
     ivec2 UV1 = ivec2(PackedOverlay & 15u, (PackedOverlay >> 4u) & 15u);
 
-    // #veil:light_color;
+    // #veil:light_color
     lightMapColor = texelFetch(Sampler2, UV2, 0);
 
     overlayColor = texelFetch(Sampler1, UV1, 0);
