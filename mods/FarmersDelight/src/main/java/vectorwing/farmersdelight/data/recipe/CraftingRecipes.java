@@ -33,7 +33,8 @@ public class CraftingRecipes
 		recipesFoodstuffs(consumer);
 		recipesFoodBlocks(consumer);
 		recipesCraftedMeals(consumer);
-		SpecialRecipeBuilder.special(ModRecipeSerializers.FOOD_SERVING.get()).save(consumer, "food_serving");
+		SpecialRecipeBuilder.special(ModRecipeSerializers.FOOD_SERVING.get()).save(consumer, FarmersDelight.MODID + ":food_serving");
+		SpecialRecipeBuilder.special(ModRecipeSerializers.DOUGH.get()).save(consumer, FarmersDelight.MODID + ":wheat_dough_from_water");
 	}
 
 	public static void canvasSignDyeing(Consumer<FinishedRecipe> consumer, ItemLike canvasSign, ItemLike hangingCanvasSign, TagKey<Item> dyeTag) {
@@ -195,7 +196,7 @@ public class CraftingRecipes
 				.define('b', Items.BRICK)
 				.define('i', Tags.Items.INGOTS_IRON)
 				.define('S', Items.WOODEN_SHOVEL)
-				.define('W', Items.WATER_BUCKET)
+				.define('W', ForgeTags.BUCKETS_WATER)
 				.unlockedBy("has_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(Items.IRON_INGOT))
 				.save(consumer);
 		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.BASKET.get())
@@ -563,21 +564,13 @@ public class CraftingRecipes
 				.unlockedBy("has_melon_slice", InventoryChangeTrigger.TriggerInstance.hasItems(Items.MELON_SLICE))
 				.save(consumer);
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.WHEAT_DOUGH.get(), 3)
-				.requires(Items.WATER_BUCKET)
 				.requires(Items.WHEAT)
 				.requires(Items.WHEAT)
 				.requires(Items.WHEAT)
+				.requires(Tags.Items.EGGS)
+				.group("fd_dough")
 				.unlockedBy("has_wheat", InventoryChangeTrigger.TriggerInstance.hasItems(Items.WHEAT))
-				.group("fd_wheat_dough")
-				.save(consumer, new ResourceLocation(FarmersDelight.MODID, "wheat_dough_from_water"));
-		ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.WHEAT_DOUGH.get(), 3)
-				.requires(ForgeTags.EGGS)
-				.requires(Items.WHEAT)
-				.requires(Items.WHEAT)
-				.requires(Items.WHEAT)
-				.unlockedBy("has_wheat", InventoryChangeTrigger.TriggerInstance.hasItems(Items.WHEAT))
-				.group("fd_wheat_dough")
-				.save(consumer, new ResourceLocation(FarmersDelight.MODID, "wheat_dough_from_eggs"));
+				.save(consumer, new ResourceLocation(FarmersDelight.MODID, "wheat_dough_from_egg"));
 		ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.PIE_CRUST.get(), 1)
 				.pattern("wMw")
 				.pattern(" w ")
@@ -685,6 +678,24 @@ public class CraftingRecipes
 				.unlockedBy("has_chocolate_pie_slice", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.CHOCOLATE_PIE_SLICE.get()))
 				.group("fd_chocolate_pie")
 				.save(consumer, new ResourceLocation(FarmersDelight.MODID, "chocolate_pie_from_slices"));
+		ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, Items.PUMPKIN_PIE, 2)
+				.pattern("cec")
+				.pattern("csc")
+				.pattern(" O ")
+				.define('c', ModItems.PUMPKIN_SLICE.get())
+				.define('e', ForgeTags.EGGS)
+				.define('s', Items.SUGAR)
+				.define('O', ModItems.PIE_CRUST.get())
+				.unlockedBy("has_pie_crust", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.PIE_CRUST.get()))
+				.group("fd_pumpkin_pie")
+				.save(consumer, new ResourceLocation(FarmersDelight.MODID, "pumpkin_pie_from_pie_crust"));
+		ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, Items.PUMPKIN_PIE, 1)
+				.pattern("##")
+				.pattern("##")
+				.define('#', ModItems.PUMPKIN_PIE_SLICE.get())
+				.unlockedBy("has_pumpkin_pie_slice", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.PUMPKIN_PIE_SLICE.get()))
+				.group("fd_pumpkin_pie")
+				.save(consumer, new ResourceLocation(FarmersDelight.MODID, "pumpkin_pie_from_slices"));
 	}
 
 	private static void recipesCraftedMeals(Consumer<FinishedRecipe> consumer) {

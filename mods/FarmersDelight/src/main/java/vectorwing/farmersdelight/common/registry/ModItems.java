@@ -1,8 +1,12 @@
 package vectorwing.farmersdelight.common.registry;
 
 import com.google.common.collect.Sets;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -10,8 +14,11 @@ import net.minecraftforge.registries.RegistryObject;
 import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.FoodValues;
 import vectorwing.farmersdelight.common.item.*;
+import vectorwing.farmersdelight.common.utility.TextUtils;
 
+import javax.annotation.Nullable;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -22,9 +29,13 @@ public class ModItems
 	public static LinkedHashSet<RegistryObject<Item>> CREATIVE_TAB_ITEMS = Sets.newLinkedHashSet();
 
 	public static RegistryObject<Item> registerWithTab(final String name, final Supplier<Item> supplier) {
-		RegistryObject<Item> block = ITEMS.register(name, supplier);
-		CREATIVE_TAB_ITEMS.add(block);
-		return block;
+		RegistryObject<Item> newItem = ITEMS.register(name, supplier);
+		CREATIVE_TAB_ITEMS.add(newItem);
+		return newItem;
+	}
+
+	public static RegistryObject<Item> registerHidden(final String name, final Supplier<Item> supplier) {
+		return ITEMS.register(name, supplier);
 	}
 
 	// Helper methods
@@ -336,6 +347,8 @@ public class ModItems
 			() -> new Item(foodItem(FoodValues.PIE_SLICE)));
 	public static final RegistryObject<Item> CHOCOLATE_PIE_SLICE = registerWithTab("chocolate_pie_slice",
 			() -> new Item(foodItem(FoodValues.PIE_SLICE)));
+	public static final RegistryObject<Item> PUMPKIN_PIE_SLICE = registerWithTab("pumpkin_pie_slice",
+			() -> new Item(foodItem(FoodValues.PIE_SLICE)));
 	public static final RegistryObject<Item> SWEET_BERRY_COOKIE = registerWithTab("sweet_berry_cookie",
 			() -> new Item(foodItem(FoodValues.COOKIES)));
 	public static final RegistryObject<Item> HONEY_COOKIE = registerWithTab("honey_cookie",
@@ -452,4 +465,14 @@ public class ModItems
 			() -> new DogFoodItem(bowlFoodItem(FoodValues.DOG_FOOD)));
 	public static final RegistryObject<Item> HORSE_FEED = registerWithTab("horse_feed",
 			() -> new HorseFeedItem(basicItem().stacksTo(16)));
+
+	// Hidden (Debug) Items
+	public static final RegistryObject<Item> DEBUG_PUMPKIN_PIE = registerHidden("debug_pumpkin_pie",
+			() -> new BlockItem(ModBlocks.PUMPKIN_PIE.get(), basicItem()){
+				@Override
+				public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+					MutableComponent textDescription = TextUtils.getTranslation("tooltip.debug_item");
+					tooltip.add(textDescription.withStyle(ChatFormatting.RED));
+				}
+			});
 }

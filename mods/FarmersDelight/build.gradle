@@ -115,6 +115,7 @@ repositories {
 }
 
 sourceSets.main.resources {
+    exclude(".cache")
     srcDirs += 'src/generated/resources'
 }
 

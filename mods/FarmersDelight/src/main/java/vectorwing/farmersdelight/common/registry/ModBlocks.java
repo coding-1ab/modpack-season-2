@@ -1,8 +1,11 @@
 package vectorwing.farmersdelight.common.registry;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -14,6 +17,7 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.NotNull;
 import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.block.*;
 
@@ -254,6 +258,15 @@ public class ModBlocks
 			() -> new PieBlock(Block.Properties.copy(Blocks.CAKE), ModItems.SWEET_BERRY_CHEESECAKE_SLICE));
 	public static final RegistryObject<Block> CHOCOLATE_PIE = BLOCKS.register("chocolate_pie",
 			() -> new PieBlock(Block.Properties.copy(Blocks.CAKE), ModItems.CHOCOLATE_PIE_SLICE));
+	public static final RegistryObject<Block> PUMPKIN_PIE = BLOCKS.register("pumpkin_pie",
+			() -> new PieBlock(Block.Properties.copy(Blocks.CAKE), ModItems.PUMPKIN_PIE_SLICE)
+			{
+				@Override
+				@SuppressWarnings("deprecation")
+				public @NotNull ItemStack getCloneItemStack(BlockGetter pLevel, BlockPos pPos, BlockState pState) {
+					return new ItemStack(Items.PUMPKIN_PIE);
+				}
+			});
 
 	// Wild Crops
 	public static final RegistryObject<Block> SANDY_SHRUB = BLOCKS.register("sandy_shrub",

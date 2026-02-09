@@ -1,5 +1,105 @@
 # Changelog
 
+## 1.3.0 (WIP)
+
+### Updates
+- The Cutting Board has been redesigned:
+  - It can now hold a **full stack of items**, instead of one at a time. This allows players to process their stacks in half the time it took before;
+  - If the board's stack isn't full yet, players can top it up with more items;
+  - When cutting, the status bar will show how many items are left on the board;
+  - Comparator signal will now be based on the fill percentage for the item's max stack size;
+  - All off-hand interaction has been removed. Placing, removing and processing items is done entirely with the main hand;
+  - The `offhand_equipment` tag has been removed.
+- Pumpkin Pie can now be placed as a block, like the other pies!
+  - By default, it is placeable without secondary action. A config exists to require sneaking, if preferred;
+- Tomato crops have been updated:
+  - The crop no longer uses the standard growth speed checks of `CropBlock`, which was slowing down hanging vines. They grow at a fixed rate now, regardless of height;
+  - Applying bone meal to a mature tomato vine (sneaking, rich soil etc) will pass the boost to the vine above it, if possible;
+  - Tomato seeds can now be planted on any farmland block;
+- FD's recipe builders now implement `RecipeBuilder`, which should allow a few extra features for add-on developers (thanks, Lance5057!);
+- FD's recipes now call for `assemble()` in most places, allowing extenders of most workstations to use the inventory when creating their result (thanks, ColonelPanic!);
+- Cutting recipes now accept arrays of ingredients in the `tool` field (thanks, BobVarioa!).
+
+## 1.2.10
+
+### Updates
+- The JEI widget for the Cooking Pot now has its own image file, to allow custom widget editing;
+  - The UI icons are still located in the main Cooking Pot UI file;
+- Villagers can now consume FD crops to become willing to breed (thanks, isErenG!);
+
+### Fixes
+- Fixed `foodEffectTooltip` config not affecting the tooltip of vanilla foods with FD effect overrides;
+- Fixed Cutting Board playing sounds at the zero corner, instead of at the center of itself;
+- Fixed non-contained meals (example: Dumplings) being deleted if sitting on the meal slot, and using the same meal against the pot to serve it (thanks, VBlackCAT!);
+
+### Translations
+- Added:
+  - kk_kz (thanks, ninsent!);
+  - zh_hk (thanks, Duppy-Conqueror!);
+- Updated:
+  - hu_hu (thanks, bayi!);
+  - ja_jp (thanks, Abbage230!);
+  - lzh (thanks, BeiDou114514!);
+  - ru_ru (thanks, pansangg!);
+
+## 1.2.9
+
+### Updates
+- The `offhand_equipment` tag now includes `forge:tools/shields` by default, extending default compatibility;
+- Rich Soil Farmland can now be hydrated by any fluid type capable of hydration;
+- Wild Cabbage and Sea Beet can now generate on any biome tagged with `minecraft:is_beach` (thanks, lyaneii!);
+
+### Fixes
+- Fixed Wheat Dough's water-based recipe still displaying in JEI when disabled;
+- Fixed FD's special recipes existing in the `minecraft` namespace;
+- Temporary fix for the Cooking Pot crashing when opened in spectator mode (access is now disabled);
+
+### Translations
+- Update main langs to include lines for wall canvas signs;
+- Fixed es_ar translation having a JSON error;
+- Added:
+  - hu_hu (thanks, bayi!);
+  - lzh (thanks, BeiDou114514!);
+- Updated:
+  - it_it (thanks, BlackShadow77!);
+  - zh_cn (thanks, Don-Trueno!);
+  - zh_tw (thanks, CyanChanges!);
+
+## 1.2.8
+
+### Additions
+- New item tags:
+  - `#meals` - Groups bowl and plate foods which are considered a "meal" by the mod. Excludes Fruit Salad and Nether Salad;
+  - `#drinks` - Groups drinkable FD items that are not potions;
+  - `#feasts` - Groups the full forms of feasts. Their portions reside in `#meals`;
+
+### Updates
+- Wheat Dough now has a simpler, less cumbersome crafting recipe using a Water Bucket:
+  - Wheat can be crafted with a Water Bucket to make Dough. The bucket's water won't be depleted, letting you craft dough indefinitely;
+  - The bucket acts as a simple technology gate to unlock this recipe;
+  - The egg recipe is still present, to not break auto-crafting setups;
+- All usages of water buckets in the mod (recipes, interactions etc) now use a common tag (thanks, thelegitdolt!):
+  - 1.20.1: `forge:buckets/water` (unofficial);
+  - 1.21.1: `c:buckets/water`;
+- Added knives to the `breaks_decorated_pots` tag;
+- Updated integration with `create:upright_on_belt` to include all bowl, plate and bottle items;
+- Updated the Master Chef advancement with additional meals;
+  - The meals reflect the "vanilla FD" entries in the `meals` tag, but does not update with the tag itself;
+- Updated effect description IDs for all langs (thanks, mpustovoi!);
+- Cooking Pot will always "cool down" when the recipe becomes invalid mid-cooking, instead of losing all cooking progress in some circumstances;
+
+### Fixes
+- Fixed Jack-O-Lantern not being mineable with a Knife;
+- Fixed Create's Potato Cannon integration;
+- Fixed Knives with Silk Touch mining Pumpkin blocks into slices;
+- Fixed Rich Soil negating fall damage (1.21.1) and `turnToDirt` converting it into normal dirt (thanks, SarahIsWeird!);
+
+### Translations
+- Updated:
+  - es_es (thanks, GGlangf!);
+  - zh_cn (thanks, NumberSir!);
+  - zh_tw (thanks, DEEMsss!);
+
 ## 1.2.7
 
 ### Updates
