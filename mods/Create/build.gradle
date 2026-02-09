@@ -191,7 +191,7 @@ sourceSets.main {
 jar {
     String name = base.archivesName.get()
 
-    from("LICENSE") {
+    from("LICENSE.md") {
         rename { "${it}_$name" }
     }
 
