@@ -22,7 +22,7 @@ public class TooltipEvents
 {
 	@SubscribeEvent
 	public static void addTooltipToVanillaSoups(ItemTooltipEvent event) {
-		if (!Configuration.VANILLA_SOUP_EXTRA_EFFECTS.get()) {
+		if (!Configuration.VANILLA_SOUP_EXTRA_EFFECTS.get() || !Configuration.FOOD_EFFECT_TOOLTIP.get()) {
 			return;
 		}
 

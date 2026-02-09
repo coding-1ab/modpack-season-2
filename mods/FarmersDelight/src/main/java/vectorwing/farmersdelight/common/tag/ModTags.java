@@ -55,6 +55,17 @@ public class ModTags
 	// Blocks which cause Campfires to emit signal smoke when placed underneath them.
 	public static final TagKey<Block> CAMPFIRE_SIGNAL_SMOKE = modBlockTag("campfire_signal_smoke");
 
+	////////////////
+
+	// Items that represent a meal: prepared food contained in a bowl or plate.
+	public static final TagKey<Item> MEALS = modItemTag("meals");
+
+	// Items that represent a drink: a bottled consumable that isn't a potion.
+	public static final TagKey<Item> DRINKS = modItemTag("drinks");
+
+	// Items that represent a feast: a larger, placeable meal which can serve many portions.
+	public static final TagKey<Item> FEASTS = modItemTag("feasts");
+
 	// Items that represent the wild form of a farmable crop.
 	public static final TagKey<Item> WILD_CROPS_ITEM = modItemTag("wild_crops");
 
@@ -66,9 +77,6 @@ public class ModTags
 
 	// Foods and items that serve as filling for Cabbage Rolls
 	public static final TagKey<Item> CABBAGE_ROLL_INGREDIENTS = modItemTag("cabbage_roll_ingredients");
-
-	// Items commonly held in the off-hand. Cutting Boards won't let them be placed from the off-hand, for convenience.
-	public static final TagKey<Item> OFFHAND_EQUIPMENT = modItemTag("offhand_equipment");
 
 	// Knife items for game logic.
 	public static final TagKey<Item> KNIVES = modItemTag("tools/knives");

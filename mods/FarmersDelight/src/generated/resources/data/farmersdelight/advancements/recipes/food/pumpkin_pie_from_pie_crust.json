@@ -1,34 +1,34 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_the_recipe": {
-      "conditions": {
-        "recipe": "farmersdelight:wheat_dough_from_eggs"
-      },
-      "trigger": "minecraft:recipe_unlocked"
-    },
-    "has_wheat": {
+    "has_pie_crust": {
       "conditions": {
         "items": [
           {
             "items": [
-              "minecraft:wheat"
+              "farmersdelight:pie_crust"
             ]
           }
         ]
       },
       "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "farmersdelight:pumpkin_pie_from_pie_crust"
+      },
+      "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
-      "has_wheat",
+      "has_pie_crust",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "farmersdelight:wheat_dough_from_eggs"
+      "farmersdelight:pumpkin_pie_from_pie_crust"
     ]
   },
   "sends_telemetry_event": false

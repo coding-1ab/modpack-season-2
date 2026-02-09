@@ -94,7 +94,7 @@ public class CuttingBoardRecipe implements Recipe<RecipeWrapper>
 		return this.results;
 	}
 
-	public List<ItemStack> rollResults(RandomSource rand, int fortuneLevel) {
+	public List<ItemStack> rollResults(RandomSource rand, int fortuneLevel, RecipeWrapper inventory) {
 		List<ItemStack> results = new ArrayList<>();
 		NonNullList<ChanceResult> rollableResults = getRollableResults();
 		for (ChanceResult output : rollableResults) {
@@ -170,7 +170,7 @@ public class CuttingBoardRecipe implements Recipe<RecipeWrapper>
 		public CuttingBoardRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
 			final String groupIn = GsonHelper.getAsString(json, "group", "");
 			final NonNullList<Ingredient> inputItemsIn = readIngredients(GsonHelper.getAsJsonArray(json, "ingredients"));
-			final JsonObject toolObject = GsonHelper.getAsJsonObject(json, "tool");
+			final JsonElement toolObject = (GsonHelper.isArrayNode(json, "tool") ? GsonHelper.getAsJsonArray(json, "tool") : GsonHelper.getAsJsonObject(json, "tool"));
 			final Ingredient toolIn = Ingredient.fromJson(toolObject);
 			if (inputItemsIn.isEmpty()) {
 				throw new JsonParseException("No ingredients for cutting recipe");

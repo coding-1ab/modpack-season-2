@@ -78,31 +78,14 @@ public class TomatoVineBlock extends CropBlock
 		if (level.getRawBrightness(pos, 0) >= 9) {
 			int age = this.getAge(state);
 			if (age < this.getMaxAge()) {
-				float speed = getGrowthSpeed(this, level, pos);
+				float speed = 5;
 				if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(level, pos, state, random.nextInt((int) (25.0F / speed) + 1) == 0)) {
 					level.setBlock(pos, state.setValue(getAgeProperty(), age + 1), 2);
 					net.minecraftforge.common.ForgeHooks.onCropsGrowPost(level, pos, state);
 				}
 			}
-			attemptRopeClimb(level, pos, random);
+			climbRopeAbove(level, pos, random);
 		}
-	}
-
-	public void attemptRopeClimb(ServerLevel level, BlockPos pos, RandomSource random) {
-		if (random.nextFloat() < 0.3F) {
-			BlockPos posAbove = pos.above();
-			BlockState stateAbove = level.getBlockState(posAbove);
-			boolean canClimb = Configuration.ENABLE_TOMATO_VINE_CLIMBING_TAGGED_ROPES.get() ? stateAbove.is(ModTags.ROPES) : stateAbove.is(ModBlocks.ROPE.get());
-			if (canClimb) {
-				int vineHeight;
-				for (vineHeight = 1; level.getBlockState(pos.below(vineHeight)).is(this); ++vineHeight) {
-				}
-				if (vineHeight < 3) {
-					level.setBlockAndUpdate(posAbove, defaultBlockState().setValue(ROPELOGGED, true));
-				}
-			}
-		}
-
 	}
 
 	@Override
@@ -135,21 +118,69 @@ public class TomatoVineBlock extends CropBlock
 		builder.add(VINE_AGE, ROPELOGGED);
 	}
 
+
+	public boolean canClimbBlock(BlockState stateAbove) {
+		return Configuration.ENABLE_TOMATO_VINE_CLIMBING_TAGGED_ROPES.get() ? stateAbove.is(ModTags.ROPES) : stateAbove.is(ModBlocks.ROPE.get());
+	}
+
+	public void climbRopeAbove(ServerLevel level, BlockPos pos, RandomSource random) {
+		BlockPos posAbove = pos.above();
+		BlockState stateAbove = level.getBlockState(posAbove);
+		if (canClimbBlock(stateAbove)) {
+			int vineHeight;
+			for (vineHeight = 1; level.getBlockState(pos.below(vineHeight)).is(this); ++vineHeight) {
+			}
+			if (vineHeight < 3) {
+				level.setBlockAndUpdate(posAbove, defaultBlockState().setValue(ROPELOGGED, true));
+			}
+		}
+	}
+
 	@Override
 	protected int getBonemealAgeIncrease(Level level) {
 		return super.getBonemealAgeIncrease(level) / 2;
 	}
 
 	@Override
-	public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
-		int newAge = this.getAge(state) + this.getBonemealAgeIncrease(level);
-		int maxAge = this.getMaxAge();
-		if (newAge > maxAge) {
-			newAge = maxAge;
+	public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state, boolean isClient) {
+		if (!this.isMaxAge(state)) {
+			return true;
 		}
 
-		level.setBlockAndUpdate(pos, state.setValue(getAgeProperty(), newAge));
-		attemptRopeClimb(level, pos, random);
+		BlockPos.MutableBlockPos mutablePos = pos.mutable();
+		for (int height = 0; height < 2; height++) {
+			mutablePos.move(Direction.UP);
+			BlockState nextState = level.getBlockState(mutablePos);
+			if (canClimbBlock(nextState)) {
+				return true;
+			}
+			if (nextState.is(ModBlocks.TOMATO_CROP.get())) {
+				if (!isMaxAge(nextState)) {
+					return true;
+				}
+			} else {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+		int newAge = this.getAge(state) + this.getBonemealAgeIncrease(level);
+		if (newAge <= this.getMaxAge()) {
+			level.setBlockAndUpdate(pos, state.setValue(getAgeProperty(), newAge));
+			if (random.nextFloat() < 0.3F) {
+				climbRopeAbove(level, pos, random);
+			}
+		} else {
+			BlockState aboveState = level.getBlockState(pos.above());
+			if (canClimbBlock(level.getBlockState(pos.above()))) {
+				climbRopeAbove(level, pos, random);
+			} else if (aboveState.is(ModBlocks.TOMATO_CROP.get()) && isValidBonemealTarget(level, pos, aboveState, false)) {
+				performBonemeal(level, random, pos.above(), aboveState);
+			}
+		}
 	}
 
 	@Override
