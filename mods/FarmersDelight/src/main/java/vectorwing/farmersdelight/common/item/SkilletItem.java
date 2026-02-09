@@ -179,7 +179,7 @@ public class SkilletItem extends BlockItem
 			double y = pos.y();
 			double z = pos.z() + 0.5D;
 			if (level.random.nextInt(50) == 0) {
-				level.playLocalSound(x, y, z, ModSounds.BLOCK_SKILLET_SIZZLE.get(), SoundSource.BLOCKS, 0.4F, level.random.nextFloat() * 0.2F + 0.9F, false);
+				level.playSound(null, x, y, z, ModSounds.BLOCK_SKILLET_SIZZLE.get(), SoundSource.BLOCKS, 0.4F, level.random.nextFloat() * 0.2F + 0.9F);
 			}
 			CompoundTag tag = stack.getOrCreateTag();
 			if (tag.contains("FlipTimeStamp")) {
@@ -187,7 +187,7 @@ public class SkilletItem extends BlockItem
 				if (level.getGameTime() - flipTimeStamp > FLIP_TIME) {
 					tag.remove("FlipTimeStamp");
 					tag.putBoolean("Flipped", !tag.getBoolean("Flipped"));
-					level.playLocalSound(x, y, z, ModSounds.BLOCK_SKILLET_ADD_FOOD.get(), SoundSource.BLOCKS, 0.4F, level.random.nextFloat() * 0.2F + 0.9F, false);
+					level.playSound(null, x, y, z, ModSounds.BLOCK_SKILLET_ADD_FOOD.get(), SoundSource.BLOCKS, 0.4F, level.random.nextFloat() * 0.2F + 0.9F);
 				}
 			}
 		}
