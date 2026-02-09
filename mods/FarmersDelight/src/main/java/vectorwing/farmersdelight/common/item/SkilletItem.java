@@ -187,7 +187,7 @@ public class SkilletItem extends BlockItem
 				if (level.getGameTime() - flipTimeStamp > FLIP_TIME) {
 					tag.remove("FlipTimeStamp");
 					tag.putBoolean("Flipped", !tag.getBoolean("Flipped"));
-					level.playLocalSound(x, y, z, ModSounds.BLOCK_SKILLET_ADD_FOOD.get(), SoundSource.BLOCKS, 0.4F, level.random.nextFloat() * 0.2F + 0.9F, false);
+					level.playSound(null, x, y, z, ModSounds.BLOCK_SKILLET_ADD_FOOD.get(), SoundSource.BLOCKS, 0.4F, level.random.nextFloat() * 0.2F + 0.9F);
 				}
 			}
 		}
