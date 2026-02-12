@@ -266,7 +266,7 @@ public class ParticleEmitter {
 
     @ApiStatus.Internal
     void onRemoved() {
-        this.cancelTasks();
+        this.remove();
         Iterator<QuasarParticle> iterator = this.particles.iterator();
         while (iterator.hasNext()) {
             iterator.next().onRemove();

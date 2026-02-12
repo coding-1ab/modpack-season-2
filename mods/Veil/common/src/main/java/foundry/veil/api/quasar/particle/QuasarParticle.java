@@ -201,6 +201,7 @@ public class QuasarParticle {
 
     @ApiStatus.Internal
     public void onRemove() {
+        this.remove();
         for (ParticleModule module : this.modules.getAllModules()) {
             module.onRemove();
         }
