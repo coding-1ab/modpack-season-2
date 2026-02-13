@@ -548,7 +548,7 @@ void main() {
 ```glsl
 in vec2 texCoord0;
 
-layout(std140) uniform NecromancerBones {
+layout(std140) uniform CustomTextures {
     sampler2D textures[128];
 };
 
