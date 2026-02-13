@@ -64,6 +64,27 @@ for more information.
       }
     }
   }
+  // Optional
+  "blend": {
+    // Optional
+    "func": "ADD",
+    // Optional
+    "alphafunc": "ADD",
+    // Optional
+    "srcrgb": "ONE",
+    // Optional
+    "dstrgb": "ZERO",
+    // Optional
+    "srcalpha": "ONE",
+    // Optional
+    "dstalpha": "ZERO"
+  },
+  // Optional
+  "required_features": [
+    "BINDLESS_TEXTURE",
+    ...
+    "See ShaderFeature.java for all supported features"
+  ],
 }
 ```
 
@@ -443,3 +464,101 @@ parameters specified by the OpenGL texture object.
   }
 }
 ```
+
+# Shader Blending
+
+Normally, blending must be specified in java code and set per render type. However, Veil provides access to override the
+currently set blend mode in the shader. This is mostly useful for post-processing, but it works in all scenarios.
+
+See [`glBlendEquation`](https://registry.khronos.org/OpenGL-Refpages/gl4/html/glBlendEquation.xhtml) and
+[`glBlendFuncSeparate`](https://registry.khronos.org/OpenGL-Refpages/gl4/html/glBlendFuncSeparate.xhtml) for more
+information on changing the blend func.
+
+### Syntax
+
+```json5
+{
+  "blend": {
+    // Optional
+    "func": "ADD|SUBTRACT|REVERSE_SUBTRACT|MIN|MAX",
+    // Optional
+    "alphafunc": "ADD|SUBTRACT|REVERSE_SUBTRACT|MIN|MAX",
+    // Optional
+    "srcrgb": "CONSTANT_ALPHA|CONSTANT_COLOR|DST_ALPHA|DST_COLOR|ONE|ONE_MINUS_CONSTANT_ALPHA|ONE_MINUS_CONSTANT_COLOR|ONE_MINUS_DST_ALPHA|ONE_MINUS_DST_COLOR|ONE_MINUS_SRC_ALPHA|ONE_MINUS_SRC_COLOR|SRC_ALPHA|SRC_ALPHA_SATURATE|SRC_COLOR|ZERO",
+    // Optional
+    "dstrgb": "CONSTANT_ALPHA|CONSTANT_COLOR|DST_ALPHA|DST_COLOR|ONE|ONE_MINUS_CONSTANT_ALPHA|ONE_MINUS_CONSTANT_COLOR|ONE_MINUS_DST_ALPHA|ONE_MINUS_DST_COLOR|ONE_MINUS_SRC_ALPHA|ONE_MINUS_SRC_COLOR|SRC_ALPHA|SRC_COLOR|ZERO",
+    // Optional
+    "srcalpha": "CONSTANT_ALPHA|CONSTANT_COLOR|DST_ALPHA|DST_COLOR|ONE|ONE_MINUS_CONSTANT_ALPHA|ONE_MINUS_CONSTANT_COLOR|ONE_MINUS_DST_ALPHA|ONE_MINUS_DST_COLOR|ONE_MINUS_SRC_ALPHA|ONE_MINUS_SRC_COLOR|SRC_ALPHA|SRC_ALPHA_SATURATE|SRC_COLOR|ZERO",
+    // Optional
+    "dstalpha": "CONSTANT_ALPHA|CONSTANT_COLOR|DST_ALPHA|DST_COLOR|ONE|ONE_MINUS_CONSTANT_ALPHA|ONE_MINUS_CONSTANT_COLOR|ONE_MINUS_DST_ALPHA|ONE_MINUS_DST_COLOR|ONE_MINUS_SRC_ALPHA|ONE_MINUS_SRC_COLOR|SRC_ALPHA|SRC_COLOR|ZERO"
+  }
+}
+```
+
+# Shader Feature
+
+Veil supports optional shader features through extensions. Instead of forcing the shader to attempt compilation and
+fail, Veil requires all required features to be present before trying to load and compile the shader.
+
+Requiring a feature will also enable all required GLSL extensions to use the feature.
+
+### Syntax
+
+```json5
+{
+  "required_features": [
+    "A list of enum constants found in ShaderFeature.java"
+  ]
+}
+```
+
+### Example
+
+`assets/veil/pinwheel/shaders/program/example.json`
+
+```json5
+{
+  "vertex": "example.vsh",
+  "fragment": "example.fsh",
+  "required_features": [
+    "BINDLESS_TEXTURE"
+  ]
+}
+```
+
+`assets/veil/pinwheel/shaders/program/example.vsh`
+
+```glsl
+layout(location = 0) in vec3 Position;
+layout(location = 1) in vec2 UV0;
+
+uniform mat4 ModelViewMat;
+uniform mat4 ProjMat;
+
+out vec2 texCoord0;
+
+void main() {
+    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+    texCoord0 = UV0;
+}
+```
+
+`assets/veil/pinwheel/shaders/program/example.fsh`
+
+```glsl
+in vec2 texCoord0;
+
+layout(std140) uniform NecromancerBones {
+    sampler2D textures[128];
+};
+
+uniform uint TextureIndex;
+
+out vec4 Color;
+
+void main() {
+    Color = texture(textures[TextureIndex], texCoord0);
+}
+```
+
+Because bindless texture is a required extension, the shader will only load and compile if the GPU supports it.
