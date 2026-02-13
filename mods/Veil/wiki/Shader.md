@@ -118,6 +118,63 @@ name when the methods in the shader are called.
 
 Custom post-shader uniforms can be added by uploading uniforms during the `VeilPostProcessingEvent.Pre` event.
 
+# Built-in Uniforms
+
+| Source    | Java Code                                                               | GLSL Code                                   | Notes                                                                                                                                                                           |
+|-----------|-------------------------------------------------------------------------|---------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Minecraft | `RenderSystem#getShaderTexture`                                         | `uniform sampler2D Sampler#;`               | Vanilla Minecraft supports samplers 0-11. Generally, the color texture is bound to `Sampler0`, the overlay is bound to `Sampler1`, and the lightmap is bound to `Sampler2`.     |
+| Minecraft | `RenderSystem#getModelViewStack`                                        | `uniform mat4 ModelViewMat;`                |                                                                                                                                                                                 |
+| Minecraft | `RenderSystem#getProjectionMatrix`                                      | `uniform mat4 ProjMat;`                     |                                                                                                                                                                                 |
+| Minecraft | `RenderSystem#getTextureMatrix`                                         | `uniform mat4 TextureMat;`                  |                                                                                                                                                                                 |
+| Minecraft | (`Window#getWidth`, `Window#getHeight`)                                 | `uniform vec2 ScreenSize;`                  |                                                                                                                                                                                 |
+| Minecraft | `RenderSystem#getShaderColor`                                           | `uniform vec4 ColorModulator;`              |                                                                                                                                                                                 |
+| Minecraft | `VeilRenderSystem#getLight0Direction`                                   | `uniform vec3 Light0_Direction;`            |                                                                                                                                                                                 |
+| Minecraft | `VeilRenderSystem#getLight1Direction`                                   | `uniform vec3 Light1_Direction;`            |                                                                                                                                                                                 |
+| Minecraft | `RenderSystem#getShaderGlintAlpha`                                      | `uniform float GlintAlpha;`                 |                                                                                                                                                                                 |
+| Minecraft | `RenderSystem#getShaderFogStart`                                        | `uniform float FogStart;`                   |                                                                                                                                                                                 |
+| Minecraft | `RenderSystem#getShaderFogEnd`                                          | `uniform float FogEnd;`                     |                                                                                                                                                                                 |
+| Minecraft | `RenderSystem#getShaderFogColor`                                        | `uniform vec4 FogColor;`                    |                                                                                                                                                                                 |
+| Minecraft | `RenderSystem#getShaderFogShape`                                        | `uniform int FogShape;`                     |                                                                                                                                                                                 |
+| Minecraft | `RenderSystem#getShaderLineWidth`                                       | `uniform float LineWidth;`                  | Only present when using `LINES` or `LINE_STRIP` render mode                                                                                                                     |
+| Minecraft | `RenderSystem#getShaderGameTime`                                        | `uniform float GameTime;`                   | Vanilla Minecraft sets this uniform to a value between 0 and 1 depending on the level game time. For example, 0 means the tick time is 0 and 0.5 means the game time is 12,000. |
+| Minecraft | Set Manually per renderer                                               | `uniform vec3 ChunkOffset;`                 | This uniform is used during chunk rendering to offset the chunks in the shader.                                                                                                 |
+| Veil      | The current client time in seconds, looping every hour                  | `uniform float VeilRenderTime;`             |                                                                                                                                                                                 |
+| Veil      | The normal transformation from the projection matrix. `Matrix4f#normal` | `uniform mat3 NormalMat;`                   |                                                                                                                                                                                 |
+| Veil      | `ClientLevel#getShade`                                                  | `uniform float VeilBlockFaceBrightness[#];` | Only set if the player is currently in a level. This should also be accessed using `#import veil:light` in a Veil shader.                                                       |
+
+# Uniform Blocks
+
+Veil has an API for creating simple uniform blocks, see `VeilShaderBufferRegistry#REGISTRY`. The data layout can then be
+constructed with `VeilShaderBufferLayout`, see `CameraMatrices` for an example.
+
+The registry key used for a shader buffer can then be used in any veil shader to import the GLSL code to access that
+block.
+
+Veil fully supports registering custom uniform blocks. See `VeilShaderBufferLayout#Builder` for more details.
+
+### Example
+
+```glsl
+#veil:buffer veil:camera
+```
+
+This will include all the fields from `CameraMatrices#createLayout` in the top level of the shader. In most cases you
+should also include an _interface name_ to make the shader more robust.
+
+```glsl
+#veil:buffer veil:camera FooBar
+```
+
+You can name the interface anything you want, but for best practice it should be related to what the block contains.
+When a shader block interface name is set, all fields are accessed via `InterfaceName.FieldName` in the GLSL code.
+
+# Built-in Uniform Blocks
+
+| Java Code                        | GLSL Code                                |
+|----------------------------------|------------------------------------------|
+| `VeilRenderer#getCameraMatrices` | `#veil:buffer veil:camera VeilCamera`    |
+| `VeilRenderer#getGuiInfo`        | `#veil:buffer veil:gui_info VeilGuiInfo` |
+
 ### Example
 
 ```java
