@@ -518,8 +518,8 @@ Requiring a feature will also enable all required GLSL extensions to use the fea
 
 ```json5
 {
-  "vertex": "example.vsh",
-  "fragment": "example.fsh",
+  "vertex": "veil:example.vsh",
+  "fragment": "veil:example.fsh",
   "required_features": [
     "BINDLESS_TEXTURE"
   ]
