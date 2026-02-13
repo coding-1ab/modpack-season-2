@@ -19,6 +19,15 @@ public class ShaderImportProcessor implements ShaderPreProcessor {
 
     private static final String INCLUDE_KEY = "#include ";
 
+    public static String sanitizeLocation(String location) {
+        if ((location.startsWith("\"") && location.endsWith("\""))
+                || (location.startsWith("'") && location.endsWith("'"))
+                || (location.startsWith("<") && location.endsWith(">"))) {
+            return location.substring(1, location.length() - 1);
+        }
+        return location;
+    }
+
     @Override
     public void modify(Context ctx, GlslTree tree) throws IOException, GlslSyntaxException, LexerException {
         List<String> imports = new ArrayList<>();
@@ -29,11 +38,7 @@ public class ShaderImportProcessor implements ShaderPreProcessor {
             }
         }
         for (String directive : imports) {
-            String importId = directive.substring(ShaderImportProcessor.INCLUDE_KEY.length()).trim();
-
-            if ((importId.startsWith("\"") && importId.endsWith("\"")) || (importId.startsWith("<") && importId.endsWith(">"))) {
-                importId = importId.substring(1, importId.length() - 1);
-            }
+            String importId = sanitizeLocation(directive.substring(ShaderImportProcessor.INCLUDE_KEY.length()).trim());
 
             try {
                 ctx.include(tree, ResourceLocation.parse(importId), IncludeOverloadStrategy.SOURCE);

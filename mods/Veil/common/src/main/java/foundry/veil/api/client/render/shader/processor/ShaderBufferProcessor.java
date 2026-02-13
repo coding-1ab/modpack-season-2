@@ -35,7 +35,7 @@ public class ShaderBufferProcessor implements ShaderPreProcessor {
             }
         }
         for (String directive : buffers) {
-            String[] parts = directive.substring(ShaderBufferProcessor.BUFFER_KEY.length()).split(" +", 2);
+            String[] parts = directive.substring(ShaderBufferProcessor.BUFFER_KEY.length()).trim().split(" +", 2);
             String bufferId = parts[0].trim();
             String interfaceName = parts.length > 1 ? parts[1].trim() : null;
 

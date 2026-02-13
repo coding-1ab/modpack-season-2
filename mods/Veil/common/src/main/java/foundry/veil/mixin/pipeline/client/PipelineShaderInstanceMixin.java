@@ -28,6 +28,8 @@ public abstract class PipelineShaderInstanceMixin {
     private static final String[] veil$FACE_BRIGHTNESS_UNIFORM_NAMES = Arrays.stream(veil$DIRECTIONS)
             .map(direction -> "VeilBlockFaceBrightness[" + direction.get3DDataValue() + "]")
             .toArray(String[]::new);
+    @Unique
+    private static final Matrix3f veil$NORMAL_MATRIX = new Matrix3f();
 
     @Shadow
     @Nullable
@@ -40,9 +42,9 @@ public abstract class PipelineShaderInstanceMixin {
             renderTime.set((System.currentTimeMillis() % 3_600_000) / 1000.0F);
         }
 
-        Uniform iModelViewMat = this.getUniform("NormalMat");
-        if (iModelViewMat != null) {
-            iModelViewMat.set(projectionMatrix.normal(new Matrix3f()));
+        Uniform normalMat = this.getUniform("NormalMat");
+        if (normalMat != null) {
+            normalMat.set(projectionMatrix.normal(veil$NORMAL_MATRIX));
         }
 
         ClientLevel level = Minecraft.getInstance().level;
