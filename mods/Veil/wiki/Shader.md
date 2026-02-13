@@ -63,7 +63,7 @@ for more information.
         ...
       }
     }
-  }
+  },
   // Optional
   "blend": {
     // Optional
