@@ -1,14 +1,19 @@
-Veil adds a custom shader format that supports all OpenGl shader stages. It also has additional features that make shaders more data-driven.
+Veil adds a custom shader format that supports all OpenGl shader stages. It also has additional features that make
+shaders more data-driven.
 
 # Defining Shaders
 
-Shader programs are located in `assets/modid/pinwheel/shaders/program`. These are used as actual shader programs that can be used during runtime.
+Shader programs are located in `assets/modid/pinwheel/shaders/program`. These are used as actual shader programs that
+can be used during runtime.
 
-Shader includes are located in `assets/modid/pinwheel/shaders/include`. These are glsl source files, but they cannot be used as programs. Instead, they can be referenced in shader programs to share code between multiple shader programs.
+Shader includes are located in `assets/modid/pinwheel/shaders/include`. These are glsl source files, but they cannot be
+used as programs. Instead, they can be referenced in shader programs to share code between multiple shader programs.
 
 # Programs
 
-Shader programs define what shader stages should be used, what definitions to have, and what textures to bind. Compute shaders are supported, but must be called from Java code. See [glDispatchCompute](https://docs.gl/gl4/glDispatchCompute) for more information.
+Shader programs define what shader stages should be used, what definitions to have, and what textures to bind. Compute
+shaders are supported, but must be called from Java code. See [glDispatchCompute](https://docs.gl/gl4/glDispatchCompute)
+for more information.
 
 ### Syntax
 
@@ -55,7 +60,7 @@ Shader programs define what shader stages should be used, what definitions to ha
       "type": "framebuffer",
       "name": "veil:deferred:depth",
       "filter": {
-	    ...
+        ...
       }
     }
   }
@@ -182,14 +187,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
-import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniformAccess;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 
 public class RenderClass {
 
-    private static final ResourceLocation CUSTOM_SHADER = Veil.veilPath("test_shader");
+    private static final ResourceLocation CUSTOM_SHADER = ResourceLocation.fromNamespaceAndPath(Veil.MODID, "test_shader");
 
     public static void render(PoseStack stack, MultiBufferSource source, float partialTicks) {
         ShaderProgram shader = VeilRenderSystem.setShader(CUSTOM_SHADER);
@@ -197,16 +202,16 @@ public class RenderClass {
             return;
         }
 
-        ShaderUniform customValue = shader.getUniform("CustomValue");
+        ShaderUniformAccess customValue = shader.getUniform("CustomValue");
         // Always check if the uniform for nullability
         // because it will be null if it doesn't exist
         if (customValue != null) {
             customValue.setFloat(32.2F);
         }
-        ShaderUniform customProjection = shader.getUniform("CustomProjection");
+        ShaderUniformAccess customProjection = shader.getUniform("CustomProjection");
         if (customProjection != null) {
             Matrix4f projection = new Matrix4f().ortho(0, 10, 10, 0, 0.3F, 100.0F, false);
-            customProjection.setMatrix(projection, false);
+            customProjection.setMatrix(projection);
         }
 
         shader.bind();
@@ -220,26 +225,21 @@ public class RenderClass {
 
 ```java
 import foundry.veil.Veil;
-import foundry.veil.api.client.render.shader.program.ShaderProgram;
-import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
+import foundry.veil.api.client.render.shader.uniform.ShaderUniformAccess;
 import foundry.veil.platform.VeilEventPlatform;
 import net.minecraft.resources.ResourceLocation;
 
 public class MainModClass {
 
-    private static final ResourceLocation CUSTOM_POST_PIPELINE = Veil.veilPath("test_pipeline");
-    private static final ResourceLocation CUSTOM_POST_SHADER = Veil.veilPath("test_post_shader");
+    private static final ResourceLocation CUSTOM_POST_PIPELINE = ResourceLocation.fromNamespaceAndPath(Veil.MODID, "test_pipeline");
 
     public MainModClass() {
         // This works for pipeline-specific uniforms
         VeilEventPlatform.INSTANCE.preVeilPostProcessing((pipelineName, pipeline, context) -> {
             if (CUSTOM_POST_PIPELINE.equals(pipelineName)) {
-                ShaderProgram shader = context.getShader(CUSTOM_POST_SHADER);
-                if (shader != null) {
-                    ShaderUniform secret = shader.getUniform("Secret");
-                    if (secret != null) {
-                        secret.setInt(42);
-                    }
+                ShaderUniformAccess secret = pipeline.getUniform("Secret");
+                if (secret != null) {
+                    secret.setInt(42);
                 }
             }
         });
@@ -292,23 +292,22 @@ recompile when changed. They should be set to constants defined in Java code.
 `Foo.java`
 
 ```java
-import foundry.veil.render.pipeline.VeilRenderSystem;
-import foundry.veil.render.pipeline.VeilRenderer;
-import foundry.veil.render.shader.definition.ShaderPreDefinitions;
-import foundry.veil.render.shader.program.ShaderProgram;
+import foundry.veil.api.client.render.VeilRenderSystem;
+import foundry.veil.api.client.render.VeilRenderer;
+import foundry.veil.api.client.render.shader.ShaderPreDefinitions;
 import net.minecraft.resources.ResourceLocation;
 
 public class Foo {
 
-    private static final ResourceLocation SHADER_ID = new ResourceLocation("veil", "example");
+    private static final ResourceLocation SHADER_ID = ResourceLocation.fromNamespaceAndPath("veil", "example");
 
     // Some event fired before rendering
     public static void onPreRender() {
         VeilRenderer renderer = VeilRenderSystem.renderer();
-        ShaderPreDefinitions definitions = renderer.getDefinitions();
+        ShaderPreDefinitions definitions = renderer.getShaderDefinitions();
 
         // This adds #define EXAMPLE_DEFINITION to all shaders that depend on it
-        definitions.define("example_definition");
+        definitions.set("example_definition");
     }
 }
 ```
@@ -329,8 +328,6 @@ This works exactly like binding any other texture in Minecraft:
 
 ```java
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 
 public class Foo {
@@ -412,23 +409,36 @@ void main() {
 ```
 
 ## Texture Filters
-All textures can have their sampling parameters specified on a per-definition basis. If specified, this overrides any parameters specified by the OpenGL texture object.
+
+All textures can have their sampling parameters specified on a per-definition basis. If specified, this overrides any
+parameters specified by the OpenGL texture object.
 
 ### Syntax
+
 ```json5
-"textures": {
-  "TextureName": {
-    "type": "location",
-    "location": "minecraft:textures/atlas/particles.png",
-    "filter": {
-      "blur": false, // Whether the texture should use linear or nearest filtering
-      "mipmap": false, // Whether the texture should use mipmaps
-      "anisotropy": 1.0, // The maximum allowed level of "anisotropy". Any value > 1 enables anisotropic filtering (https://en.wikipedia.org/wiki/Anisotropic_filtering)
-      "compareFunction": "never|always|less|lequal|equal|not_equal|gequal|greater", // Optional parameter. Indicates the type of depth comparison to make if a depth texture. Mostly used for shadow-mapping to allow correct interpolation when using blur (https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexParameter.xhtml)
-      "wrapX|wrapY|wrapZ": "repeat|clamp_to_edge|clamp_to_border|mirrored_repeat|mirror_clamp_to_edge", // Default is repeat. Indicates how the texture should be sampled if the texture coordinates fall outside the range of 0 to 1 (for X/Y/Z S/T/R respectively)
-      "borderColor": "0xFF000000", // Custom color when using clamp_to_border,
-      "borderType": "float|int|uint", // Must be set when using an integer texture
-      "seamless": false // Specifies cubemap textures to be sampled as seamless textures
+{
+  "textures": {
+    "TextureName": {
+      "type": "location",
+      "location": "minecraft:textures/atlas/particles.png",
+      "filter": {
+        "blur": false,
+        // Whether the texture should use linear or nearest filtering
+        "mipmap": false,
+        // Whether the texture should use mipmaps
+        "anisotropy": 1.0,
+        // The maximum allowed level of "anisotropy". Any value > 1 enables anisotropic filtering (https://en.wikipedia.org/wiki/Anisotropic_filtering)
+        "compareFunction": "never|always|less|lequal|equal|not_equal|gequal|greater",
+        // Optional parameter. Indicates the type of depth comparison to make if a depth texture. Mostly used for shadow-mapping to allow correct interpolation when using blur (https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexParameter.xhtml)
+        "wrapX|wrapY|wrapZ": "repeat|clamp_to_edge|clamp_to_border|mirrored_repeat|mirror_clamp_to_edge",
+        // Default is repeat. Indicates how the texture should be sampled if the texture coordinates fall outside the range of 0 to 1 (for X/Y/Z S/T/R respectively)
+        "borderColor": "0xFF000000",
+        // Custom color when using clamp_to_border,
+        "borderType": "float|int|uint",
+        // Must be set when using an integer texture
+        "seamless": false
+        // Specifies cubemap textures to be sampled as seamless textures
+      }
     }
   }
 }
