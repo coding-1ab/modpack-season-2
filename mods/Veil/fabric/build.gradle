@@ -81,7 +81,10 @@ modrinth {
     uploadFile = remapJar
     additionalFiles = [jar, sourcesJar]
     gameVersions = [project.minecraft_version]
-    changelog = file("$rootDir/changelog.md").getText('UTF-8')
+    final var changelogFile = file("$rootDir/changelog.md")
+    if (changelogFile.exists()) {
+        changelog = changelogFile.getText('UTF-8')
+    }
     dependencies {
         required.project "fabric-api"
         optional.project "sodium"

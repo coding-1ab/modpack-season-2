@@ -79,6 +79,7 @@ modrinth {
         modrinthToken = project.hasProperty('veil_modrinth_token') ? veil_modrinth_token : "dummy"
     }
 
+
     token = modrinthToken
     projectId = "veil"
     versionName = "Veil $project.version NeoForge"
@@ -87,7 +88,10 @@ modrinth {
     uploadFile = jar
     additionalFiles = [sourcesJar]
     gameVersions = [project.minecraft_version]
-    changelog = file("$rootDir/changelog.md").getText('UTF-8')
+    final var changelogFile = file("$rootDir/changelog.md")
+    if (changelogFile.exists()) {
+        changelog = changelogFile.getText('UTF-8')
+    }
     dependencies {
         optional.project "sodium"
         incompatible.project "embeddium"
