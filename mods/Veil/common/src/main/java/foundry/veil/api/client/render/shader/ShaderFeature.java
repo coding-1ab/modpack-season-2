@@ -82,6 +82,7 @@ public enum ShaderFeature {
             case SHADER_STORAGE -> directives.add("#extension GL_ARB_shader_storage_buffer_object : require");
             case ATOMIC_COUNTER -> directives.add("#extension GL_ARB_shader_atomic_counters : require");
             case BINDLESS_TEXTURE -> {
+                directives.add("#extension GL_ARB_bindless_texture : require");
                 directives.add("#extension GL_NV_gpu_shader5 : enable");
                 directives.add("#extension GL_EXT_nonuniform_qualifier : enable");
             }
