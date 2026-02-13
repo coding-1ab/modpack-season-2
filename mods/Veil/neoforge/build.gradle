@@ -76,7 +76,7 @@ dependencies {
 modrinth {
     var modrinthToken = System.getenv("MODRINTH_TOKEN")
     if (modrinthToken == null) {
-        modrinthToken = veil_modrinth_token
+        modrinthToken = project.hasProperty('veil_modrinth_token') ? veil_modrinth_token : "dummy"
     }
 
     token = modrinthToken
