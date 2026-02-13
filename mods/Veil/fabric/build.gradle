@@ -78,8 +78,8 @@ modrinth {
     versionName = "Veil $project.version Fabric"
     versionNumber = "$project.version"
     versionType = "release"
-    uploadFile = jar
-    additionalFiles = [sourcesJar]
+    uploadFile = remapJar
+    additionalFiles = [jar, sourcesJar]
     gameVersions = [project.minecraft_version]
     changelog = file("$rootDir/changelog.md").getText('UTF-8')
     dependencies {
