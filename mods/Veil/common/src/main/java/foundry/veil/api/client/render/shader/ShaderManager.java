@@ -31,6 +31,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.FileToIdConverter;
@@ -167,7 +168,11 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
         }
     }
 
-    private void readShader(ShaderProcessorList processorList, ResourceProvider resourceProvider, Map<ResourceLocation, ProgramDefinition> definitions, Map<ResourceLocation, VeilShaderSource> shaderSources, ResourceLocation definitionId, int activeBuffers) {
+    private void readShader(ShaderProcessorList processorList, ResourceProvider resourceProvider, Map<ResourceLocation, ProgramSource> definitions, ResourceLocation definitionId, int activeBuffers) {
+        if (definitions.containsKey(definitionId)) {
+            throw new IllegalStateException("Duplicate shader ignored with ID " + definitionId);
+        }
+
         Set<ResourceLocation> checkedSources = new HashSet<>();
 
         ShaderPreProcessor processor = processorList.getProcessor();
@@ -175,10 +180,8 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
 
         try {
             ProgramDefinition definition = this.parseDefinition(definitionId, resourceProvider);
-            if (definitions.put(definitionId, definition) != null) {
-                throw new IllegalStateException("Duplicate shader ignored with ID " + definitionId);
-            }
 
+            Map<ResourceLocation, VeilShaderSource> shaderSources = new Object2ObjectArrayMap<>(2);
             Map<String, Object> customProgramData = new HashMap<>();
             for (Int2ObjectMap.Entry<ResourceLocation> shader : definition.shaders().int2ObjectEntrySet()) {
                 int type = shader.getIntKey();
@@ -235,6 +238,8 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
                     throw new IOException("Failed to load " + getTypeName(type) + " shader", t);
                 }
             }
+
+            definitions.put(definitionId, new ProgramSource(definition, Map.copyOf(shaderSources)));
         } catch (IOException | IllegalArgumentException | JsonParseException e) {
             Veil.LOGGER.error("Couldn't parse shader {} from {}", definitionId, this.sourceSet.getShaderDefinitionLister().idToFile(definitionId), e);
         }
@@ -361,9 +366,8 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
         return this.sourceSet;
     }
 
-    private CompletableFuture<ReloadState> prepare(ResourceManager resourceManager, Collection<DynamicShaderProgramImpl> dynamicShaders, Collection<ResourceLocation> shaders, int activeBuffers, Executor executor) {
-        Map<ResourceLocation, ProgramDefinition> definitions = new ConcurrentHashMap<>();
-        Map<ResourceLocation, VeilShaderSource> shaderSources = new ConcurrentHashMap<>();
+    private CompletableFuture<Map<ResourceLocation, ProgramSource>> prepare(ResourceManager resourceManager, Collection<DynamicShaderProgramImpl> dynamicShaders, Collection<ResourceLocation> shaders, int activeBuffers, Executor executor) {
+        Map<ResourceLocation, ProgramSource> definitions = new ConcurrentHashMap<>();
 
         Long2ObjectMap<ShaderProcessorList> processorList = Long2ObjectMaps.synchronize(new Long2ObjectArrayMap<>());
         Deque<ResourceLocation> shaderQueue = new ConcurrentLinkedDeque<>(shaders);
@@ -380,7 +384,7 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
                     return list;
                 });
                 shaderProcessor.getShaderImporter().reset();
-                this.readShader(shaderProcessor, resourceManager, definitions, shaderSources, key, activeBuffers);
+                this.readShader(shaderProcessor, resourceManager, definitions, key, activeBuffers);
             };
         });
 
@@ -393,10 +397,10 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
                         shaderImporter.reset();
                         shader.processShaderSources(list, this.definitions, activeBuffers);
                     }
-                }, executor)).thenApply(unused -> new ReloadState(definitions, shaderSources));
+                }, executor)).thenApply(unused -> definitions);
     }
 
-    private void apply(ShaderManager.ReloadState reloadState) {
+    private void apply(Map<ResourceLocation, ProgramSource> sources) {
         Iterator<ShaderProgramImpl> iterator = this.shaders.values().iterator();
         while (iterator.hasNext()) {
             ShaderProgramImpl program = iterator.next();
@@ -411,13 +415,14 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
             }
         }
 
-        try (ShaderCompiler compiler = reloadState.createCompiler()) {
-            for (Map.Entry<ResourceLocation, ProgramDefinition> entry : reloadState.definitions().entrySet()) {
-                ProgramDefinition definition = entry.getValue();
-                if (this.isInvalid(entry.getKey(), definition)) {
-                    continue;
-                }
+        for (Map.Entry<ResourceLocation, ProgramSource> entry : sources.entrySet()) {
+            ProgramSource source = entry.getValue();
+            ProgramDefinition definition = source.definition;
+            if (this.isInvalid(entry.getKey(), definition)) {
+                continue;
+            }
 
+            try (ShaderCompiler compiler = source.createCompiler()) {
                 ResourceLocation id = entry.getKey();
                 ShaderProgramImpl program = new ShaderProgramImpl(id);
                 this.compile(program, definition, compiler);
@@ -433,21 +438,22 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
         Veil.LOGGER.info("Loaded {} shaders from: {}", this.shaders.size(), this.sourceSet.getFolder());
     }
 
-    private void applyRecompile(ShaderManager.ReloadState reloadState, Map<ResourceLocation, ShaderProgram> updatedShaders) {
-        try (ShaderCompiler compiler = reloadState.createCompiler()) {
-            for (Map.Entry<ResourceLocation, ProgramDefinition> entry : reloadState.definitions().entrySet()) {
-                ResourceLocation id = entry.getKey();
-                ShaderProgramImpl program = this.shaders.get(id);
-                if (program == null) {
-                    Veil.LOGGER.warn("Failed to recompile unknown shader: {}", id);
-                    continue;
-                }
+    private void applyRecompile(Map<ResourceLocation, ProgramSource> sources, Map<ResourceLocation, ShaderProgram> updatedShaders) {
+        for (Map.Entry<ResourceLocation, ProgramSource> entry : sources.entrySet()) {
+            ResourceLocation id = entry.getKey();
+            ShaderProgramImpl program = this.shaders.get(id);
+            if (program == null) {
+                Veil.LOGGER.warn("Failed to recompile unknown shader: {}", id);
+                continue;
+            }
 
-                ProgramDefinition definition = entry.getValue();
-                if (this.isInvalid(id, definition)) {
-                    continue;
-                }
+            ProgramSource source = entry.getValue();
+            ProgramDefinition definition = source.definition;
+            if (this.isInvalid(id, definition)) {
+                continue;
+            }
 
+            try (ShaderCompiler compiler = source.createCompiler()) {
                 this.compile(program, definition, compiler);
             }
         }
@@ -558,27 +564,25 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
             if (!shaders.isEmpty()) {
                 this.updateBuffersFuture = this.updateBuffersFuture
                         .thenCompose(unused -> this.prepare(Minecraft.getInstance().getResourceManager(), dynamicShaders, shaders, activeBuffers, Util.backgroundExecutor()))
-                        .thenAcceptAsync(reloadState -> {
-                            try (ShaderCompiler compiler = reloadState.createCompiler()) {
-                                for (Map.Entry<ResourceLocation, ProgramDefinition> entry : reloadState.definitions().entrySet()) {
-                                    ResourceLocation id = entry.getKey();
-                                    ShaderProgram program = this.getShader(id);
-                                    if (!(program instanceof ShaderProgramImpl impl)) {
-                                        Veil.LOGGER.warn("Failed to set shader active buffers: {}", id);
-                                        continue;
-                                    }
+                        .thenAcceptAsync(sources -> {
+                            for (Map.Entry<ResourceLocation, ProgramSource> entry : sources.entrySet()) {
+                                ResourceLocation id = entry.getKey();
+                                ShaderProgram program = this.getShader(id);
+                                if (!(program instanceof ShaderProgramImpl impl)) {
+                                    Veil.LOGGER.warn("Failed to set shader active buffers: {}", id);
+                                    continue;
+                                }
 
-                                    try {
-                                        impl.recompile(activeBuffers, this.sourceSet, compiler);
-                                    } catch (ShaderException e) {
-                                        Veil.LOGGER.error("Failed to update shader active buffers: {}. {}", id, e.getMessage());
-                                        String error = e.getGlError();
-                                        if (error != null) {
-                                            Veil.LOGGER.warn(error);
-                                        }
-                                    } catch (Exception e) {
-                                        Veil.LOGGER.error("Failed to update shader active buffers: {}", id, e);
+                                try (ShaderCompiler compiler = entry.getValue().createCompiler()) {
+                                    impl.recompile(activeBuffers, this.sourceSet, compiler);
+                                } catch (ShaderException e) {
+                                    Veil.LOGGER.error("Failed to update shader active buffers: {}. {}", id, e.getMessage());
+                                    String error = e.getGlError();
+                                    if (error != null) {
+                                        Veil.LOGGER.warn(error);
                                     }
+                                } catch (Exception e) {
+                                    Veil.LOGGER.error("Failed to update shader active buffers: {}", id, e);
                                 }
                             }
 
@@ -707,12 +711,11 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
         }
     }
 
-    private record ReloadState(Map<ResourceLocation, ProgramDefinition> definitions,
-                               Map<ResourceLocation, VeilShaderSource> shaderSources) {
+    private record ProgramSource(ProgramDefinition definition, Map<ResourceLocation, VeilShaderSource> sources) {
 
         public ShaderCompiler createCompiler() {
             return ShaderCompiler.direct(name -> {
-                VeilShaderSource source = this.shaderSources.get(name);
+                VeilShaderSource source = this.sources.get(name);
                 if (source == null) {
                     throw new FileNotFoundException("Unknown shader source: " + name);
                 }
