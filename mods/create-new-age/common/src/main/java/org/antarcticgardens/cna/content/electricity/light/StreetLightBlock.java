@@ -1,0 +1,66 @@
+package org.antarcticgardens.cna.content.electricity.light;
+
+import com.simibubi.create.foundation.block.IBE;
+import com.simibubi.create.foundation.utility.CreateLang;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import org.antarcticgardens.cna.CNABlockEntityTypes;
+import org.antarcticgardens.cna.config.CNAConfig;
+import org.antarcticgardens.cna.util.StringFormatUtil;
+
+import java.util.List;
+
+public class StreetLightBlock extends Block implements IBE<StreetLightBlockEntity> {
+
+    public static final IntegerProperty LIGHT_LEVEL = IntegerProperty.create("light_level", 0, 15);
+
+    public StreetLightBlock(Properties properties) {
+        super(properties);
+        registerDefaultState(defaultBlockState().setValue(LIGHT_LEVEL, 0));
+    }
+
+    @Override
+    public <S extends BlockEntity> BlockEntityTicker<S> getTicker(Level p_153212_, BlockState p_153213_, BlockEntityType<S> p_153214_) {
+        return (level, blockPos, blockState, blockEntity) -> {
+            if (blockEntity instanceof StreetLightBlockEntity streetLightBlock && !level.isClientSide)
+                streetLightBlock.tick();
+        };
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder.add(LIGHT_LEVEL));
+    }
+
+    @Override
+    public Class<StreetLightBlockEntity> getBlockEntityClass() {
+        return StreetLightBlockEntity.class;
+    }
+
+    @Override
+    public BlockEntityType<? extends StreetLightBlockEntity> getBlockEntityType() {
+        return CNABlockEntityTypes.STREET_LIGHT.get();
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(CreateLang.translate("tooltip.create_new_age.speed").style(ChatFormatting.GRAY).component());
+        tooltipComponents.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy_per_tick",
+                        StringFormatUtil.formatLong(CNAConfig.getCommon().streetLightLevelExtraction.get())).style(ChatFormatting.AQUA)
+                .add(CreateLang.text(" ").translate("tooltip.create_new_age.per_light_level").style(ChatFormatting.GRAY)).component());
+        tooltipComponents.add(CreateLang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY).component());
+        tooltipComponents.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy",
+                StringFormatUtil.formatLong(CNAConfig.getCommon().streetLightCapacity.get())).style(ChatFormatting.AQUA).component());
+    }
+}

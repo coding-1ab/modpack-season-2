@@ -41,6 +41,7 @@ public class CreateNewAgeNeoForge extends CreateNewAge {
         registerBlockEnergyCapability(event, CNABlockEntityTypes.ELECTRICAL_CONNECTOR.get());
         registerBlockEnergyCapability(event, CNABlockEntityTypes.CARBON_BRUSHES.get());
         registerBlockEnergyCapability(event, CNABlockEntityTypes.ENERGISER.get());
+        registerBlockEnergyCapability(event, CNABlockEntityTypes.STREET_LIGHT.get());
     }
 
     private <BE extends BlockEntity> void registerBlockEnergyCapability(RegisterCapabilitiesEvent event, BlockEntityType<BE> blockEntityType) {
