@@ -276,7 +276,6 @@ Enables/disables the overlay texture. By default, this layer enables the overlay
 }
 ```
 
-
 ### Bloom
 
 Adds a bloom effect to your Render Type
@@ -327,7 +326,8 @@ Valid modes:
 
 ### Output
 
-The framebuffer to draw the result of this render into. The `framebuffer` field is the name of any transparency or created veil framebuffer.
+The framebuffer to draw the result of this render into. The `framebuffer` field is the name of any transparency or
+created veil framebuffer.
 
 ```json5
 {
@@ -377,7 +377,8 @@ Sets the width of lines when rendering. If `width` is not specified, the window 
 
 ### Color Logic
 
-Enables OpenGL color logic with the specified operation. In Vanilla MC this is used for making the text selection in GUIs an inverted color (or_reverse).
+Enables OpenGL color logic with the specified operation. In Vanilla MC this is used for making the text selection in
+GUIs an inverted color (or_reverse).
 
 Valid operations:
 
@@ -415,5 +416,45 @@ Sets the per-vertex patch size when using tessellation shaders.
   "type": "veil:patches",
   // Required
   "patchVertices": 4,
+}
+```
+
+### Depth Clamp
+
+Enables OpenGL [Depth Clamp](https://paroj.github.io/gltut/Positioning/Tut05%20Depth%20Clamping.html).
+
+```json5
+{
+  "type": "veil:depth_clamp",
+  // Optional
+  "enabled": true,
+}
+```
+
+### Multisample
+
+Enables OpenGL [Multisample Drawing](https://learnopengl.com/Advanced-OpenGL/Anti-Aliasing).
+
+This only works if drawing into a framebuffer with a multi-sampled render buffer attachment (samples > 0).
+
+```json5
+{
+  "type": "veil:multisample",
+  // Optional
+  "enabled": true,
+}
+```
+
+### Seamless Cubemap
+
+Globally enables OpenGL [Seamless Cubemap Sampling](https://wikis.khronos.org/opengl/Cubemap_Texture#Seamless_cubemap).
+
+This is not required when using a Veil Shader. Instead, this can be set as a [sampling parameter](Shader#texture-filters) per cubemap texture.
+
+```json5
+{
+  "type": "veil:seamless_cubemap",
+  // Optional
+  "enabled": true,
 }
 ```

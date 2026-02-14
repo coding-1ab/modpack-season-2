@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Supplier;
 
@@ -158,7 +159,10 @@ public interface VeilRenderBridge {
     /**
      * @return A render state shard to enable color dithering
      * @since 2.0.0
+     * @deprecated This is a deprecated OpenGL feature and should be implemented using shaders
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
+    @Deprecated
     static RenderStateShard ditherState() {
         return FlagShards.DITHER;
     }
@@ -166,7 +170,10 @@ public interface VeilRenderBridge {
     /**
      * @return A render state shard to enable smooth line rendering
      * @since 2.0.0
+     * @deprecated This is a deprecated OpenGL feature and should be implemented using shaders or {@link #multisampleState()}
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
+    @Deprecated
     static RenderStateShard lineSmoothState() {
         return FlagShards.LINE_SMOOTH;
     }

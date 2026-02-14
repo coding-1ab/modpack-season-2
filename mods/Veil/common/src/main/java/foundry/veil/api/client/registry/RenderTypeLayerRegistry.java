@@ -35,6 +35,9 @@ public final class RenderTypeLayerRegistry {
     public static final RegistryObject<LayerType<LineLayer>> LINE = register("line", LineLayer.CODEC);
     public static final RegistryObject<LayerType<ColorLogicLayer>> COLOR_LOGIC = register("color_logic", ColorLogicLayer.CODEC);
     public static final RegistryObject<LayerType<PatchesLayer>> PATCHES = register(Veil.veilPath("patches"), PatchesLayer.CODEC);
+    public static final RegistryObject<LayerType<DepthClampLayer>> DEPTH_CLAMP = register(Veil.veilPath("depth_clamp"), DepthClampLayer.CODEC);
+    public static final RegistryObject<LayerType<MultisampleLayer>> MULTISAMPLE = register(Veil.veilPath("multisample"), MultisampleLayer.CODEC);
+    public static final RegistryObject<LayerType<SeamlessCubemapLayer>> SEAMLESS_CUBEMAP = register(Veil.veilPath("seamless_cubemap"), SeamlessCubemapLayer.CODEC);
 
     private RenderTypeLayerRegistry() {
     }
