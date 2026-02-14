@@ -98,6 +98,7 @@ public class DeviceInfoViewer extends SingleWindowInspector {
         ImGui.separator();
 
         title(GL_FEATURE_FLAG);
+        flagText("inspector.veil.device_info.opengl.feature_flag.tessellation", VeilRenderSystem.tessellationSupported(), "Whether tessellation shaders can be used");
         flagText("inspector.veil.device_info.opengl.feature_flag.compute", VeilRenderSystem.computeSupported(), "Whether compute shaders can be used");
         flagText("inspector.veil.device_info.opengl.feature_flag.atomic_counter", VeilRenderSystem.atomicCounterSupported(), "Whether atomic counters can be used in shaders");
         flagText("inspector.veil.device_info.opengl.feature_flag.transform_feedback", VeilRenderSystem.transformFeedbackSupported(), "Whether transform feedback can be used");

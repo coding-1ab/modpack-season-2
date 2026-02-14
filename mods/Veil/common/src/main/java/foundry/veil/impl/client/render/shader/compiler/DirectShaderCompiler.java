@@ -20,6 +20,8 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11C.GL_TRUE;
 import static org.lwjgl.opengl.GL20C.*;
+import static org.lwjgl.opengl.GL40C.GL_TESS_CONTROL_SHADER;
+import static org.lwjgl.opengl.GL40C.GL_TESS_EVALUATION_SHADER;
 import static org.lwjgl.opengl.GL43C.GL_COMPUTE_SHADER;
 import static org.lwjgl.opengl.KHRDebug.GL_SHADER;
 
@@ -39,6 +41,9 @@ public class DirectShaderCompiler implements ShaderCompiler {
     }
 
     private void validateType(int type) throws ShaderException {
+        if ((type == GL_TESS_CONTROL_SHADER || type == GL_TESS_EVALUATION_SHADER) && !VeilRenderSystem.tessellationSupported()) {
+            throw new ShaderException("Tessellation is not supported", null);
+        }
         if (type == GL_COMPUTE_SHADER && !VeilRenderSystem.computeSupported()) {
             throw new ShaderException("Compute is not supported", null);
         }

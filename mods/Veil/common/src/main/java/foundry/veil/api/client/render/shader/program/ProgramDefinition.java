@@ -190,9 +190,11 @@ public record ProgramDefinition(@Nullable ResourceLocation vertex,
             }
             if (tesselationControl != null) {
                 sources.put(GL_TESS_CONTROL_SHADER, tesselationControl);
+                requiredFeatures.add(ShaderFeature.TESSELLATION);
             }
             if (tesselationEvaluation != null) {
                 sources.put(GL_TESS_EVALUATION_SHADER, tesselationEvaluation);
+                requiredFeatures.add(ShaderFeature.TESSELLATION);
             }
             if (geometry != null) {
                 sources.put(GL_GEOMETRY_SHADER, geometry);

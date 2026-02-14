@@ -33,7 +33,11 @@ public enum ShaderFeature {
     /**
      * @since 3.0.0
      */
-    VERTEX_ATTRIBUTE64;
+    VERTEX_ATTRIBUTE64,
+    /**
+     * @since 3.1.0
+     */
+    TESSELLATION;
 
     @ApiStatus.Internal
     public static final ShaderFeature[] FEATURES = values();
@@ -60,6 +64,7 @@ public enum ShaderFeature {
             case FLOAT64 -> VeilRenderSystem.gpuShaderFloat64BitSupported();
             case INT64 -> VeilRenderSystem.gpuShaderInt64BitSupported();
             case VERTEX_ATTRIBUTE64 -> VeilRenderSystem.vertexAttribute64BitSupported();
+            case TESSELLATION -> VeilRenderSystem.tessellationSupported();
         };
     }
 
@@ -89,6 +94,7 @@ public enum ShaderFeature {
             case FLOAT64 -> directives.add("#extension GL_ARB_gpu_shader_fp64 : require");
             case INT64 -> directives.add("#extension GL_ARB_gpu_shader_int64 : require");
             case VERTEX_ATTRIBUTE64 -> directives.add("#extension GL_ARB_vertex_attrib_64bit : require");
+            case TESSELLATION -> directives.add("#extension GL_ARB_tessellation_shader : require");
         }
     }
 }

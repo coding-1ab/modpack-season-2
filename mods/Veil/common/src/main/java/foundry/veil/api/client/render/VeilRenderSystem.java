@@ -97,6 +97,7 @@ public final class VeilRenderSystem {
     private static final VeilShaderBlockState UNIFORM_BLOCK_STATE = new VeilShaderBlockState();
     private static final VeilShaderBufferCache SHADER_BUFFER_CACHE = new VeilShaderBufferCache();
 
+    private static final BooleanSupplier TESSELLATION_SUPPORTED = glCapability(caps -> caps.OpenGL40 || caps.GL_ARB_tessellation_shader);
     private static final BooleanSupplier COMPUTE_SUPPORTED = glCapability(caps -> caps.OpenGL43 || caps.GL_ARB_compute_shader);
     private static final BooleanSupplier ATOMIC_COUNTER_SUPPORTED = glCapability(caps -> caps.OpenGL42 || caps.GL_ARB_shader_atomic_counters);
     private static final BooleanSupplier TRANSFORM_FEEDBACK_SUPPORTED = glCapability(caps -> caps.OpenGL40 || caps.GL_ARB_transform_feedback3);
@@ -545,6 +546,14 @@ public final class VeilRenderSystem {
     }
 
     /**
+     * @return Whether tessellation shaders are supported
+     * @see 3.1.0
+     */
+    public static boolean tessellationSupported() {
+        return TESSELLATION_SUPPORTED.getAsBoolean();
+    }
+
+    /**
      * @return Whether compute shaders are supported
      */
     public static boolean computeSupported() {
@@ -750,7 +759,8 @@ public final class VeilRenderSystem {
             case GL_UNIFORM_BUFFER -> maxUniformBuffersBindings();
             case GL_ATOMIC_COUNTER_BUFFER -> maxAtomicCounterBufferBindings();
             case GL_SHADER_STORAGE_BUFFER -> maxShaderStorageBufferBindings();
-            default -> throw new IllegalArgumentException("Invalid Target: 0x" + Integer.toHexString(target).toUpperCase(Locale.ROOT));
+            default ->
+                    throw new IllegalArgumentException("Invalid Target: 0x" + Integer.toHexString(target).toUpperCase(Locale.ROOT));
         };
     }
 
@@ -768,7 +778,8 @@ public final class VeilRenderSystem {
             case GL_GEOMETRY_SHADER -> GL_GEOMETRY_SHADER_LIMITS.get();
             case GL_FRAGMENT_SHADER -> GL_FRAGMENT_SHADER_LIMITS.get();
             case GL_COMPUTE_SHADER -> GL_COMPUTE_SHADER_LIMITS.get();
-            default -> throw new IllegalArgumentException("Invalid Shader Type: 0x" + Integer.toHexString(shader).toUpperCase(Locale.ROOT));
+            default ->
+                    throw new IllegalArgumentException("Invalid Shader Type: 0x" + Integer.toHexString(shader).toUpperCase(Locale.ROOT));
         };
     }
 
