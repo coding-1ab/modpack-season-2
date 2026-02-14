@@ -8,7 +8,6 @@ import foundry.veil.api.resource.VeilResourceAction;
 import foundry.veil.api.resource.VeilResourceInfo;
 import foundry.veil.api.resource.VeilResourceManager;
 import foundry.veil.impl.resource.action.TextEditAction;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -18,7 +17,8 @@ import java.util.Map;
 import java.util.Set;
 
 @ApiStatus.Internal
-public record VeilShaderFileResource(VeilResourceInfo resourceInfo, ShaderManager shaderManager) implements VeilShaderResource<VeilShaderFileResource> {
+public record VeilShaderFileResource(VeilResourceInfo resourceInfo,
+                                     ShaderManager shaderManager) implements VeilShaderResource<VeilShaderFileResource> {
 
     @Override
     public List<VeilResourceAction<VeilShaderFileResource>> getActions() {
@@ -47,16 +47,13 @@ public record VeilShaderFileResource(VeilResourceInfo resourceInfo, ShaderManage
                 continue;
             }
 
-            for (Int2ObjectMap.Entry<ResourceLocation> shaderEntry : definition.shaders().int2ObjectEntrySet()) {
-                ResourceLocation sourceName = shaderEntry.getValue();
-                if (sourceName == null) {
-                    continue;
-                }
+            ResourceLocation sourceName = definition.shaders().get(type);
+            if (sourceName == null) {
+                continue;
+            }
 
-                if (id.equals(sourceName)) {
-                    programs.add(entry.getKey());
-                    break;
-                }
+            if (id.equals(sourceName)) {
+                programs.add(entry.getKey());
             }
         }
 
