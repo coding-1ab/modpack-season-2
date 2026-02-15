@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.*;
 import vectorwing.farmersdelight.common.block.CuttingBoardBlock;
 import vectorwing.farmersdelight.common.block.entity.CuttingBoardBlockEntity;
@@ -112,15 +113,12 @@ public class CuttingBoardRenderer implements BlockEntityRenderer<CuttingBoardBlo
 	}
 
 	protected int getModelCount(ItemStack stack) {
-		if (stack.getCount() > 48) {
-			return 5;
-		} else if (stack.getCount() > 32) {
-			return 4;
-		} else if (stack.getCount() > 16) {
-			return 3;
-		} else if (stack.getCount() > 1) {
-			return 2;
+		int modelCount = 1;
+
+		if (stack.getCount() > 1) {
+			modelCount += Mth.ceil(((float) stack.getCount() / stack.getMaxStackSize()) * 4);
 		}
-		return 1;
+
+		return modelCount;
 	}
 }
