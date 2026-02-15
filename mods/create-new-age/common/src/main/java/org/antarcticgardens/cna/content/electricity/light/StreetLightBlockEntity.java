@@ -84,7 +84,7 @@ public class StreetLightBlockEntity extends SmartBlockEntity implements IHaveGog
         super.tick();
         if (getLevel() == null)
             return;
-        long needed = lightLevelBehaviour.getValue() * CNAConfig.getCommon().streetLightLevelExtraction.get();
+        long needed = (long) lightLevelBehaviour.getValue() * CNAConfig.getCommon().streetLightLevelExtraction.get();
         long e = storage.internalExtract(needed, false);
         if (prvEnergy == storage.getStoredEnergy())
             return;

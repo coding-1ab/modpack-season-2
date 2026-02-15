@@ -39,7 +39,7 @@ public class CommonConfig {
     public final ModConfigSpec.ConfigValue<Boolean> radiationDamageExplosionFire;
     public final ModConfigSpec.ConfigValue<Boolean> geigerCounterSounds;
     public final ModConfigSpec.ConfigValue<Boolean> nauseaInducingRadiation;
-    public final ModConfigSpec.ConfigValue<Long> streetLightLevelExtraction;
+    public final ModConfigSpec.ConfigValue<Integer> streetLightLevelExtraction;
     public final ModConfigSpec.ConfigValue<Integer> streetLightCapacity;
 
     public CommonConfig(ModConfigSpec.Builder builder) {
@@ -95,7 +95,7 @@ public class CommonConfig {
 
         streetLightLevelExtraction = builder
                 .comment("How much extracted per tick multiplied by current light level")
-                .defineInRange("streetLightLevelExtraction", 10, 0, Long.MAX_VALUE);
+                .defineInRange("streetLightLevelExtraction", 10, 0, Integer.MAX_VALUE);
 
         builder.push("Motors");
 
