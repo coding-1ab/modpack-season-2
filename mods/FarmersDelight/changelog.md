@@ -2,6 +2,12 @@
 
 ## 1.3.0 (WIP)
 
+### Additions
+- Farmer's Delight now has a native EMI plugin! (thanks, ChrysanthCow!)
+  - It works similarly to the built-in JEI plugin, but offering compatibility with EMI's unique features, such as chances and recipe trees;
+  - With it, tags have been integrated into translation files. Both JEI and EMI now use them to display tags in-game.
+  - Default recipes have been configured for most FD recipes. I'll try to keep this updated for pack makers, but I may forget now and then.
+
 ### Updates
 - The Cutting Board has been redesigned:
   - It can now hold a **full stack of items**, instead of one at a time. This allows players to process their stacks in half the time it took before;
