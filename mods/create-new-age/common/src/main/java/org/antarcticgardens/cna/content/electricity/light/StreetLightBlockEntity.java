@@ -9,6 +9,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -57,6 +58,7 @@ public class StreetLightBlockEntity extends SmartBlockEntity implements IHaveGog
         lightLevelBehaviour = new ScrollValueBehaviour(CreateLang.translateDirect("create_new_age.street_light.light_level"), this, new StreetLightBox())
                 .between(0, 15);
         lightLevelBehaviour.value = 15;
+        lightLevelBehaviour.requiresWrench();
         lightLevelBehaviour.withCallback( i -> {
             if (getLevel() != null && storage.getStoredEnergy() > 0)
                 getLevel().setBlock(getBlockPos(), getBlockState().setValue(StreetLightBlock.LIGHT_LEVEL, i), 3);
@@ -84,6 +86,8 @@ public class StreetLightBlockEntity extends SmartBlockEntity implements IHaveGog
             return;
         long needed = lightLevelBehaviour.getValue() * CNAConfig.getCommon().streetLightLevelExtraction.get();
         long e = storage.internalExtract(needed, false);
+        if (prvEnergy == storage.getStoredEnergy())
+            return;
         if (e <= 0) {
             getLevel().setBlock(getBlockPos(), getBlockState().setValue(StreetLightBlock.LIGHT_LEVEL, 0), 3);
         } else {
@@ -101,6 +105,13 @@ public class StreetLightBlockEntity extends SmartBlockEntity implements IHaveGog
         protected Vec3 getSouthLocation() {
             // TODO: Model
             return VecHelper.voxelSpace(8, 8, 16);
+        }
+
+        @Override
+        protected boolean isSideActive(BlockState state, Direction direction) {
+            if (direction == Direction.UP || direction == Direction.DOWN)
+                return false;
+            return super.isSideActive(state, direction);
         }
     }
 }
