@@ -5,6 +5,9 @@ pipeline {
     tools {
         jdk "jdk-21"
     }
+    environment {
+        CI = 'true'
+    }
     stages {
         stage('Clean') {
             steps {
