@@ -53,8 +53,8 @@ dependencies {
 //    modRuntimeOnly "maven.modrinth:flashback:0.32.0"
 //    modRuntimeOnly "maven.modrinth:cameratweaks:1.7.0-1.21.1"
 //    modRuntimeOnly "maven.modrinth:yacl:3.6.3+1.21.1-fabric"
-    modRuntimeOnly "maven.modrinth:aaa-particles:fabric-1.21-1.4.12"
-    modRuntimeOnly "maven.modrinth:architectury-api:13.0.8+fabric"
+//    modRuntimeOnly "maven.modrinth:aaa-particles:fabric-1.21-1.4.12"
+//    modRuntimeOnly "maven.modrinth:architectury-api:13.0.8+fabric"
 
     include(api("gg.moonflower:molang-compiler:${molang_compiler_version}"))
     include(api("io.github.ocelot:glsl-processor:${glsl_processor_version}"))
