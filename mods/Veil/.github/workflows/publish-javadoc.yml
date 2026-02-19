@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - 1.21
+    paths:
+      - common/src/main/java/**
+env:
+  CI: 'true'
 
 jobs:
   publish:
