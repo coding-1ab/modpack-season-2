@@ -10,20 +10,20 @@ import org.jetbrains.annotations.ApiStatus;
  */
 public class DynamicBuffersChange {
 
-    private final int previousBuffers;
-    private final int newBuffers;
+    private final int previouslyEnabledBuffersMask;
+    private final int enabledBuffersMask;
 
     @ApiStatus.Internal
-    public DynamicBuffersChange(final int previousBuffers, final int newBuffers) {
-        this.previousBuffers = previousBuffers;
-        this.newBuffers = newBuffers;
+    public DynamicBuffersChange(final int previouslyEnabledBuffersMask, final int enabledBuffersMask) {
+        this.previouslyEnabledBuffersMask = previouslyEnabledBuffersMask;
+        this.enabledBuffersMask = enabledBuffersMask;
     }
 
     /**
      * @return a new array containing all buffers that were previously enabled
      */
     public DynamicBufferType[] getPreviouslyEnabledBuffers() {
-        return DynamicBufferType.decode(this.previousBuffers);
+        return DynamicBufferType.decode(this.previouslyEnabledBuffersMask);
     }
 
     /**
@@ -35,21 +35,21 @@ public class DynamicBuffersChange {
      * @return a new array containing all dynamic buffers that are now enabled
      */
     public DynamicBufferType[] getEnabledBuffers() {
-        return DynamicBufferType.decode(this.newBuffers);
+        return DynamicBufferType.decode(this.enabledBuffersMask);
     }
 
     /**
      * @return a mask representing the enabled state of every dynamic buffer
      */
     public int getPreviouslyEnabledBuffersMask() {
-        return this.previousBuffers;
+        return this.previouslyEnabledBuffersMask;
     }
 
     /**
      * @return a mask representing the previous enabled state of every dynamic buffer
      */
     public int getEnabledBuffersMask() {
-        return this.newBuffers;
+        return this.enabledBuffersMask;
     }
 
     /**
@@ -60,7 +60,7 @@ public class DynamicBuffersChange {
      */
     public boolean hasChanged(final DynamicBufferType buffer) {
         final int mask = buffer.getMask();
-        return ((this.newBuffers & mask) ^ (this.previousBuffers & mask)) != 0;
+        return ((this.enabledBuffersMask & mask) ^ (this.previouslyEnabledBuffersMask & mask)) != 0;
     }
 
     /**
@@ -70,7 +70,7 @@ public class DynamicBuffersChange {
      * @return if the buffer is now enabled
      */
     public boolean isEnabled(final DynamicBufferType buffer) {
-        return (this.newBuffers & buffer.getMask()) != 0;
+        return (this.enabledBuffersMask & buffer.getMask()) != 0;
     }
 
     /**
@@ -80,6 +80,6 @@ public class DynamicBuffersChange {
      * @return if the buffer was previously enabled
      */
     public boolean wasPreviouslyEnabled(final DynamicBufferType buffer) {
-        return (this.previousBuffers & buffer.getMask()) != 0;
+        return (this.previouslyEnabledBuffersMask & buffer.getMask()) != 0;
     }
 }

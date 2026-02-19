@@ -277,7 +277,7 @@ public class VeilRenderer implements ResourceManagerReloadListener {
     @ApiStatus.Internal
     public void endFrame() {
         this.framebufferManager.clear();
-        this.dynamicBufferManager.clear();
+        this.dynamicBufferManager.endFrame();
         this.postProcessingManager.endFrame();
     }
 

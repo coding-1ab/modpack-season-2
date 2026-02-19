@@ -9,7 +9,7 @@ import foundry.veil.api.client.render.VeilRenderer;
 import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.client.render.dynamicbuffer.DynamicBuffersChange;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
-import foundry.veil.api.compat.SodiumCompat;
+import foundry.veil.api.client.render.framebuffer.FramebufferManager;
 import foundry.veil.ext.RenderTargetExtension;
 import foundry.veil.ext.ShaderInstanceExtension;
 import foundry.veil.mixin.dynamicbuffer.accessor.DynamicBufferGameRendererAccessor;
@@ -30,19 +30,14 @@ import java.util.*;
 import static org.lwjgl.opengl.GL11C.*;
 import static org.lwjgl.opengl.GL12C.*;
 import static org.lwjgl.opengl.GL14C.GL_TEXTURE_LOD_BIAS;
-import static org.lwjgl.opengl.GL20C.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20C.GL_VERTEX_SHADER;
 import static org.lwjgl.opengl.GL30C.GL_COLOR_ATTACHMENT1;
-import static org.lwjgl.opengl.GL32C.GL_GEOMETRY_SHADER;
-import static org.lwjgl.opengl.GL40C.GL_TESS_CONTROL_SHADER;
-import static org.lwjgl.opengl.GL40C.GL_TESS_EVALUATION_SHADER;
-import static org.lwjgl.opengl.GL43C.GL_COMPUTE_SHADER;
 
 @ApiStatus.Internal
 public class DynamicBufferManager implements NativeResource {
 
     public static final ResourceLocation MAIN_WRAPPER = Veil.veilPath("dynamic_main");
     private static final DynamicBufferType[] BUFFERS = DynamicBufferType.values();
+    private static final long MAX_SHADER_COMPILE_TIME_NS = 2 * 1_000_000; // millisecond -> nanosecond
 
     private int activeBuffers;
     private final Object2IntMap<ResourceLocation> activeBufferLayers;
@@ -51,6 +46,7 @@ public class DynamicBufferManager implements NativeResource {
     private final Map<ResourceLocation, AdvancedFbo> framebuffers;
     private final List<AdvancedFbo> dynamicFramebuffers;
     private final EnumMap<DynamicBufferType, DynamicBuffer> dynamicBuffers;
+    private final Set<ShaderInstance> swapShaders;
     private int dynamicFboPointer;
 
     public DynamicBufferManager(int width, int height) {
@@ -61,6 +57,7 @@ public class DynamicBufferManager implements NativeResource {
         this.framebuffers = new HashMap<>();
         this.dynamicFramebuffers = new ArrayList<>();
         this.dynamicBuffers = new EnumMap<>(DynamicBufferType.class);
+        this.swapShaders = new HashSet<>();
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer textures = stack.mallocInt(DynamicBufferType.values().length);
@@ -74,9 +71,10 @@ public class DynamicBufferManager implements NativeResource {
     }
 
     private void deleteFramebuffers() {
+        FramebufferManager framebufferManager = VeilRenderSystem.renderer().getFramebufferManager();
         for (Map.Entry<ResourceLocation, AdvancedFbo> entry : this.framebuffers.entrySet()) {
             entry.getValue().free();
-            VeilRenderSystem.renderer().getFramebufferManager().removeFramebuffer(entry.getKey());
+            framebufferManager.removeFramebuffer(entry.getKey());
         }
         this.framebuffers.clear();
         for (AdvancedFbo fbo : this.dynamicFramebuffers) {
@@ -131,16 +129,16 @@ public class DynamicBufferManager implements NativeResource {
         this.deleteFramebuffers();
 
         VeilRenderer renderer = VeilRenderSystem.renderer();
-        List<ShaderInstance> shaders = new ArrayList<>();
+        this.swapShaders.clear();
 
         DynamicBufferGameRendererAccessor accessor = (DynamicBufferGameRendererAccessor) Minecraft.getInstance().gameRenderer;
         for (ShaderInstance shader : accessor.getShaders().values()) {
             if (((ShaderInstanceExtension) shader).veil$swapBuffers(this.activeBuffers)) {
-                shaders.add(shader);
+                this.swapShaders.add(shader);
             }
         }
-        if (!shaders.isEmpty()) {
-            renderer.getVanillaShaderCompiler().reload(shaders);
+        if (!this.swapShaders.isEmpty()) {
+            renderer.getVanillaShaderCompiler().reload(this.swapShaders);
         }
 
         try {
@@ -291,7 +289,7 @@ public class DynamicBufferManager implements NativeResource {
     }
 
     @ApiStatus.Internal
-    public void clear() {
+    public void endFrame() {
         for (AdvancedFbo framebuffer : this.framebuffers.values()) {
             framebuffer.clear(0.0F, 0.0F, 0.0F, 0.0F, GL_COLOR_BUFFER_BIT, this.clearBuffers);
         }
@@ -301,6 +299,41 @@ public class DynamicBufferManager implements NativeResource {
             iterator.remove();
         }
         this.dynamicFboPointer = 0;
+
+        if (this.swapShaders.isEmpty()) {
+            return;
+        }
+
+        // When switching dynamic buffers all vanilla shader sources have to be uploaded before swapping, otherwise
+        // the shader source will be processed multiple times
+        // However, this causes a noticeable lag spike when switching dynamic buffers
+        // This allocates a couple milliseconds to shader compilation on other frames
+
+        long startTime = System.nanoTime();
+        Iterator<ShaderInstance> shaderIterator = this.swapShaders.iterator();
+        while (shaderIterator.hasNext() && System.nanoTime() - startTime < MAX_SHADER_COMPILE_TIME_NS) {
+            ShaderInstanceExtension shader = (ShaderInstanceExtension) shaderIterator.next();
+            if (!shader.veil$isRecompileReady(this.activeBuffers)) {
+                continue;
+            }
+
+            boolean success = shader.veil$applyCompile();
+            shaderIterator.remove();
+
+            // If no real work was done, then try the next shader
+            if (success) {
+                break;
+            }
+        }
+
+        if (!shaderIterator.hasNext()) {
+            Veil.LOGGER.info("Finished uploading vanilla shaders");
+        }
+    }
+
+    @ApiStatus.Internal
+    public void markRecompiled(ShaderInstance shaderInstance) {
+        this.swapShaders.add(shaderInstance);
     }
 
     @ApiStatus.Internal

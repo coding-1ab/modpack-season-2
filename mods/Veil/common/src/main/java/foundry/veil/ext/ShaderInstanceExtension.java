@@ -8,6 +8,10 @@ import java.util.Collection;
 @ApiStatus.Internal
 public interface ShaderInstanceExtension {
 
+    boolean veil$isRecompileReady(int activeBuffers);
+
+    boolean veil$applyCompile();
+
     boolean veil$swapBuffers(int activeBuffers);
 
     void veil$recompile(boolean vertex, String source, int activeBuffers);

@@ -83,7 +83,10 @@ public class VanillaShaderCompiler {
 
                 boolean vertex = path.getPath().endsWith(".vsh");
                 String processed = VanillaShaderProcessor.modify(customProgramData, shader.getName(), path, vertexFormat, activeBuffers, vertex ? GL_VERTEX_SHADER : GL_FRAGMENT_SHADER, source);
-                Minecraft.getInstance().execute(() -> extension.veil$recompile(vertex, processed, activeBuffers));
+                Minecraft.getInstance().execute(() -> {
+                    extension.veil$recompile(vertex, processed, activeBuffers);
+                    VeilRenderSystem.renderer().getDynamicBufferManger().markRecompiled(shader);
+                });
             } catch (Throwable t) {
                 Veil.LOGGER.error("Couldn't load vanilla shader from {}", path, t);
             }
