@@ -1,5 +1,6 @@
 package foundry.veil;
 
+import foundry.veil.impl.client.imgui.VeilImGuiImpl;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import org.objectweb.asm.tree.ClassNode;
@@ -22,6 +23,9 @@ public class VeilMixinPlugin implements IMixinConfigPlugin {
 
     static {
         addModIncompatibility("affinity", "foundry.veil.mixin.performance.client.PerformanceRenderTargetMixin");
+        for (String mod : VeilImGuiImpl.INCOMPATIBLE_MODS) {
+            addModIncompatibility(mod, "foundry.veil.mixin.imgui");
+        }
     }
 
     private static void addModIncompatibility(String modId, String... mixinClasses) {
@@ -56,8 +60,8 @@ public class VeilMixinPlugin implements IMixinConfigPlugin {
             return this.isModLoaded(parts[5]);
         }
         for (Map.Entry<String, Set<String>> entry : INCOMPATIBLE_MIXINS.entrySet()) {
-            if (entry.getValue().contains(mixinClassName)) {
-                return !this.isModLoaded(entry.getKey());
+            if (this.isModLoaded(entry.getKey()) && entry.getValue().contains(mixinClassName)) {
+                return false;
             }
         }
         return true;

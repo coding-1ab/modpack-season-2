@@ -12,6 +12,7 @@ import imgui.internal.ImGuiContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.system.NativeResource;
 
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
@@ -23,6 +24,8 @@ import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 @Deprecated
 @ApiStatus.Internal
 public class VeilImGuiImpl implements VeilImGui, NativeResource {
+
+    public static final Set<String> INCOMPATIBLE_MODS = Set.of("axiom", "flashback");
 
     private static VeilImGui instance = new InactiveVeilImGuiImpl();
 
@@ -154,20 +157,20 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
     }
 
     public static void init(long window) {
+        for (String mod : INCOMPATIBLE_MODS) {
+            if (Veil.platform().isModLoaded(mod)) {
+                Veil.LOGGER.warn("Found incompatible ImGui mod {}, disabling", mod);
+                instance = new InactiveVeilImGuiImpl();
+                return;
+            }
+        }
+
         try {
             instance = Veil.IMGUI ? new VeilImGuiImpl(window) : new InactiveVeilImGuiImpl();
         } catch (Throwable t) {
             Veil.LOGGER.error("Failed to load ImGui, disabling", t);
             instance = new InactiveVeilImGuiImpl();
         }
-    }
-
-    public static void setImGuiPath() {
-//        if (System.getProperty("os.arch").equals("arm") || System.getProperty("os.arch").startsWith("aarch64")) {
-//            // ImGui infers a path for loading the library using this name property
-//            // Essential that this property is set, before any ImGui-adjacent native code is loaded
-//            System.setProperty("imgui.library.name", "libimgui-javaarm64.dylib");
-//        }
     }
 
     public static VeilImGui get() {
