@@ -5,8 +5,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import org.antarcticgardens.cna.content.electricity.connector.AbstractElectricalConnector;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlock;
-import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlockEntity;
 import org.antarcticgardens.esl.energy.EnergyStorage;
 import org.antarcticgardens.esl.transaction.Transaction;
 import org.antarcticgardens.esl.transaction.TransactionContext;
@@ -16,22 +16,22 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ElectricalNetwork {
-    private final List<ElectricalConnectorBlockEntity> nodes = new ArrayList<>();
-    private final Map<ElectricalConnectorBlockEntity, EnergyBlockEntity> consumers = new HashMap<>();
-    private final Map<ElectricalConnectorBlockEntity, EnergyBlockEntity> pulledSources = new HashMap<>();
+    private final List<AbstractElectricalConnector> nodes = new ArrayList<>();
+    private final Map<AbstractElectricalConnector, EnergyBlockEntity> consumers = new HashMap<>();
+    private final Map<AbstractElectricalConnector, EnergyBlockEntity> pulledSources = new HashMap<>();
 
     private final NetworkPathManager pathManager = new NetworkPathManager();
 
-    public ElectricalNetwork(ElectricalConnectorBlockEntity base) {
+    public ElectricalNetwork(AbstractElectricalConnector base) {
         nodes.add(base);
     }
 
-    public void addNode(ElectricalConnectorBlockEntity node) {
+    public void addNode(AbstractElectricalConnector node) {
         addNode(node, new ArrayList<>());
         updateConsumersAndSources();
     }
 
-    private void addNode(ElectricalConnectorBlockEntity node, List<ElectricalConnectorBlockEntity> processedNodes) {
+    private void addNode(AbstractElectricalConnector node, List<AbstractElectricalConnector> processedNodes) {
         if (!nodes.contains(node))
             nodes.add(node);
 
@@ -43,13 +43,13 @@ public class ElectricalNetwork {
 
             node.setNetwork(this);
 
-            for (ElectricalConnectorBlockEntity connector : node.getConnectedConnectors().keySet()) {
+            for (AbstractElectricalConnector connector : node.getConnectedConnectors().keySet()) {
                 if (!processedNodes.contains(connector))
                     addNode(connector, processedNodes);
             }
         }
 
-        for (ElectricalConnectorBlockEntity connectedNode : node.getConnectedConnectors().keySet())
+        for (AbstractElectricalConnector connectedNode : node.getConnectedConnectors().keySet())
             pathManager.addConnection(node, connectedNode);
     }
 
@@ -57,12 +57,12 @@ public class ElectricalNetwork {
         consumers.clear();
         pulledSources.clear();
 
-        for (ElectricalConnectorBlockEntity node : nodes) {
+        for (AbstractElectricalConnector node : nodes) {
             if (node.getLevel() != null) {
                 Direction dir = node.getBlockState().getValue(BlockStateProperties.FACING);
                 BlockEntity entity = node.getLevel().getBlockEntity(node.getSupportingBlockPos());
                 
-                if (entity != null && !(entity instanceof ElectricalConnectorBlockEntity)) {
+                if (entity != null && !(entity instanceof AbstractElectricalConnector)) {
                     EnergyStorage storage = EnergyStorage.findForBlock(node.getLevel(), node.getSupportingBlockPos(), dir);
                     
                     if (storage != null) {
@@ -82,7 +82,7 @@ public class ElectricalNetwork {
             NetworkTicker.addNetwork(this);
     }
 
-    public long insert(ElectricalConnectorBlockEntity from, long amount, TransactionContext txn) {
+    public long insert(AbstractElectricalConnector from, long amount, TransactionContext txn) {
         if (consumers.isEmpty())
             return 0;
         
@@ -96,7 +96,7 @@ public class ElectricalNetwork {
         while (inserted.get() < amount && insertedAny) {
             insertedAny = false;
             
-            for (Map.Entry<ElectricalConnectorBlockEntity, EnergyBlockEntity> e : consumers.entrySet()) {
+            for (Map.Entry<AbstractElectricalConnector, EnergyBlockEntity> e : consumers.entrySet()) {
                 if (e.getKey().equals(from)) {
                     continue;
                 }
@@ -113,8 +113,8 @@ public class ElectricalNetwork {
         return inserted.get();
     }
 
-    private long insertInto(ElectricalConnectorBlockEntity from,
-                            Map.Entry<ElectricalConnectorBlockEntity, EnergyBlockEntity> to,
+    private long insertInto(AbstractElectricalConnector from,
+                            Map.Entry<AbstractElectricalConnector, EnergyBlockEntity> to,
                             long amount, TransactionContext txn) {
         NetworkPath path;
         long inserted = 0;
@@ -145,12 +145,12 @@ public class ElectricalNetwork {
 
     public void destroy() {
         NetworkTicker.removeNetwork(this);
-        for (ElectricalConnectorBlockEntity node : nodes)
+        for (AbstractElectricalConnector node : nodes)
             node.setNetwork(new ElectricalNetwork(node));
     }
 
     protected void tick() {
-        for (Map.Entry<ElectricalConnectorBlockEntity, EnergyBlockEntity> e : pulledSources.entrySet()) {
+        for (Map.Entry<AbstractElectricalConnector, EnergyBlockEntity> e : pulledSources.entrySet()) {
             try (Transaction txn = TransactionStack.get().openOuter(); Transaction test = txn.openNested()) {
                 long maxExtracted = e.getValue().storage().extract(Long.MAX_VALUE, test);
                 test.abort();
@@ -167,7 +167,7 @@ public class ElectricalNetwork {
         return nodes.get(0).getLevel();
     }
 
-    public List<ElectricalConnectorBlockEntity> getNodes() {
+    public List<AbstractElectricalConnector> getNodes() {
         return Collections.unmodifiableList(nodes);
     }
     

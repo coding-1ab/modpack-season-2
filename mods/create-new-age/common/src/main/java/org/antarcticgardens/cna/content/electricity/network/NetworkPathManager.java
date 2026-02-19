@@ -1,6 +1,7 @@
 package org.antarcticgardens.cna.content.electricity.network;
 
 import org.antarcticgardens.cna.config.CNAConfig;
+import org.antarcticgardens.cna.content.electricity.connector.AbstractElectricalConnector;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlockEntity;
 import org.antarcticgardens.cna.util.HashSortedPair;
 
@@ -9,12 +10,12 @@ import java.util.*;
 public class NetworkPathManager {
     private NetworkPathConductivityContext context = new NetworkPathConductivityContext();
 
-    protected void addConnection(ElectricalConnectorBlockEntity node, ElectricalConnectorBlockEntity node1) {
+    protected void addConnection(AbstractElectricalConnector node, AbstractElectricalConnector node1) {
         context.addConnection(node, node1);
     }
 
-    protected NetworkPath findConductiblePath(ElectricalConnectorBlockEntity a, ElectricalConnectorBlockEntity b) {
-        List<ElectricalConnectorBlockEntity> visited = new ArrayList<>();
+    protected NetworkPath findConductiblePath(AbstractElectricalConnector a, AbstractElectricalConnector b) {
+        List<AbstractElectricalConnector> visited = new ArrayList<>();
         Queue<QueueElement> queue = new LinkedList<>();
         queue.add(new QueueElement(a, null, 0));
         visited.add(a);
@@ -28,7 +29,7 @@ public class NetworkPathManager {
                     return path;
             }
 
-            for (ElectricalConnectorBlockEntity connector : element.connector.getConnectedConnectors().keySet()) {
+            for (AbstractElectricalConnector connector : element.connector.getConnectedConnectors().keySet()) {
                 if (!visited.contains(connector) && element.depth < CNAConfig.getCommon().maxPathfindingDepth.get()) {
                     visited.add(connector);
                     queue.add(new QueueElement(connector, element, element.depth + 1));
@@ -68,5 +69,5 @@ public class NetworkPathManager {
         context.updateConductivity();
     }
 
-    private record QueueElement(ElectricalConnectorBlockEntity connector, QueueElement parent, int depth) { }
+    private record QueueElement(AbstractElectricalConnector connector, QueueElement parent, int depth) { }
 }

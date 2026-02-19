@@ -1,7 +1,7 @@
 package org.antarcticgardens.cna.content.electricity.network;
 
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlockEntity;
+import org.antarcticgardens.cna.content.electricity.connector.AbstractElectricalConnector;
 import org.antarcticgardens.esl.energy.EnergyStorage;
 import org.antarcticgardens.esl.transaction.SnapshotParticipant;
 
@@ -9,13 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NetworkSnapshot {
-    private final Map<ElectricalConnectorBlockEntity, Object> snapshots = new HashMap<>();
+    private final Map<AbstractElectricalConnector, Object> snapshots = new HashMap<>();
     private final NetworkPathConductivityContext context;
     
     public NetworkSnapshot(ElectricalNetwork network) {
         context = new NetworkPathConductivityContext(network.getPathManager().getConductivityContext());
         
-        for (ElectricalConnectorBlockEntity connector : network.getNodes()) {
+        for (AbstractElectricalConnector connector : network.getNodes()) {
             EnergyStorage storage = EnergyStorage.findForBlock(connector.getLevel(), connector.getSupportingBlockPos(), 
                     connector.getBlockState().getValue(BlockStateProperties.FACING));
             
@@ -25,7 +25,7 @@ public class NetworkSnapshot {
         }
     }
     
-    public Map<ElectricalConnectorBlockEntity, Object> getSnapshots() {
+    public Map<AbstractElectricalConnector, Object> getSnapshots() {
         return snapshots;
     }
     

@@ -1,7 +1,7 @@
 package org.antarcticgardens.cna.content.electricity.network;
 
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlockEntity;
+import org.antarcticgardens.cna.content.electricity.connector.AbstractElectricalConnector;
 import org.antarcticgardens.esl.energy.EnergyStorage;
 import org.antarcticgardens.esl.transaction.SnapshotParticipant;
 import org.antarcticgardens.esl.transaction.TransactionContext;
@@ -9,10 +9,10 @@ import org.antarcticgardens.esl.transaction.TransactionContext;
 import java.util.Map;
 
 public class NetworkEnergyStorage extends SnapshotParticipant<Object> implements EnergyStorage {
-    private final ElectricalConnectorBlockEntity connector;
+    private final AbstractElectricalConnector connector;
     private ElectricalNetwork network;
 
-    public NetworkEnergyStorage(ElectricalConnectorBlockEntity connector, ElectricalNetwork network) {
+    public NetworkEnergyStorage(AbstractElectricalConnector connector, ElectricalNetwork network) {
         this.connector = connector;
         this.network = network;
     }
@@ -64,7 +64,7 @@ public class NetworkEnergyStorage extends SnapshotParticipant<Object> implements
         if (object instanceof NetworkSnapshot snapshot) {
             getNetwork().getPathManager().setConductivityContext(new NetworkPathConductivityContext(snapshot.getContext()));
 
-            for (Map.Entry<ElectricalConnectorBlockEntity, Object> e : snapshot.getSnapshots().entrySet()) {
+            for (Map.Entry<AbstractElectricalConnector, Object> e : snapshot.getSnapshots().entrySet()) {
                 EnergyStorage storage = EnergyStorage.findForBlock(e.getKey().getLevel(), e.getKey().getSupportingBlockPos(),
                         e.getKey().getBlockState().getValue(BlockStateProperties.FACING));
                 
