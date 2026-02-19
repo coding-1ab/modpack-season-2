@@ -1,5 +1,6 @@
 package vectorwing.farmersdelight.data;
 
+import com.blamejared.crafttweaker.api.mod.Mod;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -8,6 +9,7 @@ import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.registry.ModBlocks;
+import vectorwing.farmersdelight.common.registry.ModItems;
 import vectorwing.farmersdelight.common.tag.CompatibilityTags;
 import vectorwing.farmersdelight.common.tag.ForgeTags;
 import vectorwing.farmersdelight.common.tag.ModTags;
@@ -236,6 +238,24 @@ public class BlockTags extends BlockTagsProvider
 				ModBlocks.WILD_TOMATOES.get(),
 				ModBlocks.WILD_ONIONS.get(),
 				ModBlocks.WILD_RICE.get());
+		tag(ModTags.WOODEN_CABINETS)
+				.add(ModBlocks.OAK_CABINET.get())
+				.add(ModBlocks.SPRUCE_CABINET.get())
+				.add(ModBlocks.BIRCH_CABINET.get())
+				.add(ModBlocks.JUNGLE_CABINET.get())
+				.add(ModBlocks.ACACIA_CABINET.get())
+				.add(ModBlocks.DARK_OAK_CABINET.get())
+				.add(ModBlocks.MANGROVE_CABINET.get())
+				.add(ModBlocks.CHERRY_CABINET.get())
+				.add(ModBlocks.BAMBOO_CABINET.get())
+				.add(ModBlocks.CRIMSON_CABINET.get())
+				.add(ModBlocks.WARPED_CABINET.get());
+		tag(ModTags.CABINETS).addTag(ModTags.WOODEN_CABINETS);
+
+		tag(ModTags.MUSHROOM_COLONIES)
+				.add(ModBlocks.BROWN_MUSHROOM_COLONY.get())
+				.add(ModBlocks.RED_MUSHROOM_COLONY.get());
+
 		tag(ModTags.ROPES).add(ModBlocks.ROPE.get())
 				.addOptional(new ResourceLocation("quark:rope"))
 				.addOptional(new ResourceLocation("supplementaries:rope"));
@@ -258,9 +278,8 @@ public class BlockTags extends BlockTagsProvider
 				Blocks.MYCELIUM,
 				ModBlocks.ORGANIC_COMPOST.get(),
 				ModBlocks.RICH_SOIL.get(),
-				ModBlocks.RICH_SOIL_FARMLAND.get(),
-				ModBlocks.BROWN_MUSHROOM_COLONY.get(),
-				ModBlocks.RED_MUSHROOM_COLONY.get());
+				ModBlocks.RICH_SOIL_FARMLAND.get())
+			.addTag(ModTags.MUSHROOM_COLONIES);
 		tag(ModTags.UNAFFECTED_BY_RICH_SOIL).add(
 						Blocks.GRASS_BLOCK,
 						Blocks.MOSS_BLOCK,
@@ -273,9 +292,8 @@ public class BlockTags extends BlockTagsProvider
 						Blocks.BIG_DRIPLEAF,
 						Blocks.BIG_DRIPLEAF_STEM,
 						Blocks.PINK_PETALS,
-						ModBlocks.SANDY_SHRUB.get(),
-						ModBlocks.BROWN_MUSHROOM_COLONY.get(),
-						ModBlocks.RED_MUSHROOM_COLONY.get())
+						ModBlocks.SANDY_SHRUB.get())
+				.addTag(ModTags.MUSHROOM_COLONIES)
 				.addTag(ModTags.WILD_CROPS)
 				.addTag(net.minecraft.tags.BlockTags.TALL_FLOWERS);
 		tag(ModTags.MUSHROOM_COLONY_GROWABLE_ON).add(ModBlocks.RICH_SOIL.get());

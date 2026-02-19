@@ -129,19 +129,11 @@ public class ItemTags extends ItemTagsProvider
 				.add(ModItems.GREEN_HANGING_CANVAS_SIGN.get())
 				.add(ModItems.RED_HANGING_CANVAS_SIGN.get())
 				.add(ModItems.BLACK_HANGING_CANVAS_SIGN.get());
-		tag(ModTags.WOODEN_CABINETS)
-				.add(ModItems.OAK_CABINET.get())
-				.add(ModItems.SPRUCE_CABINET.get())
-				.add(ModItems.BIRCH_CABINET.get())
-				.add(ModItems.JUNGLE_CABINET.get())
-				.add(ModItems.ACACIA_CABINET.get())
-				.add(ModItems.DARK_OAK_CABINET.get())
-				.add(ModItems.MANGROVE_CABINET.get())
-				.add(ModItems.CHERRY_CABINET.get())
-				.add(ModItems.BAMBOO_CABINET.get())
-				.add(ModItems.CRIMSON_CABINET.get())
-				.add(ModItems.WARPED_CABINET.get());
-		tag(ModTags.CABINETS).addTag(ModTags.WOODEN_CABINETS);
+		copy(ModTags.CABINETS, ModTags.CABINET_ITEMS);
+		copy(ModTags.WOODEN_CABINETS, ModTags.WOODEN_CABINET_ITEMS);
+
+		copy(ModTags.MUSHROOM_COLONIES, ModTags.MUSHROOM_COLONY_ITEMS);
+
 		tag(ModTags.SERVING_CONTAINERS).add(Items.BOWL, Items.GLASS_BOTTLE, Items.BUCKET);
 		tag(ModTags.FLAT_ON_CUTTING_BOARD).add(Items.TRIDENT, Items.SPYGLASS)
 				.addOptional(new ResourceLocation("supplementaries:quiver"))
