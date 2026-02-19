@@ -146,7 +146,7 @@ public enum VeilMultiBind {
 
     private static int getTarget(int texture) {
         GLCapabilities caps = GL.getCapabilities();
-        if (caps.glGetTextureParameteriv != 0L) { // Last ditch effort if the platform has the method anyways
+        if (caps.glGetTextureParameteriv != 0L && caps.OpenGL45) { // Last ditch effort if the platform has the method anyways
             return glGetTextureParameteri(texture, GL_TEXTURE_TARGET);
         }
         // Nothing else I can do, so do the dirty hack to figure out the target
