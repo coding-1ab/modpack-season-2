@@ -16,6 +16,10 @@
   - Comparator signal will now be based on the fill percentage for the item's max stack size;
   - All off-hand interaction has been removed. Placing, removing and processing items is done entirely with the main hand;
   - The `offhand_equipment` tag has been removed.
+- The Skillet's handheld functions have been updated (thanks to MehVahdJukaar, ChrysanthCow and the Refabricated team!):
+  - The Skillet can render foods in handheld mode again;
+  - When cooking handheld, the durability meter will become an orange "frying meter", showing you the cooking progress;
+  - When cooking handheld, you can press the "Attack" button to toss and flip the food inside the skillet. This has no gameplay effect, it's just for fun!;
 - Pumpkin Pie can now be placed as a block, like the other pies!
   - By default, it is placeable without secondary action. A config exists to require sneaking, if preferred;
 - Tomato crops have been updated:

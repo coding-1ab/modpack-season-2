@@ -13,44 +13,44 @@ import vectorwing.farmersdelight.common.item.SkilletItem;
 
 import java.util.function.Supplier;
 
-public class ModNetworking {
-    private static final String PROTOCOL_VERISON = "1";
-    public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(FarmersDelight.MODID, "main"),
-            () -> PROTOCOL_VERISON,
-            PROTOCOL_VERISON::equals,
-            PROTOCOL_VERISON::equals
-    );
+public class ModNetworking
+{
+	private static final String PROTOCOL_VERSION = "1";
+	public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
+			new ResourceLocation(FarmersDelight.MODID, "main"),
+			() -> PROTOCOL_VERSION,
+			PROTOCOL_VERSION::equals,
+			PROTOCOL_VERSION::equals
+	);
 
-    public static void register() {
-        int i = 0;
-        INSTANCE.registerMessage(i++, FlipSkilletMessage.class, FlipSkilletMessage::encode, FlipSkilletMessage::new, FlipSkilletMessage::handle);
-    }
+	public static void register() {
+		int i = 0;
+		INSTANCE.registerMessage(i++, FlipSkilletMessage.class, FlipSkilletMessage::encode, FlipSkilletMessage::new, FlipSkilletMessage::handle);
+	}
 
-    public static class FlipSkilletMessage {
+	public static class FlipSkilletMessage
+	{
+		public FlipSkilletMessage(FriendlyByteBuf buf) {
+		}
 
-        public FlipSkilletMessage(FriendlyByteBuf buf) {
-        }
+		public FlipSkilletMessage() {
+		}
 
-        public FlipSkilletMessage(){
-        }
+		public void handle(Supplier<NetworkEvent.Context> ctx) {
+			ctx.get().enqueueWork(() -> {
+				ServerPlayer player = ctx.get().getSender();
+				ItemStack stack = player.getUseItem();
+				if (stack.getItem() instanceof SkilletItem) {
+					CompoundTag tag = stack.getOrCreateTag();
+					if (!tag.contains("FlipTimeStamp")) {
+						tag.putLong("FlipTimeStamp", player.level().getGameTime());
+					}
+				}
+			});
+			ctx.get().setPacketHandled(true);
+		}
 
-        public void handle(Supplier<NetworkEvent.Context> ctx) {
-            ctx.get().enqueueWork(() -> {
-                ServerPlayer player = ctx.get().getSender();
-                ItemStack stack = player.getUseItem();
-                if (stack.getItem() instanceof SkilletItem) {
-                    CompoundTag tag = stack.getOrCreateTag();
-                    if (!tag.contains("FlipTimeStamp")) {
-                        tag.putLong("FlipTimeStamp", player.level().getGameTime());
-                    }
-                }
-            });
-            ctx.get().setPacketHandled(true);
-        }
-
-        public void encode(FriendlyByteBuf buf) {
-        }
-
-    }
+		public void encode(FriendlyByteBuf buf) {
+		}
+	}
 }
