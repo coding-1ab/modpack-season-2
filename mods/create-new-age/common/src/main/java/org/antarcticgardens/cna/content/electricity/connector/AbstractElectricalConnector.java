@@ -1,5 +1,7 @@
 package org.antarcticgardens.cna.content.electricity.connector;
 
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -8,14 +10,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -24,9 +22,10 @@ import org.antarcticgardens.cna.content.electricity.wire.WireType;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractElectricalConnector extends BlockEntity {
+public abstract class AbstractElectricalConnector extends SmartBlockEntity {
     protected final Map<AbstractElectricalConnector, WireType> connectors = new HashMap<>();
     protected final Map<BlockPos, WireType> connectorPositions = new HashMap<>();
 
@@ -40,7 +39,10 @@ public abstract class AbstractElectricalConnector extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
+
+    @Override
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         ListTag list = new ListTag();
 
         for (Map.Entry<BlockPos, WireType> e : connectorPositions.entrySet()) {
@@ -52,12 +54,11 @@ public abstract class AbstractElectricalConnector extends BlockEntity {
         }
 
         tag.put("connections", list);
-
-        super.saveAdditional(tag, registries);
+        super.write(tag, registries, clientPacket);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         ListTag list = tag.getList("connections", Tag.TAG_COMPOUND);
         connectorPositions.clear();
 
@@ -71,13 +72,7 @@ public abstract class AbstractElectricalConnector extends BlockEntity {
         }
 
         needsInstanceUpdate = true;
-        super.loadAdditional(tag, registries);
-    }
-
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
+        super.read(tag, registries, clientPacket);
     }
 
     @Override
