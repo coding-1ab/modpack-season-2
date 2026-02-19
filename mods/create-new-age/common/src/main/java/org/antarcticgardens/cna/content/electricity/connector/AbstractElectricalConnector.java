@@ -4,6 +4,7 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -16,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.antarcticgardens.cna.content.electricity.network.ElectricalNetwork;
 import org.antarcticgardens.cna.content.electricity.wire.WireType;
 
@@ -85,8 +85,10 @@ public abstract class AbstractElectricalConnector extends SmartBlockEntity {
     }
 
     public BlockPos getSupportingBlockPos() {
-        return getBlockPos().relative(getBlockState().getValue(BlockStateProperties.FACING).getOpposite());
+        return this.getBlockPos();
     }
+
+    public abstract Direction getFacing();
 
     protected void serverTick() {
         if (network == null)
@@ -98,7 +100,7 @@ public abstract class AbstractElectricalConnector extends SmartBlockEntity {
         }
     }
 
-    protected void neighborChanged() {
+    public void neighborChanged() {
         if (network != null) {
             network.updateConsumersAndSources();
         }
@@ -113,7 +115,7 @@ public abstract class AbstractElectricalConnector extends SmartBlockEntity {
         needsInstanceUpdate = true;
     }
 
-    protected void remove(Level level) {
+    public void remove(Level level) {
         if (!level.isClientSide())
             network.destroy();
 

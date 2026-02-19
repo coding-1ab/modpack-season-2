@@ -148,6 +148,7 @@ public class CNABlockEntityTypes {
     public static final BlockEntityEntry<StreetLightBlockEntity> STREET_LIGHT = REGISTRATE
             .blockEntity("street_light", StreetLightBlockEntity::new)
             .validBlocks(CNABlocks.STREET_LIGHT)
+            .renderer(() -> ElectricalConnectorRenderer::new)
             .register();
 
     public static void load() {  }

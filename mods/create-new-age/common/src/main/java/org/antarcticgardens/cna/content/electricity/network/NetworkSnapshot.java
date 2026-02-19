@@ -1,6 +1,5 @@
 package org.antarcticgardens.cna.content.electricity.network;
 
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.antarcticgardens.cna.content.electricity.connector.AbstractElectricalConnector;
 import org.antarcticgardens.esl.energy.EnergyStorage;
 import org.antarcticgardens.esl.transaction.SnapshotParticipant;
@@ -17,9 +16,9 @@ public class NetworkSnapshot {
         
         for (AbstractElectricalConnector connector : network.getNodes()) {
             EnergyStorage storage = EnergyStorage.findForBlock(connector.getLevel(), connector.getSupportingBlockPos(), 
-                    connector.getBlockState().getValue(BlockStateProperties.FACING));
+                    connector.getFacing());
             
-            if (storage instanceof SnapshotParticipant<?> snapshotParticipant && !(storage instanceof NetworkEnergyStorage)) {
+            if (storage instanceof SnapshotParticipant<?> snapshotParticipant && !(storage instanceof NetworkEnergyStorage) && !(storage instanceof SimpleNetworkEnergyStorage)) {
                 snapshots.put(connector, snapshotParticipant.createSnapshot());
             }
         }

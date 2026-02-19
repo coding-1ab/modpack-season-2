@@ -27,7 +27,7 @@ import org.antarcticgardens.cna.content.electricity.wire.WireType;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-public class ElectricalConnectorRenderer implements BlockEntityRenderer<ElectricalConnectorBlockEntity> {
+public class ElectricalConnectorRenderer implements BlockEntityRenderer<AbstractElectricalConnector> {
     public ElectricalConnectorRenderer(BlockEntityRendererProvider.Context context) {
         super();
     }
@@ -38,12 +38,12 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
     }
 
     @Override
-    public void render(ElectricalConnectorBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    public void render(AbstractElectricalConnector blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         renderAllConnections(blockEntity, poseStack, buffer);
         renderHand(blockEntity, partialTick, poseStack, buffer);
     }
 
-    public void renderAllConnections(ElectricalConnectorBlockEntity blockEntity, PoseStack poseStack, MultiBufferSource buffer) {
+    public void renderAllConnections(AbstractElectricalConnector blockEntity, PoseStack poseStack, MultiBufferSource buffer) {
         blockEntity.getConnectorPositions().entrySet().stream().forEach(e ->
                 renderConnection(blockEntity.getBlockPos(), e.getKey(), e.getValue(), poseStack, buffer, blockEntity.getLevel()));
     }
@@ -99,7 +99,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
         poseStack.popPose();
     }
 
-    public void renderHand(ElectricalConnectorBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer) {
+    public void renderHand(AbstractElectricalConnector blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null && Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
             ItemStack itemInHand = player.getMainHandItem();
@@ -139,7 +139,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                         return;
 
                     if (Minecraft.getInstance().gameMode != null && hit instanceof BlockHitResult blockHit) {
-                        if (blockEntity.getLevel().getBlockEntity(blockHit.getBlockPos()) instanceof ElectricalConnectorBlockEntity connector) {
+                        if (blockEntity.getLevel().getBlockEntity(blockHit.getBlockPos()) instanceof AbstractElectricalConnector connector) {
                             if (connector.isConnected(blockEntity.getBlockPos()))
                                 return;
 
@@ -193,12 +193,12 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
     }
 
     @Override
-    public boolean shouldRenderOffScreen(ElectricalConnectorBlockEntity blockEntity) {
+    public boolean shouldRenderOffScreen(AbstractElectricalConnector blockEntity) {
         return true;
     }
 
     @Override
-    public AABB getRenderBoundingBox(ElectricalConnectorBlockEntity blockEntity) {
+    public AABB getRenderBoundingBox(AbstractElectricalConnector blockEntity) {
         return AABB.INFINITE;
     }
 }

@@ -1,7 +1,6 @@
 package org.antarcticgardens.cna.content.electricity.light;
 
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
@@ -18,6 +17,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.antarcticgardens.cna.CNABlockEntityTypes;
 import org.antarcticgardens.cna.config.CNAConfig;
+import org.antarcticgardens.cna.content.electricity.connector.AbstractElectricalConnector;
+import org.antarcticgardens.cna.content.electricity.network.ElectricalNetwork;
+import org.antarcticgardens.cna.content.electricity.network.SimpleNetworkEnergyStorage;
 import org.antarcticgardens.cna.util.RunnableUtil;
 import org.antarcticgardens.cna.util.StringFormatUtil;
 import org.antarcticgardens.esl.energy.EnergyStorage;
@@ -25,8 +27,8 @@ import org.antarcticgardens.esl.energy.SimpleEnergyStorage;
 
 import java.util.List;
 
-public class StreetLightBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
-    private final SimpleEnergyStorage storage;
+public class StreetLightBlockEntity extends AbstractElectricalConnector implements IHaveGoggleInformation {
+    private final SimpleNetworkEnergyStorage storage;
 
     private long prvEnergy = -100000;
     public ScrollValueBehaviour lightLevelBehaviour;
@@ -34,7 +36,7 @@ public class StreetLightBlockEntity extends SmartBlockEntity implements IHaveGog
     public StreetLightBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
 
-        storage = new SimpleEnergyStorage(CNAConfig.getCommon().streetLightCapacity.get())
+        storage = new SimpleNetworkEnergyStorage(this, null, CNAConfig.getCommon().streetLightCapacity.get())
                 .onFinalCommit(RunnableUtil.createBlockEntityUpdater(this))
                 .setSupportsExtraction(false);
 
@@ -45,6 +47,11 @@ public class StreetLightBlockEntity extends SmartBlockEntity implements IHaveGog
     protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         storage.setStoredEnergy(tag.getLong("energy"));
         super.read(tag, registries, clientPacket);
+    }
+
+    @Override
+    public Direction getFacing() {
+        return null;
     }
 
     @Override
@@ -64,6 +71,7 @@ public class StreetLightBlockEntity extends SmartBlockEntity implements IHaveGog
                 getLevel().setBlock(getBlockPos(), getBlockState().setValue(StreetLightBlock.LIGHT_LEVEL, i), 3);
         });
         behaviours.add(lightLevelBehaviour);
+        super.addBehaviours(behaviours);
     }
 
     @Override
@@ -80,8 +88,9 @@ public class StreetLightBlockEntity extends SmartBlockEntity implements IHaveGog
         return true;
     }
 
-    public void tick() {
-        super.tick();
+    @Override
+    protected void serverTick() {
+        super.serverTick();
         if (getLevel() == null)
             return;
         long needed = (long) lightLevelBehaviour.getValue() * CNAConfig.getCommon().streetLightLevelExtraction.get();
@@ -113,5 +122,11 @@ public class StreetLightBlockEntity extends SmartBlockEntity implements IHaveGog
                 return false;
             return super.isSideActive(state, direction);
         }
+    }
+
+    @Override
+    public void setNetwork(ElectricalNetwork network) {
+        super.setNetwork(network);
+        storage.setNetwork(network);
     }
 }

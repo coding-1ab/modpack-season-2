@@ -59,10 +59,10 @@ public class ElectricalNetwork {
 
         for (AbstractElectricalConnector node : nodes) {
             if (node.getLevel() != null) {
-                Direction dir = node.getBlockState().getValue(BlockStateProperties.FACING);
+                Direction dir = node.getFacing();
                 BlockEntity entity = node.getLevel().getBlockEntity(node.getSupportingBlockPos());
                 
-                if (entity != null && !(entity instanceof AbstractElectricalConnector)) {
+                if (entity != null && (!(entity instanceof AbstractElectricalConnector) || entity == node)) {
                     EnergyStorage storage = EnergyStorage.findForBlock(node.getLevel(), node.getSupportingBlockPos(), dir);
                     
                     if (storage != null) {

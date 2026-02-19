@@ -3,6 +3,7 @@ package org.antarcticgardens.cna.content.electricity.light;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +17,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.antarcticgardens.cna.CNABlockEntityTypes;
+import org.antarcticgardens.cna.CNABlocks;
 import org.antarcticgardens.cna.config.CNAConfig;
+import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlock;
+import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorMode;
 import org.antarcticgardens.cna.util.StringFormatUtil;
 
 import java.util.List;
@@ -27,20 +31,20 @@ public class StreetLightBlock extends Block implements IBE<StreetLightBlockEntit
 
     public StreetLightBlock(Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(LIGHT_LEVEL, 0));
+        registerDefaultState(defaultBlockState().setValue(LIGHT_LEVEL, 0).setValue(ElectricalConnectorBlock.MODE, ElectricalConnectorMode.INERT));
     }
 
     @Override
     public <S extends BlockEntity> BlockEntityTicker<S> getTicker(Level p_153212_, BlockState p_153213_, BlockEntityType<S> p_153214_) {
         return (level, blockPos, blockState, blockEntity) -> {
             if (blockEntity instanceof StreetLightBlockEntity streetLightBlock && !level.isClientSide)
-                streetLightBlock.tick();
+                streetLightBlock.serverTick();
         };
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder.add(LIGHT_LEVEL));
+        super.createBlockStateDefinition(builder.add(LIGHT_LEVEL).add(ElectricalConnectorBlock.MODE));
     }
 
     @Override
@@ -62,5 +66,23 @@ public class StreetLightBlock extends Block implements IBE<StreetLightBlockEntit
         tooltipComponents.add(CreateLang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY).component());
         tooltipComponents.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy",
                 StringFormatUtil.formatLong(CNAConfig.getCommon().streetLightCapacity.get())).style(ChatFormatting.AQUA).component());
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (newState.is(CNABlocks.STREET_LIGHT.get()))
+            return;
+
+        if (level.getBlockEntity(pos) instanceof StreetLightBlockEntity connector) {
+            connector.remove(level);
+        }
+
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        if (level.getBlockEntity(pos) instanceof StreetLightBlockEntity connector)
+            connector.neighborChanged();
     }
 }
