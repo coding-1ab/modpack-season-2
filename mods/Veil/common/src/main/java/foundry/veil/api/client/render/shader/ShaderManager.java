@@ -591,12 +591,8 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
                             Veil.LOGGER.info("Compiled {} shaders from: {}", updatedShaders.size(), this.sourceSet.getFolder());
                         }, Minecraft.getInstance());
             }
-        } catch (ShaderException e) {
-            Veil.LOGGER.error("Failed to set shader active buffers {}: {}", active.getName(), e.getMessage());
-            String error = e.getGlError();
-            if (error != null) {
-                Veil.LOGGER.warn(error);
-            }
+        } catch (Exception e) {
+            Veil.LOGGER.error("Failed to set shader active buffers {}: {}", Objects.requireNonNull(active).getName(), e.getMessage());
         }
     }
 

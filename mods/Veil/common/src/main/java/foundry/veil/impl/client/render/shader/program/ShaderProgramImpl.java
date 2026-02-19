@@ -151,10 +151,8 @@ public class ShaderProgramImpl implements ShaderProgram {
      * Links and applies the specified shader program.
      *
      * @param program The program to apply
-     * @throws ShaderException If there is any problem linking the shader
      */
-    protected void applyProgram(CompiledProgram program) throws ShaderException {
-        program.link(this);
+    protected void applyProgram(CompiledProgram program) {
         this.textures.clear();
         this.compiledProgram = program;
         this.vertexFormat = program.detectVertexFormat();
@@ -183,6 +181,8 @@ public class ShaderProgramImpl implements ShaderProgram {
         for (ShaderUniformImpl uniform : old.values()) {
             uniform.free();
         }
+
+        program.setup(this);
     }
 
     protected void attachShaders(CompiledProgram compiledProgram, ShaderSourceSet sourceSet, ShaderCompiler compiler) throws ShaderException, IOException {
@@ -232,7 +232,7 @@ public class ShaderProgramImpl implements ShaderProgram {
                 old.free();
             }
 
-            this.applyProgram(compiledProgram);
+            compiledProgram.link();
         } catch (Exception e) {
             if (this.compiledProgram == null) {
                 // The initial program failed, so fully fail
@@ -242,6 +242,8 @@ public class ShaderProgramImpl implements ShaderProgram {
             }
             throw e;
         }
+
+        this.applyProgram(compiledProgram);
     }
 
     /**
@@ -249,9 +251,8 @@ public class ShaderProgramImpl implements ShaderProgram {
      *
      * @param activeBuffers The new active buffers
      * @return Whether this shader needs to be scheduled for a recompilation
-     * @throws ShaderException If there is any problem linking the shader
      */
-    public boolean setActiveBuffers(int activeBuffers) throws ShaderException {
+    public boolean setActiveBuffers(int activeBuffers) {
         CompiledProgram compiledProgram = this.programs.get(activeBuffers);
         if (compiledProgram != null) {
             if (this.compiledProgram != compiledProgram) {
@@ -522,7 +523,7 @@ public class ShaderProgramImpl implements ShaderProgram {
             }
         }
 
-        public void link(ShaderProgram shaderProgram) throws ShaderException {
+        public void link() throws ShaderException {
             glLinkProgram(this.program);
             if (glGetProgrami(this.program, GL_LINK_STATUS) != GL_TRUE) {
                 String log = StringUtils.trim(glGetProgramInfoLog(this.program));
@@ -531,10 +532,11 @@ public class ShaderProgramImpl implements ShaderProgram {
 
             this.uniformCache.clear();
             this.definitionDependencies.clear();
-            this.shaders.values().forEach(shader -> {
-                shader.apply(shaderProgram);
-                this.definitionDependencies.addAll(shader.definitionDependencies());
-            });
+            this.shaders.values().forEach(shader -> this.definitionDependencies.addAll(shader.definitionDependencies()));
+        }
+
+        public void setup(ShaderProgram shaderProgram) {
+            this.shaders.values().forEach(shader -> shader.apply(shaderProgram));
         }
 
         @Override
