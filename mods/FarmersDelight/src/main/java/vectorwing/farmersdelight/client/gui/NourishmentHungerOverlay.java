@@ -81,7 +81,6 @@ public class NourishmentHungerOverlay
 		Random rand = new Random();
 		rand.setSeed(ticks * 312871);
 
-//		RenderSystem.setShaderTexture(0, MOD_ICONS_TEXTURE);
 		RenderSystem.enableBlend();
 
 		for (int j = 0; j < 10; ++j) {
@@ -106,6 +105,5 @@ public class NourishmentHungerOverlay
 		}
 
 		RenderSystem.disableBlend();
-//		RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
 	}
 }
