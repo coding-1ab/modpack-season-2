@@ -29,7 +29,6 @@ import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import plus.dragons.createdragonsplus.common.CDPCommon;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.kinetics.grindstone.GrindstoneHelper;
 
@@ -58,7 +57,7 @@ public class CEIItemAttributes {
         String invertedDescriptionKey = descriptionKey + ".inverted";
         REGISTRATE.addRawLang(descriptionKey, description);
         REGISTRATE.addRawLang(invertedDescriptionKey, invertedDescription);
-        return ITEM_ATTRIBUTES.register(name, () -> new SingletonItemAttribute.Type(type -> new SingletonItemAttribute(type, predicate, CDPCommon.ID + "." + name)));
+        return ITEM_ATTRIBUTES.register(name, () -> new SingletonItemAttribute.Type(type -> new SingletonItemAttribute(type, predicate, CEICommon.ID + "." + name)));
     }
 
     public static void register(IEventBus modBus) {
