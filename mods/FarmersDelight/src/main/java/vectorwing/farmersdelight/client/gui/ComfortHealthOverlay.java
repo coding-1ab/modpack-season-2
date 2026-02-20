@@ -17,7 +17,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.Configuration;
-import vectorwing.farmersdelight.common.registry.ModEffects;
 
 import java.util.Random;
 
@@ -65,9 +64,9 @@ public class ComfortHealthOverlay
 				&& player.isHurt()
 				&& !player.hasEffect(MobEffects.REGENERATION);
 
-		if (player.getEffect(ModEffects.COMFORT.get()) != null && isPlayerEligibleForComfort) {
-			drawComfortOverlay(player, minecraft, graphics, left, top);
-		}
+//		if (player.getEffect(ModEffects.COMFORT.get()) != null && isPlayerEligibleForComfort) {
+//			drawComfortOverlay(player, minecraft, graphics, left, top);
+//		}
 	}
 
 	public static void drawComfortOverlay(Player player, Minecraft minecraft, GuiGraphics graphics, int left, int top) {
