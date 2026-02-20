@@ -19,21 +19,35 @@ public class NourishmentEffect extends MobEffect
 	}
 
 	public void applyEffectTick(LivingEntity entity, int amplifier) {
-		if (!entity.getCommandSenderWorld().isClientSide && entity instanceof Player player) {
+		if (entity.getCommandSenderWorld().isClientSide) {
+			return;
+		}
+
+		if (entity instanceof Player player) {
 			FoodData foodData = player.getFoodData();
-			boolean isPlayerHealingWithHunger =
+			boolean isPlayerHealingWithSaturation =
 					player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION)
-							&& player.isHurt()
-//							&& foodData.getSaturationLevel() > 0.0F
-							&& foodData.getFoodLevel() >= 18;
-			if (!isPlayerHealingWithHunger) {
-				float exhaustion = foodData.getExhaustionLevel();
-				float reduction = Math.min(exhaustion, 4.0F);
-				if (exhaustion > 0.0F) {
-					player.causeFoodExhaustion(-reduction);
-				}
+					&& player.isHurt()
+					&& foodData.getSaturationLevel() > 0.0;
+			if (!isPlayerHealingWithSaturation) {
+				foodData.setExhaustion(0);
 			}
 		}
+//		if (!entity.getCommandSenderWorld().isClientSide && entity instanceof Player player) {
+//			FoodData foodData = player.getFoodData();
+//			boolean isPlayerHealingWithHunger =
+//					player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION)
+//							&& player.isHurt()
+////							&& foodData.getSaturationLevel() > 0.0F
+//							&& foodData.getFoodLevel() >= 18;
+//			if (!isPlayerHealingWithHunger) {
+//				float exhaustion = foodData.getExhaustionLevel();
+//				float reduction = Math.min(exhaustion, 4.0F);
+//				if (exhaustion > 0.0F) {
+//					player.causeFoodExhaustion(-reduction);
+//				}
+//			}
+//		}
 	}
 
 	@Override
