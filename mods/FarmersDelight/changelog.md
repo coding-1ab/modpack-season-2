@@ -31,6 +31,7 @@
   - The crop no longer uses the standard growth speed checks of `CropBlock`, which was slowing down hanging vines. They grow at a fixed rate now, regardless of height;
   - Applying bone meal to a mature tomato vine (sneaking, rich soil etc) will pass the boost to the vine above it, if possible;
   - Tomato seeds can now be planted on any farmland block;
+- Stoves now only inflict burn in a small "grilling area" on top of them; the edges are safe to step on;
 
 ### Technical
 - FD's internal recipe builders have been updated, and should now be more usable for add-on developers:
