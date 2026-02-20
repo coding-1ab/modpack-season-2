@@ -3,6 +3,8 @@
 ## 1.3.0 (WIP)
 
 ### Additions
+- Pumpkin Pie can now be placed as a block, like the other pies!
+  - By default, it is placeable without secondary action. A config exists to require sneaking, if preferred;
 - Farmer's Delight now has a native EMI plugin! (thanks, ChrysanthCow!)
   - It works similarly to the built-in JEI plugin, but offering compatibility with EMI's unique features, such as chances and recipe trees;
   - With it, tags have been integrated into translation files. Both JEI and EMI now use them to display tags in-game.
@@ -20,8 +22,6 @@
   - The Skillet can render foods in handheld mode again;
   - When cooking handheld, the durability meter will become an orange "frying meter", showing you the cooking progress;
   - When cooking handheld, you can press the "Attack" button to toss and flip the food inside the skillet. This has no gameplay effect, it's just for fun!;
-- Pumpkin Pie can now be placed as a block, like the other pies!
-  - By default, it is placeable without secondary action. A config exists to require sneaking, if preferred;
 - Tomato crops have been updated:
   - The crop no longer uses the standard growth speed checks of `CropBlock`, which was slowing down hanging vines. They grow at a fixed rate now, regardless of height;
   - Applying bone meal to a mature tomato vine (sneaking, rich soil etc) will pass the boost to the vine above it, if possible;
