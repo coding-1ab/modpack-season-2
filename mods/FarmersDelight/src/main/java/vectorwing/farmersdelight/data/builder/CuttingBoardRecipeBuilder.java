@@ -21,18 +21,21 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class CuttingBoardRecipeBuilder implements RecipeBuilder {
-
+public class CuttingBoardRecipeBuilder implements RecipeBuilder
+{
 	private final List<ChanceResult> results = new ArrayList<>(4);
 	private final Ingredient ingredient;
 	private final Ingredient tool;
 	private String soundEventID;
+	@Nullable
+	private String namespace;
 
-	private CuttingBoardRecipeBuilder(Ingredient ingredient, Ingredient tool, ItemLike mainResult, int count, float chance) {
+	public CuttingBoardRecipeBuilder(Ingredient ingredient, Ingredient tool, ItemLike mainResult, int count, float chance) {
 		this.results.add(new ChanceResult(new ItemStack(mainResult.asItem(), count), chance));
 		this.ingredient = ingredient;
 		this.tool = tool;
@@ -81,41 +84,49 @@ public class CuttingBoardRecipeBuilder implements RecipeBuilder {
 		this.soundEventID = soundEventID;
 		return this;
 	}
-	
-	//Unused but required
+
 	@Override
-	public CuttingBoardRecipeBuilder unlockedBy(String p_176496_, CriterionTriggerInstance p_176497_) {
+	public CuttingBoardRecipeBuilder unlockedBy(String criterionName, CriterionTriggerInstance criterionTrigger) {
 		return this;
 	}
 
-	//Unused but required
-	@Override
-	public CuttingBoardRecipeBuilder group(String p_176495_) {
+	/**
+	 * Sets a custom namespace (mod ID) for the recipe. Use this only if the ingredient isn't registered to the mod ID you want.
+	 */
+	public CuttingBoardRecipeBuilder setNamespace(String namespace) {
+		this.namespace = namespace;
 		return this;
 	}
 
-	//Unused but required
+	@Override
+	public CuttingBoardRecipeBuilder group(@Nullable String group) {
+		return this; // no-op
+	}
+
 	@Override
 	public Item getResult() {
 		return this.results.get(0).getStack().getItem();
 	}
 
-	public void save(Consumer<FinishedRecipe> consumerIn) {
-		ResourceLocation location = ForgeRegistries.ITEMS.getKey(this.ingredient.getItems()[0].getItem());
-		this.save(consumerIn, FarmersDelight.MODID + ":cutting/" + location.getPath());
+	public static ResourceLocation getDefaultRecipeId(ItemLike itemLike) {
+		return Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(itemLike.asItem()));
 	}
 
-	public void save(Consumer<FinishedRecipe> consumerIn, String save) {
-		ResourceLocation resourcelocation = ForgeRegistries.ITEMS.getKey(this.ingredient.getItems()[0].getItem());
-		if ((new ResourceLocation(save)).equals(resourcelocation)) {
-			throw new IllegalStateException("Cutting Recipe " + save + " should remove its 'save' argument");
-		} else {
-			this.save(consumerIn, new ResourceLocation(save));
-		}
+	/**
+	 * Shorthand for saving recipes in the FD namespace.
+	 */
+	public void saveToFD(Consumer<FinishedRecipe> consumer) {
+		this.setNamespace(FarmersDelight.MODID).save(consumer);
 	}
 
-	public void save(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {
-		consumerIn.accept(new CuttingBoardRecipeBuilder.Result(id, this.ingredient, this.tool, this.results, this.soundEventID == null ? "" : this.soundEventID));
+	public void save(Consumer<FinishedRecipe> consumer) {
+		ResourceLocation defaultLocation = getDefaultRecipeId(this.ingredient.getItems()[0].getItem());
+		save(consumer, new ResourceLocation(this.namespace != null ? namespace : defaultLocation.getNamespace(), defaultLocation.getPath())
+				.withPrefix("cutting/"));
+	}
+
+	public void save(Consumer<FinishedRecipe> consumer, ResourceLocation recipeId) {
+		consumer.accept(new CuttingBoardRecipeBuilder.Result(recipeId, this.ingredient, this.tool, this.results, this.soundEventID == null ? "" : this.soundEventID));
 	}
 
 	public static class Result implements FinishedRecipe
@@ -182,6 +193,4 @@ public class CuttingBoardRecipeBuilder implements RecipeBuilder {
 			return null;
 		}
 	}
-
-	
 }

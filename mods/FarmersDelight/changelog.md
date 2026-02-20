@@ -26,7 +26,13 @@
   - The crop no longer uses the standard growth speed checks of `CropBlock`, which was slowing down hanging vines. They grow at a fixed rate now, regardless of height;
   - Applying bone meal to a mature tomato vine (sneaking, rich soil etc) will pass the boost to the vine above it, if possible;
   - Tomato seeds can now be planted on any farmland block;
-- FD's recipe builders now implement `RecipeBuilder`, which should allow a few extra features for add-on developers (thanks, Lance5057!);
+
+### Technical
+- FD's internal recipe builders have been updated, and should now be more usable for add-on developers:
+  - They now implement `RecipeBuilder`, which standardizes several methods in regards to file saving and naming (thanks, Lance5057!);
+  - Added `setNamespace(string)` to both builders, to allow users to specify a custom namespace (mod ID) for the recipe. Use it if the result isn't registered under your mod ID;
+  - The `save(consumer)` method override no longer hardcodes FD's mod ID in the recipe. Instead, it will use either the result's namespace by default, or a value set through `setNamespace(string)`;
+    - Thanks to LordFirespeed for helping me realize the issue with the method override!;
 - FD's recipes now call for `assemble()` in most places, allowing extenders of most workstations to use the inventory when creating their result (thanks, ColonelPanic!);
 - Cutting recipes now accept arrays of ingredients in the `tool` field (thanks, BobVarioa!).
 
