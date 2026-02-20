@@ -240,6 +240,7 @@
 
   "entity.farmersdelight.rotten_tomato": "Rotten Tomato",
 
+  "effect.farmersdelight.comfort": "Comfort",
   "effect.farmersdelight.nourishment": "Nourishment",
   "effect.farmersdelight.nourishment.description": "Prevents the food meter from decreasing, except when healing with saturation",
 
