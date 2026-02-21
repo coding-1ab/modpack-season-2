@@ -1,0 +1,25 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "create_new_age:block/light_pole/pole"
+      }
+    },
+    {
+      "apply": {
+        "model": "create_new_age:block/light_pole/top"
+      },
+      "when": {
+        "top": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "create_new_age:block/light_pole/bottom"
+      },
+      "when": {
+        "bottom": "true"
+      }
+    }
+  ]
+}

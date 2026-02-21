@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.antarcticgardens.cna.CNABlocks;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorMode;
+import org.antarcticgardens.cna.content.electricity.light.LightPoleBlock;
 import org.antarcticgardens.cna.content.electricity.light.StreetLightBlock;
 import org.antarcticgardens.cna.content.energising.EnergiserBlock;
 import org.antarcticgardens.cna.content.heat.heater.HeaterBlock;
@@ -224,6 +225,34 @@ public class CNABlockStateGen {
 
                 builder.addModels(builder.partialState().with(StreetLightBlock.LIGHT_LEVEL, level), new ConfiguredModel(model));
             }
+        };
+    }
+
+    public static <P extends LightPoleBlock> NonNullBiConsumer<DataGenContext<Block, P>, RegistrateBlockstateProvider> lightPole() {
+        return (c, p) -> {
+            MultiPartBlockStateBuilder builder = p.getMultipartBuilder(c.get());
+
+            ModelFile.ExistingModelFile pole = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/pole"));
+            ModelFile.ExistingModelFile top = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/top"));
+            ModelFile.ExistingModelFile bottom = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/bottom"));
+
+            builder
+                    .part()
+                    .modelFile(pole)
+                    .addModel()
+                    .end()
+
+                    .part()
+                    .modelFile(top)
+                    .addModel()
+                    .condition(LightPoleBlock.TOP, true)
+                    .end()
+
+                    .part()
+                    .modelFile(bottom)
+                    .addModel()
+                    .condition(LightPoleBlock.BOTTOM, true)
+                    .end();
         };
     }
 }

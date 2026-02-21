@@ -33,6 +33,8 @@
     "create_new_age:copper_wire_block",
     "create_new_age:overcharged_iron_wire_block",
     "create_new_age:overcharged_golden_wire_block",
-    "create_new_age:overcharged_diamond_wire_block"
+    "create_new_age:overcharged_diamond_wire_block",
+    "create_new_age:street_light",
+    "create_new_age:light_pole"
   ]
 }

@@ -1,0 +1,23 @@
+{
+	"format_version": "1.21.6",
+	"credit": "Made by AndromedaGalaxy29",
+	"textures": {
+		"0": "create_new_age:block/light_pole",
+		"particle": "create_new_age:block/light_pole"
+	},
+	"elements": [
+		{
+			"from": [5, 14.05, 5],
+			"to": [11, 16.05, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 15, 8]},
+			"faces": {
+				"north": {"uv": [4, 0, 10, 2], "texture": "#0"},
+				"east": {"uv": [4, 0, 10, 2], "texture": "#0"},
+				"south": {"uv": [4, 0, 10, 2], "texture": "#0"},
+				"west": {"uv": [4, 0, 10, 2], "texture": "#0"},
+				"up": {"uv": [10, 0, 16, 6], "texture": "#0"},
+				"down": {"uv": [10, 0, 16, 6], "texture": "#0"}
+			}
+		}
+	]
+}

@@ -6,6 +6,7 @@ import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
 import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.ModelGen;
+import com.simibubi.create.foundation.data.SharedProperties;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlock;
@@ -27,6 +29,7 @@ import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBru
 import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesItem;
 import org.antarcticgardens.cna.content.electricity.generation.coil.GeneratorCoilBlock;
 import org.antarcticgardens.cna.content.electricity.generation.magnet.ImplementedMagnetBlock;
+import org.antarcticgardens.cna.content.electricity.light.LightPoleBlock;
 import org.antarcticgardens.cna.content.electricity.light.StreetLightBlock;
 import org.antarcticgardens.cna.content.energising.EnergiserBlock;
 import org.antarcticgardens.cna.content.energising.EnergisingBlockItem;
@@ -478,6 +481,18 @@ public class CNABlocks {
                     .properties(p -> p.sound(SoundType.LANTERN))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .blockstate(CNABlockStateGen.streetLight())
+                    .item()
+                    .transform(ModelGen.customItemModel())
+                    .register();
+
+    public static final BlockEntry<LightPoleBlock> LIGHT_POLE =
+            REGISTRATE.block("light_pole", LightPoleBlock::new)
+                    .initialProperties(SharedProperties::softMetal)
+                    .properties((p) -> p.mapColor(MapColor.COLOR_GRAY).sound(SoundType.NETHERITE_BLOCK))
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .blockstate(CNABlockStateGen.lightPole())
                     .item()
                     .transform(ModelGen.customItemModel())
                     .register();
