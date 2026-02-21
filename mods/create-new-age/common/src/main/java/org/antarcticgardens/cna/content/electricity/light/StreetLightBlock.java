@@ -1,5 +1,6 @@
 package org.antarcticgardens.cna.content.electricity.light;
 
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
@@ -30,7 +31,7 @@ import org.antarcticgardens.cna.util.StringFormatUtil;
 
 import java.util.List;
 
-public class StreetLightBlock extends Block implements IBE<StreetLightBlockEntity> {
+public class StreetLightBlock extends Block implements IBE<StreetLightBlockEntity>, IWrenchable {
 
     public static final IntegerProperty LIGHT_LEVEL = IntegerProperty.create("light_level", 0, 15);
 
