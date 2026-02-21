@@ -18,7 +18,7 @@ public class NetworkSnapshot {
             EnergyStorage storage = EnergyStorage.findForBlock(connector.getLevel(), connector.getSupportingBlockPos(), 
                     connector.getFacing());
             
-            if (storage instanceof SnapshotParticipant<?> snapshotParticipant && !(storage instanceof NetworkEnergyStorage) && !(storage instanceof SimpleNetworkEnergyStorage)) {
+            if (storage instanceof SnapshotParticipant<?> snapshotParticipant && !(storage instanceof NetworkEnergyStorage)) {
                 snapshots.put(connector, snapshotParticipant.createSnapshot());
             }
         }
