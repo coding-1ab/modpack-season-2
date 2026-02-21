@@ -28,6 +28,12 @@
   - Tomato seeds can now be planted on any farmland block;
 - Stoves now only inflict burn in a small "grilling area" on top of them; the edges are safe to step on;
 
+### Fixes
+- Statistics are now properly awarded for:
+  - Using tools on the Cutting Board;
+  - Using Knives to cut cakes and pies;
+  - Using containers to take servings from feasts;
+
 ### Technical
 - FD's internal recipe builders have been updated, and should now be more usable for add-on developers:
   - They now implement `RecipeBuilder`, which standardizes several methods in regards to file saving and naming (thanks, Lance5057!);
