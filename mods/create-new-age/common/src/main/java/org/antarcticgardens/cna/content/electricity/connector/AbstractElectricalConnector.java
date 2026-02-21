@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.antarcticgardens.cna.content.electricity.network.ElectricalNetwork;
 import org.antarcticgardens.cna.content.electricity.wire.WireType;
 
@@ -175,5 +176,9 @@ public abstract class AbstractElectricalConnector extends SmartBlockEntity {
 
     public ElectricalNetwork getNetwork() {
         return network;
+    }
+
+    public Vec3 getConnectionPoint() {
+        return new Vec3(0.5f, 0.5f, 0.5f);
     }
 }
