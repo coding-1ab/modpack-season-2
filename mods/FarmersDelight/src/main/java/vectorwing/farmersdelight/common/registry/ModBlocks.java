@@ -19,6 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import vectorwing.farmersdelight.FarmersDelight;
+import vectorwing.farmersdelight.common.BlockShapes;
 import vectorwing.farmersdelight.common.block.*;
 
 import java.util.function.ToIntFunction;
@@ -303,13 +304,13 @@ public class ModBlocks
 
 	// Feasts
 	public static final RegistryObject<Block> ROAST_CHICKEN_BLOCK = BLOCKS.register("roast_chicken_block",
-			() -> new RoastChickenBlock(Block.Properties.copy(Blocks.CAKE), ModItems.ROAST_CHICKEN, true));
+			() -> new PlatedFeastBlock(Block.Properties.copy(Blocks.CAKE), ModItems.ROAST_CHICKEN, true, BlockShapes.ROAST_CHICKEN_SHAPES));
 	public static final RegistryObject<Block> STUFFED_PUMPKIN_BLOCK = BLOCKS.register("stuffed_pumpkin_block",
 			() -> new FeastBlock(Block.Properties.copy(Blocks.PUMPKIN), ModItems.STUFFED_PUMPKIN, false));
 	public static final RegistryObject<Block> HONEY_GLAZED_HAM_BLOCK = BLOCKS.register("honey_glazed_ham_block",
-			() -> new HoneyGlazedHamBlock(Block.Properties.copy(Blocks.CAKE), ModItems.HONEY_GLAZED_HAM, true));
+			() -> new PlatedFeastBlock(Block.Properties.copy(Blocks.CAKE), ModItems.HONEY_GLAZED_HAM, true, BlockShapes.HONEY_GLAZED_HAM_SHAPES));
 	public static final RegistryObject<Block> SHEPHERDS_PIE_BLOCK = BLOCKS.register("shepherds_pie_block",
-			() -> new ShepherdsPieBlock(Block.Properties.copy(Blocks.CAKE), ModItems.SHEPHERDS_PIE, true));
+			() -> new PlatedFeastBlock(Block.Properties.copy(Blocks.CAKE), ModItems.SHEPHERDS_PIE, true, BlockShapes.SHEPHERDS_PIE_BLOCK));
 	public static final RegistryObject<Block> RICE_ROLL_MEDLEY_BLOCK = BLOCKS.register("rice_roll_medley_block",
 			() -> new RiceRollMedleyBlock(Block.Properties.copy(Blocks.CAKE)));
 }
