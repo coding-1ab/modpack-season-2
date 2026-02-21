@@ -136,20 +136,20 @@ public class BlazeEnchanterBlockEntity extends BlazeExperienceBlockEntity {
 
     @Override
     public void write(CompoundTag compound, Provider registries, boolean clientPacket) {
+        super.write(compound, registries, clientPacket);
         if (seed != null)
             compound.putLong("Seed", seed);
         compound.putInt("ProcessingTime", processingTime);
         compound.put("HeldItem", heldItem.saveOptional(registries));
-        super.write(compound, registries, clientPacket);
     }
 
     @Override
     protected void read(CompoundTag compound, Provider registries, boolean clientPacket) {
+        super.read(compound, registries, clientPacket);
         if (compound.contains("Seed", Tag.TAG_LONG))
             seed = compound.getLong("Seed");
         processingTime = compound.getInt("ProcessingTime");
         heldItem = ItemStack.parseOptional(registries, compound.getCompound("HeldItem"));
-        super.read(compound, registries, clientPacket);
     }
 
     @Override

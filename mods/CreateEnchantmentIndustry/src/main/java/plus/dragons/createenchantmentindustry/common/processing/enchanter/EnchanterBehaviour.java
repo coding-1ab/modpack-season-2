@@ -31,6 +31,8 @@ import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollVa
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import java.util.List;
+
+import dev.engine_room.flywheel.api.visualization.VisualizationLevel;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -101,8 +103,11 @@ public class EnchanterBehaviour extends ScrollValueBehaviour implements IHaveGog
             enchanting = new TemplateEnchantingBehaviour(template);
         } else return false;
         update(enchanter.heldItem);
-        blockEntity.setChanged();
-        blockEntity.sendData();
+        var level = getWorld();
+        if(!(level instanceof VisualizationLevel)){
+            blockEntity.setChanged();
+            blockEntity.sendData();
+        }
         return true;
     }
 
