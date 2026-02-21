@@ -117,6 +117,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
                 itemInHand = player.getOffhandItem();
 
             if (itemInHand.getItem() instanceof ElectricWireItem wireItem) {
+                var midPoint = blockEntity.getConnectionPoint();
                 BlockPos bound = wireItem.getBoundConnector(itemInHand);
 
                 if (bound != null && bound.equals(blockEntity.getBlockPos())) {
@@ -135,15 +136,15 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
 
                     BlockPos pos = blockEntity.getBlockPos();
 
-                    var midPoint = blockEntity.getConnectionPoint();
-
                     Vector3f to = new Vector3f(
                             (float) (endPos.x - pos.getX() - midPoint.x),
                             (float) (endPos.y - pos.getY() - midPoint.y),
                             (float) (endPos.z - pos.getZ() - midPoint.z)
                     );
 
-                    double distance = endPos.distanceTo(bound.getCenter());
+                    var originPoint = blockEntity.getConnectionPoint().add(Vec3.atLowerCornerOf(bound));
+
+                    double distance = endPos.distanceTo(originPoint);
                     int maxDistance = CNAConfig.getCommon().maxWireLength.get();
 
                     if (distance > maxDistance * 2)
