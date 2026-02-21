@@ -23,7 +23,6 @@ import org.antarcticgardens.cna.content.electricity.network.SimpleNetworkEnergyS
 import org.antarcticgardens.cna.util.RunnableUtil;
 import org.antarcticgardens.cna.util.StringFormatUtil;
 import org.antarcticgardens.esl.energy.EnergyStorage;
-import org.antarcticgardens.esl.energy.SimpleEnergyStorage;
 
 import java.util.List;
 
@@ -127,5 +126,9 @@ public class StreetLightBlockEntity extends AbstractElectricalConnector implemen
     public void setNetwork(ElectricalNetwork network) {
         super.setNetwork(network);
         storage.setNetwork(network);
+    }
+
+    public Vec3 getConnectionPoint() {
+        return new Vec3(0.5f, 1/16f, 0.5f);
     }
 }
