@@ -20,7 +20,7 @@ public class ShapeUtils {
      * Rotates a VoxelShape around the Y-axis (vertical axis).<br>
      * <b>The result must be cached.</b>
      * <p>
-     * Credits to JTK222 for the algorithm
+     * Credits to JTK222 for the algorithm.
      */
     public static @NotNull VoxelShape rotateY(@NotNull VoxelShape shape, @NotNull RotationAmount rotation) {
         List<VoxelShape> rotatedShapes = new ArrayList<>();
