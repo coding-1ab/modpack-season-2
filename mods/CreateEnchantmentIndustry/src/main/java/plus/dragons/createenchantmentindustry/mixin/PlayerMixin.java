@@ -18,6 +18,7 @@
 
 package plus.dragons.createenchantmentindustry.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.simibubi.create.content.kinetics.deployer.DeployerFakePlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -46,5 +47,16 @@ public abstract class PlayerMixin extends LivingEntity {
             return this.getMainHandItem().canPerformAction(ItemAbilities.SWORD_SWEEP);
         }
         return flag;
+    }
+
+    @ModifyExpressionValue(
+            method = "attack",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;isAutoSpinAttack()Z")
+    )
+    private boolean attack$notAutoSpinAttack(boolean original) {
+        //noinspection ConstantValue
+        if (((Object) this) instanceof DeployerFakePlayer && CEIConfig.kinetics().deployerSweepAttack.get()) {
+            return false;
+        } return original;
     }
 }
