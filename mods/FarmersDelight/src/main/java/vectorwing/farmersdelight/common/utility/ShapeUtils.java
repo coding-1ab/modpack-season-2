@@ -14,7 +14,8 @@ import java.util.*;
  */
 public class ShapeUtils {
 
-    private static final Map<VoxelShape[], VoxelShape[][]> SHAPE_CACHE = new IdentityHashMap<>();
+    private static final Map<VoxelShape[], VoxelShape[][]> PLATED_SHAPE_CACHE = new IdentityHashMap<>();
+    private static final Map<VoxelShape[], VoxelShape[][]> ROTATED_SHAPE_CACHE = new IdentityHashMap<>();
 
     /**
      * Rotates a VoxelShape around the Y-axis (vertical axis).<br>
@@ -81,17 +82,8 @@ public class ShapeUtils {
     }
 
     /**
-     * Returns a precomputed shape array for the given dish shapes and plate shape, using a cache
-     * to avoid calculating the same shapes when multiple blocks share the same dish shape array.
-     * <p>
-     * {@link #computePlatedFoodShapes} does the shape computing.
-     */
-    public static VoxelShape[][] buildPlatedFoodShapes(VoxelShape[] dishShapes, VoxelShape plateShape) {
-        return SHAPE_CACHE.computeIfAbsent(dishShapes, shape -> computePlatedFoodShapes(shape, plateShape));
-    }
-
-    /**
-     * Builds a 2D array of combined plate and dish shapes for all serving stages and horizontal directions.
+     * Builds a 2D array of combined plate and dish shapes for all serving stages and horizontal directions.<br>
+     * The result gets cached. If multiple blocks have the same shapes, it returns the result from the cache.
      * <p>
      * The returned array is indexed as {@code [servings][direction]}, where servings are numbered the same
      * way as in the block class (0 — no servings left, 1 — one serving, etc.), and the direction index
@@ -103,21 +95,43 @@ public class ShapeUtils {
      * @param dishShapes the north-facing shapes for each serving stage, ordered from fewest to most servings
      * @param plateShape the plate shape, shown at all stages including when no servings remain
      */
-    public static VoxelShape[][] computePlatedFoodShapes(VoxelShape[] dishShapes, VoxelShape plateShape) {
-        VoxelShape[][] shapes = new VoxelShape[dishShapes.length + 1][4];
+    public static VoxelShape[][] buildPlatedFoodShapes(VoxelShape[] dishShapes, VoxelShape plateShape) {
+        return PLATED_SHAPE_CACHE.computeIfAbsent(dishShapes, shapes -> {
+            VoxelShape[][] result = new VoxelShape[shapes.length + 1][4];
 
-        for (int j = 0; j < 4; j++) {
-            shapes[0][j] = plateShape;
-        }
-
-        for (int i = 0; i < dishShapes.length; i++) {
-            Map<Direction, VoxelShape> rotatedRoast = ShapeUtils.getShapesRotatedFromNorth(dishShapes[i]);
-            for (Map.Entry<Direction, VoxelShape> entry : rotatedRoast.entrySet()) {
-                shapes[i + 1][entry.getKey().get2DDataValue()] = Shapes.join(plateShape, entry.getValue(), BooleanOp.OR);
+            for (int j = 0; j < 4; j++) {
+                result[0][j] = plateShape;
             }
-        }
 
-        return shapes;
+            for (int i = 0; i < shapes.length; i++) {
+                Map<Direction, VoxelShape> rotatedRoast = ShapeUtils.getShapesRotatedFromNorth(shapes[i]);
+                for (Map.Entry<Direction, VoxelShape> entry : rotatedRoast.entrySet()) {
+                    result[i + 1][entry.getKey().get2DDataValue()] = Shapes.join(plateShape, entry.getValue(), BooleanOp.OR);
+                }
+            }
+
+            return result;
+        });
+    }
+
+    /**
+     * See {@link #buildPlatedFoodShapes(VoxelShape[], VoxelShape)} for full details.
+     * Identical in behaviour, but without a plate shape, therefore the index 0 is the
+     * least-served dish shape instead of a bare plate.
+     */
+    public static VoxelShape[][] buildRotatedFoodShapes(VoxelShape[] dishShapes) {
+        return ROTATED_SHAPE_CACHE.computeIfAbsent(dishShapes, shapes -> {
+            VoxelShape[][] result = new VoxelShape[shapes.length][4];
+
+            for (int i = 0; i < shapes.length; i++) {
+                Map<Direction, VoxelShape> rotated = getShapesRotatedFromNorth(shapes[i]);
+                for (Map.Entry<Direction, VoxelShape> entry : rotated.entrySet()) {
+                    result[i][entry.getKey().get2DDataValue()] = entry.getValue();
+                }
+            }
+
+            return result;
+        });
     }
 
     /**

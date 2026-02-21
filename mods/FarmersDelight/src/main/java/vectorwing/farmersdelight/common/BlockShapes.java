@@ -7,22 +7,23 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockShapes {
 
+    public static final VoxelShape DEFAULT_PLATE_SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 2.0D, 15.0D);
     public static final VoxelShape[] ROAST_CHICKEN_SHAPES = new VoxelShape[] {
-            Block.box(4, 2, 10, 12, 9, 12),
-            Block.box(4, 2, 8, 12, 9, 12),
-            Block.box(4, 2, 6, 12, 9, 12),
-            Block.box(4, 2, 4, 12, 9, 12)
+            Block.box(4.0D, 2.0D, 10.0D, 12.0D, 9.0D, 12.0D),
+            Block.box(4.0D, 2.0D, 8.0D, 12.0D, 9.0D, 12.0D),
+            Block.box(4.0D, 2.0D, 6.0D, 12.0D, 9.0D, 12.0D),
+            Block.box(4.0D, 2.0D, 4.0D, 12.0D, 9.0D, 12.0D)
     };
     public static final VoxelShape[] HONEY_GLAZED_HAM_SHAPES = new VoxelShape[] {
-            Block.box(4, 2, 4, 12, 4, 12),
-            Block.box(4, 2, 8, 12, 10, 12),
-            Block.box(4, 2, 6, 12, 10, 12),
-            Block.box(4, 2, 4, 12, 10, 12)
+            Block.box(4.0D, 2.0D, 4.0D, 12.0D, 4.0D, 12.0D),
+            Block.box(4.0D, 2.0D, 8.0D, 12.0D, 10.0D, 12.0D),
+            Block.box(4.0D, 2.0D, 6.0D, 12.0D, 10.0D, 12.0D),
+            Block.box(4.0D, 2.0D, 4.0D, 12.0D, 10.0D, 12.0D)
     };
     public static final VoxelShape[] SHEPHERDS_PIE_BLOCK = new VoxelShape[] {
-            Block.box(2, 2, 8, 8, 8, 14),
-            Block.box(2, 2, 8, 14, 8, 14),
-            Shapes.join(Block.box(8, 2, 2, 14, 8, 8), Block.box(2, 2, 8, 14, 8, 14), BooleanOp.OR),
-            Block.box(2, 2, 2, 14, 8, 14)
+            Block.box(2.0D, 2.0D, 8.0D, 8.0D, 8.0D, 14.0D),
+            Block.box(2.0D, 2.0D, 8.0D, 14.0D, 8.0D, 14.0D),
+            Shapes.join(Block.box(8.0D, 2.0D, 2.0D, 14.0D, 8.0D, 8.0D), Block.box(2.0D, 2.0D, 8.0D, 14.0D, 8.0D, 14.0D), BooleanOp.OR),
+            Block.box(2.0D, 2.0D, 2.0D, 14.0D, 8.0D, 14.0D)
     };
 }
