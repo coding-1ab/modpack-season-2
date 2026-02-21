@@ -62,6 +62,11 @@ public class PrinterBlock extends HorizontalDirectionalBlock implements IWrencha
         builder.add(FACING);
     }
 
+    @Override
+    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
+        IBE.onRemove(pState, pLevel, pPos, pNewState);
+    }
+
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
