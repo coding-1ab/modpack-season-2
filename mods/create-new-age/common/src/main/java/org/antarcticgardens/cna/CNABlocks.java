@@ -473,7 +473,13 @@ public class CNABlocks {
             REGISTRATE.block("street_light", StreetLightBlock::new)
                     .initialProperties(() -> Blocks.REDSTONE_LAMP)
                     .properties(p -> p.lightLevel(s -> s.getValue(StreetLightBlock.LIGHT_LEVEL)))
-                    .simpleItem()
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(p -> p.sound(SoundType.LANTERN))
+                    .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .blockstate(CNABlockStateGen.streetLight())
+                    .item()
+                    .transform(ModelGen.customItemModel())
                     .register();
 
     public static void load() {  }

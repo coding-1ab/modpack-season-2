@@ -112,8 +112,7 @@ public class StreetLightBlockEntity extends AbstractElectricalConnector implemen
 
         @Override
         protected Vec3 getSouthLocation() {
-            // TODO: Model
-            return VecHelper.voxelSpace(8, 8, 16);
+            return VecHelper.voxelSpace(8, 9, 12.5);
         }
 
         @Override

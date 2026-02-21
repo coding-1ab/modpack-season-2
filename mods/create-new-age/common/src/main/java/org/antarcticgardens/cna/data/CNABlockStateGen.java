@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.antarcticgardens.cna.CNABlocks;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorMode;
+import org.antarcticgardens.cna.content.electricity.light.StreetLightBlock;
 import org.antarcticgardens.cna.content.energising.EnergiserBlock;
 import org.antarcticgardens.cna.content.heat.heater.HeaterBlock;
 import org.antarcticgardens.cna.content.heat.pipe.HeatPipeBlock;
@@ -193,6 +194,36 @@ public class CNABlockStateGen {
                         .rotationY(axis == Direction.Axis.Z ? 0 : (axis == Direction.Axis.X ? 90 : 0))
                         .build();
             });
+        };
+    }
+
+    public static <P extends StreetLightBlock> NonNullBiConsumer<DataGenContext<Block, P>, RegistrateBlockstateProvider> streetLight() {
+        return (c, p) -> {
+            VariantBlockStateBuilder builder = p.getVariantBuilder(c.get());
+
+            ModelBuilder<?> unlit = p.models().withExistingParent(c.getName() + "/unlit", p.modLoc("block/" + c.getName() + "/block"))
+                    .texture("lit", p.modLoc("block/" + c.getName() + "_unlit"));
+            ModelBuilder<?> lit5 = p.models().withExistingParent(c.getName() + "/lit_5", p.modLoc("block/" + c.getName() + "/block"))
+                    .texture("lit", p.modLoc("block/" + c.getName() + "_lit_5"));
+            ModelBuilder<?> lit10 = p.models().withExistingParent(c.getName() + "/lit_10", p.modLoc("block/" + c.getName() + "/block"))
+                    .texture("lit", p.modLoc("block/" + c.getName() + "_lit_10"));
+            ModelBuilder<?> lit15 = p.models().withExistingParent(c.getName() + "/lit_15", p.modLoc("block/" + c.getName() + "/block"))
+                    .texture("lit", p.modLoc("block/" + c.getName() + "_lit_15"));
+
+            for (int level = 0; level <= 15; level++) {
+                ModelFile model;
+                if (level == 0) {
+                    model = unlit;
+                }else if (level <= 5) {
+                    model = lit5;
+                }else if (level <= 10) {
+                    model = lit10;
+                }else {
+                    model = lit15;
+                }
+
+                builder.addModels(builder.partialState().with(StreetLightBlock.LIGHT_LEVEL, level), new ConfiguredModel(model));
+            }
         };
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -16,6 +17,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.antarcticgardens.cna.CNABlockEntityTypes;
 import org.antarcticgardens.cna.CNABlocks;
 import org.antarcticgardens.cna.config.CNAConfig;
@@ -45,6 +50,17 @@ public class StreetLightBlock extends Block implements IBE<StreetLightBlockEntit
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder.add(LIGHT_LEVEL).add(ElectricalConnectorBlock.MODE));
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.or(
+                Block.box(4, 14, 4, 12, 16, 12),
+                Block.box(2.5, 12, 2.5, 13.5, 14, 13.5),
+                Block.box(3.5, 6, 3.5, 12.5, 12, 12.5),
+                Block.box(4.5, 2, 4.5, 11.5, 6, 11.5),
+                Block.box(5.5, 0, 5.5, 10.5, 2, 10.5)
+        );
     }
 
     @Override
