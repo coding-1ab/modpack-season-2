@@ -95,7 +95,7 @@ public class CommonConfig {
 
         streetLightLevelExtraction = builder
                 .comment("How much extracted per tick multiplied by current light level")
-                .defineInRange("streetLightLevelExtraction", 10, 0, Integer.MAX_VALUE);
+                .defineInRange("streetLightLevelExtraction", 1, 0, Integer.MAX_VALUE);
 
         builder.push("Motors");
 
