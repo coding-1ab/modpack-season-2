@@ -29,7 +29,7 @@ import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBru
 import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesItem;
 import org.antarcticgardens.cna.content.electricity.generation.coil.GeneratorCoilBlock;
 import org.antarcticgardens.cna.content.electricity.generation.magnet.ImplementedMagnetBlock;
-import org.antarcticgardens.cna.content.electricity.light.LightPoleBlock;
+import org.antarcticgardens.cna.content.electricity.light.LamppostBlock;
 import org.antarcticgardens.cna.content.electricity.light.StreetLightBlock;
 import org.antarcticgardens.cna.content.energising.EnergiserBlock;
 import org.antarcticgardens.cna.content.energising.EnergisingBlockItem;
@@ -485,14 +485,14 @@ public class CNABlocks {
                     .transform(ModelGen.customItemModel())
                     .register();
 
-    public static final BlockEntry<LightPoleBlock> LIGHT_POLE =
-            REGISTRATE.block("light_pole", LightPoleBlock::new)
+    public static final BlockEntry<LamppostBlock> LAMPPOST =
+            REGISTRATE.block("lamppost", LamppostBlock::new)
                     .initialProperties(SharedProperties::softMetal)
                     .properties((p) -> p.mapColor(MapColor.COLOR_GRAY).sound(SoundType.NETHERITE_BLOCK))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                    .blockstate(CNABlockStateGen.lightPole())
+                    .blockstate(CNABlockStateGen.lamppost())
                     .item()
                     .transform(ModelGen.customItemModel())
                     .register();

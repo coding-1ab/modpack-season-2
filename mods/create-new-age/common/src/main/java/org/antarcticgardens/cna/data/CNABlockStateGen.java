@@ -8,10 +8,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import org.antarcticgardens.cna.CNABlocks;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorMode;
-import org.antarcticgardens.cna.content.electricity.light.LightPoleBlock;
+import org.antarcticgardens.cna.content.electricity.light.LamppostBlock;
 import org.antarcticgardens.cna.content.electricity.light.StreetLightBlock;
 import org.antarcticgardens.cna.content.energising.EnergiserBlock;
 import org.antarcticgardens.cna.content.heat.heater.HeaterBlock;
@@ -228,31 +227,57 @@ public class CNABlockStateGen {
         };
     }
 
-    public static <P extends LightPoleBlock> NonNullBiConsumer<DataGenContext<Block, P>, RegistrateBlockstateProvider> lightPole() {
+    public static <P extends LamppostBlock> NonNullBiConsumer<DataGenContext<Block, P>, RegistrateBlockstateProvider> lamppost() {
         return (c, p) -> {
             MultiPartBlockStateBuilder builder = p.getMultipartBuilder(c.get());
 
             ModelFile.ExistingModelFile pole = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/pole"));
             ModelFile.ExistingModelFile top = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/top"));
             ModelFile.ExistingModelFile bottom = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/bottom"));
+            ModelFile.ExistingModelFile center = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/center"));
+            ModelFile.ExistingModelFile side = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/side"));
 
-            builder
-                    .part()
+            builder.part()
                     .modelFile(pole)
                     .addModel()
-                    .end()
+                    .end();
 
-                    .part()
+            builder.part()
                     .modelFile(top)
                     .addModel()
-                    .condition(LightPoleBlock.TOP, true)
-                    .end()
+                    .condition(LamppostBlock.TOP, true)
+                    .end();
 
-                    .part()
+            builder.part()
                     .modelFile(bottom)
                     .addModel()
-                    .condition(LightPoleBlock.BOTTOM, true)
+                    .condition(LamppostBlock.BOTTOM, true)
+                    .condition(LamppostBlock.NORTH, false)
+                    .condition(LamppostBlock.EAST, false)
+                    .condition(LamppostBlock.SOUTH, false)
+                    .condition(LamppostBlock.WEST, false)
                     .end();
+
+            builder.part()
+                    .modelFile(center)
+                    .addModel()
+                    .useOr()
+                    .condition(LamppostBlock.NORTH, true)
+                    .condition(LamppostBlock.EAST, true)
+                    .condition(LamppostBlock.SOUTH, true)
+                    .condition(LamppostBlock.WEST, true)
+                    .end();
+
+            for (Direction dir : Direction.values()) {
+                if (dir.getAxis().isHorizontal()) {
+                    builder.part()
+                            .modelFile(side)
+                            .rotationY((int) dir.getOpposite().toYRot())
+                            .addModel()
+                            .condition(LamppostBlock.getDirectionProperty(dir), true)
+                            .end();
+                }
+            }
         };
     }
 }

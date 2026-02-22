@@ -2,13 +2,13 @@
 	"format_version": "1.21.6",
 	"credit": "Made by AndromedaGalaxy29",
 	"textures": {
-		"0": "create_new_age:block/light_pole",
-		"particle": "create_new_age:block/light_pole"
+		"0": "create_new_age:block/lamppost",
+		"particle": "create_new_age:block/lamppost"
 	},
 	"elements": [
 		{
-			"from": [5, 14.05, 5],
-			"to": [11, 16.05, 11],
+			"from": [4.99, 14.04, 4.99],
+			"to": [11.01, 16.06, 11.01],
 			"rotation": {"angle": 0, "axis": "y", "origin": [8, 15, 8]},
 			"faces": {
 				"north": {"uv": [4, 0, 10, 2], "texture": "#0"},
