@@ -57,6 +57,15 @@
     {
       "apply": {
         "model": "create_new_age:block/lamppost/side",
+        "y": 90
+      },
+      "when": {
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "create_new_age:block/lamppost/side",
         "y": 180
       },
       "when": {
@@ -70,15 +79,6 @@
       },
       "when": {
         "west": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "create_new_age:block/lamppost/side",
-        "y": 90
-      },
-      "when": {
-        "east": "true"
       }
     }
   ]

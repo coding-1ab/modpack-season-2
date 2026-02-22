@@ -14,9 +14,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -48,7 +50,31 @@ public class LamppostBlock extends Block implements IWrenchable {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Block.box(6, 0, 6, 10, 16, 10);
+        VoxelShape shape = Block.box(6, 0, 6, 10, 16, 10);
+
+        if (state.getValue(TOP)) {
+            shape = Shapes.or(shape, Block.box(5, 14, 5, 11, 16, 11));
+        }
+        if (state.getValue(NORTH) || state.getValue(EAST) || state.getValue(SOUTH) || state.getValue(WEST)) {
+            shape = Shapes.or(shape, Block.box(5, 5, 5, 11, 11, 11));
+        }else if (state.getValue(BOTTOM)) {
+            shape = Shapes.or(shape, Block.box(5, 0, 5, 11, 11, 11));
+        }
+
+        if (state.getValue(NORTH)) {
+            shape = Shapes.or(shape, Block.box(6, 6, 0, 10, 10, 6));
+        }
+        if (state.getValue(EAST)) {
+            shape = Shapes.or(shape, Block.box(10, 6, 6, 16, 10, 10));
+        }
+        if (state.getValue(SOUTH)) {
+            shape = Shapes.or(shape, Block.box(6, 6, 10, 10, 10, 16));
+        }
+        if (state.getValue(WEST)) {
+            shape = Shapes.or(shape, Block.box(0, 6, 6, 6, 10, 10));
+        }
+
+        return shape;
     }
 
     public static BooleanProperty getDirectionProperty(Direction direction) {

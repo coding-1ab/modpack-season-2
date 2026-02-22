@@ -268,15 +268,13 @@ public class CNABlockStateGen {
                     .condition(LamppostBlock.WEST, true)
                     .end();
 
-            for (Direction dir : Direction.values()) {
-                if (dir.getAxis().isHorizontal()) {
-                    builder.part()
-                            .modelFile(side)
-                            .rotationY((int) dir.getOpposite().toYRot())
-                            .addModel()
-                            .condition(LamppostBlock.getDirectionProperty(dir), true)
-                            .end();
-                }
+            for (Direction dir : Direction.Plane.HORIZONTAL) {
+                builder.part()
+                        .modelFile(side)
+                        .rotationY((int) dir.getOpposite().toYRot())
+                        .addModel()
+                        .condition(LamppostBlock.getDirectionProperty(dir), true)
+                        .end();
             }
         };
     }
