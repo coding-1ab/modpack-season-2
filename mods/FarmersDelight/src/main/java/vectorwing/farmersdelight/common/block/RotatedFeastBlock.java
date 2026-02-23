@@ -11,8 +11,8 @@ import vectorwing.farmersdelight.common.utility.ShapeUtils;
 
 import java.util.function.Supplier;
 
-public class RotatedFeastBlock extends FeastBlock {
-
+public class RotatedFeastBlock extends FeastBlock
+{
     private final VoxelShape[][] combinedShapes;
 
     /**

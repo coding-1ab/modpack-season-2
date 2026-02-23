@@ -12,8 +12,8 @@ import java.util.*;
 /**
  * Credits to TheGridExpert for the implementation
  */
-public class ShapeUtils {
-
+public class ShapeUtils
+{
     private static final Map<VoxelShape[], VoxelShape[][]> PLATED_SHAPE_CACHE = new IdentityHashMap<>();
     private static final Map<VoxelShape[], VoxelShape[][]> ROTATED_SHAPE_CACHE = new IdentityHashMap<>();
 
