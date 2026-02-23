@@ -2,12 +2,12 @@
   "multipart": [
     {
       "apply": {
-        "model": "create_new_age:block/lamppost/pole"
+        "model": "create_new_age:block/lamp_post/pole"
       }
     },
     {
       "apply": {
-        "model": "create_new_age:block/lamppost/top"
+        "model": "create_new_age:block/lamp_post/top"
       },
       "when": {
         "top": "true"
@@ -15,7 +15,7 @@
     },
     {
       "apply": {
-        "model": "create_new_age:block/lamppost/bottom"
+        "model": "create_new_age:block/lamp_post/bottom"
       },
       "when": {
         "bottom": "true",
@@ -27,7 +27,7 @@
     },
     {
       "apply": {
-        "model": "create_new_age:block/lamppost/center"
+        "model": "create_new_age:block/lamp_post/center"
       },
       "when": {
         "OR": [
@@ -48,7 +48,7 @@
     },
     {
       "apply": {
-        "model": "create_new_age:block/lamppost/side"
+        "model": "create_new_age:block/lamp_post/side"
       },
       "when": {
         "north": "true"
@@ -56,7 +56,7 @@
     },
     {
       "apply": {
-        "model": "create_new_age:block/lamppost/side",
+        "model": "create_new_age:block/lamp_post/side",
         "y": 90
       },
       "when": {
@@ -65,7 +65,7 @@
     },
     {
       "apply": {
-        "model": "create_new_age:block/lamppost/side",
+        "model": "create_new_age:block/lamp_post/side",
         "y": 180
       },
       "when": {
@@ -74,7 +74,7 @@
     },
     {
       "apply": {
-        "model": "create_new_age:block/lamppost/side",
+        "model": "create_new_age:block/lamp_post/side",
         "y": 270
       },
       "when": {

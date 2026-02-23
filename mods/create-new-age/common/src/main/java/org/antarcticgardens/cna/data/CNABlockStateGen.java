@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorMode;
-import org.antarcticgardens.cna.content.electricity.light.LamppostBlock;
+import org.antarcticgardens.cna.content.electricity.light.LampPostBlock;
 import org.antarcticgardens.cna.content.electricity.light.StreetLightBlock;
 import org.antarcticgardens.cna.content.energising.EnergiserBlock;
 import org.antarcticgardens.cna.content.heat.heater.HeaterBlock;
@@ -227,7 +227,7 @@ public class CNABlockStateGen {
         };
     }
 
-    public static <P extends LamppostBlock> NonNullBiConsumer<DataGenContext<Block, P>, RegistrateBlockstateProvider> lamppost() {
+    public static <P extends LampPostBlock> NonNullBiConsumer<DataGenContext<Block, P>, RegistrateBlockstateProvider> lamppost() {
         return (c, p) -> {
             MultiPartBlockStateBuilder builder = p.getMultipartBuilder(c.get());
 
@@ -245,27 +245,27 @@ public class CNABlockStateGen {
             builder.part()
                     .modelFile(top)
                     .addModel()
-                    .condition(LamppostBlock.TOP, true)
+                    .condition(LampPostBlock.TOP, true)
                     .end();
 
             builder.part()
                     .modelFile(bottom)
                     .addModel()
-                    .condition(LamppostBlock.BOTTOM, true)
-                    .condition(LamppostBlock.NORTH, false)
-                    .condition(LamppostBlock.EAST, false)
-                    .condition(LamppostBlock.SOUTH, false)
-                    .condition(LamppostBlock.WEST, false)
+                    .condition(LampPostBlock.BOTTOM, true)
+                    .condition(LampPostBlock.NORTH, false)
+                    .condition(LampPostBlock.EAST, false)
+                    .condition(LampPostBlock.SOUTH, false)
+                    .condition(LampPostBlock.WEST, false)
                     .end();
 
             builder.part()
                     .modelFile(center)
                     .addModel()
                     .useOr()
-                    .condition(LamppostBlock.NORTH, true)
-                    .condition(LamppostBlock.EAST, true)
-                    .condition(LamppostBlock.SOUTH, true)
-                    .condition(LamppostBlock.WEST, true)
+                    .condition(LampPostBlock.NORTH, true)
+                    .condition(LampPostBlock.EAST, true)
+                    .condition(LampPostBlock.SOUTH, true)
+                    .condition(LampPostBlock.WEST, true)
                     .end();
 
             for (Direction dir : Direction.Plane.HORIZONTAL) {
@@ -273,7 +273,7 @@ public class CNABlockStateGen {
                         .modelFile(side)
                         .rotationY((int) dir.getOpposite().toYRot())
                         .addModel()
-                        .condition(LamppostBlock.getDirectionProperty(dir), true)
+                        .condition(LampPostBlock.getDirectionProperty(dir), true)
                         .end();
             }
         };

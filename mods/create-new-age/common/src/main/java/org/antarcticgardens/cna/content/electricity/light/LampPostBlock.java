@@ -18,11 +18,9 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
-public class LamppostBlock extends Block implements IWrenchable {
+public class LampPostBlock extends Block implements IWrenchable {
 
     public static final BooleanProperty TOP = BooleanProperty.create("top");
     public static final BooleanProperty BOTTOM = BooleanProperty.create("bottom");
@@ -31,7 +29,7 @@ public class LamppostBlock extends Block implements IWrenchable {
     public static final BooleanProperty SOUTH = BooleanProperty.create("south");
     public static final BooleanProperty WEST = BooleanProperty.create("west");
 
-    public LamppostBlock(Properties properties) {
+    public LampPostBlock(Properties properties) {
         super(properties);
         registerDefaultState(defaultBlockState()
                 .setValue(TOP,  true)
@@ -97,12 +95,12 @@ public class LamppostBlock extends Block implements IWrenchable {
         BlockState west = world.getBlockState(pos.relative(Direction.WEST));
 
         return state
-                .setValue(TOP, !(top.getBlock() instanceof LamppostBlock))
-                .setValue(BOTTOM, !(bottom.getBlock() instanceof LamppostBlock))
-                .setValue(NORTH, north.getBlock() instanceof LamppostBlock && horizontalCheck.apply(Direction.NORTH, north))
-                .setValue(EAST, east.getBlock() instanceof LamppostBlock && horizontalCheck.apply(Direction.EAST, east))
-                .setValue(SOUTH, south.getBlock() instanceof LamppostBlock && horizontalCheck.apply(Direction.SOUTH, south))
-                .setValue(WEST, west.getBlock() instanceof LamppostBlock && horizontalCheck.apply(Direction.WEST, west));
+                .setValue(TOP, !(top.getBlock() instanceof LampPostBlock))
+                .setValue(BOTTOM, !(bottom.getBlock() instanceof LampPostBlock))
+                .setValue(NORTH, north.getBlock() instanceof LampPostBlock && horizontalCheck.apply(Direction.NORTH, north))
+                .setValue(EAST, east.getBlock() instanceof LampPostBlock && horizontalCheck.apply(Direction.EAST, east))
+                .setValue(SOUTH, south.getBlock() instanceof LampPostBlock && horizontalCheck.apply(Direction.SOUTH, south))
+                .setValue(WEST, west.getBlock() instanceof LampPostBlock && horizontalCheck.apply(Direction.WEST, west));
     }
 
     @Nullable
@@ -132,7 +130,7 @@ public class LamppostBlock extends Block implements IWrenchable {
 
         Block connectedBlock = world.getBlockState(pos.relative(face)).getBlock();
         BooleanProperty property = getDirectionProperty(face);
-        if (face.getAxis().isHorizontal() && connectedBlock instanceof LamppostBlock) {
+        if (face.getAxis().isHorizontal() && connectedBlock instanceof LampPostBlock) {
             world.setBlockAndUpdate(pos, state.setValue(property, !state.getValue(property)));
             return InteractionResult.SUCCESS;
         }

@@ -29,7 +29,7 @@ import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBru
 import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesItem;
 import org.antarcticgardens.cna.content.electricity.generation.coil.GeneratorCoilBlock;
 import org.antarcticgardens.cna.content.electricity.generation.magnet.ImplementedMagnetBlock;
-import org.antarcticgardens.cna.content.electricity.light.LamppostBlock;
+import org.antarcticgardens.cna.content.electricity.light.LampPostBlock;
 import org.antarcticgardens.cna.content.electricity.light.StreetLightBlock;
 import org.antarcticgardens.cna.content.energising.EnergiserBlock;
 import org.antarcticgardens.cna.content.energising.EnergisingBlockItem;
@@ -485,8 +485,8 @@ public class CNABlocks {
                     .transform(ModelGen.customItemModel())
                     .register();
 
-    public static final BlockEntry<LamppostBlock> LAMPPOST =
-            REGISTRATE.block("lamppost", LamppostBlock::new)
+    public static final BlockEntry<LampPostBlock> LAMP_POST =
+            REGISTRATE.block("lamp_post", LampPostBlock::new)
                     .initialProperties(SharedProperties::softMetal)
                     .properties((p) -> p.mapColor(MapColor.COLOR_GRAY).sound(SoundType.NETHERITE_BLOCK))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)

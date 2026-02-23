@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "create_new_age:lamppost"
+          "name": "create_new_age:lamp_post"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "create_new_age:blocks/lamppost"
+  "random_sequence": "create_new_age:blocks/lamp_post"
 }
