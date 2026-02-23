@@ -27,6 +27,7 @@
   - Applying bone meal to a mature tomato vine (sneaking, rich soil etc) will pass the boost to the vine above it, if possible;
   - Tomato seeds can now be planted on any farmland block;
 - Stoves now only inflict burn in a small "grilling area" on top of them; the edges are safe to step on;
+- Pies and Feasts now have more precise hitboxes, matching their shapes as they are consumed (thanks, TheGridExpert!);
 
 ### Fixes
 - Statistics are now properly awarded for:
@@ -42,6 +43,9 @@
     - Thanks to LordFirespeed for helping me realize the issue with the method override!;
 - FD's recipes now call for `assemble()` in most places, allowing extenders of most workstations to use the inventory when creating their result (thanks, ColonelPanic!);
 - Cutting recipes now accept arrays of ingredients in the `tool` field (thanks, BobVarioa!).
+- Food blocks, such as Pies and Feasts, now have new class overrides for when their VoxelShapes can rotate horizontally (thanks, TheGridExpert!):
+  - `RotatedFeastBlock` is an extension of `FeastBlock` for feasts with directional consumption shapes. You provide an array of shapes, and `ShapeUtils` will calculate and cache rotations for them;
+  - If your feast does not change horizontally as servings are taken (example: Stuffed Pumpkin), you can still use `FeastBlock`.
 
 ## 1.2.10
 
