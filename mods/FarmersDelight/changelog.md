@@ -2,6 +2,9 @@
 
 ## 1.2.10a
 
+### Updates
+- (1.21+) Tag `farmersdelight:feasts` is now added to `c:edible_when_placed`;
+
 ### Fixes
 - (1.21+) Fix Mushroom Colonies floating without support when under a light level of 13;
 - (1.21+) Create Integration - Fix outdated fluid syntax;
