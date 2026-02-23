@@ -82,11 +82,8 @@ public class MushroomColonyBlock extends BushBlock implements BonemealableBlock
 	public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
 		BlockPos floorPos = pos.below();
 		BlockState floorState = level.getBlockState(floorPos);
-		if (floorState.is(BlockTags.MUSHROOM_GROW_BLOCK)) {
-			return true;
-		} else {
-			return level.getRawBrightness(pos, 0) < PLACING_LIGHT_LEVEL && floorState.canSustainPlant(level, floorPos, net.minecraft.core.Direction.UP, state).isDefault();
-		}
+		net.neoforged.neoforge.common.util.TriState soilDecision = floorState.canSustainPlant(level, floorPos, net.minecraft.core.Direction.UP, state);
+		return floorState.is(BlockTags.MUSHROOM_GROW_BLOCK) || (soilDecision.isDefault() ? (level.getRawBrightness(pos, 0) < 13 && this.mayPlaceOn(floorState, level, floorPos)) : soilDecision.isTrue());
 	}
 
 	@Override

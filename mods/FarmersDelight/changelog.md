@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.10a
+
+### Fixes
+- (1.21+) Fix Mushroom Colonies floating without support when under a light level of 13;
+- (1.21+) Create Integration - Fix outdated fluid syntax;
+
 ## 1.2.10
 
 ### Updates
