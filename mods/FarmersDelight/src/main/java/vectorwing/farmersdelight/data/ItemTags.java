@@ -257,11 +257,7 @@ public class ItemTags extends ItemTagsProvider
 				.add(ModItems.APPLE_PIE.get())
 				.add(ModItems.SWEET_BERRY_CHEESECAKE.get())
 				.add(ModItems.CHOCOLATE_PIE.get())
-				.add(ModItems.ROAST_CHICKEN_BLOCK.get())
-				.add(ModItems.HONEY_GLAZED_HAM_BLOCK.get())
-				.add(ModItems.SHEPHERDS_PIE_BLOCK.get())
-				.add(ModItems.STUFFED_PUMPKIN_BLOCK.get())
-				.add(ModItems.RICE_ROLL_MEDLEY_BLOCK.get());
+				.addTag(ModTags.FEASTS);
 		tag(Tags.Items.FOODS_SOUP)
 				.add(ModItems.BONE_BROTH.get())
 				.add(ModItems.BEEF_STEW.get())
