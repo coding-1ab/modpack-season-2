@@ -1,12 +1,12 @@
 package org.antarcticgardens.cna;
 
-import com.mojang.math.Axis;
 import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
 import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.ModelGen;
+import com.simibubi.create.foundation.data.SharedProperties;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
@@ -21,14 +21,16 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesBlock;
 import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesItem;
-import org.antarcticgardens.cna.content.electricity.generation.brushes.CarbonBrushesItemRenderer;
 import org.antarcticgardens.cna.content.electricity.generation.coil.GeneratorCoilBlock;
 import org.antarcticgardens.cna.content.electricity.generation.magnet.ImplementedMagnetBlock;
+import org.antarcticgardens.cna.content.electricity.light.LampPostBlock;
+import org.antarcticgardens.cna.content.electricity.light.StreetLightBlock;
 import org.antarcticgardens.cna.content.energising.EnergiserBlock;
 import org.antarcticgardens.cna.content.energising.EnergisingBlockItem;
 import org.antarcticgardens.cna.content.heat.heater.HeaterBlock;
@@ -54,9 +56,6 @@ import org.antarcticgardens.cna.content.nuclear.reactor.fuelacceptor.ReactorFuel
 import org.antarcticgardens.cna.content.nuclear.reactor.rod.ReactorRodBlock;
 import org.antarcticgardens.cna.content.nuclear.reactor.vent.ReactorHeatVentBlock;
 import org.antarcticgardens.cna.data.CNABlockStateGen;
-import org.antarcticgardens.cna.rendering.ItemShaftRenderer;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.util.LinkedList;
 
@@ -471,6 +470,31 @@ public class CNABlocks {
                     .tag(BlockTags.MINEABLE_WITH_AXE)
                     .tag(BlockTags.NEEDS_IRON_TOOL)
                     .simpleItem()
+                    .register();
+
+    public static final BlockEntry<StreetLightBlock> STREET_LIGHT =
+            REGISTRATE.block("street_light", StreetLightBlock::new)
+                    .initialProperties(() -> Blocks.REDSTONE_LAMP)
+                    .properties(p -> p.lightLevel(s -> s.getValue(StreetLightBlock.LIGHT_LEVEL)))
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .properties(p -> p.sound(SoundType.LANTERN))
+                    .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .blockstate(CNABlockStateGen.streetLight())
+                    .item()
+                    .transform(ModelGen.customItemModel())
+                    .register();
+
+    public static final BlockEntry<LampPostBlock> LAMP_POST =
+            REGISTRATE.block("lamp_post", LampPostBlock::new)
+                    .initialProperties(SharedProperties::softMetal)
+                    .properties((p) -> p.mapColor(MapColor.COLOR_GRAY).sound(SoundType.NETHERITE_BLOCK))
+                    .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+                    .properties(BlockBehaviour.Properties::noOcclusion)
+                    .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .blockstate(CNABlockStateGen.lamppost())
+                    .item()
+                    .transform(ModelGen.customItemModel())
                     .register();
 
     public static void load() {  }

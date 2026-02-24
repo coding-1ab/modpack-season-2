@@ -32,5 +32,8 @@
     "create.tooltip.create_new_age.magnetic_force": "Magnetic Force: ",
     
     "create.tooltip.create_new_age.stress_limit_multiplier": "Stress Capacity Multiplier",
-    "create.tooltip.create_new_age.additional_capacity": "Additional Capacity"
+    "create.tooltip.create_new_age.additional_capacity": "Additional Capacity",
+
+    "create.tooltip.create_new_age.per_light_level": "per Light Level",
+    "create.create_new_age.street_light.light_level": "Light Level"
 }

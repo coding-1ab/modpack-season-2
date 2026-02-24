@@ -6,7 +6,7 @@
       "item": "create_new_age:reactor_casing"
     },
     "G": {
-      "tag": "c:glass_blocks"
+      "tag": "c:glass_blocks/colorless"
     }
   },
   "pattern": [

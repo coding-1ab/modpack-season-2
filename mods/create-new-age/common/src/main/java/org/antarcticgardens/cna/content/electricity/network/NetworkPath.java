@@ -1,19 +1,19 @@
 package org.antarcticgardens.cna.content.electricity.network;
 
-import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlockEntity;
+import org.antarcticgardens.cna.content.electricity.connector.AbstractElectricalConnector;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class NetworkPath {
-    private final List<ElectricalConnectorBlockEntity> nodes = new ArrayList<>();
+    private final List<AbstractElectricalConnector> nodes = new ArrayList<>();
 
     protected NetworkPath() {
 
     }
 
-    protected void addNodeToBeginning(ElectricalConnectorBlockEntity node) {
+    protected void addNodeToBeginning(AbstractElectricalConnector node) {
         if (!nodes.contains(node))
             nodes.add(0, node);
     }
@@ -22,15 +22,15 @@ public class NetworkPath {
         return nodes.size();
     }
 
-    public ElectricalConnectorBlockEntity getFirstNode() {
+    public AbstractElectricalConnector getFirstNode() {
         return nodes.get(0);
     }
 
-    public ElectricalConnectorBlockEntity getLastNode() {
+    public AbstractElectricalConnector getLastNode() {
         return nodes.get(nodes.size() - 1);
     }
 
-    public List<ElectricalConnectorBlockEntity> getNodes() {
+    public List<AbstractElectricalConnector> getNodes() {
         return Collections.unmodifiableList(nodes);
     }
 

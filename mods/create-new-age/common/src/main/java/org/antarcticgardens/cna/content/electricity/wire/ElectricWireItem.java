@@ -18,7 +18,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.antarcticgardens.cna.config.CNAConfig;
-import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlockEntity;
+import org.antarcticgardens.cna.content.electricity.connector.AbstractElectricalConnector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -69,7 +69,7 @@ public class ElectricWireItem extends Item {
             BlockPos boundToPos = getBoundConnector(stack);
             if (boundToPos == null)
                 return;
-            if (!(level.getBlockEntity(boundToPos) instanceof ElectricalConnectorBlockEntity)) {
+            if (!(level.getBlockEntity(boundToPos) instanceof AbstractElectricalConnector)) {
                 stack.remove(BOUND_TO);
             }
 
@@ -89,7 +89,7 @@ public class ElectricWireItem extends Item {
         BlockEntity clickedEntity = context.getLevel().getBlockEntity(context.getClickedPos());
         BlockPos boundToPos = getBoundConnector(context.getItemInHand());
 
-        if (clickedEntity instanceof ElectricalConnectorBlockEntity clickedConnector) {
+        if (clickedEntity instanceof AbstractElectricalConnector clickedConnector) {
             if (boundToPos == null) {
                 setBoundConnector(context.getItemInHand(), clickedConnector);
                 playBoundSound(context.getPlayer());
@@ -113,7 +113,7 @@ public class ElectricWireItem extends Item {
 
                 BlockEntity boundToEntity = context.getLevel().getBlockEntity(boundToPos);
 
-                if (boundToEntity instanceof ElectricalConnectorBlockEntity boundToConnector) {
+                if (boundToEntity instanceof AbstractElectricalConnector boundToConnector) {
                     context.getItemInHand().remove(BOUND_TO);
                     boundToConnector.connect(clickedConnector, wireType);
 
@@ -149,7 +149,7 @@ public class ElectricWireItem extends Item {
         return wireType;
     }
 
-    private void setBoundConnector(ItemStack stack, ElectricalConnectorBlockEntity connector) {
+    private void setBoundConnector(ItemStack stack, AbstractElectricalConnector connector) {
         stack.set(BOUND_TO, connector.getBlockPos());
     }
 

@@ -39,6 +39,8 @@ public class CommonConfig {
     public final ModConfigSpec.ConfigValue<Boolean> radiationDamageExplosionFire;
     public final ModConfigSpec.ConfigValue<Boolean> geigerCounterSounds;
     public final ModConfigSpec.ConfigValue<Boolean> nauseaInducingRadiation;
+    public final ModConfigSpec.ConfigValue<Integer> streetLightLevelExtraction;
+    public final ModConfigSpec.ConfigValue<Integer> streetLightCapacity;
 
     public CommonConfig(ModConfigSpec.Builder builder) {
         suToEnergy = builder
@@ -86,6 +88,14 @@ public class CommonConfig {
         maxWireLength = builder
                 .comment("Maximum wire length")
                 .defineInRange("maxWireLength", 16, 1, Integer.MAX_VALUE);
+
+        streetLightCapacity = builder
+                .comment("Internal energy capacity of a street light")
+                .defineInRange("streetLightCapacity", 10000, 0, Integer.MAX_VALUE);
+
+        streetLightLevelExtraction = builder
+                .comment("How much extracted per tick multiplied by current light level")
+                .defineInRange("streetLightLevelExtraction", 1, 0, Integer.MAX_VALUE);
 
         builder.push("Motors");
 
