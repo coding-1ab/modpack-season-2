@@ -2,6 +2,7 @@
 Version 1.2.0
 ------------------------------------------------------
 #### Additions
+- Added Street Lights and Lamp Posts
 - Added radiation effect & Geiger counter ticking - [!60 Thank you Auralyn](https://gitlab.com/antarcticgardens/create-new-age/-/merge_requests/60)
 - Reactors now explode upon overheating
 - Added CC:Tweaked compatibility
