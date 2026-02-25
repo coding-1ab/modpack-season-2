@@ -2,7 +2,6 @@ package vectorwing.farmersdelight.data;
 
 import com.google.common.collect.Sets;
 import net.minecraft.core.Direction;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -21,7 +20,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.block.*;
 import vectorwing.farmersdelight.common.registry.ModBlocks;
-import vectorwing.farmersdelight.common.registry.ModItems;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -196,6 +194,7 @@ public class BlockStates extends BlockStateProvider
 		this.pieBlock(ModBlocks.APPLE_PIE.get());
 		this.pieBlock(ModBlocks.CHOCOLATE_PIE.get());
 		this.pieBlock(ModBlocks.SWEET_BERRY_CHEESECAKE.get());
+		this.pieBlock(ModBlocks.PUMPKIN_PIE.get());
 
 		this.feastBlock((FeastBlock) ModBlocks.STUFFED_PUMPKIN_BLOCK.get());
 		this.feastBlock((FeastBlock) ModBlocks.ROAST_CHICKEN_BLOCK.get());

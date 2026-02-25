@@ -13,12 +13,8 @@ import net.minecraft.world.item.crafting.CampfireCookingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.shapes.BooleanOp;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.items.ItemStackHandler;
 import vectorwing.farmersdelight.common.block.StoveBlock;
 import vectorwing.farmersdelight.common.mixin.accessor.RecipeManagerAccessor;
@@ -29,7 +25,6 @@ import java.util.Optional;
 
 public class StoveBlockEntity extends SyncedBlockEntity
 {
-	private static final VoxelShape GRILLING_AREA = Block.box(3.0F, 0.0F, 3.0F, 13.0F, 1.0F, 13.0F);
 	private static final int INVENTORY_SLOT_COUNT = 6;
 
 	private final ItemStackHandler inventory;
@@ -80,7 +75,7 @@ public class StoveBlockEntity extends SyncedBlockEntity
 	public static void cookingTick(Level level, BlockPos pos, BlockState state, StoveBlockEntity stove) {
 		boolean isStoveLit = state.getValue(StoveBlock.LIT);
 
-		if (stove.isStoveBlockedAbove()) {
+		if (StoveBlock.isStoveTopCovered(level, pos, state)) {
 			if (!ItemUtils.isInventoryEmpty(stove.inventory)) {
 				ItemUtils.dropItems(level, pos, stove.inventory);
 				stove.inventoryChanged();
@@ -189,14 +184,6 @@ public class StoveBlockEntity extends SyncedBlockEntity
 		return this.inventory;
 	}
 
-	public boolean isStoveBlockedAbove() {
-		if (level != null) {
-			BlockState above = level.getBlockState(worldPosition.above());
-			return Shapes.joinIsNotEmpty(GRILLING_AREA, above.getShape(level, worldPosition.above()), BooleanOp.AND);
-		}
-		return false;
-	}
-
 	public Vec2 getStoveItemOffset(int index) {
 		final float X_OFFSET = 0.3F;
 		final float Y_OFFSET = 0.2F;
@@ -209,27 +196,6 @@ public class StoveBlockEntity extends SyncedBlockEntity
 				new Vec2(-X_OFFSET, -Y_OFFSET),
 		};
 		return OFFSETS[index];
-	}
-
-	private void addParticles() {
-		if (level == null) return;
-
-		for (int i = 0; i < inventory.getSlots(); ++i) {
-			if (!inventory.getStackInSlot(i).isEmpty() && level.random.nextFloat() < 0.2F) {
-				Vec2 stoveItemVector = getStoveItemOffset(i);
-				Direction direction = getBlockState().getValue(StoveBlock.FACING);
-				int directionIndex = direction.get2DDataValue();
-				Vec2 offset = directionIndex % 2 == 0 ? stoveItemVector : new Vec2(stoveItemVector.y, stoveItemVector.x);
-
-				double x = ((double) worldPosition.getX() + 0.5D) - (direction.getStepX() * offset.x) + (direction.getClockWise().getStepX() * offset.x);
-				double y = (double) worldPosition.getY() + 1.0D;
-				double z = ((double) worldPosition.getZ() + 0.5D) - (direction.getStepZ() * offset.y) + (direction.getClockWise().getStepZ() * offset.y);
-
-				for (int k = 0; k < 3; ++k) {
-					level.addParticle(ParticleTypes.SMOKE, x, y, z, 0.0D, 5.0E-4D, 0.0D);
-				}
-			}
-		}
 	}
 
 	@Override

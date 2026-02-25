@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -38,7 +39,7 @@ public class FeastBlock extends Block
 	public final Supplier<Item> servingItem;
 	public final boolean hasLeftovers;
 
-	protected static final VoxelShape[] SHAPES = new VoxelShape[]{
+	protected static final VoxelShape[] SHAPES = new VoxelShape[] {
 			Block.box(2.0D, 0.0D, 2.0D, 14.0D, 1.0D, 14.0D),
 			Block.box(2.0D, 0.0D, 2.0D, 14.0D, 3.0D, 14.0D),
 			Block.box(2.0D, 0.0D, 2.0D, 14.0D, 6.0D, 14.0D),
@@ -50,9 +51,9 @@ public class FeastBlock extends Block
 	 * This block provides up to 4 servings of food to players who interact with it.
 	 * If a leftover item is specified, the block lingers at 0 servings, and is destroyed on right-click.
 	 *
-	 * @param properties   Block properties.
-	 * @param servingItem  The meal to be served.
-	 * @param hasLeftovers Whether the block remains when out of servings. If false, the block vanishes once it runs out.
+	 * @param properties   block properties
+	 * @param servingItem  the meal to be served
+	 * @param hasLeftovers whether the block remains when out of servings. If false, the block vanishes once it runs out
 	 */
 	public FeastBlock(Properties properties, Supplier<Item> servingItem, boolean hasLeftovers) {
 		super(properties);
@@ -104,6 +105,7 @@ public class FeastBlock extends Block
 		if (servings > 0) {
 			if (!serving.hasCraftingRemainingItem() || ItemStack.isSameItem(heldStack, serving.getCraftingRemainingItem())) {
 				level.setBlock(pos, state.setValue(getServingsProperty(), servings - 1), 3);
+				player.awardStat(Stats.ITEM_USED.get(heldStack.getItem()));
 				if (!player.getAbilities().instabuild && serving.hasCraftingRemainingItem()) {
 					heldStack.shrink(1);
 				}

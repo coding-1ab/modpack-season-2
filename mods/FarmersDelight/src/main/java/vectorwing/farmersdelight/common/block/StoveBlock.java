@@ -13,7 +13,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.FireChargeItem;
+import net.minecraft.world.item.FlintAndSteelItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.crafting.CampfireCookingRecipe;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -31,11 +34,15 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.ToolActions;
 import vectorwing.farmersdelight.common.block.entity.StoveBlockEntity;
 import vectorwing.farmersdelight.common.registry.ModBlockEntityTypes;
 import vectorwing.farmersdelight.common.registry.ModDamageTypes;
 import vectorwing.farmersdelight.common.registry.ModSounds;
+import vectorwing.farmersdelight.common.tag.ForgeTags;
 import vectorwing.farmersdelight.common.utility.ItemUtils;
 import vectorwing.farmersdelight.common.utility.MathUtils;
 
@@ -47,6 +54,8 @@ public class StoveBlock extends BaseEntityBlock
 {
 	public static final BooleanProperty LIT = BlockStateProperties.LIT;
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+
+	private static final VoxelShape GRILLING_AREA = Block.box(3.0F, 0.0F, 3.0F, 13.0F, 1.0F, 13.0F);
 
 	public StoveBlock(BlockBehaviour.Properties properties) {
 		super(properties);
@@ -63,13 +72,13 @@ public class StoveBlock extends BaseEntityBlock
 				extinguish(state, level, pos);
 				heldStack.hurtAndBreak(1, player, action -> action.broadcastBreakEvent(hand));
 				return InteractionResult.SUCCESS;
-			} else if (heldItem == Items.WATER_BUCKET) {
+			} else if (heldStack.is(ForgeTags.BUCKETS_WATER)) {
 				if (!level.isClientSide()) {
 					level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0F, 1.0F);
 				}
 				extinguish(state, level, pos);
 				if (!player.isCreative()) {
-					player.setItemInHand(hand, new ItemStack(Items.BUCKET));
+					player.setItemInHand(hand, heldStack.getCraftingRemainingItem());
 				}
 				return InteractionResult.SUCCESS;
 			}
@@ -89,10 +98,9 @@ public class StoveBlock extends BaseEntityBlock
 			}
 		}
 
-		BlockEntity tileEntity = level.getBlockEntity(pos);
-		if (tileEntity instanceof StoveBlockEntity stoveEntity) {
+		if (!isStoveTopCovered(level, pos, state) && level.getBlockEntity(pos) instanceof StoveBlockEntity stoveEntity) {
 			int stoveSlot = stoveEntity.getNextEmptySlot();
-			if (stoveSlot < 0 || stoveEntity.isStoveBlockedAbove()) {
+			if (stoveSlot < 0) {
 				return InteractionResult.PASS;
 			}
 			Optional<CampfireCookingRecipe> recipe = stoveEntity.getMatchingRecipe(new SimpleContainer(heldStack), stoveSlot);
@@ -127,9 +135,11 @@ public class StoveBlock extends BaseEntityBlock
 
 	@Override
 	public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
-		boolean isLit = level.getBlockState(pos).getValue(StoveBlock.LIT);
-		if (isLit && !entity.fireImmune() && entity instanceof LivingEntity && !EnchantmentHelper.hasFrostWalker((LivingEntity) entity)) {
-			entity.hurt(ModDamageTypes.getSimpleDamageSource(level, ModDamageTypes.STOVE_BURN), 1.0F);
+		if (entity.getBoundingBox().intersects(GRILLING_AREA.bounds().move(pos.above()))) {
+			boolean isLit = level.getBlockState(pos).getValue(StoveBlock.LIT);
+			if (isLit && !entity.isSteppingCarefully() && !entity.fireImmune() && entity instanceof LivingEntity && !EnchantmentHelper.hasFrostWalker((LivingEntity) entity)) {
+				entity.hurt(ModDamageTypes.getSimpleDamageSource(level, ModDamageTypes.STOVE_BURN), 1.0F);
+			}
 		}
 
 		super.stepOn(level, pos, state, entity);
@@ -138,13 +148,25 @@ public class StoveBlock extends BaseEntityBlock
 	@Override
 	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (state.getBlock() != newState.getBlock()) {
-			BlockEntity tileEntity = level.getBlockEntity(pos);
-			if (tileEntity instanceof StoveBlockEntity) {
-				ItemUtils.dropItems(level, pos, ((StoveBlockEntity) tileEntity).getInventory());
+			BlockEntity blockEntity = level.getBlockEntity(pos);
+			if (blockEntity instanceof StoveBlockEntity) {
+				ItemUtils.dropItems(level, pos, ((StoveBlockEntity) blockEntity).getInventory());
 			}
 
 			super.onRemove(state, level, pos, newState, isMoving);
 		}
+	}
+
+	/**
+	 * Checks if the state is a Stove, and if the grilling area is being obstructed by the block above.
+	 */
+	public static boolean isStoveTopCovered(Level level, BlockPos pos, BlockState stoveState) {
+		if (stoveState.getBlock() instanceof StoveBlock) {
+			BlockPos abovePos = pos.above();
+			BlockState aboveState = level.getBlockState(abovePos);
+			return Shapes.joinIsNotEmpty(GRILLING_AREA, aboveState.getShape(level, abovePos), BooleanOp.AND);
+		}
+		return false;
 	}
 
 	@Override
@@ -154,8 +176,8 @@ public class StoveBlock extends BaseEntityBlock
 	}
 
 	@Override
-	public void animateTick(BlockState stateIn, Level level, BlockPos pos, RandomSource rand) {
-		if (stateIn.getValue(CampfireBlock.LIT)) {
+	public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource rand) {
+		if (state.getValue(CampfireBlock.LIT)) {
 			double x = (double) pos.getX() + 0.5D;
 			double y = pos.getY();
 			double z = (double) pos.getZ() + 0.5D;
@@ -163,7 +185,7 @@ public class StoveBlock extends BaseEntityBlock
 				level.playLocalSound(x, y, z, ModSounds.BLOCK_STOVE_CRACKLE.get(), SoundSource.BLOCKS, 1.0F, 1.0F, false);
 			}
 
-			Direction direction = stateIn.getValue(HorizontalDirectionalBlock.FACING);
+			Direction direction = state.getValue(HorizontalDirectionalBlock.FACING);
 			Direction.Axis direction$axis = direction.getAxis();
 			double horizontalOffset = rand.nextDouble() * 0.6D - 0.3D;
 			double xOffset = direction$axis == Direction.Axis.X ? (double) direction.getStepX() * 0.52D : horizontalOffset;
@@ -193,17 +215,17 @@ public class StoveBlock extends BaseEntityBlock
 
 	@Nullable
 	@Override
-	public BlockPathTypes getBlockPathType(BlockState state, BlockGetter world, BlockPos pos, @Nullable Mob entity) {
+	public BlockPathTypes getBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob entity) {
 		return state.getValue(LIT) ? BlockPathTypes.DAMAGE_FIRE : null;
 	}
 
 	@Override
-	public BlockState rotate(BlockState pState, Rotation pRot) {
-		return pState.setValue(FACING, pRot.rotate(pState.getValue(FACING)));
+	public BlockState rotate(BlockState state, Rotation rotation) {
+		return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
 	}
 
 	@Override
-	public BlockState mirror(BlockState pState, Mirror pMirror) {
-		return pState.rotate(pMirror.getRotation(pState.getValue(FACING)));
+	public BlockState mirror(BlockState state, Mirror mirror) {
+		return state.rotate(mirror.getRotation(state.getValue(FACING)));
 	}
 }

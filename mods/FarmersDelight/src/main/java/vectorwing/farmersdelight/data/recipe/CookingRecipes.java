@@ -6,11 +6,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
-import vectorwing.farmersdelight.data.builder.CookingPotRecipeBuilder;
 import vectorwing.farmersdelight.client.recipebook.CookingPotRecipeBookTab;
 import vectorwing.farmersdelight.common.registry.ModItems;
 import vectorwing.farmersdelight.common.tag.ForgeTags;
 import vectorwing.farmersdelight.common.tag.ModTags;
+import vectorwing.farmersdelight.data.builder.CookingPotRecipeBuilder;
 
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -77,14 +77,14 @@ public class CookingRecipes
 				.addIngredient(Items.RED_MUSHROOM)
 				.unlockedByAnyIngredient(Blocks.BROWN_MUSHROOM, Blocks.RED_MUSHROOM)
 				.setRecipeBookTab(CookingPotRecipeBookTab.MEALS)
-				.save(consumer);
+				.saveToFD(consumer);
 		CookingPotRecipeBuilder.cookingPotRecipe(Items.BEETROOT_SOUP, 1, NORMAL_COOKING, MEDIUM_EXP, Items.BOWL)
 				.addIngredient(Items.BEETROOT)
 				.addIngredient(Items.BEETROOT)
 				.addIngredient(Items.BEETROOT)
 				.unlockedByItems("has_beetroot", Items.BEETROOT)
 				.setRecipeBookTab(CookingPotRecipeBookTab.MEALS)
-				.save(consumer);
+				.saveToFD(consumer);
 		CookingPotRecipeBuilder.cookingPotRecipe(Items.RABBIT_STEW, 1, NORMAL_COOKING, MEDIUM_EXP, Items.BOWL)
 				.addIngredient(Items.BAKED_POTATO)
 				.addIngredient(Items.RABBIT)
@@ -92,7 +92,7 @@ public class CookingRecipes
 				.addIngredient(Ingredient.of(Items.BROWN_MUSHROOM, Items.RED_MUSHROOM))
 				.unlockedByAnyIngredient(Items.RABBIT, Items.BROWN_MUSHROOM, Items.RED_MUSHROOM, Items.CARROT, Items.BAKED_POTATO)
 				.setRecipeBookTab(CookingPotRecipeBookTab.MEALS)
-				.save(consumer);
+				.saveToFD(consumer);
 	}
 
 	private static void cookMeals(Consumer<FinishedRecipe> consumer) {

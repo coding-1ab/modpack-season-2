@@ -1,5 +1,6 @@
 package vectorwing.farmersdelight.common;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import net.minecraft.core.Position;
@@ -24,11 +25,13 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import vectorwing.farmersdelight.common.crafting.condition.VanillaCrateEnabledCondition;
 import vectorwing.farmersdelight.common.entity.RottenTomatoEntity;
+import vectorwing.farmersdelight.common.networking.ModNetworking;
 import vectorwing.farmersdelight.common.registry.ModAdvancements;
 import vectorwing.farmersdelight.common.registry.ModItems;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Set;
 
 public class CommonSetup
@@ -39,10 +42,10 @@ public class CommonSetup
 			registerDispenserBehaviors();
 			registerItemSetAdditions();
 			registerStackSizeOverrides();
+            ModNetworking.register();
+            ModAdvancements.register();
+			CraftingHelper.register(new VanillaCrateEnabledCondition.Serializer());
 		});
-
-		ModAdvancements.register();
-		CraftingHelper.register(new VanillaCrateEnabledCondition.Serializer());
 	}
 
 	public static void registerStackSizeOverrides() {
@@ -139,5 +142,14 @@ public class CommonSetup
 				ModItems.RICE_PANICLE.get());
 		newWantedItems.addAll(Villager.WANTED_ITEMS);
 		Villager.WANTED_ITEMS = ImmutableSet.copyOf(newWantedItems);
+
+		HashMap<Item, Integer> newFoodPoints = new HashMap<>();
+		newFoodPoints.put(ModItems.CABBAGE.get(), 1);
+		newFoodPoints.put(ModItems.TOMATO.get(), 1);
+		newFoodPoints.put(ModItems.ONION.get(), 1);
+		newFoodPoints.put(ModItems.RICE.get(), 2);
+		newFoodPoints.putAll(Villager.FOOD_POINTS);
+
+		Villager.FOOD_POINTS = ImmutableMap.copyOf(newFoodPoints);
 	}
 }

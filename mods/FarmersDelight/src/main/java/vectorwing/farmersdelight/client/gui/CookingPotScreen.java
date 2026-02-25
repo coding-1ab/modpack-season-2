@@ -1,7 +1,6 @@
 package vectorwing.farmersdelight.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
@@ -103,9 +102,10 @@ public class CookingPotScreen extends AbstractContainerScreen<CookingPotMenu> im
 				tooltip.add(((MutableComponent) mealStack.getItem().getDescription()).withStyle(mealStack.getRarity().color));
 
 				ItemStack containerStack = this.menu.blockEntity.getContainer();
-				String container = !containerStack.isEmpty() ? containerStack.getItem().getDescription().getString() : "";
-
-				tooltip.add(TextUtils.getTranslation("container.cooking_pot.served_on", container).withStyle(ChatFormatting.GRAY));
+				if (!containerStack.isEmpty()) {
+					String container = !containerStack.isEmpty() ? containerStack.getItem().getDescription().getString() : "";
+					tooltip.add(TextUtils.getTranslation("container.cooking_pot.served_on", container).withStyle(ChatFormatting.GRAY));
+				}
 
 				gui.renderComponentTooltip(font, tooltip, mouseX, mouseY);
 			} else {

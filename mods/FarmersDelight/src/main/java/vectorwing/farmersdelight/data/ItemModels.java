@@ -42,6 +42,9 @@ public class ItemModels extends ItemModelProvider
 		itemGeneratedModel(ModItems.BROWN_MUSHROOM_COLONY.get(), resourceBlock(itemName(ModItems.BROWN_MUSHROOM_COLONY.get()) + "_stage3"));
 		items.remove(ModItems.BROWN_MUSHROOM_COLONY.get());
 
+		itemGeneratedModel(ModItems.DEBUG_PUMPKIN_PIE.get(), resourceItem("debug_pumpkin_pie"));
+		items.remove(ModItems.DEBUG_PUMPKIN_PIE.get());
+
 		itemGeneratedModel(ModItems.RED_MUSHROOM_COLONY.get(), resourceBlock(itemName(ModItems.RED_MUSHROOM_COLONY.get()) + "_stage3"));
 		items.remove(ModItems.RED_MUSHROOM_COLONY.get());
 

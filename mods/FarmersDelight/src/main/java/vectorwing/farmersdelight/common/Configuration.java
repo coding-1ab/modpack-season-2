@@ -30,6 +30,7 @@ public class Configuration
 	public static final String CATEGORY_OVERRIDES = "overrides";
 	public static ForgeConfigSpec.BooleanValue VANILLA_SOUP_EXTRA_EFFECTS;
 	public static ForgeConfigSpec.BooleanValue RABBIT_STEW_JUMP_BOOST;
+	public static ForgeConfigSpec.BooleanValue PUMPKIN_PIE_SNEAK_TO_PLACE;
 	public static ForgeConfigSpec.BooleanValue DISPENSER_TOOLS_CUTTING_BOARD;
 
 	public static final String CATEGORY_OVERRIDES_STACK_SIZE = "stack_size";
@@ -39,6 +40,7 @@ public class Configuration
 	public static final String CATEGORY_WORLD = "world";
 	public static ForgeConfigSpec.BooleanValue GENERATE_FD_CHEST_LOOT;
 	public static ForgeConfigSpec.BooleanValue GENERATE_VILLAGE_COMPOST_HEAPS;
+	public static ForgeConfigSpec.BooleanValue GENERATE_VILLAGE_FARM_FD_CROPS;
 	public static ForgeConfigSpec.BooleanValue GENERATE_WILD_CABBAGES;
 	public static ForgeConfigSpec.IntValue CHANCE_WILD_CABBAGES;
 	public static ForgeConfigSpec.BooleanValue GENERATE_WILD_BEETROOTS;
@@ -104,6 +106,8 @@ public class Configuration
 				.define("vanillaSoupExtraEffects", true);
 		RABBIT_STEW_JUMP_BOOST = COMMON_BUILDER.comment("Should Rabbit Stew grant users the jumping prowess of a rabbit when eaten?")
 				.define("rabbitStewJumpBoost", true);
+		PUMPKIN_PIE_SNEAK_TO_PLACE = COMMON_BUILDER.comment("Should Pumpkin Pie require the user to sneak to place it down as a block?")
+				.define("pumpkinPieSneakToPlace", false);
 		DISPENSER_TOOLS_CUTTING_BOARD = COMMON_BUILDER.comment("Should the Dispenser be able to operate a Cutting Board in front of it?")
 				.define("dispenserUsesToolsOnCuttingBoard", true);
 
@@ -119,8 +123,10 @@ public class Configuration
 		COMMON_BUILDER.comment("World generation").push(CATEGORY_WORLD);
 		GENERATE_FD_CHEST_LOOT = COMMON_BUILDER.comment("Should this mod add some of its items (ropes, seeds, knives, meals etc.) as extra chest loot across Minecraft?")
 				.define("generateFDChestLoot", true);
-		GENERATE_VILLAGE_COMPOST_HEAPS = COMMON_BUILDER.comment("Generate Compost Heaps across all village biomes")
+		GENERATE_VILLAGE_COMPOST_HEAPS = COMMON_BUILDER.comment("Should FD generate Compost Heaps across all village biomes?")
 				.define("genVillageCompostHeaps", true);
+		GENERATE_VILLAGE_FARM_FD_CROPS = COMMON_BUILDER.comment("Should FD crops show up planted randomly in various village farms?")
+				.define("genFDCropsOnVillageFarms", true);
 
 		COMMON_BUILDER.comment("Wild Cabbage generation").push("wild_cabbages");
 		CHANCE_WILD_CABBAGES = COMMON_BUILDER.comment("Chance of generating clusters. Smaller value = more frequent.")

@@ -1,8 +1,11 @@
 package vectorwing.farmersdelight.common.registry;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -14,7 +17,9 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.NotNull;
 import vectorwing.farmersdelight.FarmersDelight;
+import vectorwing.farmersdelight.common.BlockShapes;
 import vectorwing.farmersdelight.common.block.*;
 
 import java.util.function.ToIntFunction;
@@ -254,6 +259,15 @@ public class ModBlocks
 			() -> new PieBlock(Block.Properties.copy(Blocks.CAKE), ModItems.SWEET_BERRY_CHEESECAKE_SLICE));
 	public static final RegistryObject<Block> CHOCOLATE_PIE = BLOCKS.register("chocolate_pie",
 			() -> new PieBlock(Block.Properties.copy(Blocks.CAKE), ModItems.CHOCOLATE_PIE_SLICE));
+	public static final RegistryObject<Block> PUMPKIN_PIE = BLOCKS.register("pumpkin_pie",
+			() -> new PieBlock(Block.Properties.copy(Blocks.CAKE), ModItems.PUMPKIN_PIE_SLICE)
+			{
+				@Override
+				@SuppressWarnings("deprecation")
+				public @NotNull ItemStack getCloneItemStack(BlockGetter pLevel, BlockPos pPos, BlockState pState) {
+					return new ItemStack(Items.PUMPKIN_PIE);
+				}
+			});
 
 	// Wild Crops
 	public static final RegistryObject<Block> SANDY_SHRUB = BLOCKS.register("sandy_shrub",
@@ -292,13 +306,13 @@ public class ModBlocks
 
 	// Feasts
 	public static final RegistryObject<Block> ROAST_CHICKEN_BLOCK = BLOCKS.register("roast_chicken_block",
-			() -> new RoastChickenBlock(Block.Properties.copy(Blocks.CAKE), ModItems.ROAST_CHICKEN, true));
+			() -> new RotatedFeastBlock(Block.Properties.copy(Blocks.CAKE), ModItems.ROAST_CHICKEN, true, BlockShapes.ROAST_CHICKEN_SHAPES, BlockShapes.DEFAULT_PLATE_SHAPE));
 	public static final RegistryObject<Block> STUFFED_PUMPKIN_BLOCK = BLOCKS.register("stuffed_pumpkin_block",
 			() -> new FeastBlock(Block.Properties.copy(Blocks.PUMPKIN), ModItems.STUFFED_PUMPKIN, false));
 	public static final RegistryObject<Block> HONEY_GLAZED_HAM_BLOCK = BLOCKS.register("honey_glazed_ham_block",
-			() -> new HoneyGlazedHamBlock(Block.Properties.copy(Blocks.CAKE), ModItems.HONEY_GLAZED_HAM, true));
+			() -> new RotatedFeastBlock(Block.Properties.copy(Blocks.CAKE), ModItems.HONEY_GLAZED_HAM, true, BlockShapes.HONEY_GLAZED_HAM_SHAPES, BlockShapes.DEFAULT_PLATE_SHAPE));
 	public static final RegistryObject<Block> SHEPHERDS_PIE_BLOCK = BLOCKS.register("shepherds_pie_block",
-			() -> new ShepherdsPieBlock(Block.Properties.copy(Blocks.CAKE), ModItems.SHEPHERDS_PIE, true));
+			() -> new RotatedFeastBlock(Block.Properties.copy(Blocks.CAKE), ModItems.SHEPHERDS_PIE, true, BlockShapes.SHEPHERDS_PIE_SHAPES, BlockShapes.DEFAULT_PLATE_SHAPE));
 	public static final RegistryObject<Block> RICE_ROLL_MEDLEY_BLOCK = BLOCKS.register("rice_roll_medley_block",
 			() -> new RiceRollMedleyBlock(Block.Properties.copy(Blocks.CAKE)));
 }

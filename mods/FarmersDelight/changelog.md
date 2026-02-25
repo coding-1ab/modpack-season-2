@@ -1,28 +1,212 @@
 # Changelog
 
-## 1.2.5
+## 1.3.0 (WIP)
 
 ### Additions
-- Farmer Villagers are now capable of planting and harvesting FD crops!
-  - They can plant Cabbage, Tomato and Onion. Rice is excluded due to unique planting conditions. However...
-  - They can harvest all 4 crops once fully mature, and will collect the drops. This includes the top half of Rice, which means they can harvest it indefinitely;
-- Added tag: `farmersdelight:campfire_signal_smoke`. Blocks in this tag will cause Campfires to emit "signal smoke", like the Hay Bale;
+- Pumpkin Pie can now be placed as a block, like the other pies!
+  - By default, it is placeable without secondary action. A config exists to require sneaking, if preferred;
+- Farmer's Delight now has a native EMI plugin! (thanks, ChrysanthCow!)
+  - It works similarly to the built-in JEI plugin, but offering compatibility with EMI's unique features, such as chances and recipe trees;
+  - With it, tags have been integrated into translation files. Both JEI and EMI now use them to display tags in-game.
+  - Default recipes have been configured for most FD recipes. I'll try to keep this updated for pack makers, but I may forget now and then.
 
 ### Updates
-- Knives are now effective at mining Pumpkins and Melons;
-- Knives will harvest **4 Pumpkin Slices** when mining a Pumpkin, instead of a whole unit. Carved Pumpkins are unaffected;
-- Added Canvas Signs to the vanilla `signs` and `hanging_signs` item tags;
-- Some crafting recipes are now properly grouped in the Crafting Table's recipe book;
-- Skillets are now waterloggable, but are unable to cook underwater, either handheld or as a block. Hard to fry when the skillet is flooded!
+- The Cutting Board has been redesigned:
+  - It can now hold a **full stack of items**, instead of one at a time. This allows players to process their stacks in half the time it took before;
+  - If the board's stack isn't full yet, players can top it up with more items;
+  - When cutting, the status bar will show how many items are left on the board;
+  - Comparator signal will now be based on the fill percentage for the item's max stack size;
+  - All off-hand interaction has been removed. Placing, removing and processing items is done entirely with the main hand;
+  - The `offhand_equipment` tag has been removed.
+- The Skillet's handheld functions have been updated (thanks to MehVahdJukaar, ChrysanthCow and the Refabricated team!):
+  - The Skillet can render foods in handheld mode again;
+  - When cooking handheld, the durability meter will become an orange "frying meter", showing you the cooking progress;
+  - When cooking handheld, you can press the "Attack" button to toss and flip the food inside the skillet. This has no gameplay effect, it's just for fun!;
 - Tomato crops have been updated:
   - The crop no longer uses the standard growth speed checks of `CropBlock`, which was slowing down hanging vines. They grow at a fixed rate now, regardless of height;
   - Applying bone meal to a mature tomato vine (sneaking, rich soil etc) will pass the boost to the vine above it, if possible;
   - Tomato seeds can now be planted on any farmland block;
+- Stoves now only inflict burn in a small "grilling area" on top of them; the edges are safe to step on;
+- Pies and Feasts now have more precise hitboxes, matching their shapes as they are consumed (thanks, TheGridExpert!);
 
-## Technical
-- FD's recipe builders now implement `RecipeBuilder`, which should allow a few extra features for add-on developers (thanks, Lance5057!);
+### Fixes
+- Statistics are now properly awarded for:
+  - Using tools on the Cutting Board;
+  - Using Knives to cut cakes and pies;
+  - Using containers to take servings from feasts;
+
+### Technical
+- FD's internal recipe builders have been updated, and should now be more usable for add-on developers:
+  - They now implement `RecipeBuilder`, which standardizes several methods in regards to file saving and naming (thanks, Lance5057!);
+  - Added `setNamespace(string)` to both builders, to allow users to specify a custom namespace (mod ID) for the recipe. Use it if the result isn't registered under your mod ID;
+  - The `save(consumer)` method override no longer hardcodes FD's mod ID in the recipe. Instead, it will use either the result's namespace by default, or a value set through `setNamespace(string)`;
+    - Thanks to LordFirespeed for helping me realize the issue with the method override!;
 - FD's recipes now call for `assemble()` in most places, allowing extenders of most workstations to use the inventory when creating their result (thanks, ColonelPanic!);
 - Cutting recipes now accept arrays of ingredients in the `tool` field (thanks, BobVarioa!).
+- Food blocks, such as Pies and Feasts, now have new class overrides for when their VoxelShapes can rotate horizontally (thanks, TheGridExpert!):
+  - `RotatedFeastBlock` is an extension of `FeastBlock` for feasts with directional consumption shapes. You provide an array of shapes, and `ShapeUtils` will calculate and cache rotations for them;
+  - If your feast does not change horizontally as servings are taken (example: Stuffed Pumpkin), you can still use `FeastBlock`.
+
+## 1.2.10
+
+### Updates
+- The JEI widget for the Cooking Pot now has its own image file, to allow custom widget editing;
+  - The UI icons are still located in the main Cooking Pot UI file;
+- Villagers can now consume FD crops to become willing to breed (thanks, isErenG!);
+
+### Fixes
+- Fixed `foodEffectTooltip` config not affecting the tooltip of vanilla foods with FD effect overrides;
+- Fixed Cutting Board playing sounds at the zero corner, instead of at the center of itself;
+- Fixed non-contained meals (example: Dumplings) being deleted if sitting on the meal slot, and using the same meal against the pot to serve it (thanks, VBlackCAT!);
+
+### Translations
+- Added:
+  - kk_kz (thanks, ninsent!);
+  - zh_hk (thanks, Duppy-Conqueror!);
+- Updated:
+  - hu_hu (thanks, bayi!);
+  - ja_jp (thanks, Abbage230!);
+  - lzh (thanks, BeiDou114514!);
+  - ru_ru (thanks, pansangg!);
+
+## 1.2.9
+
+### Updates
+- The `offhand_equipment` tag now includes `forge:tools/shields` by default, extending default compatibility;
+- Rich Soil Farmland can now be hydrated by any fluid type capable of hydration;
+- Wild Cabbage and Sea Beet can now generate on any biome tagged with `minecraft:is_beach` (thanks, lyaneii!);
+
+### Fixes
+- Fixed Wheat Dough's water-based recipe still displaying in JEI when disabled;
+- Fixed FD's special recipes existing in the `minecraft` namespace;
+- Temporary fix for the Cooking Pot crashing when opened in spectator mode (access is now disabled);
+
+### Translations
+- Update main langs to include lines for wall canvas signs;
+- Fixed es_ar translation having a JSON error;
+- Added:
+  - hu_hu (thanks, bayi!);
+  - lzh (thanks, BeiDou114514!);
+- Updated:
+  - it_it (thanks, BlackShadow77!);
+  - zh_cn (thanks, Don-Trueno!);
+  - zh_tw (thanks, CyanChanges!);
+
+## 1.2.8
+
+### Additions
+- New item tags:
+  - `#meals` - Groups bowl and plate foods which are considered a "meal" by the mod. Excludes Fruit Salad and Nether Salad;
+  - `#drinks` - Groups drinkable FD items that are not potions;
+  - `#feasts` - Groups the full forms of feasts. Their portions reside in `#meals`;
+
+### Updates
+- Wheat Dough now has a simpler, less cumbersome crafting recipe using a Water Bucket:
+  - Wheat can be crafted with a Water Bucket to make Dough. The bucket's water won't be depleted, letting you craft dough indefinitely;
+  - The bucket acts as a simple technology gate to unlock this recipe;
+  - The egg recipe is still present, to not break auto-crafting setups;
+- All usages of water buckets in the mod (recipes, interactions etc) now use a common tag (thanks, thelegitdolt!):
+  - 1.20.1: `forge:buckets/water` (unofficial);
+  - 1.21.1: `c:buckets/water`;
+- Added knives to the `breaks_decorated_pots` tag;
+- Updated integration with `create:upright_on_belt` to include all bowl, plate and bottle items;
+- Updated the Master Chef advancement with additional meals;
+  - The meals reflect the "vanilla FD" entries in the `meals` tag, but does not update with the tag itself;
+- Updated effect description IDs for all langs (thanks, mpustovoi!);
+- Cooking Pot will always "cool down" when the recipe becomes invalid mid-cooking, instead of losing all cooking progress in some circumstances;
+
+### Fixes
+- Fixed Jack-O-Lantern not being mineable with a Knife;
+- Fixed Create's Potato Cannon integration;
+- Fixed Knives with Silk Touch mining Pumpkin blocks into slices;
+- Fixed Rich Soil negating fall damage (1.21.1) and `turnToDirt` converting it into normal dirt (thanks, SarahIsWeird!);
+
+### Translations
+- Updated:
+  - es_es (thanks, GGlangf!);
+  - zh_cn (thanks, NumberSir!);
+  - zh_tw (thanks, DEEMsss!);
+
+## 1.2.7
+
+### Updates
+- Knives are now effective at mining Cactus;
+- Knives can now instamine Bamboo, just like a Sword;
+- Added the following blocks to the `unaffected_by_rich_soil` tag:
+  - Moss, Nylium, Big Dripleaf, Pink Petals and Tall Flowers;
+- Added `storage_blocks/<material>` tags for each storage block (crates, bags, bales) in the mod:
+  - In 1.20.1, the namespace is `forge`;
+  - In 1.21.1, the namespace is `c`;
+- Rich Soil is no longer hardcoded to deny tall flower boosting; they have simply been added to the `unaffected_by_rich_soil` tag;
+
+### Fixes
+- Fixed wrong UV at the bottom of Pie models when there's 1 slice left;
+
+### Translations
+- Updated:
+  - es_cl (thanks, Ganbare-Lucifer!);
+  - id_id (thanks, ichirei!);
+  - zh_cn (thanks, Boshigiri!);
+
+## 1.2.6
+
+### Additions
+- Farmer's Delight crops will now generate in village farms!
+  - Cabbage, Tomato and Onion will randomly replace either Wheat or Potato crops in villages;
+  - Crop availability varies between arid, temperate and cold biomes;
+  - Rice is excluded, as it requires a custom structure, and Villagers can't farm it yet.
+- Added cutting recipe for Torchflower;
+
+### Fixes
+- Fix Skillet's default block state having `waterlogged=true`;
+- Fix `tomatoes` not having a map color;
+
+### Translations
+- Added:
+  - en_nz (thanks, XlosVSM!);
+  - vp_vl (thanks, SquareScreamYT!);
+- Updated:
+  - es_mx (thanks, cerealconjugo!);
+  - ja_jp (thanks, Abbage230!);
+  - zh_cn (thanks, NumberSir!);
+
+## 1.2.5
+
+### Additions
+- Farmer Villagers are now capable of planting and harvesting FD crops!
+  - They can plant, harvest and collect the drops for Cabbage, Tomato and Onion;
+  - Rice is currently excluded from this equation, as farmer AI wasn't able to handle it properly without extensive changes.
+- Added tag: `farmersdelight:campfire_signal_smoke`. Blocks in this tag will cause Campfires to emit "signal smoke", like the Hay Bale;
+
+### Updates
+- Knives are now effective at mining Pumpkins (normal and carved) and Melons;
+- Knives will harvest **4 Pumpkin Slices** when mining a Pumpkin, instead of a whole unit. Carved Pumpkins are unaffected;
+- Added Canvas Signs to the vanilla `signs` and `hanging_signs` item tags;
+- Some crafting recipes are now properly grouped in the Crafting Table's recipe book;
+- Skillets are now waterloggable, but are unable to cook underwater, either handheld or as a block. Hard to fry when the skillet is flooded!
+- `tomatoes` were temporarily removed from the `crops` tag, as bee pollination was breaking ropelogged vines unpredictably;
+  - This will likely be addressed in the next major release;
+  
+### Fixes
+- Fix meal duplication when using containers against a Cooking Pot block, then closing and reloading the world;
+
+### Translations
+- Added:
+  - be_by (thanks, observr1!)
+  - en_gb (thanks, akkini1!)
+  - da_dk (thanks, gohkenytp!)
+  - tok (thanks, PiggyDr!)
+- Updated:
+  - de_de (thanks, joernott and DaLumma!)
+  - es_ar (thanks, axperty!)
+  - es_mx (thanks, cerealconjugo!)
+  - ja_jp (thanks, konumatakaki and EndilCrafter!)
+  - ko_kr (thanks, smoong951!)
+  - ru_ru (thanks, mpustovoi!)
+  - uk_ua (thanks, TheGridExpert!)
+  - vi_vn (thanks, godkyo98!)
+  - zh_cn (thanks, DuckDuckStudio!)
+  - zh_tw (thanks, DuckDuckStudio and FuGu0416!)
 
 ## 1.2.4
 

@@ -1,5 +1,6 @@
 package vectorwing.farmersdelight.data;
 
+import com.blamejared.crafttweaker.api.mod.Mod;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -8,6 +9,7 @@ import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.registry.ModBlocks;
+import vectorwing.farmersdelight.common.registry.ModItems;
 import vectorwing.farmersdelight.common.tag.CompatibilityTags;
 import vectorwing.farmersdelight.common.tag.ForgeTags;
 import vectorwing.farmersdelight.common.tag.ModTags;
@@ -70,13 +72,17 @@ public class BlockTags extends BlockTagsProvider
 				ModBlocks.RICH_SOIL_FARMLAND.get()
 		);
 		tag(ModTags.MINEABLE_WITH_KNIFE).add(
+						Blocks.CACTUS,
 						Blocks.MELON,
 						Blocks.PUMPKIN,
+						Blocks.CARVED_PUMPKIN,
+						Blocks.JACK_O_LANTERN,
 						Blocks.COBWEB,
 						Blocks.CAKE,
 						ModBlocks.APPLE_PIE.get(),
 						ModBlocks.SWEET_BERRY_CHEESECAKE.get(),
 						ModBlocks.CHOCOLATE_PIE.get(),
+						ModBlocks.PUMPKIN_PIE.get(),
 						ModBlocks.ROAST_CHICKEN_BLOCK.get(),
 						ModBlocks.HONEY_GLAZED_HAM_BLOCK.get(),
 						ModBlocks.SHEPHERDS_PIE_BLOCK.get(),
@@ -189,12 +195,28 @@ public class BlockTags extends BlockTagsProvider
 				ModBlocks.WILD_ONIONS.get()
 		);
 		tag(net.minecraft.tags.BlockTags.TALL_FLOWERS).add(ModBlocks.WILD_RICE.get());
+		tag(net.minecraft.tags.BlockTags.DIRT).add(
+				ModBlocks.RICH_SOIL.get());
+		tag(net.minecraft.tags.BlockTags.MAINTAINS_FARMLAND).add(
+				ModBlocks.CABBAGE_CROP.get(),
+				ModBlocks.BUDDING_TOMATO_CROP.get(),
+				ModBlocks.TOMATO_CROP.get(),
+				ModBlocks.ONION_CROP.get(),
+				ModBlocks.RICE_CROP.get()
+		);
 	}
 
 	protected void registerForgeTags() {
-		tag(net.minecraft.tags.BlockTags.DIRT).add(
-				ModBlocks.RICH_SOIL.get());
 		tag(ForgeTags.MINEABLE_WITH_KNIFE);
+		tag(ForgeTags.STORAGE_BLOCKS_CARROT).add(ModBlocks.CARROT_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_POTATO).add(ModBlocks.POTATO_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_BEETROOT).add(ModBlocks.BEETROOT_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_CABBAGE).add(ModBlocks.CABBAGE_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_TOMATO).add(ModBlocks.TOMATO_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_ONION).add(ModBlocks.ONION_CRATE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_RICE).add(ModBlocks.RICE_BAG.get());
+		tag(ForgeTags.STORAGE_BLOCKS_RICE_PANICLE).add(ModBlocks.RICE_BALE.get());
+		tag(ForgeTags.STORAGE_BLOCKS_STRAW).add(ModBlocks.STRAW_BALE.get());
 	}
 
 	protected void registerModTags() {
@@ -218,6 +240,24 @@ public class BlockTags extends BlockTagsProvider
 				ModBlocks.WILD_TOMATOES.get(),
 				ModBlocks.WILD_ONIONS.get(),
 				ModBlocks.WILD_RICE.get());
+		tag(ModTags.WOODEN_CABINETS)
+				.add(ModBlocks.OAK_CABINET.get())
+				.add(ModBlocks.SPRUCE_CABINET.get())
+				.add(ModBlocks.BIRCH_CABINET.get())
+				.add(ModBlocks.JUNGLE_CABINET.get())
+				.add(ModBlocks.ACACIA_CABINET.get())
+				.add(ModBlocks.DARK_OAK_CABINET.get())
+				.add(ModBlocks.MANGROVE_CABINET.get())
+				.add(ModBlocks.CHERRY_CABINET.get())
+				.add(ModBlocks.BAMBOO_CABINET.get())
+				.add(ModBlocks.CRIMSON_CABINET.get())
+				.add(ModBlocks.WARPED_CABINET.get());
+		tag(ModTags.CABINETS).addTag(ModTags.WOODEN_CABINETS);
+
+		tag(ModTags.MUSHROOM_COLONIES)
+				.add(ModBlocks.BROWN_MUSHROOM_COLONY.get())
+				.add(ModBlocks.RED_MUSHROOM_COLONY.get());
+
 		tag(ModTags.ROPES).add(ModBlocks.ROPE.get())
 				.addOptional(new ResourceLocation("quark:rope"))
 				.addOptional(new ResourceLocation("supplementaries:rope"));
@@ -240,19 +280,24 @@ public class BlockTags extends BlockTagsProvider
 				Blocks.MYCELIUM,
 				ModBlocks.ORGANIC_COMPOST.get(),
 				ModBlocks.RICH_SOIL.get(),
-				ModBlocks.RICH_SOIL_FARMLAND.get(),
-				ModBlocks.BROWN_MUSHROOM_COLONY.get(),
-				ModBlocks.RED_MUSHROOM_COLONY.get());
+				ModBlocks.RICH_SOIL_FARMLAND.get())
+			.addTag(ModTags.MUSHROOM_COLONIES);
 		tag(ModTags.UNAFFECTED_BY_RICH_SOIL).add(
 						Blocks.GRASS_BLOCK,
+						Blocks.MOSS_BLOCK,
+						Blocks.CRIMSON_NYLIUM,
+						Blocks.WARPED_NYLIUM,
 						Blocks.GRASS,
 						Blocks.FERN,
 						Blocks.TWISTING_VINES,
 						Blocks.TWISTING_VINES_PLANT,
-						ModBlocks.SANDY_SHRUB.get(),
-						ModBlocks.BROWN_MUSHROOM_COLONY.get(),
-						ModBlocks.RED_MUSHROOM_COLONY.get())
-				.addTag(ModTags.WILD_CROPS);
+						Blocks.BIG_DRIPLEAF,
+						Blocks.BIG_DRIPLEAF_STEM,
+						Blocks.PINK_PETALS,
+						ModBlocks.SANDY_SHRUB.get())
+				.addTag(ModTags.MUSHROOM_COLONIES)
+				.addTag(ModTags.WILD_CROPS)
+				.addTag(net.minecraft.tags.BlockTags.TALL_FLOWERS);
 		tag(ModTags.MUSHROOM_COLONY_GROWABLE_ON).add(ModBlocks.RICH_SOIL.get());
 		tag(ModTags.DROPS_CAKE_SLICE).add(
 				Blocks.CANDLE_CAKE,

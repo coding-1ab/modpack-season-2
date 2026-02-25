@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.Containers;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -27,15 +27,17 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.event.ForgeEventFactory;
 import vectorwing.farmersdelight.common.tag.ModTags;
 import vectorwing.farmersdelight.common.utility.ItemUtils;
+import vectorwing.farmersdelight.common.utility.ShapeUtils;
 
+import java.util.Map;
 import java.util.function.Supplier;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 @SuppressWarnings("deprecation")
 public class PieBlock extends Block
@@ -43,7 +45,14 @@ public class PieBlock extends Block
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final IntegerProperty BITES = IntegerProperty.create("bites", 0, 3);
 
-	protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 4.0D, 14.0D);
+	protected static final VoxelShape[] SHAPES = {
+			Block.box(2, 0, 2, 14, 4, 14),
+			Shapes.join(Block.box(2, 0, 8, 8, 4, 14), Block.box(2, 0, 2, 14, 4, 8), BooleanOp.OR),
+			Block.box(2, 0, 2, 14, 4, 8),
+			Block.box(8, 0, 2, 14, 4, 8)
+	};
+
+	private static final VoxelShape[][] ROTATED_SHAPES = buildShapes();
 
 	public final Supplier<Item> pieSlice;
 
@@ -63,7 +72,18 @@ public class PieBlock extends Block
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-		return SHAPE;
+		return ROTATED_SHAPES[state.getValue(BITES)][state.getValue(FACING).get2DDataValue()];
+	}
+
+	private static VoxelShape[][] buildShapes() {
+		VoxelShape[][] result = new VoxelShape[SHAPES.length][4];
+		for (int i = 0; i < SHAPES.length; i++) {
+			Map<Direction, VoxelShape> rotated = ShapeUtils.getShapesRotatedFromNorth(SHAPES[i]);
+			for (Map.Entry<Direction, VoxelShape> entry : rotated.entrySet()) {
+				result[i][entry.getKey().get2DDataValue()] = entry.getValue();
+			}
+		}
+		return result;
 	}
 
 	@Override
@@ -76,7 +96,7 @@ public class PieBlock extends Block
 		ItemStack heldStack = player.getItemInHand(hand);
 		if (level.isClientSide) {
 			if (heldStack.is(ModTags.KNIVES)) {
-				return cutSlice(level, pos, state, player);
+				return cutSlice(level, pos, state, player, heldStack.getItem());
 			}
 
 			if (this.consumeBite(level, pos, state, player) == InteractionResult.SUCCESS) {
@@ -89,7 +109,7 @@ public class PieBlock extends Block
 		}
 
 		if (heldStack.is(ModTags.KNIVES)) {
-			return cutSlice(level, pos, state, player);
+			return cutSlice(level, pos, state, player, heldStack.getItem());
 		}
 		return this.consumeBite(level, pos, state, player);
 	}
@@ -130,7 +150,7 @@ public class PieBlock extends Block
 	/**
 	 * Cuts off a bite and drops a slice item, without feeding the player.
 	 */
-	protected InteractionResult cutSlice(Level level, BlockPos pos, BlockState state, Player player) {
+	protected InteractionResult cutSlice(Level level, BlockPos pos, BlockState state, Player player, Item knife) {
 		int bites = state.getValue(BITES);
 		if (bites < getMaxBites() - 1) {
 			level.setBlock(pos, state.setValue(BITES, bites + 1), 3);
@@ -142,6 +162,8 @@ public class PieBlock extends Block
 		ItemUtils.spawnItemEntity(level, this.getPieSliceItem(), pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5,
 				direction.getStepX() * 0.15, 0.05, direction.getStepZ() * 0.15);
 		level.playSound(null, pos, SoundEvents.WOOL_BREAK, SoundSource.PLAYERS, 0.8F, 0.8F);
+		player.awardStat(Stats.ITEM_USED.get(knife));
+
 		return InteractionResult.SUCCESS;
 	}
 
