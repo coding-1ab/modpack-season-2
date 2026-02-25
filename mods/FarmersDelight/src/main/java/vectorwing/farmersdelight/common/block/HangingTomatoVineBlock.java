@@ -40,22 +40,14 @@ public class HangingTomatoVineBlock extends TomatoVineBlock
 	@Override
 	public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack stack) {
 		super.playerDestroy(level, player, pos, state, blockEntity, stack);
-		destroyAndPlaceRope(level, pos);
+		placeRope(level, pos);
 	}
-
-//	@Override
-//	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-//		if (state.getBlock() != newState.getBlock()) {
-//			level.destroyBlock(pos, true);
-////			destroyAndPlaceRope(level, pos);
-//		}
-//	}
 
 	@Override
 	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 		if (!state.canSurvive(level, pos)) {
 			level.destroyBlock(pos, true);
-			destroyAndPlaceRope(level, pos);
+			placeRope(level, pos);
 		}
 	}
 
@@ -64,7 +56,7 @@ public class HangingTomatoVineBlock extends TomatoVineBlock
 		builder.add(VINE_AGE);
 	}
 
-	public static void destroyAndPlaceRope(Level level, BlockPos pos) {
+	public static void placeRope(Level level, BlockPos pos) {
 		Block configuredRopeBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(Configuration.DEFAULT_TOMATO_VINE_ROPE.get()));
 		Block finalRopeBlock = configuredRopeBlock != null ? configuredRopeBlock : ModBlocks.ROPE.get();
 

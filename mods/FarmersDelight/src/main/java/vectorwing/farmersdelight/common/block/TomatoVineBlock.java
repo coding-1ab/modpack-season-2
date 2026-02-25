@@ -76,11 +76,9 @@ public class TomatoVineBlock extends CropBlock
 		if (!level.isAreaLoaded(pos, 1)) return;
 
 		// TODO: Remove this conversion, as well as the ropelogged state, in future versions.
-		if (state.is(ModBlocks.TOMATO_CROP.get())) {
-			if (state.getValue(ROPELOGGED)) {
-				level.setBlockAndUpdate(pos, ModBlocks.HANGING_TOMATO_CROP.get().defaultBlockState().setValue(VINE_AGE, this.getAge(state)));
-				return;
-			}
+		if (state.is(ModBlocks.TOMATO_CROP.get()) && state.getValue(ROPELOGGED)) {
+			level.setBlockAndUpdate(pos, ModBlocks.HANGING_TOMATO_CROP.get().defaultBlockState().setValue(VINE_AGE, this.getAge(state)));
+			return;
 		}
 
 		if (level.getRawBrightness(pos, 0) >= 9) {
