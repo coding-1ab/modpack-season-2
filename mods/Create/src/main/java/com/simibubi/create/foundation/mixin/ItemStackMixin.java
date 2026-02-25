@@ -9,11 +9,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.equipment.clipboard.ClipboardContent;
 
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 
@@ -21,8 +23,21 @@ import net.minecraft.world.level.ItemLike;
 @Deprecated(since = "6.0.7", forRemoval = true)
 @Mixin(ItemStack.class)
 public class ItemStackMixin {
+	@Unique
+	private static Item create$clipboardItem = null;
+
+	@Unique
+	private void create$checkIfClipboardIsRegistered() {
+		if (create$clipboardItem == null)
+			AllBlocks.CLIPBOARD.asOptional().ifPresent(i -> create$clipboardItem = i.asItem());
+	}
+
 	@Inject(method = "<init>(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/Item;verifyComponentsAfterLoad(Lnet/minecraft/world/item/ItemStack;)V"))
 	private void create$migrateOldClipboardComponents(ItemLike item, int count, PatchedDataComponentMap components, CallbackInfo ci) {
+		create$checkIfClipboardIsRegistered();
+		if (create$clipboardItem != null && item.asItem().equals(create$clipboardItem))
+			return;
+
 		ClipboardContent content = ClipboardContent.EMPTY;
 
 		content = create$migrateComponent(content, components, AllDataComponents.CLIPBOARD_PAGES, ClipboardContent::setPages);
