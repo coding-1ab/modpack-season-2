@@ -58,8 +58,13 @@ public class HangingTomatoVineBlock extends TomatoVineBlock
 
 	public static void placeRope(Level level, BlockPos pos) {
 		Block configuredRopeBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(Configuration.DEFAULT_TOMATO_VINE_ROPE.get()));
-		Block finalRopeBlock = configuredRopeBlock != null ? configuredRopeBlock : ModBlocks.ROPE.get();
+		if (configuredRopeBlock == null) {
+			configuredRopeBlock = ModBlocks.ROPE.get();
+		}
+		BlockState finalRopeState = configuredRopeBlock.equals(ModBlocks.ROPE.get())
+				? RopeBlock.getStateWithConnections(ModBlocks.ROPE.get().defaultBlockState(), level, pos)
+				: configuredRopeBlock.defaultBlockState();
 
-		level.setBlockAndUpdate(pos, finalRopeBlock.defaultBlockState());
+		level.setBlockAndUpdate(pos, finalRopeState);
 	}
 }
