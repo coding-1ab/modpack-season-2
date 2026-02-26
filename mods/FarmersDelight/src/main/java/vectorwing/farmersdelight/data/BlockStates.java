@@ -8,10 +8,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.state.properties.*;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
@@ -171,6 +168,7 @@ public class BlockStates extends BlockStateProvider
 		this.customStageBlock(ModBlocks.ONION_CROP.get(), mcLoc("crop"), "crop", OnionBlock.AGE, Arrays.asList(0, 0, 1, 1, 2, 2, 2, 3));
 		this.customStageBlock(ModBlocks.BUDDING_TOMATO_CROP.get(), resourceBlock("crop_cross"), "cross", BuddingTomatoBlock.AGE, Arrays.asList(0, 1, 2, 3, 3));
 
+		this.tomatoBlock(ModBlocks.TOMATO_CROP.get(), TomatoBlock.VINE_AGE, TomatoBlock.ROPELOGGED);
 		this.ropedTomatoBlock(ModBlocks.TOMATO_CROP_ON_ROPE.get(), TomatoBlock.VINE_AGE);
 
 		this.crateBlock(ModBlocks.CARROT_CRATE.get(), "carrot");
@@ -263,6 +261,20 @@ public class BlockStates extends BlockStateProvider
 					}
 					return ConfiguredModel.builder()
 							.modelFile(models().singleTexture(stageName, parent, textureKey, resourceBlock(stageName)).renderType("cutout")).build();
+				}, ignored);
+	}
+
+	public void tomatoBlock(Block block, IntegerProperty ageProperty, BooleanProperty ropeloggedProperty, Property<?>... ignored) {
+		getVariantBuilder(block)
+				.forAllStatesExcept(state -> {
+					int ageSuffix = state.getValue(ageProperty);
+					boolean ropelogged = state.getValue(ropeloggedProperty);
+					String stageName = blockName(block) + "_stage" + ageSuffix;
+					String ropeloggedStageName = blockName(block) + "_old_stage" + ageSuffix; // TODO: Make this a customStageBlock once we remove the ropelogged state for good.
+					return ConfiguredModel.builder()
+							.modelFile(ropelogged
+									? modelCropWithRope(ropeloggedStageName, "tomatoes_coiled_rope")
+									: models().singleTexture(stageName, resourceBlock("crop_cross"), "cross", resourceBlock(stageName)).renderType("cutout")).build();
 				}, ignored);
 	}
 
