@@ -23,6 +23,10 @@
   - When cooking handheld, the durability meter will become an orange "frying meter", showing you the cooking progress;
   - When cooking handheld, you can press the "Attack" button to toss and flip the food inside the skillet. This has no gameplay effect, it's just for fun!;
 - Tomato crops have been updated:
+  - Instead of a blockstate, grown tomato vines are now divided between `tomatoes` (old block) and `hanging_tomatoes` (new):
+    - This was done to fix broken behaviours with vanilla bees, modded autofarming solutions and other things. It should be more resilient to bugs now (hopefully)!;
+    - Existing `tomatoes` with `ropelogged=true` will have a "pale" appearance, and convert into `hanging_tomatoes` on random ticks;
+    - Ropes left behind by `hanging_tomatoes` should now properly update their connections when placed;
   - The crop no longer uses the standard growth speed checks of `CropBlock`, which was slowing down hanging vines. They grow at a fixed rate now, regardless of height;
   - Applying bone meal to a mature tomato vine (sneaking, rich soil etc) will pass the boost to the vine above it, if possible;
   - Tomato seeds can now be planted on any farmland block;
