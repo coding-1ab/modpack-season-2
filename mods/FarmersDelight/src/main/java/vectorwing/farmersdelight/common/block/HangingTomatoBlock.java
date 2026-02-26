@@ -6,7 +6,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -21,18 +20,6 @@ public class HangingTomatoBlock extends TomatoBlock
 	public HangingTomatoBlock(Properties properties) {
 		super(properties, false);
 		registerDefaultState(stateDefinition.any().setValue(getAgeProperty(), 0));
-	}
-
-	@Override
-	public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-		BlockPos belowPos = pos.below();
-		BlockState belowState = level.getBlockState(belowPos);
-
-		if (belowState.is(ModBlocks.TOMATO_CROP.get()) || belowState.is(ModBlocks.TOMATO_CROP_ON_ROPE.get())) {
-			return hasGoodCropConditions(level, pos);
-		}
-
-		return super.canSurvive(state, level, pos);
 	}
 
 	@Override

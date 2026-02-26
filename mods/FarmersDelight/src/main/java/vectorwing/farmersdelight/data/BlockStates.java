@@ -166,9 +166,12 @@ public class BlockStates extends BlockStateProvider
 		this.stageBlock(ModBlocks.BROWN_MUSHROOM_COLONY.get(), MushroomColonyBlock.COLONY_AGE);
 		this.stageBlock(ModBlocks.RED_MUSHROOM_COLONY.get(), MushroomColonyBlock.COLONY_AGE);
 		this.stageBlock(ModBlocks.RICE_CROP_PANICLES.get(), RicePaniclesBlock.RICE_AGE);
+
 		this.customStageBlock(ModBlocks.CABBAGE_CROP.get(), resourceBlock("crop_cross"), "cross", CabbageBlock.AGE, new ArrayList<>());
 		this.customStageBlock(ModBlocks.ONION_CROP.get(), mcLoc("crop"), "crop", OnionBlock.AGE, Arrays.asList(0, 0, 1, 1, 2, 2, 2, 3));
 		this.customStageBlock(ModBlocks.BUDDING_TOMATO_CROP.get(), resourceBlock("crop_cross"), "cross", BuddingTomatoBlock.AGE, Arrays.asList(0, 1, 2, 3, 3));
+
+		this.ropedTomatoBlock(ModBlocks.TOMATO_CROP_ON_ROPE.get(), TomatoBlock.VINE_AGE);
 
 		this.crateBlock(ModBlocks.CARROT_CRATE.get(), "carrot");
 		this.crateBlock(ModBlocks.POTATO_CRATE.get(), "potato");
@@ -263,6 +266,16 @@ public class BlockStates extends BlockStateProvider
 				}, ignored);
 	}
 
+	public void ropedTomatoBlock(Block block, IntegerProperty ageProperty, Property<?>... ignored) {
+		getVariantBuilder(block)
+				.forAllStatesExcept(state -> {
+					int ageSuffix = state.getValue(ageProperty);
+					String stageName = blockName(block) + "_stage" + ageSuffix;
+					return ConfiguredModel.builder()
+							.modelFile(modelCropWithRope(stageName, "tomatoes_coiled_rope")).build();
+				}, ignored);
+	}
+
 	public void wildCropBlock(Block block) {
 		this.wildCropBlock(block, false);
 	}
@@ -328,5 +341,13 @@ public class BlockStates extends BlockStateProvider
 									.build();
 						}
 				);
+	}
+
+	private ModelFile modelCropWithRope(String baseName, String ropeSideTextureName) {
+		return models().withExistingParent(baseName, resourceBlock("crop_with_rope"))
+				.texture("crop", resourceBlock(baseName))
+				.texture("rope_side", resourceBlock(ropeSideTextureName))
+				.texture("rope_top", resourceBlock("rope_top"))
+				.renderType("cutout");
 	}
 }
