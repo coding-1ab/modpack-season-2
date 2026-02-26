@@ -269,14 +269,14 @@ public class ModItems
 		public void registerBlocks(Map<Block, Item> blockToItemMap, Item item) {
 			super.registerBlocks(blockToItemMap, item);
 			blockToItemMap.put(ModBlocks.TOMATO_CROP.get(), item);
-			blockToItemMap.put(ModBlocks.HANGING_TOMATO_CROP.get(), item);
+			blockToItemMap.put(ModBlocks.TOMATO_CROP_ON_ROPE.get(), item);
 		}
 
 		@Override
 		public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
 			super.removeFromBlockToItemMap(blockToItemMap, itemIn);
 			blockToItemMap.remove(ModBlocks.TOMATO_CROP.get());
-			blockToItemMap.remove(ModBlocks.HANGING_TOMATO_CROP.get());
+			blockToItemMap.remove(ModBlocks.TOMATO_CROP_ON_ROPE.get());
 		}
 	});
 	public static final RegistryObject<Item> ROTTEN_TOMATO = registerWithTab("rotten_tomato",

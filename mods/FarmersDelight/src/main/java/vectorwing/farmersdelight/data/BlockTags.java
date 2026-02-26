@@ -1,6 +1,5 @@
 package vectorwing.farmersdelight.data;
 
-import com.blamejared.crafttweaker.api.mod.Mod;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -9,7 +8,6 @@ import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.registry.ModBlocks;
-import vectorwing.farmersdelight.common.registry.ModItems;
 import vectorwing.farmersdelight.common.tag.CompatibilityTags;
 import vectorwing.farmersdelight.common.tag.ForgeTags;
 import vectorwing.farmersdelight.common.tag.ModTags;
@@ -97,7 +95,7 @@ public class BlockTags extends BlockTagsProvider
 	protected void registerMinecraftTags() {
 		tag(net.minecraft.tags.BlockTags.CLIMBABLE).add(
 				ModBlocks.ROPE.get(),
-				ModBlocks.HANGING_TOMATO_CROP.get());
+				ModBlocks.TOMATO_CROP_ON_ROPE.get());
 		tag(net.minecraft.tags.BlockTags.REPLACEABLE).add(
 				ModBlocks.SANDY_SHRUB.get());
 		tag(net.minecraft.tags.BlockTags.REPLACEABLE_BY_TREES).add(
@@ -113,7 +111,7 @@ public class BlockTags extends BlockTagsProvider
 				ModBlocks.RICE_CROP_PANICLES.get(),
 				ModBlocks.BUDDING_TOMATO_CROP.get(),
 				ModBlocks.TOMATO_CROP.get(),
-				ModBlocks.HANGING_TOMATO_CROP.get());
+				ModBlocks.TOMATO_CROP_ON_ROPE.get());
 		tag(net.minecraft.tags.BlockTags.STANDING_SIGNS).add(
 				ModBlocks.CANVAS_SIGN.get(),
 				ModBlocks.WHITE_CANVAS_SIGN.get(),

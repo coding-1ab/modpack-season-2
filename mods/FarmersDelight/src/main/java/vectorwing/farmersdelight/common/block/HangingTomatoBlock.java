@@ -16,9 +16,9 @@ import vectorwing.farmersdelight.common.Configuration;
 import vectorwing.farmersdelight.common.registry.ModBlocks;
 
 @SuppressWarnings("deprecation")
-public class HangingTomatoVineBlock extends TomatoVineBlock
+public class HangingTomatoBlock extends TomatoBlock
 {
-	public HangingTomatoVineBlock(Properties properties) {
+	public HangingTomatoBlock(Properties properties) {
 		super(properties, false);
 		registerDefaultState(stateDefinition.any().setValue(getAgeProperty(), 0));
 	}
@@ -28,7 +28,7 @@ public class HangingTomatoVineBlock extends TomatoVineBlock
 		BlockPos belowPos = pos.below();
 		BlockState belowState = level.getBlockState(belowPos);
 
-		if (belowState.is(ModBlocks.TOMATO_CROP.get()) || belowState.is(ModBlocks.HANGING_TOMATO_CROP.get())) {
+		if (belowState.is(ModBlocks.TOMATO_CROP.get()) || belowState.is(ModBlocks.TOMATO_CROP_ON_ROPE.get())) {
 			return hasGoodCropConditions(level, pos);
 		}
 
@@ -39,7 +39,6 @@ public class HangingTomatoVineBlock extends TomatoVineBlock
 	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 		if (!state.canSurvive(level, pos)) {
 			level.destroyBlock(pos, true);
-			placeRope(level, pos);
 		}
 	}
 
