@@ -6,10 +6,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.texture.TextureFilter;
 import foundry.veil.impl.client.render.framebuffer.AdvancedFboImpl;
+import foundry.veil.impl.client.render.framebuffer.AdvancedFboMutableTextureAttachment;
 import foundry.veil.impl.client.render.framebuffer.DSAAdvancedFboImpl;
 import foundry.veil.impl.client.render.framebuffer.LegacyAdvancedFboImpl;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11C;
 import org.lwjgl.system.NativeResource;
@@ -277,31 +279,37 @@ public interface AdvancedFbo extends NativeResource {
     /**
      * @return The id of this framebuffer or -1 if it has been deleted
      */
+    @Contract(pure = true)
     int getId();
 
     /**
      * @return The width of this framebuffer
      */
+    @Contract(pure = true)
     int getWidth();
 
     /**
      * @return The height of this framebuffer
      */
+    @Contract(pure = true)
     int getHeight();
 
     /**
      * @return The number of color attachments in this framebuffer
      */
+    @Contract(pure = true)
     int getColorAttachments();
 
     /**
      * @return The mak used while clearing the buffer
      */
+    @Contract(pure = true)
     int getClearMask();
 
     /**
      * @return The names of the default draw buffer state
      */
+    @Contract(pure = true)
     int[] getDrawBuffers();
 
     /**
@@ -310,11 +318,13 @@ public interface AdvancedFbo extends NativeResource {
      * @param attachment The attachment to check
      * @return Whether there is a valid attachment in the specified slot
      */
+    @Contract(pure = true)
     boolean hasColorAttachment(int attachment);
 
     /**
      * @return Whether there is a depth attachment added to this framebuffer
      */
+    @Contract(pure = true)
     boolean hasDepthAttachment();
 
     /**
@@ -330,6 +340,7 @@ public interface AdvancedFbo extends NativeResource {
      * @return The attachment in the specified attachment slot
      * @throws IllegalArgumentException If there is no attachment in the specified attachment slot
      */
+    @Contract(pure = true)
     AdvancedFboAttachment getColorAttachment(int attachment);
 
     /**
@@ -338,6 +349,7 @@ public interface AdvancedFbo extends NativeResource {
      * @param attachment The attachment to check
      * @return Whether there is a valid attachment in the specified slot
      */
+    @Contract(pure = true)
     default boolean isColorTextureAttachment(int attachment) {
         return this.hasColorAttachment(attachment) && this.getColorAttachment(attachment) instanceof AdvancedFboTextureAttachment;
     }
@@ -348,6 +360,7 @@ public interface AdvancedFbo extends NativeResource {
      * @param attachment The attachment to check
      * @return Whether there is a valid attachment in the specified slot
      */
+    @Contract(pure = true)
     default boolean isMutableColorTextureAttachment(int attachment) {
         return this.hasColorAttachment(attachment) && this.getColorAttachment(attachment) instanceof AdvancedFboMutableTextureAttachment;
     }
@@ -358,6 +371,7 @@ public interface AdvancedFbo extends NativeResource {
      * @param attachment The attachment to check
      * @return Whether there is a valid attachment in the specified slot
      */
+    @Contract(pure = true)
     default boolean isColorRenderAttachment(int attachment) {
         return this.hasColorAttachment(attachment) && this.getColorAttachment(attachment) instanceof AdvancedFboRenderAttachment;
     }
@@ -372,6 +386,7 @@ public interface AdvancedFbo extends NativeResource {
      * @throws IllegalArgumentException If there is no attachment in the specified attachment
      *                                  slot, or it is not an {@link AdvancedFboTextureAttachment}
      */
+    @Contract(pure = true)
     default AdvancedFboTextureAttachment getColorTextureAttachment(int attachment) {
         AdvancedFboAttachment advancedFboAttachment = this.getColorAttachment(attachment);
         Validate.isTrue(this.isColorTextureAttachment(attachment), "Color attachment " + attachment + " must be a texture attachment to get texture information.");
@@ -421,6 +436,7 @@ public interface AdvancedFbo extends NativeResource {
      * @throws IllegalArgumentException If there is no attachment in the specified attachment
      *                                  slot, or it is not an {@link AdvancedFboRenderAttachment}
      */
+    @Contract(pure = true)
     default AdvancedFboRenderAttachment getColorRenderAttachment(int attachment) {
         AdvancedFboAttachment advancedFboAttachment = this.getColorAttachment(attachment);
         Validate.isTrue(this.isColorRenderAttachment(attachment), "Color attachment " + attachment + " must be a render attachment to get render information.");
@@ -431,11 +447,13 @@ public interface AdvancedFbo extends NativeResource {
      * @return The depth attachment of this framebuffer
      * @throws IllegalArgumentException If there is no depth attachment in this framebuffer
      */
+    @Contract(pure = true)
     AdvancedFboAttachment getDepthAttachment();
 
     /**
      * @return Whether a depth texture attachment has been added to this framebuffer
      */
+    @Contract(pure = true)
     default boolean isDepthTextureAttachment() {
         return this.hasDepthAttachment() && this.getDepthAttachment() instanceof AdvancedFboTextureAttachment;
     }
@@ -443,6 +461,7 @@ public interface AdvancedFbo extends NativeResource {
     /**
      * @return Whether a mutable depth texture attachment has been added to this framebuffer
      */
+    @Contract(pure = true)
     default boolean isDepthMutableTextureAttachment() {
         return this.hasDepthAttachment() && this.getDepthAttachment() instanceof AdvancedFboMutableTextureAttachment;
     }
@@ -450,6 +469,7 @@ public interface AdvancedFbo extends NativeResource {
     /**
      * @return Whether a depth render attachment has been added to this framebuffer
      */
+    @Contract(pure = true)
     default boolean isDepthRenderAttachment() {
         return this.hasDepthAttachment() && this.getDepthAttachment() instanceof AdvancedFboRenderAttachment;
     }
@@ -463,6 +483,7 @@ public interface AdvancedFbo extends NativeResource {
      * @throws IllegalArgumentException If there is no depth attachment in this framebuffer,
      *                                  or it is not an {@link AdvancedFboTextureAttachment}
      */
+    @Contract(pure = true)
     default AdvancedFboTextureAttachment getDepthTextureAttachment() {
         AdvancedFboAttachment advancedFboAttachment = this.getDepthAttachment();
         Validate.isTrue(this.isDepthTextureAttachment(), "Depth attachment must be a texture attachment to get texture information.");
@@ -509,6 +530,7 @@ public interface AdvancedFbo extends NativeResource {
      * @throws IllegalArgumentException If there is no depth attachment in this framebuffer,
      *                                  or it is not an {@link AdvancedFboRenderAttachment}
      */
+    @Contract(pure = true)
     default AdvancedFboRenderAttachment getDepthRenderAttachment() {
         AdvancedFboAttachment advancedFboAttachment = this.getDepthAttachment();
         Validate.isTrue(this.isDepthRenderAttachment(), "Depth attachment must be a render attachment to get render information.");
@@ -519,6 +541,7 @@ public interface AdvancedFbo extends NativeResource {
      * @return The debug label of this framebuffer in a graphics debugger
      */
     @Nullable
+    @Contract(pure = true)
     String getDebugLabel();
 
     /**

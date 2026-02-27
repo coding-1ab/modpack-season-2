@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 import static org.lwjgl.opengl.ARBDirectStateAccess.*;
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL30C.GL_DEPTH_ATTACHMENT;
+import static org.lwjgl.opengl.GL30C.GL_DEPTH_STENCIL_ATTACHMENT;
 
 /**
  * An attachment for an {@link AdvancedFboImpl} that represents a depth render buffer.
@@ -84,7 +86,7 @@ public class AdvancedFboRenderAttachment implements AdvancedFboAttachment {
 
     @Override
     public void attach(AdvancedFbo framebuffer, int attachment) {
-        Validate.isTrue(this.attachmentType != GL_DEPTH_ATTACHMENT || attachment == 0, "Only one depth buffer attachment is supported.");
+        Validate.isTrue(this.attachmentType < GL_DEPTH_ATTACHMENT || attachment == 0, "Only one depth buffer attachment is supported.");
 
         int id = this.getId();
         if (VeilRenderSystem.directStateAccessSupported()) {
@@ -95,11 +97,12 @@ public class AdvancedFboRenderAttachment implements AdvancedFboAttachment {
 
         String debugLabel = framebuffer.getDebugLabel();
         if (debugLabel != null) {
-            if (this.attachmentType == GL_DEPTH_ATTACHMENT) {
-                VeilDebug.get().objectLabel(GL_RENDERBUFFER, id, "Advanced Fbo " + debugLabel + " Depth Render Buffer");
-            } else {
-                VeilDebug.get().objectLabel(GL_RENDERBUFFER, id, "Advanced Fbo " + debugLabel + " Render Buffer " + attachment);
-            }
+            String label = switch (this.attachmentType) {
+                case GL_DEPTH_ATTACHMENT -> "Advanced Fbo " + debugLabel + " Depth Texture";
+                case GL_DEPTH_STENCIL_ATTACHMENT -> "Advanced Fbo " + debugLabel + " Depth Stencil Texture";
+                default -> "Advanced Fbo " + debugLabel + " Texture " + attachment;
+            };
+            VeilDebug.get().objectLabel(GL_RENDERBUFFER, id, label);
         }
     }
 

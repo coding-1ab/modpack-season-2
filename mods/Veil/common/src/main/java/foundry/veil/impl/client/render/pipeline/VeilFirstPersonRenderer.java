@@ -34,11 +34,12 @@ public final class VeilFirstPersonRenderer {
         int w = mainRenderTarget.getWidth();
         int h = mainRenderTarget.getHeight();
         int framebufferTexture = mainRenderTarget.getColorTextureAttachment(0).getId();
-        if (firstPerson == null || firstPerson.getWidth() != w || firstPerson.getHeight() != h) {
+        boolean stencil = mainRenderTarget.hasStencilAttachment();
+        if (firstPerson == null || firstPerson.getWidth() != w || firstPerson.getHeight() != h || firstPerson.hasStencilAttachment() != stencil) {
             free();
             firstPerson = AdvancedFbo.withSize(w, h)
                     .addColorTextureWrapper(framebufferTexture)
-                    .setFormat(FramebufferAttachmentDefinition.Format.DEPTH_COMPONENT)
+                    .setFormat(stencil ? FramebufferAttachmentDefinition.Format.DEPTH32F_STENCIL8 : FramebufferAttachmentDefinition.Format.DEPTH_COMPONENT)
                     .setDepthTextureBuffer()
                     .setDebugLabel("Veil First Person")
                     .build(true);

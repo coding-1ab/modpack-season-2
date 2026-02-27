@@ -1,6 +1,8 @@
-package foundry.veil.api.client.render.framebuffer;
+package foundry.veil.impl.client.render.framebuffer;
 
 import foundry.veil.api.client.render.VeilRenderSystem;
+import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
+import foundry.veil.api.client.render.framebuffer.AdvancedFboTextureAttachment;
 import foundry.veil.api.client.render.texture.TextureFilter;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;

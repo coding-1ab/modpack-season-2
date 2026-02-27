@@ -62,7 +62,7 @@ public abstract class AdvancedFboImpl implements AdvancedFbo {
         this.height = height;
         this.colorAttachments = colorAttachments;
         this.depthAttachment = depthAttachment;
-        this.hasStencil = depthAttachment != null && (depthAttachment.getFormat() == GL_DEPTH24_STENCIL8 || depthAttachment.getFormat() == GL_DEPTH32F_STENCIL8);
+        this.hasStencil = depthAttachment != null && (depthAttachment.getFormat() == GL_DEPTH_STENCIL || depthAttachment.getFormat() == GL_DEPTH24_STENCIL8 || depthAttachment.getFormat() == GL_DEPTH32F_STENCIL8);
         this.debugLabel = debugLabel;
 
         int mask = 0;

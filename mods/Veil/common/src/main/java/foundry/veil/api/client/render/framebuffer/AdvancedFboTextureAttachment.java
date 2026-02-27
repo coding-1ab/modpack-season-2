@@ -111,11 +111,12 @@ public class AdvancedFboTextureAttachment extends AbstractTexture implements Adv
 
         String debugLabel = framebuffer.getDebugLabel();
         if (debugLabel != null) {
-            if (this.attachmentType == GL_DEPTH_ATTACHMENT) {
-                VeilDebug.get().objectLabel(GL_TEXTURE, id, "Advanced Fbo " + debugLabel + " Depth Texture");
-            } else {
-                VeilDebug.get().objectLabel(GL_TEXTURE, id, "Advanced Fbo " + debugLabel + " Texture " + (this.name != null ? this.name : attachment));
-            }
+            String label = switch (this.attachmentType) {
+                case GL_DEPTH_ATTACHMENT -> "Advanced Fbo " + debugLabel + " Depth Texture";
+                case GL_DEPTH_STENCIL_ATTACHMENT -> "Advanced Fbo " + debugLabel + " Depth Stencil Texture";
+                default -> "Advanced Fbo " + debugLabel + " Texture " + (this.name != null ? this.name : attachment);
+            };
+            VeilDebug.get().objectLabel(GL_TEXTURE, id, label);
         }
     }
 

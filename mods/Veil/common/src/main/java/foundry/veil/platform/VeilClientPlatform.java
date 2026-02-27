@@ -13,6 +13,5 @@ public interface VeilClientPlatform extends
         VeilAddShaderPreProcessorsEvent,
         VeilShaderCompileEvent,
         VeilDynamicBuffersChangedEvent,
-        VeilRegisterGlobalControllersEvent
-{
+        VeilRegisterGlobalControllersEvent {
 }
