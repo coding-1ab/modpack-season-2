@@ -4,6 +4,7 @@
 
 ### Updates
 - (1.21+) Tag `farmersdelight:feasts` is now added to `c:edible_when_placed`;
+- (1.21+) Ropes are now tagged under the `c:ropes` block/item tags;
 
 ### Fixes
 - (1.21+) Fix Mushroom Colonies floating without support when under a light level of 13;

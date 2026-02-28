@@ -273,6 +273,7 @@ public class ItemTags extends ItemTagsProvider
 				.add(ModItems.CHOCOLATE_PIE_SLICE.get());
 
 		tag(Tags.Items.TOOLS).addTag(CommonTags.TOOLS_KNIFE);
+		tag(Tags.Items.ROPES).add(ModItems.ROPE.get());
 		tag(Tags.Items.SEEDS).add(ModItems.CABBAGE_SEEDS.get(), ModItems.RICE.get(), ModItems.TOMATO_SEEDS.get());
 		tag(Tags.Items.CROPS).addTags(CommonTags.CROPS_CABBAGE, CommonTags.CROPS_ONION, CommonTags.CROPS_RICE, CommonTags.CROPS_TOMATO);
 		tag(Tags.Items.STORAGE_BLOCKS).addTags(
