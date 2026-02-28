@@ -67,18 +67,6 @@ public class WildCropGeneration
 	}
 
 	public static void bootstrapConfiguredFeatures(BootstapContext<ConfiguredFeature<?, ?>> context) {
-		// TODO: Replace this with BlockTags.TERRAIN
-		List<PlacementModifier> tomatoModifiers = List.of(BlockPredicateFilter.forPredicate(BlockPredicate.allOf(
-				BlockPredicate.matchesBlocks(Blocks.AIR),
-				BlockPredicate.matchesBlocks(
-						new Vec3i(0, -1, 0),
-						Blocks.DIRT,
-						Blocks.GRASS_BLOCK,
-						Blocks.COARSE_DIRT,
-						Blocks.SAND,
-						Blocks.RED_SAND
-				)
-		)));
 		context.register(FEATURE_PATCH_SANDY_SHRUB, new ConfiguredFeature<>(
 				Feature.RANDOM_PATCH,
 				new RandomPatchConfiguration(32, 2, 3,
