@@ -27,6 +27,7 @@ import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.block.MushroomColonyBlock;
 import vectorwing.farmersdelight.common.registry.ModBiomeFeatures;
 import vectorwing.farmersdelight.common.registry.ModBlocks;
+import vectorwing.farmersdelight.common.tag.ModTags;
 import vectorwing.farmersdelight.common.world.configuration.WildCropConfiguration;
 import vectorwing.farmersdelight.common.world.filter.BiomeTagFilter;
 
@@ -109,13 +110,13 @@ public class WildCropGeneration
 				Blocks.FERN,
 				BlockTags.DIRT
 		));
-		context.register(FEATURE_PATCH_WILD_TOMATOES, createSimpleWildCropConfiguredFeature(
-				ModBlocks.WILD_TOMATOES.get(), Blocks.DEAD_BUSH, tomatoModifiers
+		context.register(FEATURE_PATCH_WILD_TOMATOES, wildCropConfiguredFeature(
+				ModBlocks.WILD_TOMATOES.get(), Blocks.DEAD_BUSH, ModTags.TERRAIN
 		));
 		context.register(FEATURE_PATCH_WILD_RICE, new ConfiguredFeature<>(
 				ModBiomeFeatures.WILD_RICE.get(),
 				new RandomPatchConfiguration(96, 7, 3,
-						plantPlacedFeature(ModBlocks.WILD_RICE.get(), Blocks.DIRT)
+						plantPlacedFeature(ModBlocks.WILD_RICE.get(), BlockTags.DIRT)
 				)
 		));
 		context.register(FEATURE_PATCH_BROWN_MUSHROOM_COLONIES, mushroomColonyConfiguredFeature(
@@ -182,14 +183,6 @@ public class WildCropGeneration
 		);
 	}
 
-	private static ConfiguredFeature<?, ?> createSimpleWildCropConfiguredFeature(Block primaryBlock, Block secondaryBlock, List<PlacementModifier> placementModifiers) {
-		return defaultWildCropConfiguredFeature(
-				createSimplePlacedFeature(primaryBlock, placementModifiers),
-				createSimplePlacedFeature(secondaryBlock, placementModifiers),
-				null
-		);
-	}
-
 	private static Holder<PlacedFeature> plantPlacedFeature(Block block, Block blocksToPlaceOn) {
 		return Holder.direct(new PlacedFeature(
 				Holder.direct(new ConfiguredFeature<>(
@@ -217,16 +210,6 @@ public class WildCropGeneration
 						new SimpleBlockConfiguration(SimpleStateProvider.simple(block))
 				)),
 				replaceBlockModifier(blocksToReplace)
-		));
-	}
-
-	private static Holder<PlacedFeature> createSimplePlacedFeature(Block block, List<PlacementModifier> modifiers) {
-		return Holder.direct(new PlacedFeature(
-				Holder.direct(new ConfiguredFeature<>(
-						Feature.SIMPLE_BLOCK,
-						new SimpleBlockConfiguration(SimpleStateProvider.simple(block))
-				)),
-				modifiers
 		));
 	}
 
