@@ -1,20 +1,28 @@
 package vectorwing.farmersdelight.data;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 import vectorwing.farmersdelight.FarmersDelight;
+import vectorwing.farmersdelight.common.registry.ModBiomeModifiers;
+import vectorwing.farmersdelight.common.registry.ModDamageTypes;
+import vectorwing.farmersdelight.common.world.WildCropGeneration;
 import vectorwing.farmersdelight.data.loot.FDBlockLoot;
 import vectorwing.farmersdelight.data.tools.StructureUpdater;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("unused")
@@ -27,6 +35,15 @@ public class DataGenerators
 		PackOutput output = generator.getPackOutput();
 		CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 		ExistingFileHelper helper = event.getExistingFileHelper();
+		RegistrySetBuilder registrySetBuilder = new RegistrySetBuilder()
+				.add(Registries.CONFIGURED_FEATURE, WildCropGeneration::bootstrapConfiguredFeatures)
+				.add(Registries.PLACED_FEATURE, WildCropGeneration::bootstrapPlacedFeatures)
+				.add(ForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifiers::bootstrapBiomeModifiers)
+				.add(Registries.DAMAGE_TYPE, ModDamageTypes::bootstrapDamageTypes);
+
+		DatapackBuiltinEntriesProvider datapackProvider = new DatapackBuiltinEntriesProvider(output, lookupProvider, registrySetBuilder, Set.of(FarmersDelight.MODID));
+		CompletableFuture<HolderLookup.Provider> builtinLookupProvider = datapackProvider.getRegistryProvider();
+		generator.addProvider(event.includeServer(), datapackProvider);
 
 		BlockTags blockTags = new BlockTags(output, lookupProvider, helper);
 		generator.addProvider(event.includeServer(), blockTags);
