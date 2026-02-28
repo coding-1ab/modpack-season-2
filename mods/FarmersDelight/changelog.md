@@ -28,6 +28,9 @@
   - Tomato seeds can now be planted on any farmland block;
 - Stoves now only inflict burn in a small "grilling area" on top of them; the edges are safe to step on;
 - Pies and Feasts now have more precise hitboxes, matching their shapes as they are consumed (thanks, TheGridExpert!);
+- Wild Crops have been updated:
+  - Wild Tomatoes now checks for the `farmersdelight:terrain` tag when generating;
+  - Wild Rice now checks for the `minecraft:dirt` tag when generating;
 
 ### Fixes
 - Statistics are now properly awarded for:
