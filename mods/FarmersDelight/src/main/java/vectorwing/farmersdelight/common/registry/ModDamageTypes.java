@@ -19,13 +19,12 @@ public class ModDamageTypes
 		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(type));
 	}
 
-	public static void bootstrapDamageTypes(BootstapContext<DamageType> ctx) {
-		ctx.register(STOVE_BURN, new DamageType(
+	public static void bootstrapDamageTypes(BootstapContext<DamageType> context) {
+		context.register(STOVE_BURN, new DamageType(
 				"farmersdelight.stove",
 				DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
 				0.1f,
 				DamageEffects.BURNING
 		));
 	}
-
 }

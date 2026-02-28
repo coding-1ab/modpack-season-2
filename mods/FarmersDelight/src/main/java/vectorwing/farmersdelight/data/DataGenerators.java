@@ -35,12 +35,12 @@ public class DataGenerators
 		PackOutput output = generator.getPackOutput();
 		CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 		ExistingFileHelper helper = event.getExistingFileHelper();
+
 		RegistrySetBuilder registrySetBuilder = new RegistrySetBuilder()
 				.add(Registries.CONFIGURED_FEATURE, WildCropGeneration::bootstrapConfiguredFeatures)
 				.add(Registries.PLACED_FEATURE, WildCropGeneration::bootstrapPlacedFeatures)
 				.add(ForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifiers::bootstrapBiomeModifiers)
 				.add(Registries.DAMAGE_TYPE, ModDamageTypes::bootstrapDamageTypes);
-
 		DatapackBuiltinEntriesProvider datapackProvider = new DatapackBuiltinEntriesProvider(output, lookupProvider, registrySetBuilder, Set.of(FarmersDelight.MODID));
 		CompletableFuture<HolderLookup.Provider> builtinLookupProvider = datapackProvider.getRegistryProvider();
 		generator.addProvider(event.includeServer(), datapackProvider);

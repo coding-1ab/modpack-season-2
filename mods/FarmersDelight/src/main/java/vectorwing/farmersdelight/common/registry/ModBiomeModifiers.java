@@ -51,11 +51,11 @@ public class ModBiomeModifiers
 	public static ResourceKey<BiomeModifier> BROWN_MUSHROOM_COLONIES = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(FarmersDelight.MODID, "brown_mushroom_colony"));
 	public static ResourceKey<BiomeModifier> RED_MUSHROOM_COLONIES = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(FarmersDelight.MODID, "red_mushroom_colony"));
 
-	public static void bootstrapBiomeModifiers(BootstapContext<BiomeModifier> ctx) {
-		HolderGetter<Biome> biomeGetter = ctx.lookup(Registries.BIOME);
-		HolderGetter<PlacedFeature> placedFeatureGetter = ctx.lookup(Registries.PLACED_FEATURE);
+	public static void bootstrapBiomeModifiers(BootstapContext<BiomeModifier> context) {
+		HolderGetter<Biome> biomeGetter = context.lookup(Registries.BIOME);
+		HolderGetter<PlacedFeature> placedFeatureGetter = context.lookup(Registries.PLACED_FEATURE);
 
-		ctx.register(WILD_CABBAGES, new AddFeaturesByFilterBiomeModifier(
+		context.register(WILD_CABBAGES, new AddFeaturesByFilterBiomeModifier(
 				biomeGetter.getOrThrow(BiomeTags.IS_BEACH),
 				Optional.empty(),
 				Optional.empty(),
@@ -63,7 +63,7 @@ public class ModBiomeModifiers
 				HolderSet.direct(placedFeatureGetter.getOrThrow(WildCropGeneration.PATCH_WILD_CABBAGES)),
 				GenerationStep.Decoration.VEGETAL_DECORATION
 		));
-		ctx.register(WILD_ONIONS, new AddFeaturesByFilterBiomeModifier(
+		context.register(WILD_ONIONS, new AddFeaturesByFilterBiomeModifier(
 				biomeGetter.getOrThrow(BiomeTags.IS_OVERWORLD),
 				Optional.of(HolderSet.direct(
 						biomeGetter.getOrThrow(Biomes.LUSH_CAVES),
@@ -74,7 +74,7 @@ public class ModBiomeModifiers
 				HolderSet.direct(placedFeatureGetter.getOrThrow(WildCropGeneration.PATCH_WILD_ONIONS)),
 				GenerationStep.Decoration.VEGETAL_DECORATION
 		));
-		ctx.register(WILD_TOMATOES, new AddFeaturesByFilterBiomeModifier(
+		context.register(WILD_TOMATOES, new AddFeaturesByFilterBiomeModifier(
 				biomeGetter.getOrThrow(Tags.Biomes.IS_HOT_OVERWORLD),
 				Optional.of(biomeGetter.getOrThrow(Tags.Biomes.IS_WET)),
 				Optional.empty(),
@@ -82,7 +82,7 @@ public class ModBiomeModifiers
 				HolderSet.direct(placedFeatureGetter.getOrThrow(WildCropGeneration.PATCH_WILD_TOMATOES)),
 				GenerationStep.Decoration.VEGETAL_DECORATION
 		));
-		ctx.register(WILD_CARROTS, new AddFeaturesByFilterBiomeModifier(
+		context.register(WILD_CARROTS, new AddFeaturesByFilterBiomeModifier(
 				biomeGetter.getOrThrow(BiomeTags.IS_OVERWORLD),
 				Optional.of(HolderSet.direct(
 						biomeGetter.getOrThrow(Biomes.LUSH_CAVES),
@@ -93,7 +93,7 @@ public class ModBiomeModifiers
 				HolderSet.direct(placedFeatureGetter.getOrThrow(WildCropGeneration.PATCH_WILD_CARROTS)),
 				GenerationStep.Decoration.VEGETAL_DECORATION
 		));
-		ctx.register(WILD_POTATOES, new AddFeaturesByFilterBiomeModifier(
+		context.register(WILD_POTATOES, new AddFeaturesByFilterBiomeModifier(
 				biomeGetter.getOrThrow(BiomeTags.IS_OVERWORLD),
 				Optional.of(biomeGetter.getOrThrow(Tags.Biomes.IS_UNDERGROUND)),
 				Optional.of(0.1f),
@@ -101,7 +101,7 @@ public class ModBiomeModifiers
 				HolderSet.direct(placedFeatureGetter.getOrThrow(WildCropGeneration.PATCH_WILD_POTATOES)),
 				GenerationStep.Decoration.VEGETAL_DECORATION
 		));
-		ctx.register(WILD_BEETROOTS, new AddFeaturesByFilterBiomeModifier(
+		context.register(WILD_BEETROOTS, new AddFeaturesByFilterBiomeModifier(
 				biomeGetter.getOrThrow(BiomeTags.IS_BEACH),
 				Optional.empty(),
 				Optional.empty(),
@@ -109,7 +109,7 @@ public class ModBiomeModifiers
 				HolderSet.direct(placedFeatureGetter.getOrThrow(WildCropGeneration.PATCH_WILD_BEETROOTS)),
 				GenerationStep.Decoration.VEGETAL_DECORATION
 		));
-		ctx.register(WILD_RICE, new AddFeaturesByFilterBiomeModifier(
+		context.register(WILD_RICE, new AddFeaturesByFilterBiomeModifier(
 				biomeGetter.getOrThrow(Tags.Biomes.IS_WET_OVERWORLD),
 				Optional.of(biomeGetter.getOrThrow(Tags.Biomes.IS_UNDERGROUND)),
 				Optional.empty(),
@@ -117,7 +117,7 @@ public class ModBiomeModifiers
 				HolderSet.direct(placedFeatureGetter.getOrThrow(WildCropGeneration.PATCH_WILD_RICE)),
 				GenerationStep.Decoration.VEGETAL_DECORATION
 		));
-		ctx.register(BROWN_MUSHROOM_COLONIES, new AddFeaturesByFilterBiomeModifier(
+		context.register(BROWN_MUSHROOM_COLONIES, new AddFeaturesByFilterBiomeModifier(
 				biomeGetter.getOrThrow(Tags.Biomes.IS_MUSHROOM),
 				Optional.empty(),
 				Optional.empty(),
@@ -125,7 +125,7 @@ public class ModBiomeModifiers
 				HolderSet.direct(placedFeatureGetter.getOrThrow(WildCropGeneration.PATCH_BROWN_MUSHROOM_COLONIES)),
 				GenerationStep.Decoration.VEGETAL_DECORATION
 		));
-		ctx.register(RED_MUSHROOM_COLONIES, new AddFeaturesByFilterBiomeModifier(
+		context.register(RED_MUSHROOM_COLONIES, new AddFeaturesByFilterBiomeModifier(
 				biomeGetter.getOrThrow(Tags.Biomes.IS_MUSHROOM),
 				Optional.empty(),
 				Optional.empty(),
@@ -133,7 +133,6 @@ public class ModBiomeModifiers
 				HolderSet.direct(placedFeatureGetter.getOrThrow(WildCropGeneration.PATCH_RED_MUSHROOM_COLONIES)),
 				GenerationStep.Decoration.VEGETAL_DECORATION
 		));
-
 	}
 
 	private static BiomeModifier createSimpleModifier(Holder<Biome> biomeHolder, Holder<PlacedFeature> placedFeatureHolder) {

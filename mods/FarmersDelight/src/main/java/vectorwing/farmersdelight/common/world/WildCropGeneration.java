@@ -42,8 +42,6 @@ import java.util.function.Supplier;
 public class WildCropGeneration
 {
 	public static ResourceKey<ConfiguredFeature<?, ?>> FEATURE_PATCH_SANDY_SHRUB = ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(FarmersDelight.MODID, "patch_sandy_shrub"));
-
-	// Those are unused, but kept for reference just in case
 	public static ResourceKey<ConfiguredFeature<?, ?>> FEATURE_PATCH_WILD_CABBAGES = ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(FarmersDelight.MODID, "patch_wild_cabbages"));
 	public static ResourceKey<ConfiguredFeature<?, ?>> FEATURE_PATCH_WILD_ONIONS = ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(FarmersDelight.MODID, "patch_wild_onions"));
 	public static ResourceKey<ConfiguredFeature<?, ?>> FEATURE_PATCH_WILD_TOMATOES = ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(FarmersDelight.MODID, "patch_wild_tomatoes"));
@@ -64,10 +62,7 @@ public class WildCropGeneration
 	public static ResourceKey<PlacedFeature> PATCH_BROWN_MUSHROOM_COLONIES = ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(FarmersDelight.MODID, "patch_brown_mushroom_colony"));
 	public static ResourceKey<PlacedFeature> PATCH_RED_MUSHROOM_COLONIES = ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(FarmersDelight.MODID, "patch_red_mushroom_colony"));
 
-	public static void load() {
-	}
-
-	public static void bootstrapConfiguredFeatures(BootstapContext<ConfiguredFeature<?, ?>> ctx) {
+	public static void bootstrapConfiguredFeatures(BootstapContext<ConfiguredFeature<?, ?>> context) {
 		List<PlacementModifier> sandModifiers = List.of(BlockPredicateFilter.forPredicate(BlockPredicate.allOf(
 				BlockPredicate.matchesBlocks(Blocks.AIR),
 				BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.SAND)
@@ -77,7 +72,7 @@ public class WildCropGeneration
 				BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.DIRT)
 		)));
 		Holder<PlacedFeature> sandyShrubPlacedFeature = createSimplePlacedFeature(ModBlocks.SANDY_SHRUB, sandModifiers);
-		ctx.register(FEATURE_PATCH_SANDY_SHRUB, new ConfiguredFeature<>(
+		context.register(FEATURE_PATCH_SANDY_SHRUB, new ConfiguredFeature<>(
 				Feature.RANDOM_PATCH,
 				new RandomPatchConfiguration(
 						32,
@@ -86,11 +81,11 @@ public class WildCropGeneration
 						sandyShrubPlacedFeature
 				)
 		));
-		ctx.register(FEATURE_PATCH_WILD_CABBAGES, createWildCropConfiguredFeature(
+		context.register(FEATURE_PATCH_WILD_CABBAGES, createWildCropConfiguredFeature(
 				createSimplePlacedFeature(ModBlocks.WILD_CABBAGES, sandModifiers),
 				sandyShrubPlacedFeature
 		));
-		ctx.register(FEATURE_PATCH_WILD_ONIONS, createSimpleWildCropConfiguredFeature(
+		context.register(FEATURE_PATCH_WILD_ONIONS, createSimpleWildCropConfiguredFeature(
 				ModBlocks.WILD_ONIONS.get(), Blocks.ALLIUM, dirtModifiers
 		));
 		List<PlacementModifier> tomatoModifiers = List.of(BlockPredicateFilter.forPredicate(BlockPredicate.allOf(
@@ -104,14 +99,14 @@ public class WildCropGeneration
 						Blocks.RED_SAND
 				)
 		)));
-		ctx.register(FEATURE_PATCH_WILD_TOMATOES, createSimpleWildCropConfiguredFeature(
+		context.register(FEATURE_PATCH_WILD_TOMATOES, createSimpleWildCropConfiguredFeature(
 				ModBlocks.WILD_TOMATOES.get(), Blocks.DEAD_BUSH, tomatoModifiers
 		));
 		List<PlacementModifier> carrotCoarseDirtModifiers = List.of(BlockPredicateFilter.forPredicate(BlockPredicate.allOf(
 				BlockPredicate.replaceable(new Vec3i(0, 1, 0)),
 				BlockPredicate.matchesTag(BlockTags.DIRT)
 		)));
-		ctx.register(FEATURE_PATCH_WILD_CARROTS, new ConfiguredFeature<>(
+		context.register(FEATURE_PATCH_WILD_CARROTS, new ConfiguredFeature<>(
 				ModBiomeFeatures.WILD_CROP.get(),
 				new WildCropConfiguration(
 						64,
@@ -122,10 +117,10 @@ public class WildCropGeneration
 						createSimplePlacedFeature(Blocks.COARSE_DIRT, carrotCoarseDirtModifiers)
 				)
 		));
-		ctx.register(FEATURE_PATCH_WILD_POTATOES, createSimpleWildCropConfiguredFeature(
+		context.register(FEATURE_PATCH_WILD_POTATOES, createSimpleWildCropConfiguredFeature(
 				ModBlocks.WILD_POTATOES.get(), Blocks.FERN, dirtModifiers
 		));
-		ctx.register(FEATURE_PATCH_WILD_BEETROOTS, createWildCropConfiguredFeature(
+		context.register(FEATURE_PATCH_WILD_BEETROOTS, createWildCropConfiguredFeature(
 				createSimplePlacedFeature(ModBlocks.WILD_BEETROOTS, sandModifiers),
 				sandyShrubPlacedFeature
 		));
@@ -133,7 +128,7 @@ public class WildCropGeneration
 				BlockPredicate.matchesBlocks(Blocks.AIR),
 				BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), Blocks.DIRT)
 		)));
-		ctx.register(FEATURE_PATCH_WILD_RICE, new ConfiguredFeature<>(
+		context.register(FEATURE_PATCH_WILD_RICE, new ConfiguredFeature<>(
 				ModBiomeFeatures.WILD_RICE.get(),
 				new RandomPatchConfiguration(
 						96,
@@ -146,15 +141,56 @@ public class WildCropGeneration
 				BlockPredicate.matchesBlocks(Blocks.AIR),
 				BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), Blocks.MYCELIUM)
 		)));
-		ctx.register(FEATURE_PATCH_BROWN_MUSHROOM_COLONIES, createMushroomColonyConfiguredFeature(
+		context.register(FEATURE_PATCH_BROWN_MUSHROOM_COLONIES, createMushroomColonyConfiguredFeature(
 				ModBlocks.BROWN_MUSHROOM_COLONY.get(),
 				Blocks.BROWN_MUSHROOM
 		));
-		ctx.register(FEATURE_PATCH_RED_MUSHROOM_COLONIES, createMushroomColonyConfiguredFeature(
+		context.register(FEATURE_PATCH_RED_MUSHROOM_COLONIES, createMushroomColonyConfiguredFeature(
 				ModBlocks.RED_MUSHROOM_COLONY.get(),
 				Blocks.RED_MUSHROOM
 		));
 	}
+
+	public static void bootstrapPlacedFeatures(BootstapContext<PlacedFeature> context) {
+		var configuredFeatureLookup = context.lookup(Registries.CONFIGURED_FEATURE);
+		context.register(PATCH_WILD_CABBAGES, createPatchPlacedFeature(
+				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_WILD_CABBAGES),
+				30
+		));
+		context.register(PATCH_WILD_ONIONS, createPatchPlacedFeature(
+				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_WILD_ONIONS),
+				120
+		));
+		context.register(PATCH_WILD_TOMATOES, createPatchPlacedFeature(
+				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_WILD_TOMATOES),
+				100
+		));
+		context.register(PATCH_WILD_CARROTS, createPatchPlacedFeature(
+				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_WILD_CARROTS),
+				120
+		));
+		context.register(PATCH_WILD_POTATOES, createPatchPlacedFeature(
+				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_WILD_POTATOES),
+				100
+		));
+		context.register(PATCH_WILD_BEETROOTS, createPatchPlacedFeature(
+				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_WILD_BEETROOTS),
+				30
+		));
+		context.register(PATCH_WILD_RICE, createPatchPlacedFeature(
+				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_WILD_RICE),
+				20
+		));
+		context.register(PATCH_BROWN_MUSHROOM_COLONIES, createPatchPlacedFeature(
+				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_BROWN_MUSHROOM_COLONIES),
+				15
+		));
+		context.register(PATCH_RED_MUSHROOM_COLONIES, createPatchPlacedFeature(
+				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_RED_MUSHROOM_COLONIES),
+				15
+		));
+	}
+
 
 	private static ConfiguredFeature<?, ?> createMushroomColonyConfiguredFeature(Block colonyBlock, Block mushroomBlock) {
 		final List<PlacementModifier> myceliumModifiers = List.of(BlockPredicateFilter.forPredicate(BlockPredicate.allOf(
@@ -213,46 +249,6 @@ public class WildCropGeneration
 		return createSimplePlacedFeature(blockSupplier.get(), modifiers);
 	}
 
-	public static void bootstrapPlacedFeatures(BootstapContext<PlacedFeature> ctx) {
-		var configuredFeatureLookup = ctx.lookup(Registries.CONFIGURED_FEATURE);
-		ctx.register(PATCH_WILD_CABBAGES, createPatchPlacedFeature(
-				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_WILD_CABBAGES),
-				30
-		));
-		ctx.register(PATCH_WILD_ONIONS, createPatchPlacedFeature(
-				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_WILD_ONIONS),
-				120
-		));
-		ctx.register(PATCH_WILD_TOMATOES, createPatchPlacedFeature(
-				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_WILD_TOMATOES),
-				100
-		));
-		ctx.register(PATCH_WILD_CARROTS, createPatchPlacedFeature(
-				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_WILD_CARROTS),
-				120
-		));
-		ctx.register(PATCH_WILD_POTATOES, createPatchPlacedFeature(
-				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_WILD_POTATOES),
-				100
-		));
-		ctx.register(PATCH_WILD_BEETROOTS, createPatchPlacedFeature(
-				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_WILD_BEETROOTS),
-				30
-		));
-		ctx.register(PATCH_WILD_RICE, createPatchPlacedFeature(
-				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_WILD_RICE),
-				20
-		));
-		ctx.register(PATCH_BROWN_MUSHROOM_COLONIES, createPatchPlacedFeature(
-				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_BROWN_MUSHROOM_COLONIES),
-				15
-		));
-		ctx.register(PATCH_RED_MUSHROOM_COLONIES, createPatchPlacedFeature(
-				configuredFeatureLookup.getOrThrow(FEATURE_PATCH_RED_MUSHROOM_COLONIES),
-				15
-		));
-	}
-
 	private static PlacedFeature createPatchPlacedFeature(Holder<ConfiguredFeature<?, ?>> configuredFeature, int rarity) {
 		return new PlacedFeature(
 				configuredFeature,
@@ -265,5 +261,4 @@ public class WildCropGeneration
 				)
 		);
 	}
-
 }
