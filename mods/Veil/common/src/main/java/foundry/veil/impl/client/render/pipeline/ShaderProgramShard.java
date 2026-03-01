@@ -23,4 +23,8 @@ public class ShaderProgramShard extends RenderStateShard.ShaderStateShard {
     public String toString() {
         return this.name + "[" + this.shader + "]";
     }
+
+    public ResourceLocation getShader() {
+        return this.shader;
+    }
 }

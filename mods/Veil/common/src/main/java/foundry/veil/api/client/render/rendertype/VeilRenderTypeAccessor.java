@@ -1,11 +1,14 @@
 package foundry.veil.api.client.render.rendertype;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import foundry.veil.impl.client.render.pipeline.ShaderProgramShard;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11C;
 import org.lwjgl.opengl.GL14C;
@@ -93,4 +96,15 @@ public interface VeilRenderTypeAccessor {
      * @return An immutable view of all states in the render type
      */
     List<RenderStateShard> states();
+
+    /**
+     * @return The Veil shader location in this shard or <code>null</code> if not defined or a vanilla shader
+     * @since 3.3.0
+     */
+    default @Nullable ResourceLocation veilShaderId() {
+        if (this.shaderState() instanceof ShaderProgramShard shard) {
+            return shard.getShader();
+        }
+        return null;
+    }
 }
