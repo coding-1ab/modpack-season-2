@@ -151,6 +151,11 @@ public enum VeilMultiBind {
             .expireAfterAccess(10, TimeUnit.SECONDS)
             .build();
 
+    private static final Cache<Integer, Integer> TEXTURE_TARGET_CACHE = CacheBuilder.newBuilder()
+            .maximumSize(100)
+            .expireAfterAccess(10, TimeUnit.SECONDS)
+            .build();
+
     private static int getTarget(int texture) {
         Integer cached = TEXTURE_TARGET_CACHE.getIfPresent(texture);
         if (cached != null) {
@@ -238,4 +243,5 @@ public enum VeilMultiBind {
         }
         return multiBind;
     }
+
 }
