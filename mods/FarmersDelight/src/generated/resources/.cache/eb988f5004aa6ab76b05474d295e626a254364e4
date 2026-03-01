@@ -1,4 +1,4 @@
-// 1.20.1	2026-03-01T14:03:09.5841207	Block States: farmersdelight
+// 1.20.1	2026-03-01T19:23:44.9760407	Block States: farmersdelight
 d4d9057afde725ea2a48206d8c1ea6eee4ec1c24 assets/farmersdelight/blockstates/acacia_cabinet.json
 c1a643b06507467b350b8eedb4cc05f93d71abb2 assets/farmersdelight/blockstates/apple_pie.json
 5cf28a36e15368244462670289f57eb16fa0a086 assets/farmersdelight/blockstates/bamboo_cabinet.json
@@ -180,6 +180,7 @@ ed9c93db642c91e91ed3a51266098e80c89ce3b4 assets/farmersdelight/models/block/pump
 df3d55a99f5a94d0acc79a7d8ce9cafef5e5fdf8 assets/farmersdelight/models/block/red_mushroom_colony_stage2.json
 4ce06178ae6c31003840fb48740d232916f3cb00 assets/farmersdelight/models/block/red_mushroom_colony_stage3.json
 13f0134669353f4926ecd34c081b4eec185a5563 assets/farmersdelight/models/block/rice_bag.json
+88de555887a69f71a77256e39155e5f076731331 assets/farmersdelight/models/block/rice_bale.json
 9070be2b1f6b47e478c73ed10d2bbee906e0e8c0 assets/farmersdelight/models/block/rice_panicles_stage0.json
 2a0ca5276a239499661ca63ec5310ae2e70e1b7f assets/farmersdelight/models/block/rice_panicles_stage1.json
 6df16828196b34b6be23c1c4b35f2c809f7bcbbd assets/farmersdelight/models/block/rice_panicles_stage2.json

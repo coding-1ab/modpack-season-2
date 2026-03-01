@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import vectorwing.farmersdelight.FarmersDelight;
@@ -40,16 +41,19 @@ public class BlockStates extends BlockStateProvider
 		return ForgeRegistries.BLOCKS.getKey(block).getPath();
 	}
 
-	public ResourceLocation resourceBlock(String path) {
-		return new ResourceLocation(FarmersDelight.MODID, "block/" + path);
+	public ResourceLocation resourceMCBlock(String path) {
+		return new ResourceLocation(ModelProvider.BLOCK_FOLDER + "/" + path);
+	}
+	public ResourceLocation resourceFDBlock(String path) {
+		return new ResourceLocation(FarmersDelight.MODID, ModelProvider.BLOCK_FOLDER + "/" + path);
 	}
 
 	public ModelFile existingModel(Block block) {
-		return new ModelFile.ExistingModelFile(resourceBlock(blockName(block)), models().existingFileHelper);
+		return new ModelFile.ExistingModelFile(resourceFDBlock(blockName(block)), models().existingFileHelper);
 	}
 
 	public ModelFile existingModel(String path) {
-		return new ModelFile.ExistingModelFile(resourceBlock(path), models().existingFileHelper);
+		return new ModelFile.ExistingModelFile(resourceFDBlock(path), models().existingFileHelper);
 	}
 
 	@Override
@@ -59,19 +63,19 @@ public class BlockStates extends BlockStateProvider
 
 		String riceBag = blockName(ModBlocks.RICE_BAG.get());
 		this.simpleBlock(ModBlocks.RICE_BAG.get(), models().withExistingParent(riceBag, "cube")
-				.texture("particle", resourceBlock(riceBag + "_top"))
-				.texture("down", resourceBlock(riceBag + "_bottom"))
-				.texture("up", resourceBlock(riceBag + "_top"))
-				.texture("north", resourceBlock(riceBag + "_side_tied"))
-				.texture("south", resourceBlock(riceBag + "_side_tied"))
-				.texture("east", resourceBlock(riceBag + "_side"))
-				.texture("west", resourceBlock(riceBag + "_side"))
+				.texture("particle", resourceFDBlock(riceBag + "_top"))
+				.texture("down", resourceFDBlock(riceBag + "_bottom"))
+				.texture("up", resourceFDBlock(riceBag + "_top"))
+				.texture("north", resourceFDBlock(riceBag + "_side_tied"))
+				.texture("south", resourceFDBlock(riceBag + "_side_tied"))
+				.texture("east", resourceFDBlock(riceBag + "_side"))
+				.texture("west", resourceFDBlock(riceBag + "_side"))
 		);
 
 		customDirectionalBlock(ModBlocks.BASKET.get(),
 				$ -> existingModel(ModBlocks.BASKET.get()), BasketBlock.ENABLED, BasketBlock.WATERLOGGED);
 		customDirectionalBlock(ModBlocks.RICE_BALE.get(),
-				$ -> existingModel(ModBlocks.RICE_BALE.get()));
+				$ -> modelCubeBottomTop(blockName(ModBlocks.RICE_BALE.get())));
 		customHorizontalBlock(ModBlocks.CUTTING_BOARD.get(),
 				$ -> existingModel(ModBlocks.CUTTING_BOARD.get()), BasketBlock.WATERLOGGED);
 
@@ -80,9 +84,9 @@ public class BlockStates extends BlockStateProvider
 		stageBlock(ModBlocks.BROWN_MUSHROOM_COLONY.get(), MushroomColonyBlock.COLONY_AGE);
 		stageBlock(ModBlocks.RED_MUSHROOM_COLONY.get(), MushroomColonyBlock.COLONY_AGE);
 
-		customStageBlock(ModBlocks.CABBAGE_CROP.get(), resourceBlock("template_crop_cross"), "cross", CabbageBlock.AGE, new ArrayList<>());
+		customStageBlock(ModBlocks.CABBAGE_CROP.get(), resourceFDBlock("template_crop_cross"), "cross", CabbageBlock.AGE, new ArrayList<>());
 		customStageBlock(ModBlocks.ONION_CROP.get(), mcLoc("crop"), "crop", OnionBlock.AGE, Arrays.asList(0, 0, 1, 1, 2, 2, 2, 3));
-		customStageBlock(ModBlocks.BUDDING_TOMATO_CROP.get(), resourceBlock("template_crop_cross"), "cross", BuddingTomatoBlock.AGE, Arrays.asList(0, 1, 2, 3, 3));
+		customStageBlock(ModBlocks.BUDDING_TOMATO_CROP.get(), resourceFDBlock("template_crop_cross"), "cross", BuddingTomatoBlock.AGE, Arrays.asList(0, 1, 2, 3, 3));
 		riceRootBlock(ModBlocks.RICE_CROP.get());
 		stageBlock(ModBlocks.RICE_CROP_PANICLES.get(), RicePaniclesBlock.RICE_AGE);
 
@@ -136,10 +140,10 @@ public class BlockStates extends BlockStateProvider
 			String suffix = state.getValue(StoveBlock.LIT) ? "_on" : "";
 
 			return models().orientableWithBottom(name + suffix,
-					resourceBlock(name + "_side"),
-					resourceBlock(name + "_front" + suffix),
-					resourceBlock(name + "_bottom"),
-					resourceBlock(name + "_top" + suffix));
+					resourceFDBlock(name + "_side"),
+					resourceFDBlock(name + "_front" + suffix),
+					resourceFDBlock(name + "_bottom"),
+					resourceFDBlock(name + "_top" + suffix));
 		});
 
 		Set<Block> canvasSigns = Sets.newHashSet(
@@ -221,14 +225,14 @@ public class BlockStates extends BlockStateProvider
 
 	public ConfiguredModel[] cubeRandomRotation(Block block, String suffix) {
 		String formattedName = blockName(block) + (suffix.isEmpty() ? "" : "_" + suffix);
-		return ConfiguredModel.allYRotations(models().cubeAll(formattedName, resourceBlock(formattedName)), 0, false);
+		return ConfiguredModel.allYRotations(models().cubeAll(formattedName, resourceFDBlock(formattedName)), 0, false);
 	}
 
 	public void organicCompostBlock(Block block) {
 		getVariantBuilder(block).forAllStates(state -> {
 			int composting = state.getValue(OrganicCompostBlock.COMPOSTING);
 			String textureName = blockName(block) + "_stage" + composting / 2;
-			return ConfiguredModel.allYRotations(models().cubeAll(textureName, resourceBlock(textureName)), 0, false);
+			return ConfiguredModel.allYRotations(models().cubeAll(textureName, resourceFDBlock(textureName)), 0, false);
 		});
 	}
 
@@ -264,7 +268,7 @@ public class BlockStates extends BlockStateProvider
 			int ageSuffix = state.getValue(ageProperty);
 			String stageName = blockName(block) + "_stage" + ageSuffix;
 			return ConfiguredModel.builder()
-					.modelFile(models().cross(stageName, resourceBlock(stageName)).renderType("cutout")).build();
+					.modelFile(models().cross(stageName, resourceFDBlock(stageName)).renderType("cutout")).build();
 		}, ignored);
 	}
 
@@ -275,10 +279,10 @@ public class BlockStates extends BlockStateProvider
 			stageName += suffixes.isEmpty() ? ageSuffix : suffixes.get(Math.min(suffixes.size(), ageSuffix));
 			if (parent == null) {
 				return ConfiguredModel.builder()
-						.modelFile(models().cross(stageName, resourceBlock(stageName)).renderType("cutout")).build();
+						.modelFile(models().cross(stageName, resourceFDBlock(stageName)).renderType("cutout")).build();
 			}
 			return ConfiguredModel.builder()
-					.modelFile(models().singleTexture(stageName, parent, textureKey, resourceBlock(stageName)).renderType("cutout")).build();
+					.modelFile(models().singleTexture(stageName, parent, textureKey, resourceFDBlock(stageName)).renderType("cutout")).build();
 		}, ignored);
 	}
 
@@ -289,7 +293,7 @@ public class BlockStates extends BlockStateProvider
 			String stageName = isSupporting
 					? blockName(block) + "_supporting"
 					: blockName(block) + "_stage" + age;
-			return ConfiguredModel.builder().modelFile(models().cross(stageName, resourceBlock(stageName))
+			return ConfiguredModel.builder().modelFile(models().cross(stageName, resourceFDBlock(stageName))
 					.renderType("cutout")).build();
 		});
 	}
@@ -300,24 +304,24 @@ public class BlockStates extends BlockStateProvider
 
 	public void wildCropBlock(Block block, boolean isBushCrop) {
 		if (isBushCrop) {
-			this.simpleBlock(block, models().singleTexture(blockName(block), resourceBlock("template_bush_crop"), "crop", resourceBlock(blockName(block))).renderType("cutout"));
+			this.simpleBlock(block, models().singleTexture(blockName(block), resourceFDBlock("template_bush_crop"), "crop", resourceFDBlock(blockName(block))).renderType("cutout"));
 		} else {
-			this.simpleBlock(block, models().cross(blockName(block), resourceBlock(blockName(block))).renderType("cutout"));
+			this.simpleBlock(block, models().cross(blockName(block), resourceFDBlock(blockName(block))).renderType("cutout"));
 		}
 	}
 
 	public void crateBlock(Block block, String cropName) {
 		this.simpleBlock(block,
-				models().cubeBottomTop(blockName(block), resourceBlock(cropName + "_crate_side"), resourceBlock("crate_bottom"), resourceBlock(cropName + "_crate_top")));
+				models().cubeBottomTop(blockName(block), resourceFDBlock(cropName + "_crate_side"), resourceFDBlock("crate_bottom"), resourceFDBlock(cropName + "_crate_top")));
 	}
 
 	public void cabinetBlock(Block block, String woodType) {
 		this.horizontalBlock(block, state -> {
 			String suffix = state.getValue(CabinetBlock.OPEN) ? "_open" : "";
 			return models().orientable(blockName(block) + suffix,
-					resourceBlock(woodType + "_cabinet_side"),
-					resourceBlock(woodType + "_cabinet_front" + suffix),
-					resourceBlock(woodType + "_cabinet_top"));
+					resourceFDBlock(woodType + "_cabinet_side"),
+					resourceFDBlock(woodType + "_cabinet_front" + suffix),
+					resourceFDBlock(woodType + "_cabinet_top"));
 		});
 	}
 
@@ -342,9 +346,9 @@ public class BlockStates extends BlockStateProvider
 	public void doublePlantBlock(Block block) {
 		getVariantBuilder(block)
 				.partialState().with(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER)
-				.modelForState().modelFile(models().cross(blockName(block) + "_bottom", resourceBlock(blockName(block) + "_bottom")).renderType("cutout")).addModel()
+				.modelForState().modelFile(models().cross(blockName(block) + "_bottom", resourceFDBlock(blockName(block) + "_bottom")).renderType("cutout")).addModel()
 				.partialState().with(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER)
-				.modelForState().modelFile(models().cross(blockName(block) + "_top", resourceBlock(blockName(block) + "_top")).renderType("cutout")).addModel();
+				.modelForState().modelFile(models().cross(blockName(block) + "_top", resourceFDBlock(blockName(block) + "_top")).renderType("cutout")).addModel();
 	}
 
 	/**
@@ -376,29 +380,36 @@ public class BlockStates extends BlockStateProvider
 
 	// Model Functions --------------------------
 
+	private ModelFile modelCubeBottomTop(String baseName) {
+		return models().withExistingParent(baseName, resourceMCBlock("cube_bottom_top"))
+				.texture("bottom", resourceFDBlock(baseName + "_bottom"))
+				.texture("side", resourceFDBlock(baseName + "_side"))
+				.texture("top", resourceFDBlock(baseName + "_top"));
+	}
+
 	private ModelFile modelPie(String baseName) {
-		return models().withExistingParent(baseName, resourceBlock("template_pie"))
-				.texture("particle", resourceBlock(baseName + "_top"))
-				.texture("bottom", resourceBlock("pie_bottom"))
-				.texture("side", resourceBlock("pie_side"))
-				.texture("top", resourceBlock(baseName + "_top"));
+		return models().withExistingParent(baseName, resourceFDBlock("template_pie"))
+				.texture("particle", resourceFDBlock(baseName + "_top"))
+				.texture("bottom", resourceFDBlock("pie_bottom"))
+				.texture("side", resourceFDBlock("pie_side"))
+				.texture("top", resourceFDBlock(baseName + "_top"));
 	}
 
 	private ModelFile modelPieSlice(String baseName, int bites) {
-		return models().withExistingParent(baseName + "_slice" + bites, resourceBlock("template_pie_slice" + bites))
-				.texture("particle", resourceBlock(baseName + "_top"))
-				.texture("bottom", resourceBlock("pie_bottom"))
-				.texture("side", resourceBlock("pie_side"))
-				.texture("inner", resourceBlock(baseName + "_inner"))
-				.texture("top", resourceBlock(baseName + "_top"));
+		return models().withExistingParent(baseName + "_slice" + bites, resourceFDBlock("template_pie_slice" + bites))
+				.texture("particle", resourceFDBlock(baseName + "_top"))
+				.texture("bottom", resourceFDBlock("pie_bottom"))
+				.texture("side", resourceFDBlock("pie_side"))
+				.texture("inner", resourceFDBlock(baseName + "_inner"))
+				.texture("top", resourceFDBlock(baseName + "_top"));
 	}
 
 	private ModelFile modelFarmland(String farmlandName, String dirtName, boolean moist) {
 		String moistSuffix = moist ? "_moist" : "";
-		return models().withExistingParent(farmlandName + moistSuffix, resourceBlock("template_farmland_custom"))
+		return models().withExistingParent(farmlandName + moistSuffix, resourceFDBlock("template_farmland_custom"))
 //				.texture("particle", resourceBlock(farmlandName + moistSuffix))
-				.texture("bottom", resourceBlock(dirtName))
-				.texture("side", resourceBlock(moist ? farmlandName + moistSuffix + "_side" : dirtName))
-				.texture("top", resourceBlock(farmlandName + moistSuffix));
+				.texture("bottom", resourceFDBlock(dirtName))
+				.texture("side", resourceFDBlock(moist ? farmlandName + moistSuffix + "_side" : dirtName))
+				.texture("top", resourceFDBlock(farmlandName + moistSuffix));
 	}
 }
