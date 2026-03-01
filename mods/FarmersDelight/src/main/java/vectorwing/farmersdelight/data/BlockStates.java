@@ -363,7 +363,7 @@ public class BlockStates extends BlockStateProvider
 	// Model Functions --------------------------
 
 	private ModelFile modelPie(String baseName) {
-		return models().withExistingParent(baseName, resourceBlock("pie"))
+		return models().withExistingParent(baseName, resourceBlock("template_pie"))
 				.texture("particle", resourceBlock(baseName + "_top"))
 				.texture("bottom", resourceBlock("pie_bottom"))
 				.texture("side", resourceBlock("pie_side"))
@@ -371,7 +371,7 @@ public class BlockStates extends BlockStateProvider
 	}
 
 	private ModelFile modelPieSlice(String baseName, int bites) {
-		return models().withExistingParent(baseName + "_slice" + bites, resourceBlock("pie_slice" + bites))
+		return models().withExistingParent(baseName + "_slice" + bites, resourceBlock("template_pie_slice" + bites))
 				.texture("particle", resourceBlock(baseName + "_top"))
 				.texture("bottom", resourceBlock("pie_bottom"))
 				.texture("side", resourceBlock("pie_side"))
