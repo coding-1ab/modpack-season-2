@@ -79,10 +79,12 @@ public class BlockStates extends BlockStateProvider
 
 		stageBlock(ModBlocks.BROWN_MUSHROOM_COLONY.get(), MushroomColonyBlock.COLONY_AGE);
 		stageBlock(ModBlocks.RED_MUSHROOM_COLONY.get(), MushroomColonyBlock.COLONY_AGE);
-		stageBlock(ModBlocks.RICE_CROP_PANICLES.get(), RicePaniclesBlock.RICE_AGE);
+
 		customStageBlock(ModBlocks.CABBAGE_CROP.get(), resourceBlock("crop_cross"), "cross", CabbageBlock.AGE, new ArrayList<>());
 		customStageBlock(ModBlocks.ONION_CROP.get(), mcLoc("crop"), "crop", OnionBlock.AGE, Arrays.asList(0, 0, 1, 1, 2, 2, 2, 3));
 		customStageBlock(ModBlocks.BUDDING_TOMATO_CROP.get(), resourceBlock("crop_cross"), "cross", BuddingTomatoBlock.AGE, Arrays.asList(0, 1, 2, 3, 3));
+		riceRootBlock(ModBlocks.RICE_CROP.get());
+		stageBlock(ModBlocks.RICE_CROP_PANICLES.get(), RicePaniclesBlock.RICE_AGE);
 
 		crateBlock(ModBlocks.CARROT_CRATE.get(), "carrot");
 		crateBlock(ModBlocks.POTATO_CRATE.get(), "potato");
@@ -278,6 +280,18 @@ public class BlockStates extends BlockStateProvider
 			return ConfiguredModel.builder()
 					.modelFile(models().singleTexture(stageName, parent, textureKey, resourceBlock(stageName)).renderType("cutout")).build();
 		}, ignored);
+	}
+
+	public void riceRootBlock(Block block) {
+		getVariantBuilder(block).forAllStatesExcept(state -> {
+			int age = state.getValue(RiceBlock.AGE);
+			boolean isSupporting = state.getValue(RiceBlock.SUPPORTING) && age == 3;
+			String stageName = isSupporting
+					? blockName(block) + "_supporting"
+					: blockName(block) + "_stage" + age;
+			return ConfiguredModel.builder().modelFile(models().cross(stageName, resourceBlock(stageName))
+					.renderType("cutout")).build();
+		});
 	}
 
 	public void wildCropBlock(Block block) {
