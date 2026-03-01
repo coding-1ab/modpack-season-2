@@ -1,4 +1,4 @@
-// 1.20.1	2025-09-17T20:40:52.0043798	Block States: farmersdelight
+// 1.20.1	2026-02-28T21:50:53.1371974	Block States: farmersdelight
 d4d9057afde725ea2a48206d8c1ea6eee4ec1c24 assets/farmersdelight/blockstates/acacia_cabinet.json
 c1a643b06507467b350b8eedb4cc05f93d71abb2 assets/farmersdelight/blockstates/apple_pie.json
 5cf28a36e15368244462670289f57eb16fa0a086 assets/farmersdelight/blockstates/bamboo_cabinet.json
@@ -21,6 +21,7 @@ a9fe3db0d209aa7e3dd328b32ebc776e0b8e998d assets/farmersdelight/blockstates/birch
 07e7cbfda72043537fb5be1765cfa8864c17a205 assets/farmersdelight/blockstates/budding_tomatoes.json
 0e2dcbbb710b5aac3929ecbecc1e158abe456087 assets/farmersdelight/blockstates/cabbages.json
 b95ef5c1d0b1538ac6b6c9c538760d4106ac18ca assets/farmersdelight/blockstates/cabbage_crate.json
+c24712bba0c0bf4d82e5c4d10366e1c1bf6b8ef2 assets/farmersdelight/blockstates/canvas_rug.json
 8ee2f7c922e1e098812e0bd0cc5c7633f5632216 assets/farmersdelight/blockstates/canvas_sign.json
 8ee2f7c922e1e098812e0bd0cc5c7633f5632216 assets/farmersdelight/blockstates/canvas_wall_sign.json
 c0f89cb303eb1a79be5959b3af35f486786bbfad assets/farmersdelight/blockstates/carrot_crate.json

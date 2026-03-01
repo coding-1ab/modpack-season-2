@@ -56,6 +56,7 @@ public class BlockStates extends BlockStateProvider
 	protected void registerStatesAndModels() {
 		this.simpleBlock(ModBlocks.RICH_SOIL.get(), cubeRandomRotation(ModBlocks.RICH_SOIL.get(), ""));
 		this.simpleBlock(ModBlocks.SAFETY_NET.get(), existingModel(ModBlocks.SAFETY_NET.get()));
+		this.simpleBlock(ModBlocks.CANVAS_RUG.get(), existingModel(ModBlocks.CANVAS_RUG.get()));
 
 		Set<Block> canvasSigns = Sets.newHashSet(
 				// Standard
