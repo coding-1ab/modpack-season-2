@@ -80,9 +80,9 @@ public class BlockStates extends BlockStateProvider
 		stageBlock(ModBlocks.BROWN_MUSHROOM_COLONY.get(), MushroomColonyBlock.COLONY_AGE);
 		stageBlock(ModBlocks.RED_MUSHROOM_COLONY.get(), MushroomColonyBlock.COLONY_AGE);
 
-		customStageBlock(ModBlocks.CABBAGE_CROP.get(), resourceBlock("crop_cross"), "cross", CabbageBlock.AGE, new ArrayList<>());
+		customStageBlock(ModBlocks.CABBAGE_CROP.get(), resourceBlock("template_crop_cross"), "cross", CabbageBlock.AGE, new ArrayList<>());
 		customStageBlock(ModBlocks.ONION_CROP.get(), mcLoc("crop"), "crop", OnionBlock.AGE, Arrays.asList(0, 0, 1, 1, 2, 2, 2, 3));
-		customStageBlock(ModBlocks.BUDDING_TOMATO_CROP.get(), resourceBlock("crop_cross"), "cross", BuddingTomatoBlock.AGE, Arrays.asList(0, 1, 2, 3, 3));
+		customStageBlock(ModBlocks.BUDDING_TOMATO_CROP.get(), resourceBlock("template_crop_cross"), "cross", BuddingTomatoBlock.AGE, Arrays.asList(0, 1, 2, 3, 3));
 		riceRootBlock(ModBlocks.RICE_CROP.get());
 		stageBlock(ModBlocks.RICE_CROP_PANICLES.get(), RicePaniclesBlock.RICE_AGE);
 
@@ -300,7 +300,7 @@ public class BlockStates extends BlockStateProvider
 
 	public void wildCropBlock(Block block, boolean isBushCrop) {
 		if (isBushCrop) {
-			this.simpleBlock(block, models().singleTexture(blockName(block), resourceBlock("bush_crop"), "crop", resourceBlock(blockName(block))).renderType("cutout"));
+			this.simpleBlock(block, models().singleTexture(blockName(block), resourceBlock("template_bush_crop"), "crop", resourceBlock(blockName(block))).renderType("cutout"));
 		} else {
 			this.simpleBlock(block, models().cross(blockName(block), resourceBlock(blockName(block))).renderType("cutout"));
 		}
