@@ -54,9 +54,88 @@ public class BlockStates extends BlockStateProvider
 
 	@Override
 	protected void registerStatesAndModels() {
-		this.simpleBlock(ModBlocks.RICH_SOIL.get(), cubeRandomRotation(ModBlocks.RICH_SOIL.get(), ""));
-		this.simpleBlock(ModBlocks.SAFETY_NET.get(), existingModel(ModBlocks.SAFETY_NET.get()));
-		this.simpleBlock(ModBlocks.CANVAS_RUG.get(), existingModel(ModBlocks.CANVAS_RUG.get()));
+		simpleBlock(ModBlocks.RICH_SOIL.get(), cubeRandomRotation(ModBlocks.RICH_SOIL.get(), ""));
+		simpleBlock(ModBlocks.SAFETY_NET.get(), existingModel(ModBlocks.SAFETY_NET.get()));
+		simpleBlock(ModBlocks.CANVAS_RUG.get(), existingModel(ModBlocks.CANVAS_RUG.get()));
+		organicCompostBlock(ModBlocks.ORGANIC_COMPOST.get());
+
+		String riceBag = blockName(ModBlocks.RICE_BAG.get());
+		this.simpleBlock(ModBlocks.RICE_BAG.get(), models().withExistingParent(riceBag, "cube")
+				.texture("particle", resourceBlock(riceBag + "_top"))
+				.texture("down", resourceBlock(riceBag + "_bottom"))
+				.texture("up", resourceBlock(riceBag + "_top"))
+				.texture("north", resourceBlock(riceBag + "_side_tied"))
+				.texture("south", resourceBlock(riceBag + "_side_tied"))
+				.texture("east", resourceBlock(riceBag + "_side"))
+				.texture("west", resourceBlock(riceBag + "_side"))
+		);
+
+		customDirectionalBlock(ModBlocks.BASKET.get(),
+				$ -> existingModel(ModBlocks.BASKET.get()), BasketBlock.ENABLED, BasketBlock.WATERLOGGED);
+		customDirectionalBlock(ModBlocks.RICE_BALE.get(),
+				$ -> existingModel(ModBlocks.RICE_BALE.get()));
+		customHorizontalBlock(ModBlocks.CUTTING_BOARD.get(),
+				$ -> existingModel(ModBlocks.CUTTING_BOARD.get()), BasketBlock.WATERLOGGED);
+
+		horizontalBlock(ModBlocks.HALF_TATAMI_MAT.get(), existingModel("tatami_mat_half"));
+		horizontalBlock(ModBlocks.STOVE.get(), state -> {
+			String name = blockName(ModBlocks.STOVE.get());
+			String suffix = state.getValue(StoveBlock.LIT) ? "_on" : "";
+
+			return models().orientableWithBottom(name + suffix,
+					resourceBlock(name + "_side"),
+					resourceBlock(name + "_front" + suffix),
+					resourceBlock(name + "_bottom"),
+					resourceBlock(name + "_top" + suffix));
+		});
+
+		stageBlock(ModBlocks.BROWN_MUSHROOM_COLONY.get(), MushroomColonyBlock.COLONY_AGE);
+		stageBlock(ModBlocks.RED_MUSHROOM_COLONY.get(), MushroomColonyBlock.COLONY_AGE);
+		stageBlock(ModBlocks.RICE_CROP_PANICLES.get(), RicePaniclesBlock.RICE_AGE);
+		customStageBlock(ModBlocks.CABBAGE_CROP.get(), resourceBlock("crop_cross"), "cross", CabbageBlock.AGE, new ArrayList<>());
+		customStageBlock(ModBlocks.ONION_CROP.get(), mcLoc("crop"), "crop", OnionBlock.AGE, Arrays.asList(0, 0, 1, 1, 2, 2, 2, 3));
+		customStageBlock(ModBlocks.BUDDING_TOMATO_CROP.get(), resourceBlock("crop_cross"), "cross", BuddingTomatoBlock.AGE, Arrays.asList(0, 1, 2, 3, 3));
+
+		crateBlock(ModBlocks.CARROT_CRATE.get(), "carrot");
+		crateBlock(ModBlocks.POTATO_CRATE.get(), "potato");
+		crateBlock(ModBlocks.BEETROOT_CRATE.get(), "beetroot");
+		crateBlock(ModBlocks.CABBAGE_CRATE.get(), "cabbage");
+		crateBlock(ModBlocks.TOMATO_CRATE.get(), "tomato");
+		crateBlock(ModBlocks.ONION_CRATE.get(), "onion");
+
+		axisBlock((RotatedPillarBlock) ModBlocks.STRAW_BALE.get());
+
+		cabinetBlock(ModBlocks.OAK_CABINET.get(), "oak");
+		cabinetBlock(ModBlocks.BIRCH_CABINET.get(), "birch");
+		cabinetBlock(ModBlocks.SPRUCE_CABINET.get(), "spruce");
+		cabinetBlock(ModBlocks.JUNGLE_CABINET.get(), "jungle");
+		cabinetBlock(ModBlocks.ACACIA_CABINET.get(), "acacia");
+		cabinetBlock(ModBlocks.DARK_OAK_CABINET.get(), "dark_oak");
+		cabinetBlock(ModBlocks.MANGROVE_CABINET.get(), "mangrove");
+		cabinetBlock(ModBlocks.CHERRY_CABINET.get(), "cherry");
+		cabinetBlock(ModBlocks.BAMBOO_CABINET.get(), "bamboo");
+		cabinetBlock(ModBlocks.CRIMSON_CABINET.get(), "crimson");
+		cabinetBlock(ModBlocks.WARPED_CABINET.get(), "warped");
+
+		pieBlock(ModBlocks.APPLE_PIE.get());
+		customPieBlock(ModBlocks.CHOCOLATE_PIE.get());
+		pieBlock(ModBlocks.SWEET_BERRY_CHEESECAKE.get());
+		pieBlock(ModBlocks.PUMPKIN_PIE.get());
+
+		feastBlock((FeastBlock) ModBlocks.STUFFED_PUMPKIN_BLOCK.get());
+		feastBlock((FeastBlock) ModBlocks.ROAST_CHICKEN_BLOCK.get());
+		feastBlock((FeastBlock) ModBlocks.HONEY_GLAZED_HAM_BLOCK.get());
+		feastBlock((FeastBlock) ModBlocks.SHEPHERDS_PIE_BLOCK.get());
+		feastBlock((FeastBlock) ModBlocks.RICE_ROLL_MEDLEY_BLOCK.get());
+
+		wildCropBlock(ModBlocks.SANDY_SHRUB.get());
+		wildCropBlock(ModBlocks.WILD_BEETROOTS.get());
+		wildCropBlock(ModBlocks.WILD_CABBAGES.get());
+		wildCropBlock(ModBlocks.WILD_POTATOES.get());
+		wildCropBlock(ModBlocks.WILD_TOMATOES.get());
+		wildCropBlock(ModBlocks.WILD_CARROTS.get());
+		wildCropBlock(ModBlocks.WILD_ONIONS.get());
+		doublePlantBlock(ModBlocks.WILD_RICE.get());
 
 		Set<Block> canvasSigns = Sets.newHashSet(
 				// Standard
@@ -131,91 +210,21 @@ public class BlockStates extends BlockStateProvider
 				ModBlocks.BLACK_HANGING_CANVAS_WALL_SIGN.get());
 
 		for (Block sign : canvasSigns) {
-			this.simpleBlock(sign, existingModel(ModBlocks.CANVAS_SIGN.get()));
+			simpleBlock(sign, existingModel(ModBlocks.CANVAS_SIGN.get()));
 		}
-
-		String riceBag = blockName(ModBlocks.RICE_BAG.get());
-		this.simpleBlock(ModBlocks.RICE_BAG.get(), models().withExistingParent(riceBag, "cube")
-				.texture("particle", resourceBlock(riceBag + "_top"))
-				.texture("down", resourceBlock(riceBag + "_bottom"))
-				.texture("up", resourceBlock(riceBag + "_top"))
-				.texture("north", resourceBlock(riceBag + "_side_tied"))
-				.texture("south", resourceBlock(riceBag + "_side_tied"))
-				.texture("east", resourceBlock(riceBag + "_side"))
-				.texture("west", resourceBlock(riceBag + "_side"))
-		);
-
-		customDirectionalBlock(ModBlocks.BASKET.get(),
-				$ -> existingModel(ModBlocks.BASKET.get()), BasketBlock.ENABLED, BasketBlock.WATERLOGGED);
-		customDirectionalBlock(ModBlocks.RICE_BALE.get(),
-				$ -> existingModel(ModBlocks.RICE_BALE.get()));
-		customHorizontalBlock(ModBlocks.CUTTING_BOARD.get(),
-				$ -> existingModel(ModBlocks.CUTTING_BOARD.get()), BasketBlock.WATERLOGGED);
-
-		this.horizontalBlock(ModBlocks.HALF_TATAMI_MAT.get(), existingModel("tatami_mat_half"));
-		this.horizontalBlock(ModBlocks.STOVE.get(), state -> {
-			String name = blockName(ModBlocks.STOVE.get());
-			String suffix = state.getValue(StoveBlock.LIT) ? "_on" : "";
-
-			return models().orientableWithBottom(name + suffix,
-					resourceBlock(name + "_side"),
-					resourceBlock(name + "_front" + suffix),
-					resourceBlock(name + "_bottom"),
-					resourceBlock(name + "_top" + suffix));
-		});
-
-		this.stageBlock(ModBlocks.BROWN_MUSHROOM_COLONY.get(), MushroomColonyBlock.COLONY_AGE);
-		this.stageBlock(ModBlocks.RED_MUSHROOM_COLONY.get(), MushroomColonyBlock.COLONY_AGE);
-		this.stageBlock(ModBlocks.RICE_CROP_PANICLES.get(), RicePaniclesBlock.RICE_AGE);
-		this.customStageBlock(ModBlocks.CABBAGE_CROP.get(), resourceBlock("crop_cross"), "cross", CabbageBlock.AGE, new ArrayList<>());
-		this.customStageBlock(ModBlocks.ONION_CROP.get(), mcLoc("crop"), "crop", OnionBlock.AGE, Arrays.asList(0, 0, 1, 1, 2, 2, 2, 3));
-		this.customStageBlock(ModBlocks.BUDDING_TOMATO_CROP.get(), resourceBlock("crop_cross"), "cross", BuddingTomatoBlock.AGE, Arrays.asList(0, 1, 2, 3, 3));
-
-		this.crateBlock(ModBlocks.CARROT_CRATE.get(), "carrot");
-		this.crateBlock(ModBlocks.POTATO_CRATE.get(), "potato");
-		this.crateBlock(ModBlocks.BEETROOT_CRATE.get(), "beetroot");
-		this.crateBlock(ModBlocks.CABBAGE_CRATE.get(), "cabbage");
-		this.crateBlock(ModBlocks.TOMATO_CRATE.get(), "tomato");
-		this.crateBlock(ModBlocks.ONION_CRATE.get(), "onion");
-
-		this.axisBlock((RotatedPillarBlock) ModBlocks.STRAW_BALE.get());
-
-		this.cabinetBlock(ModBlocks.OAK_CABINET.get(), "oak");
-		this.cabinetBlock(ModBlocks.BIRCH_CABINET.get(), "birch");
-		this.cabinetBlock(ModBlocks.SPRUCE_CABINET.get(), "spruce");
-		this.cabinetBlock(ModBlocks.JUNGLE_CABINET.get(), "jungle");
-		this.cabinetBlock(ModBlocks.ACACIA_CABINET.get(), "acacia");
-		this.cabinetBlock(ModBlocks.DARK_OAK_CABINET.get(), "dark_oak");
-		this.cabinetBlock(ModBlocks.MANGROVE_CABINET.get(), "mangrove");
-		this.cabinetBlock(ModBlocks.CHERRY_CABINET.get(), "cherry");
-		this.cabinetBlock(ModBlocks.BAMBOO_CABINET.get(), "bamboo");
-		this.cabinetBlock(ModBlocks.CRIMSON_CABINET.get(), "crimson");
-		this.cabinetBlock(ModBlocks.WARPED_CABINET.get(), "warped");
-
-		this.pieBlock(ModBlocks.APPLE_PIE.get());
-		this.customPieBlock(ModBlocks.CHOCOLATE_PIE.get());
-		this.pieBlock(ModBlocks.SWEET_BERRY_CHEESECAKE.get());
-		this.pieBlock(ModBlocks.PUMPKIN_PIE.get());
-
-		this.feastBlock((FeastBlock) ModBlocks.STUFFED_PUMPKIN_BLOCK.get());
-		this.feastBlock((FeastBlock) ModBlocks.ROAST_CHICKEN_BLOCK.get());
-		this.feastBlock((FeastBlock) ModBlocks.HONEY_GLAZED_HAM_BLOCK.get());
-		this.feastBlock((FeastBlock) ModBlocks.SHEPHERDS_PIE_BLOCK.get());
-		this.feastBlock((FeastBlock) ModBlocks.RICE_ROLL_MEDLEY_BLOCK.get());
-
-		this.wildCropBlock(ModBlocks.SANDY_SHRUB.get());
-		this.wildCropBlock(ModBlocks.WILD_BEETROOTS.get());
-		this.wildCropBlock(ModBlocks.WILD_CABBAGES.get());
-		this.wildCropBlock(ModBlocks.WILD_POTATOES.get());
-		this.wildCropBlock(ModBlocks.WILD_TOMATOES.get());
-		this.wildCropBlock(ModBlocks.WILD_CARROTS.get());
-		this.wildCropBlock(ModBlocks.WILD_ONIONS.get());
-		this.doublePlantBlock(ModBlocks.WILD_RICE.get());
 	}
 
 	public ConfiguredModel[] cubeRandomRotation(Block block, String suffix) {
 		String formattedName = blockName(block) + (suffix.isEmpty() ? "" : "_" + suffix);
 		return ConfiguredModel.allYRotations(models().cubeAll(formattedName, resourceBlock(formattedName)), 0, false);
+	}
+
+	public void organicCompostBlock(Block block) {
+		getVariantBuilder(block).forAllStates(state -> {
+			int composting = state.getValue(OrganicCompostBlock.COMPOSTING);
+			String textureName = blockName(block) + "_stage" + composting / 2;
+			return ConfiguredModel.allYRotations(models().cubeAll(textureName, resourceBlock(textureName)), 0, false);
+		});
 	}
 
 	public void customDirectionalBlock(Block block, Function<BlockState, ModelFile> modelFunc, Property<?>... ignored) {
