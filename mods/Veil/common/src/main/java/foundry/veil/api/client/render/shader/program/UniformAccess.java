@@ -1,6 +1,7 @@
 package foundry.veil.api.client.render.shader.program;
 
 import foundry.veil.api.client.render.shader.uniform.ShaderUniformAccess;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL31C;
 
@@ -9,6 +10,7 @@ import org.lwjgl.opengl.GL31C;
  *
  * @author Ocelot
  */
+@ApiStatus.NonExtendable
 public interface UniformAccess {
 
     /**
@@ -74,4 +76,20 @@ public interface UniformAccess {
      * @return Whether that storage block can be set
      */
     boolean hasStorageBlock(CharSequence name);
+
+    /**
+     * Sets the binding to use for the specified uniform block.
+     *
+     * @param name    The name of the block to set
+     * @param binding The binding to use for that block
+     */
+    void setUniformBlock(CharSequence name, int binding);
+
+    /**
+     * Sets the binding to use for the specified storage block.
+     *
+     * @param name    The name of the block to set
+     * @param binding The binding to use for that block
+     */
+    void setStorageBlock(CharSequence name, int binding);
 }

@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Ocelot
  */
+@ApiStatus.NonExtendable
 public interface TextureUniformAccess {
 
     /**

@@ -35,7 +35,7 @@ import static org.lwjgl.opengl.GL43C.glShaderStorageBlockBinding;
  * @author Ocelot
  */
 @ApiStatus.NonExtendable
-public interface ShaderProgram extends NativeResource, MutableUniformAccess, TextureUniformAccess {
+public interface ShaderProgram extends NativeResource, UniformAccess, TextureUniformAccess {
 
     /**
      * Binds this program for use.
