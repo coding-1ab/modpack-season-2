@@ -3,7 +3,6 @@
   "textures": {
     "bottom": "farmersdelight:block/pie_bottom",
     "inner": "farmersdelight:block/apple_pie_inner",
-    "particle": "farmersdelight:block/apple_pie_top",
     "side": "farmersdelight:block/pie_side",
     "top": "farmersdelight:block/apple_pie_top"
   }

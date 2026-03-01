@@ -3,7 +3,6 @@
   "textures": {
     "bottom": "farmersdelight:block/pie_bottom",
     "inner": "farmersdelight:block/sweet_berry_cheesecake_inner",
-    "particle": "farmersdelight:block/sweet_berry_cheesecake_top",
     "side": "farmersdelight:block/pie_side",
     "top": "farmersdelight:block/sweet_berry_cheesecake_top"
   }

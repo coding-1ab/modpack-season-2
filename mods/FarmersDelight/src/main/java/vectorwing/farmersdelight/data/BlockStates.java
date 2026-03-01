@@ -389,7 +389,6 @@ public class BlockStates extends BlockStateProvider
 
 	private ModelFile modelPie(String baseName) {
 		return models().withExistingParent(baseName, resourceFDBlock("template_pie"))
-				.texture("particle", resourceFDBlock(baseName + "_top"))
 				.texture("bottom", resourceFDBlock("pie_bottom"))
 				.texture("side", resourceFDBlock("pie_side"))
 				.texture("top", resourceFDBlock(baseName + "_top"));
@@ -397,7 +396,6 @@ public class BlockStates extends BlockStateProvider
 
 	private ModelFile modelPieSlice(String baseName, int bites) {
 		return models().withExistingParent(baseName + "_slice" + bites, resourceFDBlock("template_pie_slice" + bites))
-				.texture("particle", resourceFDBlock(baseName + "_top"))
 				.texture("bottom", resourceFDBlock("pie_bottom"))
 				.texture("side", resourceFDBlock("pie_side"))
 				.texture("inner", resourceFDBlock(baseName + "_inner"))
@@ -407,7 +405,6 @@ public class BlockStates extends BlockStateProvider
 	private ModelFile modelFarmland(String farmlandName, String dirtName, boolean moist) {
 		String moistSuffix = moist ? "_moist" : "";
 		return models().withExistingParent(farmlandName + moistSuffix, resourceFDBlock("template_farmland_custom"))
-//				.texture("particle", resourceBlock(farmlandName + moistSuffix))
 				.texture("bottom", resourceFDBlock(dirtName))
 				.texture("side", resourceFDBlock(moist ? farmlandName + moistSuffix + "_side" : dirtName))
 				.texture("top", resourceFDBlock(farmlandName + moistSuffix));
