@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
 
 import java.nio.IntBuffer;
+import java.util.concurrent.TimeUnit;
 
 import static org.lwjgl.opengl.ARBMultiBind.glBindSamplers;
 import static org.lwjgl.opengl.ARBMultiBind.glBindTextures;
@@ -147,6 +148,7 @@ public enum VeilMultiBind {
     };
     private static final Cache<Integer, Integer> TEXTURE_TARGET_CACHE = CacheBuilder.newBuilder()
             .maximumSize(100)
+            .expireAfterAccess(10, TimeUnit.SECONDS)
             .build();
 
     private static int getTarget(int texture) {
