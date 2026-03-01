@@ -51,7 +51,7 @@ public class ItemModels extends ItemModelProvider
 		blockBasedModel(ModItems.TATAMI.get(), "_half");
 		items.remove(ModItems.TATAMI.get());
 
-		blockBasedModel(ModItems.ORGANIC_COMPOST.get(), "_0");
+		blockBasedModel(ModItems.ORGANIC_COMPOST.get(), "_stage0");
 		items.remove(ModItems.ORGANIC_COMPOST.get());
 
 		// Items that should be held like a mug

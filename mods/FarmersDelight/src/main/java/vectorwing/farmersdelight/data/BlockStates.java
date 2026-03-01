@@ -54,10 +54,8 @@ public class BlockStates extends BlockStateProvider
 
 	@Override
 	protected void registerStatesAndModels() {
-		simpleBlock(ModBlocks.RICH_SOIL.get(), cubeRandomRotation(ModBlocks.RICH_SOIL.get(), ""));
 		simpleBlock(ModBlocks.SAFETY_NET.get(), existingModel(ModBlocks.SAFETY_NET.get()));
 		simpleBlock(ModBlocks.CANVAS_RUG.get(), existingModel(ModBlocks.CANVAS_RUG.get()));
-		organicCompostBlock(ModBlocks.ORGANIC_COMPOST.get());
 
 		String riceBag = blockName(ModBlocks.RICE_BAG.get());
 		this.simpleBlock(ModBlocks.RICE_BAG.get(), models().withExistingParent(riceBag, "cube")
@@ -78,16 +76,6 @@ public class BlockStates extends BlockStateProvider
 				$ -> existingModel(ModBlocks.CUTTING_BOARD.get()), BasketBlock.WATERLOGGED);
 
 		horizontalBlock(ModBlocks.HALF_TATAMI_MAT.get(), existingModel("tatami_mat_half"));
-		horizontalBlock(ModBlocks.STOVE.get(), state -> {
-			String name = blockName(ModBlocks.STOVE.get());
-			String suffix = state.getValue(StoveBlock.LIT) ? "_on" : "";
-
-			return models().orientableWithBottom(name + suffix,
-					resourceBlock(name + "_side"),
-					resourceBlock(name + "_front" + suffix),
-					resourceBlock(name + "_bottom"),
-					resourceBlock(name + "_top" + suffix));
-		});
 
 		stageBlock(ModBlocks.BROWN_MUSHROOM_COLONY.get(), MushroomColonyBlock.COLONY_AGE);
 		stageBlock(ModBlocks.RED_MUSHROOM_COLONY.get(), MushroomColonyBlock.COLONY_AGE);
@@ -104,6 +92,10 @@ public class BlockStates extends BlockStateProvider
 		crateBlock(ModBlocks.ONION_CRATE.get(), "onion");
 
 		axisBlock((RotatedPillarBlock) ModBlocks.STRAW_BALE.get());
+
+		organicCompostBlock(ModBlocks.ORGANIC_COMPOST.get());
+		simpleBlock(ModBlocks.RICH_SOIL.get(), cubeRandomRotation(ModBlocks.RICH_SOIL.get(), ""));
+		farmlandBlock(ModBlocks.RICH_SOIL_FARMLAND.get(), ModBlocks.RICH_SOIL.get());
 
 		cabinetBlock(ModBlocks.OAK_CABINET.get(), "oak");
 		cabinetBlock(ModBlocks.BIRCH_CABINET.get(), "birch");
@@ -136,6 +128,17 @@ public class BlockStates extends BlockStateProvider
 		wildCropBlock(ModBlocks.WILD_CARROTS.get());
 		wildCropBlock(ModBlocks.WILD_ONIONS.get());
 		doublePlantBlock(ModBlocks.WILD_RICE.get());
+
+		horizontalBlock(ModBlocks.STOVE.get(), state -> {
+			String name = blockName(ModBlocks.STOVE.get());
+			String suffix = state.getValue(StoveBlock.LIT) ? "_on" : "";
+
+			return models().orientableWithBottom(name + suffix,
+					resourceBlock(name + "_side"),
+					resourceBlock(name + "_front" + suffix),
+					resourceBlock(name + "_bottom"),
+					resourceBlock(name + "_top" + suffix));
+		});
 
 		Set<Block> canvasSigns = Sets.newHashSet(
 				// Standard
@@ -227,49 +230,54 @@ public class BlockStates extends BlockStateProvider
 		});
 	}
 
+	public void farmlandBlock(Block farmlandBlock, Block dirtBlock) {
+		getVariantBuilder(farmlandBlock).forAllStates(state -> {
+			int moisture = state.getValue(RichSoilFarmlandBlock.MOISTURE);
+			return ConfiguredModel.builder()
+					.modelFile(modelFarmland(blockName(farmlandBlock), blockName(dirtBlock), moisture == 7))
+					.build();
+		});
+	}
+
 	public void customDirectionalBlock(Block block, Function<BlockState, ModelFile> modelFunc, Property<?>... ignored) {
-		getVariantBuilder(block)
-				.forAllStatesExcept(state -> {
-					Direction dir = state.getValue(BlockStateProperties.FACING);
-					return ConfiguredModel.builder()
-							.modelFile(modelFunc.apply(state))
-							.rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
-							.rotationY(dir.getAxis().isVertical() ? 0 : ((int) dir.toYRot() + DEFAULT_ANGLE_OFFSET) % 360)
-							.build();
-				}, ignored);
+		getVariantBuilder(block).forAllStatesExcept(state -> {
+			Direction dir = state.getValue(BlockStateProperties.FACING);
+			return ConfiguredModel.builder()
+					.modelFile(modelFunc.apply(state))
+					.rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
+					.rotationY(dir.getAxis().isVertical() ? 0 : ((int) dir.toYRot() + DEFAULT_ANGLE_OFFSET) % 360)
+					.build();
+		}, ignored);
 	}
 
 	public void customHorizontalBlock(Block block, Function<BlockState, ModelFile> modelFunc, Property<?>... ignored) {
-		getVariantBuilder(block)
-				.forAllStatesExcept(state -> ConfiguredModel.builder()
-						.modelFile(modelFunc.apply(state))
-						.rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + DEFAULT_ANGLE_OFFSET) % 360)
-						.build(), ignored);
+		getVariantBuilder(block).forAllStatesExcept(state -> ConfiguredModel.builder()
+				.modelFile(modelFunc.apply(state))
+				.rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + DEFAULT_ANGLE_OFFSET) % 360)
+				.build(), ignored);
 	}
 
 	public void stageBlock(Block block, IntegerProperty ageProperty, Property<?>... ignored) {
-		getVariantBuilder(block)
-				.forAllStatesExcept(state -> {
-					int ageSuffix = state.getValue(ageProperty);
-					String stageName = blockName(block) + "_stage" + ageSuffix;
-					return ConfiguredModel.builder()
-							.modelFile(models().cross(stageName, resourceBlock(stageName)).renderType("cutout")).build();
-				}, ignored);
+		getVariantBuilder(block).forAllStatesExcept(state -> {
+			int ageSuffix = state.getValue(ageProperty);
+			String stageName = blockName(block) + "_stage" + ageSuffix;
+			return ConfiguredModel.builder()
+					.modelFile(models().cross(stageName, resourceBlock(stageName)).renderType("cutout")).build();
+		}, ignored);
 	}
 
 	public void customStageBlock(Block block, @Nullable ResourceLocation parent, String textureKey, IntegerProperty ageProperty, List<Integer> suffixes, Property<?>... ignored) {
-		getVariantBuilder(block)
-				.forAllStatesExcept(state -> {
-					int ageSuffix = state.getValue(ageProperty);
-					String stageName = blockName(block) + "_stage";
-					stageName += suffixes.isEmpty() ? ageSuffix : suffixes.get(Math.min(suffixes.size(), ageSuffix));
-					if (parent == null) {
-						return ConfiguredModel.builder()
-								.modelFile(models().cross(stageName, resourceBlock(stageName)).renderType("cutout")).build();
-					}
-					return ConfiguredModel.builder()
-							.modelFile(models().singleTexture(stageName, parent, textureKey, resourceBlock(stageName)).renderType("cutout")).build();
-				}, ignored);
+		getVariantBuilder(block).forAllStatesExcept(state -> {
+			int ageSuffix = state.getValue(ageProperty);
+			String stageName = blockName(block) + "_stage";
+			stageName += suffixes.isEmpty() ? ageSuffix : suffixes.get(Math.min(suffixes.size(), ageSuffix));
+			if (parent == null) {
+				return ConfiguredModel.builder()
+						.modelFile(models().cross(stageName, resourceBlock(stageName)).renderType("cutout")).build();
+			}
+			return ConfiguredModel.builder()
+					.modelFile(models().singleTexture(stageName, parent, textureKey, resourceBlock(stageName)).renderType("cutout")).build();
+		}, ignored);
 	}
 
 	public void wildCropBlock(Block block) {
@@ -300,22 +308,21 @@ public class BlockStates extends BlockStateProvider
 	}
 
 	public void feastBlock(FeastBlock block) {
-		getVariantBuilder(block)
-				.forAllStates(state -> {
-					IntegerProperty servingsProperty = block.getServingsProperty();
-					int servings = state.getValue(servingsProperty);
+		getVariantBuilder(block).forAllStates(state -> {
+			IntegerProperty servingsProperty = block.getServingsProperty();
+			int servings = state.getValue(servingsProperty);
 
-					String suffix = "_stage" + (block.getMaxServings() - servings);
+			String suffix = "_stage" + (block.getMaxServings() - servings);
 
-					if (servings == 0) {
-						suffix = block.hasLeftovers ? "_leftover" : "_stage" + (servingsProperty.getPossibleValues().toArray().length - 2);
-					}
+			if (servings == 0) {
+				suffix = block.hasLeftovers ? "_leftover" : "_stage" + (servingsProperty.getPossibleValues().toArray().length - 2);
+			}
 
-					return ConfiguredModel.builder()
-							.modelFile(existingModel(blockName(block) + suffix))
-							.rotationY(((int) state.getValue(FeastBlock.FACING).toYRot() + DEFAULT_ANGLE_OFFSET) % 360)
-							.build();
-				});
+			return ConfiguredModel.builder()
+					.modelFile(existingModel(blockName(block) + suffix))
+					.rotationY(((int) state.getValue(FeastBlock.FACING).toYRot() + DEFAULT_ANGLE_OFFSET) % 360)
+					.build();
+		});
 	}
 
 	public void doublePlantBlock(Block block) {
@@ -370,5 +377,14 @@ public class BlockStates extends BlockStateProvider
 				.texture("side", resourceBlock("pie_side"))
 				.texture("inner", resourceBlock(baseName + "_inner"))
 				.texture("top", resourceBlock(baseName + "_top"));
+	}
+
+	private ModelFile modelFarmland(String farmlandName, String dirtName, boolean moist) {
+		String moistSuffix = moist ? "_moist" : "";
+		return models().withExistingParent(farmlandName + moistSuffix, resourceBlock("template_farmland_custom"))
+//				.texture("particle", resourceBlock(farmlandName + moistSuffix))
+				.texture("bottom", resourceBlock(dirtName))
+				.texture("side", resourceBlock(moist ? farmlandName + moistSuffix + "_side" : dirtName))
+				.texture("top", resourceBlock(farmlandName + moistSuffix));
 	}
 }

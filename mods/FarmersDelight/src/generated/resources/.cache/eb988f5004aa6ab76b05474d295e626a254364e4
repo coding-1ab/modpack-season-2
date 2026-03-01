@@ -1,4 +1,4 @@
-// 1.20.1	2026-03-01T13:04:38.0116616	Block States: farmersdelight
+// 1.20.1	2026-03-01T13:40:26.7446759	Block States: farmersdelight
 d4d9057afde725ea2a48206d8c1ea6eee4ec1c24 assets/farmersdelight/blockstates/acacia_cabinet.json
 c1a643b06507467b350b8eedb4cc05f93d71abb2 assets/farmersdelight/blockstates/apple_pie.json
 5cf28a36e15368244462670289f57eb16fa0a086 assets/farmersdelight/blockstates/bamboo_cabinet.json
@@ -91,6 +91,7 @@ d0b942f2e9c9036277e4cb89a70a56877df0e678 assets/farmersdelight/blockstates/rice_
 52b8c058185c61469e179156c24cbdda195d0d14 assets/farmersdelight/blockstates/rice_panicles.json
 b7193e19fd0c247bb749688b483ff5098dfd90ee assets/farmersdelight/blockstates/rice_roll_medley_block.json
 ee9526c2fe9ef142e74d2f52b3ba25dd7f5d55c4 assets/farmersdelight/blockstates/rich_soil.json
+8554219ee8e40471f8ac0d2b2f1f16227a6b636c assets/farmersdelight/blockstates/rich_soil_farmland.json
 1d166f08356c7778f8f71e6e903e92c76f472177 assets/farmersdelight/blockstates/roast_chicken_block.json
 61339c185ed423cf1b33dfd7d540977ab83a2a2a assets/farmersdelight/blockstates/safety_net.json
 487d56bbfa59470e8eca28982c05791be4791ed2 assets/farmersdelight/blockstates/sandy_shrub.json
@@ -183,6 +184,8 @@ df3d55a99f5a94d0acc79a7d8ce9cafef5e5fdf8 assets/farmersdelight/models/block/red_
 6df16828196b34b6be23c1c4b35f2c809f7bcbbd assets/farmersdelight/models/block/rice_panicles_stage2.json
 57c4f896a17513d3bb1017c8d64b410d6454edc5 assets/farmersdelight/models/block/rice_panicles_stage3.json
 e32f59a6806c497071eda244734ee05a4c67429a assets/farmersdelight/models/block/rich_soil.json
+edceda6d919789455e6add4d2b63ea150ef3a26f assets/farmersdelight/models/block/rich_soil_farmland.json
+3c5fd53e4ebbe1d7060a2ea6491236c38739c991 assets/farmersdelight/models/block/rich_soil_farmland_moist.json
 0aa9d5b543da7c84b7efc90848167ec16a0eb8bc assets/farmersdelight/models/block/sandy_shrub.json
 0c4920dd449120a0c9615f31f9ed2d478c9ac5c2 assets/farmersdelight/models/block/spruce_cabinet.json
 bee1fa8b8cfae229b920578100130bf29545b8c4 assets/farmersdelight/models/block/spruce_cabinet_open.json
