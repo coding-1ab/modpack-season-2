@@ -193,7 +193,7 @@ public class BlockStates extends BlockStateProvider
 		this.cabinetBlock(ModBlocks.WARPED_CABINET.get(), "warped");
 
 		this.pieBlock(ModBlocks.APPLE_PIE.get());
-		this.pieBlock(ModBlocks.CHOCOLATE_PIE.get());
+		this.customPieBlock(ModBlocks.CHOCOLATE_PIE.get());
 		this.pieBlock(ModBlocks.SWEET_BERRY_CHEESECAKE.get());
 		this.pieBlock(ModBlocks.PUMPKIN_PIE.get());
 
@@ -248,7 +248,6 @@ public class BlockStates extends BlockStateProvider
 				}, ignored);
 	}
 
-	// I am not proud of this method... But hey, it's runData. Only I shall have to deal with it.
 	public void customStageBlock(Block block, @Nullable ResourceLocation parent, String textureKey, IntegerProperty ageProperty, List<Integer> suffixes, Property<?>... ignored) {
 		getVariantBuilder(block)
 				.forAllStatesExcept(state -> {
@@ -318,16 +317,49 @@ public class BlockStates extends BlockStateProvider
 				.modelForState().modelFile(models().cross(blockName(block) + "_top", resourceBlock(blockName(block) + "_top")).renderType("cutout")).addModel();
 	}
 
+	/**
+	 * Creates blockstates for a pie whose model is based on the pie template.
+	 */
 	public void pieBlock(Block block) {
-		getVariantBuilder(block)
-				.forAllStates(state -> {
-							int bites = state.getValue(PieBlock.BITES);
-							String suffix = bites > 0 ? "_slice" + bites : "";
-							return ConfiguredModel.builder()
-									.modelFile(existingModel(blockName(block) + suffix))
-									.rotationY(((int) state.getValue(PieBlock.FACING).toYRot() + DEFAULT_ANGLE_OFFSET) % 360)
-									.build();
-						}
-				);
+		getVariantBuilder(block).forAllStates(state -> {
+			int bites = state.getValue(PieBlock.BITES);
+			return ConfiguredModel.builder()
+					.modelFile(bites > 0 ? modelPieSlice(blockName(block), bites) : modelPie(blockName(block)))
+					.rotationY(((int) state.getValue(PieBlock.FACING).toYRot() + DEFAULT_ANGLE_OFFSET) % 360)
+					.build();
+		});
+	}
+
+	/**
+	 * Creates blockstates for a pie whose model is custom, in an existing file.
+	 */
+	public void customPieBlock(Block block) {
+		getVariantBuilder(block).forAllStates(state -> {
+			int bites = state.getValue(PieBlock.BITES);
+			String suffix = bites > 0 ? "_slice" + bites : "";
+			return ConfiguredModel.builder()
+					.modelFile(existingModel(blockName(block) + suffix))
+					.rotationY(((int) state.getValue(PieBlock.FACING).toYRot() + DEFAULT_ANGLE_OFFSET) % 360)
+					.build();
+		});
+	}
+
+	// Model Functions --------------------------
+
+	private ModelFile modelPie(String baseName) {
+		return models().withExistingParent(baseName, resourceBlock("pie"))
+				.texture("particle", resourceBlock(baseName + "_top"))
+				.texture("bottom", resourceBlock("pie_bottom"))
+				.texture("side", resourceBlock("pie_side"))
+				.texture("top", resourceBlock(baseName + "_top"));
+	}
+
+	private ModelFile modelPieSlice(String baseName, int bites) {
+		return models().withExistingParent(baseName + "_slice" + bites, resourceBlock("pie_slice" + bites))
+				.texture("particle", resourceBlock(baseName + "_top"))
+				.texture("bottom", resourceBlock("pie_bottom"))
+				.texture("side", resourceBlock("pie_side"))
+				.texture("inner", resourceBlock(baseName + "_inner"))
+				.texture("top", resourceBlock(baseName + "_top"));
 	}
 }
