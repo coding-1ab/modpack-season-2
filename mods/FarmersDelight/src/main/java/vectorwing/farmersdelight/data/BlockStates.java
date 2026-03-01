@@ -8,10 +8,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.state.properties.*;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
@@ -44,6 +41,7 @@ public class BlockStates extends BlockStateProvider
 	public ResourceLocation resourceMCBlock(String path) {
 		return new ResourceLocation(ModelProvider.BLOCK_FOLDER + "/" + path);
 	}
+
 	public ResourceLocation resourceFDBlock(String path) {
 		return new ResourceLocation(FarmersDelight.MODID, ModelProvider.BLOCK_FOLDER + "/" + path);
 	}
@@ -87,6 +85,7 @@ public class BlockStates extends BlockStateProvider
 		customStageBlock(ModBlocks.CABBAGE_CROP.get(), resourceFDBlock("template_crop_cross"), "cross", CabbageBlock.AGE, new ArrayList<>());
 		customStageBlock(ModBlocks.ONION_CROP.get(), mcLoc("crop"), "crop", OnionBlock.AGE, Arrays.asList(0, 0, 1, 1, 2, 2, 2, 3));
 		customStageBlock(ModBlocks.BUDDING_TOMATO_CROP.get(), resourceFDBlock("template_crop_cross"), "cross", BuddingTomatoBlock.AGE, Arrays.asList(0, 1, 2, 3, 3));
+		tomatoBlock(ModBlocks.TOMATO_CROP.get(), TomatoVineBlock.VINE_AGE, TomatoVineBlock.ROPELOGGED);
 		riceRootBlock(ModBlocks.RICE_CROP.get());
 		stageBlock(ModBlocks.RICE_CROP_PANICLES.get(), RicePaniclesBlock.RICE_AGE);
 
@@ -265,8 +264,8 @@ public class BlockStates extends BlockStateProvider
 
 	public void stageBlock(Block block, IntegerProperty ageProperty, Property<?>... ignored) {
 		getVariantBuilder(block).forAllStatesExcept(state -> {
-			int ageSuffix = state.getValue(ageProperty);
-			String stageName = blockName(block) + "_stage" + ageSuffix;
+			int age = state.getValue(ageProperty);
+			String stageName = blockName(block) + "_stage" + age;
 			return ConfiguredModel.builder()
 					.modelFile(models().cross(stageName, resourceFDBlock(stageName)).renderType("cutout")).build();
 		}, ignored);
@@ -274,15 +273,28 @@ public class BlockStates extends BlockStateProvider
 
 	public void customStageBlock(Block block, @Nullable ResourceLocation parent, String textureKey, IntegerProperty ageProperty, List<Integer> suffixes, Property<?>... ignored) {
 		getVariantBuilder(block).forAllStatesExcept(state -> {
-			int ageSuffix = state.getValue(ageProperty);
+			int age = state.getValue(ageProperty);
 			String stageName = blockName(block) + "_stage";
-			stageName += suffixes.isEmpty() ? ageSuffix : suffixes.get(Math.min(suffixes.size(), ageSuffix));
+			stageName += suffixes.isEmpty() ? age : suffixes.get(Math.min(suffixes.size(), age));
 			if (parent == null) {
 				return ConfiguredModel.builder()
 						.modelFile(models().cross(stageName, resourceFDBlock(stageName)).renderType("cutout")).build();
 			}
 			return ConfiguredModel.builder()
 					.modelFile(models().singleTexture(stageName, parent, textureKey, resourceFDBlock(stageName)).renderType("cutout")).build();
+		}, ignored);
+	}
+
+	public void tomatoBlock(Block block, IntegerProperty ageProperty, BooleanProperty ropeloggedProperty, Property<?>... ignored) {
+		getVariantBuilder(block).forAllStatesExcept(state -> {
+			int age = state.getValue(ageProperty);
+			boolean ropelogged = state.getValue(ropeloggedProperty);
+			String stageName = blockName(block) + "_stage" + age;
+			String ropeloggedStageName = blockName(block) + "_vine_stage" + age; // TODO: Make this a customStageBlock once we remove the ropelogged state for good.
+			return ConfiguredModel.builder()
+					.modelFile(ropelogged
+							? modelCropWithRope(ropeloggedStageName, "tomatoes_coiled_rope")
+							: modelCropCross(stageName)).build();
 		}, ignored);
 	}
 
@@ -385,6 +397,20 @@ public class BlockStates extends BlockStateProvider
 				.texture("bottom", resourceFDBlock(baseName + "_bottom"))
 				.texture("side", resourceFDBlock(baseName + "_side"))
 				.texture("top", resourceFDBlock(baseName + "_top"));
+	}
+
+	private ModelFile modelCropCross(String baseName) {
+		return models().withExistingParent(baseName, resourceFDBlock("template_crop_cross"))
+				.texture("cross", resourceFDBlock(baseName))
+				.renderType("cutout");
+	}
+
+	private ModelFile modelCropWithRope(String baseName, String ropeSideTextureName) {
+		return models().withExistingParent(baseName, resourceFDBlock("template_crop_with_rope"))
+				.texture("crop", resourceFDBlock(baseName))
+				.texture("rope_side", resourceFDBlock(ropeSideTextureName))
+				.texture("rope_top", resourceFDBlock("rope_top"))
+				.renderType("cutout");
 	}
 
 	private ModelFile modelPie(String baseName) {
