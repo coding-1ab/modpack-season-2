@@ -141,10 +141,9 @@ public class LootModifiers extends GlobalLootModifierProvider {
 	}
 
 	private AddItemModifier strawHarvesting(LootItemBlockStatePropertyCondition.Builder slicedBlock, float chance) {
-		//make an array to hold all possible entities that the modifier applies to
 		return new AddItemModifier(new LootItemCondition[]{
 				MatchTool.toolMatches(ItemPredicate.Builder.item().of(ModTags.STRAW_HARVESTERS)).build(),
-				LootItemRandomChanceCondition.randomChance(chance).build(), //TODO ask if looting should also be accounted for
+				LootItemRandomChanceCondition.randomChance(chance).build(), //TODO see if looting should also be accounted for
 				slicedBlock.build()
 		}, ModItems.STRAW.get(), 1);
 	}
