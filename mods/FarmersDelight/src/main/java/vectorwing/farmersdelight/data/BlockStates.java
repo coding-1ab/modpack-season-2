@@ -134,6 +134,8 @@ public class BlockStates extends BlockStateProvider
 		wildCropBlock(ModBlocks.WILD_ONIONS.get());
 		doublePlantBlock(ModBlocks.WILD_RICE.get());
 
+		cookingPotBlock(ModBlocks.COOKING_POT.get());
+		skilletBlock(ModBlocks.SKILLET.get());
 		horizontalBlock(ModBlocks.STOVE.get(), state -> {
 			String name = blockName(ModBlocks.STOVE.get());
 			String suffix = state.getValue(StoveBlock.LIT) ? "_on" : "";
@@ -222,9 +224,28 @@ public class BlockStates extends BlockStateProvider
 		}
 	}
 
-	public ConfiguredModel[] cubeRandomRotation(Block block, String suffix) {
-		String formattedName = blockName(block) + (suffix.isEmpty() ? "" : "_" + suffix);
-		return ConfiguredModel.allYRotations(models().cubeAll(formattedName, resourceFDBlock(formattedName)), 0, false);
+	public void cookingPotBlock(Block block) {
+		getVariantBuilder(block).forAllStatesExcept(state -> {
+			String supportSuffix = switch (state.getValue(CookingPotBlock.SUPPORT)) {
+				case NONE -> "";
+				case TRAY -> "_tray";
+				case HANDLE -> "_handle";
+			};
+			return ConfiguredModel.builder()
+					.modelFile(existingModel(blockName(block) + supportSuffix))
+					.rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + DEFAULT_ANGLE_OFFSET) % 360)
+					.build();
+		}, CookingPotBlock.WATERLOGGED);
+	}
+
+	public void skilletBlock(Block block) {
+		getVariantBuilder(block).forAllStatesExcept(state -> {
+			String supportSuffix = state.getValue(SkilletBlock.SUPPORT) ? "_tray" : "";
+			return ConfiguredModel.builder()
+					.modelFile(existingModel(blockName(block) + supportSuffix))
+					.rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + DEFAULT_ANGLE_OFFSET) % 360)
+					.build();
+		}, SkilletBlock.WATERLOGGED);
 	}
 
 	public void organicCompostBlock(Block block) {
@@ -391,6 +412,11 @@ public class BlockStates extends BlockStateProvider
 	}
 
 	// Model Functions --------------------------
+
+	public ConfiguredModel[] cubeRandomRotation(Block block, String suffix) {
+		String formattedName = blockName(block) + (suffix.isEmpty() ? "" : "_" + suffix);
+		return ConfiguredModel.allYRotations(models().cubeAll(formattedName, resourceFDBlock(formattedName)), 0, false);
+	}
 
 	private ModelFile modelCubeBottomTop(String baseName) {
 		return models().withExistingParent(baseName, resourceMCBlock("cube_bottom_top"))
