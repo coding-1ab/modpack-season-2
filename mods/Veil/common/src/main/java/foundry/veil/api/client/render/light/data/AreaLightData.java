@@ -4,8 +4,10 @@ import foundry.veil.api.client.color.Colorc;
 import foundry.veil.api.client.editor.EditorAttributeProvider;
 import foundry.veil.api.client.registry.LightTypeRegistry;
 import foundry.veil.api.client.render.CullFrustum;
+import foundry.veil.api.client.render.light.DDALightData;
 import foundry.veil.api.client.render.light.InstancedLightData;
 import imgui.ImGui;
+import imgui.type.ImBoolean;
 import net.minecraft.client.Camera;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -19,7 +21,7 @@ import java.nio.ByteBuffer;
  *
  * @since 2.0.0
  */
-public class AreaLightData extends LightData implements InstancedLightData, EditorAttributeProvider {
+public class AreaLightData extends LightData implements InstancedLightData, DDALightData, EditorAttributeProvider {
 
     private static final float MAX_ANGLE_SIZE = (float) (65535.0 / 2.0 / Math.PI);
 
@@ -31,7 +33,7 @@ public class AreaLightData extends LightData implements InstancedLightData, Edit
 
     protected float angle;
     protected float distance;
-    protected boolean occluded;
+    protected boolean occlusionEnabled;
 
     public AreaLightData() {
         this.matrix = new Matrix4d();
@@ -42,16 +44,7 @@ public class AreaLightData extends LightData implements InstancedLightData, Edit
 
         this.angle = (float) Math.toRadians(45);
         this.distance = 1.0F;
-        this.occluded = false;
-    }
-
-    public boolean isOccluded() {
-        return this.occluded;
-    }
-
-    public AreaLightData setOccluded(boolean occluded) {
-        this.occluded = occluded;
-        return this;
+        this.occlusionEnabled = false;
     }
 
     protected void updateMatrix() {
@@ -99,6 +92,11 @@ public class AreaLightData extends LightData implements InstancedLightData, Edit
         return this.distance;
     }
 
+    @Override
+    public boolean isOcclusionEnabled() {
+        return this.occlusionEnabled;
+    }
+
     /**
      * Sets the size of the light's surface
      *
@@ -127,6 +125,11 @@ public class AreaLightData extends LightData implements InstancedLightData, Edit
      */
     public AreaLightData setDistance(float distance) {
         this.distance = distance;
+        return this;
+    }
+
+    public AreaLightData setOcclusionEnabled(boolean occlusionEnabled) {
+        this.occlusionEnabled = occlusionEnabled;
         return this;
     }
 
@@ -174,7 +177,7 @@ public class AreaLightData extends LightData implements InstancedLightData, Edit
 
         buffer.putShort((short) Mth.clamp((int) (this.angle * MAX_ANGLE_SIZE), 0, 65535));
         buffer.putFloat(this.distance);
-        buffer.putFloat(this.occluded ? 1.0F : 0.0F);
+        buffer.putFloat(this.occlusionEnabled ? 1.0F : 0.0F);
     }
 
     @Override
@@ -213,7 +216,6 @@ public class AreaLightData extends LightData implements InstancedLightData, Edit
 
         float[] editAngle = new float[]{this.angle};
         float[] editDistance = new float[]{this.distance};
-        imgui.type.ImBoolean editOccluded = new imgui.type.ImBoolean(this.occluded);
 
         if (ImGui.dragFloat2("size", editSize, 0.02F, 0.0001F)) {
             this.setSize(editSize[0], editSize[1]);
@@ -264,8 +266,8 @@ public class AreaLightData extends LightData implements InstancedLightData, Edit
             this.setDistance(editDistance[0]);
         }
 
-        if (ImGui.checkbox("Occluded", editOccluded)) {
-            this.occluded = editOccluded.get();
+        if (ImGui.checkbox("Occluded", this.occlusionEnabled)) {
+            this.occlusionEnabled = !this.occlusionEnabled;
         }
     }
 }

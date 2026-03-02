@@ -1,37 +1,36 @@
 package foundry.veil.impl.client.render.light;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import foundry.veil.Veil;
-import foundry.veil.api.client.registry.LightTypeRegistry;
 import foundry.veil.api.client.render.VeilRenderSystem;
-import foundry.veil.api.client.render.light.data.AreaLightData;
-import foundry.veil.api.client.render.light.data.PointLightData;
-import foundry.veil.api.client.render.light.renderer.LightRenderHandle;
-import foundry.veil.api.client.render.light.renderer.LightRenderer;
-import foundry.veil.api.client.render.shader.program.ShaderProgram;
+import foundry.veil.api.client.render.light.renderer.DDALightRenderer;
+import foundry.veil.api.client.render.light.renderer.LightTypeRenderer;
 import it.unimi.dsi.fastutil.longs.LongArrayFIFOQueue;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.ApiStatus;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
+import java.util.Collection;
 import java.util.Objects;
 
 import static org.lwjgl.opengl.GL11C.*;
 import static org.lwjgl.opengl.GL12C.*;
 import static org.lwjgl.opengl.GL30C.GL_R8;
 
+@ApiStatus.Internal
 public final class VoxelShadowGrid {
 
     public static final int GRID_SIZE = 64;
-    private static final int HALF = GRID_SIZE / 2;
+    private static final int HALF = GRID_SIZE >> 1;
     private static final int GRID_VOLUME = GRID_SIZE * GRID_SIZE * GRID_SIZE;
     private static final int SLICE_AREA = GRID_SIZE * GRID_SIZE;
 
@@ -40,9 +39,7 @@ public final class VoxelShadowGrid {
     private static final int MAX_DIRTY_UPDATES_PER_FRAME = 512;
     private static final int MAX_DIRTY_BACKLOG = 16384;
 
-    private static final ResourceLocation POINT_SHADER = Veil.veilPath("light/point");
-    private static final ResourceLocation AREA_SHADER = Veil.veilPath("light/area");
-
+    private static final Vector3f uniformGridPos = new Vector3f();
     private static int textureId;
 
     private static ResourceKey<Level> gridDimension;
@@ -63,7 +60,7 @@ public final class VoxelShadowGrid {
     private VoxelShadowGrid() {
     }
 
-    public static void beforeRenderLights() {
+    public static void setup() {
         RenderSystem.assertOnRenderThread();
 
         Minecraft client = Minecraft.getInstance();
@@ -90,8 +87,8 @@ public final class VoxelShadowGrid {
                 startFullBuild(level, cx, cy, cz);
             } else if (buildBuffer != null) {
                 int maxDelta = Math.max(
-                    Math.abs(cx - (buildOriginX + HALF)),
-                    Math.max(Math.abs(cy - (buildOriginY + HALF)), Math.abs(cz - (buildOriginZ + HALF)))
+                        Math.abs(cx - (buildOriginX + HALF)),
+                        Math.max(Math.abs(cy - (buildOriginY + HALF)), Math.abs(cz - (buildOriginZ + HALF)))
                 );
                 if (!Objects.equals(buildDimension, level.dimension()) || maxDelta >= HALF) {
                     startFullBuild(level, cx, cy, cz);
@@ -111,7 +108,11 @@ public final class VoxelShadowGrid {
             uploadBuffer(gridBuffer);
         }
 
-        pushUniforms(level, cx, cy, cz);
+        if (gridBuffer != null && Objects.equals(gridDimension, level.dimension())) {
+            uniformGridPos.set(originX, originY, originZ);
+        } else {
+            uniformGridPos.set(cx - HALF, cy - HALF, cz - HALF);
+        }
     }
 
     public static void markBlockDirty(BlockPos pos) {
@@ -235,14 +236,29 @@ public final class VoxelShadowGrid {
             int ax = Math.abs(dx), ay = Math.abs(dy), az = Math.abs(dz);
 
             if (dx != 0 && ax >= ay && ax >= az) {
-                if (dx > 0) { shiftXPositive(level); dx--; }
-                else        { shiftXNegative(level); dx++; }
+                if (dx > 0) {
+                    shiftXPositive(level);
+                    dx--;
+                } else {
+                    shiftXNegative(level);
+                    dx++;
+                }
             } else if (dz != 0 && az >= ay) {
-                if (dz > 0) { shiftZPositive(level); dz--; }
-                else        { shiftZNegative(level); dz++; }
+                if (dz > 0) {
+                    shiftZPositive(level);
+                    dz--;
+                } else {
+                    shiftZNegative(level);
+                    dz++;
+                }
             } else if (dy != 0) {
-                if (dy > 0) { shiftYPositive(level); dy--; }
-                else        { shiftYNegative(level); dy++; }
+                if (dy > 0) {
+                    shiftYPositive(level);
+                    dy--;
+                } else {
+                    shiftYNegative(level);
+                    dy++;
+                }
             } else {
                 break;
             }
@@ -269,6 +285,10 @@ public final class VoxelShadowGrid {
                 DRAIN_SCRATCH[i] = DIRTY_QUEUE.dequeueLong();
                 DIRTY_SET.remove(DRAIN_SCRATCH[i]);
             }
+        }
+
+        if (toDrain == 0) {
+            return false;
         }
 
         boolean updatedGrid = false;
@@ -428,37 +448,20 @@ public final class VoxelShadowGrid {
     }
 
     private static boolean hasOccludedLights() {
-        LightRenderer renderer = VeilRenderSystem.renderer().getLightRenderer();
-        for (LightRenderHandle<PointLightData> handle : renderer.getLights(LightTypeRegistry.POINT.get())) {
-            if (handle.getLightData().isOccluded()) return true;
-        }
-        for (LightRenderHandle<AreaLightData> handle : renderer.getLights(LightTypeRegistry.AREA.get())) {
-            if (handle.getLightData().isOccluded()) return true;
+        Collection<LightTypeRenderer<?>> renderers = VeilRenderSystem.renderer().getLightRenderer().getRenderers().values();
+        for (LightTypeRenderer<?> renderer : renderers) {
+            if (renderer instanceof DDALightRenderer<?> ddaLightRenderer && ddaLightRenderer.hasOccludedLights()) {
+                return true;
+            }
         }
         return false;
     }
 
-    private static void pushUniforms(ClientLevel level, int cx, int cy, int cz) {
-        int ox, oy, oz;
-        if (gridBuffer != null && Objects.equals(gridDimension, level.dimension())) {
-            ox = originX;
-            oy = originY;
-            oz = originZ;
-        } else {
-            ox = cx - HALF;
-            oy = cy - HALF;
-            oz = cz - HALF;
-        }
-        pushUniforms(POINT_SHADER, ox, oy, oz);
-        pushUniforms(AREA_SHADER, ox, oy, oz);
+    public static Vector3fc getUniformGridPos() {
+        return uniformGridPos;
     }
 
-    private static void pushUniforms(ResourceLocation shader, int ox, int oy, int oz) {
-        ShaderProgram program = VeilRenderSystem.renderer().getShaderManager().getShader(shader);
-        if (program == null || !program.isValid()) {
-            return;
-        }
-        program.setSampler("BlockGrid", textureId);
-        program.getUniformSafe("GridOrigin").setVector(ox, oy, oz);
+    public static int getTextureId() {
+        return textureId;
     }
 }

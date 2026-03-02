@@ -10,9 +10,11 @@ import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.light.data.LightData;
 import foundry.veil.api.client.render.vertex.VertexArray;
+import foundry.veil.impl.client.render.light.VoxelShadowGrid;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.UnmodifiableView;
 import org.lwjgl.system.NativeResource;
 
 import java.util.Collection;
@@ -35,12 +37,14 @@ public final class LightRenderer implements NativeResource {
 
     private static final ResourceLocation BUFFER_ID = Veil.veilPath("lights");
     private final Map<LightTypeRegistry.LightType<?>, LightTypeRenderer<?>> renderers;
+    private final Map<LightTypeRegistry.LightType<?>, LightTypeRenderer<?>> renderersView;
 
     /**
      * Creates a new light renderer.
      */
     public LightRenderer() {
         this.renderers = new Object2ObjectArrayMap<>();
+        this.renderersView = Collections.unmodifiableMap(this.renderers);
     }
 
     /**
@@ -52,6 +56,7 @@ public final class LightRenderer implements NativeResource {
     @ApiStatus.Internal
     public boolean render(CullFrustum frustum, AdvancedFbo lightFbo) {
         boolean hasRendered = false;
+        boolean setupDDA = false;
         VeilRenderer renderer = VeilRenderSystem.renderer();
 
         for (LightTypeRenderer<?> lightRenderer : this.renderers.values()) {
@@ -73,6 +78,14 @@ public final class LightRenderer implements NativeResource {
                 break;
             }
 
+            // Decide if the DDA needs to be updated
+            if (lightRenderer instanceof DDALightRenderer<?> ddalightRenderer) {
+                if (!setupDDA) {
+                    VoxelShadowGrid.setup();
+                    setupDDA = true;
+                }
+                ddalightRenderer.uploadVoxelGridUniforms(VoxelShadowGrid.getTextureId(), VoxelShadowGrid.getUniformGridPos());
+            }
             lightRenderer.renderLights(this);
         }
 
@@ -120,6 +133,15 @@ public final class LightRenderer implements NativeResource {
     public <T extends LightData> Collection<? extends LightRenderHandle<T>> getLights(LightTypeRegistry.LightType<? extends T> type) {
         LightTypeRenderer<?> renderer = this.renderers.get(type);
         return renderer != null ? (Collection<? extends LightRenderHandle<T>>) renderer.getLights() : Collections.emptyList();
+    }
+
+    /**
+     * @return A view of all existing light renderers
+     * @since 3.3.0
+     */
+    @UnmodifiableView
+    public Map<LightTypeRegistry.LightType<?>, LightTypeRenderer<?>> getRenderers() {
+        return this.renderersView;
     }
 
     @Override

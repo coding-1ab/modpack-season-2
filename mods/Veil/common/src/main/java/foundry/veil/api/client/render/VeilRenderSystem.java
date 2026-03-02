@@ -35,12 +35,12 @@ import foundry.veil.impl.client.imgui.AdvancedFboImGuiAreaImpl;
 import foundry.veil.impl.client.imgui.VeilImGuiImpl;
 import foundry.veil.impl.client.necromancer.render.NecromancerRenderDispatcher;
 import foundry.veil.impl.client.render.dynamicbuffer.VanillaShaderCompiler;
+import foundry.veil.impl.client.render.light.VoxelShadowGrid;
 import foundry.veil.impl.client.render.pipeline.VeilBloomRenderer;
 import foundry.veil.impl.client.render.pipeline.VeilShaderBlockState;
 import foundry.veil.impl.client.render.pipeline.VeilShaderBufferCache;
 import foundry.veil.impl.client.render.profiler.VeilRenderProfilerImpl;
 import foundry.veil.impl.client.render.shader.program.ShaderProgramImpl;
-import foundry.veil.impl.client.render.light.VoxelShadowGrid;
 import foundry.veil.mixin.pipeline.accessor.PipelineBufferSourceAccessor;
 import foundry.veil.platform.VeilEventPlatform;
 import net.minecraft.Util;
@@ -1278,8 +1278,6 @@ public final class VeilRenderSystem {
             AdvancedFbo.unbind();
             return false;
         }
-
-        VoxelShadowGrid.beforeRenderLights();
 
         VeilDebug debug = VeilDebug.get();
         debug.pushDebugGroup("Veil Draw Lights");

@@ -4,6 +4,7 @@ import foundry.veil.api.client.color.Colorc;
 import foundry.veil.api.client.editor.EditorAttributeProvider;
 import foundry.veil.api.client.registry.LightTypeRegistry;
 import foundry.veil.api.client.render.CullFrustum;
+import foundry.veil.api.client.render.light.DDALightData;
 import foundry.veil.api.client.render.light.IndirectLightData;
 import imgui.ImGui;
 import net.minecraft.client.Camera;
@@ -19,25 +20,16 @@ import java.nio.ByteBuffer;
  *
  * @since 2.0.0
  */
-public class PointLightData extends LightData implements IndirectLightData, EditorAttributeProvider {
+public class PointLightData extends LightData implements IndirectLightData, DDALightData, EditorAttributeProvider {
 
     protected final Vector3d position;
     protected float radius;
-    protected boolean occluded;
+    protected boolean occlusionEnabled;
 
     public PointLightData() {
         this.position = new Vector3d();
         this.radius = 1.0F;
-        this.occluded = false;
-    }
-
-    public boolean isOccluded() {
-        return this.occluded;
-    }
-
-    public PointLightData setOccluded(boolean occluded) {
-        this.occluded = occluded;
-        return this;
+        this.occlusionEnabled = false;
     }
 
     @Override
@@ -48,6 +40,11 @@ public class PointLightData extends LightData implements IndirectLightData, Edit
     @Override
     public Vector3dc getPosition() {
         return this.position;
+    }
+
+    @Override
+    public boolean isOcclusionEnabled() {
+        return this.occlusionEnabled;
     }
 
     public PointLightData setPosition(Vector3dc pos) {
@@ -62,6 +59,11 @@ public class PointLightData extends LightData implements IndirectLightData, Edit
 
     public PointLightData setRadius(float radius) {
         this.radius = radius;
+        return this;
+    }
+
+    public PointLightData setOcclusionEnabled(boolean occlusionEnabled) {
+        this.occlusionEnabled = occlusionEnabled;
         return this;
     }
 
@@ -108,7 +110,7 @@ public class PointLightData extends LightData implements IndirectLightData, Edit
         buffer.putFloat(this.color.green() * this.brightness);
         buffer.putFloat(this.color.blue() * this.brightness);
         buffer.putFloat(this.radius);
-        buffer.putFloat(this.occluded ? 1.0F : 0.0F);
+        buffer.putFloat(this.occlusionEnabled ? 1.0F : 0.0F);
     }
 
     @Override
@@ -130,7 +132,6 @@ public class PointLightData extends LightData implements IndirectLightData, Edit
         double[] editZ = new double[]{this.position.z()};
 
         float[] editRadius = new float[]{this.radius};
-        imgui.type.ImBoolean editOccluded = new imgui.type.ImBoolean(this.occluded);
 
         float totalWidth = ImGui.calcItemWidth();
         ImGui.pushItemWidth(totalWidth / 3.0F - (ImGui.getStyle().getItemInnerSpacingX() * 0.58F));
@@ -154,8 +155,8 @@ public class PointLightData extends LightData implements IndirectLightData, Edit
             this.setRadius(editRadius[0]);
         }
 
-        if (ImGui.checkbox("Occluded", editOccluded)) {
-            this.occluded = editOccluded.get();
+        if (ImGui.checkbox("Occluded", this.occlusionEnabled)) {
+            this.occlusionEnabled = !this.occlusionEnabled;
         }
     }
 }

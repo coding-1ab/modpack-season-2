@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import foundry.veil.Veil;
 import foundry.veil.api.client.render.light.data.PointLightData;
+import foundry.veil.api.client.render.light.renderer.DDALightRenderer;
 import foundry.veil.api.client.render.light.renderer.InstancedLightRenderer;
 import foundry.veil.api.client.render.light.renderer.LightRenderHandle;
 import foundry.veil.api.client.render.light.renderer.LightTypeRenderer;
@@ -16,11 +17,12 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3fc;
 
 import java.util.List;
 
 @ApiStatus.Internal
-public class InstancedPointLightRenderer extends InstancedLightRenderer<PointLightData> {
+public class InstancedPointLightRenderer extends InstancedLightRenderer<PointLightData> implements DDALightRenderer<PointLightData> {
 
     private static final ResourceLocation RENDER_TYPE = Veil.veilPath("light/point");
 
@@ -46,5 +48,18 @@ public class InstancedPointLightRenderer extends InstancedLightRenderer<PointLig
     @Override
     protected @Nullable RenderType getRenderType(List<? extends LightRenderHandle<PointLightData>> lights) {
         return VeilRenderType.get(RENDER_TYPE);
+    }
+
+    @Override
+    public void uploadVoxelGridUniforms(int voxelGridTexture, Vector3fc voxelGridOrigin) {
+        RenderType renderType = VeilRenderType.get(RENDER_TYPE);
+        if (renderType == null) {
+            return;
+        }
+
+        ResourceLocation veilShaderId = VeilRenderType.getShards(renderType).veilShaderId();
+        if (veilShaderId != null) {
+            DDALightRenderer.uploadVoxelGridUniforms(veilShaderId, voxelGridTexture, voxelGridOrigin);
+        }
     }
 }
