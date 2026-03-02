@@ -16,15 +16,17 @@ import net.minecraft.world.level.storage.loot.predicates.*;
 import net.minecraftforge.common.data.GlobalLootModifierProvider;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import vectorwing.farmersdelight.FarmersDelight;
-import vectorwing.farmersdelight.common.block.RiceBlock;
+import vectorwing.farmersdelight.common.block.RicePaniclesBlock;
 import vectorwing.farmersdelight.common.loot.modifier.AddItemModifier;
 import vectorwing.farmersdelight.common.loot.modifier.AddLootTableModifier;
 import vectorwing.farmersdelight.common.loot.modifier.PastrySlicingModifier;
 import vectorwing.farmersdelight.common.loot.modifier.ReplaceItemModifier;
 import vectorwing.farmersdelight.common.registry.ModBlocks;
 import vectorwing.farmersdelight.common.registry.ModItems;
-import vectorwing.farmersdelight.common.registry.ModLootTables;
+import vectorwing.farmersdelight.common.registry.ModChestLootTables;
 import vectorwing.farmersdelight.common.tag.ModTags;
+
+import java.util.List;
 
 public class LootModifiers extends GlobalLootModifierProvider {
 	public LootModifiers(PackOutput output) {
@@ -34,20 +36,20 @@ public class LootModifiers extends GlobalLootModifierProvider {
 	@Override
 	protected void start() {
 		//chest loot
-		this.add("add_loot_abandoned_mineshaft", this.createNewPool(BuiltInLootTables.ABANDONED_MINESHAFT, ModLootTables.ABANDONED_MINESHAFT));
-		this.add("add_loot_bastion_hoglin_stable", this.createNewPool(BuiltInLootTables.BASTION_HOGLIN_STABLE, ModLootTables.BASTION_HOGLIN_STABLE));
-		this.add("add_loot_bastion_treasure", this.createNewPool(BuiltInLootTables.BASTION_TREASURE, ModLootTables.BASTION_TREASURE));
-		this.add("add_loot_end_city_treasure", this.createNewPool(BuiltInLootTables.END_CITY_TREASURE, ModLootTables.END_CITY_TREASURE));
-		this.add("add_loot_pillager_outpost", this.createNewPool(BuiltInLootTables.PILLAGER_OUTPOST, ModLootTables.PILLAGER_OUTPOST));
-		this.add("add_loot_ruined_portal", this.createNewPool(BuiltInLootTables.RUINED_PORTAL, ModLootTables.RUINED_PORTAL));
-		this.add("add_loot_shipwreck_supply", this.createNewPool(BuiltInLootTables.SHIPWRECK_SUPPLY, ModLootTables.SHIPWRECK_SUPPLY));
-		this.add("add_loot_simple_dungeon", this.createNewPool(BuiltInLootTables.SIMPLE_DUNGEON, ModLootTables.SIMPLE_DUNGEON));
-		this.add("add_loot_village_butcher", this.createNewPool(BuiltInLootTables.VILLAGE_BUTCHER, ModLootTables.VILLAGE_BUTCHER));
-		this.add("add_loot_village_desert_house", this.createNewPool(BuiltInLootTables.VILLAGE_DESERT_HOUSE, ModLootTables.VILLAGE_DESERT_HOUSE));
-		this.add("add_loot_village_plains_house", this.createNewPool(BuiltInLootTables.VILLAGE_PLAINS_HOUSE, ModLootTables.VILLAGE_PLAINS_HOUSE));
-		this.add("add_loot_village_savanna_house", this.createNewPool(BuiltInLootTables.VILLAGE_SAVANNA_HOUSE, ModLootTables.VILLAGE_SAVANNA_HOUSE));
-		this.add("add_loot_village_snowy_house", this.createNewPool(BuiltInLootTables.VILLAGE_SNOWY_HOUSE, ModLootTables.VILLAGE_SNOWY_HOUSE));
-		this.add("add_loot_village_taiga_house", this.createNewPool(BuiltInLootTables.VILLAGE_TAIGA_HOUSE, ModLootTables.VILLAGE_TAIGA_HOUSE));
+		this.add("add_loot_abandoned_mineshaft", this.createNewPool(BuiltInLootTables.ABANDONED_MINESHAFT, ModChestLootTables.ABANDONED_MINESHAFT));
+		this.add("add_loot_bastion_hoglin_stable", this.createNewPool(BuiltInLootTables.BASTION_HOGLIN_STABLE, ModChestLootTables.BASTION_HOGLIN_STABLE));
+		this.add("add_loot_bastion_treasure", this.createNewPool(BuiltInLootTables.BASTION_TREASURE, ModChestLootTables.BASTION_TREASURE));
+		this.add("add_loot_end_city_treasure", this.createNewPool(BuiltInLootTables.END_CITY_TREASURE, ModChestLootTables.END_CITY_TREASURE));
+		this.add("add_loot_pillager_outpost", this.createNewPool(BuiltInLootTables.PILLAGER_OUTPOST, ModChestLootTables.PILLAGER_OUTPOST));
+		this.add("add_loot_ruined_portal", this.createNewPool(BuiltInLootTables.RUINED_PORTAL, ModChestLootTables.RUINED_PORTAL));
+		this.add("add_loot_shipwreck_supply", this.createNewPool(BuiltInLootTables.SHIPWRECK_SUPPLY, ModChestLootTables.SHIPWRECK_SUPPLY));
+		this.add("add_loot_simple_dungeon", this.createNewPool(BuiltInLootTables.SIMPLE_DUNGEON, ModChestLootTables.SIMPLE_DUNGEON));
+		this.add("add_loot_village_butcher", this.createNewPool(BuiltInLootTables.VILLAGE_BUTCHER, ModChestLootTables.VILLAGE_BUTCHER));
+		this.add("add_loot_village_desert_house", this.createNewPool(BuiltInLootTables.VILLAGE_DESERT_HOUSE, ModChestLootTables.VILLAGE_DESERT_HOUSE));
+		this.add("add_loot_village_plains_house", this.createNewPool(BuiltInLootTables.VILLAGE_PLAINS_HOUSE, ModChestLootTables.VILLAGE_PLAINS_HOUSE));
+		this.add("add_loot_village_savanna_house", this.createNewPool(BuiltInLootTables.VILLAGE_SAVANNA_HOUSE, ModChestLootTables.VILLAGE_SAVANNA_HOUSE));
+		this.add("add_loot_village_snowy_house", this.createNewPool(BuiltInLootTables.VILLAGE_SNOWY_HOUSE, ModChestLootTables.VILLAGE_SNOWY_HOUSE));
+		this.add("add_loot_village_taiga_house", this.createNewPool(BuiltInLootTables.VILLAGE_TAIGA_HOUSE, ModChestLootTables.VILLAGE_TAIGA_HOUSE));
 
 		//entity drops
 		this.add("scavenging_feather", this.addItemWithKnifeKill(Items.FEATHER, EntityType.CHICKEN));
@@ -62,6 +64,7 @@ public class LootModifiers extends GlobalLootModifierProvider {
 
 		//block drops
 		this.add("scavenging_pumpkin", new ReplaceItemModifier(new LootItemCondition[]{
+				LootItemBlockStatePropertyCondition.hasBlockStateProperties(Blocks.PUMPKIN).build(),
 				MatchTool.toolMatches(ItemPredicate.Builder.item().of(ModTags.KNIVES))
 						.and(MatchTool.toolMatches(ItemPredicate.Builder.item().hasEnchantment(new EnchantmentPredicate(Enchantments.SILK_TOUCH, MinMaxBounds.Ints.ANY))).invert()).build()
 		}, Items.PUMPKIN, ModItems.PUMPKIN_SLICE.get(), 4));
@@ -69,15 +72,15 @@ public class LootModifiers extends GlobalLootModifierProvider {
 		//pastry slicing
 		this.add("slicing_apple_pie", this.pastrySlicing(ModItems.APPLE_PIE_SLICE.get(), ModBlocks.APPLE_PIE.get()));
 		this.add("slicing_cake", this.pastrySlicing(ModItems.CAKE_SLICE.get(), Blocks.CAKE));
-		this.add("slicing_candle_cake", this.pastrySlicing(ModItems.CAKE_SLICE.get(), Blocks.CANDLE_CAKE, Blocks.WHITE_CANDLE_CAKE, Blocks.ORANGE_CANDLE_CAKE, Blocks.MAGENTA_CANDLE_CAKE, Blocks.LIGHT_BLUE_CANDLE_CAKE, Blocks.YELLOW_CANDLE_CAKE, Blocks.LIME_CANDLE_CAKE, Blocks.PINK_CANDLE_CAKE, Blocks.GRAY_CANDLE_CAKE, Blocks.LIGHT_GRAY_CANDLE_CAKE, Blocks.CYAN_CANDLE_CAKE, Blocks.PURPLE_CANDLE_CAKE, Blocks.BLUE_CANDLE_CAKE, Blocks.BROWN_CANDLE_CAKE, Blocks.GREEN_CANDLE_CAKE, Blocks.RED_CANDLE_CAKE, Blocks.BLACK_CANDLE_CAKE));
 		this.add("slicing_chocolate_pie", this.pastrySlicing(ModItems.CHOCOLATE_PIE_SLICE.get(), ModBlocks.CHOCOLATE_PIE.get()));
 		this.add("slicing_pumpkin_pie", this.pastrySlicing(ModItems.PUMPKIN_PIE_SLICE.get(), ModBlocks.PUMPKIN_PIE.get()));
 		this.add("slicing_sweet_berry_cheesecake", this.pastrySlicing(ModItems.SWEET_BERRY_CHEESECAKE_SLICE.get(), ModBlocks.SWEET_BERRY_CHEESECAKE.get()));
+		this.add("slicing_candle_cake", this.candleCakeSlicing());
 
 		//straw
 		this.add("straw_from_grass", this.strawHarvesting(LootItemBlockStatePropertyCondition.hasBlockStateProperties(Blocks.GRASS), 0.2F));
-		this.add("straw_from_mature_rice", this.strawHarvesting(LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.RICE_CROP.get()).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(RiceBlock.AGE, 3)), 1.0F));
-		this.add("straw_from_mature_wheat", this.strawHarvesting(LootItemBlockStatePropertyCondition.hasBlockStateProperties(Blocks.WHEAT).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CropBlock.AGE, 7)), 1.0F));
+		this.add("straw_from_mature_rice", this.strawHarvesting(LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.RICE_CROP_PANICLES.get()).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(RicePaniclesBlock.RICE_AGE, 3))));
+		this.add("straw_from_mature_wheat", this.strawHarvesting(LootItemBlockStatePropertyCondition.hasBlockStateProperties(Blocks.WHEAT).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CropBlock.AGE, 7))));
 		this.add("straw_from_sandy_shrub", this.strawHarvesting(LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.SANDY_SHRUB.get()), 0.3F));
 		this.add("straw_from_tall_grass", this.strawHarvesting(LootItemBlockStatePropertyCondition.hasBlockStateProperties(Blocks.TALL_GRASS), 0.2F));
 	}
@@ -123,20 +126,28 @@ public class LootModifiers extends GlobalLootModifierProvider {
 						EntityPredicate.Builder.entity().flags(
 										EntityFlagsPredicate.Builder.flags().setOnFire(fire).build())
 								.build())
-						.build()
+						.build(),
+				LootItemRandomChanceWithLootingCondition.randomChanceAndLootingBoost(0.5F, 0.1F).build()
 		}, item, 1);
 	}
 
-	private PastrySlicingModifier pastrySlicing(Item receivedItem, Block... slicedBlock) {
-		//make an array to hold all possible entities that the modifier applies to
-		LootItemCondition.Builder[] condition = new LootItemCondition.Builder[slicedBlock.length];
+	private AddItemModifier candleCakeSlicing() {
+		List<Block> cakes = List.of(Blocks.CANDLE_CAKE, Blocks.WHITE_CANDLE_CAKE, Blocks.ORANGE_CANDLE_CAKE, Blocks.MAGENTA_CANDLE_CAKE, Blocks.LIGHT_BLUE_CANDLE_CAKE, Blocks.YELLOW_CANDLE_CAKE, Blocks.LIME_CANDLE_CAKE, Blocks.PINK_CANDLE_CAKE, Blocks.GRAY_CANDLE_CAKE, Blocks.LIGHT_GRAY_CANDLE_CAKE, Blocks.CYAN_CANDLE_CAKE, Blocks.PURPLE_CANDLE_CAKE, Blocks.BLUE_CANDLE_CAKE, Blocks.BROWN_CANDLE_CAKE, Blocks.GREEN_CANDLE_CAKE, Blocks.RED_CANDLE_CAKE, Blocks.BLACK_CANDLE_CAKE);
+		LootItemCondition.Builder[] conditions = new LootItemCondition.Builder[cakes.size()];
 		//add every block we list. The list can be as long as we want it to be.
-		for (int i = 0; i < slicedBlock.length; i++) {
-			condition[i] = LootItemBlockStatePropertyCondition.hasBlockStateProperties(slicedBlock[i]);
+		for (int i = 0; i < cakes.size(); i++) {
+			conditions[i] = LootItemBlockStatePropertyCondition.hasBlockStateProperties(cakes.get(i));
 		}
+		return new AddItemModifier(new LootItemCondition[]{
+				MatchTool.toolMatches(ItemPredicate.Builder.item().of(ModTags.KNIVES)).build(),
+				AnyOfCondition.anyOf(conditions).build()
+		}, ModItems.CAKE_SLICE.get(), 7);
+	}
+
+	private PastrySlicingModifier pastrySlicing(Item receivedItem, Block slicedBlock) {
 		return new PastrySlicingModifier(new LootItemCondition[]{
 				MatchTool.toolMatches(ItemPredicate.Builder.item().of(ModTags.KNIVES)).build(),
-				AnyOfCondition.anyOf(condition).build()
+				LootItemBlockStatePropertyCondition.hasBlockStateProperties(slicedBlock).build()
 		}, receivedItem);
 	}
 
@@ -144,6 +155,13 @@ public class LootModifiers extends GlobalLootModifierProvider {
 		return new AddItemModifier(new LootItemCondition[]{
 				MatchTool.toolMatches(ItemPredicate.Builder.item().of(ModTags.STRAW_HARVESTERS)).build(),
 				LootItemRandomChanceCondition.randomChance(chance).build(), //TODO see if looting should also be accounted for
+				slicedBlock.build()
+		}, ModItems.STRAW.get(), 1);
+	}
+
+	private AddItemModifier strawHarvesting(LootItemBlockStatePropertyCondition.Builder slicedBlock) {
+		return new AddItemModifier(new LootItemCondition[]{
+				MatchTool.toolMatches(ItemPredicate.Builder.item().of(ModTags.STRAW_HARVESTERS)).build(),
 				slicedBlock.build()
 		}, ModItems.STRAW.get(), 1);
 	}

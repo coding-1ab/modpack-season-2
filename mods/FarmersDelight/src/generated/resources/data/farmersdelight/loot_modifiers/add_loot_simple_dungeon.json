@@ -6,5 +6,5 @@
       "loot_table_id": "minecraft:chests/simple_dungeon"
     }
   ],
-  "lootTable": "farmersdelight:chests/fd_simple_dungeons"
+  "lootTable": "farmersdelight:chests/fd_simple_dungeon"
 }

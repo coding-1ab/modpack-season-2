@@ -8,13 +8,8 @@
       }
     },
     {
-      "condition": "minecraft:any_of",
-      "terms": [
-        {
-          "block": "farmersdelight:sweet_berry_cheesecake",
-          "condition": "minecraft:block_state_property"
-        }
-      ]
+      "block": "farmersdelight:sweet_berry_cheesecake",
+      "condition": "minecraft:block_state_property"
     }
   ],
   "slice": "farmersdelight:sweet_berry_cheesecake_slice"

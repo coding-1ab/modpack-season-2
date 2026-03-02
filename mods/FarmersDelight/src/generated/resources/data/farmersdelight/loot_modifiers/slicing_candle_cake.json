@@ -1,5 +1,5 @@
 {
-  "type": "farmersdelight:pastry_slicing",
+  "type": "farmersdelight:add_item",
   "conditions": [
     {
       "condition": "minecraft:match_tool",
@@ -81,5 +81,6 @@
       ]
     }
   ],
-  "slice": "farmersdelight:cake_slice"
+  "count": 7,
+  "item": "farmersdelight:cake_slice"
 }

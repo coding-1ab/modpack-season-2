@@ -13,7 +13,7 @@ import net.minecraft.world.level.storage.loot.functions.SetItemDamageFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import vectorwing.farmersdelight.common.registry.ModItems;
-import vectorwing.farmersdelight.common.registry.ModLootTables;
+import vectorwing.farmersdelight.common.registry.ModChestLootTables;
 
 import java.util.function.BiConsumer;
 
@@ -21,7 +21,7 @@ public class FDChestLoot implements LootTableSubProvider {
 
 	@Override
 	public void generate(BiConsumer<ResourceLocation, LootTable.Builder> consumer) {
-		consumer.accept(ModLootTables.ABANDONED_MINESHAFT, LootTable.lootTable()
+		consumer.accept(ModChestLootTables.ABANDONED_MINESHAFT, LootTable.lootTable()
 				.withPool(LootPool.lootPool()
 						.setRolls(ConstantValue.exactly(1.0F))
 						.add(LootItem.lootTableItem(ModItems.COOKING_POT.get()))
@@ -44,7 +44,7 @@ public class FDChestLoot implements LootTableSubProvider {
 						.add(EmptyLootItem.emptyItem().setWeight(2))
 				));
 
-		consumer.accept(ModLootTables.BASTION_HOGLIN_STABLE, LootTable.lootTable()
+		consumer.accept(ModChestLootTables.BASTION_HOGLIN_STABLE, LootTable.lootTable()
 				.withPool(LootPool.lootPool()
 						.setRolls(ConstantValue.exactly(1.0F))
 						.add(LootItem.lootTableItem(ModItems.DIAMOND_KNIFE.get())
@@ -61,7 +61,7 @@ public class FDChestLoot implements LootTableSubProvider {
 						.add(EmptyLootItem.emptyItem().setWeight(2))
 				));
 
-		consumer.accept(ModLootTables.BASTION_TREASURE, LootTable.lootTable()
+		consumer.accept(ModChestLootTables.BASTION_TREASURE, LootTable.lootTable()
 				.withPool(LootPool.lootPool()
 						.setRolls(ConstantValue.exactly(1.0F))
 						.add(LootItem.lootTableItem(ModItems.DIAMOND_KNIFE.get())
@@ -71,7 +71,7 @@ public class FDChestLoot implements LootTableSubProvider {
 						.add(EmptyLootItem.emptyItem().setWeight(6))
 				));
 
-		consumer.accept(ModLootTables.END_CITY_TREASURE, LootTable.lootTable()
+		consumer.accept(ModChestLootTables.END_CITY_TREASURE, LootTable.lootTable()
 				.withPool(LootPool.lootPool()
 						.setRolls(ConstantValue.exactly(1.0F))
 						.add(LootItem.lootTableItem(ModItems.DIAMOND_KNIFE.get())
@@ -81,7 +81,7 @@ public class FDChestLoot implements LootTableSubProvider {
 						.add(EmptyLootItem.emptyItem().setWeight(6))
 				));
 
-		consumer.accept(ModLootTables.PILLAGER_OUTPOST, LootTable.lootTable()
+		consumer.accept(ModChestLootTables.PILLAGER_OUTPOST, LootTable.lootTable()
 				.withPool(LootPool.lootPool()
 						.setRolls(UniformGenerator.between(1.0F, 2.0F))
 						.add(LootItem.lootTableItem(ModItems.ONION.get()).setWeight(5)
@@ -91,7 +91,7 @@ public class FDChestLoot implements LootTableSubProvider {
 						.add(EmptyLootItem.emptyItem().setWeight(2))
 				));
 
-		consumer.accept(ModLootTables.RUINED_PORTAL, LootTable.lootTable()
+		consumer.accept(ModChestLootTables.RUINED_PORTAL, LootTable.lootTable()
 				.withPool(LootPool.lootPool()
 						.setRolls(ConstantValue.exactly(1.0F))
 						.add(LootItem.lootTableItem(ModItems.GOLDEN_KNIFE.get())
@@ -99,7 +99,7 @@ public class FDChestLoot implements LootTableSubProvider {
 						.add(EmptyLootItem.emptyItem().setWeight(3))
 				));
 
-		consumer.accept(ModLootTables.SHIPWRECK_SUPPLY, LootTable.lootTable()
+		consumer.accept(ModChestLootTables.SHIPWRECK_SUPPLY, LootTable.lootTable()
 				.withPool(LootPool.lootPool()
 						.setRolls(UniformGenerator.between(1.0F, 2.0F))
 						.add(LootItem.lootTableItem(ModItems.TOMATO_SEEDS.get()).setWeight(6)
@@ -117,7 +117,7 @@ public class FDChestLoot implements LootTableSubProvider {
 						.add(EmptyLootItem.emptyItem().setWeight(1))
 				));
 
-		consumer.accept(ModLootTables.SIMPLE_DUNGEON, LootTable.lootTable()
+		consumer.accept(ModChestLootTables.SIMPLE_DUNGEON, LootTable.lootTable()
 				.withPool(LootPool.lootPool()
 						.setRolls(UniformGenerator.between(1.0F, 4.0F))
 						.add(LootItem.lootTableItem(ModItems.TOMATO_SEEDS.get())
@@ -132,7 +132,7 @@ public class FDChestLoot implements LootTableSubProvider {
 						.add(EmptyLootItem.emptyItem().setWeight(2))
 				));
 
-		consumer.accept(ModLootTables.VILLAGE_BUTCHER, LootTable.lootTable()
+		consumer.accept(ModChestLootTables.VILLAGE_BUTCHER, LootTable.lootTable()
 				.withPool(LootPool.lootPool()
 						.setRolls(ConstantValue.exactly(1.0F))
 						.add(LootItem.lootTableItem(ModItems.FLINT_KNIFE.get()))
@@ -149,7 +149,7 @@ public class FDChestLoot implements LootTableSubProvider {
 								.apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 6.0F))))
 						.add(EmptyLootItem.emptyItem())));
 
-		consumer.accept(ModLootTables.VILLAGE_DESERT_HOUSE, LootTable.lootTable()
+		consumer.accept(ModChestLootTables.VILLAGE_DESERT_HOUSE, LootTable.lootTable()
 				.withPool(LootPool.lootPool()
 						.setRolls(UniformGenerator.between(1.0F, 3.0F))
 						.add(LootItem.lootTableItem(ModItems.TOMATO_SEEDS.get())
@@ -157,7 +157,7 @@ public class FDChestLoot implements LootTableSubProvider {
 						.add(LootItem.lootTableItem(ModItems.CABBAGE_SEEDS.get())
 								.apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))));
 
-		consumer.accept(ModLootTables.VILLAGE_PLAINS_HOUSE, LootTable.lootTable()
+		consumer.accept(ModChestLootTables.VILLAGE_PLAINS_HOUSE, LootTable.lootTable()
 				.withPool(LootPool.lootPool()
 						.setRolls(UniformGenerator.between(1.0F, 3.0F))
 						.add(LootItem.lootTableItem(ModItems.ONION.get())
@@ -165,7 +165,7 @@ public class FDChestLoot implements LootTableSubProvider {
 						.add(LootItem.lootTableItem(ModItems.TOMATO_SEEDS.get())
 								.apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))));
 
-		consumer.accept(ModLootTables.VILLAGE_SAVANNA_HOUSE, LootTable.lootTable()
+		consumer.accept(ModChestLootTables.VILLAGE_SAVANNA_HOUSE, LootTable.lootTable()
 				.withPool(LootPool.lootPool()
 						.setRolls(UniformGenerator.between(1.0F, 3.0F))
 						.add(LootItem.lootTableItem(ModItems.TOMATO_SEEDS.get())
@@ -173,7 +173,7 @@ public class FDChestLoot implements LootTableSubProvider {
 						.add(LootItem.lootTableItem(ModItems.CABBAGE_SEEDS.get())
 								.apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))));
 
-		consumer.accept(ModLootTables.VILLAGE_SNOWY_HOUSE, LootTable.lootTable()
+		consumer.accept(ModChestLootTables.VILLAGE_SNOWY_HOUSE, LootTable.lootTable()
 				.withPool(LootPool.lootPool()
 						.setRolls(UniformGenerator.between(1.0F, 3.0F))
 						.add(LootItem.lootTableItem(ModItems.ONION.get())
@@ -181,7 +181,7 @@ public class FDChestLoot implements LootTableSubProvider {
 						.add(LootItem.lootTableItem(ModItems.CABBAGE_SEEDS.get())
 								.apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))));
 
-		consumer.accept(ModLootTables.VILLAGE_TAIGA_HOUSE, LootTable.lootTable()
+		consumer.accept(ModChestLootTables.VILLAGE_TAIGA_HOUSE, LootTable.lootTable()
 				.withPool(LootPool.lootPool()
 						.setRolls(UniformGenerator.between(1.0F, 3.0F))
 						.add(LootItem.lootTableItem(ModItems.CABBAGE_SEEDS.get())

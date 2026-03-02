@@ -8,13 +8,8 @@
       }
     },
     {
-      "condition": "minecraft:any_of",
-      "terms": [
-        {
-          "block": "farmersdelight:chocolate_pie",
-          "condition": "minecraft:block_state_property"
-        }
-      ]
+      "block": "farmersdelight:chocolate_pie",
+      "condition": "minecraft:block_state_property"
     }
   ],
   "slice": "farmersdelight:chocolate_pie_slice"

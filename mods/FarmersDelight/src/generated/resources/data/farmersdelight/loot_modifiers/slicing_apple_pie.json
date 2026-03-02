@@ -8,13 +8,8 @@
       }
     },
     {
-      "condition": "minecraft:any_of",
-      "terms": [
-        {
-          "block": "farmersdelight:apple_pie",
-          "condition": "minecraft:block_state_property"
-        }
-      ]
+      "block": "farmersdelight:apple_pie",
+      "condition": "minecraft:block_state_property"
     }
   ],
   "slice": "farmersdelight:apple_pie_slice"

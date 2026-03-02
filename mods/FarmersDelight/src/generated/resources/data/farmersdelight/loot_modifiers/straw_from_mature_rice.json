@@ -8,11 +8,7 @@
       }
     },
     {
-      "chance": 1.0,
-      "condition": "minecraft:random_chance"
-    },
-    {
-      "block": "farmersdelight:rice",
+      "block": "farmersdelight:rice_panicles",
       "condition": "minecraft:block_state_property",
       "properties": {
         "age": "3"

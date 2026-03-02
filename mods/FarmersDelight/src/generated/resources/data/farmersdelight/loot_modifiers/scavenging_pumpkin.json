@@ -3,6 +3,10 @@
   "added_item": "farmersdelight:pumpkin_slice",
   "conditions": [
     {
+      "block": "minecraft:pumpkin",
+      "condition": "minecraft:block_state_property"
+    },
+    {
       "condition": "minecraft:all_of",
       "terms": [
         {
