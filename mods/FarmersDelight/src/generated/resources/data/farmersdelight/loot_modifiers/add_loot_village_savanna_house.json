@@ -6,5 +6,5 @@
       "loot_table_id": "minecraft:chests/village/village_savanna_house"
     }
   ],
-  "lootTable": "farmersdelight:chests/fd_village_savanna_shouse"
+  "lootTable": "farmersdelight:chests/fd_village_savanna_house"
 }

@@ -6,5 +6,5 @@
       "loot_table_id": "minecraft:chests/village/village_snowy_house"
     }
   ],
-  "lootTable": "farmersdelight:chests/fd_village_snowy_shouse"
+  "lootTable": "farmersdelight:chests/fd_village_snowy_house"
 }

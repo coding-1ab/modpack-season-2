@@ -13,11 +13,11 @@ public class ModLootTables {
     public static final ResourceLocation SHIPWRECK_SUPPLY = register("chests/fd_shipwreck_supply");
     public static final ResourceLocation SIMPLE_DUNGEON = register("chests/fd_simple_dungeons");
     public static final ResourceLocation VILLAGE_BUTCHER = register("chests/fd_village_butcher");
-    public static final ResourceLocation VILLAGE_DESERT_HOUSE = register("chests/fd_village_desert_shouse");
-    public static final ResourceLocation VILLAGE_PLAINS_HOUSE = register("chests/fd_village_plains_shouse");
-    public static final ResourceLocation VILLAGE_SAVANNA_HOUSE = register("chests/fd_village_savanna_shouse");
-    public static final ResourceLocation VILLAGE_SNOWY_HOUSE = register("chests/fd_village_snowy_shouse");
-    public static final ResourceLocation VILLAGE_TAIGA_HOUSE = register("chests/fd_village_taiga_shouse");
+    public static final ResourceLocation VILLAGE_DESERT_HOUSE = register("chests/fd_village_desert_house");
+    public static final ResourceLocation VILLAGE_PLAINS_HOUSE = register("chests/fd_village_plains_house");
+    public static final ResourceLocation VILLAGE_SAVANNA_HOUSE = register("chests/fd_village_savanna_house");
+    public static final ResourceLocation VILLAGE_SNOWY_HOUSE = register("chests/fd_village_snowy_house");
+    public static final ResourceLocation VILLAGE_TAIGA_HOUSE = register("chests/fd_village_taiga_house");
 
     private static ResourceLocation register(String id) {
         return new ResourceLocation(FarmersDelight.MODID, id);
