@@ -56,8 +56,8 @@ public class LootModifiers extends GlobalLootModifierProvider {
 		this.add("scavenging_leather", this.addItemWithKnifeKill(Items.LEATHER, EntityType.COW, EntityType.MOOSHROOM, EntityType.HORSE, EntityType.DONKEY, EntityType.MULE, EntityType.LLAMA, EntityType.TRADER_LLAMA));
 		this.add("scavenging_rabbit_hide", this.addItemWithKnifeKill(Items.RABBIT_HIDE, EntityType.RABBIT));
 		this.add("scavenging_shulker_shell", this.addItemWithKnifeKill(Items.SHULKER_SHELL, EntityType.SHULKER));
-		this.add("scavenging_smoked_ham_from_hoglin", this.addItemWithKnifeKill(ModItems.HAM.get(), true, EntityType.HOGLIN));
-		this.add("scavenging_smoked_ham_from_pig", this.addItemWithKnifeKill(ModItems.HAM.get(), true, EntityType.PIG));
+		this.add("scavenging_smoked_ham_from_hoglin", this.addItemWithKnifeKill(ModItems.SMOKED_HAM.get(), true, EntityType.HOGLIN));
+		this.add("scavenging_smoked_ham_from_pig", this.addItemWithKnifeKill(ModItems.SMOKED_HAM.get(), true, EntityType.PIG));
 		this.add("scavenging_string", this.addItemWithKnifeKill(Items.STRING, EntityType.SPIDER, EntityType.CAVE_SPIDER));
 
 		//block drops
@@ -143,7 +143,7 @@ public class LootModifiers extends GlobalLootModifierProvider {
 	private AddItemModifier strawHarvesting(LootItemBlockStatePropertyCondition.Builder slicedBlock, float chance) {
 		//make an array to hold all possible entities that the modifier applies to
 		return new AddItemModifier(new LootItemCondition[]{
-				MatchTool.toolMatches(ItemPredicate.Builder.item().of(ModTags.KNIVES)).build(),
+				MatchTool.toolMatches(ItemPredicate.Builder.item().of(ModTags.STRAW_HARVESTERS)).build(),
 				LootItemRandomChanceCondition.randomChance(chance).build(), //TODO ask if looting should also be accounted for
 				slicedBlock.build()
 		}, ModItems.STRAW.get(), 1);
