@@ -15,6 +15,9 @@
                 "min": 0.15
               },
               "function": "minecraft:set_damage"
+            },
+            {
+              "function": "minecraft:enchant_randomly"
             }
           ],
           "name": "farmersdelight:diamond_knife"

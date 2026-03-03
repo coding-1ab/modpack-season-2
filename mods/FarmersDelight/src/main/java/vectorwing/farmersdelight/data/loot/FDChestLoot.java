@@ -48,10 +48,12 @@ public class FDChestLoot implements LootTableSubProvider {
 				.withPool(LootPool.lootPool()
 						.setRolls(ConstantValue.exactly(1.0F))
 						.add(LootItem.lootTableItem(ModItems.DIAMOND_KNIFE.get())
-								.apply(SetItemDamageFunction.setDamage(UniformGenerator.between(0.15F, 0.8F))))
+								.apply(SetItemDamageFunction.setDamage(UniformGenerator.between(0.15F, 0.8F)))
+								.apply(EnchantRandomlyFunction.randomApplicableEnchantment()))
 						.add(LootItem.lootTableItem(ModItems.GOLDEN_KNIFE.get()).setWeight(2)
 								.apply(EnchantRandomlyFunction.randomApplicableEnchantment()))
 						.add(EmptyLootItem.emptyItem().setWeight(2))
+
 				).withPool(LootPool.lootPool()
 						.setRolls(UniformGenerator.between(1.0F, 2.0F))
 						.add(LootItem.lootTableItem(ModItems.HAM.get()).setWeight(4)
@@ -126,7 +128,7 @@ public class FDChestLoot implements LootTableSubProvider {
 								.apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 4.0F))))
 						.add(EmptyLootItem.emptyItem().setWeight(2))
 				).withPool(LootPool.lootPool()
-						.setRolls(ConstantValue.exactly(1.0F))
+						.setRolls(ConstantValue.exactly(3.0F))
 						.add(LootItem.lootTableItem(ModItems.ROPE.get())
 								.apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 12.0F))))
 						.add(EmptyLootItem.emptyItem().setWeight(2))
@@ -154,7 +156,7 @@ public class FDChestLoot implements LootTableSubProvider {
 						.setRolls(UniformGenerator.between(1.0F, 3.0F))
 						.add(LootItem.lootTableItem(ModItems.TOMATO_SEEDS.get())
 								.apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))
-						.add(LootItem.lootTableItem(ModItems.CABBAGE_SEEDS.get())
+						.add(LootItem.lootTableItem(ModItems.RICE.get())
 								.apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))));
 
 		consumer.accept(ModChestLootTables.VILLAGE_PLAINS_HOUSE, LootTable.lootTable()
