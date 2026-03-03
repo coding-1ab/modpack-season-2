@@ -2,6 +2,9 @@ package vectorwing.farmersdelight.common.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -38,8 +41,9 @@ public class FeastBlock extends Block
 
 	public final Supplier<Item> servingItem;
 	public final boolean hasLeftovers;
+	public final boolean hasServingParticles;
 
-	protected static final VoxelShape[] SHAPES = new VoxelShape[] {
+	protected static final VoxelShape[] SHAPES = new VoxelShape[]{
 			Block.box(2.0D, 0.0D, 2.0D, 14.0D, 1.0D, 14.0D),
 			Block.box(2.0D, 0.0D, 2.0D, 14.0D, 3.0D, 14.0D),
 			Block.box(2.0D, 0.0D, 2.0D, 14.0D, 6.0D, 14.0D),
@@ -55,10 +59,11 @@ public class FeastBlock extends Block
 	 * @param servingItem  the meal to be served
 	 * @param hasLeftovers whether the block remains when out of servings. If false, the block vanishes once it runs out
 	 */
-	public FeastBlock(Properties properties, Supplier<Item> servingItem, boolean hasLeftovers) {
+	public FeastBlock(Properties properties, Supplier<Item> servingItem, boolean hasLeftovers, boolean hasServingParticles) {
 		super(properties);
 		this.servingItem = servingItem;
 		this.hasLeftovers = hasLeftovers;
+		this.hasServingParticles = hasServingParticles;
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(getServingsProperty(), getMaxServings()));
 	}
 
@@ -90,7 +95,7 @@ public class FeastBlock extends Block
 		return this.takeServing(level, pos, state, player, hand);
 	}
 
-	protected InteractionResult takeServing(LevelAccessor level, BlockPos pos, BlockState state, Player player, InteractionHand hand) {
+	protected InteractionResult takeServing(Level level, BlockPos pos, BlockState state, Player player, InteractionHand hand) {
 		int servings = state.getValue(getServingsProperty());
 
 		if (servings == 0) {
@@ -116,6 +121,9 @@ public class FeastBlock extends Block
 					level.removeBlock(pos, false);
 				}
 				level.playSound(null, pos, SoundEvents.ARMOR_EQUIP_GENERIC, SoundSource.BLOCKS, 1.0F, 1.0F);
+				if (hasServingParticles && level instanceof ServerLevel serverLevel) {
+					serverLevel.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 3, 0.1, 0.1, 0.1, 0.001D);
+				}
 				return InteractionResult.SUCCESS;
 			} else {
 				player.displayClientMessage(TextUtils.getTranslation("block.feast.use_container", serving.getCraftingRemainingItem().getHoverName()), true);
@@ -130,8 +138,8 @@ public class FeastBlock extends Block
 	}
 
 	@Override
-	public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
-		return facing == Direction.DOWN && !stateIn.canSurvive(level, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(stateIn, facing, facingState, level, currentPos, facingPos);
+	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+		return facing == Direction.DOWN && !state.canSurvive(level, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, facing, facingState, level, currentPos, facingPos);
 	}
 
 	@Override
@@ -145,8 +153,8 @@ public class FeastBlock extends Block
 	}
 
 	@Override
-	public int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos pos) {
-		return blockState.getValue(getServingsProperty());
+	public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+		return state.getValue(getServingsProperty());
 	}
 
 	@Override
