@@ -26,6 +26,7 @@ import vectorwing.farmersdelight.common.registry.ModItems;
 import vectorwing.farmersdelight.common.registry.ModChestLootTables;
 import vectorwing.farmersdelight.common.tag.ModTags;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LootModifiers extends GlobalLootModifierProvider {
@@ -53,13 +54,13 @@ public class LootModifiers extends GlobalLootModifierProvider {
 
 		//entity drops
 		this.add("scavenging_feather", this.addItemWithKnifeKill(Items.FEATHER, EntityType.CHICKEN));
-		this.add("scavenging_ham_from_hoglin", this.addItemWithKnifeKill(ModItems.HAM.get(), false, EntityType.HOGLIN));
-		this.add("scavenging_ham_from_pig", this.addItemWithKnifeKill(ModItems.HAM.get(), false, EntityType.PIG));
+		this.add("scavenging_ham_from_hoglin", this.addItemWithKnifeKill(ModItems.HAM.get(), false, 1.0F, EntityType.HOGLIN));
+		this.add("scavenging_ham_from_pig", this.addItemWithKnifeKill(ModItems.HAM.get(), false, 0.5F, EntityType.PIG));
 		this.add("scavenging_leather", this.addItemWithKnifeKill(Items.LEATHER, EntityType.COW, EntityType.MOOSHROOM, EntityType.HORSE, EntityType.DONKEY, EntityType.MULE, EntityType.LLAMA, EntityType.TRADER_LLAMA));
 		this.add("scavenging_rabbit_hide", this.addItemWithKnifeKill(Items.RABBIT_HIDE, EntityType.RABBIT));
 		this.add("scavenging_shulker_shell", this.addItemWithKnifeKill(Items.SHULKER_SHELL, EntityType.SHULKER));
-		this.add("scavenging_smoked_ham_from_hoglin", this.addItemWithKnifeKill(ModItems.SMOKED_HAM.get(), true, EntityType.HOGLIN));
-		this.add("scavenging_smoked_ham_from_pig", this.addItemWithKnifeKill(ModItems.SMOKED_HAM.get(), true, EntityType.PIG));
+		this.add("scavenging_smoked_ham_from_hoglin", this.addItemWithKnifeKill(ModItems.SMOKED_HAM.get(), true, 1.0F, EntityType.HOGLIN));
+		this.add("scavenging_smoked_ham_from_pig", this.addItemWithKnifeKill(ModItems.SMOKED_HAM.get(), true, 0.5F, EntityType.PIG));
 		this.add("scavenging_string", this.addItemWithKnifeKill(Items.STRING, EntityType.SPIDER, EntityType.CAVE_SPIDER));
 
 		//block drops
@@ -79,8 +80,8 @@ public class LootModifiers extends GlobalLootModifierProvider {
 
 		//straw
 		this.add("straw_from_grass", this.strawHarvesting(LootItemBlockStatePropertyCondition.hasBlockStateProperties(Blocks.GRASS), 0.2F));
-		this.add("straw_from_mature_rice", this.strawHarvesting(LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.RICE_CROP_PANICLES.get()).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(RicePaniclesBlock.RICE_AGE, 3))));
-		this.add("straw_from_mature_wheat", this.strawHarvesting(LootItemBlockStatePropertyCondition.hasBlockStateProperties(Blocks.WHEAT).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CropBlock.AGE, 7))));
+		this.add("straw_from_mature_rice", this.strawHarvesting(LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.RICE_CROP_PANICLES.get()).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(RicePaniclesBlock.RICE_AGE, 3)), 1.0F));
+		this.add("straw_from_mature_wheat", this.strawHarvesting(LootItemBlockStatePropertyCondition.hasBlockStateProperties(Blocks.WHEAT).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CropBlock.AGE, 7)), 1.0F));
 		this.add("straw_from_sandy_shrub", this.strawHarvesting(LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.SANDY_SHRUB.get()), 0.3F));
 		this.add("straw_from_tall_grass", this.strawHarvesting(LootItemBlockStatePropertyCondition.hasBlockStateProperties(Blocks.TALL_GRASS), 0.2F));
 	}
@@ -90,45 +91,32 @@ public class LootModifiers extends GlobalLootModifierProvider {
 	}
 
 	private AddItemModifier addItemWithKnifeKill(Item item, EntityType<?>... entity) {
-		//make an array to hold all possible entities that the modifier applies to
-		LootItemCondition.Builder[] condition = new LootItemCondition.Builder[entity.length];
-		//add every entity we list. The list can be as long as we want it to be.
-		for (int i = 0; i < entity.length; i++) {
-			condition[i] = LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS,
-					EntityPredicate.Builder.entity().of(entity[i]).build());
-		}
-
-		return new AddItemModifier(new LootItemCondition[]{
-				LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.KILLER,
-						EntityPredicate.Builder.entity().equipment(
-										EntityEquipmentPredicate.Builder.equipment().mainhand(
-														ItemPredicate.Builder.item().of(ModTags.KNIVES).build())
-												.build())
-								.build())
-						.build(),
-				AnyOfCondition.anyOf(condition).build()
-		}, item, 1);
+		return this.addItemWithKnifeKill(item, null, 1.0F, entity);
 	}
 
-	private AddItemModifier addItemWithKnifeKill(Item item, boolean fire, EntityType<?> entity) {
-		return new AddItemModifier(new LootItemCondition[]{
-				LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.KILLER,
-						EntityPredicate.Builder.entity().equipment(
-										EntityEquipmentPredicate.Builder.equipment().mainhand(
-														ItemPredicate.Builder.item().of(ModTags.KNIVES).build())
-												.build())
-								.build())
-						.build(),
-				LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS,
-						EntityPredicate.Builder.entity().of(entity).build())
-						.build(),
-				LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS,
-						EntityPredicate.Builder.entity().flags(
-										EntityFlagsPredicate.Builder.flags().setOnFire(fire).build())
-								.build())
-						.build(),
-				LootItemRandomChanceWithLootingCondition.randomChanceAndLootingBoost(0.5F, 0.1F).build()
-		}, item, 1);
+	private AddItemModifier addItemWithKnifeKill(Item item, Boolean onFire, float chance, EntityType<?>... entity) {
+		//make an array to hold all possible entities that the modifier applies to
+		LootItemCondition.Builder[] entityConditions = new LootItemCondition.Builder[entity.length];
+		//add every entity we list. The list can be as long as we want it to be.
+		for (int i = 0; i < entity.length; i++) {
+			entityConditions[i] = LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS,
+					EntityPredicate.Builder.entity().of(entity[i]).build());
+		}
+		List<LootItemCondition> conditions = new ArrayList<>();
+
+		//check for knife kill
+		conditions.add(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.KILLER, EntityPredicate.Builder.entity().equipment(EntityEquipmentPredicate.Builder.equipment().mainhand(ItemPredicate.Builder.item().of(ModTags.KNIVES).build()).build()).build()).build());
+		conditions.add(entityConditions.length > 1 ? AnyOfCondition.anyOf(entityConditions).build() : entityConditions[0].build());
+
+		if (onFire != null) {
+			conditions.add(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity().flags(EntityFlagsPredicate.Builder.flags().setOnFire(onFire).build())).build());
+		}
+
+		if (chance < 1.0F) {
+			conditions.add(LootItemRandomChanceWithLootingCondition.randomChanceAndLootingBoost(chance, 0.1F).build());
+		}
+
+		return new AddItemModifier(conditions.toArray(LootItemCondition[]::new), item, 1);
 	}
 
 	private AddItemModifier candleCakeSlicing() {
@@ -152,17 +140,14 @@ public class LootModifiers extends GlobalLootModifierProvider {
 	}
 
 	private AddItemModifier strawHarvesting(LootItemBlockStatePropertyCondition.Builder slicedBlock, float chance) {
-		return new AddItemModifier(new LootItemCondition[]{
-				MatchTool.toolMatches(ItemPredicate.Builder.item().of(ModTags.STRAW_HARVESTERS)).build(),
-				LootItemRandomChanceCondition.randomChance(chance).build(), //TODO see if looting should also be accounted for
-				slicedBlock.build()
-		}, ModItems.STRAW.get(), 1);
-	}
+		List<LootItemCondition> conditions = new ArrayList<>();
 
-	private AddItemModifier strawHarvesting(LootItemBlockStatePropertyCondition.Builder slicedBlock) {
-		return new AddItemModifier(new LootItemCondition[]{
-				MatchTool.toolMatches(ItemPredicate.Builder.item().of(ModTags.STRAW_HARVESTERS)).build(),
-				slicedBlock.build()
-		}, ModItems.STRAW.get(), 1);
+		conditions.add(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ModTags.STRAW_HARVESTERS)).build());
+		if (chance < 1.0F) {
+			conditions.add(LootItemRandomChanceCondition.randomChance(chance).build());
+		}
+		conditions.add(slicedBlock.build());
+
+		return new AddItemModifier(conditions.toArray(LootItemCondition[]::new), ModItems.STRAW.get(), 1);
 	}
 }
