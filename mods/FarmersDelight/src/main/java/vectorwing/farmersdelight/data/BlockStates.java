@@ -389,7 +389,7 @@ public class BlockStates extends BlockStateProvider
 			String suffix = "_stage" + (block.getMaxServings() - servings);
 
 			if (servings == 0) {
-				suffix = block.hasLeftovers ? "_leftover" : "_stage" + (servingsProperty.getPossibleValues().toArray().length - 2);
+				suffix = block.hasLeftovers ? "_leftovers" : "_stage" + (servingsProperty.getPossibleValues().toArray().length - 2);
 			}
 
 			return ConfiguredModel.builder()
