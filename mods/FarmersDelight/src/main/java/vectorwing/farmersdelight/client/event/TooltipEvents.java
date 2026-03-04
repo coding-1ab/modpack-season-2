@@ -1,12 +1,14 @@
 package vectorwing.farmersdelight.client.event;
 
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -14,6 +16,7 @@ import net.minecraftforge.fml.common.Mod;
 import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.Configuration;
 import vectorwing.farmersdelight.common.FoodValues;
+import vectorwing.farmersdelight.common.utility.TextUtils;
 
 import java.util.List;
 
@@ -22,11 +25,17 @@ public class TooltipEvents
 {
 	@SubscribeEvent
 	public static void addTooltipToVanillaSoups(ItemTooltipEvent event) {
+		Item food = event.getItemStack().getItem();
+
+		if (food.equals(Items.PUMPKIN_PIE)) {
+			MutableComponent placeableText = TextUtils.tooltip(Configuration.PUMPKIN_PIE_SNEAK_TO_PLACE.get() ? "placeable_sneaking" : "placeable");
+			List<Component> tooltip = event.getToolTip();
+			tooltip.add(placeableText.withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.ITALIC));
+		}
+
 		if (!Configuration.VANILLA_SOUP_EXTRA_EFFECTS.get() || !Configuration.FOOD_EFFECT_TOOLTIP.get()) {
 			return;
 		}
-
-		Item food = event.getItemStack().getItem();
 
 		FoodProperties soupEffects = FoodValues.VANILLA_SOUP_EFFECTS.get(food);
 

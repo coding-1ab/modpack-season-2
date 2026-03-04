@@ -267,6 +267,8 @@
   "farmersdelight.tooltip.milk_bottle": "Scrub Off 1 Effect",
   "farmersdelight.tooltip.hot_cocoa": "Scrub Off 1 Cursed Ache",
   "farmersdelight.tooltip.melon_juice": "Wee Quick Healin'",
+  "farmersdelight.tooltip.placeable": "Ye can put this down",
+  "farmersdelight.tooltip.placeable_sneaking": "Ye can put this down if sneakin'",
   "farmersdelight.tooltip.debug_item": "Debug item - Not meant for gameplay",
 
   "farmersdelight.advancement.root": "Farmer's Delight",

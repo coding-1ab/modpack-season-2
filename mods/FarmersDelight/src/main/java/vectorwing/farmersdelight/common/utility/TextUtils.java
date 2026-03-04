@@ -33,6 +33,10 @@ public class TextUtils
 		return Component.translatable(FarmersDelight.MODID + "." + key, args);
 	}
 
+	public static MutableComponent tooltip(String key, Object... args) {
+		return Component.translatable(FarmersDelight.MODID + ".tooltip." + key, args);
+	}
+
 	/**
 	 * An alternate version of PotionUtils.addPotionTooltip, that obtains the item's food-property potion effects instead.
 	 */
