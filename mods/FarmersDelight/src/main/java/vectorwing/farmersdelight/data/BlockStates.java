@@ -102,6 +102,29 @@ public class BlockStates extends BlockStateProvider
 		simpleBlock(ModBlocks.RICH_SOIL.get(), cubeRandomRotation(ModBlocks.RICH_SOIL.get(), ""));
 		farmlandBlock(ModBlocks.RICH_SOIL_FARMLAND.get(), ModBlocks.RICH_SOIL.get());
 
+		this.getMultipartBuilder(ModBlocks.ROPE.get())
+				.part().modelFile(existingModel("rope_post")).addModel().end()
+				.part().modelFile(existingModel("rope_bell_tie")).addModel().condition(RopeBlock.TIED_TO_BELL, true).end()
+				.part().modelFile(existingModel("rope_side")).addModel().condition(RopeBlock.NORTH, true).end()
+				.part().modelFile(existingModel("rope_side")).rotationY(90).addModel().condition(RopeBlock.EAST, true).end()
+				.part().modelFile(existingModel("rope_side_alt")).addModel().condition(RopeBlock.SOUTH, true).end()
+				.part().modelFile(existingModel("rope_side_alt")).rotationY(90).addModel().condition(RopeBlock.WEST, true).end();
+
+		ModelFile head = existingModel("tatami_mat_head");
+		ModelFile foot = existingModel("tatami_mat_foot");
+		this.getVariantBuilder(ModBlocks.FULL_TATAMI_MAT.get()).forAllStates(state ->
+				ConfiguredModel.builder().modelFile(state.getValue(TatamiMatBlock.PART) == BedPart.HEAD ? head : foot).rotationY((int) state.getValue(TatamiMatBlock.FACING).toYRot()).build());
+
+		ModelFile odd = existingModel("tatami_odd");
+		ModelFile even = existingModel("tatami_even");
+		ModelFile notPaired = models().cubeAll(ModBlocks.TATAMI.getId().getPath() + "_half", new ResourceLocation(FarmersDelight.MODID, "block/tatami_mat_half"));
+		this.getVariantBuilder(ModBlocks.TATAMI.get()).forAllStates(state -> {
+			Direction dir = state.getValue(TatamiBlock.FACING);
+			return ConfiguredModel.builder().modelFile(state.getValue(TatamiBlock.PAIRED) ? dir.get3DDataValue() % 2 == 0 ? even : odd : notPaired)
+					.rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
+					.rotationY(dir.getAxis().isVertical() ? 0 : (((int) dir.toYRot()) + 180) % 360).build();
+		});
+
 		cabinetBlock(ModBlocks.OAK_CABINET.get(), "oak");
 		cabinetBlock(ModBlocks.BIRCH_CABINET.get(), "birch");
 		cabinetBlock(ModBlocks.SPRUCE_CABINET.get(), "spruce");
