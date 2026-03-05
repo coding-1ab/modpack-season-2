@@ -956,14 +956,13 @@ public class ShaderProgramImpl implements ShaderProgram {
 
         @Override
         public int getId() {
-            Int2ObjectMap<CompiledShader> shaders = this.program.getShaders();
             switch (this.type) {
                 case VERTEX -> {
-                    CompiledShader vertex = shaders.get(GL_VERTEX_SHADER);
+                    CompiledShader vertex = this.program.getVertexShader();
                     return vertex != null ? vertex.id() : 0;
                 }
                 case FRAGMENT -> {
-                    CompiledShader fragment = shaders.get(GL_FRAGMENT_SHADER);
+                    CompiledShader fragment = this.program.getFragmentShader();
                     return fragment != null ? fragment.id() : 0;
                 }
             }

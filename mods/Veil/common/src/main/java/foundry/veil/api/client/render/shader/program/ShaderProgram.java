@@ -121,6 +121,54 @@ public interface ShaderProgram extends NativeResource, UniformAccess, TextureUni
     Int2ObjectMap<CompiledShader> getShaders();
 
     /**
+     * @return The vertex shader attached to this program or <code>null</code> if there is no valid shader
+     * @since 3.4.0
+     */
+    default @Nullable CompiledShader getVertexShader() {
+        return this.getShaders().get(GL_VERTEX_SHADER);
+    }
+
+    /**
+     * @return The geometry shader attached to this program or <code>null</code> if there is no valid shader
+     * @since 3.4.0
+     */
+    default @Nullable CompiledShader getGeometryShader() {
+        return this.getShaders().get(GL_GEOMETRY_SHADER);
+    }
+
+    /**
+     * @return The tessellation control shader attached to this program or <code>null</code> if there is no valid shader
+     * @since 3.4.0
+     */
+    default @Nullable CompiledShader getTessellationControlShader() {
+        return this.getShaders().get(GL_TESS_CONTROL_SHADER);
+    }
+
+    /**
+     * @return The tessellation evaluation shader attached to this program or <code>null</code> if there is no valid shader
+     * @since 3.4.0
+     */
+    default @Nullable CompiledShader getTessellationEvaluationShader() {
+        return this.getShaders().get(GL_TESS_EVALUATION_SHADER);
+    }
+
+    /**
+     * @return The fragment shader attached to this program or <code>null</code> if there is no valid shader
+     * @since 3.4.0
+     */
+    default @Nullable CompiledShader getFragmentShader() {
+        return this.getShaders().get(GL_FRAGMENT_SHADER);
+    }
+
+    /**
+     * @return The compute shader attached to this program or <code>null</code> if there is no valid shader
+     * @since 3.4.0
+     */
+    default @Nullable CompiledShader getComputeShader() {
+        return this.getShaders().get(GL_COMPUTE_SHADER);
+    }
+
+    /**
      * @return Whether this program has a valid compiled shader
      * @since 2.0.0
      */
