@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -35,9 +36,11 @@ public interface VeilRenderBridge {
      * <ul>
      *     <li>The shader instance cannot be used to free the shader program. {@link ShaderProgram#free()} must be called separately.
      *     If the shader is loaded through {@link ShaderManager} then there is no need to free the shader.</li>
+     *     <li>{@link ShaderInstance#attachToProgram()} is unsupported</li>
      *     <li>Calling {@link Uniform#upload()} will do nothing since the values are uploaded when the appropriate methods are called</li>
      *     <li>Uniforms are lazily wrapped and will not crash when the wrong method is called.</li>
      *     <li>{@link Uniform#set(int, float)} is not supported and will throw an {@link UnsupportedOperationException}.</li>
+     *     <li>{@link Uniform#setMat4x2(float, float, float, float, float, float, float, float)} is not supported and will throw an {@link UnsupportedOperationException}.</li>
      *     <li>{@link Uniform#set(float[])} only works for 1, 2, 3, and 4 float elements. Any other size will throw an {@link UnsupportedOperationException}.</li>
      * </ul>
      *
@@ -46,6 +49,18 @@ public interface VeilRenderBridge {
      */
     static ShaderInstance toShaderInstance(ShaderProgram program) {
         return ((ShaderProgramImpl) program).toShaderInstance();
+    }
+
+
+    /**
+     * Attempts to convert a vanilla Minecraft shader instance into a Veil shader. Only works if the shader instance is wrapped with {@link #toShaderInstance(ShaderProgram)}.
+     *
+     * @param instance The program to convert
+     * @return The wrapped shader program or <code>null</code> if the program is not a wrapped Veil shader
+     * @since 3.4.0
+     */
+    static @Nullable ShaderProgram toShaderProgram(ShaderInstance instance) {
+        return instance instanceof ShaderProgramImpl.Wrapper wrapper ? wrapper.program() : null;
     }
 
     /**
