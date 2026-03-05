@@ -7,10 +7,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockShapes
 {
-    public static final VoxelShape TRAY_SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 2.0D, 15.0D);
-    public static final VoxelShape INDENTED_TRAY_SHAPE = Shapes.join(
-            TRAY_SHAPE,
-            Block.box(2.0D, 1.0D, 2.0D, 14.0D, 2.0D, 14.0D),
+    public static final VoxelShape TRAY_OUTER_SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 2.0D, 15.0D);
+    public static final VoxelShape TRAY_INNER_SHAPE = Block.box(2.0D, 1.0D, 2.0D, 14.0D, 2.0D, 14.0D);
+    public static final VoxelShape TRAY_SHAPE = Shapes.join(
+            TRAY_OUTER_SHAPE,
+            TRAY_INNER_SHAPE,
             BooleanOp.ONLY_FIRST);
 
     public static final VoxelShape[] ROAST_CHICKEN_SHAPES = new VoxelShape[] {
