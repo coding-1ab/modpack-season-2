@@ -167,10 +167,11 @@ public class DynamicBufferManager implements NativeResource {
     public void free() {
         this.deleteFramebuffers();
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer textures = stack.mallocInt(BUFFERS.length);
-            for (DynamicBufferType value : BUFFERS) {
-                textures.put(value.ordinal(), this.dynamicBuffers.get(value).textureId);
+            IntBuffer textures = stack.mallocInt(this.dynamicBuffers.size());
+            for (DynamicBuffer buffer : this.dynamicBuffers.values()) {
+                textures.put(buffer.textureId);
             }
+            textures.rewind();
             glDeleteTextures(textures);
         }
         this.dynamicBuffers.clear();
