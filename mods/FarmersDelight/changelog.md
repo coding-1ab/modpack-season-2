@@ -42,6 +42,7 @@
   - Using containers to take servings from feasts;
 
 ### Technical
+- Added data generation for most things which were still manually written (thanks, GizmoTheMoonPig and Abbie5!);
 - FD's internal recipe builders have been updated, and should now be more usable for add-on developers:
   - They now implement `RecipeBuilder`, which standardizes several methods in regards to file saving and naming (thanks, Lance5057!);
   - Added `setNamespace(string)` to both builders, to allow users to specify a custom namespace (mod ID) for the recipe. Use it if the result isn't registered under your mod ID;
