@@ -28,14 +28,14 @@
   - Tomato seeds can now be planted on any farmland block;
 - Feasts and Pies have been updated:
   - All Feast models received a visual update, with new textures/models, proper cullfaces and UV optimization;
-  - Feasts and Pies will now emit particles when taking portions from them;
-  - Feasts and Pies now have "Placeable" in their tooltip, to better indicate their role;
+  - They will now emit particles when taking portions from them;
+  - They now have more precise hitboxes, matching their shapes as they are consumed (thanks, TheGridExpert!);
+  - They now have "Placeable" in their tooltip, to better indicate their role;
     - Pumpkin Pie will say "Placeable when sneaking" if the sneak-to-place config is enabled;
 - Wild Crops have been updated:
   - Wild Tomatoes now checks for the `farmersdelight:terrain` tag when generating;
   - Wild Rice now checks for the `minecraft:dirt` tag when generating;
 - Stoves now only inflict burn in a small "grilling area" on top of them; the edges are safe to step on;
-- Pies and Feasts now have more precise hitboxes, matching their shapes as they are consumed (thanks, TheGridExpert!);
 - The following model files were renamed, to make it clearer they're meant to be templates:
   - `bush_crop` -> `template_bush_crop`
   - `crop_cross` -> `template_crop_cross`;
@@ -57,10 +57,10 @@
   - The `save(consumer)` method override no longer hardcodes FD's mod ID in the recipe. Instead, it will use either the result's namespace by default, or a value set through `setNamespace(string)`;
     - Thanks to LordFirespeed for helping me realize the issue with the method override!;
 - FD's recipes now call for `assemble()` in most places, allowing extenders of most workstations to use the inventory when creating their result (thanks, ColonelPanic!);
-- Cutting recipes now accept arrays of ingredients in the `tool` field (thanks, BobVarioa!).
+- Cutting recipes now accept arrays of ingredients in the `tool` field (thanks, BobVarioa!);
 - Food blocks, such as Pies and Feasts, now have new class overrides for when their VoxelShapes can rotate horizontally (thanks, TheGridExpert!):
   - `RotatedFeastBlock` is an extension of `FeastBlock` for feasts with directional consumption shapes. You provide an array of shapes, and `ShapeUtils` will calculate and cache rotations for them;
-  - If your feast does not change horizontally as servings are taken (example: Stuffed Pumpkin), you can still use `FeastBlock`.
+  - If your feast's hitbox does not change horizontally as servings are taken (example: Stuffed Pumpkin), you can still use `FeastBlock`.
 
 ## 1.2.10
 
