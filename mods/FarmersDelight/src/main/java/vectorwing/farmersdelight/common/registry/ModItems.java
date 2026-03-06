@@ -334,11 +334,11 @@ public class ModItems
 	public static final RegistryObject<Item> PIE_CRUST = registerWithTab("pie_crust",
 			() -> new Item(foodItem(FoodValues.PIE_CRUST)));
 	public static final RegistryObject<Item> APPLE_PIE = registerWithTab("apple_pie",
-			() -> new BlockItem(ModBlocks.APPLE_PIE.get(), basicItem()));
+			() -> new PlaceableItem(ModBlocks.APPLE_PIE.get(), basicItem()));
 	public static final RegistryObject<Item> SWEET_BERRY_CHEESECAKE = registerWithTab("sweet_berry_cheesecake",
-			() -> new BlockItem(ModBlocks.SWEET_BERRY_CHEESECAKE.get(), basicItem()));
+			() -> new PlaceableItem(ModBlocks.SWEET_BERRY_CHEESECAKE.get(), basicItem()));
 	public static final RegistryObject<Item> CHOCOLATE_PIE = registerWithTab("chocolate_pie",
-			() -> new BlockItem(ModBlocks.CHOCOLATE_PIE.get(), basicItem()));
+			() -> new PlaceableItem(ModBlocks.CHOCOLATE_PIE.get(), basicItem()));
 	public static final RegistryObject<Item> CAKE_SLICE = registerWithTab("cake_slice",
 			() -> new Item(foodItem(FoodValues.CAKE_SLICE)));
 	public static final RegistryObject<Item> APPLE_PIE_SLICE = registerWithTab("apple_pie_slice",
@@ -438,27 +438,27 @@ public class ModItems
 
 	// Feasts
 	public static final RegistryObject<Item> ROAST_CHICKEN_BLOCK = registerWithTab("roast_chicken_block",
-			() -> new BlockItem(ModBlocks.ROAST_CHICKEN_BLOCK.get(), basicItem().stacksTo(1)));
+			() -> new PlaceableItem(ModBlocks.ROAST_CHICKEN_BLOCK.get(), basicItem().stacksTo(1)));
 	public static final RegistryObject<Item> ROAST_CHICKEN = registerWithTab("roast_chicken",
 			() -> new ConsumableItem(bowlFoodItem(FoodValues.ROAST_CHICKEN), true));
 
 	public static final RegistryObject<Item> STUFFED_PUMPKIN_BLOCK = registerWithTab("stuffed_pumpkin_block",
-			() -> new BlockItem(ModBlocks.STUFFED_PUMPKIN_BLOCK.get(), basicItem().stacksTo(1)));
+			() -> new PlaceableItem(ModBlocks.STUFFED_PUMPKIN_BLOCK.get(), basicItem().stacksTo(1)));
 	public static final RegistryObject<Item> STUFFED_PUMPKIN = registerWithTab("stuffed_pumpkin",
 			() -> new ConsumableItem(bowlFoodItem(FoodValues.STUFFED_PUMPKIN), true));
 
 	public static final RegistryObject<Item> HONEY_GLAZED_HAM_BLOCK = registerWithTab("honey_glazed_ham_block",
-			() -> new BlockItem(ModBlocks.HONEY_GLAZED_HAM_BLOCK.get(), basicItem().stacksTo(1)));
+			() -> new PlaceableItem(ModBlocks.HONEY_GLAZED_HAM_BLOCK.get(), basicItem().stacksTo(1)));
 	public static final RegistryObject<Item> HONEY_GLAZED_HAM = registerWithTab("honey_glazed_ham",
 			() -> new ConsumableItem(bowlFoodItem(FoodValues.HONEY_GLAZED_HAM), true));
 
 	public static final RegistryObject<Item> SHEPHERDS_PIE_BLOCK = registerWithTab("shepherds_pie_block",
-			() -> new BlockItem(ModBlocks.SHEPHERDS_PIE_BLOCK.get(), basicItem().stacksTo(1)));
+			() -> new PlaceableItem(ModBlocks.SHEPHERDS_PIE_BLOCK.get(), basicItem().stacksTo(1)));
 	public static final RegistryObject<Item> SHEPHERDS_PIE = registerWithTab("shepherds_pie",
 			() -> new ConsumableItem(bowlFoodItem(FoodValues.SHEPHERDS_PIE), true));
 
 	public static final RegistryObject<Item> RICE_ROLL_MEDLEY_BLOCK = registerWithTab("rice_roll_medley_block",
-			() -> new BlockItem(ModBlocks.RICE_ROLL_MEDLEY_BLOCK.get(), basicItem().stacksTo(1)));
+			() -> new PlaceableItem(ModBlocks.RICE_ROLL_MEDLEY_BLOCK.get(), basicItem().stacksTo(1)));
 
 	// Pet Foods
 	public static final RegistryObject<Item> DOG_FOOD = registerWithTab("dog_food",
@@ -470,7 +470,7 @@ public class ModItems
 	public static final RegistryObject<Item> DEBUG_PUMPKIN_PIE = registerHidden("debug_pumpkin_pie",
 			() -> new BlockItem(ModBlocks.PUMPKIN_PIE.get(), basicItem()){
 				@Override
-				public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+				public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
 					MutableComponent textDescription = TextUtils.getTranslation("tooltip.debug_item");
 					tooltip.add(textDescription.withStyle(ChatFormatting.RED));
 				}

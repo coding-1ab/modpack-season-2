@@ -3,7 +3,6 @@
   "credit": "Made with Blockbench",
   "parent": "block/block",
   "textures": {
-    "rolls": "farmersdelight:block/rice_roll_medley",
     "particle": "farmersdelight:block/platter",
     "platter": "farmersdelight:block/platter"
   },
@@ -44,42 +43,6 @@
         "west": {"uv": [2, 15, 14, 16], "texture": "#platter"},
         "down": {"uv": [2, 14, 14, 16], "rotation": 90, "texture": "#platter", "cullface": "down"}
       }
-    },
-    {
-      "name": "salmon_6",
-      "from": [2, 3, 3],
-      "to": [4, 5, 8],
-      "faces": {
-        "north": {"uv": [0, 5, 2, 7], "texture": "#rolls"},
-        "east": {"uv": [2, 0, 7, 2], "texture": "#rolls"},
-        "south": {"uv": [0, 5, 2, 7], "texture": "#rolls"},
-        "west": {"uv": [2, 0, 7, 2], "texture": "#rolls"},
-        "up": {"uv": [0, 0, 2, 5], "texture": "#rolls"}
-      }
-    },
-    {
-      "name": "cod_7",
-      "from": [6, 3, 8],
-      "to": [8, 5, 13],
-      "faces": {
-        "north": {"uv": [7, 5, 9, 7], "texture": "#rolls"},
-        "east": {"uv": [9, 0, 14, 2], "texture": "#rolls"},
-        "south": {"uv": [7, 5, 9, 7], "texture": "#rolls"},
-        "west": {"uv": [9, 0, 14, 2], "texture": "#rolls"},
-        "up": {"uv": [7, 0, 9, 5], "texture": "#rolls"}
-      }
-    },
-    {
-      "name": "cod_8",
-      "from": [3, 3, 8],
-      "to": [5, 5, 13],
-      "faces": {
-        "north": {"uv": [7, 5, 9, 7], "texture": "#rolls"},
-        "east": {"uv": [9, 0, 14, 2], "texture": "#rolls"},
-        "south": {"uv": [7, 5, 9, 7], "texture": "#rolls"},
-        "west": {"uv": [9, 0, 14, 2], "texture": "#rolls"},
-        "up": {"uv": [7, 0, 9, 5], "texture": "#rolls"}
-      }
     }
   ],
   "groups": [
@@ -88,12 +51,6 @@
       "origin": [1, 1, 1],
       "color": 0,
       "children": [0, 1, 2]
-    },
-    {
-      "name": "rolls",
-      "origin": [10, 1, 10],
-      "color": 0,
-      "children": [3, 4, 5]
     }
   ]
 }
