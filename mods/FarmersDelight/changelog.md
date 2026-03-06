@@ -26,9 +26,9 @@
   - The crop no longer uses the standard growth speed checks of `CropBlock`, which was slowing down hanging vines. They grow at a fixed rate now, regardless of height;
   - Applying bone meal to a mature tomato vine (sneaking, rich soil etc) will pass the boost to the vine above it, if possible;
   - Tomato seeds can now be planted on any farmland block;
-- Feasts have gotten their models and textures updated:
-  - The Feast tray has been retextured, and has a modeled indentation to fit the side dish where applicable;
-  - Their model files have changed quite a bit, so resource packs may need to update!;
+- Feasts have received a visual update, with new models and textures:
+  - Feast models were optimized, with proper cullfaces and UV's on all elements;
+  - Their model files have changed quite a bit, so resource packs will need to update!;
 - Stoves now only inflict burn in a small "grilling area" on top of them; the edges are safe to step on;
 - Pies and Feasts now have more precise hitboxes, matching their shapes as they are consumed (thanks, TheGridExpert!);
 - Wild Crops have been updated:
