@@ -36,12 +36,6 @@
   - Wild Tomatoes now checks for the `farmersdelight:terrain` tag when generating;
   - Wild Rice now checks for the `minecraft:dirt` tag when generating;
 - Stoves now only inflict burn in a small "grilling area" on top of them; the edges are safe to step on;
-- The following model files were renamed, to make it clearer they're meant to be templates:
-  - `bush_crop` -> `template_bush_crop`
-  - `crop_cross` -> `template_crop_cross`;
-  - `crop_with_rope` -> `template_crop_with_rope`;
-  - `pie` -> `template_pie`;
-  - `pie_slice[1-3]` -> `template_pie_slice[1-3]`;
 
 ### Fixes
 - Statistics are now properly awarded for:
@@ -61,6 +55,12 @@
 - Food blocks, such as Pies and Feasts, now have new class overrides for when their VoxelShapes can rotate horizontally (thanks, TheGridExpert!):
   - `RotatedFeastBlock` is an extension of `FeastBlock` for feasts with directional consumption shapes. You provide an array of shapes, and `ShapeUtils` will calculate and cache rotations for them;
   - If your feast's hitbox does not change horizontally as servings are taken (example: Stuffed Pumpkin), you can still use `FeastBlock`.
+- The following model files were renamed, to make it clearer they're meant to be templates:
+  - `bush_crop` -> `template_bush_crop`
+  - `crop_cross` -> `template_crop_cross`;
+  - `crop_with_rope` -> `template_crop_with_rope`;
+  - `pie` -> `template_pie`;
+  - `pie_slice[1-3]` -> `template_pie_slice[1-3]`;
 
 ## 1.2.10
 
