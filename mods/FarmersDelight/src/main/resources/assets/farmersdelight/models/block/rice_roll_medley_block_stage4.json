@@ -3,8 +3,8 @@
   "credit": "Made with Blockbench",
   "parent": "block/block",
   "textures": {
-    "particle": "farmersdelight:block/tray",
     "rolls": "farmersdelight:block/rice_roll_medley",
+    "particle": "farmersdelight:block/platter",
     "platter": "farmersdelight:block/platter"
   },
   "elements": [

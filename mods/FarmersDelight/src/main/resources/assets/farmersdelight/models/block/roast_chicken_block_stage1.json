@@ -200,7 +200,7 @@
   ],
   "groups": [
     {
-      "name": "stage_1",
+      "name": "stage1",
       "origin": [8, 8, 8],
       "color": 0,
       "children": [

@@ -7,7 +7,7 @@
     "tray": "farmersdelight:block/tray",
     "tray_bottom": "farmersdelight:block/tray_bottom",
     "leftovers": "farmersdelight:block/roast_chicken_leftovers",
-    "particle": "farmersdelight:block/roast_chicken",
+    "particle": "farmersdelight:block/roast_chicken_leftovers",
     "details": "farmersdelight:block/roast_chicken_details"
   },
   "elements": [

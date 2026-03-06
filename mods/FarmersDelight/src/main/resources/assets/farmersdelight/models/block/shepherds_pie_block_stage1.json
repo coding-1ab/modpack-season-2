@@ -26,7 +26,7 @@
       }
     },
     {
-      "name": "north edge",
+      "name": "north_edge",
       "from": [2, 1, 1],
       "to": [14, 2, 2],
       "faces": {
@@ -36,7 +36,7 @@
       }
     },
     {
-      "name": "south edge",
+      "name": "south_edge",
       "from": [2, 1, 14],
       "to": [14, 2, 15],
       "faces": {
@@ -45,7 +45,7 @@
       }
     },
     {
-      "name": "west edge",
+      "name": "west_edge",
       "from": [1, 1, 1],
       "to": [2, 2, 15],
       "faces": {
@@ -57,7 +57,7 @@
       }
     },
     {
-      "name": "east edge",
+      "name": "east_edge",
       "from": [14, 1, 1],
       "to": [15, 2, 15],
       "faces": {
@@ -68,7 +68,7 @@
       }
     },
     {
-      "name": "pie back",
+      "name": "pie_back_slice",
       "from": [2, 1, 8],
       "to": [14, 8, 14],
       "faces": {
@@ -80,7 +80,7 @@
       }
     },
     {
-      "name": "pie front slice",
+      "name": "pie_front_slice",
       "from": [8, 1, 2],
       "to": [14, 8, 8],
       "faces": {
@@ -93,7 +93,7 @@
   ],
   "groups": [
     {
-      "name": "stage 1",
+      "name": "stage1",
       "origin": [8, 8, 8],
       "color": 0,
       "children": [

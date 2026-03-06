@@ -156,7 +156,7 @@
   ],
   "groups": [
     {
-      "name": "stage_3",
+      "name": "stage3",
       "origin": [8, 8, 8],
       "color": 0,
       "children": [
