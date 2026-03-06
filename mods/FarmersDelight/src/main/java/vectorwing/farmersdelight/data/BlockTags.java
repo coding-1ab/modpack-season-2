@@ -1,6 +1,5 @@
 package vectorwing.farmersdelight.data;
 
-import com.blamejared.crafttweaker.api.mod.Mod;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -9,7 +8,6 @@ import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.registry.ModBlocks;
-import vectorwing.farmersdelight.common.registry.ModItems;
 import vectorwing.farmersdelight.common.tag.CompatibilityTags;
 import vectorwing.farmersdelight.common.tag.ForgeTags;
 import vectorwing.farmersdelight.common.tag.ModTags;
@@ -201,6 +199,11 @@ public class BlockTags extends BlockTagsProvider
 				ModBlocks.TOMATO_CROP.get(),
 				ModBlocks.ONION_CROP.get(),
 				ModBlocks.RICE_CROP.get()
+		);
+		tag(net.minecraft.tags.BlockTags.COMBINATION_STEP_SOUND_BLOCKS).add(
+				ModBlocks.CANVAS_RUG.get(),
+				ModBlocks.FULL_TATAMI_MAT.get(),
+				ModBlocks.HALF_TATAMI_MAT.get()
 		);
 	}
 

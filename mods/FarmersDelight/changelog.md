@@ -38,6 +38,7 @@
 - Stoves now only inflict burn in a small "grilling area" on top of them; the edges are safe to step on;
 
 ### Fixes
+- Fix Canvas Rug and Tatami Mats not having their own stepping sounds, by tagging them as `combination_step_sound_blocks` (thanks, Mickeon!);
 - Statistics are now properly awarded for:
   - Using tools on the Cutting Board;
   - Using Knives to cut cakes and pies;
