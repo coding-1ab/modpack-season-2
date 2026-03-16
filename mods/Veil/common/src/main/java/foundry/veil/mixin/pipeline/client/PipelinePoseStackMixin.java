@@ -46,6 +46,7 @@ public abstract class PipelinePoseStackMixin implements MatrixStack {
         while (this.poseStack.size() > 1) {
             this.shadow$popPose();
         }
+        this.setIdentity();
     }
 
     @Override
