@@ -12,7 +12,6 @@ import foundry.veil.api.client.render.CullFrustum;
 import foundry.veil.api.client.render.VeilLevelPerspectiveRenderer;
 import foundry.veil.api.client.render.VeilRenderBridge;
 import foundry.veil.api.client.render.VeilRenderSystem;
-import foundry.veil.impl.client.render.light.VoxelShadowGrid;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.framebuffer.FramebufferManager;
 import foundry.veil.api.client.render.framebuffer.FramebufferStack;
@@ -20,6 +19,7 @@ import foundry.veil.api.client.render.framebuffer.VeilFramebuffers;
 import foundry.veil.api.client.render.rendertype.VeilRenderType;
 import foundry.veil.api.compat.SodiumCompat;
 import foundry.veil.ext.LevelRendererExtension;
+import foundry.veil.impl.client.render.light.VoxelShadowGrid;
 import foundry.veil.impl.client.render.shader.VeilVanillaShaders;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
@@ -298,6 +298,21 @@ public abstract class PipelineLevelRendererMixin implements LevelRendererExtensi
             VertexBuffer.unbind();
         } else {
             this.renderSectionLayer(renderType, x, y, z, this.veil$tempFrustum.set(frustum), this.veil$tempProjection.set(projection));
+        }
+    }
+
+    @Inject(method = "renderSectionLayer", at = @At("TAIL"))
+    public void renderExtraSectionLayers(RenderType renderType, double x, double y, double z, Matrix4f frustrumMatrix, Matrix4f projectionMatrix, CallbackInfo ci) {
+        while (renderType instanceof VeilRenderType.RenderTypeWrapper wrapper) {
+            renderType = wrapper.get();
+        }
+
+        if (!(renderType instanceof VeilRenderType.LayeredRenderType layeredRenderType)) {
+            return;
+        }
+
+        for (RenderType layer : layeredRenderType.getLayers()) {
+            this.renderSectionLayer(layer, x, y, z, frustrumMatrix, projectionMatrix);
         }
     }
 
