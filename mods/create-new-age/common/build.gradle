@@ -2,14 +2,16 @@ dependencies {
     neoForge("net.neoforged:neoforge:${project.neoforgeVersion}")
 
     modCompileOnly("com.simibubi.create:create-${rootProject.minecraftVersion}:${rootProject.createVersion}:slim") { transitive = false }
-    modImplementation("net.createmod.ponder:Ponder-NeoForge-${minecraftVersion}:${ponderVersion}")
+    modImplementation("net.createmod.ponder:ponder-neoforge:${ponderVersion}+mc${minecraftVersion}")
     modImplementation("dev.engine-room.flywheel:flywheel-neoforge-${minecraftVersion}:${flywheelVersion}")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraftVersion}:${flywheelVersion}")
     modCompileOnly("com.tterrag.registrate:Registrate:${rootProject.registrateVersion}")
 
     modCompileOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-common-api:${rootProject.cctVersion}")
-    // TODO: Make this platform agnostic
-    modCompileOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge-api:${rootProject.cctVersion}")
+    if (enableCCT.toBoolean()) {
+        // TODO: Make this platform agnostic
+        modCompileOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge-api:${rootProject.cctVersion}")
+    }
 
 //    modCompileOnly("net.fabricmc:fabric-loader:${project(":fabric").fabricLoaderVersion}")
 //    modCompileOnly("curse.maven:forge-config-api-port-fabric-547434:4583000")
