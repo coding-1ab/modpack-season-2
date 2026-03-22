@@ -27,7 +27,7 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
 
     public static final Set<String> INCOMPATIBLE_MODS = Set.of("axiom", "flashback");
 
-    private static VeilImGui instance = new InactiveVeilImGuiImpl();
+    private static VeilImGui instance = InactiveVeilImGuiImpl.INSTANCE;
 
     private final VeilImGuiImplGlfw implGlfw;
     private final ImGuiImplGl3 implGl3;
@@ -160,16 +160,16 @@ public class VeilImGuiImpl implements VeilImGui, NativeResource {
         for (String mod : INCOMPATIBLE_MODS) {
             if (Veil.platform().isModLoaded(mod)) {
                 Veil.LOGGER.warn("Found incompatible ImGui mod {}, disabling", mod);
-                instance = new InactiveVeilImGuiImpl();
+                instance = InactiveVeilImGuiImpl.INSTANCE;
                 return;
             }
         }
 
         try {
-            instance = Veil.IMGUI ? new VeilImGuiImpl(window) : new InactiveVeilImGuiImpl();
+            instance = Veil.IMGUI ? new VeilImGuiImpl(window) : InactiveVeilImGuiImpl.INSTANCE;
         } catch (Throwable t) {
             Veil.LOGGER.error("Failed to load ImGui, disabling", t);
-            instance = new InactiveVeilImGuiImpl();
+            instance = InactiveVeilImGuiImpl.INSTANCE;
         }
     }
 

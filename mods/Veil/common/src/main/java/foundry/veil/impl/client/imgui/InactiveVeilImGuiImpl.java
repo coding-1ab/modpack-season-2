@@ -1,13 +1,12 @@
 package foundry.veil.impl.client.imgui;
 
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.function.ObjIntConsumer;
 
 @Deprecated
 @ApiStatus.Internal
-public class InactiveVeilImGuiImpl implements VeilImGui {
+public enum InactiveVeilImGuiImpl implements VeilImGui {
+
+    INSTANCE;
 
     @Override
     public void start() {
