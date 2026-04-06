@@ -45,5 +45,4 @@ public class ReactorFuelAcceptorBlock extends ReactorBlock implements EntityBloc
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
-
 }
