@@ -27,8 +27,9 @@ public class ShaderFeatureProcessor implements ShaderPreProcessor {
             return;
         }
 
+        int type = ctx.type();
         for (ShaderFeature requiredFeature : definition.requiredFeatures()) {
-            requiredFeature.modifyShader(tree);
+            requiredFeature.modifyShader(type, tree);
         }
     }
 }

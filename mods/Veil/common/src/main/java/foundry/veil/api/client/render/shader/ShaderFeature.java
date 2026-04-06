@@ -8,6 +8,9 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 
+import static org.lwjgl.opengl.GL40C.GL_TESS_CONTROL_SHADER;
+import static org.lwjgl.opengl.GL40C.GL_TESS_EVALUATION_SHADER;
+
 /**
  * Shader features allow a higher-level way of requesting GLSL functionality without having to manually enable extensions per-shader.
  *
@@ -79,7 +82,10 @@ public enum ShaderFeature {
      * Modifies the specified shader source to add the required GLSL extensions.
      *
      * @param tree The tree to modify
+     * @deprecated Use {@link #modifyShader(int, GlslTree)}
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
+    @Deprecated
     public void modifyShader(GlslTree tree) {
         final List<String> directives = tree.getDirectives();
         switch (this) {
@@ -94,7 +100,35 @@ public enum ShaderFeature {
             case FLOAT64 -> directives.add("#extension GL_ARB_gpu_shader_fp64 : require");
             case INT64 -> directives.add("#extension GL_ARB_gpu_shader_int64 : require");
             case VERTEX_ATTRIBUTE64 -> directives.add("#extension GL_ARB_vertex_attrib_64bit : require");
-            case TESSELLATION -> directives.add("#extension GL_ARB_tessellation_shader : require");
+        }
+    }
+
+    /**
+     * Modifies the specified shader source to add the required GLSL extensions.
+     *
+     * @param shaderType The type of shader to modify
+     * @param tree       The tree to modify
+     * @since 3.4.0
+     */
+    public void modifyShader(int shaderType, GlslTree tree) {
+        final List<String> directives = tree.getDirectives();
+        switch (this) {
+            case COMPUTE -> directives.add("#extension GL_ARB_compute_shader : require");
+            case SHADER_STORAGE -> directives.add("#extension GL_ARB_shader_storage_buffer_object : require");
+            case ATOMIC_COUNTER -> directives.add("#extension GL_ARB_shader_atomic_counters : require");
+            case BINDLESS_TEXTURE -> {
+                directives.add("#extension GL_ARB_bindless_texture : require");
+                directives.add("#extension GL_NV_gpu_shader5 : enable");
+                directives.add("#extension GL_EXT_nonuniform_qualifier : enable");
+            }
+            case FLOAT64 -> directives.add("#extension GL_ARB_gpu_shader_fp64 : require");
+            case INT64 -> directives.add("#extension GL_ARB_gpu_shader_int64 : require");
+            case VERTEX_ATTRIBUTE64 -> directives.add("#extension GL_ARB_vertex_attrib_64bit : require");
+            case TESSELLATION -> {
+                if (shaderType == GL_TESS_CONTROL_SHADER || shaderType == GL_TESS_EVALUATION_SHADER) {
+                    directives.add("#extension GL_ARB_tessellation_shader : require");
+                }
+            }
         }
     }
 }
