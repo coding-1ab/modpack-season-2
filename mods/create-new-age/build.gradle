@@ -70,17 +70,7 @@ subprojects {
             }
         }
     }
-    
-    if (project.name != "common") {
-        processResources {
-            from(project(":common").sourceSets.main.resources)
-            
-            filesMatching(["fabric.mod.json", "META-INF/mods.toml", "assets/**/*.json"]) {
-                expand(project.properties)
-            }
-        }
-    }
-    
+
     loom {
         accessWidenerPath = project(":common").file("src/main/resources/create_new_age-common.accesswidener")
     }
