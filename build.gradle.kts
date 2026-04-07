@@ -167,13 +167,12 @@ repositories {
     }
 }
 
-val localRuntime = configurations.create("localRuntime")
+val localRuntime = configurations.maybeCreate("localRuntime")
 configurations {
     runtimeClasspath {
         extendsFrom(localRuntime)
     }
 }
-
 
 dependencies {
     testImplementation(kotlin("test"))
@@ -191,10 +190,10 @@ dependencies {
     }
     localRuntime("squeek.appleskin:appleskin")
     localRuntime("org.appliedenergistics:appliedenergistics2")
-    localRuntime("org.antarcticgardens.cna:create-new-age") {
+    /*localRuntime("org.antarcticgardens.cna:create-new-age") {
         isTransitive = false
-    }
-    // localRuntime("mezz.jei:jei-${property("minecraft_version")}-neoforge")
+    }*/
+    localRuntime("mezz.jei:jei-${property("minecraft_version")}-neoforge")
 
     add("additionalRuntimeClasspath", "org.jetbrains:annotations")
 }
