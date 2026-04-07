@@ -17,9 +17,9 @@ import appeng.hooks.VisualStateSaving;
  * <p/>
  * Used for compatibility with PonderJS.
  */
-@Mixin(targets = "com.simibubi.create.foundation.ponder.PonderWorld", remap = false)
+@Mixin(targets = "net.createmod.ponder.api.level.PonderLevel", remap = false)
 @Pseudo
-public class PonderWorldMixin {
+public class PonderLevelMixin {
     @Inject(method = "restore", at = @At("HEAD"), remap = false, require = 0)
     public void enableClientSideStateSavingForRestore(CallbackInfo ci) {
         VisualStateSaving.setEnabled(true);

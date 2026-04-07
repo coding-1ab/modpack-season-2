@@ -20,7 +20,7 @@
     "WrappedGenericStackTooltipModIdMixin",
     "PickColorMixin",
     "TextureAtlasMixin",
-    "PonderWorldMixin",
+    "PonderLevelMixin",
     "ModelBakeryMixin",
     "VariantDeserializerMixin"
   ],
