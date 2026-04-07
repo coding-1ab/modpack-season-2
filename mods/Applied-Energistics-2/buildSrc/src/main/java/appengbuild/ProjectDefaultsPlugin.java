@@ -52,12 +52,12 @@ public class ProjectDefaultsPlugin implements Plugin<Project> {
 
                         // Custom version source provider
                         return project.getProviders().of(ProjectVersionSource.class, spec -> {
-                            spec.getParameters()
-                                    .getDefaultBranches()
-                                    .addAll(
-                                            "main",
-                                            "neoforge/" + project.getProperties().get("minecraft_version")
-                                    );
+                            ProjectVersionSource.ProjectVersionSourceParams params = spec.getParameters();
+                            params.getDefaultBranches().addAll(
+                                    "main",
+                                    "neoforge/" + project.getProperties().get("minecraft_version")
+                            );
+                            params.getProjectRoot().set(project.getProjectDir());
                         });
                     });
 

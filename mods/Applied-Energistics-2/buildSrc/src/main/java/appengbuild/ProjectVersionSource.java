@@ -1,6 +1,6 @@
 package appengbuild;
 
-import org.gradle.api.GradleException;
+import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.ValueSource;
 import org.gradle.api.provider.ValueSourceParameters;
@@ -47,7 +47,7 @@ public abstract class ProjectVersionSource implements ValueSource<String, Projec
     }
 
     private String detectVersion() throws InterruptedException, IOException {
-        var gitVersion = git("--version");
+        var gitVersion = git(getParameters().getProjectRoot(), "--version");
         if (!gitVersion.contains("git version")) {
             throw new RuntimeException("Git version command did not return a git version: " + gitVersion);
         }
@@ -81,10 +81,7 @@ public abstract class ProjectVersionSource implements ValueSource<String, Projec
         String currentRev = "HEAD";
 
         while (true) {
-            String described = git("describe", "--long", "--tags", currentRev);
-            if (described == null) {
-                throw new GradleException("Cannot calculate the project version without a previous Git tag. Did you forget to run \"git fetch --tags\"?");
-            }
+            String described = git(getParameters().getProjectRoot(), "describe", "--long", "--tags", currentRev);
 
             // Describe (long) output is "<tag>-<offset>-g<commit>"
             String[] describeSplit = rsplit(described, "-", 2);
@@ -128,11 +125,12 @@ public abstract class ProjectVersionSource implements ValueSource<String, Projec
 
     @Nullable
     private String getBranchSuffix() throws IOException, InterruptedException {
-        String headOutput = git("symbolic-ref", "-q", "HEAD");
+        ProjectVersionSourceParams params = getParameters();
+        String headOutput = git(params.getProjectRoot(), "symbolic-ref", "-q", "HEAD");
         String longBranch = headOutput.isEmpty() ? null : headOutput;
 
         String branch = longBranch != null ? shortenRefName(longBranch) : "";
-        if (getParameters().getDefaultBranches().get().contains(branch)) {
+        if (params.getDefaultBranches().get().contains(branch)) {
             // Branch is exempted from suffix
             return null;
         }
@@ -149,11 +147,12 @@ public abstract class ProjectVersionSource implements ValueSource<String, Projec
         return refName.replaceFirst("^refs/heads/", "");
     }
 
-    private static String git(String... args) throws InterruptedException, IOException {
+    private static String git(RegularFileProperty root, String... args) throws InterruptedException, IOException {
         var combinedArgs = new ArrayList<String>(1 + args.length);
         combinedArgs.add("git");
+
         Collections.addAll(combinedArgs, args);
-        var process = new ProcessBuilder(combinedArgs).start();
+        var process = new ProcessBuilder(combinedArgs).directory(root.get().getAsFile()).start();
 
         // We provide no STDIN to the process
         process.getOutputStream().close();
@@ -215,6 +214,9 @@ public abstract class ProjectVersionSource implements ValueSource<String, Projec
         @Input
         @Optional
         public abstract ListProperty<String> getDefaultBranches();
+
+        @Input
+        public abstract RegularFileProperty getProjectRoot();
     }
 
     private static class NativeEncodingHolder {
