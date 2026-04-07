@@ -9,7 +9,7 @@
 	url = https://github.com/tmvkrpxl0/Applied-Energistics-2.git
 [submodule "mods/create-new-age"]
 	path = mods/create-new-age
-	url = https://github.com/tmvkrpxl0/create-new-age.git
+	url = https://gitlab.com/tmvkrpxl0/create-new-age.git
 [submodule "mods/create_connected"]
 	path = mods/create_connected
 	url = https://github.com/tmvkrpxl0/create_connected.git
