@@ -1,6 +1,6 @@
 plugins {
     id "maven-publish"
-    id "dev.architectury.loom" version "1.9-SNAPSHOT" apply false
+    id "dev.architectury.loom" version "1.13-SNAPSHOT" apply false
     id "me.modmuss50.mod-publish-plugin" version "1.1.0"
     id "dev.ithundxr.silk" version "1.0.1"
 }
@@ -61,7 +61,8 @@ subprojects {
         annotationProcessor("systems.manifold:manifold-preprocessor:2024.1.29")
 
         modImplementation(include("org.antarcticgardens.esl:esl-${project.name}-${rootProject.minecraftVersion}:${rootProject.eslVersion}+${project.name}-mc${rootProject.minecraftVersion}"))
-        
+
+        println("mezz.jei:jei-${rootProject.minecraftVersion}-common-api:${rootProject.jeiVersion}")
         modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraftVersion}-common-api:${rootProject.jeiVersion}")
 
         if (project.name != "common") {
