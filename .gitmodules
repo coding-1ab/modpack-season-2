@@ -16,6 +16,3 @@
 [submodule "mods/createaddition"]
 	path = mods/createaddition
 	url = https://github.com/tmvkrpxl0/createaddition.git
-[submodule "mods/JustEnoughItems"]
-	path = mods/JustEnoughItems
-	url = https://github.com/mezz/JustEnoughItems.git
