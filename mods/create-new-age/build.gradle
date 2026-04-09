@@ -17,7 +17,9 @@ subprojects {
     apply plugin: "me.modmuss50.mod-publish-plugin"
     apply plugin: "dev.ithundxr.silk"
 
-    archivesBaseName = "create-new-age"
+	base {
+		archivesName = "create-new-age"
+	}
 
     repositories {
         mavenLocal()
@@ -60,10 +62,9 @@ subprojects {
         
         annotationProcessor("systems.manifold:manifold-preprocessor:2024.1.29")
 
-        modImplementation(include("org.antarcticgardens.esl:esl-${project.name}-${rootProject.minecraftVersion}:${rootProject.eslVersion}+${project.name}-mc${rootProject.minecraftVersion}"))
+        implementation(include("org.antarcticgardens.esl:esl-${project.name}-${rootProject.minecraftVersion}:${rootProject.eslVersion}+${project.name}-mc${rootProject.minecraftVersion}"))
 
-        println("mezz.jei:jei-${rootProject.minecraftVersion}-common-api:${rootProject.jeiVersion}")
-        modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraftVersion}-common-api:${rootProject.jeiVersion}")
+        compileOnlyApi("mezz.jei:jei-${rootProject.minecraftVersion}-common-api:${rootProject.jeiVersion}")
 
         if (project.name != "common") {
             if (recipeViewer == "jei") {
@@ -97,7 +98,7 @@ subprojects {
     publishing {
         publications {
             maven(MavenPublication) {
-                artifactId = project.archivesBaseName + "-${project.name}-${rootProject.minecraftVersion}"
+                artifactId = base.archivesName.get() + "-${project.name}-${rootProject.minecraftVersion}"
                 if (!System.getenv("RELEASE").asBoolean())
                     version = "${rootProject.modVersion}-build.${System.getenv("GIT_SHA")}+${project.name}-mc${rootProject.minecraftVersion}"
                 from components.java
