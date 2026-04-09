@@ -2,28 +2,26 @@ dependencies {
     compileOnly(project(":common"))
     neoForge("net.neoforged:neoforge:${project.neoforgeVersion}")
 
-    modImplementation("com.simibubi.create:create-${rootProject.minecraftVersion}:${rootProject.createVersion}:slim") { transitive = false }
-    modImplementation("net.createmod.ponder:ponder-neoforge:${ponderVersion}+mc${minecraftVersion}")
-    modCompileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraftVersion}:${flywheelVersion}")
-    modRuntimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraftVersion}:${flywheelVersion}")
-    modApi("com.tterrag.registrate:Registrate:${rootProject.registrateVersion}")
+    implementation("com.simibubi.create:create-${rootProject.minecraftVersion}:${rootProject.createVersion}:slim") { transitive = false }
+    implementation("net.createmod.ponder:ponder-neoforge:${ponderVersion}+mc${minecraftVersion}")
+    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraftVersion}:${flywheelVersion}")
+    runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraftVersion}:${flywheelVersion}")
+    api("com.tterrag.registrate:Registrate:${rootProject.registrateVersion}")
 
     if (enableCraftsAndAdditions.toBoolean()) {
-        modRuntimeOnly("maven.modrinth:createaddition:neoforge-${minecraftVersion}-${craftsAndAdditionsVersion}")
+        runtimeOnly("maven.modrinth:createaddition:neoforge-${minecraftVersion}-${craftsAndAdditionsVersion}")
     }
     if (enableAE2.toBoolean()) {
-        modRuntimeOnly("org.appliedenergistics:appliedenergistics2:${appliedEnergistics2Version}")
+        runtimeOnly("org.appliedenergistics:appliedenergistics2:${appliedEnergistics2Version}")
     }
 
     compileOnly("io.github.llamalad7:mixinextras-common:0.5.0")
     annotationProcessor(implementation(include("io.github.llamalad7:mixinextras-neoforge:0.5.0")))
 
     // Computer Craft stuffs
-    modCompileOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge-api:${rootProject.cctVersion}")
+    compileOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge-api:${rootProject.cctVersion}")
     if (enableCCT.toBoolean()) {
-        modRuntimeOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge:${rootProject.cctVersion}")
-        // Required to be able to run CC:Tweaked
-        forgeRuntimeLibrary("cc.tweaked:cobalt:0.9.7")
+        runtimeOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge:${rootProject.cctVersion}")
     }
 }
 
