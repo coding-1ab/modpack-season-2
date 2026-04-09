@@ -3,7 +3,7 @@
 	url = https://github.com/tmvkrpxl0/Create.git
 [submodule "mods/AppleSkin"]
 	path = mods/AppleSkin
-	url = https://github.com/squeek502/AppleSkin.git
+	url = https://github.com/coding-1ab/AppleSkin.git
 [submodule "mods/Applied-Energistics-2"]
 	path = mods/Applied-Energistics-2
 	url = https://github.com/tmvkrpxl0/Applied-Energistics-2.git
@@ -16,3 +16,7 @@
 [submodule "mods/createaddition"]
 	path = mods/createaddition
 	url = https://github.com/tmvkrpxl0/createaddition.git
+[submodule "mods/CC-Tweaked"]
+	path = mods/CC-Tweaked
+	url = https://github.com/cc-tweaked/CC-Tweaked.git
+	branch = mc-1.21.x

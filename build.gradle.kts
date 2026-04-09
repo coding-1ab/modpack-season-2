@@ -167,7 +167,9 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("thedarkcolour:kotlinforforge-neoforge:5.+")
 
-    localRuntime("com.simibubi.create:create-${property("minecraft_version")}:${property("create_version")}:slim") { isTransitive = false }
+    localRuntime("com.simibubi.create:create-${property("minecraft_version")}:${property("create_version")}:slim") {
+        isTransitive = false
+    }
     localRuntime("net.createmod.ponder:ponder-neoforge:${property("ponder_version")}+mc${property("minecraft_version")}")
     localRuntime("dev.engine-room.flywheel:flywheel-neoforge-${property("minecraft_version")}:${property("flywheel_version")}")
     localRuntime("com.tterrag.registrate:Registrate:${property("registrate_version")}")
@@ -179,10 +181,13 @@ dependencies {
     }
     localRuntime("squeek.appleskin:appleskin")
     localRuntime("org.appliedenergistics:appliedenergistics2")
-    /*localRuntime("org.antarcticgardens.cna:create-new-age") {
+    localRuntime("org.antarcticgardens.cna:create-new-age") {
         isTransitive = false
-    }*/
-    localRuntime("mezz.jei:jei-${property("minecraft_version")}-neoforge")
+    }
+    localRuntime("cc.tweaked:cc-tweaked-${property("minecraft_version")}-forge")
+
+    localRuntime("mezz.jei:jei-${property("minecraft_version")}-neoforge:19.27.0.340")
+    localRuntime("dev.emi:emi-neoforge:1.1.22+1.21.1")
 
     add("additionalRuntimeClasspath", "org.jetbrains:annotations")
 }
@@ -212,4 +217,8 @@ sourceSets.main.get().resources {
 
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8" // Use the UTF-8 charset for Java compilation
+}
+
+java.toolchain {
+    languageVersion.set(JavaLanguageVersion.of(21))
 }
