@@ -118,8 +118,6 @@ repositories {
         url = uri("https://modmaven.dev")
     }
 
-    maven("https://mvn.devos.one/snapshots/")
-    maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/")
     maven("https://maven.realrobotix.me/copycats") {
         // maven for Copycats+
         name = "realrobotixCopycats"
@@ -153,17 +151,8 @@ repositories {
         }
     }
     maven("https://maven.theillusivec4.top/") // Curios API
-    maven("https://maven.squiddev.cc") // CC: Tweaked
-    maven("https://maven.ftb.dev/releases") // FTB Mods
-    maven("https://maven.architectury.dev") // Arch API
-    maven("https://chocolateminecraft.com/maven") // Xaero
-    maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven")
-    // NeoForge config api port, needed by ponder
-    maven("https://jm.gserv.me/repository/maven-public") { // JourneyMap
-        content {
-            includeGroup("info.journeymap")
-            includeGroup("mysticdrew")
-        }
+    maven("https://maven.terraformersmc.com/") {
+        name = "TerraformersMC"
     }
 }
 
