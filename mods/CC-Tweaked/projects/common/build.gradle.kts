@@ -23,7 +23,7 @@ configurations {
 }
 
 repositories {
-    maven("https://maven.neoforged.net/") {
+    maven("https://maven.neoforged.net/releases") {
         content {
             includeModule("org.spongepowered", "mixin")
         }
