@@ -5,6 +5,7 @@ import java.util.concurrent.Executor;
 
 import com.google.common.collect.ImmutableList;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -41,19 +42,24 @@ import appeng.spatial.SpatialStorageDimensionIds;
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin {
     @Shadow
+    @Final
     private Map<ResourceKey<Level>, ServerLevel> levels;
 
     @Shadow
+    @Final
     protected WorldData worldData;
 
     @Shadow
-    protected Executor executor;
+    @Final
+    private Executor executor;
 
     @Shadow
+    @Final
     protected LevelStorageSource.LevelStorageAccess storageSource;
 
     @Shadow
-    protected LayeredRegistryAccess<RegistryLayer> registries;
+    @Final
+    private LayeredRegistryAccess<RegistryLayer> registries;
 
     @SuppressWarnings("ConstantConditions")
     @Inject(method = "createLevels", at = @At(value = "TAIL"))
