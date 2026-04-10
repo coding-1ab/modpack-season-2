@@ -20,3 +20,7 @@
 	path = mods/CC-Tweaked
 	url = https://github.com/cc-tweaked/CC-Tweaked.git
 	branch = mc-1.21.x
+[submodule "mods/NatureSpiritForge"]
+	path = mods/NatureSpiritForge
+	url = https://github.com/coding-1ab/NatureSpiritForge.git
+	branch = 1.21.1

@@ -29,6 +29,7 @@ addMod("./mods/createaddition", "com.mrh0.createaddition:createaddition")
 addMod("./mods/AppleSkin", "squeek.appleskin:appleskin")
 addMod("./mods/create-new-age", "org.antarcticgardens.cna:create-new-age", ":neoforge")
 addMod("./mods/Applied-Energistics-2", "org.appliedenergistics:appliedenergistics2")
+addMod("./mods/NatureSpiritForge", "net.hibiscus:natures_spirit")
 addMod(
     "./mods/CC-Tweaked", arrayOf(
         "cc.tweaked:cc-tweaked-1.21.1-common-api" to ":common-api",

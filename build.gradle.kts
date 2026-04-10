@@ -107,6 +107,7 @@ repositories {
     }
     maven("https://maven.createmod.net") // Create, Ponder, Flywheel
     maven("https://maven.ithundxr.dev/snapshots") // Registrate
+    maven("https://maven.minecraftforge.net/")
     maven {
         // location of the maven that hosts JEI files since January 2023
         name = "Jared's maven"
@@ -187,7 +188,8 @@ dependencies {
     localRuntime("cc.tweaked:cc-tweaked-${property("minecraft_version")}-forge")
 
     localRuntime("mezz.jei:jei-${property("minecraft_version")}-neoforge:19.27.0.340")
-    localRuntime("dev.emi:emi-neoforge:1.1.22+1.21.1")
+    localRuntime("dev.emi:emi-neoforge:1.1.22+${property("minecraft_version")}")
+    localRuntime("net.hibiscus:natures_spirit")
 
     add("additionalRuntimeClasspath", "org.jetbrains:annotations")
 }
