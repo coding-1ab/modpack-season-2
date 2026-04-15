@@ -6,16 +6,14 @@
   "textures": {
     "Noise": {
       "type": "location",
-      "location": "aeronautics:textures/special/noise_composed.png"
+      "location": "aeronautics:textures/special/noise_composed.png",
+      "filter": {
+        "blur": true
+      }
     },
     "DiffuseDepthSampler": {
       "type": "framebuffer",
       "name": "minecraft:main:depth"
     }
-  },
-  "definitions": [
-    {
-      "TESSELLATION_SHADER": 1
-    }
-  ]
+  }
 }
