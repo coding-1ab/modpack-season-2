@@ -1,16 +1,13 @@
 package dev.eriksonn.aeronautics.content.blocks.levitite;
 
 import dev.eriksonn.aeronautics.index.AeroBlocks;
-import dev.eriksonn.aeronautics.index.client.AeroRenderTypes;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
 import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper;
 import dev.ryanhcode.sable.physics.config.dimension_physics.DimensionPhysicsData;
 import dev.ryanhcode.sable.physics.floating_block.FloatingBlockMaterial;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
-import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.ryanhcode.sable.util.SableMathUtils;
 import foundry.veil.api.client.render.VeilRenderSystem;
-import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
 import org.joml.Matrix3f;
@@ -19,6 +16,7 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class LevititeShaderManager {
@@ -33,9 +31,10 @@ public class LevititeShaderManager {
     private static final Matrix3f matrix = new Matrix3f();
     private static final Vector3d gravityVector1 = new Vector3d();
     private static final Vector3f gravityVector2 = new Vector3f();
+    private static boolean enabled = false;
 
     public static HashMap<ClientSubLevel, LevititeShaderManager> managers = new HashMap<>();
-    
+
     private final Vector3d smoothedLinearVelocity = new Vector3d();
     private final Vector3d lastSmoothedLinearVelocity = new Vector3d();
     private final Vector3d smoothedAngularVelocity = new Vector3d();
@@ -43,12 +42,21 @@ public class LevititeShaderManager {
     private final Vector3d accumulatedPosition = new Vector3d();
 
     public static void tick() {
-        managers.keySet().removeIf(SubLevel::isRemoved);
-        for (Map.Entry<ClientSubLevel, LevititeShaderManager> entry : managers.entrySet()) {
-            LevititeShaderManager manager = entry.getValue();
-            ClientSubLevel subLevel = entry.getKey();
+        if (managers.isEmpty()) {
+            return;
+        }
 
-            manager.internalTick(subLevel);
+        Iterator<Map.Entry<ClientSubLevel, LevititeShaderManager>> iterator = managers.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<ClientSubLevel, LevititeShaderManager> entry = iterator.next();
+
+            ClientSubLevel subLevel = entry.getKey();
+            if (subLevel.isRemoved()) {
+                iterator.remove();
+                continue;
+            }
+
+            entry.getValue().internalTick(subLevel);
         }
     }
 
@@ -58,9 +66,7 @@ public class LevititeShaderManager {
     }
 
     public static void disableShader() {
-        ShaderUniform u = VeilRenderSystem.renderer().getShaderManager().getShader(AeroRenderTypes.shaderPath).getUniform("enabled");
-        if (u != null)
-            u.setInt(0);
+        enabled = false;
     }
 
     public static void prepareShaderForWorld(ShaderInstance shader, double camX, double camY, double camZ) {
@@ -68,13 +74,13 @@ public class LevititeShaderManager {
         camY = camY % 10000;
         camZ = camZ % 10000;
         setMaterialProperties(shader);
-        shader.safeGetUniform("enabled").set(1);
         shader.safeGetUniform("offset").set(-(float) camX, -(float) camY, -(float) camZ);
         shader.safeGetUniform("currentOrientation").set(matrix.identity());
         shader.safeGetUniform("sublevelPosition").set(0f, 0f, 0f);
         shader.safeGetUniform("linearVelocity").set(0f, 0f, 0f);
         shader.safeGetUniform("angularVelocity").set(0f, 0f, 0f);
         shader.safeGetUniform("onSublevel").set(0);
+        enabled = true;
     }
 
     public static void setMaterialProperties(ShaderInstance shader) {
@@ -148,12 +154,15 @@ public class LevititeShaderManager {
         currentOrientation.transformInverse(gravityVector1);
         gravityVector2.set(gravityVector1);
 
-        shader.safeGetUniform("enabled").set(1);
         shader.safeGetUniform("offset").set((float) offset.x, (float) offset.y, (float) offset.z);
         shader.safeGetUniform("linearVelocity").set((float) linearVelocity.x * 20, (float) linearVelocity.y * 20, (float) linearVelocity.z * 20);
         shader.safeGetUniform("angularVelocity").set((float) angularVelocity.x * 20, (float) angularVelocity.y * 20, (float) angularVelocity.z * 20);
         shader.safeGetUniform("sublevelPosition").set((float) currentPos.x % 10000, (float) currentPos.y % 10000, (float) currentPos.z % 10000);
         shader.safeGetUniform("currentOrientation").set(matrix.set(currentOrientation));
         shader.safeGetUniform("onSublevel").set(1);
+    }
+
+    public static boolean isEnabled() {
+        return VeilRenderSystem.tessellationSupported() && enabled;
     }
 }
