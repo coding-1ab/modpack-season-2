@@ -1,9 +1,10 @@
 plugins {
     id "java-library"
     id "maven-publish"
-    id "net.neoforged.moddev" version "1.0.21"
-    id "me.modmuss50.mod-publish-plugin" version "0.8.4"
+    id "net.neoforged.moddev" version "2.0.141"
+    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
     id "com.diffplug.spotless" version "7.0.2"
+    id "idea"
 }
 
 tasks.named("wrapper", Wrapper).configure {
@@ -82,15 +83,15 @@ configurations {
 
 repositories {
     mavenLocal()
-    maven { url "https://maven.dragons.plus/releases" } // Create: Dragons Plus
-    maven { url "https://maven.createmod.net" } // Ponder, Flywheel
-    maven { url "https://mvn.devos.one/snapshots" } // Registrate
-    maven { url "https://maven.blamejared.com" } // JEI
-    maven { url "https://maven.theillusivec4.top/" } // Curios API
-    maven { url 'https://maven.fallenbreath.me/releases' } // Conditional Mixin
-    maven { url "https://www.cursemaven.com" }
-    maven { url "https://api.modrinth.com/maven" }
-    maven { url "https://raw.githubusercontent.com/Fuzss/modresources/main/maven" } // NeoForge config api port, needed by ponder
+    maven { url = "https://maven.dragons.plus/releases" } // Create: Dragons Plus
+    maven { url = "https://maven.createmod.net" } // Ponder, Flywheel
+    maven { url = "https://mvn.devos.one/snapshots" } // Registrate
+    maven { url = "https://maven.blamejared.com" } // JEI
+    maven { url = "https://maven.theillusivec4.top/" } // Curios API
+    maven { url = 'https://maven.fallenbreath.me/releases' } // Conditional Mixin
+    maven { url = "https://www.cursemaven.com" }
+    maven { url = "https://api.modrinth.com/maven" }
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven" } // NeoForge config api port, needed by ponder
 }
 
 dependencies {
@@ -165,8 +166,8 @@ publishing {
     }
     repositories {
         maven {
-            name "DragonsPlus"
-            url "https://maven.dragons.plus/releases"
+            name = "DragonsPlus"
+            url = "https://maven.dragons.plus/releases"
             credentials(PasswordCredentials)
             authentication {
                 basic(BasicAuthentication)
