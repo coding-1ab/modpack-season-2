@@ -24,3 +24,21 @@
 	path = mods/NatureSpiritForge
 	url = https://github.com/coding-1ab/NatureSpiritForge.git
 	branch = 1.21.1
+[submodule "mods/easyshulkerboxes"]
+	path = mods/easyshulkerboxes
+	url = https://github.com/Fuzss/easyshulkerboxes.git
+[submodule "mods/CreateDragonPlus"]
+	path = mods/CreateDragonPlus
+	url = https://github.com/coding-1ab/CreateDragonsPlus.git
+[submodule "mods/CreateEnchantmentIndustry"]
+	path = mods/CreateEnchantmentIndustry
+	url = https://github.com/coding-1ab/CreateEnchantmentIndustry.git
+[submodule "mods/Quicksand"]
+	path = mods/Quicksand
+	url = https://github.com/coding-1ab/Quicksand.git
+[submodule "mods/Spice-of-Life-Carrot-Edition"]
+	path = mods/Spice-of-Life-Carrot-Edition
+	url = https://github.com/coding-1ab/Spice-of-Life-Carrot-Edition.git
+[submodule "mods/FarmersDelight"]
+	path = mods/FarmersDelight
+	url = https://github.com/coding-1ab/FarmersDelight.git
