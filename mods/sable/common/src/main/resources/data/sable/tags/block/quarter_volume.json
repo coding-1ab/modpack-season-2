@@ -1,0 +1,42 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:fences",
+    "#minecraft:fence_gates",
+    "#minecraft:trapdoors",
+    "#minecraft:doors",
+    "#minecraft:wool_carpets",
+    "#minecraft:candles",
+    "#c:glass_panes",
+
+    "minecraft:ladder",
+    "minecraft:iron_bars",
+
+    "minecraft:cocoa",
+    "minecraft:moss_carpet",
+    "minecraft:bamboo",
+    "minecraft:sea_pickle",
+    "minecraft:chain",
+    "minecraft:lightning_rod",
+    "minecraft:flower_pot",
+    "minecraft:end_rod",
+    "minecraft:lantern",
+    "minecraft:soul_lantern",
+
+    { "id": "create:clipboard", "required": false },
+    { "id": "create:redstone_link", "required": false },
+
+    "#sable:diode",
+    { "id": "create:andesite_ladder", "required": false },
+    { "id": "create:copper_ladder", "required": false },
+    { "id": "create:brass_ladder", "required": false },
+
+    { "id": "create:andesite_bars", "required": false },
+    { "id": "create:copper_bars", "required": false },
+    { "id": "create:brass_bars", "required": false },
+
+    { "id": "create:copycat_step", "required": false },
+    { "id": "create:copycat_panel", "required": false },
+    { "id": "#create:table_cloths", "required": false }
+  ]
+}

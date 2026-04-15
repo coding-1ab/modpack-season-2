@@ -1,0 +1,7 @@
+{
+  "selector": "#sable:heavy",
+
+  "properties": {
+    "sable:mass": 2.0
+  }
+}
