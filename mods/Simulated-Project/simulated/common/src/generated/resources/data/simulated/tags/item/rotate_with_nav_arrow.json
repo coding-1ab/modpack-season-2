@@ -1,0 +1,11 @@
+{
+  "values": [
+    "simulated:redstone_magnet",
+    "minecraft:compass",
+    "minecraft:recovery_compass",
+    {
+      "id": "naturescompass:naturescompass",
+      "required": false
+    }
+  ]
+}
