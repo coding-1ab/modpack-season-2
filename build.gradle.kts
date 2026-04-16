@@ -57,10 +57,15 @@ neoForge {
             data()
 
             // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
-            // gameDirectory = project.file('run-data')
+            gameDirectory = project.file("run-data")
 
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            // programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+            programArguments.addAll(
+                "--mod", properties["mod_id"]!! as String,
+                "--all",
+                "--output", file("src/generated/resources/").absolutePath,
+                "--existing", file("src/main/resources/").absolutePath
+            )
         }
 
         // applies to all the run configs above
@@ -89,14 +94,14 @@ neoForge {
         }
     }
 
-    /*mods {
+    mods {
         // define mod <-> source bindings
         // these are used to tell the game which sources are for which mod
         // multi mod projects should define one per mod
-        "$mod_id" {
-            sourceSet(sourceSets.main)
+        create(properties["mod_id"]!! as String) {
+            sourceSet(sourceSets.main.get())
         }
-    }*/
+    }
 }
 
 repositories {
@@ -195,6 +200,10 @@ dependencies {
     localRuntime("curse.maven:searchables-858542:5831692")
     localRuntime("curse.maven:jade-324717:5493270")
     localRuntime("curse.maven:atlas-633577:5490697")
+
+    compileOnly("com.mrh0.createaddition:createaddition")
+    compileOnly("plus.dragons.createdragonsplus:create-dragons-plus")
+    compileOnly("org.appliedenergistics:appliedenergistics2")
 
     add("additionalRuntimeClasspath", "org.jetbrains:annotations")
 }
