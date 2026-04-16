@@ -40,7 +40,7 @@ View the [Sable Developer Wiki](https://github.com/ryanhcode/sable/wiki) for doc
 - Eriksonn for the sub-level splitting region algorithm, floating blocks, and amazing math wizardry
 - Ocelot for the fancy sub-level renderer and an incredible amount of optimization and API help
 - Cyvack for many Create compatibility fixes and features, assembly help, and general development
-- NotSoEpic for lift math, compatibility fixes, bug-fixes, and lots of general development
+- BeeIsYou for lift math, compatibility fixes, bug-fixes, and lots of general development
 - KyanBirb for assets, compatibility fixes, bug-fixes and lots of general development
 - Cake for bug-fixes and general development help
 - Rhyguy1 for morale
