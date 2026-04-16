@@ -19,7 +19,11 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building'
-                sh './gradlew build'
+                withCredentials([
+                    usernamePassword(credentialsId: 'publishing-user-credentials', usernameVariable: 'local_maven_user', passwordVariable: 'local_maven_token')
+                ]) {
+                    sh './gradlew build'
+                }
             }
         }
         stage('Publish') {
