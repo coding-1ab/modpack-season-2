@@ -31,9 +31,24 @@ addMods {
         )
     )
     addMod("./mods/Spice-of-Life-Carrot-Edition", "com.cazsius.solcarrot:solcarrot")
-    addMod("./mods/CreateDragonPlus", "plus.dragons.createdragonsplus:create-dragons-plus-1.21.1")
-    addMod("./mods/CreateEnchantmentIndustry", "plus.dragons.createenchantmentindustry:create-enchantment-industry-1.21.1")
-    addMod("./mods/Quicksand", "plus.dragons.quicksand:quicksand-neoforge-1.21.1")
+    addMod(
+        "./mods/CreateDragonPlus", arrayOf(
+            "plus.dragons.createdragonsplus:create-dragons-plus" to ":",
+            "plus.dragons.createdragonsplus:create-dragons-plus-1.21.1" to ":",
+        )
+    )
+    addMod(
+        "./mods/CreateEnchantmentIndustry", arrayOf(
+            "plus.dragons.createenchantmentindustry:create-enchantment-industry" to ":",
+            "plus.dragons.createenchantmentindustry:create-enchantment-industry-1.21.1" to ":",
+        )
+    )
+    addMod(
+        "./mods/Quicksand", arrayOf(
+            "plus.dragons.quicksand:quicksand" to ":",
+            "plus.dragons.quicksand:quicksand-neoforge-1.21.1" to ":",
+        )
+    )
     addMod(
         "./mods/CC-Tweaked", arrayOf(
             "cc.tweaked:cc-tweaked-1.21.1-common-api" to ":common-api",
