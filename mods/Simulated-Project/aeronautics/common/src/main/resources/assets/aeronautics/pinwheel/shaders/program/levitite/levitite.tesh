@@ -2,15 +2,15 @@
 layout (quads) in;
 uniform sampler2D Noise;
 
-in vec2 texCoord1[];
-out vec2 texCoord2;
-in vec4 vertexColor1[];
-out vec4 vertexColor2;
-in float vertexDistance1[];
-out float vertexDistance2;
+in vec2 texCoord0_out[];
+in vec4 vertexColor_out[];
+in float vertexDistance_out[];
 
-out float ghostLayerFullness2;
-out float ghostNoiseMagnitude2;
+out vec2 texCoord0;
+out vec4 vertexColor;
+out float vertexDistance;
+out float ghostLayerFullness;
+out float ghostNoiseMagnitude;
 out float depth;
 
 uniform mat4 ProjMat;
@@ -49,16 +49,16 @@ void main(void)
 {
     //basic transfer of vertex info to the sub-vertices
     vec4 tePosition = mix(mix(gl_in[0].gl_Position, gl_in[3].gl_Position, gl_TessCoord.y), mix(gl_in[1].gl_Position, gl_in[2].gl_Position, gl_TessCoord.y), gl_TessCoord.x);
-    texCoord2 = mix(mix(texCoord1[0], texCoord1[3], gl_TessCoord.y), mix(texCoord1[1], texCoord1[2], gl_TessCoord.y), gl_TessCoord.x);
-    vertexColor2 = mix(mix(vertexColor1[0], vertexColor1[3], gl_TessCoord.y), mix(vertexColor1[1], vertexColor1[2], gl_TessCoord.y), gl_TessCoord.x);
-    vertexDistance2 = mix(mix(vertexDistance1[0], vertexDistance1[3], gl_TessCoord.y), mix(vertexDistance1[1], vertexDistance1[2], gl_TessCoord.y), gl_TessCoord.x);
+    texCoord0 = mix(mix(texCoord0_out[0], texCoord0_out[3], gl_TessCoord.y), mix(texCoord0_out[1], texCoord0_out[2], gl_TessCoord.y), gl_TessCoord.x);
+    vertexColor = mix(mix(vertexColor_out[0], vertexColor_out[3], gl_TessCoord.y), mix(vertexColor_out[1], vertexColor_out[2], gl_TessCoord.y), gl_TessCoord.x);
+    vertexDistance = mix(mix(vertexDistance_out[0], vertexDistance_out[3], gl_TessCoord.y), mix(vertexDistance_out[1], vertexDistance_out[2], gl_TessCoord.y), gl_TessCoord.x);
 
     vec3 pos = tePosition.xyz;
     vec3 localPos = getLocalPosition(pos);
     vec3 vel = getVelocity(localPos);
     float l = onSublevel > 0 ? length(vel) : 0;
     float falloff = exp(-l/materialTransitionSpeed);
-    ghostLayerFullness2 = 1-falloff*falloff;
+    ghostLayerFullness = 1-falloff*falloff;
     if(layerIndex!=0)
     {
         vec3 p = localPos;
@@ -74,7 +74,7 @@ void main(void)
         vec3 nudge = getNoiseFromPositionAndTime(vec4(p,t),modifier);
         if(l>0.0001) //squish the noise offsets to move more along the direction of motion as the speed increases
             nudge = mix(vel*dot(nudge,vel)/dot(vel,vel),nudge,mix(1.0,0.1,(1-falloff)*(1-falloff)));
-        nudge *= ghostLayerFullness2;
+        nudge *= ghostLayerFullness;
         pos += nudge;
     }else
     {
@@ -84,7 +84,7 @@ void main(void)
         p/=10;
         float t = time/500;
         vec3 n = getNoiseFromPositionAndTime(vec4(p,t),drag.yxz*vec3(0.7,1,1));
-        ghostNoiseMagnitude2 = abs(n.x+n.y+n.z)*max(0.3,ghostLayerFullness2);
+        ghostNoiseMagnitude = abs(n.x+n.y+n.z)*max(0.3,ghostLayerFullness);
     }
 
     gl_Position = ProjMat * ModelViewMat * vec4(pos,1);

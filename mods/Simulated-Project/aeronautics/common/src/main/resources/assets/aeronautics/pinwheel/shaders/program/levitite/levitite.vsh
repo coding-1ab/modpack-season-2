@@ -23,8 +23,8 @@ uniform float time;
 uniform int onSublevel;
 uniform int layerIndex;
 
-out float vertexDistance0;
-out vec4 vertexColor0;
+out float vertexDistance;
+out vec4 vertexColor;
 out vec2 texCoord0;
 
 void main() {
@@ -39,9 +39,9 @@ void main() {
     }
     gl_Position = vec4(pos, 1.0);
 
-    vertexDistance0 = fog_distance(pos, FogShape);
-    vertexColor0 = Color * minecraft_sample_lightmap(Sampler2, ivec2(UV2 * vec2(1.0, SableSkyLightScale)));
-    vertexColor0.rgb *= mix(vec3(1.0), vec3(block_brightness(inverse(NormalMat) * (ModelViewMat * vec4(Normal, 0.0)).xyz)), SableEnableNormalLighting);
+    vertexDistance = fog_distance(pos, FogShape);
+    vertexColor = Color * minecraft_sample_lightmap(Sampler2, ivec2(UV2 * vec2(1.0, SableSkyLightScale)));
+    vertexColor.rgb *= mix(vec3(1.0), vec3(block_brightness(inverse(NormalMat) * (ModelViewMat * vec4(Normal, 0.0)).xyz)), SableEnableNormalLighting);
 
     texCoord0 = UV0;
 }

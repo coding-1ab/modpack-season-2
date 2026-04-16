@@ -1,10 +1,12 @@
 layout (vertices = 4) out;
+
 in vec2 texCoord0[];
-out vec2 texCoord1[];
-in vec4 vertexColor0[];
-out vec4 vertexColor1[];
-in float vertexDistance0[];
-out float vertexDistance1[];
+in vec4 vertexColor[];
+in float vertexDistance[];
+
+out vec2 texCoord0_out[];
+out vec4 vertexColor_out[];
+out float vertexDistance_out[];
 
 void main(void)
 {
@@ -19,9 +21,9 @@ void main(void)
         gl_TessLevelOuter[3] = 4;
     }
 
-    texCoord1[gl_InvocationID] = texCoord0[gl_InvocationID];
     gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
-    vertexColor1[gl_InvocationID] = vertexColor0[gl_InvocationID];
-    vertexDistance1[gl_InvocationID] = vertexDistance0[gl_InvocationID];
+    texCoord0_out[gl_InvocationID] = texCoord0[gl_InvocationID];
+    vertexColor_out[gl_InvocationID] = vertexColor[gl_InvocationID];
+    vertexDistance_out[gl_InvocationID] = vertexDistance[gl_InvocationID];
 
 }
