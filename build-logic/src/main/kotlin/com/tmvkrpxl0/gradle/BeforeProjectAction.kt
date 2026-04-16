@@ -4,6 +4,7 @@ import org.gradle.api.IsolatedAction
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.file.ArchiveOperations
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.add
@@ -13,7 +14,7 @@ import org.gradle.language.jvm.tasks.ProcessResources
 
 @Suppress("UnstableApiUsage")
 class BeforeProjectAction(
-    private val modules: ListProperty<String>,
+    private val modules: ListProperty<Pair<String, Boolean>>,
 ) : IsolatedAction<Project> {
     override fun execute(project: Project) {
         val archive = project.serviceOf<ArchiveOperations>()
@@ -27,7 +28,7 @@ class BeforeProjectAction(
             val nonTransitive = project.configurations.create("nonTransitive") {
                 isTransitive = false
             }
-            modules.get().forEach { module ->
+            modules.get().forEach { (module, includeTransitive) ->
                 val dependency = project.dependencies.create(module) as ModuleDependency
                 val separator = module.indexOf(':')
                 val artifactId = module.substring(separator + 1)
@@ -40,14 +41,17 @@ class BeforeProjectAction(
                     val moduleOutput = this.output
                     project.dependencies.add("localRuntime", moduleOutput)
 
-                    project.dependencies.add("nonTransitive", dependency) {
-                        isTransitive = false
+                    if (includeTransitive) {
+                        project.dependencies.add("nonTransitive", dependency) {
+                            isTransitive = false
+                        }
+                        project.dependencies.add("transitive", dependency) {
+                            isTransitive = true
+                        }
                     }
+
                     project.dependencies.add("${sourceSetName}nonTransitive", dependency) {
                         isTransitive = false
-                    }
-                    project.dependencies.add("transitive", dependency) {
-                        isTransitive = true
                     }
 
                     val unzipped = moduleNonTransitive.elements.map { elements ->
@@ -57,6 +61,7 @@ class BeforeProjectAction(
 
                     project.tasks.named<ProcessResources>(processResourcesTaskName) {
                         from(unzipped)
+                        duplicatesStrategy = DuplicatesStrategy.WARN
                     }
                 }
             }

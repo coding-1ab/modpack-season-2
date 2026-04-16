@@ -107,7 +107,7 @@ repositories {
     }
     maven("https://maven.createmod.net") // Create, Ponder, Flywheel
     maven("https://maven.ithundxr.dev/snapshots") // Registrate
-    maven("https://maven.minecraftforge.net/")
+    maven("https://maven.minecraftforge.net/") // Terrablender
     maven {
         // location of the maven that hosts JEI files since January 2023
         name = "Jared's maven"
@@ -178,31 +178,14 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("thedarkcolour:kotlinforforge-neoforge:5.+")
 
-    /*implementation("com.simibubi.create:create-${property("minecraft_version")}:${property("create_version")}:slim") {
-        isTransitive = false
-    }*/
-    // localRuntime("net.createmod.ponder:ponder-neoforge:${property("ponder_version")}+mc${property("minecraft_version")}")
-    // localRuntime("dev.engine-room.flywheel:flywheel-neoforge-${property("minecraft_version")}:${property("flywheel_version")}")
-    // localRuntime("com.tterrag.registrate:Registrate:${property("registrate_version")}")
-    /*localRuntime("com.hlysine.create_connected:create_connected") {
-        isTransitive = false
-    }*/
-    /*implementation("com.mrh0.createaddition:createaddition") {
-        isTransitive = false
-    }*/
-    // localRuntime("squeek.appleskin:appleskin-neoforge")
-    // implementation("org.appliedenergistics:appliedenergistics2")
-    /*localRuntime("org.antarcticgardens.cna:create-new-age") {
-        isTransitive = false
-    }*/
-    // localRuntime("cc.tweaked:cc-tweaked-${property("minecraft_version")}-forge")
+    localRuntime("net.createmod.ponder:ponder-neoforge:${property("ponder_version")}+mc${property("minecraft_version")}")
+    localRuntime("dev.engine-room.flywheel:flywheel-neoforge-${property("minecraft_version")}:${property("flywheel_version")}")
+    localRuntime("com.tterrag.registrate:Registrate:${property("registrate_version")}")
 
     localRuntime("mezz.jei:jei-${property("minecraft_version")}-neoforge:19.27.0.340")
     localRuntime("dev.emi:emi-neoforge:1.1.22+${property("minecraft_version")}")
-
-    // localRuntime("net.hibiscus:natures_spirit")
-    // localRuntime("vectorwing.farmersdelight:FarmersDelight")
-    // localRuntime("com.cazsius.solcarrot:solcarrot")
+    localRuntime("org.appliedenergistics:guideme:21.1.1")
+    localRuntime("com.github.glitchfiend:TerraBlender-neoforge:1.21.1-4.1.0.8")
 
     localRuntime("curse.maven:configured-457570:7276577")
     localRuntime("curse.maven:easyshulkerboxes-594006:6697879")
@@ -212,10 +195,6 @@ dependencies {
     localRuntime("curse.maven:searchables-858542:5831692")
     localRuntime("curse.maven:jade-324717:5493270")
     localRuntime("curse.maven:atlas-633577:5490697")
-
-    // localRuntime("plus.dragons.createdragonsplus:create-dragons-plus-1.21.1")
-    // localRuntime("plus.dragons.createenchantmentindustry:create-enchantment-industry-1.21.1")
-    // localRuntime("plus.dragons.quicksand:quicksand-neoforge-1.21.1")
 
     add("additionalRuntimeClasspath", "org.jetbrains:annotations")
 }
