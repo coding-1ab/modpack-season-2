@@ -113,6 +113,7 @@ public class RapierPhysicsPipeline implements PhysicsPipeline {
         try {
             Rapier3D.initialize(this.sceneId, gravity.x(), gravity.y(), gravity.z(), universalDrag);
         } catch (final UnsatisfiedLinkError e) {
+            Sable.LOGGER.error("Sable has failed to link with the natives for its Rapier pipeline. Please report with system details to " + Sable.ISSUE_TRACKER_URL);
             final CrashReport crashReport = CrashReport.forThrowable(e, "Sable linking with Rapier natives");
             throw new ReportedException(crashReport);
         }

@@ -56,6 +56,7 @@ public class Rapier3D {
         final String nativeName = getNativeName();
         try (final InputStream is = Rapier3D.class.getResourceAsStream("/natives/" + LIB_NAME + "/" + nativeName)) {
             if (is == null) {
+                Sable.LOGGER.error("Sable has failed to find the natives needed to load its Rapier pipeline. Please report with system details and logs to " + Sable.ISSUE_TRACKER_URL);
                 throw new FileNotFoundException(LIB_NAME);
             }
 
@@ -66,7 +67,7 @@ public class Rapier3D {
         } catch (final Exception e) {
             ENABLED = false;
 
-            Sable.LOGGER.error("Failed to load `" + nativeName + "` library", e);
+            Sable.LOGGER.error("Sable has failed to load the natives needed for its Rapier pipeline. Please report with system details and logs to " + Sable.ISSUE_TRACKER_URL);
         }
     }
 
