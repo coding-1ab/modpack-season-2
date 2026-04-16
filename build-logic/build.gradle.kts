@@ -14,17 +14,6 @@ gradlePlugin {
 
 repositories {
     mavenCentral()
-    gradlePluginPortal()
-    maven("https://maven.neoforged.net") {
-        name = "NeoForge"
-        content {
-            includeGroup("net.neoforged")
-        }
-    }
-}
-
-dependencies {
-    implementation("net.neoforged.moddev:net.neoforged.moddev.gradle.plugin:2.0.141")
 }
 
 kotlin {
