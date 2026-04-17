@@ -4,17 +4,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
-import dev.ryanhcode.sable.mixinterface.dynamic_directional_shading.ModelBlockRendererCacheExtension;
 import dev.ryanhcode.sable.platform.SableSubLevelRenderPlatform;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.ryanhcode.sable.sublevel.render.SubLevelRenderData;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.PrioritizeChunkUpdates;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.chunk.RenderRegionCache;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -199,7 +195,6 @@ public class VanillaSingleSubLevelRenderData implements SubLevelRenderData {
 
     @Override
     public void close() {
-        SableSubLevelRenderPlatform.INSTANCE.removeCustomModelData(this.subLevel.getLevel(), this.singleBlockPos);
         this.removeBlockEntity();
     }
 }

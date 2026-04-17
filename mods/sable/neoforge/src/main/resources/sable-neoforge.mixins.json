@@ -59,8 +59,7 @@
     "compatibility.flywheel.VisualManagerImplMixin",
     "compatibility.pmweather.RadarRendererMixin",
     "dynamic_directional_shading.SectionCompilerMixin",
-    "sound.MovingSoundInstanceDelegateMixin",
-    "sublevel_render.vanilla.ModelDataManagerMixin"
+    "sound.MovingSoundInstanceDelegateMixin"
   ],
   "mixins": [
     "compatibility.backpacks.BackpackPickupEventsMixin",

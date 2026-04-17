@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.ryanhcode.sable.platform.SableSubLevelRenderPlatform;
 import dev.ryanhcode.sable.sublevel.render.vanilla.SingleBlockSubLevelWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
@@ -20,11 +19,6 @@ import java.util.List;
 
 @ApiStatus.Internal
 public class SableSubLevelRenderPlatformImpl implements SableSubLevelRenderPlatform {
-
-    @Override
-    public void removeCustomModelData(final ClientLevel level, final BlockPos pos) {
-        // no-op
-    }
 
     @Override
     public void tesselateBlock(final SingleBlockSubLevelWrapper blockAndTintGetter, final BakedModel bakedModel, final BlockState blockState, final BlockPos pos, final PoseStack poseStack, final VertexConsumer vertexConsumer, final RandomSource randomSource, final long seed, final int packedOverlay, @Nullable final RenderType renderType) {
