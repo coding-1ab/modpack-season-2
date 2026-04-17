@@ -40,7 +40,7 @@ public class MountedPotatoCannonRenderer extends SafeBlockEntityRenderer<Mounted
 	}
 
 	private void renderComponents(final MountedPotatoCannonBlockEntity be, final float partialTicks, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay) {
-		final VertexConsumer vb = buffer.getBuffer(RenderType.cutout());
+		final VertexConsumer vb = buffer.getBuffer(RenderType.cutoutMipped());
 
 		final boolean drawParts = !VisualizationManager.supportsVisualization(be.getLevel());
 		if (drawParts) {

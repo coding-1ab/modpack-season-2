@@ -185,7 +185,6 @@ public class AeroBlocks {
                     .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(p -> p.lightLevel(HotAirBurnerBlock::getLightPower))
-                    .addLayer(() -> RenderType::cutoutMipped)
                     .blockstate((ctx, prov) ->
                             BlockStateGen.simpleBlock(ctx, prov,
                                     blockState -> prov.models().getExistingFile(
@@ -213,7 +212,6 @@ public class AeroBlocks {
                     .initialProperties(SharedProperties::stone)
                     .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
                     .properties(BlockBehaviour.Properties::noOcclusion)
-                    .addLayer(() -> RenderType::cutoutMipped)
                     .blockstate((ctx, prov) ->
                             prov.horizontalBlock(ctx.get(), blockState -> prov.models()
                                     .getExistingFile(prov.modLoc("block/" + ctx.getName() + "/block_" + (blockState.getValue(SteamVentBlock.VARIANT).getSerializedName())))))
@@ -347,7 +345,6 @@ public class AeroBlocks {
     public static final BlockEntry<MountedPotatoCannonBlock> MOUNTED_POTATO_CANNON =
             REGISTRATE.block("mounted_potato_cannon", MountedPotatoCannonBlock::new)
                     .initialProperties(SharedProperties::stone)
-                    .addLayer(() -> RenderType::cutoutMipped)
                     .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
                     .blockstate(AeroBlockStateGen::directionalPoweredAxisBlockstate)
                     .properties(BlockBehaviour.Properties::noOcclusion)
