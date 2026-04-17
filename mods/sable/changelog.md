@@ -1,1 +1,1 @@
- - Initial release!
+ - Protect sub-levels splitting producing sub-levels with zero mass

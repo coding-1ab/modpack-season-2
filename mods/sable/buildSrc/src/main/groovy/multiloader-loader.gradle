@@ -63,6 +63,12 @@ publishMods {
         minecraftVersions.add(minecraft_version)
     }*/
 
+    github {
+        repository = "ryanhcode/sable"
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+        commitish = "main"
+    }
+
     modrinth {
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         projectId = "T9PomCSv"
