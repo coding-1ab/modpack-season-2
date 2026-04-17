@@ -46,6 +46,7 @@ tasks.named('sourcesJar', Jar) {
 
 publishMods {
     def isFabric = project.name == "fabric"
+    def loaderName = isFabric ? "Fabric" : "NeoForge"
     def changelogFile = rootProject.file("changelog.md")
 
     type = STABLE
@@ -54,7 +55,7 @@ publishMods {
     changelog = changelogFile.text
 
     version = "$project.version+mc$minecraft_version"
-    displayName = "$mod_name $project.name $project.version for mc$minecraft_version"
+    displayName = "$mod_name $loaderName $project.version for mc$minecraft_version"
     modLoaders.add(project.name)
 
     /*curseforge {
