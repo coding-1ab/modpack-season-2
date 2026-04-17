@@ -4,6 +4,7 @@ import dev.eriksonn.aeronautics.Aeronautics;
 import dev.eriksonn.aeronautics.events.AeronauticsClientEvents;
 import dev.eriksonn.aeronautics.index.AeroBlocks;
 import dev.eriksonn.aeronautics.index.client.AeroRenderTypes;
+import dev.eriksonn.aeronautics.mixin.levitite.ChunkRenderTypeSetAccessor;
 import dev.eriksonn.aeronautics.neoforge.content.fluids.AeroFluidType;
 import dev.eriksonn.aeronautics.neoforge.index.AeroFluidsNeoForge;
 import foundry.veil.forge.event.ForgeVeilRegisterBlockLayersEvent;
@@ -18,6 +19,8 @@ import net.neoforged.neoforge.client.ChunkRenderTypeSet;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+
+import java.util.List;
 
 @EventBusSubscriber(modid = Aeronautics.MOD_ID, value = Dist.CLIENT)
 public class AeroNeoForgeClientEvents {
@@ -47,6 +50,22 @@ public class AeroNeoForgeClientEvents {
             final ChunkRenderTypeSet set = ChunkRenderTypeSet.of(RenderType.SOLID, AeroRenderTypes.levitite(), AeroRenderTypes.levititeGhosts());
             ItemBlockRenderTypes.setRenderLayer(AeroBlocks.LEVITITE.get(), set);
             ItemBlockRenderTypes.setRenderLayer(AeroBlocks.PEARLESCENT_LEVITITE.get(), set);
+
+            fixChunkRenderTypeSet();
+        }
+
+        /**
+         * Certain mods (like Bookshelf) cause the ChunkRenderTypeSet class in NeoForge to get initialized early,
+         * cementing the chunk render layers inside it. We do this as an unfortunate safety measure to "fix" the
+         * static collections in ChunkRenderTypeSet to include the Levitite layers, if the class is loaded before
+         * us.
+         */
+        private static void fixChunkRenderTypeSet() {
+            final List<RenderType> list = RenderType.chunkBufferLayers();
+
+            ChunkRenderTypeSetAccessor.setChunkRenderTypesList(list);
+            ChunkRenderTypeSetAccessor.setChunkRenderTypes(list.toArray(new RenderType[0]));
+            ((ChunkRenderTypeSetAccessor) (Object) ChunkRenderTypeSet.all()).getBits().set(0, list.size());
         }
 
         @SubscribeEvent
