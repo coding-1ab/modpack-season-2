@@ -1,0 +1,8 @@
+{
+  "block.modpack_tweaks.ender_fire": "엔더의 불",
+  "block.modpack_tweaks.ender_fuel": "엔더 연료",
+  "fluid_type.modpack_tweaks.ender_fuel": "엔더 연료",
+  "item.modpack_tweaks.ender_fuel_bucket": "엔더 연료 양동이",
+  "item.modpack_tweaks.shulker_shell_fragment": "셜커 껍데기 조각",
+  "itemGroup.modpack_tweaks.title": "코딩랩 모드팩 자체 컨텐츠"
+}

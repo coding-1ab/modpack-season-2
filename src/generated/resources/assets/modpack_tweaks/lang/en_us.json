@@ -1,0 +1,8 @@
+{
+  "block.modpack_tweaks.ender_fire": "Ender Fire",
+  "block.modpack_tweaks.ender_fuel": "Ender Fuel",
+  "fluid_type.modpack_tweaks.ender_fuel": "Ender Fuel",
+  "item.modpack_tweaks.ender_fuel_bucket": "Ender Fuel Bucket",
+  "item.modpack_tweaks.shulker_shell_fragment": "Shulker Shell Fragment",
+  "itemGroup.modpack_tweaks.title": "Coding Lab Modpack Tweaks"
+}
