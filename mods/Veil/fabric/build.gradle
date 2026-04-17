@@ -1,7 +1,6 @@
 plugins {
-    id 'multiloader-loader'
     id 'fabric-loom'
-    id 'com.modrinth.minotaur'
+    id 'multiloader-loader'
 }
 
 loom {
@@ -76,29 +75,4 @@ dependencies {
     include(runtimeOnly("io.github.spair:imgui-java-natives-linux:$imgui_version"))
     include(runtimeOnly("io.github.spair:imgui-java-natives-macos:$imgui_version"))
     include(runtimeOnly("io.github.spair:imgui-java-natives-windows:$imgui_version"))
-}
-
-modrinth {
-    var modrinthToken = System.getenv("MODRINTH_TOKEN")
-    if (modrinthToken == null) {
-        modrinthToken = project.hasProperty('modrinth_token') ? modrinth_token : "dummy"
-    }
-
-    token = modrinthToken
-    projectId = "veil"
-    versionName = "Veil $project.version Fabric"
-    versionNumber = "$project.version"
-    versionType = "release"
-    uploadFile = remapJar
-    additionalFiles = [jar, sourcesJar]
-    gameVersions = [project.minecraft_version]
-    final var changelogFile = file("$rootDir/changelog.md")
-    if (changelogFile.exists()) {
-        changelog = changelogFile.getText('UTF-8')
-    }
-    dependencies {
-        required.project "fabric-api"
-        optional.project "sodium"
-    }
-    debugMode = !project.modrinth_publish.equalsIgnoreCase("true")
 }
