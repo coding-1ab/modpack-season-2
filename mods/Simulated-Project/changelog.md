@@ -1,2 +1,2 @@
 - Return the Create team's wrench.
-- Fix compatability with Bookshelf and Levitite shaders 
+- Initial release.
