@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "modpack_tweaks:item/shulker_shell_fragment"
+  }
+}

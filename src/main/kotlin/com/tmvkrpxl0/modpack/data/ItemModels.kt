@@ -13,5 +13,9 @@ class ItemModels(output: PackOutput, existingFileHelper: ExistingFileHelper) :
             "layer0",
             "item/ender_fuel_bucket".toResource()
         )
+        withExistingParent("shulker_shell_fragment", "minecraft:item/generated").texture(
+            "layer0",
+            "item/shulker_shell_fragment".toResource()
+        )
     }
 }
