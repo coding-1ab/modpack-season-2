@@ -2,12 +2,14 @@ package dev.ryanhcode.sable.sublevel.plot.heat;
 
 import dev.ryanhcode.sable.SableConfig;
 import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
+import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3i;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.plot.HeatDataChunkSection;
 import dev.ryanhcode.sable.sublevel.plot.LevelPlot;
 import dev.ryanhcode.sable.sublevel.plot.PlotChunkHolder;
+import dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -237,7 +239,15 @@ public class SubLevelHeatMapManager {
                 listener.addBlocks(level, bounds, blocks);
             }
 
-            SubLevelAssemblyHelper.assembleBlocks((ServerLevel) level, blocks.get(0), blocks, bounds);
+            final ServerSubLevel subLevel = SubLevelAssemblyHelper.assembleBlocks((ServerLevel) level, blocks.get(0), blocks, bounds);
+
+            // Protect against split sub-levels that have zero mass.
+            if (subLevel.getMassTracker().getCenterOfMass() == null || subLevel.getMassTracker().getMass() <= 0.0) {
+                subLevel.getPlot().destroyAllBlocks();
+
+                final SubLevelContainer container = Objects.requireNonNull(SubLevelContainer.getContainer(level));
+                container.removeSubLevel(subLevel, SubLevelRemovalReason.REMOVED);
+            }
         }
     }
 
