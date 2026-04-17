@@ -33,7 +33,7 @@ public class MagnetPlacementHelper implements IPlacementHelper {
         if (world.getBlockEntity(ray.getBlockPos()) instanceof GeneratorCoilBlockEntity coil) {
             PlacementOffset offset = checkCoil(coil);
             if (offset == null) {
-                for (int i = 0; i < CNAConfig.getCommon().maxCoils.get(); i++) {
+                for (int i = 0; i < CNAConfig.getServer().maxCoils.get(); i++) {
                     if (world.getBlockEntity(ray.getBlockPos().relative(coil.getBlockState().getValue(BlockStateProperties.AXIS), i)) 
                             instanceof GeneratorCoilBlockEntity c) {
                         if ((offset = checkCoil(c)) != null)

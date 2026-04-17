@@ -2,7 +2,6 @@ package org.antarcticgardens.cna.content.electricity.network;
 
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.electricity.connector.AbstractElectricalConnector;
-import org.antarcticgardens.cna.content.electricity.connector.ElectricalConnectorBlockEntity;
 import org.antarcticgardens.cna.util.HashSortedPair;
 
 import java.util.*;
@@ -30,7 +29,7 @@ public class NetworkPathManager {
             }
 
             for (AbstractElectricalConnector connector : element.connector.getConnectedConnectors().keySet()) {
-                if (!visited.contains(connector) && element.depth < CNAConfig.getCommon().maxPathfindingDepth.get()) {
+                if (!visited.contains(connector) && element.depth < CNAConfig.getServer().maxPathfindingDepth.get()) {
                     visited.add(connector);
                     queue.add(new QueueElement(connector, element, element.depth + 1));
                 }

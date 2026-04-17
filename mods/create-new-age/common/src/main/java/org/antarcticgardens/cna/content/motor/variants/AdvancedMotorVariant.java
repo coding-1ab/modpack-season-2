@@ -5,16 +5,16 @@ import org.antarcticgardens.cna.config.CNAConfig;
 public class AdvancedMotorVariant implements IMotorVariant {
     @Override
     public long getMaxCapacity() {
-        return CNAConfig.getCommon().advancedMotorCapacity.get();
+        return CNAConfig.getServer().advancedMotorCapacity.get();
     }
 
     @Override
     public float getSpeed() {
-        return CNAConfig.getCommon().advancedMotorSpeed.get().floatValue();
+        return CNAConfig.getServer().advancedMotorSpeed.get().floatValue();
     }
 
     @Override
     public float getStress() {
-        return CNAConfig.getCommon().advancedMotorStress.get().floatValue();
+        return CNAConfig.getServer().advancedMotorStress.get().floatValue();
     }
 }

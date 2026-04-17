@@ -25,7 +25,7 @@ public enum WireType {
     }
 
     public long getConductivity() {
-        return (long) (conductivity * CNAConfig.getCommon().conductivityMultiplier.get());
+        return (long) (conductivity * CNAConfig.getServer().conductivityMultiplier.get());
     }
 
     public ItemStack getDroppedItem() {

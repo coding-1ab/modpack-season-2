@@ -2,7 +2,7 @@ package org.antarcticgardens.cna.config;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-public class CommonConfig {
+public class ServerConfig {
     public final ModConfigSpec.ConfigValue<Double> suToEnergy;
     public final ModConfigSpec.ConfigValue<Integer> maxRodsInDirection;
     public final ModConfigSpec.ConfigValue<Integer> maxCoils;
@@ -42,7 +42,7 @@ public class CommonConfig {
     public final ModConfigSpec.ConfigValue<Integer> streetLightLevelExtraction;
     public final ModConfigSpec.ConfigValue<Integer> streetLightCapacity;
 
-    public CommonConfig(ModConfigSpec.Builder builder) {
+    public ServerConfig(ModConfigSpec.Builder builder) {
         suToEnergy = builder
                 .comment(
                         "Responsible for how much energy is generated per 1 stress unit in a tick",

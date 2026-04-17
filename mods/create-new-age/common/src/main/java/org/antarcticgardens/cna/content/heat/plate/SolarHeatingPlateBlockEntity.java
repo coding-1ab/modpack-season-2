@@ -105,7 +105,7 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
 
 
     public void tick(BlockPos blockPos, Level world, BlockState blockState) {
-        double generationMultiplier = CNAConfig.getCommon().solarPanelHeatMultiplier.get();
+        double generationMultiplier = CNAConfig.getServer().solarPanelHeatMultiplier.get();
 
         int dark = 0;
         if (world.isClientSide()) {

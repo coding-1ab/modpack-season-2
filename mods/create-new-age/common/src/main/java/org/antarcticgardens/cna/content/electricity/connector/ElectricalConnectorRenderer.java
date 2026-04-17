@@ -145,7 +145,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
                     var originPoint = blockEntity.getConnectionPoint().add(Vec3.atLowerCornerOf(bound));
 
                     double distance = endPos.distanceTo(originPoint);
-                    int maxDistance = CNAConfig.getCommon().maxWireLength.get();
+                    int maxDistance = CNAConfig.getServer().maxWireLength.get();
 
                     if (distance > maxDistance * 2)
                         return;

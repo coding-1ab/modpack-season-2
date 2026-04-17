@@ -100,7 +100,7 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements IHav
 
         storage.setCapacity(lastOutput * 20L);
 
-        int coilsLeft = CNAConfig.getCommon().maxCoils.get();
+        int coilsLeft = CNAConfig.getServer().maxCoils.get();
         lastOutput = 0;
         coilsLeft = processCoil(worldPosition, facing, coilsLeft);
         processCoil(worldPosition, facing.getOpposite(), coilsLeft);

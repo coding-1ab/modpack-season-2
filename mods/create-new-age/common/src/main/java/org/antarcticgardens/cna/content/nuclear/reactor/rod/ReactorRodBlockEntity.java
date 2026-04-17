@@ -13,7 +13,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.antarcticgardens.cna.CNABlocks;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.heat.HeatBlockEntity;
 import org.antarcticgardens.cna.content.nuclear.NuclearUtil;
@@ -30,14 +29,14 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
     int twoSeconds = 0;
     private boolean working;
     public void tick(BlockPos pos, Level world, BlockState state) {
-        var common = CNAConfig.getCommon();
+        var common = CNAConfig.getServer();
         double multiplier = common.overheatingMultiplier.get();
         if (multiplier > 0 && this.heat > 16000*multiplier) {
             heat-=common.nuclearReactorRodHeatLoss.get();
             setChanged();
-            float explosionRadius = CNAConfig.getCommon().radiationDamageExplosionScale.get().floatValue() * CNAConfig.getCommon().reactorOverheatExplosionMultiplier.get().floatValue();
+            float explosionRadius = CNAConfig.getServer().radiationDamageExplosionScale.get().floatValue() * CNAConfig.getServer().reactorOverheatExplosionMultiplier.get().floatValue();
             HeatBlockEntity.handleOverheat(this, () -> ((ReactorRodBlock) state.getBlock()).explode(level, pos, state, explosionRadius,
-                    CNAConfig.getCommon().radiationDamageExplosionFire.get() && CNAConfig.getCommon().reactorOverheatExplosionMultiplier.get().floatValue() > 0));
+                    CNAConfig.getServer().radiationDamageExplosionFire.get() && CNAConfig.getServer().reactorOverheatExplosionMultiplier.get().floatValue() > 0));
         }
         twoSeconds++;
         if (twoSeconds > 40) {

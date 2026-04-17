@@ -152,7 +152,7 @@ public class HeatPipeBlock extends Block implements EntityBlock, IWrenchable {
 
             selfC.generating = 0;
 
-            double loss =  CNAConfig.getCommon().passivePipeHeatLoss.get();
+            double loss =  CNAConfig.getServer().passivePipeHeatLoss.get();
 
             selfC.heat = (float) Math.max(0, selfC.heat - loss);
 

@@ -69,8 +69,8 @@ public class ReactorRodBlock extends ReactorBlock implements EntityBlock {
 
     @Override
     public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
-        this.explode(level, pos, state, CNAConfig.getCommon().radiationDamageExplosionScale.get().floatValue(),
-                CNAConfig.getCommon().radiationDamageExplosionFire.get());
+        this.explode(level, pos, state, CNAConfig.getServer().radiationDamageExplosionScale.get().floatValue(),
+                CNAConfig.getServer().radiationDamageExplosionFire.get());
     }
 
     public void explode(LevelAccessor level, BlockPos pos, BlockState state, float explosionRadius, boolean useFire) {

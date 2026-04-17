@@ -5,16 +5,16 @@ import org.antarcticgardens.cna.config.CNAConfig;
 public class AdvancedMotorExtensionVariant implements IMotorExtensionVariant {
     @Override
     public float getMultiplier() {
-        return CNAConfig.getCommon().advancedMotorExtensionMultiplier.get().floatValue();
+        return CNAConfig.getServer().advancedMotorExtensionMultiplier.get().floatValue();
     }
 
     @Override
     public long getExtraCapacity() {
-        return CNAConfig.getCommon().advancedMotorExtensionExtraCapacity.get();
+        return CNAConfig.getServer().advancedMotorExtensionExtraCapacity.get();
     }
 
     @Override
     public int getScrollStep() {
-        return CNAConfig.getCommon().advancedMotorExtensionScrollStep.get();
+        return CNAConfig.getServer().advancedMotorExtensionScrollStep.get();
     }
 }

@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -78,11 +77,11 @@ public class StreetLightBlock extends Block implements IBE<StreetLightBlockEntit
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(CreateLang.translate("tooltip.create_new_age.speed").style(ChatFormatting.GRAY).component());
         tooltipComponents.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy_per_tick",
-                        StringFormatUtil.formatLong(CNAConfig.getCommon().streetLightLevelExtraction.get())).style(ChatFormatting.AQUA)
+                        StringFormatUtil.formatLong(CNAConfig.getServer().streetLightLevelExtraction.get())).style(ChatFormatting.AQUA)
                 .add(CreateLang.text(" ").translate("tooltip.create_new_age.per_light_level").style(ChatFormatting.GRAY)).component());
         tooltipComponents.add(CreateLang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY).component());
         tooltipComponents.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy",
-                StringFormatUtil.formatLong(CNAConfig.getCommon().streetLightCapacity.get())).style(ChatFormatting.AQUA).component());
+                StringFormatUtil.formatLong(CNAConfig.getServer().streetLightCapacity.get())).style(ChatFormatting.AQUA).component());
     }
 
     @Override

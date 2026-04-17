@@ -28,11 +28,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.antarcticgardens.cna.CNABlockEntityTypes;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.motor.variants.IMotorVariant;
 import org.antarcticgardens.cna.util.StringFormatUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -53,7 +51,7 @@ public class MotorBlock extends DirectionalKineticBlock implements IRotate, IBE<
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(CreateLang.translate("tooltip.create_new_age.generates").style(ChatFormatting.GRAY)
                 .component());
-        tooltipComponents.add(CreateLang.text(" ").add(CreateLang.number(variant.getStress() * CNAConfig.getCommon().motorSUMultiplier.get()).text(" ")
+        tooltipComponents.add(CreateLang.text(" ").add(CreateLang.number(variant.getStress() * CNAConfig.getServer().motorSUMultiplier.get()).text(" ")
                 .translate("generic.unit.stress").style(ChatFormatting.AQUA)).component());
 
         tooltipComponents.add(CreateLang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY)
