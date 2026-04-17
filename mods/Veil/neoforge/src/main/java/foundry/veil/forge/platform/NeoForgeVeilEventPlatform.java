@@ -69,9 +69,11 @@ public class NeoForgeVeilEventPlatform implements VeilEventPlatform {
         NeoForge.EVENT_BUS.<ForgeVeilPostProcessingEvent.Post>addListener(forgeEvent -> event.postVeilPostProcessing(forgeEvent.getName(), forgeEvent.getPipeline(), forgeEvent.getContext()));
     }
 
+    // This is needed for types to line up
+    @SuppressWarnings("RedundantCast")
     @Override
     public void onVeilRegisterBlockLayers(VeilRegisterBlockLayersEvent event) {
-        this.getModBus().<ForgeVeilRegisterBlockLayersEvent>addListener(event::onRegisterBlockLayers);
+        this.getModBus().<ForgeVeilRegisterBlockLayersEvent>addListener(forgeEvent -> event.onRegisterBlockLayers((VeilRegisterBlockLayersEvent.Registry) forgeEvent));
     }
 
     @Override
