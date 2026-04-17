@@ -23,7 +23,7 @@ subprojects {
         mavenLocal()
         mavenCentral()
 
-        maven { url "https://maven.neoforged.net/" }
+        maven { url "https://maven.neoforged.net/releases/" }
         maven { url = "https://cursemaven.com" } // CurseForge maven
         maven { url = "https://api.modrinth.com/maven" } // Modrinth maven
         
