@@ -6,15 +6,9 @@ import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.tags.BiomeTags
 import net.minecraft.util.RandomSource
-import net.minecraft.world.effect.MobEffectInstance
-import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.level.BlockGetter
-import net.minecraft.world.level.GameRules
-import net.minecraft.world.level.Level
-import net.minecraft.world.level.LevelAccessor
-import net.minecraft.world.level.LevelReader
+import net.minecraft.world.level.*
 import net.minecraft.world.level.block.BaseFireBlock
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
@@ -120,8 +114,10 @@ class EnderFire(blockProperties: Properties) : BaseFireBlock(blockProperties, 2.
     }
 
     override fun entityInside(state: BlockState, level: Level, pos: BlockPos, entity: Entity) {
-        if (entity is LivingEntity) {
-            entity.addEffect(MobEffectInstance(MobEffects.LEVITATION, 100))
+        if (entity is LivingEntity && level is ServerLevel) {
+            if (level.random.nextInt(100) == 0) {
+                randomTeleport(entity, level)
+            }
         }
         super.entityInside(state, level, pos, entity)
     }

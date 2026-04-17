@@ -5,7 +5,9 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel
 import net.neoforged.neoforge.common.data.ExistingFileHelper
+import org.example.com.tmvkrpxl0.modpack.Blocks
 import org.example.com.tmvkrpxl0.modpack.Blocks.ENDER_FIRE
 import org.example.com.tmvkrpxl0.modpack.EnderFire
 import org.example.com.tmvkrpxl0.modpack.ModPackTweaks
@@ -23,8 +25,21 @@ class BlockStates(output: PackOutput, helper: ExistingFileHelper) :
             EnderFire.WEST,
             EnderFire.UP,
         )
+        fluid("ender_fuel")
     }
 
+    @Suppress("UnusedVariable", "unused")
+    fun fluid(fluidName: String) {
+        val stateBuilder = getVariantBuilder(Blocks.ENDER_FUEL)
+        val model = models()
+            .getBuilder(fluidName)
+            .texture("particle", "minecraft:block/water_still")
+            .renderType("minecraft:translucent").let { ConfiguredModel(it) }
+        val state = stateBuilder.partialState()
+            .addModels(model)
+    }
+
+    @Suppress("UnusedVariable", "unused")
     fun fire(
         prefix: String,
         fireBlock: Block,

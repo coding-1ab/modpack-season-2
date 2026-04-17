@@ -7,6 +7,7 @@ import net.neoforged.neoforge.common.data.BlockTagsProvider
 import net.neoforged.neoforge.common.data.ExistingFileHelper
 import org.example.com.tmvkrpxl0.modpack.Blocks
 import org.example.com.tmvkrpxl0.modpack.ModPackTweaks
+import plus.dragons.createdragonsplus.common.registry.CDPBlocks
 import java.util.concurrent.CompletableFuture
 
 class BlockTags(
@@ -17,5 +18,6 @@ class BlockTags(
     BlockTagsProvider(output, lookup, ModPackTweaks.ID, helper) {
     override fun addTags(provider: HolderLookup.Provider) {
         tag(BlockTags.FIRE).add(Blocks.ENDER_FIRE)
+        tag(CDPBlocks.MOD_TAGS.fanEndingCatalysts).add(Blocks.ENDER_FIRE)
     }
 }

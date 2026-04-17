@@ -56,12 +56,12 @@ addMods {
     )
     addMod(
         "./mods/CC-Tweaked", arrayOf(
-            "cc.tweaked:cc-tweaked-1.21.1-common-api" to ":common-api",
-            "cc.tweaked:cc-tweaked-1.21.1-common" to ":common",
-            "cc.tweaked:cc-tweaked-1.21.1-forge-api" to ":forge-api",
             "cc.tweaked:cc-tweaked-1.21.1-forge" to ":forge",
-            "cc.tweaked:cc-tweaked-1.21.1-core-api" to ":core-api",
+            "cc.tweaked:cc-tweaked-1.21.1-forge-api" to ":forge-api",
+            "cc.tweaked:cc-tweaked-1.21.1-common" to ":common",
+            "cc.tweaked:cc-tweaked-1.21.1-common-api" to ":common-api",
             "cc.tweaked:cc-tweaked-1.21.1-core" to ":core",
+            "cc.tweaked:cc-tweaked-1.21.1-core-api" to ":core-api",
         ),
         false
     )

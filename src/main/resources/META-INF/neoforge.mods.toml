@@ -1,18 +1,21 @@
-modLoader="kotlinforforge"
-loaderVersion="[5.3,)"
-license="GPL"
+modLoader = "kotlinforforge"
+loaderVersion = "[5.3,)"
+license = "GPL"
 
 [[mods]]
-modId="modpack_tweaks"
-version="1.0"
-displayName="Coding Lab Modpack Tweaks"
+modId = "modpack_tweaks"
+version = "1.0"
+displayName = "Coding Lab Modpack Tweaks"
 #updateJSONURL=""
-authors="tmvkrpxl0"
-description="Adds various food-related HUD improvements"
+authors = "tmvkrpxl0"
+description = "Adds various food-related HUD improvements"
 
 [[dependencies.modpack_tweaks]]
-    modId="neoforge"
-    type="required"
-    versionRange="[21.1.0-beta,)"
-    ordering="NONE"
-    side="BOTH"
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1.0-beta,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[mixins]]
+config = "modpack_tweaks.mixins.json"

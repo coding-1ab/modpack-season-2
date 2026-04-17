@@ -16,7 +16,9 @@ object ModPackTweaks {
     init {
         LOGGER.info("Starting Coding Lab Modpack Tweaks")
 
-        Blocks.registerBlocks(MOD_BUS)
+        Blocks.register(MOD_BUS)
+        Items.register(MOD_BUS)
+        Fluids.register(MOD_BUS)
         MOD_BUS.addListener(::gatherData)
     }
 }
