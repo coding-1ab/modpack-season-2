@@ -3,6 +3,7 @@
   "minVersion": "0.8",
   "refmap": "quicksand.refmap.json",
   "package": "plus.dragons.quicksand.mixin",
+  "plugin": "plus.dragons.quicksand.mixin.MixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "biomeswevegone.BWGBlocksMixin",

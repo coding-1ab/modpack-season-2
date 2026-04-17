@@ -20,13 +20,13 @@ package plus.dragons.quicksand.mixin.biomeswevegone;
 
 import java.util.function.Supplier;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 import plus.dragons.quicksand.common.registry.QuicksandBlocks;
+import plus.dragons.quicksand.mixin.LoadWhen;
 
-@Pseudo
+@LoadWhen(modId = "biomeswevegone")
 @Mixin(targets = "net.potionstudios.biomeswevegone.world.level.block.BWGBlocks")
 public class BWGBlocksMixin {
     @Redirect(method = "<clinit>", slice = @Slice(from = @At(value = "CONSTANT", args = "stringValue=quicksand"), to = @At(value = "FIELD", target = "Lnet/potionstudios/biomeswevegone/world/level/block/BWGBlocks;QUICKSAND:Ljava/util/function/Supplier;")), at = @At(value = "INVOKE", target = "Lnet/potionstudios/biomeswevegone/world/level/block/BWGBlocks;registerCubeAllBlockItem(Ljava/lang/String;Ljava/util/function/Supplier;)Ljava/util/function/Supplier;"))
