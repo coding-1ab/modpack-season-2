@@ -407,7 +407,7 @@ public class TorsionSpringBlockEntity extends KineticBlockEntity implements Extr
         }
 
         public MutableComponent formatValue(final ValueSettings settings) {
-            return SimLang.number(Math.max(1, Math.abs(settings.value())))
+            return SimLang.number(Math.abs(settings.value()))
                     .add(CreateLang.translateDirect("generic.unit.degrees"))
                     .component();
         }
