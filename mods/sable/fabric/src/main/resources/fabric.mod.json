@@ -38,7 +38,6 @@
     "fabric-convention-tags-v2": ">=${fabric_version}"
   },
   "breaks": {
-    "lithium": "*",
     "sablecompanion": "<${sable_companion_version}"
   }
 }

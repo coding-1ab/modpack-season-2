@@ -65,6 +65,8 @@ dependencies {
     compileOnly "maven.modrinth:distanthorizons:$rootProject.distant_horizons_version"
     compileOnly "maven.modrinth:backpacks-for-dummies:$rootProject.backpacks_for_dummies_version"
 
+    implementation "maven.modrinth:lithium:mc1.21.1-0.15.3-neoforge"
+
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
     implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
