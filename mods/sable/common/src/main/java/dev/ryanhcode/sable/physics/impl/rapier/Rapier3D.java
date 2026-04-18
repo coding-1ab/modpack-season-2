@@ -69,7 +69,7 @@ public class Rapier3D {
         } catch (final Throwable t) {
             ENABLED = false;
 
-            Sable.LOGGER.error("Sable has failed to load the natives needed for its Rapier pipeline. Native library name {}. Please report with system details and logs to {}", nativeName, Sable.ISSUE_TRACKER_URL);
+            Sable.LOGGER.error("Sable has failed to load the natives needed for its Rapier pipeline. Native library name {}. Please report with system details and logs to {}", nativeName, Sable.ISSUE_TRACKER_URL, t);
         }
     }
 
