@@ -22,6 +22,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -140,14 +141,17 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 				time = CommonConfig.TESLA_COIL_HURT_EFFECT_TIME_PLAYER.get();
 			}
 
+            DamageSource damageSource = CADamageTypes.teslaCoil(level);
+            boolean hasHurt = false;
+
 			if(dmg > 0) {
-				e.hurt(CADamageTypes.teslaCoil(level), dmg);
+				hasHurt = e.hurt(damageSource, dmg);
 				if (!zapped) {
 					if (CommonConfig.AUDIO_ENABLED.get()) level.playSound(null, worldPosition, CASounds.LOUD_ZAP.get(), SoundSource.BLOCKS, 0.6f, 1f);
 					zapped = true;
 				}
 			}
-			if(time > 0) e.addEffect(new MobEffectInstance(CAEffects.SHOCKING, time));
+			if(time > 0 && hasHurt) e.addEffect(new MobEffectInstance(CAEffects.SHOCKING, time));
 		}
 	}
 
