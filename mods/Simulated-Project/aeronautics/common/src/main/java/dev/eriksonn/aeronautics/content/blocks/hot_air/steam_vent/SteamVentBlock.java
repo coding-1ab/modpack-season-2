@@ -37,6 +37,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
+
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
 public class SteamVentBlock extends Block implements IBE<SteamVentBlockEntity>, SimpleWaterloggedBlock, IWrenchable {
