@@ -1,11 +1,14 @@
 package dev.ryanhcode.sable.physics.impl.rapier;
 
+import com.mojang.text2speech.Narrator.InitializeException;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.PhysicsPipelineBody;
 import dev.ryanhcode.sable.api.physics.callback.BlockSubLevelCollisionCallback;
 import dev.ryanhcode.sable.api.physics.mass.MassData;
 import dev.ryanhcode.sable.mixinterface.physics.ServerLevelSceneExtension;
 import dev.ryanhcode.sable.physics.impl.rapier.collider.RapierVoxelColliderData;
+import net.minecraft.Util;
+import net.minecraft.Util.OS;
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix3dc;
@@ -24,8 +27,6 @@ import java.nio.file.StandardCopyOption;
 public class Rapier3D {
     private static final String LIB_NAME = "sable_rapier";
     private static final String LIB_TMP_DIR_PREFIX = LIB_NAME + "_natives";
-    private static final boolean WIN = System.getProperty("os.name").toLowerCase().contains("win");
-    private static final boolean MAC = System.getProperty("os.name").toLowerCase().contains("mac");
     public static boolean ENABLED = false;
 
     private static int countingSceneID = 0;
@@ -43,11 +44,14 @@ public class Rapier3D {
             arch = "x86_64";
         }
 
-        if (WIN) {
+        final OS os = Util.getPlatform();
+        if (os == OS.WINDOWS) {
             return LIB_NAME + "_" + arch + "_windows.dll";
-        } else if (MAC) {
+        } else if (os == OS.OSX) {
             return LIB_NAME + "_" + arch + "_macos.dylib";
         } else {
+            if (os != OS.LINUX)
+                Sable.LOGGER.error("Unknown platform '{}' detected, sable will attempt to use linux natives, this may or may not work.", System.getProperty("os.name"));
             return LIB_NAME + "_" + arch + "_linux.so";
         }
     }
