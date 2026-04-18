@@ -12,6 +12,10 @@ plugins {
 group = "com.tmvkrpxl0"
 version = "1.0-SNAPSHOT"
 
+val minecraftVersion = project.properties["minecraft_version"]!! as String
+val sodiumVersion = project.properties["sodium_version"]!! as String
+val curiosVersion = project.properties["curios_version"]!! as String
+
 neoForge {
     // Specify the version of NeoForge to use.
     version = project.properties["neo_version"]!! as String
@@ -29,18 +33,18 @@ neoForge {
     runs {
         create("clientAuth") {
             client()
-            gameDirectory.dir("run/clinet")
+            gameDirectory = project.file("runs/client")
             devLogin = true
         }
         create("client") {
             client()
-            gameDirectory.dir("run/clinet")
+            gameDirectory = project.file("runs/client")
             // systemProperty("neoforge.enabledGameTestNamespaces", project.mod_id)
         }
 
         create("server") {
             server()
-            gameDirectory.dir("run/server")
+            gameDirectory = project.file("runs/server")
             programArgument("--nogui")
             // systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
@@ -57,7 +61,7 @@ neoForge {
             data()
 
             // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
-            gameDirectory = project.file("run-data")
+            gameDirectory = project.file("runs/data")
 
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
             programArguments.addAll(
@@ -183,14 +187,14 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("thedarkcolour:kotlinforforge-neoforge:5.+")
 
-    localRuntime("net.createmod.ponder:ponder-neoforge:${property("ponder_version")}+mc${property("minecraft_version")}")
+    localRuntime("net.createmod.ponder:ponder-neoforge:${property("ponder_version")}+mc${minecraftVersion}")
     localRuntime("dev.engine-room.flywheel:flywheel-neoforge-${property("minecraft_version")}:${property("flywheel_version")}")
     localRuntime("com.tterrag.registrate:Registrate:${property("registrate_version")}")
 
-    localRuntime("mezz.jei:jei-${property("minecraft_version")}-neoforge:19.27.0.340")
-    localRuntime("dev.emi:emi-neoforge:1.1.22+${property("minecraft_version")}")
+    localRuntime("mezz.jei:jei-${minecraftVersion}-neoforge:19.27.0.340")
+    localRuntime("dev.emi:emi-neoforge:1.1.22+${minecraftVersion}")
     localRuntime("org.appliedenergistics:guideme:21.1.1")
-    localRuntime("com.github.glitchfiend:TerraBlender-neoforge:1.21.1-4.1.0.8")
+    localRuntime("com.github.glitchfiend:TerraBlender-neoforge:${minecraftVersion}-4.1.0.8")
 
     localRuntime("curse.maven:configured-457570:7276577")
     localRuntime("curse.maven:easyshulkerboxes-594006:6697879")
@@ -200,6 +204,8 @@ dependencies {
     localRuntime("curse.maven:searchables-858542:5831692")
     localRuntime("curse.maven:jade-324717:5493270")
     localRuntime("curse.maven:atlas-633577:5490697")
+    localRuntime("top.theillusivec4.curios:curios-neoforge:$curiosVersion+${minecraftVersion}")
+    localRuntime("maven.modrinth:sodium:mc${minecraftVersion}-$sodiumVersion-neoforge")
 
     compileOnly("com.mrh0.createaddition:createaddition")
     compileOnly("plus.dragons.createdragonsplus:create-dragons-plus")
