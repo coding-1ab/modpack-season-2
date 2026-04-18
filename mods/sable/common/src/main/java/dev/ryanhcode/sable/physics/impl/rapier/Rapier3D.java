@@ -64,7 +64,7 @@ public class Rapier3D {
             Files.copy(is, tempFile, StandardCopyOption.REPLACE_EXISTING);
             System.load(tempFile.toAbsolutePath().toString());
             ENABLED = true;
-        } catch (final Exception e) {
+        } catch (final Throwable t) {
             ENABLED = false;
 
             Sable.LOGGER.error("Sable has failed to load the natives needed for its Rapier pipeline. Please report with system details and logs to " + Sable.ISSUE_TRACKER_URL);
