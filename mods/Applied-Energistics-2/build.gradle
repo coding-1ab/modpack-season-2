@@ -309,7 +309,7 @@ spotless {
         target 'src/*/java/appeng/**/*.java'
 
         endWithNewline()
-        indentWithSpaces()
+        leadingTabsToSpaces()
         removeUnusedImports()
         toggleOffOn()
         eclipse().configFile 'codeformat/codeformat.xml'
@@ -336,7 +336,7 @@ spotless {
         } catch (Exception ignored) {
         }
         addStep(biomeConfig.createStep())
-        indentWithSpaces(2)
+       leadingTabsToSpaces(2)
         endWithNewline()
     }
 }
