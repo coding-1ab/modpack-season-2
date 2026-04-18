@@ -1,5 +1,7 @@
 package dev.ryanhcode.sable.mixin.plot.lighting;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import dev.ryanhcode.sable.api.sublevel.ClientSubLevelContainer;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
@@ -13,17 +15,17 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(ClientPacketListener.class)
 public class ClientPacketListenerMixin {
 
-    @Redirect(method = "handleLevelChunkWithLight", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;queueLightUpdate(Ljava/lang/Runnable;)V"))
-    private void sable$queueLightData(final ClientLevel level, final Runnable runnable, @Local(argsOnly = true) final ClientboundLevelChunkWithLightPacket packet) {
-        final ClientSubLevelContainer container = SubLevelContainer.getContainer(level);
+    @WrapOperation(method = "handleLevelChunkWithLight", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;queueLightUpdate(Ljava/lang/Runnable;)V"))
+    private void sable$queueLightData(final ClientLevel instance, final Runnable task, final Operation<Void> original, @Local(argsOnly = true) final ClientboundLevelChunkWithLightPacket packet) {
+        final ClientSubLevelContainer container = SubLevelContainer.getContainer(instance);
 
         if (container.inBounds(packet.getX(), packet.getZ())) {
-            runnable.run();
-            level.getLightEngine().runLightUpdates();
+            task.run();
+            instance.getLightEngine().runLightUpdates();
             return;
         }
 
-        level.queueLightUpdate(runnable);
+        original.call(instance, task);
     }
 
 }
