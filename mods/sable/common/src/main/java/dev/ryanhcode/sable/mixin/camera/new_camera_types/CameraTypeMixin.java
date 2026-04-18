@@ -5,6 +5,7 @@ import dev.ryanhcode.sable.mixinhelpers.camera.new_camera_types.SableCameraTypes
 import net.minecraft.client.CameraType;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.gen.Invoker;
@@ -16,27 +17,25 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public class CameraTypeMixin {
     @Shadow
     @Final
+    @Mutable
     private static CameraType[] $VALUES;
 
     @Final
     @Shadow
+    @Mutable
     private static CameraType[] VALUES;
 
     static {
         final var subLevelView = create("SUB_LEVEL_VIEW", $VALUES.length, false, false);
 
-        //noinspection ShadowFinalModification
         $VALUES = ArrayUtils.add($VALUES, subLevelView);
 
-        //noinspection ShadowFinalModification
         VALUES = ArrayUtils.add(VALUES, subLevelView);
 
         final var subLevelViewUnlocked = create("SUB_LEVEL_VIEW_UNLOCKED", $VALUES.length, false, false);
 
-        //noinspection ShadowFinalModification
         $VALUES = ArrayUtils.add($VALUES, subLevelViewUnlocked);
 
-        //noinspection ShadowFinalModification
         VALUES = ArrayUtils.add(VALUES, subLevelViewUnlocked);
     }
 
