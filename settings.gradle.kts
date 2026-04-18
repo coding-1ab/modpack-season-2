@@ -23,7 +23,11 @@ addMods {
     )
     addMod("./mods/AppleSkin", "squeek.appleskin:appleskin-neoforge")
     addMod("./mods/create-new-age", "org.antarcticgardens.cna:create-new-age", ":neoforge")
-    addMod("./mods/Applied-Energistics-2", "org.appliedenergistics:appliedenergistics2")
+    addMod(
+        "./mods/Applied-Energistics-2", arrayOf(
+                "org.appliedenergistics:appliedenergistics2" to ":",
+        "curse.maven:applied-energistics-2-223794" to ":"
+    ), true)
     addMod("./mods/NatureSpiritForge", "net.hibiscus:natures_spirit")
     addMod(
         "./mods/FarmersDelight", arrayOf(
@@ -62,6 +66,18 @@ addMods {
             "cc.tweaked:cc-tweaked-1.21.1-common-api" to ":common-api",
             "cc.tweaked:cc-tweaked-1.21.1-core" to ":core",
             "cc.tweaked:cc-tweaked-1.21.1-core-api" to ":core-api",
+        ),
+        false
+    )
+    addMod(
+        "./mods/iteminteractions", arrayOf(
+            "fuzs.iteminteractions:iteminteractions" to ":",
+        ),
+        false
+    )
+    addMod(
+        "./mods/Create-Stock-Bridge/NeoForge", arrayOf(
+            "com.tom5454.createstockbridge:createstockbridge-1.21.1" to ":"
         ),
         false
     )
