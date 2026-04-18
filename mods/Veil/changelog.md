@@ -1,1 +1,2 @@
-- Add proper support for low OpenGL versions
+- Fix some graphics cards not detecting texture targets properly
+- Rework multi-bind API to explicitly request texture targets

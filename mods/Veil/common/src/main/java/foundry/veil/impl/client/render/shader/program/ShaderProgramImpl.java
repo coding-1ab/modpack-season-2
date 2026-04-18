@@ -28,6 +28,7 @@ import foundry.veil.api.client.render.shader.uniform.ShaderUniformAccess;
 import foundry.veil.api.client.render.texture.SamplerObject;
 import foundry.veil.api.client.render.texture.TextureFilter;
 import foundry.veil.api.client.util.VertexFormatCodec;
+import foundry.veil.ext.AbstractTextureExtension;
 import foundry.veil.impl.client.render.shader.uniform.ShaderUniformImpl;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -417,21 +418,21 @@ public class ShaderProgramImpl implements ShaderProgram {
         if (context != null) {
             for (Map.Entry<String, ShaderTexture> entry : this.definitionSamplers.entrySet()) {
                 ShaderTexture source = entry.getValue();
-                this.setSampler(entry.getKey(), source.textureSource.getId(context), source.samplerId());
+                this.setTexture(entry.getKey(), source.textureSource.getTarget(context), source.textureSource.getId(context), source.samplerId());
             }
         }
         this.textures.bind(this.compiledProgram.uniformCache, samplerStart);
     }
 
     @Override
-    public void setSampler(CharSequence name, int textureId, int samplerId) {
+    public void setTexture(CharSequence name, int target, int textureId, int samplerId) {
         if (this.compiledProgram != null && this.compiledProgram.uniformCache.hasSampler(name.toString())) {
-            this.textures.put(name, textureId, samplerId);
+            this.textures.put(name, target, textureId, samplerId);
         }
     }
 
     @Override
-    public void removeSampler(CharSequence name) {
+    public void removeTexture(CharSequence name) {
         this.textures.remove(name);
     }
 
@@ -659,19 +660,29 @@ public class ShaderProgramImpl implements ShaderProgram {
 
         @Override
         public void setSampler(@NotNull String name, Object value) {
-            int sampler = switch (value) {
-                case RenderTarget target -> target.getColorTextureId();
-                case AbstractTexture texture -> texture.getId();
-                case Integer id -> id;
-                default -> -1;
-            };
-
-            if (sampler != -1) {
-                if (sampler == 0) {
-                    this.program.removeSampler(name);
-                } else {
-                    this.program.setSampler(name, sampler);
+            int target, textureId;
+            switch (value) {
+                case RenderTarget renderTarget -> {
+                    target = GL_TEXTURE_2D;
+                    textureId = renderTarget.getColorTextureId();
                 }
+                case AbstractTexture texture -> {
+                    target = ((AbstractTextureExtension) texture).getTextureTarget();
+                    textureId = texture.getId();
+                }
+                case Integer id -> {
+                    target = GL_TEXTURE_2D;
+                    textureId = id;
+                }
+                default -> {
+                    return;
+                }
+            }
+
+            if (textureId == 0) {
+                this.program.removeTexture(name);
+            } else {
+                this.program.setTexture(name, target, textureId);
             }
         }
 

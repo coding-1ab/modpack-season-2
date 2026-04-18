@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.api.client.render.VeilRenderSystem;
+import foundry.veil.ext.AbstractTextureExtension;
 import foundry.veil.mixin.pipeline.accessor.PipelineNativeImageAccessor;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 
@@ -13,7 +14,7 @@ import static org.lwjgl.opengl.GL12C.*;
 import static org.lwjgl.opengl.GL14C.GL_TEXTURE_LOD_BIAS;
 import static org.lwjgl.opengl.GL30C.GL_TEXTURE_2D_ARRAY;
 
-public abstract class ArrayTexture extends AbstractTexture {
+public abstract class ArrayTexture extends AbstractTexture implements AbstractTextureExtension {
 
     private int width;
     private int height;
@@ -85,5 +86,10 @@ public abstract class ArrayTexture extends AbstractTexture {
     @Override
     public void bind() {
         glBindTexture(GL_TEXTURE_2D_ARRAY, this.getId());
+    }
+
+    @Override
+    public int getTextureTarget() {
+        return GL_TEXTURE_2D_ARRAY;
     }
 }

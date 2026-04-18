@@ -9,6 +9,8 @@ import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2LongArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.system.MemoryUtil;
@@ -16,26 +18,30 @@ import org.lwjgl.system.MemoryUtil;
 import java.nio.IntBuffer;
 import java.util.Map;
 
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
+
 @ApiStatus.Internal
 public class ShaderTextureCache {
 
     private final ShaderProgram program;
-    private final Object2IntMap<CharSequence> textures;
+    private final Object2LongMap<CharSequence> textures;
     private final Int2IntMap samplers;
     private final Object2IntMap<CharSequence> boundSamplers;
 
     private boolean textureDirty;
     private boolean samplerDirty;
     private IntBuffer textureBindings;
+    private IntBuffer textureTargets;
     private IntBuffer samplerBindings;
 
     public ShaderTextureCache(ShaderProgram program) {
         this.program = program;
-        this.textures = new Object2IntArrayMap<>();
+        this.textures = new Object2LongArrayMap<>();
         this.samplers = new Int2IntArrayMap();
         this.boundSamplers = new Object2IntArrayMap<>();
 
         this.textureBindings = null;
+        this.textureTargets = null;
         this.samplerBindings = null;
     }
 
@@ -58,16 +64,20 @@ public class ShaderTextureCache {
             }
 
             // If the texture is "missing", then refer back to the bound missing texture and remove
-            int textureId = this.textures.getInt(name);
-            if (textureId == 0 || textureId == missingTexture) {
+            long packed = this.textures.getLong(name);
+            int textureId = getTextureId(packed);
+            if (packed == 0L || textureId == missingTexture) {
                 if (!hasMissing) {
                     hasMissing = true;
                     int position = this.textureBindings.position();
                     for (int i = 0; i < position; i++) {
                         this.textureBindings.put(i + 1, this.textureBindings.get(i));
+                        this.textureTargets.put(i + 1, this.textureTargets.get(i));
                     }
                     this.textureBindings.position(position + 1);
                     this.textureBindings.put(0, MissingTextureAtlasSprite.getTexture().getId());
+                    this.textureTargets.position(position + 1);
+                    this.textureTargets.put(0, GL_TEXTURE_2D);
 
                     // Increment all existing samplers
                     for (CharSequence boundSampler : this.boundSamplers.keySet()) {
@@ -75,7 +85,7 @@ public class ShaderTextureCache {
                     }
                 }
                 uniform.setInt(0);
-                this.textures.removeInt(name);
+                this.textures.removeLong(name);
                 continue;
             }
 
@@ -87,8 +97,10 @@ public class ShaderTextureCache {
                     int position = this.textureBindings.position();
                     for (int i = 0; i < position - 1; i++) {
                         this.textureBindings.put(i + 1, this.textureBindings.get(i));
+                        this.textureTargets.put(i + 1, this.textureTargets.get(i));
                     }
                     this.textureBindings.put(0, MissingTextureAtlasSprite.getTexture().getId());
+                    this.textureTargets.put(0, GL_TEXTURE_2D);
 
                     // Delete the last texture binding
                     if (last != null) {
@@ -103,6 +115,7 @@ public class ShaderTextureCache {
                 uniform.setInt(0);
             } else {
                 this.textureBindings.put(textureId);
+                this.textureTargets.put(getTarget(packed));
                 this.boundSamplers.put(name, sampler);
             }
 
@@ -139,22 +152,29 @@ public class ShaderTextureCache {
             if (this.textureBindings == null || this.textureBindings.capacity() < 1 + this.textures.size()) {
                 this.textureBindings = MemoryUtil.memRealloc(this.textureBindings, 1 + this.textures.size());
             }
+            if (this.textureTargets == null || this.textureTargets.capacity() < 1 + this.textures.size()) {
+                this.textureTargets = MemoryUtil.memRealloc(this.textureTargets, 1 + this.textures.size());
+            }
 
             this.textureBindings.clear();
+            this.textureTargets.clear();
             this.uploadTextures(cache, samplerStart);
             this.textureBindings.flip();
+            this.textureTargets.flip();
 
             // Delete texture and sampler buffers if there aren't any textures
             if (this.textureBindings.limit() == 0) {
                 MemoryUtil.memFree(this.textureBindings);
+                MemoryUtil.memFree(this.textureTargets);
                 MemoryUtil.memFree(this.samplerBindings);
                 this.textureBindings = null;
+                this.textureTargets = null;
                 this.samplerBindings = null;
             }
         }
 
         if (this.textureBindings != null && this.textureBindings.limit() > 0) {
-            VeilRenderSystem.bindTextures(samplerStart, this.textureBindings);
+            VeilRenderSystem.bindTextures(samplerStart, this.textureTargets, this.textureBindings);
 
             if (this.samplerDirty) {
                 this.samplerDirty = false;
@@ -175,8 +195,9 @@ public class ShaderTextureCache {
         }
     }
 
-    public void put(CharSequence name, int textureId, int samplerId) {
-        this.textureDirty |= this.textures.put(name, textureId) != textureId;
+    public void put(CharSequence name, int target, int textureId, int samplerId) {
+        long packed = packTexture(target, textureId);
+        this.textureDirty |= this.textures.put(name, packed) != packed;
         if (samplerId != 0) {
             this.samplerDirty |= this.samplers.put(textureId, samplerId) != samplerId;
         } else {
@@ -185,11 +206,11 @@ public class ShaderTextureCache {
     }
 
     public void remove(CharSequence name) {
-        int oldId = this.textures.removeInt(name);
-        if (oldId != 0) {
-            this.textures.put(name, 0);
+        long oldPacked = this.textures.removeLong(name);
+        if (oldPacked != 0) {
+            this.textures.put(name, 0L);
             this.textureDirty = true;
-            if (this.samplers.remove(oldId) != 0) {
+            if (this.samplers.remove(getTextureId(oldPacked)) != 0) {
                 this.samplerDirty = true;
             }
         }
@@ -203,11 +224,27 @@ public class ShaderTextureCache {
             MemoryUtil.memFree(this.textureBindings);
             this.textureBindings = null;
         }
+        if (this.textureTargets != null) {
+            MemoryUtil.memFree(this.textureTargets);
+            this.textureTargets = null;
+        }
         if (this.samplerBindings != null) {
             MemoryUtil.memFree(this.samplerBindings);
             this.samplerBindings = null;
         }
         this.textureDirty = true;
         this.samplerDirty = true;
+    }
+
+    public static long packTexture(int target, int textureId) {
+        return (long) target << 32L | textureId;
+    }
+
+    public static int getTarget(long packed) {
+        return (int) ((packed >> 32) & 0xFFFFFFFFL);
+    }
+
+    public static int getTextureId(long packed) {
+        return (int) (packed & 0xFFFFFFFFL);
     }
 }

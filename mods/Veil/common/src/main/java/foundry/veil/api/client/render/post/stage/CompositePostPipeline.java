@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
+
 /**
  * A pipeline that runs all child pipelines in order.
  */
@@ -112,11 +114,12 @@ public final class CompositePostPipeline implements PostPipeline {
 
         this.framebuffers.forEach(context::setFramebuffer);
         for (DynamicBufferType buffer : this.dynamicBuffers) {
-            context.setSampler(buffer.getSourceName(), VeilRenderSystem.renderer().getDynamicBufferManger().getBufferTexture(buffer), 0);
+            context.setTexture(buffer.getSourceName(), GL_TEXTURE_2D, VeilRenderSystem.renderer().getDynamicBufferManger().getBufferTexture(buffer), 0);
         }
         for (Map.Entry<String, ShaderProgramImpl.ShaderTexture> entry : this.samplers.entrySet()) {
             ShaderProgramImpl.ShaderTexture texture = entry.getValue();
-            context.setSampler(entry.getKey(), texture.textureSource().getId(context), texture.samplerId());
+            ShaderTextureSource source = texture.textureSource();
+            context.setTexture(entry.getKey(), source.getTarget(context), source.getId(context), texture.samplerId());
         }
         for (PostPipeline pipeline : this.stages) {
             pipeline.apply(context);

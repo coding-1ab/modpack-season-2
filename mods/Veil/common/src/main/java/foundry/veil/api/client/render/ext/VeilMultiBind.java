@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.Veil;
+import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.opengl.ARBMultiBind;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
@@ -65,6 +66,38 @@ public enum VeilMultiBind {
         }
 
         @Override
+        public void bindTextures(int first, IntBuffer targets, IntBuffer textures) {
+            int activeTexture = GlStateManager._getActiveTexture();
+            for (int i = 0; i < textures.limit(); i++) {
+                RenderSystem.activeTexture(GL_TEXTURE0 + first + i);
+                int texture = textures.get(i);
+                int target = targets.get(i);
+                if (target == GL_TEXTURE_2D && first + i < 12) {
+                    RenderSystem.bindTexture(texture);
+                } else {
+                    glBindTexture(target, texture);
+                }
+            }
+            RenderSystem.activeTexture(activeTexture);
+        }
+
+        @Override
+        public void bindTextures(int first, int[] targets, int[] textures) {
+            int activeTexture = GlStateManager._getActiveTexture();
+            for (int i = 0; i < textures.length; i++) {
+                RenderSystem.activeTexture(GL_TEXTURE0 + first + i);
+                int texture = textures[i];
+                int target = targets[i];
+                if (target == GL_TEXTURE_2D && first + i < 12) {
+                    RenderSystem.bindTexture(texture);
+                } else {
+                    glBindTexture(target, texture);
+                }
+            }
+            RenderSystem.activeTexture(activeTexture);
+        }
+
+        @Override
         public void bindSamplers(int first, IntBuffer samplers) {
             for (int i = 0; i < samplers.limit(); i++) {
                 glBindSampler(first + i, samplers.get(i));
@@ -105,6 +138,16 @@ public enum VeilMultiBind {
             }
 
             glBindTextures(first, textures);
+        }
+
+        @Override
+        public void bindTextures(int first, IntBuffer targets, IntBuffer textures) {
+            this.bindTextures(first, textures);
+        }
+
+        @Override
+        public void bindTextures(int first, int[] targets, int[] textures) {
+            this.bindTextures(first, textures);
         }
 
         @Override
@@ -151,7 +194,10 @@ public enum VeilMultiBind {
             .expireAfterAccess(10, TimeUnit.SECONDS)
             .build();
 
-    private static int getTarget(int texture) {
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
+    @Deprecated
+    @ApiStatus.Internal
+    public static int getTarget(int texture) {
         Integer cached = TEXTURE_TARGET_CACHE.getIfPresent(texture);
         if (cached != null) {
             return cached;
@@ -195,7 +241,10 @@ public enum VeilMultiBind {
      *
      * @param first    The first unit to bind to
      * @param textures The textures to bind
+     * @deprecated Use {@link #bindTextures(int, IntBuffer, IntBuffer)}
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
+    @Deprecated
     public abstract void bindTextures(int first, IntBuffer textures);
 
     /**
@@ -203,8 +252,31 @@ public enum VeilMultiBind {
      *
      * @param first    The first unit to bind to
      * @param textures The textures to bind
+     * @deprecated Use {@link #bindTextures(int, int[], int[])}
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
+    @Deprecated
     public abstract void bindTextures(int first, int... textures);
+
+    /**
+     * Binds the specified texture ids to sequential texture units and invalidates the GLStateManager.
+     *
+     * @param first    The first unit to bind to
+     * @param targets  The texture targets
+     * @param textures The textures to bind
+     * @since 3.6.0
+     */
+    public abstract void bindTextures(int first, IntBuffer targets, IntBuffer textures);
+
+    /**
+     * Binds the specified texture ids to sequential texture units and invalidates the GLStateManager.
+     *
+     * @param first    The first unit to bind to
+     * @param targets  The texture targets
+     * @param textures The textures to bind
+     * @since 3.6.0
+     */
+    public abstract void bindTextures(int first, int[] targets, int[] textures);
 
     /**
      * Binds the specified sampler ids to sequential texture units and invalidates the GLStateManager.

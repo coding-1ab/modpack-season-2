@@ -28,6 +28,11 @@ public record LocationSource(ResourceLocation location, @Nullable TextureFilter 
     }
 
     @Override
+    public int getTarget(Context context) {
+        return context.getTextureTarget(this.location);
+    }
+
+    @Override
     public Type type() {
         return Type.LOCATION;
     }

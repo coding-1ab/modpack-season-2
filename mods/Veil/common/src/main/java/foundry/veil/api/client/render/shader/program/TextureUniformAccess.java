@@ -1,8 +1,10 @@
 package foundry.veil.api.client.render.shader.program;
 
+import foundry.veil.api.client.render.ext.VeilMultiBind;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.framebuffer.AdvancedFboTextureAttachment;
 import foundry.veil.api.client.render.shader.texture.ShaderTextureSource;
+import foundry.veil.ext.AbstractTextureExtension;
 import foundry.veil.impl.client.render.shader.program.ShaderProgramImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -59,10 +61,12 @@ public interface TextureUniformAccess {
      * @param name     The name of the texture to set
      * @param location The name of the texture in the texture manager to bind and assign a texture unit
      * @since 2.5.0
+     * @deprecated Use {@link #setTexture(CharSequence, ResourceLocation)} instead
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
+    @Deprecated
     default void setSampler(CharSequence name, ResourceLocation location) {
-        AbstractTexture abstractTexture = Minecraft.getInstance().getTextureManager().getTexture(location);
-        this.setSampler(name, abstractTexture.getId(), 0);
+        this.setTexture(name, location);
     }
 
     /**
@@ -72,10 +76,58 @@ public interface TextureUniformAccess {
      * @param location  The name of the texture in the texture manager to bind and assign a texture unit
      * @param samplerId The id of the sampler assign a texture unit
      * @since 2.5.0
+     * @deprecated Use {@link #setTexture(CharSequence, ResourceLocation, int)} instead
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
+    @Deprecated
     default void setSampler(CharSequence name, ResourceLocation location, int samplerId) {
-        AbstractTexture abstractTexture = Minecraft.getInstance().getTextureManager().getTexture(location);
-        this.setSampler(name, abstractTexture.getId(), samplerId);
+        this.setTexture(name, location, samplerId);
+    }
+
+    /**
+     * Adds a texture that is dynamically bound and sets texture units.
+     *
+     * @param name     The name of the texture to set
+     * @param location The name of the texture in the texture manager to bind and assign a texture unit
+     * @since 3.6.0
+     */
+    default void setTexture(CharSequence name, ResourceLocation location) {
+        this.setTexture(name, Minecraft.getInstance().getTextureManager().getTexture(location));
+    }
+
+    /**
+     * Adds a texture that is dynamically bound and sets texture units.
+     *
+     * @param name      The name of the texture to set
+     * @param location  The name of the texture in the texture manager to bind and assign a texture unit
+     * @param samplerId The id of the sampler assign a texture unit
+     * @since 3.6.0
+     */
+    default void setTexture(CharSequence name, ResourceLocation location, int samplerId) {
+        this.setTexture(name, Minecraft.getInstance().getTextureManager().getTexture(location), samplerId);
+    }
+
+    /**
+     * Adds a texture that is dynamically bound and sets texture units.
+     *
+     * @param name    The name of the texture to set
+     * @param texture The texture to bind and assign a texture unit
+     * @since 3.6.0
+     */
+    default void setTexture(CharSequence name, AbstractTexture texture) {
+        this.setTexture(name, ((AbstractTextureExtension) texture).getTextureTarget(), texture.getId(), 0);
+    }
+
+    /**
+     * Adds a texture that is dynamically bound and sets texture units.
+     *
+     * @param name      The name of the texture to set
+     * @param texture   The texture to bind and assign a texture unit
+     * @param samplerId The id of the sampler assign a texture unit
+     * @since 3.6.0
+     */
+    default void setTexture(CharSequence name, AbstractTexture texture, int samplerId) {
+        this.setTexture(name, ((AbstractTextureExtension) texture).getTextureTarget(), texture.getId(), samplerId);
     }
 
     /**
@@ -83,9 +135,12 @@ public interface TextureUniformAccess {
      *
      * @param name      The name of the texture to set
      * @param textureId The id of the texture to bind and assign a texture unit
+     * @deprecated Use {@link #setTexture(CharSequence, int, int)} instead
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
+    @Deprecated
     default void setSampler(CharSequence name, int textureId) {
-        this.setSampler(name, textureId, 0);
+        this.setTexture(name, VeilMultiBind.getTarget(textureId), textureId, 0);
     }
 
     /**
@@ -94,15 +149,56 @@ public interface TextureUniformAccess {
      * @param name      The name of the texture to set
      * @param textureId The id of the texture to bind and assign a texture unit
      * @param samplerId The id of the sampler assign a texture unit
+     * @deprecated Use {@link #setTexture(CharSequence, int, int, int)} instead
      */
-    void setSampler(CharSequence name, int textureId, int samplerId);
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
+    @Deprecated
+    default void setSampler(CharSequence name, int textureId, int samplerId) {
+        this.setTexture(name, VeilMultiBind.getTarget(textureId), textureId, samplerId);
+    }
+
+    /**
+     * Adds a texture that is dynamically bound and sets texture units.
+     *
+     * @param name      The name of the texture to set
+     * @param target    The target of the texture
+     * @param textureId The id of the texture to bind and assign a texture unit
+     * @since 3.6.0
+     */
+    default void setTexture(CharSequence name, int target, int textureId) {
+        this.setTexture(name, target, textureId, 0);
+    }
+
+    /**
+     * Adds a texture that is dynamically bound and sets texture units.
+     *
+     * @param name      The name of the texture to set
+     * @param target    The target of the texture
+     * @param textureId The id of the texture to bind and assign a texture unit
+     * @param samplerId The id of the sampler assign a texture unit
+     * @since 3.6.0
+     */
+    void setTexture(CharSequence name, int target, int textureId, int samplerId);
 
     /**
      * Removes the specified sampler binding. This will effectively make it a missing texture.
      *
      * @param name The name of the sampler to remove
+     * @deprecated Use {@link #removeTexture(CharSequence)} instead
      */
-    void removeSampler(CharSequence name);
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
+    @Deprecated
+    default void removeSampler(CharSequence name) {
+        this.removeTexture(name);
+    }
+
+    /**
+     * Removes the specified sampler binding. This will effectively make it a missing texture.
+     *
+     * @param name The name of the sampler to remove
+     * @since 3.6.0
+     */
+    void removeTexture(CharSequence name);
 
     /**
      * Loads the samplers set by {@link #setSampler(CharSequence, int)} into the shader.

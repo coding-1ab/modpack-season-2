@@ -2,6 +2,7 @@ package foundry.veil.api.client.render.texture;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.api.client.render.VeilRenderSystem;
+import foundry.veil.ext.AbstractTextureExtension;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.core.Direction;
 
@@ -14,7 +15,7 @@ import static org.lwjgl.opengl.GL13C.*;
  *
  * @author Ocelot
  */
-public abstract class CubemapTexture extends AbstractTexture {
+public abstract class CubemapTexture extends AbstractTexture implements AbstractTextureExtension {
 
     /**
      * Converts the {@link Direction} value to the correct GL cubemap enum.
@@ -72,5 +73,10 @@ public abstract class CubemapTexture extends AbstractTexture {
     @Override
     public void bind() {
         VeilRenderSystem.renderThreadExecutor().execute(() -> glBindTexture(GL_TEXTURE_CUBE_MAP, this.getId()));
+    }
+
+    @Override
+    public int getTextureTarget() {
+        return GL_TEXTURE_CUBE_MAP;
     }
 }

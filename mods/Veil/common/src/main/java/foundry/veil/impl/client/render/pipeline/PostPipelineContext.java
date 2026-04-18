@@ -5,6 +5,9 @@ import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.framebuffer.VeilFramebuffers;
 import foundry.veil.api.client.render.post.PostPipeline;
 import foundry.veil.api.client.render.shader.program.TextureUniformAccess;
+import foundry.veil.impl.client.render.shader.program.ShaderTextureCache;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2LongArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.resources.ResourceLocation;
@@ -20,14 +23,16 @@ import java.util.Map;
 @ApiStatus.Internal
 public class PostPipelineContext implements PostPipeline.Context {
 
-    private final Object2LongMap<CharSequence> samplers;
+    private final Object2LongMap<CharSequence> textures;
+    private final Object2IntMap<CharSequence> samplers;
     private final Map<ResourceLocation, AdvancedFbo> framebuffers;
 
     /**
      * Creates a new context to fit the specified window.
      */
     public PostPipelineContext() {
-        this.samplers = new Object2LongArrayMap<>();
+        this.textures = new Object2LongArrayMap<>();
+        this.samplers = new Object2IntArrayMap<>();
         this.framebuffers = new HashMap<>();
     }
 
@@ -42,13 +47,14 @@ public class PostPipelineContext implements PostPipeline.Context {
      * Ends the running pass and cleans up resources.
      */
     public void end() {
-        this.samplers.clear();
+        this.textures.clear();
         this.framebuffers.clear();
     }
 
     @Override
-    public void setSampler(CharSequence name, int textureId, int samplerId) {
-        this.samplers.put(name, (long) samplerId << 32 | textureId);
+    public void setTexture(CharSequence name, int target, int textureId, int samplerId) {
+        this.textures.put(name, ShaderTextureCache.packTexture(target, textureId));
+        this.samplers.put(name, samplerId);
     }
 
     @Override
@@ -58,18 +64,19 @@ public class PostPipelineContext implements PostPipeline.Context {
 
     @Override
     public void applySamplers(TextureUniformAccess shader) {
-        for (Object2LongMap.Entry<CharSequence> samplerEntry : this.samplers.object2LongEntrySet()) {
-            long value = samplerEntry.getLongValue();
-            int textureId = (int) (value & 0xFFFFFFFFL);
-            int samplerId = (int) ((value >> 32) & 0xFFFFFFFFL);
-            shader.setSampler(samplerEntry.getKey(), textureId, samplerId);
+        for (Object2LongMap.Entry<CharSequence> samplerEntry : this.textures.object2LongEntrySet()) {
+            CharSequence key = samplerEntry.getKey();
+            long packed = samplerEntry.getLongValue();
+            int target = ShaderTextureCache.getTarget(packed);
+            int textureId = ShaderTextureCache.getTextureId(packed);
+            shader.setTexture(key, target, textureId, this.samplers.getOrDefault(key, 0));
         }
     }
 
     @Override
     public void clearSamplers(TextureUniformAccess shader) {
-        for (CharSequence name : this.samplers.keySet()) {
-            shader.removeSampler(name);
+        for (CharSequence name : this.textures.keySet()) {
+            shader.removeTexture(name);
         }
     }
 

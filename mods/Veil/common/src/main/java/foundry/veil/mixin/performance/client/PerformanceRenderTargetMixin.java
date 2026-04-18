@@ -24,6 +24,7 @@ import static org.lwjgl.opengl.ARBCopyImage.glCopyImageSubData;
 import static org.lwjgl.opengl.ARBDirectStateAccess.glBlitNamedFramebuffer;
 import static org.lwjgl.opengl.ARBDirectStateAccess.glClearNamedFramebufferfv;
 import static org.lwjgl.opengl.GL11C.*;
+import static org.lwjgl.opengl.GL13C.GL_TEXTURE0;
 
 @Mixin(RenderTarget.class)
 public abstract class PerformanceRenderTargetMixin implements PerformanceRenderTargetExtension {
@@ -161,7 +162,11 @@ public abstract class PerformanceRenderTargetMixin implements PerformanceRenderT
                 GlStateManager._disableBlend();
             }
 
-            VeilRenderSystem.bindTextures(0, this.getColorTextureId());
+            int activeTexture = GlStateManager._getActiveTexture();
+            GlStateManager._activeTexture(GL_TEXTURE0);
+            GlStateManager._bindTexture(this.getColorTextureId());
+            GlStateManager._activeTexture(activeTexture);
+
             shader.bind();
             VeilRenderSystem.drawScreenQuad();
             ShaderProgram.unbind();

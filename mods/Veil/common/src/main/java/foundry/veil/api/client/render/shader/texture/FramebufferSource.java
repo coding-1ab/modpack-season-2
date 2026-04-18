@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
+
 /**
  * Source of a shader texture using a framebuffer.
  *
@@ -48,6 +50,11 @@ public record FramebufferSource(
             return framebuffer.isDepthTextureAttachment() ? framebuffer.getDepthTextureAttachment().getId() : 0;
         }
         return framebuffer.isColorTextureAttachment(this.sampler) ? framebuffer.getColorTextureAttachment(this.sampler).getId() : 0;
+    }
+
+    @Override
+    public int getTarget(Context context) {
+        return GL_TEXTURE_2D;
     }
 
     @Override

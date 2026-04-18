@@ -10,10 +10,13 @@ import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.texture.TextureFilter;
 import foundry.veil.api.util.EnumCodec;
+import foundry.veil.ext.AbstractTextureExtension;
 import foundry.veil.impl.client.render.dynamicbuffer.DynamicBufferManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
+
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
 
 /**
  * Source for shader textures. This allows resource location textures as well as other special types.
@@ -36,6 +39,15 @@ public sealed interface ShaderTextureSource permits LocationSource, FramebufferS
      * @return The id of the texture to bind
      */
     int getId(Context context);
+
+    /**
+     * Retrieves the target of this texture based on context.
+     *
+     * @param context The context to use
+     * @return The target of the bound texture
+     * @since 3.6.0
+     */
+    int getTarget(Context context);
 
     /**
      * @return The filtering this texture should use or <code>null</code> for the texture default
@@ -115,6 +127,20 @@ public sealed interface ShaderTextureSource permits LocationSource, FramebufferS
                 }
             }
             return Minecraft.getInstance().getTextureManager().getTexture(name).getId();
+        }
+
+        /**
+         * Retrieves a texture target by id.
+         *
+         * @param name The name of the texture to retrieve
+         * @return The target for that texture
+         * @since 3.6.0
+         */
+        default int getTextureTarget(ResourceLocation name) {
+            if (Veil.MODID.equals(name.getNamespace()) && name.getPath().startsWith("dynamic_buffer")) {
+                return GL_TEXTURE_2D;
+            }
+            return ((AbstractTextureExtension) Minecraft.getInstance().getTextureManager().getTexture(name)).getTextureTarget();
         }
     }
 }

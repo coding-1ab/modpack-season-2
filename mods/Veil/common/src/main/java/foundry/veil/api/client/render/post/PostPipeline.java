@@ -3,6 +3,7 @@ package foundry.veil.api.client.render.post;
 import com.mojang.serialization.Codec;
 import foundry.veil.api.client.registry.PostPipelineStageRegistry;
 import foundry.veil.api.client.render.VeilRenderSystem;
+import foundry.veil.api.client.render.ext.VeilMultiBind;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.shader.program.MutableUniformAccess;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
@@ -109,8 +110,23 @@ public interface PostPipeline extends MutableUniformAccess, NativeResource {
          * @param name      The name of the sampler
          * @param textureId The id of the texture to bind
          * @param samplerId The id of the sampler to bind
+         * @deprecated Ise {@link #setTexture(CharSequence, int, int, int)} instead
          */
-        void setSampler(CharSequence name, int textureId, int samplerId);
+        @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
+        @Deprecated
+        default void setSampler(CharSequence name, int textureId, int samplerId) {
+            this.setTexture(name, VeilMultiBind.getTarget(textureId), textureId, samplerId);
+        }
+
+        /**
+         * Binds a named sampler id. All samplers can be applied with {@link #applySamplers(TextureUniformAccess)} for adding them to shaders.
+         *
+         * @param name      The name of the sampler
+         * @param textureId The id of the texture to bind
+         * @param samplerId The id of the sampler to bind
+         * @since 3.6.0
+         */
+        void setTexture(CharSequence name, int target, int textureId, int samplerId);
 
         /**
          * Sets a framebuffer to a name. This allows post stages to create new framebuffers that can be accessed later on.
