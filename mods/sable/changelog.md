@@ -1,1 +1,4 @@
- - Include Rapier physics pipeline natives for AArch64 Linux machines
+ - Improve Lithium compatibility
+ - Various mixin compatibility improvements
+ - Improve logging when Sable Rapier natives fail to load
+ - Add Sable Rapier support for AArch64 Linux machines
