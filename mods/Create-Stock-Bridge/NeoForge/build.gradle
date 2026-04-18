@@ -3,8 +3,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.168'
-    id 'net.neoforged.gradle.mixin' version '7.0.168'
+    id 'net.neoforged.gradle.userdev' version '7.1.22'
 }
 
 version = mod_version
@@ -93,11 +92,11 @@ runs {
 
     client {
         // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
     }
 
     server {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         arguments '--nogui'
     }
 
@@ -105,7 +104,7 @@ runs {
     // By default, the server will crash when no gametests are provided.
     // The gametest system is also enabled by default for other run configs under the /test command.
     gameTestServer {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
     }
 
     data {
@@ -120,9 +119,6 @@ runs {
         	'--existing-mod', 'create'
         ]
     }
-}
-
-mixin {
 }
 
 dependencies {
@@ -188,12 +184,12 @@ tasks.withType(ProcessResources).configureEach {
             loader_version_range: loader_version_range,
             mod_id              : mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors         : mod_authors, mod_description: mod_description, pack_format_number: pack_format_number,
-            file: [jarVersion: mod_version]
+            file                : [jarVersion: mod_version]
     ]
     inputs.properties replaceProperties
 
-    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
-        expand replaceProperties + [project: project]
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand replaceProperties
     }
 }
 
