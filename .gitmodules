@@ -42,3 +42,9 @@
 [submodule "mods/FarmersDelight"]
 	path = mods/FarmersDelight
 	url = https://github.com/coding-1ab/FarmersDelight.git
+[submodule "mods/iteminteractions"]
+	path = mods/iteminteractions
+	url = https://github.com/coding-1ab/iteminteractions.git
+[submodule "mods/Create-Stock-Bridge"]
+	path = mods/Create-Stock-Bridge
+	url = https://github.com/coding-1ab/Create-Stock-Bridge.git
