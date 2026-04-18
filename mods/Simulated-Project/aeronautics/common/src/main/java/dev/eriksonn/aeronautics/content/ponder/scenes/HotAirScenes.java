@@ -347,6 +347,7 @@ public class HotAirScenes {
             scene.world().showSectionAndMerge(util.select().position(burnerPos.offset(i - 2 + k, 0, 0)), Direction.DOWN, shipLink);
             scene.idle(2 + k);
         }
+        scene.addInstruction(new PullTheAssemblerKronkInstruction(util.grid().at(6, 2, 4), true, true));
         scene.world().showSectionAndMerge(util.select().fromTo(1, 3, 2, 1, 6, 2), Direction.DOWN, shipLink);
         scene.world().showSectionAndMerge(util.select().fromTo(7, 3, 2, 7, 6, 2), Direction.DOWN, shipLink);
         scene.world().showSectionAndMerge(util.select().fromTo(1, 3, 6, 1, 6, 6), Direction.DOWN, shipLink);

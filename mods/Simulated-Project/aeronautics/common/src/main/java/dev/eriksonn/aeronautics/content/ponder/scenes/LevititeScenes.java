@@ -7,10 +7,7 @@ import dev.eriksonn.aeronautics.content.ponder.instructions.ChangePropellerRotat
 import dev.eriksonn.aeronautics.content.ponder.instructions.PropellerRotateInstruction;
 import dev.simulated_team.simulated.index.SimBlocks;
 import dev.simulated_team.simulated.ponder.SmoothMovementUtils;
-import dev.simulated_team.simulated.ponder.instructions.AirflowAABBInstruction;
-import dev.simulated_team.simulated.ponder.instructions.CustomAnimateWorldSectionInstruction;
-import dev.simulated_team.simulated.ponder.instructions.CustomToggleBaseShadowInstruction;
-import dev.simulated_team.simulated.ponder.instructions.OffsetBreakParticlesInstruction;
+import dev.simulated_team.simulated.ponder.instructions.*;
 import dev.eriksonn.aeronautics.config.AeroConfig;
 import dev.eriksonn.aeronautics.content.ponder.instructions.PropellerParticleSpawningInstruction;
 import dev.eriksonn.aeronautics.index.AeroBlocks;
@@ -350,6 +347,7 @@ public class LevititeScenes {
         BlockPos gearshiftPos = new BlockPos(3, 3, 4);
         Selection propeller = select.fromTo(1, 2, 3, 1, 4, 5);
         //BlockPos assemblerPos = new BlockPos(7, 3, 4);
+        scene.addInstruction(new PullTheAssemblerKronkInstruction(util.grid().at(7, 3, 4), true, true));
 
         ElementLink<WorldSectionElement> airship = world.showIndependentSection(select.fromTo(2, 2, 2, 7, 2, 6), Direction.DOWN);
         ElementLink<WorldSectionElement> stirlingSection = null;
