@@ -1,6 +1,5 @@
-package fuzs.iteminteractions.neoforge.impl;
+package fuzs.iteminteractions.impl;
 
-import fuzs.iteminteractions.impl.ItemInteractions;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import net.neoforged.fml.common.Mod;
 

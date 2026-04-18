@@ -1,4 +1,4 @@
 @ApiStatus.Internal
-package fuzs.iteminteractions.neoforge.impl.client;
+package fuzs.iteminteractions.impl.client;
 
 import org.jetbrains.annotations.ApiStatus;
