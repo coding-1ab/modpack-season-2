@@ -33,11 +33,16 @@ loom {
         accessWidenerPath.set(aw)
     }
     runs {
+        configureEach {
+            vmArg("-Dmixin.debug.export=true")
+        }
+        
         client {
             client()
             setConfigName('Fabric Client')
             ideConfigGenerated(true)
             runDir('runs/client')
+            
         }
         server {
             server()

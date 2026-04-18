@@ -17,7 +17,8 @@ neoForge {
     }
     runs {
         configureEach {
-            systemProperty('neoforge.enabledGameTestNamespaces', mod_id)
+            systemProperty("neoforge.enabledGameTestNamespaces", mod_id.toString())
+            systemProperty("mixin.debug.export", "true")
             ideName = "NeoForge ${it.name.capitalize()} (${project.path})" // Unify the run config names with fabric
         }
         client {
@@ -28,7 +29,7 @@ neoForge {
         }
         gameTest {
             type = "gameTestServer"
-            gameDirectory = project.file('build/gametest')
+            gameDirectory = project.file("build/gametest")
         }
     }
     mods {
