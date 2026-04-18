@@ -1,6 +1,5 @@
 package dev.ryanhcode.sable.physics.impl.rapier;
 
-import com.mojang.text2speech.Narrator.InitializeException;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.PhysicsPipelineBody;
 import dev.ryanhcode.sable.api.physics.callback.BlockSubLevelCollisionCallback;
