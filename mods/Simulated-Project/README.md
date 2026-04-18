@@ -1,4 +1,5 @@
 ![banner](./images/banner.png)
+
 <div>
     <h1 align="center" style="display: block; margin-bottom: 10px;">The Simulated Project
         <div>
@@ -12,6 +13,8 @@
     </h1>
     <p>
         A suite of mods extending Create with physics-based contraptions. Our aim with these mods is to provide a cohesive and seamless way to interact with physics objects in Minecraft. Planes, cars, and weird insect machines are all made fully possible using Create Simulated!
+        
+Crowdin: https://crowdin.com/project/create-aeronautics
     </p>
     <h1></h1>
     <div>
