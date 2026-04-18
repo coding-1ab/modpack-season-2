@@ -67,3 +67,4 @@ run
 
 # BlueJ files
 *.ctxt
+src/generated/resources/.cache
