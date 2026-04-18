@@ -1,9 +1,8 @@
 package dev.simulated_team.simulated.util.hold_interaction;
 
 import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.api.SubLevelHelper;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
-import dev.simulated_team.simulated.util.click_interactions.MouseCallback;
+import dev.simulated_team.simulated.util.click_interactions.InteractCallback;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -23,7 +22,7 @@ import org.lwjgl.glfw.GLFW;
  * Controlled using {@link HoldInteractionManager}<br>
  * Only one instance is ever expected to exist, so go wild with static variables
  */
-public abstract class BlockHoldInteraction implements MouseCallback {
+public abstract class BlockHoldInteraction implements InteractCallback {
     /**
      * Called only when the interaction has just been started
      */
@@ -91,22 +90,22 @@ public abstract class BlockHoldInteraction implements MouseCallback {
     }
 
     @Override
-    public MouseInputResult onLeftClick(final int modifiers, final int action, final KeyMapping leftKey) {
+    public Result onAttack(final int modifiers, final int action, final KeyMapping leftKey) {
         if (this.isActive()) {
-            return new MouseInputResult(true);
+            return new Result(true);
         }
 
-        return MouseCallback.super.onLeftClick(modifiers, action, leftKey);
+        return InteractCallback.super.onAttack(modifiers, action, leftKey);
     }
 
     @Override
-    public MouseInputResult onRightClick(final int modifiers, final int action, final KeyMapping rightKey) {
+    public Result onUse(final int modifiers, final int action, final KeyMapping rightKey) {
         if (action == GLFW.GLFW_RELEASE && this.isActive()) {
             this.release();
             HoldInteractionManager.stop();
         }
 
-        return MouseCallback.super.onRightClick(modifiers, action, rightKey);
+        return InteractCallback.super.onUse(modifiers, action, rightKey);
     }
 
     /**
@@ -119,13 +118,13 @@ public abstract class BlockHoldInteraction implements MouseCallback {
     }
 
     @Override
-    public MouseInputResult onMouseMove(final double yaw, final double pitch) {
+    public Result onMouseMove(final double yaw, final double pitch) {
         if (this.isActive()) {
             if (this.activeOnMouseMove(yaw, pitch)) {
-                return new MouseInputResult(true);
+                return new Result(true);
             }
         }
-        return MouseCallback.super.onMouseMove(yaw, pitch);
+        return InteractCallback.super.onMouseMove(yaw, pitch);
     }
 
     public boolean activeOnMouseMove(final double yaw, final double pitch) {

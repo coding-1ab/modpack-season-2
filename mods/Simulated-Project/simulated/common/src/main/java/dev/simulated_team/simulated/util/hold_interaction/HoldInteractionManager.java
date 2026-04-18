@@ -8,7 +8,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Manages client interactions that require holding right click
+ * Manages client interactions that require holding use on a block
  */
 public class HoldInteractionManager {
     @Nullable
@@ -23,7 +23,7 @@ public class HoldInteractionManager {
         return blockHoldInteraction == active;
     }
 
-    static void start(final BlockHoldInteraction blockHoldInteraction) {
+    public static void start(final BlockHoldInteraction blockHoldInteraction) {
         if (active != null) {
             active.stop();
         }
@@ -32,7 +32,7 @@ public class HoldInteractionManager {
         active.start();
     }
 
-    static void stop() {
+    public static void stop() {
         if (active != null) {
             active.stop();
             active = null;

@@ -21,6 +21,7 @@
     "handle.LocalPlayerMixin",
     "handle.MinecraftMixin",
     "hold_interaction.GoggleOverlayRendererMixin",
+    "hold_interaction.KeyboardHandlerMixin",
     "hold_interaction.LocalPlayerMixin",
     "hold_interaction.MouseHandlerMixin",
     "linked_typewriter.PonderTooltipHandlerMixin",

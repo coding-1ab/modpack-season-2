@@ -12,8 +12,8 @@ import dev.simulated_team.simulated.content.physics_staff.PhysicsStaffRenderHand
 import dev.simulated_team.simulated.index.SimClickInteractions;
 import dev.simulated_team.simulated.service.SimConfigService;
 import dev.simulated_team.simulated.util.SimDistUtil;
-import dev.simulated_team.simulated.util.click_interactions.MouseCallback;
-import dev.simulated_team.simulated.util.click_interactions.MouseCallback.MouseInputResult;
+import dev.simulated_team.simulated.util.click_interactions.InteractCallback;
+import dev.simulated_team.simulated.util.click_interactions.InteractCallback.Result;
 import dev.simulated_team.simulated.util.hold_interaction.HoldInteractionManager;
 import dev.simulated_team.simulated.util.hold_interaction.HoldTipManager;
 import foundry.veil.api.client.render.MatrixStack;
@@ -55,27 +55,27 @@ public class SimulatedCommonClientEvents {
     /**
      * Called from loader specific implementation of events. Used to call separate onInput inside of client handlers. Can be cancelled.
      *
-     * @param button    The button being pressed. Use {@link org.lwjgl.glfw.GLFW#GLFW_KEY_SPACE GLFW} keys to determine what button is being pressed
+     * @param input     The button being pressed. Use {@link org.lwjgl.glfw.GLFW#GLFW_KEY_SPACE GLFW} keys to determine what button is being pressed
      * @param modifiers The modifier key that is being applied to this action.
      * @param action    The action of this key. Use {@link org.lwjgl.glfw.GLFW#GLFW_RELEASE GLFW} Action keys.
      */
-    public static MouseInputResult onBeforeMouseInput(final int button, final int modifiers, final int action) {
+    public static Result onBeforeMouseInput(final InteractCallback.Input input, final int modifiers, final int action) {
         final Minecraft mc = Minecraft.getInstance();
-        final MouseCallback.MouseMappings mappings = MouseCallback.MouseMappings.getMappings();
+        final InteractCallback.KeyMappings mappings = InteractCallback.KeyMappings.getMappings();
 
         if (mc.screen != null) {
-            return MouseInputResult.empty();
+            return Result.empty();
         }
 
-        for (final MouseCallback mouseCallback : SimClickInteractions.CLICK_INTERACTION_ENTRIES) {
-            final MouseInputResult returnEvent = MouseCallback.filterClick(mouseCallback, button, modifiers, action, mappings);
+        for (final InteractCallback interactCallback : SimClickInteractions.CLICK_INTERACTION_ENTRIES) {
+            final Result returnEvent = InteractCallback.filterInteract(interactCallback, input, modifiers, action, mappings);
 
-            if (!MouseInputResult.empty().equals(returnEvent)) {
+            if (!Result.empty().equals(returnEvent)) {
                 return returnEvent;
             }
         }
 
-        return MouseInputResult.empty();
+        return Result.empty();
     }
 
 
@@ -85,21 +85,21 @@ public class SimulatedCommonClientEvents {
      * @param yaw    The resulting change in yaw
      * @param pitch  The modifier key that is being applied to this action.
      */
-    public static MouseInputResult onMouseMove(final double yaw, final double pitch) {
+    public static Result onMouseMove(final double yaw, final double pitch) {
         final Minecraft mc = Minecraft.getInstance();
 
         if (mc.screen != null) {
-            return MouseInputResult.empty();
+            return Result.empty();
         }
 
-        for (final MouseCallback mouseCallback : SimClickInteractions.CLICK_INTERACTION_ENTRIES) {
-            final MouseInputResult returnEvent = mouseCallback.onMouseMove(yaw, pitch);
-            if (!MouseInputResult.empty().equals(returnEvent)) {
+        for (final InteractCallback interactCallback : SimClickInteractions.CLICK_INTERACTION_ENTRIES) {
+            final Result returnEvent = interactCallback.onMouseMove(yaw, pitch);
+            if (!Result.empty().equals(returnEvent)) {
                 return returnEvent;
             }
         }
 
-        return MouseInputResult.empty();
+        return Result.empty();
     }
 
     public static void onRenderLevelStage(final VeilRenderLevelStageEvent.Stage stage, final LevelRenderer levelRenderer, final MultiBufferSource.BufferSource bufferSource, final MatrixStack matrixStack, final Matrix4fc matrix4fc, final Matrix4fc matrix4fc1, final int i, final DeltaTracker deltaTracker, final Camera camera, final Frustum frustum) {
@@ -116,18 +116,18 @@ public class SimulatedCommonClientEvents {
      * @param deltaX x scroll value
      * @param deltaY y scroll value
      */
-    public static MouseInputResult onMouseScroll(final double deltaX, final double deltaY) {
+    public static Result onMouseScroll(final double deltaX, final double deltaY) {
         if (Minecraft.getInstance().screen == null) {
-            for (final MouseCallback mouseCallback : SimClickInteractions.CLICK_INTERACTION_ENTRIES) {
-                final MouseInputResult result = mouseCallback.onScroll(deltaX, deltaY);
+            for (final InteractCallback interactCallback : SimClickInteractions.CLICK_INTERACTION_ENTRIES) {
+                final Result result = interactCallback.onScroll(deltaX, deltaY);
 
-                if (!MouseInputResult.empty().equals(result)) {
+                if (!Result.empty().equals(result)) {
                     return result;
                 }
             }
         }
 
-        return MouseInputResult.empty();
+        return Result.empty();
     }
 
     /**
@@ -167,8 +167,12 @@ public class SimulatedCommonClientEvents {
         ZiplineClientManager.tick();
         LinkedTypewriterInteractionHandler.tick();
 
-        for (final MouseCallback mouseCallback : SimClickInteractions.CLICK_INTERACTION_ENTRIES) {
-            mouseCallback.clientTick(level, player);
+        if (instance.screen != null) {
+            HoldInteractionManager.stop();
+        }
+
+        for (final InteractCallback interactCallback : SimClickInteractions.CLICK_INTERACTION_ENTRIES) {
+            interactCallback.clientTick(level, player);
         }
 
         HoldInteractionManager.tick(level, player);

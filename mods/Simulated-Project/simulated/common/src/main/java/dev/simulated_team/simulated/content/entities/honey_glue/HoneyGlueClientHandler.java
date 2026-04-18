@@ -4,7 +4,6 @@ import com.simibubi.create.AllKeys;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.foundation.utility.RaycastHelper;
 import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.api.SubLevelHelper;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.simulated_team.simulated.data.SimLang;
@@ -18,7 +17,7 @@ import dev.simulated_team.simulated.network.packets.honey_glue.HoneyGlueSpawnPac
 import dev.simulated_team.simulated.service.SimConfigService;
 import dev.simulated_team.simulated.util.SimColors;
 import dev.simulated_team.simulated.util.SimDistUtil;
-import dev.simulated_team.simulated.util.click_interactions.MouseCallback;
+import dev.simulated_team.simulated.util.click_interactions.InteractCallback;
 import foundry.veil.api.network.VeilPacketManager;
 import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.outliner.Outliner;
@@ -48,7 +47,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.List;
 import java.util.Optional;
 
-public class HoneyGlueClientHandler implements MouseCallback {
+public class HoneyGlueClientHandler implements InteractCallback {
     private State currentState = State.UNBOUND;
     private BlockPos selectedPos;
 
@@ -80,17 +79,17 @@ public class HoneyGlueClientHandler implements MouseCallback {
     }
 
     @Override
-    public MouseInputResult onRightClick(final int modifiers, final int action, final KeyMapping rightKey) {
+    public Result onUse(final int modifiers, final int action, final KeyMapping rightKey) {
         if (action == GLFW.GLFW_PRESS) {
             final Player player = SimDistUtil.getClientPlayer();
             final InteractionHand hand = this.getHoneyGlueHand(player);
             if (hand == null) {
-                return MouseInputResult.empty();
+                return Result.empty();
             }
 
             if (player.isShiftKeyDown()) {
                 this.clearAndSwing(player);
-                return new MouseInputResult(true);
+                return new Result(true);
             }
 
             final BlockHitResult bhr = this.getHitResult();
@@ -98,45 +97,45 @@ public class HoneyGlueClientHandler implements MouseCallback {
                 final boolean success = this.selectPos(bhr.getBlockPos(), player, player.getItemInHand(hand));
                 if (success) {
                     player.swing(InteractionHand.MAIN_HAND);
-                    return new MouseInputResult(true);
+                    return new Result(true);
                 } else {
-                    return MouseInputResult.empty();
+                    return Result.empty();
                 }
             }
         }
 
-        return MouseCallback.super.onRightClick(modifiers, action, rightKey);
+        return InteractCallback.super.onUse(modifiers, action, rightKey);
     }
 
     @Override
-    public MouseInputResult onLeftClick(final int modifiers, final int action, final KeyMapping leftKey) {
+    public Result onAttack(final int modifiers, final int action, final KeyMapping leftKey) {
         if (action == GLFW.GLFW_PRESS) {
             final Player player = SimDistUtil.getClientPlayer();
             if (this.getHoneyGlueHand(player) == null) {
-                return MouseInputResult.empty();
+                return Result.empty();
             }
 
             if (this.hoveredGlue != null) {
                 VeilPacketManager.server().sendPacket(new HoneyGlueChangeBoundsPacket(new AABB(0, 0, 0, 0, 0, 0), this.hoveredGlue.getUUID()));
                 this.clearAndSwing(player);
-                return new MouseInputResult(true);
+                return new Result(true);
             }
         }
 
-        return MouseCallback.super.onLeftClick(modifiers, action, leftKey);
+        return InteractCallback.super.onAttack(modifiers, action, leftKey);
     }
 
     @Override
-    public MouseInputResult onScroll(final double deltaX, double deltaY) {
+    public Result onScroll(final double deltaX, double deltaY) {
         final Player player = SimDistUtil.getClientPlayer();
 
         if (player == null)
-            return MouseInputResult.empty();
+            return Result.empty();
 
         final InteractionHand hand = this.getHoneyGlueHand(player);
 
         if (hand == null || !AllKeys.ctrlDown()) {
-            return MouseInputResult.empty();
+            return Result.empty();
         } else if (this.currentState == State.UNBOUND && this.hoveredGlue != null) {
             this.hoveredGlue.updateClientBounds();
             final AABB bb = this.hoveredGlue.getBoundingBox();
@@ -164,7 +163,7 @@ public class HoneyGlueClientHandler implements MouseCallback {
             }
         }
 
-        return new MouseInputResult(true);
+        return new Result(true);
     }
 
     @Override

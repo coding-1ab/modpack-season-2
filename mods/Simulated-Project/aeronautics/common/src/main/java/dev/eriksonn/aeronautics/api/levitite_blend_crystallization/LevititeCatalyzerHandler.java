@@ -1,9 +1,9 @@
 package dev.eriksonn.aeronautics.api.levitite_blend_crystallization;
 
-import dev.simulated_team.simulated.util.SimDistUtil;
-import dev.simulated_team.simulated.util.click_interactions.MouseCallback;
 import dev.eriksonn.aeronautics.index.AeroTags;
 import dev.eriksonn.aeronautics.network.packets.LevititeCatalystCrystallizationPacket;
+import dev.simulated_team.simulated.util.SimDistUtil;
+import dev.simulated_team.simulated.util.click_interactions.InteractCallback;
 import foundry.veil.api.network.VeilPacketManager;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.player.LocalPlayer;
@@ -21,7 +21,7 @@ import org.lwjgl.glfw.GLFW;
 
 import static com.simibubi.create.foundation.utility.RaycastHelper.getTraceTarget;
 
-public class LevititeCatalyzerHandler implements MouseCallback {
+public class LevititeCatalyzerHandler implements InteractCallback {
     @NotNull
     private static ClipContext gatherContext(final Player player) {
         final Vec3 origin = player.getEyePosition();
@@ -39,7 +39,7 @@ public class LevititeCatalyzerHandler implements MouseCallback {
     }
 
     @Override
-    public MouseInputResult onRightClick(final int modifiers, final int action, final KeyMapping rightKey) {
+    public Result onUse(final int modifiers, final int action, final KeyMapping rightKey) {
 
         if (action == GLFW.GLFW_PRESS) {
             final LocalPlayer player = (LocalPlayer) SimDistUtil.getClientPlayer();
@@ -49,17 +49,17 @@ public class LevititeCatalyzerHandler implements MouseCallback {
             final InteractionHand hand = InteractionHand.MAIN_HAND;
             final ItemStack catalyzer = player.getItemInHand(hand);
             if (!isCatalyzer(catalyzer))
-                return MouseInputResult.empty();
+                return Result.empty();
 
             final ClipContext context = gatherContext(player);
             final BlockHitResult ray = level.clip(context);
             if (ray.getType() != HitResult.Type.MISS && level.getFluidState(ray.getBlockPos()).getType() == LevititeBlendHelper.getFluid()) {
                 VeilPacketManager.server().sendPacket(new LevititeCatalystCrystallizationPacket(ray.getBlockPos(), hand, catalyzer));
                 player.swing(hand);
-                return new MouseInputResult(true);
+                return new Result(true);
             }
         }
 
-        return MouseInputResult.empty();
+        return Result.empty();
     }
 }

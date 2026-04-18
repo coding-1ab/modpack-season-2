@@ -3,7 +3,6 @@ package dev.simulated_team.simulated.content.blocks.rope.strand.client;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.foundation.utility.RaycastHelper;
 import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.api.SubLevelHelper;
 import dev.ryanhcode.sable.api.math.OrientedBoundingBox3d;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.simulated_team.simulated.data.SimLang;
@@ -13,7 +12,7 @@ import dev.simulated_team.simulated.network.packets.RopeRidingPacket;
 import dev.simulated_team.simulated.service.SimConfigService;
 import dev.simulated_team.simulated.util.SimColors;
 import dev.simulated_team.simulated.util.SimMathUtils;
-import dev.simulated_team.simulated.util.click_interactions.MouseCallback;
+import dev.simulated_team.simulated.util.click_interactions.InteractCallback;
 import foundry.veil.api.network.VeilPacketManager;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.createmod.catnip.animation.AnimationTickHolder;
@@ -39,7 +38,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.Optional;
 import java.util.UUID;
 
-public class ZiplineClientManager implements MouseCallback {
+public class ZiplineClientManager implements InteractCallback {
     private static final double CONTINUOUS_STEP_SIZE = 0.25;
     private static final double HALF_THICKNESS = 4.0 / 16.0;
     public static UUID ridingRope = null;
@@ -330,9 +329,9 @@ public class ZiplineClientManager implements MouseCallback {
     }
 
     @Override
-    public MouseInputResult onRightClick(final int modifiers, final int action, final KeyMapping rightKey) {
+    public Result onUse(final int modifiers, final int action, final KeyMapping rightKey) {
         if (action == GLFW.GLFW_RELEASE || hoveringRope == null || ridingRope == hoveringRope)
-            return MouseInputResult.empty();
+            return Result.empty();
 
         final Minecraft mc = Minecraft.getInstance();
         final ItemStack mainHandItem = mc.player.getMainHandItem();
@@ -344,27 +343,27 @@ public class ZiplineClientManager implements MouseCallback {
             final ClientRopeStrand strand = ropeManager.getStrand(hoveringRope);
 
             if (strand == null) {
-                return MouseInputResult.empty();
+                return Result.empty();
             }
 
             final ClosestQuery query = getClosestPointOnStrand(strand, mc.player);
 
             if (!canStartRiding(query, mc.player, true)) {
-                return MouseInputResult.empty();
+                return Result.empty();
             }
 
             embark(hoveringRope);
             mc.player.swing(InteractionHand.MAIN_HAND);
-            return new MouseInputResult(true);
+            return new Result(true);
         }
 
         if (isDestroyer || (isWrench && mc.player.isShiftKeyDown())) {
             VeilPacketManager.server().sendPacket(new RopeBreakPacket(hoveringRope));
             mc.player.swing(InteractionHand.MAIN_HAND);
-            return new MouseInputResult(true);
+            return new Result(true);
         }
 
-        return MouseInputResult.empty();
+        return Result.empty();
     }
 
     public record ClosestQuery(Vector3d position, Vector3d normal) {

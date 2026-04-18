@@ -1,13 +1,12 @@
 package dev.simulated_team.simulated.content.items.spring;
 
 import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.api.SubLevelHelper;
 import dev.simulated_team.simulated.data.SimLang;
 import dev.simulated_team.simulated.index.SimItems;
 import dev.simulated_team.simulated.network.packets.PlaceSpringPacket;
 import dev.simulated_team.simulated.util.SimColors;
 import dev.simulated_team.simulated.util.SimDistUtil;
-import dev.simulated_team.simulated.util.click_interactions.MouseCallback;
+import dev.simulated_team.simulated.util.click_interactions.InteractCallback;
 import foundry.veil.api.network.VeilPacketManager;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.KeyMapping;
@@ -28,7 +27,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
-public class SpringItemHandler implements MouseCallback {
+public class SpringItemHandler implements InteractCallback {
     public static final double MAX_LENGTH = 9.0;
 
     public BlockPos linkPos;
@@ -55,7 +54,7 @@ public class SpringItemHandler implements MouseCallback {
     }
 
     @Override
-    public MouseInputResult onRightClick(final int modifiers, final int action, final KeyMapping rightKey) {
+    public Result onUse(final int modifiers, final int action, final KeyMapping rightKey) {
         final LocalPlayer player = (LocalPlayer) SimDistUtil.getClientPlayer();
         final Level level = player.level();
 
@@ -63,7 +62,7 @@ public class SpringItemHandler implements MouseCallback {
             final InteractionHand hand = this.getHandOrNull(player);
             if (hand == null) {
                 this.reset(true);
-                return MouseInputResult.empty();
+                return Result.empty();
             }
 
             if (this.linkPos != null) {
@@ -71,7 +70,7 @@ public class SpringItemHandler implements MouseCallback {
                     player.swing(hand);
 
                     this.reset(true);
-                    return new MouseInputResult(true);
+                    return new Result(true);
                 }
             }
 
@@ -85,26 +84,26 @@ public class SpringItemHandler implements MouseCallback {
 
                 if (this.testExceedsRange(level, childCenter, parentCenter)) {
                     this.sendMessage("out_of_range", SimColors.NUH_UH_RED);
-                    return MouseInputResult.empty();
+                    return Result.empty();
                 }
 
                 if (parentCenter.equals(childCenter)) {
                     this.sendMessage("same_block", SimColors.NUH_UH_RED);
-                    return MouseInputResult.empty();
+                    return Result.empty();
                 }
 
                 if (!this.testPlacementAndSendError(level, childCenter, pos, dir)) {
-                    return MouseInputResult.empty();
+                    return Result.empty();
                 }
 
                 player.swing(hand);
                 VeilPacketManager.server().sendPacket(new PlaceSpringPacket(this.linkPos, pos, this.linkDirection, dir, hand));
                 this.reset(false);
-                return new MouseInputResult(true);
+                return new Result(true);
             }
         }
 
-        return MouseInputResult.empty();
+        return Result.empty();
     }
 
     private boolean testExceedsRange(final Level level, final BlockPos childPos, final BlockPos parentPos) {

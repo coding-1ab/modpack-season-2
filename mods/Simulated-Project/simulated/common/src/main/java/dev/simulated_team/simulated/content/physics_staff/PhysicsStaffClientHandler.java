@@ -4,10 +4,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.CreateClient;
 import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.api.SubLevelHelper;
+import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
-import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.simulated_team.simulated.SimulatedClient;
 import dev.simulated_team.simulated.config.client.items.SimItemConfigs;
 import dev.simulated_team.simulated.index.SimKeys;
@@ -16,7 +15,7 @@ import dev.simulated_team.simulated.network.packets.physics_staff.PhysicsStaffAc
 import dev.simulated_team.simulated.network.packets.physics_staff.PhysicsStaffDragPacket;
 import dev.simulated_team.simulated.service.SimConfigService;
 import dev.simulated_team.simulated.util.SimDistUtil;
-import dev.simulated_team.simulated.util.click_interactions.MouseCallback;
+import dev.simulated_team.simulated.util.click_interactions.InteractCallback;
 import foundry.veil.api.network.VeilPacketManager;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
@@ -527,29 +526,29 @@ public class PhysicsStaffClientHandler {
         }
     }
 
-    public static class PhysicsStaffMouseHandler implements MouseCallback {
+    public static class PhysicsStaffMouseHandler implements InteractCallback {
 
         @Override
-        public MouseInputResult onLeftClick(final int modifiers, final int action, final KeyMapping leftKey) {
+        public Result onAttack(final int modifiers, final int action, final KeyMapping leftKey) {
             if (SimulatedClient.PHYSICS_STAFF_CLIENT_HANDLER.holdingStaff && action == GLFW.GLFW_PRESS) {
                 SimulatedClient.PHYSICS_STAFF_CLIENT_HANDLER.onItemPunched();
-                return new MouseInputResult(true);
+                return new Result(true);
             }
 
-            return MouseCallback.super.onLeftClick(modifiers, action, leftKey);
+            return InteractCallback.super.onAttack(modifiers, action, leftKey);
         }
 
         @Override
-        public MouseInputResult onRightClick(final int modifiers, final int action, final KeyMapping rightKey) {
+        public Result onUse(final int modifiers, final int action, final KeyMapping rightKey) {
             if (SimulatedClient.PHYSICS_STAFF_CLIENT_HANDLER.holdingStaff && action == GLFW.GLFW_PRESS) {
                 SimulatedClient.PHYSICS_STAFF_CLIENT_HANDLER.onItemUsed(PhysicsStaffAction.START_DRAG);
-                return new MouseInputResult(true);
+                return new Result(true);
             }
-            return MouseCallback.super.onRightClick(modifiers, action, rightKey);
+            return InteractCallback.super.onUse(modifiers, action, rightKey);
         }
 
         @Override
-        public MouseInputResult onMouseMove(final double yaw, final double pitch) {
+        public Result onMouseMove(final double yaw, final double pitch) {
             final Minecraft mc = Minecraft.getInstance();
             final PhysicsStaffClientHandler handler = SimulatedClient.PHYSICS_STAFF_CLIENT_HANDLER;
 
@@ -567,14 +566,14 @@ public class PhysicsStaffClientHandler {
                 orientation.rotateLocalY(yawChange);
                 orientation.premul(new Quaterniond(new AxisAngle4d(Math.toRadians(-pitch) * rotationSensitivity, axis.x, axis.y, axis.z)));
 
-                return new MouseInputResult(true);
+                return new Result(true);
             }
 
-            return MouseCallback.super.onMouseMove(yaw, pitch);
+            return InteractCallback.super.onMouseMove(yaw, pitch);
         }
 
         @Override
-        public MouseInputResult onScroll(final double deltaX, final double deltaY) {
+        public Result onScroll(final double deltaX, final double deltaY) {
             final PhysicsStaffClientHandler handler = SimulatedClient.PHYSICS_STAFF_CLIENT_HANDLER;
             final ClientDragSession dragSession = handler.dragSession;
 
@@ -586,9 +585,9 @@ public class PhysicsStaffClientHandler {
                 final boolean sprint = Minecraft.getInstance().options.keySprint.isDown();
                 final double sensMultiplier = Mth.clamp(Math.pow(currentDistance / 10.0, 0.5), 1.0, 5) * (sprint ? 4 : 1);
                 dragSession.setDistance(handler.clampDistance(currentDistance + deltaY * scrollSensitivity * sensMultiplier));
-                return new MouseInputResult(true);
+                return new Result(true);
             }
-            return MouseCallback.super.onScroll(deltaX, deltaY);
+            return InteractCallback.super.onScroll(deltaX, deltaY);
         }
     }
 

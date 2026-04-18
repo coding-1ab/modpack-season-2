@@ -2,7 +2,6 @@ package dev.simulated_team.simulated.content.blocks.handle;
 
 import com.simibubi.create.AllItems;
 import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.api.SubLevelHelper;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.simulated_team.simulated.index.SimTags;
@@ -174,14 +173,14 @@ public class ClientHandleHandler extends BlockHoldInteraction {
     }
 
     @Override
-    public MouseInputResult onScroll(final double deltaX, final double deltaY) {
+    public Result onScroll(final double deltaX, final double deltaY) {
         final Player player = SimDistUtil.getClientPlayer();
         if (this.isActive() && player != null) {
             this.deltaRange(player, (float) deltaY);
-            return new MouseInputResult(true);
+            return new Result(true);
         }
 
-        return MouseInputResult.empty();
+        return Result.empty();
     }
 
     public void deltaRange(final Player player, final float delta) {
