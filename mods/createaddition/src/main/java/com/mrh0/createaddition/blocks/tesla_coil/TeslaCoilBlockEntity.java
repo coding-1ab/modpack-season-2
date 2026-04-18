@@ -40,14 +40,14 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements IHaveGoggleInformation, IObserveBlockEntity {
 
-	private Optional<RecipeHolder<ChargingRecipe>> recipeCache = Optional.empty();
+	private @Nullable RecipeHolder<ChargingRecipe> recipeCache = null;
 
 	private final ItemStackHandler inputInv;
 	private int chargeAccumulator;
@@ -106,7 +106,7 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 		return CommonConfig.TESLA_COIL_CHARGE_RATE.get();
 	}
 
-	protected float getItemCharge(IEnergyStorage energy) {
+	protected float getItemCharge(@Nullable IEnergyStorage energy) {
 		if (energy == null) return 0f;
 		return (float) energy.getEnergyStored() / (float) energy.getMaxEnergyStored();
 	}
@@ -116,9 +116,14 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 	}
 
 	private void doDmg() {
+        Level level = getLevel();
+        if (level == null) {
+            return;
+        }
+
 		localEnergy.internalConsumeEnergy(CommonConfig.TESLA_COIL_HURT_ENERGY_REQUIRED.get());
 		BlockPos origin = getBlockPos().relative(getBlockState().getValue(TeslaCoilBlock.FACING).getOpposite());
-		List<LivingEntity> ents = getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(origin).inflate(CommonConfig.TESLA_COIL_HURT_RANGE.get()));
+		List<LivingEntity> ents = level.getEntitiesOfClass(LivingEntity.class, new AABB(origin).inflate(CommonConfig.TESLA_COIL_HURT_RANGE.get()));
 		boolean zapped = false;
 		for(LivingEntity e : ents) {
 			if(e == null) return;
@@ -220,22 +225,23 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 		return true;
 	}
 
-	private int energyRemoved = 0;
-	private boolean chargeRecipe(ItemStack stack, TransportedItemStack transported, TransportedItemStackHandlerBehaviour handler) {
-		if(this.getLevel() == null) return false;
+    private boolean chargeRecipe(ItemStack stack, TransportedItemStack transported, TransportedItemStackHandlerBehaviour handler) {
+        Level level = getLevel();
+		if(level == null) return false;
+
 		if(!inputInv.getStackInSlot(0).is(stack.getItem())) {
 			inputInv.setStackInSlot(0, stack);
-			recipeCache = find(new RecipeWrapper(inputInv), this.getLevel());
+			recipeCache = find(new RecipeWrapper(inputInv), level);
 			chargeAccumulator = 0;
 		}
-		if(recipeCache.isPresent()) {
-			ChargingRecipe recipe = recipeCache.get().value();
-			energyRemoved = localEnergy.internalConsumeEnergy(Util.min(CommonConfig.TESLA_COIL_RECIPE_CHARGE_RATE.get(), recipe.getEnergy() - chargeAccumulator, recipe.getMaxChargeRate()));
+		if(recipeCache != null) {
+			ChargingRecipe recipe = recipeCache.value();
+            int energyRemoved = localEnergy.internalConsumeEnergy(Util.min(CommonConfig.TESLA_COIL_RECIPE_CHARGE_RATE.get(), recipe.getEnergy() - chargeAccumulator, recipe.getMaxChargeRate()));
 			chargeAccumulator += energyRemoved;
 			if(chargeAccumulator >= recipe.getEnergy()) {
 				TransportedItemStack remainingStack = transported.copy();
 				TransportedItemStack result = transported.copy();
-				result.stack = recipe.getResultItem(this.getLevel().registryAccess()).copy();
+				result.stack = recipe.getResultItem(level.registryAccess()).copy();
 				remainingStack.stack.shrink(1);
 				List<TransportedItemStack> outList = new ArrayList<>();
 				outList.add(result);
@@ -249,8 +255,8 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 		return false;
 	}
 
-	public Optional<RecipeHolder<ChargingRecipe>> find(RecipeWrapper wrapper, Level level) {
-		return level.getRecipeManager().getRecipeFor(CARecipes.CHARGING_TYPE.get(), wrapper, level);
+	public @Nullable RecipeHolder<ChargingRecipe> find(RecipeWrapper wrapper, Level level) {
+		return level.getRecipeManager().getRecipeFor(CARecipes.CHARGING_TYPE.get(), wrapper, level).orElse(null);
 	}
 
 	@Override
@@ -277,8 +283,8 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 	@Override
 	public void onObserved(ServerPlayer player, ObservePacketPayload pkt) {
 		int timeRemaining = 0;
-		if(recipeCache.isPresent()) {
-			ChargingRecipe recipe = recipeCache.get().value();
+		if(recipeCache != null) {
+			ChargingRecipe recipe = recipeCache.value();
 			int chargeRate = Util.min(CommonConfig.TESLA_COIL_RECIPE_CHARGE_RATE.get(), recipe.getEnergy() - chargeAccumulator, recipe.getMaxChargeRate());
 			if (chargeRate == 0) return;
 			timeRemaining = (recipe.getEnergy() - chargeAccumulator) / chargeRate;
