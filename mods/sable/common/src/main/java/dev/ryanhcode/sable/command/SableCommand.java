@@ -7,9 +7,9 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.ryanhcode.sable.api.command.SableCommandHelper;
 import dev.ryanhcode.sable.api.command.SubLevelArgumentType;
-import dev.ryanhcode.sable.companion.math.Pose3dc;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
+import dev.ryanhcode.sable.companion.math.Pose3dc;
 import dev.ryanhcode.sable.network.packets.tcp.ClientboundEnterGizmoPacket;
 import dev.ryanhcode.sable.network.packets.udp.SableUDPEchoPacket;
 import dev.ryanhcode.sable.network.udp.SableUDPServer;
@@ -29,6 +29,8 @@ import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
 import java.util.Collection;
+import java.util.Formatter;
+import java.util.Locale;
 
 public class SableCommand {
 
@@ -81,7 +83,7 @@ public class SableCommand {
                             final ResourceLocation dimension = subLevel.getLevel().dimension().location();
                             final GlobalSavedSubLevelPointer pointer = subLevel.getLastSerializationPointer();
                             final Component fileId = Component.translatable("commands.sable.info.name.tooltip", pointer != null ? pointer.toString() : "None yet");
-                            component.setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/execute in %s run tp @s %.2f %.2f %.2f".formatted(dimension, pos.x(), pos.y(), pos.z())))
+                            component.setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, new Formatter().format(Locale.ROOT, "/execute in %s run tp @s %.2f %.2f %.2f", dimension, pos.x(), pos.y(), pos.z()).toString()))
                                     .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, fileId))
                                     .withColor(ChatFormatting.GRAY));
                             return component;
