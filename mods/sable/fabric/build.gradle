@@ -1,7 +1,7 @@
 plugins {
     id "me.modmuss50.mod-publish-plugin" version "1.1.0" // https://github.com/modmuss50/mod-publish-plugin
-    id 'fabric-loom'
-    id 'multiloader-loader'
+    id "fabric-loom"
+    id "multiloader-loader"
 }
 
 dependencies {
@@ -28,26 +28,33 @@ dependencies {
 }
 
 loom {
-    def aw = project(':common').file("src/main/resources/${mod_id}.accesswidener")
+    def aw = project(":common").file("src/main/resources/${mod_id}.accesswidener")
     if (aw.exists()) {
         accessWidenerPath.set(aw)
     }
     runs {
-        configureEach {
-            vmArg("-Dmixin.debug.export=true")
+        def client = client {
+            client()
+            setConfigName("Fabric Client")
+            ideConfigGenerated(true)
+            runDir("runs/client")
+        }
+        def server = server {
+            server()
+            setConfigName("Fabric Server")
+            ideConfigGenerated(true)
+            runDir("runs/server")
         }
 
-        client {
-            client()
-            setConfigName('Fabric Client')
-            ideConfigGenerated(true)
-            runDir('runs/client')
+        clientMixinExport {
+            inherit(client)
+            setConfigName(configName + " | Mixin Export")
+            vmArg("-Dmixin.debug.export=true")
         }
-        server {
-            server()
-            setConfigName('Fabric Server')
-            ideConfigGenerated(true)
-            runDir('runs/server')
+        serverMixinExport {
+            inherit(server)
+            setConfigName(configName + " | Mixin Export")
+            vmArg("-Dmixin.debug.export=true")
         }
     }
 }
