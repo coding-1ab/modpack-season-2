@@ -5,6 +5,9 @@ on:
       - 'common/src/main/java/**'
       - 'fabric/src/main/java/**'
       - 'neoforge/src/main/java/**'
+      - '**/gradle.properties'
+      - '**/settings.gradle'
+      - '**/build.gradle'
       - '.github/workflows/build.yml'
 
 jobs:
