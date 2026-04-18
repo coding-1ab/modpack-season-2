@@ -13,6 +13,9 @@ import dev.ryanhcode.sable.sublevel.plot.ClientLevelPlot;
 import dev.ryanhcode.sable.sublevel.plot.LevelPlot;
 import dev.ryanhcode.sable.sublevel.render.SubLevelRenderData;
 import dev.ryanhcode.sable.sublevel.render.dispatcher.SubLevelRenderDispatcher;
+import net.minecraft.CrashReport;
+import net.minecraft.CrashReportCategory;
+import net.minecraft.ReportedException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -246,10 +249,17 @@ public class ClientSubLevel extends SubLevel implements ClientSubLevelAccess {
      * Re-creates the render data using the current renderer.
      */
     public void updateRenderData() {
-        if (this.renderData != null) {
-            this.renderData.close();
+        try {
+            if (this.renderData != null) {
+                this.renderData.close();
+            }
+            this.renderData = SubLevelRenderDispatcher.get().createRenderData(this);
+        } catch (final Throwable t) {
+            final CrashReport crashreport = CrashReport.forThrowable(t, "Updating render data");
+            final CrashReportCategory crashreportcategory = crashreport.addCategory("Render Dispatcher");
+            crashreportcategory.setDetail("Class", () -> SubLevelRenderDispatcher.get().getClass().getName());
+            throw new ReportedException(crashreport);
         }
-        this.renderData = SubLevelRenderDispatcher.get().createRenderData(this);
     }
 
     /**
