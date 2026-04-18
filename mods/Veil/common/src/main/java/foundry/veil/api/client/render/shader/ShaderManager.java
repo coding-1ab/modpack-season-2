@@ -46,6 +46,8 @@ import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Async;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLCapabilities;
 
 import java.io.Closeable;
 import java.io.FileNotFoundException;
@@ -168,7 +170,7 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
         }
     }
 
-    private void readShader(ShaderProcessorList processorList, ResourceProvider resourceProvider, Map<ResourceLocation, ProgramSource> definitions, ResourceLocation definitionId, int activeBuffers) {
+    private void readShader(ShaderProcessorList processorList, ResourceProvider resourceProvider, Map<ResourceLocation, ProgramSource> definitions, ResourceLocation definitionId, int activeBuffers, GLCapabilities caps) {
         if (definitions.containsKey(definitionId)) {
             throw new IllegalStateException("Duplicate shader ignored with ID " + definitionId);
         }
@@ -216,6 +218,7 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
                             processorList.getShaderImporter(),
                             activeBuffers,
                             type,
+                            caps,
                             uniformBindings,
                             dependencies,
                             macros,
@@ -305,17 +308,18 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
 
         compileProgram.setShaderSources(shaderSources);
         int activeBuffers = VeilRenderSystem.renderer().getDynamicBufferManger().getActiveBuffers();
-        return CompletableFuture.runAsync(() -> {
-            ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-            ShaderProcessorList list = new ShaderProcessorList(resourceManager);
-            this.addProcessors(list, resourceManager);
-            compileProgram.processShaderSources(list, this.definitions, activeBuffers);
-        }, Util.backgroundExecutor()).thenApplyAsync(unused -> {
-            try (ShaderCompiler compiler = ShaderCompiler.direct(null)) {
-                this.compile(compileProgram, null, compiler);
-            }
-            return compileProgram;
-        }, VeilRenderSystem.renderThreadExecutor());
+        return CompletableFuture.supplyAsync(GL::getCapabilities, VeilRenderSystem.renderThreadExecutor())
+                .thenCompose(caps -> CompletableFuture.runAsync(() -> {
+                    ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+                    ShaderProcessorList list = new ShaderProcessorList(resourceManager);
+                    this.addProcessors(list, resourceManager);
+                    compileProgram.processShaderSources(list, this.definitions, activeBuffers, caps);
+                }, Util.backgroundExecutor())).thenApplyAsync(unused -> {
+                    try (ShaderCompiler compiler = ShaderCompiler.direct(null)) {
+                        this.compile(compileProgram, null, compiler);
+                    }
+                    return compileProgram;
+                }, VeilRenderSystem.renderThreadExecutor());
     }
 
     /**
@@ -371,33 +375,37 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
 
         Long2ObjectMap<ShaderProcessorList> processorList = Long2ObjectMaps.synchronize(new Long2ObjectArrayMap<>());
         Deque<ResourceLocation> shaderQueue = new ConcurrentLinkedDeque<>(shaders);
-        ThreadTaskScheduler scheduler = new ThreadTaskScheduler("VeilShaderCompiler", Math.max(1, Runtime.getRuntime().availableProcessors() / 4), () -> {
-            ResourceLocation key = shaderQueue.poll();
-            if (key == null) {
-                return null;
-            }
 
-            return () -> {
-                ShaderProcessorList shaderProcessor = processorList.computeIfAbsent(Thread.currentThread().threadId(), id -> {
-                    ShaderProcessorList list = new ShaderProcessorList(resourceManager);
-                    this.addProcessors(list, resourceManager);
-                    return list;
-                });
-                shaderProcessor.getShaderImporter().reset();
-                this.readShader(shaderProcessor, resourceManager, definitions, key, activeBuffers);
-            };
-        });
+        return CompletableFuture.supplyAsync(GL::getCapabilities, VeilRenderSystem.renderThreadExecutor())
+                .thenCompose(caps -> {
+                            ThreadTaskScheduler scheduler = new ThreadTaskScheduler("VeilShaderCompiler", Math.max(1, Runtime.getRuntime().availableProcessors() / 4), () -> {
+                                ResourceLocation key = shaderQueue.poll();
+                                if (key == null) {
+                                    return null;
+                                }
 
-        return CompletableFuture.allOf(scheduler.getCompletedFuture(),
-                CompletableFuture.runAsync(() -> {
-                    ShaderProcessorList list = new ShaderProcessorList(resourceManager);
-                    this.addProcessors(list, resourceManager);
-                    ShaderImporterImpl shaderImporter = list.getShaderImporter();
-                    for (DynamicShaderProgramImpl shader : dynamicShaders) {
-                        shaderImporter.reset();
-                        shader.processShaderSources(list, this.definitions, activeBuffers);
-                    }
-                }, executor)).thenApply(unused -> definitions);
+                                return () -> {
+                                    ShaderProcessorList shaderProcessor = processorList.computeIfAbsent(Thread.currentThread().threadId(), id -> {
+                                        ShaderProcessorList list = new ShaderProcessorList(resourceManager);
+                                        this.addProcessors(list, resourceManager);
+                                        return list;
+                                    });
+                                    shaderProcessor.getShaderImporter().reset();
+                                    this.readShader(shaderProcessor, resourceManager, definitions, key, activeBuffers, caps);
+                                };
+                            });
+
+                            return CompletableFuture.allOf(scheduler.getCompletedFuture(), CompletableFuture.runAsync(() -> {
+                                ShaderProcessorList list = new ShaderProcessorList(resourceManager);
+                                this.addProcessors(list, resourceManager);
+                                ShaderImporterImpl shaderImporter = list.getShaderImporter();
+                                for (DynamicShaderProgramImpl shader : dynamicShaders) {
+                                    shaderImporter.reset();
+                                    shader.processShaderSources(list, this.definitions, activeBuffers, caps);
+                                }
+                            }, executor));
+                        }
+                ).thenApply(unused -> definitions);
     }
 
     private void apply(Map<ResourceLocation, ProgramSource> sources) {
@@ -672,6 +680,7 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
                                        ShaderImporter shaderImporter,
                                        int activeBuffers,
                                        int type,
+                                       GLCapabilities glCapabilities,
                                        Object2IntMap<String> uniformBindings,
                                        Set<String> definitionDependencies,
                                        Map<String, String> macros,
@@ -681,7 +690,7 @@ public class ShaderManager implements PreparableReloadListener, Closeable {
         @Override
         public GlslTree modifyInclude(@Nullable ResourceLocation name, String source) throws IOException, GlslSyntaxException, LexerException {
             GlslTree tree = GlslParser.preprocessParse(source, this.macros);
-            PreProcessorContext context = new PreProcessorContext(this.customProgramData, this.preProcessor, this.definition, this.preDefinitions, this.shaderImporter, this.activeBuffers, this.type, this.uniformBindings, this.definitionDependencies, this.macros, name, false);
+            PreProcessorContext context = new PreProcessorContext(this.customProgramData, this.preProcessor, this.definition, this.preDefinitions, this.shaderImporter, this.activeBuffers, this.type, this.glCapabilities, this.uniformBindings, this.definitionDependencies, this.macros, name, false);
             this.preProcessor.modify(context, tree);
             return tree;
         }

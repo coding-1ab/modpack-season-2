@@ -1,1 +1,1 @@
-- Fix crash when using `onVeilRegisterBlockLayers`
+- Add proper support for low OpenGL versions

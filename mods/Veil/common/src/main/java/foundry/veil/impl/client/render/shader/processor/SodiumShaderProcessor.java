@@ -16,6 +16,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLCapabilities;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -56,7 +58,7 @@ public class SodiumShaderProcessor {
         DynamicBufferType.addMacros(activeBuffers, macros);
         VeilRenderSystem.renderer().getShaderManager().addMacros(macros);
         GlslTree tree = GlslParser.preprocessParse(source, macros);
-        processor.getProcessor().modify(new Context(CUSTOM_PROGRAM_DATA.get(), processor, name, activeBuffers, type, macros, true), tree);
+        processor.getProcessor().modify(new Context(CUSTOM_PROGRAM_DATA.get(), processor, name, activeBuffers, type, GL.getCapabilities(), macros, true), tree);
         GlslTree.stripGLMacros(macros);
         tree.getMacros().putAll(macros);
         return tree.toSourceString();
@@ -67,13 +69,14 @@ public class SodiumShaderProcessor {
                            @Nullable ResourceLocation name,
                            int activeBuffers,
                            int type,
+                           GLCapabilities glCapabilities,
                            Map<String, String> macros,
                            boolean sourceFile) implements ShaderPreProcessor.SodiumContext {
 
         @Override
         public GlslTree modifyInclude(@Nullable ResourceLocation name, String source) throws IOException, GlslSyntaxException, LexerException {
             GlslTree tree = GlslParser.preprocessParse(source, this.macros);
-            this.processor.getImportProcessor().modify(new Context(this.customProgramData, this.processor, name, this.activeBuffers, this.type, this.macros, false), tree);
+            this.processor.getImportProcessor().modify(new Context(this.customProgramData, this.processor, name, this.activeBuffers, this.type, this.glCapabilities, this.macros, false), tree);
             return tree;
         }
 

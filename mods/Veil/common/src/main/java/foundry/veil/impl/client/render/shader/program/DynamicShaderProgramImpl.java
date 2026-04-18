@@ -25,6 +25,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.GLCapabilities;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -72,7 +73,7 @@ public class DynamicShaderProgramImpl extends ShaderProgramImpl {
         this.shaderSources.putAll(shaderSources);
     }
 
-    public void processShaderSources(ShaderProcessorList processorList, ShaderPreDefinitions definitions, int activeBuffers) {
+    public void processShaderSources(ShaderProcessorList processorList, ShaderPreDefinitions definitions, int activeBuffers, GLCapabilities glCapabilities) {
         this.processedShaderSources.clear();
 
         ShaderPreProcessor processor = processorList.getProcessor();
@@ -100,6 +101,7 @@ public class DynamicShaderProgramImpl extends ShaderProgramImpl {
                             processorList,
                             activeBuffers,
                             type,
+                            glCapabilities,
                             uniformBindings,
                             macros,
                             dependencies,
@@ -146,6 +148,7 @@ public class DynamicShaderProgramImpl extends ShaderProgramImpl {
                                        ShaderProcessorList processor,
                                        int activeBuffers,
                                        int type,
+                                       GLCapabilities glCapabilities,
                                        Object2IntMap<String> uniformBindings,
                                        Map<String, String> macros,
                                        Set<String> definitionDependencies,
@@ -155,7 +158,7 @@ public class DynamicShaderProgramImpl extends ShaderProgramImpl {
         @Override
         public GlslTree modifyInclude(@Nullable ResourceLocation name, String source) throws IOException, GlslSyntaxException, LexerException {
             GlslTree tree = GlslParser.preprocessParse(source, this.macros);
-            PreProcessorContext context = new PreProcessorContext(this.customProgramData, this.processor, this.activeBuffers, this.type, this.uniformBindings, this.macros, this.definitionDependencies, name, false);
+            PreProcessorContext context = new PreProcessorContext(this.customProgramData, this.processor, this.activeBuffers, this.type, this.glCapabilities, this.uniformBindings, this.macros, this.definitionDependencies, name, false);
             this.processor.getImportProcessor().modify(context, tree);
             return tree;
         }

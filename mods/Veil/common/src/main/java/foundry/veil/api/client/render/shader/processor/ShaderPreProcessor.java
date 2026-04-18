@@ -16,6 +16,7 @@ import io.github.ocelot.glslprocessor.api.node.variable.GlslNewFieldNode;
 import io.github.ocelot.glslprocessor.lib.anarres.cpp.LexerException;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.GLCapabilities;
 
 import java.io.IOException;
 import java.util.*;
@@ -131,6 +132,12 @@ public interface ShaderPreProcessor {
          * @return The OpenGL type of the compiling shader
          */
         int type();
+
+        /**
+         * @return The current OpenGL capabilities
+         * @since 3.5.0
+         */
+        GLCapabilities glCapabilities();
 
         /**
          * @return The name of this shader type

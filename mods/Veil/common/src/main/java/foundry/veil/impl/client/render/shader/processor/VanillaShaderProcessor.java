@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.GLCapabilities;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -41,7 +42,7 @@ public class VanillaShaderProcessor {
         PROCESSOR.remove();
     }
 
-    public static String modify(Map<String, Object> customProgramData, @Nullable String shaderInstance, @Nullable ResourceLocation name, @Nullable VertexFormat vertexFormat, int activeBuffers, int type, String source) throws IOException, GlslSyntaxException, LexerException {
+    public static String modify(Map<String, Object> customProgramData, @Nullable String shaderInstance, @Nullable ResourceLocation name, @Nullable VertexFormat vertexFormat, int activeBuffers, int type, String source, GLCapabilities glCapabilities) throws IOException, GlslSyntaxException, LexerException {
         ShaderProcessorList processor = PROCESSOR.get();
         if (processor == null) {
             throw new NullPointerException("Processor not initialized");
@@ -52,7 +53,7 @@ public class VanillaShaderProcessor {
         DynamicBufferType.addMacros(activeBuffers, macros);
         VeilRenderSystem.renderer().getShaderManager().addMacros(macros);
         GlslTree tree = GlslParser.preprocessParse(source, macros);
-        processor.getProcessor().modify(new Context(customProgramData, processor, shaderInstance, name, activeBuffers, type, vertexFormat, macros), tree);
+        processor.getProcessor().modify(new Context(customProgramData, processor, shaderInstance, name, activeBuffers, type, glCapabilities, vertexFormat, macros), tree);
         GlslTree.stripGLMacros(macros);
         tree.getMacros().putAll(macros);
         return tree.toSourceString();
@@ -64,13 +65,14 @@ public class VanillaShaderProcessor {
                            ResourceLocation name,
                            int activeBuffers,
                            int type,
+                           GLCapabilities glCapabilities,
                            VertexFormat vertexFormat,
                            Map<String, String> macros) implements ShaderPreProcessor.MinecraftContext {
 
         @Override
         public GlslTree modifyInclude(@Nullable ResourceLocation name, String source) throws IOException, GlslSyntaxException, LexerException {
             GlslTree tree = GlslParser.preprocessParse(source, this.macros);
-            this.processor.getImportProcessor().modify(new Context(this.customProgramData, this.processor, this.shaderInstance, name, this.activeBuffers, this.type, this.vertexFormat, this.macros), tree);
+            this.processor.getImportProcessor().modify(new Context(this.customProgramData, this.processor, this.shaderInstance, name, this.activeBuffers, this.type, this.glCapabilities, this.vertexFormat, this.macros), tree);
             return tree;
         }
 
