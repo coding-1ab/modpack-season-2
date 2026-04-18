@@ -31,7 +31,7 @@ public class AeroPonderScenes {
         helper.forComponents(AeroBlocks.STEAM_VENT)
                 .addStoryBoard("hot_air/steam_vent", (scene, util) -> HotAirScenes.hotAirBurner(scene, util, true))
                 .addStoryBoard("airpressure/vent",(builder,util) -> AirPressureScenes.airPressure(builder,util,new AirPressureScenes.Vent()));
-        helper.forComponents(AeroBlocks.WHITE_ENVELOPE_BLOCK)
+        helper.forComponents(AeroBlocks.DYED_ENVELOPE_BLOCKS)
                 .addStoryBoard("hot_air/envelope", HotAirScenes::envelope);
 
         //KINETICS
