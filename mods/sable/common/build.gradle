@@ -134,7 +134,10 @@ tasks.register('copyRustNativesDev', Copy) {
 
     def moves = [
             [src: "target/debug/libsable_rapier.dylib", dest: "sable_rapier_aarch64_macos.dylib"],
+            [src: "target/debug/libsable_rapier.dylib", dest: "sable_rapier_x86_64_macos.dylib"],
+            [src: "target/debug/libsable_rapier.so", dest: "sable_rapier_aarch64_linux.so"],
             [src: "target/debug/libsable_rapier.so", dest: "sable_rapier_x86_64_linux.so"],
+            [src: "target/debug/sable_rapier.dll", dest: "sable_rapier_aarch64_windows.dll"],
             [src: "target/debug/sable_rapier.dll", dest: "sable_rapier_x86_64_windows.dll"]
     ]
     moves.forEach { map ->
