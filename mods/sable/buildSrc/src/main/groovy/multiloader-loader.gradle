@@ -58,11 +58,24 @@ publishMods {
     displayName = "$mod_name $loaderName $project.version for mc$minecraft_version"
     modLoaders.add(project.name)
 
-    /*curseforge {
+    curseforge {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
         projectId = "1312371"
         minecraftVersions.add(minecraft_version)
-    }*/
+
+        clientRequired = true
+        serverRequired = true
+
+        if (project.name.contains("neoforge")) {
+            optional("create")
+        }
+
+        if (isFabric) {
+            requires("fabric-api")
+        }
+
+        embeds("veil-lib")
+    }
 
     modrinth {
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
