@@ -64,6 +64,7 @@ import java.lang.Math;
 import java.nio.IntBuffer;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -258,6 +259,7 @@ public final class VeilRenderSystem {
 
     private static boolean pendingFontRebuild;
     private static VeilRenderer renderer;
+    private static GpuVendor gpuVendor;
     private static ResourceLocation shaderLocation;
     private static int screenQuadVao;
     private static IntBuffer emptySamplers;
@@ -1103,6 +1105,17 @@ public final class VeilRenderSystem {
     }
 
     /**
+     * @return The detected GPU vendor
+     * @since 3.6.0
+     */
+    public static GpuVendor gpuVendor() {
+        if (gpuVendor == null) {
+            gpuVendor = detectVendor();
+        }
+        return gpuVendor;
+    }
+
+    /**
      * @return An executor for the main render thread
      */
     public static Executor renderThreadExecutor() {
@@ -1355,5 +1368,19 @@ public final class VeilRenderSystem {
     public static void clearLevel() {
         NecromancerRenderDispatcher.delete();
         VoxelShadowGrid.clearLevel();
+    }
+
+    private static GpuVendor detectVendor() {
+        String vendor = Objects.requireNonNull(glGetString(GL_VENDOR)).toLowerCase(Locale.ROOT);
+        if (vendor.contains("intel")) {
+            return GpuVendor.INTEL;
+        } else if (vendor.contains("nvidia")) {
+            return GpuVendor.NVIDIA;
+        } else if (vendor.contains("amd") || vendor.contains("ati")) {
+            return GpuVendor.AMD;
+        } else if (vendor.contains("apple")) {
+            return GpuVendor.APPLE;
+        }
+        return GpuVendor.OTHER;
     }
 }

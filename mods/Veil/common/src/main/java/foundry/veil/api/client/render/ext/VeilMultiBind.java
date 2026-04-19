@@ -5,6 +5,8 @@ import com.google.common.cache.CacheBuilder;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.Veil;
+import foundry.veil.api.client.render.GpuVendor;
+import foundry.veil.api.client.render.VeilRenderSystem;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.opengl.ARBMultiBind;
 import org.lwjgl.opengl.GL;
@@ -300,7 +302,9 @@ public enum VeilMultiBind {
     public static VeilMultiBind get() {
         if (multiBind == null) {
             GLCapabilities caps = GL.getCapabilities();
-            if (caps.OpenGL44 || caps.GL_ARB_multi_bind) {
+            // TODO for some reason multi-bind doesn't work on some intel machines
+            // It's not *that* big of a performance boost, so just disable on Intel
+            if (VeilRenderSystem.gpuVendor() != GpuVendor.INTEL && (caps.OpenGL44 || caps.GL_ARB_multi_bind)) {
                 multiBind = SUPPORTED;
                 Veil.LOGGER.info("Multi-Bind supported, using core");
             } else {
