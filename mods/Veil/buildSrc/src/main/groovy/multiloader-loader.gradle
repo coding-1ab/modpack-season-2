@@ -66,11 +66,25 @@ publishMods {
     displayName = "$mod_name $project.version ${project.name.capitalize()}"
     modLoaders.add(project.name)
 
-    /*curseforge {
+    curseforge {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-        projectId = "1312371"
+        projectId = "1517006"
         minecraftVersions.add(minecraft_version)
-    }*/
+
+        clientRequired = true
+        serverRequired = false
+
+        optional "sodium"
+
+        if (isNeoforge) {
+            incompatible "embeddium"
+            incompatible "rubidium"
+        }
+
+        if (isFabric) {
+            requires "fabric-api"
+        }
+    }
 
     github {
         repository = "FoundryMC/Veil"
