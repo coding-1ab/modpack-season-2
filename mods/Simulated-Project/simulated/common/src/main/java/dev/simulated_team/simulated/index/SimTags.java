@@ -29,6 +29,8 @@ public class SimTags {
     }
 
     public static class Blocks {
+        public static final TagKey<Block> NON_MOVABLE = create("non_movable");
+
         public static final TagKey<Block> SUPER_LIGHT = create("sable", "super_light");
         public static final TagKey<Block> LIGHT = create("sable", "light");
         public static final TagKey<Block> DIODE = create("sable", "diode");
@@ -49,6 +51,8 @@ public class SimTags {
         }
         private static void genBlockTags(final RegistrateTagsProvider<Block> provIn) {
             final TagGen.CreateTagsProvider<Block> prov = new TagGen.CreateTagsProvider<>(provIn, Block::builtInRegistryHolder);
+            prov.tag(Blocks.NON_MOVABLE);
+
             prov.tag(SimTags.Blocks.SUPER_LIGHT).addTag(SimTags.Blocks.NAMEPLATE_BLOCKS);
             prov.tag(SimTags.Blocks.SUPER_LIGHT).addTag(HANDLES);
             prov.tag(AllTags.AllBlockTags.BRITTLE.tag).addTag(HANDLES);

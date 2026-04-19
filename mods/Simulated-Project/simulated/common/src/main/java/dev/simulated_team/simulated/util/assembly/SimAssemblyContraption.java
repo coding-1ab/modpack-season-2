@@ -20,6 +20,7 @@ import dev.simulated_team.simulated.content.blocks.swivel_bearing.SwivelBearingB
 import dev.simulated_team.simulated.content.entities.honey_glue.HoneyGlueEntity;
 import dev.simulated_team.simulated.index.SimBlockMovementChecks;
 import dev.simulated_team.simulated.index.SimBlocks;
+import dev.simulated_team.simulated.index.SimTags;
 import dev.simulated_team.simulated.service.SimAssemblyService;
 import dev.simulated_team.simulated.service.SimConfigService;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -430,7 +431,7 @@ public class SimAssemblyContraption {
     }
 
     protected boolean movementAllowed(final BlockState state, final Level world, final BlockPos pos) {
-        return state.getDestroySpeed(world, pos) != -1;
+        return state.getDestroySpeed(world, pos) != -1 && !state.is(SimTags.Blocks.NON_MOVABLE);
     }
 
     protected boolean isAnchoringBlockAt(final BlockPos pos) {

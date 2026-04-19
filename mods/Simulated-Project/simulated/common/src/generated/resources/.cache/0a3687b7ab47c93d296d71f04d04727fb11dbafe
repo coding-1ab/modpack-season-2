@@ -1,4 +1,4 @@
-// 1.21.1	2026-04-19T11:00:38.1286441	Registrate Provider for simulated [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2026-04-19T12:22:34.7276706	Registrate Provider for simulated [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 767bb2f61cacd88e29b044a9f6622d282368134f assets/simulated/blockstates/altitude_sensor.json
 201713560b3c1d80d3cc6ea6eb4da736ed965f83 assets/simulated/blockstates/analog_transmission.json
 ede6dc262e3ccc9f5478bd382c21fba172d471bb assets/simulated/blockstates/auger_cog.json
@@ -547,6 +547,7 @@ e8db24d156cb082296d7a03c101d10edece96e23 data/simulated/recipe/white_nameplate.j
 8070ed6a2f9a12b93f43e605964ce14720f7dd78 data/simulated/recipe/yellow_handle.json
 29337bfc08fb47ff783702912a30d0b9a5cecd52 data/simulated/tags/block/handles.json
 8ce24cc25f78cb0153ce13f6fda9aa2f91b9fd4a data/simulated/tags/block/nameplate_blocks.json
+35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/simulated/tags/block/non_movable.json
 ac1afbf9798f80a0e863969c37d02fc765cbdd2b data/simulated/tags/block/symmetric_sails.json
 9d35f5bce83d1c63037ae41d0a8904892f1f2836 data/simulated/tags/item/destroys_rope.json
 b073dc1cf1a55ae7c6195f6808b059c51b1af515 data/simulated/tags/item/handle_variants.json
