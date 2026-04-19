@@ -309,6 +309,8 @@
   "simulated.gui.threshold_switch.rope_winch_length": "%1$s Blocks",
   "simulated.key.alt": "Alt",
   "simulated.keyinfo.rotate_mode": "Physics Staff Rotate Mode",
+  "simulated.keyinfo.scroll_down": "Scroll Down",
+  "simulated.keyinfo.scroll_up": "Scroll Up",
   "simulated.laser_pointer.max_length": "Max Casting Distance",
   "simulated.linked_typewriter.bind_item": "Press any key to bind this frequency to the respective key",
   "simulated.linked_typewriter.bind_mode": "Bind mode active",

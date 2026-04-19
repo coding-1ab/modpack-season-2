@@ -10,6 +10,7 @@ import dev.simulated_team.simulated.content.end_sea.EndSeaRenderer;
 import dev.simulated_team.simulated.content.items.rope.RopeItem.ClientRopeItemHandler;
 import dev.simulated_team.simulated.content.physics_staff.PhysicsStaffRenderHandler;
 import dev.simulated_team.simulated.index.SimClickInteractions;
+import dev.simulated_team.simulated.index.SimKeys;
 import dev.simulated_team.simulated.service.SimConfigService;
 import dev.simulated_team.simulated.util.SimDistUtil;
 import dev.simulated_team.simulated.util.click_interactions.InteractCallback;
@@ -147,6 +148,16 @@ public class SimulatedCommonClientEvents {
      */
     public static void preClientTick(final Minecraft instance) {
         ThrottleLeverClientGripHandler.clearNearbyThrottleLevers();
+        double delta = 0;
+        if (SimKeys.SCROLL_UP.isPressed()) {
+            delta++;
+        }
+        if (SimKeys.SCROLL_DOWN.isPressed()) {
+            delta--;
+        }
+        if (delta != 0) {
+            onMouseScroll(0, delta);
+        }
     }
 
     /**
