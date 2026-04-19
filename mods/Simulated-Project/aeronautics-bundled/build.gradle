@@ -108,7 +108,7 @@ publishMods {
         serverRequired = true
 
         requires("create")
-        requires("sable")
+        // requires("sable")
     }
 
     modrinth {
