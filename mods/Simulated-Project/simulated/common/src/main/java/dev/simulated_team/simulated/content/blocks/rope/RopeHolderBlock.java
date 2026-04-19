@@ -3,7 +3,6 @@ package dev.simulated_team.simulated.content.blocks.rope;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.api.SubLevelHelper;
 import dev.ryanhcode.sable.api.block.BlockSubLevelAssemblyListener;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.simulated_team.simulated.content.blocks.rope.strand.server.RopeAttachment;
@@ -26,7 +25,15 @@ public interface RopeHolderBlock <T extends SmartBlockEntity> extends BlockSubLe
             final RopeStrandHolderBehavior ropeHolder = block.getHolder(be);
 
             final ServerRopeStrand strand = ropeHolder.getAttachedStrand();
-            final BlockPos attachment = strand.getAttachment(RopeAttachmentPoint.START).blockAttachment();
+            if (strand == null) {
+                return ItemInteractionResult.FAIL;
+            }
+
+            final RopeAttachment ropeAttachment = strand.getAttachment(RopeAttachmentPoint.START);
+            if (ropeAttachment == null) {
+                return ItemInteractionResult.FAIL;
+            }
+            final BlockPos attachment = ropeAttachment.blockAttachment();
 
             final BlockEntity blockEntity = level.getBlockEntity(attachment);
 
