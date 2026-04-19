@@ -81,7 +81,7 @@ public class TorsionSpringBlockEntity extends KineticBlockEntity implements Extr
     @Override
     public void addBehaviours(final List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
-        behaviours.add(this.angleInput = new TorsionSpringScrollValueBehaviour(this).between(-360, 360));
+        behaviours.add(this.angleInput = new TorsionSpringScrollValueBehaviour(this).between(1, 360));
         this.angleInput.onlyActiveWhen(this::showValue);
         this.angleInput.setValue(90);
     }
@@ -397,7 +397,7 @@ public class TorsionSpringBlockEntity extends KineticBlockEntity implements Extr
 
         public TorsionSpringScrollValueBehaviour(final SmartBlockEntity be) {
             super(SimLang.translate("torsion_spring.angle_limit").component(), be, new TorsionSpringValueBox());
-            this.withFormatter(v -> Math.abs(v) + CreateLang.translateDirect("generic.unit.degrees")
+            this.withFormatter(v -> Math.max(1, v) + CreateLang.translateDirect("generic.unit.degrees")
                     .getString());
         }
 
@@ -407,7 +407,7 @@ public class TorsionSpringBlockEntity extends KineticBlockEntity implements Extr
         }
 
         public MutableComponent formatValue(final ValueSettings settings) {
-            return SimLang.number(Math.abs(settings.value()))
+            return SimLang.number(Math.max(1, settings.value()))
                     .add(CreateLang.translateDirect("generic.unit.degrees"))
                     .component();
         }
