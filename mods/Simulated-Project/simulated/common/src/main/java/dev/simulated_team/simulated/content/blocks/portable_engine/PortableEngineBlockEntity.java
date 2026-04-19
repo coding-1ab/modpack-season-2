@@ -342,15 +342,6 @@ public class PortableEngineBlockEntity extends GeneratingKineticBlockEntity impl
         return this.inventory.insertGeneral(ItemInfoWrapper.generateFromStack(heldItem), heldItem.getCount(), true) > 0;
     }
 
-    @Override
-    public void lazyTick() {
-        if (this.level == null || this.level.isClientSide) {
-            return;
-        }
-
-        this.level.updateNeighborsAt(this.worldPosition, this.getBlockState().getBlock());
-    }
-
     public void spawnParticles() {
         Vec3 hatchPos = VecHelper.getCenterOf(this.worldPosition);
 
