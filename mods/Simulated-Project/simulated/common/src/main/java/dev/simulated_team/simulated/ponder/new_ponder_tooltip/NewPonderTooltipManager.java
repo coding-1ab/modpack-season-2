@@ -1,14 +1,14 @@
 package dev.simulated_team.simulated.ponder.new_ponder_tooltip;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import dev.simulated_team.simulated.Simulated;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,28 +74,34 @@ public class NewPonderTooltipManager {
 		if(WATCHED_PONDER_SCENES != null) return;
 
 		final DataResult<Set<ResourceLocation>> result = CODEC.parse(JsonOps.INSTANCE, getOrCreateFile());
-
-		result.ifSuccess((set) -> {
-			WATCHED_PONDER_SCENES = new HashSet<>();
-			WATCHED_PONDER_SCENES.addAll(set);
-		});
+		WATCHED_PONDER_SCENES = new HashSet<>();
+		result.ifSuccess((set) -> WATCHED_PONDER_SCENES.addAll(set));
 	}
 
-	private static JsonElement getOrCreateFile() {
+	private static @NotNull JsonElement getOrCreateFile() {
+		final Path path = filePath();
+		String jsonString = "[]";
+
 		try {
-			final Path path = filePath();
 			final File file = path.toFile();
-
 			if(file.exists()) {
-				return JsonParser.parseString(Files.readString(path));
+				jsonString = Files.readString(path);
 			} else {
-				Files.writeString(path, "[]");
-				return new JsonArray();
+				Files.writeString(path, jsonString);
 			}
-		} catch (final IOException ignored) {
+		} catch (IOException ignored) {
+			Simulated.LOGGER.info("There was an error reading ponders_watched.json.");
+        }
 
+		JsonElement element = new JsonArray();
+
+		try {
+			element = JsonParser.parseString(jsonString);
+		} catch (JsonSyntaxException ignored) {
+			Simulated.LOGGER.info("ponders_watched.json was malformed.");
 		}
-		return null;
+
+		return element;
 	}
 
 	public record RegisterBuilder(Item... items) {
