@@ -1,3 +1,1 @@
-- Fix some graphics cards not detecting texture targets properly
-- Rework multi-bind API to explicitly request texture targets
-- Add GpuVendor getter
+- Fix crash when using patch render state shard
