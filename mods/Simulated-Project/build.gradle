@@ -7,10 +7,6 @@ allprojects {
     if (project == rootProject) {
         version = '1.0.0'
     }
-
-    if (System.getenv('BUILD_NUMBER') != null) {
-        version += "-" + System.getenv('BUILD_NUMBER')
-    }
 }
 
 def configureModSubprojects(String modName) {
@@ -25,10 +21,6 @@ def configureModSubprojects(String modName) {
         version = project.mod_version
         group = modProps.group
         description = modProps.description
-
-        if (System.getenv('BUILD_NUMBER') != null) {
-            version += "-" + System.getenv('BUILD_NUMBER')
-        }
     }
 }
 

@@ -15,10 +15,6 @@ version = project.mod_version
 group = modProps.group
 description = modProps.description
 
-if (System.getenv('BUILD_NUMBER') != null) {
-    version += "-" + System.getenv('BUILD_NUMBER')
-}
-
 base {
     archivesName = "create-aeronautics-bundled-${minecraft_version}"
 }
