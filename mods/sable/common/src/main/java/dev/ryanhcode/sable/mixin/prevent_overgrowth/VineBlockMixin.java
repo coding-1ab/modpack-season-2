@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class VineBlockMixin {
 
     @WrapOperation(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"), require = 0)
-    boolean stopSpreadBeyondSubLevel(final ServerLevel level, final BlockPos spreadPos, final BlockState blockState, final int flags, final Operation<Boolean> original, @Local(argsOnly = true) final BlockPos vinePos) {
+    public boolean stopSpreadBeyondSubLevel(final ServerLevel level, final BlockPos spreadPos, final BlockState blockState, final int flags, final Operation<Boolean> original, @Local(argsOnly = true) final BlockPos vinePos) {
         final SubLevel subLevel = Sable.HELPER.getContaining(level, vinePos);
         if (subLevel != null && !subLevel.getPlot().getBoundingBox().contains(spreadPos.getX(), spreadPos.getY(), spreadPos.getZ())) {
             return true;
