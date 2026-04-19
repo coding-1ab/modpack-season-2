@@ -67,7 +67,7 @@ public enum SimKeys {
 	public boolean isPressed() {
 		if (!this.modifiable)
 			return AllKeys.isKeyDown(this.key);
-		return this.keybind.isDown();
+		return this.keybind != null && this.keybind.isDown();
 	}
 
 	public String getBoundKey() {
