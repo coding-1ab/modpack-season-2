@@ -1,2 +1,7 @@
-- Return the Create team's wrench.
-- Initial release.
+ - Fix Nature's Compass compatibility issues
+ - Make all dyed Envelope blocks ponderable
+ - Fix issues with String locales causing crashes in some languages
+ - Fix hold interactions not working when the Use key is bound to a key instead of a mouse button
+ - Fix issues with labels in the value boxes for the Torsion Spring
+ - Add #simulated:non_movable tag for blocks for Simulated Contraption assembly
+ - Fix issues with the ponder tooltip manager causing crashes
