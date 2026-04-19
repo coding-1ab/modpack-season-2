@@ -117,6 +117,8 @@
     "compatibility.create.impact.AbstractBellBlockMixin",
     "compatibility.create.inventory_manipulation.CapManipulationBehaviourBaseMixin",
     "compatibility.create.inventory_manipulation.ChuteBlockEntityMixin",
+    "compatibility.create.lectern_controller.LecternControllerBlockEntityMixin",
+    "compatibility.create.lectern_controller.LecternControllerBlockMixin",
     "compatibility.create.logistics.StockKeeperCategoryMenuMixin",
     "compatibility.create.mechnical_arm.MechanicalArmSublevelFailure",
     "compatibility.create.nozzle.NozzleBlockEntityAccessor",
