@@ -72,6 +72,7 @@ publishMods {
 
         if (isFabric) {
             requires("fabric-api")
+            embeds("forge-config-api-port")
         }
 
         embeds("veil-lib")
@@ -88,6 +89,7 @@ publishMods {
 
         if (isFabric) {
             requires("fabric-api")
+            embeds("forge-config-api-port")
         }
 
         embeds("veil")
