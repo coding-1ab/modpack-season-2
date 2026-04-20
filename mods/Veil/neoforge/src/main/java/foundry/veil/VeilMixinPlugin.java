@@ -25,6 +25,7 @@ public class VeilMixinPlugin implements IMixinConfigPlugin {
 
     static {
         addModIncompatibility("affinity", "foundry.veil.mixin.performance.client.PerformanceRenderTargetMixin");
+        addModIncompatibility("hdr_mod", "foundry.veil.mixin.performance.client.PerformanceRenderTargetMixin");
         if (FMLLoader.getDist() == Dist.CLIENT) {
             for (String mod : VeilImGuiImpl.INCOMPATIBLE_MODS) {
                 addModIncompatibility(mod, "foundry.veil.mixin.imgui");
