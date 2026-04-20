@@ -11,12 +11,11 @@ import dev.eriksonn.aeronautics.content.particle.PropellerAirParticle;
 import dev.eriksonn.aeronautics.content.particle.PropellerAirParticleData;
 import dev.eriksonn.aeronautics.data.AeroLang;
 import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.api.SubLevelHelper;
 import dev.ryanhcode.sable.api.block.propeller.BlockEntityPropeller;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
+import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.physics.config.dimension_physics.DimensionPhysicsData;
 import dev.ryanhcode.sable.sublevel.SubLevel;
-import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -216,6 +215,11 @@ public class PropellerActorBehaviour extends BlockEntityBehaviour implements IHa
         return (float) (airflow / 20f);
     }
 
+    public float getParticleSpeed() {
+        float speed = this.getAirflowTickSpeed();
+        return Math.clamp(speed, -5, 5);
+    }
+
     /**
      * Spawn simple airflow particles
      */
@@ -225,7 +229,7 @@ public class PropellerActorBehaviour extends BlockEntityBehaviour implements IHa
         if (this.propellerLayers.isEmpty())
             return;
 
-        final double speed = this.getAirflowTickSpeed();
+        final double speed = this.getParticleSpeed();
 
         final Vector3d mutSpeed = new Vector3d();
 
