@@ -3,17 +3,16 @@ package dev.simulated_team.simulated.content.blocks.docking_connector;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.api.SubLevelHelper;
 import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import dev.ryanhcode.sable.api.physics.constraint.fixed.FixedConstraintConfiguration;
 import dev.ryanhcode.sable.api.physics.constraint.fixed.FixedConstraintHandle;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
+import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
-import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.simulated_team.simulated.content.blocks.redstone_magnet.*;
 import dev.simulated_team.simulated.index.SimBlocks;
 import dev.simulated_team.simulated.index.SimSoundEvents;
@@ -501,6 +500,10 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
         this.extension.setValue(tag.getFloat("Extension"));
         this.extension.updateChaseTarget(tag.getFloat("Target"));
         this.feet.setValue(tag.getFloat("Feet"));
+
+        // ensure current = old value for visual lerping
+        this.extension.setValue(this.extension.getValue());
+        this.feet.setValue(this.feet.getValue());
 
         if (tag.contains("OtherConnector")) {
             this.otherConnectorPosition = NbtUtils.readBlockPos(tag, "OtherConnector").orElse(null);
