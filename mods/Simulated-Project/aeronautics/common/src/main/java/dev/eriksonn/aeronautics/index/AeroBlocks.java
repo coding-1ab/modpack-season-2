@@ -2,7 +2,6 @@ package dev.eriksonn.aeronautics.index;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.AllTags;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
 import com.simibubi.create.foundation.block.DyedBlockList;
@@ -11,11 +10,6 @@ import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.simibubi.create.foundation.utility.DyeHelper;
-import dev.simulated_team.simulated.data.SimBlockStateGen;
-import dev.simulated_team.simulated.index.SimItems;
-import dev.simulated_team.simulated.index.sounds.SimLazySoundType;
-import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
-import dev.simulated_team.simulated.registrate.simulated_tab.CreativeTabItemTransforms;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.providers.RegistrateLangProvider;
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
@@ -36,7 +30,11 @@ import dev.eriksonn.aeronautics.content.blocks.propeller.small.wooden.WoodenProp
 import dev.eriksonn.aeronautics.content.components.Levitating;
 import dev.eriksonn.aeronautics.data.AeroBlockStateGen;
 import dev.ryanhcode.sable.index.SableTags;
-import net.minecraft.client.renderer.RenderType;
+import dev.simulated_team.simulated.data.SimBlockStateGen;
+import dev.simulated_team.simulated.index.SimItems;
+import dev.simulated_team.simulated.index.sounds.SimLazySoundType;
+import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
+import dev.simulated_team.simulated.registrate.simulated_tab.CreativeTabItemTransforms;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -235,7 +233,6 @@ public class AeroBlocks {
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .transform(AeroStress.setImpact(2.0))
                     .blockstate((ctx, prov) -> SimBlockStateGen.facingBlockstate(ctx, prov, "block/propeller_bearing/block"))
-                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
                     .transform(axeOrPickaxe())
                     .item()
                     .transform(customItemModel())
@@ -257,7 +254,6 @@ public class AeroBlocks {
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .blockstate(
                             (ctx, prov) -> SimBlockStateGen.facingBlockstate(ctx, prov, "block/gyroscopic_propeller_bearing/block"))
-                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
                     .transform(axeOrPickaxe())
                     .item()
                     .transform(customItemModel())
@@ -345,7 +341,6 @@ public class AeroBlocks {
     public static final BlockEntry<MountedPotatoCannonBlock> MOUNTED_POTATO_CANNON =
             REGISTRATE.block("mounted_potato_cannon", MountedPotatoCannonBlock::new)
                     .initialProperties(SharedProperties::stone)
-                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
                     .blockstate(AeroBlockStateGen::directionalPoweredAxisBlockstate)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .transform(AeroStress.setImpact(2.0))
