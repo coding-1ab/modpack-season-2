@@ -5,7 +5,7 @@
   "minVersion": "0.8",
   "plugin": "dev.ryanhcode.sable.plugin.SableMixinPlugin",
   "client": [
-    "block_entity_visible.ClientHooksMixin",
+    "block_entity_visible.LevelRendererMixin",
     "camera_rotation.CameraMixin",
     "compatibility.create.behaviour_compatibility.harvester_block_entity.HarvesterRendererMixin",
     "compatibility.create.belt.BeltRendererMixin",
