@@ -13,6 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
+
 /**
  * Provides write access to all textures in a shader program.
  *
@@ -36,21 +38,21 @@ public interface TextureUniformAccess {
             }
 
             AdvancedFboTextureAttachment attachment = framebuffer.getColorTextureAttachment(i);
-            this.setSampler("DiffuseSampler" + i, attachment.getId());
+            this.setTexture("DiffuseSampler" + i, GL_TEXTURE_2D, attachment.getId());
             if (attachment.getName() != null) {
-                this.setSampler(attachment.getName(), attachment.getId());
+                this.setTexture(attachment.getName(), GL_TEXTURE_2D, attachment.getId());
             }
             if (!setDiffuseSampler) {
-                this.setSampler("DiffuseSampler", attachment.getId());
+                this.setTexture("DiffuseSampler", GL_TEXTURE_2D, attachment.getId());
                 setDiffuseSampler = true;
             }
         }
 
         if (framebuffer.isDepthTextureAttachment()) {
             AdvancedFboTextureAttachment attachment = framebuffer.getDepthTextureAttachment();
-            this.setSampler("DiffuseDepthSampler", attachment.getId());
+            this.setTexture("DiffuseDepthSampler", GL_TEXTURE_2D, attachment.getId());
             if (attachment.getName() != null) {
-                this.setSampler(attachment.getName(), attachment.getId());
+                this.setTexture(attachment.getName(), GL_TEXTURE_2D, attachment.getId());
             }
         }
     }
@@ -201,7 +203,7 @@ public interface TextureUniformAccess {
     void removeTexture(CharSequence name);
 
     /**
-     * Loads the samplers set by {@link #setSampler(CharSequence, int)} into the shader.
+     * Loads the samplers set by {@link #setTexture(CharSequence, int, int)} into the shader.
      *
      * @param samplerStart The sampler to start binding to
      */
@@ -210,7 +212,7 @@ public interface TextureUniformAccess {
     }
 
     /**
-     * Loads the samplers set by {@link #setSampler(CharSequence, int)} into the shader.
+     * Loads the samplers set by {@link #setTexture(CharSequence, int, int)} into the shader.
      *
      * @param context      The context for setting built-in shader samplers or <code>null</code> to ignore normal samplers
      * @param samplerStart The sampler to start binding to

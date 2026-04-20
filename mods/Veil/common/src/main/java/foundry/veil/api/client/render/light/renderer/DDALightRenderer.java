@@ -8,6 +8,8 @@ import foundry.veil.api.client.render.shader.program.UniformAccess;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector3fc;
 
+import static org.lwjgl.opengl.GL12.GL_TEXTURE_3D;
+
 /**
  * Updates DDA uniforms for the light renderer.
  *
@@ -45,7 +47,7 @@ public interface DDALightRenderer<T extends LightData & DDALightData> extends Li
         if (program == null) {
             return;
         }
-        program.setSampler("BlockGrid", voxelGridTexture);
+        program.setTexture("BlockGrid", GL_TEXTURE_3D, voxelGridTexture);
         program.getUniformSafe("GridOrigin").setVector(gridOrigin);
     }
 }
