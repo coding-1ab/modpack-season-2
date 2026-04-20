@@ -43,7 +43,7 @@ public class AeroSoundDistUtil {
         final ClientLevel level = minecraft.level;
         final SoundManager soundManager = minecraft.getSoundManager();
 
-        if (level != null) {
+        if (level != null && !minecraft.isPaused()) {
             if (!soundManager.isActive(BalloonBurnerSoundInstance.GLOBAL_HOT_AIR_BURNER_SOUND)) {
                 soundManager.queueTickingSound(BalloonBurnerSoundInstance.GLOBAL_HOT_AIR_BURNER_SOUND);
             }
