@@ -53,30 +53,22 @@ public class VanillaShaderCompiler {
             try (Reader reader = resourceManager.openAsReader(path)) {
                 String source = IOUtils.toString(reader);
                 GlslPreprocessor preprocessor = new GlslPreprocessor() {
-                    private final Set<String> importedPaths = new HashSet<>();
+                    private final Set<ResourceLocation> importedPaths = new HashSet<>();
 
                     @Override
                     public String applyImport(boolean useFullPath, @NotNull String directory) {
-                        if (useFullPath) {
-                            directory = FileUtil.normalizeResourcePath(path.getPath() + directory);
-                        } else {
-                            directory = FileUtil.normalizeResourcePath("shaders/include/" + directory);
-                            if (directory.indexOf(ResourceLocation.NAMESPACE_SEPARATOR) != -1) {
-                                ResourceLocation contained = ResourceLocation.parse(directory);
-                                String finalDirectory = directory;
-                                directory = contained.withPath(path -> path.replace(finalDirectory, path)).toString();
-                            }
-                        }
+                        ResourceLocation loc = ResourceLocation.parse(directory);
+                        String normalised = FileUtil.normalizeResourcePath((useFullPath ? path : "shaders/include/") + loc.getPath());
+                        ResourceLocation resourcelocation = ResourceLocation.fromNamespaceAndPath(loc.getNamespace(), normalised);
 
-                        if (!this.importedPaths.add(directory)) {
+                        if (!this.importedPaths.add(resourcelocation)) {
                             return null;
                         }
 
-                        ResourceLocation resourcelocation = ResourceLocation.parse(directory);
                         try (Reader reader = resourceManager.openAsReader(resourcelocation)) {
                             return IOUtils.toString(reader);
                         } catch (IOException e) {
-                            Veil.LOGGER.error("Could not open GLSL import {}: {}", directory, e.getMessage());
+                            Veil.LOGGER.error("Could not open GLSL import {}: {}", resourcelocation, e.getMessage());
                             return "#error " + e.getMessage();
                         }
                     }
