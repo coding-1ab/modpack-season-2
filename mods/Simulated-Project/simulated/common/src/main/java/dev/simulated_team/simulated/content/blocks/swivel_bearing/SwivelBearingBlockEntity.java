@@ -891,6 +891,11 @@ public class SwivelBearingBlockEntity extends KineticBlockEntity implements Extr
         }
 
         @Override
+        protected boolean canPropagateDiagonally(final IRotate block, final BlockState state) {
+            return true;
+        }
+
+        @Override
         public Component getKey() {
             return SimLang.translate("extra_kinetics.extra_cogwheel").component();
         }
