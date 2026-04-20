@@ -65,6 +65,7 @@
     "dynamic_stress.KineticStatsMixin",
     "end_sea.VanillaSubLevelRenderDispatcherMixin",
     "extendo_grip.ExtendoGripItemMixin",
+    "extra_kinetics.EncasedCogwheelBlockMixin",
     "extra_kinetics.GeneratingKineticBlockEntityMixin",
     "extra_kinetics.KineticBlockEntityMixin",
     "extra_kinetics.KineticBlockMixin",
