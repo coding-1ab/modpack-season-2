@@ -95,6 +95,7 @@ dependencies {
     compileOnly "maven.modrinth:sodium:$sodium_version"
     compileOnly "maven.modrinth:distanthorizons:$distant_horizons_version"
     compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge:$cc_tweaked_version")
+    compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-common-api:$cc_tweaked_version")
     compileOnly("io.github.mortuusars.exposure:exposure-${minecraft_version}-neoforge:${exposure_version}") { transitive = false }
     compileOnly("maven.modrinth:jade:${project.jade_version}+neoforge") { transitive = false }
     compileOnly("maven.modrinth:jade-addons-forge:${project.jade_addons_version}+neoforge") { transitive = false }
