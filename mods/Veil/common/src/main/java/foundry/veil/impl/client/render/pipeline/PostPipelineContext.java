@@ -48,6 +48,7 @@ public class PostPipelineContext implements PostPipeline.Context {
      */
     public void end() {
         this.textures.clear();
+        this.samplers.clear();
         this.framebuffers.clear();
     }
 
