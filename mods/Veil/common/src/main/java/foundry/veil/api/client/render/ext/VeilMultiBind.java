@@ -208,7 +208,7 @@ public enum VeilMultiBind {
         GLCapabilities caps = GL.getCapabilities();
         if (caps.glGetTextureParameteriv != 0L && caps.OpenGL45) { // Last ditch effort if the platform has the method anyways
             int target = glGetTextureParameteri(texture, GL_TEXTURE_TARGET);
-            
+
             // For some reason on some Intel integrated graphics they don't follow the spec and this generates an error
             // In that case, just continue on to the cursed path below
             if (target != 0) {
