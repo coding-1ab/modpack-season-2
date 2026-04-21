@@ -12,6 +12,7 @@
 [submodule "mods/create-new-age"]
 	path = mods/create-new-age
 	url = https://github.com/coding-1ab/create-new-age.git
+	branch = 1.21.1
 [submodule "mods/create_connected"]
 	path = mods/create_connected
 	url = https://github.com/tmvkrpxl0/create_connected.git
