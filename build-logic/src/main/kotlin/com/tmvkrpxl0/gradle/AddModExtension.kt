@@ -10,6 +10,7 @@ abstract class AddModExtension(private val settings: Settings) {
         val config = ModConfig(
             filePath = path,
             includeTransitive = true,
+            excludeAsset = false,
             modProjects = listOf(
                 ModProjectConfig(
                     dependencyNotations = listOf(module),
@@ -40,17 +41,19 @@ abstract class AddModExtension(private val settings: Settings) {
     fun addMod(
         filePath: String,
         includeTransitive: Boolean,
-        modProjects: List<ModProjectConfig>
+        modProjects: List<ModProjectConfig>,
+        excludeAsset: Boolean = false,
     ) {
-        val mod = ModConfig(filePath, includeTransitive, modProjects)
+        val mod = ModConfig(filePath, includeTransitive, modProjects, excludeAsset)
         addMod(mod)
     }
 
     fun mod(
         filePath: String,
         includeTransitive: Boolean,
-        modProjects: List<ModProjectConfig>
-    ) = ModConfig(filePath, includeTransitive, modProjects)
+        modProjects: List<ModProjectConfig>,
+        excludeAsset: Boolean = false,
+    ) = ModConfig(filePath, includeTransitive, modProjects, excludeAsset)
 
     fun modProject(
         dependencyNotations: List<String>,
@@ -62,7 +65,8 @@ abstract class AddModExtension(private val settings: Settings) {
 data class ModConfig(
     val filePath: String,
     val includeTransitive: Boolean,
-    val modProjects: List<ModProjectConfig>
+    val modProjects: List<ModProjectConfig>,
+    val excludeAsset: Boolean
 )
 
 data class ModProjectConfig(

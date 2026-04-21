@@ -7,8 +7,10 @@ import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.add
 import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.language.jvm.tasks.ProcessResources
 
@@ -28,8 +30,11 @@ class BeforeProjectAction(
             val nonTransitive = project.configurations.create("nonTransitive") {
                 isTransitive = false
             }
+            val createModJars = project.tasks.register<Jar>("createModJars")
+
             mods.get().forEach { mod ->
                 val includeTransitive = mod.includeTransitive
+                val excludeAssets = mod.excludeAsset
 
                 mod.modProjects.forEach { modProject ->
                     val notation = modProject.dependencyNotations.first()
@@ -72,6 +77,18 @@ class BeforeProjectAction(
                         project.tasks.named<ProcessResources>(processResourcesTaskName) {
                             from(unzipped)
                             duplicatesStrategy = DuplicatesStrategy.WARN
+                        }
+
+                        val prepareJar = project.tasks.register<Jar>("${sourceSetName}prepareJar") {
+                            from(unzipped)
+                            duplicatesStrategy = DuplicatesStrategy.WARN
+                            if (excludeAssets) {
+                                exclude("assets")
+                            }
+                        }
+
+                        createModJars.configure {
+                            dependsOn(prepareJar)
                         }
                     }
                 }
