@@ -34,7 +34,7 @@ public class LevititeCatalyzerHandler implements InteractCallback {
                 player);
     }
 
-    private static boolean isCatalyzer(final ItemStack item) {
+    public static boolean isCatalyzer(final ItemStack item) {
         return item.is(AeroTags.ItemTags.LEVITITE_CATALYZER) || item.is(AeroTags.ItemTags.LEVITITE_SOUL_CATALYZER);
     }
 
@@ -54,7 +54,7 @@ public class LevititeCatalyzerHandler implements InteractCallback {
             final ClipContext context = gatherContext(player);
             final BlockHitResult ray = level.clip(context);
             if (ray.getType() != HitResult.Type.MISS && level.getFluidState(ray.getBlockPos()).getType() == LevititeBlendHelper.getFluid()) {
-                VeilPacketManager.server().sendPacket(new LevititeCatalystCrystallizationPacket(ray.getBlockPos(), hand, catalyzer));
+                VeilPacketManager.server().sendPacket(new LevititeCatalystCrystallizationPacket(ray.getBlockPos(), hand));
                 player.swing(hand);
                 return new Result(true);
             }
