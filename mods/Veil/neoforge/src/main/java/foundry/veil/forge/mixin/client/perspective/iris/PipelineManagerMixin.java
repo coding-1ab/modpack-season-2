@@ -1,5 +1,6 @@
 package foundry.veil.forge.mixin.client.perspective.iris;
 
+import foundry.veil.VeilMixinPlugin;
 import foundry.veil.api.client.render.VeilLevelPerspectiveRenderer;
 import net.irisshaders.iris.pipeline.PipelineManager;
 import net.irisshaders.iris.shaderpack.materialmap.NamespacedId;
@@ -7,6 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+@VeilMixinPlugin.ModMixin(modId = "iris")
 @Mixin(PipelineManager.class)
 public class PipelineManagerMixin {
 

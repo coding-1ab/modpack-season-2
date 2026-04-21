@@ -5,10 +5,16 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLLoader;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
+import org.spongepowered.asm.service.IClassBytecodeProvider;
+import org.spongepowered.asm.service.MixinService;
+import org.spongepowered.asm.util.Annotations;
 
+import java.io.IOException;
 import java.util.*;
 
 public class VeilMixinPlugin implements IMixinConfigPlugin {
@@ -52,6 +58,33 @@ public class VeilMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        String modMixin = Type.getDescriptor(ModMixin.class);
+        IClassBytecodeProvider bytecodeProvider = MixinService.getService().getBytecodeProvider();
+        ClassNode mixinClass;
+        try {
+            mixinClass = bytecodeProvider.getClassNode(mixinClassName);
+        } catch (ClassNotFoundException | IOException ignored) {
+            return true; // Intentionally trigger load error later since mixinClass itself being missing is clearly error
+        }
+        List<AnnotationNode> annotations = new ArrayList<>();
+        {
+            if (mixinClass.invisibleAnnotations != null) {
+                annotations.addAll(mixinClass.invisibleAnnotations);
+            }
+            if (mixinClass.visibleAnnotations != null) {
+                annotations.addAll(mixinClass.visibleAnnotations);
+            }
+        }
+
+        for(AnnotationNode annotation: annotations) {
+            if (annotation.desc.equals(modMixin)) {
+                String modId = Annotations.getValue(annotation, "modId");
+                if (FMLLoader.getLoadingModList().getMods().stream().noneMatch(mod -> mod.getModId().equals(modId))) {
+                    return false;
+                }
+            }
+        }
+
         for (String compat : COMPAT) {
             if (mixinClassName.startsWith(compat)) {
                 return Veil.SODIUM ? !mixinClassName.startsWith(compat + ".vanilla") : !mixinClassName.startsWith(compat + ".sodium");
@@ -94,5 +127,9 @@ public class VeilMixinPlugin implements IMixinConfigPlugin {
     }
 
     public void postApply(String targetClassName, org.spongepowered.asm.lib.tree.ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
+    }
+
+    public @interface ModMixin {
+        String modId();
     }
 }

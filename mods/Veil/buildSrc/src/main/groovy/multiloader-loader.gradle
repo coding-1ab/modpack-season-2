@@ -3,6 +3,12 @@ plugins {
     id 'me.modmuss50.mod-publish-plugin'
 }
 
+['apiElements', 'runtimeElements', 'sourcesElements'].each { variant ->
+    configurations."$variant".outgoing {
+        capability("$group:$project.name:$version")
+    }
+}
+
 configurations {
     commonJava {
         canBeResolved = true
