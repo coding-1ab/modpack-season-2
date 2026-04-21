@@ -590,8 +590,11 @@ public class DiagramScreen extends AbstractSimiScreen {
         this.renderContents(this.subLevel, partialTicks);
         this.note.renderWidget(graphics, mouseX, mouseY, partialTicks);
 
-        this.turnDownButton.visible = this.turnDownButton.active = this.config.pitch() < 45.0f;
-        this.turnUpButton.visible = this.turnUpButton.active = this.config.pitch() > -45.0f;
+        // genuinely how can this be null they are assigned values in the constructor
+        if (this.turnDownButton != null && this.turnUpButton != null) {
+            this.turnDownButton.visible = this.turnDownButton.active = this.config.pitch() < 45.0f;
+            this.turnUpButton.visible = this.turnUpButton.active = this.config.pitch() > -45.0f;
+        }
 
         ps.pushPose();
 
