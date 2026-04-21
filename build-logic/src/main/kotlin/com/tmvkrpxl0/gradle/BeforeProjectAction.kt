@@ -14,7 +14,7 @@ import org.gradle.language.jvm.tasks.ProcessResources
 
 @Suppress("UnstableApiUsage")
 class BeforeProjectAction(
-    private val modules: ListProperty<Pair<String, Boolean>>,
+    private val mods: ListProperty<ModConfig>,
 ) : IsolatedAction<Project> {
     override fun execute(project: Project) {
         val archive = project.serviceOf<ArchiveOperations>()
@@ -28,40 +28,51 @@ class BeforeProjectAction(
             val nonTransitive = project.configurations.create("nonTransitive") {
                 isTransitive = false
             }
-            modules.get().forEach { (module, includeTransitive) ->
-                val dependency = project.dependencies.create(module) as ModuleDependency
-                val separator = module.indexOf(':')
-                val artifactId = module.substring(separator + 1)
-                val sourceSetName = artifactId.replace('.', '-')
-                val moduleNonTransitive = project.configurations.create("${sourceSetName}nonTransitive") {
-                    isTransitive = false
-                }
+            mods.get().forEach { mod ->
+                val includeTransitive = mod.includeTransitive
 
-                sourceSet.register(sourceSetName) {
-                    val moduleOutput = this.output
-                    project.dependencies.add("localRuntime", moduleOutput)
-
-                    if (includeTransitive) {
-                        project.dependencies.add("nonTransitive", dependency) {
-                            isTransitive = false
-                        }
-                        project.dependencies.add("transitive", dependency) {
-                            isTransitive = true
-                        }
+                mod.modProjects.forEach { modProject ->
+                    val notation = modProject.dependencyNotations.first()
+                    val shouldUnpack = modProject.shouldUnpack
+                    if (!shouldUnpack) {
+                        return@forEach
                     }
 
-                    project.dependencies.add("${sourceSetName}nonTransitive", dependency) {
+                    val dependency = project.dependencies.create(notation) as ModuleDependency
+                    val separator = notation.indexOf(':')
+                    val artifactId = notation.substring(separator + 1)
+                    val sourceSetName = artifactId.replace('.', '-')
+                    val sourceArtifactContainer = "${sourceSetName}nonTransitive"
+                    val sourceArtifactContainerConfig = project.configurations.create(sourceArtifactContainer) {
                         isTransitive = false
                     }
 
-                    val unzipped = moduleNonTransitive.elements.map { elements ->
-                        val jar = elements.singleOrNull()!!
-                        archive.zipTree(jar)
-                    }
+                    sourceSet.register(sourceSetName) {
+                        val moduleOutput = this.output
+                        project.dependencies.add("localRuntime", moduleOutput)
 
-                    project.tasks.named<ProcessResources>(processResourcesTaskName) {
-                        from(unzipped)
-                        duplicatesStrategy = DuplicatesStrategy.WARN
+                        if (includeTransitive) {
+                            project.dependencies.add("nonTransitive", dependency) {
+                                isTransitive = false
+                            }
+                            project.dependencies.add("transitive", dependency) {
+                                isTransitive = true
+                            }
+                        }
+
+                        project.dependencies.add(sourceArtifactContainer, dependency) {
+                            isTransitive = false
+                        }
+
+                        val unzipped = sourceArtifactContainerConfig.elements.map { elements ->
+                            val jar = elements.singleOrNull()!!
+                            archive.zipTree(jar)
+                        }
+
+                        project.tasks.named<ProcessResources>(processResourcesTaskName) {
+                            from(unzipped)
+                            duplicatesStrategy = DuplicatesStrategy.WARN
+                        }
                     }
                 }
             }

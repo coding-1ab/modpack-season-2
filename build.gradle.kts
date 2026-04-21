@@ -34,6 +34,7 @@ neoForge {
         create("clientAuth") {
             client()
             gameDirectory = project.file("runs/client")
+            jvmArguments.add("-Dmodernfix.allowSparkProfiling=true")
             devLogin = true
         }
         create("client") {
@@ -45,7 +46,6 @@ neoForge {
         create("server") {
             server()
             gameDirectory = project.file("runs/server")
-            programArgument("--nogui")
             // systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
@@ -79,7 +79,7 @@ neoForge {
             // "SCAN": For mods scan.
             // "REGISTRIES": For firing of registry events.
             // "REGISTRYDUMP": For getting the contents of all registries.
-            systemProperty("forge.logging.markers", "REGISTRIES")
+            systemProperty("forge.logging.markers", "REGISTRYDUMP")
 
             // Recommended logging level for the console
             // You can set various levels here.
@@ -88,6 +88,7 @@ neoForge {
             jvmArguments.addAll(
                 "-XX:+IgnoreUnrecognizedVMOptions",
                 "-XX:+AllowEnhancedClassRedefinition",
+                "-XX:+EnableDynamicAgentLoading",
                 //jvmArgument("-XX:-OmitStackTraceInFastThrow", // uncomment when you get exceptions with null messages etc
                 // "-XX:+UnlockCommercialFeatures", // uncomment for profiling
             )
@@ -174,6 +175,10 @@ repositories {
         }
     }
     maven("https://maven.idiotss.com/releases/") // ESL
+
+    maven("https://maven.ryanhcode.dev/releases") { // Sable
+        name = "RyanHCode Maven"
+    }
 }
 
 val localRuntime = configurations.maybeCreate("localRuntime")
@@ -202,14 +207,17 @@ dependencies {
     localRuntime("curse.maven:configurable-1092048:7356762")
     localRuntime("curse.maven:controlling-250398:6368976")
     localRuntime("curse.maven:searchables-858542:5831692")
-    localRuntime("curse.maven:jade-324717:5493270")
+    localRuntime("curse.maven:jade-324717:7545219")
     localRuntime("curse.maven:atlas-633577:5490697")
+    localRuntime("curse.maven:modernfix-790626:7917721")
+    localRuntime("curse.maven:spark-361579:6225208")
     localRuntime("top.theillusivec4.curios:curios-neoforge:$curiosVersion+${minecraftVersion}")
     localRuntime("maven.modrinth:sodium:mc${minecraftVersion}-$sodiumVersion-neoforge")
 
     compileOnly("com.mrh0.createaddition:createaddition")
     compileOnly("plus.dragons.createdragonsplus:create-dragons-plus")
     compileOnly("org.appliedenergistics:appliedenergistics2")
+    implementation("dev.ryanhcode.sable:sable-neoforge-${minecraftVersion}")
 
     add("additionalRuntimeClasspath", "org.jetbrains:annotations")
 }
