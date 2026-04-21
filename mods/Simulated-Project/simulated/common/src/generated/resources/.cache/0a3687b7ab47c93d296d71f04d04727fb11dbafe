@@ -1,4 +1,4 @@
-// 1.21.1	2026-04-21T01:54:19.6445053	Registrate Provider for simulated [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2026-04-21T13:25:19.1035135	Registrate Provider for simulated [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 767bb2f61cacd88e29b044a9f6622d282368134f assets/simulated/blockstates/altitude_sensor.json
 201713560b3c1d80d3cc6ea6eb4da736ed965f83 assets/simulated/blockstates/analog_transmission.json
 ede6dc262e3ccc9f5478bd382c21fba172d471bb assets/simulated/blockstates/auger_cog.json
@@ -316,8 +316,10 @@ e823db1144344765980ace3c440ded34d218c050 data/create/advancement/recipes/misc/wh
 0ceea6ba849ca05515775f85ac6faa0e5e4160fd data/create/tags/block/brittle.json
 3d92c638aa11faa207384609988172c97b4f9417 data/create/tags/block/safe_nbt.json
 ac1afbf9798f80a0e863969c37d02fc765cbdd2b data/create/tags/block/windmill_sails.json
+ed40c7afce811d9aa9eb7aaafaad621e24fe4755 data/c/tags/item/enchantables.json
 6e338ffc084b485b54c7d3a38f1ab777dec90782 data/minecraft/tags/block/mineable/axe.json
 e986c8626ffccc910165f91ae888df5ed7ebbcf6 data/minecraft/tags/block/mineable/pickaxe.json
+5596ff42dae8a4ae8c3cbaacb9b9802b2aabc016 data/minecraft/tags/item/enchantable/durability.json
 1f47b4d1af005c9ac44979e621595d5bd89930c3 data/sable/tags/block/diode.json
 5477f598a0a6232ee4b4910e9ee0473ff2a89a71 data/sable/tags/block/light.json
 b7580c68a190f8d2dea1fb6e05033a0d164ca20d data/sable/tags/block/super_light.json

@@ -5,7 +5,6 @@ import com.simibubi.create.content.equipment.zapper.ShootableGadgetItemMethods;
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import com.simibubi.create.foundation.utility.RaycastHelper;
 import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.api.SubLevelHelper;
 import dev.simulated_team.simulated.SimulatedClient;
 import dev.simulated_team.simulated.content.entities.launched_plunger.LaunchedPlungerEntity;
 import dev.simulated_team.simulated.content.entities.launched_plunger.LaunchedPlungerServerHandler;
@@ -169,6 +168,11 @@ public class PlungerLauncherItem extends Item implements CustomArmPoseItem {
     @Override
     public boolean canAttackBlock(final BlockState state, final Level level, final BlockPos pos, final Player player) {
         return false;
+    }
+
+    @Override
+    public int getEnchantmentValue() {
+        return 1;
     }
 
     public record BarrelAndCorrectionInfo(Vec3 barrelPos, Vec3 motion) {
