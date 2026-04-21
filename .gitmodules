@@ -50,3 +50,13 @@
 [submodule "mods/Create-Stock-Bridge"]
 	path = mods/Create-Stock-Bridge
 	url = https://github.com/coding-1ab/Create-Stock-Bridge.git
+[submodule "mods/Veil"]
+	path = mods/Veil
+	url = https://github.com/coding-1ab/Veil.git
+	branch = 1.21
+[submodule "mods/sable"]
+	path = mods/sable
+	url = https://github.com/coding-1ab/sable.git
+[submodule "mods/Simulated-Project"]
+	path = mods/Simulated-Project
+	url = https://github.com/coding-1ab/Simulated-Project.git
