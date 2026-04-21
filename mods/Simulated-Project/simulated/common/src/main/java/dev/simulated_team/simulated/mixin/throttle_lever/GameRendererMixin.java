@@ -1,7 +1,6 @@
 package dev.simulated_team.simulated.mixin.throttle_lever;
 
 import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.api.entity.EntitySubLevelUtil;
 import dev.simulated_team.simulated.content.blocks.throttle_lever.ThrottleLeverBlockEntity;
 import dev.simulated_team.simulated.content.blocks.throttle_lever.ThrottleLeverClientGripHandler;
 import net.minecraft.client.Minecraft;
@@ -23,7 +22,7 @@ public class GameRendererMixin {
 
     @Shadow
     @Final
-    private Minecraft minecraft;
+    Minecraft minecraft;
 
     @Inject(method = "pick(F)V", at = @At("TAIL"))
     private void simulated$pickThrottleLever(final float partialTicks, final CallbackInfo ci) {
@@ -32,7 +31,7 @@ public class GameRendererMixin {
         final LocalPlayer player = this.minecraft.player;
         if (player == null) return;
 
-        final Vec3 eyePos = EntitySubLevelUtil.getEyePositionInterpolated(player, partialTicks);
+        final Vec3 eyePos = Sable.HELPER.getEyePositionInterpolated(player, partialTicks);
 
         final HitResult mcHitResult = this.minecraft.hitResult;
         double minDistance = mcHitResult != null && mcHitResult.getType() != HitResult.Type.MISS ? Sable.HELPER.distanceSquaredWithSubLevels(player.level(), eyePos, mcHitResult.getLocation()) : Double.MAX_VALUE;
