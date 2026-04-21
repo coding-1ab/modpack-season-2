@@ -136,7 +136,7 @@
   "force_group.sable.balloon_lift": "Balloon Lift",
   "force_group.sable.propulsion": "Propulsion",
   "force_group.sable.lift": "Lift",
-  "force_group.sable.magnetic_force": "Magnetic Force",
+  "force_group.sable.magnetic_force": "Magnetic",
 
   "schematic.sable.mirror_not_supported": "Cannot mirror schematics containing sub-levels!",
 
